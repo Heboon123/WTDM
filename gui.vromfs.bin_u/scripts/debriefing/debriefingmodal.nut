@@ -3260,15 +3260,23 @@ let statTooltipColumnParamByType = {
       return ""
 
     let isWin = this.debriefingResult.isSucceed
+
     let bonusWp = (isWin ? ::get_warpoints_blk()?.winK : ::get_warpoints_blk()?.defeatK) ?? 0.0
-    let rBlk = ::get_ranks_blk()
-    let missionRp = (isWin ? rBlk?.expForVictoryVersusPerSec : rBlk?.expForPlayingVersusPerSec) ?? 0.0
-    let baseRp = rBlk?.expBaseVersusPerSec ?? 0
-    let bonusRp = (baseRp > 0) ? (missionRp.tofloat() / baseRp - 1.0) : 0.0
-    let rp = (bonusRp > 0) ? ceil(bonusRp * 100) : 0
     let wp = (bonusWp > 0) ? ceil(bonusWp * 100) : 0
-    let textRp = rp ? ::getRpPriceText($"+{rp}%", true) : ""
-    let textWp = wp ? ::getWpPriceText($"+{wp}%", true) : ""
+    let textWp = (wp > 0) ? ::getWpPriceText($"+{wp}%", true) : ""
+
+    let mis = ::get_current_mission_info_cached()
+    let useTimeAwardingExp = mis?.useTimeAwardingEconomics ?? false
+    local textRp = ""
+    if (!useTimeAwardingExp) {
+      let rBlk = ::get_ranks_blk()
+      let missionRp = (isWin ? rBlk?.expForVictoryVersusPerSec : rBlk?.expForPlayingVersusPerSec) ?? 0.0
+      let baseRp = rBlk?.expBaseVersusPerSec ?? 0
+      if (missionRp > 0 && baseRp > 0) {
+        let rp = ceil((missionRp.tofloat() / baseRp - 1.0) * 100)
+        textRp = ::getRpPriceText($"+{rp}%", true)
+      }
+    }
     return ::g_string.implode([textRp, textWp], loc("ui/comma"))
   }
 
