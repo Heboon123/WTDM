@@ -2495,7 +2495,7 @@
     {
       "attacker": {
         "name": "douglas_ad_4_france",
-        "weap": "douglas_ad_4_t10_151",
+        "weap": "douglas_ad_4_france_t_10_151",
         "rankRange": [15,18]
       }
     },
@@ -2621,7 +2621,7 @@
     {
       "attacker": {
         "name": "yak-38m",
-        "weap": "yak_38m_2x_ub32_ub16",
+        "weap": "yak_38m_2x_ub32",
         "rankRange": [23,26]
       }
     },
@@ -3853,7 +3853,7 @@
     {
       "helicopter_rocket": {
         "name": "mi_35m",
-        "weap": "mi_35m_rocket_c_8_ko_upk_23_250",
+        "weap": "mi_35m_rocket_c_8_ko",
         "rankRange": [25,50]
       }
     },
@@ -4088,10 +4088,20 @@
     "instructorAlphaPrediction": 5.0,
     "instructorCritAngleK": 0.2,
     "constPitchPropCoeffBase": 1.0,
-    "constPitchDerrCoeffBase": 12.0
+    "constPitchDerrCoeffBase": 12.0,
+    "reducedFlightModelLoop": true,
+    "propsDefault": {
+      "critMult": [-1.0,-1.0],
+      "limitOverload": true,
+      "overloadMult": [0.85,0.92,0.85,0.92],
+      "overloadTimeRange": [0.9,1.0]
+    }
   },
   "orbit": {
-    "yawOffsetMult": 30.0,
+    "yawOffsetMultMax": 200.0,
+    "yawOffsetMultRelInitial": -0.15,
+    "yawOffsetMultRateMax": 0.5,
+    "climbAngleMax": [-30.0,20.0],
     "pitchKi": 0.01,
     "pitchKd": 0.01,
     "pitchMax": 15.0
@@ -4105,27 +4115,16 @@
     "predictionTime": [0.17,3.0,0.7],
     "scoreTreshold": 0.0001,
     "analyticalScore": 0.085,
-    "angVelFactorMin": 1.42,
-    "rollRateToAngVelFactor": 0.497,
-    "localDirYawPitchRotYZMax0": 0.125,
-    "autoBankLevelMultToLocalDirYawPitchRotYZMax": 0.3,
-    "rollAndPullUpWishDirYMin": -0.7,
-    "rollandPullUpWishDirMin": 0.3,
-    "allowedRollRateCoeff": [0.17,0.3,0.4,1.5],
-    "rollTimeMult": 0.44,
-    "rollPidKpMult": 1.25,
-    "dirXZFactorPitch0": [0.15,2.0,0.35,0.06],
-    "dirXZFactorPitchMin": 0.02,
-    "dirXZFactorYaw0": [0.15,2.0,0.35,0.06],
-    "dirXZFactorYawMin": 0.02,
-    "rollRateLimToDirXZFactor": [0.7,1000000.0],
+    "rotationStopTimeMax": 3.0,
     "angDistToRadialAngleAdd": [0.12,0.0,0.03,1.0],
     "rollRateToRadialAngleAdd": 0.15,
     "radialAngleAddMax": 0.3,
+    "angVelFactorMin": 1.42,
+    "rollRateToAngVelFactor": 0.497,
     "applyFactorSpeedRange": [0.3,0.6],
-    "rotationStopTimeMax": 3.0,
     "disableSolvingForDeadElevator": false,
     "disableSolvingForDeadRudder": true,
+    "reducedFlightModelLoop": true,
     "elevRuddTreshold": 0.01,
     "elevRuddLinearSearchIterMax": 0,
     "elevRuddPosCaching": false,
@@ -4133,7 +4132,25 @@
     "elevRuddDiffTreshold": 0.0,
     "sceneCollisionDetectionTickInterval": 5,
     "preciseRotationStopTimeStepMult": 2.0,
-    "preciseRotationStopTickMult": 4
+    "preciseRotationStopTickMult": 4,
+    "propsDefault": {
+      "forceAdvanced": false,
+      "preciseRotStopDetection": false,
+      "localDirYawPitchRotYZMax0": 0.125,
+      "autoBankLevelMultToLocalDirYawPitchRotYZMax": 0.3,
+      "rollAndPullUpWishDirYMin": -0.7,
+      "rollandPullUpWishDirMin": 0.3,
+      "allowedRollRateCoeff": [0.17,0.3,0.4,1.5],
+      "rollTimeMult": 0.44,
+      "rollPidKpMult": 1.25,
+      "dirXZFactorPitch0": [0.15,2.0,0.35,0.06],
+      "dirXZFactorPitchMin": 0.02,
+      "dirXZFactorYaw0": [0.15,2.0,0.35,0.06],
+      "dirXZFactorYawMin": 0.02,
+      "dirXZToRollRateLim": [0.0,0.0],
+      "rollRateLimToDirXZFactorMin": [0.7,1000000.0],
+      "rollRateLimToDirXZFactorMax": [0.7,1000000.0]
+    }
   },
   "autopilot": {
     "Ailerons": {
@@ -4165,14 +4182,15 @@
       "aoaFactorDeadZone": 0.0,
       "loadFactorFilterViscosity": 0.05,
       "loadFactorDeadZone": 0.0,
+      "loadFactorByPass": true,
       "maxLoadFactorMult": 0.85,
       "targetMaxAoaFactorMult": 1.0,
       "additionalAoaMaxFactorMult": 1.0,
       "maxAoaFactorMult": 0.95,
       "limitAoaByLoadFactor": true,
       "limitStabAoa": false,
-      "loadFactorTimeMultBase": 5.0,
-      "aoaTimeMultBase": 0.2
+      "loadFactorTimeMultBase": 4.0,
+      "aoaTimeMultBase": 4.0
     },
     "Yaw": {
       "rateDeadZone": 0.0,
@@ -4342,6 +4360,9 @@
     },
     {
       "time": [0.025,50.0]
+    },
+    {
+      "time": [0.027,50.0]
     },
     {
       "time": [0.03,60.0]
@@ -4712,6 +4733,27 @@
       "radarModeName": "PD track"
     },
     {
+      "radarModeName": "PD HDN standby"
+    },
+    {
+      "radarModeName": "PD HDN search"
+    },
+    {
+      "radarModeName": "PD HDN acquisition"
+    },
+    {
+      "radarModeName": "PD HDN ACM"
+    },
+    {
+      "radarModeName": "PD HDN BST"
+    },
+    {
+      "radarModeName": "PD HDN VSL"
+    },
+    {
+      "radarModeName": "PD HDN track"
+    },
+    {
       "radarModeName": "LD standby"
     },
     {
@@ -4761,6 +4803,27 @@
     },
     {
       "radarModeName": "TWS track"
+    },
+    {
+      "radarModeName": "TWS HDN standby"
+    },
+    {
+      "radarModeName": "TWS HDN search"
+    },
+    {
+      "radarModeName": "TWS HDN acquisition"
+    },
+    {
+      "radarModeName": "TWS HDN ACM"
+    },
+    {
+      "radarModeName": "TWS HDN BST"
+    },
+    {
+      "radarModeName": "TWS HDN VSL"
+    },
+    {
+      "radarModeName": "TWS HDN track"
     },
     {
       "radarModeName": "IRST standby"
@@ -5012,6 +5075,7 @@
     "wheelBrakesSpeed": [100.0,2.0],
     "arrestorAcceleration": [3.0,4.5],
     "wingOverloadToBreakProbabilityMult": 6.0,
+    "wingOverloadStress": [-0.05,-5.0,0.05,5.0],
     "wingOverspeedToBreakProbabilityMult": 0.03,
     "controlFinsDestructionSpeedDiff": 10.0,
     "controlOverspeedToBreakProbabilityMult": 0.05,
@@ -5035,6 +5099,8 @@
         "speedSearchSafetyIntervalInitial": 100.0,
         "speedSearchSafetyIntervalNormal": 7.0,
         "loadFactorSearchStep": 0.025,
+        "mainRotorAngleStep": 0.003,
+        "mainRotorSearchIterMax": 250,
         "propPitchSearchStep": 0.0005,
         "omegaSearchStep": 0.2
       },
@@ -5043,6 +5109,8 @@
         "speedSearchSafetyIntervalInitial": 100.0,
         "speedSearchSafetyIntervalNormal": 7.0,
         "loadFactorSearchStep": 0.025,
+        "mainRotorAngleStep": 0.005,
+        "mainRotorSearchIterMax": 150,
         "propPitchSearchStep": 0.0005,
         "omegaSearchStep": 0.2
       },
@@ -5051,6 +5119,8 @@
         "speedSearchSafetyIntervalInitial": 100.0,
         "speedSearchSafetyIntervalNormal": 7.0,
         "loadFactorSearchStep": 0.25,
+        "mainRotorAngleStep": 0.005,
+        "mainRotorSearchIterMax": 150,
         "propPitchSearchStep": 0.0015,
         "omegaSearchStep": 1.0
       }

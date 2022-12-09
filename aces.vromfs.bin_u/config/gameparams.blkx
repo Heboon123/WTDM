@@ -191,10 +191,11 @@
   "newDamageTimer": 100.0,
   "friendlyFireImmortalOnLandTime": 30.0,
   "readyToDieRepairTimeMult": 3.0,
+  "bailoutEnabled": true,
   "bailoutReadyToDieTime": 15.0,
-  "airfieldRepairDamageLimit": 0.5,
   "bailoutHoldTime": 3.0,
   "bailoutHoldTimeAtExitZone": 1.5,
+  "airfieldRepairDamageLimit": 0.65,
   "enableHeicopterTargetLock3dPerson": true,
   "aimCorrectionAngleMax": 5.0,
   "rocketShakeCamera": 1.0,
@@ -286,6 +287,10 @@
   "showWaveHitcam": true,
   "waveOffset": [20.0,20.0],
   "ticksBetweenBulletsTraceShoots": 3,
+  "gyroSightOmegaFilterTau": 0.2,
+  "gyroSightDistanceDefault": 275.0,
+  "gyroSightBulletDrag": false,
+  "gyroSightBulletGravity": true,
   "secondaryWeaponSwitchOnOutOfAmmoTimeOut": 1.0,
   "enableBotTorpedoShooting": true,
   "torpedoShootByBotMaxDistance": 7500.0,
@@ -6280,6 +6285,10 @@
       "staticCascadeFxaaStr": 1.0,
       "staticCascadeUseRiSecLayer": true,
       "staticCascadeDualPass": false,
+      "staticCascadeTransition": true,
+      "staticCascadeStopRenderingAfterRegionSplit": true,
+      "staticCascadeDepthBias": 0.007,
+      "staticCascadeDepthSlopeBias": 0.02,
       "useOcclusion": true,
       "hangarShadowDist": 80.0,
       "hangarPowWeight": 0.4,
@@ -6311,7 +6320,10 @@
       "staticCascadeFxaaStr": 1.0,
       "staticCascadeUseRiSecLayer": true,
       "staticCascadeDualPass": false,
-      "staticCascadeDepthBias": 0.001,
+      "staticCascadeTransition": true,
+      "staticCascadeStopRenderingAfterRegionSplit": true,
+      "staticCascadeDepthBias": 0.007,
+      "staticCascadeDepthSlopeBias": 0.02,
       "useOcclusion": true,
       "hangarShadowDist": 80.0,
       "hangarPowWeight": 0.4,
@@ -6321,30 +6333,37 @@
     "medium": {
       "cascadeWidth": 768,
       "splitsW": 2,
-      "splitsH": 2,
+      "splitsH": 1,
       "cascadeDepth24bit": false,
-      "tpsShadowDist": 340.0,
-      "tpsPowWeight": 0.92,
-      "cockpitShadowDist": 300.0,
-      "cockpitPowWeight": 0.992,
-      "tanksShadowDist": 125.0,
-      "tanksPowWeight": 0.8,
-      "shipsShadowDist": 80.0,
-      "shipsPowWeight": 0.78,
-      "bigShipsShadowDist": 120.0,
-      "bigShipsPowWeight": 0.66,
-      "fadeOut": 30.0,
+      "tpsShadowDist": 60.0,
+      "tpsPowWeight": 0.3,
+      "cockpitShadowDist": 120.0,
+      "cockpitPowWeight": 0.95,
+      "tanksShadowDist": 40.0,
+      "tanksPowWeight": 0.4,
+      "shipsShadowDist": 60.0,
+      "shipsPowWeight": 0.25,
+      "bigShipsShadowDist": 160.0,
+      "bigShipsPowWeight": 0.4,
+      "fadeOut": 10.0,
       "rotationMargin": 0.1,
       "staticCascadeCount": 1,
-      "staticCascadeRegMul": 5.0,
+      "staticCascadeRegMul": 1.0,
       "staticCascadeTexWidth": 1024,
-      "staticCascadeRegWidth": 150.0,
+      "staticCascadeRegWidth": 500.0,
       "staticCascadeStarting": 0,
       "staticCascadeFxaaStr": 3.0,
-      "staticCascadeUseRiSecLayer": false,
-      "staticCascadeDualPass": true,
+      "staticCascadeUseRiSecLayer": true,
+      "staticCascadeDualPass": false,
+      "staticCascadeTransition": true,
+      "staticCascadeStopRenderingAfterRegionSplit": true,
       "staticCascadeDepthBias": 0.007,
-      "useOcclusion": true
+      "staticCascadeDepthSlopeBias": 0.02,
+      "useOcclusion": true,
+      "hangarShadowDist": 80.0,
+      "hangarPowWeight": 0.4,
+      "hangarShipsShadowDist": 80.0,
+      "hangarShipsPowWeight": 0.4
     }
   },
   "shadows": {
@@ -17176,6 +17195,54 @@
           "name": "wheel_l_03_",
           "modelNames": "bosvark_spaag"
         }
+      },
+      {
+        "p": {
+          "name": "wheel_r_01_",
+          "modelNames": "m1128_wolfpack"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_01_",
+          "modelNames": "m1128_wolfpack"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_02_",
+          "modelNames": "m1128_wolfpack"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_02_",
+          "modelNames": "m1128_wolfpack"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_03_",
+          "modelNames": "m1128_wolfpack"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_03_",
+          "modelNames": "m1128_wolfpack"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_04_",
+          "modelNames": "m1128_wolfpack"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_04_",
+          "modelNames": "m1128_wolfpack"
+        }
       }
     ],
     "crew": [
@@ -19251,6 +19318,18 @@
       },
       {
         "excRE": "dynaf_platform_light_b"
+      },
+      {
+        "excRE": "airfield_flight_light_blue"
+      },
+      {
+        "excRE": "airfield_flight_light_red"
+      },
+      {
+        "excRE": "airfield_flight_light_green"
+      },
+      {
+        "excRE": "airfield_flight_light_yellow"
       }
     ],
     "hideForMode0re": [
@@ -19583,6 +19662,18 @@
       },
       {
         "excRE": "dynaf_platform_light_b"
+      },
+      {
+        "excRE": "airfield_flight_light_blue"
+      },
+      {
+        "excRE": "airfield_flight_light_red"
+      },
+      {
+        "excRE": "airfield_flight_light_green"
+      },
+      {
+        "excRE": "airfield_flight_light_yellow"
       }
     ],
     "hideForMode1": [
@@ -20672,6 +20763,18 @@
       },
       {
         "ri": "oil_platform_a"
+      },
+      {
+        "ri": "airfield_flight_light_blue"
+      },
+      {
+        "ri": "airfield_flight_light_red"
+      },
+      {
+        "ri": "airfield_flight_light_green"
+      },
+      {
+        "ri": "airfield_flight_light_yellow"
       }
     ],
     "badLod1ForStaticShadow": [
@@ -21596,6 +21699,12 @@
     },
     {
       "burnMarkColor": [0.01,0.01,0.01,0.8]
+    },
+    {
+      "useProjectedDecalsForSplashDecals": true
+    },
+    {
+      "useExplosionPatch": true
     }
   ],
   "cutting": {
@@ -21943,7 +22052,132 @@
       }
     ]
   },
-  "prefetchEffects": {
-    "name": "explosion_ship_big"
-  }
+  "prefetchEffects": [
+    {
+      "name": "explosion_ship_big"
+    },
+    {
+      "name": "tank_exhaust"
+    },
+    {
+      "name": "ship_exhaust"
+    },
+    {
+      "name": "ad_metal"
+    },
+    {
+      "name": "ad_metal_small"
+    },
+    {
+      "name": "ad_wood_small"
+    },
+    {
+      "name": "ad_dust_stucco"
+    },
+    {
+      "name": "ad_dust_bollard"
+    },
+    {
+      "name": "ad_dust_red_bricks"
+    },
+    {
+      "name": "ad_fence_wood_small"
+    },
+    {
+      "name": "ad_shlagbaum"
+    },
+    {
+      "name": "tank_smoke_small"
+    },
+    {
+      "name": "tank_explosion"
+    },
+    {
+      "name": "ground_model_expl"
+    },
+    {
+      "name": "smoke_exhaust_air"
+    },
+    {
+      "name": "tracers_destroyed_small_red"
+    },
+    {
+      "name": "ad_paper_splash_medium"
+    },
+    {
+      "name": "smoke_after_hit_big"
+    },
+    {
+      "name": "fire_after_hit_big"
+    },
+    {
+      "name": "land_crash_fire_time_limit"
+    },
+    {
+      "name": "minor_fuel_fire"
+    },
+    {
+      "name": "hit_smoke"
+    },
+    {
+      "name": "hit_flame"
+    },
+    {
+      "name": "ad_sand"
+    },
+    {
+      "name": "major_fuel_fire_ground"
+    },
+    {
+      "name": "tracers_destroyed_small_green"
+    },
+    {
+      "name": "tracers_destroyed_med_white"
+    },
+    {
+      "name": "tracers_ricocheted_small_green"
+    },
+    {
+      "name": "tracers_ricocheted_small_red"
+    },
+    {
+      "name": "fire_trails_dstr_smal"
+    },
+    {
+      "name": "fire_trails_explosion_smal"
+    },
+    {
+      "name": "fire_trails_dstr_med"
+    },
+    {
+      "name": "smoke_after_hit_tiny"
+    },
+    {
+      "name": "smoke_after_hit_med"
+    },
+    {
+      "name": "fire_after_hit_tiny"
+    },
+    {
+      "name": "fire_after_hit_small"
+    },
+    {
+      "name": "tracers_destroyed_big_red"
+    },
+    {
+      "name": "location_smoke_city"
+    },
+    {
+      "name": "location_lighthouse_50_fx"
+    },
+    {
+      "name": "location_ground_leaves"
+    },
+    {
+      "name": "location_ground_papers"
+    },
+    {
+      "name": "dust_pieces"
+    }
+  ]
 }

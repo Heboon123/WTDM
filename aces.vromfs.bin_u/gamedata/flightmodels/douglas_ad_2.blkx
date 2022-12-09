@@ -1088,12 +1088,20 @@
     },
     {
       "part": {
-        "name": "spar_l_dm"
+        "name": "spar_l_dm",
+        "onKill": {
+          "nothing": 100.0,
+          "cut": 0.001
+        }
       }
     },
     {
       "part": {
-        "name": "spar_r_dm"
+        "name": "spar_r_dm",
+        "onKill": {
+          "nothing": 100.0,
+          "cut": 0.001
+        }
       }
     },
     {
@@ -2192,34 +2200,12 @@
       }
     ]
   },
-  "commonWeapons": [
-    {
-      "Weapon": {
-        "trigger": "cannon",
-        "blk": "gameData/Weapons/cannonAN_M3.blk",
-        "emitter": "flare1",
-        "flash": "flare1",
-        "shell": "emtr_shellrejection1",
-        "dm": "cannon1_dm",
-        "bullets": 200,
-        "light": true,
-        "spread": 1.2
-      }
-    },
-    {
-      "Weapon": {
-        "trigger": "cannon",
-        "blk": "gameData/Weapons/cannonAN_M3.blk",
-        "emitter": "flare2",
-        "flash": "flare2",
-        "shell": "emtr_shellrejection2",
-        "dm": "cannon2_dm",
-        "bullets": 200,
-        "light": false,
-        "spread": 1.4
-      }
+  "commonWeapons": {
+    "Weapon": {
+      "slot": 0,
+      "preset": "default_common"
     }
-  ],
+  },
   "weapon_presets": [
     {
       "preset": {
@@ -2230,231 +2216,726 @@
     {
       "preset": {
         "name": "douglas_ad_2_hvars",
-        "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_hvars.blk",
-        "weaponConfig": {
-          "Weapon": {
-            "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
-            "amountPerTier": 2.0,
-            "iconType": "rockets_he_middle_group"
-          }
-        }
-      }
-    },
-    {
-      "preset": {
-        "name": "douglas_ad_2_torpedo_12hvar",
-        "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_torpedo_12hvar.blk",
-        "reqModification": "btd_tc",
-        "weaponConfig": {
-          "Weapon": {
-            "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
-            "amountPerTier": 2.0,
-            "iconType": "rockets_he_middle_group"
-          }
-        }
+        "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_hvars.blk"
       }
     },
     {
       "preset": {
         "name": "douglas_ad_2_rockets",
-        "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_rockets.blk",
-        "reqModification": "frc_mk3",
-        "weaponConfig": {
-          "Weapon": {
-            "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
-            "amountPerTier": 2.0,
-            "iconType": "rockets_he_middle_group"
-          }
-        }
+        "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_rockets.blk"
       }
     },
     {
       "preset": {
-        "name": "douglas_ad_2_2x500lb",
-        "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_2x500lb.blk",
-        "reqModification": "btd_sbc"
+        "name": "douglas_ad_4_3x250lb",
+        "blk": "gameData/FlightModels/weaponPresets/douglas_ad_4_3x250lb.blk"
       }
     },
     {
       "preset": {
-        "name": "douglas_ad_2_2x1000lb",
-        "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_2x1000lb.blk",
-        "reqModification": "btd_mbc",
-        "weaponConfig": {
-          "Weapon": {
-            "blk": "gameData/Weapons/BombGuns/us_1000lb_anm65a1.blk",
-            "amountPerTier": 1.0,
-            "iconType": "bombs_large"
-          }
-        }
+        "name": "douglas_ad_2_3x500lb",
+        "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_3x500lb.blk"
       }
     },
     {
       "preset": {
-        "name": "douglas_ad_2_1x2000lb",
-        "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_1x2000lb.blk",
-        "reqModification": "btd_lbc"
+        "name": "douglas_ad_2_3x1000lb",
+        "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_3x1000lb.blk"
       }
     },
     {
-      "preset": [
+      "preset": {
+        "name": "douglas_ad_2_bomb_3xmine_mk13_mod0",
+        "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_bomb_3xmine_mk13_mod0.blk"
+      }
+    },
+    {
+      "preset": {
+        "name": "douglas_ad_2_3x2000lb",
+        "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_3x2000lb.blk"
+      }
+    },
+    {
+      "preset": {
+        "name": "douglas_ad_2_torpedo",
+        "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_torpedo.blk"
+      }
+    }
+  ],
+  "WeaponSlots": [
+    {
+      "maxloadMass": 3629.0
+    },
+    {
+      "maxloadMassLeftConsoles": 2000.0
+    },
+    {
+      "maxloadMassRightConsoles": 2000.0
+    },
+    {
+      "maxDisbalance": 1200.0
+    },
+    {
+      "weaponsSlotCount": 15.0
+    },
+    {
+      "HideNodes": [
         {
-          "name": "douglas_ad_2_1x2000lb_2x500lb"
+          "node": "pylon1"
         },
         {
-          "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_1x2000lb_2x500lb.blk"
+          "node": "pylon2"
         },
         {
-          "reqModification": "btd_sbc"
+          "node": "pylon3"
         },
         {
-          "reqModification": "btd_lbc"
+          "node": "pylon4"
         },
         {
-          "weaponConfig": {
-            "Weapon": {
-              "blk": "gameData/Weapons/BombGuns/us_1000lb_anm65a1.blk",
-              "amountPerTier": 1.0,
-              "iconType": "bombs_large"
-            }
-          }
+          "node": "pylon5"
+        },
+        {
+          "node": "pylon6"
+        },
+        {
+          "node": "pylon7"
+        },
+        {
+          "node": "pylon8"
+        },
+        {
+          "node": "pylon9"
+        },
+        {
+          "node": "pylon10"
+        },
+        {
+          "node": "pylon11"
+        },
+        {
+          "node": "pylon12"
+        },
+        {
+          "node": "pylon13"
+        },
+        {
+          "node": "pylon14"
         }
       ]
     },
     {
-      "preset": [
-        {
-          "name": "douglas_ad_2_1x2000lb_2x1000lb"
-        },
-        {
-          "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_1x2000lb_2x1000lb.blk"
-        },
-        {
-          "reqModification": "btd_mbc"
-        },
-        {
-          "reqModification": "btd_lbc"
-        },
-        {
-          "weaponConfig": {
-            "Weapon": {
-              "blk": "gameData/Weapons/BombGuns/us_1000lb_anm65a1.blk",
-              "amountPerTier": 1.0,
-              "iconType": "bombs_large"
-            }
-          }
-        }
-      ]
-    },
-    {
-      "preset": {
-        "name": "douglas_ad_2_2x500lb_12hvar",
-        "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_2x500lb_12hvar.blk",
-        "reqModification": "btd_sbc",
-        "weaponConfig": {
-          "Weapon": {
-            "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
-            "amountPerTier": 2.0,
-            "iconType": "rockets_he_middle_group"
-          }
-        }
-      }
-    },
-    {
-      "preset": {
-        "name": "douglas_ad_2_2x1000lb_12hvar",
-        "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_2x1000lb_12hvar.blk",
-        "reqModification": "btd_mbc",
-        "weaponConfig": [
+      "WeaponSlot": {
+        "index": 0,
+        "notUseforDisbalanceCalculation": true,
+        "WeaponPreset": [
+          {
+            "name": "default_common"
+          },
           {
             "Weapon": {
-              "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
-              "amountPerTier": 2.0,
-              "iconType": "rockets_he_middle_group"
+              "trigger": "cannon",
+              "blk": "gameData/Weapons/cannonAN_M3.blk",
+              "emitter": "flare1",
+              "flash": "flare1",
+              "shell": "emtr_shellrejection1",
+              "dm": "cannon1_dm",
+              "bullets": 200,
+              "light": true,
+              "spread": 1.2
             }
           },
           {
             "Weapon": {
-              "blk": "gameData/Weapons/BombGuns/us_1000lb_anm65a1.blk",
-              "amountPerTier": 1.0,
-              "iconType": "bombs_large"
+              "trigger": "cannon",
+              "blk": "gameData/Weapons/cannonAN_M3.blk",
+              "emitter": "flare2",
+              "flash": "flare2",
+              "shell": "emtr_shellrejection2",
+              "dm": "cannon2_dm",
+              "bullets": 200,
+              "light": false,
+              "spread": 1.4
             }
           }
         ]
       }
     },
     {
-      "preset": {
-        "name": "douglas_ad_2_1x2000lb_rockets",
-        "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_1x2000lb_rockets.blk",
-        "reqModification": "btd_lbc",
-        "weaponConfig": {
+      "WeaponSlot": {
+        "index": 1,
+        "tier": 14,
+        "order": 1,
+        "WeaponPreset": {
+          "iconType": "rockets_he_small",
+          "name": "hvar",
+          "ShowNodes": {
+            "node": "pylon1"
+          },
           "Weapon": {
+            "trigger": "rockets",
+            "external": true,
+            "separate": true,
             "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
-            "amountPerTier": 2.0,
-            "iconType": "rockets_he_middle_group"
+            "emitter": "5_in_hvar_b_1",
+            "bullets": 1
           }
         }
       }
     },
     {
-      "preset": [
+      "WeaponSlot": {
+        "index": 2,
+        "tier": 13,
+        "order": 3,
+        "WeaponPreset": {
+          "iconType": "rockets_he_small",
+          "name": "hvar",
+          "ShowNodes": {
+            "node": "pylon2"
+          },
+          "Weapon": {
+            "trigger": "rockets",
+            "external": true,
+            "separate": true,
+            "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
+            "emitter": "5_in_hvar_b_2",
+            "bullets": 1
+          }
+        }
+      }
+    },
+    {
+      "WeaponSlot": {
+        "index": 3,
+        "tier": 12,
+        "order": 5,
+        "WeaponPreset": {
+          "iconType": "rockets_he_small",
+          "name": "hvar",
+          "ShowNodes": {
+            "node": "pylon3"
+          },
+          "Weapon": {
+            "trigger": "rockets",
+            "external": true,
+            "separate": true,
+            "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
+            "emitter": "5_in_hvar_b_3",
+            "bullets": 1
+          }
+        }
+      }
+    },
+    {
+      "WeaponSlot": {
+        "index": 4,
+        "tier": 11,
+        "order": 7,
+        "WeaponPreset": {
+          "iconType": "rockets_he_small",
+          "name": "hvar",
+          "ShowNodes": {
+            "node": "pylon4"
+          },
+          "Weapon": {
+            "trigger": "rockets",
+            "external": true,
+            "separate": true,
+            "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
+            "emitter": "5_in_hvar_b_4",
+            "bullets": 1
+          }
+        }
+      }
+    },
+    {
+      "WeaponSlot": {
+        "index": 5,
+        "tier": 10,
+        "order": 9,
+        "WeaponPreset": {
+          "iconType": "rockets_he_small",
+          "name": "hvar",
+          "ShowNodes": {
+            "node": "pylon5"
+          },
+          "Weapon": {
+            "trigger": "rockets",
+            "external": true,
+            "separate": true,
+            "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
+            "emitter": "5_in_hvar_b_5",
+            "bullets": 1
+          }
+        }
+      }
+    },
+    {
+      "WeaponSlot": {
+        "index": 6,
+        "tier": 9,
+        "order": 11,
+        "WeaponPreset": {
+          "iconType": "rockets_he_small",
+          "name": "hvar",
+          "ShowNodes": {
+            "node": "pylon6"
+          },
+          "Weapon": {
+            "trigger": "rockets",
+            "external": true,
+            "separate": true,
+            "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
+            "emitter": "5_in_hvar_b_6",
+            "bullets": 1
+          }
+        }
+      }
+    },
+    {
+      "WeaponSlot": [
         {
-          "name": "douglas_ad_2_1x2000lb_2x500lb_12hvar"
+          "index": 7
         },
         {
-          "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_1x2000lb_2x500lb_12hvar.blk"
+          "tier": 8
         },
         {
-          "reqModification": "btd_sbc"
+          "order": 13
         },
         {
-          "reqModification": "btd_lbc"
-        },
-        {
-          "weaponConfig": {
+          "WeaponPreset": {
+            "iconType": "bombs_small",
+            "name": "us_250_anm57a1_slot7",
+            "reqModification": "btd_sbc",
+            "ShowNodes": {
+              "node": "pylon7"
+            },
             "Weapon": {
-              "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
-              "amountPerTier": 2.0,
-              "iconType": "rockets_he_middle_group"
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/us_250lb_anm57.blk",
+              "emitter": "us_500lbs_1",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_middle",
+            "name": "us_500lb_anm64a1",
+            "reqModification": "btd_sbc",
+            "ShowNodes": {
+              "node": "pylon7"
+            },
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/us_500lb_anm64a1.blk",
+              "emitter": "us_500lbs_1",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_large",
+            "name": "us_1000lb",
+            "reqModification": "btd_mbc",
+            "ShowNodes": {
+              "node": "pylon7"
+            },
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/us_1000lb_anm65a1.blk",
+              "emitter": "us_1000lbs_1",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "air_mines",
+            "name": "us_mine_mk13_mod0",
+            "reqModification": "us_mine_mk13_mod0",
+            "ShowNodes": {
+              "node": "pylon7"
+            },
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/mines/us_mine_mk13_mod0.blk",
+              "emitter": "us_1000lbs_1",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "rockets_he_large",
+            "name": "tyni_tim",
+            "reqModification": "frc_mk3",
+            "ShowNodes": {
+              "node": "pylon7"
+            },
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/us_11_75_in_tiny_tim.blk",
+              "emitter": "tiny_tim_1",
+              "external": true,
+              "separate": true,
+              "bullets": 1,
+              "machLimit": 1.01
             }
           }
         }
       ]
     },
     {
-      "preset": [
+      "WeaponSlot": [
         {
-          "name": "douglas_ad_2_1x2000lb_2x1000lb_12hvar"
+          "index": 8
         },
         {
-          "blk": "gameData/FlightModels/weaponPresets/douglas_ad_2_1x2000lb_2x1000lb_12hvar.blk"
+          "tier": 7
         },
         {
-          "reqModification": "btd_mbc"
+          "order": 15
         },
         {
-          "reqModification": "btd_lbc"
+          "notUseforDisbalanceCalculation": true
         },
         {
-          "weaponConfig": [
-            {
-              "Weapon": {
-                "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
-                "amountPerTier": 2.0,
-                "iconType": "rockets_he_middle_group"
-              }
-            },
-            {
-              "Weapon": {
-                "blk": "gameData/Weapons/BombGuns/us_1000lb_anm65a1.blk",
-                "amountPerTier": 1.0,
-                "iconType": "bombs_large"
-              }
+          "WeaponPreset": {
+            "iconType": "bombs_middle",
+            "name": "us_500lb_anm64a1_center",
+            "reqModification": "btd_sbc",
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/us_500lb_anm64a1.blk",
+              "emitter": "us_2000lbs_1",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
             }
-          ]
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_large",
+            "name": "us_1000lb_center",
+            "reqModification": "btd_mbc",
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/us_1000lb_anm65a1.blk",
+              "emitter": "us_2000lbs_1",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "air_mines",
+            "name": "us_mine_mk13_mod0_center",
+            "reqModification": "btd_mbc",
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/mines/us_mine_mk13_mod0.blk",
+              "emitter": "us_2000lbs_1",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "air_torpedo",
+            "name": "mk13_torpedo",
+            "reqModification": "btd_tc",
+            "Weapon": {
+              "trigger": "torpedoes",
+              "blk": "gameData/Weapons/torpedoes/us_mk13_torpedo.blk",
+              "emitter": "mk13_torpedo",
+              "external": true,
+              "separate": true,
+              "bullets": 1,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_special",
+            "name": "us_2000lb",
+            "reqModification": "btd_lbc",
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/us_2000lbs_anm66.blk",
+              "emitter": "us_2000lbs_1",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          }
         }
       ]
+    },
+    {
+      "WeaponSlot": [
+        {
+          "index": 9
+        },
+        {
+          "tier": 6
+        },
+        {
+          "order": 14
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_small",
+            "name": "us_250_anm57a1_slot9",
+            "reqModification": "btd_sbc",
+            "ShowNodes": {
+              "node": "pylon8"
+            },
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/us_250lb_anm57.blk",
+              "emitter": "us_500lbs_2",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_middle",
+            "name": "us_500lb_anm64a1",
+            "reqModification": "btd_sbc",
+            "ShowNodes": {
+              "node": "pylon8"
+            },
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/us_500lb_anm64a1.blk",
+              "emitter": "us_500lbs_2",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_large",
+            "name": "us_1000lb",
+            "reqModification": "btd_mbc",
+            "ShowNodes": {
+              "node": "pylon8"
+            },
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/us_1000lb_anm65a1.blk",
+              "emitter": "us_1000lbs_2",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "air_mines",
+            "name": "us_mine_mk13_mod0",
+            "reqModification": "us_mine_mk13_mod0",
+            "ShowNodes": {
+              "node": "pylon8"
+            },
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/mines/us_mine_mk13_mod0.blk",
+              "emitter": "us_1000lbs_2",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "rockets_he_large",
+            "name": "tyni_tim",
+            "reqModification": "frc_mk3",
+            "ShowNodes": {
+              "node": "pylon8"
+            },
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/us_11_75_in_tiny_tim.blk",
+              "emitter": "tiny_tim_2",
+              "external": true,
+              "separate": true,
+              "bullets": 1,
+              "machLimit": 1.01
+            }
+          }
+        }
+      ]
+    },
+    {
+      "WeaponSlot": {
+        "index": 10,
+        "tier": 5,
+        "order": 12,
+        "WeaponPreset": {
+          "iconType": "rockets_he_small",
+          "name": "hvar",
+          "ShowNodes": {
+            "node": "pylon9"
+          },
+          "Weapon": {
+            "trigger": "rockets",
+            "external": true,
+            "separate": true,
+            "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
+            "emitter": "5_in_hvar_b_7",
+            "bullets": 1
+          }
+        }
+      }
+    },
+    {
+      "WeaponSlot": {
+        "index": 11,
+        "tier": 4,
+        "order": 10,
+        "WeaponPreset": {
+          "iconType": "rockets_he_small",
+          "name": "hvar",
+          "ShowNodes": {
+            "node": "pylon10"
+          },
+          "Weapon": {
+            "trigger": "rockets",
+            "external": true,
+            "separate": true,
+            "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
+            "emitter": "5_in_hvar_b_8",
+            "bullets": 1
+          }
+        }
+      }
+    },
+    {
+      "WeaponSlot": {
+        "index": 12,
+        "tier": 3,
+        "order": 8,
+        "WeaponPreset": {
+          "iconType": "rockets_he_small",
+          "name": "hvar",
+          "ShowNodes": {
+            "node": "pylon11"
+          },
+          "Weapon": {
+            "trigger": "rockets",
+            "external": true,
+            "separate": true,
+            "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
+            "emitter": "5_in_hvar_b_9",
+            "bullets": 1
+          }
+        }
+      }
+    },
+    {
+      "WeaponSlot": {
+        "index": 13,
+        "tier": 2,
+        "order": 6,
+        "WeaponPreset": {
+          "iconType": "rockets_he_small",
+          "name": "hvar",
+          "ShowNodes": {
+            "node": "pylon12"
+          },
+          "Weapon": {
+            "trigger": "rockets",
+            "external": true,
+            "separate": true,
+            "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
+            "emitter": "5_in_hvar_b_10",
+            "bullets": 1
+          }
+        }
+      }
+    },
+    {
+      "WeaponSlot": {
+        "index": 14,
+        "tier": 1,
+        "order": 4,
+        "WeaponPreset": {
+          "iconType": "rockets_he_small",
+          "name": "hvar",
+          "ShowNodes": {
+            "node": "pylon13"
+          },
+          "Weapon": {
+            "trigger": "rockets",
+            "external": true,
+            "separate": true,
+            "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
+            "emitter": "5_in_hvar_b_11",
+            "bullets": 1
+          }
+        }
+      }
+    },
+    {
+      "WeaponSlot": {
+        "index": 15,
+        "tier": 0,
+        "order": 2,
+        "WeaponPreset": {
+          "iconType": "rockets_he_small",
+          "name": "hvar",
+          "ShowNodes": {
+            "node": "pylon14"
+          },
+          "Weapon": {
+            "trigger": "rockets",
+            "external": true,
+            "separate": true,
+            "blk": "gameData/Weapons/rocketGuns/us_5_in_hvar_b.blk",
+            "emitter": "5_in_hvar_b_12",
+            "bullets": 1
+          }
+        }
+      }
     }
   ],
   "jetwash": {
@@ -2594,10 +3075,15 @@
       "tier": 3,
       "reqModification": "frc_mk3"
     },
+    "us_mine_mk13_mod0": {
+      "tier": 4,
+      "modClass": "weapon",
+      "reqModification": "btd_mbc"
+    },
     "btd_lbc": {
       "modClass": "weapon",
       "tier": 4,
-      "reqModification": "btd_mbc"
+      "reqModification": "us_mine_mk13_mod0"
     }
   },
   "Passport": {

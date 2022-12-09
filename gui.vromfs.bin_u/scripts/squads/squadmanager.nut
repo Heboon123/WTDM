@@ -19,7 +19,7 @@ let { getRealName } = require("%scripts/user/nameMapping.nut")
 let { requestUsersInfo } = require("%scripts/user/usersInfoManager.nut")
 let { sendSystemInvite } = require("%scripts/social/xboxSquadManager/xboxSquadManager.nut")
 let SquadMember = require("%scripts/squads/squadMember.nut")
-let { isQueueDataActual, actualizeQueueData } = require("%scripts/queue/queueBattleData.nut")
+let { needActualizeQueueData, actualizeQueueData } = require("%scripts/queue/queueBattleData.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 
@@ -114,6 +114,20 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
 
   onEventPresetsByGroupsChanged = @(_params) this.updateMyMemberData()
   onEventBeforeProfileInvalidation = @(_p) this.reset()
+
+  function updateMyMemberDataAfterActualizeJwt(myMemberData = null) {
+    if (!this.isInSquad())
+      return
+
+    //no need force actualazie jwt profile data for leader or if not ready
+    //on set ready status jwt profile data force actualaze
+    if (!needActualizeQueueData.value || this.isSquadLeader() || !this.isMeReady()) {
+      this.updateMyMemberData(myMemberData)
+      return
+    }
+
+    actualizeQueueData(@(_) ::g_squad_manager.updateMyMemberData())
+  }
 }
 
 ::g_squad_manager.setState <- function setState(newState)
@@ -613,12 +627,8 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
   if (!this.meReady)
     this.isMyCrewsReady = false
 
-  if (needUpdateMemberData) {
-    if (isQueueDataActual.value)
-      this.updateMyMemberData()
-    else
-      actualizeQueueData(@(_) ::g_squad_manager.updateMyMemberData())
-  }
+  if (needUpdateMemberData)
+    this.updateMyMemberDataAfterActualizeJwt()
 
   ::broadcastEvent(squadEvent.SET_READY)
 }

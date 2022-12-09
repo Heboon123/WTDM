@@ -38,7 +38,7 @@
         "hp": 15.0
       }
     },
-    "armor_engine": {
+    "armor_jet_engine": {
       "engine1_dm": {
         "genericDamageMult": 1.6,
         "hp": 50.5
@@ -82,7 +82,11 @@
         "hp": 95.5
       },
       "fuse_dm": {
-        "hp": 95.5
+        "hp": 72.8
+      },
+      "tail_dm": {
+        "genericDamageMult": 0.5,
+        "hp": 100.5
       },
       "wing1_l_dm": {
         "genericDamageMult": 0.3,
@@ -1074,13 +1078,47 @@
     },
     {
       "part": {
-        "name": "spar_l_dm"
+        "name": "spar_l_dm",
+        "onKill": {
+          "nothing": 100.0,
+          "cut": 0.001
+        }
       }
     },
     {
       "part": {
-        "name": "spar_r_dm"
+        "name": "spar_r_dm",
+        "onKill": {
+          "nothing": 100.0,
+          "cut": 0.001
+        }
       }
+    },
+    {
+      "part": [
+        {
+          "name": "tail_dm"
+        },
+        {
+          "onHit": {
+            "flame": 0.2,
+            "smoke": 0.2
+          }
+        },
+        {
+          "onKill": {
+            "tailcontrol_dm": 1.0,
+            "nothing": 19.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 10.0,
+            "tailcontrol_dm": 1.0,
+            "nothing": 9.0
+          }
+        }
+      ]
     },
     {
       "part": {
@@ -2692,7 +2730,7 @@
       "prevModification": "new_compressor_jet",
       "tier": 2,
       "effects": {
-        "aileronBooster": 0.6,
+        "aileronBooster": 1.0,
         "elevatorBooster": 0.9
       }
     },
