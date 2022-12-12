@@ -527,6 +527,103 @@
               "digits": 0
             },
             {
+              "var": "temp_t1_zone_name"
+            },
+            {
+              "var": "temp_t2_zone_name"
+            }
+          ]
+        },
+        {
+          "varAddString": [
+            {
+              "value": "_hardcore"
+            },
+            {
+              "digits": 0
+            },
+            {
+              "var": "temp_t1_spawn_01_name"
+            },
+            {
+              "var": "temp_t1_spawn_02_name"
+            },
+            {
+              "var": "temp_t1_spawn_03_name"
+            },
+            {
+              "var": "temp_t2_spawn_01_name"
+            },
+            {
+              "var": "temp_t2_spawn_02_name"
+            },
+            {
+              "var": "temp_t2_spawn_03_name"
+            }
+          ]
+        },
+        {
+          "varAddString": {
+            "value": "_hardcore",
+            "digits": 0,
+            "var": "temp_battle_area_name"
+          }
+        },
+        {
+          "triggerEnable": {
+            "target": "bttl_check_hardcore_exist"
+          }
+        }
+      ],
+      "else_actions": []
+    },
+    "bttl_check_hardcore_exist": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "initMission": []
+      },
+      "conditions": [
+        {
+          "objectExists": {
+            "target": "@temp_t1_zone_name",
+            "type": "area"
+          }
+        },
+        {
+          "objectExists": {
+            "target": "@temp_t2_zone_name",
+            "type": "area"
+          }
+        },
+        {
+          "objectExists": {
+            "target": "@temp_t1_spawn_01_name",
+            "type": "squad"
+          }
+        },
+        {
+          "objectExists": {
+            "target": "@temp_t2_spawn_01_name",
+            "type": "squad"
+          }
+        }
+      ],
+      "actions": [
+        {
+          "varAddString": [
+            {
+              "value": "_hardcore"
+            },
+            {
+              "digits": 0
+            },
+            {
               "var": "t1_zone_name"
             },
             {
@@ -575,7 +672,64 @@
           }
         }
       ],
-      "else_actions": []
+      "else_actions": [
+        {
+          "varAddString": [
+            {
+              "value": "_arcade"
+            },
+            {
+              "digits": 0
+            },
+            {
+              "var": "t1_zone_name"
+            },
+            {
+              "var": "t2_zone_name"
+            }
+          ]
+        },
+        {
+          "varAddString": [
+            {
+              "value": "_arcade"
+            },
+            {
+              "digits": 0
+            },
+            {
+              "var": "t1_spawn_01_name"
+            },
+            {
+              "var": "t1_spawn_02_name"
+            },
+            {
+              "var": "t1_spawn_03_name"
+            },
+            {
+              "var": "t2_spawn_01_name"
+            },
+            {
+              "var": "t2_spawn_02_name"
+            },
+            {
+              "var": "t2_spawn_03_name"
+            }
+          ]
+        },
+        {
+          "varAddString": {
+            "value": "_arcade",
+            "digits": 0,
+            "var": "battle_area_name"
+          }
+        },
+        {
+          "triggerEnable": {
+            "target": "bttl_check_random_spawn"
+          }
+        }
+      ]
     },
     "bttl_check_random_spawn": {
       "is_enabled": false,
@@ -902,14 +1056,16 @@
           "moAddMissionObjective": {
             "target": "avg_Bttl_objective_01",
             "object_var_comp_op": "equal",
-            "object_var_name": ""
+            "object_var_name": "",
+            "object_marking": 0
           }
         },
         {
           "moAddMissionObjective": {
             "target": "avg_Bttl_objective_02",
             "object_var_comp_op": "equal",
-            "object_var_name": ""
+            "object_var_name": "",
+            "object_marking": 0
           }
         },
         {

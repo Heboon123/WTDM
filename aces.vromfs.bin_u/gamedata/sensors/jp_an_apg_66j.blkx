@@ -3,12 +3,25 @@
   "name": "AN/APG-66J",
   "showMissileLaunchZone": true,
   "transivers": {
-    "common": {
+    "pulse": {
       "sideLobesAttenuation": -22.0,
       "power": 350.0,
       "band": 8,
       "rcs": 3.0,
       "range": 56000.0,
+      "rangeMax": 150000.0,
+      "timeGainControl": true,
+      "antenna": {
+        "angleHalfSens": 3.5,
+        "sideLobesSensitivity": -32.0
+      }
+    },
+    "pulseDoppler": {
+      "sideLobesAttenuation": -22.0,
+      "power": 350.0,
+      "band": 8,
+      "rcs": 3.0,
+      "range": 35000.0,
       "rangeMax": 150000.0,
       "timeGainControl": true,
       "antenna": {
@@ -54,12 +67,36 @@
       "barsCount": 2,
       "rowMajor": true
     },
+    "hudLock": {
+      "type": "pyramide",
+      "azimuthLimits": [-60.0,60.0],
+      "elevationLimits": [-30.0,30.0],
+      "period": 1.3,
+      "width": 10.0,
+      "barHeight": 4.0,
+      "barsCount": 5,
+      "rowMajor": true,
+      "indicate": true
+    },
+    "verticalLock": {
+      "type": "pyramide",
+      "azimuthLimits": [-60.0,60.0],
+      "elevationLimits": [-30.0,30.0],
+      "period": 1.3,
+      "width": 20.0,
+      "barHeight": 3.3,
+      "barsCount": 3,
+      "rowMajor": false,
+      "centerElevation": 15.0,
+      "indicate": true
+    },
     "boresightLock": {
       "type": "cone",
       "azimuthLimits": [-60.0,60.0],
       "elevationLimits": [-60.0,60.0],
-      "period": 1.0,
+      "period": 0.3,
       "width": 1.75,
+      "centerElevation": -3.0,
       "indicate": true
     },
     "designationLock": {
@@ -95,7 +132,7 @@
       }
     },
     "pulseDopplerSearch": {
-      "dynamicRange": [40.0,15.0],
+      "dynamicRange": [40.0,10.0],
       "groundClutter": false,
       "aircraftAsTarget": true,
       "friendFoeId": true,
@@ -130,7 +167,7 @@
       }
     },
     "pulseDopplerTrack": {
-      "dynamicRange": [40.0,15.0],
+      "dynamicRange": [40.0,10.0],
       "groundClutter": false,
       "aircraftAsTarget": true,
       "angularAccuracy": 0.05,
@@ -160,7 +197,9 @@
       "scanPattern3": "searchWide"
     },
     "boresightLock": {
-      "scanPattern1": "boresightLock"
+      "scanPattern1": "boresightLock",
+      "scanPattern2": "verticalLock",
+      "scanPattern3": "hudLock"
     }
   },
   "scopeRangeSets": {
@@ -183,7 +222,7 @@
             "value": false
           },
           "setTransiver": {
-            "transiver": "common"
+            "transiver": "pulseDoppler"
           },
           "setSignal": {
             "signal": "pulseDopplerSearch"
@@ -223,6 +262,9 @@
           "setModeName": {
             "name": "standby"
           },
+          "setTransiver": {
+            "transiver": "pulse"
+          },
           "setSignal": {
             "signal": "pulseSearch"
           }
@@ -231,6 +273,9 @@
           "setStandbyModeCommon": [],
           "setModeName": {
             "name": "PD standby"
+          },
+          "setTransiver": {
+            "transiver": "pulseDoppler"
           },
           "setSignal": {
             "signal": "pulseDopplerSearch"
@@ -272,6 +317,9 @@
           "setModeName": {
             "name": "search"
           },
+          "setTransiver": {
+            "transiver": "pulse"
+          },
           "setSignal": {
             "signal": "pulseSearch"
           }
@@ -280,6 +328,9 @@
           "setSearchModeCommon": [],
           "setModeName": {
             "name": "PD search"
+          },
+          "setTransiver": {
+            "transiver": "pulseDoppler"
           },
           "setSignal": {
             "signal": "pulseDopplerSearch"
@@ -332,6 +383,9 @@
           "setModeName": {
             "name": "acquisition"
           },
+          "setTransiver": {
+            "transiver": "pulse"
+          },
           "setSignal": {
             "signal": "pulseTrack"
           }
@@ -340,6 +394,9 @@
           "setDesignationLockModeCommon": [],
           "setModeName": {
             "name": "PD acquisition"
+          },
+          "setTransiver": {
+            "transiver": "pulseDoppler"
           },
           "setSignal": {
             "signal": "pulseDopplerTrack"
@@ -353,9 +410,6 @@
           "clearTargetsOfInterest": [],
           "setScanPatternSet": {
             "scanPatternSet": "boresightLock"
-          },
-          "setScanPattern": {
-            "scanPattern": "boresightLock"
           },
           "resetScanPhase": [],
           "setCenterAzimuth": {
@@ -392,6 +446,9 @@
           "setModeName": {
             "name": "ACM"
           },
+          "setTransiver": {
+            "transiver": "pulse"
+          },
           "setSignal": {
             "signal": "pulseTrack"
           }
@@ -400,6 +457,9 @@
           "setBoresightLockModeCommon": [],
           "setModeName": {
             "name": "PD ACM"
+          },
+          "setTransiver": {
+            "transiver": "pulseDoppler"
           },
           "setSignal": {
             "signal": "pulseDopplerTrack"
@@ -444,6 +504,9 @@
           "setModeName": {
             "name": "track"
           },
+          "setTransiver": {
+            "transiver": "pulse"
+          },
           "setSignal": {
             "signal": "pulseTrack"
           }
@@ -452,6 +515,9 @@
           "setTrackModeCommon": [],
           "setModeName": {
             "name": "PD track"
+          },
+          "setTransiver": {
+            "transiver": "pulseDoppler"
           },
           "setSignal": {
             "signal": "pulseDopplerTrack"
@@ -933,6 +999,12 @@
           },
           {
             "stateFrom": "pulseDopplerSearch"
+          },
+          {
+            "stateFrom": "pulseBoresightLock"
+          },
+          {
+            "stateFrom": "pulseDopplerBoresightLock"
           },
           {
             "command": "scanPatternSwitch"
