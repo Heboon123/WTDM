@@ -19,12 +19,12 @@ local modsTree = {
   function findPathToMod(branch, modName)
   {
     foreach(idx, item in branch)
-      if (type(item)=="table") //modification
+      if (typeof(item)=="table") //modification
       {
         if (item.name == modName)
           return [idx]
       }
-      else if (type(item)=="array") //branch
+      else if (typeof(item)=="array") //branch
       {
         let res = findPathToMod(item, modName)
         if (res!=null)
@@ -62,7 +62,7 @@ local modsTree = {
         return true
 
       foreach (branch in this.tree)
-        if (type(branch)=="array" && branch[0]==mod.modClass)
+        if (typeof(branch)=="array" && branch[0]==mod.modClass)
         {
           branch.append(mod)
           return true
@@ -135,21 +135,21 @@ local modsTree = {
 
   function shiftBranchX(branch, offsetX)
   {
-    if (type(branch)=="table") //modification
+    if (typeof(branch)=="table") //modification
       branch.guiPosX <- (("guiPosX" in branch)? branch.guiPosX : 0.0) + offsetX
-    else if (type(branch)=="array") //branch
+    else if (typeof(branch)=="array") //branch
       foreach(_idx, item in branch)
         shiftBranchX(item, offsetX)
   }
 
   function getMergeBranchXOffset(branch, tiersTable)
   {
-    if (type(branch)=="table") //modification
+    if (typeof(branch)=="table") //modification
     {
       let curOffset = (tiersTable && (branch.tier in tiersTable))? tiersTable[branch.tier] : 0
       return curOffset - branch.guiPosX
     } else
-    if (type(branch)=="array") //branch
+    if (typeof(branch)=="array") //branch
     {
       local mergeOffset = 0
       foreach(idx, item in branch)
@@ -181,8 +181,8 @@ local modsTree = {
 
   function generatePositions(branch, tiersTable = null)
   {
-    let isRoot = !branch[0] || type(branch[0])=="string"
-    let isCategory = branch[0] && type(branch[0])=="string"
+    let isRoot = !branch[0] || typeof(branch[0])=="string"
+    let isCategory = branch[0] && typeof(branch[0])=="string"
     let rootTier = isRoot? -1 : branch[0].tier
     let sideBranches = [] //mods with same tier with they req mod tier
                             //in tree root here is mods without any branch
@@ -196,7 +196,7 @@ local modsTree = {
       let item = branch[i]
       local isSide = false
       local itemTiers = null
-      if (type(item)=="table") //modification
+      if (typeof(item)=="table") //modification
       {
         item.guiPosX <- 0.0
         itemTiers = { [item.tier] = 1.0 }
@@ -204,10 +204,10 @@ local modsTree = {
           for(local j = rootTier+1; j<item.tier; j++) //place for lines
             itemTiers[j] <- 1.0
         isSide = isRoot || isCategory || item.tier == rootTier
-      } else if (type(item)=="array") //branch
+      } else if (typeof(item)=="array") //branch
       {
         itemTiers = generatePositions(item)
-        if (type(item[0])=="table")
+        if (typeof(item[0])=="table")
         {
           isSide = item[0].tier == rootTier
           if (rootTier>=0)
@@ -288,7 +288,7 @@ local modsTree = {
     if (!curCorners)
       curCorners = [{ guiPosX = -1, tier = -1}, { guiPosX = -1, tier = -1}]
     foreach(_idx, item in branch)
-      if (type(item)=="table") //modification
+      if (typeof(item)=="table") //modification
       {
         foreach(p in ["guiPosX", "tier"])
         {
@@ -298,7 +298,7 @@ local modsTree = {
             curCorners[1][p] = item[p] + 1
         }
       }
-      else if (type(item)=="array") //branch
+      else if (typeof(item)=="array") //branch
         curCorners = getBranchCorners(item, curCorners)
     return curCorners
   }
@@ -308,16 +308,16 @@ local modsTree = {
     if (!curArrows)
       curArrows = []
 
-    let reqName = (type(branch[0])=="table")? branch[0].name : null
+    let reqName = (typeof(branch[0])=="table")? branch[0].name : null
     foreach(_idx, item in branch)
     {
       local checkItem = null
-      if (type(item)=="table") //modification
+      if (typeof(item)=="table") //modification
         checkItem = item
-      else if (type(item)=="array") //branch
+      else if (typeof(item)=="array") //branch
       {
         getBranchArrows(item, curArrows)
-        if (type(item[0])=="table")
+        if (typeof(item[0])=="table")
           checkItem = item[0]
       }
 
@@ -347,11 +347,11 @@ local modsTree = {
       return res
 
     foreach (_idx, item in this.tree)
-      if (type(item)=="array") //branch
+      if (typeof(item)=="array") //branch
       {
         let corners = this.getBranchCorners(item)
         let block = {
-          name = type(item[0])=="string"? loc("modification/category/" + item[0]) : ""
+          name = typeof(item[0])=="string"? loc("modification/category/" + item[0]) : ""
           width = max(corners[1].guiPosX - corners[0].guiPosX, 1)
         }
         res.blocks.append(block)
@@ -375,14 +375,14 @@ local modsTree = {
     if (!branch)
       branch = this.tree
     foreach (_idx, item in branch)
-      if (type(item)=="table") //modification
+      if (typeof(item)=="table") //modification
         debugLog($"{addStr}{item.name} ({item.tier}, {item?.guiPosX ?? 0})")
-      else if (type(item)=="array") //branch
+      else if (typeof(item)=="array") //branch
       {
         debugLog($"{addStr}[")
         debugTree(item, addStr + "  ")
         debugLog($"{addStr}]")
-      } else if (type(item)=="string")
+      } else if (typeof(item)=="string")
         debugLog($"{addStr}modClass = {item}")
   }
 

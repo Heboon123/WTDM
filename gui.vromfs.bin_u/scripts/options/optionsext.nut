@@ -46,17 +46,13 @@ let {
  get_option_radar_aim_elevation_control = @() false,
  set_option_radar_aim_elevation_control = @(_value) null,
  get_option_seeker_auto_stabilization = @() true,
- set_option_seeker_auto_stabilization = @(_value) null,
- get_gyro_sight_deflection = @() true,
- set_gyro_sight_deflection = @(_value) null
+ set_option_seeker_auto_stabilization = @(_value) null
 } = require("controlsOptions")
 let inventoryClient = require("%scripts/inventory/inventoryClient.nut")
 let { getFullUnlockDesc } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { switchProfileCountry, profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { debug_dump_stack } = require("dagor.debug")
 let { isUnlockVisible } = require("%scripts/unlocks/unlocksModule.nut")
-let { getClustersByCountry } = require("%scripts/onlineInfo/defaultClusters.nut")
-let { getCountryCode } = require("auth_wt")
 
 ::BOMB_ASSAULT_FUSE_TIME_OPT_VALUE <- -1
 const SPEECH_COUNTRY_UNIT_VALUE = 2
@@ -97,16 +93,9 @@ setGuiOptionsMode(::OPTIONS_MODE_GAMEPLAY)
   [1920,1088],
 ]
 
-let clanRequirementsRankDescId = {
-  [::USEROPT_CLAN_REQUIREMENTS_MIN_AIR_RANK] = "rankReqAircraft",
-  [::USEROPT_CLAN_REQUIREMENTS_MIN_TANK_RANK] = "rankReqTank",
-  [::USEROPT_CLAN_REQUIREMENTS_MIN_BLUEWATER_SHIP_RANK] = "rankReqBluewaterShip",
-  [::USEROPT_CLAN_REQUIREMENTS_MIN_COASTAL_SHIP_RANK] = "rankReqCoastalShip"
-}
-
 ::image_for_air <- function image_for_air(air)
 {
-  if (type(air) == "string")
+  if (typeof(air) == "string")
     air = ::getAircraftByName(air)
   if (!air)
     return ""
@@ -215,7 +204,7 @@ local isWaitMeasureEvent = false
 
 ::find_in_array <- function find_in_array(arr, val, notFoundValue = -1)
 {
-  if (type(arr) != "array" && type(arr) != "table")
+  if (typeof arr != "array" && typeof arr != "table")
     return notFoundValue
 
   foreach (i, v in arr)
@@ -252,7 +241,7 @@ local isWaitMeasureEvent = false
 
   foreach (idx, item in items)
   {
-    let opt = type(item) == "string" ? { text = item } : clone item
+    let opt = typeof(item) == "string" ? { text = item } : clone item
     opt.selected <- idx == value
     if ("hue" in item)
       opt.hueColor <- ::get_block_hsv_color(item.hue, item?.sat ?? 0.7, item?.val ?? 0.7)
@@ -265,7 +254,7 @@ local isWaitMeasureEvent = false
     if ("name" in item)
       opt.optName <- item.name
 
-    if (type(item?.image) == "string") {
+    if (typeof(item?.image) == "string") {
       opt.images <- [{ image = item.image }]
       opt.rawdelete("image")
     }
@@ -372,7 +361,7 @@ local isWaitMeasureEvent = false
 
   foreach (v in option.items)
   {
-    let item = type(v) == "string" ? { text = v, image = "" } : v
+    let item = typeof(v) == "string" ? { text = v, image = "" } : v
     let viewItem = {}
     foreach (key in [ "enabled", "isVisible" ])
       viewItem[key] <- item?[key] ?? true
@@ -1880,14 +1869,6 @@ let fillSoundDescr = @(descr, sndType, id, title = null) descr.__update(
       descr.controlName <- "switchbox"
       descr.value = ::get_option_deflection()
       break
-
-    case ::USEROPT_GYRO_SIGHT_DEFLECTION:
-      descr.id = "gyro_sight_deflection"
-      descr.controlType = optionControlType.CHECKBOX
-      descr.controlName <- "switchbox"
-      descr.value = get_gyro_sight_deflection()
-      break
-
     case ::USEROPT_CROSSHAIR_SPEED:
       descr.id = "crosshair_speed"
       descr.items = ["#options/no", "#options/yes"]
@@ -2243,7 +2224,7 @@ let fillSoundDescr = @(descr, sndType, id, title = null) descr.__update(
       descr.items = []
       descr.values = []
       descr.trParams <- "optionWidthInc:t='double';"
-      if (type(aircraft) == "string")
+      if (typeof aircraft == "string")
       {
         let air = ::getAircraftByName(aircraft)
         if (air)
@@ -2282,7 +2263,7 @@ let fillSoundDescr = @(descr, sndType, id, title = null) descr.__update(
     case ::USEROPT_SKIN:
       descr.id = "skin"
       descr.trParams <- "optionWidthInc:t='double';"
-      if (type(::aircraft_for_weapons) == "string")
+      if (typeof ::aircraft_for_weapons == "string")
       {
         let skins = ::g_decorator.getSkinsOption(::aircraft_for_weapons)
         descr.items = skins.items
@@ -3294,32 +3275,45 @@ let fillSoundDescr = @(descr, sndType, id, title = null) descr.__update(
       descr.id = "cluster"
       descr.items = []
       descr.values = []
+      defaultValue = 0
 
-      if (::g_clusters.clusters_info.len() > 0) {
-        descr.items = ::g_clusters.clusters_info.map(@(c) {
-          text = ::g_clusters.getClusterLocName(c.name)
-          name = c.name
-          enable = true
-          image = c.isUnstable ? "#ui/gameuiskin#urgent_warning.svg" : null
-          tooltip = c.isUnstable ? loc("multiplayer/cluster_connection_unstable") : null
-          isUnstable = c.isUnstable
-        })
-        descr.values = ::g_clusters.clusters_info.map(@(c) c.name)
-        let defaultClusters = getClustersByCountry(getCountryCode())
-          .filter(@(c) descr.values.contains(c))
-        defaultValue = ";".join(defaultClusters.len() > 0 ? defaultClusters : descr.values)
+      if (::g_clusters.clusters_info.len() > 0)
+      {
+        let defaultClusters = split_by_chars(::get_default_network_cluster(), ";")
+        let selectedClusters = []
+        for(local i = 0; i < ::g_clusters.clusters_info.len(); i++)
+        {
+          let cluster = ::g_clusters.clusters_info[i]
+          let isUnstable = cluster.isUnstable
+          descr.items.append({
+            text = ::g_clusters.getClusterLocName(cluster.name)
+            name = cluster.name
+            enable = true
+            image = isUnstable ? "#ui/gameuiskin#urgent_warning.svg" : null
+            tooltip = isUnstable ? loc("multiplayer/cluster_connection_unstable") : null
+            isUnstable
+          })
+          descr.values.append(cluster.name)
+
+          if (isInArray(cluster.name, defaultClusters))
+            selectedClusters.append(descr.values[descr.values.len() - 1])
+        }
+        defaultValue = selectedClusters.len() > 0 ? ";".join(selectedClusters) : descr.values[0]
       }
-      else {
-        // only in dev mode (otherwise would be logout)
-        descr.items.append({
-          text = "---"
-          enable = true
-          image = null
-          tooltip = null
-          isUnstable = false
-        })
+      else
+      {
         defaultValue = ""
-        descr.values.append(defaultValue)
+        if (descr.items.len() == 0) //disable_network
+        {
+          descr.items.append({
+            text = "---"
+            enable = true
+            image = null
+            tooltip = null
+            isUnstable = false
+          })
+          descr.values.append(defaultValue)
+        }
       }
 
       prevValue = ::get_gui_option_in_mode(optionId, ::OPTIONS_MODE_MP_DOMINATION)
@@ -3872,10 +3866,16 @@ let fillSoundDescr = @(descr, sndType, id, title = null) descr.__update(
 
     case ::USEROPT_CLAN_REQUIREMENTS_MIN_AIR_RANK:
     case ::USEROPT_CLAN_REQUIREMENTS_MIN_TANK_RANK:
-    case ::USEROPT_CLAN_REQUIREMENTS_MIN_BLUEWATER_SHIP_RANK:
-    case ::USEROPT_CLAN_REQUIREMENTS_MIN_COASTAL_SHIP_RANK:
-      descr.id = clanRequirementsRankDescId?[optionId] ?? ""
-      descr.title = loc($"clan/{descr.id}")
+      if (optionId == ::USEROPT_CLAN_REQUIREMENTS_MIN_AIR_RANK)
+      {
+        descr.id = "rankReqAircraft"
+        descr.title = loc("clan/rankReqAircraft")
+      }
+      else if (optionId == ::USEROPT_CLAN_REQUIREMENTS_MIN_TANK_RANK)
+      {
+        descr.id = "rankReqTank"
+        descr.title = loc("clan/rankReqTank")
+      }
       descr.optionCb = "onRankReqChange"
       descr.items = []
       descr.values = []
@@ -3994,7 +3994,6 @@ let fillSoundDescr = @(descr, sndType, id, title = null) descr.__update(
       descr.value = ::get_gui_option_in_mode(optionId, ::OPTIONS_MODE_GAMEPLAY, true)
       defaultValue = true
       descr.defVal <- defaultValue
-      descr.optionCb <- "onChangeDisplayRealNick"
       break
 
     case ::USEROPT_SHOW_SOCIAL_NOTIFICATIONS:
@@ -4162,12 +4161,12 @@ let fillSoundDescr = @(descr, sndType, id, title = null) descr.__update(
   }
 
   if (descr.value != null &&
-      type(descr.values) == "array" &&
+      typeof descr.values == "array" &&
       descr.values.len() > 0 &&
       !(descr.value in descr.values))
     descr.value = null
 
-  if (descr.value == null && valueToSet != null && type(descr.values) == "array")
+  if (descr.value == null && valueToSet != null && typeof descr.values == "array")
     for (local i = 0; i < descr.values.len(); i++)
     {
       if (descr.values[i] == valueToSet)
@@ -4427,7 +4426,7 @@ let fillSoundDescr = @(descr, sndType, id, title = null) descr.__update(
     case ::USEROPT_MEASUREUNITS_TEMPERATURE:
     case ::USEROPT_MEASUREUNITS_WING_LOADING:
     case ::USEROPT_MEASUREUNITS_POWER_TO_WEIGHT_RATIO:
-      if (type(descr.values) == "array" && value >= 0 && value < descr.values.len())
+      if (typeof descr.values == "array" && value >= 0 && value < descr.values.len())
       {
         local unitType = 0
         if (optionId == ::USEROPT_MEASUREUNITS_ALT)
@@ -4603,11 +4602,6 @@ let fillSoundDescr = @(descr, sndType, id, title = null) descr.__update(
     case ::USEROPT_CROSSHAIR_DEFLECTION:
       ::set_option_deflection(value)
       break
-
-    case ::USEROPT_GYRO_SIGHT_DEFLECTION:
-      set_gyro_sight_deflection(value)
-      break
-
     case ::USEROPT_CROSSHAIR_SPEED:
       ::set_option_crosshair_speed(descr.values[value])
       break
@@ -4728,7 +4722,7 @@ let fillSoundDescr = @(descr, sndType, id, title = null) descr.__update(
       break;
 
     case ::USEROPT_SKIN:
-      if (type(descr.values) == "array")
+      if (typeof descr.values == "array")
       {
         let air = ::aircraft_for_weapons
         if (value >= 0 && value < descr.values.len())
@@ -5168,7 +5162,7 @@ let fillSoundDescr = @(descr, sndType, id, title = null) descr.__update(
     case ::USEROPT_HUD_SHOW_TANK_GUNS_AMMO:
       if (descr.controlType == optionControlType.LIST)
       {
-        if (type(descr.values) != "array")
+        if (typeof descr.values != "array")
           break
         if (value < 0 || value >= descr.values.len())
           break

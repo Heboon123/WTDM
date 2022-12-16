@@ -219,7 +219,7 @@ let { markObjShortcutOnHover } = require("%sqDagui/guiBhv/guiBhvUtils.nut")
       }
 
       let armyName = ::ww_find_army_name_by_coordinates(mousePos[0], mousePos[1])
-      let lastSavedArmyName = params?.armyName
+      let lastSavedArmyName = getTblValue("armyName", params)
       if (armyName != lastSavedArmyName)
       {
         if (!armyName)
@@ -228,11 +228,10 @@ let { markObjShortcutOnHover } = require("%sqDagui/guiBhv/guiBhvUtils.nut")
           params.armyName <- armyName
 
         hoverChanged = true
-        ::ww_event("MapArmyHoverChanged", {armyName})
       }
 
       let airfieldIndex = ::ww_find_airfield_by_coordinates(mousePos[0], mousePos[1])
-      let lastAirfieldIndex = params?.airfieldIndex ?? -1
+      let lastAirfieldIndex = getTblValue("airfieldIndex", params)
       if (airfieldIndex != lastAirfieldIndex)
       {
         if (airfieldIndex < 0)
@@ -241,7 +240,6 @@ let { markObjShortcutOnHover } = require("%sqDagui/guiBhv/guiBhvUtils.nut")
           params.airfieldIndex <- airfieldIndex
 
         hoverChanged = true
-        ::ww_event("MapAirfieldHoverChanged", {airfieldIndex})
       }
     }
 

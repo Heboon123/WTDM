@@ -42,9 +42,9 @@ let { isDataBlock } = require("%sqstd/underscore.nut")
 
   function ___checkReturn___(val, key)
   {
-    if (type(val) == "table")
+    if (typeof(val) == "table")
       return ::DataBlockAdapter(val, key)
-    if (type(val) == "array")
+    if (typeof(val) == "array")
       return this.___checkReturn___(val[0], key)
     return val
   }
@@ -75,7 +75,7 @@ let { isDataBlock } = require("%sqstd/underscore.nut")
       return res
 
     let valList = this.___originData___[key]
-    if (type(valList) != "array")
+    if (typeof(valList) != "array")
     {
       res.append(this.___checkReturn___(valList, key))
       return res
@@ -121,7 +121,7 @@ let { isDataBlock } = require("%sqstd/underscore.nut")
     this.___paramsListNames___ = []
     foreach(key, val in this.___originData___)
     {
-      if (type(val) != "array")
+      if (typeof(val) != "array")
       {
         this.___addToParamsList___(val, key)
         continue

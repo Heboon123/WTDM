@@ -194,14 +194,14 @@ local MRoomsHandlers = class {
     let pub = getTblValue("public", attr_from)
     let priv = getTblValue("private", attr_from)
 
-    if (type(priv) == "table")
+    if (typeof priv == "table")
     {
       if ("private" in attr_to)
         updateAttribs(priv, attr_to.private)
       else
         attr_to.private <- priv
     }
-    if (type(pub) == "table")
+    if (typeof pub == "table")
     {
       if ("public" in attr_to)
         updateAttribs(pub, attr_to.public)
@@ -269,7 +269,7 @@ local MRoomsHandlers = class {
   function onRoomInvite(notify, send_resp)
   {
     local inviteData = notify.invite_data
-    if (!(type(inviteData) == "table"))
+    if (!(typeof inviteData == "table"))
       inviteData = {}
     inviteData.roomId <- notify.roomId
 
@@ -387,7 +387,7 @@ local MRoomsHandlers = class {
 
 ::is_my_userid <- function is_my_userid(user_id)
 {
-  if (type(user_id) == "string")
+  if (typeof user_id == "string")
     return user_id == ::my_user_id_str
   return user_id == ::my_user_id_int64
 }

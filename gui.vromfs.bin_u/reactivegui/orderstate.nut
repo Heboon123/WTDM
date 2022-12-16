@@ -1,6 +1,6 @@
 from "%rGui/globals/ui_library.nut" import *
 
-let { subscribe } = require("eventbus")
+let {interop} = require("%rGui/globals/interop.nut")
 
 let state = persist("orderState", @() {
   statusText = Watched("")
@@ -9,13 +9,12 @@ let state = persist("orderState", @() {
   scoresTable = Watched([])
 })
 
-let function orderStateUpdate(params) {
-  state.statusText(params.statusText)
-  state.statusTextBottom(params.statusTextBottom)
-  state.showOrder(params.showOrder)
-  state.scoresTable(params.scoresTable)
+interop.orderStateUpdate <- function (params) {
+    state.statusText(params.statusText)
+    state.statusTextBottom(params.statusTextBottom)
+    state.showOrder(params.showOrder)
+    state.scoresTable(params.scoresTable)
 }
 
-subscribe("orderStateUpdate", orderStateUpdate)
 
 return state

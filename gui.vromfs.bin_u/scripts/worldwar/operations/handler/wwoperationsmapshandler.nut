@@ -285,7 +285,6 @@ local WW_SEASON_OVER_NOTICE_PERIOD_DAYS = 7
         trophyDesc = $"{this.getTrophyDesc(trophy)} {progressText}"
         status = isProgressReached ? "received" : ""
         descTooltipText = this.getTrophyTooltip(trophy, updStatsText)
-        tooltipId = ::g_tooltip.getIdItem(trophyId)
         iconTooltipText = this.getTrophyTooltip(trophiesBlk, updStatsText)
         rewardImage = trophyItem.getIcon()
         isTrophy = true
@@ -1089,11 +1088,6 @@ local WW_SEASON_OVER_NOTICE_PERIOD_DAYS = 7
     this.onClansQueue()
   }
 
-  function onHelp()
-  {
-    ::gui_handlers.HelpInfoHandlerModal.openHelp(this)
-  }
-
   function getWndHelpConfig()
   {
     let res = {
@@ -1102,44 +1096,24 @@ local WW_SEASON_OVER_NOTICE_PERIOD_DAYS = 7
     }
 
     let links = [
-      { obj = ["topmenu_ww_menu_btn"]
-        msgId = "hint_topmenu_ww_menu_btn"
+      { obj = ["to_battle_button"]
+        msgId = "hint_to_battle_button"
       }
 
-      { obj = ["item_name"]
-        msgId = "hint_operation_name"
+      { obj = ["item_desc"]
+        msgId = "hint_item_desc"
       }
 
-      { obj = ["country_1"]
-        msgId = "hint_country"
+      { obj = ["maps_list"]
+        msgId = "hint_maps_list"
       }
 
-      { obj = ["btn_find_operation"]
-        msgId = "hint_btn_find_operation"
-      }
-
-      { obj = ["btn_back_operation"]
-        msgId = "hint_btn_back_operation"
+      { obj = ["trophy_list"]
+        msgId = "trophy_list_list"
       }
 
       { obj = ["btn_join_queue"]
         msgId = "hint_btn_join_queue"
-      }
-
-      { obj = ["btn_join_clan_operation"]
-        msgId = "hint_btn_join_clan_operation"
-      }
-
-      { obj = ["item_status_text"]
-        msgId = "hint_item_status_text"
-      }
-
-      { obj = ["rewards_panel"]
-        msgId = "hint_rewards_panel"
-      }
-
-      { obj = ["selector_nest"]
-        msgId = "hint_btn_cluster"
       }
     ]
 

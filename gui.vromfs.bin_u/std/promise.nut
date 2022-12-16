@@ -21,8 +21,8 @@ Promise = class {
       onRejectedCallbacks = []
       value = null
     }
-    this._state = state
-    this.resolve = function (v) {
+    _state = state
+    resolve = function (v) {
       if (state.status == P_PENDING) {
         state.status = P_FULFILLED
         state.value = v
@@ -32,7 +32,7 @@ Promise = class {
       }
     }
 
-    this.reject = function (v) {
+    reject = function (v) {
       if (state.status == P_PENDING) {
         state.status = P_REJECTED
         state.value = v
@@ -43,15 +43,15 @@ Promise = class {
     }
 
     try {
-      handler(this.resolve, this.reject)
+      handler(resolve, reject)
     }
     catch (err) {
-      this.reject(err)
+      reject(err)
     }
   }
 
   function then(onFulfilled, onRejected=@(...) null) {
-      let state = this._state
+      let state = _state
       return Promise(function(resolve, reject) { // -disable-warning: -ident-hides-ident
           if (state.status == P_PENDING) {
               state.onFulfilledCallbacks.append(function() {

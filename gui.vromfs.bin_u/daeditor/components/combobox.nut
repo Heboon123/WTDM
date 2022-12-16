@@ -3,7 +3,7 @@ let comboStyle = require("combobox.style.nut")
 
 local ComboPopupLayer = 1
 if ("Layers" in getconsttable()) {
-  ComboPopupLayer = getconsttable()?["Layers"].ComboPopup ?? 1
+  ComboPopupLayer = Layers?.ComboPopup ?? 1
 }
 
 let popupContentAnim = [

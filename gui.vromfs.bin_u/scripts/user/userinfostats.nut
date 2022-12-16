@@ -11,7 +11,6 @@ let avatars = require("%scripts/user/avatars.nut")
 let { hasAllFeatures } = require("%scripts/user/features.nut")
 let { eachParam, eachBlock } = require("%sqstd/datablock.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
-let lbDataType = require("%scripts/leaderboard/leaderboardDataType.nut")
 
 let statsFm = ["fighter", "bomber", "assault"]
 let statsTanks = ["tank", "tank_destroyer", "heavy_tank", "SPAA"]
@@ -69,6 +68,7 @@ let statsConfig = [
     id = "naval_kills"
     name = "stats/kills_naval"
     mode = "pvp_played"
+    reqFeature = ["Ships"]
   }
 
   {
@@ -138,7 +138,7 @@ let airStatsListConfig = [
       return sessions
     }
   },
-  { id = "victories_battles", type = lbDataType.PERCENT
+  { id = "victories_battles", type = ::g_lb_data_type.PERCENT
     countFunc = function(statBlk) {
       let victories = statBlk?.victories ?? 0
       let sessions = victories + (statBlk?.defeats ?? 0)
@@ -151,15 +151,15 @@ let airStatsListConfig = [
   "deaths",
   "air_kills",
   "ground_kills",
-  { id = "naval_kills", icon = "lb_naval_kills", text = "multiplayer/naval_kills" },
+  { id = "naval_kills", icon = "lb_naval_kills", text = "multiplayer/naval_kills", reqFeature = ["Ships"] },
   { id = "wp_total", icon = "lb_wp_total_gained", text = "multiplayer/wp_total_gained", ownProfileOnly = true },
   { id = "online_exp_total", icon = "lb_online_exp_gained_for_common", text = "multiplayer/online_exp_gained_for_common" },
 ]
 foreach (idx, val in airStatsListConfig) {
-  if (type(val) == "string")
+  if (typeof(val) == "string")
     airStatsListConfig[idx] = { id = val }
   if ("type" not in airStatsListConfig[idx])
-    airStatsListConfig[idx].type <- lbDataType.NUM
+    airStatsListConfig[idx].type <- ::g_lb_data_type.NUM
 }
 
 let function getAirsStatsFromBlk(blk) {
@@ -200,7 +200,7 @@ let function buildProfileSummaryRowData(config, summary, diffCode, textId = "")
   if (diff == ::g_difficulty.UNKNOWN)
     return null
 
-  let modeList = (type(config.mode) == "array") ? config.mode : [config.mode]
+  let modeList = (typeof config.mode == "array") ? config.mode : [config.mode]
   local value = 0
   foreach(mode in modeList)
   {
@@ -254,6 +254,11 @@ let function fillProfileSummary(sObj, summary, diff) {
     else if (item.separateRowsByFm)
       for (local i = 0; i < statsFm.len(); i++)
       {
+        if (isInArray(statsFm[i], statsTanks) && !hasFeature("Tanks"))
+          continue
+        if (isInArray(statsFm[i], statsShips) && !hasFeature("Ships"))
+          continue
+
         let rowId = "row_" + idx + "_" + i
         item.fm = statsFm[i]
         let row = buildProfileSummaryRowData(item, summary, diff, rowId)
@@ -368,6 +373,7 @@ let function getPlayerStatsFromBlk(blk) {
 }
 
 return {
+  statsTanks
   fillProfileSummary
   getCountryMedals
   getPlayerStatsFromBlk

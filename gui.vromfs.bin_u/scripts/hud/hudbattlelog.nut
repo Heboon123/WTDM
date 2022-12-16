@@ -10,7 +10,6 @@ let time = require("%scripts/time.nut")
 let spectatorWatchedHero = require("%scripts/replays/spectatorWatchedHero.nut")
 let { is_replay_playing } = require("replays")
 let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
-let { send } = require("eventbus")
 
 enum BATTLE_LOG_FILTER
 {
@@ -179,7 +178,7 @@ enum BATTLE_LOG_FILTER
     if (safe && this.battleLog.len() && this.battleLog[this.battleLog.len() - 1].time < ::get_usefull_total_time())
       return
     this.battleLog = []
-    send("clearBattleLog", {})
+    ::call_darg("clearBattleLog")
   }
 
   function onHudMessage(msg)
@@ -271,7 +270,7 @@ enum BATTLE_LOG_FILTER
     if (this.battleLog.len() == this.logMaxLen)
       this.battleLog.remove(0)
     this.battleLog.append(logEntry)
-    send("pushBattleLogEntry", logEntry)
+    ::call_darg("pushBattleLogEntry", logEntry)
     ::broadcastEvent("BattleLogMessage", logEntry)
   }
 

@@ -1,12 +1,18 @@
 from "%rGui/globals/ui_library.nut" import *
 
-let { subscribe } = require("eventbus")
+let {interop} = require("%rGui/globals/interop.nut")
 
 let state = persist("battleLogState", @(){
   log = Watched([])
 })
 
-subscribe("pushBattleLogEntry", @(logEntry) state.log.mutate(@(v) v.append(logEntry)))
-subscribe("clearBattleLog", @(_) state.log([]))
+interop.pushBattleLogEntry <- function (log_entry) {
+  state.log.value.append(log_entry)
+  state.log.trigger()
+}
+
+interop.clearBattleLog <- function () {
+  state.log.update([])
+}
 
 return state

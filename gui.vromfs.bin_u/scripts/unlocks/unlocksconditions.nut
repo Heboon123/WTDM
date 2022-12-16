@@ -123,9 +123,6 @@ let formatParamsDefault = {
   bothStr    = "".concat("%s", loc("ui/mdash"), "%s")
 }
 
-let timeRangeConditions = ["timeRange", "char_time_range"]
-let isTimeRangeCondition = @(c) timeRangeConditions.contains(c)
-
 let regExpNumericEnding = regexp2("\\d+$")
 
 let nestedUnlockModes = ["unlockOpenCount", "unlockStageCount", "unlocks", "char_unlocks"]
@@ -349,7 +346,7 @@ let function loadParamsConditions(blk) {
   if (blk?.hidden)
     return res
 
-  if (blk?.elite != null && (type(blk?.elite) != "integer" || blk.elite > 1))
+  if (blk?.elite != null && (typeof(blk?.elite) != "integer" || blk.elite > 1))
     res.append(createCondition("eliteUnitsOnly"))
 
   if (blk?.premium == false)
@@ -413,9 +410,9 @@ let function mergeConditionToList(newCond, list) {
   if (!cond.values)
     cond.values = newCond.values
   else {
-    if (type(cond.values) != "array")
+    if (typeof(cond.values) != "array")
       cond.values = [cond.values]
-    cond.values.extend((type(newCond.values) == "array") ? newCond.values : [newCond.values])
+    cond.values.extend((typeof(newCond.values) == "array") ? newCond.values : [newCond.values])
   }
 
   // merge specific by type
@@ -560,7 +557,7 @@ let function loadCondition(blk, unlockMode) {
 
     res.locGroup <- $"{(minStatGroups?[stat] ?? "")}InSession"
   }
-  else if (isTimeRangeCondition(t)) {
+  else if (isInArray(t, ::unlock_time_range_conditions)) {
     let beginTime = blk?.beginDate != null ? time.getTimestampFromStringUtc(blk.beginDate) : -1
     if (beginTime != -1) {
       res.beginTime <- beginTime
@@ -762,7 +759,6 @@ return {
   loadConditionsFromBlk
   loadCondition
   isNestedUnlockMode
-  isTimeRangeCondition
   isBitModeType
   addToText
   getDiffNameByInt

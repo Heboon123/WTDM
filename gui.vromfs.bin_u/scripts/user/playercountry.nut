@@ -2,7 +2,7 @@ from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
 #explicit-this
-let { getCountryCode } = require("auth_wt")
+
 let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
 let sonyUser = require("sony.user")
 let { addListenersWithoutEnv, CONFIG_VALIDATION } = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -17,12 +17,12 @@ let function xboxGetCountryCode() {
   let xbox_code = ::xbox_get_region()
   if (xbox_code != "")
     return xbox_code.toupper()
-  return getCountryCode()
+  return ::get_country_code()
 }
 
 let getPlayerCountryCode = isPlatformSony ? @() sonyUser?.country.toupper()
   : isPlatformXboxOne ? xboxGetCountryCode
-  : getCountryCode
+  : ::get_country_code
 
 let countriesWithRecommendEmailRegistration = {
   AZ = "Azerbaijan"

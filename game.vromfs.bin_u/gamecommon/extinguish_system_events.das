@@ -3,19 +3,17 @@ require ecs
 
 
 // hanled in das
+[cpp_event(unicast, with_scheme)]
+struct EventFireSystemStopSingleBurn
+  fireId : int
+
 [cpp_event(unicast, with_scheme, routing=ROUTING_CLIENT_TO_SERVER)]
 struct EventExtinguishSystemSetActive
   active : bool
 
 [cpp_event(unicast, with_scheme)]
-struct EventExtinguishSystemSpendExtinguisher
-{}
-
-[cpp_event(unicast, with_scheme)]
 struct EventExtinguishSystemStopBurnWithExtinguisher
-  targetEid : EntityId
-  hasMod : bool
-  withPenalty : bool
+  modRequired : bool
 
 [cpp_event(unicast, with_scheme)]
 struct EventExtinguishSystemActivateExtinguisher
@@ -33,14 +31,16 @@ struct EventExtinguishSystemAddExtinguisherCount
 struct EventExtinguishSystemTurnOffExtinguisher
 {}
 
-[event(unicast, routing=ROUTING_SERVER_TO_CLIENT)]
+[cpp_event(unicast)]
 struct EventFireSystemNetSync
   isBurning : bool
   crewBusyRemainingTime : float
   extinguisherRemainingTime : float
   timeToNextExtinguisher : float
   extinguisherCount : int
-  data : IntList const?  // part id, fire params id of burning parts
+  partIds : UInt16List
+  fireParamsIds : IntList
+  partsBurning : BoolList
 
 // handled in cpp
 

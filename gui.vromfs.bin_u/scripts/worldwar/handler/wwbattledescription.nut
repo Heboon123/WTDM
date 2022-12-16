@@ -28,7 +28,7 @@ global enum WW_BATTLE_VIEW_MODES
   QUEUE_INFO
 }
 
-local DEFAULT_BATTLE_ITEM_CONFIG = {
+local DEFAULT_BATTLE_ITEM_CONGIG = {
   id = ""
   itemPrefixText = ""
   imgTag = "wwBattleIcon"
@@ -51,7 +51,6 @@ local DEFAULT_BATTLE_ITEM_CONFIG = {
   hasSquadsInviteButton = true
   hasBattleFilter = false
 
-  curBattleIdInQueue = ""
   curBattleInList = null      // selected battle in list
   operationBattle = null      // battle to dasplay, check join enable, join, etc
   needEventHeader = true
@@ -107,7 +106,7 @@ local DEFAULT_BATTLE_ITEM_CONFIG = {
   {
     this.battlesListObj = this.scene.findObject("items_list")
     let battleListData = ::handyman.renderCached(this.sceneTplBattleList,
-      { items = array(this.minCountBattlesInList, DEFAULT_BATTLE_ITEM_CONFIG)})
+      { items = array(this.minCountBattlesInList, DEFAULT_BATTLE_ITEM_CONGIG)})
     this.guiScene.appendWithBlk(this.battlesListObj, battleListData, this)
     this.curBattleListMap = []
     this.initQueueInfo()
@@ -714,7 +713,16 @@ local DEFAULT_BATTLE_ITEM_CONFIG = {
       unitAvailability == WW_BATTLE_UNITS_REQUIREMENTS.OPERATION_UNITS ||
       unitAvailability == WW_BATTLE_UNITS_REQUIREMENTS.BATTLE_UNITS)
 
-    this.updateAutoPresetButton(joinWarningData)
+    let isVisibleBtnAutoPreset = joinWarningData.needMsgBox || this.hasSlotbarByUnitsGroups
+    let btnAutoPreset = this.showSceneBtn("btn_auto_preset", isVisibleBtnAutoPreset)
+    if (isVisibleBtnAutoPreset) {
+      let bestPresetData = getBestPresetData(joinWarningData.availableUnits,
+        joinWarningData.country, this.hasSlotbarByUnitsGroups)
+      let hasChangeInPreset = bestPresetData?.hasChangeInPreset ?? false
+      btnAutoPreset.inactiveColor = hasChangeInPreset ? "no" : "yes"
+      btnAutoPreset.hasUnseenIcon = hasChangeInPreset ? "yes" : "no"
+      ::showBtn("auto_preset_warning_icon", hasChangeInPreset, btnAutoPreset)
+    }
 
     let btnSlotbarHelpObj = this.showSceneBtn("btn_slotbar_help", this.hasSlotbarByUnitsGroups)
     if (this.hasSlotbarByUnitsGroups)
@@ -825,40 +833,10 @@ local DEFAULT_BATTLE_ITEM_CONFIG = {
       ::ww_get_operation_id(), this.operationBattle.id, profileCountrySq.value)
   }
 
-  function onEventWWUpdateWWQueues(params)
+  function onEventWWUpdateWWQueues(_params)
   {
     this.reinitBattlesList()
-
-    let hasQueueForCurBattle = params?.queuesData[this.curBattleInList.id] != null
-    if (hasQueueForCurBattle || this.curBattleIdInQueue == this.curBattleInList.id) {
-      this.updateButtons()
-      this.curBattleIdInQueue = hasQueueForCurBattle ? this.curBattleInList.id : ""
-    }
-  }
-
-  function onEventPresetsByGroupsChanged(_params)
-  {
-    this.updateAutoPresetButton(null)
-  }
-
-  function updateAutoPresetButton(joinWarningData)
-  {
-    if (!this.curBattleInList.isValid()) {
-      this.showSceneBtn("btn_auto_preset", false)
-      return
-    }
-
-    joinWarningData = joinWarningData ?? this.operationBattle.getWarningReasonData(this.getPlayerSide())
-    let isVisibleBtnAutoPreset = joinWarningData.needMsgBox || this.hasSlotbarByUnitsGroups
-    let btnAutoPreset = this.showSceneBtn("btn_auto_preset", isVisibleBtnAutoPreset)
-    if (isVisibleBtnAutoPreset) {
-      let bestPresetData = getBestPresetData(joinWarningData.availableUnits,
-        joinWarningData.country, this.hasSlotbarByUnitsGroups)
-      let hasChangeInPreset = bestPresetData?.hasChangeInPreset ?? false
-      btnAutoPreset.inactiveColor = hasChangeInPreset ? "no" : "yes"
-      btnAutoPreset.hasUnseenIcon = hasChangeInPreset ? "yes" : "no"
-      ::showBtn("auto_preset_warning_icon", hasChangeInPreset, btnAutoPreset)
-    }
+    this.updateButtons()
   }
 
   function goBack()
@@ -1008,8 +986,6 @@ local DEFAULT_BATTLE_ITEM_CONFIG = {
         ::ww_event("LeaveBattle")
         break
     }
-
-    this.curBattleIdInQueue = ""
   }
 
   function onItemSelect()
@@ -1261,11 +1237,6 @@ local DEFAULT_BATTLE_ITEM_CONFIG = {
   {
   }
 
-  function onHelp()
-  {
-    ::gui_handlers.HelpInfoHandlerModal.openHelp(this)
-  }
-
   function getWndHelpConfig()
   {
     let res = {
@@ -1355,6 +1326,8 @@ local DEFAULT_BATTLE_ITEM_CONFIG = {
 
     return this.battlesListObj.getChild(idx-1).getClone(this.battlesListObj, this)
   }
+
+  onEventPresetsByGroupsChanged = @(_params) this.updateButtons()
 
   function getSlotbarActions()
   {

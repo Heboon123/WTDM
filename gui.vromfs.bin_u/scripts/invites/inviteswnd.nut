@@ -5,7 +5,7 @@ from "%scripts/dagui_library.nut" import *
 #explicit-this
 
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-let { checkAndShowMultiplayerPrivilegeWarning, checkAndShowCrossplayWarning,
+let { checkAndShowMultiplayerPrivilegeWarning,
   isMultiplayerPrivilegeAvailable } = require("%scripts/user/xboxFeatures.nut")
 let { isShowGoldBalanceWarning } = require("%scripts/user/balanceFeatures.nut")
 
@@ -92,11 +92,12 @@ let { isShowGoldBalanceWarning } = require("%scripts/user/balanceFeatures.nut")
             return
           }
 
+          if (!invite.isAvailableByCrossPlay() && !::xbox_try_show_crossnetwork_message()) {
+            ::showInfoMsgBox(invite.getRestrictionText())
+
           if (isShowGoldBalanceWarning())
             return
 
-          if (!invite.isAvailableByCrossPlay()) {
-            checkAndShowCrossplayWarning(@() ::showInfoMsgBox(invite.getRestrictionText()))
             return
           }
         }

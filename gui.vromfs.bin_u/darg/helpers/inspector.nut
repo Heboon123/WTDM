@@ -166,7 +166,7 @@ let textColor = @(sf) sf & S_ACTIVE ? 0xFFFFFF00
 let function mkPropContent(desc, key, sf) {
   let { text, valCtor } = getPropValueTexts(desc, key, 200)
   local keyValue = $"{key.tostring()} = <color={valColor}>{text}</color>"
-  if (type(valCtor) == "string")
+  if (typeof valCtor == "string")
     keyValue = $"{keyValue} {valCtor}"
   local content = {
     rendObj = ROBJ_TEXTAREA
@@ -177,14 +177,14 @@ let function mkPropContent(desc, key, sf) {
     hangingIndent = sh(3)
     text = keyValue
   }
-  if (type(valCtor) == "function")
+  if (typeof valCtor == "function")
     content = valCtor?(content)
   return content
 }
 
 let function propPanel(desc) {
   local pKeys = []
-  if (type(desc) == "class")
+  if (typeof desc == "class")
     foreach (key, _ in desc)
       pKeys.append(key)
   else

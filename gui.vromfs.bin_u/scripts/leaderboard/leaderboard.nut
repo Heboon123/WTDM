@@ -68,30 +68,35 @@ let { getSeparateLeaderboardPlatformName } = require("%scripts/social/crossplay.
     text = "#missions/tank_event_arcade"
     mode = "tank_arcade"
     diffCode = DIFFICULTY_ARCADE
+    reqFeature = [ "Tanks" ]
   }
   {
     // Tank Realistic Battles
     text = "#missions/tank_event_historical"
     mode = "tank_realistic"
     diffCode = DIFFICULTY_REALISTIC
+    reqFeature = [ "Tanks" ]
   }
   {
     // Tank Simulator Battles
     text = "#missions/tank_event_simulator"
     mode = "tank_simulation"
     diffCode = DIFFICULTY_HARDCORE
+    reqFeature = [ "Tanks" ]
   }
   {
     // Ship Arcade Battles
     text = "#missions/ship_event_arcade"
     mode = "test_ship_arcade"
     diffCode = DIFFICULTY_ARCADE
+    reqFeature = [ "Ships" ]
   }
   {
     // Ship Realistic Battles
     text = "#missions/ship_event_historical"
     mode = "test_ship_realistic"
     diffCode = DIFFICULTY_REALISTIC
+    reqFeature = [ "Ships" ]
   }
   {
     // Helicopter Arcade Battles
@@ -348,7 +353,7 @@ let { getSeparateLeaderboardPlatformName } = require("%scripts/social/crossplay.
     {
       if (fieldId == "_id")
         continue
-      if (type(fieldValue) == "string")
+      if (typeof fieldValue == "string")
         continue
       let compareToValue = getTblValue(fieldId, b, 0)
       if (fieldValue != compareToValue)

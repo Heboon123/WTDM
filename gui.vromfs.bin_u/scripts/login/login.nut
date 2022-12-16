@@ -45,7 +45,7 @@ global enum LOGIN_STATE //bit mask
 
   function bigQueryOnLogin()
   {
-    local params = platformId
+    local params = target_platform
     if (::getSystemConfigOption("launcher/bg_update", true))
       params += " bg_update"
     ::add_big_query_record("login", params)

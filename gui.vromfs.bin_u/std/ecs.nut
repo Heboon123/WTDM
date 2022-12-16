@@ -169,7 +169,7 @@ local function register_es(name, onEvents={}, compsDesc={}, params = {}) {
     foreach (_, compslist in comps){
       foreach (comp in compslist){
         local compName = comp
-        if (type(compName) == "array")
+        if (typeof compName == "array")
           compName = comp[0]
         if (compName?.contains(".")) {
           println($"dots in component {comp?[0]} es {name}")

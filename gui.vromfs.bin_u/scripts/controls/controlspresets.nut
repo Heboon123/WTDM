@@ -219,7 +219,7 @@ let function _handleVersion(preset)
     {
       let blk = ::DataBlock()
       blk.load($"{controlsPresetConfigPath.value}config/hotkeys/list.blk")
-      local platform = isPlatformSteamDeck ? "steamdeck" : platformId
+      local platform = isPlatformSteamDeck ? "steamdeck" : target_platform
       this.presetsListCached = (blk?[platform] != null)
         ? blk[platform] % "preset"
         : blk % "preset"

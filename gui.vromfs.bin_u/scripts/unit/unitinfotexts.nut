@@ -116,7 +116,7 @@ let unitRoleByName = {}
 
 let function getUnitRole(unitData) { //  "fighter", "bomber", "assault", "transport", "diveBomber", "none"
   local unit = unitData
-  if (type(unitData) == "string")
+  if (typeof(unitData) == "string")
     unit = ::getAircraftByName(unitData);
 
   if (!unit)

@@ -190,7 +190,7 @@ root {
           _on_click:t='onJoinBattle'
           css-hier-invalidate:t='yes'
           isCancel:t='no'
-          btnName:t='X'
+          btnName:t='A'
           inactive:t='no'
           display:t='hide'
           enable:t='no'
@@ -242,10 +242,4 @@ root {
     timer_handler_func:t='onUpdate'
     timer_interval_msec:t='1000'
   }
-}
-
-DummyButton {
-  behaviour:t='accesskey'
-  accessKey:t='F1'
-  on_click:t='onHelp'
 }

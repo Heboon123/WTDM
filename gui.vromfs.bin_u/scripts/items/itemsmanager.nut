@@ -438,7 +438,7 @@ foreach (fn in [
 
 ::ItemsManager.isItemdefId <- function isItemdefId(id)
 {
-  return type(id) == "integer"
+  return typeof id == "integer"
 }
 
 ::ItemsManager.requestItemsByItemdefIds <- function requestItemsByItemdefIds(itemdefIdsList)
@@ -513,7 +513,7 @@ local lastItemDefsUpdatedelayedCall = 0
 /////////////////////////////////////////////////////////////////////////////////////////////
 ::ItemsManager.getInventoryItemType <- function getInventoryItemType(blkType)
 {
-  if (type(blkType) == "string") {
+  if (typeof(blkType) == "string") {
     if (blkType in inventoryItemTypeByTag)
       return inventoryItemTypeByTag[blkType]
 

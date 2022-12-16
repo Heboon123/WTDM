@@ -149,35 +149,10 @@
   </style>
   <script>
  
-  const ChartVariant = {
-    NULL:  0,
-    WING:  0,
-    WING_SWEEP:   1,
-    WING_SWEEP_1: 2,
-    WING_SWEEP_2: 3,
-    WING_SWEEP_3: 4,
-    WING_SWEEP_4: 5,
-    WING_SWEEP_5: 6,
-    WING_SWEEP_6: 7,
-    WING_SWEEP_7: 8,
-    WING_SWEEP_8: 9,
-    STAB:  10,
-    FIN:   11,
-    FUSEL: 12,
-    PROP1: 13,
-    PROP2: 14,
-    PROP3: 15,
-    PROP4: 16,
-    PROP5: 17,
-    PROP6: 18,
-    MAX:   19
-  } 
   
-  // all parameters are unitless, no need to change unit system here
   var settings = {
     unitSystemName: 0
   }
-
   var state = {
     connected: true,
     fm: {
@@ -187,22 +162,7 @@
     }
   }
   
-  var chartsParameters = {
-    type: 'table',
-    items: {
-      polarType:     { type: 'enum',                  controlId: 'ComboPolarType',  value: ChartVariant.WING },
-      
-      machMin:       { type: 'number', precision: 2,  controlId: 'EditMachMin',     value: 0.0, min: 0.0, max: 3.0 },
-      machStep:      { type: 'number', precision: 2,  controlId: 'EditMachStep',    value: 0.2, min: 0.0, max: 3.0 },
-      machMax:       { type: 'number', precision: 2,  controlId: 'EditMachMax',     value: 1.2, min: 0.0, max: 3.0 },
-      
-      showFlaps:     { type: 'bool',                  controlId: 'CheckBoxShowFlaps', value: true },
-      flaps:         { type: 'number', unit: 'ratio', controlId: 'EditFlaps',       value: 1.0, min: 0.0, max: 1.0 },
-      flapsMach:     { type: 'number', precision: 2,  controlId: 'EditFlapsMach',   value: 0.0, min: 0.0, max: 3.0 },
-      
-      sweep:         { type: 'number', unit: 'ratio', controlId: 'EditSweep',       value: 1.0, min: 0.0, max: 1.0 }
-    }
-  }
+  var polarType = 'wing'
   
   var polarPropertyItems =
   {
@@ -228,7 +188,7 @@
         CyMin:            { type: 'number',                 precision: 4, controlId: 'EditCyMin' }
       }
     },
-    flaps: {
+    fullFlaps: {
       type: 'table',
       items: {
         Cx0:              { type: 'number',                 precision: 4, controlId: 'EditCx0Flaps' },
@@ -297,13 +257,12 @@
           noFlapsPoints.data.push( [ noFlaps[i].points[j][0] * radToDeg, noFlaps[i].points[j][1] ] )
         data.push(noFlapsPoints)
       }
-      const flaps = polarPlot['flaps']
-      if (flaps != undefined)
+      const fullFlaps = polarPlot['fullFlaps']
+      if (fullFlaps != undefined)
       {
-        var flapsValue = convertToUnit(flaps.flaps, chartsParameters.items.flaps.unit, settings.unitSystemName)
-        var fullFlapsPoints = { label: 'Flaps=' + flapsValue.toString() + ', M=' + flaps.mach.toString(), data: [], lines: { lineWidth: 5 } }
-        for (var i = 0; i < flaps.points.length; ++i)
-          fullFlapsPoints.data.push( [ flaps.points[i][0] * radToDeg, flaps.points[i][1] ] )
+        var fullFlapsPoints = { label: 'Flaps, M=0.0', data: [], lines: { lineWidth: 5 } }
+        for (var i = 0; i < fullFlaps.length; ++i)
+          fullFlapsPoints.data.push( [ fullFlaps[i][0] * radToDeg, fullFlaps[i][1] ] )
         data.push(fullFlapsPoints)
       }
     }
@@ -324,14 +283,13 @@
           noFlapsPoints.data.push( [ noFlaps[i].points[j][0] * radToDeg, noFlaps[i].points[j][2] ] )
         data.push(noFlapsPoints)
       }
-      const flaps = polarPlot['flaps']
-      if (flaps != undefined)
+      const fullFlaps = polarPlot['fullFlaps']
+      if (fullFlaps != undefined)
       {
-        var flapsValue = convertToUnit(flaps.flaps, chartsParameters.items.flaps.unit, settings.unitSystemName)
-        var flapsPoints = { label: 'Flaps=' + flapsValue.toString() + ', M=' + flaps.mach.toString(), data: [], lines: { lineWidth: 5 } }
-        for (var i = 0; i < flaps.points.length; ++i)
-          flapsPoints.data.push( [ flaps.points[i][0] * radToDeg, flaps.points[i][2] ] )
-        data.push(flapsPoints)
+        var fullFlapsPoints = { label: 'Flaps, M=0.0', data: [], lines: { lineWidth: 5 } }
+        for (var i = 0; i < fullFlaps.length; ++i)
+          fullFlapsPoints.data.push( [ fullFlaps[i][0] * radToDeg, fullFlaps[i][2] ] )
+        data.push(fullFlapsPoints)
       }
     }
     return data
@@ -351,14 +309,13 @@
           noFlapsPoints.data.push( [ noFlaps[i].points[j][0] * radToDeg, Math.abs(noFlaps[i].points[j][1] / noFlaps[i].points[j][2]) ] )
         data.push(noFlapsPoints)
       }      
-      const flaps = polarPlot['flaps']
-      if (flaps != undefined)
+      const fullFlaps = polarPlot['fullFlaps']
+      if (fullFlaps != undefined)
       {
-        var flapsValue = convertToUnit(flaps.flaps, chartsParameters.items.flaps.unit, settings.unitSystemName)
-        var flapsPoints = { label: 'Flaps=' + flapsValue.toString() + ', M=' + flaps.mach.toString(), data: [], lines: { lineWidth: 5 } }
-        for (var i = 0; i < flaps.points.length; ++i)
-          flapsPoints.data.push( [ flaps.points[i][0] * radToDeg, Math.abs(flaps.points[i][1] / flaps.points[i][2]) ] )
-        data.push(flapsPoints)
+        var fullFlapsPoints = { label: 'Flaps, M=0.0', data: [], lines: { lineWidth: 5 } }
+        for (var i = 0; i < fullFlaps.length; ++i)
+          fullFlapsPoints.data.push( [ fullFlaps[i][0] * radToDeg, Math.abs(fullFlaps[i][1] / fullFlaps[i][2]) ] )
+        data.push(fullFlapsPoints)
       }
     }
     return data
@@ -381,15 +338,15 @@
             noFlapsPoints.data.push( [ noFlaps[i].points[j][2], noFlaps[i].points[j][1] ] )
         data.push(noFlapsPoints)
       }      
-      const flaps = polarPlot['flaps']
-      if (flaps != undefined)
+      const fullFlaps = polarPlot['fullFlaps']
+      if (fullFlaps != undefined)
       {
-        var flapsPoints = { label: 'Flaps, M=0.0', data: [], lines: { lineWidth: 5 } }
-        for (var i = 0; i < flaps.length; ++i)
-          if (flaps.points[i][0] < aoaCritHigh &&
-              flaps.points[i][1] > 0.0)
-            flapsPoints.data.push( [ flaps.points[i][2], flaps.points[i][1] ] )
-        data.push(flapsPoints)
+        var fullFlapsPoints = { label: 'Flaps, M=0.0', data: [], lines: { lineWidth: 5 } }
+        for (var i = 0; i < fullFlaps.length; ++i)
+          if (fullFlaps[i][0] < aoaCritHigh &&
+              fullFlaps[i][1] > 0.0)
+            fullFlapsPoints.data.push( [ fullFlaps[i][2], fullFlaps[i][1] ] )
+        data.push(fullFlapsPoints)
       }
     }
     return data
@@ -572,11 +529,6 @@
         charts: polarChartTypesData,
         data: { polarType: 'wing' }
       },
-      wingSweep: {
-        enabled: false,
-        charts: polarChartTypesData,
-        data: { polarType: 'wingSweep' }
-      },      
       wingSweep1: {
         enabled: false,
         charts: polarChartTypesData,
@@ -664,82 +616,57 @@
       }      
     }
   }
-    
+  
   var chartVariants =
   {
-    polar: [
-      chartsData.polar.wing,
-      chartsData.polar.wingSweep,
-      chartsData.polar.wingSweep1,
-      chartsData.polar.wingSweep2,
-      chartsData.polar.wingSweep3,
-      chartsData.polar.wingSweep4,
-      chartsData.polar.wingSweep5,
-      chartsData.polar.wingSweep6,
-      chartsData.polar.wingSweep7,
-      chartsData.polar.wingSweep8,
-      chartsData.polar.stabilizer,
-      chartsData.polar.fin,
-      chartsData.polar.fuselage,
-      chartsData.polar.propeller1Blade,
-      chartsData.polar.propeller2Blade,
-      chartsData.polar.propeller3Blade,
-      chartsData.polar.propeller4Blade,
-      chartsData.polar.propeller5Blade,
-      chartsData.polar.propeller6Blade
-    ]
+    polar: {
+      wing:           chartsData.polar.wing,
+      wingSweep1:     chartsData.polar.wingSweep1,
+      wingSweep2:     chartsData.polar.wingSweep2,
+      wingSweep3:     chartsData.polar.wingSweep3,
+      wingSweep4:     chartsData.polar.wingSweep4,
+      wingSweep5:     chartsData.polar.wingSweep5,
+      wingSweep6:     chartsData.polar.wingSweep6,
+      wingSweep7:     chartsData.polar.wingSweep7,
+      wingSweep8:     chartsData.polar.wingSweep8,
+      stabilizer:     chartsData.polar.stabilizer,
+      fin:            chartsData.polar.fin,
+      fuselage:       chartsData.polar.fuselage,
+      propeller1Blade: chartsData.polar.propeller1Blade,
+      propeller2Blade: chartsData.polar.propeller2Blade,
+      propeller3Blade: chartsData.polar.propeller3Blade,
+      propeller4Blade: chartsData.polar.propeller4Blade,
+      propeller5Blade: chartsData.polar.propeller5Blade,
+      propeller6Blade: chartsData.polar.propeller6Blade
+    }
   }
   
-  const chartVariantPolars =
-  [
-    "wing",
-    "wingSweep",
-    "wingSweep1",
-    "wingSweep2",
-    "wingSweep3",
-    "wingSweep4",
-    "wingSweep5",
-    "wingSweep6",
-    "wingSweep7",
-    "wingSweep8",
-    "stabilizer",
-    "fin",
-    "fuselage",
-    "propeller1Blade",
-    "propeller2Blade",
-    "propeller3Blade",
-    "propeller4Blade",
-    "propeller5Blade",
-    "propeller6Blade"
-  ]
-  
   const chartVariantsNames =
-  [
-    "Wing",
-    "Wing Sweep",
-    "Wing Sweep 1",
-    "Wing Sweep 2",
-    "Wing Sweep 3",
-    "Wing Sweep 4",
-    "Wing Sweep 5",
-    "Wing Sweep 6",
-    "Wing Sweep 7",
-    "Wing Sweep 8",
-    "Stabilizer",
-    "Fin",
-    "Fuselage",
-    "Propeller Type 1 blade",
-    "Propeller Type 2 blade",
-    "Propeller Type 3 blade",
-    "Propeller Type 4 blade",
-    "Propeller Type 5 blade",
-    "Propeller Type 6 blade"
-  ]
+  {
+    wing: "Wing",
+    wingSweep1: "Wing Sweep 1",
+    wingSweep2: "Wing Sweep 2",
+    wingSweep3: "Wing Sweep 3",
+    wingSweep4: "Wing Sweep 4",
+    wingSweep5: "Wing Sweep 5",
+    wingSweep6: "Wing Sweep 6",
+    wingSweep7: "Wing Sweep 7",
+    wingSweep8: "Wing Sweep 8",
+    stabilizer: "Stabilizer",
+    fin: "Fin",
+    fuselage: "Fuselage",
+    propeller1Blade: "Propeller Type 1 blade",
+    propeller2Blade: "Propeller Type 2 blade",
+    propeller3Blade: "Propeller Type 3 blade",
+    propeller4Blade: "Propeller Type 4 blade",
+    propeller5Blade: "Propeller Type 5 blade",
+    propeller6Blade: "Propeller Type 6 blade"
+  }
   
   function selectChartVariant(group, variant)
   {
     var variantsGroup = chartVariants[group]
-    for (var currVariant in variantsGroup)
+    for (currVariant in variantsGroup)
       variantsGroup[currVariant].enabled = false    
     variantsGroup[variant].enabled = true
   }
@@ -943,11 +870,7 @@
         wingSweepTable = true
       }
     }
-    if (wingSweepTable)
-    {
-      tbl.polar['wingSweep'] = readPolarFromBlk(aerodynamics['WingPlaneSweep'].FlapsPolar0)
-    }
-    else
+    if (!wingSweepTable)
     {
       var wing = aerodynamics.WingPlane.FlapsPolar0
       tbl.polar['wing'] = readPolarFromBlk(wing)
@@ -984,66 +907,36 @@
       fmTables[tableName] = data.tables[tableName]
 
     var comboPolarType = document.getElementById("ComboPolarType")
-    comboPolarType.options.length = 0   
-    
-    for (var charVariant = ChartVariant.NULL; charVariant < ChartVariant.MAX; ++charVariant)
-    {
-      var chartVariantPolar = chartVariantPolars[charVariant]
-      if (fmProperties.polar[chartVariantPolar])
-        comboPolarType.options[comboPolarType.options.length] = new Option(chartVariantsNames[charVariant], charVariant)
-    }
+    comboPolarType.options.length = 0
+    for (var curPolarType in fmProperties.polar)
+      if (fmProperties.polar[curPolarType])
+        comboPolarType.options[comboPolarType.options.length] = new Option(chartVariantsNames[curPolarType], curPolarType)
         
-    if ((chartsParameters.items.polarType.value in chartVariantPolars) &&
-        chartVariantPolars[chartsParameters.items.polarType.value] in fmProperties.polar)
-    {
-    }
+    if (polarType in fmProperties.polar)
+      comboPolarType.value = polarType
     else
     {
       if ("propeller1Blade" in fmProperties.polar)
-        chartsParameters.items.polarType.value = ChartVariant.PROP1
+        comboPolarType.value = polarType = "propeller1Blade"
       else if ("wing" in fmProperties.polar)      
-        chartsParameters.items.polarType.value = ChartVariant.WING
+        comboPolarType.value = polarType = "wing"
       else if ("wingSweep1" in fmProperties.polar)      
-        chartsParameters.items.polarType.value = ChartVariant.WING_SWEEP_1
+        comboPolarType.value = polarType = "wingSweep1"
       else
-        chartsParameters.items.polarType.value = ChartVariant.STAB
+        comboPolarType.value = polarType = "stabilizer"
     }
-    saveParameter(chartsParameters.items.polarType, settings.unitSystemName)
-    
-    selectChartVariant('polar', chartsParameters.items.polarType.value)
+      
+    selectChartVariant('polar', polarType)
     setupCharts(chartsData.polar)
   }
   
   //Callbacks
   
-  function onChartsParamChange(path)
+  function onPolarTypeChange(polarTypeIn)
   {
-    var param = getParameterByPath(chartsParameters, path)
-    if (param != undefined)
-    {
-      loadParameter(param, settings.unitSystemName)
-      serializeParameterToCookie(param, 'chartsParameters' + parameterPathToString(path))
-      updateFmPropertiesOnParamChange()
-    }
-    else
-      alert('Parameter path "chartsParameters' + parameterPathToString(path) + '" not found!')
-  }
-  
-  function enablePolarParameters()
-  {
-    setParameterEnabled(chartsParameters.items.sweep, chartsParameters.items.polarType.value == ChartVariant.WING_SWEEP, settings.unitSystemName)
-    var showFlapsParams = chartsParameters.items.polarType.value >= ChartVariant.WING && chartsParameters.items.polarType.value <= ChartVariant.WING_SWEEP_8
-    setParameterEnabled(chartsParameters.items.showFlaps, showFlapsParams, settings.unitSystemName)
-    setParameterEnabled(chartsParameters.items.flaps, showFlapsParams, settings.unitSystemName)
-    setParameterEnabled(chartsParameters.items.flapsMach, showFlapsParams, settings.unitSystemName)
-  }      
-  
-  function onPolarTypeChange()
-  {
-    onChartsParamChange(['polarType'])
+    polarType = polarTypeIn
+    selectChartVariant('polar', polarTypeIn)
     setupCharts(chartsData.polar)
-    selectChartVariant('polar', chartsParameters.items.polarType.value)
-    enablePolarParameters()    
   }
     
   function setCommand(data, successFunc, errorFunc) {
@@ -1060,14 +953,7 @@
     setCommand( {
                   cmd: 'getFmProperties',
                   'fileName' : state.fm.fileName,
-                  'fileTime' : state.fm.fileTime,
-                  'machMin'  : chartsParameters.items.machMin.value,
-                  'machStep' : chartsParameters.items.machStep.value,
-                  'machMax'  : chartsParameters.items.machMax.value,
-                  'showFlaps': chartsParameters.items.showFlaps.value,
-                  'flaps'    : chartsParameters.items.flaps.value,
-                  'flapsMach': chartsParameters.items.flapsMach.value,
-                  'sweep'    : chartsParameters.items.sweep.value
+                  'fileTime' : state.fm.fileTime
                 },
                 function(data)
                 {
@@ -1083,22 +969,6 @@
               )
   }
   
-  function updateFmPropertiesOnParamChange()
-  {
-    setCommand( {
-                  cmd: 'getFmProperties',
-                  'machMin'  : chartsParameters.items.machMin.value,
-                  'machStep' : chartsParameters.items.machStep.value,
-                  'machMax'  : chartsParameters.items.machMax.value,
-                  'showFlaps': chartsParameters.items.showFlaps.value,
-                  'flaps'    : chartsParameters.items.flaps.value,
-                  'flapsMach': chartsParameters.items.flapsMach.value,
-                  'sweep'    : chartsParameters.items.sweep.value
-                },
-                fillFmProperties
-              )
-  }  
-  
   function updateFmPropertiesNow()
   {
     setCommand({cmd: 'getFmProperties'}, fillFmProperties)
@@ -1107,14 +977,7 @@
   function init()
   {
     onConnectionStateChange(false)
-    
-    prepareParameter(chartsParameters)
-    deserializeParameterFromCookie(chartsParameters, 'chartsParameters')    
-    saveParameter(chartsParameters, settings.unitSystemName)
-        
     updateFmProperties()
-    
-    enablePolarParameters()
   }
 
   window.onload = init;
@@ -1126,40 +989,12 @@
   <h2 id="HeaderConnectionState">Disconnected</h2>  
   <h2 id="HeaderAircraftType">Unknown</h2>
   <input type="button" value="Update" onClick="updateFmPropertiesNow()">
-  <table>
-    <tr>
-      <td colspan="10"><b>Parameters</b></td>
-    </tr>
-    <tr>
-      <td>Polar</td>
-      <td colspan="5"><select id="ComboPolarType" style="font-size:20px;font-weight:bold;" onchange="onPolarTypeChange()" style="width:100%"></select></td>
-      <td colspan="3"></td>
-    </tr>
-    <tr>  
-      <td>Mach</td>
-      <td>Min</td>
-      <td colspan="2"><input class="number-box" type="number" step="0.1" id="EditMachMin" size = "5" value="0" onchange="onChartsParamChange(['machMin'])"></td>  
-      <td>Step</td>
-      <td colspan="2"><input class="number-box" type="number" step="0.1" id="EditMachStep" size = "5" value="0" onchange="onChartsParamChange(['machStep'])"></td>  
-      <td>Max</td>
-      <td colspan="2"><input class="number-box" type="number" step="0.1" id="EditMachMax" size = "5" value="0" onchange="onChartsParamChange(['machMax'])"></td>  
-    </tr>
-    <tr>  
-      <td>Flaps</td>
-      <td>Show</td>
-      <td colspan="2"><input type="checkbox" id="CheckBoxShowFlaps" onchange="onChartsParamChange(['showFlaps'])"></td>  
-      <td>Value</td>
-      <td colspan="2"><input class="number-box" type="number" step="10.0" id="EditFlaps" size = "5" value="0" onchange="onChartsParamChange(['flaps'])"></td>  
-      <td>Mach</td>
-      <td colspan="2"><input class="number-box" type="number" step="0.1" id="EditFlapsMach" size = "5" value="0" onchange="onChartsParamChange(['flapsMach'])"></td>  
-    </tr>
-    <tr>
-      <td>Sweep</td>
-      <td>Value</td>
-      <td><input class="number-box" type="number" step="1.0" id="EditSweep" size = "5" value="0" onchange="onChartsParamChange(['sweep'])"></td>  
-      <td colspan="7"></td>
-    </tr>
-  </table>
+  <h2></h2>
+  <br>
+    <select id="ComboPolarType" style="font-size:20px;font-weight:bold;" onchange="onPolarTypeChange(this.value)" style="width:100%">
+    </select>  
+  </br>
+ 
   <table>
     <tr>
       <td>

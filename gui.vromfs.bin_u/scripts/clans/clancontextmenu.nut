@@ -5,7 +5,8 @@ from "%scripts/dagui_library.nut" import *
 #explicit-this
 
 let playerContextMenu = require("%scripts/user/playerContextMenu.nut")
-let { isChatEnableWithPlayer, hasMenuChat } = require("%scripts/chat/chatStates.nut")
+let { isChatEnableWithPlayer } = require("%scripts/chat/chatStates.nut")
+let { hasChat } = require("%scripts/user/matchingFeature.nut")
 
 let getClanActions = function(clanId)
 {
@@ -54,7 +55,7 @@ let getRequestActions = function(clanId, playerUid, playerName = "", handler = n
       show = playerUid != ::my_user_id_str
              && ::ps4_is_chat_enabled()
              && !::u.isEmpty(name)
-             && hasMenuChat.value
+             && hasChat.value
       action = function()
       {
         if (isBlock)

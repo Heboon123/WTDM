@@ -21,6 +21,7 @@ let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
   units = []
   cbOwnerShowUnit = null
   getEdiffFunc = null
+  wndTitle = null
 
   isUseUnitPlates = false
   unitToShowOnClose = null
@@ -31,7 +32,7 @@ let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
     let countriesView = this.getCountriesView(unitsData)
 
     return {
-      windowTitle = loc("shop/search/results") + loc("ui/colon") + this.searchString
+      windowTitle = this.wndTitle ?? (loc("shop/search/results") + loc("ui/colon") + this.searchString)
       countriesCount = countriesView.len()
       countriesTotal = shopCountriesList.len()
       countries = countriesView
@@ -168,9 +169,9 @@ let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 }
 
 return {
-  open = function(searchString, cbOwnerShowUnit, getEdiffFunc)
+  open = function(searchString, cbOwnerShowUnit, getEdiffFunc, params = null)
   {
-    let units = shopSearchCore.findUnitsByLocName(searchString)
+    let units = params?.units ?? shopSearchCore.findUnitsByLocName(searchString)
     if (!units.len())
       return false
     ::handlersManager.loadHandler(::gui_handlers.ShopSearchWnd, {
@@ -178,6 +179,7 @@ return {
       cbOwnerShowUnit = cbOwnerShowUnit
       getEdiffFunc = getEdiffFunc
       units = units
+      wndTitle = params?.wndTitle
     })
     return true
   }

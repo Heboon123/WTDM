@@ -29,22 +29,21 @@ let { canStartPreviewScene, useDecorator, showDecoratorAccessRestriction,
 let { getPlayerCurUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 let { getSelectedChild, findChildIndex } = require("%sqDagui/daguiUtil.nut")
 let bhvUnseen = require("%scripts/seen/bhvUnseen.nut")
-let { getUnlockIds } = require("%scripts/unlocks/unlockMarkers.nut")
+let { getUnlockIds, getUnitListByUnlockId } = require("%scripts/unlocks/unlockMarkers.nut")
 let { getShopDiffCode } = require("%scripts/shop/shopDifficulty.nut")
+let shopSearchWnd  = require("%scripts/shop/shopSearchWnd.nut")
 let seenList = require("%scripts/seen/seenList.nut").get(SEEN.UNLOCK_MARKERS)
 let { havePlayerTag } = require("%scripts/user/userUtils.nut")
 let { placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { isCollectionItem } = require("%scripts/collections/collections.nut")
 let { openCollectionsWnd } = require("%scripts/collections/collectionsWnd.nut")
-let { launchEmailRegistration, canEmailRegistration, emailRegistrationTooltip,
-  needShowGuestEmailRegistration, launchGuestEmailRegistration
+let { launchEmailRegistration, canEmailRegistration, emailRegistrationTooltip
 } = require("%scripts/user/suggestionEmailRegistration.nut")
 let { getUnlockCondsDescByCfg, getUnlockMultDescByCfg, getUnlockNameText, getUnlockMainCondDescByCfg,
-  getLocForBitValues } = require("%scripts/unlocks/unlocksViewModule.nut")
+  getLocForBitValues, getUnlockTitle } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { APP_ID } = require("app")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { isUnlockVisible } = require("%scripts/unlocks/unlocksModule.nut")
-let openUnlockUnitListWnd = require("%scripts/unlocks/unlockUnitListWnd.nut")
 let { isUnlockFav, canAddFavorite, unlockToFavorites,
   toggleUnlockFav } = require("%scripts/unlocks/favoriteUnlocks.nut")
 
@@ -379,7 +378,7 @@ let selMedalIdx = {}
       btn_getLink = !::is_in_loading_screen() && isProfileOpened && hasFeature("Invites")
       btn_codeApp = isPlatformPC && hasFeature("AllowExternalLink") &&
         !havePlayerTag("gjpass") && ::isInMenu() && isProfileOpened && !::is_vendor_tencent()
-      btn_EmailRegistration = isProfileOpened && (canEmailRegistration() || needShowGuestEmailRegistration())
+      btn_EmailRegistration = isProfileOpened && canEmailRegistration()
       paginator_place = (sheet == "Statistics") && this.airStatsList && (this.airStatsList.len() > this.statsPerPage)
       btn_achievements_url = (sheet == "UnlockAchievement") && hasFeature("AchievementsUrl")
         && hasFeature("AllowExternalLink") && !::is_vendor_tencent()
@@ -389,9 +388,7 @@ let selMedalIdx = {}
     ::showBtnTable(this.scene, buttonsList)
 
     if (buttonsList.btn_EmailRegistration)
-      this.scene.findObject("btn_EmailRegistration").tooltip = needShowGuestEmailRegistration()
-        ? loc("mainmenu/PcEmailRegistration/desc")
-        : emailRegistrationTooltip
+      this.scene.findObject("btn_EmailRegistration").tooltip = emailRegistrationTooltip
 
     this.updateDecalButtons(this.getCurDecal())
   }
@@ -1125,6 +1122,8 @@ let selMedalIdx = {}
     let unit = ::getAircraftByName(unitName)
     if (unit == null)
       return false
+    if (!hasFeature("Tanks") && unit?.isTank())
+      return false
     return unit.isVisibleInShop()
   }
 
@@ -1375,7 +1374,16 @@ let selMedalIdx = {}
   }
 
   function showUnlockUnits(obj) {
-    openUnlockUnitListWnd(obj.unlockId, Callback(@(u) this.showUnitInShop(u), this))
+    let unlockBlk = ::g_unlocks.getUnlockById(obj.unlockId)
+    let allUnits = getUnitListByUnlockId(obj.unlockId).filter(@(u) u.isVisibleInShop())
+
+    let unlockCfg = ::build_conditions_config(unlockBlk)
+    shopSearchWnd.open(null, Callback(@(u) this.showUnitInShop(u), this), getShopDiffCode, {
+      units = allUnits
+      wndTitle = loc("mainmenu/showVehiclesTitle", {
+        taskName = getUnlockTitle(unlockCfg)
+      })
+    })
   }
 
   function showUnitInShop(unitName) {
@@ -1830,10 +1838,7 @@ let selMedalIdx = {}
 
   function onBindEmail()
   {
-    if (needShowGuestEmailRegistration())
-      launchGuestEmailRegistration()
-    else
-      launchEmailRegistration()
+    launchEmailRegistration()
     this.doWhenActiveOnce("updateButtons")
   }
 

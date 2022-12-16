@@ -21,7 +21,6 @@ let { getActionBarItems, getOwnerUnitName, getActionBarUnitName } = require_nati
 let { is_replay_playing } = require("replays")
 let { hitCameraInit, hitCameraReinit } = require("%scripts/hud/hudHitCamera.nut")
 let { hudTypeByHudUnitType } = require("%scripts/hud/hudUnitType.nut")
-let { is_benchmark_game_mode } = require("mission")
 
 ::dagui_propid.add_name_id("fontSize")
 
@@ -323,7 +322,7 @@ let function maybeOfferControlsHelp() {
       return HUD_TYPE.CUTSCENE
     if (this.spectatorMode)
       return HUD_TYPE.SPECTATOR
-    if (is_benchmark_game_mode())
+    if (::get_game_mode() == GM_BENCHMARK)
       return HUD_TYPE.BENCHMARK
     if (::is_freecam_enabled())
       return HUD_TYPE.FREECAM
@@ -571,7 +570,7 @@ let function maybeOfferControlsHelp() {
   {
     if (this.getHudType() == HUD_TYPE.SHIP) {
       let missionProgressHeight = isProgressVisible() ? to_pixels("@missionProgressHeight") : 0;
-      send("updateDmgIndicatorStates", {
+      ::call_darg("hudDmgIndicatorStatesUpdate", {
         size = [0, 0], pos = [0, 0],
         padding = [0, 0, missionProgressHeight, 0]
       })
@@ -592,7 +591,7 @@ let function maybeOfferControlsHelp() {
 
     obj = this.scene.findObject("hud_tank_damage_indicator")
     if (obj?.isValid())
-      send("updateDmgIndicatorStates", {
+      ::call_darg("hudDmgIndicatorStatesUpdate", {
         size = obj.getSize(), pos = obj.getPos(),
         padding = [0, 0, 0, 0]
       })
@@ -745,7 +744,7 @@ let function maybeOfferControlsHelp() {
   function updateDmgIndicatorSize() {
     let obj = this.scene.findObject("hud_tank_damage_indicator")
     if (obj?.isValid())
-      send("updateDmgIndicatorStates", {
+      ::call_darg("hudDmgIndicatorStatesUpdate", {
         size = obj.getSize(), pos = obj.getPos(),
         padding = [0, 0, 0, 0]
       })

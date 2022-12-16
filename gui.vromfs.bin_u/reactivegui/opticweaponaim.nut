@@ -1,10 +1,12 @@
 from "%rGui/globals/ui_library.nut" import *
 
+let {backgroundColor} = require("style/airHudStyle.nut")
+
 enum GuidanceLockResult {
   RESULT_TRACKING = 3
 }
 
-let opticWeaponAim = @(tracker_size, tracker_x, tracker_y, guidance_lock_state, tracker_visible, color_watched) function() {
+let opticWeaponAim = @(tracker_size, tracker_x, tracker_y, guidance_lock_state, tracker_visible, color_watched, is_background) function() {
   let tSize = tracker_size.value
 
   let circleTracking =
@@ -29,7 +31,8 @@ let opticWeaponAim = @(tracker_size, tracker_x, tracker_y, guidance_lock_state, 
     watch = [color_watched, guidance_lock_state, tracker_visible, tracker_size, tracker_x, tracker_y]
     rendObj = ROBJ_VECTOR_CANVAS
     size = [sh(14.0), sh(14.0)]
-    color = color_watched.value
+    color = is_background ? backgroundColor
+        : color_watched.value
     fillColor = Color(0, 0, 0, 0)
     commands = !tracker_visible.value ? null
       : guidance_lock_state.value == GuidanceLockResult.RESULT_TRACKING ? circleTracking

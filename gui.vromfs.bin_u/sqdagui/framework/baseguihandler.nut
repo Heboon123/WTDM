@@ -256,9 +256,9 @@ let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
         break
 
       let action = this.delayedActions.remove(0)
-      if (type(action) == "string" && action in this)
+      if (typeof(action) == "string" && action in this)
         this[action]()
-      else if (type(action) == "function")
+      else if (typeof(action) == "function")
         action()
     }
     this._isPopActionsInProgress = false
@@ -273,7 +273,7 @@ let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
   {
     if (this.isSceneActiveNoModals())
     {
-      if (type(func) == "function")
+      if (typeof(func) == "function")
         func()
       else
         assert(false, "doWhenActive recieved " + func + ", instead of function")
@@ -284,7 +284,7 @@ let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
   function doWhenActiveOnce(funcName)
   {
-    assert(type(funcName) == "string", "Error: doWhenActiveOnce work only with function names")
+    assert(typeof(funcName) == "string", "Error: doWhenActiveOnce work only with function names")
 
     let prevIdx = this.delayedActions.indexof(funcName)
     if (prevIdx != null)

@@ -4,6 +4,7 @@ from "%scripts/dagui_library.nut" import *
 #explicit-this
 
 let {
+  platformId,
   isXboxScarlett,
   isXbox,
   isPS4,

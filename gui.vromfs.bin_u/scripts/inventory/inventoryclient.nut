@@ -2,13 +2,12 @@ from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
 #explicit-this
-let inventory = require("inventory")
+
 let { format, split_by_chars } = require("string")
 let { get_time_msec } = require("dagor.time")
 let progressMsg = require("%sqDagui/framework/progressMsg.nut")
 let contentSignKeys = require("%scripts/inventory/inventoryContentSign.nut")
 let { APP_ID } = require("app")
-let { encode_uri_component } = require("url")
 
 enum validationCheckBitMask {
   VARTYPE            = 0x01
@@ -45,7 +44,7 @@ let requestInternal = function(requestData, data, callback, progressBoxData = nu
   if (progressBoxData)
     progressMsg.create(INVENTORY_PROGRESS_MSG_ID, progressBoxData)
 
-  inventory.request(requestData, function(res) {
+  ::inventory.request(requestData, function(res) {
     callback(res)
     if (progressBoxData)
       progressMsg.destroy(INVENTORY_PROGRESS_MSG_ID, true)
@@ -308,7 +307,7 @@ let class InventoryClient {
 
     let item = itemdefid && this.itemdefs?[itemdefid]
     if ((item?.market_hash_name ?? "") != "")
-      return "".concat(marketplaceBaseUrl, "&viewitem&n=", encode_uri_component(item.market_hash_name))
+      return marketplaceBaseUrl+ "&viewitem&n=" + ::encode_uri_component(item.market_hash_name)
 
     return null
   }
@@ -643,7 +642,7 @@ let class InventoryClient {
       this.requestItemDefs(function() {
         if (cb) {
           for (local i = newItems.len() - 1; i >= 0; --i) {
-            if (type(newItems[i].itemdef) != "table") {
+            if (typeof(newItems[i].itemdef) != "table") {
               newItems.remove(i)
             }
           }

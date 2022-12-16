@@ -389,7 +389,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
   function updateAxisItemsPos(valsArray)
   {
-    if (type(valsArray) != "array")
+    if (typeof(valsArray) != "array")
       return
 
     let objectsArray = ["test-game-box", "test-real-box"]

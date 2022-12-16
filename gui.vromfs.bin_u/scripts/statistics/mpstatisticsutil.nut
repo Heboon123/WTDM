@@ -734,13 +734,11 @@ let function guiStartMPStatScreenFromGame()
 
 ::getUnitClassIco <- function getUnitClassIco(unit)
 {
-  local unitName = unit?.name ?? ""
-  if (type(unit) == "string") {
-    unitName = unit
+  if (::u.isString(unit))
     unit = ::getAircraftByName(unit)
-  }
-  return unitName == "" ? ""
-    : unit?.customClassIco ?? $"#ui/gameuiskin#{unitName}_ico.svg"
+  if (!unit)
+    return ""
+  return unit.customClassIco ?? ::get_unit_class_icon_by_unit(unit, unit.name + "_ico")
 }
 
 ::getUnitClassColor <- function getUnitClassColor(unit)

@@ -12,7 +12,10 @@ let { requestUnknownXboxIds } = require("%scripts/contacts/externalContactsServi
 local needCheckSquadInvites = false // It required 'in moment', no need to save in persist
 let postponedInvitation = persist("postponedInvitation", @() Watched("0"))
 
-let getCurSquadId = @() ::g_squad_manager.isInSquad() ? ::g_squad_manager.getLeaderUid().tostring() : ::my_user_id_str
+let function getCurSquadId(needCheckSquadData = true) {
+  let squadLeaderUid = needCheckSquadData ? ::g_squad_manager.getLeaderUid().tostring() : ""
+  return squadLeaderUid != "" ? squadLeaderUid : ::my_user_id_str
+}
 
 let function sendInvitation(xuid) {
   let squadId = getCurSquadId()
@@ -22,42 +25,32 @@ let function sendInvitation(xuid) {
 }
 
 
-let function updateActivity() {
-  local maxPlayers = 4
-  local curPlayers = 1
-  let squadId = getCurSquadId()
-  if (::g_squad_manager.isInSquad()) {
-    maxPlayers = ::g_squad_manager.getMaxSquadSize()
-    curPlayers = ::g_squad_manager.getSquadSize()
-  }
-  let shouldSetActivity = ::g_squad_manager.isSquadLeader() || !::g_squad_manager.isInSquad()
-  if (shouldSetActivity) {
-    set_activity(squadId, JoinRestriction.InviteOnly, maxPlayers, curPlayers, squadId, function(success) {
-      logX($"Set activity succeeded: {success}",
-        $"squadId {squadId}, restriction {JoinRestriction.InviteOnly}, maxPlayers {maxPlayers}, curPlayers {curPlayers}")
-    })
-  } else {
-    logX("Skip setting activity for regular squad member")
-  }
+let function updateActivity(needCheckSquadData = true) {
+  let maxPlayers = needCheckSquadData ? ::g_squad_manager.getMaxSquadSize() : 4
+  let curPlayers = needCheckSquadData ? ::g_squad_manager.getSquadSize() : 0
+  let squadId = getCurSquadId(needCheckSquadData)
+  set_activity(squadId, JoinRestriction.InviteOnly, maxPlayers, curPlayers, squadId, function(success) {
+    logX($"Set activity succeeded: {success}",
+      $"squadId {squadId}, restriction {JoinRestriction.InviteOnly}, maxPlayers {maxPlayers}, curPlayers {curPlayers}")
+  })
 }
 
-let function clearActivity(callback = null) {
+let function clearActivity() {
   clear_activity(function(_) {
     logX("Activity cleared")
-    callback?()
   })
 }
 
 
 let function onSquadJoin() {
   logX("onSquadJoin")
-  clearActivity(updateActivity())
+  updateActivity()
 }
 
 
 let function onSquadLeave() {
   logX("onSquadLeave")
-  clearActivity(updateActivity())
+  clearActivity()
 }
 
 
@@ -82,7 +75,7 @@ let function onSquadSizeChange() {
 
 let function onSquadLeadershipTransfer() {
   logX("onSquadLeadershipTransfer")
-  clearActivity(updateActivity())
+  updateActivity()
 }
 
 let function acceptExistingIngameInvite(uid)
@@ -151,6 +144,7 @@ addListenersWithoutEnv({
   SquadSizeChanged = @(...) onSquadSizeChange()
   SquadLeadershipTransfered = @(...) onSquadLeadershipTransfer()
   SignOut = @(...) clearActivity()
+  LoginStateChanged = @(...) updateActivity(false)
   LoginComplete  = @(...) updateActivity()
 })
 

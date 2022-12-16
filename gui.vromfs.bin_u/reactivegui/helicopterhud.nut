@@ -53,108 +53,110 @@ let helicopterArbiterParamsTable = paramsTable(MainMask, SecondaryMask,
   helicopterArbiterParamsTablePos,
   hdpx(1), true, false, true)
 
-let function helicopterMainHud() {
+let function helicopterMainHud(isBackground) {
   return @(){
     watch = IsMainHudVisible
     children = IsMainHudVisible.value
     ? [
-      rocketAim(sh(0.8), sh(1.8), HudColor.value)
-      aamAim(HudColor, AlertColorHigh)
-      agmAim(HudColor)
-      gunDirection(HudColor, false)
-      fixedGunsDirection()
-      helicopterCCRP(HudColor)
-      vertSpeed(sh(4.0), sh(15), sw(50) + hdpx(315), sh(42.5), HudColor.value)
-      horSpeed(HudColor.value)
-      helicopterParamsTable()
-      taTarget(sw(25), sh(25))
+      rocketAim(sh(0.8), sh(1.8), HudColor.value, isBackground)
+      aamAim(HudColor, AlertColorHigh, isBackground)
+      agmAim(HudColor, isBackground)
+      gunDirection(HudColor, false, isBackground)
+      fixedGunsDirection(HudColor, isBackground)
+      helicopterCCRP(HudColor, isBackground)
+      vertSpeed(sh(4.0), sh(15), sw(50) + hdpx(315), sh(42.5), HudColor.value, isBackground)
+      horSpeed(HudColor.value, isBackground)
+      helicopterParamsTable(isBackground)
+      taTarget(sw(25), sh(25), isBackground)
     ]
     : null
   }
 }
 
-let function helicopterSightHud() {
+let function helicopterSightHud(isBackground) {
+
   return @(){
     watch = IsSightHudVisible
     children = IsSightHudVisible.value ?
     [
-      vertSpeed(sh(4.0), sh(30), sw(50) + hdpx(325), sh(35), HudColor.value)
-      turretAngles(HudColor, hdpx(150), hdpx(150), sw(50), sh(90))
-      agmLaunchZone(HudColor, sw(100), sh(100))
-      launchDistanceMax(HudColor, hdpx(150), hdpx(150), sw(50), sh(90))
-      helicopterSightParamsTable()
-      lockSight(HudColor, hdpx(150), hdpx(100), sw(50), sh(50))
+      vertSpeed(sh(4.0), sh(30), sw(50) + hdpx(325), sh(35), HudColor.value, isBackground)
+      turretAngles(HudColor, hdpx(150), hdpx(150), sw(50), sh(90), isBackground)
+      agmLaunchZone(HudColor, sw(100), sh(100), isBackground)
+      launchDistanceMax(HudColor, hdpx(150), hdpx(150), sw(50), sh(90), isBackground)
+      helicopterSightParamsTable(isBackground)
+      lockSight(HudColor, hdpx(150), hdpx(100), sw(50), sh(50), isBackground)
       targetSize(HudColor, sw(100), sh(100))
-      agmTrackZoneComponent(HudColor)
-      agmTrackerStatusComponent(HudColor, sw(50), sh(41))
-      laserDesignatorComponent(HudColor, sw(50), sh(42))
-      laserDesignatorStatusComponent(HudColor, sw(50), sh(38))
-      sight(HudColor, sw(50), sh(50), hdpx(500))
-      rangeFinder(HudColor, sw(50), sh(59))
-      detectAlly(sw(51), sh(35))
-      agmAim(HudColor)
-      gunDirection(HudColor, true)
+      agmTrackZoneComponent(HudColor, isBackground)
+      agmTrackerStatusComponent(HudColor, sw(50), sh(41), isBackground)
+      laserDesignatorComponent(HudColor, sw(50), sh(42), isBackground)
+      laserDesignatorStatusComponent(HudColor, sw(50), sh(38), isBackground)
+      sight(HudColor, sw(50), sh(50), hdpx(500), isBackground)
+      rangeFinder(HudColor, sw(50), sh(59), isBackground)
+      detectAlly(sw(51), sh(35), isBackground)
+      agmAim(HudColor, isBackground)
+      gunDirection(HudColor, true, isBackground)
     ]
     : null
   }
 }
 
-let function helicopterGunnerHud() {
+let function helicopterGunnerHud(isBackground) {
   return @(){
     watch = IsGunnerHudVisible
     children = IsGunnerHudVisible.value
     ? [
-        gunDirection(HudColor, false)
-        fixedGunsDirection()
-        helicopterCCRP(HudColor)
-        vertSpeed(sh(4.0), sh(15), sw(50) + hdpx(315), sh(42.5), HudColor.value)
-        helicopterParamsTable()
+        gunDirection(HudColor, false, isBackground)
+        fixedGunsDirection(HudColor, isBackground)
+        helicopterCCRP(HudColor, isBackground)
+        vertSpeed(sh(4.0), sh(15), sw(50) + hdpx(315), sh(42.5), HudColor.value, isBackground)
+        helicopterParamsTable(isBackground)
       ]
     : null
   }
 }
 
-let function pilotHud() {
+let function pilotHud(isBackground) {
   return @(){
     watch = IsPilotHudVisible
     children = IsPilotHudVisible.value ?
     [
-      vertSpeed(sh(4.0), sh(15), sw(50) + hdpx(325), sh(42.5), HudColor.value)
-      helicopterParamsTable()
+      vertSpeed(sh(4.0), sh(15), sw(50) + hdpx(325), sh(42.5), HudColor.value, isBackground)
+      helicopterParamsTable(isBackground)
     ]
     : null
   }
 }
 
-let function helicopterArbiterHud() {
+let function helicopterArbiterHud(isBackground) {
   return @(){
     watch = IsArbiterHudVisible
     children = IsArbiterHudVisible.value ?
     [
-      helicopterArbiterParamsTable()
+      helicopterArbiterParamsTable(isBackground)
     ]
     : null
   }
 }
 
-let function mkHelicopterIndicators() {
+let function mkHelicopterIndicators(isBackground) {
   return @() {
     watch = [IsRadarHudVisible, IsMfdEnabled, HudColor]
     children = [
-      helicopterMainHud()
-      helicopterSightHud()
-      helicopterGunnerHud()
-      helicopterArbiterHud()
-      pilotHud()
+      helicopterMainHud(isBackground)
+      helicopterSightHud(isBackground)
+      helicopterGunnerHud(isBackground)
+      helicopterArbiterHud(isBackground)
+      pilotHud(isBackground)
       !IsMfdEnabled.value ? twsElement(HudColor, twsPosComputed, twsSize) : null
       !IsMfdEnabled.value ? radarElement(HudColor, radarPosWatched, radarSize) : null
-      !IsRadarHudVisible.value ? compassElem(HudColor, compassSize, [sw(50) - 0.5*compassSize[0], sh(15)]) : null
-      bombSightComponent(sh(10.0), sh(10.0))
+      !IsRadarHudVisible.value ? compassElem(HudColor, compassSize, [sw(50) - 0.5*compassSize[0], sh(15)], isBackground) : null
+      bombSightComponent(sh(10.0), sh(10.0), isBackground)
     ]
   }
 }
 
-let helicopterIndicators = mkHelicopterIndicators()
+let helicopterIndicators = mkHelicopterIndicators(false)
+let helicopterIndicatorsBackground = mkHelicopterIndicators(true)
 
 let indicatorsCtor = @() {
   watch = [
@@ -165,7 +167,7 @@ let indicatorsCtor = @() {
   halign = ALIGN_LEFT
   valign = ALIGN_TOP
   children = (IndicatorsVisible.value || IsMfdEnabled.value)
-    ? helicopterIndicators
+    ? [helicopterIndicatorsBackground, helicopterIndicators]
     : null
  }
 

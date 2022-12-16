@@ -53,7 +53,6 @@ let { hasEveryDayLoginAward } = require("%scripts/items/everyDayLoginAward.nut")
 let { is_replay_turned_on, is_replay_saved, is_replay_present,
   on_save_replay, on_view_replay } = require("replays")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
-let { is_benchmark_game_mode } = require("mission")
 
 const DEBR_LEADERBOARD_LIST_COLUMNS = 2
 const DEBR_AWARDS_LIST_COLUMNS = 3
@@ -150,7 +149,7 @@ let statTooltipColumnParamByType = {
   else
     log("gui_nav gui_start_debriefing back_from_replays is null");
 
-  if (is_benchmark_game_mode())
+  if (gm == GM_BENCHMARK)
   {
     let title = ::loc_current_mission_name()
     let benchmark_data = ::stat_get_benchmark()
@@ -2906,9 +2905,6 @@ let statTooltipColumnParamByType = {
     if (this.isInProgress)
       return
 
-    if (this.needShowWorldWarOperationBtn())
-      this.switchWwOperationToCurrent()
-
     this.isInProgress = true
 
     ::autosave_replay()
@@ -2923,7 +2919,6 @@ let statTooltipColumnParamByType = {
     else
     {  //do_finalize_debriefing
       this.save()
-      ::checkRemnantPremiumAccount()
     }
     this.playCountSound(false)
   }

@@ -27,7 +27,6 @@ let { APP_ID } = require("app")
 let { getUnlockNameText } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { ceil, floor } = require("math")
-let lbDataType = require("%scripts/leaderboard/leaderboardDataType.nut")
 
 ::gui_modal_userCard <- function gui_modal_userCard(playerInfo)  // uid, id (in session), name
 {
@@ -969,15 +968,15 @@ let lbDataType = require("%scripts/leaderboard/leaderboardDataType.nut")
             else
             {
               let value = (lb[lbCategory.field].idx < 0) ? -1 : lb[lbCategory.field].idx + 1
-              res = lbCategory.getItemCell(value, null, false, lbDataType.PLACE)
+              res = lbCategory.getItemCell(value, null, false, ::g_lb_data_type.PLACE)
             }
           }
           else
           {
             if (!row.showLbPlaces)
-              res = lbCategory.getItemCell(lbCategory.lbDataType == lbDataType.PERCENT ? -1 : 0)
+              res = lbCategory.getItemCell(lbCategory.lbDataType == ::g_lb_data_type.PERCENT ? -1 : 0)
             else
-              res = lbCategory.getItemCell(-1, null, false, lbDataType.PLACE)
+              res = lbCategory.getItemCell(-1, null, false, ::g_lb_data_type.PLACE)
           }
 
           if ("tooltip" in res)

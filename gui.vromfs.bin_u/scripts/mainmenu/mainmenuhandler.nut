@@ -6,7 +6,6 @@ from "%scripts/dagui_library.nut" import *
 
 let { format } = require("string")
 let { debug_dump_stack } = require("dagor.debug")
-let { hangar_get_current_unit_name } = require("hangar")
 let SecondsUpdater = require("%sqDagui/timer/secondsUpdater.nut")
 let time = require("%scripts/time.nut")
 let contentStateModule = require("%scripts/clientState/contentState.nut")
@@ -149,7 +148,7 @@ let { getSuggestedSkin } = require("%scripts/customization/suggestedSkins.nut")
   forceUpdateSelUnitInfo = @() this.updateSelUnitInfo(true)
   function updateSelUnitInfo(isForced = false)
   {
-    let unitName = hangar_get_current_unit_name()
+    let unitName = ::hangar_get_current_unit_name()
     if (!isForced && unitName == this.visibleUnitInfoName)
       return
     this.visibleUnitInfoName = unitName
@@ -182,7 +181,7 @@ let { getSuggestedSkin } = require("%scripts/customization/suggestedSkins.nut")
   }
 
   function onSkinPreview() {
-    getSuggestedSkin(hangar_get_current_unit_name())?.doPreview()
+    getSuggestedSkin(::hangar_get_current_unit_name())?.doPreview()
   }
 
   function updateUnitRentInfo(unit)
@@ -245,6 +244,6 @@ let { getSuggestedSkin } = require("%scripts/customization/suggestedSkins.nut")
   }
 
   function onEventItemsShopUpdate(_) {
-    this.updateSuggestedSkin(::getAircraftByName(hangar_get_current_unit_name()))
+    this.updateSuggestedSkin(::getAircraftByName(::hangar_get_current_unit_name()))
   }
 }

@@ -13,11 +13,11 @@ let {
   IsPilotHudVisible, IsMainHudVisible, IsGunnerHudVisible,
   HudColor, AlertColorHigh, IsBomberViewHudVisible,
   isBombSightActivated, isAAMSightActivated, isRocketSightActivated,
-  isCanonSightActivated, isTurretSightActivated, isParamTableActivated, IsLaserDesignatorEnabled } = require("airState.nut")
+  isCanonSightActivated, isTurretSightActivated, isParamTableActivated } = require("airState.nut")
 let aamAim = require("rocketAamAim.nut")
 let agmAim = require("agmAim.nut")
 let gbuAim = require("gbuAim.nut")
-let {paramsTable, compassElem, lockSight, rangeFinder}  = require("airHudElems.nut")
+let {paramsTable, compassElem, lockSight}  = require("airHudElems.nut")
 
 let {
   aircraftTurretsComponent, fixedGunsDirection, aircraftRocketSight,
@@ -45,105 +45,81 @@ let aircraftArbiterParamsTable = paramsTable(MainMask, SecondaryMask,
         aircraftArbiterParamsTablePos,
         hdpx(1), true, false, true)
 
-
-let function mkAircraftMainHud() {
-  let watch = [IsMainHudVisible, IsBomberViewHudVisible, isRocketSightActivated, isAAMSightActivated,
-    isTurretSightActivated, isCanonSightActivated, isParamTableActivated, isBombSightActivated]
-
-  return function() {
-    let children = IsMainHudVisible.value
-    ? [
-        isRocketSightActivated.value ? aircraftRocketSight(sh(10.0), sh(10.0)) : null
-        isAAMSightActivated.value ? aamAim(HudColor, AlertColorHigh) : null
-        agmAim(HudColor)
-        gbuAim(HudColor)
-        isTurretSightActivated.value ? aircraftTurretsComponent(HudColor) : null
-        isCanonSightActivated.value ? fixedGunsDirection(HudColor) : null
-        isParamTableActivated.value ? aircraftParamsTable() : null
-        isBombSightActivated.value ? bombSightComponent(sh(10.0), sh(10.0)) : null
-      ]
-        : IsBomberViewHudVisible.value
-    ? [
-        aircraftParamsTable()
-      ]
-    : null
-
-    return {
-      watch
-      children
-    }
+let function aircraftMainHud(isBackground) {
+  return @(){
+    watch = [IsMainHudVisible, IsBomberViewHudVisible, isRocketSightActivated, isAAMSightActivated,
+      isTurretSightActivated, isCanonSightActivated, isParamTableActivated, isBombSightActivated]
+    children =
+      IsMainHudVisible.value
+        ? [
+            isRocketSightActivated.value ? aircraftRocketSight(sh(10.0), sh(10.0)) : null
+            isAAMSightActivated.value ? aamAim(HudColor, AlertColorHigh, isBackground) : null
+            agmAim(HudColor, isBackground)
+            gbuAim(HudColor, isBackground)
+            isTurretSightActivated.value ? aircraftTurretsComponent(HudColor) : null
+            isCanonSightActivated.value ? fixedGunsDirection(HudColor, isBackground) : null
+            isParamTableActivated.value ? aircraftParamsTable(isBackground) : null
+            isBombSightActivated.value ? bombSightComponent(sh(10.0), sh(10.0), isBackground) : null
+          ]
+            : IsBomberViewHudVisible.value
+        ? [
+            aircraftParamsTable(isBackground, false)
+          ]
+            : null
   }
 }
 
-let aircraftSightHud = @() {
-  watch = [TargetingPodSightVisible, IsLaserDesignatorEnabled]
-  children = TargetingPodSightVisible.value ?
-    [
-      targetingPodSight(sw(100), sh(100))
-      laserDesignatorStatusComponent(HudColor, sw(50), sh(38))
-      IsLaserDesignatorEnabled.value ? rangeFinder(HudColor, sw(50), sh(59)) : null
-      lockSight(HudColor, hdpx(150), hdpx(100), sw(50), sh(50))
-    ]
-    : null
-}
 
-
-let function aircraftGunnerHud() {
-  return {
+let aircraftGunnerHud = @(isBackground)
+  @() {
     watch = [IsGunnerHudVisible, isParamTableActivated, isTurretSightActivated]
     children = IsGunnerHudVisible.value
       ? [
         isTurretSightActivated.value ? aircraftTurretsComponent() : null
-        isParamTableActivated.value ? aircraftParamsTable() : null
+        isParamTableActivated.value ? aircraftParamsTable(isBackground) : null
       ]
       : null
   }
-}
 
-let function aircraftPilotHud() {
-  return {
+let aircraftPilotHud = @(isBackground)
+  @(){
     watch = [IsPilotHudVisible, isParamTableActivated]
     children = IsPilotHudVisible.value && isParamTableActivated.value
-      ? aircraftParamsTable()
+      ? aircraftParamsTable(isBackground)
       : null
   }
-}
 
 
-let function weaponHud() {
-  return {
+let weaponHud = @(isBackground)
+  @() {
     watch = IsWeaponHudVisible
     children = IsWeaponHudVisible.value
       ? [
-        aamAim(HudColor, AlertColorHigh)
-        agmAim(HudColor)
-        gbuAim(HudColor)
+        aamAim(HudColor, AlertColorHigh, isBackground)
+        agmAim(HudColor, isBackground)
+        gbuAim(HudColor, isBackground)
       ]
       : null
   }
-}
 
-let function aircraftArbiterHud() {
-  return {
+let aircraftArbiterHud = @(isBackground)
+  @(){
     watch = [IsArbiterHudVisible, isParamTableActivated]
     children = IsArbiterHudVisible.value && isParamTableActivated.value
-      ? aircraftArbiterParamsTable()
+      ? aircraftArbiterParamsTable(isBackground)
       : null
   }
-}
 
-let function mkAgmAimIndicator(watchedColor) {
-  return function() {
-    return {
-      watch = AtgmTrackerVisible
-      size = flex()
-      children = AtgmTrackerVisible.value ? [agmAim(watchedColor)] : null
-    }
+let agmAimIndicator = @(watchedColor, isBackground)
+  @(){
+    watch = AtgmTrackerVisible
+    size = flex()
+    children = AtgmTrackerVisible.value ? [agmAim(watchedColor, isBackground)] : null
   }
-}
 
 
-let function aircraftHUDs() {
+let function aircraftHUDs(isBackground) {
+
   let radarSize = sh(28)
   let radarPosComputed = Computed(@() [
     bw.value + 0.99 * rw.value - radarSize,
@@ -157,28 +133,30 @@ let function aircraftHUDs() {
   ])
 
   return @() {
-    watch = [OpticAtgmSightVisible, IndicatorsVisible, LaserAtgmSightVisible]
+    watch = [OpticAtgmSightVisible, IndicatorsVisible, LaserAtgmSightVisible, TargetingPodSightVisible]
     children =
     [
-      mkAircraftMainHud()
-      aircraftGunnerHud
-      aircraftPilotHud
-      aircraftArbiterHud
+      aircraftMainHud(isBackground)
+      aircraftGunnerHud(isBackground)
+      aircraftPilotHud(isBackground)
+      aircraftArbiterHud(isBackground)
       twsElement(HudColor, twsPosWatched, twsSize)
       radarElement(HudColor, radarPosComputed, radarSize)
       OpticAtgmSightVisible.value ? opticAtgmSight(sw(100), sh(100)) : null
-      mkAgmAimIndicator(HudColor)
-      !IndicatorsVisible.value ? null : weaponHud()
-      laserPointComponent(HudColor)
-      LaserAtgmSightVisible.value ? laserAtgmSight(sw(100), sh(100)) : null
-      aircraftSightHud
-      !LaserAtgmSightVisible.value ? compassElem(HudColor, compassSize, [sw(50) - 0.5*compassSize[0], sh(15)]) : null
+      agmAimIndicator(HudColor, isBackground)
+      !IndicatorsVisible.value ? null : weaponHud(isBackground)
+      laserPointComponent(HudColor, isBackground)
+      LaserAtgmSightVisible.value && !isBackground ? laserAtgmSight(sw(100), sh(100)) : null
+      TargetingPodSightVisible.value && !isBackground ? targetingPodSight(sw(100), sh(100)) : null
+      TargetingPodSightVisible.value && !isBackground ? laserDesignatorStatusComponent(HudColor, sw(50), sh(38), isBackground) : null
+      TargetingPodSightVisible.value && !isBackground ? lockSight(HudColor, hdpx(150), hdpx(100), sw(50), sh(50), isBackground) : null
+      !LaserAtgmSightVisible.value ? compassElem(HudColor, compassSize, [sw(50) - 0.5*compassSize[0], sh(15)], isBackground) : null
     ]
   }
 }
 
 let function aircraftRoot() {
-  let children = aircraftHUDs()
+  let children = [aircraftHUDs(true), aircraftHUDs(false)]
 
   return {
     halign = ALIGN_LEFT

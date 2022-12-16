@@ -5,7 +5,6 @@ from "%scripts/dagui_library.nut" import *
 #explicit-this
 
 let { format } = require("string")
-let { shell_launch } = require("url")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
 let tutorialModule = require("%scripts/user/newbieTutorialDisplay.nut")
@@ -42,6 +41,11 @@ let openQrWindow = require("%scripts/wndLib/qrWindow.nut")
   }
   else if (unlockType == "TournamentReward")
     return ::gui_handlers.TournamentRewardReceivedWnd.open(config)
+  else if (unlockType == UNLOCKABLE_AIRCRAFT)
+  {
+    if (!hasFeature("Tanks") && ::getAircraftByName(config?.id)?.isTank())
+      return false
+  }
 
   ::gui_start_modal_wnd(::gui_handlers.ShowUnlockHandler, { config=config })
   return true
@@ -300,7 +304,7 @@ let openQrWindow = require("%scripts/wndLib/qrWindow.nut")
     let linkString = format(loc("msgBox/viralAcquisition"), ::my_user_id_str)
     let msg_head = format(loc("mainmenu/invitationHead"), ::my_user_name)
     let msg_body = format(loc("mainmenu/invitationBody"), linkString)
-    shell_launch($"mailto:yourfriend@email.com?subject={msg_head}&body={msg_body}")
+    ::shell_launch("mailto:yourfriend@email.com?subject=" + msg_head + "&body=" + msg_body)
   }
 
   function onFacebookPostLink()

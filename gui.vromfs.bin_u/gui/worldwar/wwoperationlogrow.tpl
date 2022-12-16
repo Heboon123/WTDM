@@ -87,8 +87,6 @@ tdiv {
           width:t='1@wwArmySmallIconWidth'
           behavior:t='button'
           armyId:t=''
-          focusBtnName:t='A'
-          showConsoleImage:t='no'
           on_click:t = 'onClickArmy'
           text:t=' '
 
@@ -130,8 +128,6 @@ tdiv {
           width:t='1@wwArmySmallIconWidth'
           behavior:t='button'
           armyId:t=''
-          focusBtnName:t='A'
-          showConsoleImage:t='no'
           on_click:t = 'onClickArmy'
           text:t=' '
 

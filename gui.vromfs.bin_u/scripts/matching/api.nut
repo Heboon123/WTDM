@@ -18,7 +18,7 @@ let _matching = {
       return params
     foreach(key, value in params)
     {
-      if (type(value) == "string")
+      if (typeof value == "string")
       {
         switch (key)
         {

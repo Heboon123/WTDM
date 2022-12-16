@@ -30,6 +30,7 @@ return [
   }
   {
     id = "ID_TRACKER_RESET_POSITION"
+    checkGroup = ctrlGroups.COMMON
     checkAssign = false
   }
   //
@@ -43,12 +44,14 @@ return [
   {
     id = "tracker_camx"
     type = CONTROL_TYPE.AXIS
+    checkGroup = ctrlGroups.COMMON
     checkAssign = false
     showFunc = @() ::is_tracker_joystick()
   }
   {
     id = "tracker_camy"
     type = CONTROL_TYPE.AXIS
+    checkGroup = ctrlGroups.COMMON
     checkAssign = false
     showFunc = @() ::is_tracker_joystick()
   }

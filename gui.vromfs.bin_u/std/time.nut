@@ -1,4 +1,3 @@
-let { abs } = require("math")
 let { format, split_by_chars } = require("string")
 let {isStringInteger} = require("string.nut")
 
@@ -30,24 +29,21 @@ let function secondsToTime(time){
   if(type(time)=="table" && "seconds" in time)
     return time
   let s = time.tointeger()
-  return {
-    days = s / TIME_DAY_IN_SECONDS
-    hours = (s / TIME_HOUR_IN_SECONDS) % TIME_DAY_IN_HOURS
-    minutes = (s % TIME_HOUR_IN_SECONDS) / TIME_MINUTE_IN_SECONDS
-    seconds = s % TIME_MINUTE_IN_SECONDS
-    milliseconds = ((time-s)*1000).tointeger()
-  }
+  let milliseconds = ((time-s)*1000).tointeger()
+  let hoursNum = (s / TIME_HOUR_IN_SECONDS) % 24
+  let minutesNum = (s % TIME_HOUR_IN_SECONDS) / TIME_MINUTE_IN_SECONDS
+  let secondsNum = s % TIME_MINUTE_IN_SECONDS
+  let days = (s / TIME_DAY_IN_SECONDS)
+  return {days=days, hours = hoursNum, minutes = minutesNum, seconds = secondsNum, milliseconds=milliseconds}
 }
 
 let function secondsToTimeSimpleString(time) {
-  let sign = time >= 0 ? "" : "-"
-  let { days=0, hours=0, minutes=0, seconds=0 } = secondsToTime(abs(time.tointeger()))
-  let totalHours = days * TIME_DAY_IN_HOURS + hours
-  let hoursStr = totalHours > 0 ? totalHours.tostring() : null
-  let minuteStr = totalHours > 0 ? format("%02d", minutes) : minutes.tostring()
-  let secondsStr = format("%02d", seconds)
+  let {hours=0, minutes=0, seconds=0} = secondsToTime(time)
+  let minuteStr = hours > 0 ? format("%02d", minutes) : minutes.tostring()
+  let hoursStr = hours > 0 ? hours.tostring() : null
+  let secondsStr = format("%02d", seconds)//minutes+hours > 0 ? format("%02d", seconds) : seconds.tostring()
   let res = ":".join([hoursStr,minuteStr,secondsStr].filter(@(v) v != null))
-  return $"{sign}{res}"
+  return time < 0 ? $"-{res}" : $"{res}"
 }
 
 let function roundTime(time){

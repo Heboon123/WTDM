@@ -9,7 +9,6 @@ let { debug_dump_stack } = require("dagor.debug")
 let time = require("%scripts/time.nut")
 let { acos, PI } = require("math")
 let penalty = require("penalty")
-let { hangar_is_model_loaded, hangar_get_loaded_unit_name } = require("hangar")
 let decorLayoutPresets = require("%scripts/customization/decorLayoutPresetsWnd.nut")
 let unitActions = require("%scripts/unit/unitActions.nut")
 let { showResource, canStartPreviewScene,
@@ -73,7 +72,7 @@ enum decalTwoSidedMode
 
   if (!showedUnit.value
       ||
-        ( hangar_get_loaded_unit_name() == showedUnit.value.name
+        ( ::hangar_get_loaded_unit_name() == showedUnit.value.name
         && !::is_loaded_model_high_quality()
         && !::check_package_and_ask_download("pkg_main"))
     )
@@ -153,7 +152,6 @@ enum decalTwoSidedMode
   isDecoratorItemUsed = false
 
   isUnitTank = false
-  isUnitShipOrBoat = false
   isUnitOwn = false
 
   currentState = decoratorEditState.NONE
@@ -251,7 +249,6 @@ enum decalTwoSidedMode
   {
     this.isUnitOwn = this.unit.isUsable()
     this.isUnitTank = this.unit.isTank()
-    this.isUnitShipOrBoat = this.unit.isShipOrBoat()
 
     this.access_Decals      = !this.previewMode && this.isUnitOwn && ::g_decorator_type.DECALS.isAvailable(this.unit)
     this.access_Attachables = !this.previewMode && this.isUnitOwn && ::g_decorator_type.ATTACHABLES.isAvailable(this.unit)
@@ -345,7 +342,7 @@ enum decalTwoSidedMode
 
   function exportSampleUserSkin(_obj)
   {
-    if (!hangar_is_model_loaded())
+    if (!::hangar_is_loaded())
       return
 
     if (!::can_save_current_skin_template())
@@ -367,7 +364,7 @@ enum decalTwoSidedMode
 
   function refreshSkinsList(_obj)
   {
-    if (!hangar_is_model_loaded())
+    if (!::hangar_is_loaded())
       return
 
     this.updateUserSkinList()
@@ -395,7 +392,7 @@ enum decalTwoSidedMode
       this.switchUnit(modelName)
     else
       this.updateMainGuiElements()
-    if (hangar_get_loaded_unit_name() == this.unit.name
+    if (::hangar_get_loaded_unit_name() == this.unit.name
         && !::is_loaded_model_high_quality())
       ::check_package_and_ask_download("pkg_main", null, null, this, "air_in_hangar", this.goBack)
   }
@@ -518,7 +515,7 @@ enum decalTwoSidedMode
 
   function createSkinSliders()
   {
-    if (!this.isUnitOwn || (!this.isUnitTank && !this.isUnitShipOrBoat))
+    if (!this.isUnitOwn || !this.isUnitTank)
       return
 
     let options = [::USEROPT_TANK_CAMO_SCALE,
@@ -546,7 +543,7 @@ enum decalTwoSidedMode
 
   function updateSkinSliders()
   {
-    if (!this.isUnitOwn || (!this.isUnitTank && !this.isUnitShipOrBoat))
+    if (!this.isUnitOwn || !this.isUnitTank)
       return
 
     let skinIndex = this.skinList?.values.indexof(this.previewSkinId) ?? 0
@@ -853,7 +850,7 @@ enum decalTwoSidedMode
 
           skins_div = !isInEditMode && !this.decorMenu?.isOpened && this.access_Skins
           user_skins_block = !this.previewMode && this.access_UserSkins
-          tank_skin_settings = !this.previewMode && (this.isUnitTank || this.isUnitShipOrBoat)
+          tank_skin_settings = !this.previewMode && this.isUnitTank
 
           previewed_decorator_div  = !isInEditMode && this.decoratorPreview
           previewed_decorator_unit = !isInEditMode && this.decoratorPreview && this.initialUnitId && this.initialUnitId != this.unit?.name
@@ -884,7 +881,7 @@ enum decalTwoSidedMode
     if (needUpdateSlotDivs)
       this.updateSlotsDivsVisibility(decoratorType)
 
-    let isHangarLoaded = hangar_is_model_loaded()
+    let isHangarLoaded = ::hangar_is_loaded()
     ::enableBtnTable(this.scene, {
           decalslots_div     = isHangarLoaded
           slots_list         = isHangarLoaded
@@ -1043,7 +1040,7 @@ enum decalTwoSidedMode
 
   function onUpdate(_obj, _dt)
   {
-    this.showLoadingRot(!hangar_is_model_loaded())
+    this.showLoadingRot(!::hangar_is_loaded())
   }
 
   function getCurrentDecoratorSlot(decoratorType)
@@ -2207,7 +2204,7 @@ enum decalTwoSidedMode
   {
     if (!this.previewParams)
       return
-    if (hangar_get_loaded_unit_name() == this.previewParams.unitName)
+    if (::hangar_get_loaded_unit_name() == this.previewParams.unitName)
       this.removeAllDecorators(false)
     switch (this.previewMode)
     {

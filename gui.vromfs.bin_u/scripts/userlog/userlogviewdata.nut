@@ -1149,7 +1149,7 @@ let function getLinkMarkup(text, url, acccessKeyName=null)
       {
         if (logObj?.item)
         {
-          if (type(logObj.item) == "array")
+          if (typeof(logObj.item) == "array")
           {
             let items = logObj.item
             while(items.len())

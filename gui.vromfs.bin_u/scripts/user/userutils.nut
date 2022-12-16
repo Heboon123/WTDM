@@ -10,7 +10,6 @@ let { targetPlatform } = require("%scripts/clientState/platform.nut")
 let { getMyCrewUnitsState } = require("%scripts/slotbar/crewsListInfo.nut")
 let { getSelSlotsData } = require("%scripts/slotbar/slotbarState.nut")
 let { queueProfileJwt } = require("%scripts/queue/queueBattleData.nut")
-let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 let function getMyStateData() {
   let profileInfo = ::get_profile_info()
@@ -60,15 +59,7 @@ let function getMyStateData() {
 
 let havePlayerTag = @(tag) ::get_player_tags().indexof(tag) != null
 
-let isGuestLogin = Watched(havePlayerTag("guestlogin"))
-let updateGuestLogin = @() isGuestLogin(havePlayerTag("guestlogin"))
-
-addListenersWithoutEnv({
-  AuthorizeComplete = @(_) updateGuestLogin()
-})
-
 return {
   getMyStateData
   havePlayerTag
-  isGuestLogin
 }

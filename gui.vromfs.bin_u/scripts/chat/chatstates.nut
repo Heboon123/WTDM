@@ -6,8 +6,6 @@ from "%scripts/dagui_library.nut" import *
 let platformModule = require("%scripts/clientState/platform.nut")
 let crossplayModule = require("%scripts/social/crossplay.nut")
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
-let { hasChat } = require("%scripts/user/matchingFeature.nut")
-let { isGuestLogin } = require("%scripts/user/userUtils.nut")
 
 local xboxChatEnabledCache = null
 let function getXboxChatEnableStatus(needOverlayMessage = false) {
@@ -79,8 +77,6 @@ let function canUseVoice() {
   return hasFeature("Voice") && ::gchat_is_voice_enabled()
 }
 
-let hasMenuChat = Computed(@() hasChat.value && !isGuestLogin.value)
-
 subscriptions.addListenersWithoutEnv({
   SignOut = @(_p) invalidateCache()
 })
@@ -92,5 +88,4 @@ return {
   attemptShowOverlayMessage = attemptShowOverlayMessage
   isCrossNetworkMessageAllowed = isCrossNetworkMessageAllowed
   chatStatesCanUseVoice = canUseVoice
-  hasMenuChat
 }

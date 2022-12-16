@@ -22,7 +22,7 @@ foreach (notificationName, callback in
                 if (from == "web-service")
                 {
                   let res = ::handle_web_rpc(params)
-                  if (type(res) == "table")
+                  if (typeof(res) == "table")
                     cb(res)
                   else
                     cb({result = res})

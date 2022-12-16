@@ -715,8 +715,10 @@ const PRESETS_VERSION_SAVE_ID = "presetsVersion"
         unitTypesMask = unitTypesMask | (1 << unitType)
     }
 
+    let enabled = hasFeature("Tanks") || (unitTypesMask != (1 << ES_UNIT_TYPE_TANK))
+
     preset.unitTypesMask = unitTypesMask
-    preset.enabled = true
+    preset.enabled = enabled
 
     return preset
   }

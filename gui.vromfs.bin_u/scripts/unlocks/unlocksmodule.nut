@@ -3,7 +3,8 @@ from "%scripts/dagui_library.nut" import *
 let { isPlatformSony, isPlatformXboxOne,
   isPlatformPC } = require("%scripts/clientState/platform.nut")
 let psnUser = require("sony.user")
-let { getUnlockConditions, isTimeRangeCondition } = require("%scripts/unlocks/unlocksConditions.nut")
+let { getUnlockConditions } = require("%scripts/unlocks/unlocksConditions.nut")
+let { hasFeatureBasic } = require("%scripts/user/features.nut")
 let { getTimestampFromStringUtc, daysToSeconds } = require("%scripts/time.nut")
 let { split_by_chars } = require("string")
 
@@ -29,7 +30,7 @@ let function isUnlockVisibleByTime(id, hasIncludTimeBefore = true, resWhenNoTime
       || ::is_numeric(unlock?.visibleDaysBefore)
       || ::is_numeric(unlock?.visibleDaysAfter))
     foreach (cond in getUnlockConditions(unlock?.mode)) {
-      if (!isTimeRangeCondition(cond.type))
+      if (!isInArray(cond.type, ::unlock_time_range_conditions))
         continue
 
       let startTime = getTimestampFromStringUtc(cond.beginDate)
@@ -68,7 +69,7 @@ let function isUnlockVisibleOnCurPlatform(unlockBlk) {
     return false
   if (unlockBlk?.ps_plus && !psnUser.hasPremium())
     return false
-  if (unlockBlk?.hide_for_platform == platformId)
+  if (unlockBlk?.hide_for_platform == target_platform)
     return false
 
   let unlockType = ::get_unlock_type(unlockBlk?.type ?? "")
@@ -103,6 +104,8 @@ let function isUnlockVisible(unlockBlk, needCheckVisibilityByPlatform = true) {
       if (cond?.type == "playerHasFeature" && cond?.feature != null && !hasFeature(cond.feature))
         return false
 
+  if (!hasFeatureBasic("Tanks") && ::is_unlock_tanks_related(unlockBlk?.id, unlockBlk))
+    return false
   if (!checkDependingUnlocks(unlockBlk))
     return false
   if (isHiddenByUnlockedUnlocks(unlockBlk))

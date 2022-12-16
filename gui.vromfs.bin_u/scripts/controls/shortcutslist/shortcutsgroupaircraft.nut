@@ -10,7 +10,6 @@ let { unitClassType } = require("%scripts/unit/unitClassType.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
 let { MAX_CAMERA_SPEED, MIN_CAMERA_SPEED } = require("%scripts/controls/controlsConsts.nut")
-let { ActionGroup } = require("controls")
 
 let isMouseAimSelected = @() (::g_controls_utils.getMouseUsageMask() & AIR_MOUSE_USAGE.AIM)
 let needFullGunnerSettings = @() isPlatformSony || isPlatformXboxOne || !isMouseAimSelected()
@@ -38,7 +37,7 @@ return [
     id = "ID_PLANE_SWAP_GAMEPAD_STICKS_WITHOUT_MODIFIERS"
     type = CONTROL_TYPE.BUTTON
     onClick = @() controlsOperations.swapGamepadSticks(
-      ActionGroup.AIRPLANE,
+      ctrlGroups.AIR,
       controlsOperations.Flags.WITHOUT_MODIFIERS
     )
     showFunc = @() ::have_xinput_device()
@@ -46,7 +45,7 @@ return [
   {
     id = "ID_PLANE_SWAP_GAMEPAD_STICKS"
     type = CONTROL_TYPE.BUTTON
-    onClick = @() controlsOperations.swapGamepadSticks( ActionGroup.AIRPLANE )
+    onClick = @() controlsOperations.swapGamepadSticks( ctrlGroups.AIR )
     showFunc = @() ::have_xinput_device()
   }
 //-------------------------------------------------------
@@ -341,6 +340,7 @@ return [
   }
   {
     id = "ID_FUEL_TANKS"
+    showFunc = @() hasFeature("Payload")
     checkAssign = false
   }
   {
@@ -498,10 +498,6 @@ return [
     id = "ID_UNLOCK_TARGETING"
     checkAssign = false
     needShowInHelp = true
-  }
-  {
-    id = "ID_DESIGNATE_TARGET"
-    checkAssign = false
   }
 //-------------------------------------------------------
   {
@@ -680,30 +676,37 @@ return [
   }
   {
     id = "ID_MFD_1_PAGE_PLANE"
+    checkGroup = ctrlGroups.AIR
     checkAssign = false
   }
   {
     id = "ID_MFD_2_PAGE_PLANE"
+    checkGroup = ctrlGroups.AIR
     checkAssign = false
   }
   {
     id = "ID_MFD_3_PAGE_PLANE"
+    checkGroup = ctrlGroups.AIR
     checkAssign = false
   }
   {
     id = "ID_MFD_ZOOM_PLANE"
+    checkGroup = ctrlGroups.AIR
     checkAssign = false
   }
   {
     id = "ID_PLANE_NIGHT_VISION"
+    checkGroup = ctrlGroups.AIR
     checkAssign = false
   }
   {
     id = "ID_PLANE_SMOKE_SCREEN_GENERATOR"
+    checkGroup = ctrlGroups.AIR
     checkAssign = false
   }
   {
     id = "ID_PLANE_KILLSTREAK_WHEEL_MENU"
+    checkGroup = ctrlGroups.AIR
     checkAssign = false
     showFunc = ::have_xinput_device
   }
@@ -711,6 +714,7 @@ return [
     id = "wheelmenu_x"
     type = CONTROL_TYPE.AXIS
     axisDirection = AxisDirection.X
+    checkGroup = ctrlGroups.AIR
     hideAxisOptions = ["rangeSet", "relativeAxis", "kRelSpd", "kRelStep"]
     showFunc = ::have_xinput_device
     checkAssign = @() ::is_xinput_device()
@@ -719,6 +723,7 @@ return [
     id = "wheelmenu_y"
     type = CONTROL_TYPE.AXIS
     axisDirection = AxisDirection.Y
+    checkGroup = ctrlGroups.AIR
     hideAxisOptions = ["rangeSet", "relativeAxis", "kRelSpd", "kRelStep"]
     showFunc = ::have_xinput_device
     checkAssign = @() ::is_xinput_device()

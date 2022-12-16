@@ -395,14 +395,6 @@ def public add_type_ptr_ref ( var a : StructurePtr ) : StructurePtr
     //! Implementation details for the reification. This adds any array to the rules.
     return a // notice,
 
-def private generatedExpr( var expr : ExpressionPtr ) : ExpressionPtr
-    expr.genFlags |= ExprGenFlags generated
-    return <- expr
-
-def private generatedVariable( var svar : VariablePtr ) : VariablePtr
-    svar.flags |= VariableFlags generated
-    return <- svar
-
 class private QRulesVisitor : AstVisitor
     tag_index : int = 0
     failed : bool = false
@@ -429,7 +421,7 @@ class private QRulesVisitor : AstVisitor
                 name:="replaceTypeWithTypeDecl",
                 arguments:=[{ExpressionPtr
                     new [[ExprVar() at=typ.at, name:="rules"]];
-                    new [[ExprConstString() at=typ.at, value:=new_tag_name]] |> generatedExpr();
+                    new [[ExprConstString() at=typ.at, value:=new_tag_name]];
                     new [[ExprCall() at=typ.at, name:="add_type_ptr_ref",
                         arguments := [{ExpressionPtr[1] clone_expression(typ.firstType.dimExpr[0]) }]
                     ]]
@@ -453,8 +445,8 @@ class private QRulesVisitor : AstVisitor
                 name:="renameVariable",
                 arguments:=[{ExpressionPtr
                     new [[ExprVar() at=arg.at, name:="rules"]];
-                    new [[ExprConstString() at=arg.at, value:=new_tag_name]] |> generatedExpr();
-                    clone_expression(arg.source) |> generatedExpr()
+                    new [[ExprConstString() at=arg.at, value:=new_tag_name]];
+                    clone_expression(arg.source)
                 }]]]
             arg.name := new_tag_name
             arg.flags ^= VariableFlags tag
@@ -469,8 +461,8 @@ class private QRulesVisitor : AstVisitor
                 name:="replaceArgumentWithList",
                 arguments:=[{ExpressionPtr
                     new [[ExprVar() at=arg.at, name:="rules"]];
-                    new [[ExprConstString() at=arg.at, value:=new_tag_name]] |> generatedExpr();
-                    clone_expression(arg.init) |> generatedExpr()
+                    new [[ExprConstString() at=arg.at, value:=new_tag_name]];
+                    clone_expression(arg.init)
                 }]]]
             arg.name := new_tag_name
     def override preVisitExprFor ( var expr : smart_ptr<ExprFor> ) : void
@@ -481,10 +473,9 @@ class private QRulesVisitor : AstVisitor
                     name:="renameVariable",
                     arguments:=[{ExpressionPtr
                         new [[ExprVar() at=expr.at, name:="rules"]];
-                        new [[ExprConstString() at=expr.at, value:=new_tag_name]] |> generatedExpr();
-                        clone_expression(tag) |> generatedExpr()
+                        new [[ExprConstString() at=expr.at, value:=new_tag_name]];
+                        clone_expression(tag)
                     }]]]
-                // rblock.list[length(rblock.list) - 1].flags |= VariableFlags generated
                 itn := new_tag_name
                 tag := null
     def override visitExprTag ( expr:smart_ptr<ExprTag> ) : ExpressionPtr
@@ -502,7 +493,7 @@ class private QRulesVisitor : AstVisitor
                 name:="replaceVariable",
                 arguments:=[{ExpressionPtr
                     new [[ExprVar() at=expr.at, name:="rules"]];
-                    new [[ExprConstString() at=expr.at, value:=new_tag_name]] |> generatedExpr();
+                    new [[ExprConstString() at=expr.at, value:=new_tag_name]];
                     new [[ExprCall() at=expr.at, name:="convert_to_expression",
                         arguments := [{ExpressionPtr[1] clone_expression(expr.subexpr) }]
                     ]]
@@ -512,7 +503,7 @@ class private QRulesVisitor : AstVisitor
                 name:="replaceVariable",
                 arguments:=[{ExpressionPtr
                     new [[ExprVar() at=expr.at, name:="rules"]];
-                    new [[ExprConstString() at=expr.at, value:=new_tag_name]] |> generatedExpr();
+                    new [[ExprConstString() at=expr.at, value:=new_tag_name]];
                     new [[ExprCall() at=expr.at, name:="add_ptr_ref",
                         arguments := [{ExpressionPtr[1] clone_expression(expr.subexpr) }]
                     ]]
@@ -522,15 +513,15 @@ class private QRulesVisitor : AstVisitor
                 name:="replaceVariableWithList",
                 arguments:=[{ExpressionPtr
                     new [[ExprVar() at=expr.at, name:="rules"]];
-                    new [[ExprConstString() at=expr.at, value:=new_tag_name]] |> generatedExpr();
-                    clone_expression(expr.subexpr) |> generatedExpr()
+                    new [[ExprConstString() at=expr.at, value:=new_tag_name]];
+                    clone_expression(expr.subexpr)
                 }]]]
         elif expr.name=="b" // expression block
             rblock.list |> emplace_new <| new [[ExprCall() at=expr.at,
                 name:="replaceVariable",
                 arguments:=[{ExpressionPtr
                     new [[ExprVar() at=expr.at, name:="rules"]];
-                    new [[ExprConstString() at=expr.at, value:=new_tag_name]] |> generatedExpr();
+                    new [[ExprConstString() at=expr.at, value:=new_tag_name]];
                     new [[ExprCall() at=expr.at,name:="make_expression_block", arguments := [{ExpressionPtr[1] clone_expression(expr.subexpr) }] ]]
                 }]]]
         elif expr.name=="i" // identificator
@@ -538,8 +529,8 @@ class private QRulesVisitor : AstVisitor
                 name:="renameVariable",
                 arguments:=[{ExpressionPtr
                     new [[ExprVar() at=expr.at, name:="rules"]];
-                    new [[ExprConstString() at=expr.at, value:=new_tag_name]] |> generatedExpr();
-                    clone_expression(expr.subexpr) |> generatedExpr()
+                    new [[ExprConstString() at=expr.at, value:=new_tag_name]];
+                    clone_expression(expr.subexpr)
                 }]]]
             if expr.value != null
                 if expr.value is ExprLet
@@ -557,8 +548,8 @@ class private QRulesVisitor : AstVisitor
                 name:="renameField",
                 arguments:=[{ExpressionPtr
                     new [[ExprVar() at=expr.at, name:="rules"]];
-                    new [[ExprConstString() at=expr.at, value:=new_tag_name]] |> generatedExpr();
-                    clone_expression(expr.subexpr) |> generatedExpr()
+                    new [[ExprConstString() at=expr.at, value:=new_tag_name]];
+                    clone_expression(expr.subexpr)
                 }]]]
             var fexpr <- clone_expression(expr.value)
             if fexpr is ExprField
@@ -585,8 +576,8 @@ class private QRulesVisitor : AstVisitor
                     name:="renameCall",
                     arguments:=[{ExpressionPtr
                         new [[ExprVar() at=expr.at, name:="rules"]];
-                        new [[ExprConstString() at=expr.at, value:=new_tag_name]] |> generatedExpr();
-                        clone_expression(expr.subexpr) |> generatedExpr()
+                        new [[ExprConstString() at=expr.at, value:=new_tag_name]];
+                        clone_expression(expr.subexpr)
                     }]]]
                 var ccall <- clone_expression(expr.value)
                 (ccall as ExprCall).name := new_tag_name
@@ -596,8 +587,8 @@ class private QRulesVisitor : AstVisitor
                     name:="renameCall",
                     arguments:=[{ExpressionPtr
                         new [[ExprVar() at=expr.at, name:="rules"]];
-                        new [[ExprConstString() at=expr.at, value:=new_tag_name]] |> generatedExpr();
-                        clone_expression(expr.subexpr) |> generatedExpr()
+                        new [[ExprConstString() at=expr.at, value:=new_tag_name]];
+                        clone_expression(expr.subexpr)
                     }]]]
                 var ccall <- clone_expression(expr.value)
                 (ccall as ExprAddr).target := new_tag_name
@@ -615,7 +606,7 @@ def private apply_qrules ( var expr:smart_ptr<Expression>& ) : smart_ptr<ExprBlo
     var eblk <- new [[ExprBlock() at=expr.at,
         returnType <- new [[TypeDecl() at=expr.at, baseType=Type tVoid]],
         arguments := [{VariablePtr[1]
-            new [[Variable() at=expr.at, name := "rules", _type <- clone_type(typeinfo(ast_typedecl type<Template>)) ]] |> generatedVariable()
+            new [[Variable() at=expr.at, name := "rules", _type <- clone_type(typeinfo(ast_typedecl type<Template>)) ]]
         }],
         blockFlags = ExprBlockFlags isClosure
     ]]
@@ -640,17 +631,6 @@ def public apply_qblock ( var expr:smart_ptr<Expression>; blk:block<(var rules:T
     var qblk <- move_unquote_block(res)
     qblk.blockFlags ^= ExprBlockFlags isClosure
     return qblk
-
-def public apply_qblock_to_array ( var expr:smart_ptr<Expression>; blk:block<(var rules:Template):void> ) : array<ExpressionPtr>
-    //! Implementation details for the expression reificaiton. This is a block reification.
-    var res <- apply_template(expr, blk)
-    assert(res is ExprMakeBlock)
-    var qblk <- move_unquote_block(res)
-    var arr : array<ExpressionPtr>
-    for e in qblk.list
-        arr |> emplace_new <| clone_expression(e)
-    qblk := null
-    return <- arr
 
 def public apply_qblock_expr ( var expr:smart_ptr<Expression>; blk:block<(var rules:Template):void> ) : ExpressionPtr
     //! Implementation details for the expression reificaiton. This is a frist line of the block as expression reification.
@@ -710,11 +690,6 @@ class private QMacro : AstQCallMacro {}
 class private QBlockMacro : AstQCallMacro
     override apply_call = "apply_qblock"
     override macro_call = "qmacro_block"
-
-[call_macro(name="qmacro_block_to_array")]
-class private QBlockToArrayMacro : AstQCallMacro
-    override apply_call = "apply_qblock_to_array"
-    override macro_call = "qmacro_block_to_array"
 
 [call_macro(name="qmacro_expr")]
 class private QBlockExprMacro : AstQCallMacro

@@ -15,28 +15,9 @@ let loginWndBlkPath = require("%scripts/login/loginWndBlkPath.nut")
 let { setGuiOptionsMode } = require_native("guiOptions")
 let { havePlayerTag } = require("%scripts/user/userUtils.nut")
 let { getDistr } = require("auth_wt")
-let {dgs_get_settings} = require("dagor.system")
-let { get_user_system_info } = require("sysinfo")
-let regexp2 = require("regexp2")
-let { register_command } = require("console")
 
 const MAX_GET_2STEP_CODE_ATTEMPTS = 10
-const GUEST_LOGIN_SAVE_ID = "guestLoginId"
 
-let validateNickRegexp = regexp2(@"[^_0-9a-zA-Z]")
-
-local dbgGuestLoginIdPrefix = ""
-
-let function getGuestLoginId() {
-  let { uuid0 = "", uuid1 = "", uuid2 = "" } = get_user_system_info()
-  return $"{dbgGuestLoginIdPrefix}{uuid0}_{uuid1}_{uuid2}"
-}
-
-let function setDbgGuestLoginIdPrefix(prefix) {
-  dbgGuestLoginIdPrefix = $"{prefix}_"
-  console_print(getGuestLoginId())
-}
-register_command(setDbgGuestLoginIdPrefix, "debug.set_guest_login_id_prefix")
 
 ::gui_handlers.LoginWndHandler <- class extends ::BaseGuiHandler
 {
@@ -54,7 +35,6 @@ register_command(setDbgGuestLoginIdPrefix, "debug.set_guest_login_id_prefix")
   isLoginRequestInprogress = false
   requestGet2stepCodeAtempt = 0
   isSteamAuth = false
-  isGuestLogin = false
 
   defaultSaveLoginFlagVal = false
   defaultSavePasswordFlagVal = false
@@ -80,7 +60,7 @@ register_command(setDbgGuestLoginIdPrefix, "debug.set_guest_login_id_prefix")
 
     let bugDiscObj = this.scene.findObject("browser_bug_disclaimer")
     if (checkObj(bugDiscObj))
-      bugDiscObj.show(platformId == "linux64" && ::is_steam_big_picture()) //STEAM_OS
+      bugDiscObj.show(target_platform == "linux64" && ::is_steam_big_picture()) //STEAM_OS
 
     let lp = ::get_login_pass()
     let isVietnamese = ::is_vietnamese_version()
@@ -119,12 +99,7 @@ register_command(setDbgGuestLoginIdPrefix, "debug.set_guest_login_id_prefix")
     let isSteamRunning = ::steam_is_running()
     let showSteamLogin = isSteamRunning
     let showWebLogin = !isSteamRunning && ::webauth_start(this, this.onSsoAuthorizationComplete)
-    local showGuestLogin = false
-    //
-
-
-    this.showSceneBtn("secondary_auth_block", showGuestLogin || showSteamLogin || showWebLogin)
-    this.showSceneBtn("guest_login_action_button", showGuestLogin)
+    this.showSceneBtn("secondary_auth_block", showSteamLogin || showWebLogin)
     this.showSceneBtn("steam_login_action_button", showSteamLogin)
     this.showSceneBtn("sso_login_action_button", showWebLogin)
     this.showSceneBtn("btn_signUp_link", !showSteamLogin)
@@ -133,7 +108,7 @@ register_command(setDbgGuestLoginIdPrefix, "debug.set_guest_login_id_prefix")
 
     let saveLoginAndPassMask = AUTO_SAVE_FLG_LOGIN | AUTO_SAVE_FLG_PASS
     let autoLoginEnable = (lp.autoSave & saveLoginAndPassMask) == saveLoginAndPassMask
-    local autoLogin = (this.initial_autologin && autoLoginEnable) || (dgs_get_settings()?.yunetwork.forceAutoLogin ?? false)
+    local autoLogin = (this.initial_autologin && autoLoginEnable) || ::need_force_autologin()
     let autoLoginObj = this.scene.findObject("loginbox_autologin")
     if (checkObj(autoLoginObj))
     {
@@ -166,8 +141,8 @@ register_command(setDbgGuestLoginIdPrefix, "debug.set_guest_login_id_prefix")
       return
     }
 
-    let disableAutoRelogin = getroottable()?.disable_autorelogin_once ?? false
-    autoLogin = autoLogin && !disableAutoRelogin
+    if ("disable_autorelogin_once" in getroottable())
+      autoLogin = autoLogin && !::disable_autorelogin_once
     if (autoLogin)
     {
       this.doLoginDelayed()
@@ -214,7 +189,7 @@ register_command(setDbgGuestLoginIdPrefix, "debug.set_guest_login_id_prefix")
       {
         let param = avCircuits.getParamName(i)
         let value = avCircuits.getParamValue(i)
-        if (param == this.paramName && type(value) == "string")
+        if (param == this.paramName && typeof(value) == "string")
         {
           if (value == defaultCircuit)
             defValue = i
@@ -406,11 +381,8 @@ register_command(setDbgGuestLoginIdPrefix, "debug.set_guest_login_id_prefix")
                      (autoSavePassword  ? AUTO_SAVE_FLG_PASS      : 0) |
                      (disableSSLCheck   ? AUTO_SAVE_FLG_NOSSLCERT : 0)
 
-    if (this.was_using_stoken || this.isSteamAuth || this.isGuestLogin)
+    if (this.was_using_stoken || this.isSteamAuth)
       autoSave = autoSave | AUTO_SAVE_FLG_DISABLE
-
-    if (this.isGuestLogin)
-      ::save_local_shared_settings(GUEST_LOGIN_SAVE_ID, getGuestLoginId())
 
     ::set_login_pass(no_dump_login.tostring(), ::get_object_value(this.scene, "loginbox_password", ""), autoSave)
     if (!checkObj(this.scene)) //set_login_pass start onlineJob
@@ -716,33 +688,5 @@ register_command(setDbgGuestLoginIdPrefix, "debug.set_guest_login_id_prefix")
   function goBack()
   {
     this.onExit()
-  }
-
-  function guestProceedAuthorization(guestLoginId, nick = "") {
-    this.isGuestLogin = true
-    this.isLoginRequestInprogress = true
-    ::disable_autorelogin_once <- false
-    statsd.send_counter("sq.game_start.request_login", 1, {login_type = "guest"})
-    log("Guest Login: check_login_pass")
-    let result = ::check_login_pass(guestLoginId, nick, "guest", "guest", false, false)
-    this.proceedAuthorizationResult(result, "")
-  }
-
-  function onGuestAuthorization() {
-    let guestLoginId = getGuestLoginId()
-    if (guestLoginId == ::load_local_shared_settings(GUEST_LOGIN_SAVE_ID)) {
-      this.guestProceedAuthorization(guestLoginId)
-      return
-    }
-
-    ::gui_modal_editbox_wnd({
-      title = loc("mainmenu/chooseName")
-      label = loc("choose_nickname_req")
-      maxLen = 16
-      validateFunc = @(nick) validateNickRegexp.replace("", nick)
-      canCancel = true
-      owner = this
-      okFunc = @(nick) this.guestProceedAuthorization(guestLoginId, nick)
-    })
   }
 }

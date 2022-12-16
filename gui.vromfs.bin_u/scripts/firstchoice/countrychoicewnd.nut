@@ -160,6 +160,7 @@ enum CChoiceState {
             )
             text = loc($"mainmenu/{armyName}")
             videoPreview = hasFeature("VideoPreview") ? $"video/unitTypePreview/{armyName}.ivf" : null
+            desription = loc("{armyName}/choiseDescription", "")
           })
         }
         return items
@@ -272,6 +273,7 @@ enum CChoiceState {
           let cData = {
             countryName = loc(country)
             backgroundImage = image
+            desription = loc($"{country}/choiseDescription", "")
             lockText = null
           }
 

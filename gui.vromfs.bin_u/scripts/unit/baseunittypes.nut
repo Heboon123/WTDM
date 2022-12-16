@@ -70,7 +70,7 @@ return {
     firstChosenTypeUnlockName = "chosen_unit_type_tank"
     missionSettingsAvailabilityFlag = "isTanksAllowed"
     crewUnitType = CUT_TANK
-    isAvailable = @() true
+    isAvailable = function() { return hasFeature("Tanks") }
     isAvailableForFirstChoice = function(country = null)
     {
       if (!this.isAvailable() || !::check_tanks_available(true))
@@ -83,6 +83,7 @@ return {
     canUseSeveralBulletsForGun = true
     modClassOrder = ["mobility", "protection", "firepower"]
     isSkinAutoSelectAvailable = @() hasFeature("SkinAutoSelect")
+    canSpendGold = @() this.isAvailable() && hasFeature("SpendGoldForTanks")
     canShowProtectionAnalysis = @() true
     canShowVisualEffectInProtectionAnalysis = @() false
     wheelmenuAxis = [ "gm_wheelmenu_x", "gm_wheelmenu_y" ]
@@ -102,7 +103,8 @@ return {
     missionSettingsAvailabilityFlag = "isShipsAllowed"
     crewUnitType = CUT_SHIP
     hasAiGunners = true
-    isAvailable = @() true
+    isAvailable = function() { return hasFeature("Ships") }
+    isVisibleInShop = function() { return this.isAvailable() && hasFeature("ShipsVisibleInShop") }
     isAvailableForFirstChoice = function(country = null)
     {
       if (!this.isAvailable() || !hasFeature("ShipsFirstChoice"))
@@ -114,6 +116,7 @@ return {
     }
     canUseSeveralBulletsForGun = true
     modClassOrder = ["seakeeping", "unsinkability", "firepower"]
+    canSpendGold = @() this.isAvailable() && hasFeature("SpendGoldForShips")
     canShowProtectionAnalysis = @() hasFeature("DmViewerProtectionAnalysisShip")
     canShowVisualEffectInProtectionAnalysis = @() false
     bulletSetsQuantity = BULLETS_SETS_QUANTITY
@@ -137,6 +140,7 @@ return {
     isUsedInKillStreaks = true
     crewUnitType = CUT_AIRCRAFT
     isAvailable = @() true
+    isVisibleInShop = function() { return this.isAvailable() }
     isAvailableForFirstChoice = @(_country = null) false
     canUseSeveralBulletsForGun = false
     canChangeViewType = true
@@ -161,7 +165,8 @@ return {
     isPresentOnMatching = false
     crewUnitType = CUT_SHIP
     hasAiGunners = true
-    isAvailable = @() true
+    isAvailable = function() { return hasFeature("Ships") }
+    isVisibleInShop = function() { return this.isAvailable() && hasFeature("ShipsVisibleInShop") }
     isAvailableForFirstChoice = function(country = null)
     {
       if (!this.isAvailable() || !hasFeature("BoatsFirstChoice"))
@@ -173,6 +178,7 @@ return {
     }
     canUseSeveralBulletsForGun = true
     modClassOrder = ["seakeeping", "unsinkability", "firepower"]
+    canSpendGold = @() this.isAvailable() && hasFeature("SpendGoldForShips")
     canShowProtectionAnalysis = @() hasFeature("DmViewerProtectionAnalysisShip")
     canShowVisualEffectInProtectionAnalysis = @() false
     bulletSetsQuantity = BULLETS_SETS_QUANTITY

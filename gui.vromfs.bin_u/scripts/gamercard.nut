@@ -7,7 +7,7 @@ from "%scripts/dagui_library.nut" import *
 let { format } = require("string")
 let time = require("%scripts/time.nut")
 let platformModule = require("%scripts/clientState/platform.nut")
-let { isChatEnabled, hasMenuChat } = require("%scripts/chat/chatStates.nut")
+let { isChatEnabled } = require("%scripts/chat/chatStates.nut")
 let showTitleLogo = require("%scripts/viewUtils/showTitleLogo.nut")
 let { setVersionText } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { hasBattlePass } = require("%scripts/battlePass/unlocksRewardsState.nut")
@@ -15,6 +15,7 @@ let { stashBhvValueConfig } = require("%sqDagui/guiBhv/guiBhvValueConfig.nut")
 let { boosterEffectType, haveActiveBonusesByEffectType } = require("%scripts/items/boosterEffect.nut")
 let globalCallbacks = require("%sqDagui/globalCallbacks/globalCallbacks.nut")
 let { money_type } = require("%scripts/money.nut")
+let { hasChat } = require("%scripts/user/matchingFeature.nut")
 
 ::fill_gamer_card <- function fill_gamer_card(cfg = null, prefix = "gc_", scene = null, save_scene=true)
 {
@@ -226,7 +227,7 @@ let { money_type } = require("%scripts/money.nut")
                              gc_clanTag = showClanTag
                              gc_profile = hasFeature("Profile")
                              gc_contacts = canHaveFriends
-                             gc_chat_btn = hasMenuChat.value
+                             gc_chat_btn = hasChat.value
                              gc_shop = is_in_menu && canSpendGold
                              gc_eagles = canSpendGold
                              gc_warpoints = hasFeature("WarpointsInMenu")
@@ -259,7 +260,7 @@ let { money_type } = require("%scripts/money.nut")
   let buttonsEnableTable = {
                                 gc_clanTag = showClanTag && is_in_menu
                                 gc_contacts = canHaveFriends
-                                gc_chat_btn = hasMenuChat.value && isChatEnabled()
+                                gc_chat_btn = hasChat.value && isChatEnabled()
                                 gc_free_exp = canSpendGold && is_in_menu
                                 gc_warpoints = canSpendGold && is_in_menu
                                 gc_eagles = canSpendGold && is_in_menu
@@ -393,7 +394,7 @@ let { money_type } = require("%scripts/money.nut")
 
 ::update_gamercards_chat_info <- function update_gamercards_chat_info(prefix = "gc_")
 {
-  if (!::gchat_is_enabled() || !hasMenuChat.value)
+  if (!::gchat_is_enabled() || !hasChat.value)
     return
 
   let haveNew = ::g_chat.haveNewMessages()
@@ -414,11 +415,11 @@ let { money_type } = require("%scripts/money.nut")
 }
 
 let function updateGamercardChatButton() {
-  let canChat = ::gchat_is_enabled() && hasMenuChat.value
+  let canChat  = ::gchat_is_enabled() && hasChat.value
   ::do_with_all_gamercards(@(scene) ::showBtn("gc_chat_btn", canChat, scene))
 }
 
-hasMenuChat.subscribe(@(_) updateGamercardChatButton())
+hasChat.subscribe(@(_) updateGamercardChatButton())
 
 globalCallbacks.addTypes({
   onOpenGameModeSelect = {

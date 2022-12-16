@@ -4,7 +4,6 @@ from "%scripts/dagui_library.nut" import *
 #explicit-this
 
 let controlsOperations = require("%scripts/controls/controlsOperations.nut")
-let { ActionGroup } = require("controls")
 
 return [
   {
@@ -21,7 +20,7 @@ return [
     id = "ID_COMMON_SWAP_GAMEPAD_STICKS_WITHOUT_MODIFIERS"
     type = CONTROL_TYPE.BUTTON
     onClick = @() controlsOperations.swapGamepadSticks(
-      ActionGroup.ONLY_COMMON | ActionGroup.HANGAR | ActionGroup.REPLAY,
+      ctrlGroups.ONLY_COMMON | ctrlGroups.HANGAR | ctrlGroups.REPLAY,
       controlsOperations.Flags.WITHOUT_MODIFIERS
     )
     showFunc = @() ::have_xinput_device()
@@ -30,7 +29,7 @@ return [
     id = "ID_COMMON_SWAP_GAMEPAD_STICKS"
     type = CONTROL_TYPE.BUTTON
     onClick = @() controlsOperations.swapGamepadSticks(
-      ActionGroup.ONLY_COMMON | ActionGroup.HANGAR | ActionGroup.REPLAY
+      ctrlGroups.ONLY_COMMON | ctrlGroups.HANGAR | ctrlGroups.REPLAY
     )
     showFunc = @() ::have_xinput_device()
   }

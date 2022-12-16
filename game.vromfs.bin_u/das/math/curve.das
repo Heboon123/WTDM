@@ -1,5 +1,6 @@
 module curve shared
 require ecs
+require %dasGameLibs.math.base
 require DagorMath
 
 // piecewise linear curve

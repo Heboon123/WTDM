@@ -8,7 +8,6 @@ let { get_game_params } = require("gameparams")
 let controlsOperations = require("%scripts/controls/controlsOperations.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
-let { ActionGroup } = require("controls")
 
 return [
   {
@@ -28,7 +27,7 @@ return [
     id = "ID_HELICOPTER_SWAP_GAMEPAD_STICKS_WITHOUT_MODIFIERS"
     type = CONTROL_TYPE.BUTTON
     onClick = @() controlsOperations.swapGamepadSticks(
-      ActionGroup.HELICOPTER,
+      ctrlGroups.HELICOPTER,
       controlsOperations.Flags.WITHOUT_MODIFIERS
     )
     showFunc = @() ::have_xinput_device()
@@ -36,7 +35,7 @@ return [
   {
     id = "ID_HELICOPTER_SWAP_GAMEPAD_STICKS"
     type = CONTROL_TYPE.BUTTON,
-    onClick = @() controlsOperations.swapGamepadSticks( ActionGroup.HELICOPTER )
+    onClick = @() controlsOperations.swapGamepadSticks( ctrlGroups.HELICOPTER )
     showFunc = @() ::have_xinput_device()
   }
 //-------------------------------------------------------
@@ -72,22 +71,26 @@ return [
   }
   {
     id = "ID_TOGGLE_INSTRUCTOR_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_CONTROL_MODE_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     filterShow = [globalEnv.EM_MOUSE_AIM, globalEnv.EM_INSTRUCTOR]
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_MOUSE_AIM_OVERRIDE_ROLL_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     filterShow = [globalEnv.EM_MOUSE_AIM]
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_FBW_MODE_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     filterShow = [globalEnv.EM_FULL_REAL]
     checkAssign = false
   }
@@ -99,6 +102,7 @@ return [
   {
     id = "helicopter_collective"
     type = CONTROL_TYPE.AXIS
+    checkGroup = ctrlGroups.HELICOPTER
     needShowInHelp = true
   }
   {
@@ -115,23 +119,27 @@ return [
   {
     id = "helicopter_climb"
     type = CONTROL_TYPE.AXIS
+    checkGroup = ctrlGroups.HELICOPTER
     filterShow = [ globalEnv.EM_MOUSE_AIM, globalEnv.EM_INSTRUCTOR ]
   }
   {
     id = "helicopter_cyclic_roll"
     type = CONTROL_TYPE.AXIS
+    checkGroup = ctrlGroups.HELICOPTER
     reqInMouseAim = false
     needShowInHelp = true
   }
   {
     id = "helicopter_cyclic_pitch"
     type = CONTROL_TYPE.AXIS
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "helicopter_pedals"
     type = CONTROL_TYPE.AXIS
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
@@ -166,21 +174,25 @@ return [
   }
   {
     id = "ID_FIRE_MGUNS_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     conflictGroup = ConflictGroups.HELICOPTER_FIRE
     needShowInHelp = true
   }
   {
     id = "ID_FIRE_CANNONS_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     conflictGroup = ConflictGroups.HELICOPTER_FIRE
     needShowInHelp = true
   }
   {
     id = "ID_FIRE_ADDITIONAL_GUNS_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     conflictGroup = ConflictGroups.HELICOPTER_FIRE
     needShowInHelp = true
   }
   {
     id = "helicopter_fire"
+    checkGroup = ctrlGroups.HELICOPTER
     alternativeIds = [
       "ID_FIRE_MGUNS_HELICOPTER"
       "ID_FIRE_CANNONS_HELICOPTER"
@@ -190,43 +202,53 @@ return [
   }
   {
     id = "ID_FIRE_PRIMARY_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_FIRE_SECONDARY_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_JETTISON_SECONDARY_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     showFunc = @() hasFeature("WeaponJettison")
   }
   {
     id = "ID_BOMBS_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     needShowInHelp = true
   }
   {
     id = "ID_BOMBS_SERIES_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     alternativeIds = [ "ID_BOMBS_HELICOPTER" ]
   }
   {
     id = "ID_ROCKETS_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     needShowInHelp = true
   }
   {
     id = "ID_ROCKETS_SERIES_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     alternativeIds = [ "ID_ROCKETS_HELICOPTER" ]
   }
   {
     id = "ID_WEAPON_LOCK_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_AGM_LOCK_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_GUIDED_BOMBS_LOCK_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
@@ -247,101 +269,123 @@ return [
   }
   {
     id = "ID_TOGGLE_LASER_DESIGNATOR_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_SENSOR_SWITCH_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_SENSOR_TYPE_SWITCH_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_SENSOR_MODE_SWITCH_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_SENSOR_ACM_SWITCH_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_SENSOR_SCAN_PATTERN_SWITCH_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_SENSOR_RANGE_SWITCH_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_SENSOR_TARGET_SWITCH_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_SENSOR_TARGET_LOCK_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "helicopter_sensor_cue_x"
     type = CONTROL_TYPE.AXIS
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "helicopter_sensor_cue_y"
     type = CONTROL_TYPE.AXIS
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "helicopter_sensor_cue_z"
     type = CONTROL_TYPE.AXIS
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     showFunc = @() hasFeature("RadarElevationControl")
   }
   {
     id = "ID_IRCM_SWITCH_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_FLARES_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_FLARES_SERIES_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_TOGGLE_PERIODIC_FLARES_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_TOGGLE_MLWS_FLARES_SLAVING_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_ATGM_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     needShowInHelp = true
   }
   {
     id = "ID_AAM_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     needShowInHelp = true
   }
   {
     id = "ID_GUIDED_BOMBS_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     needShowInHelp = true
     checkAssign = false
   }
   {
     id = "helicopter_atgm_aim_x"
+    checkGroup = ctrlGroups.HELICOPTER
     type = CONTROL_TYPE.AXIS
     reqInMouseAim = false
     axisDirection = AxisDirection.X
   }
   {
     id = "helicopter_atgm_aim_y"
+    checkGroup = ctrlGroups.HELICOPTER
     type = CONTROL_TYPE.AXIS
     reqInMouseAim = false
     axisDirection = AxisDirection.Y
@@ -358,6 +402,7 @@ return [
   }
   {
     id = "ID_CHANGE_SHOT_FREQ_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
@@ -379,56 +424,67 @@ return [
   }
   {
     id = "ID_TOGGLE_VIEW_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_LOCK_TARGETING_AT_POINT_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_UNLOCK_TARGETING_AT_POINT_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_CAMERA_FPS_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_CAMERA_TPS_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_CAMERA_VIRTUAL_FPS_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_CAMERA_VIRTUAL_TARGET_FPS_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_CAMERA_GUNNER_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_TARGET_CAMERA_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_AIM_CAMERA_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     condition = @() isPlatformSony || isPlatformXboxOne
   }
   {
     id = "target_camera_helicopter"
     type = CONTROL_TYPE.AXIS
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     condition = @() isPlatformSony || isPlatformXboxOne
     hideAxisOptions = ["rangeSet", "relativeAxis", "kRelSpd", "kRelStep"]
@@ -436,17 +492,20 @@ return [
   {
     id = "helicopter_zoom"
     type = CONTROL_TYPE.AXIS
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "helicopter_camx"
     type = CONTROL_TYPE.AXIS
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     axisDirection = AxisDirection.X
   }
   {
     id = "helicopter_camy"
     type = CONTROL_TYPE.AXIS
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     axisDirection = AxisDirection.Y
   }
@@ -463,12 +522,14 @@ return [
   {
     id = "helicopter_mouse_aim_x"
     type = CONTROL_TYPE.AXIS
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     axisDirection = AxisDirection.X
   }
   {
     id = "helicopter_mouse_aim_y"
     type = CONTROL_TYPE.AXIS
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     axisDirection = AxisDirection.Y
   }
@@ -538,82 +599,95 @@ return [
   }
   {
     id = "ID_TOGGLE_ENGINE_HELICOPTER"
-    checkAssign = false
-  }
-  {
-    id = "ID_TOGGLE_EXTINGUISHER_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_GEAR_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_FLAPS_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_FLAPS_UP_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_FLAPS_DOWN_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_AIR_BRAKE_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     needShowInHelp = true
   }
   {
     id = "ID_TOGGLE_COCKPIT_DOOR_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_TOGGLE_COCKPIT_LIGHTS_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_TOGGLE_COLLIMATOR_HELICOPTER"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
     filterShow = [globalEnv.EM_FULL_REAL]
   }
   {
     id = "ID_MFD_1_PAGE"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_MFD_2_PAGE"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_MFD_3_PAGE"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_MFD_ZOOM"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_HELI_GUNNER_NIGHT_VISION"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_THERMAL_WHITE_IS_HOT_HELI"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "ID_REQUEST_DETECT_ALLY_HELI"
+    checkGroup = ctrlGroups.HELICOPTER
     checkAssign = false
   }
   {
     id = "helicopter_wheelmenu_x"
     type = CONTROL_TYPE.AXIS
     axisDirection = AxisDirection.X
+    checkGroup = ctrlGroups.HELICOPTER
     hideAxisOptions = ["rangeSet", "relativeAxis", "kRelSpd", "kRelStep"]
     showFunc = @() (isPlatformSony || isPlatformXboxOne || ::is_xinput_device())
     checkAssign = @() ::is_xinput_device()
@@ -622,6 +696,7 @@ return [
     id = "helicopter_wheelmenu_y"
     type = CONTROL_TYPE.AXIS
     axisDirection = AxisDirection.Y
+    checkGroup = ctrlGroups.HELICOPTER
     hideAxisOptions = ["rangeSet", "relativeAxis", "kRelSpd", "kRelStep"]
     showFunc = @() (isPlatformSony || isPlatformXboxOne || ::is_xinput_device())
     checkAssign = @() ::is_xinput_device()

@@ -192,7 +192,7 @@ const SKIRMISH_ROOMS_LIST_ID = "skirmish"
       }
     }
     let clusters = ui_filter?.clusters
-    if (type(clusters) == "array" && clusters.len() > 0) {
+    if (typeof(clusters) == "array" && clusters.len() > 0) {
       filter["public/cluster"] <- {
         test = "in"
         value = clusters

@@ -6,7 +6,6 @@ from "%scripts/dagui_library.nut" import *
 
 let statsd = require("statsd")
 let { get_time_msec } = require("dagor.time")
-let { get_current_mission_name } = require("mission")
 let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 
 ::MissionStats <- {
@@ -47,7 +46,7 @@ let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReload
   if (!::is_multiplayer())
     return
 
-  statsd.send_counter("sq.early_session_leave", 1, {mission = get_current_mission_name()})
+  statsd.send_counter("sq.early_session_leave", 1, {mission = ::get_current_mission_name()})
 }
 
 //!!must be atthe end of the file

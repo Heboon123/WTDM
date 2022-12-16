@@ -14,7 +14,7 @@ let { isLoadingBgUnlock, getLoadingBgName,
   getLoadingBgIdByUnlockId } = require("%scripts/loading/loadingBgData.nut")
 let { getEntitlementConfig, getEntitlementName } = require("%scripts/onlineShop/entitlements.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
-let { loadCondition, isBitModeType, getMainProgressCondition, isNestedUnlockMode, isTimeRangeCondition,
+let { loadCondition, isBitModeType, getMainProgressCondition, isNestedUnlockMode,
   getRangeString, getUnlockConditions, getDiffNameByInt } = require("%scripts/unlocks/unlocksConditions.nut")
 
 let customLocTypes = ["gameModeInfoString", "missionPostfix"]
@@ -66,7 +66,7 @@ let mapConditionUnitType = {
 let function getUnlockBeginDateText(unlock) {
   let isBlk = unlock?.mode != null
   let conds = isBlk ? getUnlockConditions(unlock.mode) : unlock?.conditions
-  local timeCond = conds?.findvalue(@(c) isTimeRangeCondition(c.type))
+  local timeCond = conds?.findvalue(@(c) ::unlock_time_range_conditions.contains(c.type))
   if (isBlk)
     timeCond = loadCondition(timeCond, unlock.mode?.type)
   return (timeCond?.beginTime != null)
@@ -442,7 +442,7 @@ let function addUsualConditionsText(groupsList, condition) {
   if (values == null)
     return addValueToGroup(groupsList, group, text)
 
-  if (type(values) != "array")
+  if (typeof values != "array")
     values = [values]
 
   values = processUnitTypeArray(values)
@@ -453,7 +453,7 @@ let function addUsualConditionsText(groupsList, condition) {
 let function addUniqConditionsText(groupsList, condition) {
   let condType = condition.type
 
-  if (isTimeRangeCondition(condType)) {
+  if (isInArray(condType, ::unlock_time_range_conditions)) {
     foreach(key in ["beginDate", "endDate"])
       if (key in condition)
         addValueToGroup(groupsList, key, condition[key])
@@ -493,7 +493,7 @@ let function addCustomConditionsTextData(groupsList, condition) {
   if (values == null)
     return
 
-  if (type(values) != "array")
+  if (typeof values != "array")
     values = [values]
 
   let condType = condition.type

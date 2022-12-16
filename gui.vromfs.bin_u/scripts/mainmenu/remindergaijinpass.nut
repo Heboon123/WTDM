@@ -6,7 +6,6 @@ from "%scripts/dagui_library.nut" import *
 
 let reminderGaijinPassModal = require("%scripts/mainmenu/reminderGaijinPassModal.nut")
 let { havePlayerTag } = require("%scripts/user/userUtils.nut")
-let { getUtcDays } = require("%scripts/time.nut")
 
 let function checkGaijinPassReminder()
 {
@@ -17,7 +16,7 @@ let function checkGaijinPassReminder()
     || ::load_local_account_settings("skipped_msg/gaijinPassDontShowThisAgain", false))
       return
 
-  let currDays = getUtcDays()
+  let currDays = this.time.getUtcDays()
   let deltaDaysReminder = currDays - ::load_local_account_settings("gaijinpass/lastDayReminder", 0)
   if (deltaDaysReminder == 0)
     return

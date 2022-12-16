@@ -61,7 +61,7 @@ let activityFeedRequestLocParams = freeze({
     for (local i = 0; i < abbreviationsList.paramCount(); i++)
     {
       let param = abbreviationsList.getParamValue(i)
-      if (type(param) != "string")
+      if (typeof(param) != "string")
         continue
 
       let abbrevName = abbreviationsList.getParamName(i)

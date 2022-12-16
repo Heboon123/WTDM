@@ -80,7 +80,6 @@ root {
                   width:t='pw - 0.01@sf'
                   margin-left:t='0.01@sf'
                   smallFont:t='yes'
-                  holderId:t='<<id>>'
                   on_click:t='onUnitClick'
 
                   <<#isTooltipByHold>>tooltipId:t='<<tooltipId>>'<</isTooltipByHold>>

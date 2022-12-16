@@ -161,7 +161,7 @@ let function makeSideScroll(content, options = DEF_SIDE_SCROLL_OPTIONS) {
 
   let function contentRoot() {
     local bhv = rootBase?.behavior ?? []
-    if (type(bhv) != "array")
+    if (typeof(bhv) != "array")
       bhv = [bhv]
     else
       bhv = clone bhv
@@ -203,7 +203,7 @@ let function makeHVScrolls(content, options={}) {
 
   let function contentRoot() {
     local bhv = rootBase?.behavior ?? []
-    if (type(bhv) != "array")
+    if (typeof(bhv)!="array")
       bhv = [bhv]
     else
       bhv = clone bhv

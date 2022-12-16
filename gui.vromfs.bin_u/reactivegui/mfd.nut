@@ -36,19 +36,19 @@ let mfdSightParamsTable = paramsTable(MfdSightMask, SecondaryMask,
   mfdSightParamTablePos,
   hdpx(3))
 
-let function mfdSightHud() {
-  return {
+let function mfdSightHud(isBackground) {
+  return @(){
     watch = IsMfdSightHudVisible
     pos = [MfdSightPosSize[0], MfdSightPosSize[1]]
     children = IsMfdSightHudVisible.value ?
     [
-      turretAngles(MfdColor, sightSw(15), sightHdpx(150), sightSw(50), sightSh(90))
-      launchDistanceMax(MfdColor, sightSw(15), sightHdpx(150), sightSw(50), sightSh(90))
-      sight(MfdColor, sightSw(50), sightSh(50), sightHdpx(500))
-      rangeFinder(MfdColor, sightSw(50), sightSh(58))
-      lockSight(MfdColor, sightHdpx(150), sightHdpx(100), sightSw(50), sightSh(50))
+      turretAngles(MfdColor, sightSw(15), sightHdpx(150), sightSw(50), sightSh(90), isBackground)
+      launchDistanceMax(MfdColor, sightSw(15), sightHdpx(150), sightSw(50), sightSh(90), isBackground)
+      sight(MfdColor, sightSw(50), sightSh(50), sightHdpx(500), isBackground)
+      rangeFinder(MfdColor, sightSw(50), sightSh(58), isBackground)
+      lockSight(MfdColor, sightHdpx(150), sightHdpx(100), sightSw(50), sightSh(50), isBackground)
       targetSize(MfdColor, sightSw(100), sightSh(100))
-      mfdSightParamsTable()
+      mfdSightParamsTable(isBackground)
     ]
     : null
   }
@@ -57,9 +57,10 @@ let function mfdSightHud() {
 
 let function Root() {
   let children = [
+    mfdSightHud(true)
     mkTws
     mkRadarForMfd(MfdColor)
-    mfdSightHud
+    mfdSightHud(false)
   ]
 
   return {

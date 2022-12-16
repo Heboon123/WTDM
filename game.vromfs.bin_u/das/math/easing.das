@@ -1,5 +1,6 @@
 module easing shared
 require math
+require %dasGameLibs.math.base
 
 [generic]
 def linear(p : float)

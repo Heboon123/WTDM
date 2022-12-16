@@ -38,7 +38,7 @@ let function isAllBlkImagesPrefetched(blk)
   local res = true
   foreach(tag in ["background-image", "foreground-image"])
     foreach(img in (blk % tag))
-      if (type(img) == "string")
+      if (typeof(img) == "string")
         if (!isImagePrefetched(img))
           res = false
 

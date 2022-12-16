@@ -240,7 +240,7 @@ local function preciseSecondsToString(value, canShowZeroMinutes = true) {
 
 
 let function getRaceTimeFromSeconds(value, zeroIsValid = false) {
-  if (type(value) != "float" && type(value) != "integer")
+  if (typeof value != "float" && typeof value != "integer")
     return ""
   if (value < 0 || (!zeroIsValid && value == 0))
     return loc("leaderboards/notAvailable")

@@ -29,7 +29,7 @@ let u = require("u.nut")
  */
 
 local assertFunc = function(_callback, errorText) { throw(errorText) }
-local getDbgName = @(context) type(context)
+local getDbgName = @(context) typeof context
 
 local Callback = class {
   refToContext = null
@@ -123,9 +123,9 @@ local Callback = class {
 local function make(func, context = null) {
   if (u.isCallback(func))
     return func
-  if (type(func) == "function")
+  if (typeof func == "function")
     return Callback(func, context)
-  if (type(func) == "string" && (func in context) && type(context[func]) == "function")
+  if (typeof func == "string" && (func in context) && typeof context[func] == "function")
     return Callback(context[func], context)
   return null
 }

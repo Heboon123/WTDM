@@ -55,7 +55,7 @@ let platformMap = {
 let function logError(event, params = {}) {
   local txt = $"{event}: "
   foreach (idx, p in params)
-    if (type(p) == "string")
+    if (typeof(p) == "string")
       txt = $"{txt} {idx} = {p}"
   log(txt)
   send_counter(event, 1, {

@@ -12,7 +12,7 @@ let { debriefingRows } = require("%scripts/debriefing/debriefingFull.nut")
 let { GUI } = require("%scripts/utils/configs.nut")
 let { register_command } = require("console")
 
-let logP = log_with_prefix("[ShowRate] ")
+let logP = log_with_prefix("[UserUtils] ")
 
 let needShowRateWnd = persist("needShowRateWnd", @() Watched(false)) //need this, because debriefing data destroys after debriefing modal is closed
 
@@ -32,8 +32,6 @@ let cfg = { // Overridden by gui.blk values
   minKillsNum = 1
   hideSteamRateLanguages = ""
   hideSteamRateLanguagesArray = []
-  sessionsPlayedAfterRewardReceived = ""
-  sessionsPlayedAfterRewardReceivedArray = []
 }
 
 let function initConfig() {
@@ -46,39 +44,6 @@ let function initConfig() {
   foreach (k, _v in cfg)
     cfg[k] = cfgBlk?[k] ?? cfg[k]
   cfg.hideSteamRateLanguagesArray = cfg.hideSteamRateLanguages.split(";")
-  cfg.sessionsPlayedAfterRewardReceivedArray = cfg.sessionsPlayedAfterRewardReceived.split(";")
-}
-
-let function isEnoughBattlesPlayedAfterReceivedReward() {
-  if (cfg.sessionsPlayedAfterRewardReceivedArray.len() < 2)
-    return false
-
-  let rewardId = cfg.sessionsPlayedAfterRewardReceivedArray[0]
-  local battlesCount = cfg.sessionsPlayedAfterRewardReceivedArray[1].tointeger()
-  let total = ::get_user_logs_count()
-  let blk = ::DataBlock()
-  local battlesAfterTrophy = 0
-  local needCheckBattles = false
-  for (local i = total-1; i >= 0; i--)
-  {
-    ::get_user_log_blk_body(i, blk)
-
-    if (blk?.type == EULT_SESSION_RESULT)
-      battlesAfterTrophy++
-
-    if (!needCheckBattles && (blk?.body?.itemDefId == rewardId.tointeger()
-        || blk?.body?.trophyItemDefId == rewardId.tointeger()
-        || blk?.body?.id == rewardId)) {
-      needCheckBattles = true
-    }
-
-    if (needCheckBattles)
-      return battlesAfterTrophy >= battlesCount
-
-    blk.reset()
-  }
-
-  return false
 }
 
 let function setNeedShowRate(debriefingResult, myPlace) {
@@ -88,7 +53,7 @@ let function setNeedShowRate(debriefingResult, myPlace) {
     return
 
   if (::load_local_account_settings(RATE_WND_SAVE_ID, false)) {
-    logP("Already seen")
+    logP("[ShowRate] Already seen")
     return
   }
 
@@ -101,7 +66,7 @@ let function setNeedShowRate(debriefingResult, myPlace) {
 
   let isWin = debriefingResult?.isSucceed && (debriefingResult?.gm == GM_DOMINATION)
   if (isWin && (havePurchasedPremium.value || havePurchasedSpecUnit.value || myPlace <= cfg.minPlaceOnWin)) {
-    logP($"Passed by win and prem {havePurchasedPremium.value || havePurchasedSpecUnit.value} or win and place {myPlace} condition")
+    logP($"[ShowRate] Passed by win and prem {havePurchasedPremium.value || havePurchasedSpecUnit.value} or win and place {myPlace} condition")
     needShowRateWnd(true)
     return
   }
@@ -116,7 +81,7 @@ let function setNeedShowRate(debriefingResult, myPlace) {
     })
 
     haveMadeKills(haveMadeKills.value || totalKills >= cfg.minKillsNum)
-    logP($"Update kills count {totalKills}; haveMadeKills {haveMadeKills.value}")
+    logP($"[ShowRate] Update kills count {totalKills}; haveMadeKills {haveMadeKills.value}")
   }
   else {
     winsInARow(0)
@@ -124,17 +89,12 @@ let function setNeedShowRate(debriefingResult, myPlace) {
   }
 
   if (winsInARow.value >= cfg.totalWinsInARow && haveMadeKills.value) {
-    logP("Passed by wins in a row and kills")
-    needShowRateWnd(true)
-    return
-  }
-
-  if (isEnoughBattlesPlayedAfterReceivedReward()) {
-    logP("Passed by battles count after received reward")
+    logP("[ShowRate] Passed by wins in a row and kills")
     needShowRateWnd(true)
   }
 }
 
+/*
 let function tryOpenXboxRateReviewWnd() {
   if (isPlatformXboxOne && ::xbox_show_rate_and_review())
   {
@@ -142,6 +102,7 @@ let function tryOpenXboxRateReviewWnd() {
     ::add_big_query_record("rate", "xbox")
   }
 }
+*/
 
 let function tryOpenSteamRateReview(forceShow = false) {
   if (!forceShow && (!::steam_is_running() || !hasFeature("SteamRateGame")))
@@ -159,7 +120,7 @@ let function checkShowRateWnd() {
   if (!needShowRateWnd.value || ::load_local_account_settings(RATE_WND_SAVE_ID, false))
     return
 
-  tryOpenXboxRateReviewWnd()
+  // tryOpenXboxRateReviewWnd()
   tryOpenSteamRateReview()
 
   // in case of error, show in next launch.

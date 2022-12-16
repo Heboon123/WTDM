@@ -403,11 +403,6 @@ local class TopMenu extends ::gui_handlers.BaseGuiHandlerWT {
     }
   }
 
-  function onHelp()
-  {
-    ::gui_handlers.HelpInfoHandlerModal.openHelp(this)
-  }
-
   function getWndHelpConfig()
   {
     let res = {

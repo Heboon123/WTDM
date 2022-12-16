@@ -84,7 +84,7 @@ local WwQueuesData = class
     this.lastUpdateTimeMsec = get_time_msec()
     this.data = queuesData
 
-    ::ww_event("UpdateWWQueues", { queuesData })
+    ::ww_event("UpdateWWQueues")
   }
 
   function requestError(_taskResult)

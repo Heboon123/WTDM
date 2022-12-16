@@ -5,50 +5,11 @@ from "%scripts/dagui_library.nut" import *
 #explicit-this
 
 let { openUrl } = require("%scripts/onlineShop/url.nut")
-let { isPlatformSony, isPlatformXboxOne, isPlatformPC
-} = require("%scripts/clientState/platform.nut")
+let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
 let { addPromoAction } = require("%scripts/promo/promoActions.nut")
 let { addPromoButtonConfig } = require("%scripts/promo/promoButtonsConfig.nut")
 let { havePlayerTag } = require("%scripts/user/userUtils.nut")
 let { register_command } = require("console")
-let { getPlayerSsoShortToken } = require("auth_wt")
-let { TIME_DAY_IN_SECONDS } = require("%scripts/time.nut")
-
-let needShowGuestEmailRegistration = @() isPlatformPC && havePlayerTag("guestlogin")
-
-let function launchGuestEmailRegistration() {
-  let language = ::g_language.getShortName()
-  let stoken = getPlayerSsoShortToken()
-  let url = loc("url/pc_bind_url", { language, stoken })
-  openUrl(url, false, false, "profile_page")
-}
-
-let function showGuestEmailRegistration() {
-  ::showUnlockWnd({
-    name = loc("mainmenu/PcEmailRegistration")
-    desc = loc("mainmenu/PcEmailRegistration/desc")
-    popupImage = "ui/images/invite_big.jpg?P1"
-    onOkFunc = launchGuestEmailRegistration
-    okBtnText = "msgbox/btn_bind"
-  })
-}
-
-let function checkShowGuestEmailRegistrationAfterLogin() {
-  if (!needShowGuestEmailRegistration())
-    return
-
-  let firstCheckTime = ::load_local_account_settings("GuestEmailRegistrationCheckTime")
-  if (firstCheckTime == null) {
-    ::save_local_account_settings("GuestEmailRegistrationCheckTime", ::get_charserver_time_sec())
-    return
-  }
-
-  let timeSinceFirstCheck = ::get_charserver_time_sec() - firstCheckTime
-  if (timeSinceFirstCheck < TIME_DAY_IN_SECONDS)
-    return
-
-  showGuestEmailRegistration()
-}
 
 let canEmailRegistration = isPlatformSony ? @() havePlayerTag("psnlogin")
   : isPlatformXboxOne ? @() havePlayerTag("livelogin") && hasFeature("AllowXboxAccountLinking")
@@ -68,7 +29,7 @@ let function launchSteamEmailRegistration() {
     false, false, "profile_page")
 }
 
-let function checkShowSteamEmailRegistration() {
+let function checkAutoShowSteamEmailRegistration() {
   if (!canEmailRegistration())
     return
 
@@ -91,7 +52,7 @@ let function checkShowSteamEmailRegistration() {
 let launchPS4EmailRegistration = @()
   ::ps4_open_url_logged_in(loc("url/ps4_bind_url"), loc("url/ps4_bind_redirect"))
 
-let function checkShowPS4EmailRegistration() {
+let function checkAutoShowPS4EmailRegistration() {
   if (!canEmailRegistration())
     return
 
@@ -139,7 +100,7 @@ let forceLauncheXboxSuggestionEmailRegistration = @()
     okFunc = sendXboxEmailBind
   })
 
-let function checkShowXboxEmailRegistration() {
+let function checkAutoShowXboxEmailRegistration() {
   if (!canEmailRegistration())
     return
 
@@ -151,9 +112,9 @@ let function checkShowXboxEmailRegistration() {
   forceLauncheXboxSuggestionEmailRegistration()
 }
 
-let checkShowEmailRegistration = isPlatformSony ? checkShowPS4EmailRegistration
- : ::steam_is_running() ? checkShowSteamEmailRegistration
- : isPlatformXboxOne ? checkShowXboxEmailRegistration
+let checkAutoShowEmailRegistration = isPlatformSony ? checkAutoShowPS4EmailRegistration
+ : ::steam_is_running() ? checkAutoShowSteamEmailRegistration
+ : isPlatformXboxOne ? checkAutoShowXboxEmailRegistration
  : @() null
 
 let emailRegistrationTooltip = isPlatformSony ? loc("mainmenu/PS4EmailRegistration/desc")
@@ -196,9 +157,5 @@ return {
   launchEmailRegistration
   canEmailRegistration
   emailRegistrationTooltip
-  checkShowEmailRegistration
-  needShowGuestEmailRegistration
-  showGuestEmailRegistration
-  checkShowGuestEmailRegistrationAfterLogin
-  launchGuestEmailRegistration
+  checkAutoShowEmailRegistration
 }

@@ -51,9 +51,7 @@ let function memoizeByEvents(func, hashFunc = null, clearOnEvents = []) {
       let hashKey = hashFunc(vargv) ?? NullKey
       if (hashKey in cache)
         return cache[hashKey]
-      let res = func.acall(args)
-      cache[hashKey] <- res
-      return res
+      return cache[hashKey] <- func.acall(args)
     }
   }
   else if (isOneParam) {
@@ -61,9 +59,7 @@ let function memoizeByEvents(func, hashFunc = null, clearOnEvents = []) {
       let k = v ?? NullKey
       if (k in cache)
         return cache[k]
-      let res = func(v)
-      cache[k] <- res
-      return res
+      return cache[k] <- func(v)
     }
   }
   else if (isNoParams) {
@@ -80,9 +76,7 @@ let function memoizeByEvents(func, hashFunc = null, clearOnEvents = []) {
     let hashKey = vargv.len() > 0 ? vargv[0] ?? NullKey : NoArg
     if (hashKey in cache)
       return cache[hashKey]
-    let res = func.acall(args)
-    cache[hashKey] <- res
-    return res
+    return cache[hashKey] <- func.acall(args)
   }
 }
 

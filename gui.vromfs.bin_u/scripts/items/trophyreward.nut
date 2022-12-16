@@ -52,17 +52,20 @@ let TrophyMultiAward = require("%scripts/items/trophyMultiAward.nut")
     let typeVal = config?[rType]
     let count = config?.count ?? 1
 
-    local checkBuffer = type(typeVal) == "string" ? typeVal : $"{rType}_{typeVal}"
-    if (rType == "resourceType" && ::g_decorator_type.getTypeByResourceType(typeVal))
-      checkBuffer = $"{checkBuffer}_{idx}"
-    else if (::PrizesView.isPrizeMultiAward(config) && "parentTrophyRandId" in config)
-      checkBuffer = $"{checkBuffer}_{config.parentTrophyRandId}"
+    local checkBuffer = typeVal
+    if (typeof typeVal != "string")
+      checkBuffer = rType + "_" + typeVal
 
-    if (checkBuffer not in tempBuffer)
+    if (rType == "resourceType" && ::g_decorator_type.getTypeByResourceType(typeVal))
+      checkBuffer = checkBuffer + "_" + idx
+
+    if (!getTblValue(checkBuffer, tempBuffer))
+    {
       tempBuffer[checkBuffer] <- {
-        count = count
-        arrayIdx = idx
-      }
+          count = count
+          arrayIdx = idx
+        }
+    }
     else
       tempBuffer[checkBuffer].count += count
 
@@ -423,7 +426,7 @@ let TrophyMultiAward = require("%scripts/items/trophyMultiAward.nut")
 {
   local rewardsList = []
   local singleReward = config
-  if (type(config) != "array")
+  if (typeof(config) != "array")
     rewardsList = this.getRewardList(config)
   else
   {

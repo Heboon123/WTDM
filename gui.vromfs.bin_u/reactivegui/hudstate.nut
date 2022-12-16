@@ -2,7 +2,6 @@ from "%rGui/globals/ui_library.nut" import *
 
 let interopGet = require("interopGen.nut")
 let { isDmgIndicatorVisible } = require_native("gameplayBinding")
-let { subscribe } = require("eventbus")
 
 let hudState = persist("hudState", @(){
   unitType = Watched("")
@@ -14,7 +13,6 @@ let hudState = persist("hudState", @(){
   canZoom = Watched(false)
 })
 
-subscribe("updateDmgIndicatorStates", @(v) hudState.dmgIndicatorStates(v))
 
 interopGet({
   stateTable = hudState

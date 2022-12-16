@@ -205,7 +205,6 @@ let { is_replay_playing } = require("replays")
     ::g_orders.disableOrders()
     ::quit_to_debriefing()
     ::interrupt_multiplayer(true)
-    ::HudBattleLog.reset()
     this.onResumeRaw()
   }
 

@@ -109,7 +109,7 @@ let maxRomanDigit = 3
 
 //Function from http://blog.stevenlevithan.com/archives/javascript-roman-numeral-converter
 local function getRomanNumeral(num) {
-  let t = type(num)
+  let t = typeof num
   if ((t != "integer" && t != "float") || num < 0)
     return ""
 
