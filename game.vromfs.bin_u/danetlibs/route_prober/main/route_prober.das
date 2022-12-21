@@ -1,6 +1,6 @@
 require auth
 require ClientNet
-require wtCircuit
+require CurrentCircuit
 require DagorDataBlock
 require DagorMath
 require DagorRandom
@@ -17,7 +17,7 @@ require statsd
 let MAIN_HOST_ROUTE_ID : uint = 0u// strong assumption, but currently there is no way to know, which route is the host
 let PERMILLE_PER_PERCENT : int = 10
 
-// TODO(k.zakharchenko): update to description when the logic is established
+// TODO: update to description when the logic is established
 // When the route evaluation is enabled, there is one route_prober and several route_stats entities (one for each route to the server).
 // Route evaluation is executed in a regular period. Route prober takes the last 10 seconds stats of the currently enabled route and
 // compares them with the stats of alternative routes. The alternative route stats may be stale because they were obtained the last time

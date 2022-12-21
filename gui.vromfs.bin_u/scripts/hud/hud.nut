@@ -21,6 +21,8 @@ let { getActionBarItems, getOwnerUnitName, getActionBarUnitName } = require_nati
 let { is_replay_playing } = require("replays")
 let { hitCameraInit, hitCameraReinit } = require("%scripts/hud/hudHitCamera.nut")
 let { hudTypeByHudUnitType } = require("%scripts/hud/hudUnitType.nut")
+let { is_benchmark_game_mode } = require("mission")
+let updateExtWatched = require("%scripts/global/updateExtWatched.nut")
 
 ::dagui_propid.add_name_id("fontSize")
 
@@ -322,7 +324,7 @@ let function maybeOfferControlsHelp() {
       return HUD_TYPE.CUTSCENE
     if (this.spectatorMode)
       return HUD_TYPE.SPECTATOR
-    if (::get_game_mode() == GM_BENCHMARK)
+    if (is_benchmark_game_mode())
       return HUD_TYPE.BENCHMARK
     if (::is_freecam_enabled())
       return HUD_TYPE.FREECAM
@@ -350,10 +352,10 @@ let function maybeOfferControlsHelp() {
       hud_kill_log              = visMode.isPartVisible(HUD_VIS_PART.KILLLOG)
       chatPlace                 = visMode.isPartVisible(HUD_VIS_PART.CHAT)
       hud_enemy_damage_nest     = visMode.isPartVisible(HUD_VIS_PART.KILLCAMERA)
-      order_status              = visMode.isPartVisible(HUD_VIS_PART.ORDERS)
+      order_status              = ::get_gui_option_in_mode(::USEROPT_HUD_VISIBLE_ORDERS, ::OPTIONS_MODE_GAMEPLAY, true)
     }
 
-    send("updateExtWatched", {
+    updateExtWatched({
       isChatPlaceVisible = objsToShow.chatPlace
       isOrderStatusVisible = objsToShow.order_status
     })
@@ -570,7 +572,7 @@ let function maybeOfferControlsHelp() {
   {
     if (this.getHudType() == HUD_TYPE.SHIP) {
       let missionProgressHeight = isProgressVisible() ? to_pixels("@missionProgressHeight") : 0;
-      ::call_darg("hudDmgIndicatorStatesUpdate", {
+      send("updateDmgIndicatorStates", {
         size = [0, 0], pos = [0, 0],
         padding = [0, 0, missionProgressHeight, 0]
       })
@@ -591,7 +593,7 @@ let function maybeOfferControlsHelp() {
 
     obj = this.scene.findObject("hud_tank_damage_indicator")
     if (obj?.isValid())
-      ::call_darg("hudDmgIndicatorStatesUpdate", {
+      send("updateDmgIndicatorStates", {
         size = obj.getSize(), pos = obj.getPos(),
         padding = [0, 0, 0, 0]
       })
@@ -744,7 +746,7 @@ let function maybeOfferControlsHelp() {
   function updateDmgIndicatorSize() {
     let obj = this.scene.findObject("hud_tank_damage_indicator")
     if (obj?.isValid())
-      ::call_darg("hudDmgIndicatorStatesUpdate", {
+      send("updateDmgIndicatorStates", {
         size = obj.getSize(), pos = obj.getPos(),
         padding = [0, 0, 0, 0]
       })

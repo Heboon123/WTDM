@@ -4,9 +4,14 @@ from "%scripts/dagui_library.nut" import *
 #explicit-this
 
 let { file_exists } = require("dagor.fs")
-let { floor, round_by_value, roundToDigits, round } = require("%sqstd/math.nut")
+let { calculate_tank_bullet_parameters } = require("unitCalculcation")
+let { floor, round_by_value, roundToDigits, round, pow } = require("%sqstd/math.nut")
 let { copyParamsToTable } = require("%sqstd/datablock.nut")
-let { getBulletsSetData,
+let {
+      //
+
+
+        getBulletsSetData,
         getBulletAnnotation,
         getBulletsSearchName,
         getModifIconItem,
@@ -14,6 +19,8 @@ let { getBulletsSetData,
 let { WEAPON_TYPE,
   isCaliberCannon, getWeaponNameByBlkPath } = require("%scripts/weaponry/weaponryInfo.nut")
 let { saclosMissileBeaconIRSourceBand } = require("%scripts/weaponry/weaponsParams.nut")
+let { getMeasuredExplosionText, getTntEquivalentText, getRicochetData, getTntEquivalentDmg
+} = require("%scripts/weaponry/dmgModel.nut")
 let { GUI } = require("%scripts/utils/configs.nut")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { format } = require("string")
@@ -234,6 +241,12 @@ let function addAdditionalBulletsInfoToDesc(bulletsData, descTbl) {
   if ("mass" not in bulletsData)
     return
 
+  if (bulletsData?.kineticDmg && bulletsData.kineticDmg > 0)
+    addProp(p, loc("bullet_properties/kineticDmg"), round_by_value(bulletsData.kineticDmg, 10))
+  if (bulletsData?.explosiveDmg && bulletsData.explosiveDmg > 0)
+    addProp(p, loc("bullet_properties/explosiveDmg"), round_by_value(bulletsData.explosiveDmg, 10))
+  if (bulletsData?.cumulativeDmg && bulletsData.cumulativeDmg > 0)
+    addProp(p, loc("bullet_properties/cumulativeDmg"), round_by_value(bulletsData.cumulativeDmg, 10))
   if (bulletsData.caliber > 0)
     addProp(p, loc("bullet_properties/caliber"), round_by_value(bulletsData.caliber,
       isCaliberCannon(bulletsData.caliber) ? 1 : 0.01) + " " + loc("measureUnits/mm"))
@@ -276,11 +289,13 @@ let function addAdditionalBulletsInfoToDesc(bulletsData, descTbl) {
   {
     if (bulletsData.guidanceType == "ir" || bulletsData.guidanceType == "optical" )
     {
+      let targetSignatureType = bulletsData?.targetSignatureType != null ? bulletsData?.targetSignatureType : bulletsData?.visibilityType
       addProp(p, loc("missile/guidance"),
-        loc($"missile/guidance/{bulletsData?.visibilityType == "optic" ? "tv" : "ir"}"))
+        loc($"missile/guidance/{targetSignatureType == "optic" ? "tv" : "ir"}"))
       if (bulletsData?.bulletType == "aam" || bulletsData?.bulletType == "sam_tank")
       {
-        if (bulletsData.bandMaskToReject != 0)
+        if ( (bulletsData?.gateWidth != null && bulletsData.gateWidth < bulletsData.fov) ||
+             bulletsData.bandMaskToReject != 0)
           addProp(p, loc("missile/eccm"), loc("options/yes"))
         addProp(p, loc("missile/aspect"), bulletsData.rangeBand1 > 0 ?
           loc("missile/aspect/allAspect") : loc("missile/aspect/rearAspect"))
@@ -344,11 +359,11 @@ let function addAdditionalBulletsInfoToDesc(bulletsData, descTbl) {
   let explosiveMass = bulletsData?.explosiveMass
   if (explosiveMass)
     addProp(p, loc("bullet_properties/explosiveMass"),
-      ::g_dmg_model.getMeasuredExplosionText(explosiveMass))
+      getMeasuredExplosionText(explosiveMass))
 
   if (explosiveType && explosiveMass)
   {
-    let tntEqText = ::g_dmg_model.getTntEquivalentText(explosiveType, explosiveMass)
+    let tntEqText = getTntEquivalentText(explosiveType, explosiveMass)
     if (tntEqText.len())
       addProp(p, loc("bullet_properties/explosiveMassInTNTEquivalent"), tntEqText)
   }
@@ -375,7 +390,7 @@ let function addAdditionalBulletsInfoToDesc(bulletsData, descTbl) {
     addProp(p, loc("bullet_properties/proximityFuze/triggerRadius"),
       proximityFuseRadius + " " + loc("measureUnits/meters_alt"))
 
-  let ricochetData = !bulletsData.isCountermeasure && ::g_dmg_model.getRicochetData(bulletsData?.ricochetPreset)
+  let ricochetData = !bulletsData.isCountermeasure && getRicochetData(bulletsData?.ricochetPreset)
   if (ricochetData)
     foreach(item in ricochetData.angleProbabilityMap)
       addProp(p, loc("bullet_properties/angleByProbability",
@@ -475,7 +490,7 @@ let function buildBulletsData(bullet_parameters, bulletsSet = null) {
         {
           local armor = null;
           let idist = bullet_params.armorPiercingDist[i].tointeger()
-          if (typeof(bullet_params.armorPiercing[i]) != "table")
+          if (type(bullet_params.armorPiercing[i]) != "table")
             continue
 
           if (d == idist || (d < idist && !i))
@@ -501,12 +516,12 @@ let function buildBulletsData(bullet_parameters, bulletsSet = null) {
     if (!needAddParams)
       continue
 
-    foreach(p in ["mass", "speed", "fuseDelay", "fuseDelayDist", "explodeTreshold", "operatedDist",
-      "machMax", "endSpeed", "maxSpeed", "rangeBand0", "rangeBand1", "bandMaskToReject"])
+    foreach(p in ["mass", "kineticDmg", "explosiveDmg", "cumulativeDmg", "speed", "fuseDelay", "fuseDelayDist", "explodeTreshold", "operatedDist",
+      "machMax", "endSpeed", "maxSpeed", "rangeBand0", "rangeBand1", "fov", "gateWidth", "bandMaskToReject"])
       bulletsData[p] <- bullet_params?[p] ?? 0
 
     foreach(p in ["reloadTimes", "autoAiming", "irBeaconBand", "isBeamRider", "timeLife", "guaranteedRange", "rangeMax",
-      "weaponBlkPath", "guidanceType", "visibilityType", "radarRange", "laserRange", "loadFactorMax"])
+      "weaponBlkPath", "guidanceType", "targetSignatureType", "radarRange", "laserRange", "loadFactorMax"])
     {
       if(p in bullet_params)
         bulletsData[p] <- bullet_params[p]
@@ -547,6 +562,44 @@ let function addBulletAnimationsToDesc(descTbl, bulletAnimations) {
     })
   descTbl.hasBulletAnimation <- descTbl.bulletAnimations.len() > 0
 }
+
+//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 let function addBulletsParamToDesc(descTbl, unit, item)
 {
@@ -589,13 +642,19 @@ let function addBulletsParamToDesc(descTbl, unit, item)
 
   let searchName = getBulletsSearchName(unit, modName)
   let useDefaultBullet = searchName != modName
-  let bullet_parameters = ::calculate_tank_bullet_parameters(unit.name,
+  let bullet_parameters = calculate_tank_bullet_parameters(unit.name,
     useDefaultBullet && "weaponBlkName" in bulletsSet ?
       bulletsSet.weaponBlkName :
       getModificationBulletsEffect(searchName),
     useDefaultBullet, false)
 
   let bulletsData = buildBulletsData(bullet_parameters, bulletsSet)
+  //
+
+
+
+
+
   addAdditionalBulletsInfoToDesc(bulletsData, descTbl)
   addArmorPiercingToDesc(bulletsData, descTbl)
 }

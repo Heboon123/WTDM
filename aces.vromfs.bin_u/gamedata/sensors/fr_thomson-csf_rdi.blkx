@@ -382,7 +382,7 @@
             "signal": "pulseDopplerSearch"
           },
           "setModeName": {
-            "name": "PD standby"
+            "name": "PD HDN standby"
           }
         },
         "setTwsStandbyMode": {
@@ -394,7 +394,7 @@
             "signal": "pulseDopplerSearch"
           },
           "setModeName": {
-            "name": "TWS standby"
+            "name": "TWS HDN standby"
           }
         },
         "resetStandbyMode": {
@@ -455,7 +455,7 @@
             "signal": "pulseDopplerSearch"
           },
           "setModeName": {
-            "name": "PD search"
+            "name": "PD HDN search"
           }
         },
         "setTwsSearchMode": {
@@ -467,7 +467,7 @@
             "signal": "pulseDopplerSearch"
           },
           "setModeName": {
-            "name": "TWS search"
+            "name": "TWS HDN search"
           }
         },
         "resetSearchMode": {
@@ -549,7 +549,7 @@
             "signal": "pulseDopplerTrack"
           },
           "setModeName": {
-            "name": "PD acquisition"
+            "name": "PD HDN acquisition"
           }
         },
         "setTwsDesignationLockMode": {
@@ -578,7 +578,7 @@
             "signal": "pulseDopplerTrack"
           },
           "setModeName": {
-            "name": "TWS acquisition"
+            "name": "TWS HDN acquisition"
           }
         },
         "designatedTargetSearch": {
@@ -607,7 +607,7 @@
         },
         "setPulseDopplerTrackModeNameTrack": {
           "setModeName": {
-            "name": "PD track"
+            "name": "PD HDN track"
           }
         },
         "setPulseTrackModeNameLock": {
@@ -617,7 +617,7 @@
         },
         "setPulseDopplerTrackModeNameLock": {
           "setModeName": {
-            "name": "PD ACM"
+            "name": "PD HDN ACM"
           }
         },
         "setTrackModeNameTrack": [
@@ -976,6 +976,19 @@
             "doCustomActionTemplate": {
               "fsm": "main",
               "name": "setStandbyMode"
+            }
+          }
+        },
+        "acmTrackToSearch": {
+          "stateFrom": "acmTrack",
+          "command": "acmSwitch",
+          "stateTo": "search",
+          "actions": {
+            "disableTrackModes": [],
+            "resetTrackMode": [],
+            "doCustomActionTemplate": {
+              "fsm": "main",
+              "name": "setSearchMode"
             }
           }
         },

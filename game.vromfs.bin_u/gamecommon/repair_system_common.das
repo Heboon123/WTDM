@@ -1,13 +1,10 @@
 module repair_system_common shared
 require ecs
 require DagorMath
+require dm
 require Unit
 require WTDamageModel
 require app
-
-
-let REPAIR_PENALTY_REL_HP = 0.5f
-let REPAIR_PENALTY_SLOW = 1.5f
 
 
 def get_flag(repair_state : uint; flag) : bool
@@ -30,10 +27,11 @@ def is_repair_with_mods_availabile(repair_state : uint) : bool
 
 
 def can_repair_part(dm : DamageableVisualModel; part_id : int; part_state : uint; part_hp : float4; repair_system_repair_hp_multiplier : float; repair_with_mods_available : bool)
+  let partId = dm |> dm_get_remap(part_id)
   return (
     get_flag(part_state, DmPartRepairState ALLOW_REPAIR) &&
     (!get_flag(part_state, DmPartRepairState MOD_REQUIRED) || repair_with_mods_available) &&
-    dm |> dm_is_dmg_part_active(part_id) && dm |> dm_get_rel_hp(part_id) <= part_hp.w * repair_system_repair_hp_multiplier
+    partId |> dm_part_id_valid() && dm |> dm_get_rel_hp(part_id) <= part_hp.w * repair_system_repair_hp_multiplier
   )
 
 
@@ -80,9 +78,14 @@ def get_part_repair_hp(unit : Unit?; part_id : int) : float
   return *unit.visual |> dm_get_dmg_part_hp(part_id)
 
 
+def dm_get_part_hp_prop(dm; part_no) : float
+  let partId = dm |> dm_get_remap(part_no)
+  return get_part_hp_prop_value(dm_get_part_props_id(dm, partId), 0.0f)
+
+
 def get_part_needed_hp(dm; part_id : int; var part_hp : float4&; repair_system_repair_hp_multiplier : float)
   if part_hp.y <= 0.0f
-    part_hp.y = dm |> dm_get_part_hp_prop(part_id)
+    part_hp.y = dm_get_part_hp_prop(dm, part_id)
   return part_hp.y * repair_system_repair_hp_multiplier * part_hp.z
 
 

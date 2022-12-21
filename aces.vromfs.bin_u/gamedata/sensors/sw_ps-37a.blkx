@@ -3,12 +3,25 @@
   "name": "PS-37A",
   "showMissileLaunchZone": true,
   "transivers": {
-    "common": {
+    "pulse": {
       "sideLobesAttenuation": -20.0,
       "power": 400.0,
       "band": 8,
-      "rcs": 5.0,
+      "rcs": 3.0,
       "range": 70000.0,
+      "rangeMax": 150000.0,
+      "timeGainControl": true,
+      "antenna": {
+        "angleHalfSens": 3.5,
+        "sideLobesSensitivity": -30.0
+      }
+    },
+    "pulseDoppler": {
+      "sideLobesAttenuation": -20.0,
+      "power": 400.0,
+      "band": 8,
+      "rcs": 3.0,
+      "range": 35000.0,
       "rangeMax": 150000.0,
       "timeGainControl": true,
       "antenna": {
@@ -108,7 +121,7 @@
       }
     },
     "pulseDopplerSearch": {
-      "dynamicRange": [40.0,15.0],
+      "dynamicRange": [40.0,10.0],
       "groundClutter": false,
       "aircraftAsTarget": true,
       "friendFoeId": true,
@@ -143,7 +156,7 @@
       }
     },
     "pulseDopplerTrack": {
-      "dynamicRange": [40.0,13.0],
+      "dynamicRange": [40.0,10.0],
       "groundClutter": false,
       "aircraftAsTarget": true,
       "angularAccuracy": 0.06,
@@ -199,7 +212,7 @@
             "value": false
           },
           "setTransiver": {
-            "transiver": "common"
+            "transiver": "pulseDoppler"
           },
           "setSignal": {
             "signal": "pulseDopplerSearch"
@@ -239,6 +252,9 @@
           "setScanPatternSet": {
             "scanPatternSet": "search"
           },
+          "setTransiver": {
+            "transiver": "pulse"
+          },
           "setSignal": {
             "signal": "pulseSearch"
           }
@@ -250,6 +266,9 @@
           },
           "setScanPatternSet": {
             "scanPatternSet": "search"
+          },
+          "setTransiver": {
+            "transiver": "pulseDoppler"
           },
           "setSignal": {
             "signal": "pulseDopplerSearch"
@@ -291,6 +310,9 @@
           "setScanPatternSet": {
             "scanPatternSet": "search"
           },
+          "setTransiver": {
+            "transiver": "pulse"
+          },
           "setSignal": {
             "signal": "pulseSearch"
           }
@@ -309,6 +331,9 @@
           },
           "setScanPatternSet": {
             "scanPatternSet": "search"
+          },
+          "setTransiver": {
+            "transiver": "pulseDoppler"
           },
           "setSignal": {
             "signal": "pulseDopplerSearch"
@@ -361,6 +386,9 @@
           "setModeName": {
             "name": "acquisition"
           },
+          "setTransiver": {
+            "transiver": "pulse"
+          },
           "setSignal": {
             "signal": "pulseTrack"
           }
@@ -369,6 +397,9 @@
           "setDesignationLockModeCommon": [],
           "setModeName": {
             "name": "PD acquisition"
+          },
+          "setTransiver": {
+            "transiver": "pulseDoppler"
           },
           "setSignal": {
             "signal": "pulseDopplerTrack"
@@ -382,9 +413,6 @@
           "clearTargetsOfInterest": [],
           "setScanPatternSet": {
             "scanPatternSet": "boresightLock"
-          },
-          "setScanPattern": {
-            "scanPattern": "boresightLock"
           },
           "resetScanPhase": [],
           "setCenterAzimuth": {
@@ -421,6 +449,9 @@
           "setModeName": {
             "name": "ACM"
           },
+          "setTransiver": {
+            "transiver": "pulse"
+          },
           "setSignal": {
             "signal": "pulseTrack"
           }
@@ -429,6 +460,9 @@
           "setBoresightLockModeCommon": [],
           "setModeName": {
             "name": "PD ACM"
+          },
+          "setTransiver": {
+            "transiver": "pulseDoppler"
           },
           "setSignal": {
             "signal": "pulseDopplerTrack"
@@ -473,6 +507,9 @@
           "setModeName": {
             "name": "track"
           },
+          "setTransiver": {
+            "transiver": "pulse"
+          },
           "setSignal": {
             "signal": "pulseTrack"
           }
@@ -481,6 +518,9 @@
           "setTrackModeCommon": [],
           "setModeName": {
             "name": "PD track"
+          },
+          "setTransiver": {
+            "transiver": "pulseDoppler"
           },
           "setSignal": {
             "signal": "pulseDopplerTrack"
@@ -493,6 +533,9 @@
           },
           "setScanPatternSet": {
             "scanPatternSet": "tws"
+          },
+          "setTransiver": {
+            "transiver": "pulseDoppler"
           },
           "setSignal": {
             "signal": "pulseDopplerSearch"
@@ -513,6 +556,9 @@
           },
           "setScanPatternSet": {
             "scanPatternSet": "tws"
+          },
+          "setTransiver": {
+            "transiver": "pulseDoppler"
           },
           "setSignal": {
             "signal": "pulseDopplerSearch"
@@ -997,6 +1043,12 @@
           },
           {
             "stateFrom": "pulseDopplerSearch"
+          },
+          {
+            "stateFrom": "pulseBoresightLock"
+          },
+          {
+            "stateFrom": "pulseDopplerBoresightLock"
           },
           {
             "stateFrom": "twsStandby"

@@ -46,7 +46,7 @@
         "hp": 40.0
       }
     },
-    "armor_engine": {
+    "armor_jet_engine": {
       "engine1_dm": {
         "genericDamageMult": 1.6,
         "hp": 50.5
@@ -993,12 +993,20 @@
     },
     {
       "part": {
-        "name": "spar_l_dm"
+        "name": "spar_l_dm",
+        "onKill": {
+          "nothing": 100.0,
+          "cut": 0.001
+        }
       }
     },
     {
       "part": {
-        "name": "spar_r_dm"
+        "name": "spar_r_dm",
+        "onKill": {
+          "nothing": 100.0,
+          "cut": 0.001
+        }
       }
     },
     {
@@ -2393,13 +2401,55 @@
       ]
     },
     {
-      "WeaponSlot": {
-        "index": 0,
-        "notUseforDisbalanceCalculation": true,
-        "WeaponPreset": {
-          "name": "f_104s_asa_common"
+      "WeaponSlot": [
+        {
+          "index": 0
+        },
+        {
+          "notUseforDisbalanceCalculation": true
+        },
+        {
+          "WeaponPreset": {
+            "name": "f_104s_asa_common"
+          }
+        },
+        {
+          "WeaponPreset": [
+            {
+              "name": "f_104s_ltc_common"
+            },
+            {
+              "ShowNodes": {
+                "node": "fuse2"
+              }
+            },
+            {
+              "Weapon": {
+                "trigger": "countermeasures",
+                "startFx": "",
+                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
+                "emitter": "emtr_flare1",
+                "bullets": 30,
+                "external": true,
+                "separate": true,
+                "brakeChuteRange": [0.0,0.0]
+              }
+            },
+            {
+              "Weapon": {
+                "trigger": "countermeasures",
+                "startFx": "",
+                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
+                "emitter": "emtr_flare2",
+                "bullets": 30,
+                "external": true,
+                "separate": true,
+                "brakeChuteRange": [0.0,0.0]
+              }
+            }
+          ]
         }
-      }
+      ]
     },
     {
       "WeaponSlot": [
@@ -3823,6 +3873,36 @@
     },
     "new_cover": {
       "tier": 4
+    },
+    "countermeasures_launcher_chaff_only": [],
+    "countermeasures_launcher_flare_only": [],
+    "countermeasures_launcher_chaff_priority": [],
+    "countermeasures_launcher_flare_priority": [],
+    "countermeasures_belt_pack": {
+      "modClass": "armor",
+      "turn_it_off": false,
+      "invertEnableLogic": false,
+      "group": "countermeasures",
+      "tier": 1,
+      "effects": {
+        "commonWeapons": {
+          "hideDmParts": [
+            {
+              "node": "armor1_dm"
+            },
+            {
+              "node": "armor2_dm"
+            },
+            {
+              "node": "armor3_dm"
+            }
+          ],
+          "Weapon": {
+            "slot": 0,
+            "preset": "f_104s_ltc_common"
+          }
+        }
+      }
     },
     "M60_air_targets": [],
     "M60_armor_targets": [],

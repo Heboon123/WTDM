@@ -404,7 +404,6 @@ let prizeViewConfig = {
       } else if (st.stackType == STACK_TYPE.VEHICLE)
       {
         data = {
-          icon = this.getPrizeTypeIcon(st.prize)
           title = this._getStackUnitsText(st)
         }
       } else if (st.stackType == STACK_TYPE.CURRENCY)
@@ -726,7 +725,7 @@ let prizeViewConfig = {
   if (prize?.unlock || prize?.unlockType)
   {
     local unlockType = prize?.unlockType || ::get_unlock_type_by_id(prize?.unlock)
-    if (typeof(unlockType) == "string")
+    if (type(unlockType) == "string")
       unlockType = ::get_unlock_type(unlockType)
     return ::g_decorator_type.getTypeByUnlockedItemType(unlockType).prizeTypeIcon
   }

@@ -16,10 +16,10 @@ let { getPlayerName,
         isPlatformSony } = require("%scripts/clientState/platform.nut")
 let {newRoom, newMessage, initChatMessageListOn} = require("%scripts/chat/menuChatRoom.nut")
 let { topMenuBorders } = require("%scripts/mainmenu/topMenuStates.nut")
-let { isChatEnabled, isChatEnableWithPlayer,
+let { isChatEnabled, isChatEnableWithPlayer, hasMenuChat,
   isCrossNetworkMessageAllowed, chatStatesCanUseVoice } = require("%scripts/chat/chatStates.nut")
 let { updateContactsStatusByContacts } = require("%scripts/contacts/updateContactsStatus.nut")
-let { hasChat } = require("%scripts/user/matchingFeature.nut")
+let { send } = require("eventbus")
 
 const CHAT_ROOMS_LIST_SAVE_ID = "chatRooms"
 const VOICE_CHAT_SHOW_COUNT_SAVE_ID = "voiceChatShowCount"
@@ -1133,8 +1133,10 @@ let sortChatUsers = @(a, b) a.name <=> b.name
                                                     voiceChatStatus = voiceChatStatus
                                                    })
 
-        ::call_darg("updateVoiceChatStatus", { name = contact?.getName() ?? "",
-          isTalking = voiceChatStatus == voiceChatStats.talking})
+        send("updateVoiceChatStatus", {
+          name = contact?.getName() ?? "",
+          isTalking = voiceChatStatus == voiceChatStats.talking
+        })
       }
     }
     /* //!! For debug only!!
@@ -1143,7 +1145,7 @@ let sortChatUsers = @(a, b) a.name <=> b.name
     if (db)
     {
       foreach(name, param in db)
-        if (typeof(param) != "instance")
+        if (type(param) != "instance")
           msg += "\n" + name + " = " + param
         else
         if (name=="list")
@@ -2948,7 +2950,7 @@ if (::g_login.isLoggedIn())
 
 ::openChatScene <- function openChatScene(ownerHandler = null)
 {
-  if (!::gchat_is_enabled() || !hasChat.value)
+  if (!::gchat_is_enabled() || !hasMenuChat.value)
   {
     ::showInfoMsgBox(loc("msgbox/notAvailbleYet"))
     return false

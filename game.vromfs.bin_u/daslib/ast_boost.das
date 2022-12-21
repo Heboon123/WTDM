@@ -10,6 +10,8 @@ require ast public
 require strings
 require daslib/strings_boost
 
+typedef AnnotationDeclarationPtr = smart_ptr<AnnotationDeclaration>
+
 def clone ( var args : dasvector`das_string; var nargs:array<string> )
     let tot = length(nargs)
     args |> resize ( tot )
@@ -800,3 +802,12 @@ def public get_workhorse_types
         Type tFloat2;           Type tFloat3;           Type tFloat4;           Type tRange;
         Type tURange;           Type tString;           Type tDouble;           Type tPointer
     ]]
+
+def public find_argument_index ( typ:TypeDeclPtr; name:string )
+    for a,ai in typ.argNames,range(100500)
+        if a==name
+            return ai
+    return -1
+
+def public isCMRESType ( blockT:TypeDeclPtr )
+    return blockT!=null && blockT.isRefType && !blockT.flags.ref

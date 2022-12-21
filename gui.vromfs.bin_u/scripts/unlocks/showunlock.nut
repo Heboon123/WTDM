@@ -5,6 +5,7 @@ from "%scripts/dagui_library.nut" import *
 #explicit-this
 
 let { format } = require("string")
+let { shell_launch } = require("url")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
 let tutorialModule = require("%scripts/user/newbieTutorialDisplay.nut")
@@ -18,6 +19,8 @@ let { openLinkWithSource } = require("%scripts/web/webActionsForPromo.nut")
 let { checkRankUpWindow } = require("%scripts/debriefing/rankUpModal.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let openQrWindow = require("%scripts/wndLib/qrWindow.nut")
+let { showGuestEmailRegistration, needShowGuestEmailRegistration
+} = require("%scripts/user/suggestionEmailRegistration.nut")
 
 ::delayed_unlock_wnd <- []
 ::showUnlockWnd <- function showUnlockWnd(config)
@@ -41,11 +44,6 @@ let openQrWindow = require("%scripts/wndLib/qrWindow.nut")
   }
   else if (unlockType == "TournamentReward")
     return ::gui_handlers.TournamentRewardReceivedWnd.open(config)
-  else if (unlockType == UNLOCKABLE_AIRCRAFT)
-  {
-    if (!hasFeature("Tanks") && ::getAircraftByName(config?.id)?.isTank())
-      return false
-  }
 
   ::gui_start_modal_wnd(::gui_handlers.ShowUnlockHandler, { config=config })
   return true
@@ -263,6 +261,12 @@ let openQrWindow = require("%scripts/wndLib/qrWindow.nut")
 
   function onMsgLink(obj)
   {
+    if (needShowGuestEmailRegistration()) {
+      base.goBack()
+      showGuestEmailRegistration()
+      return
+    }
+
     if (getTblValue("type", this.config) == "regionalPromoPopup")
       ::add_big_query_record("promo_popup_click",
         ::save_to_json({ id = this.config?.id ?? this.config?.link ?? this.config?.popupImage ?? - 1 }))
@@ -304,7 +308,7 @@ let openQrWindow = require("%scripts/wndLib/qrWindow.nut")
     let linkString = format(loc("msgBox/viralAcquisition"), ::my_user_id_str)
     let msg_head = format(loc("mainmenu/invitationHead"), ::my_user_name)
     let msg_body = format(loc("mainmenu/invitationBody"), linkString)
-    ::shell_launch("mailto:yourfriend@email.com?subject=" + msg_head + "&body=" + msg_body)
+    shell_launch($"mailto:yourfriend@email.com?subject={msg_head}&body={msg_body}")
   }
 
   function onFacebookPostLink()

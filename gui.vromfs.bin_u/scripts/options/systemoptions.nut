@@ -3,7 +3,6 @@ from "%scripts/dagui_library.nut" import *
 #no-root-fallback
 #explicit-this
 
-let { subscribe, send } = require("eventbus")
 let { round } = require("math")
 let { format, strip } = require("string")
 let regexp2 = require("regexp2")
@@ -54,6 +53,7 @@ let compModeGraphicsOptions = {
     compatibilityShadowQuality = { compMode = true, fullMode = false }
   }
   standaloneOptions = {
+    xess              = { compMode = false }
     dlss              = { compMode = false }
     dlssSharpness     = { compMode = false }
   }
@@ -85,6 +85,7 @@ local mUiStruct = [
   {
     container = "sysopt_bottom_left"
     items = [
+      "xess"
       "dlss"
       "dlssSharpness"
       "anisotropy"
@@ -109,6 +110,7 @@ local mUiStruct = [
       "contactShadowsQuality"
       "ssrQuality"
       "waterQuality"
+      "waterEffectsQuality"
       "giQuality"
       "physicsQuality"
       "displacementQuality"
@@ -284,7 +286,7 @@ let isHotReloadPending = @() checkChanges(mCfgApplied, mCfgCurrent).needEngineRe
 let isSavePending = @() checkChanges(mCfgInitial, mCfgCurrent).needSave
 
 let canUseGraphicsOptions = @() is_platform_pc && hasFeature("GraphicsOptions")
-let canShowGpuBenchmark = @() canUseGraphicsOptions() && target_platform != "macosx"
+let canShowGpuBenchmark = @() canUseGraphicsOptions() && platformId != "macosx"
 
 let function updateGuiNavbar(show=true) {
   let scene = mHandler?.scene
@@ -353,6 +355,7 @@ let function localize(optionId, valueId) {
     case "graphicsQuality":
     case "texQuality":
     case "shadowQuality":
+    case "waterEffectsQuality":
     case "compatibilityShadowQuality":
     case "fxResolutionQuality":
     case "tireTracksQuality":
@@ -377,6 +380,21 @@ let function parseResolution(resolution) {
   }
 }
 
+let function getAvailableXessModes()
+{
+  let values = ["off"]
+  let selectedResolution = parseResolution(getGuiValue("resolution", "auto"))
+  if (::is_xess_quality_available_at_resolution(0, selectedResolution.w, selectedResolution.h))
+    values.append("performance")
+  if (::is_xess_quality_available_at_resolution(1, selectedResolution.w, selectedResolution.h))
+    values.append("balanced")
+  if (::is_xess_quality_available_at_resolution(2, selectedResolution.w, selectedResolution.h))
+    values.append("quality")
+  if (::is_xess_quality_available_at_resolution(3, selectedResolution.w, selectedResolution.h))
+    values.append("ultra_quality")
+
+  return values;
+}
 
 let function getAvailableDlssModes()
 {
@@ -522,7 +540,12 @@ mShared = {
   }
 
   dlssClick = function() {
-    foreach (id in [ "antialiasing", "ssaa", "dlssSharpness" ])
+    foreach (id in [ "antialiasing", "xess", "ssaa", "dlssSharpness" ])
+      enableGuiOption(id, getOptionDesc(id)?.enabled() ?? true)
+  }
+
+  xessClick = function() {
+    foreach (id in [ "antialiasing", "dlss", "ssaa", "dlssSharpness" ])
       enableGuiOption(id, getOptionDesc(id)?.enabled() ?? true)
   }
 
@@ -781,6 +804,20 @@ mSettings = {
     values = [ "ultralow", "low", "medium", "high", "max", "movie", "custom" ]
     onChanged = "graphicsQualityClick"
   }
+  xess = { widgetType="list" def="off" blk="video/xessQuality" restart=false
+    init = function(_blk, desc) {
+      desc.values <- getAvailableXessModes()
+    }
+    onChanged = "xessClick"
+    getFromBlk = function(blk, desc) {
+      let quality = get_blk_value_by_path(blk, desc.blk, -1)
+      return (quality == 0) ? "performance" : (quality == 1) ? "balanced" : (quality == 2) ? "quality" : (quality == 3) ? "ultra_quality" : "off"
+    }
+    setToBlk = function(blk, desc, val) {
+      let quality = (val == "performance") ? 0 : (val == "balanced") ? 1 : (val == "quality") ? 2 : (val == "ultra_quality") ? 3 : -1
+      set_blk_value_by_path(blk, desc.blk, quality)
+    }
+  }
   dlss = { widgetType="list" def="off" blk="video/dlssQuality" restart=false
     init = function(_blk, desc) {
       desc.values <- getAvailableDlssModes()
@@ -827,7 +864,7 @@ mSettings = {
   }
     onChanged = "antiAliasingClick"
     values = [ "none", "fxaa", "high_fxaa", "low_taa"]
-    enabled = @() !getGuiValue("compatibilityMode") && getGuiValue("dlss", "off") == "off"
+    enabled = @() !getGuiValue("compatibilityMode") && getGuiValue("dlss", "off") == "off" && getGuiValue("xess", "off") == "off"
   }
   taau_ratio = { widgetType="slider" def=100 min=50 max=100 blk="video/temporalResolutionScale" restart=false
     enabled = @() !getGuiValue("compatibilityMode")
@@ -837,7 +874,7 @@ mSettings = {
   }
   ssaa = { widgetType="list" def="none" blk="graphics/ssaa" restart=false
     values = [ "none", "4X" ]
-    enabled = @() !getGuiValue("compatibilityMode") && getGuiValue("dlss", "off") == "off"
+    enabled = @() !getGuiValue("compatibilityMode") && getGuiValue("dlss", "off") == "off" && getGuiValue("xess", "off") == "off"
     onChanged = "ssaaClick"
     getFromBlk = function(blk, desc) {
       let val = get_blk_value_by_path(blk, desc.blk, 1.0)
@@ -899,6 +936,9 @@ mSettings = {
   }
   shadowQuality = { widgetType="list" def="high" blk="graphics/shadowQuality" restart=false
     values = [ "ultralow", "low", "medium", "high", "ultrahigh" ]
+  }
+  waterEffectsQuality = { widgetType="list" def="high" blk="graphics/waterEffectsQuality" restart=false
+    values = [ "low", "medium", "high" ]
   }
   compatibilityShadowQuality = { widgetType="list" def="low" blk="graphics/compatibilityShadowQuality" restart=false
     values = [ "low", "medium" ]
@@ -1033,7 +1073,7 @@ mSettings = {
       configure_stereo(val)
       return set_blk_value_by_path(blk, desc.blk, val)
     }
-    enabled = @() is_platform_windows && (target_platform == "win64" || ::is_dev_version) && !getGuiValue("compatibilityMode")
+    enabled = @() is_platform_windows && (platformId == "win64" || ::is_dev_version) && !getGuiValue("compatibilityMode")
   }
   vrMirror = { widgetType="list" def="left" blk="video/vreye" restart=false values = [ "left", "right", "both" ]
   }
@@ -1278,17 +1318,8 @@ let function applyRestartEngine(reloadScene = false) {
   foreach (id, value in mCfgCurrent)
     mCfgApplied[id] <- value
 
-  local cb = null
-  if (reloadScene) {
-    let params = {
-        resolution = mCfgCurrent.resolution
-        screenMode = mCfgCurrent.mode
-    }
-    cb = @() send("updateExtWatched", params)
-  }
-
   log("[sysopt] Resetting renderer.")
-  applyRendererSettingsChange(reloadScene, true, cb)
+  applyRendererSettingsChange(reloadScene, true)
 }
 
 let isReloadSceneRerquired = @() mCfgApplied.resolution != mCfgCurrent.resolution
@@ -1545,11 +1576,6 @@ let function setQualityPreset(presetName) {
 
 //------------------------------------------------------------------------------
 init()
-
-subscribe("updateScreenStates", @(_) send("updateExtWatched", {
-  resolution = getGuiValue("resolution", "1024 x 768")
-  screenMode = getGuiValue("mode", "fullscreen")
-}))
 
 //------------------------------------------------------------------------------
 return {

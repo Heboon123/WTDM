@@ -15,8 +15,10 @@
   "haveCCIPForGun": true,
   "haveCCRPForBombs": true,
   "ilsLCOSS": true,
+  "hmdVtas": true,
   "isBwOpticSight": true,
   "havePointOfInterestDesignator": true,
+  "hasHelmetDesignator": true,
   "gyroscopicSightOverSensors": true,
   "type": "typeFighter",
   "paratrooper": "usa_para",
@@ -39,7 +41,7 @@
         "hp": 15.0
       }
     },
-    "armor_engine": {
+    "armor_jet_engine": {
       "engine1_dm": {
         "genericDamageMult": 1.6,
         "hp": 50.5
@@ -1309,12 +1311,20 @@
     },
     {
       "part": {
-        "name": "spar_l_dm"
+        "name": "spar_l_dm",
+        "onKill": {
+          "nothing": 100.0,
+          "cut": 0.001
+        }
       }
     },
     {
       "part": {
-        "name": "spar_r_dm"
+        "name": "spar_r_dm",
+        "onKill": {
+          "nothing": 100.0,
+          "cut": 0.001
+        }
       }
     },
     {
@@ -2848,7 +2858,7 @@
             "textureArea": [0.0,0.5,0.5,1.0],
             "page": {
               "type": "radar",
-              "radarScale": 0.67
+              "radarScale": 0.6
             }
           }
         },
@@ -3046,6 +3056,9 @@
         },
         {
           "node": "pylon_centr"
+        },
+        {
+          "node": "flare_open"
         }
       ]
     },
@@ -3068,12 +3081,34 @@
             "name": "ltc_common"
           },
           {
+            "HideNodes": {
+              "node": "flare_cap"
+            }
+          },
+          {
+            "ShowNodes": {
+              "node": "flare_open"
+            }
+          },
+          {
             "ShowNodes": [
               {
-                "node": "pylon_l_ltc_in"
+                "node": "gear_l18"
               },
               {
-                "node": "pylon_r_ltc_in"
+                "node": "gear_l19"
+              },
+              {
+                "node": "gear_l20"
+              },
+              {
+                "node": "gear_r20"
+              },
+              {
+                "node": "gear_r19"
+              },
+              {
+                "node": "gear_r18"
               }
             ]
           },
@@ -3082,8 +3117,8 @@
               "trigger": "countermeasures",
               "startFx": "",
               "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
-              "emitter": "emtr_flare3",
-              "bullets": 45,
+              "emitter": "emtr_flare1",
+              "bullets": 30,
               "external": true,
               "separate": false
             }
@@ -3093,8 +3128,8 @@
               "trigger": "countermeasures",
               "startFx": "",
               "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
-              "emitter": "emtr_flare4",
-              "bullets": 45,
+              "emitter": "emtr_flare2",
+              "bullets": 30,
               "external": true,
               "separate": false
             }

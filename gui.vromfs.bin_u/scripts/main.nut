@@ -38,8 +38,7 @@ let { get_local_unixtime } = require("dagor.time")
 if (::disable_network())
   ::get_charserver_time_sec = get_local_unixtime
 
-::nda_version <- -1
-::nda_version_tanks <-5
+::nda_version <- 5
 ::eula_version <- 6
 
 ::TEXT_EULA <- 0
@@ -66,7 +65,7 @@ if (::disable_network())
 
 ::g_script_reloader.registerPersistentData("MainGlobals", getroottable(),
   [
-    "nda_version", "nda_version_tanks", "eula_version",
+    "nda_version", "eula_version",
     "is_debug_mode_enabled", "first_generation",
     "show_console_buttons", "is_dev_version"
   ])

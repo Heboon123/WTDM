@@ -1537,38 +1537,52 @@
     "selector": {
       "name": "shipBot",
       "selectStrategy": "ordered",
-      "selector": [
-        {
-          "selectStrategy": "ordered"
-        },
-        {
-          "selectOnSuccess": true
-        },
-        {
-          "sequencer": {
-            "findShipLeader": [],
-            "followShipLeader": []
+      "parallel": {
+        "selector": [
+          {
+            "selectStrategy": "ordered"
+          },
+          {
+            "selectOnSuccess": true
+          },
+          {
+            "sequencer": {
+              "findShipLeader": [],
+              "followShipLeader": []
+            }
+          },
+          {
+            "sequencer": {
+              "doesntHaveLeader": [],
+              "selector": {
+                "selectStrategy": "ordered",
+                "selectOnSuccess": true,
+                "transferLeader": [],
+                "findNextShipWaypoint": [],
+                "checkIfShipHasDestination": [],
+                "recalculatePathToTarget": [],
+                "findCapturePointToSail": {
+                  "canCapture": true
+                }
+              },
+              "shipSail": []
+            }
           }
-        },
-        {
-          "sequencer": {
-            "doesntHaveLeader": [],
-            "selector": {
-              "selectStrategy": "ordered",
-              "selectOnSuccess": true,
-              "transferLeader": [],
-              "findNextShipWaypoint": [],
-              "checkIfShipHasDestination": [],
-              "recalculatePathToTarget": [],
-              "findCapturePointToSail": {
-                "canCapture": true
-              }
-            },
-            "shipSail": []
-          }
+        ],
+        "sendSupportAircraft": {
+          "timeOutRange": [10.0,30.0],
+          "attackersPerTargetMax": 1,
+          "attacksMax": 3
         }
-      ],
-      "stopShipEngine": []
+      },
+      "sequencer": {
+        "stopShipEngine": [],
+        "sendSupportAircraft": {
+          "timeOutRange": [10.0,30.0],
+          "attackersPerTargetMax": 1,
+          "attacksMax": 3
+        }
+      }
     }
   },
   {
@@ -4705,6 +4719,17 @@
     }
   },
   {
+    "selector": {
+      "name": "tankBotDriveByRoute",
+      "selectStrategy": "ordered",
+      "sequencer": {
+        "driveByRoute": {
+          "dist": 10.0
+        }
+      }
+    }
+  },
+  {
     "selector": [
       {
         "name": "missionTargetEliminator"
@@ -6660,11 +6685,7 @@
               },
               {
                 "sequencer": {
-                  "setGroupLeaderAs": {
-                    "varName": "vip"
-                  },
-                  "setBotPlayerTargetAs": {
-                    "botVarName": "vip",
+                  "setPlayerTargetAs": {
                     "varName": "playerTarget"
                   },
                   "setAsTarget": {
@@ -6946,11 +6967,7 @@
               },
               {
                 "sequencer": {
-                  "setGroupLeaderAs": {
-                    "varName": "vip"
-                  },
-                  "setBotPlayerTargetAs": {
-                    "botVarName": "vip",
+                  "setPlayerTargetAs": {
                     "varName": "playerTarget"
                   },
                   "setAsTarget": {

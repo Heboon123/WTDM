@@ -16,6 +16,7 @@ let DistToSafety = Watched(0.0)
 let DistToTarget = Watched(0.0)
 let RocketMode = Watched(false)
 let CannonMode = Watched(false)
+let AirCannonMode = Watched(false)
 let BombCCIPMode = Watched(false)
 let BlkFileName = Watched("")
 let IsMfdEnabled = Watched(false)
@@ -29,6 +30,8 @@ let RadarTargetDistRate = Watched(0.0)
 let RadarTargetDist = Watched(0.0)
 let RadarTargetPosValid = Watched(false)
 let RadarTargetPos = [0, 0]
+let RadarTargetAngle = Watched(-1.0)
+let GunfireSolution = [-1, -1]
 let AamAccelLock = Watched(false)
 let MfdRadarWithNavVis = Watched(false)
 let MfdRadarNavPosSize = [0, 0, 0, 0]
@@ -68,6 +71,8 @@ let planeState = {
   RadarTargetPosValid,
   RadarTargetPos,
   RadarTargetDistRate,
+  RadarTargetAngle,
+  GunfireSolution,
   AamAccelLock,
   MfdRadarWithNavVis,
   MfdRadarNavPosSize,
@@ -78,7 +83,8 @@ let planeState = {
   MfdVdiVisible,
   MfdVdiPosSize,
   VdiColor,
-  IsOnGround
+  IsOnGround,
+  AirCannonMode
 }
 
 interop.updatePlaneIlsPosSize <- function(x, y, w, h) {
@@ -117,6 +123,11 @@ interop.updateAimLockPos <- function(x, y) {
 interop.updateRadarTargetPos <- function(x, y) {
   RadarTargetPos[0] = x
   RadarTargetPos[1] = y
+}
+
+interop.updateGunfireSolution <- function(x, y) {
+  GunfireSolution[0] = x
+  GunfireSolution[1] = y
 }
 
 interop.updateIlsAtgmTargetPos <- function(x, y) {

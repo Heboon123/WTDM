@@ -17,10 +17,12 @@ let { isAvailableFacebook } = require("%scripts/social/facebookStates.nut")
 let { checkInvitesAfterFlight } = require("%scripts/social/psnSessionManager/getPsnSessionManagerApi.nut")
 let { checkNuclearEvent } = require("%scripts/matching/serviceNotifications/nuclearEventHandler.nut")
 let { checkShowRateWnd } = require("%scripts/user/suggestionRateGame.nut")
-let { checkAutoShowEmailRegistration } = require("%scripts/user/suggestionEmailRegistration.nut")
+let { checkShowEmailRegistration,
+  checkShowGuestEmailRegistrationAfterLogin } = require("%scripts/user/suggestionEmailRegistration.nut")
 let { checkShowGpuBenchmarkWnd } = require("%scripts/options/gpuBenchmarkWnd.nut")
 let { checkAfterFlight } = require("%scripts/social/xboxSquadManager/xboxSquadManager.nut")
 let checkReconnect = require("%scripts/matchingRooms/checkReconnect.nut")
+let { grant_promo_items = @() null, is_running } = require_native("steam")
 
 let delayed_gblk_error_popups = []
 let function showGblkErrorPopup(errCode, path) {
@@ -99,13 +101,14 @@ local function onMainMenuReturn(handler, isAfterLogin) {
   if(isAllowPopups && hasFeature("Invites") && !guiScene.hasModalObject())
     handler.doWhenActiveOnce("checkShowViralAcquisition")
 
-  if (!guiScene.hasModalObject() && isAllowPopups)
-    handler.doWhenActive(@() checkAutoShowEmailRegistration())
+  if (isAllowPopups && !guiScene.hasModalObject())
+    handler.doWhenActive(@() checkShowEmailRegistration())
+
+  if (isAfterLogin && isAllowPopups && !guiScene.hasModalObject())
+    handler.doWhenActive(@() checkShowGuestEmailRegistrationAfterLogin())
 
   if (isAllowPopups && !guiScene.hasModalObject() && !isPlatformSony && isAvailableFacebook())
     handler.doWhenActive(function () { ::show_facebook_login_reminder() })
-  if (isAllowPopups)
-    handler.doWhenActive(function () { ::checkRemnantPremiumAccount() })
   if (handler.unitInfoPanel == null)
   {
     handler.unitInfoPanel = ::create_slot_info_panel(handler.scene, true, "mainmenu")
@@ -128,7 +131,16 @@ local function onMainMenuReturn(handler, isAfterLogin) {
     handler.doWhenActiveOnce("checkNewUnitTypeToBattleTutor")
   }
 
+  if (!isAfterLogin && isAllowPopups) {
+    handler.doWhenActive(@() ::dmViewer.checkShowViewModeTutor(DM_VIEWER_XRAY))
+    handler.doWhenActive(@() ::dmViewer.checkShowViewModeTutor(DM_VIEWER_ARMOR))
+  }
+
   handler.doWhenActive(popGblkErrorPopups)
+
+  //steamapi
+  if (is_running())
+    handler.doWhenActive(@() grant_promo_items())
 
   guiScene.initCursor("%gui/cursor.blk", "normal")
 

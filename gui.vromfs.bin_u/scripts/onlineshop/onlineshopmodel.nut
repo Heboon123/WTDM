@@ -6,6 +6,7 @@ from "%scripts/dagui_library.nut" import *
 
 let { format } = require("string")
 let { ceil } = require("math")
+let { get_url_for_purchase } = require("url")
 let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
 let { getShopItem, openIngameStore, canUseIngameShop
 } = require("%scripts/onlineShop/entitlementsStore.nut")
@@ -17,6 +18,8 @@ let { addPromoAction } = require("%scripts/promo/promoActions.nut")
 let { ENTITLEMENTS_PRICE } = require("%scripts/utils/configs.nut")
 let { havePlayerTag } = require("%scripts/user/userUtils.nut")
 let { KWARG_NON_STRICT } = require("%sqstd/functools.nut")
+let { showGuestEmailRegistration, needShowGuestEmailRegistration
+} = require("%scripts/user/suggestionEmailRegistration.nut")
 
 
 /*
@@ -139,7 +142,7 @@ let { KWARG_NON_STRICT } = require("%sqstd/functools.nut")
 
 ::OnlineShopModel.isEntitlement <- function isEntitlement(name)
 {
-  if (typeof name == "string")
+  if (type(name) == "string")
     return name in this.getPriceBlk()
   return false
 }
@@ -261,7 +264,7 @@ let function getEntitlementsByFeature(name)
     return entitlements
   foreach(condition in (feature % "condition"))
   {
-    if (typeof(condition) == "string" &&
+    if (type(condition) == "string" &&
         ::OnlineShopModel.isEntitlement(condition))
       entitlements.append(condition)
   }
@@ -356,14 +359,9 @@ let function getEntitlementsByFeature(name)
   let isSteam = ::steam_is_running() &&
                   (havePlayerTag("steam") || hasFeature("AllowSteamAccountLinking")) //temporary use old code pass for steam
 
-  // COMPATIBILITY: native pre-auth blocks login in embedded-to-external browser case, but we want this
-  //                fixed on production without version bump.
-  let useScriptBasedAutoLogin = "get_url_for_purchase" in getroottable()
   let url = isSteam
-            ? format(loc("url/webstore/steam/item"), guid, ::steam_get_app_id(), ::steam_get_my_id())
-            : (useScriptBasedAutoLogin
-              ? $"auto_local auto_login {::get_url_for_purchase(guid)}"
-              : ::get_authenticated_url_for_purchase(guid))
+    ? format(loc("url/webstore/steam/item"), guid, ::steam_get_app_id(), ::steam_get_my_id())
+    : " ".concat("auto_local", "auto_login", get_url_for_purchase(guid))
 
   if (url == "")
   {
@@ -372,7 +370,7 @@ let function getEntitlementsByFeature(name)
     return
   }
 
-  this.openShopUrl(url, !useScriptBasedAutoLogin && !isSteam)
+  this.openShopUrl(url)
 }
 
 ::OnlineShopModel.getGoodsChapter <- function getGoodsChapter(goodsName)
@@ -408,6 +406,11 @@ let function getEntitlementsByFeature(name)
 
 ::OnlineShopModel.openShopUrl <- function openShopUrl(baseUrl, isAlreadyAuthenticated = false)
 {
+  if (needShowGuestEmailRegistration()) {
+    showGuestEmailRegistration()
+    return
+  }
+
   openUrl(baseUrl, false, isAlreadyAuthenticated, "shop_window")
   this.startEntitlementsUpdater()
 }
