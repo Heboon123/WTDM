@@ -12,7 +12,7 @@
       "rangeMax": 50000.0,
       "antenna": {
         "angleHalfSens": 3.5,
-        "sideLobesSensitivity": -34.0
+        "sideLobesSensitivity": -32.0
       }
     },
     "hprf": {
@@ -36,8 +36,14 @@
       "rangeMax": 30000.0,
       "visibilityType": "infraRed",
       "antenna": {
-        "angleHalfSens": 2.5,
-        "sideLobesSensitivity": -80.0
+        "azimuth": {
+          "angleHalfSens": 4.0,
+          "sideLobesSensitivity": -80.0
+        },
+        "elevation": {
+          "angleHalfSens": 0.3,
+          "sideLobesSensitivity": -80.0
+        }
       }
     }
   },
@@ -72,7 +78,7 @@
       "elevationLimits": [-45.0,60.0],
       "rollStabLimit": 90.0,
       "pitchStabLimit": 30.0,
-      "period": 4.0,
+      "period": 3.7,
       "width": 25.0,
       "barHeight": 2.5,
       "barsCount": 4,
@@ -95,7 +101,7 @@
       "type": "pyramide",
       "azimuthLimits": [-70.0,70.0],
       "elevationLimits": [-45.0,60.0],
-      "period": 2.2,
+      "period": 1.1,
       "width": 25.0,
       "barHeight": 2.5,
       "barsCount": 2,
@@ -113,35 +119,36 @@
       "azimuthLimits": [-30.0,30.0],
       "elevationLimits": [-15.0,15.0],
       "rollStabLimit": 90.0,
-      "pitchStabLimit": 30.0,
       "period": 2.5,
-      "width": 30.0,
-      "barHeight": 2.0,
+      "width": 15.0,
+      "barHeight": 4.0,
       "barsCount": 15,
-      "rowMajor": true
+      "rowMajor": false,
+      "isSmoothMajor": true,
+      "barsOneWay": false
     },
     "irstSearchNarrow": {
       "type": "pyramide",
       "azimuthLimits": [-30.0,30.0],
       "elevationLimits": [-15.0,15.0],
       "rollStabLimit": 90.0,
-      "pitchStabLimit": 30.0,
       "period": 1.25,
       "width": 15.0,
-      "barHeight": 2.0,
-      "barsCount": 15,
-      "rowMajor": true
+      "barHeight": 3.75,
+      "barsCount": 8,
+      "rowMajor": false,
+      "isSmoothMajor": true,
+      "barsOneWay": false
     },
     "irstDesignationLockSearch": {
       "type": "pyramide",
       "azimuthLimits": [-30.0,30.0],
       "elevationLimits": [-15.0,15.0],
       "rollStabLimit": 90.0,
-      "pitchStabLimit": 30.0,
-      "period": 1.5,
+      "period": 0.3,
       "width": 15.0,
-      "barHeight": 2.0,
-      "barsCount": 2,
+      "barHeight": 4.0,
+      "barsCount": 1,
       "rowMajor": false,
       "indicate": true
     },
@@ -149,10 +156,10 @@
       "type": "pyramide",
       "azimuthLimits": [-30.0,30.0],
       "elevationLimits": [-15.0,15.0],
-      "period": 1.5,
+      "period": 0.3,
       "width": 15.0,
-      "barHeight": 2.0,
-      "barsCount": 2,
+      "barHeight": 4.0,
+      "barsCount": 1,
       "rowMajor": false,
       "centerElevation": 1.0,
       "indicate": true
@@ -310,10 +317,10 @@
   },
   "scopeRangeSets": {
     "common": {
-      "range1": 25000.0,
-      "range2": 50000.0,
-      "range3": 100000.0,
-      "range4": 10000.0
+      "range1": 50000.0,
+      "range2": 100000.0,
+      "range3": 10000.0,
+      "range4": 25000.0
     },
     "acm": {
       "range1": 10000.0
@@ -569,6 +576,11 @@
             "source": "targetDesignation",
             "width": 1000.0
           },
+          "setRelSpeedGatePos": {
+            "source": "constRange",
+            "pos": 0.0,
+            "width": 1800.0
+          },
           "setCenterAzimuth": {
             "source": "targetDesignation"
           },
@@ -618,6 +630,11 @@
           "setDesignationLockModeCommon": [],
           "setScanPattern": {
             "scanPattern": "irstDesignationLockSearch"
+          },
+          "setDistGatePos": {
+            "source": "constRange",
+            "pos": 15000.0,
+            "width": 30000.0
           },
           "setCenterAzimuth": {
             "source": "targetDesignation"
@@ -764,6 +781,11 @@
           "setFsmActive": {
             "fsm": "lock",
             "active": true
+          },
+          "setDistGatePos": {
+            "source": "constRange",
+            "pos": 15000.0,
+            "width": 30000.0
           },
           "setScopeRangeSet": {
             "scopeRangeSet": "acm"
@@ -1309,6 +1331,16 @@
           }
         ],
         "setIrst": [
+          {
+            "setTargetDesignationRange": {
+              "azimuthRange": [-30.0,30.0],
+              "azmithWidth": 2.0,
+              "elevationRange": [-15.0,15.0],
+              "elevationWidth": 3.0,
+              "distanceRange": [0.0,30000.0],
+              "distanceWidth": 100.0
+            }
+          },
           {
             "setCustomActionTemplate": {
               "fsm": "main",
