@@ -3,8 +3,7 @@
   "bin_dump_file": "",
   "mission_settings": {
     "player": {
-      "army": 1,
-      "wing": ""
+      "army": 1
     },
     "player_teamB": {
       "army": 2
@@ -13,11 +12,8 @@
       "level": "levels/water.bin",
       "type": "singleMission",
       "environment": "Day",
-      "weather": "hazy",
-      "restoreType": "attempts",
-      "optionalTakeOff": false
-    },
-    "spectator_points": []
+      "weather": "hazy"
+    }
   },
   "imports": [],
   "triggers": {
@@ -236,16 +232,6 @@
             "speed": 20.0,
             "lockSpeed": true,
             "advancedCollisionAvoidance": true
-          }
-        },
-        {
-          "unitSetIndication": {
-            "set": true,
-            "target_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target": "@convoy_sq_name"
           }
         },
         {
@@ -767,74 +753,10 @@
           }
         },
         {
-          "missionMarkAsRespawnPoint": {
-            "loc_name": "missions/spawn",
-            "spawnEffect": false,
-            "isStrictSpawn": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "useExisting": false,
-            "isIndividual": true,
-            "removeAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "radius": 50.0,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "resetStrictSpawnIndex": false,
-            "replaceAreas": false,
-            "forceCreate": false,
-            "target": "@current_spawnpoint_str",
-            "team": "A",
-            "separate_fuel_time": false,
-            "modular_airfield": false,
-            "offset": [0.0,0.0,100.0],
-            "tags": {
-              "type_bomber": false,
-              "type_fighter": false,
-              "type_assault": false,
-              "tank": true,
-              "type_heavy_tank": true,
-              "type_medium_tank": true,
-              "type_light_tank": true,
-              "type_tank_destroyer": true,
-              "type_spaa": true
-            }
-          }
-        },
-        {
-          "missionMarkAsRespawnPoint": {
-            "loc_name": "missions/spawn",
-            "spawnEffect": false,
-            "isStrictSpawn": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "useExisting": false,
-            "isIndividual": true,
-            "removeAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": false,
-            "radius": 50.0,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "resetStrictSpawnIndex": false,
-            "replaceAreas": false,
-            "forceCreate": false,
-            "target": "@prev_spawnpoint_str",
-            "team": "A",
-            "separate_fuel_time": false,
-            "modular_airfield": false,
-            "disableAfter": 0,
-            "offset": [0.0,0.0,100.0],
-            "tags": {
-              "type_bomber": false,
-              "type_fighter": false,
-              "type_assault": false,
-              "tank": true,
-              "type_heavy_tank": true,
-              "type_medium_tank": true,
-              "type_light_tank": true,
-              "type_tank_destroyer": true,
-              "type_spaa": true
-            }
+          "varSetString": {
+            "value": "",
+            "var": "current_spawnpoint_loc_name",
+            "input_var": "spawnpoint_loc_name_prefix"
           }
         },
         {
@@ -851,10 +773,11 @@
           }
         },
         {
-          "varModify": {
-            "operator": "add",
-            "value": 1.0,
-            "var": "current_waypoint"
+          "varAddString": {
+            "value": "",
+            "digits": 2,
+            "var": "current_spawnpoint_loc_name",
+            "input_var": "current_waypoint"
           }
         },
         {
@@ -863,6 +786,46 @@
             "digits": 2,
             "var": "current_spawnpoint_str",
             "input_var": "current_waypoint"
+          }
+        },
+        {
+          "missionMarkAsRespawnPoint": {
+            "loc_name": "@current_spawnpoint_loc_name",
+            "spawnEffect": false,
+            "isStrictSpawn": false,
+            "isAirfield": false,
+            "isUnit": false,
+            "useExisting": false,
+            "isIndividual": true,
+            "removeAreas": false,
+            "canSpawnOnNeutral": false,
+            "showOnMap": true,
+            "radius": 50.0,
+            "onlyOnePlayerPerSpawnPoint": false,
+            "resetStrictSpawnIndex": false,
+            "replaceAreas": false,
+            "forceCreate": false,
+            "ignoreTeamsOnReuse": false,
+            "target": "@current_spawnpoint_str",
+            "team": "A",
+            "tags": {
+              "type_bomber": false,
+              "type_fighter": false,
+              "type_assault": false,
+              "tank": true,
+              "type_heavy_tank": true,
+              "type_medium_tank": true,
+              "type_light_tank": true,
+              "type_tank_destroyer": true,
+              "type_spaa": true
+            }
+          }
+        },
+        {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "current_waypoint"
           }
         },
         {
@@ -881,74 +844,10 @@
           }
         },
         {
-          "missionMarkAsRespawnPoint": {
-            "loc_name": "missions/spawn",
-            "spawnEffect": false,
-            "isStrictSpawn": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "useExisting": false,
-            "isIndividual": true,
-            "removeAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "radius": -1.0,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "resetStrictSpawnIndex": false,
-            "replaceAreas": false,
-            "forceCreate": false,
-            "target": "@current_spawnpoint_str",
-            "team": "B",
-            "separate_fuel_time": false,
-            "modular_airfield": false,
-            "offset": [0.0,0.0,0.0],
-            "tags": {
-              "type_bomber": false,
-              "type_fighter": false,
-              "type_assault": false,
-              "tank": true,
-              "type_heavy_tank": true,
-              "type_medium_tank": true,
-              "type_light_tank": true,
-              "type_tank_destroyer": true,
-              "type_spaa": true
-            }
-          }
-        },
-        {
-          "missionMarkAsRespawnPoint": {
-            "loc_name": "missions/spawn",
-            "spawnEffect": false,
-            "isStrictSpawn": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "useExisting": false,
-            "isIndividual": true,
-            "removeAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": false,
-            "radius": -1.0,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "resetStrictSpawnIndex": false,
-            "replaceAreas": false,
-            "forceCreate": false,
-            "target": "@prev_spawnpoint_str",
-            "team": "B",
-            "separate_fuel_time": false,
-            "modular_airfield": false,
-            "disableAfter": 0,
-            "offset": [0.0,0.0,0.0],
-            "tags": {
-              "type_bomber": false,
-              "type_fighter": false,
-              "type_assault": false,
-              "tank": true,
-              "type_heavy_tank": true,
-              "type_medium_tank": true,
-              "type_light_tank": true,
-              "type_tank_destroyer": true,
-              "type_spaa": true
-            }
+          "varSetString": {
+            "value": "",
+            "var": "current_spawnpoint_loc_name",
+            "input_var": "spawnpoint_loc_name_prefix"
           }
         },
         {
@@ -965,10 +864,11 @@
           }
         },
         {
-          "varModify": {
-            "operator": "add",
-            "value": 1.0,
-            "var": "current_waypoint"
+          "varAddString": {
+            "value": "",
+            "digits": 2,
+            "var": "current_spawnpoint_loc_name",
+            "input_var": "current_waypoint"
           }
         },
         {
@@ -977,6 +877,46 @@
             "digits": 2,
             "var": "current_spawnpoint_str",
             "input_var": "current_waypoint"
+          }
+        },
+        {
+          "missionMarkAsRespawnPoint": {
+            "loc_name": "@current_spawnpoint_loc_name",
+            "spawnEffect": false,
+            "isStrictSpawn": false,
+            "isAirfield": false,
+            "isUnit": false,
+            "useExisting": false,
+            "isIndividual": true,
+            "removeAreas": false,
+            "canSpawnOnNeutral": false,
+            "showOnMap": true,
+            "radius": -1.0,
+            "onlyOnePlayerPerSpawnPoint": false,
+            "resetStrictSpawnIndex": false,
+            "replaceAreas": false,
+            "forceCreate": false,
+            "ignoreTeamsOnReuse": false,
+            "target": "@current_spawnpoint_str",
+            "team": "B",
+            "tags": {
+              "type_bomber": false,
+              "type_fighter": false,
+              "type_assault": false,
+              "tank": true,
+              "type_heavy_tank": true,
+              "type_medium_tank": true,
+              "type_light_tank": true,
+              "type_tank_destroyer": true,
+              "type_spaa": true
+            }
+          }
+        },
+        {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "current_waypoint"
           }
         },
         {
@@ -1226,6 +1166,9 @@
           "object_var_value": 0,
           "fastClimb": false,
           "destTimeMode": false,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
           "object": "all_players_squad",
           "speed": 50.0,
           "distributionRadius": 300.0
@@ -1293,14 +1236,16 @@
           "moAddMissionObjective": {
             "target": "t1_convoy_defend",
             "object_var_comp_op": "equal",
-            "object_var_name": ""
+            "object_var_name": "",
+            "object_marking": 0
           }
         },
         {
           "moAddMissionObjective": {
             "target": "t2_convoy_attack",
             "object_var_comp_op": "equal",
-            "object_var_name": ""
+            "object_var_name": "",
+            "object_marking": 0
           }
         }
       ],
@@ -1309,14 +1254,16 @@
           "moAddMissionObjective": {
             "target": "t2_convoy_defend",
             "object_var_comp_op": "equal",
-            "object_var_name": ""
+            "object_var_name": "",
+            "object_marking": 0
           }
         },
         {
           "moAddMissionObjective": {
             "target": "t1_convoy_attack",
             "object_var_comp_op": "equal",
-            "object_var_name": ""
+            "object_var_name": "",
+            "object_marking": 0
           }
         }
       ]
@@ -1388,6 +1335,8 @@
     "linPointStr_next": "",
     "current_spawnpoint_str": "t1_tanks_spawn01",
     "prev_spawnpoint_str": "t1_tanks_spawn00",
+    "spawnpoint_loc_name_prefix": "missions/spawn_",
+    "current_spawnpoint_loc_name": "",
     "convoy_sq_name": "t1_convoy_sq"
   },
   "dialogs": [],
@@ -1454,6 +1403,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -1536,6 +1491,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 1,
             "count": 1,
@@ -1614,6 +1575,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -1696,6 +1663,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 1,
             "count": 1,
@@ -1774,6 +1747,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -1856,6 +1835,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 1,
             "count": 1,
@@ -1934,6 +1919,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -2016,6 +2007,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 1,
             "count": 1,
@@ -2094,6 +2091,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -2176,6 +2179,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 1,
             "count": 1,
@@ -2254,6 +2263,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -2336,6 +2351,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 1,
             "count": 1,
@@ -2414,6 +2435,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -2496,6 +2523,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 1,
             "count": 1,
@@ -2574,6 +2607,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -2656,6 +2695,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 1,
             "count": 1,
@@ -2734,6 +2779,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -2816,6 +2867,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 1,
             "count": 1,
@@ -2894,6 +2951,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -2976,6 +3039,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 1,
             "count": 1,
@@ -3054,6 +3123,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -3136,6 +3211,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 1,
             "count": 1,
@@ -3214,6 +3295,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -3296,6 +3383,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 1,
             "count": 1,
@@ -3374,6 +3467,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -3456,6 +3555,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 1,
             "count": 1,
@@ -3534,6 +3639,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -3616,6 +3727,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 1,
             "count": 1,
@@ -3694,6 +3811,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -3776,804 +3899,10 @@
           "modification": "manual_extinguisher"
         },
         {
-          "props": {
-            "army": 1,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
+          "crewSkillK": 0.0
         },
         {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t1_convoy_31"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2228.04,4.48985,3453.0]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 1,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t1_convoy_32"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2228.04,4.48985,3455.67]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 1,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t1_convoy_33"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2228.04,4.48985,3458.34]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 1,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t1_convoy_34"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2228.04,4.48985,3461.01]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 1,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t1_convoy_35"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2228.04,4.48985,3463.68]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 1,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t1_convoy_36"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2228.04,4.48985,3466.35]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 1,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t1_convoy_37"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2228.04,4.48985,3469.02]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 1,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t1_convoy_38"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2228.04,4.48985,3471.69]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 1,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t1_convoy_39"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2228.04,4.48985,3474.36]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 1,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t1_convoy_40"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2228.04,4.48985,3477.03]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
+          "applyAllMods": false
         },
         {
           "props": {
@@ -4656,6 +3985,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 2,
             "count": 1,
@@ -4734,6 +4069,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -4816,6 +4157,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 2,
             "count": 1,
@@ -4894,6 +4241,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -4976,6 +4329,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 2,
             "count": 1,
@@ -5054,6 +4413,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -5136,6 +4501,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 2,
             "count": 1,
@@ -5214,6 +4585,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -5296,6 +4673,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 2,
             "count": 1,
@@ -5374,6 +4757,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -5456,6 +4845,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 2,
             "count": 1,
@@ -5534,6 +4929,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -5616,6 +5017,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 2,
             "count": 1,
@@ -5694,6 +5101,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -5776,6 +5189,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 2,
             "count": 1,
@@ -5854,6 +5273,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -5936,6 +5361,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 2,
             "count": 1,
@@ -6014,6 +5445,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -6096,6 +5533,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 2,
             "count": 1,
@@ -6174,6 +5617,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -6256,6 +5705,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 2,
             "count": 1,
@@ -6334,6 +5789,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -6416,6 +5877,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 2,
             "count": 1,
@@ -6494,6 +5961,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -6576,6 +6049,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 2,
             "count": 1,
@@ -6654,6 +6133,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -6736,6 +6221,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 2,
             "count": 1,
@@ -6814,6 +6305,12 @@
         },
         {
           "modification": "manual_extinguisher"
+        },
+        {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
         },
         {
           "props": {
@@ -6896,6 +6393,12 @@
           "modification": "manual_extinguisher"
         },
         {
+          "crewSkillK": 0.0
+        },
+        {
+          "applyAllMods": false
+        },
+        {
           "props": {
             "army": 2,
             "count": 1,
@@ -6976,804 +6479,10 @@
           "modification": "manual_extinguisher"
         },
         {
-          "props": {
-            "army": 2,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
+          "crewSkillK": 0.0
         },
         {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t2_convoy_31"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2236.65,4.48985,3474.47]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 2,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t2_convoy_32"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2236.65,4.48985,3477.86]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 2,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t2_convoy_33"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2236.65,4.48985,3481.25]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 2,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t2_convoy_34"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2236.65,4.48985,3484.63]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 2,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t2_convoy_35"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2236.65,4.48985,3488.02]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 2,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t2_convoy_36"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2236.65,4.48985,3491.4]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 2,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t2_convoy_37"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2236.65,4.48985,3494.79]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 2,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t2_convoy_38"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2236.65,4.48985,3498.17]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 2,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t2_convoy_39"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2236.65,4.48985,3501.56]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
-        },
-        {
-          "props": {
-            "army": 2,
-            "count": 1,
-            "formation_type": "rows",
-            "formation_div": 3,
-            "formation_step": [2.5,2.0],
-            "formation_noise": [0.1,0.1],
-            "uniqueName": "",
-            "attack_type": "fire_at_will",
-            "isDelayed": true,
-            "unitReplacementType": "tank"
-          }
-        },
-        {
-          "way": []
-        }
-      ]
-    },
-    {
-      "tankModels": [
-        {
-          "name": "t2_convoy_40"
-        },
-        {
-          "tm": [
-            [1.0,0.0,0.0],
-            [0.0,1.0,0.0],
-            [0.0,0.0,1.0],
-            [2236.65,4.48985,3504.94]
-          ]
-        },
-        {
-          "unit_class": "germ_flakpanzer_38t_Gepard"
-        },
-        {
-          "objLayer": 1
-        },
-        {
-          "closed_waypoints": false
-        },
-        {
-          "isShipSpline": false
-        },
-        {
-          "shipTurnRadius": 100.0
-        },
-        {
-          "weapons": ""
-        },
-        {
-          "bullets0": ""
-        },
-        {
-          "bullets1": ""
-        },
-        {
-          "bullets2": ""
-        },
-        {
-          "bullets3": ""
-        },
-        {
-          "bulletsCount0": 0
-        },
-        {
-          "bulletsCount1": 0
-        },
-        {
-          "bulletsCount2": 0
-        },
-        {
-          "bulletsCount3": 0
-        },
-        {
-          "modification": "tank_tool_kit"
-        },
-        {
-          "modification": "manual_extinguisher"
+          "applyAllMods": false
         },
         {
           "props": {
@@ -7804,9 +6513,6 @@
           [2234.1,4.33279,3359.53]
         ],
         "props": [
-          {
-            "object_marking": 0
-          },
           {
             "squad_members": "t2_convoy_01"
           },
@@ -7898,34 +6604,7 @@
             "squad_members": "t2_convoy_30"
           },
           {
-            "squad_members": "t2_convoy_31"
-          },
-          {
-            "squad_members": "t2_convoy_32"
-          },
-          {
-            "squad_members": "t2_convoy_33"
-          },
-          {
-            "squad_members": "t2_convoy_34"
-          },
-          {
-            "squad_members": "t2_convoy_35"
-          },
-          {
-            "squad_members": "t2_convoy_36"
-          },
-          {
-            "squad_members": "t2_convoy_37"
-          },
-          {
-            "squad_members": "t2_convoy_38"
-          },
-          {
-            "squad_members": "t2_convoy_39"
-          },
-          {
-            "squad_members": "t2_convoy_40"
+            "object_marking": 0
           }
         ]
       }
@@ -7940,9 +6619,6 @@
           [2224.16,4.48985,3363.35]
         ],
         "props": [
-          {
-            "object_marking": 0
-          },
           {
             "squad_members": "t1_convoy_01"
           },
@@ -8034,34 +6710,7 @@
             "squad_members": "t1_convoy_30"
           },
           {
-            "squad_members": "t1_convoy_31"
-          },
-          {
-            "squad_members": "t1_convoy_32"
-          },
-          {
-            "squad_members": "t1_convoy_33"
-          },
-          {
-            "squad_members": "t1_convoy_34"
-          },
-          {
-            "squad_members": "t1_convoy_35"
-          },
-          {
-            "squad_members": "t1_convoy_36"
-          },
-          {
-            "squad_members": "t1_convoy_37"
-          },
-          {
-            "squad_members": "t1_convoy_38"
-          },
-          {
-            "squad_members": "t1_convoy_39"
-          },
-          {
-            "squad_members": "t1_convoy_40"
+            "object_marking": 0
           }
         ]
       }

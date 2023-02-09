@@ -107,14 +107,14 @@ let getActions = function(contact, params)
   actions.append({
     text = crossplayModule.getTextWithCrossplayIcon(showCrossPlayIcon, loc("multiplayer/invite_to_session"))
     show = canInviteToChatRoom && ::SessionLobby.canInvitePlayer(uid) && canInviteToSesson
-    isVisualDisabled = !canInteractCrossConsole || !canInteractCrossPlatform
+    isVisualDisabled = !canInteractCrossConsole || !canInteractCrossPlatform || !canInvite
     action = function () {
       if (!canInteractCrossConsole)
         return showNotAvailableActionPopup()
-      if (!canInteractCrossPlatform) {
-        checkAndShowCrossplayWarning()
-        return
-      }
+      if (!canInteractCrossPlatform)
+        return checkAndShowCrossplayWarning()
+      if (!canInvite)
+        return notifyPlayerAboutRestriction(contact, true)
 
       if (isPS4Player && !u.isEmpty(::SessionLobby.getExternalId()))
         contact.updatePSNIdAndDo(@() invite(
@@ -187,6 +187,11 @@ let getActions = function(contact, params)
       text = loc("mainmenu/btnClanCard")
       show = hasFeature("Clans") && !u.isEmpty(clanTag) && clanTag != ::clan_get_my_clan_tag()
       action = @() ::showClanPage("", "", clanTag)
+    }
+    {
+      text = loc("worldwar/inviteToOperation")
+      show = ::is_worldwar_enabled() && ::g_world_war.isWwOperationInviteEnable()
+      action = @() ::g_world_war.inviteToWwOperation(contact.uid)
     }
   )
 //---- </Common> ------------------

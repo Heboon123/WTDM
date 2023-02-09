@@ -2,10 +2,6 @@
   "selected_tag": "",
   "bin_dump_file": "",
   "mission_settings": {
-    "atmosphere": {
-      "pressure": 760.0,
-      "temperature": -10.0
-    },
     "player": [
       {
         "army": 1
@@ -214,8 +210,6 @@
     "mission": {
       "level": "levels/avg_snow_alps.bin",
       "type": "domination",
-      "restoreType": "attempts",
-      "optionalTakeOff": false,
       "environment": "Day",
       "weather": "hazy",
       "locName": "missions/_DBttlA;alps/name",
@@ -229,10 +223,12 @@
       "allowedKillStreaks": true,
       "randomSpawnTeams": false,
       "remapAiTankModels": true,
-      "battleAreaColorPreset": "battleArea",
+      "showTacticalMapCellSize": true,
+      "timeLimitWarn": 3600,
       "country_axis": "germany",
       "country_allies": "ussr",
-      "showTacticalMapCellSize": true,
+      "restoreType": "attempts",
+      "optionalTakeOff": false,
       "allowedUnitTypes": {
         "isAirplanesAllowed": true,
         "isTanksAllowed": true,
@@ -240,7 +236,10 @@
         "isHelicoptersAllowed": true
       }
     },
-    "spectator_points": [],
+    "atmosphere": {
+      "pressure": 760.0,
+      "temperature": -10.0
+    },
     "briefing": {
       "place_loc": "",
       "date_loc": "",
@@ -320,39 +319,7 @@
   "imports": [
     {
       "import_record": {
-        "file": "gameData/missions/cta/tanks/alps/template_alps_Dbttl.blk",
-        "importAreas": true,
-        "importUnits": true,
-        "importTriggers": true,
-        "importMissionObjectives": true,
-        "importWayPoints": true,
-        "showAreas": true,
-        "showUnits": true,
-        "showTriggers": true,
-        "showMissionObjectives": true,
-        "showWayPoints": true,
-        "excludes": []
-      }
-    },
-    {
-      "import_record": {
         "file": "gameData/missions/templates/tank_templates/tank_base_logic_template.blk",
-        "importAreas": true,
-        "importUnits": true,
-        "importTriggers": true,
-        "importMissionObjectives": true,
-        "importWayPoints": true,
-        "showAreas": true,
-        "showUnits": true,
-        "showTriggers": true,
-        "showMissionObjectives": true,
-        "showWayPoints": true,
-        "excludes": []
-      }
-    },
-    {
-      "import_record": {
-        "file": "gameData/missions/templates/tank_templates/ai_base_defense_template.blk",
         "importAreas": true,
         "importUnits": true,
         "importTriggers": true,
@@ -397,6 +364,54 @@
         "showWayPoints": true,
         "excludes": []
       }
+    },
+    {
+      "import_record": {
+        "file": "gameData/missions/cta/tanks/alps/mainareas/template_apls_dbttl.blk",
+        "importAreas": true,
+        "importUnits": true,
+        "importTriggers": true,
+        "importMissionObjectives": true,
+        "importWayPoints": true,
+        "showAreas": true,
+        "showUnits": true,
+        "showTriggers": true,
+        "showMissionObjectives": true,
+        "showWayPoints": true,
+        "excludes": []
+      }
+    },
+    {
+      "import_record": {
+        "file": "gameData/missions/templates/tank_templates/dbttl_short_template.blk",
+        "importAreas": true,
+        "importUnits": true,
+        "importTriggers": true,
+        "importMissionObjectives": true,
+        "importWayPoints": true,
+        "showAreas": true,
+        "showUnits": true,
+        "showTriggers": true,
+        "showMissionObjectives": true,
+        "showWayPoints": true,
+        "excludes": []
+      }
+    },
+    {
+      "import_record": {
+        "file": "gameData/missions/templates/tank_templates/dbttl_at_guns_template.blk",
+        "importAreas": true,
+        "importUnits": true,
+        "importTriggers": true,
+        "importMissionObjectives": true,
+        "importWayPoints": true,
+        "showAreas": true,
+        "showUnits": true,
+        "showTriggers": true,
+        "showMissionObjectives": true,
+        "showWayPoints": true,
+        "excludes": []
+      }
     }
   ],
   "triggers": {
@@ -413,7 +428,31 @@
   "dialogs": [],
   "airfields": [],
   "effects": [],
-  "units": [],
+  "units": {
+    "area_squad": {
+      "name": "remove_rendinst_area",
+      "tm": [
+        [1.0,0.0,0.0],
+        [0.0,1.0,0.0],
+        [0.0,0.0,1.0],
+        [921.797,241.652,550.045]
+      ],
+      "props": [
+        {
+          "squad_members": "remove_rendinst_area_01"
+        },
+        {
+          "squad_members": "remove_rendinst_area_02"
+        },
+        {
+          "squad_members": "remove_rendinst_area_03"
+        },
+        {
+          "squad_members": "remove_rendinst_area_04"
+        }
+      ]
+    }
+  },
   "areas": {
     "t2_briefing_airspawn": {
       "type": "Point",
@@ -421,7 +460,7 @@
         [-0.198457,0.0,0.98011],
         [0.0,1.0,0.0],
         [-0.98011,0.0,-0.198457],
-        [506.818,414.211,1539.25]
+        [474.236,414.211,1052.57]
       ],
       "objLayer": 0,
       "props": []
@@ -432,7 +471,7 @@
         [-0.186653,0.0,-0.982426],
         [0.0,1.0,0.0],
         [0.982426,0.0,-0.186653],
-        [1500.91,296.9,537.269]
+        [1528.65,296.9,1366.29]
       ],
       "objLayer": 0,
       "props": []
@@ -488,6 +527,50 @@
         [0.0,1.0,0.0],
         [0.0,0.0,1.0],
         [1175.0,230.0,1000.0]
+      ],
+      "objLayer": 0,
+      "props": []
+    },
+    "remove_rendinst_area_01": {
+      "type": "Box",
+      "tm": [
+        [60.0,0.0,0.0],
+        [0.0,10.0,0.0],
+        [0.0,0.0,100.0],
+        [449.67,242.625,674.135]
+      ],
+      "objLayer": 0,
+      "props": []
+    },
+    "remove_rendinst_area_02": {
+      "type": "Box",
+      "tm": [
+        [30.0,0.0,0.0],
+        [0.0,10.0,0.0],
+        [0.0,0.0,20.0],
+        [1121.1,219.06,1001.26]
+      ],
+      "objLayer": 0,
+      "props": []
+    },
+    "remove_rendinst_area_03": {
+      "type": "Box",
+      "tm": [
+        [16.054,0.0,-25.343],
+        [0.0,10.0,0.0],
+        [16.8953,0.0,10.7027],
+        [1102.03,219.06,949.863]
+      ],
+      "objLayer": 0,
+      "props": []
+    },
+    "remove_rendinst_area_04": {
+      "type": "Box",
+      "tm": [
+        [-1.19368,0.0,-39.9822],
+        [0.0,10.0,0.0],
+        [19.9911,0.0,-0.596839],
+        [1197.95,219.05,902.05]
       ],
       "objLayer": 0,
       "props": []
