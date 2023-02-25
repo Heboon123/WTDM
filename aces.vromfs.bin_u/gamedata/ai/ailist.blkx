@@ -1535,54 +1535,37 @@
   },
   {
     "selector": {
-      "name": "shipBot",
+      "name": "shipMissionUnit",
       "selectStrategy": "ordered",
-      "parallel": {
-        "selector": [
-          {
-            "selectStrategy": "ordered"
-          },
-          {
-            "selectOnSuccess": true
-          },
-          {
-            "sequencer": {
-              "findShipLeader": [],
-              "followShipLeader": []
-            }
-          },
-          {
-            "sequencer": {
-              "doesntHaveLeader": [],
-              "selector": {
-                "selectStrategy": "ordered",
-                "selectOnSuccess": true,
-                "transferLeader": [],
-                "findNextShipWaypoint": [],
-                "checkIfShipHasDestination": [],
-                "recalculatePathToTarget": [],
-                "findCapturePointToSail": {
-                  "canCapture": true
-                }
-              },
-              "shipSail": []
-            }
+      "selector": [
+        {
+          "selectStrategy": "ordered"
+        },
+        {
+          "selectOnSuccess": true
+        },
+        {
+          "sequencer": {
+            "findShipLeader": [],
+            "followShipLeader": []
           }
-        ],
-        "sendSupportAircraft": {
-          "timeOutRange": [10.0,30.0],
-          "attackersPerTargetMax": 1,
-          "attacksMax": 3
+        },
+        {
+          "sequencer": {
+            "doesntHaveLeader": [],
+            "selector": {
+              "selectStrategy": "ordered",
+              "selectOnSuccess": true,
+              "transferLeader": [],
+              "findNextShipWaypoint": [],
+              "checkIfShipHasDestination": [],
+              "recalculatePathToTarget": []
+            },
+            "shipSail": []
+          }
         }
-      },
-      "sequencer": {
-        "stopShipEngine": [],
-        "sendSupportAircraft": {
-          "timeOutRange": [10.0,30.0],
-          "attackersPerTargetMax": 1,
-          "attacksMax": 3
-        }
-      }
+      ],
+      "stopShipEngine": []
     }
   },
   {
@@ -4456,6 +4439,13 @@
     ]
   },
   {
+    "selector": {
+      "name": "railFlight",
+      "selectStrategy": "ordered",
+      "railFlight": []
+    }
+  },
+  {
     "selector": [
       {
         "name": "cutsceneFighterVsFighter"
@@ -7188,6 +7178,51 @@
           "name": "sel-energyAttack",
           "energyAttack": []
         }
+      }
+    }
+  },
+  {
+    "parallel": {
+      "name": "shipBot",
+      "selector": {
+        "selectStrategy": "ordered",
+        "selector": [
+          {
+            "selectStrategy": "ordered"
+          },
+          {
+            "selectOnSuccess": true
+          },
+          {
+            "sequencer": {
+              "findShipLeader": [],
+              "followShipLeader": []
+            }
+          },
+          {
+            "sequencer": {
+              "doesntHaveLeader": [],
+              "selector": {
+                "selectStrategy": "ordered",
+                "selectOnSuccess": true,
+                "transferLeader": [],
+                "findNextShipWaypoint": [],
+                "checkIfShipHasDestination": [],
+                "recalculatePathToTarget": [],
+                "findCapturePointToSail": {
+                  "canCapture": true
+                }
+              },
+              "shipSail": []
+            }
+          }
+        ],
+        "stopShipEngine": []
+      },
+      "sendSupportAircraft": {
+        "timeOutRange": [10.0,30.0],
+        "attackersPerTargetMax": 1,
+        "attacksMax": 3
       }
     }
   }

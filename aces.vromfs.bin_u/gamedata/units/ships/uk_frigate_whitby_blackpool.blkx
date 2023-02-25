@@ -78,7 +78,7 @@
     "hasExpl": false
   },
   {
-    "exhaustFx": "ship_exhaust_large"
+    "exhaustFx": "ship_exhaust_med"
   },
   {
     "explosionFx": "explosion_ship_big"
@@ -227,6 +227,18 @@
       },
       {
         "replace_tex": {
+          "from": "flag_france_01_c*",
+          "to": "flag_france_01_c_tomoe*"
+        }
+      },
+      {
+        "replace_tex": {
+          "from": "flag_egypt_01_c*",
+          "to": "flag_ussr_01_c_tomoe*"
+        }
+      },
+      {
+        "replace_tex": {
           "from": "airplane_ger_ar196_c*",
           "to": "airplane_ger_ar196_c_tomoe*"
         }
@@ -285,79 +297,6 @@
       },
       {
         "suffix": "1"
-      },
-      {
-        "deadHeadAttitudeMin": -55.0
-      },
-      {
-        "deadHeadAttitudeMax": -40.0
-      },
-      {
-        "ikNode": {
-          "downNode": "Bip01 L Hand",
-          "midNode": "Bip01 L Forearm",
-          "upNode": "Bip01 L UpperArm",
-          "targetNode": "lefthand_",
-          "flexionDir": [0.5,-0.5,0.3]
-        }
-      },
-      {
-        "ikNode": {
-          "downNode": "Bip01 R Hand",
-          "midNode": "Bip01 R Forearm",
-          "upNode": "Bip01 R UpperArm",
-          "targetNode": "righthand_",
-          "flexionDir": [-0.5,-0.5,0.3]
-        }
-      },
-      {
-        "ikNode": {
-          "downNode": "Bip01 L Foot",
-          "midNode": "Bip01 L Calf",
-          "upNode": "Bip01 L Thigh",
-          "targetNode": "pedal_lfoot_",
-          "flexionDir": [-0.2,1.0,-1.0]
-        }
-      },
-      {
-        "ikNode": {
-          "downNode": "Bip01 R Foot",
-          "midNode": "Bip01 R Calf",
-          "upNode": "Bip01 R Thigh",
-          "targetNode": "pedal_rfoot_",
-          "flexionDir": [-0.6,1.0,-1.0]
-        }
-      }
-    ]
-  },
-  {
-    "ikGunner": [
-      {
-        "model": "uk_sailor_modern_char"
-      },
-      {
-        "maxHeadHorAngle": 60.0
-      },
-      {
-        "maxHeadDownAngle": 60.0
-      },
-      {
-        "maxHeadUpAngle": 10.0
-      },
-      {
-        "headNode": "Bip01 Head"
-      },
-      {
-        "pelvisNode": "Bip01 Pelvis"
-      },
-      {
-        "pelvisTargetNode": "Bip01 Pelvis_"
-      },
-      {
-        "crouchDelta": [0.0,0.0,0.0]
-      },
-      {
-        "suffix": "2"
       },
       {
         "deadHeadAttitudeMin": -55.0
@@ -479,7 +418,7 @@
   {
     "ikGunner": [
       {
-        "model": "uk_officer_modern_char"
+        "model": "uk_sailor_modern_char"
       },
       {
         "maxHeadHorAngle": 60.0
@@ -624,9 +563,8 @@
   },
   {
     "attach": {
-      "Bip01 Pelvis_1": "uk_officer_modern_sit",
-      "Bip01 Pelvis_2": "uk_sailor_modern_standing",
-      "Bip01 Pelvis_3": "uk_sailor_modern_standing",
+      "Bip01 Pelvis_1": "uk_sailor_modern_sit",
+      "Bip01 Pelvis_3": "uk_officer_modern_standing",
       "Bip01 Pelvis_4": "uk_sailor_modern_sit",
       "Bip01 Pelvis_5": "uk_sailor_modern_sit"
     }
@@ -683,6 +621,20 @@
           "type": "engineFan",
           "turnSpeed": 1.0,
           "node": "bone_roll_engine_04"
+        }
+      },
+      {
+        "device": {
+          "type": "engineFan",
+          "turnSpeed": 1.0,
+          "node": "bone_roll_engine_05"
+        }
+      },
+      {
+        "device": {
+          "type": "engineFan",
+          "turnSpeed": 1.0,
+          "node": "bone_roll_engine_06"
         }
       },
       {
@@ -1080,6 +1032,12 @@
         "armorThrough": 15.0,
         "ammunition_storage_01_dm": {
           "hp": 1500.0
+        },
+        "ammunition_storage_02_dm": {
+          "hp": 1239.0
+        },
+        "ammunition_storage_03_dm": {
+          "hp": 1239.0
         }
       },
       "ammo_storages_shells": {
@@ -2940,7 +2898,7 @@
       },
       "new_aux_caliber_turrets": [],
       "new_main_caliber_turrets": {
-        "reqModification": "new_aux_caliber_turrets"
+        "prevModification": "new_aux_caliber_turrets"
       },
       "ship_bomb_mortar": []
     }
@@ -4334,7 +4292,16 @@
           "weaponTrigger": "gunner14"
         },
         {
-          "entityMunition": "depth_charge"
+          "entityMunition": "aux"
+        },
+        {
+          "replenishmentDelay": 5.0
+        },
+        {
+          "replenishmentTime": 10.0
+        },
+        {
+          "removeLoadedAmmo": false
         },
         {
           "fatalFire": false
@@ -4356,6 +4323,7 @@
         },
         {
           "shells": {
+            "autoLoad": true,
             "damageEffect": "ammunition_depth_charges",
             "depth_charge_01_dm": {
               "count": 1
@@ -4364,6 +4332,7 @@
         },
         {
           "shells": {
+            "autoLoad": true,
             "damageEffect": "ammunition_depth_charges",
             "depth_charge_02_dm": {
               "count": 1
@@ -4372,9 +4341,23 @@
         },
         {
           "shells": {
+            "autoLoad": true,
             "damageEffect": "ammunition_depth_charges",
             "depth_charge_03_dm": {
               "count": 1
+            }
+          }
+        },
+        {
+          "shells": {
+            "isStock": true,
+            "fatalFire": false,
+            "fatalExplosion": true,
+            "explosionEvent": "ammo_explosion_2",
+            "fireEvent": "ammo_fire_2",
+            "damageEffect": "ammunition_depth_charges",
+            "ammunition_storage_02_dm": {
+              "count": 48
             }
           }
         }
@@ -4384,7 +4367,16 @@
           "weaponTrigger": "gunner15"
         },
         {
-          "entityMunition": "depth_charge"
+          "entityMunition": "aux"
+        },
+        {
+          "replenishmentDelay": 5.0
+        },
+        {
+          "replenishmentTime": 10.0
+        },
+        {
+          "removeLoadedAmmo": false
         },
         {
           "fatalFire": false
@@ -4406,6 +4398,7 @@
         },
         {
           "shells": {
+            "autoLoad": true,
             "damageEffect": "ammunition_depth_charges",
             "depth_charge_04_dm": {
               "count": 1
@@ -4414,6 +4407,7 @@
         },
         {
           "shells": {
+            "autoLoad": true,
             "damageEffect": "ammunition_depth_charges",
             "depth_charge_05_dm": {
               "count": 1
@@ -4422,9 +4416,23 @@
         },
         {
           "shells": {
+            "autoLoad": true,
             "damageEffect": "ammunition_depth_charges",
             "depth_charge_06_dm": {
               "count": 1
+            }
+          }
+        },
+        {
+          "shells": {
+            "isStock": true,
+            "fatalFire": false,
+            "fatalExplosion": true,
+            "explosionEvent": "ammo_explosion_2",
+            "fireEvent": "ammo_fire_2",
+            "damageEffect": "ammunition_depth_charges",
+            "ammunition_storage_03_dm": {
+              "count": 48
             }
           }
         }
