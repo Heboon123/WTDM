@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -41,7 +40,8 @@ return {
     crewUnitType = CUT_AIRCRAFT
     hasAiGunners = true
     isAvailable = @() true
-    isAvailableForFirstChoice = function(country = null) {
+    isAvailableForFirstChoice = function(country = null)
+    {
       if (!this.isAvailable())
         return false
       if (!country)
@@ -71,7 +71,8 @@ return {
     missionSettingsAvailabilityFlag = "isTanksAllowed"
     crewUnitType = CUT_TANK
     isAvailable = @() true
-    isAvailableForFirstChoice = function(country = null) {
+    isAvailableForFirstChoice = function(country = null)
+    {
       if (!this.isAvailable() || !::check_tanks_available(true))
         return false
       if (!country)
@@ -102,7 +103,8 @@ return {
     crewUnitType = CUT_SHIP
     hasAiGunners = true
     isAvailable = @() true
-    isAvailableForFirstChoice = function(country = null) {
+    isAvailableForFirstChoice = function(country = null)
+    {
       if (!this.isAvailable() || !hasFeature("ShipsFirstChoice"))
         return false
       if (!country)
@@ -160,7 +162,8 @@ return {
     crewUnitType = CUT_SHIP
     hasAiGunners = true
     isAvailable = @() true
-    isAvailableForFirstChoice = function(country = null) {
+    isAvailableForFirstChoice = function(country = null)
+    {
       if (!this.isAvailable() || !hasFeature("BoatsFirstChoice"))
         return false
       if (!country)

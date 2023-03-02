@@ -1,12 +1,9 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
 #explicit-this
 
 let { file_exists } = require("dagor.fs")
-let { frnd } = require("dagor.random")
-let DataBlock = require("DataBlock")
 let fileCheck = require("%scripts/clientState/fileCheck.nut")
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
 let SecondsUpdater = require("%sqDagui/timer/secondsUpdater.nut")
@@ -32,7 +29,7 @@ let function invalidateCache() {
 
 let function loadBgBlk(name) {
   loadErrorText = null
-  local res = DataBlock()
+  local res = ::DataBlock()
   let fullName = getFullFileName(name)
   let isLoaded = res.load(fullName)
   if (isLoaded)
@@ -63,19 +60,23 @@ local function load(blkFilePath = "", obj = null, curBgData = null) {
 
   if (blkFilePath != "")
     lastBg = blkFilePath
-  else if (::g_login.isLoggedIn() || lastBg == "") { //no change bg during first load
+  else
+    if (::g_login.isLoggedIn() || lastBg == "") //no change bg during first load
+    {
       if (hasFeature("LoadingBackgroundFilter")
-        && ::g_login.isProfileReceived() && havePremium.value) {
+        && ::g_login.isProfileReceived() && havePremium.value)
+      {
         let filteredCurBgList = curBgList.filter(@(_v, id) !isLoadingScreenBanned(id))
         if (filteredCurBgList.len() > 0)
           curBgList = filteredCurBgList
       }
 
       local sum = 0.0
-      foreach (_name, value in curBgList)
+      foreach(_name, value in curBgList)
         sum += value
-      sum = frnd() * sum
-      foreach (name, value in curBgList) {
+      sum = ::math.frnd() * sum
+      foreach(name, value in curBgList)
+      {
         lastBg = name
         sum -= value
         if (sum <= 0)
@@ -84,7 +85,8 @@ local function load(blkFilePath = "", obj = null, curBgData = null) {
     }
 
   local bgBlk = loadBgBlk(lastBg)
-  if (!bgBlk) {
+  if (!bgBlk)
+  {
     invalidateCache()
     load("", obj)
     return
@@ -97,8 +99,7 @@ local function load(blkFilePath = "", obj = null, curBgData = null) {
   if (isDebugMode && loadErrorText) {
     let markup = "textAreaCentered { pos:t='pw/2-w/2, ph/2-h/2'; position:t='absolute'; text:t='{0}' }".subst(loadErrorText)
     obj.getScene().replaceContentFromText(obj, markup, markup.len(), this)
-  }
-  else
+  } else
     obj.getScene().replaceContentFromDataBlock(obj, bgBlk, this)
   debugLastModified = MODIFY_UNKNOWN
 }

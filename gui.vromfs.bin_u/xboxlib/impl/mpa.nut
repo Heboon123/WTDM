@@ -46,7 +46,7 @@ return {
   JoinRestriction = mpa.JoinRestriction
   EncounterType = mpa.EncounterType
 
-  is_available = @() true
+  is_available = mpa.is_available
   set_activity
   clear_activity
   send_invitations

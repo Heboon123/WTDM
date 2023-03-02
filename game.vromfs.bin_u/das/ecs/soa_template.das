@@ -98,8 +98,6 @@ def fn_or_block_patch(var func; blk; var astChanged : bool&)
 
 [macro_function]
 def fn_patch(var fn : smart_ptr<Function>; var astChanged : bool&)
-  patch_soa_blocks(fn, unsafe(addr(astChanged)))
-
   for ann in fn.annotations
     if ann.annotation.name == "remove_call_args"
       return true
@@ -245,7 +243,7 @@ class ReplaceIndexAndFieldsVisitor : AstVisitor
 
   def override visitExprFor(expr : smart_ptr<ExprFor>) : ExpressionPtr
     var soa_index = -1
-    for index, its in count(), expr.sources
+    for index, its in range(100500), expr.sources
       if (its is ExprVar)
         if (its as ExprVar).name == it_prefix
           soa_index = index

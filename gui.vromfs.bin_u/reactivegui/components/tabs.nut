@@ -17,8 +17,7 @@ let function tabCtor(tab, is_current, handler) {
       textColor = colors.menu.activeTextColor
       fillColor = colors.menu.listboxSelOptionColor
       borderColor = colors.menu.headerOptionSelectedColor
-    }
-    else {
+    } else {
       textColor = isHover ? colors.menu.headerOptionSelectedTextColor : colors.menu.headerOptionTextColor
       fillColor = colors.transparent
       borderColor = isActive && isHover ? colors.menu.headerOptionSelectedColor :
@@ -34,7 +33,7 @@ let function tabCtor(tab, is_current, handler) {
       size = [ SIZE_TO_CONTENT, fpx(30) + 2 * (dp() + fpx(3))]
       watch = stateFlags
       group = grp
-      padding = [fpx(2) + scrn_tgt(0.005), scrn_tgt(0.01), scrn_tgt(0.005), scrn_tgt(0.01)]
+      padding = [fpx(2)+ scrn_tgt(0.005), scrn_tgt(0.01), scrn_tgt(0.005), scrn_tgt(0.01)]
       margin = [0, dp()]
       behavior = Behaviors.Button
 
@@ -57,7 +56,7 @@ let function tabCtor(tab, is_current, handler) {
 }
 
 
-let tabsHolder = @(_params) {
+let tabsHolder = @(_params){
   rendObj = ROBJ_SOLID
   size = [flex(), SIZE_TO_CONTENT]
   flow = FLOW_HORIZONTAL

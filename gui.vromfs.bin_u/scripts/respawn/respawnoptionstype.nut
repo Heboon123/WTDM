@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -202,7 +201,7 @@ options.addTypes({
     triggerUpdContentBitMask = RespawnOptUpdBit.UNIT_ID
     needSetToReqData = true
     isShowForRandomUnit = false
-    needCheckValueWhenOptionUpdate = true
+    needCheckValueWhenOptionUpdate =true
     isShowForUnit = @(p) (p.unit.isAir() || p.unit.isHelicopter())
   }
   countermeasures_periods = {

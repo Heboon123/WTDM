@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -9,7 +8,8 @@ let enums = require("%sqStdLibs/helpers/enums.nut")
 let transportManager = require("%scripts/worldWar/inOperation/wwTransportManager.nut")
 let actionModesManager = require("%scripts/worldWar/inOperation/wwActionModesManager.nut")
 
-global enum WW_MAP_CONSPLE_SHORTCUTS {
+global enum WW_MAP_CONSPLE_SHORTCUTS
+{
   LMB_IMITATION = "A"
   MOVE = "Y"
   ENTRENCH = "RB"
@@ -19,7 +19,8 @@ global enum WW_MAP_CONSPLE_SHORTCUTS {
   TRANSPORT_UNLOAD = "R3"
 }
 
-enum ORDER {
+enum ORDER
+{
   ENTRENCH
   PREPARE_FIRE
   TRANSPORT_LOAD
@@ -42,7 +43,7 @@ enum ORDER {
   getActionName = @() ""
   getKeyboardShortcut = @() ::show_console_buttons
     ? ""
-    : loc("ui/parentheses/space", { text = this.keyboardShortcut })
+    : loc("ui/parentheses/space", { text = this.keyboardShortcut})
   text = @() $"{this.getActionName()}{this.getKeyboardShortcut()}"
   isHidden = @() true
   isEnabled = @() !::g_world_war.isCurrentOperationFinished()
@@ -78,7 +79,8 @@ enums.addTypesByGlobalName("g_ww_map_controls_buttons",
       if (!armiesNames.len())
         return true
 
-      foreach (armyName in armiesNames) {
+      foreach (armyName in armiesNames)
+      {
         let army = ::g_world_war.getArmyByName(armyName)
         let unitType = army.getUnitType()
         if (::g_ww_unit_type.isGround(unitType) ||
@@ -124,7 +126,8 @@ enums.addTypesByGlobalName("g_ww_map_controls_buttons",
       if (!armiesNames.len())
         return true
 
-      foreach (armyName in armiesNames) {
+      foreach (armyName in armiesNames)
+      {
         let army = ::g_world_war.getArmyByName(armyName)
         if (army.hasArtilleryAbility)
           return false
@@ -152,7 +155,8 @@ enums.addTypesByGlobalName("g_ww_map_controls_buttons",
       if (!armiesNames.len())
         return true
 
-      foreach (armyName in armiesNames) {
+      foreach (armyName in armiesNames)
+      {
         let army = ::g_world_war.getArmyByName(armyName)
         if (army.isTransport())
           return false
@@ -191,7 +195,8 @@ enums.addTypesByGlobalName("g_ww_map_controls_buttons",
       if (!armiesNames.len())
         return true
 
-      foreach (armyName in armiesNames) {
+      foreach (armyName in armiesNames)
+      {
         let army = ::g_world_war.getArmyByName(armyName)
         if (army.isTransport())
           return false
@@ -213,8 +218,9 @@ enums.addTypesByGlobalName("g_ww_map_controls_buttons",
   }
 }, null, "name")
 
-::g_ww_map_controls_buttons.types.sort(@(a, b) a.sortOrder <=> b.sortOrder)
+::g_ww_map_controls_buttons.types.sort(@(a,b) a.sortOrder <=> b.sortOrder)
 
-::g_ww_map_controls_buttons.setSelectedObjectCode <- function setSelectedObjectCode(code) {
+::g_ww_map_controls_buttons.setSelectedObjectCode <- function setSelectedObjectCode(code)
+{
   this.selectedObjectCode = code
 }

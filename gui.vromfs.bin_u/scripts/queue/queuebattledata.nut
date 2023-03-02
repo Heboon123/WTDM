@@ -1,4 +1,3 @@
-//checked for plus_string
 //checked for explicitness
 #no-root-fallback
 #explicit-this
@@ -103,8 +102,7 @@ register_command(function() {
     needDebugNewResult(true)
     actualizeQueueData()
     console_print("Actualize queue data")
-  }
-  else
+  } else
     printQueueDataResult()
 }, "meta.debugJwtQueueData")
 

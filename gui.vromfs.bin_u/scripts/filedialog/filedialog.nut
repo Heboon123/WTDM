@@ -1,11 +1,9 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
 #no-root-fallback
 #explicit-this
 
-let DataBlock = require("DataBlock")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { format } = require("string")
 let time = require("%scripts/time.nut")
@@ -165,7 +163,8 @@ let { find_files } = require("dagor.fs")
       getView = function(value) {
         local text = ""
         local tooltip = "#filesystem/mTimeNotSpecified"
-        if (value != null) {
+        if (value != null)
+        {
           tooltip = time.buildDateTimeStr(value)
           text = time.buildTabularDateTimeStr(value)
         }
@@ -247,7 +246,8 @@ let { find_files } = require("dagor.fs")
       getView = function(value) {
         local text = ""
         local tooltip = "#filesystem/fileSizeNotSpecified"
-        if (value != null) {
+        if (value != null)
+        {
           text = ::g_measure_type.FILE_SIZE.getMeasureUnitsText(value, true, false);
           tooltip = ::g_measure_type.FILE_SIZE.getMeasureUnitsText(value, true, true);
         }
@@ -281,35 +281,38 @@ let { find_files } = require("dagor.fs")
   }
 
   static defaultFsFunctions = {
-    validatePath = function(path) {
+    validatePath = function(path)
+    {
       return (path && path != ""
         && (is_platform_windows
           ? (path.len() >= 2 && path[1] == ':')
           : path[0] == '/'))
     }
 
-    readDirFiles = function(path, maxFiles) {
+    readDirFiles = function(path, maxFiles)
+    {
       if (!this.validatePath(path))
         return []
-      let files = find_files(stdpath.join(path, this.allFilesFilter), { maxCount = maxFiles })
-      foreach (file in files)
+      let files = find_files(stdpath.join(path, this.allFilesFilter), {maxCount=maxFiles})
+      foreach(file in files)
         if ("name" in file)
           file.fullPath <- stdpath.join(path, file.name)
       return files
     }
 
-    readFileInfo = function(path) {
+    readFileInfo = function(path)
+    {
       if (!this.validatePath(path))
         return null
       let basename = stdpath.fileName(path)
-      local files = find_files(path, { maxCount = 1 })
+      local files = find_files(path, {maxCount=1})
       if (files.len() > 0 && getTblValue("name", files[0]) == basename)
         return files[0]
 
       if (files.len() == 0)
-        files = find_files(stdpath.join(path, this.allFilesFilter), { maxCount = 1 })
+        files = find_files(stdpath.join(path, this.allFilesFilter), {maxCount = 1})
       if (files.len() > 0)
-        return { name = basename, isDirectory = true }
+        return {name = basename, isDirectory = true}
       return null
     }
 
@@ -329,7 +332,8 @@ let { find_files } = require("dagor.fs")
       return file != null && getTblValue("isDirectory", file, false)
     }
 
-    getNavElements = function() {
+    getNavElements = function()
+    {
       // Filtering non-existent elements is performed when filling navigation bar
       let favorites = []
       favorites.append({
@@ -342,15 +346,18 @@ let { find_files } = require("dagor.fs")
         ]
       })
 
-      if (is_platform_windows) {
-        let disks = { name = "#filesystem/winDiskDrives", childs = [] }
-        for (local diskChar = 'C' ; diskChar <= 'Z'; diskChar++) {
+      if (is_platform_windows)
+      {
+        let disks = {name = "#filesystem/winDiskDrives", childs = []}
+        for (local diskChar = 'C' ; diskChar <= 'Z'; diskChar++)
+        {
           let path = diskChar.tochar() + ":"
-          disks.childs.append({ path = path })
+          disks.childs.append({path = path})
         }
         favorites.append(disks)
       }
-      else if (platformId == "macosx") {
+      else if (platformId == "macosx")
+      {
         favorites.append({
           name = "#filesystem/fsMountPoints"
           childs = [
@@ -360,7 +367,8 @@ let { find_files } = require("dagor.fs")
           ]
         })
       }
-      else { /* base template for other unix-based OS */
+      else /* base template for other unix-based OS */
+      {
         favorites.append({
           name = "#filesystem/fsMountPoints"
           childs = [
@@ -381,7 +389,8 @@ let { find_files } = require("dagor.fs")
   // ========================= INIT SCREEN ==========================
   // ================================================================
 
-  function initScreen() {
+  function initScreen()
+  {
     if (!this.scene)
       return this.goBack()
 
@@ -398,7 +407,7 @@ let { find_files } = require("dagor.fs")
       ["directory", "name", "mTime", "extension", "size"]
     this.columnSortOrder = this.columnSortOrder || [
       // Sort by "directory" always and before sorting by user selected column
-      { column = "directory", reverse = true }
+      {column = "directory", reverse = true}
       "userSort"
     ]
 
@@ -410,14 +419,16 @@ let { find_files } = require("dagor.fs")
     this.currentFilter = this.currentFilter ||
       (isInArray(this.allFilesFilter, this.filters) ? this.allFilesFilter : this.filters[0])
 
-    if (this.extension && this.currentFilter != this.allFilesFilter && this.extension != this.currentFilter) {
+    if (this.extension && this.currentFilter != this.allFilesFilter && this.extension != this.currentFilter)
+    {
       ::script_net_assert_once("FileDialog: extension not same as currentFilter",
         "FileDialog: specified extension is not same as currentFilter")
       this.goBack()
       return
     }
 
-    if (this.onSelectCallback == null) {
+    if (this.onSelectCallback == null)
+    {
       ::script_net_assert_once("FileDialog: null onSelectCallback",
         "FileDialog: onSelectCallback not specified")
       this.goBack()
@@ -441,7 +452,8 @@ let { find_files } = require("dagor.fs")
 
     // Fill columns structure
     this.prepareColums()
-    if (!this.validateColums()) {
+    if (!this.validateColums())
+    {
       this.goBack()
       return
     }
@@ -461,18 +473,21 @@ let { find_files } = require("dagor.fs")
   // =========================== HANDLERS ===========================
   // ================================================================
 
-  function onFileTableClick(_obj) {
+  function onFileTableClick(_obj)
+  {
     this.setFocusToFileTable()
     this.updateSelectedFileName()
   }
 
 
-  function onFileTableDblClick() {
+  function onFileTableDblClick()
+  {
     this.onOpen()
   }
 
 
-  function onNavigation() {
+  function onNavigation()
+  {
     if (!this.isNavigationToggleAllowed)
       return
 
@@ -481,29 +496,34 @@ let { find_files } = require("dagor.fs")
   }
 
 
-  function onForward() {
+  function onForward()
+  {
     this.moveInHistory(1)
   }
 
 
-  function onBack() {
+  function onBack()
+  {
     this.moveInHistory(-1)
   }
 
 
-  function onUp() {
+  function onUp()
+  {
     let parentPath = stdpath.parentPath(this.dirPath)
     if (parentPath != null)
       this.openDirectory(parentPath)
   }
 
 
-  function onCancel() {
+  function onCancel()
+  {
     this.goBack()
   }
 
 
-  function onOpen() {
+  function onOpen()
+  {
     let dirPathObj = this.getObj("dir_path")
     let fileNameObj = this.getObj("file_name")
 
@@ -511,7 +531,8 @@ let { find_files } = require("dagor.fs")
       this.onDirPathEditBoxActivate()
     else if (fileNameObj.isFocused())
       this.onFileNameEditBoxActivate()
-    else {
+    else
+    {
       this.updateSelectedFileName()
 
       let fullPath = getTblValue(this.fileName, this.cachedFileFullPathByFileName) ||
@@ -522,12 +543,14 @@ let { find_files } = require("dagor.fs")
   }
 
 
-  function onDirPathEditBoxFocus() {
+  function onDirPathEditBoxFocus()
+  {
     this.guiScene.performDelayed(this, this.fillDirPathObj)
   }
 
 
-  function onRefresh() {
+  function onRefresh()
+  {
     let dirPathObj = this.getObj("dir_path")
     let path = dirPathObj.isFocused() ? dirPathObj.getValue() : this.dirPath
     this.openDirectory(path)
@@ -535,7 +558,8 @@ let { find_files } = require("dagor.fs")
   }
 
 
-  function onDirPathEditBoxActivate() {
+  function onDirPathEditBoxActivate()
+  {
     let dirPathObj = this.getObj("dir_path")
     let path = dirPathObj.isFocused() ? dirPathObj.getValue() : this.dirPath
     this.openFileOrDir(path)
@@ -543,24 +567,28 @@ let { find_files } = require("dagor.fs")
   }
 
 
-  function onFileNameEditBoxActivate() {
+  function onFileNameEditBoxActivate()
+  {
     this.fileName = this.getObj("file_name").getValue()
     if (this.fileName != "")
       this.openFileOrDir(stdpath.join(this.dirPath, this.fileName))
   }
 
 
-  function onFileNameEditBoxCancelEdit() {
+  function onFileNameEditBoxCancelEdit()
+  {
     this.onToggleFocusFileName()
   }
 
 
-  function onDirPathEditBoxCancelEdit() {
+  function onDirPathEditBoxCancelEdit()
+  {
     this.onToggleFocusDirPath()
   }
 
 
-  function onToggleFocusFileName() {
+  function onToggleFocusFileName()
+  {
     let fileTableObj = this.getObj("file_table")
     let fileNameObj = this.getObj("file_name")
     if (fileNameObj.isHovered())
@@ -569,7 +597,8 @@ let { find_files } = require("dagor.fs")
       ::select_editbox(fileNameObj)
   }
 
-  function onToggleFocusDirPath() {
+  function onToggleFocusDirPath()
+  {
     let fileTableObj = this.getObj("file_table")
     let dirPathObj = this.getObj("dir_path")
     if (dirPathObj.isHovered())
@@ -579,12 +608,14 @@ let { find_files } = require("dagor.fs")
   }
 
 
-  function onFileNameEditBoxChangeValue() {
+  function onFileNameEditBoxChangeValue()
+  {
     this.fileName = this.getObj("file_name").getValue()
   }
 
 
-  function onNavListSelect(obj) {
+  function onNavListSelect(obj)
+  {
     let idx = obj.getValue()
     if (idx < 0 || idx >= obj.childrenCount())
       return
@@ -599,27 +630,32 @@ let { find_files } = require("dagor.fs")
   }
 
 
-  function onFileTableSelect(_obj) {
+  function onFileTableSelect(_obj)
+  {
     this.updateSelectedFileName()
   }
 
 
-  function onDirPathPartClick(obj) {
+  function onDirPathPartClick(obj)
+  {
     if (obj?.id in this.cachedPathByPathPartId)
       this.openDirectory(this.cachedPathByPathPartId[obj.id])
   }
 
 
-  function onFileTableColumnClick(obj) {
+  function onFileTableColumnClick(obj)
+  {
     let objId = obj.id
     let columnName = this.cachedColumnNameByTableColumnId[objId]
-    foreach (column in this.columns) {
+    foreach (column in this.columns)
+    {
       if (column.name != columnName)
         continue
 
       if (this.userSortColumn == column)
         this.isUserSortReverse = !this.isUserSortReverse
-      else {
+      else
+      {
         this.userSortColumn = column
         this.isUserSortReverse = false
       }
@@ -632,12 +668,14 @@ let { find_files } = require("dagor.fs")
   }
 
 
-  function onFilterChange(obj) {
+  function onFilterChange(obj)
+  {
     let idx = obj.getValue()
     if (idx < 0 || idx >= obj.childrenCount() || idx >= this.filters.len())
       return
 
-    if (this.filters[idx] != this.currentFilter) {
+    if (this.filters[idx] != this.currentFilter)
+    {
       this.currentFilter = this.filters[idx]
       this.fillFileTableObj(true)
     }
@@ -648,20 +686,25 @@ let { find_files } = require("dagor.fs")
   // ======================= DATA OPERATIONS ========================
   // ================================================================
 
-  function prepareColums() {
+  function prepareColums()
+  {
     // Add columns used for show and sort
-    foreach (columnSourceInfo in this.columnSources) {
+    foreach (columnSourceInfo in this.columnSources)
+    {
       let source = this[columnSourceInfo.sourceName]
-      foreach (idx, columnInfoSrc in source) {
+      foreach (idx, columnInfoSrc in source)
+      {
         local columnInfo
-        if (::u.isString(columnInfoSrc)) {
-          columnInfo = { column = columnInfoSrc }
+        if (::u.isString(columnInfoSrc))
+        {
+          columnInfo = {column = columnInfoSrc}
           source[idx] = columnInfo
         }
         else
           columnInfo = columnInfoSrc
 
-        if (::u.isString(columnInfo.column)) {
+        if (::u.isString(columnInfo.column))
+        {
           let columnName = columnInfo.column
           this.columns[columnName] <- getTblValue(columnName, this.columns, {})
           columnInfo.column = this.columns[columnName]
@@ -670,7 +713,8 @@ let { find_files } = require("dagor.fs")
     }
 
     // Copy attributes from defaults
-    foreach (columnName, column in this.columns) {
+    foreach (columnName, column in this.columns)
+    {
       column.name <- columnName
       if (!(columnName in this.defaultColumns))
         continue
@@ -687,15 +731,19 @@ let { find_files } = require("dagor.fs")
   }
 
 
-  function validateColums() {
+  function validateColums()
+  {
     // Check required attributes
-    foreach (columnSourceInfo in this.columnSources) {
+    foreach (columnSourceInfo in this.columnSources)
+    {
       let source = this[columnSourceInfo.sourceName]
       let requiredAttributes = columnSourceInfo.requiredAttributes
-      foreach (_idx, columnInfo in source) {
+      foreach (_idx, columnInfo in source)
+      {
         let column = columnInfo.column
         foreach (attr in requiredAttributes)
-          if (!(attr in column)) {
+          if (!(attr in column))
+          {
             ::script_net_assert_once("ERROR: FileDialog ColumnNoAttr", format(
               "ERROR: FileDialog column " +
               getTblValue("name", column, "[UNDEFINED name]") +
@@ -711,7 +759,8 @@ let { find_files } = require("dagor.fs")
   setFocusToFileTable = @() ::move_mouse_on_child_by_value(this.getObj("file_table"))
 
 
-  function updateSelectedFileName() {
+  function updateSelectedFileName()
+  {
     let fileTableObj = this.getObj("file_table")
     if (!fileTableObj)
       return
@@ -733,7 +782,8 @@ let { find_files } = require("dagor.fs")
   }
 
 
-  function restorePathFromSettings() {
+  function restorePathFromSettings()
+  {
     if (!this.pathTag)
       return
 
@@ -742,7 +792,8 @@ let { find_files } = require("dagor.fs")
     this.dirPath  = getTblValue("dirPath",  loadBlk, this.dirPath)
     this.fileName = getTblValue("fileName", loadBlk, this.fileName)
 
-    while (!this.isDirectory(this.readFileInfo(this.dirPath))) {
+    while (!this.isDirectory(this.readFileInfo(this.dirPath)))
+    {
       let parentPath = stdpath.parentPath(this.dirPath)
       if (!parentPath)
         return
@@ -751,24 +802,27 @@ let { find_files } = require("dagor.fs")
   }
 
 
-  function savePathToSettings(path) {
+  function savePathToSettings(path)
+  {
     if (!this.pathTag || this.dirPath == "")
       return
 
     let settingName = this.FILEDIALOG_PATH_SETTING_ID + "/" + this.pathTag
-    let saveBlk = DataBlock()
+    let saveBlk = ::DataBlock()
     saveBlk.dirPath = stdpath.parentPath(path)
     saveBlk.fileName = stdpath.fileName(path)
     ::save_local_account_settings(settingName, saveBlk)
   }
 
 
-  function updateButtons() {
+  function updateButtons()
+  {
     if (!this.isValid())
       return
 
     local shouldUseSaveButton = this.isSaveFile
-    if (shouldUseSaveButton && this.fileName in this.cachedFileFullPathByFileName) {
+    if (shouldUseSaveButton && this.fileName in this.cachedFileFullPathByFileName)
+    {
       let file = this.readFileInfo(this.cachedFileFullPathByFileName[this.fileName])
       shouldUseSaveButton = !this.isDirectory(file)
     }
@@ -779,7 +833,8 @@ let { find_files } = require("dagor.fs")
   }
 
 
-  function moveInHistory(shift) {
+  function moveInHistory(shift)
+  {
     if (shift == 0)
       return
 
@@ -790,7 +845,8 @@ let { find_files } = require("dagor.fs")
     let targetList = isForward ? this.dirHistoryBefore : this.dirHistoryAfter
 
     this.rememberSelectedFile()
-    for (local stepIdx = 0; stepIdx < numSteps; stepIdx++) {
+    for (local stepIdx = 0; stepIdx < numSteps; stepIdx++)
+    {
       if (sourceList.len() == 0)
         break
       targetList.append(this.dirPath)
@@ -800,20 +856,25 @@ let { find_files } = require("dagor.fs")
   }
 
 
-  function executeSelectCallback() {
-    if (this.onSelectCallback(this.finallySelectedPath)) {
+  function executeSelectCallback()
+  {
+    if (this.onSelectCallback(this.finallySelectedPath))
+    {
       this.savePathToSettings(this.finallySelectedPath)
       this.goBack()
     }
   }
 
 
-  function openDirectory(path) {
+  function openDirectory(path)
+  {
     path = stdpath.normalize(path)
     let file = this.readFileInfo(path)
-    if (this.isDirectory(file)) {
+    if (this.isDirectory(file))
+    {
       this.rememberSelectedFile()
-      if (this.dirPath == path) {
+      if (this.dirPath == path)
+      {
         this.fillFileTableObj(true)
         return
       }
@@ -825,59 +886,68 @@ let { find_files } = require("dagor.fs")
       return true
     }
     else
-      ::showInfoMsgBox(loc("filesystem/folderDeleted", { path = path }))
+      ::showInfoMsgBox(loc("filesystem/folderDeleted", {path = path}))
   }
 
 
-  function openFileOrDir(path) {
+  function openFileOrDir(path)
+  {
     path = stdpath.normalize(path)
     let file = this.readFileInfo(path)
     if (this.isDirectory(file))
       this.openDirectory(path)
-    else {
+    else
+    {
       this.finallySelectedPath = path
-      if (this.isSaveFile) {
+      if (this.isSaveFile)
+      {
         let folderPath = stdpath.parentPath(path)
         if (this.shouldAskOnRewrite && this.isExists(file))
           ::scene_msg_box("filesystem_rewrite_msg_box", null,
-            loc("filesystem/askRewriteFile", { path = path }),
+            loc("filesystem/askRewriteFile", {path = path}),
             [["ok", Callback(this.executeSelectCallback, this) ],
             ["cancel", function() {} ]], "cancel", {})
         else if (!this.isDirectory(this.readFileInfo(folderPath)))
-          ::showInfoMsgBox(loc("filesystem/folderDeleted", { path = folderPath }))
-        else {
+          ::showInfoMsgBox(loc("filesystem/folderDeleted", {path = folderPath}))
+        else
+        {
           if (!this.isExists(file) && this.extension
             && !::g_string.endsWith(this.finallySelectedPath, "." + this.extension))
             this.finallySelectedPath += "." + this.extension
           this.executeSelectCallback()
         }
       }
-      else {
+      else
+      {
         if (this.isExists(file))
           this.executeSelectCallback()
         else
-          ::showInfoMsgBox(loc("filesystem/fileNotExists", { path = path }))
+          ::showInfoMsgBox(loc("filesystem/fileNotExists", {path = path}))
       }
     }
   }
 
-  function rememberSelectedFile() {
+  function rememberSelectedFile()
+  {
     local path = ""
     let pathSegments = stdpath.splitToArray(stdpath.join(this.dirPath, this.fileName))
-    for (local j = 0; j < pathSegments.len() - 1; j++) {
+    for (local j = 0; j < pathSegments.len() - 1; j++)
+    {
       path = stdpath.join(path, pathSegments[j])
       this.lastSelectedFileByPath[path] <- pathSegments[j + 1]
     }
   }
 
 
-  function restoreLastSelectedFile() {
+  function restoreLastSelectedFile()
+  {
     let fileTableObj = this.getObj("file_table")
     if (!fileTableObj)
       return
 
     let selectedFile = getTblValue(this.dirPath, this.lastSelectedFileByPath, this.fileName)
-    if (selectedFile in this.cachedTableRowIdxByFileName) {
+    if (selectedFile in this.cachedTableRowIdxByFileName)
+    {
       let rowIdx = this.cachedTableRowIdxByFileName[selectedFile]
       if (rowIdx >= 0 && rowIdx < fileTableObj.childrenCount())
         fileTableObj.setValue(rowIdx)
@@ -886,7 +956,8 @@ let { find_files } = require("dagor.fs")
   }
 
 
-  function restoreFileName() {
+  function restoreFileName()
+  {
     let fileNameObj = this.getObj("file_name")
     if (fileNameObj && this.fileName == "")
       this.fileName = fileNameObj.getValue()
@@ -897,9 +968,11 @@ let { find_files } = require("dagor.fs")
   // ======================== FILL FUNCTIONS ========================
   // ================================================================
 
-  function updateAllDelayed() {
+  function updateAllDelayed()
+  {
     this.restoreFileName()
-    this.guiScene.performDelayed(this, function() {
+    this.guiScene.performDelayed(this, function()
+    {
       this.fillDirPathObj()
       this.fillFileNameObj()
       this.fillFileTableObj()
@@ -911,7 +984,8 @@ let { find_files } = require("dagor.fs")
 
   isDirPathObjFilled = null
   isDirPathObjFocused = null
-  function fillDirPathObj(forceUpdate = false) {
+  function fillDirPathObj(forceUpdate = false)
+  {
     let dirPathObj = this.getObj("dir_path")
     if (!dirPathObj)
       return
@@ -931,18 +1005,21 @@ let { find_files } = require("dagor.fs")
     this.getObj("btn_refresh_img")["rotation"] = isFocused ?
       "90" : "0"
 
-    if (isFocused) {
+    if (isFocused)
+    {
       dirPathObj.setValue(this.dirPath)
       this.guiScene.replaceContentFromText(dirPathObj, "", 0, this)
     }
-    else {
+    else
+    {
       dirPathObj.setValue("")
       let pathParts = stdpath.splitToArray(this.dirPath)
 
       this.cachedPathByPathPartId.clear()
-      let view = { items = [] }
+      let view = {items = []}
       local combinedPath = ""
-      foreach (idx, pathPart in pathParts) {
+      foreach (idx, pathPart in pathParts)
+      {
         combinedPath = stdpath.join(combinedPath, pathPart)
         if (pathPart == "")
           continue
@@ -963,7 +1040,8 @@ let { find_files } = require("dagor.fs")
   }
 
 
-  function fillFileNameObj() {
+  function fillFileNameObj()
+  {
     let fileNameObj = this.getObj("file_name")
     if (fileNameObj)
       fileNameObj.setValue(this.fileName)
@@ -972,7 +1050,8 @@ let { find_files } = require("dagor.fs")
 
   fileTableObjFilledPath = null
   fileTableObjFilledFilter = null
-  function fillFileTableObj(forceUpdate = false) {
+  function fillFileTableObj(forceUpdate = false)
+  {
     let fileTableObj = this.getObj("file_table")
     if (!fileTableObj)
       return
@@ -991,7 +1070,8 @@ let { find_files } = require("dagor.fs")
 
     this.cachedFileFullPathByFileName.clear()
     let fileNameMetaAttr = {}
-    foreach (file in filesList) {
+    foreach (file in filesList)
+    {
       let fileData = {}
       foreach (columnName, column in this.columns)
         fileData[columnName] <- column.getValue(file, this)
@@ -1008,7 +1088,7 @@ let { find_files } = require("dagor.fs")
     // when read directories with large files number
     filesTableData.sort(this.fileDataComporator.bindenv(this))
 
-    let view = { rows = [] }
+    let view = {rows = []}
 
     let headerRowView = {
       row_id = "file_header_row"
@@ -1016,7 +1096,8 @@ let { find_files } = require("dagor.fs")
       cells = []
     }
     this.cachedColumnNameByTableColumnId.clear()
-    foreach (visibleColumn in this.visibleColumns) {
+    foreach (visibleColumn in this.visibleColumns)
+    {
       let id = "file_col_" + visibleColumn.column.name
       this.cachedColumnNameByTableColumnId[id] <- visibleColumn.column.name
       headerRowView.cells.append({
@@ -1031,7 +1112,8 @@ let { find_files } = require("dagor.fs")
     local isEven = true
     this.cachedFileNameByTableRowId.clear()
     this.cachedTableRowIdxByFileName.clear()
-    foreach (idx, fileData in filesTableData) {
+    foreach (idx, fileData in filesTableData)
+    {
       let rowId = "file_row_" + idx
       let filename = fileData[fileNameMetaAttr]
       this.cachedFileNameByTableRowId[rowId] <- filename
@@ -1041,7 +1123,8 @@ let { find_files } = require("dagor.fs")
         even = isEven
         cells = []
       }
-      foreach (visibleColumn in this.visibleColumns) {
+      foreach (visibleColumn in this.visibleColumns)
+      {
         let column = visibleColumn.column
         let value = fileData[column.name]
         let cellView = column.getView(value)
@@ -1057,15 +1140,19 @@ let { find_files } = require("dagor.fs")
   }
 
 
-  function filterNavElements(navList) {
-    for (local k = navList.len() - 1; k >= 0; k--) {
+  function filterNavElements(navList)
+  {
+    for (local k = navList.len() - 1; k >= 0; k--)
+    {
       let element = navList[k]
-      if ("childs" in element && "name" in element) {
+      if ("childs" in element && "name" in element)
+      {
         this.filterNavElements(element.childs)
         if (element.childs.len() != 0)
           continue
       }
-      else if ("path" in element) {
+      else if ("path" in element)
+      {
         element.path = stdpath.normalize(element.path)
         if (!("name" in element))
           element.name <- element.path
@@ -1077,9 +1164,11 @@ let { find_files } = require("dagor.fs")
   }
 
 
-  function fillNavListData(navListData, navList, depth = 0) {
+  function fillNavListData(navListData, navList, depth = 0)
+  {
     foreach (navGroup in navList)
-      if ("childs" in navGroup) {
+      if ("childs" in navGroup)
+      {
         navListData.append({
           text = "name" in navGroup ? navGroup.name : ""
           depth = depth
@@ -1096,7 +1185,8 @@ let { find_files } = require("dagor.fs")
 
 
   isNavListObjFilled = false
-  function fillNavListObj(forceUpdate = false) {
+  function fillNavListObj(forceUpdate = false)
+  {
     if (!this.isNavigationVisible && this.getObj("nav_list").isFocused())
       this.setFocusToFileTable()
 
@@ -1114,7 +1204,8 @@ let { find_files } = require("dagor.fs")
     this.filterNavElements(navList)
     this.fillNavListData(navListData, navList)
 
-    if (navListData.len() == 0) {
+    if (navListData.len() == 0)
+    {
       this.isNavigationToggleAllowed = false
       this.isNavigationVisible = false
       this.showSceneBtn("nav_list", false)
@@ -1122,9 +1213,10 @@ let { find_files } = require("dagor.fs")
     }
     this.showSceneBtn("btn_navigation", this.isNavigationToggleAllowed)
 
-    let view = { items = [] }
+    let view = {items = []}
     this.cachedPathByNavItemId.clear()
-    foreach (idx, navData in navListData) {
+    foreach (idx, navData in navListData)
+    {
       let id = "nav_item_" + idx
       if ("path" in navData)
         this.cachedPathByNavItemId[id] <- navData.path
@@ -1143,7 +1235,8 @@ let { find_files } = require("dagor.fs")
 
 
   isFiltersObjFilled = false
-  function fillFiltersObj(forceUpdate = false) {
+  function fillFiltersObj(forceUpdate = false)
+  {
     let shouldUseFilters = this.filters.len() > 1
     let fileFilterObj = this.showSceneBtn("file_filter", shouldUseFilters)
     if (!fileFilterObj || !shouldUseFilters || (this.isFiltersObjFilled && !forceUpdate))
@@ -1151,9 +1244,10 @@ let { find_files } = require("dagor.fs")
 
     this.isNavListObjFilled = true
 
-    let view = { items = [] }
+    let view = {items = []}
     local selectedIdx = 0
-    foreach (idx, filter in this.filters) {
+    foreach (idx, filter in this.filters)
+    {
       view.items.append({
         id = "filter_" + idx
         isAllFiles = filter == this.allFilesFilter
@@ -1174,9 +1268,11 @@ let { find_files } = require("dagor.fs")
   // ====================== SORT COMPORATORS ========================
   // ================================================================
 
-  function fileDataComporator(lhs, rhs) {
+  function fileDataComporator(lhs, rhs)
+  {
     foreach (columnSource in [this.columnSortOrder, this.visibleColumns])
-      foreach (sortInfo in columnSource) {
+      foreach (sortInfo in columnSource)
+      {
         let column = sortInfo.column
         let lhsValue = getTblValue(column.name, lhs, null)
         let rhsValue = getTblValue(column.name, rhs, null)
@@ -1187,17 +1283,20 @@ let { find_files } = require("dagor.fs")
     return 0
   }
 
-  static function compareObjOrNull(lhs, rhs) {
+  static function compareObjOrNull(lhs, rhs)
+  {
     return (lhs != null ? 1 : 0) - (rhs != null ? 1 : 0)
   }
 
-  static function compareStringOrNull(lhs, rhs) {
+  static function compareStringOrNull(lhs, rhs)
+  {
     return lhs == rhs ? 0
       : (::gui_handlers.FileDialog.compareObjOrNull(lhs, rhs)
         || (lhs > rhs ? 1 : lhs < rhs ? -1 : 0))
   }
 
-  static function compareIntOrNull(lhs, rhs) {
+  static function compareIntOrNull(lhs, rhs)
+  {
     return ::gui_handlers.FileDialog.compareObjOrNull(lhs, rhs)
       || (lhs != null ? lhs - rhs : 0)
   }

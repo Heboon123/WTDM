@@ -1,10 +1,9 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
 #explicit-this
 
-let { handlerType } = require("%sqDagui/framework/handlerType.nut")
+let {handlerType} = require("%sqDagui/framework/handlerType.nut")
 let { format } = require("string")
 let SecondsUpdater = require("%sqDagui/timer/secondsUpdater.nut")
 let penalties = require("%scripts/penitentiary/penalties.nut")
@@ -16,8 +15,7 @@ let { isChatEnabled, hasMenuChat } = require("%scripts/chat/chatStates.nut")
 let { openUrl } = require("%scripts/onlineShop/url.nut")
 let { get_time_msec } = require("dagor.time")
 let { useTouchscreen } = require("%scripts/clientState/touchScreen.nut")
-let { setGuiOptionsMode, getGuiOptionsMode } = require("guiOptions")
-let { set_game_mode, get_game_mode } = require("mission")
+let { setGuiOptionsMode, getGuiOptionsMode } = require_native("guiOptions")
 
 local stickedDropDown = null
 let defaultSlotbarActions = [
@@ -29,7 +27,7 @@ let forceTimePID = ::dagui_propid.add_name_id("force-time")
 
 let function moveToFirstEnabled(obj) {
   let total = obj.childrenCount()
-  for (local i = 0; i < total; i++) {
+  for(local i = 0; i < total; i++) {
     let child = obj.getChild(i)
     if (!child.isValid() || !child.isEnabled())
       continue
@@ -43,8 +41,8 @@ let function setForceMove(obj, value) {
   obj.setIntProp(forceTimePID, get_time_msec())
 }
 
-let function getDropDownRootObj(obj) {
-  while (obj != null) {
+local function getDropDownRootObj(obj) {
+  while(obj != null) {
     if (obj?["class"] == "dropDown")
       return obj
     obj = obj.getParent()
@@ -52,7 +50,7 @@ let function getDropDownRootObj(obj) {
   return null
 }
 
-let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
+local class BaseGuiHandlerWT extends ::BaseGuiHandler {
   canQuitByGoBack = true
 
   squadWidgetHandlerWeak = null
@@ -87,7 +85,8 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
   needVoiceChat = true
   canInitVoiceChatWithSquadWidget = false
 
-  constructor(gui_scene, params = {}) {
+  constructor(gui_scene, params = {})
+  {
     base.constructor(gui_scene, params)
 
     if (this.wndType == handlerType.MODAL || this.wndType == handlerType.BASE)
@@ -97,12 +96,14 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     this.setWndOptionsMode()
   }
 
-  function init() {
+  function init()
+  {
     this.fillGamercard()
     base.init()
   }
 
-  function getNavbarMarkup() {
+  function getNavbarMarkup()
+  {
     let tplView = this.getNavbarTplView()
     if (!tplView)
       return null
@@ -111,7 +112,8 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
 
   function getNavbarTplView() { return null }
 
-  function fillGamercard() {
+  function fillGamercard()
+  {
     ::fill_gamer_card(null, "gc_", this.scene)
     this.initGcBackButton()
     this.initSquadWidget()
@@ -119,11 +121,13 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     this.initRightSection()
   }
 
-  function initGcBackButton() {
+  function initGcBackButton()
+  {
     this.showSceneBtn("gc_nav_back", this.canQuitByGoBack && useTouchscreen && !::is_in_loading_screen())
   }
 
-  function initSquadWidget() {
+  function initSquadWidget()
+  {
     if (this.squadWidgetHandlerWeak)
       return
 
@@ -135,16 +139,19 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     this.registerSubHandler(this.squadWidgetHandlerWeak)
   }
 
-  function initVoiceChatWidget() {
+  function initVoiceChatWidget()
+  {
     if (this.canInitVoiceChatWithSquadWidget || this.squadWidgetHandlerWeak == null)
       ::handlersManager.initVoiceChatWidget(this)
   }
 
-  function updateVoiceChatWidget(shouldShow) {
+  function updateVoiceChatWidget(shouldShow)
+  {
     this.showSceneBtn(this.voiceChatWidgetNestObjId, shouldShow)
   }
 
-  function initRightSection() {
+  function initRightSection()
+  {
     if (this.rightSectionHandlerWeak)
       return
 
@@ -160,10 +167,12 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
    * @param filterFunc Optional filter function with mode id
    *                   as parameter and boolean return type.
    */
-  function getModesTabsView(selectedDiffCode, filterFunc) {
+  function getModesTabsView(selectedDiffCode, filterFunc)
+  {
     let tabsView = []
     local isFoundSelected = false
-    foreach (diff in ::g_difficulty.types) {
+    foreach(diff in ::g_difficulty.types)
+    {
       if (!diff.isAvailable() || (filterFunc && !filterFunc(diff)))
         continue
 
@@ -181,7 +190,8 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     return tabsView
   }
 
-  function updateModesTabsContent(modesObj, view) {
+  function updateModesTabsContent(modesObj, view)
+  {
     let data = ::handyman.renderCached("%gui/frameHeaderTabs.tpl", view)
     this.guiScene.replaceContentFromText(modesObj, data, data.len(), this)
 
@@ -190,7 +200,8 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
       this[selectCb](modesObj)
   }
 
-  function fillModeListBox(nest, selectedDiffCode = 0, filterFunc = null, addTabs = []) {
+  function fillModeListBox(nest, selectedDiffCode=0, filterFunc = null, addTabs = [])
+  {
     if (!checkObj(nest))
       return
 
@@ -203,25 +214,30 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     })
   }
 
-  function onTopMenuGoBack(...) {
+  function onTopMenuGoBack(...)
+  {
     this.checkedForward(function() {
       this.goForward(::gui_start_mainmenu, false)
     })
   }
 
-  function afterSave() {
+  function afterSave()
+  {
     log("warning! empty afterSave!")
   }
 
-  function save(onlineSave = true) {
+  function save(onlineSave = true)
+  {
     let handler = this
     log("save")
-    if (::is_save_device_selected()) {
+    if (::is_save_device_selected())
+    {
       local saveRes = SAVELOAD_OK;
       saveRes = ::save_profile(onlineSave && ::is_online_available())
 
-      if (saveRes != SAVELOAD_OK) {
-        log("saveRes = " + saveRes.tostring())
+      if (saveRes != SAVELOAD_OK)
+      {
+        log("saveRes = "+saveRes.tostring())
         local txt = "x360/noSaveDevice"
         if (saveRes == SAVELOAD_NO_SPACE)
           txt = "x360/noSpace"
@@ -246,7 +262,8 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
       else
         handler.afterSave()
     }
-    else {
+    else
+    {
       this.msgBox("no_save_device", loc("xbox360/questionSelectDevice"),
       [
         ["yes", (@(handler, onlineSave) function() {
@@ -265,7 +282,8 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     }
   }
 
-  function goForwardCheckEntitlement(start_func, entitlement) {
+  function goForwardCheckEntitlement(start_func, entitlement)
+  {
     this.guiScene = ::get_cur_gui_scene()
 
     this.startFunc = start_func
@@ -273,19 +291,21 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     if (type(entitlement) == "table")
       this.task = entitlement
     else
-      this.task = { loc = entitlement, entitlement = entitlement }
+      this.task = {loc = entitlement, entitlement = entitlement}
 
-    this.task.gm <- get_game_mode()
+    this.task.gm <- ::get_game_mode()
 
     this.taskId = ::update_entitlements()
     if (::is_dev_version && this.taskId < 0)
       this.goForward(start_func)
-    else {
+    else
+    {
       let taskOptions = {
         showProgressBox = true
         progressBoxText = loc("charServer/checking")
       }
-      let taskSuccessCallback = Callback(function () {
+      let taskSuccessCallback = Callback(function ()
+        {
           if (::checkAllowed.bindenv(this)(this.task))
             this.goForward(this.startFunc)
         }, this)
@@ -293,15 +313,18 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     }
   }
 
-  function goForwardOrJustStart(start_func, start_without_forward) {
+  function goForwardOrJustStart(start_func, start_without_forward)
+  {
     if (start_without_forward)
       start_func();
     else
       this.goForward(start_func)
   }
 
-  function goForwardIfOnline(start_func, skippable, start_without_forward = false) {
-    if (::is_online_available()) {
+  function goForwardIfOnline(start_func, skippable, start_without_forward = false)
+  {
+    if (::is_online_available())
+    {
       this.goForwardOrJustStart(start_func, start_without_forward)
       return
     }
@@ -314,15 +337,18 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     ::g_matching_connect.connect(successCb, errorCb)
   }
 
-  function destroyProgressBox() {
-    if (checkObj(this.progressBox)) {
+  function destroyProgressBox()
+  {
+    if(checkObj(this.progressBox))
+    {
       this.guiScene.destroyElement(this.progressBox)
       ::broadcastEvent("ModalWndDestroy")
     }
     this.progressBox = null
   }
 
-  function onShowHud(show = true, needApplyPending = false) {
+  function onShowHud(show = true, needApplyPending = false)
+  {
     if (!this.isSceneActive())
       return
 
@@ -337,7 +363,8 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
       this.guiScene.applyPendingChanges(false) //to correct work isVisible() for scene objects after event
   }
 
-  function startOnlineShop(chapter = null, afterCloseShop = null, metric = "unknown") {
+  function startOnlineShop(chapter = null, afterCloseShop = null, metric = "unknown")
+  {
     let handler = this
     this.goForwardIfOnline(function() {
         local closeFunc = null
@@ -351,10 +378,11 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
   }
 
   function onOnlineShop(_obj)          { this.startOnlineShop() }
-  function onOnlineShopPremium()      { this.startOnlineShop("premium") }
+  function onOnlineShopPremium()      { this.startOnlineShop("premium")}
   function onOnlineShopLions()        { this.startOnlineShop("warpoints") }
 
-  function onOnlineShopEagles() {
+  function onOnlineShopEagles()
+  {
     if (hasFeature("EnableGoldPurchase"))
       this.startOnlineShop("eagles", null, "gamercard")
     else
@@ -364,45 +392,54 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
   function onItemsShop() { ::gui_start_itemsShop() }
   function onInventory() { ::gui_start_inventory() }
 
-  function onConvertExp(_obj) {
+  function onConvertExp(_obj)
+  {
     ::gui_modal_convertExp()
   }
 
-  function notAvailableYetMsgBox() {
-    this.msgBox("not_available", loc("msgbox/notAvailbleYet"), [["ok", function() {} ]], "ok", { cancel_fn = function() {} })
+  function notAvailableYetMsgBox()
+  {
+    this.msgBox("not_available", loc("msgbox/notAvailbleYet"), [["ok", function() {} ]], "ok", { cancel_fn = function() {}})
   }
 
-  function onUserLog(_obj) {
+  function onUserLog(_obj)
+  {
     if (hasFeature("UserLog"))
       ::gui_modal_userLog()
     else
       this.notAvailableYetMsgBox()
   }
 
-  function onProfile(_obj) {
+  function onProfile(_obj)
+  {
     ::gui_start_profile()
   }
 
-  function onMyClanOpen() {
+  function onMyClanOpen()
+  {
     ::gui_modal_clans("my_clan")
   }
 
-  function onGC_chat(_obj) {
+  function onGC_chat(_obj)
+  {
     if (!::isMenuChatActive())
       isChatEnabled(true)
 
     this.switchChatWindow()
   }
 
-  function switchChatWindow() {
+  function switchChatWindow()
+  {
     if (::gchat_is_enabled() && hasMenuChat.value)
       ::switchMenuChatObj(::getChatDiv(this.scene))
   }
 
-  function onSwitchContacts() {
+  function onSwitchContacts()
+  {
     ::switchContactsObj(this.scene, this)
   }
-  function onGC_contacts(_obj) {
+  function onGC_contacts(_obj)
+  {
     if (!hasFeature("Friends"))
       return this.notAvailableYetMsgBox()
 
@@ -411,37 +448,45 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
 
     this.onSwitchContacts()
   }
-  function onGC_invites(_obj) {
+  function onGC_invites(_obj)
+  {
     ::gui_start_invites()
   }
-  function onInviteSquad(_obj) {
+  function onInviteSquad(_obj)
+  {
     ::gui_start_search_squadPlayer()
   }
 
-  function getSlotbar() {
+  function getSlotbar()
+  {
     return this.rootHandlerWeak ? this.rootHandlerWeak.slotbarWeak : this.slotbarWeak
   }
 
-  function getCurSlotUnit() {
+  function getCurSlotUnit()
+  {
     let slotbar = this.getSlotbar()
     return slotbar && slotbar.getCurSlotUnit()
   }
 
-  function getHangarFallbackUnitParams() {
+  function getHangarFallbackUnitParams()
+  {
     return this.getSlotbar()?.getHangarFallbackUnitParams()
   }
 
-  function getCurCrew() {
+  function getCurCrew()
+  {
     let slotbar = this.getSlotbar()
     return slotbar && slotbar.getCurCrew()
   }
 
-  function getCurSlotbarCountry() {
+  function getCurSlotbarCountry()
+  {
     local slotbar = this.getSlotbar()
     return slotbar && slotbar.getCurCountry()
   }
 
-  function onTake(unit, params = {}) {
+  function onTake(unit, params = {})
+  {
     unitActions.take(unit, {
         unitObj = unit?.name ? this.scene.findObject(unit.name) : null
         shouldCheckCrewsReady = this.shouldCheckCrewsReady
@@ -450,7 +495,8 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
 
   hasAutoRefillChangeInProcess = false
 
-  function onSlotsChangeAutoRefill(obj) {
+  function onSlotsChangeAutoRefill(obj)
+  {
     if ((this.slotbarWeak?.slotbarOninit ?? false) || this.hasAutoRefillChangeInProcess)
       return
     let mode = obj.id == "slots-autorepair" ? 0
@@ -470,8 +516,10 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
   }
 
   //"nav-help" - navBar
-  function createSlotbar(params = {}, nest = "nav-help") {
-    if (this.slotbarWeak) {
+  function createSlotbar(params = {}, nest = "nav-help")
+  {
+    if (this.slotbarWeak)
+    {
       this.slotbarWeak.setParams(params)
       return
     }
@@ -489,23 +537,27 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     this.registerSubHandler(slotbar)
   }
 
-  function createSlotbarHandler(params) {
+  function createSlotbarHandler(params)
+  {
     return ::gui_handlers.SlotbarWidget.create(params)
   }
 
-  function reinitSlotbar() { //!!FIX ME: Better to not use it.
+  function reinitSlotbar() //!!FIX ME: Better to not use it.
+  {
     let slotbar = this.getSlotbar()
     if (slotbar)
       slotbar.fullUpdate()
   }
 
-  function destroySlotbar() {
+  function destroySlotbar()
+  {
     if (this.slotbarWeak)
       this.slotbarWeak.destroy()
     this.slotbarWeak = null
   }
 
-  function getSlotbarActions() {
+  function getSlotbarActions()
+  {
     return this.slotbarActions || defaultSlotbarActions
   }
 
@@ -515,7 +567,8 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     crew = unitObj?.crew_id ? ::get_crew_by_id(unitObj.crew_id.tointeger()) : null
   }
 
-  function openUnitActionsList(unitObj, ignoreSelect = false, ignoreHover = false) {
+  function openUnitActionsList(unitObj, ignoreSelect = false, ignoreHover = false)
+  {
     if (!checkObj(unitObj) || (!ignoreHover && !unitObj.isHovered()))
       return
     let parentObj = unitObj.getParent()
@@ -537,16 +590,20 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     }.__update(this.getParamsForActionsList(), this.getUnitParamsFromObj(unitObj)))
   }
 
-  function onOpenActionsList(obj) {
+  function onOpenActionsList(obj)
+  {
     this.openUnitActionsList(obj.getParent().getParent(), true)
   }
 
-  function getSlotbarPresetsList() {
+  function getSlotbarPresetsList()
+  {
     return this.rootHandlerWeak ? this.rootHandlerWeak.presetsListWeak : this.presetsListWeak
   }
 
-  function setSlotbarPresetsListAvailable(isAvailable) {
-    if (isAvailable) {
+  function setSlotbarPresetsListAvailable(isAvailable)
+  {
+    if (isAvailable)
+    {
       if (this.presetsListWeak)
         this.presetsListWeak.update()
       else
@@ -556,8 +613,10 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
       this.presetsListWeak.destroy()
   }
 
-  function slotOpCb(id, tType, result) {
-    if (id != this.taskId) {
+  function slotOpCb(id, tType, result)
+  {
+    if (id != this.taskId)
+    {
       log("wrong ID in char server cb, ignoring");
       ::g_tasker.charCallback(id, tType, result)
       return
@@ -567,13 +626,15 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
 
     penalties.showBannedStatusMsgBox(true)
 
-    if (result != 0) {
+    if (result != 0)
+    {
       let handler = this
-      local text = loc("charServer/updateError/" + result.tostring())
+      local text = loc("charServer/updateError/"+result.tostring())
 
       if (("EASTE_ERROR_NICKNAME_HAS_NOT_ALLOWED_CHARS" in getroottable())
         && ("get_char_extended_error" in getroottable()))
-        if (result == EASTE_ERROR_NICKNAME_HAS_NOT_ALLOWED_CHARS) {
+        if (result == EASTE_ERROR_NICKNAME_HAS_NOT_ALLOWED_CHARS)
+        {
           let notAllowedChars = ::get_char_extended_error()
           text = format(text, notAllowedChars)
         }
@@ -591,7 +652,8 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     this.afterSlotOp()
   }
 
-  function showTaskProgressBox(text = null, cancelFunc = null, delayedButtons = 30) {
+  function showTaskProgressBox(text = null, cancelFunc = null, delayedButtons = 30)
+  {
     if (checkObj(this.progressBox))
       return
 
@@ -599,7 +661,7 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
       text = loc("charServer/purchase0")
 
     if (cancelFunc == null)
-      cancelFunc = function() {}
+      cancelFunc = function(){}
 
     this.progressBox = this.msgBox("char_connecting",
         text,
@@ -609,19 +671,23 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
         })
   }
 
-  function onGenericTooltipOpen(obj) {
+  function onGenericTooltipOpen(obj)
+  {
     ::g_tooltip.open(obj, this)
   }
 
-  function onTooltipObjClose(obj) {
+  function onTooltipObjClose(obj)
+  {
     ::g_tooltip.close.call(this, obj)
   }
 
-  function onContactTooltipOpen(obj) {
+  function onContactTooltipOpen(obj)
+  {
     let uid = obj?.uid
     local canShow = false
     local contact = null
-    if (uid) {
+    if (uid)
+    {
       contact = ::getContact(uid)
       canShow = this.canShowContactTooltip(contact)
     }
@@ -631,20 +697,23 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
       ::fillContactTooltip(obj, contact, this)
   }
 
-  function canShowContactTooltip(contact) {
+  function canShowContactTooltip(contact)
+  {
     return contact != null
   }
 
-  function onQueuesTooltipOpen(obj) {
+  function onQueuesTooltipOpen(obj)
+  {
     this.guiScene.replaceContent(obj, "%gui/queue/queueInfoTooltip.blk", this)
-    SecondsUpdater(obj.findObject("queue_tooltip_root"), function(obj, _params) {
+    SecondsUpdater(obj.findObject("queue_tooltip_root"), function(obj, _params)
+    {
       obj.findObject("text").setValue(::queues.getQueuesInfoText())
     })
   }
 
-  function onProjectawardTooltipOpen(obj) {
-    if (!checkObj(obj))
-      return
+  function onProjectawardTooltipOpen(obj)
+  {
+    if (!checkObj(obj)) return
     let img = obj?.img ?? ""
     let title = obj?.title ?? ""
     let desc = obj?.desc ?? ""
@@ -659,7 +728,8 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     picDiv.show(true)
   }
 
-  function onViewImage(obj) {
+  function onViewImage(obj)
+  {
     ::view_fullscreen_image(obj)
   }
 
@@ -668,15 +738,18 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
   function onSupport()         { openUrl(loc("url/support")) }
   function onWiki()            { openUrl(loc("url/wiki")) }
 
-  function onSquadCreate(_obj) {
+  function onSquadCreate(_obj)
+  {
     if (::g_squad_manager.isInSquad())
       this.msgBox("already_in_squad", loc("squad/already_in_squad"), [["ok", function() {} ]], "ok", { cancel_fn = function() {} })
     else
       ::chatInviteToSquad(null, this)
   }
 
-  function unstickLastDropDown(newObj = null, forceMove = "no") {
-    if (checkObj(stickedDropDown) && (!newObj || !stickedDropDown.isEqual(newObj))) {
+  function unstickLastDropDown(newObj = null, forceMove = "no")
+  {
+    if (checkObj(stickedDropDown) && (!newObj || !stickedDropDown.isEqual(newObj)))
+    {
       setForceMove(stickedDropDown, forceMove)
       stickedDropDown.getScene().applyPendingChanges(false)
       this.onStickDropDown(stickedDropDown, false)
@@ -690,7 +763,8 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
       setForceMove(rootObj, "close")
   }
 
-  function onDropDownToggle(obj) {
+  function onDropDownToggle(obj)
+  {
     obj = getDropDownRootObj(obj)
     if (!obj)
       return
@@ -704,18 +778,20 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     this.onStickDropDown(obj, needStick)
   }
 
-  function onHoverSizeMove(obj) {
+  function onHoverSizeMove(obj)
+  {
     //this only for pc mouse logic. For animated gamepad cursor look onDropdownAnimFinish
     if (!::is_mouse_last_time_used())
       return
     this.unstickLastDropDown(getDropDownRootObj(obj))
   }
 
-  function onGCDropdown(obj) {
+  function onGCDropdown(obj)
+  {
     local id = obj?.id
     let ending = "_panel"
-    if (id && id.len() > ending.len() && id.slice(id.len() - ending.len()) == ending)
-      id = id.slice(0, id.len() - ending.len())
+    if (id && id.len() > ending.len() && id.slice(id.len()-ending.len())==ending)
+      id = id.slice(0, id.len()-ending.len())
     if (!isInArray(id, this.GCDropdownsList))
       return
 
@@ -724,12 +800,14 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
       this.onDropDownToggle(btnObj)
   }
 
-  function onStickDropDown(obj, show) {
+  function onStickDropDown(obj, show)
+  {
     if (!checkObj(obj))
       return
 
     let id = obj?.id
-    if (!show || !isInArray(id, this.GCDropdownsList)) {
+    if (!show || !isInArray(id, this.GCDropdownsList))
+    {
       this.curGCDropdown = null
       return
     }
@@ -783,7 +861,8 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
   getCurGCDropdownBtn  = @() this.curGCDropdown != null ? this.getObj(this.curGCDropdown + "_btn") : null
   getCurGCDropdownMenu = @() this.curGCDropdown != null ? this.getObj(this.curGCDropdown + "_focus") : null
 
-  function setSceneTitle(text, placeObj = null, name = "gc_title") {
+  function setSceneTitle(text, placeObj = null, name = "gc_title")
+  {
     if (!placeObj)
      placeObj = this.scene
 
@@ -795,41 +874,46 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
       textObj.setValue(text.tostring())
   }
 
-  function restoreMainOptions() {
+  function restoreMainOptions()
+  {
     if (this.mainOptionsMode >= 0)
       setGuiOptionsMode(this.mainOptionsMode)
     if (this.mainGameMode >= 0)
-      set_game_mode(this.mainGameMode)
+      ::set_mp_mode(this.mainGameMode)
   }
 
-  function setWndGameMode() {
+  function setWndGameMode()
+  {
     if (this.wndGameMode < 0)
       return
-    this.mainGameMode = get_game_mode()
-    set_game_mode(this.wndGameMode)
+    this.mainGameMode = ::get_mp_mode()
+    ::set_mp_mode(this.wndGameMode)
   }
 
-  function setWndOptionsMode() {
+  function setWndOptionsMode()
+  {
     if (this.wndOptionsMode < 0)
       return
     this.mainOptionsMode = getGuiOptionsMode()
     setGuiOptionsMode(this.wndOptionsMode)
   }
 
-  function checkAndStart(onSuccess, onCancel, checkName, checkParam = null) {
+  function checkAndStart(onSuccess, onCancel, checkName, checkParam = null)
+  {
     ::queues.checkAndStart(callback.make(onSuccess, this), callback.make(onCancel, this),
       checkName, checkParam)
   }
 
-  function checkedNewFlight(func, cancelFunc = null) { this.checkAndStart(func, cancelFunc, "isCanNewflight") }
-  function checkedForward(func, cancelFunc = null) { this.checkAndStart(func, cancelFunc, "isCanGoForward") }
-  function checkedCrewModify(func, cancelFunc = null) { this.checkAndStart(func, cancelFunc, "isCanModifyCrew") }
-  function checkedAirChange(func, cancelFunc = null) {
-    //change selected air
-    this.checkAndStart(func, cancelFunc, "isCanAirChange")
-  }
-  function checkedCrewAirChange(func, cancelFunc = null) {
-    //change air in slot
+  function checkedNewFlight(func, cancelFunc=null)
+                   { this.checkAndStart(func, cancelFunc, "isCanNewflight") }
+  function checkedForward(func, cancelFunc=null)
+                   { this.checkAndStart(func, cancelFunc, "isCanGoForward") }
+  function checkedCrewModify(func, cancelFunc=null)
+                   { this.checkAndStart(func, cancelFunc, "isCanModifyCrew") }
+  function checkedAirChange(func, cancelFunc=null)  //change selected air
+                   { this.checkAndStart(func, cancelFunc, "isCanAirChange") }
+  function checkedCrewAirChange(func, cancelFunc=null) //change air in slot
+  {
     this.checkAndStart(
       function() {
         ::g_squad_utils.checkSquadUnreadyAndDo(callback.make(func, this),
@@ -837,27 +921,55 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
       },
       cancelFunc, "isCanModifyCrew")
   }
-  function checkedModifyQueue(qType, func, cancelFunc = null) {
+  function checkedModifyQueue(qType, func, cancelFunc = null)
+  {
     this.checkAndStart(func, cancelFunc, "isCanModifyQueueParams", qType)
   }
 
-  function proccessLinkFromText(obj, _itype, link) {
+  function onFacebookPostScrnshot(saved_screenshot_path)
+  {
+    ::make_facebook_login_and_do((@(saved_screenshot_path) function() {::start_facebook_upload_screenshot(saved_screenshot_path)})(saved_screenshot_path), this)
+  }
+
+  function onFacebookLoginAndPostScrnshot()
+  {
+    ::make_screenshot_and_do(this.onFacebookPostScrnshot, this)
+  }
+
+  function onFacebookLoginAndAddFriends()
+  {
+    ::make_facebook_login_and_do(function()
+         {
+           ::scene_msg_box("facebook_login", null, loc("facebook/downloadingFriends"), null, null)
+           ::facebook_load_friends(EPL_MAX_PLAYERS_IN_LIST)
+         }, this)
+  }
+
+  function proccessLinkFromText(obj, _itype, link)
+  {
     openUrl(link, false, false, obj?.bqKey ?? obj?.id)
   }
 
-  function onModalWndDestroy() {
+  function onFacebookPostPurchaseChange(obj)
+  {
+    ::broadcastEvent("FacebookFeedPostValueChange", {value = obj.getValue()})
+  }
+
+  function onModalWndDestroy()
+  {
     if (!::handlersManager.isAnyModalHandlerActive())
       ::restoreHangarControls()
     base.onModalWndDestroy()
     ::checkMenuChatBack()
   }
 
-  function onSceneActivate(show) {
-    if (show) {
+  function onSceneActivate(show)
+  {
+    if (show)
+    {
       this.setWndGameMode()
       this.setWndOptionsMode()
-    }
-    else
+    } else
       this.restoreMainOptions()
 
     if (::is_hud_visible())
@@ -866,11 +978,13 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     base.onSceneActivate(show)
   }
 
-  function getControlsAllowMask() {
+  function getControlsAllowMask()
+  {
     return this.wndControlsAllowMask
   }
 
-  function switchControlsAllowMask(mask) {
+  function switchControlsAllowMask(mask)
+  {
     if (mask == this.wndControlsAllowMask)
       return
 
@@ -878,10 +992,12 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     ::handlersManager.updateControlsAllowMask()
   }
 
-  function getWidgetsList() {
+  function getWidgetsList()
+  {
     let result = []
     if (this.widgetsList)
-      foreach (widgetDesc in this.widgetsList) {
+      foreach (widgetDesc in this.widgetsList)
+      {
         result.append({ widgetId = widgetDesc.widgetId })
         if ("placeholderId" in widgetDesc)
           result.top()["transform"] <- this.getWidgetParams(widgetDesc.placeholderId)
@@ -889,7 +1005,8 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     return result
   }
 
-  function getWidgetParams(placeholderId) {
+  function getWidgetParams(placeholderId)
+  {
     let placeholderObj = this.scene.findObject(placeholderId)
     if (!checkObj(placeholderObj))
       return null
@@ -900,20 +1017,22 @@ let BaseGuiHandlerWT = class extends ::BaseGuiHandler {
     }
   }
 
+  function onFacebookLoginAndPostMessage() {}
   function sendInvitation() {}
+  function onFacebookPostLink() {}
 
-  function onModActionBtn() {}
-  function onModItemClick() {}
-  function onModItemDblClick() {}
-  function onModCheckboxClick() {}
-  function onAltModAction() {}
-  function onModChangeBulletsSlider() {}
+  function onModActionBtn(){}
+  function onModItemClick(){}
+  function onModItemDblClick(){}
+  function onModCheckboxClick(){}
+  function onAltModAction(){}
+  function onModChangeBulletsSlider(){}
 
-  function onShowMapRenderFilters() {}
+  function onShowMapRenderFilters(){}
 }
 
 ::gui_handlers.BaseGuiHandlerWT <- BaseGuiHandlerWT
 
 return {
-  stickedDropDown
+  stickedDropDown = stickedDropDown
 }

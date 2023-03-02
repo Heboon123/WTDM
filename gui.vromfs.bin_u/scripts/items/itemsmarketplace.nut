@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -13,7 +12,8 @@ let { showGuestEmailRegistration, needShowGuestEmailRegistration
 let isMarketplaceEnabled = @() hasFeature("Marketplace")
   && hasFeature("AllowExternalLink") && inventoryClient.getMarketplaceBaseUrl() != null
 
-let function goToMarketplace() {
+let function goToMarketplace()
+{
   if (!isMarketplaceEnabled())
     return
 

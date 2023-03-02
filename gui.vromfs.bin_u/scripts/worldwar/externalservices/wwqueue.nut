@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -10,9 +9,9 @@ let { getMyClanOperation, isMyClanInQueue
 let { actionWithGlobalStatusRequest,
   getGlobalStatusData } = require("%scripts/worldWar/operations/model/wwGlobalStatus.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
-let DataBlock  = require("DataBlock")
 
-::WwQueue <- class {
+::WwQueue <- class
+{
   map = null
   data = null
 
@@ -20,41 +19,49 @@ let DataBlock  = require("DataBlock")
   myClanQueueTime = -1
   cachedClanId = -1 //need to update clan data if clan changed
 
-  constructor(v_map, v_data = null) {
+  constructor(v_map, v_data = null)
+  {
     this.map = v_map
     this.data = v_data
   }
 
-  function isMapActive() {
+  function isMapActive()
+  {
     return this.map.isActive() || this.map.getOpGroup().hasActiveOperations()
   }
 
-  function getArmyGroupsByCountry(country, defValue = null) {
+  function getArmyGroupsByCountry(country, defValue = null)
+  {
     return getTblValue(country, this.data, defValue)
   }
 
-  function isMyClanJoined(country = null) {
+  function isMyClanJoined(country = null)
+  {
     let countries = this.getMyClanCountries()
     return country ? isInArray(country, countries) : countries.len() != 0
   }
 
-  function getMyClanCountries() {
+  function getMyClanCountries()
+  {
     this.gatherMyClanDataOnce()
     return this.myClanCountries || []
   }
 
-  function getMyClanQueueJoinTime() {
+  function getMyClanQueueJoinTime()
+  {
     this.gatherMyClanDataOnce()
     return max(0, this.myClanQueueTime)
   }
 
-  function resetCache() {
+  function resetCache()
+  {
     this.myClanCountries = null
     this.myClanQueueTime = -1
     this.cachedClanId = -1
   }
 
-  function gatherMyClanDataOnce() {
+  function gatherMyClanDataOnce()
+  {
     let myClanId = ::clan_get_my_clan_id().tointeger()
     if (myClanId == this.cachedClanId)
       return
@@ -64,33 +71,40 @@ let DataBlock  = require("DataBlock")
       return
 
     this.myClanCountries = []
-    foreach (country in shopCountriesList) {
+    foreach(country in shopCountriesList)
+    {
       let groups = this.getArmyGroupsByCountry(country)
-      let myGroup = groups && ::u.search(groups, (@(myClanId) function(ag) { return getTblValue("clanId", ag) == myClanId })(myClanId))
-      if (myGroup) {
+      let myGroup = groups && ::u.search(groups, (@(myClanId) function(ag) { return getTblValue("clanId", ag) == myClanId })(myClanId) )
+      if (myGroup)
+      {
         this.myClanCountries.append(country)
         this.myClanQueueTime = max(this.myClanQueueTime, getTblValue("at", myGroup, -1))
       }
     }
 
-    if (!this.myClanCountries.len()) {
+    if (!this.myClanCountries.len())
+    {
       this.myClanCountries = null
       this.myClanQueueTime = -1
     }
   }
 
-  function getArmyGroupsAmountByCountries() {
+  function getArmyGroupsAmountByCountries()
+  {
     let res = {}
-    foreach (country in shopCountriesList) {
+    foreach(country in shopCountriesList)
+    {
       let groups = this.getArmyGroupsByCountry(country)
       res[country] <- groups ? groups.len() : 0
     }
     return res
   }
 
-  function getClansNumberInQueueText() {
+  function getClansNumberInQueueText()
+  {
     let clansInQueue = {}
-    foreach (country in shopCountriesList) {
+    foreach(country in shopCountriesList)
+    {
       let groups = this.getArmyGroupsByCountry(country)
       if (groups)
         foreach (memberData in groups)
@@ -98,12 +112,14 @@ let DataBlock  = require("DataBlock")
     }
     let clansInQueueNumber = clansInQueue.len()
     return !clansInQueueNumber ? "" :
-      loc("worldwar/clansInQueueTotal", { number = clansInQueueNumber })
+      loc("worldwar/clansInQueueTotal", {number = clansInQueueNumber})
   }
 
-  function getArmyGroupsAmountTotal() {
+  function getArmyGroupsAmountTotal()
+  {
     local res = 0
-    foreach (country in shopCountriesList) {
+    foreach(country in shopCountriesList)
+    {
       let groups = this.getArmyGroupsByCountry(country)
       if (groups)
         res += groups.len()
@@ -111,19 +127,23 @@ let DataBlock  = require("DataBlock")
     return res
   }
 
-  function getNameText() {
+  function getNameText()
+  {
     return this.map.getNameText()
   }
 
-  function getGeoCoordsText() {
+  function getGeoCoordsText()
+  {
     return  this.map.getGeoCoordsText()
   }
 
-  function getCountriesByTeams() {
+  function getCountriesByTeams()
+  {
     return this.map.getCountriesByTeams()
   }
 
-  function getCantJoinQueueReasonData(country = null) {
+  function getCantJoinQueueReasonData(country = null)
+  {
     let res = this.getCantJoinAnyQueuesReasonData()
     if (! res.canJoin)
       return res
@@ -138,7 +158,8 @@ let DataBlock  = require("DataBlock")
     return res
   }
 
-  static function getCantJoinAnyQueuesReasonData() {
+  static function getCantJoinAnyQueuesReasonData()
+  {
     let res = {
       canJoin = false
       reasonText = ""
@@ -151,9 +172,11 @@ let DataBlock  = require("DataBlock")
       res.reasonText = loc("worldwar/mapStatus/yourClanInQueue")
     else if (!::g_clans.hasRightsToQueueWWar())
       res.reasonText = loc("worldWar/onlyLeaderCanQueue")
-    else {
+    else
+    {
       let myClanType = ::g_clans.getMyClanType()
-      if (!::clan_can_register_to_ww()) {
+      if (!::clan_can_register_to_ww())
+      {
         res.reasonText = loc("clan/wwar/lacksMembers", {
           clanType = myClanType.getTypeNameLoc()
           count = myClanType.getMinMemberCountToWWar()
@@ -168,9 +191,11 @@ let DataBlock  = require("DataBlock")
     return res
   }
 
-  function joinQueue(country, isSilence = true, clusters = null) {
+  function joinQueue(country, isSilence = true, clusters = null)
+  {
     let cantJoinReason = this.getCantJoinQueueReasonData(country)
-    if (!cantJoinReason.canJoin) {
+    if (!cantJoinReason.canJoin)
+    {
       if (!isSilence)
         ::showInfoMsgBox(cantJoinReason.reasonText)
       return false
@@ -179,18 +204,20 @@ let DataBlock  = require("DataBlock")
     return this._joinQueue(country, clusters)
   }
 
-  function _joinQueue(country, clusters = null) {
-    let requestBlk = DataBlock()
+  function _joinQueue(country, clusters = null)
+  {
+    let requestBlk = ::DataBlock()
     requestBlk.mapName = this.map.name
     requestBlk.country = country
     requestBlk.clusters = clusters
     if (::check_balance_msgBox(::Cost(getGlobalStatusData()?.operationCreationFeeWp ?? 0)))
       actionWithGlobalStatusRequest("cln_clan_register_ww_army_group", requestBlk,
-        { showProgressBox = true })
+        { showProgressBox = true } )
 
   }
 
-  function getCantLeaveQueueReasonData() {
+  function getCantLeaveQueueReasonData()
+  {
     let res = {
       canLeave = false
       reasonText = ""
@@ -206,9 +233,11 @@ let DataBlock  = require("DataBlock")
     return res
   }
 
-  function leaveQueue(isSilence = true) {
+  function leaveQueue(isSilence = true)
+  {
     let cantLeaveReason = this.getCantLeaveQueueReasonData()
-    if (!cantLeaveReason.canLeave) {
+    if (!cantLeaveReason.canLeave)
+    {
       if (!isSilence)
         ::showInfoMsgBox(cantLeaveReason.reasonText)
       return false
@@ -217,21 +246,25 @@ let DataBlock  = require("DataBlock")
     return this._leaveQueue()
   }
 
-  function _leaveQueue() {
-    let requestBlk = DataBlock()
+  function _leaveQueue()
+  {
+    let requestBlk = ::DataBlock()
     requestBlk.mapName = this.map.name
     actionWithGlobalStatusRequest("cln_clan_unregister_ww_army_group", requestBlk, { showProgressBox = true })
   }
 
-  function getMapChangeStateTimeText() {
+  function getMapChangeStateTimeText()
+  {
     return this.map.getMapChangeStateTimeText()
   }
 
-  function getMinClansCondition() {
+  function getMinClansCondition()
+  {
     return this.map.getMinClansCondition()
   }
 
-  function getClansConditionText() {
+  function getClansConditionText()
+  {
     return this.map.getClansConditionText()
   }
 

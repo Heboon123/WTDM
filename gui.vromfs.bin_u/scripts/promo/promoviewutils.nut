@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -33,9 +32,11 @@ from "%scripts/dagui_library.nut" import *
   text - text to set
   prevShowIdx - previous text index returned by this function. if never called before, than -1
 */
-::g_promo_view_utils.animSwitchCollapsedText <- function animSwitchCollapsedText(scene, blockId, text) {
+::g_promo_view_utils.animSwitchCollapsedText <- function animSwitchCollapsedText(scene, blockId, text)
+{
   let animSizeObj = this.getCollapsedAnimSizeObj(scene, blockId)
-  if (!checkObj(animSizeObj)) {
+  if (!checkObj(animSizeObj))
+  {
     assert(false, "g_promo_view_utils: try to anim update text for not existing block: " + blockId)
     return
   }
@@ -45,7 +46,8 @@ from "%scripts/dagui_library.nut" import *
   let setIdx = isInited ? (prevShowIdx + 1) % this.collapsedTextBlocksAnim.len() : 0
   animSizeObj.setIntProp(this.collapsedTextIdxPID, setIdx)
 
-  foreach (idx, animData in this.collapsedTextBlocksAnim) {
+  foreach(idx, animData in this.collapsedTextBlocksAnim)
+  {
     let textObj = scene.findObject(blockId + animData.blockEnding)
     if (!checkObj(textObj))
       continue
@@ -68,7 +70,8 @@ from "%scripts/dagui_library.nut" import *
   }
 }
 
-::g_promo_view_utils.getVisibleCollapsedTextObj <- function getVisibleCollapsedTextObj(scene, blockId) {
+::g_promo_view_utils.getVisibleCollapsedTextObj <- function getVisibleCollapsedTextObj(scene, blockId)
+{
   local idx = 0
   let sizeObj = this.getCollapsedAnimSizeObj(scene, blockId)
   if (checkObj(sizeObj))
@@ -76,6 +79,7 @@ from "%scripts/dagui_library.nut" import *
   return scene.findObject(blockId + this.collapsedTextBlocksAnim[idx].blockEnding)
 }
 
-::g_promo_view_utils.getCollapsedAnimSizeObj <- function getCollapsedAnimSizeObj(scene, blockId) {
+::g_promo_view_utils.getCollapsedAnimSizeObj <- function getCollapsedAnimSizeObj(scene, blockId)
+{
   return scene.findObject(blockId + "_collapsed_size_obj")
 }

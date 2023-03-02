@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -7,7 +6,6 @@ from "%scripts/dagui_library.nut" import *
 
 let { format } = require("string")
 let { get_time_msec } = require("dagor.time")
-let DataBlock  = require("DataBlock")
 /* Item API:
   getCost                    - return item cost
   buy(cb, handler)            - buy item, call cb when buy success
@@ -62,12 +60,13 @@ const ITEM_SOON_EXPIRE_SEC = 14400
 const ITEM_VERY_SOON_EXPIRE_SEC = 3600
 
 local expireTypes = {
-  SOON = { id = "soon", color = "@itemSoonExpireColor" }
-  VERY_SOON = { id = "very_soon", color = "@red" }
+  SOON = {id = "soon", color = "@itemSoonExpireColor"}
+  VERY_SOON = {id = "very_soon", color = "@red"}
 }
 ::items_classes <- {}
 
-::BaseItem <- class {
+::BaseItem <- class
+{
   id = ""
   static iType = itemType.UNKNOWN
   static defaultLocId = "unknown"
@@ -131,7 +130,8 @@ local expireTypes = {
 
   restrictedInCountries = null
 
-  constructor(blk, invBlk = null, slotData = null) {
+  constructor(blk, invBlk = null, slotData = null)
+  {
     this.id = blk.getBlockName() || invBlk?.id || ""
     this.locId = blk?.locId
     this.blkType = blk?.type
@@ -149,7 +149,7 @@ local expireTypes = {
 
     this.shopFilterMask = this.iType
     let types = blk % "additionalShopItemType"
-    foreach (t in types)
+    foreach(t in types)
       this.shopFilterMask = this.shopFilterMask | ::ItemsManager.getInventoryItemType(t)
 
     this.expiredTimeAfterActivationH = blk?.expiredTimeHAfterActivation ?? 0
@@ -163,11 +163,12 @@ local expireTypes = {
 
     this.expiredTimeSec = expiredTime != null ? expiredTime + 0.001 * get_time_msec() : 0
 
-    if (this.isInventoryItem) {
+    if (this.isInventoryItem)
+    {
       this.uids = slotData?.uids ?? []
       this.amount = slotData?.count ?? 1
-    }
-    else {
+    } else
+    {
       this.sellCountStep = blk?.sell_count_step || 1
       this.limitGlobal = blk?.limitGlobal ?? 0
       this.limitPersonalTotal = blk?.limitPersonalTotal ?? 0
@@ -177,7 +178,8 @@ local expireTypes = {
 
   getSeenId = @() this.id.tostring()
 
-  function makeEmptyInventoryItem() {
+  function makeEmptyInventoryItem()
+  {
     let res = clone this
     res.isInventoryItem = true
     res.uids = []
@@ -185,95 +187,110 @@ local expireTypes = {
     return res
   }
 
-  function isEqual(item) {
+  function isEqual(item)
+  {
     if (item.isInventoryItem != this.isInventoryItem || item.id != this.id)
       return false
     if (!this.isInventoryItem)
       return true
 
-    foreach (uid in item.uids)
+    foreach(uid in item.uids)
       if (this.uids.indexof(uid) != null)
         return true
     return false
   }
 
-  function getLimitData() {
+  function getLimitData()
+  {
     return ::g_item_limits.getLimitDataByItemName(this.id)
   }
 
-  function checkPurchaseFeature() {
+  function checkPurchaseFeature()
+  {
     return this.purchaseFeature == "" || hasFeature(this.purchaseFeature)
   }
 
-  function getDebugName() {
+  function getDebugName()
+  {
     let myClass = this.getclass()
-    foreach (name, iClass in ::items_classes)
+    foreach(name, iClass in ::items_classes)
       if (myClass == iClass)
         return name
     return "BaseItem"
   }
 
-  function _tostring() {
+  function _tostring()
+  {
     return format("Item %s (id = %s)", this.getDebugName(), this.id.tostring())
   }
 
-  function isCanBuy() {
+  function isCanBuy()
+  {
     return this.canBuy && this.checkPurchaseFeature() && !this.isExpired()
   }
 
-  function getCost(ignoreCanBuy = false) {
+  function getCost(ignoreCanBuy = false)
+  {
     if (this.isCanBuy() || ignoreCanBuy)
       return ::Cost(::wp_get_item_cost(this.id), ::wp_get_item_cost_gold(this.id)).multiply(this.getSellAmount())
     return ::Cost()
   }
 
-  function getIcon(_addItemName = true) {
+  function getIcon(_addItemName = true)
+  {
     if (this.lottieAnimation != null)
       return ::LayersIcon.getIconData(null, this.getLottieImage())
     return ::LayersIcon.getIconData(this.iconStyle + "_shop", this.defaultIcon, 1.0, this.defaultIconStyle)
   }
 
-  function getSmallIconName() {
+  function getSmallIconName()
+  {
     return this.typeIcon
   }
 
-  function getBigIcon() {
+  function getBigIcon()
+  {
     return this.getIcon()
   }
 
-  function getOpenedIcon() {
+  function getOpenedIcon()
+  {
     return this.getIcon()
   }
 
-  function getOpenedBigIcon() {
+  function getOpenedBigIcon()
+  {
     return this.getBigIcon()
   }
 
-  function setIcon(obj, params = {}) {
+  function setIcon(obj, params = {})
+  {
     if (!checkObj(obj))
       return
 
     let bigPicture = getTblValue("bigPicture", params, false)
 
     let addItemName = getTblValue("addItemName", params, true)
-    let imageData = bigPicture ? this.getBigIcon() : this.getIcon(addItemName)
+    let imageData = bigPicture? this.getBigIcon() : this.getIcon(addItemName)
     if (!imageData)
       return
 
     let guiScene = obj.getScene()
-    obj.doubleSize = bigPicture ? "yes" : "no"
+    obj.doubleSize = bigPicture? "yes" : "no"
     obj.wideSize = params?.wideSize ? "yes" : "no"
     guiScene.replaceContentFromText(obj, imageData, imageData.len(), null)
   }
 
-  function getName(_colored = true) {
+  function getName(_colored = true)
+  {
     local name = loc("item/" + this.id, loc("item/" + this.defaultLocId))
     if (this.locId != null)
       name = loc(this.locId, name)
     return name
   }
 
-  function getNameWithCount(colored = true, count = 0) {
+  function getNameWithCount(colored = true, count = 0)
+  {
     local counttext = ""
     if (count > 1)
       counttext = colorize("activeTextColor", " x") + colorize("userlogColoredText", count)
@@ -281,43 +298,52 @@ local expireTypes = {
     return this.getName(colored) + counttext
   }
 
-  function getTypeName() {
+  function getTypeName()
+  {
     return loc("item/" + this.defaultLocId)
   }
 
-  function getNameMarkup(count = 0, showTitle = true, hasPadding = false) {
+  function getNameMarkup(count = 0, showTitle = true, hasPadding = false)
+  {
     return ::handyman.renderCached("%gui/items/itemString.tpl", {
-      title = showTitle ? colorize("activeTextColor", this.getName()) : null
+      title = showTitle? colorize("activeTextColor",this.getName()) : null
       icon = this.getSmallIconName()
       tooltipId = ::g_tooltip.getIdItem(this.id, { isDisguised = this.isDisguised })
-      count = count > 1 ? (colorize("activeTextColor", " x") + colorize("userlogColoredText", count)) : null
+      count = count > 1? (colorize("activeTextColor", " x") + colorize("userlogColoredText", count)) : null
       hasPadding = hasPadding
     })
   }
 
-  function getDescriptionTitle() {
+  function getDescriptionTitle()
+  {
     return this.getName()
   }
 
-  function getDescriptionUnderTitle() {
+  function getDescriptionUnderTitle()
+  {
     return ""
   }
 
-  function getAmount() {
+  function getAmount()
+  {
     return this.amount
   }
 
-  function getSellAmount() {
+  function getSellAmount()
+  {
     return this.sellCountStep
   }
 
-  function getShortItemTypeDescription() {
+  function getShortItemTypeDescription()
+  {
     return loc("item/" + this.id + "/shortTypeDesc", loc("item/" + this.blkType + "/shortTypeDesc", ""))
   }
 
-  function getItemTypeDescription(loc_params = {}) {
+  function getItemTypeDescription(loc_params = {})
+  {
     local idText = ""
-    if (this.locId != null) {
+    if (this.locId != null)
+    {
       idText = loc(this.locId, this.locId + "/typeDesc", loc_params)
       if (idText != "")
         return idText
@@ -334,7 +360,8 @@ local expireTypes = {
     return ""
   }
 
-  function getDescription() {
+  function getDescription()
+  {
     return loc("item/" + this.id + "/desc", "")
   }
 
@@ -352,13 +379,14 @@ local expireTypes = {
 
   shouldShowAmount = @(count) count > 1 || count == 0 || this.transferAmount > 0
 
-  function getViewData(params = {}) {
+  function getViewData(params = {})
+  {
     let openedPicture = getTblValue("openedPicture", params, false)
     let bigPicture = getTblValue("bigPicture", params, false)
     let addItemName = getTblValue("addItemName", params, true)
     let res = {
       layered_image = params?.overrideLayeredImage
-        ?? (openedPicture ? (bigPicture ? this.getOpenedBigIcon() : this.getOpenedIcon()) : bigPicture ? this.getBigIcon() : this.getIcon(addItemName))
+        ?? (openedPicture? (bigPicture? this.getOpenedBigIcon() : this.getOpenedIcon()) : bigPicture? this.getBigIcon() : this.getIcon(addItemName))
       enableBackground = getTblValue("enableBackground", params, true)
     }
 
@@ -370,7 +398,7 @@ local expireTypes = {
     if (getTblValue("showPrice", params, true))
       res.price <- this.getCost().getTextAccordingToBalance()
 
-    foreach (paramName, value in params)
+    foreach(paramName, value in params)
       res[paramName] <- value
 
     let craftTimerText = params?.craftTimerText
@@ -404,12 +432,15 @@ local expireTypes = {
 
   // Parameters that can be overridden by item substitution
   // have been took out in separate function getSubstitutionViewData
-  function getSubstitutionViewData(res, params) {
-    if (getTblValue("showAction", params, true)) {
+  function getSubstitutionViewData(res, params)
+  {
+    if (getTblValue("showAction", params, true))
+    {
       let mainActionData = params?.overrideMainActionData ?? this.getMainActionData(true, params)
       res.isInactive <- (params?.showButtonInactiveIfNeed ?? false)
         && (mainActionData?.isInactive ?? false)
-      if (mainActionData && this.getLimitsCheckData().result) {
+      if (mainActionData && this.getLimitsCheckData().result)
+      {
         res.modActionName <- mainActionData?.btnColoredName ?? mainActionData.btnName
         res.needShowActionButtonAlways <- mainActionData?.needShowActionButtonAlways ?? this.needShowActionButtonAlways(params)
         res.onItemAction <- mainActionData?.onItemAction
@@ -421,15 +452,17 @@ local expireTypes = {
     let additionalTextInAmmount = params?.shouldHideAdditionalAmmount ? ""
       : this.getAdditionalTextInAmmount()
     if ((!this.shouldAutoConsume || this.canOpenForGold())
-      && (!::u.isInteger(amountVal) || this.shouldShowAmount(amountVal))) {
+      && (!::u.isInteger(amountVal) || this.shouldShowAmount(amountVal)))
+    {
       res.amount <- isSelfAmount && this.hasReachedMaxAmount()
         ? colorize("goodTextColor",
-          loc("ui/parentheses/space", { text = amountVal + loc("ui/slash") + this.maxAmount }))
+          loc("ui/parentheses/space", {text = amountVal + loc("ui/slash") + this.maxAmount}))
         : amountVal.tostring() + additionalTextInAmmount
       if (isSelfAmount && this.transferAmount > 0)
         res.isInTransfer <- true
     }
-    if (getTblValue("showSellAmount", params, false)) {
+    if (getTblValue("showSellAmount", params, false))
+    {
       let sellAmount = this.getSellAmount()
       if (sellAmount > 1)
         res.amount <- sellAmount + additionalTextInAmmount
@@ -439,7 +472,7 @@ local expireTypes = {
       res.isItemLocked <- this.isInventoryItem && !this.amount && !this.showAlwaysAsEnabledAndUnlocked()
 
     let boostEfficiency = this.getBoostEfficiency()
-    if (params?.hasBoostEfficiency && boostEfficiency)
+    if(params?.hasBoostEfficiency && boostEfficiency)
       res.boostEfficiency <- colorize(this.getAmount() > 0
         ? "activeTextColor"
         : "commonTextColor", loc("keysPlus") + boostEfficiency + loc("measureUnits/percent"))
@@ -447,19 +480,23 @@ local expireTypes = {
     return res
   }
 
-  function getBoostEfficiency() {
+  function getBoostEfficiency()
+  {
     return null
   }
 
-  function getContentIconData() {
+  function getContentIconData()
+  {
     return null
   }
 
-  function hasLink() {
+  function hasLink()
+  {
     return this.link != "" && hasFeature("AllowExternalLink")
   }
 
-  function openLink() {
+  function openLink()
+  {
     if (!this.hasLink())
       return
     if (needShowGuestEmailRegistration()) {
@@ -471,8 +508,9 @@ local expireTypes = {
       openUrl(validLink, this.forceExternalBrowser, false, this.linkBigQueryKey)
   }
 
-  function _requestBuy(params = {}) {
-    let blk = DataBlock()
+  function _requestBuy(params = {})
+  {
+    let blk = ::DataBlock()
     blk["name"] = this.id
     blk["count"] = getTblValue("count", params, this.getSellAmount())
     blk["cost"] = params.cost
@@ -481,7 +519,8 @@ local expireTypes = {
     return ::char_send_blk("cln_buy_item", blk)
   }
 
-  function _buy(cb, params = {}) {
+  function _buy(cb, params = {})
+  {
     if (!this.isCanBuy() || !::check_balance_msgBox(this.getCost()))
       return false
 
@@ -489,8 +528,7 @@ local expireTypes = {
     let onSuccessCb = (@(cb, item) function() {
       ::update_gamercards()
       item.forceRefreshLimits()
-      if (cb)
-        cb({
+      if (cb) cb({
         success = true
         item = this
       })
@@ -503,11 +541,13 @@ local expireTypes = {
     return taskId >= 0
   }
 
-  function buy(cb, handler = null, params = {}) {
+  function buy(cb, handler = null, params = {})
+  {
     if (!this.isCanBuy() || !::check_balance_msgBox(this.getCost()))
       return false
 
-    if (this.hasReachedMaxAmount()) {
+    if (this.hasReachedMaxAmount())
+    {
       ::scene_msg_box("reached_max_amount", null, loc(this.getLocIdsList().reachedMaxAmount),
         [["cancel"]], "cancel")
       return false
@@ -520,7 +560,8 @@ local expireTypes = {
 
   onCheckLegalRestrictions = @(cb, handler, params) this.showBuyConfirm(cb, handler, params)
 
-  function showBuyConfirm(cb, handler, params) {
+  function showBuyConfirm(cb, handler, params)
+  {
     if (!handler?.isValid())
       handler = ::get_cur_base_gui_handler()
 
@@ -542,17 +583,19 @@ local expireTypes = {
           ["cancel", function() {} ]], "purchase")
   }
 
-  function getBuyText(colored, short, locIdBuyText = "mainmenu/btnBuy", cost = null) {
+  function getBuyText(colored, short, locIdBuyText = "mainmenu/btnBuy", cost = null)
+  {
     let res = loc(locIdBuyText)
     if (short)
       return res
 
     cost = cost ?? this.getCost()
-    let costText = colored ? cost.getTextAccordingToBalance() : cost.getUncoloredText()
-    return res + ((costText == "") ? "" : " (" + costText + ")")
+    let costText = colored? cost.getTextAccordingToBalance() : cost.getUncoloredText()
+    return res + ((costText == "")? "" : " (" + costText + ")")
   }
 
-  function getMainActionData(isShort = false, _params = {}) {
+  function getMainActionData(isShort = false, _params = {})
+  {
     if (this.isCanBuy())
       return {
         btnName = this.getBuyText(false, isShort)
@@ -563,7 +606,8 @@ local expireTypes = {
     return null
   }
 
-  function doMainAction(cb, handler, params = null) {
+  function doMainAction(cb, handler, params = null)
+  {
     return this.buy(cb, handler, params)
   }
 
@@ -577,7 +621,8 @@ local expireTypes = {
   hasTimer           = @() this.expiredTimeSec != 0
                            || (this.getCraftingItem()?.expiredTimeSec ?? 0) > 0
   getNoTradeableTimeLeft = @() max(0, this.tradeableTimestamp - ::get_charserver_time_sec())
-  function getExpireType() {
+  function getExpireType()
+  {
     if (!this.hasTimer())
       return null
     let deltaSeconds = this.getExpireDeltaSec()
@@ -586,11 +631,13 @@ local expireTypes = {
       : expireTypes.SOON
   }
 
-  function canPreview() {
+  function canPreview()
+  {
     return false
   }
 
-  function doPreview() {
+  function doPreview()
+  {
   }
 
   getTimeLeftText  = @() ::g_string.implode([this.getExpireTimeTextShort(), this.getNoTradeableTimeTextShort()], "\n")
@@ -598,7 +645,8 @@ local expireTypes = {
   onItemExpire     = @() ::ItemsManager.markInventoryUpdateDelayed()
   onTradeAllowed   = @() null
 
-  function getExpireAfterActivationText(withTitle = true) {
+  function getExpireAfterActivationText(withTitle = true)
+  {
     local res = ""
     if (!this.expiredTimeAfterActivationH)
       return res
@@ -609,11 +657,13 @@ local expireTypes = {
     return res
   }
 
-  function getExpireTimeTextShort() {
+  function getExpireTimeTextShort()
+  {
     if (this.expiredTimeSec <= 0)
       return ""
     let deltaSeconds = this.getExpireDeltaSec()
-    if (deltaSeconds < 0) {
+    if (deltaSeconds < 0)
+    {
       if (this.isInventoryItem && this.amount > 0)
         this.onItemExpire()
       return loc(this.itemExpiredLocId)
@@ -624,24 +674,28 @@ local expireTypes = {
     return expireTimeColor ? colorize(expireTimeColor, resStr) : resStr
   }
 
-  function getCurExpireTimeText() {
+  function getCurExpireTimeText()
+  {
     local res = ""
     let active = this.isActive()
     if (!active)
       res += this.getExpireAfterActivationText()
 
     let timeText = this.getExpireTimeTextShort()
-    if (timeText != "") {
+    if (timeText != "")
+    {
       let labelLocId = active ? "items/expireTimeLeft" : "items/expireTimeBeforeActivation"
-      res += ((res != "") ? "\n" : "") + loc(labelLocId) + loc("ui/colon") +
+      res += ((res!="") ? "\n" : "") + loc(labelLocId) + loc("ui/colon") +
         colorize("activeTextColor", timeText)
     }
     return res
   }
 
-  function getNoTradeableTimeTextShort() {
+  function getNoTradeableTimeTextShort()
+  {
     let seconds = this.getNoTradeableTimeLeft()
-    if (seconds <= 0) {
+    if (seconds <= 0)
+    {
       if (this.tradeableTimestamp > 0)
         this.onTradeAllowed()
       return ""
@@ -651,11 +705,13 @@ local expireTypes = {
       ::stringReplace(hoursToString(secondsToHours(seconds), false, true, true), " ", ::nbsp)
   }
 
-  function getTableData() {
+  function getTableData()
+  {
     return null
   }
 
-  function canStack(_item) {
+  function canStack(_item)
+  {
     return false
   }
 
@@ -664,33 +720,39 @@ local expireTypes = {
   function getContent() { return [] }
   function getContentNoRecursion() { return [] }
 
-  function getStackName(_stackParams) {
+  function getStackName(_stackParams)
+  {
     return this.getShortDescription()
   }
 
-  function hasLimits() {
+  function hasLimits()
+  {
     return (this.limitGlobal > 0 || this.limitPersonalTotal > 0 || this.limitPersonalAtTime > 0) && !::ItemsManager.ignoreItemLimits
   }
 
-  function forceRefreshLimits() {
+  function forceRefreshLimits()
+  {
     if (this.hasLimits())
       ::g_item_limits.requestLimitsForItem(this.id, true)
   }
 
-  function getLimitsDescription() {
+  function getLimitsDescription()
+  {
     if (this.isInventoryItem || !this.hasLimits())
       return ""
 
     let limitData = this.getLimitData()
     local locParams = null
     let textParts = []
-    if (this.limitGlobal > 0) {
+    if (this.limitGlobal > 0)
+    {
       locParams = {
         itemsLeft = colorize("activeTextColor", (this.limitGlobal - limitData.countGlobal))
       }
       textParts.append(loc("items/limitDescription/limitGlobal", locParams))
     }
-    if (this.limitPersonalTotal > 0) {
+    if (this.limitPersonalTotal > 0)
+    {
       locParams = {
         itemsPurchased = colorize("activeTextColor", limitData.countPersonalTotal)
         itemsTotal = colorize("activeTextColor", this.limitPersonalTotal)
@@ -702,7 +764,8 @@ local expireTypes = {
     return ::g_string.implode(textParts, "\n")
   }
 
-  function getLimitsCheckData() {
+  function getLimitsCheckData()
+  {
     let data = {
       result = true
       reason = ""
@@ -711,12 +774,14 @@ local expireTypes = {
       return data
 
     let limitData = this.getLimitData()
-    foreach (name in ["Global", "PersonalTotal", "PersonalAtTime"]) {
+    foreach (name in ["Global", "PersonalTotal", "PersonalAtTime"])
+    {
       let limitName = format("limit%s", name)
       let limitValue = getTblValue(limitName, this, 0)
       let countName = format("count%s", name)
       let countValue = getTblValue(countName, limitData, 0)
-      if (0 < limitValue && limitValue <= countValue) {
+      if (0 < limitValue && limitValue <= countValue)
+      {
         data.result = false
         data.reason = loc(format("items/limitDescription/maxedOut/limit%s", name))
         break
@@ -725,7 +790,8 @@ local expireTypes = {
     return data
   }
 
-  function getGlobalLimitText() {
+  function getGlobalLimitText()
+  {
     if (this.limitGlobal == 0)
       return ""
 
@@ -741,11 +807,13 @@ local expireTypes = {
     return loc("items/limitDescription/globalLimitText", locParams)
   }
 
-  function isForEvent(_checkEconomicName = "") {
+  function isForEvent(_checkEconomicName = "")
+  {
     return false
   }
 
-  function setDisguise(shouldDisguise) {
+  function setDisguise(shouldDisguise)
+  {
     this.isDisguised = shouldDisguise
     this.allowBigPicture = false
   }
@@ -774,7 +842,7 @@ local expireTypes = {
   isCrafting = @() !!this.getCraftingItem()
   hasCraftTimer = @() this.isCrafting()
   getCraftTimeTextShort = @() ""
-  getCraftTimeLeft = @() - 1
+  getCraftTimeLeft = @() -1
   getCraftTimeText = @() ""
   isCraftResult = @() false
   getCraftResultItem = @() null

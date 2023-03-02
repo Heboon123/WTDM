@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -56,5 +55,6 @@ let aabbList = {
 }
 
 ::get_ingame_map_aabb <- function get_ingame_map_aabb() { return aabbList.map() }  //this function used in native code
+::get_damage_pannel_aabb <- function get_damage_pannel_aabb() { return aabbList.dmPanel() } //this function used in native code
 
 return @(name) aabbList?[name]()

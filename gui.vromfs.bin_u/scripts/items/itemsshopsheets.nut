@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -39,7 +38,8 @@ shopSheets.template <- {
     ? (@(item) ::ItemsManager.isItemVisible(item, shopTab) && this.isDevItemsTab == item.isDevItem)
     : (@(item) ::ItemsManager.isItemVisible(item, shopTab))
 
-  getItemsList = function(shopTab, _subsetId = null) {
+  getItemsList = function(shopTab, _subsetId = null)
+  {
     let visibleTypeMask = ::ItemsManager.checkItemsMaskFeatures(this.typeMask)
     let filterFunc = this.getItemFilterFunc(shopTab).bindenv(this)
     if (shopTab == itemsTab.INVENTORY)
@@ -53,8 +53,10 @@ shopSheets.template <- {
   getSubsetSeenListId = @(subsetId) "{0}/{1}".subst(this.getSeenId(), subsetId)
 }
 
-let function getTabSeenId(tabIdx) { //!!FIX ME: move tabs to separate enum
-  switch (tabIdx) {
+let function getTabSeenId(tabIdx) //!!FIX ME: move tabs to separate enum
+{
+  switch (tabIdx)
+  {
     case itemsTab.SHOP:          return SEEN.ITEMS_SHOP
     case itemsTab.INVENTORY:     return SEEN.INVENTORY
     case itemsTab.WORKSHOP:      return SEEN.WORKSHOP
@@ -63,9 +65,11 @@ let function getTabSeenId(tabIdx) { //!!FIX ME: move tabs to separate enum
 }
 let isTabVisible = @(tabIdx) tabIdx != itemsTab.WORKSHOP || workshop.isAvailable() //!!FIX ME: move tabs to separate enum
 
-shopSheets.addSheets <- function(sheetsTable) {
+shopSheets.addSheets <- function(sheetsTable)
+{
   enums.addTypes(this, sheetsTable,
-    function() {
+    function()
+    {
       if (!this.locId)
         this.locId = "itemTypes/" + this.id.tolower()
       if (!this.emptyTabLocId)
@@ -78,16 +82,19 @@ shopSheets.addSheets <- function(sheetsTable) {
 
   //register seen sublist getters
   for (local tab = 0; tab < itemsTab.TOTAL; tab++)
-    if (isTabVisible(tab)) {
+    if (isTabVisible(tab))
+    {
       let curTab = tab
       let tabSeenList = seenList.get(getTabSeenId(tab))
       foreach (sh in this.types)
-        if (sh.isAllowedForTab(tab)) {
+        if (sh.isAllowedForTab(tab))
+        {
           let curSheet = sh
           let shSeenId = sh.getSeenId()
           tabSeenList.setSubListGetter(shSeenId, @() curSheet.getItemsList(curTab).map(@(it) it.getSeenId()))
 
-          if (sh.hasSubLists()) {
+          if (sh.hasSubLists())
+          {
             let subsetList = curSheet.getSet().getSubsetsList()
             subsetList.apply(@(subset) tabSeenList.setSubListGetter(curSheet.getSubsetSeenListId(subset.id),
               @() curSheet.getItemsList(curTab, subset.id).map(@(it) it.getSeenId())))
@@ -96,17 +103,20 @@ shopSheets.addSheets <- function(sheetsTable) {
     }
 }
 
-shopSheets.findSheet <- function(config, defSheet = null) {
+shopSheets.findSheet <- function(config, defSheet = null)
+{
   local res = null
-  foreach (sh in this.types) {
-    if (config == sh) {
+  foreach(sh in this.types)
+  {
+    if (config == sh)
+    {
       res = sh //this is already sheet
       break
     }
 
     local isFullMatch = true
     local isPartMatch = false
-    foreach (key, value in config)
+    foreach(key, value in config)
       if (key in sh)
         if (value == sh[key])
           isPartMatch = true
@@ -236,11 +246,13 @@ shopSheets.addSheets({
   }
 })
 
-shopSheets.updateWorkshopSheets <- function() {
+shopSheets.updateWorkshopSheets <- function()
+{
   let sets = workshop.getSetsList()
   let newSheets = {}
 
-  foreach (idx, set in sets) {
+  foreach(idx, set in sets)
+  {
     let id = set.getShopTabId()
     if (id in this)
       continue
@@ -255,7 +267,7 @@ shopSheets.updateWorkshopSheets <- function() {
       setIdx = idx
       getSet = @() workshop.getSetsList()?[this.setIdx] ?? workshop.emptySet
       isAllowedForTab = @(shopTab) shopTab == itemsTab.WORKSHOP
-      isEnabled = @(shopTab) this.isAllowedForTab(shopTab) && this.getSet().isVisible()
+      isEnabled = @(shopTab) this.isAllowedForTab(shopTab)&& this.getSet().isVisible()
 
       hasSubLists = @() this.getSet().hasSubsets
 
@@ -283,7 +295,8 @@ shopSheets.updateWorkshopSheets <- function() {
     shopSheets.addSheets(newSheets)
 }
 
-shopSheets.getSheetDataByItem <- function(item) {
+shopSheets.getSheetDataByItem <- function(item)
+{
   if (item.shouldAutoConsume)
     return null
 

@@ -18,7 +18,7 @@
     "collisionSphere1": [5.0,2.0,0.0,1.0]
   },
   {
-    "exhaustFx": "tank_exhaust_med"
+    "exhaustFx": "tank_exhaust"
   },
   {
     "damagedExhaustFx": "tank_broken_exhaust"
@@ -156,20 +156,6 @@
           "type": "engineFan",
           "turnSpeed": 1.0,
           "node": "bone_roll_engine_04"
-        }
-      },
-      {
-        "device": {
-          "type": "engineFan",
-          "turnSpeed": 1.0,
-          "node": "bone_roll_engine_05"
-        }
-      },
-      {
-        "device": {
-          "type": "engineFan",
-          "turnSpeed": 1.0,
-          "node": "bone_roll_engine_06"
         }
       },
       {
@@ -3733,10 +3719,10 @@
         "dmName": "driver_dm"
       },
       {
-        "deadHeadAttitudeMin": -55.0
+        "deadHeadAttitudeMin": -40.0
       },
       {
-        "deadHeadAttitudeMax": -40.0
+        "deadHeadAttitudeMax": -55.0
       },
       {
         "ikNode": {
@@ -3809,10 +3795,10 @@
         "dmName": "commander_dm"
       },
       {
-        "deadHeadAttitudeMin": -55.0
+        "deadHeadAttitudeMin": -40.0
       },
       {
-        "deadHeadAttitudeMax": -40.0
+        "deadHeadAttitudeMax": -55.0
       },
       {
         "ikNode": {
@@ -3885,10 +3871,10 @@
         "dmName": "gunner_dm"
       },
       {
-        "deadHeadAttitudeMin": -55.0
+        "deadHeadAttitudeMin": -40.0
       },
       {
-        "deadHeadAttitudeMax": -40.0
+        "deadHeadAttitudeMax": -55.0
       },
       {
         "ikNode": {
@@ -3961,10 +3947,86 @@
         "dmName": "loader_dm"
       },
       {
-        "deadHeadAttitudeMin": -55.0
+        "deadHeadAttitudeMin": -40.0
       },
       {
-        "deadHeadAttitudeMax": -40.0
+        "deadHeadAttitudeMax": -55.0
+      },
+      {
+        "ikNode": {
+          "downNode": "Bip01 L Hand",
+          "midNode": "Bip01 L Forearm",
+          "upNode": "Bip01 L UpperArm",
+          "targetNode": "lefthand_",
+          "flexionDir": [0.5,-0.5,0.3]
+        }
+      },
+      {
+        "ikNode": {
+          "downNode": "Bip01 R Hand",
+          "midNode": "Bip01 R Forearm",
+          "upNode": "Bip01 R UpperArm",
+          "targetNode": "righthand_",
+          "flexionDir": [-0.5,-0.5,0.3]
+        }
+      },
+      {
+        "ikNode": {
+          "downNode": "Bip01 L Foot",
+          "midNode": "Bip01 L Calf",
+          "upNode": "Bip01 L Thigh",
+          "targetNode": "pedal_lfoot_",
+          "flexionDir": [-0.2,1.0,-1.0]
+        }
+      },
+      {
+        "ikNode": {
+          "downNode": "Bip01 R Foot",
+          "midNode": "Bip01 R Calf",
+          "upNode": "Bip01 R Thigh",
+          "targetNode": "pedal_rfoot_",
+          "flexionDir": [-0.6,1.0,-1.0]
+        }
+      }
+    ]
+  },
+  {
+    "ikGunner": [
+      {
+        "model": "soviet_gunner_char"
+      },
+      {
+        "maxHeadHorAngle": 60.0
+      },
+      {
+        "maxHeadDownAngle": 60.0
+      },
+      {
+        "maxHeadUpAngle": 10.0
+      },
+      {
+        "headNode": "Bip01 Head"
+      },
+      {
+        "pelvisNode": "Bip01 Pelvis"
+      },
+      {
+        "pelvisTargetNode": "Bip01 Pelvis_"
+      },
+      {
+        "crouchDelta": [0.0,0.0,0.0]
+      },
+      {
+        "suffix": "5"
+      },
+      {
+        "dmName": "loader_01_dm"
+      },
+      {
+        "deadHeadAttitudeMin": -40.0
+      },
+      {
+        "deadHeadAttitudeMax": -55.0
       },
       {
         "ikNode": {
@@ -4019,6 +4081,9 @@
         },
         {
           "substitute": "loader"
+        },
+        {
+          "substitute": "loader2"
         }
       ],
       "driver": [
@@ -4033,10 +4098,18 @@
         },
         {
           "substitute": "loader"
+        },
+        {
+          "substitute": "loader2"
         }
       ],
       "loader": {
         "dmPart": "loader_dm",
+        "role": "loader",
+        "substitute": "commander"
+      },
+      "loader2": {
+        "dmPart": "loader_01_dm",
         "role": "loader",
         "substitute": "commander"
       },
@@ -4083,7 +4156,7 @@
           "barrel": "bone_gun_barrel"
         },
         "limits": {
-          "yaw": [-26.0,26.0],
+          "yaw": [-27.0,27.0],
           "pitch": [-5.0,15.0]
         },
         "limitsTable": {

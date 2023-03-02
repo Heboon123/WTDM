@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -51,10 +50,11 @@ enums.addTypesByGlobalName("g_ww_map_reinforcement_tab_type", {
     getTabTextPostfix = function() {
       let availReinf = ::g_world_war.getMyReadyReinforcementsArray().len()
       if (availReinf > 0)
-        return loc("ui/parentheses/space", { text = availReinf })
+        return loc("ui/parentheses/space", {text = availReinf})
       return ""
     }
-    getHandler = function (placeObj) {
+    getHandler = function (placeObj)
+    {
       return ::handlersManager.loadHandler(
         ::gui_handlers.WwReinforcements,
         { scene = placeObj }
@@ -88,7 +88,8 @@ enums.addTypesByGlobalName("g_ww_map_reinforcement_tab_type", {
     getTabTextPostfix = function() {
       local commonCount = 0
       local surroundedCount = 0
-      foreach (armiesData in ::g_operations.getArmiesCache()) {
+      foreach (armiesData in ::g_operations.getArmiesCache())
+      {
         commonCount += (armiesData?.common ?? []).len()
         surroundedCount += (armiesData?.surrounded ?? []).len()
       }

@@ -1,12 +1,9 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
 #explicit-this
 
 let { get_time_msec } = require("dagor.time")
-let DataBlock  = require("DataBlock")
-
 const REQUEST_TIME_OUT_MSEC  = 20000    //20sec
 const VALID_INFO_TIME_OUT_MSEC = 1800000 //30min
 
@@ -24,7 +21,7 @@ let function needRequest(clanId) {
 }
 
 let function prepareListToRequest(clanIdsArray) {
-  let blk = DataBlock()
+  let blk = ::DataBlock()
   blk.addBlock("body")
   foreach (clanId in clanIdsArray) {
     let clanIdStr = clanId.tostring()
@@ -57,7 +54,7 @@ let function updateClansInfoList(data) {
 
 let function requestListCb(data) {
   let clansInfoList = updateClansInfoList(data)
-  ::broadcastEvent("UpdateClansInfoList", { clansInfoList = clansInfoList })
+  ::broadcastEvent("UpdateClansInfoList", { clansInfoList = clansInfoList})
 }
 
 let function requestError(requestBlk) {

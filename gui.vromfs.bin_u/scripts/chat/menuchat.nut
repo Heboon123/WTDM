@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -7,27 +6,21 @@ from "%scripts/dagui_library.nut" import *
 
 let { format } = require("string")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-let DataBlock = require("DataBlock")
 let { get_time_msec } = require("dagor.time")
-let { resetTimeout } = require("dagor.workcycle")
 
 let regexp2 = require("regexp2")
-let { parse_json } = require("json")
 let { clearBorderSymbols } = require("%sqstd/string.nut")
 let penalties = require("%scripts/penitentiary/penalties.nut")
 let { getPlayerName,
         isPlayerFromXboxOne,
         isPlatformSony } = require("%scripts/clientState/platform.nut")
-let { newRoom, newMessage, initChatMessageListOn } = require("%scripts/chat/menuChatRoom.nut")
+let {newRoom, newMessage, initChatMessageListOn} = require("%scripts/chat/menuChatRoom.nut")
 let { topMenuBorders } = require("%scripts/mainmenu/topMenuStates.nut")
 let { isChatEnabled, isChatEnableWithPlayer, hasMenuChat,
   isCrossNetworkMessageAllowed, chatStatesCanUseVoice } = require("%scripts/chat/chatStates.nut")
 let { updateContactsStatusByContacts } = require("%scripts/contacts/updateContactsStatus.nut")
-let { hasMenuGeneralChats, hasMenuChatPrivate, hasMenuChatSquad, hasMenuChatClan, hasMenuChatMPlobby } = require("%scripts/user/matchingFeature.nut")
 let { add_user, remove_user, is_muted } = require("%scripts/chat/xboxVoice.nut")
 let { send } = require("eventbus")
-let { get_option_voicechat, set_gchat_event_cb,
-  is_chat_message_empty, is_chat_message_allowed } = require("chat")
 
 const CHAT_ROOMS_LIST_SAVE_ID = "chatRooms"
 const VOICE_CHAT_SHOW_COUNT_SAVE_ID = "voiceChatShowCount"
@@ -43,15 +36,15 @@ const VOICE_CHAT_SHOW_COUNT_SAVE_ID = "voiceChatShowCount"
 ::default_chat_rooms <- ["general"]
 ::langs_list <- ["en", "ru"] //first is default
 ::global_chat_rooms_list <- null
-::global_chat_rooms <- [{ name = "general", langs = ["en", "ru", "de", "zh", "vn"] },
-                        { name = "radio", langs = ["ru"], hideInOtherLangs = true },
-                        { name = "lfg" },
-                        { name = "historical" },
-                        { name = "realistic" }
+::global_chat_rooms <- [{name = "general", langs = ["en", "ru", "de", "zh", "vn"] },
+                        {name = "radio", langs = ["ru"], hideInOtherLangs = true },
+                        {name = "lfg" },
+                        {name = "historical"},
+                        {name = "realistic"}
                        ]
 
-::punctuation_list <- [" ", ".", ",", ":", ";", "\"", "'", "~", "!", "@", "#", "$", "%", "^", "&", "*",
-                       "(", ")", "+", "|", "-", "=", "\\", "/", "<", ">", "[", "]", "{", "}", "`", "?"]
+::punctuation_list <- [" ", ".", ",", ":", ";", "\"", "'", "~","!","@","#","$","%","^","&","*",
+                       "(",")","+","|","-","=","\\","/","<",">","[","]","{","}","`","?"]
 ::cur_chat_lang <- loc("current_lang")
 
 ::available_cmd_list <- ["help", //local command to view help
@@ -73,15 +66,17 @@ const VOICE_CHAT_SHOW_COUNT_SAVE_ID = "voiceChatShowCount"
 ::g_script_reloader.registerPersistentData("MenuChatGlobals", getroottable(), ["clanUserTable"]) //!!FIX ME: must be in contacts
 
 let sortChatUsers = @(a, b) a.name <=> b.name
-let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
 
-::getGlobalRoomsListByLang <- function getGlobalRoomsListByLang(lang, roomsList = null) {
+::getGlobalRoomsListByLang <- function getGlobalRoomsListByLang(lang, roomsList = null)
+{
   let res = []
-  let def_lang = isInArray(lang, ::langs_list) ? lang : ::langs_list[0]
-  foreach (r in ::global_chat_rooms) {
+  let def_lang = isInArray(lang, ::langs_list)? lang : ::langs_list[0]
+  foreach(r in ::global_chat_rooms)
+  {
     local l = def_lang
-    if ("langs" in r && r.langs.len()) {
-      l = isInArray(lang, r.langs) ? lang : r.langs[0]
+    if ("langs" in r && r.langs.len())
+    {
+      l = isInArray(lang, r.langs)? lang : r.langs[0]
       if (getTblValue("hideInOtherLangs", r, false) && !isInArray(lang, r.langs))
         continue
     }
@@ -91,13 +86,15 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
   return res
 }
 
-::getGlobalRoomsList <- function getGlobalRoomsList(all_lang = false) {
+::getGlobalRoomsList <- function getGlobalRoomsList(all_lang=false)
+{
   let res = ::getGlobalRoomsListByLang(::cur_chat_lang)
   if (all_lang)
-    foreach (lang in ::langs_list)
-      if (lang != ::cur_chat_lang) {
+    foreach(lang in ::langs_list)
+      if (lang!=::cur_chat_lang)
+      {
         let list = ::getGlobalRoomsListByLang(lang)
-        foreach (ch in list)
+        foreach(ch in list)
           if (!isInArray(ch, res))
             res.append(ch)
       }
@@ -105,7 +102,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
 }
 ::global_chat_rooms_list = ::getGlobalRoomsList(true)
 
-::MenuChatHandler <- class extends ::gui_handlers.BaseGuiHandlerWT {
+::MenuChatHandler <- class extends ::gui_handlers.BaseGuiHandlerWT
+{
   wndType = handlerType.CUSTOM
   needLocalEcho = true
   skipMyMessages = false //to skip local echo from code events
@@ -125,27 +123,32 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
   curHoverObjId = null
   static editboxObjIdList = [ "menuchat_input", "search_edit" ]
 
-  constructor(gui_scene, params = {}) {
+  constructor(gui_scene, params = {})
+  {
     ::g_script_reloader.registerPersistentData("MenuChatHandler", this, ["roomsInited"]) //!!FIX ME: must be in g_chat
 
     base.constructor(gui_scene, params)
     ::subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
   }
 
-  function isValid() {
+  function isValid()
+  {
     return true
   }
 
-  function getControlsAllowMask() {
+  function getControlsAllowMask()
+  {
     if (!this.isMenuChatActive() || !this.scene.isEnabled())
       return CtrlsInGui.CTRL_ALLOW_FULL
     return this.wndControlsAllowMask
   }
 
-  function updateControlsAllowMask() {
+  function updateControlsAllowMask()
+  {
     local mask = CtrlsInGui.CTRL_ALLOW_FULL
 
-    if (::last_chat_scene_show) {
+    if (::last_chat_scene_show)
+    {
       let focusObj = this.guiScene.getSelectedObject()
       let hasFocusedObj = checkObj(focusObj) && this.editboxObjIdList.contains(focusObj?.id)
 
@@ -159,14 +162,16 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.switchControlsAllowMask(mask)
   }
 
-  function onChatEditboxFocus(_obj) {
+  function onChatEditboxFocus(_obj)
+  {
     this.guiScene.performDelayed(this, function() {
       if (this.checkScene())
         this.updateControlsAllowMask()
     })
   }
 
-  function onChatWindowMouseOver(obj) {
+  function onChatWindowMouseOver(obj)
+  {
     if (!::show_console_buttons)
       return
     let isMouseOver = this.checkScene() && obj.isMouseOver()
@@ -176,27 +181,31 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.updateControlsAllowMask()
   }
 
-  function onChatListHover(obj) {
+  function onChatListHover(obj)
+  {
     if (this.checkScene() && obj.isHovered())
       this.checkListValue(obj)
   }
 
-  function selectEditbox(obj) {
+  function selectEditbox(obj)
+  {
     if (this.checkScene() && checkObj(obj) && obj.isVisible() && obj.isEnabled())
       ::select_editbox(obj)
   }
 
-  function selectChatInputEditbox() {
+  function selectChatInputEditbox()
+  {
     this.selectEditbox(this.scene.findObject("menuchat_input"))
   }
 
-  function initChat(obj, resetList = true) {
-    if (obj != null && obj == this.scene)
+  function initChat(obj, resetList = true)
+  {
+    if (obj!=null && obj == this.scene)
       return
 
     this.needLocalEcho = !::is_vendor_tencent()
 
-    set_gchat_event_cb(null, ::menuChatCb)
+    ::set_gchat_event_cb(null, ::menuChatCb)
     this.chatSceneShow(false)
     this.scene = obj
     this.sceneChanged = true
@@ -207,12 +216,14 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.reloadChatScene()
   }
 
-  function switchScene(obj, onlyShow = false) {
-    if (!checkObj(obj) || (checkObj(this.scene) && this.scene.isEqual(obj))) {
+  function switchScene(obj, onlyShow = false)
+  {
+    if (!checkObj(obj) || (checkObj(this.scene) && this.scene.isEqual(obj)))
+    {
       if (!onlyShow || !::last_chat_scene_show)
         this.chatSceneShow()
-    }
-    else {
+    } else
+    {
       this.prevScenes.append({
         scene = this.scene
         show = ::last_chat_scene_show
@@ -224,20 +235,24 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     }
   }
 
-  function removeFromPrevScenes(obj) {
-    for (local i = this.prevScenes.len() - 1; i >= 0; i--) {
+  function removeFromPrevScenes(obj)
+  {
+    for(local i=this.prevScenes.len()-1; i>=0; i--)
+    {
       let scn = this.prevScenes[i].scene
       if (!checkObj(scn) || scn.isEqual(obj))
         this.prevScenes.remove(i)
     }
   }
 
-  function checkScene() {
+  function checkScene()
+  {
     if (checkObj(this.scene))
       return true
 
-    for (local i = this.prevScenes.len() - 1; i >= 0; i--)
-      if (checkObj(this.prevScenes[i].scene)) {
+    for(local i=this.prevScenes.len()-1; i>=0; i--)
+      if (checkObj(this.prevScenes[i].scene))
+      {
         this.scene = this.prevScenes[i].scene
         this.guiScene = this.scene.getScene()
         let prevRoomHandler = this.prevScenes[i].roomHandlerWeak
@@ -245,8 +260,7 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
         this.sceneChanged = true
         this.chatSceneShow(this.prevScenes[i].show || ::last_chat_scene_show)
         return true
-      }
-      else
+      } else
         this.prevScenes.remove(i)
     this.scene = null
     return false
@@ -262,11 +276,13 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     return isChatEnabled()
   }
 
-  function reloadChatScene() {
+  function reloadChatScene()
+  {
     if (!this.checkScene())
       return
 
-    if (!this.scene.findObject("menuchat")) {
+    if (!this.scene.findObject("menuchat"))
+    {
       this.guiScene = this.scene.getScene()
       this.sceneChanged = true
       this.guiScene.replaceContent(this.scene, "%gui/chat/menuChat.blk", this)
@@ -278,24 +294,26 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       this.searchInited = false
       initChatMessageListOn(this.scene.findObject("menu_chat_messages_container"), this)
       this.updateRoomsList()
-      this.updateButtonCreateRoom()
     }
   }
 
-  function fillList(listObj, formatText, listTotal) {
+  function fillList(listObj, formatText, listTotal)
+  {
     let total = listObj.childrenCount()
     if (total > listTotal)
-      for (local i = total - 1; i >= listTotal; i--)
+      for(local i = total-1; i>=listTotal; i--)
         this.guiScene.destroyElement(listObj.getChild(i))
-    else if (total < listTotal) {
+    else if (total < listTotal)
+    {
       local data = ""
-      for (local i = total; i < listTotal; i++)
+      for(local i = total; i<listTotal; i++)
         data += format(formatText, i, i)
       this.guiScene.appendWithBlk(listObj, data, this)
     }
   }
 
-  function switchCurRoom(room, needUpdateWindow = true) {
+  function switchCurRoom(room, needUpdateWindow = true)
+  {
     if (::u.isString(room))
       room = ::g_chat.getRoomById(room)
     if (!room || room == this.curRoom)
@@ -307,19 +325,12 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       this.updateRoomsList()
   }
 
-  function updateButtonCreateRoom() {
-    let btnCreateRoomObj = this.scene.findObject("btn_create_room")
-    if (!checkObj(btnCreateRoomObj))
-      return
-    btnCreateRoomObj.enable(hasMenuGeneralChats.value)
-    btnCreateRoomObj.show(hasMenuGeneralChats.value)
-  }
-
-  function updateRoomsList() {
+  function updateRoomsList()
+  {
     if (!this.checkScene())
       return
     let obj = this.scene.findObject("rooms_list")
-    if (!checkObj(obj))
+    if(!checkObj(obj))
       return
 
     this.guiScene.setUpdatesEnabled(false, false)
@@ -327,28 +338,28 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.fillList(obj, roomFormat, ::g_chat.rooms.len())
 
     local curVal = -1
-
-    foreach (idx, room in ::g_chat.rooms) {
+    foreach(idx, room in ::g_chat.rooms)
+    {
       this.updateRoomTabByIdx(idx, room, obj)
 
-      if (room == this.curRoom && room.type.isVisible())
+      if (room == this.curRoom)
         curVal = idx
     }
 
-    if (curVal < 0 && ::g_chat.rooms.len() > 0) {
+    if (curVal<0 && ::g_chat.rooms.len() > 0)
+    {
       curVal = obj.getValue()
       if (curVal < 0 || curVal >= ::g_chat.rooms.len())
-        curVal = ::g_chat.rooms.len() - 1
+        curVal = ::g_chat.rooms.len()-1
     }
 
-    if (curVal != -1 && curVal != obj.getValue())
+    if (curVal != obj.getValue())
       obj.setValue(curVal)
-
-    this.scene.findObject("blocked_chat_msg").show(::g_chat.rooms.len() == 0)
 
     this.guiScene.setUpdatesEnabled(true, true)
 
-    if (!this.onRoomChanged()) {
+    if (!this.onRoomChanged())
+    {
       this.checkNewMessages()
       this.updateRoomsIcons()
     }
@@ -360,7 +371,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.showSceneBtn("btn_send", needShow)
   }
 
-  function onRoomChanged() {
+  function onRoomChanged()
+  {
     if (!this.checkScene())
       return false
 
@@ -368,7 +380,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     let value = obj.getValue()
     let roomData = getTblValue(value, ::g_chat.rooms)
 
-    if (!roomData) {
+    if (!roomData)
+    {
       this.updateUsersList()
       this.updateChatText()
       this.updateInputText(roomData)
@@ -399,12 +412,14 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     return true
   }
 
-  function onRoomRClick(_obj) {
+  function onRoomRClick(_obj)
+  {
     if (this.curRoom.type == ::g_chat_room_type.PRIVATE)
       ::g_chat.showPlayerRClickMenu(this.curRoom.id, this.curRoom.id)
   }
 
-  function checkSwitchRoomHandler(roomData) {
+  function checkSwitchRoomHandler(roomData)
+  {
     this.showSceneBtn("menu_chat_custom_handler_block", roomData.hasCustomViewHandler)
     if (!roomData.hasCustomViewHandler)
       return
@@ -412,7 +427,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     if (!this.roomHandlerWeak)
       return this.createRoomHandler(roomData)
 
-    if (("roomId" in this.roomHandlerWeak) && this.roomHandlerWeak.roomId != roomData.id) {
+    if (("roomId" in this.roomHandlerWeak) && this.roomHandlerWeak.roomId != roomData.id)
+    {
       if ("remove" in this.roomHandlerWeak)
         this.roomHandlerWeak.remove()
       this.createRoomHandler(roomData)
@@ -423,20 +439,23 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       this.roomHandlerWeak.onSceneShow()
   }
 
-  function createRoomHandler(roomData) {
+  function createRoomHandler(roomData)
+  {
     let obj = this.scene.findObject("menu_chat_custom_handler_block")
     let roomHandler = roomData.type.loadCustomHandler(obj, roomData.id, Callback(this.goBack, this))
     this.roomHandlerWeak = roomHandler && roomHandler.weakref()
   }
 
-  function updateHeaderBlock(roomData) {
+  function updateHeaderBlock(roomData)
+  {
     if (!this.checkScene())
       return
 
     let hasChatHeader = roomData.type.hasChatHeader
     let obj = this.showSceneBtn("menu_chat_header_block", hasChatHeader)
     let isRoomChanged = obj?.roomId != roomData.id
-    if (!isRoomChanged) {
+    if (!isRoomChanged)
+    {
       if (hasChatHeader)
         roomData.type.updateChatHeader(obj, roomData)
       return
@@ -449,11 +468,13 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     obj.roomId = roomData.id
   }
 
-  function updateInputText(roomData) {
+  function updateInputText(roomData)
+  {
     this.scene.findObject("menuchat_input").setValue(getTblValue("lastTextInput", roomData, ""))
   }
 
-  function updateRoomTabByIdx(idx, room, listObj = null) {
+  function updateRoomTabByIdx(idx, room, listObj = null)
+  {
     if (!this.checkScene())
       return
     if (!listObj)
@@ -463,48 +484,54 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     let roomTab = listObj.getChild(idx)
     if (!checkObj(roomTab))
       return
-    let roomVisible = room.type.isVisible()
 
-    roomTab.canClose = room.canBeClosed ? "yes" : "no"
-    roomTab.enable(!room.hidden && !room.concealed() && roomVisible)
-    roomTab.show(!room.hidden && !room.concealed() && roomVisible)
+    roomTab.canClose = room.canBeClosed? "yes" : "no"
+    roomTab.enable(!room.hidden && !room.concealed())
+    roomTab.show(!room.hidden && !room.concealed())
     roomTab.tooltip = room.type.getTooltip(room.id)
-    let textObj = roomTab.findObject("room_txt_" + idx)
+    let textObj = roomTab.findObject("room_txt_"+idx)
     textObj.colorTag = room.type.getRoomColorTag(room.id)
     textObj.setValue(room.getRoomName())
   }
 
-  function updateRoomTabById(roomId) {
-    foreach (idx, room in ::g_chat.rooms)
+  function updateRoomTabById(roomId)
+  {
+    foreach(idx, room in ::g_chat.rooms)
       if (room.id == roomId)
         this.updateRoomTabByIdx(idx, room)
   }
 
-  function updateAllRoomTabs() {
+  function updateAllRoomTabs()
+  {
     if (!this.checkScene())
       return
     let listObj = this.scene.findObject("rooms_list")
-    foreach (idx, room in ::g_chat.rooms)
+    foreach(idx, room in ::g_chat.rooms)
       this.updateRoomTabByIdx(idx, room, listObj)
   }
 
-  function onEventChatThreadInfoChanged(p) {
+  function onEventChatThreadInfoChanged(p)
+  {
     this.updateRoomTabById(getTblValue("roomId", p))
   }
 
-  function onEventChatFilterChanged(_p) {
+  function onEventChatFilterChanged(_p)
+  {
     this.updateAllRoomTabs()
   }
 
-  function onEventContactsGroupUpdate(_p) {
+  function onEventContactsGroupUpdate(_p)
+  {
     this.updateAllRoomTabs()
   }
 
-  function onEventSquadStatusChanged(_p) {
+  function onEventSquadStatusChanged(_p)
+  {
     this.updateAllRoomTabs()
   }
 
-  function onEventCrossNetworkChatOptionChanged(_p) {
+  function onEventCrossNetworkChatOptionChanged(_p)
+  {
     this.updateAllRoomTabs()
   }
 
@@ -512,22 +539,26 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.updateAllRoomTabs()
   }
 
-  function onEventVoiceChatOptionUpdated(_p) {
+  function onEventVoiceChatOptionUpdated(_p)
+  {
     this.updateUsersList()
   }
 
-  function alwaysShowPlayersList() {
+  function alwaysShowPlayersList()
+  {
     return ::show_console_buttons
   }
 
-  function getRoomIdxById(id) {
-    foreach (idx, item in ::g_chat.rooms)
+  function getRoomIdxById(id)
+  {
+    foreach(idx, item in ::g_chat.rooms)
       if (item.id == id)
         return idx
     return -1
   }
 
-  function updateRoomsIcons() {
+  function updateRoomsIcons()
+  {
     if (!this.checkScene() || !::last_chat_scene_show)
       return
 
@@ -538,62 +569,69 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     local total = roomsObj.childrenCount()
     if (total > ::g_chat.rooms.len())
       total = ::g_chat.rooms.len() //Maybe assert here?
-    for (local i = 0; i < total; i++) {
+    for(local i=0; i<total; i++)
+    {
       let childObj = roomsObj.getChild(i)
       let obj = childObj.findObject("new_msgs")
       let haveNew = ::g_chat.rooms[i].newImportantMessagesCount > 0
       if (checkObj(obj) != haveNew)
-        if (haveNew) {
+        if (haveNew)
+        {
           let data = ::handyman.renderCached("%gui/cssElems/cornerImg.tpl", {
             id = "new_msgs"
             img = "#ui/gameuiskin#chat_new.svg"
             hasGlow = true
           })
           this.guiScene.appendWithBlk(childObj, data, this)
-        }
-        else
+        } else
           this.guiScene.destroyElement(obj)
     }
   }
 
-  function updateUsersList() {
+  function updateUsersList()
+  {
     if (!this.checkScene())
       return
 
     this.guiScene.setUpdatesEnabled(false, false)
     let listObj = this.scene.findObject("users_list")
     let leftObj = this.scene.findObject("middleLine")
-    if (!this.curRoom || !this.curRoom.havePlayersList || (!this.showPlayersList && !this.alwaysShowPlayersList())) {
+    if (!this.curRoom || !this.curRoom.havePlayersList || (!this.showPlayersList && !this.alwaysShowPlayersList()))
+    {
       leftObj.show(false)
       //guiScene.replaceContentFromText(listObj, "", 0, this)
     }
-    else {
+    else
+    {
       leftObj.show(true)
       let users = this.curRoom.users
-      if (users == null)
+      if (users==null)
         this.guiScene.replaceContentFromText(listObj, "", 0, this)
-      else {
+      else
+      {
         let userFormat = "text { id:t='user_name_%d'; behaviour:t='button'; " +
                              "on_click:t='onUserListClick'; on_r_click:t='onUserListRClick'; " +
                              "tooltipObj { id:t='tooltip'; uid:t=''; on_tooltip_open:t='onContactTooltipOpen'; on_tooltip_close:t='onTooltipObjClose'; display:t='hide' }\n " +
                              "title:t='$tooltipObj';\n" +
                            "}\n"
         this.fillList(listObj, userFormat, users.len())
-        foreach (idx, user in users) {
+        foreach(idx, user in users)
+        {
           let fullName = ::g_contacts.getPlayerFullName(
             getPlayerName(user.name),
             ::clanUserTable?[user.name] ?? ""
           )
-          listObj.findObject("user_name_" + idx).setValue(fullName)
+          listObj.findObject("user_name_"+idx).setValue(fullName)
         }
       }
     }
     if (this.curRoom)
-      foreach (idx, user in this.curRoom.users) {
+      foreach(idx, user in this.curRoom.users)
+      {
         if (user.uid == null && (::g_squad_manager.isInMySquad(user.name, false) || ::is_in_my_clan(user.name)))
           user.uid = ::Contact.getByName(user.name)?.uid
 
-        let contact = (user.uid != null) ? ::getContact(user.uid) : null
+        let contact = (user.uid != null)? ::getContact(user.uid) : null
         this.updateUserPresence(listObj, idx, contact)
       }
 
@@ -601,7 +639,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.guiScene.setUpdatesEnabled(true, true)
   }
 
-  function updateReadyButton() {
+  function updateReadyButton()
+  {
     if (!this.checkScene() || !this.showPlayersList || !this.curRoom)
       return
 
@@ -612,7 +651,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       readyObj.setValue(::g_squad_manager.isMeReady() ? loc("multiplayer/btnNotReady") : loc("mainmenu/btnReady"))
   }
 
-  function updateSquadInfo() {
+  function updateSquadInfo()
+  {
     if (!this.checkScene() || !this.curRoom)
       return
 
@@ -623,36 +663,41 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     let br = ::g_squad_manager.getLeaderBattleRating()
     let isShow = br && ::g_squad_manager.isInSquad() && this.curRoom.id == ::g_chat.getMySquadRoomId()
 
-    if (isShow) {
+    if(isShow)
+    {
       let gmText = ::events.getEventNameText(
                        ::events.getEvent(::g_squad_manager.getLeaderGameModeId())
                      ) ?? ""
-      local desc = loc("shop/battle_rating") + " " + format("%.1f", br)
+      local desc = loc("shop/battle_rating") +" "+ format("%.1f", br)
       desc = ::g_string.implode([gmText, desc], "\n")
       squadBRTextObj.setValue(desc)
     }
     squadBRTextObj.show(isShow)
   }
 
-  function onEventSquadDataUpdated(_params) {
+  function onEventSquadDataUpdated(_params)
+  {
     this.updateSquadInfo()
   }
 
-  function updateUserPresence(listObj, idx, contact) {
+  function updateUserPresence(listObj, idx, contact)
+  {
     let obj = listObj.findObject("user_name_" + idx)
-    if (obj) {
+    if (obj)
+    {
       let inMySquad = contact && ::g_squad_manager.isInMySquad(contact.name, false)
       let inMyClan = contact && ::is_in_my_clan(contact.name)
       let img = inMySquad ? contact.presence.getIcon() : ""
       local img2 = ""
       local voiceIcon = ""
-      if (inMySquad) {
+      if (inMySquad)
+      {
         let memberData = ::g_squad_manager.getMemberData(contact.uid)
         if (memberData && ::checkCountry(memberData.country, "squad member data ( uid = " + contact.uid + ")", true))
           img2 = ::get_country_icon(memberData.country)
       }
-      obj.findObject("tooltip").uid = (inMySquad && contact) ? contact.uid : ""
-      if (get_option_voicechat()
+      obj.findObject("tooltip").uid = (inMySquad && contact)? contact.uid : ""
+      if (::get_option_voicechat()
           && (inMySquad || inMyClan)
           && chatStatesCanUseVoice()
           && contact.voiceStatus in ::voiceChatIcons)
@@ -661,34 +706,37 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       this.setIcon(obj, "statusImg", "img", img)
       this.setIcon(obj, "statusImg2", "img2", img2)
       this.setIcon(obj, "statusVoiceIcon", "voiceIcon", voiceIcon)
-      let imgCount = (inMySquad ? 2 : 0) + (voiceIcon != "" ? 1 : 0)
-      obj.imgType = imgCount == 0 ? "none" : (imgCount.tostring() + "ico")
+      let imgCount = (inMySquad? 2 : 0) + (voiceIcon != ""? 1 : 0)
+      obj.imgType = imgCount==0? "none" : (imgCount.tostring()+"ico")
     }
   }
 
-  function setIcon(obj, id, blockName, image) {
-    if (!checkObj(obj))
+  function setIcon(obj, id, blockName, image)
+  {
+    if(!checkObj(obj))
       return
 
     let picObj = obj.findObject(id)
-    if (picObj)
+    if(picObj)
       picObj["background-image"] = image
-    else {
+    else
+    {
       let string = "%s { id:t='%s'; background-image:t='%s'}"
       let data = format(string, blockName, id, image)
       this.guiScene.prependWithBlk(obj, data, this)
     }
   }
 
-  function updatePresenceContact(contact) {
+  function updatePresenceContact(contact)
+  {
     if (!this.checkScene() || !::last_chat_scene_show)
       return
 
-    if (!this.curRoom)
-      return
+    if (!this.curRoom) return
 
-    foreach (idx, user in this.curRoom.users)
-      if (user.name == contact.name) {
+    foreach(idx, user in this.curRoom.users)
+      if (user.name == contact.name)
+      {
         user.uid = contact.uid
         let listObj = this.scene.findObject("users_list")
         this.updateUserPresence(listObj, idx, contact)
@@ -696,7 +744,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       }
   }
 
-  function updateChatText() {
+  function updateChatText()
+  {
     this.updateCustomChatTexts()
     if (!this.checkScene())
       return
@@ -707,12 +756,13 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
         return
       roomToDraw = this.curRoom
     }
-    else if (!::gchat_is_connected()) {
-      if (::gchat_is_connecting() || ::g_chat.rooms.len() == 0) {
+    else if (!::gchat_is_connected())
+    {
+      if (::gchat_is_connecting() || ::g_chat.rooms.len()==0)
+      {
         roomToDraw = newRoom("#___empty___")
         roomToDraw.addMessage(newMessage("", loc("chat/connecting")))
-      }
-      else {
+      } else {
         roomToDraw = this.emptyChatRoom
         roomToDraw.addMessage(newMessage("", loc("chat/disconnected")))
       }
@@ -722,7 +772,7 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
   }
 
   function drawRoomTo(room, messagesContainer, isSceneChanged = false) {
-    let lastMessageIndex = (room.mBlocks.len() == 0) ? -1 : room.mBlocks.top().messageIndex
+    let lastMessageIndex = (room.mBlocks.len() == 0) ? -1:room.mBlocks.top().messageIndex
     if (lastMessageIndex == this.lastShowedInRoomMessageIndex && !isSceneChanged)
       return
 
@@ -732,33 +782,34 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
 
     let totalMblocks = room.mBlocks.len()
     let numChildrens = messagesContainer.childrenCount()
-    for (local i = 0; i < numChildrens; i++) {
+    for(local i=0; i < numChildrens; i++) {
       let msgObj = messagesContainer.getChild(i)
       let textObj  = msgObj.findObject("chat_message_text")
       if (i < totalMblocks) {
         msgObj.show(true)
-        msgObj.messageType = room.mBlocks[i].messageType
+        msgObj.messageType=room.mBlocks[i].messageType
         textObj.setValue(room.mBlocks[i].text)
-      }
-      else {
+      } else {
         msgObj.show(false)
       }
     }
     messagesContainer.getScene().setUpdatesEnabled(true, true)
   }
 
-  function chatSceneShow(show = null) {
+  function chatSceneShow(show=null)
+  {
     if (!this.checkScene())
       return
 
-    if (show == null)
+    if (show==null)
       show = !this.scene.isVisible()
     if (!show)
       this.loadSizes()
     this.scene.show(show)
     this.scene.enable(show)
     ::last_chat_scene_show = show
-    if (show) {
+    if (show)
+    {
       this.setSavedSizes()
       this.rejoinDefaultRooms(true)
       this.checkNewMessages()
@@ -780,7 +831,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.onChatWindowMouseOver(this.scene)
   }
 
-  function restoreFocus() {
+  function restoreFocus()
+  {
     if (!this.checkScene())
       return
     let inputObj = this.scene.findObject("menuchat_input")
@@ -790,52 +842,57 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       ::move_mouse_on_child_by_value(this.scene.findObject("rooms_list"))
   }
 
-  function loadRoomParams(roomName, joinParams) {
-    foreach (r in ::default_chat_rooms) //validate incorrect created default chat rooms by cur lang
+  function loadRoomParams(roomName, joinParams)
+  {
+    foreach(r in ::default_chat_rooms) //validate incorrect created default chat rooms by cur lang
       if (roomName == "#" + r + "_" + ::cur_chat_lang)  {
         let rList = ::getGlobalRoomsListByLang(::cur_chat_lang, [r])
         // default rooms should have empty joinParams
-        return {  roomName = (rList.len() ? "#" + rList[0] : roomName)
+        return {  roomName = (rList.len()? "#" + rList[0] : roomName)
                   joinParams = ""  }
       }
 
     let idx = roomName.indexof(" ")
-    if (idx)  {
+    if ( idx )  {
       //  loading legacy record like '#some_chat password'
-      return {  roomName = "#" + ::g_chat.validateRoomName(roomName.slice(0, idx))
-                joinParams = roomName.slice(idx + 1)  }
+      return {  roomName = "#"+::g_chat.validateRoomName( roomName.slice(0, idx) )
+                joinParams = roomName.slice(idx+1)  }
     }
 
     return {  roomName = roomName
               joinParams = joinParams  }
   }
 
-  function rejoinDefaultRooms(initRooms = false) {
+  function rejoinDefaultRooms(initRooms = false)
+  {
     if (!::gchat_is_connected() || !::g_login.isProfileReceived())
       return
     if (this.roomsInited && !initRooms)
       return
 
     let baseRoomsList = ::g_chat.getBaseRoomsList()
-    foreach (idx, roomId in baseRoomsList)
+    foreach(idx, roomId in baseRoomsList)
       if (!::g_chat.getRoomById(roomId))
         this.addRoom(roomId, null, null, idx == 0)
 
-    if (isChatEnabled()) {
+    if (isChatEnabled())
+    {
       let chatRooms = ::load_local_account_settings(CHAT_ROOMS_LIST_SAVE_ID)
       local roomIdx = 0
-      if (chatRooms != null) {
+      if (chatRooms != null)
+      {
         let storedRooms = []
-        for (roomIdx = 0; chatRooms?["room" + roomIdx]; roomIdx++)
-          storedRooms.append(this.loadRoomParams(chatRooms?["room" + roomIdx],
-                                             chatRooms?["params" + roomIdx]))
+        for(roomIdx = 0; chatRooms?["room"+roomIdx]; roomIdx++)
+          storedRooms.append( this.loadRoomParams(chatRooms?["room"+roomIdx],
+                                             chatRooms?["params"+roomIdx]) )
 
-        foreach (it in storedRooms) {
+        foreach (it in storedRooms)
+        {
           let roomType = ::g_chat_room_type.getRoomType(it.roomName)
           if (!roomType.needSave()) //"needSave" has changed
             continue
 
-          ::gchat_raw_command(format("join %s%s",  it.roomName,  (it.joinParams == "" ? "" : " " + it.joinParams)))
+          ::gchat_raw_command(format("join %s%s",  it.roomName,  (it.joinParams==""?"":" "+it.joinParams) ))
           this.addChatJoinParams(it.roomName, it.joinParams)
         }
       }
@@ -843,14 +900,16 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.roomsInited = true
   }
 
-  function saveJoinedRooms() {
+  function saveJoinedRooms()
+  {
     if (!this.roomsInited)
       return
 
     local saveIdx = 0
-    let chatRoomsBlk = DataBlock()
-    foreach (room in ::g_chat.rooms)
-      if (!room.hidden && room.type.needSave()) {
+    let chatRoomsBlk = ::DataBlock()
+    foreach(room in ::g_chat.rooms)
+      if (!room.hidden && room.type.needSave())
+      {
         chatRoomsBlk["room" + saveIdx] = ::gchat_escape_target(room.id)
         if (room.joinParams != "")
           chatRoomsBlk["params" + saveIdx] = room.joinParams
@@ -859,12 +918,15 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     ::save_local_account_settings(CHAT_ROOMS_LIST_SAVE_ID, chatRoomsBlk)
   }
 
-  function goBack() {
+  function goBack()
+  {
     this.chatSceneShow(false)
   }
 
-  function loadSizes() {
-    if (this.isMenuChatActive()) {
+  function loadSizes()
+  {
+    if (this.isMenuChatActive())
+    {
       ::menu_chat_sizes = {}
       local obj = this.scene.findObject("menuchat")
       ::menu_chat_sizes.pos <- obj.getPosRC()
@@ -879,18 +941,23 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     }
   }
 
-  function onRoomCreator() {
+  function onRoomCreator()
+  {
     ::g_chat.openRoomCreationWnd()
   }
 
-  function setSavedSizes() {
-    if (!::menu_chat_sizes) {
+  function setSavedSizes()
+  {
+    if (!::menu_chat_sizes)
+    {
       let data = ::loadLocalByScreenSize("menu_chat_sizes")
-      if (data) {
-        ::menu_chat_sizes = parse_json(data)
+      if (data)
+      {
+        ::menu_chat_sizes = ::parse_json(data)
         if (!("pos" in ::menu_chat_sizes) || !("size" in ::menu_chat_sizes) || !("usersSize" in ::menu_chat_sizes))
           ::menu_chat_sizes = null
-        else {
+        else
+        {
           ::menu_chat_sizes.pos[0] = ::menu_chat_sizes.pos[0].tointeger()
           ::menu_chat_sizes.pos[1] = ::menu_chat_sizes.pos[1].tointeger()
           ::menu_chat_sizes.size[0] = ::menu_chat_sizes.size[0].tointeger()
@@ -905,8 +972,7 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       return
 
     local obj = this.scene.findObject("menuchat")
-    if (!obj)
-      return
+    if (!obj) return
 
     let pos = getTblValue("pos", ::menu_chat_sizes)
     let size = getTblValue("size", ::menu_chat_sizes)
@@ -914,31 +980,36 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       return
 
     let rootSize = this.guiScene.getRoot().getSize()
-    for (local i = 0; i <= 1; i++) //pos chat in screen
-      if (pos[i] < topMenuBorders[i][0] * rootSize[i])
-        pos[i] = (topMenuBorders[i][0] * rootSize[i]).tointeger()
-      else if (pos[i] + size[i] > topMenuBorders[i][1] * rootSize[i])
-          pos[i] = (topMenuBorders[i][1] * rootSize[i] - size[i]).tointeger()
+    for(local i=0; i<=1; i++) //pos chat in screen
+      if (pos[i] < topMenuBorders[i][0]*rootSize[i])
+        pos[i] = (topMenuBorders[i][0]*rootSize[i]).tointeger()
+      else
+        if (pos[i]+size[i] > topMenuBorders[i][1]*rootSize[i])
+          pos[i] = (topMenuBorders[i][1]*rootSize[i] - size[i]).tointeger()
 
     obj.pos = pos[0] + ", " + pos[1]
     obj.size = size[0] + ", " + size[1]
 
-    if ("usersSize" in ::menu_chat_sizes) {
+    if ("usersSize" in ::menu_chat_sizes)
+    {
       obj = this.scene.findObject("middleLine")
       obj.size = ::menu_chat_sizes.usersSize[0] + ", ph" // + ::menu_chat_sizes.usersSize[1]
     }
 
-    if ("searchSize" in ::menu_chat_sizes) {
+    if ("searchSize" in ::menu_chat_sizes)
+    {
       obj = this.scene.findObject("searchDiv")
       if (obj.isVisible() && ("searchSize" in ::menu_chat_sizes))
         obj.size = ::menu_chat_sizes.searchSize[0] + ", ph"
     }
   }
 
-  function onPresenceDetectionCheckIn(code) {
-    if ((code >= 0) && (code < ::get_pds_code_limit())) {
+  function onPresenceDetectionCheckIn( code )
+  {
+    if ( (code >= 0) && (code < ::get_pds_code_limit()) )
+    {
 //      local taskId =
-      ::send_pds_presence_check_in(code)
+      ::send_pds_presence_check_in( code )
 //      if (taskId >= 0)
 //      {
 //        ::set_char_cb(this, slotOpCb)
@@ -948,27 +1019,31 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     }
   }
 
-  function onPresenceDetectionTick() {
-    if (!::gchat_is_connected())
+  function onPresenceDetectionTick()
+  {
+    if ( !::gchat_is_connected() )
       return
 
-    if (!::is_myself_anyof_moderators())
+    if ( !::is_myself_anyof_moderators() )
       return
 
-    if (this.presenceDetectionTimer <= 0) {
+    if ( this.presenceDetectionTimer <= 0 )
+    {
       this.presenceDetectionTimer = ::get_pds_next_time()
     }
 
-    if (::get_charserver_time_sec() > this.presenceDetectionTimer) {
+    if ( ::get_charserver_time_sec() > this.presenceDetectionTimer )
+    {
       this.presenceDetectionTimer = 0
-      let msg = format(loc("chat/presenceCheck"), ::get_pds_code_suggestion().tostring())
+      let msg = format( loc("chat/presenceCheck"), ::get_pds_code_suggestion().tostring() )
 
       this.addRoomMsg("", "", msg, false, false)
     }
   }
 
   //once per 1 sec
-  function onUpdate(_obj, _dt) {
+  function onUpdate(_obj, _dt)
+  {
     if (!::last_chat_scene_show)
       return
 
@@ -976,69 +1051,81 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.onPresenceDetectionTick()
   }
 
-  function onEventCb(event, taskId, db) {
+  function onEventCb(event, taskId, db)
+  {
 //    if (event == GCHAT_EVENT_TASK_RESPONSE || event == GCHAT_EVENT_TASK_ERROR)
-    foreach (idx, t in this.chatTasks)
-      if (t.task == taskId) {
+    foreach(idx, t in this.chatTasks)
+      if (t.task==taskId)
+      {
         t.handler.call(this, event, db, t)
         this.chatTasks.remove(idx)
       }
-    if (event == GCHAT_EVENT_MESSAGE) {
+    if (event == GCHAT_EVENT_MESSAGE)
+    {
       if (isChatEnabled())
         this.onMessage(db)
     }
-    else if (event == GCHAT_EVENT_CONNECTED) {
-      if (this.roomsInited) {
+    else if (event == GCHAT_EVENT_CONNECTED)
+    {
+      if (this.roomsInited)
+      {
         this.showRoomPopup(newMessage("", loc("chat/connected")), ::g_chat.getSystemRoomId())
       }
       this.rejoinDefaultRooms()
-      if (::g_chat.rooms.len() > 0) {
+      if (::g_chat.rooms.len() > 0)
+      {
         let msg = loc("chat/connected")
         this.addRoomMsg("", "", msg)
       }
 
-      foreach (room in ::g_chat.rooms) {
+      foreach (room in ::g_chat.rooms)
+      {
         if (room.id.slice(0, 1) != "#" || ::g_chat.isSystemChatRoom(room.id))
           continue
 
-        let cb = (!checkObj(room.customScene)) ? null : (@(room) function() { this.afterReconnectCustomRoom(room.id) })(room)
+        let cb = (!checkObj(room.customScene))? null : (@(room) function() { this.afterReconnectCustomRoom(room.id) })(room)
         this.joinRoom(room.id, "", cb, null, null, true)
       }
       this.updateRoomsList()
       ::broadcastEvent("ChatConnected")
-    }
-    else if (event == GCHAT_EVENT_DISCONNECTED)
+    } else if (event == GCHAT_EVENT_DISCONNECTED)
       this.addRoomMsg("", "", loc("chat/disconnected"))
     else if (event == GCHAT_EVENT_CONNECTION_FAILURE)
       this.addRoomMsg("", "", loc("chat/connectionFail"))
     else if (event == GCHAT_EVENT_TASK_RESPONSE)
       this.onEventTaskResponse(taskId, db)
-    else if (event == GCHAT_EVENT_VOICE) {
-      if (db.uid) {
+    else if (event == GCHAT_EVENT_VOICE)
+    {
+      if(db.uid)
+      {
         let contact = ::getContact(db.uid)
         local voiceChatStatus = null
-        if (db.type == "join") {
+        if(db.type == "join")
+        {
           add_user(db.uid)
           voiceChatStatus = is_muted(db.uid) ?
                               voiceChatStats.muted :
                               voiceChatStats.online
         }
-        if (db.type == "part") {
+        if(db.type == "part")
+        {
           voiceChatStatus = voiceChatStats.offline
           remove_user(db.uid)
         }
-        if (db.type == "update") {
+        if(db.type == "update")
+        {
           if (is_muted(db.uid))
             voiceChatStatus = voiceChatStats.muted
-          else if (db.is_speaking)
+          else if(db.is_speaking)
             voiceChatStatus = voiceChatStats.talking
           else
             voiceChatStatus = voiceChatStats.online
         }
 
-        if (!contact)
+        if(!contact)
           ::collectMissedContactData(db.uid, "voiceStatus", voiceChatStatus)
-        else {
+        else
+        {
           contact.voiceStatus = voiceChatStatus
           if (this.checkScene())
             ::chatUpdatePresence(contact)
@@ -1083,7 +1170,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     */ //debug end
   }
 
-  function createRoomUserInfo(name, uid = null) {
+  function createRoomUserInfo(name, uid = null)
+  {
     return {
       name = name
       uid = uid
@@ -1091,17 +1179,20 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     }
   }
 
-  function onEventTaskResponse(taskId, db) {
+  function onEventTaskResponse(taskId, db)
+  {
     if (!this.checkEventResponseByType(db))
       this.checkEventResponseByTaskId(taskId, db)
   }
 
-  function checkEventResponseByType(db) {
+  function checkEventResponseByType(db)
+  {
     let dbType = db?.type
     if (!dbType)
       return false
 
-    if (dbType == "rooms") {
+    if (dbType=="rooms")
+    {
       this.searchInProgress = false
       if (db?.list)
         this.searchRoomList = db.list % "item"
@@ -1110,22 +1201,26 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       this.searchInited = false
       this.fillSearchList()
     }
-    else if (dbType == "names") {
+    else if (dbType=="names")
+    {
       if (!db?.list || !db?.channel)
         return true
 
       let roomData = ::g_chat.getRoomById(db.channel)
-      if (roomData) {
+      if (roomData)
+      {
         let uList = db.list % "item"
         roomData.users = []
-        foreach (idx, u in uList)
-          if (::find_in_array(uList, u) == idx) { //check duplicates
+        foreach(idx, u in uList)
+          if (::find_in_array(uList, u)==idx) //check duplicates
+          {
             let utbl = this.createRoomUserInfo(u)
-            let first = utbl.name.slice(0, 1)
+            let first = utbl.name.slice(0,1)
 
             if (::g_chat_room_type.getRoomType(db.channel).isHaveOwner
-                && (first == "@" || first == "+")) {
-              utbl.name = utbl.name.slice(1, utbl.name.len())
+                && (first == "@" || first == "+"))
+            {
+              utbl.name = utbl.name.slice(1,utbl.name.len())
               utbl.isOwner = true
             }
             roomData.users.append(utbl)
@@ -1136,39 +1231,46 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       if (::g_chat.isRoomClan(db.channel))
         ::broadcastEvent("ClanRoomMembersChanged");
     }
-    else if (dbType == "user_leave") {
+    else if (dbType=="user_leave")
+    {
       if (!db?.channel || !db?.nick)
         return true
-      if (db.channel == "")
-        foreach (roomData in ::g_chat.rooms) {
+      if (db.channel=="")
+        foreach(roomData in ::g_chat.rooms)
+        {
           this.removeUserFromRoom(roomData, db.nick)
           if (::g_chat.isRoomClan(roomData.id))
             ::broadcastEvent(
               "ClanRoomMembersChanged",
-              { nick = db.nick, presence = ::g_contact_presence.OFFLINE }
+              {nick = db.nick, presence = ::g_contact_presence.OFFLINE }
             )
         }
-      else {
+      else
+      {
         this.removeUserFromRoom(::g_chat.getRoomById(db.channel), db.nick)
         if (::g_chat.isRoomClan(db.channel))
           ::broadcastEvent(
             "ClanRoomMembersChanged",
-            { nick = db.nick, presence = ::g_contact_presence.OFFLINE }
+            {nick = db.nick, presence = ::g_contact_presence.OFFLINE }
           )
       }
     }
-    else if (dbType == "user_join") {
+    else if (dbType=="user_join")
+    {
       if (!db?.channel || !db?.nick)
         return true
       let roomData = ::g_chat.getRoomById(db.channel)
-      if (roomData) {
+      if (roomData)
+      {
         local found = false
-        foreach (u in roomData.users)
-          if (u.name == db.nick) {
+        foreach(u in roomData.users)
+          if (u.name == db.nick)
+          {
             found = true
             break
           }
-        if (!found) {
+        if (!found)
+        {
           roomData.users.append(this.createRoomUserInfo(db.nick))
           roomData.users.sort(sortChatUsers)
           if (::g_chat.isRoomSquad(roomData.id))
@@ -1179,11 +1281,12 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
         if (::g_chat.isRoomClan(db.channel))
           ::broadcastEvent(
             "ClanRoomMembersChanged",
-            { nick = db.nick, presence = ::g_contact_presence.ONLINE }
+            {nick = db.nick, presence = ::g_contact_presence.ONLINE }
           )
       }
     }
-    else if (dbType == "invitation") {
+    else if (dbType=="invitation")
+    {
       if (!db?.channel || !db?.from)
         return true
 
@@ -1195,15 +1298,17 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       ::g_chat.updateThreadInfo(db)
     else if (dbType == "progress_caps")
       ::g_chat.updateProgressCaps(db)
-    else if (dbType == "thread_list_end")
+    else if ( dbType == "thread_list_end" )
       ::g_chat_latest_threads.onThreadsListEnd()
     else
       return false
     return true
   }
 
-  function checkEventResponseByTaskId(taskId, _db) {
-    if (::g_string.startsWith(taskId, "join_#")) {
+  function checkEventResponseByTaskId(taskId, _db)
+  {
+    if (::g_string.startsWith(taskId, "join_#"))
+    {
       let roomId = taskId.slice(5)
       if (::g_chat.isSystemChatRoom(roomId))
         return
@@ -1214,7 +1319,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       local room = ::g_chat.getRoomById(roomId)
       if (!room)
         room = this.addRoom(roomId)
-      else {
+      else
+      {
         room.joined = true
         if (room.customScene)
           this.afterReconnectCustomRoom(roomId)
@@ -1224,12 +1330,14 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       this.updateRoomsList()
       ::broadcastEvent("ChatRoomJoin", { room = room })
     }
-    else if (::g_string.startsWith(taskId, "leave_#")) {
+    else if (::g_string.startsWith(taskId, "leave_#"))
+    {
       let roomId = taskId.slice(6) //auto reconnect to this channel by server
       if (::g_chat.isSystemChatRoom(roomId))
         return
       let room = ::g_chat.getRoomById(roomId)
-      if (room) {
+      if (room)
+      {
         room.joined = false
         let isSquad = ::g_chat.isRoomSquad(room.id)
         let isClan = ::g_chat.isRoomClan(room.id)
@@ -1237,7 +1345,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
         if (isSquad || isClan)
           this.silenceUsersByList(room.users)
         room.users = []
-        if (isSquad) {
+        if (isSquad)
+        {
           room.canBeClosed = true
           this.updateRoomTabById(room.id)
         }
@@ -1249,32 +1358,35 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     }
   }
 
-  function silenceUsersByList(users) {
-    if (!users || !users.len())
+  function silenceUsersByList(users)
+  {
+    if(!users || !users.len())
       return
 
     let resultFunc = Callback(
       function(contact) {
-        if (!contact)
+        if(!contact)
           return
 
-        if (contact?.voiceStatus == voiceChatStats.talking)
+        if(contact?.voiceStatus == voiceChatStats.talking)
           this.onEventCb(GCHAT_EVENT_VOICE, null,
             { uid = contact.uid, type = "update", is_speaking = false })
       }, this)
 
-   foreach (user in users)
+   foreach(user in users)
      ::find_contact_by_name_and_do(user.name, resultFunc)
   }
 
-  function removeUserFromRoom(roomData, nick) {
-    if (!("users" in roomData))
+  function removeUserFromRoom(roomData, nick)
+  {
+    if(!("users" in roomData))
       return
-    foreach (idx, u in roomData.users)
-      if (u.name == nick) {
+    foreach(idx, u in roomData.users)
+      if (u.name == nick)
+      {
         if (::g_chat.isRoomSquad(roomData.id))
           this.onSquadListMember(nick, false)
-        else if ("isOwner" in u && u.isOwner == true)
+        else if("isOwner" in u && u.isOwner == true)
           ::gchat_list_names(::gchat_escape_target(roomData.id))
         roomData.users.remove(idx)
         if (this.curRoom == roomData)
@@ -1284,9 +1396,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
   }
 
   function addRoomMsg(roomId, from, msg, privateMsg = false, myPrivate = false, overlaySystemColor = null,
-    important = false) {
-    if (!::g_chat_room_type.getRoomType(roomId).isVisible())
-      return
+    important = false)
+  {
     let mBlock = newMessage(from, msg, privateMsg, myPrivate, overlaySystemColor,
       important, !::g_chat.isRoomSquad(roomId))
     if (!mBlock)
@@ -1294,19 +1405,20 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
 
     updateContactsStatusByContacts([::getContact(mBlock.uid, mBlock.from, mBlock.clanTag)])
 
-    if (::g_chat.rooms.len() == 0) {
+    if (::g_chat.rooms.len() == 0)
+    {
       if (important) {
         this.delayedChatRoom.addMessage(mBlock)
         this.newMessagesGC()
-      }
-      else if (roomId == "") {
+      } else if (roomId=="") {
         this.emptyChatRoom.addMessage(mBlock)
         this.updateChatText()
       }
-    }
-    else {
-      foreach (roomData in ::g_chat.rooms) {
-        if ((roomId == "") || roomData.id == roomId) {
+    } else {
+      foreach(roomData in ::g_chat.rooms)
+      {
+        if ((roomId=="") || roomData.id == roomId)
+        {
           roomData.addMessage(mBlock)
 
           if (!this.curRoom)
@@ -1319,7 +1431,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
               && (roomData.type.needCountAsImportant || mBlock.important)
               && !(mBlock.isMeSender || mBlock.isSystemSender)
               && (!::last_chat_scene_show || this.curRoom != roomData)
-             ) {
+             )
+          {
             roomData.newImportantMessagesCount++
             this.newMessagesGC()
 
@@ -1327,7 +1440,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
               this.showRoomPopup(mBlock, roomData.id)
           }
           else if (roomId == "" && mBlock.important
-            && this.curRoom.type == ::g_chat_room_type.SYSTEM && !::last_chat_scene_show) {
+            && this.curRoom.type == ::g_chat_room_type.SYSTEM && !::last_chat_scene_show)
+          {
             roomData.newImportantMessagesCount++
             this.newMessagesGC()
           }
@@ -1335,17 +1449,19 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       }
     }
 
-    if (privateMsg && roomId == "" && !::last_chat_scene_show)
+    if (privateMsg && roomId=="" && !::last_chat_scene_show)
       this.newMessagesGC()
 
     this.updateRoomsIcons()
   }
 
-  function newMessagesGC() {
+  function newMessagesGC()
+  {
     ::update_gamercards()
   }
 
-  function checkNewMessages() {
+  function checkNewMessages()
+  {
     if (this.delayedChatRoom && this.delayedChatRoom.mBlocks.len() > 0)
       return
 
@@ -1357,37 +1473,43 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     ::update_gamercards()
   }
 
-  function checkLastActionRoom() {
-    if (this.lastActionRoom == "" || !::g_chat.getRoomById(this.lastActionRoom))
+  function checkLastActionRoom()
+  {
+    if (this.lastActionRoom=="" || !::g_chat.getRoomById(this.lastActionRoom))
       this.lastActionRoom = getTblValue("id", this.curRoom, "")
   }
 
   filterPlayerName = @(name) getPlayerName(
-    ::g_string.replace(::g_string.replace(name, "%20", " "),  "%40", "@"))
+    ::g_string.replace( ::g_string.replace(name, "%20", " ") , "%40", "@"))
 
-  function onMessage(db) {
+  function onMessage(db)
+  {
     if (!db || !db.from)
       return
 
     if (this.skipMyMessages && db?.sender.nick == ::my_user_name)
       return
 
-    if (db?.type == "xpost") {
+    if (db?.type == "xpost")
+    {
       if ((db?.message.len() ?? 0) > 0)
         foreach (room in ::g_chat.rooms)
-          if (room.id == db?.sender.name) {
+          if (room.id == db?.sender.name)
+          {
             let idxLast = db.message.indexof(">")
-            if ((db.message.slice(0, 1) == "<") && (idxLast != null)) {
-              room.addMessage(newMessage(db.message.slice(1, idxLast), db.message.slice(idxLast + 1), false, false, this.mpostColor))
+            if ((db.message.slice(0,1)=="<") && (idxLast != null))
+            {
+              room.addMessage(newMessage(db.message.slice(1, idxLast), db.message.slice(idxLast+1), false, false, this.mpostColor))
             }
             else
               room.addMessage(newMessage("", db.message, false, false, this.xpostColor))
 
-            if (room == this.curRoom)
+            if ( room == this.curRoom )
               this.updateChatText();
           }
     }
-    else if (db?.type == "groupchat" || db?.type == "chat") {
+    else if (db?.type == "groupchat" || db?.type == "chat")
+    {
       local roomId = ""
       local user = ""
       local userContact = null
@@ -1402,7 +1524,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       if (::u.isEmpty(message))
         return
 
-      if (!db?.sender.service) {
+      if (!db?.sender.service)
+      {
         clanTag = db?.tag ?? ""
         user = db.sender.nick
         if (db?.userId && db.userId != "0")
@@ -1416,7 +1539,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
         if (!isSystemMessage && !isCrossNetworkMessageAllowed(user))
           return
 
-        if (privateMsg) {  //private message
+        if (privateMsg)  //private message
+        {
           if (::isUserBlockedByPrivateSetting(db.userId, user) ||
               !isChatEnableWithPlayer(user))
             return
@@ -1424,18 +1548,21 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
           if (db.type == "chat")
             roomId = db.sender.nick
           myPrivate = db.sender.nick == ::my_user_name
-          if (myPrivate) {
+          if ( myPrivate )
+          {
             user = db.sender.name
             userContact = null
           }
 
           local haveRoom = false;
           foreach (room in ::g_chat.rooms)
-            if (room.id == roomId) {
+            if (room.id == roomId)
+            {
               haveRoom = true;
               break;
             }
-          if (!haveRoom) {
+          if (!haveRoom)
+          {
             if (::isPlayerNickInContacts(user, EPL_BLOCKLIST))
               return
             this.addRoom(roomId)
@@ -1444,7 +1571,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
         }
 
         // System message
-        if (isSystemMessage) {
+        if (isSystemMessage)
+        {
           let nameLen = ::my_user_name.len()
           if (message.len() >= nameLen && message.slice(0, nameLen) == ::my_user_name)
             ::sync_handler_simulate_signal("profile_reload")
@@ -1458,7 +1586,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
         myPrivate
       )
     }
-    else if (db?.type == "error") {
+    else if (db?.type == "error")
+    {
       if (db?.error == null)
         return
 
@@ -1471,17 +1600,21 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       else if (senderFrom && this.roomRegexp.match(senderFrom))
         roomId = senderFrom
 
-      if (errorName == chatErrorName.NO_SUCH_NICK_CHANNEL) {
+      if (errorName == chatErrorName.NO_SUCH_NICK_CHANNEL)
+      {
         let userName = roomId
-        if (!this.roomRegexp.match(userName)) { //private room
+        if (!this.roomRegexp.match(userName)) //private room
+        {
           this.addRoomMsg(this.lastActionRoom, "",
                      format(loc("chat/error/401/userNotConnected"),
                             ::gchat_unescape_target(this.filterPlayerName(userName))))
           return
         }
       }
-      else if (errorName == chatErrorName.CANNOT_JOIN_THE_CHANNEL && roomId.len() > 1) {
-        if (::g_chat.isRoomSquad(roomId)) {
+      else if (errorName == chatErrorName.CANNOT_JOIN_THE_CHANNEL && roomId.len() > 1)
+      {
+        if (::g_chat.isRoomSquad(roomId))
+        {
           ::g_popups.add(null, loc("squad/join_chat_failed"), null, null, null, "squad_chat_failed")
           return
         }
@@ -1501,12 +1634,15 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       }
 
       let roomType = ::g_chat_room_type.getRoomType(roomId)
-      if (isInArray(errorName, [chatErrorName.NO_SUCH_CHANNEL, chatErrorName.NO_SUCH_NICK_CHANNEL])) {
-        if (roomId == ::g_chat.getMySquadRoomId()) {
+      if (isInArray(errorName, [chatErrorName.NO_SUCH_CHANNEL, chatErrorName.NO_SUCH_NICK_CHANNEL]))
+      {
+        if (roomId == ::g_chat.getMySquadRoomId())
+        {
           this.leaveSquadRoom()
           return
         }
-        if (roomType == ::g_chat_room_type.THREAD) {
+        if (roomType == ::g_chat_room_type.THREAD)
+        {
           let threadInfo = ::g_chat.getThreadInfo(roomId)
           if (threadInfo)
             threadInfo.invalidate()
@@ -1516,7 +1652,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       //remap roomnames in params
       let locParams = {}
       let errParamCount = db.error?.errorParamCount || db.error.getInt("paramCount", 0) //"paramCount" is a support old client
-      for (local i = 0; i < errParamCount; i++) {
+      for(local i = 0; i < errParamCount; i++)
+      {
         let key = "param" + i
         local value = db.error?[key]
         if (!value)
@@ -1545,7 +1682,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       log("Chat error: Received message of unknown type = " + (db?.type ?? "null"))
   }
 
-  function joinRoom(id, password = "", onJoinFunc = null, customScene = null, ownerHandler = null, reconnect = false) {
+  function joinRoom(id, password = "", onJoinFunc = null, customScene = null, ownerHandler = null, reconnect = false)
+  {
     let roomData = ::g_chat.getRoomById(id)
     if (roomData && id == ::g_chat.getMySquadRoomId())
       roomData.canBeClosed = false
@@ -1568,13 +1706,17 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
                        })
   }
 
-  function onJoinRoom(event, db, taskConfig) {
-    if (event != GCHAT_EVENT_TASK_ERROR && db?.type != "error") {
+  function onJoinRoom(event, db, taskConfig)
+  {
+    if (event != GCHAT_EVENT_TASK_ERROR && db?.type != "error")
+    {
       local needNewRoom = true
-      foreach (room in ::g_chat.rooms)
-        if (taskConfig.roomId == room.id) {
-          if (!room.joined) {
-            let msgId = ::g_chat.isRoomSquad(taskConfig.roomId) ? "squad/joinChannel" : "chat/joinChannel"
+      foreach(room in ::g_chat.rooms)
+        if (taskConfig.roomId == room.id)
+        {
+          if (!room.joined)
+          {
+            let msgId = ::g_chat.isRoomSquad(taskConfig.roomId)? "squad/joinChannel" : "chat/joinChannel"
             this.addRoomMsg(room.id, "", format(loc(msgId), room.getRoomName()))
           }
           room.joined = true
@@ -1589,18 +1731,17 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     }
   }
 
-  function addRoom(id, customScene = null, ownerHandler = null, selectRoom = false) {
+  function addRoom(id, customScene = null, ownerHandler = null, selectRoom = false)
+  {
     let r = newRoom(id, customScene, ownerHandler)
-    if (!r.type.isVisible())
-      return null
-
     r.joinParams = this.roomJoinParamsTable?[::gchat_escape_target(id)] ??  ""
 
     if (r.type != ::g_chat_room_type.PRIVATE)
       this.guiScene.playSound("chat_join")
     ::g_chat.addRoom(r)
 
-    if (this.unhiddenRoomsCount() == 1) {
+    if (this.unhiddenRoomsCount() == 1)
+    {
       if (isChatEnabled())
         this.addRoomMsg(id, "", loc("menuchat/hello"))
     }
@@ -1610,8 +1751,9 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     if (r.type == ::g_chat_room_type.SQUAD && isChatEnabled())
       this.addRoomMsg(id, "", loc("squad/channelIntro"))
 
-    if (this.delayedChatRoom && this.delayedChatRoom.mBlocks.len() > 0) {
-      for (local i = 0; i < this.delayedChatRoom.mBlocks.len(); i++) {
+    if (this.delayedChatRoom && this.delayedChatRoom.mBlocks.len() > 0)
+    {
+      for(local i = 0; i < this.delayedChatRoom.mBlocks.len(); i++) {
         r.mBlocks.append(this.delayedChatRoom.mBlocks[i])
       }
 
@@ -1621,7 +1763,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     }
     if (!r.hidden)
       this.saveJoinedRooms()
-    if (chatStatesCanUseVoice() && r.type.canVoiceChat) {
+    if (chatStatesCanUseVoice() && r.type.canVoiceChat)
+    {
       this.shouldCheckVoiceChatSuggestion = true
       if (::handlersManager.findHandlerClassInScene(::gui_handlers.MainMenu) != null)
         this.checkVoiceChatSuggestion()
@@ -1629,30 +1772,34 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     return r
   }
 
-  function checkVoiceChatSuggestion() {
+  function checkVoiceChatSuggestion()
+  {
     if (!this.shouldCheckVoiceChatSuggestion || !::g_login.isProfileReceived())
       return
     this.shouldCheckVoiceChatSuggestion = false
 
     let VCdata = ::get_option(::USEROPT_VOICE_CHAT)
     let voiceChatShowCount = ::load_local_account_settings(VOICE_CHAT_SHOW_COUNT_SAVE_ID, 0)
-    if (this.isFirstAskForSession && voiceChatShowCount < ::g_chat.MAX_MSG_VC_SHOW_TIMES && !VCdata.value) {
+    if(this.isFirstAskForSession && voiceChatShowCount < ::g_chat.MAX_MSG_VC_SHOW_TIMES && !VCdata.value)
+    {
       this.msgBox("join_voiceChat", loc("msg/enableVoiceChat"),
               [
-                ["yes", function() { ::set_option(::USEROPT_VOICE_CHAT, true) }],
-                ["no", function() {} ]
+                ["yes", function(){::set_option(::USEROPT_VOICE_CHAT, true)}],
+                ["no", function(){} ]
               ], "no",
-              { cancel_fn = function() {} })
+              { cancel_fn = function(){}})
       ::save_local_account_settings(VOICE_CHAT_SHOW_COUNT_SAVE_ID, voiceChatShowCount + 1)
     }
     this.isFirstAskForSession = false
   }
 
-  function onEventClanInfoUpdate(_p) {
+  function onEventClanInfoUpdate(_p)
+  {
     local haveChanges = false
-    foreach (room in ::g_chat.rooms)
+    foreach(room in ::g_chat.rooms)
       if (::g_chat.isRoomClan(room.id)
-          && (room.canBeClosed != (room.id != ::g_chat.getMyClanRoomId()))) {
+          && (room.canBeClosed != (room.id != ::g_chat.getMyClanRoomId())))
+      {
         haveChanges = true
         room.canBeClosed = !room.canBeClosed
       }
@@ -1660,17 +1807,18 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       this.updateRoomsList()
   }
 
-  function unhiddenRoomsCount() {
+  function unhiddenRoomsCount()
+  {
     local count = 0
-    foreach (room in ::g_chat.rooms)
+    foreach(room in ::g_chat.rooms)
       if (!room.hidden && !room.concealed())
         count++
     return count
   }
 
-  function onRoomClose(obj) {
-    if (!obj)
-      return
+  function onRoomClose(obj)
+  {
+    if (!obj) return
     let id = obj?.id
     if (!id || id.len() < 7 || id.slice(0, 6) != "close_")
       return
@@ -1679,18 +1827,21 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.closeRoom(value)
   }
 
-  function onRemoveRoom(obj) {
+  function onRemoveRoom(obj)
+  {
     this.closeRoom(obj.getValue(), true)
   }
 
-  function closeRoom(roomIdx, askAllRooms = false) {
+  function closeRoom(roomIdx, askAllRooms = false)
+  {
     if (!(roomIdx in ::g_chat.rooms))
       return
     let roomData = ::g_chat.rooms[roomIdx]
     if (!roomData.canBeClosed)
       return
 
-    if (askAllRooms) {
+    if (askAllRooms)
+    {
       let msg = format(loc("chat/ask/leaveRoom"), roomData.getRoomName())
       this.msgBox("leave_squad", msg,
         [
@@ -1712,13 +1863,15 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     })
   }
 
-  function closeRoomById(id) {
+  function closeRoomById(id)
+  {
     let idx = this.getRoomIdxById(id)
     if (idx >= 0)
       this.closeRoom(idx)
   }
 
-  function onUsersListActivate(obj) {
+  function onUsersListActivate(obj)
+  {
     let value = obj.getValue()
     if (value < 0 || value >= obj.childrenCount())
       return
@@ -1733,8 +1886,10 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       @(contact) ::g_chat.showPlayerRClickMenu(playerName, roomId, contact, position))
   }
 
-  function onChatCancel(obj) {
-    if (this.isCustomRoomActionObj(obj)) {
+  function onChatCancel(obj)
+  {
+    if (this.isCustomRoomActionObj(obj))
+    {
       let customRoom = this.findCustomRoomByObj(obj)
       if (customRoom && customRoom.ownerHandler && ("onCustomChatCancel" in customRoom.ownerHandler))
         customRoom.ownerHandler.onCustomChatCancel.call(customRoom.ownerHandler)
@@ -1743,93 +1898,109 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       this.goBack()
   }
 
-  function onChatEntered(obj) {
+  function onChatEntered(obj)
+  {
     this.chatSendAction(obj, false)
   }
 
-  function checkCmd(msg) {
-    if (msg.slice(0, 1) == "\\" || msg.slice(0, 1) == "/")
-      foreach (cmd in ::available_cmd_list)
-        if ((msg.len() > (cmd.len() + 2) && msg.slice(1, cmd.len() + 2) == (cmd + " "))
-            || (msg.len() == (cmd.len() + 1) && msg.slice(1, cmd.len() + 1) == cmd)) {
-          let hasParam = msg.len() > cmd.len() + 2;
+  function checkCmd(msg)
+  {
+    if (msg.slice(0, 1)=="\\" || msg.slice(0, 1)=="/")
+      foreach(cmd in ::available_cmd_list)
+        if ((msg.len() > (cmd.len()+2) && msg.slice(1, cmd.len()+2) == (cmd + " "))
+            || (msg.len() == (cmd.len()+1) && msg.slice(1, cmd.len()+1) == cmd))
+        {
+          let hasParam = msg.len() > cmd.len()+2;
 
           if (cmd == "help" || cmd == "shelp")
             this.addRoomMsg(this.curRoom.id, "", loc("menuchat/" + cmd))
           else if (cmd == "edit")
             ::g_chat.openModifyThreadWndByRoomId(this.curRoom.id)
           else if (cmd == "msg")
-            return hasParam ? msg.slice(0, 1) + msg.slice(cmd.len() + 2) : null
-          else if (cmd == "p_check") {
-            if (!hasParam) {
+            return hasParam ? msg.slice(0,1) + msg.slice(cmd.len()+2) : null
+          else if (cmd == "p_check")
+          {
+            if (!hasParam)
+            {
               this.addRoomMsg(this.curRoom.id, "", loc("chat/presenceCheckArg"));
               return null;
             }
 
-            if (!::is_myself_anyof_moderators()) {
+            if ( !::is_myself_anyof_moderators() )
+            {
               this.addRoomMsg(this.curRoom.id, "", loc("chat/presenceCheckDenied"));
               return null;
             }
 
-            this.onPresenceDetectionCheckIn(::to_integer_safe(msg.slice(cmd.len() + 2), -1))
+            this.onPresenceDetectionCheckIn(::to_integer_safe(msg.slice(cmd.len()+2), -1))
             return null;
           }
-          else if (cmd == "join" || cmd == "part") {
-            if (cmd == "join") {
-              if (!hasParam) {
+          else if (cmd == "join" || cmd == "part")
+          {
+            if (cmd == "join")
+            {
+              if (!hasParam)
+              {
                 this.addRoomMsg(this.curRoom.id, "", loc("chat/error/461"));
                 return null;
               }
 
-              let paramStr = msg.slice(cmd.len() + 2)
+              let paramStr = msg.slice(cmd.len()+2)
               let spaceidx = paramStr.indexof(" ")
-              local roomName = spaceidx ? paramStr.slice(0, spaceidx) : paramStr
+              local roomName = spaceidx ? paramStr.slice(0,spaceidx) : paramStr
               if (roomName.slice(0, 1) != "#")
                 roomName = "#" + roomName
-              let pass = spaceidx ? paramStr.slice(spaceidx + 1) : ""
+              let pass = spaceidx ? paramStr.slice(spaceidx+1) : ""
 
               this.addChatJoinParams(::gchat_escape_target(roomName), pass)
             }
-            if (msg.len() > cmd.len() + 2)
-              if (msg.slice(cmd.len() + 2, cmd.len() + 3) != "#")
-                ::gchat_raw_command(msg.slice(1, cmd.len() + 2) + "#" + ::gchat_escape_target(msg.slice(cmd.len() + 2)))
+            if (msg.len() > cmd.len()+2)
+              if (msg.slice(cmd.len()+2, cmd.len()+3)!="#")
+                ::gchat_raw_command(msg.slice(1, cmd.len()+2) + "#" + ::gchat_escape_target(msg.slice(cmd.len()+2)))
               else
                 ::gchat_raw_command(msg.slice(1))
             return null
           }
-          else if (cmd == "invite") {
-            if (this.curRoom) {
-              if (this.curRoom.id == ::g_chat.getMySquadRoomId()) {
-                if (!hasParam) {
+          else if (cmd == "invite")
+          {
+            if (this.curRoom)
+            {
+              if (this.curRoom.id == ::g_chat.getMySquadRoomId())
+              {
+                if (!hasParam)
+                {
                   this.addRoomMsg(this.curRoom.id, "", loc("chat/error/461"));
                   return null;
                 }
 
-                this.inviteToSquadRoom(msg.slice(cmd.len() + 2))
+                this.inviteToSquadRoom(msg.slice(cmd.len()+2))
               }
               else
                 ::gchat_raw_command(msg.slice(1) + " " + ::gchat_escape_target(this.curRoom.id))
-            }
-            else
+            } else
               this.addRoomMsg(this.curRoom.id, "", loc(::g_chat.CHAT_ERROR_NO_CHANNEL))
           }
           else if (cmd == "mode" || cmd == "xpost" || cmd == "mpost")
             this.gchatRawCmdWithCurRoom(msg, cmd)
-          else if (cmd == "squad_invite" || cmd == "sinvite") {
-            if (!hasParam) {
+          else if (cmd == "squad_invite" || cmd == "sinvite")
+          {
+            if (!hasParam)
+            {
               this.addRoomMsg(this.curRoom.id, "", loc("chat/error/461"));
               return null;
             }
 
-            this.inviteToSquadRoom(msg.slice(cmd.len() + 2))
+            this.inviteToSquadRoom(msg.slice(cmd.len()+2))
           }
-          else if (cmd == "squad_remove" || cmd == "sremove" || cmd == "kick") {
-            if (!hasParam) {
+          else if (cmd == "squad_remove" || cmd == "sremove" || cmd == "kick")
+          {
+            if (!hasParam)
+            {
               this.addRoomMsg(this.curRoom.id, "", loc("chat/error/461"));
               return null;
             }
 
-            let playerName = msg.slice(cmd.len() + 2)
+            let playerName = msg.slice(cmd.len()+2)
             if (cmd == "kick")
               this.kickPlayeFromRoom(playerName)
             else
@@ -1844,20 +2015,24 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     return msg
   }
 
-  function gchatRawCmdWithCurRoom(msg, cmd) {
+  function gchatRawCmdWithCurRoom(msg, cmd)
+  {
     if (!this.curRoom)
       this.addRoomMsg("", "", loc(::g_chat.CHAT_ERROR_NO_CHANNEL))
-    else if (::g_chat.isSystemChatRoom(this.curRoom.id))
+    else
+    if (::g_chat.isSystemChatRoom(this.curRoom.id))
       this.addRoomMsg(this.curRoom.id, "", loc("chat/cantWriteInSystem"))
-    else {
-      if (msg.len() > cmd.len() + 2)
-        ::gchat_raw_command(msg.slice(1, cmd.len() + 2) + ::gchat_escape_target(this.curRoom.id) + " " + msg.slice(cmd.len() + 2))
+    else
+    {
+      if (msg.len() > cmd.len()+2)
+        ::gchat_raw_command(msg.slice(1, cmd.len()+2) + ::gchat_escape_target(this.curRoom.id) + " " + msg.slice(cmd.len()+2))
       else
         ::gchat_raw_command(msg.slice(1) + " " + ::gchat_escape_target(this.curRoom.id))
     }
   }
 
-  function kickPlayeFromRoom(playerName) {
+  function kickPlayeFromRoom(playerName)
+  {
     if (!this.curRoom || ::g_chat.isSystemChatRoom(this.curRoom.id))
       return this.addRoomMsg(this.curRoom || "", "", loc(::g_chat.CHAT_ERROR_NO_CHANNEL))
     if (this.curRoom.id == ::g_chat.getMySquadRoomId())
@@ -1866,16 +2041,19 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     ::gchat_raw_command("kick " + ::gchat_escape_target(this.curRoom.id) + " " + ::gchat_escape_target(playerName))
   }
 
-  function squadMsg(msg) {
+  function squadMsg(msg)
+  {
     let sRoom = ::g_chat.getMySquadRoomId()
     this.addRoomMsg(sRoom, "", msg)
     if (this.curRoom && this.curRoom.id != sRoom)
       this.addRoomMsg(this.curRoom.id, "", msg)
   }
 
-  function leaveSquadRoom() {
+  function leaveSquadRoom()
+  {
     //squad room can be only one joined at once, but at moment we want to leave it cur squad room id can be missed.
-    foreach (room in ::g_chat.rooms) {
+    foreach(room in ::g_chat.rooms)
+    {
       if (room.type != ::g_chat_room_type.SQUAD || !room.joined)
         continue
 
@@ -1886,24 +2064,27 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       room.users.clear()
       this.updateRoomTabById(room.id)
 
-      if (this.curRoom == room)
+      if(this.curRoom == room)
         this.updateUsersList()
     }
   }
 
-  function isInSquadRoom() {
+  function isInSquadRoom()
+  {
     let roomName = ::g_chat.getMySquadRoomId()
-    foreach (room in ::g_chat.rooms)
+    foreach(room in ::g_chat.rooms)
       if (room.id == roomName)
         return room.joined
     return false
   }
 
-  function inviteToSquadRoom(playerName, delayed = false) {
+  function inviteToSquadRoom(playerName, delayed=false)
+  {
     if (!::gchat_is_connected())
       return false
 
-    if (!hasFeature("Squad")) {
+    if (!hasFeature("Squad"))
+    {
       this.addRoomMsg(this.curRoom.id, "", loc("msgbox/notAvailbleYet"))
       return false
     }
@@ -1914,7 +2095,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     if (!playerName)
       return false
 
-    if (!::g_squad_manager.isSquadLeader()) {
+    if (!::g_squad_manager.isSquadLeader())
+    {
       this.addRoomMsg(this.curRoom.id, "", loc("squad/only_leader_can_invite"))
       return false
     }
@@ -1922,7 +2104,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     if (!this.isInSquadRoom())
       return false
 
-    if (delayed) {
+    if (delayed)
+    {
       let dcmd = "xinvite " + ::gchat_escape_target(playerName) + " " + ::gchat_escape_target(::g_chat.getMySquadRoomId())
       log(dcmd)
       ::gchat_raw_command(dcmd)
@@ -1932,33 +2115,38 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     return true
   }
 
-  function onSquadListMember(name, join) {
+  function onSquadListMember(name, join)
+  {
     if (!::g_squad_manager.isInSquad())
       return
 
     this.addRoomMsg(::g_chat.getMySquadRoomId(),
       "",
-      format(loc(join ? "squad/player_join" : "squad/player_leave"),
+      format(loc(join? "squad/player_join" : "squad/player_leave"),
           getPlayerName(name)
     ))
   }
 
-  function squadReady() {
+  function squadReady()
+  {
     if (::g_squad_manager.canSwitchReadyness())
       ::g_squad_manager.setReadyFlag()
   }
 
-  function onEventSquadSetReady(_params) {
+  function onEventSquadSetReady(_params)
+  {
     this.updateReadyButton()
     if (::g_squad_manager.isInSquad())
       this.squadMsg(loc(::g_squad_manager.isMeReady() ? "squad/change_to_ready" : "squad/change_to_not_ready"))
   }
 
-  function onEventQueueChangeState(_params) {
+  function onEventQueueChangeState(_params)
+  {
     this.updateReadyButton()
   }
 
-  function onEventSquadPlayerInvited(params) {
+  function onEventSquadPlayerInvited(params)
+  {
     if (!::g_squad_manager.isSquadLeader())
       return
 
@@ -1971,19 +2159,21 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
        this.squadMsg(format(loc("squad/invited_player"), contact.name))
   }
 
-  function checkValidAndSpamMessage(msg, room = null, isPrivate = false) {
-    if (is_chat_message_empty(msg))
+  function checkValidAndSpamMessage(msg, room = null, isPrivate = false)
+  {
+    if (::is_chat_message_empty(msg))
       return false
     if (isPrivate || ::is_myself_anyof_moderators())
       return true
-    if (is_chat_message_allowed(msg))
+    if (::is_chat_message_allowed(msg))
       return true
-    this.addRoomMsg(room ? room : this.curRoom.id, "", loc("charServer/ban/reason/SPAM"))
+    this.addRoomMsg(room? room : this.curRoom.id, "", loc("charServer/ban/reason/SPAM"))
 
     return false
   }
 
-  function checkAndPrintDevoiceMsg(roomId = null) {
+  function checkAndPrintDevoiceMsg(roomId = null)
+  {
     if (!roomId)
       roomId = this.curRoom.id
 
@@ -1993,7 +2183,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     return devoice != null
   }
 
-  function onChatEdit(obj) {
+  function onChatEdit(obj)
+  {
     let sceneData = this.getSceneDataByActionObj(obj)
     if (!sceneData)
       return
@@ -2002,22 +2193,25 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       roomData.lastTextInput = obj.getValue()
   }
 
-  function onChatSend(obj) {
+  function onChatSend(obj)
+  {
     this.chatSendAction(obj, true)
   }
 
-  function chatSendAction(obj, isFromButton = false) {
+  function chatSendAction(obj, isFromButton = false)
+  {
     let sceneData = this.getSceneDataByActionObj(obj)
     if (!sceneData)
       return
 
-    if (sceneData.room == "")
+    if (sceneData.room=="")
       return
 
     this.lastActionRoom = sceneData.room
     let inputObj = sceneData.scene.findObject("menuchat_input")
-    let value = checkObj(inputObj) ? inputObj.getValue() : ""
-    if (value == "") {
+    let value = checkObj(inputObj)? inputObj.getValue() : ""
+    if (value == "")
+    {
       let roomData = this.findCustomRoomByObj(obj)
       if (!isFromButton && roomData && roomData.ownerHandler && ("onCustomChatContinue" in roomData.ownerHandler))
         roomData.ownerHandler.onCustomChatContinue.call(roomData.ownerHandler)
@@ -2028,7 +2222,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.sendMessageToRoom(value, sceneData.room)
   }
 
-  function sendMessageToRoom(msg, roomId) {
+  function sendMessageToRoom(msg, roomId)
+  {
     ::last_send_messages.append(msg)
     if (::last_send_messages.len() > ::g_chat.MAX_LAST_SEND_MESSAGES)
       ::last_send_messages.remove(0)
@@ -2049,8 +2244,10 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     let privateData = this.getPrivateData(msg, roomId)
     if (privateData)
       this.onChatPrivate(privateData)
-    else {
-      if (this.checkValidAndSpamMessage(msg, roomId)) {
+    else
+    {
+      if (this.checkValidAndSpamMessage(msg, roomId))
+      {
         if (::g_chat.isSystemChatRoom(roomId))
           this.addRoomMsg(roomId, "", loc("chat/cantWriteInSystem"))
         else {
@@ -2063,16 +2260,19 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     }
   }
 
-  function getPrivateData(msg, roomId = null) {
-    if (msg.slice(0, 1) == "\\" || msg.slice(0, 1) == "/") {
+  function getPrivateData(msg, roomId = null)
+  {
+    if (msg.slice(0, 1)=="\\" || msg.slice(0, 1)=="/")
+    {
       msg = msg.slice(1)
       let res = { user = "", msg = "" }
       let start = msg.indexof(" ") ?? -1
       if (start < 1)
         res.user = msg
-      else {
+      else
+      {
         res.user = msg.slice(0, start)
-        res.msg = msg.slice(start + 1)
+        res.msg = msg.slice(start+1)
       }
       return res
     }
@@ -2083,7 +2283,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     return null
   }
 
-  function onChatPrivate(data) {
+  function onChatPrivate(data)
+  {
     if (!this.checkValidAndSpamMessage(data.msg, null, true))
       return
     if (!this.curRoom)
@@ -2105,9 +2306,11 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
           $"<Link={::g_chat.generatePlayerLink(data.user)}>{getPlayerName(data.user)}</Link>"
         )
       )
-    else if (data.user != this.curRoom.id) {
+    else if (data.user != this.curRoom.id)
+    {
       let userRoom = ::g_chat.getRoomById(data.user)
-      if (!userRoom) {
+      if (!userRoom)
+      {
         this.addRoom(data.user)
         this.updateRoomsList()
       }
@@ -2116,27 +2319,31 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     }
   }
 
-  function showLastSendMsg(showScene = null) {
+  function showLastSendMsg(showScene = null)
+  {
     if (!checkObj(showScene))
       return
     let obj = showScene.findObject("menuchat_input")
     if (!checkObj(obj))
       return
 
-    obj.setValue((this.lastSendIdx in ::last_send_messages) ? ::last_send_messages[this.lastSendIdx] : "")
+    obj.setValue((this.lastSendIdx in ::last_send_messages)? ::last_send_messages[this.lastSendIdx] : "")
   }
 
-  function openInviteMenu(menu, position) {
-    if (menu.len() > 0)
+  function openInviteMenu(menu, position)
+  {
+    if(menu.len() > 0)
       ::gui_right_click_menu(menu, this, position)
   }
 
-  function hasPrefix(roomId, prefix) {
+  function hasPrefix(roomId, prefix)
+  {
     return roomId.len() >= prefix.len() && roomId.slice(0, prefix.len()) == prefix
   }
 
-  function switchLastSendMsg(inc, _obj) {
-    if (::last_send_messages.len() == 0)
+  function switchLastSendMsg(inc, _obj)
+  {
+    if (::last_send_messages.len()==0)
       return
 
     let selObj = this.guiScene.getSelectedObject()
@@ -2148,21 +2355,24 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
 
     this.lastSendIdx += inc
     if (this.lastSendIdx < -1)
-      this.lastSendIdx = ::last_send_messages.len() - 1
+      this.lastSendIdx = ::last_send_messages.len()-1
     if (this.lastSendIdx >= ::last_send_messages.len())
       this.lastSendIdx = -1
     this.showLastSendMsg(sceneData.scene)
   }
 
-  function onPrevMsg(obj) {
+  function onPrevMsg(obj)
+  {
     this.switchLastSendMsg(-1, obj)
   }
 
-  function onNextMsg(obj) {
+  function onNextMsg(obj)
+  {
     this.switchLastSendMsg(-1, obj)
   }
 
-  function onShowPlayersList() {
+  function onShowPlayersList()
+  {
     this.showPlayersList = !this.showPlayersList
     this.updateUsersList()
   }
@@ -2170,7 +2380,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
   function onChatLinkClick(obj, _itype, link)  { this.onChatLink(obj, link, !::show_console_buttons) }
   function onChatLinkRClick(obj, _itype, link) { this.onChatLink(obj, link, false) }
 
-  function onChatLink(obj, link, lclick) {
+  function onChatLink(obj, link, lclick)
+  {
     let sceneData = this.getSceneDataByActionObj(obj)
     if (!sceneData)
       return
@@ -2178,14 +2389,17 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     if (link && link.len() < 4)
       return
 
-    if (link.slice(0, 2) == "PL") {
+    if(link.slice(0, 2) == "PL")
+    {
       local name = ""
       local contact = null
-      if (link.slice(0, 4) == "PLU_") {
+      if(link.slice(0, 4) == "PLU_")
+      {
         contact = ::getContact(link.slice(4))
         name = contact.name
       }
-      else {
+      else
+      {
         name = link.slice(3)
         contact = ::Contact.getByName(name)
       }
@@ -2194,7 +2408,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       else
         ::g_chat.showPlayerRClickMenu(name, sceneData.room, contact)
     }
-    else if (::g_chat.checkBlockedLink(link)) {
+    else if (::g_chat.checkBlockedLink(link))
+    {
       let roomData = ::g_chat.getRoomById(sceneData.room)
       if (!roomData)
         return
@@ -2211,14 +2426,16 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
   function onUserListClick(obj)  { this.onUserList(obj, !::show_console_buttons) }
   function onUserListRClick(obj) { this.onUserList(obj, false) }
 
-  function onUserList(obj, lclick) {
-    if (!obj?.id || obj.id.len() <= 10 || obj.id.slice(0, 10) != "user_name_")
+  function onUserList(obj, lclick)
+  {
+    if (!obj?.id || obj.id.len() <= 10 || obj.id.slice(0,10) != "user_name_")
       return
 
     let num = obj.id.slice(10).tointeger()
     local name = obj.text
     if (this.curRoom && this.checkScene())
-      if (this.curRoom.users.len() > num) {
+      if(this.curRoom.users.len() > num)
+        {
           name = this.curRoom.users[num].name
           this.scene.findObject("users_list").setValue(num)
         }
@@ -2232,13 +2449,15 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       ::g_chat.showPlayerRClickMenu(name, sceneData.room)
   }
 
-  function changePrivateTo(user) {
+  function changePrivateTo(user)
+  {
     if (!::g_chat.checkChatConnected())
       return
     if (!this.checkScene())
       return
 
-    if (user != this.curRoom?.id) {
+    if (user!=this.curRoom?.id)
+    {
       let userRoom = ::g_chat.getRoomById(user)
       if (!userRoom)
         this.addRoom(user)
@@ -2247,8 +2466,10 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     ::broadcastEvent("ChatOpenPrivateRoom", { room = user })
   }
 
-  function addNickToEdit(user, showScene = null) {
-    if (!showScene) {
+  function addNickToEdit(user, showScene = null)
+  {
+    if (!showScene)
+    {
       if (!this.checkScene())
         return
       showScene = this.scene
@@ -2262,24 +2483,27 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.selectEditbox(inputObj)
   }
 
-  function onShowSearchList() {
+  function onShowSearchList()
+  {
     this.showSearch(null, true)
   }
 
-  function showSearch(show = null, selectSearchEditbox = false) {
+  function showSearch(show=null, selectSearchEditbox = false)
+  {
     if (!this.checkScene())
       return
 
     let sObj = this.scene.findObject("searchDiv")
     let wasVisible = sObj.isVisible()
-    if (show == null)
+    if (show==null)
       show = !wasVisible
 
     if (!show && wasVisible)
       this.loadSizes()
 
     sObj.show(show)
-    if (show) {
+    if (show)
+    {
       this.setSavedSizes()
       if (!this.searchInited)
         this.fillSearchList()
@@ -2289,22 +2513,25 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     }
   }
 
-  function validateSearchList() {
+  function validateSearchList()
+  {
     if (!this.searchRoomList)
       return
 
-    for (local i = this.searchRoomList.len() - 1; i >= 0; i--)
+    for(local i = this.searchRoomList.len() - 1; i >= 0; i--)
       if (!::g_chat_room_type.getRoomType(this.searchRoomList[i]).isVisibleInSearch())
         this.searchRoomList.remove(i)
   }
 
-  function resetSearchList() {
+  function resetSearchList()
+  {
     this.searchRoomList = []
     this.searchShowNotFound = false
     this.defaultRoomsInSearch = true
   }
 
-  function fillSearchList() {
+  function fillSearchList()
+  {
     if (!this.checkScene())
       return
 
@@ -2320,15 +2547,18 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.guiScene.setUpdatesEnabled(false, false)
     local data = ""
     let total = min(this.searchRoomList.len(), ::g_chat.MAX_ROOMS_IN_SEARCH)
-    if (this.searchRoomList.len() > 0) {
-      for (local i = 0; i < total; i++) {
+    if (this.searchRoomList.len() > 0)
+    {
+      for(local i = 0; i < total; i++)
+      {
         local rName = this.searchRoomList[i]
-        rName = (rName.slice(0, 1) == "#") ? rName.slice(1) : loc("chat/channel/" + rName, rName)
+        rName = (rName.slice(0, 1)=="#")? rName.slice(1) : loc("chat/channel/" + rName, rName)
         data += format("text { id:t='search_room_txt_%d'; text:t='%s'; tooltip:t='%s'; }",
                     i, ::g_string.stripTags(rName), ::g_string.stripTags(rName))
       }
     }
-    else {
+    else
+    {
       if (this.searchInProgress)
         data = "animated_wait_icon { pos:t='0.5(pw-w),0.03sh'; position:t='absolute'; background-rotation:t='0' }"
       else if (this.searchShowNotFound)
@@ -2343,11 +2573,13 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
   }
 
   last_search_time = -10000000
-  function onSearchStart() {
+  function onSearchStart()
+  {
     if (!this.checkScene())
       return
 
-    if (!::ps4_is_ugc_enabled()) {
+    if (!::ps4_is_ugc_enabled())
+    {
       ::ps4_show_ugc_restriction()
       return
     }
@@ -2357,7 +2589,7 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
 
     let sObj = this.scene.findObject("search_edit")
     local value = sObj.getValue()
-    if (!value || is_chat_message_empty(value))
+    if (!value || ::is_chat_message_empty(value))
       return
 
     value = "#" + clearBorderSymbols(value, [" ", "*"]) + "*"
@@ -2370,22 +2602,26 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.last_search_time = get_time_msec()
   }
 
-  function closeSearch() {
+  function closeSearch()
+  {
     if (::g_chat.isSystemChatRoom(this.curRoom.id))
       this.goBack()
-    else if (this.checkScene()) {
+    else if (this.checkScene())
+    {
       this.scene.findObject("searchDiv").show(false)
       this.selectChatInputEditbox()
     }
   }
 
-  function onCancelSearchEdit(obj) {
+  function onCancelSearchEdit(obj)
+  {
     if (!checkObj(obj))
       return
 
-    if (obj.getValue() == "" && this.defaultRoomsInSearch)
+    if (obj.getValue()=="" && this.defaultRoomsInSearch)
       this.closeSearch()
-    else {
+    else
+    {
       this.onMainChannels()
       obj.setValue("")
     }
@@ -2393,7 +2629,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.searchShowNotFound = false
   }
 
-  function onCancelSearchRooms(_obj) {
+  function onCancelSearchRooms(_obj)
+  {
     if (!this.checkScene())
       return
 
@@ -2405,7 +2642,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.onMainChannels()
   }
 
-  function onSearchRoomJoin(obj) {
+  function onSearchRoomJoin(obj)
+  {
     if (!this.checkScene())
       return
 
@@ -2413,54 +2651,65 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       obj = this.scene.findObject("searchList")
 
     let value = obj.getValue()
-    if (value in this.searchRoomList) {
+    if (value in this.searchRoomList)
+    {
       if (!isChatEnabled(true))
         return
-      if (!isInArray(this.searchRoomList[value], ::global_chat_rooms_list) && !::ps4_is_ugc_enabled()) {
+      if (!isInArray(this.searchRoomList[value], ::global_chat_rooms_list) && !::ps4_is_ugc_enabled())
+      {
         ::ps4_show_ugc_restriction()
         return
       }
 
       this.selectChatInputEditbox()
-      let rName = (this.searchRoomList[value].slice(0, 1) != "#") ? "#" + this.searchRoomList[value] : this.searchRoomList[value]
+      let rName = (this.searchRoomList[value].slice(0,1)!="#")? "#"+this.searchRoomList[value] : this.searchRoomList[value]
       let room = ::g_chat.getRoomById(rName)
       if (room)
         this.switchCurRoom(room)
-      else {
+      else
+      {
         this.changeRoomOnJoin = rName
         this.joinRoom(this.changeRoomOnJoin)
       }
     }
   }
 
-  function onMainChannels() {
+  function onMainChannels()
+  {
     if (this.checkScene() && !this.defaultRoomsInSearch)
-      this.guiScene.performDelayed(this, function() {
-        if (!this.defaultRoomsInSearch) {
+      this.guiScene.performDelayed(this, function()
+      {
+        if (!this.defaultRoomsInSearch)
+        {
           this.resetSearchList()
           this.fillSearchList()
         }
       })
   }
 
-  function isMenuChatActive() {
+  function isMenuChatActive()
+  {
     return this.checkScene() && ::last_chat_scene_show;
   }
 
-  function addChatJoinParams(roomName, pass) {
+  function addChatJoinParams(roomName, pass)
+  {
     this.roomJoinParamsTable[roomName] <- pass
   }
 
-  function showRoomPopup(msgBlock, roomId) {
+  function showRoomPopup(msgBlock, roomId)
+  {
     if (::get_gui_option_in_mode(::USEROPT_SHOW_SOCIAL_NOTIFICATIONS, ::OPTIONS_MODE_GAMEPLAY))
-      ::g_popups.add(msgBlock.fullName && msgBlock.fullName.len() ? (msgBlock.fullName + ":") : null,
+      ::g_popups.add(msgBlock.fullName && msgBlock.fullName.len()? (msgBlock.fullName + ":") : null,
         msgBlock.msgs.top(),
         @() ::g_chat.openChatRoom(roomId)
       )
   }
 
-  function popupAcceptInvite(roomId) {
-    if (::g_chat_room_type.THREAD.checkRoomId(roomId)) {
+  function popupAcceptInvite(roomId)
+  {
+    if (::g_chat_room_type.THREAD.checkRoomId(roomId))
+    {
       ::g_chat.joinThread(roomId)
       this.changeRoomOnJoin = roomId
       return
@@ -2471,7 +2720,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     this.changeRoomOnJoin = roomId
   }
 
-  function openChatRoom(roomId) {
+  function openChatRoom(roomId)
+  {
     let curScene = ::getLastGamercardScene()
 
     ::switchMenuChatObj(::getChatDiv(curScene))
@@ -2479,27 +2729,34 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
 
     let roomList = this.scene.findObject("rooms_list")
     foreach (idx, room in ::g_chat.rooms)
-      if (room.id == roomId) {
+      if (room.id == roomId)
+      {
         roomList.setValue(idx)
         break
       }
     this.onRoomChanged()
   }
 
-  function onEventPlayerPenaltyStatusChanged(_params) {
+  function onEventPlayerPenaltyStatusChanged(_params)
+  {
     this.checkAndPrintDevoiceMsg()
   }
 
-  function onEventNewSceneLoaded(_p) {
-    this.guiScene.performDelayed(this, function() { //need delay becoase of in the next scene can be obj for this chat room too (mpLobby)
+  function onEventNewSceneLoaded(_p)
+  {
+    this.guiScene.performDelayed(this, function() //need delay becoase of in the next scene can be obj for this chat room too (mpLobby)
+    {
       this.updateCustomChatTexts()
     })
   }
 
-  function updateCustomChatTexts() {
-    for (local idx = ::g_chat.rooms.len() - 1; idx >= 0; idx--) {
+  function updateCustomChatTexts()
+  {
+    for(local idx = ::g_chat.rooms.len()-1; idx>=0; idx--)
+    {
       let room = ::g_chat.rooms[idx]
-      if (checkObj(room.customScene)) {
+      if (checkObj(room.customScene))
+      {
         let obj = room.customScene.findObject("custom_chat_text_block")
         if (checkObj(obj))
           this.drawRoomTo(room, obj)
@@ -2509,41 +2766,41 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     }
   }
 
-  function isCustomRoomActionObj(obj) {
+  function isCustomRoomActionObj(obj)
+  {
     return (obj?._customRoomId ?? "") != ""
   }
 
-  function findCustomRoomByObj(obj) {
+  function findCustomRoomByObj(obj)
+  {
     let id = obj?._customRoomId ?? ""
     if (id != "")
       return ::g_chat.getRoomById(id)
 
     //try to find by scene
-    foreach (item in ::g_chat.rooms)
+    foreach(item in ::g_chat.rooms)
       if (checkObj(item.customScene) && item.customScene.isEqual(obj))
         return item
     return null
   }
 
-  function getSceneDataByActionObj(obj) {
-    if (this.isCustomRoomActionObj(obj)) {
+  function getSceneDataByActionObj(obj)
+  {
+    if (this.isCustomRoomActionObj(obj))
+    {
       let customRoom = this.findCustomRoomByObj(obj)
       if (!customRoom || !checkObj(customRoom.customScene))
         return null
 
       return { room = customRoom.id, scene = customRoom.customScene }
-    }
-    else if (this.checkScene())
+    } else if (this.checkScene())
       return { room = this.curRoom.id, scene = this.scene }
 
     return null
   }
 
-  function joinCustomObjRoom(sceneObj, roomId, password, ownerHandler) {
-    if (!hasMenuChatMPlobby.value) {
-      sceneObj.show(hasMenuChatMPlobby.value)
-      return
-    }
+  function joinCustomObjRoom(sceneObj, roomId, password, ownerHandler)
+  {
     let prevRoom = this.findCustomRoomByObj(sceneObj)
     if (prevRoom)
       if (prevRoom.id == roomId)
@@ -2553,7 +2810,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
 
     let objGuiScene = sceneObj.getScene()
     objGuiScene.replaceContent(sceneObj, "%gui/chat/customChat.blk", this)
-    foreach (name in ["menuchat_input", "btn_send", "btn_prevMsg", "btn_nextMsg"]) {
+    foreach(name in ["menuchat_input", "btn_send", "btn_prevMsg", "btn_nextMsg"])
+    {
       let obj = sceneObj.findObject(name)
       obj._customRoomId = roomId
     }
@@ -2561,7 +2819,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
     initChatMessageListOn(sceneObj.findObject("custom_chat_text_block"), this, roomId)
 
     let room = ::g_chat.getRoomById(roomId)
-    if (room) {
+    if (room)
+    {
       room.customScene = sceneObj
       room.ownerHandler = ownerHandler
       room.joined = true
@@ -2576,25 +2835,29 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       sceneObj, ownerHandler)
   }
 
-  function afterReconnectCustomRoom(roomId) {
+  function afterReconnectCustomRoom(roomId)
+  {
     let roomData = ::g_chat.getRoomById(roomId)
     if (!roomData || !checkObj(roomData.customScene))
       return
 
     let isChatAvailable = this.isChatAvailableInCurRoom()
-    foreach (objName in ["menuchat_input", "btn_send"]) {
+    foreach(objName in ["menuchat_input", "btn_send"])
+    {
       let obj = roomData.customScene.findObject(objName)
       if (checkObj(obj))
         obj.enable(isChatAvailable)
     }
   }
 
-  function checkListValue(obj) {
+  function checkListValue(obj)
+  {
     if (obj.getValue() < 0 && obj.childrenCount())
       obj.setValue(0)
   }
 
-  function onEventInviteReceived(params) {
+  function onEventInviteReceived(params)
+  {
     let invite = getTblValue("invite", params)
     if (!invite || !invite.isVisible())
       return
@@ -2604,13 +2867,9 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
       this.addRoomMsg("", "", msg, false, false, invite.inviteColor, true)
   }
 
-  function onEventInviteUpdated(params) {
+  function onEventInviteUpdated(params)
+  {
     this.onEventInviteReceived(params)
-  }
-
-  function onEventUpdateChatFeatures(_) {
-    this.rejoinDefaultRooms(true)
-    this.updateRoomsList()
   }
 
   function onChatInputWrapRight() {
@@ -2643,13 +2902,16 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
   mpostColor = "@chatTextMpostColor"
 }
 
-::menuChatCb <- function menuChatCb(event, taskId, db) {
+::menuChatCb <- function menuChatCb(event, taskId, db)
+{
   if (::menu_chat_handler)
     ::menu_chat_handler.onEventCb.call(::menu_chat_handler, event, taskId, db)
 }
 
-::initEmptyMenuChat <- function initEmptyMenuChat() {
-  if (!::menu_chat_handler) {
+::initEmptyMenuChat <- function initEmptyMenuChat()
+{
+  if (!::menu_chat_handler)
+  {
     ::menu_chat_handler = ::MenuChatHandler(::get_gui_scene())
     ::menu_chat_handler.initChat(null)
   }
@@ -2658,7 +2920,8 @@ let sendEventUpdateChatFeatures = @() ::broadcastEvent("UpdateChatFeatures")
 if (::g_login.isLoggedIn())
   ::initEmptyMenuChat()
 
-::loadMenuChatToObj <- function loadMenuChatToObj(obj) {
+::loadMenuChatToObj <- function loadMenuChatToObj(obj)
+{
   if (!checkObj(obj))
     return
 
@@ -2668,15 +2931,17 @@ if (::g_login.isLoggedIn())
   ::menu_chat_handler.initChat(obj)
 }
 
-::switchMenuChatObj <- function switchMenuChatObj(obj) {
-  if (!::menu_chat_handler) {
+::switchMenuChatObj <- function switchMenuChatObj(obj)
+{
+  if (!::menu_chat_handler)
+  {
     ::loadMenuChatToObj(obj)
-  }
-  else
+  } else
     ::menu_chat_handler.switchScene(obj)
 }
 
-::switchMenuChatObjIfVisible <- function switchMenuChatObjIfVisible(obj) {
+::switchMenuChatObjIfVisible <- function switchMenuChatObjIfVisible(obj)
+{
   if (::menu_chat_handler &&
       ::last_chat_scene_show &&
       !(isPlatformSony && ::is_in_loading_screen()) //!!!HACK, till hover is not working on loading
@@ -2684,19 +2949,22 @@ if (::g_login.isLoggedIn())
     ::menu_chat_handler.switchScene(obj, true)
 }
 
-::checkMenuChatBack <- function checkMenuChatBack() {
+::checkMenuChatBack <- function checkMenuChatBack()
+{
   if (::menu_chat_handler)
     ::menu_chat_handler.checkScene()
 }
 
-::openChatScene <- function openChatScene(ownerHandler = null) {
-  if (!::gchat_is_enabled() || !hasMenuChat.value) {
+::openChatScene <- function openChatScene(ownerHandler = null)
+{
+  if (!::gchat_is_enabled() || !hasMenuChat.value)
+  {
     ::showInfoMsgBox(loc("msgbox/notAvailbleYet"))
     return false
   }
 
   let scene = ownerHandler ? ownerHandler.scene : ::getLastGamercardScene()
-  if (!checkObj(scene))
+  if(!checkObj(scene))
     return false
 
   let obj = ::getChatDiv(scene)
@@ -2704,10 +2972,11 @@ if (::g_login.isLoggedIn())
     ::loadMenuChatToObj(obj)
   else
     ::menu_chat_handler.switchScene(obj, true)
-  return ::menu_chat_handler != null
+  return ::menu_chat_handler!=null
 }
 
-::openChatPrivate <- function openChatPrivate(playerName, ownerHandler = null) {
+::openChatPrivate <- function openChatPrivate(playerName, ownerHandler = null)
+{
   if (!isPlayerFromXboxOne(playerName))
     return ::g_chat.openPrivateRoom(playerName, ownerHandler)
 
@@ -2720,19 +2989,22 @@ if (::g_login.isLoggedIn())
   })
 }
 
-::isMenuChatActive <- function isMenuChatActive() {
+::isMenuChatActive <- function isMenuChatActive()
+{
   if (!::menu_chat_handler)
     return false;
 
   return ::menu_chat_handler.isMenuChatActive();
 }
 
-::chatUpdatePresence <- function chatUpdatePresence(contact) {
+::chatUpdatePresence <- function chatUpdatePresence(contact)
+{
   if (::menu_chat_handler)
     ::menu_chat_handler.updatePresenceContact.call(::menu_chat_handler, contact)
 }
 
-::resetChat <- function resetChat() {
+::resetChat <- function resetChat()
+{
   ::g_chat.rooms = []
   ::new_menu_chat_messages <- false
   ::last_send_messages = []
@@ -2741,33 +3013,38 @@ if (::g_login.isLoggedIn())
     ::menu_chat_handler.roomsInited = false
 }
 
-::getChatDiv <- function getChatDiv(scene) {
-  if (!checkObj(scene))
+::getChatDiv <- function getChatDiv(scene)
+{
+  if(!checkObj(scene))
     scene = null
   let guiScene = ::get_gui_scene()
   local chatObj = scene ? scene.findObject("menuChat_scene") : guiScene["menuChat_scene"]
-  if (!chatObj) {
-    guiScene.appendWithBlk(scene ? scene : "", "tdiv { id:t='menuChat_scene' }")
+  if (!chatObj)
+  {
+    guiScene.appendWithBlk(scene? scene : "", "tdiv { id:t='menuChat_scene' }")
     chatObj = scene ? scene.findObject("menuChat_scene") : guiScene["menuChat_scene"]
   }
   return chatObj
 }
 
 
-::open_invite_menu <- function open_invite_menu(menu, position) {
+::open_invite_menu <- function open_invite_menu(menu, position)
+{
   if (::menu_chat_handler)
     ::menu_chat_handler.openInviteMenu.call(::menu_chat_handler, menu, position)
 }
 
-::joinCustomObjRoom <- function joinCustomObjRoom(obj, roomName, password = "", owner = null) {
+::joinCustomObjRoom <- function joinCustomObjRoom(obj, roomName, password = "", owner = null)
 //owner need if you want to handle custom room events:
 //  onCustomChatCancel   (press esc when room input in focus)
 //  onCustomChatContinue (press enter on empty message)
+{
   if (::menu_chat_handler)
     ::menu_chat_handler.joinCustomObjRoom.call(::menu_chat_handler, obj, roomName, password, owner)
 }
 
-::isUserBlockedByPrivateSetting <- function isUserBlockedByPrivateSetting(uid = null, userName = "") {
+::isUserBlockedByPrivateSetting <- function isUserBlockedByPrivateSetting(uid = null, userName = "")
+{
   let checkUid = uid != null
 
   let privateValue = ::get_gui_option_in_mode(::USEROPT_ONLY_FRIENDLIST_CONTACT, ::OPTIONS_MODE_GAMEPLAY)
@@ -2775,7 +3052,3 @@ if (::g_login.isLoggedIn())
     || ::isPlayerNickInContacts(userName, EPL_BLOCKLIST)
 }
 
-hasMenuGeneralChats.subscribe(@(_) resetTimeout(0.01, sendEventUpdateChatFeatures))
-hasMenuChatPrivate.subscribe(@(_) resetTimeout(0.01, sendEventUpdateChatFeatures))
-hasMenuChatSquad.subscribe(@(_) resetTimeout(0.01, sendEventUpdateChatFeatures))
-hasMenuChatClan.subscribe(@(_) resetTimeout(0.01, sendEventUpdateChatFeatures))

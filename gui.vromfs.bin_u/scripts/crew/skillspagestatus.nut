@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -60,7 +59,8 @@ enums.addTypesByGlobalName("g_skills_page_status", {
   */
 })
 
-::g_skills_page_status.getPageStatus <- function getPageStatus(crew, unit, page, crewUnitType, skillPoints) {
+::g_skills_page_status.getPageStatus <- function getPageStatus(crew, unit, page, crewUnitType, skillPoints)
+{
   local res = ::g_skills_page_status.NONE
   let items = getTblValue("items", page)
   if (!items || !items.len())
@@ -69,7 +69,8 @@ enums.addTypesByGlobalName("g_skills_page_status", {
   let total = items.len()
   local allowedMax = 0  //amount of skills not maxed but allowed to max
   let allowedAmount = [] //only for not maxed
-  foreach (item in items) {
+  foreach(item in items)
+  {
     if (!item.isVisible(crewUnitType))
       continue
 
@@ -88,12 +89,13 @@ enums.addTypesByGlobalName("g_skills_page_status", {
       allowedAmount.append(availStep - curStep)
   }
 
-  foreach (statusType in this.types) {
+  foreach(statusType in this.types)
+  {
     if (res.priority >= statusType.priority)
       continue
 
     local checked = allowedMax
-    foreach (allowed in allowedAmount)
+    foreach(allowed in allowedAmount)
       if (allowed >= statusType.minSteps)
         checked++
 

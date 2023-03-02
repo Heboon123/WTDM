@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -32,12 +31,14 @@ let function loadSkills() {
   let calcBlk = skillsBlk?.crew_skills_calc
   if (calcBlk == null)
     return
-  foreach (memberName, memberBlk in calcBlk) {
+  foreach (memberName, memberBlk in calcBlk)
+  {
     if (!::u.isDataBlock(memberBlk))
       continue
 
     maxSkillValueByMemberAndSkill[memberName] <- {}
-    foreach (skillName, skillBlk in memberBlk) {
+    foreach (skillName, skillBlk in memberBlk)
+    {
       if (!::u.isDataBlock(skillBlk))
         continue // Not actually a skill blk.
       let skillItem = ::g_crew.getSkillItem(memberName, skillName)
@@ -71,7 +72,8 @@ let function loadSkills() {
 
   skillParameterInfo.clear()
   let typesBlk = skillsBlk?.measure_type_by_skill_parameter
-  if (typesBlk != null) {
+  if (typesBlk != null)
+  {
     local sortOrder = 0
     foreach (parameterName, typeName in typesBlk)
       skillParameterInfo[parameterName] <- {
@@ -82,7 +84,8 @@ let function loadSkills() {
 }
 
 let function updateSkills() {
-  if (!skillsLoaded) {
+  if (!skillsLoaded)
+  {
     skillsLoaded = true
     loadSkills()
   }
@@ -118,7 +121,8 @@ let function getSkillValue(crewId, unit, memberName, skillName) {
 
 let function getSkillCategoryCrewLevel(crewData, unit, skillCategory, crewUnitType) {
   local res = 0
-  foreach (categorySkill in skillCategory.skillItems) {
+  foreach (categorySkill in skillCategory.skillItems)
+  {
     if (!categorySkill.isVisible(crewUnitType))
       continue
 
@@ -166,7 +170,8 @@ let function getMinSkillsUnitRepairRank(unitRank) {
   let repairRanksBlk = ::get_skills_blk()?.repair_ranks
   if (!repairRanksBlk)
     return -1
-  for (local i = 1; ; i++) {
+  for(local i = 1; ; i++)
+  {
     let rankValue = repairRanksBlk?["rank" + i]
     if (!rankValue)
       break

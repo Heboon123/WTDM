@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -7,22 +6,24 @@ from "%scripts/dagui_library.nut" import *
 
 let { clearBorderSymbols } = require("%sqstd/string.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-let { is_chat_message_empty } = require("chat")
 
-::gui_handlers.AddRadioModalHandler <- class extends ::gui_handlers.BaseGuiHandlerWT {
+::gui_handlers.AddRadioModalHandler <- class extends ::gui_handlers.BaseGuiHandlerWT
+{
   wndType = handlerType.MODAL
   sceneBlkName = "%gui/popup/addRadio.blk"
 
   editStationName = ""
 
-  function initScreen() {
+  function initScreen()
+  {
     ::select_editbox(this.scene.findObject("newradio_name"))
     let nameRadio = loc("options/internet_radio_" + ((this.editStationName == "") ? "add" : "edit"))
     let titleRadio = this.scene.findObject("internet_radio_title")
     titleRadio.setValue(nameRadio)
     let btnAddRadio = this.scene.findObject("btn_add_radio")
     btnAddRadio.setValue(nameRadio)
-    if (this.editStationName != "") {
+    if (this.editStationName != "")
+    {
       let editName = this.scene.findObject("newradio_name")
       editName.setValue(this.editStationName)
       let editUrl = this.scene.findObject("newradio_url")
@@ -31,7 +32,8 @@ let { is_chat_message_empty } = require("chat")
     }
   }
 
-  function onChanged() {
+  function onChanged()
+  {
     local msg = this.getMsgByEditbox("url")
     if (msg == "")
       msg = this.getMsgByEditbox("name")
@@ -40,21 +42,23 @@ let { is_chat_message_empty } = require("chat")
     btnAddRadio.tooltip = msg
   }
 
-  function getMsgByEditbox(name) {
-    let isEmpty = is_chat_message_empty(this.scene.findObject("newradio_" + name).getValue())
-    return isEmpty ? loc("options/no_" + name + "_radio") : ""
+  function getMsgByEditbox(name)
+  {
+    let isEmpty = ::is_chat_message_empty(this.scene.findObject("newradio_"+name).getValue())
+    return isEmpty ? loc("options/no_"+name+"_radio") : ""
   }
 
   onFocusUrl = @() ::select_editbox(this.scene.findObject("newradio_url"))
 
-  function onAddRadio() {
+  function onAddRadio()
+  {
     let value = this.scene.findObject("newradio_name").getValue()
-    if (is_chat_message_empty(value))
+    if (::is_chat_message_empty(value))
       return
 
     let name = clearBorderSymbols(value, [" "])
     local url = this.scene.findObject("newradio_url").getValue()
-    if (url != "")
+    if(url != "")
       url = clearBorderSymbols(url, [" "])
 
     if (name == "")
@@ -67,11 +71,12 @@ let { is_chat_message_empty } = require("chat")
           [["ok", function() {}]], "ok")
 
     let listRadio = ::get_internet_radio_stations()
-    if (this.editStationName != "") {
+    if (this.editStationName != "")
+    {
       ::edit_internet_radio_station(this.editStationName, name, url)
-    }
-    else {
-      foreach (radio in listRadio) {
+    } else {
+      foreach (radio in listRadio)
+      {
         if (radio == name)
           return this.msgBox("warning",
             loc("options/msg_name_exists_radio"),

@@ -1,11 +1,9 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
 #no-root-fallback
 #explicit-this
 
-let DataBlock = require("DataBlock")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { format } = require("string")
 let SecondsUpdater = require("%sqDagui/timer/secondsUpdater.nut")
@@ -15,10 +13,9 @@ let { getPlayerName,
         isPlatformSony } = require("%scripts/clientState/platform.nut")
 let { isLeaderboardsAvailable } = require("%scripts/events/eventInfo.nut")
 let { haveRewards, getBaseVictoryReward } = require("%scripts/events/eventRewards.nut")
-let { get_meta_mission_info_by_name } = require("guiMission")
-let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
 
-::create_event_description <- function create_event_description(parent_scene, event = null, needEventHeader = true) {
+::create_event_description <- function create_event_description(parent_scene, event = null, needEventHeader = true)
+{
   let containerObj = parent_scene.findObject("item_desc")
   if (!checkObj(containerObj))
     return null
@@ -31,7 +28,8 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
   return handler
 }
 
-::gui_handlers.EventDescription <- class extends ::gui_handlers.BaseGuiHandlerWT {
+::gui_handlers.EventDescription <- class extends ::gui_handlers.BaseGuiHandlerWT
+{
   wndType = handlerType.CUSTOM
   sceneBlkName = "%gui/empty.blk"
 
@@ -45,14 +43,16 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
   // Most recent request for short leaderboards.
   newSelfRowRequest = null
 
-  function initScreen() {
+  function initScreen()
+  {
     this.playersInTable = []
     let blk = ::handyman.renderCached("%gui/events/eventDescription.tpl", {})
     this.guiScene.replaceContentFromText(this.scene, blk, blk.len(), this)
     this.updateContent()
   }
 
-  function selectEvent(event, eventRoom = null) {
+  function selectEvent(event, eventRoom = null)
+  {
     if (this.room)
       ::g_mroom_info.get(this.room.roomId).checkRefresh()
     if (this.selectedEvent == event && ::u.isEqual(this.room, eventRoom))
@@ -63,7 +63,8 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
     this.updateContent()
   }
 
-  function updateContent() {
+  function updateContent()
+  {
     if (!checkObj(this.scene))
       return
 
@@ -72,9 +73,11 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
     this.guiScene.setUpdatesEnabled(true, true)
   }
 
-  function _updateContent() {
+  function _updateContent()
+  {
     this.currentFullRoomData = this.getFullRoomData()
-    if (this.selectedEvent == null) {
+    if (this.selectedEvent == null)
+    {
       this.setEventDescObjVisible(false)
       return
     }
@@ -92,7 +95,8 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
 
     // Event difficulty
     let eventDifficultyObj = this.getObject("event_difficulty")
-    if (eventDifficultyObj != null) {
+    if (eventDifficultyObj != null)
+    {
       let difficultyText = ::events.isDifficultyCustom(this.selectedEvent)
         ? loc("options/custom")
         : ::events.getDifficultyText(this.selectedEvent.name)
@@ -102,10 +106,12 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
 
     // Event players range
     let eventPlayersRangeObj = this.getObject("event_players_range")
-    if (eventPlayersRangeObj != null) {
+    if (eventPlayersRangeObj != null)
+    {
       let rangeData = ::events.getPlayersRangeTextData(roomMGM)
       eventPlayersRangeObj.show(rangeData.isValid)
-      if (rangeData.isValid) {
+      if (rangeData.isValid)
+      {
         let labelObj = this.getObject("event_players_range_label")
         if (labelObj != null)
           labelObj.setValue(rangeData.label)
@@ -117,17 +123,19 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
 
     // Clan info
     let clanOnlyInfoObj = this.getObject("clan_event")
-    if (clanOnlyInfoObj != null)
+    if(clanOnlyInfoObj != null)
       clanOnlyInfoObj.show(::events.isEventForClan(this.selectedEvent))
 
     // Allow switch clan
     let allowSwitchClanObj = this.getObject("allow_switch_clan")
-    if (allowSwitchClanObj != null) {
+    if (allowSwitchClanObj != null)
+    {
       let eventType = getTblValue("type", this.selectedEvent, 0)
       let clanTournamentType = EVENT_TYPE.TOURNAMENT | EVENT_TYPE.CLAN
       let showMessage = (eventType & clanTournamentType) == clanTournamentType
       allowSwitchClanObj.show(showMessage)
-      if (showMessage) {
+      if (showMessage)
+      {
         let locId = "events/allowSwitchClan/" + ::events.isEventAllowSwitchClan(this.selectedEvent).tostring()
         allowSwitchClanObj.text = loc(locId)
       }
@@ -135,8 +143,10 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
 
     // Timer
     let timerObj = this.getObject("event_time")
-    if (timerObj != null) {
-        SecondsUpdater(timerObj, Callback(function(obj, _params) {
+    if (timerObj != null)
+    {
+        SecondsUpdater(timerObj, Callback(function(obj, _params)
+        {
           let text = this.getDescriptionTimeText()
           obj.setValue(text)
           return text.len() == 0
@@ -144,10 +154,12 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
     }
 
     let timeLimitObj = this.showSceneBtn("event_time_limit", !!this.room)
-    if (timeLimitObj && this.room) {
+    if (timeLimitObj && this.room)
+    {
       let timeLimit = ::SessionLobby.getTimeLimit(this.room)
       local timeText = ""
-      if (timeLimit > 0) {
+      if (timeLimit > 0)
+      {
         let option = ::get_option(::USEROPT_TIME_LIMIT)
         timeText = option.getTitle() + loc("ui/colon") + option.getValueLocText(timeLimit)
       }
@@ -159,7 +171,8 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
     // Fill vehicle lists
     local teamObj = null
     let sides = ::events.getSidesList(roomMGM)
-    foreach (team in ::events.getSidesList()) {
+    foreach(team in ::events.getSidesList())
+    {
       let teamName = ::events.getTeamName(team)
       teamObj = this.getObject(teamName)
       if (teamObj == null)
@@ -171,9 +184,10 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
         continue
 
       let titleObj = teamObj.findObject("team_title")
-      if (checkObj(titleObj)) {
+      if(checkObj(titleObj))
+      {
         let isEventFreeForAll = ::events.isEventFreeForAll(roomMGM)
-        titleObj.show(! ::events.isEventSymmetricTeams(roomMGM) || isEventFreeForAll)
+        titleObj.show( ! ::events.isEventSymmetricTeams(roomMGM) || isEventFreeForAll)
         titleObj.setValue(isEventFreeForAll ? loc("events/ffa")
           : ::g_team.getTeamByCode(team).getName())
       }
@@ -200,8 +214,10 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
     this.fetchLbData()
   }
 
-  function getTeamPlayersCountText(team, teamData, roomMGM) {
-    if (!this.room) {
+  function getTeamPlayersCountText(team, teamData, roomMGM)
+  {
+    if (!this.room)
+    {
       if (::events.hasTeamSizeHandicap(roomMGM))
         return colorize("activeTextColor", loc("events/handicap") + ::events.getTeamSize(teamData))
       return ""
@@ -226,10 +242,12 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
     return loc("events/players_count") + loc("ui/colon") + loc(locId, locParams)
   }
 
-  function updateContentHeader() {
+  function updateContentHeader()
+  {
     // Difficulty image
     let difficultyImgObj = this.getObject("difficulty_img")
-    if (difficultyImgObj) {
+    if (difficultyImgObj)
+    {
       difficultyImgObj["background-image"] = ::events.getDifficultyImg(this.selectedEvent.name)
       difficultyImgObj["tooltip"] = ::events.getDifficultyTooltip(this.selectedEvent.name)
     }
@@ -240,7 +258,8 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
       eventNameObj.setValue(this.getHeaderText())
   }
 
-  function getHeaderText() {
+  function getHeaderText()
+  {
     if (!this.room)
       return ::events.getEventNameText(this.selectedEvent) + " " + ::events.getRespawnsText(this.selectedEvent)
 
@@ -258,11 +277,12 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
       teamsCntText = loc("events/players_count") + loc("ui/colon") + (teamsCnt[Team.A] + teamsCnt[Team.B])
     else
       teamsCntText = teamsCnt[Team.A] + " " + loc("country/VS") + " " + teamsCnt[Team.B]
-    res += loc("ui/parentheses/space", { text = teamsCntText })
+    res += loc("ui/parentheses/space", { text =teamsCntText })
     return res
   }
 
-  function updateCostText() {
+  function updateCostText()
+  {
     if (this.selectedEvent == null)
       return
 
@@ -275,7 +295,8 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
     costDescObj.setValue(text)
 
     let ticketBoughtImgObj = this.getObject("bought_ticket_img")
-    if (ticketBoughtImgObj != null) {
+    if (ticketBoughtImgObj != null)
+    {
       let showImg = ::events.hasEventTicket(this.selectedEvent)
         && ::events.getEventActiveTicket(this.selectedEvent).getCost() > ::zero_money
       ticketBoughtImgObj.show(showImg)
@@ -287,7 +308,8 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
         || hasAchievementGroup)
   }
 
-  function loadMap() {
+  function loadMap()
+  {
     if (this.selectedEvent.name.len() == 0)
       return
 
@@ -298,14 +320,17 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
       misName = ::events.getEventMission(this.selectedEvent.name)
 
     local hasMission = misName != ""
-    if (hasMission) {
-      let misData = get_meta_mission_info_by_name(misName)
-      if (misData) {
-        let m = DataBlock()
-        m.load(misData.getStr("mis_file", ""))
-        setMapPreview(this.scene.findObject("tactical-map"), m)
+    if (hasMission)
+    {
+      let misData = ::get_meta_mission_info_by_name(misName)
+      if (misData)
+      {
+        let m = ::DataBlock()
+        m.load(misData.getStr("mis_file",""))
+        ::g_map_preview.setMapPreview(this.scene.findObject("tactical-map"), m)
       }
-      else {
+      else
+      {
         log("Error: Event " + this.selectedEvent.name + ": not found mission info for mission " + misName)
         hasMission = false
       }
@@ -317,7 +342,8 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
       multipleMapObj["background-image"] = "#ui/random_mission_map.ddsx"
   }
 
-  function getDescriptionTimeText() {
+  function getDescriptionTimeText()
+  {
     if (!this.room)
       return ::events.getEventTimeText(::events.getMGameMode(this.selectedEvent, this.room))
 
@@ -331,10 +357,12 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
     return loc("multiplayer/battleStartsIn", { time = time.secondsToString(secToStart, true) })
   }
 
-  function fetchLbData() {
+  function fetchLbData()
+  {
     let isLbAvailable = isLeaderboardsAvailable()
     this.hideEventLeaderboard(isLbAvailable)
-    if (!isLbAvailable) {
+    if (!isLbAvailable)
+    {
       this.showEventLb(null)
       return
     }
@@ -352,7 +380,8 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
       })(this.selectedEvent), this)
   }
 
-  function showEventLb(lb_data) {
+  function showEventLb(lb_data)
+  {
     if (!checkObj(this.scene))
       return
 
@@ -386,7 +415,8 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
 
     local data = ""
     local rowIdx = 0
-    foreach (row in lbRows) {
+    foreach(row in lbRows)
+    {
       if ((row?[lbCategory.field] ?? -1) <= 0)
         continue
       data += this.generateRowTableData(row, rowIdx++, lbCategory)
@@ -397,14 +427,16 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
     this.guiScene.replaceContentFromText(lbTable, data, data.len(), this)
   }
 
-  function checkLbTableVisible(lb_rows, lbCategory) {
+  function checkLbTableVisible(lb_rows, lbCategory)
+  {
     if (isPlatformSony || isPlatformXboxOne || lbCategory == null || lb_rows.len() == 0)
       return false
 
     return true
   }
 
-  function generateRowTableData(row, rowIdx, lbCategory) {
+  function generateRowTableData(row, rowIdx, lbCategory)
+  {
     if (!this.newSelfRowRequest)
       return ""
 
@@ -433,7 +465,8 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
       }
     ]
 
-    if (lbCategory) {
+    if (lbCategory)
+    {
       let td = lbCategory.getItemCell(getTblValue(lbCategory.field, row, -1))
       td.tdalign <- "right"
       rowData.append(td)
@@ -442,35 +475,41 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
     return data
   }
 
-  function setEventDescObjVisible(value) {
+  function setEventDescObjVisible(value)
+  {
     let eventDescObj = this.getObject("event_desc")
     if (eventDescObj != null)
       eventDescObj.show(value)
   }
 
-  function getObject(id, parentObject = null) {
+  function getObject(id, parentObject = null)
+  {
     if (parentObject == null)
       parentObject = this.scene
     let obj = parentObject.findObject(id)
     return checkObj(obj) ? obj : null
   }
 
-  function onEventInventoryUpdate(_params) {
+  function onEventInventoryUpdate(_params)
+  {
     this.updateCostText()
   }
 
-  function onEventEventlbDataRenewed(params) {
+  function onEventEventlbDataRenewed(params)
+  {
     if (getTblValue("eventId", params) == getTblValue("name", this.selectedEvent))
       this.fetchLbData()
   }
 
-  function onEventItemBought(params) {
+  function onEventItemBought(params)
+  {
     let item = getTblValue("item", params)
     if (item && item.isForEvent(getTblValue("name", this.selectedEvent)))
       this.updateCostText()
   }
 
-  function onOpenEventLeaderboards() {
+  function onOpenEventLeaderboards()
+  {
     if (this.selectedEvent == null)
       return
 
@@ -482,7 +521,8 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
     })
   }
 
-  function onRewardsList() {
+  function onRewardsList()
+  {
     let eventAchievementGroup = ::events.getEventAchievementGroup(this.selectedEvent)
     if (eventAchievementGroup != "") {
       ::gui_start_profile({
@@ -497,11 +537,13 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
         }])
   }
 
-  function onPlayersList() {
+  function onPlayersList()
+  {
     ::gui_handlers.MRoomMembersWnd.open(this.room)
   }
 
-  function hideEventLeaderboard(showWaitBox = true) {
+  function hideEventLeaderboard(showWaitBox = true)
+  {
     let lbWrapObj = this.getObject("lb_wrap")
     if (lbWrapObj == null)
       return
@@ -516,11 +558,13 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
       lbWaitBox.show(showWaitBox)
   }
 
-  function getFullRoomData() {
+  function getFullRoomData()
+  {
     return this.room && ::g_mroom_info.get(this.room.roomId).getFullRoomData()
   }
 
-  function onEventMRoomInfoUpdated(p) {
+  function onEventMRoomInfoUpdated(p)
+  {
     if (this.room && p.roomId == this.room.roomId && !::u.isEqual(this.currentFullRoomData, this.getFullRoomData()))
       this.updateContent()
   }

@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -27,8 +26,10 @@ let function calcSquadMrank(brData) {
     return -1
 
   local maxBR = -1
-  foreach (name, _idx in brData) {
-    if (name != "error" && brData[name].len() > 0) {
+  foreach (name, _idx in brData)
+  {
+    if (name != "error" && brData[name].len() > 0)
+    {
       let val = brData[name][0].mrank
       maxBR = max(maxBR, val)
     }
@@ -69,13 +70,15 @@ let function getCrafts(data, country = null) {
     return crafts
 
   let brokenAirs = data?.brokenAirs ?? []
-  foreach (name in craftData) {
+  foreach (name in craftData)
+  {
      let craft = ::getAircraftByName(name)
      if (craft == null || isInArray(name, brokenAirs))
        continue
 
      crafts.append({
        name = name
+       type = craft.expClass.expClassName // compatibility with 2.17.0.X, this parameter is replaced by craftType
        craftType = craft.expClass.expClassName
        mrank = craft.getEconomicRank(::get_current_ediff())
        rank = craft?.rank ?? -1
@@ -104,7 +107,8 @@ let function setBattleRating(recentUserData, brData) {
     brInfoByGamemodeId.mutate(@(v) delete v[gameModeId])
 }
 
-let function getBestCountryData(event) {
+let function getBestCountryData(event)
+{
   if (!event)
     return null
   let teams = ::events.getAvailableTeams(event)
@@ -122,9 +126,11 @@ let function getUserData() {
 
   let players = []
 
-  if (::g_squad_manager.isSquadLeader()) {
+  if (::g_squad_manager.isSquadLeader())
+  {
     let countryData = getBestCountryData(::events.getEvent(recentBrGameModeId.value))
-    foreach (member in ::g_squad_manager.getMembers()) {
+    foreach(member in ::g_squad_manager.getMembers())
+    {
       if (!member.online || member.country == "")
         continue
 
@@ -133,21 +139,22 @@ let function getUserData() {
       players.append({
         name = member.name
         country = country ?? member.country
-        slot = crafts.findindex(function(p) { return p.name == member.selAirs?[country ?? member.country] }) ?? -1
+        slot = crafts.findindex(function(p) { return p.name == member.selAirs?[country ?? member.country]}) ?? -1
         crafts = crafts
       })
     }
   }
-  else {
+  else
+  {
     let data = getMyStateData()
-    if (data.country == "")
+    if(data.country == "")
       return null
 
     let crafts = getCrafts(data)
     players.append({
       name = data.name
       country = data.country
-      slot = crafts.findindex(function(p) { return p.name == data.selAirs?[data.country] }) ?? -1
+      slot = crafts.findindex(function(p) { return p.name == data.selAirs?[data.country]}) ?? -1
       crafts = crafts
     })
   }
@@ -168,8 +175,9 @@ let function requestBattleRating(cb, recentUserData) {
 }
 
 local updateBattleRating
-updateBattleRating = function(gameMode = null, brData = null) { //!!FIX ME: why outside update request and internal callback the same function?
+updateBattleRating = function(gameMode = null, brData = null) //!!FIX ME: why outside update request and internal callback the same function?
   //it make harder to read it, and can have a lot of errors.
+{
   gameMode = gameMode ?? ::game_mode_manager.getCurrentGameMode()
   recentBrGameModeId(gameMode?.id ?? "")
   recentBrSourceGameModeId(gameMode?.source.gameModeId)
@@ -179,13 +187,15 @@ updateBattleRating = function(gameMode = null, brData = null) { //!!FIX ME: why 
     return
   }
 
-  if (isUpdating && !(get_time_msec() - lastRequestTimeMsec >= MATCHING_REQUEST_LIFETIME)) {
-    if (isBRKnown(recentUserData))
+  if (isUpdating && !(get_time_msec() - lastRequestTimeMsec >= MATCHING_REQUEST_LIFETIME))
+  {
+    if(isBRKnown(recentUserData))
       setBattleRating(recentUserData, null)
     return
   }
 
-  if (::u.isEqual(userData, recentUserData) && brData) {
+  if(::u.isEqual(userData, recentUserData) && brData)
+  {
     setBattleRating(recentUserData, brData)
     return
   }

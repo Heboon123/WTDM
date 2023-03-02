@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -12,7 +11,8 @@ local unitsTable = {} //unitName - unitBlock
 let function clear() { unitsTable = {} }
 let function haveUnits() { return unitsTable.len() > 0 }
 
-let function addUnit(unit) {
+let function addUnit(unit)
+{
   if (!unit)
     return
 
@@ -20,8 +20,10 @@ let function addUnit(unit) {
 }
 
 local purchaseModifications = @(_unitsArray) null
-purchaseModifications = function(unitsArray) {
-  if (unitsArray.len() == 0) {
+purchaseModifications = function(unitsArray)
+{
+  if (unitsArray.len() == 0)
+  {
     clear()
     ::showInfoMsgBox(loc("msgbox/all_researched_modifications_bought"), "successfully_bought_mods")
     return
@@ -38,7 +40,8 @@ purchaseModifications = function(unitsArray) {
 }
 
 local checkUnboughtMods = @(_silent = false) null
-checkUnboughtMods = function(silent = false) {
+checkUnboughtMods = function(silent = false)
+{
   if (!haveUnits())
     return
 
@@ -46,7 +49,8 @@ checkUnboughtMods = function(silent = false) {
   let unitsWithNBMods = []
   let stringOfUnits = []
 
-  foreach (_unitName, unit in unitsTable) {
+  foreach(_unitName, unit in unitsTable)
+  {
     let modsCost = getAllModsCost(unit)
     if (modsCost.isZero())
       continue
@@ -59,7 +63,8 @@ checkUnboughtMods = function(silent = false) {
   if (unitsWithNBMods.len() == 0)
     return
 
-  if (silent) {
+  if (silent)
+  {
     if (::check_balance_msgBox(cost, null, silent))
       purchaseModifications(unitsWithNBMods)
     return
@@ -75,7 +80,7 @@ checkUnboughtMods = function(silent = false) {
         purchaseModifications(unitsWithNBMods)
       })(cost, unitsWithNBMods)],
      ["no", @()clear() ]],
-      "yes", { cancel_fn = @()clear() })
+      "yes", { cancel_fn = @()clear()})
 }
 
 return {

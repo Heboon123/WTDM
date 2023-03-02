@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -32,7 +31,7 @@ let function getDifficultyByOptionId(optionId) {
 let function getCurPresetId(diffCode) {
   let optionId = ::g_difficulty.getDifficultyByDiffCode(diffCode).contentAllowedPresetOption
   let option = ::get_option(optionId)
-  let defValue = option.value in option.values ? option.values[option.value] : "historical"
+  let defValue = option.value in option.values? option.values[option.value] : "historical"
   return ::get_gui_option_in_mode(optionId, ::OPTIONS_MODE_GAMEPLAY, defValue)
 }
 

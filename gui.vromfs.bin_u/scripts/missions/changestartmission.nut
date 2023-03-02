@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -12,15 +11,17 @@ local startMissionInsteadOfQueue = null
   }
 */
 
-let updateStartMissionInsteadOfQueue = function() {
+let updateStartMissionInsteadOfQueue = function()
+{
   let rBlk = ::get_ranks_blk()
 
   let mInfo = rBlk?.custom_single_mission
   if (mInfo?.name == null)
     startMissionInsteadOfQueue = null
-  else {
+  else
+  {
     startMissionInsteadOfQueue = {}
-    foreach (name, val in mInfo)
+    foreach(name, val in mInfo)
       startMissionInsteadOfQueue[name] <- val
   }
 }

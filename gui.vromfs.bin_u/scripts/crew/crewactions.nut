@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -6,7 +5,6 @@ from "%scripts/dagui_library.nut" import *
 
 let { format } = require("string")
 let chard = require("chard")
-let DataBlock = require("DataBlock")
 
 const PROCESS_TIME_OUT = 60000
 
@@ -28,7 +26,8 @@ let function trainCrewUnitWithoutSwitchCurrUnit(crew, unit) {
   }
 
   let cost = ::g_crew.getCrewTrainCost(crew, unit)
-  if (cost.isZero()) {
+  if (cost.isZero())
+  {
     onTrainCrew()
     return
   }
@@ -46,10 +45,10 @@ let function trainCrewUnitWithoutSwitchCurrUnit(crew, unit) {
 
 
 let function createBatchTrainCrewRequestBlk(requestData) {
-  let requestBlk = DataBlock()
-  requestBlk.batchTrainCrew <- DataBlock()
+  let requestBlk = ::DataBlock()
+  requestBlk.batchTrainCrew <- ::DataBlock()
   foreach (requestItem in requestData) {
-    let itemBlk = DataBlock()
+    let itemBlk = ::DataBlock()
     itemBlk.crewId <- requestItem.crewId
     itemBlk.unitName <- requestItem.airName
     requestBlk.batchTrainCrew.trainCrew <- itemBlk

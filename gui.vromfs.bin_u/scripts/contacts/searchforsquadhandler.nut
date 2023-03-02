@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -15,8 +14,10 @@ let updateContacts = require("%scripts/contacts/updateContacts.nut")
 let { addPromoAction } = require("%scripts/promo/promoActions.nut")
 let { addPromoButtonConfig } = require("%scripts/promo/promoButtonsConfig.nut")
 
-::gui_start_search_squadPlayer <- function gui_start_search_squadPlayer() {
-  if (!::g_squad_manager.canInviteMember()) {
+::gui_start_search_squadPlayer <- function gui_start_search_squadPlayer()
+{
+  if (!::g_squad_manager.canInviteMember())
+  {
     ::showInfoMsgBox(loc("squad/not_a_leader"), "squad_not_available")
     return
   }
@@ -25,7 +26,8 @@ let { addPromoButtonConfig } = require("%scripts/promo/promoButtonsConfig.nut")
   ::handlersManager.loadHandler(::gui_handlers.SearchForSquadHandler)
 }
 
-::gui_handlers.SearchForSquadHandler <- class extends ::ContactsHandler {
+::gui_handlers.SearchForSquadHandler <- class extends ::ContactsHandler
+{
   wndType = handlerType.MODAL
   sceneBlkName = "%gui/contacts/contacts.blk"
 
@@ -36,7 +38,8 @@ let { addPromoButtonConfig } = require("%scripts/promo/promoButtonsConfig.nut")
 
   sg_groups = null
 
-  function initScreen() {
+  function initScreen()
+  {
     this.guiScene.setUpdatesEnabled(false, false)
 
     this.fillDefaultSearchList()
@@ -57,29 +60,34 @@ let { addPromoButtonConfig } = require("%scripts/promo/promoButtonsConfig.nut")
     this.updateSquadButton()
   }
 
-  function isValid() {
+  function isValid()
+  {
     return ::gui_handlers.BaseGuiHandlerWT.isValid.bindenv(this)()
   }
 
-  function goBack() {
+  function goBack()
+  {
     ::gui_handlers.BaseGuiHandlerWT.goBack.bindenv(this)()
   }
 
-  function checkScene() {
+  function checkScene()
+  {
     return checkObj(this.scene)
   }
 
-  function onPlayerSelect(obj) {
+  function onPlayerSelect(obj)
+  {
     this.curPlayer = ::contacts[this.curGroup]?[obj.getValue()]
     this.updateSquadButton()
   }
 
-  function updateSquadButton() {
+  function updateSquadButton()
+  {
     let contactName = this.curPlayer?.name ?? ""
-    let isBlock = this.curPlayer ? this.curPlayer.isInBlockGroup() : false
+    let isBlock = this.curPlayer? this.curPlayer.isInBlockGroup() : false
     let isXBoxOnePlayer = isXBoxPlayerName(contactName)
     let canInteractCrossPlatform = isXBoxOnePlayer || crossplayModule.isCrossPlayEnabled()
-    let canInvite = this.curPlayer ? this.curPlayer.canInvite() : true
+    let canInvite = this.curPlayer? this.curPlayer.canInvite() : true
 
     let showSquadInvite = !::show_console_buttons
       && hasFeature("SquadInviteIngame")
@@ -95,13 +103,15 @@ let { addPromoButtonConfig } = require("%scripts/promo/promoButtonsConfig.nut")
     this.showSceneBtn("btn_squadInvite_bottom", showSquadInvite)
   }
 
-  function onPlayerMsg(obj) {
+  function onPlayerMsg(obj)
+  {
     this.updateCurPlayer(obj)
     if (this.curPlayer)
       ::openChatPrivate(this.curPlayer.name, this)
   }
 
-  function isContactsWindowActive() {
+  function isContactsWindowActive()
+  {
     return this.checkScene()
   }
 
@@ -110,7 +120,8 @@ let { addPromoButtonConfig } = require("%scripts/promo/promoButtonsConfig.nut")
     this.validateCurGroup()
   }
 
-  function onEventContactsGroupUpdate(p) {
+  function onEventContactsGroupUpdate(p)
+  {
     if (p?.groupName == null) //update all groups
       this.updateSearchContactsGroups()
     base.onEventContactsGroupUpdate(p)
@@ -118,11 +129,12 @@ let { addPromoButtonConfig } = require("%scripts/promo/promoButtonsConfig.nut")
 
   function updateSearchContactsGroups() {
     this.sg_groups = [::EPLX_SEARCH, EPL_FRIENDLIST, EPL_RECENT_SQUAD]
-    if (::is_in_clan()) {
+    if(::is_in_clan()) {
       this.sg_groups.append(this.clanGroup)
       ::g_clans.updateClanContacts()
     }
-    if (isPlatformSony) {
+    if (isPlatformSony)
+    {
       this.sg_groups.insert(2, ::EPLX_PS4_FRIENDS)
       if (!(::EPLX_PS4_FRIENDS in ::contacts))
         ::contacts[::EPLX_PS4_FRIENDS] <- []

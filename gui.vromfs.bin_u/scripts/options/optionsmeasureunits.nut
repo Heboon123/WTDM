@@ -1,11 +1,8 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
 #explicit-this
 
-let DataBlock = require("DataBlock")
-let { Point2 } = require("dagor.math")
 let { pow } = require("math")
 let { format } = require("string")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -27,7 +24,8 @@ let optionsByIndex = [
   { useroptId = ::USEROPT_MEASUREUNITS_POWER_TO_WEIGHT_RATIO, optId = "power_to_weight_ratio" },
 ]
 
-let function isInitialized() {
+let function isInitialized()
+{
   return (persistent.unitsCfg?.len() ?? 0) != 0
 }
 
@@ -35,16 +33,19 @@ let getMeasureUnitsNames = @() isInitialized()
   ? ::g_measure_type.types.reduce(@(acc, v) acc.__update({ [v.name] = v.getMeasureUnitsLocKey() }), {})
   : null
 
-let function init() {
+let function init()
+{
   persistent.unitsCfg = []
-  let blk = DataBlock()
+  let blk = ::DataBlock()
   blk.load("config/measureUnits.blk")
-  for (local i = 0; i < blk.blockCount(); i++) {
+  for (local i = 0; i < blk.blockCount(); i++)
+  {
     let blkUnits = blk.getBlock(i)
     let units = []
-    for (local j = 0; j < blkUnits.blockCount(); j++) {
+    for (local j = 0; j < blkUnits.blockCount(); j++)
+    {
       let blkUnit = blkUnits.getBlock(j)
-      let roundAfter = blkUnit.getPoint2("roundAfter", Point2(0, 0))
+      let roundAfter = blkUnit.getPoint2("roundAfter", ::Point2(0, 0))
       let unit = {
         name = blkUnit.getBlockName()
         round = blkUnit.getInt("round", 0)
@@ -59,7 +60,8 @@ let function init() {
   updateExtWatched({ measureUnitsNames = getMeasureUnitsNames() })
 }
 
-let function getOption(useroptId) {
+let function getOption(useroptId)
+{
   let unitNo = optionsByIndex.findindex(@(option) option.useroptId == useroptId)
   let option = optionsByIndex[unitNo]
   let units = persistent.unitsCfg[unitNo]
@@ -73,12 +75,14 @@ let function getOption(useroptId) {
   }
 }
 
-let function getMeasureCfg(unitNo) {
+let function getMeasureCfg(unitNo)
+{
   let unitName = ::get_option_unit_type(unitNo)
   return persistent.unitsCfg[unitNo].findvalue(@(u) u.name == unitName)
 }
 
-local function countMeasure(unitNo, value, separator = " - ", addMeasureUnits = true, forceMaxPrecise = false, isPresize = true) {
+local function countMeasure(unitNo, value, separator = " - ", addMeasureUnits = true, forceMaxPrecise = false, isPresize = true)
+{
   let unit = getMeasureCfg(unitNo)
   if (!unit)
     return ""
@@ -104,7 +108,8 @@ local function countMeasure(unitNo, value, separator = " - ", addMeasureUnits = 
   return result
 }
 
-let function isMetricSystem(unitNo) {
+let function isMetricSystem(unitNo)
+{
   let unitName = ::get_option_unit_type(unitNo)
   return persistent.unitsCfg[unitNo].findindex(@(u) u.name == unitName) == 0
 }

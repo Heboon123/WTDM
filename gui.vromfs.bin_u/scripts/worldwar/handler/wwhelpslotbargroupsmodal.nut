@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -11,11 +10,13 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
 const LAST_SEEN_SAVE_ID = "seen/help/wwar_slotbar_groups"
 
-::gui_handlers.WwHelpSlotbarGroupsModal <- class extends ::gui_handlers.BaseGuiHandlerWT {
+::gui_handlers.WwHelpSlotbarGroupsModal <- class extends ::gui_handlers.BaseGuiHandlerWT
+{
   wndType = handlerType.MODAL
   sceneBlkName = "%gui/help/helpWndCustom.blk"
 
-  function initScreen() {
+  function initScreen()
+  {
     let title = " ".concat(loc("hotkeys/ID_HELP"), loc("ui/mdash"), loc("worldwar/vehicleGroups"))
     this.scene.findObject("wnd_title").setValue(title)
 
@@ -23,7 +24,8 @@ const LAST_SEEN_SAVE_ID = "seen/help/wwar_slotbar_groups"
     this.fillLinkLines()
   }
 
-  function fillLinkLines() {
+  function fillLinkLines()
+  {
     let linkContainer = this.scene.findObject("wnd_content")
     let linkLinesConfig = {
       startObjContainer = linkContainer

@@ -1,13 +1,10 @@
 #explicit-this
 #no-root-fallback
 
-let { handlerType } = require("handlerType.nut")
+let {handlerType} = require("handlerType.nut")
 let { check_obj } = require("%sqDagui/daguiUtil.nut")
 let { handlersManager } = require("baseGuiHandlerManager.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
-
-let broadcastEvent = require("%sqStdLibs/helpers/subscriptions.nut").broadcast
-let checkObj = @(obj) obj != null && obj?.isValid()
 
 ::BaseGuiHandler <- class {
   wndType = handlerType.BASE
@@ -28,7 +25,8 @@ let checkObj = @(obj) obj != null && obj?.isValid()
   delayedActions = null
   rootHandlerWeak = null
 
-  constructor(gui_scene, params = {}) {
+  constructor(gui_scene, params = {})
+  {
     this.guiScene = gui_scene
     this.delayedActions = []
     this.subHandlers = []
@@ -40,24 +38,28 @@ let checkObj = @(obj) obj != null && obj?.isValid()
     this.setParams(params)
   }
 
-  function init() { //init handler after scene full loaded
+  function init() //init handler after scene full loaded
+  {
     this.loadNavBar()
     this.initScreen()
   }
 
-  function setParams(params) {
-    foreach (name, value in params)
+  function setParams(params)
+  {
+    foreach(name, value in params)
       if (name in this)
         this[name] = value
   }
 
-  function initCustomHandlerScene() {
+  function initCustomHandlerScene()
+  {
     if (!check_obj(this.scene))
       return false
 
     this.guiScene = this.scene.getScene()
 
-    if (this.sceneBlkName) {
+    if (this.sceneBlkName)
+    {
       this.guiScene.replaceContent(this.scene, this.sceneBlkName, this)
       return true
     }
@@ -65,7 +67,8 @@ let checkObj = @(obj) obj != null && obj?.isValid()
     return this.initHandlerSceneTpl()
   }
 
-  function initHandlerSceneTpl() {
+  function initHandlerSceneTpl()
+  {
     if (!this.sceneTplName)
       return false
 
@@ -89,17 +92,20 @@ let checkObj = @(obj) obj != null && obj?.isValid()
   function initScreen() {}
   function onDestroy()  {}
 
-  function isValid() {
+  function isValid()
+  {
     return check_obj(this.scene)
   }
 
-  function isInCurrentScene() {
+  function isInCurrentScene()
+  {
     return this.guiScene.isEqual(::get_cur_gui_scene())
   }
 
-  function loadNavBar() {
+  function loadNavBar()
+  {
     let markup = this.getNavbarMarkup()
-    if (!markup && !this.sceneNavBlkName)
+    if(!markup && !this.sceneNavBlkName)
       return
     let obj = this.scene.findObject("nav-help")
     if (!check_obj(obj))
@@ -113,21 +119,25 @@ let checkObj = @(obj) obj != null && obj?.isValid()
 
   function getNavbarMarkup() { return null }
 
-  function isSceneActive() {
+  function isSceneActive()
+  {
     return check_obj(this.scene) && this.scene.isEnabled()
   }
 
-  function isSceneActiveNoModals() {
+  function isSceneActiveNoModals()
+  {
     return this.isSceneActive() && this.scene.getModalCounter() == 0
   }
 
   //************** only for wndType == handlerType.ROOT *****************//
-  function getBaseHandlersContainer() {
+  function getBaseHandlersContainer()
+  {
     return null
   }
   function onNewContentLoaded(_handler) {}
 
-  function onEventNewSceneLoaded(_p) {
+  function onEventNewSceneLoaded(_p)
+  {
     if (this.wndType != handlerType.ROOT)
       return
 
@@ -136,25 +146,29 @@ let checkObj = @(obj) obj != null && obj?.isValid()
       this.onNewContentLoaded(handler)
   }
 
-  function getCurActiveContentHandler() {
+  function getCurActiveContentHandler()
+  {
     let handler = handlersManager.getActiveBaseHandler()
     return (handler && handler.rootHandlerClass == this.getclass()) ? handler : null
   }
   //************** end of only for wndType == handlerType.ROOT *****************//
 
-  function getObj(name) {
+  function getObj(name)
+  {
     if (!check_obj(this.scene))
       return null
     return this.scene.findObject(name)
   }
 
-  function showSceneBtn(id, status) {
-    let obj = checkObj(this.scene) ? this.scene.findObject(id) : ::get_cur_gui_scene()[id]
-    return ::show_obj(obj, status)
+  function showSceneBtn(id, status)
+  {
+    return ::showBtn(id, status, this.scene)
   }
 
-  function msgBox(id, text, buttons, def_btn, options = {}) {
-    for (local i = 0; i < ::gui_scene_boxes.len(); i++) {
+  function msgBox(id, text, buttons, def_btn, options = {})
+  {
+    for (local i = 0; i < ::gui_scene_boxes.len(); i++)
+    {
       if (::gui_scene_boxes[i].id == id)
         return null
     }
@@ -164,11 +178,13 @@ let checkObj = @(obj) obj != null && obj?.isValid()
     return ::scene_msg_box(id, this.guiScene, text, buttons, def_btn, options)
   }
 
-  function onMsgLink(obj) {
+  function onMsgLink(obj)
+  {
     ::open_url_by_obj(obj)
   }
 
-  function goForward(startFunc, needFade = true) {
+  function goForward(startFunc, needFade=true)
+  {
     if (!startFunc)
       return
 
@@ -178,20 +194,25 @@ let checkObj = @(obj) obj != null && obj?.isValid()
       startFunc()
   }
 
-  function fullReloadScene() {
+  function fullReloadScene()
+  {
     this.guiScene.performDelayed(this, @() handlersManager.startSceneFullReload())
   }
 
   function afterModalDestroy() {}
 
-  function onModalWndDestroy() {
+  function onModalWndDestroy()
+  {
     this.afterModalDestroy()
-    broadcastEvent("ModalWndDestroy", { handler = this })
+    ::broadcastEvent("ModalWndDestroy", { handler = this })
   }
 
-  function goBack() {
-    if (this.wndType == handlerType.MODAL) {
-      this.guiScene.performDelayed(this, function() {
+  function goBack()
+  {
+    if (this.wndType == handlerType.MODAL)
+    {
+      this.guiScene.performDelayed(this, function()
+      {
         handlersManager.destroyHandler(this)
         handlersManager.clearInvalidHandlers()
 
@@ -200,7 +221,8 @@ let checkObj = @(obj) obj != null && obj?.isValid()
       return
     }
 
-    if (this.wndType == handlerType.BASE && this.backSceneFunc != null) {
+    if (this.wndType == handlerType.BASE && this.backSceneFunc != null)
+    {
       if (this.needAnimatedSwitchScene)
         handlersManager.animatedSwitchScene(this.backSceneFunc)
       else
@@ -208,24 +230,28 @@ let checkObj = @(obj) obj != null && obj?.isValid()
     }
   }
 
-  function setBackSceneFunc(scene_func) {
+  function setBackSceneFunc(scene_func)
+  {
     this.backSceneFunc = scene_func
   }
 
-  function onSceneActivate(show) {
+  function onSceneActivate(show)
+  {
     if (show)
       this.popDelayedActions()
-    foreach (handler in this.subHandlers)
+    foreach(handler in this.subHandlers)
       if (handlersManager.isHandlerValid(handler))
         handler.onSceneActivate(show)
   }
 
   _isPopActionsInProgress = false
-  function popDelayedActions() {
+  function popDelayedActions()
+  {
     if (this._isPopActionsInProgress)
       return
     this._isPopActionsInProgress = true
-    while (this.delayedActions.len() > 0) {
+    while (this.delayedActions.len() > 0)
+    {
       if (!this.checkActiveForDelayedAction())
         break
 
@@ -238,22 +264,26 @@ let checkObj = @(obj) obj != null && obj?.isValid()
     this._isPopActionsInProgress = false
   }
 
-  function checkActiveForDelayedAction() {
+  function checkActiveForDelayedAction()
+  {
     return this.isSceneActiveNoModals()
   }
 
-  function doWhenActive(func) {
-    if (this.isSceneActiveNoModals()) {
+  function doWhenActive(func)
+  {
+    if (this.isSceneActiveNoModals())
+    {
       if (type(func) == "function")
         func()
       else
-        assert(false, $"doWhenActive recieved {func}, instead of function")
+        assert(false, "doWhenActive recieved " + func + ", instead of function")
     }
     else
       this.delayedActions.append(func)
   }
 
-  function doWhenActiveOnce(funcName) {
+  function doWhenActiveOnce(funcName)
+  {
     assert(type(funcName) == "string", "Error: doWhenActiveOnce work only with function names")
 
     let prevIdx = this.delayedActions.indexof(funcName)
@@ -263,7 +293,8 @@ let checkObj = @(obj) obj != null && obj?.isValid()
     this.popDelayedActions()
   }
 
-  function onEventModalWndDestroy(_params) {
+  function onEventModalWndDestroy(_params)
+  {
     if (this.isSceneActive())
       this.popDelayedActions()
   }
@@ -275,22 +306,25 @@ let checkObj = @(obj) obj != null && obj?.isValid()
    *   stateData = ... // Data to be used during handler state restore.
    * }
    */
-  function getHandlerRestoreData() {
+  function getHandlerRestoreData()
+  {
     return null
   }
 
   /**
    * Restores handler to state described in specified state data.
    */
-  function restoreHandler(_stateData) {
+  function restoreHandler(_stateData)
+  {
   }
 
-  function registerSubHandler(handler) {
+  function registerSubHandler(handler)
+  {
     if (!handlersManager.isHandlerValid(handler))
       return
 
     //clear outdated subHandlers
-    for (local i = this.subHandlers.len() - 1; i >= 0; i--)
+    for(local i = this.subHandlers.len() - 1; i >= 0; i--)
       if (!handlersManager.isHandlerValid(this.subHandlers[i]))
         this.subHandlers.remove(i)
 

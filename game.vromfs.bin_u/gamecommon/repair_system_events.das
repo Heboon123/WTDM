@@ -18,7 +18,7 @@ struct EventRepairSystemStartBotRepairTimer
 
 [cpp_event(unicast, with_scheme)]
 struct EventRepairSystemAllowPartRepair
-  packedPartId : uint
+  partId : int
   allow : bool
 
 [cpp_event(unicast, with_scheme)]

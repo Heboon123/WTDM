@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -21,8 +20,8 @@ let {
   haveDiscount = @() false,
   openIngameStore = @(...) false,
   canUseIngameShop = @(...) false
-} = isPlatformSony ? require("%scripts/onlineShop/ps4Shop.nut")
-  : isPlatformXboxOne ? require("%scripts/onlineShop/xboxShop.nut")
+} = isPlatformSony? require("%scripts/onlineShop/ps4Shop.nut")
+  : isPlatformXboxOne? require("%scripts/onlineShop/xboxShop.nut")
   : ::epic_is_running() ? require("%scripts/onlineShop/epicShop.nut")
   : null
 

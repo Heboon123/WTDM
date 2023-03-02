@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -83,7 +82,8 @@ let function getParamsFromSlotbarConfig(crew, slotbar) {
   }
 }
 
-local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
+local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT
+{
   wndType = handlerType.MODAL
   sceneBlkName = "%gui/slotbar/slotbarChooseAircraft.blk"
   slotbarWeak = null
@@ -118,7 +118,8 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
 
   isSelectByGroups = false
 
-  function initScreen() {
+  function initScreen()
+  {
     this.country = ::g_crews_list.get()[this.countryId].country
     this.curOptionsMasks = []
     this.filterOptionsList = this.getFilterOptionsList()
@@ -167,7 +168,8 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     this.showSceneBtn("choose_popup_menu", !this.isEmptyOptionsList || (needEmptyCrewButton && ::show_console_buttons) || this.hasGroupText())
   }
 
-  function reinitScreen(params = {}) {
+  function reinitScreen(params = {})
+  {
     if (checkObj(this.curClonObj))
       this.curClonObj.getScene().destroyElement(this.curClonObj)
     this.setParams(params)
@@ -175,7 +177,8 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     this.wasReinited = true
   }
 
-  function fillLegendData() {
+  function fillLegendData()
+  {
     this.legendData.clear()
     foreach (specType in ::g_crew_spec_type.types)
       if (specType != ::g_crew_spec_type.UNKNOWN)
@@ -183,7 +186,8 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     this.addLegendData("warningIcon", "#ui/gameuiskin#new_icon.svg", "#mainmenu/selectCrew/haveMoreQualified/tooltip")
   }
 
-  function fillLegend() {
+  function fillLegend()
+  {
     let haveLegend = !this.isEmptyOptionsList && this.legendData.len() > 0
     let legendNest = this.showSceneBtn("legend_nest", haveLegend)
     if (!haveLegend)
@@ -198,7 +202,8 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     this.guiScene.replaceContentFromText(legendNest, markup, markup.len(), this)
   }
 
-  function initAvailableUnitsArray() {
+  function initAvailableUnitsArray()
+  {
     this.unitsArray = this.sortUnitsList(this.unitsArray)
 
     this.unitsList = []
@@ -214,7 +219,8 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     return needEmptyCrewButton
   }
 
-  function sortUnitsList(units) {
+  function sortUnitsList(units)
+  {
     let ediff = this.getCurrentEdiff()
     let trained = getTblValue("trainedSpec", this.crew, {})
     let getSortSpecialization = @(unit) unit.name in trained ? trained[unit.name]
@@ -246,8 +252,9 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     return unitsSortArr.map(@(unit) unit.unit)
   }
 
-  function addLegendData(id, imagePath, locId) {
-    foreach (data in this.legendData)
+  function addLegendData(id, imagePath, locId)
+  {
+    foreach(data in this.legendData)
       if (id == data.id)
         return
 
@@ -258,16 +265,19 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     })
   }
 
-  function haveMoreQualifiedCrew(unit) {
+  function haveMoreQualifiedCrew(unit)
+  {
     let bestIdx = ::g_crew.getBestTrainedCrewIdxForUnit(unit, false, this.crew)
     return bestIdx >= 0 && bestIdx != this.crew.idInCountry
   }
 
   getTextSlotMarkup = @(id, text) ::build_aircraft_item(id, null, { emptyText = text })
 
-  function fillUnitsList() {
+  function fillUnitsList()
+  {
     let markupArr = []
-    foreach (_idx, unit in this.unitsList) {
+    foreach(_idx, unit in this.unitsList)
+    {
       local rowData = ""
       if (!::u.isInteger(unit))
         rowData = "unitCell {}"
@@ -288,11 +298,13 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     this.showMoreObj = tblObj.findObject("td_show_more")
   }
 
-  function onEmptyCrew() {
+  function onEmptyCrew()
+  {
     this.trainSlotAircraft(null)
   }
 
-  function onDoneSlotChoose(obj) {
+  function onDoneSlotChoose(obj)
+  {
     let row = obj.getValue()
     if (row < 0)
       return
@@ -302,7 +314,8 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
       return this.goToShop()
     if (unit == SEL_UNIT_BUTTON.EMPTY_CREW)
       return this.trainSlotAircraft(null) //empty slot
-    if (unit == SEL_UNIT_BUTTON.SHOW_MORE) {
+    if (unit == SEL_UNIT_BUTTON.SHOW_MORE)
+    {
       this.curVisibleSlots += this.slotsPerPage - 1 //need to all new slots be visible and current button also
       this.updateUnitsList()
       return
@@ -327,15 +340,18 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     this.trainSlotAircraft(unit)
   }
 
-  function goToShop() {
+  function goToShop()
+  {
     this.goBack()
-    if (this.slotbarWeak?.ownerWeak?.openShop) {
+    if (this.slotbarWeak?.ownerWeak?.openShop)
+    {
       let unit = this.getCrewUnit()
       this.slotbarWeak.ownerWeak.openShop(unit?.unitType)
     }
   }
 
-  function trainSlotAircraft(unit) {
+  function trainSlotAircraft(unit)
+  {
     let onFinishCb = Callback(this.onTakeProcessFinish, this)
     if (this.isSelectByGroups)
       setUnit({
@@ -347,15 +363,18 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
       ::CrewTakeUnitProcess(this.crew, unit, onFinishCb)
   }
 
-  function onTakeProcessFinish(_isSuccess) {
+  function onTakeProcessFinish(_isSuccess)
+  {
     this.goBack()
   }
 
-  function initChooseUnitsOptions() {
+  function initChooseUnitsOptions()
+  {
     this.curOptionsMasks.clear()
     this.optionsMaskByUnits.clear()
 
-    foreach (slot in this.unitsList) {
+    foreach(slot in this.unitsList)
+    {
       let unit = this.getSlotUnit(slot)
       if (!::u.isUnit(unit))
         continue
@@ -373,34 +392,38 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     }
   }
 
-  function fillChooseUnitsOptions() {
+  function fillChooseUnitsOptions()
+  {
     let locParams = {
       gameModeName = colorize("hotkeyColor", this.getGameModeNameFromParams(this.config))
       customListName = colorize("hotkeyColor", this.getCustomListNameFromParams(this.config))
     }
 
     let objOptionsNest = this.scene.findObject("choose_options_nest")
-    if (!checkObj(objOptionsNest))
+    if ( !checkObj(objOptionsNest) )
       return
 
     this.isEmptyOptionsList = true
     let view = { rows = [] }
-    foreach (idx, userOpt in this.filterOptionsList) {
+    foreach (idx, userOpt in this.filterOptionsList)
+    {
       let maskOption = ::get_option(userOpt)
       let singleOption = getTblValue("singleOption", maskOption, false)
-      if (singleOption) {
+      if (singleOption)
+      {
         // All bits but first are set to 1.
         maskOption.value = maskOption.value | ~1
         ::set_option(userOpt, maskOption.value)
       }
       let maskStorage = getTblValue(idx, this.curOptionsMasks, 0)
-      if ((maskOption.value & maskStorage) == 0) {
+      if ((maskOption.value & maskStorage) == 0)
+      {
         maskOption.value = maskStorage
         ::set_option(userOpt, maskOption.value)
       }
       let hideTitle = getTblValue("hideTitle", maskOption, false)
       let row = {
-        option_title = hideTitle ? "" : loc(maskOption.hint)
+        option_title = hideTitle ? "" : loc( maskOption.hint )
         option_id = maskOption.id
         option_idx = idx
         option_uid = userOpt
@@ -410,8 +433,9 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
       row.cb <- maskOption?.cb
 
       local countVisibleOptions = 0
-      foreach (idxItem, text in maskOption.items) {
-        let optionVisible = ((1 << idxItem) & maskStorage) != 0
+      foreach (idxItem, text in maskOption.items)
+      {
+        let optionVisible = ( (1 << idxItem) & maskStorage ) != 0
         if (optionVisible)
           countVisibleOptions++
         local name = text
@@ -436,7 +460,7 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     this.showSceneBtn("choose_options_header", !this.isEmptyOptionsList)
     this.showSceneBtn("filtered_units_text", !this.isEmptyOptionsList)
     let objChoosePopupMenu = this.scene.findObject("choose_popup_menu")
-    if (!checkObj(objChoosePopupMenu))
+    if ( !checkObj(objChoosePopupMenu) )
       return
 
     this.guiScene.setUpdatesEnabled(true, true)
@@ -446,7 +470,8 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     objChoosePopupMenu.side = ((objChoosePopupMenu.getPosRC()[0] + sizeChoosePopupMenu[0]) > scrWidth) ? "left" : "right"
   }
 
-  function getGameModeNameFromParams(params) {
+  function getGameModeNameFromParams(params)
+  {
     //same order as in is_unit_enabled_for_slotbar
     local event = ::events.getEvent(params?.eventId)
     if (!event && params?.roomCreationContext)
@@ -463,11 +488,13 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     return getTblValue("text", ::game_mode_manager.getCurrentGameMode(), "")
   }
 
-  function getCustomListNameFromParams(params) {
+  function getCustomListNameFromParams(params)
+  {
     return params?.customUnitsListName ?? ""
   }
 
-  function getCurrentEdiff() {
+  function getCurrentEdiff()
+  {
     if (this.config?.getEdiffFunc)
       return this.config.getEdiffFunc()
     if (this.slotbarWeak)
@@ -475,12 +502,14 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     return ::get_current_ediff()
   }
 
-  function onSelectedOptionChooseUnsapportedUnit(obj) {
+  function onSelectedOptionChooseUnsapportedUnit(obj)
+  {
     this.onSelectedOptionChooseUnit(obj)
     this.updateOptionShowUnsupportedForCustomList()
   }
 
-  function onSelectedOptionChooseUnit(obj) {
+  function onSelectedOptionChooseUnit(obj)
+  {
     if (!checkObj(obj) || !obj?.idx)
       return
 
@@ -495,7 +524,8 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     this.updateUnitsList()
   }
 
-  function updateOptionShowUnsupportedForCustomList() {
+  function updateOptionShowUnsupportedForCustomList()
+  {
     let modeOption = ::get_option(::USEROPT_BIT_CHOOSE_UNITS_SHOW_UNSUPPORTED_FOR_GAME_MODE)
     let customOption = ::get_option(::USEROPT_BIT_CHOOSE_UNITS_SHOW_UNSUPPORTED_FOR_CUSTOM_LIST)
 
@@ -504,7 +534,8 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
       return
 
     let isModeOptionChecked = modeOption.value & 1
-    if (!isModeOptionChecked) {
+    if (!isModeOptionChecked)
+    {
       let idx = this.filterOptionsList.indexof(::USEROPT_BIT_CHOOSE_UNITS_SHOW_UNSUPPORTED_FOR_GAME_MODE)
       let maskOptions = this.curOptionsMasks?[idx]
       if (maskOptions)
@@ -513,7 +544,8 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     customOptionObj.show(isModeOptionChecked)
   }
 
-  function showUnitSlot(objSlot, unit, isVisible) {
+  function showUnitSlot(objSlot, unit, isVisible)
+  {
     objSlot.show(isVisible)
     objSlot.inactive = isVisible ? "no" : "yes"
     if (!isVisible || objSlot.childrenCount())
@@ -551,7 +583,8 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     ::fill_unit_item_timers(objSlot.findObject(id), unit, unitItemParams)
   }
 
-  function updateUnitsList() {
+  function updateUnitsList()
+  {
     if (!checkObj(this.scene))
       return
 
@@ -572,7 +605,8 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     local firstHiddenUnitObj = null
     local needShowMoreButton = false
 
-    for (local i = 0; i < total; i++) {
+    for (local i = 0; i < total; i++)
+    {
       let objSlot = tblObj.getChild(i)
       if (!objSlot)
         continue
@@ -585,17 +619,18 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
       local isVisible = true
       if (masksUnit)
         for (local j = 0; j < lenghtOptions; j++)
-          if ((masksUnit[j] & optionMasks[j]) == 0)
+          if ( (masksUnit[j] & optionMasks[j]) == 0 )
             isVisible = false
 
-      if (isVisible) {
+      if (isVisible)
+      {
         isVisible = ++visibleAmount <= this.curVisibleSlots
         if (!isVisible)
-          if (visibleAmount == this.curVisibleSlots) {
+          if (visibleAmount == this.curVisibleSlots)
+          {
             firstHiddenUnit = unit
             firstHiddenUnitObj = objSlot
-          }
-          else
+          } else
             needShowMoreButton = true
       }
 
@@ -608,7 +643,8 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
 
     if (!needShowMoreButton && firstHiddenUnit)
       this.showUnitSlot(firstHiddenUnitObj, firstHiddenUnit, true)
-    if (this.showMoreObj) {
+    if (this.showMoreObj)
+    {
       this.showMoreObj.show(needShowMoreButton)
       this.showMoreObj.inactive = needShowMoreButton ? "no" : "yes"
       if (!isFirstPage && needShowMoreButton)
@@ -627,17 +663,20 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
       tblObj.setValue(selected)
   }
 
-  function onEventSetInQueue(_params) {
+  function onEventSetInQueue(_params)
+  {
     this.goBack()
   }
 
-  function getCrewUnit() {
+  function getCrewUnit()
+  {
     return this.isSelectByGroups
       ? this.config?.countryPresets[this.country].units[this.idInCountry]
       : ::g_crew.getCrewUnit(this.crew)
   }
 
-  function getSelectedGroup() {
+  function getSelectedGroup()
+  {
     if (!this.isSelectByGroups)
       return null
 
@@ -655,7 +694,8 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
   getFilterOptionsList = @() this.isSelectByGroups ? [] : defaultFilterOptions
   hasGroupText = @() this.isSelectByGroups
 
-  function updateUnitsGroupText(unit = null) {
+  function updateUnitsGroupText(unit = null)
+  {
     let isVisibleGroupText = this.hasGroupText()
     let unitsGroupTextObj = this.showSceneBtn("units_group_text", isVisibleGroupText)
     if (!isVisibleGroupText)
@@ -670,7 +710,8 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     unitsGroupTextObj.setValue("\n".join(textArray, true))
   }
 
-  function onSlotSelect(obj) {
+  function onSlotSelect(obj)
+  {
     let row = obj.getValue()
     if (row < 0)
       return

@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -7,7 +6,7 @@ from "%scripts/dagui_library.nut" import *
 let screenInfo = require("%scripts/options/screenInfo.nut")
 let { isPlatformSony } = require("%scripts/clientState/platform.nut")
 let sony = require("sony")
-let { is_stereo_mode } = require("vr")
+let { is_stereo_mode } = require_native("vr")
 let { useTouchscreen } = require("%scripts/clientState/touchScreen.nut")
 
 let defValue  = 1.0
@@ -31,7 +30,8 @@ let getFixedValue = @() //return -1 when not fixed
   : useTouchscreen ? 0.9
   : -1
 
-let getValue = function() {
+let getValue = function()
+{
   let value = getFixedValue()
   if (value != -1)
     return value
@@ -42,7 +42,8 @@ let getValue = function() {
   return ::get_option_hud_screen_safe_area()
 }
 
-local setValue = function(value) {
+local setValue = function(value)
+{
   if (!::g_login.isAuthorized())
     return
 

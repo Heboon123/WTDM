@@ -1,9 +1,6 @@
-local argv = require_optional("dagor.system")?.argv ?? ::__argv
-
-
 let function get_arg_value_by_name(name){
   name = $"-{name}"
-  foreach (a in argv){
+  foreach (a in __argv){
     let l = name.len()
     if (a.slice(0,l) == name){
       if (a.len() > l)

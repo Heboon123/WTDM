@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -11,7 +10,8 @@ let { GUI } = require("%scripts/utils/configs.nut")
 let cache = persist("cache", @() {})
 let function clearCache() {
   cache.clear()
-  foreach (id in ["guid", "xbox", ps4RegionName(), "epic"]) {
+  foreach (id in ["guid", "xbox", ps4RegionName(), "epic"])
+  {
     cache[id] <- {}
     cache[$"inv_{id}"] <- {}
   }
@@ -19,8 +19,10 @@ let function clearCache() {
 clearCache()
 
 let function getBundlesList(blockName) {
-  if (!cache[blockName].len()) {
-    if (!(blockName in cache)) {
+  if (!cache[blockName].len())
+  {
+    if (!(blockName in cache))
+    {
       ::script_net_assert_once($"not exist bundles block {blockName} in cache", $"Don't exist requested bundles block {blockName} in cache")
       return ""
     }
@@ -48,11 +50,13 @@ let function getCachedEntitlementId(blockName, bundleName) {
 
   let invBlockName = $"inv_{blockName}"
 
-  if (!(bundleName in cache[invBlockName])) {
+  if (!(bundleName in cache[invBlockName]))
+  {
     cache[invBlockName][bundleName] <- ""
     let list = getBundlesList(blockName)
     foreach (entId, bndlId in list)
-      if (bndlId == bundleName) {
+      if (bndlId == bundleName)
+      {
         cache[invBlockName][bundleName] = entId
         break
       }

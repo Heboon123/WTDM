@@ -51,6 +51,8 @@ popup_menu {
         position:t='relative'
         on_select:t='onSelect'
         on_cancel_edit:t='onSelect'
+        optType:t='<<optType>>'
+        isEmptyDefault:t='<<isEmptyDefault>>'
         <<@options>>
       }
     }

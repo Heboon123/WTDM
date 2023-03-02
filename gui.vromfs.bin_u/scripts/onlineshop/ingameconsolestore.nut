@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -50,7 +49,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
   hoverHoldAction = null
   isMouseMode = true
 
-  function initScreen() {
+  function initScreen()
+  {
     this.updateMouseMode()
     this.updateShowItemButton()
     let infoObj = this.scene.findObject("item_info")
@@ -67,7 +67,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     this.moveMouseToMainList()
   }
 
-  function reinitScreen(params) {
+  function reinitScreen(params)
+  {
     this.itemsCatalog = params?.itemsCatalog
     this.curItem = params?.curItem ?? this.curItem
     this.itemsListValid = false
@@ -75,19 +76,23 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     this.moveMouseToMainList()
   }
 
-  function fillItemsList() {
+  function fillItemsList()
+  {
     this.initNavigation()
     this.initSheets()
   }
 
-  function initSheets() {
-    if (!this.sheetsArray.len() && this.isLoadingInProgress) {
+  function initSheets()
+  {
+    if (!this.sheetsArray.len() && this.isLoadingInProgress)
+    {
       this.fillPage()
       return
     }
 
     this.navItems = []
-    foreach (idx, sh in this.sheetsArray) {
+    foreach(idx, sh in this.sheetsArray)
+    {
       if (this.curSheetId && this.curSheetId == sh.categoryId)
         this.curSheet = sh
 
@@ -117,7 +122,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     this.applyFilters()
   }
 
-  function initNavigation() {
+  function initNavigation()
+  {
     let handler = ::handlersManager.loadHandler(
       ::gui_handlers.navigationPanel,
       { scene                  = this.scene.findObject("control_navigation")
@@ -145,7 +151,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     this.curSheet = newSheet
     this.itemsListValid = false
 
-    if (obj?.subsetId) {
+    if (obj?.subsetId)
+    {
       this.subsetList = this.curSheet.getSubsetsListParameters().subsetList
       this.curSubsetId = this.initSubsetId ?? obj.subsetId
       this.initSubsetId = null
@@ -155,7 +162,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     this.applyFilters()
   }
 
-  function onItemClickCb(obj) {
+  function onItemClickCb(obj)
+  {
     if (!obj?.isCollapsable || !this.navigationHandlerWeak)
       return
 
@@ -163,21 +171,23 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     let subsetId = this.curSubsetId
     this.navigationHandlerWeak.onCollapse(collapseBtnObj)
     if (collapseBtnObj.getParent().collapsed == "no")
-      this.getSheetsListObj().setValue( //set selection on chapter item if not found item with subsetId just in case to avoid crash
+      this.getSheetsListObj().setValue(//set selection on chapter item if not found item with subsetId just in case to avoid crash
         ::u.search(this.navItems, @(item) item?.subsetId == subsetId)?.idx ?? obj.idx)
   }
 
   function recalcCurPage() {
-    let lastIdx = this.itemsList.findindex(function(item) { return item.id == this.curItem?.id }.bindenv(this)) ?? -1
+    let lastIdx = this.itemsList.findindex(function(item) { return item.id == this.curItem?.id}.bindenv(this)) ?? -1
     if (lastIdx > 0)
       this.curPage = this.getPageNum(lastIdx)
     else if (this.curPage * this.itemsPerPage > this.itemsList.len())
       this.curPage = max(0, this.getPageNum(this.itemsList.len() - 1))
   }
 
-  function applyFilters() {
+  function applyFilters()
+  {
     this.initItemsListSizeOnce()
-    if (!this.itemsListValid) {
+    if (!this.itemsListValid)
+    {
       this.itemsListValid = true
       this.loadCurSheetItemsList()
       this.updateSortingList()
@@ -187,19 +197,22 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     this.fillPage()
   }
 
-  function fillPage() {
+  function fillPage()
+  {
     let view = { items = [], hasFocusBorder = true, onHover = "onItemHover" }
 
-    if (!this.isLoadingInProgress) {
+    if (!this.isLoadingInProgress)
+    {
       let pageStartIndex = this.curPage * this.itemsPerPage
       let pageEndIndex = min((this.curPage + 1) * this.itemsPerPage, this.itemsList.len())
-      for (local i = pageStartIndex; i < pageEndIndex; i++) {
+      for (local i=pageStartIndex; i < pageEndIndex; i++)
+      {
         let item = this.itemsList[i]
         if (!item)
           continue
         view.items.append(item.getViewData({
           itemIndex = i.tostring(),
-          unseenIcon = item.canBeUnseen() ? null : bhvUnseen.makeConfigStr(this.seenEnumId, item.getSeenId())
+          unseenIcon = item.canBeUnseen()? null : bhvUnseen.makeConfigStr(this.seenEnumId, item.getSeenId())
         }))
       }
     }
@@ -227,13 +240,14 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     else {
       this.recalcCurPage()
       ::generatePaginator(this.scene.findObject("paginator_place"), this,
-        this.curPage, this.getPageNum(this.itemsList.len() - 1), null, true /*show last page*/ )
+        this.curPage, this.getPageNum(this.itemsList.len() - 1), null, true /*show last page*/)
     }
 
     if (!this.itemsList?.len() && this.sheetsArray.len())
       this.focusSheetsList()
 
-    if (!this.isLoadingInProgress) {
+    if (!this.isLoadingInProgress)
+    {
       let value = this.findLastValue(prevValue)
       if (value >= 0)
         listObj.setValue(value)
@@ -242,7 +256,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
   focusSheetsList = @() ::move_mouse_on_child_by_value(this.getSheetsListObj())
 
-  function findLastValue(prevValue) {
+  function findLastValue(prevValue)
+  {
     let offset = this.curPage * this.itemsPerPage
     let total = clamp(this.itemsList.len() - offset, 0, this.itemsPerPage)
     if (!total)
@@ -250,7 +265,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
     local res = clamp(prevValue, 0, total - 1)
     if (this.curItem)
-      for (local i = 0; i < total; i++) {
+      for(local i = 0; i < total; i++)
+      {
         let item = this.itemsList[offset + i]
         if (this.curItem.id != item.id)
           continue
@@ -259,14 +275,16 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     return res
   }
 
-  function goToPage(obj) {
+  function goToPage(obj)
+  {
     this.markCurrentPageSeen()
     this.curItem = null
     this.curPage = obj.to_page.tointeger()
     this.fillPage()
   }
 
-  function onItemAction(buttonObj) {
+  function onItemAction(buttonObj)
+  {
     let id = buttonObj?.holderId
     if (id == null)
       return
@@ -274,11 +292,13 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     this.onShowDetails(item)
   }
 
-  function onMainAction(_obj) {
+  function onMainAction(_obj)
+  {
     this.onShowDetails()
   }
 
-  function onAltAction(_obj) {
+  function onAltAction(_obj)
+  {
     let item = this.getCurItem()
     if (!item)
       return
@@ -286,7 +306,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     item.showDescription()
   }
 
-  function onShowDetails(item = null) {
+  function onShowDetails(item = null)
+  {
     item = item || this.getCurItem()
     if (!item)
       return
@@ -294,12 +315,14 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     item.showDetails()
   }
 
-  function onNavCollapseCb (isCollapsed) {
+  function onNavCollapseCb (isCollapsed)
+  {
     this.isNavCollapsed = isCollapsed
     this.applyFilters()
   }
 
-  function initItemsListSizeOnce() {
+  function initItemsListSizeOnce()
+  {
     let listObj = this.getItemsListObj()
     let emptyListObj = this.scene.findObject("empty_items_list")
     let infoObj = this.scene.findObject("item_info_nest")
@@ -322,17 +345,19 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     emptyListObj.left = leftPos
     infoObj.left = leftPos
     infoObj.width = "fw"
-    this.itemsPerPage = (itemsCountX * itemsCountY).tointeger()
+    this.itemsPerPage = (itemsCountX * itemsCountY ).tointeger()
   }
 
-  function onChangeSortParam(obj) {
+  function onChangeSortParam(obj)
+  {
     let val = ::get_obj_valid_index(obj)
     this.lastSorting = val < 0 ? 0 : val
     this.updateSorting()
     this.applyFilters()
   }
 
-  function updateSortingList() {
+  function updateSortingList()
+  {
     let obj = this.scene.findObject("sorting_block_bg")
     if (!checkObj(obj))
       return
@@ -343,7 +368,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
       btnName = "Y"
       funcName = "onChangeSortParam"
       values = this.curSheet?.sortParams.map(@(p, idx) {
-        text = "{0} ({1})".subst(loc($"items/sort/{p.param}"), loc(p.asc ? "items/sort/ascending" : "items/sort/descending"))
+        text = "{0} ({1})".subst(loc($"items/sort/{p.param}"), loc(p.asc? "items/sort/ascending" : "items/sort/descending"))
         isSelected = curVal == idx
       }) ?? []
     }
@@ -353,7 +378,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     this.getSortListObj().setValue(curVal)
   }
 
-  function updateSorting() {
+  function updateSorting()
+  {
     if (!this.curSheet)
       return
 
@@ -365,15 +391,18 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     }.bindenv(this))
   }
 
-  function sortOrder(a, b, isAscendingSort, sortParam, sortSubParam) {
-    return (isAscendingSort ? 1 : -1) * (a[sortParam] <=> b[sortParam]) || a[sortSubParam] <=> b[sortSubParam]
+  function sortOrder(a, b, isAscendingSort, sortParam, sortSubParam)
+  {
+    return (isAscendingSort? 1: -1) * (a[sortParam] <=> b[sortParam]) || a[sortSubParam] <=> b[sortSubParam]
   }
 
-  function getSortParam() {
+  function getSortParam()
+  {
     return this.curSheet?.sortParams[this.getSortListObj().getValue()]
   }
 
-  function markCurrentPageSeen() {
+  function markCurrentPageSeen()
+  {
     if (!this.itemsList)
       return
 
@@ -386,7 +415,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     this.seenList.markSeen(list)
   }
 
-  function updateItemInfo() {
+  function updateItemInfo()
+  {
     let item = this.getCurItem()
     this.fillItemInfo(item)
     this.showSceneBtn("jumpToDescPanel", ::show_console_buttons && item != null)
@@ -399,7 +429,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     this.markItemSeen(item)
   }
 
-  function fillItemInfo(item) {
+  function fillItemInfo(item)
+  {
     let descObj = this.scene.findObject("item_info")
 
     local obj = null
@@ -423,7 +454,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     this.guiScene.replaceContentFromText(obj, imageData, imageData.len(), this)
   }
 
-  function getPriceBlock(item) {
+  function getPriceBlock(item)
+  {
     if (item?.isBought)
       return ""
     //Generate price string as PSN requires and return blk format to replace it.
@@ -437,14 +469,16 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     return isButtonsVisible
   }
 
-  function updateButtons() {
+  function updateButtons()
+  {
     if (!this.updateButtonsBar())
       return
 
     let item = this.getCurItem()
     let showMainAction = item != null && !item.isBought
     let buttonObj = this.showSceneBtn("btn_main_action", showMainAction)
-    if (showMainAction) {
+    if (showMainAction)
+    {
       buttonObj.visualStyle = "secondary"
       setColoredDoubleTextToButton(this.scene, "btn_main_action", loc(this.storeLocId))
     }
@@ -457,12 +491,14 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     this.showSceneBtn("warning_text", showSecondAction)
   }
 
-  function markItemSeen(item) {
+  function markItemSeen(item)
+  {
     if (item)
       this.seenList.markSeen(item.getSeenId())
   }
 
-  function getCurItem() {
+  function getCurItem()
+  {
     if (this.isLoadingInProgress)
       return null
 
@@ -473,7 +509,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     return this.itemsList?[obj.getValue() + this.curPage * this.itemsPerPage]
   }
 
-  function getCurItemObj() {
+  function getCurItemObj()
+  {
     let itemListObj = this.getItemsListObj()
     let value = ::get_obj_valid_index(itemListObj)
     if (value < 0)
@@ -499,22 +536,26 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
   getItemsListObj = @() this.scene.findObject("items_list")
   moveMouseToMainList = @() ::move_mouse_on_child_by_value(this.getItemsListObj())
 
-  function goBack() {
+  function goBack()
+  {
     this.markCurrentPageSeen()
     base.goBack()
   }
 
-  function afterModalDestroy() {
+  function afterModalDestroy()
+  {
     if (this.afterCloseFunc)
       this.afterCloseFunc()
   }
 
-  function onItemsListFocusChange() {
+  function onItemsListFocusChange()
+  {
     if (this.isValid())
       this.updateItemInfo()
   }
 
-  function onJumpToDescPanelAccessKey(_obj) {
+  function onJumpToDescPanelAccessKey(_obj)
+  {
     if (!::show_console_buttons)
       return
     let containerObj = this.scene.findObject("item_info")

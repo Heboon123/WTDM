@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -50,7 +49,7 @@ let function addStageConfigWithRewardToList(stagesArray, unlock, stageIdx, stage
       prizeStatus = isChallengeStage && stage <= seasonLevel.value ? "received"
         : getPrizeStatus(unlock, stageIdx)
       warbondsShopLevel = warbondsShopLevelByStages.value?[stage.tostring()]
-      stageChallenge = stageChallenge
+      stageChallenge =stageChallenge
     }))
   }
 }
@@ -60,8 +59,8 @@ let seasonStages = Computed(function() {
     premiumUnlock.value?.stages?.len() ?? 0,
     seasonLevel.value + COUNT_OF_VISIBLE_INCOMPLETED_LOOP_STAGES)
   let res = []
-  for (local i = 0; i < stagesCount; i++) {
-    let stageChallenge = curSeasonChallengesByStage.value?[i + 1]
+  for(local i=0; i < stagesCount; i++) {
+    let stageChallenge = curSeasonChallengesByStage.value?[i+1]
     addStageConfigWithRewardToList(res, basicUnlock.value, i, stageChallenge)
     addStageConfigWithRewardToList(res, premiumUnlock.value, i)
   }

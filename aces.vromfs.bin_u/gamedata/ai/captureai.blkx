@@ -1535,44 +1535,9 @@
   },
   {
     "selector": {
-      "name": "shipMissionUnit",
-      "selectStrategy": "ordered",
-      "selector": [
-        {
-          "selectStrategy": "ordered"
-        },
-        {
-          "selectOnSuccess": true
-        },
-        {
-          "sequencer": {
-            "findShipLeader": [],
-            "followShipLeader": []
-          }
-        },
-        {
-          "sequencer": {
-            "doesntHaveLeader": [],
-            "selector": {
-              "selectStrategy": "ordered",
-              "selectOnSuccess": true,
-              "transferLeader": [],
-              "findNextShipWaypoint": [],
-              "checkIfShipHasDestination": [],
-              "recalculatePathToTarget": []
-            },
-            "shipSail": []
-          }
-        }
-      ],
-      "stopShipEngine": []
-    }
-  },
-  {
-    "parallel": {
       "name": "shipBot",
-      "selector": {
-        "selectStrategy": "ordered",
+      "selectStrategy": "ordered",
+      "parallel": {
         "selector": [
           {
             "selectStrategy": "ordered"
@@ -1604,12 +1569,19 @@
             }
           }
         ],
-        "stopShipEngine": []
+        "sendSupportAircraft": {
+          "timeOutRange": [10.0,30.0],
+          "attackersPerTargetMax": 1,
+          "attacksMax": 3
+        }
       },
-      "sendSupportAircraft": {
-        "timeOutRange": [10.0,30.0],
-        "attackersPerTargetMax": 1,
-        "attacksMax": 3
+      "sequencer": {
+        "stopShipEngine": [],
+        "sendSupportAircraft": {
+          "timeOutRange": [10.0,30.0],
+          "attackersPerTargetMax": 1,
+          "attacksMax": 3
+        }
       }
     }
   }

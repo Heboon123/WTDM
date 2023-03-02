@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -10,7 +9,8 @@ let visibleConditionsList = {
   isNotInClan = @() !::is_in_clan()
 }
 
-let function isVisibleByConditions(blk) {
+let function isVisibleByConditions(blk)
+{
   let visibleConditions = blk?.visibleConditions
   if (visibleConditions == null)
     return true

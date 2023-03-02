@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -6,9 +5,9 @@ from "%scripts/dagui_library.nut" import *
 #explicit-this
 
 let BaseItemModClass = require("%scripts/items/itemsClasses/itemModBase.nut")
-let DataBlock  = require("DataBlock")
 
-::items_classes.ModOverdrive <- class extends BaseItemModClass {
+::items_classes.ModOverdrive <- class extends BaseItemModClass
+{
   static iType = itemType.MOD_OVERDRIVE
   static defaultLocId = "modOverdrive"
   static defaultIcon = "#ui/gameuiskin#overdrive_upgrade_bg.png"
@@ -18,7 +17,8 @@ let DataBlock  = require("DataBlock")
   allowBigPicture = false
   isActiveOverdrive = false
 
-  constructor(blk, invBlk = null, slotData = null) {
+  constructor(blk, invBlk = null, slotData = null)
+  {
     base.constructor(blk, invBlk, slotData)
 
     this.isActiveOverdrive = slotData?.isActive ?? false
@@ -30,7 +30,8 @@ let DataBlock  = require("DataBlock")
 
   getIconMainLayer = @() ::LayersIcon.findLayerCfg("mod_overdrive")
 
-  function getMainActionData(isShort = false, params = {}) {
+  function getMainActionData(isShort = false, params = {})
+  {
     if (this.amount && this.canActivate())
       return {
         btnName = loc("item/activate")
@@ -39,13 +40,15 @@ let DataBlock  = require("DataBlock")
     return base.getMainActionData(isShort, params)
   }
 
-  function doMainAction(cb, handler, params = null) {
+  function doMainAction(cb, handler, params = null)
+  {
     if (this.canActivate())
       return this.activate(cb, handler)
     return base.doMainAction(cb, handler, params)
   }
 
-  function activate(cb, _handler = null) {
+  function activate(cb, _handler = null)
+  {
     let uid = this.uids?[0]
     if (uid == null)
       return false
@@ -57,7 +60,7 @@ let DataBlock  = require("DataBlock")
       ::broadcastEvent("OverdriveActivated")
     }
 
-    let blk = DataBlock()
+    let blk = ::DataBlock()
     blk.uid = uid
     let taskId = ::char_send_blk("cln_activate_mod_overdrive_item", blk)
     return ::g_tasker.addTask(

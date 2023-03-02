@@ -18,8 +18,6 @@ def isExpressionType ( _vinfo )
     if _vinfo.basicType != Type tPointer || _vinfo.firstType == null
         return false
     let vinfo = _vinfo.firstType
-    if vinfo.basicType != Type tHandle
-        return false
     if vinfo.annotation._module.name!="ast"
         return false
     if !string(vinfo.annotation.name) |> starts_with("Expr")
@@ -61,13 +59,11 @@ def describe_arg ( var ctxid:Context; vinfo; arg:void? ) : void
         elif isRttiType(vinfo,"AnnotationArgumentList")
             report_to_debugger(ctxid, "ast_debug", vinfo.name, describe(*reinterpret<AnnotationArgumentList?> arg))
             return
-        let parg = reinterpret<void??> arg
-        if parg==null || *parg==null
+        if *reinterpret<void??> arg == null
             report_to_debugger(ctxid, "ast_debug", vinfo.name, null)
             return
         if isExpressionType(vinfo)
             report_to_debugger(ctxid, "ast_debug", vinfo.name, describe(*reinterpret<ExpressionPtr?> arg))
-            report_to_debugger(ctxid, "ast_debug", vinfo.name+".detailed", debug_expression(*reinterpret<ExpressionPtr?> arg))
         elif isAstPtrType(vinfo,"TypeDecl")
             report_to_debugger(ctxid, "ast_debug", vinfo.name, describe(*reinterpret<TypeDeclPtr?> arg))
         elif isAstPtrType(vinfo,"Function")
@@ -86,13 +82,7 @@ class SampleStackWalker : DapiStackWalker
         else
             describe_arg(*ctxid,vinfo,unsafe(addr(arg)))
     def override onVariable ( inf:FuncInfo; vinfo:LocalVariableInfo; arg:void?; inScope:bool ) : void
-        if !inScope
-            return
-        if vinfo.flags.ref || vinfo.flags.refType
-            unsafe
-                describe_arg(*ctxid,vinfo,* reinterpret<void??>(arg))
-        else
-            describe_arg(*ctxid,vinfo,arg)
+        describe_arg(*ctxid,vinfo,arg)
     def override onAfterCall ( pp:Prologue ) : bool
         return false    // only stack top
 
@@ -108,6 +98,12 @@ class ContextStateAgent : DapiDebugAgent
             delete walker_adapter
             delete walker
     def override onCollect(var ctx:Context; at:LineInfo)
+        walker.ctxid = unsafe(addr(ctx))
+        walk_stack(walker_adapter,ctx,at)
+    def override onBreakpoint ( var ctx:Context; at:LineInfo; reason,text:string ) : void
+        walker.ctxid = unsafe(addr(ctx))
+        walk_stack(walker_adapter,ctx,at)
+    def override onSingleStep ( var ctx:Context; at:LineInfo ) : void
         walker.ctxid = unsafe(addr(ctx))
         walk_stack(walker_adapter,ctx,at)
 

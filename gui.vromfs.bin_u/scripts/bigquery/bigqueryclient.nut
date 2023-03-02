@@ -1,19 +1,19 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 #strict
 #allow-root-table
 let ww_leaderboard = require("ww_leaderboard")
 let { get_local_unixtime   } = require("dagor.time")
-let { rnd                  } = require("dagor.random")
+let { grnd                 } = require("dagor.random")
 let { format               } = require("string")
 let { to_string            } = require("json")
 let { getDistr             } = require("auth_wt")
 let { get_user_system_info } = require("sysinfo")
 
-local bqStat = persist("bqStat", @() { sendStartOnce = false })
+local bqStat = persist("bqStat", @(){sendStartOnce=false})
 
 
-let function get_distr() {
+let function get_distr()
+{
   local distr = getDistr()
   if (distr.len() > 0)
     return distr
@@ -25,11 +25,13 @@ let function get_distr() {
 }
 
 
-let function add_sysinfo(table) {
+let function add_sysinfo(table)
+{
   let sysinfo = get_user_system_info()
 
   local uuid = ""
-  foreach (u in ["uuid0", "uuid2"]) {  // biosUuid, systemHddId
+  foreach (u in ["uuid0", "uuid2"])  // biosUuid, systemHddId
+  {
     local str = sysinfo?[u] ?? ""
     str = str.slice(str.len() / 2)
     uuid = $"{uuid}{str}"
@@ -49,7 +51,8 @@ let function add_sysinfo(table) {
 }
 
 
-let function add_user_info(table) {
+let function add_user_info(table)
+{
   add_sysinfo(table)
 
   let distr = get_distr()
@@ -75,7 +78,8 @@ let function add_user_info(table) {
 }
 
 
-let function bq_client_noa(event, uniqueId, table) {
+let function bq_client_noa(event, uniqueId, table)
+{
   add_user_info(table)
   let params  = to_string(table)
   let request =
@@ -92,30 +96,33 @@ let function bq_client_noa(event, uniqueId, table) {
     data = {}
   }
 
-  ww_leaderboard.request(request, function(_response) {})  // cloud-server
+  ww_leaderboard.request(request, function(_response){})  // cloud-server
   log($"BQ CLIENT_NOA {event} {params} [{uniqueId}]")
 }
 
 
-let function bqSendStart() {  // NOTE: call after 'reset PlayerProfile' in log
+let function bqSendStart()  // NOTE: call after 'reset PlayerProfile' in log
+{
   if (bqStat.sendStartOnce)
     return
 
   local blk = ::get_common_local_settings_blk()
 
-  if ("uniqueId" not in blk || type(blk.uniqueId) != "string" || blk.uniqueId.len() < 16) {
-    blk.uniqueId <- format("%.8X%.8X", get_local_unixtime(), rnd() * rnd())
+  if ("uniqueId" not in blk || type(blk.uniqueId) != "string" || blk.uniqueId.len() < 16)
+  {
+    blk.uniqueId <- format("%.8X%.8X", get_local_unixtime(), grnd()*grnd())
     assert(blk.uniqueId.len() == 16)
   }
 
-  if ("runCount" not in blk || type(blk.runCount) != "integer" || blk.runCount < 0) {
+  if ("runCount" not in blk || type(blk.runCount) != "integer" || blk.runCount < 0)
+  {
     blk.runCount <- 0;
   }
   blk.runCount += 1
 
   ::save_common_local_settings()
 
-  local table = { "run" : blk.runCount }
+  local table = {"run": blk.runCount}
   if (blk?.autologin == true)
     table.auto <- true
 
@@ -125,7 +132,8 @@ let function bqSendStart() {  // NOTE: call after 'reset PlayerProfile' in log
 }
 
 
-let function bqSendLoginState(table) {
+let function bqSendLoginState(table)
+{
   let blk = ::get_common_local_settings_blk()
 
   table.uniq <- blk?.uniqueId ?? ""

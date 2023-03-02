@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -12,7 +11,7 @@ let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 let nameMapping = Watched(null)
 
-local resetNameMapping = @() nameMapping({ f = {}, r = {} })
+local resetNameMapping = @() nameMapping({f = {}, r = {}})
 resetNameMapping()
 
 addListenersWithoutEnv({

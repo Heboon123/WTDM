@@ -30,13 +30,14 @@ de4workMode.subscribe(function(v) {
   set_setting_by_blk_path?(SETTING_EDITOR_WORKMODE, v ?? "")
   save_settings?()
 })
-
-let initWorkModes = function(modes, defMode=null) {
+let initWorkModes = function(modes) {
   de4workModes(modes ?? [""])
-  let good_mode = modes.contains(defMode) ? defMode : modes?[0] ?? ""
-  let last_mode = get_setting_by_blk_path?(SETTING_EDITOR_WORKMODE) ?? good_mode
-  let mode_to_set = modes.contains(last_mode) ? last_mode : good_mode
-  de4workMode(mode_to_set)
+  local good_mode = modes?[0] ?? ""
+  local last_mode = get_setting_by_blk_path?(SETTING_EDITOR_WORKMODE) ?? good_mode
+  foreach(mode in modes)
+    if (last_mode == mode)
+      good_mode = mode
+  de4workMode(good_mode)
 }
 
 let proceedWithSavingUnsavedChanges = function(showMsgbox, callback, unsavedText=null, proceedText=null) {

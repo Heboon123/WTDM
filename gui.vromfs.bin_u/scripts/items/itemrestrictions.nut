@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -16,7 +15,8 @@ let countryCodeToLocId = {
 }
 
 // restrictedInCountries - array of countries codes
-let function hasLegalRestictions(restrictedInCountries) {
+let function hasLegalRestictions(restrictedInCountries)
+{
   if (restrictedInCountries.len() == 0)
     return false
 
@@ -24,13 +24,16 @@ let function hasLegalRestictions(restrictedInCountries) {
   return restrictedInCountries.findindex(@(c) c == userCountry) != null
 }
 
-let function showLegalRestrictionsNotice() {
+let function showLegalRestrictionsNotice()
+{
   ::scene_msg_box("legalRestrictionsNotice", null, loc("msgbox/legalRestrictionsNotice"),
     [["ok"]], "ok")
 }
 
-let function getCountryName(countryCode) {
-  if (countryCode not in countryCodeToLocId) {
+let function getCountryName(countryCode)
+{
+  if (countryCode not in countryCodeToLocId)
+  {
     ::script_net_assert_once("Legal restrictions: unsupported country code",
       $"Random rewards functionality is limited in {countryCode}, but no loc key was defined")
     return ""
@@ -44,11 +47,13 @@ let function getCountryName(countryCode) {
   return res
 }
 
-let function checkLegalRestrictions(restrictedInCountries, onSuccessCb) {
+let function checkLegalRestrictions(restrictedInCountries, onSuccessCb)
+{
   if (!hasLegalRestictions(restrictedInCountries))
     return onSuccessCb()
 
-  if (legalRestrictionsChecked.value) {
+  if (legalRestrictionsChecked.value)
+  {
     if (isPurchaseAllowed.value)
       return onSuccessCb()
 

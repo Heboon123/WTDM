@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -6,7 +5,8 @@ from "%scripts/dagui_library.nut" import *
 #explicit-this
 
 let enums = require("%sqStdLibs/helpers/enums.nut")
-enum PRESENCE_SORT {
+enum PRESENCE_SORT
+{
   UNKNOWN
   OFFLINE
   ONLINE

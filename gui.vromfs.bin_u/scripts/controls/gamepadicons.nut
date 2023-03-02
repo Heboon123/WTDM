@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -75,8 +74,8 @@ let btnNameByIndex = [
   "dirpad_right"  //  3 JOY_XBOX_REAL_BTN_D_RIGHT
   "button_start"  //  4 JOY_XBOX_REAL_BTN_START // PS4 Options
   "button_back"   //  5 JOY_XBOX_REAL_BTN_BACK  // PS4 Touchscreen Press
-  "l_stick_pressed" //  6 JOY_XBOX_REAL_BTN_L_THUMB
-  "r_stick_pressed" //  7 JOY_XBOX_REAL_BTN_R_THUMB
+  "l_stick_pressed"//  6 JOY_XBOX_REAL_BTN_L_THUMB
+  "r_stick_pressed"//  7 JOY_XBOX_REAL_BTN_R_THUMB
   "l_shoulder"    //  8 JOY_XBOX_REAL_BTN_L_SHOULDER
   "r_shoulder"    //  9 JOY_XBOX_REAL_BTN_R_SHOULDER
   "table_plays_icon" // 10 JOY_XBOX_REAL_BTN_0X0400
@@ -156,19 +155,21 @@ let getTexture = @(id, preset = curPreset) (id in controlsList) ? preset + id + 
 let getTextureByButtonIdx = @(idx) getTexture(btnNameByIndex?[idx])
 
 local cssString = null
-let getCssString = function() {
+let getCssString = function()
+{
   if (cssString)
     return cssString
 
   cssString = ""
-  foreach (name, _value in controlsList)
+  foreach(name, _value in controlsList)
     cssString += format("@const control_%s:%s;", name, getTexture(name))
   return cssString
 }
 
 let getGamepadAxisTexture = @(axisVal, _preset = curPreset) getTexture(gamepadAxesImages?[axisVal])
 
-let getMouseTexture = function(idx, preset = curPreset) {
+let getMouseTexture = function(idx, preset = curPreset)
+{
   if (preset == ICO_PRESET_PS4 && idx in ps4TouchpadImagesByMouseIdx)
     return preset + ps4TouchpadImagesByMouseIdx[idx] + SVG_EXT
 

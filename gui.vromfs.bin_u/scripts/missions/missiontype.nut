@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -164,7 +163,6 @@ enums.addTypesByGlobalName("g_mission_type", {
     objectives = MISSION_OBJECTIVE.KILLS_AIR | MISSION_OBJECTIVE.KILLS_NAVAL | MISSION_OBJECTIVE.ZONE_CAPTURE
     objectivesWw = MISSION_OBJECTIVE.KILLS_AIR | MISSION_OBJECTIVE.KILLS_NAVAL | MISSION_OBJECTIVE.KILLS_TOTAL_AI | MISSION_OBJECTIVE.ZONE_CAPTURE
     filterGroup = MISSION_GROUP.DOMINATION
-    helpBlkPath = "%gui/help/missionNavalDomination.blk"
   }
 
   N_BTTL = {  // Naval: Battle
@@ -172,7 +170,6 @@ enums.addTypesByGlobalName("g_mission_type", {
     objectives = MISSION_OBJECTIVE.KILLS_AIR | MISSION_OBJECTIVE.KILLS_NAVAL | MISSION_OBJECTIVE.ZONE_CAPTURE
     objectivesWw = MISSION_OBJECTIVE.KILLS_AIR | MISSION_OBJECTIVE.KILLS_NAVAL | MISSION_OBJECTIVE.KILLS_TOTAL_AI | MISSION_OBJECTIVE.ZONE_CAPTURE
     filterGroup = MISSION_GROUP.BATTLE
-    helpBlkPath = "%gui/help/missionNavalDomination.blk"
   }
 
   N_CONQ = {  // Naval: Conquest
@@ -180,7 +177,6 @@ enums.addTypesByGlobalName("g_mission_type", {
     objectives = MISSION_OBJECTIVE.KILLS_AIR | MISSION_OBJECTIVE.KILLS_NAVAL | MISSION_OBJECTIVE.ZONE_CAPTURE
     objectivesWw = MISSION_OBJECTIVE.KILLS_AIR | MISSION_OBJECTIVE.KILLS_NAVAL | MISSION_OBJECTIVE.KILLS_TOTAL_AI | MISSION_OBJECTIVE.ZONE_CAPTURE
     filterGroup = MISSION_GROUP.CONQUEST
-    helpBlkPath = "%gui/help/missionNavalDomination.blk"
   }
 
   N_CNV = {  // Naval: Convoy

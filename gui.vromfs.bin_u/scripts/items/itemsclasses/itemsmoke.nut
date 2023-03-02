@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -8,9 +7,9 @@ from "%scripts/dagui_library.nut" import *
 let { getBestUnitForPreview } = require("%scripts/customization/contentPreview.nut")
 let { aeroSmokesList } = require("%scripts/unlocks/unlockSmoke.nut")
 let { getPlayerCurUnit } = require("%scripts/slotbar/playerCurUnit.nut")
-let { select_training_mission } = require("guiMission")
 
-::items_classes.Smoke <- class extends ::BaseItem {
+::items_classes.Smoke <- class extends ::BaseItem
+{
   static iType = itemType.SMOKE
 
   needUpdateListAfterAction = true
@@ -18,7 +17,8 @@ let { select_training_mission } = require("guiMission")
   unlockType = ""
   tags = null
 
-  constructor(blk, invBlk = null, slotData = null) {
+  constructor(blk, invBlk = null, slotData = null)
+  {
     base.constructor(blk, invBlk, slotData)
     this.id = blk.unlockId
     this.usingStyle = this.getUsingStyle(blk)
@@ -27,12 +27,13 @@ let { select_training_mission } = require("guiMission")
     this.tags = []
     let tagsBlk = blk?.tags
     if (tagsBlk)
-      for (local i = 0; i < tagsBlk.paramCount(); i++)
+      for (local i=0; i < tagsBlk.paramCount(); i++)
         if (tagsBlk.getParamValue(i))
           this.tags.append(tagsBlk.getParamName(i))
   }
 
-  function getOptionData() {
+  function getOptionData()
+  {
     let option = ::get_option(::USEROPT_AEROBATICS_SMOKE_TYPE)
     if (!option)
       return {}
@@ -40,14 +41,15 @@ let { select_training_mission } = require("guiMission")
     let unlockId = this.id
     let idx = option.unlocks.findindex(@(v) v == unlockId)
 
-    return { option = option, currIdx = idx }
+    return {option = option, currIdx = idx}
   }
 
   isUnlocked = @() ::is_unlocked_scripted(this.unlockType, this.id)
 
   isShowPrise = @() !this.isUnlocked()
 
-  function isActive() {
+  function isActive()
+  {
     if (!this.isUnlocked())
       return false
 
@@ -56,7 +58,7 @@ let { select_training_mission } = require("guiMission")
     return data?.currIdx && data.option.value == data.currIdx
   }
 
-  getName = @(colored = true) // Used with type name in buy dialog message only
+  getName = @(colored = true)// Used with type name in buy dialog message only
     $"{loc("itemTypes/aerobatic_smoke")} {base.getName(colored)}"
 
   getDescriptionTitle = @() base.getName()
@@ -78,13 +80,15 @@ let { select_training_mission } = require("guiMission")
 
   canPreview = @() true
 
-  function doPreview() {
+  function doPreview()
+  {
     let unit = getBestUnitForPreview(this.isAllowedByUnitTypes, this.isAvailable)
     if (!unit)
       return
 
     let currUnit = getPlayerCurUnit()
-    if (unit.name == currUnit?.name) {
+    if (unit.name == currUnit?.name)
+    {
       this.openTestFlight(unit)
       return
     }
@@ -101,10 +105,11 @@ let { select_training_mission } = require("guiMission")
 
   }
 
-  function openTestFlight(unit) {
+  function openTestFlight(unit)
+  {
     let curItem = this
-    ::last_called_gui_testflight = @() ::gui_start_itemsShop({ curTab = -1, curItem })
-    ::update_test_flight_unit_info({unit})
+    ::last_called_gui_testflight = @() ::gui_start_itemsShop({curTab = -1, curItem})
+    ::test_flight_aircraft <- unit
     ::cur_aircraft_name = unit.name
     let defaultValues = {
       [::USEROPT_WEAPONS] = "",
@@ -139,18 +144,20 @@ let { select_training_mission } = require("guiMission")
       persistentSmokeId = smokeId
     }, misInfo)
 
-    select_training_mission(misInfo)
+    ::select_training_mission(misInfo)
     ::queues.checkAndStart(@() ::get_cur_base_gui_handler().goForward(::gui_start_flight),
       null, "isCanNewflight")
   }
 
-  function getCost(ignoreCanBuy = false) {
+  function getCost(ignoreCanBuy = false)
+  {
     return (this.isCanBuy() || ignoreCanBuy) && !this.isUnlocked()
       ? ::get_unlock_cost(this.id).multiply(this.getSellAmount())
       : ::Cost()
   }
 
-  function getUsingStyle(blk) {
+  function getUsingStyle(blk)
+  {
     local pref = []
     foreach (pos in ["rightwing", "leftwing", "tail"])
       if (blk?[pos] != "")
@@ -159,7 +166,8 @@ let { select_training_mission } = require("guiMission")
     return ::g_string.implode(pref, "_")
   }
 
-  function setCurrOption() {
+  function setCurrOption()
+  {
     let data = this.getOptionData()
     let idx = data?.currIdx
     if (!idx)
@@ -168,23 +176,27 @@ let { select_training_mission } = require("guiMission")
     ::set_option (data.option.type, idx, data.option)
   }
 
-  function consumeSmoke(cb) {
+  function consumeSmoke(cb)
+  {
     this.setCurrOption()
     if (cb)
       cb(true)
   }
 
-  function doMainAction(cb, handler, params = null) {
+  function doMainAction(cb, handler, params = null)
+  {
     return this.isUnlocked()
       ? this.consumeSmoke(cb)
       : this.buy(cb, handler, params)
   }
 
-  function _buy(cb, _params = null) {
+  function _buy(cb, _params = null)
+  {
     ::g_unlocks.buyUnlock(this.id, Callback(@() cb(true), this))
   }
 
-  function getTagsDesc() {
+  function getTagsDesc()
+  {
     if (this.tags.len() == 0)
       return ""
 

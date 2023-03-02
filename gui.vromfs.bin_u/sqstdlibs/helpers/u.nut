@@ -5,14 +5,13 @@
  * u is a set of utility functions, trashbin
   it also provide export for underscore.nut for legacy reasons
  */
-
-let DataBlock = require("DataBlock")
-let dagorMath = require("dagor.math")
+let { DataBlock } = require("datablockWrapper.nut")
 let underscore = require("%sqstd/underscore.nut")
 let functools = require("%sqstd/functools.nut")
 local {isTable, isArray, isDataBlock } = underscore
 
-local rnd = require_optional("dagor.random")?.rnd
+local rootTable = getroottable()
+local rnd = rootTable?.math?.rnd
   ?? require("math")?.rand
   ?? function() {
        throw("no math library exist")
@@ -118,7 +117,11 @@ local function isEmpty(val) {
 */
 local function registerClass(className, classRef, isEqualFunc = null, isEmptyFunc = null) {
   local funcName = $"is{className.slice(0, 1).toupper()}{className.slice(1)}"
-  this[funcName] <- @(value) type(value) == "instance" && (value instanceof classRef)
+  this[funcName] <- function(value) {
+    if (value instanceof classRef)
+      return true
+    return false
+  }
 
   if (isEqualFunc != null)
     registerIsEqual(classRef, isEqualFunc)
@@ -136,7 +139,6 @@ local function isEqual(val1, val2){
 */
 local dagorClasses = {
   DataBlock = {
-    classRef = DataBlock
     isEmpty = @(val) !val.paramCount() && !val.blockCount()
     isEqual = function(val1, val2) {
       if (val1.paramCount() != val2.paramCount() || val1.blockCount() != val2.blockCount())
@@ -155,40 +157,32 @@ local dagorClasses = {
     }
   }
   Point2 = {
-    classRef = dagorMath.Point2
     isEqual = @(val1, val2) val1.x == val2.x && val1.y == val2.y
     isEmpty = @(val) !val.x && !val.y
   }
   IPoint2 = {
-    classRef = dagorMath.IPoint2
     isEqual = @(val1, val2) val1.x == val2.x && val1.y == val2.y
     isEmpty = @(val) !val.x && !val.y
   }
   Point3 = {
-    classRef = dagorMath.Point3
     isEqual = @(val1, val2) val1.x == val2.x && val1.y == val2.y && val1.z == val2.z
     isEmpty = @(val) !val.x && !val.y && !val.z
   }
   IPoint3 = {
-    classRef = dagorMath.IPoint3
     isEqual = @(val1, val2) val1.x == val2.x && val1.y == val2.y && val1.z == val2.z
     isEmpty = @(val) !val.x && !val.y && !val.z
   }
   Point4 = {
-    classRef = dagorMath.Point4
     isEqual = @(val1, val2) val1.x == val2.x && val1.y == val2.y && val1.z == val2.z && val1.w == val2.w
     isEmpty = @(val) !val.x && !val.y && !val.z && !val.w
   }
   Color4 = {
-    classRef = dagorMath.Color4
     isEqual = @(val1, val2) val1.r == val2.r && val1.g == val2.g && val1.b == val2.b && val1.a == val2.a
   }
   Color3 = {
-    classRef = dagorMath.Color3
     isEqual = @(val1, val2) val1.r == val2.r && val1.g == val2.g && val1.b == val2.b
   }
   TMatrix = {
-    classRef = dagorMath.TMatrix
     isEqual = function(val1, val2) {
       for (local i = 0; i < 4; i++)
         if (!isEqual(val1[i], val2[i]))
@@ -447,7 +441,7 @@ foreach (typeName in internalTypes) {
 }
 
 foreach (className, config in dagorClasses)
-  if (type(config?.classRef) == "class")
-    export.registerClass(className, config.classRef, config?.isEqual, config?.isEmpty)
+  if (className in rootTable)
+    export.registerClass(className, rootTable[className], config?.isEqual, config?.isEmpty)
 
 return export

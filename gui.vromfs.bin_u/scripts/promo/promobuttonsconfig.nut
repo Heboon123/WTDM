@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -8,7 +7,8 @@ let promoButtonsConfig = {}
 
 let addPromoButtonConfig = kwarg(function addPromoButtonConfig(promoButtonId, buttonType = null, getText = null,
   collapsedIcon = null, collapsedText = null, needUpdateByTimer = false, getCustomSeenId = null,
-  updateFunctionInHandler = null, updateByEvents = null, image = null, aspect_ratio = null) {
+  updateFunctionInHandler = null, updateByEvents = null, image = null, aspect_ratio = null)
+{
   promoButtonsConfig[promoButtonId] <- {
     buttonType              //custom visual type of promo
     getText                 //function for custom text of promo

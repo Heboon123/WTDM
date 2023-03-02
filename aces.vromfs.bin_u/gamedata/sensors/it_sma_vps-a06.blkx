@@ -35,7 +35,7 @@
   "scanPatterns": {
     "radarLock": {
       "type": "pyramide",
-      "azimuthLimits": [-90.0,90.0],
+      "azimuthLimits": [-10.0,10.0],
       "elevationLimits": [-10.0,80.0],
       "yawStabLimit": 180.0,
       "pitchStabLimit": 80.0,
@@ -49,7 +49,7 @@
     },
     "radarLosLock": {
       "type": "pyramide",
-      "azimuthLimits": [-90.0,90.0],
+      "azimuthLimits": [-10.0,10.0],
       "elevationLimits": [-10.0,80.0],
       "yawStabLimit": 180.0,
       "pitchStabLimit": 80.0,
@@ -63,7 +63,7 @@
     },
     "radarTrack": {
       "type": "no",
-      "azimuthLimits": [-90.0,90.0],
+      "azimuthLimits": [-10.0,10.0],
       "elevationLimits": [-10.0,80.0],
       "yawStabLimit": 180.0,
       "pitchStabLimit": 80.0,
@@ -381,7 +381,7 @@
         "init": {
           "stateFrom": "init",
           "event": "init",
-          "stateTo": "radarStandby",
+          "stateTo": "radarParked",
           "actions": {
             "init": [],
             "setRadarStandbyMode": [],
@@ -687,7 +687,75 @@
             },
             "setRadar": []
           }
-        }
+        },
+        "switchRadarOn": {
+          "stateFrom": "radarParked",
+          "command": "switch",
+          "event": "enable",
+          "stateTo": "radarStandby"
+        },
+        "switchRadarOff": [
+          {
+            "stateFrom": "radarStandby"
+          },
+          {
+            "stateFrom": "radarLosLock"
+          },
+          {
+            "stateFrom": "radarVisualLock"
+          },
+          {
+            "stateFrom": "radarTrack"
+          },
+          {
+            "command": "switch"
+          },
+          {
+            "event": "disable"
+          },
+          {
+            "stateTo": "radarParked"
+          },
+          {
+            "actions": {
+              "setRadarStandbyMode": []
+            }
+          }
+        ],
+        "switchIrstOn": {
+          "stateFrom": "irstParked",
+          "command": "switch",
+          "event": "enable",
+          "stateTo": "irstStandby"
+        },
+        "switchIrstOff": [
+          {
+            "stateFrom": "irstStandby"
+          },
+          {
+            "stateFrom": "irstLosLock"
+          },
+          {
+            "stateFrom": "irstVisualLock"
+          },
+          {
+            "stateFrom": "irstTrack"
+          },
+          {
+            "command": "switch"
+          },
+          {
+            "event": "disable"
+          },
+          {
+            "stateTo": "irstParked"
+          },
+          {
+            "actions": {
+              "setIrstStandbyMode": []
+            }
+          }
+        ]
       }
     },
     "lock": {

@@ -1,10 +1,8 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
 #explicit-this
 
-let DataBlock = require("DataBlock")
 let { calcPercent } = require("%sqstd/math.nut")
 let psnStore = require("sony.store")
 let psnUser = require("sony.user")
@@ -29,7 +27,7 @@ let function handleNewPurchase(itemId) {
   ::ps4_update_purchases_on_auth()
   let taskParams = { showProgressBox = true, progressBoxText = loc("charServer/checking") }
   ::g_tasker.addTask(::update_entitlements_limited(true), taskParams)
-  ::broadcastEvent("PS4ItemUpdate", { id = itemId })
+  ::broadcastEvent("PS4ItemUpdate", {id = itemId})
 }
 
 let getActionText = @(action) action == psnStore.Action.PURCHASED ? "purchased"
@@ -46,7 +44,7 @@ let function sendBqRecord(metric, itemId, result = null) {
   }
 
   if ("action" in sendStat) {
-    sendStat.__update({ action = getActionText(sendStat.action) })
+    sendStat.__update({action = getActionText(sendStat.action)})
     metric.append(sendStat.action)
   }
 
@@ -126,7 +124,7 @@ local psnV2ShopPurchasableItem = class {
   }
 
   function updateSkuInfo(blk) {
-    this.skuInfo = (blk?.skus.blockCount() ?? 0) > 0 ? blk.skus.getBlock(0) : DataBlock()
+    this.skuInfo = (blk?.skus.blockCount() ?? 0) > 0? blk.skus.getBlock(0) : ::DataBlock()
     let userHasPlus = psnUser.hasPremium()
     let isPlusPrice = this.skuInfo?.isPlusPrice ?? false
     let displayPrice = this.skuInfo?.displayPrice ?? ""
@@ -155,7 +153,7 @@ local psnV2ShopPurchasableItem = class {
 
   haveDiscount = @() !this.isBought && this.price != null && this.listPrice != null && this.price != this.listPrice
   havePsPlusDiscount = @() psnUser.hasPremium() && ("displayPlusUpsellPrice" in this.skuInfo || this.skuInfo?.isPlusPrice) //use in markup
-  getDiscountPercent = @() (this.price == null && this.listPrice == null) ? 0 : calcPercent(1 - (this.price.tofloat() / this.listPrice))
+  getDiscountPercent = @() (this.price == null && this.listPrice == null)? 0 : calcPercent(1 - (this.price.tofloat() / this.listPrice))
 
   getPriceText = function() {
     if (this.priceText == "")
@@ -177,7 +175,7 @@ local psnV2ShopPurchasableItem = class {
       let totalLines = (len / maxSymbolsInLine).tointeger() + 1
       for (local i = 1; i < totalLines; i++) {
         splitDesc.append("\n")
-        splitDesc.append(this.description.slice(i * maxSymbolsInLine, (i + 1) * maxSymbolsInLine))
+        splitDesc.append(this.description.slice(i * maxSymbolsInLine, (i+1) * maxSymbolsInLine))
       }
       return "".join(splitDesc)
     }
@@ -211,7 +209,7 @@ local psnV2ShopPurchasableItem = class {
   canBeUnseen = @() this.isBought
   showDetails = function(metricPlaceCall = "ingame_store.v2") {
     let itemId = this.id
-    let eventData = { itemId = itemId, metricPlaceCall = metricPlaceCall }
+    let eventData = {itemId = itemId, metricPlaceCall = metricPlaceCall}
     sendBqRecord([metricPlaceCall, "checkout.open"], itemId)
     psnStore.open_checkout(
       [itemId],
@@ -222,7 +220,7 @@ local psnV2ShopPurchasableItem = class {
   }
   showDescription = function(metricPlaceCall = "ingame_store.v2") {
     let itemId = this.id
-    let eventData = { itemId = itemId, metricPlaceCall = metricPlaceCall }
+    let eventData = {itemId = itemId, metricPlaceCall = metricPlaceCall}
     sendBqRecord([metricPlaceCall, "description.open"], itemId)
     psnStore.open_product(
       itemId,

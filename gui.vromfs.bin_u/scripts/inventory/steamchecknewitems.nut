@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { requestAllItems } = require("%scripts/inventory/steamInventory.nut")
@@ -92,7 +91,7 @@ let function checkUnknownItems() {
     if (::ItemsManager.findItemById(itemDef)) {
       knownItems.append(sItem)
       let itemDefId = itemDef
-      unknownSteamNewItems.mutate(@(v) delete v[itemDefId])
+      unknownSteamNewItems.mutate(@(v) delete v[itemDefId] )
     }
   }
 

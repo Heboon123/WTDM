@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -7,10 +6,9 @@ from "%scripts/dagui_library.nut" import *
 
 let wwUnitClassParams = require("%scripts/worldWar/inOperation/wwUnitClassParams.nut")
 let airfieldTypes = require("%scripts/worldWar/inOperation/model/airfieldTypes.nut")
-let DataBlock  = require("DataBlock")
-let { Point2 } = require("dagor.math")
 
-::WwAirfield <- class {
+::WwAirfield <- class
+{
   index  = -1
   size   = 0
   side   = SIDE_NONE
@@ -23,10 +21,11 @@ let { Point2 } = require("dagor.math")
   allyFormation = null
   createArmyMorale = 0
 
-  constructor(airfieldIndex) {
+  constructor(airfieldIndex)
+  {
     this.airfieldType = airfieldTypes.AT_RUNWAY
     this.index  = airfieldIndex
-    this.pos    = Point2()
+    this.pos    = ::Point2()
     this.armies = []
     this.formations = []
     this.cooldownFormations = []
@@ -39,21 +38,25 @@ let { Point2 } = require("dagor.math")
     this.update()
   }
 
-  function isValid() {
+  function isValid()
+  {
     return this.index >= 0
   }
 
-  function getIndex() {
+  function getIndex()
+  {
     return this.index
   }
 
-  function update() {
+  function update()
+  {
     this.createArmyMorale = ::g_world_war.getWWConfigurableValue("airfieldCreateArmyMorale", 0)
 
-    let blk = DataBlock()
+    let blk = ::DataBlock()
     ::ww_get_airfield_info(this.index, blk)
 
-    if ("specs" in blk) {
+    if ("specs" in blk)
+    {
       this.side = blk.specs?.side ? ::ww_side_name_to_val(blk.specs.side) : this.side
       this.size = blk.specs?.size || this.size
       this.pos = blk.specs?.pos || this.pos
@@ -61,18 +64,22 @@ let { Point2 } = require("dagor.math")
     }
 
     if ("groups" in blk)
-      for (local i = 0; i < blk.groups.blockCount(); i++) {
+      for (local i = 0; i < blk.groups.blockCount(); i++)
+      {
         let itemBlk = blk.groups.getBlock(i)
         let formation = ::WwAirfieldFormation(itemBlk, this)
         this.formations.append(formation)
 
-        if (formation.isBelongsToMyClan()) {
+        if (formation.isBelongsToMyClan())
+        {
           this.clanFormation = formation
           this.clanFormation.setFormationID(WW_ARMY_RELATION_ID.CLAN)
           this.clanFormation.setName("formation_" + WW_ARMY_RELATION_ID.CLAN)
         }
-        else {
-          if (!this.allyFormation) {
+        else
+        {
+          if (!this.allyFormation)
+          {
             this.allyFormation = ::WwCustomFormation(itemBlk, this)
             this.allyFormation.setFormationID(WW_ARMY_RELATION_ID.ALLY)
             this.allyFormation.setName("formation_" + WW_ARMY_RELATION_ID.ALLY)
@@ -83,7 +90,8 @@ let { Point2 } = require("dagor.math")
         }
 
         let cooldownsBlk = itemBlk.getBlockByName("cooldownUnits")
-        for (local j = 0; j < cooldownsBlk.blockCount(); j++) {
+        for (local j = 0; j < cooldownsBlk.blockCount(); j++)
+        {
           let cdFormation = ::WwAirfieldCooldownFormation(cooldownsBlk.getBlock(j), this)
           cdFormation.owner = ::WwArmyOwner(itemBlk.getBlockByName("owner"))
           cdFormation.setFormationID(j)
@@ -96,7 +104,8 @@ let { Point2 } = require("dagor.math")
       this.armies = blk.armies % "item"
   }
 
-  function _tostring() {
+  function _tostring()
+  {
     local returnText = "AIRFIELD: index = " + this.index + ", side = " + this.side + ", size = " + this.size + ", pos = " + toString(this.pos) + ", airfieldType = " + this.airfieldType.name
     if (this.formations.len())
       returnText += ", groups len = " + this.formations.len()
@@ -105,23 +114,28 @@ let { Point2 } = require("dagor.math")
     return returnText
   }
 
-  function isArmyBelongsTo(army) {
+  function isArmyBelongsTo(army)
+  {
     return isInArray(army.name, this.armies)
   }
 
-  function getSide() {
+  function getSide()
+  {
     return this.side
   }
 
-  function getSize() {
+  function getSize()
+  {
     return this.size
   }
 
-  function getPos() {
+  function getPos()
+  {
     return this.pos
   }
 
-  function getUnitsNumber(needToAddCooldown = true) {
+  function getUnitsNumber(needToAddCooldown = true)
+  {
     local count = 0
     foreach (formation in this.formations)
       count += formation.getUnitsNumber()
@@ -133,11 +147,14 @@ let { Point2 } = require("dagor.math")
     return count
   }
 
-  function getUnitsInFlyNumber() {
+  function getUnitsInFlyNumber()
+  {
     local unitsNumber = 0
-    foreach (armyName in this.armies) {
+    foreach (armyName in this.armies)
+    {
       let army = ::g_world_war.getArmyByName(armyName)
-      if (army.isValid()) {
+      if (army.isValid())
+      {
         army.updateUnits()
         unitsNumber += army.getUnitsNumber()
       }
@@ -146,24 +163,29 @@ let { Point2 } = require("dagor.math")
     return unitsNumber
   }
 
-  function isMySide(checkSide) {
+  function isMySide(checkSide)
+  {
     return this.getSide() == checkSide
   }
 
-  function getCooldownsWithManageAccess() {
+  function getCooldownsWithManageAccess()
+  {
     return ::u.filter(this.cooldownFormations, function(formation) { return formation.hasManageAccess() })
   }
 
-  function getCooldownArmiesByGroupIdx(groupIdx) {
+  function getCooldownArmiesByGroupIdx(groupIdx)
+  {
     return ::u.filter(this.cooldownFormations,
       @(formation) formation.getArmyGroupIdx() == groupIdx)
   }
 
-  function getCooldownArmiesNumberByGroupIdx(groupIdx) {
+  function getCooldownArmiesNumberByGroupIdx(groupIdx)
+  {
     return this.getCooldownArmiesByGroupIdx(groupIdx).len()
   }
 
-  function hasEnoughUnitsToFly() {
+  function hasEnoughUnitsToFly()
+  {
     foreach (formation in this.formations)
       if (this.hasFormationEnoughUnitsToFly(formation))
         return true
@@ -171,7 +193,8 @@ let { Point2 } = require("dagor.math")
     return false
   }
 
-  function hasFormationEnoughUnitsToFly(formation) {
+  function hasFormationEnoughUnitsToFly(formation)
+  {
     if (!formation || !formation.isValid() || !formation.hasManageAccess())
       return false
 
@@ -181,7 +204,8 @@ let { Point2 } = require("dagor.math")
       [WW_UNIT_CLASS.HELICOPTER] = 0
     }
     local customClassAmount = 0
-    foreach (unit in formation.units) {
+    foreach (unit in formation.units)
+    {
       let flyOutUnitClass = wwUnitClassParams.getUnitClassData(unit).flyOutUnitClass
       if (!(flyOutUnitClass in airClassesAmount))
         continue
@@ -197,10 +221,12 @@ let { Point2 } = require("dagor.math")
 
     let operation = ::g_operations.getCurrentOperation()
     let flyoutRange = operation.getUnitsFlyoutRange()
-    foreach (mask in [WW_UNIT_CLASS.FIGHTER, WW_UNIT_CLASS.COMBINED, WW_UNIT_CLASS.HELICOPTER]) {
+    foreach (mask in [WW_UNIT_CLASS.FIGHTER, WW_UNIT_CLASS.COMBINED, WW_UNIT_CLASS.HELICOPTER])
+    {
       local additionalAirs = 0
       local hasEnough = false
-      foreach (unitClass, amount in airClassesAmount) {
+      foreach (unitClass, amount in airClassesAmount)
+      {
         let unitRange = operation.getQuantityToFlyOut(unitClass, mask, flyoutRange)
 
         hasEnough = amount + additionalAirs >= unitRange.x

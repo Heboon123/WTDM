@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -20,7 +19,8 @@ let pseudoAxesList = {
 enums.addTypes(pseudoAxesList, {
   TOGGLE_VIEW = {
     id = "pseudo_toggle_view"
-    translate = function () {
+    translate = function ()
+    {
       let curUnitType = ::get_es_unit_type(getPlayerCurUnit())
       if (curUnitType == ES_UNIT_TYPE_TANK)
         return ["ID_TOGGLE_VIEW_GM"]
@@ -36,7 +36,8 @@ enums.addTypes(pseudoAxesList, {
 
   PSEUDO_FIRE = {
     id = "pseudo_fire"
-    translate = function() {
+    translate = function()
+    {
       let requiredControls = ::getRequiredControlsForUnit(
         getPlayerCurUnit(), ::getCurrentHelpersMode())
 
@@ -54,7 +55,8 @@ enums.addTypes(pseudoAxesList, {
       else
         return ["ID_FIRE_MGUNS", "ID_FIRE_CANNONS"]
     }
-    isAssigned = function () {
+    isAssigned = function ()
+    {
       foreach (shortcut in this.translate())
         if (::g_shortcut_type.COMMON_SHORTCUT.isAssigned(shortcut))
           return true
@@ -78,12 +80,14 @@ let function getPseudoAxisById(shortcutId) {
   PSEUDO_AXIS = {
     isMe = @(shortcutId) isPseudoAxis(shortcutId)
 
-    isAssigned = function (shortcutId, _preset = null) {
+    isAssigned = function (shortcutId, _preset = null)
+    {
       let pseudoAxis = getPseudoAxisById(shortcutId)
       return pseudoAxis.isAssigned()
     }
 
-    expand = function (shortcutId, _showKeyBoardShortcutsForMouseAim) {
+    expand = function (shortcutId, _showKeyBoardShortcutsForMouseAim)
+    {
       let pseudoAxis = getPseudoAxisById(shortcutId)
       return pseudoAxis.translate()
     }

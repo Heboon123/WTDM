@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -6,9 +5,9 @@ from "%scripts/dagui_library.nut" import *
 #explicit-this
 
 let BaseItemModClass = require("%scripts/items/itemsClasses/itemModBase.nut")
-let DataBlock  = require("DataBlock")
 
-::items_classes.UniversalSpare <- class extends BaseItemModClass {
+::items_classes.UniversalSpare <- class extends BaseItemModClass
+{
   static iType = itemType.UNIVERSAL_SPARE
   static defaultLocId = "universalSpare"
   static defaultIcon = "#ui/gameuiskin#item_uni_spare.png"
@@ -22,12 +21,14 @@ let DataBlock  = require("DataBlock")
 
   getConditionsBlk = @(configBlk) configBlk?.universalSpareParams
 
-  function initConditions(conditionsBlk) {
+  function initConditions(conditionsBlk)
+  {
     base.initConditions(conditionsBlk)
     this.numSpares = conditionsBlk?.numSpares ?? 1
   }
 
-  function getDescriptionIntroArray() {
+  function getDescriptionIntroArray()
+  {
     let res = [loc("items/universalSpare/description/uponActivation")]
     if (this.numSpares > 1)
       res.append(loc("items/universalSpare/numSpares") + loc("ui/colon") + colorize("activeTextColor", this.numSpares))
@@ -36,11 +37,13 @@ let DataBlock  = require("DataBlock")
 
   getDescriptionOutroArray = @() [ colorize("fadedTextColor", loc("items/universalSpare/description")) ]
 
-  function getName(colored = true) {
+  function getName(colored = true)
+  {
     return base.getName(colored) + " " + this.getRankText()
   }
 
-  function canActivateOnUnit(unit) {
+  function canActivateOnUnit(unit)
+  {
     if (this.countries && !isInArray(unit.shopCountry, this.countries))
       return false
     if (unit.rank < this.rankRange.x || unit.rank > this.rankRange.y)
@@ -50,7 +53,8 @@ let DataBlock  = require("DataBlock")
     return true
   }
 
-  function activateOnUnit(unit, count, extSuccessCb = null) {
+  function activateOnUnit(unit, count, extSuccessCb = null)
+  {
     if (!this.canActivateOnUnit(unit)
       || !this.isInventoryItem || !this.uids.len()
       || count <= 0 || count > this.getAmount())
@@ -62,7 +66,7 @@ let DataBlock  = require("DataBlock")
       ::broadcastEvent("UniversalSpareActivated")
     }
 
-    let blk = DataBlock()
+    let blk = ::DataBlock()
     blk.uid = this.uids[0]
     blk.unit = unit.name
     blk.useItemsCount = count
@@ -70,7 +74,8 @@ let DataBlock  = require("DataBlock")
     return ::g_tasker.addTask(taskId, { showProgressBox = true }, successCb)
   }
 
-  function getIcon(_addItemName = true) {
+  function getIcon(_addItemName = true)
+  {
     local res = ::LayersIcon.genDataFromLayer(this._getBaseIconCfg())
     res += ::LayersIcon.genDataFromLayer(this._getFlagLayer())
     res += ::LayersIcon.genDataFromLayer(this._getuUnitTypesLayer())
@@ -78,18 +83,21 @@ let DataBlock  = require("DataBlock")
     return res
   }
 
-  function _getBaseIconCfg() {
+  function _getBaseIconCfg()
+  {
     let layerId = "universal_spare_base"
     return ::LayersIcon.findLayerCfg(layerId)
   }
 
-  function _getuUnitTypesLayer() {
+  function _getuUnitTypesLayer()
+  {
     if (!this.unitTypes || this.unitTypes.len() != 1)
       return ::LayersIcon.findLayerCfg("universal_spare_all")
     return ::LayersIcon.findLayerCfg("universal_spare_" + this.unitTypes[0])
   }
 
-  function _getRankLayer() {
+  function _getRankLayer()
+  {
     let textLayerStyle = "universal_spare_rank_text"
     let layerCfg = ::LayersIcon.findLayerCfg(textLayerStyle)
     if (!layerCfg)
@@ -98,7 +106,8 @@ let DataBlock  = require("DataBlock")
     return layerCfg
   }
 
-  function _getFlagLayer() {
+  function _getFlagLayer()
+  {
     if (!this.countries || this.countries.len() != 1)
       return null
     let flagLayerStyle = "universal_spare_flag"

@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -14,20 +13,22 @@ let statsd = require("statsd")
 let exitGame = require("%scripts/utils/exitGame.nut")
 
 local authDataByTypes = {
-  mail = { text = "#mainmenu/2step/confirmMail", img = "#ui/images/two_step_email.png" }
-  ga = { text = "#mainmenu/2step/confirmGA", img = "#ui/images/two_step_phone_ga.png" }
-  gp = { text = "#mainmenu/2step/confirmGP", img = "#ui/images/two_step_phone_gp.png" }
-  unknown = { text = "#mainmenu/2step/confirmUnknown", img = "" }
+  mail = {text = "#mainmenu/2step/confirmMail", img = "#ui/images/two_step_email.png"}
+  ga = {text = "#mainmenu/2step/confirmGA", img = "#ui/images/two_step_phone_ga.png"}
+  gp = {text = "#mainmenu/2step/confirmGP", img = "#ui/images/two_step_phone_gp.png"}
+  unknown = {text = "#mainmenu/2step/confirmUnknown", img = ""}
 }
 
-::gui_handlers.twoStepModal <- class extends ::BaseGuiHandler {
+::gui_handlers.twoStepModal <- class extends ::BaseGuiHandler
+{
   wndType              = handlerType.MODAL
   sceneTplName         = "%gui/login/twoStepModal.tpl"
   loginScene           = null
   continueLogin        = null
   curTimeTimer         = null
 
-  function getSceneTplView() {
+  function getSceneTplView()
+  {
     let isExt2StepAllowed = ::is_external_app_2step_allowed()
     let data = !isExt2StepAllowed && ::is_has_email_two_step_type_sync() ? authDataByTypes.mail
       : isExt2StepAllowed && ::is_has_wtassistant_two_step_type_sync() ? authDataByTypes.ga
@@ -38,17 +39,19 @@ local authDataByTypes = {
       verStatusText = data.text
       authTypeImg = data.img
       isShowRestoreLink = isExt2StepAllowed
-      isRememberDevice = ::get_object_value(this.loginScene, "loginbox_code_remember_this_device", false)
+      isRememberDevice = ::get_object_value(this.loginScene,"loginbox_code_remember_this_device", false)
       timerWidth = daguiFonts.getStringWidthPx("99:99:99", "fontNormal", this.guiScene)
     }
   }
 
-  function initScreen() {
+  function initScreen()
+  {
     this.reinitCurTimeTimer()
     ::select_editbox(this.getObj("loginbox_code"))
   }
 
-  function reinitCurTimeTimer() {
+  function reinitCurTimeTimer()
+  {
     this.curTimeTimer = null
     let timerObj = this.scene.findObject("currTimeText")
     if (!checkObj(timerObj))
@@ -59,12 +62,13 @@ local authDataByTypes = {
     timerCb()
   }
 
-  function onSubmit(_obj) {
+  function onSubmit(_obj)
+  {
     ::disable_autorelogin_once <- false
-    statsd.send_counter("sq.game_start.request_login", 1, { login_type = "regular" })
+    statsd.send_counter("sq.game_start.request_login", 1, {login_type = "regular"})
     log("Login: check_login_pass")
     let result = ::check_login_pass(
-      ::get_object_value(this.loginScene, "loginbox_username", ""),
+      ::get_object_value(this.loginScene, "loginbox_username",""),
       ::get_object_value(this.loginScene, "loginbox_password", ""), "",
       ::get_object_value(this.scene, "loginbox_code", ""),
       ::get_object_value(this.scene, "loginbox_code_remember_this_device", false),
@@ -72,7 +76,8 @@ local authDataByTypes = {
     this.proceedAuth(result)
   }
 
-  function showErrorMsg() {
+  function showErrorMsg()
+  {
     let txtObj = this.scene.findObject("verStatus")
     if (!checkObj(txtObj))
       return
@@ -87,10 +92,12 @@ local authDataByTypes = {
     this.reinitCurTimeTimer()
   }
 
-  function proceedAuth(result) {
-    switch (result) {
+  function proceedAuth(result)
+  {
+    switch (result)
+    {
       case YU2_OK:
-        this.continueLogin(::get_object_value(this.loginScene, "loginbox_username", ""))
+        this.continueLogin(::get_object_value(this.loginScene, "loginbox_username",""))
         break
 
       case YU2_2STEP_AUTH:
@@ -103,7 +110,7 @@ local authDataByTypes = {
         [
           ["exit", exitGame],
           ["tryAgain", null]
-        ], "tryAgain", { cancel_fn = function() {} })
+        ], "tryAgain", { cancel_fn = function() {}})
     }
   }
 }

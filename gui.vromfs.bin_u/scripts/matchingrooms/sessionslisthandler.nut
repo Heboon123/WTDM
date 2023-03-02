@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -10,13 +9,12 @@ let fillSessionInfo = require("%scripts/matchingRooms/fillSessionInfo.nut")
 let { suggestAndAllowPsnPremiumFeatures } = require("%scripts/user/psnFeatures.nut")
 let { isGameModeCoop } = require("%scripts/matchingRooms/matchingGameModesUtils.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
-let { setGuiOptionsMode } = require("guiOptions")
+let { setGuiOptionsMode } = require_native("guiOptions")
 let lobbyStates = require("%scripts/matchingRooms/lobbyStates.nut")
 let { havePremium } = require("%scripts/user/premium.nut")
 let { checkAndShowMultiplayerPrivilegeWarning,
   isMultiplayerPrivilegeAvailable } = require("%scripts/user/xboxFeatures.nut")
 let { isShowGoldBalanceWarning } = require("%scripts/user/balanceFeatures.nut")
-let { get_game_mode } = require("mission")
 
 ::match_search_gm <- -1
 
@@ -24,57 +22,67 @@ let { get_game_mode } = require("mission")
 
 ::g_script_reloader.registerPersistentData("SessionsList", getroottable(), ["match_search_gm"])
 
-::gui_start_session_list <- function gui_start_session_list(prev_scene_func = null) {
+::gui_start_session_list <- function gui_start_session_list(prev_scene_func=null)
+{
   if (prev_scene_func)
     ::back_sessions_func = prev_scene_func
 
   ::handlersManager.loadHandler(::gui_handlers.SessionsList,
                   {
-                    wndOptionsMode = ::get_options_mode(get_game_mode())
+                    wndOptionsMode = ::get_options_mode(::get_game_mode())
                     backSceneFunc = ::back_sessions_func
                   })
 }
 
-::gui_start_missions <- function gui_start_missions() { //!!FIX ME: is it really used in some cases?
+::gui_start_missions <- function gui_start_missions() //!!FIX ME: is it really used in some cases?
+{
   ::match_search_gm = -1
   ::gui_start_session_list(::gui_start_mainmenu)
 }
 
-::gui_start_skirmish <- function gui_start_skirmish() {
+::gui_start_skirmish <- function gui_start_skirmish()
+{
   ::prepare_start_skirmish()
   ::gui_start_session_list(::gui_start_mainmenu)
 }
 
-::prepare_start_skirmish <- function prepare_start_skirmish() {
+::prepare_start_skirmish <- function prepare_start_skirmish()
+{
   ::match_search_gm = GM_SKIRMISH
 }
 
-::build_check_table <- function build_check_table(session, gm = 0) {
+::build_check_table <- function build_check_table(session, gm=0)
+{
   let ret = {}
 
   if (session)
     gm = session.gameModeInt
 
-  if (gm == GM_BUILDER) {
+  if (gm == GM_BUILDER)
+  {
     ret.silentFeature <- "ModeBuilder"
   }
-  else if (gm == GM_DYNAMIC) {
-    if (session) {
+  else if (gm == GM_DYNAMIC)
+  {
+    if (session)
+    {
       ret.minRank <- ::dynamic_req_country_rank
       ret.rankCountry <- session.country
     }
     ret.silentFeature <- "ModeDynamic"
   }
-  else if (gm == GM_SINGLE_MISSION) {
+  else if (gm == GM_SINGLE_MISSION)
+  {
     if (session)
-      ret.unlock <- session.chapter + "/" + session.map
+      ret.unlock <- session.chapter+"/"+session.map
     ret.silentFeature <- "ModeSingleMissions"
   }
 
   return ret
 }
 
-::gui_handlers.SessionsList <- class extends ::gui_handlers.GenericOptions {
+::gui_handlers.SessionsList <- class extends ::gui_handlers.GenericOptions
+{
   sceneBlkName = sessionsListBlkPath.value
   sceneNavBlkName = "%gui/navSessionsList.blk"
   optionsContainer = "mp_coop_options"
@@ -90,7 +98,8 @@ let { get_game_mode } = require("mission")
 
   curDifficulty = -1
 
-  function initScreen() {
+  function initScreen()
+  {
     base.initScreen()
     this.sessionsListObj = this.scene.findObject("sessions_table")
 
@@ -103,7 +112,7 @@ let { get_game_mode } = require("mission")
 
     let head = this.scene.findObject("sessions_diff_header")
     if (checkObj(head))
-      head.setValue(this.isCoop ? loc("multiplayer/difficultyShort") : loc("multiplayer/createModeShort"))
+      head.setValue(this.isCoop? loc("multiplayer/difficultyShort") : loc("multiplayer/createModeShort"))
 
     this.updateRoomsHeader()
     this.initOptions()
@@ -114,21 +123,26 @@ let { get_game_mode } = require("mission")
     this.updateButtons()
   }
 
-  function initRoomsPerPage() {
+  function initRoomsPerPage()
+  {
     let listHeight = this.sessionsListObj.getSize()[1]
     let rowHeight = this.guiScene.calcString("@baseTrHeight", null)
     this.roomsPerPage = max((listHeight / rowHeight).tointeger(), 1)
   }
 
-  function updateButtons() {
+  function updateButtons()
+  {
     local title = ""
-    if (this.isCoop) {
-      if (hasFeature("ModeDynamic")) {
+    if (this.isCoop)
+    {
+      if(hasFeature("ModeDynamic"))
+      {
         ::showBtn("btn_dynamic", true)
         let dynBtn = this.guiScene["btn_dynamic"]
-        if (checkObj(dynBtn)) {
-          dynBtn.inactiveColor = havePremium.value ? "no" : "yes"
-          dynBtn.tooltip = havePremium.value ? "" : loc("mainmenu/onlyWithPremium")
+        if(checkObj(dynBtn))
+        {
+          dynBtn.inactiveColor = havePremium.value? "no" : "yes"
+          dynBtn.tooltip = havePremium.value? "" : loc("mainmenu/onlyWithPremium")
         }
       }
 
@@ -136,7 +150,8 @@ let { get_game_mode } = require("mission")
       ::showBtn("btn_builder", hasFeature("ModeBuilder"))
       title = loc("mainmenu/btnMissions")
     }
-    else {
+    else
+    {
       ::showBtn("btn_skirmish", true)
       title = loc("mainmenu/btnCustomMatch")
     }
@@ -144,7 +159,8 @@ let { get_game_mode } = require("mission")
     this.setSceneTitle(title)
   }
 
-  function initOptions() {
+  function initOptions()
+  {
     setGuiOptionsMode(::OPTIONS_MODE_SEARCH)
     local options = null
     if (this.isCoop)
@@ -152,13 +168,13 @@ let { get_game_mode } = require("mission")
         [::USEROPT_SEARCH_GAMEMODE, "spinner"],
         [::USEROPT_SEARCH_DIFFICULTY, "spinner"],
       ]
-    else if (::match_search_gm == GM_SKIRMISH)
+    else
+    if (::match_search_gm == GM_SKIRMISH)
       options = [
         [::USEROPT_SEARCH_DIFFICULTY, "spinner"],
       ]
 
-    if (!options)
-      return
+    if (!options) return
 
     let container = ::create_options_container(this.optionsContainer, options, false, 0.5, false)
     let optObj = this.scene.findObject("session-options")
@@ -168,9 +184,9 @@ let { get_game_mode } = require("mission")
     this.optionsContainers.append(container.descr)
   }
 
-  function onGamemodeChange(obj) {
-    if (!obj)
-      return
+  function onGamemodeChange(obj)
+  {
+    if (!obj) return
     let value = obj.getValue()
     let option = ::get_option(::USEROPT_SEARCH_GAMEMODE)
     if (!(value in option.values))
@@ -179,7 +195,8 @@ let { get_game_mode } = require("mission")
     ::match_search_gm = option.values[value]
   }
 
-  function onDifficultyChange(obj) {
+  function onDifficultyChange(obj)
+  {
     if (!checkObj(obj))
       return
 
@@ -198,7 +215,8 @@ let { get_game_mode } = require("mission")
 
   function onSkirmish(_obj) { ::checkAndCreateGamemodeWnd(this, GM_SKIRMISH) }
 
-  function onSessionsUpdate(_obj = null, _dt = 0.0) {
+  function onSessionsUpdate(_obj = null, _dt = 0.0)
+  {
     if (::handlersManager.isAnyModalHandlerActive()
         || ::is_multiplayer()
         || ::SessionLobby.status != lobbyStates.NOT_IN_ROOM)
@@ -207,17 +225,21 @@ let { get_game_mode } = require("mission")
     this.roomsListData.requestList(this.getCurFilter())
   }
 
-  function onEventSearchedRoomsChanged(_p) {
+  function onEventSearchedRoomsChanged(_p)
+  {
     this.updateRoomsList()
   }
 
-  function onEventRoomsSearchStarted(_p) {
+  function onEventRoomsSearchStarted(_p)
+  {
     this.updateSearchMsg()
   }
 
-  function updateSearchMsg() {
+  function updateSearchMsg()
+  {
     let infoText = this.guiScene["info-text"]
-    if (checkObj(infoText)) {
+    if (checkObj(infoText))
+    {
       let show = (type(this.roomsList) != "array") || (this.roomsList.len() == 0)
       if (show)
         infoText.setValue(this.roomsListData.isNewest() ? loc("wait/sessionNone") : loc("wait/sessionSearch"))
@@ -225,14 +247,17 @@ let { get_game_mode } = require("mission")
     }
   }
 
-  function getCurFilter() {
+  function getCurFilter()
+  {
     return { diff = this.curDifficulty }
   }
 
-  function sortRoomsList() {
+  function sortRoomsList()
+  {
     //need to add ability to sort rooms by categories chosen by user
     //but temporary better to sort work at least as it was before from matching
-    foreach (room in this.roomsList) {
+    foreach(room in this.roomsList)
+    {
       let size = ::SessionLobby.getRoomSize(room)
       room._players <- ::SessionLobby.getRoomMembersCnt(room)
       room._full <- room._players >= size
@@ -247,18 +272,20 @@ let { get_game_mode } = require("mission")
   }
 
   _columnsList = null
-  function getColumnsList() {
+  function getColumnsList()
+  {
     if (this._columnsList)
       return this._columnsList
     if (this.isCoop)
-      this._columnsList = ["hasPassword", "mission", "name", "numPlayers", "gm" /*, "difficultyStr"*/ ]
+      this._columnsList = ["hasPassword", "mission", "name", "numPlayers", "gm"/*, "difficultyStr"*/]
     else
-      this._columnsList = ["hasPassword", "mission", "name", "numPlayers" /*, "difficultyStr"*/ ]
+      this._columnsList = ["hasPassword", "mission", "name", "numPlayers"/*, "difficultyStr"*/]
     return this._columnsList
   }
 
   _roomsMarkUpData = null
-  function getRoomsListMarkUpData() {
+  function getRoomsListMarkUpData()
+  {
     if (this._roomsMarkUpData)
       return this._roomsMarkUpData
 
@@ -291,7 +318,8 @@ let { get_game_mode } = require("mission")
     return this._roomsMarkUpData
   }
 
-  function updateRoomsHeader() {
+  function updateRoomsHeader()
+  {
     let headerObj = this.scene.findObject("sessions-header")
     if (!checkObj(headerObj))
       return
@@ -308,7 +336,8 @@ let { get_game_mode } = require("mission")
     this.guiScene.replaceContentFromText(headerObj, headerData, headerData.len(), this)
   }
 
-  function updateRoomsList() {
+  function updateRoomsList()
+  {
     this.roomsListData.requestList(this.getCurFilter())
     this.roomsList = this.roomsListData.getList()
     this.sortRoomsList()
@@ -317,7 +346,8 @@ let { get_game_mode } = require("mission")
     this.updateRoomsPage()
   }
 
-  function updateRoomsPage() {
+  function updateRoomsPage()
+  {
     if (!checkObj(this.sessionsListObj))
       return
 
@@ -330,7 +360,8 @@ let { get_game_mode } = require("mission")
 
     let start = this.curPage * this.roomsPerPage
     let end = min(start + this.roomsPerPage, this.roomsList.len())
-    for (local i = start; i < end; i++) {
+    for(local i = start; i < end; i++)
+    {
       let room = this.roomsList[i]
       this.curPageRoomsList.append(room)
       if (selectedRow < 0 && ::u.isEqual(room, selectedRoom))
@@ -349,7 +380,8 @@ let { get_game_mode } = require("mission")
     this.updatePaginator(maxPage)
   }
 
-  function updatePaginator(maxPage) {
+  function updatePaginator(maxPage)
+  {
     let pagObj = this.scene.findObject("paginator_place")
     if (maxPage > 0)
       ::generatePaginator(pagObj, this, this.curPage, maxPage, null, true)
@@ -357,12 +389,14 @@ let { get_game_mode } = require("mission")
       ::hidePaginator(pagObj)
   }
 
-  function goToPage(obj) {
+  function goToPage(obj)
+  {
     this.curPage = obj.to_page.tointeger()
     this.updateRoomsPage()
   }
 
-  function getCurRoom() {
+  function getCurRoom()
+  {
     if (!checkObj(this.sessionsListObj))
       return null
 
@@ -372,7 +406,8 @@ let { get_game_mode } = require("mission")
     return null
   }
 
-  function updateCurRoomInfo() {
+  function updateCurRoomInfo()
+  {
     let room = this.getCurRoom()
     fillSessionInfo(this.scene, room?.public)
     ::update_vehicle_info_button(this.scene, room)
@@ -382,16 +417,19 @@ let { get_game_mode } = require("mission")
       btnObj.inactiveColor = room ? "no" : "yes"
   }
 
-  function onSessionSelect() {
+  function onSessionSelect()
+  {
     this.updateCurRoomInfo()
   }
 
   doSelectSessions = @() ::move_mouse_on_child_by_value(this.sessionsListObj)
 
-  function onGamercard(_obj) {
+  function onGamercard(_obj)
+  {
   }
 
-  function onStart(_obj) {
+  function onStart(_obj)
+  {
     if (!suggestAndAllowPsnPremiumFeatures())
       return
 
@@ -422,18 +460,21 @@ let { get_game_mode } = require("mission")
     })(room))
   }
 
-  function onVehiclesInfo(_obj) {
+  function onVehiclesInfo(_obj)
+  {
     ::gui_start_modal_wnd(::gui_handlers.VehiclesWindow, {
       teamDataByTeamName = getTblValue("public", this.getCurRoom())
     })
   }
 }
 
-::fillCountriesList <- function fillCountriesList(obj, countries, handler = null) {
+::fillCountriesList <- function fillCountriesList(obj, countries, handler = null)
+{
   if (!checkObj(obj))
     return
 
-  if (obj.childrenCount() != shopCountriesList.len()) {
+  if (obj.childrenCount() != shopCountriesList.len())
+  {
     let view = {
       countries = ::u.map(shopCountriesList, function (countryName) {
         return {
@@ -446,7 +487,7 @@ let { get_game_mode } = require("mission")
     obj.getScene().replaceContentFromText(obj, markup, markup.len(), handler)
   }
 
-  foreach (idx, country in shopCountriesList)
+  foreach(idx, country in shopCountriesList)
     if (idx < obj.childrenCount())
       obj.getChild(idx).show(isInArray(country, countries))
 }

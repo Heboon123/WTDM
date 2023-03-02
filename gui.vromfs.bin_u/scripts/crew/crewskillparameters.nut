@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -39,7 +38,7 @@ let function getParametersByCrewId(crewId, unitName) {
       },
       specialization = 1,
     };*/
-    parameters = calc_crew_parameters(crewId, /*values*/ null, unitName)
+    parameters = calc_crew_parameters(crewId, /*values*/null, unitName)
     if (!(crewId in parametersByCrewId))
       parametersByCrewId[crewId] <- {}
     parametersByCrewId[crewId][unitName] <- parameters
@@ -93,7 +92,8 @@ let function getTooltipText(memberName, skillName, crewUnitType, crew, difficult
   else if (crew && memberName == "groundService" && skillName == "repair") {
     let fullParamsList = ::g_skill_parameters_request_type.CURRENT_VALUES.getParameters(crew.id, unit)
     let repairRank = fullParamsList?[difficulty.crewSkillName][memberName].repairRank.groundServiceRepairRank ?? 0
-    if (repairRank != 0 && unit && unit.rank > repairRank) {
+    if (repairRank!=0 && unit && unit.rank > repairRank)
+    {
       let text = loc("crew/notEnoughRepairRank", {
                           rank = colorize("activeTextColor", ::get_roman_numeral(unit.rank))
                           level = colorize("activeTextColor",
@@ -102,9 +102,11 @@ let function getTooltipText(memberName, skillName, crewUnitType, crew, difficult
       resArray.append(colorize("warningTextColor", text))
     }
   }
-  else if (memberName == "loader" && skillName == "loading_time_mult") {
+  else if (memberName == "loader" && skillName == "loading_time_mult")
+  {
     let wBlk = ::get_wpcost_blk()
-    if (unit && wBlk?[unit.name].primaryWeaponAutoLoader) {
+    if (unit && wBlk?[unit.name].primaryWeaponAutoLoader)
+    {
       let text = loc("crew/loader/loading_time_mult/tooltipauto")
       resArray.append(colorize("warningTextColor", text))
     }
@@ -120,8 +122,9 @@ let function getColumnsTypesList(skillsList, crewUnitType) {
     if (!columnType.checkCrewUnitType(crewUnitType))
       continue
 
-    foreach (skill in skillsList)
-      if (columnType.checkSkill(skill.memberName, skill.skillName)) {
+    foreach(skill in skillsList)
+      if (columnType.checkSkill(skill.memberName, skill.skillName))
+      {
         columnTypes.append(columnType)
         break
       }
@@ -160,12 +163,12 @@ let function getParametersByRequestType(crewId, skillsList, difficulty, requestT
                          ? requestType.getSelectedParameters(crewId, unit)
                          : requestType.getParameters(crewId, unit)
 
-  foreach (skill in skillsList) {
+  foreach(skill in skillsList) {
     // Leaving data only related to selected difficulty, member and skill.
     let skillParams = fullParamsList?[difficulty.crewSkillName][skill.memberName][skill.skillName]
     if (!skillParams)
       continue
-    foreach (key, value in skillParams) {
+    foreach(key, value in skillParams) {
       if (!(key in res))
         res[key] <- []
       res[key].append({
@@ -180,7 +183,7 @@ let function getParametersByRequestType(crewId, skillsList, difficulty, requestT
 
 let function getSortedArrayByParamsTable(parameters, crewUnitType) {
   let res = []
-  foreach (name, valuesArr in parameters) {
+  foreach(name, valuesArr in parameters) {
     if (crewUnitType != CUT_AIRCRAFT && name == "airfieldMinRepairTime")
       continue
     res.append({
@@ -199,14 +202,16 @@ let function getSortedArrayByParamsTable(parameters, crewUnitType) {
 }
 
 let function parseParameters(columnTypes,
-  currentParametersByRequestType, selectedParametersByRequestType, crewUnitType) {
+  currentParametersByRequestType, selectedParametersByRequestType, crewUnitType)
+{
   let res = []
   let currentParameters = currentParametersByRequestType[::g_skill_parameters_request_type.CURRENT_VALUES]
   if (!::u.isTable(currentParameters))
     return res
 
   let paramsArray = getSortedArrayByParamsTable(currentParameters, crewUnitType)
-  foreach (_idx, paramData in paramsArray) {
+  foreach (_idx, paramData in paramsArray)
+  {
     let parametersType = ::g_skill_parameters_type.getTypeByParamName(paramData.name)
     parametersType.parseColumns(paramData, columnTypes,
       currentParametersByRequestType, selectedParametersByRequestType, res)
@@ -216,7 +221,7 @@ let function parseParameters(columnTypes,
 
 let function filterSkillsList(skillsList) {
   let res = []
-  foreach (skill in skillsList) {
+  foreach(skill in skillsList) {
     let group = getTblValue(skill.skillName, skillGroups)
     if (group) {
       let resSkill = ::u.search(res, (@(skill, group) function(resSkill) {
@@ -232,14 +237,15 @@ let function filterSkillsList(skillsList) {
 }
 
 //skillsList = [{ memberName = "", skillName = "" }]
-let function getSkillListParameterRowsView(crew, difficulty, notFilteredSkillsList, crewUnitType, unit) {
+let function getSkillListParameterRowsView(crew, difficulty, notFilteredSkillsList, crewUnitType, unit)
+{
   let skillsList = filterSkillsList(notFilteredSkillsList)
 
   let columnTypes = getColumnsTypesList(skillsList, crewUnitType)
 
   //preparing full requestsList
   let fullRequestsList = [::g_skill_parameters_request_type.CURRENT_VALUES] //required for getting params list
-  foreach (columnType in columnTypes) {
+  foreach(columnType in columnTypes) {
     ::u.appendOnce(columnType.previousParametersRequestType, fullRequestsList, true)
     ::u.appendOnce(columnType.currentParametersRequestType, fullRequestsList, true)
   }

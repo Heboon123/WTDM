@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -39,7 +38,8 @@ const INFO_WND_SAVE_PATH = "infoWnd"
     clear all info about saved switches
 */
 
-::gui_handlers.InfoWnd <- class extends ::BaseGuiHandler {
+::gui_handlers.InfoWnd <- class extends ::BaseGuiHandler
+{
   wndType = handlerType.MODAL
   sceneBlkName = "%gui/wndLib/infoWnd.blk"
 
@@ -54,7 +54,8 @@ const INFO_WND_SAVE_PATH = "infoWnd"
   isCanceled = true
   buttonsCbs = null
 
-  static function openChecked(config) {
+  static function openChecked(config)
+  {
     if (!::gui_handlers.InfoWnd.canShowAgain(getTblValue("checkId", config)))
       return false
 
@@ -62,19 +63,23 @@ const INFO_WND_SAVE_PATH = "infoWnd"
     return true
   }
 
-  static function canShowAgain(chkId) {
+  static function canShowAgain(chkId)
+  {
     return !chkId || ::load_local_account_settings(INFO_WND_SAVE_PATH + "/" + chkId, true)
   }
 
-  static function setCanShowAgain(chkId, isCanShowAgain) {
+  static function setCanShowAgain(chkId, isCanShowAgain)
+  {
     ::save_local_account_settings(INFO_WND_SAVE_PATH + "/" + chkId, isCanShowAgain)
   }
 
-  static function clearAllSaves() {
+  static function clearAllSaves()
+  {
     ::save_local_account_settings(INFO_WND_SAVE_PATH, null)
   }
 
-  function initScreen() {
+  function initScreen()
+  {
     this.scene.findObject("header").setValue(this.header)
     this.scene.findObject("message").setValue(this.message)
     if (!this.checkId)
@@ -86,13 +91,15 @@ const INFO_WND_SAVE_PATH = "infoWnd"
       this.scene.findObject("close_btn").have_shortcut = "BNotEsc"
   }
 
-  function createButtons() {
+  function createButtons()
+  {
     this.buttonsCbs = {}
     local markup = ""
     let infoHandler = this
     local hasBigButton = false
     if (this.buttons)
-      foreach (idx, btn in this.buttons) {
+      foreach(idx, btn in this.buttons)
+      {
         local cb = null
         if ("onClick" in btn)
           cb = Callback(btn.onClick, this.buttonsContext)
@@ -112,7 +119,8 @@ const INFO_WND_SAVE_PATH = "infoWnd"
     this.guiScene.replaceContentFromText(this.scene.findObject("buttons_place"), markup, markup.len(), this.buttonsCbs)
 
     //update navBar
-    if (!markup.len()) {
+    if (!markup.len())
+    {
       this.scene.findObject("info_wnd_frame")["class"] = "wnd"
       this.showSceneBtn("nav-help", false)
     }
@@ -120,17 +128,20 @@ const INFO_WND_SAVE_PATH = "infoWnd"
       this.scene.findObject("info_wnd_frame").largeNavBarHeight = "yes"
   }
 
-  function onButtonClick() {
+  function onButtonClick()
+  {
     this.isCanceled = false
     this.goBack()
   }
 
-  function onDoNotShowMeAgain(obj) {
+  function onDoNotShowMeAgain(obj)
+  {
     if (obj)
       this.setCanShowAgain(this.checkId, !obj.getValue())
   }
 
-  function afterModalDestroy() {
+  function afterModalDestroy()
+  {
     if (this.isCanceled && this.onCancel)
       this.onCancel()
   }

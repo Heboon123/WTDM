@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -7,7 +6,6 @@ from "%scripts/dagui_library.nut" import *
 
 let time = require("%scripts/time.nut")
 let { ceil } = require("math")
-let DataBlock  = require("DataBlock")
 
 ::WwArtilleryAmmo <- class {
   hasArtilleryStrike = false
@@ -20,7 +18,8 @@ let DataBlock  = require("DataBlock")
   cooldownAfterMoveSec = 0
   strikeIntervalSec = 0
 
-  function update(armyName, blk = null) {
+  function update(armyName, blk = null)
+  {
     if (!blk)
       return
 
@@ -29,12 +28,13 @@ let DataBlock  = require("DataBlock")
     this.updateStrike(armyName)
   }
 
-  function updateStrike(armyName) {
+  function updateStrike(armyName)
+  {
     this.hasArtilleryStrike = false
     this.nextStrikeTimeMillis = 0
     this.strikesDone = null
 
-    let strikesBlk = DataBlock()
+    let strikesBlk = ::DataBlock()
     ::ww_get_artillery_strikes(strikesBlk)
 
     let strikeBlk = strikesBlk?.artilleryStrikes?[armyName]
@@ -46,32 +46,39 @@ let DataBlock  = require("DataBlock")
     this.strikesDone = getTblValue("strikesDone", strikeBlk, 0)
   }
 
-  function getAmmoCount() {
+  function getAmmoCount()
+  {
     return this.ammoCount
   }
 
-  function getMaxAmmoCount() {
+  function getMaxAmmoCount()
+  {
     return this.maxAmmoCount
   }
 
-  function getNextAmmoRefillTime() {
+  function getNextAmmoRefillTime()
+  {
     let millisec = this.nextAmmoRefillMillisec - ::ww_get_operation_time_millisec()
     return time.millisecondsToSeconds(millisec).tointeger()
   }
 
-  function getMaxStrikesPerAttack() {
+  function getMaxStrikesPerAttack()
+  {
     return min(this.maxStrikesPerAttack, this.maxAmmoCount)
   }
 
-  function getCooldownAfterMoveMillisec() {
+  function getCooldownAfterMoveMillisec()
+  {
     return (this.cooldownAfterMoveSec * 1000 / ::ww_get_speedup_factor()).tointeger()
   }
 
-  function getStrikeIntervalMillisec() {
+  function getStrikeIntervalMillisec()
+  {
     return (this.strikeIntervalSec * 1000 / ::ww_get_speedup_factor()).tointeger()
   }
 
-  function getTimeToNextStrike() {
+  function getTimeToNextStrike()
+  {
     if (!this.hasStrike())
       return 0
 
@@ -79,7 +86,8 @@ let DataBlock  = require("DataBlock")
     return max(ceil(time.millisecondsToSeconds(millisec)).tointeger(), 1)
   }
 
-  function getTimeToCompleteStrikes() {
+  function getTimeToCompleteStrikes()
+  {
     if (!this.hasStrike())
       return 0
 
@@ -90,19 +98,23 @@ let DataBlock  = require("DataBlock")
     return max(ceil(time.millisecondsToSeconds(millisec)).tointeger(), 1)
   }
 
-  function getUnusedStrikesNumber() {
+  function getUnusedStrikesNumber()
+  {
     return this.hasStrike() ? this.getMaxStrikesPerAttack() - this.strikesDone - 1 : 0
   }
 
-  function hasStrike() {
+  function hasStrike()
+  {
     return this.hasArtilleryStrike
   }
 
-  function isStrikePreparing() {
+  function isStrikePreparing()
+  {
     return this.hasStrike() ? this.strikesDone == 0 : false
   }
 
-  function setArtilleryParams(params) {
+  function setArtilleryParams(params)
+  {
     if (!params)
       return
 

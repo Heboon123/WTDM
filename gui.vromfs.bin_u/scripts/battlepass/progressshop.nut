@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -69,7 +68,7 @@ let seenBattlePassShopRows = Computed(@() (seasonShopConfig.value?.purchaseWndIt
   .filter(@(name) name != "")
 )
 
-let markRowsSeen = @() seenBattlePassShop.markSeen(seenBattlePassShopRows.value)
+let markRowsSeen =@() seenBattlePassShop.markSeen(seenBattlePassShopRows.value)
 
 let function onSeenBpShopChanged() {
   seenBattlePassShop.setDaysToUnseen(SEEN_OUT_OF_DATE_DAYS)
@@ -151,7 +150,7 @@ local BattlePassShopWnd = class extends ::gui_handlers.BaseGuiHandlerWT {
         let isRealyBought = g.isBought && (!hasBuyImprovedPass || g.isImprovedBattlePass)
         return {
           rowName = g.rowIdx
-          rowEven = (idx % 2 == 0) ? "yes" : "no"
+          rowEven = (idx%2 == 0) ? "yes" :"no"
           amount = $"{g.name} {g.valueText}"
           cost = g.passExchangeItem != null ? null : $"{isRealyBought ? loc("check_mark/green") : ""} {g.cost.tostring()}"
           isDisabled = g.isDisabled
@@ -235,7 +234,7 @@ local BattlePassShopWnd = class extends ::gui_handlers.BaseGuiHandlerWT {
     let msgText = ::warningIfGold(
       loc("onlineShop/needMoneyQuestion", {
           purchase = $"{goodsConfig.name} {goodsConfig.valueText}",
-          cost = goodsConfig.cost.getTextAccordingToBalance() }),
+          cost = goodsConfig.cost.getTextAccordingToBalance()}),
       goodsConfig.cost)
     let onCancel = @() ::move_mouse_on_child(this.scene.findObject("items_list"), curGoodsIdx)
     this.msgBox("purchase_ask", msgText,

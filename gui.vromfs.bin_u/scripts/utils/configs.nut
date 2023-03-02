@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -6,7 +5,6 @@ from "%scripts/dagui_library.nut" import *
 
 let ConfigBase = require("configBase.nut")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
-let DataBlock = require("DataBlock")
 
 let configs = {
   PRICE = {
@@ -27,7 +25,7 @@ let configs = {
 
   GUI = {
     getImpl = function() {
-      let blk = DataBlock()
+      let blk = ::DataBlock()
       try {
         blk.load("config/gui.blk")
       }
@@ -40,7 +38,7 @@ let configs = {
 
   AVATARS = {
     getImpl = function() {
-      let blk = DataBlock()
+      let blk = ::DataBlock()
       try {
         blk.load("config/avatars.blk")
       }

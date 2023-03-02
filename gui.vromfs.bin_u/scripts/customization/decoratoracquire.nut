@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -6,7 +5,8 @@ from "%scripts/dagui_library.nut" import *
 
 // Functions for acquiring decorators by all possible ways (purchase, consume coupon, find on marketplace)
 
-let function askPurchaseDecorator(decorator, onSuccessCb) {
+let function askPurchaseDecorator(decorator, onSuccessCb)
+{
   if (!(decorator?.canBuyUnlock(null) ?? false))
     return
 
@@ -31,7 +31,8 @@ let function askPurchaseDecorator(decorator, onSuccessCb) {
         ["cancel"]], "ok", { cancel_fn = @() null })
 }
 
-let function askConsumeDecoratorCoupon(decorator, onSuccessCb) {
+let function askConsumeDecoratorCoupon(decorator, onSuccessCb)
+{
   if (!(decorator?.canGetFromCoupon(null) ?? false))
     return
 
@@ -42,14 +43,16 @@ let function askConsumeDecoratorCoupon(decorator, onSuccessCb) {
   }, this), null)
 }
 
-let function findDecoratorCouponOnMarketplace(decorator) {
+let function findDecoratorCouponOnMarketplace(decorator)
+{
   let item = ::ItemsManager.findItemById(decorator?.getCouponItemdefId())
   if (!(item?.hasLink() ?? false))
     return
   item.openLink()
 }
 
-let function askFindDecoratorCouponOnMarketplace(decorator) {
+let function askFindDecoratorCouponOnMarketplace(decorator)
+{
   if (!(decorator?.canBuyCouponOnMarketplace(null) ?? false))
     return
 
@@ -62,7 +65,8 @@ let function askFindDecoratorCouponOnMarketplace(decorator) {
 }
 
 // Pass unit=null to skip unit check
-let function canAcquireDecorator(decorator, unit = null) {
+let function canAcquireDecorator(decorator, unit = null)
+{
   if (decorator == null || decorator.isUnlocked())
     return false
   return decorator.canBuyUnlock(unit)
@@ -70,7 +74,8 @@ let function canAcquireDecorator(decorator, unit = null) {
     || decorator.canBuyCouponOnMarketplace(unit)
 }
 
-let function askAcquireDecorator(decorator, onSuccessCb) {
+let function askAcquireDecorator(decorator, onSuccessCb)
+{
   if (!canAcquireDecorator(decorator, null))
     return
   if (decorator.canBuyUnlock(null))

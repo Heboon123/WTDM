@@ -1,10 +1,8 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
 #explicit-this
 
-let { rnd } = require("dagor.random")
 let { createBgData } = require("%scripts/loading/loadingBgData.nut")
 let { GUI } = require("%scripts/utils/configs.nut")
 let { animBgLoad } = require("%scripts/loading/animBg.nut")
@@ -20,8 +18,8 @@ let function wwAnimBgLoad(name) {
     return animBgLoad(fullPath)
 
   let curBgData = createBgData()
-  foreach (n in wwBg) // Need to set random weight in config for random image getting when no active map
-    curBgData.list[$"{WW_BG_PATH}{n}.blk"] <- rnd() % 10
+  foreach(n in wwBg)// Need to set random weight in config for random image getting when no active map
+    curBgData.list[$"{WW_BG_PATH}{n}.blk"] <- ::math.rnd() % 10
   return animBgLoad("", null, curBgData)
 }
 

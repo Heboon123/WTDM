@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -16,9 +15,9 @@ let create = @(data, onFinishCb) psn.send(
 
     if (err) {
       statsd.send_counter("sq.psn_game_sessions.create", 1,
-        { status = "error", request = "create_session", error_code = err.code })
+        {status = "error", request = "create_session", error_code = err.code})
       log($"[PSGSM] Game Sessions: Create: Error: {toString(err, 4)}")
-      debugTableData(data, { recursionLevel = 10 })
+      debugTableData(data, {recursionLevel = 10})
     }
 
     onFinishCb(response, err)
@@ -33,7 +32,7 @@ let updateInfo = function(sessionId, curData, newData, onFinishCb) {
     if (curData != null && isEqual(val, newData[key]))
       continue
 
-    let pair = { [key] = newData[key] }
+    let pair = {[key] = newData[key]}
     psn.send(
       psn.gameSessionManager.update(
         sessionId,
@@ -44,7 +43,7 @@ let updateInfo = function(sessionId, curData, newData, onFinishCb) {
 
         if (err) {
           statsd.send_counter("sq.psn_game_sessions.update_session", 1,
-            { status = "error", request = "update_session", error_code = err.code })
+            {status = "error", request = "update_session", error_code = err.code})
           log($"[PSGSM] Game Sessions: Update Info: {sessionId}: Error: {toString(err, 4)}")
         }
 
@@ -62,7 +61,7 @@ let destroy = function(sessionId, onFinishCb = psn.noOpCb) {
 
       if (err) {
         statsd.send_counter("sq.psn_game_sessions.destroy_session", 1,
-          { status = "error", request = "destroy_session", error_code = err.code })
+          {status = "error", request = "destroy_session", error_code = err.code})
         log($"[PSGSM] Game Sessions: Destroy: {sessionId}: Error receieved: {toString(err, 4)}")
       }
 
@@ -79,9 +78,9 @@ let joinAsPlayer = function(sessionId, sessionData, pushContextId, onFinishCb = 
       debug_dump_stack()
       if (err) {
         statsd.send_counter("sq.psn_game_sessions.join_as_player", 1,
-          { status = "error", request = "join_as_player", error_code = err.code })
+          {status = "error", request = "join_as_player", error_code = err.code})
         log($"[PSGSM] Join: As Player: {sessionId}: Error: {toString(err, 4)}")
-        debugTableData(sessionData, { recursionLevel = 10 })
+        debugTableData(sessionData, {recursionLevel = 10})
       }
 
       onFinishCb(sessionId, pushContextId, response, err)
@@ -97,9 +96,9 @@ let joinAsSpectator = function(sessionId, sessionData, pushContextId, onFinishCb
       debug_dump_stack()
       if (err) {
         statsd.send_counter("sq.psn_game_sessions.join_as_spectator", 1,
-          { status = "error", request = "join_as_spectator", error_code = err.code })
+          {status = "error", request = "join_as_spectator", error_code = err.code})
         log($"[PSGSM] Join: As Spectator: {sessionId}: Error: {toString(err, 4)}")
-        debugTableData(sessionData, { recursionLevel = 10 })
+        debugTableData(sessionData, {recursionLevel = 10})
       }
 
       onFinishCb(sessionId, pushContextId, response, err)

@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -6,11 +5,13 @@ from "%scripts/dagui_library.nut" import *
 
 local savedAirfields = {}
 
-let function reset() {
+let function reset()
+{
   savedAirfields = {}
 }
 
-let function updateMapIcons() {
+let function updateMapIcons()
+{
   if (!::g_world_war.haveManagementAccessForAnyGroup())
     return
 
@@ -25,7 +26,8 @@ let function updateMapIcons() {
         spriteType = airfield.airfieldType.spriteType
       }
 
-  foreach (idx, airfield in curAirfields) {
+  foreach (idx, airfield in curAirfields)
+  {
     let lastAirfield = savedAirfields?[idx] ?? {}
     if (::u.isEqual(airfield, lastAirfield))
       continue

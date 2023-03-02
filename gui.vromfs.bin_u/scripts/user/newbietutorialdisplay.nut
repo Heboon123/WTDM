@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -9,7 +8,8 @@ let { skipTutorialBitmaskId } = require("%scripts/tutorials/tutorialsData.nut")
 
 let TUTORIAL_VERSION_COUNTER = 1
 
-let saveVersion = function(ver = null) {
+let saveVersion = function(ver = null)
+{
   if (::loadLocalByAccount("tutor/tutorialVersion") == null)
     ::saveLocalByAccount("tutor/tutorialVersion", ver ?? TUTORIAL_VERSION_COUNTER)
 }

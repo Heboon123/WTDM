@@ -11,7 +11,8 @@ setValue only move mouse to child
 ::gui_bhv.HoverNavigator <- class extends ::gui_bhv.posNavigator {
   bhvId = "HoverNavigator"
 
-  function onAttach(obj) {
+  function onAttach(obj)
+  {
     markChildrenInteractive(obj, true)
     markObjShortcutOnHover(obj, true)
     return RETCODE_NOTHING
@@ -33,7 +34,8 @@ setValue only move mouse to child
     return RETCODE_NOTHING
   }
 
-  function onExtMouse(obj, mx, my, btn_id, is_up, _bits) {
+  function onExtMouse(obj, mx, my, btn_id, is_up, _bits)
+  {
     if (btn_id != 2)  //right mouse button
       return RETCODE_NOTHING
     if (is_up && this.findClickedObj(obj, mx, my))

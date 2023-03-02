@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -6,14 +5,13 @@ from "%scripts/dagui_library.nut" import *
 #explicit-this
 
 let { get_time_msec } = require("dagor.time")
-let DataBlock  = require("DataBlock")
 let ItemGenerators = require("%scripts/items/itemsClasses/itemGenerators.nut")
 let inventoryClient = require("%scripts/inventory/inventoryClient.nut")
 let itemTransfer = require("%scripts/items/itemsTransfer.nut")
 let stdMath = require("%sqstd/math.nut")
 let { setShouldCheckAutoConsume, checkAutoConsume } = require("%scripts/items/autoConsumeItems.nut")
 let { buyableSmokesList } = require("%scripts/unlocks/unlockSmoke.nut")
-let { boosterEffectType } = require("%scripts/items/boosterEffect.nut")
+let { boosterEffectType }= require("%scripts/items/boosterEffect.nut")
 let seenList = require("%scripts/seen/seenList.nut")
 let { addPromoAction } = require("%scripts/promo/promoActions.nut")
 let { PRICE } = require("%scripts/utils/configs.nut")
@@ -197,22 +195,25 @@ foreach (fn in [
     this.shopVisibleSeenIds = null
   }
 
-  function getInventoryItemById(id) {
+  function getInventoryItemById(id)
+  {
     this._checkInventoryUpdate()
     return this.inventoryItemById?[id]
   }
 }
 
-::ItemsManager.fillFakeItemsList <- function fillFakeItemsList() {
+::ItemsManager.fillFakeItemsList <- function fillFakeItemsList()
+{
   let curLevel = ::get_cyber_cafe_level()
   if (curLevel == this.genericItemsForCyberCafeLevel)
     return
 
   this.genericItemsForCyberCafeLevel = curLevel
 
-  this.fakeItemsList = DataBlock()
+  this.fakeItemsList = ::DataBlock()
 
-  for (local i = 0; i <= ::cyber_cafe_max_level; i++) {
+  for (local i = 0; i <= ::cyber_cafe_max_level; i++)
+  {
     let level = i || curLevel //we do not need level0 booster, but need booster of current level.
     let table = {
       type = itemType.FAKE_BOOSTER
@@ -226,7 +227,8 @@ foreach (fn in [
     this.fakeItemsList["FakeBoosterForNetCafeLevel" + (i || "")] <- ::build_blk_from_container(table)
   }
 
-  for (local i = 2; i <= ::g_squad_manager.getMaxSquadSize(); i++) {
+  for (local i = 2; i <= ::g_squad_manager.getMaxSquadSize(); i++)
+  {
     let table = {
       type = itemType.FAKE_BOOSTER
       rateBoosterParams = {
@@ -248,7 +250,8 @@ foreach (fn in [
 /////////////////////////////////////////////////////////////////////////////////////////////
 //---------------------------------SHOP ITEMS----------------------------------------------//
 /////////////////////////////////////////////////////////////////////////////////////////////
-::ItemsManager._checkUpdateList <- function _checkUpdateList() {
+::ItemsManager._checkUpdateList <- function _checkUpdateList()
+{
   local hasChanges = this.checkShopItemsUpdate()
   if (this.checkItemDefsUpdate())
     hasChanges = true
@@ -262,7 +265,7 @@ foreach (fn in [
   this.itemsList.extend(this.itemsListInternal)
   this.itemsList.extend(this.itemsListExternal)
 
-  foreach (item in this.itemsList)
+  foreach(item in this.itemsList)
     if (item.id in this.shopItemById)
       duplicatesId.append(item.id)
     else
@@ -272,7 +275,8 @@ foreach (fn in [
     assert(false, "Items shop: found duplicate items id = \n" + ::g_string.implode(duplicatesId, ", "))
 }
 
-::ItemsManager.checkShopItemsUpdate <- function checkShopItemsUpdate() {
+::ItemsManager.checkShopItemsUpdate <- function checkShopItemsUpdate()
+{
   if (!this._reqUpdateList)
     return false
   this._reqUpdateList = false
@@ -284,7 +288,8 @@ foreach (fn in [
   let pBlk = ::get_price_blk()
   let trophyBlk = pBlk?.trophy
   if (trophyBlk)
-    for (local i = 0; i < trophyBlk.blockCount(); i++) {
+    for (local i = 0; i < trophyBlk.blockCount(); i++)
+    {
       let blk = trophyBlk.getBlock(i)
       if (blk?.shouldNotBeDisplayedOnClient)
         continue
@@ -296,10 +301,12 @@ foreach (fn in [
 
   let itemsBlk = ::get_items_blk()
   this.ignoreItemLimits = !!itemsBlk?.ignoreItemLimits
-  for (local i = 0; i < itemsBlk.blockCount(); i++) {
+  for(local i = 0; i < itemsBlk.blockCount(); i++)
+  {
     let blk = itemsBlk.getBlock(i)
     let iType = this.getInventoryItemType(blk?.type)
-    if (iType == itemType.UNKNOWN) {
+    if (iType == itemType.UNKNOWN)
+    {
       log("Error: unknown item type in items blk = " + (blk?.type ?? "NULL"))
       continue
     }
@@ -309,7 +316,8 @@ foreach (fn in [
 
   ::ItemsManager.fillFakeItemsList()
   if (this.fakeItemsList)
-    for (local i = 0; i < this.fakeItemsList.blockCount(); i++) {
+    for (local i = 0; i < this.fakeItemsList.blockCount(); i++)
+    {
       let blk = this.fakeItemsList.getBlock(i)
       let item = this.createItem(blk?.type, blk)
       this.itemsListInternal.append(item)
@@ -322,16 +330,19 @@ foreach (fn in [
   return true
 }
 
-::ItemsManager.checkItemDefsUpdate <- function checkItemDefsUpdate() {
+::ItemsManager.checkItemDefsUpdate <- function checkItemDefsUpdate()
+{
   if (!this._reqUpdateItemDefsList)
     return false
   this._reqUpdateItemDefsList = false
 
   this.itemsListExternal.clear()
   // Collecting itemdefs as shop items
-  foreach (itemDefDesc in inventoryClient.getItemdefs()) {
+  foreach (itemDefDesc in inventoryClient.getItemdefs())
+  {
     local item = this.itemsByItemdefId?[itemDefDesc?.itemdefid]
-    if (!item) {
+    if (!item)
+    {
       let defType = itemDefDesc?.type
 
       if (isInArray(defType, [ "playtimegenerator", "generator", "bundle", "delayedexchange" ])
@@ -354,16 +365,20 @@ foreach (fn in [
   return true
 }
 
-::ItemsManager.onEventEntitlementsUpdatedFromOnlineShop <- function onEventEntitlementsUpdatedFromOnlineShop(_params) {
+::ItemsManager.onEventEntitlementsUpdatedFromOnlineShop <- function onEventEntitlementsUpdatedFromOnlineShop(_params)
+{
   let curLevel = ::get_cyber_cafe_level()
-  if (this.genericItemsForCyberCafeLevel != curLevel) {
+  if (this.genericItemsForCyberCafeLevel != curLevel)
+  {
     this.markItemsListUpdate()
     this.markInventoryUpdate()
   }
 }
 
-::ItemsManager.initItemsClasses <- function initItemsClasses() {
-  foreach (_name, itemClass in ::items_classes) {
+::ItemsManager.initItemsClasses <- function initItemsClasses()
+{
+  foreach(_name, itemClass in ::items_classes)
+  {
     let iType = itemClass.iType
     if (stdMath.number_of_set_bits(iType) != 1)
       assert(false, "Incorrect item class iType " + iType + " must be a power of 2")
@@ -375,40 +390,47 @@ foreach (fn in [
 }
 ::ItemsManager.initItemsClasses() //init classes right after scripts load.
 
-::ItemsManager.createItem <- function createItem(itemType, blk, inventoryBlk = null, slotData = null) {
-  let iClass = (itemType in this.itemTypeClasses) ? this.itemTypeClasses[itemType] : ::BaseItem
+::ItemsManager.createItem <- function createItem(itemType, blk, inventoryBlk = null, slotData = null)
+{
+  let iClass = (itemType in this.itemTypeClasses)? this.itemTypeClasses[itemType] : ::BaseItem
   return iClass(blk, inventoryBlk, slotData)
 }
 
-::ItemsManager.getItemClass <- function getItemClass(itemType) {
-  return (itemType in this.itemTypeClasses) ? this.itemTypeClasses[itemType] : ::BaseItem
+::ItemsManager.getItemClass <- function getItemClass(itemType)
+{
+  return (itemType in this.itemTypeClasses)? this.itemTypeClasses[itemType] : ::BaseItem
 }
 
-::ItemsManager.getItemsList <- function getItemsList(typeMask = itemType.ALL, filterFunc = null) {
+::ItemsManager.getItemsList <- function getItemsList(typeMask = itemType.ALL, filterFunc = null)
+{
   this._checkUpdateList()
   return this._getItemsFromList(this.itemsList, typeMask, filterFunc)
 }
 
-::ItemsManager.getShopList <- function getShopList(typeMask = itemType.INVENTORY_ALL, filterFunc = null) {
+::ItemsManager.getShopList <- function getShopList(typeMask = itemType.INVENTORY_ALL, filterFunc = null)
+{
   this._checkUpdateList()
   return this._getItemsFromList(this.itemsList, typeMask, filterFunc, "shopFilterMask")
 }
 
-::ItemsManager.isItemVisible <- function isItemVisible(item, shopTab) {
+::ItemsManager.isItemVisible <- function isItemVisible(item, shopTab)
+{
   return shopTab == itemsTab.SHOP ? item.isCanBuy() && (!item.isDevItem || hasFeature("devItemShop"))
       && !item.isHiddenItem() && !item.isVisibleInWorkshopOnly() && !item.isHideInShop
     : shopTab == itemsTab.INVENTORY ? !item.isHiddenItem() && !item.isVisibleInWorkshopOnly()
     : false
 }
 
-::ItemsManager.getShopVisibleSeenIds <- function getShopVisibleSeenIds() {
+::ItemsManager.getShopVisibleSeenIds <- function getShopVisibleSeenIds()
+{
   if (!this.shopVisibleSeenIds)
     this.shopVisibleSeenIds = this.getShopList(this.checkItemsMaskFeatures(itemType.INVENTORY_ALL),
       @(it) ::ItemsManager.isItemVisible(it, itemsTab.SHOP)).map(@(it) it.getSeenId())
   return this.shopVisibleSeenIds
 }
 
-::ItemsManager.findItemById <- function findItemById(id, _typeMask = itemType.ALL) {
+::ItemsManager.findItemById <- function findItemById(id, _typeMask = itemType.ALL)
+{
   this._checkUpdateList()
   let item = this.shopItemById?[id] ?? this.itemsByItemdefId?[id]
   if (!item && this.isItemdefId(id))
@@ -416,15 +438,18 @@ foreach (fn in [
   return item
 }
 
-::ItemsManager.isItemdefId <- function isItemdefId(id) {
+::ItemsManager.isItemdefId <- function isItemdefId(id)
+{
   return type(id) == "integer"
 }
 
-::ItemsManager.requestItemsByItemdefIds <- function requestItemsByItemdefIds(itemdefIdsList) {
+::ItemsManager.requestItemsByItemdefIds <- function requestItemsByItemdefIds(itemdefIdsList)
+{
   inventoryClient.requestItemdefsByIds(itemdefIdsList)
 }
 
-::ItemsManager.getItemOrRecipeBundleById <- function getItemOrRecipeBundleById(id) {
+::ItemsManager.getItemOrRecipeBundleById <- function getItemOrRecipeBundleById(id)
+{
   local item = this.findItemById(id)
   if (item || !ItemGenerators.get(id))
     return item
@@ -440,7 +465,8 @@ foreach (fn in [
   return item
 }
 
-::ItemsManager.markItemsListUpdate <- function markItemsListUpdate() {
+::ItemsManager.markItemsListUpdate <- function markItemsListUpdate()
+{
   this._reqUpdateList = true
   this.shopVisibleSeenIds = null
   seenItems.setDaysToUnseen(OUT_OF_DATE_DAYS_ITEMS_SHOP)
@@ -451,7 +477,8 @@ foreach (fn in [
 
 ::ItemsManager.smokeItems.subscribe(@(_p) ::ItemsManager.markItemsListUpdate())
 
-::ItemsManager.markItemsDefsListUpdate <- function markItemsDefsListUpdate() {
+::ItemsManager.markItemsDefsListUpdate <- function markItemsDefsListUpdate()
+{
   this._reqUpdateItemDefsList = true
   this.shopVisibleSeenIds = null
   seenItems.onListChanged()
@@ -460,7 +487,8 @@ foreach (fn in [
 }
 
 local lastItemDefsUpdatedelayedCall = 0
-::ItemsManager.markItemsDefsListUpdateDelayed <- function markItemsDefsListUpdateDelayed() {
+::ItemsManager.markItemsDefsListUpdateDelayed <- function markItemsDefsListUpdateDelayed()
+{
   if (this._reqUpdateItemDefsList)
     return
   if (lastItemDefsUpdatedelayedCall
@@ -474,7 +502,8 @@ local lastItemDefsUpdatedelayedCall = 0
   }.bindenv(this))
 }
 
-::ItemsManager.onEventItemDefChanged <- function onEventItemDefChanged(_p) {
+::ItemsManager.onEventItemDefChanged <- function onEventItemDefChanged(_p)
+{
   this.markItemsDefsListUpdateDelayed()
 }
 
@@ -484,7 +513,8 @@ local lastItemDefsUpdatedelayedCall = 0
 /////////////////////////////////////////////////////////////////////////////////////////////
 //---------------------------------INVENTORY ITEMS-----------------------------------------//
 /////////////////////////////////////////////////////////////////////////////////////////////
-::ItemsManager.getInventoryItemType <- function getInventoryItemType(blkType) {
+::ItemsManager.getInventoryItemType <- function getInventoryItemType(blkType)
+{
   if (type(blkType) == "string") {
     if (blkType in inventoryItemTypeByTag)
       return inventoryItemTypeByTag[blkType]
@@ -492,7 +522,8 @@ local lastItemDefsUpdatedelayedCall = 0
     blkType = ::item_get_type_id_by_type_name(blkType)
   }
 
-  switch (blkType) {
+  switch (blkType)
+  {
     case EIT_BOOSTER:           return itemType.BOOSTER
     case EIT_TOURNAMENT_TICKET: return itemType.TICKET
     case EIT_WAGER:             return itemType.WAGER
@@ -516,24 +547,27 @@ local lastItemDefsUpdatedelayedCall = 0
   let itemsBlk = ::get_items_blk()
 
   let itemsCache = ::get_items_cache()
-  foreach (slot in itemsCache) {
+  foreach(slot in itemsCache)
+  {
     if (!slot.uids.len())
       continue
 
-    let invItemBlk = DataBlock()
+    let invItemBlk = ::DataBlock()
     ::get_item_data_by_uid(invItemBlk, slot.uids[0])
     if (getTblValue("expiredTime", invItemBlk, 0) < 0)
       continue
 
     let iType = this.getInventoryItemType(invItemBlk?.type)
-    if (iType == itemType.UNKNOWN) {
+    if (iType == itemType.UNKNOWN)
+    {
       //debugTableData(invItemBlk)
       //assert(false, "Inventory: unknown item type = " + invItemBlk?.type)
       continue
     }
 
     let blk = itemsBlk?[slot.id]
-    if (!blk) {
+    if (!blk)
+    {
       if (::is_dev_version)
         log("Error: found removed item: " + slot.id)
       continue //skip removed items
@@ -547,11 +581,13 @@ local lastItemDefsUpdatedelayedCall = 0
   }
 
   ::ItemsManager.fillFakeItemsList()
-  if (this.fakeItemsList && ::get_cyber_cafe_level()) {
+  if (this.fakeItemsList && ::get_cyber_cafe_level())
+  {
     let id = "FakeBoosterForNetCafeLevel"
     let blk = this.fakeItemsList.getBlockByName(id)
-    if (blk) {
-      let item = this.createItem(blk?.type, blk, DataBlock(), { uids = [::FAKE_ITEM_CYBER_CAFE_BOOSTER_UID] })
+    if (blk)
+    {
+      let item = this.createItem(blk?.type, blk, ::DataBlock(), {uids = [::FAKE_ITEM_CYBER_CAFE_BOOSTER_UID]})
       this.inventory.append(item)
       this.inventoryItemById[item.id] <- item
     }
@@ -559,13 +595,14 @@ local lastItemDefsUpdatedelayedCall = 0
 
   //gather transfer items list
   let transferAmounts = {}
-  foreach (data in itemTransfer.getSendingList())
+  foreach(data in itemTransfer.getSendingList())
     transferAmounts[data.itemDefId] <- (transferAmounts?[data.itemDefId] ?? 0) + 1
 
   // Collecting external inventory items
   this.rawInventoryItemAmountsByItemdefId = {}
   let extInventoryItems = []
-  foreach (itemDesc in inventoryClient.getItems()) {
+  foreach (itemDesc in inventoryClient.getItems())
+  {
     let itemDefDesc = itemDesc.itemdef
     let itemDefId = itemDesc.itemdefid
     if (itemDefId in this.rawInventoryItemAmountsByItemdefId)
@@ -576,18 +613,21 @@ local lastItemDefsUpdatedelayedCall = 0
     if (!itemDefDesc.len()) //item not full updated, or itemDesc no more exist.
       continue
     let iType = this.getInventoryItemType(itemDefDesc?.tags?.type ?? "")
-    if (iType == itemType.UNKNOWN) {
+    if (iType == itemType.UNKNOWN)
+    {
       logerr("Inventory: Unknown itemdef.tags.type in item " + (itemDefDesc?.itemdefid ?? "NULL"))
       continue
     }
 
     local isCreate = true
     foreach (existingItem in extInventoryItems)
-      if (existingItem.tryAddItem(itemDefDesc, itemDesc)) {
+      if (existingItem.tryAddItem(itemDefDesc, itemDesc))
+      {
         isCreate = false
         break
       }
-    if (isCreate) {
+    if (isCreate)
+    {
       let item = this.createItem(iType, itemDefDesc, itemDesc)
       if (item.id in transferAmounts)
         item.transferAmount += delete transferAmounts[item.id]
@@ -600,14 +640,17 @@ local lastItemDefsUpdatedelayedCall = 0
 
   //add items in transfer
   let itemdefsToRequest = []
-  foreach (itemdefid, amount in transferAmounts) {
+  foreach(itemdefid, amount in transferAmounts)
+  {
     let itemdef = inventoryClient.getItemdefs()?[itemdefid]
-    if (!itemdef) {
+    if (!itemdef)
+    {
       itemdefsToRequest.append(itemdefid)
       continue
     }
     let iType = this.getInventoryItemType(itemdef?.tags?.type ?? "")
-    if (iType == itemType.UNKNOWN) {
+    if (iType == itemType.UNKNOWN)
+    {
       if (isInArray(itemdef?.type, [ "item", "delayedexchange" ]))
         logerr("Inventory: Transfer: Unknown itemdef.tags.type in item " + itemdefid)
       continue
@@ -625,20 +668,24 @@ local lastItemDefsUpdatedelayedCall = 0
   this.extInventoryUpdateTime = get_time_msec()
 }
 
-::ItemsManager.getInventoryList <- function getInventoryList(typeMask = itemType.ALL, filterFunc = null) {
+::ItemsManager.getInventoryList <- function getInventoryList(typeMask = itemType.ALL, filterFunc = null)
+{
   this._checkInventoryUpdate()
   checkAutoConsume()
   return this._getItemsFromList(this.inventory, typeMask, filterFunc)
 }
 
-::ItemsManager.getInventoryListByShopMask <- function getInventoryListByShopMask(typeMask, filterFunc = null) {
+::ItemsManager.getInventoryListByShopMask <- function getInventoryListByShopMask(typeMask, filterFunc = null)
+{
   this._checkInventoryUpdate()
   checkAutoConsume()
   return this._getItemsFromList(this.inventory, typeMask, filterFunc, "shopFilterMask")
 }
 
-::ItemsManager.getInventoryVisibleSeenIds <- function getInventoryVisibleSeenIds() {
-  if (!this.inventoryVisibleSeenIds) {
+::ItemsManager.getInventoryVisibleSeenIds <- function getInventoryVisibleSeenIds()
+{
+  if (!this.inventoryVisibleSeenIds)
+  {
     let itemsList = this.getInventoryListByShopMask(this.checkItemsMaskFeatures(itemType.INVENTORY_ALL))
     this.inventoryVisibleSeenIds = itemsList.filter(
       @(it) ::ItemsManager.isItemVisible(it, itemsTab.INVENTORY)).map(@(it) it.getSeenId())
@@ -650,13 +697,15 @@ local lastItemDefsUpdatedelayedCall = 0
 ::ItemsManager.getInventoryItemByCraftedFrom <- @(uid) ::u.search(this.getInventoryList(),
   @(item) item.isCraftResult() && item.craftedFrom == uid)
 
-::ItemsManager.markInventoryUpdate <- function markInventoryUpdate() {
+::ItemsManager.markInventoryUpdate <- function markInventoryUpdate()
+{
   if (this._needInventoryUpdate)
     return
 
   this._needInventoryUpdate = true
   this.inventoryVisibleSeenIds = null
-  if (!this.isInventoryFullUpdated && this.isInventoryInternalUpdated && !inventoryClient.isWaitForInventory()) {
+  if (!this.isInventoryFullUpdated && this.isInventoryInternalUpdated && !inventoryClient.isWaitForInventory())
+  {
     this.isInventoryFullUpdated = true
     seenInventory.setDaysToUnseen(OUT_OF_DATE_DAYS_INVENTORY)
   }
@@ -666,7 +715,8 @@ local lastItemDefsUpdatedelayedCall = 0
 }
 
 local lastInventoryUpdateDelayedCall = 0
-::ItemsManager.markInventoryUpdateDelayed <- function markInventoryUpdateDelayed() {
+::ItemsManager.markInventoryUpdateDelayed <- function markInventoryUpdateDelayed()
+{
   if (this._needInventoryUpdate)
     return
   if (lastInventoryUpdateDelayedCall
@@ -682,7 +732,8 @@ local lastInventoryUpdateDelayedCall = 0
   }.bindenv(this), 200)
 }
 
-::ItemsManager.onItemsLoaded <- function onItemsLoaded() {
+::ItemsManager.onItemsLoaded <- function onItemsLoaded()
+{
   this.isInventoryInternalUpdated = true
   this.markInventoryUpdate()
 }
@@ -692,7 +743,8 @@ local lastInventoryUpdateDelayedCall = 0
   this._reqUpdateList = true
 }
 
-::ItemsManager.onEventSignOut <- function onEventSignOut(_p) {
+::ItemsManager.onEventSignOut <- function onEventSignOut(_p)
+{
   this.isInventoryFullUpdated = false
   this.isInventoryInternalUpdated = false
 }
@@ -702,19 +754,21 @@ local lastInventoryUpdateDelayedCall = 0
 //---------------------------------ITEM UTILS----------------------------------------------//
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-::ItemsManager.checkItemsMaskFeatures <- function checkItemsMaskFeatures(itemsMask) { //return itemss mask only of available features
-  foreach (iType, feature in this.itemTypeFeatures)
+::ItemsManager.checkItemsMaskFeatures <- function checkItemsMaskFeatures(itemsMask) //return itemss mask only of available features
+{
+  foreach(iType, feature in this.itemTypeFeatures)
     if ((itemsMask & iType) && !hasFeature(feature))
       itemsMask -= iType
   return itemsMask
 }
 
-::ItemsManager._getItemsFromList <- function _getItemsFromList(list, typeMask, filterFunc = null, itemMaskProperty = "iType") {
+::ItemsManager._getItemsFromList <- function _getItemsFromList(list, typeMask, filterFunc = null, itemMaskProperty = "iType")
+{
   if (typeMask == itemType.ALL && !filterFunc)
     return list
 
   let res = []
-  foreach (item in list)
+  foreach(item in list)
     if (((item?[itemMaskProperty] ?? item.iType) & typeMask)
         && (!filterFunc || filterFunc(item)))
       res.append(item)
@@ -722,13 +776,15 @@ local lastInventoryUpdateDelayedCall = 0
 }
 
 //just update gamercards atm.
-::ItemsManager.registerBoosterUpdateTimer <- function registerBoosterUpdateTimer(boostersList) {
+::ItemsManager.registerBoosterUpdateTimer <- function registerBoosterUpdateTimer(boostersList)
+{
   if (!::is_in_flight())
     return
 
   let curFlightTime = ::get_usefull_total_time()
   local nextExpireTime = -1
-  foreach (booster in boostersList) {
+  foreach(booster in boostersList)
+  {
     let expireTime = booster.getExpireFlightTime()
     if (expireTime <= curFlightTime)
       continue
@@ -755,19 +811,22 @@ local lastInventoryUpdateDelayedCall = 0
                                                    )
 }
 
-::ItemsManager._onBoosterExpiredInFlight <- function _onBoosterExpiredInFlight(_dt = 0) {
+::ItemsManager._onBoosterExpiredInFlight <- function _onBoosterExpiredInFlight(_dt = 0)
+{
   this.removeRefreshBoostersTask()
   if (::is_in_flight())
     ::update_gamercards()
 }
 
-::ItemsManager.removeRefreshBoostersTask <- function removeRefreshBoostersTask() {
+::ItemsManager.removeRefreshBoostersTask <- function removeRefreshBoostersTask()
+{
   if (this.refreshBoostersTask >= 0)
     ::periodic_task_unregister(this.refreshBoostersTask)
   this.refreshBoostersTask = -1
 }
 
-::ItemsManager.refreshExtInventory <- function refreshExtInventory() {
+::ItemsManager.refreshExtInventory <- function refreshExtInventory()
+{
   inventoryClient.refreshItems()
 }
 
@@ -775,24 +834,29 @@ local lastInventoryUpdateDelayedCall = 0
 ::ItemsManager.onEventSendingItemsChanged        <- @(_p) this.markInventoryUpdateDelayed()
 ::ItemsManager.onEventTourRegistrationComplete   <- @(_p) this.markInventoryUpdate()
 
-::ItemsManager.onEventLoadingStateChange <- function onEventLoadingStateChange(_p) {
+::ItemsManager.onEventLoadingStateChange <- function onEventLoadingStateChange(_p)
+{
   if (!::is_in_flight())
     this.removeRefreshBoostersTask()
 }
 
-::ItemsManager.onEventGameLocalizationChanged <- function onEventGameLocalizationChanged(_p) {
+::ItemsManager.onEventGameLocalizationChanged <- function onEventGameLocalizationChanged(_p)
+{
   inventoryClient.forceRefreshItemDefs((@() this.itemsByItemdefId = {}).bindenv(this))
 }
 
-::ItemsManager.findItemByUid <- function findItemByUid(uid, filterType = itemType.ALL) {
+::ItemsManager.findItemByUid <- function findItemByUid(uid, filterType = itemType.ALL)
+{
   let itemsArray = ::ItemsManager.getInventoryList(filterType)
-  let res = ::u.search(itemsArray, @(item) isInArray(uid, item.uids))
+  let res = ::u.search(itemsArray, @(item) isInArray(uid, item.uids) )
   return res
 }
 
-::ItemsManager.collectUserlogItemdefs <- function collectUserlogItemdefs() {
-  for (local i = 0; i < ::get_user_logs_count(); i++) {
-    let blk = DataBlock()
+::ItemsManager.collectUserlogItemdefs <- function collectUserlogItemdefs()
+{
+  for(local i = 0; i < ::get_user_logs_count(); i++)
+  {
+    let blk = ::DataBlock()
     ::get_user_log_blk_body(i, blk)
     let itemDefId = blk?.body?.itemDefId
     if (itemDefId)
@@ -800,15 +864,18 @@ local lastInventoryUpdateDelayedCall = 0
   }
 }
 
-::ItemsManager.isEnabled <- function isEnabled() {
+::ItemsManager.isEnabled <- function isEnabled()
+{
   let checkNewbie = !::my_stats.isMeNewbie()
     || seenInventory.hasSeen()
     || this.inventory.len() > 0
   return hasFeature("Items") && checkNewbie
 }
 
-::ItemsManager.getItemsSortComparator <- function getItemsSortComparator(itemsSeenList = null) {
-  return function(item1, item2) {
+::ItemsManager.getItemsSortComparator <- function getItemsSortComparator(itemsSeenList = null)
+{
+  return function(item1, item2)
+  {
     if (!item1 || !item2)
       return item2 <=> item1
     return item2.isActive() <=> item1.isActive()
@@ -822,7 +889,8 @@ local lastInventoryUpdateDelayedCall = 0
   }
 }
 
-::ItemsManager.getRawInventoryItemAmount <- function getRawInventoryItemAmount(itemdefid) {
+::ItemsManager.getRawInventoryItemAmount <- function getRawInventoryItemAmount(itemdefid)
+{
   return this.rawInventoryItemAmountsByItemdefId?[itemdefid] ?? 0
 }
 
@@ -863,7 +931,8 @@ addPromoAction("consume_item", @(handler, params, _obj) consumeItemFromPromo(han
 seenItems.setListGetter(@() ::ItemsManager.getShopVisibleSeenIds())
 seenInventory.setListGetter(@() ::ItemsManager.getInventoryVisibleSeenIds())
 
-let makeSeenCompatibility = @(savePath) function() {
+let makeSeenCompatibility = @(savePath) function()
+  {
     let res = {}
     let blk = ::loadLocalByAccount(savePath)
     if (!::u.isDataBlock(blk))

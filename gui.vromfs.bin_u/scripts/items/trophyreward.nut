@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -6,7 +5,6 @@ from "%scripts/dagui_library.nut" import *
 #explicit-this
 
 let TrophyMultiAward = require("%scripts/items/trophyMultiAward.nut")
-let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
 
 ::trophyReward <- {
   maxRewardsShow = 5
@@ -42,12 +40,14 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
     && !(extItem.itemdef?.tags.hiddenInRewardWnd ?? false)
 }
 
-::trophyReward.processUserlogData <- function processUserlogData(configsArray = []) {
+::trophyReward.processUserlogData <- function processUserlogData(configsArray = [])
+{
   if (configsArray.len() == 0)
     return []
 
   let tempBuffer = {}
-  foreach (idx, config in configsArray) {
+  foreach(idx, config in configsArray)
+  {
     let rType = ::trophyReward.getType(config)
     let typeVal = config?[rType]
     let count = config?.count ?? 1
@@ -77,7 +77,8 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
   }
 
   let res = []
-  foreach (block in tempBuffer) {
+  foreach(block in tempBuffer)
+  {
     let result = clone configsArray[block.arrayIdx]
     result.count <- block.count
 
@@ -88,7 +89,8 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
   return res
 }
 
-::trophyReward.rewardsSortComparator <- function rewardsSortComparator(a, b) {
+::trophyReward.rewardsSortComparator <- function rewardsSortComparator(a, b)
+{
   if (!a || !b)
     return b <=> a
 
@@ -97,7 +99,8 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
   if (typeA != typeB)
     return typeA <=> typeB
 
-  if (typeA == "item") {
+  if (typeA == "item")
+  {
     let itemA = ::ItemsManager.findItemById(a.item)
     let itemB = ::ItemsManager.findItemById(b.item)
     if (itemA && itemB)
@@ -107,7 +110,8 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
   return (a?[typeA] ?? "") <=> (b?[typeB] ?? "")
 }
 
-::trophyReward.getImageByConfig <- function getImageByConfig(config = null, onlyImage = true, layerCfgName = "item_place_single", imageAsItem = false) {
+::trophyReward.getImageByConfig <- function getImageByConfig(config = null, onlyImage = true, layerCfgName = "item_place_single", imageAsItem = false)
+{
   local image = ""
   let rewardType = ::trophyReward.getType(config)
   if (rewardType == "")
@@ -116,11 +120,12 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
   let rewardValue = config[rewardType] // warning disable: -access-potentially-nulled
   local style = "reward_" + rewardType
 
-  if (rewardType == "multiAwardsOnWorthGold" || rewardType == "modsForBoughtUnit") {
-    let trophyMultiAward = TrophyMultiAward(DataBlockAdapter(config))
+  if (rewardType == "multiAwardsOnWorthGold" || rewardType == "modsForBoughtUnit"){
+    let trophyMultiAward = TrophyMultiAward(::DataBlockAdapter(config))
     image = onlyImage ? trophyMultiAward.getOnlyRewardImage() : trophyMultiAward.getRewardImage()
   }
-  else if (::trophyReward.isRewardItem(rewardType)) {
+  else if (::trophyReward.isRewardItem(rewardType))
+  {
     let item = ::ItemsManager.findItemById(rewardValue)
     if (item?.isHiddenItem() ?? true)
       return ""
@@ -143,14 +148,17 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
   }
   else if (rewardType == "unit" || rewardType == "rentedUnit")
     style += "_" + ::getUnitTypeText(::get_es_unit_type(::getAircraftByName(rewardValue))).tolower()
-  else if (rewardType == "resource" || rewardType == "resourceType") {
-    if (config.resourceType) {
+  else if (rewardType == "resource" || rewardType == "resourceType")
+  {
+    if (config.resourceType)
+    {
       let visCfg = this.getDecoratorVisualConfig(config)
       style = visCfg.style
       image = visCfg.image
     }
   }
-  else if (rewardType == "unlockType") {
+  else if (rewardType == "unlockType")
+  {
     style = "reward_" + rewardValue
     if (!::LayersIcon.findStyleCfg(style))
       style = "reward_unlock"
@@ -183,19 +191,21 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
     return resultImage
 
   let tooltipConfig = ::PrizesView.getPrizeTooltipConfig(config)
-  return ::handyman.renderCached(("%gui/items/reward_item.tpl"), { items = [tooltipConfig.__update({
+  return ::handyman.renderCached(("%gui/items/reward_item.tpl"), {items = [tooltipConfig.__update({
     layered_image = resultImage,
-    hasFocusBorder = true })] })
+    hasFocusBorder = true })]})
 }
 
-::trophyReward.getDecoratorVisualConfig <- function getDecoratorVisualConfig(config) {
+::trophyReward.getDecoratorVisualConfig <- function getDecoratorVisualConfig(config)
+{
   let res = {
     style = ""
     image = ""
   }
 
   let decoratorType = ::g_decorator_type.getTypeByResourceType(config.resourceType)
-  if (decoratorType) {
+  if (decoratorType)
+  {
     let decorator = ::g_decorator.getDecorator(config?.resource, decoratorType)
     let cfg = clone ::LayersIcon.findLayerCfg("item_decal")
     cfg.img <- decoratorType.getImage(decorator)
@@ -203,7 +213,8 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
       res.image = ::LayersIcon.genDataFromLayer(cfg)
   }
 
-  if (res.image == "") {
+  if (res.image == "")
+  {
     res.style = "reward_" + config.resourceType
     if (!::LayersIcon.findStyleCfg(res.style))
       res.style = "reward_unlock"
@@ -212,7 +223,8 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
   return res
 }
 
-::trophyReward.getMoneyLayer <- function getMoneyLayer(config) {
+::trophyReward.getMoneyLayer <- function getMoneyLayer(config)
+{
   let currencyCfg = ::PrizesView.getPrizeCurrencyCfg(config)
   if (!currencyCfg)
     return  ""
@@ -225,7 +237,8 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
   return ::LayersIcon.getTextDataFromLayer(layerCfg)
 }
 
-::trophyReward.getWPIcon <- function getWPIcon(wp) {
+::trophyReward.getWPIcon <- function getWPIcon(wp)
+{
   local icon = ""
   foreach (v in this.wpIcons)
     if (wp >= v.value || icon == "")
@@ -233,15 +246,18 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
   return icon
 }
 
-::trophyReward.getFullWPIcon <- function getFullWPIcon(wp) {
+::trophyReward.getFullWPIcon <- function getFullWPIcon(wp)
+{
   return ::LayersIcon.getIconData(this.getWPIcon(wp), null, null, "reward_warpoints")
 }
 
-::trophyReward.getFullWarbondsIcon <- function getFullWarbondsIcon() {
+::trophyReward.getFullWarbondsIcon <- function getFullWarbondsIcon()
+{
   return ::LayersIcon.genDataFromLayer(::LayersIcon.findLayerCfg("item_warbonds"))
 }
 
-::trophyReward.getRestRewardsNumLayer <- function getRestRewardsNumLayer(configsArray, maxNum) {
+::trophyReward.getRestRewardsNumLayer <- function getRestRewardsNumLayer(configsArray, maxNum)
+{
   let restRewards = configsArray.len() - maxNum
   if (restRewards <= 0)
     return ""
@@ -250,27 +266,30 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
   if (!layer)
     return ""
 
-  layer.text <- loc("trophy/moreRewards", { num = restRewards })
+  layer.text <- loc("trophy/moreRewards", {num = restRewards})
   return ::LayersIcon.getTextDataFromLayer(layer)
 }
 
-::trophyReward.getReward <- function getReward(configsArray = []) {
+::trophyReward.getReward <- function getReward(configsArray = [])
+{
   if (configsArray.len() == 1)
     return ::trophyReward.getRewardText(configsArray[0])
 
   return ::trophyReward.getCommonRewardText(configsArray)
 }
 
-::trophyReward.isRewardItem <- function isRewardItem(rewardType) {
+::trophyReward.isRewardItem <- function isRewardItem(rewardType)
+{
   return isInArray(rewardType, ["item", "trophy"])
 }
 
-::trophyReward.getType <- function getType(config) {
+::trophyReward.getType <- function getType(config)
+{
   if (this.isRewardMultiAward(config))
-    return "multiAwardsOnWorthGold" in config ? "multiAwardsOnWorthGold" : "modsForBoughtUnit"
+    return "multiAwardsOnWorthGold" in config? "multiAwardsOnWorthGold" : "modsForBoughtUnit"
 
   if (config)
-    foreach (param, _value in config)
+    foreach(param, _value in config)
       if (isInArray(param, this.rewardTypes))
         return param
 
@@ -279,7 +298,8 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
   return ""
 }
 
-::trophyReward.getName <- function getName(config) {
+::trophyReward.getName <- function getName(config)
+{
   let rewardType = ::trophyReward.getType(config)
   if (!::trophyReward.isRewardItem(rewardType))
     return ""
@@ -291,17 +311,21 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
   return ""
 }
 
-::trophyReward.getRewardText <- function getRewardText(config, isFull = false, color = "") {
-  return ::PrizesView.getPrizeText(DataBlockAdapter(config), true, false, true, isFull, color)
+::trophyReward.getRewardText <- function getRewardText(config, isFull = false, color = "")
+{
+  return ::PrizesView.getPrizeText(::DataBlockAdapter(config), true, false, true, isFull, color)
 }
 
-::trophyReward.getCommonRewardText <- function getCommonRewardText(configsArray) {
+::trophyReward.getCommonRewardText <- function getCommonRewardText(configsArray)
+{
   let result = {}
   local currencies = {}
 
-  foreach (config in configsArray) {
+  foreach(config in configsArray)
+  {
     let currencyCfg = ::PrizesView.getPrizeCurrencyCfg(config)
-    if (currencyCfg) {
+    if (currencyCfg)
+    {
       if (!(currencyCfg.type in currencies))
         currencies[currencyCfg.type] <- currencyCfg
       else
@@ -315,9 +339,11 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
       subType = null
       num = 0
     }
-    if (rewType == "item") {
+    if (rewType == "item")
+    {
       let item = ::ItemsManager.findItemById(config[rewType])
-      if (item) {
+      if (item)
+      {
         rewData.subType <- item.iType
         rewData.item <- item
         rewType = rewType + "_" + item.iType
@@ -339,13 +365,16 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
 
   local returnData = [ currencies ]
 
-  foreach (data in result) {
-    if (data.type == "item") {
+  foreach(data in result)
+  {
+    if (data.type == "item")
+    {
       let item = getTblValue("item", data)
       if (item)
         returnData.append(item.getTypeName() + loc("ui/colon") + data.num)
     }
-    else {
+    else
+    {
       local text = ::trophyReward.getRewardText(data.config)
       if (data.num > 1)
         text += loc("ui/colon") + data.num
@@ -356,22 +385,26 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
   return colorize("activeTextColor", returnData)
 }
 
-::trophyReward.isRewardMultiAward <- function isRewardMultiAward(config) {
+::trophyReward.isRewardMultiAward <- function isRewardMultiAward(config)
+{
   return getTblValue("multiAwardsOnWorthGold", config) != null
          || getTblValue("modsForBoughtUnit", config) != null
 }
 
-::trophyReward.showInResults <- function showInResults(rewardType) {
+::trophyReward.showInResults <- function showInResults(rewardType)
+{
   return rewardType != "unlockType" && rewardType != "resourceType"
 }
 
-::trophyReward.getRewardList <- function getRewardList(config) {
+::trophyReward.getRewardList <- function getRewardList(config)
+{
   if (this.isRewardMultiAward(config))
-    return TrophyMultiAward(DataBlockAdapter(config)).getResultPrizesList()
+    return TrophyMultiAward(::DataBlockAdapter(config)).getResultPrizesList()
 
   let prizes = []
   foreach (rewardType in this.rewardTypes)
-    if (rewardType in config && this.showInResults(rewardType)) {
+    if (rewardType in config && this.showInResults(rewardType))
+    {
       let prize = {
         [rewardType] = config[rewardType]
         count = getTblValue("count", config)
@@ -381,32 +414,35 @@ let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
       if (rewardType in this.specialPrizeParams)
         this.specialPrizeParams[rewardType](config, prize)
 
-      prizes.append(DataBlockAdapter(prize))
+      prizes.append(::DataBlockAdapter(prize))
     }
   return prizes
 }
 
-::trophyReward.getRewardsListViewData <- function getRewardsListViewData(config, params = {}) {
+::trophyReward.getRewardsListViewData <- function getRewardsListViewData(config, params = {})
+{
   local rewardsList = []
   local singleReward = config
   if (type(config) != "array")
     rewardsList = this.getRewardList(config)
-  else {
+  else
+  {
     singleReward = (config.len() == 1) ? config[0] : null
-    foreach (cfg in config)
+    foreach(cfg in config)
       rewardsList.extend(this.getRewardList(cfg))
   }
 
   if (singleReward != null && getTblValue("multiAwardHeader", params)
       && this.isRewardMultiAward(singleReward))
-    params.header <- TrophyMultiAward(DataBlockAdapter(singleReward)).getName()
+    params.header <- TrophyMultiAward(::DataBlockAdapter(singleReward)).getName()
 
   params.receivedPrizes <- true
 
   return ::PrizesView.getPrizesListView(rewardsList, params)
 }
 
-::trophyReward.getRewardType <- function getRewardType(prize) {
+::trophyReward.getRewardType <- function getRewardType(prize)
+{
   foreach (rewardType in this.rewardTypes)
     if (rewardType in prize)
       return rewardType

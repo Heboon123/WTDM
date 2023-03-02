@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -14,9 +13,10 @@ let function getWorldWarPromoText(isWwEnabled = null) {
   if (!::is_worldwar_enabled())
     return text
 
-  if ((isWwEnabled ?? ::g_world_war.canJoinWorldwarBattle())) {
+  if ((isWwEnabled ?? ::g_world_war.canJoinWorldwarBattle()))
+  {
     let operationText = ::g_world_war.getPlayedOperationText(false)
-    if (operationText != null)
+    if (operationText !=null)
       text = operationText
   }
 

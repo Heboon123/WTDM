@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -10,13 +9,15 @@ let { tryOpenNextTutorialHandler } = require("%scripts/tutorials/nextTutorialHan
 let { checkTutorialsList } = require("%scripts/tutorials/tutorialsData.nut")
 let { getShowedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 
-::getReserveAircraftName <- function getReserveAircraftName(paramsTable) {
+::getReserveAircraftName <- function getReserveAircraftName(paramsTable)
+{
   let preferredCrew = getTblValue("preferredCrew", paramsTable, null)
 
   // Trained level by unit name.
   let trainedSpec = getTblValue("trainedSpec", preferredCrew, {})
 
-  foreach (unitName, _unitSpec in trainedSpec) {
+  foreach (unitName, _unitSpec in trainedSpec)
+  {
     let unit = ::getAircraftByName(unitName)
     if (unit != null && ::checkReserveUnit(unit, paramsTable))
       return unit.name
@@ -29,7 +30,8 @@ let { getShowedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
   return ""
 }
 
-::checkReserveUnit <- function checkReserveUnit(unit, paramsTable) {
+::checkReserveUnit <- function checkReserveUnit(unit, paramsTable)
+{
   let country = getTblValue("country", paramsTable, "")
   let unitType = getTblValue("unitType", paramsTable, ES_UNIT_TYPE_AIRCRAFT)
   let ignoreUnits = getTblValue("ignoreUnits", paramsTable, [])
@@ -44,7 +46,8 @@ let { getShowedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
          (ignoreSlotbarCheck || !::isUnitInSlotbar(unit)))
 }
 
-::check_tutorial_on_start <- function check_tutorial_on_start() {
+::check_tutorial_on_start <- function check_tutorial_on_start()
+{
   let unit = getShowedUnit()
   foreach (tutorial in checkTutorialsList) {
     if (!(tutorial?.isNeedAskInMainmenu ?? false))

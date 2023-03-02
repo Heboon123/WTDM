@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -8,8 +7,10 @@ from "%scripts/dagui_library.nut" import *
 let DataBlock = require("DataBlock")
 let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
 
-::gui_handlers.ControlsBackupManager <- class extends ::gui_handlers.SaveDataDialog {
-  function initScreen() {
+::gui_handlers.ControlsBackupManager <- class extends ::gui_handlers.SaveDataDialog
+{
+  function initScreen()
+  {
     if (!this.isAvailable())
       return
 
@@ -18,7 +19,8 @@ let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platfo
   }
 
 
-  function doSave(descr) {
+  function doSave(descr)
+  {
     this.showWaitAnimation(true)
     let blk = DataBlock()
     blk.comment = descr.comment
@@ -29,7 +31,8 @@ let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platfo
   }
 
 
-  function onBackupSaved(params) {
+  function onBackupSaved(params)
+  {
     this.showWaitAnimation(false)
     if (!params.success)
       ::showInfoMsgBox(loc("msgbox/errorSavingPreset"))
@@ -37,7 +40,8 @@ let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platfo
   }
 
 
-  function doLoad(descr) {
+  function doLoad(descr)
+  {
     this.showWaitAnimation(true)
     let blk = DataBlock()
     blk.path = descr.path
@@ -48,9 +52,11 @@ let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platfo
   }
 
 
-  function onBackupLoaded(params) {
+  function onBackupLoaded(params)
+  {
     this.showWaitAnimation(false)
-    if (params.success) {
+    if (params.success)
+    {
       ::preset_changed = true
       ::broadcastEvent("ControlsPresetChanged")
     }
@@ -60,7 +66,8 @@ let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platfo
   }
 
 
-  function doDelete(descr) {
+  function doDelete(descr)
+  {
     this.showWaitAnimation(true)
     let blk = DataBlock()
     blk.path = descr.path
@@ -71,18 +78,21 @@ let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platfo
   }
 
 
-  function onBackupDeleted(_params) {
+  function onBackupDeleted(_params)
+  {
     this.showWaitAnimation(false)
     this.requestEntries()
   }
 
 
-  static function isAvailable() {
+  static function isAvailable()
+  {
     return (isPlatformSony || isPlatformXboxOne) && "request_list_controls_backup" in getroottable()
   }
 
 
-  static function open() {
+  static function open()
+  {
     ::handlersManager.loadHandler(::gui_handlers.ControlsBackupManager)
   }
 }

@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -15,11 +14,11 @@ let { needUseHangarDof } = require("%scripts/viewUtils/hangarDof.nut")
 let { checkAndShowMultiplayerPrivilegeWarning, checkAndShowCrossplayWarning,
   isMultiplayerPrivilegeAvailable } = require("%scripts/user/xboxFeatures.nut")
 let { isShowGoldBalanceWarning } = require("%scripts/user/balanceFeatures.nut")
-let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
 
 ::dagui_propid.add_name_id("modeId")
 
-::gui_handlers.GameModeSelect <- class extends ::gui_handlers.BaseGuiHandlerWT {
+::gui_handlers.GameModeSelect <- class extends ::gui_handlers.BaseGuiHandlerWT
+{
   sceneTplName = "%gui/gameModeSelect/gameModeSelect.tpl"
   shouldBlurSceneBgFn = needUseHangarDof
   needAnimatedSwitchScene = false
@@ -55,25 +54,31 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     ES_UNIT_TYPE_SHIP
   ]
 
-  static function open() {
+  static function open()
+  {
     ::gui_start_modal_wnd(::gui_handlers.GameModeSelect)
   }
 
-  function getSceneTplView() {
+  function getSceneTplView()
+  {
     return { categories = this.categories }
   }
 
-  function initScreen() {
+  function initScreen()
+  {
     this.backSceneFunc = ::gui_start_mainmenu
     this.updateContent()
   }
 
-  function fillModesList() {
+  function fillModesList()
+  {
     this.filledGameModes.clear()
 
-    foreach (cat in this.categories) {
+    foreach (cat in this.categories)
+    {
       let modes = this[cat.modesGenFunc]()
-      if (modes.len() == 0) {
+      if (modes.len() == 0)
+      {
         this.filledGameModes.append({
           isEmpty = true
           textWhenEmpty = cat?.textWhenEmpty || ""
@@ -97,7 +102,8 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     this.setGameModesTimer()
   }
 
-  function updateContent() {
+  function updateContent()
+  {
     this.gameModesWithTimer.clear()
     this.newIconWidgetsByGameModeID.clear()
 
@@ -111,7 +117,8 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     this.updateSelection()
   }
 
-  function updateSelection() {
+  function updateSelection()
+  {
     let curGM = ::game_mode_manager.getCurrentGameMode()
     if (curGM == null)
       return
@@ -125,8 +132,10 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     ::move_mouse_on_child(curGameModeObj, index)
   }
 
-  function registerNewIconWidgets() {
-    foreach (gameMode in this.filledGameModes) {
+  function registerNewIconWidgets()
+  {
+    foreach (gameMode in this.filledGameModes)
+    {
       if (!gameMode.isMode || !gameMode?.hasContent)
         continue
 
@@ -140,7 +149,8 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     }
   }
 
-  function createFeaturedModesView() {
+  function createFeaturedModesView()
+  {
     let view = []
     view.extend(this.getViewArray(::game_mode_manager.getPveBattlesGameModes()))
     view.extend(this.getViewArray(::game_mode_manager.getFeaturedGameModes()))
@@ -149,12 +159,15 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     return view
   }
 
-  function getViewArray(gameModesArray) {
+  function getViewArray(gameModesArray)
+  {
     let view = []
     // First go all wide featured game modes then - non-wide.
     local numNonWideGameModes = 0
-    foreach (isWide in [ true, false ]) {
-      while (true) {
+    foreach (isWide in [ true, false ])
+    {
+      while (true)
+      {
         let gameMode = this.getGameModeByCondition(gameModesArray,
           @(gameMode) gameMode.displayWide == isWide) // warning disable: -iterator-in-lambda
         if (gameMode == null)
@@ -173,14 +186,16 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     return view
   }
 
-  function sortByUnitType(gameModeViews) {
+  function sortByUnitType(gameModeViews)
+  {
     gameModeViews.sort(function(a, b) { // warning disable: -return-different-types
-      foreach (unitType in unitTypes.types) {
-        if (b.isWide != a.isWide)
+      foreach(unitType in unitTypes.types)
+      {
+        if(b.isWide != a.isWide)
           return b.isWide <=> a.isWide
         let isAContainsType = a.gameMode.unitTypes.indexof(unitType.esUnitType) != null
         let isBContainsType = b.gameMode.unitTypes.indexof(unitType.esUnitType) != null
-        if (! isAContainsType && ! isBContainsType)
+        if( ! isAContainsType && ! isBContainsType)
           continue
         return isBContainsType <=> isAContainsType
         || b.gameMode.unitTypes.len() <=> a.gameMode.unitTypes.len()
@@ -189,7 +204,8 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     })
   }
 
-  function createDebugGameModesView() {
+  function createDebugGameModesView()
+  {
     let view = []
     let debugGameModes = ::game_mode_manager.getDebugGameModes()
     foreach (gameMode in debugGameModes)
@@ -197,15 +213,17 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     return view
   }
 
-  function createFeaturedLinksView() {
+  function createFeaturedLinksView()
+  {
     let res = []
-    foreach (_idx, mode in ::featured_modes) {
+    foreach (_idx, mode in ::featured_modes)
+    {
       if (!mode.isVisible())
         continue
 
       let id = ::game_mode_manager.getGameModeItemId(mode.modeId)
       let hasNewIconWidget = mode.hasNewIconWidget && !::game_mode_manager.isSeen(id)
-      let newIconWidgetContent = hasNewIconWidget ? ::NewIconWidget.createLayout() : null
+      let newIconWidgetContent = hasNewIconWidget? ::NewIconWidget.createLayout() : null
 
       res.append({
         id = id
@@ -238,10 +256,12 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     return res
   }
 
-  function createGameModesView() {
+  function createGameModesView()
+  {
     let gameModesView = []
     let partitions = ::game_mode_manager.getGameModesPartitions()
-    foreach (partition in partitions) {
+    foreach (partition in partitions)
+    {
       let partitionView = this.createGameModesPartitionView(partition)
       if (partitionView)
         gameModesView.extend(partitionView)
@@ -249,7 +269,8 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     return gameModesView
   }
 
-  function createGameModeView(gameMode, _separator = false, isNarrow = false) {
+  function createGameModeView(gameMode, _separator = false, isNarrow = false)
+  {
     if (gameMode == null)
       return {
         hasContent = false
@@ -264,7 +285,7 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
 
     let id = ::game_mode_manager.getGameModeItemId(gameMode.id)
     let hasNewIconWidget = !::game_mode_manager.isSeen(id)
-    let newIconWidgetContent = hasNewIconWidget ? ::NewIconWidget.createLayout() : null
+    let newIconWidgetContent = hasNewIconWidget? ::NewIconWidget.createLayout() : null
 
     let crossPlayRestricted = isMultiplayerPrivilegeAvailable.value && !this.isCrossPlayEventAvailable(event)
     let inactiveColor = !isMultiplayerPrivilegeAvailable.value || crossPlayRestricted
@@ -304,13 +325,14 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
       isCrossPlayRequired = crossplayModule.needShowCrossPlayInfo() && !::events.isEventPlatformOnlyAllowed(event)
       showEventDescription = !isLink && ::events.isEventNeedInfoButton(event)
       eventTrophyImage = this.getTrophyMarkUpData(trophyName)
-      isTrophyRecieved = trophyName == "" ? false : !::can_receive_pve_trophy(-1, trophyName)
+      isTrophyRecieved = trophyName == ""? false : !::can_receive_pve_trophy(-1, trophyName)
       mapPreferences = this.isShowMapPreferences(gameMode?.getEvent())
       prefTitle = mapPreferencesParams.getPrefTitle(gameMode?.getEvent())
     }
   }
 
-  function getRestrictionTooltipText(event) {
+  function getRestrictionTooltipText(event)
+  {
     if (!isMultiplayerPrivilegeAvailable.value)
       return loc("xbox/noMultiplayer")
 
@@ -330,16 +352,19 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     return loc("xbox/crossPlayRequired")
   }
 
-  function isCrossPlayEventAvailable(event) {
+  function isCrossPlayEventAvailable(event)
+  {
     return crossplayModule.isCrossPlayEnabled()
            || ::events.isEventPlatformOnlyAllowed(event)
   }
 
-  function getWidgetId(gameModeId) {
+  function getWidgetId(gameModeId)
+  {
     return gameModeId + "_widget"
   }
 
-  function getTrophyMarkUpData(trophyName) {
+  function getTrophyMarkUpData(trophyName)
+  {
     if (::u.isEmpty(trophyName))
       return null
 
@@ -350,16 +375,19 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     return trophyItem.getNameMarkup(0, false)
   }
 
-  function createGameModeCountriesView(gameMode) {
+  function createGameModeCountriesView(gameMode)
+  {
     let res = []
     local countries = gameMode.countries
     if (!countries.len() || countries.len() >= ::g_crews_list.get().len())
       return res
 
     local needShowLocked = false
-    if (countries.len() >= 0.7 * ::g_crews_list.get().len()) {
+    if (countries.len() >= 0.7 * ::g_crews_list.get().len())
+    {
       let lockedCountries = []
-      foreach (countryData in ::g_crews_list.get()) {
+      foreach(countryData in ::g_crews_list.get())
+      {
         let country = countryData.country
         if (!isInArray(country, countries))
           lockedCountries.append(country)
@@ -374,14 +402,16 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     return res
   }
 
-  function createGameModesPartitionView(partition) {
+  function createGameModesPartitionView(partition)
+  {
     if (partition.gameModes.len() == 0)
       return null
 
     let gameModes = partition.gameModes
     let needEmptyGameModeBlocks = !!::u.search(gameModes, @(gm) !gm.displayWide)
     let view = []
-    foreach (_idx, esUnitType in this.basePanelConfig) {
+    foreach (_idx, esUnitType in this.basePanelConfig)
+    {
       let gameMode = this.chooseGameModeEsUnitType(gameModes, esUnitType, this.basePanelConfig)
       if (gameMode)
         view.append(this.createGameModeView(gameMode, false, true))
@@ -396,23 +426,27 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
    * Find appropriate game mode from array and returns it.
    * If game mode is not null, it will be removed from array.
    */
-  function chooseGameModeEsUnitType(gameModes, esUnitType, esUnitTypesFilter) {
+  function chooseGameModeEsUnitType(gameModes, esUnitType, esUnitTypesFilter)
+  {
     return this.getGameModeByCondition(gameModes,
       @(gameMode) u.max(::game_mode_manager.getRequiredUnitTypes(gameMode).filter(
         @(esUType) isInArray(esUType, esUnitTypesFilter))) == esUnitType)
   }
 
-  function getGameModeByCondition(gameModes, conditionFunc) {
+  function getGameModeByCondition(gameModes, conditionFunc)
+  {
     return ::u.search(gameModes, conditionFunc)
   }
 
-  function onGameModeSelect(obj) {
+  function onGameModeSelect(obj)
+  {
     this.markGameModeSeen(obj)
     let gameModeView = u.search(this.filledGameModes, @(gm) gm.isMode && gm?.hasContent && gm.modeId == obj.modeId)
     this.performGameModeSelect(gameModeView.gameMode)
   }
 
-  function performGameModeSelect(gameMode) {
+  function performGameModeSelect(gameMode)
+  {
     if (!isMultiplayerPrivilegeAvailable.value) {
       checkAndShowMultiplayerPrivilegeWarning()
       return
@@ -426,7 +460,8 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
       return
 
     let event = ::game_mode_manager.getGameModeEvent(gameMode)
-    if (event && !this.isCrossPlayEventAvailable(event)) {
+    if (event && !this.isCrossPlayEventAvailable(event))
+    {
       checkAndShowCrossplayWarning(@() ::showInfoMsgBox(loc("xbox/actionNotAvailableCrossNetworkPlay")))
       return
     }
@@ -445,7 +480,8 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     })
   }
 
-  function markGameModeSeen(obj) {
+  function markGameModeSeen(obj)
+  {
     if (!obj?.id || ::game_mode_manager.isSeen(obj.id))
       return
 
@@ -457,7 +493,8 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     widget.setWidgetVisible(false)
   }
 
-  function onGameModeGamepadSelect(obj) {
+  function onGameModeGamepadSelect(obj)
+  {
     let val = obj.getValue()
     if (val < 0 || val >= obj.childrenCount())
       return
@@ -469,26 +506,31 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     this.updateEventDescriptionConsoleButton(gmView.gameMode)
   }
 
-  function onOpenClusterSelect(obj) {
-    openClustersMenuWnd(obj)
+  function onOpenClusterSelect(obj)
+  {
+    clustersModule.createClusterSelectMenu(obj)
   }
 
-  function onEventClusterChange(_params) {
+  function onEventClusterChange(_params)
+  {
     this.updateClusters()
   }
 
-  function updateClusters() {
+  function updateClusters()
+  {
     clustersModule.updateClusters(this.scene.findObject("cluster_select_button"))
   }
 
-  function onClusterSelectActivate(obj) {
+  function onClusterSelectActivate(obj)
+  {
     let value = obj.getValue()
     let childObj = (value >= 0 && value < obj.childrenCount()) ? obj.getChild(value) : null
     if (checkObj(childObj))
       this.onOpenClusterSelect(childObj)
   }
 
-  function onGameModeActivate(obj) {
+  function onGameModeActivate(obj)
+  {
     let value = ::get_obj_valid_index(obj)
     if (value < 0)
       return
@@ -496,11 +538,13 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     this.performGameModeSelect(this.filledGameModes[value].gameMode)
   }
 
-  function onEventDescription(obj) {
+  function onEventDescription(obj)
+  {
     this.openEventDescription(::game_mode_manager.getGameModeById(obj.modeId))
   }
 
-  function onGamepadEventDescription(_obj) {
+  function onGamepadEventDescription(_obj)
+  {
     let gameModesObject = this.getObj("general_game_modes")
     if (!checkObj(gameModesObject))
       return
@@ -512,15 +556,18 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
     this.openEventDescription(this.filledGameModes[value].gameMode)
   }
 
-  function openEventDescription(gameMode) {
+  function openEventDescription(gameMode)
+  {
     let event = ::game_mode_manager.getGameModeEvent(gameMode)
-    if (event != null) {
+    if (event != null)
+    {
       this.restoreFromModal = true
       ::events.openEventInfo(event)
     }
   }
 
-  function updateEventDescriptionConsoleButton(gameMode) {
+  function updateEventDescriptionConsoleButton(gameMode)
+  {
     this.showSceneBtn("event_description_console_button", gameMode != null
       && gameMode?.forClan
       && ::show_console_buttons
@@ -545,35 +592,41 @@ let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
   function onEventCrossPlayOptionChanged(_p) { this.updateContent() }
   function onEventXboxMultiplayerPrivilegeUpdated(_p) { this.updateContent() }
 
-  function updateButtons() {
+  function updateButtons()
+  {
     ::showBtn("wiki_link", hasFeature("AllowExternalLink") && !::is_vendor_tencent(), this.scene)
   }
 
-  function setGameModesTimer() {
+  function setGameModesTimer()
+  {
     let timerObj = this.scene.findObject("game_modes_timer")
     if (checkObj(timerObj))
-      timerObj.setUserData(this.gameModesWithTimer.len() ? this : null)
+      timerObj.setUserData(this.gameModesWithTimer.len()? this : null)
   }
 
-  function onTimerUpdate(_obj, _dt) {
-    foreach (gameModeId, updateFunc in this.gameModesWithTimer) {
+  function onTimerUpdate(_obj, _dt)
+  {
+    foreach (gameModeId, updateFunc in this.gameModesWithTimer)
+    {
       updateFunc(this.scene, gameModeId)
     }
   }
 
-  function isShowMapPreferences(curEvent) {
+  function isShowMapPreferences(curEvent)
+  {
     return hasFeature("MapPreferences") && !::is_me_newbie()
       && isMultiplayerPrivilegeAvailable.value
       && mapPreferencesParams.hasPreferences(curEvent)
       && ((curEvent?.maxDislikedMissions ?? 0) > 0 || (curEvent?.maxBannedMissions ?? 0) > 0)
   }
 
-  function onMapPreferences(obj) {
+  function onMapPreferences(obj)
+  {
     let curEvent = obj?.modeId != null
       ? ::game_mode_manager.getGameModeById(obj.modeId)?.getEvent()
       : ::game_mode_manager.getCurrentGameMode()?.getEvent()
     ::g_squad_utils.checkSquadUnreadyAndDo(
-      Callback(@() mapPreferencesModal.open({ curEvent = curEvent }), this),
+      Callback(@() mapPreferencesModal.open({curEvent = curEvent}), this),
       null, this.shouldCheckCrewsReady)
   }
 }

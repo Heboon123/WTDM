@@ -1,11 +1,9 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
 #explicit-this
 
 let guidParser = require("%scripts/guidParser.nut")
-let DataBlock = require("DataBlock")
 
 let downloadableSkins = {} // { unitName = { skinIds = [], suggestedSkinIds = {} } }
 
@@ -21,15 +19,17 @@ let function updateDownloadableSkins(unitName) {
   local shouldCache = true
 
   if (hasFeature("MarketplaceSkinsInCustomization") && hasFeature("Marketplace")
-    && hasFeature("EnableLiveSkins")) {
-    let marketSkinsBlk = DataBlock()
+    && hasFeature("EnableLiveSkins"))
+  {
+    let marketSkinsBlk = ::DataBlock()
     marketSkinsBlk.load("config/skins_market.blk")
     let blkList = marketSkinsBlk % unitName
     let skinBlks = blkList.filter(@(blk) (type(blk?.marketplaceItemdefId) == "integer")
       && (blk?.reqFeature == null || hasFeature(blk.reqFeature))
       && (blk?.hideFeature == null || !hasFeature(blk.hideFeature)))
 
-    foreach (blk in skinBlks) {
+    foreach (blk in skinBlks)
+    {
       let itemdefId = blk?.marketplaceItemdefId
       let item = ::ItemsManager.findItemById(itemdefId)
       shouldCache = shouldCache && item != null

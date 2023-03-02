@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -6,7 +5,6 @@ from "%scripts/dagui_library.nut" import *
 
 let { get_blk_value_by_path } = require("%sqStdLibs/helpers/datablockUtils.nut")
 let { addToText } = require("%scripts/unlocks/unlocksConditions.nut")
-let DataBlock = require("DataBlock")
 
                                  //param name in tournament configs //param name in userlogs configs
 let getRewardConditionId = @(rewardBlk) rewardBlk?.condition_type ?? rewardBlk?.awardType ?? ""
@@ -21,7 +19,7 @@ let getConditionField = @(rewardBlk) rewardBlk?.fieldName ?? ""
 let getConditionIcon = @(condition) condition?.icon ?? ""
 
 let function getTournamentInfoBlk(eventEconomicName) {
-  let blk = DataBlock()
+  let blk = ::DataBlock()
   ::get_tournament_info_blk(eventEconomicName, blk)
   return blk
 }
@@ -31,13 +29,13 @@ let function getLeaderboardConditionText(rewardBlk, progress = null) {
   let value = getConditionValue(rewardBlk)
   let valueMin = rewardBlk?.valueMin
   let txtValue = valueMin
-    ? loc("conditions/position/from_to", { min = valueMin, max = value }) : value
-  local res = loc("conditions/" + conditionId + "/" + rewardBlk.fieldName, { value = txtValue })
+    ? loc("conditions/position/from_to", {min = valueMin, max = value}) : value
+  local res = loc("conditions/" + conditionId + "/" + rewardBlk.fieldName, {value = txtValue})
   let progressTxt = progress && valueMin
     ? $"{loc("ui/dot")} {loc("conditions/position/place")}{loc("ui/colon")} {progress}"
     : progress
       ? "".concat(" ",
-        loc("ui/parentheses/space", { text = $"{progress}{loc("ui/slash")}{value}" }))
+        loc("ui/parentheses/space", {text = $"{progress}{loc("ui/slash")}{value}"}))
       : ""
 
   return $"{res}{progressTxt}"
@@ -45,7 +43,7 @@ let function getLeaderboardConditionText(rewardBlk, progress = null) {
 
 let function getSequenceWinsText(rewardBlk, progress = null) {
   let value = getConditionValue(rewardBlk)
-  local res = loc("conditions/sequence_wins", { value = value })
+  local res = loc("conditions/sequence_wins", {value = value})
 
   if (progress)
     res += " (" + progress + "/" + value + ")"
@@ -62,12 +60,14 @@ let rewardConditionsList = {
    */
   reach_value = {
     id = "reach_value"
-    function updateProgress(reward_blk, event, eventEconomicName, callback, context) {
+    function updateProgress(reward_blk, event, eventEconomicName, callback, context)
+    {
       let cb = Callback(callback, context)
       ::g_reward_progress_manager.requestProgress(event, eventEconomicName, reward_blk.fieldName,
         function (value) {
           local progress = "0"
-          if (value != null) {
+          if (value != null)
+          {
             let { lbDataType } = ::g_lb_category.getTypeByField(reward_blk.fieldName)
             progress = lbDataType.getShortTextByValue(value)
           }
@@ -83,12 +83,14 @@ let rewardConditionsList = {
    */
   field_number = {
     id = "field_number"
-    function updateProgress(reward_blk, event, eventEconomicName, callback, context) {
+    function updateProgress(reward_blk, event, eventEconomicName, callback, context)
+    {
       local cb = Callback(callback, context)
       ::g_reward_progress_manager.requestProgress(event, eventEconomicName, reward_blk.fieldName,
         function (value) {
           local progress = "0"
-          if (value != null) {
+          if (value != null)
+          {
             value = value % getConditionValue(reward_blk)
             let { lbDataType } = ::g_lb_category.getTypeByField(reward_blk.fieldName)
             progress = lbDataType.getShortTextByValue(value)
@@ -104,7 +106,8 @@ let rewardConditionsList = {
    */
   position = {
     id = "position"
-    function updateProgress(reward_blk, event, eventEconomicName, callback, context) {
+    function updateProgress(reward_blk, event, eventEconomicName, callback, context)
+    {
       let request = ::events.getMainLbRequest(event)
       request.economicName = eventEconomicName
       if (request.forClans)
@@ -130,7 +133,8 @@ let rewardConditionsList = {
 
   sequence_wins = {
     id = "sequence_wins"
-    function updateProgress(_rewardBlk, _event, eventEconomicName, callback, context) {
+    function updateProgress(_rewardBlk, _event, eventEconomicName, callback, context)
+    {
       let progress = getTournamentInfoBlk(eventEconomicName)?.sequenceWinCount ?? 0
       Callback(callback, context)(progress.tostring())
     }
@@ -169,7 +173,8 @@ let rewardsConfig = [ //first in list have higher priority to show icon or to ge
     id = "trophy"
     locId = ""
     getValue = function(blk) {
-      if ("trophyName" in blk) {
+      if ("trophyName" in blk)
+      {
         let trophy = ::ItemsManager.findItemById(blk.trophyName)
         if (trophy)
           return {
@@ -196,7 +201,8 @@ let rewardsConfig = [ //first in list have higher priority to show icon or to ge
     id = "item"
     locId = ""
     getValue = function(blk) {
-      if ("itemsName" in blk) {
+      if ("itemsName" in blk)
+      {
         let item = ::ItemsManager.findItemById(blk.itemsName)
         if (item)
           return {
@@ -222,7 +228,8 @@ let rewardsConfig = [ //first in list have higher priority to show icon or to ge
 ]
 
 let function initConfigs() {
-  foreach (cfg in rewardsConfig) {
+  foreach(cfg in rewardsConfig)
+  {
     let id = cfg.id
     if (!("locId" in cfg))
       cfg.locId = "reward/" + id
@@ -259,7 +266,8 @@ let function getSortedRewardsByConditions(event, awardsBlk  = null) {
   if (!rBlk)
     return res
 
-  foreach (blk in (rBlk % "pr")) {
+  foreach(blk in (rBlk % "pr"))
+  {
     let condName = getRewardConditionId(blk)
     if (condName == "")
       continue
@@ -271,7 +279,7 @@ let function getSortedRewardsByConditions(event, awardsBlk  = null) {
   }
 
   //sort rewards
-  foreach (condName, typeData in res)
+  foreach(condName, typeData in res)
     typeData.sort((@(condName) function(a, b) {
         let aValue = getConditionValue(a)
         let bValue = getConditionValue(b)
@@ -286,7 +294,8 @@ let function getSortedRewardsByConditions(event, awardsBlk  = null) {
 }
 
 let function getRewardIcon(rewardBlk) {
-  foreach (cfg in rewardsConfig) {
+  foreach(cfg in rewardsConfig)
+  {
     let value = cfg.getValue(rewardBlk)
     if (value == null)
       continue
@@ -297,7 +306,8 @@ let function getRewardIcon(rewardBlk) {
 }
 
 let function getRewardRowIcon(rewardBlk) {
-  foreach (cfg in rewardsConfig) {
+  foreach(cfg in rewardsConfig)
+  {
     let value = cfg.getValue(rewardBlk)
     if (value == null)
       continue
@@ -309,7 +319,8 @@ let function getRewardRowIcon(rewardBlk) {
 
 let function getRewardDescText(rewardBlk) {
   local text = ""
-  foreach (cfg in rewardsConfig) {
+  foreach(cfg in rewardsConfig)
+  {
     let value = cfg.getValue(rewardBlk)
     if (value == null)
       continue
@@ -322,7 +333,8 @@ let function getRewardDescText(rewardBlk) {
 }
 
 let function getRewardTooltipId(reward_blk) {
-  foreach (cfg in rewardsConfig) {
+  foreach(cfg in rewardsConfig)
+  {
     let value = cfg.getValue(reward_blk)
     if (value != null)
       return cfg.getTooltipId(value)
@@ -333,16 +345,18 @@ let function getRewardTooltipId(reward_blk) {
 let function getTotalRewardDescText(rewardsBlksArray) {
   local text = ""
   local money = ::Cost()
-  foreach (rewardBlk in rewardsBlksArray)
-    foreach (cfg in rewardsConfig) {
+  foreach(rewardBlk in rewardsBlksArray)
+    foreach(cfg in rewardsConfig)
+    {
       let value = cfg.getValue(rewardBlk)
       if (value == null)
         continue
 
       if (cfg.id == "money")
         money += value
-      else {
-        let val = ("valueText" in cfg) ? cfg.valueText(value) : value
+      else
+      {
+        let val = ("valueText" in cfg)? cfg.valueText(value) : value
         text = addToText(text, "", val, "activeTextColor")
       }
     }
@@ -382,7 +396,8 @@ let function isRewardReceived(reward_blk, eventEconomicName) {
   //and every raward has value
   ending += reward_blk.value
 
-  for (local i = 0; i < infoBlk.awards.blockCount(); i++) {
+  for(local i = 0; i < infoBlk.awards.blockCount(); i++)
+  {
     let blk = infoBlk.awards.getBlock(i)
     let name = blk.getBlockName()
 
@@ -405,7 +420,8 @@ let function getNextReward(rewardBlk, event) {
   if (!(conditionId in allRewards))
     return null
 
-  foreach (nextPretendetn in allRewards[conditionId]) {
+  foreach (nextPretendetn in allRewards[conditionId])
+  {
     if (!getTblValue(conditionId, nextPretendetn))
       continue
     if (nextPretendetn[conditionId] > rewardBlk[conditionId])

@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -53,7 +52,8 @@ let modes = [
     hasDaysData = false
   }]
 
-let function getModeByName(mName) {
+let function getModeByName(mName)
+{
   return ::u.search(modes, @(m) m.mode == mName
     && (!m?.needFeature || hasFeature(m.needFeature)))
 }
@@ -70,7 +70,8 @@ dataParams = {
 headersParams = {
   userId = -1 //optional parameter. Equal to user id for user leaderboard and clan id for clan leaderboard
 } */
-let function requestWwLeaderboardData(modeName, dataParams, cb, headersParams = {}) {
+let function requestWwLeaderboardData(modeName, dataParams, cb, headersParams = {})
+{
   let mode = getModeByName(modeName)
   if (!mode)
     return
@@ -78,7 +79,8 @@ let function requestWwLeaderboardData(modeName, dataParams, cb, headersParams = 
   requestLeaderboardData(dataParams, headersParams.__merge({ appId = mode.appId }), cb)
 }
 
-let function requestWwLeaderboardModes(modeName, cb) {
+let function requestWwLeaderboardModes(modeName, cb)
+{
   if (!::g_login.isLoggedIn())
     return
 
@@ -95,13 +97,15 @@ let function requestWwLeaderboardModes(modeName, cb) {
   ww_leaderboard.request(requestData, cb)
 }
 
-let function getSeasonDay(days) {
+let function getSeasonDay(days)
+{
   if (!days)
     return 0
 
   local seasonDay = 0
   foreach (dayId in days)
-    if (dayId.slice(0, 3) == "day") {
+    if (dayId.slice(0, 3) == "day")
+    {
       let dayNumberText = dayId.slice(3)
       if (::g_string.isStringInteger(dayNumberText))
         seasonDay = max(seasonDay, dayNumberText.tointeger())
@@ -129,8 +133,9 @@ let function isUsersLeaderboard(lbModeData) {
   return lbModeData.appId == "1134"
 }
 
-let function updateClanByWWLBAndDo(clanInfo, afterUpdate) {
-  if (!::g_world_war.isWWSeasonActive())
+let function updateClanByWWLBAndDo(clanInfo, afterUpdate)
+{
+  if(!::g_world_war.isWWSeasonActive())
     return afterUpdate(clanInfo)
 
   requestWwLeaderboardData("ww_clans",
@@ -141,19 +146,20 @@ let function updateClanByWWLBAndDo(clanInfo, afterUpdate) {
       count    = 0
       category = ::g_lb_category.WW_EVENTS_PERSONAL_ELO.field
     },
-    function (response) {
+    function (response){
       let lbData = response?[clanInfo.tag]
-      if (lbData) {
+      if(lbData)
+      {
         let idx = lbData?.idx
         let rating = lbData?.rating?.value_total
-        if (rating != null)
+        if(rating != null)
           clanInfo.rating <- round(rating / 10000.0).tointeger()
-        if (idx != null)
+        if(idx != null)
           clanInfo.place <- idx + 1
       }
       clanInfo.hasLBData <- lbData != null && clanInfo.canShowActivity()
       afterUpdate(clanInfo)
-    }, { userId =  clanInfo.id })
+    }, {userId =  clanInfo.id})
 }
 
 return {

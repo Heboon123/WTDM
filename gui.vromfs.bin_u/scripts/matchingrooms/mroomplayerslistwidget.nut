@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -42,15 +41,18 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
   static TEAM_TBL_PREFIX = "players_table_"
 
-  static function create(config) {
-    if (!getTblValue("teams", config) || !checkObj(getTblValue("scene", config))) {
+  static function create(config)
+  {
+    if (!getTblValue("teams", config) || !checkObj(getTblValue("scene", config)))
+    {
       assert(false, "cant create playersListWidget - no teams or scene")
       return null
     }
     return ::handlersManager.loadHandler(::gui_handlers.MRoomPlayersListWidget, config)
   }
 
-  function getSceneTplView() {
+  function getSceneTplView()
+  {
     let view = {
       teamsAmount = this.teams.len()
       teams = []
@@ -63,7 +65,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
         name = { width = "fw" }
       }
     }
-    foreach (idx, team in this.teams) {
+    foreach(idx, team in this.teams)
+    {
       markupData.invert <- idx == 0  && this.teams.len() == 2
       view.teams.append(
       {
@@ -75,7 +78,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     return view
   }
 
-  function initScreen() {
+  function initScreen()
+  {
     this.setFullRoomInfo()
     this.playersInTeamTables = {}
     this.focusedTeam = this.teams[0]
@@ -86,14 +90,16 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
   /*************************************PUBLIC FUNCTIONS *******************************************/
   /*************************************************************************************************/
 
-  function getSelectedPlayer() {
+  function getSelectedPlayer()
+  {
     let objTbl = this.getFocusedTeamTableObj()
     return objTbl && getTblValue(objTbl.getValue(), getTblValue(this.focusedTeam, this.playersInTeamTables))
   }
 
-  function getSelectedRowPos() {
+  function getSelectedRowPos()
+  {
     let objTbl = this.getFocusedTeamTableObj()
-    if (!objTbl)
+    if(!objTbl)
       return null
     let rowNum = objTbl.getValue()
     if (rowNum < 0 || rowNum >= objTbl.childrenCount())
@@ -109,20 +115,23 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
   /************************************PRIVATE FUNCTIONS *******************************************/
   /*************************************************************************************************/
 
-  function getTeamTableId(team) {
+  function getTeamTableId(team)
+  {
     return this.TEAM_TBL_PREFIX + team.id
   }
 
-  function updatePlayersTbl() {
+  function updatePlayersTbl()
+  {
     this.isTablesInUpdate = true
     let playersList = ::SessionLobby.getMembersInfoList(this.room)
-    foreach (team in this.teams)
+    foreach(team in this.teams)
       this.updateTeamPlayersTbl(team, playersList)
     this.isTablesInUpdate = false
     this.onPlayerSelect()
   }
 
-  function updateTeamPlayersTbl(team, playersList) {
+  function updateTeamPlayersTbl(team, playersList)
+  {
     let objTbl = this.scene.findObject(this.getTeamTableId(team))
     if (!checkObj(objTbl))
       return
@@ -135,35 +144,41 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     this.playersInTeamTables[team] <- teamList
 
     //update cur value
-    if (teamList.len() > 0) {
+    if (teamList.len() > 0)
+    {
       let curValue = objTbl.getValue() ?? -1
-      let validValue = clamp(curValue, 0, teamList.len() - 1)
+      let validValue = clamp(curValue, 0, teamList.len()-1)
       if (curValue != validValue)
         objTbl.setValue(validValue)
     }
   }
 
-  function getFocusedTeamTableObj() {
+  function getFocusedTeamTableObj()
+  {
     return this.getObj(this.getTeamTableId(this.focusedTeam))
   }
 
-  function updateFocusedTeamByObj(obj) {
+  function updateFocusedTeamByObj(obj)
+  {
     this.focusedTeam = getTblValue(::getObjIdByPrefix(obj, this.TEAM_TBL_PREFIX), ::g_team, this.focusedTeam)
   }
 
-  function onTableClick(obj) {
+  function onTableClick(obj)
+  {
     this.updateFocusedTeamByObj(obj)
     this.onPlayerSelect()
   }
 
-  function onTableSelect(obj) {
+  function onTableSelect(obj)
+  {
     if (this.isTablesInUpdate)
       return
     this.updateFocusedTeamByObj(obj)
     this.onPlayerSelect()
   }
 
-  function onPlayerSelect() {
+  function onPlayerSelect()
+  {
     if (this.onPlayerSelectCb)
       this.onPlayerSelectCb(this.getSelectedPlayer())
   }
@@ -172,7 +187,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
   function onTableRClick()      { if (this.onPlayerRClickCb)   this.onPlayerRClickCb(this.getSelectedPlayer()) }
   function onTableHover(obj)    { if (this.onTablesHoverChange) this.onTablesHoverChange(obj.id, obj.isHovered()) }
 
-  function onPlayerHover(obj) {
+  function onPlayerHover(obj)
+  {
     if (!checkObj(obj) || !obj.isHovered())
       return
     let value = ::to_integer_safe(obj?.rowIdx, -1, false)
@@ -181,19 +197,23 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
       listObj.setValue(value)
   }
 
-  function onEventLobbyMembersChanged(_p) {
+  function onEventLobbyMembersChanged(_p)
+  {
     this.updatePlayersTbl()
   }
 
-  function onEventLobbyMemberInfoChanged(_p) {
+  function onEventLobbyMemberInfoChanged(_p)
+  {
     this.updatePlayersTbl()
   }
 
-  function onEventLobbySettingsChange(_p) {
+  function onEventLobbySettingsChange(_p)
+  {
     this.updatePlayersTbl()
   }
 
-  function setFullRoomInfo() {
+  function setFullRoomInfo()
+  {
     if (!this.room)
       return
     let fullRoom = ::g_mroom_info.get(this.room.roomId).getFullRoomData()
@@ -201,8 +221,10 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
       this.room = fullRoom
   }
 
-  function onEventMRoomInfoUpdated(p) {
-    if (this.room && p.roomId == this.room.roomId) {
+  function onEventMRoomInfoUpdated(p)
+  {
+    if (this.room && p.roomId == this.room.roomId)
+    {
       this.setFullRoomInfo()
       this.updatePlayersTbl()
     }

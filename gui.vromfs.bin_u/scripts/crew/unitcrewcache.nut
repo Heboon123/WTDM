@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -21,12 +20,14 @@ from "%scripts/dagui_library.nut" import *
   }
 }
 
-::g_unit_crew_cache.getUnitCrewDataById <- function getUnitCrewDataById(crewId, unit) {
+::g_unit_crew_cache.getUnitCrewDataById <- function getUnitCrewDataById(crewId, unit)
+{
   if (crewId == null)
     return null
 
   let unitName = unit?.name ?? ""
-  if (crewId != this.lastUnitCrewId || unitName != this.lastUnitName) {
+  if (crewId != this.lastUnitCrewId || unitName != this.lastUnitName)
+  {
     this.lastUnitCrewId = crewId
     this.lastUnitName = unitName
     let unitCrewBlk = ::get_aircraft_crew_blk(this.lastUnitCrewId, this.lastUnitName)
@@ -35,7 +36,8 @@ from "%scripts/dagui_library.nut" import *
   return this.lastUnitCrewData
 }
 
-::g_unit_crew_cache.initCache <- function initCache() {
+::g_unit_crew_cache.initCache <- function initCache()
+{
   ::add_event_listener("CrewSkillsChanged", this.onEventCrewSkillsChanged,
     this, ::g_listener_priority.UNIT_CREW_CACHE_UPDATE)
   ::add_event_listener("QualificationIncreased", @(_p) this.invalidateCache(),
@@ -44,11 +46,13 @@ from "%scripts/dagui_library.nut" import *
     this, ::g_listener_priority.UNIT_CREW_CACHE_UPDATE)
 }
 
-::g_unit_crew_cache.onEventCrewSkillsChanged <- function onEventCrewSkillsChanged(_params) {
+::g_unit_crew_cache.onEventCrewSkillsChanged <- function onEventCrewSkillsChanged(_params)
+{
   this.invalidateCache()
 }
 
-::g_unit_crew_cache.onEventCrewChanged <- function onEventCrewChanged(_params) {
+::g_unit_crew_cache.onEventCrewChanged <- function onEventCrewChanged(_params)
+{
   this.invalidateCache()
 }
 

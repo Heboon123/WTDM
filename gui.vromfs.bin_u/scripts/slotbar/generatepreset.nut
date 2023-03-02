@@ -1,10 +1,9 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
 #explicit-this
 
-let { setUnits, getSlotItem, getCurPreset } = require("%scripts/slotbar/slotbarPresetsByVehiclesGroups.nut")
+let { setUnits, getSlotItem, getCurPreset} = require("%scripts/slotbar/slotbarPresetsByVehiclesGroups.nut")
 let { batchTrainCrew } = require("%scripts/crew/crewActions.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 
@@ -79,7 +78,7 @@ let function getBestPresetData(availableUnits, country, hasSlotbarByUnitsGroups)
 
       let bestCrew = availableCrews[0]
       trainCrewsData[bestCrew.id] <- unit
-      trainCrewsDataForGroups.append({ crew = bestCrew, unit = unit })
+      trainCrewsDataForGroups.append({crew = bestCrew, unit = unit})
       if (bestCrew?.idInCountry == null || curCountryCrews?[bestCrew.idInCountry] != unit.name)
         hasChangeInPreset = true
     }
@@ -89,7 +88,7 @@ let function getBestPresetData(availableUnits, country, hasSlotbarByUnitsGroups)
   if (hasSlotbarByUnitsGroups && unusedUnits.len() > 0 && idCountry != null) {
     local emptyCrewId = countryCrews.len()
     foreach (unit in unusedUnits) {
-      trainCrewsDataForGroups.append({ crew = getSlotItem(idCountry, emptyCrewId), unit = unit })
+      trainCrewsDataForGroups.append({crew = getSlotItem(idCountry, emptyCrewId), unit = unit})
       usedUnits.append(unit)
       if (curCountryCrews?[emptyCrewId] != unit.name)
         hasChangeInPreset = true
@@ -139,8 +138,8 @@ let function generatePreset(availableUnits, country, hasSlotbarByUnitsGroups) {
           setUnits(bestPresetData.trainCrewsDataForGroups)
         else
           batchTrainCrew(
-            ::get_crews_list_by_country(country).map(@(c) { crewId = c.id,
-              airName = bestPresetData.trainCrewsData?[c.id].name ?? "" }),
+            ::get_crews_list_by_country(country).map(@(c) {crewId = c.id,
+              airName = bestPresetData.trainCrewsData?[c.id].name ?? ""}),
             null, @() ::broadcastEvent("SlotbarPresetLoaded"))
         }
       ],

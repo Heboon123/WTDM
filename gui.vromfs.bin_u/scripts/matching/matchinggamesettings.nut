@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -26,7 +25,8 @@ let function fetchMatchingGameSetting() {
     function (result) {
       isFetching = false
 
-      if (result.error == OPERATION_COMPLETE) {
+      if (result.error == OPERATION_COMPLETE)
+      {
         failedFetches = 0
         matchingGameSettings(result)
         return

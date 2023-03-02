@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -17,10 +16,12 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
   alignObj = null
   menuWidth = "0.6@sf"
 
-  function initScreen() {
+  function initScreen()
+  {
     let tableObj = this.scene.findObject("optionslist")
     tableObj.width = this.menuWidth
-    if (this.options) {
+    if (this.options)
+    {
       tableObj.height = this.options.len() + "@baseTrHeight"
       if (this.options.len() <= 1)
         tableObj.invisibleSelection = "yes"
@@ -32,17 +33,20 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     this.initOpenAnimParams()
   }
 
-  function goBack() {
+  function goBack()
+  {
     this.applyOptions(true)
   }
 
-  function applyReturn() {
+  function applyReturn()
+  {
     if (!this.applyFunc)
       this.restoreMainOptions()
     base.applyReturn()
   }
 
-  function initOpenAnimParams() {
+  function initOpenAnimParams()
+  {
     let animObj = this.scene.findObject("anim_block")
     if (!animObj)
       return

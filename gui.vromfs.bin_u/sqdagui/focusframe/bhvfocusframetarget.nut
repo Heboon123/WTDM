@@ -10,12 +10,12 @@ let function hideImage(obj) {
   if (focusImageSource == null)
     return
 
-  let style = []
+  local style = ""
   if (focusImageSource != "foreground")
-    style.append("background-color:#00000000;")
+    style += "background-color:#00000000;"
   if (focusImageSource != "background")
-    style.append("foreground-color:#00000000;")
-  obj.style = "".join(style)
+    style += "foreground-color:#00000000;"
+  obj.style = style
 }
 
 
@@ -24,9 +24,12 @@ let function unhideImage(obj) {
 }
 
 
-let class bhvFocusFrameTarget {
-  function onAttach(obj) {
-    if (onSetTarget) {
+let class bhvFocusFrameTarget
+{
+  function onAttach(obj)
+  {
+    if (onSetTarget)
+    {
       //instant hide image, because there is a single frame before animaton start with correct object sizes
       if (shouldHideImage)
         hideImage(obj)
@@ -35,7 +38,8 @@ let class bhvFocusFrameTarget {
     return RETCODE_NOTHING
   }
 
-  function onDetach(obj) {
+  function onDetach(obj)
+  {
     if (onUnsetTarget)
       onUnsetTarget(obj)
     if (shouldHideImage)

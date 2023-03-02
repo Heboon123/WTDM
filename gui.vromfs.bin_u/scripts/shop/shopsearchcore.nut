@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -6,16 +5,18 @@ from "%scripts/dagui_library.nut" import *
 
 let regexp2 = require("regexp2")
 
-let reUnitLocNameSeparators = regexp2(@"[ \-_/.()" + ::nbsp + "]")
+let reUnitLocNameSeparators = regexp2(@"[ \-_/.()"+::nbsp+"]")
 let translit = { cyr = "авекмнорстх", lat = "abekmhopctx" }
 let searchTokensCache = {}
 
-local function comparePrep(text) {
+local function comparePrep(text)
+{
   text = utf8(::g_string.utf8ToLower(text)).strtr(translit.cyr, translit.lat)
   return reUnitLocNameSeparators.replace("", text)
 }
 
-let function cacheUnitSearchTokens(unit) {
+let function cacheUnitSearchTokens(unit)
+{
   let tokens = []
   ::u.appendOnce(comparePrep(::getUnitName(unit.name, true)),  tokens)
   ::u.appendOnce(comparePrep(::getUnitName(unit.name, false)), tokens)
@@ -26,7 +27,8 @@ let function clearCache() {
   searchTokensCache.clear()
 }
 
-let function rebuildCache() {
+let function rebuildCache()
+{
   if (!::g_login.isLoggedIn())
     return
 
@@ -35,14 +37,16 @@ let function rebuildCache() {
     cacheUnitSearchTokens(unit)
 }
 
-let function tokensMatch(tokens, searchStr) {
+let function tokensMatch(tokens, searchStr)
+{
   foreach (t in tokens)
     if (t.indexof(searchStr) != null)
       return true
   return false
 }
 
-let function findUnitsByLocName(searchStrRaw, needIncludeHidden = false, needIncludeNotInShop = false) {
+let function findUnitsByLocName(searchStrRaw, needIncludeHidden = false, needIncludeNotInShop = false)
+{
   if (!searchTokensCache.len())
     rebuildCache() // hack, restores cache after scripts reload.
 

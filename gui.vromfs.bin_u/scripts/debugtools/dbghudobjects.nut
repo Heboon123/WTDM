@@ -1,7 +1,4 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
-
-let { frnd } = require("dagor.random")
 
 //checked for explicitness
 #no-root-fallback
@@ -21,8 +18,9 @@ let function genRandomEvent() {
   if (!totalChance)
     return
 
-  local chance = frnd() * totalChance
-  foreach (oType in activeObjectTypes) {
+  local chance = ::math.frnd() * totalChance
+  foreach(oType in activeObjectTypes)
+  {
     chance -= oType.eventChance
     if (chance > 0)
       continue
@@ -36,8 +34,8 @@ let function onUpdate(_obj, dt) {
     return
 
   local eventChance = dt * eventsPerSec
-  for (eventChance; eventChance > 0; eventChance--)
-    if (eventChance >= 1 || eventChance > frnd())
+  for(eventChance; eventChance > 0; eventChance--)
+    if (eventChance >= 1 || eventChance > ::math.frnd())
       genRandomEvent()
 }
 
@@ -73,7 +71,8 @@ let function updateActiveObjectsTypes() {
   let hudType = getCurHudType()
   activeObjectTypes.clear()
   totalChance = 0.0
-  foreach (oType in dbgHudObjectTypes.types) {
+  foreach(oType in dbgHudObjectTypes.types)
+  {
     if (!oType.isVisible(hudType))
       continue
     activeObjectTypes.append(oType)

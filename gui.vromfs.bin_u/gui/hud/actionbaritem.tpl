@@ -39,17 +39,15 @@ actionBarItemDiv {
         background-image:t='<<icon>>'
       }
       <</bullets>>
-      actionItemCooldown {
+      tdiv {
         id:t='cooldown'
-        sector-angle-1:t='<<cooldown>>'
-        inc-factor:t='<<cooldownIncFactor>>'
-        background-color:t='#cc0c111c'
-      }
-      actionItemCooldown {
-        id:t='progressCooldown'
-        sector-angle-1:t='<<progressCooldown>>'
-        inc-factor:t='<<progressCooldownIncFactor>>'
-        background-color:t='#88080C12'
+        re-type:t='sector';
+        sector-angle-1:t='<<cooldown>>';
+        sector-angle-2:t='360';
+        size:t='pw, ph';
+        position:t='absolute';
+        pos:t='0, 0';
+        background-color:t='#cc0c111c';
       }
       transpBlinkAnimation {
         id:t='availability'
@@ -86,11 +84,15 @@ actionBarItemDiv {
         text:t='#actionBar/action/automatic/abbr'
         <<^automatic>>display:t='hide'<</automatic>>
       }
-      actionItemCooldown {
-        id:t='blockedCooldown'
-        sector-angle-1:t='<<blockedCooldown>>'
-        inc-factor:t='<<blockedCooldownIncFactor>>'
-        background-color:t='#99020202'
+      tdiv {
+        id:t='BlockedCooldown'
+        re-type:t='sector';
+        sector-angle-1:t='360';
+        sector-angle-2:t='360';
+        size:t='pw, ph';
+        position:t='absolute';
+        pos:t='0, 0';
+        background-color:t='#99020202';
       }
       <<#showShortcut>>
       <<#isXinput>>

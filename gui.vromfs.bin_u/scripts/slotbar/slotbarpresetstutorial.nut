@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -55,7 +54,8 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
   /**
    * Returns false if tutorial was skipped due to some error.
    */
-  function startTutorial() {
+  function startTutorial()
+  {
     this.currentStepsName = "startTutorial"
     this.currentGameModeId = ::game_mode_manager.getCurrentGameModeId()
     if (this.preset == null)
@@ -72,7 +72,8 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
       return false
     let presetObj = this.presetsList.getListChildByPresetIdx(this.validPresetIndex)
     local steps
-    if (presetObj && presetObj.isVisible()) { // Preset is in slotbar presets list.
+    if (presetObj && presetObj.isVisible()) // Preset is in slotbar presets list.
+    {
       this.currentStepsName = "selectPreset"
       steps = [{
         obj = [presetObj]
@@ -83,7 +84,8 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
         keepEnv = true
       }]
     }
-    else {
+    else
+    {
       let presetsButtonObj = this.presetsList.getPresetsButtonObj()
       if (presetsButtonObj == null)
         return false
@@ -105,7 +107,8 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
     return true
   }
 
-  function onSlotbarPresetSelect() {
+  function onSlotbarPresetSelect()
+  {
     if (this.checkCurrentTutorialCanceled())
       return
     ::add_event_listener("SlotbarPresetLoaded", this.onEventSlotbarPresetLoaded, this)
@@ -114,7 +117,8 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
       listObj.setValue(this.validPresetIndex)
   }
 
-  function onChooseSlotbarPresetWnd_Open() {
+  function onChooseSlotbarPresetWnd_Open()
+  {
     if (this.checkCurrentTutorialCanceled())
       return
     this.chooseSlotbarPresetHandler = ::gui_choose_slotbar_preset(this.currentHandler)
@@ -147,7 +151,8 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
     this.currentTutorial = ::gui_modal_tutor(steps, this.currentHandler, true)
   }
 
-  function onChooseSlotbarPresetWnd_Select() {
+  function onChooseSlotbarPresetWnd_Select()
+  {
     if (this.checkCurrentTutorialCanceled(false))
       return
     let itemsListObj = this.chooseSlotbarPresetHandler.scene.findObject("items_list")
@@ -155,14 +160,16 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
     this.chooseSlotbarPresetHandler.onItemSelect(null)
   }
 
-  function onChooseSlotbarPresetWnd_Apply() {
+  function onChooseSlotbarPresetWnd_Apply()
+  {
     if (this.checkCurrentTutorialCanceled())
       return
     ::add_event_listener("SlotbarPresetLoaded", this.onEventSlotbarPresetLoaded, this)
     this.chooseSlotbarPresetHandler.onBtnPresetLoad(null)
   }
 
-  function onEventSlotbarPresetLoaded(_params) {
+  function onEventSlotbarPresetLoaded(_params)
+  {
     if (this.checkCurrentTutorialCanceled())
       return
     subscriptions.removeEventListenersByEnv("SlotbarPresetLoaded", this)
@@ -181,7 +188,8 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
       this.startPressToBattleButtonStep()
   }
 
-  function onStartPress() {
+  function onStartPress()
+  {
     if (this.checkCurrentTutorialCanceled())
       return
     this.currentHandler.onStart()
@@ -191,19 +199,22 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
       this.onComplete({ result = "success" })
   }
 
-  function createMessageWhithUnitType(partLocId = "selectPreset") {
+  function createMessageWhithUnitType(partLocId = "selectPreset")
+  {
     let types = ::game_mode_manager.getRequiredUnitTypes(this.tutorialGameMode)
     let unitType = unitTypes.getByEsUnitType(::u.max(types))
     let unitTypeLocId = "options/chooseUnitsType/" + unitType.lowerName
     return loc("slotbarPresetsTutorial/" + partLocId, { unitType = loc(unitTypeLocId) })
   }
 
-  function createMessage_pressToBattleButton() {
+  function createMessage_pressToBattleButton()
+  {
     return loc("slotbarPresetsTutorial/pressToBattleButton",
       { gameModeName = this.tutorialGameMode.text })
   }
 
-  function getPresetIndex(prst) {
+  function getPresetIndex(prst)
+  {
     let presets = getTblValue(this.currentCountry, ::slotbarPresets.presets, null)
     return ::find_in_array(presets, prst, -1)
   }
@@ -212,7 +223,8 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
    * This subtutorial for selecting allowed unit within selected preset.
    * Returns false if tutorial was skipped for some reason.
    */
-  function startUnitSelectStep() {
+  function startUnitSelectStep()
+  {
     let slotbarHandler = this.currentHandler.getSlotbar()
     if (!slotbarHandler)
       return false
@@ -244,7 +256,8 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
     return true
   }
 
-  function onUnitSelect() {
+  function onUnitSelect()
+  {
     if (this.checkCurrentTutorialCanceled())
       return
     let slotbar = this.currentHandler.getSlotbar()
@@ -256,11 +269,13 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
   /**
    * Returns -1 if no such unit found.
    */
-  function getAllowedUnitIndexByPreset(prst) {
+  function getAllowedUnitIndexByPreset(prst)
+  {
     let units = prst?.units
     if (units == null)
       return -1
-    for (local i = 0; i < units.len(); ++i) {
+    for (local i = 0; i < units.len(); ++i)
+    {
       let unit = ::getAircraftByName(units[i])
       if (::game_mode_manager.isUnitAllowedForGameMode(unit))
         return i
@@ -268,7 +283,8 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
     return -1
   }
 
-  function startPressToBattleButtonStep() {
+  function startPressToBattleButtonStep()
+  {
     if (this.checkCurrentTutorialCanceled())
       return
     let objs = [
@@ -286,7 +302,8 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
     this.currentTutorial = ::gui_modal_tutor(steps, this.currentHandler, true)
   }
 
-  function startOpenGameModeSelectStep() {
+  function startOpenGameModeSelectStep()
+  {
     if (!this.isNewUnitTypeToBattleTutorial)
       return false
     let currentGameMode = ::game_mode_manager.getCurrentGameMode()
@@ -308,7 +325,8 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
     return true
   }
 
-  function onOpenGameModeSelect() {
+  function onOpenGameModeSelect()
+  {
     if (this.checkCurrentTutorialCanceled())
       return
     let gameModeChangeButtonObj = this.currentHandler?.gameModeChangeButtonObj
@@ -318,7 +336,8 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
     this.currentHandler.openGameModeSelect()
   }
 
-  function onEventGamercardDrawerOpened(_params) {
+  function onEventGamercardDrawerOpened(_params)
+  {
     if (this.checkCurrentTutorialCanceled())
       return
     subscriptions.removeEventListenersByEnv("GamercardDrawerOpened", this)
@@ -326,7 +345,8 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
     this.startSelectGameModeStep()
   }
 
-  function startSelectGameModeStep() {
+  function startSelectGameModeStep()
+  {
     if (this.checkCurrentTutorialCanceled())
       return
     let gameModeSelectHandler = this.currentHandler?.gameModeSelectHandler
@@ -349,7 +369,8 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
     this.currentTutorial = ::gui_modal_tutor(steps, this.currentHandler, true)
   }
 
-  function onSelectGameMode() {
+  function onSelectGameMode()
+  {
     if (this.checkCurrentTutorialCanceled())
       return
     ::add_event_listener("CurrentGameModeIdChanged", this.onEventCurrentGameModeIdChanged, this)
@@ -363,7 +384,8 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
     gameModeSelectHandler.onGameModeSelect(gameModeObj)
   }
 
-  function onEventCurrentGameModeIdChanged(_params) {
+  function onEventCurrentGameModeIdChanged(_params)
+  {
     if (this.checkCurrentTutorialCanceled())
       return
     subscriptions.removeEventListenersByEnv("CurrentGameModeIdChanged", this)
@@ -378,11 +400,13 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
    * only for final tutorial step callbacks and 'false'
    * for intermediate states.
    */
-  function checkCurrentTutorialCanceled(removeCurrentTutorial = true) {
+  function checkCurrentTutorialCanceled(removeCurrentTutorial = true)
+  {
     let canceled = getTblValue("canceled", this.currentTutorial, false)
     if (removeCurrentTutorial)
       this.currentTutorial = null
-    if (canceled) {
+    if (canceled)
+    {
       this.sendLastStepsNameToBigQuery()
       if (this.onComplete != null)
         this.onComplete({ result = "canceled" })
@@ -391,11 +415,13 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
     return false
   }
 
-  static function getCounter() {
+  static function getCounter()
+  {
     return ::loadLocalByAccount("tutor/slotbar_presets_tutorial_counter", 0)
   }
 
-  function sendLastStepsNameToBigQuery() {
+  function sendLastStepsNameToBigQuery()
+  {
     if (this.isNewUnitTypeToBattleTutorial)
       ::add_big_query_record("new_unit_type_to_battle_tutorial_lastStepsName", this.currentStepsName)
   }

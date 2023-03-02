@@ -1,22 +1,14 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
 #no-root-fallback
 #explicit-this
 
-let DataBlock  = require("DataBlock")
 let { requestUsersInfo } = require("%scripts/user/usersInfoManager.nut")
 let { isShowGoldBalanceWarning } = require("%scripts/user/balanceFeatures.nut")
 let { actionWithGlobalStatusRequest } = require("%scripts/worldWar/operations/model/wwGlobalStatus.nut")
 let { notifyMailRead } = require("%scripts/matching/serviceNotifications/postbox.nut")
-
-let function removeInvite(operationId) {
-  let uid = ::g_invites_classes.Operation.getUidByParams({ mail = { operationId = operationId } })
-  let invite = ::g_invites.findInviteByUid(uid)
-  if (invite)
-    ::g_invites.remove(invite)
-}
+let { removeInviteToOperation } = require("%scripts/worldWar/wwInvites.nut")
 
 const WW_OPERATION_INVITE_EXPIRE_SEC = 3600
 let inviteActiveColor = "userlogColoredText"
@@ -90,7 +82,7 @@ let inviteActiveColor = "userlogColoredText"
   getPopupText = @() this.getInviteText()
   haveRestrictions = @() !::isInMenu()
 
-  function getRestrictionText() {
+  function getRestrictionText(){
     if (this.haveRestrictions())
       return loc("invite/session/cant_apply_in_flight")
     return ""
@@ -105,11 +97,11 @@ let inviteActiveColor = "userlogColoredText"
     let onSuccess = Callback(function() {
         this.isAccepted = true
         this.remove()
-        removeInvite(this.operationId)
+        removeInviteToOperation(this.operationId)
         if (this.mailId)
           notifyMailRead(this.mailId)
     }, this)
-    let requestBlk = DataBlock()
+    let requestBlk = ::DataBlock()
     requestBlk.operationId = this.operationId
     actionWithGlobalStatusRequest("cln_ww_global_status_short", requestBlk, null,
       @() ::g_world_war.joinOperationById(this.operationId, this.country, null, onSuccess, true))
@@ -120,7 +112,7 @@ let inviteActiveColor = "userlogColoredText"
       return
 
     let acceptCallback = Callback(this.implAccept, this)
-    let callback = function () { ::queues.checkAndStart(acceptCallback, null, "isCanNewflight") }
+    let callback = function () { ::queues.checkAndStart(acceptCallback, null, "isCanNewflight")}
     let canJoin = ::g_squad_utils.canJoinFlightMsgBox(
       { isLeaderCanJoin = true, msgId = "squad/leave_squad_for_invite" },
       callback
@@ -141,6 +133,6 @@ let inviteActiveColor = "userlogColoredText"
 
     this.isRejected = true
     this.remove()
-    removeInvite(this.operationId)
+    removeInviteToOperation(this.operationId)
   }
 }

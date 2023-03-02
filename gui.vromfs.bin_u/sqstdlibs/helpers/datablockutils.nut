@@ -6,7 +6,7 @@ local {  getBlkByPathArray,
   getBlkValueByPath,
   setFuncBlkByArrayPath
 } = require("%sqstd/datablock.nut")
-let DataBlock = require("DataBlock")
+let { DataBlock } = require("datablockWrapper.nut")
 
  //blk in path shoud exist and be correct
 local function blkFromPath(path){

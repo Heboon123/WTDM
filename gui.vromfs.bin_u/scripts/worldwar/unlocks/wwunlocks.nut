@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -24,7 +23,8 @@ subscriptions.addListenersWithoutEnv({
 local function getWwUnlocksForCash() {
   local chapter = ""
   local res = []
-  foreach (unlock in ::g_unlocks.getAllUnlocksWithBlkOrder()) {
+  foreach(unlock in ::g_unlocks.getAllUnlocksWithBlkOrder())
+  {
     local newChapter = unlock?.chapter ?? ""
     if (newChapter != "")
       chapter = newChapter

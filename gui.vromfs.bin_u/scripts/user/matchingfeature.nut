@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -15,12 +14,6 @@ let defaults = {  //def value when feature not found in matching game settings
   hasBattleChatModeAll = false
   hasBattleChatModeTeam = false
   hasBattleChatModeSquad = true
-  hasMenuGeneralChats = true
-  hasMenuChatPrivate = true
-  hasMenuChatSquad = true
-  hasMenuChatClan = true
-  hasMenuChatSystem = true
-  hasMenuChatMPlobby = true
 }
 
 let toggleFeatures = Watched({

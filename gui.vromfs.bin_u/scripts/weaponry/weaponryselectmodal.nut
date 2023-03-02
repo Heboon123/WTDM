@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -36,7 +35,8 @@ let { updateModItem, createModItemLayout } = require("%scripts/weaponry/weaponry
 let { getLastWeapon, setLastWeapon, isWeaponVisible, isWeaponEnabled, isDefaultTorpedoes,
   needSecondaryWeaponsWnd } = require("%scripts/weaponry/weaponryInfo.nut")
 
-::gui_start_weaponry_select_modal <- function gui_start_weaponry_select_modal(config) {
+::gui_start_weaponry_select_modal <- function gui_start_weaponry_select_modal(config)
+{
   ::handlersManager.loadHandler(::gui_handlers.WeaponrySelectModal, config)
 }
 
@@ -48,7 +48,8 @@ local CHOOSE_WEAPON_PARAMS = {
   setLastWeapon = @(unitName, weaponName) setLastWeapon(unitName, weaponName)
   getLastWeapon = @(unitName) getLastWeapon(unitName)
 }
-::gui_start_choose_unit_weapon <- function gui_start_choose_unit_weapon(unit, cb, params = CHOOSE_WEAPON_PARAMS) {
+::gui_start_choose_unit_weapon <- function gui_start_choose_unit_weapon(unit, cb, params = CHOOSE_WEAPON_PARAMS)
+{
   params = CHOOSE_WEAPON_PARAMS.__merge(params)
 
   let curWeaponName = params.getLastWeapon(unit.name)
@@ -61,7 +62,8 @@ local CHOOSE_WEAPON_PARAMS = {
   }
 
   let list = []
-  foreach (weapon in unit.getWeapons()) {
+  foreach(weapon in unit.getWeapons())
+  {
     let needShowDefTorpedoes = forceShowDefaultTorpedoes && isDefaultTorpedoes(weapon)
     if (!isForcedAvailable && !needShowDefTorpedoes
         && !isWeaponVisible(unit, weapon, hasOnlySelectable))
@@ -93,7 +95,8 @@ local CHOOSE_WEAPON_PARAMS = {
     })
 }
 
-::gui_handlers.WeaponrySelectModal <- class extends ::gui_handlers.BaseGuiHandlerWT {
+::gui_handlers.WeaponrySelectModal <- class extends ::gui_handlers.BaseGuiHandlerWT
+{
   wndType      = handlerType.MODAL
   sceneTplName = "%gui/weaponry/weaponrySelectModal.tpl"
   needVoiceChat = false
@@ -112,7 +115,8 @@ local CHOOSE_WEAPON_PARAMS = {
   wasSelIdx = 0
   selIdx = 0
 
-  function getSceneTplView() {
+  function getSceneTplView()
+  {
     if (!this.unit || !this.list)
       return null
 
@@ -122,9 +126,11 @@ local CHOOSE_WEAPON_PARAMS = {
     this.wasSelIdx = -1
     let params = { posX = 0, posY = 0 }
     local weaponryListMarkup = ""
-    foreach (idx, config in this.list) {
+    foreach(idx, config in this.list)
+    {
       let weaponryItem = getTblValue("weaponryItem", config)
-      if (!weaponryItem) {
+      if (!weaponryItem)
+      {
         ::script_net_assert_once("cant load weaponry",
                                 "Error: empty weaponryItem for WeaponrySelectModal. unit = " + (this.unit && this.unit.name))
         this.list = null //goback
@@ -149,7 +155,8 @@ local CHOOSE_WEAPON_PARAMS = {
     return res
   }
 
-  function initScreen() {
+  function initScreen()
+  {
     if (!this.list || !this.unit)
       return this.goBack()
 
@@ -159,10 +166,12 @@ local CHOOSE_WEAPON_PARAMS = {
     ::move_mouse_on_child_by_value(this.scene.findObject("weapons_list"))
   }
 
-  function updateItems() {
+  function updateItems()
+  {
     let listObj = this.scene.findObject("weapons_list")
     let total = min(this.list.len(), listObj.childrenCount())
-    for (local i = 0; i < total; i++) {
+    for(local i = 0; i < total; i++)
+    {
       let config = this.list[i]
       let itemObj = listObj.getChild(i)
       let enabled = getTblValue("enabled", config, true)
@@ -174,7 +183,8 @@ local CHOOSE_WEAPON_PARAMS = {
     this.weaponItemParams.visualDisabled <- false
   }
 
-  function updateOpenAnimParams() {
+  function updateOpenAnimParams()
+  {
     let animObj = this.scene.findObject("anim_block")
     if (!animObj)
       return
@@ -184,7 +194,8 @@ local CHOOSE_WEAPON_PARAMS = {
 
     local scaleId = "height"
     local scaleAxis = 1
-    if (this.align == "left" || this.align == "right") {
+    if (this.align == "left" || this.align == "right")
+    {
       scaleId = "width"
       scaleAxis = 0
     }
@@ -194,12 +205,14 @@ local CHOOSE_WEAPON_PARAMS = {
     animObj[scaleId + "-end"] = size[scaleAxis].tostring()
   }
 
-  function onChangeValue(obj) {
+  function onChangeValue(obj)
+  {
     this.selIdx = obj.getValue()
     this.goBack()
   }
 
-  function onModItemClick(obj) {
+  function onModItemClick(obj)
+  {
     let idx = ::to_integer_safe(obj?.holderId, -1)
     if (idx < 0)
       return
@@ -207,7 +220,8 @@ local CHOOSE_WEAPON_PARAMS = {
     this.goBack()
   }
 
-  function afterModalDestroy() {
+  function afterModalDestroy()
+  {
     if (this.alignObj?.isValid())
       ::move_mouse_on_obj(this.alignObj)
 

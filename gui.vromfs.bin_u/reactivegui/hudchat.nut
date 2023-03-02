@@ -1,18 +1,19 @@
 from "%rGui/globals/ui_library.nut" import *
 let cross_call = require("%rGui/globals/cross_call.nut")
+let {chat_on_send, toggle_ingame_chat, chat_on_text_update} = require("%rGui/globals/chat.nut")
 let string = require("string")
 let colors = require("style/colors.nut")
 let teamColors = require("style/teamColors.nut")
 let textInput =  require("components/textInput.nut")
 let penalty = require("penitentiary/penalty.nut")
-let { secondsToTimeSimpleString } = require("%sqstd/time.nut")
+let {secondsToTimeSimpleString} = require("%sqstd/time.nut")
 let state = require("hudChatState.nut")
 let hudState = require("hudState.nut")
 let hudLog = require("components/hudLog.nut")
 let fontsState = require("style/fontsState.nut")
 let hints = require("hints/hints.nut")
 let JB = require("%rGui/control/gui_buttons.nut")
-let { chat_on_text_update, toggle_ingame_chat, chat_on_send } = require("chat")
+
 let scrollableData = require("components/scrollableData.nut")
 
 
@@ -53,8 +54,7 @@ let function modeColor(mode) {
 let function sendFunc(_message) {
   if (!penalty.isDevoiced()) {
     chat_on_send()
-  }
-  else {
+  } else {
     state.pushSystemMessage(penalty.getDevoiceDescriptionText())
   }
 }
@@ -89,7 +89,7 @@ let function chatInputCtor(field, send) {
     valign = ALIGN_BOTTOM
     borderRadius = 0
     valignText = ALIGN_CENTER
-    textmargin = [fpx(5),  fpx(8)]
+    textmargin = [fpx(5) , fpx(8)]
     imeOpenJoyBtn = $"{JB.A}"
     hotkeys = [
       [ $"{JB.B}", onEscape ],
@@ -110,20 +110,13 @@ let function chatInputCtor(field, send) {
   return textInput.hud(field, options)
 }
 
-let shadow = {
-  fontFx = FFT_SHADOW
-  fontFxColor = 0xFF000000
-  fontFxFactor = 20
-  fontFxOffsX = hdpx(1)
-  fontFxOffsY = hdpx(1)
-}
 
 let function getHintText() {
   let config = hints(
     cross_call.mp_chat_mode.getChatHint(),
     { font = fontsState.get("small")
       place = "chatHint"
-    }.__update(shadow))
+    })
   return config
 }
 
@@ -133,7 +126,7 @@ let chatHint = @() {
   size = [flex(), SIZE_TO_CONTENT]
   flow = FLOW_HORIZONTAL
   valign = ALIGN_CENTER
-  padding = [hdpx(4), hdpx(8)]
+  padding = [fpx(8)]
   gap = { size = flex() }
   color = colors.hud.hudLogBgColor
   children = [
@@ -144,7 +137,7 @@ let chatHint = @() {
       text = cross_call.mp_chat_mode.getModeNameText(state.modeId.value)
       color = modeColor(state.modeId.value)
       font = fontsState.get("normal")
-    }.__update(shadow)
+    }
   ]
 }
 
@@ -189,22 +182,18 @@ let getSenderColor = function (message) {
 
 let messageComponent = @(message) function() {
   local text = ""
-  if (message.sender == "") { //system
+  if (message.sender == "") { //systme
     text = string.format(
-      "%s <color=%d>%s</color>",
-      secondsToTimeSimpleString(message.time),
+      "<color=%d>%s</color>",
       colors.hud.chatActiveInfoColor,
       loc(message.text)
     )
-  }
-  else {
-    let playerName = cross_call.platform.getPlayerName(message.sender)
-    let playerFullName = cross_call.getPlayerFullName(playerName, message.clanTag)
+  } else {
     text = string.format("%s <Color=%d>[%s] %s:</Color> <Color=%d>%s</Color>",
       secondsToTimeSimpleString(message.time),
       getSenderColor(message),
       cross_call.mp_chat_mode.getModeNameText(message.mode),
-      playerFullName,
+      cross_call.platform.getPlayerName(message.sender),
       getMessageColor(message),
       message.isAutomatic
         ? message.text
@@ -216,11 +205,8 @@ let messageComponent = @(message) function() {
     size = [flex(), SIZE_TO_CONTENT]
     rendObj = ROBJ_TEXTAREA
     behavior = Behaviors.TextArea
-    lineSpacing = hdpx(2)
-    hangingIndent = hdpx(8)
     text = text
     font = fontsState.get("small")
-    color = colors.hud.chatTextAllColor
     key = message
   }
 }

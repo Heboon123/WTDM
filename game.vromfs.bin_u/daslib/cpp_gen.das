@@ -495,7 +495,7 @@ def genEnums(hf,mf,df:FILE const?)
         var enName = en.name
         var removePrefix = false
         var isFlags = false
-        get(ex_enums, en.name) <| $ ( val )
+        find_if_exists(ex_enums, en.name) <| $ ( val )
             enName = val.name
             removePrefix = val.removePrefix
             isFlags = val.isFlags
@@ -615,8 +615,9 @@ def genStructs(hf,mf,df:FILE const?)
             if fld.isBitfield           // TODO: support bitfields
                 continue
             var substType = ""
-            substitute_field_types |> get("{st.cppName}::{fld.cppName}") <| $ ( val )
-                substType = val
+            substitute_field_types |> find_if_exists("{st.cppName}::{fld.cppName}") <| $ ( val )
+                if val != null
+                    substType = *val
             if substType |> empty()
                 fprint(mf,"\t\taddField<DAS_BIND_MANAGED_FIELD({fld.cppName})>(\"{getBindFldName(fld.name)}\",\"{fld.cppName}\");\n")
             else
@@ -827,7 +828,7 @@ def genFunction(fn:ClangFunc; castbind:bool; df:FILE const?)
     fprint(df,"\t->args(\{")
     if fn.isMethod
         fprint(df,"\"self\",")
-    for arg,argi in fn.args,count()
+    for arg,argi in fn.args,range(100500)
         if argi!=0
             fprint(df,",")
         if empty(arg.name)
@@ -847,14 +848,14 @@ def genFunction(fn:ClangFunc; castbind:bool; df:FILE const?)
         delete qargs
         revArgs = false
     if revArgs
-        get(rev_enums, rtype) <| $ ( rt )
-            fprint(df,"\t\t->res_type(makeType<{rt}>(lib))\n")
-    for arg,_argi in fn.args,count()
+        find_if_exists(rev_enums, rtype) <| $ ( rt )
+            fprint(df,"\t\t->res_type(makeType<{*rt}>(lib))\n")
+    for arg,_argi in fn.args,range(100500)
         let argi = fn.isMethod ? _argi+1 : _argi
         var thisArgEnum = ""
         if revArgs
-            get(rev_enums, qargs[_argi]) <| $ ( en )
-                thisArgEnum = en
+            find_if_exists(rev_enums, qargs[_argi]) <| $ ( en )
+                thisArgEnum = *en
                 fprint(df,"\t\t->arg_type({argi},makeType<{thisArgEnum}>(lib))\n")
         if !empty(arg.value)
             if arg.value=="nullptr"

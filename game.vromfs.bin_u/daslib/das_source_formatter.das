@@ -1,6 +1,7 @@
 options indenting = 4
 options no_unused_block_arguments = false
 options no_unused_function_arguments = false
+options no_global_variables = false
 
 module das_source_formatter shared private
 
@@ -793,7 +794,8 @@ def do_format(var ctx: FormatterCtx)
 
 
 def public format_source_string(file_data: string const& implicit): string
-    var inscope ctx: FormatterCtx
+    var ctx: FormatterCtx
+    defer_delete(ctx)
     ctx.data <- [{ for c in file_data; uint8(c) }]
     ctx.data |> push(uint8(0))
     ctx |> do_format()
@@ -808,7 +810,8 @@ def format_source(var ctx: FormatterCtx; file_data: array<uint8> const& implicit
 
 
 def public format_source(file_data: array<uint8> const& implicit): string
-    var inscope ctx: FormatterCtx
+    var ctx: FormatterCtx
+    defer_delete(ctx)
     return ctx |> format_source(file_data)
 
 
@@ -835,7 +838,8 @@ def public format_file(var ctx: FormatterCtx; file_name: string const&)
 
 
 def public format_file(file_name: string const&)
-    var inscope ctx: FormatterCtx
+    var ctx: FormatterCtx
+    defer_delete(ctx)
     ctx |> format_file(file_name)
 
 
@@ -845,7 +849,8 @@ def public format_files(var ctx: FormatterCtx; file_names: array<string>&)
 
 
 def public format_files(file_names: array<string>&)
-    var inscope ctx: FormatterCtx
+    var ctx: FormatterCtx
+    defer_delete(ctx)
     ctx |> format_files(file_names)
 
 /*

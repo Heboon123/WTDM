@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -43,7 +42,8 @@ elemViewType.addTypes({
   SHOP_SQUADRON_EXP_ICON = {
     model = elemModelType.SQUADRON_EXP_ICON
 
-    updateView = function(obj, _params) {
+    updateView = function(obj, _params)
+    {
       let isVisible = this.model.isVisible()
       obj.show(isVisible)
       if (isVisible)
@@ -54,9 +54,11 @@ elemViewType.addTypes({
   COUNTRY_SQUADRON_EXP_ICON = {
     model = elemModelType.SQUADRON_EXP_ICON
 
-    updateView = function(obj, _params) {
+    updateView = function(obj, _params)
+    {
       local isVisible = topMenuShopActive.value && this.model.isVisible()
-      if (!isVisible) {
+      if(!isVisible)
+      {
         obj.show(isVisible)
         return
       }
@@ -72,9 +74,11 @@ elemViewType.addTypes({
   SHOP_PAGES_SQUADRON_EXP_ICON = {
     model = elemModelType.SQUADRON_EXP_ICON
 
-    updateView = function(obj, _params) {
+    updateView = function(obj, _params)
+    {
       local isVisible = topMenuShopActive.value && this.model.isVisible()
-      if (!isVisible) {
+      if(!isVisible)
+      {
         obj.show(isVisible)
         return
       }

@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -21,7 +20,8 @@ let localDevoice = {
 }
 
 ::add_event_listener("LoadingStateChange",
-  function(_p) {
+  function(_p)
+  {
     if (::is_in_flight())
       devoiceList.clear()
   }, localDevoice)

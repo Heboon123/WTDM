@@ -1,6 +1,4 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
-let { subscribeHudEvents } = require("hudMessages")
 
 //checked for explicitness
 #no-root-fallback
@@ -11,16 +9,19 @@ let { subscribeHudEvents } = require("hudMessages")
   subscribers = {}
   eventsStack = [] //for debug top event
 
-  function init() {
-    subscribeHudEvents(this, this.onHudEvent)
+  function init()
+  {
+    ::subscribe_hud_events(this, this.onHudEvent)
     this.reset()
   }
 
-  function reset() {
+  function reset()
+  {
     this.subscribers = {}
   }
 
-  function subscribe(event_name, callback_fn, context = null) {
+  function subscribe(event_name, callback_fn, context = null)
+  {
     let cb = Callback(callback_fn, context)
     if (::u.isArray(event_name))
       foreach (evName in event_name)
@@ -29,14 +30,16 @@ let { subscribeHudEvents } = require("hudMessages")
       this.pushCallback(event_name, cb)
   }
 
-  function pushCallback(event_name, callback_obj) {
+  function pushCallback(event_name, callback_obj)
+  {
     if (!(event_name in this.subscribers))
       this.subscribers[event_name] <- []
 
     this.subscribers[event_name].append(callback_obj)
   }
 
-  function onHudEvent(event_name, event_data = {}) {
+  function onHudEvent(event_name, event_data = {})
+  {
     if (!(event_name in this.subscribers))
       return
 
@@ -54,17 +57,19 @@ let { subscribeHudEvents } = require("hudMessages")
     this.eventsStack.pop()
   }
 
-  function handleData(data) {
+  function handleData(data)
+  {
     if (::u.isDataBlock(data))
       return ::buildTableFromBlk(data)
 
     let res = {}
-    foreach (paramName, param in data)
+    foreach(paramName, param in data)
       res[paramName] <- param
     return res
   }
 
-  function getCurHudEventName() {
+  function getCurHudEventName()
+  {
     return this.eventsStack.len() ? this.eventsStack.top() : null
   }
 }

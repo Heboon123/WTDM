@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -6,7 +5,7 @@ from "%scripts/dagui_library.nut" import *
 
 let getNearestMap = function(mapsList) {
   local nearestMap = null
-  foreach (map in mapsList)
+  foreach(map in mapsList)
     if (map.isAnnounceAndNotDebug(false)) {
       if (map.isActive())
         return map

@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -59,7 +58,8 @@ enums.addTypesByGlobalName("g_event_display_type", {
   }
 })
 
-::g_event_display_type.getTypeByName <- function getTypeByName(name) {
+::g_event_display_type.getTypeByName <- function getTypeByName(name)
+{
   return enums.getCachedType("name", name, ::g_event_display_type.cache.byName,
     ::g_event_display_type, ::g_event_display_type.REGULAR)
 }

@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -74,7 +73,7 @@ let function getAuthenticatedUrlConfig(baseUrl, isAlreadyAuthenticated = false) 
   }
 }
 
-let function open(baseUrl, forceExternal = false, isAlreadyAuthenticated = false) {
+let function open(baseUrl, forceExternal=false, isAlreadyAuthenticated = false) {
   if (!hasFeature("AllowExternalLink"))
     return
 
@@ -101,7 +100,8 @@ let function open(baseUrl, forceExternal = false, isAlreadyAuthenticated = false
   let hasFeat = urlType.isOnlineShop
                      ? hasFeature("EmbeddedBrowserOnlineShop")
                      : hasFeature("EmbeddedBrowser")
-  if (!forceExternal && ::use_embedded_browser() && !::steam_is_running() && hasFeat) {
+  if (!forceExternal && ::use_embedded_browser() && !::steam_is_running() && hasFeat)
+  {
     // Embedded browser
     ::open_browser_modal(url, urlConfig.urlTags, baseUrl)
     ::broadcastEvent("BrowserOpened", { url = url, external = false })
@@ -112,7 +112,8 @@ let function open(baseUrl, forceExternal = false, isAlreadyAuthenticated = false
   ::get_gui_scene().performDelayed(getroottable(), function() {
     // External browser
     let response = shell_launch(url)
-    if (response > 0) {
+    if (response > 0)
+    {
       let errorText = ::get_yu2_error_text(response)
       ::showInfoMsgBox(errorText, "errorMessageBox")
       log("shell_launch() have returned " + response + " for URL:" + url)
@@ -121,7 +122,7 @@ let function open(baseUrl, forceExternal = false, isAlreadyAuthenticated = false
   })
 }
 
-let function openUrlByObj(obj, forceExternal = false, isAlreadyAuthenticated = false) {
+let function openUrlByObj(obj, forceExternal=false, isAlreadyAuthenticated = false) {
   if (!checkObj(obj) || obj?.link == null || obj.link == "")
     return
 
@@ -133,7 +134,8 @@ let function validateLink(link) {
   if (link == null)
     return null
 
-  if (!::u.isString(link)) {
+  if (!::u.isString(link))
+  {
     log("CHECK LINK result: " + toString(link))
     assert(false, "CHECK LINK: Link recieved not as text")
     return null
@@ -158,12 +160,12 @@ let function validateLink(link) {
   return null
 }
 
-let function openUrl(baseUrl, forceExternal = false, isAlreadyAuthenticated = false, biqQueryKey = "") {
+let function openUrl(baseUrl, forceExternal=false, isAlreadyAuthenticated = false, biqQueryKey = "") {
   if (!hasFeature("AllowExternalLink"))
     return
 
-  let bigQueryInfoObject = { url = baseUrl }
-  if (! ::u.isEmpty(biqQueryKey))
+  let bigQueryInfoObject = {url = baseUrl}
+  if( ! ::u.isEmpty(biqQueryKey))
     bigQueryInfoObject["from"] <- biqQueryKey
 
   ::add_big_query_record(forceExternal ? "player_opens_external_browser" : "player_opens_browser"

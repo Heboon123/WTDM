@@ -1,11 +1,9 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
 #no-root-fallback
 #explicit-this
 
-let DataBlock = require("DataBlock")
 let { get_time_msec } = require("dagor.time")
 let SecondsUpdater = require("%sqDagui/timer/secondsUpdater.nut")
 let DaguiSceneTimers = require("%sqDagui/timer/daguiSceneTimers.nut")
@@ -37,7 +35,8 @@ enum HintShowState {
 
   delayedShowTimers = {} // key = hint.name, value = timer
 
-  function init(v_nest) {
+  function init(v_nest)
+  {
     this.subscribe()
 
     if (!checkObj(v_nest))
@@ -50,20 +49,23 @@ enum HintShowState {
   }
 
 
-  function reinit() {
+  function reinit()
+  {
     if (!this.findSceneObjects())
       return
     this.restoreAllHints()
   }
 
 
-  function onEventLoadingStateChange(_p) {
-    if (!::is_in_flight()) {
+  function onEventLoadingStateChange(_p)
+  {
+    if (!::is_in_flight())
+    {
       this.activeHints.clear()
       this.timers.reset()
-    }
-    else {
-      let hintOptionsBlk = DataBlock()
+    } else
+    {
+      let hintOptionsBlk = ::DataBlock()
       foreach (hint in ::g_hud_hints.types)
         hint.updateHintOptionsBlk(hintOptionsBlk)
       ::set_hint_options_by_blk(hintOptionsBlk)
@@ -71,22 +73,26 @@ enum HintShowState {
     this.animatedRemovedHints.clear()
   }
 
-  function removeAllHints(hintFilterField = "isHideOnDeath") {
+  function removeAllHints(hintFilterField = "isHideOnDeath")
+  {
     let hints = ::u.filter(this.activeHints, @(hintData) hintData.hint[hintFilterField])
     foreach (hintData in hints)
       this.removeHint(hintData, true)
   }
 
-  function onLocalPlayerDead() {
+  function onLocalPlayerDead()
+  {
     this.removeAllHints()
   }
 
-  function onWatchedHeroChanged() {
+  function onWatchedHeroChanged()
+  {
     this.removeAllHints("isHideOnWatchedHeroChanged")
   }
 
   //return false if can't
-  function findSceneObjects() {
+  function findSceneObjects()
+  {
     this.scene = this.nest.findObject("hud_hints_nest")
     if (!checkObj(this.scene))
       return false
@@ -97,13 +103,15 @@ enum HintShowState {
   }
 
 
-  function restoreAllHints() {
+  function restoreAllHints()
+  {
     foreach (hintData in this.activeHints)
       this.updateHint(hintData)
   }
 
 
-  function subscribe() {
+  function subscribe()
+  {
     ::g_hud_event_manager.subscribe("LocalPlayerDead", function (_eventData) {
       this.onLocalPlayerDead()
     }, this)
@@ -112,18 +120,20 @@ enum HintShowState {
       this.onWatchedHeroChanged()
     }, this)
 
-    foreach (hint in ::g_hud_hints.types) {
-      if (!hint.isEnabled() || this.isHintShowCountExceeded(hint)) {
+    foreach (hint in ::g_hud_hints.types)
+    {
+      if(!hint.isEnabled() || this.isHintShowCountExceeded(hint))
+      {
         log("Hints: " + (hint?.showEvent ?? "_") + " is disabled")
         continue
       }
 
       if (!::u.isNull(hint.showEvent))
         ::g_hud_event_manager.subscribe(hint.showEvent, (@(hint) function (eventData) {
-          if (this.isHintShowCountExceeded(hint))
+          if(this.isHintShowCountExceeded(hint))
             return
 
-          if (hint.delayTime > 0)
+          if(hint.delayTime > 0)
             this.showDelayed(hint, eventData)
           else
             this.onShowEvent(hint, eventData)
@@ -143,7 +153,7 @@ enum HintShowState {
         })(hint), this)
 
       if (hint.updateCbs)
-        foreach (eventName, func in hint.updateCbs)
+        foreach(eventName, func in hint.updateCbs)
           ::g_hud_event_manager.subscribe(eventName, (@(hint, func) function (eventData) {
             if (!hint.isCurrent(eventData, false))
               return
@@ -156,13 +166,15 @@ enum HintShowState {
     }
   }
 
-  function findActiveHintFromSameGroup(hint) {
+  function findActiveHintFromSameGroup(hint)
+  {
     return ::u.search(this.activeHints, (@(hint) function (hintData) {
       return hint.hintType.isSameReplaceGroup(hintData.hint, hint)
     })(hint))
   }
 
-  function addToList(hint, eventData) {
+  function addToList(hint, eventData)
+  {
     this.activeHints.append({
       hint = hint
       hintObj = null
@@ -171,16 +183,18 @@ enum HintShowState {
       lifeTimerWeak = null
     })
 
-    let addedHint = this.activeHints?[this.activeHints.len() - 1]
+    let addedHint = this.activeHints?[this.activeHints.len()-1]
     return addedHint
   }
 
-  function updateRemoveTimer(hintData) {
+  function updateRemoveTimer(hintData)
+  {
     if (!hintData.hint.selfRemove)
       return
 
     let lifeTime = hintData.hint.getLifeTime(hintData.eventData)
-    if (hintData.lifeTimerWeak) {
+    if (hintData.lifeTimerWeak)
+    {
       if (lifeTime <= 0)
         this.timers.removeTimer(hintData.lifeTimerWeak)
       else
@@ -198,30 +212,36 @@ enum HintShowState {
     }, this)).weakref()
   }
 
-  function removeDelayedShowTimer(hint) {
-    if (this.delayedShowTimers?[hint.name]) {
+  function removeDelayedShowTimer(hint)
+  {
+    if(this.delayedShowTimers?[hint.name])
+    {
       this.timers.removeTimer(this.delayedShowTimers[hint.name])
       delete this.delayedShowTimers[hint.name]
     }
   }
 
-  function updateHintInList(hintData, eventData) {
+  function updateHintInList(hintData, eventData)
+  {
     hintData.eventData = eventData
     hintData.addTime = get_time_msec()
   }
 
-  function removeFromList(hintData) {
+  function removeFromList(hintData)
+  {
     let idx = this.activeHints.findindex(@(item) item == hintData)
     if (idx != null)
       this.activeHints.remove(idx)
   }
 
-  function onShowEvent(hint, eventData) {
+  function onShowEvent(hint, eventData)
+  {
     if (!hint.isCurrent(eventData, false))
       return
 
     let res = this.checkHintInterval(hint)
-    if (res == HintShowState.DISABLE) {
+    if (res == HintShowState.DISABLE)
+    {
       ::disable_hint(hint.mask)
       return
     }
@@ -236,11 +256,13 @@ enum HintShowState {
     if (hintData)
       if (!hint.hintType.isReplaceable(hint, eventData, hintData.hint, hintData.eventData))
         return
-      else if (hint == hintData.hint) {
+      else if (hint == hintData.hint)
+      {
         this.hideHint(hintData, true)
         this.updateHintInList(hintData, eventData)
       }
-      else {
+      else
+      {
         this.removeHint(hintData, true)
         hintData = null
       }
@@ -254,12 +276,14 @@ enum HintShowState {
 
 
 
-  function isHintNestEmpty(hint) {
+  function isHintNestEmpty(hint)
+  {
     return !::u.search(this.activeHints, @(hintData)
       hintData.hint != hint && hintData.hint.hintType == hint.hintType)
   }
 
-  function showHint(hintData) {
+  function showHint(hintData)
+  {
     if (!checkObj(this.nest))
       return
 
@@ -280,7 +304,8 @@ enum HintShowState {
     ::increase_hint_show_count(hintData.hint.maskId)
   }
 
-  function setCoutdownTimer(hintData) {
+  function setCoutdownTimer(hintData)
+  {
     if (!hintData.hint.selfRemove)
       return
 
@@ -305,7 +330,8 @@ enum HintShowState {
     })(hintData))
   }
 
-  function hideHint(hintData, isInstant) {
+  function hideHint(hintData, isInstant)
+  {
     let hintObject = hintData.hintObj
     if (!checkObj(hintObject))
       return
@@ -315,17 +341,21 @@ enum HintShowState {
       this.animatedRemovedHints.append(clone hintData)
   }
 
-  function removeHint(hintData, isInstant) {
+  function removeHint(hintData, isInstant)
+  {
     this.hideHint(hintData, isInstant)
     if (hintData.hint.selfRemove && hintData.lifeTimerWeak)
       this.timers.removeTimer(hintData.lifeTimerWeak)
     this.removeFromList(hintData)
   }
 
-  function checkRemovedHints(hint) {
-    for (local i = this.animatedRemovedHints.len() - 1; i >= 0; i--) {
+  function checkRemovedHints(hint)
+  {
+    for(local i = this.animatedRemovedHints.len() - 1; i >= 0; i--)
+    {
       let hintData = this.animatedRemovedHints[i]
-      if (checkObj(hintData.hintObj)) {
+      if (checkObj(hintData.hintObj))
+      {
         if (!hint.hintType.isSameReplaceGroup(hintData.hint, hint))
           continue
         hintData.hint.hideHint(hintData.hintObj, true)
@@ -334,7 +364,8 @@ enum HintShowState {
     }
   }
 
-  function removeSingleInNestHints(hint) {
+  function removeSingleInNestHints(hint)
+  {
     foreach (hintData in this.activeHints)
       if (hintData.hint != hint &&
           hintData.hint.hintType == hint.hintType &&
@@ -342,7 +373,8 @@ enum HintShowState {
         this.removeHint(hintData, true)
   }
 
-  function updateHint(hintData) {
+  function updateHint(hintData)
+  {
     this.updateRemoveTimer(hintData)
 
     let hintObj = hintData.hintObj
@@ -352,7 +384,8 @@ enum HintShowState {
     this.setCoutdownTimer(hintData)
 
     let timeBarObj = hintObj.findObject("time_bar")
-    if (checkObj(timeBarObj)) {
+    if (checkObj(timeBarObj))
+    {
       let totaltime = hintData.hint.getTimerTotalTimeSec(hintData.eventData)
       let currentTime = hintData.hint.getTimerCurrentTimeSec(hintData.eventData, hintData.addTime)
       ::g_time_bar.setPeriod(timeBarObj, totaltime)
@@ -360,23 +393,27 @@ enum HintShowState {
     }
   }
 
-  function onEventScriptsReloaded(_p) {
-    foreach (hintData in this.activeHints)
+  function onEventScriptsReloaded(_p)
+  {
+    foreach(hintData in this.activeHints)
       hintData.hint = ::g_hud_hints.getByName(hintData.hint.name)
   }
 
 
-  function checkHintInterval(hint) {
+  function checkHintInterval(hint)
+  {
     let interval = hint.getTimeInterval()
     if (interval == HINT_INTERVAL.ALWAYS_VISIBLE)
       return HintShowState.SHOW_HINT
     else if (interval == HINT_INTERVAL.HIDDEN)
       return HintShowState.DISABLE
 
-    if (!(hint.maskId in this.lastShowedTimeDict)) {
+    if (!(hint.maskId in this.lastShowedTimeDict))
+    {
       return HintShowState.SHOW_HINT
     }
-    else {
+    else
+    {
       let ageSec = (get_time_msec() - this.lastShowedTimeDict[hint.maskId]) * 0.001
       return ageSec >= interval ? HintShowState.SHOW_HINT : HintShowState.NOT_MATCH
     }
@@ -384,8 +421,9 @@ enum HintShowState {
     return HintShowState.NOT_MATCH
   }
 
-  function isHintShowCountExceeded(hint) {
-    if (hint.maskId >= 0 || (hint?.totalCount ?? 0) > 0)
+  function isHintShowCountExceeded(hint)
+  {
+    if(hint.maskId >= 0 || (hint?.totalCount ?? 0) > 0)
       log("Hints: " + (hint?.showEvent ?? "_")
       + " maskId = " + hint.maskId
       + " totalCount = " + (hint?.totalCount ?? "_")
@@ -395,14 +433,15 @@ enum HintShowState {
       && ::get_hint_seen_count(hint.maskId) > hint.totalCount)
   }
 
-  function showDelayed(hint, eventData) {
+  function showDelayed(hint, eventData)
+  {
     if (hint.delayTime <= 0)
       return
-    if (this.delayedShowTimers?[hint.name])
+    if(this.delayedShowTimers?[hint.name])
       return
 
     this.delayedShowTimers[hint.name] <- this.timers.addTimer(hint.delayTime, Callback(function () {
-      if (this.delayedShowTimers?[hint.name])
+      if(this.delayedShowTimers?[hint.name])
         this.onShowEvent(hint, eventData)
     }, this)).weakref()
   }

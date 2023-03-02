@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -15,7 +14,8 @@ let ItemCouponBase = require("%scripts/items/itemsClasses/itemCouponBase.nut")
   getWarbondsAmount    = @() this.metaBlk?.count || 0
   canConsume           = @() this.isInventoryItem && this.getWarbond() != null && this.getWarbondsAmount() > 0
 
-  function getPrizeDescription(count, _colored = true) {
+  function getPrizeDescription(count, _colored = true)
+  {
     if (!this.shouldAutoConsume)
       return null
     let wb = this.getWarbond()

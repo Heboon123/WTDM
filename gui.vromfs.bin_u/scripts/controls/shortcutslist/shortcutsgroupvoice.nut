@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -78,7 +77,8 @@ let function getFastVoiceMessageOption(index) {
   }
 }
 
-for (local i = 1; i <= NUM_FAST_VOICE_MESSAGES; i++) {
+for (local i = 1; i <= NUM_FAST_VOICE_MESSAGES; i++)
+{
   groupList.append(getFastVoiceMessageOption(i))
   groupList.append(getFavoriteVoiceMessageOption(i))
 }

@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -11,6 +10,6 @@ return {
     ::request_matching("postbox.add_mail", succCb, errCb, data, reqOpt)
 
   notifyMailRead = @(mailId, succCb = null, errCb = null, reqOpt = null)
-    ::request_matching("postbox.notify_read", succCb, errCb, { mail_id = mailId }, reqOpt)
+    ::request_matching("postbox.notify_read", succCb, errCb, {mail_id = mailId}, reqOpt)
 }
 

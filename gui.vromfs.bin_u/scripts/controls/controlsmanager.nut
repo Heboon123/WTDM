@@ -1,10 +1,8 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
 #explicit-this
 
-let DataBlock  = require("DataBlock")
 let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 ::g_script_reloader.loadOnce("%scripts/controls/controlsPreset.nut")
 ::g_script_reloader.loadOnce("%scripts/controls/controlsGlobals.nut")
@@ -12,14 +10,13 @@ let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReload
 
 let { isPlatformSony } = require("%scripts/clientState/platform.nut")
 let { eachBlock } = require("%sqstd/datablock.nut")
-let { setGuiOptionsMode, getGuiOptionsMode } = require("guiOptions")
+local { setGuiOptionsMode, getGuiOptionsMode } = require_native("guiOptions")
 
 ::g_controls_manager <- {
   [PERSISTENT_DATA_PARAMS] = ["curPreset"]
 
   // PRIVATE VARIABLES
   curPreset = ::ControlsPreset()
-  previewPreset = null
   isControlsCommitPerformed = false
 
   fixesList = [
@@ -52,7 +49,8 @@ let { setGuiOptionsMode, getGuiOptionsMode } = require("guiOptions")
     }
     {
       target = "ID_CONTINUE"
-      valueFunction = function() {
+      valueFunction = function()
+      {
         return [[::is_xinput_device() ? {
           deviceId = ::GAMEPAD_ENTER_SHORTCUT.dev[0]
           buttonId = ::GAMEPAD_ENTER_SHORTCUT.btn[0] // used in mission hints
@@ -84,11 +82,13 @@ let { setGuiOptionsMode, getGuiOptionsMode } = require("guiOptions")
   /*********************** PUBLIC FUNCTIONS ***********************/
   /****************************************************************/
 
-  function getCurPreset() {
+  function getCurPreset()
+  {
     return this.curPreset
   }
 
-  function setCurPreset(otherPreset) {
+  function setCurPreset(otherPreset)
+  {
     log("ControlsManager: curPreset updated")
     this.curPreset = otherPreset
     this.fixDeviceMapping()
@@ -96,26 +96,16 @@ let { setGuiOptionsMode, getGuiOptionsMode } = require("guiOptions")
     this.commitControls()
   }
 
-  function getPreviewPreset() {
-    return this.previewPreset ?? this.curPreset
-  }
-
-  function setPreviewPreset(preset) {
-    this.previewPreset = preset
-  }
-
-  function clearPreviewPreset() {
-    this.previewPreset = null
-  }
-
-  function notifyPresetModified() {
+  function notifyPresetModified()
+  {
     this.commitControls()
   }
 
-  function fixDeviceMapping() {
+  function fixDeviceMapping()
+  {
     let realMapping = []
 
-    let blkDeviceMapping = DataBlock()
+    let blkDeviceMapping = ::DataBlock()
     ::fill_joysticks_desc(blkDeviceMapping)
 
     eachBlock(blkDeviceMapping, @(blkJoy)
@@ -135,7 +125,8 @@ let { setGuiOptionsMode, getGuiOptionsMode } = require("guiOptions")
 
 
   /* Commit controls to game client */
-  function commitControls() {
+  function commitControls()
+  {
     if (this.isControlsCommitPerformed)
       return
     this.isControlsCommitPerformed = true
@@ -154,23 +145,28 @@ let { setGuiOptionsMode, getGuiOptionsMode } = require("guiOptions")
     this.isControlsCommitPerformed = false
   }
 
-  function setDefaultRelativeAxes() {
+  function setDefaultRelativeAxes()
+  {
     if (!("shortcutsList" in getroottable()))
       return
 
     foreach (shortcut in ::shortcutsList)
-      if (shortcut.type == CONTROL_TYPE.AXIS && (shortcut?.isAbsOnlyWhenRealAxis ?? false)) {
+      if (shortcut.type == CONTROL_TYPE.AXIS && (shortcut?.isAbsOnlyWhenRealAxis ?? false))
+      {
         let axis = this.curPreset.getAxis(shortcut.id)
         if (axis.axisId == -1)
           axis.relative = true
       }
   }
 
-  function fixControls() {
-    foreach (fixData in this.fixesList) {
+  function fixControls()
+  {
+    foreach (fixData in this.fixesList)
+    {
       let value = "valueFunction" in fixData ?
         fixData.valueFunction() : fixData.value
-      if (getTblValue("isAppend", fixData)) {
+      if (getTblValue("isAppend", fixData))
+      {
         let isGamepadExpected =  ::is_xinput_device() || ::have_xinput_device()
         if (this.curPreset.isHotkeyShortcutBinded(fixData.source, value)
             || (fixData.shouldAppendIfEmptyOnXInput
@@ -188,7 +184,8 @@ let { setGuiOptionsMode, getGuiOptionsMode } = require("guiOptions")
     this.setDefaultRelativeAxes()
   }
 
-  function restoreHardcodedKeys(maxShortcutCombinations) {
+  function restoreHardcodedKeys(maxShortcutCombinations)
+  {
     foreach (shortcutsGroup in this.hardcodedShortcuts)
       if (!("condition" in shortcutsGroup) || shortcutsGroup.condition())
         foreach (shortcut in shortcutsGroup.list)
@@ -196,7 +193,8 @@ let { setGuiOptionsMode, getGuiOptionsMode } = require("guiOptions")
             this.curPreset.addHotkeyShortcut(shortcut.name, shortcut.combo)
   }
 
-  function clearGuiOptions() {
+  function clearGuiOptions()
+  {
     let prefix = "USEROPT_"
     let userOptTypes = []
     foreach (oType, _value in this.curPreset.params)
@@ -206,7 +204,8 @@ let { setGuiOptionsMode, getGuiOptionsMode } = require("guiOptions")
       delete this.curPreset.params[oType]
   }
 
-  function commitGuiOptions() {
+  function commitGuiOptions()
+  {
     if (!::g_login.isProfileReceived())
       return
 
@@ -222,7 +221,8 @@ let { setGuiOptionsMode, getGuiOptionsMode } = require("guiOptions")
 
   // While controls reloaded on PS4 from uncrorrect blk when mission started
   // it is required to commit controls when mission start.
-  function onEventMissionStarted(_params) {
+  function onEventMissionStarted(_params)
+  {
     if (isPlatformSony)
       this.commitControls()
   }

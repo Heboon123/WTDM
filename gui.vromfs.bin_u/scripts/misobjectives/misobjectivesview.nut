@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -15,7 +14,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
                                        })
 }
 
-::gui_handlers.misObjectivesView <- class extends ::gui_handlers.BaseGuiHandlerWT {
+::gui_handlers.misObjectivesView <- class extends ::gui_handlers.BaseGuiHandlerWT
+{
   wndType = handlerType.CUSTOM
   sceneBlkName = "%gui/missions/misObjective.blk"
 
@@ -23,25 +23,29 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
   curList = null
 
-  function initScreen() {
+  function initScreen()
+  {
     this.curList = []
     this.scene.findObject("objectives_list_timer").setUserData(this)
     this.refreshList()
   }
 
-  function onUpdate(_obj, _dt) {
+  function onUpdate(_obj, _dt)
+  {
     this.refreshList()
   }
 
-  function onSceneActivate(show) {
+  function onSceneActivate(show)
+  {
     if (show)
       this.refreshList()
   }
 
-  function getNewList() {
+  function getNewList()
+  {
     let fullList = ::get_objectives_list()
     let res = []
-    foreach (misObj in fullList)
+    foreach(misObj in fullList)
       if (misObj.status > 0 && (this.objTypeMask & (1 << misObj.type)))
         res.append(misObj)
 
@@ -55,18 +59,19 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     return res
   }
 
-  function refreshList() {
+  function refreshList()
+  {
     let newList = this.getNewList()
     let total = max(newList.len(), this.curList.len())
     local lastObj = null
-    for (local i = 0; i < total; i++) {
+    for(local i = 0; i < total; i++)
+    {
       let newObjective = getTblValue(i, newList)
       if (::u.isEqual(getTblValue(i, this.curList), newObjective))
         continue
 
       let obj = this.updateObjective(i, newObjective)
-      if (obj)
-        lastObj = obj
+      if (obj) lastObj = obj
     }
 
     if (lastObj)
@@ -75,7 +80,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     this.curList = newList
   }
 
-  function updateObjective(idx, objective) {
+  function updateObjective(idx, objective)
+  {
     let obj = this.getMisObjObject(idx)
     let show = objective != null
     obj.show(show)
@@ -95,7 +101,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     return obj
   }
 
-  function getMisObjObject(idx) {
+  function getMisObjObject(idx)
+  {
     let id = "objective_" + idx
     local obj = this.scene.findObject(id)
     if (checkObj(obj))

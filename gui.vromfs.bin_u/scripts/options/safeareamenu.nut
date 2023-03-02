@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -7,7 +6,7 @@ from "%scripts/dagui_library.nut" import *
 let screenInfo = require("%scripts/options/screenInfo.nut")
 let { isPlatformSony } = require("%scripts/clientState/platform.nut")
 let sony = require("sony")
-let { is_stereo_mode } = require("vr")
+let { is_stereo_mode } = require_native("vr")
 let { useTouchscreen } = require("%scripts/clientState/touchScreen.nut")
 
 let defValue  = 1.0
@@ -21,7 +20,8 @@ let getFixedValue = @() //return -1 when not fixed
   : ::is_low_width_screen() ? 1.0
   : -1
 
-let compatibleGetValue = function() {
+let compatibleGetValue = function()
+{
   let value = !::g_login.isAuthorized() ?
     ::to_float_safe(::getSystemConfigOption("video/safearea", defValue), defValue) :
     ::get_gui_option_in_mode(::USEROPT_MENU_SCREEN_SAFE_AREA, ::OPTIONS_MODE_GAMEPLAY, defValue)
@@ -31,7 +31,8 @@ let compatibleGetValue = function() {
   return value
 }
 
-let getValue = function() {
+let getValue = function()
+{
   local value = getFixedValue()
   if (value != -1)
     return value
@@ -40,7 +41,8 @@ let getValue = function() {
   return isInArray(value, values) ? value : defValue
 }
 
-local setValue = function(value) {
+local setValue = function(value)
+{
   if (!::g_login.isAuthorized())
     return
 

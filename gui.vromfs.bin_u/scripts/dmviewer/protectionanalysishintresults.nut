@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -76,7 +75,8 @@ enums.addTypes(results, {
 }, null, "id")
 results.types.sort(@(a, b) a.checkOrder <=> b.checkOrder)
 
-results.getResultTypeByParams <- function(params) {
+results.getResultTypeByParams <- function(params)
+{
   foreach (t in this.types)
     if (params?.criticalDamageTest == t.criticalDamageTestName || t.checkParams(params))
       return t

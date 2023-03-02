@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -8,7 +7,6 @@ let { isChatEnabled, isChatEnableWithPlayer } = require("%scripts/chat/chatState
 let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { getRealName } = require("%scripts/user/nameMapping.nut")
 let { send } = require("eventbus")
-let { CHAT_MODE_ALL, CHAT_MODE_PRIVATE, chat_set_mode } = require("chat")
 
 let mpChatState = {
   log = [],
@@ -62,7 +60,7 @@ local mpChatModel = {
 
 
   function onIncomingMessage(sender, msg, _enemy, mode, automatic) {
-    if ((!isChatEnabled()
+    if ( (!isChatEnabled()
          || mode == CHAT_MODE_PRIVATE
          || !isChatEnableWithPlayer(sender))
         && !automatic) {
@@ -85,7 +83,7 @@ local mpChatModel = {
       time = ::get_usefull_total_time()
       sTime = ::get_charserver_time_sec()
 
-      team = player ? player.team : 0
+      team = player ? player.team:0
     }
 
     if (mpChatState.log.len() > this.maxLogSize) {
@@ -115,19 +113,19 @@ local mpChatModel = {
       let enabledModId = isEnabledCurMod ? mpChatState.currentModeId
         : ::g_mp_chat_mode.getNextMode(mpChatState.currentModeId)
       if (enabledModId != null)
-        chat_set_mode(enabledModId, "")
+        ::chat_set_mode(enabledModId, "")
       return
     }
 
     mpChatState.currentModeId = modeId
     send("hudChatModeIdUpdate", { modeId })
-    ::broadcastEvent("MpChatModeChanged", { modeId = mpChatState.currentModeId })
+    ::broadcastEvent("MpChatModeChanged", { modeId = mpChatState.currentModeId})
   }
 
 
   function onInputChanged(str) {
     send("mpChatInputChanged", { str })
-    ::broadcastEvent("MpChatInputChanged", { str = str })
+    ::broadcastEvent("MpChatInputChanged", {str = str})
   }
 
 
@@ -151,7 +149,7 @@ local mpChatModel = {
     if (newModeId == null)
       return
 
-    chat_set_mode(newModeId, "")
+    ::chat_set_mode(newModeId, "")
   }
 }
 

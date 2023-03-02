@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -10,7 +9,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
 const GAMEPAD_CURSOR_CONTROLS_SPLASH_DISPLAYED_SAVE_ID = "gamepad_cursor_controls_splash_displayed"
 
-::gui_handlers.GampadCursorControlsSplash <- class extends ::gui_handlers.BaseGuiHandlerWT {
+::gui_handlers.GampadCursorControlsSplash <- class extends ::gui_handlers.BaseGuiHandlerWT
+{
   wndType = handlerType.MODAL
   sceneBlkName = "%gui/controls/gamepadCursorControlsSplash.blk"
 
@@ -98,7 +98,8 @@ const GAMEPAD_CURSOR_CONTROLS_SPLASH_DISPLAYED_SAVE_ID = "gamepad_cursor_control
   }
 
 
-  function initScreen() {
+  function initScreen()
+  {
     let contentObj = this.scene.findObject("content")
     if (!checkObj(contentObj))
       this.goBack()
@@ -124,13 +125,15 @@ const GAMEPAD_CURSOR_CONTROLS_SPLASH_DISPLAYED_SAVE_ID = "gamepad_cursor_control
   }
 
 
-  function goBack() {
+  function goBack()
+  {
     this.markDisplayed()
     base.goBack()
   }
 
 
-  function getNavbarTplView() {
+  function getNavbarTplView()
+  {
     return {
       right = [
         {

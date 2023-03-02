@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -14,8 +13,10 @@ let function startLogout() {
   if (!canLogout())
     return ::exit_game()
 
-  if (::is_multiplayer()) { //we cant logout from session instantly, so need to return "to debriefing"
-    if (::is_in_flight()) {
+  if (::is_multiplayer()) //we cant logout from session instantly, so need to return "to debriefing"
+  {
+    if (::is_in_flight())
+    {
       needLogoutAfterSession(true)
       ::quit_mission()
       return

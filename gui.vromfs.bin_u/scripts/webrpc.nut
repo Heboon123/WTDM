@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -7,11 +6,13 @@ from "%scripts/dagui_library.nut" import *
 ::web_rpc <- {
   handlers = {}
 
-  function register_handler(func_name, handler) {
+  function register_handler(func_name, handler)
+  {
     this.handlers[func_name] <- handler
   }
 
-  function handle_web_rpc_unsafe(call) {
+  function handle_web_rpc_unsafe(call)
+  {
     let func = call["func"]
     if (!(func in this.handlers))
       return "RPC method not found"
@@ -22,11 +23,13 @@ from "%scripts/dagui_library.nut" import *
   }
 }
 
-::handle_web_rpc <- function handle_web_rpc(call) {
+::handle_web_rpc <- function handle_web_rpc(call)
+{
   try {
     return ::web_rpc.handle_web_rpc_unsafe(call)
   }
-  catch (e) {
+  catch (e)
+  {
     log("web rpc failed: " + e)
     return e
   }

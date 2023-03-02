@@ -1,18 +1,15 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
 #no-root-fallback
 #explicit-this
 
-let { rnd } = require("dagor.random")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { getMapByName } = require("%scripts/worldWar/operations/model/wwActionsWhithGlobalStatus.nut")
 let { getClansInfoByClanIds } = require("%scripts/clans/clansListShortInfo.nut")
 let { register_command } = require("console")
 let { round_by_value } = require("%sqstd/math.nut")
 let { deep_clone } = require("%sqstd/underscore.nut")
-let { disableSeenUserlogs } = require("%scripts/userLog/userlogUtils.nut")
 
 let STATS_FIELDS = [
   ::g_lb_category.PLAYER_KILLS
@@ -32,7 +29,6 @@ local WwOperationRewardPopup = class extends ::gui_handlers.BaseGuiHandlerWT {
   wndType      = handlerType.MODAL
   sceneTplName = "%gui/worldWar/wwOperationRewardPopup.tpl"
   logObj       = null
-  logId        = null
   myClanId     = null
   opClanId     = null
   isMeWinner   = null
@@ -63,10 +59,10 @@ local WwOperationRewardPopup = class extends ::gui_handlers.BaseGuiHandlerWT {
       icon = "#ui/gameuiskin#medal_bonus.png"
       name = $"{loc("worldWar/endOperation/reward")}{loc("ui/colon")}"
       earnedText = ::Cost((uLog?.wp ?? 0) - (uLog?.managerStats.wpManager ?? 0)).toStringWithParams({
-        isWpAlwaysShown = true })
+        isWpAlwaysShown = true})
       last = !hasManager
     }]
-    if (hasManager) {
+    if(hasManager) {
       let { actionsCount = 0, totalActionsCount = 0 } = uLog?.managerStats
 
       let activity = totalActionsCount > 0
@@ -86,7 +82,7 @@ local WwOperationRewardPopup = class extends ::gui_handlers.BaseGuiHandlerWT {
         icon = "#ui/gameuiskin#card_medal.png"
         name = $"{loc("worldWar/endOperation/manager_reward")}{loc("ui/colon")}"
         earnedText = ::Cost(uLog?.managerStats.wpManager ?? 0).toStringWithParams({
-          isWpAlwaysShown = true })
+          isWpAlwaysShown = true})
         last = true
       })
     }
@@ -95,7 +91,7 @@ local WwOperationRewardPopup = class extends ::gui_handlers.BaseGuiHandlerWT {
     return {
       headerText = $"{textLocId} {loc("ui/number_sign")}{operationId}"
       backgroundImg = getMapByName(uLog?.mapName)?.data.backgroundImage
-        ?? "#ui/images/worldwar_window_bg_image?P1"
+        ?? "#ui/images/worldwar_window_bg_image.jpg?P1"
       winClanTag = colorize("userlogColoredText", this.isMeWinner ? myClanTag : opClanTag)
       vs = colorize("userlogColoredText", loc("country/VS").tolower())
       loseClanTag = colorize("userlogColoredText", this.isMeWinner ? opClanTag : myClanTag)
@@ -105,8 +101,6 @@ local WwOperationRewardPopup = class extends ::gui_handlers.BaseGuiHandlerWT {
       hasManager
     }
   }
-
-  initScreen = @() disableSeenUserlogs([this.logId])
 
   function onEventUpdateClansInfoList(p) {
     let myClanTag = p.clansInfoList?[this.myClanId].tag ?? ""
@@ -119,8 +113,8 @@ local WwOperationRewardPopup = class extends ::gui_handlers.BaseGuiHandlerWT {
 }
 
 ::gui_handlers.WwOperationRewardPopup <- WwOperationRewardPopup
-let openWwOperationRewardPopup = @(p)
-  ::handlersManager.loadHandler(WwOperationRewardPopup, { logObj = p.body, logId = p.id })
+let openWwOperationRewardPopup = @(logObj)
+  ::handlersManager.loadHandler(WwOperationRewardPopup, { logObj })
 
 register_command(
   function() {
@@ -136,18 +130,18 @@ register_command(
           operationId = operationId
           mapName = ::g_ww_global_status_type.MAPS.getList()?.keys()[0] ?? ""
           winner = true
-          wp = rnd() % 10000
+          wp = ::math.rnd() % 10000
           side = "SIDE_1"
           side1Clan0 = ::clan_get_my_clan_id().tointeger()
           side2Clan0 = ::clan_get_my_clan_id().tointeger()
 
           userStats = {
-            wpEarned = rnd() % 100000
-            flyouts = rnd() % 100
-            score = rnd() % 1000
-            playerKills = rnd() % 10
-            deaths = rnd() % 10
-            aiKills = rnd() % 100
+            wpEarned = ::math.rnd() % 100000
+            flyouts = ::math.rnd() % 100
+            score = ::math.rnd() % 1000
+            playerKills = ::math.rnd() % 10
+            deaths = ::math.rnd() % 10
+            aiKills = ::math.rnd() % 100
           }
 
           managerStats = {

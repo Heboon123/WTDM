@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -6,9 +5,9 @@ from "%scripts/dagui_library.nut" import *
 #explicit-this
 
 let BaseItemModClass = require("%scripts/items/itemsClasses/itemModBase.nut")
-let DataBlock  = require("DataBlock")
 
-::items_classes.ModUpgrade <- class extends BaseItemModClass {
+::items_classes.ModUpgrade <- class extends BaseItemModClass
+{
   static iType = itemType.MOD_UPGRADE
   static defaultLocId = "modUpgrade"
   static defaultIcon = "#ui/gameuiskin#overdrive_upgrade_bg.png"
@@ -23,12 +22,14 @@ let DataBlock  = require("DataBlock")
 
   getActivateInfo  = @() loc("item/modUpgrade/activateInModifications")
 
-  function initConditions(conditionsBlk) {
+  function initConditions(conditionsBlk)
+  {
     base.initConditions(conditionsBlk)
     this.level = conditionsBlk?.level ?? 0
   }
 
-  function getDescriptionIntroArray() {
+  function getDescriptionIntroArray()
+  {
     if (this.level)
       return [ loc("multiplayer/level") + loc("ui/colon") + colorize("activeTextColor", this.level) ]
     return null
@@ -36,7 +37,8 @@ let DataBlock  = require("DataBlock")
 
   getIconMainLayer = @() ::LayersIcon.findLayerCfg("mod_upgrade")
 
-  function canActivateOnMod(unit, mod) {
+  function canActivateOnMod(unit, mod)
+  {
     if (this.modsList && !isInArray(mod.name, this.modsList)
       && !isInArray(::get_modifications_blk()?.modifications?[mod.name]?.modUpgradeType, this.modsList))
       return false
@@ -51,7 +53,8 @@ let DataBlock  = require("DataBlock")
     return true
   }
 
-  function activateOnMod(unit, mod, extSuccessCb = null) {
+  function activateOnMod(unit, mod, extSuccessCb = null)
+  {
     let uid = this.uids?[0]
     if (uid == null)
       return false
@@ -62,7 +65,7 @@ let DataBlock  = require("DataBlock")
       ::broadcastEvent("ModUpgraded", { unit = unit, mod = mod })
     }
 
-    let blk = DataBlock()
+    let blk = ::DataBlock()
     blk.uid = uid
     blk.unit = unit.name
     blk.mod = mod.name

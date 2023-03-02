@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -8,7 +7,8 @@ from "%scripts/dagui_library.nut" import *
 let playerContextMenu = require("%scripts/user/playerContextMenu.nut")
 let { isChatEnableWithPlayer, hasMenuChat } = require("%scripts/chat/chatStates.nut")
 
-let getClanActions = function(clanId) {
+let getClanActions = function(clanId)
+{
   if (!hasFeature("Clans"))
     return []
 
@@ -33,7 +33,8 @@ let getClanActions = function(clanId) {
   ]
 }
 
-let getRequestActions = function(clanId, playerUid, playerName = "", handler = null) {
+let getRequestActions = function(clanId, playerUid, playerName = "", handler = null)
+{
   if (!playerUid)
     return []
 
@@ -54,7 +55,8 @@ let getRequestActions = function(clanId, playerUid, playerName = "", handler = n
              && ::ps4_is_chat_enabled()
              && !::u.isEmpty(name)
              && hasMenuChat.value
-      action = function() {
+      action = function()
+      {
         if (isBlock)
           return playerContextMenu.showBlockedPlayerPopup(name)
 
@@ -69,7 +71,7 @@ let getRequestActions = function(clanId, playerUid, playerName = "", handler = n
     }
     {
       text = loc("mainmenu/btnUserCard")
-      action = @() ::gui_modal_userCard({ uid = playerUid })
+      action = @() ::gui_modal_userCard({uid = playerUid})
     }
     {
       text = loc("clan/requestApprove")

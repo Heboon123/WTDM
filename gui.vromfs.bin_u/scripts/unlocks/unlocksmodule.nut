@@ -1,4 +1,3 @@
-//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { isPlatformSony, isPlatformXboxOne,
@@ -7,8 +6,6 @@ let psnUser = require("sony.user")
 let { getUnlockConditions, isTimeRangeCondition } = require("%scripts/unlocks/unlocksConditions.nut")
 let { getTimestampFromStringUtc, daysToSeconds } = require("%scripts/time.nut")
 let { split_by_chars } = require("string")
-let DataBlock = require("DataBlock")
-let { charSendBlk } = require("chard")
 
 let function checkDependingUnlocks(unlockBlk) {
   if (!unlockBlk || !unlockBlk?.hideUntilPrevUnlocked)
@@ -114,16 +111,8 @@ let function isUnlockVisible(unlockBlk, needCheckVisibilityByPlatform = true) {
   return true
 }
 
-let function openUnlockManually(unlockId, onSuccess = null) {
-  let blk = DataBlock()
-  blk.addStr("unlock", unlockId)
-  let taskId = charSendBlk("cln_manual_reward_unlock", blk)
-  ::g_tasker.addTask(taskId, { showProgressBox = true }, onSuccess)
-}
-
 return {
   isUnlockVisibleOnCurPlatform
   isUnlockVisible
   isUnlockVisibleByTime
-  openUnlockManually
 }
