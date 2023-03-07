@@ -1,6 +1,7 @@
 options no_unused_block_arguments = false
 options no_unused_function_arguments = false
 options indenting = 4
+options strict_smart_pointers = true
 
 module faker shared private
 
@@ -67,7 +68,7 @@ def public long_string ( var faker:Faker )
     var len = 0u
     faker.rnd |> next(len)
     len %= faker.max_long_string
-    var arr : array<uint8>; defer_delete(arr)
+    var inscope arr : array<uint8>
     arr |> reserve(int(len))
     for t in urange(len)
         var Ch = 0u
@@ -129,6 +130,10 @@ def public random_int2 ( var faker:Faker )
     //! Generates random int2.
     return int2(faker |> random_int, faker |> random_int)
 
+def public random_range ( var faker:Faker )
+    //! Generates random range.
+    return range(faker |> random_int, faker |> random_int)
+
 def public random_int3 ( var faker:Faker )
     //! Generates random int3.
     return int3(faker |> random_int, faker |> random_int, faker |> random_int)
@@ -140,6 +145,10 @@ def public random_int4 ( var faker:Faker )
 def public random_uint2 ( var faker:Faker )
     //! Generates random uint2.
     return uint2(faker |> random_uint, faker |> random_uint)
+
+def public random_urange ( var faker:Faker )
+    //! Generates random urange.
+    return urange(faker |> random_uint, faker |> random_uint)
 
 def public random_uint3 ( var faker:Faker )
     //! Generates random uint3.

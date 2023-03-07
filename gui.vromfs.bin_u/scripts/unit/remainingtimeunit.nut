@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -5,7 +6,7 @@ from "%scripts/dagui_library.nut" import *
 
 from "dagor.workcycle" import clearTimer, setTimeout
 let { TIME_DAY_IN_SECONDS, buildDateStr } = require("%scripts/time.nut")
-let timeBase = require("%scripts/timeLoc.nut")
+let timeBase = require("%appGlobals/timeLoc.nut")
 let { addListenersWithoutEnv, CONFIG_VALIDATION } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { shopPromoteUnits } = require("%scripts/shop/shopUnitsInfo.nut")
 
@@ -24,10 +25,10 @@ let function updatePromoteUnits() {
   let currentTime = ::get_charserver_time_sec()
   local nextChangeTime = null
 
-  foreach(promoteUnit in shopPromoteUnits.value){
-    let {unit, timeStart, timeEnd} = promoteUnit
+  foreach (promoteUnit in shopPromoteUnits.value) {
+    let { unit, timeStart, timeEnd } = promoteUnit
 
-    if(::isUnitBought(unit) || currentTime > timeEnd)
+    if (::isUnitBought(unit) || currentTime > timeEnd)
       continue
 
     let nextTime = timeStart > currentTime
@@ -42,7 +43,7 @@ let function updatePromoteUnits() {
   if (nextChangeTime != null && nextChangeTime > currentTime)
     setTimeout(nextChangeTime - currentTime, updatePromoteUnits)
 
-  if(!::u.isEqual(activPromUnits, promoteUnits.value))
+  if (!::u.isEqual(activPromUnits, promoteUnits.value))
     promoteUnits(activPromUnits)
 }
 
@@ -50,8 +51,8 @@ let function isPromUnit(unit) {
   return promoteUnits.value?[unit.name].isActive ?? false
 }
 
-let function fillPromUnitInfo(holderObj, unit){
-  if(shopPromoteUnits.value?[unit.name] == null || !holderObj?.isValid())
+let function fillPromUnitInfo(holderObj, unit) {
+  if (shopPromoteUnits.value?[unit.name] == null || !holderObj?.isValid())
     return false
 
   if (!isPromUnit(unit)) {
@@ -61,7 +62,7 @@ let function fillPromUnitInfo(holderObj, unit){
   let timeEnd = promoteUnits.value[unit.name].timeEnd
   let t = timeEnd - ::get_charserver_time_sec()
 
-  if(t <= 0){
+  if (t <= 0) {
     ::showBtn("aircraft-remainingTimeBuyInfo", false, holderObj)
     return false
   }

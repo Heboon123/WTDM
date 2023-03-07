@@ -6,7 +6,7 @@ root {
   img {
     position:t='absolute'
     size:t='sw, 0.145sw'
-    background-image:t='#ui/images/steam_rate_bg.jpg?P1'
+    background-image:t='#ui/images/steam_rate_bg?P1'
 
     tdiv {
       width:t='0.75@rh' //by size of frame 
@@ -64,22 +64,22 @@ root {
       isTransparent:t='yes'
       navLeft {
         Button_text {
+          text:t='#mainmenu/btnClose'
+          on_click:t='goBack'
+          visualStyle:t='steam'
+          focusBtnName:t='A'
+          showConsoleImage:t='no'
+        }
+      }
+      
+      navRight {
+        Button_text {
           text:t='#msgbox/goToSteam'
           on_click:t='onApply'
           visualStyle:t='steam'
           focusBtnName:t='A'
           showConsoleImage:t='no'
           externalLink:t='yes'
-        }
-      }
-      
-      navRight {
-        Button_text {
-          text:t='#mainmenu/btnClose'
-          on_click:t='goBack'
-          visualStyle:t='steam'
-          focusBtnName:t='A'
-          showConsoleImage:t='no'
         }
       }
     }

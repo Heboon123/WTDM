@@ -2,6 +2,7 @@ options indenting = 4
 options no_unused_block_arguments = false
 options no_unused_function_arguments = false
 options no_aot = true
+options strict_smart_pointers = true
 
 module cpp_bind public
 
@@ -12,11 +13,11 @@ require daslib/ast_boost
 require daslib/strings_boost
 
 def private log_cpp_class_method ( cpp_file:file; name:string; fntype:TypeDeclPtr )
-    var cft <- clone_type(fntype.firstType)
+    var inscope cft <- clone_type(fntype.firstType)
     cft.flags |= TypeDeclFlags smartPtrNative
     let rettd = describe_cpp(cft)
     fwrite(cpp_file, "{rettd} {name} ( Context * __context__, Func __funcCall__")
-    for argN,argT,argI in fntype.argNames,fntype.argTypes,range(100500)
+    for argN,argT,argI in fntype.argNames,fntype.argTypes,count()
         fwrite(cpp_file, ", ")
         if argI==0
             fwrite(cpp_file, "void * ")
@@ -31,7 +32,7 @@ def private log_cpp_class_method ( cpp_file:file; name:string; fntype:TypeDeclPt
 def private log_cpp_class_method_call ( cpp_file:file; name:string; fntype:TypeDeclPtr )
     let rettd = describe_cpp(fntype.firstType)
     fwrite(cpp_file, "das_invoke_function<{rettd}>::invoke\n      <")
-    for argN,argT,argI in fntype.argNames,fntype.argTypes,range(100500)
+    for argN,argT,argI in fntype.argNames,fntype.argTypes,count()
         if argI!=0
             fwrite(cpp_file, ",")
         if argI==0
@@ -42,7 +43,7 @@ def private log_cpp_class_method_call ( cpp_file:file; name:string; fntype:TypeD
             if argT.isRefType
                 fwrite(cpp_file, " &")
     fwrite(cpp_file, ">\n        (__context__,nullptr,__funcCall__,\n          ")
-    for argN,argI in fntype.argNames,range(100500)
+    for argN,argI in fntype.argNames,count()
         if argI!=0
             fwrite(cpp_file, ",")
         fwrite(cpp_file, "{argN}")
@@ -57,7 +58,7 @@ def log_cpp_class_adapter ( cpp_file:file; name:string; cinfo:TypeDeclPtr )
     //!     log_cpp_class_adapter(cppFileNameDotInc, "daScriptClassName", typeinfo(ast_typedecl type<daScriptClassName>))
     assert(cinfo.isClass,"can only make adapter out of a class")
     var methods : array<string>
-    var types : array<TypeDeclPtr>
+    var inscope types : array<TypeDeclPtr>
     for fld in cinfo.structType.fields
         if !fld._type.isFunction || fld.name=="__finalize" || fld.init!=null
             continue
@@ -67,14 +68,14 @@ def log_cpp_class_adapter ( cpp_file:file; name:string; cinfo:TypeDeclPtr )
     fwrite(cpp_file, "class {name} \{\n")
     fwrite(cpp_file, "protected:\n")
     fwrite(cpp_file, "  enum \{\n")
-    for mn,mni in methods, range(100500)
+    for mn,mni in methods, count()
         fwrite(cpp_file, "    __fn_{mn} = {mni},\n")
     fwrite(cpp_file, "  };\n")
     fwrite(cpp_file, "protected:\n")
     fwrite(cpp_file, "  int _das_class_method_offset[{nmet}];\n")
     fwrite(cpp_file, "public:\n")
     fwrite(cpp_file, "  {name} ( const StructInfo * info ) \{\n")
-    for mn,mni in methods, range(100500)
+    for mn,mni in methods, count()
         fwrite(cpp_file, "      _das_class_method_offset[__fn_{mn}] = adapt_field_offset(\"{mn}\",info);\n")
     fwrite(cpp_file, "  \}\n")
     for mn,mt in methods,types

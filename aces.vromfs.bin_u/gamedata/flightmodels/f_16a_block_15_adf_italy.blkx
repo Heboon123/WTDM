@@ -2,18 +2,19 @@
   "model": "f_16a_block_15_adf_italy",
   "fmFile": "fm/f_16a_block_15_adf_italy.blk",
   "MetaPartsBlk": "gameData/FlightModels/dm/metaparts/jet_fighter_metaparts.blk",
-  "viewDistKInSight": 4.0,
+  "viewDistKInSight": 6.0,
   "gearSinkRangeLR": 0.178,
   "gearSinkRangeC": 0.164,
   "haveCCIPForGun": true,
+  "haveCCRPForGun": true,
   "ilsMarconiAvionics": true,
   "jetEnginePowerFullScale": true,
   "standardExhaustFxType": "jet_exhaust",
   "afterburnerExhaustFxType": "jet_afterburner_exhaust",
   "startExhaustFxType": "jet_start_exhaust",
+  "disableExhaustFxIfContrailIsActive": true,
   "gyroscopicSightOverSensors": true,
   "type": "typeFighter",
-  "paratrooper": "ally",
   "advancedInstructor": true,
   "advancedMouseAim": true,
   "instructorCritMult": [0.8,0.8],
@@ -31,6 +32,7 @@
   "fireParamsPreset": "2200kph",
   "fightAiBehaviour": "fighter",
   "autopilotImpl": "FBW",
+  "paratrooper": "usa_irvin_5000_ejection_para",
   "DamageParts": {
     "armor10": {
       "cannon1_dm": {
@@ -2261,7 +2263,9 @@
   },
   "Sound": {
     "Engine": "engine05_f110_WEP",
-    "gun": "gun_default"
+    "gun": "gun_default",
+    "nozzleMoveSfx": "nozzle_moving",
+    "nozzleAngleThreshold": 0.3
   },
   "cockpit": {
     "sightInFov": 50.5,
@@ -2324,7 +2328,7 @@
       "clock_hour": [0.0,12.0],
       "clock_min": [0.0,60.0],
       "clock_sec": [0.0,60.0],
-      "rpm": [0.0,10200.0],
+      "rpm": [0.0,14000.0],
       "oil_pressure": [0.0,160.0],
       "water_temperature": [200.0,1200.0],
       "fuel_pressure": [0.0,15.0],
@@ -2401,7 +2405,7 @@
   "sensors": [
     {
       "sensor": {
-        "blk": "gameData/sensors/us_an_apg_66.blk",
+        "blk": "gameData/sensors/us_an_apg_66_v_1.blk",
         "dmPart": "radar_dm"
       }
     },
@@ -2998,18 +3002,55 @@
     },
     {
       "replace_tex": {
-        "from": "f_16a_block_15_adf_italy_c_dmg*"
-      }
-    },
-    {
-      "replace_tex": {
         "from": "f_16a_block_15_adf_italy_n*"
       }
+    }
+  ],
+  "bailout": [
+    {
+      "buttonHoldTime": 1.0
     },
     {
-      "replace_tex": {
-        "from": "f_16a_block_15_adf_italy_n_dmg*"
-      }
+      "wreckSpeed": 10.0
+    },
+    {
+      "wreckDir": [-1.0,1.0,0.0]
+    },
+    {
+      "seatEjectDelay": 0.5
+    },
+    {
+      "seatVel": [-10.0,20.0,0.0]
+    },
+    {
+      "minHeight": 0.0
+    },
+    {
+      "minSpeed": 0.0
+    },
+    {
+      "hasSafeExit": true
+    },
+    {
+      "wreck": "blister1"
+    },
+    {
+      "hide": "seat_01"
+    },
+    {
+      "hide": "blister2"
+    },
+    {
+      "hide": "blister3"
+    },
+    {
+      "seat": "seat_01"
+    },
+    {
+      "fxEmitter": "blister1"
+    },
+    {
+      "fxType": "catapult_expl_ejection"
     }
   ],
   "cutting": {

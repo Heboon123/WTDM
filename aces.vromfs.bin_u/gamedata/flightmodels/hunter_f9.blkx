@@ -9,6 +9,7 @@
   "standardExhaustFxType": "jet_exhaust",
   "afterburnerExhaustFxType": "jet_afterburner_exhaust",
   "startExhaustFxType": "jet_start_exhaust",
+  "disableExhaustFxIfContrailIsActive": true,
   "overheatBlk": "gameData/FlightModels/dm/overheat.blk",
   "damagePartsToCollisionObjectsMapBlk": "gameData/FlightModels/DM/dm_parts_to_collision_objects.blk",
   "damagePartsToFmPartsMapBlk": "gameData/FlightModels/DM/dm_parts_to_fm_parts_map.blk",
@@ -149,6 +150,11 @@
         "hp": 60.5
       }
     },
+    "dural5": {
+      "radar_dm": {
+        "hp": 35.0
+      }
+    },
     "glass64": {
       "armor1_dm": {
         "hp": 100.0
@@ -203,6 +209,12 @@
       },
       "tank6_dm": {
         "hp": 59.8
+      },
+      "tank7_dm": {
+        "hp": 68.4
+      },
+      "tank8_dm": {
+        "hp": 68.4
       }
     }
   },
@@ -951,6 +963,11 @@
       }
     },
     {
+      "part": {
+        "name": "radar_dm"
+      }
+    },
+    {
       "part": [
         {
           "name": "rudder_dm"
@@ -1498,6 +1515,118 @@
             "damage": 80.0,
             "fire": 50.0,
             "leak": 10.0
+          }
+        }
+      ]
+    },
+    {
+      "part": [
+        {
+          "name": "tank7_dm"
+        },
+        {
+          "onHit": {
+            "fire": 0.05,
+            "leak": 0.7
+          }
+        },
+        {
+          "onHit": {
+            "damage": 20.0,
+            "fire": 0.3,
+            "leak": 0.8
+          }
+        },
+        {
+          "onHit": {
+            "damage": 50.0,
+            "fire": 0.9,
+            "leak": 0.9
+          }
+        },
+        {
+          "onHit": {
+            "damage": 80.0,
+            "expl": 0.5,
+            "fire": 0.9,
+            "leak": 0.9
+          }
+        },
+        {
+          "onKill": {
+            "fire": 10.0,
+            "leak": 10.0,
+            "nothing": 80.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 50.0,
+            "fire": 25.0,
+            "leak": 35.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 80.0,
+            "fire": 50.0,
+            "leak": 30.0
+          }
+        }
+      ]
+    },
+    {
+      "part": [
+        {
+          "name": "tank8_dm"
+        },
+        {
+          "onHit": {
+            "fire": 0.05,
+            "leak": 0.7
+          }
+        },
+        {
+          "onHit": {
+            "damage": 20.0,
+            "fire": 0.3,
+            "leak": 0.8
+          }
+        },
+        {
+          "onHit": {
+            "damage": 50.0,
+            "fire": 0.9,
+            "leak": 0.9
+          }
+        },
+        {
+          "onHit": {
+            "damage": 80.0,
+            "expl": 0.5,
+            "fire": 0.9,
+            "leak": 0.9
+          }
+        },
+        {
+          "onKill": {
+            "fire": 10.0,
+            "leak": 10.0,
+            "nothing": 80.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 50.0,
+            "fire": 25.0,
+            "leak": 35.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 80.0,
+            "fire": 50.0,
+            "leak": 30.0
           }
         }
       ]
@@ -2683,17 +2812,7 @@
     },
     {
       "replace_tex": {
-        "from": "hunter_f9_a_dmg*"
-      }
-    },
-    {
-      "replace_tex": {
         "from": "hunter_f9_n*"
-      }
-    },
-    {
-      "replace_tex": {
-        "from": "hunter_f9_n_dmg*"
       }
     }
   ],

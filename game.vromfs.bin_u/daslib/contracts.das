@@ -2,13 +2,14 @@ options indenting = 4
 options no_unused_block_arguments = false
 options no_unused_function_arguments = false
 options no_aot = true
+options strict_smart_pointers = true
 
 module contracts shared private
 
 require ast
 require daslib/ast_boost
 
-def public isYetAnotherVectorTemplate ( var td:TypeDeclPtr )
+def public isYetAnotherVectorTemplate ( td:TypeDeclPtr )
     //! returns true if the given type declaration is a das::vector template bound on C++ side
     return td.isHandle && td.annotation!=null && td.annotation.is_any_vector
 
@@ -57,18 +58,6 @@ class IsDimMacro : IsAnyType
                 if fna.name==argv.name
                     if length(typ.dim)==0
                         errors := "argument {argv.name} is not an [], it is {describe(typ)}"
-                        return false
-        return true
-
-[contract(name="expect_not_dim")]
-class IsNotDimMacro : IsAnyType
-    //! [expect_not_dim(argname)] contract, which never accepts T[]
-    def override isCompatible ( var func:FunctionPtr; var types:VectorTypeDeclPtr; decl:AnnotationDeclaration; var errors:das_string ) : bool
-        for fna,typ in func.arguments,types // note: N^2
-            for argv in decl.arguments
-                if fna.name==argv.name
-                    if length(typ.dim)!=0
-                        errors := "argument {argv.name} is [], it is {describe(typ)}"
                         return false
         return true
 
@@ -178,5 +167,41 @@ class IsAnyFunctionNonPtrMacro : IsAnyType
                 if fna.name==argv.name
                     if typ.baseType!=Type tFunction
                         errors := "argument {argv.name} is not a function, it is {describe(typ)}"
+                        return false
+        return true
+
+[contract(name="expect_ref")]
+class IsRefMacro : IsAnyType
+    //! [expect_ref(argname)] contract, which only accepts references
+    def override isCompatible ( var func:FunctionPtr; var types:VectorTypeDeclPtr; decl:AnnotationDeclaration; var errors:das_string ) : bool
+        for fna,typ in func.arguments,types // note: N^2
+            for argv in decl.arguments
+                if fna.name==argv.name
+                    if !typ.isRef
+                        errors := "argument {argv.name} is not a reference, it is {describe(typ)}"
+                        return false
+        return true
+
+[contract(name="expect_pointer")]
+class IsPointer : IsAnyType
+    //! [expect_pointer(argname)] contract, which only accepts pointers
+    def override isCompatible ( var func:FunctionPtr; var types:VectorTypeDeclPtr; decl:AnnotationDeclaration; var errors:das_string ) : bool
+        for fna,typ in func.arguments,types // note: N^2
+            for argv in decl.arguments
+                if fna.name==argv.name
+                    if typ.baseType!=Type tPointer
+                        errors := "argument {argv.name} is not a pointer, it is {describe(typ)}"
+                        return false
+        return true
+
+[contract(name="expect_value_handle")]
+class IsValueHandle : IsAnyType
+    //! [expect_value_handle(argname)] contract, which only accepts value handles
+    def override isCompatible ( var func:FunctionPtr; var types:VectorTypeDeclPtr; decl:AnnotationDeclaration; var errors:das_string ) : bool
+        for fna,typ in func.arguments,types // note: N^2
+            for argv in decl.arguments
+                if fna.name==argv.name
+                    if typ.baseType!=Type tHandle || typ.isRefType
+                        errors := "argument {argv.name} is not a value handle, it is {describe(typ)}"
                         return false
         return true

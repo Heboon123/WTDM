@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 //checked for explicitness
@@ -5,6 +6,7 @@ from "%scripts/dagui_library.nut" import *
 #explicit-this
 
 let { format } = require("string")
+let { getRgbStrFromHsv } = require("colorCorrector")
 
 ::hudEnemyDamage <- {
   // HitCamera HUE color range is: 160 (100%hp) - 0 (0%hp).
@@ -92,8 +94,7 @@ let { format } = require("string")
 
   listObj   = null
 
-  function init(nest)
-  {
+  function init(nest) {
     if (!checkObj(nest))
       return
 
@@ -113,16 +114,14 @@ let { format } = require("string")
     this.reinit()
   }
 
-  function reinit()
-  {
+  function reinit() {
     this.enabled = ::get_show_destroyed_parts()
 
     if (checkObj(this.listObj))
       this.listObj.pos = ::get_option_xray_kill() ? this.listObj.posHitcamOn : this.listObj.posHitcamOff
   }
 
-  function resetTargetData()
-  {
+  function resetTargetData() {
     this.lastTargetId = null
     this.lastTargetVersion = null
     this.lastTargetType = ES_UNIT_TYPE_INVALID
@@ -139,14 +138,12 @@ let { format } = require("string")
         }
   }
 
-  function rebuildWidgets()
-  {
+  function rebuildWidgets() {
     if (!checkObj(this.listObj))
       return
 
     local markup = ""
-    foreach (_sectionIdx, section in this.partsOrder)
-    {
+    foreach (_sectionIdx, section in this.partsOrder) {
       foreach (partId in section.parts)
         markup += ::handyman.renderCached(("%gui/hud/hudEnemyDamage.tpl"), {
           id = partId
@@ -156,15 +153,13 @@ let { format } = require("string")
     this.guiScene.replaceContentFromText(this.listObj, markup, markup.len(), this)
   }
 
-  function resetWidgets()
-  {
+  function resetWidgets() {
     foreach (_sectionIdx, section in this.partsOrder)
       foreach (partId in section.parts)
         this.hidePart(partId)
   }
 
-  function onEnemyPartDamage(data)
-  {
+  function onEnemyPartDamage(data) {
     if (!this.enabled || !checkObj(this.listObj))
       return
 
@@ -191,8 +186,7 @@ let { format } = require("string")
     */
 
     let { unitId, unitVersion, partName = null } = data
-    if (unitId != this.lastTargetId || unitVersion != this.lastTargetVersion)
-    {
+    if (unitId != this.lastTargetId || unitVersion != this.lastTargetVersion) {
       if (!this.isAllAnimationsFinished())
         this.resetWidgets()
 
@@ -202,8 +196,7 @@ let { format } = require("string")
       this.lastTargetType = data?.unitType ?? ES_UNIT_TYPE_INVALID
       this.lastTargetKilled = data?.unitKilled ?? false
     }
-    else
-    {
+    else {
       this.lastTargetKilled = data?.unitKilled ?? this.lastTargetKilled
     }
 
@@ -228,12 +221,11 @@ let { format } = require("string")
     let value = 1.0 / thresholdShowHealthBelow * showHp
     let hue =  showHp ? (this.hueHpMin + (this.hueHpMax - this.hueHpMin) * value) : this.hueKill
     let brightness =  showHp ? (this.brightnessHpMin - (this.brightnessHpMin - this.brightnessHpMax) * value) : brightnessKill
-    let color = format("#%s", ::get_color_from_hsv(hue, 1, brightness))
+    let color = format("#%s", getRgbStrFromHsv(hue, 1, brightness))
     this.showPart(partName, color, !showHp)
   }
 
-  function onHitcamTargetKilled(params)
-  {
+  function onHitcamTargetKilled(params) {
     if (::is_multiplayer() || this.lastTargetKilled)
       return
 
@@ -250,8 +242,7 @@ let { format } = require("string")
     })
   }
 
-  function showPart(partId, color, isKilled)
-  {
+  function showPart(partId, color, isKilled) {
     if (!checkObj(this.listObj))
       return
     let obj = this.listObj.findObject(partId)
@@ -262,8 +253,7 @@ let { format } = require("string")
     obj._blink = "yes"
   }
 
-  function hidePart(partId)
-  {
+  function hidePart(partId) {
     if (!checkObj(this.listObj))
       return
     let obj = this.listObj.findObject(partId)
@@ -271,8 +261,7 @@ let { format } = require("string")
       obj._blink = "no"
   }
 
-  function onEnemyDamageAnimationFinish(obj)
-  {
+  function onEnemyDamageAnimationFinish(obj) {
     if (!checkObj(obj))
       return
     if (!(obj?.id in this.partsConfig))
@@ -282,8 +271,7 @@ let { format } = require("string")
     cfg.show = false
   }
 
-  function isAllAnimationsFinished()
-  {
+  function isAllAnimationsFinished() {
     foreach (_partName, cfg in this.partsConfig)
       if (cfg.show)
         return false

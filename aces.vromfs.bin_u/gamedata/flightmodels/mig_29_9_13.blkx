@@ -8,6 +8,8 @@
   "haveCCIPForBombs": true,
   "haveCCIPForGun": true,
   "haveCCRPForBombs": true,
+  "haveCCRPForGun": true,
+  "havePointOfInterestDesignator": true,
   "ils31": true,
   "hmdShelZoom": true,
   "hasHelmetDesignator": true,
@@ -18,11 +20,11 @@
   "helmetDesignatorZone4": [40.0,-50.0,50.0],
   "gyroscopicSightOverSensors": true,
   "type": "typeFighter",
-  "paratrooper": "ally",
   "advancedInstructor": true,
   "standardExhaustFxType": "jet_exhaust_heavy",
   "afterburnerExhaustFxType": "jet_afterburner_exhaust_heavy",
   "startExhaustFxType": "jet_start_exhaust",
+  "disableExhaustFxIfContrailIsActive": true,
   "overheatBlk": "gameData/FlightModels/DM/overheat.blk",
   "damagePartsToCollisionObjectsMapBlk": "gameData/FlightModels/DM/dm_parts_to_collision_objects.blk",
   "damagePartsToFmPartsMapBlk": "gameData/FlightModels/DM/dm_parts_to_fm_parts_map.blk",
@@ -36,6 +38,7 @@
   "fireParamsPreset": "2400kph",
   "fightAiBehaviour": "fighter",
   "autopilotImpl": "FBW",
+  "paratrooper": "su_k_36_ejection_para",
   "DamageParts": {
     "armor10": {
       "cannon1_dm": {
@@ -2437,7 +2440,9 @@
   },
   "Sound": {
     "Engine": "engine05_rd33_WEP",
-    "gun": "gun_default"
+    "gun": "gun_default",
+    "nozzleMoveSfx": "nozzle_moving_2",
+    "nozzleAngleThreshold": 0.3
   },
   "cockpit": [
     {
@@ -2459,7 +2464,7 @@
       "mirrorPos": [5.415,1.363,0.0]
     },
     {
-      "mirrorNorm": [-1.0,0.1,0.0]
+      "mirrorNorm": [-0.998,-0.07,0.0]
     },
     {
       "mirrorNode": "blister4"
@@ -2527,6 +2532,8 @@
         "trimmer": [-1.0,1.0],
         "weapon2": [0.0,1.0],
         "weapon3": [0.0,1.0],
+        "gears": [0.0,1.0],
+        "gear_fixed": true,
         "flaps": [0.0,1.0],
         "flaps_fixed": false,
         "speed": [0.0,555.555],
@@ -2595,7 +2602,9 @@
               "ilsSize": [0.4,0.4],
               "ilsOffsetForce": 0.0,
               "brightnessMult": 3.5,
-              "ilsColor": "#0aff0a78"
+              "ilsColor": "#0aff0a78",
+              "bloomForce": 0.115,
+              "lineWidthScale": 0.6
             }
           }
         }
@@ -2919,7 +2928,7 @@
               "Weapon": {
                 "trigger": "countermeasures",
                 "startFx": "",
-                "blk": "gameData/Weapons/rocketGuns/countermeasure_large_launcher_jet.blk",
+                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
                 "emitter": "emtr_flare1",
                 "bullets": 30,
                 "external": true,
@@ -2930,7 +2939,7 @@
               "Weapon": {
                 "trigger": "countermeasures",
                 "startFx": "",
-                "blk": "gameData/Weapons/rocketGuns/countermeasure_large_launcher_jet.blk",
+                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
                 "emitter": "emtr_flare2",
                 "bullets": 30,
                 "external": true,
@@ -4652,17 +4661,7 @@
     },
     {
       "replace_tex": {
-        "from": "mig_29_9_13_c_dmg*"
-      }
-    },
-    {
-      "replace_tex": {
         "from": "mig_29_9_13_n*"
-      }
-    },
-    {
-      "replace_tex": {
-        "from": "mig_29_9_13_n_dmg*"
       }
     }
   ],
@@ -4674,6 +4673,21 @@
     "chuteFlapVarName": "fire_chute",
     "chuteTimeScaleParam": "chute_time_scale",
     "chuteFallSpeed": 1.0
+  },
+  "bailout": {
+    "buttonHoldTime": 1.0,
+    "wreckSpeed": 10.0,
+    "wreckDir": [-1.0,1.0,0.0],
+    "seatEjectDelay": 0.5,
+    "seatVel": [-10.0,20.0,0.0],
+    "minHeight": 0.0,
+    "minSpeed": 0.0,
+    "hasSafeExit": true,
+    "wreck": "blister1",
+    "hide": "seat_01",
+    "seat": "seat_01",
+    "fxEmitter": "blister1",
+    "fxType": "catapult_expl_ejection"
   },
   "cutting": {
     "_emtr_break_wing0_l_from": [-0.309921,0.385191,1.99025],

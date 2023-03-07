@@ -1,14 +1,15 @@
 {
-  "model": "f_16a_block_10",
+  "model": "f_16a_block_10_iaf",
   "fmFile": "fm/f_16a_block_10.blk",
   "MetaPartsBlk": "gameData/FlightModels/dm/metaparts/jet_fighter_metaparts.blk",
-  "viewDistKInSight": 4.0,
+  "viewDistKInSight": 6.0,
   "gearSinkRangeLR": 0.178,
   "gearSinkRangeC": 0.164,
   "haveCCIPForRocket": true,
   "haveCCIPForBombs": true,
   "haveCCIPForGun": true,
   "haveCCRPForBombs": true,
+  "haveCCRPForGun": true,
   "isBwOpticSight": true,
   "havePointOfInterestDesignator": true,
   "ilsMarconiAvionics": true,
@@ -16,9 +17,9 @@
   "standardExhaustFxType": "jet_exhaust",
   "afterburnerExhaustFxType": "jet_afterburner_exhaust",
   "startExhaustFxType": "jet_start_exhaust",
+  "disableExhaustFxIfContrailIsActive": true,
   "gyroscopicSightOverSensors": true,
   "type": "typeFighter",
-  "paratrooper": "ally",
   "advancedInstructor": true,
   "advancedMouseAim": true,
   "instructorCritMult": [0.8,0.8],
@@ -36,6 +37,7 @@
   "fireParamsPreset": "2200kph",
   "fightAiBehaviour": "fighter",
   "autopilotImpl": "FBW",
+  "paratrooper": "usa_irvin_5000_ejection_para",
   "DamageParts": {
     "armor10": {
       "cannon1_dm": {
@@ -2266,7 +2268,9 @@
   },
   "Sound": {
     "Engine": "engine05_f110_WEP",
-    "gun": "gun_default"
+    "gun": "gun_default",
+    "nozzleMoveSfx": "nozzle_moving",
+    "nozzleAngleThreshold": 0.3
   },
   "propellers": {
     "prop0": -1,
@@ -2365,7 +2369,7 @@
       "clock_hour": [0.0,12.0],
       "clock_min": [0.0,60.0],
       "clock_sec": [0.0,60.0],
-      "rpm": [0.0,10200.0],
+      "rpm": [0.0,14000.0],
       "oil_pressure": [0.0,160.0],
       "water_temperature": [200.0,1200.0],
       "fuel_pressure": [0.0,15.0],
@@ -2459,7 +2463,7 @@
     }
   ],
   "gunnerOpticFps": {
-    "pos": [1.2,-0.15,0.0],
+    "pos": [2.6,-0.15,0.0],
     "head": "optic1_turret",
     "crosshairPreset": "test_crosshair",
     "angularLimits": [-20.0,20.0,-20.0,20.0],
@@ -3727,36 +3731,57 @@
       "modClass": "weapon"
     }
   },
-  "default_skin": [
-    {
-      "name": "iaf"
-    },
-    {
-      "replace_tex": {
-        "from": "f_16a_block_10_c*",
-        "to": "f_16a_block_10_iaf_c*"
-      }
-    },
-    {
-      "replace_tex": {
-        "from": "f_16a_block_10_c_dmg*",
-        "to": "f_16a_block_10_iaf_c_dmg*"
-      }
+  "user_skin": {
+    "name": "f_16a_block_10_iaf",
+    "replace_tex": {
+      "from": "f_16a_block_10_iaf_c*"
     }
-  ],
-  "user_skin": [
+  },
+  "bailout": [
     {
-      "name": "f_16a_block_10_iaf"
+      "buttonHoldTime": 1.0
     },
     {
-      "replace_tex": {
-        "from": "f_16a_block_10_iaf_c*"
-      }
+      "wreckSpeed": 10.0
     },
     {
-      "replace_tex": {
-        "from": "f_16a_block_10_iaf_c_dmg*"
-      }
+      "wreckDir": [-1.0,1.0,0.0]
+    },
+    {
+      "seatEjectDelay": 0.5
+    },
+    {
+      "seatVel": [-10.0,20.0,0.0]
+    },
+    {
+      "minHeight": 0.0
+    },
+    {
+      "minSpeed": 0.0
+    },
+    {
+      "hasSafeExit": true
+    },
+    {
+      "wreck": "blister1"
+    },
+    {
+      "hide": "seat_01"
+    },
+    {
+      "hide": "blister2"
+    },
+    {
+      "hide": "blister3"
+    },
+    {
+      "seat": "seat_01"
+    },
+    {
+      "fxEmitter": "blister1"
+    },
+    {
+      "fxType": "catapult_expl_ejection"
     }
   ],
   "cutting": {

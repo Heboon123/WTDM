@@ -18,7 +18,7 @@
     "collisionSphere1": [5.0,2.0,0.0,1.0]
   },
   {
-    "exhaustFx": "tank_exhaust"
+    "exhaustFx": "tank_exhaust_med"
   },
   {
     "damagedExhaustFx": "tank_broken_exhaust"
@@ -154,6 +154,20 @@
       },
       {
         "device": {
+          "type": "engineFan",
+          "turnSpeed": -30.0,
+          "node": "bone_roll_engine_05"
+        }
+      },
+      {
+        "device": {
+          "type": "engineFan",
+          "turnSpeed": -30.0,
+          "node": "bone_roll_engine_06"
+        }
+      },
+      {
+        "device": {
           "type": "waterJetShutter",
           "turnSpeed": 1.5,
           "maxValue": -1.7,
@@ -212,6 +226,9 @@
         },
         "superstructure_bottom_dm": {
           "armorThickness": 15.0
+        },
+        "turret_01_front_dm": {
+          "armorThickness": 22.0
         },
         "ex_armor_l_01_dm": {
           "armorThickness": 10.0
@@ -351,9 +368,6 @@
         "turret_01_top_dm": {
           "armorThickness": 22.0
         },
-        "turret_01_front_dm": {
-          "armorThickness": 22.0
-        },
         "turret_01_bottom_dm": {
           "armorThickness": 30.0
         },
@@ -370,10 +384,10 @@
           "armorThickness": 30.0
         },
         "ex_armor_02_dm": {
-          "armorThickness": 30.0
+          "armorThickness": 22.0
         },
         "ex_armor_03_dm": {
-          "armorThickness": 30.0
+          "armorThickness": 22.0
         }
       },
       "mask": {
@@ -413,18 +427,30 @@
       },
       "gun": {
         "armorClass": "tank_barrel",
-        "hp": 150.0,
-        "armorThickness": 30.0,
-        "gun_barrel_dm": {
-          "armorThickness": 20.0,
-          "hp": 120.0
-        },
+        "hp": 250.0,
+        "armorThickness": 40.0,
+        "gun_barrel_dm": [],
         "gun_barrel_01_dm": {
-          "armorThickness": 20.0,
-          "hp": 120.0
+          "armorThrough": 10.0,
+          "armorThickness": 5.0,
+          "hp": 50.0
         },
-        "gun_barrel_02_dm": [],
+        "gun_barrel_02_dm": {
+          "armorThrough": 10.0,
+          "armorThickness": 5.0,
+          "hp": 50.0
+        },
         "gun_barrel_03_dm": {
+          "armorThrough": 10.0,
+          "armorThickness": 5.0,
+          "hp": 50.0
+        },
+        "gun_barrel_04_dm": {
+          "armorThrough": 10.0,
+          "armorThickness": 5.0,
+          "hp": 50.0
+        },
+        "gun_barrel_05_dm": {
           "armorThrough": 10.0,
           "armorThickness": 5.0,
           "hp": 50.0
@@ -866,38 +892,21 @@
     }
   },
   {
-    "attachables": [
-      {
-        "superstructure_back_dm": false
-      },
-      {
-        "body_front_dm": false
-      },
-      {
-        "body_front_dm": true
-      },
-      {
-        "ex_decor_r_03_dm": true
-      },
-      {
-        "ex_decor_r_04_dm": true
-      },
-      {
-        "ex_decor_r_05_dm": true
-      },
-      {
-        "ex_decor_l_03_dm": true
-      },
-      {
-        "ex_decor_l_04_dm": true
-      },
-      {
-        "ex_decor_l_05_dm": true
-      },
-      {
-        "ex_armor_01_dm": true
-      }
-    ]
+    "attachables": {
+      "superstructure_back_dm": true,
+      "body_front_dm": true,
+      "ex_decor_r_03_dm": true,
+      "ex_decor_r_04_dm": true,
+      "ex_decor_r_05_dm": true,
+      "ex_decor_l_03_dm": true,
+      "ex_decor_l_04_dm": true,
+      "ex_decor_l_05_dm": true,
+      "ex_armor_01_dm": true,
+      "ex_armor_r_12_dm": true,
+      "ex_armor_l_13_dm": true,
+      "ex_armor_02_dm": false,
+      "ex_armor_03_dm": false
+    }
   },
   {
     "sound": {
@@ -3208,6 +3217,7 @@
           "blk": "gameData/Weapons/groundModels_weapons/8mm_Hotchkiss_Mle1914_user_machinegun.blk",
           "emitter": "bone_mg_body_04",
           "flash": "emtr_mg_flame_04",
+          "allowableDelta": 180.0,
           "barrelDP": "gun_barrel_02_dm",
           "defaultYaw": 0.0,
           "defaultPitch": 0.0,
@@ -3247,25 +3257,19 @@
       {
         "Weapon": [
           {
-            "trigger": "gunner2"
+            "trigger": "gunner1"
           },
           {
-            "triggerGroup": "coaxial"
+            "triggerGroup": "machinegun"
           },
           {
             "blk": "gameData/Weapons/groundModels_weapons/8mm_Hotchkiss_Mle1914_user_machinegun.blk"
           },
           {
-            "emitter": "bone_mg_body_01"
+            "emitter": "bone_mg_body_v"
           },
           {
             "flash": "emtr_mg_flame_01"
-          },
-          {
-            "allowableDelta": 30.0
-          },
-          {
-            "barrelDP": "gun_barrel_01_dm"
           },
           {
             "defaultYaw": 0.0
@@ -3274,13 +3278,16 @@
             "defaultPitch": 0.0
           },
           {
-            "useAnimFlashNode": true
+            "barrelDP": "gun_barrel_01_dm"
           },
           {
-            "speedYaw": 20.0
+            "breechDP": "cannon_breech_01_dm"
           },
           {
-            "speedPitch": 20.0
+            "speedYaw": 5.5
+          },
+          {
+            "speedPitch": 4.0
           },
           {
             "fireConeAngle": 1.0
@@ -3289,10 +3296,7 @@
             "fireConeAngle": 15.0
           },
           {
-            "bullets": 5000
-          },
-          {
-            "isBulletBelt": true
+            "bullets": 1000
           },
           {
             "ChainfireTime": 3.0
@@ -3329,8 +3333,8 @@
           },
           {
             "turret": {
-              "head": "bone_mg_body_01",
-              "gun": "bone_mg_body_01",
+              "head": "bone_mg_body_h",
+              "gun": "bone_mg_body_v",
               "gunnerDm": "machine_gunner_dm"
             }
           },

@@ -6,6 +6,13 @@
     "import": "%danetlibs/route_prober/templates/route_prober.blk"
   },
   {
+    "ecs_no_debug": {
+      "noECSDebug:tag": {
+        "_tags": "ecsDebug"
+      }
+    }
+  },
+  {
     "replicating": {
       "replication": []
     }
@@ -80,6 +87,7 @@
       "setting__cannotMove": false,
       "setting__toGround": false,
       "setting__loadSound": true,
+      "setting__aiEnabled": true,
       "setting__bullets:list<t>": [],
       "setting__bulletsCount:list<i>": [],
       "setting__unit_target_list:list<t>": []
@@ -1218,27 +1226,66 @@
   {
     "floating_rendinst_system": {
       "_singleton": true,
-      "floatingRiSystem__useRandomWaves": false,
+      "floatingRiSystem__randomWavesAmplitude": 0.0,
+      "floatingRiSystem__randomWavesLength": 0.5,
+      "floatingRiSystem__randomWavesPeriod": 1.0,
+      "floatingRiSystem__randomWavesVelocity": [0.6,0.6],
       "floatingRiSystem__volumePresets:object": {
-        "default_1:object": {
-          "floatVolumesCd": 0.57,
-          "sphereRad": 0.8,
-          "middleDepth": 0.0,
-          "volumesCount": 1
+        "default_1:array": {
+          "volPos": [0.0,0.0,0.0]
         },
-        "default_4:object": {
-          "floatVolumesCd": 0.57,
-          "sphereRad": 0.57,
-          "sideDepth": 0.0,
-          "volumesCount": 4
-        },
-        "default_12:object": {
-          "floatVolumesCd": 0.57,
-          "sphereRad": 0.37,
-          "middleDepth": 0.5,
-          "sideDepth": 0.0,
-          "volumesCount": 12
-        }
+        "default_4:array": [
+          {
+            "volPos": [-1.0,0.0,-1.0]
+          },
+          {
+            "volPos": [-1.0,0.0,1.0]
+          },
+          {
+            "volPos": [1.0,0.0,-1.0]
+          },
+          {
+            "volPos": [1.0,0.0,1.0]
+          }
+        ],
+        "default_12:array": [
+          {
+            "volPos": [-1.0,0.5,0.0]
+          },
+          {
+            "volPos": [1.0,0.5,0.0]
+          },
+          {
+            "volPos": [-0.8,0.0,-1.0]
+          },
+          {
+            "volPos": [-0.4,0.0,-1.0]
+          },
+          {
+            "volPos": [0.0,0.0,-1.0]
+          },
+          {
+            "volPos": [0.4,0.0,-1.0]
+          },
+          {
+            "volPos": [0.8,0.0,-1.0]
+          },
+          {
+            "volPos": [-0.8,0.0,1.0]
+          },
+          {
+            "volPos": [-0.4,0.0,1.0]
+          },
+          {
+            "volPos": [0.0,0.0,1.0]
+          },
+          {
+            "volPos": [0.4,0.0,1.0]
+          },
+          {
+            "volPos": [0.8,0.0,1.0]
+          }
+        ]
       },
       "floatingRiSystem__userVolumePresets:object": []
     }
@@ -1252,15 +1299,17 @@
       "floatingRiGroup__elasticity": 0.1,
       "floatingRiGroup__physUpdateDt": 0.0417,
       "floatingRiGroup__maxShiftDist": 1000.0,
+      "floatingRiGroup__viscosity": 0.57,
+      "floatingRiGroup__minDistToGround": -1000000.0,
       "_group": {
         "_track": true,
         "floatingRiGroup__resName": "",
-        "floatingRiGroup__mass": 1.0,
         "floatingRiGroup__inertiaMult": [80.0,0.1,80.0],
         "floatingRiGroup__volumesCount": -1,
         "floatingRiGroup__volumePresetName": "",
-        "floatingRiGroup__geomCenterShift": [0.0,0.0,0.0],
-        "floatingRiGroup__physBboxSizeMul": [1.0,1.0,1.0]
+        "floatingRiGroup__spheresRad": 0.57,
+        "floatingRiGroup__density": 500.0,
+        "floatingRiGroup__densityRandRange": 0.0
       },
       "floatingRiGroup__riPhysFloatingModel": []
     }
@@ -1415,7 +1464,7 @@
       "repair_system_trailer_repair_time": 20.0,
       "repair_system_state:u32": [],
       "repair_system_parts_state:list<u32>": [],
-      "repair_system_parts_id:list<i>": [],
+      "repair_system_parts_id": [],
       "repair_system_parts_speed_mult:list<r>": [],
       "repair_system_parts_hp:list<p4>": []
     }
@@ -1436,7 +1485,81 @@
       "extinguish_system_penalty_without_mod": false,
       "extinguish_system_auto_extinguisher": false,
       "extinguish_system_is_assisting": false,
-      "fire_system_require_net_sync": false
+      "extinguish_system_require_net_sync": false
+    }
+  },
+  {
+    "unit_fire_damage": {
+      "fire_system_require_net_sync": false,
+      "fire_damage__isBurn": false,
+      "fire_damage__updateBurnInterval": 1.0,
+      "fire_damage__nextUpdateTime": 0.0,
+      "fire_damage__offender:eid": [],
+      "fire_data__packedPartId:list<u32>": [],
+      "fire_data__nodeId:list<i>": [],
+      "fire_data__fireParamsId:list<i>": [],
+      "fire_data__offset:list<p3>": [],
+      "fire_data__radius:list<p2>": [],
+      "fire_data__initiatorId:list<u32>": [],
+      "fire_data__startTime:list<r>": [],
+      "fire_data__extinguishProgress:list<r>": [],
+      "fire_data__underwaterTimer:list<r>": []
+    }
+  },
+  {
+    "unit_fire_fx": {
+      "fire_fx__id:list<i>": [],
+      "fire_fx__fxId:list<i>": [],
+      "fire_fx__paramsId:list<i>": []
+    }
+  },
+  {
+    "unit_ammo_stowage": {
+      "_hide": true,
+      "ammo_stowage__dpAmmo": [-1,-1,-1],
+      "ammo_stowage__dpTorpedo": [-1,-1,-1],
+      "ammo_stowage__dpDepthCharge": [-1,-1,-1],
+      "ammo_stowage__timeAmmoFire": -1.0,
+      "ammo_stowage__ammoLost": 0,
+      "ammo_stowage__combustionTime": 10.0,
+      "ammo_stowage__detonateProb": 0.1,
+      "ammo_stowage__detonatePortion": [0.3,0.6],
+      "ammo_stowage__detonateMinCaliber": 0.035,
+      "ammo_stowage__damagePropsId": -1,
+      "ammo_stowage__fxEvAmmoFireId": -1,
+      "ammo_stowage__ammoState:u32": [],
+      "ammo_stowage__delayedOffender": [],
+      "ammo_stowage__partIdRemap:list<ip4>": [],
+      "ammo_stowage__triggerIdRemap:list<i>": [],
+      "ammo_stowages__state:list<u32>": [],
+      "ammo_stowages__numAmmo:list<ip3>": [],
+      "ammo_stowages__numAmmoFirstStage:list<ip3>": [],
+      "ammo_stowages__replenishmentStartEnd:list<p2>": [],
+      "ammo_stowages__replenishmentTime:list<p2>": [],
+      "ammo_stowages__powderMassToSplash": [],
+      "ammo_stowages__clustersRange:list<ip2>": [],
+      "ammo_stowages__weaponTriggersRange:list<ip2>": [],
+      "ammo_stowage__weaponTriggers:list<i>": [],
+      "ammo_clusters__type:list<i>": [],
+      "ammo_clusters__state:list<u32>": [],
+      "ammo_clusters__fireEvtId:list<i>": [],
+      "ammo_clusters__fireParamsId:list<i>": [],
+      "ammo_clusters__explosionEvtId:list<i>": [],
+      "ammo_clusters__damageEffectPresetId:list<i>": [],
+      "ammo_clusters__reloadTimeMult:list<r>": [],
+      "ammo_clusters__splashConstraints:list<p3>": [],
+      "ammo_clusters__shatterConstraints:list<p3>": [],
+      "ammo_clusters__exterminatedAmmo:list<i>": [],
+      "ammo_clusters__entityMunition:list<t>": [],
+      "ammo_clusters__slotsRange:list<ip2>": [],
+      "ammo_clusters__wreckageRange:list<ip2>": [],
+      "ammo_clusters__elevatorPartsRange:list<ip2>": [],
+      "ammo_stowage__wreckageIds:list<i>": [],
+      "ammo_stowage__elevatorPartsIds": [],
+      "ammo_slots__state:list<u32>": [],
+      "ammo_slots__partId": [],
+      "ammo_slots__numAmmo:list<ip2>": [],
+      "ammo_slots__node": []
     }
   },
   {
@@ -1451,22 +1574,16 @@
         "_extends": "unit_fire_and_extinguish"
       },
       {
+        "_extends": "unit_fire_damage"
+      },
+      {
+        "_extends": "unit_fire_fx"
+      },
+      {
+        "_extends": "unit_ammo_stowage"
+      },
+      {
         "move_sys__maxDecel": 0.0
-      },
-      {
-        "fire_damage__update_burn_interval": 1.0
-      },
-      {
-        "fire_damage__isBurn": false
-      },
-      {
-        "fire_fx__id:list<i>": []
-      },
-      {
-        "fire_fx__fxId:list<i>": []
-      },
-      {
-        "fire_fx__paramsId:list<i>": []
       },
       {
         "unit_crew": []
@@ -1476,12 +1593,6 @@
       },
       {
         "fuel_tanks": []
-      },
-      {
-        "ammo_stowage": []
-      },
-      {
-        "fire_damage": []
       },
       {
         "modEids:list<eid>": {
@@ -1561,7 +1672,7 @@
   {
     "ship_cover_parts": {
       "ship_water_next_net_sync": 0.0,
-      "ship_cover_parts_part_id:list<u32>": [],
+      "ship_cover_parts_part_id": [],
       "ship_cover_parts_compartment_id:list<i>": [],
       "ship_cover_parts_water:list<p3>": [],
       "ship_cover_parts_weight:list<r>": [],
@@ -1575,10 +1686,10 @@
   {
     "ship_breaches": {
       "ship_breaches_next_id": 0,
-      "ship_breaches_fatal_part_id": -1,
       "ship_additional_water_left_side": 0.0,
       "ship_additional_water_right_side": 0.0,
       "ship_flood_step": 1,
+      "ship_breaches_fatal_part_id": [],
       "ship_breaches_id:list<i>": [],
       "ship_breaches_pos:list<p3>": [],
       "ship_breaches_normal:list<p3>": [],
@@ -1586,7 +1697,7 @@
       "ship_breaches_amount_to_repair:list<r>": [],
       "ship_breaches_depth_scale:list<r>": [],
       "ship_breaches_next_check:list<r>": [],
-      "ship_breaches_part_id:list<i>": [],
+      "ship_breaches_part_id": [],
       "ship_breaches_cover_id:list<i>": [],
       "ship_breaches_leaked_amount:list<r>": [],
       "ship_breaches_offender": []
@@ -1649,7 +1760,7 @@
         "ship_damage_control_running": false
       },
       {
-        "ship_damage_control_cooldown": 0.0
+        "ship_damage_control_cooldown_end_time": 0.0
       },
       {
         "ship_damage_control_time_penalty": [1.0,1.2,1.4]
@@ -1814,6 +1925,7 @@
         [0.0,0.0,0.0]
       ],
       "background_model__canOutline": false,
+      "background_model__upgraded": false,
       "background_model_res": [],
       "background_model__bullets:list<t>": [],
       "background_model__spawnEid:eid": []
@@ -2312,6 +2424,17 @@
         [0.0,0.0,1.0],
         [0.0,0.0,0.0]
       ]
+    }
+  },
+  {
+    "projectile": {
+      "_extends": "ecs_no_debug"
+    }
+  },
+  {
+    "bullet": {
+      "_extends": "projectile",
+      "bullet_component": []
     }
   }
 ]

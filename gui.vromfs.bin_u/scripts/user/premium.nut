@@ -1,9 +1,10 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
 #explicit-this
 
-let timeBase = require("%scripts/timeLoc.nut")
+let timeBase = require("%appGlobals/timeLoc.nut")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { setTimeout, clearTimer } = require("dagor.workcycle")
 let { register_command } = require("console")

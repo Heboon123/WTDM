@@ -30,6 +30,9 @@
     "startExhaustFxType": "jet_start_exhaust"
   },
   {
+    "disableExhaustFxIfContrailIsActive": true
+  },
+  {
     "overheatBlk": "gameData/FlightModels/DM/overheat.blk"
   },
   {
@@ -239,7 +242,7 @@
           "hp": 110.5
         }
       },
-      "glass102": {
+      "glass106": {
         "armor10_dm": {
           "hp": 100.0
         }
@@ -3310,18 +3313,38 @@
   },
   {
     "modifications": {
-      "cd_98": [],
+      "CdMin_Fuse": {
+        "tier": 1,
+        "modClass": "lth"
+      },
+      "structure_str": {
+        "prevModification": "CdMin_Fuse",
+        "tier": 2,
+        "modClass": "lth"
+      },
+      "cd_98": {
+        "prevModification": "structure_str",
+        "tier": 3,
+        "modClass": "lth"
+      },
+      "new_cover": {
+        "prevModification": "cd_98",
+        "tier": 4,
+        "modClass": "lth"
+      },
+      "new_compressor_jet": {
+        "tier": 1,
+        "modClass": "lth"
+      },
+      "hp_105_jet": {
+        "prevModification": "new_compressor_jet",
+        "tier": 3,
+        "modClass": "lth"
+      },
       "air_extinguisher": {
         "tier": 4,
-        "modClass": "weapon",
+        "modClass": "armor",
         "invertEnableLogic": false
-      },
-      "CdMin_Fuse": [],
-      "new_cover": [],
-      "structure_str": [],
-      "hp_105_jet": [],
-      "new_compressor_jet": {
-        "tier": 1
       },
       "ns23_belt_pack": {
         "tier": 1
@@ -3366,17 +3389,7 @@
       },
       {
         "replace_tex": {
-          "from": "il_28_c_dmg*"
-        }
-      },
-      {
-        "replace_tex": {
           "from": "il_28_n*"
-        }
-      },
-      {
-        "replace_tex": {
-          "from": "il_28_n_dmg*"
         }
       }
     ]
@@ -3393,17 +3406,7 @@
       },
       {
         "replace_tex": {
-          "from": "il_28_germany_c_dmg*"
-        }
-      },
-      {
-        "replace_tex": {
           "from": "il_28_germany_n*"
-        }
-      },
-      {
-        "replace_tex": {
-          "from": "il_28_germany_n_dmg*"
         }
       }
     ]
@@ -3442,20 +3445,8 @@
       },
       {
         "replace_tex": {
-          "from": "il_28_c_dmg*",
-          "to": "il_28_germany_c_dmg*"
-        }
-      },
-      {
-        "replace_tex": {
           "from": "il_28_n*",
           "to": "il_28_germany_n*"
-        }
-      },
-      {
-        "replace_tex": {
-          "from": "il_28_n_dmg*",
-          "to": "il_28_germany_n_dmg*"
         }
       }
     ]
@@ -3470,20 +3461,8 @@
       },
       {
         "replace_tex": {
-          "from": "il_28_c_dmg*",
-          "to": "il_28_germany_c_tomoe_dmg*"
-        }
-      },
-      {
-        "replace_tex": {
           "from": "il_28_n*",
           "to": "il_28_germany_n*"
-        }
-      },
-      {
-        "replace_tex": {
-          "from": "il_28_n_dmg*",
-          "to": "il_28_germany_n_dmg*"
         }
       }
     ]

@@ -11,12 +11,12 @@
   "hasMissileCommandLine": false,
   "gyroscopicSightOverSensors": true,
   "type": "typeFighter",
-  "paratrooper": "ally",
   "advancedInstructor": true,
   "advancedMouseAim": true,
   "standardExhaustFxType": "jet_exhaust",
   "afterburnerExhaustFxType": "jet_afterburner_exhaust",
   "startExhaustFxType": "jet_start_exhaust",
+  "disableExhaustFxIfContrailIsActive": true,
   "overheatBlk": "gameData/FlightModels/DM/overheat.blk",
   "damagePartsToCollisionObjectsMapBlk": "gameData/FlightModels/DM/dm_parts_to_collision_objects.blk",
   "damagePartsToFmPartsMapBlk": "gameData/FlightModels/DM/dm_parts_to_fm_parts_map.blk",
@@ -30,12 +30,19 @@
   "fireParamsPreset": "2400kph",
   "fightAiBehaviour": "fighter",
   "autopilotImpl": "FBW",
+  "paratrooper": "su_k_36_ejection_para",
   "DamageParts": {
     "armor10": {
       "armor2_dm": {
         "hp": 40.0
       },
       "cannon1_dm": {
+        "hp": 15.0
+      },
+      "cannon2_dm": {
+        "hp": 15.0
+      },
+      "cannon3_dm": {
         "hp": 15.0
       }
     },
@@ -121,6 +128,12 @@
         "hp": 19.5
       },
       "cover2_dm": {
+        "hp": 19.5
+      },
+      "cover5_dm": {
+        "hp": 19.5
+      },
+      "cover6_dm": {
         "hp": 19.5
       }
     },
@@ -246,12 +259,32 @@
     },
     {
       "part": {
+        "name": "cannon2_dm"
+      }
+    },
+    {
+      "part": {
+        "name": "cannon3_dm"
+      }
+    },
+    {
+      "part": {
         "name": "cover1_dm"
       }
     },
     {
       "part": {
         "name": "cover2_dm"
+      }
+    },
+    {
+      "part": {
+        "name": "cover5_dm"
+      }
+    },
+    {
+      "part": {
+        "name": "cover6_dm"
       }
     },
     {
@@ -2091,7 +2124,9 @@
   },
   "Sound": {
     "Engine": "engine05_R11_N1_WEP",
-    "gun": "gun_default"
+    "gun": "gun_default",
+    "nozzleMoveSfx": "nozzle_moving_2",
+    "nozzleAngleThreshold": 0.3
   },
   "cockpit": [
     {
@@ -2206,7 +2241,9 @@
             "ilsSize": [0.24,0.24],
             "ilsOffsetForce": 0.0,
             "brightnessMult": 3.5,
-            "ilsColor": "#0aff0a78"
+            "ilsColor": "#0aff0a78",
+            "bloomForce": 0.115,
+            "lineWidthScale": 0.6
           }
         }
       }
@@ -2384,13 +2421,13 @@
       "maxloadMass": 2000.0
     },
     {
-      "maxloadMassLeftConsoles": 500.0
+      "maxloadMassLeftConsoles": 520.0
     },
     {
-      "maxloadMassRightConsoles": 500.0
+      "maxloadMassRightConsoles": 520.0
     },
     {
-      "maxDisbalance": 500.0
+      "maxDisbalance": 520.0
     },
     {
       "HideNodes": [
@@ -2525,6 +2562,9 @@
         },
         {
           "node": "su_infrared_flare_bp_50_60"
+        },
+        {
+          "node": "pylon_6"
         }
       ]
     },
@@ -2535,6 +2575,18 @@
         },
         {
           "node": "armor2_dm"
+        },
+        {
+          "node": "cover5_dm"
+        },
+        {
+          "node": "cannon2_dm"
+        },
+        {
+          "node": "cover6_dm"
+        },
+        {
+          "node": "cannon3_dm"
         }
       ]
     },
@@ -2570,9 +2622,6 @@
             },
             {
               "ShowNodes": [
-                {
-                  "node": "pylon_fueltank"
-                },
                 {
                   "node": "su_infrared_flare_pkvp_23"
                 },
@@ -2995,11 +3044,20 @@
                 "node": "apu_68um_003"
               }
             ],
+            "ShowDmParts": [
+              {
+                "node": "cover5_dm"
+              },
+              {
+                "node": "cannon2_dm"
+              }
+            ],
             "Weapon": {
               "trigger": "additional gun",
               "blk": "gameData/Weapons/cannonGSh_23L.blk",
               "emitter": "flare3",
               "flash": "flare3",
+              "dm": "cannon2_dm",
               "bullets": 250,
               "spread": 1.5,
               "traceOffset": 1,
@@ -3690,11 +3748,20 @@
                 "node": "apu_68um_004"
               }
             ],
+            "ShowDmParts": [
+              {
+                "node": "cover6_dm"
+              },
+              {
+                "node": "cannon3_dm"
+              }
+            ],
             "Weapon": {
               "trigger": "additional gun",
               "blk": "gameData/Weapons/cannonGSh_23L.blk",
               "emitter": "flare5",
               "flash": "flare5",
+              "dm": "cannon3_dm",
               "bullets": 250,
               "spread": 1.5,
               "traceOffset": 1,
@@ -3913,17 +3980,7 @@
     },
     {
       "replace_tex": {
-        "from": "mig_23mla_dmg*"
-      }
-    },
-    {
-      "replace_tex": {
         "from": "mig_23mla_n*"
-      }
-    },
-    {
-      "replace_tex": {
-        "from": "mig_23mla_n_dmg*"
       }
     }
   ],
@@ -3935,6 +3992,21 @@
     "chuteFlapVarName": "fire_chute",
     "chuteTimeScaleParam": "chute_time_scale",
     "chuteFallSpeed": 1.0
+  },
+  "bailout": {
+    "buttonHoldTime": 1.0,
+    "wreckSpeed": 10.0,
+    "wreckDir": [-1.0,1.0,0.0],
+    "seatEjectDelay": 0.5,
+    "seatVel": [-10.0,20.0,0.0],
+    "minHeight": 0.0,
+    "minSpeed": 0.0,
+    "hasSafeExit": true,
+    "wreck": "blister1",
+    "hide": "seat_01",
+    "seat": "seat_01",
+    "fxEmitter": "blister1",
+    "fxType": "catapult_expl_ejection"
   },
   "cutting": {
     "emtr_break_wing1_l_from": [-0.992083,0.564914,1.58065],

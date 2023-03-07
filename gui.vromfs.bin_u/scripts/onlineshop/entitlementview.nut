@@ -1,3 +1,4 @@
+//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 //checked for explicitness
 #no-root-fallback
@@ -7,6 +8,7 @@ let { getEntitlementConfig, getEntitlementName } = require("%scripts/onlineShop/
 let { getUnitRole } = require("%scripts/unit/unitInfoTexts.nut")
 let globalCallbacks = require("%sqDagui/globalCallbacks/globalCallbacks.nut")
 let { getUnlockNameText } = require("%scripts/unlocks/unlocksViewModule.nut")
+let { getUnlockTypeById } = require("unlocks")
 
 let template = "%gui/items/trophyDesc.tpl"
 let singleItemIconLayer = "item_place_single"
@@ -44,7 +46,7 @@ let getEntitlementGiftView = @(entitlement) (entitlement?.entitlementGift ?? [])
 })
 
 let getUnlockView = @(entitlement) (entitlement?.unlockGift ?? []).map(function(unlockId) {
-  let unlockType = ::get_unlock_type_by_id(unlockId)
+  let unlockType = getUnlockTypeById(unlockId)
   let typeValid = unlockType >= 0
   let unlockTypeText = typeValid ? ::get_name_by_unlock_type(unlockType) : "unknown"
 
@@ -135,7 +137,7 @@ let getUnitsGiftView = @(entitlement, params) (entitlement?.aircraftGift ?? []).
     classIco = classIco,
     shopItemType = shopItemType,
     unitPlate = unitPlate,
-    commentText = isBought? colorize("badTextColor", loc(receiveOnce)) : null
+    commentText = isBought ? colorize("badTextColor", loc(receiveOnce)) : null
     buttons = buttons
     buttonsCount = buttons.len()
   }
@@ -162,7 +164,7 @@ local function getEntitlementView(entitlement, params = {}) {
 
 let generateLayers = function(layersArray) {
   let offsetByItem = ::LayersIcon.getOffset(layersArray.len(), MIN_ITEMS_OFFSET, MAX_ITEMS_OFFSET)
-  let offsetAllItems = (layersArray.len()-1) / 2.0
+  let offsetAllItems = (layersArray.len() - 1) / 2.0
   let res = layersArray.map(function(imageLayer, idx) {
     return ::LayersIcon.genDataFromLayer(
       { x = $"({offsetByItem} * {idx - offsetAllItems})@itemWidth", w = "1@itemWidth", h = "1@itemWidth" },

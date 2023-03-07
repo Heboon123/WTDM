@@ -21,6 +21,9 @@
     "haveCCIPForGun": true
   },
   {
+    "haveCCRPForGun": true
+  },
+  {
     "haveCCRPForBombs": true
   },
   {
@@ -48,13 +51,13 @@
     "startExhaustFxType": "jet_start_exhaust"
   },
   {
+    "disableExhaustFxIfContrailIsActive": true
+  },
+  {
     "gyroscopicSightOverSensors": true
   },
   {
     "type": "typeFighter"
-  },
-  {
-    "paratrooper": "usa_para"
   },
   {
     "overheatBlk": "gameData/FlightModels/dm/overheat.blk"
@@ -94,6 +97,9 @@
   },
   {
     "autopilotImpl": "FBW"
+  },
+  {
+    "paratrooper": "usa_irvin_i_24_ejection_para"
   },
   {
     "DamageParts": {
@@ -3040,8 +3046,8 @@
   },
   {
     "attach": {
-      "pilot1": "pilot_it_late_500",
-      "pilot2": "pilot_it_late_500"
+      "pilot2": "pilot_it_late_500",
+      "pilot1": "pilot_it_late_500"
     }
   },
   {
@@ -3052,7 +3058,9 @@
   {
     "Sound": {
       "Engine": "engine05_04_J79GE_N1_WEP",
-      "gun": "gun_default"
+      "gun": "gun_default",
+      "nozzleMoveSfx": "nozzle_moving_2",
+      "nozzleAngleThreshold": 0.3
     }
   },
   {
@@ -3182,7 +3190,7 @@
               "textureArea": [0.0,0.0,0.5,0.5],
               "page": {
                 "type": "radar",
-                "radarScale": 1.3
+                "radarScale": 1.01
               }
             }
           },
@@ -3191,7 +3199,7 @@
               "textureArea": [0.5,0.5,1.0,1.0],
               "page": {
                 "type": "rwr",
-                "radarScale": 3.4
+                "radarScale": 1.0
               }
             }
           },
@@ -4678,7 +4686,7 @@
       },
       {
         "sensor": {
-          "blk": "gameData/sensors/us_an_apr_25.blk"
+          "blk": "gameData/sensors/jp_j_apr_6.blk"
         }
       }
     ]
@@ -4918,17 +4926,7 @@
       },
       {
         "replace_tex": {
-          "from": "f_4ej_kai_c_dmg*"
-        }
-      },
-      {
-        "replace_tex": {
           "from": "f_4ej_kai_n*"
-        }
-      },
-      {
-        "replace_tex": {
-          "from": "f_4ej_kai_n_dmg*"
         }
       }
     ]
@@ -4942,18 +4940,62 @@
     }
   },
   {
-    "default_skin_tomoe": [
+    "default_skin_tomoe": {
+      "replace_tex": {
+        "from": "f_4ej_kai_c*",
+        "to": "f_4ej_kai_c_tomoe*"
+      }
+    }
+  },
+  {
+    "bailout": [
       {
-        "replace_tex": {
-          "from": "f_4ej_kai_c*",
-          "to": "f_4ej_kai_c_tomoe*"
-        }
+        "buttonHoldTime": 1.0
       },
       {
-        "replace_tex": {
-          "from": "f_4ej_kai_c_dmg*",
-          "to": "f_4ej_kai_c_tomoe_dmg*"
-        }
+        "wreckSpeed": 10.0
+      },
+      {
+        "wreckDir": [-1.0,1.0,0.0]
+      },
+      {
+        "seatEjectDelay": 0.5
+      },
+      {
+        "ejectInterval": 0.7
+      },
+      {
+        "seatVel": [-10.0,20.0,0.0]
+      },
+      {
+        "minHeight": 0.0
+      },
+      {
+        "minSpeed": 0.0
+      },
+      {
+        "hasSafeExit": true
+      },
+      {
+        "wreck": "blister1"
+      },
+      {
+        "wreck": "blister2"
+      },
+      {
+        "seat": "seat_02"
+      },
+      {
+        "seat": "seat_01"
+      },
+      {
+        "fxEmitter": "blister1"
+      },
+      {
+        "fxEmitter": "blister2"
+      },
+      {
+        "fxType": "catapult_expl_ejection"
       }
     ]
   },

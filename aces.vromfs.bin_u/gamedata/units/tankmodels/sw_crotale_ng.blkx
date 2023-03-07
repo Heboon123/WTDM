@@ -18,7 +18,7 @@
     "collisionSphere1": [5.0,2.0,0.0,1.0]
   },
   {
-    "exhaustFx": "tank_exhaust"
+    "exhaustFx": "tank_exhaust_med"
   },
   {
     "damagedExhaustFx": "tank_broken_exhaust"
@@ -177,6 +177,20 @@
           "type": "engineFan",
           "turnSpeed": 1.0,
           "node": "bone_roll_engine_04"
+        }
+      },
+      {
+        "device": {
+          "type": "engineFan",
+          "turnSpeed": 1.0,
+          "node": "bone_roll_engine_05"
+        }
+      },
+      {
+        "device": {
+          "type": "engineFan",
+          "turnSpeed": 1.0,
+          "node": "bone_roll_engine_06"
         }
       },
       {
@@ -2340,73 +2354,135 @@
     "class_tags": []
   },
   {
-    "commonWeapons": {
-      "Weapon": {
-        "trigger": "gunner0",
-        "triggerGroup": "primary",
-        "blk": "gameData/Weapons/groundModels_weapons/163mm_vt_1_launcher_user_cannon.blk",
-        "flash": "emtr_gun_flame_01",
-        "useEmitter": true,
-        "emitter": "bone_rocket_01",
-        "emitterGenRange": [1,8],
-        "emitterGenFmt": "bone_rocket_%02d",
-        "ammoDpGenFmt": "ammo_turret_%02d_dm",
-        "recoilMultiplier": 0.0,
-        "stopForFire": true,
-        "maxSpeedForFire": 5.0,
-        "maxAdditionalPitch": 0.0,
-        "createGunEffects": true,
-        "defaultYaw": 0.0,
-        "defaultPitch": 0.0,
-        "barrelDP": "gun_barrel_dm",
-        "speedYaw": 85.0,
-        "speedPitch": 40.0,
-        "fireConeAngle": 1.0,
-        "isBulletBelt": false,
-        "bullets": 8,
-        "salvoAmount": 100.0,
-        "ChainfireTime": 0.0,
-        "DelayAfterShoot": 5.0,
-        "AttackMaxDistance": 1000.0,
-        "AttackMaxRadius": 1000.0,
-        "AttackMaxHeight": 1000.0,
-        "accuracyAir": 0.0,
-        "accuracyGnd": 1.5,
-        "errMeasureVel": 0.0,
-        "errMeasureVelFast": 0.0,
-        "errMeasureVelFwdShift": 0.0,
-        "errMeasureVelDir": 0.0,
-        "errTargettingOn100kmph": 0.0,
-        "errTargetting": 3.0,
-        "errExplTime": 0.0,
-        "turret": {
-          "head": "bone_turret",
-          "gun": "bone_gun",
-          "gunnerDm": "gunner_dm"
-        },
-        "limits": {
-          "yaw": [-180.0,180.0],
-          "pitch": [-8.0,80.0]
+    "commonWeapons": [
+      {
+        "remotelyGuidedWeaponsMax": 1
+      },
+      {
+        "Weapon": {
+          "dummy": true,
+          "trigger": "gunner0",
+          "triggerGroup": "primary",
+          "blk": "gameData/Weapons/dummy_weapon.blk",
+          "emitter": "bone_gun",
+          "aimForOperatedShell": true,
+          "defaultYaw": 0.0,
+          "defaultPitch": 0.0,
+          "speedYaw": 85.0,
+          "speedPitch": 40.0,
+          "bullets": 1,
+          "turret": {
+            "head": "bone_turret",
+            "gun": "bone_roll_01",
+            "rotatedTurret": "bone_turret",
+            "horDriveDm": "drive_turret_h_dm"
+          },
+          "limits": {
+            "yaw": [-180.0,180.0],
+            "pitch": [-8.0,80.0]
+          },
+          "gunStabilizer": {
+            "hasVerticalGunFreeMode": false,
+            "hasHorizontal": true,
+            "horizontalOmegaMult": 1.0,
+            "horizontalSpeedLimitKPH": 75.0,
+            "hasVertical": true,
+            "verticalOmegaMult": 1.0,
+            "verticalSpeedLimitKPH": 75.0,
+            "speedFromVehicleVerticalMult": -1.0,
+            "errorKPHToDegrees": [
+              {
+                "row": [5.0,0.0]
+              },
+              {
+                "row": [25.0,0.015]
+              },
+              {
+                "row": [35.0,0.02]
+              },
+              {
+                "row": [45.0,0.1]
+              },
+              {
+                "row": [50.0,0.3]
+              }
+            ]
+          }
         }
       },
-      "animatedBones": [
-        {
-          "node": "antenna_target_location"
-        },
-        {
-          "node": "antenna_target_location_mount"
-        },
-        {
-          "node": "antenna_target_tagging"
-        },
-        {
-          "node": "antenna_target_tagging_mount"
-        },
-        {
-          "node": "bone_roll_01"
+      {
+        "Weapon": {
+          "trigger": "gunner1",
+          "triggerGroup": "primary",
+          "blk": "gameData/Weapons/groundModels_weapons/163mm_vt_1_launcher_user_cannon.blk",
+          "flash": "emtr_gun_flame_01",
+          "useEmitter": true,
+          "emitter": "bone_rocket_01",
+          "emitterGenRange": [1,8],
+          "emitterGenFmt": "bone_rocket_%02d",
+          "ammoDpGenFmt": "ammo_turret_%02d_dm",
+          "recoilMultiplier": 0.0,
+          "stopForFire": true,
+          "maxSpeedForFire": 5.0,
+          "maxAdditionalPitch": 0.0,
+          "createGunEffects": true,
+          "defaultYaw": 0.0,
+          "defaultPitch": 0.0,
+          "barrelDP": "gun_barrel_dm",
+          "speedYaw": 85.0,
+          "speedPitch": 40.0,
+          "fireConeAngle": 1.0,
+          "isBulletBelt": false,
+          "bullets": 8,
+          "salvoAmount": 100.0,
+          "ChainfireTime": 0.0,
+          "DelayAfterShoot": 5.0,
+          "AttackMaxDistance": 1000.0,
+          "AttackMaxRadius": 1000.0,
+          "AttackMaxHeight": 1000.0,
+          "accuracyAir": 0.0,
+          "accuracyGnd": 1.5,
+          "errMeasureVel": 0.0,
+          "errMeasureVelFast": 0.0,
+          "errMeasureVelFwdShift": 0.0,
+          "errMeasureVelDir": 0.0,
+          "errTargettingOn100kmph": 0.0,
+          "errTargetting": 3.0,
+          "errExplTime": 0.0,
+          "turret": {
+            "head": "bone_turret",
+            "gun": "bone_gun_01",
+            "gunnerDm": "gunner_dm",
+            "rotatedTurret": "bone_turret",
+            "verDriveDm": "drive_turret_v_dm",
+            "horDriveDm": "drive_turret_h_dm"
+          },
+          "limits": {
+            "yaw": [-180.0,180.0],
+            "pitch": [-8.0,80.0]
+          }
         }
-      ]
-    }
+      },
+      {
+        "animatedBones": [
+          {
+            "node": "antenna_target_location"
+          },
+          {
+            "node": "antenna_target_location_mount"
+          },
+          {
+            "node": "antenna_target_tagging"
+          },
+          {
+            "node": "antenna_target_tagging_mount"
+          },
+          {
+            "node": "bone_roll_01"
+          }
+        ]
+      }
+    ]
   },
   {
     "weapon_presets": {
@@ -3628,10 +3704,10 @@
         "dmName": "gunner_dm"
       },
       {
-        "deadHeadAttitudeMin": -40.0
+        "deadHeadAttitudeMin": -55.0
       },
       {
-        "deadHeadAttitudeMax": -55.0
+        "deadHeadAttitudeMax": -40.0
       },
       {
         "ikNode": {
@@ -3704,10 +3780,10 @@
         "dmName": "loader_dm"
       },
       {
-        "deadHeadAttitudeMin": -40.0
+        "deadHeadAttitudeMin": -55.0
       },
       {
-        "deadHeadAttitudeMax": -55.0
+        "deadHeadAttitudeMax": -40.0
       },
       {
         "ikNode": {
@@ -3780,10 +3856,10 @@
         "dmName": "commander_dm"
       },
       {
-        "deadHeadAttitudeMin": -40.0
+        "deadHeadAttitudeMin": -55.0
       },
       {
-        "deadHeadAttitudeMax": -55.0
+        "deadHeadAttitudeMax": -40.0
       },
       {
         "ikNode": {
@@ -3856,10 +3932,10 @@
         "dmName": "driver_dm"
       },
       {
-        "deadHeadAttitudeMin": -40.0
+        "deadHeadAttitudeMin": -55.0
       },
       {
-        "deadHeadAttitudeMax": -55.0
+        "deadHeadAttitudeMax": -40.0
       },
       {
         "ikNode": {

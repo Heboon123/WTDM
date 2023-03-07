@@ -2,6 +2,7 @@ options indenting = 4
 options no_unused_block_arguments = false
 options no_unused_function_arguments = false
 options no_aot = true
+options strict_smart_pointers = true
 
 module constant_expression shared private
 
@@ -58,24 +59,24 @@ class ConstantExpressionMacro : AstFunctionAnnotation
         macro_verify(expr.func!=null,compiling_program(),expr.at,"expecting inferred function")
         var argi : array<int>
         var anni = -1
-        for ann,idd in expr.func.annotations,range(100500)
+        for ann,idd in expr.func.annotations,count()
             if ann.annotation.name=="constant_expression"
                 anni = idd
                 for arg in ann.arguments
                     macro_verify(arg.basicType==Type tBool, compiling_program(), expr.at,"unsupported argument type {arg.basicType}")
-                    for farg,fidx in expr.func.arguments,range(100500)
+                    for farg,fidx in expr.func.arguments,count()
                         if farg.name==arg.name
                             if !isConstantExpression(expr.arguments[fidx])
                                 if arg.bValue
                                     compiling_program() |> macro_error(expr.at,"function {expr.func.name} argument {arg.name} is not a compilation time constant")
-                                return [[ExpressionPtr]]
+                                return <- [[ExpressionPtr]]
                             argi |> push(fidx)
                 break
         argi |> sort_unique
         argi |> reverse
         if empty(argi)
-            return [[ExpressionPtr]]
-        var func_copy <- clone_function(FunctionPtr(expr.func))
+            return <- [[ExpressionPtr]]
+        var inscope func_copy <- clone_function(FunctionPtr(expr.func))
         var func_name = "{func_copy.name}`constant_expression"
         for i in argi
             let fhash = hash(describe(expr.arguments[i]))
@@ -97,7 +98,7 @@ class ConstantExpressionMacro : AstFunctionAnnotation
         func_copy.flags |= FunctionFlags generated
         func_copy.annotations |> erase(anni)
         compiling_module() |> add_function(func_copy)
-        var new_call <- clone_expression(expr)
+        var inscope new_call <- clone_expression(expr)
         var ncall = new_call as ExprCall
         ncall.name := func_name
         for i in argi
