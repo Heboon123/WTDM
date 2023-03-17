@@ -112,37 +112,11 @@
       }
     ],
     "mission": {
-      "level": "levels/avg_football_field.bin",
-      "type": "domination",
-      "restoreType": "attempts",
-      "optionalTakeOff": false,
+      "type": "singleMission",
+      "level": "levels/water.bin",
       "environment": "Day",
-      "weather": "clear",
-      "locName": "missions/tank_football_Tdm",
-      "locDesc": "missions/tank_football_Tdm/desc",
-      "gt_football": true,
-      "scoreLimit": 20,
-      "timeLimit": 25,
-      "deathPenaltyMul": 0.0,
-      "randomSpawnTeams": false,
-      "isBotsAllowed": false,
-      "useTankBots": false,
-      "footballScoreGoal": 100.0,
-      "footballScoreAssist": 50.0,
-      "footballScoreSave": 75.0,
-      "colorTeamA": "#f28b43ff",
-      "colorTeamB": "#179d98ff",
-      "difficulty": "arcade",
-      "isPhysPredictionEnabled": true,
-      "isPreciseCollisionDetectionEnabled": true,
-      "useCustomOnlineUnlocksOnly": true,
-      "countryFlagTeamA": "country_invisible",
-      "countryFlagTeamB": "country_invisible",
-      "allowedUnitTypes": {
-        "isTanksAllowed": true
-      }
-    },
-    "spectator_points": []
+      "weather": "hazy"
+    }
   },
   "imports": [],
   "triggers": {
@@ -169,8 +143,9 @@
             "killOutOfBattleArea": true,
             "killArea": false,
             "detectionArea": false,
-            "newGridHorizontalCellCount": 0,
-            "area": "battle_area"
+            "airMapArea": false,
+            "area": "battle_area",
+            "newGridHorizontalCellCount": 0
           }
         },
         {
@@ -472,6 +447,9 @@
               "radius": -1.0,
               "onlyOnePlayerPerSpawnPoint": false,
               "resetStrictSpawnIndex": true,
+              "forceCreate": false,
+              "replaceAreas": false,
+              "ignoreTeamsOnReuse": false,
               "target": "@t1_respawn_name",
               "team": "A",
               "tags": {
@@ -498,6 +476,9 @@
               "radius": -1.0,
               "onlyOnePlayerPerSpawnPoint": false,
               "resetStrictSpawnIndex": true,
+              "forceCreate": false,
+              "replaceAreas": false,
+              "ignoreTeamsOnReuse": false,
               "target": "@t2_respawn_name",
               "team": "B",
               "tags": {
@@ -524,6 +505,9 @@
               "radius": -1.0,
               "onlyOnePlayerPerSpawnPoint": false,
               "resetStrictSpawnIndex": false,
+              "forceCreate": false,
+              "replaceAreas": false,
+              "ignoreTeamsOnReuse": false,
               "target": "t1_respawn_keeper",
               "team": "A",
               "separate_fuel_time": false,
@@ -553,6 +537,9 @@
               "radius": -1.0,
               "onlyOnePlayerPerSpawnPoint": false,
               "resetStrictSpawnIndex": false,
+              "forceCreate": false,
+              "replaceAreas": false,
+              "ignoreTeamsOnReuse": false,
               "target": "t2_respawn_keeper",
               "team": "B",
               "separate_fuel_time": false,
@@ -600,6 +587,9 @@
               "radius": -1.0,
               "onlyOnePlayerPerSpawnPoint": false,
               "resetStrictSpawnIndex": false,
+              "forceCreate": false,
+              "replaceAreas": false,
+              "ignoreTeamsOnReuse": false,
               "target": "@t1_respawn_name",
               "team": "A",
               "disableAfter": 0,
@@ -627,6 +617,9 @@
               "radius": -1.0,
               "onlyOnePlayerPerSpawnPoint": false,
               "resetStrictSpawnIndex": false,
+              "forceCreate": false,
+              "replaceAreas": false,
+              "ignoreTeamsOnReuse": false,
               "target": "@t2_respawn_name",
               "team": "B",
               "disableAfter": 0,
@@ -654,6 +647,9 @@
               "radius": -1.0,
               "onlyOnePlayerPerSpawnPoint": false,
               "resetStrictSpawnIndex": false,
+              "forceCreate": false,
+              "replaceAreas": false,
+              "ignoreTeamsOnReuse": false,
               "target": "t1_respawn_keeper",
               "team": "A",
               "disableAfter": 0,
@@ -681,6 +677,9 @@
               "radius": -1.0,
               "onlyOnePlayerPerSpawnPoint": false,
               "resetStrictSpawnIndex": false,
+              "forceCreate": false,
+              "replaceAreas": false,
+              "ignoreTeamsOnReuse": false,
               "target": "t2_respawn_keeper",
               "team": "B",
               "disableAfter": 0,
@@ -708,6 +707,9 @@
               "radius": -1.0,
               "onlyOnePlayerPerSpawnPoint": false,
               "resetStrictSpawnIndex": false,
+              "forceCreate": false,
+              "replaceAreas": false,
+              "ignoreTeamsOnReuse": false,
               "target": "t1_ingame_respawn",
               "team": "A",
               "tags": {
@@ -734,6 +736,9 @@
               "radius": -1.0,
               "onlyOnePlayerPerSpawnPoint": false,
               "resetStrictSpawnIndex": false,
+              "forceCreate": false,
+              "replaceAreas": false,
+              "ignoreTeamsOnReuse": false,
               "target": "t2_ingame_respawn",
               "team": "B",
               "separate_fuel_time": false,
@@ -809,11 +814,11 @@
               "object_marking": 0,
               "object_var_name": "",
               "object_var_comp_op": "equal",
-              "object_var_value": 0,
               "func": "notLess",
               "value": 1,
               "object": "all_players_squad",
               "unit_type_ex": "isActive",
+              "object_var_value": 0,
               "var": "min_players_count"
             }
           },
@@ -823,11 +828,11 @@
               "object_marking": 0,
               "object_var_name": "",
               "object_var_comp_op": "equal",
-              "object_var_value": 0,
               "func": "notLess",
               "value": 1,
               "object": "all_players_squad",
               "unit_type_ex": "isActive",
+              "object_var_value": 0,
               "var": "min_players_count"
             }
           },
@@ -1139,10 +1144,10 @@
           {
             "triggerEnable": [
               {
-                "target": "t1_leads_by_2_goals"
+                "target": "t1_near_win_by_advantage"
               },
               {
-                "target": "t2_leads_by_2_goals"
+                "target": "t2_near_win_by_advantage"
               }
             ]
           },
@@ -1225,7 +1230,7 @@
         },
         "else_actions": []
       },
-      "t1_leads_by_2_goals": {
+      "t1_near_win_by_advantage": {
         "is_enabled": false,
         "comments": "",
         "props": {
@@ -1241,8 +1246,9 @@
         "conditions": {
           "varCompareInt": {
             "var_value": "t1_points_advantage",
-            "value": 2,
-            "comparasion_func": "notLess"
+            "value": 0,
+            "comparasion_func": "notLess",
+            "var_value_other": "points_advantage_for_t1_near_win"
           }
         },
         "actions": [
@@ -1254,7 +1260,7 @@
           {
             "playHint": {
               "hintType": "standard",
-              "name": "hints/football_ally_leads_by_2_goals",
+              "name": "@hint_ally_near_win_by_advantage",
               "action": "show",
               "shouldFadeOut": true,
               "time": 4.0,
@@ -1270,7 +1276,7 @@
           {
             "playHint": {
               "hintType": "standard",
-              "name": "hints/football_enemy_leads_by_2_goals",
+              "name": "@hint_enemy_near_win_by_advantage",
               "action": "show",
               "shouldFadeOut": true,
               "time": 4.0,
@@ -1286,11 +1292,11 @@
         ],
         "else_actions": {
           "triggerDisable": {
-            "target": "t1_leads_by_2_goals"
+            "target": "t1_near_win_by_advantage"
           }
         }
       },
-      "t2_leads_by_2_goals": {
+      "t2_near_win_by_advantage": {
         "is_enabled": false,
         "comments": "",
         "props": {
@@ -1306,8 +1312,9 @@
         "conditions": {
           "varCompareInt": {
             "var_value": "t1_points_advantage",
-            "value": -2,
-            "comparasion_func": "notMore"
+            "value": 0,
+            "comparasion_func": "notMore",
+            "var_value_other": "points_advantage_for_t2_near_win"
           }
         },
         "actions": [
@@ -1319,7 +1326,7 @@
           {
             "playHint": {
               "hintType": "standard",
-              "name": "hints/football_ally_leads_by_2_goals",
+              "name": "@hint_ally_near_win_by_advantage",
               "action": "show",
               "shouldFadeOut": true,
               "time": 4.0,
@@ -1335,7 +1342,7 @@
           {
             "playHint": {
               "hintType": "standard",
-              "name": "hints/football_enemy_leads_by_2_goals",
+              "name": "@hint_enemy_near_win_by_advantage",
               "action": "show",
               "shouldFadeOut": true,
               "time": 4.0,
@@ -1351,7 +1358,7 @@
         ],
         "else_actions": {
           "triggerDisable": {
-            "target": "t2_leads_by_2_goals"
+            "target": "t2_near_win_by_advantage"
           }
         }
       }
@@ -1514,15 +1521,29 @@
           {
             "unitPlayEffect": {
               "effect_type": "specify",
-              "effect": "tank_explosion",
+              "effect": "firework_score_turquoise",
               "offset": [0.0,0.0,0.0],
-              "radiusOffset": [0.0,0.0],
               "show": true,
               "attach": false,
               "scale": 1.3,
               "loopSpawn": true,
               "delay": [1.0,1.0],
-              "target": "ball"
+              "target": "ball",
+              "radiusOffset": [0.0,0.0]
+            }
+          },
+          {
+            "unitPlayEffect": {
+              "effect_type": "specify",
+              "effect": "firework_score_ginger",
+              "offset": [0.0,0.0,0.0],
+              "show": true,
+              "attach": false,
+              "scale": 1.0,
+              "loopSpawn": true,
+              "delay": [1.0,1.0],
+              "target": "ball",
+              "radiusOffset": [0.0,0.0]
             }
           },
           {
@@ -1666,98 +1687,150 @@
             "var_value_other": "t2_points"
           }
         },
-        "actions": {
-          "playHint": {
-            "hintType": "standard",
-            "name": "hints/football_overtime",
-            "action": "show",
-            "shouldFadeOut": true,
-            "time": 3.0,
-            "priority": 1,
-            "isOverFade": false,
-            "target_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "team": "Both"
-          },
-          "unitPlayEffect": {
-            "effect_type": "specify",
-            "effect": "tank_explosion",
-            "offset": [0.0,0.0,0.0],
-            "radiusOffset": [0.0,0.0],
-            "show": true,
-            "attach": false,
-            "scale": 1.3,
-            "loopSpawn": true,
-            "delay": [1.0,1.0],
-            "target": "ball"
-          },
-          "triggerEnable": {
-            "target": "common_goal"
-          },
-          "wait": {
-            "time": 6.0
-          },
-          "varSetInt": {
-            "value": 90,
-            "var": "current_timer",
-            "input_var": "half_overtime_time"
-          }
-        },
-        "else_actions": {
-          "triggerDisable": [
-            {
-              "target": "half_overtime_end"
-            },
-            {
-              "target": "overtime_end"
+        "actions": [
+          {
+            "playHint": {
+              "hintType": "standard",
+              "name": "hints/football_overtime",
+              "action": "show",
+              "shouldFadeOut": true,
+              "time": 3.0,
+              "priority": 1,
+              "isOverFade": false,
+              "target_marking": 0,
+              "object_var_name": "",
+              "object_var_comp_op": "equal",
+              "object_var_value": 0,
+              "team": "Both"
             }
-          ],
-          "playHint": {
-            "hintType": "standard",
-            "name": "hints/football_fulltime",
-            "action": "show",
-            "shouldFadeOut": true,
-            "time": 3.0,
-            "priority": 1,
-            "isOverFade": false,
-            "target_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0
           },
-          "unitPlayEffect": {
-            "effect_type": "specify",
-            "effect": "tank_explosion",
-            "offset": [0.0,0.0,0.0],
-            "radiusOffset": [0.0,0.0],
-            "show": true,
-            "attach": false,
-            "scale": 1.3,
-            "loopSpawn": true,
-            "delay": [1.0,1.0],
-            "target": "ball"
+          {
+            "unitPlayEffect": {
+              "effect_type": "specify",
+              "effect": "firework_score_turquoise",
+              "offset": [0.0,0.0,0.0],
+              "show": true,
+              "attach": false,
+              "scale": 1.3,
+              "loopSpawn": true,
+              "delay": [1.0,1.0],
+              "target": "ball",
+              "radiusOffset": [0.0,0.0]
+            }
           },
-          "unitPutToSleep": {
-            "target": "ball"
+          {
+            "unitPlayEffect": {
+              "effect_type": "specify",
+              "effect": "firework_score_ginger",
+              "offset": [0.0,0.0,0.0],
+              "show": true,
+              "attach": false,
+              "scale": 1.0,
+              "loopSpawn": true,
+              "delay": [1.0,1.0],
+              "target": "ball",
+              "radiusOffset": [0.0,0.0]
+            }
           },
-          "unitSetProperties": {
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "object": "all_players_squad",
-            "cannotShoot": true,
-            "cannotMove": true
+          {
+            "triggerEnable": {
+              "target": "common_goal"
+            }
           },
-          "wait": {
-            "time": 5.0
+          {
+            "wait": {
+              "time": 6.0
+            }
           },
-          "triggerEnable": {
-            "target": "check_winner"
+          {
+            "varSetInt": {
+              "value": 90,
+              "var": "current_timer",
+              "input_var": "half_overtime_time"
+            }
           }
-        }
+        ],
+        "else_actions": [
+          {
+            "triggerDisable": [
+              {
+                "target": "half_overtime_end"
+              },
+              {
+                "target": "overtime_end"
+              }
+            ]
+          },
+          {
+            "playHint": {
+              "hintType": "standard",
+              "name": "hints/football_fulltime",
+              "action": "show",
+              "shouldFadeOut": true,
+              "time": 3.0,
+              "priority": 1,
+              "isOverFade": false,
+              "target_marking": 0,
+              "object_var_name": "",
+              "object_var_comp_op": "equal",
+              "object_var_value": 0
+            }
+          },
+          {
+            "unitPlayEffect": {
+              "effect_type": "specify",
+              "effect": "firework_score_turquoise",
+              "offset": [0.0,0.0,0.0],
+              "show": true,
+              "attach": false,
+              "scale": 1.3,
+              "loopSpawn": true,
+              "delay": [1.0,1.0],
+              "target": "ball",
+              "radiusOffset": [0.0,0.0]
+            }
+          },
+          {
+            "unitPlayEffect": {
+              "effect_type": "specify",
+              "effect": "firework_score_ginger",
+              "offset": [0.0,0.0,0.0],
+              "show": true,
+              "attach": false,
+              "scale": 1.0,
+              "loopSpawn": true,
+              "delay": [1.0,1.0],
+              "target": "ball",
+              "radiusOffset": [0.0,0.0]
+            }
+          },
+          {
+            "unitPutToSleep": {
+              "target": "ball"
+            }
+          },
+          {
+            "unitSetProperties": {
+              "object_marking": 0,
+              "object_var_name": "",
+              "object_var_comp_op": "equal",
+              "object_var_value": 0,
+              "object": "all_players_squad",
+              "cannotShoot": true,
+              "cannotMove": true
+            }
+          },
+          {
+            "wait": {
+              "time": 5.0
+            }
+          },
+          {
+            "triggerEnable": {
+              "target": "check_winner"
+            }
+          }
+        ]
       },
       "half_overtime_end": {
         "is_enabled": true,
@@ -1825,15 +1898,29 @@
           {
             "unitPlayEffect": {
               "effect_type": "specify",
-              "effect": "tank_explosion",
+              "effect": "firework_score_turquoise",
               "offset": [0.0,0.0,0.0],
-              "radiusOffset": [0.0,0.0],
               "show": true,
               "attach": false,
               "scale": 1.3,
               "loopSpawn": true,
               "delay": [1.0,1.0],
-              "target": "ball"
+              "target": "ball",
+              "radiusOffset": [0.0,0.0]
+            }
+          },
+          {
+            "unitPlayEffect": {
+              "effect_type": "specify",
+              "effect": "firework_score_ginger",
+              "offset": [0.0,0.0,0.0],
+              "show": true,
+              "attach": false,
+              "scale": 1.0,
+              "loopSpawn": true,
+              "delay": [1.0,1.0],
+              "target": "ball",
+              "radiusOffset": [0.0,0.0]
             }
           },
           {
@@ -1893,59 +1980,87 @@
             "comparasion_func": "equal"
           }
         },
-        "actions": {
-          "varSetBool": {
-            "value": false,
-            "var": "match_in_progress"
+        "actions": [
+          {
+            "varSetBool": {
+              "value": false,
+              "var": "match_in_progress"
+            }
           },
-          "playHint": {
-            "hintType": "standard",
-            "name": "hints/football_fulltime",
-            "action": "show",
-            "shouldFadeOut": true,
-            "time": 3.0,
-            "priority": 1,
-            "isOverFade": false,
-            "target_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "team": "Both"
+          {
+            "playHint": {
+              "hintType": "standard",
+              "name": "hints/football_fulltime",
+              "action": "show",
+              "shouldFadeOut": true,
+              "time": 3.0,
+              "priority": 1,
+              "isOverFade": false,
+              "target_marking": 0,
+              "object_var_name": "",
+              "object_var_comp_op": "equal",
+              "object_var_value": 0,
+              "team": "Both"
+            }
           },
-          "playSound": {
-            "name": "football_event/referee_end",
-            "loop": false,
-            "start": true,
-            "team": "Both"
+          {
+            "playSound": {
+              "name": "football_event/referee_end",
+              "loop": false,
+              "start": true,
+              "team": "Both"
+            }
           },
-          "unitPlayEffect": {
-            "effect_type": "specify",
-            "effect": "tank_explosion",
-            "offset": [0.0,0.0,0.0],
-            "radiusOffset": [0.0,0.0],
-            "show": true,
-            "attach": false,
-            "scale": 1.3,
-            "loopSpawn": true,
-            "delay": [1.0,1.0],
-            "target": "ball"
+          {
+            "unitPlayEffect": {
+              "effect_type": "specify",
+              "effect": "firework_score_turquoise",
+              "offset": [0.0,0.0,0.0],
+              "show": true,
+              "attach": false,
+              "scale": 1.3,
+              "loopSpawn": true,
+              "delay": [1.0,1.0],
+              "target": "ball",
+              "radiusOffset": [0.0,0.0]
+            }
           },
-          "unitPutToSleep": {
-            "target": "ball"
+          {
+            "unitPlayEffect": {
+              "effect_type": "specify",
+              "effect": "firework_score_ginger",
+              "offset": [0.0,0.0,0.0],
+              "show": true,
+              "attach": false,
+              "scale": 1.0,
+              "loopSpawn": true,
+              "delay": [1.0,1.0],
+              "target": "ball",
+              "radiusOffset": [0.0,0.0]
+            }
           },
-          "unitSetProperties": {
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "object": "all_players_squad",
-            "cannotShoot": true,
-            "cannotMove": true
+          {
+            "unitPutToSleep": {
+              "target": "ball"
+            }
           },
-          "triggerEnable": {
-            "target": "check_winner"
+          {
+            "unitSetProperties": {
+              "object_marking": 0,
+              "object_var_name": "",
+              "object_var_comp_op": "equal",
+              "object_var_value": 0,
+              "object": "all_players_squad",
+              "cannotShoot": true,
+              "cannotMove": true
+            }
+          },
+          {
+            "triggerEnable": {
+              "target": "check_winner"
+            }
           }
-        },
+        ],
         "else_actions": []
       },
       "check_winner": {
@@ -1974,6 +2089,9 @@
             "moSetObjectiveStatus": {
               "target": "t1_football_score_the_goals",
               "status": 2,
+              "object_var_comp_op": "equal",
+              "object_var_name": "",
+              "object_marking": 0,
               "team": "A"
             }
           },
@@ -1981,6 +2099,9 @@
             "moSetObjectiveStatus": {
               "target": "t2_football_score_the_goals",
               "status": 3,
+              "object_var_comp_op": "equal",
+              "object_var_name": "",
+              "object_marking": 0,
               "team": "B"
             }
           },
@@ -1998,6 +2119,9 @@
             "moSetObjectiveStatus": {
               "target": "t1_football_score_the_goals",
               "status": 3,
+              "object_var_comp_op": "equal",
+              "object_var_name": "",
+              "object_marking": 0,
               "team": "A"
             }
           },
@@ -2005,6 +2129,9 @@
             "moSetObjectiveStatus": {
               "target": "t2_football_score_the_goals",
               "status": 2,
+              "object_var_comp_op": "equal",
+              "object_var_name": "",
+              "object_marking": 0,
               "team": "B"
             }
           },
@@ -2042,10 +2169,10 @@
             "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
-            "object_var_value": 0,
             "check_objects": "any",
             "object": "ball",
-            "target": "t2_goal"
+            "target": "t2_goal",
+            "object_var_value": 0
           },
           "varCompareBool": {
             "var_value": "match_in_progress",
@@ -2095,13 +2222,13 @@
               "effect_type": "specify",
               "effect": "firework_score_ginger",
               "offset": [0.0,0.0,0.0],
-              "radiusOffset": [0.0,0.0],
               "show": true,
               "attach": false,
               "scale": 1.0,
               "loopSpawn": true,
               "delay": [1.0,1.0],
-              "target": "ball"
+              "target": "ball",
+              "radiusOffset": [0.0,0.0]
             }
           },
           {
@@ -2137,10 +2264,10 @@
             "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
-            "object_var_value": 0,
             "check_objects": "any",
             "object": "ball",
-            "target": "t1_goal"
+            "target": "t1_goal",
+            "object_var_value": 0
           },
           "varCompareBool": {
             "var_value": "match_in_progress",
@@ -2190,13 +2317,13 @@
               "effect_type": "specify",
               "effect": "firework_score_turquoise",
               "offset": [0.0,0.0,0.0],
-              "radiusOffset": [0.0,0.0],
               "show": true,
               "attach": false,
               "scale": 1.0,
               "loopSpawn": true,
               "delay": [1.0,1.0],
-              "target": "ball"
+              "target": "ball",
+              "radiusOffset": [0.0,0.0]
             }
           },
           {
@@ -2240,12 +2367,12 @@
             "var_value": "t2_points"
           },
           "triggerEnable": {
-            "target": "t1_leads_by_3_goals"
+            "target": "t1_win_by_advantage"
           }
         },
         "else_actions": []
       },
-      "t1_leads_by_3_goals": {
+      "t1_win_by_advantage": {
         "is_enabled": false,
         "comments": "",
         "props": {
@@ -2261,8 +2388,9 @@
         "conditions": {
           "varCompareInt": {
             "var_value": "t1_points_advantage",
-            "value": 3,
-            "comparasion_func": "notLess"
+            "value": 0,
+            "comparasion_func": "notLess",
+            "var_value_other": "points_advantage_for_t1_win"
           }
         },
         "actions": [
@@ -2313,8 +2441,11 @@
           },
           {
             "moSetObjectiveStatus": {
-              "target": "t1_football_get_advantage_in_3_goals",
+              "target": "@objective_t1_win_by_advantage",
               "status": 2,
+              "object_var_comp_op": "equal",
+              "object_var_name": "",
+              "object_marking": 0,
               "team": "A"
             }
           },
@@ -2322,13 +2453,19 @@
             "moSetObjectiveStatus": {
               "target": "t2_football_score_the_goals",
               "status": 3,
+              "object_var_comp_op": "equal",
+              "object_var_name": "",
+              "object_marking": 0,
               "team": "B"
             }
           },
           {
             "moSetObjectiveStatus": {
-              "target": "t2_football_get_advantage_in_3_goals",
+              "target": "@objective_t2_win_by_advantage",
               "status": 3,
+              "object_var_comp_op": "equal",
+              "object_var_name": "",
+              "object_marking": 0,
               "team": "B"
             }
           },
@@ -2338,11 +2475,11 @@
         ],
         "else_actions": {
           "triggerEnable": {
-            "target": "t2_leads_by_3_goals"
+            "target": "t2_win_by_advantage"
           }
         }
       },
-      "t2_leads_by_3_goals": {
+      "t2_win_by_advantage": {
         "is_enabled": false,
         "comments": "",
         "props": {
@@ -2358,8 +2495,9 @@
         "conditions": {
           "varCompareInt": {
             "var_value": "t1_points_advantage",
-            "value": -3,
-            "comparasion_func": "notMore"
+            "value": 0,
+            "comparasion_func": "notMore",
+            "var_value_other": "points_advantage_for_t2_win"
           }
         },
         "actions": [
@@ -2410,8 +2548,11 @@
           },
           {
             "moSetObjectiveStatus": {
-              "target": "t2_football_get_advantage_in_3_goals",
+              "target": "@objective_t2_win_by_advantage",
               "status": 2,
+              "object_var_comp_op": "equal",
+              "object_var_name": "",
+              "object_marking": 0,
               "team": "B"
             }
           },
@@ -2419,13 +2560,19 @@
             "moSetObjectiveStatus": {
               "target": "t1_football_score_the_goals",
               "status": 3,
+              "object_var_comp_op": "equal",
+              "object_var_name": "",
+              "object_marking": 0,
               "team": "A"
             }
           },
           {
             "moSetObjectiveStatus": {
-              "target": "t1_football_get_advantage_in_3_goals",
+              "target": "@objective_t1_win_by_advantage",
               "status": 3,
+              "object_var_comp_op": "equal",
+              "object_var_name": "",
+              "object_marking": 0,
               "team": "A"
             }
           },
@@ -2504,6 +2651,9 @@
               "radius": -1.0,
               "onlyOnePlayerPerSpawnPoint": false,
               "resetStrictSpawnIndex": false,
+              "forceCreate": false,
+              "replaceAreas": false,
+              "ignoreTeamsOnReuse": false,
               "target": "t1_ingame_respawn",
               "team": "A",
               "disableAfter": 1,
@@ -2531,6 +2681,9 @@
               "radius": -1.0,
               "onlyOnePlayerPerSpawnPoint": false,
               "resetStrictSpawnIndex": false,
+              "forceCreate": false,
+              "replaceAreas": false,
+              "ignoreTeamsOnReuse": false,
               "target": "t2_ingame_respawn",
               "team": "B",
               "separate_fuel_time": false,
@@ -2619,14 +2772,14 @@
               "action": "show",
               "shouldFadeOut": true,
               "time": 3.0,
-              "priority": 2,
+              "priority": 3,
               "isOverFade": false,
               "target_marking": 0,
               "object_var_name": "",
               "object_var_comp_op": "equal",
               "object_var_value": 0,
-              "var_style": "playerId",
               "var_name": "mpPlayerIdGoal",
+              "var_style": "playerId",
               "team": "A"
             }
           },
@@ -2637,14 +2790,14 @@
               "action": "show",
               "shouldFadeOut": true,
               "time": 3.0,
-              "priority": 2,
+              "priority": 3,
               "isOverFade": false,
               "target_marking": 0,
               "object_var_name": "",
               "object_var_comp_op": "equal",
               "object_var_value": 0,
-              "var_style": "playerId",
               "var_name": "mpPlayerIdGoal",
+              "var_style": "playerId",
               "team": "B"
             }
           }
@@ -2685,8 +2838,8 @@
               "object_var_name": "",
               "object_var_comp_op": "equal",
               "object_var_value": 0,
-              "var_style": "playerId",
               "var_name": "mpPlayerIdGoal",
+              "var_style": "playerId",
               "team": "A"
             }
           },
@@ -2703,12 +2856,60 @@
               "object_var_name": "",
               "object_var_comp_op": "equal",
               "object_var_value": 0,
-              "var_style": "playerId",
               "var_name": "mpPlayerIdGoal",
+              "var_style": "playerId",
               "team": "B"
             }
           }
         ],
+        "else_actions": []
+      }
+    },
+    "saves": {
+      "isCategory": true,
+      "is_enabled": true,
+      "save_hint": {
+        "is_enabled": true,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": true
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 0.01
+          }
+        },
+        "conditions": {
+          "varCompareInt": {
+            "var_value": "mpPlayerIdSave",
+            "value": -1,
+            "comparasion_func": "more"
+          }
+        },
+        "actions": {
+          "playHint": {
+            "hintType": "standard",
+            "name": "hints/football_made_a_save",
+            "action": "show",
+            "shouldFadeOut": true,
+            "time": 3.0,
+            "priority": 2,
+            "isOverFade": false,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "var_name": "mpPlayerIdSave",
+            "var_style": "playerId",
+            "team": "Both"
+          },
+          "varSetInt": {
+            "value": -1,
+            "var": "mpPlayerIdSave"
+          }
+        },
         "else_actions": []
       }
     },
@@ -3042,7 +3243,6 @@
             "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
-            "object_var_value": 0,
             "check_objects": "all",
             "object": "ball",
             "target": "field"
@@ -3363,10 +3563,10 @@
             "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
-            "object_var_value": 0,
             "func": "less",
             "value": 0,
             "object": "all_players_squad",
+            "object_var_value": 0,
             "var": "players_online_count_int"
           }
         },
@@ -3398,10 +3598,10 @@
             "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
-            "object_var_value": 0,
             "func": "more",
             "value": 0,
             "object": "all_players_squad",
+            "object_var_value": 0,
             "var": "players_online_count_int"
           }
         },
@@ -3437,10 +3637,10 @@
             "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
-            "object_var_value": 0,
             "func": "less",
             "value": 0,
             "object": "all_players_squad",
+            "object_var_value": 0,
             "var": "players_active_count_int"
           }
         },
@@ -3472,10 +3672,10 @@
             "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
-            "object_var_value": 0,
             "func": "more",
             "value": 0,
             "object": "all_players_squad",
+            "object_var_value": 0,
             "var": "players_active_count_int"
           }
         },
@@ -3516,30 +3716,6 @@
       },
       "onSuccess": [],
       "onFailed": []
-    },
-    "t1_football_get_advantage_in_3_goals": {
-      "is_enabled": true,
-      "comments": "",
-      "type": "abstractMissionObjective",
-      "props": {
-        "isPrimary": true,
-        "timeLimit": 1800,
-        "team": "A"
-      },
-      "onSuccess": [],
-      "onFailed": []
-    },
-    "t2_football_get_advantage_in_3_goals": {
-      "is_enabled": true,
-      "comments": "",
-      "type": "abstractMissionObjective",
-      "props": {
-        "isPrimary": true,
-        "timeLimit": 1800,
-        "team": "B"
-      },
-      "onSuccess": [],
-      "onFailed": []
     }
   },
   "variables": {
@@ -3565,6 +3741,7 @@
     "match_stage_end_full_hint": "hints/football_halftime_counter",
     "random": 1,
     "mpPlayerIdGoal": -1,
+    "mpPlayerIdSave": -1,
     "ball_stopped": false,
     "ball_out": false,
     "reset_ball_timer": 5,
@@ -3601,6 +3778,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -3648,6 +3827,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -3695,6 +3876,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -3742,6 +3925,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -3789,6 +3974,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -3836,6 +4023,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -3883,6 +4072,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -3930,6 +4121,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -3977,6 +4170,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4024,6 +4219,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4071,6 +4268,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4118,6 +4317,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4165,6 +4366,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4212,6 +4415,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4259,6 +4464,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4306,6 +4513,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4353,6 +4562,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4400,6 +4611,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4447,6 +4660,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4494,6 +4709,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4541,6 +4758,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4588,6 +4807,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4635,6 +4856,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4682,6 +4905,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4729,6 +4954,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4776,6 +5003,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4823,6 +5052,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4870,6 +5101,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4917,6 +5150,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4964,6 +5199,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5011,6 +5248,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5058,6 +5297,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5105,6 +5346,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5153,6 +5396,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5201,6 +5446,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5249,6 +5496,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5297,6 +5546,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5345,6 +5596,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5393,6 +5646,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5441,6 +5696,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5489,6 +5746,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5537,6 +5796,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5585,6 +5846,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5633,6 +5896,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5681,6 +5946,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5729,6 +5996,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5777,6 +6046,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5825,6 +6096,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5873,6 +6146,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5921,6 +6196,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -5969,6 +6246,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -6017,6 +6296,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -6065,6 +6346,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -6113,6 +6396,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -6161,6 +6446,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -6209,6 +6496,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -6257,6 +6546,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -6305,6 +6596,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -6353,6 +6646,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -6401,6 +6696,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -6449,6 +6746,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -6497,6 +6796,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -6545,6 +6846,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -6593,6 +6896,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -6614,42 +6919,6 @@
             "ai_skill": "NORMAL",
             "task": "FLY_WAYPOINT"
           }
-        },
-        "way": []
-      }
-    },
-    {
-      "phys_obj": {
-        "name": "ball",
-        "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [0.0,22.5,0.0]
-        ],
-        "unit_class": "ball",
-        "objLayer": 1,
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
         },
         "way": []
       }
@@ -6858,6 +7127,9 @@
           },
           {
             "object_type": "isTeamA"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -7066,6 +7338,9 @@
           },
           {
             "object_type": "isTeamB"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -7271,764 +7546,15 @@
           },
           {
             "squad_members": "t2_player32"
-          }
-        ]
-      }
-    },
-    {
-      "area_squad": {
-        "name": "t2_respawn_att_1",
-        "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-219.596,70.0,-107.65]
-        ],
-        "props": [
-          {
-            "squad_members": "t2_respawn01_att_a"
           },
           {
-            "squad_members": "t2_respawn02_att_a"
-          },
-          {
-            "squad_members": "t2_respawn03_a"
-          },
-          {
-            "squad_members": "t2_respawn04_a"
-          },
-          {
-            "squad_members": "t2_respawn05_a"
-          }
-        ]
-      }
-    },
-    {
-      "area_squad": {
-        "name": "t1_respawn_att_1",
-        "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-208.2,70.0,112.8]
-        ],
-        "props": [
-          {
-            "squad_members": "t1_respawn01_att_a"
-          },
-          {
-            "squad_members": "t1_respawn02_att_a"
-          },
-          {
-            "squad_members": "t1_respawn03_a"
-          },
-          {
-            "squad_members": "t1_respawn04_a"
-          },
-          {
-            "squad_members": "t1_respawn05_a"
-          }
-        ]
-      }
-    },
-    {
-      "area_squad": {
-        "name": "t1_respawn_1v1",
-        "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-209.309,70.0,32.8069]
-        ],
-        "props": [
-          {
-            "squad_members": "t1_respawn_1v1_a"
-          },
-          {
-            "squad_members": "t1_respawn_1v1_b"
-          }
-        ]
-      }
-    },
-    {
-      "area_squad": {
-        "name": "t2_respawn_1v1",
-        "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-222.65,82.0045,-61.6155]
-        ],
-        "props": [
-          {
-            "squad_members": "t2_respawn_1v1_a"
-          },
-          {
-            "squad_members": "t2_respawn_1v1_b"
-          }
-        ]
-      }
-    },
-    {
-      "area_squad": {
-        "name": "t1_ingame_respawn",
-        "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-196.704,70.0,32.8069]
-        ],
-        "props": [
-          {
-            "squad_members": "t1_ingame_respawn01"
-          },
-          {
-            "squad_members": "t1_ingame_respawn02"
-          },
-          {
-            "squad_members": "t1_ingame_respawn03"
-          },
-          {
-            "squad_members": "t1_ingame_respawn04"
-          }
-        ]
-      }
-    },
-    {
-      "area_squad": {
-        "name": "t2_ingame_respawn",
-        "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-196.704,82.7539,-63.6285]
-        ],
-        "props": [
-          {
-            "squad_members": "t2_ingame_respawn01"
-          },
-          {
-            "squad_members": "t2_ingame_respawn02"
-          },
-          {
-            "squad_members": "t2_ingame_respawn03"
-          },
-          {
-            "squad_members": "t2_ingame_respawn04"
-          }
-        ]
-      }
-    },
-    {
-      "area_squad": {
-        "name": "t2_respawn_def",
-        "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-222.65,69.0097,-88.5411]
-        ],
-        "props": [
-          {
-            "squad_members": "t2_respawn01_def"
-          },
-          {
-            "squad_members": "t2_respawn02_def_a"
-          },
-          {
-            "squad_members": "t2_respawn03_a"
-          },
-          {
-            "squad_members": "t2_respawn04_a"
-          },
-          {
-            "squad_members": "t2_respawn05_a"
-          }
-        ]
-      }
-    },
-    {
-      "area_squad": {
-        "name": "t1_respawn_def",
-        "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-208.2,70.0,91.6926]
-        ],
-        "props": [
-          {
-            "squad_members": "t1_respawn01_def"
-          },
-          {
-            "squad_members": "t1_respawn02_def_a"
-          },
-          {
-            "squad_members": "t1_respawn03_a"
-          },
-          {
-            "squad_members": "t1_respawn04_a"
-          },
-          {
-            "squad_members": "t1_respawn05_a"
-          }
-        ]
-      }
-    },
-    {
-      "area_squad": {
-        "name": "t2_respawn_att_2",
-        "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-232.048,70.0,-107.65]
-        ],
-        "props": [
-          {
-            "squad_members": "t2_respawn01_att_b"
-          },
-          {
-            "squad_members": "t2_respawn02_att_b"
-          },
-          {
-            "squad_members": "t2_respawn03_b"
-          },
-          {
-            "squad_members": "t2_respawn04_b"
-          },
-          {
-            "squad_members": "t2_respawn05_b"
-          }
-        ]
-      }
-    },
-    {
-      "area_squad": {
-        "name": "t1_respawn_att_2",
-        "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-225.149,70.0,112.8]
-        ],
-        "props": [
-          {
-            "squad_members": "t1_respawn01_att_b"
-          },
-          {
-            "squad_members": "t1_respawn02_att_b"
-          },
-          {
-            "squad_members": "t1_respawn03_b"
-          },
-          {
-            "squad_members": "t1_respawn04_b"
-          },
-          {
-            "squad_members": "t1_respawn05_b"
+            "object_marking": 0
           }
         ]
       }
     }
   ],
-  "areas": {
-    "t1_respawn05_a": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,-2.0],
-        [0.0,2.0,0.0],
-        [2.0,0.0,1.50996e-07],
-        [60.0,20.0,85.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "battle_area": {
-      "type": "Box",
-      "tm": [
-        [340.0,0.0,0.0],
-        [0.0,500.0,0.0],
-        [0.0,0.0,340.0],
-        [0.0,0.0,0.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "center": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-06,0.0,-20.0],
-        [0.0,20.0,0.0],
-        [20.0,0.0,1.50996e-06],
-        [0.0,22.5,0.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_goal": {
-      "type": "Box",
-      "tm": [
-        [40.0,0.0,0.0],
-        [0.0,12.0,0.0],
-        [0.0,0.0,10.0],
-        [0.0,20.0,124.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_goal": {
-      "type": "Box",
-      "tm": [
-        [40.0,0.0,0.0],
-        [0.0,12.0,0.0],
-        [0.0,0.0,10.0],
-        [0.0,20.0,-124.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "field": {
-      "type": "Box",
-      "tm": [
-        [182.0,0.0,0.0],
-        [0.0,500.0,0.0],
-        [0.0,0.0,238.0],
-        [0.0,0.0,0.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_respawn02_def_a": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,2.0],
-        [0.0,2.0,0.0],
-        [-2.0,0.0,1.50996e-07],
-        [60.0,20.0,-85.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_respawn03_a": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,-2.0],
-        [0.0,2.0,0.0],
-        [2.0,0.0,1.50996e-07],
-        [26.0,20.0,95.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_respawn01_att_a": {
-      "type": "Point",
-      "tm": [
-        [-1.99999,0.0,5.96046e-08],
-        [0.0,2.0,0.0],
-        [-5.96046e-08,0.0,-1.99999],
-        [7.0,20.0,0.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_respawn04_a": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,-2.0],
-        [0.0,2.0,0.0],
-        [2.0,0.0,1.50996e-07],
-        [-26.0,20.0,95.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_respawn02_att_a": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,-2.0],
-        [0.0,2.0,0.0],
-        [2.0,0.0,1.50996e-07],
-        [-35.0,20.0,40.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_respawn04_a": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,2.0],
-        [0.0,2.0,0.0],
-        [-2.0,0.0,1.50996e-07],
-        [26.0,20.0,-95.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_respawn01_att_a": {
-      "type": "Point",
-      "tm": [
-        [1.99999,0.0,-5.96046e-08],
-        [0.0,2.0,0.0],
-        [5.96046e-08,0.0,1.99999],
-        [-7.0,20.0,0.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_respawn03_a": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,2.0],
-        [0.0,2.0,0.0],
-        [-2.0,0.0,1.50996e-07],
-        [-26.0,20.0,-95.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_respawn05_a": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,2.0],
-        [0.0,2.0,0.0],
-        [-2.0,0.0,1.50996e-07],
-        [-60.0,20.0,-85.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_respawn_1v1_a": {
-      "type": "Point",
-      "tm": [
-        [0.923496,0.0,-1.77402],
-        [0.0,2.0,0.0],
-        [1.77402,0.0,0.923496],
-        [-30.0,20.0,60.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_respawn_1v1_a": {
-      "type": "Point",
-      "tm": [
-        [-0.923496,0.0,1.77402],
-        [0.0,2.0,0.0],
-        [-1.77402,0.0,-0.923496],
-        [28.5467,20.0,-60.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_respawn_keeper": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,-2.0],
-        [0.0,2.0,0.0],
-        [2.0,0.0,1.50996e-07],
-        [0.0,20.0,110.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_respawn_keeper": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,2.0],
-        [0.0,2.0,0.0],
-        [-2.0,0.0,1.50996e-07],
-        [0.0,20.0,-110.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_ingame_respawn01": {
-      "type": "Point",
-      "tm": [
-        [-1.41421,0.0,-1.41421],
-        [0.0,2.0,0.0],
-        [1.41421,0.0,-1.41421],
-        [60.0,20.0,75.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_ingame_respawn02": {
-      "type": "Point",
-      "tm": [
-        [-1.41421,0.0,-1.41421],
-        [0.0,2.0,0.0],
-        [1.41421,0.0,-1.41421],
-        [50.0,20.0,85.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_ingame_respawn03": {
-      "type": "Point",
-      "tm": [
-        [1.41421,0.0,-1.41421],
-        [0.0,2.0,0.0],
-        [1.41421,0.0,1.41421],
-        [-50.0,20.0,85.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_ingame_respawn04": {
-      "type": "Point",
-      "tm": [
-        [1.41421,0.0,-1.41421],
-        [0.0,2.0,0.0],
-        [1.41421,0.0,1.41421],
-        [-60.0,20.0,75.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_ingame_respawn01": {
-      "type": "Point",
-      "tm": [
-        [1.41421,0.0,1.41421],
-        [0.0,2.0,0.0],
-        [-1.41421,0.0,1.41421],
-        [-60.0,20.0,-75.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_ingame_respawn02": {
-      "type": "Point",
-      "tm": [
-        [1.41421,0.0,1.41421],
-        [0.0,2.0,0.0],
-        [-1.41421,0.0,1.41421],
-        [-50.0,20.0,-85.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_ingame_respawn03": {
-      "type": "Point",
-      "tm": [
-        [-1.41421,0.0,1.41421],
-        [0.0,2.0,0.0],
-        [-1.41421,0.0,-1.41421],
-        [60.0,20.0,-75.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_ingame_respawn04": {
-      "type": "Point",
-      "tm": [
-        [-1.41421,0.0,1.41421],
-        [0.0,2.0,0.0],
-        [-1.41421,0.0,-1.41421],
-        [50.0,20.0,-85.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_respawn01_def": {
-      "type": "Point",
-      "tm": [
-        [-1.64111e-06,0.0,-1.99999],
-        [0.0,2.0,0.0],
-        [1.99999,0.0,-1.64111e-06],
-        [0.0,20.0,100.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_respawn01_def": {
-      "type": "Point",
-      "tm": [
-        [4.17233e-07,0.0,2.0],
-        [0.0,2.0,0.0],
-        [-2.0,0.0,4.17233e-07],
-        [0.0,20.0,-100.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_respawn_1v1_b": {
-      "type": "Point",
-      "tm": [
-        [-0.923496,0.0,-1.77402],
-        [0.0,2.0,0.0],
-        [1.77402,0.0,-0.923496],
-        [30.0,20.0,60.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_respawn_1v1_b": {
-      "type": "Point",
-      "tm": [
-        [0.923496,0.0,1.77402],
-        [0.0,2.0,0.0],
-        [-1.77402,0.0,0.923496],
-        [-30.0,20.0,-60.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_respawn01_att_b": {
-      "type": "Point",
-      "tm": [
-        [-1.99999,0.0,-5.96046e-08],
-        [0.0,2.0,0.0],
-        [5.96046e-08,0.0,-1.99999],
-        [7.0,20.0,0.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_respawn01_att_b": {
-      "type": "Point",
-      "tm": [
-        [1.99999,0.0,5.96046e-08],
-        [0.0,2.0,0.0],
-        [-5.96046e-08,0.0,1.99999],
-        [-7.0,20.0,0.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_respawn05_b": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,2.0],
-        [0.0,2.0,0.0],
-        [-2.0,0.0,1.50996e-07],
-        [60.0,19.9998,-85.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_respawn03_b": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,2.0],
-        [0.0,2.0,0.0],
-        [-2.0,0.0,1.50996e-07],
-        [26.0,19.9998,-95.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_respawn04_b": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,2.0],
-        [0.0,2.0,0.0],
-        [-2.0,0.0,1.50996e-07],
-        [-26.0,19.9998,-95.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_respawn02_def_b": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,2.0],
-        [0.0,2.0,0.0],
-        [-2.0,0.0,1.50996e-07],
-        [-60.0,19.9998,-85.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_respawn05_b": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,-2.0],
-        [0.0,2.0,0.0],
-        [2.0,0.0,1.50996e-07],
-        [-60.0,19.9998,85.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_respawn04_b": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,-2.0],
-        [0.0,2.0,0.0],
-        [2.0,0.0,1.50996e-07],
-        [26.0,19.9998,95.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_respawn03_b": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,-2.0],
-        [0.0,2.0,0.0],
-        [2.0,0.0,1.50996e-07],
-        [-26.0,19.9998,95.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_respawn02_att_b": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,-2.0],
-        [0.0,2.0,0.0],
-        [2.0,0.0,1.50996e-07],
-        [35.0,19.9998,40.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_respawn02_att_b": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,2.0],
-        [0.0,2.0,0.0],
-        [-2.0,0.0,1.50996e-07],
-        [-35.0,19.9998,-40.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t2_respawn02_att_a": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,2.0],
-        [0.0,2.0,0.0],
-        [-2.0,0.0,1.50996e-07],
-        [35.0,20.0,-40.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_respawn02_def_a": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,-2.0],
-        [0.0,2.0,0.0],
-        [2.0,0.0,1.50996e-07],
-        [-60.0,19.9998,85.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    },
-    "t1_respawn02_def_b": {
-      "type": "Point",
-      "tm": [
-        [1.50996e-07,0.0,-2.0],
-        [0.0,2.0,0.0],
-        [2.0,0.0,1.50996e-07],
-        [60.0,19.9998,85.0]
-      ],
-      "objLayer": 0,
-      "props": []
-    }
-  },
+  "areas": [],
   "objLayers": [
     {
       "layer": {
