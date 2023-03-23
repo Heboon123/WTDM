@@ -11,7 +11,7 @@ let { CannonMode, CannonSelectedArray, CannonSelected, CannonReloadTime, CannonC
   CannonsAdditionalCount, CannonsAdditionalSeconds, CannonsAdditionalMode, CannonsAdditionalSelected, IsCanAdditionalEmpty,
   AgmCount, AgmSeconds, AgmTimeToHit, AgmTimeToWarning, AgmActualCount, AgmName, AgmSelected, IsAgmEmpty,
   AamCount, AamSeconds, AamActualCount, AamName, AamSelected, IsAamEmpty,
-  GuidedBombsCount, GuidedBombsSeconds, GuidedBombsActualCount, GuidedBombsName, GuidedBombsSelected, IsGuidedBmbEmpty,
+  GuidedBombsCount, GuidedBombsSeconds, GuidedBombsMode, GuidedBombsActualCount, GuidedBombsName, GuidedBombsSelected, IsGuidedBmbEmpty,
   FlaresCount, FlaresSeconds, FlaresMode, IsFlrEmpty,
   ChaffsCount, ChaffsSeconds, ChaffsMode, IsChaffsEmpty,
   RocketsCount, RocketsSeconds, RocketsActualCount, RocketsSalvo, RocketsMode, RocketsName, RocketsSelected, IsRktEmpty,
@@ -270,6 +270,47 @@ let function getThrottleCaption(mode, isControled, idx) {
   return "".join(texts)
 }
 
+let function getModeCaption(mode) {
+  let texts = []
+  if (mode & (1 << WeaponMode.CCRP_MODE))
+    texts.append(loc("HUD/WEAPON_MODE_AUTO"))
+  else if (mode & (1 << WeaponMode.GYRO_MODE))
+    texts.append(loc("HUD/WEAPON_MODE_GYRO"))
+  if (mode & (1 << WeaponMode.CCIP_MODE)) {
+    if (texts.len() > 0)
+      texts.append("/")
+    texts.append(loc("HUD/WEAPON_MODE_CCIP"))
+  }
+  return "".join(texts)
+}
+
+let function getBombModeCaption(mode) {
+  let texts = []
+  if (mode & (1 << WeaponMode.CCRP_MODE))
+    texts.append(loc("HUD/WEAPON_MODE_CCRP"))
+  if (mode & (1 << WeaponMode.CCIP_MODE)) {
+    if (texts.len() > 0)
+      texts.append("/")
+    texts.append(loc("HUD/WEAPON_MODE_CCIP"))
+  }
+
+  //check both ccip/rp and bombBay
+  let ballisticModeBits = mode & (1 << (WeaponMode.CCRP_MODE + 1))
+  if (ballisticModeBits > 0 && (mode ^ ballisticModeBits) > 0)
+    texts.append("  ")
+
+  if (mode & (1 << WeaponMode.BOMB_BAY_OPEN))
+    texts.append(loc("HUD/BAY_DOOR_IS_OPEN_INDICATION"))
+  if (mode & (1 << WeaponMode.BOMB_BAY_CLOSED))
+    texts.append(loc("HUD/BAY_DOOR_IS_CLOSED_INDICATION"))
+  if (mode & (1 << WeaponMode.BOMB_BAY_OPENING))
+    texts.append(loc("HUD/BAY_DOOR_IS_OPENING_INDICATION"))
+  if (mode & (1 << WeaponMode.BOMB_BAY_CLOSING))
+    texts.append(loc("HUD/BAY_DOOR_IS_CLOSING_INDICATION"))
+
+  return "".join(texts)
+}
+
 let function getAGCaption(guidanceLockState, pointIsTarget) {
   let texts = []
   if (guidanceLockState == GuidanceLockResult.RESULT_INVALID)
@@ -304,7 +345,7 @@ let function getAACaption(guidanceLockState) {
   return "".join(texts)
 }
 
-let function getGBCaption(guidanceLockState, pointIsTarget) {
+let function getGBCaption(guidanceLockState, pointIsTarget, mode) {
   let texts = []
   if (guidanceLockState == GuidanceLockResult.RESULT_INVALID)
     texts.append(loc("HUD/TXT_GUIDED_BOMBS_SHORT"))
@@ -318,6 +359,8 @@ let function getGBCaption(guidanceLockState, pointIsTarget) {
     texts.append(loc(!pointIsTarget ? "HUD/TXT_GUIDED_BOMBS_TRACK" : "HUD/TXT_GUIDED_BOMBS_POINT_TRACK"))
   else if (guidanceLockState == GuidanceLockResult.RESULT_LOCK_AFTER_LAUNCH)
     texts.append(loc("HUD/TXT_GUIDED_BOMBS_LOCK_AFTER_LAUNCH"))
+  texts.append(" ")
+  texts.append(getBombModeCaption(mode))
   return "".join(texts)
 }
 
@@ -329,32 +372,6 @@ let function getCountermeasuresCaption(isFlare, mode) {
     texts.append(loc("HUD/INDICATION_MODE_SEPARATION"))
   if (mode & CountermeasureMode.MLWS_SLAVED_COUNTERMEASURE)
     texts.append(loc("HUD/COUNTERMEASURE_MLWS"))
-  return "".join(texts)
-}
-
-let function getModeCaption(mode) {
-  let texts = []
-  if ((mode & (1 << WeaponMode.CCIP_MODE)) && (mode & (1 << WeaponMode.CCRP_MODE)))
-    texts.append(loc("HUD/WEAPON_MODE_CCIP_CCRP"))
-  else if (mode & (1 << WeaponMode.CCIP_MODE))
-    texts.append(loc("HUD/WEAPON_MODE_CCIP"))
-  else if (mode & (1 << WeaponMode.CCRP_MODE))
-    texts.append(loc("HUD/WEAPON_MODE_CCRP"))
-
-  //check both ccip/rp and bombBay
-  let ballisticModeBits = mode & (1 << (WeaponMode.CCRP_MODE + 1))
-  if (ballisticModeBits > 0 && (mode ^ ballisticModeBits) > 0)
-    texts.append("  ")
-
-  if (mode & (1 << WeaponMode.BOMB_BAY_OPEN))
-    texts.append(loc("HUD/BAY_DOOR_IS_OPEN_INDICATION"))
-  if (mode & (1 << WeaponMode.BOMB_BAY_CLOSED))
-    texts.append(loc("HUD/BAY_DOOR_IS_CLOSED_INDICATION"))
-  if (mode & (1 << WeaponMode.BOMB_BAY_OPENING))
-    texts.append(loc("HUD/BAY_DOOR_IS_OPENING_INDICATION"))
-  if (mode & (1 << WeaponMode.BOMB_BAY_CLOSING))
-    texts.append(loc("HUD/BAY_DOOR_IS_CLOSING_INDICATION"))
-
   return "".join(texts)
 }
 
@@ -378,7 +395,7 @@ let function getRocketCaption(mode) {
 
 let function getBombCaption(mode) {
   let texts = [loc("HUD/BOMBS_SHORT"), " "]
-  texts.append(getModeCaption(mode))
+  texts.append(getBombModeCaption(mode))
   return "".join(texts)
 }
 
@@ -476,8 +493,8 @@ let function createParam(param, width, height, style, colorWatch, needCaption, f
     watch = [titleComputed, colorAlertCaptionW, alertStateCaptionComputed, colorFxCaption, factorFxCaption]
     rendObj = ROBJ_TEXT
     size = [SIZE_TO_CONTENT, height]
-    margin = [0, 0.06 * width, 0, 0]
-    minWidth = 0.2 * width
+    margin = [0, 0.0, 0, 0]
+    minWidth = 0.26 * width
     text = titleComputed.value
     color = colorAlertCaptionW.value
     fontFxColor = colorFxCaption.value
@@ -657,7 +674,7 @@ let textParamsMapMain = {
   },
   [AirParamsMain.GUIDED_BOMBS] = {
     titleComputed = Computed(@() GuidedBombsCount.value <= 0 ? loc("HUD/TXT_GUIDED_BOMBS_SHORT") :
-      getGBCaption(guidedBombsGuidanceLockState.value, guidedBombsGuidancePointIsTarget.value))
+      getGBCaption(guidedBombsGuidanceLockState.value, guidedBombsGuidancePointIsTarget.value, GuidedBombsMode.value))
     valueComputed = Computed(@() generateBulletsTextFunction(GuidedBombsCount.value, GuidedBombsSeconds.value, 0, GuidedBombsActualCount.value))
     selectedComputed = Computed(@() GuidedBombsSelected.value ? ">" : "")
     additionalComputed = Computed(@() loc(GuidedBombsName.value))
