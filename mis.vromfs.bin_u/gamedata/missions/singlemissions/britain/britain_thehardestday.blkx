@@ -2,10 +2,6 @@
   "selected_tag": "",
   "bin_dump_file": "",
   "mission_settings": {
-    "atmosphere": {
-      "pressure": 759.0,
-      "temperature": 16.0
-    },
     "player": {
       "army": 1,
       "wing": "player"
@@ -16,11 +12,15 @@
     "mission": {
       "level": "levels/britain.bin",
       "type": "singleMission",
-      "restoreType": "tactical control",
-      "optionalTakeOff": false,
       "environment": "Day",
       "weather": "clear",
-      "gt_cooperative": true
+      "gt_cooperative": true,
+      "restoreType": "tactical control",
+      "optionalTakeOff": false
+    },
+    "atmosphere": {
+      "pressure": 759.0,
+      "temperature": 16.0
     },
     "briefing": {
       "place_loc": "",
@@ -39,6 +39,9 @@
           },
           {
             "picture": ""
+          },
+          {
+            "showAirMap": false
           },
           {
             "arrow": [
@@ -112,6 +115,56 @@
       "conditions": [],
       "actions": [
         {
+          "comment": {
+            "value": ""
+          }
+        },
+        {
+          "comment": {
+            "value": ""
+          }
+        },
+        {
+          "comment": {
+            "value": ""
+          }
+        },
+        {
+          "unitLoadBehTree": [
+            {
+              "name": "missionBomber"
+            },
+            {
+              "objects": "luftwaffe_bombers00"
+            },
+            {
+              "objects": "luftwaffe_bombers01"
+            },
+            {
+              "objects": "luftwaffe_bombers02"
+            }
+          ]
+        },
+        {
+          "unitLoadBehTree": [
+            {
+              "name": "missionFighter"
+            },
+            {
+              "objects": "luftwaffe_fighters00"
+            },
+            {
+              "objects": "luftwaffe_fighters01"
+            },
+            {
+              "objects": "luftwaffe_fighters02"
+            },
+            {
+              "objects": "ally_planes"
+            }
+          ]
+        },
+        {
           "missionMarkAsWaypoint": {
             "visible": true,
             "primary": true,
@@ -128,6 +181,18 @@
         },
         {
           "unitSetProperties": [
+            {
+              "object_marking": 0
+            },
+            {
+              "object_var_name": ""
+            },
+            {
+              "object_var_comp_op": "equal"
+            },
+            {
+              "object_var_value": 0
+            },
             {
               "object": "wave01"
             },
@@ -159,12 +224,28 @@
         },
         {
           "unitSetProperties": {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "object": "radar_icon",
             "isImmortal": true
           }
         },
         {
           "unitSetProperties": [
+            {
+              "object_marking": 0
+            },
+            {
+              "object_var_name": ""
+            },
+            {
+              "object_var_comp_op": "equal"
+            },
+            {
+              "object_var_value": 0
+            },
             {
               "object": "air_def_squad"
             },
@@ -201,8 +282,51 @@
           "moAddMissionObjective": {
             "target": "single_britain_theHardestDay_fly00"
           }
+        },
+        {
+          "unitMoveTo": {
+            "object_marking": 0,
+            "target": "player",
+            "target_marking": 0,
+            "waypointReachedDist": 10.0,
+            "recalculatePathDist": -1.0,
+            "follow_target": true,
+            "teleportHeightType": "absolute",
+            "useUnitHeightForTele": true,
+            "shouldKeepFormation": true,
+            "teleportHeightValue": 1000.0,
+            "horizontalDirectionForTeleport": true,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "fastClimb": false,
+            "destTimeMode": false,
+            "target_var_name": "",
+            "target_var_comp_op": "equal",
+            "target_var_value": 0,
+            "object": "ally_planes",
+            "target_type": "isActive",
+            "follow_offset": [0.0,250.0,0.0]
+          }
+        },
+        {
+          "unitAttackTarget": {
+            "playerAttracted": false,
+            "target_marking": 0,
+            "object": "ally_planes",
+            "target": "germany_planes",
+            "fireRandom": true,
+            "targetDistMax": 4000.0,
+            "maxNumAttackersPerTarget": 1,
+            "attackAltRange": [250.0,7000.0],
+            "keepDeadUnitsInTargetList": true,
+            "anchorTarget": "player",
+            "targetToAnchorDist": [3000.0,4000.0],
+            "resetObjectToFollow": false
+          }
         }
-      ]
+      ],
+      "else_actions": []
     },
     "if_offline": {
       "is_enabled": true,
@@ -222,23 +346,37 @@
           "object_type": "isOffline",
           "object_marking": 0,
           "check_objects": "all",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_type": "isAlive",
+          "check_period": 1.0,
           "object": "player"
         }
       },
       "actions": [
         {
           "unitSetProperties": {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "object": "player",
             "targetableByAi": false
           }
         },
         {
           "unitSetProperties": {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "object": "player_himself",
             "targetableByAi": true
           }
         }
-      ]
+      ],
+      "else_actions": []
     },
     "waypoint01": {
       "is_enabled": false,
@@ -259,11 +397,18 @@
           "object_type": "isAlive",
           "object_marking": 0,
           "check_objects": "any",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "player",
           "target": "waypoint00"
         }
       },
       "actions": [
+        {
+          "comment": {
+            "value": ""
+          }
+        },
         {
           "missionMarkAsWaypoint": {
             "visible": false,
@@ -289,7 +434,8 @@
             "target": "wave_arrival"
           }
         }
-      ]
+      ],
+      "else_actions": []
     },
     "wave_arrival": {
       "is_enabled": false,
@@ -312,11 +458,50 @@
           "target_type": "isAlive",
           "check_objects": "any",
           "check_targets": "any",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "target_marking": 0,
           "object": "player",
           "target": "waypoint01"
         }
       },
       "actions": [
+        {
+          "comment": {
+            "value": ""
+          }
+        },
+        {
+          "comment": {
+            "value": ""
+          }
+        },
+        {
+          "comment": {
+            "value": ""
+          }
+        },
+        {
+          "comment": {
+            "value": ""
+          }
+        },
+        {
+          "comment": {
+            "value": ""
+          }
+        },
+        {
+          "comment": {
+            "value": ""
+          }
+        },
+        {
+          "comment": {
+            "value": ""
+          }
+        },
         {
           "missionMarkAsWaypoint": {
             "visible": false,
@@ -330,7 +515,10 @@
         {
           "moSetObjectiveStatus": {
             "target": "single_britain_theHardestDay_fly00",
-            "status": 2
+            "status": 2,
+            "object_marking": 0,
+            "object_var_comp_op": "equal",
+            "object_var_name": ""
           }
         },
         {
@@ -356,19 +544,47 @@
             "useUnitHeightForTele": true,
             "shouldKeepFormation": true,
             "teleportHeightValue": 1000.0,
-            "object": "wave01",
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "target_var_name": "",
+            "target_var_comp_op": "equal",
+            "target_var_value": 0,
+            "target_marking": 0,
+            "waypointReachedDist": 10.0,
+            "recalculatePathDist": -1.0,
+            "fastClimb": false,
+            "destTimeMode": false,
+            "horizontalDirectionForTeleport": true,
+            "object": "luftwaffe_bombers00",
             "speed": 250.0
           }
         },
         {
           "unitMoveTo": {
-            "target": "radar_area",
-            "follow_target": false,
+            "object_marking": 0,
+            "target": "luftwaffe_bombers00",
+            "target_marking": 0,
+            "waypointReachedDist": 10.0,
+            "recalculatePathDist": -1.0,
+            "follow_target": true,
             "teleportHeightType": "absolute",
             "useUnitHeightForTele": true,
             "shouldKeepFormation": true,
             "teleportHeightValue": 1000.0,
-            "object": "wave02"
+            "horizontalDirectionForTeleport": true,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "fastClimb": false,
+            "destTimeMode": false,
+            "target_var_name": "",
+            "target_var_comp_op": "equal",
+            "target_var_value": 0,
+            "object": "luftwaffe_fighters00",
+            "target_type": "isActive",
+            "follow_offset": [0.0,250.0,0.0]
           }
         },
         {
@@ -379,24 +595,173 @@
             "useUnitHeightForTele": true,
             "shouldKeepFormation": true,
             "teleportHeightValue": 1000.0,
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "target_var_name": "",
+            "target_var_comp_op": "equal",
+            "target_var_value": 0,
+            "target_marking": 0,
+            "waypointReachedDist": 10.0,
+            "recalculatePathDist": -1.0,
+            "fastClimb": false,
+            "destTimeMode": false,
+            "horizontalDirectionForTeleport": true,
+            "object": "wave02"
+          }
+        },
+        {
+          "unitMoveTo": {
+            "object_marking": 0,
+            "target": "luftwaffe_bombers01",
+            "target_marking": 0,
+            "waypointReachedDist": 10.0,
+            "recalculatePathDist": -1.0,
+            "follow_target": true,
+            "teleportHeightType": "absolute",
+            "useUnitHeightForTele": true,
+            "shouldKeepFormation": true,
+            "teleportHeightValue": 1000.0,
+            "horizontalDirectionForTeleport": true,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "fastClimb": false,
+            "destTimeMode": false,
+            "target_var_name": "",
+            "target_var_comp_op": "equal",
+            "target_var_value": 0,
+            "object": "luftwaffe_fighters01",
+            "target_type": "isActive",
+            "follow_offset": [0.0,250.0,0.0]
+          }
+        },
+        {
+          "unitMoveTo": {
+            "target": "radar_area",
+            "follow_target": false,
+            "teleportHeightType": "absolute",
+            "useUnitHeightForTele": true,
+            "shouldKeepFormation": true,
+            "teleportHeightValue": 1000.0,
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "target_var_name": "",
+            "target_var_comp_op": "equal",
+            "target_var_value": 0,
+            "target_marking": 0,
+            "waypointReachedDist": 10.0,
+            "recalculatePathDist": -1.0,
+            "fastClimb": false,
+            "destTimeMode": false,
+            "horizontalDirectionForTeleport": true,
             "object": "wave03"
+          }
+        },
+        {
+          "unitMoveTo": {
+            "object_marking": 0,
+            "target": "luftwaffe_bombers02",
+            "target_marking": 0,
+            "waypointReachedDist": 10.0,
+            "recalculatePathDist": -1.0,
+            "follow_target": true,
+            "teleportHeightType": "absolute",
+            "useUnitHeightForTele": true,
+            "shouldKeepFormation": true,
+            "teleportHeightValue": 1000.0,
+            "horizontalDirectionForTeleport": true,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "fastClimb": false,
+            "destTimeMode": false,
+            "target_var_name": "",
+            "target_var_comp_op": "equal",
+            "target_var_value": 0,
+            "object": "luftwaffe_fighters02",
+            "target_type": "isActive",
+            "follow_offset": [0.0,250.0,0.0]
+          }
+        },
+        {
+          "unitAttackTarget": {
+            "playerAttracted": false,
+            "target_marking": 0,
+            "object": "luftwaffe_fighters00",
+            "target": "british_planes",
+            "fireRandom": true,
+            "targetDistMax": 4000.0,
+            "maxNumAttackersPerTarget": 1,
+            "attackAltRange": [250.0,7000.0],
+            "keepDeadUnitsInTargetList": true,
+            "anchorTarget": "luftwaffe_bombers00",
+            "targetToAnchorDist": [3000.0,4000.0],
+            "resetObjectToFollow": false
+          }
+        },
+        {
+          "unitAttackTarget": {
+            "playerAttracted": false,
+            "target_marking": 0,
+            "object": "luftwaffe_fighters01",
+            "target": "british_planes",
+            "fireRandom": true,
+            "targetDistMax": 4000.0,
+            "maxNumAttackersPerTarget": 1,
+            "attackAltRange": [250.0,7000.0],
+            "keepDeadUnitsInTargetList": true,
+            "anchorTarget": "luftwaffe_bombers01",
+            "targetToAnchorDist": [3000.0,4000.0],
+            "resetObjectToFollow": false
+          }
+        },
+        {
+          "unitAttackTarget": {
+            "playerAttracted": false,
+            "target_marking": 0,
+            "object": "luftwaffe_fighters02",
+            "target": "british_planes",
+            "fireRandom": true,
+            "targetDistMax": 4000.0,
+            "maxNumAttackersPerTarget": 1,
+            "attackAltRange": [250.0,7000.0],
+            "keepDeadUnitsInTargetList": true,
+            "anchorTarget": "luftwaffe_bombers02",
+            "targetToAnchorDist": [3000.0,4000.0],
+            "resetObjectToFollow": false
           }
         },
         {
           "unitSetIndication": {
             "set": true,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "target": "luftwaffe_bombers00"
           }
         },
         {
           "unitSetIndication": {
             "set": true,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "target": "luftwaffe_bombers01"
           }
         },
         {
           "unitSetIndication": {
             "set": true,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "target": "luftwaffe_bombers02"
           }
         },
@@ -458,7 +823,8 @@
             }
           ]
         }
-      ]
+      ],
+      "else_actions": []
     },
     "01wave_turn": {
       "is_enabled": false,
@@ -479,6 +845,8 @@
           "object_marking": 0,
           "func": "less",
           "value": 8,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "luftwaffe_bombers00"
         }
       },
@@ -501,30 +869,48 @@
             "useUnitHeightForTele": true,
             "shouldKeepFormation": true,
             "teleportHeightValue": 1000.0,
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "target_var_name": "",
+            "target_var_comp_op": "equal",
+            "target_var_value": 0,
+            "target_marking": 0,
+            "waypointReachedDist": 10.0,
+            "recalculatePathDist": -1.0,
+            "fastClimb": false,
+            "destTimeMode": false,
+            "horizontalDirectionForTeleport": true,
             "object": "luftwaffe_bombers00"
           }
         },
         {
           "unitSetIndication": {
             "set": false,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "target": "luftwaffe_bombers00"
           }
         },
         {
           "varModify": {
-            "var": "waves_turned",
             "operator": "add",
-            "value": 1.0
+            "value": 1.0,
+            "var": "waves_turned"
           }
         },
         {
           "varModify": {
-            "var": "waves_gone",
             "operator": "add",
-            "value": 1.0
+            "value": 1.0,
+            "var": "waves_gone"
           }
         }
-      ]
+      ],
+      "else_actions": []
     },
     "02wave_turn": {
       "is_enabled": false,
@@ -545,6 +931,8 @@
           "object_marking": 0,
           "func": "less",
           "value": 9,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "luftwaffe_bombers01"
         }
       },
@@ -567,30 +955,48 @@
             "useUnitHeightForTele": true,
             "shouldKeepFormation": true,
             "teleportHeightValue": 1000.0,
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "target_var_name": "",
+            "target_var_comp_op": "equal",
+            "target_var_value": 0,
+            "target_marking": 0,
+            "waypointReachedDist": 10.0,
+            "recalculatePathDist": -1.0,
+            "fastClimb": false,
+            "destTimeMode": false,
+            "horizontalDirectionForTeleport": true,
             "object": "luftwaffe_bombers01"
           }
         },
         {
           "unitSetIndication": {
             "set": false,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "target": "luftwaffe_bombers01"
           }
         },
         {
           "varModify": {
-            "var": "waves_turned",
             "operator": "add",
-            "value": 1.0
+            "value": 1.0,
+            "var": "waves_turned"
           }
         },
         {
           "varModify": {
-            "var": "waves_gone",
             "operator": "add",
-            "value": 1.0
+            "value": 1.0,
+            "var": "waves_gone"
           }
         }
-      ]
+      ],
+      "else_actions": []
     },
     "03wave_turn": {
       "is_enabled": false,
@@ -611,6 +1017,8 @@
           "object_marking": 0,
           "func": "less",
           "value": 9,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "luftwaffe_bombers02"
         }
       },
@@ -633,30 +1041,48 @@
             "useUnitHeightForTele": true,
             "shouldKeepFormation": true,
             "teleportHeightValue": 1000.0,
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "target_var_name": "",
+            "target_var_comp_op": "equal",
+            "target_var_value": 0,
+            "target_marking": 0,
+            "waypointReachedDist": 10.0,
+            "recalculatePathDist": -1.0,
+            "fastClimb": false,
+            "destTimeMode": false,
+            "horizontalDirectionForTeleport": true,
             "object": "luftwaffe_bombers02"
           }
         },
         {
           "unitSetIndication": {
             "set": false,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "target": "luftwaffe_bombers02"
           }
         },
         {
           "varModify": {
-            "var": "waves_turned",
             "operator": "add",
-            "value": 1.0
+            "value": 1.0,
+            "var": "waves_turned"
           }
         },
         {
           "varModify": {
-            "var": "waves_gone",
             "operator": "add",
-            "value": 1.0
+            "value": 1.0,
+            "var": "waves_gone"
           }
         }
-      ]
+      ],
+      "else_actions": []
     },
     "01wave_bomb": {
       "is_enabled": true,
@@ -677,6 +1103,8 @@
           "object_type": "isAlive",
           "object_marking": 0,
           "check_objects": "any",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "luftwaffe_bombers00",
           "target": "radar_area"
         }
@@ -692,6 +1120,19 @@
           "useUnitHeightForTele": true,
           "shouldKeepFormation": false,
           "teleportHeightValue": 1000.0,
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "horizontalDirectionForTeleport": true,
           "object": "wave01"
         },
         "unitAttackTarget": {
@@ -701,14 +1142,19 @@
         },
         "unitSetIndication": {
           "set": false,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
           "target": "luftwaffe_bombers00"
         },
         "varModify": {
-          "var": "waves_gone",
           "operator": "add",
-          "value": 1.0
+          "value": 1.0,
+          "var": "waves_gone"
         }
-      }
+      },
+      "else_actions": []
     },
     "02wave_bomb": {
       "is_enabled": true,
@@ -729,6 +1175,8 @@
           "object_type": "isAlive",
           "object_marking": 0,
           "check_objects": "any",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "luftwaffe_bombers01",
           "target": "radar_area"
         }
@@ -744,6 +1192,19 @@
           "useUnitHeightForTele": true,
           "shouldKeepFormation": false,
           "teleportHeightValue": 1000.0,
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "horizontalDirectionForTeleport": true,
           "object": "wave02"
         },
         "unitAttackTarget": {
@@ -753,14 +1214,19 @@
         },
         "unitSetIndication": {
           "set": false,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
           "target": "luftwaffe_bombers01"
         },
         "varModify": {
-          "var": "waves_gone",
           "operator": "add",
-          "value": 1.0
+          "value": 1.0,
+          "var": "waves_gone"
         }
-      }
+      },
+      "else_actions": []
     },
     "03wave_bomb": {
       "is_enabled": true,
@@ -781,6 +1247,8 @@
           "object_type": "isAlive",
           "object_marking": 0,
           "check_objects": "any",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "luftwaffe_bombers02",
           "target": "radar_area"
         }
@@ -796,6 +1264,19 @@
           "useUnitHeightForTele": true,
           "shouldKeepFormation": false,
           "teleportHeightValue": 1000.0,
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "horizontalDirectionForTeleport": true,
           "object": "wave03"
         },
         "unitAttackTarget": {
@@ -805,14 +1286,19 @@
         },
         "unitSetIndication": {
           "set": false,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
           "target": "luftwaffe_bombers02"
         },
         "varModify": {
-          "var": "waves_gone",
           "operator": "add",
-          "value": 1.0
+          "value": 1.0,
+          "var": "waves_gone"
         }
-      }
+      },
+      "else_actions": []
     },
     "mission_completed01": {
       "is_enabled": true,
@@ -854,6 +1340,21 @@
               "check_objects": "any"
             },
             {
+              "object_var_name": ""
+            },
+            {
+              "object_var_comp_op": "equal"
+            },
+            {
+              "object_var_value": 0
+            },
+            {
+              "target_type": "isAlive"
+            },
+            {
+              "check_period": 1.0
+            },
+            {
               "object": "luftwaffe_bombers00"
             },
             {
@@ -879,19 +1380,37 @@
         {
           "moSetObjectiveStatus": {
             "target": "single_britain_theHardestDay_att00",
-            "status": 2
+            "status": 2,
+            "object_marking": 0,
+            "object_var_comp_op": "equal",
+            "object_var_name": ""
           }
         },
         {
           "moSetObjectiveStatus": {
             "target": "single_britain_theHardestDay_att01",
-            "status": 3
+            "status": 3,
+            "object_marking": 0,
+            "object_var_comp_op": "equal",
+            "object_var_name": ""
           }
         },
         {
           "unitSetIndication": [
             {
               "set": false
+            },
+            {
+              "target_marking": 0
+            },
+            {
+              "object_var_name": ""
+            },
+            {
+              "object_var_comp_op": "equal"
+            },
+            {
+              "object_var_value": 0
             },
             {
               "target": "luftwaffe_bombers00"
@@ -914,7 +1433,8 @@
             "timer": false
           }
         }
-      ]
+      ],
+      "else_actions": []
     },
     "mission_completed02": {
       "is_enabled": false,
@@ -941,6 +1461,21 @@
             "check_objects": "all"
           },
           {
+            "object_var_name": ""
+          },
+          {
+            "object_var_comp_op": "equal"
+          },
+          {
+            "object_var_value": 0
+          },
+          {
+            "target_type": "isAlive"
+          },
+          {
+            "check_period": 1.0
+          },
+          {
             "object": "luftwaffe_bombers00"
           },
           {
@@ -965,19 +1500,37 @@
         {
           "moSetObjectiveStatus": {
             "target": "single_britain_theHardestDay_att00",
-            "status": 2
+            "status": 2,
+            "object_marking": 0,
+            "object_var_comp_op": "equal",
+            "object_var_name": ""
           }
         },
         {
           "moSetObjectiveStatus": {
             "target": "single_britain_theHardestDay_att01",
-            "status": 2
+            "status": 2,
+            "object_marking": 0,
+            "object_var_comp_op": "equal",
+            "object_var_name": ""
           }
         },
         {
           "unitSetIndication": [
             {
               "set": false
+            },
+            {
+              "target_marking": 0
+            },
+            {
+              "object_var_name": ""
+            },
+            {
+              "object_var_comp_op": "equal"
+            },
+            {
+              "object_var_value": 0
             },
             {
               "target": "luftwaffe_bombers00"
@@ -1000,7 +1553,8 @@
             "timer": false
           }
         }
-      ]
+      ],
+      "else_actions": []
     },
     "mission_failed": {
       "is_enabled": true,
@@ -1045,19 +1599,37 @@
         {
           "moSetObjectiveStatus": {
             "target": "single_britain_theHardestDay_att00",
-            "status": 3
+            "status": 3,
+            "object_marking": 0,
+            "object_var_comp_op": "equal",
+            "object_var_name": ""
           }
         },
         {
           "moSetObjectiveStatus": {
             "target": "single_britain_theHardestDay_att01",
-            "status": 3
+            "status": 3,
+            "object_marking": 0,
+            "object_var_comp_op": "equal",
+            "object_var_name": ""
           }
         },
         {
           "unitSetIndication": [
             {
               "set": false
+            },
+            {
+              "target_marking": 0
+            },
+            {
+              "object_var_name": ""
+            },
+            {
+              "object_var_comp_op": "equal"
+            },
+            {
+              "object_var_value": 0
             },
             {
               "target": "luftwaffe_bombers00"
@@ -1080,7 +1652,8 @@
             "timer": false
           }
         }
-      ]
+      ],
+      "else_actions": []
     },
     "01fighters_go_away": {
       "is_enabled": false,
@@ -1098,6 +1671,10 @@
       "conditions": [],
       "actions": {
         "unitSetProperties": {
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
           "object": "luftwaffe_fighters00",
           "attack_type": "hold_fire"
         },
@@ -1108,9 +1685,23 @@
           "useUnitHeightForTele": true,
           "shouldKeepFormation": true,
           "teleportHeightValue": 1000.0,
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "horizontalDirectionForTeleport": true,
           "object": "luftwaffe_fighters00"
         }
-      }
+      },
+      "else_actions": []
     },
     "02fighters_go_away": {
       "is_enabled": false,
@@ -1128,6 +1719,10 @@
       "conditions": [],
       "actions": {
         "unitSetProperties": {
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
           "object": "luftwaffe_fighters01",
           "attack_type": "hold_fire"
         },
@@ -1138,9 +1733,23 @@
           "useUnitHeightForTele": true,
           "shouldKeepFormation": true,
           "teleportHeightValue": 1000.0,
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "horizontalDirectionForTeleport": true,
           "object": "luftwaffe_fighters01"
         }
-      }
+      },
+      "else_actions": []
     },
     "03fighters_go_away": {
       "is_enabled": false,
@@ -1158,6 +1767,10 @@
       "conditions": [],
       "actions": {
         "unitSetProperties": {
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
           "object": "luftwaffe_fighters02",
           "attack_type": "hold_fire"
         },
@@ -1168,9 +1781,23 @@
           "useUnitHeightForTele": true,
           "shouldKeepFormation": true,
           "teleportHeightValue": 1000.0,
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "horizontalDirectionForTeleport": true,
           "object": "luftwaffe_fighters02"
         }
-      }
+      },
+      "else_actions": []
     },
     "00fighters_attack_player": {
       "is_enabled": true,
@@ -1193,6 +1820,10 @@
           "target_type": "isAlive",
           "check_objects": "any",
           "check_targets": "any",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "target_marking": 0,
           "object": "luftwaffe_bombers00",
           "target": "player"
         }
@@ -1205,7 +1836,8 @@
           "playerAttractedCount": 1,
           "playerAttractedEffRate": 0.1
         }
-      }
+      },
+      "else_actions": []
     },
     "01fighters_attack_player": {
       "is_enabled": true,
@@ -1228,6 +1860,10 @@
           "target_type": "isAlive",
           "check_objects": "any",
           "check_targets": "any",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "target_marking": 0,
           "object": "luftwaffe_bombers01",
           "target": "player"
         }
@@ -1240,7 +1876,8 @@
           "playerAttractedCount": 1,
           "playerAttractedEffRate": 0.1
         }
-      }
+      },
+      "else_actions": []
     },
     "02fighters_attack_player": {
       "is_enabled": true,
@@ -1263,6 +1900,10 @@
           "target_type": "isAlive",
           "check_objects": "any",
           "check_targets": "any",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "target_marking": 0,
           "object": "luftwaffe_bombers02",
           "target": "player"
         }
@@ -1275,7 +1916,8 @@
           "playerAttractedCount": 1,
           "playerAttractedEffRate": 0.1
         }
-      }
+      },
+      "else_actions": []
     }
   },
   "mission_objectives": {
@@ -1333,14 +1975,26 @@
       "armada": {
         "name": "player",
         "tm": [
-          [-0.707107,0.0,-0.707107],
+          [-0.422802,0.0,-0.906223],
           [0.0,1.0,0.0],
-          [0.707107,0.0,-0.707107],
-          [40382.5,2155.05,-2291.4]
+          [0.906223,0.0,-0.422802],
+          [35889.5,2155.05,2242.87]
         ],
-        "closed_waypoints": false,
         "unit_class": "spitfire_mk1",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "spitfire_mk1_default",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 1,
           "count": 4,
@@ -1350,7 +2004,8 @@
           "altLimit": 6000.0,
           "attack_type": "fire_at_will",
           "skill": 4,
-          "numInWing": 2,
+          "player": true,
+          "numInWing": 4,
           "plane": {
             "wing_formation": "Diamond",
             "row_distances": 3.0,
@@ -1374,9 +2029,21 @@
           [-0.5,0.0,-0.866026],
           [44243.7,2155.05,-22413.3]
         ],
-        "closed_waypoints": false,
         "unit_class": "ju-87b-2",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "Ju87_B2_default",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 15,
@@ -1410,9 +2077,21 @@
           [-0.92388,0.0,-0.382684],
           [40344.0,3585.3,-29541.6]
         ],
-        "closed_waypoints": false,
         "unit_class": "ju-87b-2",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "Ju87_B2_default",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 15,
@@ -1446,9 +2125,21 @@
           [-0.707107,0.0,-0.707107],
           [49083.9,1530.4,-22341.7]
         ],
-        "closed_waypoints": false,
         "unit_class": "ju-87b-2",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "Ju87_B2_default",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 15,
@@ -1482,9 +2173,21 @@
           [-0.5,0.0,-0.866026],
           [45185.1,2237.8,-22957.3]
         ],
-        "closed_waypoints": false,
         "unit_class": "bf-110c-4",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "Bf-110C-4_default",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 3,
@@ -1518,9 +2221,21 @@
           [-0.766045,0.0,-0.642788],
           [40156.3,2237.8,-31076.3]
         ],
-        "closed_waypoints": false,
         "unit_class": "bf-110c-4",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "Bf-110C-4_default",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 4,
@@ -1554,12 +2269,72 @@
           [-0.573576,0.0,-0.819153],
           [49993.5,2237.8,-23462.8]
         ],
-        "closed_waypoints": false,
         "unit_class": "bf-110c-4",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "Bf-110C-4_default",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 5,
+          "free_distance": 70.0,
+          "floating_distance": 50.0,
+          "minimum_distance_to_earth": 20.0,
+          "altLimit": 6000.0,
+          "attack_type": "fire_at_will",
+          "skill": 4,
+          "numInWing": 2,
+          "plane": {
+            "wing_formation": "Diamond",
+            "row_distances": 3.0,
+            "col_distances": 3.0,
+            "super_formation": "Diamond",
+            "super_row_distances": 1.5,
+            "super_col_distances": 1.5,
+            "ai_skill": "NORMAL",
+            "task": "FLY_WAYPOINT"
+          }
+        },
+        "way": []
+      }
+    },
+    {
+      "armada": {
+        "name": "ally_planes",
+        "tm": [
+          [-0.215047,0.0,-0.976604],
+          [0.0,1.0,0.0],
+          [0.976604,0.0,-0.215047],
+          [35973.4,2155.06,2486.29]
+        ],
+        "unit_class": "spitfire_mk1",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "spitfire_mk1_default",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 4,
           "free_distance": 70.0,
           "floating_distance": 50.0,
           "minimum_distance_to_earth": 20.0,
@@ -1590,9 +2365,21 @@
           [0.0,0.0,1.0],
           [24062.9,177.733,481.25]
         ],
-        "closed_waypoints": false,
         "unit_class": "dummy",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 1,
           "count": 1,
@@ -1615,9 +2402,21 @@
           [0.5,0.0,0.866025],
           [22301.1,54.55,-1485.3]
         ],
-        "closed_waypoints": false,
         "unit_class": "uk_87mm_mkII",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 1,
           "count": 2,
@@ -1640,9 +2439,21 @@
           [0.906308,0.0,0.422618],
           [21046.4,80.1,-2299.6]
         ],
-        "closed_waypoints": false,
         "unit_class": "uk_87mm_mkII",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 1,
           "count": 2,
@@ -1665,9 +2476,21 @@
           [0.906308,0.0,0.422618],
           [23533.7,54.55,-870.45]
         ],
-        "closed_waypoints": false,
         "unit_class": "uk_87mm_mkII",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 1,
           "count": 2,
@@ -1690,9 +2513,21 @@
           [0.996195,0.0,0.0871558],
           [24108.3,176.8,334.95]
         ],
-        "closed_waypoints": false,
         "unit_class": "uk_87mm_mkII",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 1,
           "count": 2,
@@ -1715,9 +2550,6 @@
           [0.0,0.0,1.0],
           [47369.9,-1.0,-22373.8]
         ],
-        "closed_waypoints": false,
-        "unit_class": "",
-        "weapons": "",
         "props": [
           {
             "squad_members": "luftwaffe_bombers00"
@@ -1725,8 +2557,7 @@
           {
             "squad_members": "luftwaffe_fighters00"
           }
-        ],
-        "way": []
+        ]
       }
     },
     {
@@ -1738,9 +2569,6 @@
           [0.0,0.0,1.0],
           [40760.0,50.6,-29510.4]
         ],
-        "closed_waypoints": false,
-        "unit_class": "",
-        "weapons": "",
         "props": [
           {
             "squad_members": "luftwaffe_bombers01"
@@ -1748,8 +2576,7 @@
           {
             "squad_members": "luftwaffe_fighters01"
           }
-        ],
-        "way": []
+        ]
       }
     },
     {
@@ -1761,9 +2588,6 @@
           [0.0,0.0,1.0],
           [49291.2,-1.0,-25881.8]
         ],
-        "closed_waypoints": false,
-        "unit_class": "",
-        "weapons": "",
         "props": [
           {
             "squad_members": "luftwaffe_bombers02"
@@ -1771,8 +2595,7 @@
           {
             "squad_members": "luftwaffe_fighters02"
           }
-        ],
-        "way": []
+        ]
       }
     },
     {
@@ -1784,14 +2607,10 @@
           [0.0,0.0,1.0],
           [40888.0,-1.0,-10173.7]
         ],
-        "closed_waypoints": false,
-        "unit_class": "",
-        "weapons": "",
         "props": {
           "squad_members": "player",
           "object_type": "isPlayer"
-        },
-        "way": []
+        }
       }
     },
     {
@@ -1803,9 +2622,6 @@
           [0.0,0.0,1.0],
           [24281.4,152.1,1270.5]
         ],
-        "closed_waypoints": false,
-        "unit_class": "",
-        "weapons": "",
         "props": [
           {
             "squad_members": "air_def05"
@@ -1819,8 +2635,7 @@
           {
             "squad_members": "air_def08"
           }
-        ],
-        "way": []
+        ]
       }
     },
     {
@@ -1832,9 +2647,6 @@
           [0.0,0.0,1.0],
           [23745.1,169.5,1245.55]
         ],
-        "closed_waypoints": false,
-        "unit_class": "",
-        "weapons": "",
         "props": [
           {
             "squad_members": "crowd_ship00"
@@ -1854,8 +2666,57 @@
           {
             "squad_members": "crowd_ship05"
           }
+        ]
+      }
+    },
+    {
+      "squad": {
+        "name": "british_planes",
+        "tm": [
+          [1.0,0.0,0.0],
+          [0.0,1.0,0.0],
+          [0.0,0.0,1.0],
+          [47405.1,2155.06,-1898.61]
         ],
-        "way": []
+        "props": [
+          {
+            "squad_members": "player"
+          },
+          {
+            "squad_members": "ally_planes"
+          }
+        ]
+      }
+    },
+    {
+      "squad": {
+        "name": "germany_planes",
+        "tm": [
+          [1.0,0.0,0.0],
+          [0.0,1.0,0.0],
+          [0.0,0.0,1.0],
+          [44834.4,2330.69,-25298.8]
+        ],
+        "props": [
+          {
+            "squad_members": "luftwaffe_bombers01"
+          },
+          {
+            "squad_members": "luftwaffe_fighters01"
+          },
+          {
+            "squad_members": "luftwaffe_bombers00"
+          },
+          {
+            "squad_members": "luftwaffe_fighters00"
+          },
+          {
+            "squad_members": "luftwaffe_bombers02"
+          },
+          {
+            "squad_members": "luftwaffe_fighters02"
+          }
+        ]
       }
     },
     {
@@ -1867,9 +2728,21 @@
           [0.906308,0.0,0.422618],
           [23996.0,-1.0,-975.9]
         ],
-        "closed_waypoints": false,
         "unit_class": "hms_cargo_ship",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 1,
           "count": 3,
@@ -1892,9 +2765,21 @@
           [0.5,0.0,0.866025],
           [22816.4,-1.0,-1899.5]
         ],
-        "closed_waypoints": false,
         "unit_class": "hms_leander",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 1,
           "count": 1,
@@ -1917,9 +2802,21 @@
           [0.67559,0.0,0.737277],
           [22918.4,-1.0,-1660.15]
         ],
-        "closed_waypoints": false,
         "unit_class": "uss_dd_georgetown",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 1,
           "count": 1,
@@ -1942,9 +2839,21 @@
           [0.737277,0.0,0.67559],
           [22990.8,-1.0,-1585.1]
         ],
-        "closed_waypoints": false,
         "unit_class": "hms_cargo_ship",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 1,
           "count": 3,
@@ -1967,9 +2876,21 @@
           [0.866025,0.0,0.5],
           [23734.2,-400.3,-1041.15]
         ],
-        "closed_waypoints": false,
         "unit_class": "fishboat2",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 1,
           "count": 3,
@@ -1992,9 +2913,21 @@
           [0.866025,0.0,0.5],
           [23075.7,-400.3,-1461.05]
         ],
-        "closed_waypoints": false,
         "unit_class": "fishboat2",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 1,
           "count": 3,
@@ -2013,29 +2946,29 @@
     "waypoint00": {
       "type": "Sphere",
       "tm": [
-        [1078.2,0.0,0.0],
-        [0.0,1078.2,0.0],
-        [0.0,0.0,1078.2],
-        [37534.6,2155.1,-6336.8]
+        [1500.0,0.0,0.0],
+        [0.0,1500.0,0.0],
+        [0.0,0.0,1500.0],
+        [34573.8,2155.1,-3365.17]
       ],
       "props": []
     },
     "waypoint01": {
       "type": "Sphere",
       "tm": [
-        [1078.2,0.0,0.0],
-        [0.0,1078.2,0.0],
-        [0.0,0.0,1078.2],
-        [33061.6,2155.1,-10743.3]
+        [1500.0,0.0,0.0],
+        [0.0,1500.0,0.0],
+        [0.0,0.0,1500.0],
+        [34735.8,2155.1,-11071.0]
       ],
       "props": []
     },
     "radar_area": {
       "type": "Sphere",
       "tm": [
-        [4702.5,0.0,0.0],
-        [0.0,4702.5,0.0],
-        [0.0,0.0,4702.5],
+        [7000.0,0.0,0.0],
+        [0.0,7000.0,0.0],
+        [0.0,0.0,7000.0],
         [24056.2,2150.25,491.5]
       ],
       "props": []
@@ -2050,5 +2983,28 @@
       ],
       "props": []
     }
-  }
+  },
+  "objLayers": [
+    {
+      "layer": {
+        "enabled": true
+      }
+    },
+    {
+      "layer": {
+        "enabled": true
+      }
+    },
+    {
+      "layer": {
+        "enabled": true
+      }
+    },
+    {
+      "layer": {
+        "enabled": true
+      }
+    }
+  ],
+  "wayPoints": []
 }
