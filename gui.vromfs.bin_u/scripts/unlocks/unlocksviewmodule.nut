@@ -10,7 +10,6 @@ let { number_of_set_bits, round_by_value } = require("%sqstd/math.nut")
 let { buildDateStrShort } = require("%scripts/time.nut")
 let { processUnitTypeArray } = require("%scripts/unit/unitClassType.nut")
 let { getRoleText } = require("%scripts/unit/unitInfoTexts.nut")
-let { getShopDiffCode } = require("%scripts/shop/shopDifficulty.nut")
 let { isLoadingBgUnlock, getLoadingBgName,
   getLoadingBgIdByUnlockId } = require("%scripts/loading/loadingBgData.nut")
 let { getEntitlementConfig, getEntitlementName } = require("%scripts/onlineShop/entitlements.nut")
@@ -230,6 +229,9 @@ let function getUnlockNameText(unlockType, id) {
         : loc(locId)
 
     case UNLOCKABLE_TROPHY:
+      let unlockBlk = getUnlockById(id)
+      if (unlockBlk?.locId)
+        return getUnlockLocName(unlockBlk)
       let item = ::ItemsManager.findItemById(id, itemType.TROPHY)
       return item ? item.getName(false) : loc($"item/{id}")
 
@@ -763,10 +765,7 @@ let function getUnlockMultDesc(condition) {
 
   let isMultipliersByDiff = multiplierTable?.ArcadeBattle != null
   foreach (param, num in multiplierTable) {
-    if (num == 1)
-      continue
-
-    if (!isMultipliersByDiff && ((param - getShopDiffCode()) % 3 != 0))
+    if (num == 1 && isMultipliersByDiff)
       continue
 
     if (mulText.len() > 0)
