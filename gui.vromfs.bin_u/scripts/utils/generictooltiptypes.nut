@@ -24,6 +24,7 @@ let { getUnlockDesc, getUnlockCondsDescByCfg, getUnlockMultDescByCfg, getUnlockC
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { getSubunlockCfg } = require("%scripts/unlocks/unlocksConditions.nut")
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
+let { getDecorator, getPlaneBySkinId } = require("%scripts/customization/decorCache.nut")
 
 let tooltipTypes = {
   types = []
@@ -157,7 +158,7 @@ let exportTypes = addTooltipTypes({
       if (decoratorType == ::g_decorator_type.UNKNOWN)
         return false
 
-      let decorator = ::g_decorator.getDecorator(id, decoratorType)
+      let decorator = getDecorator(id, decoratorType)
       if (!decorator)
         return false
 
@@ -527,7 +528,7 @@ let exportTypes = addTooltipTypes({
         guiScene.appendWithBlk(obj, " ".concat("img{", bgImage, size, svgSize, "}"), this)
       }
       else if (decoratorType == ::g_decorator_type.SKINS) {
-        let unit = ::getAircraftByName(::g_unlocks.getPlaneBySkinId(name))
+        let unit = ::getAircraftByName(getPlaneBySkinId(name))
         local text = []
         if (unit)
           text.append(loc("reward/skin_for") + " " + ::getUnitName(unit))

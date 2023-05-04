@@ -21,6 +21,7 @@ let { isUnlockVisible, isUnlockVisibleByTime, getUnlockCost, debugLogVisibleByTi
 let { isUnlockReadyToOpen } = require("chard")
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
 let { makeConfigStr } = require("%scripts/seen/bhvUnseen.nut")
+let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
 
 let MAX_STAGES_NUM = 10 // limited by images gui/hud/gui_skin/unlock_icons/stage_(un)locked_N
 
@@ -191,7 +192,7 @@ let MAX_STAGES_NUM = 10 // limited by images gui/hud/gui_skin/unlock_icons/stage
                                 ("image" in unlockConfig && unlockConfig.image != "" ? "" : "unlockImg{}"))
       hiddenContent += format("unlocked:t='%s'; ", (isUnlocked ? "yes" : "no"))
       if (unlockConfig.type == "char_resources") {
-        let decorator = ::g_decorator.getDecoratorById(unlockConfig.names[i])
+        let decorator = getDecoratorById(unlockConfig.names[i])
         if (decorator)
           hiddenContent += DECORATION.getMarkup(decorator.id, decorator.decoratorType.unlockedItemType)
       }
