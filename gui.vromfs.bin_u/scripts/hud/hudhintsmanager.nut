@@ -1,17 +1,19 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
+let { subscribe_handler } = require("%sqStdLibs/helpers/subscriptions.nut")
 let DataBlock = require("DataBlock")
 let { get_time_msec } = require("dagor.time")
 let SecondsUpdater = require("%sqDagui/timer/secondsUpdater.nut")
 let DaguiSceneTimers = require("%sqDagui/timer/daguiSceneTimers.nut")
-let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { registerPersistentDataFromRoot, PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { getHudElementAabb, dmPanelStatesAabb } = require("%scripts/hud/hudElementsAabb.nut")
 let { stashBhvValueConfig } = require("%sqDagui/guiBhv/guiBhvValueConfig.nut")
 let { actionBarItems } = require("%scripts/hud/actionBarState.nut")
+let { getHudUnitType } = require("hudState")
+let { HUD_UNIT_TYPE } = require("%scripts/hud/hudUnitType.nut")
 
 const TIMERS_CHECK_INTEVAL = 0.25
 
@@ -48,16 +50,16 @@ enum HintShowState {
       return
     this.restoreAllHints()
     this.updatePosHudHintBlock()
+    this.changeMissionHintsPosition(dmPanelStatesAabb.value)
   }
-
 
   function reinit() {
     if (!this.findSceneObjects())
       return
     this.restoreAllHints()
     this.updatePosHudHintBlock()
+    this.changeMissionHintsPosition(dmPanelStatesAabb.value)
   }
-
 
   function onEventLoadingStateChange(_p) {
     if (!::is_in_flight()) {
@@ -74,12 +76,12 @@ enum HintShowState {
   }
 
   function removeAllHints(hintFilterField = "isHideOnDeath") {
-    let hints = ::u.filter(this.activeHints, @(hintData) hintData.hint[hintFilterField])
+    let hints = u.filter(this.activeHints, @(hintData) hintData.hint[hintFilterField])
     foreach (hintData in hints)
       this.removeHint(hintData, true)
   }
 
-  function onLocalPlayerDead() {
+    function onLocalPlayerDead() {
     this.removeAllHints()
   }
 
@@ -103,6 +105,28 @@ enum HintShowState {
       this.updateHint(hintData)
   }
 
+  function changeMissionHintsPosition(value) {
+    if (!(this.nest?.isValid() ?? false))
+      return
+    let mission_hints = this.nest.findObject("mission_action_hints_holder")
+    if (!(mission_hints?.isValid() ?? false))
+      return
+
+    mission_hints["width"] = "pw"
+    let isShip = [HUD_UNIT_TYPE.SHIP, HUD_UNIT_TYPE.SHIP_EX].contains(getHudUnitType())
+    if(!isShip) {
+      mission_hints["hintSizeStyle"] = "common"
+      mission_hints["left"] = ""
+      return
+    }
+    mission_hints["hintSizeStyle"] = "action"
+    let dmgPanelWidth = value?.size[0] ?? 0
+    let left = $"{dmgPanelWidth} + 0.015@shHud"
+    mission_hints["left"] = $"{left} - 1/6@rwHud"
+    let map_left = getHudElementAabb("map")?.pos[0] ?? 0
+    if(map_left > 0)
+      mission_hints["width"] = $"{map_left - dmgPanelWidth} - 0.03@shHud - 1@bwHud"
+  }
 
   function updatePosHudHintBlock() {
     if (!(this.nest?.isValid() ?? false))
@@ -127,14 +151,14 @@ enum HintShowState {
       this.onWatchedHeroChanged()
     }, this)
 
-    foreach (hint in ::g_hud_hints.types) {
-      if (!hint.isEnabled() || this.isHintShowCountExceeded(hint)) {
-        log("Hints: " + (hint?.showEvent ?? "_") + " is disabled")
+    foreach (hintType in ::g_hud_hints.types) {
+      if (!hintType.isEnabled() || this.isHintShowCountExceeded(hintType)) {
+        log($"Hints: {(hintType?.showEvent ?? "_")} is disabled")
         continue
       }
-
-      if (!::u.isNull(hint.showEvent))
-        ::g_hud_event_manager.subscribe(hint.showEvent, (@(hint) function (eventData) {
+      let hint = hintType
+      if (!u.isNull(hint.showEvent))
+        ::g_hud_event_manager.subscribe(hint.showEvent, function (eventData) {
           if (this.isHintShowCountExceeded(hint))
             return
 
@@ -142,10 +166,10 @@ enum HintShowState {
             this.showDelayed(hint, eventData)
           else
             this.onShowEvent(hint, eventData)
-        })(hint), this)
+        }, this)
 
-      if (!::u.isNull(hint.hideEvent))
-        ::g_hud_event_manager.subscribe(hint.hideEvent, (@(hint) function (eventData) {
+      if (!u.isNull(hint.hideEvent))
+        ::g_hud_event_manager.subscribe(hint.hideEvent, function (eventData) {
           if (!hint.isCurrent(eventData, true))
             return
 
@@ -155,26 +179,26 @@ enum HintShowState {
           if (!hintData)
             return
           this.removeHint(hintData, hintData.hint.isInstantHide(eventData))
-        })(hint), this)
+        }, this)
 
       if (hint.updateCbs)
-        foreach (eventName, func in hint.updateCbs)
-          ::g_hud_event_manager.subscribe(eventName, (@(hint, func) function (eventData) {
+        foreach (eventName, func in hint.updateCbs) {
+          let cbFunc = func
+          ::g_hud_event_manager.subscribe(eventName, function (eventData) {
             if (!hint.isCurrent(eventData, false))
               return
 
             let hintData = this.findActiveHintFromSameGroup(hint)
-            let needUpdate = func.call(hint, hintData, eventData)
+            let needUpdate = cbFunc.call(hint, hintData, eventData)
             if (hintData && needUpdate)
               this.updateHint(hintData)
-          })(hint, func), this)
+          }, this)
+        }
     }
   }
 
   function findActiveHintFromSameGroup(hint) {
-    return ::u.search(this.activeHints, (@(hint) function (hintData) {
-      return hint.hintType.isSameReplaceGroup(hintData.hint, hint)
-    })(hint))
+    return u.search(this.activeHints, @(hintData) hint.hintType.isSameReplaceGroup(hintData.hint, hint))
   }
 
   function addToList(hint, eventData) {
@@ -267,10 +291,8 @@ enum HintShowState {
     this.updateHint(hintData)
   }
 
-
-
   function isHintNestEmpty(hint) {
-    return !::u.search(this.activeHints, @(hintData)
+    return !u.search(this.activeHints, @(hintData)
       hintData.hint != hint && hintData.hint.hintType == hint.hintType)
   }
 
@@ -423,5 +445,7 @@ enum HintShowState {
   }
 }
 
-::g_script_reloader.registerPersistentDataFromRoot("g_hud_hints_manager")
-::subscribe_handler(::g_hud_hints_manager, ::g_listener_priority.DEFAULT_HANDLER)
+dmPanelStatesAabb.subscribe(@(value) ::g_hud_hints_manager.changeMissionHintsPosition(value))
+
+registerPersistentDataFromRoot("g_hud_hints_manager")
+subscribe_handler(::g_hud_hints_manager, ::g_listener_priority.DEFAULT_HANDLER)

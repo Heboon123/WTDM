@@ -1,14 +1,12 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { hasPremium, requestPremiumStatusUpdate, reportPremiumFeatureUsage } = require("sony.user")
 let { isPlatformPS5 } = require("%scripts/clientState/platform.nut")
 let { suggest_psplus } = require("sony.store")
 let { isCrossPlayEnabled } = require("%scripts/social/crossplay.nut")
 let { subscribe } = require("eventbus")
+let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 
 subscribe("psPlusSuggested", @(_r) requestPremiumStatusUpdate(@(_r) null))
@@ -37,7 +35,7 @@ let function startPremiumFeatureReporting() {
 
 let function enablePremiumFeatureReporting() {
   log("[PLUS] enable multiplayer reporting")
-  ::add_event_listener("LobbyStatusChange", function(_p) {
+  add_event_listener("LobbyStatusChange", function(_p) {
       if (::SessionLobby.myState == PLAYER_IN_FLIGHT) {
         log("[PLUS] start reporting")
         startPremiumFeatureReporting()

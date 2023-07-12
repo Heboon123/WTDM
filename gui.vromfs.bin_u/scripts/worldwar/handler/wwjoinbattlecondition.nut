@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let wwActionsWithUnitsList = require("%scripts/worldWar/inOperation/wwActionsWithUnitsList.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -28,7 +26,7 @@ let { getCustomViewCountryData } = require("%scripts/worldWar/inOperation/wwOper
     if (unitAvailability == WW_BATTLE_UNITS_REQUIREMENTS.OPERATION_UNITS ||
         unitAvailability == WW_BATTLE_UNITS_REQUIREMENTS.BATTLE_UNITS) {
       let requiredUnits = this.battle.getUnitsRequiredForJoin(team, this.side)
-      wwUnitsList = ::u.filter(wwActionsWithUnitsList.loadUnitsFromNameCountTbl(requiredUnits),
+      wwUnitsList = u.filter(wwActionsWithUnitsList.loadUnitsFromNameCountTbl(requiredUnits),
         @(unit) !unit.isControlledByAI())
       wwUnitsList = wwActionsWithUnitsList.getUnitsListViewParams({
         wwUnits = wwUnitsList,

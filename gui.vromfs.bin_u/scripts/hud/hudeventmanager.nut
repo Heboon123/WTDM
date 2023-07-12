@@ -1,10 +1,8 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 let { subscribeHudEvents } = require("hudMessages")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 ::g_hud_event_manager <-
 {
@@ -22,7 +20,7 @@ let { subscribeHudEvents } = require("hudMessages")
 
   function subscribe(event_name, callback_fn, context = null) {
     let cb = Callback(callback_fn, context)
-    if (::u.isArray(event_name))
+    if (u.isArray(event_name))
       foreach (evName in event_name)
         this.pushCallback(evName, cb)
     else
@@ -55,7 +53,7 @@ let { subscribeHudEvents } = require("hudMessages")
   }
 
   function handleData(data) {
-    if (::u.isDataBlock(data))
+    if (u.isDataBlock(data))
       return ::buildTableFromBlk(data)
 
     let res = {}

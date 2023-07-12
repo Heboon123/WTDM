@@ -1619,6 +1619,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -2762,13 +2763,13 @@
           "flash": "emtr_gun_flame_01",
           "useEmitter": true,
           "aimingFromBoneGun": true,
-          "sleeveEmitter": "emtr_shell_01",
-          "sleeveMesh": "auto_cannon_cartridge_case",
+          "shellCasingEmitter": "emtr_shell_01",
+          "shellCasingMesh": "auto_cannon_cartridge_case",
           "openHatchTime": 0.0,
-          "sleevesLifeTime": 3.0,
-          "sleeveImpulse": [7.0,0.5,0.0],
-          "sleevesImpulseOffset": 0.05,
-          "linkSleeveToGun": true,
+          "shellCasingLifeTime": 3.0,
+          "shellCasingImpulse": [7.0,0.5,0.0],
+          "shellCasingImpulseOffset": 0.05,
+          "linkShellCasingToGun": true,
           "recoilMultiplier": 0.5,
           "barrelDP": "gun_barrel_01_dm",
           "breechDP": "cannon_breech_01_dm",
@@ -2887,13 +2888,13 @@
           "flash": "emtr_gun_flame",
           "useEmitter": true,
           "aimingFromBoneGun": true,
-          "sleeveEmitter": "emtr_shell_02",
-          "sleeveMesh": "auto_cannon_cartridge_case",
+          "shellCasingEmitter": "emtr_shell_02",
+          "shellCasingMesh": "auto_cannon_cartridge_case",
           "openHatchTime": 0.0,
-          "sleevesLifeTime": 3.0,
-          "sleeveImpulse": [7.0,-0.5,0.0],
-          "sleevesImpulseOffset": 0.05,
-          "linkSleeveToGun": true,
+          "shellCasingLifeTime": 3.0,
+          "shellCasingImpulse": [7.0,-0.5,0.0],
+          "shellCasingImpulseOffset": 0.05,
+          "linkShellCasingToGun": true,
           "barrelDP": "gun_barrel_dm",
           "breechDP": "cannon_breech_02_dm",
           "recoilMultiplier": 0.5,
@@ -3092,8 +3093,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -4014,6 +4015,15 @@
           "fx": {
             "name": "smoke_after_hit_tiny",
             "setOrientation": true
+          }
+        }
+      },
+      {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
           }
         }
       },

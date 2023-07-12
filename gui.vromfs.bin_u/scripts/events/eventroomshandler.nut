@@ -1,9 +1,8 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { get_time_msec } = require("dagor.time")
@@ -21,6 +20,7 @@ let { checkAndShowMultiplayerPrivilegeWarning,
   isMultiplayerPrivilegeAvailable } = require("%scripts/user/xboxFeatures.nut")
 let { isShowGoldBalanceWarning } = require("%scripts/user/balanceFeatures.nut")
 let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
+let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
 enum eRoomFlags { //bit enum. sorted by priority
   CAN_JOIN              = 0x8000 //set by CAN_JOIN_MASK, used for sorting
@@ -216,10 +216,10 @@ const NOTICEABLE_RESPONCE_DELAY_TIME_MS = 250
     }
 
     ::EventJoinProcess(this.event, this.getCurRoom(),
-      @(_event) ::add_big_query_record("to_battle_button", ::save_to_json(configForStatistic)),
+      @(_event) sendBqEvent("CLIENT_BATTLE_2", "to_battle_button", configForStatistic),
       function() {
         configForStatistic.canIntoToBattle <- false
-        ::add_big_query_record("to_battle_button", ::save_to_json(configForStatistic))
+        sendBqEvent("CLIENT_BATTLE_2", "to_battle_button", configForStatistic)
       })
   }
 
@@ -430,8 +430,8 @@ const NOTICEABLE_RESPONCE_DELAY_TIME_MS = 250
       if (!isLocked && !(roomFlags & eRoomFlags.HAS_UNIT_MATCH_RULES))
         color = "@warningTextColor"
       let rankText = ::events.getBrTextByRules(reqUnits)
-      let ruleTexts = ::u.map(reqUnits, this.getRuleText)
-      let rulesText = colorize(color, ::g_string.implode(ruleTexts, loc("ui/comma")))
+      let ruleTexts = u.map(reqUnits, this.getRuleText)
+      let rulesText = colorize(color, loc("ui/comma").join(ruleTexts, true))
 
       text = colorize(color, rankText) + " " + text
       if (rulesText.len())
@@ -560,11 +560,11 @@ const NOTICEABLE_RESPONCE_DELAY_TIME_MS = 250
       }
     }
 
-    if (::u.isEqual(this.viewRoomList, view))
+    if (u.isEqual(this.viewRoomList, view))
       return this.updateWindow()
 
     this.viewRoomList = view
-    let data = ::handyman.renderCached("%gui/events/eventRoomsList.tpl", view)
+    let data = handyman.renderCached("%gui/events/eventRoomsList.tpl", view)
     this.guiScene.replaceContentFromText(this.roomsListObj, data, data.len(), this)
     let roomsCount = this.roomsListObj.childrenCount()
     for (local i = 0; i < roomsCount; i++)
@@ -586,7 +586,7 @@ const NOTICEABLE_RESPONCE_DELAY_TIME_MS = 250
   }
 
   function getFlagsArrayByCountriesArray(countriesArray) {
-    return ::u.map(
+    return u.map(
               countriesArray,
               function(country) {
                 return { image = ::get_country_icon(country) }
@@ -640,7 +640,7 @@ const NOTICEABLE_RESPONCE_DELAY_TIME_MS = 250
   }
 
   function updateCollapseChapterStatus(chapterObj) {
-    let index = ::find_in_array(this.collapsedChapterNamesArray, chapterObj.id)
+    let index = u.find_in_array(this.collapsedChapterNamesArray, chapterObj.id)
     let isCollapse = index < 0
     if (isCollapse)
       this.collapsedChapterNamesArray.append(chapterObj.id)

@@ -234,12 +234,14 @@
           "armorThickness": 25.0
         },
         "composite_armor_hull_02_dm": {
-          "armorThickness": 25.0,
-          "hidableInXrayViewer": true
+          "armorThickness": 17.0,
+          "hidableInXrayViewer": true,
+          "armorClass": "tank_structural_steel"
         },
         "composite_armor_hull_03_dm": {
-          "armorThickness": 25.0,
-          "hidableInXrayViewer": true
+          "armorThickness": 17.0,
+          "hidableInXrayViewer": true,
+          "armorClass": "tank_structural_steel"
         },
         "turret_04_side_dm": {
           "armorThickness": 25.4
@@ -979,7 +981,7 @@
       {
         "armorArrayHull": {
           "xrayDmPart": "composite_armor_hull_02_dm",
-          "titleLoc": "RHA_tank_modern",
+          "titleLoc": "tank_structural_steel",
           "armorArrayText": {
             "layer": {
               "dmPart": "composite_armor_hull_02_dm"
@@ -990,7 +992,7 @@
       {
         "armorArrayHull": {
           "xrayDmPart": "composite_armor_hull_03_dm",
-          "titleLoc": "RHA_tank_modern",
+          "titleLoc": "tank_structural_steel",
           "armorArrayText": {
             "layer": {
               "dmPart": "composite_armor_hull_03_dm"
@@ -1983,6 +1985,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -3475,8 +3478,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -4401,6 +4404,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -5076,7 +5088,7 @@
       "descLocId": "skin/rsa_camo_modern_three_color/desc",
       "replace_tex": {
         "from": "uk_camo_very_dark_drab*",
-        "to": "rsa_camo_modern_three_color*"
+        "to": "rsa_camo_modern_three_color_v2*"
       }
     }
   },
@@ -5100,6 +5112,12 @@
     "smokeScreenExhaustEmitters": [
       {
         "emitter": "emtr_exhaust_01"
+      },
+      {
+        "emitter": "emtr_exhaust_02"
+      },
+      {
+        "emitter": "emtr_exhaust_03"
       },
       {
         "emitter": "emtr_exhaust_04"

@@ -1,17 +1,19 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
-
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { getDecorButtonView } = require("%scripts/customization/decorView.nut")
 let { isCollectionItem } = require("%scripts/collections/collections.nut")
 let { findChild } = require("%sqDagui/daguiUtil.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { getCachedDataByType, getDecorator, getCachedOrderByType
 } = require("%scripts/customization/decorCache.nut")
+let { utf8ToLower } = require("%sqstd/string.nut")
+let { setTimeout, clearTimer } = require("dagor.workcycle")
+let bhvUnseen = require("%scripts/seen/bhvUnseen.nut")
+let seenList = require("%scripts/seen/seenList.nut")
+let { needMarkSeenResource, disableMarkSeenResource } = require("%scripts/seen/markSeenResources.nut")
 
 let class DecorMenuHandler extends ::gui_handlers.BaseGuiHandlerWT {
   wndType = handlerType.CUSTOM
@@ -25,38 +27,82 @@ let class DecorMenuHandler extends ::gui_handlers.BaseGuiHandlerWT {
   curDecorType = null
   curSlotDecorId = null
   preSelectDecorId = null
+  applyFilterTimer = null
+
+  decoratorsCache = {}
+  decorsToMarkSeen = []
+
+  currentSeenListId = ""
+  currentSeenList = null
 
   function updateHandlerData(decorType, unit, slotDecorId, preSelectDecoratorId) {
     this.curDecorType = decorType
     this.curUnit = unit
     this.curSlotDecorId = slotDecorId
     this.preSelectDecorId = preSelectDecoratorId
+    this.currentSeenListId = this.curDecorType.name == "DECALS" ? SEEN.DECALS : SEEN.DECORATORS
+    this.currentSeenList = seenList.get(this.currentSeenListId)
+  }
+
+  function prepareDecoratorsCache(decorCache) {
+    let needMarkSeen = needMarkSeenResource(this.currentSeenListId)
+    this.decoratorsCache.clear()
+    let categories = this.getCategories()
+    foreach(categoryId in categories) {
+      let groups = decorCache.catToGroupNames[categoryId]
+      let hasGroups = groups.len() > 1 || groups[0] != "other"
+      local listSummaryId = ""
+      if(hasGroups) {
+        listSummaryId = $"{categoryId}.summary"
+        this.decoratorsCache[listSummaryId] <- []
+      }
+      foreach(groupId in groups) {
+        let listId = $"{categoryId}.{groupId}"
+        let decors = decorCache.catToGroups?[categoryId][groupId] ?? []
+        let unit = this.curUnit
+        let decorsListId = decors.filter(@(dec) dec.canUse(unit)).map(@(dec) dec.id)
+        this.decoratorsCache[listId] <- decorsListId
+        if(hasGroups)
+          this.decoratorsCache[listSummaryId].extend(decorsListId)
+        if(needMarkSeen)
+          this.currentSeenList.markSeen(decorsListId)
+      }
+    }
+    disableMarkSeenResource(this.currentSeenListId)
   }
 
   function createCategories() {
     if (!this.scene?.isValid())
       return
-
     let headerObj = this.scene.findObject("decals_wnd_header")
     headerObj.setValue(loc(this.curDecorType.listHeaderLocId))
 
     let decorType = this.curDecorType
     let decorCache = this.getDecorCache()
-    let categories = this.getCategories().map(function(categoryId) {
+    this.prepareDecoratorsCache(decorCache)
+
+    let categories = []
+    foreach(categoryId in this.getCategories()) {
       let groups = decorCache.catToGroupNames[categoryId]
       let hasGroups = groups.len() > 1 || groups[0] != "other"
-      return {
+      let groupId = hasGroups ? "summary" : "other"
+
+      let subListId = $"{categoryId}.{groupId}"
+      this.currentSeenList.setSubListGetter(subListId, Callback(@() this.decoratorsCache.filter(@(_val, key) key == subListId).values()?[0] ?? [], this))
+      categories.append({
         id = $"category_{categoryId}"
         headerText = $"#{decorType.categoryPathPrefix}{categoryId}"
         categoryId
-        groupId = hasGroups ? "" : "other"
+        groupId
         hasGroups
-      }
-    })
+        unseenIcon = bhvUnseen.makeConfigStr(this.currentSeenListId, subListId)
+      })
+    }
 
-    let data = ::handyman.renderCached(this.categoryTpl, { categories })
+    let data = handyman.renderCached(this.categoryTpl, { categories })
     let listObj = this.scene.findObject("categories_list")
     this.guiScene.replaceContentFromText(listObj, data, data.len(), this)
+    this.switchPanels("categories")
   }
 
   function updateSelectedCategory(_decorator) {
@@ -139,6 +185,9 @@ let class DecorMenuHandler extends ::gui_handlers.BaseGuiHandlerWT {
     this.scene.show(isShown)
     this.scene.enable(isShown)
     ::enableHangarControls(!this.scene.findObject("hangar_control_tracking").isHovered())
+    this.resetFilter()
+    if(!isShown)
+      this.markSeenDecors()
   }
 
   // private
@@ -151,15 +200,21 @@ let class DecorMenuHandler extends ::gui_handlers.BaseGuiHandlerWT {
   function generateGroupsCategoryContent(categoryId) {
     let groups = this.getDecorCache().catToGroupNames[categoryId]
     let decorType = this.curDecorType
-    let categories = groups.map(@(groupId) {
-      id = $"group_{groupId}"
-      headerText = $"#{decorType.groupPathPrefix}{groupId}"
-      categoryId
-      groupId
-      hasGroups = false
-      isGroup = true
-    })
-    return ::handyman.renderCached(this.categoryTpl, { categories })
+    let categories = []
+    foreach(groupId in groups) {
+      let subListId = $"{categoryId}.{groupId}"
+      this.currentSeenList.setSubListGetter(subListId, Callback(@() this.decoratorsCache.filter(@(_val, key) key == subListId).values()[0], this))
+      categories.append({
+        id = $"group_{groupId}"
+        headerText = $"#{decorType.groupPathPrefix}{groupId}"
+        categoryId
+        groupId
+        hasGroups = false
+        isGroup = true
+        unseenIcon = bhvUnseen.makeConfigStr(this.currentSeenListId, subListId)
+      })
+    }
+    return handyman.renderCached(this.categoryTpl, { categories })
   }
 
   function getSelectedObj(listObj) {
@@ -176,7 +231,7 @@ let class DecorMenuHandler extends ::gui_handlers.BaseGuiHandlerWT {
   function fillDecalsCategoryContent(listObj) {
     if (!listObj?.isValid())
       return
-
+    this.markSeenDecors()
     let categoryObj = this.getSelectedObj(listObj)
     if (!categoryObj?.isValid()) {
       this.savePath("")
@@ -216,14 +271,11 @@ let class DecorMenuHandler extends ::gui_handlers.BaseGuiHandlerWT {
     ::saveLocalByAccount(localPath, "/".join([categoryId, groupId], true))
   }
 
-  function generateDecalCategoryContent(categoryId, groupId) {
-    let decors = this.getDecorCache().catToGroups?[categoryId][groupId]
-    if (!decors || decors.len() == 0)
-      return ""
-
+  function getDecorButtonsView(decors) {
     let slotDecorId = this.curSlotDecorId
     let unit = this.curUnit
-    let view = {
+    let currentListId = this.currentSeenListId
+    return {
       isTooltipByHold = ::show_console_buttons
       buttons = decors.map(@(decorator) getDecorButtonView(decorator, unit, {
         needHighlight = decorator.id == slotDecorId
@@ -232,9 +284,28 @@ let class DecorMenuHandler extends ::gui_handlers.BaseGuiHandlerWT {
         onCollectionBtnClick = isCollectionItem(decorator)
           ? "onCollectionIconClick"
           : null
+        unseenIcon = decorator.canUse(unit) ? bhvUnseen.makeConfigStr(currentListId, decorator.id) : ""
       }))
     }
-    return ::handyman.renderCached("%gui/commonParts/imageButton.tpl", view)
+  }
+
+  function generateDecalCategoryContent(categoryId, groupId) {
+    let decors = this.getDecorCache().catToGroups?[categoryId][groupId]
+    if (!decors || decors.len() == 0)
+      return ""
+
+    let view = this.getDecorButtonsView(decors)
+    let unit = this.curUnit
+    this.storeSeenDecors(decors.filter(@(decor) decor.canUse(unit)).map(@(decor) decor.id))
+    return handyman.renderCached("%gui/commonParts/imageButton.tpl", view)
+  }
+
+  storeSeenDecors = @(decors) this.decorsToMarkSeen.extend(decors)
+
+  function markSeenDecors() {
+    if(this.currentSeenList != null)
+      this.currentSeenList.markSeen(this.decorsToMarkSeen)
+    this.decorsToMarkSeen.clear()
   }
 
   function scrollDecalsCategory() {
@@ -304,7 +375,7 @@ let class DecorMenuHandler extends ::gui_handlers.BaseGuiHandlerWT {
     if (listObj.getValue() != decorator.catIndex)
       listObj.setValue(decorator.catIndex)
 
-    ::broadcastEvent("DecorMenuItemClick", { decorator })
+    broadcastEvent("DecorMenuItemClick", { decorator })
   }
 
   function onDecorItemDoubleClick(obj) {
@@ -312,16 +383,16 @@ let class DecorMenuHandler extends ::gui_handlers.BaseGuiHandlerWT {
     if (!decorator)
       return
 
-    ::broadcastEvent("DecorMenuItemDblClick", { decorator })
+    broadcastEvent("DecorMenuItemDblClick", { decorator })
   }
 
   function onCollectionIconClick(obj) {
     let decoratorId = obj.holderId
-    ::broadcastEvent("DecorMenuCollectionIconClick", { decoratorId })
+    broadcastEvent("DecorMenuCollectionIconClick", { decoratorId })
   }
 
   function onDecorItemSelect() {
-    ::broadcastEvent("DecorMenuItemSelect")
+    broadcastEvent("DecorMenuItemSelect")
   }
 
   function onDecorItemActivate(listObj) {
@@ -329,7 +400,7 @@ let class DecorMenuHandler extends ::gui_handlers.BaseGuiHandlerWT {
   }
 
   function onDecorListHoverChange() {
-    ::broadcastEvent("DecorMenuListHoverChange")
+    broadcastEvent("DecorMenuListHoverChange")
   }
 
   function onDecorItemHeader(listObj) {
@@ -344,6 +415,63 @@ let class DecorMenuHandler extends ::gui_handlers.BaseGuiHandlerWT {
   }
 
   onDecorMenuHoverChange = @(obj) ::enableHangarControls(!obj.isHovered())
+
+  function onFilterCancel(filterObj) {
+    if (filterObj.getValue() != "")
+      filterObj.setValue("")
+    else
+      broadcastEvent("DecorMenuFilterCancel")
+  }
+
+  function resetFilter() {
+    let filterEditBox = this.scene.findObject("filter_edit_box")
+    if(!filterEditBox?.isValid())
+      return
+
+    filterEditBox.setValue("")
+  }
+
+  function generateDecoratorsContentByName(name) {
+    let filteredDecors = []
+    let decorCache = this.getDecorCache()
+    foreach(cat in decorCache.categories) {
+      let groups = decorCache.catToGroups[cat]
+      foreach(decors in groups) {
+        filteredDecors.extend(decors.filter(@(v) utf8ToLower(v.getName()).indexof(name) != null))
+      }
+    }
+    if (filteredDecors.len() == 0)
+      return ""
+
+    let view = this.getDecorButtonsView(filteredDecors)
+    return handyman.renderCached("%gui/commonParts/imageButton.tpl", view)
+  }
+
+  function applyFilter(obj) {
+    clearTimer(this.applyFilterTimer)
+    let filterText = utf8ToLower(obj.getValue())
+    if(filterText == "") {
+      this.switchPanels("categories")
+      return
+    }
+
+    let applyCallback = Callback(@() this.applyFilterImpl(filterText), this)
+    this.applyFilterTimer = setTimeout(0.8, @() applyCallback())
+  }
+
+  function applyFilterImpl(filterText) {
+    let decoratorsObj = this.scene.findObject("filtered_decorators")
+    if(!decoratorsObj?.isValid())
+      return
+    let data = this.generateDecoratorsContentByName(filterText)
+    this.guiScene.replaceContentFromText(decoratorsObj, data, data.len(), this)
+    this.switchPanels("decorators")
+  }
+
+  function switchPanels(currentPanel) {
+    let panels = this.scene.findObject("panels")
+    panels.currentPanel = currentPanel
+  }
 }
 
 ::gui_handlers.DecorMenuHandler <- DecorMenuHandler

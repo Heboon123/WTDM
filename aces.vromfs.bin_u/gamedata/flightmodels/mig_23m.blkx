@@ -6,11 +6,10 @@
   "gearSinkRangeC": 0.333,
   "jetEnginePowerFullScale": true,
   "haveCCIPForRocket": true,
+  "gyroSight": true,
   "haveCCIPForGun": true,
   "ilsASP23": true,
-  "gyroscopicSightOverSensors": true,
   "type": "typeFighter",
-  "paratrooper": "ally",
   "advancedInstructor": true,
   "advancedMouseAim": true,
   "standardExhaustFxType": "jet_exhaust",
@@ -30,6 +29,7 @@
   "fireParamsPreset": "2400kph",
   "fightAiBehaviour": "fighter",
   "autopilotImpl": "FBW",
+  "paratrooper": "su_k_36_ejection_para",
   "DamageParts": {
     "armor10": {
       "armor2_dm": {
@@ -208,6 +208,11 @@
       },
       "tank6_dm": {
         "hp": 109.2
+      }
+    },
+    "steel_tank_s": {
+      "tank7_dm": {
+        "hp": 80.5
       }
     }
   },
@@ -392,6 +397,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -402,6 +423,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -599,6 +636,14 @@
           }
         },
         {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
+          }
+        },
+        {
           "onKill": {
             "wingcontrol_l_dm": 1.0,
             "wingcontrol_r_dm": 1.0,
@@ -644,6 +689,14 @@
             "wing_l_dm": 1.0,
             "wing_r_dm": 1.0
           }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
+          }
         }
       ]
     },
@@ -674,6 +727,14 @@
           "onHit": {
             "damage": 50.0,
             "tail_dm": 1.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
           }
         },
         {
@@ -729,6 +790,14 @@
             "damage": 50.0,
             "tail_dm": 1.0,
             "nothing": 1.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
           }
         }
       ]
@@ -1330,6 +1399,62 @@
             "damage": 80.0,
             "fire": 50.0,
             "leak": 10.0
+          }
+        }
+      ]
+    },
+    {
+      "part": [
+        {
+          "name": "tank7_dm"
+        },
+        {
+          "onHit": {
+            "fire": 0.05,
+            "leak": 0.7
+          }
+        },
+        {
+          "onHit": {
+            "damage": 20.0,
+            "fire": 0.3,
+            "leak": 0.8
+          }
+        },
+        {
+          "onHit": {
+            "damage": 50.0,
+            "fire": 0.9,
+            "leak": 0.9
+          }
+        },
+        {
+          "onHit": {
+            "damage": 80.0,
+            "expl": 0.5,
+            "fire": 0.9,
+            "leak": 0.9
+          }
+        },
+        {
+          "onKill": {
+            "fire": 10.0,
+            "leak": 10.0,
+            "nothing": 80.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 50.0,
+            "fire": 25.0,
+            "leak": 35.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 80.0,
+            "fire": 50.0,
+            "leak": 30.0
           }
         }
       ]
@@ -2328,6 +2453,12 @@
     },
     {
       "preset": {
+        "name": "mig_23m_ltc",
+        "blk": "gameData/FlightModels/weaponPresets/mig_23m_ltc.blk"
+      }
+    },
+    {
+      "preset": {
         "name": "mig_23m_rocket_r3s",
         "blk": "gameData/FlightModels/weaponPresets/mig_23m_rocket_r3s.blk"
       }
@@ -2557,6 +2688,9 @@
         },
         {
           "node": "su_infrared_flare_bp_50_60"
+        },
+        {
+          "node": "su_800l_mig_23_27_drop_tank_central_pylon"
         }
       ]
     },
@@ -2567,86 +2701,32 @@
         },
         {
           "node": "armor2_dm"
+        },
+        {
+          "node": "tank7_dm"
         }
       ]
     },
     {
-      "WeaponSlot": [
-        {
-          "index": 0
-        },
-        {
-          "notUseforDisbalanceCalculation": true
-        },
-        {
-          "WeaponPreset": {
-            "name": "gsh_23l_common",
-            "Weapon": {
-              "trigger": "cannon",
-              "blk": "gameData/Weapons/cannonGSh_23L.blk",
-              "emitter": "flare1",
-              "flash": "flare1",
-              "dm": "cannon1_dm",
-              "bullets": 200,
-              "spread": 1.0,
-              "counterIndex": 1,
-              "gearLimit": [0.0,0.1],
-              "gearName": "gear_c"
-            }
+      "WeaponSlot": {
+        "index": 0,
+        "notUseforDisbalanceCalculation": true,
+        "WeaponPreset": {
+          "name": "gsh_23l_common",
+          "Weapon": {
+            "trigger": "cannon",
+            "blk": "gameData/Weapons/cannonGSh_23L.blk",
+            "emitter": "flare1",
+            "flash": "flare1",
+            "dm": "cannon1_dm",
+            "bullets": 200,
+            "spread": 1.0,
+            "counterIndex": 1,
+            "gearLimit": [0.0,0.1],
+            "gearName": "gear_c"
           }
-        },
-        {
-          "WeaponPreset": [
-            {
-              "name": "gsh_23l_ltc_common"
-            },
-            {
-              "ShowNodes": [
-                {
-                  "node": "pylon_fueltank"
-                },
-                {
-                  "node": "su_infrared_flare_pkvp_23"
-                },
-                {
-                  "node": "su_infrared_flare_bp_50_60"
-                },
-                {
-                  "node": "chute3"
-                },
-                {
-                  "node": "chute4"
-                }
-              ]
-            },
-            {
-              "Weapon": {
-                "trigger": "cannon",
-                "blk": "gameData/Weapons/cannonGSh_23L.blk",
-                "emitter": "flare1",
-                "flash": "flare1",
-                "dm": "cannon1_dm",
-                "bullets": 200,
-                "spread": 1.0,
-                "counterIndex": 1,
-                "gearLimit": [0.0,0.1],
-                "gearName": "gear_c"
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "countermeasures",
-                "startFx": "",
-                "blk": "gameData/Weapons/rocketGuns/countermeasure_large_launcher_jet.blk",
-                "emitter": "emtr_flare1",
-                "bullets": 12,
-                "external": true,
-                "separate": true
-              }
-            }
-          ]
         }
-      ]
+      }
     },
     {
       "WeaponSlot": [
@@ -2727,7 +2807,7 @@
               "separate": true
             },
             "BannedWeaponPreset": {
-              "slot": 4,
+              "slot": 5,
               "preset": "r_23t"
             }
           }
@@ -2749,7 +2829,7 @@
               "separate": true
             },
             "BannedWeaponPreset": {
-              "slot": 4,
+              "slot": 5,
               "preset": "r_23r"
             }
           }
@@ -3104,7 +3184,7 @@
         {
           "WeaponPreset": {
             "iconType": "bombs_small_group_x4",
-            "name": "ofab100_120",
+            "name": "ofab100_120_slot2",
             "reqModification": "su_17_ofab_100",
             "ShowNodes": {
               "node": "pylon_1"
@@ -3115,6 +3195,10 @@
               "emitter": "mbd2_67u_1",
               "external": true,
               "machLimit": 1.01
+            },
+            "BannedWeaponPreset": {
+              "slot": 3,
+              "preset": "ptb"
             }
           }
         },
@@ -3148,6 +3232,84 @@
       "WeaponSlot": [
         {
           "index": 3
+        },
+        {
+          "tier": 6
+        },
+        {
+          "order": 5
+        },
+        {
+          "notUseforDisbalanceCalculation": true
+        },
+        {
+          "WeaponPreset": [
+            {
+              "iconType": "ptb"
+            },
+            {
+              "name": "ptb"
+            },
+            {
+              "showInWeaponMenu": true
+            },
+            {
+              "ShowNodes": {
+                "node": "su_800l_mig_23_27_drop_tank_central_pylon"
+              }
+            },
+            {
+              "ShowDmParts": {
+                "node": "tank7_dm"
+              }
+            },
+            {
+              "Weapon": {
+                "trigger": "fuel tanks",
+                "blk": "gameData/Weapons/drop_tank/su_800l_mig_23m_silver_fuse.blk",
+                "emitter": "su_800l_mig_23_27_drop_tank_central",
+                "bullets": 1,
+                "external": true
+              }
+            },
+            {
+              "BannedWeaponPreset": {
+                "slot": 2,
+                "preset": "ofab100_120_slot2"
+              }
+            },
+            {
+              "BannedWeaponPreset": {
+                "slot": 4,
+                "preset": "ofab100_120_slot4"
+              }
+            }
+          ]
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "ltc",
+            "name": "ltc",
+            "ShowNodes": {
+              "node": "su_infrared_flare_pkvp_23"
+            },
+            "Weapon": {
+              "trigger": "countermeasures",
+              "startFx": "",
+              "blk": "gameData/Weapons/rocketGuns/countermeasure_large_launcher_jet.blk",
+              "emitter": "emtr_flare1",
+              "bullets": 12,
+              "external": true,
+              "separate": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "WeaponSlot": [
+        {
+          "index": 4
         },
         {
           "tier": 5
@@ -3278,7 +3440,7 @@
         {
           "WeaponPreset": {
             "iconType": "bombs_small_group_x4",
-            "name": "ofab100_120",
+            "name": "ofab100_120_slot4",
             "reqModification": "su_17_ofab_100",
             "ShowNodes": {
               "node": "pylon_2"
@@ -3289,6 +3451,10 @@
               "emitter": "mbd2_67u_2",
               "external": true,
               "machLimit": 1.01
+            },
+            "BannedWeaponPreset": {
+              "slot": 3,
+              "preset": "ptb"
             }
           }
         },
@@ -3342,7 +3508,7 @@
     {
       "WeaponSlot": [
         {
-          "index": 4
+          "index": 5
         },
         {
           "tier": 4
@@ -3783,15 +3949,7 @@
       "tier": 1,
       "turn_it_off": false,
       "invertEnableLogic": false,
-      "group": "mi-24_EVU",
-      "effects": {
-        "commonWeapons": {
-          "Weapon": {
-            "slot": 0,
-            "preset": "gsh_23l_ltc_common"
-          }
-        }
-      }
+      "group": "mi-24_EVU"
     },
     "air_extinguisher": {
       "prevModification": "countermeasures_belt_pack",
@@ -3875,6 +4033,21 @@
     "chuteFlapVarName": "fire_chute",
     "chuteTimeScaleParam": "chute_time_scale",
     "chuteFallSpeed": 1.0
+  },
+  "bailout": {
+    "buttonHoldTime": 1.0,
+    "wreckSpeed": 10.0,
+    "wreckDir": [-1.0,1.0,0.0],
+    "seatEjectDelay": 0.5,
+    "seatVel": [-10.0,20.0,0.0],
+    "minHeight": 0.0,
+    "minSpeed": 0.0,
+    "hasSafeExit": true,
+    "wreck": "blister1",
+    "hide": "seat_01",
+    "seat": "seat_01",
+    "fxEmitter": "blister1",
+    "fxType": "catapult_expl_ejection"
   },
   "cutting": {
     "emtr_break_wing1_l_from": [-0.999142,-0.191786,2.62057],

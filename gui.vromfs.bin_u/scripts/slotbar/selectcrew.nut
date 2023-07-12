@@ -1,20 +1,20 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { Cost } = require("%scripts/money.nut")
+let u = require("%sqStdLibs/helpers/u.nut")
+let { toPixels } = require("%sqDagui/daguiUtil.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let slotbarWidget = require("%scripts/slotbar/slotbarWidgetByVehiclesGroups.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-
 let slotbarPresets = require("%scripts/slotbar/slotbarPresetsByVehiclesGroups.nut")
 let tutorAction = require("%scripts/tutorials/tutorialActions.nut")
 let { placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { getSafearea } = require("%scripts/options/safeAreaMenu.nut")
+let { CrewTakeUnitProcess } = require("%scripts/crew/crewTakeUnitProcess.nut")
+let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
 ::gui_start_selecting_crew <- function gui_start_selecting_crew(config) {
-  if (::CrewTakeUnitProcess.safeInterrupt())
+  if (CrewTakeUnitProcess.safeInterrupt())
     ::handlersManager.destroyPrevHandlerAndLoadNew(::gui_handlers.SelectCrew, config)
 }
 
@@ -132,8 +132,8 @@ let function getObjPosInSafeArea(obj) {
   function updateObjectsPositions(tdClone, legendObj, headerObj) {
     let rootSize = this.guiScene.getRoot().getSize()
     let sh = rootSize[1]
-    let bh = ::g_dagui_utils.toPixels(this.guiScene, "@bh")
-    let interval = ::g_dagui_utils.toPixels(this.guiScene, "@itemsIntervalBig")
+    let bh = toPixels(this.guiScene, "@bh")
+    let interval = toPixels(this.guiScene, "@itemsIntervalBig")
 
     //count position by visual card obj. real td is higher and wider than a card.
     let visTdObj = tdClone.childrenCount() ? tdClone.getChild(0) : tdClone
@@ -186,7 +186,7 @@ let function getObjPosInSafeArea(obj) {
 
       if (isNearTd) { //else centered.
         let sw = rootSize[0]
-        let bw = ::g_dagui_utils.toPixels(this.guiScene, "@bw")
+        let bw = toPixels(this.guiScene, "@bw")
         local legendPosX = tdPos[0] + tdSize[0] + interval
         if (legendPosX + legendSize[0] > sw - bw)
           legendPosX = tdPos[0] - interval - legendSize[0]
@@ -215,7 +215,7 @@ let function getObjPosInSafeArea(obj) {
     if (!costTable)
       return
 
-    let cost = ::Cost(costTable.cost, costTable.costGold)
+    let cost = Cost(costTable.cost, costTable.costGold)
     if (cost.gold > 0)
       return
 
@@ -223,13 +223,13 @@ let function getObjPosInSafeArea(obj) {
   }
 
   function getCurrentEdiff() {
-    return ::u.isFunction(this.getEdiffFunc) ? this.getEdiffFunc() : ::get_current_ediff()
+    return u.isFunction(this.getEdiffFunc) ? this.getEdiffFunc() : ::get_current_ediff()
   }
 
   function getTakeAirCost() {
     return this.isSelectByGroups
-      ? ::Cost()
-      : ::CrewTakeUnitProcess.getProcessCost(
+      ? Cost()
+      : CrewTakeUnitProcess.getProcessCost(
           this.getCurCrew(),
           this.unit
         )
@@ -254,7 +254,7 @@ let function getObjPosInSafeArea(obj) {
   }
 
   function startTutorial() {
-    let playerBalance = ::Cost()
+    let playerBalance = Cost()
     let playerInfo = ::get_profile_info()
     playerBalance.wp = playerInfo.balance
     playerBalance.gold = playerInfo.gold
@@ -297,7 +297,7 @@ let function getObjPosInSafeArea(obj) {
         onFinishCb = onFinishCb
       })
     else
-      ::CrewTakeUnitProcess(crew, this.unit, onFinishCb)
+      CrewTakeUnitProcess(crew, this.unit, onFinishCb)
   }
 
   function onTakeProcessFinish(isSuccess) {
@@ -305,9 +305,10 @@ let function getObjPosInSafeArea(obj) {
       return
 
     if (this.isNewUnit) {
-      ::add_big_query_record("choosed_crew_for_new_unit",
-        ::save_to_json({ unit = this.unit.name
-          crew = this.getCurCrew()?.id }))
+      sendBqEvent("CLIENT_GAMEPLAY_1", "choosed_crew_for_new_unit", {
+        unit = this.unit.name
+        crew = this.getCurCrew()?.id
+      })
     }
     if (this.afterSuccessFunc)
       this.afterSuccessFunc()
@@ -356,7 +357,7 @@ let function getObjPosInSafeArea(obj) {
       this.addLegendData(legendData, specType)
     }
 
-    if (::u.isEmpty(legendData))
+    if (u.isEmpty(legendData))
       return null
 
     legendData.sort(function(a, b) {
@@ -375,7 +376,7 @@ let function getObjPosInSafeArea(obj) {
     if (!checkObj(obj))
       return null
 
-    let blk = ::handyman.renderCached("%gui/slotbar/legend_block.tpl", view)
+    let blk = handyman.renderCached("%gui/slotbar/legend_block.tpl", view)
     this.guiScene.replaceContentFromText(obj, blk, blk.len(), this)
 
     return obj

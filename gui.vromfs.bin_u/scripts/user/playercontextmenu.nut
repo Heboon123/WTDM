@@ -1,8 +1,5 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let u = require("%sqStdLibs/helpers/u.nut")
 let platformModule = require("%scripts/clientState/platform.nut")
@@ -12,7 +9,7 @@ let { isChatEnabled, attemptShowOverlayMessage, hasMenuChat,
   isCrossNetworkMessageAllowed } = require("%scripts/chat/chatStates.nut")
 let { updateContactsStatusByContacts } = require("%scripts/contacts/updateContactsStatus.nut")
 let { verifyContact } = require("%scripts/contacts/contactsManager.nut")
-
+let { addContact, removeContact } = require("%scripts/contacts/contactsState.nut")
 let { invite } = require("%scripts/social/psnSessionManager/getPsnSessionManagerApi.nut")
 let { checkAndShowMultiplayerPrivilegeWarning, checkAndShowCrossplayWarning,
   isMultiplayerPrivilegeAvailable } = require("%scripts/user/xboxFeatures.nut")
@@ -195,7 +192,7 @@ let getActions = function(contact, params) {
 //---- <Squad> --------------------
   if (hasFeature("Squad")) {
     let meLeader = ::g_squad_manager.isSquadLeader()
-    let inMySquad = ::g_squad_manager.isInMySquad(name, false)
+    let inMySquad = ::g_squad_manager.isInMySquadById(uidInt64, false)
     let squadMemberData = params?.squadMemberData
     let hasApplicationInMySquad = ::g_squad_manager.hasApplicationInMySquad(uidInt64, name)
     let canInviteDiffConsole = ::g_squad_manager.canInviteMemberByPlatform(name)
@@ -332,13 +329,13 @@ let getActions = function(contact, params) {
           if (!canInteractCrossConsole)
             showNotAvailableActionPopup()
           else
-            ::editContactMsgBox(contact, EPL_FRIENDLIST, true)
+            addContact(contact, EPL_FRIENDLIST)
         }
       }
       {
         text = loc("contacts/friendlist/remove")
         show = isFriend && contact.isInFriendGroup()
-        action = @() ::editContactMsgBox(contact, EPL_FRIENDLIST, false)
+        action = @() removeContact(contact, EPL_FRIENDLIST)
       }
       {
         text = loc("contacts/psn/friends/request")
@@ -346,19 +343,14 @@ let getActions = function(contact, params) {
         action = @() contact.sendPsnFriendRequest(EPL_FRIENDLIST)
       }
       {
-        text = loc("contacts/steamlist/remove")
-        show = params?.curContactGroup == EPL_STEAM && ::isPlayerInContacts(uid, EPL_STEAM)
-        action = @() ::editContactMsgBox(contact, EPL_STEAM, false)
-      }
-      {
         text = loc("contacts/blacklist/add")
         show = !isMe && !isFriend && !isBlock && canBlock && !isPS4Player
-        action = @() ::editContactMsgBox(contact, EPL_BLOCKLIST, true)
+        action = @() addContact(contact, EPL_BLOCKLIST)
       }
       {
         text = loc("contacts/blacklist/remove")
         show = isBlock && canBlock && (!isPS4Player || (isPS4Player && contact.isInPSNFriends()))
-        action = @() ::editContactMsgBox(contact, EPL_BLOCKLIST, false)
+        action = @() removeContact(contact, EPL_BLOCKLIST)
       }
       {
         text = loc("contacts/psn/blacklist/request")

@@ -1,16 +1,15 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { Cost } = require("%scripts/money.nut")
+
 
 
 let { format } = require("string")
 let { getShopItem,
         canUseIngameShop,
         getShopItemsTable } = require("%scripts/onlineShop/entitlementsStore.nut")
-let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { broadcastEvent, addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let unitActions = require("%scripts/unit/unitActions.nut")
 let slotbarPresets = require("%scripts/slotbar/slotbarPresetsByVehiclesGroups.nut")
 let unitContextMenuState = require("%scripts/unit/unitContextMenuState.nut")
@@ -58,7 +57,7 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
       showAction = inMenu
       actionFunc = function () {
         ::queues.checkAndStart(function () {
-          ::broadcastEvent("BeforeStartShowroom")
+          broadcastEvent("BeforeStartShowroom")
           showedUnit(unit)
           ::handlersManager.animatedSwitchScene(::gui_start_decals)
         }, null, "isCanModifyCrew")
@@ -158,7 +157,7 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
     }
     else if (action == "repair") {
       let repairCost = ::wp_get_repair_cost(unit.name)
-      actionText = loc("mainmenu/btnRepair") + ": " + ::Cost(repairCost).getTextAccordingToBalance()
+      actionText = loc("mainmenu/btnRepair") + ": " + Cost(repairCost).getTextAccordingToBalance()
       icon       = "#ui/gameuiskin#slot_repair.svg"
       haveWarning = true
       showAction = inMenu && isUsable && repairCost > 0 && ::SessionLobby.canChangeCrewUnits()
@@ -231,14 +230,14 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
       let countryExp = ::shop_get_country_excess_exp(::getUnitCountry(unit), ::get_es_unit_type(unit))
       let getReqExp = reqExp < countryExp ? reqExp : countryExp
       let needToFlushExp = !isSquadronVehicle && shopResearchMode && countryExp > 0
-      let squadronExpText = ::Cost().setSap(squadronExp).tostring()
+      let squadronExpText = Cost().setSap(squadronExp).tostring()
 
       actionText = needToFlushExp || (isSquadronResearchMode && needChosenResearchOfSquadron)
         ? format(loc("mainmenu/btnResearch")
           + (needToFlushExp || canFlushSquadronExp ? " (%s)" : ""),
           isSquadronVehicle
             ? squadronExpText
-            : ::Cost().setRp(getReqExp).tostring())
+            : Cost().setRp(getReqExp).tostring())
         : canFlushSquadronExp && (isInResearch || isSquadronResearchMode)
           ? format(loc("mainmenu/btnInvestSquadronExp") + " (%s)", squadronExpText)
             : isInResearch && setResearchManually && !isSquadronVehicle

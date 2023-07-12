@@ -432,7 +432,7 @@
         "wheel_support_dm": [],
         "submodule": {
           "armorClass": "tank_traks",
-          "armorThickness": 10.0,
+          "armorThickness": 15.0,
           "hp": 150.0,
           "ex_armor_01_dm": []
         },
@@ -1868,6 +1868,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.4,
               "nothing": 0.6,
               "fHitCritical": true
@@ -2985,6 +2986,9 @@
   {
     "commonWeapons": [
       {
+        "remotelyGuidedWeaponsMax": 1
+      },
+      {
         "Weapon": {
           "trigger": "gunner0",
           "triggerGroup": "primary",
@@ -2992,12 +2996,13 @@
           "emitter": "bone_gun_barrel_02",
           "flash": "emtr_gun_flame_02",
           "useEmitter": true,
-          "sleeveEmitter": "emtr_shell_01",
-          "sleeveMesh": "auto_cannon_cartridge_case",
-          "sleevesLifeTime": 5.0,
-          "sleeveImpulse": [2.5,0.0,0.5],
-          "linkSleeveToGun": true,
+          "shellCasingEmitter": "emtr_shell_01",
+          "shellCasingMesh": "auto_cannon_cartridge_case",
+          "shellCasingLifeTime": 5.0,
+          "shellCasingImpulse": [2.5,0.0,0.5],
+          "linkShellCasingToGun": true,
           "recoilOffset": 0.045,
+          "jammedReloadTime": 15.0,
           "defaultYaw": 0.0,
           "defaultPitch": 0.0,
           "barrelDP": "gun_barrel_02_dm",
@@ -3103,12 +3108,12 @@
           "emitter": "bone_gun_barrel_01",
           "flash": "emtr_gun_flame_01",
           "useEmitter": true,
-          "sleeveEmitter": "emtr_shell",
-          "sleeveMesh": "semi_combustible_cartridge_case",
+          "shellCasingEmitter": "emtr_shell",
+          "shellCasingMesh": "semi_combustible_cartridge_case",
           "hatchAnimVar": "hatch_toggle",
           "openHatchTime": 1.3,
-          "sleevesLifeTime": 10.0,
-          "sleeveImpulse": [5.0,0.0,0.0],
+          "shellCasingLifeTime": 10.0,
+          "shellCasingImpulse": [5.0,0.0,0.0],
           "recoilOffset": 0.045,
           "recoilMultiplier": 0.4,
           "defaultYaw": 0.0,
@@ -3613,8 +3618,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -4539,6 +4544,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -4853,6 +4867,9 @@
         "effects": {
           "commonWeapons": [
             {
+              "remotelyGuidedWeaponsMax": 1
+            },
+            {
               "Weapon": {
                 "trigger": "gunner0",
                 "triggerGroup": "primary",
@@ -4860,12 +4877,13 @@
                 "emitter": "bone_gun_barrel_02",
                 "flash": "emtr_gun_flame_02",
                 "useEmitter": true,
-                "sleeveEmitter": "emtr_shell_01",
-                "sleeveMesh": "auto_cannon_cartridge_case",
-                "sleevesLifeTime": 5.0,
-                "sleeveImpulse": [2.5,0.0,0.5],
-                "linkSleeveToGun": true,
+                "shellCasingEmitter": "emtr_shell_01",
+                "shellCasingMesh": "auto_cannon_cartridge_case",
+                "shellCasingLifeTime": 5.0,
+                "shellCasingImpulse": [2.5,0.0,0.5],
+                "linkShellCasingToGun": true,
                 "recoilOffset": 0.045,
+                "jammedReloadTime": 15.0,
                 "defaultYaw": 0.0,
                 "defaultPitch": 0.0,
                 "barrelDP": "gun_barrel_02_dm",
@@ -4971,12 +4989,12 @@
                 "emitter": "bone_gun_barrel_01",
                 "flash": "emtr_gun_flame_01",
                 "useEmitter": true,
-                "sleeveEmitter": "emtr_shell",
-                "sleeveMesh": "semi_combustible_cartridge_case",
+                "shellCasingEmitter": "emtr_shell",
+                "shellCasingMesh": "semi_combustible_cartridge_case",
                 "hatchAnimVar": "hatch_toggle",
                 "openHatchTime": 1.3,
-                "sleevesLifeTime": 10.0,
-                "sleeveImpulse": [5.0,0.0,0.0],
+                "shellCasingLifeTime": 10.0,
+                "shellCasingImpulse": [5.0,0.0,0.0],
                 "recoilOffset": 0.045,
                 "recoilMultiplier": 0.4,
                 "defaultYaw": 0.0,
@@ -5383,6 +5401,7 @@
   {
     "supportPlane": {
       "supportPlaneClass": "ucav_recon_micro",
+      "behTreeName": "recon_micro",
       "planeStartSpeed": 80.0,
       "count": 1
     }
@@ -5592,6 +5611,12 @@
     "smokeScreenExhaustEmitters": [
       {
         "emitter": "emtr_exhaust_01"
+      },
+      {
+        "emitter": "emtr_exhaust_02"
+      },
+      {
+        "emitter": "emtr_exhaust_03"
       },
       {
         "emitter": "emtr_exhaust_04"

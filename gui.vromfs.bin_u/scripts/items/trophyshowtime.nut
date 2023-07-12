@@ -1,17 +1,14 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 from "dagor.workcycle" import setTimeout, clearTimer
-let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { broadcastEvent, addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let seenList = require("%scripts/seen/seenList.nut").get(SEEN.ITEMS_SHOP)
 let { TIME_DAY_IN_SECONDS, TIME_WEEK_IN_SECONDS } = require("%scripts/time.nut")
 
 local trophies = []
 
-let onShowTimer = @() ::broadcastEvent("UpdateTrophiesVisibility")
+let onShowTimer = @() broadcastEvent("UpdateTrophiesVisibility")
 
 let function resetShowTimer() {
   clearTimer(onShowTimer)
@@ -33,7 +30,7 @@ let function resetShowTimer() {
 let function onAlarmTimer() {
   ::ItemsManager.invalidateShopVisibleSeenIds()
   seenList.onListChanged()
-  ::broadcastEvent("UpdateTrophyUnseenIcons")
+  broadcastEvent("UpdateTrophyUnseenIcons")
 }
 
 let function resetAlarmTimer() {

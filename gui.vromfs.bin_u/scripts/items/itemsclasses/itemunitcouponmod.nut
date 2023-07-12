@@ -1,11 +1,9 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let ItemExternal = require("%scripts/items/itemsClasses/itemExternal.nut")
+let { utf8ToLower } = require("%sqstd/string.nut")
 
 ::items_classes.ItemUnitCouponMod <- class extends ItemExternal {
   static iType = itemType.UNIT_COUPON_MOD
@@ -21,5 +19,5 @@ let ItemExternal = require("%scripts/items/itemsClasses/itemExternal.nut")
     return { contentIcon = this.getSmallIconName() }
   }
 
-  getTypeNameForMarketableDesc = @() ::g_string.utf8ToLower(loc("item"))
+  getTypeNameForMarketableDesc = @() utf8ToLower(loc("item"))
 }

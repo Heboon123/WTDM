@@ -1,10 +1,8 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { openUrl } = require("%scripts/onlineShop/url.nut")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { subscribe } = require("eventbus")
 let { format } = require("string")
@@ -33,7 +31,7 @@ let { format } = require("string")
   }
 }
 
-subscribe("steam.overlay_activation", @(p) ::broadcastEvent("SteamOverlayStateChanged", p))
+subscribe("steam.overlay_activation", @(p) broadcastEvent("SteamOverlayStateChanged", p))
 
 return {
   open = @(onApplyFunc = null) ::handlersManager.loadHandler(::gui_handlers.SteamRateGame,

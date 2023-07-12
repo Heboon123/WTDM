@@ -1,9 +1,8 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { Cost } = require("%scripts/money.nut")
+
 
 let { format } = require("string")
 let { shell_launch } = require("url")
@@ -22,6 +21,7 @@ let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let openQrWindow = require("%scripts/wndLib/qrWindow.nut")
 let { showGuestEmailRegistration, needShowGuestEmailRegistration
 } = require("%scripts/user/suggestionEmailRegistration.nut")
+let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
 ::delayed_unlock_wnd <- []
 ::showUnlockWnd <- function showUnlockWnd(config) {
@@ -82,7 +82,7 @@ let { showGuestEmailRegistration, needShowGuestEmailRegistration
     if (getTblValue("type", this.config, -1) == UNLOCKABLE_AIRCRAFT || "unitName" in this.config) {
       let id = getTblValue("id", this.config)
       let unitName = getTblValue("unitName", this.config, id)
-      this.unit = ::getAircraftByName(unitName)
+      this.unit = getAircraftByName(unitName)
       this.updateUnitItem()
     }
 
@@ -202,7 +202,7 @@ let { showGuestEmailRegistration, needShowGuestEmailRegistration
     let buyObj = this.showSceneBtn("btn_buy_unit", canBuy)
     if (canBuy && checkObj(buyObj)) {
       let locText = loc("shop/btnOrderUnit", { unit = ::getUnitName(this.unit.name) })
-      let unitCost = canBuyOnline ? ::Cost() : ::getUnitCost(this.unit)
+      let unitCost = canBuyOnline ? Cost() : ::getUnitCost(this.unit)
       placePriceTextToButton(this.scene, "btn_buy_unit", locText, unitCost, 0, ::getUnitRealCost(this.unit))
     }
 
@@ -246,8 +246,9 @@ let { showGuestEmailRegistration, needShowGuestEmailRegistration
     }
 
     if (getTblValue("type", this.config) == "regionalPromoPopup")
-      ::add_big_query_record("promo_popup_click",
-        ::save_to_json({ id = this.config?.id ?? this.config?.link ?? this.config?.popupImage ?? -1 }))
+      sendBqEvent("CLIENT_POPUP_1", "promo_popup_click", {
+        id = this.config?.id ?? this.config?.link ?? this.config?.popupImage ?? -1
+      })
     openLinkWithSource([ obj?.link, this.config?.forceExternalBrowser ?? false ], "show_unlock")
   }
 

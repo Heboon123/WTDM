@@ -1,11 +1,10 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
+let { subscribe_handler } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { format } = require("string")
-let { subscribe } = require("eventbus")
+let { subscribe, unsubscribe } = require("eventbus")
+let { isShowDebugInterface = @() false, is_app_loaded = @() false } = require("app") //compatibility with 25.04.2023
 let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
 
 
@@ -136,7 +135,7 @@ let function updateStatus(params) {
 
 
 let function init() {
-  ::subscribe_handler({
+  subscribe_handler({
     function onEventShowHud(_p) {
       let objects = getCurSceneObjects()
       if (objects)
@@ -147,4 +146,9 @@ let function init() {
 
 init()
 
-subscribe("updateStatusString", updateStatus)
+let initSubscription = @() isShowDebugInterface() ? unsubscribe("updateStatusString", updateStatus)
+  : subscribe("updateStatusString", updateStatus)
+if (is_app_loaded())
+  initSubscription()
+subscribe("onAcesInitComplete", @(_) initSubscription())
+subscribe("onUpdateProfile", @(_) initSubscription())

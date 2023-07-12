@@ -1,13 +1,10 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { format } = require("string")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-
+let { countSizeInItems } = require("%sqDagui/daguiUtil.nut")
 let regexp2 = require("regexp2")
 let time = require("%scripts/time.nut")
 let replayMetadata = require("%scripts/replays/replayMetadata.nut")
@@ -15,6 +12,7 @@ let { is_replay_turned_on, is_replay_saved, get_replays_dir,
   get_new_replay_filename, on_save_replay, on_view_replay, get_replays_list,
   on_del_replay, on_open_replays_folder, get_replay_info } = require("replays")
 let { is_benchmark_game_mode } = require("mission")
+let { startsWith, endsWith } = require("%sqstd/string.nut")
 let { reqUnlockByClient } = require("%scripts/unlocks/unlocksModule.nut")
 
 const REPLAY_SESSION_ID_MIN_LENGHT = 16
@@ -32,7 +30,7 @@ local canPlayReplay = @(replay) replay != null && is_replay_turned_on()
 ::current_replay_author <- null
 ::back_from_replays <- null
 
-::g_script_reloader.registerPersistentData("ReplayScreenGlobals", getroottable(), ["current_replay", "current_replay_author"])
+registerPersistentData("ReplayScreenGlobals", getroottable(), ["current_replay", "current_replay_author"])
 
 ::gui_start_replays <- function gui_start_replays() {
   ::gui_start_modal_wnd(::gui_handlers.ReplayScreen)
@@ -199,7 +197,7 @@ local canPlayReplay = @(replay) replay != null && is_replay_turned_on()
     let lastIdx = min(this.replays.len(), ((this.curPage + 1) * this.replaysPerPage))
     for (local i = firstIdx; i < lastIdx; i++) {
       local iconName = "";
-      let autosave = ::g_string.startsWith(this.replays[i].name, ::autosave_replay_prefix)
+      let autosave = startsWith(this.replays[i].name, ::autosave_replay_prefix)
       if (isCorruptedReplay(this.replays[i]))
         iconName = "#ui/gameuiskin#icon_primary_fail.svg"
       else if (autosave)
@@ -213,7 +211,7 @@ local canPlayReplay = @(replay) replay != null && is_replay_turned_on()
       })
     }
 
-    let data = ::handyman.renderCached("%gui/missions/missionBoxItemsList.tpl", view)
+    let data = handyman.renderCached("%gui/missions/missionBoxItemsList.tpl", view)
     this.guiScene.replaceContentFromText(listObj, data, data.len(), this)
     for (local i = 0; i < listObj.childrenCount(); i++)
       listObj.getChild(i).setIntProp(this.listIdxPID, firstIdx + i)
@@ -226,7 +224,7 @@ local canPlayReplay = @(replay) replay != null && is_replay_turned_on()
     for (local i = firstIdx; i < lastIdx; i++) {
       let obj = this.scene.findObject("txt_replay_" + i);
       local name = this.replays[i].name;
-      let hasDateInName = ::g_string.startsWith(name, ::autosave_replay_prefix) || defaultReplayNameMask.match(name)
+      let hasDateInName = startsWith(name, ::autosave_replay_prefix) || defaultReplayNameMask.match(name)
       if (!hasDateInName && !isCorruptedReplay(this.replays[i])) {
         let startTime = this.replays[i]?.startTime ?? -1
         if (startTime >= 0) {
@@ -333,7 +331,7 @@ local canPlayReplay = @(replay) replay != null && is_replay_turned_on()
         limits = loc("options/unlimited")
 
       text += loc("options/fuel_and_ammo") + loc("ui/colon") + limits + "\n" */
-      let autosave = ::g_string.startsWith(this.replays[index].name, ::autosave_replay_prefix) //not replayInfo
+      let autosave = startsWith(this.replays[index].name, ::autosave_replay_prefix) //not replayInfo
       if (autosave)
         text += loc("msg/autosaveReplayDescription") + "\n"
       text += this.createSessionResultsTable(replayInfo)
@@ -342,7 +340,7 @@ local canPlayReplay = @(replay) replay != null && is_replay_turned_on()
 
       let fps = this.replays[index].text
       if (fps.len())
-        text += fps + (::g_string.endsWith(fps, "\n") ? "" : "\n")
+        text += fps + (endsWith(fps, "\n") ? "" : "\n")
 
       objDesc.findObject("item_name").setValue(headerText)
       objDesc.findObject("item_desc_text").setValue(text)
@@ -599,7 +597,7 @@ local canPlayReplay = @(replay) replay != null && is_replay_turned_on()
   function calculateReplaysPerPage() {
     this.guiScene.applyPendingChanges(false)
     let replaysListObj = this.scene.findObject("items_list")
-    this.replaysPerPage = ::g_dagui_utils.countSizeInItems(replaysListObj, 1, "1@baseTrHeight", 0, 0).itemsCountY
+    this.replaysPerPage = countSizeInItems(replaysListObj, 1, "1@baseTrHeight", 0, 0).itemsCountY
   }
 }
 
@@ -611,7 +609,7 @@ local canPlayReplay = @(replay) replay != null && is_replay_turned_on()
       return this.goBack();
 
     this.baseName = this.baseName || ""
-    this.baseName = ::g_string.startsWith(this.baseName, ::autosave_replay_prefix) ?
+    this.baseName = startsWith(this.baseName, ::autosave_replay_prefix) ?
       this.baseName.slice(::autosave_replay_prefix.len()) : this.baseName
     this.scene.findObject("edit_box_window_header").setValue(loc("mainmenu/replayName"));
 
@@ -628,7 +626,7 @@ local canPlayReplay = @(replay) replay != null && is_replay_turned_on()
     foreach (c in "\\|/<>:?*\"")
       if (newName.indexof(c.tochar()) != null)
         return false
-    if (::g_string.startsWith(newName, ::autosave_replay_prefix))
+    if (startsWith(newName, ::autosave_replay_prefix))
       return false;
     return true;
   }

@@ -21,6 +21,33 @@
   "triggers": {
     "isCategory": true,
     "is_enabled": true,
+    "at_init": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "initMission": []
+      },
+      "conditions": [],
+      "actions": {
+        "unitLoadBehTree": [
+          {
+            "name": "missionAssault"
+          },
+          {
+            "objects": "at_t1_assault"
+          },
+          {
+            "objects": "at_t2_assault"
+          }
+        ]
+      },
+      "else_actions": []
+    },
     "at_start": {
       "is_enabled": true,
       "comments": "",
@@ -350,7 +377,7 @@
           }
         },
         {
-          "unitLoadBehTree": [
+          "__unitLoadBehTree": [
             {
               "name": "missionAssault"
             },
@@ -381,6 +408,12 @@
         {
           "unitSetProperties": [
             {
+              "object": "at_t1_assault"
+            },
+            {
+              "object": "at_t2_assault"
+            },
+            {
               "object_marking": 0
             },
             {
@@ -391,12 +424,6 @@
             },
             {
               "object_var_value": 0
-            },
-            {
-              "object": "at_t1_assault"
-            },
-            {
-              "object": "at_t2_assault"
             },
             {
               "airAccuracy": 0.0

@@ -8,6 +8,7 @@
   "gearSinkRange2C": 0.144,
   "haveCCIPForRocket": true,
   "haveCCIPForBombs": true,
+  "gyroSight": true,
   "haveCCIPForGun": true,
   "haveCCRPForBombs": true,
   "havePointOfInterestDesignator": true,
@@ -388,6 +389,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -398,6 +415,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -823,6 +856,14 @@
           }
         },
         {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
+          }
+        },
+        {
           "onKill": {
             "wingcontrol_l_dm": 1.0,
             "wingcontrol_r_dm": 1.0,
@@ -868,6 +909,14 @@
             "wing_l_dm": 1.0,
             "wing_r_dm": 1.0
           }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
+          }
         }
       ]
     },
@@ -898,6 +947,14 @@
           "onHit": {
             "damage": 50.0,
             "tail_dm": 1.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
           }
         },
         {
@@ -953,6 +1010,14 @@
             "damage": 50.0,
             "tail_dm": 1.0,
             "nothing": 1.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
           }
         }
       ]
@@ -2412,10 +2477,10 @@
       "targetingPodFov": [12.0,3.2]
     },
     {
-      "sightInFov": 50.5
+      "sightInFov": 12.299
     },
     {
-      "sightOutFov": 40.5
+      "sightOutFov": 12.299
     },
     {
       "sightFov": 1.0
@@ -2628,24 +2693,41 @@
       }
     }
   ],
-  "gunnerOpticFps": {
-    "TV": {
-      "pos": [0.8,-0.2,0.0],
-      "head": "optic2_turret",
-      "crosshairPreset": "test_crosshair",
-      "angularLimits": [-38.0,38.0,-55.0,38.0],
-      "opticType": "",
-      "turretNo": 0
+  "gunnerOpticFps": [
+    {
+      "TV": {
+        "pos": [0.8,-0.2,0.0],
+        "head": "optic2_turret",
+        "crosshairPreset": "test_crosshair",
+        "angularLimits": [-38.0,38.0,-55.0,38.0],
+        "opticType": "",
+        "turretNo": 0,
+        "nvIndex": 2
+      }
     },
-    "Target": {
-      "pos": [0.5,-0.3,0.0],
-      "head": "optic1_turret",
-      "crosshairPreset": "test_crosshair",
-      "angularLimits": [-90.0,90.0,-160.0,15.0],
-      "opticType": "targeting",
-      "turretNo": 0
+    {
+      "TV": {
+        "pos": [0.8,-0.2,0.0],
+        "head": "optic2_turret",
+        "crosshairPreset": "test_crosshair",
+        "angularLimits": [-38.0,38.0,-55.0,38.0],
+        "opticType": "tv",
+        "turretNo": 0,
+        "nvIndex": 2
+      }
+    },
+    {
+      "Target": {
+        "pos": [0.5,-0.3,0.0],
+        "head": "optic1_turret",
+        "crosshairPreset": "test_crosshair",
+        "angularLimits": [-90.0,90.0,-160.0,15.0],
+        "opticType": "targeting",
+        "turretNo": 0,
+        "nvIndex": 2
+      }
     }
-  },
+  ],
   "commonWeapons": {
     "hasTargetingPod": true,
     "Weapon": {
@@ -2700,6 +2782,12 @@
       "preset": {
         "name": "harrier_gr7_uk_1000lb",
         "blk": "gameData/FlightModels/weaponPresets/harrier_gr7_uk_1000lb.blk"
+      }
+    },
+    {
+      "preset": {
+        "name": "harrier_gr7_uk_1000lb_n117",
+        "blk": "gameData/FlightModels/weaponPresets/harrier_gr7_uk_1000lb_n117.blk"
       }
     },
     {
@@ -2821,24 +2909,22 @@
       ]
     },
     {
-      "WeaponSlot": [
-        {
-          "index": 0
-        },
-        {
-          "notUseforDisbalanceCalculation": true
-        },
-        {
-          "WeaponPreset": {
-            "name": "common",
+      "WeaponSlot": {
+        "index": 0,
+        "notUseforDisbalanceCalculation": true,
+        "WeaponPreset": [
+          {
+            "name": "common"
+          },
+          {
             "Weapon": {
               "dummy": true,
               "trigger": "gunner0",
               "triggerGroup": "primary",
               "blk": "gameData/Weapons/dummy_weapon.blk",
-              "emitter": "optic1_gun",
+              "emitter": "optic2_gun",
               "defaultYaw": 0.0,
-              "defaultPitch": 15.0,
+              "defaultPitch": 0.0,
               "speedYaw": 200.0,
               "speedPitch": 200.0,
               "parkInDeadzone": true,
@@ -2853,62 +2939,31 @@
                 "pitch": [-90.0,90.0]
               }
             }
-          }
-        },
-        {
-          "WeaponPreset": [
-            {
-              "name": "ltc_common"
-            },
-            {
-              "Weapon": {
-                "dummy": true,
-                "trigger": "gunner0",
-                "triggerGroup": "primary",
-                "blk": "gameData/Weapons/dummy_weapon.blk",
-                "emitter": "optic2_gun",
-                "defaultYaw": 0.0,
-                "defaultPitch": 0.0,
-                "speedYaw": 200.0,
-                "speedPitch": 200.0,
-                "parkInDeadzone": true,
-                "aimForOperatedShell": true,
-                "turret": {
-                  "head": "optic2_turret",
-                  "gun": "optic2_gun",
-                  "mainTurret": true
-                },
-                "limits": {
-                  "yaw": [-40.0,40.0],
-                  "pitch": [-90.0,90.0]
-                }
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "countermeasures",
-                "startFx": "",
-                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
-                "emitter": "emtr_flare1",
-                "bullets": 30,
-                "external": true,
-                "separate": false
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "countermeasures",
-                "startFx": "",
-                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
-                "emitter": "emtr_flare2",
-                "bullets": 30,
-                "external": true,
-                "separate": false
-              }
+          },
+          {
+            "Weapon": {
+              "trigger": "countermeasures",
+              "startFx": "",
+              "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
+              "emitter": "emtr_flare1",
+              "bullets": 30,
+              "external": true,
+              "separate": false
             }
-          ]
-        }
-      ]
+          },
+          {
+            "Weapon": {
+              "trigger": "countermeasures",
+              "startFx": "",
+              "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
+              "emitter": "emtr_flare2",
+              "bullets": 30,
+              "external": true,
+              "separate": false
+            }
+          }
+        ]
+      }
     },
     {
       "WeaponSlot": [
@@ -3133,6 +3188,22 @@
         },
         {
           "WeaponPreset": {
+            "iconType": "bombs_large_high_drag",
+            "name": "uk_1000lbs_n117",
+            "reqModification": "uk_mk_10_1000lb",
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp_n117.blk",
+              "emitter": "1000lb_gp_001",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
             "iconType": "guided_bomb_middle_laser",
             "name": "gbu_12",
             "reqModification": "us_gbu_12",
@@ -3332,6 +3403,22 @@
         },
         {
           "WeaponPreset": {
+            "iconType": "bombs_large_high_drag",
+            "name": "uk_1000lbs_n117",
+            "reqModification": "uk_mk_10_1000lb",
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp_n117.blk",
+              "emitter": "1000lb_gp_003",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
             "iconType": "guided_bomb_middle_laser",
             "name": "gbu_12",
             "reqModification": "us_gbu_12",
@@ -3472,26 +3559,52 @@
       ]
     },
     {
-      "WeaponSlot": {
-        "index": 6,
-        "tier": 6,
-        "order": 11,
-        "notUseforDisbalanceCalculation": true,
-        "WeaponPreset": {
-          "iconType": "bombs_large",
-          "name": "uk_1000lbs",
-          "reqModification": "uk_mk_10_1000lb",
-          "Weapon": {
-            "trigger": "bombs",
-            "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp.blk",
-            "emitter": "1000lb_gp_005",
-            "bullets": 1,
-            "external": true,
-            "separate": true,
-            "machLimit": 1.01
+      "WeaponSlot": [
+        {
+          "index": 6
+        },
+        {
+          "tier": 6
+        },
+        {
+          "order": 11
+        },
+        {
+          "notUseforDisbalanceCalculation": true
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_large",
+            "name": "uk_1000lbs",
+            "reqModification": "uk_mk_10_1000lb",
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp.blk",
+              "emitter": "1000lb_gp_005",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_large_high_drag",
+            "name": "uk_1000lbs_n117",
+            "reqModification": "uk_mk_10_1000lb",
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp_n117.blk",
+              "emitter": "1000lb_gp_005",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
           }
         }
-      }
+      ]
     },
     {
       "WeaponSlot": {
@@ -3589,6 +3702,22 @@
             "Weapon": {
               "trigger": "bombs",
               "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp.blk",
+              "emitter": "1000lb_gp_004",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_large_high_drag",
+            "name": "uk_1000lbs_n117",
+            "reqModification": "uk_mk_10_1000lb",
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp_n117.blk",
               "emitter": "1000lb_gp_004",
               "bullets": 1,
               "external": true,
@@ -3807,6 +3936,22 @@
             "Weapon": {
               "trigger": "bombs",
               "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp.blk",
+              "emitter": "1000lb_gp_002",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_large_high_drag",
+            "name": "uk_1000lbs_n117",
+            "reqModification": "uk_mk_10_1000lb",
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp_n117.blk",
               "emitter": "1000lb_gp_002",
               "bullets": 1,
               "external": true,
@@ -4181,16 +4326,7 @@
       "turn_it_off": false,
       "invertEnableLogic": false,
       "group": "countermeasures",
-      "tier": 1,
-      "effects": {
-        "commonWeapons": {
-          "hasTargetingPod": true,
-          "Weapon": {
-            "slot": 0,
-            "preset": "ltc_common"
-          }
-        }
-      }
+      "tier": 1
     },
     "uk_ltc_bol": {
       "reqModification": "countermeasures_belt_pack",
@@ -4203,20 +4339,21 @@
       "effects": {
         "nightVision": {
           "gunnerIr": {
-            "resolution": [1024,768],
-            "lightMult": 8.0,
-            "ghosting": 0.75,
-            "noiseFactor": 0.2
+            "resolution": [1920,1080],
+            "lightMult": 10.0,
+            "ghosting": 0.7,
+            "noiseFactor": 0.15
           },
           "pilotIr": {
-            "resolution": [1024,768],
-            "lightMult": 8.0,
-            "ghosting": 0.75,
-            "noiseFactor": 0.2
+            "resolution": [1920,1080],
+            "lightMult": 10.0,
+            "ghosting": 0.7,
+            "noiseFactor": 0.15
           },
           "sightThermal": {
             "resolution": [500,300],
-            "noiseFactor": 0.05
+            "noiseFactor": 0.05,
+            "index": 2
           }
         }
       }

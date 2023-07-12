@@ -1,10 +1,8 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let u = require("%sqStdLibs/helpers/u.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { setPopupMenuPosAndAlign } = require("%sqDagui/daguiUtil.nut")
 let stdMath = require("%sqstd/math.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
@@ -20,7 +18,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
   function getSceneTplView() {
     return {
-      items = ::handyman.renderCached("%gui/items/item.tpl", { items = ::u.map(this.itemsList, @(i) i.getViewData()) })
+      items = handyman.renderCached("%gui/items/item.tpl", { items = u.map(this.itemsList, @(i) i.getViewData()) })
       columns = stdMath.calc_golden_ratio_columns(this.itemsList.len())
 
       align = this.align
@@ -40,7 +38,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
   function updateWndAlign() {
     if (checkObj(this.alignObj))
-      this.align = ::g_dagui_utils.setPopupMenuPosAndAlign(this.alignObj, this.align, this.scene.findObject("frame_obj"))
+      this.align = setPopupMenuPosAndAlign(this.alignObj, this.align, this.scene.findObject("frame_obj"))
   }
 
   function setCurItem(item) {

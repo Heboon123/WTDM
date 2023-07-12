@@ -1,8 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
 let { format } = require("string")
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -110,7 +108,7 @@ let function getTooltipText(memberName, skillName, crewUnitType, crew, difficult
     }
   }
 
-  return ::g_string.implode(resArray, "\n")
+  return "\n".join(resArray, true)
 }
 
 //skillsList = [{ memberName = "", skillName = "" }]
@@ -202,7 +200,7 @@ let function parseParameters(columnTypes,
   currentParametersByRequestType, selectedParametersByRequestType, crewUnitType) {
   let res = []
   let currentParameters = currentParametersByRequestType[::g_skill_parameters_request_type.CURRENT_VALUES]
-  if (!::u.isTable(currentParameters))
+  if (!u.isTable(currentParameters))
     return res
 
   let paramsArray = getSortedArrayByParamsTable(currentParameters, crewUnitType)
@@ -219,9 +217,9 @@ let function filterSkillsList(skillsList) {
   foreach (skill in skillsList) {
     let group = getTblValue(skill.skillName, skillGroups)
     if (group) {
-      let resSkill = ::u.search(res, (@(skill, group) function(resSkill) {
+      let resSkill = u.search(res, function(resSkill) {
                          return skill.skillName == resSkill.skillName && isInArray(resSkill.memberName, group)
-                       })(skill, group))
+                       })
       if (resSkill)
         continue
     }
@@ -240,8 +238,8 @@ let function getSkillListParameterRowsView(crew, difficulty, notFilteredSkillsLi
   //preparing full requestsList
   let fullRequestsList = [::g_skill_parameters_request_type.CURRENT_VALUES] //required for getting params list
   foreach (columnType in columnTypes) {
-    ::u.appendOnce(columnType.previousParametersRequestType, fullRequestsList, true)
-    ::u.appendOnce(columnType.currentParametersRequestType, fullRequestsList, true)
+    u.appendOnce(columnType.previousParametersRequestType, fullRequestsList, true)
+    u.appendOnce(columnType.currentParametersRequestType, fullRequestsList, true)
   }
 
   //collect parameters by request types

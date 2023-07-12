@@ -1,11 +1,13 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { Cost } = require("%scripts/money.nut")
+let u = require("%sqStdLibs/helpers/u.nut")
+
 
 let { get_time_msec } = require("dagor.time")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let DataBlock  = require("DataBlock")
 let { ceil } = require("math")
 let { format, split_by_chars } = require("string")
@@ -21,9 +23,10 @@ let itemTransfer = require("%scripts/items/itemsTransfer.nut")
 let { getMarkingPresetsById, getCustomLocalizationPresets,
   getEffectOnOpenChestPresetById } = require("%scripts/items/workshop/workshop.nut")
 let { getEnumValName } = require("%scripts/debugTools/dbgEnum.nut")
-let { select_training_mission } = require("guiMission")
+let { select_training_mission, get_meta_mission_info_by_name } = require("guiMission")
 let { getDecorator, buildLiveDecoratorFromResource
 } = require("%scripts/customization/decorCache.nut")
+let { utf8ToLower, stripTags } = require("%sqstd/string.nut")
 
 let emptyBlk = DataBlock()
 
@@ -223,28 +226,28 @@ local ItemExternal = class extends ::BaseItem {
 
     local tags = this.getTagsLoc()
     if (tags.len()) {
-      tags = ::u.map(tags, @(txt) colorize("activeTextColor", txt))
-      desc.append(loc("ugm/tags") + loc("ui/colon") + ::g_string.implode(tags, loc("ui/comma")))
+      tags = u.map(tags, @(txt) colorize("activeTextColor", txt))
+      desc.append(loc("ugm/tags") + loc("ui/colon") + loc("ui/comma").join(tags, true))
     }
 
     if (! this.itemDef?.tags?.hideDesc)
       desc.append(this.itemDef?.description ?? "")
 
-    return ::g_string.implode(desc, "\n\n")
+    return "\n\n".join(desc, true)
   }
 
   function getIcon(_addItemName = true) {
-    return this.isDisguised ? ::LayersIcon.getIconData("disguised_item")
-      : ::LayersIcon.getIconData(null, this.getLottieImage() ?? this.itemDef.icon_url)
+    return this.isDisguised ? LayersIcon.getIconData("disguised_item")
+      : LayersIcon.getIconData(null, this.getLottieImage() ?? this.itemDef.icon_url)
   }
 
   function getBigIcon() {
     if (this.isDisguised)
-      return ::LayersIcon.getIconData("disguised_item")
+      return LayersIcon.getIconData("disguised_item")
 
     let image = this.getLottieImage("1@itemIconBlockWidth")
-      ?? (!::u.isEmpty(this.itemDef.icon_url_large) ? this.itemDef.icon_url_large : this.itemDef.icon_url)
-    return ::LayersIcon.getIconData(null, image)
+      ?? (!u.isEmpty(this.itemDef.icon_url_large) ? this.itemDef.icon_url_large : this.itemDef.icon_url)
+    return LayersIcon.getIconData(null, image)
   }
 
   getOpeningCaption = @() loc(this.getLocIdsList().openingRewardTitle)
@@ -266,7 +269,7 @@ local ItemExternal = class extends ::BaseItem {
   function getCost(ignoreCanBuy = false) {
     if (this.isCanBuy() || ignoreCanBuy)
       return inventoryClient.getItemCost(this.id)
-    return ::Cost()
+    return Cost()
   }
 
   getTransferText = @() this.transferAmount > 0
@@ -342,7 +345,7 @@ local ItemExternal = class extends ::BaseItem {
           false)
   }
 
-  getTypeNameForMarketableDesc = @() ::g_string.utf8ToLower(this.getTypeName())
+  getTypeNameForMarketableDesc = @() utf8ToLower(this.getTypeName())
 
   function getMarketablePropDesc() {
     if (!hasFeature("Marketplace") || this.shouldAutoConsume || (this.itemDef?.tags.hideMarketablePropDesc ?? false))
@@ -503,7 +506,7 @@ local ItemExternal = class extends ::BaseItem {
       data_below_text = ::PrizesView.getPrizesListView([ this.metaBlk ],
         { showAsTrophyContent = true, receivedPrizes = false, widthByParentParent = true })
       data_below_buttons = hasFeature("Marketplace") && this.itemDef?.marketable
-        ? format("textarea{overlayTextColor:t='warning'; text:t='%s'}", ::g_string.stripTags(loc("msgBox/coupon_will_be_spent")))
+        ? format("textarea{overlayTextColor:t='warning'; text:t='%s'}", stripTags(loc("msgBox/coupon_will_be_spent")))
         : null
     }
     let item = this //we need direct link, to not lose action on items list refresh.
@@ -793,7 +796,7 @@ local ItemExternal = class extends ::BaseItem {
       return true
 
     if (this.canAssemble())
-      return this.getVisibleRecipes()?.findvalue(@(r) r.isUsable) ?? false
+      return !!this.getVisibleRecipes()?.findvalue(@(r) r.isUsable)
 
     if (mainActionData?.isDisassemble ?? false)
       return this.getDisassembleRecipe()?.isUsable ?? false
@@ -801,7 +804,7 @@ local ItemExternal = class extends ::BaseItem {
     return false
   }
 
-  isGoldPurchaseInProgress = @() ::u.search(itemTransfer.getSendingList(), @(data) (data?.goldCost ?? 0) > 0) != null
+  isGoldPurchaseInProgress = @() u.search(itemTransfer.getSendingList(), @(data) (data?.goldCost ?? 0) > 0) != null
 
   isMultiPurchaseAvailable = @() this.allowToBuyAmount > 1
 
@@ -818,7 +821,7 @@ local ItemExternal = class extends ::BaseItem {
       headerText = loc("onlineShop/purchase", { purchase = this.getName() })
       buttonText = loc("msgbox/btn_purchase")
       getValueText = function(amount) {
-        let cost = ::Cost() + item.getCost()
+        let cost = Cost() + item.getCost()
         let product = cost.multiply(amount).getTextAccordingToBalance()
         return $"{amount} x {cost} = {product}"
       }
@@ -827,7 +830,7 @@ local ItemExternal = class extends ::BaseItem {
   }
 
   function onAmountAccept(cb, handler, params) {
-    let cost = (::Cost() + this.getCost()).multiply(params.amount)
+    let cost = (Cost() + this.getCost()).multiply(params.amount)
     if (::check_balance_msgBox(cost))
       this.showBuyConfirm(cb, handler, params)
   }
@@ -1004,7 +1007,7 @@ local ItemExternal = class extends ::BaseItem {
     if (!misName)
       return null
 
-    let misBlk = ::get_mission_meta_info(misName)
+    let misBlk = get_meta_mission_info_by_name(misName)
     if (!misBlk || (("reqFeature" in misBlk) && !hasFeature(misBlk.reqFeature)))
       return null
 
@@ -1019,11 +1022,11 @@ local ItemExternal = class extends ::BaseItem {
     if (!this.canRunCustomMission())
         return false
 
-    let misBlk = ::get_mission_meta_info(this.itemDef.tags.canRunCustomMission)
+    let misBlk = get_meta_mission_info_by_name(this.itemDef.tags.canRunCustomMission)
     if (misBlk?.requiredPackage != null && !::check_package_and_ask_download(misBlk.requiredPackage))
       return true
 
-    ::broadcastEvent("BeforeStartCustomMission")
+    broadcastEvent("BeforeStartCustomMission")
     ::custom_miss_flight <- true
     ::current_campaign_mission <- this.itemDef.tags.canRunCustomMission
     select_training_mission(misBlk)
@@ -1132,7 +1135,7 @@ local ItemExternal = class extends ::BaseItem {
     if (recipes.len() == 0)
       return true
 
-    return ::u.search(recipes, @(r) r.isUsable) != null
+    return u.search(recipes, @(r) r.isUsable) != null
   }
 
   function getBoostEfficiency() {

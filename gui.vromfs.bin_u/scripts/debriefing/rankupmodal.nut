@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -49,7 +46,7 @@ let delayedRankUpWnd = []
           let rblk = pblk.getBlock(range)
           for (local aircraft = 0; aircraft < rblk.blockCount(); aircraft++) { //aircrafts
             let airBlk = rblk.getBlock(aircraft);
-            local air = ::getAircraftByName(airBlk.getBlockName());
+            local air = getAircraftByName(airBlk.getBlockName());
             if (air) {
               if (this.isShowUnit(air, showAsUnlock)) {
                 airRow += ::build_aircraft_item(air.name, air);
@@ -59,7 +56,7 @@ let delayedRankUpWnd = []
             else
               for (local group = 0; group < airBlk.blockCount(); group++) { //airgroup
                 let gAirBlk = airBlk.getBlock(group);
-                air = ::getAircraftByName(gAirBlk.getBlockName());
+                air = getAircraftByName(gAirBlk.getBlockName());
                 if (this.isShowUnit(air, showAsUnlock)) {
                   airRow += ::build_aircraft_item(air.name, air);
                   unitItems.append({ id = air.name, unit = air })

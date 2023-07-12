@@ -1,8 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
 let { get_time_msec } = require("dagor.time")
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -57,7 +55,7 @@ let function onGlobalStatusReceived(newData) {
   lastUpdatetTime(get_time_msec())
   local changedListsMask = 0
   foreach (gsType in ::g_ww_global_status_type.types)
-    if (!::u.isEqual(gsType.getData(curData.value), gsType.getData(newData)))
+    if (!u.isEqual(gsType.getData(curData.value), gsType.getData(newData)))
       changedListsMask = changedListsMask | gsType.typeMask
 
   if (!changedListsMask)

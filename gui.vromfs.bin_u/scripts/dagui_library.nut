@@ -1,7 +1,4 @@
 //checked for plus_string
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { kwarg, memoize } = require("%sqstd/functools.nut")
 let { Computed, Watched } = require("frp")
@@ -14,6 +11,7 @@ let isInArray = @(v, arr) arr.contains(v)
 let { Callback } = require("%sqStdLibs/helpers/callback.nut")
 let { hasFeature } = require("%scripts/user/features.nut")
 let { platformId }  = require("%sqstd/platform.nut")
+let { toPixels } = require("%sqDagui/daguiUtil.nut")
 
 let checkObj = @(obj) obj != null && obj?.isValid()
 
@@ -29,13 +27,15 @@ let function colorize(color, text) {
 }
 
 let function to_pixels(value) {
-  return ::g_dagui_utils.toPixels(::get_cur_gui_scene(), value)
+  return toPixels(::get_cur_gui_scene(), value)
 }
 
 let is_platform_pc = ["win32", "win64", "macosx", "linux64"].contains(platformId)
 let is_platform_windows = ["win32", "win64"].contains(platformId)
 let is_platform_android = platformId == "android"
 let is_platform_xbox = platformId == "xboxOne" || platformId == "xboxScarlett"
+
+let getAircraftByName = @(name) getroottable()?["all_units"][name]
 
 return log.__merge({
   platformId
@@ -63,6 +63,9 @@ return log.__merge({
   //function tools
   kwarg
   memoize
+
+  //some ugly stuff
+  getAircraftByName
 })
 
 

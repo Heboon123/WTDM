@@ -1,8 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 let isHudVisible = Watched(::is_hud_visible())
 
@@ -10,7 +9,7 @@ let isHudVisible = Watched(::is_hud_visible())
 ::on_show_hud <- function on_show_hud(show = true) {
   isHudVisible(show)
   ::handlersManager.getActiveBaseHandler()?.onShowHud(show, true)
-  ::broadcastEvent("ShowHud", { show = show })
+  broadcastEvent("ShowHud", { show = show })
 }
 
 return {

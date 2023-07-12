@@ -1,9 +1,11 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+
+let { Cost } = require("%scripts/money.nut")
+let u = require("%sqStdLibs/helpers/u.nut")
+
 let inventory = require("inventory")
+let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { format, split_by_chars } = require("string")
 let { get_time_msec } = require("dagor.time")
 let progressMsg = require("%sqDagui/framework/progressMsg.nut")
@@ -12,6 +14,8 @@ let { APP_ID } = require("app")
 let { encode_uri_component } = require("url")
 let DataBlock = require("DataBlock")
 let { json_to_string } = require("json")
+let { cutPrefix } = require("%sqstd/string.nut")
+let { TASK_CB_TYPE } = require("%scripts/tasker.nut")
 
 enum validationCheckBitMask {
   VARTYPE            = 0x01
@@ -73,7 +77,7 @@ let prices = Computed(function() {
 })
 
 let function notifyPricesChanged() {
-  ::broadcastEvent("ExtPricesChanged")
+  broadcastEvent("ExtPricesChanged")
 }
 prices.subscribe(@(_) notifyPricesChanged())
 
@@ -140,7 +144,7 @@ let function _validate(data, name) {
   if (!data || !validation)
     return data
 
-  if (!::u.isArray(data))
+  if (!u.isArray(data))
     return null
 
   local itemsBroken  = []
@@ -149,7 +153,7 @@ let function _validate(data, name) {
 
   for (local i = data.len() - 1; i >= 0; i--) {
     let item = data[i]
-    local isItemValid = ::u.isTable(item)
+    local isItemValid = u.isTable(item)
     local itemErrors = 0
 
     foreach (checks, keys in validation) {
@@ -193,9 +197,9 @@ let function _validate(data, name) {
             if (key in item)
               itemDebug.append(key + "=" + item[key])
       itemDebug.append(isItemValid ? ("err=" + itemErrors) : "INVALID")
-      itemDebug.append(::u.isTable(item) ? ("len=" + item.len()) : ("var=" + type(item)))
+      itemDebug.append(u.isTable(item) ? ("len=" + item.len()) : ("var=" + type(item)))
 
-      itemsBroken.append(::g_string.implode(itemDebug, ","))
+      itemsBroken.append(",".join(itemDebug, true))
     }
 
     if (!isItemValid)
@@ -203,8 +207,8 @@ let function _validate(data, name) {
   }
 
   if (itemsBroken.len() || keysMissing.len() || keysWrongType.len()) {
-    itemsBroken = ::g_string.implode(itemsBroken, ";") // warning disable: -assigned-never-used
-    keysMissing = ::g_string.implode(keysMissing.keys(), ";") // warning disable: -assigned-never-used
+    itemsBroken = ";".join(itemsBroken, true) // warning disable: -assigned-never-used
+    keysMissing = ";".join(keysMissing.keys(), true) // warning disable: -assigned-never-used
     keysWrongType = ";".join(keysWrongType.topairs().map(@(i) i[0] + "=" + i[1])) // warning disable: -assigned-never-used
     ::script_net_assert_once("inventory client bad response", $"InventoryClient: Response has errors: {name}")
   }
@@ -229,7 +233,7 @@ let class InventoryClient {
   haveInitializedPublicKeys = false
 
   constructor() {
-    ::subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
+    subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
     if (::g_login.isProfileReceived())
       this.refreshDataOnAuthorization()
   }
@@ -415,7 +419,7 @@ let class InventoryClient {
     this.updatePendingItemDefRequest(cb, shouldRefreshAll)
     if (this.isItemdefRequestInProgress()
         || (this._lastDelayedItemdefsRequestTime
-          && this._lastDelayedItemdefsRequestTime < get_time_msec() + LOST_DELAYED_ACTION_MSEC))
+          && (this._lastDelayedItemdefsRequestTime + LOST_DELAYED_ACTION_MSEC > get_time_msec())))
       return
     this._lastDelayedItemdefsRequestTime = get_time_msec()
     ::handlersManager.doDelayed(function() {
@@ -435,7 +439,7 @@ let class InventoryClient {
 
     let itemdefidsRequest = []
     foreach (itemdefid, value in this.itemdefs) {
-      if (!requestData.shouldRefreshAll && (!::u.isEmpty(value) || this.itemdefidsRequested?[itemdefid]))
+      if (!requestData.shouldRefreshAll && (!u.isEmpty(value) || this.itemdefidsRequested?[itemdefid]))
         continue
 
       itemdefidsRequest.append(itemdefid)
@@ -445,7 +449,7 @@ let class InventoryClient {
     if (!itemdefidsRequest.len())
       return requestData.fireCb()
 
-    let itemdefidsString = ::g_string.implode(itemdefidsRequest, ",")
+    let itemdefidsString = ",".join(itemdefidsRequest, true)
     log("Request itemdefs " + itemdefidsString)
 
     this.lastItemdefsRequestTime = get_time_msec()
@@ -465,7 +469,7 @@ let class InventoryClient {
           let itemdefid = itemdef.itemdefid
           if (itemdefid in this.itemdefidsRequested)
             delete this.itemdefidsRequested[itemdefid]
-          hasItemDefChanges = hasItemDefChanges || requestData.shouldRefreshAll || ::u.isEmpty(this.itemdefs?[itemdefid])
+          hasItemDefChanges = hasItemDefChanges || requestData.shouldRefreshAll || u.isEmpty(this.itemdefs?[itemdefid])
           this.addItemDef(itemdef)
         }
 
@@ -484,11 +488,11 @@ let class InventoryClient {
   function notifyInventoryUpdate(hasInventoryChanges = false, hasItemDefChanges = false) {
     if (hasItemDefChanges) {
       log("ExtInventory itemDef changed")
-      ::broadcastEvent("ItemDefChanged")
+      broadcastEvent("ItemDefChanged")
     }
     if (hasInventoryChanges) {
       log("ExtInventory changed")
-      ::broadcastEvent("ExtInventoryChanged")
+      broadcastEvent("ExtInventoryChanged")
     }
   }
 
@@ -544,12 +548,12 @@ let class InventoryClient {
         recipeStr = recipe
       }
       foreach (component in split_by_chars(recipe, ",")) {
-        let requirement = ::g_string.cutPrefix(component, "require=")
+        let requirement = cutPrefix(component, "require=")
         if (requirement != null) {
           parsedRecipe.requirement = requirement
           continue
         }
-        let reqItems = ::g_string.cutPrefix(component, "req_items=")
+        let reqItems = cutPrefix(component, "req_items=")
         if (reqItems != null) {
           foreach (reqItem in split_by_chars(reqItems, "+")) {
             let pair = split_by_chars(reqItem, "x")
@@ -640,7 +644,7 @@ let class InventoryClient {
       outputitemdefid = outputItemDefId
       materials
     }
-    if (::u.isString(requirement) && requirement.len() > 0) {
+    if (u.isString(requirement) && requirement.len() > 0) {
       json["permission"] <- requirement
     }
 
@@ -675,7 +679,7 @@ let class InventoryClient {
     // but this will break compatibility with the char server. This distinction
     // can be removed later.
 
-    if (!::u.isString(requirement) || requirement.len() == 0) {
+    if (!u.isString(requirement) || requirement.len() == 0) {
       this.exchangeDirect(materials, outputItemDefId, cb, errocCb, shouldCheckInventory)
       return
     }
@@ -709,7 +713,7 @@ let class InventoryClient {
 
   function updatePrice(watch, result, typeOfPrice) {
     let itemPrices = result?.response?.itemPrices
-    if (!::u.isArray(itemPrices)) {
+    if (!u.isArray(itemPrices)) {
       notifyPricesChanged()
       return
     }
@@ -719,7 +723,7 @@ let class InventoryClient {
       let itemdefid = data?.itemdefid
       if (itemdefid == null)
         continue
-      res[itemdefid] <- typeOfPrice == WAR_THUNDER_EAGLES ? ::Cost(0, data?.price) : ::Cost(data?.price, 0)
+      res[itemdefid] <- typeOfPrice == WAR_THUNDER_EAGLES ? Cost(0, data?.price) : Cost(data?.price, 0)
       shouldRequestItemdefs = this.addItemDefIdToRequest(itemdefid) || shouldRequestItemdefs
     }
     watch(res)

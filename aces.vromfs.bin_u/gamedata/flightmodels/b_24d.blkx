@@ -24,6 +24,9 @@
     "gearSinkRangeC": 0.176
   },
   {
+    "gyroSight": false
+  },
+  {
     "type": "typeBomber"
   },
   {
@@ -2867,7 +2870,7 @@
           "midNode": "Bip01 L Forearm",
           "upNode": "Bip01 L UpperArm",
           "targetNode": "throttle_lhand_",
-          "flexionDir": [0.0,-1.0,0.1]
+          "flexionDir": [0.0,-1.0,0.6]
         }
       },
       {
@@ -2876,7 +2879,7 @@
           "midNode": "Bip01 R Forearm",
           "upNode": "Bip01 R UpperArm",
           "targetNode": "stick_rhand_",
-          "flexionDir": [0.0,-1.0,-0.1]
+          "flexionDir": [0.0,-1.0,-0.5]
         }
       },
       {
@@ -2885,7 +2888,7 @@
           "midNode": "Bip01 L Calf",
           "upNode": "Bip01 L Thigh",
           "targetNode": "pedal_lfoot_",
-          "flexionDir": [0.0,1.0,-0.2]
+          "flexionDir": [0.0,1.0,0.15]
         }
       },
       {
@@ -2894,7 +2897,7 @@
           "midNode": "Bip01 R Calf",
           "upNode": "Bip01 R Thigh",
           "targetNode": "pedal_rfoot_",
-          "flexionDir": [0.0,1.0,0.2]
+          "flexionDir": [0.0,1.0,-0.01]
         }
       }
     ]
@@ -2931,7 +2934,7 @@
           "midNode": "Bip01 L Forearm",
           "upNode": "Bip01 L UpperArm",
           "targetNode": "throttle_lhand_",
-          "flexionDir": [0.0,-1.0,0.1]
+          "flexionDir": [0.0,-1.0,0.5]
         }
       },
       {
@@ -2940,7 +2943,7 @@
           "midNode": "Bip01 R Forearm",
           "upNode": "Bip01 R UpperArm",
           "targetNode": "stick_rhand_",
-          "flexionDir": [0.0,-1.0,-0.1]
+          "flexionDir": [0.0,-1.0,-0.5]
         }
       },
       {
@@ -2949,7 +2952,7 @@
           "midNode": "Bip01 L Calf",
           "upNode": "Bip01 L Thigh",
           "targetNode": "pedal_lfoot_",
-          "flexionDir": [0.0,1.0,-0.2]
+          "flexionDir": [0.0,1.0,0.0]
         }
       },
       {
@@ -2958,7 +2961,7 @@
           "midNode": "Bip01 R Calf",
           "upNode": "Bip01 R Thigh",
           "targetNode": "pedal_rfoot_",
-          "flexionDir": [0.0,1.0,0.2]
+          "flexionDir": [0.0,1.0,0.0]
         }
       }
     ]
@@ -3812,14 +3815,50 @@
   },
   {
     "modifications": {
-      "cd_98": [],
-      "CdMin_Fuse": [],
-      "new_cover": [],
-      "structure_str": [],
-      "hp_105": [],
-      "new_radiator": [],
-      "new_compressor": [],
-      "new_engine_injection": [],
+      "CdMin_Fuse": {
+        "tier": 1,
+        "modClass": "lth"
+      },
+      "structure_str": {
+        "prevModification": "CdMin_Fuse",
+        "tier": 2,
+        "modClass": "lth"
+      },
+      "cd_98": {
+        "prevModification": "structure_str",
+        "tier": 3,
+        "modClass": "lth"
+      },
+      "new_cover": {
+        "prevModification": "cd_98",
+        "tier": 4,
+        "modClass": "lth"
+      },
+      "new_radiator": {
+        "tier": 1,
+        "modClass": "lth"
+      },
+      "new_compressor": {
+        "prevModification": "new_radiator",
+        "tier": 2,
+        "modClass": "lth"
+      },
+      "hp_105": {
+        "prevModification": "new_compressor",
+        "tier": 3,
+        "modClass": "lth"
+      },
+      "new_engine_injection": {
+        "prevModification": "hp_105",
+        "tier": 4,
+        "modClass": "lth"
+      },
+      "air_extinguisher": {
+        "image": "#ui/gameuiskin#engine_extinguisher",
+        "tier": 4,
+        "modClass": "armor",
+        "invertEnableLogic": false
+      },
       "b-24_sbc": {
         "modClass": "weapon",
         "tier": 1,
@@ -3914,13 +3953,6 @@
       "bmg50_turret_belt_pack": [],
       "bmg50_turret_new_gun": {
         "reqModification": "bmg50_turret_belt_pack"
-      },
-      "air_extinguisher": {
-        "image": "#ui/gameuiskin#engine_extinguisher",
-        "prevModification": "bmg50_turret_new_gun",
-        "tier": 4,
-        "modClass": "weapon",
-        "invertEnableLogic": false
       },
       "50cal_turret_ap": [],
       "50cal_turret_api": []

@@ -1,10 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { show_obj } = require("%sqDagui/daguiUtil.nut")
 let QUEUE_TYPE_BIT = require("%scripts/queue/queueTypeBit.nut")
 let { setGuiOptionsMode, getGuiOptionsMode } = require("guiOptions")
 let lobbyStates = require("%scripts/matchingRooms/lobbyStates.nut")
@@ -152,7 +148,7 @@ let class AutoStartBattleHandler extends ::gui_handlers.BaseGuiHandlerWT {
       this.updateQueueWaitIconImage()
     }
 
-    ::show_obj(this.autoStartQueueWnd, value)
+    show_obj(this.autoStartQueueWnd, value)
   }
 
   function startBattle() {

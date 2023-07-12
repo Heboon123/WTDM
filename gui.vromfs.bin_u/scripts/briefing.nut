@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let DataBlock = require("DataBlock")
 let { format } = require("string")
@@ -12,17 +9,18 @@ let { getWeaponNameText } = require("%scripts/weaponry/weaponryDescription.nut")
 let { isGameModeCoop } = require("%scripts/matchingRooms/matchingGameModesUtils.nut")
 let { getMaxEconomicRank } = require("%appGlobals/ranks_common_shared.nut")
 let { setGuiOptionsMode, set_gui_option, get_gui_option } = require("guiOptions")
-let { is_benchmark_game_mode, get_game_mode, get_game_type
-} = require("mission")
-let { get_meta_missions_info, get_meta_mission_info_by_name, do_start_flight,
-  select_mission, select_mission_full, quit_to_debriefing
+let { is_benchmark_game_mode, get_game_mode, get_game_type } = require("mission")
+let { get_meta_missions_info, get_meta_mission_info_by_gm_and_name, do_start_flight,
+  select_mission, select_mission_full, quit_to_debriefing, get_mission_difficulty
 } = require("guiMission")
 let { dynamicSetTakeoffMode } = require("dynamicMission")
 let { restartCurrentMission } = require("%scripts/missions/missionsUtilsModule.nut")
+let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { isHostInRoom } = require("%scripts/matching/serviceNotifications/mrooms.nut")
 
 ::back_from_briefing <- ::gui_start_mainmenu
 
-::g_script_reloader.registerPersistentData("BriefingGlobals", getroottable(), ["back_from_briefing"])
+registerPersistentData("BriefingGlobals", getroottable(), ["back_from_briefing"])
 
 ::mission_settings <- {
   name = null
@@ -57,7 +55,7 @@ let { restartCurrentMission } = require("%scripts/missions/missionsUtilsModule.n
 }
 
 ::gui_start_flight <- function gui_start_flight() {
-  ::set_context_to_player("difficulty", ::get_mission_difficulty())
+  ::set_context_to_player("difficulty", get_mission_difficulty())
   do_start_flight()
 }
 
@@ -87,8 +85,9 @@ let { restartCurrentMission } = require("%scripts/missions/missionsUtilsModule.n
   let missionName = ::current_campaign_mission
   if (missionName != null) {
     let missionBlk = DataBlock()
-    missionBlk.setFrom(get_meta_mission_info_by_name(::current_campaign_mission))
-    let briefingOptions = ::get_briefing_options(get_game_mode(), get_game_type(), missionBlk)
+    let gm = get_game_mode()
+    missionBlk.setFrom(get_meta_mission_info_by_gm_and_name(gm, ::current_campaign_mission))
+    let briefingOptions = ::get_briefing_options(gm, get_game_type(), missionBlk)
     if (briefingOptions.len() == 0)
       return restartCurrentMission()
   }
@@ -99,15 +98,15 @@ let { restartCurrentMission } = require("%scripts/missions/missionsUtilsModule.n
   }
 
   let finalApplyFunc = function() {
-    ::set_context_to_player("difficulty", ::get_mission_difficulty())
+    ::set_context_to_player("difficulty", get_mission_difficulty())
     restartCurrentMission()
   }
-  params.applyFunc <- (@(finalApplyFunc) function() {
+  params.applyFunc <- function() {
     if (get_gui_option(::USEROPT_DIFFICULTY) == "custom")
       ::gui_start_cd_options(finalApplyFunc)
     else
       finalApplyFunc()
-  })(finalApplyFunc)
+  }
 
   ::handlersManager.loadHandler(::gui_handlers.Briefing, params)
   ::handlersManager.setLastBaseHandlerStartFunc(::gui_start_briefing_restart)
@@ -118,14 +117,14 @@ let { restartCurrentMission } = require("%scripts/missions/missionsUtilsModule.n
   let gm = get_game_mode()
   if (gm == GM_SINGLE_MISSION || gm == GM_DYNAMIC) {
     if (::SessionLobby.isInRoom()) {
-      if (!::is_host_in_room())
+      if (!isHostInRoom())
         ::SessionLobby.continueCoopWithSquad(::mission_settings);
       else
         ::scene_msg_box("wait_host_leave", null, loc("msgbox/please_wait"),
           [["cancel", function() {}]], "cancel",
             {
               cancel_fn = function() { ::SessionLobby.continueCoopWithSquad(::mission_settings); },
-              need_cancel_fn = function() { return !::is_host_in_room(); }
+              need_cancel_fn = function() { return !isHostInRoom(); }
               waitAnim = true,
               delayedButtons = 15
             })
@@ -162,7 +161,7 @@ let { restartCurrentMission } = require("%scripts/missions/missionsUtilsModule.n
     ::get_cur_base_gui_handler().goForward(::gui_start_flight);
 }
 
-::g_script_reloader.registerPersistentData("mission_settings", getroottable(), ["mission_settings"])
+registerPersistentData("mission_settings", getroottable(), ["mission_settings"])
 
 ::get_briefing_options <- function get_briefing_options(gm, gt, missionBlk) {
   let optionItems = []
@@ -373,7 +372,7 @@ let function get_mission_desc_text(missionBlk) {
       return
 
     this.missionBlk = DataBlock()
-    this.missionBlk.setFrom(get_meta_mission_info_by_name(this.missionName))
+    this.missionBlk.setFrom(get_meta_mission_info_by_gm_and_name(gm, this.missionName))
 
     if (gm == GM_EVENT)
       ::mission_settings.coop = true;
@@ -744,12 +743,12 @@ let function get_mission_desc_text(missionBlk) {
       ::show_gui(false);
 
       let guihandler = this
-      local nextFunc = (@(guihandler) function() {
+      local nextFunc = function() {
           ::get_gui_scene().performDelayed(guihandler, function() {
             ::show_gui(true);
             this.applyOptions()
           })
-        })(guihandler)
+        }
 
       this.guiScene.performDelayed(guihandler, nextFunc)
     }

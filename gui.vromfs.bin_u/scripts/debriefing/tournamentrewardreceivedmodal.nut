@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let { getRewardCondition, getNextReward, getConditionIcon, getRewardIcon, getRewardDescText,
   getConditionText } = require("%scripts/events/eventRewards.nut")
@@ -56,7 +54,7 @@ let { getRewardCondition, getNextReward, getConditionIcon, getRewardIcon, getRew
         rewardIcon    = getRewardIcon(nextReward)
         rewardText    = getRewardDescText(nextReward)
       }
-    let blk = ::handyman.renderCached("%gui/tournamentRewardReceived.tpl", view)
+    let blk = handyman.renderCached("%gui/tournamentRewardReceived.tpl", view)
     this.guiScene.replaceContentFromText(this.scene.findObject("root-box"), blk, blk.len(), this)
   }
 

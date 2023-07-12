@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
@@ -30,9 +28,9 @@ let class PrizesRewardWnd extends ::gui_handlers.trophyRewardWnd {
 
   function getIconData() {
     if (!this.opened)
-      return ::LayersIcon.getIconData(this.chestDefaultImg)
+      return LayersIcon.getIconData(this.chestDefaultImg)
 
-    return "".concat(::LayersIcon.getIconData($"{this.chestDefaultImg}_opened"),
+    return "".concat(LayersIcon.getIconData($"{this.chestDefaultImg}_opened"),
       this.getRewardImage())
   }
 

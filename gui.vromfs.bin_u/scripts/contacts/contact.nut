@@ -1,9 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { isPlayerFromXboxOne,
         isPlayerFromPS4,
@@ -19,6 +16,9 @@ let { subscribe } = require("eventbus")
 let { isMultiplayerPrivilegeAvailable } = require("%scripts/user/xboxFeatures.nut")
 let psnSocial = require("sony.social")
 let { EPLX_PS4_FRIENDS } = require("%scripts/contacts/contactsManager.nut")
+let { replace } = require("%sqstd/string.nut")
+let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { show_profile_card } = require("%xboxLib/impl/user.nut")
 
 let contactsByName = {}
 
@@ -58,6 +58,7 @@ subscribe("playerProfileDialogClosed", function(r) {
   interactionStatus = null
 
   isBlockedMe = false
+  contactServiceGroup = ""
 
   constructor(contactData) {
     let newName = contactData?["name"] ?? ""
@@ -68,7 +69,7 @@ subscribe("playerProfileDialogClosed", function(r) {
 
     this.update(contactData)
 
-    ::add_event_listener("XboxSystemUIReturn", function(_p) {
+    add_event_listener("XboxSystemUIReturn", function(_p) {
       this.interactionStatus = null
     }, this)
   }
@@ -132,18 +133,24 @@ subscribe("playerProfileDialogClosed", function(r) {
   }
 
   function openXBoxFriendsEdit() {
-    this.updateXboxIdAndDo(@() ::xbox_show_add_remove_friend(this.xboxId))
+    this.updateXboxIdAndDo(function() {
+      if (this.xboxId)
+        show_profile_card(this.xboxId.tointeger(), null)
+    })
   }
 
   function openXboxProfile() {
-    this.updateXboxIdAndDo(@() ::xbox_show_profile_card(this.xboxId))
+    this.updateXboxIdAndDo(function() {
+      if (this.xboxId)
+        show_profile_card(this.xboxId.tointeger(), null)
+    })
   }
 
-  function getXboxId(afterSuccessCb = null) {
+  function getXboxId(afterSuccessCb = null, show_progress = true) {
     if (this.xboxId != "")
       return this.xboxId
 
-    reqPlayerExternalIDsByUserId(this.uid, { showProgressBox = true }, afterSuccessCb)
+    reqPlayerExternalIDsByUserId(this.uid, { showProgressBox = show_progress }, afterSuccessCb)
     return null
   }
 
@@ -297,7 +304,7 @@ subscribe("playerProfileDialogClosed", function(r) {
     if (!isPlatformSony)
       return
 
-    let ircName = ::g_string.replace(this.name, "@", "%40") //!!!Temp hack, *_by_uid will not be working on sony testing build
+    let ircName = replace(this.name, "@", "%40") //!!!Temp hack, *_by_uid will not be working on sony testing build
     ::gchat_voice_mute_peer_by_name(this.isInBlockGroup() || this.isBlockedMe, ircName)
   }
 
@@ -309,4 +316,5 @@ subscribe("playerProfileDialogClosed", function(r) {
   isInFriendGroup = @() this.isInGroup(EPL_FRIENDLIST)
   isInPSNFriends = @() this.isInGroup(EPLX_PS4_FRIENDS)
   isInBlockGroup = @() this.isInGroup(EPL_BLOCKLIST)
+  setContactServiceGroup = @(grp_name) this.contactServiceGroup = grp_name
 }

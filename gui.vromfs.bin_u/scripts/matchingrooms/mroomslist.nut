@@ -1,15 +1,15 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { get_time_msec } = require("dagor.time")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { format } = require("string")
 let crossplayModule = require("%scripts/social/crossplay.nut")
 let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
 let u = require("%sqstd/underscore.nut")
+let { fetchRoomsList } = require("%scripts/matching/serviceNotifications/mrooms.nut")
+let { getGameModeIdsByEconomicName } = require("%scripts/matching/matchingGameModes.nut")
 
 const ROOM_LIST_REFRESH_MIN_TIME = 3000 //ms
 const ROOM_LIST_REQUEST_TIME_OUT = 45000 //ms
@@ -76,7 +76,7 @@ const SKIRMISH_ROOMS_LIST_ID = "skirmish"
   }
 
   function getRoom(roomId) {
-    return ::u.search(this.getList(), (@(roomId) function(r) { return r.roomId == roomId })(roomId))
+    return this.getList().findvalue(@(r) r.roomId == roomId)
   }
 
   function requestList(filter) {
@@ -102,8 +102,8 @@ const SKIRMISH_ROOMS_LIST_ID = "skirmish"
     this.curRoomsFilter = roomsFilter
     let hideFullRooms = filter?.hideFullRooms ?? true
     let roomsData = this
-    ::fetch_rooms_list(roomsFilter, @(p) roomsData.requestListCb(p, hideFullRooms))
-    ::broadcastEvent("RoomsSearchStarted", { roomsList = this })
+    fetchRoomsList(roomsFilter, @(p) roomsData.requestListCb(p, hideFullRooms))
+    broadcastEvent("RoomsSearchStarted", { roomsList = this })
     return true
   }
 
@@ -120,7 +120,7 @@ const SKIRMISH_ROOMS_LIST_ID = "skirmish"
 
     this.lastUpdateTimeMsec = get_time_msec()
     this.updateRoomsList(digest, hideFullRooms)
-    ::broadcastEvent("SearchedRoomsChanged", { roomsList = this })
+    broadcastEvent("SearchedRoomsChanged", { roomsList = this })
 
     if (this.queuedRoomsFilter != null) {
       this.requestList(this.queuedRoomsFilter)
@@ -193,7 +193,7 @@ const SKIRMISH_ROOMS_LIST_ID = "skirmish"
 
     if ("eventEconomicName" in this.requestParams) {
       let economicName = this.requestParams.eventEconomicName
-      let modesList = ::g_matching_game_modes.getGameModeIdsByEconomicName(economicName)
+      let modesList = getGameModeIdsByEconomicName(economicName)
       res.group = "matching-lobby"
 
       if (modesList.len()) {

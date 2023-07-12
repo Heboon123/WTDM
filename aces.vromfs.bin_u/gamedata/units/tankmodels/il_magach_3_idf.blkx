@@ -1823,6 +1823,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -3220,10 +3221,10 @@
           "trigger": "gunner3",
           "triggerGroup": "machinegun",
           "blk": "gameData/Weapons/groundModels_weapons/7_62mm_M1919A4_user_machinegun.blk",
-          "emitter": "emtr_gun_flame_01",
-          "flash": "emtr_gun_flame_01",
+          "emitter": "emtr_gun_flame_02",
+          "flash": "emtr_gun_flame_02",
           "useEmitter": true,
-          "barrelDP": "gun_barrel_01_dm",
+          "barrelDP": "gun_barrel_02_dm",
           "defaultYaw": 0.0,
           "defaultPitch": 0.0,
           "parkInDeadzone": false,
@@ -3245,8 +3246,8 @@
           "errExplTime": 0.0,
           "forestallTime": 0.1,
           "turret": {
-            "head": "bone_mg_aa_h",
-            "gun": "bone_mg_aa_v",
+            "head": "bone_mg_aa_h_02",
+            "gun": "bone_mg_aa_v_02",
             "gunnerDm": "commander_dm",
             "hasNightVision": false
           },
@@ -3261,10 +3262,10 @@
           "trigger": "gunner4",
           "triggerGroup": "machinegun",
           "blk": "gameData/Weapons/groundModels_weapons/7_62mm_FN_MAG60_40_user_machinegun.blk",
-          "emitter": "emtr_gun_flame_02",
-          "flash": "emtr_gun_flame_02",
+          "emitter": "emtr_gun_flame_01",
+          "flash": "emtr_gun_flame_01",
           "useEmitter": true,
-          "barrelDP": "gun_barrel_02_dm",
+          "barrelDP": "gun_barrel_01_dm",
           "defaultYaw": 0.0,
           "defaultPitch": 0.0,
           "parkInDeadzone": false,
@@ -3496,8 +3497,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -4418,6 +4419,15 @@
           "fx": {
             "name": "smoke_after_hit_tiny",
             "setOrientation": true
+          }
+        }
+      },
+      {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
           }
         }
       },

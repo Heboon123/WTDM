@@ -1,19 +1,15 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { Cost } = require("%scripts/money.nut")
+let u = require("%sqStdLibs/helpers/u.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let DataBlock = require("DataBlock")
 let { sortPresetsList, setFavoritePresets, getWeaponryPresetView,
   getWeaponryByPresetInfo, getCustomWeaponryPresetView
 } = require("%scripts/weaponry/weaponryPresetsParams.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-
-let { getLastWeapon, setLastWeapon, getWeaponDisabledMods
-} = require("%scripts/weaponry/weaponryInfo.nut")
-let { getModificationName } = require("%scripts/weaponry/bulletsInfo.nut")
+let { getLastWeapon, setLastWeapon } = require("%scripts/weaponry/weaponryInfo.nut")
 let { getItemAmount, getItemCost, getItemStatusTbl } = require("%scripts/weaponry/itemInfo.nut")
 let { getWeaponItemViewParams } = require("%scripts/weaponry/weaponryVisual.nut")
 let { getTierDescTbl, updateWeaponTooltip, getTierTooltipParams
@@ -21,7 +17,7 @@ let { getTierDescTbl, updateWeaponTooltip, getTierTooltipParams
 let { weaponsPurchase, canBuyItem } = require("%scripts/weaponry/weaponsPurchase.nut")
 let { placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { RESET_ID, openPopupFilter } = require("%scripts/popups/popupFilter.nut")
-let { appendOnce } = require("%sqStdLibs/helpers/u.nut")
+let { appendOnce } = u
 let { MAX_PRESETS_NUM, CHAPTER_ORDER, CHAPTER_NEW_IDX, CHAPTER_FAVORITE_IDX,
   CUSTOM_PRESET_PREFIX, isCustomPreset, getDefaultCustomPresetParams
 } = require("%scripts/weaponry/weaponryPresets.nut")
@@ -31,6 +27,7 @@ let { cutPrefix } = require("%sqstd/string.nut")
 let { openEditWeaponryPreset, openEditPresetName } = require("%scripts/weaponry/editWeaponryPreset.nut")
 let { isModAvailableOrFree } = require("%scripts/weaponry/modificationInfo.nut")
 let { deep_clone } = require("%sqstd/underscore.nut")
+let { promptReqModInstall, needReqModInstall } = require("%scripts/weaponry/checkInstallMods.nut")
 
 const MY_FILTERS = "weaponry_presets/filters"
 
@@ -123,7 +120,7 @@ let FILTER_OPTIONS = ["Favorite", "Available", 1, 2, 3, 4]
       popupAlign = "top"
     })
 
-    this.showSceneBtn("custom_weapons_available_txt", this.isCustomPresetsAvailable()
+    this.showSceneBtn("custom_weapons_available_txt", this.unit.hasWeaponSlots
       && !::is_in_flight() && !this.unit.isUsable())
   }
 
@@ -273,7 +270,7 @@ let FILTER_OPTIONS = ["Favorite", "Available", 1, 2, 3, 4]
     if (this.curTierIdx >= 0 && this.curPresetIdx != null) {
       let item = this.presets[this.curPresetIdx]
       let weaponry = item.tiersView?[this.curTierIdx].weaponry
-      data = weaponry ? ::handyman.renderCached(("%gui/weaponry/weaponTooltip.tpl"),
+      data = weaponry ? handyman.renderCached(("%gui/weaponry/weaponTooltip.tpl"),
         getTierDescTbl(this.unit, getTierTooltipParams(weaponry, item.name, this.curTierIdx))) : ""
     }
     this.guiScene.replaceContentFromText(descObj, data, data.len(), null)
@@ -281,7 +278,7 @@ let FILTER_OPTIONS = ["Favorite", "Available", 1, 2, 3, 4]
 
   function onModItemDblClick(_obj) {
     let idx = this.curPresetIdx
-    let params = ::u.search(this.presetsMarkup, @(i) i?.presetId == idx)
+    let params = u.search(this.presetsMarkup, @(i) i?.presetId == idx)
     if (params?.weaponryItem.actionBtnCanShow != "no")
       this.onModActionBtn()
   }
@@ -311,9 +308,8 @@ let FILTER_OPTIONS = ["Favorite", "Available", 1, 2, 3, 4]
         return this.onBuy(item)
       }
 
-      let disabledMods = getWeaponDisabledMods(this.unit, item)
-      if (disabledMods.len() > 0) {
-        this.showReqModsMsg(disabledMods)
+      if (needReqModInstall(this.unit, item)) {
+        promptReqModInstall(this.unit, item)
         return
       }
 
@@ -324,32 +320,10 @@ let FILTER_OPTIONS = ["Favorite", "Available", 1, 2, 3, 4]
     this.guiScene.performDelayed(this, @()this.goBack())
   }
 
-  function showReqModsMsg(disabledMods) {
-    let aUnit = this.unit
-    let modNames = disabledMods.map(@(n) colorize("userlogColoredText", getModificationName(aUnit, n)))
-    let text = loc("weaponry/require_mod_install", {
-      modNames = loc("ui/colon").join(modNames)
-      numMods = disabledMods.len()
-    })
-    let onOk = Callback(@() this.installMods(disabledMods), this)
-    ::scene_msg_box("activate_wager_message_box", null, text, [["yes", onOk], ["no"]], "yes")
-  }
-
-  function installMods(disabledMods) {
-    let aUnit = this.unit
-    let onSuccess = Callback(function() {
-      disabledMods.each(@(n) ::updateAirAfterSwitchMod(aUnit, n))
-      ::broadcastEvent("ModificationChanged")
-    }, this)
-
-    let taskId = ::enable_modifications(this.unit.name, disabledMods, true)
-    ::g_tasker.addTask(taskId, { showProgressBox = true }, onSuccess)
-  }
-
   function onBuy(item) {
     if (!::shop_is_weapon_available(this.unit.name, item.name, false, true))
       return
-    this.checkSaveBulletsAndDo(Callback((@(unit, item) function() {
+    this.checkSaveBulletsAndDo(Callback((@(unit, item) function() { //-ident-hides-ident
       weaponsPurchase(unit, { modItem = item, open = false })
     })(this.unit, item), this))
   }
@@ -365,7 +339,7 @@ let FILTER_OPTIONS = ["Favorite", "Available", 1, 2, 3, 4]
     if (needSave) {
       this.taskId = ::save_online_single_job(SAVE_WEAPON_JOB_DIGIT)
       if (this.taskId >= 0 && func) {
-        let cb = ::u.isFunction(func) ? Callback(func, this) : func
+        let cb = u.isFunction(func) ? Callback(func, this) : func
         ::g_tasker.addTask(this.taskId, { showProgressBox = true }, cb)
       }
     }
@@ -461,7 +435,7 @@ let FILTER_OPTIONS = ["Favorite", "Available", 1, 2, 3, 4]
     }
 
     let idx = this.curPresetIdx
-    let params = ::u.search(this.presetsMarkup, @(i) i?.presetId == idx)
+    let params = u.search(this.presetsMarkup, @(i) i?.presetId == idx)
     let btnText = params?.weaponryItem.actionBtnText ?? ""
     let canBuy = this.presets[idx].weaponPreset.cost > 0
     let actionBtnObj = this.showSceneBtn("actionBtn", btnText != ""
@@ -487,7 +461,7 @@ let FILTER_OPTIONS = ["Favorite", "Available", 1, 2, 3, 4]
       return
 
     this.presetsMarkup = this.getPresetsMarkup(pList ?? this.presets)
-    let data = ::handyman.renderCached("%gui/weaponry/weaponryPreset.tpl", {
+    let data = handyman.renderCached("%gui/weaponry/weaponryPreset.tpl", {
       chapterPos = this.chapterPos
       presets = this.presetsMarkup
       isShowConsoleBtn = ::show_console_buttons
@@ -707,7 +681,7 @@ let FILTER_OPTIONS = ["Favorite", "Available", 1, 2, 3, 4]
 
   function onPresetCopy() {
     let newPreset = getDefaultCustomPresetParams(this.customIdx)
-    newPreset.tiers <- ::u.copy(this.presets[this.curPresetIdx].tiers)
+    newPreset.tiers <- u.copy(this.presets[this.curPresetIdx].tiers)
     this.editNewPreset(newPreset)
   }
 
@@ -748,7 +722,7 @@ let FILTER_OPTIONS = ["Favorite", "Available", 1, 2, 3, 4]
       return
 
     this.multiPurchaseList = []
-    this.totalCost = ::Cost()
+    this.totalCost = Cost()
     foreach (preset in this.presets) {
       let weaponPreset = preset.weaponPreset
       let statusTbl = getItemStatusTbl(this.unit, weaponPreset)

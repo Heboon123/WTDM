@@ -1655,6 +1655,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -2488,8 +2489,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -3414,6 +3415,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -3585,9 +3595,8 @@
           "armorThickness": 44.0
         },
         "composite_armor_hull_01_dm": {
-          "armorThickness": 5.0,
-          "hidableInXrayViewer": true,
-          "armorClass": "RHA_tank_modern"
+          "armorThickness": 6.0,
+          "hidableInXrayViewer": true
         }
       },
       "optics": {
@@ -4092,7 +4101,7 @@
     "xray_viewer_data": {
       "armorArrayHull": {
         "xrayDmPart": "composite_armor_hull_01_dm",
-        "titleLoc": "RHA_tank_modern",
+        "titleLoc": "aluminium",
         "armorArrayText": {
           "layer": {
             "dmPart": "composite_armor_hull_01_dm"
@@ -4174,6 +4183,9 @@
   {
     "commonWeapons": [
       {
+        "remotelyGuidedWeaponsMax": 1
+      },
+      {
         "Weapon": {
           "trigger": "gunner0",
           "triggerGroup": "primary",
@@ -4184,6 +4196,7 @@
           "recoilMultiplier": 0.0,
           "stopForFire": true,
           "maxSpeedForFire": 5.0,
+          "staticElevation": 1.725,
           "defaultYaw": 0.0,
           "defaultPitch": 0.0,
           "allowableDelta": 20.0,
@@ -4327,6 +4340,9 @@
         "effects": {
           "commonWeapons": [
             {
+              "remotelyGuidedWeaponsMax": 1
+            },
+            {
               "Weapon": {
                 "trigger": "gunner0",
                 "triggerGroup": "primary",
@@ -4337,6 +4353,7 @@
                 "recoilMultiplier": 0.0,
                 "stopForFire": true,
                 "maxSpeedForFire": 5.0,
+                "staticElevation": 1.725,
                 "defaultYaw": 0.0,
                 "defaultPitch": 0.0,
                 "allowableDelta": 20.0,

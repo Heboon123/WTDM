@@ -1,9 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { secondsToTime, millisecondsToSecondsInt } = require("%scripts/time.nut")
 let { buildTimeStr } = require("%appGlobals/timeLoc.nut")
@@ -88,9 +85,9 @@ local class airRaidWndScene extends ::gui_handlers.BaseGuiHandlerWT {
 
     ::scene_msg_box("show_message_from_matching",
       null,
-      ::g_string.implode([colorize("warningTextColor",
+      "\n".join([colorize("warningTextColor",
         loc("NEW_CLIENT/EXIT_TITLE")),
-        loc("NEW_CLIENT/EXIT_MESSAGE")], "\n"),
+        loc("NEW_CLIENT/EXIT_MESSAGE")], true),
         [["ok", @() exitGame() ]],
         "ok",
         { cancel_fn = @() exitGame() })

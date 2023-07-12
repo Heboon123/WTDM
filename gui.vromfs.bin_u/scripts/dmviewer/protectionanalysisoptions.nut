@@ -1,15 +1,14 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let { format } = require("string")
 let { calculate_tank_bullet_parameters } = require("unitCalculcation")
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let stdMath = require("%sqstd/math.nut")
-let { WEAPON_TYPE,
+let { WEAPON_TYPE, TRIGGER_TYPE,
         getLinkedGunIdx,
         getWeaponNameByBlkPath } = require("%scripts/weaponry/weaponryInfo.nut")
 let { getBulletsList,
@@ -25,6 +24,7 @@ let { hasUnitAtRank } = require("%scripts/airInfo.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { isCountryHaveUnitType } = require("%scripts/shop/shopUnitsInfo.nut")
 let { getUnitWeapons, getWeaponBlkParams } = require("%scripts/weaponry/weaponryPresets.nut")
+let { utf8ToUpper } = require("%sqstd/string.nut")
 
 local options = {
   types = []
@@ -166,6 +166,12 @@ options.addTypes <- function(typesTable) {
   this.types.sort(@(a, b) a.sortId <=> b.sortId)
 }
 
+let function addParamsToBulletSet(bSet, bData) {
+  foreach (param in ["explosiveType", "explosiveMass"])
+    bSet[param] <- bData?[param]
+
+  return bSet
+}
 local sortIdCount = 0
 options.addTypes({
   UNKNOWN = {
@@ -181,7 +187,7 @@ options.addTypes({
       let esUnitTypes = getThreatEsUnitTypes()
       let types = esUnitTypes.map(@(e) unitTypes.getByEsUnitType(e))
       this.values = esUnitTypes
-      this.items  = ::u.map(types, @(t) { text = "{0} {1}".subst(t.fontIcon, t.getArmyLocName()) })
+      this.items  = u.map(types, @(t) { text = "{0} {1}".subst(t.fontIcon, t.getArmyLocName()) })
       let preferredEsUnitType = this.value ?? options.targetUnit.esUnitType
       this.value = this.values.indexof(preferredEsUnitType) != null ? preferredEsUnitType
         : (this.values?[0] ?? ES_UNIT_TYPE_INVALID)
@@ -194,8 +200,8 @@ options.addTypes({
 
     updateParams = function(_handler, _scene) {
       let unitType = options.UNITTYPE.value
-      this.values = ::u.filter(shopCountriesList, @(c) isCountryHaveUnitType(c, unitType))
-      this.items  = ::u.map(this.values, @(c) { text = loc(c), image = ::get_country_icon(c) })
+      this.values = u.filter(shopCountriesList, @(c) isCountryHaveUnitType(c, unitType))
+      this.items  = u.map(this.values, @(c) { text = loc(c), image = ::get_country_icon(c) })
       let preferredCountry = this.value ?? options.targetUnit.shopCountry
       this.value = this.values.indexof(preferredCountry) != null ? preferredCountry
         : (this.values?[0] ?? "")
@@ -211,7 +217,7 @@ options.addTypes({
       for (local rank = 1; rank <= ::max_country_rank; rank++)
         if (hasUnitAtRank(rank, unitType, country, true, false))
           this.values.append(rank)
-      this.items = ::u.map(this.values, @(r) {
+      this.items = u.map(this.values, @(r) {
         text = format(loc("conditions/unitRank/format"), ::get_roman_numeral(r))
       })
       let preferredRank = this.value ?? options.targetUnit.rank
@@ -226,12 +232,12 @@ options.addTypes({
       let rank = options.RANK.value
       let country = options.COUNTRY.value
       let ediff = ::get_current_ediff()
-      local list = ::get_units_list(@(u) u.esUnitType == unitType
-        && u.shopCountry == country && u.rank == rank && u.isVisibleInShop())
-      list = ::u.map(list, @(u) { unit = u, id = u.name, br = u.getBattleRating(ediff) })
+      local list = ::get_units_list(@(unit) unit.esUnitType == unitType
+        && unit.shopCountry == country && unit.rank == rank && unit.isVisibleInShop())
+      list = u.map(list, @(unit) { unit, id = unit.name, br = unit.getBattleRating(ediff) })
       list.sort(@(a, b) a.br <=> b.br)
-      this.values = ::u.map(list, @(v) v.unit)
-      this.items = ::u.map(list, @(v) {
+      this.values = u.map(list, @(v) v.unit)
+      this.items = u.map(list, @(v) {
         text  = format("[%.1f] %s", v.br, ::getUnitName(v.id))
         image = ::image_for_air(v.unit)
         addDiv = UNIT.getMarkup(v.id, { showLocalState = false })
@@ -261,6 +267,7 @@ options.addTypes({
       local curGunIdx = -1
       let groupsCount = getBulletsGroupCount(unit)
 
+      // Offensive Armament
       for (local groupIndex = 0; groupIndex < getLastFakeBulletsIndex(unit); groupIndex++) {
         let gunIdx = getLinkedGunIdx(groupIndex, groupsCount, unit.unitType.bulletSetsQuantity, false)
         if (gunIdx == curGunIdx)
@@ -320,12 +327,12 @@ options.addTypes({
             local addDiv = ""
 
             if (isBulletBelt) {
-              local bSet = bulletsSet.__merge({ bullets = [bulletName] })
               let bData = bulletsSet.bulletDataByType[bulletName]
-
-              foreach (param in ["explosiveType", "explosiveMass", "bulletAnimations"]) {
-                bSet[param] <- bData?[param]
-              }
+              local bSet = bulletsSet.__merge({
+                bullets = [bulletName]
+                bulletAnimations = bData.bulletAnimations
+              })
+              addParamsToBulletSet(bSet, bData)
 
               addDiv = SINGLE_BULLET.getMarkup(unit.name, bulletName, {
                 modName = value,
@@ -350,43 +357,67 @@ options.addTypes({
         }
       }
 
-      // Collecting special shells
-      let specialBulletTypes = [ "rocket" ]
+      // Secondary weapons
+      let specialBulletTypes = [ "rocket", "bullet" ]
+
       let unitBlk = unit ? ::get_full_unit_blk(unit.name) : null
       let weapons = getUnitWeapons(unitBlk)
       let knownWeapBlkArray = []
 
       foreach (weap in weapons) {
-        if (!weap?.blk || weap?.dummy || isInArray(weap.blk, knownWeapBlkArray))
+        if (!weap?.blk || weap?.dummy || weap.trigger == TRIGGER_TYPE.COUNTERMEASURES
+          || isInArray(weap.blk, knownWeapBlkArray))
           continue
         knownWeapBlkArray.append(weap.blk)
 
         let { weaponBlk, weaponBlkPath } = getWeaponBlkParams(weap.blk, {})
-        local bulletBlk = null
+        local curBlk
+        local curType
 
         foreach (t in specialBulletTypes)
-          bulletBlk = bulletBlk ?? weaponBlk?[t]
+          if (weaponBlk?[t]) {
+            curBlk = weaponBlk?[t]
+            curType = t
+            break
+          }
 
-        let locName = ::g_string.utf8ToUpper(
+        let isBullet = curType == "bullet"
+        let locName = utf8ToUpper(
           loc("weapons/{0}".subst(getWeaponNameByBlkPath(weaponBlkPath))), 1)
-        if (!bulletBlk || isInArray(locName, bulletNamesSet))
+        if (!curBlk || isInArray(locName, bulletNamesSet))
           continue
 
         bulletNamesSet.append(locName)
+        let bulletParams = calculate_tank_bullet_parameters(unit.name, weaponBlkPath, true, false)?[0]
         this.values.append({
-          bulletName = ""
+          bulletName = isBullet ? curBlk.bulletType : ""
           weaponBlkName = weaponBlkPath
-          bulletParams = calculate_tank_bullet_parameters(unit.name, weaponBlkPath, true, false)?[0]
-          sortVal = bulletBlk?.caliber ?? 0
+          bulletParams
+          sortVal = curBlk?.caliber ?? 0
         })
+
+        local bSet
+        if (isBullet)
+          bSet = addParamsToBulletSet({}, curBlk).__merge({
+            caliber = (curBlk?.caliber ?? 0) * 1000
+            bullets = weaponBlk % "bullet"
+            cartridge = 0
+            bulletAnimations = [curBlk?.shellAnimation ?? ""]
+          })
 
         this.items.append({
           text = locName
-          addDiv = SINGLE_WEAPON.getMarkup(unit.name, {
-            blkPath = weaponBlkPath
-            tType = weap.trigger
-            presetName = weap.presetId
-          })
+          addDiv = isBullet
+            ? SINGLE_BULLET.getMarkup(unit.name, curBlk.bulletType, {
+              bSet
+              bulletParams
+            })
+            : SINGLE_WEAPON.getMarkup(unit.name, {
+              blkPath = weaponBlkPath
+              tType = weap.trigger
+              presetName = weap.presetId
+            })
+
         })
       }
 
@@ -413,7 +444,7 @@ options.addTypes({
     valueWidth = "@dmInfoTextWidth"
 
     getControlMarkup = function() {
-      return ::handyman.renderCached("%gui/dmViewer/distanceSlider.tpl", {
+      return handyman.renderCached("%gui/dmViewer/distanceSlider.tpl", {
         containerId = "container_" + this.id
         id = this.id
         min = 0
@@ -479,6 +510,67 @@ options.addTypes({
       parentObj.display = isBulletAvailable() ? "show" : "hide"
     }
   }
+  //
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 })
 
 options.init <- function(handler, scene) {
@@ -496,7 +588,12 @@ options.init <- function(handler, scene) {
 options.setAnalysisParams <- function() {
   let bullet   = options.BULLET.value
   let distance = options.DISTANCE.value
-  ::set_protection_checker_params(bullet?.weaponBlkName ?? "", bullet?.bulletName ?? "", distance)
+  //
+
+
+
+  ::set_protection_checker_params(bullet?.weaponBlkName ?? "", bullet?.bulletName ?? "", distance, 0)
+  //
 }
 
 options.get <- @(id) this?[id] ?? this.UNKNOWN

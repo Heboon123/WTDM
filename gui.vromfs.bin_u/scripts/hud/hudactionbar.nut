@@ -1,9 +1,9 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { broadcastEvent, add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 let { format } = require("string")
 let { debug_dump_stack } = require("dagor.debug")
@@ -16,7 +16,7 @@ let { LONG_ACTIONBAR_TEXT_LEN, getActionItemAmountText, getActionItemModificatio
   getActionItemStatus } = require("%scripts/hud/hudActionBarInfo.nut")
 let { toggleShortcut } = require("%globalScripts/controls/shortcutActions.nut")
 let { getWheelBarItems, activateActionBarAction, getActionBarUnitName } = require("hudActionBar")
-let { EII_BULLET, EII_ARTILLERY_TARGET, EII_EXTINGUISHER, EII_ROCKET, EII_FORCED_GUN
+let { EII_BULLET, EII_ARTILLERY_TARGET, EII_EXTINGUISHER, EII_ROCKET, EII_FORCED_GUN, EII_WEAPON_LEAD
 } = require("hudActionBarConst")
 let { arrangeStreakWheelActions } = require("%scripts/hud/hudActionBarStreakWheel.nut")
 let { is_replay_playing } = require("replays")
@@ -93,12 +93,15 @@ let function needFullUpdate(item, prevItem, hudUnitType) {
     ::g_hud_event_manager.subscribe("LocalPlayerAlive", function (_data) {
       updateActionBar()
     }, this)
+    add_event_listener("ChangedShowActionBar", function (_eventData) {
+      this.updateVisibility()
+    }, this)
 
     this.updateParams()
     updateActionBar()
     this.scene.setValue(stashBhvValueConfig([{
       watch = actionBarItems
-      updateFunc = Callback(@(_obj, actionItems) this.updateActionBarItems(actionItems), this)
+      updateFunc = Callback(@(_obj, actionItems) this.updateActionBarItems(actionItems), this) //-ident-hides-ident
     }]))
   }
 
@@ -117,7 +120,7 @@ let function needFullUpdate(item, prevItem, hudUnitType) {
   }
 
   function getActionBarUnit() {
-    return ::getAircraftByName(getActionBarUnitName())
+    return getAircraftByName(getActionBarUnitName())
   }
 
   function fill() {
@@ -128,7 +131,7 @@ let function needFullUpdate(item, prevItem, hudUnitType) {
     this.curActionBarUnitName = getActionBarUnitName()
 
     let view = {
-      items = ::u.map(this.actionItems, (@(a) this.buildItemView(a, true)).bindenv(this))
+      items = u.map(this.actionItems, (@(a) this.buildItemView(a, true)).bindenv(this))
     }
 
     let partails = {
@@ -143,11 +146,11 @@ let function needFullUpdate(item, prevItem, hudUnitType) {
         this.enableBarItemAfterCooldown(idx, cooldownTimeout)
     }
 
-    let blk = ::handyman.renderCached(("%gui/hud/actionBar.tpl"), view, partails)
+    let blk = handyman.renderCached(("%gui/hud/actionBar.tpl"), view, partails)
     this.guiScene.replaceContentFromText(this.scene.findObject("actions_nest"), blk, blk.len(), this)
     this.scene.findObject("action_bar").setUserData(this)
 
-    ::broadcastEvent("HudActionbarInited", { actionBarItemsAmount = this.actionItems.len() })
+    broadcastEvent("HudActionbarInited", { actionBarItemsAmount = this.actionItems.len() })
   }
 
   //creates view for handyman by one actionBar item
@@ -207,7 +210,7 @@ let function needFullUpdate(item, prevItem, hudUnitType) {
     let unit = this.getActionBarUnit()
     let modifName = getActionItemModificationName(item, unit)
     if (modifName) {
-      viewItem.bullets <- ::handyman.renderNested(loadTemplateText("%gui/weaponry/bullets.tpl"),
+      viewItem.bullets <- handyman.renderNested(loadTemplateText("%gui/weaponry/bullets.tpl"),
         function (_text) {
           // if fake bullets are not generated yet, generate them
           if (isFakeBullet(modifName) && !(modifName in unit.bulletsSets))
@@ -250,9 +253,11 @@ let function needFullUpdate(item, prevItem, hudUnitType) {
 
   function updateWaitGaugeDegree(obj, waitGaugeDegreeParams) {
     let { degree, incFactor } = waitGaugeDegreeParams
-    if (degree == (obj.getFinalProp(sectorAngle1PID) ?? -1).tointeger())
+    let incFactorStr = format("%.1f", incFactor)
+    if (degree == (obj.getFinalProp(sectorAngle1PID) ?? -1).tointeger()
+        && incFactorStr == obj?["inc-factor"])
       return
-    obj["inc-factor"] = format("%.1f", incFactor)
+    obj["inc-factor"] = incFactorStr
     obj.set_prop_latent(sectorAngle1PID, degree)
     obj.updateRendElem()
   }
@@ -268,7 +273,7 @@ let function needFullUpdate(item, prevItem, hudUnitType) {
 
     if ((prevActionItems?.len() ?? 0) != this.actionItems.len() || this.actionItems.len() == 0) {
       this.fill()
-      ::broadcastEvent("HudActionbarResized", { size = this.actionItems.len() })
+      broadcastEvent("HudActionbarResized", { size = this.actionItems.len() })
       return
     }
 
@@ -329,10 +334,10 @@ let function needFullUpdate(item, prevItem, hudUnitType) {
         mainActionButtonObj.show(isReady)
       if (actionType == EII_ARTILLERY_TARGET && item.active != this.artillery_target_mode) {
         this.artillery_target_mode = item.active
-        ::broadcastEvent("ArtilleryTarget", { active = this.artillery_target_mode })
+        broadcastEvent("ArtilleryTarget", { active = this.artillery_target_mode })
       }
 
-      if (actionType != prevActionItems[id].type)
+      if (actionType != prevActionItems[id].type || actionType == EII_WEAPON_LEAD)
         this.scene.findObject($"tooltip_{itemObjId}").tooltip = actionBarType.getTooltipText(item)
 
       let { cooldownEndTime = 0, cooldownTime = 1, inProgressTime = 1, inProgressEndTime = 0,
@@ -391,7 +396,7 @@ let function needFullUpdate(item, prevItem, hudUnitType) {
       let delta = currentItem.countEx - prewItem.countEx || currentItem.count - prewItem.count
       if (prewItem.ammoLost < currentItem.ammoLost)
         ::g_hud_event_manager.onHudEvent("hint:ammoDestroyed:show")
-      let blk = ::handyman.renderCached("%gui/hud/actionBarIncrement.tpl", { is_increment = delta > 0, delta_amount = delta })
+      let blk = handyman.renderCached("%gui/hud/actionBarIncrement.tpl", { is_increment = delta > 0, delta_amount = delta })
       this.guiScene.appendWithBlk(itemObj, blk, this)
     }
   }
@@ -403,8 +408,10 @@ let function needFullUpdate(item, prevItem, hudUnitType) {
   }
 
   function updateVisibility() {
-    if (checkObj(this.scene))
-      this.scene.show(!::g_hud_live_stats.isVisible())
+    if (checkObj(this.scene)) {
+      let showActionBarOption = ::get_gui_option_in_mode(::USEROPT_SHOW_ACTION_BAR, ::OPTIONS_MODE_GAMEPLAY, true)
+      this.scene.show(!::g_hud_live_stats.isVisible() && showActionBarOption)
+    }
   }
 
   function activateAction(obj) {

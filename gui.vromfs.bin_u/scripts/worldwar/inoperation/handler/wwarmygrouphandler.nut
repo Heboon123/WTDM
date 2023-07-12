@@ -1,9 +1,8 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+
+let { subscribe_handler } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 ::WwArmyGroupHandler <- class {
   group = null
@@ -20,7 +19,7 @@ from "%scripts/dagui_library.nut" import *
 
     this.scene = v_placeObj
     this.group = v_group
-    ::subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
+    subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
   }
 
   function updateSelectedStatus() {

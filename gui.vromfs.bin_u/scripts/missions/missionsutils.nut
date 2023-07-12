@@ -1,11 +1,10 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 
+let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let DataBlock = require("DataBlock")
 let { format } = require("string")
 let { get_blk_value_by_path, blkOptFromPath } = require("%sqStdLibs/helpers/datablockUtils.nut")
@@ -13,7 +12,7 @@ let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { isPlatformSony } = require("%scripts/clientState/platform.nut")
 let { getMissionLocName } = require("%scripts/missions/missionsUtilsModule.nut")
 let { get_meta_mission_info_by_name, get_meta_missions_info_by_campaigns,
-  add_custom_mission_list_full } = require("guiMission")
+  add_custom_mission_list_full, get_meta_mission_info_by_gm_and_name } = require("guiMission")
 let { set_game_mode, get_game_mode, get_game_type } = require("mission")
 
 const COOP_MAX_PLAYERS = 4
@@ -32,7 +31,7 @@ global enum MIS_PROGRESS { //value received from get_mission_progress
 
 let needCheckForVictory = Watched(false)
 
-::g_script_reloader.registerPersistentData("MissionsUtilsGlobals", getroottable(),
+registerPersistentData("MissionsUtilsGlobals", getroottable(),
   [
     "enable_coop_in_QMB", "enable_coop_in_SingleMissions", "enable_custom_battles"
   ])
@@ -185,10 +184,16 @@ let needCheckForVictory = Watched(false)
   ::game_mode_maps.clear()
 }
 
-::get_mission_meta_info <- function get_mission_meta_info(missionName) {
+let function getUrlOrFileMissionMetaInfo(missionName, gm = null) {
   let urlMission = ::g_url_missions.findMissionByName(missionName)
   if (urlMission != null)
     return urlMission.getMetaInfo()
+
+  if (gm != null) {
+    let misBlk = get_meta_mission_info_by_gm_and_name(gm, missionName)
+    if (misBlk != null)
+      return misBlk
+  }
 
   return get_meta_mission_info_by_name(missionName)
 }
@@ -311,7 +316,7 @@ let needCheckForVictory = Watched(false)
   ::enable_coop_in_QMB            = hasFeature(isPlatformSony ? "QmbCoopPs4"            : "QmbCoopPc")
   ::enable_coop_in_SingleMissions = hasFeature(isPlatformSony ? "SingleMissionsCoopPs4" : "SingleMissionsCoopPc")
   ::enable_custom_battles         = hasFeature(isPlatformSony ? "CustomBattlesPs4"      : "CustomBattlesPc")
-  ::broadcastEvent("GameModesAvailability")
+  broadcastEvent("GameModesAvailability")
 }
 
 ::get_mission_name <- function get_mission_name(missionId, config, locNameKey = "locName") {
@@ -401,4 +406,5 @@ let needCheckForVictory = Watched(false)
 
 return {
   needCheckForVictory
+  getUrlOrFileMissionMetaInfo
 }

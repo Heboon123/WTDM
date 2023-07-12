@@ -1,8 +1,5 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -11,7 +8,7 @@ let { isPlatformSony } = require("%scripts/clientState/platform.nut")
 
 subscriptions.addListenersWithoutEnv({
   UnitBought = function(p) {
-    let unit = ::getAircraftByName(p?.unitName)
+    let unit = getAircraftByName(p?.unitName)
     if (!unit)
       return
 

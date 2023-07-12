@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let stdMath = require("%sqstd/math.nut")
@@ -236,6 +234,6 @@ enums.addTypesByGlobalName("g_hud_enemy_debuffs", {
   foreach (item in this.types)
     if (unitTypeBit & item.unitTypesMask)
       foreach (partName in item.parts)
-        ::u.appendOnce(partName, list)
+        u.appendOnce(partName, list)
   return list
 }

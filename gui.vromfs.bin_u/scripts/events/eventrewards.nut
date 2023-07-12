@@ -1,8 +1,8 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
+
+let { Cost } = require("%scripts/money.nut")
 
 let { get_blk_value_by_path } = require("%sqStdLibs/helpers/datablockUtils.nut")
 let { addToText } = require("%scripts/unlocks/unlocksConditions.nut")
@@ -151,12 +151,12 @@ let rewardsConfig = [ //first in list have higher priority to show icon or to ge
   { id = "money"
     locId = ""
     getValue = function(blk) {
-      let cost = ::Cost().setFromTbl(blk)
+      let cost = Cost().setFromTbl(blk)
       return (cost > ::zero_money) ? cost : null
     }
     getIconStyle = function(value, _blk) {
       let img = (value.gold > 0) ? "#ui/gameuiskin#items_eagles" : "#ui/gameuiskin#items_warpoints"
-      return ::LayersIcon.getIconData(null, img)
+      return LayersIcon.getIconData(null, img)
     }
     getRowIcon = function(_value, _blk) {
       return ""
@@ -227,9 +227,9 @@ let function initConfigs() {
     if (!("locId" in cfg))
       cfg.locId = "reward/" + id
     if (!("getValue" in cfg))
-      cfg.getValue = (@(id) function(blk) { return blk?[id] })(id)
+      cfg.getValue = @(blk) blk?[id]
     if (!("getIconStyle" in cfg))
-      cfg.getIconStyle = (@(id) function(_value, _blk) { return ::LayersIcon.getIconData("reward_" + id) })(id)
+      cfg.getIconStyle = @(_value, _blk) LayersIcon.getIconData($"reward_{id}")
   }
 }
 initConfigs()
@@ -250,7 +250,7 @@ let function getBaseVictoryReward(event) {
 
   let wp = rewardsBlk?.baseWpAward ?? 0
   let gold = rewardsBlk?.baseGoldAward ?? 0
-  return (wp || gold) ? ::Cost(wp, gold) : null
+  return (wp || gold) ? Cost(wp, gold) : null
 }
 
 let function getSortedRewardsByConditions(event, awardsBlk  = null) {
@@ -272,7 +272,7 @@ let function getSortedRewardsByConditions(event, awardsBlk  = null) {
 
   //sort rewards
   foreach (condName, typeData in res)
-    typeData.sort((@(condName) function(a, b) {
+    typeData.sort(function(a, b) {
         let aValue = getConditionValue(a)
         let bValue = getConditionValue(b)
         if (aValue != bValue)
@@ -280,7 +280,7 @@ let function getSortedRewardsByConditions(event, awardsBlk  = null) {
         if (a?[condName] != b?[condName])
           return ((a?[condName] ?? "") > (b?[condName] ?? "")) ? 1 : -1
         return 0
-      })(condName))
+      })
 
   return res
 }
@@ -332,7 +332,7 @@ let function getRewardTooltipId(reward_blk) {
 
 let function getTotalRewardDescText(rewardsBlksArray) {
   local text = ""
-  local money = ::Cost()
+  local money = Cost()
   foreach (rewardBlk in rewardsBlksArray)
     foreach (cfg in rewardsConfig) {
       let value = cfg.getValue(rewardBlk)

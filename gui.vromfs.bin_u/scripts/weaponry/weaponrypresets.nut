@@ -1,8 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
 let { blkOptFromPath } = require("%sqStdLibs/helpers/datablockUtils.nut")
 
@@ -23,7 +21,7 @@ let isEqualWeapon = @(a, b) a.slot == b.slot
 
 let function addSlotWeaponsFromPreset(res, slotBlk, preset, tiersCount, isEqualFunc = isEqualWeapon) {
   foreach (weapon in (preset % "Weapon")) {
-    let slotWeapon = ::u.copy(weapon)
+    let slotWeapon = u.copy(weapon)
     slotWeapon.presetId = preset.name
     slotWeapon.slot = slotBlk.index
     slotWeapon.tier = slotBlk?.tier ?? (tiersCount - 1 - slotBlk.index)
@@ -57,13 +55,13 @@ let function getWeaponsByTypes(unitBlk, weaponsBlk, isCommon = true) {
       let slotIdx = wp.slot
       let slot = slots.findvalue(@(s) s.index == slotIdx)
       if (!slot) {
-        ::script_net_assert_once("WeaponSlots", $"WeaponSlot index does not exist")
+        logerr($"[WeaponSlots] Unit {unitName}: WeaponSlot index {slotIdx} does not exist")
         continue
       }
       let presetName = wp.preset
       let curPreset = (slot % "WeaponPreset").findvalue(@(s) s.name == presetName)
       if (curPreset == null) {
-        ::script_net_assert_once("WeaponSlots", $"WeaponPreset does not exist")
+        logerr($"[WeaponSlots] Unit {unitName}, preset {presetName}: WeaponPreset does not exist")
         continue
       }
 
@@ -73,7 +71,7 @@ let function getWeaponsByTypes(unitBlk, weaponsBlk, isCommon = true) {
   // !!!FIX ME: Processing old format of weapons data should be removed over time when all units presets get ability to be customized.
   else // PLAIN data type
     foreach (weapon in (weaponsBlk % "Weapon"))
-      ::u.appendOnce((::u.copy(weapon)), res)
+      u.appendOnce((u.copy(weapon)), res)
 
   return res
 }
@@ -110,9 +108,9 @@ let function getUnitWeapons(unitBlk) { // Pesets weapon only
   else
     foreach (preset in getUnitPresets(unitBlk))
       foreach (weapon in getPresetWeaponsByPath(unitBlk, preset.blk)) {
-          let w = ::u.copy(weapon)
+          let w = u.copy(weapon)
           w.presetId <- preset.name
-          ::u.appendOnce(w, res)
+          u.appendOnce(w, res)
       }
 
   return res

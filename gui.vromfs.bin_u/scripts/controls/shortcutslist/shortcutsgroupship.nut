@@ -1,7 +1,4 @@
 //checked for plus_string
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 from "%scripts/dagui_library.nut" import *
 let { get_option_multiplier, set_option_multiplier,
   OPTION_AIM_TIME_NONLINEARITY_SHIP, OPTION_AIM_ACCELERATION_DELAY_SHIP,
@@ -11,6 +8,7 @@ let controlsOperations = require("%scripts/controls/controlsOperations.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
 let { ActionGroup } = require("controls")
+let { checkOptionValue } = require("%scripts/controls/controlsUtils.nut")
 
 return [
   {
@@ -57,20 +55,20 @@ return [
   {
     id = "ship_main_engine"
     type = CONTROL_TYPE.AXIS
-    showFunc = @() ::g_controls_utils.checkOptionValue(::USEROPT_SEPERATED_ENGINE_CONTROL_SHIP, false)
+    showFunc = @() checkOptionValue(::USEROPT_SEPERATED_ENGINE_CONTROL_SHIP, false)
     axisDirection = AxisDirection.Y
     needShowInHelp = true
   }
   {
     id = "ship_port_engine"
     type = CONTROL_TYPE.AXIS
-    showFunc = @() ::g_controls_utils.checkOptionValue(::USEROPT_SEPERATED_ENGINE_CONTROL_SHIP, true)
+    showFunc = @() checkOptionValue(::USEROPT_SEPERATED_ENGINE_CONTROL_SHIP, true)
     checkAssign = false
   }
   {
     id = "ship_star_engine"
     type = CONTROL_TYPE.AXIS
-    showFunc = @() ::g_controls_utils.checkOptionValue(::USEROPT_SEPERATED_ENGINE_CONTROL_SHIP, true)
+    showFunc = @() checkOptionValue(::USEROPT_SEPERATED_ENGINE_CONTROL_SHIP, true)
     checkAssign = false
   }
   {
@@ -102,7 +100,7 @@ return [
   {
     id = "ID_SHIP_SELECTWEAPON_WHEEL_MENU"
     checkAssign = false
-    showFunc = @() ::g_controls_utils.checkOptionValue(::USEROPT_WHEEL_CONTROL_SHIP, true)
+    showFunc = @() checkOptionValue(::USEROPT_WHEEL_CONTROL_SHIP, true)
       && (::is_xinput_device() || isPlatformSony || isPlatformXboxOne)
   }
   {
@@ -445,6 +443,14 @@ return [
     checkAssign = false
   }
   //
+
+
+
+
+
+
+
+
 
 
 

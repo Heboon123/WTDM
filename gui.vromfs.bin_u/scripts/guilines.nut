@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { Point2 } = require("dagor.math")
 let { format } = require("string")
@@ -262,7 +259,7 @@ let function getHelpDotMarkup(point /*Point2*/ , tag = "helpLineDot") {
   foreach (dot in lines.dots0)
     data.append(getHelpDotMarkup(dot, "helpLineDot"))
 
-  return ::g_string.implode(data)
+  return "".join(data, true)
 }
 
 ::LinesGenerator.createLinkLines <- function createLinkLines(links, obstacles, interval = 0, lineWidth = 1, priority = 0, initial = true) {

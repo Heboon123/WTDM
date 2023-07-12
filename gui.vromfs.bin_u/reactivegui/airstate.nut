@@ -49,6 +49,11 @@ let AgmRotatedLaunchZonePitchMax = Watched(0.0)
 let AgmRotatedLaunchZonePitchMin = Watched(0.0)
 let AgmLaunchZoneDistMin         = Watched(0.0)
 let AgmLaunchZoneDistMax         = Watched(0.0)
+let IsOutLaunchZone              = Watched(false)
+let IsLaunchZoneOnTarget         = Watched(true)
+let LaunchZonePosX               = Watched(0.0)
+let LaunchZonePosY               = Watched(0.0)
+let LaunchZoneWatched = Watched({ x0 = 0, y0 = 0, x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0 })
 
 let IRCMState                    = Watched(0)
 
@@ -236,6 +241,15 @@ let isCanonSightActivated = Watched(false)
 let isTurretSightActivated = Watched(false)
 let isParamTableActivated = Watched(false)
 
+let IlsAtgmLaunchEdge1X = Watched(0)
+let IlsAtgmLaunchEdge1Y = Watched(0)
+let IlsAtgmLaunchEdge2X = Watched(0)
+let IlsAtgmLaunchEdge2Y = Watched(0)
+let IlsAtgmLaunchEdge3X = Watched(0)
+let IlsAtgmLaunchEdge3Y = Watched(0)
+let IlsAtgmLaunchEdge4X = Watched(0)
+let IlsAtgmLaunchEdge4Y = Watched(0)
+
 let helicopterState = {
 
   IndicatorsVisible,
@@ -280,6 +294,19 @@ let helicopterState = {
   AgmRotatedLaunchZonePitchMin,
   AgmLaunchZoneDistMin,
   AgmLaunchZoneDistMax,
+  IsOutLaunchZone,
+  IsLaunchZoneOnTarget,
+  LaunchZonePosX,
+  LaunchZonePosY,
+  LaunchZoneWatched,
+  IlsAtgmLaunchEdge1X,
+  IlsAtgmLaunchEdge1Y,
+  IlsAtgmLaunchEdge2X,
+  IlsAtgmLaunchEdge2Y,
+  IlsAtgmLaunchEdge3X,
+  IlsAtgmLaunchEdge3Y,
+  IlsAtgmLaunchEdge4X,
+  IlsAtgmLaunchEdge4Y,
 
   IRCMState,
 
@@ -702,6 +729,14 @@ interop.updateEnginesThrottle <- function(mode, trt, state, index) {
 
 interop.updateEngineControl <- function(index, is_controlled) {
   isEngineControled[index](is_controlled)
+}
+
+interop.updateLaunchZone <- function(x0, y0, x1, y1, x2, y2, x3, y3) {
+  let curVal = LaunchZoneWatched.value
+  if (curVal.x0 != x0 || curVal.y0 != y0 || curVal.x1 != x1 || curVal.y1 != y1
+    || curVal.x2 != x2 || curVal.y2 != y2 || curVal.x3 != x3 || curVal.y3 != y3) {
+    LaunchZoneWatched({ x0, x1, x2, x3, y0, y1, y2, y3 })
+  }
 }
 
 return helicopterState

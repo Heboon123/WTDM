@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let { generateQrBlocks } = require("%sqstd/qrCode.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -68,7 +66,7 @@ local class qrWindow extends ::gui_handlers.BaseGuiHandlerWT {
   }
 
   function updateQrCode() {
-    let data = ::handyman.renderCached("%gui/commonParts/qrCode.tpl", this.getQrCodeView())
+    let data = handyman.renderCached("%gui/commonParts/qrCode.tpl", this.getQrCodeView())
     this.guiScene.replaceContentFromText(this.scene.findObject("wnd_content"), data, data.len(), this)
   }
 

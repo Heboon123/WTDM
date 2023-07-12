@@ -1,10 +1,8 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
+let { find_in_array } = require("%sqStdLibs/helpers/u.nut")
 
 let discountPostfixArray = ["_premium", ""]
 
@@ -158,8 +156,8 @@ let function sortDiscountDescriptionItems(items, sortData) {
       return 0
     }
     let paramsOrder = sortData[item1.category].paramsOrder
-    let index1 = ::find_in_array(paramsOrder, item1.paramName)
-    let index2 = ::find_in_array(paramsOrder, item2.paramName)
+    let index1 = find_in_array(paramsOrder, item1.paramName)
+    let index2 = find_in_array(paramsOrder, item2.paramName)
     if (index1 != index2)
       return index1 > index2 ? 1 : -1
     return 0

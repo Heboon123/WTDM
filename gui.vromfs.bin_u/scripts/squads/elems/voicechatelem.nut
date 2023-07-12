@@ -1,10 +1,8 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { toPixels } = require("%sqDagui/daguiUtil.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { subscribe_handler } = require("%sqStdLibs/helpers/subscriptions.nut")
 let elemModelType = require("%sqDagui/elemUpdater/elemModelType.nut")
 let elemViewType = require("%sqDagui/elemUpdater/elemViewType.nut")
 let { chatStatesCanUseVoice } = require("%scripts/chat/chatStates.nut")
@@ -15,7 +13,7 @@ const MAX_VOICE_ELEMS_IN_GC = 2
 elemModelType.addTypes({
   VOICE_CHAT = {
 
-    init = @() ::subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
+    init = @() subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
 
     onEventVoiceChatStatusUpdated = @(_p) this.notify([])
     onEventSquadStatusChanged = @(_p) this.notify([])
@@ -113,15 +111,15 @@ elemViewType.addTypes({
     }
 
     fillContainer = function(obj, childRequired) {
-      let data = ::handyman.renderCached("%gui/chat/voiceChatElement.tpl",
+      let data = handyman.renderCached("%gui/chat/voiceChatElement.tpl",
         { voiceChatElement = array(childRequired, {}) })
       obj.getScene().replaceContentFromText(obj, data, data.len(), this)
 
       let heightEnd = obj.getParent().getFinalProp("isSmall") == "yes"
-        ? ::g_dagui_utils.toPixels(::get_cur_gui_scene(), "1@gamercardHeight") /
+        ? toPixels(::get_cur_gui_scene(), "1@gamercardHeight") /
             MAX_VOICE_ELEMS_IN_GC
-        : ::g_dagui_utils.toPixels(::get_cur_gui_scene(), "1@voiceChatBaseIconHeight") +
-            ::g_dagui_utils.toPixels(::get_cur_gui_scene(), "1@blockInterval")
+        : toPixels(::get_cur_gui_scene(), "1@voiceChatBaseIconHeight") +
+            toPixels(::get_cur_gui_scene(), "1@blockInterval")
 
       for (local i = 0; i < obj.childrenCount(); i++)
         obj.getChild(i)["height-end"] = heightEnd.tointeger().tostring()

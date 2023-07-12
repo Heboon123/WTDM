@@ -123,9 +123,6 @@
     "smokeScreenRad": 12.0
   },
   {
-    "smokeScreenOffset": [-3.0,0.0,2.0]
-  },
-  {
     "smokeScreenDmPart": "engine_dm"
   },
   {
@@ -133,6 +130,9 @@
   },
   {
     "smokeScreenFx": "smokescreen_no_therm_small"
+  },
+  {
+    "smokeScreenOffset": [-1.0,0.0,-4.0]
   },
   {
     "DamageParts": {
@@ -2394,6 +2394,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -3975,7 +3976,7 @@
         "width": 0.55,
         "fricFrontal": [1.0,0.8],
         "tracksTensionK": [6.5,10.0,2.0],
-        "trackMesh": "us_merkava_mk_1_phys_track_line",
+        "trackMesh": "il_merkava_mk_4_phys_track_line",
         "trackLen": 0.149,
         "trackCount": 100,
         "trackFadeTime": 0.5,
@@ -4068,8 +4069,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -4990,6 +4991,15 @@
           "fx": {
             "name": "smoke_after_hit_tiny",
             "setOrientation": true
+          }
+        }
+      },
+      {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
           }
         }
       },
@@ -6127,6 +6137,12 @@
     "smokeScreenExhaustEmitters": [
       {
         "emitter": "emtr_exhaust_01"
+      },
+      {
+        "emitter": "emtr_exhaust_02"
+      },
+      {
+        "emitter": "emtr_exhaust_03"
       },
       {
         "emitter": "emtr_exhaust_04"

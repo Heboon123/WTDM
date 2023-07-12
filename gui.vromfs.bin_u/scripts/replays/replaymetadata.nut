@@ -1,13 +1,12 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
 let { split_by_chars } = require("string")
 let datablockConverter = require("%scripts/utils/datablockConverter.nut")
 let { get_replay_info } = require("replays")
 let DataBlock = require("DataBlock")
+let { get_mplayers_list } = require("mission")
 
 let buildReplayMpTable = function(replayPath) {
   let res = []
@@ -22,7 +21,7 @@ let buildReplayMpTable = function(replayPath) {
 
   let gameType = replayInfo?.gameType ?? 0
   let authorUserId = ::to_integer_safe(commentsBlk?.authorUserId ?? "", -1000, false)
-  let authorBlk = ::u.search(playersBlkList, @(v) ::to_integer_safe(v?.userId ?? "", 0, false) == authorUserId)
+  let authorBlk = u.search(playersBlkList, @(v) ::to_integer_safe(v?.userId ?? "", 0, false) == authorUserId)
   let authorSquadId = authorBlk?.squadId ?? INVALID_SQUAD_ID
 
   foreach (b in playersBlkList) {
@@ -79,7 +78,7 @@ let restoreReplayScriptCommentsBlk = function(replayPath) {
 
   // Works for Server replays
   if (!playersInfo.len()) {
-    let mplayersList = ::get_mplayers_list(GET_MPLAYERS_LIST, true)
+    let mplayersList = get_mplayers_list(GET_MPLAYERS_LIST, true)
     foreach (mplayer in mplayersList) {
       if (mplayer?.isBot || mplayer?.userId == null)
         continue

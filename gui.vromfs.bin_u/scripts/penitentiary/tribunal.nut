@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
 ::tribunal <- {
@@ -73,7 +70,7 @@ let { format } = require("string")
     if (!complaintsCount)
       return
 
-    let textReasons = ::g_string.implode(reasonsList, "\n")
+    let textReasons = "\n".join(reasonsList, true)
     local text = loc("charServer/complaintToYou"
       + (complaintsCount >= this.maxComplaintCount ? "MoreThen" : ""))
 

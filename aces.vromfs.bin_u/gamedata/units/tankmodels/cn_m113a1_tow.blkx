@@ -1237,11 +1237,10 @@
     "xray_viewer_data": {
       "armorArrayHull": {
         "xrayDmPart": "composite_armor_hull_02_dm",
-        "titleLoc": "RHA_tank_modern",
+        "titleLoc": "aluminium",
         "armorArrayText": {
           "layer": {
-            "dmPart": "composite_armor_hull_02_dm",
-            "xrayTextThickness": 6.0
+            "dmPart": "composite_armor_hull_02_dm"
           }
         }
       }
@@ -2298,6 +2297,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -3125,6 +3125,9 @@
   {
     "commonWeapons": [
       {
+        "remotelyGuidedWeaponsMax": 1
+      },
+      {
         "Weapon": {
           "trigger": "gunner0",
           "triggerGroup": "primary",
@@ -3136,6 +3139,7 @@
           "recoilMultiplier": 0.0,
           "stopForFire": true,
           "maxSpeedForFire": 5.0,
+          "staticElevation": 1.725,
           "defaultYaw": 0.0,
           "defaultPitch": 0.0,
           "allowableDelta": 20.0,
@@ -3312,8 +3316,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -4238,6 +4242,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -4341,6 +4354,9 @@
           "changeMass": 10.0,
           "commonWeapons": [
             {
+              "remotelyGuidedWeaponsMax": 1
+            },
+            {
               "Weapon": {
                 "trigger": "gunner0",
                 "triggerGroup": "primary",
@@ -4353,6 +4369,7 @@
                 "stopForFire": true,
                 "maxSpeedForFire": 5.0,
                 "fakeBulletIdx": 1,
+                "staticElevation": 1.725,
                 "defaultYaw": 0.0,
                 "defaultPitch": 0.0,
                 "allowableDelta": 20.0,

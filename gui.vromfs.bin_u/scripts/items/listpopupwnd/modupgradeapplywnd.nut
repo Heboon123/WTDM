@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let weaponryEffects = require("%scripts/weaponry/weaponryEffects.nut")
 
@@ -15,7 +13,7 @@ let weaponryEffects = require("%scripts/weaponry/weaponryEffects.nut")
 
   static function open(unitToActivate, modToActivate, wndAlignObj = null, wndAlign = ALIGN.TOP) {
     local list = ::ItemsManager.getInventoryList(itemType.MOD_UPGRADE)
-    list = ::u.filter(list, @(item) item.canActivateOnMod(unitToActivate, modToActivate))
+    list = u.filter(list, @(item) item.canActivateOnMod(unitToActivate, modToActivate))
     if (!list.len()) {
       ::showInfoMsgBox(loc("msg/noUpgradeItemsForMod"))
       return

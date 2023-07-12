@@ -40,6 +40,7 @@
   "replay_key_reducing_enabled": false,
   "debug_rend_inst_loading_delay_on_pc_ms": 0,
   "collimatorSize": 0.14,
+  "gunnerChangeTime": 3.0,
   "tracer_limit_enabled": true,
   "long_flak_explosion_percent": 25,
   "groundRicochetAngle": 60.0,
@@ -53,13 +54,13 @@
   "tank_vision_grass_displacement_rad": 10.0,
   "bombingZoneHpToTntEquivalentTons": 0.0001,
   "maxDistForWatchXRayInSpectator": 50.0,
-  "killZoneVisibilityDistance": 100.0,
-  "detectionZoneVisibilityDistance": 150.0,
+  "killZoneVisibilityDistance": 50.0,
+  "detectionZoneVisibilityDistance": 100.0,
   "showEnemyAtKillZone": true,
   "effectsZNearOffsetInCockpit": 2.0,
   "invisibleSupportUnits": true,
   "unitDefaultVisibilityDistance": 2000.0,
-  "sleeveFallFx": "hit_12_18mm_water",
+  "shellCasingFallFx": "hit_12_18mm_water",
   "minMassMultApexObjectsCollidedWithHero": 0.002,
   "maxMassMultApexObjectsCollidedWithHero": 0.04,
   "minViscosityApexObjectsCollidedWithHero": 0.95,
@@ -82,6 +83,10 @@
   "rocketIndicatorShowUnguided": false,
   "rocketIndicatorLosCheck": true,
   "deltaTimeMultCCIP": 1.0,
+  "separateIndicationCCIP": false,
+  "guidedBombsCCRP": true,
+  "cannonDirMaxShootRange": 1500.0,
+  "rocketDirMaxShootRange": 2000.0,
   "warningMessageForLWS": true,
   "warningSoundForLWS": true,
   "preciseForestall": false,
@@ -143,6 +148,8 @@
   "rendinstAccumulatedPowerMult": 3.0,
   "rendinstCheckDestrImpulseAsImmortal": 250000.0,
   "collideWithDynGeom": false,
+  "groundModelBlastRadiusOnExplosion": 15.0,
+  "groundModelBlastPowerOnExplosion": 0.7,
   "groundModelDamageDelay": 0.5,
   "deadlyHeightForGMs": 30.0,
   "treeCollisionFraction": 0.85,
@@ -157,6 +164,7 @@
   "chaffDispersionFromAirViscosity": 1.0,
   "chaffDispersionSpeedFromAirViscosity": 0.02,
   "chaffCloudMaxRadius": 80.0,
+  "chaffCloudRcsMaxRadius": 35.0,
   "chaffDopplerSpeedWidthMult": 0.1,
   "defaultAirCannonsSpeedDispersion": 0.025,
   "defaultTankCannonsSpeedDispersion": 0.0,
@@ -217,6 +225,7 @@
   "rendinstExtraSubstFaceThres": 65536,
   "aircraftRelSpeedToWingWaveAmplitude": 0.0,
   "maxTankInactiveTime": 10.0,
+  "syncGunRocketLaunch": true,
   "cockpit_target_brightness_mul": 0.9,
   "cockpit_adaptation_max_mul": 0.9,
   "helicopter_target_brightness_mul": 0.8,
@@ -275,7 +284,6 @@
   "maxDelayedDownloadTogether": 5,
   "maxDelayedDownloads": 100,
   "downloadLimitationInSingle": false,
-  "loadNetEffectiveness": 100,
   "digDustFx": "dust_tank_digging_shovel",
   "digDirtFx": "dust_tank_digging_ground",
   "gmKillFxName": "tank_fire_small",
@@ -366,6 +374,22 @@
       "startColor1": "#fff83c78",
       "startColor2": "#fff83246",
       "startTime": 0.025
+    },
+    "tracers_rocket_med_red_sparks": {
+      "tracerFxType": "tracers_rocket_med_red_sparks",
+      "color1": "#00000000",
+      "color2": "#00000000",
+      "startColor1": "#00000000",
+      "startColor2": "#00000000",
+      "startTime": 0.0
+    },
+    "tracers_rocket_med_red": {
+      "tracerFxType": "tracers_rocket_med_red",
+      "color1": "#00000000",
+      "color2": "#00000000",
+      "startColor1": "#00000000",
+      "startColor2": "#00000000",
+      "startTime": 0.0
     },
     "7mmRed": {
       "halfSize": 3.0,
@@ -4800,6 +4824,17 @@
       "color2": "#ff0000c8",
       "hdrK": 5.0
     },
+    "beamRedShort": {
+      "halfSize": 2.0,
+      "distScaleStart": 5.0,
+      "distScaleEnd": 200.0,
+      "distScale": 5.0,
+      "radius": 0.05,
+      "beam": true,
+      "color1": "#ffe1de96",
+      "color2": "#f80000ff",
+      "hdrK": 100.0
+    },
     "beamBlue": {
       "halfSize": 4.0,
       "distScaleStart": 50.0,
@@ -4924,7 +4959,8 @@
       "hudShowAttentionMarkForAircraft": false,
       "shipSupportPlanes": true,
       "lightDM": false,
-      "checkActivityByPlayerDamage": false
+      "checkActivityByPlayerDamage": false,
+      "shipGunsRearm": true
     },
     "realistic": {
       "baseDifficulty": 1,
@@ -4991,7 +5027,8 @@
       "hudShowAttentionMarkForAircraft": false,
       "shipSupportPlanes": false,
       "lightDM": false,
-      "checkActivityByPlayerDamage": false
+      "checkActivityByPlayerDamage": false,
+      "shipGunsRearm": false
     },
     "hardcore": {
       "baseDifficulty": 2,
@@ -5057,7 +5094,8 @@
       "hudSendSquare": false,
       "hudShowAttentionMarkForAircraft": false,
       "shipSupportPlanes": false,
-      "checkActivityByPlayerDamage": false
+      "checkActivityByPlayerDamage": false,
+      "shipGunsRearm": false
     }
   },
   "custom_difficulty": {
@@ -5127,6 +5165,7 @@
       "shipSupportPlanes": false,
       "lightDM": false,
       "checkActivityByPlayerDamage": false,
+      "shipGunsRearm": false,
       "setDifficulty": 1
     },
     "tank_hardcore": {
@@ -5194,6 +5233,7 @@
       "hudShowAttentionMarkForAircraft": false,
       "shipSupportPlanes": false,
       "checkActivityByPlayerDamage": false,
+      "shipGunsRearm": false,
       "setDifficulty": 2
     },
     "ship_arcade": {
@@ -5262,6 +5302,7 @@
       "shipSupportPlanes": true,
       "lightDM": false,
       "checkActivityByPlayerDamage": true,
+      "shipGunsRearm": true,
       "setDifficulty": 0
     },
     "ship_realistic": {
@@ -5330,6 +5371,7 @@
       "shipSupportPlanes": false,
       "lightDM": false,
       "checkActivityByPlayerDamage": true,
+      "shipGunsRearm": false,
       "setDifficulty": 1
     }
   },
@@ -5428,7 +5470,16 @@
         "shipTorpedoAutoUpdateDepth": true,
         "hudShipsFireCtrlShowVerticalAxis": false,
         "hudShipsFireCtrlShowHorizontalAxis": false,
-        "hudShipsFireCtrlShowMarker": true
+        "hudShipsFireCtrlShowMarker": true,
+        "planeRepairAssistRadius": 10.0,
+        "tankRepairAssistRadius": 10.0,
+        "tankRepairRequestHelpRadius": 150.0,
+        "tankExtinguishAssistRadius": 10.0,
+        "tankExtinguishRequestHelpRadius": 150.0,
+        "shipRepairAssistRadius": 200.0,
+        "shipRepairRequestHelpRadius": 500.0,
+        "shipCruiserRepairAssistRadius": 500.0,
+        "shipCruiserRepairRequestHelpRadius": 1500.0
       },
       "medium": {
         "scoutPreset": "realistic",
@@ -5500,7 +5551,16 @@
         "shipTorpedoDepthMax": 4.0,
         "hudShipsFireCtrlShowVerticalAxis": true,
         "hudShipsFireCtrlShowHorizontalAxis": false,
-        "hudShipsFireCtrlShowMarker": false
+        "hudShipsFireCtrlShowMarker": false,
+        "planeRepairAssistRadius": 10.0,
+        "tankRepairAssistRadius": 10.0,
+        "tankRepairRequestHelpRadius": 150.0,
+        "tankExtinguishAssistRadius": 10.0,
+        "tankExtinguishRequestHelpRadius": 150.0,
+        "shipRepairAssistRadius": 200.0,
+        "shipRepairRequestHelpRadius": 500.0,
+        "shipCruiserRepairAssistRadius": 500.0,
+        "shipCruiserRepairRequestHelpRadius": 1500.0
       },
       "hard": {
         "scoutPreset": "hard",
@@ -5570,7 +5630,16 @@
         "shipTorpedoDepthMax": 4.0,
         "hudShipsFireCtrlShowVerticalAxis": true,
         "hudShipsFireCtrlShowHorizontalAxis": false,
-        "hudShipsFireCtrlShowMarker": false
+        "hudShipsFireCtrlShowMarker": false,
+        "planeRepairAssistRadius": 10.0,
+        "tankRepairAssistRadius": 10.0,
+        "tankRepairRequestHelpRadius": 150.0,
+        "tankExtinguishAssistRadius": 10.0,
+        "tankExtinguishRequestHelpRadius": 150.0,
+        "shipRepairAssistRadius": 200.0,
+        "shipRepairRequestHelpRadius": 500.0,
+        "shipCruiserRepairAssistRadius": 500.0,
+        "shipCruiserRepairRequestHelpRadius": 1500.0
       }
     },
     "engineControl": {
@@ -5770,6 +5839,8 @@
         "shellLoadingTimeMult": 1.0,
         "arcadeTurnPowerMult": 1.7,
         "tankTurretPitchInc": 10.0,
+        "shipArcadeTurretBoostHorz": 1.6,
+        "shipArcadeTurretBoostVert": 2.8,
         "shipRudderAreaMult": 1.1,
         "shipRudderDeflectionMult": 1.1,
         "shipThrustMultShip": 1.0,
@@ -5794,7 +5865,9 @@
         "enableNegativeModifications": false,
         "shellLoadingTimeMult": 1.0,
         "arcadeTurnPowerMult": 1.35,
-        "tankTurretPitchInc": 0.0
+        "tankTurretPitchInc": 0.0,
+        "shipArcadeTurretBoostHorz": 1.0,
+        "shipArcadeTurretBoostVert": 1.0
       },
       "worldwar": {
         "arcadeBoost": false,
@@ -5811,6 +5884,8 @@
         "shellLoadingTimeMult": 1.0,
         "arcadeTurnPowerMult": 1.35,
         "tankTurretPitchInc": 0.0,
+        "shipArcadeTurretBoostHorz": 1.0,
+        "shipArcadeTurretBoostVert": 1.0,
         "shipRudderAreaMult": 1.1,
         "shipRudderDeflectionMult": 1.1,
         "shipThrustMultShip": 1.0,
@@ -6417,12 +6492,12 @@
         "armorPenetrationDispersionGauss": true,
         "brokenBarrelAllowShoot": true,
         "explodeBulletInMalfunctionBreech": false,
-        "brokenBarrelDispersionMult": 15.0,
+        "brokenBarrelDispersionMult": 5.0,
         "brokenBarrelBulletSpeedMult": 0.5,
         "brokenBarrelPenetrationMult": 0.5,
         "brokenHorTurretDriveSpeed": 4.0,
         "brokenHorTurretDriveJammedTime": 3.0,
-        "brokenVerTurretDriveAngle": 3.0,
+        "brokenVerTurretDriveAngle": 6.0,
         "brokenVerTurretDriveJammedTime": 3.0,
         "showDestroyedParts": false,
         "gunFreqRange": [0.35,0.03],
@@ -6430,9 +6505,9 @@
         "misfireTime": [2.0,4.0],
         "maxMisfires": 2,
         "destroyAircraftWithRocketHit": false,
-        "brokenEngineRedynessMult": 0.4,
+        "brokenEngineRedynessMult": 0.6,
         "brokenEngineCooldownTimer": 10.0,
-        "brokenTransmissionGearPenalty": 0.5,
+        "brokenTransmissionGearPenalty": 0.75,
         "brokenTransmissionCooldownTimer": 10.0,
         "brokenBarrelCooldownTime": 10.0,
         "brokenCannonBreachCooldownTime": 10.0,
@@ -6440,20 +6515,12 @@
         "crashDamagePlayers": false,
         "crashDamageBots": true,
         "simulateBattery": false,
-        "shipBrokenFunnelMaxRedynessMult": 0.5,
         "shipBrokenEngineRedynessMult": 0.5,
         "shipBrokenEngineCooldown": 30.0,
         "shipBrokenTransmissionCooldown": 30.0,
-        "shipBrokenRudderCooldownTimer": 10.0,
-        "shipBrokenRudderDeflectionMult": 0.85,
-        "shipBrokenRudderAreaMult": 0.85,
-        "shipBrokenHorTurretDriveJammedTime": [10.0,10.0,10.0],
-        "shipBrokenHorTurretDriveSpeedMult": 0.85,
+        "shipBrokenShaftCooldown": 30.0,
         "shipBrokenBarrelShotFreqMult": 1.2,
-        "shipBrokenBarrelDispersionMult": 1.05,
-        "shipBrokenPumpMaxWaterMassVelMult": 0.5,
-        "shipBrokenElevatorMult": 1.0,
-        "shipDamagedElevatorMult": 1.0
+        "shipBrokenBarrelDispersionMult": 1.05
       },
       "realistic": {
         "brokenBarrelAllowShoot": true,
@@ -6462,6 +6529,47 @@
         "showDestroyedParts": false,
         "destroyBreechInMalfunction": true,
         "brokenHorTurretDriveSpeed": 3.0,
+        "brokenHorTurretDriveJammedTime": 15.0,
+        "brokenVerTurretDriveAngle": 6.0,
+        "brokenVerTurretDriveJammedTime": 15.0,
+        "brokenEngineRedynessMult": 0.6,
+        "brokenEngineCooldownTimer": 30.0,
+        "brokenCannonBreachCooldownTime": 30.0,
+        "gunFreqRange": [0.35,0.03],
+        "misfireChance": [0.2,0.5],
+        "misfireTime": [3.0,6.0],
+        "maxMisfires": 3,
+        "brokenBarrelCooldownTime": 30.0,
+        "brokenBarrelDispersionMult": 5.0,
+        "brokenBarrelBulletSpeedMult": 0.5,
+        "brokenBarrelPenetrationMult": 0.5,
+        "brokenTransmissionGearPenalty": 0.75,
+        "brokenTransmissionCooldownTimer": 30.0,
+        "bombShatterDamageScaleForAircraft": [0.5,0.55,0.6],
+        "crashDamagePlayers": true,
+        "crashDamageBots": true,
+        "simulateBattery": true,
+        "shipBrokenEngineRedynessMult": 0.5,
+        "shipBrokenEngineCooldown": 30.0,
+        "shipBrokenTransmissionCooldown": 30.0,
+        "shipBrokenShaftCooldown": 30.0,
+        "shipBrokenBarrelShotFreqMult": 1.15,
+        "shipBrokenBarrelDispersionMult": 1.05
+      },
+      "simulator": {
+        "brokenBarrelAllowShoot": true,
+        "explodeBulletInMalfunctionBreech": true,
+        "destroyAircraftWithRocketHit": false,
+        "showDestroyedParts": false,
+        "bombShatterDamageScaleForAircraft": [0.5,0.55,0.6],
+        "crashDamagePlayers": true,
+        "crashDamageBots": true,
+        "shipBrokenFunnelMaxRedynessMult": 0.5,
+        "shipBrokenElevatorMult": 0.85,
+        "shipDamagedElevatorMult": 1.0,
+        "simulateBattery": true,
+        "destroyBreechInMalfunction": true,
+        "brokenHorTurretDriveSpeed": 1.0,
         "brokenHorTurretDriveJammedTime": 15.0,
         "brokenVerTurretDriveAngle": 3.0,
         "brokenVerTurretDriveJammedTime": 15.0,
@@ -6473,44 +6581,11 @@
         "misfireTime": [3.0,6.0],
         "maxMisfires": 3,
         "brokenBarrelCooldownTime": 30.0,
-        "brokenBarrelDispersionMult": 15.0,
+        "brokenBarrelDispersionMult": 10.0,
         "brokenBarrelBulletSpeedMult": 0.5,
         "brokenBarrelPenetrationMult": 0.5,
         "brokenTransmissionGearPenalty": 0.5,
-        "brokenTransmissionCooldownTimer": 30.0,
-        "bombShatterDamageScaleForAircraft": [0.5,0.55,0.6],
-        "crashDamagePlayers": true,
-        "crashDamageBots": true,
-        "simulateBattery": true,
-        "shipBrokenFunnelMaxRedynessMult": 0.5,
-        "shipBrokenEngineRedynessMult": 0.5,
-        "shipBrokenEngineCooldown": 30.0,
-        "shipBrokenTransmissionCooldown": 30.0,
-        "shipBrokenRudderCooldownTimer": 10.0,
-        "shipBrokenRudderDeflectionMult": 0.85,
-        "shipBrokenRudderAreaMult": 0.85,
-        "shipBrokenHorTurretDriveJammedTime": [10.0,10.0,10.0],
-        "shipBrokenHorTurretDriveSpeedMult": 0.85,
-        "shipBrokenBarrelShotFreqMult": 1.2,
-        "shipBrokenBarrelDispersionMult": 1.05,
-        "shipBrokenPumpMaxWaterMassVelMult": 0.5,
-        "shipBrokenElevatorMult": 0.8,
-        "shipDamagedElevatorMult": 0.9
-      },
-      "simulator": {
-        "brokenBarrelAllowShoot": false,
-        "explodeBulletInMalfunctionBreech": true,
-        "destroyAircraftWithRocketHit": false,
-        "showDestroyedParts": false,
-        "brokenHorTurretDriveSpeed": 0.0,
-        "brokenVerTurretDriveAngle": 0.0,
-        "bombShatterDamageScaleForAircraft": [0.5,0.55,0.6],
-        "crashDamagePlayers": true,
-        "crashDamageBots": true,
-        "shipBrokenFunnelMaxRedynessMult": 0.5,
-        "shipBrokenElevatorMult": 0.8,
-        "shipDamagedElevatorMult": 0.9,
-        "simulateBattery": true
+        "brokenTransmissionCooldownTimer": 30.0
       }
     },
     "bombAssaultFuseTimeOverride": {
@@ -6693,6 +6768,14 @@
       "on": {
         "checkActivityByPlayerDamage": true
       }
+    },
+    "shipGunsRearm": {
+      "off": {
+        "rearmStackRel": 0.1
+      },
+      "on": {
+        "rearmStackRel": 0.1
+      }
     }
   },
   "commonScenes": {
@@ -6797,7 +6880,8 @@
     "maxPatchesUnitVolume": 200,
     "maxPatchesRendinst": 1000,
     "maxDropRadius": 0.002,
-    "maxPatches": 200
+    "maxPatches": 200,
+    "slopedDecalsAngleThreshold": 45.0
   },
   "glassScratches": {
     "texcoord_mul": 10.0,
@@ -8635,6 +8719,30 @@
       "steering_gear_10": {
         "my": "ship_steering_gear",
         "enemy": "ship_steering_gear"
+      }
+    },
+    {
+      "shaft_01": {
+        "my": "ship_shaft",
+        "enemy": "ship_shaft"
+      }
+    },
+    {
+      "shaft_02": {
+        "my": "ship_shaft",
+        "enemy": "ship_shaft"
+      }
+    },
+    {
+      "shaft_03": {
+        "my": "ship_shaft",
+        "enemy": "ship_shaft"
+      }
+    },
+    {
+      "shaft_04": {
+        "my": "ship_shaft",
+        "enemy": "ship_shaft"
       }
     },
     {
@@ -15287,7 +15395,14 @@
         "p": {
           "name": "funnel_",
           "unit": "ship",
-          "xrayColor": "#b9cdb0ff"
+          "xrayColor": "#b9c8aaff"
+        }
+      },
+      {
+        "p": {
+          "name": "shaft_",
+          "unit": "ship",
+          "xrayColor": "#b9c8aaff"
         }
       },
       {
@@ -15852,6 +15967,30 @@
       {
         "p": {
           "name": "wheel_r_01_",
+          "modelNames": "bm_31_12"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_01_",
+          "modelNames": "bm_31_12"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_02_",
+          "modelNames": "bm_31_12"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_02_",
+          "modelNames": "bm_31_12"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_01_",
           "modelNames": "btr_152a"
         }
       },
@@ -18871,6 +19010,234 @@
         "p": {
           "name": "wheel_l_04_",
           "modelNames": "type_16_mod"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_01_",
+          "modelNames": "amd_35_sa35"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_01_",
+          "modelNames": "amd_35_sa35"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_02_",
+          "modelNames": "amd_35_sa35"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_02_",
+          "modelNames": "amd_35_sa35"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_01_",
+          "modelNames": "sarc_mk4_a"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_01_",
+          "modelNames": "sarc_mk4_a"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_02_",
+          "modelNames": "sarc_mk4_a"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_02_",
+          "modelNames": "sarc_mk4_a"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_01_",
+          "modelNames": "type_87_rcv_prot"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_01_",
+          "modelNames": "type_87_rcv_prot"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_02_",
+          "modelNames": "type_87_rcv_prot"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_02_",
+          "modelNames": "type_87_rcv_prot"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_03_",
+          "modelNames": "type_87_rcv_prot"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_03_",
+          "modelNames": "type_87_rcv_prot"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_01_",
+          "modelNames": "btr_80a"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_01_",
+          "modelNames": "btr_80a"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_02_",
+          "modelNames": "btr_80a"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_02_",
+          "modelNames": "btr_80a"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_03_",
+          "modelNames": "btr_80a"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_03_",
+          "modelNames": "btr_80a"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_04_",
+          "modelNames": "btr_80a"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_04_",
+          "modelNames": "btr_80a"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_01_",
+          "modelNames": "freccia"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_01_",
+          "modelNames": "freccia"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_02_",
+          "modelNames": "freccia"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_02_",
+          "modelNames": "freccia"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_03_",
+          "modelNames": "freccia"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_03_",
+          "modelNames": "freccia"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_04_",
+          "modelNames": "freccia"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_04_",
+          "modelNames": "freccia"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_01_",
+          "modelNames": "vbci2_mct30"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_01_",
+          "modelNames": "vbci2_mct30"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_02_",
+          "modelNames": "vbci2_mct30"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_02_",
+          "modelNames": "vbci2_mct30"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_03_",
+          "modelNames": "vbci2_mct30"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_03_",
+          "modelNames": "vbci2_mct30"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_r_04_",
+          "modelNames": "vbci2_mct30"
+        }
+      },
+      {
+        "p": {
+          "name": "wheel_l_04_",
+          "modelNames": "vbci2_mct30"
         }
       }
     ],
@@ -19011,6 +19378,11 @@
       {
         "p": {
           "name": "transmission_"
+        }
+      },
+      {
+        "p": {
+          "name": "shaft_"
         }
       },
       {
@@ -20872,9 +21244,6 @@
         "incRE": "scaffold"
       },
       {
-        "incRE": "concrete_fence_c"
-      },
-      {
         "incRE": "fence_gates_b"
       },
       {
@@ -21074,6 +21443,39 @@
       },
       {
         "excRE": "airfield_flight_light_yellow"
+      },
+      {
+        "excRE": "small_hurtgen_stone_fence_a"
+      },
+      {
+        "excRE": "damaged_small_hurtgen_stone_fence_a"
+      },
+      {
+        "excRE": "fulda_fence_b"
+      },
+      {
+        "excRE": "fulda_fence_c"
+      },
+      {
+        "excRE": "fulda_fence_d"
+      },
+      {
+        "excRE": "fulda_fence_e"
+      },
+      {
+        "excRE": "wood_fence_f"
+      },
+      {
+        "excRE": "wood_fence_g"
+      },
+      {
+        "excRE": "wood_fence_h"
+      },
+      {
+        "excRE": "wood_fence_j"
+      },
+      {
+        "excRE": "wood_fence_k"
       }
     ],
     "hideForMode0re": [
@@ -21180,9 +21582,6 @@
         "incRE": "scaffold"
       },
       {
-        "incRE": "concrete_fence_c"
-      },
-      {
         "incRE": "fence_gates_b"
       },
       {
@@ -21220,6 +21619,9 @@
       },
       {
         "incRE": "_dp_"
+      },
+      {
+        "incRE": "concrete_fence_"
       },
       {
         "incRE": "american_town_building_1_floor_a_"
@@ -21418,6 +21820,39 @@
       },
       {
         "excRE": "airfield_flight_light_yellow"
+      },
+      {
+        "excRE": "small_hurtgen_stone_fence_a"
+      },
+      {
+        "excRE": "damaged_small_hurtgen_stone_fence_a"
+      },
+      {
+        "excRE": "fulda_fence_b"
+      },
+      {
+        "excRE": "fulda_fence_c"
+      },
+      {
+        "excRE": "fulda_fence_d"
+      },
+      {
+        "excRE": "fulda_fence_e"
+      },
+      {
+        "excRE": "wood_fence_f"
+      },
+      {
+        "excRE": "wood_fence_g"
+      },
+      {
+        "excRE": "wood_fence_h"
+      },
+      {
+        "excRE": "wood_fence_j"
+      },
+      {
+        "excRE": "wood_fence_k"
       },
       {
         "excRE": "japan_i_400_dmg_dp_01"
@@ -22609,6 +23044,96 @@
       },
       {
         "ri": "searchlight_tower_winter_a_dmg"
+      },
+      {
+        "ri": "bridge_aqueduct_part_big_a_span"
+      },
+      {
+        "ri": "bridge_aqueduct_part_big_b"
+      },
+      {
+        "ri": "bridge_aqueduct_part_medium"
+      },
+      {
+        "ri": "bridge_aqueduct_part_medium_type_a"
+      },
+      {
+        "ri": "bridge_aqueduct_part_small_a"
+      },
+      {
+        "ri": "bridge_aqueduct_part_small_b"
+      },
+      {
+        "ri": "sandstone_cliffs_huge_a"
+      },
+      {
+        "ri": "sandstone_cliffs_huge_b"
+      },
+      {
+        "ri": "sandstone_cliffs_huge_c"
+      },
+      {
+        "ri": "sandstone_cliffs_huge_d"
+      },
+      {
+        "ri": "sandstone_cliffs_pillar_big_a"
+      },
+      {
+        "ri": "sandstone_cliffs_pillar_big_b"
+      },
+      {
+        "ri": "sandstone_cliffs_pillar_big_c"
+      },
+      {
+        "ri": "sandstone_cliffs_pillar_big_d"
+      },
+      {
+        "ri": "sandstone_cliffs_pillar_big_e"
+      },
+      {
+        "ri": "sandstone_cliffs_pillar_big_f"
+      },
+      {
+        "ri": "sandstone_cliffs_pillar_medium_a"
+      },
+      {
+        "ri": "sandstone_cliffs_pillar_medium_b"
+      },
+      {
+        "ri": "sandstone_cliffs_pillar_medium_c"
+      },
+      {
+        "ri": "sandstone_cliffs_pillar_medium_d"
+      },
+      {
+        "ri": "sandstone_cliffs_pillar_medium_e"
+      },
+      {
+        "ri": "sandstone_cliffs_pillar_medium_f"
+      },
+      {
+        "ri": "sandstone_cliffs_pillar_small_a"
+      },
+      {
+        "ri": "sandstone_cliffs_pillar_small_b"
+      },
+      {
+        "ri": "sandstone_cliffs_pillar_small_c"
+      },
+      {
+        "ri": "sandstone_cliffs_pillar_small_d"
+      },
+      {
+        "ri": "sandstone_cliffs_rock_medium_a"
+      },
+      {
+        "ri": "sandstone_cliffs_rock_medium_b"
+      },
+      {
+        "ri": "sandstone_cliffs_rock_medium_c"
+      },
+      {
+        "ri": "sandstone_cliffs_rock_medium_d"
       }
     ],
     "badLod1ForStaticShadow": [
@@ -23600,11 +24125,42 @@
     "burnMarkRadiusMultOther": 0.5,
     "burnMarkOpacityDeltaTime": 6.0,
     "burnMarkMaxOpacity": 0.93,
-    "maximumRayPerProximityDamage": 15,
+    "maximumRayPerProximityDamageAircraft": 15,
+    "maximumRayPerProximityDamageGroundModel": 15,
     "minRadiusProximityDamage": 0.6,
     "maxRadiusProximityDamage": 0.7,
-    "numProximityDamageVisualPerPart": 3,
+    "numProximityDamageVisualPerPartOnAircraft": 3,
+    "numProximityDamageVisualPerPartOnGroundModel": 4,
+    "distFromExplosionForDiscardingProximityDamage": 0.3,
+    "minCaliberForProximityDamage": 0.04,
+    "minCaliberForBulletProximityDamageGroundModel": 0.07,
+    "minCaliberForBulletProximityDamageAircraft": 0.055,
+    "muzzleMarkPositionPushMult": 0.2,
+    "muzzleMarkPushMult": 1.5,
+    "muzzleMarkRadius": 0.25,
     "showBurnMark": true
+  },
+  "burnMarkParameters": {
+    "radiusBomber": 1.45,
+    "positionPushMultBomber": 2.4,
+    "pushMultDirBomber": 3.0,
+    "positionPushMultFighter": 2.4,
+    "pushMultDirFighter": 3.0,
+    "burnMarkOpacityDeltaTime": 6.0,
+    "burnMarkOpacity": 0.85,
+    "minCaliberForMuzzleAnimationCalculation": 0.0762,
+    "maxCaliberForMuzzleAnimationCalculation": 0.3,
+    "minNumBulletsForAnimationCalculation": 200,
+    "maxNumBulletsForAnimationCalculation": 60,
+    "maximumAircraftSpeedForScrollingTexture": 450.0,
+    "maximumTimeForScrollingEnd": 20.0,
+    "timeBeforeSlowingDownScrollingTime": 13.0,
+    "muzzleMarkRadius": 0.4,
+    "muzzleMarkPushMult": 1.2,
+    "muzzleMarkPositionPushMult": 0.25,
+    "radiusWarShips": 7.0,
+    "positionPushMultWarShips": 5.0,
+    "pushMultDirWarShips": 1.15
   },
   "cutting": {
     "diffMarksTex": "dyn_decals_atlas_a",

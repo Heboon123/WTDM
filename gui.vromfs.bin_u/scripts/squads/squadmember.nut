@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let class SquadMember {
   uid = ""
@@ -83,7 +81,7 @@ let class SquadMember {
 
       if (isInArray(property, ["brokenAirs", "missedPkg", "unallowedEventsENames",     //!!!FIX ME If this parametrs is empty then msquad returns table instead array
              "bannedMissions", "dislikedMissions", "craftsInfoByUnitsGroups"])        // Need remove this block after msquad fixed
-          && !::u.isArray(newValue))
+          && !u.isArray(newValue))
         newValue = []
 
       if (newValue != this[property]) {
@@ -106,7 +104,7 @@ let class SquadMember {
   function getData() {
     let result = { uid = this.uid }
     foreach (_idx, property in this.updatedProperties)
-      if (!::u.isEmpty(this[property]))
+      if (!u.isEmpty(this[property]))
         result[property] <- this[property]
 
     return result

@@ -524,14 +524,10 @@
         "wheel_support_dm": [],
         "submodule": {
           "armorClass": "tank_traks",
-          "armorThickness": 30.0,
-          "hp": 400.0,
-          "ex_armor_turret_r_01_dm": {
-            "hp": 300.0
-          },
-          "ex_armor_turret_l_01_dm": {
-            "hp": 300.0
-          }
+          "armorThickness": 20.0,
+          "hp": 300.0,
+          "ex_armor_turret_r_01_dm": [],
+          "ex_armor_turret_l_01_dm": []
         }
       },
       "gun": {
@@ -1941,6 +1937,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -3692,8 +3689,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -4614,6 +4611,15 @@
           "fx": {
             "name": "smoke_after_hit_tiny",
             "setOrientation": true
+          }
+        }
+      },
+      {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
           }
         }
       },

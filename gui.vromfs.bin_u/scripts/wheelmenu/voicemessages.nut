@@ -1,8 +1,5 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
 let localDevoice = require("%scripts/penitentiary/localDevoice.nut")
@@ -39,6 +36,13 @@ let voiceMessageNames = [
   { category = "report", name = "voice_message_well_done", blinkTime = 0, haveTarget = false, showPlace = false },
   { category = "report", name = "voice_message_attacking_target", blinkTime = 10, haveTarget = true, showPlace = true, icon = "icon_attacking", iconBlinkTime = 6, iconTarget = "target" },
   { category = "report", name = "voice_message_repairing", blinkTime = 0, haveTarget = false, showPlace = false, forTank = true, useRepairTime = true },
+
+  { category = "request", name = "voice_message_request_target", blinkTime = 6, haveTarget = false, showPlace = true, forAircraft = true },
+  { category = "request", name = "voice_message_request_air_support", blinkTime = 6, haveTarget = false, forTank = true, showPlace = true, useTargetIfExist=true, icon = "icon_attacking", iconBlinkTime = 6},
+  { category = "request", name = "voice_message_request_uav", blinkTime = 6, haveTarget = false, showPlace = true },
+  { category = "request", name = "voice_message_help_me", blinkTime = 10, haveTarget = false, showPlace = true, forTank = true },
+
+  { category = "targeting", name = "voice_message_air", blinkTime = 6, haveTarget = false, showPlace = false, showDirection = true , coneAngle = 30},
 
   { category = HIDDEN_CATEGORY_NAME, name = "voice_message_attention_to_point", blinkTime = 5, haveTarget = false, showPlace = true,
                                     icon = "icon_attention_to_point", iconBlinkTime = 8, iconTarget = "sender", attentionToPoint = true },
@@ -125,7 +129,7 @@ let function showVoiceMessageList(show, category, squad, targetName) {
 
   let categories = []
   let menu = []
-  let heroIsTank = ::getAircraftByName(::last_ca_aircraft)?.isTank() ?? false
+  let heroIsTank = getAircraftByName(::get_player_unit_name())?.isTank() ?? false
   local shortcutTable = {}
 
   foreach (idx, record in voiceMessageNames) {

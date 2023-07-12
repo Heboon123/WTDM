@@ -1684,6 +1684,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -2305,9 +2306,6 @@
     "MetaParts": {
       "closed_fightning_compartment": [
         {
-          "part": "driver_dm"
-        },
-        {
           "part": "loader_dm"
         },
         {
@@ -2362,9 +2360,6 @@
           "part": "drive_turret_h_02_dm"
         },
         {
-          "part": "transmission_dm"
-        },
-        {
           "part": "ammo_body_01_dm"
         },
         {
@@ -2387,6 +2382,25 @@
         },
         {
           "part": "ammo_body_08_dm"
+        },
+        {
+          "effect": {
+            "conditionDamageType": "explosion",
+            "conditionDamage": 1.0,
+            "pressure": true
+          }
+        },
+        {
+          "effect": {
+            "conditionDamageType": "shatter",
+            "conditionDamage": 1.0,
+            "pressure": true
+          }
+        }
+      ],
+      "closed_control_compartment": [
+        {
+          "part": "driver_dm"
         },
         {
           "effect": {
@@ -2432,6 +2446,9 @@
   {
     "commonWeapons": [
       {
+        "remotelyGuidedWeaponsMax": 1
+      },
+      {
         "Weapon": {
           "dummy": true,
           "trigger": "gunner0",
@@ -2447,6 +2464,7 @@
           "turret": {
             "head": "bone_camera_gunner",
             "gun": "bone_camera_gunner",
+            "verDriveDm": "drive_turret_v_dm",
             "horDriveDm": "drive_turret_h_dm",
             "rotatedTurret": "bone_turret"
           },
@@ -2499,14 +2517,14 @@
           "maxSpeedForFire": 5.0,
           "reloadAnimVar": "flarakrad_action",
           "waitShellForPark": true,
-          "sleeveEmitter": "bone_rocket_%02d",
-          "sleeveMesh": "roland_rocket_container",
-          "sleeveEmitterRange": [1,2],
+          "shellCasingEmitter": "bone_rocket_%02d",
+          "shellCasingMesh": "roland_rocket_container",
+          "shellCasingEmitterRange": [1,2],
           "openHatchTime": 0.0,
-          "sleevesLifeTime": 15.0,
-          "sleeveImpulse": [0.0,0.0,0.0],
-          "linkSleeveToGun": true,
-          "needScaleSleeve": false,
+          "shellCasingLifeTime": 15.0,
+          "shellCasingImpulse": [0.0,0.0,0.0],
+          "linkShellCasingToGun": true,
+          "needScaleShellCasing": false,
           "canChangeBulletInReload": false,
           "createGunEffects": true,
           "parkForReload": true,
@@ -2538,6 +2556,8 @@
             "head": "bone_turret",
             "gun": "bone_gun_01",
             "gunnerDm": "gunner_dm",
+            "verDriveDm": "drive_turret_v_dm",
+            "horDriveDm": "drive_turret_h_dm",
             "rotatedTurret": "bone_turret"
           },
           "limits": {
@@ -3644,6 +3664,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -3744,6 +3773,9 @@
         "effects": {
           "commonWeapons": [
             {
+              "remotelyGuidedWeaponsMax": 1
+            },
+            {
               "Weapon": {
                 "dummy": true,
                 "trigger": "gunner0",
@@ -3759,6 +3791,7 @@
                 "turret": {
                   "head": "bone_camera_gunner",
                   "gun": "bone_camera_gunner",
+                  "verDriveDm": "drive_turret_v_dm",
                   "horDriveDm": "drive_turret_h_dm",
                   "rotatedTurret": "bone_turret"
                 },
@@ -3811,14 +3844,14 @@
                 "maxSpeedForFire": 5.0,
                 "reloadAnimVar": "flarakrad_action",
                 "waitShellForPark": true,
-                "sleeveEmitter": "bone_rocket_%02d",
-                "sleeveMesh": "roland_rocket_container",
-                "sleeveEmitterRange": [1,2],
+                "shellCasingEmitter": "bone_rocket_%02d",
+                "shellCasingMesh": "roland_rocket_container",
+                "shellCasingEmitterRange": [1,2],
                 "openHatchTime": 0.0,
-                "sleevesLifeTime": 15.0,
-                "sleeveImpulse": [0.0,0.0,0.0],
-                "linkSleeveToGun": true,
-                "needScaleSleeve": false,
+                "shellCasingLifeTime": 15.0,
+                "shellCasingImpulse": [0.0,0.0,0.0],
+                "linkShellCasingToGun": true,
+                "needScaleShellCasing": false,
                 "canChangeBulletInReload": false,
                 "createGunEffects": true,
                 "parkForReload": true,
@@ -3850,6 +3883,8 @@
                   "head": "bone_turret",
                   "gun": "bone_gun_01",
                   "gunnerDm": "gunner_dm",
+                  "verDriveDm": "drive_turret_v_dm",
+                  "horDriveDm": "drive_turret_h_dm",
                   "rotatedTurret": "bone_turret"
                 },
                 "limits": {

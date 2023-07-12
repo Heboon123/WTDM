@@ -1,9 +1,8 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 let DataBlock = require("DataBlock")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -17,6 +16,8 @@ let { getUnitRole } = require("%scripts/unit/unitInfoTexts.nut")
 let QUEUE_TYPE_BIT = require("%scripts/queue/queueTypeBit.nut")
 let { setModalBreadcrumbGoBackParams } = require("%scripts/breadcrumb.nut")
 let { get_meta_mission_info_by_name } = require("guiMission")
+let { trim, utf8ToUpper } = require("%sqstd/string.nut")
+let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
 let function getActiveTicketTxt(event) {
   if (!event)
@@ -114,10 +115,10 @@ local ESportTournament = class extends ::gui_handlers.BaseGuiHandlerWT {
       local items = []
       local dayCountries = []
       foreach (country, units in countries) {
-        dayCountries.append({ icon = ::get_country_icon($"{::g_string.trim(country)}_round") })
+        dayCountries.append({ icon = ::get_country_icon($"{trim(country)}_round") })
         foreach (name, _v in units)
           items.append({
-            text = ::getUnitName(::getAircraftByName(name))
+            text = ::getUnitName(getAircraftByName(name))
             image = ::getUnitClassIco(name)
             shopItemType = getUnitRole(name)
           })
@@ -160,7 +161,7 @@ local ESportTournament = class extends ::gui_handlers.BaseGuiHandlerWT {
         ? colorize("totalTextColor", row.name) : row.name
       texts.append({ text = $"{idx + 1} {txt}" })
     }
-    let data = ::handyman.renderCached("%gui/commonParts/text.tpl", { texts = texts })
+    let data = handyman.renderCached("%gui/commonParts/text.tpl", { texts = texts })
     this.guiScene.replaceContentFromText(topObj, data, data.len(), this)
   }
 
@@ -182,8 +183,8 @@ local ESportTournament = class extends ::gui_handlers.BaseGuiHandlerWT {
 
     return {
       descTxt = "\n".join(descTxtArr, true)
-      lbBtnTxt = ::g_string.utf8ToUpper(loc("tournaments/leaderboard"))
-      rewardsBtnTxt = ::g_string.utf8ToUpper(loc("tournaments/rewards"))
+      lbBtnTxt = utf8ToUpper(loc("tournaments/leaderboard"))
+      rewardsBtnTxt = utf8ToUpper(loc("tournaments/rewards"))
       hasRewardBtn = isRewardsAvailable(this.tournament)
       days = this.getDaysParams()
     }
@@ -290,7 +291,7 @@ local ESportTournament = class extends ::gui_handlers.BaseGuiHandlerWT {
       showProgressBox = true
       progressBoxText = loc("tournaments/registration_in_progress")
     }
-    let onSuccess = @() ::broadcastEvent("TourRegistrationComplete", { id = tourId })
+    let onSuccess = @() broadcastEvent("TourRegistrationComplete", { id = tourId })
     ::g_tasker.addTask(taskId, taskOptions, onSuccess)
   }
 
@@ -327,10 +328,10 @@ local ESportTournament = class extends ::gui_handlers.BaseGuiHandlerWT {
     }
 
     ::EventJoinProcess(this.curEvent, null,
-      @(_curEvent) ::add_big_query_record("to_battle_button", ::save_to_json(configForStatistic)),
+      @(_curEvent) sendBqEvent("CLIENT_BATTLE_2", "to_battle_button", configForStatistic),
       function() {
         configForStatistic.canIntoToBattle <- false
-        ::add_big_query_record("to_battle_button", ::save_to_json(configForStatistic))
+        sendBqEvent("CLIENT_BATTLE_2", "to_battle_button", configForStatistic)
       })
   }
 

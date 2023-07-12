@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let time = require("%scripts/time.nut")
@@ -245,7 +242,7 @@ enums.addTypesByGlobalName("g_mplayer_param_type", {
         if (rowVal)
           res.append(loc(row.label) + loc("ui/colon") + rowVal)
       }
-      return ::g_string.implode(res, "\n")
+      return "\n".join(res, true)
     }
   }
 

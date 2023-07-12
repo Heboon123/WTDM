@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let gamepadIcons = require("%scripts/controls/gamepadIcons.nut")
 
@@ -21,7 +19,7 @@ let gamepadIcons = require("%scripts/controls/gamepadIcons.nut")
 
   function getMarkup() {
     let data = this.getMarkupData()
-    return ::handyman.renderCached(data.template, data.view)
+    return handyman.renderCached(data.template, data.view)
   }
 
   function getMarkupData() {

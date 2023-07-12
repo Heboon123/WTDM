@@ -2,6 +2,9 @@
   "model": "wirraway",
   "MetaPartsBlk": "gameData/FlightModels/dm/metaparts/1x_engine_attacker_metaparts.blk",
   "exhaustEffectsBlk": "gameData/FlightModels/exhaustEffects/exhaustEffects_common.blk",
+  "gearSinkRangeLR": 0.189,
+  "gearSinkRangeC": 0.062,
+  "gyroSight": false,
   "fightAiBehaviour": "assault",
   "type": "typeBomber",
   "paratrooper": "raf_para",
@@ -26,6 +29,11 @@
       },
       "mgun2_dm": {
         "hp": 15.0
+      }
+    },
+    "armor8_5": {
+      "armor1_dm": {
+        "hp": 40.0
       }
     },
     "armor_engine": {
@@ -92,7 +100,7 @@
         "hp": 105.5
       },
       "fuse_dm": {
-        "hp": 98.2
+        "hp": 99.6
       },
       "tail_dm": {
         "genericDamageMult": 0.5,
@@ -120,7 +128,7 @@
         "hp": 19.5
       },
       "cover2_dm": {
-        "hp": 19.5
+        "hp": 20.2
       },
       "cover3_dm": {
         "hp": 19.5
@@ -161,6 +169,9 @@
       }
     },
     "steel": {
+      "gear_c_dm": {
+        "hp": 39.5
+      },
       "gear_l_dm": {
         "hp": 39.5
       },
@@ -308,6 +319,11 @@
           }
         }
       ]
+    },
+    {
+      "part": {
+        "name": "armor1_dm"
+      }
     },
     {
       "part": {
@@ -910,6 +926,42 @@
           "onKill": {
             "damage": 100.0,
             "tail_dm": 1.0
+          }
+        }
+      ]
+    },
+    {
+      "part": [
+        {
+          "name": "gear_c_dm"
+        },
+        {
+          "onHit": {
+            "damage": 15.0,
+            "cut": 0.1
+          }
+        },
+        {
+          "onHit": {
+            "damage": 25.0,
+            "cut": 0.4
+          }
+        },
+        {
+          "onHit": {
+            "damage": 40.0,
+            "cut": 0.7
+          }
+        },
+        {
+          "onHit": {
+            "damage": 60.0,
+            "cut": 1.0
+          }
+        },
+        {
+          "onKill": {
+            "cut": 1.0
           }
         }
       ]
@@ -2343,17 +2395,18 @@
     "lightAttenuation": 8.0,
     "openedGunnerCockpit": true,
     "devices": {
-      "speed": [0.0,133.0],
+      "stick_ailerons": [-1.0,1.0],
+      "stick_elevator": [-1.0,1.0],
       "pedals1": [-1.0,1.0],
       "pedals2": [-1.0,1.0],
       "pedals3": [-1.0,1.0],
       "pedals4": [-1.0,1.0],
       "pedals5": [-1.0,1.0],
       "pedals6": [-1.0,1.0],
-      "stick_ailerons": [-2.2,2.2],
-      "stick_elevator": [-1.9,1.9],
-      "throttle": [-1.8,1.0],
-      "throttle_1": [-1.8,1.0],
+      "pedals7": [-1.0,1.0],
+      "pedals8": [-1.0,1.0],
+      "throttle": [0.0,1.0],
+      "throttle_1": [0.0,1.0],
       "mixture": [0.0,1.0],
       "mixture_1": [0.0,1.0],
       "prop_pitch": [0.0,1.0],
@@ -2361,30 +2414,31 @@
       "weapon1": [0.0,1.0],
       "weapon2": [0.0,1.0],
       "trimmer": [-1.0,1.0],
+      "flaps": [0.0,1.0],
+      "flaps_fixed": true,
+      "gears": [0.0,1.0],
+      "gear_fixed": true,
+      "speed": [0.0,134.112],
       "compass": [0.0,360.0],
       "compass1": [0.0,360.0],
-      "vario": [-10.0,10.0],
-      "altitude_hour": [0.0,40000.0],
+      "vario": [-10.16,10.16],
+      "altitude_10k": [0.0,40000.0],
       "altitude_koef": 3.28,
+      "aviahorizon_pitch": [-45.0,45.0],
+      "aviahorizon_roll": [-180.0,180.0],
       "bank": [-8.0,8.0],
       "turn": [-0.23562,0.23562],
       "clock_hour": [0.0,12.0],
       "clock_min": [0.0,60.0],
       "clock_sec": [0.0,60.0],
-      "manifold_pressure": [0.3453,1.727],
+      "manifold_pressure": [0.334,1.6711],
       "rpm": [0.0,3500.0],
       "oil_temperature": [0.0,100.0],
       "oil_pressure": [0.0,150.0],
-      "water_temperature": [0.0,100.0],
       "head_temperature": [0.0,350.0],
-      "fuel1": [0.0,200.0],
-      "fuel_pressure": [0.0,20.0],
-      "aviahorizon_pitch": [-45.0,45.0],
-      "aviahorizon_roll": [-180.0,180.0],
-      "flaps": [0.0,1.0],
-      "flaps_fixed": true,
-      "gears": [0.0,1.0],
-      "gear_fixed": true
+      "carb_temperature": [-50.0,30.0],
+      "fuel": [0.0,200.0],
+      "fuel_pressure": [0.0,20.0]
     },
     "parts_holes_dmg": {
       "part": "fuse"
@@ -2454,8 +2508,8 @@
     }
   ],
   "gunnerFps": {
-    "pos": [0.0,0.3,0.0],
-    "head": "turret1"
+    "pos": [-0.6,0.2,0.0],
+    "head": "gun1"
   },
   "weapon_presets": [
     {

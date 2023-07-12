@@ -791,11 +791,10 @@
     "xray_viewer_data": {
       "armorArrayHull": {
         "xrayDmPart": "composite_armor_hull_02_dm",
-        "titleLoc": "RHA_tank_modern",
+        "titleLoc": "aluminium",
         "armorArrayText": {
           "layer": {
-            "dmPart": "composite_armor_hull_02_dm",
-            "xrayTextThickness": 6.0
+            "dmPart": "composite_armor_hull_02_dm"
           }
         }
       }
@@ -1762,6 +1761,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -2418,6 +2418,7 @@
   },
   {
     "commonWeapons": {
+      "maxMissileSalvoTimeInterval": 3.0,
       "Weapon": {
         "trigger": "gunner0",
         "triggerGroup": "primary",
@@ -2431,6 +2432,8 @@
         "recoilMultiplier": 0.1,
         "stopForFire": true,
         "maxSpeedForFire": 5.0,
+        "staticElevation": 0.875,
+        "circleAim": false,
         "barrelDP": "gun_barrel_01_dm",
         "createGunEffects": true,
         "defaultYaw": 0.0,
@@ -2599,8 +2602,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -3525,6 +3528,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -3614,6 +3626,9 @@
         "effects": {
           "commonWeapons": [
             {
+              "maxMissileSalvoTimeInterval": 3.0
+            },
+            {
               "Weapon": {
                 "trigger": "gunner0",
                 "triggerGroup": "primary",
@@ -3627,6 +3642,8 @@
                 "recoilMultiplier": 0.1,
                 "stopForFire": true,
                 "maxSpeedForFire": 5.0,
+                "staticElevation": 0.875,
+                "circleAim": false,
                 "barrelDP": "gun_barrel_01_dm",
                 "createGunEffects": true,
                 "defaultYaw": 0.0,
@@ -3854,6 +3871,12 @@
     "smokeScreenExhaustEmitters": [
       {
         "emitter": "emtr_exhaust_01"
+      },
+      {
+        "emitter": "emtr_exhaust_02"
+      },
+      {
+        "emitter": "emtr_exhaust_03"
       },
       {
         "emitter": "emtr_exhaust_04"

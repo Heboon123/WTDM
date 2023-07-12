@@ -270,6 +270,10 @@
         "ex_armor_02_dm": {
           "armorThickness": 25.4,
           "armorClass": "tank_structural_steel"
+        },
+        "ex_armor_03_dm": {
+          "armorThickness": 30.0,
+          "armorClass": "tank_structural_steel"
         }
       },
       "turret_cha": {
@@ -718,8 +722,7 @@
           "armorClass": "tank_traks",
           "armorThickness": 20.0,
           "hp": 200.0,
-          "ex_armor_body_01_dm": [],
-          "ex_armor_01_dm": []
+          "ex_armor_body_01_dm": []
         }
       },
       "gun": {
@@ -1870,6 +1873,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.4,
               "nothing": 0.6,
               "fHitCritical": true
@@ -3406,6 +3410,31 @@
             ]
           }
         }
+      },
+      {
+        "hideNodes": [
+          {
+            "node": "roll_01"
+          },
+          {
+            "node": "roll_02"
+          },
+          {
+            "node": "roll_03"
+          },
+          {
+            "node": "roll_04"
+          },
+          {
+            "node": "body_03"
+          },
+          {
+            "node": "body_04"
+          },
+          {
+            "node": "ex_armor_03"
+          }
+        ]
       }
     ]
   },
@@ -3525,8 +3554,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -4465,6 +4494,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -4572,6 +4610,24 @@
             },
             {
               "node": "body_02"
+            },
+            {
+              "node": "body_04"
+            },
+            {
+              "node": "roll_01"
+            },
+            {
+              "node": "roll_02"
+            },
+            {
+              "node": "roll_03"
+            },
+            {
+              "node": "roll_04"
+            },
+            {
+              "node": "ex_armor_03"
             }
           ]
         },
@@ -5129,6 +5185,31 @@
                   "pitch": [0.0,0.0]
                 }
               }
+            },
+            {
+              "hideNodes": [
+                {
+                  "node": "roll_01"
+                },
+                {
+                  "node": "roll_02"
+                },
+                {
+                  "node": "roll_03"
+                },
+                {
+                  "node": "roll_04"
+                },
+                {
+                  "node": "body_03"
+                },
+                {
+                  "node": "body_04"
+                },
+                {
+                  "node": "ex_armor_03"
+                }
+              ]
             }
           ]
         }
@@ -5573,6 +5654,12 @@
     "smokeScreenExhaustEmitters": [
       {
         "emitter": "emtr_exhaust_01"
+      },
+      {
+        "emitter": "emtr_exhaust_02"
+      },
+      {
+        "emitter": "emtr_exhaust_03"
       },
       {
         "emitter": "emtr_exhaust_04"

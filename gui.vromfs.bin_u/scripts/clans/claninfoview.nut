@@ -1,8 +1,5 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let DataBlock  = require("DataBlock")
@@ -30,7 +27,7 @@ let function getClanRequirementsText(membershipRequirements) {
 
   local ranksReqText = ""
   if (ranksReqTextArray.len()) {
-    ranksReqText = ::g_string.implode(ranksReqTextArray, " " + ranksConditionTypeText + " ")
+    ranksReqText = $" {ranksConditionTypeText } ".join(ranksReqTextArray, true)
     ranksReqText = loc("clan/rankReqInfoHead") + loc("ui/colon") + ranksReqText
   }
 
@@ -55,7 +52,7 @@ let function getClanRequirementsText(membershipRequirements) {
       }
     }
 
-  return ::g_string.implode([ranksReqText, battlesReqText], "\n")
+  return "\n".join([ranksReqText, battlesReqText], true)
 }
 
 return {

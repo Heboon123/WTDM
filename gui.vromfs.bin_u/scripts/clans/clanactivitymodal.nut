@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { round } = require("math")
 let { format } = require("string")
@@ -48,7 +45,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     let maxActivityToday = [(isShowPeriodActivity ? this.memberData.curPeriodActivity : this.memberData.curActivity).tostring()]
     if (maxActivityPerDay > 0)
       maxActivityToday.append((isShowPeriodActivity ? this.clanData.maxActivityPerPeriod : maxActivityPerDay).tostring())
-    this.scene.findObject("clan_activity_today_value").setValue(::g_string.implode(maxActivityToday, " / "))
+    this.scene.findObject("clan_activity_today_value").setValue(" / ".join(maxActivityToday, true))
     this.scene.findObject("clan_activity_total_value").setValue(format("%d",
       isShowPeriodActivity ? this.memberData.totalPeriodActivity : this.memberData.totalActivity))
 
@@ -101,7 +98,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     foreach (entry in historyArr) {
       let rowParams = [
         { text = time.buildDateStr(time.daysToSeconds(entry.day)) },
-        { text = (::u.isInteger(entry.data) ? entry.data : entry.data?.activity ?? 0).tostring() }
+        { text = (u.isInteger(entry.data) ? entry.data : entry.data?.activity ?? 0).tostring() }
       ]
 
       if (this.hasClanExperience) {

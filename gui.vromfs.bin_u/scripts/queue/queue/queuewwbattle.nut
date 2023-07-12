@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let slotbarPresets = require("%scripts/slotbar/slotbarPresetsByVehiclesGroups.nut")
 
@@ -77,7 +74,7 @@ let slotbarPresets = require("%scripts/slotbar/slotbarPresetsByVehiclesGroups.nu
   function createCraftsInfoConfig(craftsInfo) {
     let res = []
     foreach (idx, unitName in craftsInfo) {
-      let unit = ::getAircraftByName(unitName)
+      let unit = getAircraftByName(unitName)
       if (unit == null)
         continue
 

@@ -1,8 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
 let { format } = require("string")
 let { round_by_value } = require("%sqstd/math.nut")
@@ -16,7 +14,7 @@ let { getBulletsSetData, getModificationName } = require("%scripts/weaponry/bull
 let { getModificationBulletsGroup } = require("%scripts/weaponry/modificationInfo.nut")
 let { reloadCooldownTimeByCaliber } = require("%scripts/weaponry/weaponsParams.nut")
 let { getPresetWeapons } = require("%scripts/weaponry/weaponryPresets.nut")
-
+let { utf8ToUpper } = require("%sqstd/string.nut")
 
 let function getReloadTimeByCaliber(caliber, ediff = null) {
   let diff = ::get_difficulty_by_ediff(ediff ?? ::get_current_ediff())
@@ -31,7 +29,7 @@ let getTextNoWeapons = @(unit, isPrimary) isPrimary ? loc("weapon/noPrimaryWeapo
 
 local function getWeaponInfoText(unit, p = WEAPON_TEXT_PARAMS) {
   local text = ""
-  unit = type(unit) == "string" ? ::getAircraftByName(unit) : unit
+  unit = type(unit) == "string" ? getAircraftByName(unit) : unit
   if (!unit)
     return text
 
@@ -41,7 +39,7 @@ local function getWeaponInfoText(unit, p = WEAPON_TEXT_PARAMS) {
 
   p = WEAPON_TEXT_PARAMS.__merge(p)
   let unitType = ::get_es_unit_type(unit)
-  if (::u.isEmpty(weapons) && p.needTextWhenNoWeapons)
+  if (u.isEmpty(weapons) && p.needTextWhenNoWeapons)
     text += getTextNoWeapons(unit, p.isPrimary)
   let stackableWeapons = [WEAPON_TYPE.TURRETS]
   foreach (weaponType, triggers in (weapons?.weaponsByTypes ?? {})) {
@@ -145,7 +143,7 @@ local function getWeaponInfoText(unit, p = WEAPON_TEXT_PARAMS) {
           if (trigger[TRIGGER_TYPE.TURRETS] > 1)
             tText = format(loc("weapons/turret_number"), trigger[TRIGGER_TYPE.TURRETS]) + tText
           else
-            tText = ::g_string.utf8ToUpper(loc("weapons_types/turrets"), 1) + loc("ui/colon") + tText
+            tText = utf8ToUpper(loc("weapons_types/turrets"), 1) + loc("ui/colon") + tText
         }
       }
 
@@ -187,7 +185,7 @@ let function getWeaponNameText(unit, isPrimary = null, weaponPreset = -1, newLin
 
 let function getWeaponXrayDescText(weaponBlk, unit, ediff) {
   let weaponsArr = []
-  ::u.appendOnce((::u.copy(weaponBlk)), weaponsArr)
+  u.appendOnce((u.copy(weaponBlk)), weaponsArr)
   let weaponTypes = addWeaponsFromBlk({}, weaponsArr, unit)
   foreach (weaponType, weaponTypeList in (weaponTypes?.weaponsByTypes ?? {}))
     foreach (weapons in weaponTypeList)
@@ -239,7 +237,7 @@ local function getWeaponShortTypeFromWpName(wpName, unit = null) {
     return ""
 
   if (type(unit) == "string")
-    unit = ::getAircraftByName(unit)
+    unit = getAircraftByName(unit)
 
   if (!unit)
     return ""

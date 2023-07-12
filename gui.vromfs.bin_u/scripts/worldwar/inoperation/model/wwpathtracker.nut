@@ -1,8 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
 ::WwPathTracker <- class {
   status = ""
@@ -34,7 +32,7 @@ from "%scripts/dagui_library.nut" import *
       return
 
     for (local i = 0; i < pointsBlk.blockCount(); i++)
-      this.points.append(::u.copy(pointsBlk.getBlock(i)))
+      this.points.append(u.copy(pointsBlk.getBlock(i)))
   }
 
   function isMove() {

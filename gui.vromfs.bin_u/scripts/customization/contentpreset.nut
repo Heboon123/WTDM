@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { eachBlock } = require("%sqstd/datablock.nut")
 
@@ -18,7 +16,7 @@ let function getContentPresets() {
 
   eachBlock(::get_ugc_blk()?.presets, @(_, n) contentPresets.append(n))
 
-  contentPresetIdxByName = ::u.invert(contentPresets)
+  contentPresetIdxByName = u.invert(contentPresets)
   return contentPresets
 }
 

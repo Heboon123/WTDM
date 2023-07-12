@@ -9,6 +9,18 @@
   "sound": "weapon.rocketgun_132",
   "tags": [],
   "bomb": {
+    "normalizationPreset": "heat",
+    "ricochetPreset": "he",
+    "secondaryShattersPreset": "ap",
+    "stabilityThreshold": 0.5,
+    "stabilityCaliberToArmorThreshold": 5.0,
+    "stabilityReductionAfterRicochet": 0.3,
+    "stabilityReductionAfterPenetration": 0.15,
+    "bulletType": "he_bomb",
+    "slopeEffectPreset": "ap",
+    "fresnel": [0.23,0.1,2.0],
+    "useEffectiveArmorThicknessForShatter": true,
+    "explodeOnRendinst": true,
     "mass": 495.3,
     "mass_lbs": 1092.0,
     "explosiveType": "comp_h6",
@@ -16,11 +28,11 @@
     "bombType": "he_bomb",
     "bombName": "uk_1000lb_gbu_16_mk13_paveway_2",
     "dragCx": 0.0257,
-    "caliber": 0.356,
-    "length": 3.68,
-    "distFromCmToStab": 0.05,
-    "CxK": 0.8,
-    "WdK": [0.1,0.1,0.1],
+    "caliber": 0.3556,
+    "length": 3.683,
+    "distFromCmToStab": 0.5,
+    "CxK": 1.245,
+    "WdK": [2.5,2.5,2.5],
     "wingAreaMult": 1.8,
     "finsAoaHor": 0.15,
     "finsAoaVer": 0.15,
@@ -61,6 +73,11 @@
     "shutterHit": 15.0,
     "amountPerTier": 1.0,
     "iconType": "guided_bomb_large_laser",
+    "stabilityRicochetModifier": {
+      "mod1": [0.0,0.5],
+      "mod2": [15.0,0.7],
+      "mod3": [30.0,0.99]
+    },
     "pressureDamage": {
       "damageType": "pressure"
     },
@@ -68,14 +85,13 @@
       "permanentlyActivated": true,
       "lockOnAfterLaunch": true,
       "inertialNavigation": false,
-      "inertialNavigationDriftSpeed": 3.5,
       "laserSeeker": {
         "range": 7000.0,
         "rangeMax": 12000.0,
         "fov": 20.0,
         "lockAngleMax": 0.0,
         "angleMax": 0.0,
-        "rateMax": 10.0,
+        "rateMax": 10000.0,
         "prolongationTimeMax": 1.0,
         "filterAlpha": 0.85,
         "filterBetta": 0.2
@@ -83,15 +99,13 @@
       "guidanceAutopilot": {
         "timeToGain0": [60.0,1.0],
         "timeToGain1": [60.1,0.0],
-        "baseIndSpeed": 1300.0,
-        "angleToAccelMult": 0.0,
-        "omegaToAccelMult": 3.0,
-        "elevationAdd": 1.2,
-        "reqAccelMax": 3.0,
-        "accelControlProp": 0.1,
-        "accelControlIntg": 0.1,
-        "accelControlIntgLim": 0.75,
-        "accelControlDiff": 0.1
+        "baseIndSpeed": 1800.0,
+        "propNavMult": 4.0,
+        "reqAccelMax": 4.0,
+        "accelControlProp": 0.0896,
+        "accelControlIntg": 0.0996,
+        "accelControlIntgLim": 1.0,
+        "accelControlDiff": 0.0003
       }
     },
     "arcadeProp": {

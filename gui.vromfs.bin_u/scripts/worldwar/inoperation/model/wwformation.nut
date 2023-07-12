@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 ::WwFormation <- class {
   name = ""
@@ -52,7 +50,7 @@ from "%scripts/dagui_library.nut" import *
   function getUnits(excludeInfantry = false) {
     this.updateUnits()
     if (excludeInfantry)
-      return ::u.filter(this.units, function (unit) {
+      return u.filter(this.units, function (unit) {
         return !::g_ww_unit_type.isInfantry(unit.getWwUnitType().code)
       })
     return this.units
@@ -178,7 +176,7 @@ from "%scripts/dagui_library.nut" import *
   }
 
   function getOverrideIcon() {
-    if (::u.isEmpty(this.overrideIconId))
+    if (u.isEmpty(this.overrideIconId))
       return null
 
     return ::ww_get_army_override_icon(this.overrideIconId, this.loadedArmyType, this.hasArtilleryAbility)

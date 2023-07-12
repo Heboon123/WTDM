@@ -1,11 +1,8 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
-local { WW_MAP_TOOLTIP_TYPE_BATTLE, WW_MAP_TOOLTIP_TYPE_ARMY
+let u = require("%sqStdLibs/helpers/u.nut")
+let { setObjPosition } = require("%sqDagui/daguiUtil.nut")
+let { WW_MAP_TOOLTIP_TYPE_BATTLE, WW_MAP_TOOLTIP_TYPE_ARMY
 } = require("%scripts/worldWar/wwGenericTooltipTypes.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
@@ -48,7 +45,7 @@ const SHOW_TOOLTIP_DELAY_TIME = 0.35
 
   function onEventWWMapUpdateCursorByTimer(p) {
     let newSpecs = this.getUpdatedSpecs(p)
-    if (::u.isEqual(this.specs, newSpecs))
+    if (u.isEqual(this.specs, newSpecs))
       return
 
     this.updateScreen(newSpecs)
@@ -232,6 +229,6 @@ const SHOW_TOOLTIP_DELAY_TIME = 0.35
   function updatePos() {
     let cursorPos = ::get_dagui_mouse_cursor_pos_RC()
     cursorPos[0] = cursorPos[0]  + "+1@wwMapTooltipOffset"
-    ::g_dagui_utils.setObjPosition(this.scene, cursorPos, ["@bw", "@bh"])
+    setObjPosition(this.scene, cursorPos, ["@bw", "@bh"])
   }
 }

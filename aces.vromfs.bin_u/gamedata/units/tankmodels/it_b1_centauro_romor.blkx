@@ -198,6 +198,11 @@
     ]
   },
   {
+    "dmgAngles": {
+      "hatch_08": [50.0,50.0]
+    }
+  },
+  {
     "DamageEffects": [
       {
         "part": [
@@ -1147,6 +1152,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -1785,6 +1791,17 @@
             }
           }
         }
+      },
+      {
+        "armorArrayHull": {
+          "xrayDmPart": "composite_armor_hull_04_dm",
+          "titleLoc": "RHA_tank_modern",
+          "armorArrayText": {
+            "layer": {
+              "dmPart": "composite_armor_hull_04_dm"
+            }
+          }
+        }
       }
     ]
   },
@@ -2079,6 +2096,17 @@
           "armorArrayText": {
             "layer": {
               "dmPart": "composite_armor_hull_03_dm"
+            }
+          }
+        }
+      },
+      {
+        "armorArrayHull": {
+          "xrayDmPart": "composite_armor_hull_05_dm",
+          "titleLoc": "RHA_tank_modern",
+          "armorArrayText": {
+            "layer": {
+              "dmPart": "composite_armor_hull_05_dm"
             }
           }
         }
@@ -2773,8 +2801,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -3720,6 +3748,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -4047,6 +4084,10 @@
           "hidableInXrayViewer": true
         },
         "composite_armor_hull_03_dm": {
+          "armorThickness": 5.0,
+          "hidableInXrayViewer": true
+        },
+        "composite_armor_hull_05_dm": {
           "armorThickness": 5.0,
           "hidableInXrayViewer": true
         }
@@ -5065,6 +5106,7 @@
   {
     "supportPlane": {
       "supportPlaneClass": "ucav_recon_micro",
+      "behTreeName": "recon_micro",
       "planeStartSpeed": 80.0,
       "count": 1
     }

@@ -7,6 +7,7 @@
   "gearSinkRangeC": 0.164,
   "haveCCIPForRocket": true,
   "haveCCIPForBombs": true,
+  "gyroSight": true,
   "haveCCIPForGun": true,
   "jetEnginePowerFullScale": true,
   "standardExhaustFxType": "jet_exhaust",
@@ -14,7 +15,6 @@
   "startExhaustFxType": "jet_start_exhaust",
   "disableExhaustFxIfContrailIsActive": true,
   "ilsLCOSS": true,
-  "gyroscopicSightOverSensors": true,
   "type": "typeFighter",
   "paratrooper": "ally",
   "advancedInstructor": true,
@@ -637,6 +637,14 @@
           }
         },
         {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
+          }
+        },
+        {
           "onKill": {
             "wingcontrol_l_dm": 1.0,
             "wingcontrol_r_dm": 1.0,
@@ -682,6 +690,14 @@
             "wing_l_dm": 1.0,
             "wing_r_dm": 1.0
           }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
+          }
         }
       ]
     },
@@ -712,6 +728,14 @@
           "onHit": {
             "damage": 50.0,
             "tail_dm": 1.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
           }
         },
         {
@@ -767,6 +791,14 @@
             "damage": 50.0,
             "tail_dm": 1.0,
             "nothing": 1.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
           }
         }
       ]
@@ -2264,6 +2296,12 @@
     },
     {
       "preset": {
+        "name": "f-104g_bomb_mk82_snakeye",
+        "blk": "gameData/FlightModels/weaponPresets/f-104g_bomb_mk82_snakeye.blk"
+      }
+    },
+    {
+      "preset": {
         "name": "f-104g_bomb_m117",
         "blk": "gameData/FlightModels/weaponPresets/f-104g_bomb_m117.blk"
       }
@@ -2353,13 +2391,18 @@
       ]
     },
     {
-      "WeaponSlot": [
-        {
-          "index": 0
-        },
-        {
-          "WeaponPreset": {
-            "name": "m61a1_common",
+      "WeaponSlot": {
+        "index": 0,
+        "WeaponPreset": [
+          {
+            "name": "m61a1_common"
+          },
+          {
+            "ShowNodes": {
+              "node": "fuse2"
+            }
+          },
+          {
             "Weapon": [
               {
                 "trigger": "cannon"
@@ -2390,79 +2433,36 @@
               },
               {
                 "counterIndex": 2
+              },
+              {
+                "rotationAnimScale": "gun_rotate_01:CRS"
               }
             ]
-          }
-        },
-        {
-          "WeaponPreset": [
-            {
-              "name": "m61a1_ltc_common"
-            },
-            {
-              "ShowNodes": {
-                "node": "fuse2"
-              }
-            },
-            {
-              "Weapon": [
-                {
-                  "trigger": "cannon"
-                },
-                {
-                  "blk": "gameData/Weapons/cannonM61A1.blk"
-                },
-                {
-                  "emitter": "flare1"
-                },
-                {
-                  "flash": "flare1"
-                },
-                {
-                  "shell": "emtr_shellrejection1"
-                },
-                {
-                  "dm": "cannon1_dm"
-                },
-                {
-                  "bullets": 750
-                },
-                {
-                  "spread": 1.0
-                },
-                {
-                  "counterIndex": 1
-                },
-                {
-                  "counterIndex": 2
-                }
-              ]
-            },
-            {
-              "Weapon": {
-                "trigger": "countermeasures",
-                "startFx": "",
-                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
-                "emitter": "emtr_flare1",
-                "bullets": 30,
-                "external": true,
-                "separate": false
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "countermeasures",
-                "startFx": "",
-                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
-                "emitter": "emtr_flare2",
-                "bullets": 30,
-                "external": true,
-                "separate": false
-              }
+          },
+          {
+            "Weapon": {
+              "trigger": "countermeasures",
+              "startFx": "",
+              "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
+              "emitter": "emtr_flare1",
+              "bullets": 30,
+              "external": true,
+              "separate": false
             }
-          ]
-        }
-      ]
+          },
+          {
+            "Weapon": {
+              "trigger": "countermeasures",
+              "startFx": "",
+              "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
+              "emitter": "emtr_flare2",
+              "bullets": 30,
+              "external": true,
+              "separate": false
+            }
+          }
+        ]
+      }
     },
     {
       "WeaponSlot": [
@@ -2668,6 +2668,29 @@
             "Weapon": {
               "trigger": "bombs",
               "blk": "gameData/Weapons/BombGuns/us_500lb_mk_82_ldgp.blk",
+              "emitter": "500lb_mk_82_001",
+              "bullets": 1,
+              "external": true,
+              "separate": true
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_middle_high_drag",
+            "name": "mk82_snakeye",
+            "reqModification": "us_500lb_mk82",
+            "ShowNodes": [
+              {
+                "node": "pylon_wing_001"
+              },
+              {
+                "node": "pylon_wing_001_dop"
+              }
+            ],
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/us_500lb_mk_82_ldgp_snakeye.blk",
               "emitter": "500lb_mk_82_001",
               "bullets": 1,
               "external": true,
@@ -2991,6 +3014,24 @@
             "Weapon": {
               "trigger": "bombs",
               "blk": "gameData/Weapons/BombGuns/us_500lb_mk_82_ldgp.blk",
+              "emitter": "500lb_mk_82_002",
+              "bullets": 1,
+              "external": true,
+              "separate": true
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_middle_high_drag",
+            "name": "mk82_snakeye",
+            "reqModification": "us_500lb_mk82",
+            "ShowNodes": {
+              "node": "pylon_fus_001"
+            },
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/us_500lb_mk_82_ldgp_snakeye.blk",
               "emitter": "500lb_mk_82_002",
               "bullets": 1,
               "external": true,
@@ -3370,6 +3411,29 @@
         },
         {
           "WeaponPreset": {
+            "iconType": "bombs_middle_high_drag",
+            "name": "mk82_snakeye",
+            "reqModification": "us_500lb_mk82",
+            "ShowNodes": [
+              {
+                "node": "pylon_wing_002"
+              },
+              {
+                "node": "pylon_wing_002_dop"
+              }
+            ],
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/us_500lb_mk_82_ldgp_snakeye.blk",
+              "emitter": "500lb_mk_82_003",
+              "bullets": 1,
+              "external": true,
+              "separate": true
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
             "iconType": "bombs_large",
             "name": "m117",
             "reqModification": "us_750lb_m117a1",
@@ -3673,15 +3737,7 @@
       "turn_it_off": false,
       "invertEnableLogic": false,
       "group": "countermeasures",
-      "tier": 1,
-      "effects": {
-        "commonWeapons": {
-          "Weapon": {
-            "slot": 0,
-            "preset": "m61a1_ltc_common"
-          }
-        }
-      }
+      "tier": 1
     },
     "us_aim_9b": {
       "tier": 2,

@@ -1,12 +1,11 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let ecs = require("%sqstd/ecs.nut")
-let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { registerPersistentDataFromRoot, PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { abs, floor } = require("math")
 let { EventOnConnectedToServer } = require("net")
 let { MatchingRoomExtraParams = null } = require_optional("dasevents")
@@ -35,10 +34,19 @@ let checkReconnect = require("%scripts/matchingRooms/checkReconnect.nut")
 let { send } = require("eventbus")
 let { dynamicMissionPlayed, isDynamicWon } = require("dynamicMission")
 let { get_meta_mission_info_by_name, leave_mp_session, quit_to_debriefing,
-  interrupt_multiplayer
+  interrupt_multiplayer, get_mission_difficulty_int
 } = require("guiMission")
-let { set_game_mode, get_game_mode, get_game_type
-} = require("mission")
+let { set_game_mode, get_game_mode, get_game_type } = require("mission")
+let { addRecentContacts } = require("%scripts/contacts/contactsManager.nut")
+let { notifyQueueLeave } = require("%scripts/matching/serviceNotifications/match.nut")
+let { matchingApiFunc, matchingRpcSubscribe } = require("%scripts/matching/api.nut")
+let { serializeDyncampaign, invitePlayerToRoom, roomSetReadyState, roomSetPassword,
+  roomStartSession, kickMember, setRoomAttributes, setMemberAttributes, requestLeaveRoom,
+  requestJoinRoom, requestDestroyRoom, requestCreateRoom, isMyUserId
+} = require("%scripts/matching/serviceNotifications/mrooms.nut")
+let { getUrlOrFileMissionMetaInfo } = require("%scripts/missions/missionsUtils.nut")
+let { getModeById } = require("%scripts/matching/matchingGameModes.nut")
+let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
 /*
 SessionLobby API
@@ -205,12 +213,11 @@ let allowed_mission_settings = { //only this settings are allowed in room
     ::LAST_SESSION_DEBUG_INFO = "sid:" + sessionId
 
   log("notify_session_start")
-  ::add_big_query_record("joining_session",
-    ::save_to_json({
-      gm = get_game_mode()
-      sessionId = sessionId
-      missionsComplete = ::my_stats.getMissionsComplete()
-    }))
+  sendBqEvent("CLIENT_BATTLE_2", "joining_session", {
+    gm = get_game_mode()
+    sessionId = sessionId
+    missionsComplete = ::my_stats.getMissionsComplete()
+  })
   ::SessionLobby.switchStatus(lobbyStates.JOINING_SESSION)
 }
 
@@ -222,7 +229,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
     "spectator", "isReady", "isInLobbySession", "team", "countryData", "myState",
     "isSpectatorSelectLocked", "crsSetTeamTo", "curEdiff",
     "needJoinSessionAfterMyInfoApply", "isLeavingLobbySession", "_syncedMyInfo",
-    "playersInfo", "lastEventName, isReadyInSetStateRoom"
+    "playersInfo", "isReadyInSetStateRoom"
   ]
 
   settings = {}
@@ -233,7 +240,6 @@ let allowed_mission_settings = { //only this settings are allowed in room
   isRoomByQueue = false
   isEventRoom = false
   roomId = INVALID_ROOM_ID
-  lastEventName = ""
   roomUpdated = false
   password = ""
 
@@ -271,7 +277,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
   needJoinSessionAfterMyInfoApply = false
   isLeavingLobbySession = false
   needCheckReconnect = false
-  isReadyInSetStateRoom = null // if null then not response is expected from room_set_ready_state
+  isReadyInSetStateRoom = null // if null then not response is expected from roomSetReadyState
 
   roomTimers = [
     {
@@ -322,7 +328,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
   function getMissionNameLocIdsArray(room = null) {
     let misData = this.getMissionData(room)
     if ("name" in misData)
-      return getMissionLocIdsArray(::get_mission_meta_info(misData.name))
+      return getMissionLocIdsArray(getUrlOrFileMissionMetaInfo(misData.name))
     return []
   }
 
@@ -417,7 +423,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
     if (value == null)
       continue
 
-    _settings.mission[key] <- ::u.isDataBlock(value) ? ::buildTableFromBlk(value) : value
+    _settings.mission[key] <- u.isDataBlock(value) ? ::buildTableFromBlk(value) : value
   }
 
   _settings.creator <- ::my_user_name
@@ -480,9 +486,9 @@ let allowed_mission_settings = { //only this settings are allowed in room
     _settings.mranks <- { min = mrankMin, max = mrankMax }
 
   _settings.chatPassword <- this.isInRoom() ? this.getChatRoomPassword() : ::gen_rnd_password(16)
-  if (!::u.isEmpty(this.settings?.externalSessionId))
+  if (!u.isEmpty(this.settings?.externalSessionId))
     _settings.externalSessionId <- this.settings.externalSessionId
-  if (!::u.isEmpty(this.settings?.psnMatchId))
+  if (!u.isEmpty(this.settings?.psnMatchId))
     _settings.psnMatchId <- this.settings.psnMatchId
 
   this.fillTeamsInfo(_settings, mission)
@@ -496,7 +502,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
     return
 
   this.settings["externalSessionId"] <- extId
-  ::set_room_attributes({ roomId = this.roomId, public = this.settings }, @(p) ::SessionLobby.afterRoomUpdate(p))
+  setRoomAttributes({ roomId = this.roomId, public = this.settings }, @(p) ::SessionLobby.afterRoomUpdate(p))
 }
 
 ::SessionLobby.getExternalId <- function getExternalId() {
@@ -515,7 +521,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
     return
   }
 
-  if (checkEqual && ::u.isEqual(this.settings, v_settings))
+  if (checkEqual && u.isEqual(this.settings, v_settings))
     return
 
   //v_settings can be publick date of room, and it does not need to be updated settings somewhere else
@@ -531,7 +537,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
 
   this.roomUpdated = notify || !this.isRoomOwner || !this.isInRoom() || this.isEventRoom
   if (!this.roomUpdated)
-    ::set_room_attributes({ roomId = this.roomId, public = this.settings }, function(p) { ::SessionLobby.afterRoomUpdate(p) })
+    setRoomAttributes({ roomId = this.roomId, public = this.settings }, function(p) { ::SessionLobby.afterRoomUpdate(p) })
 
   if (this.isInRoom())
     this.validateTeamAndReady()
@@ -540,7 +546,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
   if (newGm >= 0)
     set_game_mode(newGm)
 
-  ::broadcastEvent("LobbySettingsChange")
+  broadcastEvent("LobbySettingsChange")
 }
 
 ::SessionLobby.UpdatePlayersInfo <- function UpdatePlayersInfo() {
@@ -560,7 +566,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
     if (k.indexof("pinfo_") != 0)
       continue
     let uid = k.slice(6).tointeger()
-    if (pinfo == null) {
+    if (pinfo == null || pinfo.len() == 0) {
       if (uid in this.playersInfo)
         delete this.playersInfo[uid]
     }
@@ -576,7 +582,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
   this.isSpectatorSelectLocked = false
   let userInUidsList = function(list_name) {
     let ids = getTblValue(list_name, this.getSessionInfo())
-    if (::u.isArray(ids))
+    if (u.isArray(ids))
       return isInArray(::my_user_id_int64, ids)
     return false
   }
@@ -589,11 +595,11 @@ let allowed_mission_settings = { //only this settings are allowed in room
   this.crsSetTeamTo = Team.none
   foreach (team in ::events.getSidesList()) {
     let players = this.getSessionInfo()?[::events.getTeamName(team)].players
-    if (!::u.isArray(players))
+    if (!u.isArray(players))
       continue
 
     foreach (uid in players)
-      if (::is_my_userid(uid)) {
+      if (isMyUserId(uid)) {
         this.crsSetTeamTo = team
         break
       }
@@ -692,7 +698,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
   if (!this.isInRoom())
     return
 
-  ::broadcastEvent("LobbyRoomInSession")
+  broadcastEvent("LobbyRoomInSession")
   if (this.isRoomOwner)
     this.checkDynamicSettings()
 }
@@ -723,7 +729,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
 ::SessionLobby.getMissionNameLoc <- function getMissionNameLoc(room = null) {
   let misData = this.getMissionData(room)
   if ("name" in misData) {
-    let missionMetaInfo = ::get_mission_meta_info(misData.name)
+    let missionMetaInfo = getUrlOrFileMissionMetaInfo(misData.name)
     return ::get_combine_loc_name_mission(missionMetaInfo ? missionMetaInfo : misData)
   }
   return ""
@@ -743,14 +749,14 @@ let allowed_mission_settings = { //only this settings are allowed in room
 
 ::SessionLobby.getGameType <- function getGameType(room = null) {
   let res = getTblValue("_gameType", this.getMissionData(room), 0)
-  return ::u.isInteger(res) ? res : 0
+  return u.isInteger(res) ? res : 0
 }
 
-::SessionLobby.getMGameModeId <- function getMGameModeId(room = null) { //gameModeId by g_matching_game_modes
+::SessionLobby.getMGameModeId <- function getMGameModeId(room = null) { //gameModeId by matchingGameModes
   return getTblValue("game_mode_id", this.getPublicData(room))
 }
 
-::SessionLobby.getClusterName <- function getClusterName(room = null) { //gameModeId by g_matching_game_modes
+::SessionLobby.getClusterName <- function getClusterName(room = null) {
   local cluster = getTblValue("cluster", room)
   if (cluster == null)
     cluster = getTblValue("cluster", this.getPublicData(room))
@@ -811,7 +817,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
     return null
 
   let curBR = unit.getBattleRating(::is_in_flight()
-    ? ::get_mission_difficulty_int()
+    ? get_mission_difficulty_int()
     : ::get_current_shop_difficulty().diffCode)
   let maxBR = (this.getBattleRatingParamByPlayerInfo(this.getMemberPlayerInfo(::my_user_id_int64),
     ES_UNIT_TYPE_SHIP)?.units?[0]?.rating ?? 0) + MAX_BR_DIFF_AVAILABLE_AND_REQ_UNITS
@@ -915,21 +921,17 @@ let allowed_mission_settings = { //only this settings are allowed in room
   if (this.status == lobbyStates.NOT_IN_ROOM) {
     this.resetParams()
     if (wasStatus == lobbyStates.JOINING_SESSION)
-      ::destroy_session_scripted()
+      ::destroy_session_scripted("on leave room while joining session")
   }
   if (this.status == lobbyStates.JOINING_SESSION)
-    ::add_squad_to_contacts()
-
-  if (this.status == lobbyStates.JOINING_SESSION ||
-    this.status == lobbyStates.IN_SESSION)
-    this.lastEventName = this.getRoomEvent()?.name ?? ""
+    addRecentContacts(::g_squad_manager.getSquadMembersDataForContact())
 
   this.updateMyState()
 
-  ::broadcastEvent("LobbyStatusChange")
+  broadcastEvent("LobbyStatusChange")
   send("setIsMultiplayerState", { isMultiplayer = this.isInRoom() })
   if (wasInRoom != this.isInRoom())
-    ::broadcastEvent("LobbyIsInRoomChanged", { wasSessionInLobby })
+    broadcastEvent("LobbyIsInRoomChanged", { wasSessionInLobby })
 }
 
 ::SessionLobby.resetParams <- function resetParams() {
@@ -967,13 +969,13 @@ let allowed_mission_settings = { //only this settings are allowed in room
 
   if (this.isRoomOwner && this.status != lobbyStates.NOT_IN_ROOM && this.status != lobbyStates.CREATING_ROOM) {
     let prevPass = this.password
-    ::room_set_password({ roomId = this.roomId, password = v_password },
-      (@(prevPass) function(p) {
+    roomSetPassword({ roomId = this.roomId, password = v_password },
+      function(p) {
         if (!::checkMatchingError(p)) {
           ::SessionLobby.password = prevPass
           ::SessionLobby.checkDynamicSettings()
         }
-      })(prevPass))
+      })
   }
   this.password = v_password
 }
@@ -1013,7 +1015,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
 
   let missionId = this.getMissionName()
   let missionInfo = DataBlock()
-  missionInfo.setFrom(::get_mission_meta_info(missionId))
+  missionInfo.setFrom(getUrlOrFileMissionMetaInfo(missionId))
   let missionBlk = DataBlock()
   if (missionInfo)
     missionBlk.load(missionInfo.mis_file)
@@ -1029,8 +1031,8 @@ let allowed_mission_settings = { //only this settings are allowed in room
   }
 
   this.switchStatus(lobbyStates.UPLOAD_CONTENT)
-  ::set_room_attributes({ roomId = this.roomId, private = { userMission = blkData.result } },
-                        (@(missionId, afterDoneFunc) function(p) {
+  setRoomAttributes({ roomId = this.roomId, private = { userMission = blkData.result } },
+                        function(p) {
                           if (!::checkMatchingError(p)) {
                             ::SessionLobby.returnStatusToRoom()
                             return
@@ -1039,7 +1041,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
                           ::SessionLobby.returnStatusToRoom()
                           if (afterDoneFunc)
                             afterDoneFunc()
-                        })(missionId, afterDoneFunc))
+                        })
 }
 
 ::SessionLobby.mergeTblChanges <- function mergeTblChanges(tblBase, tblNew) {
@@ -1062,7 +1064,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
 ::SessionLobby.updateReadyAndSyncMyInfo <- function updateReadyAndSyncMyInfo(ready) {
   this.isReady = ready
   this.syncMyInfo({ state = this.updateMyState(true) })
-  ::broadcastEvent("LobbyReadyChanged")
+  broadcastEvent("LobbyReadyChanged")
 }
 
 ::SessionLobby.onMemberInfoUpdate <- function onMemberInfoUpdate(params) {
@@ -1087,7 +1089,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
       else
         member[tblName] <- params[tblName]
 
-  if (::is_my_userid(member.userId)) {
+  if (isMyUserId(member.userId)) {
     this.isRoomOwner = this.isMemberOperator(member)
     this.isInLobbySession = this.isMemberInSession(member)
     this.initMyParamsByMemberInfo(member)
@@ -1098,12 +1100,12 @@ let allowed_mission_settings = { //only this settings are allowed in room
       this.tryJoinSession(true)
     this.needJoinSessionAfterMyInfoApply = false
   }
-  ::broadcastEvent("LobbyMemberInfoChanged")
+  broadcastEvent("LobbyMemberInfoChanged")
 }
 
 ::SessionLobby.initMyParamsByMemberInfo <- function initMyParamsByMemberInfo(me = null) {
   if (!me)
-    me = ::u.search(this.members, function(m) { return ::is_my_userid(m.userId) })
+    me = u.search(this.members, function(m) { return isMyUserId(m.userId) })
   if (!me)
     return
 
@@ -1131,7 +1133,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
         if (this._syncedMyInfo[key] == value)
           continue
         if (type(value) == "array" || type(value) == "table")
-          if (::u.isEqual(this._syncedMyInfo[key], value))
+          if (u.isEqual(this._syncedMyInfo[key], value))
             continue
       }
       syncData[key] <- value
@@ -1150,11 +1152,11 @@ let allowed_mission_settings = { //only this settings are allowed in room
   }
 
   // Sends info to server
-  ::set_member_attributes(info, (@(reqUpdateMatchingSlots) function(_p) {
+  setMemberAttributes(info, (@(reqUpdateMatchingSlots) function(_p) {
     if (reqUpdateMatchingSlots)
       this.checkUpdateMatchingSlots()
   })(reqUpdateMatchingSlots).bindenv(this))
-  ::broadcastEvent("LobbyMyInfoChanged", syncData)
+  broadcastEvent("LobbyMyInfoChanged", syncData)
 }
 
 ::SessionLobby.syncAllInfo <- function syncAllInfo() {
@@ -1199,7 +1201,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
     memberId = member.memberId
     userId = member.userId.tostring() //member info same format as get_mplayers_list
     name = member.name
-    isLocal = ::is_my_userid(member.userId)
+    isLocal = isMyUserId(member.userId)
     spectator = getTblValue("spectator", member, false)
     isBot = false
   }
@@ -1265,7 +1267,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
   }
 
   this.isReadyInSetStateRoom = ready
-  ::room_set_ready_state(
+  roomSetReadyState(
     { state = ready, roomId = this.roomId },
     (@(silent, ready) function(p) {
       this.isReadyInSetStateRoom = null
@@ -1289,7 +1291,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
 
       if (needUpdateState)
         this.syncMyInfo({ state = this.updateMyState(true) })
-      ::broadcastEvent("LobbyReadyChanged")
+      broadcastEvent("LobbyReadyChanged")
     })(silent, ready).bindenv(this))
   return true
 }
@@ -1413,7 +1415,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
 }
 
 ::SessionLobby.setCountryData <- function setCountryData(data) { //return is data changed
-  local changed = !this.countryData || !::u.isEqual(this.countryData, data)
+  local changed = !this.countryData || !u.isEqual(this.countryData, data)
   this.countryData = data
   let teamDataChanges = this.checkMyTeam()
   changed = changed || teamDataChanges.len() > 0
@@ -1494,7 +1496,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
 
   this.prepareSettings(missionSettings)
 
-  ::create_room({ size = 4, public = this.settings }, function(p) { ::SessionLobby.afterRoomCreation(p) })
+  requestCreateRoom({ size = 4, public = this.settings }, function(p) { ::SessionLobby.afterRoomCreation(p) })
   this.switchStatus(lobbyStates.CREATING_ROOM)
   return true
 }
@@ -1515,7 +1517,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
   if (blacklist.len())
     initParams.blacklist <- blacklist
 
-  ::create_room(initParams, function(p) { ::SessionLobby.afterRoomCreation(p) })
+  requestCreateRoom(initParams, function(p) { ::SessionLobby.afterRoomCreation(p) })
   this.switchStatus(lobbyStates.CREATING_ROOM)
   return true
 }
@@ -1532,7 +1534,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
   }
 
   this.isEventRoom = true
-  ::create_room(params, function(p) { ::SessionLobby.afterRoomCreation(p) })
+  requestCreateRoom(params, function(p) { ::SessionLobby.afterRoomCreation(p) })
   this.switchStatus(lobbyStates.CREATING_ROOM)
   return true
 }
@@ -1555,7 +1557,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
   if (!this.isRoomOwner)
     return
 
-  ::destroy_room({ roomId = this.roomId }, function(_p) {})
+  requestDestroyRoom({ roomId = this.roomId }, function(_p) {})
   ::SessionLobby.afterLeaveRoom({})
 }
 
@@ -1565,7 +1567,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
     return
   }
 
-  ::leave_room({}, function(_p) {
+  requestLeaveRoom({}, function(_p) {
       ::SessionLobby.afterLeaveRoom({})
    })
 }
@@ -1624,12 +1626,12 @@ let allowed_mission_settings = { //only this settings are allowed in room
     ""
 
   this.switchStatus(lobbyStates.JOINING_ROOM)
-  ::join_room(join_params, this.afterRoomJoining.bindenv(this))
+  requestJoinRoom(join_params, this.afterRoomJoining.bindenv(this))
 }
 
 ::SessionLobby.joinBattle <- function joinBattle(battleId) {
   ::queues.leaveAllQueuesSilent()
-  ::notify_queue_leave({})
+  notifyQueueLeave({})
   this.isRoomOwner = false
   this.isRoomByQueue = false
   this.sendJoinRoomRequest({ battleId = battleId })
@@ -1648,11 +1650,11 @@ let allowed_mission_settings = { //only this settings are allowed in room
     return
   }
 
-  this.isRoomOwner = ::is_my_userid(senderId)
+  this.isRoomOwner = isMyUserId(senderId)
   this.isRoomByQueue = senderId == null
 
   if (this.isRoomByQueue)
-    ::notify_queue_leave({})
+    notifyQueueLeave({})
   else
     ::queues.leaveAllQueuesSilent()
 
@@ -1709,7 +1711,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
   ::g_squad_utils.updateMyCountryData()
 
   let public = getTblValue("public", params, this.settings)
-  if (!this.isRoomOwner || ::u.isEmpty(this.settings)) {
+  if (!this.isRoomOwner || u.isEmpty(this.settings)) {
     this.setSettings(public)
 
     let mGameMode = this.getMGameMode()
@@ -1730,7 +1732,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
       this.updateMemberHostParams(this.members[i])
       this.members.remove(i)
     }
-    else if (::is_my_userid(this.members[i].userId))
+    else if (isMyUserId(this.members[i].userId))
         this.isRoomOwner = this.isMemberOperator(this.members[i])
 
   this.returnStatusToRoom()
@@ -1746,11 +1748,11 @@ let allowed_mission_settings = { //only this settings are allowed in room
         economicName = ::events.getEventEconomicName(event)
       })
 
-    ::broadcastEvent("AfterJoinEventRoom", event)
+    broadcastEvent("AfterJoinEventRoom", event)
   }
 
   if (this.isRoomOwner && get_game_mode() == GM_DYNAMIC && !dynamicMissionPlayed()) {
-    ::serialize_dyncampaign({ roomId = this.roomId },
+    serializeDyncampaign(
       function(p) {
         if (::checkMatchingError(p))
           ::SessionLobby.checkAutoStart()
@@ -1764,7 +1766,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
 
   last_round = getTblValue("last_round", public, true)
   this.setRoomInSession(this.isSessionStartedInRoom())
-  ::broadcastEvent("RoomJoined", params)
+  broadcastEvent("RoomJoined", params)
 }
 
 ::SessionLobby.returnStatusToRoom <- function returnStatusToRoom() {
@@ -1788,7 +1790,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
   }
 
   let params = { roomId = this.roomId, userId = uid, password = this.password }
-  ::invite_player_to_room(params, @(p) ::checkMatchingError(p, false))
+  invitePlayerToRoom(params, @(p) ::checkMatchingError(p, false))
 }
 
 ::SessionLobby.kickPlayer <- function kickPlayer(member) {
@@ -1797,7 +1799,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
 
   foreach (_idx, m in this.members)
     if (m.memberId == member.memberId)
-      ::kick_member({ roomId = this.roomId, memberId = member.memberId }, function(p) { ::checkMatchingError(p) })
+      kickMember({ roomId = this.roomId, memberId = member.memberId }, function(p) { ::checkMatchingError(p) })
 }
 
 ::SessionLobby.updateRoomAttributes <- function updateRoomAttributes(missionSettings) {
@@ -1808,7 +1810,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
 }
 
 ::SessionLobby.afterRoomUpdate <- function afterRoomUpdate(params) {
-  if (!::checkMatchingError(params))
+  if (!::checkMatchingError(params, false))
     return this.destroyRoom()
 
   this.roomUpdated = true
@@ -1914,7 +1916,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
   }
   log("start session")
 
-  ::room_start_session({ roomId = this.roomId, cluster = this.getPublicParam("cluster", "EU") },
+  roomStartSession({ roomId = this.roomId, cluster = this.getPublicParam("cluster", "EU") },
       function(p) {
         if (!::SessionLobby.isInRoom())
           return
@@ -1951,7 +1953,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
         this.leaveRoom()
 
     ::error_message_box("yn1/connect_error", errorCode,
-      [["ok", ::destroy_session_scripted]],
+      [["ok", @() ::destroy_session_scripted("on error message from host") ]],
       "ok",
       { saved = true })
   }
@@ -1969,7 +1971,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
       return
     }
   this.members.append(params)
-  ::broadcastEvent("LobbyMembersChanged")
+  broadcastEvent("LobbyMembersChanged")
   this.checkAutoStart()
 }
 
@@ -1980,7 +1982,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
   foreach (idx, m in this.members)
     if (params.memberId == m.memberId) {
       this.members.remove(idx)
-      if (::is_my_userid(m.userId)) {
+      if (isMyUserId(m.userId)) {
         this.afterLeaveRoom({})
         if (kicked) {
           if (!::isInMenu()) {
@@ -1993,7 +1995,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
                           { saved = true })
         }
       }
-      ::broadcastEvent("LobbyMembersChanged")
+      broadcastEvent("LobbyMembersChanged")
       break
     }
 }
@@ -2113,7 +2115,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
 }
 
 ::SessionLobby.canInvitePlayer <- function canInvitePlayer(uid) {
-  return this.isInRoom() && !::is_my_userid(uid) && this.haveLobby() && !this.isPlayerInMyRoom(uid)
+  return this.isInRoom() && !isMyUserId(uid) && this.haveLobby() && !this.isPlayerInMyRoom(uid)
 }
 
 ::SessionLobby.isPlayerInMyRoom <- function isPlayerInMyRoom(uid) {
@@ -2138,7 +2140,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
     if (member.online
         && member.isReady
         && !member.isMe()
-        && !::u.search(this.members, @(m) m.userId == uid)) {
+        && !u.search(this.members, @(m) m.userId == uid)) {
       this.invitePlayer(uid)
     }
 }
@@ -2152,7 +2154,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
 }
 
 ::SessionLobby.getMemberPlayerInfo <- function getMemberPlayerInfo(uid) {
-  return getTblValue(uid.tointeger(), this.playersInfo)
+  return this.playersInfo?[uid.tointeger()]
 }
 
 ::SessionLobby.getPlayersInfo <- function getPlayersInfo() {
@@ -2175,6 +2177,24 @@ let allowed_mission_settings = { //only this settings are allowed in room
   return memberInfo.team == myInfo.team && memberInfo.squad == myInfo.squad
 }
 
+::SessionLobby.isMemberInMySquadById <- function isMemberInMySquadById(userId) {
+  if (userId == null || userId == ::my_user_id_int64)
+    return false
+  if (!::SessionLobby.isInRoom())
+    return false
+
+  let myInfo = this.getMemberPlayerInfo(::my_user_id_int64)
+  if (myInfo == null || myInfo.squad == INVALID_SQUAD_ID)
+    return false
+
+  let memberInfo = this.getMemberPlayerInfo(userId)
+
+  if (memberInfo == null)
+    return false
+
+  return memberInfo.team == myInfo.team && memberInfo.squad == myInfo.squad
+}
+
 ::SessionLobby.isEqualSquadId <- function isEqualSquadId(squadId1, squadId2) {
   return squadId1 != INVALID_SQUAD_ID && squadId1 == squadId2
 }
@@ -2183,11 +2203,11 @@ let allowed_mission_settings = { //only this settings are allowed in room
   let craftsInfo = member?.crafts_info
   if (craftsInfo == null)
     return null
-  let difficulty = ::is_in_flight() ? ::get_mission_difficulty_int() : ::get_current_shop_difficulty().diffCode
+  let difficulty = ::is_in_flight() ? get_mission_difficulty_int() : ::get_current_shop_difficulty().diffCode
   let units = []
   foreach (unitInfo in craftsInfo) {
     let unitName = unitInfo.name
-    let unit = ::getAircraftByName(unitName)
+    let unit = getAircraftByName(unitName)
     if (esUnitTypeFilter != null && esUnitTypeFilter != unit.esUnitType)
       continue
 
@@ -2207,7 +2227,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
  * Returns false for non player's (random, etc.) units available for spawn.
  */
 ::SessionLobby.isUsedPlayersOwnUnit <- function isUsedPlayersOwnUnit(member, unitId) {
-  return ::u.search(member?.crafts_info ?? [], @(ci) ci.name == unitId) != null
+  return u.search(member?.crafts_info ?? [], @(ci) ci.name == unitId) != null
 }
 
 /**
@@ -2376,7 +2396,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
   if (isCustomGameModeAllowed && (CUSTOM_GAMEMODE_KEY in room))
     return room._customGameMode
 
-  let mGameMode = ::g_matching_game_modes.getModeById(mGameModeId)
+  let mGameMode = getModeById(mGameModeId)
   if (isCustomGameModeAllowed && room && mGameMode && ::events.isCustomGameMode(mGameMode)) {
     let customGameMode = clone mGameMode
     foreach (team in ::g_team.getTeams())
@@ -2389,8 +2409,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
 }
 
 ::SessionLobby.getRoomEvent <- function getRoomEvent(room = null) {
-  let mGameMode = this.getMGameMode(room)
-  return mGameMode && ::events.getEvent(mGameMode.name)
+  return ::events.getEvent(this.getPublicData(room)?.game_mode_name)
 }
 
 ::SessionLobby.getMaxDisbalance <- function getMaxDisbalance() {
@@ -2469,7 +2488,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
 }
 
 ::SessionLobby.joinEventSession <- function joinEventSession(needLeaveRoomOnError = false, params = null) {
-  ::matching_api_func("mrooms.join_session",
+  matchingApiFunc("mrooms.join_session",
     function(params) {
       if (!::checkMatchingError(params) && needLeaveRoomOnError)
         this.leaveRoom()
@@ -2480,7 +2499,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
 
 ::SessionLobby.leaveEventSessionWithRetry <- function leaveEventSessionWithRetry() {
   this.isLeavingLobbySession = true
-  ::matching_api_func("mrooms.leave_session",
+  matchingApiFunc("mrooms.leave_session",
     function(params) {
       // there is a some lag between actual disconnect from host and disconnect detection
       // just try to leave until host says that player is not in session anymore
@@ -2488,7 +2507,7 @@ let allowed_mission_settings = { //only this settings are allowed in room
         ::g_delayed_actions.add(this.leaveEventSessionWithRetry.bindenv(this), 1000)
       else {
         this.isLeavingLobbySession = false
-        ::broadcastEvent("LobbyStatusChange")
+        broadcastEvent("LobbyStatusChange")
       }
     }.bindenv(this))
 }
@@ -2502,17 +2521,13 @@ let allowed_mission_settings = { //only this settings are allowed in room
 }
 
 ::web_rpc.register_handler("join_battle", ::SessionLobby.rpcJoinBattle)
-::g_script_reloader.registerPersistentDataFromRoot("SessionLobby")
-::subscribe_handler(::SessionLobby, ::g_listener_priority.DEFAULT_HANDLER)
+registerPersistentDataFromRoot("SessionLobby")
+subscribe_handler(::SessionLobby, ::g_listener_priority.DEFAULT_HANDLER)
 
-foreach (notificationName, callback in
-  {
-    ["match.notify_wait_for_session_join"] = @(_params) ::SessionLobby.setWaitForQueueRoom(true),
-
-    ["match.notify_join_session_aborted"] = @(_params) ::SessionLobby.leaveWaitForQueueRoom()
-  }
-)
-  ::matching_rpc_subscribe(notificationName, callback)
+matchingRpcSubscribe("match.notify_wait_for_session_join",
+  @(_) ::SessionLobby.setWaitForQueueRoom(true))
+matchingRpcSubscribe("match.notify_join_session_aborted",
+  @(_) ::SessionLobby.leaveWaitForQueueRoom())
 
 ecs.register_es("on_connected_to_server_es", {
   [EventOnConnectedToServer] = function() {
@@ -2532,7 +2547,7 @@ ecs.register_es("on_connected_to_server_es", {
 ::on_connection_failed <- function on_connection_failed(text) {
   if (!::SessionLobby.isInRoom())
     return
-  ::destroy_session()
+  ::destroy_session_scripted("on_connection_failed")
   ::SessionLobby.leaveRoom()
   ::showInfoMsgBox(text, "on_connection_failed")
 }

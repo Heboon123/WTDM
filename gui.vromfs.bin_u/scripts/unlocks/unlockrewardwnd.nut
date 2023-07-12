@@ -1,9 +1,9 @@
 //checked for plus_string
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 from "%scripts/dagui_library.nut" import *
+let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
+
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { getDecoratorDataToUse, useDecorator } = require("%scripts/customization/contentPreview.nut")
 let { getUnlockTypeText } = require("%scripts/unlocks/unlocksViewModule.nut")
@@ -38,7 +38,6 @@ register_command(
   decorator = null
   decoratorUnit = null
   decoratorSlot = -1
-  unit = null
 
   function initScreen() {
     this.processConfigsArray()
@@ -79,30 +78,18 @@ register_command(
   }
 
   function checkConfigsArray() {
-    let units = []
     let decors = []
 
     foreach (unlock in this.unlocks) {
       let unlockType = ::g_unlock_view.getUnlockType(unlock)
-      if (unlockType == UNLOCKABLE_AIRCRAFT)
-        units.append(::getAircraftByName(unlock.id))
-      else if (unlockType == UNLOCKABLE_DECAL
+      if (unlockType == UNLOCKABLE_DECAL
         || unlockType == UNLOCKABLE_SKIN
         || unlockType == UNLOCKABLE_ATTACHABLE)
         decors.append({ unlockId = unlock.id unlockType = unlockType })
     }
 
-    if (units.len() > 1)
-      return
-    if (units.len() == 0 && decors.len() != 1)
-      return
-    if (units.len() == 1 && units[0].isUsable() && !::isUnitInSlotbar(units[0])) {
-      this.unit = units[0]
-      this.showSceneBtn("btn_take_air", true)
-    }
-    else if (units.len() == 0 && decors.len() == 1) {
+    if (decors.len() == 1)
       this.updateResourceData(decors[0].unlockId, decors[0].unlockType)
-    }
   }
 
   function updateResourceData(resource, resourceType) {
@@ -120,20 +107,7 @@ register_command(
     }
   }
 
-  function onTakeNavBar() {
-    if (!this.unit)
-      return
-
-    this.onTake(this.unit)
-  }
-
-  function onTake(unitToTake) {
-    base.onTake(unitToTake, {
-      cellClass = "slotbarClone"
-      isNewUnit = true
-      afterSuccessFunc = Callback(@() this.goBack(), this)
-    })
-  }
+  onTakeNavBar = @() null
 
   function setTitle() {
     let title = this.getTitle()
@@ -227,8 +201,8 @@ register_command(
     if (layersData == "")
       return ""
 
-    let layerCfg = ::LayersIcon.findLayerCfg("item_place_container")
-    let res = ::LayersIcon.genDataFromLayer(layerCfg, layersData)
+    let layerCfg = LayersIcon.findLayerCfg("item_place_container")
+    let res = LayersIcon.genDataFromLayer(layerCfg, layersData)
     return res
   }
 
@@ -266,10 +240,10 @@ register_command(
   onPreviewDecorator = @() null
 
   function getImageLayer(unlock, config) {
-    let imageLayer = ::LayersIcon.getIconData(unlock?.iconStyle ?? "", unlock?.descrImage ?? "")
+    let imageLayer = LayersIcon.getIconData(unlock?.iconStyle ?? "", unlock?.descrImage ?? "")
     let tooltipConfig = ::PrizesView.getPrizeTooltipConfig(config)
 
-    return ::handyman.renderCached(("%gui/items/item.tpl"), { items = [tooltipConfig.__update({
+    return handyman.renderCached(("%gui/items/item.tpl"), { items = [tooltipConfig.__update({
       layered_image = imageLayer,
       hasFocusBorder = true })] })
   }

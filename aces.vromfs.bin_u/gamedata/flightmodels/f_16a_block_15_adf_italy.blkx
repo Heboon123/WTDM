@@ -5,6 +5,7 @@
   "viewDistKInSight": 6.0,
   "gearSinkRangeLR": 0.178,
   "gearSinkRangeC": 0.164,
+  "gyroSight": true,
   "haveCCIPForGun": true,
   "haveCCRPForGun": true,
   "ilsMarconiAvionics": true,
@@ -13,7 +14,6 @@
   "afterburnerExhaustFxType": "jet_afterburner_exhaust",
   "startExhaustFxType": "jet_start_exhaust",
   "disableExhaustFxIfContrailIsActive": true,
-  "gyroscopicSightOverSensors": true,
   "type": "typeFighter",
   "advancedInstructor": true,
   "advancedMouseAim": true,
@@ -395,6 +395,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -405,6 +421,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -602,6 +634,14 @@
           }
         },
         {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
+          }
+        },
+        {
           "onKill": {
             "wingcontrol_l_dm": 1.0,
             "wingcontrol_r_dm": 1.0,
@@ -647,6 +687,14 @@
             "wing_l_dm": 1.0,
             "wing_r_dm": 1.0
           }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
+          }
         }
       ]
     },
@@ -677,6 +725,14 @@
           "onHit": {
             "damage": 50.0,
             "tail_dm": 1.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
           }
         },
         {
@@ -732,6 +788,14 @@
             "damage": 50.0,
             "tail_dm": 1.0,
             "nothing": 1.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
           }
         }
       ]
@@ -2343,24 +2407,14 @@
     },
     "multifunctionDisplays": [
       {
-        "display": [
-          {
-            "textureArea": [0.0,0.0,0.5,0.5]
-          },
-          {
-            "page": {
-              "type": "radar",
-              "radarScale": 0.81,
-              "hideRadarBackground": true
-            }
-          },
-          {
-            "page": {
-              "type": "target_tracking",
-              "turretIdx": 0
-            }
+        "display": {
+          "textureArea": [0.0,0.0,0.5,0.5],
+          "page": {
+            "type": "radar",
+            "radarScale": 0.81,
+            "hideRadarBackground": true
           }
-        ]
+        }
       },
       {
         "display": {
@@ -2379,7 +2433,8 @@
             "ilsSize": [0.2,0.2],
             "ilsOffsetForce": 0.0,
             "brightnessMult": 3.5,
-            "ilsColor": "#0aff0a64"
+            "ilsColor": "#0aff0a64",
+            "lineWidthScale": 0.5
           }
         }
       }
@@ -2550,16 +2605,14 @@
       ]
     },
     {
-      "WeaponSlot": [
-        {
-          "index": 0
-        },
-        {
-          "notUseforDisbalanceCalculation": true
-        },
-        {
-          "WeaponPreset": {
-            "name": "m61a1_common",
+      "WeaponSlot": {
+        "index": 0,
+        "notUseforDisbalanceCalculation": true,
+        "WeaponPreset": [
+          {
+            "name": "m61a1_common"
+          },
+          {
             "Weapon": {
               "trigger": "cannon",
               "blk": "gameData/Weapons/cannonM61A1.blk",
@@ -2572,52 +2625,31 @@
               "traceOffset": 1,
               "rotationAnimScale": "gun_rotate_01:CRS"
             }
-          }
-        },
-        {
-          "WeaponPreset": [
-            {
-              "name": "m61a1_ltc_common"
-            },
-            {
-              "Weapon": {
-                "trigger": "cannon",
-                "blk": "gameData/Weapons/cannonM61A1.blk",
-                "emitter": "flare1",
-                "flash": "flare1",
-                "dm": "cannon1_dm",
-                "bullets": 512,
-                "light": false,
-                "spread": 1.2,
-                "traceOffset": 1,
-                "rotationAnimScale": "gun_rotate_01:CRS"
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "countermeasures",
-                "startFx": "",
-                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
-                "emitter": "emtr_flare1",
-                "bullets": 30,
-                "external": true,
-                "separate": true
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "countermeasures",
-                "startFx": "",
-                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
-                "emitter": "emtr_flare2",
-                "bullets": 30,
-                "external": true,
-                "separate": true
-              }
+          },
+          {
+            "Weapon": {
+              "trigger": "countermeasures",
+              "startFx": "",
+              "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
+              "emitter": "emtr_flare1",
+              "bullets": 30,
+              "external": true,
+              "separate": true
             }
-          ]
-        }
-      ]
+          },
+          {
+            "Weapon": {
+              "trigger": "countermeasures",
+              "startFx": "",
+              "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
+              "emitter": "emtr_flare2",
+              "bullets": 30,
+              "external": true,
+              "separate": true
+            }
+          }
+        ]
+      }
     },
     {
       "WeaponSlot": {
@@ -2950,15 +2982,7 @@
       "turn_it_off": false,
       "invertEnableLogic": false,
       "group": "countermeasures",
-      "tier": 1,
-      "effects": {
-        "commonWeapons": {
-          "Weapon": {
-            "slot": 0,
-            "preset": "m61a1_ltc_common"
-          }
-        }
-      }
+      "tier": 1
     },
     "f_4c_g_suit": {
       "prevModification": "countermeasures_belt_pack",

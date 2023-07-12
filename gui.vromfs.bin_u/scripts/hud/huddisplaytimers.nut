@@ -1,15 +1,14 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let { get_time_msec } = require("dagor.time")
 let { fabs } = require("math")
 let SecondsUpdater = require("%sqDagui/timer/secondsUpdater.nut")
 let time = require("%scripts/time.nut")
 let { MISSION_CAPTURE_ZONE_START, MISSION_CAPTURING_ZONE } = require("guiMission")
+let { get_local_mplayer } = require("mission")
 
 let REPAIR_SHOW_TIME_THRESHOLD = 1.5
 
@@ -171,7 +170,7 @@ let REPAIR_SHOW_TIME_THRESHOLD = 1.5
 
     this.unitType = v_unitType
     this.guiScene = this.scene.getScene()
-    let blk = ::handyman.renderCached("%gui/hud/hudDisplayTimers.tpl", this.getViewData())
+    let blk = handyman.renderCached("%gui/hud/hudDisplayTimers.tpl", this.getViewData())
     this.guiScene.replaceContentFromText(this.scene, blk, blk.len(), this)
 
     ::g_hud_event_manager.subscribe("TankDebuffs:Rearm", this.onRearm, this)
@@ -198,13 +197,13 @@ let REPAIR_SHOW_TIME_THRESHOLD = 1.5
 
     ::g_hud_event_manager.subscribe("zoneCapturingEvent", this.onZoneCapturingEvent, this)
 
-    if (getTblValue("isDead", ::get_local_mplayer(), false))
+    if (getTblValue("isDead", get_local_mplayer(), false))
       this.clearAllTimers()
   }
 
 
   function reinit() {
-    if (getTblValue("isDead", ::get_local_mplayer(), false))
+    if (getTblValue("isDead", get_local_mplayer(), false))
       this.clearAllTimers()
   }
 
@@ -289,7 +288,7 @@ let REPAIR_SHOW_TIME_THRESHOLD = 1.5
 
     let timebarObj = placeObj.findObject("timer")
     ::g_time_bar.setPeriod(timebarObj, newStateData.totalHealingTime + 1)
-    ::g_time_bar.setCurrentTime(timebarObj, newStateData.totalHealingTime - newStateData.timeToHeal)
+    ::g_time_bar.setCurrentTime(timebarObj, newStateData.totalHealingTime - (newStateData?.currentHealingTime ?? 0)) //compatibility 21.03.2023
   }
 
 
@@ -366,7 +365,7 @@ let REPAIR_SHOW_TIME_THRESHOLD = 1.5
       iconObj.wink = "no"
       ::g_time_bar.setDirectionForward(timebarObj)
       let createTime = get_time_msec()
-      this.repairUpdater = SecondsUpdater(timeTextObj, (@(debuffs_data, createTime) function(obj, _p) {
+      this.repairUpdater = SecondsUpdater(timeTextObj, function(obj, _p) {
         let curTime = get_time_msec()
         let timeToShowSeconds = debuffs_data.time - time.millisecondsToSeconds(curTime - createTime)
         if (timeToShowSeconds < 0)
@@ -374,7 +373,7 @@ let REPAIR_SHOW_TIME_THRESHOLD = 1.5
 
         obj.setValue(timeToShowSeconds.tointeger().tostring())
         return false
-      })(debuffs_data, createTime))
+      })
     }
 
     ::g_time_bar.setPeriod(timebarObj, debuffs_data.time)
@@ -471,7 +470,7 @@ let REPAIR_SHOW_TIME_THRESHOLD = 1.5
       iconObj.wink = "no"
       ::g_time_bar.setDirectionForward(timebarObj)
       let createTime = get_time_msec()
-      this.repairBreachesUpdater = SecondsUpdater(timeTextObj, (@(debuffs_data, createTime) function(obj, _p) {
+      this.repairBreachesUpdater = SecondsUpdater(timeTextObj, function(obj, _p) {
         let curTime = get_time_msec()
         let timeToShowSeconds = debuffs_data.time - time.millisecondsToSeconds(curTime - createTime)
         if (timeToShowSeconds < 0)
@@ -479,7 +478,7 @@ let REPAIR_SHOW_TIME_THRESHOLD = 1.5
 
         obj.setValue(timeToShowSeconds.tointeger().tostring())
         return false
-      })(debuffs_data, createTime))
+      })
     }
 
     ::g_time_bar.setPeriod(timebarObj, debuffs_data.time)
@@ -549,7 +548,7 @@ let REPAIR_SHOW_TIME_THRESHOLD = 1.5
       iconObj.wink = "no"
       ::g_time_bar.setDirectionForward(timebarObj)
       let createTime = get_time_msec()
-      this.extinguishUpdater = SecondsUpdater(timeTextObj, (@(debuffs_data, createTime) function(obj, _p) {
+      this.extinguishUpdater = SecondsUpdater(timeTextObj, function(obj, _p) {
         let curTime = get_time_msec()
         let timeToShowSeconds = debuffs_data.time - time.millisecondsToSeconds(curTime - createTime)
         if (timeToShowSeconds < 0)
@@ -557,7 +556,7 @@ let REPAIR_SHOW_TIME_THRESHOLD = 1.5
 
         obj.setValue(timeToShowSeconds.tointeger().tostring())
         return false
-      })(debuffs_data, createTime))
+      })
     }
 
     ::g_time_bar.setPeriod(timebarObj, debuffs_data.time)

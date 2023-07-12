@@ -1,12 +1,10 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 
 let { get_time_msec } = require("dagor.time")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let DataBlock = require("DataBlock")
 let avatars = require("%scripts/user/avatars.nut")
 let { setTimeout, clearTimer } = require("dagor.workcycle")
@@ -31,7 +29,7 @@ enum userInfoEventName {
 }
 
 let MIN_TIME_BETWEEN_SAME_REQUESTS_MSEC = 300000
-let MAX_REQUESTED_UID_NUM = 4
+let MAX_REQUESTED_UID_NUM = 100
 let usersInfo = {}
 let usersForRequest = {}
 local haveRequest = false
@@ -75,17 +73,18 @@ let function _requestDataCommonSuccessCallback(response) {
   }
 
   if (isUpdated)
-    ::broadcastEvent(userInfoEventName.UPDATED, { usersInfo = response })
+    broadcastEvent(userInfoEventName.UPDATED, { usersInfo = response })
 }
 
 let function _convertServerResponse(response) {
   let res = {}
   foreach (uid, userInfo in response) {
-    let pilotId = userInfo?.pilotId ?? ""
+    if (userInfo?.failed)
+      continue
     let convertedData = {
       uid = uid
       name = userInfo?.nick ?? ""
-      pilotIcon = avatars.getIconById(pilotId)
+      pilotIcon = avatars.getIconById(userInfo?.pilotId ?? "")
       title = userInfo?.title ?? ""
       clanTag =  userInfo?.clanTag ?? ""
       clanName =  userInfo?.clanName ?? ""
@@ -123,7 +122,7 @@ let function requestUsersInfo(users, successCb = null, errorCb = null) {
   if (fastResponse != null && successCb != null)
     return successCb(fastResponse)
 
-  let usersList = ::g_string.implode(users, ";")
+  let usersList = ";".join(users, true)
 
   let requestBlk = DataBlock()
   requestBlk.setStr("usersList", usersList)

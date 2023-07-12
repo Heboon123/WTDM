@@ -1,15 +1,15 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
+let { subscribe_handler } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { subscribe } = require("eventbus")
 let DataBlock = require("DataBlock")
 let { get_blk_value_by_path, blkOptFromPath } = require("%sqStdLibs/helpers/datablockUtils.nut")
 let SecondsUpdater = require("%sqDagui/timer/secondsUpdater.nut")
-let hudElementsAabb = require("%scripts/hud/hudElementsAabb.nut")
-let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { getHudElementAabb } = require("%scripts/hud/hudElementsAabb.nut")
+let { registerPersistentDataFromRoot, PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 
 ::g_hud_tutorial_elements <- {
   [PERSISTENT_DATA_PARAMS] = ["visibleHTObjects", "isDebugMode", "debugBlkName"]
@@ -45,7 +45,7 @@ let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReload
   if (!this.active)
     return
 
-  if (::u.isEmpty(blkOptFromPath(blkPath))) {
+  if (u.isEmpty(blkOptFromPath(blkPath))) {
     let msg = $"Hud_tutorial_elements: blk file is empty. (blkPath = {blkPath})"
     log(msg)
     assert(false, msg)
@@ -69,10 +69,6 @@ let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReload
 
   if (this.isDebugMode)
     this.addDebugTimer()
-  else
-    ::g_hud_event_manager.subscribe("hudElementShow", function(data) {
-      this.onElementToggle(data)
-    }, this)
 }
 
 ::g_hud_tutorial_elements.initNestObjects <- function initNestObjects() {
@@ -93,7 +89,7 @@ let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReload
 
   let fullMisBlk = misBlk?.mis_file ? blkOptFromPath(misBlk.mis_file) : null
   let res = fullMisBlk  && get_blk_value_by_path(fullMisBlk, "mission_settings/mission/tutorialObjectsFile")
-  return ::u.isString(res) ? res : null
+  return u.isString(res) ? res : null
 }
 
 ::g_hud_tutorial_elements.reinit <- function reinit() {
@@ -166,7 +162,7 @@ let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReload
 }
 
 ::g_hud_tutorial_elements.getAABB <- function getAABB(name) {
-  return hudElementsAabb(name)
+  return getHudElementAabb(name)
 }
 
 ::g_hud_tutorial_elements.refreshObjects <- function refreshObjects() {
@@ -238,12 +234,14 @@ let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReload
   if (blkName == "")
     blkName = this.getBlkNameByCurMission()
 
-  this.isDebugMode = ::u.isString(blkName) && blkName.len()
+  this.isDebugMode = u.isString(blkName) && blkName.len()
   this.debugBlkName = blkName
   this.debugLastModified = -1
   this.init(this.nest)
   return this.debugBlkName
 }
 
-::g_script_reloader.registerPersistentDataFromRoot("g_hud_tutorial_elements")
-::subscribe_handler(::g_hud_tutorial_elements, ::g_listener_priority.DEFAULT_HANDLER)
+registerPersistentDataFromRoot("g_hud_tutorial_elements")
+subscribe_handler(::g_hud_tutorial_elements, ::g_listener_priority.DEFAULT_HANDLER)
+subscribe("hudElementShow", @(data) ::g_hud_tutorial_elements.onElementToggle(data))
+

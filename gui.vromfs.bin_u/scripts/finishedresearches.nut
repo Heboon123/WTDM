@@ -1,19 +1,18 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let prepareUnitsForPurchaseMods = require("%scripts/weaponry/prepareUnitsForPurchaseMods.nut")
+let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
+let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
 ::researched_items_table <- null
 ::abandoned_researched_items_for_session <- []
 ::researchedModForCheck <- "prevMod"
 ::researchedUnitForCheck <- "prevUnit"
 
-::g_script_reloader.registerPersistentData("finishedResearchesGlobals", getroottable(),
+registerPersistentData("finishedResearchesGlobals", getroottable(),
   ["researched_items_table", "abandoned_researched_items_for_session"])
 
 let isResearchForModification = @(research)
@@ -28,7 +27,7 @@ let getUnitNameFromResearchItem = @(research)
     ::gui_start_modal_wnd(::gui_handlers.researchUnitNotification, { researchBlock = researchBlock })
   }
   else {
-    let unit = ::getAircraftByName(getUnitNameFromResearchItem(researchBlock))
+    let unit = getAircraftByName(getUnitNameFromResearchItem(researchBlock))
     ::open_weapons_for_unit(unit, { researchMode = true, researchBlock = researchBlock })
   }
 }
@@ -87,7 +86,7 @@ let function removeResearchBlock(researchBlock) {
 
   for (local i = ::researched_items_table.len() - 1; i >= 0; --i) {
     if (isResearchAbandoned(::researched_items_table[i]) ||
-      !::getAircraftByName(getUnitNameFromResearchItem(::researched_items_table[i]))?.unitType.isAvailable()
+      !getAircraftByName(getUnitNameFromResearchItem(::researched_items_table[i]))?.unitType.isAvailable()
     )
       removeResearchBlock(::researched_items_table[i])
   }
@@ -100,10 +99,9 @@ let function removeResearchBlock(researchBlock) {
       continue
 
     if (isResearchForModification(research)) {
-      let unit = ::getAircraftByName(getUnitNameFromResearchItem(research))
-      ::add_big_query_record("completed_new_research_modification",
-        ::save_to_json({ unit = unit.name
-          modification = research.name }))
+      let unit = getAircraftByName(getUnitNameFromResearchItem(research))
+      sendBqEvent("CLIENT_GAMEPLAY_1", "completed_new_research_modification",{ unit = unit.name
+        modification = research.name })
       ::shop_set_researchable_unit_module(unit.name, "")
       prepareUnitsForPurchaseMods.addUnit(unit)
     }
@@ -150,7 +148,7 @@ let function removeResearchBlock(researchBlock) {
     }
 
     let unitName = getTblValue(::researchedUnitForCheck, this.researchBlock)
-    this.unit = ::getAircraftByName(unitName)
+    this.unit = getAircraftByName(unitName)
     if (!this.unit) {
       this.goBack()
       return

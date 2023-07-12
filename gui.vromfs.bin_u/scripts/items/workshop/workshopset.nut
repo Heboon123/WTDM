@@ -1,15 +1,15 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let DataBlock  = require("DataBlock")
+let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { format } = require("string")
 let workshopCraftTree = require("workshopCraftTree.nut")
 let { hasAllFeatures } = require("%scripts/user/features.nut")
 let { getTimestampFromStringUtc } = require("%scripts/time.nut")
+let { startsWith } = require("%sqstd/string.nut")
 
 const KNOWN_ITEMS_SAVE_ID = "workshop/known"
 const KNOWN_REQ_ITEMS_SAVE_ID = "workshop/knownReqItems"
@@ -95,7 +95,7 @@ local WorkshopSet = class {
     if (this.hasSubsets)
       this.curSubsetId = ::load_local_account_settings(CURRENT_SUBSET_SAVE_PATH + this.id, firstSubsetId)
 
-    ::subscribe_handler(this, ::g_listener_priority.CONFIG_VALIDATION)
+    subscribe_handler(this, ::g_listener_priority.CONFIG_VALIDATION)
     this.checkForcedDisplayTime(blk?.forcedDisplayWithoutFeature)
   }
 
@@ -110,12 +110,12 @@ local WorkshopSet = class {
   isVisibleSubsetId         = @(subsetId) this.subsetsList?[subsetId] != null && this.isVisibleSubset(this.subsetsList[subsetId])
 
   isItemInSet               = @(item) item.id in this.itemdefs
-  isItemIdInSet             = @(id) id in this.itemdefs
-  isItemIdHidden            = @(id) (this.itemdefs[id].blockNumber in this.hiddenItemsBlocks)
-                                || (this.hasSubsets && !this.isVisibleSubsetId(this.itemdefs[id].subsetId))
-  isVisibleOnlyInCraftTree  = @(id) this.itemsVisibleOnlyInCraftTree?[id] != null
-  isItemIdKnown             = @(id) this.initKnownItemsOnce() || id in this.knownItemdefs
-  isReqItemIdKnown          = @(id) id in this.knownReqItemdefs
+  isItemIdInSet             = @(item_id) item_id in this.itemdefs
+  isItemIdHidden            = @(item_id) (this.itemdefs[item_id].blockNumber in this.hiddenItemsBlocks)
+                                || (this.hasSubsets && !this.isVisibleSubsetId(this.itemdefs[item_id].subsetId))
+  isVisibleOnlyInCraftTree  = @(item_id) this.itemsVisibleOnlyInCraftTree?[item_id] != null
+  isItemIdKnown             = @(item_id) this.initKnownItemsOnce() || item_id in this.knownItemdefs
+  isReqItemIdKnown          = @(item_id) item_id in this.knownReqItemdefs
   shouldDisguiseItem        = @(item) !(item.id in this.alwaysVisibleItemdefs) && !this.isItemIdKnown(item.id)
     && !item?.itemDef?.tags?.alwaysKnownItem
 
@@ -133,7 +133,7 @@ local WorkshopSet = class {
     foreach (reqItems in itemsBlk % "reqItems") {
       let itemsTbl = {}
       foreach (reqId in reqItems.split(",")) {
-        let needHave = !::g_string.startsWith(reqId, "!") // true = need to have, false = need to NOT have.
+        let needHave = !startsWith(reqId, "!") // true = need to have, false = need to NOT have.
         let itemId = reqId.slice(needHave ? 0 : 1).tointeger()
 
         itemsTbl[itemId] <- needHave
@@ -392,7 +392,7 @@ local WorkshopSet = class {
   _tostring        = @() format("WorkshopSet %s (itemdefsAmount = %d)", this.id, this.itemdefs.len())
 
   isVisibleCraftTree = @(craftTree) hasAllFeatures(craftTree.reqFeaturesArr)
-  getCraftTree       = @() ::u.search(this.craftTrees, this.isVisibleCraftTree.bindenv(this))
+  getCraftTree       = @() u.search(this.craftTrees, this.isVisibleCraftTree.bindenv(this))
 
   function getItemsListForCraftTree(craftTree) {
     let itemDefIds = craftTree.craftTreeItemsIdArray
@@ -447,7 +447,7 @@ local WorkshopSet = class {
       return null
 
     foreach (subset in this.subsetsList)
-      if (this.isVisibleSubset(subset) && ::u.search(subset.items, @(i) i == itemId) != null)
+      if (this.isVisibleSubset(subset) && u.search(subset.items, @(i) i == itemId) != null)
         return subset.id
 
     return null
@@ -549,7 +549,7 @@ local WorkshopSet = class {
       this.isForcedDisplayByDate = true
       ::g_delayed_actions.add(Callback(function() {
           this.isForcedDisplayByDate = false
-          ::broadcastEvent("WorkshopAvailableChanged")
+          broadcastEvent("WorkshopAvailableChanged")
         }, this), (endTime - currentTime) * 1000)
 
       return
@@ -557,7 +557,7 @@ local WorkshopSet = class {
 
     ::g_delayed_actions.add(Callback(function() {
         this.isForcedDisplayByDate = true
-        ::broadcastEvent("WorkshopAvailableChanged")
+        broadcastEvent("WorkshopAvailableChanged")
       }, this), (startTime - currentTime) * 1000)
   }
 }

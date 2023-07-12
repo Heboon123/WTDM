@@ -1,10 +1,10 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
+let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { sessionsListBlkPath } = require("%scripts/matchingRooms/getSessionsListBlkPath.nut")
 let fillSessionInfo = require("%scripts/matchingRooms/fillSessionInfo.nut")
 let { suggestAndAllowPsnPremiumFeatures } = require("%scripts/user/psnFeatures.nut")
@@ -22,7 +22,7 @@ let { get_game_mode } = require("mission")
 
 ::back_sessions_func <- ::gui_start_mainmenu
 
-::g_script_reloader.registerPersistentData("SessionsList", getroottable(), ["match_search_gm"])
+registerPersistentData("SessionsList", getroottable(), ["match_search_gm"])
 
 ::gui_start_session_list <- function gui_start_session_list(prev_scene_func = null) {
   if (prev_scene_func)
@@ -333,7 +333,7 @@ let { get_game_mode } = require("mission")
     for (local i = start; i < end; i++) {
       let room = this.roomsList[i]
       this.curPageRoomsList.append(room)
-      if (selectedRow < 0 && ::u.isEqual(room, selectedRoom))
+      if (selectedRow < 0 && u.isEqual(room, selectedRoom))
          selectedRow = this.curPageRoomsList.len() - 1
     }
     if (selectedRow < 0 && this.curPageRoomsList.len())
@@ -417,9 +417,7 @@ let { get_game_mode } = require("mission")
       )
       return
 
-    this.checkedNewFlight((@(room) function() {
-      ::SessionLobby.joinFoundRoom(room)
-    })(room))
+    this.checkedNewFlight(@() ::SessionLobby.joinFoundRoom(room))
   }
 
   function onVehiclesInfo(_obj) {
@@ -435,14 +433,14 @@ let { get_game_mode } = require("mission")
 
   if (obj.childrenCount() != shopCountriesList.len()) {
     let view = {
-      countries = ::u.map(shopCountriesList, function (countryName) {
+      countries = u.map(shopCountriesList, function (countryName) {
         return {
           countryName = countryName
           countryIcon = ::get_country_icon(countryName)
         }
       })
     }
-    let markup = ::handyman.renderCached("%gui/countriesList.tpl", view)
+    let markup = handyman.renderCached("%gui/countriesList.tpl", view)
     obj.getScene().replaceContentFromText(obj, markup, markup.len(), handler)
   }
 

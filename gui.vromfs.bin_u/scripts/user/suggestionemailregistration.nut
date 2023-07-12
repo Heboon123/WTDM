@@ -1,9 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { openUrl } = require("%scripts/onlineShop/url.nut")
 let { isPlatformSony, isPlatformXboxOne, isPlatformPC
@@ -12,24 +9,33 @@ let { addPromoAction } = require("%scripts/promo/promoActions.nut")
 let { addPromoButtonConfig } = require("%scripts/promo/promoButtonsConfig.nut")
 let { havePlayerTag } = require("%scripts/user/userUtils.nut")
 let { register_command } = require("console")
-let { getPlayerSsoShortToken } = require("auth_wt")
+let { getPlayerSsoShortTokenAsync } = require("auth_wt")
 let { TIME_DAY_IN_SECONDS } = require("%scripts/time.nut")
+let { validateEmail } = require("%sqstd/string.nut")
+let { subscribe } = require("eventbus")
 
 let needShowGuestEmailRegistration = @() isPlatformPC && havePlayerTag("guestlogin")
 
-let function launchGuestEmailRegistration() {
+let function launchGuestEmailRegistration(stoken) {
   let language = ::g_language.getShortName()
-  let stoken = getPlayerSsoShortToken()
   let url = loc("url/pc_bind_url", { language, stoken })
   openUrl(url, false, false, "profile_page")
 }
+
+subscribe("onGetStokenForGuestEmail", function(msg) {
+  let { status, stoken = null } = msg
+  if (status != YU2_OK)
+    ::error_message_box("yn1/connect_error", status, [["ok"]], "ok")
+  else
+    launchGuestEmailRegistration(stoken)
+})
 
 let function showGuestEmailRegistration() {
   ::showUnlockWnd({
     name = loc("mainmenu/SteamEmailRegistration")
     desc = loc("mainmenu/guestEmailRegistration/desc")
     popupImage = "ui/images/invite_big?P1"
-    onOkFunc = launchGuestEmailRegistration
+    onOkFunc = @() getPlayerSsoShortTokenAsync("onGetStokenForGuestEmail")
     okBtnText = "msgbox/btn_bind"
   })
 }
@@ -110,19 +116,23 @@ let function checkShowPS4EmailRegistration() {
   })
 }
 
-let sendXboxEmailBind = @(val) ::xbox_link_email(val, function(status) {
-  ::g_popups.add("", colorize(
-    status == YU2_OK ? "activeTextColor" : "warningTextColor",
-    loc($"mainmenu/XboxOneEmailRegistration/result/{status}")
-  ))
-})
+let function sendXboxEmailBind(val) {
+  ::show_wait_screen("msgbox/please_wait")
+  ::xbox_link_email(val, function(status) {
+    ::close_wait_screen()
+    ::g_popups.add("", colorize(
+      status == YU2_OK ? "activeTextColor" : "warningTextColor",
+      loc($"mainmenu/XboxOneEmailRegistration/result/{status}")
+    ))
+  })
+}
 
 let function launchXboxEmailRegistration(override = {}) {
   ::gui_modal_editbox_wnd({
     leftAlignedLabel = true
     title = loc("mainmenu/XboxOneEmailRegistration")
     label = loc("mainmenu/XboxOneEmailRegistration/desc")
-    checkWarningFunc = ::g_string.validateEmail
+    checkWarningFunc = validateEmail
     allowEmpty = false
     needOpenIMEonInit = false
     editBoxEnableFunc = canEmailRegistration
@@ -201,5 +211,4 @@ return {
   needShowGuestEmailRegistration
   showGuestEmailRegistration
   checkShowGuestEmailRegistrationAfterLogin
-  launchGuestEmailRegistration
 }

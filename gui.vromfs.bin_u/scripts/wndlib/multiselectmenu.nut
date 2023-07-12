@@ -1,9 +1,9 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
+let { setPopupMenuPosAndAlign } = require("%sqDagui/daguiUtil.nut")
+let stdMath = require("%sqstd/math.nut")
+let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
 /*
   config = {
@@ -27,10 +27,6 @@ from "%scripts/dagui_library.nut" import *
     ]
   }
 */
-let stdMath = require("%sqstd/math.nut")
-let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-
-
 ::gui_start_multi_select_menu <- function gui_start_multi_select_menu(config) {
   ::handlersManager.loadHandler(::gui_handlers.MultiSelectMenu, config)
 }
@@ -69,7 +65,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     if (!this.list)
       return this.goBack()
 
-    this.align = ::g_dagui_utils.setPopupMenuPosAndAlign(this.alignObj, this.align, this.scene.findObject("main_frame"))
+    this.align = setPopupMenuPosAndAlign(this.alignObj, this.align, this.scene.findObject("main_frame"))
     this.guiScene.applyPendingChanges(false)
     ::move_mouse_on_child(this.scene.findObject("multi_select"), 0)
   }
@@ -90,7 +86,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
   function getCurValuesArray() {
     let selOptions = ::get_array_by_bit_value(this.currentBitMask, this.list)
-    return ::u.map(selOptions, function(o) { return getTblValue("value", o) })
+    return u.map(selOptions, function(o) { return getTblValue("value", o) })
   }
 
   function onChangeValue(obj) {

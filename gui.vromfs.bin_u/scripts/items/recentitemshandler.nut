@@ -1,13 +1,9 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { show_obj } = require("%sqDagui/daguiUtil.nut")
 let { getStringWidthPx } = require("%scripts/viewUtils/daguiFonts.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-
 let { addPromoButtonConfig } = require("%scripts/promo/promoButtonsConfig.nut")
 let { updateExpireAlarmIcon } = require("%scripts/items/itemVisual.nut")
 
@@ -55,7 +51,7 @@ let { updateExpireAlarmIcon } = require("%scripts/items/itemVisual.nut")
     this.recentItems = ::g_recent_items.getRecentItems()
     let isVisible = (!checkDefShow || this.defShow) && this.recentItems.len() > 0
       && ::ItemsManager.isEnabled() && ::isInMenu()
-    ::show_obj(this.scene, isVisible)
+    show_obj(this.scene, isVisible)
     this.wasShown = isVisible
     if (!isVisible)
       return
@@ -67,7 +63,7 @@ let { updateExpireAlarmIcon } = require("%scripts/items/itemVisual.nut")
     let otherItemsText = this.createOtherItemsText(this.numOtherItems)
     let view = {
       id = ::g_promo.getActionParamsKey(this.scene.id)
-      items = ::handyman.renderCached("%gui/items/item.tpl", this.createItemsView(this.recentItems))
+      items = handyman.renderCached("%gui/items/item.tpl", this.createItemsView(this.recentItems))
       otherItemsText = otherItemsText
       needAutoScroll = getStringWidthPx(otherItemsText, "fontNormal", this.guiScene)
         > to_pixels("1@arrowButtonWidth") ? "yes" : "no"
@@ -76,7 +72,7 @@ let { updateExpireAlarmIcon } = require("%scripts/items/itemVisual.nut")
       collapsedText = ::g_promo.getCollapsedText(promoView, this.scene.id)
       collapsedIcon = ::g_promo.getCollapsedIcon(promoView, this.scene.id)
     }
-    let blk = ::handyman.renderCached("%gui/items/recentItemsHandler.tpl", view)
+    let blk = handyman.renderCached("%gui/items/recentItemsHandler.tpl", view)
     this.guiScene.replaceContentFromText(this.scene, blk, blk.len(), this)
     this.scene.findObject("update_timer").setUserData(this)
   }
@@ -142,7 +138,7 @@ let { updateExpireAlarmIcon } = require("%scripts/items/itemVisual.nut")
     let isVisible = !::handlersManager.findHandlerClassInScene(::gui_handlers.EveryDayLoginAward)
       && !::handlersManager.findHandlerClassInScene(::gui_handlers.trophyRewardWnd)
       && ::g_recent_items.getRecentItems().len()
-    ::show_obj(this.scene, isVisible)
+    show_obj(this.scene, isVisible)
   }
 
   onEventActiveHandlersChanged = @(_p) this.updateVisibility()

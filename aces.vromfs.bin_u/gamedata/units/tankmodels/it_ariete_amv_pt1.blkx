@@ -453,7 +453,7 @@
       },
       "composite_screen": {
         "armorClass": "hull_side_special_armor",
-        "armorThickness": 20.0,
+        "armorThickness": 30.0,
         "hp": 800.0,
         "stopChanceOnDeadPart": 0.0,
         "createSecondaryShatters": false,
@@ -1926,6 +1926,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.4,
               "nothing": 0.6,
               "fHitCritical": true
@@ -3711,8 +3712,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -3861,6 +3862,34 @@
           {
             "point": {
               "nameTemplate": "bone_roll_10_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_11_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_11_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_12_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_12_02"
             }
           }
         ]
@@ -4777,6 +4806,15 @@
           "fx": {
             "name": "smoke_after_hit_tiny",
             "setOrientation": true
+          }
+        }
+      },
+      {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
           }
         }
       },

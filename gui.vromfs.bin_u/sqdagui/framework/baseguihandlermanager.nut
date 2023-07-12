@@ -1,5 +1,3 @@
-#explicit-this
-#no-root-fallback
 
 let { check_obj } = require("%sqDagui/daguiUtil.nut")
 let { format } = require("string")
@@ -7,9 +5,9 @@ let { handlerType } = require("handlerType.nut")
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
 let { get_time_msec } = require("dagor.time")
 let { debug_dump_stack } = require("dagor.debug")
-let { PERSISTENT_DATA_PARAMS, g_script_reloader } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { PERSISTENT_DATA_PARAMS, registerPersistentDataFromRoot } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
-let broadcastEvent = subscriptions.broadcast
+let { broadcastEvent } = subscriptions
 
 ::current_base_gui_handler <- null //active base handler in main gui scene
 ::always_reload_scenes <- false //debug only
@@ -61,8 +59,8 @@ let broadcastEvent = subscriptions.broadcast
   delayedActionsGuiScene             = null
 
   function init() {
-    g_script_reloader.registerPersistentDataFromRoot("handlersManager")
-    subscriptions.subscribeHandler(::handlersManager, subscriptions.DEFAULT_HANDLER)
+    registerPersistentDataFromRoot("handlersManager")
+    subscriptions.subscribe_handler(::handlersManager, subscriptions.DEFAULT_HANDLER)
   }
 
   function loadHandler(handlerClass, params = {}) {
@@ -241,7 +239,7 @@ let broadcastEvent = subscriptions.broadcast
       rootHandler = handler.rootHandlerClass(guiScene, {})
       this.loadHandlerScene(rootHandler)
       this.handlers[handlerType.ROOT].append(rootHandler.weakref())
-      subscriptions.subscribeHandler(rootHandler)
+      subscriptions.subscribe_handler(rootHandler)
       newLoadedRootHandler = rootHandler
     }
 
@@ -301,7 +299,7 @@ let broadcastEvent = subscriptions.broadcast
 
   function createHandler(handlerClass, guiScene, params) {
     let handler = handlerClass(guiScene, params)
-    subscriptions.subscribeHandler(handler)
+    subscriptions.subscribe_handler(handler)
     return handler
   }
 

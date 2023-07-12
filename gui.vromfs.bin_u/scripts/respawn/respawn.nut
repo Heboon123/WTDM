@@ -1,16 +1,18 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { Cost } = require("%scripts/money.nut")
+let u = require("%sqStdLibs/helpers/u.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { toPixels } = require("%sqDagui/daguiUtil.nut")
+let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { get_time_msec } = require("dagor.time")
 let { get_gui_option } = require("guiOptions")
 let { ceil } = require("math")
 let { format } = require("string")
 let { is_has_multiplayer } = require("multiplayer")
-let { get_current_mission_name, get_game_mode, get_game_type } = require("mission")
+let { get_current_mission_name, get_game_mode,
+  get_game_type, get_mplayers_list, get_local_mplayer } = require("mission")
 let { fetchChangeAircraftOnStart, canRespawnCaNow, canRequestAircraftNow,
   setSelectedUnitInfo, getAvailableRespawnBases, getRespawnBaseTimeLeftById,
   selectRespawnBase, highlightRespawnBase, getRespawnBase, doRespawnPlayer } = require("guiRespawn")
@@ -23,16 +25,11 @@ let gamepadIcons = require("%scripts/controls/gamepadIcons.nut")
 let contentPreset = require("%scripts/customization/contentPreset.nut")
 let actionBarInfo = require("%scripts/hud/hudActionBarInfo.nut")
 let { getWeaponNameText } = require("%scripts/weaponry/weaponryDescription.nut")
-let { getLastWeapon,
-        setLastWeapon,
-        isWeaponEnabled,
-        isWeaponVisible,
-        getOverrideBullets } = require("%scripts/weaponry/weaponryInfo.nut")
+let { getLastWeapon, setLastWeapon, isWeaponEnabled, isWeaponVisible, getOverrideBullets
+} = require("%scripts/weaponry/weaponryInfo.nut")
 let { getModificationName, getUnitLastBullets } = require("%scripts/weaponry/bulletsInfo.nut")
-let { AMMO,
-        getAmmoAmount,
-        getAmmoMaxAmountInSession,
-        getAmmoAmountData } = require("%scripts/weaponry/ammoInfo.nut")
+let { AMMO, getAmmoAmount, getAmmoMaxAmountInSession, getAmmoAmountData
+} = require("%scripts/weaponry/ammoInfo.nut")
 let { getModificationByName } = require("%scripts/weaponry/modificationInfo.nut")
 let { setColoredDoubleTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { checkInRoomMembers } = require("%scripts/contacts/updateContactsStatus.nut")
@@ -48,10 +45,11 @@ let { onSpectatorMode, switchSpectatorTarget,
 } = require("guiSpectator")
 let { getMplayersList } = require("%scripts/statistics/mplayersList.nut")
 let { getCrew } = require("%scripts/crew/crew.nut")
-let { quit_to_debriefing } = require("guiMission")
+let { quit_to_debriefing, get_mission_difficulty_int, get_unit_wp_to_respawn } = require("guiMission")
 let { setCurSkinToHangar, getRealSkin, getSkinsOption
 } = require("%scripts/customization/skins.nut")
 let { reqUnlockByClient } = require("%scripts/unlocks/unlocksModule.nut")
+let { openPersonalTasks } = require("%scripts/unlocks/personalTasks.nut")
 
 ::last_ca_aircraft <- null
 ::used_planes <- {}
@@ -59,7 +57,7 @@ let { reqUnlockByClient } = require("%scripts/unlocks/unlocksModule.nut")
 
 ::before_first_flight_in_session <- false
 
-::g_script_reloader.registerPersistentData("RespawnGlobals", getroottable(),
+registerPersistentData("RespawnGlobals", getroottable(),
   ["last_ca_aircraft", "used_planes", "need_race_finish_results", "before_first_flight_in_session"])
 
 ::COLORED_DROPRIGHT_TEXT_STYLE <- "textStyle:t='textarea';"
@@ -195,7 +193,7 @@ enum ESwitchSpectatorTarget {
 
     this.updateCooldown = -1
     this.wasTimeLeft = -1000
-    this.mplayerTable = ::get_local_mplayer() || {}
+    this.mplayerTable = get_local_mplayer() || {}
     this.missionTable = this.missionRules.missionParams
 
     this.readyForRespawn = this.readyForRespawn && this.isRespawn
@@ -260,6 +258,7 @@ enum ESwitchSpectatorTarget {
     this.updateControlsAllowMask()
     this.updateVoiceChatWidget(!this.isRespawn)
     checkInRoomMembers()
+    ::contacts_handler?.sceneShow(false)
   }
 
   function isModeWithFriendlyUnits(gt = null) {
@@ -477,7 +476,7 @@ enum ESwitchSpectatorTarget {
           isList = o.cType == optionControlType.LIST
           isCheckbox = o.cType == optionControlType.CHECKBOX
         })
-    let markup = ::handyman.renderCached("%gui/respawn/respawnOptions.tpl", { cells })
+    let markup = handyman.renderCached("%gui/respawn/respawnOptions.tpl", { cells })
     this.guiScene.replaceContentFromText(this.scene.findObject("respawn_options_table"), markup, markup.len(), this)
   }
 
@@ -503,7 +502,7 @@ enum ESwitchSpectatorTarget {
 
   function initAircraftSelect() {
     if (showedUnit.value == null)
-      showedUnit(::getAircraftByName(::last_ca_aircraft))
+      showedUnit(getAircraftByName(::last_ca_aircraft))
 
     log($"initScreen aircraft {::last_ca_aircraft} showedUnit {showedUnit.value}")
 
@@ -538,7 +537,7 @@ enum ESwitchSpectatorTarget {
       local airName = ::last_ca_aircraft
       if (this.isGTCooperative)
         airName = getTblValue("aircraftName", this.mplayerTable, "")
-      let air = ::getAircraftByName(airName)
+      let air = getAircraftByName(airName)
       if (air) {
         showedUnit(air)
         this.scene.findObject("air_info_div").show(true)
@@ -602,7 +601,7 @@ enum ESwitchSpectatorTarget {
       let curWpBalance = ::get_cur_warpoints()
       let total = this.sessionWpBalance
       if (curWpBalance != total || (info.cur_award_positive != 0 && info.cur_award_negative != 0)) {
-        let curWpBalanceString = ::Cost(curWpBalance).toStringWithParams({ isWpAlwaysShown = true })
+        let curWpBalanceString = Cost(curWpBalance).toStringWithParams({ isWpAlwaysShown = true })
         local curPositiveIncrease = ""
         local curNegativeDecrease = ""
         local color = info.cur_award_positive > 0 ? "@goodTextColor" : "@badTextColor"
@@ -613,14 +612,14 @@ enum ESwitchSpectatorTarget {
         }
         else if (info.cur_award_negative != 0)
           curNegativeDecrease = colorize("@badTextColor",
-            ::Cost(-1 * info.cur_award_negative).toStringWithParams({ isWpAlwaysShown = true }))
+            Cost(-1 * info.cur_award_negative).toStringWithParams({ isWpAlwaysShown = true }))
 
         if (curDifference != 0)
           curPositiveIncrease = colorize(color, "".concat(curDifference > 0 ? "+" : "",
-            ::Cost(curDifference).toStringWithParams({ isWpAlwaysShown = true })))
+            Cost(curDifference).toStringWithParams({ isWpAlwaysShown = true })))
 
         let totalString = "".concat(" = ", colorize("@activeTextColor",
-          ::Cost(total).toStringWithParams({ isWpAlwaysShown = true })))
+          Cost(total).toStringWithParams({ isWpAlwaysShown = true })))
 
         wpBalance = "".concat(curWpBalanceString, curPositiveIncrease, curNegativeDecrease, totalString)
       }
@@ -640,7 +639,7 @@ enum ESwitchSpectatorTarget {
       return 0
 
     let air = this.getCurSlotUnit()
-    let airRespawnCost = air ? ::get_unit_wp_to_respawn(air.name) : 0
+    let airRespawnCost = air ? get_unit_wp_to_respawn(air.name) : 0
     let weaponPrice = air ? this.getWeaponPrice(air.name, this.getSelWeapon()) : 0
     return airRespawnCost + weaponPrice
   }
@@ -799,7 +798,7 @@ enum ESwitchSpectatorTarget {
        && this.isRespawn
        && airName in ::used_planes
        && isInArray(weapon, ::used_planes[airName])) {
-      let unit = ::getAircraftByName(airName)
+      let unit = getAircraftByName(airName)
       let count = getAmmoMaxAmountInSession(unit, weapon, AMMO.WEAPON) - getAmmoAmount(unit, weapon, AMMO.WEAPON)
       return (count * ::wp_get_cost2(airName, weapon))
     }
@@ -939,7 +938,7 @@ enum ESwitchSpectatorTarget {
       this.canChooseRespawnBase = false
     }
 
-    return !::u.isEqual(this.respawnBasesList, currBasesList)
+    return !u.isEqual(this.respawnBasesList, currBasesList)
   }
 
 
@@ -1054,7 +1053,7 @@ enum ESwitchSpectatorTarget {
 
     actionBarInfo.cacheActionDescs(requestData.name)
 
-    setShowUnit(::getAircraftByName(requestData.name))
+    setShowUnit(getAircraftByName(requestData.name))
   }
 
   function getSelectedRequestData(silent = true) {
@@ -1153,7 +1152,7 @@ enum ESwitchSpectatorTarget {
       return null
 
     let ruleMsg = this.missionRules.getSpecialCantRespawnMessage(unit)
-    if (!::u.isEmpty(ruleMsg))
+    if (!u.isEmpty(ruleMsg))
       return { text = ruleMsg, id = "cant_spawn_by_mission_rules" }
 
     if (this.isRespawn && !this.missionRules.isUnitEnabledBySessionRank(unit))
@@ -1262,7 +1261,7 @@ enum ESwitchSpectatorTarget {
   function checkReady(obj = null) {
     this.onOtherOptionUpdate(obj)
 
-    this.readyForRespawn = this.lastRequestData != null && ::u.isEqual(this.lastRequestData, this.getSelectedRequestData())
+    this.readyForRespawn = this.lastRequestData != null && u.isEqual(this.lastRequestData, this.getSelectedRequestData())
 
     if (!this.readyForRespawn && this.isApplyPressed)
       if (!this.doRespawnCalled)
@@ -1292,7 +1291,7 @@ enum ESwitchSpectatorTarget {
       if (this.haveSlotbar) {
         let wpCost = this.getRespawnWpTotalCost()
         if (wpCost > 0) {
-          shortCostText = ::Cost(wpCost).getUncoloredText()
+          shortCostText = Cost(wpCost).getUncoloredText()
           costTextArr.append(shortCostText)
         }
 
@@ -1444,7 +1443,7 @@ enum ESwitchSpectatorTarget {
     if (!skinId)
       return true
 
-    let diffCode = ::get_mission_difficulty_int()
+    let diffCode = get_mission_difficulty_int()
 
     let curPresetId = contentPreset.getCurPresetId(diffCode)
     let newPresetId = contentPreset.getPresetIdBySkin(diffCode, unit.name, skinId)
@@ -1545,7 +1544,7 @@ enum ESwitchSpectatorTarget {
       return
     }
 
-    ::broadcastEvent("PlayerSpawn", this.lastRequestData)
+    broadcastEvent("PlayerSpawn", this.lastRequestData)
     if (this.lastRequestData) {
       this.lastSpawnUnitName = this.lastRequestData.name
       let requestedWeapon = this.lastRequestData.weapon
@@ -1563,7 +1562,7 @@ enum ESwitchSpectatorTarget {
     if (!this.doRespawnCalled || !this.isRespawn)
       return false
 
-    let unit = ::getAircraftByName(this.lastRequestData?.name ?? this.lastSpawnUnitName)
+    let unit = getAircraftByName(this.lastRequestData?.name ?? this.lastSpawnUnitName)
     if (!unit || this.missionRules.getUnitLeftRespawns(unit) != 0)
       return false
 
@@ -1669,6 +1668,7 @@ enum ESwitchSpectatorTarget {
     if (show != null)
       this.showButtons = show
 
+    let canUseUnlocks = (get_game_type() & GT_USE_UNLOCKS) != 0
     let buttons = {
       btn_select =          this.showButtons && this.isRespawn && !this.isNoRespawns && !this.stayOnRespScreen && !this.doRespawnCalled && !this.isSpectate
       btn_select_no_enter = this.showButtons && this.isRespawn && !this.isNoRespawns && !this.stayOnRespScreen && !this.doRespawnCalled && this.isSpectate
@@ -1677,6 +1677,7 @@ enum ESwitchSpectatorTarget {
       btn_QuitMission =     this.showButtons && this.isRespawn && this.isNoRespawns && ::g_mis_loading_state.isReadyToShowRespawn()
       btn_back =            this.showButtons && useTouchscreen && !this.isRespawn
       btn_activateorder =   this.showButtons && this.isRespawn && ::g_orders.showActivateOrderButton() && (!this.isSpectate || !::show_console_buttons)
+      btn_personal_tasks =  this.showButtons && this.isRespawn && canUseUnlocks
     }
     foreach (id, value in buttons)
       this.showSceneBtn(id, value)
@@ -1848,7 +1849,7 @@ enum ESwitchSpectatorTarget {
     let text = $"{name} {title}"
 
     let targetId = getSpectatorTargetId()
-    let player = ::get_mplayers_list(GET_MPLAYERS_LIST, true).findvalue(@(p) p.id == targetId)
+    let player = get_mplayers_list(GET_MPLAYERS_LIST, true).findvalue(@(p) p.id == targetId)
     let color = player != null ? ::get_mplayer_color(player) : "teamBlueColor"
 
     this.scene.findObject("spectator_name").setValue(colorize(color, text))
@@ -1985,6 +1986,8 @@ enum ESwitchSpectatorTarget {
     ::quit_mission()
   }
 
+  onPersonalTasksOpen = @() openPersonalTasks()
+
   function goBack() {
     if (!this.isRespawn)
       ::close_ingame_gui()
@@ -2034,7 +2037,7 @@ enum ESwitchSpectatorTarget {
     this.guiScene.applyPendingChanges(false)
 
     let leftPanelObj = this.scene.findObject("panel-left")
-    let minChatHeight = ::g_dagui_utils.toPixels(this.guiScene, "1@minChatHeight")
+    let minChatHeight = toPixels(this.guiScene, "1@minChatHeight")
     let hOversize = unitOptionsObj.getSize()[1] + objectivesObj.getSize()[1] +
       minChatHeight - leftPanelObj.getSize()[1]
 
@@ -2045,9 +2048,9 @@ enum ESwitchSpectatorTarget {
       unitOptionsObj.height = unitOptionsHeight
     }
 
-    let maxChatHeight = ::g_dagui_utils.toPixels(this.guiScene, "1@maxChatHeight")
+    let maxChatHeight = toPixels(this.guiScene, "1@maxChatHeight")
     this.canSwitchChatSize = chatObj.getSize()[1] < maxChatHeight
-      && objectivesObj.getSize()[1] > ::g_dagui_utils.toPixels(this.guiScene, "1@minMisObjHeight")
+      && objectivesObj.getSize()[1] > toPixels(this.guiScene, "1@minMisObjHeight")
 
     this.showSceneBtn("mis_obj_text_header", !this.canSwitchChatSize)
     this.showSceneBtn("mis_obj_button_header", this.canSwitchChatSize)

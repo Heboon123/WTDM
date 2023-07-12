@@ -1,8 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 let ww_leaderboard = require("ww_leaderboard")
 let { getSeparateLeaderboardPlatformName } = require("%scripts/social/crossplay.nut")
 let DataBlock = require("DataBlock")
@@ -147,7 +145,7 @@ let function convertLeaderboardData(result, applyLocalisationToName = false) {
     }
     foreach (columnId, columnData in rowData) {
       let key = leaderboardKeyCorrection?[columnId] ?? columnId
-      if (key in lbData && ::u.isEmpty(columnData))
+      if (key in lbData && u.isEmpty(columnData))
         continue
 
       let valueFactor = leaderboardValueFactors?[columnId]

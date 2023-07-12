@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 // TEST: ::gui_start_wheelmenu({ menu=[0,1,2,3,4,5,6,7].map(@(v) {name=$"{v}"}), callbackFunc=@(i) dlog(i) ?? ::close_cur_wheelmenu() })
 
@@ -80,7 +78,6 @@ const ITEMS_PER_PAGE = 8
                                    | CtrlsInGui.CTRL_ALLOW_VEHICLE_KEYBOARD
                                    | CtrlsInGui.CTRL_ALLOW_VEHICLE_JOY
                                    | CtrlsInGui.CTRL_ALLOW_MP_STATISTICS
-                                   | CtrlsInGui.CTRL_ALLOW_TACTICAL_MAP
 
   invalidIndex = -1
   applyIndex = -1
@@ -113,6 +110,8 @@ const ITEMS_PER_PAGE = 8
     if (!this.menu || !checkObj(this.scene))
       return this.close()
 
+    if (!::ps4_is_circle_selected_as_enter_button())
+      this.wndControlsAllowMaskWhenActive = this.wndControlsAllowMaskWhenActive | CtrlsInGui.CTRL_ALLOW_TACTICAL_MAP
     ::close_cur_wheelmenu()
 
     this.guiScene = this.scene.getScene()
@@ -204,7 +203,7 @@ const ITEMS_PER_PAGE = 8
 
   function updateContentForItem(contentObj, item) {
     if (this.contentTemplate != null) { //!!!FIX ME need remove replace content for killStreakWheelMenu
-      let blk = ::handyman.renderCached(this.contentTemplate, item)
+      let blk = handyman.renderCached(this.contentTemplate, item)
       this.guiScene.replaceContentFromText(contentObj, blk, blk.len(), this)
       return
     }

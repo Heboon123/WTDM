@@ -1,9 +1,9 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { Cost } = require("%scripts/money.nut")
+let u = require("%sqStdLibs/helpers/u.nut")
+
 
 let { getMyClanOperation, isMyClanInQueue
 } = require("%scripts/worldWar/operations/model/wwActionsWhithGlobalStatus.nut")
@@ -66,7 +66,7 @@ let DataBlock  = require("DataBlock")
     this.myClanCountries = []
     foreach (country in shopCountriesList) {
       let groups = this.getArmyGroupsByCountry(country)
-      let myGroup = groups && ::u.search(groups, (@(myClanId) function(ag) { return getTblValue("clanId", ag) == myClanId })(myClanId))
+      let myGroup = groups && u.search(groups, @(ag) getTblValue("clanId", ag) == myClanId)
       if (myGroup) {
         this.myClanCountries.append(country)
         this.myClanQueueTime = max(this.myClanQueueTime, getTblValue("at", myGroup, -1))
@@ -184,7 +184,7 @@ let DataBlock  = require("DataBlock")
     requestBlk.mapName = this.map.name
     requestBlk.country = country
     requestBlk.clusters = clusters
-    if (::check_balance_msgBox(::Cost(getGlobalStatusData()?.operationCreationFeeWp ?? 0)))
+    if (::check_balance_msgBox(Cost(getGlobalStatusData()?.operationCreationFeeWp ?? 0)))
       actionWithGlobalStatusRequest("cln_clan_register_ww_army_group", requestBlk,
         { showProgressBox = true })
 

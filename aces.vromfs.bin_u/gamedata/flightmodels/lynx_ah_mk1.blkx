@@ -5,6 +5,7 @@
   "MetaPartsBlk": "gameData/FlightModels/dm/metaparts/hellicopters_metaparts.blk",
   "gearSinkRangeLR": 0.001,
   "gearSinkRangeC": 0.001,
+  "gyroSight": false,
   "type": "typeFighter",
   "paratrooper": "usa_para",
   "advancedInstructor": true,
@@ -156,6 +157,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -166,6 +183,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -193,6 +226,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -203,6 +252,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -852,6 +917,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -862,6 +943,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -1233,13 +1330,13 @@
   ],
   "WeaponSlots": [
     {
-      "maxloadMass": 550.0
+      "maxloadMass": 570.0
     },
     {
       "maxloadMassLeftConsoles": 260.0
     },
     {
-      "maxloadMassRightConsoles": 260.0
+      "maxloadMassRightConsoles": 340.0
     },
     {
       "maxDisbalance": 200.0
@@ -1317,13 +1414,23 @@
       }
     },
     {
-      "WeaponSlot": [
-        {
-          "index": 0
-        },
-        {
-          "WeaponPreset": {
-            "name": "default_common",
+      "WeaponSlot": {
+        "index": 0,
+        "WeaponPreset": [
+          {
+            "name": "default_common"
+          },
+          {
+            "ShowNodes": [
+              {
+                "node": "gear_l1"
+              },
+              {
+                "node": "gear_r1"
+              }
+            ]
+          },
+          {
             "Weapon": {
               "dummy": true,
               "trigger": "gunner0",
@@ -1347,73 +1454,31 @@
                 "pitch": [-50.0,25.0]
               }
             }
-          }
-        },
-        {
-          "WeaponPreset": [
-            {
-              "name": "ltc_common"
-            },
-            {
-              "ShowNodes": [
-                {
-                  "node": "gear_l1"
-                },
-                {
-                  "node": "gear_r1"
-                }
-              ]
-            },
-            {
-              "Weapon": {
-                "dummy": true,
-                "trigger": "gunner0",
-                "triggerGroup": "primary",
-                "blk": "gameData/Weapons/dummy_weapon.blk",
-                "emitter": "optic1_gun",
-                "parkInDeadzone": false,
-                "defaultYaw": 0.0,
-                "defaultPitch": 0.0,
-                "speedYaw": 25.0,
-                "speedPitch": 25.0,
-                "aimForOperatedShell": true,
-                "turret": {
-                  "head": "optic1_turret",
-                  "gun": "optic1_gun",
-                  "playerControllable": false,
-                  "mainTurret": true
-                },
-                "limits": {
-                  "yaw": [-115.0,90.0],
-                  "pitch": [-50.0,25.0]
-                }
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "countermeasures",
-                "startFx": "",
-                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher.blk",
-                "emitter": "emtr_flare1",
-                "bullets": 96,
-                "external": true,
-                "separate": false
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "countermeasures",
-                "startFx": "",
-                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher.blk",
-                "emitter": "emtr_flare2",
-                "bullets": 96,
-                "external": true,
-                "separate": false
-              }
+          },
+          {
+            "Weapon": {
+              "trigger": "countermeasures",
+              "startFx": "",
+              "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher.blk",
+              "emitter": "emtr_flare1",
+              "bullets": 96,
+              "external": true,
+              "separate": false
             }
-          ]
-        }
-      ]
+          },
+          {
+            "Weapon": {
+              "trigger": "countermeasures",
+              "startFx": "",
+              "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher.blk",
+              "emitter": "emtr_flare2",
+              "bullets": 96,
+              "external": true,
+              "separate": false
+            }
+          }
+        ]
+      }
     },
     {
       "WeaponSlot": [
@@ -1451,6 +1516,7 @@
           "WeaponPreset": {
             "iconType": "atgm_type2_x2",
             "name": "tow_x2_default",
+            "remotelyGuidedWeaponsMax": 1,
             "ShowNodes": [
               {
                 "node": "lynx_pylon_tow_l"
@@ -1474,6 +1540,7 @@
             "iconType": "atgm_type1_x4",
             "name": "tow_x4",
             "reqModification": "ah_1_TOW_2",
+            "remotelyGuidedWeaponsMax": 1,
             "ShowNodes": [
               {
                 "node": "lynx_pylon_tow_l"
@@ -1497,6 +1564,7 @@
             "iconType": "atgm_type2_x2_late",
             "name": "tow2_x2",
             "reqModification": "ah_1_TOW2",
+            "remotelyGuidedWeaponsMax": 1,
             "ShowNodes": [
               {
                 "node": "lynx_pylon_tow_l"
@@ -1520,6 +1588,7 @@
             "iconType": "atgm_type1_x4_late",
             "name": "tow2_x4",
             "reqModification": "ah_1_TOW2_2",
+            "remotelyGuidedWeaponsMax": 1,
             "ShowNodes": [
               {
                 "node": "lynx_pylon_tow_l"
@@ -1654,7 +1723,7 @@
             ],
             "Weapon": {
               "trigger": "aam",
-              "blk": "gameData/Weapons/containers/atas_2x_stinger_left.blk",
+              "blk": "gameData/Weapons/containers/atas_2x_stinger.blk",
               "emitter": "aim92_stinger_pod_001",
               "external": true,
               "separate": true,
@@ -1686,7 +1755,7 @@
           ],
           "Weapon": {
             "trigger": "aam",
-            "blk": "gameData/Weapons/containers/atas_2x_stinger_right.blk",
+            "blk": "gameData/Weapons/containers/atas_2x_stinger.blk",
             "emitter": "aim92_stinger_pod_002",
             "external": true,
             "separate": true,
@@ -1732,6 +1801,7 @@
             "iconType": "atgm_type2_x2",
             "name": "tow_x2",
             "reqModification": "ah_1_TOW",
+            "remotelyGuidedWeaponsMax": 1,
             "ShowNodes": [
               {
                 "node": "lynx_pylon_tow_r"
@@ -1755,6 +1825,7 @@
             "iconType": "atgm_type1_x4",
             "name": "tow_x4",
             "reqModification": "ah_1_TOW_2",
+            "remotelyGuidedWeaponsMax": 1,
             "ShowNodes": [
               {
                 "node": "lynx_pylon_tow_r"
@@ -1778,6 +1849,7 @@
             "iconType": "atgm_type2_x2_late",
             "name": "tow2_x2",
             "reqModification": "ah_1_TOW2",
+            "remotelyGuidedWeaponsMax": 1,
             "ShowNodes": [
               {
                 "node": "lynx_pylon_tow_r"
@@ -1801,6 +1873,7 @@
             "iconType": "atgm_type1_x4_late",
             "name": "tow2_x4",
             "reqModification": "ah_1_TOW2_2",
+            "remotelyGuidedWeaponsMax": 1,
             "ShowNodes": [
               {
                 "node": "lynx_pylon_tow_r"
@@ -4512,15 +4585,7 @@
       "turn_it_off": false,
       "tier": 1,
       "invertEnableLogic": false,
-      "group": "countermeasures",
-      "effects": {
-        "commonWeapons": {
-          "Weapon": {
-            "slot": 0,
-            "preset": "ltc_common"
-          }
-        }
-      }
+      "group": "countermeasures"
     },
     "heli_night_vision_system": {
       "prevModification": "stinger_aam",
@@ -4542,7 +4607,7 @@
             "noiseFactor": 0.15
           },
           "sightThermal": {
-            "resolution": [1024,768],
+            "resolution": [1920,1080],
             "noiseFactor": 0.05
           }
         }

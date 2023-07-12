@@ -1,9 +1,9 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { Cost } = require("%scripts/money.nut")
+let u = require("%sqStdLibs/helpers/u.nut")
+
 
 let { format } = require("string")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -68,7 +68,7 @@ let { getFullUnlockDescByName } = require("%scripts/unlocks/unlocksViewModule.nu
     let chaptersBlk = DataBlock()
     chaptersBlk.load("config/chapters.blk")
     foreach (cBlk in chaptersBlk % "images")
-      if (::u.isDataBlock(cBlk))
+      if (u.isDataBlock(cBlk))
         for (local i = 0; i < cBlk.paramCount(); i++)
           this.chapterImgList[cBlk.getParamName(i)] <- true
   }
@@ -293,7 +293,7 @@ let { getFullUnlockDescByName } = require("%scripts/unlocks/unlocksViewModule.nu
     }
     else if (this.gm == GM_DYNAMIC && rBlk?.dynamic) {
       let dataBlk = rBlk.dynamic
-      let rewMoney = ::Cost()
+      let rewMoney = Cost()
       let xpId = "xpEarnedWinDiff0"
       let wpId = "wpEarnedWinDiff0"
       let muls = ::get_player_multipliers()

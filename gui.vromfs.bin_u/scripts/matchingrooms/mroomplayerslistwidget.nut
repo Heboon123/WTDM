@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 /*
  API:
@@ -128,7 +126,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
       return
 
     let teamList = team == ::g_team.ANY ? playersList
-      : ::u.filter(playersList, @(p) p.team.tointeger() == team.code)
+      : u.filter(playersList, @(p) p.team.tointeger() == team.code)
     ::set_mp_table(objTbl, teamList)
     ::update_team_css_label(objTbl)
 

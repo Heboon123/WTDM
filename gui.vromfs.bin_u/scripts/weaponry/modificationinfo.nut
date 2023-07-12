@@ -1,8 +1,5 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { AMMO,
         getAmmoAmount,
@@ -56,6 +53,11 @@ let function findAnyNotResearchedMod(unit) {
       return mod
 
   return null
+}
+
+let function isModMounted(unitName, modName) {
+  let status = ::shop_get_module_research_status(unitName, modName)
+  return (status & ES_ITEM_STATUS_MOUNTED) != 0
 }
 
 let function isModAvailableOrFree(unitName, modName) {
@@ -131,10 +133,11 @@ let function updateRelationModificationList(unit, modifName) {
 }
 
 ::cross_call_api.getModificationByName <- @(unitName, modName)
-  getModificationByName(::getAircraftByName(unitName), modName)
+  getModificationByName(getAircraftByName(unitName), modName)
 
 return {
   canBuyMod
+  isModMounted
   isModResearched
   isModClassPremium
   isModClassExpendable

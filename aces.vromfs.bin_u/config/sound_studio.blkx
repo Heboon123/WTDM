@@ -70,7 +70,7 @@
   "banks": {
     "presets": {
       "master": {
-        "masterbank": {
+        "masterbank.strings": {
           "async": false,
           "preload": true
         },
@@ -78,7 +78,7 @@
           "async": false,
           "preload": true
         },
-        "masterbank.strings": {
+        "masterbank": {
           "async": false,
           "preload": true
         },
@@ -259,20 +259,22 @@
           "preload": false
         },
         "football": {
-          "async": false,
+          "async": true,
           "preload": false
         },
         "football.assets": {
-          "async": false,
+          "async": true,
           "preload": false
         },
         "event": {
           "async": true,
-          "preload": false
+          "preload": false,
+          "path": "sound"
         },
         "event.assets": {
           "async": true,
-          "preload": false
+          "preload": false,
+          "path": "sound"
         }
       },
       "dialogs": {
@@ -379,6 +381,28 @@
           "preload": false
         }
       },
+      "crew_extended": {
+        "crew_dialogs_<type>_new": {
+          "async": true,
+          "preload": false,
+          "optional": true
+        },
+        "crew_dialogs_<type>_new.assets": {
+          "async": true,
+          "preload": false,
+          "optional": true
+        },
+        "_crew_dialogs_<type>_new_<lang>": {
+          "async": true,
+          "preload": false,
+          "optional": true
+        },
+        "_crew_dialogs_<type>_new_<lang>.assets": {
+          "async": true,
+          "preload": false,
+          "optional": true
+        }
+      },
       "crew": {
         "crew_dialogs_<type>": {
           "async": true,
@@ -394,26 +418,6 @@
           "optional": true
         },
         "_crew_dialogs_<type>_<lang>.assets": {
-          "async": true,
-          "preload": false,
-          "optional": true
-        },
-        "crew_dialogs_naval_new": {
-          "async": true,
-          "preload": false,
-          "optional": true
-        },
-        "crew_dialogs_naval_new.assets": {
-          "async": true,
-          "preload": false,
-          "optional": true
-        },
-        "_crew_dialogs_naval_new_<lang>": {
-          "async": true,
-          "preload": false,
-          "optional": true
-        },
-        "_crew_dialogs_naval_new_<lang>.assets": {
           "async": true,
           "preload": false,
           "optional": true
@@ -494,19 +498,23 @@
       "Polish": "pl",
       "Czech": "cz",
       "Turkish": "tr",
-      "Portugue": "pt",
+      "Portuguese": "pt",
       "Ukrainia": "uk",
       "Serbian": "sr",
       "Swedish": "sv",
       "Hebrew": "he",
-      "Hungaria": "hu",
+      "Hungarian": "hu",
       "Korean": "ko",
       "Belarusi": "be",
       "Romanian": "ro",
       "Chinese": "zh",
       "Japanese": "jp",
       "Vietnamese": "vi",
-      "TChinese": "zh"
+      "TChinese": "zh",
+      "Finnish": "fi",
+      "Australian": "en_au",
+      "SouthAfrican": "en_za",
+      "USA": "en_us"
     }
   },
   "budget": {
@@ -652,6 +660,9 @@
     }
   },
   "misc_effects": {
+    "art_sound_start_height": 1000.0,
+    "art_sound_start_min_height": 200.0,
+    "art_sound_start_radius": 600.0,
     "pathGui": "aircraft/gui",
     "pathGuiEvents": "aircraft/gui",
     "voiceMessagePath": "/voice%i/%s_%i",
@@ -823,6 +834,9 @@
     "eventBinocularsOn": "binoculars_on",
     "eventBinocularsOff": "binoculars_off",
     "eventBinocularsZoom": "binoculars_zoom",
+    "eventShellCasingFallBig": "shell_fall_big",
+    "eventShellCasingFallMed": "shell_fall_med",
+    "eventShellCasingFallSmall": "shell_fall_small",
     "eventSleeveFallBig": "shell_fall_big",
     "eventSleeveFallMed": "shell_fall_med",
     "eventSleeveFallSmall": "shell_fall_small",
@@ -891,6 +905,9 @@
     "shipSizeThreshold": 35.0,
     "eventNuclearStrike": "explosions_far",
     "shockImpulseThreshold": 1.0,
+    "eventShellCasingHullMed": "shell_fall_hull_med",
+    "eventShellCasingHullSmall": "shell_fall_hull_small",
+    "eventShellCasingHullBig": "shell_fall_hull_big",
     "eventSleeveHullMed": "shell_fall_hull_med",
     "eventSleeveHullSmall": "shell_fall_hull_small",
     "eventSleeveHullBig": "shell_fall_hull_big"
@@ -1112,8 +1129,8 @@
         "updInterval": 0.05
       },
       "lod_1": {
-        "radius": 300.0,
-        "maxSounds": 8,
+        "radius": 400.0,
+        "maxSounds": 16,
         "updInterval": 0.2
       }
     }
@@ -1149,7 +1166,7 @@
         "maxSounds": 8
       },
       "lod_1": {
-        "radius": 200.0,
+        "radius": 300.0,
         "maxSounds": 12
       }
     }
@@ -5350,6 +5367,26 @@
       "distSmooth": 0.9
     }
   },
+  "engine_uav_p": {
+    "effects": {
+      "path": "event/units/uav_p",
+      "eventStart": "engine_start",
+      "eventStop": "engine_stop",
+      "eventProp": "engine_prop"
+    },
+    "outside": {
+      "path": "event/units/uav_p",
+      "eventFront": "",
+      "eventBack": "engine",
+      "eventSurround": "",
+      "eventLod1": "engine",
+      "rpmSmooth": 0.014,
+      "loadScale": 6.0,
+      "loadSmooth": 0.05,
+      "distSmooth": 0.9,
+      "distScaleOnNotHero": 1.0
+    }
+  },
   "engine01_toon_ai": {
     "effects": {
       "path": "toon/engines",
@@ -5568,6 +5605,20 @@
       "eventBack": "engine_uav_mq1_ai",
       "eventSurround": "",
       "eventLod1": "engine_uav_mq1_ai",
+      "rpmSmooth": 0.014,
+      "loadScale": 6.0,
+      "loadSmooth": 0.05,
+      "distSmooth": 0.9,
+      "distScaleOnNotHero": 1.0
+    }
+  },
+  "engine_uav_p_ai": {
+    "outside": {
+      "path": "event/units/uav_p",
+      "eventFront": "",
+      "eventBack": "engine_ai",
+      "eventSurround": "",
+      "eventLod1": "engine_ai",
       "rpmSmooth": 0.014,
       "loadScale": 6.0,
       "loadSmooth": 0.05,
@@ -9884,6 +9935,55 @@
       },
       "outside": {
         "path": "ground/engines/ai/kamaz",
+        "eventBack": "engine",
+        "rpmSmooth": 1.0,
+        "loadScale": 6.0,
+        "loadSmooth": 0.5,
+        "distSmooth": 0.9,
+        "distScaleOnNotHero": 1.0
+      }
+    }
+  },
+  "engine_btr80": {
+    "effects": {
+      "path": "ground/engines/btr80",
+      "wep": "",
+      "overheatOutside": "",
+      "overheatCockpit": "",
+      "dive": "engine_dive",
+      "timeFallingDown": 2.0,
+      "engineVolumeOnOverheat": 0.8,
+      "eventStart": "engine_start",
+      "eventStop": "engine_stop"
+    },
+    "outside": {
+      "path": "ground/engines/btr80",
+      "eventFront": "",
+      "eventBack": "engine",
+      "eventSurround": "",
+      "eventLod1": "engine",
+      "rpmSmooth": 1.0,
+      "loadScale": 6.0,
+      "loadSmooth": 0.1,
+      "distSmooth": 0.9,
+      "distScaleOnNotHero": 1.0,
+      "offsetPos": [-2.0,1.3,0.0]
+    },
+    "cockpit": {
+      "path": "ground/engines/btr80",
+      "event_cockpit_l": "engine_interior",
+      "event_start_cockpit_l": "engine_start_interior",
+      "event_stop_cockpit_l": "engine_stop_interior",
+      "leftPos": [-1.0,1.0,0.0]
+    },
+    "ai": {
+      "effects": {
+        "path": "ground/engines/ai/btr80",
+        "eventStart": "engine_start",
+        "eventStop": "engine_stop"
+      },
+      "outside": {
+        "path": "ground/engines/ai/btr80",
         "eventBack": "engine",
         "rpmSmooth": 1.0,
         "loadScale": 6.0,
@@ -14770,6 +14870,11 @@
         "path": "naval/effects"
       }
     },
+    "event_reload_rocket": {
+      "path": "event/units/hedge",
+      "event": "reload_rocket",
+      "time": 2.0
+    },
     "grd_roland_reload": {
       "path": "ground/effects",
       "event": "reload_roland",
@@ -15109,34 +15214,1120 @@
     "crewDmgAbandonedThreshold": 0.05,
     "breachesCritThreshold": 4.5,
     "breachesSeriousThreshold": 3.5,
+    "reportBulletTypeTimeThreshold": 4.0,
     "aircraftDetectionRadius": 2000.0,
     "detectionReportSideCooldown": 25.0,
     "detectionReportGlobalCooldown": 25.0,
     "isAdSystemExtended": {
       "Russian": {
-        "warShip": true
+        "warShip": true,
+        "heavyVehicle": true
       },
       "English": {
-        "warShip": true
+        "warShip": true,
+        "heavyVehicle": true
       },
       "French": {
-        "warShip": true
-      },
-      "Italian": {
-        "warShip": true
+        "warShip": true,
+        "heavyVehicle": true
       },
       "German": {
-        "warShip": true
+        "warShip": true,
+        "heavyVehicle": true
+      },
+      "Italian": {
+        "warShip": true,
+        "heavyVehicle": true
       },
       "Japanese": {
-        "warShip": true
+        "warShip": true,
+        "heavyVehicle": true
+      },
+      "Finnish": {
+        "heavyVehicle": true
+      },
+      "Hungarian": {
+        "heavyVehicle": true
+      },
+      "SouthAfrican": {
+        "heavyVehicle": true
+      },
+      "Australian": {
+        "heavyVehicle": true
+      },
+      "Czech": {
+        "heavyVehicle": true
+      },
+      "Korean": {
+        "heavyVehicle": true
+      },
+      "Polish": {
+        "heavyVehicle": true
+      },
+      "Portuguese": {
+        "heavyVehicle": true
+      },
+      "Spanish": {
+        "heavyVehicle": true
+      },
+      "Turkish": {
+        "heavyVehicle": true
+      },
+      "Vietnamese": {
+        "heavyVehicle": true
+      },
+      "Chinese": {
+        "heavyVehicle": true
+      },
+      "TChinese": {
+        "heavyVehicle": true
+      },
+      "Serbian": {
+        "heavyVehicle": true
+      },
+      "Swedish": {
+        "heavyVehicle": true
+      },
+      "USA": {
+        "warShip": true,
+        "heavyVehicle": true,
+        "remap": {
+          "warShip": "English"
+        }
       }
+    },
+    "targetEvents": {
+      "SPG": "SPG",
+      "Vehicle": "vehicle",
+      "Armored Car": "armoredCar",
+      "APC": "APC",
+      "BMP": "BMP",
+      "SPAA": "SPAA",
+      "MLRS": "MLRS",
+      "T-34": "T34",
+      "T-64": "T64",
+      "T-72": "T72",
+      "T-80": "T80",
+      "Abrams": "abrams",
+      "M1A1": "abrams",
+      "M1A2": "abrams",
+      "IPM": "abrams",
+      "Merkava": "merkava",
+      "Panther": "panther",
+      "Tiger": "tiger",
+      "Leopard": "leopard",
+      "Leclerc": "leclerc"
     },
     "heavyVehicle": {
       "projectPath": "dialogs_crew_ground",
       "projectType": "ground",
       "minSpeechInterval": 2.0,
       "eventsChancePlay": 1.0,
+      "eventsExtended": {
+        "someTarget": {
+          "event": "05_targeting/voice_message_commander_target",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "someTank": {
+          "event": "05_targeting/voice_message_commander_target_tank",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "vehicle": {
+          "event": "05_targeting/voice_message_commander_target_vehicle",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "armoredCar": {
+          "event": "05_targeting/voice_message_commander_target_car",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "APC": {
+          "event": "05_targeting/voice_message_commander_target_APC",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "BMP": {
+          "event": "05_targeting/voice_message_commander_target_BMP",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "SPAA": {
+          "event": "05_targeting/voice_message_commander_target_SPAA",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "MLRS": {
+          "event": "05_targeting/voice_message_commander_target_MLRS",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "someAircraft": {
+          "event": "05_targeting/voice_message_commander_target_aircraft",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "helicopter": {
+          "event": "05_targeting/voice_message_commander_target_helicopter",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "T34": {
+          "event": "05_targeting/voice_message_commander_target_t34",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "T64": {
+          "event": "05_targeting/voice_message_commander_target_t64",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "T72": {
+          "event": "05_targeting/voice_message_commander_target_t72",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "T80": {
+          "event": "05_targeting/voice_message_commander_target_t80",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "abrams": {
+          "event": "05_targeting/voice_message_commander_target_abrams",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "merkava": {
+          "event": "05_targeting/voice_message_commander_target_merkava",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "panther": {
+          "event": "05_targeting/voice_message_commander_target_panther",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "tiger": {
+          "event": "05_targeting/voice_message_commander_target_tiger",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "leopard": {
+          "event": "05_targeting/voice_message_commander_target_leopard",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "leclerc": {
+          "event": "05_targeting/voice_message_commander_target_leclerc",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "SPG": {
+          "event": "05_targeting/voice_message_commander_target_SAM",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "targetNear": {
+          "event": "05_targeting/voice_message_commander_target_near",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "targetDistance": {
+          "event": "05_targeting/voice_message_commander_target_distance",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "commanderShoot": {
+          "event": "05_targeting/voice_message_commander_shot",
+          "playerRole": "commander",
+          "player": -1
+        },
+        "driverObstacle": {
+          "event": "05_targeting/voice_message_driver_obstacle",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 5.0
+        },
+        "loadBulletFrag": {
+          "event": "04_loading/voice_message_commander_load_frag",
+          "playerRole": "commander",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletAP": {
+          "event": "04_loading/voice_message_commander_load_AP",
+          "playerRole": "commander",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletHighExpl": {
+          "event": "04_loading/voice_message_commander_load_HE",
+          "playerRole": "commander",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletHEP": {
+          "event": "04_loading/voice_message_commander_load_HESH",
+          "playerRole": "commander",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletCumulative": {
+          "event": "04_loading/voice_message_commander_load_HEAT",
+          "playerRole": "commander",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletSubCaliber": {
+          "event": "04_loading/voice_message_commander_load_sabot",
+          "playerRole": "commander",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletAPDS": {
+          "event": "04_loading/voice_message_commander_load_sabot",
+          "playerRole": "commander",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletSmoke": {
+          "event": "04_loading/voice_message_commander_load_smoke",
+          "playerRole": "commander",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletCanister": {
+          "event": "04_loading/voice_message_commander_load_canister",
+          "playerRole": "commander",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletMissile": {
+          "event": "04_loading/voice_message_commander_load_missile",
+          "playerRole": "commander",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletFragReport": {
+          "event": "04_loading/voice_message_loader_load_frag",
+          "playerRole": "loader",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletAPReport": {
+          "event": "04_loading/voice_message_loader_load_AP",
+          "playerRole": "loader",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletHighExplReport": {
+          "event": "04_loading/voice_message_loader_load_HE",
+          "playerRole": "loader",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletHEPReport": {
+          "event": "04_loading/voice_message_loader_load_HESH",
+          "playerRole": "loader",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletCumulativeReport": {
+          "event": "04_loading/voice_message_loader_load_HEAT",
+          "playerRole": "loader",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletSubCaliberReport": {
+          "event": "04_loading/voice_message_loader_load_sabot",
+          "playerRole": "loader",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletAPDSReport": {
+          "event": "04_loading/voice_message_loader_load_sabot",
+          "playerRole": "loader",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletSmokeReport": {
+          "event": "04_loading/voice_message_loader_load_smoke",
+          "playerRole": "loader",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletCanisterReport": {
+          "event": "04_loading/voice_message_loader_load_canister",
+          "playerRole": "loader",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "loadBulletMissileReport": {
+          "event": "04_loading/voice_message_loader_load_missile",
+          "playerRole": "loader",
+          "player": -1,
+          "eventsChancePlay": 1.0
+        },
+        "mgReady": {
+          "event": "04_loading/voice_message_loader_mg_ready",
+          "playerRole": "loader",
+          "player": -1
+        },
+        "misfire": {
+          "event": "04_loading/voice_message_gunner_misfire",
+          "playerRole": "tank_gunner",
+          "player": -1
+        },
+        "reloadCommand": {
+          "event": "04_loading/voice_message_commander_reload",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "missionVictory": {
+          "event": "11_battle_end/voice_message_chief_battle_win",
+          "playerRole": "commander",
+          "player": -1,
+          "radioNoiseType": "outer_crew"
+        },
+        "missionFailed": {
+          "event": "11_battle_end/voice_message_chief_battle_loose",
+          "playerRole": "commander",
+          "player": -1,
+          "radioNoiseType": "outer_crew"
+        },
+        "battleStartTank": {
+          "event": "01_battle_start/voice_message_chief_battle_start",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0,
+          "radioNoiseType": "outer_crew"
+        },
+        "battleStartCommander": {
+          "event": "01_battle_start/voice_message_commander_battle_start",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "driverReady": {
+          "event": "01_battle_start/voice_message_driver_battle_ready",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "gunnerReady": {
+          "event": "01_battle_start/voice_message_gunner_battle_ready",
+          "playerRole": "tank_gunner",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "loaderReady": {
+          "event": "01_battle_start/voice_message_loader_battle_ready",
+          "playerRole": "loader",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "enginePrepare": {
+          "event": "02_movement_control/voice_message_commander_engine_prepare",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 2.0
+        },
+        "engineReady": {
+          "event": "02_movement_control/voice_message_driver_engine_ready",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver",
+          "player": -1
+        },
+        "moveForward": {
+          "event": "02_movement_control/voice_message_commander_move_forward",
+          "playerRole": "commander",
+          "player": -1
+        },
+        "moveForwardReport": {
+          "event": "02_movement_control/voice_message_driver_move_forward",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "moveFaster": {
+          "event": "02_movement_control/voice_message_commander_move_faster",
+          "playerRole": "commander",
+          "player": -1,
+          "minSpeechInterval": 5.0
+        },
+        "moveRevvs": {
+          "event": "02_movement_control/voice_message_commander_move_revvs",
+          "playerRole": "commander",
+          "player": -1
+        },
+        "moveStop": {
+          "event": "02_movement_control/voice_message_commander_move_stop",
+          "playerRole": "commander",
+          "player": -1
+        },
+        "moveSlower": {
+          "event": "02_movement_control/voice_message_commander_move_slower",
+          "playerRole": "commander",
+          "player": -1
+        },
+        "moveBackward": {
+          "event": "02_movement_control/voice_message_commander_move_backward",
+          "playerRole": "commander",
+          "player": -1
+        },
+        "shotRight": {
+          "event": "06_shooting_results/voice_message_driver_correction_right",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "shotLeft": {
+          "event": "06_shooting_results/voice_message_driver_correction_left",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver",
+          "player": -1,
+          "minSpeechInterval": 0.0
+        },
+        "overShoot": {
+          "event": "06_shooting_results/voice_message_driver_correction_retreat",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver",
+          "player": -1,
+          "minSpeechInterval": 0.0,
+          "delayTime": 0.5
+        },
+        "underShoot": {
+          "event": "06_shooting_results/voice_message_driver_correction_undershoot",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver",
+          "player": -1,
+          "minSpeechInterval": 0.0,
+          "delayTime": 0.5
+        },
+        "enemyDestroyed": {
+          "event": "06_shooting_results/voice_message_driver_correction_target_hit",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver",
+          "player": -1,
+          "minSpeechInterval": 0.0,
+          "delayTime": 1.0
+        },
+        "correctionHit": {
+          "event": "06_shooting_results/voice_message_driver_correction_hit",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver",
+          "player": -1,
+          "minSpeechInterval": 5.0,
+          "delayTime": 1.0
+        },
+        "tankFire": {
+          "event": "07_fighting_for_survivability/voice_message_<role>_fire",
+          "minSpeechInterval": 30.0,
+          "roles": [
+            {
+              "role": "driver"
+            },
+            {
+              "role": "loader"
+            },
+            {
+              "role": "tank_gunner"
+            }
+          ]
+        },
+        "engineFire": {
+          "event": "07_fighting_for_survivability/voice_message_<role>_fire_engine",
+          "minSpeechInterval": 30.0,
+          "roles": [
+            {
+              "role": "driver"
+            },
+            {
+              "role": "loader"
+            },
+            {
+              "role": "tank_gunner"
+            }
+          ]
+        },
+        "bodyFire": {
+          "event": "07_fighting_for_survivability/voice_message_<role>_fire_fighting_compartment",
+          "minSpeechInterval": 30.0,
+          "roles": [
+            {
+              "role": "driver"
+            },
+            {
+              "role": "loader"
+            },
+            {
+              "role": "tank_gunner"
+            }
+          ]
+        },
+        "cellarsFire": {
+          "event": "07_fighting_for_survivability/voice_message_<role>_fire_munition_compartment",
+          "minSpeechInterval": 30.0,
+          "roles": [
+            {
+              "role": "driver"
+            },
+            {
+              "role": "loader"
+            },
+            {
+              "role": "tank_gunner"
+            }
+          ]
+        },
+        "fireExtinguished": {
+          "event": "07_fighting_for_survivability/voice_message_<role>_fire_extinguished",
+          "minSpeechInterval": 10.0,
+          "roles": [
+            {
+              "role": "driver"
+            },
+            {
+              "role": "loader"
+            },
+            {
+              "role": "tank_gunner"
+            }
+          ]
+        },
+        "weVeBeenHit": {
+          "event": "07_fighting_for_survivability/voice_message_<role>_weve_been_hit",
+          "minSpeechInterval": 10.0,
+          "roles": [
+            {
+              "role": "driver"
+            },
+            {
+              "role": "loader"
+            },
+            {
+              "role": "tank_gunner"
+            }
+          ]
+        },
+        "weAreDamaged": {
+          "event": "07_fighting_for_survivability/voice_message_<role>_damaged",
+          "minSpeechInterval": 30.0,
+          "roles": [
+            {
+              "role": "driver"
+            },
+            {
+              "role": "loader"
+            },
+            {
+              "role": "tank_gunner"
+            }
+          ]
+        },
+        "chassisDamaged": {
+          "event": "07_fighting_for_survivability/voice_message_driver_running_gear_damaged",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver",
+          "minSpeechInterval": 30.0
+        },
+        "leaveVehicle": {
+          "event": "07_fighting_for_survivability/voice_message_commander_bail",
+          "playerRole": "commander",
+          "minSpeechInterval": 0.0
+        },
+        "leftTrackDamaged": {
+          "event": "07_fighting_for_survivability/voice_message_driver_left_track",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver"
+        },
+        "rightTrackDamaged": {
+          "event": "07_fighting_for_survivability/voice_message_driver_right_track",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver"
+        },
+        "leftTrackDestroyed": {
+          "event": "07_fighting_for_survivability/voice_message_driver_track_lost",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver"
+        },
+        "rightTrackDestroyed": {
+          "event": "07_fighting_for_survivability/voice_message_driver_track_lost",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver"
+        },
+        "engineStart": {
+          "event": "02_movement_control/voice_message_commander_engine_start",
+          "playerRole": "commander"
+        },
+        "engineStop": {
+          "event": "02_movement_control/voice_message_commander_engine_stop",
+          "playerRole": "commander"
+        },
+        "engineStarted": {
+          "event": "02_movement_control/voice_message_driver_engine_yes",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver"
+        },
+        "engineDestroyed": {
+          "event": "07_fighting_for_survivability/voice_message_driver_engine_off",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver"
+        },
+        "engineStalled": {
+          "event": "07_fighting_for_survivability/voice_message_driver_engine_stalled",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver"
+        },
+        "fuelTankDamaged": {
+          "event": "07_fighting_for_survivability/voice_message_driver_engine_fuel_leak",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver",
+          "delayTime": 1.0
+        },
+        "verticalAimingDamaged": {
+          "event": "07_fighting_for_survivability/voice_message_gunner_elevation_drive_damaged",
+          "playerRole": "tank_gunner",
+          "delayTime": 1.0
+        },
+        "horizontalAimingDamaged": {
+          "event": "07_fighting_for_survivability/voice_message_gunner_rotation_drive_damaged",
+          "playerRole": "tank_gunner",
+          "delayTime": 1.0
+        },
+        "transmissionDamaged": {
+          "event": "07_fighting_for_survivability/voice_message_driver_transmission_damaged",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver"
+        },
+        "wheelDestroyed": {
+          "event": "07_fighting_for_survivability/voice_message_driver_running_gear_damaged",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver"
+        },
+        "weaponDamaged": {
+          "event": "07_fighting_for_survivability/voice_message_gunner_barrel_damaged",
+          "playerRole": "tank_gunner",
+          "delayTime": 1.0
+        },
+        "gunBreechDamaged": {
+          "event": "07_fighting_for_survivability/voice_message_gunner_breech_damaged",
+          "playerRole": "tank_gunner",
+          "delayTime": 1.0
+        },
+        "machineGunDestroyed": {
+          "event": "07_fighting_for_survivability/voice_message_gunner_mg_aa_lost",
+          "playerRole": "tank_gunner",
+          "delayTime": 1.0
+        },
+        "coaxialGunDestroyed": {
+          "event": "07_fighting_for_survivability/voice_message_gunner_mg_directional_lost",
+          "playerRole": "tank_gunner",
+          "delayTime": 1.0
+        },
+        "radiatorDamaged": {
+          "event": "07_fighting_for_survivability/voice_message_driver_radiator_damaged",
+          "playerRole": "tank_gunner",
+          "delayTime": 1.0
+        },
+        "transmissionRepaired": {
+          "event": "07_fighting_for_survivability/voice_message_driver_on_the_move",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver"
+        },
+        "tracksRepaired": {
+          "event": "07_fighting_for_survivability/voice_message_driver_tracks_repaired",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver",
+          "minSpeechInterval": 5.0
+        },
+        "wheelRepaired": {
+          "event": "07_fighting_for_survivability/voice_message_driver_wheel_repaired",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver",
+          "minSpeechInterval": 10.0
+        },
+        "engineRepaired": {
+          "event": "07_fighting_for_survivability/voice_message_driver_engine_repaired",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver",
+          "minSpeechInterval": 5.0
+        },
+        "vertDriveRepaired": {
+          "event": "07_fighting_for_survivability/voice_message_gunner_elevation_drive_repaired",
+          "playerRole": "tank_gunner"
+        },
+        "horDriveRepaired": {
+          "event": "07_fighting_for_survivability/voice_message_gunner_rotation_drive_repaired",
+          "playerRole": "tank_gunner"
+        },
+        "gunRepaired": {
+          "event": "07_fighting_for_survivability/voice_message_gunner_cannon_ready",
+          "playerRole": "tank_gunner"
+        },
+        "machineGunRepaired": {
+          "event": "07_fighting_for_survivability/voice_message_gunner_mg_ready",
+          "playerRole": "tank_gunner"
+        },
+        "gunnerTakingCommand": {
+          "event": "07_fighting_for_survivability/voice_message_gunner_taking_command",
+          "playerRole": "tank_gunner"
+        },
+        "driverTakingCommand": {
+          "event": "07_fighting_for_survivability/voice_message_driver_taking_command",
+          "radioNoiseType": "inner_driver",
+          "playerRole": "driver"
+        },
+        "loaderTakingCommand": {
+          "event": "07_fighting_for_survivability/voice_message_loader_taking_command",
+          "playerRole": "loader"
+        },
+        "chargerContused": {
+          "event": "07_fighting_for_survivability/voice_message_<role>_loader_unconscious",
+          "minSpeechInterval": 5.0,
+          "roles": [
+            {
+              "role": "driver"
+            },
+            {
+              "role": "tank_gunner"
+            }
+          ]
+        },
+        "driverContused": {
+          "event": "07_fighting_for_survivability/voice_message_<role>_driver_unconscious",
+          "minSpeechInterval": 5.0,
+          "roles": [
+            {
+              "role": "loader"
+            },
+            {
+              "role": "tank_gunner"
+            }
+          ]
+        },
+        "gunlayerContused": {
+          "event": "07_fighting_for_survivability/voice_message_<role>_gunner_unconscious",
+          "minSpeechInterval": 5.0,
+          "roles": [
+            {
+              "role": "driver"
+            },
+            {
+              "role": "loader"
+            }
+          ]
+        },
+        "chargerWounded": {
+          "event": "07_fighting_for_survivability/voice_message_<role>_loader_stunned",
+          "minSpeechInterval": 5.0,
+          "roles": [
+            {
+              "role": "driver"
+            },
+            {
+              "role": "tank_gunner"
+            }
+          ]
+        },
+        "driverWounded": {
+          "event": "07_fighting_for_survivability/voice_message_<role>_driver_stunned",
+          "minSpeechInterval": 5.0,
+          "roles": [
+            {
+              "role": "loader"
+            },
+            {
+              "role": "tank_gunner"
+            }
+          ]
+        },
+        "gunlayerWounded": {
+          "event": "07_fighting_for_survivability/voice_message_<role>_gunner_stunned",
+          "minSpeechInterval": 5.0,
+          "roles": [
+            {
+              "role": "driver"
+            },
+            {
+              "role": "loader"
+            }
+          ]
+        },
+        "crewLost": {
+          "event": "07_fighting_for_survivability/voice_message_commander_crew_lost",
+          "playerRole": "commander",
+          "minSpeechInterval": 0.0
+        },
+        "artShootingWarning": {
+          "event": "08_artillery_support/voice_message_chief_artillery_danger",
+          "playerRole": "commander",
+          "minSpeechInterval": 0.0,
+          "delayTime": 1.0,
+          "radioNoiseType": "outer_crew"
+        },
+        "artCommand": {
+          "event": "08_artillery_support/voice_message_commander_art_coordinates",
+          "playerRole": "commander",
+          "minSpeechInterval": 0.0,
+          "radioNoiseType": "outer_crew"
+        },
+        "artCommandBySelf": {
+          "event": "08_artillery_support/voice_message_commander_art_on_me",
+          "playerRole": "commander",
+          "minSpeechInterval": 0.0,
+          "radioNoiseType": "outer_crew"
+        },
+        "artCoordsCommander": {
+          "event": "08_artillery_support/voice_message_commander_art_<tag>",
+          "playerRole": "commander",
+          "minSpeechInterval": 0.0,
+          "radioNoiseType": "outer_crew"
+        },
+        "artCoordsArtillery": [
+          {
+            "event": "08_artillery_support/voice_message_artillery_<tag>"
+          },
+          {
+            "playerRole": "commander"
+          },
+          {
+            "minSpeechInterval": 0.0
+          },
+          {
+            "radioNoiseType": "outer_crew"
+          },
+          {
+            "radioNoiseType": "outer_crew"
+          }
+        ],
+        "artDestroy": {
+          "event": "08_artillery_support/voice_message_commander_art_destroy",
+          "playerRole": "commander",
+          "minSpeechInterval": 0.0,
+          "radioNoiseType": "outer_crew"
+        },
+        "artilleryAck": {
+          "event": "08_artillery_support/voice_message_artillery_acknowledged",
+          "playerRole": "commander",
+          "minSpeechInterval": 0.0,
+          "radioNoiseType": "outer_crew"
+        },
+        "artilleryOpenFire": {
+          "event": "08_artillery_support/voice_message_artillery_open_fire",
+          "playerRole": "commander",
+          "minSpeechInterval": 0.0,
+          "radioNoiseType": "outer_crew"
+        },
+        "artilleryUnderstood": {
+          "event": "08_artillery_support/voice_message_artillery_understood",
+          "playerRole": "commander",
+          "minSpeechInterval": 0.0,
+          "radioNoiseType": "outer_crew"
+        },
+        "artilleryBracketed": {
+          "event": "08_artillery_support/voice_message_artillery_bracketed",
+          "playerRole": "commander",
+          "minSpeechInterval": 0.0,
+          "radioNoiseType": "outer_crew"
+        },
+        "aviaStreakStart": {
+          "event": "09_aviation_support/voice_message_commander_art_request",
+          "playerRole": "commander",
+          "minSpeechInterval": 30.0,
+          "radioNoiseType": "outer_crew"
+        },
+        "aviaStreakReport": {
+          "event": "09_aviation_support/voice_message_aviation_on_the_way",
+          "playerRole": "commander",
+          "minSpeechInterval": 30.0,
+          "radioNoiseType": "outer_crew"
+        },
+        "aircraftInView": {
+          "event": "10_air_defense/voice_message_chief_air_danger",
+          "playerRole": "commander",
+          "minSpeechInterval": 30.0,
+          "radioNoiseType": "outer_crew"
+        },
+        "ucavLaunch": {
+          "event": "03_various_devices/voice_message_commander_ucav_launch",
+          "playerRole": "commander"
+        },
+        "ucavReady": {
+          "event": "03_various_devices/voice_message_commander_ucav_recover",
+          "playerRole": "commander"
+        },
+        "shovelOn": {
+          "event": "03_various_devices/voice_message_commander_shovel_on",
+          "playerRole": "commander"
+        },
+        "shovelOff": {
+          "event": "03_various_devices/voice_message_commander_shovel_off",
+          "playerRole": "commander"
+        },
+        "stabilizerOn": {
+          "event": "03_various_devices/voice_message_commander_stabilizer_on",
+          "playerRole": "commander",
+          "minSpeechInterval": 10.0
+        },
+        "stabilizerOff": {
+          "event": "03_various_devices/voice_message_commander_stabilizer_off",
+          "playerRole": "commander",
+          "minSpeechInterval": 10.0
+        }
+      },
+      "azimuth": {
+        "event": "05_targeting/voice_message_commander_target_<angle>_h",
+        "step": 1,
+        "num": 13,
+        "player": -1,
+        "playerRole": "commander",
+        "minSpeechInterval": 0.0
+      },
+      "angleCorrectionMetric": {
+        "event": "06_shooting_results/voice_message_commander_correction_<dist>",
+        "playerRole": "commander",
+        "minSpeechInterval": 0.0,
+        "distances": [
+          {
+            "val": "002"
+          },
+          {
+            "val": "004"
+          },
+          {
+            "val": "006"
+          },
+          {
+            "val": "008"
+          },
+          {
+            "val": "010"
+          },
+          {
+            "val": "012"
+          },
+          {
+            "val": "014"
+          },
+          {
+            "val": "016"
+          }
+        ]
+      },
+      "distanceMetric": {
+        "event": "05_targeting/voice_message_commander_target_<dist>_m",
+        "player": -1,
+        "playerRole": "commander",
+        "minSpeechInterval": 0.0,
+        "distances": [
+          {
+            "val": 300
+          },
+          {
+            "val": 350
+          },
+          {
+            "val": 400
+          },
+          {
+            "val": 450
+          },
+          {
+            "val": 500
+          },
+          {
+            "val": 550
+          },
+          {
+            "val": 600
+          },
+          {
+            "val": 650
+          },
+          {
+            "val": 700
+          },
+          {
+            "val": 750
+          },
+          {
+            "val": 800
+          },
+          {
+            "val": 850
+          },
+          {
+            "val": 900
+          },
+          {
+            "val": 950
+          },
+          {
+            "val": 1000
+          },
+          {
+            "val": 1100
+          },
+          {
+            "val": 1200
+          },
+          {
+            "val": 1300
+          },
+          {
+            "val": 1400
+          },
+          {
+            "val": 1500
+          },
+          {
+            "val": 1600
+          },
+          {
+            "val": 1700
+          },
+          {
+            "val": 1800
+          },
+          {
+            "val": 1900
+          },
+          {
+            "val": 2000
+          }
+        ]
+      },
       "events": {
         "shortStop": {
           "event": "voice_message_short_stop",
@@ -15444,6 +16635,7 @@
         },
         "driverWounded": {
           "event": "voice_message_driver_wounded",
+          "radioNoiseType": "inner_driver",
           "playerRole": "commander",
           "player": 1,
           "player2Role": "tank_gunner",
@@ -15484,6 +16676,7 @@
         },
         "driverContused": {
           "event": "voice_message_driver_contused",
+          "radioNoiseType": "inner_driver",
           "playerRole": "commander",
           "player": 1,
           "player2Role": "tank_gunner",
@@ -15506,6 +16699,7 @@
         },
         "driverHealed": {
           "event": "voice_message_driver_healed",
+          "radioNoiseType": "inner_driver",
           "playerRole": "tank_gunner",
           "player": 3,
           "delayTime": 1.0
@@ -15513,6 +16707,7 @@
       },
       "bulletTypeToEvent": {
         "apbc_tank": "loadBulletAP",
+        "apbc_usa_tank": "loadBulletAP",
         "apc_tank": "loadBulletAP",
         "aphe_tank": "loadBulletAP",
         "aphebc_tank": "loadBulletAP",
@@ -15541,6 +16736,7 @@
         "apds_fs_full_body_steel_tank": "loadBulletAPDS",
         "apds_fs_tungsten_small_core_tank": "loadBulletAPDS",
         "apds_fs_tungsten_l10_l15_tank": "loadBulletAPDS",
+        "apds_fs_long_l30_tank": "loadBulletSubCaliber",
         "atgm_tank": "loadBulletMissile",
         "rocket_tank": "loadBulletMissile"
       }
@@ -17316,6 +18512,24 @@
         ]
       }
     }
+  },
+  "operatorCountries": {
+    "country_finland": "Finnish",
+    "country_czech": "Czech",
+    "country_south_africa": "SouthAfrican",
+    "country_south_africa_modern": "SouthAfrican",
+    "country_australia": "Australian",
+    "country_hungary": "Hungarian",
+    "country_poland": "Polish",
+    "country_spain": "Spanish",
+    "country_turkey": "Turkish",
+    "country_vietnam": "Vietnamese"
+  },
+  "radioNoise": {
+    "path": "dialogs_crew_ground/background_noises",
+    "outer_crew": "outer_crew",
+    "inner_crew": "inner_gunner",
+    "commander_radio": "commander_radio"
   },
   "airDefenceSiren": {
     "path": "aircraft/ambient",

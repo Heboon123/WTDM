@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { split_by_chars } = require("string")
 let { get_game_version_str } = require("app")
@@ -11,7 +9,8 @@ let time = require("%scripts/time.nut")
 let platformModule = require("%scripts/clientState/platform.nut")
 let promoConditions = require("%scripts/promo/promoConditions.nut")
 let { isPollVoted } = require("%scripts/web/webpoll.nut")
-let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { registerPersistentDataFromRoot, PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { startsWith } = require("%sqstd/string.nut")
 
 enum POPUP_VIEW_TYPES {
   NEVER = "never"
@@ -53,7 +52,7 @@ let function getTimeIntByString(stringDate, defaultValue = 0) {
   }
 
   foreach (name, val in blk) {
-    if (::g_string.startsWith(name, "name_")) {
+    if (startsWith(name, "name_")) {
       let lang = name.slice(5)
       feed.params.captions[lang] <- val
       feed.params.condensedCaptions[lang] <- val
@@ -152,7 +151,7 @@ let function getTimeIntByString(stringDate, defaultValue = 0) {
     return false
 
   let popupsBlk = ::get_gui_regional_blk()?.popupItems
-  if (!::u.isDataBlock(popupsBlk))
+  if (!u.isDataBlock(popupsBlk))
     return false
 
   local result = false
@@ -174,7 +173,7 @@ let function getTimeIntByString(stringDate, defaultValue = 0) {
 ::g_popup_msg.showPopupDebug <- function showPopupDebug(dbgId) {
   let debugLog = dlog // warning disable: -forbidden-function
   let popupsBlk = ::get_gui_regional_blk()?.popupItems
-  if (!::u.isDataBlock(popupsBlk)) {
+  if (!u.isDataBlock(popupsBlk)) {
     debugLog("POPUP ERROR: No popupItems in gui_regional.blk")
     return false
   }
@@ -193,4 +192,4 @@ let function getTimeIntByString(stringDate, defaultValue = 0) {
   return false
 }
 
-::g_script_reloader.registerPersistentDataFromRoot("g_popup_msg")
+registerPersistentDataFromRoot("g_popup_msg")

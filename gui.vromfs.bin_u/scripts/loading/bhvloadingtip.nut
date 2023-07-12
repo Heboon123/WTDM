@@ -1,8 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
 let { getTip } = require("%scripts/loading/loadingTips.nut")
 
@@ -29,7 +27,7 @@ let { getTip } = require("%scripts/loading/loadingTips.nut")
     }
 
     function setValue(obj, unitTypeMask) { //to set unit type from scripts
-      if (!::u.isInteger(unitTypeMask) || unitTypeMask == this.getUnitTypeMask(obj))
+      if (!u.isInteger(unitTypeMask) || unitTypeMask == this.getUnitTypeMask(obj))
         return
       obj.setIntProp(this.unitTypeMaskPID, unitTypeMask)
       this.updateTip(obj)

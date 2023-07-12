@@ -1798,6 +1798,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -2461,6 +2462,9 @@
   {
     "commonWeapons": [
       {
+        "maxMissileSalvoTimeInterval": 3.0
+      },
+      {
         "Weapon": {
           "trigger": "gunner0",
           "triggerGroup": "primary",
@@ -2468,12 +2472,12 @@
           "emitter": "bone_gun_barrel",
           "flash": "emtr_gun_flame",
           "rearmCartridgeTime": 20.0,
-          "sleeveEmitter": "emtr_shell_01",
-          "sleeveMesh": "auto_cannon_cartridge_case",
+          "shellCasingEmitter": "emtr_shell_01",
+          "shellCasingMesh": "auto_cannon_cartridge_case",
           "openHatchTime": 0.0,
-          "sleevesLifeTime": 5.0,
-          "sleeveImpulse": [0.0,0.0,-2.0],
-          "linkSleeveToGun": true,
+          "shellCasingLifeTime": 5.0,
+          "shellCasingImpulse": [0.0,0.0,-2.0],
+          "linkShellCasingToGun": true,
           "recoilOffset": 0.01,
           "maxAdditionalPitch": 0.0,
           "recoilMultiplier": 0.3,
@@ -2534,6 +2538,7 @@
           "recoilMultiplier": 0.1,
           "stopForFire": true,
           "maxSpeedForFire": 5.0,
+          "staticElevation": 0.875,
           "barrelDP": "gun_barrel_01_dm",
           "createGunEffects": true,
           "defaultYaw": 0.0,
@@ -2559,13 +2564,13 @@
           "errTargetting": 3.0,
           "errExplTime": 0.0,
           "turret": {
-            "head": "bone_turret",
+            "head": "bone_gun_01",
             "gun": "bone_gun_01",
             "gunnerDm": "gunner_dm",
             "rotatedTurret": "bone_turret"
           },
           "limits": {
-            "yaw": [-180.0,180.0],
+            "yaw": [-0.0,0.0],
             "pitch": [-0.0,85.0]
           }
         }
@@ -2834,6 +2839,34 @@
             }
           }
         ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_11_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_11_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_12_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_12_02"
+            }
+          }
+        ]
       }
     ]
   },
@@ -2846,8 +2879,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -3772,6 +3805,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -4035,6 +4077,12 @@
     "smokeScreenExhaustEmitters": [
       {
         "emitter": "emtr_exhaust_01"
+      },
+      {
+        "emitter": "emtr_exhaust_02"
+      },
+      {
+        "emitter": "emtr_exhaust_03"
       },
       {
         "emitter": "emtr_exhaust_04"

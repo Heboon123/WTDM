@@ -1,12 +1,10 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
-let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { registerPersistentDataFromRoot, PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { getTimestampFromStringUtc } = require("%scripts/time.nut")
 let { targetPlatform, isPlatformPC, isPlatformPS4 } = require("%scripts/clientState/platform.nut")
 
@@ -152,7 +150,7 @@ local updateGiftUnitsDiscountTask = -1
 
 ::g_discount.pushDiscountsUpdateEvent <- function pushDiscountsUpdateEvent() {
   ::update_gamercards()
-  ::broadcastEvent("DiscountsDataUpdated")
+  broadcastEvent("DiscountsDataUpdated")
 }
 
 ::g_discount.onEventUnitBought <- function onEventUnitBought(p) {
@@ -206,13 +204,13 @@ local updateGiftUnitsDiscountTask = -1
 
   local isShopDiscountVisible = false
   foreach (airName, discount in this.discountsList.airList)
-    if (discount > 0 && this.canBeVisibleOnUnit(::getAircraftByName(airName))) {
+    if (discount > 0 && this.canBeVisibleOnUnit(getAircraftByName(airName))) {
       isShopDiscountVisible = true
       break
     }
   if (!isShopDiscountVisible)
     foreach (airName, discount in this.discountsList.entitlementUnits)
-      if (discount > 0 && this.canBeVisibleOnUnit(::getAircraftByName(airName))) {
+      if (discount > 0 && this.canBeVisibleOnUnit(getAircraftByName(airName))) {
         isShopDiscountVisible = true
         break
       }
@@ -360,5 +358,5 @@ local updateGiftUnitsDiscountTask = -1
 // Independent Modules
 require("%scripts/slotbar/elems/discountIconElem.nut")
 
-::subscribe_handler(::g_discount, ::g_listener_priority.CONFIG_VALIDATION)
-::g_script_reloader.registerPersistentDataFromRoot("g_discount")
+subscribe_handler(::g_discount, ::g_listener_priority.CONFIG_VALIDATION)
+registerPersistentDataFromRoot("g_discount")

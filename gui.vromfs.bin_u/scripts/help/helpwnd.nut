@@ -1,14 +1,13 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let { ceil } = require("math")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { format } = require("string")
 let { get_current_mission_name } = require("mission")
+let { get_meta_mission_info_by_name } = require("guiMission")
 let { blkFromPath } = require("%sqStdLibs/helpers/datablockUtils.nut")
 let { search, isEmpty, isTMatrix } = require("%sqStdLibs/helpers/u.nut")
 let gamepadIcons = require("%scripts/controls/gamepadIcons.nut")
@@ -106,7 +105,7 @@ require("%scripts/viewUtils/bhvHelpFrame.nut")
       })
     }
 
-    let data = ::handyman.renderCached("%gui/frameHeaderTabs.tpl", view)
+    let data = handyman.renderCached("%gui/frameHeaderTabs.tpl", view)
     this.guiScene.replaceContentFromText(tabsObj, data, data.len(), this)
 
     this.fillSubTabs()
@@ -129,7 +128,7 @@ require("%scripts/viewUtils/bhvHelpFrame.nut")
         })
       }
 
-      let data = ::handyman.renderCached("%gui/commonParts/shopFilter.tpl", view)
+      let data = handyman.renderCached("%gui/commonParts/shopFilter.tpl", view)
       this.guiScene.replaceContentFromText(subTabsObj, data, data.len(), this)
     }
 
@@ -335,11 +334,11 @@ require("%scripts/viewUtils/bhvHelpFrame.nut")
       view.texts.append({
         width = 100.0 / (scTextFull.len() || 1) + "%pw"
         viewclass = "parInvert"
-        text = ::g_string.implode(textsArr, "\n")
+        text = "\n".join(textsArr, true)
       })
 
     let obj = this.scene.findObject("full_shortcuts_texts")
-    let data = ::handyman.renderCached("%gui/commonParts/text.tpl", view)
+    let data = handyman.renderCached("%gui/commonParts/text.tpl", view)
     this.guiScene.replaceContentFromText(obj, data, data.len(), this)
 
     let kbdObj = this.scene.findObject("keyboard_div")
@@ -426,8 +425,7 @@ require("%scripts/viewUtils/bhvHelpFrame.nut")
     let ignoreAxis = ["camx", "camy"]
     let customLocalization = { ["camx"] = "controls/help/camx" }
 
-    let curJoyParams = ::JoystickParams()
-    curJoyParams.setFrom(::joystick_get_cur_settings())
+    let curJoyParams = ::joystick_get_cur_settings()
     let axisIds = [
       { id = "joy_axis_l", x = 0, y = 1 }
       { id = "joy_axis_r", x = 2, y = 3 }
@@ -607,7 +605,7 @@ require("%scripts/viewUtils/bhvHelpFrame.nut")
       view.rows.append(rowData)
     }
 
-    let markup = ::handyman.renderCached("%gui/help/helpShortcutsList.tpl", view)
+    let markup = handyman.renderCached("%gui/help/helpShortcutsList.tpl", view)
     this.guiScene.replaceContentFromText(defControlsFrame, markup, markup.len(), this)
   }
 
@@ -640,7 +638,7 @@ require("%scripts/viewUtils/bhvHelpFrame.nut")
       local altitudeBottom = 0
       local altitudeTop = 0
 
-      let misInfoBlk = ::get_mission_meta_info(get_current_mission_name())
+      let misInfoBlk = get_meta_mission_info_by_name(get_current_mission_name())
       let misBlk = misInfoBlk?.mis_file ? blkFromPath(misInfoBlk.mis_file) : null
       let areasBlk = misBlk?.areas
       if (areasBlk) {
@@ -694,7 +692,7 @@ require("%scripts/viewUtils/bhvHelpFrame.nut")
       let view = {
         items = items
       }
-      let blk = ::handyman.renderCached(("%gui/help/helpActionBarItem.tpl"), view)
+      let blk = handyman.renderCached(("%gui/help/helpActionBarItem.tpl"), view)
       this.guiScene.replaceContentFromText(obj, blk, blk.len(), this)
     }
   }
@@ -711,7 +709,7 @@ require("%scripts/viewUtils/bhvHelpFrame.nut")
       viewItem.icon <- item.icon
     else
       viewItem.icon <- actionBarType.getIcon(item, null,
-        ::getAircraftByName(actionBar?.unitId ?? ""), actionBar?.hudUnitType ?? "")
+        getAircraftByName(actionBar?.unitId ?? ""), actionBar?.hudUnitType ?? "")
 
     return viewItem
   }

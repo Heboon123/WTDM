@@ -146,7 +146,7 @@
           "armorClass": "CHA_tank_modern"
         },
         "turret_03_side_dm": {
-          "armorThickness": 5.0
+          "armorThickness": 11.0
         },
         "turret_02_bottom_dm": {
           "armorThickness": 32.0
@@ -225,7 +225,7 @@
           "armorThickness": 15.0
         },
         "turret_03_back_dm": {
-          "armorThickness": 102.0
+          "armorThickness": 11.0
         },
         "turret_03_top_dm": {
           "armorThickness": 30.0,
@@ -1789,6 +1789,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -3315,8 +3316,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -4241,6 +4242,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -4892,6 +4902,7 @@
   {
     "supportPlane": {
       "supportPlaneClass": "ucav_recon_micro",
+      "behTreeName": "recon_micro",
       "planeStartSpeed": 80.0,
       "count": 1
     }

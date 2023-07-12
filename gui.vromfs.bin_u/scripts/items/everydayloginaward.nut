@@ -1,11 +1,11 @@
 //-file:plus-string
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 from "%scripts/dagui_library.nut" import *
+let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
+let u = require("%sqStdLibs/helpers/u.nut")
 
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let DataBlock  = require("DataBlock")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let time = require("%scripts/time.nut")
@@ -15,6 +15,7 @@ let { todayLoginExp, loginStreak, getExpRangeTextOfLoginStreak } = require("%scr
 let { GUI } = require("%scripts/utils/configs.nut")
 let { register_command } = require("console")
 let { initItemsRoulette, skipItemsRouletteAnimation } = require("%scripts/items/roulette/itemsRoulette.nut")
+let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
 let class EveryDayLoginAward extends ::gui_handlers.BaseGuiHandlerWT {
   wndType = handlerType.MODAL
@@ -82,7 +83,7 @@ let class EveryDayLoginAward extends ::gui_handlers.BaseGuiHandlerWT {
       return
     local imageSectionName = "image"
     let imageSectionNameAlt = "tencent_image"
-    if (::is_vendor_tencent() && ::u.isDataBlock(data[imageSectionNameAlt]))
+    if (::is_vendor_tencent() && u.isDataBlock(data[imageSectionNameAlt]))
       imageSectionName = imageSectionNameAlt
 
     this.savePeriodAwardData(data)
@@ -185,7 +186,7 @@ let class EveryDayLoginAward extends ::gui_handlers.BaseGuiHandlerWT {
       if (this.isOpened)
         return item.getOpenedBigIcon()
 
-      return ::handyman.renderCached("%gui/items/item.tpl", {
+      return handyman.renderCached("%gui/items/item.tpl", {
         items = item.getViewData({
           enableBackground = false,
           showAction = false,
@@ -199,7 +200,7 @@ let class EveryDayLoginAward extends ::gui_handlers.BaseGuiHandlerWT {
 
     log("Every Day Login Award: not found item by id = " + id)
     debugTableData(this.userlog)
-    return ::LayersIcon.getIconData("default_chest_debug")
+    return LayersIcon.getIconData("default_chest_debug")
   }
 
   function getRewardsArray(awardName) {
@@ -238,7 +239,7 @@ let class EveryDayLoginAward extends ::gui_handlers.BaseGuiHandlerWT {
     if (layersData == "")
       return ""
 
-    return ::LayersIcon.genDataFromLayer(::LayersIcon.findLayerCfg("item_place_container"), layersData)
+    return LayersIcon.genDataFromLayer(LayersIcon.findLayerCfg("item_place_container"), layersData)
   }
 
   function savePeriodAwardData(guiBlkEDLAdata = null) {
@@ -248,11 +249,11 @@ let class EveryDayLoginAward extends ::gui_handlers.BaseGuiHandlerWT {
       guiBlkEDLAdata = guiBlk?.every_day_login_award
     }
 
-    if (!::u.isDataBlock(guiBlkEDLAdata)
-        || !::u.isDataBlock(guiBlkEDLAdata?.periodic_award))
+    if (!u.isDataBlock(guiBlkEDLAdata)
+        || !u.isDataBlock(guiBlkEDLAdata?.periodic_award))
       return
 
-    this.curPeriodicAwardData = ::u.copy(guiBlkEDLAdata.periodic_award)
+    this.curPeriodicAwardData = u.copy(guiBlkEDLAdata.periodic_award)
   }
 
   function updatePeriodRewardImage() {
@@ -271,7 +272,7 @@ let class EveryDayLoginAward extends ::gui_handlers.BaseGuiHandlerWT {
       return
 
     let bgImage = curentRewardData?.trophy
-    if (::u.isEmpty(bgImage)) {
+    if (u.isEmpty(bgImage)) {
       assert(isDefault, "Every Day Login Award: empty trophy param for config for period " + period)
       debugTableData(cfg)
       return
@@ -403,7 +404,7 @@ let class EveryDayLoginAward extends ::gui_handlers.BaseGuiHandlerWT {
       this.haveItems = this.haveItems || ::trophyReward.isRewardItem(rewardType)
 
       if (rewardType == "unit" || rewardType == "rentedUnit")
-        this.unit = ::getAircraftByName(reward[rewardType]) || this.unit
+        this.unit = getAircraftByName(reward[rewardType]) || this.unit
     }
 
     foreach (reward in this.periodicRewardsArray) {
@@ -411,7 +412,7 @@ let class EveryDayLoginAward extends ::gui_handlers.BaseGuiHandlerWT {
       this.haveItems = this.haveItems || ::trophyReward.isRewardItem(rewardType)
 
       if (rewardType == "unit" || rewardType == "rentedUnit")
-        this.periodUnit = ::getAircraftByName(reward[rewardType]) || this.periodUnit
+        this.periodUnit = getAircraftByName(reward[rewardType]) || this.periodUnit
     }
   }
 
@@ -502,7 +503,7 @@ let class EveryDayLoginAward extends ::gui_handlers.BaseGuiHandlerWT {
 
     let awardsObj = this.scene.findObject("awards_line")
     if (view.items.len() > 0 && checkObj(awardsObj)) {
-      let data = ::handyman.renderCached(("%gui/items/awardItem.tpl"), view)
+      let data = handyman.renderCached(("%gui/items/awardItem.tpl"), view)
       this.guiScene.replaceContentFromText(awardsObj, data, data.len(), this)
     }
 
@@ -544,7 +545,7 @@ let class EveryDayLoginAward extends ::gui_handlers.BaseGuiHandlerWT {
 
     for (local i = 1; i < daysDiff; i++)
       view.items.append({
-        item = ::handyman.renderCached("%gui/items/item.tpl", {
+        item = handyman.renderCached("%gui/items/item.tpl", {
           items = [{
             enableBackground = true
             skipNavigation = true
@@ -596,7 +597,7 @@ let class EveryDayLoginAward extends ::gui_handlers.BaseGuiHandlerWT {
         continue
 
       let progressImage = rewardConfig.progress
-      if (::u.isEmpty(progressImage)) {
+      if (u.isEmpty(progressImage)) {
         assert(isDefault, "Every Day Login Award: empty progress param for config for period = " + period)
         debugTableData(rewardConfig)
         continue
@@ -621,7 +622,7 @@ let class EveryDayLoginAward extends ::gui_handlers.BaseGuiHandlerWT {
     if (!view.item.len())
       return
 
-    let data = ::handyman.renderCached("%gui/items/edlaProgressBarRewardIcon.tpl", view)
+    let data = handyman.renderCached("%gui/items/edlaProgressBarRewardIcon.tpl", view)
     this.guiScene.appendWithBlk(blockObj, data, this)
   }
 
@@ -631,10 +632,10 @@ let class EveryDayLoginAward extends ::gui_handlers.BaseGuiHandlerWT {
 
   function sendOpenTrophyStatistic(obj) {
     let objId = obj?.id
-    ::add_big_query_record("daily_trophy_screen",
-      objId == "btn_open" ? "main_get_reward"
+    sendBqEvent("CLIENT_GAMEPLAY_1", "daily_trophy_screen", {
+      result = objId == "btn_open" ? "main_get_reward"
         : objId == "btn_nav_open" ? "navbar_get_reward"
-        : "exit")
+        : "exit"})
   }
 
   function initExpTexts() {

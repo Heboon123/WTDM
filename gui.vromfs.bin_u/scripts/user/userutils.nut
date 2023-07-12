@@ -1,9 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { get_player_tags } = require("auth_wt")
 let crossplayModule = require("%scripts/social/crossplay.nut")
 let mapPreferencesParams = require("%scripts/missions/mapPreferencesParams.nut")
 let slotbarPresets = require("%scripts/slotbar/slotbarPresetsByVehiclesGroups.nut")
@@ -59,7 +56,7 @@ let function getMyStateData() {
   return myData
 }
 
-let havePlayerTag = @(tag) ::get_player_tags().indexof(tag) != null
+let havePlayerTag = @(tag) get_player_tags().indexof(tag) != null
 
 let isGuestLogin = Watched(havePlayerTag("guestlogin"))
 let updateGuestLogin = @() isGuestLogin(havePlayerTag("guestlogin"))

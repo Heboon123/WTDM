@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { buildDateTimeStr, getTimestampFromStringUtc } = require("%scripts/time.nut")
@@ -53,7 +51,7 @@ let { getRewardConditionId, getRewardConditionById, getConditionValue, getCondit
         navImagesText = this.tabsList.len() > 1 ? ::get_navigation_images_text(idx, this.tabsList.len()) : ""
         selected = idx == 0
       })
-    let data = ::handyman.renderCached(this.sceneTplName, { tabs })
+    let data = handyman.renderCached(this.sceneTplName, { tabs })
     this.guiScene.replaceContentFromText(this.scene.findObject("root-box"), data, data.len(), this)
 
     this.updateRewards()
@@ -69,11 +67,11 @@ let { getRewardConditionId, getRewardConditionById, getConditionValue, getCondit
     let eventEconomicName = finalAwardDate ? tourId : ::events.getEventEconomicName(event)
     let view = {
       total      = rewards.len()
-      baseReward = (@(event) function () {
+      baseReward = function () {
         let reward = getBaseVictoryReward(event)
         return reward ? loc("tournaments/reward/everyVictory",  { reward = reward }) : reward
-      })(event)
-      items = (@(rewards, _event) function () {
+      }
+      items = function () {
         local even = true
         let res = []
         foreach (conditionName, condition in rewards)
@@ -94,10 +92,10 @@ let { getRewardConditionId, getRewardConditionById, getConditionValue, getCondit
             res.append(item)
           }
         return res
-      })(rewards, event)
+      }
     }
 
-    let data = ::handyman.renderCached(this.rewardsTableTplName, view)
+    let data = handyman.renderCached(this.rewardsTableTplName, view)
     this.guiScene.replaceContentFromText(this.scene.findObject("rewards_content"), data, data.len(), this)
   }
 

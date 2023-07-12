@@ -1,8 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
 let { format } = require("string")
 let contentStateModule = require("%scripts/clientState/contentState.nut")
@@ -13,6 +11,7 @@ let exitGame = require("%scripts/utils/exitGame.nut")
 let { addPromoAction } = require("%scripts/promo/promoActions.nut")
 let { is_fully_translated } = require("acesInfo")
 let DataBlock = require("DataBlock")
+let { stripTags } = require("%sqstd/string.nut")
 
 let function check_members_pkg(pack) {
   let members = ::g_squad_manager.checkMembersPkg(pack)
@@ -119,13 +118,13 @@ let function request_packages_and_restart(packList) {
       reqPacksList.remove(i)
 
   eachBlock(::OnlineShopModel.getPriceBlk(),
-    @(b, n) ::u.appendOnce(checkReqContent(n, b), reqPacksList, true))
+    @(b, n) u.appendOnce(checkReqContent(n, b), reqPacksList, true))
   eachBlock(::get_game_settings_blk()?.features,
-    @(b, n) ::u.appendOnce(checkReqContent(n, b), reqPacksList, true))
+    @(b, n) u.appendOnce(checkReqContent(n, b), reqPacksList, true))
 
   //workaround - reqPack is missing again in ents
-  ::u.appendOnce(checkReqContentByName("usa_pacific_41_43", "hc_pacific"), reqPacksList, true)
-  ::u.appendOnce(checkReqContentByName("jpn_pacific_41_43", "hc_pacific"), reqPacksList, true)
+  u.appendOnce(checkReqContentByName("usa_pacific_41_43", "hc_pacific"), reqPacksList, true)
+  u.appendOnce(checkReqContentByName("jpn_pacific_41_43", "hc_pacific"), reqPacksList, true)
 
   local text = ""
   let langId = ::get_current_language()
@@ -133,7 +132,7 @@ let function request_packages_and_restart(packList) {
   if (!::have_package(langPack) && is_fully_translated(langId)) {
     if (!reqPacksList.len())
       text = loc("yn1/have_new_content_lang")
-    ::u.appendOnce(langPack, reqPacksList)
+    u.appendOnce(langPack, reqPacksList)
   }
 
   let canceledBlk = ::loadLocalByAccount("canceledPacks")
@@ -158,17 +157,17 @@ let function request_packages_and_restart(packList) {
 
   ::scene_msg_box("new_content", null, text,
     [["ok",
-      (@(reqPacksList) function() {
+      function() {
         request_packages_and_restart(reqPacksList)
-      })(reqPacksList)],
+      }],
      ["cancel",
-       (@(reqPacksList) function() {
+       function() {
          let canceledPacks = ::loadLocalByAccount("canceledPacks") ?? DataBlock()
          foreach (pack in reqPacksList)
            if (!(pack in canceledPacks))
              canceledPacks[pack] = true
          ::saveLocalByAccount("canceledPacks", canceledPacks)
-       })(reqPacksList)]
+       }]
     ],
     "ok")
 }
@@ -206,7 +205,7 @@ let function set_asked_pack(pack, askTag = null) {
       _msg = contentStateModule.getClientDownloadProgressText()
   }
   else {
-    if (::u.isEmpty(_msg)) {
+    if (u.isEmpty(_msg)) {
       local ending = ""
       if (!::can_download_package())
         ending = "/info"
@@ -264,8 +263,8 @@ let function set_asked_pack(pack, askTag = null) {
 
   local params = null
   if (langId != "English") {
-    let messageEn = ::g_string.stripTags(loc("yn1/have_new_content_lang/en"))
-    let buttonsEn = ::g_string.stripTags(format("[%s] = %s, [%s] = %s",
+    let messageEn = stripTags(loc("yn1/have_new_content_lang/en"))
+    let buttonsEn = stripTags(format("[%s] = %s, [%s] = %s",
       loc("msgbox/btn_download"), loc("msgbox/btn_download/en"),
       loc("msgbox/btn_cancel"), loc("msgbox/btn_cancel/en")))
     params = {
@@ -275,7 +274,7 @@ let function set_asked_pack(pack, askTag = null) {
   }
 
   ::scene_msg_box("req_pkg_locatization", null, loc("yn1/have_new_content_lang"),
-    [["download", (@(pack) function() { request_packages_and_restart([pack]) })(pack)], ["cancel"]], "cancel", params)
+    [["download", function() { request_packages_and_restart([pack]) }], ["cancel"]], "cancel", params)
 }
 
 ::check_speech_country_unit_localization_package_and_ask_download <- function check_speech_country_unit_localization_package_and_ask_download() {
@@ -300,9 +299,7 @@ let function set_asked_pack(pack, askTag = null) {
     [
       [
         "ok",
-        (@(reqPacksList) function() {
-          request_packages_and_restart(reqPacksList)
-        })(reqPacksList)
+        @() request_packages_and_restart(reqPacksList)
       ],
       ["cancel", function() {}]
     ],

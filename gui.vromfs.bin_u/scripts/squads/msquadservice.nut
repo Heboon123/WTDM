@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 global enum msquadErrorId {
   ALREADY_IN_SQUAD = "ALREADY_IN_SQUAD"
@@ -76,7 +74,7 @@ global enum msquadErrorId {
   }
 
   function _convertIdToInt(id) {
-    if (::u.isString(id))
+    if (u.isString(id))
       id = id.tointeger()
 
     return id

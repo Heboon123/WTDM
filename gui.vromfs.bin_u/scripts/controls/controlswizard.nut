@@ -1,9 +1,9 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 let { MAX_SHORTCUTS } = require("%scripts/controls/controlsConsts.nut")
 let { format } = require("string")
@@ -14,6 +14,10 @@ let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platfo
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let controlsPresetConfigPath = require("%scripts/controls/controlsPresetConfigPath.nut")
 let { getHelpPreviewHandler } = require("%scripts/help/helpPreview.nut")
+let { recomendedControlPresets, getControlsPresetBySelectedType
+} = require("%scripts/controls/controlsUtils.nut")
+let { joystickSetCurSettings, setShortcutsAndSaveControls
+} = require("%scripts/controls/controlsCompatibility.nut")
 
 ::aircraft_controls_wizard_config <- [
   { id = "helpers_mode"
@@ -32,11 +36,11 @@ let { getHelpPreviewHandler } = require("%scripts/help/helpPreview.nut")
     { id = "msg_wasd_type",
       text = loc("controls/askKeyboardWasdType"),
       type = CONTROL_TYPE.MSG_BOX
-      options = ::recomended_control_presets.map(@(name) "#msgbox/btn_" + name)
+      options = recomendedControlPresets.map(@(name) $"#msgbox/btn_{name}")
       defValue = 1,
       onButton = function(value) {
-        let cType = ::recomended_control_presets[value]
-        let preset = ::get_controls_preset_by_selected_type(cType)
+        let cType = recomendedControlPresets[value]
+        let preset = getControlsPresetBySelectedType(cType)
         this.applyPreset(preset.fileName)
       }
     }
@@ -74,8 +78,7 @@ let { getHelpPreviewHandler } = require("%scripts/help/helpPreview.nut")
           }
           let axis = this.curJoyParams.getAxis(::get_axis_index("throttle"))
           axis.relative = !isAxis
-          let device = ::joystick_get_default()
-          this.curJoyParams.applyParams(device)
+          ::g_controls_manager.commitControls()
         }
       skip = ["msg/holdThrottleForWEP"] //dont work in axis, but need to correct prevItem work, when skipList used in onAxisDone
     }
@@ -146,8 +149,7 @@ let { getHelpPreviewHandler } = require("%scripts/help/helpPreview.nut")
           axis.relative = value != 0
           axis.innerDeadzone = (value != 0) ? 0.25 : 0.05
         }
-        let device = ::joystick_get_default()
-        this.curJoyParams.applyParams(device)
+        ::g_controls_manager.commitControls()
       }
     }
       { id = "neutral_cam_pos", type = CONTROL_TYPE.SHORTCUT_GROUP
@@ -397,9 +399,8 @@ let function isInArrayRecursive(v, arr) {
     this.shortcutNames = []
     this.shortcutItems = []
 
-    this.curJoyParams = ::JoystickParams()
-    this.curJoyParams.setFrom(::joystick_get_cur_settings())
-    this.deviceMapping = ::u.copy(::g_controls_manager.getCurPreset().deviceMapping)
+    this.curJoyParams = ::joystick_get_cur_settings()
+    this.deviceMapping = u.copy(::g_controls_manager.getCurPreset().deviceMapping)
 
     this.initAxisPresetup()
 
@@ -841,8 +842,7 @@ let function isInArrayRecursive(v, arr) {
         axis.relative = ("buttonRelative" in this.curItem) ? this.curItem.buttonRelative : false
         axis.relSens = ("relSens" in this.curItem) ? this.curItem.relSens : 1.0
         axis.relStep = ("relStep" in this.curItem) ? this.curItem.relStep : 0
-        let device = ::joystick_get_default()
-        this.curJoyParams.applyParams(device)
+        ::g_controls_manager.commitControls()
       }
 
     if (this.curItem.type == CONTROL_TYPE.AXIS && ("onAxisDone" in this.curItem))
@@ -910,11 +910,11 @@ let function isInArrayRecursive(v, arr) {
       actionText += ((actionText == "") ? "" : ", ") + loc("hotkeys/" + this.shortcutNames[binding[0]])
     let msg = loc("hotkeys/msg/unbind_question", { action = actionText })
     this.msgBox("controls_wizard_bind_existing_shortcut", msg, [
-      ["add", (@(_curBinding, devs, btns, shortcutId) function() {
+      ["add", function() {
         this.doBind(devs, btns, shortcutId)
         this.onButtonDone()
-      })(curBinding, devs, btns, shortcutId)],
-      ["replace", (@(curBinding, devs, btns, shortcutId) function() {
+      }],
+      ["replace", function() {
         foreach (binding in curBinding) {
           this.shortcuts[binding[0]].remove(binding[1])
           let item = this.shortcutItems[binding[0]]
@@ -923,7 +923,7 @@ let function isInArrayRecursive(v, arr) {
         }
         this.doBind(devs, btns, shortcutId)
         this.onButtonDone()
-      })(curBinding, devs, btns, shortcutId)],
+      }],
       ["cancel", function() { this.askShortcut() }],
       ["skip", function() { this.onButtonDone() }],
     ], "add")
@@ -1079,8 +1079,7 @@ let function isInArrayRecursive(v, arr) {
       axis.kMul = this.axisApplyParams.kMul
     }
 
-    let device = ::joystick_get_default()
-    this.curJoyParams.applyParams(device)
+    ::g_controls_manager.commitControls()
 
     //clear hotkey min|max when use axis
     foreach (arr in this.curItem.modifiersId)
@@ -1110,10 +1109,10 @@ let function isInArrayRecursive(v, arr) {
     })
     this.msgBox("controls_wizard_bind_existing_axis", msg, [
       ["add", function() { this.bindAxis() }],
-      ["replace", (@(curBinding) function() {
+      ["replace", function() {
         this.repeatItemsList.extend(curBinding)
         this.bindAxis()
-      })(curBinding)],
+      }],
       ["cancel", function() { this.askAxis() }],
       ["skip", function() { this.onCancelButtonInput(null) }],
     ], "add")
@@ -1348,7 +1347,7 @@ let function isInArrayRecursive(v, arr) {
       let view = { items = [] }
       foreach (idx, btn in this.msgButtons) {
         local text = getTblValue("text", btn, "")
-        if (::u.isString(btn))
+        if (u.isString(btn))
           text = btn
 
         if (this.getStrSymbol(text, 0) != "#")
@@ -1361,7 +1360,7 @@ let function isInArrayRecursive(v, arr) {
         })
       }
 
-      let data = ::handyman.renderCached("%gui/commonParts/shopFilter.tpl", view)
+      let data = handyman.renderCached("%gui/commonParts/shopFilter.tpl", view)
       let listObj = this.scene.findObject("listbox")
       this.guiScene.replaceContentFromText(listObj, data, data.len(), this)
       if (defValue in this.msgButtons)
@@ -1385,7 +1384,7 @@ let function isInArrayRecursive(v, arr) {
       return
 
     this.waitMsgButton = false
-    this.guiScene.performDelayed(this, (@(value) function() {
+    this.guiScene.performDelayed(this, function() {
       if ("optionType" in this.curItem) {
         this.optionsToSave.append({ type = this.curItem.optionType, value = value })
         if ("isFilterObj" in this.curItem && this.curItem.isFilterObj) {
@@ -1403,7 +1402,7 @@ let function isInArrayRecursive(v, arr) {
       if ("onButton" in this.curItem)
         this.curItem.onButton.call(this, value)
       this.nextItem()
-    })(value))
+    })
   }
 
   function getCurListboxObj() {
@@ -1525,14 +1524,10 @@ let function isInArrayRecursive(v, arr) {
   }
 
   function doApply() {
-    ::set_controls_preset("")
-    ::set_shortcuts(this.shortcuts, this.shortcutNames)
     foreach (option in this.optionsToSave)
       ::set_option(option.type, option.value)
-
-    let device = ::joystick_get_default()
-    this.curJoyParams.applyParams(device)
-    ::joystick_set_cur_settings(this.curJoyParams)
+    joystickSetCurSettings(this.curJoyParams)
+    setShortcutsAndSaveControls(this.shortcuts, this.shortcutNames)
     this.save(false)
   }
 
@@ -1561,7 +1556,7 @@ let function isInArrayRecursive(v, arr) {
     ::set_bind_mode(false)
     ::preset_changed = true
     ::g_controls_manager.clearPreviewPreset()
-    ::broadcastEvent("ControlsPresetChanged")
+    broadcastEvent("ControlsPresetChanged")
   }
 
   function showMsg(msg = null, config = null, time = 1.0) {

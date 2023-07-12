@@ -7,6 +7,7 @@
   "gearSinkRange2C": 0.142,
   "haveCCIPForRocket": true,
   "haveCCIPForBombs": true,
+  "gyroSight": true,
   "haveCCIPForGun": true,
   "haveCCRPForBombs": true,
   "is410SUM1Ils": true,
@@ -377,6 +378,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -387,6 +404,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -698,6 +731,14 @@
           }
         },
         {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
+          }
+        },
+        {
           "onKill": {
             "wingcontrol_l_dm": 1.0,
             "wingcontrol_r_dm": 1.0,
@@ -743,6 +784,14 @@
             "wing_l_dm": 1.0,
             "wing_r_dm": 1.0
           }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
+          }
         }
       ]
     },
@@ -773,6 +822,14 @@
           "onHit": {
             "damage": 50.0,
             "tail_dm": 1.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
           }
         },
         {
@@ -828,6 +885,14 @@
             "damage": 50.0,
             "tail_dm": 1.0,
             "nothing": 1.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
           }
         }
       ]
@@ -2451,6 +2516,18 @@
         "name": "harrier_gr3_bomb_dlt_1000lbs",
         "blk": "gameData/FlightModels/weaponPresets/harrier_gr3_bomb_dlt_1000lbs.blk"
       }
+    },
+    {
+      "preset": {
+        "name": "harrier_gr3_bomb_1000lbs_n117",
+        "blk": "gameData/FlightModels/weaponPresets/harrier_gr3_bomb_1000lbs_n117.blk"
+      }
+    },
+    {
+      "preset": {
+        "name": "harrier_gr3_bomb_dlt_1000lbs_n117",
+        "blk": "gameData/FlightModels/weaponPresets/harrier_gr3_bomb_dlt_1000lbs_n117.blk"
+      }
     }
   ],
   "WeaponSlots": [
@@ -2538,148 +2615,86 @@
       ]
     },
     {
-      "WeaponSlot": [
-        {
-          "index": 0
-        },
-        {
-          "notUseforDisbalanceCalculation": true
-        },
-        {
-          "WeaponPreset": [
-            {
-              "name": "aden_common"
-            },
-            {
-              "HideNodes": {
-                "node": "fuse2"
-              }
-            },
-            {
-              "ShowDmParts": [
-                {
-                  "node": "cannon1_dm"
-                },
-                {
-                  "node": "cover4_dm"
-                },
-                {
-                  "node": "cannon2_dm"
-                },
-                {
-                  "node": "cover5_dm"
-                }
-              ]
-            },
-            {
-              "Weapon": {
-                "trigger": "cannon",
-                "blk": "gameData/Weapons/cannonADEN_mk4.blk",
-                "emitter": "flare1",
-                "flash": "flare1",
-                "shell": "emtr_shellrejection1",
-                "dm": "cannon1_dm",
-                "bullets": 130,
-                "light": false,
-                "spread": 1.2,
-                "traceOffset": 1
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "cannon",
-                "blk": "gameData/Weapons/cannonADEN_mk4.blk",
-                "emitter": "flare2",
-                "flash": "flare2",
-                "shell": "emtr_shellrejection2",
-                "dm": "cannon2_dm",
-                "bullets": 130,
-                "light": false,
-                "spread": 1.2,
-                "traceOffset": 1
-              }
+      "WeaponSlot": {
+        "index": 0,
+        "notUseforDisbalanceCalculation": true,
+        "WeaponPreset": [
+          {
+            "name": "aden_common"
+          },
+          {
+            "HideNodes": {
+              "node": "fuse2"
             }
-          ]
-        },
-        {
-          "WeaponPreset": [
-            {
-              "name": "aden_ltc_common"
-            },
-            {
-              "HideNodes": {
-                "node": "fuse2"
+          },
+          {
+            "ShowDmParts": [
+              {
+                "node": "cannon1_dm"
+              },
+              {
+                "node": "cover4_dm"
+              },
+              {
+                "node": "cannon2_dm"
+              },
+              {
+                "node": "cover5_dm"
               }
-            },
-            {
-              "ShowDmParts": [
-                {
-                  "node": "cannon1_dm"
-                },
-                {
-                  "node": "cover4_dm"
-                },
-                {
-                  "node": "cannon2_dm"
-                },
-                {
-                  "node": "cover5_dm"
-                }
-              ]
-            },
-            {
-              "Weapon": {
-                "trigger": "cannon",
-                "blk": "gameData/Weapons/cannonADEN_mk4.blk",
-                "emitter": "flare1",
-                "flash": "flare1",
-                "shell": "emtr_shellrejection1",
-                "dm": "cannon1_dm",
-                "bullets": 130,
-                "light": false,
-                "spread": 1.2,
-                "traceOffset": 1
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "cannon",
-                "blk": "gameData/Weapons/cannonADEN_mk4.blk",
-                "emitter": "flare2",
-                "flash": "flare2",
-                "shell": "emtr_shellrejection2",
-                "dm": "cannon2_dm",
-                "bullets": 130,
-                "light": false,
-                "spread": 1.2,
-                "traceOffset": 1
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "countermeasures",
-                "startFx": "",
-                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
-                "emitter": "emtr_flare1",
-                "bullets": 30,
-                "external": true,
-                "separate": false
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "countermeasures",
-                "startFx": "",
-                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
-                "emitter": "emtr_flare2",
-                "bullets": 30,
-                "external": true,
-                "separate": false
-              }
+            ]
+          },
+          {
+            "Weapon": {
+              "trigger": "cannon",
+              "blk": "gameData/Weapons/cannonADEN_mk4.blk",
+              "emitter": "flare1",
+              "flash": "flare1",
+              "shell": "emtr_shellrejection1",
+              "dm": "cannon1_dm",
+              "bullets": 130,
+              "light": false,
+              "spread": 1.2,
+              "traceOffset": 1
             }
-          ]
-        }
-      ]
+          },
+          {
+            "Weapon": {
+              "trigger": "cannon",
+              "blk": "gameData/Weapons/cannonADEN_mk4.blk",
+              "emitter": "flare2",
+              "flash": "flare2",
+              "shell": "emtr_shellrejection2",
+              "dm": "cannon2_dm",
+              "bullets": 130,
+              "light": false,
+              "spread": 1.2,
+              "traceOffset": 1
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "countermeasures",
+              "startFx": "",
+              "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
+              "emitter": "emtr_flare1",
+              "bullets": 30,
+              "external": true,
+              "separate": false
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "countermeasures",
+              "startFx": "",
+              "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
+              "emitter": "emtr_flare2",
+              "bullets": 30,
+              "external": true,
+              "separate": false
+            }
+          }
+        ]
+      }
     },
     {
       "WeaponSlot": [
@@ -2896,6 +2911,54 @@
               "emitter": "dlt_001"
             }
           }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_large_high_drag",
+            "name": "1000lbs_n117",
+            "reqModification": "sea_hawk_2x1000lb",
+            "ShowNodes": [
+              {
+                "node": "pylon_i_l"
+              },
+              {
+                "node": "pylon_i_l_upor"
+              }
+            ],
+            "Weapon": {
+              "trigger": "bombs",
+              "external": true,
+              "separate": true,
+              "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp_n117.blk",
+              "emitter": "1000lbs_gp_001",
+              "bullets": 1
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_large_high_drag_group_x2",
+            "name": "1000lbs_x2_slot2_n117",
+            "reqModification": "sea_hawk_2x1000lb",
+            "ShowNodes": [
+              {
+                "node": "dlt_001"
+              },
+              {
+                "node": "pylon_i_l"
+              },
+              {
+                "node": "pylon_i_l_upor"
+              }
+            ],
+            "Weapon": {
+              "trigger": "bombs",
+              "external": true,
+              "separate": true,
+              "blk": "gameData/Weapons/containers/uk_dlt_1000_gp_x2_left_wing_n117.blk",
+              "emitter": "dlt_001"
+            }
+          }
         }
       ]
     },
@@ -2954,6 +3017,29 @@
               "external": true,
               "separate": true,
               "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp.blk",
+              "emitter": "1000lbs_gp_002",
+              "bullets": 1
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_large_high_drag",
+            "name": "1000lbs_n117",
+            "reqModification": "sea_hawk_2x1000lb",
+            "ShowNodes": [
+              {
+                "node": "pylon_c"
+              },
+              {
+                "node": "pylon_c_upor"
+              }
+            ],
+            "Weapon": {
+              "trigger": "bombs",
+              "external": true,
+              "separate": true,
+              "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp_n117.blk",
               "emitter": "1000lbs_gp_002",
               "bullets": 1
             }
@@ -3089,6 +3175,54 @@
               "external": true,
               "separate": true,
               "blk": "gameData/Weapons/containers/uk_dlt_1000_gp_x2_right_wing.blk",
+              "emitter": "dlt_002"
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_large_high_drag",
+            "name": "1000lbs_n117",
+            "reqModification": "sea_hawk_2x1000lb",
+            "ShowNodes": [
+              {
+                "node": "pylon_i_r"
+              },
+              {
+                "node": "pylon_i_r_upor"
+              }
+            ],
+            "Weapon": {
+              "trigger": "bombs",
+              "external": true,
+              "separate": true,
+              "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp_n117.blk",
+              "emitter": "1000lbs_gp_003",
+              "bullets": 1
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_large_high_drag_group_x2",
+            "name": "1000lbs_x2_slot4_n117",
+            "reqModification": "sea_hawk_2x1000lb",
+            "ShowNodes": [
+              {
+                "node": "dlt_002"
+              },
+              {
+                "node": "pylon_i_r"
+              },
+              {
+                "node": "pylon_i_r_upor"
+              }
+            ],
+            "Weapon": {
+              "trigger": "bombs",
+              "external": true,
+              "separate": true,
+              "blk": "gameData/Weapons/containers/uk_dlt_1000_gp_x2_right_wing_n117.blk",
               "emitter": "dlt_002"
             }
           }
@@ -3300,15 +3434,7 @@
       "turn_it_off": false,
       "invertEnableLogic": false,
       "group": "countermeasures",
-      "tier": 1,
-      "effects": {
-        "commonWeapons": {
-          "Weapon": {
-            "slot": 0,
-            "preset": "aden_ltc_common"
-          }
-        }
-      }
+      "tier": 1
     },
     "us_aim_9g": {
       "prevModification": "countermeasures_belt_pack",

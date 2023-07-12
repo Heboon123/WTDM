@@ -1,9 +1,6 @@
-#explicit-this
-#no-root-fallback
 
-let { g_script_reloader } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
-g_script_reloader.loadOnce("%sqDagui/daguiUtil.nut")
-g_script_reloader.loadOnce("%sqstd/math.nut")
+let { loadOnce } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+loadOnce("%sqstd/math.nut")
 
 if (!("gui_bhv" in getroottable()))
   ::gui_bhv <- {}
@@ -25,4 +22,4 @@ foreach (fn in [
                  "bhvControlsInput.nut"
                  "bhvAnim.nut"
                ])
-  g_script_reloader.loadOnce($"%sqDagui/guiBhv/{fn}")
+  loadOnce($"%sqDagui/guiBhv/{fn}")

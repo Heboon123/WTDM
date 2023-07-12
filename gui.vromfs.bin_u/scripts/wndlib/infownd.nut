@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -98,14 +96,14 @@ const INFO_WND_SAVE_PATH = "infoWnd"
           cb = Callback(btn.onClick, this.buttonsContext)
 
         let cbName = "onClickBtn" + idx
-        this.buttonsCbs[cbName] <- (@(cb, infoHandler) function() {
+        this.buttonsCbs[cbName] <- function() {
           if (cb)
             cb()
           if (infoHandler && infoHandler.isValid())
             infoHandler.onButtonClick()
-        })(cb, infoHandler)
+        }
         btn.funcName <- cbName
-        markup += ::handyman.renderCached("%gui/commonParts/button.tpl", btn)
+        markup += handyman.renderCached("%gui/commonParts/button.tpl", btn)
 
         hasBigButton = hasBigButton || getTblValue("isToBattle", btn, false)
       }

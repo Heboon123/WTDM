@@ -1,10 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let u = require("%sqStdLibs/helpers/u.nut")
+let { toPixels } = require("%sqDagui/daguiUtil.nut")
 let { format } = require("string")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
@@ -38,8 +35,8 @@ const MAX_TEXTURE_SIZE_IN_ATLAS = 512
 
     let image = this.showObj?["background-image"]
     this.maxSize = [
-      ::g_dagui_utils.toPixels(this.guiScene, this.showObj?["max-width"]  ?? "@rw", this.showObj),
-      ::g_dagui_utils.toPixels(this.guiScene, this.showObj?["max-height"] ?? "@rh", this.showObj)
+      toPixels(this.guiScene, this.showObj?["max-width"]  ?? "@rw", this.showObj),
+      toPixels(this.guiScene, this.showObj?["max-height"] ?? "@rh", this.showObj)
     ]
 
     if (!image || image == "" || !this.maxSize[0] || !this.maxSize[1])
@@ -122,7 +119,7 @@ const MAX_TEXTURE_SIZE_IN_ATLAS = 512
  * maxSize @array|@integer - max size in pixels. Array ([w, h]) or integer (used for both sides) (0 = unlimited).
  **/
 ::gui_start_image_wnd <- function gui_start_image_wnd(image = null, ratio = 1, maxSize = 0) {
-  if (::u.isEmpty(image))
+  if (u.isEmpty(image))
     return
 
   let params = { image, ratio, maxSize }
@@ -157,8 +154,8 @@ const MAX_TEXTURE_SIZE_IN_ATLAS = 512
       return this.goBack()
 
     if (!this.maxSize)
-      this.maxSize = [ ::g_dagui_utils.toPixels(this.guiScene, "@rw"), ::g_dagui_utils.toPixels(this.guiScene, "@rh") ]
-    else if (::u.isInteger(this.maxSize))
+      this.maxSize = [ toPixels(this.guiScene, "@rw"), toPixels(this.guiScene, "@rh") ]
+    else if (u.isInteger(this.maxSize))
       this.maxSize = [ this.maxSize, this.maxSize ]
 
     let height = ::screen_height() / 1.5

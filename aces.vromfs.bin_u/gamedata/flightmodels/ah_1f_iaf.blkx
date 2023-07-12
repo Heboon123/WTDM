@@ -4,11 +4,12 @@
   "viewDistKInSight": 6.0,
   "MetaPartsBlk": "gameData/FlightModels/dm/metaparts/hellicopters_metaparts.blk",
   "haveCCIPForRocket": true,
+  "gyroSight": true,
   "haveCCIPForGun": true,
   "haveCCIPForTurret": true,
   "haveCCRPForRocket": false,
   "haveCCRPForTurret": true,
-  "havePointOfInterestDesignator": true,
+  "hasPointOfInterestMemory": false,
   "gearSinkRangeLR": 0.001,
   "gearSinkRangeC": 0.001,
   "tpsCameraTargetOffsetAtZoom": [80.0,60.0,0.0],
@@ -300,6 +301,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -310,6 +327,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -858,6 +891,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -868,6 +917,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -1357,6 +1422,9 @@
       "pedals5": [-1.0,1.0],
       "pedals6": [-1.0,1.0],
       "throttle": [-1.0,1.0],
+      "throttle_1": [0.0,1.0],
+      "throttle_2": [0.0,1.0],
+      "throttle_3": [0.0,1.0],
       "prop_pitch": [-1.0,1.0],
       "clock_hour": [0.0,12.0],
       "clock_min": [0.0,60.0],
@@ -1375,6 +1443,8 @@
       "speed": [0.0,102.889],
       "vario": [-15.24,15.24],
       "rpm": [0.0,10000.0],
+      "rpm_hour": [0.0,11000.0],
+      "rpm_min": [0.0,1000.0],
       "fuel": [0.0,907.0],
       "water_temperature": [0.0,900.0],
       "oil_pressure": [25.0,150.0],
@@ -1580,121 +1650,9 @@
               "name": "m197_common"
             },
             {
-              "Weapon": {
-                "dummy": true,
-                "trigger": "gunner0",
-                "triggerGroup": "primary",
-                "blk": "gameData/Weapons/dummy_weapon.blk",
-                "emitter": "optic1_gun",
-                "defaultYaw": 0.0,
-                "defaultPitch": 0.0,
-                "speedYaw": 25.0,
-                "speedPitch": 25.0,
-                "parkInDeadzone": false,
-                "aimForOperatedShell": true,
-                "turret": {
-                  "head": "optic1_turret",
-                  "gun": "optic1_gun",
-                  "mainTurret": true
-                },
-                "limits": {
-                  "yaw": [-115.0,115.0],
-                  "pitch": [-50.0,25.0]
-                }
+              "ShowNodes": {
+                "node": "fuse2"
               }
-            },
-            {
-              "Weapon": [
-                {
-                  "trigger": "gunner0"
-                },
-                {
-                  "blk": "gameData/Weapons/cannonM197.blk"
-                },
-                {
-                  "emitter": "flare1"
-                },
-                {
-                  "flash": "flare1"
-                },
-                {
-                  "turret": "turret1"
-                },
-                {
-                  "turret": {
-                    "head": "turret1",
-                    "gun": "gun1",
-                    "barrel": "gun_barrel1",
-                    "mainTurret": true,
-                    "ballisticTargeting": true
-                  }
-                },
-                {
-                  "shell": "emtr_shellrejection1"
-                },
-                {
-                  "dm": "gunner1_dm"
-                },
-                {
-                  "gunnerDm": "gunner1_dm"
-                },
-                {
-                  "gunDm": "cannon1_dm"
-                },
-                {
-                  "partsDP": "cannon1_dm"
-                },
-                {
-                  "bullets": 750
-                },
-                {
-                  "recoilOffset": 0.0
-                },
-                {
-                  "rotationAnimScale": "gun_rotate_01:CRS"
-                },
-                {
-                  "parkInDeadzone": false
-                },
-                {
-                  "limits": {
-                    "yaw": [-115.0,115.0],
-                    "pitch": [-50.0,25.0]
-                  }
-                },
-                {
-                  "limitsTable": {
-                    "lim1": [-115.0,-103.0,-50.0,15.0],
-                    "lim2": [-103.0,-75.0,-50.0,19.0],
-                    "lim3": [-75.0,-52.0,-50.0,24.0],
-                    "lim4": [-52.0,-35.0,-50.0,25.0],
-                    "lim5": [-35.0,-15.0,-50.0,23.0],
-                    "lim6": [-15.0,15.0,-50.0,20.0],
-                    "lim7": [15.0,35.0,-50.0,23.0],
-                    "lim8": [35.0,52.0,-50.0,25.0],
-                    "lim9": [52.0,75.0,-50.0,24.0],
-                    "lim10": [75.0,103.0,-50.0,19.0],
-                    "lim11": [103.0,115.0,-50.0,15.0]
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "WeaponPreset": [
-            {
-              "name": "m197_ltc_common"
-            },
-            {
-              "ShowNodes": [
-                {
-                  "node": "fuse2"
-                },
-                {
-                  "node": "fuse3"
-                }
-              ]
             },
             {
               "Weapon": {
@@ -1917,8 +1875,8 @@
                 },
                 {
                   "limits": {
-                    "yaw": [-115.0,115.0],
-                    "pitch": [-50.0,25.0]
+                    "yaw": [-110.0,110.0],
+                    "pitch": [-50.0,21.0]
                   }
                 },
                 {
@@ -1985,7 +1943,8 @@
               "blk": "gameData/Weapons/containers/lau_131a_desert_hydra_70_m247.blk",
               "emitter": "aero_6_b1",
               "mass": 0.01,
-              "dragCx": 0.01
+              "dragCx": 0.01,
+              "jettisonable": false
             }
           }
         },
@@ -2000,7 +1959,8 @@
               "blk": "gameData/Weapons/containers/m261_hydra_70_m247.blk",
               "emitter": "aero_7_l_b001",
               "mass": 0.01,
-              "dragCx": 0.01
+              "dragCx": 0.01,
+              "jettisonable": false
             }
           }
         },
@@ -2009,6 +1969,7 @@
             "iconType": "atgm_type2_x2",
             "name": "tow_x2",
             "reqModification": "ah_1_TOW",
+            "remotelyGuidedWeaponsMax": 1,
             "Weapon": {
               "trigger": "atgm",
               "external": true,
@@ -2023,6 +1984,7 @@
             "iconType": "atgm_type2_x2_late",
             "name": "tow2_x2",
             "reqModification": "ah_1_TOW2",
+            "remotelyGuidedWeaponsMax": 1,
             "Weapon": {
               "trigger": "atgm",
               "external": true,
@@ -2037,6 +1999,7 @@
             "iconType": "atgm_type1_x4",
             "name": "tow_x4",
             "reqModification": "ah_1_TOW_2",
+            "remotelyGuidedWeaponsMax": 1,
             "Weapon": {
               "trigger": "atgm",
               "external": true,
@@ -2051,6 +2014,7 @@
             "iconType": "atgm_type1_x4_late",
             "name": "tow2_x4",
             "reqModification": "ah_1_TOW2_2",
+            "remotelyGuidedWeaponsMax": 1,
             "Weapon": {
               "trigger": "atgm",
               "external": true,
@@ -2083,7 +2047,8 @@
               "blk": "gameData/Weapons/containers/lau_131a_desert_hydra_70_m247.blk",
               "emitter": "aero_6_b2",
               "mass": 0.01,
-              "dragCx": 0.01
+              "dragCx": 0.01,
+              "jettisonable": false
             }
           }
         },
@@ -2098,7 +2063,8 @@
               "blk": "gameData/Weapons/containers/m261_hydra_70_m247.blk",
               "emitter": "aero_7_l_b002",
               "mass": 0.01,
-              "dragCx": 0.01
+              "dragCx": 0.01,
+              "jettisonable": false
             }
           }
         }
@@ -2125,7 +2091,8 @@
               "blk": "gameData/Weapons/containers/lau_131a_desert_hydra_70_m247.blk",
               "emitter": "aero_6_b3",
               "mass": 0.01,
-              "dragCx": 0.01
+              "dragCx": 0.01,
+              "jettisonable": false
             }
           }
         },
@@ -2140,7 +2107,8 @@
               "blk": "gameData/Weapons/containers/m261_hydra_70_m247.blk",
               "emitter": "aero_7_l_b003",
               "mass": 0.01,
-              "dragCx": 0.01
+              "dragCx": 0.01,
+              "jettisonable": false
             }
           }
         }
@@ -2167,7 +2135,8 @@
               "blk": "gameData/Weapons/containers/lau_131a_desert_hydra_70_m247.blk",
               "emitter": "aero_6_b4",
               "mass": 0.01,
-              "dragCx": 0.01
+              "dragCx": 0.01,
+              "jettisonable": false
             }
           }
         },
@@ -2182,7 +2151,8 @@
               "blk": "gameData/Weapons/containers/m261_hydra_70_m247.blk",
               "emitter": "aero_7_l_b004",
               "mass": 0.01,
-              "dragCx": 0.01
+              "dragCx": 0.01,
+              "jettisonable": false
             }
           }
         },
@@ -2191,6 +2161,7 @@
             "iconType": "atgm_type2_x2",
             "name": "tow_x2",
             "reqModification": "ah_1_TOW",
+            "remotelyGuidedWeaponsMax": 1,
             "Weapon": {
               "trigger": "atgm",
               "external": true,
@@ -2205,6 +2176,7 @@
             "iconType": "atgm_type2_x2_late",
             "name": "tow2_x2",
             "reqModification": "ah_1_TOW2",
+            "remotelyGuidedWeaponsMax": 1,
             "Weapon": {
               "trigger": "atgm",
               "external": true,
@@ -2219,6 +2191,7 @@
             "iconType": "atgm_type1_x4",
             "name": "tow_x4",
             "reqModification": "ah_1_TOW_2",
+            "remotelyGuidedWeaponsMax": 1,
             "Weapon": {
               "trigger": "atgm",
               "external": true,
@@ -2233,6 +2206,7 @@
             "iconType": "atgm_type1_x4_late",
             "name": "tow2_x4",
             "reqModification": "ah_1_TOW2_2",
+            "remotelyGuidedWeaponsMax": 1,
             "Weapon": {
               "trigger": "atgm",
               "external": true,
@@ -4933,12 +4907,6 @@
       "reqModification": "t_160_belt_pack",
       "tier": 2
     },
-    "uh_1c_xm18": {
-      "deactivationIsAllowed": false,
-      "prevModification": "t_160_new_gun",
-      "tier": 3,
-      "modClass": "weapon"
-    },
     "ah_1_m261_hydra_70": {
       "deactivationIsAllowed": false,
       "modClass": "weapon",
@@ -4977,15 +4945,7 @@
       "tier": 1,
       "turn_it_off": false,
       "invertEnableLogic": false,
-      "group": "mi-24_EVU",
-      "effects": {
-        "commonWeapons": {
-          "Weapon": {
-            "slot": 0,
-            "preset": "m197_ltc_common"
-          }
-        }
-      }
+      "group": "mi-24_EVU"
     },
     "heli_counterMeasures": {
       "reqModification": "countermeasures_belt_pack",

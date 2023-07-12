@@ -1,8 +1,5 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { Point2 } = require("dagor.math")
 const COUNT_REQ_FOR_FAKE_UNIT = 2
@@ -58,7 +55,7 @@ let function getShopBlkTable(selAirName = "") {
   let blk = ::get_shop_blk()
 
   let totalCountries = blk.blockCount()
-  let selAir = ::getAircraftByName(selAirName)
+  let selAir = getAircraftByName(selAirName)
   for (local c = 0; c < totalCountries; c++) {  //country
     let cblk = blk.getBlock(c)
     let countryData = {
@@ -93,7 +90,7 @@ let function getShopBlkTable(selAirName = "") {
         for (local a = 0; a < totalAirs; a++) {
           let airBlk = rblk.getBlock(a)
           let airData = { name = airBlk.getBlockName() }
-          local air = ::getAircraftByName(airBlk.getBlockName())
+          local air = getAircraftByName(airBlk.getBlockName())
           if (air) {
             selected = selected || air.name == selAirName
 
@@ -109,7 +106,7 @@ let function getShopBlkTable(selAirName = "") {
             let groupTotal = airBlk.blockCount()
             for (local ga = 0; ga < groupTotal; ga++) {
               let gAirBlk = airBlk.getBlock(ga)
-              air = ::getAircraftByName(gAirBlk.getBlockName())
+              air = getAircraftByName(gAirBlk.getBlockName())
               if (!air || !air.isVisibleInShop())
                 continue
 
@@ -133,6 +130,8 @@ let function getShopBlkTable(selAirName = "") {
             airData.reqAir <- airBlk.reqAir
           if (airBlk?.futureReqAir != null)
             airData.futureReqAir <- airBlk.futureReqAir
+          if (airBlk?.futureReqAirDesc != null)
+            airData.futureReqAirDesc <- airBlk.futureReqAirDesc
           if (airBlk?.rankPosXY) {
             airData.rankPosXY <- airBlk.rankPosXY
             hasRankPosXY = true

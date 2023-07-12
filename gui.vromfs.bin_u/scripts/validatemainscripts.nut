@@ -1,8 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 //Load main scripts
 let { file_exists } = require("dagor.fs")
@@ -20,6 +18,6 @@ foreach (name, hClass in ::gui_handlers) {
   local tplName = hClass.sceneTplName
   if (tplName) {
     assert(file_exists(tplName), $"Failed to load sceneTplName {tplName} for ::gui_handlers.{name}")
-    ::handyman.renderCached(tplName, {}) //validate template tokens
+    handyman.renderCached(tplName, {}) //validate template tokens
   }
 }

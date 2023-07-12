@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
@@ -27,7 +25,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
       }
       showOkButton = false
     }
-    let data = ::handyman.renderCached("%gui/events/eventDescriptionWindow.tpl", view)
+    let data = handyman.renderCached("%gui/events/eventDescriptionWindow.tpl", view)
     this.guiScene.replaceContentFromText(this.scene, data, data.len(), this)
     this.eventDescription = ::create_event_description(this.scene, this.event, false)
   }

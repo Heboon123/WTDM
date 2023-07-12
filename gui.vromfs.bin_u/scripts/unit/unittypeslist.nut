@@ -1,8 +1,5 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { split_by_chars } = require("string")
 let enums = require("%sqStdLibs/helpers/enums.nut")
@@ -124,7 +121,7 @@ local unitTypes = {
   }
 
   function getByUnitName(unitId) {
-    let unit = ::getAircraftByName(unitId)
+    let unit = getAircraftByName(unitId)
     return unit ? unit.unitType : this.INVALID
   }
 

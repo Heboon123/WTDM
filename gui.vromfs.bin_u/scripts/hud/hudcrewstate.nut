@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let stdMath = require("%sqstd/math.nut")
@@ -114,17 +112,18 @@ enums.addTypesByGlobalName("g_hud_crew_member", {
       return
 
     this.guiScene = this.scene.getScene()
-    let blk = ::handyman.renderCached("%gui/hud/hudCrewState.tpl",
+    let blk = handyman.renderCached("%gui/hud/hudCrewState.tpl",
       { drivingDirectionModeValue = getConfigValueById("driving_direction_mode") })
     this.guiScene.replaceContentFromText(this.scene, blk, blk.len(), this)
 
     foreach (crewMemberType in ::g_hud_crew_member.types) {
-      ::g_hud_event_manager.subscribe(crewMemberType.hudEventName,
-        (@(crewMemberType) function (eventData) {
-          let crewObj = this.scene.findObject(crewMemberType.sceneId)
+      let memberType = crewMemberType
+      ::g_hud_event_manager.subscribe(memberType.hudEventName,
+        function (eventData) {
+          let crewObj = this.scene.findObject(memberType.sceneId)
           if (checkObj(crewObj))
-            crewMemberType.setCrewMemberState(crewObj, eventData)
-        })(crewMemberType), this)
+            memberType.setCrewMemberState(crewObj, eventData)
+        }, this)
     }
 
     ::hud_request_hud_crew_state()

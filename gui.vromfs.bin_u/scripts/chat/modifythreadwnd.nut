@@ -1,10 +1,8 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { find_in_array } = require("%sqStdLibs/helpers/u.nut")
 let time = require("%scripts/time.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
@@ -77,7 +75,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
       if (langInfo)
         view.countries.append({ countryIcon = langInfo.icon })
     }
-    let data = ::handyman.renderCached("%gui/countriesList.tpl", view)
+    let data = handyman.renderCached("%gui/countriesList.tpl", view)
     this.guiScene.replaceContentFromText(this.scene.findObject("language_btn"), data, data.len(), this)
   }
 
@@ -170,15 +168,13 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
   function onPinChatMenu() {
     let hoursList = [1, 2, 3, 4, 6, 12, 18, 24, 2 * 24, 3 * 24, 5 * 24, 7 * 24, 10 * 24, 14 * 24]
-    let menu = []
-    foreach (hours in hoursList)
-      menu.append({
-        text = loc("chat/pinThreadForTime", { time = time.hoursToString(hours) })
-        action = (@(hours) function() {
-          let timeInt = ::get_charserver_time_sec() + time.hoursToSeconds(hours)
-          this.setChatTime(timeInt)
-        })(hours)
-      })
+    let menu = hoursList.map(@(hours) {
+      text = loc("chat/pinThreadForTime", { time = time.hoursToString(hours) })
+      action = function() {
+        let timeInt = ::get_charserver_time_sec() + time.hoursToSeconds(hours)
+        this.setChatTime(timeInt)
+      }
+    })
     ::gui_right_click_menu(menu, this)
   }
 
@@ -192,7 +188,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     for (local i = 0; i < maxPos; i++)
       menu.append({
         text = loc("chat/moveThreadToPosition", { place = i + 1 })
-        action = (@(i) function() { this.moveChatToPlace(i) })(i)
+        action = function() { this.moveChatToPlace(i) }
       })
     ::gui_right_click_menu(menu, this)
   }
@@ -203,7 +199,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
       return
 
     place = clamp(place, 0, list.len() - 1)
-    let curPlace = ::find_in_array(list, this.threadInfo)
+    let curPlace = find_in_array(list, this.threadInfo)
     if (curPlace >= 0 && curPlace < place)
       place++
 

@@ -26,6 +26,7 @@ let IlsAtgmTrackerVisible = Watched(false)
 let IlsAtgmTargetPos = [0, 0]
 let IlsAtgmLocked = Watched(false)
 let RwrScale = Watched(1.0)
+let RwrBackHide = Watched(false)
 let RadarTargetDistRate = Watched(0.0)
 let RadarTargetDist = Watched(0.0)
 let RadarTargetPosValid = Watched(false)
@@ -37,12 +38,15 @@ let MfdRadarWithNavVis = Watched(false)
 let MfdRadarNavPosSize = [0, 0, 0, 0]
 let AimLockPos = [0, 0]
 let AimLockValid = Watched(false)
+let AimLockDist = Watched(-1)
 let TvvMark = [0, 0]
 let AtgmTargetDist = Watched(0.0)
 let MfdVdiVisible = Watched(false)
 let MfdVdiPosSize = [0, 0, 0, 0]
 let VdiColor = Watched(Color(255, 255, 0, 240))
 let IsOnGround = Watched(false)
+let DigitalDevicesVisible = Watched(false)
+let DigDevicesPosSize = [0, 0, 0, 0]
 
 let planeState = {
   BlkFileName,
@@ -67,6 +71,7 @@ let planeState = {
   IlsAtgmTargetPos,
   IlsAtgmLocked,
   RwrScale,
+  RwrBackHide,
   RadarTargetDist,
   RadarTargetPosValid,
   RadarTargetPos,
@@ -77,6 +82,7 @@ let planeState = {
   MfdRadarWithNavVis,
   MfdRadarNavPosSize,
   AimLockValid,
+  AimLockDist,
   AimLockPos,
   TvvMark,
   AtgmTargetDist,
@@ -84,7 +90,9 @@ let planeState = {
   MfdVdiPosSize,
   VdiColor,
   IsOnGround,
-  AirCannonMode
+  AirCannonMode,
+  DigitalDevicesVisible,
+  DigDevicesPosSize
 }
 
 interop.updatePlaneIlsPosSize <- function(x, y, w, h) {
@@ -113,6 +121,13 @@ interop.updatePlaneVdiPosSize <- function(x, y, w, h) {
   MfdVdiPosSize[1] = y
   MfdVdiPosSize[2] = w
   MfdVdiPosSize[3] = h
+}
+
+interop.updateDigDevicesPosSize <- function(x, y, w, h) {
+  DigDevicesPosSize[0] = x
+  DigDevicesPosSize[1] = y
+  DigDevicesPosSize[2] = w
+  DigDevicesPosSize[3] = h
 }
 
 interop.updateAimLockPos <- function(x, y) {

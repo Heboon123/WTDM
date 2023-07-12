@@ -1,13 +1,10 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format, split_by_chars } = require("string")
 let { ceil } = require("math")
 let { number_of_set_bits, round_by_value } = require("%sqstd/math.nut")
-let { buildDateStrShort } = require("%scripts/time.nut")
+let { buildDateStrShort, buildDateTimeStr } = require("%scripts/time.nut")
 let { processUnitTypeArray } = require("%scripts/unit/unitClassType.nut")
 let { getRoleText } = require("%scripts/unit/unitInfoTexts.nut")
 let { isLoadingBgUnlock, getLoadingBgName,
@@ -22,11 +19,13 @@ let { getUnlockCost, isUnlockComplete } = require("%scripts/unlocks/unlocksModul
 let { getDecoratorById, getPlaneBySkinId } = require("%scripts/customization/decorCache.nut")
 let { cutPrefix } = require("%sqstd/string.nut")
 let { getLocIdsArray } = require("%scripts/langUtils/localization.nut")
+let { getUnlockProgressSnapshot } = require("%scripts/unlocks/unlockProgressSnapshots.nut")
+let { season, seasonLevel, getLevelByExp } = require("%scripts/battlePass/seasonState.nut")
 
 let customLocTypes = ["gameModeInfoString", "missionPostfix"]
 
 let conditionsOrder = [
-  "beginDate", "endDate",
+  "beginDate", "endDate", "battlepassProgress",
   "missionsWon", "mission", "char_mission_completed",
   "missionType", "atLeastOneUnitsRankOnStartMission", "maxUnitsRankOnStartMission",
   "unitExists", "additional", "unitClass",
@@ -74,7 +73,7 @@ let function getUnlockBeginDateText(unlock) {
   let conds = isBlk ? getUnlockConditions(unlock.mode) : unlock?.conditions
   local timeCond = conds?.findvalue(@(c) isTimeRangeCondition(c.type))
   if (isBlk)
-    timeCond = loadCondition(timeCond, unlock.mode?.type)
+    timeCond = loadCondition(timeCond, unlock)
   return (timeCond?.beginTime != null)
     ? buildDateStrShort(timeCond.beginTime).replace(" ", ::nbsp)
     : ""
@@ -454,6 +453,14 @@ let function getUsualCondValueText(condType, v, condition) {
       return loc(v)
     case "operationMap":
       return loc($"worldWar/map/{v}")
+    case "battlepassProgress":
+      let reqLevel = getLevelByExp(v)
+      if (condition.season != season.value)
+        return $"{reqLevel}"
+      let curLevelText = loc("conditions/battlepassProgress/currentLevel", { level = seasonLevel.value })
+      return reqLevel <= seasonLevel.value
+        ? $"{reqLevel} {curLevelText}"
+        : $"{reqLevel} {colorize("red" ,curLevelText)}"
     default:
       return loc($"{condType}/{v}")
   }
@@ -592,6 +599,18 @@ let function getUnlockCondsDescByCfg(cfg) {
     return ""
 
   return getUnlockCondsDesc(cfg.conditions, cfg.isExpired)
+}
+
+let function getUnlockSnapshotText(unlockCfg) {
+  let snapshot = getUnlockProgressSnapshot(unlockCfg.id)
+  if (!snapshot)
+    return ""
+
+  let date = buildDateTimeStr(snapshot.timeSec)
+  let delta = isBitModeType(unlockCfg.type)
+    ? number_of_set_bits(unlockCfg.curVal) - number_of_set_bits(snapshot.progress)
+    : unlockCfg.curVal - snapshot.progress
+  return colorize("darkGreen", loc("unlock/progress_snapshot", { delta = max(delta, 0), date }))
 }
 
 let function getUnlockCostText(cfg) {
@@ -895,6 +914,7 @@ return {
   getUnlockCondsDescByCfg
   getUnlockMultDesc
   getUnlockMultDescByCfg
+  getUnlockSnapshotText
   getUnlockCostText
   getUnitRequireUnlockText
   getUnitRequireUnlockShortText

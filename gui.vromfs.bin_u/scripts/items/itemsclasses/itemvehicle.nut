@@ -1,8 +1,5 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let ItemCouponBase = require("%scripts/items/itemsClasses/itemCouponBase.nut")
 
@@ -15,7 +12,7 @@ let ItemCouponBase = require("%scripts/items/itemsClasses/itemCouponBase.nut")
 
   function addResources() {
     base.addResources()
-    this.unit = ::getAircraftByName(this.metaBlk?.unit)
+    this.unit = getAircraftByName(this.metaBlk?.unit)
   }
 
   getContentIconData = @() { contentIcon = ::image_for_air(this.unit?.name ?? ""), contentType = "unit" }

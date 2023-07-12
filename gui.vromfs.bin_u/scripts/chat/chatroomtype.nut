@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
 let enums = require("%sqStdLibs/helpers/enums.nut")
@@ -11,6 +8,7 @@ let platformModule = require("%scripts/clientState/platform.nut")
 let { isCrossNetworkMessageAllowed, isChatEnableWithPlayer } = require("%scripts/chat/chatStates.nut")
 let { hasMenuGeneralChats, hasMenuChatPrivate, hasMenuChatSquad, hasMenuChatClan,
   hasMenuChatSystem, hasMenuChatMPlobby } = require("%scripts/user/matchingFeature.nut")
+let { startsWith, slice } = require("%sqstd/string.nut")
 
 enum chatRoomCheckOrder {
   CUSTOM
@@ -38,7 +36,7 @@ enum chatRoomTabOrder {
   tabOrder = chatRoomTabOrder.REGULAR
   isErrorPopupAllowed = true
 
-  checkRoomId = function(roomId) { return ::g_string.startsWith(roomId, this.roomPrefix) }
+  checkRoomId = function(roomId) { return startsWith(roomId, this.roomPrefix) }
 
   //roomId params depend on roomType
   getRoomId   = function(param1, _param2 = null) { return this.roomPrefix + param1 }
@@ -107,7 +105,7 @@ enums.addTypesByGlobalName("g_chat_room_type", {
     havePlayersList = false
     needCountAsImportant = true
 
-    checkRoomId  = function(roomId) { return !::g_string.startsWith(roomId, this.roomPrefix) }
+    checkRoomId  = function(roomId) { return !startsWith(roomId, this.roomPrefix) }
     getRoomId    = function(playerName, ...) { return playerName }
     getRoomName  = function(roomId, isColored = false) { //roomId == playerName
       local res = ::g_contacts.getPlayerFullName(
@@ -195,11 +193,11 @@ enums.addTypesByGlobalName("g_chat_room_type", {
     checkOrder = chatRoomCheckOrder.GLOBAL
     havePlayersList = false
     checkRoomId = function(roomId) {
-      if (!::g_string.startsWith(roomId, "#"))
+      if (!startsWith(roomId, "#"))
         return false
       foreach (r in ::global_chat_rooms)
         if (roomId.indexof(r.name + "_", 1) == 1) {
-          let lang = ::g_string.slice(roomId, r.name.len() + 2)
+          let lang = slice(roomId, r.name.len() + 2)
           local langsList = getTblValue("langs", r, ::langs_list)
           return isInArray(lang, langsList)
         }

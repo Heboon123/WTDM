@@ -1,18 +1,17 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { isDataBlock, isEmpty, isEqual } = require("%sqStdLibs/helpers/u.nut")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 let overrrideSlotbarMissionName = persist("overrrideSlotbarMissionName", @() Watched("")) //recalc slotbar only on mission change
 let overrideSlotbar = persist("overrideSlotbar", @() Watched(null)) //null or []
 let userSlotbarCountry = persist("userSlotbarCountry", @() Watched("")) //for return user country after reset override slotbar
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { switchProfileCountry, profileCountrySq } = require("%scripts/user/playerCountry.nut")
+let { getUrlOrFileMissionMetaInfo } = require("%scripts/missions/missionsUtils.nut")
 
-overrideSlotbar.subscribe(@(_) ::broadcastEvent("OverrideSlotbarChanged"))
+overrideSlotbar.subscribe(@(_) broadcastEvent("OverrideSlotbarChanged"))
 
 let makeCrewsCountryData = @(country) { country = country, crews = [] }
 
@@ -35,7 +34,7 @@ let function addCrewToCountryData(countryData, crewId, countryId, crewUnitName) 
 }
 
 let function getMissionEditSlotbarBlk(missionName) {
-  let misBlk = ::get_mission_meta_info(missionName)
+  let misBlk = getUrlOrFileMissionMetaInfo(missionName)
   let editSlotbar = misBlk?.editSlotbar
   //override slotbar does not support keepOwnUnits atm.
   if (!isDataBlock(editSlotbar) || editSlotbar.keepOwnUnits)

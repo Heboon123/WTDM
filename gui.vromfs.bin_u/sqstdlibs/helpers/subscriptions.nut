@@ -1,5 +1,3 @@
-#explicit-this
-#no-root-fallback
 
 let callback = require("callback.nut")
 
@@ -158,9 +156,9 @@ local function debugLoggingEnable(isEnable  = null) {
 }
 
 return {
-  broadcast
-  addEventListener
-  subscribeHandler
+  broadcastEvent = broadcast
+  add_event_listener = addEventListener
+  subscribe_handler = subscribeHandler
   addListenersWithoutEnv
   removeEventListenersByEnv
   removeAllListenersByEnv

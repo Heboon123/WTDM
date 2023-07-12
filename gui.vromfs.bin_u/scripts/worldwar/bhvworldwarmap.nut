@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { Point2 } = require("dagor.math")
 let { split_by_chars } = require("string")
@@ -112,13 +109,13 @@ let { markObjShortcutOnHover } = require("%sqDagui/guiBhv/guiBhvUtils.nut")
 
     if (currentSelectedObject == mapObjectSelect.AIRFIELD) {
       let airfieldIdx = ::ww_get_selected_airfield();
-      let checkFlewOutArmy = (@(obj, airfieldIdx) function() {
+      let checkFlewOutArmy = function() {
           let army = ::ww_find_last_flew_out_army_name_by_airfield(airfieldIdx)
           if (army && army != "") {
             this.selectArmy(obj, army, true)
             this.setSelectedObject(obj, mapObjectSelect.ARMY)
           }
-        })(obj, airfieldIdx)
+        }
 
       let mapCell = ::ww_get_map_cell_by_coords(clickPos.x, clickPos.y)
       if (::ww_is_cell_generally_passable(mapCell))
@@ -320,7 +317,7 @@ let { markObjShortcutOnHover } = require("%sqDagui/guiBhv/guiBhvUtils.nut")
 
   function setSelectedArmies(obj, selectedArmies) {
     let params = obj.getUserData() || {}
-    params[this.selectedArmiesID] <- ::g_string.implode(selectedArmies, ",")
+    params[this.selectedArmiesID] <- ",".join(selectedArmies, true)
     obj.setUserData(params)
     let selectedArmiesInfo = []
     foreach (armyName in selectedArmies) {
@@ -431,17 +428,17 @@ let { markObjShortcutOnHover } = require("%sqDagui/guiBhv/guiBhvUtils.nut")
 
     let mapPos = ::ww_convert_map_to_world_position(screenPosX, screenPosY)
     let battleIconRadSquare = this.getBattleIconRadius() * this.getBattleIconRadius()
-    let filterFunc = (@(mapPos, battleIconRadSquare) function(battle) {
+    let filterFunc = function(battle) {
       let diff = battle.pos - mapPos
       return diff.lengthSq() <= battleIconRadSquare && !battle.isFinished()
-    })(mapPos, battleIconRadSquare)
+    }
     let battles = ::g_world_war.getBattles(filterFunc)
     let haveAnyBattles = battles.len() > 0
 
     if (!haveAnyBattles)
       return false
 
-    let sortFunc = (@(mapPos) function(battle1, battle2) {
+    let sortFunc = function(battle1, battle2) {
       let diff1 = battle1.pos - mapPos
       let diff2 = battle2.pos - mapPos
 
@@ -452,7 +449,7 @@ let { markObjShortcutOnHover } = require("%sqDagui/guiBhv/guiBhvUtils.nut")
         return l1 > l2 ? 1 : -1
 
       return 0
-    })(mapPos)
+    }
     battles.sort(sortFunc)
 
     return battles[0]

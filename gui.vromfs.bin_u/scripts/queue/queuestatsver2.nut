@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 ::queue_stats_versions.StatsVer2 <- class extends ::queue_stats_versions.Base {
   neutralTeamId = ::get_team_name_by_mp_team(MP_TEAM_NEUTRAL)
@@ -99,7 +97,7 @@ from "%scripts/dagui_library.nut" import *
 
   function getCountByRank(statsByCountries, rank) {
     local res = 0
-    if (!::u.isTable(statsByCountries))
+    if (!u.isTable(statsByCountries))
       return res
 
     let key = rank.tostring()
@@ -157,7 +155,7 @@ from "%scripts/dagui_library.nut" import *
 
   function gatherClansData(stats) {
     let statsByClans = getTblValue("byClans", stats)
-    if (::u.isEmpty(statsByClans))
+    if (u.isEmpty(statsByClans))
       return false
 
     let myClanInfo = getTblValue(::clan_get_my_clan_tag(), statsByClans)
@@ -166,7 +164,7 @@ from "%scripts/dagui_library.nut" import *
 
 
     foreach (_clanTag, clanStats in statsByClans)
-      this.clansQueueTable = ::u.tablesCombine(
+      this.clansQueueTable = u.tablesCombine(
         this.clansQueueTable,
         clanStats,
         @(sumClans, clanPlayers) sumClans + (clanPlayers ? 1 : 0),

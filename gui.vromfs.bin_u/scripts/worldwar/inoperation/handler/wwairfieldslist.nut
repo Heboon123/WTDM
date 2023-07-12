@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let wwActionsWithUnitsList = require("%scripts/worldWar/inOperation/wwActionsWithUnitsList.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -70,7 +68,7 @@ let { cutPrefix } = require("%sqstd/string.nut")
     let airfields = this.getAirfields()
     let placeObj = this.scene.findObject("airfields_list")
     let view = { airfields = airfields }
-    let data = ::handyman.renderCached("%gui/worldWar/wwAirfieldsList.tpl", view)
+    let data = handyman.renderCached("%gui/worldWar/wwAirfieldsList.tpl", view)
     this.guiScene.replaceContentFromText(placeObj, data, data.len(), this)
     this.ownedAirfieldsNumber = airfields.len()
   }
@@ -84,9 +82,9 @@ let { cutPrefix } = require("%sqstd/string.nut")
       this.updateTimer.destroy()
 
     this.updateTimer = ::Timer(placeObj, this.updateDelay,
-      (@(placeObj, airfieldIdx, cooldownView) function() {
+      function() {
         this.onUpdateTimer(placeObj, airfieldIdx, cooldownView)
-      })(placeObj, airfieldIdx, cooldownView), this, true)
+      }, this, true)
 
     this.onUpdateTimer(placeObj, airfieldIdx, cooldownView)
   }
@@ -150,7 +148,7 @@ let { cutPrefix } = require("%sqstd/string.nut")
           formationView.army.append(formation.getView())
       }
 
-    let data = ::handyman.renderCached(this.airfieldBlockTplName, formationView)
+    let data = handyman.renderCached(this.airfieldBlockTplName, formationView)
     this.guiScene.replaceContentFromText(placeObj, data, data.len(), this)
 
     blockObj.show(true)
@@ -189,7 +187,7 @@ let { cutPrefix } = require("%sqstd/string.nut")
     foreach (_i, cooldown in cooldownFormations)
       cooldownView.army.append(cooldown.getView())
 
-    let data = ::handyman.renderCached(this.airfieldBlockTplName, cooldownView)
+    let data = handyman.renderCached(this.airfieldBlockTplName, cooldownView)
     this.guiScene.replaceContentFromText(placeObj, data, data.len(), this)
     this.fillTimer(index, cooldownView)
   }

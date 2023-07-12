@@ -5,6 +5,7 @@
   "viewDistKInSight": 6.0,
   "haveCCIPForRocket": true,
   "haveCCRPForRocket": false,
+  "gyroSight": true,
   "haveCCIPForGun": true,
   "haveCCIPForTurret": true,
   "haveCCRPForGun": false,
@@ -210,6 +211,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -220,6 +237,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -247,6 +280,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -257,6 +306,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -799,6 +864,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -809,6 +890,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -1705,11 +1802,6 @@
     },
     {
       "sensor": {
-        "blk": "gameData/sensors/cn_helicopter_z_mlws.blk"
-      }
-    },
-    {
-      "sensor": {
         "blk": "gameData/sensors/cn_helicopter_z_rwr.blk"
       }
     },
@@ -1842,16 +1934,14 @@
       ]
     },
     {
-      "WeaponSlot": [
-        {
-          "index": 0
-        },
-        {
-          "notUseforDisbalanceCalculation": true
-        },
-        {
-          "WeaponPreset": {
-            "name": "default_common",
+      "WeaponSlot": {
+        "index": 0,
+        "notUseforDisbalanceCalculation": true,
+        "WeaponPreset": [
+          {
+            "name": "default_common"
+          },
+          {
             "Weapon": {
               "dummy": true,
               "trigger": "gunner0",
@@ -1874,51 +1964,20 @@
                 "pitch": [-80.0,30.0]
               }
             }
-          }
-        },
-        {
-          "WeaponPreset": [
-            {
-              "name": "ltc_common"
-            },
-            {
-              "Weapon": {
-                "dummy": true,
-                "trigger": "gunner0",
-                "triggerGroup": "primary",
-                "blk": "gameData/Weapons/dummy_weapon.blk",
-                "emitter": "optic1_gun",
-                "parkInDeadzone": false,
-                "defaultYaw": 0.0,
-                "defaultPitch": 0.0,
-                "speedYaw": 40.0,
-                "speedPitch": 40.0,
-                "aimForOperatedShell": true,
-                "turret": {
-                  "head": "optic1_turret",
-                  "gun": "optic1_gun",
-                  "mainTurret": true
-                },
-                "limits": {
-                  "yaw": [-115.0,115.0],
-                  "pitch": [-80.0,30.0]
-                }
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "countermeasures",
-                "startFx": "",
-                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
-                "emitter": "emtr_flare1",
-                "bullets": 48,
-                "external": true,
-                "separate": false
-              }
+          },
+          {
+            "Weapon": {
+              "trigger": "countermeasures",
+              "startFx": "",
+              "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher.blk",
+              "emitter": "emtr_flare1",
+              "bullets": 48,
+              "external": true,
+              "separate": false
             }
-          ]
-        }
-      ]
+          }
+        ]
+      }
     },
     {
       "WeaponSlot": [
@@ -2321,22 +2380,16 @@
       "modClass": "weapon",
       "tier": 4
     },
-    "countermeasures_launcher_chaff_only": [],
-    "countermeasures_launcher_flare_only": [],
-    "countermeasures_launcher_chaff_priority": [],
-    "countermeasures_launcher_flare_priority": [],
-    "countermeasures_belt_pack": {
+    "maw_countermeasures_launcher_chaff_only": [],
+    "maw_countermeasures_launcher_flare_only": [],
+    "maw_countermeasures_launcher_chaff_priority": [],
+    "maw_countermeasures_launcher_flare_priority": [],
+    "MAW_system_heli_false_thermal_targets": {
       "modClass": "weapon",
       "turn_it_off": false,
       "tier": 1,
       "invertEnableLogic": false,
       "effects": {
-        "commonWeapons": {
-          "Weapon": {
-            "slot": 0,
-            "preset": "ltc_common"
-          }
-        },
         "sensors": [
           {
             "sensor": {
@@ -2371,7 +2424,7 @@
     "heli_night_vision_system": {
       "image": "#ui/gameuiskin#thermal_sight",
       "tier": 3,
-      "prevModification": "countermeasures_belt_pack",
+      "prevModification": "MAW_system_heli_false_thermal_targets",
       "effects": {
         "nightVision": {
           "gunnerIr": {
@@ -2387,7 +2440,7 @@
             "noiseFactor": 0.15
           },
           "sightThermal": {
-            "resolution": [1024,768],
+            "resolution": [1920,1080],
             "noiseFactor": 0.05
           }
         }

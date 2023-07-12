@@ -305,6 +305,10 @@
         "composite_armor_hull_03_dm": {
           "armorThickness": 8.0,
           "hidableInXrayViewer": true
+        },
+        "composite_armor_hull_04_dm": {
+          "armorThickness": 8.0,
+          "hidableInXrayViewer": true
         }
       },
       "add_turret_armor": {
@@ -328,6 +332,9 @@
         },
         "gun_mask_dm": {
           "armorThickness": 8.0
+        },
+        "turret_11_front_dm": {
+          "armorThickness": 25.0
         },
         "gun_mask_01_dm": {
           "armorThickness": 8.0
@@ -927,6 +934,11 @@
           "hp": 100.0
         }
       }
+    }
+  },
+  {
+    "dmgAngles": {
+      "hatch_13": [50.0,50.0]
     }
   },
   {
@@ -1895,6 +1907,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -2527,6 +2540,17 @@
           "armorArrayText": {
             "layer": {
               "dmPart": "composite_armor_hull_03_dm"
+            }
+          }
+        }
+      },
+      {
+        "armorArrayHull": {
+          "xrayDmPart": "composite_armor_hull_04_dm",
+          "titleLoc": "RHA_tank_modern",
+          "armorArrayText": {
+            "layer": {
+              "dmPart": "composite_armor_hull_04_dm"
             }
           }
         }
@@ -3474,8 +3498,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -4421,6 +4445,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -4877,6 +4910,7 @@
   {
     "supportPlane": {
       "supportPlaneClass": "ucav_recon_micro",
+      "behTreeName": "recon_micro",
       "planeStartSpeed": 80.0,
       "count": 1
     }

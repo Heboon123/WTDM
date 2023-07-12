@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 /*
   widget API:
@@ -48,7 +46,7 @@ from "%scripts/dagui_library.nut" import *
       icon = getTblValue("icon", params, ::NewIconWidget.defaultIcon)
       tooltip = getTblValue("tooltip", params, "")
     }
-    return ::handyman.renderCached("%gui/newIconWidget.tpl", view)
+    return handyman.renderCached("%gui/newIconWidget.tpl", view)
   }
 
   function setContainer(containerObj) {

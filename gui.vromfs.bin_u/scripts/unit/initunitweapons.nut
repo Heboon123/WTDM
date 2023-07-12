@@ -1,10 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
-let { format, split_by_chars } = require("string")
+let { split_by_chars } = require("string")
 let { eachBlock, eachParam } = require("%sqstd/datablock.nut")
 let { isModClassExpendable } = require("%scripts/weaponry/modificationInfo.nut")
 let { isDataBlock, isString, appendOnce } = require("%sqStdLibs/helpers/u.nut")
@@ -193,8 +190,8 @@ let function initUnitModifications(modifications, modificationsBlk, esUnitType) 
 
     //validate prevModification. it used in gui only.
     if (("prevModification" in mod) && !(modificationsBlk?[mod.prevModification]))
-      errorsTextArray.append(format("Not exist prevModification '%s' for '%s' (%s)",
-                             delete mod.prevModification, modName, esUnitType))
+      errorsTextArray.append(
+        $"Not exist prevModification '{delete mod.prevModification}' for '{modName}'")
   })
   return errorsTextArray
 }

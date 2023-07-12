@@ -1,13 +1,12 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 from "soundOptions" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { format } = require("string")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { saveProfile, forceSaveProfile } = require("%scripts/clientState/saveProfile.nut")
@@ -16,6 +15,8 @@ let { getPlayerCurUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 let { getFullUnlockDesc } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { set_option_ptt } = require("chat")
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
+let { getUrlOrFileMissionMetaInfo } = require("%scripts/missions/missionsUtils.nut")
+let { set_gui_option } = require("guiOptions")
 
 let function get_country_by_team(team_index) {
   local countries = null
@@ -309,7 +310,7 @@ let function get_country_by_team(team_index) {
 
   function onVoicechatChange(_obj) {
     ::set_option(::USEROPT_VOICE_CHAT, !::get_option(::USEROPT_VOICE_CHAT).value)
-    ::broadcastEvent("VoiceChatOptionUpdated")
+    broadcastEvent("VoiceChatOptionUpdated")
   }
 
   function onInstantOptionApply(obj) {
@@ -317,7 +318,12 @@ let function get_country_by_team(team_index) {
   }
 
   function onChangedPartHudVisible(_obj) {
-    ::broadcastEvent("ChangedPartHudVisible")
+    broadcastEvent("ChangedPartHudVisible")
+  }
+
+  function onChangedShowActionBar(obj) {
+    set_gui_option(::USEROPT_SHOW_ACTION_BAR, obj.getValue())
+    broadcastEvent("ChangedShowActionBar")
   }
 
   function onTankAltCrosshair(obj) {
@@ -388,7 +394,7 @@ let function get_country_by_team(team_index) {
       obj.setValue(value)
 
     if (needSendNotification) {
-      ::broadcastEvent("CrossNetworkChatOptionChanged")
+      broadcastEvent("CrossNetworkChatOptionChanged")
 
       if (value == false) { //Turn off voice if we turn off crossnetwork opt
         let voiceOpt = ::get_option(::USEROPT_VOICE_CHAT)
@@ -431,7 +437,7 @@ let function get_country_by_team(team_index) {
     if (!this.optionsContainers)
       return null
     foreach (container in this.optionsContainers) {
-      let option = ::u.search(container.data, @(o) o.type == optionType)
+      let option = u.search(container.data, @(o) o.type == optionType)
       if (option)
         return option
     }
@@ -561,7 +567,7 @@ let function get_country_by_team(team_index) {
     if (!checkObj(optionTrObj))
       return
 
-    let missionBlk = ::get_mission_meta_info(this.optionsConfig?.missionName ?? "")
+    let missionBlk = getUrlOrFileMissionMetaInfo(this.optionsConfig?.missionName ?? "", this.optionsConfig?.gm)
     let useKillStreaks = missionBlk && ::is_skirmish_with_killstreaks(missionBlk) &&
       this.getOptValue(::USEROPT_USE_KILLSTREAKS, false)
     let allowedUnitTypesMask  = ::get_mission_allowed_unittypes_mask(missionBlk, useKillStreaks)
@@ -665,7 +671,7 @@ let function get_country_by_team(team_index) {
         break
       }
     }
-    if (::u.isEmpty(trId))
+    if (u.isEmpty(trId))
       return
 
     let rowObj = objTbl.findObject(trId)
@@ -733,7 +739,7 @@ let function get_country_by_team(team_index) {
 
   function getCurrentOptionsList() {
     let containerName = this.currentContainerName
-    let container = ::u.search(this.optionsContainers, @(c) c.name == containerName)
+    let container = u.search(this.optionsContainers, @(c) c.name == containerName)
     return getTblValue("data", container, [])
   }
 

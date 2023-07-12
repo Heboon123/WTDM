@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let playerContextMenu = require("%scripts/user/playerContextMenu.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -89,7 +87,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     if (!checkObj(alertIconObj))
       return
 
-    alertIconObj.show(!::u.isEmpty(fullAlertText))
+    alertIconObj.show(!u.isEmpty(fullAlertText))
     alertIconObj.tooltip = fullAlertText
   }
 

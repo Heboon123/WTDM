@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { canInteractCrossConsole,
         isXBoxPlayerName,
@@ -70,7 +67,7 @@ let { EPLX_SEARCH, EPLX_CLAN, EPLX_PS4_FRIENDS, contactsWndSizes
   }
 
   function onPlayerSelect(obj) {
-    this.curPlayer = ::contacts[this.curGroup]?[obj.getValue()]
+    base.onPlayerSelect(obj)
     this.updateSquadButton()
   }
 

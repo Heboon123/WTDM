@@ -196,7 +196,8 @@
         "ex_decor_r_06_dm": [],
         "ex_decor_r_01_dm": [],
         "ex_decor_l_01_dm": [],
-        "ex_armor_01_dm": []
+        "ex_armor_01_dm": [],
+        "turret_01_side_dm": []
       },
       "timber": {
         "armorClass": "ship_wood",
@@ -292,9 +293,6 @@
         },
         "turret_side_dm": {
           "armorThickness": 155.0
-        },
-        "turret_01_side_dm": {
-          "armorThickness": 135.0
         },
         "turret_02_side_dm": {
           "armorThickness": 115.0
@@ -1874,6 +1872,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.4,
               "nothing": 0.6,
               "fHitCritical": true
@@ -3332,8 +3331,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -4261,6 +4260,15 @@
           "fx": {
             "name": "smoke_after_hit_tiny",
             "setOrientation": true
+          }
+        }
+      },
+      {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
           }
         }
       },

@@ -1,9 +1,8 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { Cost } = require("%scripts/money.nut")
+
 
 
 let regexp2 = require("regexp2")
@@ -19,7 +18,7 @@ let awards = [[70000, 0], [300000, 100], [0, 2500]]
 let getLinkString = @() format(loc("msgBox/viralAcquisition"), ::my_user_id_str)
 
 local function getViralAcquisitionDesc(locId = "msgbox/linkCopied") {
-  locId = "/".concat(locId, "separatedVessels") // add separatedVessels postfix when vessels ranks are not equal to other ranks
+  locId = "/".concat(locId, "disabledThirdStageForVessels") // add separatedVessels postfix when vessels ranks are not equal to other ranks
   let desc = loc(locId, {
     firstAwardRank = ::get_roman_numeral(awardRanks[0]),
     secondAwardRank = ::get_roman_numeral(awardRanks[1]),
@@ -27,10 +26,10 @@ local function getViralAcquisitionDesc(locId = "msgbox/linkCopied") {
     firstAwardVesselsRank = ::get_roman_numeral(awardVesselsRanks[0]),
     secondAwardVesselsRank = ::get_roman_numeral(awardVesselsRanks[1]),
     thirdAwardVesselsRank = ::get_roman_numeral(awardVesselsRanks[2]),
-    firstAwardPrize = ::Cost(awards[0][0], awards[0][1]).tostring(),
-    secondAwardPrize = ::Cost(awards[1][0], awards[1][1]).tostring(),
-    thirdAwardPrize = ::Cost(awards[2][0], awards[2][1]).tostring(),
-    gift = ::Cost(0, 50).tostring(),
+    firstAwardPrize = Cost(awards[0][0], awards[0][1]).tostring(),
+    secondAwardPrize = Cost(awards[1][0], awards[1][1]).tostring(),
+    thirdAwardPrize = Cost(awards[2][0], awards[2][1]).tostring(),
+    gift = Cost(0, 50).tostring(),
     link = getLinkString() })
   return desc
 }

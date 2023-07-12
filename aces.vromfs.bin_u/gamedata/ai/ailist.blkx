@@ -2359,7 +2359,15 @@
                   "isTargetType": {
                     "type": "bomber"
                   },
-                  "fighterAttackBomber": []
+                  "selector": {
+                    "selectStrategy": "ordered",
+                    "selectOnSuccess": true,
+                    "sequencer": {
+                      "isFighterSpecialAttackBomber": [],
+                      "fighterAttackBomber": []
+                    },
+                    "fighterAttackFighter": []
+                  }
                 }
               },
               {
@@ -2881,7 +2889,15 @@
                 "isTargetType": {
                   "type": "bomber"
                 },
-                "fighterAttackBomber": []
+                "selector": {
+                  "selectStrategy": "ordered",
+                  "selectOnSuccess": true,
+                  "sequencer": {
+                    "isFighterSpecialAttackBomber": [],
+                    "fighterAttackBomber": []
+                  },
+                  "fighterAttackFighter": []
+                }
               }
             },
             {
@@ -3529,7 +3545,8 @@
                 "flyToPos": {
                   "speed": 350.0,
                   "dist": -1.0,
-                  "minAlt": 10.0
+                  "minAlt": 10.0,
+                  "terrainSensitivity": 0.0
                 }
               },
               "waypointFollow": []
@@ -4253,7 +4270,8 @@
             "speed": 550.0,
             "dist": -1.0,
             "minAlt": 100.0,
-            "destType": "battleField"
+            "destType": "battleField",
+            "terrainSensitivity": 0.0
           }
         }
       },
@@ -4439,13 +4457,6 @@
     ]
   },
   {
-    "selector": {
-      "name": "railFlight",
-      "selectStrategy": "ordered",
-      "railFlight": []
-    }
-  },
-  {
     "selector": [
       {
         "name": "cutsceneFighterVsFighter"
@@ -4533,7 +4544,15 @@
         }
       },
       {
-        "fighterAttackBomber": []
+        "selector": {
+          "selectStrategy": "ordered",
+          "selectOnSuccess": true,
+          "sequencer": {
+            "isFighterSpecialAttackBomber": [],
+            "fighterAttackBomber": []
+          },
+          "fighterAttackFighter": []
+        }
       }
     ]
   },
@@ -6387,7 +6406,7 @@
             "ifThenElse": {
               "isPlayerOrbitActive": [],
               "orbitHere": {
-                "speed": 120.0,
+                "speed": 250.0,
                 "rollFactor": 0.13,
                 "maxPitch": 30.0,
                 "maxRoll": 45.0
@@ -6401,6 +6420,83 @@
             }
           }
         }
+      }
+    ]
+  },
+  {
+    "selector": [
+      {
+        "name": "recon_micro"
+      },
+      {
+        "selectStrategy": "ordered"
+      },
+      {
+        "reaction": {
+          "event": "groundAhead",
+          "parallel": {
+            "turnToEvasiveDir": [],
+            "stayAtSpeed": {
+              "speedMode": "boostOn"
+            }
+          }
+        }
+      },
+      {
+        "reaction": {
+          "event": "collisionAhead",
+          "parallel": {
+            "turnToEvasiveDir": [],
+            "stayAtSpeed": {
+              "speedMode": "boostOn"
+            }
+          }
+        }
+      },
+      {
+        "reaction": {
+          "event": "outsideBattleField",
+          "flyToPos": {
+            "speed": 550.0,
+            "dist": -1.0,
+            "minAlt": 100.0,
+            "destType": "battleField"
+          }
+        }
+      },
+      {
+        "sequencer": [
+          {
+            "reaction": {
+              "event": "groundAhead"
+            }
+          },
+          {
+            "reaction": {
+              "event": "outsideBattleField"
+            }
+          },
+          {
+            "selector": {
+              "selectStrategy": "ordered",
+              "ifThenElse": {
+                "isPlayerOrbitActive": [],
+                "orbitHere": {
+                  "speed": 100.0,
+                  "rollFactor": 0.13,
+                  "maxPitch": 30.0,
+                  "maxRoll": 45.0
+                },
+                "parallel": {
+                  "stayAtCurrentAlt": [],
+                  "stayAtSpeed": {
+                    "speedMode": "maxSpeed"
+                  }
+                }
+              }
+            }
+          }
+        ]
       }
     ]
   },
@@ -6533,7 +6629,15 @@
                 "isTargetType": {
                   "type": "bomber"
                 },
-                "fighterAttackBomber": []
+                "selector": {
+                  "selectStrategy": "ordered",
+                  "selectOnSuccess": true,
+                  "sequencer": {
+                    "isFighterSpecialAttackBomber": [],
+                    "fighterAttackBomber": []
+                  },
+                  "fighterAttackFighter": []
+                }
               }
             }
           ]
@@ -6755,7 +6859,8 @@
                     },
                     "bombTarget": {
                       "instantAttack": true,
-                      "fireMode": "salvo"
+                      "fireMode": "salvo",
+                      "carpetBombing": false
                     }
                   }
                 }
@@ -6769,7 +6874,8 @@
                     "selectStrategy": "ordered",
                     "bombTarget": {
                       "instantAttack": true,
-                      "fireMode": "salvo"
+                      "fireMode": "salvo",
+                      "carpetBombing": false
                     },
                     "fighterAttackGround": {
                       "instantAttack": true,

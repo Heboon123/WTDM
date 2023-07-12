@@ -1,19 +1,16 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
+let { loadIfExist } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { broadcastEvent, subscribe_handler, DEFAULT_HANDLER } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { charRequestJwtFromServer } = require("chard")
 let { format } = require("string")
 let { subscribe } = require("eventbus")
 let DataBlock = require("DataBlock")
-let subscriptions = require_optional("%sqStdLibs/helpers/subscriptions.nut")
 
-if ("g_script_reloader" in getroottable())
-  ::g_script_reloader.loadIfExist("%scripts/framework/msgBox.nut")
+loadIfExist("%scripts/framework/msgBox.nut")
 
-global enum TASK_CB_TYPE {
+enum TASK_CB_TYPE {
   BASIC,
   REQUEST_DATA
 }
@@ -69,8 +66,7 @@ let function hideTaskProgressBox() {
 
   let guiScene = currentProgressBox.getScene()
   guiScene.destroyElement(currentProgressBox)
-  if ("broadcastEvent" in getroottable())
-    ::broadcastEvent("ModalWndDestroy")
+  broadcastEvent("ModalWndDestroy")
   currentProgressBox = null
 }
 
@@ -221,9 +217,9 @@ subscribe("onCharRequestJwtFromServerComplete", onCharRequestJwtFromServerComple
 
 restoreCharCallback()
 
-if (subscriptions)
-  subscriptions.subscribeHandler(::g_tasker, subscriptions.DEFAULT_HANDLER)
+subscribe_handler(::g_tasker, DEFAULT_HANDLER)
 
 return {
   charRequestJwt
+  TASK_CB_TYPE
 }

@@ -1,10 +1,8 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
+let { subscribe_handler } = require("%sqStdLibs/helpers/subscriptions.nut")
 let elemModelType = require("%sqDagui/elemUpdater/elemModelType.nut")
 let elemViewType = require("%sqDagui/elemUpdater/elemViewType.nut")
 let { topMenuShopActive } = require("%scripts/mainmenu/topMenuStates.nut")
@@ -13,7 +11,7 @@ let { promoteUnits } = require("%scripts/unit/remainingTimeUnit.nut")
 elemModelType.addTypes({
   REMAINING_TIME_UNIT = {
     function init() {
-      ::subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
+      subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
     }
 
     isVisible = @() promoteUnits.value.findvalue(@(d) d.isActive) != null

@@ -1,8 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
 const DEFAULT_MAX_SKILL_LEVEL = 50
 
@@ -33,12 +31,12 @@ let function loadSkills() {
   if (calcBlk == null)
     return
   foreach (memberName, memberBlk in calcBlk) {
-    if (!::u.isDataBlock(memberBlk))
+    if (!u.isDataBlock(memberBlk))
       continue
 
     maxSkillValueByMemberAndSkill[memberName] <- {}
     foreach (skillName, skillBlk in memberBlk) {
-      if (!::u.isDataBlock(skillBlk))
+      if (!u.isDataBlock(skillBlk))
         continue // Not actually a skill blk.
       let skillItem = ::g_crew.getSkillItem(memberName, skillName)
       if (!skillItem)

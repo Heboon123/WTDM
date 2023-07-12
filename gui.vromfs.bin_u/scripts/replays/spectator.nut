@@ -1,11 +1,10 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 from "hudMessages" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { getObjValidIndex } = require("%sqDagui/daguiUtil.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { format } = require("string")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { CHAT_MODE_ALL, chat_set_mode, toggle_ingame_chat } = require("chat")
@@ -28,7 +27,7 @@ let { get_time_speeds_list, get_time_speed, is_replay_playing, get_replay_anchor
 let { getEnumValName } = require("%scripts/debugTools/dbgEnum.nut")
 let { HUD_UNIT_TYPE } = require("%scripts/hud/hudUnitType.nut")
 let { send, subscribe } = require("eventbus")
-let { get_game_type } = require("mission")
+let { get_game_type, get_mplayers_list, get_local_mplayer } = require("mission")
 let { round_by_value } = require("%sqstd/math.nut")
 
 enum SPECTATOR_MODE {
@@ -159,10 +158,10 @@ let weaponIconsReloadBits = {
   }]
 
   function initScreen() {
-    ::g_script_reloader.registerPersistentData("Spectator", this, [ "debugMode" ])
+    registerPersistentData("Spectator", this, [ "debugMode" ])
 
     this.gameType = get_game_type()
-    let mplayerTable = ::get_local_mplayer() || {}
+    let mplayerTable = get_local_mplayer() || {}
     let isReplay = is_replay_playing()
     let replayProps = get_replay_props()
 
@@ -328,7 +327,7 @@ let weaponIconsReloadBits = {
       })
 
     let tabsObj = this.showSceneBtn("tabs", true)
-    let data = ::handyman.renderCached("%gui/frameHeaderTabs.tpl", view)
+    let data = handyman.renderCached("%gui/frameHeaderTabs.tpl", view)
     this.guiScene.replaceContentFromText(tabsObj, data, data.len(), this)
     tabsObj.setValue(0)
   }
@@ -388,7 +387,7 @@ let weaponIconsReloadBits = {
 
     if (friendlyTeamSwitched || isTargetSwitched) {
       ::g_hud_live_stats.show(this.isMultiplayer, null, spectatorWatchedHero.id)
-      ::broadcastEvent("WatchedHeroSwitched")
+      broadcastEvent("WatchedHeroSwitched")
       this.updateHistoryLog()
     }
 
@@ -465,7 +464,7 @@ let weaponIconsReloadBits = {
       list.append(loc("controls/no_rockets_left"))
     if (briefMalfunctionState & BMS_OUT_OF_TORPEDOES)
       list.append(loc("controls/no_torpedoes_left"))
-    local desc = ::g_string.implode(list, loc("ui/semicolon"))
+    local desc = loc("ui/semicolon").join(list, true)
     if (desc.len())
       desc = colorize("warningTextColor", desc)
     return desc
@@ -704,7 +703,7 @@ let weaponIconsReloadBits = {
 
     let curPlayer = this.getTargetPlayer()
     if (::get_is_console_mode_enabled() && u.isEqual(curPlayer, player)) {
-      let selIndex = ::get_obj_valid_index(obj)
+      let selIndex = getObjValidIndex(obj)
       let selectedPlayerBlock = obj.getChild(selIndex >= 0 ? selIndex : 0)
       ::session_player_rmenu(
         this,
@@ -792,7 +791,7 @@ let weaponIconsReloadBits = {
   }
 
   function getTeamPlayers(teamId) {
-    let tbl = (teamId != 0) ? ::get_mplayers_list(teamId, true) : [ ::get_local_mplayer() ]
+    let tbl = (teamId != 0) ? get_mplayers_list(teamId, true) : [ get_local_mplayer() ]
     for (local i = tbl.len() - 1; i >= 0; i--) {
       let player = tbl[i]
       if (player.spectator
@@ -941,7 +940,7 @@ let weaponIconsReloadBits = {
     let view = { rows = array(newRows, 1)
                    iconLeft = teamInfo.index == 0
                  }
-    let data = ::handyman.renderCached(("%gui/hud/spectatorTeamRow.tpl"), view)
+    let data = handyman.renderCached(("%gui/hud/spectatorTeamRow.tpl"), view)
     this.guiScene.appendWithBlk(objTbl, data, this)
     return totalRows
   }
@@ -1081,7 +1080,7 @@ let weaponIconsReloadBits = {
       extra.append(i + " = " + val)
     }
     extra.sort()
-    return ::g_string.implode(extra, "\n")
+    return "\n".join(extra, true)
   }
 
   function playerStateToString(state) {
@@ -1264,7 +1263,7 @@ let weaponIconsReloadBits = {
         msg.message <- this.buildHistoryLogMessage(msg)
 
       let historyLogMessages = u.map(this.historyLog, @(msg) msg.message)
-      obj.setValue(obj.isVisible() ? ::g_string.implode(historyLogMessages, "\n") : "")
+      obj.setValue(obj.isVisible() ? "\n".join(historyLogMessages, true) : "")
     }
   }
 
@@ -1329,11 +1328,11 @@ let weaponIconsReloadBits = {
               if (shortcutsText != "")
                 locNames.append(shortcutsText)
             }
-            hotkeys = ::g_string.implode(locNames, loc("ui/comma"))
+            hotkeys = loc("ui/comma").join(locNames, true)
           }
           else if ("keys" in keys) {
             let keysLocalized = u.map(keys.keys, loc)
-            hotkeys = ::g_string.implode(keysLocalized, loc("ui/comma"))
+            hotkeys = loc("ui/comma").join(keysLocalized, true)
           }
 
           if (hotkeys != "") {
@@ -1374,7 +1373,7 @@ let weaponIconsReloadBits = {
       return
 
     let timeTotal = this.replayTimeTotal
-    let data = ::handyman.renderCached("%gui/replays/replayAnchorMark.tpl", {
+    let data = handyman.renderCached("%gui/replays/replayAnchorMark.tpl", {
       anchors = anchors.map(function(v, idx) {
         let anchorTimeS = v / 1000.0
         return {
@@ -1403,7 +1402,7 @@ let weaponIconsReloadBits = {
     let member = ::SessionLobby.isInRoom() ? ::SessionLobby.getMemberByName(name) : null
     return member ? !!::SessionLobby.getMemberPublicParam(member, "spectator") : false
   }
-  return !!getTblValue("spectator", ::get_local_mplayer() || {}, 0)
+  return !!getTblValue("spectator", get_local_mplayer() || {}, 0)
 }
 ::cross_call_api.isPlayerDedicatedSpectator <- ::isPlayerDedicatedSpectator
 
@@ -1425,5 +1424,5 @@ let weaponIconsReloadBits = {
 }
 
 subscribe("replayWait", function (event) {
-  ::broadcastEvent("ReplayWait", event)
+  broadcastEvent("ReplayWait", event)
 })

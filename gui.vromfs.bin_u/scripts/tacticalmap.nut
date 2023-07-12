@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
 let { getWeaponShortTypeFromWpName } = require("%scripts/weaponry/weaponryDescription.nut")
@@ -271,7 +268,7 @@ let { get_game_type, get_cur_game_mode_name } = require("mission")
     let obj = this.scene.findObject("pilot_aircraft")
     if (obj) {
       let fm = ::get_player_unit_name()
-      let unit = ::getAircraftByName(fm)
+      let unit = getAircraftByName(fm)
       local text = ::getUnitName(fm)
       if (unit?.isAir() || unit?.isHelicopter?())
         text += loc("ui/colon") + getWeaponShortTypeFromWpName(::get_cur_unit_weapon_preset(), fm)

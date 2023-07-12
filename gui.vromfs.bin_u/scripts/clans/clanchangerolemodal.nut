@@ -1,11 +1,9 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { getPlayerName } = require("%scripts/clientState/platform.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let lbDataType = require("%scripts/leaderboard/leaderboardDataType.nut")
@@ -120,7 +118,7 @@ let lbDataType = require("%scripts/leaderboard/leaderboardDataType.nut")
       ::sync_handler_simulate_signal("clan_info_reload")
 
     let onTaskSuccess = function() {
-      ::broadcastEvent("ClanMemberRoleChanged")
+      broadcastEvent("ClanMemberRoleChanged")
       ::g_popups.add(null, msg)
     }
 

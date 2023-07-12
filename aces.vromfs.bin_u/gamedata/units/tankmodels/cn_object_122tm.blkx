@@ -1292,6 +1292,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.4,
               "nothing": 0.6,
               "fHitCritical": true
@@ -1625,6 +1626,9 @@
   {
     "commonWeapons": [
       {
+        "remotelyGuidedWeaponsMax": 1
+      },
+      {
         "Weapon": {
           "trigger": "gunner0",
           "blk": "gameData/Weapons/groundModels_weapons/120mm_122TM_user_cannon.blk",
@@ -1839,7 +1843,7 @@
         "Weapon": {
           "trigger": "gunner3",
           "triggerGroup": "machinegun",
-          "blk": "gameData/Weapons/groundModels_weapons/12_7mm_DShK_user_machinegun.blk",
+          "blk": "gameData/Weapons/groundModels_weapons/12_7mm_Type_54_user_machinegun.blk",
           "emitter": "bone_mg_aa_v_01",
           "flash": "emtr_mg_aa_flame_01",
           "barrelDP": "gun_barrel_01_dm",
@@ -2015,8 +2019,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -2165,6 +2169,34 @@
           {
             "point": {
               "nameTemplate": "bone_roll_10_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_11_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_11_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_12_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_12_02"
             }
           }
         ]
@@ -3269,6 +3301,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -3418,6 +3459,12 @@
     "smokeScreenExhaustEmitters": [
       {
         "emitter": "emtr_exhaust_01"
+      },
+      {
+        "emitter": "emtr_exhaust_02"
+      },
+      {
+        "emitter": "emtr_exhaust_03"
       },
       {
         "emitter": "emtr_exhaust_04"

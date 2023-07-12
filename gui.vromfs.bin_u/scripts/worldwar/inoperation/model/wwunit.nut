@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
 let { getRoleText } = require("%scripts/unit/unitInfoTexts.nut")
@@ -28,7 +25,7 @@ let { getWeaponTypeIcoByWeapon } = require("%scripts/statistics/mpStatisticsUtil
       return
 
     this.name = blk.getBlockName() || getTblValue("name", blk, "")
-    this.unit = ::getAircraftByName(this.name)
+    this.unit = getAircraftByName(this.name)
 
     this.wwUnitType = ::g_ww_unit_type.getUnitTypeByWwUnit(this)
     this.expClass = this.wwUnitType.expClass || (this.unit ? this.unit.expClass.name : "")

@@ -46,6 +46,15 @@ let modeNames = [
   "hud/PD HDN VSL",
   "hud/PD HDN track",
 
+  "hud/GTM standby",
+  "hud/GTM search",
+  "hud/GTM acquisition",
+  "hud/GTM ACM",
+  "hud/GTM BST",
+  "hud/GTM VSL",
+  "hud/GTM track",
+
+
   "hud/LD standby",
   "hud/LD search",
   "hud/LD acquisition",
@@ -73,6 +82,14 @@ let modeNames = [
   "hud/TWS HDN BST",
   "hud/TWS HDN VSL",
   "hud/TWS HDN track",
+
+  "hud/TWS GTM standby",
+  "hud/TWS GTM search",
+  "hud/TWS GTM acquisition",
+  "hud/TWS GTM ACM",
+  "hud/TWS GTM BST",
+  "hud/TWS GTM VSL",
+  "hud/TWS GTM track",
 
   "hud/IRST standby",
   "hud/IRST search",
@@ -117,6 +134,7 @@ let MfdRadarEnabled = Watched(false)
 let MfdIlsEnabled = Watched(false)
 let MfdRadarColor = Watched(Color(10, 202, 10, 250))
 let MfdRadarHideBkg = Watched(false)
+let MfdRadarFontScale = Watched(-1)
 
 let Speed = Watched(0.0)
 
@@ -240,7 +258,7 @@ radarState.__update({
 
     AzimuthRange, AzimuthRangeInv, ElevationRange, ElevationRangeInv, AamTimeOfFlightMax, AamLaunchZoneDistMinVal, AamLaunchZoneDistMaxVal,
 
-    HmdSensorVisible, HmdSensorDesignation
+    HmdSensorVisible, HmdSensorDesignation, MfdRadarFontScale
   }
 )
 
@@ -282,7 +300,7 @@ interop.updateTarget <- function (index,
 
   let cvt = @(val, vmin, vmax, omin, omax) omin + ((omax - omin) * (val - vmin)) / (vmax - vmin)
 
-  let signalRel = signal_rel < 0.05
+  let signalRel = signal_rel < 0.01
     ? 0.0
     : cvt(signal_rel, 0.05, 1.0, 0.3, 1.0)
   let old_tgt = targets[index]

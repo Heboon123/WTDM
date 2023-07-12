@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let gamepadIcons = require("%scripts/controls/gamepadIcons.nut")
 
@@ -31,7 +29,7 @@ let gamepadIcons = require("%scripts/controls/gamepadIcons.nut")
 
   function getMarkup() {
     let data = this.getMarkupData()
-    return ::handyman.renderCached(data.template, data.view)
+    return handyman.renderCached(data.template, data.view)
   }
 
   function getMarkupData() {
@@ -44,7 +42,7 @@ let gamepadIcons = require("%scripts/controls/gamepadIcons.nut")
       data.view.buttonImage <- this.getImage()
       data.template = "%gui/shortcutAxis.tpl"
     }
-    else if (this.deviceId == STD_MOUSE_DEVICE_ID) {
+    else if (this.deviceId == STD_MOUSE_DEVICE_ID && this.axisId < 0) {// Do not show mouse axis if joystick bound
       data.view.buttonImage <- this.getImage()
       data.template = "%gui/shortcutAxis.tpl"
     }

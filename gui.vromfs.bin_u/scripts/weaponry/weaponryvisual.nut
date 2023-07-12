@@ -1,8 +1,8 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+
+let { Cost } = require("%scripts/money.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let { format } = require("string")
 let modUpgradeElem = require("%scripts/weaponry/elems/modUpgradeElem.nut")
@@ -14,6 +14,7 @@ let { getBulletsIconView } = require("%scripts/weaponry/bulletsVisual.nut")
 let { weaponItemTplPath } = require("%scripts/weaponry/getWeaponItemTplPath.nut")
 let { getModItemName, getFullItemCostText } = require("weaponryDescription.nut")
 let { MODIFICATION, WEAPON, SPARE, PRIMARY_WEAPON } = require("%scripts/weaponry/weaponryTooltips.nut")
+let { debug_dump_stack } = require("dagor.debug")
 
 ::dagui_propid.add_name_id("_iconBulletName")
 
@@ -140,9 +141,12 @@ let function getWeaponItemViewParams(id, unit, item, params = {}) {
   let bIcoItem = isBullets(visualItem) ? visualItem : getModifIconItem(unit, visualItem)
   if (bIcoItem) {
     let bulletsSet = getBulletsSetData(unit, bIcoItem.name)
-    assert(unit?.isTank() || bulletsSet != null,
-          $"No bullets in bullets set {visualItem.name} for {unit.name}")
-
+    if (!unit?.isTank() && bulletsSet == null) {
+      let unitName = unit.name // warning disable: -declared-never-used
+      let bulletsSetName = visualItem.name // warning disable: -declared-never-used
+      debug_dump_stack()
+      logerr("No bullets in bullets set")
+    }
     res.iconBulletName = bIcoItem.name
     res.bulletImg = getBulletsIconView(bulletsSet)
   }
@@ -216,7 +220,7 @@ let function getWeaponItemViewParams(id, unit, item, params = {}) {
       res.priceText = priceText
     else if (canResearch && !isResearchInProgress && !isResearchPaused) {
       let showExp = itemReqExp - statusTbl.modExp
-      local rpText = ::Cost().setRp(showExp).tostring()
+      local rpText = Cost().setRp(showExp).tostring()
       if (flushExp > 0 && flushExp >= showExp)
         rpText = colorize("goodTextColor", rpText)
       res.priceText = rpText
@@ -324,7 +328,12 @@ let function updateModItem(unit, item, itemObj, showButtons, handler, params = {
     params.__merge({ showButtons = showButtons }))
   let { isTooltipByHold, tooltipId, actionBtnCanShow, actionHoldDummyCanShow } = viewParams
 
-  itemObj.findObject("name").setValue(viewParams.nameText)
+  // For single-line textareas, enforce non-breaking text to prevent line wrapping,
+  // ensuring maximum visibility of the displayed text.
+  let isSingleLine = !viewParams.hideBulletsChoiceBlock
+  itemObj.findObject("name").setValue(isSingleLine
+    ? ::stringReplace(viewParams.nameText, " ", ::nbsp)
+    : viewParams.nameText)
 
   if (isTooltipByHold)
     itemObj.tooltipId = tooltipId
@@ -336,7 +345,7 @@ let function updateModItem(unit, item, itemObj, showButtons, handler, params = {
     let divObj = itemObj.findObject("bullets")
     if (checkObj(divObj)) {
       divObj._iconBulletName = viewParams.iconBulletName
-      let data = ::handyman.renderCached(("%gui/weaponry/bullets.tpl"), viewParams.bulletImg)
+      let data = handyman.renderCached(("%gui/weaponry/bullets.tpl"), viewParams.bulletImg)
       itemObj.getScene().replaceContentFromText(divObj, data, data.len(), handler)
     }
   }
@@ -462,7 +471,7 @@ let function createModItemLayout(id, unit, item, iType, params = {}) {
   if (!("type" in item))
     item.type <- iType
 
-  return ::handyman.renderCached(weaponItemTplPath.value, getWeaponItemViewParams(id, unit, item, params))
+  return handyman.renderCached(weaponItemTplPath.value, getWeaponItemViewParams(id, unit, item, params))
 }
 
 let function createModItem(id, unit, item, iType, holderObj, handler, params = {}) {

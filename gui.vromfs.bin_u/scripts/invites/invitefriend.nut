@@ -1,9 +1,10 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+
+let { addContact, execContactsCharAction } = require("%scripts/contacts/contactsState.nut")
+let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 ::g_invites_classes.Friend <- class extends ::BaseInvite {
   static function getUidByParams(params) {
@@ -11,12 +12,12 @@ from "%scripts/dagui_library.nut" import *
   }
 
   function updateCustomParams(params, initial = false) {
-    this.inviterName = getTblValue("inviterName", params, this.inviterName)
-    this.inviterUid = getTblValue("inviterUid", params, this.inviterUid)
+    this.inviterName = params?.inviterName ?? this.inviterName
+    this.inviterUid = params?.inviterUid ?? this.inviterUid
     this.isAutoAccepted = this.isAlreadyAccepted()
 
     if (initial)
-      ::add_event_listener("ContactsGroupUpdate",
+      add_event_listener("ContactsGroupUpdate",
                            function (_p) {
                              if (this.isAlreadyAccepted())
                                this.remove()
@@ -25,7 +26,7 @@ from "%scripts/dagui_library.nut" import *
   }
 
   function isValid() {
-    return base.isValid() && !::u.isEmpty(this.inviterUid)
+    return base.isValid() && !u.isEmpty(this.inviterUid)
   }
 
   function isOutdated() {
@@ -51,7 +52,12 @@ from "%scripts/dagui_library.nut" import *
 
   function accept() {
     if (this.isValid())
-      ::editContactMsgBox(::getContact(this.inviterUid, this.inviterName), EPL_FRIENDLIST, true)
+      addContact(::getContact(this.inviterUid, this.inviterName), EPL_FRIENDLIST)
     this.remove()
+  }
+
+  function reject() {
+    this.remove()
+    execContactsCharAction(this.inviterUid, "contacts_reject_request")
   }
 }

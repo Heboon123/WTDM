@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let { getPlayerCurUnit } = require("%scripts/slotbar/playerCurUnit.nut")
@@ -71,7 +69,7 @@ let function isPseudoAxis(shortcutId) {
 }
 
 let function getPseudoAxisById(shortcutId) {
-  return ::u.search(pseudoAxesList.types, (@(item) item.id == shortcutId))
+  return u.search(pseudoAxesList.types, (@(item) item.id == shortcutId))
 }
 
 ::g_shortcut_type.addType({

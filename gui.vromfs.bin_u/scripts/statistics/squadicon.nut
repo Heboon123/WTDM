@@ -1,19 +1,16 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
 let listLabelsSquad = {}
 let nextLabel = { team1 = 1, team2 = 1 }
 local topSquads = {}
 let playersInfo = persist("playersInfo", @() Watched({}))
-let { getRealName } = require("%scripts/user/nameMapping.nut")
 
 let getPlayersInfo = @() playersInfo.value
 let function updateIconPlayersInfo() {
   let sessionPlayersInfo = ::SessionLobby.getPlayersInfo()
-  if (sessionPlayersInfo.len() > 0 && !::u.isEqual(playersInfo.value, sessionPlayersInfo))
+  if (sessionPlayersInfo.len() > 0 && !u.isEqual(playersInfo.value, sessionPlayersInfo))
     playersInfo(clone sessionPlayersInfo)
 }
 
@@ -69,12 +66,12 @@ let function getSquadInfo(idSquad) {
   return squad
 }
 
-let function getSquadInfoByMemberName(name) {
-  if (name == "")
+let function getSquadInfoByMemberId(userId) {
+  if (userId == null)
     return null
 
-  foreach (_uid, member in getPlayersInfo())
-    if (member.name == name || member.name == getRealName(name))
+  foreach (uid, member in getPlayersInfo())
+    if (uid == userId)
       return getSquadInfo(member.squad)
 
   return null
@@ -96,8 +93,7 @@ let function updateTopSquadScore(mplayers) {
     let squadScore = getTblValue("squadScore", player, 0)
     if (!squadScore || squadScore < topSquadScore)
       continue
-    let name = getTblValue("name", player, "")
-    let squadId = getTblValue("squadId", getSquadInfoByMemberName(name), INVALID_SQUAD_ID)
+    let squadId = getTblValue("squadId", getSquadInfoByMemberId(player?.id), INVALID_SQUAD_ID)
     if (squadId == INVALID_SQUAD_ID)
       continue
     if (squadScore > topSquadScore) {
@@ -133,6 +129,6 @@ return {
   updateListLabelsSquad
   getSquadInfo
   isShowSquad
-  getSquadInfoByMemberName
+  getSquadInfoByMemberId
   getTopSquadId
 }

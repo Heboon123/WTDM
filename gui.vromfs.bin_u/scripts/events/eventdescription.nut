@@ -1,9 +1,8 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let DataBlock = require("DataBlock")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -47,7 +46,7 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
 
   function initScreen() {
     this.playersInTable = []
-    let blk = ::handyman.renderCached("%gui/events/eventDescription.tpl", {})
+    let blk = handyman.renderCached("%gui/events/eventDescription.tpl", {})
     this.guiScene.replaceContentFromText(this.scene, blk, blk.len(), this)
     this.updateContent()
   }
@@ -55,7 +54,7 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
   function selectEvent(event, eventRoom = null) {
     if (this.room)
       ::g_mroom_info.get(this.room.roomId).checkRefresh()
-    if (this.selectedEvent == event && ::u.isEqual(this.room, eventRoom))
+    if (this.selectedEvent == event && u.isEqual(this.room, eventRoom))
       return
 
     this.selectedEvent = event
@@ -343,7 +342,7 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
     ::events.requestSelfRow(
       this.newSelfRowRequest,
       "mini_lb_self",
-      (@(selectedEvent) function (_self_row) {
+      (@(selectedEvent) function (_self_row) { //-ident-hides-ident
         ::events.requestLeaderboard(::events.getMainLbRequest(selectedEvent),
         "mini_lb_self",
         function (lb_data) {
@@ -521,7 +520,7 @@ let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
   }
 
   function onEventMRoomInfoUpdated(p) {
-    if (this.room && p.roomId == this.room.roomId && !::u.isEqual(this.currentFullRoomData, this.getFullRoomData()))
+    if (this.room && p.roomId == this.room.roomId && !u.isEqual(this.currentFullRoomData, this.getFullRoomData()))
       this.updateContent()
   }
 }

@@ -1,9 +1,12 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { Cost } = require("%scripts/money.nut")
+let u = require("%sqStdLibs/helpers/u.nut")
+
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 let { format } = require("string")
 let { get_time_msec } = require("dagor.time")
@@ -223,14 +226,14 @@ local expireTypes = {
 
   function getCost(ignoreCanBuy = false) {
     if (this.isCanBuy() || ignoreCanBuy)
-      return ::Cost(::wp_get_item_cost(this.id), ::wp_get_item_cost_gold(this.id)).multiply(this.getSellAmount())
-    return ::Cost()
+      return Cost(::wp_get_item_cost(this.id), ::wp_get_item_cost_gold(this.id)).multiply(this.getSellAmount())
+    return Cost()
   }
 
   function getIcon(_addItemName = true) {
     if (this.lottieAnimation != null)
-      return ::LayersIcon.getIconData(null, this.getLottieImage())
-    return ::LayersIcon.getIconData(this.iconStyle + "_shop", this.defaultIcon, 1.0, this.defaultIconStyle)
+      return LayersIcon.getIconData(null, this.getLottieImage())
+    return LayersIcon.getIconData(this.iconStyle + "_shop", this.defaultIcon, 1.0, this.defaultIconStyle)
   }
 
   function getSmallIconName() {
@@ -286,7 +289,7 @@ local expireTypes = {
   }
 
   function getNameMarkup(count = 0, showTitle = true, hasPadding = false) {
-    return ::handyman.renderCached("%gui/items/itemString.tpl", {
+    return handyman.renderCached("%gui/items/itemString.tpl", {
       title = showTitle ? colorize("activeTextColor", this.getName()) : null
       icon = this.getSmallIconName()
       tooltipId = ::g_tooltip.getIdItem(this.id, { isDisguised = this.isDisguised })
@@ -421,7 +424,7 @@ local expireTypes = {
     let additionalTextInAmmount = params?.shouldHideAdditionalAmmount ? ""
       : this.getAdditionalTextInAmmount()
     if ((!this.shouldAutoConsume || this.canOpenForGold())
-      && (!::u.isInteger(amountVal) || this.shouldShowAmount(amountVal))) {
+      && (!u.isInteger(amountVal) || this.shouldShowAmount(amountVal))) {
       res.amount <- isSelfAmount && this.hasReachedMaxAmount()
         ? colorize("goodTextColor",
           loc("ui/parentheses/space", { text = amountVal + loc("ui/slash") + this.maxAmount }))
@@ -486,7 +489,7 @@ local expireTypes = {
       return false
 
     let item = this
-    let onSuccessCb = (@(cb, item) function() {
+    let onSuccessCb = function() {
       ::update_gamercards()
       item.forceRefreshLimits()
       if (cb)
@@ -494,9 +497,9 @@ local expireTypes = {
         success = true
         item = this
       })
-      ::broadcastEvent("ItemBought", { item = item })
-    })(cb, item)
-    let onErrorCb = (@(item) function(_res) { item.forceRefreshLimits() })(item)
+      broadcastEvent("ItemBought", { item = item })
+    }
+    let onErrorCb = @(_res) item.forceRefreshLimits()
 
     let taskId = this._requestBuy(params)
     ::g_tasker.addTask(taskId, { showProgressBox = true }, onSuccessCb, onErrorCb)
@@ -526,7 +529,7 @@ local expireTypes = {
 
     let name = this.getName()
     let numItems = params?.amount ?? 1
-    let cost = numItems == 1 ? this.getCost() : (::Cost() + this.getCost()).multiply(numItems)
+    let cost = numItems == 1 ? this.getCost() : (Cost() + this.getCost()).multiply(numItems)
     let price = cost.getTextAccordingToBalance()
     let msgTextLocKey = numItems == 1
       ? "onlineShop/needMoneyQuestion"
@@ -538,7 +541,7 @@ local expireTypes = {
     params["cost"] <- cost.wp
     params["costGold"] <- cost.gold
     handler.msgBox("need_money", msgText,
-          [["purchase", (@(item, cb, params) function() { item._buy(cb, params) })(item, cb, params) ],
+          [["purchase", @() item._buy(cb, params)],
           ["cancel", function() {} ]], "purchase")
   }
 
@@ -593,7 +596,7 @@ local expireTypes = {
   function doPreview() {
   }
 
-  getTimeLeftText  = @() ::g_string.implode([this.getExpireTimeTextShort(), this.getNoTradeableTimeTextShort()], "\n")
+  getTimeLeftText  = @() "\n".join([this.getExpireTimeTextShort(), this.getNoTradeableTimeTextShort()], true)
 
   onItemExpire     = @() ::ItemsManager.markInventoryUpdateDelayed()
   onTradeAllowed   = @() null
@@ -699,7 +702,7 @@ local expireTypes = {
     }
     if (this.limitPersonalAtTime > 0 && limitData.countPersonalAtTime >= this.limitPersonalAtTime)
       textParts.append(loc("items/limitDescription/limitPersonalAtTime"))
-    return ::g_string.implode(textParts, "\n")
+    return "\n".join(textParts, true)
   }
 
   function getLimitsCheckData() {

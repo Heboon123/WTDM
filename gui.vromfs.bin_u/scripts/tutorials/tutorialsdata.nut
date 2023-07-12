@@ -1,11 +1,9 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+
+let { Cost } = require("%scripts/money.nut")
 
 let { format } = require("string")
-let { checkJoystickThustmasterHotas } = require("%scripts/controls/hotas.nut")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { getMissionRewardsMarkup } = require("%scripts/missions/missionsUtilsModule.nut")
 let { get_meta_missions_info_by_chapters, select_mission } = require("guiMission")
@@ -95,7 +93,7 @@ let function getTutorialFirstCompletRewardData(misDataBlk, params = {}) {
     showFullReward = false, isMissionComplete = false } = params
   let res = {
     locId = "reward/tutorialFirstComplet"
-    rewardMoney = ::Cost()
+    rewardMoney = Cost()
     isComplete = true
     hasReward = false
     hasRewardImage
@@ -149,15 +147,6 @@ let function saveTutorialToCheckReward(mission) {
   let progress = ::get_mission_progress(fullMissionName)
   let isComplete = progress >= 0 && progress < 3
 
-  local presetFilename = ""
-  let preset = ::g_controls_presets.getCurrentPresetInfo()
-  if (preset.name.indexof("hotas4") != null
-      && checkJoystickThustmasterHotas(false)
-      && ! hasFeature("DisableSwitchPresetOnTutorialForHotas4")) {
-      presetFilename = preset.fileName
-      ::apply_joy_preset_xchange(::g_controls_presets.getControlsPresetFilename("dualshock4"))
-  }
-
   let rBlk = ::get_pve_awards_blk()
   let dataBlk = rBlk?[::get_game_mode_name(GM_TRAINING)]
   let misDataBlk = dataBlk?[missionName]
@@ -169,7 +158,6 @@ let function saveTutorialToCheckReward(mission) {
     missionName
     progress
     fullMissionName
-    presetFilename
     firstCompletRewardData = getTutorialFirstCompletRewardData(misDataBlk, {
       highlighted = true
       hasRewardImage = false
@@ -329,13 +317,13 @@ let function checkDiffTutorial(diff, unitType, needMsgBox = true, cancelCb = nul
   if (needMsgBox)
     ::scene_msg_box("req_tutorial_msgbox", null, msgText,
       [
-        ["startTutorial", (@(mData, diff) function() {
+        ["startTutorial", function() {
           mData.mission.setStr("difficulty", ::get_option(::USEROPT_DIFFICULTY).values[diff])
           select_mission(mData.mission, true)
           ::current_campaign_mission = mData.mission.name
           saveTutorialToCheckReward(mData.mission)
           ::handlersManager.animatedSwitchScene(::gui_start_flight)
-        })(mData, diff)],
+        }],
         ["cancel", cancelCb]
       ], "cancel")
   else if (cancelCb)

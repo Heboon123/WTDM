@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { format } = require("string")
@@ -128,7 +125,7 @@ let { set_game_mode, get_game_mode, get_cur_game_mode_name } = require("mission"
     this.guiScene.performDelayed(this, function() {
       if (this.timer >= 0)
         return
-      ::destroy_session_scripted()
+      ::destroy_session_scripted("on cancel join game")
       ::SessionLobby.leaveRoom()
     })
   }

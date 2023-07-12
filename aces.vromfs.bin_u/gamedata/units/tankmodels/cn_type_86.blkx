@@ -337,7 +337,7 @@
         "wheel_r_top_04_dm": [],
         "submodule": {
           "armorClass": "tank_traks",
-          "armorThickness": 10.0,
+          "armorThickness": 15.0,
           "hp": 150.0,
           "ex_armor_l_04_dm": [],
           "ex_armor_l_05_dm": [],
@@ -1744,6 +1744,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.4,
               "nothing": 0.6,
               "fHitCritical": true
@@ -3092,8 +3093,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -4018,6 +4019,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -4044,14 +4054,6 @@
       "headPos": [0.0,4.0,-8.0],
       "headPosOnShooting": [-0.7,3.0,-0.3],
       "detectionHeight": 2.068
-    }
-  },
-  {
-    "ircmProjector": {
-      "node": "ex_lantern_01",
-      "beamRadius": [1400.0,100.0],
-      "projectorPower": [0.02,0.07],
-      "glowOffset": [0.125,0.0,0.0]
     }
   },
   {
@@ -4221,6 +4223,12 @@
     "smokeScreenExhaustEmitters": [
       {
         "emitter": "emtr_exhaust_01"
+      },
+      {
+        "emitter": "emtr_exhaust_02"
+      },
+      {
+        "emitter": "emtr_exhaust_03"
       },
       {
         "emitter": "emtr_exhaust_04"
@@ -4562,6 +4570,9 @@
           "changeMass": 400.0,
           "rcostAddParam": 0.9,
           "commonWeapons": [
+            {
+              "remotelyGuidedWeaponsMax": 1
+            },
             {
               "Weapon": {
                 "trigger": "gunner0",

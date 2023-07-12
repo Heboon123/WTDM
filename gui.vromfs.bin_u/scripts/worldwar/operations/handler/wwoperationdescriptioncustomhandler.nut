@@ -1,10 +1,8 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let u = require("%sqStdLibs/helpers/u.nut")
+let { countSizeInItems, toPixels } = require("%sqDagui/daguiUtil.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let unitContextMenuState = require("%scripts/unit/unitContextMenuState.nut")
 
 ::gui_handlers.WwOperationDescriptionCustomHandler <- class extends ::gui_handlers.WwMapDescription {
@@ -28,7 +26,7 @@ let unitContextMenuState = require("%scripts/unit/unitContextMenuState.nut")
 
     this.updateDescription()
 
-    if (::u.isEmpty(this.map))
+    if (u.isEmpty(this.map))
       return
 
     this.fillOperationBackground()
@@ -85,7 +83,7 @@ let unitContextMenuState = require("%scripts/unit/unitContextMenuState.nut")
     foreach (side in ::g_world_war.getCommonSidesOrder()) {
       let sideStrenghtObj = this.scene.findObject("strenght_" + ::ww_side_val_to_name(side))
       if (checkObj(sideStrenghtObj)) {
-        let curWidth = ::g_dagui_utils.toPixels(
+        let curWidth = toPixels(
           this.guiScene,
           "pw-2*(" + sideStrenghtObj.getSize()[0] + "+1@blockInterval+2@framePadding)",
           mapNestObj
@@ -155,12 +153,12 @@ let unitContextMenuState = require("%scripts/unit/unitContextMenuState.nut")
       let isInvert = side == SIDE_2
 
       let unitListObjPlace = this.scene.findObject("team_" + sideName + "_unit_info")
-      let unitListBlk = ::handyman.renderCached(this.sceneTplTeamStrenght, this.getUnitsListViewBySide(side, isInvert))
+      let unitListBlk = handyman.renderCached(this.sceneTplTeamStrenght, this.getUnitsListViewBySide(side, isInvert))
       this.guiScene.replaceContentFromText(unitListObjPlace, unitListBlk, unitListBlk.len(), this)
 
       let armyGroupObjPlace = this.scene.findObject("team_" + sideName + "_army_group_info")
       let armyGroupViewData = this.getClanListViewDataBySide(side, isInvert, armyGroupObjPlace)
-      let armyGroupsBlk = ::handyman.renderCached(this.sceneTplTeamArmyGroups, armyGroupViewData)
+      let armyGroupsBlk = handyman.renderCached(this.sceneTplTeamArmyGroups, armyGroupViewData)
       this.guiScene.replaceContentFromText(armyGroupObjPlace, armyGroupsBlk, armyGroupsBlk.len(), this)
 
       let clanBlockTextObj = armyGroupObjPlace.findObject("clan_block_text")
@@ -198,7 +196,7 @@ let unitContextMenuState = require("%scripts/unit/unitContextMenuState.nut")
       return viewData
 
     let armyGroups = ::g_world_war.getArmyGroupsBySide(side)
-    let clansPerColumn = ::g_dagui_utils.countSizeInItems(parentObj, 1, "@leaderboardTrHeight",
+    let clansPerColumn = countSizeInItems(parentObj, 1, "@leaderboardTrHeight",
       0, 0, 0, "2@wwWindowListBackgroundPadding").itemsCountY
 
     local armyGroupNames = null

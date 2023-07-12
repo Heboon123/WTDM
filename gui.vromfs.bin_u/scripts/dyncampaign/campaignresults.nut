@@ -1,9 +1,8 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { Cost } = require("%scripts/money.nut")
+
 
 let { dynamicGetVisual } = require("dynamicMission")
 let DataBlock = require("DataBlock")
@@ -34,7 +33,7 @@ let { getDynamicResult } = require("%scripts/debriefing/debriefingFull.nut")
 
     if (wpdata.nDCWp > 0) {
       this.guiScene["info-dc-text"].setValue(loc("debriefing/dc"))
-      this.guiScene["info-dc-wp"].setValue(::Cost(wpdata.nDCWp).toStringWithParams(
+      this.guiScene["info-dc-wp"].setValue(Cost(wpdata.nDCWp).toStringWithParams(
         { isWpAlwaysShown = true, isColored = false }))
     }
 

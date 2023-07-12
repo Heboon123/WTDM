@@ -1,14 +1,10 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let time = require("%scripts/time.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { ceil } = require("math")
-
+let { getObjValidIndex } = require("%sqDagui/daguiUtil.nut")
 let bhvUnseen = require("%scripts/seen/bhvUnseen.nut")
 let seenWarbondsShop = require("%scripts/seen/seenList.nut").get(SEEN.WARBONDS_SHOP)
 let { setColoredDoubleTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
@@ -72,7 +68,7 @@ let { canStartPreviewScene } = require("%scripts/customization/contentPreview.nu
         unseenIcon = bhvUnseen.makeConfigStr(SEEN.WARBONDS_SHOP, wb.getSeenId())
       })
 
-    let data = ::handyman.renderCached("%gui/frameHeaderTabs.tpl", view)
+    let data = handyman.renderCached("%gui/frameHeaderTabs.tpl", view)
     let tabsObj = this.getTabsListObj()
     this.guiScene.replaceContentFromText(tabsObj, data, data.len(), this)
 
@@ -154,7 +150,7 @@ let { canStartPreviewScene } = require("%scripts/customization/contentPreview.nu
     }
 
     let listObj = this.getItemsListObj()
-    let data = ::handyman.renderCached(("%gui/items/item.tpl"), view)
+    let data = handyman.renderCached(("%gui/items/item.tpl"), view)
     listObj.enable(data != "")
     this.guiScene.replaceContentFromText(listObj, data, data.len(), this)
 
@@ -194,7 +190,7 @@ let { canStartPreviewScene } = require("%scripts/customization/contentPreview.nu
 
   function getCurAwardObj() {
     let itemListObj = this.getItemsListObj()
-    let value = ::get_obj_valid_index(itemListObj)
+    let value = getObjValidIndex(itemListObj)
     if (value < 0)
       return null
 

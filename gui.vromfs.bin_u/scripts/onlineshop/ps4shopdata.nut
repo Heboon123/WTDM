@@ -1,10 +1,9 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
+let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
+let { broadcastEvent } = subscriptions
 let datablock = require("DataBlock")
 
 let seenList = require("%scripts/seen/seenList.nut").get(SEEN.EXT_PS4_SHOP)
@@ -19,7 +18,7 @@ let persistent = {
   categoriesData = datablock() // Collect one time in a session, reset on relogin
   itemsList = {} //Updatable during game
 }
-::g_script_reloader.registerPersistentData("PS4ShopData", persistent, ["categoriesData", "itemsList"])
+registerPersistentData("PS4ShopData", persistent, ["categoriesData", "itemsList"])
 
 
 
@@ -55,7 +54,7 @@ let onFinishCollectData = function(v_categoriesData = null) {
 
   //Must call in the end
   log("PSN: Shop Data: Finish update items info")
-  ::broadcastEvent("Ps4ShopDataUpdated", { isLoadingInProgress = false })
+  broadcastEvent("Ps4ShopDataUpdated", { isLoadingInProgress = false })
 }
 
 let filterFunc = function(label) {
@@ -72,7 +71,7 @@ let initPs4CategoriesAfterLogin = function() {
     isCategoriesInitedOnce = true
     invalidateSeenList = true
     isFinishedUpdateItems = false
-    ::broadcastEvent("Ps4ShopDataUpdated", { isLoadingInProgress = true })
+    broadcastEvent("Ps4ShopDataUpdated", { isLoadingInProgress = true })
 
     storeData.request(onFinishCollectData, filterFunc)
   }
@@ -142,7 +141,7 @@ let function onSuccessCb(itemsArray) {
   }
 
   // Send event for updating items in shop
-  ::broadcastEvent("PS4IngameShopUpdate")
+  broadcastEvent("PS4IngameShopUpdate")
 }
 
 let updateSpecificItemInfo = function(id) {

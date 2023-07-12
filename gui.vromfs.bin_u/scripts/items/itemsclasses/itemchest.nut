@@ -1,9 +1,8 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { Cost } = require("%scripts/money.nut")
+
 
 let inventoryClient = require("%scripts/inventory/inventoryClient.nut")
 let ItemExternal = require("%scripts/items/itemsClasses/itemExternal.nut")
@@ -103,7 +102,7 @@ let inventoryItemTypeByTag = require("%scripts/items/inventoryItemTypeByTag.nut"
     let content = this.getContent()
     local hasContent = content.len() != 0
 
-    return ::g_string.implode([
+    return "\n".join([
       this.getTransferText(),
       this.getMarketablePropDesc(),
       this.getCurExpireTimeText(),
@@ -111,7 +110,7 @@ let inventoryItemTypeByTag = require("%scripts/items/inventoryItemTypeByTag.nut"
       (hasContent ? ::PrizesView.getPrizesListText(content, this.getDescHeaderFunction()) : ""),
       this.getHiddenItemsDesc() || "",
       this.getLongDescription(),
-    ], "\n")
+    ], true)
   }
 
   function getLongDescription() {
@@ -252,7 +251,7 @@ let inventoryItemTypeByTag = require("%scripts/items/inventoryItemTypeByTag.nut"
 
   function getCost(ignoreCanBuy = false) {
     if (this.canOpenForGold() && this.isInventoryItem && this.amount > 0)
-      return this.getOpenForGoldRecipe()?.getOpenCost(this) ?? ::Cost()
+      return this.getOpenForGoldRecipe()?.getOpenCost(this) ?? Cost()
 
     return base.getCost(ignoreCanBuy)
   }

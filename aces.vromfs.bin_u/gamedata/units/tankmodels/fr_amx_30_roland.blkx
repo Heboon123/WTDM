@@ -1867,6 +1867,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -2538,14 +2539,14 @@
         "stopForFire": true,
         "maxSpeedForFire": 5.0,
         "reloadAnimVar": "amx_30_roland_action",
-        "sleeveEmitter": "bone_rocket_%02d",
-        "sleeveMesh": "roland_rocket_container",
-        "sleeveEmitterRange": [1,2],
+        "shellCasingEmitter": "bone_rocket_%02d",
+        "shellCasingMesh": "roland_rocket_container",
+        "shellCasingEmitterRange": [1,2],
         "openHatchTime": 0.0,
-        "sleevesLifeTime": 15.0,
-        "sleeveImpulse": [-2.0,0.0,-1.0],
-        "linkSleeveToGun": true,
-        "needScaleSleeve": false,
+        "shellCasingLifeTime": 15.0,
+        "shellCasingImpulse": [-2.0,0.0,-1.0],
+        "linkShellCasingToGun": true,
+        "needScaleShellCasing": false,
         "canChangeBulletInReload": false,
         "createGunEffects": true,
         "parkForReload": true,
@@ -2724,8 +2725,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -3650,6 +3651,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -3760,14 +3770,14 @@
                 "stopForFire": true,
                 "maxSpeedForFire": 5.0,
                 "reloadAnimVar": "amx_30_roland_action",
-                "sleeveEmitter": "bone_rocket_%02d",
-                "sleeveMesh": "roland_rocket_container",
-                "sleeveEmitterRange": [1,2],
+                "shellCasingEmitter": "bone_rocket_%02d",
+                "shellCasingMesh": "roland_rocket_container",
+                "shellCasingEmitterRange": [1,2],
                 "openHatchTime": 0.0,
-                "sleevesLifeTime": 15.0,
-                "sleeveImpulse": [-2.0,0.0,-1.0],
-                "linkSleeveToGun": true,
-                "needScaleSleeve": false,
+                "shellCasingLifeTime": 15.0,
+                "shellCasingImpulse": [-2.0,0.0,-1.0],
+                "linkShellCasingToGun": true,
+                "needScaleShellCasing": false,
                 "canChangeBulletInReload": false,
                 "createGunEffects": true,
                 "parkForReload": true,

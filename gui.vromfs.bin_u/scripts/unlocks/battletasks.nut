@@ -1,10 +1,12 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { Cost } = require("%scripts/money.nut")
+let u = require("%sqStdLibs/helpers/u.nut")
 
+
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let DataBlock = require("DataBlock")
 let SecondsUpdater = require("%sqDagui/timer/secondsUpdater.nut")
 let time = require("%scripts/time.nut")
@@ -23,6 +25,23 @@ let { isUnlockVisible } = require("%scripts/unlocks/unlocksModule.nut")
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
 let { isUnlockFav } = require("%scripts/unlocks/favoriteUnlocks.nut")
 let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
+let { updateTimeParamsFromBlk, getDifficultyTypeByName, getDifficultyTypeByTask,
+  canPlayerInteractWithDifficulty, withdrawTasksArrayByDifficulty,
+  EASY_TASK, MEDIUM_TASK, HARD_TASK, UNKNOWN_TASK
+} = require("%scripts/unlocks/battleTaskDifficulty.nut")
+
+let difficultyTypes = [
+  EASY_TASK,
+  MEDIUM_TASK,
+  HARD_TASK
+]
+
+let function compareBattleTasks(a, b) {
+  if (a?._sort_order == null || b?._sort_order == null)
+    return 0
+
+  return b._sort_order <=> a._sort_order
+}
 
 ::g_battle_tasks <- null
 
@@ -68,7 +87,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
     this.lastGenerationId = 0
     this.specTasksLastGenerationId = 0
 
-    ::subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
+    subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
   }
 
   function reset() {
@@ -85,7 +104,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
   }
 
   isAvailableForUser = @() hasFeature("BattleTasks")
-    && !::u.isEmpty(this.getTasksArray())
+    && !u.isEmpty(this.getTasksArray())
     && isMultiplayerPrivilegeAvailable.value
 
   function updateTasksData() {
@@ -96,20 +115,13 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
     this.updatedProposedTasks()
     this.updatedActiveTasks()
 
-    this.currentTasksArray.sort(function(a, b) {
-      if (a?._sort_order == null || b?._sort_order == null)
-        return 0
-
-      if (a._sort_order == b._sort_order)
-        return 0
-
-      return a._sort_order > b._sort_order ? 1 : -1
-    })
+    this.currentTasksArray.sort(compareBattleTasks)
+    this.activeTasksArray.sort(compareBattleTasks)
 
     if (::isInMenu())
       this.checkNewSpecialTasks()
     this.updateCompleteTaskWatched()
-    ::broadcastEvent("BattleTasksFinishedUpdate")
+    broadcastEvent("BattleTasksFinishedUpdate")
   }
 
   function onEventBattleTasksShowAll(params) {
@@ -122,7 +134,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
 
   function updatedProposedTasks() {
     let tasksDataBlock = ::get_proposed_personal_unlocks_blk()
-    ::g_battle_task_difficulty.updateTimeParamsFromBlk(tasksDataBlock)
+    updateTimeParamsFromBlk(tasksDataBlock)
     this.lastGenerationId = tasksDataBlock?[this.dailyTasksId + "_lastGenerationId"] ?? 0
     this.specTasksLastGenerationId = tasksDataBlock?[this.specialTasksId + "_lastGenerationId"] ?? 0
 
@@ -136,8 +148,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
       task.setFrom(tasksDataBlock.getBlock(i))
       task.isActive = false
       this.proposedTasksArray.append(task)
-      if (!this.isTaskActual(task) || !this.canInteract(task)
-        || !::g_battle_task_difficulty.checkAvailabilityByProgress(task, this.showAllTasksValue))
+      if (!this.isTaskActual(task) || !this.canInteract(task))
         continue
 
       this.currentTasksArray.append(task)
@@ -158,8 +169,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
       task.isActive = true
       this.activeTasksArray.append(task)
 
-      if (!this.isTaskActual(task) || !this.canInteract(task)
-        || !::g_battle_task_difficulty.checkAvailabilityByProgress(task, this.showAllTasksValue))
+      if (!this.isTaskActual(task) || !this.canInteract(task))
         continue
 
       this.currentTasksArray.append(task)
@@ -170,7 +180,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
   }
 
   function updateRerollCost(tasksDataBlock) {
-    this.rerollCost = ::Cost(getTblValue("_rerollCost", tasksDataBlock, 0),
+    this.rerollCost = Cost(getTblValue("_rerollCost", tasksDataBlock, 0),
                         getTblValue("_rerollGoldCost", tasksDataBlock, 0))
   }
 
@@ -179,11 +189,11 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
   }
 
   function isTaskTimeExpired(task) {
-    return ::g_battle_task_difficulty.getDifficultyTypeByTask(task).isTimeExpired(task)
+    return getDifficultyTypeByTask(task).isTimeExpired(task)
   }
 
   function isTaskDone(config) {
-    if (::u.isEmpty(config))
+    if (u.isEmpty(config))
       return false
 
     if (this.isBattleTask(config)) {
@@ -208,24 +218,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
     return false
   }
 
-  function canActivateTask(task) {
-    if (!this.isBattleTask(task))
-      return false
-
-    let diff = ::g_battle_task_difficulty.getDifficultyTypeByTask(task)
-    if (!::g_battle_task_difficulty.canPlayerInteractWithDifficulty(diff, this.getProposedTasksArray())
-        || !::g_battle_task_difficulty.checkAvailabilityByProgress(task))
-        return false
-
-    foreach (_idx, activeTask in this.getActiveTasksArray())
-      if (!this.isAutoAcceptedTask(activeTask))
-        return false
-
-    return true
-  }
-
   function getTasksArray() { return this.currentTasksArray }
-  function getProposedTasksArray() { return this.proposedTasksArray }
   function getActiveTasksArray() { return this.activeTasksArray }
   function getWidgetsTable() { return this.newIconWidgetByTaskId }
 
@@ -280,7 +273,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
       delete this.seenTasks[generation_id]
 
     if (sendEvent)
-      ::broadcastEvent("NewBattleTasksChanged")
+      broadcastEvent("NewBattleTasksChanged")
     return true
   }
 
@@ -293,7 +286,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
     }
 
     if (changeNew)
-      ::broadcastEvent("NewBattleTasksChanged")
+      broadcastEvent("NewBattleTasksChanged")
   }
 
   function getUnseenTasksCount() {
@@ -312,11 +305,11 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
   function getLocalizedTaskNameById(param) {
     local task = null
     local id = null
-    if (::u.isDataBlock(param)) {
+    if (u.isDataBlock(param)) {
       task = param
       id = getTblValue("id", param)
     }
-    else if (::u.isString(param)) {
+    else if (u.isString(param)) {
       task = this.getTaskById(param)
       id = param
     }
@@ -327,7 +320,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
   }
 
   function getTaskById(id) {
-    if (::u.isTable(id) || ::u.isDataBlock(id))
+    if (u.isTable(id) || u.isDataBlock(id))
       id = getTblValue("id", id)
 
     if (!id)
@@ -359,16 +352,12 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
     return getTblValue("_controller", config, false)
   }
 
-  function isAutoAcceptedTask(task) {
-    return getTblValue("_autoAccept", task, false)
-  }
-
   function isBattleTask(task) {
-    if (::u.isString(task))
+    if (u.isString(task))
       task = this.getTaskById(task)
 
-    let diff = ::g_battle_task_difficulty.getDifficultyTypeByTask(task)
-    return diff != ::g_battle_task_difficulty.UNKNOWN
+    let diff = getDifficultyTypeByTask(task)
+    return diff != UNKNOWN_TASK
   }
 
   function isUserlogForBattleTasksGroup(body) {
@@ -385,8 +374,6 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
     let blackList = []
     let whiteList = []
 
-    let proposedTasks = this.getProposedTasksArray()
-
     foreach (taskId, table in logObj) {
       local header = ""
       let diffTypeName = getTblValue("type", table)
@@ -394,10 +381,10 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
         if (isInArray(diffTypeName, blackList))
           continue
 
-        let diff = ::g_battle_task_difficulty.getDifficultyTypeByName(diffTypeName)
+        let diff = getDifficultyTypeByName(diffTypeName)
         if (!isInArray(diffTypeName, whiteList)
-            && !::g_battle_task_difficulty.canPlayerInteractWithDifficulty(diff,
-                                          proposedTasks, this.showAllTasksValue)) {
+            && !canPlayerInteractWithDifficulty(diff,
+              this.proposedTasksArray, this.showAllTasksValue)) {
           blackList.append(diffTypeName)
           continue
         }
@@ -422,7 +409,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
         data += loc("userlog/battletask/type/" + userlogHeader) + loc("ui/colon")
         lastUserLogHeader = userlogHeader
       }
-      data += ::g_string.implode(arr, "\n")
+      data +=  "\n".join(arr, true)
     }
 
     return data
@@ -431,17 +418,17 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
   function getDifficultyByProposals(proposals) {
     if (proposals.findindex(function(_v, id) {
       let battleTask = ::g_battle_tasks.getTaskById(id)
-      return ::g_battle_task_difficulty.HARD == ::g_battle_task_difficulty.getDifficultyTypeByTask(battleTask)
+      return HARD_TASK == getDifficultyTypeByTask(battleTask)
     }))
-      return ::g_battle_task_difficulty.HARD
+      return HARD_TASK
 
-    return ::g_battle_task_difficulty.EASY
+    return EASY_TASK
   }
 
   function generateStringForUserlog(table, taskId) {
     local text = this.getBattleTaskLocIdFromUserlog(table, taskId)
-    let cost = ::Cost(getTblValue("cost", table, 0), getTblValue("costGold", table, 0))
-    if (!::u.isEmpty(cost))
+    let cost = Cost(getTblValue("cost", table, 0), getTblValue("costGold", table, 0))
+    if (!u.isEmpty(cost))
       text += loc("ui/parentheses/space", { text = cost.tostring() })
 
     return text
@@ -472,7 +459,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
     if (!taskGenId)
       return 0
 
-    return ::u.isString(taskGenId) ? taskGenId.tointeger() : taskGenId
+    return u.isString(taskGenId) ? taskGenId.tointeger() : taskGenId
   }
 
   function isTaskActual(task) {
@@ -490,11 +477,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
     if (!typesToCheck)
       return true
 
-    return isInArray(::g_battle_task_difficulty.getDifficultyTypeByTask(checkTask).name, typesToCheck)
-  }
-
-  function canCancelTask(task) {
-    return !this.isTaskDone(task) && !getTblValue("_preventCancel", task, false)
+    return isInArray(getDifficultyTypeByTask(checkTask).name, typesToCheck)
   }
 
   function getTasksListByControllerTask(taskController, conditions) {
@@ -502,7 +485,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
     if (!this.isController(taskController))
       return tasksArray
 
-    let unlocksCond = ::u.search(conditions, function(cond) { return cond.type == "char_personal_unlock" })
+    let unlocksCond = u.search(conditions, function(cond) { return cond.type == "char_personal_unlock" })
     let personalUnlocksTypes = unlocksCond && unlocksCond.values
 
     foreach (task in this.currentTasksArray)
@@ -513,7 +496,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
   }
 
   function getTaskWithAvailableAward(tasksArray) {
-    return ::u.search(tasksArray, function(task) {
+    return u.search(tasksArray, function(task) {
         return this.canGetReward(task)
       }.bindenv(this))
   }
@@ -546,7 +529,10 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
         taskUnlocksListPrefix = getMainConditionListPrefix(config.conditions)
 
         if (this.isUnlocksList(config))
-          taskUnlocksList = this.getUnlocksListView(config.__merge({isOnlyInfo = !!paramsCfg?.isOnlyInfo }))
+          taskUnlocksList = this.getUnlocksListView(config.__merge({
+            isOnlyInfo = !!paramsCfg?.isOnlyInfo
+            isInteractive = paramsCfg?.isInteractive
+          }))
         else
           taskStreaksList = this.getStreaksListView(config)
       }
@@ -567,7 +553,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
 
     let view = {
       id = config.id
-      taskDescription = ::g_string.implode(taskDescription, "\n")
+      taskDescription =  "\n".join(taskDescription, true)
       taskSpecialDescription = this.getRefreshTimeTextForTask(task)
       taskUnlocksListPrefix = taskUnlocksListPrefix
       taskUnlocks = taskUnlocksList
@@ -580,7 +566,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
       isOnlyInfo = paramsCfg?.isOnlyInfo ?? false
     }
 
-    return ::handyman.renderCached("%gui/unlocks/battleTasksDescription.tpl", view)
+    return handyman.renderCached("%gui/unlocks/battleTasksDescription.tpl", view)
   }
 
   function getUnlockConditionBlock(text, _id, config, isUnlocked, isFinal, compareOR = false, isBitMode = true) {
@@ -630,6 +616,8 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
 
     let namesLoc = getLocForBitValues(config.type, config.names, config.hasCustomUnlockableList)
     let isBitMode = isBitModeType(config.type)
+    let isInteractive = config?.isInteractive ?? true
+    let isAddToFavVisible = isInteractive && !config.isOnlyInfo
 
     foreach (idx, unlockId in config.names) {
       let isEven = idx % 2 == 0
@@ -641,7 +629,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
             text = decorator.getName()
             isUnlocked = decorator.isUnlocked()
             tooltipMarkup = DECORATION.getMarkup(decorator.id, decorator.decoratorType.unlockedItemType)
-            isAddToFavVisible = !config.isOnlyInfo // will be updated to false if no unlock in the decorator
+            isAddToFavVisible // will be updated to false if no unlock in the decorator
           }.__update(this.getUnlockAdditionalView(decorator.unlockId)))
       }
       else {
@@ -657,7 +645,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
           isUnlocked
           text = unlockName
           tooltipMarkup = this.getTooltipMarkupByModeType(unlockConfig)
-          isAddToFavVisible = !config.isOnlyInfo
+          isAddToFavVisible
         }.__update(this.getUnlockAdditionalView(unlockId)))
       }
     }
@@ -707,7 +695,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
   }
 
   function getRefreshTimeTextForTask(task) {
-    let diff = ::g_battle_task_difficulty.getDifficultyTypeByTask(task)
+    let diff = getDifficultyTypeByTask(task)
     let timeLeft = diff.getTimeLeft(task)
     if (timeLeft < 0)
       return ""
@@ -722,7 +710,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
     if (!checkObj(taskBlockObj))
       return
 
-    let diff = ::g_battle_task_difficulty.getDifficultyTypeByTask(task)
+    let diff = getDifficultyTypeByTask(task)
     if (!diff.hasTimer)
       return
 
@@ -742,7 +730,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
     holderObj = taskBlockObj.findObject("tasks_refresh_timer")
     if (checkObj(holderObj))
       SecondsUpdater(holderObj, function(obj, _params) {
-        let timeText = ::g_battle_task_difficulty.EASY.getTimeLeftText(task)
+        let timeText = EASY_TASK.getTimeLeftText(task)
         obj.setValue(loc("ui/parentheses/space", { text = timeText + loc("icon/timer") }))
 
         return timeText == ""
@@ -754,7 +742,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
   }
 
   function getPlaybackPath(playbackName, shouldUseDefaultLang = false) {
-    if (::u.isEmpty(playbackName))
+    if (u.isEmpty(playbackName))
       return ""
 
     let guiBlk = GUI.get()
@@ -777,7 +765,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
     }
 
     local reward = getUnlockRewardsText(config)
-    let difficulty = ::g_battle_task_difficulty.getDifficultyTypeByTask(task)
+    let difficulty = getDifficultyTypeByTask(task)
     if (hasFeature("BattlePass")) {
       let unlockReward = getUnlockReward(activeUnlocks.value?[difficulty.userstatUnlockId])
 
@@ -785,7 +773,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
       rewardMarkUp.itemMarkUp <- $"{rewardMarkUp?.itemMarkUp ?? ""}{unlockReward.itemMarkUp}"
     }
 
-    if (difficulty == ::g_battle_task_difficulty.MEDIUM) {
+    if (difficulty == MEDIUM_TASK) {
       let specialTaskAward = ::g_warbonds.getCurrentWarbond()?.getAwardByType(::g_wb_award_type[EWBAT_BATTLE_TASK])
       if (specialTaskAward?.awardType.hasIncreasingLimit()) {
         let rewardText = loc("warbonds/canBuySpecialTasks/awardTitle", { count = 1 })
@@ -804,7 +792,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
   function generateItemView(config, paramsCfg = {}) {
     let isPromo = paramsCfg?.isPromo ?? false
     let isShortDescription = paramsCfg?.isShortDescription ?? false
-
+    let isInteractive = paramsCfg?.isInteractive ?? true
     let task = this.getTaskById(config) || getTblValue("originTask", config)
     let isTaskBattleTask = this.isBattleTask(task)
     let isCanGetReward = this.canGetReward(task)
@@ -823,9 +811,9 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
     let taskStatus = this.getTaskStatus(task)
 
     return {
-      id = id
-      title = title
-      taskStatus = taskStatus
+      id
+      title
+      taskStatus
       taskImage = (paramsCfg?.showUnlockImage ?? true) && (getTblValue("image", task) || getTblValue("image", config))
       taskPlayback = getTblValue("playback", task) || getTblValue("playback", config)
       isPlaybackDownloading = !::g_sound.canPlay(id)
@@ -833,12 +821,14 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
       taskHeaderCondition = headerCond ? loc("ui/parentheses/space", { text = headerCond }) : null
       description = isTaskBattleTask || isUnlock ? this.getTaskDescription(config, paramsCfg) : null
       reward = isPromo ? null : this.getRewardMarkUpConfig(task, config)
-      newIconWidget = isTaskBattleTask ? (this.isTaskActive(task) ? null : ::NewIconWidget.createLayout()) : null
-      canGetReward = isTaskBattleTask && isCanGetReward
-      canReroll = isTaskBattleTask && !isCanGetReward
+      newIconWidget = (isInteractive && isTaskBattleTask)
+        ? (this.isTaskActive(task) ? null : ::NewIconWidget.createLayout())
+        : null
+      canGetReward = isInteractive && isTaskBattleTask && isCanGetReward
+      canReroll = isInteractive && isTaskBattleTask && !isCanGetReward
       otherTasksNum = task && isPromo ? this.getTotalActiveTasksNum() : null
       isLowWidthScreen = isPromo ? ::is_low_width_screen() : null
-      isPromo = isPromo
+      isPromo
       isOnlyInfo = paramsCfg?.isOnlyInfo ?? false
       needShowProgressValue = taskStatus == null && config?.curVal != null && config.curVal >= 0 && config?.maxVal != null && config.maxVal >= 0
       progressValue = config?.curVal
@@ -846,7 +836,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
       needShowProgressBar = progressData?.show
       progressBarValue = progressBarValue.tointeger()
       getTooltipId = (isPromo || isShortDescription) && isTaskBattleTask ? @() BATTLE_TASK.getTooltipId(id) : null
-      isShortDescription = isShortDescription
+      isShortDescription
       shouldRefreshTimer = config?.shouldRefreshTimer ?? false
     }
   }
@@ -860,7 +850,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
   }
 
   function getDifficultyImage(task) {
-    let difficulty = ::g_battle_task_difficulty.getDifficultyTypeByTask(task)
+    let difficulty = getDifficultyTypeByTask(task)
     if (difficulty.showSeasonIcon) {
       let curWarbond = ::g_warbonds.getCurrentWarbond()
       if (curWarbond)
@@ -871,54 +861,78 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
   }
 
   function getTasksArrayByIncreasingDifficulty() {
-    let typesArray = [
-      ::g_battle_task_difficulty.EASY,
-      ::g_battle_task_difficulty.MEDIUM,
-      ::g_battle_task_difficulty.HARD
-    ]
-
     let result = []
-    foreach (t in typesArray) {
-      let arr = ::g_battle_task_difficulty.withdrawTasksArrayByDifficulty(t, this.currentTasksArray)
+    foreach (t in difficultyTypes) {
+      let arr = withdrawTasksArrayByDifficulty(t, this.currentTasksArray)
       if (arr.len() == 0)
         continue
 
-      if (::g_battle_task_difficulty.canPlayerInteractWithDifficulty(t, arr))
+      if (canPlayerInteractWithDifficulty(t, this.currentTasksArray))
         result.extend(arr)
     }
-
     return result
   }
 
-  function filterTasksByGameModeId(tasksArray, gameModeId) {
-    if (::u.isEmpty(gameModeId))
-      return tasksArray
+  // Returns only tasks that can be completed in the game mode specified,
+  // including tasks with unclaimed rewards or those that have been completed.
+  function getCurBattleTasksByGm(gameModeId) {
+    let hasTaskForGm = this.activeTasksArray.findindex(
+      @(t) ::g_battle_tasks.isTaskForGM(t, gameModeId)) != null
+    if (!hasTaskForGm)
+      return []
 
+    let tasks = this.activeTasksArray.filter(@(t) ::g_battle_tasks.isTaskActual(t))
     let res = []
-    foreach (task in tasksArray) {
-      if (!this.isBattleTask(task))
+    foreach (diff in difficultyTypes) {
+      let taskCanInteract = canPlayerInteractWithDifficulty(diff, tasks)
+      if (!taskCanInteract)
         continue
 
-      let blk = ::build_conditions_config(task)
-      foreach (condition in blk.conditions) {
-        let values = getTblValue("values", condition)
-        if (::u.isEmpty(values))
-            continue
+      let tasksByDiff = withdrawTasksArrayByDifficulty(diff, tasks)
+      if (tasksByDiff.len() == 0)
+        continue
 
-        if (isInArray(gameModeId, values)) {
-          res.append(task)
-          break
-        }
-      }
+      let taskWithReward = this.getTaskWithAvailableAward(tasksByDiff)
+      if (taskWithReward != null)
+        res.append(taskWithReward)
+      else
+        res.extend(tasksByDiff.filter(@(t) ::g_battle_tasks.isTaskDone(t)
+          || ::g_battle_tasks.isTaskForGM(t, gameModeId)))
     }
     return res
   }
 
+  function isTaskForGM(task, gameModeId) {
+    if (!this.isBattleTask(task))
+      return false
+
+    let cfg = ::build_conditions_config(task)
+    foreach (condition in cfg.conditions) {
+      let values = getTblValue("values", condition)
+      if (u.isEmpty(values))
+        continue
+      if (isInArray(gameModeId, values))
+        return true
+    }
+    return false
+  }
+
+  function filterTasksByGameModeId(tasksArray, gameModeId) {
+    if (u.isEmpty(gameModeId))
+      return tasksArray
+
+    let res = []
+    foreach (task in tasksArray)
+      if (this.isTaskForGM(task, gameModeId))
+        res.append(task)
+    return res
+  }
+
   function getTasksArrayByDifficulty(searchArray, difficulty = null) {
-    if (::u.isEmpty(searchArray))
+    if (u.isEmpty(searchArray))
       searchArray = this.currentTasksArray
 
-    if (::u.isEmpty(difficulty))
+    if (u.isEmpty(difficulty))
       return searchArray
 
     return searchArray.filter(@(task) ::g_battle_tasks.isTaskSameDifficulty(task, difficulty))
@@ -938,7 +952,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
     let blk = ::build_conditions_config(task)
     foreach (condition in blk.conditions) {
       let values = getTblValue("values", condition)
-      if (::u.isEmpty(values))
+      if (u.isEmpty(values))
         continue
 
       foreach (value in values) {
@@ -958,7 +972,7 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
   }
 
   function requestRewardForTask(battleTaskId) {
-    if (::u.isEmpty(battleTaskId))
+    if (u.isEmpty(battleTaskId))
       return
 
     let battleTask = this.getTaskById(battleTaskId)
@@ -975,15 +989,14 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
 
     let taskId = ::char_send_blk("cln_reward_specific_battle_task", blk)
     ::g_tasker.addTask(taskId, { showProgressBox = true }, function() {
-      ::g_warbonds_view.needShowProgressBarInPromo = true
       ::update_gamercards()
-      ::broadcastEvent("BattleTasksIncomeUpdate")
-      ::broadcastEvent("BattleTasksRewardReceived")
+      broadcastEvent("BattleTasksIncomeUpdate")
+      broadcastEvent("BattleTasksRewardReceived")
     })
   }
 
   function rerollTask(task) {
-    if (::u.isEmpty(task))
+    if (u.isEmpty(task))
       return
 
     let blk = DataBlock()
@@ -993,13 +1006,13 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
     ::g_tasker.addTask(taskId, { showProgressBox = true },
       function() {
         statsd.send_counter("sq.battle_tasks.reroll_v2", 1, { task_id = (task?._base_id ?? "null") })
-        ::broadcastEvent("BattleTasksIncomeUpdate")
+        broadcastEvent("BattleTasksIncomeUpdate")
       }
     )
   }
 
   function rerollSpecialTask(task) {
-    if (::u.isEmpty(task))
+    if (u.isEmpty(task))
       return
 
     let blk = DataBlock()
@@ -1010,14 +1023,14 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
     ::g_tasker.addTask(taskId, { showProgressBox = true },
       function() {
         statsd.send_counter("sq.battle_tasks.special_reroll", 1, { task_id = (task?._base_id ?? "null") })
-        ::broadcastEvent("BattleTasksIncomeUpdate")
+        broadcastEvent("BattleTasksIncomeUpdate")
       })
   }
 
   function canActivateHardTasks() {
     return ::isInMenu()
-      && ::u.search(this.proposedTasksArray, Callback(this.isSpecialBattleTask, this)) != null
-      && ::u.search(this.activeTasksArray, Callback(this.isSpecialBattleTask, this)) == null
+      && u.search(this.proposedTasksArray, Callback(this.isSpecialBattleTask, this)) != null
+      && u.search(this.activeTasksArray, Callback(this.isSpecialBattleTask, this)) == null
   }
 
   function isSpecialBattleTask(task) {
@@ -1037,13 +1050,13 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
     if (!this.canActivateHardTasks())
       return
 
-    let arr = ::u.filter(this.proposedTasksArray, Callback(this.isSpecialBattleTask, this))
+    let arr = u.filter(this.proposedTasksArray, Callback(this.isSpecialBattleTask, this))
     ::gui_start_battle_tasks_select_new_task_wnd(arr)
   }
 
   function getDifficultyTypeGroup() {
     let result = []
-    foreach (t in ::g_battle_task_difficulty.types) {
+    foreach (t in difficultyTypes) {
       let difficultyGroup = t.getDifficultyGroup()
       if (difficultyGroup == "")
         continue
@@ -1054,8 +1067,8 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
   }
 
   function canInteract(task) {
-    let diff = ::g_battle_task_difficulty.getDifficultyTypeByTask(task)
-    return ::g_battle_task_difficulty.canPlayerInteractWithDifficulty(diff, this.currentTasksArray, this.showAllTasksValue)
+    let diff = getDifficultyTypeByTask(task)
+    return canPlayerInteractWithDifficulty(diff, this.currentTasksArray, this.showAllTasksValue)
   }
 
   function updateCompleteTaskWatched() {
@@ -1070,17 +1083,17 @@ let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
         continue
 
       if (!this.isTaskDone(task)) {
-        if (::g_battle_task_difficulty.HARD == ::g_battle_task_difficulty.getDifficultyTypeByTask(task))
+        if (HARD_TASK == getDifficultyTypeByTask(task))
           hasInCompleteHard = true
         continue
       }
 
-      if (::g_battle_task_difficulty.EASY == ::g_battle_task_difficulty.getDifficultyTypeByTask(task)) {
+      if (EASY_TASK == getDifficultyTypeByTask(task)) {
         isCompleteEasy = true
         continue
       }
 
-      if (::g_battle_task_difficulty.MEDIUM == ::g_battle_task_difficulty.getDifficultyTypeByTask(task)) {
+      if (MEDIUM_TASK == getDifficultyTypeByTask(task)) {
         isCompleteMedium = true
         continue
       }

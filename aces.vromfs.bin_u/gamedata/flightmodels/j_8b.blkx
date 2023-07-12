@@ -18,6 +18,9 @@
     "haveCCIPForBombs": true
   },
   {
+    "gyroSight": true
+  },
+  {
     "haveCCIPForGun": true
   },
   {
@@ -31,9 +34,6 @@
   },
   {
     "ilsJ8HK": true
-  },
-  {
-    "gyroscopicSightOverSensors": true
   },
   {
     "standardExhaustFxType": "jet_exhaust"
@@ -959,6 +959,14 @@
             }
           },
           {
+            "onHit": {
+              "damage": 200.0,
+              "wingcontrol_dm": 0.2,
+              "wingcontrol_l_dm": 0.2,
+              "wingcontrol_r_dm": 0.2
+            }
+          },
+          {
             "onKill": {
               "wingcontrol_l_dm": 1.0,
               "wingcontrol_r_dm": 1.0,
@@ -1003,6 +1011,14 @@
               "fire": 5.0,
               "wing_l_dm": 1.0,
               "wing_r_dm": 1.0
+            }
+          },
+          {
+            "onKill": {
+              "damage": 200.0,
+              "wingcontrol_dm": 0.4,
+              "wingcontrol_l_dm": 0.4,
+              "wingcontrol_r_dm": 0.4
             }
           }
         ]
@@ -1033,6 +1049,14 @@
             }
           },
           {
+            "onHit": {
+              "damage": 200.0,
+              "wingcontrol_dm": 0.2,
+              "wingcontrol_l_dm": 0.2,
+              "wingcontrol_r_dm": 0.2
+            }
+          },
+          {
             "onKill": {
               "wingcontrol_l_dm": 1.0,
               "wingcontrol_r_dm": 1.0,
@@ -1077,6 +1101,14 @@
               "fire": 5.0,
               "wing_l_dm": 1.0,
               "wing_r_dm": 1.0
+            }
+          },
+          {
+            "onKill": {
+              "damage": 200.0,
+              "wingcontrol_dm": 0.4,
+              "wingcontrol_l_dm": 0.4,
+              "wingcontrol_r_dm": 0.4
             }
           }
         ]
@@ -1108,6 +1140,14 @@
             "onHit": {
               "damage": 50.0,
               "tail_dm": 1.0
+            }
+          },
+          {
+            "onHit": {
+              "damage": 200.0,
+              "wingcontrol_dm": 0.2,
+              "wingcontrol_l_dm": 0.2,
+              "wingcontrol_r_dm": 0.2
             }
           },
           {
@@ -1163,6 +1203,14 @@
               "damage": 50.0,
               "tail_dm": 1.0,
               "nothing": 1.0
+            }
+          },
+          {
+            "onKill": {
+              "damage": 200.0,
+              "wingcontrol_dm": 0.4,
+              "wingcontrol_l_dm": 0.4,
+              "wingcontrol_r_dm": 0.4
             }
           }
         ]
@@ -2778,6 +2826,24 @@
       },
       {
         "preset": {
+          "name": "j_8b_bomb250_4",
+          "blk": "gameData/FlightModels/weaponPresets/j_8b_bomb250_4.blk"
+        }
+      },
+      {
+        "preset": {
+          "name": "j_8b_bomb500_gp",
+          "blk": "gameData/FlightModels/weaponPresets/j_8b_bomb500_gp.blk"
+        }
+      },
+      {
+        "preset": {
+          "name": "j_8b_bomb500_4",
+          "blk": "gameData/FlightModels/weaponPresets/j_8b_bomb500_4.blk"
+        }
+      },
+      {
+        "preset": {
           "name": "j_8b_4x_type90_rockets",
           "blk": "gameData/FlightModels/weaponPresets/j_8b_4x_type90_rockets.blk"
         }
@@ -2896,16 +2962,27 @@
         ]
       },
       {
-        "WeaponSlot": [
-          {
-            "index": 0
-          },
-          {
-            "notUseforDisbalanceCalculation": true
-          },
-          {
-            "WeaponPreset": {
-              "name": "type_23_3_common",
+        "WeaponSlot": {
+          "index": 0,
+          "notUseforDisbalanceCalculation": true,
+          "WeaponPreset": [
+            {
+              "name": "type_23_3_common"
+            },
+            {
+              "ShowNodes": [
+                {
+                  "node": "pylon_fueltank"
+                },
+                {
+                  "node": "su_infrared_flare_pkvp_23"
+                },
+                {
+                  "node": "su_infrared_flare_bp_50_60"
+                }
+              ]
+            },
+            {
               "Weapon": {
                 "trigger": "cannon",
                 "blk": "gameData/Weapons/cannonType_23_3.blk",
@@ -2919,66 +2996,31 @@
                 "spread": 1.0,
                 "counterIndex": 1
               }
-            }
-          },
-          {
-            "WeaponPreset": [
-              {
-                "name": "type_23_3_ltc_common"
-              },
-              {
-                "ShowNodes": [
-                  {
-                    "node": "pylon_fueltank"
-                  },
-                  {
-                    "node": "su_infrared_flare_pkvp_23"
-                  },
-                  {
-                    "node": "su_infrared_flare_bp_50_60"
-                  }
-                ]
-              },
-              {
-                "Weapon": {
-                  "trigger": "cannon",
-                  "blk": "gameData/Weapons/cannonType_23_3.blk",
-                  "emitter": "flare1",
-                  "flash": "flare1",
-                  "shell": "emtr_shellrejection1",
-                  "dm": "cannon1_dm",
-                  "gearLimit": [0.0,0.1],
-                  "gearName": "gear_c",
-                  "bullets": 200,
-                  "spread": 1.0,
-                  "counterIndex": 1
-                }
-              },
-              {
-                "Weapon": {
-                  "trigger": "countermeasures",
-                  "startFx": "",
-                  "blk": "gameData/Weapons/rocketGuns/countermeasure_large_launcher_jet.blk",
-                  "emitter": "emtr_flare1",
-                  "bullets": 32,
-                  "external": true,
-                  "separate": true
-                }
-              },
-              {
-                "Weapon": {
-                  "trigger": "countermeasures",
-                  "startFx": "",
-                  "blk": "gameData/Weapons/rocketGuns/countermeasure_large_launcher_jet.blk",
-                  "emitter": "emtr_flare2",
-                  "bullets": 32,
-                  "external": true,
-                  "separate": true
-                }
+            },
+            {
+              "Weapon": {
+                "trigger": "countermeasures",
+                "startFx": "",
+                "blk": "gameData/Weapons/rocketGuns/countermeasure_large_launcher_jet.blk",
+                "emitter": "emtr_flare1",
+                "bullets": 32,
+                "external": true,
+                "separate": true
               }
-            ]
-          }
-        ]
+            },
+            {
+              "Weapon": {
+                "trigger": "countermeasures",
+                "startFx": "",
+                "blk": "gameData/Weapons/rocketGuns/countermeasure_large_launcher_jet.blk",
+                "emitter": "emtr_flare2",
+                "bullets": 32,
+                "external": true,
+                "separate": true
+              }
+            }
+          ]
+        }
       },
       {
         "WeaponSlot": {
@@ -3086,12 +3128,67 @@
               },
               "Weapon": {
                 "trigger": "bombs",
-                "blk": "gameData/Weapons/BombGuns/china_250kg_mk_82.blk",
+                "blk": "gameData/Weapons/BombGuns/cn_gp_250_3.blk",
                 "emitter": "bomb250_1",
                 "bullets": 1,
                 "external": true,
                 "separate": true,
                 "machLimit": 1.01
+              }
+            }
+          },
+          {
+            "WeaponPreset": {
+              "iconType": "bombs_middle_high_drag",
+              "name": "250_4",
+              "reqModification": "cn_q5_type_250",
+              "ShowNodes": {
+                "node": "rocket_pylon_l1"
+              },
+              "Weapon": {
+                "trigger": "bombs",
+                "blk": "gameData/Weapons/BombGuns/cn_gp_250_4.blk",
+                "emitter": "bomb250_1",
+                "bullets": 1,
+                "external": true,
+                "separate": true,
+                "machLimit": 1.01
+              }
+            }
+          },
+          {
+            "WeaponPreset": {
+              "iconType": "bombs_large",
+              "name": "gp500",
+              "reqModification": "cn_q5_type_500",
+              "ShowNodes": {
+                "node": "rocket_pylon_l1"
+              },
+              "Weapon": {
+                "trigger": "bombs",
+                "blk": "gameData/Weapons/BombGuns/cn_gp_500_3.blk",
+                "emitter": "bomb250_1",
+                "bullets": 1,
+                "external": true,
+                "separate": true
+              }
+            }
+          },
+          {
+            "WeaponPreset": {
+              "iconType": "bombs_large_high_drag",
+              "name": "gp500_4",
+              "reqModification": "cn_q5_type_500",
+              "ShowNodes": {
+                "node": "rocket_pylon_l1"
+              },
+              "Weapon": {
+                "trigger": "bombs",
+                "blk": "gameData/Weapons/BombGuns/cn_gp_500_4.blk",
+                "emitter": "bomb250_1",
+                "bullets": 1,
+                "external": true,
+                "separate": true
               }
             }
           }
@@ -3125,28 +3222,56 @@
         }
       },
       {
-        "WeaponSlot": {
-          "index": 4,
-          "tier": 6,
-          "order": 7,
-          "notUseforDisbalanceCalculation": true,
-          "WeaponPreset": {
-            "iconType": "bombs_middle_group_x6",
-            "name": "250kg_mk_82_x6",
-            "reqModification": "cn_q5_type_250",
-            "ShowNodes": {
-              "node": "bomb_pylon1"
-            },
-            "Weapon": {
-              "trigger": "bombs",
-              "blk": "gameData/Weapons/containers/china_mer_bomb_pylon_250kg_mk_82.blk",
-              "emitter": "bomb_pylon2",
-              "external": true,
-              "separate": true,
-              "machLimit": 1.01
+        "WeaponSlot": [
+          {
+            "index": 4
+          },
+          {
+            "tier": 6
+          },
+          {
+            "order": 7
+          },
+          {
+            "notUseforDisbalanceCalculation": true
+          },
+          {
+            "WeaponPreset": {
+              "iconType": "bombs_middle_group_x6",
+              "name": "250kg_mk_82_x6",
+              "reqModification": "cn_q5_type_250",
+              "ShowNodes": {
+                "node": "bomb_pylon1"
+              },
+              "Weapon": {
+                "trigger": "bombs",
+                "blk": "gameData/Weapons/containers/china_mer_bomb_pylon_250kg_mk_82.blk",
+                "emitter": "bomb_pylon2",
+                "external": true,
+                "separate": true,
+                "machLimit": 1.01
+              }
+            }
+          },
+          {
+            "WeaponPreset": {
+              "iconType": "bombs_middle_high_drag_group_x6",
+              "name": "250_4_x6",
+              "reqModification": "cn_q5_type_250",
+              "ShowNodes": {
+                "node": "bomb_pylon1"
+              },
+              "Weapon": {
+                "trigger": "bombs",
+                "blk": "gameData/Weapons/containers/china_mer_bomb_pylon_250_4.blk",
+                "emitter": "bomb_pylon2",
+                "external": true,
+                "separate": true,
+                "machLimit": 1.01
+              }
             }
           }
-        }
+        ]
       },
       {
         "WeaponSlot": {
@@ -3259,12 +3384,67 @@
               },
               "Weapon": {
                 "trigger": "bombs",
-                "blk": "gameData/Weapons/BombGuns/china_250kg_mk_82.blk",
+                "blk": "gameData/Weapons/BombGuns/cn_gp_250_3.blk",
                 "emitter": "bomb250_2",
                 "bullets": 1,
                 "external": true,
                 "separate": true,
                 "machLimit": 1.01
+              }
+            }
+          },
+          {
+            "WeaponPreset": {
+              "iconType": "bombs_middle_high_drag",
+              "name": "250_4",
+              "reqModification": "cn_q5_type_250",
+              "ShowNodes": {
+                "node": "rocket_pylon_r1"
+              },
+              "Weapon": {
+                "trigger": "bombs",
+                "blk": "gameData/Weapons/BombGuns/cn_gp_250_4.blk",
+                "emitter": "bomb250_2",
+                "bullets": 1,
+                "external": true,
+                "separate": true,
+                "machLimit": 1.01
+              }
+            }
+          },
+          {
+            "WeaponPreset": {
+              "iconType": "bombs_large",
+              "name": "gp500",
+              "reqModification": "cn_q5_type_500",
+              "ShowNodes": {
+                "node": "rocket_pylon_r1"
+              },
+              "Weapon": {
+                "trigger": "bombs",
+                "blk": "gameData/Weapons/BombGuns/cn_gp_500_3.blk",
+                "emitter": "bomb250_2",
+                "bullets": 1,
+                "external": true,
+                "separate": true
+              }
+            }
+          },
+          {
+            "WeaponPreset": {
+              "iconType": "bombs_large_high_drag",
+              "name": "gp500_4",
+              "reqModification": "cn_q5_type_500",
+              "ShowNodes": {
+                "node": "rocket_pylon_r1"
+              },
+              "Weapon": {
+                "trigger": "bombs",
+                "blk": "gameData/Weapons/BombGuns/cn_gp_500_4.blk",
+                "emitter": "bomb250_2",
+                "bullets": 1,
+                "external": true,
+                "separate": true
               }
             }
           }
@@ -3549,7 +3729,7 @@
       },
       "hydravlic_power": {
         "effects": {
-          "aileronBooster": 0.9
+          "aileronBooster": 0.6
         }
       },
       "new_compressor_jet": {
@@ -3579,6 +3759,11 @@
       "cn_q5_type_250": {
         "reqModification": "cn_q5_hf6",
         "modClass": "weapon",
+        "tier": 3
+      },
+      "cn_q5_type_500": {
+        "reqModification": "cn_q5_type_250",
+        "modClass": "weapon",
         "tier": 4
       },
       "countermeasures_launcher_chaff_only": [],
@@ -3590,15 +3775,7 @@
         "turn_it_off": false,
         "invertEnableLogic": false,
         "group": "countermeasures",
-        "tier": 1,
-        "effects": {
-          "commonWeapons": {
-            "Weapon": {
-              "slot": 0,
-              "preset": "type_23_3_ltc_common"
-            }
-          }
-        }
+        "tier": 1
       },
       "j_7_pl5b": {
         "prevModification": "countermeasures_belt_pack",

@@ -1,15 +1,13 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { get_base_game_version } = require("app")
 let { is_seen_nuclear_event, is_seen_main_nuclear_event, need_show_after_streak
 } = require("hangarEventCommand")
 let airRaidWndScene = require("%scripts/wndLib/airRaidWnd.nut")
-let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { broadcastEvent, addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { Version } = require("%sqstd/version.nut")
+let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
 let newClientVersionEvent = persist("newClientVersionEvent ", @() {
   hasMessage = false
@@ -23,7 +21,7 @@ let function isNewClientFunc() {
 let function onNewClientVersion(params) {
   newClientVersionEvent.hasMessage = true
   if (!::is_in_flight())
-    ::broadcastEvent("NewClientVersion", params)
+    broadcastEvent("NewClientVersion", params)
 
   return { result = "ok" }
 }
@@ -60,10 +58,11 @@ let function bigQuerryForNuclearEvent() {
   if (!needSendStatistic)
     return
 
-  ::add_big_query_record("nuclear_event", ::save_to_json({
+  sendBqEvent("CLIENT_GAMEPLAY_1", "nuclear_event", {
     user = ::my_user_id_str,
     seenInOldClient = is_seen_nuclear_event(),
-    seenInNewClient = is_seen_main_nuclear_event() }))
+    seenInNewClient = is_seen_main_nuclear_event()
+  })
   ::save_local_account_settings("sendNuclearStatistic", false)
 }
 

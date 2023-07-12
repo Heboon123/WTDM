@@ -1,10 +1,8 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
+let { subscribe_handler } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { WEAPON_TAG,
         isUnitHaveAnyWeaponsTags } = require("%scripts/weaponry/weaponryInfo.nut")
 let { tryOpenNextTutorialHandler } = require("%scripts/tutorials/nextTutorialHandler.nut")
@@ -39,7 +37,7 @@ let { tryOpenNextTutorialHandler } = require("%scripts/tutorials/nextTutorialHan
 
   function onEventCrewTakeUnit(params) {
     let unit = getTblValue("unit", params)
-    this.actions.append((@(unit) function() { return this.checkTutorialOnSetUnit(unit) })(unit).bindenv(this))
+    this.actions.append((function() { return this.checkTutorialOnSetUnit(unit) }).bindenv(this))
     this.processActions()
   }
 
@@ -65,4 +63,4 @@ let { tryOpenNextTutorialHandler } = require("%scripts/tutorials/nextTutorialHan
   }
 }
 
-::subscribe_handler(::g_tutorials_manager, ::g_listener_priority.DEFAULT_HANDLER)
+subscribe_handler(::g_tutorials_manager, ::g_listener_priority.DEFAULT_HANDLER)

@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 
 let { format } = require("string")
@@ -72,7 +69,7 @@ let function makeTblByBranch(branch, ranksHeight, headRow = null) {
     else {
       curAir = item
       if (item?.reqAir)
-        prevAir = ::getAircraftByName(item.reqAir)
+        prevAir = getAircraftByName(item.reqAir)
       if (prevAir)
         curAir.reqAir <- prevAir.name
     }
@@ -433,7 +430,7 @@ let function generatePageTreeByRankPosXY(page) {
   if (unitsWithWrongPositions.len() > 0) {
     let message = format("Error: Wrong rank position in shop config for unitType = %s\nunits: %s\n",
                              page.name,
-                             ::g_string.implode(unitsWithWrongPositions, "\n")
+                             "\n".join(unitsWithWrongPositions, true)
                             )
     ::script_net_assert_once("Wrong rank position in shop config", message)
   }

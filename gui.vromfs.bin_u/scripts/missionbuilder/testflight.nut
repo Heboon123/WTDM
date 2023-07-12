@@ -1,11 +1,9 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { getLastWeapon } = require("%scripts/weaponry/weaponryInfo.nut")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
 let { bombNbr, hasCountermeasures, getCurrentPreset } = require("%scripts/unit/unitStatus.nut")
@@ -15,9 +13,10 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 let { getCdBaseDifficulty, set_unit_option, set_gui_option, get_gui_option } = require("guiOptions")
 let { getActionBarUnitName } = require("hudActionBar")
 let { switchProfileCountry } = require("%scripts/user/playerCountry.nut")
-let { select_training_mission } = require("guiMission")
+let { select_training_mission, get_meta_mission_info_by_name } = require("guiMission")
 let { isPreviewingLiveSkin, setCurSkinToHangar
 } = require("%scripts/customization/skins.nut")
+let { stripTags } = require("%sqstd/string.nut")
 
 ::missionBuilderVehicleConfigForBlk <- {} //!!FIX ME: Should to remove this
 ::last_called_gui_testflight <- null
@@ -120,7 +119,7 @@ let { isPreviewingLiveSkin, setCurSkinToHangar
   function checkBulletsRows() {
     if (type(::aircraft_for_weapons) != "string")
       return
-    let air = ::getAircraftByName(::aircraft_for_weapons)
+    let air = getAircraftByName(::aircraft_for_weapons)
     if (!air)
       return
 
@@ -142,7 +141,6 @@ let { isPreviewingLiveSkin, setCurSkinToHangar
     let handler = ::handlersManager.loadHandler(::gui_handlers.unitWeaponsHandler, {
       scene = weaponryObj
       unit = this.unit
-      canChangeBulletsAmount = true
       isForcedAvailable = isUnitSpecial && !isUnitUsable
       forceShowDefaultTorpedoes = !isUnitSpecial && !isUnitUsable
     })
@@ -297,7 +295,7 @@ let { isPreviewingLiveSkin, setCurSkinToHangar
     if (!bulletsManager || !bulletsManager.checkChosenBulletsCount())
       return
 
-    ::broadcastEvent("BeforeStartTestFlight")
+    broadcastEvent("BeforeStartTestFlight")
 
     if (::g_squad_manager.isNotAloneOnline())
       return this.onMissionBuilder()
@@ -339,7 +337,7 @@ let { isPreviewingLiveSkin, setCurSkinToHangar
 
   function startTestFlight() {
     let misName = this.getTestFlightMisName(this.unit.testFlight)
-    let misBlk = ::get_mission_meta_info(misName)
+    let misBlk = get_meta_mission_info_by_name(misName)
     if (!misBlk)
       return assert(false, "Error: wrong testflight mission " + misName)
 
@@ -517,7 +515,7 @@ let { isPreviewingLiveSkin, setCurSkinToHangar
     if ("hints" in option)
       obj.tooltip = option.hints[ obj.getValue() ]
     else if ("hint" in option)
-      obj.tooltip = ::g_string.stripTags(loc(option.hint, ""))
+      obj.tooltip = stripTags(loc(option.hint, ""))
     this.checkBulletsRows()
     this.updateWeaponOptions()
   }

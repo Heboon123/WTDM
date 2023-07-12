@@ -1,8 +1,5 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { DECORATION } = require("%scripts/utils/genericTooltipTypes.nut")
 
@@ -60,6 +57,7 @@ let function getDecorButtonView(decorator, unit, params = null) {
     unitLocked
     leftAmount
     lockCountryImg
+    unseenIcon = params?.unseenIcon
   }
 }
 

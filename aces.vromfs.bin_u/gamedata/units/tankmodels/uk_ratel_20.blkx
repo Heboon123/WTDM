@@ -321,6 +321,14 @@
           "hp": 20.0
         }
       },
+      "hull_turret_spaced_armor": {
+        "armorClass": "RHA_tank",
+        "composite_armor_hull_01_dm": {
+          "armorThickness": 5.0,
+          "hidableInViewer": true,
+          "hidableInXrayViewer": true
+        }
+      },
       "chassis": {
         "hp": 250.0,
         "armorThickness": 10.0,
@@ -1709,6 +1717,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -2494,6 +2503,18 @@
     }
   },
   {
+    "xray_viewer_data": {
+      "armorArrayHullTop": {
+        "xrayDmPart": "composite_armor_hull_01_dm",
+        "armorArrayText": {
+          "layer": {
+            "dmPart": "composite_armor_hull_01_dm"
+          }
+        }
+      }
+    }
+  },
+  {
     "sound": {
       "EngineName": "engine_mctav6",
       "TrackSoundPath": "tanks/engines_tanks",
@@ -2511,6 +2532,9 @@
   },
   {
     "commonWeapons": [
+      {
+        "remotelyGuidedWeaponsMax": 1
+      },
       {
         "Weapon": {
           "trigger": "gunner0",
@@ -2707,6 +2731,7 @@
           "emitter": "bone_rocket_02",
           "stopForFire": true,
           "maxSpeedForFire": 5.0,
+          "staticElevation": 1.25,
           "createGunEffects": true,
           "defaultYaw": 0.0,
           "defaultPitch": 0.0,
@@ -3808,6 +3833,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -3931,6 +3965,9 @@
         "modClass": "protection",
         "effects": {
           "commonWeapons": [
+            {
+              "remotelyGuidedWeaponsMax": 1
+            },
             {
               "Weapon": {
                 "trigger": "gunner0",
@@ -4127,6 +4164,7 @@
                 "emitter": "bone_rocket_02",
                 "stopForFire": true,
                 "maxSpeedForFire": 5.0,
+                "staticElevation": 1.25,
                 "createGunEffects": true,
                 "defaultYaw": 0.0,
                 "defaultPitch": 0.0,

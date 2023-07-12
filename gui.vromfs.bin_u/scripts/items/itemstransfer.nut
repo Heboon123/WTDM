@@ -1,10 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
-let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
+let { broadcastEvent, addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 local sendingList = {}
 
@@ -20,10 +17,10 @@ let function updateSendingList() {
       }
   sendingList = newList
   if (isChanged)
-    ::broadcastEvent("SendingItemsChanged")
+    broadcastEvent("SendingItemsChanged")
 }
 
-subscriptions.addListenersWithoutEnv({
+addListenersWithoutEnv({
   SignOut = @(_p) sendingList.clear()
   ProfileUpdated = @(_p) updateSendingList()
   ScriptsReloaded = @(_p) ::g_login.isProfileReceived() && updateSendingList()

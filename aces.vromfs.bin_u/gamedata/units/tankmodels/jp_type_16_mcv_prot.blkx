@@ -260,7 +260,8 @@
           "armorThickness": 15.0
         },
         "gun_mask_01_dm": {
-          "armorThickness": 20.0
+          "armorThickness": 20.0,
+          "ignoreSolidDimension": true
         },
         "gun_mask_02_dm": {
           "armorThickness": 20.0
@@ -369,7 +370,8 @@
           "armorThickness": 15.0
         },
         "turret_07_front_dm": {
-          "armorThickness": 20.0
+          "armorThickness": 20.0,
+          "ignoreSolidDimension": true
         },
         "turret_07_side_dm": {
           "armorThickness": 10.0
@@ -408,8 +410,7 @@
         },
         "turret_front_dm": {
           "armorThickness": 5.0,
-          "armorClass": "RHAHH_tank",
-          "hidableInViewer": true
+          "armorClass": "RHAHH_tank"
         },
         "turret_02_back_dm": {
           "armorThickness": 15.0
@@ -1843,6 +1844,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -3572,6 +3574,34 @@
             }
           }
         ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_11_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_11_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_12_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_12_02"
+            }
+          }
+        ]
       }
     ]
   },
@@ -4519,6 +4549,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -5150,6 +5189,7 @@
   {
     "supportPlane": {
       "supportPlaneClass": "ucav_recon_micro",
+      "behTreeName": "recon_micro",
       "planeStartSpeed": 80.0,
       "count": 1
     }

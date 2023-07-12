@@ -4,8 +4,10 @@
   "MetaPartsBlk": "gameData/FlightModels/dm/metaparts/hellicopters_metaparts.blk",
   "viewDistKInSight": 6.0,
   "haveCCIPForRocket": true,
+  "gyroSight": true,
   "haveCCIPForGun": true,
   "haveCCIPForBombs": true,
+  "hasPointOfInterestMemory": false,
   "gearSinkRangeLR": 0.316,
   "gearSinkRangeC": 0.25,
   "tpsCameraTargetOffsetAtZoom": [-80.0,40.0,0.0],
@@ -386,6 +388,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -396,6 +414,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -423,6 +457,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -433,6 +483,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -1116,6 +1182,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -1126,6 +1208,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -1832,16 +1930,16 @@
   ],
   "WeaponSlots": [
     {
-      "maxloadMass": 3017.0
+      "maxloadMass": 2400.0
     },
     {
-      "maxloadMassLeftConsoles": 800.0
+      "maxloadMassLeftConsoles": 1200.0
     },
     {
-      "maxloadMassRightConsoles": 800.0
+      "maxloadMassRightConsoles": 1200.0
     },
     {
-      "maxDisbalance": 480.0
+      "maxDisbalance": 500.0
     },
     {
       "HideNodes": [
@@ -1964,6 +2062,16 @@
               "name": "gsh_30_2k_common"
             },
             {
+              "ShowNodes": [
+                {
+                  "node": "fuse2"
+                },
+                {
+                  "node": "fuse4"
+                }
+              ]
+            },
+            {
               "Weapon": {
                 "dummy": true,
                 "trigger": "gunner0",
@@ -1998,6 +2106,28 @@
                 "bullets": 250,
                 "spread": 1.2,
                 "recoilMultiplier": 0.5
+              }
+            },
+            {
+              "Weapon": {
+                "trigger": "countermeasures",
+                "startFx": "",
+                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher.blk",
+                "emitter": "emtr_flare1",
+                "bullets": 96,
+                "external": true,
+                "separate": false
+              }
+            },
+            {
+              "Weapon": {
+                "trigger": "countermeasures",
+                "startFx": "",
+                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher.blk",
+                "emitter": "emtr_flare2",
+                "bullets": 96,
+                "external": true,
+                "separate": false
               }
             }
           ]
@@ -2011,60 +2141,6 @@
               "ShowNodes": {
                 "node": "fuse2"
               }
-            },
-            {
-              "Weapon": {
-                "dummy": true,
-                "trigger": "gunner0",
-                "triggerGroup": "primary",
-                "blk": "gameData/Weapons/dummy_weapon.blk",
-                "emitter": "optic1_gun",
-                "defaultYaw": 0.0,
-                "defaultPitch": 0.0,
-                "speedYaw": 25.0,
-                "speedPitch": 25.0,
-                "parkInDeadzone": false,
-                "aimForOperatedShell": true,
-                "turret": {
-                  "head": "optic1_turret",
-                  "gun": "optic1_gun",
-                  "playerControllable": false
-                },
-                "limits": {
-                  "yaw": [-50.0,50.0],
-                  "pitch": [-40.0,20.0]
-                }
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "cannon",
-                "blk": "gameData/Weapons/cannonGSh_30_2K.blk",
-                "emitter": "flare1",
-                "flash": "flare1",
-                "shell": "emtr_shellrejection1",
-                "dm": "cannon1_dm",
-                "bullets": 250,
-                "spread": 1.2,
-                "recoilMultiplier": 0.5
-              }
-            }
-          ]
-        },
-        {
-          "WeaponPreset": [
-            {
-              "name": "gsh_30_2k_ltc_common"
-            },
-            {
-              "ShowNodes": [
-                {
-                  "node": "fuse4"
-                },
-                {
-                  "node": "fuse2"
-                }
-              ]
             },
             {
               "Weapon": {
@@ -2217,6 +2293,7 @@
           "iconType": "atgm_type2_x2",
           "name": "9m114",
           "reqModification": "mi_24_su_9M114",
+          "remotelyGuidedWeaponsMax": 1,
           "Weapon": {
             "trigger": "atgm",
             "blk": "gameData/Weapons/containers/9m114_x2_default_helicopter.blk",
@@ -2386,6 +2463,7 @@
             "iconType": "atgm_type2_x2",
             "name": "9m114_x2",
             "reqModification": "mi_24_su_9M114_2",
+            "remotelyGuidedWeaponsMax": 1,
             "Weapon": {
               "trigger": "atgm",
               "blk": "gameData/Weapons/containers/9m114_x2_helicopter.blk",
@@ -2821,6 +2899,7 @@
             "iconType": "atgm_type2_x2",
             "name": "9m114_x2",
             "reqModification": "mi_24_su_9M114_2",
+            "remotelyGuidedWeaponsMax": 1,
             "Weapon": {
               "trigger": "atgm",
               "blk": "gameData/Weapons/containers/9m114_x2_helicopter.blk",
@@ -2888,6 +2967,7 @@
           "iconType": "atgm_type2_x2",
           "name": "9m114",
           "reqModification": "mi_24_su_9M114",
+          "remotelyGuidedWeaponsMax": 1,
           "Weapon": {
             "trigger": "atgm",
             "blk": "gameData/Weapons/containers/9m114_x2_default_helicopter.blk",
@@ -5672,15 +5752,7 @@
       "invertEnableLogic": false,
       "reqModification": "heli_screen_exhaust_device",
       "group": "countermeasures",
-      "tier": 2,
-      "effects": {
-        "commonWeapons": {
-          "Weapon": {
-            "slot": 0,
-            "preset": "gsh_30_2k_ltc_common"
-          }
-        }
-      }
+      "tier": 2
     },
     "heli_counterMeasures": {
       "turn_it_off": false,
@@ -5709,16 +5781,16 @@
       "effects": {
         "nightVision": {
           "gunnerIr": {
-            "resolution": [1024,768],
-            "lightMult": 8.0,
-            "ghosting": 0.75,
-            "noiseFactor": 0.2
+            "resolution": [1920,1080],
+            "lightMult": 10.0,
+            "ghosting": 0.7,
+            "noiseFactor": 0.15
           },
           "pilotIr": {
-            "resolution": [1024,768],
-            "lightMult": 8.0,
-            "ghosting": 0.75,
-            "noiseFactor": 0.2
+            "resolution": [1920,1080],
+            "lightMult": 10.0,
+            "ghosting": 0.7,
+            "noiseFactor": 0.15
           }
         }
       }

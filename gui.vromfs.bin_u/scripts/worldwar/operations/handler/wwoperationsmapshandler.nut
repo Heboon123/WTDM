@@ -1,10 +1,9 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
+let u = require("%sqStdLibs/helpers/u.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { getObjValidIndex } = require("%sqDagui/daguiUtil.nut")
 let DataBlock  = require("DataBlock")
 let { format } = require("string")
 let time = require("%scripts/time.nut")
@@ -226,7 +225,7 @@ local WW_SEASON_OVER_NOTICE_PERIOD_DAYS = 7
 
     this.isFillingList = true
 
-    let markup = ::handyman.renderCached("%gui/worldWar/wwOperationsMapsItemsList.tpl", view)
+    let markup = handyman.renderCached("%gui/worldWar/wwOperationsMapsItemsList.tpl", view)
     this.guiScene.replaceContentFromText(this.mapsListObj, markup, markup.len(), this)
 
     this.selMap = null //force refresh description
@@ -300,7 +299,7 @@ local WW_SEASON_OVER_NOTICE_PERIOD_DAYS = 7
         descTooltipText = unlConf.locId != "" ? getUnlockLocName(unlConf)
           : getUnlockNameText(unlConf.unlockType, unlConf.id)
         progressTxt = progressTxt
-        rewardImage = ::LayersIcon.getIconData(
+        rewardImage = LayersIcon.getIconData(
           imgConf.style,
           imgConf.image,
           imgConf.ratio,
@@ -318,7 +317,7 @@ local WW_SEASON_OVER_NOTICE_PERIOD_DAYS = 7
     if (!rewardsObj?.isValid())
       return
 
-    let data = ::handyman.renderCached("%gui/worldWar/wwRewards.tpl", { wwRewards = rewards })
+    let data = handyman.renderCached("%gui/worldWar/wwRewards.tpl", { wwRewards = rewards })
     this.guiScene.replaceContentFromText(rewardsObj, data, data.len(), this)
   }
 
@@ -457,8 +456,8 @@ local WW_SEASON_OVER_NOTICE_PERIOD_DAYS = 7
       listObj.setValue(selIdx)
     }
 
-    if (this.collapsedChapters && !::u.isEmpty(itemObj?.id)) {
-      let idx = ::find_in_array(this.collapsedChapters, itemObj.id)
+    if (this.collapsedChapters && !u.isEmpty(itemObj?.id)) {
+      let idx = u.find_in_array(this.collapsedChapters, itemObj.id)
       if (isShow && idx != -1)
         this.collapsedChapters.remove(idx)
       else if (!isShow && idx == -1)
@@ -970,7 +969,7 @@ local WW_SEASON_OVER_NOTICE_PERIOD_DAYS = 7
       function(countriesData) {
         local statistics = convertLeaderboardData(countriesData).rows
         local view = getStatisticsView(statistics, map)
-        local markup = ::handyman.renderCached("%gui/worldWar/wwGlobeMapInfo.tpl", view)
+        local markup = handyman.renderCached("%gui/worldWar/wwGlobeMapInfo.tpl", view)
         guiScene.replaceContentFromText(statisticsObj, markup, markup.len(), this)
       }, this)
     wwLeaderboardData.requestWwLeaderboardData(
@@ -1103,7 +1102,7 @@ local WW_SEASON_OVER_NOTICE_PERIOD_DAYS = 7
       return
 
     let worldWarUrlBtnKey = ::get_gui_regional_blk()?.worldWarUrlBtnKey ?? ""
-    let isVisibleBtn = !::u.isEmpty(worldWarUrlBtnKey)
+    let isVisibleBtn = !u.isEmpty(worldWarUrlBtnKey)
     let btnObj = this.showSceneBtn("ww_wiki", isVisibleBtn)
     if (!isVisibleBtn || !btnObj?.isValid())
       return
@@ -1168,7 +1167,7 @@ local WW_SEASON_OVER_NOTICE_PERIOD_DAYS = 7
     if (!checkObj(countriesContainerObj))
       return null
 
-    let value = ::get_obj_valid_index(countriesContainerObj)
+    let value = getObjValidIndex(countriesContainerObj)
     if (value < 0)
       return null
 
@@ -1225,5 +1224,10 @@ local WW_SEASON_OVER_NOTICE_PERIOD_DAYS = 7
 
   function onEventUpdateClansInfoList(p) {
     addClanTagToNameInLeaderbord(this.scene.findObject("top_global_managers"), p?.clansInfoList ?? {})
+  }
+
+  function onEventProfileUpdated(_) {
+    // Update view for new role rights
+    this.updateWindow()
   }
 }

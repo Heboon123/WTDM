@@ -1,7 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-#no-root-fallback
-#explicit-this
+let { find_in_array } = require("%sqStdLibs/helpers/u.nut")
+let { get_last_skin, set_last_skin } = require("unitCustomization")
 let skinLocations = require("%scripts/customization/skinLocations.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -10,18 +10,19 @@ let { getDecorator, getSkinId, DEFAULT_SKIN_NAME, getSkinNameBySkinId
 let { getDownloadableSkins } = require("%scripts/customization/downloadableDecorators.nut")
 let { isGuid } = require("%scripts/guidParser.nut")
 let { isUnlockVisible } = require("%scripts/unlocks/unlocksModule.nut")
+let { get_meta_mission_info_by_name } = require("guiMission")
 
 let previewedLiveSkinIds = []
 let approversUnitToPreviewLiveResource = Watched(null)
 
 let function getBestSkinsList(unitName, isLockedAllowed) {
-  let unit = ::getAircraftByName(unitName)
+  let unit = getAircraftByName(unitName)
   if (!unit)
     return [DEFAULT_SKIN_NAME]
 
   let misBlk = ::is_in_flight()
     ? ::get_current_mission_info_cached()
-    : ::get_mission_meta_info(unit.testFlight)
+    : get_meta_mission_info_by_name(unit.testFlight)
   let level = misBlk?.level
   if (!level)
     return [DEFAULT_SKIN_NAME]
@@ -57,21 +58,21 @@ let function isAutoSkinAvailable(unitName) {
 }
 
 let function getLastSkin(unitName) {
-  let unit = ::getAircraftByName(unitName)
+  let unit = getAircraftByName(unitName)
   if (!unit.isUsable() && unit.getPreviewSkinId() != "")
     return unit.getPreviewSkinId()
   if (!isAutoSkinAvailable(unitName))
-    return ::hangar_get_last_skin(unitName)
+    return get_last_skin(unitName)
   return ::load_local_account_settings(getSkinSaveId(unitName))
 }
 
 let function setLastSkin(unitName, skinName, needAutoSkin = true) {
   if (!isAutoSkinAvailable(unitName))
-    return skinName && ::hangar_set_last_skin(unitName, skinName)
+    return skinName && set_last_skin(unitName, skinName)
   if (needAutoSkin || getLastSkin(unitName))
     ::save_local_account_settings(getSkinSaveId(unitName), skinName)
   if (!needAutoSkin || skinName)
-    ::hangar_set_last_skin(unitName, skinName || getAutoSkin(unitName))
+    set_last_skin(unitName, skinName || getAutoSkin(unitName))
 }
 
 let isAutoSkinOn = @(unitName) !getLastSkin(unitName)
@@ -79,12 +80,12 @@ let getRealSkin  = @(unitName) getLastSkin(unitName) || getAutoSkin(unitName)
 
 let function setAutoSkin(unitName, needSwitchOn) {
   if (needSwitchOn != isAutoSkinOn(unitName))
-    setLastSkin(unitName, needSwitchOn ? null : ::hangar_get_last_skin(unitName))
+    setLastSkin(unitName, needSwitchOn ? null : get_last_skin(unitName))
 }
 
 let function setCurSkinToHangar(unitName) {
   if (!isAutoSkinOn(unitName))
-    ::hangar_set_last_skin(unitName, getRealSkin(unitName))
+    set_last_skin(unitName, getRealSkin(unitName))
 }
 
 let function isPreviewingLiveSkin() {
@@ -158,7 +159,7 @@ let function getSkinsOption(unitName, showLocked = false, needAutoSkin = true, s
     value      = 0
   }
 
-  let unit = ::getAircraftByName(unitName)
+  let unit = getAircraftByName(unitName)
   if (!unit)
     return descr
 
@@ -219,7 +220,7 @@ let function getSkinsOption(unitName, showLocked = false, needAutoSkin = true, s
   }
 
   let curSkin = getLastSkin(unit.name)
-  descr.value = ::find_in_array(descr.values, curSkin, -1)
+  descr.value = find_in_array(descr.values, curSkin, -1)
   if (descr.value != -1 || !descr.values.len())
     return descr
 
@@ -231,7 +232,7 @@ let function getSkinsOption(unitName, showLocked = false, needAutoSkin = true, s
 }
 
 let function applyPreviewSkin(unitName) {
-  let unit = ::getAircraftByName(unitName)
+  let unit = getAircraftByName(unitName)
   if (!unit)
     return
 

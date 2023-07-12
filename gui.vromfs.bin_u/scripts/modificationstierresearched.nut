@@ -1,22 +1,23 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { Cost } = require("%scripts/money.nut")
+let u = require("%sqStdLibs/helpers/u.nut")
+
 
 let { format } = require("string")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
 let activityFeedPostFunc = require("%scripts/social/activityFeed/activityFeedPostFunc.nut")
 
 ::gui_start_mod_tier_researched <- function gui_start_mod_tier_researched(config) {
   foreach (param, value in config) {
-    if (::u.isArray(value) && value.len() == 1)
+    if (u.isArray(value) && value.len() == 1)
       config[param] = value[0]
   }
 
-  let unit = ::getAircraftByName(getTblValue("unit", config))
+  let unit = getAircraftByName(getTblValue("unit", config))
   if (!unit)
     return
 
@@ -24,7 +25,7 @@ let activityFeedPostFunc = require("%scripts/social/activityFeed/activityFeedPos
     unit = unit
     unitInResearch = config?.resUnit
     tier = config?.tier ?? []
-    expReward = ::Cost().setRp(config?.expToInvUnit ?? 0)
+    expReward = Cost().setRp(config?.expToInvUnit ?? 0)
   }
   ::gui_start_modal_wnd(::gui_handlers.ModificationsTierResearched, wndParams)
 }
@@ -43,9 +44,9 @@ let activityFeedPostFunc = require("%scripts/social/activityFeed/activityFeedPos
 
   function initScreen() {
     if (!this.expReward)
-      this.expReward = ::Cost()
+      this.expReward = Cost()
 
-    if (::u.isArray(this.unitInResearch))  //fix crash, but need to fix combine function to correct show multiple researched units
+    if (u.isArray(this.unitInResearch))  //fix crash, but need to fix combine function to correct show multiple researched units
       this.unitInResearch = this.unitInResearch[0] //but this is a really reare case, maybe no need to care about
 
     let isLastResearchedModule = ::shop_get_researchable_module_name(this.unit.name) == ""
@@ -73,7 +74,7 @@ let activityFeedPostFunc = require("%scripts/social/activityFeed/activityFeedPos
     }
 
     local tierText = ""
-    if (::u.isArray(this.tier)) {
+    if (u.isArray(this.tier)) {
       if (this.tier.len() == 1)
         tierText = this.tier.top()
       else if (this.tier.len() == 2)
@@ -127,7 +128,7 @@ let activityFeedPostFunc = require("%scripts/social/activityFeed/activityFeedPos
   }
 
   function afterModalDestroy() {
-    ::broadcastEvent("UpdateResearchingUnit", { unitName = this.unitInResearch })
+    broadcastEvent("UpdateResearchingUnit", { unitName = this.unitInResearch })
     ::checkNonApprovedResearches(true)
     activityFeedPostFunc(this.postConfig, this.postCustomConfig, bit_activity.PS4_ACTIVITY_FEED)
   }

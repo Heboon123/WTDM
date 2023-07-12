@@ -1,8 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let { file_exists } = require("dagor.fs")
 let { calculate_tank_bullet_parameters } = require("unitCalculcation")
@@ -25,6 +24,7 @@ let { getMeasuredExplosionText, getTntEquivalentText, getRicochetData, getTntEqu
 let { GUI } = require("%scripts/utils/configs.nut")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { format } = require("string")
+let { get_mission_difficulty_int } = require("guiMission")
 
 local bulletIcons = {}
 local bulletAspectRatio = {}
@@ -98,8 +98,8 @@ let function getBulletsIconView(bulletsSet, tooltipId = null, tooltipDelayed = f
           ?? DEFAULT_BULLET_IMG_ASPECT_RATIO
         local maxAmountInView = (bulletsSet?.weaponType == WEAPON_TYPE.COUNTERMEASURES)
           ? 1 : min(MAX_BULLETS_ON_ICON, (1.0 / ratio).tointeger())
-        if (bulletsSet.catridge)
-          maxAmountInView = min(bulletsSet.catridge, maxAmountInView)
+        if (bulletsSet.cartridge)
+          maxAmountInView = min(bulletsSet.cartridge, maxAmountInView)
         count = length * max(1, floor(maxAmountInView / length))
       }
 
@@ -146,7 +146,7 @@ let function getBulletsIconView(bulletsSet, tooltipId = null, tooltipDelayed = f
 let function getBulletsIconData(bulletsSet) {
   if (!bulletsSet)
     return ""
-  return ::handyman.renderCached(("%gui/weaponry/bullets.tpl"), getBulletsIconView(bulletsSet))
+  return handyman.renderCached(("%gui/weaponry/bullets.tpl"), getBulletsIconView(bulletsSet))
 }
 
 let function getArmorPiercingViewData(armorPiercing, dist) {
@@ -160,11 +160,11 @@ let function getArmorPiercingViewData(armorPiercing, dist) {
       continue
     if (!angles) {
       res = []
-      angles = ::u.keys(armorTbl)
+      angles = u.keys(armorTbl)
       angles.sort(@(a, b) a <=> b)
       let headRow = {
         text = ""
-        values = ::u.map(angles, function(v) { return { value = v + loc("measureUnits/deg") } })
+        values = u.map(angles, function(v) { return { value = v + loc("measureUnits/deg") } })
       }
       res.append(headRow)
     }
@@ -304,6 +304,14 @@ let function addAdditionalBulletsInfoToDesc(bulletsData, descTbl) {
         addProp(p, loc("missile/seekerRange"),
           ::g_measure_type.DISTANCE.getMeasureUnitsText(bulletsData.radarRange))
     }
+    else if (bulletsData.guidanceType == "saclos") {
+      addProp(p, loc("missile/guidance"),
+        loc($"missile/guidance/{bulletsData?.isBeamRider ? "beamRiding" : "saclos"}"))
+      if ("irBeaconBand" in bulletsData) {
+        if (bulletsData.irBeaconBand != saclosMissileBeaconIRSourceBand.value)
+          addProp(p, loc("missile/eccm"), loc("options/yes"))
+      }
+    }
     else {
       addProp(p, loc("missile/guidance"),
         loc($"missile/guidance/{bulletsData.guidanceType}"))
@@ -376,7 +384,7 @@ let function addAdditionalBulletsInfoToDesc(bulletsData, descTbl) {
           roundToDigits(item.angle, 2) + loc("measureUnits/deg"))
 
   if ("reloadTimes" in bulletsData) {
-    let currentDiffficulty = ::is_in_flight() ? ::get_mission_difficulty_int()
+    let currentDiffficulty = ::is_in_flight() ? get_mission_difficulty_int()
       : ::get_current_shop_difficulty().diffCode
     let reloadTime = bulletsData.reloadTimes[currentDiffficulty]
     if (reloadTime > 0)
@@ -463,20 +471,22 @@ let function buildBulletsData(bullet_parameters, bulletsSet = null) {
             continue
 
           if (d == idist || (d < idist && !i))
-            armor = ::u.map(bullet_params.armorPiercing[i], @(f) round(f).tointeger())
+            armor = u.map(bullet_params.armorPiercing[i], @(f) round(f).tointeger())
           else if (d < idist && i) {
             let prevDist = bullet_params.armorPiercingDist[i - 1].tointeger()
-            if (d > prevDist)
-              armor = ::u.tablesCombine(bullet_params.armorPiercing[i - 1], bullet_params.armorPiercing[i],
-                        (@(d, prevDist, idist) function(prev, next) {
-                          return (prev + (next - prev) * (d - prevDist.tointeger()) / (idist - prevDist)).tointeger()
-                        })(d, prevDist, idist), 0)
+            if (d > prevDist) {
+              let newDist = d
+              let idx = i
+              armor = u.tablesCombine(bullet_params.armorPiercing[idx - 1], bullet_params.armorPiercing[idx],
+                @(prev, next) (prev + (next - prev) * (newDist - prevDist.tointeger()) / (idist - prevDist)).tointeger(),
+                0)
+            }
           }
           if (armor == null)
             continue
 
           bulletsData.armorPiercing[ind] = (!bulletsData.armorPiercing[ind])
-            ? armor : ::u.tablesCombine(bulletsData.armorPiercing[ind], armor, max)
+            ? armor : u.tablesCombine(bulletsData.armorPiercing[ind], armor, max)
         }
       }
     }

@@ -309,9 +309,7 @@
           "armorEffectiveThicknessMax": 160.0
         },
         "turret_05_back_dm": {
-          "armorThickness": 250.0,
-          "armorClass": "CHA_tank_modern",
-          "armorEffectiveThicknessMax": 250.0
+          "armorThickness": 20.0
         },
         "turret_05_front_dm": {
           "armorThickness": 40.0
@@ -491,7 +489,8 @@
         "hp": 10000.0,
         "gun_mask_dm": {
           "armorThickness": 16.0,
-          "armorClass": "RHAHH_tank"
+          "armorClass": "RHAHH_tank",
+          "ignoreSolidDimension": true
         },
         "gun_mask_01_dm": {
           "armorThickness": 30.0,
@@ -1973,6 +1972,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.4,
               "nothing": 0.6,
               "fHitCritical": true
@@ -3468,6 +3468,7 @@
         "model": "mb_873_ka_501"
       },
       "mechanics": {
+        "steerType": "clutch_braking",
         "maxBrakeForce": 300000.0,
         "driveGearRadius": 0.312,
         "mainGearRatio": 4.47,
@@ -3535,8 +3536,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -4457,6 +4458,15 @@
           "fx": {
             "name": "smoke_after_hit_tiny",
             "setOrientation": true
+          }
+        }
+      },
+      {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
           }
         }
       },

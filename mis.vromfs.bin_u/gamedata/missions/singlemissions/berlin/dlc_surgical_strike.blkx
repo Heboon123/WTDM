@@ -2,10 +2,6 @@
   "selected_tag": "",
   "bin_dump_file": "",
   "mission_settings": {
-    "atmosphere": {
-      "pressure": 756.0,
-      "temperature": 17.0
-    },
     "player": {
       "army": 1,
       "wing": "player_wing"
@@ -16,18 +12,22 @@
     "mission": {
       "level": "levels/berlin.bin",
       "type": "singleMission",
-      "restoreType": "attempts",
-      "optionalTakeOff": false,
       "environment": "Day",
       "weather": "cloudy",
+      "gt_reload_explosives": true,
+      "restoreType": "attempts",
+      "optionalTakeOff": false,
       "windSpeed": [4.0,5.0],
       "windDirectionDeg": [235.0,240.0],
-      "gt_reload_explosives": true,
       "stars": {
         "year": 1945,
         "month": 4,
         "day": 20
       }
+    },
+    "atmosphere": {
+      "pressure": 756.0,
+      "temperature": 17.0
     },
     "spectator_points": [],
     "briefing": {
@@ -47,6 +47,9 @@
           },
           {
             "picture": ""
+          },
+          {
+            "showAirMap": false
           },
           {
             "arrow": [
@@ -175,16 +178,16 @@
               "object_type": "isAlive"
             },
             {
-              "attack_type": "dont_aim"
+              "targetableByAi": false
             },
             {
               "stealthRadius": 100.0
             },
             {
-              "effShootingRate": 0.6
+              "attack_type": "dont_aim"
             },
             {
-              "targetableByAi": false
+              "effShootingRate": 0.6
             }
           ]
         },
@@ -212,25 +215,35 @@
               "object_type": "isAlive"
             },
             {
-              "attack_type": "dont_aim"
+              "targetableByAi": false
             },
             {
               "stealthRadius": 100.0
             },
             {
-              "effShootingRate": 0.6
+              "attack_type": "dont_aim"
             },
             {
-              "targetableByAi": false
+              "effShootingRate": 0.6
             }
           ]
         },
         {
           "unitSetProperties": {
             "object": "ussr_tanks_01",
+            "targetableByAi": false,
             "attack_type": "hold_fire",
-            "effShootingRate": 0.2,
-            "targetableByAi": false
+            "effShootingRate": 0.2
+          }
+        },
+        {
+          "unitSetProperties": {
+            "object": "player_wing",
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "bombDelayExplosion": 1.2
           }
         },
         {
@@ -271,12 +284,21 @@
         {
           "unitSetIndication": {
             "set": true,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "target": "ussr_tanks_01"
           }
         },
         {
           "moAddMissionObjective": {
             "target": "dlc_surgical_strike_main"
+          }
+        },
+        {
+          "comment": {
+            "value": "delay for bombs"
           }
         }
       ],
@@ -305,6 +327,8 @@
           "check_targets": "any",
           "object_marking": 0,
           "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "artillery_point_01"
         }
@@ -337,29 +361,41 @@
               "object": "germ_artillery_01_02"
             },
             {
-              "attack_type": "fire_at_will"
+              "targetableByAi": true
             },
             {
               "stealthRadius": 4500.0
             },
             {
-              "targetableByAi": true
+              "attack_type": "fire_at_will"
             }
           ]
         },
         {
           "unitSetProperties": {
             "object": "air_defence_01",
-            "attack_type": "fire_at_will",
+            "targetableByAi": false,
             "stealthRadius": 7500.0,
-            "effShootingRate": 0.1,
-            "targetableByAi": false
+            "attack_type": "fire_at_will",
+            "effShootingRate": 0.1
           }
         },
         {
           "unitSetIndication": [
             {
               "set": true
+            },
+            {
+              "target_marking": 0
+            },
+            {
+              "object_var_name": ""
+            },
+            {
+              "object_var_comp_op": "equal"
+            },
+            {
+              "object_var_value": 0
             },
             {
               "target": "germ_artillery_01_01"
@@ -429,6 +465,12 @@
             "value": 1
           },
           {
+            "object_var_name": ""
+          },
+          {
+            "object_var_comp_op": "equal"
+          },
+          {
             "object": "germ_artillery_01_01"
           },
           {
@@ -465,6 +507,8 @@
           "object_type": "isAlive",
           "object_marking": 0,
           "check_objects": "any",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "waypoint_01_area_03"
         }
@@ -472,11 +516,11 @@
       "actions": {
         "unitSetProperties": {
           "object": "ussr_tanks_01",
+          "useForTriggerFiltered": true,
+          "targetableByAi": true,
           "attack_type": "fire_at_will",
           "effShootingRate": 0.2,
-          "targetableByAi": true,
-          "speed": 5.0,
-          "useForTriggerFiltered": true
+          "speed": 5.0
         }
       },
       "else_actions": []
@@ -501,6 +545,8 @@
             "object_type": "isAlive",
             "object_marking": 0,
             "check_objects": "any",
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
             "object": "ussr_tanks_01",
             "target": "waypoint_01_area_03"
           }
@@ -511,6 +557,8 @@
             "object_type": "isAlive",
             "object_marking": 0,
             "check_objects": "any",
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
             "object": "ussr_tanks_01",
             "target": "waypoint_02_area_03"
           }
@@ -521,6 +569,8 @@
             "object_type": "isAlive",
             "object_marking": 0,
             "check_objects": "any",
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
             "object": "ussr_tanks_01",
             "target": "waypoint_03_area_03"
           }
@@ -531,6 +581,8 @@
             "object_type": "isAlive",
             "object_marking": 0,
             "check_objects": "any",
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
             "object": "ussr_tanks_01",
             "target": "waypoint_04_area_03"
           }
@@ -541,6 +593,8 @@
             "object_type": "isAlive",
             "object_marking": 0,
             "check_objects": "any",
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
             "object": "ussr_tanks_01",
             "target": "waypoint_05_area_03"
           }
@@ -551,6 +605,8 @@
             "object_type": "isAlive",
             "object_marking": 0,
             "check_objects": "any",
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
             "object": "ussr_tanks_01",
             "target": "waypoint_05_area_04"
           }
@@ -561,6 +617,8 @@
             "object_type": "isAlive",
             "object_marking": 0,
             "check_objects": "any",
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
             "object": "ussr_tanks_01",
             "target": "waypoint_06_area_03"
           }
@@ -571,6 +629,8 @@
             "object_type": "isAlive",
             "object_marking": 0,
             "check_objects": "any",
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
             "object": "ussr_tanks_01",
             "target": "waypoint_07_area_03"
           }
@@ -581,6 +641,8 @@
             "object_type": "isAlive",
             "object_marking": 0,
             "check_objects": "any",
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
             "object": "ussr_tanks_01",
             "target": "waypoint_08_area_03"
           }
@@ -591,6 +653,8 @@
             "object_type": "isAlive",
             "object_marking": 0,
             "check_objects": "any",
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
             "object": "ussr_tanks_01",
             "target": "taks_wave_zone"
           }
@@ -599,10 +663,10 @@
       "actions": {
         "unitSetProperties": {
           "object": "ussr_tanks_01",
-          "attack_type": "dont_aim",
+          "useForTriggerFiltered": true,
           "targetableByAi": false,
-          "speed": 50.0,
-          "useForTriggerFiltered": true
+          "attack_type": "dont_aim",
+          "speed": 30.0
         }
       },
       "else_actions": []
@@ -636,6 +700,15 @@
           },
           {
             "check_period": 1.0
+          },
+          {
+            "object_var_name": ""
+          },
+          {
+            "object_var_comp_op": "equal"
+          },
+          {
+            "object_var_value": 0
           },
           {
             "object": "germ_artillery_01_01"
@@ -746,6 +819,9 @@
             "icon": "tank",
             "icon army": 1,
             "set": true,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "target": "ussr_tanks_01"
           }
         },
@@ -768,6 +844,15 @@
             },
             {
               "set": true
+            },
+            {
+              "object_var_name": ""
+            },
+            {
+              "object_var_comp_op": "equal"
+            },
+            {
+              "object_var_value": 0
             },
             {
               "target": "germ_artillery_01_02"
@@ -805,6 +890,15 @@
             },
             {
               "set": true
+            },
+            {
+              "object_var_name": ""
+            },
+            {
+              "object_var_comp_op": "equal"
+            },
+            {
+              "object_var_value": 0
             },
             {
               "target": "germ_pz_vi_01"
@@ -851,6 +945,8 @@
           "object_marking": 0,
           "func": "less",
           "value": 3,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01"
         }
       },
@@ -860,7 +956,10 @@
         },
         "moSetObjectiveStatus": {
           "target": "dlc_surgical_strike_main",
-          "status": 3
+          "status": 3,
+          "object_marking": 0,
+          "object_var_comp_op": "equal",
+          "object_var_name": ""
         },
         "wait": {
           "time": 3.0
@@ -892,6 +991,8 @@
           "check_targets": "any",
           "object_marking": 0,
           "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "artillery_point_02"
         }
@@ -911,23 +1012,27 @@
         {
           "unitSetProperties": {
             "object": "germ_artillery_02_01",
-            "attack_type": "fire_at_will",
+            "targetableByAi": true,
             "stealthRadius": 4500.0,
-            "targetableByAi": true
+            "attack_type": "fire_at_will"
           }
         },
         {
           "unitSetProperties": {
             "object": "air_defence_02",
-            "attack_type": "fire_at_will",
+            "targetableByAi": false,
             "stealthRadius": 7500.0,
-            "effShootingRate": 0.1,
-            "targetableByAi": false
+            "attack_type": "fire_at_will",
+            "effShootingRate": 0.1
           }
         },
         {
           "unitSetIndication": {
             "set": true,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "target": "germ_artillery_02_01"
           }
         },
@@ -972,6 +1077,8 @@
           "object_marking": 0,
           "func": "notLess",
           "value": 1,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "germ_artillery_02_01"
         }
       },
@@ -1004,6 +1111,8 @@
           "object_type": "isAlive",
           "object_marking": 0,
           "check_objects": "any",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "waypoint_02_area_03"
         }
@@ -1011,11 +1120,11 @@
       "actions": {
         "unitSetProperties": {
           "object": "ussr_tanks_01",
+          "useForTriggerFiltered": true,
+          "targetableByAi": true,
           "attack_type": "fire_at_will",
           "effShootingRate": 0.2,
-          "targetableByAi": true,
-          "speed": 5.0,
-          "useForTriggerFiltered": true
+          "speed": 5.0
         }
       },
       "else_actions": []
@@ -1043,6 +1152,8 @@
           "check_targets": "any",
           "object_marking": 0,
           "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "tanks_point_01"
         }
@@ -1058,19 +1169,19 @@
         {
           "unitSetProperties": {
             "object": "germ_pz_vi_01",
-            "attack_type": "fire_at_will",
+            "targetableByAi": true,
             "stealthRadius": 4500.0,
-            "effShootingRate": 0.2,
-            "targetableByAi": true
+            "attack_type": "fire_at_will",
+            "effShootingRate": 0.2
           }
         },
         {
           "unitSetProperties": {
             "object": "air_defence_03",
-            "attack_type": "fire_at_will",
+            "targetableByAi": false,
             "stealthRadius": 4500.0,
-            "effShootingRate": 0.1,
-            "targetableByAi": false
+            "attack_type": "fire_at_will",
+            "effShootingRate": 0.1
           }
         },
         {
@@ -1082,6 +1193,18 @@
             "shouldKeepFormation": false,
             "teleportHeightValue": 1000.0,
             "horizontalDirectionForTeleport": true,
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "target_var_name": "",
+            "target_var_comp_op": "equal",
+            "target_var_value": 0,
+            "target_marking": 0,
+            "waypointReachedDist": 10.0,
+            "recalculatePathDist": -1.0,
+            "fastClimb": false,
+            "destTimeMode": false,
             "object": "germ_pz_vi_01",
             "speed": 15.0
           }
@@ -1094,6 +1217,10 @@
         {
           "unitSetIndication": {
             "set": true,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "target": "germ_pz_vi_01"
           }
         },
@@ -1138,6 +1265,8 @@
           "object_marking": 0,
           "func": "notLess",
           "value": 1,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "germ_pz_vi_01"
         }
       },
@@ -1170,6 +1299,8 @@
           "object_type": "isAlive",
           "object_marking": 0,
           "check_objects": "any",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "waypoint_03_area_03"
         }
@@ -1177,11 +1308,11 @@
       "actions": {
         "unitSetProperties": {
           "object": "ussr_tanks_01",
+          "useForTriggerFiltered": true,
+          "targetableByAi": true,
           "attack_type": "fire_at_will",
           "effShootingRate": 0.4,
-          "targetableByAi": true,
-          "speed": 4.0,
-          "useForTriggerFiltered": true
+          "speed": 4.0
         }
       },
       "else_actions": []
@@ -1209,6 +1340,8 @@
           "check_targets": "any",
           "object_marking": 0,
           "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "waypoint_04_area_03"
         }
@@ -1217,23 +1350,27 @@
         {
           "unitSetProperties": {
             "object": "germ_artillery_03_01",
-            "attack_type": "fire_at_will",
+            "targetableByAi": true,
             "stealthRadius": 4500.0,
-            "targetableByAi": true
+            "attack_type": "fire_at_will"
           }
         },
         {
           "unitSetProperties": {
             "object": "air_defence_04",
-            "attack_type": "fire_at_will",
+            "targetableByAi": false,
             "stealthRadius": 7500.0,
-            "effShootingRate": 0.1,
-            "targetableByAi": false
+            "attack_type": "fire_at_will",
+            "effShootingRate": 0.1
           }
         },
         {
           "unitSetIndication": {
             "set": true,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "target": "germ_artillery_03_01"
           }
         },
@@ -1278,6 +1415,8 @@
           "object_marking": 0,
           "func": "notLess",
           "value": 1,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "germ_artillery_03_01"
         }
       },
@@ -1310,6 +1449,8 @@
           "object_type": "isAlive",
           "object_marking": 0,
           "check_objects": "any",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "waypoint_04_area_03"
         }
@@ -1317,11 +1458,11 @@
       "actions": {
         "unitSetProperties": {
           "object": "ussr_tanks_01",
+          "useForTriggerFiltered": true,
+          "targetableByAi": true,
           "attack_type": "fire_at_will",
           "effShootingRate": 0.4,
-          "targetableByAi": true,
-          "speed": 5.0,
-          "useForTriggerFiltered": true
+          "speed": 5.0
         }
       },
       "else_actions": []
@@ -1349,6 +1490,8 @@
           "check_targets": "any",
           "object_marking": 0,
           "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "pziv_01_point"
         }
@@ -1357,39 +1500,47 @@
         {
           "unitSetProperties": {
             "object": "pziv_01",
-            "attack_type": "fire_at_will",
+            "targetableByAi": true,
             "stealthRadius": 4500.0,
-            "targetableByAi": true
+            "attack_type": "fire_at_will"
           }
         },
         {
           "unitSetProperties": {
             "object": "air_defence_05",
-            "attack_type": "fire_at_will",
+            "targetableByAi": false,
             "stealthRadius": 7500.0,
-            "effShootingRate": 0.1,
-            "targetableByAi": false
+            "attack_type": "fire_at_will",
+            "effShootingRate": 0.1
           }
         },
         {
           "unitSetProperties": {
             "object": "germ_tigers_wave",
-            "attack_type": "hold_fire",
-            "stealthRadius": 7500.0,
-            "effShootingRate": 0.8,
             "targetableByAi": false,
+            "stealthRadius": 7500.0,
+            "attack_type": "hold_fire",
+            "effShootingRate": 0.8,
             "speed": 45.0
           }
         },
         {
           "unitSetIndication": {
             "set": true,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "target": "pziv_01"
           }
         },
         {
           "unitSetIndication": {
             "set": true,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "target": "germ_tigers_wave",
             "delayForObjects": [1.0,5.0]
           }
@@ -1446,6 +1597,8 @@
           "object_marking": 0,
           "func": "notLess",
           "value": 1,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "pziv_01"
         }
       },
@@ -1497,6 +1650,12 @@
             "check_objects": "any"
           },
           {
+            "object_var_name": ""
+          },
+          {
+            "object_var_comp_op": "equal"
+          },
+          {
             "object": "ussr_tanks_01"
           },
           {
@@ -1510,11 +1669,11 @@
       "actions": {
         "unitSetProperties": {
           "object": "ussr_tanks_01",
+          "useForTriggerFiltered": true,
+          "targetableByAi": true,
           "attack_type": "fire_at_will",
           "effShootingRate": 0.5,
-          "targetableByAi": true,
-          "speed": 5.0,
-          "useForTriggerFiltered": true
+          "speed": 5.0
         },
         "wait": {
           "time": 45.0
@@ -1544,6 +1703,8 @@
           "object_type": "isAlive",
           "object_marking": 0,
           "check_objects": "any",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "waypoint_05_area_05"
         }
@@ -1557,6 +1718,18 @@
           "shouldKeepFormation": false,
           "teleportHeightValue": 1000.0,
           "horizontalDirectionForTeleport": true,
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "fastClimb": false,
+          "destTimeMode": false,
           "object": "ussr_tanks_01",
           "useForTriggerFiltered": true
         },
@@ -1589,6 +1762,8 @@
           "check_targets": "any",
           "object_marking": 0,
           "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "back_door_point"
         }
@@ -1601,8 +1776,8 @@
         },
         "unitSetProperties": {
           "object": "ussr_tanks_01",
-          "speed": 60.0,
-          "useForTriggerFiltered": true
+          "useForTriggerFiltered": true,
+          "speed": 60.0
         }
       },
       "else_actions": []
@@ -1630,6 +1805,8 @@
           "check_targets": "any",
           "object_marking": 0,
           "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "waypoint_06_area_03"
         }
@@ -1638,23 +1815,27 @@
         {
           "unitSetProperties": {
             "object": "germ_artillery_04_01",
-            "attack_type": "fire_at_will",
+            "targetableByAi": true,
             "stealthRadius": 4500.0,
-            "targetableByAi": true
+            "attack_type": "fire_at_will"
           }
         },
         {
           "unitSetProperties": {
             "object": "air_defence_06",
-            "attack_type": "fire_at_will",
+            "targetableByAi": false,
             "stealthRadius": 7500.0,
-            "effShootingRate": 0.1,
-            "targetableByAi": false
+            "attack_type": "fire_at_will",
+            "effShootingRate": 0.1
           }
         },
         {
           "unitSetIndication": {
             "set": true,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "target": "germ_artillery_04_01"
           }
         },
@@ -1699,6 +1880,8 @@
           "object_marking": 0,
           "func": "notLess",
           "value": 1,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "germ_artillery_04_01"
         }
       },
@@ -1731,6 +1914,8 @@
           "object_type": "isAlive",
           "object_marking": 0,
           "check_objects": "any",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "waypoint_06_area_03"
         }
@@ -1738,11 +1923,11 @@
       "actions": {
         "unitSetProperties": {
           "object": "ussr_tanks_01",
+          "useForTriggerFiltered": true,
+          "targetableByAi": true,
           "attack_type": "fire_at_will",
           "effShootingRate": 0.4,
-          "targetableByAi": true,
-          "speed": 5.0,
-          "useForTriggerFiltered": true
+          "speed": 5.0
         }
       },
       "else_actions": []
@@ -1770,6 +1955,8 @@
           "check_targets": "any",
           "object_marking": 0,
           "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "tiger_02_point"
         }
@@ -1803,26 +1990,26 @@
               "object": "germ_tiger_03"
             },
             {
-              "attack_type": "fire_at_will"
+              "targetableByAi": true
             },
             {
               "stealthRadius": 4500.0
             },
             {
-              "effShootingRate": 0.9
+              "attack_type": "fire_at_will"
             },
             {
-              "targetableByAi": true
+              "effShootingRate": 0.9
             }
           ]
         },
         {
           "unitSetProperties": {
             "object": "air_defence_07",
-            "attack_type": "fire_at_will",
+            "targetableByAi": false,
             "stealthRadius": 7500.0,
-            "effShootingRate": 0.1,
-            "targetableByAi": false
+            "attack_type": "fire_at_will",
+            "effShootingRate": 0.1
           }
         },
         {
@@ -1834,6 +2021,18 @@
             "shouldKeepFormation": false,
             "teleportHeightValue": 1000.0,
             "horizontalDirectionForTeleport": true,
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "target_var_name": "",
+            "target_var_comp_op": "equal",
+            "target_var_value": 0,
+            "target_marking": 0,
+            "waypointReachedDist": 10.0,
+            "recalculatePathDist": -1.0,
+            "fastClimb": false,
+            "destTimeMode": false,
             "object": "germ_tiger_01",
             "speed": 25.0
           }
@@ -1847,6 +2046,18 @@
             "shouldKeepFormation": false,
             "teleportHeightValue": 1000.0,
             "horizontalDirectionForTeleport": true,
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "target_var_name": "",
+            "target_var_comp_op": "equal",
+            "target_var_value": 0,
+            "target_marking": 0,
+            "waypointReachedDist": 10.0,
+            "recalculatePathDist": -1.0,
+            "fastClimb": false,
+            "destTimeMode": false,
             "object": "germ_tiger_02",
             "speed": 25.0
           }
@@ -1860,6 +2071,18 @@
             "shouldKeepFormation": false,
             "teleportHeightValue": 1000.0,
             "horizontalDirectionForTeleport": true,
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "target_var_name": "",
+            "target_var_comp_op": "equal",
+            "target_var_value": 0,
+            "target_marking": 0,
+            "waypointReachedDist": 10.0,
+            "recalculatePathDist": -1.0,
+            "fastClimb": false,
+            "destTimeMode": false,
             "object": "germ_tiger_03",
             "speed": 25.0
           }
@@ -1893,6 +2116,18 @@
           "unitSetIndication": [
             {
               "set": true
+            },
+            {
+              "target_marking": 0
+            },
+            {
+              "object_var_name": ""
+            },
+            {
+              "object_var_comp_op": "equal"
+            },
+            {
+              "object_var_value": 0
             },
             {
               "target": "germ_tiger_01"
@@ -1952,6 +2187,12 @@
             "value": 1
           },
           {
+            "object_var_name": ""
+          },
+          {
+            "object_var_comp_op": "equal"
+          },
+          {
             "object": "germ_tiger_01"
           },
           {
@@ -1991,6 +2232,8 @@
           "object_type": "isAlive",
           "object_marking": 0,
           "check_objects": "any",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "waypoint_07_area_03"
         }
@@ -1998,11 +2241,11 @@
       "actions": {
         "unitSetProperties": {
           "object": "ussr_tanks_01",
+          "useForTriggerFiltered": true,
+          "targetableByAi": true,
           "attack_type": "fire_at_will",
           "effShootingRate": 0.8,
-          "targetableByAi": true,
-          "speed": 5.0,
-          "useForTriggerFiltered": true
+          "speed": 5.0
         }
       },
       "else_actions": []
@@ -2030,6 +2273,8 @@
           "check_targets": "any",
           "object_marking": 0,
           "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "final_point"
         }
@@ -2038,12 +2283,12 @@
         {
           "unitSetProperties": {
             "object": "final_germ_squad",
-            "attack_type": "fire_at_will",
-            "stealthRadius": 4500.0,
-            "effShootingRate": 0.9,
             "targetableByAi": true,
-            "speed": 5.0,
-            "delayForObjects": [1.0,5.0]
+            "delayForObjects": [1.0,5.0],
+            "stealthRadius": 4500.0,
+            "attack_type": "fire_at_will",
+            "effShootingRate": 0.9,
+            "speed": 5.0
           }
         },
         {
@@ -2058,22 +2303,26 @@
               "object": "air_defence_10"
             },
             {
-              "attack_type": "fire_at_will"
+              "targetableByAi": false
             },
             {
               "stealthRadius": 7500.0
             },
             {
-              "effShootingRate": 0.1
+              "attack_type": "fire_at_will"
             },
             {
-              "targetableByAi": false
+              "effShootingRate": 0.1
             }
           ]
         },
         {
           "unitSetIndication": {
             "set": true,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "target": "final_germ_squad",
             "delayForObjects": [1.0,5.0]
           }
@@ -2116,6 +2365,8 @@
           "object_marking": 0,
           "func": "notLess",
           "value": 1,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "final_germ_squad"
         }
       },
@@ -2148,6 +2399,8 @@
           "object_type": "isAlive",
           "object_marking": 0,
           "check_objects": "any",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "waypoint_08_area_03"
         }
@@ -2155,11 +2408,11 @@
       "actions": {
         "unitSetProperties": {
           "object": "ussr_tanks_01",
+          "useForTriggerFiltered": true,
+          "targetableByAi": true,
           "attack_type": "fire_at_will",
           "effShootingRate": 0.5,
-          "targetableByAi": true,
-          "speed": 5.0,
-          "useForTriggerFiltered": true
+          "speed": 5.0
         }
       },
       "else_actions": []
@@ -2183,6 +2436,8 @@
           "object_type": "isAlive",
           "object_marking": 0,
           "check_objects": "all",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "waypoint_08_area_03"
         },
@@ -2191,13 +2446,18 @@
           "object_marking": 0,
           "func": "less",
           "value": 1,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "final_germ_squad"
         }
       },
       "actions": {
         "moSetObjectiveStatus": {
           "target": "dlc_surgical_strike_main",
-          "status": 2
+          "status": 2,
+          "object_marking": 0,
+          "object_var_comp_op": "equal",
+          "object_var_name": ""
         },
         "wait": {
           "time": 3.0
@@ -2229,6 +2489,9 @@
           "check_objects": "any",
           "target_type": "isAlive",
           "check_period": 1.0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
           "object": "structures_01"
         },
         "unitWhenInArea": {
@@ -2236,6 +2499,8 @@
           "object_type": "isAlive",
           "object_marking": 0,
           "check_objects": "any",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "area_03"
         }
@@ -2243,7 +2508,10 @@
       "actions": {
         "moSetObjectiveStatus": {
           "target": "dlc_surgical_strike_main",
-          "status": 3
+          "status": 3,
+          "object_marking": 0,
+          "object_var_comp_op": "equal",
+          "object_var_name": ""
         },
         "unitSetProperties": {
           "object": "ussr_tanks_01",
@@ -2285,6 +2553,12 @@
             "value": 1
           },
           {
+            "object_var_name": ""
+          },
+          {
+            "object_var_comp_op": "equal"
+          },
+          {
             "object": "germ_artillery_01_02"
           },
           {
@@ -2323,6 +2597,8 @@
           "object_marking": 0,
           "func": "less",
           "value": 1,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "germ_artillery_02_01"
         }
       },
@@ -2357,6 +2633,8 @@
           "object_marking": 0,
           "func": "less",
           "value": 1,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "germ_pz_vi_01"
         }
       },
@@ -2391,6 +2669,8 @@
           "object_marking": 0,
           "func": "less",
           "value": 1,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "germ_artillery_03_01"
         }
       },
@@ -2425,6 +2705,8 @@
           "object_marking": 0,
           "func": "less",
           "value": 1,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "pziv_01"
         }
       },
@@ -2462,6 +2744,8 @@
           "object_marking": 0,
           "func": "less",
           "value": 1,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "germ_artillery_04_01"
         }
       },
@@ -2503,6 +2787,12 @@
           },
           {
             "value": 1
+          },
+          {
+            "object_var_name": ""
+          },
+          {
+            "object_var_comp_op": "equal"
           },
           {
             "object": "germ_tiger_01"
@@ -2550,6 +2840,8 @@
           "check_targets": "any",
           "object_marking": 0,
           "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "taks_wave_zone"
         }
@@ -2557,10 +2849,10 @@
       "actions": {
         "unitSetProperties": {
           "object": "germ_tigers_wave",
-          "attack_type": "fire_at_will",
-          "stealthRadius": 7500.0,
-          "effShootingRate": 0.6,
           "targetableByAi": true,
+          "stealthRadius": 7500.0,
+          "attack_type": "fire_at_will",
+          "effShootingRate": 0.6,
           "speed": 5.0
         },
         "triggerEnable": {
@@ -2588,6 +2880,8 @@
           "object_marking": 0,
           "func": "notLess",
           "value": 1,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "germ_tigers_wave"
         }
       },
@@ -2620,6 +2914,8 @@
           "object_type": "isAlive",
           "object_marking": 0,
           "check_objects": "any",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "ussr_tanks_01",
           "target": "taks_wave_zone"
         }
@@ -2627,11 +2923,11 @@
       "actions": {
         "unitSetProperties": {
           "object": "ussr_tanks_01",
+          "useForTriggerFiltered": true,
+          "targetableByAi": true,
           "attack_type": "fire_at_will",
           "effShootingRate": 0.6,
-          "targetableByAi": true,
-          "speed": 5.0,
-          "useForTriggerFiltered": true
+          "speed": 5.0
         }
       },
       "else_actions": []
@@ -2792,6 +3088,8 @@
           "check_targets": "any",
           "object_marking": 0,
           "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
           "object": "germ_tanks_squad",
           "target": "ussr_tanks_01"
         }
@@ -2847,7 +3145,9 @@
         ],
         "unit_class": "il-2m",
         "closed_waypoints": false,
-        "weapons": "IL2M_fab100_rs132",
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "il_2m_fab250",
         "bullets0": "",
         "bullets1": "",
         "bullets2": "",
@@ -2856,6 +3156,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 1,
           "count": 4,
@@ -2887,10 +3189,12 @@
           [-0.996195,0.0,-0.0871557],
           [0.0,1.0,0.0],
           [0.0871557,0.0,-0.996195],
-          [3726.45,38.05,7492.8]
+          [3726.45,42.9429,7492.8]
         ],
         "unit_class": "ussr_t34_85_increased_pitch",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -2900,6 +3204,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 1,
           "count": 16,
@@ -2917,40 +3223,11 @@
               [1.0,0.0,0.0],
               [0.0,1.0,0.0],
               [0.0,0.0,1.0],
-              [3695.7,38.8,7492.05]
+              [3682.53,43.0746,7497.95]
             ],
             "props": {
               "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
-              "shouldKeepFormation": false
-            }
-          },
-          "ussr_tanks_01_wp_02": {
-            "type": "normal",
-            "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [3634.35,44.05,7495.95]
-            ],
-            "props": {
-              "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
-              "shouldKeepFormation": false
-            }
-          },
-          "ussr_tanks_01_wp_05": {
-            "type": "normal",
-            "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [3565.55,37.5,7492.7]
-            ],
-            "props": {
-              "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
-              "shouldKeepFormation": false
+              "moveType": "GATHER_TO"
             }
           },
           "ussr_tanks_01_wp_03": {
@@ -2959,11 +3236,11 @@
               [1.0,0.0,0.0],
               [0.0,1.0,0.0],
               [0.0,0.0,1.0],
-              [2993.6,53.75,7429.6]
+              [3001.12,53.7502,7435.1]
             ],
             "props": {
               "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
+              "moveType": "USE_SPLINES",
               "shouldKeepFormation": false
             }
           },
@@ -2973,11 +3250,11 @@
               [1.0,0.0,0.0],
               [0.0,1.0,0.0],
               [0.0,0.0,1.0],
-              [2856.5,60.0,7528.2]
+              [2866.86,60.0,7520.54]
             ],
             "props": {
               "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
+              "moveType": "USE_SPLINES",
               "shouldKeepFormation": false
             }
           },
@@ -2987,67 +3264,11 @@
               [1.0,0.0,0.0],
               [0.0,1.0,0.0],
               [0.0,0.0,1.0],
-              [2915.1,49.5,7912.95]
+              [2986.13,50.9881,8062.01]
             ],
             "props": {
               "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
-              "shouldKeepFormation": false
-            }
-          },
-          "ussr_tanks_01_wp_09": {
-            "type": "normal",
-            "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [2710.9,56.25,7966.3]
-            ],
-            "props": {
-              "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
-              "shouldKeepFormation": false
-            }
-          },
-          "ussr_tanks_01_wp_10": {
-            "type": "normal",
-            "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [2567.45,62.95,8034.85]
-            ],
-            "props": {
-              "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
-              "shouldKeepFormation": false
-            }
-          },
-          "ussr_tanks_01_wp_11": {
-            "type": "normal",
-            "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [2453.3,69.45,8058.2]
-            ],
-            "props": {
-              "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
-              "shouldKeepFormation": false
-            }
-          },
-          "ussr_tanks_01_wp_12": {
-            "type": "normal",
-            "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [2424.45,70.45,8125.2]
-            ],
-            "props": {
-              "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
+              "moveType": "USE_SPLINES",
               "shouldKeepFormation": false
             }
           },
@@ -3061,8 +3282,21 @@
             ],
             "props": {
               "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
+              "moveType": "USE_SPLINES",
               "shouldKeepFormation": false
+            }
+          },
+          "ussr_tanks_01_wp_06": {
+            "type": "normal",
+            "tm": [
+              [1.0,0.0,0.0],
+              [0.0,1.0,0.0],
+              [0.0,0.0,1.0],
+              [2210.41,72.2101,8545.48]
+            ],
+            "props": {
+              "speed": 30.0,
+              "moveType": "USE_SPLINES"
             }
           },
           "ussr_tanks_01_wp_14": {
@@ -3071,11 +3305,11 @@
               [1.0,0.0,0.0],
               [0.0,1.0,0.0],
               [0.0,0.0,1.0],
-              [1997.3,72.1,8620.0]
+              [2013.35,74.7491,8615.3]
             ],
             "props": {
               "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
+              "moveType": "USE_SPLINES",
               "shouldKeepFormation": false
             }
           },
@@ -3099,12 +3333,11 @@
               [1.0,0.0,0.0],
               [0.0,1.0,0.0],
               [0.0,0.0,1.0],
-              [1548.45,65.35,8869.05]
+              [1472.23,72.022,8896.0]
             ],
             "props": {
               "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
-              "shouldKeepFormation": false
+              "moveType": "USE_SPLINES"
             }
           },
           "ussr_tanks_01_wp_17": {
@@ -3113,12 +3346,11 @@
               [1.0,0.0,0.0],
               [0.0,1.0,0.0],
               [0.0,0.0,1.0],
-              [1037.3,58.75,9008.9]
+              [1382.44,76.0434,8933.48]
             ],
             "props": {
               "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
-              "shouldKeepFormation": false
+              "moveType": "USE_SPLINES"
             }
           },
           "ussr_tanks_01_wp_18": {
@@ -3127,12 +3359,11 @@
               [1.0,0.0,0.0],
               [0.0,1.0,0.0],
               [0.0,0.0,1.0],
-              [656.55,62.65,8973.9]
+              [943.87,72.0498,8837.72]
             ],
             "props": {
               "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
-              "shouldKeepFormation": false
+              "moveType": "MOVETO_STRAIGHT"
             }
           },
           "ussr_tanks_01_wp_19": {
@@ -3141,12 +3372,11 @@
               [1.0,0.0,0.0],
               [0.0,1.0,0.0],
               [0.0,0.0,1.0],
-              [500.0,60.65,8799.85]
+              [500.0,72.0504,8799.85]
             ],
             "props": {
               "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
-              "shouldKeepFormation": false
+              "moveType": "MOVETO_STRAIGHT"
             }
           },
           "ussr_tanks_01_wp_20": {
@@ -3155,7 +3385,7 @@
               [1.0,0.0,0.0],
               [0.0,1.0,0.0],
               [0.0,0.0,1.0],
-              [203.55,58.0,8594.95]
+              [203.55,72.0497,8594.95]
             ],
             "props": {
               "speed": 30.0,
@@ -3173,10 +3403,12 @@
           [0.984808,0.0,-0.173648],
           [0.0,1.0,0.0],
           [0.173648,0.0,0.984808],
-          [2882.0,68.1,8012.0]
+          [2885.35,54.8109,8024.63]
         ],
         "unit_class": "germ_pzIVc",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3186,6 +3418,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 4,
@@ -3206,10 +3440,12 @@
           [-0.737277,0.0,0.67559],
           [0.0,1.0,0.0],
           [-0.67559,0.0,-0.737277],
-          [2584.4,58.95,8314.65]
+          [2580.59,58.95,8319.46]
         ],
         "unit_class": "germ_pzIVh",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3219,6 +3455,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 6,
@@ -3239,10 +3477,12 @@
           [0.0871558,0.0,0.996195],
           [0.0,1.0,0.0],
           [-0.996195,0.0,0.0871558],
-          [1173.7,59.8,8930.05]
+          [1173.7,72.0358,8930.05]
         ],
         "unit_class": "germ_hummel",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3252,6 +3492,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -3272,10 +3514,12 @@
           [-0.5,0.0,-0.866025],
           [0.0,1.0,0.0],
           [0.866025,0.0,-0.5],
-          [1313.55,59.8,8976.8]
+          [1313.55,72.0265,8976.8]
         ],
         "unit_class": "germ_hummel",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3285,6 +3529,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -3305,10 +3551,12 @@
           [6.70552e-08,0.0,1.0],
           [0.0,1.0,0.0],
           [-1.0,0.0,6.70552e-08],
-          [1041.85,59.8,8962.45]
+          [1041.85,72.0397,8962.45]
         ],
         "unit_class": "germ_hummel",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3318,6 +3566,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -3338,10 +3588,12 @@
           [-0.258819,0.0,0.965926],
           [0.0,1.0,0.0],
           [-0.965926,0.0,-0.258819],
-          [517.1,62.0,7991.9]
+          [517.1,72.0501,7991.9]
         ],
         "unit_class": "germ_pzV_g_panter",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3351,6 +3603,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -3386,10 +3640,12 @@
           [-0.258819,0.0,0.965926],
           [0.0,1.0,0.0],
           [-0.965926,0.0,-0.258819],
-          [236.2,62.0,7830.3]
+          [236.2,72.0434,7830.3]
         ],
         "unit_class": "germ_stugIV",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3399,6 +3655,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -3434,10 +3692,12 @@
           [0.130526,0.0,0.991445],
           [0.0,1.0,0.0],
           [-0.991445,0.0,0.130526],
-          [109.25,62.0,7859.15]
+          [109.25,72.0432,7859.15]
         ],
         "unit_class": "germ_tigerI",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3447,6 +3707,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -3482,10 +3744,12 @@
           [0.130526,0.0,0.991445],
           [0.0,1.0,0.0],
           [-0.991445,0.0,0.130526],
-          [-37.15,62.0,7968.15]
+          [-37.15,72.0501,7968.15]
         ],
         "unit_class": "germ_tigerI",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3495,6 +3759,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -3530,10 +3796,12 @@
           [0.130526,0.0,0.991445],
           [0.0,1.0,0.0],
           [-0.991445,0.0,0.130526],
-          [-258.1,62.0,8104.1]
+          [-258.1,72.0493,8104.1]
         ],
         "unit_class": "germ_pzIVh",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3543,6 +3811,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -3578,10 +3848,12 @@
           [-0.737277,0.0,0.67559],
           [0.0,1.0,0.0],
           [-0.67559,0.0,-0.737277],
-          [750.95,62.0,8239.7]
+          [750.95,72.0495,8239.7]
         ],
         "unit_class": "germ_pzV_g_panter",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3591,6 +3863,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -3626,10 +3900,12 @@
           [-0.0314109,0.0,-0.999506],
           [0.0,1.0,0.0],
           [0.999506,0.0,-0.0314109],
-          [2041.85,73.35,9945.65]
+          [2034.88,59.5369,9677.15]
         ],
         "unit_class": "germ_tigerI",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3639,13 +3915,15 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 8,
           "formation_type": "rows",
           "formation_div": 8,
-          "formation_step": [2.5,6.0],
-          "formation_noise": [0.1,1.0],
+          "formation_step": [2.5,4.0],
+          "formation_noise": [0.1,0.4],
           "uniqueName": "",
           "attack_type": "hold_fire",
           "stealthRadius": 50.0,
@@ -3658,12 +3936,11 @@
               [1.0,0.0,0.0],
               [0.0,1.0,0.0],
               [0.0,0.0,1.0],
-              [2025.75,58.9,9566.8]
+              [2034.94,57.999,9653.67]
             ],
             "props": {
               "speed": 0.0,
-              "moveType": "MOVETO_STRAIGHT",
-              "shouldKeepFormation": false
+              "moveType": "GATHER_TO"
             }
           },
           "tracked_vehicles_01_wp_02": {
@@ -3672,12 +3949,25 @@
               [1.0,0.0,0.0],
               [0.0,1.0,0.0],
               [0.0,0.0,1.0],
-              [1971.5,74.85,9099.2]
+              [2283.65,70.0359,8817.19]
             ],
             "props": {
               "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
+              "moveType": "USE_SPLINES",
               "shouldKeepFormation": false
+            }
+          },
+          "germ_tigers_wave_wp_01": {
+            "type": "normal",
+            "tm": [
+              [1.0,0.0,0.0],
+              [0.0,1.0,0.0],
+              [0.0,0.0,1.0],
+              [1995.27,78.2936,8719.79]
+            ],
+            "props": {
+              "speed": 30.0,
+              "moveType": "USE_SPLINES"
             }
           },
           "tracked_vehicles_01_wp_03": {
@@ -3686,12 +3976,38 @@
               [1.0,0.0,0.0],
               [0.0,1.0,0.0],
               [0.0,0.0,1.0],
-              [1861.55,83.35,8684.2]
+              [1927.5,83.35,8808.3]
             ],
             "props": {
               "speed": 30.0,
-              "moveType": "MOVETO_STRAIGHT",
+              "moveType": "USE_SPLINES",
               "shouldKeepFormation": false
+            }
+          },
+          "germ_tigers_wave_wp_02": {
+            "type": "normal",
+            "tm": [
+              [1.0,0.0,0.0],
+              [0.0,1.0,0.0],
+              [0.0,0.0,1.0],
+              [1872.58,72.0049,8707.37]
+            ],
+            "props": {
+              "speed": 30.0,
+              "moveType": "MOVETO_STRAIGHT"
+            }
+          },
+          "germ_tigers_wave_wp_03": {
+            "type": "normal",
+            "tm": [
+              [1.0,0.0,0.0],
+              [0.0,1.0,0.0],
+              [0.0,0.0,1.0],
+              [1818.41,72.0093,8630.69]
+            ],
+            "props": {
+              "speed": 30.0,
+              "moveType": "MOVETO_STRAIGHT"
             }
           }
         }
@@ -3708,6 +4024,8 @@
         ],
         "unit_class": "germ_88mm_pak43_noground",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3717,6 +4035,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 2,
@@ -3741,6 +4061,8 @@
         ],
         "unit_class": "germ_88mm_pak43_noground",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3750,6 +4072,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 2,
@@ -3774,6 +4098,8 @@
         ],
         "unit_class": "germ_88mm_pak43_noground",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3783,6 +4109,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 4,
@@ -3807,6 +4135,8 @@
         ],
         "unit_class": "berlin_bridge_01",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3816,6 +4146,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 1,
           "count": 1,
@@ -3841,6 +4173,8 @@
         ],
         "unit_class": "germ_88mm_pak43_noground",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3850,6 +4184,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 6,
@@ -3874,6 +4210,8 @@
         ],
         "unit_class": "germ_88mm_pak43_noground",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3883,6 +4221,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 4,
@@ -3934,7 +4274,7 @@
           [1.0,0.0,0.0],
           [0.0,1.0,0.0],
           [0.0,0.0,1.0],
-          [432.35,23.65,10163.8]
+          [432.35,58.1716,10163.8]
         ],
         "props": [
           {
@@ -3987,6 +4327,8 @@
         ],
         "unit_class": "germ_37mm_flak43",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -3996,6 +4338,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4023,6 +4367,8 @@
         ],
         "unit_class": "germ_37mm_flak43",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -4032,6 +4378,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4059,6 +4407,8 @@
         ],
         "unit_class": "germ_37mm_flak43",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -4068,6 +4418,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4095,6 +4447,8 @@
         ],
         "unit_class": "germ_37mm_flak43",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -4104,6 +4458,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4131,6 +4487,8 @@
         ],
         "unit_class": "germ_37mm_flak43",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -4140,6 +4498,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4167,6 +4527,8 @@
         ],
         "unit_class": "germ_37mm_flak43",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -4176,6 +4538,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4203,6 +4567,8 @@
         ],
         "unit_class": "germ_37mm_flak43",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -4212,6 +4578,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4239,6 +4607,8 @@
         ],
         "unit_class": "germ_37mm_flak43",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -4248,6 +4618,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4275,6 +4647,8 @@
         ],
         "unit_class": "germ_37mm_flak43",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -4284,6 +4658,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4311,6 +4687,8 @@
         ],
         "unit_class": "germ_37mm_flak43",
         "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -4320,6 +4698,8 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -4404,7 +4784,7 @@
         [60.0,0.0,0.0],
         [0.0,60.0,0.0],
         [0.0,0.0,60.0],
-        [2869.15,59.4,7626.7]
+        [2869.15,59.5821,7626.7]
       ],
       "props": []
     },

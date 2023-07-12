@@ -1,7 +1,4 @@
 //checked for plus_string
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { Watched } = require("frp")
 let { isDataBlock } = require("%sqStdLibs/helpers/u.nut")
@@ -109,6 +106,7 @@ let defaults = Watched({  //def value when feature not found in game_settings.bl
   WorldWarCountryLeaderboard = false
 
   SpecialShip = false
+  Human = false
 
   GraphicsOptions = true
   Spectator = false

@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let platformModule = require("%scripts/clientState/platform.nut")
 let { checkAndShowMultiplayerPrivilegeWarning,
@@ -12,6 +9,7 @@ let { requestUsersInfo } = require("%scripts/user/usersInfoManager.nut")
 let { needProceedSquadInvitesAccept,
   isPlayerFromXboxSquadList } = require("%scripts/social/xboxSquadManager/xboxSquadManager.nut")
 let { isShowGoldBalanceWarning } = require("%scripts/user/balanceFeatures.nut")
+let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 ::g_invites_classes.Squad <- class extends ::BaseInvite {
   //custom class params, not exist in base invite
@@ -54,7 +52,7 @@ let { isShowGoldBalanceWarning } = require("%scripts/user/balanceFeatures.nut")
     this.isAccepted = false
 
     if (initial)
-      ::add_event_listener("SquadStatusChanged",
+      add_event_listener("SquadStatusChanged",
         function (_p) {
           if (::g_squad_manager.isInSquad()
               && ::g_squad_manager.getLeaderUid() == this.squadId.tostring())

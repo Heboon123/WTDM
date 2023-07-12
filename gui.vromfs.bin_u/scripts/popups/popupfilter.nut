@@ -1,9 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { getStringWidthPx } = require("%scripts/viewUtils/daguiFonts.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -114,8 +111,8 @@ local popupFilter = class extends ::gui_handlers.BaseGuiHandlerWT {
     if (!this.onChangeFn)
       return
 
-    foreach (inst in this.stateList.filter(@(inst) inst.typeName == obj.typeName))
-      this.stateList[inst.id].value = false
+    foreach (state in this.stateList.filter(@(inst) inst.typeName == obj.typeName))
+      this.stateList[state.id].value = false
 
     this.updateMainBtn()
     this.updateColumn(obj.typeName)

@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
+let { subscribe_handler } = require("%sqStdLibs/helpers/subscriptions.nut")
 let DataBlock = require("DataBlock")
 let u = require("%sqStdLibs/helpers/u.nut")
 let time = require("%scripts/time.nut")
@@ -33,7 +31,7 @@ local SeenList = class {
 
     this.entitiesData = {}
     this.subListGetters = {}
-    ::subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
+    subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
   }
 
   /*************************************************************************************************/

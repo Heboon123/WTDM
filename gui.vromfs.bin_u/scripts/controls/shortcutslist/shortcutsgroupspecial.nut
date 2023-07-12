@@ -1,9 +1,7 @@
 //checked for plus_string
-#no-root-fallback
-#explicit-this
 from "%scripts/dagui_library.nut" import *
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
-//let { getPlayerCurUnit } = require("%scripts/slotbar/playerCurUnit.nut")
+let { getPlayerCurUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 
 return [
   {
@@ -11,7 +9,7 @@ return [
     type = CONTROL_TYPE.HEADER
     unitTypes = [ unitTypes.TANK ]
     unitTag = "type_exoskeleton"
-    //showFunc = @() (getPlayerCurUnit()?.isHuman() ?? false)
+    showFunc = @() hasFeature("Human") || (getPlayerCurUnit()?.isHuman() ?? false)
     needShowInHelp = true
   }
 //-------------------------------------------------------
@@ -152,6 +150,11 @@ return [
   }
   {
     id = "ID_SUPPORT_PLANE_ORBITING_HUMAN"
+    checkAssign = false
+  }
+  {
+    id = "ID_REPAIR_HUMAN"
+    needShowInHelp = true
     checkAssign = false
   }
 ]

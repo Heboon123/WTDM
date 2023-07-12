@@ -1,8 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
 /* Data in config (gui.blk/loading_bg)
 
@@ -91,7 +89,7 @@ let function applyBlkToBgData(bgData, blk) {
       list[key] = defValue
 
   let reserveBg = blk?[RESERVE_BG_KEY]
-  if (::u.isString(reserveBg))
+  if (u.isString(reserveBg))
     bgData.reserveBg = reserveBg
 
   for (local i = 0; i < blk.paramCount(); i++) {
@@ -109,26 +107,26 @@ let function applyBlkToAllBgData(blk) {
   applyBlkToBgData(bgDataAfterLogin, blk)
   applyBlkToBgData(bgDataBeforeLogin, blk)
   let beforeLoginBlk = blk?[BLOCK_BEFORE_LOGIN_KEY]
-  if (::u.isDataBlock(beforeLoginBlk))
+  if (u.isDataBlock(beforeLoginBlk))
     applyBlkToBgData(bgDataBeforeLogin, beforeLoginBlk)
 }
 
 let function applyBlkByLang(langBlk, curLang) {
   let langsInclude = langBlk?.langsInclude
   let langsExclude = langBlk?.langsExclude
-  if (::u.isDataBlock(langsInclude)
+  if (u.isDataBlock(langsInclude)
       && !isInArray(curLang, langsInclude % "lang"))
     return
-  if (::u.isDataBlock(langsExclude)
+  if (u.isDataBlock(langsExclude)
       && isInArray(curLang, langsExclude % "lang"))
     return
 
   let platformInclude = langBlk?.platformInclude
   let platformExclude = langBlk?.platformExclude
-  if (::u.isDataBlock(platformInclude)
+  if (u.isDataBlock(platformInclude)
       && !isInArray(platformId, platformInclude % "platform"))
     return
-  if (::u.isDataBlock(platformExclude)
+  if (u.isDataBlock(platformExclude)
       && isInArray(platformId, platformExclude % "platform"))
     return
 
@@ -140,7 +138,7 @@ let function applyBlkByLang(langBlk, curLang) {
 
 let function validateBgData(bgData) {
   let list = bgData.list
-  let keys = ::u.keys(list)
+  let keys = u.keys(list)
   foreach (key in keys) {
     let validValue = ::to_float_safe(list[key], 0)
     if (validValue > 0.0001)
@@ -167,11 +165,11 @@ let function initOnce() {
 
   let curLang = ::g_language.getLanguageName()
   foreach (langBlk in bgBlk % "language")
-    if (::u.isDataBlock(langBlk))
+    if (u.isDataBlock(langBlk))
       applyBlkByLang(langBlk, curLang)
 
   let presetBlk = bgBlk?[::get_country_flags_preset()]
-  if (::u.isDataBlock(presetBlk))
+  if (u.isDataBlock(presetBlk))
     applyBlkToAllBgData(presetBlk)
 
   validateBgData(bgDataAfterLogin)

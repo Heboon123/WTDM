@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { parse_json } = require("json")
 
@@ -102,12 +100,12 @@ let function registerLocTags(locTagsTable) { //tag = locId
 
 let systemMsg = { //functons here need to be able recursive call self
   function validateLangConfig(langConfig, valueValidateFunction) {
-    return ::u.map(
+    return u.map(
       langConfig,
       function(value) {
-        if (::u.isString(value))
+        if (u.isString(value))
           return valueValidateFunction(value)
-        else if (::u.isTable(value) || ::u.isArray(value))
+        else if (u.isTable(value) || u.isArray(value))
           return this.validateLangConfig(value, valueValidateFunction)
         return value
       }.bindenv(this)
@@ -123,14 +121,14 @@ let systemMsg = { //functons here need to be able recursive call self
   }
 
   function convertAny(langConfig, paramValidateFunction = null, separator = "", defaultLocValue = null) {
-    if (::u.isTable(langConfig))
+    if (u.isTable(langConfig))
       return this.convertTable(langConfig, paramValidateFunction)
-    if (::u.isArray(langConfig)) {
-      let resArray = ::u.map(langConfig,
+    if (u.isArray(langConfig)) {
+      let resArray = u.map(langConfig,
         (@(cfg) this.convertAny(cfg, paramValidateFunction) || "").bindenv(this))
-      return ::g_string.implode(resArray, separator)
+      return separator.join(resArray, true)
     }
-    if (::u.isString(langConfig))
+    if (u.isString(langConfig))
       return loc(getLocId(langConfig), defaultLocValue)
     return null
   }
@@ -138,7 +136,7 @@ let systemMsg = { //functons here need to be able recursive call self
   function convertTable(configTbl, paramValidateFunction = null) {
     local res = ""
     let locId = configTbl?[LOC_ID]
-    if (!::u.isString(locId)) { //res by value
+    if (!u.isString(locId)) { //res by value
       let value = configTbl?[VALUE_ID]
       if (value == null)
         return res
@@ -151,13 +149,13 @@ let systemMsg = { //functons here need to be able recursive call self
       let params = {}
       foreach (key, param in configTbl) {
         let text = this.convertAny(param, paramValidateFunction, "", "")
-        if (!::u.isEmpty(text)) {
+        if (!u.isEmpty(text)) {
           params[key] <- text
           continue
         }
 
         local paramOut
-        if (paramValidateFunction && ::u.isString(param))
+        if (paramValidateFunction && u.isString(param))
           paramOut = paramValidateFunction(param)
         else
           paramOut = param

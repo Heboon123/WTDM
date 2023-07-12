@@ -1341,6 +1341,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -2467,25 +2468,279 @@
     }
   },
   {
-    "PhysSys": {
-      "find": "^bone_suspension_(._\\d\\d)$",
-      "points": {
-        "suspension": {
-          "name": "bone_suspension_$1"
-        },
-        "wheel": {
-          "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+    "PhysSys": [
+      {
+        "group": {
+          "find": "bone_suspension_(\\w)_(\\d+)$",
+          "points": {
+            "lever": {
+              "limitMin": [0.0,0.0,0.0],
+              "limitMax": [0.0,0.0,0.0],
+              "name": "bone_suspension_$1_01"
+            },
+            "suspension_01_01": {
+              "name": "bone_suspension_$1_$2_01",
+              "limitMin": [-0.5,-0.5,0.0],
+              "limitMax": [0.5,0.5,0.0]
+            },
+            "wheel": {
+              "searchChildren": {
+                "parent": "lever",
+                "find": "bone_wheel_",
+                "occurence": 1,
+                "limitMin": [-1.0,-1.0,0.0],
+                "limitMax": [1.0,1.0,0.0]
+              }
+            },
+            "suspension_01_02": {
+              "name": "bone_suspension_$1_$2_02",
+              "limitMin": [-0.5,-0.5,0.0],
+              "limitMax": [0.5,0.5,0.0]
+            }
+          },
+          "constraints": [
+            {
+              "edge": {
+                "from": "lever",
+                "to": "wheel"
+              }
+            },
+            {
+              "edge": {
+                "rotateSecond": true,
+                "moveSecond": false,
+                "to": "suspension_01_01",
+                "from": "lever"
+              }
+            },
+            {
+              "projection": {
+                "to": "wheel",
+                "from": "lever",
+                "point": "suspension_01_01"
+              }
+            },
+            {
+              "projection": {
+                "movePoint": false,
+                "moveEdge": true,
+                "moveEdgeNodes": false,
+                "point": "suspension_01_02",
+                "from": "lever",
+                "to": "suspension_01_01"
+              }
+            },
+            {
+              "projection": {
+                "point": "suspension_01_01",
+                "to": "suspension_01_02",
+                "from": "lever",
+                "movePoint": false
+              }
+            }
+          ]
         }
       },
-      "constraints": {
-        "edge": {
-          "from": "suspension",
-          "to": "wheel"
+      {
+        "group": {
+          "find": "bone_suspension_tb_(\\w)_(\\d+)$",
+          "points": {
+            "suspension": {
+              "limitMin": [0.0,0.0,0.0],
+              "limitMax": [0.0,0.0,0.0],
+              "name": "bone_suspension_tb_$1_$2"
+            },
+            "wheel": {
+              "searchChildren": {
+                "occurence": 1,
+                "limitMin": [-1.0,-1.0,0.0],
+                "limitMax": [1.0,1.0,0.0],
+                "parent": "suspension",
+                "find": "bone_wheel_"
+              }
+            }
+          },
+          "constraints": {
+            "edge": {
+              "from": "suspension",
+              "to": "wheel"
+            }
+          }
         }
       }
-    }
+    ]
+  },
+  {
+    "chainIK": [
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_01_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_01_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_02_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_02_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_03_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_03_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_04_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_04_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_05_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_05_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_06_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_06_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_07_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_07_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_08_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_08_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_09_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_09_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_10_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_10_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_11_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_11_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_12_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_12_02"
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "ammo": {
@@ -3741,6 +3996,15 @@
           "fx": {
             "name": "smoke_after_hit_tiny",
             "setOrientation": true
+          }
+        }
+      },
+      {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
           }
         }
       },

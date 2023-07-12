@@ -1,9 +1,8 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { Cost } = require("%scripts/money.nut")
+
 
 let { format } = require("string")
 let time = require("%scripts/time.nut")
@@ -177,7 +176,7 @@ let { placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nu
                           canUpgrade
 
     if (upgradeMembersButtonVisible) {
-      let cost = ::clan_get_admin_editor_mode() ? ::Cost() : this.clanData.clanType.getMembersUpgradeCost(this.clanData.mlimit)
+      let cost = ::clan_get_admin_editor_mode() ? Cost() : this.clanData.clanType.getMembersUpgradeCost(this.clanData.mlimit)
       let upgStep = this.clanData.clanType.getMembersUpgradeStep()
       placePriceTextToButton(this.scene, "btn_upg_members", loc("clan/members_upgrade_button", { step = upgStep }), cost)
     }
@@ -188,7 +187,7 @@ let { placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nu
 
   // Override
   function onUpgradeMembers() {
-    let cost = ::clan_get_admin_editor_mode() ? ::Cost() : this.clanData.clanType.getMembersUpgradeCost(this.clanData.mlimit)
+    let cost = ::clan_get_admin_editor_mode() ? Cost() : this.clanData.clanType.getMembersUpgradeCost(this.clanData.mlimit)
     if (::check_balance_msgBox(cost)) {
       let step = this.clanData.clanType.getMembersUpgradeStep()
       let msgText = ::warningIfGold(loc("clan/needMoneyQuestion_upgradeMembers",

@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 // warning disable: -file:forbidden-function
 
@@ -15,7 +13,11 @@ let { format, strip } = require("string")
 let regexp2 = require("regexp2")
 let { register_command } = require("console")
 let { debug_get_skyquake_path } = require("%scripts/debugTools/dbgUtils.nut")
+let { get_skins_for_unit } = require("unitCustomization")
 let { getBestSkinsList } = require("%scripts/customization/skins.nut")
+let { utf8ToLower, startsWith, lastIndexOf, replace } = require("%sqstd/string.nut")
+let { get_decals_blk } = require("blkGetters")
+let DataBlock = require("DataBlock")
 
 local skyquakePath = debug_get_skyquake_path()
 
@@ -61,7 +63,7 @@ let function debug_check_unlocalized_resources() {
   foreach (unit in ::all_units)
     if (unit.isInShop) {
       if (unit.skins.len() == 0)
-        unit.skins = ::get_skins_for_unit(unit.name) //always returns at least one entry
+        unit.skins = get_skins_for_unit(unit.name) //always returns at least one entry
 
       foreach (skin in unit.skins)
         if (skin.name.len()) {
@@ -77,7 +79,8 @@ let function debug_check_unlocalized_resources() {
   // Decals
   log("DECALS")
   count = 0
-  local blk = ::get_decals_blk()
+  local blk = DataBlock()
+  get_decals_blk(blk)
   local total = blk.blockCount()
   for (local i = 0; i < total; i++) {
     local dblk = blk.getBlock(i)
@@ -233,12 +236,12 @@ let function debug_check_unit_naming() {
     foreach (idx, unitId in unitIds)
       foreach (suffix in suffixes) {
         local origName = names[c][suffix][idx]
-        local nameLow = ::g_string.utf8ToLower(origName)
+        local nameLow = utf8ToLower(origName)
         local fixed = cfg.suspiciousChars.replace("_", nameLow)
 
         if (fixed == nameLow)
           continue
-        if (cfg?.allowWithPrefix && ::g_string.startsWith(nameLow, cfg.allowWithPrefix))
+        if (cfg?.allowWithPrefix && startsWith(nameLow, cfg.allowWithPrefix))
           continue
         if (cfg?.unsuspiciousChars && cfg.unsuspiciousChars.match(nameLow))
           continue
@@ -272,7 +275,7 @@ local unitImagesCheckCfgs = [
     getImgFnByUnitId = @(unitId) $"{unitId}_ico.svg"
     getImgFnForUnit = function(unit) {
       local img = ::getUnitClassIco(unit)
-      return img.slice(::g_string.lastIndexOf(img, "#") + 1)
+      return img.slice(lastIndexOf(img, "#") + 1)
     }
   },
   {
@@ -286,7 +289,7 @@ local unitImagesCheckCfgs = [
     getImgFnByUnitId = @(unitId) $"{unitId}.tga"
     getImgFnForUnit = function(unit) {
       local img = ::image_for_air(unit)
-      return "".concat(img.slice(::g_string.lastIndexOf(img, "#") + 1), ".tga")
+      return "".concat(img.slice(lastIndexOf(img, "#") + 1), ".tga")
     }
   },
   {
@@ -300,15 +303,12 @@ local unitImagesCheckCfgs = [
     getImgFnByUnitId = @(unitId) $"{unitId}.tga"
     getImgFnForUnit = function(unit) {
       local img = ::image_for_air(unit)
-      return "".concat(img.slice(::g_string.lastIndexOf(img, "#") + 1), ".tga")
+      return "".concat(img.slice(lastIndexOf(img, "#") + 1), ".tga")
     }
     filterUnits = @(unit) ::is_tencent_unit_image_reqired(unit)
     onStart  = function() {
-      ::_is_vendor_tencent <- ::is_vendor_tencent
-      ::is_vendor_tencent = @() true
     }
     onFinish = function() {
-      ::is_vendor_tencent  = ::_is_vendor_tencent
     }
   },
   {
@@ -322,7 +322,7 @@ local unitImagesCheckCfgs = [
     getImgFnByUnitId = @(unitId) $"{unitId}.dds"
     getImgFnForUnit = function(unit) {
       local img = unitInfoTexts.getUnitTooltipImage(unit)
-      return "".concat(img.slice(::g_string.lastIndexOf(img, "/") + 1), ".dds")
+      return "".concat(img.slice(lastIndexOf(img, "/") + 1), ".dds")
     }
   },
 ]
@@ -332,7 +332,7 @@ local function unitImagesSearchEverywhere(fn, files, unit, cfg) {
   foreach (pathKey in [ "pathRel", "pathDev" ])
     foreach (unitTag, subDir in cfg.subDirs)
       if (files[unitTag][pathKey].indexof(fn) != null) {
-        local path = ::g_string.replace("/".concat(cfg[pathKey], subDir, fn), "/", "\\")
+        local path = replace("/".concat(cfg[pathKey], subDir, fn), "/", "\\")
         if (res.findvalue(@(v) v.path == path) == null)
           res.append({
             path = path
@@ -343,7 +343,7 @@ local function unitImagesSearchEverywhere(fn, files, unit, cfg) {
 }
 
 let function debug_check_unit_images(verbose = false) {
-  local unitsList = ::all_units.values().filter(@(u) u.isInShop)
+  local unitsList = ::all_units.values().filter(@(unit) unit.isInShop)
   local errors    = 0
   local warnings  = 0
   local info      = 0
@@ -394,7 +394,7 @@ let function debug_check_unit_images(verbose = false) {
 
       if (files[unitTag][pathKey].indexof(fn) == null) {
         // Image not exists, or has wrong location.
-        local imgUnit = ::getAircraftByName(cfg.getUnitIdByImgFn(fn))
+        local imgUnit = getAircraftByName(cfg.getUnitIdByImgFn(fn))
         if (imgUnit != null && imgUnit != unit && unit.isPkgDev && !imgUnit.isPkgDev) {
           local unitTag2 = imgUnit.unitType.getCrewTag()
           local pathKey2 = imgUnit.isPkgDev ? "pathDev" : "pathRel"
@@ -414,7 +414,7 @@ let function debug_check_unit_images(verbose = false) {
           : "should be here"
         local comment = located != null ? $" (wrong location: \"{located.path}\")" : ""
         local expectedPath = "/".concat(cfg[pathKey], cfg.subDirs[unitTag], fn)
-        expectedPath = ::g_string.replace(expectedPath, "/", "\\")
+        expectedPath = replace(expectedPath, "/", "\\")
         printFunc($"{accidentType}: {cfg.imgType} for {unitSrc} unit \"{unit.name}\" {accidentText}: \"{expectedPath}\"{comment}")
       }
       else {
@@ -422,7 +422,7 @@ let function debug_check_unit_images(verbose = false) {
         local locatedList = unitImagesSearchEverywhere(fn, files, unit, cfg)
         if (locatedList.len() > 1) {
           local expectedPath = "/".concat(cfg[pathKey], cfg.subDirs[unitTag], fn)
-          expectedPath = ::g_string.replace(expectedPath, "/", "\\")
+          expectedPath = replace(expectedPath, "/", "\\")
           foreach (located in locatedList)
             if (located.path != expectedPath) {
               warnings++
@@ -449,8 +449,8 @@ let function debug_cur_level_auto_skins() {
   foreach (unit in ::all_units)
     if (unit.unitType.isSkinAutoSelectAvailable()) {
       total++
-      fullDebugtext += "\n" + unit.name + " -> "
-        + ::g_string.implode(getBestSkinsList(unit.name, true), ", ")
+      fullDebugtext = "".concat(fullDebugtext, "\n", unit.name, " -> ",
+        ", ".join(getBestSkinsList(unit.name, true), true))
     }
 
   log(fullDebugtext)
@@ -466,7 +466,7 @@ let function debug_all_skins_without_location_mask() {
           continue
         local mask = skinLocations.getSkinLocationsMask(skin.name, unit.name)
         if (!mask)
-          ::u.appendOnce(skin.name, totalList)
+          u.appendOnce(skin.name, totalList)
       }
   dlog($"Total skins without location mask = {totalList.len()}\n{", ".join(totalList, true)}")
 }

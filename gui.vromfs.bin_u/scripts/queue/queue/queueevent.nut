@@ -1,12 +1,12 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let mapPreferencesParams = require("%scripts/missions/mapPreferencesParams.nut")
 let { needActualizeQueueData, queueProfileJwt, actualizeQueueData } = require("%scripts/queue/queueBattleData.nut")
+let { enqueueInSession } = require("%scripts/matching/serviceNotifications/match.nut")
+let { matchingApiFunc } = require("%scripts/matching/api.nut")
 
 ::queue_classes.Event <- class extends ::queue_classes.Base {
   shouldQueueCustomMode = false
@@ -56,7 +56,7 @@ let { needActualizeQueueData, queueProfileJwt, actualizeQueueData } = require("%
 
   function removeQueueByUid(queueUid) {
     let cluster = this.queueUidsList[queueUid].cluster
-    if (::u.filter(this.queueUidsList, @(q) q.cluster == cluster).len() <= 1) {
+    if (u.filter(this.queueUidsList, @(q) q.cluster == cluster).len() <= 1) {
       let idx = this.params.clusters.indexof(cluster)
       if (idx != null)
         this.params.clusters.remove(idx)
@@ -107,7 +107,7 @@ let { needActualizeQueueData, queueProfileJwt, actualizeQueueData } = require("%
   }
 
   function _joinQueueImpl(queryParams, successCallback, errorCallback, needShowError = true) {
-    ::enqueue_in_session(
+    enqueueInSession(
       queryParams,
       function(response) {
         if (::checkMatchingError(response, needShowError)) {
@@ -138,7 +138,7 @@ let { needActualizeQueueData, queueProfileJwt, actualizeQueueData } = require("%
   }
 
   static function _leaveQueueImpl(queryParams, successCallback, errorCallback, needShowError = false) {
-    ::matching_api_func(
+    matchingApiFunc(
       "match.leave_queue"
       function(response) {
         if (::checkMatchingError(response, needShowError))
@@ -227,7 +227,7 @@ let { needActualizeQueueData, queueProfileJwt, actualizeQueueData } = require("%
     let customMgm = this.getCustomMgm(this.name)
     if (!customMgm)
       return false
-    return !!::u.search(this.queueUidsList, @(q) q.gameModeId == customMgm.gameModeId)
+    return !!u.search(this.queueUidsList, @(q) q.gameModeId == customMgm.gameModeId)
   }
 
   function isCustomModeSwitchedOn() {

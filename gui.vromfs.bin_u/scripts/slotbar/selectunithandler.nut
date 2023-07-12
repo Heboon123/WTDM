@@ -1,13 +1,13 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let u = require("%sqStdLibs/helpers/u.nut")
+let { toPixels } = require("%sqDagui/daguiUtil.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { CrewTakeUnitProcess } = require("%scripts/crew/crewTakeUnitProcess.nut")
 let { canAssignInSlot, setUnit } = require("%scripts/slotbar/slotbarPresetsByVehiclesGroups.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-
+let { startsWith } = require("%sqstd/string.nut")
 let { hasDefaultUnitsInCountry } = require("%scripts/shop/shopUnitsInfo.nut")
 
 global enum SEL_UNIT_BUTTON {
@@ -40,7 +40,7 @@ const MIN_NON_EMPTY_SLOTS_IN_COUNTRY = 1
 let function getParamsFromSlotbarConfig(crew, slotbar) {
   if (!::SessionLobby.canChangeCrewUnits())
     return null
-  if (!::CrewTakeUnitProcess.safeInterrupt())
+  if (!CrewTakeUnitProcess.safeInterrupt())
     return null
 
   let slotbarObj = slotbar.scene
@@ -58,8 +58,8 @@ let function getParamsFromSlotbarConfig(crew, slotbar) {
     let busyUnits = ::get_crews_list_by_country(country)
       .map(@(cc) cc?.aircraft ?? "").filter(@(id) id != "" && id != crewUnitId)
     busyUnitsCount = busyUnits.len()
-    unitsArray = ::all_units.filter(@(u) busyUnits.indexof(u.name) == null
-      && u.canAssignToCrew(country)).values()
+    unitsArray = ::all_units.filter(@(unit) busyUnits.indexof(unit.name) == null
+      && unit.canAssignToCrew(country)).values()
   }
   else {
     let unitsGroups = slotbar.unitsGroupsByCountry?[country]
@@ -194,7 +194,7 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
       haveLegend = this.legendData.len() > 0,
       legendData = this.legendData
     }
-    let markup = ::handyman.renderCached("%gui/slotbar/legend_block.tpl", legendView)
+    let markup = handyman.renderCached("%gui/slotbar/legend_block.tpl", legendView)
     this.guiScene.replaceContentFromText(legendNest, markup, markup.len(), this)
   }
 
@@ -269,7 +269,7 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     let markupArr = []
     foreach (_idx, unit in this.unitsList) {
       local rowData = ""
-      if (!::u.isInteger(unit))
+      if (!u.isInteger(unit))
         rowData = "unitCell {}"
       else if (unit == SEL_UNIT_BUTTON.SHOP)
         rowData = this.getTextSlotMarkup("shop_item", "#mainmenu/btnShop")
@@ -308,7 +308,7 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
       return
     }
 
-    if (this.isSelectByGroups && ::u.isUnit(unit) && !canAssignInSlot(unit, this.config.unitsGroupsByCountry, this.country))
+    if (this.isSelectByGroups && u.isUnit(unit) && !canAssignInSlot(unit, this.config.unitsGroupsByCountry, this.country))
       return
 
     if (!this.hasChangeVehicle(unit))
@@ -344,7 +344,7 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
         onFinishCb = onFinishCb
       })
     else
-      ::CrewTakeUnitProcess(this.crew, unit, onFinishCb)
+      CrewTakeUnitProcess(this.crew, unit, onFinishCb)
   }
 
   function onTakeProcessFinish(_isSuccess) {
@@ -357,7 +357,7 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
 
     foreach (slot in this.unitsList) {
       let unit = this.getSlotUnit(slot)
-      if (!::u.isUnit(unit))
+      if (!u.isUnit(unit))
         continue
 
       let masks = []
@@ -415,7 +415,7 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
         if (optionVisible)
           countVisibleOptions++
         local name = text
-        if (::g_string.startsWith(name, "#"))
+        if (startsWith(name, "#"))
           name = name.slice(1)
         name = loc(name, locParams)
         row.nums.append({
@@ -429,7 +429,7 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
         this.isEmptyOptionsList = false
     }
 
-    let markup = ::handyman.renderCached(("%gui/slotbar/choose_units_filter.tpl"), view)
+    let markup = handyman.renderCached(("%gui/slotbar/choose_units_filter.tpl"), view)
     this.guiScene.replaceContentFromText(objOptionsNest, markup, markup.len(), this)
 
     objOptionsNest.show(!this.isEmptyOptionsList)
@@ -442,7 +442,7 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     this.guiScene.setUpdatesEnabled(true, true)
 
     let sizeChoosePopupMenu = objChoosePopupMenu.getSize()
-    let scrWidth = ::g_dagui_utils.toPixels(this.guiScene, "@bw + @rw")
+    let scrWidth = toPixels(this.guiScene, "@bw + @rw")
     objChoosePopupMenu.side = ((objChoosePopupMenu.getPosRC()[0] + sizeChoosePopupMenu[0]) > scrWidth) ? "left" : "right"
   }
 
@@ -578,7 +578,7 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
         continue
       let slot = this.unitsList?[i]
       let unit = this.getSlotUnit(slot)
-      if (!::u.isUnit(unit))
+      if (!u.isUnit(unit))
         continue
 
       let masksUnit = this.optionsMaskByUnits?[unit.name]
@@ -664,7 +664,7 @@ local class SelectUnitHandler extends ::gui_handlers.BaseGuiHandlerWT {
     let textArray = [loc("mainmenu/onlyShownUnitsByGroup", {
       groupName = loc(this.getSelectedGroup()?.name ?? "")
     })]
-    if (::u.isUnit(unit) && !canAssignInSlot(unit, this.config.unitsGroupsByCountry, this.country))
+    if (u.isUnit(unit) && !canAssignInSlot(unit, this.config.unitsGroupsByCountry, this.country))
       textArray.append(colorize("red", loc("worldwar/help/slotbar/unit_unavailable")))
 
     unitsGroupTextObj.setValue("\n".join(textArray, true))
@@ -688,7 +688,7 @@ return {
 
       let params = getParamsFromSlotbarConfig(crew, slotbar)
       if (params == null)
-        return ::broadcastEvent("ModalWndDestroy")
+        return broadcastEvent("ModalWndDestroy")
 
       ::handlersManager.destroyPrevHandlerAndLoadNew(SelectUnitHandler, params)
     })

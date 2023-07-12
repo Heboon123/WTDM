@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let DataBlock = require("DataBlock")
 let { checkTutorialsList, reqTutorial, tutorialRewardData, clearTutorialRewardData
@@ -150,9 +148,6 @@ let function tryOpenTutorialRewardHandler() {
   let progress = ::get_mission_progress(tutorialRewardData.value.fullMissionName)
   set_game_mode(mainGameMode)
 
-  if (tutorialRewardData.value.presetFilename != "")
-    ::apply_joy_preset_xchange(tutorialRewardData.value.presetFilename)
-
   let decorator = getDecoratorByResource(
     tutorialRewardData.value.resource,
     tutorialRewardData.value.resourceType)
@@ -193,7 +188,7 @@ let function tryOpenTutorialRewardHandler() {
       })
     }
 
-    if (::u.search(reqTutorial, @(val) val == misName) != null) {
+    if (u.search(reqTutorial, @(val) val == misName) != null) {
       newCountries = ::checkUnlockedCountries()
       foreach (c in newCountries)
         checkRankUpWindow(c, -1, ::get_player_rank_by_country(c))

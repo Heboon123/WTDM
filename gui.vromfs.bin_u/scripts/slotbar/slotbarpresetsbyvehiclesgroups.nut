@@ -1,14 +1,14 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { isEqual } = require("%sqStdLibs/helpers/u.nut")
 
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
+let { broadcastEvent } = subscriptions
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { getCrew } = require("%scripts/crew/crew.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let DataBlock = require("DataBlock")
+let { split } = require("%sqstd/string.nut")
 
 local curPreset = {
   groupsList = {} //groups config by country
@@ -48,7 +48,7 @@ let function savePresets(presetId, countryPresets) {
     blk[countryId] <- ",".join(preset.units.map(@(unit) unit?.name ?? ""))
 
   let cfgBlk = ::load_local_account_settings(getPresetSaveIdByEventId(presetId))
-  if (::u.isEqual(blk, cfgBlk))
+  if (isEqual(blk, cfgBlk))
     return
 
   ::save_local_account_settings(getPresetSaveIdByEventId(presetId), blk)
@@ -133,14 +133,14 @@ let function getPresetsList(presetId, groupsList) {
     for (local c = 0; c < countryCount; c++) {
       let strPreset = savedPresetsBlk.getParamValue(c)
       let preset = getPresetTemplate()
-      let unitNames = ::g_string.split(strPreset, ",")
+      let unitNames = split(strPreset, ",")
       if (unitNames.len() == 0)
         continue
 
       local hasUnits = false
       for (local i = 0; i < unitNames.len(); i++) {
         let unitName = unitNames[i]
-        let unit = ::getAircraftByName(unitName)
+        let unit = getAircraftByName(unitName)
         if (unit != null)
           hasUnits = true
 
@@ -192,12 +192,13 @@ let setUnit = kwarg(function setUnit(crew, unit, onFinishCb = null, showNotifica
     curPreset.countryPresets[country].units[idx] = unit
     updatePresets(curPreset.presetId, curPreset.countryPresets)
     if (needEvent)
-      ::broadcastEvent("PresetsByGroupsChanged", { crew = crew, unit = unit })
+      broadcastEvent("PresetsByGroupsChanged", {
+        crew = crew, unit = unit, unitNames = [unit.name]})
     onFinishCb?(true)
   }
 
-  let oldGroupIdx = curCountryPreset.units.findindex(@(u)
-    groupIdByUnitName?[u?.name ?? ""] == unitGroup)
+  let oldGroupIdx = curCountryPreset.units.findindex(@(unit)
+    groupIdByUnitName?[unit?.name ?? ""] == unitGroup)
   if (unitGroup != curUnitGroup && oldGroupIdx != null) {
     let replaceUnitGroup = function() {
       curPreset.countryPresets[country].units[oldGroupIdx] = curUnit
@@ -230,6 +231,10 @@ let setUnit = kwarg(function setUnit(crew, unit, onFinishCb = null, showNotifica
     onApplyCb()
 })
 
+let getCurPresetUnitNames = @()
+  (curPreset.countryPresets?[::get_profile_country()].units.map(@(unit) unit?.name)
+    ?? []).filter(@(n) n)
+
 let function setCurPreset(presetId, groupsList) {
   let curPresetId = curPreset.presetId
   if (curPresetId == presetId)
@@ -240,7 +245,7 @@ let function setCurPreset(presetId, groupsList) {
     countryPresets = countryPresets
     presetId = presetId
   }
-  ::broadcastEvent("PresetsByGroupsChanged")
+  broadcastEvent("PresetsByGroupsChanged", {unitNames = getCurPresetUnitNames()})
 }
 
 let function getCurPreset() {
@@ -272,16 +277,19 @@ let function getCrewByUnit(unit) {
 }
 
 let function setUnits(trainCrews) {
+  let unitNames = []
   foreach (data in trainCrews)
-    if (data.unit != null)
+    if (data.unit != null) {
       setUnit({
         crew = data.crew
         unit = data.unit
         showNotification = false
         needEvent = false
       })
+      unitNames.append(data.unit.name)
+    }
 
-  ::broadcastEvent("PresetsByGroupsChanged")
+  broadcastEvent("PresetsByGroupsChanged", {unitNames})
 }
 
 let setGroup = kwarg(function setGroup(crew, group, onFinishCb) {
@@ -315,15 +323,77 @@ let function getVehiclesGroupByUnit(unit, countryGroupsList) {
   return countryGroupsList?.groups[countryGroupsList?.groupIdByUnitName[unit?.name ?? ""] ?? ""]
 }
 
+let function getWarningTextTbl(availableUnits, countryCrews, isCrewByUnitsGroup) {
+  let res = {
+    needShow = false
+    needMsgBox = false
+    warningText = ""
+    fullWarningText = ""
+  }
+
+  let crewNames = []
+  foreach (crew in countryCrews) {
+    let crewUnit = isCrewByUnitsGroup
+      ? crew
+      : ::g_crew.getCrewUnit(crew)
+    if (crewUnit != null)
+      crewNames.append(crewUnit.name)
+  }
+
+  local isAllBattleUnitsInSlots = true
+  foreach (unitName, _ in availableUnits)
+    if (!isInArray(unitName, crewNames)) {
+      if (isCrewByUnitsGroup) {
+        res.needShow = true
+        res.needMsgBox = true
+        res.warningText = loc("worldWar/warning/can_insert_higher_rank_units")
+        res.fullWarningText = loc("worldWar/warning/can_insert_higher_rank_units_full")
+        return res
+      }
+      else if (getAircraftByName(unitName)?.canUseByPlayer() ?? false) {
+        res.needShow = true
+        res.needMsgBox = true
+        res.warningText = loc("worldWar/warning/can_insert_more_available_units")
+        res.fullWarningText = loc("worldWar/warning/can_insert_more_available_units_full")
+        return res
+      }
+      else
+        isAllBattleUnitsInSlots = false
+    }
+
+  if (!isAllBattleUnitsInSlots) {
+    res.needShow = true
+    res.warningText = loc("worldWar/warning/has_not_all_battle_units")
+    res.fullWarningText = loc("worldWar/warning/has_not_all_battle_units_full")
+  }
+
+  return res
+}
+
+let function getBestAvailableUnitByGroup(curSlotbarUnits, groupUnits, presetGroupsList, country, eDiff = null) {
+  eDiff = eDiff ?? DIFFICULTY_REALISTIC
+  let sortedUnits = groupUnits.values().map(
+    @(u) { unit = u, rank = u.getBattleRating(eDiff),
+      isInSlotbar = isInArray(u, curSlotbarUnits), isSpecial = ::isUnitSpecial(u) })
+  sortedUnits.sort(@(a, b) b.rank <=> a.rank
+    || b.isSpecial <=> a.isSpecial
+    || b.isInSlotbar <=> a.isInSlotbar
+    || a.unit.name <=> b.unit.name)
+  return sortedUnits.findvalue(@(u) canAssignInSlot(u.unit, presetGroupsList, country))
+}
+
 return {
-  setCurPreset = setCurPreset
-  getCurPreset = getCurPreset
-  setUnit = setUnit
-  getCurCraftsInfo = getCurCraftsInfo
-  getCrewByUnit = getCrewByUnit
-  getSlotItem = getSlotItem
-  canAssignInSlot = canAssignInSlot
-  setUnits = setUnits
-  setGroup = setGroup
-  getVehiclesGroupByUnit = getVehiclesGroupByUnit
+  setCurPreset
+  getCurPreset
+  setUnit
+  getCurCraftsInfo
+  getCrewByUnit
+  getSlotItem
+  canAssignInSlot
+  setUnits
+  setGroup
+  getVehiclesGroupByUnit
+  getWarningTextTbl
+  getCurPresetUnitNames
+  getBestAvailableUnitByGroup
 }

@@ -1,8 +1,5 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { getSlotbarOverrideData } = require("%scripts/slotbar/slotbarOverride.nut")
 let { isRequireUnlockForUnit } = require("%scripts/unit/unitStatus.nut")
@@ -25,7 +22,7 @@ let function getEventSlotbarHint(event, country) {
     return ""
 
   let hasNotUnlockedUnit = crews.findindex(
-    @(c) isRequireUnlockForUnit(::getAircraftByName(c.aircraft))
+    @(c) isRequireUnlockForUnit(getAircraftByName(c.aircraft))
   ) != null
 
   return hasNotUnlockedUnit ? loc("event/unlockAircrafts") : ""

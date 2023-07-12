@@ -1,8 +1,5 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 require("ingameConsoleStore.nut")
 let DataBlock = require("DataBlock")
@@ -12,18 +9,22 @@ let psnSystem = require("sony.sys")
 
 let seenEnumId = SEEN.EXT_PS4_SHOP
 
+let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
+let { broadcastEvent } = subscriptions
 let seenList = require("%scripts/seen/seenList.nut").get(seenEnumId)
 let shopData = require("%scripts/onlineShop/ps4ShopData.nut")
 let { ENTITLEMENTS_PRICE } = require("%scripts/utils/configs.nut")
 let openQrWindow = require("%scripts/wndLib/qrWindow.nut")
 let { isPlayerRecommendedEmailRegistration } = require("%scripts/user/playerCountry.nut")
 let { targetPlatform } = require("%scripts/clientState/platform.nut")
+let { showPcStorePromo } = require("%scripts/user/pcStorePromo.nut")
+let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
 let persistent = {
   sheetsArray = []
 }
-::g_script_reloader.registerPersistentData("PS4Shop", persistent, ["sheetsArray"])
+registerPersistentData("PS4Shop", persistent, ["sheetsArray"])
 
 
 let defaultsSheetData = {
@@ -91,7 +92,7 @@ let fillSheetsArray = function(bcEventParams = {}) {
     })
   }
 
-  ::broadcastEvent("PS4ShopSheetsInited", bcEventParams)
+  broadcastEvent("PS4ShopSheetsInited", bcEventParams)
 }
 
 subscriptions.addListenersWithoutEnv({
@@ -167,6 +168,9 @@ subscriptions.addListenersWithoutEnv({
     this.updateSorting()
     this.fillItemsList()
     ::g_discount.updateOnlineShopDiscounts()
+
+    if (isPlayerRecommendedEmailRegistration())
+      showPcStorePromo()
   }
 
   function onEventSignOut(_p) {
@@ -229,7 +233,7 @@ let function openIngameStore(params = {}) {
     && isChapterSuitable(params?.chapter)
     && ::g_language.getLanguageName() == "Russian"
     && isPlayerRecommendedEmailRegistration()) {
-    ::add_big_query_record("ingame_store_qr", targetPlatform)
+    sendBqEvent("CLIENT_POPUP_1", "ingame_store_qr", { targetPlatform })
     openQrWindow({
       headerText = params?.chapter == "eagles" ? loc("charServer/chapter/eagles") : ""
       infoText = loc("eagles/rechargeUrlNotification")

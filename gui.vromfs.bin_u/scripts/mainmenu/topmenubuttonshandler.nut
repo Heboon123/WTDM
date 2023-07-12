@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let bhvUnseen = require("%scripts/seen/bhvUnseen.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -99,7 +97,7 @@ let { getButtonConfigById } = require("%scripts/mainmenu/topMenuButtons.nut")
       }
 
       let tmId = sectionData.getTopMenuButtonDivId()
-      ::u.appendOnce(tmId, this.GCDropdownsList)
+      u.appendOnce(tmId, this.GCDropdownsList)
 
       sectionsView.append({
         tmId = tmId
@@ -228,7 +226,7 @@ let { getButtonConfigById } = require("%scripts/mainmenu/topMenuButtons.nut")
 
   function switchMenuFocus() {
     let section = this.sectionsStructure.getSectionByName(this.ON_ESC_SECTION_OPEN)
-    if (::u.isEmpty(section))
+    if (u.isEmpty(section))
       return
 
     if (::show_console_buttons && section.mergeIndex >= -1) {

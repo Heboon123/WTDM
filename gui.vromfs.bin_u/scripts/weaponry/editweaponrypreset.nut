@@ -1,10 +1,8 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { getObjValidIndex } = require("%sqDagui/daguiUtil.nut")
 let regexp2 = require("regexp2")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { getCustomWeaponryPresetView, editSlotInPreset, getPresetWeightRestrictionText, getTierIcon
@@ -167,7 +165,7 @@ let function openEditPresetName(name, okFunc) {
 
   function getCurrenTierObj() {
     let presetObj = this.presetNest.findObject("tiersNest_")
-    let value = ::get_obj_valid_index(presetObj)
+    let value = getObjValidIndex(presetObj)
     if (value < 0)
       return null
 
@@ -203,9 +201,7 @@ let function openEditPresetName(name, okFunc) {
     openEditPresetName(this.preset.customNameText, okFunc)
   }
 
-  function onWeaponChoose(obj) {
-    let presetId = obj.id
-    let tierId = obj.holderId.tointeger()
+  function chooseWeapon(tierId, presetId, isForced = false) {
     let cb = Callback(function() {
       if (!this.isValid())
         return
@@ -215,8 +211,10 @@ let function openEditPresetName(name, okFunc) {
       this.updateWeightCapacityText()
       ::move_mouse_on_obj(this.presetNest.findObject($"tier_{tierId}"))
     }, this)
-    editSlotInPreset(this.preset, tierId, presetId, this.availableWeapons, this.unit, this.favoriteArr, cb)
+    editSlotInPreset(this.preset, tierId, presetId, this.availableWeapons, this.unit, this.favoriteArr, cb, isForced)
   }
+
+  onWeaponChoose = @(obj) this.chooseWeapon(obj.holderId.tointeger(), obj.id)
 
   function updateButtons() {
     if (!::show_console_buttons)
@@ -242,7 +240,7 @@ let function openEditPresetName(name, okFunc) {
   onAltModAction = @() null
   onPresetSelect = @() null
 
-  function onPresetSave() {
+  function savePreset() {
     let restrictionsText = getPresetWeightRestrictionText(this.preset, this.unitBlk)
     if (restrictionsText != "") {
       ::showInfoMsgBox($"{loc("msg/can_not_save_preset")}\n{restrictionsText}", "can_not_save_disbalanced_preset")
@@ -250,11 +248,15 @@ let function openEditPresetName(name, okFunc) {
     }
 
     addCustomPreset(this.unit, this.preset)
+  }
+
+  function onPresetSave() {
+    this.savePreset()
     base.goBack()
   }
 
   function updatePreset() {
-    let data = ::handyman.renderCached("%gui/weaponry/weaponryPreset.tpl", { presets = this.getPresetMarkup() })
+    let data = handyman.renderCached("%gui/weaponry/weaponryPreset.tpl", { presets = this.getPresetMarkup() })
     this.guiScene.replaceContentFromText(this.presetNest, data, data.len(), this)
   }
 

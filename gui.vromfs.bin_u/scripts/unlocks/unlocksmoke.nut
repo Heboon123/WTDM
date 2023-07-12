@@ -1,8 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
 let DataBlock = require("DataBlock")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -49,7 +47,7 @@ let function updateBuyableSmokesList() {
         res.append(inst)
   }
 
-  if (!::u.isEqual(res, buyableSmokesList.value))
+  if (!u.isEqual(res, buyableSmokesList.value))
     buyableSmokesList(res)
 }
 

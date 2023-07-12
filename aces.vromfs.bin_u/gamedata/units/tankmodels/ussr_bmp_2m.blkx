@@ -388,8 +388,10 @@
         "wheel_r_top_03_dm": [],
         "submodule": {
           "armorClass": "tank_traks",
-          "armorThickness": 10.0,
+          "armorThickness": 15.0,
           "hp": 150.0,
+          "ex_armor_l_06_dm": [],
+          "ex_armor_r_06_dm": [],
           "wheel_support_dm": []
         }
       },
@@ -1204,6 +1206,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.4,
               "nothing": 0.6,
               "fHitCritical": true
@@ -1588,18 +1591,21 @@
   {
     "commonWeapons": [
       {
+        "maxMissileSalvoTimeInterval": 5.0
+      },
+      {
         "Weapon": {
           "trigger": "gunner0",
           "blk": "gameData/Weapons/groundModels_weapons/30mm_2A42_user_cannon.blk",
           "emitter": "bone_gun_barrel",
           "flash": "emtr_gun_flame",
-          "sleeveEmitter": "emtr_shell",
-          "sleeveMesh": "auto_cannon_cartridge_case",
+          "shellCasingEmitter": "emtr_shell",
+          "shellCasingMesh": "auto_cannon_cartridge_case",
           "openHatchTime": 0.0,
-          "sleevesLifeTime": 5.0,
-          "sleeveImpulse": [6.0,0.0,0.5],
-          "sleevesImpulseOffset": 0.04,
-          "linkSleeveToGun": true,
+          "shellCasingLifeTime": 5.0,
+          "shellCasingImpulse": [6.0,0.0,0.5],
+          "shellCasingImpulseOffset": 0.04,
+          "linkShellCasingToGun": true,
           "maxAdditionalPitch": 0.0,
           "recoilOffset": 0.045,
           "jammedReloadTime": 15.0,
@@ -1801,6 +1807,7 @@
           "emitterGenFmt": "bone_rocket_%02d",
           "ammoDpGenFmt": "ammo_turret_%02d_dm",
           "stopForFire": false,
+          "staticElevation": 1.125,
           "createGunEffects": true,
           "defaultYaw": 0.0,
           "defaultPitch": 0.0,
@@ -2235,8 +2242,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -2246,6 +2253,178 @@
         }
       }
     }
+  },
+  {
+    "chainIK": [
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_01_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_01_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_02_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_02_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_03_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_03_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_04_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_04_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_05_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_05_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_06_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_06_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_07_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_07_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_08_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_08_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_09_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_09_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_10_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_10_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_11_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_11_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_12_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_12_02"
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "ammo": {
@@ -3170,6 +3349,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -3396,18 +3584,21 @@
         "effects": {
           "commonWeapons": [
             {
+              "maxMissileSalvoTimeInterval": 5.0
+            },
+            {
               "Weapon": {
                 "trigger": "gunner0",
                 "blk": "gameData/Weapons/groundModels_weapons/30mm_2A42_user_cannon.blk",
                 "emitter": "bone_gun_barrel",
                 "flash": "emtr_gun_flame",
-                "sleeveEmitter": "emtr_shell",
-                "sleeveMesh": "auto_cannon_cartridge_case",
+                "shellCasingEmitter": "emtr_shell",
+                "shellCasingMesh": "auto_cannon_cartridge_case",
                 "openHatchTime": 0.0,
-                "sleevesLifeTime": 5.0,
-                "sleeveImpulse": [6.0,0.0,0.5],
-                "sleevesImpulseOffset": 0.04,
-                "linkSleeveToGun": true,
+                "shellCasingLifeTime": 5.0,
+                "shellCasingImpulse": [6.0,0.0,0.5],
+                "shellCasingImpulseOffset": 0.04,
+                "linkShellCasingToGun": true,
                 "maxAdditionalPitch": 0.0,
                 "recoilOffset": 0.045,
                 "jammedReloadTime": 15.0,
@@ -3609,6 +3800,7 @@
                 "emitterGenFmt": "bone_rocket_%02d",
                 "ammoDpGenFmt": "ammo_turret_%02d_dm",
                 "stopForFire": false,
+                "staticElevation": 1.125,
                 "createGunEffects": true,
                 "defaultYaw": 0.0,
                 "defaultPitch": 0.0,
@@ -3948,6 +4140,7 @@
   {
     "supportPlane": {
       "supportPlaneClass": "ucav_recon_micro",
+      "behTreeName": "recon_micro",
       "planeStartSpeed": 80.0,
       "count": 1
     }
@@ -4032,6 +4225,12 @@
     "smokeScreenExhaustEmitters": [
       {
         "emitter": "emtr_exhaust_01"
+      },
+      {
+        "emitter": "emtr_exhaust_02"
+      },
+      {
+        "emitter": "emtr_exhaust_03"
       },
       {
         "emitter": "emtr_exhaust_04"

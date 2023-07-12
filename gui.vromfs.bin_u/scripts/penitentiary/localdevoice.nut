@@ -1,9 +1,8 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+
+let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 let devoiceList = {}
 
@@ -20,7 +19,7 @@ let localDevoice = {
   switchMuted = @(name, devoiceMask) (this.isMuted(name, devoiceMask) ? this.unsetMuted : this.setMuted)(name, devoiceMask)
 }
 
-::add_event_listener("LoadingStateChange",
+add_event_listener("LoadingStateChange",
   function(_p) {
     if (::is_in_flight())
       devoiceList.clear()

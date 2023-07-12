@@ -1,8 +1,5 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let hudState = require("hudState")
 let { getHitCameraAABB } = require("%scripts/hud/hudHitCamera.nut")
@@ -15,23 +12,20 @@ let function getAabbObjFromHud(hudFuncName) {
   return ::get_dagui_obj_aabb(handler[hudFuncName]())
 }
 
-let dmPanelStates = {
-  aabb = null
-}
+let dmPanelStatesAabb = persist("dmPanelStatesAabb", @() Watched({}))
 
 let function update_damage_panel_state(params) {
-  dmPanelStates.aabb <- params
+  dmPanelStatesAabb(params)
 }
 
 ::cross_call_api.update_damage_panel_state <- update_damage_panel_state
-::g_script_reloader.registerPersistentData("dmPanelState", dmPanelStates, [ "aabb" ])
 
 let function getDamagePannelAabb() {
   let handler = ::handlersManager.findHandlerClassInScene(::gui_handlers.Hud)
   if (!handler)
     return null
   let hudType = handler.getHudType()
-  return hudType == HUD_TYPE.SHIP || hudType == HUD_TYPE.TANK ? dmPanelStates.aabb
+  return hudType == HUD_TYPE.SHIP || hudType == HUD_TYPE.TANK ? dmPanelStatesAabb.value
     : ::get_dagui_obj_aabb(handler.getDamagePannelObj())
 }
 
@@ -57,4 +51,7 @@ let aabbList = {
 
 ::get_ingame_map_aabb <- function get_ingame_map_aabb() { return aabbList.map() }  //this function used in native code
 
-return @(name) aabbList?[name]()
+return {
+  getHudElementAabb = @(name) aabbList?[name]()
+  dmPanelStatesAabb
+}

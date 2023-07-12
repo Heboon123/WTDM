@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { cutPrefix } = require("%sqstd/string.nut")
@@ -83,7 +81,7 @@ local popupOptList = class extends ::gui_handlers.BaseGuiHandlerWT {
   }
 
   function onAction() {
-    this.tmpStates = ::u.copy(this.stateList)
+    this.tmpStates = u.copy(this.stateList)
     this.updateSelectorView()
     ::showBtn(SELECTOR_OBJ, true, this.scene)
   }
@@ -114,7 +112,7 @@ local popupOptList = class extends ::gui_handlers.BaseGuiHandlerWT {
   }
 
   function onApply() {
-    this.stateList = ::u.copy(this.tmpStates)
+    this.stateList = u.copy(this.tmpStates)
     this.tmpStates = null
     let clusterOpt = ::get_option(::USEROPT_CLUSTER)
     let res = []

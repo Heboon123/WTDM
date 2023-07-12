@@ -8,12 +8,18 @@
       "power": 350.0,
       "band": 8,
       "rcs": 3.0,
-      "range": 56000.0,
-      "rangeMax": 150000.0,
+      "range": 60000.0,
+      "rangeMax": 130000.0,
       "timeGainControl": true,
       "antenna": {
-        "angleHalfSens": 3.5,
-        "sideLobesSensitivity": -32.0
+        "azimuth": {
+          "angleHalfSens": 3.5,
+          "sideLobesSensitivity": -32.0
+        },
+        "elevation": {
+          "angleHalfSens": 4.8,
+          "sideLobesSensitivity": -32.0
+        }
       }
     },
     "pulseDoppler": {
@@ -22,11 +28,17 @@
       "band": 8,
       "rcs": 3.0,
       "range": 45000.0,
-      "rangeMax": 150000.0,
+      "rangeMax": 100000.0,
       "timeGainControl": true,
       "antenna": {
-        "angleHalfSens": 3.5,
-        "sideLobesSensitivity": -32.0
+        "azimuth": {
+          "angleHalfSens": 3.5,
+          "sideLobesSensitivity": -32.0
+        },
+        "elevation": {
+          "angleHalfSens": 4.8,
+          "sideLobesSensitivity": -32.0
+        }
       }
     }
   },
@@ -43,56 +55,56 @@
       "azimuthLimits": [-60.0,60.0],
       "elevationLimits": [-30.0,30.0],
       "rollStabLimit": 70.0,
-      "pitchStabLimit": 30.0,
-      "period": 0.35,
+      "pitchStabLimit": 60.0,
+      "period": 0.65,
       "width": 10.0,
-      "barHeight": 2.5,
+      "barHeight": 4.0,
       "barsCount": 2,
       "rowMajor": true
     },
     "searchMedium": {
       "type": "pyramide",
       "azimuthLimits": [-60.0,60.0],
-      "elevationLimits": [-30.0,30.0],
+      "elevationLimits": [-60.0,60.0],
       "rollStabLimit": 70.0,
-      "pitchStabLimit": 30.0,
-      "period": 2.0,
+      "pitchStabLimit": 60.0,
+      "period": 3.8,
       "width": 30.0,
-      "barHeight": 2.5,
+      "barHeight": 4.0,
       "barsCount": 4,
       "rowMajor": true
     },
     "searchWide": {
       "type": "pyramide",
       "azimuthLimits": [-60.0,60.0],
-      "elevationLimits": [-30.0,30.0],
+      "elevationLimits": [-60.0,60.0],
       "rollStabLimit": 70.0,
-      "pitchStabLimit": 30.0,
-      "period": 2.0,
+      "pitchStabLimit": 60.0,
+      "period": 3.8,
       "width": 60.0,
-      "barHeight": 2.5,
+      "barHeight": 4.0,
       "barsCount": 2,
       "rowMajor": true
     },
     "hudLock": {
       "type": "pyramide",
       "azimuthLimits": [-60.0,60.0],
-      "elevationLimits": [-30.0,30.0],
-      "period": 1.3,
+      "elevationLimits": [-60.0,60.0],
+      "period": 1.0,
       "width": 10.0,
-      "barHeight": 4.0,
-      "barsCount": 5,
+      "barHeight": 4.8,
+      "barsCount": 4,
       "rowMajor": true,
       "indicate": true
     },
     "verticalLock": {
       "type": "pyramide",
       "azimuthLimits": [-60.0,60.0],
-      "elevationLimits": [-30.0,30.0],
-      "period": 1.3,
+      "elevationLimits": [-60.0,60.0],
+      "period": 1.0,
       "width": 20.0,
-      "barHeight": 3.3,
-      "barsCount": 3,
+      "barHeight": 4.8,
+      "barsCount": 2,
       "rowMajor": false,
       "centerElevation": 15.0,
       "indicate": true
@@ -109,14 +121,14 @@
     "designationLock": {
       "type": "pyramide",
       "azimuthLimits": [-60.0,60.0],
-      "elevationLimits": [-30.0,30.0],
+      "elevationLimits": [-60.0,60.0],
       "rollStabLimit": 70.0,
       "pitchStabLimit": 30.0,
-      "period": 0.5,
+      "period": 1.0,
       "width": 10.0,
-      "barHeight": 2.5,
-      "barsCount": 2,
-      "rowMajor": false,
+      "barHeight": 4.0,
+      "barsCount": 4,
+      "rowMajor": true,
       "indicate": true
     },
     "track": {
@@ -178,8 +190,7 @@
       "aircraftAsTarget": true,
       "angularAccuracy": 0.05,
       "distanceAccuracy": 12.0,
-      "absDopplerSpeed": true,
-      "mainBeamDopplerSpeed": true,
+      "mainBeamNotchWidth": 40.0,
       "track": true,
       "distance": {
         "presents": true,
@@ -189,7 +200,7 @@
       },
       "dopplerSpeed": {
         "presents": true,
-        "minValue": 20.0,
+        "minValue": -1500.0,
         "maxValue": 1500.0,
         "signalWidthMin": 2.0,
         "width": 20.0
@@ -261,9 +272,6 @@
           },
           "setScopeRangeSet": {
             "scopeRangeSet": "common"
-          },
-          "setIllumination": {
-            "illumination": false
           }
         },
         "setPulseStandbyMode": {
@@ -316,9 +324,6 @@
           },
           "setScopeRangeSet": {
             "scopeRangeSet": "common"
-          },
-          "setIllumination": {
-            "illumination": false
           }
         },
         "setPulseSearchMode": {
@@ -400,7 +405,7 @@
             "setRelSpeedGatePos": {
               "source": "constRange",
               "pos": 0.0,
-              "width": 1800.0
+              "width": 3000.0
             }
           },
           {
@@ -411,11 +416,6 @@
           },
           {
             "clearTargets": []
-          },
-          {
-            "setIllumination": {
-              "illumination": false
-            }
           }
         ],
         "setPulseDesignationLockMode": {
@@ -472,13 +472,10 @@
           "setRelSpeedGatePos": {
             "source": "constRange",
             "pos": 0.0,
-            "width": 1800.0
+            "width": 3000.0
           },
           "setScopeRangeSet": {
             "scopeRangeSet": "boresightLock"
-          },
-          "setIllumination": {
-            "illumination": false
           }
         },
         "setPulseBoresightLockMode": {
@@ -534,9 +531,6 @@
           "setFsmActive": {
             "fsm": "track",
             "active": true
-          },
-          "setIllumination": {
-            "illumination": true
           }
         },
         "setPulseTrackMode": {

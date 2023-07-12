@@ -1,12 +1,11 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 log($"onScriptLoadAfterLogin: wt")
 
 // Please don't move paths from the main list here anymore. Instead, just edit paths in the main list below.
+let { loadOnce, loadIfExist } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+
 require("unit/initUnitTypes.nut")
 require("controls/shortcutsList/updateShortcutsModulesList.nut")
 require("slotInfoPanel/updateSlotInfoPanelButtons.nut")
@@ -22,6 +21,7 @@ foreach (fn in [
   "%scripts/ranks.nut"
   "%scripts/difficulty.nut"
   "%scripts/teams.nut"
+  "%scripts/unit/unit.nut"
   "%scripts/airInfo.nut"
   "%scripts/options/optionsExt.nut"
   "%scripts/options/initOptions.nut"
@@ -86,7 +86,6 @@ foreach (fn in [
   "%scripts/changeCountry.nut"
   "%scripts/instantAction.nut"
   "%scripts/promo/promoViewUtils.nut"
-  "%scripts/unlocks/battleTaskDifficulty.nut"
   "%scripts/unlocks/battleTasks.nut"
   "%scripts/promo/promo.nut"
   "%scripts/promo/promoHandler.nut"
@@ -98,13 +97,14 @@ foreach (fn in [
 
   "%scripts/slotbar/crewsList.nut"
   "%scripts/slotbar/slotbar.nut"
+  "%scripts/weaponry/editWeaponryPreset.nut"
+  "%scripts/weaponry/weaponryPresetsRepair.nut"
   "%scripts/slotbar/slotbarWidget.nut"
   "%scripts/slotbar/selectCrew.nut"
   "%scripts/slotbar/slotbarPresetsList.nut"
 
   "%scripts/onlineInfo/onlineInfo.nut"
   "%scripts/onlineInfo/clustersManagement.nut"
-  "%scripts/matching/matchingGameModes.nut"
 
   "%scripts/user/presenceType.nut"
   "%scripts/squads/msquadService.nut"
@@ -138,7 +138,6 @@ foreach (fn in [
   "%scripts/invites/invitesWnd.nut"
 
   "%scripts/controls/controlsPresets.nut"
-  "%scripts/controls/controlsUtils.nut"
   "%scripts/controls/controls.nut"
   "%scripts/controls/assignButtonWnd.nut"
   "%scripts/controls/controlsConsole.nut"
@@ -380,13 +379,11 @@ foreach (fn in [
   "%scripts/matching/serviceNotifications/match.nut"
   "%scripts/matching/serviceNotifications/mlogin.nut"
   "%scripts/matching/serviceNotifications/mrpc.nut"
-  "%scripts/matching/serviceNotifications/mpresense.nut"
   "%scripts/matching/serviceNotifications/msquad.nut"
-  "%scripts/matching/serviceNotifications/mrooms.nut"
 
   "%scripts/gamepadSceneSettings.nut"
 ]) {
-  ::g_script_reloader.loadOnce(fn)
+  loadOnce(fn)
 }
 
 require("%scripts/controls/controlsFootballNy2021Hack.nut")
@@ -407,4 +404,4 @@ require("%scripts/debugTools/dbgVoiceChat.nut")
 
 
 if (::g_login.isAuthorized() || ::disable_network()) //load scripts from packs only after login
-  ::g_script_reloader.loadIfExist("%scripts/worldWar/worldWar.nut")
+  loadIfExist("%scripts/worldWar/worldWar.nut")

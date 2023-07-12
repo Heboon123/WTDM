@@ -5,6 +5,7 @@
   "harmonizationSuffix": "_tomoe",
   "gearSinkRangeLR": 0.166,
   "gearSinkRangeC": 0.188,
+  "gyroSight": true,
   "haveCCIPForRocket": true,
   "haveCCIPForBombs": true,
   "haveCCIPForGun": true,
@@ -547,6 +548,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -557,6 +574,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -584,6 +617,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -594,6 +643,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -791,6 +856,14 @@
           }
         },
         {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
+          }
+        },
+        {
           "onKill": {
             "wingcontrol_l_dm": 1.0,
             "wingcontrol_r_dm": 1.0,
@@ -836,6 +909,14 @@
             "wing_l_dm": 1.0,
             "wing_r_dm": 1.0
           }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
+          }
         }
       ]
     },
@@ -866,6 +947,14 @@
           "onHit": {
             "damage": 50.0,
             "tail_dm": 1.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
           }
         },
         {
@@ -921,6 +1010,14 @@
             "damage": 50.0,
             "tail_dm": 1.0,
             "nothing": 1.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
           }
         }
       ]
@@ -2518,6 +2615,12 @@
     },
     {
       "preset": {
+        "name": "q_5a_4x250kg_4_bombs",
+        "blk": "gameData/FlightModels/weaponPresets/q_5a_4x250kg_4_bombs.blk"
+      }
+    },
+    {
+      "preset": {
         "name": "q_5a_type90_rockets",
         "blk": "gameData/FlightModels/weaponPresets/q_5a_type90_rockets.blk"
       }
@@ -2562,101 +2665,57 @@
       ]
     },
     {
-      "WeaponSlot": [
-        {
-          "index": 0
-        },
-        {
-          "notUseforDisbalanceCalculation": true
-        },
-        {
-          "WeaponPreset": [
-            {
-              "name": "type23_common"
-            },
-            {
-              "ShowNodes": {
-                "node": "tail_no_type941"
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "cannon",
-                "blk": "gameData/Weapons/cannon_type23_2k.blk",
-                "emitter": "flare1",
-                "flash": "flare1",
-                "shell": "emtr_shellrejection1",
-                "dm": "cannon1_dm",
-                "bullets": 120,
-                "spread": 1.0,
-                "counterIndex": 1
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "cannon",
-                "blk": "gameData/Weapons/cannon_type23_2k.blk",
-                "emitter": "flare2",
-                "flash": "flare2",
-                "shell": "emtr_shellrejection2",
-                "dm": "cannon2_dm",
-                "bullets": 120,
-                "spread": 1.0,
-                "counterIndex": 3
-              }
+      "WeaponSlot": {
+        "index": 0,
+        "notUseforDisbalanceCalculation": true,
+        "WeaponPreset": [
+          {
+            "name": "type23_common"
+          },
+          {
+            "ShowNodes": {
+              "node": "tail_type941"
             }
-          ]
-        },
-        {
-          "WeaponPreset": [
-            {
-              "name": "type23_q5b_common"
-            },
-            {
-              "ShowNodes": {
-                "node": "tail_type941"
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "cannon",
-                "blk": "gameData/Weapons/cannon_type23_2k.blk",
-                "emitter": "flare1",
-                "flash": "flare1",
-                "shell": "emtr_shellrejection1",
-                "dm": "cannon1_dm",
-                "bullets": 120,
-                "spread": 1.0,
-                "counterIndex": 1
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "cannon",
-                "blk": "gameData/Weapons/cannon_type23_2k.blk",
-                "emitter": "flare2",
-                "flash": "flare2",
-                "shell": "emtr_shellrejection2",
-                "dm": "cannon2_dm",
-                "bullets": 120,
-                "spread": 1.0,
-                "counterIndex": 3
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "countermeasures",
-                "startFx": "",
-                "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
-                "emitter": "emtr_flare1",
-                "bullets": 18,
-                "external": true,
-                "separate": false
-              }
+          },
+          {
+            "Weapon": {
+              "trigger": "cannon",
+              "blk": "gameData/Weapons/cannon_type23_2k.blk",
+              "emitter": "flare1",
+              "flash": "flare1",
+              "shell": "emtr_shellrejection1",
+              "dm": "cannon1_dm",
+              "bullets": 120,
+              "spread": 1.0,
+              "counterIndex": 1
             }
-          ]
-        }
-      ]
+          },
+          {
+            "Weapon": {
+              "trigger": "cannon",
+              "blk": "gameData/Weapons/cannon_type23_2k.blk",
+              "emitter": "flare2",
+              "flash": "flare2",
+              "shell": "emtr_shellrejection2",
+              "dm": "cannon2_dm",
+              "bullets": 120,
+              "spread": 1.0,
+              "counterIndex": 3
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "countermeasures",
+              "startFx": "",
+              "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
+              "emitter": "emtr_flare1",
+              "bullets": 18,
+              "external": true,
+              "separate": false
+            }
+          }
+        ]
+      }
     },
     {
       "WeaponSlot": {
@@ -2809,6 +2868,59 @@
               "Weapon": {
                 "trigger": "bombs",
                 "blk": "gameData/Weapons/BombGuns/cn_gp_250_3.blk",
+                "emitter": "china_gp_250_3_004",
+                "bullets": 1,
+                "external": true,
+                "separate": true
+              }
+            }
+          ]
+        },
+        {
+          "WeaponPreset": [
+            {
+              "iconType": "bombs_middle_high_drag_group_x4"
+            },
+            {
+              "name": "gp250_4_x4"
+            },
+            {
+              "reqModification": "cn_q5_type_250"
+            },
+            {
+              "Weapon": {
+                "trigger": "bombs",
+                "blk": "gameData/Weapons/BombGuns/cn_gp_250_4.blk",
+                "emitter": "china_gp_250_3_001",
+                "bullets": 1,
+                "external": true,
+                "separate": true
+              }
+            },
+            {
+              "Weapon": {
+                "trigger": "bombs",
+                "blk": "gameData/Weapons/BombGuns/cn_gp_250_4.blk",
+                "emitter": "china_gp_250_3_002",
+                "bullets": 1,
+                "external": true,
+                "separate": true
+              }
+            },
+            {
+              "Weapon": {
+                "trigger": "bombs",
+                "blk": "gameData/Weapons/BombGuns/cn_gp_250_4.blk",
+                "emitter": "china_gp_250_3_003",
+                "bullets": 1,
+                "external": true,
+                "separate": true
+              }
+            },
+            {
+              "Weapon": {
+                "trigger": "bombs",
+                "blk": "gameData/Weapons/BombGuns/cn_gp_250_4.blk",
                 "emitter": "china_gp_250_3_004",
                 "bullets": 1,
                 "external": true,
@@ -3140,15 +3252,7 @@
       "turn_it_off": false,
       "invertEnableLogic": false,
       "tier": 1,
-      "group": "q_5b_group",
-      "effects": {
-        "commonWeapons": {
-          "Weapon": {
-            "slot": 0,
-            "preset": "type23_q5b_common"
-          }
-        }
-      }
+      "group": "q_5b_group"
     },
     "q_5b_type130": {
       "reqModification": "q_5b_ltc",

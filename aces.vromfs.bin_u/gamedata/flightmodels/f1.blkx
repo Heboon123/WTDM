@@ -5,6 +5,7 @@
   "harmonizationSuffix": "_tomoe",
   "haveCCIPForRocket": true,
   "haveCCIPForBombs": true,
+  "gyroSight": true,
   "haveCCIPForGun": true,
   "haveCCRPForBombs": true,
   "havePointOfInterestDesignator": true,
@@ -32,7 +33,6 @@
   "fireParamsPreset": "1800kph",
   "fightAiBehaviour": "fighter",
   "autopilotImpl": "FBW",
-  "gyroscopicSightOverSensors": true,
   "DamageParts": {
     "armor10": {
       "cannon1_dm": {
@@ -613,6 +613,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -623,6 +639,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -650,6 +682,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -660,6 +708,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -857,6 +921,14 @@
           }
         },
         {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
+          }
+        },
+        {
           "onKill": {
             "wingcontrol_l_dm": 1.0,
             "wingcontrol_r_dm": 1.0,
@@ -901,6 +973,14 @@
             "fire": 5.0,
             "wing_l_dm": 1.0,
             "wing_r_dm": 1.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
           }
         }
       ]
@@ -931,6 +1011,14 @@
           }
         },
         {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
+          }
+        },
+        {
           "onKill": {
             "wingcontrol_l_dm": 1.0,
             "wingcontrol_r_dm": 1.0,
@@ -975,6 +1063,14 @@
             "fire": 5.0,
             "wing_l_dm": 1.0,
             "wing_r_dm": 1.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
           }
         }
       ]
@@ -1006,6 +1102,14 @@
           "onHit": {
             "damage": 50.0,
             "tail_dm": 1.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
           }
         },
         {
@@ -1061,6 +1165,14 @@
             "damage": 50.0,
             "tail_dm": 1.0,
             "nothing": 1.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
           }
         }
       ]
@@ -2819,7 +2931,8 @@
             "dm": "cannon1_dm",
             "bullets": 750,
             "spread": 1.2,
-            "traceOffset": 1
+            "traceOffset": 1,
+            "rotationAnimScale": "gun_rotate_01:CRS"
           }
         }
       }
@@ -2960,6 +3073,7 @@
               "blk": "gameData/Weapons/containers/der_us_500lb_mk_82.blk",
               "emitter": "aero_7_l_b001",
               "external": true,
+              "separate": true,
               "machLimit": 1.01
             }
           }
@@ -2978,6 +3092,7 @@
               "emitter": "bomb_anm117_2",
               "bullets": 1,
               "external": true,
+              "separate": true,
               "machLimit": 1.01
             }
           }
@@ -3043,6 +3158,7 @@
               "blk": "gameData/Weapons/containers/der_us_500lb_mk_82.blk",
               "emitter": "pylon4a_l",
               "external": true,
+              "separate": true,
               "machLimit": 1.01
             }
           }
@@ -3061,6 +3177,7 @@
               "emitter": "bomb_anm117_4",
               "bullets": 1,
               "external": true,
+              "separate": true,
               "machLimit": 1.01
             }
           }
@@ -3126,6 +3243,7 @@
               "blk": "gameData/Weapons/containers/fer_us_500lb_mk_82.blk",
               "emitter": "fer",
               "external": true,
+              "separate": true,
               "machLimit": 1.01
             }
           }
@@ -3144,6 +3262,7 @@
               "emitter": "bomb_anm117_1",
               "bullets": 1,
               "external": true,
+              "separate": true,
               "machLimit": 1.01
             }
           }
@@ -3174,6 +3293,7 @@
               "blk": "gameData/Weapons/containers/der_us_500lb_mk_82.blk",
               "emitter": "pylon4a_r",
               "external": true,
+              "separate": true,
               "machLimit": 1.01
             }
           }
@@ -3192,6 +3312,7 @@
               "emitter": "bomb_anm117_5",
               "bullets": 1,
               "external": true,
+              "separate": true,
               "machLimit": 1.01
             }
           }
@@ -3303,6 +3424,7 @@
               "blk": "gameData/Weapons/containers/der_us_500lb_mk_82.blk",
               "emitter": "aero_7_l_b002",
               "external": true,
+              "separate": true,
               "machLimit": 1.01
             }
           }
@@ -3321,6 +3443,7 @@
               "emitter": "bomb_anm117_3",
               "bullets": 1,
               "external": true,
+              "separate": true,
               "machLimit": 1.01
             }
           }

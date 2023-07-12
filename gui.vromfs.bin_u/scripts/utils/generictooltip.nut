@@ -1,15 +1,15 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { parse_json } = require("json")
 
 let { getTooltipType, UNLOCK, ITEM, INVENTORY, SUBTROPHY, UNIT,
   CREW_SPECIALIZATION, BUY_CREW_SPEC, DECORATION
 } = require("genericTooltipTypes.nut")
+let { startsWith } = require("%sqstd/string.nut")
+let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 local openedTooltipObjs = []
 let function removeInvalidTooltipObjs() {
@@ -92,11 +92,10 @@ let function fillTooltip(obj, handler, tooltipType, id, params) {
   }
 
   foreach (key, value in tooltipType)
-    if (::u.isFunction(value) && ::g_string.startsWith(key, "onEvent")) {
+    if (u.isFunction(value) && startsWith(key, "onEvent")) {
       let eventName = key.slice("onEvent".len())
-      ::add_event_listener(eventName, (@(eventName) function(eventParams) {
-        tooltipType["onEvent" + eventName](eventParams, obj, handler, id, params)
-      })(eventName), data)
+      add_event_listener(eventName,
+        @(eventParams) tooltipType["onEvent" + eventName](eventParams, obj, handler, id, params))
     }
   return data
 }
@@ -136,7 +135,7 @@ let function fillTooltip(obj, handler, tooltipType, id, params) {
   if (this.inited)
     return
   this.inited = true
-  ::add_event_listener("ChangedCursorVisibility", this.onEventChangedCursorVisibility, this)
+  add_event_listener("ChangedCursorVisibility", this.onEventChangedCursorVisibility, this)
 }
 
 ::g_tooltip.onEventChangedCursorVisibility <- function onEventChangedCursorVisibility(params) {

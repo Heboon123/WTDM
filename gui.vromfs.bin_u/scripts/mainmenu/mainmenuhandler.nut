@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
 let { debug_dump_stack } = require("dagor.debug")
@@ -19,6 +16,8 @@ let { tryOpenTutorialRewardHandler } = require("%scripts/tutorials/tutorialRewar
 let { getCrewUnlockTime, getCrewUnlockTimeByUnit } = require("%scripts/crew/crewInfo.nut")
 let { placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { getSuggestedSkin } = require("%scripts/customization/suggestedSkins.nut")
+let { startShipTrainingMission, canStartShipTrainingMission } = require("%scripts/missions/shipTrainingMission.nut")
+let { create_promo_blocks } = require("%scripts/promo/promoHandler.nut")
 
 ::gui_handlers.MainMenu <- class extends ::gui_handlers.InstantDomination {
   rootHandlerClass = topMenuHandlerClass.getHandler()
@@ -51,6 +50,14 @@ let { getSuggestedSkin } = require("%scripts/customization/suggestedSkins.nut")
       ::SessionLobby.leaveRoom()
     }
     ::stop_gui_sound("deb_count") //!!Dirty hack: after inconsistent leave debriefing from code.
+  }
+
+  function onStart() {
+    if (canStartShipTrainingMission()) {
+      this.guiScene.performDelayed(this, @() this.goForward(startShipTrainingMission))
+      return
+    }
+    base.onStart()
   }
 
   function onEventOnlineInfoUpdate(_params) {
@@ -106,7 +113,7 @@ let { getSuggestedSkin } = require("%scripts/customization/suggestedSkins.nut")
     if (!hasFeature("PromoBlocks"))
       return
 
-    this.promoHandler = ::create_promo_blocks(this)
+    this.promoHandler = create_promo_blocks(this)
     this.registerSubHandler(this.promoHandler)
   }
 
@@ -139,7 +146,7 @@ let { getSuggestedSkin } = require("%scripts/customization/suggestedSkins.nut")
       return
     this.visibleUnitInfoName = unitName
 
-    let unit = ::getAircraftByName(unitName)
+    let unit = getAircraftByName(unitName)
     this.updateUnitCrewLocked(unit)
     this.updateUnitRentInfo(unit)
     this.updateLowQualityModelWarning()
@@ -227,6 +234,6 @@ let { getSuggestedSkin } = require("%scripts/customization/suggestedSkins.nut")
   }
 
   function onEventItemsShopUpdate(_) {
-    this.updateSuggestedSkin(::getAircraftByName(hangar_get_current_unit_name()))
+    this.updateSuggestedSkin(getAircraftByName(hangar_get_current_unit_name()))
   }
 }

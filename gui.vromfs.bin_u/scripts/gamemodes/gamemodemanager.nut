@@ -1,11 +1,10 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let RB_GM_TYPE = require("%scripts/gameModes/rbGmTypes.nut")
+let { subscribe_handler, broadcastEvent, add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
 let DataBlock = require("DataBlock")
 let QUEUE_TYPE_BIT = require("%scripts/queue/queueTypeBit.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
@@ -179,7 +178,7 @@ let { isShowGoldBalanceWarning, hasMultiplayerRestritionByBalance
         let lastPlayedEventId = ::events.getLastPlayedEvent()?.name
         let lastPlayedEventRelevance = isInArray(lastPlayedEventId, chapterEvents) ?
           ::events.checkUnitRelevanceForEvent(lastPlayedEventId, curUnit) : UnitRelevance.NONE
-        let relevanceList = ::u.map(chapterEvents, function(id) {
+        let relevanceList = u.map(chapterEvents, function(id) {
           return { eventId = id, relevance = ::events.checkUnitRelevanceForEvent(id, curUnit) }
         })
         relevanceList.sort(@(a, b) b.relevance <=> a.relevance || a.eventId <=> b.eventId)
@@ -274,12 +273,12 @@ let { isShowGoldBalanceWarning, hasMultiplayerRestritionByBalance
    * require it to update.
    */
   constructor() {
-    ::add_event_listener("EventsDataUpdated", this._onEventsDataUpdated.bindenv(this))
-    ::add_event_listener("MyStatsUpdated", this._onMyStatsUpdated.bindenv(this))
-    ::add_event_listener("UnitTypeChosen", this._onUnitTypeChosen.bindenv(this))
-    ::add_event_listener("GameLocalizationChanged", this._onGameLocalizationChanged.bindenv(this))
-    ::add_event_listener("CrewTakeUnit", this._onEventCrewTakeUnit.bindenv(this))
-    ::subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
+    add_event_listener("EventsDataUpdated", this._onEventsDataUpdated.bindenv(this))
+    add_event_listener("MyStatsUpdated", this._onMyStatsUpdated.bindenv(this))
+    add_event_listener("UnitTypeChosen", this._onUnitTypeChosen.bindenv(this))
+    add_event_listener("GameLocalizationChanged", this._onGameLocalizationChanged.bindenv(this))
+    add_event_listener("CrewTakeUnit", this._onEventCrewTakeUnit.bindenv(this))
+    subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
 
     foreach (idx, id in this.defaultSeenGameModeIDs)
       this.defaultSeenGameModeIDs[idx] = this.getGameModeItemId(id)
@@ -448,7 +447,7 @@ let { isShowGoldBalanceWarning, hasMultiplayerRestritionByBalance
       gameMode = this.getCurrentGameMode()
     let checkedUnitTypes = ::game_mode_manager.getRequiredUnitTypes(gameMode)
     foreach (unitName in unitNames) {
-      let unit = ::getAircraftByName(unitName)
+      let unit = getAircraftByName(unitName)
       if (isInArray(unit?.esUnitType, checkedUnitTypes)
         && this.isUnitAllowedForGameMode(unit, gameMode))
         return true
@@ -545,7 +544,7 @@ let { isShowGoldBalanceWarning, hasMultiplayerRestritionByBalance
    * mode in game modes array.
    */
   function getCurrentGameModeIndex() {
-    return ::find_in_array(this._gameModes, this.getCurrentGameMode(), 0)
+    return u.find_in_array(this._gameModes, this.getCurrentGameMode(), 0)
   }
 
   //
@@ -575,7 +574,7 @@ let { isShowGoldBalanceWarning, hasMultiplayerRestritionByBalance
     if (save)
       ::saveLocalByAccount("selected_random_battle", this._currentGameModeId)
 
-    ::broadcastEvent("CurrentGameModeIdChanged", { isUserSelected = isUserSelected })
+    broadcastEvent("CurrentGameModeIdChanged", { isUserSelected = isUserSelected })
   }
 
   function _clearGameModes() {
@@ -703,7 +702,7 @@ let { isShowGoldBalanceWarning, hasMultiplayerRestritionByBalance
         this._createEventGameMode(event)
     }
 
-    ::broadcastEvent("GameModesUpdated")
+    broadcastEvent("GameModesUpdated")
   }
 
   function _updateCurrentGameModeId() {
@@ -719,14 +718,14 @@ let { isShowGoldBalanceWarning, hasMultiplayerRestritionByBalance
     if (!gameMode)
       return []
 
-    let filteredUnitTypes = ::u.filter(unitTypes.types,
+    let filteredUnitTypes = u.filter(unitTypes.types,
       @(unitType) isOnlyAvailable ? unitType.isAvailable() : unitType)
     if (gameMode.type != RB_GM_TYPE.EVENT)
-      return ::u.map(filteredUnitTypes, @(unitType) unitType.esUnitType)
+      return u.map(filteredUnitTypes, @(unitType) unitType.esUnitType)
 
     let event = this.getGameModeEvent(gameMode)
-    return ::u.map(
-      ::u.filter(filteredUnitTypes,
+    return u.map(
+      u.filter(filteredUnitTypes,
         @(unitType) needReqUnitType ? ::events.isUnitTypeRequired(event, unitType.esUnitType)
           : ::events.isUnitTypeAvailable(event, unitType.esUnitType)
       ),
@@ -736,24 +735,25 @@ let { isShowGoldBalanceWarning, hasMultiplayerRestritionByBalance
   function getGameModesPartitions() {
     let partitions = []
     foreach (partitionData in ::game_mode_select_partitions_data) {
+      let { forClan, diffCode, skipFeatured, skipEnableOnDebug } = partitionData
       let partition = {
-        separator = partitionData.forClan
+        separator = forClan
         gameModes = ::game_mode_manager.getGameModes(
           ES_UNIT_TYPE_INVALID,
-          (@(partitionData) function (gameMode) {
-            let checkForClan = gameMode.forClan == partitionData.forClan
-            let checkDiffCode = partitionData.diffCode == -1 || gameMode.diffCode == partitionData.diffCode
-            let checkSkipFeatured = !partitionData.skipFeatured || gameMode.displayType != ::g_event_display_type.FEATURED
+          function (gameMode) {
+            let checkForClan = gameMode.forClan == forClan
+            let checkDiffCode = diffCode == -1 || gameMode.diffCode == diffCode
+            let checkSkipFeatured = !skipFeatured || gameMode.displayType != ::g_event_display_type.FEATURED
             let isPVEBattle = gameMode.displayType == ::g_event_display_type.PVE_BATTLE
-            let checkSkipEnableOnDebug = !partitionData.skipEnableOnDebug || !gameMode.enableOnDebug
+            let checkSkipEnableOnDebug = !skipEnableOnDebug || !gameMode.enableOnDebug
             return checkForClan && checkDiffCode && checkSkipFeatured
               && checkSkipEnableOnDebug && !isPVEBattle && !gameMode.forClan
-          })(partitionData)
+          }
         )
       }
       // If diff code is not provided
       // sort game modes by difficulty.
-      if (partitionData.diffCode == -1) {
+      if (diffCode == -1) {
         partition.gameModes.sort(function (gm1, gm2) {
           return ::events.diffCodeCompare(gm1.diffCode, gm2.diffCode)
         })
@@ -818,7 +818,7 @@ let { isShowGoldBalanceWarning, hasMultiplayerRestritionByBalance
 
     this.seenShowingGameModesInited = true
 
-    ::broadcastEvent("ShowingGameModesUpdated")
+    broadcastEvent("ShowingGameModesUpdated")
 
     return true
   }
@@ -826,7 +826,7 @@ let { isShowGoldBalanceWarning, hasMultiplayerRestritionByBalance
   function markShowingGameModeAsSeen(gameModeId) {
     this.isSeenByGameModeId[gameModeId] <- true
     this.saveSeenGameModes()
-    ::broadcastEvent("ShowingGameModesUpdated")
+    broadcastEvent("ShowingGameModesUpdated")
   }
 
   function getUnseenGameModeCount() {

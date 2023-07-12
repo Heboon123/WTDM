@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let stdMath = require("%sqstd/math.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -18,6 +16,7 @@ let { getShowedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 let { topMenuHandler } = require("%scripts/mainmenu/topMenuStates.nut")
 let { set_game_mode } = require("mission")
 let { select_mission } = require("guiMission")
+let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
 const NEW_PLAYER_TUTORIAL_CHOICE_STATISTIC_SAVE_ID = "statistic:new_player_tutorial_choice"
 
@@ -36,10 +35,10 @@ local NextTutorialHandler = class extends ::gui_handlers.BaseGuiHandlerWT {
     if (!this.tutorialMission)
       return this.goBack()
 
-    let msgText = ::g_string.implode([
+    let msgText = "\n".join([
       loc("askPlayTutorial"),
       colorize("userlogColoredText", loc($"missions/{this.tutorialMission.name}")),
-    ], "\n")
+    ], true)
 
     this.scene.findObject("msgText").setValue(msgText)
 
@@ -79,7 +78,7 @@ local NextTutorialHandler = class extends ::gui_handlers.BaseGuiHandlerWT {
     saveTutorialToCheckReward(this.tutorialMission)
     ::saveLocalByAccount("firstRunTutorial_" + this.tutorialMission.name, true)
     this.setLaunchedTutorialQuestions()
-    ::destroy_session_scripted()
+    ::destroy_session_scripted("on start tutorial")
 
     set_game_mode(GM_TRAINING)
     select_mission(this.tutorialMission, true)
@@ -106,7 +105,7 @@ local NextTutorialHandler = class extends ::gui_handlers.BaseGuiHandlerWT {
                   }
     if (obj != null)
       info["input"] <- this.getObjectUserInputType(obj)
-    ::add_big_query_record ("new_player_tutorial_choice", ::save_to_json(info))
+    sendBqEvent("CLIENT_GAMEPLAY_1", "new_player_tutorial_choice", info)
     ::saveLocalByAccount(NEW_PLAYER_TUTORIAL_CHOICE_STATISTIC_SAVE_ID, true)
   }
 
@@ -174,9 +173,9 @@ let function tryOpenNextTutorialHandler(checkId, checkSkip = true) {
 
 let function onOpenTutorialFromPromo(owner, params = []) {
   local tutorialId = ""
-  if (::u.isString(params))
+  if (u.isString(params))
     tutorialId = params
-  else if (::u.isArray(params) && params.len() > 0)
+  else if (u.isArray(params) && params.len() > 0)
     tutorialId = params[0]
 
   owner.checkedNewFlight(function() {

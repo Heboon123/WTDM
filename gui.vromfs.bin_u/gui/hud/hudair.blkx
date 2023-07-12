@@ -1,13 +1,5 @@
 [
   {
-    "tacticalMap": {
-      "id": "hud_air_tactical_map",
-      "size": "@sizeTacticalMap, @sizeTacticalMap",
-      "position": "absolute",
-      "pos": "pw - w, ph - h"
-    }
-  },
-  {
     "tdiv": {
       "id": "xray_render_dmg_indicator",
       "size": "@sizeDamageIndicator, @sizeDamageIndicator",
@@ -16,18 +8,30 @@
   },
   {
     "tdiv": {
-      "id": "hud_kill_log",
       "position": "absolute",
-      "pos": "pw -w, ph -h -1@hudMisObjIconsSize -1@blockInterval",
-      "height": "0.2*@shHud",
-      "overflow": "hidden",
-      "hudMessages": {
-        "id": "hud_message_kill_log_notification",
-        "message_style": "kill_log_notification",
+      "pos": "pw - w, ph - h",
+      "flow": "vertical",
+      "tdiv": {
+        "id": "hud_kill_log",
         "position": "relative",
-        "pos": "pw - w, ph - h",
-        "width": "0.5@shHud",
-        "flow": "vertical"
+        "pos": "pw -w, 0",
+        "height": "0.2*@shHud",
+        "margin-bottom": "0.02*@shHud",
+        "overflow": "hidden",
+        "hudMessages": {
+          "id": "hud_message_kill_log_notification",
+          "message_style": "kill_log_notification",
+          "position": "relative",
+          "pos": "pw - w, ph - h",
+          "width": "0.5@shHud",
+          "flow": "vertical"
+        }
+      },
+      "tacticalMap": {
+        "id": "hud_air_tactical_map",
+        "size": "@sizeTacticalMap, @sizeTacticalMap",
+        "position": "relative",
+        "pos": "pw - w, 0"
       }
     }
   },
@@ -538,6 +542,19 @@
                 "min-height": "0.1@shHud",
                 "tdiv": {
                   "id": "mission_hints",
+                  "width": "pw",
+                  "position": "relative",
+                  "pos": "0, ph-h",
+                  "flow": "vertical"
+                }
+              }
+            },
+            {
+              "tdiv": {
+                "id": "mission_action_hints_holder",
+                "position": "relative",
+                "tdiv": {
+                  "id": "mission_action_hints",
                   "width": "pw",
                   "position": "relative",
                   "pos": "0, ph-h",

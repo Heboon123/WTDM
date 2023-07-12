@@ -1,9 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { openMfm, getMfmSectionTitle, getMfmHandler } = require("%scripts/wheelmenu/multifuncMenuTools.nut")
 let cfg = require("%scripts/wheelmenu/multifuncmenuCfg.nut")
@@ -18,7 +15,6 @@ local { emulateShortcut } = require("controls")
                                  | CtrlsInGui.CTRL_ALLOW_VEHICLE_KEYBOARD
                                  | CtrlsInGui.CTRL_ALLOW_VEHICLE_JOY
                                  | CtrlsInGui.CTRL_ALLOW_MP_STATISTICS
-                                 | CtrlsInGui.CTRL_ALLOW_TACTICAL_MAP
 
   wndControlsAllowMaskWhenInactive = CtrlsInGui.CTRL_ALLOW_FULL
 

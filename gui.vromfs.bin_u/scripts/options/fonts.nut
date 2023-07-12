@@ -1,8 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let { round } = require("math")
@@ -103,7 +102,7 @@ let function update_font_heights(font) {
     }
     foreach (prefixId in daguiFonts.getRealFontNamePrefixesMap())
       config[$"fontHeight_{prefixId}"] <- daguiFonts.getFontLineHeightPx(null, $"{prefixId}{this.fontGenId}")
-    return ::handyman.renderCached("%gui/const/const_fonts_css.tpl", config)
+    return handyman.renderCached("%gui/const/const_fonts_css.tpl", config)
   }
 
   //text visible in options
@@ -185,7 +184,7 @@ let function getAvailableFontBySaveId(saveId) {
 ::g_font.getAvailableFonts <- function getAvailableFonts() {
   let sWidth = ::screen_width()
   let sHeight = ::screen_height()
-  return ::u.filter(this.types, @(f) f.isAvailable(sWidth, sHeight))
+  return u.filter(this.types, @(f) f.isAvailable(sWidth, sHeight))
 }
 
 ::g_font.getSmallestFont <- function getSmallestFont(sWidth, sHeight) {

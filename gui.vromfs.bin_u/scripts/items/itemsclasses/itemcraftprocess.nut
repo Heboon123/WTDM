@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let ItemExternal = require("%scripts/items/itemsClasses/itemExternal.nut")
 let inventoryClient = require("%scripts/inventory/inventoryClient.nut")
@@ -59,10 +57,10 @@ let inventoryClient = require("%scripts/inventory/inventoryClient.nut")
   function onCancelComplete(resultItems, params) {
     ::ItemsManager.markInventoryUpdateDelayed()
 
-    let resultItemsShowOpening  = ::u.filter(resultItems, ::trophyReward.isShowItemInTrophyReward)
+    let resultItemsShowOpening  = u.filter(resultItems, ::trophyReward.isShowItemInTrophyReward)
     let trophyId = this.id
     if (resultItemsShowOpening.len()) {
-      let openTrophyWndConfigs = ::u.map(resultItemsShowOpening, @(extItem) {
+      let openTrophyWndConfigs = u.map(resultItemsShowOpening, @(extItem) {
         id = trophyId
         item = extItem?.itemdef?.itemdefid
         count = extItem?.quantity ?? 0

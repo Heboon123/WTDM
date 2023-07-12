@@ -1,10 +1,8 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let u = require("%sqStdLibs/helpers/u.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { getObjValidIndex } = require("%sqDagui/daguiUtil.nut")
 let time = require("%scripts/time.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
@@ -62,11 +60,11 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
       threads = list
     }
 
-    let data = ::handyman.renderCached("%gui/chat/chatThreadsListRows.tpl", view)
+    let data = handyman.renderCached("%gui/chat/chatThreadsListRows.tpl", view)
     this.guiScene.replaceContentFromText(this.listObj, data, data.len(), this)
 
     if (list.len())
-      this.listObj.setValue(::find_in_array(list, selThread, 0))
+      this.listObj.setValue(u.find_in_array(list, selThread, 0))
   }
 
   function markListChanged() {
@@ -99,9 +97,9 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
     let langs = ::g_chat_latest_threads.getSearchLangsList()
     let view = {
-      countries = ::u.map(langs, function (l) { return { countryIcon = l.icon } })
+      countries = u.map(langs, function (l) { return { countryIcon = l.icon } })
     }
-    let data = ::handyman.renderCached("%gui/countriesList.tpl", view)
+    let data = handyman.renderCached("%gui/countriesList.tpl", view)
     this.guiScene.replaceContentFromText(langsBtn, data, data.len(), this)
   }
 
@@ -116,9 +114,9 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     if (::g_chat_categories.isSearchAnyCategory())
       text = loc("chat/allCategories")
     else {
-      let textsList = ::u.map(::g_chat_categories.getSearchCategoriesLList(),
+      let textsList = u.map(::g_chat_categories.getSearchCategoriesLList(),
                                 function(cName) { return ::g_chat_categories.getCategoryNameText(cName) })
-      text = ::g_string.implode(textsList, ", ")
+      text = ", ".join(textsList, true)
     }
     catBtn.setValue(text)
   }
@@ -211,7 +209,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
       return
 
     //sellImg is bigger than item, so for correct view while selecting by gamepad need to scroll to selImg
-    let val = ::get_obj_valid_index(this.listObj)
+    let val = getObjValidIndex(this.listObj)
     local childObj = this.listObj.getChild(val < 0 ? 0 : val)
     if (!checkObj(childObj))
       childObj = this.listObj.getChild(0)
@@ -261,7 +259,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     if (this.isSceneActive()) {
       //wait to apply all options before update scene.
       let cb = Callback(this.updateAll, this)
-      this.guiScene.performDelayed(this, (@(cb) function() { cb() })(cb))
+      this.guiScene.performDelayed(this, function() { cb() })
     }
   }
 

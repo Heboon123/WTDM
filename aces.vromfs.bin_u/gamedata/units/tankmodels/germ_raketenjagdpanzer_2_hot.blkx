@@ -845,6 +845,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.4,
               "nothing": 0.6,
               "fHitCritical": true
@@ -1700,6 +1701,9 @@
   {
     "commonWeapons": [
       {
+        "remotelyGuidedWeaponsMax": 1
+      },
+      {
         "Weapon": {
           "dummy": true,
           "trigger": "gunner0",
@@ -1733,15 +1737,16 @@
           "useEmitter": true,
           "emitter": "bone_rocket_01",
           "reloadAnimVar": "rjpz_2_hot_action",
-          "sleeveEmitter": "bone_rocket_01",
-          "sleeveMesh": "waffensystem_hot_container",
+          "shellCasingEmitter": "bone_rocket_01",
+          "shellCasingMesh": "waffensystem_hot_container",
           "openHatchTime": 0.0,
-          "sleevesLifeTime": 30.0,
-          "sleeveImpulse": [0.0,0.0,1.0],
-          "linkSleeveToGun": true,
-          "needScaleSleeve": false,
+          "shellCasingLifeTime": 30.0,
+          "shellCasingImpulse": [0.0,0.0,1.0],
+          "linkShellCasingToGun": true,
+          "needScaleShellCasing": false,
           "stopForFire": true,
           "maxSpeedForFire": 5.0,
+          "staticElevation": 1.425,
           "parkForReload": true,
           "circleAim": true,
           "createGunEffects": true,
@@ -1950,8 +1955,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -2864,6 +2869,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -2988,6 +3002,9 @@
         "effects": {
           "commonWeapons": [
             {
+              "remotelyGuidedWeaponsMax": 1
+            },
+            {
               "Weapon": {
                 "dummy": true,
                 "trigger": "gunner0",
@@ -3021,15 +3038,16 @@
                 "useEmitter": true,
                 "emitter": "bone_rocket_01",
                 "reloadAnimVar": "rjpz_2_hot_action",
-                "sleeveEmitter": "bone_rocket_01",
-                "sleeveMesh": "waffensystem_hot_container",
+                "shellCasingEmitter": "bone_rocket_01",
+                "shellCasingMesh": "waffensystem_hot_container",
                 "openHatchTime": 0.0,
-                "sleevesLifeTime": 30.0,
-                "sleeveImpulse": [0.0,0.0,1.0],
-                "linkSleeveToGun": true,
-                "needScaleSleeve": false,
+                "shellCasingLifeTime": 30.0,
+                "shellCasingImpulse": [0.0,0.0,1.0],
+                "linkShellCasingToGun": true,
+                "needScaleShellCasing": false,
                 "stopForFire": true,
                 "maxSpeedForFire": 5.0,
+                "staticElevation": 1.425,
                 "parkForReload": true,
                 "circleAim": true,
                 "createGunEffects": true,

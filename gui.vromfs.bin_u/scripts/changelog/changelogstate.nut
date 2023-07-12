@@ -1,8 +1,5 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { get_base_game_version } = require("app")
 let emptySceneWithDarg = require("%scripts/wndLib/emptySceneWithDarg.nut")
@@ -27,7 +24,7 @@ const PatchnoteReceived = "PatchnoteReceived"
 
 let ERROR_PAGE = {
   title = loc("matching/SERVER_ERROR_BAD_REQUEST")
-  content = { v = loc("matching/SERVER_ERROR_INTERNAL") }
+  content = [ { v = loc("matching/SERVER_ERROR_INTERNAL") } ]
 }
 let chosenPatchnote = Watched(null)
 let chosenPatchnoteLoaded = persist("chosenPatchnoteLoaded", @()Watched(false))
@@ -88,7 +85,7 @@ let function mkVersion(v) {
   let version = mkVersionFromString(tVersion)
   let title = v?.title ?? tVersion
   local titleshort = v?.titleshort ?? "undefined"
-  if (titleshort == "undefined" || titleshort.len() > 50)
+  if (titleshort == "undefined" || utf8(titleshort).charCount() > 50)
     titleshort = null
   let date = v?.date ?? ""
   return { version, title, tVersion, versionType, titleshort, iVersion = versionToInt(version), id = v.id, date }
@@ -114,7 +111,7 @@ let function filterVersions(vers) {
 let function processPatchnotesList(response) {
   let status = response?.status ?? -1
   let http_code = response?.http_code ?? -1
-  if (status != http.SUCCESS || http_code < 200 || 300 <= http_code) {
+  if (status != http.HTTP_SUCCESS || http_code < 200 || 300 <= http_code) {
     logError("changelog_versions_receive_errors", {
       reason = "Error in version response"
       stage = "get_versions"
@@ -210,7 +207,7 @@ let function afterGetRequestedPatchnote(result) {
 let function cachePatchnote(response) {
   let status = response?.status ?? -1
   let http_code = response?.http_code ?? -1
-  if (status != http.SUCCESS || http_code < 200 || 300 <= http_code) {
+  if (status != http.HTTP_SUCCESS || http_code < 200 || 300 <= http_code) {
     logError("changelog_receive_errors", {
       reason = "Error in patchnotes response"
       stage = "get_patchnote",

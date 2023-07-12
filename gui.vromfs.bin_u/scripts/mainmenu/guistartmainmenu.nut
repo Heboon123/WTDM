@@ -1,13 +1,12 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let onMainMenuReturnActions = require("%scripts/mainmenu/onMainMenuReturnActions.nut")
 let { topMenuShopActive } = require("%scripts/mainmenu/topMenuStates.nut")
 let { debug_dump_stack } = require("dagor.debug")
 let { dynamicClear } = require("dynamicMission")
+let { mission_desc_clear } = require("guiMission")
+
 
 local dbgStartCheck = 0
 
@@ -22,7 +21,7 @@ local dbgStartCheck = 0
   ::back_from_replays = null
 
   dynamicClear()
-  ::mission_desc_clear()
+  mission_desc_clear()
   ::mission_settings.dynlist <- []
 
   ::handlersManager.setLastBaseHandlerStartFunc(::gui_start_mainmenu)

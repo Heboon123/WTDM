@@ -1,16 +1,20 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
-let { split_by_chars } = require("string")
+let { split_by_chars, format } = require("string")
 let regexp2 = require("regexp2")
 let mapPreferences = require("mapPreferences")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { getMissionLocName } = require("%scripts/missions/missionsUtilsModule.nut")
 let { havePremium } = require("%scripts/user/premium.nut")
+let { get_meta_mission_info_by_name } = require("guiMission")
+let { getGameModesByEconomicName } = require("%scripts/matching/matchingGameModes.nut")
+let { getMaxEconomicRank } = require("%appGlobals/ranks_common_shared.nut")
+
+const MIN_AVAILABLE_VEHICLE_BR   = 1.0
+const VEHICLE_TO_MAP_MIN_BR_DIFF = -1.0
 
 let mapsListByEvent = {}
 
@@ -77,8 +81,8 @@ let function getMissionLoc(missionId, config, isLevelBanMode, locNameKey = "locN
       getMissionLocName(config, locNameKey)
 
   return isLevelBanMode
-    ? ::g_string.implode([missionLocName,
-      loc("ui/parentheses/space", { text = loc("maps/preferences/all_missions") })], " ")
+    ? " ".join([missionLocName,
+      loc("ui/parentheses/space", { text = loc("maps/preferences/all_missions") })], true)
     : missionLocName
 }
 
@@ -92,20 +96,41 @@ let function getInactiveMaps(curEvent, mapsList) {
   foreach (name, list in banData) {
     res[name] <- []
       foreach (map in list)
-        if (!::u.search(mapsList, @(inst) inst.map == map))
+        if (!u.search(mapsList, @(inst) inst.map == map))
           res[name].append(map)
   }
 
   return res
 }
 
-let function getMissionParams(name, missionInfo) {
+let function getBattleRatingsRangeText(minRank, maxRank) {
+  let minVehicleBr = max(
+    ::calc_battle_rating_from_rank(minRank) + VEHICLE_TO_MAP_MIN_BR_DIFF
+    MIN_AVAILABLE_VEHICLE_BR
+  )
+  let maxVehicleBr = ::calc_battle_rating_from_rank(maxRank)
+  let maxAvailableBr = ::calc_battle_rating_from_rank(getMaxEconomicRank())
+  return minVehicleBr == maxVehicleBr ? format("%.1f", minVehicleBr)
+    : maxVehicleBr > maxAvailableBr ? $"{format("%.1f", minVehicleBr)}+"
+    : $"{format("%.1f", minVehicleBr)} - {format("%.1f", maxVehicleBr)}"
+}
+
+let function getBattleRatingsDescriptionText(minRank, maxRank) {
+  return "".concat(
+    loc("mainmenu/brText")
+    $"{loc("ui/colon")}"
+    getBattleRatingsRangeText(minRank, maxRank)
+  )
+}
+
+let function getMissionParams(name, missionInfo, ranksRange) {
   let mType = name.split("_").top().split("Conq").top()
   return {
     id = name,
     title = getMissionLoc(name, missionInfo, false),
     type = mType,
     sortIdx = sortIdxByMissionType?[mType] ?? sortIdxByMissionType.other
+    ranksRange
   }
 }
 
@@ -131,25 +156,33 @@ let function getMapsListImpl(curEvent) {
         }
 
   let missionList = {}
-  foreach (gm in ::g_matching_game_modes.getGameModesByEconomicName(::events.getEventEconomicName(curEvent)))
+  foreach (gm in getGameModesByEconomicName(::events.getEventEconomicName(curEvent)))
     missionList.__update(gm?.mission_decl.missions_list ?? {})
 
   let assertMisNames = []
-  foreach (name, _val in missionList) {
+  foreach (name, val in missionList) {
     if (isLevelBanMode && missionToLevelTable?[name].origMisName)
       continue
 
-    let missionInfo = ::get_mission_meta_info(missionToLevelTable?[name].origMisName ?? name)
+    let missionInfo = get_meta_mission_info_by_name(missionToLevelTable?[name].origMisName ?? name)
     if ((missionInfo?.level ?? "") == "") {
       assertMisNames.append(name)
       continue
     }
     let level = missionToLevelTable?[name].level ?? ::map_to_location(missionInfo.level)
     let map = isLevelBanMode ? level : name
+    let unrestrictedRanksRange = { minMRank = 0, maxMRank = getMaxEconomicRank() + 1.0 }
+    let ranksRange = val?.enableIf ?? unrestrictedRanksRange
     if (isLevelBanMode) {
-      let levelMap = ::u.search(list, @(inst) inst.map == map)
+      let levelMap = u.search(list, @(inst) inst.map == map)
       if (levelMap) {
-        levelMap.missions.append(getMissionParams(name, missionInfo))
+        let minRank = min(levelMap.minMRank, ranksRange.minMRank)
+        let maxRank = max(levelMap.maxMRank, ranksRange.maxMRank)
+
+        levelMap.missions.append(getMissionParams(name, missionInfo, ranksRange))
+        levelMap.minMRank = minRank
+        levelMap.maxMRank = maxRank
+        levelMap.brRangeText = getBattleRatingsRangeText(minRank, maxRank)
         continue
       }
     }
@@ -170,11 +203,14 @@ let function getMapsListImpl(curEvent) {
       title = getMissionLoc(name, missionInfo, isLevelBanMode)
       level = level
       image = image
-      missions = [getMissionParams(name, missionInfo)]
+      missions = [getMissionParams(name, missionInfo, ranksRange)]
       disliked = mapStateData.disliked
       banned = mapStateData.banned
       liked = mapStateData.liked
       state = getMapState(mapStateData)
+      minMRank = ranksRange.minMRank
+      maxMRank = ranksRange.maxMRank
+      brRangeText = getBattleRatingsRangeText(ranksRange.minMRank, ranksRange.maxMRank)
     })
   }
 
@@ -275,4 +311,5 @@ return {
   getMapState = getMapState
   getInactiveMaps = getInactiveMaps
   getPrefTypes = getPrefTypes
+  getBattleRatingsDescriptionText = getBattleRatingsDescriptionText
 }

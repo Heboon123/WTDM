@@ -1,10 +1,9 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
 let { round, fabs } = require("math")
+let { utf8ToLower } = require("%sqstd/string.nut")
 
 global enum bit_unit_status {
   locked      = 1
@@ -23,7 +22,7 @@ global enum bit_unit_status {
 let basicUnitRoles = {
   [ES_UNIT_TYPE_AIRCRAFT] = ["type_fighter", "type_assault", "type_bomber"],
   [ES_UNIT_TYPE_TANK] = ["type_tank", "type_light_tank", "type_medium_tank", "type_heavy_tank",
-    "type_tank_destroyer", "type_spaa", "type_lbv", "type_mbv", "type_hbv"],
+    "type_tank_destroyer", "type_spaa", "type_lbv", "type_mbv", "type_hbv", "type_exoskeleton"],
   [ES_UNIT_TYPE_BOAT] = ["type_boat", "type_heavy_boat", "type_barge", "type_frigate"],
   [ES_UNIT_TYPE_SHIP] = ["type_ship", "type_destroyer", "type_light_cruiser",
     "type_heavy_cruiser", "type_battlecruiser", "type_battleship", "type_submarine"],
@@ -44,6 +43,7 @@ let unitRoleFontIcons = {
   lbv                      = loc("icon/unitclass/light_tank")
   mbv                      = loc("icon/unitclass/medium_tank")
   hbv                      = loc("icon/unitclass/heavy_tank")
+  exoskeleton              = loc("icon/unitclass/medium_tank"),
   ship                     = loc("icon/unitclass/ship"),
   boat                     = loc("icon/unitclass/gun_boat")
   heavy_boat               = loc("icon/unitclass/heavy_gun_boat")
@@ -117,7 +117,7 @@ let unitRoleByName = {}
 let function getUnitRole(unitData) { //  "fighter", "bomber", "assault", "transport", "diveBomber", "none"
   local unit = unitData
   if (type(unitData) == "string")
-    unit = ::getAircraftByName(unitData);
+    unit = getAircraftByName(unitData);
 
   if (!unit)
     return ""; //not found
@@ -157,7 +157,7 @@ let getRoleTextByTag = @(tag) loc($"mainmenu/{tag}")
   typeof @source == "string" -> @source is role id
 */
 let function getUnitRoleIcon(source) {
-  let role = ::u.isString(source) ? source
+  let role = u.isString(source) ? source
     : getUnitBasicRole(source)
   return unitRoleFontIcons?[role] ?? ""
 }
@@ -200,7 +200,7 @@ let function getFullUnitRoleText(unit) {
     }
 
   if (textsList.len())
-    return ::g_string.implode(textsList, loc("mainmenu/unit_type_separator"))
+    return loc("mainmenu/unit_type_separator").join(textsList, true)
 
   return basicRole != "" ? getRoleTextByTag(basicRole) : ""
 }
@@ -230,7 +230,7 @@ let function getShipMaterialTexts(unitId) {
   }
   if (res?.superstructureValue && res?.superstructureValue == res?.hullValue) {
     res.hullLabel += " " + loc("clan/rankReqInfoCondType_and") + " " +
-      ::g_string.utf8ToLower(res.superstructureLabel)
+      utf8ToLower(res.superstructureLabel)
     res.rawdelete("superstructureLabel")
     res.rawdelete("superstructureValue")
   }

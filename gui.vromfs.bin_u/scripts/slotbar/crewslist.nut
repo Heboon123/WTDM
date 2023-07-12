@@ -1,10 +1,9 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
+let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { getSlotbarOverrideData, isSlotbarOverrided } = require("%scripts/slotbar/slotbarOverride.nut")
 let { updateShopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 
@@ -38,7 +37,7 @@ let { updateShopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 ::g_crews_list.invalidate <- function invalidate(needForceInvalidate = false) {
   if (needForceInvalidate || !isSlotbarOverrided()) {
     this.crewsList = [] //do not broke previously received crewsList if someone use link on it
-    ::broadcastEvent("CrewsListInvalidate")
+    broadcastEvent("CrewsListInvalidate")
     return true
   }
   return false
@@ -74,7 +73,7 @@ let { updateShopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 
   this._isReinitSlotbarsInProgress = true
   ::init_selected_crews(true)
-  ::broadcastEvent("CrewsListChanged")
+  broadcastEvent("CrewsListChanged")
   this._isReinitSlotbarsInProgress = false
 }
 
@@ -128,5 +127,5 @@ let { updateShopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
   ::g_crews_list.reinitSlotbars()
 }
 
-::subscribe_handler(::g_crews_list, ::g_listener_priority.DEFAULT_HANDLER)
-::g_script_reloader.registerPersistentData("g_crews_list", ::g_crews_list, [ "isCrewListOverrided" ])
+subscribe_handler(::g_crews_list, ::g_listener_priority.DEFAULT_HANDLER)
+registerPersistentData("g_crews_list", ::g_crews_list, [ "isCrewListOverrided" ])

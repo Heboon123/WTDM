@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { ceil, fabs } = require("math")
 let DataBlock = require("DataBlock")
@@ -19,7 +17,7 @@ let { MIN_TIERS_COUNT, CHAPTER_ORDER, CHAPTER_FAVORITE_IDX, CHAPTER_NEW_IDX, CUS
 } = require("%scripts/weaponry/weaponryPresets.nut")
 let { getCustomPresetByPresetBlk, convertPresetToBlk
 } = require("%scripts/unit/unitWeaponryCustomPresets.nut")
-let { appendOnce } = require("%sqStdLibs/helpers/u.nut")
+let { appendOnce } = u
 let { cutPrefix } = require("%sqstd/string.nut")
 let { openRestrictionsWeaponryPreset } = require("%scripts/weaponry/restrictionsWeaponryPreset.nut")
 let { deep_clone } = require("%sqstd/underscore.nut")
@@ -58,7 +56,7 @@ let function getWeaponrySize(massKg) {
 }
 
 let function getTypeByPurpose(weaponry) {
-  if (::u.isEmpty(weaponry))
+  if (u.isEmpty(weaponry))
     return "NONE"
 
   let res = []
@@ -223,7 +221,7 @@ let function getPredefinedTiers(preset, unitName) {
   let filledTiers = {}
   foreach (triggerType, triggers in (preset?.weaponsByTypes ?? {}))
     foreach (weaponry in triggers.weaponBlocks)
-      if (weaponry?.tiers && !::u.isEmpty(weaponry.tiers)) { // Tiers config takes effect only when all weapons in preset have tiers
+      if (weaponry?.tiers && !u.isEmpty(weaponry.tiers)) { // Tiers config takes effect only when all weapons in preset have tiers
         let amountPerTier = weaponry.amountPerTier ?? 1
         let iconType = weaponry.iconType
         foreach (idx, tier in weaponry.tiers) {
@@ -237,7 +235,7 @@ let function getPredefinedTiers(preset, unitName) {
           }
           if (filledTiers?[tierId]) {
             // Create additional tiers info and add it on already existing tier if two weapons placed per one tier
-            let currTier = ::u.search(res, @(p) p.tierId == tierId)
+            let currTier = u.search(res, @(p) p.tierId == tierId)
             if (currTier) {
               currTier.weaponry.addWeaponry <- weaponry.__merge(params.__merge({
                 itemsNum = weaponry.num / (tier?.amountPerTier ?? amountPerTier) }))
@@ -392,14 +390,14 @@ let function getPresetView(unit, preset, weaponry, favoriteArr, availableWeapons
     dependentWeaponPreset = {}
     bannedWeaponPreset = {}
     tiersView         = {}
-    weaponPreset      = ::u.copy(preset)
+    weaponPreset      = u.copy(preset)
     weaponsByTypes    = {}
     weaponsSlotCount  = ::get_full_unit_blk(unit.name)?.WeaponSlots?.weaponsSlotCount ?? MIN_TIERS_COUNT
   }
 
-  foreach (weaponType, triggers in (weaponry?.weaponsByTypes ?? {}))
+  foreach (triggers in (weaponry?.weaponsByTypes ?? {}))
     foreach (t in triggers) {
-      let tType = weaponType == TRIGGER_TYPE.TURRETS ? weaponType : t.trigger
+      let tType = t.trigger
       presetView.weaponsByTypes[tType] <- presetView?.weaponsByTypes[tType] ?? {}
       presetView.weaponsByTypes[tType].weaponBlocks <- presetView.weaponsByTypes[tType]?.weaponBlocks ?? {}
       let w = presetView.weaponsByTypes[tType].weaponBlocks
@@ -568,11 +566,12 @@ let function addRemovedDependetWeaponsParams(preset, tierId, availableWeapons, e
   let dependentWeapons = preset.dependentWeaponPreset[presetId].filter(@(w) w.slot == slot) ?? []
   let weaponsToRemove = []
   foreach (dependentWeapon in dependentWeapons) {
-    editSlotParams.slots.append({ tierId = dependentWeapon.reqForTier })
+    if(!editSlotParams.slots.filter(@(v) v.tierId == dependentWeapon.reqForTier))
+      editSlotParams.slots.append({ tierId = dependentWeapon.reqForTier })
     let dependWeaponName = getAvailableWeaponName(availableWeapons, dependentWeapon.reqForPresetId,
       dependentWeapon.reqForTier, editSlotParams.weaponBlkCache)
     let dependWeapon = loc($"weapons/{dependWeaponName}")
-    appendOnce(dependWeapon, editSlotParams. removedWeapon)
+    appendOnce(dependWeapon, editSlotParams.removedWeapon)
     weaponsToRemove.append({ dependWeapon, tierNum = dependentWeapon.reqForTier + 1 })
     editSlotParams.removedWeaponCount++
   }
@@ -599,7 +598,7 @@ let function createPresetAfter(preset, unit, favoriteArr, availableWeapons, edit
   return { presetBefore = deep_clone(preset), presetAfter = res }
 }
 
-let function editSlotInPreset(preset, tierId, presetId, availableWeapons, unit, favoriteArr, cb) {
+let function editSlotInPreset(preset, tierId, presetId, availableWeapons, unit, favoriteArr, cb, isForced = false) {
   let editSlotParams = {
     slots = []
     msgTextArray = []
@@ -632,7 +631,7 @@ let function editSlotInPreset(preset, tierId, presetId, availableWeapons, unit, 
   }))
 
   openRestrictionsWeaponryPreset({ presets = createPresetAfter(preset, unit, favoriteArr, availableWeapons, editSlotParams),
-    messageText = "\n".join(msgTextArray), ok_fn = @() editSlotInPresetImpl(preset, slots, cb) })
+    messageText = "\n".join(msgTextArray), ok_fn = @() editSlotInPresetImpl(preset, slots, cb), isForced })
 }
 
 let function overloadMsg(locKey, weight, maxWeight) {
@@ -714,4 +713,5 @@ return {
   editSlotInPreset
   getPresetWeightRestrictionText
   getTierIcon
+  findAvailableWeapon
 }

@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let DataBlock = require("DataBlock")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -29,6 +27,9 @@ let { checkAndShowMultiplayerPrivilegeWarning,
   isMultiplayerPrivilegeAvailable } = require("%scripts/user/xboxFeatures.nut")
 let { isShowGoldBalanceWarning } = require("%scripts/user/balanceFeatures.nut")
 let openClustersMenuWnd = require("%scripts/onlineInfo/clustersMenuWnd.nut")
+let { setTimeout, clearTimer } = require("dagor.workcycle")
+let { cutPrefix } = require("%sqstd/string.nut")
+let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
 const COLLAPSED_CHAPTERS_SAVE_ID = "events_collapsed_chapters"
 const ROOMS_LIST_OPEN_COUNT_SAVE_ID = "tutor/roomsListOpenCount"
@@ -103,6 +104,8 @@ const SHOW_RLIST_BEFORE_OPEN_DEFAULT = 10
   selectedIdx = -1
   isMouseMode = true
 
+  updateButtonsTimer = null
+
   function initScreen() {
     this.mainOptionsMode = getGuiOptionsMode()
     setGuiOptionsMode(::OPTIONS_MODE_MP_DOMINATION)
@@ -145,12 +148,12 @@ const SHOW_RLIST_BEFORE_OPEN_DEFAULT = 10
     if (newChapterId == this.curChapterId && this.curEventId == newEventId)
       return this.updateWindow()
 
-    this.checkQueue((@(newEventId) function () {
+    this.checkQueue(function () {
         this.curChapterId = newChapterId
         this.curEventId = newEventId
         this.selectedIdx = curEventIdx
         this.updateWindow()
-      })(newEventId),
+      },
       function() { this.selectEvent(this.curEventId) })
   }
 
@@ -219,10 +222,10 @@ const SHOW_RLIST_BEFORE_OPEN_DEFAULT = 10
     }
 
     ::EventJoinProcess(event, null,
-      @(_event) ::add_big_query_record("to_battle_button", ::save_to_json(configForStatistic)),
+      @(_event) sendBqEvent("CLIENT_BATTLE_2", "to_battle_button", configForStatistic),
       function() {
         configForStatistic.canIntoToBattle <- false
-        ::add_big_query_record("to_battle_button", ::save_to_json(configForStatistic))
+        sendBqEvent("CLIENT_BATTLE_2", "to_battle_button", configForStatistic)
       })
   }
 
@@ -488,6 +491,19 @@ const SHOW_RLIST_BEFORE_OPEN_DEFAULT = 10
       slotbar.shade(this.isInEventQueue())
   }
 
+  function scheduleUpdateButtonsIfNeeded(event) {
+    clearTimer(this.updateButtonsTimer)
+
+    local time = ::events.getEventStartTime(event)
+    if (time <= 0)
+      time = ::events.getEventEndTime(event)
+    if (time <= 0)
+      return
+
+    let cb = Callback(@() this.updateButtons(), this)
+    this.updateButtonsTimer = setTimeout(time, @() cb())
+  }
+
   function updateButtons() {
     let event = ::events.getEvent(this.curEventId)
     let isEvent = event != null
@@ -500,6 +516,7 @@ const SHOW_RLIST_BEFORE_OPEN_DEFAULT = 10
     let isReady = ::g_squad_manager.isMeReady()
     let isSquadMember = ::g_squad_manager.isSquadMember()
 
+    this.scheduleUpdateButtonsIfNeeded(event)
     this.showSceneBtn("btn_select_console", !isCurItemInFocus && (isEvent || isHeader))
 
     let showJoinBtn = isCurItemInFocus && (isEvent && (!isInQueue || (isSquadMember && !isReady)))
@@ -590,7 +607,7 @@ const SHOW_RLIST_BEFORE_OPEN_DEFAULT = 10
       view.items.extend(eventItems)
     }
 
-    let data = ::handyman.renderCached("%gui/missions/missionBoxItemsList.tpl", view)
+    let data = handyman.renderCached("%gui/missions/missionBoxItemsList.tpl", view)
     this.guiScene.replaceContentFromText(this.eventsListObj, data, data.len(), this)
     for (local i = 0; i < this.eventsListObj.childrenCount(); i++)
       this.eventsListObj.getChild(i).setIntProp(this.listIdxPID, i)
@@ -639,7 +656,7 @@ const SHOW_RLIST_BEFORE_OPEN_DEFAULT = 10
   function onCollapse(obj) {
     if (!obj?.id)
       return
-    this.collapseChapter(::g_string.cutPrefix(obj.id, "btn_", obj.id))
+    this.collapseChapter(cutPrefix(obj.id, "btn_", obj.id))
     this.updateButtons()
   }
 

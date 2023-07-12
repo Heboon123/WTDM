@@ -1,14 +1,12 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let statsd = require("statsd")
 let DataBlock = require("DataBlock")
 let { get_authenticated_url_sso } = require("url")
-let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { registerPersistentData, PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let penalties = require("%scripts/penitentiary/penalties.nut")
 let tutorialModule = require("%scripts/user/newbieTutorialDisplay.nut")
 let contentStateModule = require("%scripts/clientState/contentState.nut")
@@ -27,13 +25,15 @@ let { isNeedFirstCountryChoice,
 let { havePlayerTag } = require("%scripts/user/userUtils.nut")
 let { bqSendStart }    = require("%scripts/bigQuery/bigQueryClient.nut")
 let { get_meta_missions_info } = require("guiMission")
-
+let { forceUpdateGameModes } = require("%scripts/matching/matchingGameModes.nut")
+let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
+let { disableMarkSeenAllResourcesForNewUser } = require("%scripts/seen/markSeenResources.nut")
 
 ::my_user_id_str <- ""
 ::my_user_id_int64 <- -1
 ::my_user_name <- ""
 
-::g_script_reloader.registerPersistentData("LoginWTGlobals", getroottable(),
+registerPersistentData("LoginWTGlobals", getroottable(),
   [
     "my_user_id_str", "my_user_id_int64", "my_user_name"
   ])
@@ -97,7 +97,7 @@ let function go_to_account_web_page(bqKey = "") {
   if (!this.isAuthorized()) {
     if (::g_login.initOptionsPseudoThread)
       ::g_login.initOptionsPseudoThread.clear()
-    ::broadcastEvent("SignOut")
+    broadcastEvent("SignOut")
     return
   }
 
@@ -108,7 +108,7 @@ let function go_to_account_web_page(bqKey = "") {
 }
 
 ::g_login.initConfigs <- function initConfigs(cb) {
-  ::broadcastEvent("AuthorizeComplete")
+  broadcastEvent("AuthorizeComplete")
   ::load_scripts_after_login_once()
   ::run_reactive_gui()
   ::my_user_id_str = ::get_player_user_id_str()
@@ -177,27 +177,25 @@ let function go_to_account_web_page(bqKey = "") {
       ::checkUnlockedCountriesByAirs()
 
       if (isNeedFirstCountryChoice())
-        ::broadcastEvent("AccountReset")
+        broadcastEvent("AccountReset")
     }
     function() {
       checkUnlocksByAbTest()
     }
     function() {
       // FIXME: it is better to get string from NDA text!
-      let versions = ["nda_version", "eula_version"]
+      let versions = ["eula_version"]
       foreach (sver in versions) {
         let l = loc(sver, "-1")
         try { getroottable()[sver] = l.tointeger() }
-        catch(e) { assert(0, "can't convert '" + l + "' to version " + sver) }
+        catch(e) { assert(0, $"can't convert '{l}' to version {sver}") }
       }
 
-      if (::should_agree_eula(::nda_version, ::TEXT_NDA))
-        ::gui_start_eula(::TEXT_NDA)
-      else if (::should_agree_eula(::eula_version, ::TEXT_EULA))
-        ::gui_start_eula(::TEXT_EULA)
+      if (::should_agree_eula(::eula_version, ::TEXT_EULA))
+        ::gui_start_eula()
     }
     function() {
-      if (::should_agree_eula(::nda_version, ::TEXT_NDA) || ::should_agree_eula(::eula_version, ::TEXT_EULA))
+      if (::should_agree_eula(::eula_version, ::TEXT_EULA))
         return PT_STEP_STATUS.SUSPEND
       return null
     }
@@ -212,10 +210,14 @@ let function go_to_account_web_page(bqKey = "") {
     }
     function() {
       if (isNeedFirstCountryChoice()) {
-        ::g_matching_game_modes.forceUpdateGameModes()
+        disableMarkSeenAllResourcesForNewUser()
+        forceUpdateGameModes()
         ::gui_start_countryChoice()
         ::gui_handlers.FontChoiceWnd.markSeen()
         tutorialModule.saveVersion()
+
+        if(havePlayerTag("steamlogin"))
+          ::save_local_account_settings("disabledReloginSteamAccount", true)
       }
       else
         tutorialModule.saveVersion(0)
@@ -261,7 +263,7 @@ let function go_to_account_web_page(bqKey = "") {
   this.statsdOnLogin()
   this.bigQueryOnLogin()
 
-  ::broadcastEvent("LoginComplete")
+  broadcastEvent("LoginComplete")
 
   //animatedSwitchScene sync function, so we need correct finish current call
   ::get_cur_gui_scene().performDelayed(getroottable(), function() {
@@ -313,15 +315,6 @@ let function needAutoStartBattle() {
   else if (!::fetch_devices_inited_once() && !isPlatformSteamDeck)
     handler.doWhenActive(function() { ::gui_start_controls_type_choice() })
 
-  if (::g_login.isProfileReceived() && ::g_controls_presets.isNewerControlsPresetVersionAvailable()) {
-    let patchNoteText = ::g_controls_presets.getPatchNoteTextForCurrentPreset()
-    ::scene_msg_box("new_controls_version_msg_box", null,
-      loc("mainmenu/new_controls_version_msg_box", { patchnote = patchNoteText }),
-      [["yes", function () { ::g_controls_presets.setHighestVersionOfCurrentPreset() }],
-       ["no", function () { ::g_controls_presets.rejectHighestVersionOfCurrentPreset() }]
-      ], "yes", { cancel_fn = function () { ::g_controls_presets.rejectHighestVersionOfCurrentPreset() } })
-  }
-
   if (::show_console_buttons) {
     if (::g_login.isProfileReceived() && ::gui_handlers.GampadCursorControlsSplash.shouldDisplay())
       handler.doWhenActive(@() ::gui_handlers.GampadCursorControlsSplash.open())
@@ -370,16 +363,11 @@ let function needAutoStartBattle() {
 ::g_login.statsdOnLogin <- function statsdOnLogin() {
   statsd.send_counter("sq.game_start.login", 1)
 
-  if (::get_controls_preset() == "") {
-    log("statsd_on_login customcontrols")
-    statsd.send_counter("sq.customcontrols", 1)
-  }
-
   if (isPlatformSony) {
     if (!::ps4_is_chat_enabled())
-      ::add_big_query_record("ps4.restrictions.chat", "")
+      sendBqEvent("CLIENT_GAMEPLAY_1", "ps4.restrictions.chat", {})
     if (!::ps4_is_ugc_enabled())
-      ::add_big_query_record("ps4.restrictions.ugc", "")
+      sendBqEvent("CLIENT_GAMEPLAY_1", "ps4.restrictions.ugc", {})
   }
 
   if (is_platform_windows) {

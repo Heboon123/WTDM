@@ -1,9 +1,8 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { get_blk_value_by_path } = require("%sqStdLibs/helpers/datablockUtils.nut")
 let DataBlock  = require("DataBlock")
@@ -96,7 +95,7 @@ let { addToText } = require("%scripts/unlocks/unlocksConditions.nut")
       if (!iconTable)
         iconTable = eventIconTable
       else
-        iconTable = ::u.tablesCombine(iconTable,
+        iconTable = u.tablesCombine(iconTable,
                                       eventIconTable,
                                       function(resultTblVal, eventTblVal) {
                                         return resultTblVal != eventTblVal ? null : eventTblVal
@@ -114,7 +113,7 @@ let { addToText } = require("%scripts/unlocks/unlocksConditions.nut")
     insertLayersArrayCfg.append(this._getTournamentTypeLayer(getTblValue("type", this.customLayers) || iconTable.type, small))
     insertLayersArrayCfg.append(addItemName ? this._getNameLayer(getTblValue("name", iconTable), small) : null)
 
-    return ::LayersIcon.genInsertedDataFromLayer(this._getBackground(small), insertLayersArrayCfg)
+    return LayersIcon.genInsertedDataFromLayer(this._getBackground(small), insertLayersArrayCfg)
   }
 
   function getBasePartOfLayerId(small) {
@@ -122,7 +121,7 @@ let { addToText } = require("%scripts/unlocks/unlocksConditions.nut")
   }
 
   function _getBackground(small) {
-    return ::LayersIcon.findLayerCfg(this.getBasePartOfLayerId(small))
+    return LayersIcon.findLayerCfg(this.getBasePartOfLayerId(small))
   }
 
   function _getUnitType(event) {
@@ -140,7 +139,7 @@ let { addToText } = require("%scripts/unlocks/unlocksConditions.nut")
   }
 
   function _getUnitTypeLayer(unitsString, small) {
-    return ::LayersIcon.findLayerCfg(this.getBasePartOfLayerId(small) + unitsString)
+    return LayersIcon.findLayerCfg(this.getBasePartOfLayerId(small) + unitsString)
   }
 
   function _getDiffCode(event) {
@@ -150,7 +149,7 @@ let { addToText } = require("%scripts/unlocks/unlocksConditions.nut")
   function _getDifficultyLayer(diffCode, small) {
     if (diffCode == null)
       return null
-    return ::LayersIcon.findLayerCfg(this.getBasePartOfLayerId(small) + "_diff" + diffCode)
+    return LayersIcon.findLayerCfg(this.getBasePartOfLayerId(small) + "_diff" + diffCode)
   }
 
   function _getTournamentMode(event) {
@@ -168,7 +167,7 @@ let { addToText } = require("%scripts/unlocks/unlocksConditions.nut")
   }
 
   function _getTournamentModeLayer(mode, small) {
-    return ::LayersIcon.findLayerCfg(this.getBasePartOfLayerId(small) + "_gm_" + mode)
+    return LayersIcon.findLayerCfg(this.getBasePartOfLayerId(small) + "_gm_" + mode)
   }
 
   function _getTournamentType(event) {
@@ -182,7 +181,7 @@ let { addToText } = require("%scripts/unlocks/unlocksConditions.nut")
   }
 
   function _getTournamentTypeLayer(lType, small) {
-    return ::LayersIcon.findLayerCfg(this.getBasePartOfLayerId(small) + "_gt_" + lType)
+    return LayersIcon.findLayerCfg(this.getBasePartOfLayerId(small) + "_gt_" + lType)
   }
 
   function _getNameForLayer(_event, eventEconomicName = "") {
@@ -198,7 +197,7 @@ let { addToText } = require("%scripts/unlocks/unlocksConditions.nut")
     if (!small || !text)
       return null
 
-    let layerCfg = ::LayersIcon.findLayerCfg(this.textLayerStyle)
+    let layerCfg = LayersIcon.findLayerCfg(this.textLayerStyle)
     if (!layerCfg)
       return null
 
@@ -309,7 +308,7 @@ let { addToText } = require("%scripts/unlocks/unlocksConditions.nut")
       }
     }
 
-    local text = ::g_string.implode(textParts, "\n")
+    local text = "\n".join(textParts, true)
     if (text.len() == 0)
       text = loc("ticket/noRestrictions")
 
@@ -347,7 +346,7 @@ let { addToText } = require("%scripts/unlocks/unlocksConditions.nut")
     }
 
     desc.append(base.getDescription())
-    return ::g_string.implode(desc, "\n")
+    return "\n".join(desc, true)
   }
 
   function getLongDescription() {
@@ -363,7 +362,7 @@ let { addToText } = require("%scripts/unlocks/unlocksConditions.nut")
     }
 
     desc.append(base.getDescription())
-    return ::g_string.implode(desc, "\n")
+    return "\n".join(desc, true)
   }
 
   function _checkTicketDefCount(defCount, maxDefCount, numUnfinishedSessions) {

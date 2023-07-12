@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let { format } = require("string")
 let { addTooltipTypes } = require("%scripts/utils/genericTooltipTypes.nut")
@@ -48,14 +46,14 @@ let tooltipTypes = {
     }
     isCustomTooltipFill = true
     fillTooltip = function(obj, handler, unitName, params) {
-      let unit = ::getAircraftByName(unitName)
+      let unit = getAircraftByName(unitName)
       if (!unit)
         return false
       let { modName = "", bulletName = "", bulletParams = {}, bSet = {} } = params
 
       let locName = " ".concat(format(loc("caliber/mm"), bSet.caliber),
         getModificationName(unit, modName), loc($"{bulletName}/name/short"))
-      let data = ::handyman.renderCached(("%gui/weaponry/weaponTooltip.tpl"),
+      let data = handyman.renderCached(("%gui/weaponry/weaponTooltip.tpl"),
         getSingleBulletParamToDesc(unit, locName, bulletName, bSet, bulletParams))
       obj.getScene().replaceContentFromText(obj, data, data.len(), handler)
       return true
@@ -69,7 +67,7 @@ let tooltipTypes = {
     }
     isCustomTooltipFill = true
     fillTooltip = function(obj, handler, unitName, params) {
-      let unit = ::getAircraftByName(unitName)
+      let unit = getAircraftByName(unitName)
       if (!unit)
         return false
       let { modName = "" } = params
@@ -89,7 +87,7 @@ let tooltipTypes = {
         (validateWeaponryTooltipParams(params)).__merge({ modName }))
     isCustomTooltipFill = true
     fillTooltip = function(obj, handler, unitName, params) {
-      let unit = ::getAircraftByName(unitName)
+      let unit = getAircraftByName(unitName)
       if (!unit)
         return false
       let { modName = "" } = params
@@ -110,11 +108,11 @@ let tooltipTypes = {
       if (!obj?.isValid())
         return false
 
-      let unit = ::getAircraftByName(unitName)
+      let unit = getAircraftByName(unitName)
       if (!unit)
         return false
 
-      let data = ::handyman.renderCached(("%gui/weaponry/weaponTooltip.tpl"), getSingleWeaponDescTbl(unit, params))
+      let data = handyman.renderCached(("%gui/weaponry/weaponTooltip.tpl"), getSingleWeaponDescTbl(unit, params))
       obj.getScene().replaceContentFromText(obj, data, data.len(), handler)
       return true
     }
@@ -131,7 +129,7 @@ let tooltipTypes = {
       if (!obj?.isValid())
         return false
 
-      let unit = ::getAircraftByName(unitName)
+      let unit = getAircraftByName(unitName)
       if (!unit)
         return false
 
@@ -159,7 +157,7 @@ let tooltipTypes = {
       if (!checkObj(obj))
         return false
 
-      let unit = ::getAircraftByName(unitName)
+      let unit = getAircraftByName(unitName)
       let spare = getTblValue("spare", unit)
       if (!spare)
         return false
@@ -179,10 +177,10 @@ let tooltipTypes = {
       if (!checkObj(obj))
         return false
 
-      let unit = ::getAircraftByName(unitName)
+      let unit = getAircraftByName(unitName)
       if (!unit)
         return false
-      let data = ::handyman.renderCached(("%gui/weaponry/weaponTooltip.tpl"),
+      let data = handyman.renderCached(("%gui/weaponry/weaponTooltip.tpl"),
         getTierDescTbl(unit, params))
       obj.getScene().replaceContentFromText(obj, data, data.len(), handler)
 
@@ -196,7 +194,7 @@ let tooltipTypes = {
     isCustomTooltipFill = true
 
     function fillTooltip(obj, handler, unitName, params) {
-      let unit = ::getAircraftByName(unitName)
+      let unit = getAircraftByName(unitName)
       if (!unit)
         return false
       let { modName = "" } = params

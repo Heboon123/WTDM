@@ -123,9 +123,6 @@
     "smokeScreenRad": 12.0
   },
   {
-    "smokeScreenOffset": [-3.0,0.0,2.0]
-  },
-  {
     "smokeScreenDmPart": "engine_dm"
   },
   {
@@ -133,6 +130,9 @@
   },
   {
     "smokeScreenFx": "smokescreen_no_therm_small"
+  },
+  {
+    "smokeScreenOffset": [-1.0,0.0,-4.0]
   },
   {
     "DamageParts": {
@@ -1968,6 +1968,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -3798,8 +3799,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -3841,6 +3842,12 @@
         "rotation": 1.3,
         "collisionNode": "cls_turret"
       }
+    }
+  },
+  {
+    "dmgAngles": {
+      "hatch_16": [50.0,75.0],
+      "hatch_15": [50.0,75.0]
     }
   },
   {
@@ -4724,6 +4731,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -5493,6 +5509,12 @@
     "smokeScreenExhaustEmitters": [
       {
         "emitter": "emtr_exhaust_01"
+      },
+      {
+        "emitter": "emtr_exhaust_02"
+      },
+      {
+        "emitter": "emtr_exhaust_03"
       },
       {
         "emitter": "emtr_exhaust_04"

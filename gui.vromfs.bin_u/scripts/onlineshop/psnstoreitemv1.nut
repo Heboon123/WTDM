@@ -1,10 +1,9 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
 
 let DataBlock = require("DataBlock")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { calcPercent } = require("%sqstd/math.nut")
 let psnStore = require("sony.store")
 let psnUser = require("sony.user")
@@ -15,6 +14,7 @@ let { GUI } = require("%scripts/utils/configs.nut")
 let { targetPlatform } = require("%scripts/clientState/platform.nut")
 let { getEntitlementId } = require("%scripts/onlineShop/onlineBundles.nut")
 let { getEntitlementView } = require("%scripts/onlineShop/entitlementView.nut")
+let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
 let IMAGE_TYPE_INDEX = 1 //240x240
 let BQ_DEFAULT_ACTION_ERROR = -1
@@ -29,7 +29,7 @@ let function handleNewPurchase(itemId) {
   ::ps4_update_purchases_on_auth()
   let taskParams = { showProgressBox = true, progressBoxText = loc("charServer/checking") }
   ::g_tasker.addTask(::update_entitlements_limited(true), taskParams)
-  ::broadcastEvent("PS4ItemUpdate", { id = itemId })
+  broadcastEvent("PS4ItemUpdate", { id = itemId })
 }
 
 let getActionText = @(action) action == psnStore.Action.PURCHASED ? "purchased"
@@ -52,11 +52,9 @@ let function sendBqRecord(metric, itemId, result = null) {
 
   let path = ".".join(metric)
   statsd.send_counter($"sq.{path}", 1)
-  ::add_big_query_record(path,
-    ::save_to_json(sendStat.__merge({
-      itemId = itemId
-    }))
-  )
+  sendBqEvent("CLIENT_POPUP_1", path, sendStat.__merge({
+    itemId = itemId
+  }))
 }
 
 let function reportRecord(data, _record_name) {
@@ -202,14 +200,14 @@ local Ps4ShopPurchasableItem = class {
   isCanBuy = @() this.isPurchasable && !this.isBought
   isInactive = @() !this.isPurchasable || this.isBought
 
-  getIcon = @(...) this.imagePath ? ::LayersIcon.getCustomSizeIconData(this.imagePath, "pw, ph")
-                             : ::LayersIcon.getIconData(null, null, 1.0, this.defaultIconStyle)
+  getIcon = @(...) this.imagePath ? LayersIcon.getCustomSizeIconData(this.imagePath, "pw, ph")
+                             : LayersIcon.getIconData(null, null, 1.0, this.defaultIconStyle)
 
   getBigIcon = function() {
     let ps4ShopBlk = GUI.get()?.ps4_ingame_shop
     let ingameShopImages = ps4ShopBlk?.items
     if (ingameShopImages?[this.id] && ps4ShopBlk?.mainPart && ps4ShopBlk?.fileExtension)
-      return ::LayersIcon.getCustomSizeIconData("!" + ps4ShopBlk.mainPart + this.id + ps4ShopBlk.fileExtension, "pw, ph")
+      return LayersIcon.getCustomSizeIconData("!" + ps4ShopBlk.mainPart + this.id + ps4ShopBlk.fileExtension, "pw, ph")
 
     return null
   }

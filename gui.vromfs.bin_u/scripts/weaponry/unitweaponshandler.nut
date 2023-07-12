@@ -1,20 +1,16 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
-let { updateModItem,
-        createModItemLayout,
-        updateItemBulletsSlider } = require("%scripts/weaponry/weaponryVisual.nut")
-        let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { countSizeInItems } = require("%sqDagui/daguiUtil.nut")
+let { updateModItem, createModItemLayout, updateItemBulletsSlider
+} = require("%scripts/weaponry/weaponryVisual.nut")
+let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { ceil } = require("math")
-
 let { getLastWeapon, setLastWeapon, isWeaponEnabled, isWeaponVisible,
   isDefaultTorpedoes } = require("%scripts/weaponry/weaponryInfo.nut")
 let { isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitStatus.nut")
+let { cutPrefix } = require("%sqstd/string.nut")
+let { checkShowShipWeaponsTutor } = require("%scripts/weaponry/shipWeaponsTutor.nut")
 
 ::gui_handlers.unitWeaponsHandler <- class extends ::gui_handlers.BaseGuiHandlerWT {
   wndType = handlerType.CUSTOM
@@ -22,7 +18,6 @@ let { isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitStatus.nut")
   unit = null
   canShowPrice = false
   canChangeWeaponry = true
-  canChangeBulletsAmount = true
 
   weaponItemId = "secondary_weapon"
   bulletsIdPrefix = "bullets_"
@@ -36,6 +31,8 @@ let { isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitStatus.nut")
   isForcedAvailable = false
   forceShowDefaultTorpedoes = false
 
+  needCheckTutor = true
+
   function initScreen() {
     this.bulletsManager = ::UnitBulletsManager(this.unit, { isForcedAvailable = this.isForcedAvailable })
     this.updateShowItemParams()
@@ -46,7 +43,7 @@ let { isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitStatus.nut")
     if (!this.needRecountWidth || !this.scene.isVisible() || this.scene.getSize()[0] <= 0)
       return
 
-    let sizes = ::g_dagui_utils.countSizeInItems(this.scene, "@modCellWidth", "@modCellHeight", 0, 0)
+    let sizes = countSizeInItems(this.scene, "@modCellWidth", "@modCellHeight", 0, 0)
     this.modsInRow = sizes.itemsCountX
     this.scene.width = this.modsInRow + "@modCellWidth"
     this.needRecountWidth = false
@@ -56,8 +53,8 @@ let { isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitStatus.nut")
     this.showItemParams = {
       canShowPrice = this.canShowPrice
       canShowStatusImage = false
-      selectBulletsByManager = (this.canChangeWeaponry && this.canChangeBulletsAmount) ? this.bulletsManager : null
-      needSliderButtons = this.canChangeBulletsAmount
+      selectBulletsByManager = this.canChangeWeaponry ? this.bulletsManager : null
+      needSliderButtons = true
       hasMenu = false
       isForceHidePlayerInfo = this.isForcedAvailable || this.forceShowDefaultTorpedoes
     }
@@ -85,6 +82,11 @@ let { isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitStatus.nut")
 
     this.fillWeaponryByColumnsConfig(columnsConfig)
     this.updateAllItems()
+
+    if (this.needCheckTutor) {
+      this.guiScene.performDelayed(this, @() checkShowShipWeaponsTutor(this, columnsConfig))
+      this.needCheckTutor = false
+    }
   }
 
   function setCanChangeWeaponry(newValue, forceUpdate) {
@@ -149,7 +151,7 @@ let { isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitStatus.nut")
         needHeader = needHeader || cell.header != null
 
         if (cell.header)
-          bgBlock.columnsList.append(this.getColumnConfig(cell.header, bgBlock.columnsList.len() > 0, itemWidth))
+          bgBlock.columnsList.append(this.getColumnConfig(cell.id, cell.header, bgBlock.columnsList.len() > 0, itemWidth))
       }
 
       if (isLineEmpty)
@@ -178,7 +180,7 @@ let { isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitStatus.nut")
     this.scene.height = (lineOffset + line) + "@modCellHeight"
     if (!this.needRecountWidth)
       this.scene.width = (itemWidth * columns.len()) + "@modCellWidth"
-    let data = ::handyman.renderCached("%gui/weaponry/weaponry.tpl", view)
+    let data = handyman.renderCached("%gui/weaponry/weaponry.tpl", view)
     this.guiScene.replaceContentFromText(this.scene, data, data.len(), this)
   }
 
@@ -194,8 +196,9 @@ let { isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitStatus.nut")
     }
   }
 
-  function getColumnConfig(header, needDivLine = false, width = 1) {
+  function getColumnConfig(id, header, needDivLine = false, width = 1) {
     return {
+      id
       name = header
       needDivLine = needDivLine
       width = width
@@ -275,8 +278,7 @@ let { isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitStatus.nut")
       return null
 
     let res = this.getEmptyColumnsConfig()
-    if (this.canChangeBulletsAmount)
-      res.itemWidth = 1.5
+    res.itemWidth = 1.5
     if (gunsCount == 1) {
       let totalMods = this.bulletsManager.getActiveBulGroupsAmount()
       local totalColumns = 0
@@ -481,7 +483,7 @@ let { isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitStatus.nut")
   }
 
   function getBulletGroupByItemId(id) {
-    let idxStr = ::g_string.cutPrefix(id, this.bulletsIdPrefix, -1)
+    let idxStr = cutPrefix(id, this.bulletsIdPrefix, -1)
     return this.getBulletGroupByIndex(::to_integer_safe(idxStr, -1))
   }
 
@@ -546,7 +548,7 @@ let { isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitStatus.nut")
       return
 
     let itemObj = listObj.getChild(idx)
-    let id = ::g_string.cutPrefix(itemObj.id, this.bulletsIdPrefix, -1)
+    let id = cutPrefix(itemObj.id, this.bulletsIdPrefix, -1)
     let groupIdx = ::to_integer_safe(id, -1)
     let group = this.getBulletGroupByIndex(groupIdx)
     if (!group)

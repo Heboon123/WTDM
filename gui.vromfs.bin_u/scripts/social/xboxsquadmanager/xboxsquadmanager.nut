@@ -1,12 +1,9 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let logX = require("%sqstd/log.nut")().with_prefix("[MPA_MANAGER] ")
+let { addListenersWithoutEnv, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { set_activity, clear_activity, send_invitations, JoinRestriction } = require("%xboxLib/mpa.nut")
-let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { register_activation_callback, get_sender_xuid } = require("%xboxLib/activation.nut")
 let { requestUnknownXboxIds } = require("%scripts/contacts/externalContactsService.nut")
 
@@ -99,7 +96,7 @@ let function acceptExistingIngameInvite(uid) {
 
   needCheckSquadInvites = true
   invite.checkAutoAcceptXboxInvite()
-  ::broadcastEvent("XboxInviteAccepted")
+  broadcastEvent("XboxInviteAccepted")
   needCheckSquadInvites = false
 }
 
@@ -139,7 +136,7 @@ register_activation_callback(function() {
       ::quit_mission()
     }
 
-    ::broadcastEvent("XboxInviteAccepted")
+    broadcastEvent("XboxInviteAccepted")
     return
   }
 

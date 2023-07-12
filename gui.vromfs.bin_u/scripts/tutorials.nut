@@ -1,9 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { tryOpenNextTutorialHandler } = require("%scripts/tutorials/nextTutorialHandler.nut")
 let { checkTutorialsList } = require("%scripts/tutorials/tutorialsData.nut")
@@ -31,7 +28,7 @@ let function getReserveAircraftName(paramsTable) {
   let trainedSpec = getTblValue("trainedSpec", preferredCrew, {})
 
   foreach (unitName, _unitSpec in trainedSpec) {
-    let unit = ::getAircraftByName(unitName)
+    let unit = getAircraftByName(unitName)
     if (unit != null && checkReserveUnit(unit, paramsTable))
       return unit.name
   }

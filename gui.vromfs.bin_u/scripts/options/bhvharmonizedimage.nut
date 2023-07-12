@@ -1,8 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
 if (!("gui_bhv" in getroottable()))
   ::gui_bhv <- {}
@@ -14,7 +12,7 @@ if (!("gui_bhv" in getroottable()))
 
   function onAttach(obj) {
     let textureId = obj?.harmonizedImageId
-    if (!::u.isEmpty(textureId))
+    if (!u.isEmpty(textureId))
       obj["background-image"] = ::get_country_flag_img(textureId)
     return RETCODE_NOTHING
   }

@@ -1,9 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { addPromoAction } = require("%scripts/promo/promoActions.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -51,14 +48,14 @@ let { switchProfileCountry, profileCountrySq } = require("%scripts/user/playerCo
       this.highlightUnitsInTree([this.curAirName])
   }
 
-  function onCloseShop() {
+  function goBack() {
     ::gui_handlers.BaseGuiHandlerWT.goBack.call(this)
   }
 }
 
 let function openShopViewWndFromPromo(params) {
   let unitName = params?[0] ?? ""
-  let unit = ::getAircraftByName(unitName)
+  let unit = getAircraftByName(unitName)
   if (!unit)
     return
 

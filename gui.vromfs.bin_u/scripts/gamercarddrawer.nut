@@ -1,11 +1,9 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 enum GamercardDrawerState {
   STATE_CLOSED
@@ -40,7 +38,7 @@ enum GamercardDrawerState {
       return
     this.currentState = GamercardDrawerState.STATE_CLOSING
     this.setOpenAnim(false)
-    ::broadcastEvent("GamercardDrawerAnimationStart", { isOpening = false })
+    broadcastEvent("GamercardDrawerAnimationStart", { isOpening = false })
   }
 
   function openDrawer() {
@@ -49,7 +47,7 @@ enum GamercardDrawerState {
       return
     this.currentState = GamercardDrawerState.STATE_OPENING
     this.setOpenAnim(true)
-    ::broadcastEvent("GamercardDrawerAnimationStart", { isOpening = true })
+    broadcastEvent("GamercardDrawerAnimationStart", { isOpening = true })
   }
 
   function setOpenAnim(open) {
@@ -112,7 +110,7 @@ enum GamercardDrawerState {
     let params = {
       target = this.currentTarget
     }
-    ::broadcastEvent("GamercardDrawerOpened", params)
+    broadcastEvent("GamercardDrawerOpened", params)
   }
 
   function onDrawerClose(_obj) {

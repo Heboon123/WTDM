@@ -1,8 +1,5 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -12,10 +9,12 @@ let { debriefingRows } = require("%scripts/debriefing/debriefingFull.nut")
 let { GUI } = require("%scripts/utils/configs.nut")
 let { register_command } = require("console")
 let { is_running } = require("steam")
+let { request_review } = require("%xboxLib/impl/store.nut")
+let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
 local openReviewWnd = @(...) null
 if (isPlatformXboxOne)
-  openReviewWnd = @(...) ::xbox_show_rate_and_review()
+  openReviewWnd = @(...) request_review(null)
 else if (is_running())
   openReviewWnd = require("steamRateGameWnd.nut").open
 
@@ -138,7 +137,7 @@ let function tryOpenXboxRateReviewWnd() {
 
   openReviewWnd()
   ::save_local_account_settings(RATE_WND_TIME_SAVE_ID, ::get_charserver_time_sec())
-  ::add_big_query_record("rate", ::save_to_json({ from = "xbox" }))
+  sendBqEvent("CLIENT_POPUP_1", "rate", { from = "xbox" })
 }
 
 let function tryOpenSteamRateReview(forceShow = false) {
@@ -150,12 +149,11 @@ let function tryOpenSteamRateReview(forceShow = false) {
 
   //On Steam we already know that there will be no errors on displaying to player web page
   ::save_local_account_settings(RATE_WND_TIME_SAVE_ID, ::get_charserver_time_sec())
-  ::add_big_query_record("rate", ::save_to_json({ from = "steam" }))
+  sendBqEvent("CLIENT_POPUP_1", "rate", { from = "steam" })
 
   //Send additional data if player accepted opening web page
   openReviewWnd(@(openedBrowser)
-    ::add_big_query_record("rate",
-      ::save_to_json({ from = "steam", openedBrowser = openedBrowser }))
+    sendBqEvent("CLIENT_POPUP_1", "rate", { from = "steam", openedBrowser = openedBrowser })
   )
 }
 
@@ -174,7 +172,7 @@ let function checkShowRateWnd() {
 
 addListenersWithoutEnv({
   UnitBought = function(p) {
-    let unit = ::getAircraftByName(p?.unitName)
+    let unit = getAircraftByName(p?.unitName)
     if (unit && ::isUnitSpecial(unit))
       havePurchasedSpecUnit(true)
   }
@@ -189,6 +187,7 @@ addListenersWithoutEnv({
 })
 
 register_command(@() tryOpenSteamRateReview(true), "debug.show_steam_rate_wnd")
+register_command(@() tryOpenXboxRateReviewWnd(), "debug.show_xbox_rate_wnd")
 
 return {
   setNeedShowRate

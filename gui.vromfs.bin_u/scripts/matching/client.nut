@@ -1,12 +1,10 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let exitGame = require("%scripts/utils/exitGame.nut")
-let { subscribe } = require("eventbus")
 let { getLocalLanguage } = require("language")
+let { replace } = require("%sqstd/string.nut")
+let { matchingApiFunc } = require("%scripts/matching/api.nut")
 
 let function addLineBreaks(text) {
   if (getLocalLanguage() != "HChinese")
@@ -20,26 +18,6 @@ let function addLineBreaks(text) {
     resArr.append(nextChar, (i < total - 1 ? "\t" : ""))
   }
   return "".join(resArr)
-}
-
-subscribe("on_online_unavailable", function(_) {
-  log("on_online_unavailable")
-  ::g_matching_connect.onDisconnect()
-})
-
-::on_online_available <- function on_online_available() {
-  log("on_online_available")
-  ::g_matching_connect.onConnect()
-}
-
-::logout_with_msgbox <- function logout_with_msgbox(params) {
-  let message = "message" in params ? params["message"] : null
-  ::g_matching_connect.logoutWithMsgBox(params.reason, message, params.reasonDomain)
-}
-
-::exit_with_msgbox <- function exit_with_msgbox(params) {
-  let message = "message" in params ? params["message"] : null
-  ::g_matching_connect.exitWithMsgBox(params.reason, message, params.reasonDomain)
 }
 
 ::punish_show_tips <- function punish_show_tips(params) {
@@ -70,16 +48,16 @@ requestOptions:
 ::request_matching <- function request_matching(functionName, onSuccess = null, onError = null, params = null, requestOptions = null) {
   let showError = getTblValue("showError", requestOptions, true)
 
-  let callback = (@(onSuccess, onError, showError) function(response) {
+  let callback = function(response) {
                      if (!::checkMatchingError(response, showError)) {
                        if (onError != null)
                          onError(response)
                      }
                      else if (onSuccess != null)
                       onSuccess(response)
-                   })(onSuccess, onError, showError)
+                   }
 
-  ::matching_api_func(functionName, callback, params)
+  matchingApiFunc(functionName, callback, params)
 }
 
 ::checkMatchingError <- function checkMatchingError(params, showError = true) {
@@ -90,7 +68,7 @@ requestOptions:
     return false
 
   let errorId = getTblValue("error_id", params) || ::matching.error_string(params.error)
-  local text = loc("matching/" + ::g_string.replace(errorId, ".", "_"))
+  local text = loc("matching/" + replace(errorId, ".", "_"))
   if ("error_message" in params)
     text = text + "\n<B>" + params.error_message + "</B>"
 

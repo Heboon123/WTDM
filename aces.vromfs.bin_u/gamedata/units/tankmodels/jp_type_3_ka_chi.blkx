@@ -111,6 +111,9 @@
     "type": "typeMediumTank"
   },
   {
+    "steeringAnimVar": "steering_param"
+  },
+  {
     "DamageParts": {
       "formatVersion": 2,
       "armorClass": "RHA_tank",
@@ -1633,6 +1636,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -4170,6 +4174,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -4512,6 +4525,12 @@
             },
             {
               "node": "hatch_10"
+            },
+            {
+              "node": "rudder_01"
+            },
+            {
+              "node": "rudder_02"
             }
           ]
         }

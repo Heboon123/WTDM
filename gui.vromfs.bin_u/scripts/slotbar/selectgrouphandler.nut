@@ -1,11 +1,9 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let slotbarPresets = require("%scripts/slotbar/slotbarPresetsByVehiclesGroups.nut")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { getGroupUnitMarkUp } = require("%scripts/unit/groupUnit.nut")
 let { getParamsFromSlotbarConfig } = require("%scripts/slotbar/selectUnitHandler.nut")
 
@@ -80,7 +78,7 @@ return {
   open = function(crew, slotbar) {
     let params = getParamsFromSlotbarConfig(crew, slotbar)
     if (params == null)
-      return ::broadcastEvent("ModalWndDestroy")
+      return broadcastEvent("ModalWndDestroy")
 
     ::handlersManager.destroyPrevHandlerAndLoadNew(SelectGroupHandler, params)
   }

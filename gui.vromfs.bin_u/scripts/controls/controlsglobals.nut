@@ -1,8 +1,5 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 // Functions in this file called from C++ code
 
@@ -12,7 +9,6 @@ from "%scripts/dagui_library.nut" import *
   let otherPreset = ::ControlsPreset(blkOrPresetPath)
   if (otherPreset.isLoaded && otherPreset.hotkeys.len() > 0) {
     ::g_controls_manager.setCurPreset(otherPreset)
-    ::controls_fix_device_mapping()
     ::is_last_load_controls_succeeded = true
   }
   else {

@@ -1767,6 +1767,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.4,
               "nothing": 0.6,
               "fHitCritical": true
@@ -2898,13 +2899,13 @@
           "blk": "gameData/Weapons/groundModels_weapons/57mm_AU_220M_user_cannon.blk",
           "emitter": "bone_gun_barrel",
           "flash": "emtr_gun_flame",
-          "sleeveEmitter": "emtr_shell",
-          "sleeveMesh": "auto_cannon_cartridge_case",
+          "shellCasingEmitter": "emtr_shell",
+          "shellCasingMesh": "auto_cannon_cartridge_case",
           "hatchAnimVar": "hatch_toggle",
-          "openHatchTime": 0.3,
-          "sleevesLifeTime": 5.0,
-          "sleeveImpulse": [1.0,8.0,2.0],
-          "linkSleeveToGun": true,
+          "openHatchTime": 0.5,
+          "shellCasingLifeTime": 5.0,
+          "shellCasingImpulse": [1.0,1.0,2.0],
+          "linkShellCasingToGun": true,
           "recoilOffset": 0.2,
           "defaultYaw": 0.0,
           "defaultPitch": 0.0,
@@ -3367,8 +3368,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -4293,6 +4294,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -4514,13 +4524,13 @@
                 "blk": "gameData/Weapons/groundModels_weapons/57mm_AU_220M_user_cannon.blk",
                 "emitter": "bone_gun_barrel",
                 "flash": "emtr_gun_flame",
-                "sleeveEmitter": "emtr_shell",
-                "sleeveMesh": "auto_cannon_cartridge_case",
+                "shellCasingEmitter": "emtr_shell",
+                "shellCasingMesh": "auto_cannon_cartridge_case",
                 "hatchAnimVar": "hatch_toggle",
-                "openHatchTime": 0.3,
-                "sleevesLifeTime": 5.0,
-                "sleeveImpulse": [1.0,8.0,2.0],
-                "linkSleeveToGun": true,
+                "openHatchTime": 0.5,
+                "shellCasingLifeTime": 5.0,
+                "shellCasingImpulse": [1.0,1.0,2.0],
+                "linkShellCasingToGun": true,
                 "recoilOffset": 0.2,
                 "defaultYaw": 0.0,
                 "defaultPitch": 0.0,
@@ -4845,6 +4855,7 @@
   {
     "supportPlane": {
       "supportPlaneClass": "ucav_recon_micro",
+      "behTreeName": "recon_micro",
       "planeStartSpeed": 80.0,
       "count": 1
     }
@@ -4975,7 +4986,7 @@
               "count": 3
             },
             "ammo_turret_33_dm": {
-              "count": 3
+              "count": 2
             },
             "ammo_turret_34_dm": {
               "count": 2
@@ -4984,7 +4995,7 @@
               "count": 2
             },
             "ammo_turret_36_dm": {
-              "count": 1
+              "count": 2
             },
             "ammo_turret_37_dm": {
               "count": 3
@@ -5049,6 +5060,12 @@
     "smokeScreenExhaustEmitters": [
       {
         "emitter": "emtr_exhaust_01"
+      },
+      {
+        "emitter": "emtr_exhaust_02"
+      },
+      {
+        "emitter": "emtr_exhaust_03"
       },
       {
         "emitter": "emtr_exhaust_04"

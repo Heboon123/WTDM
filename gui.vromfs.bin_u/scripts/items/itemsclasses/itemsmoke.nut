@@ -1,14 +1,14 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { Cost } = require("%scripts/money.nut")
+
 
 let { getBestUnitForPreview } = require("%scripts/customization/contentPreview.nut")
 let { aeroSmokesList } = require("%scripts/unlocks/unlockSmoke.nut")
 let { getPlayerCurUnit } = require("%scripts/slotbar/playerCurUnit.nut")
-let { select_training_mission } = require("guiMission")
+let { select_training_mission, get_meta_mission_info_by_name } = require("guiMission")
 let { getUnlockTypeById } = require("unlocks")
 let { getUnlockCost, buyUnlock } = require("%scripts/unlocks/unlocksModule.nut")
 
@@ -64,9 +64,9 @@ let { getUnlockCost, buyUnlock } = require("%scripts/unlocks/unlocksModule.nut")
   getDescriptionTitle = @() base.getName()
 
   getIcon = @(_addItemName = true)
-    ::LayersIcon.getIconData(this.usingStyle, this.defaultIcon, 1.0, this.defaultIconStyle)
+    LayersIcon.getIconData(this.usingStyle, this.defaultIcon, 1.0, this.defaultIconStyle)
 
-  getBigIcon = @() ::LayersIcon.getIconData($"{this.usingStyle}_big", this.defaultIcon, 1.0, this.defaultIconStyle)
+  getBigIcon = @() LayersIcon.getIconData($"{this.usingStyle}_big", this.defaultIcon, 1.0, this.defaultIconStyle)
 
   getMainActionData = @(isShort = false, _params = {}) this.isActive() ? null : {
       btnName = this.isUnlocked() ? loc("item/consume") : this.getBuyText(false, isShort)
@@ -125,7 +125,7 @@ let { getUnlockCost, buyUnlock } = require("%scripts/unlocks/unlocksModule.nut")
       ::set_gui_option_in_mode(idx, val, ::OPTIONS_MODE_TRAINING)
 
     let misName = "aerobatic_smoke_preview"
-    let misInfo = ::get_mission_meta_info(misName)
+    let misInfo = get_meta_mission_info_by_name(misName)
     if (!misInfo)
       return ::script_net_assert_once("Wrong testflight mission",
         "ItemSmoke: No meta info for aerobatic_smoke_preview")
@@ -149,7 +149,7 @@ let { getUnlockCost, buyUnlock } = require("%scripts/unlocks/unlocksModule.nut")
   function getCost(ignoreCanBuy = false) {
     return (this.isCanBuy() || ignoreCanBuy) && !this.isUnlocked()
       ? getUnlockCost(this.id).multiply(this.getSellAmount())
-      : ::Cost()
+      : Cost()
   }
 
   function getUsingStyle(blk) {
@@ -158,7 +158,7 @@ let { getUnlockCost, buyUnlock } = require("%scripts/unlocks/unlocksModule.nut")
       if (blk?[pos] != "")
         pref.append(pos)
   pref = ["aerobatic_smoke", blk.rarity].extend(pref.len() < 3 ? pref : ["triple"])
-    return ::g_string.implode(pref, "_")
+    return "_".join(pref, true)
   }
 
   function setCurrOption() {

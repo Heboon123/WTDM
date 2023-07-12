@@ -1661,6 +1661,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -2838,22 +2839,22 @@
             "shotFreq": 2.0
           },
           {
-            "sleeveEmitter": "emtr_shell"
+            "shellCasingEmitter": "emtr_shell"
           },
           {
-            "sleeveMesh": "cartridge_case"
+            "shellCasingMesh": "cartridge_case"
           },
           {
             "openHatchTime": 0.0
           },
           {
-            "sleevesLifeTime": 10.0
+            "shellCasingLifeTime": 10.0
           },
           {
-            "sleeveImpulse": [8.0,0.0,0.0]
+            "shellCasingImpulse": [8.0,0.0,0.0]
           },
           {
-            "linkSleeveToGun": true
+            "linkShellCasingToGun": true
           },
           {
             "maxAdditionalPitch": 0.0
@@ -3120,7 +3121,7 @@
         "cls_body": "convex_hull"
       },
       "engine": {
-        "horsePowers": 830.0,
+        "horsePowers": 1100.0,
         "maxRPM": 2200.0,
         "minRPM": 800.0
       },
@@ -3194,8 +3195,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -4120,6 +4121,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -4244,22 +4254,22 @@
                   "shotFreq": 2.0
                 },
                 {
-                  "sleeveEmitter": "emtr_shell"
+                  "shellCasingEmitter": "emtr_shell"
                 },
                 {
-                  "sleeveMesh": "cartridge_case"
+                  "shellCasingMesh": "cartridge_case"
                 },
                 {
                   "openHatchTime": 0.0
                 },
                 {
-                  "sleevesLifeTime": 10.0
+                  "shellCasingLifeTime": 10.0
                 },
                 {
-                  "sleeveImpulse": [8.0,0.0,0.0]
+                  "shellCasingImpulse": [8.0,0.0,0.0]
                 },
                 {
-                  "linkSleeveToGun": true
+                  "linkShellCasingToGun": true
                 },
                 {
                   "maxAdditionalPitch": 0.0

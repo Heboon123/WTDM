@@ -1,11 +1,9 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
+let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { get_gui_option, getGuiOptionsMode } = require("guiOptions")
 let stdMath = require("%sqstd/math.nut")
 let { AMMO, getAmmoWarningMinimum } = require("%scripts/weaponry/ammoInfo.nut")
@@ -25,7 +23,7 @@ global enum bulletsAmountState {
 ::UnitBulletsManager <- class {
   unit = null  //setUnit to change
   bulGroups = null //bulletsGroups
-  gunsInfo = null //bulletsInfo for primary guns (guns, total, catridge, groupIndex) //getBulletsInfoForPrimaryGuns
+  gunsInfo = null //bulletsInfo for primary guns (guns, total, cartridge, groupIndex) //getBulletsInfoForPrimaryGuns
   groupsActiveMask = 0
 
   checkPurchased = true
@@ -38,7 +36,7 @@ global enum bulletsAmountState {
     this.isForcedAvailable = params?.isForcedAvailable ?? false
 
     this.setUnit(v_unit)
-    ::subscribe_handler(this, ::g_listener_priority.CONFIG_VALIDATION)
+    subscribe_handler(this, ::g_listener_priority.CONFIG_VALIDATION)
   }
 
   function getUnit() {
@@ -47,7 +45,7 @@ global enum bulletsAmountState {
 
   function setUnit(v_unit) {
     if (type(v_unit) == "string")
-      v_unit = ::getAircraftByName(v_unit)
+      v_unit = getAircraftByName(v_unit)
     if (this.unit == v_unit)
       return
 
@@ -98,7 +96,7 @@ global enum bulletsAmountState {
     bulGroup.setBulletsCount(newCount)
     if (bulGroup.gunInfo)
       bulGroup.gunInfo.unallocated <- unallocated + count - newCount
-    ::broadcastEvent("BulletsCountChanged", { unit = this.unit })
+    broadcastEvent("BulletsCountChanged", { unit = this.unit })
     return true
   }
 
@@ -139,7 +137,7 @@ global enum bulletsAmountState {
 
     bulGroup.setBullet(bulletName)
     this.validateBulletsCount()
-    ::broadcastEvent("BulletsGroupsChanged", { unit = this.unit, changedGroups = changedGroups })
+    broadcastEvent("BulletsGroupsChanged", { unit = this.unit, changedGroups = changedGroups })
 
     this._bulletsSetValueRecursion = false
   }
@@ -254,9 +252,7 @@ global enum bulletsAmountState {
       weaponItemParams = itemParams
       alignObj = alignObj
       align = align
-      onChangeValueCb = Callback((@(bulGroup) function(mod) {
-        this.changeBulletsValue(bulGroup, mod.name)
-      })(bulGroup), this)
+      onChangeValueCb = Callback(@(mod) this.changeBulletsValue(bulGroup, mod.name), this)
     })
   }
 

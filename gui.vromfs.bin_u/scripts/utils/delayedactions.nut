@@ -1,8 +1,5 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
 let { rnd_int } = require("dagor.random")
@@ -92,11 +89,8 @@ let function test() {
   let curTime = get_time_msec()
   for (local i = 0; i < 100; ++i) {
     let rndDelay = rnd_int(0, 9)
-
-    add((@(i, rndDelay, curTime) function() {
-          log(format("[%d] %d run action with delay %d seconds", curTime, i, rndDelay))
-        })(i, rndDelay, curTime),
-    rndDelay * 1000)
+    let idx = i
+    add(@() log(format("[%d] %d run action with delay %d seconds", curTime, idx, rndDelay)), rndDelay * 1000)
   }
 }
 

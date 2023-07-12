@@ -1,13 +1,11 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { Cost } = require("%scripts/money.nut")
+let u = require("%sqStdLibs/helpers/u.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { format } = require("string")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-
+let { getObjValidIndex, toPixels } = require("%sqDagui/daguiUtil.nut")
 let callback = require("%sqStdLibs/helpers/callback.nut")
 let selectUnitHandler = require("%scripts/slotbar/selectUnitHandler.nut")
 let { getWeaponsStatusName, checkUnitWeapons } = require("%scripts/weaponry/weaponryInfo.nut")
@@ -26,6 +24,7 @@ let bhvUnseen = require("%scripts/seen/bhvUnseen.nut")
 let seenList = require("%scripts/seen/seenList.nut").get(SEEN.UNLOCK_MARKERS)
 let { getUnlockIdsByCountry } = require("%scripts/unlocks/unlockMarkers.nut")
 let { switchProfileCountry, profileCountrySq } = require("%scripts/user/playerCountry.nut")
+let { startsWith } = require("%sqstd/string.nut")
 
 const SLOT_NEST_TAG = "unitItemContainer { {0} }"
 
@@ -311,7 +310,7 @@ const SLOT_NEST_TAG = "unitItemContainer { {0} }"
       this.addCrewData(countryData.crews,
         { idInCountry = crewsList.len()
           idCountry = c
-          cost = ::Cost(slotCostTbl.cost, slotCostTbl.costGold)
+          cost = Cost(slotCostTbl.cost, slotCostTbl.costGold)
         })
     }
     return res
@@ -476,7 +475,7 @@ const SLOT_NEST_TAG = "unitItemContainer { {0} }"
            break
       }
     if (needUpdateCountriesMarkup) {
-      let countriesData = ::handyman.renderCached("%gui/slotbar/slotbarCountryItem.tpl", countriesView)
+      let countriesData = handyman.renderCached("%gui/slotbar/slotbarCountryItem.tpl", countriesView)
       this.guiScene.replaceContentFromText(countriesNestObj, countriesData, countriesData.len(), this)
     }
 
@@ -496,7 +495,7 @@ const SLOT_NEST_TAG = "unitItemContainer { {0} }"
     this.slotbarOninit = false
     this.guiScene.applyPendingChanges(false)
 
-    let countriesNestMaxWidth = ::g_dagui_utils.toPixels(this.guiScene, "1@slotbarCountriesMaxWidth")
+    let countriesNestMaxWidth = toPixels(this.guiScene, "1@slotbarCountriesMaxWidth")
     let countriesNestWithBtnsObj = this.scene.findObject("header_countries_nest")
     if (countriesNestWithBtnsObj.getSize()[0] > countriesNestMaxWidth)
       countriesNestObj.isShort = "yes"
@@ -572,7 +571,7 @@ const SLOT_NEST_TAG = "unitItemContainer { {0} }"
   }
 
   function getCurrentEdiff() {
-    if (::u.isFunction(this.ownerWeak?.getCurrentEdiff))
+    if (u.isFunction(this.ownerWeak?.getCurrentEdiff))
       return this.ownerWeak.getCurrentEdiff()
     return ::get_current_ediff()
   }
@@ -600,7 +599,7 @@ const SLOT_NEST_TAG = "unitItemContainer { {0} }"
 
   function getSlotIdByObjId(slotObjId, countryId) {
     let prefix = "td_slot_" + countryId + "_"
-    if (!::g_string.startsWith(slotObjId, prefix))
+    if (!startsWith(slotObjId, prefix))
       return -1
     return ::to_integer_safe(slotObjId.slice(prefix.len()), -1)
   }
@@ -617,7 +616,7 @@ const SLOT_NEST_TAG = "unitItemContainer { {0} }"
       return res
     res.countryId = countryIdStr.tointeger()
 
-    let curValue = ::get_obj_valid_index(obj)
+    let curValue = getObjValidIndex(obj)
     if (curValue < 0)
       return res
 
@@ -700,7 +699,7 @@ const SLOT_NEST_TAG = "unitItemContainer { {0} }"
     let country = ::g_crews_list.get()[this.curSlotCountryId].country
 
     let rawCost = ::get_crew_slot_cost(country)
-    let cost = rawCost ? ::Cost(rawCost.cost, rawCost.costGold) : ::Cost()
+    let cost = rawCost ? Cost(rawCost.cost, rawCost.costGold) : Cost()
     if (!::check_balance_msgBox(cost)) {
       restorePrevSelection()
       return
@@ -829,7 +828,7 @@ const SLOT_NEST_TAG = "unitItemContainer { {0} }"
       return
 
     let country = countryData.country
-    let blk = ::handyman.renderCached("%gui/slotbar/slotbarItem.tpl", {
+    let blk = handyman.renderCached("%gui/slotbar/slotbarItem.tpl", {
       countryIdx = countryData.idx
       needSkipAnim = countriesCount == 0
       alwaysShowBorder = this.alwaysShowBorder

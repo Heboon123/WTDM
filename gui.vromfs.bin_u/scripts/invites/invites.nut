@@ -1,12 +1,13 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let DataBlock = require("DataBlock")
-let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { registerPersistentDataFromRoot, PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { startsWith } = require("%sqstd/string.nut")
+
 ::g_invites <- {
   [PERSISTENT_DATA_PARAMS] = ["list", "newInvitesAmount"]
 
@@ -41,12 +42,12 @@ let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReload
 
 ::g_invites.broadcastInviteReceived <- function broadcastInviteReceived(invite) {
   if (!invite.isDelayed && !invite.isAutoAccepted)
-    ::broadcastEvent("InviteReceived", { invite = invite })
+    broadcastEvent("InviteReceived", { invite = invite })
 }
 
 ::g_invites.broadcastInviteUpdated <- function broadcastInviteUpdated(invite) {
   if (invite.isVisible())
-    ::broadcastEvent("InviteUpdated", { invite = invite })
+    broadcastEvent("InviteUpdated", { invite = invite })
 }
 
 ::g_invites.addChatRoomInvite <- function addChatRoomInvite(roomId, inviterName) {
@@ -85,7 +86,7 @@ let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReload
 }
 
 ::g_invites.addFriendInvite <- function addFriendInvite(name, uid) {
-  if (::u.isEmpty(name) || ::u.isEmpty(uid))
+  if (u.isEmpty(name) || u.isEmpty(uid))
     return
   return this.addInvite(::g_invites_classes.Friend, { inviterName = name, inviterUid = uid })
 }
@@ -99,7 +100,7 @@ let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReload
       isRemoved = true
     }
   if (isRemoved)
-    ::broadcastEvent("InviteRemoved")
+    broadcastEvent("InviteRemoved")
 }
 
 ::g_invites.remove <- function remove(invite) {
@@ -108,7 +109,7 @@ let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReload
       invite.onRemove()
       this.list.remove(idx)
       this.updateNewInvitesAmount()
-      ::broadcastEvent("InviteRemoved")
+      broadcastEvent("InviteRemoved")
       break
     }
 }
@@ -128,7 +129,7 @@ let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReload
 }
 
 ::g_invites.acceptInviteByLink <- function acceptInviteByLink(link) {
-  if (!::g_string.startsWith(link, ::BaseInvite.chatLinkPrefix))
+  if (!startsWith(link, ::BaseInvite.chatLinkPrefix))
     return false
 
   let invite = ::g_invites.findInviteByChatLink(link)
@@ -239,7 +240,7 @@ let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReload
 }
 
 ::g_invites.onEventScriptsReloaded <- function onEventScriptsReloaded(_p) {
-  this.list = ::u.map(this.list, function(invite) {
+  this.list = u.map(this.list, function(invite) {
     let params = invite.reloadParams
     foreach (inviteClass in ::g_invites_classes)
       if (inviteClass.getUidByParams(params) == invite.uid) {
@@ -252,5 +253,5 @@ let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReload
 }
 
 
-::subscribe_handler(::g_invites, ::g_listener_priority.DEFAULT_HANDLER)
-::g_script_reloader.registerPersistentDataFromRoot("g_invites")
+subscribe_handler(::g_invites, ::g_listener_priority.DEFAULT_HANDLER)
+registerPersistentDataFromRoot("g_invites")

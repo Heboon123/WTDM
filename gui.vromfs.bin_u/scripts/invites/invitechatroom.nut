@@ -1,11 +1,10 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
+let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
+
 ::g_invites_classes.ChatRoom <- class extends ::BaseInvite {
   //custom class params, not exist in base invite
   roomId = ""
@@ -25,7 +24,7 @@ let { format } = require("string")
       if (threadInfo.lastUpdateTime < 0)
         this.setDelayed(true)
       if (initial)
-        ::add_event_listener("ChatThreadInfoChanged",
+        add_event_listener("ChatThreadInfoChanged",
                              function (data) {
                                if (getTblValue("roomId", data) == this.roomId)
                                  this.setDelayed(false)

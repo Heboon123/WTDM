@@ -1,11 +1,9 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { loading_play_voice } = require("loading")
 let platformModule = require("%scripts/clientState/platform.nut")
 let { is_replay_playing } = require("replays")
@@ -208,8 +206,8 @@ let function updateAnimTimer() {
   if (exp)
     messageArr.append(loc("exp_received/by_param", { value = decimalFormat(exp) }))
 
-  ::broadcastEvent("StreakArrived", { id = id })
-  ::g_streaks.addStreak(id, header, ::g_string.implode(messageArr, loc("ui/comma")))
+  broadcastEvent("StreakArrived", { id = id })
+  ::g_streaks.addStreak(id, header, loc("ui/comma").join(messageArr, true))
 }
 
 ::get_loc_for_streak <- function get_loc_for_streak(StreakNameType, name, stageparam, playerNick = "", colorId = 0) {

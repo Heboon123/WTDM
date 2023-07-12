@@ -1,13 +1,10 @@
 //checked for plus_string
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 from "%scripts/dagui_library.nut" import *
 let { get_time_msec } = require("dagor.time")
 let { removeUserstatItemRewardToShow } = require("%scripts/userstat/userstatItemsRewards.nut")
-let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { broadcastEvent, addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { resetTimeout } = require("dagor.workcycle")
 
 //this module collect all prizes from userlogs if chest has prizes with auto consume prizes and show trophy window
@@ -42,8 +39,7 @@ let function hideWaitingProgressBox() {
 
   let guiScene = currentProgressBox.getScene()
   guiScene.destroyElement(currentProgressBox)
-  if ("broadcastEvent" in getroottable())
-    ::broadcastEvent("ModalWndDestroy")
+  broadcastEvent("ModalWndDestroy")
   currentProgressBox = null
 }
 

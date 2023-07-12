@@ -1,13 +1,14 @@
 module events shared
 require ecs
 require dm
-require %game.unit_events
-require %game.dm_events
-require %game.ammo_stowage_events
-require %game.fire_system_events
-require %game.repair_system_events
-require %game.extinguish_system_events
-require %game.ship_events
+require %game.dm.dm_events
+require %game.dm.fire_system_events
+require %game.unit.unit_events
+require %game.unit.ammo_stowage_events
+require %game.unit.repair_system_events
+require %game.unit.extinguish_system_events
+require %game.unit.ship_events
+
 
 [cpp_event(broadcast)]
 struct ParallelUpdateFrameDelayed
@@ -146,3 +147,12 @@ struct CmdLockHangarMusic
 [cpp_event(unicast, with_scheme)]
 struct EventOnTrailerDead
 {}
+
+[cpp_event(broadcast, with_scheme, routing=ROUTING_CLIENT_TO_SERVER)]
+struct EventTryControlBurav
+  uid : int
+  target : float2
+
+[cpp_event(unicast, with_scheme)]
+struct EventKilledByBurav
+  killerUid : int

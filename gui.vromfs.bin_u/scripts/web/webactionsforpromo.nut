@@ -1,8 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
 let { getPollIdByFullUrl, invalidateTokensCache } = require("%scripts/web/webpoll.nut")
 let { validateLink, openUrl } = require("%scripts/onlineShop/url.nut")
@@ -12,9 +10,9 @@ let { addPromoButtonConfig } = require("%scripts/promo/promoButtonsConfig.nut")
 let function openLinkWithSource(params = [], source = "promo_open_link") {
   local link = ""
   local forceBrowser = false
-  if (::u.isString(params))
+  if (u.isString(params))
     link = params
-  else if (::u.isArray(params) && params.len() > 0) {
+  else if (u.isArray(params) && params.len() > 0) {
     link = params[0]
     forceBrowser = params?[1] ?? false
   }

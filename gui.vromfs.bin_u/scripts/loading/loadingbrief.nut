@@ -1,10 +1,8 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
+let { find_in_array } = require("%sqStdLibs/helpers/u.nut")
 let { format, split_by_chars } = require("string")
 let { frnd } = require("dagor.random")
 let DataBlock = require("DataBlock")
@@ -22,10 +20,12 @@ let { setDoubleTextToButton, setHelpTextOnLoading } = require("%scripts/viewUtil
 let { GUI } = require("%scripts/utils/configs.nut")
 let { hasMenuChat } = require("%scripts/chat/chatStates.nut")
 let { getTip } = require("%scripts/loading/loadingTips.nut")
+let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { getUrlOrFileMissionMetaInfo } = require("%scripts/missions/missionsUtils.nut")
 
 const MIN_SLIDE_TIME = 2.0
 
-::add_event_listener("FinishLoading", function(_p) {
+add_event_listener("FinishLoading", function(_p) {
   ::stop_gui_sound("slide_loop")
   loading_stop_voice()
   loading_stop_music()
@@ -65,7 +65,7 @@ const MIN_SLIDE_TIME = 2.0
       else if (get_game_type() & GT_DYNAMIC)
         missionBlk.setFrom(::mission_settings.mission)
       else if (::current_campaign_mission)
-        missionBlk.setFrom(::get_mission_meta_info(::current_campaign_mission))
+        missionBlk.setFrom(getUrlOrFileMissionMetaInfo(::current_campaign_mission, this.gm))
 
       if (this.gm == GM_TEST_FLIGHT)
         country = ::getCountryByAircraftName(::get_test_flight_unit_info()?.unit.name)
@@ -122,7 +122,7 @@ const MIN_SLIDE_TIME = 2.0
           foreach (slideBlock in partBlock % "slide") {
             let image = slideBlock.getStr("picture", "")
             if (image != "") {
-              if (::find_in_array(excludeArray, image, -1) >= 0) {
+              if (find_in_array(excludeArray, image, -1) >= 0) {
                 log("EXCLUDE by: " + ::get_country_flags_preset() + "; slide " + image)
                 continue
               }
@@ -232,7 +232,7 @@ const MIN_SLIDE_TIME = 2.0
     }
     if (m_condition != "")
       res.append(loc("sm_conditions") + loc("ui/colon") + " " + m_condition)
-    return ::g_string.implode(res, "\n")
+    return "\n".join(res, true)
   }
 
   function onUpdate(_obj, dt) {

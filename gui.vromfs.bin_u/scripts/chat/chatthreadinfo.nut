@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { split_by_chars } = require("string")
 let platformModule = require("%scripts/clientState/platform.nut")
@@ -72,7 +70,7 @@ const MAX_THREAD_LANG_VISIBLE = 3
       this.title = this.roomId
     this.numPosts = dataBlk?.numposts ?? this.numPosts
 
-    this.updateInfoTags(::u.isString(dataBlk?.tags) ? split_by_chars(dataBlk.tags, ",") : [])
+    this.updateInfoTags(u.isString(dataBlk?.tags) ? split_by_chars(dataBlk.tags, ",") : [])
     if (this.ownerNick.len() && this.ownerUid.len())
       ::getContact(this.ownerUid, this.ownerNick, this.ownerClanTag)
 
@@ -111,7 +109,7 @@ const MAX_THREAD_LANG_VISIBLE = 3
         resArray.append(str)
     }
     resArray.extend(this.customTags)
-    return ::g_string.implode(resArray, ",")
+    return ",".join(resArray, true)
   }
 
   function sortLangList() {
@@ -181,9 +179,9 @@ const MAX_THREAD_LANG_VISIBLE = 3
     let menu = [
       {
         text = this.getJoinText()
-        action = (@(thread) function() {
+        action = function() {
           thread.join()
-        })(thread)
+        }
       }
     ]
 

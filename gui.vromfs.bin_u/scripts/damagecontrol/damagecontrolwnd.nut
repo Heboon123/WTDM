@@ -1,7 +1,4 @@
 //checked for plus_string
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 from "%scripts/dagui_library.nut" import *
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -11,7 +8,7 @@ let DataBlock = require("DataBlock")
 
 register_command(
   function () {
-    let unit = ::getAircraftByName("us_destroyer_clemson_litchfield")
+    let unit = getAircraftByName("us_destroyer_clemson_litchfield")
     ::handlersManager.loadHandler(::gui_handlers.DamageControlWnd, { unit })
   },
   "ui.debug_damage_control")

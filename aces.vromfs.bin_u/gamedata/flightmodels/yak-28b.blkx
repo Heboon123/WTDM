@@ -5,7 +5,7 @@
   "gearSinkRangeLR": 1.0,
   "gearSinkRangeC": 0.45,
   "gearSinkRange2C": 0.01,
-  "haveCCIPForRocket": true,
+  "gyroSight": true,
   "haveCCIPForGun": true,
   "haveCCIPForBombs": true,
   "jetEnginePowerFullScale": true,
@@ -549,6 +549,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -559,6 +575,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -586,6 +618,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -596,6 +644,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -793,6 +857,14 @@
           }
         },
         {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
+          }
+        },
+        {
           "onKill": {
             "wingcontrol_l_dm": 1.0,
             "wingcontrol_r_dm": 1.0,
@@ -838,6 +910,14 @@
             "wing_l_dm": 1.0,
             "wing_r_dm": 1.0
           }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
+          }
         }
       ]
     },
@@ -868,6 +948,14 @@
           "onHit": {
             "damage": 50.0,
             "tail_dm": 1.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
           }
         },
         {
@@ -923,6 +1011,14 @@
             "damage": 50.0,
             "tail_dm": 1.0,
             "nothing": 1.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
           }
         }
       ]
@@ -2675,18 +2771,42 @@
     "engine0": 1,
     "engine1": 2
   },
-  "commonWeapons": {
-    "Weapon": {
-      "trigger": "cannon",
-      "blk": "gameData/Weapons/cannonNR23.blk",
-      "emitter": "flare1",
-      "flash": "flare1",
-      "shell": "emtr_shellrejection1",
-      "dm": "cannon1_dm",
-      "bullets": 50,
-      "spread": 1.0
+  "commonWeapons": [
+    {
+      "Weapon": {
+        "trigger": "cannon",
+        "blk": "gameData/Weapons/cannonNR23.blk",
+        "emitter": "flare1",
+        "flash": "flare1",
+        "shell": "emtr_shellrejection1",
+        "dm": "cannon1_dm",
+        "bullets": 50,
+        "spread": 1.0
+      }
+    },
+    {
+      "Weapon": {
+        "trigger": "countermeasures",
+        "startFx": "",
+        "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
+        "emitter": "emtr_flare1",
+        "bullets": 32,
+        "external": true,
+        "separate": false
+      }
+    },
+    {
+      "Weapon": {
+        "trigger": "countermeasures",
+        "startFx": "",
+        "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
+        "emitter": "emtr_flare2",
+        "bullets": 32,
+        "external": true,
+        "separate": false
+      }
     }
-  },
+  ],
   "weapon_presets": [
     {
       "preset": {
@@ -3040,45 +3160,7 @@
       "tier": 1,
       "turn_it_off": false,
       "invertEnableLogic": false,
-      "group": "mi-24_EVU",
-      "effects": {
-        "commonWeapons": [
-          {
-            "Weapon": {
-              "trigger": "cannon",
-              "blk": "gameData/Weapons/cannonNR23.blk",
-              "emitter": "flare1",
-              "flash": "flare1",
-              "shell": "emtr_shellrejection1",
-              "dm": "cannon1_dm",
-              "bullets": 50,
-              "spread": 1.0
-            }
-          },
-          {
-            "Weapon": {
-              "trigger": "countermeasures",
-              "startFx": "",
-              "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
-              "emitter": "emtr_flare1",
-              "bullets": 32,
-              "external": true,
-              "separate": false
-            }
-          },
-          {
-            "Weapon": {
-              "trigger": "countermeasures",
-              "startFx": "",
-              "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
-              "emitter": "emtr_flare2",
-              "bullets": 32,
-              "external": true,
-              "separate": false
-            }
-          }
-        ]
-      }
+      "group": "mi-24_EVU"
     }
   },
   "user_skin": [

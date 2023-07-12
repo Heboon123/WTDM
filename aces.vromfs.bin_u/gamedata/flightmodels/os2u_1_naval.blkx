@@ -12,6 +12,9 @@
     "MetaPartsBlk": "gameData/FlightModels/dm/metaparts/1x_engine_bomber_metaparts.blk"
   },
   {
+    "gyroSight": false
+  },
+  {
     "type": "typeBomber"
   },
   {
@@ -742,6 +745,14 @@
             }
           },
           {
+            "onHit": {
+              "damage": 200.0,
+              "wingcontrol_dm": 0.2,
+              "wingcontrol_l_dm": 0.2,
+              "wingcontrol_r_dm": 0.2
+            }
+          },
+          {
             "onKill": {
               "wingcontrol_l_dm": 1.0,
               "wingcontrol_r_dm": 1.0,
@@ -787,6 +798,14 @@
               "wing_l_dm": 1.0,
               "wing_r_dm": 1.0
             }
+          },
+          {
+            "onKill": {
+              "damage": 200.0,
+              "wingcontrol_dm": 0.4,
+              "wingcontrol_l_dm": 0.4,
+              "wingcontrol_r_dm": 0.4
+            }
           }
         ]
       },
@@ -817,6 +836,14 @@
             "onHit": {
               "damage": 50.0,
               "tail_dm": 1.0
+            }
+          },
+          {
+            "onHit": {
+              "damage": 200.0,
+              "wingcontrol_dm": 0.2,
+              "wingcontrol_l_dm": 0.2,
+              "wingcontrol_r_dm": 0.2
             }
           },
           {
@@ -872,6 +899,14 @@
               "damage": 50.0,
               "tail_dm": 1.0,
               "nothing": 1.0
+            }
+          },
+          {
+            "onKill": {
+              "damage": 200.0,
+              "wingcontrol_dm": 0.4,
+              "wingcontrol_l_dm": 0.4,
+              "wingcontrol_r_dm": 0.4
             }
           }
         ]
@@ -2501,14 +2536,50 @@
   },
   {
     "modifications": {
-      "cd_98": [],
-      "CdMin_Fuse": [],
-      "new_cover": [],
-      "structure_str": [],
-      "hp_105": [],
-      "new_radiator": [],
-      "new_compressor": [],
-      "new_engine_injection": [],
+      "CdMin_Fuse": {
+        "tier": 1,
+        "modClass": "lth"
+      },
+      "structure_str": {
+        "prevModification": "CdMin_Fuse",
+        "tier": 2,
+        "modClass": "lth"
+      },
+      "cd_98": {
+        "prevModification": "structure_str",
+        "tier": 3,
+        "modClass": "lth"
+      },
+      "new_cover": {
+        "prevModification": "cd_98",
+        "tier": 4,
+        "modClass": "lth"
+      },
+      "new_radiator": {
+        "tier": 1,
+        "modClass": "lth"
+      },
+      "new_compressor": {
+        "prevModification": "new_radiator",
+        "tier": 2,
+        "modClass": "lth"
+      },
+      "hp_105": {
+        "prevModification": "new_compressor",
+        "tier": 3,
+        "modClass": "lth"
+      },
+      "new_engine_injection": {
+        "prevModification": "hp_105",
+        "tier": 4,
+        "modClass": "lth"
+      },
+      "air_extinguisher": {
+        "image": "#ui/gameuiskin#engine_extinguisher",
+        "tier": 4,
+        "modClass": "armor",
+        "invertEnableLogic": false
+      },
       "30cal_universal": [],
       "30cal_tracer": [],
       "30cal_stealth": [],

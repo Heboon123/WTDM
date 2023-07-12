@@ -1,10 +1,8 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { getObjValue } = require("%sqDagui/daguiUtil.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
 ::gui_handlers.navigationPanel <- class extends ::gui_handlers.BaseGuiHandlerWT {
@@ -83,7 +81,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
       })
     ) }
 
-    let data = ::handyman.renderCached("%gui/missions/missionBoxItemsList.tpl", view)
+    let data = handyman.renderCached("%gui/missions/missionBoxItemsList.tpl", view)
     this.guiScene.replaceContentFromText(navListObj, data, data.len(), this)
 
     this.updateVisibility()
@@ -231,7 +229,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
   }
 
   function getCurrentItem() {
-    let currentIdx = ::get_object_value(this.scene, this.navListObjId)
+    let currentIdx = getObjValue(this.scene, this.navListObjId)
     if (currentIdx == null)
       return null
 

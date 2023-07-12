@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 ::mission_rules.UnitsDeck <- class extends ::mission_rules.Base {
   needLeftRespawnOnSlots = true
@@ -56,7 +54,7 @@ from "%scripts/dagui_library.nut" import *
     let weaponsLimitsBlk = this.getWeaponsLimitsBlk()
     let unitsGroups = this.getUnitsGroups()
 
-    if (::u.isDataBlock(limitedBlk))
+    if (u.isDataBlock(limitedBlk))
       for (local i = 0; i < limitedBlk.paramCount(); i++) {
         let unitName = limitedBlk.getParamName(i)
         let teamUnitPreset = getTblValue(unitName, myTeamUnitsParamsBlk, null)
@@ -92,7 +90,7 @@ from "%scripts/dagui_library.nut" import *
     local missionUnit = unit
     let missionUnitName = this.getMyStateBlk()?.userUnitToUnitGroup[unit.name] ?? ""
     if (missionUnitName != "")
-      missionUnit = ::getAircraftByName(missionUnitName)
+      missionUnit = getAircraftByName(missionUnitName)
 
     return this.getUnitLeftRespawns(unit) == 0
       && this.getUnitLeftRespawnsByTeamDataBlk(missionUnit, this.getMyTeamDataBlk()) != 0

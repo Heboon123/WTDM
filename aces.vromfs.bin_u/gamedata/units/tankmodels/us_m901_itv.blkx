@@ -712,11 +712,10 @@
     "xray_viewer_data": {
       "armorArrayHull": {
         "xrayDmPart": "composite_armor_hull_01_dm",
-        "titleLoc": "RHA_tank_modern",
+        "titleLoc": "aluminium",
         "armorArrayText": {
           "layer": {
-            "dmPart": "composite_armor_hull_01_dm",
-            "xrayTextThickness": 6.0
+            "dmPart": "composite_armor_hull_01_dm"
           }
         }
       }
@@ -1683,6 +1682,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -2387,6 +2387,9 @@
   {
     "commonWeapons": [
       {
+        "remotelyGuidedWeaponsMax": 1
+      },
+      {
         "Weapon": {
           "trigger": "gunner0",
           "triggerGroup": "primary",
@@ -2405,6 +2408,7 @@
           "battlePositionSpeed": 20.0,
           "lagStopForFireTime": 1.0,
           "reloadAnimVar": "m901_reload_var",
+          "staticElevation": 1.725,
           "createGunEffects": true,
           "parkForReload": true,
           "waitShellForPark": true,
@@ -2605,8 +2609,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -3531,6 +3535,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -3582,6 +3595,9 @@
         "effects": {
           "commonWeapons": [
             {
+              "remotelyGuidedWeaponsMax": 1
+            },
+            {
               "Weapon": {
                 "trigger": "gunner0",
                 "triggerGroup": "primary",
@@ -3600,6 +3616,7 @@
                 "battlePositionSpeed": 20.0,
                 "lagStopForFireTime": 1.0,
                 "reloadAnimVar": "m901_reload_var",
+                "staticElevation": 1.725,
                 "createGunEffects": true,
                 "parkForReload": true,
                 "waitShellForPark": true,

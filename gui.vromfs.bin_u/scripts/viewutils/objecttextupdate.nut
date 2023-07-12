@@ -1,9 +1,10 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
+let { Cost } = require("%scripts/money.nut")
+let u = require("%sqStdLibs/helpers/u.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { removeTextareaTags } = require("%sqDagui/daguiUtil.nut")
 let { format } = require("string")
 let { get_game_version_str } = require("app")
 
@@ -36,7 +37,7 @@ local function setDoubleTextToButton(nestObj, firstBtnId, firstText, secondText 
 }
 
 let function setColoredDoubleTextToButton(nestObj, btnId, coloredText) {
-  return setDoubleTextToButton(nestObj, btnId, ::g_dagui_utils.removeTextareaTags(coloredText), coloredText)
+  return setDoubleTextToButton(nestObj, btnId, removeTextareaTags(coloredText), coloredText)
 }
 
 //instead of wpCost you can use direc Cost  (instance of money)
@@ -46,7 +47,7 @@ let function setColoredDoubleTextToButton(nestObj, btnId, coloredText) {
  * placePriceTextToButton(nestObj, btnId, localizedText, cost (Cost) )
  */
 let function placePriceTextToButton(nestObj, btnId, localizedText, arg1 = 0, arg2 = 0, fullCost = null) {
-  let cost = ::u.isMoney(arg1) ? arg1 : ::Cost(arg1, arg2)
+  let cost = u.isMoney(arg1) ? arg1 : Cost(arg1, arg2)
   let needShowPrice = !cost.isZero()
   let needShowDiscount = needShowPrice && fullCost != null && (fullCost.gold > cost.gold || fullCost.wp > cost.wp)
   let priceFormat = needShowPrice ? " ({0})" : ""
@@ -54,7 +55,7 @@ let function placePriceTextToButton(nestObj, btnId, localizedText, arg1 = 0, arg
   let coloredCost = cost.getTextAccordingToBalance()
   let priceTextColored = "".concat(localizedText, priceFormat.subst(coloredCost))
   let textBlock = needShowPrice
-    ? ::handyman.renderCached("%gui/commonParts/discount.tpl", {
+    ? handyman.renderCached("%gui/commonParts/discount.tpl", {
       headerText = $"{localizedText} ("
       priceText = coloredCost
       listPriceText = fullCost?.getUncoloredText() ?? ""

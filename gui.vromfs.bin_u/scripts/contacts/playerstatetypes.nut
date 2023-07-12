@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let enums = require("%sqStdLibs/helpers/enums.nut")
 ::g_player_state <- {
@@ -24,7 +21,7 @@ let enums = require("%sqStdLibs/helpers/enums.nut")
     getText = function(playerInfo = {}) {
       let stateLoc = this.stateText.len() ? loc("multiplayer/state/" + this.stateText) : ""
       let roleLoc = this.isSpectator(playerInfo) ? loc("multiplayer/state/player_referee") : ""
-      return ::g_string.implode([ roleLoc, stateLoc ], loc("ui/semicolon"))
+      return loc("ui/semicolon").join([ roleLoc, stateLoc ], true)
     }
   }
 }

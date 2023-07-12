@@ -1513,6 +1513,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.4,
               "nothing": 0.6,
               "fHitCritical": true
@@ -2618,6 +2619,9 @@
   {
     "commonWeapons": [
       {
+        "remotelyGuidedWeaponsMax": 1
+      },
+      {
         "Weapon": {
           "dummy": true,
           "trigger": "gunner0",
@@ -2653,21 +2657,21 @@
           "emitter": "bone_rocket_01",
           "reloadAnimVar": "9p149_action",
           "recoilMultiplier": 0.01,
-          "sleeveEmitter": "bone_rocket_01",
-          "sleeveMesh": "9m114_rocket_container",
+          "shellCasingEmitter": "bone_rocket_01",
+          "shellCasingMesh": "9m114_rocket_container",
           "openHatchTime": 0.0,
-          "sleevesLifeTime": 15.0,
-          "sleeveImpulse": [0.0,1.0,0.0],
-          "linkSleeveToGun": true,
-          "needScaleSleeve": false,
+          "shellCasingLifeTime": 15.0,
+          "shellCasingImpulse": [0.0,1.0,0.0],
+          "linkShellCasingToGun": true,
+          "needScaleShellCasing": false,
           "stopForFire": true,
           "readyToFireVar": "9p149_close_action",
           "readyToFireTime": 2.5,
           "maxSpeedForFire": 6.0,
           "battlePositionSpeed": 20.0,
           "lagStopForFireTime": 1.0,
+          "staticElevation": 2.125,
           "parkForReload": true,
-          "circleAim": true,
           "createGunEffects": true,
           "defaultYaw": 0.0,
           "defaultPitch": 0.0,
@@ -2960,8 +2964,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -3874,6 +3878,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -4151,6 +4164,12 @@
     "smokeScreenExhaustEmitters": [
       {
         "emitter": "emtr_exhaust_01"
+      },
+      {
+        "emitter": "emtr_exhaust_02"
+      },
+      {
+        "emitter": "emtr_exhaust_03"
       },
       {
         "emitter": "emtr_exhaust_04"

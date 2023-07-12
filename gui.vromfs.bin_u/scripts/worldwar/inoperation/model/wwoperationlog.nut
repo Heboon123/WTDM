@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let DataBlock  = require("DataBlock")
 
@@ -65,7 +63,7 @@ let DataBlock  = require("DataBlock")
 
 ::g_ww_logs.getObjectivesBlk <- function getObjectivesBlk() {
   let objectivesBlk = ::g_world_war.getOperationObjectives()
-  return objectivesBlk ? ::u.copy(objectivesBlk?.data) : DataBlock()
+  return objectivesBlk ? u.copy(objectivesBlk?.data) : DataBlock()
 }
 
 ::g_ww_logs.requestNewLogs <- function requestNewLogs(loadAmount, useLogMark, handler = null) {
@@ -122,7 +120,7 @@ let DataBlock  = require("DataBlock")
 
     let logTable = {
       id = logBlk?.thisLogId
-      blk = ::u.copy(logBlk)
+      blk = u.copy(logBlk)
       time = logBlk?.time ?? -1
       category = logType.category
       isReaded = false
@@ -220,7 +218,7 @@ let DataBlock  = require("DataBlock")
 }
 
 ::g_ww_logs.getLastReadLogMark <- function getLastReadLogMark() {
-  return ::u.search(::g_ww_logs.loaded, @(l) l.isReaded, true)?.id ?? ""
+  return u.search(::g_ww_logs.loaded, @(l) l.isReaded, true)?.id ?? ""
 }
 
 ::g_ww_logs.getUnreadedNumber <- function getUnreadedNumber() {

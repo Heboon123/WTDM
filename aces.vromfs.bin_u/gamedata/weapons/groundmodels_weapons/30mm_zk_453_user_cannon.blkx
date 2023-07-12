@@ -33,7 +33,7 @@
     "maxDeltaAngleVertical": 0.085
   },
   {
-    "shotFreq": 6.667
+    "shotFreq": 7.5
   },
   {
     "shotFreqRndK": 0.1
@@ -121,6 +121,10 @@
       "bulletName": "30mm_jpzsv_53_59",
       "speed": 1000.0,
       "maxDistance": 7000.0,
+      "breakingArmorThicknessEffective": true,
+      "breakingArmorThickness": [2.0,40.0],
+      "breakingCriticalSpeed": 700.0,
+      "breakingDistance": 0.02,
       "relativeVelHitShift": [300.0,1000.0],
       "relativeVelArmorShift": [200.0,1000.0],
       "selfDestructionFx": "explosion_air_selfexplosion_small",
@@ -144,9 +148,11 @@
         }
       ],
       "hitpower": {
-        "HitPower0m": [1.0,0.0],
-        "HitPower1000m": [0.9,0.0],
-        "HitPower10000m": [0.8,10000.0]
+        "HitPower0m": [1.0,300.0],
+        "HitPower1000m": [0.7,1000.0],
+        "HitPower1500m": [0.6,1500.0],
+        "HitPower2500m": [0.6,2500.0],
+        "HitPower10000m": [0.5,10000.0]
       },
       "damage": {
         "kinetic": {
@@ -155,6 +161,16 @@
           "demarreSpeedPow": 1.43,
           "demarreMassPow": 0.71,
           "demarreCaliberPow": 1.07
+        },
+        "breakingScaleByArmor": {
+          "mod0": [5.0,1.0],
+          "mod1": [10.0,0.8],
+          "mod2": [40.0,0.5]
+        },
+        "breakingScaleByAir": {
+          "mod0": [0.05,1.0],
+          "mod1": [0.2,0.7],
+          "mod2": [0.5,0.5]
         }
       },
       "visual": {
@@ -210,7 +226,7 @@
           "fx": "hit_28_38mm_snow_ap"
         },
         "glass": {
-          "fx": "hit_28_38mm_metal_ap"
+          "fx": "armoured_glass"
         },
         "wood": {
           "fx": "hit_28_38mm_wood_ap"
@@ -266,7 +282,7 @@
       "bulletName": "30mm_jfsv_53_he",
       "hitPowerMult": 5.0,
       "explodeTreshold": 0.1,
-      "fuseDelayDist": 0.0,
+      "fuseDelayDist": 0.1,
       "selfDestructionFx": "explosion_air_selfexplosion_small",
       "explosionEffect": "hit_28_38mm_metal_he",
       "groundCollisionEffect": "hit_28_38mm_dirt_he",
@@ -293,6 +309,13 @@
         "HitPower7000m": [0.1,7000.0]
       },
       "damage": {
+        "kinetic": {
+          "damageType": "generic",
+          "demarrePenetrationK": 0.15,
+          "demarreSpeedPow": 1.43,
+          "demarreMassPow": 0.71,
+          "demarreCaliberPow": 1.07
+        },
         "shatter": [
           {
             "useRealShatters": true
@@ -303,19 +326,28 @@
           {
             "segment": {
               "radiusScale": 1.065,
-              "penetrationScale": 1.0,
-              "damageScale": 1.0,
-              "angles": [0.0,179.0],
-              "countPortion": 0.5
+              "penetrationScale": 1.2,
+              "damageScale": 1.2,
+              "angles": [20.0,160.0],
+              "countPortion": 0.4
             }
           },
           {
             "segment": {
               "radiusScale": 1.065,
-              "penetrationScale": 1.0,
-              "damageScale": 1.0,
-              "angles": [180.0,359.0],
-              "countPortion": 0.5
+              "penetrationScale": 1.2,
+              "damageScale": 1.2,
+              "angles": [200.0,340.0],
+              "countPortion": 0.4
+            }
+          },
+          {
+            "segment": {
+              "radiusScale": 1.065,
+              "penetrationScale": 1.2,
+              "damageScale": 1.2,
+              "angles": [0.0,359.0],
+              "countPortion": 0.2
             }
           }
         ]
@@ -376,7 +408,7 @@
           "fx": "hit_28_38mm_snow_he"
         },
         "glass": {
-          "fx": "hit_28_38mm_metal_he"
+          "fx": "armoured_glass"
         },
         "wood": {
           "fx": "hit_28_38mm_wood_he"
@@ -433,7 +465,7 @@
         "bulletName": "30mm_jfsv_53_he",
         "hitPowerMult": 5.0,
         "explodeTreshold": 0.1,
-        "fuseDelayDist": 0.0,
+        "fuseDelayDist": 0.1,
         "selfDestructionFx": "explosion_air_selfexplosion_small",
         "explosionEffect": "hit_28_38mm_metal_he",
         "groundCollisionEffect": "hit_28_38mm_dirt_he",
@@ -460,6 +492,13 @@
           "HitPower7000m": [0.1,7000.0]
         },
         "damage": {
+          "kinetic": {
+            "damageType": "generic",
+            "demarrePenetrationK": 0.15,
+            "demarreSpeedPow": 1.43,
+            "demarreMassPow": 0.71,
+            "demarreCaliberPow": 1.07
+          },
           "shatter": [
             {
               "useRealShatters": true
@@ -470,19 +509,28 @@
             {
               "segment": {
                 "radiusScale": 1.065,
-                "penetrationScale": 1.0,
-                "damageScale": 1.0,
-                "angles": [0.0,179.0],
-                "countPortion": 0.5
+                "penetrationScale": 1.2,
+                "damageScale": 1.2,
+                "angles": [20.0,160.0],
+                "countPortion": 0.4
               }
             },
             {
               "segment": {
                 "radiusScale": 1.065,
-                "penetrationScale": 1.0,
-                "damageScale": 1.0,
-                "angles": [180.0,359.0],
-                "countPortion": 0.5
+                "penetrationScale": 1.2,
+                "damageScale": 1.2,
+                "angles": [200.0,340.0],
+                "countPortion": 0.4
+              }
+            },
+            {
+              "segment": {
+                "radiusScale": 1.065,
+                "penetrationScale": 1.2,
+                "damageScale": 1.2,
+                "angles": [0.0,359.0],
+                "countPortion": 0.2
               }
             }
           ]
@@ -543,7 +591,7 @@
             "fx": "hit_28_38mm_snow_he"
           },
           "glass": {
-            "fx": "hit_28_38mm_metal_he"
+            "fx": "armoured_glass"
           },
           "wood": {
             "fx": "hit_28_38mm_wood_he"
@@ -602,6 +650,10 @@
         "bulletName": "30mm_jpzsv_53_59",
         "speed": 1000.0,
         "maxDistance": 7000.0,
+        "breakingArmorThicknessEffective": true,
+        "breakingArmorThickness": [2.0,40.0],
+        "breakingCriticalSpeed": 700.0,
+        "breakingDistance": 0.02,
         "relativeVelHitShift": [300.0,1000.0],
         "relativeVelArmorShift": [200.0,1000.0],
         "selfDestructionFx": "explosion_air_selfexplosion_small",
@@ -625,9 +677,11 @@
           }
         ],
         "hitpower": {
-          "HitPower0m": [1.0,0.0],
-          "HitPower1000m": [0.9,0.0],
-          "HitPower10000m": [0.8,10000.0]
+          "HitPower0m": [1.0,300.0],
+          "HitPower1000m": [0.7,1000.0],
+          "HitPower1500m": [0.6,1500.0],
+          "HitPower2500m": [0.6,2500.0],
+          "HitPower10000m": [0.5,10000.0]
         },
         "damage": {
           "kinetic": {
@@ -636,6 +690,16 @@
             "demarreSpeedPow": 1.43,
             "demarreMassPow": 0.71,
             "demarreCaliberPow": 1.07
+          },
+          "breakingScaleByArmor": {
+            "mod0": [5.0,1.0],
+            "mod1": [10.0,0.8],
+            "mod2": [40.0,0.5]
+          },
+          "breakingScaleByAir": {
+            "mod0": [0.05,1.0],
+            "mod1": [0.2,0.7],
+            "mod2": [0.5,0.5]
           }
         },
         "visual": {
@@ -691,7 +755,7 @@
             "fx": "hit_28_38mm_snow_ap"
           },
           "glass": {
-            "fx": "hit_28_38mm_metal_ap"
+            "fx": "armoured_glass"
           },
           "wood": {
             "fx": "hit_28_38mm_wood_ap"

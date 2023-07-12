@@ -1,9 +1,8 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { Cost } = require("%scripts/money.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { show_obj } = require("%sqDagui/daguiUtil.nut")
 let DataBlock = require("DataBlock")
 let { charSendBlk } = require("chard")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -43,7 +42,7 @@ let class PersonalOfferHandler extends ::gui_handlers.BaseGuiHandlerWT {
       this.updateTimeLeftText()
       this.scene.findObject("update_timer").setUserData(this)
     }
-    this.costGold = ::Cost(0, this.offerBlk.costGold)
+    this.costGold = Cost(0, this.offerBlk.costGold)
     this.updateDiscount()
     this.updateImages()
     this.updateButtons()
@@ -55,7 +54,7 @@ let class PersonalOfferHandler extends ::gui_handlers.BaseGuiHandlerWT {
     let { discountValue = 0, fullCostGold = 0 } = this.offerBlk
     if (fullCostGold > 0)
       this.scene.findObject("exclusive_price_value_text").setValue(
-        ::Cost(0, fullCostGold).getUncoloredText())
+        Cost(0, fullCostGold).getUncoloredText())
     if (discountValue > 0)
       this.scene.findObject("discount_value_text").setValue($"{discountValue.tostring()}%")
   }
@@ -118,7 +117,7 @@ let class PersonalOfferHandler extends ::gui_handlers.BaseGuiHandlerWT {
         group.items.append(itemData)
       }
       else {
-        let unit = ::getAircraftByName(localConfig.unit)
+        let unit = getAircraftByName(localConfig.unit)
 
         let fakeUnit = {
           isFakeUnit = true
@@ -155,7 +154,7 @@ let class PersonalOfferHandler extends ::gui_handlers.BaseGuiHandlerWT {
   }
 
   function updateRewards() {
-    let data = ::handyman.renderCached("%gui/profile/offerItem.tpl", { offers = this.groups })
+    let data = handyman.renderCached("%gui/profile/offerItem.tpl", { offers = this.groups })
     let nest = this.scene.findObject("offer_markup")
     this.guiScene.replaceContentFromText(nest, data, data.len(), this)
   }
@@ -271,7 +270,7 @@ let PersonalOfferPromoHandler = class extends ::gui_handlers.BaseGuiHandlerWT {
 
   function updateHandler(offer) {
     let isVisible = offer != null
-    ::show_obj(this.scene, isVisible)
+    show_obj(this.scene, isVisible)
     this.scene.findObject("update_timer").setUserData(isVisible ? this : null)
     if (!isVisible)
       return

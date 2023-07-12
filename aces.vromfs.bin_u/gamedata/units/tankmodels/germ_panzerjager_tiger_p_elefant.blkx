@@ -123,13 +123,15 @@
           "armorThickness": 80.0
         },
         "superstructure_front_dm": {
-          "armorThickness": 100.0
+          "armorThickness": 100.0,
+          "disableProjectleBreaking": true
         },
         "turret_01_front_dm": {
           "armorThickness": 100.0
         },
         "turret_02_front_dm": {
-          "armorThickness": 80.0
+          "armorThickness": 80.0,
+          "disableProjectleBreaking": true
         },
         "turret_03_front_dm": {
           "armorThickness": 80.0
@@ -248,7 +250,8 @@
       "mask": {
         "armorClass": "CHA_tank",
         "gun_mask_dm": {
-          "armorThickness": 100.0
+          "armorThickness": 100.0,
+          "disableProjectleBreaking": true
         },
         "gun_mask_01_dm": {
           "armorThickness": 125.0
@@ -258,7 +261,8 @@
           "variableThickness": true
         },
         "turret_04_front_dm": {
-          "armorThickness": 100.0
+          "armorThickness": 100.0,
+          "disableProjectleBreaking": true
         }
       },
       "optics": {
@@ -1695,6 +1699,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -3755,6 +3760,15 @@
           "fx": {
             "name": "smoke_after_hit_tiny",
             "setOrientation": true
+          }
+        }
+      },
+      {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
           }
         }
       },

@@ -1,10 +1,8 @@
-#no-root-fallback
-#explicit-this
 
 let { check_obj } = require("%sqDagui/daguiUtil.nut")
-let { g_script_reloader, PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { PERSISTENT_DATA_PARAMS, registerPersistentData
+} = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 
-g_script_reloader.loadOnce("%sqDagui/daguiUtil.nut") //!!FIX ME: better to make this modules too
 
 const TIME_INTERVAL_SWITCH_OFF = 1000000.0
 
@@ -20,7 +18,7 @@ local DaguiSceneTimers = class {
     this.timersList = []
     this.updateInterval = updateInterval_
     if (persistentDataUid)
-      g_script_reloader.registerPersistentData($"DaguiSceneTimers_{persistentDataUid}", this, [PERSISTENT_DATA_PARAMS])
+      registerPersistentData($"DaguiSceneTimers_{persistentDataUid}", this, [PERSISTENT_DATA_PARAMS])
   }
 
   /*************************************************************************************************/

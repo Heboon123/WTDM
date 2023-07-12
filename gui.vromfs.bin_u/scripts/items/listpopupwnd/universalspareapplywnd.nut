@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 ::gui_handlers.UniversalSpareApplyWnd <- class extends ::gui_handlers.ItemsListWndBase {
   sceneTplName = "%gui/items/universalSpareApplyWnd.tpl"
@@ -18,7 +16,7 @@ from "%scripts/dagui_library.nut" import *
 
   static function open(unitToActivate, wndAlignObj = null, wndAlign = ALIGN.BOTTOM) {
     local list = ::ItemsManager.getInventoryList(itemType.UNIVERSAL_SPARE)
-    list = ::u.filter(list, @(item) item.canActivateOnUnit(unitToActivate))
+    list = u.filter(list, @(item) item.canActivateOnUnit(unitToActivate))
     if (!list.len()) {
       ::showInfoMsgBox(loc("msg/noUniversalSpareForUnit"))
       return

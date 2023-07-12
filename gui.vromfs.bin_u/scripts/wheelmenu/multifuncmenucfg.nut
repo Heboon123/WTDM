@@ -1,8 +1,5 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { blkOptFromPath } = require("%sqStdLibs/helpers/datablockUtils.nut")
 let vehicleModel = require("vehicleModel")
@@ -12,6 +9,10 @@ let memoizeByEvents = require("%scripts/utils/memoizeByEvents.nut")
 let { emulateShortcut } = require("controls")
 let { getHudUnitType } = require("hudState")
 let { HUD_UNIT_TYPE } = require("%scripts/hud/hudUnitType.nut")
+let { get_mission_difficulty_int } = require("guiMission")
+let { getLastWeapon } = require("%scripts/weaponry/weaponryInfo.nut")
+let { getUnitPresets } = require("%scripts/weaponry/weaponryPresets.nut")
+let { getWeaponryCustomPresets } = require("%scripts/unit/unitWeaponryCustomPresets.nut")
 
 let getHandler = @() ::handlersManager.findHandlerClassInScene(::gui_handlers.multifuncMenuHandler)
 let toggleShortcut = @(shortcutId)  getHandler()?.toggleShortcut(shortcutId)
@@ -57,8 +58,8 @@ let hasWeaponSecondary  = memoize(@(unitId) is_bit_set(getWeapTgMask(unitId), TR
 let hasWeaponMachinegun = memoize(@(unitId) is_bit_set(getWeapTgMask(unitId), TRIGGER_GROUP_MACHINE_GUN))
 
 let hasCameraCockpit  = memoize(@(_unitId) vehicleModel.hasCockpit())
-let hasCameraExternal       = @(_unitId) ::get_mission_difficulty_int() < DIFFICULTY_HARDCORE
-let hasCameraVirtualCockpit = @(_unitId) ::get_mission_difficulty_int() < DIFFICULTY_HARDCORE
+let hasCameraExternal       = @(_unitId) get_mission_difficulty_int() < DIFFICULTY_HARDCORE
+let hasCameraVirtualCockpit = @(_unitId) get_mission_difficulty_int() < DIFFICULTY_HARDCORE
 let hasCameraGunner   = memoize(@(_unitId) vehicleModel.hasGunners())
 let hasCameraBombview = memoize(@(_unitId) vehicleModel.hasBombview())
 
@@ -117,6 +118,45 @@ let function voiceMessagesMenuFunc() {
       : "hotkeys/ID_SHOW_VOICE_MESSAGE_LIST")
   }
 }
+
+let function hasRadarInSensorsBlk(sensorsBlk) {
+  if (sensorsBlk != null)
+    foreach (sensor in (sensorsBlk % "sensor")) {
+      let sBlk = blkOptFromPath(sensor?.blk)
+      if (sBlk?.type == "radar" && (sBlk?.showOnHud ?? true))
+        return true
+    }
+  return false
+}
+
+let hasRadar = memoizeByMission(function hasRadar(unitId, secondaryWeaponId) {
+  let unitBlk = ::get_full_unit_blk(unitId)
+  if (hasRadarInSensorsBlk(unitBlk?.sensors))
+    return true
+  if (unitBlk?.WeaponSlots) {
+    let predefinedPreset = getUnitPresets(unitBlk).findvalue(@(p) p.name == secondaryWeaponId)
+    local weaponsBlk
+    if (predefinedPreset != null)
+      weaponsBlk = blkOptFromPath(predefinedPreset?.blk)
+    else {
+      let unit = getAircraftByName(unitId)
+      if (unit != null)
+        weaponsBlk = getWeaponryCustomPresets(unit).findvalue(@(p) p.name == secondaryWeaponId)?.weaponsBlk
+    }
+    let weaponBlkList = weaponsBlk != null ? (weaponsBlk % "Weapon") : []
+    let ids = weaponBlkList
+      .map(@(v) v.preset)
+      .reduce(@(acc, v) acc.contains(v) ? acc : acc.append(v), []) //warning disable: -unwanted-modification
+    if (ids.len())
+      foreach (slot in unitBlk.WeaponSlots % "WeaponSlot") {
+        let wPresets = slot % "WeaponPreset"
+        let acviteSlotBlk = wPresets.findvalue(@(b) ids.contains(b.name))
+        if (hasRadarInSensorsBlk(acviteSlotBlk?.sensors))
+          return true
+      }
+  }
+  return false
+})
 
 //--------------------------------------------------------------------------------------------------
 
@@ -180,16 +220,7 @@ let cfg = {
 
   ["radar"] = {
     title = "hotkeys/ID_SENSORS_HEADER"
-    enable = memoize(function(unitId) {
-      let unitBlk = ::get_full_unit_blk(unitId)
-      if (unitBlk?.sensors)
-        foreach (sensor in (unitBlk.sensors % "sensor")) {
-          let sensorBlk = blkOptFromPath(sensor?.blk)
-          if (sensorBlk?.type == "radar" && (sensorBlk?.showOnHud ?? true))
-            return true
-        }
-      return false
-    })
+    enable = memoizeBySpawn(@(unitId) hasRadar(unitId, getLastWeapon(unitId)))
     items = [
       { shortcut = [ "ID_SENSOR_SWITCH", "ID_SENSOR_SWITCH_HELICOPTER",
           "ID_SENSOR_SWITCH_TANK", "ID_SENSOR_SWITCH_SHIP" ] }
@@ -332,7 +363,7 @@ let cfg = {
 
   ["engine_air"] = {
     title = "armor_class/engine"
-    enable = @(_unitId) ::get_mission_difficulty_int() >= DIFFICULTY_REALISTIC
+    enable = @(_unitId) get_mission_difficulty_int() >= DIFFICULTY_REALISTIC
     items = [
       { shortcut = [ "ID_TOGGLE_ENGINE", "ID_TOGGLE_ENGINE_HELICOPTER" ] }
       { shortcut = [ "ID_TOGGLE_PROP_FEATHERING" ], enable = hasEnginesWithFeatheringControl }
@@ -347,7 +378,7 @@ let cfg = {
 
   ["engine_heli"] = {
     title = "armor_class/engine"
-    enable = @(_unitId) ::get_mission_difficulty_int() >= DIFFICULTY_REALISTIC
+    enable = @(_unitId) get_mission_difficulty_int() >= DIFFICULTY_REALISTIC
     items = [
       { shortcut = [ "ID_TOGGLE_ENGINE", "ID_TOGGLE_ENGINE_HELICOPTER" ] }
       { shortcut = [ "ID_FBW_MODE", "ID_FBW_MODE_HELICOPTER" ] }
@@ -363,7 +394,7 @@ let cfg = {
   ["control_engines_separately"] = {
     title = "hotkeys/ID_SEPARATE_ENGINE_CONTROL_HEADER"
     enable = @(_unitId) vehicleModel.getEnginesCount() > 1
-      && ::get_mission_difficulty_int() >= DIFFICULTY_REALISTIC
+      && get_mission_difficulty_int() >= DIFFICULTY_REALISTIC
     onEnter = enableManualEngineControl
     onExit  = restoreManualEngineControl
     items = [
@@ -619,16 +650,7 @@ let cfg = {
 
   ["radar_human"] = {
     title = "hotkeys/ID_SENSORS_HEADER"
-    enable = memoize(function(unitId) {
-      let unitBlk = ::get_full_unit_blk(unitId)
-      if (unitBlk?.sensors)
-        foreach (sensor in (unitBlk.sensors % "sensor")) {
-          let sensorBlk = blkOptFromPath(sensor?.blk)
-          if (sensorBlk?.type == "radar" && (sensorBlk?.showOnHud ?? true))
-            return true
-        }
-      return false
-    })
+    enable = memoizeBySpawn(@(unitId) hasRadar(unitId, getLastWeapon(unitId)))
     items = [
       { shortcut = [ "ID_SENSOR_SWITCH_HUMAN" ] }
       { shortcut = [ "ID_SENSOR_TARGET_SWITCH_HUMAN" ] }

@@ -55,6 +55,18 @@
       "barsCount": 3,
       "rowMajor": true
     },
+    "searchSideRadar": {
+      "type": "pyramide",
+      "azimuthLimits": [-45.0,45.0],
+      "elevationLimits": [-30.0,45.0],
+      "rollStabLimit": 50.0,
+      "pitchStabLimit": 45.0,
+      "period": 1.8,
+      "width": 27.5,
+      "barHeight": 3.0,
+      "barsCount": 3,
+      "rowMajor": true
+    },
     "designationLockRadar": {
       "type": "pyramide",
       "azimuthLimits": [-45.0,45.0],
@@ -157,7 +169,8 @@
   "scanPatternSets": {
     "searchRadar": {
       "scanPattern1": "searchNormalRadar",
-      "scanPattern2": "searchCenteredRadar"
+      "scanPattern2": "searchSideRadar",
+      "scanPattern3": "searchCenteredRadar"
     },
     "searchIrst": {
       "scanPattern1": "searchNormalIrst",
@@ -232,11 +245,19 @@
           },
           "setScopeRangeSet": {
             "scopeRangeSet": "searchRadar"
+          },
+          "setFsmActive": {
+            "fsm": "scanSide",
+            "active": true
           }
         },
         "setIrstStandbyAndSearchModesCommon": {
           "setScanPatternSet": {
             "scanPatternSet": "searchIrst"
+          },
+          "setFsmActive": {
+            "fsm": "scanSide",
+            "active": false
           }
         },
         "setRadarStandbyMode": {
@@ -308,15 +329,25 @@
             "value": 0.0
           }
         },
-        "resetSearchMode": {
-          "setFsmActive": {
-            "fsm": "search",
-            "active": false
+        "resetSearchMode": [
+          {
+            "setFsmActive": {
+              "fsm": "search",
+              "active": false
+            }
           },
-          "setCueEnabled": {
-            "value": false
+          {
+            "setFsmActive": {
+              "fsm": "scanSide",
+              "active": false
+            }
+          },
+          {
+            "setCueEnabled": {
+              "value": false
+            }
           }
-        },
+        ],
         "setDesignationLockModeCommon": {
           "setEnabled": {
             "value": true
@@ -761,6 +792,56 @@
           "actions": {
             "setDetectedTargetActive": []
           }
+        }
+      }
+    },
+    "scanSide": {
+      "stateInit": "normal",
+      "transitions": {
+        "normalToSide": {
+          "stateFrom": "normal",
+          "command": "scanPatternSwitch",
+          "stateTo": "side"
+        },
+        "sideToCentered": {
+          "stateFrom": "side",
+          "command": "scanPatternSwitch",
+          "stateTo": "centered",
+          "actions": {
+            "setCenterAzimuth": {
+              "source": "constant",
+              "value": 0.0
+            }
+          }
+        },
+        "centeredToNormal": {
+          "stateFrom": "centered",
+          "command": "scanPatternSwitch",
+          "stateTo": "normal",
+          "actions": {
+            "setCenterAzimuth": {
+              "source": "constant",
+              "value": 0.0
+            }
+          }
+        },
+        "update": {
+          "stateFrom": "side",
+          "event": "update",
+          "actions": [
+            {
+              "setCenterAzimuth": {
+                "source": "constant",
+                "value": 0.0
+              }
+            },
+            {
+              "setCenterAzimuth": {
+                "source": "designationCue",
+                "value": 0.668
+              }
+            }
+          ]
         }
       }
     },

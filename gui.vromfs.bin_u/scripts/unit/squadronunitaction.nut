@@ -1,9 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let isAllClanUnitsResearched = @() ::all_units.findvalue(
   @(unit) unit.isSquadronVehicle() && unit.isVisibleInShop() && ::canResearchUnit(unit)
@@ -18,7 +15,7 @@ let function needChooseClanUnitResearch() {
   if (researchingUnitName == "")
     return true
 
-  let unit = ::getAircraftByName(researchingUnitName)
+  let unit = getAircraftByName(researchingUnitName)
   if (!unit || !unit.isVisibleInShop())
     return false
 

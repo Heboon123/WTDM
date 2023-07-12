@@ -1,11 +1,9 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let DataBlock = require("DataBlock")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
 
 ::gui_handlers.ControlsBackupManager <- class extends ::gui_handlers.SaveDataDialog {
@@ -52,7 +50,7 @@ let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platfo
     this.showWaitAnimation(false)
     if (params.success) {
       ::preset_changed = true
-      ::broadcastEvent("ControlsPresetChanged")
+      broadcastEvent("ControlsPresetChanged")
     }
     else
       ::showInfoMsgBox(loc("msgbox/errorSavingPreset"))

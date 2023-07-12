@@ -123,7 +123,8 @@
           "armorThickness": 80.0
         },
         "superstructure_front_dm": {
-          "armorThickness": 100.0
+          "armorThickness": 100.0,
+          "disableProjectleBreaking": true
         },
         "turret_01_front_dm": {
           "armorThickness": 100.0
@@ -1679,6 +1680,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -2558,6 +2560,7 @@
   },
   {
     "commonWeapons": {
+      "updateAnimBonesAlways": true,
       "Weapon": {
         "trigger": "gunner0",
         "blk": "gameData/Weapons/groundModels_weapons/88mm_PaK43_user_cannon.blk",
@@ -2605,7 +2608,7 @@
           },
           {
             "linkedAnimPart": {
-              "horNode": "optic_gun",
+              "horNode": "bone_optic_gun",
               "horLimits": [-180.0,180.0],
               "horOriginLimits": [-180.0,180.0]
             }
@@ -2625,6 +2628,9 @@
       },
       "hideNodes": {
         "node": "ex_decor_01"
+      },
+      "animatedBones": {
+        "node": "bone_optic_gun"
       }
     }
   },
@@ -2728,6 +2734,144 @@
         "dampeningCompressionRatio": 0.15
       }
     }
+  },
+  {
+    "PhysSys": [
+      {
+        "group": {
+          "find": "^bone_suspension_(._\\d\\d)$",
+          "points": {
+            "lever": {
+              "limitMin": [0.0,0.0,0.0],
+              "limitMax": [0.0,0.0,0.0],
+              "name": "bone_suspension_$1"
+            },
+            "suspension_01_01": {
+              "limitMin": [-1.0,-1.0,0.0],
+              "limitMax": [1.0,1.0,0.0],
+              "name": "bone_suspension_$1_01"
+            },
+            "wheel_01": {
+              "searchChildren": {
+                "occurence": 1,
+                "limitMin": [-1.0,-1.0,0.0],
+                "limitMax": [1.0,1.0,0.0],
+                "parent": "suspension_01_01",
+                "find": "bone_wheel_"
+              }
+            },
+            "wheel_02": {
+              "searchChildren": {
+                "occurence": 2,
+                "limitMin": [-1.0,-1.0,0.0],
+                "limitMax": [1.0,1.0,0.0],
+                "find": "bone_wheel_",
+                "parent": "suspension_01_01"
+              }
+            }
+          },
+          "constraints": [
+            {
+              "projection": {
+                "point": "suspension_01_01",
+                "from": "wheel_02",
+                "to": "wheel_01"
+              }
+            },
+            {
+              "edge": {
+                "from": "lever",
+                "to": "suspension_01_01",
+                "moveSecond": false
+              }
+            },
+            {
+              "edge": {
+                "to": "wheel_01",
+                "from": "suspension_01_01",
+                "moveNodes": false
+              }
+            },
+            {
+              "direction": {
+                "moveNodes": true,
+                "rotateSecond": false,
+                "from": "wheel_02",
+                "to": "wheel_01",
+                "point": "suspension_01_01"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "group": {
+          "find": "^bone_suspension_(\\w)_back_(\\d+)$",
+          "points": {
+            "lever": {
+              "limitMin": [0.0,0.0,0.0],
+              "limitMax": [0.0,0.0,0.0],
+              "name": "bone_suspension_$1_back_$2"
+            },
+            "suspension_01_bac_01": {
+              "limitMin": [-1.0,-1.0,0.0],
+              "limitMax": [1.0,1.0,0.0],
+              "name": "bone_suspension_$1_back_01_01"
+            },
+            "wheel_01": {
+              "searchChildren": {
+                "occurence": 1,
+                "limitMin": [-1.0,-1.0,0.0],
+                "limitMax": [1.0,1.0,0.0],
+                "parent": "suspension_01_bac_01",
+                "find": "bone_wheel_"
+              }
+            },
+            "wheel_02": {
+              "searchChildren": {
+                "occurence": 2,
+                "limitMin": [-1.0,-1.0,0.0],
+                "limitMax": [1.0,1.0,0.0],
+                "parent": "suspension_01_bac_01",
+                "find": "bone_wheel_"
+              }
+            }
+          },
+          "constraints": [
+            {
+              "projection": {
+                "point": "suspension_01_bac_01",
+                "from": "wheel_02",
+                "to": "wheel_01"
+              }
+            },
+            {
+              "edge": {
+                "from": "lever",
+                "to": "suspension_01_bac_01",
+                "moveSecond": false
+              }
+            },
+            {
+              "edge": {
+                "to": "wheel_02",
+                "from": "suspension_01_bac_01",
+                "moveNodes": false
+              }
+            },
+            {
+              "direction": {
+                "moveNodes": true,
+                "rotateSecond": false,
+                "from": "wheel_02",
+                "to": "wheel_01",
+                "point": "suspension_01_bac_01"
+              }
+            }
+          ]
+        }
+      }
+    ]
   },
   {
     "ammo": {
@@ -3639,6 +3783,15 @@
           "fx": {
             "name": "smoke_after_hit_tiny",
             "setOrientation": true
+          }
+        }
+      },
+      {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
           }
         }
       },

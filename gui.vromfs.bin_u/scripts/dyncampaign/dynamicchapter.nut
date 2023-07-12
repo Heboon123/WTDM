@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let DataBlock = require("DataBlock")
 let { format } = require("string")
@@ -163,7 +161,7 @@ let { get_cur_game_mode_name } = require("mission")
       })
     }
 
-    return ::handyman.renderCached("%gui/missions/missionBoxItemsList.tpl", view)
+    return handyman.renderCached("%gui/missions/missionBoxItemsList.tpl", view)
   }
 
   function refreshMissionDesc() {

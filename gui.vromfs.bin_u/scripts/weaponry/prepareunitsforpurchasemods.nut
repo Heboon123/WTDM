@@ -1,8 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+
+let { Cost } = require("%scripts/money.nut")
 
 let { getAllModsCost } = require("%scripts/weaponry/itemInfo.nut")
 let { weaponsPurchase } = require("%scripts/weaponry/weaponsPurchase.nut")
@@ -42,7 +41,7 @@ checkUnboughtMods = function(silent = false) {
   if (!haveUnits())
     return
 
-  local cost = ::Cost()
+  local cost = Cost()
   let unitsWithNBMods = []
   let stringOfUnits = []
 
@@ -67,13 +66,13 @@ checkUnboughtMods = function(silent = false) {
 
   ::scene_msg_box("buy_all_available_mods", null,
     loc("msgbox/buy_all_researched_modifications",
-      { unitsList = ::g_string.implode(stringOfUnits, ","), cost = cost.getTextAccordingToBalance() }),
-    [["yes", (@(cost, unitsWithNBMods) function() {
+      { unitsList = ",".join(stringOfUnits, true), cost = cost.getTextAccordingToBalance() }),
+    [["yes", function() {
         if (!::check_balance_msgBox(cost, @()checkUnboughtMods()))
           return
 
         purchaseModifications(unitsWithNBMods)
-      })(cost, unitsWithNBMods)],
+      }],
      ["no", @()clear() ]],
       "yes", { cancel_fn = @()clear() })
 }

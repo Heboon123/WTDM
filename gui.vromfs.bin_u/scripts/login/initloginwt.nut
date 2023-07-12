@@ -1,9 +1,6 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
+let { loadOnce } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 local cachedLoginData = persist("cachedLoginData", @() { use_tencent_login = null, use_dmm_login = null })
 
 foreach (fn in [
@@ -19,7 +16,7 @@ foreach (fn in [
                  "updaterModal.nut"
                  "loginWT.nut"
                ])
-  ::g_script_reloader.loadOnce("%scripts/login/" + fn)
+  loadOnce($"%scripts/login/{fn}")
 
 ::use_tencent_login <- function use_tencent_login() {
   if (cachedLoginData.use_tencent_login == null) {

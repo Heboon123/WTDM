@@ -1738,6 +1738,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -2870,6 +2871,9 @@
   {
     "commonWeapons": [
       {
+        "remotelyGuidedWeaponsMax": 1
+      },
+      {
         "Weapon": {
           "trigger": "gunner0",
           "triggerGroup": "primary",
@@ -2907,7 +2911,12 @@
             "gun": "bone_gun",
             "barrel": "bone_gun_barrel",
             "gunnerDm": "gunner_dm",
-            "secondGunnerDm": "commander_dm"
+            "secondGunnerDm": "commander_dm",
+            "linkedAnimPart": {
+              "verNode": "bone_roll_01",
+              "verLimits": [-180.0,180.0],
+              "verOriginLimits": [-180.0,180.0]
+            }
           },
           "limits": {
             "yaw": [-180.0,180.0],
@@ -3053,6 +3062,7 @@
           "stopForFire": true,
           "maxSpeedForFire": 5.0,
           "parkForReload": true,
+          "staticElevation": 1.725,
           "createGunEffects": true,
           "defaultYaw": 0.0,
           "defaultPitch": 0.0,
@@ -3250,8 +3260,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -3261,6 +3271,178 @@
         }
       }
     }
+  },
+  {
+    "chainIK": [
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_01_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_01_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_02_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_02_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_03_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_03_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_04_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_04_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_05_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_05_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_06_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_06_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_07_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_07_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_08_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_08_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_09_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_09_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_10_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_10_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_11_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_11_02"
+            }
+          }
+        ]
+      },
+      {
+        "points": [
+          {
+            "point": {
+              "nameTemplate": "bone_roll_12_01"
+            }
+          },
+          {
+            "point": {
+              "nameTemplate": "bone_roll_12_02"
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "ammo": {
@@ -4176,6 +4358,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -4236,6 +4427,9 @@
           "changeMass": 10.0,
           "commonWeapons": [
             {
+              "remotelyGuidedWeaponsMax": 1
+            },
+            {
               "Weapon": {
                 "trigger": "gunner0",
                 "triggerGroup": "primary",
@@ -4273,7 +4467,12 @@
                   "gun": "bone_gun",
                   "barrel": "bone_gun_barrel",
                   "gunnerDm": "gunner_dm",
-                  "secondGunnerDm": "commander_dm"
+                  "secondGunnerDm": "commander_dm",
+                  "linkedAnimPart": {
+                    "verNode": "bone_roll_01",
+                    "verLimits": [-180.0,180.0],
+                    "verOriginLimits": [-180.0,180.0]
+                  }
                 },
                 "limits": {
                   "yaw": [-180.0,180.0],
@@ -4419,6 +4618,7 @@
                 "stopForFire": true,
                 "maxSpeedForFire": 5.0,
                 "parkForReload": true,
+                "staticElevation": 1.725,
                 "createGunEffects": true,
                 "defaultYaw": 0.0,
                 "defaultPitch": 0.0,
@@ -4553,6 +4753,7 @@
   {
     "supportPlane": {
       "supportPlaneClass": "ucav_recon_micro",
+      "behTreeName": "recon_micro",
       "planeStartSpeed": 80.0,
       "count": 1
     }

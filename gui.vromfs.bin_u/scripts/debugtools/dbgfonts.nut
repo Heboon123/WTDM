@@ -1,8 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
 // warning disable: -file:forbidden-function
 
@@ -30,7 +28,7 @@ let function debug_fonts_list(isActiveColor = true, needBorder = true) {
     needBorder = needBorder
     fontsAdditionalText = fontsAdditionalText
 
-    textsList = ::u.map(fonts.getFontsList(),
+    textsList = u.map(fonts.getFontsList(),
       @(name) {
         id = name
         font = name

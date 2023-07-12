@@ -1,8 +1,5 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { getTimestampFromStringUtc } = require("%scripts/time.nut")
@@ -40,7 +37,7 @@ let function generateUnitShopInfo() {
         for (local a = 0; a < totalAirs; a++) {
           let airBlk = rblk.getBlock(a)
           let airName = airBlk.getBlockName()
-          local air = ::getAircraftByName(airName)
+          local air = getAircraftByName(airName)
 
           if (airBlk?.reqAir != null)
             prevAir = airBlk.reqAir
@@ -56,7 +53,7 @@ let function generateUnitShopInfo() {
             let groupName = airName
             for (local ga = 0; ga < groupTotal; ga++) {
               let gAirBlk = airBlk.getBlock(ga)
-              air = ::getAircraftByName(gAirBlk.getBlockName())
+              air = getAircraftByName(gAirBlk.getBlockName())
               if (!air)
                 continue
               air.applyShopBlk(gAirBlk, prevAir, groupName)

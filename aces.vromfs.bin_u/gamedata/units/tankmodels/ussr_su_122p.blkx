@@ -147,8 +147,7 @@
           "armorThickness": 10.0
         },
         "turret_01_side_dm": {
-          "armorThickness": 5.0,
-          "armorClass": "tank_structural_steel"
+          "armorThickness": 10.0
         },
         "turret_02_back_dm": {
           "armorThickness": 5.0
@@ -1376,8 +1375,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -2302,6 +2301,15 @@
         }
       },
       {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
+          }
+        }
+      },
+      {
         "procedural": {
           "name": "default",
           "fx": {
@@ -2777,6 +2785,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.4,
               "nothing": 0.6,
               "fHitCritical": true

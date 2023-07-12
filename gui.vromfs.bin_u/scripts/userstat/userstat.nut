@@ -1,16 +1,14 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 let userstat = require("userstat")
+let { addListenersWithoutEnv, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { get_time_msec } = require("dagor.time")
-let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { APP_ID } = require("app")
 let { APP_ID_CUSTOM_LEADERBOARD
 } = require("%scripts/leaderboard/requestLeaderboardData.nut")
 let DataBlock = require("DataBlock")
 let { json_to_string } = require("json")
+let { TASK_CB_TYPE } = require("%scripts/tasker.nut")
 
 const STATS_REQUEST_TIMEOUT = 45000
 const STATS_UPDATE_INTERVAL = 60000 //unlocks progress update interval
@@ -188,7 +186,7 @@ addListenersWithoutEnv({
 
 let userstatCustomLeaderboardStats = customLeaderboardStatsUpdatable.data
 userstatCustomLeaderboardStats.subscribe(
-  @(_) ::broadcastEvent("UserstatCustomLeaderboardStats"))
+  @(_) broadcastEvent("UserstatCustomLeaderboardStats"))
 
 return {
   userstatUnlocks

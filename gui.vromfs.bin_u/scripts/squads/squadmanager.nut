@@ -1,11 +1,10 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
+let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { get_time_msec } = require("dagor.time")
 let { hasAnyFeature } = require("%scripts/user/features.nut")
 let squadApplications = require("%scripts/squads/squadApplications.nut")
@@ -22,7 +21,7 @@ let { sendSystemInvite } = require("%scripts/social/xboxSquadManager/xboxSquadMa
 let SquadMember = require("%scripts/squads/squadMember.nut")
 let { needActualizeQueueData, actualizeQueueData } = require("%scripts/queue/queueBattleData.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
-let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { registerPersistentDataFromRoot, PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 
 enum squadEvent {
   DATA_RECEIVED = "SquadDataReceived"
@@ -256,7 +255,7 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
 
     this.setMaxSquadSize(newSize)
     this.setSquadData()
-    ::broadcastEvent(squadEvent.SIZE_CHANGED)
+    broadcastEvent(squadEvent.SIZE_CHANGED)
   }
 
   function setReadyFlag(ready = null, needUpdateMemberData = true) {
@@ -288,7 +287,7 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
     if (needUpdateMemberData)
       this.updateMyMemberDataAfterActualizeJwt()
 
-    ::broadcastEvent(squadEvent.SET_READY)
+    broadcastEvent(squadEvent.SET_READY)
   }
 
   function setCrewsReadyFlag(ready = null, needUpdateMemberData = true) {
@@ -325,7 +324,7 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
       return false
     this.state = newState
     this.lastStateChangeTime = get_time_msec()
-    ::broadcastEvent(squadEvent.STATUS_CHANGED)
+    broadcastEvent(squadEvent.STATUS_CHANGED)
     return true
   }
 
@@ -345,12 +344,12 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
     }
 
     ::updateContact(memberData.getData())
-    ::broadcastEvent(squadEvent.DATA_UPDATED)
-    ::broadcastEvent("SquadOnlineChanged")
+    broadcastEvent(squadEvent.DATA_UPDATED)
+    broadcastEvent("SquadOnlineChanged")
   }
 
   hasApplicationInMySquad = @(uid, name = null) uid ? (uid in this.getApplicationsToSquad())
-    : ::u.search(this.getApplicationsToSquad(), @(player) player.name == name) != null
+    : u.search(this.getApplicationsToSquad(), @(player) player.name == name) != null
 
   isSquadFull = @() this.getSquadSize() >= this.getMaxSquadSize()
   isInSquad = @(forChat = false) (forChat && !::SessionLobby.isMpSquadChatAllowed()) ? false
@@ -358,13 +357,18 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
   isMeReady = @() this.meReady
   isSquadLeader = @() this.isInSquad() && this.getLeaderUid() == ::my_user_id_str
   isPlayerInvited = @(uid, name = null) uid ? (uid in this.getInvitedPlayers())
-    : ::u.search(this.getInvitedPlayers(), @(player) player.name == name) != null
+    : u.search(this.getInvitedPlayers(), @(player) player.name == name) != null
   isMySquadLeader = @(uid) this.isInSquad() && uid != null && uid == this.getLeaderUid()
   isSquadMember = @() this.isInSquad() && !this.isSquadLeader()
   isMemberReady = @(uid) this.getMemberData(uid)?.isReady ?? false
   isInMySquad = @(name, checkAutosquad = true)
     (this.isInSquad() && this.isMySquadMember(name)) ? true
       : checkAutosquad && ::SessionLobby.isMemberInMySquadByName(name)
+
+  isInMySquadById = @(userId, checkAutosquad = true)
+    (this.isInSquad() && this.isMySquadMemberById(userId)) ? true
+      : checkAutosquad && ::SessionLobby.isMemberInMySquadById(userId)
+
   isMe = @(uid) uid == ::my_user_id_str
   isStateInTransition = @() (this.state == squadState.JOINING || this.state == squadState.LEAVING)
     && this.lastStateChangeTime + SQUAD_REQEST_TIMEOUT > get_time_msec()
@@ -381,7 +385,7 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
     if (currentData?.selSlots?[currentCountry] != receivedData?.selSlots?[receivedCountry])
       return true
 
-    if (!::u.isEqual(battleRating.getCrafts(currentData), battleRating.getCrafts(receivedData)))
+    if (!u.isEqual(battleRating.getCrafts(currentData), battleRating.getCrafts(receivedData)))
       return true
 
     return false
@@ -474,7 +478,7 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
     ::updateContact(memberData.getData())
 
     ::msquad.setMyMemberData(::my_user_id_str, data)
-    ::broadcastEvent(squadEvent.DATA_UPDATED)
+    broadcastEvent(squadEvent.DATA_UPDATED)
   }
 
   function updateLeaderData(isActualBR = true) {
@@ -545,11 +549,11 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
     foreach (_idx, membersArray in checksArray)
       foreach (_uid, member in membersArray) {
         if (platformModule.isXBoxPlayerName(member.name))
-          ::u.appendOnce("xboxOne", playerPlatforms)
+          u.appendOnce("xboxOne", playerPlatforms)
         else if (platformModule.isPS4PlayerName(member.name))
-          ::u.appendOnce("ps4", playerPlatforms)
+          u.appendOnce("ps4", playerPlatforms)
         else
-          ::u.appendOnce("pc", playerPlatforms)
+          u.appendOnce("pc", playerPlatforms)
       }
 
     this.squadData.platformInfo = playerPlatforms
@@ -561,7 +565,7 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
 
     let presence = ::g_presence_type.getCurrent()
     let presenceParams = presence.getParams()
-    if (!::u.isEqual(this.squadData.presence, presenceParams))
+    if (!u.isEqual(this.squadData.presence, presenceParams))
       this.squadData.presence = presenceParams
   }
 
@@ -578,7 +582,7 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
   function initSquadSizes() {
     this.squadSizesList.clear()
     let sizesBlk = ::get_game_settings_blk()?.squad?.sizes
-    if (!::u.isDataBlock(sizesBlk))
+    if (!u.isDataBlock(sizesBlk))
       return
 
     local maxSize = 0
@@ -665,10 +669,10 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
     local password = this.getSquadRoomPassword()
     local callback = null
 
-    if (::u.isEmpty(name))
+    if (u.isEmpty(name))
       return
 
-    if (this.isSquadLeader() && ::u.isEmpty(password)) {
+    if (this.isSquadLeader() && u.isEmpty(password)) {
       password = ::gen_rnd_password(15)
       this.squadData.chatInfo.password = password
 
@@ -679,7 +683,7 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
       }
     }
 
-    if (::u.isEmpty(password))
+    if (u.isEmpty(password))
       return
 
     ::g_chat.joinSquadRoom(callback)
@@ -699,18 +703,18 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
 
     let callback = function(response) {
       if (response?.error_id != msquadErrorId.NOT_SQUAD_MEMBER)
-        if (!::checkMatchingError(response))
+        if (!::checkMatchingError(response, false))
           return
 
       if ("squad" in response) {
-        ::broadcastEvent(squadEvent.DATA_RECEIVED, response?.squad)
+        broadcastEvent(squadEvent.DATA_RECEIVED, response?.squad)
 
         if (::g_squad_manager.getSquadSize(true) == 1)
           ::g_squad_manager.disbandSquad()
         else
           ::g_squad_manager.updateMyMemberData()
 
-        ::broadcastEvent(squadEvent.STATUS_CHANGED)
+        broadcastEvent(squadEvent.STATUS_CHANGED)
       }
 
       let invites = response?.invites
@@ -727,7 +731,7 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
   function requestSquadData(callback = null) {
     let fullCallback = (@(callback) function(response) {
       if ("squad" in response) {
-        ::broadcastEvent(squadEvent.DATA_RECEIVED, response?.squad)
+        broadcastEvent(squadEvent.DATA_RECEIVED, response?.squad)
 
         if (::g_squad_manager.getSquadSize(true) == 1)
           ::g_squad_manager.disbandSquad()
@@ -786,14 +790,14 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
     if (platformModule.isPS4PlayerName(name)) {
       let contact = ::getContact(uid, name)
       isInvitingPsnPlayer = true
-      if (::u.isEmpty(::g_squad_manager.getPsnSessionId()))
+      if (u.isEmpty(::g_squad_manager.getPsnSessionId()))
         contact.updatePSNIdAndDo(function() {
           ::g_squad_manager.delayedInvites.append(contact.psnId)
         })
     }
 
     let callback = function(_response) {
-      if (isInvitingPsnPlayer && ::u.isEmpty(::g_squad_manager.delayedInvites)) {
+      if (isInvitingPsnPlayer && u.isEmpty(::g_squad_manager.delayedInvites)) {
         let contact = ::getContact(uid, name)
         contact.updatePSNIdAndDo(function() {
           invite(::g_squad_manager.getPsnSessionId(), contact.psnId)
@@ -808,7 +812,7 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
   }
 
   function processDelayedInvitations() {
-    if (::u.isEmpty(this.getPsnSessionId()) || ::u.isEmpty(this.delayedInvites))
+    if (u.isEmpty(this.getPsnSessionId()) || u.isEmpty(this.delayedInvites))
       return
 
     foreach (invitee in this.delayedInvites)
@@ -823,10 +827,10 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
     local fullCallback = null
     if (callback != null) {
       let counterTbl = { invitesLeft = ::g_squad_manager.getInvitedPlayers().len() }
-      fullCallback = (@(callback, counterTbl) function() {
+      fullCallback = function() {
         if (!--counterTbl.invitesLeft)
           callback()
-      })(callback, counterTbl)
+      }
     }
 
     foreach (uid, _memberData in this.getInvitedPlayers())
@@ -918,6 +922,8 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
   }
 
   isMySquadMember = @(name) (this.membersNames?[name] != null) || (this.membersNames?[getRealName(name)] != null)
+  isMySquadMemberById = @(id) this.squadData.members?[id] != null
+
 
   function canTransferLeadership(uid) {
     if (!hasFeature("SquadTransferLeadership"))
@@ -926,7 +932,7 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
     if (!this.canManageSquad())
       return false
 
-    if (::u.isEmpty(uid))
+    if (u.isEmpty(uid))
       return false
 
     if (uid == ::my_user_id_str)
@@ -947,13 +953,13 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
       return
 
     ::msquad.transferLeadership(uid)
-    ::broadcastEvent(squadEvent.LEADERSHIP_TRANSFER, { uid = uid })
+    broadcastEvent(squadEvent.LEADERSHIP_TRANSFER, { uid = uid })
   }
 
   function onLeadershipTransfered() {
     ::g_squad_manager.setReadyFlag(::g_squad_manager.isSquadLeader())
     ::g_squad_manager.setCrewsReadyFlag(::g_squad_manager.isSquadLeader())
-    ::broadcastEvent(squadEvent.STATUS_CHANGED)
+    broadcastEvent(squadEvent.STATUS_CHANGED)
   }
 
   function acceptSquadInvite(sid) {
@@ -980,7 +986,7 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
     let memberData = ::g_squad_manager.squadData.members?[uid]
     if (memberData) {
       memberData.isWaiting = true
-      ::broadcastEvent(squadEvent.DATA_UPDATED)
+      broadcastEvent(squadEvent.DATA_UPDATED)
     }
 
     let callback = @(response) ::g_squad_manager.requestMemberDataCallback(uid, response)
@@ -1019,9 +1025,9 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
 
     ::g_squad_manager.joinSquadChatRoom()
 
-    ::broadcastEvent(squadEvent.DATA_UPDATED)
+    broadcastEvent(squadEvent.DATA_UPDATED)
     if (isMemberVehicleDataChanged)
-      ::broadcastEvent("SquadMemberVehiclesChanged")
+      broadcastEvent("SquadMemberVehiclesChanged")
 
     let memberSquadsVersion = receivedMemberData?.squadsVersion ?? DEFAULT_SQUADS_VERSION
     ::g_squad_utils.checkSquadsVersion(memberSquadsVersion)
@@ -1061,8 +1067,8 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
     ::update_contacts_by_list(contactsUpdatedList)
 
     this.setState(squadState.NOT_IN_SQUAD)
-    ::broadcastEvent(squadEvent.DATA_UPDATED)
-    ::broadcastEvent(squadEvent.INVITES_CHANGED)
+    broadcastEvent(squadEvent.DATA_UPDATED)
+    broadcastEvent(squadEvent.INVITES_CHANGED)
   }
 
   function addInvitedPlayers(uid) {
@@ -1073,9 +1079,9 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
 
     requestUsersInfo([uid])
 
-    ::broadcastEvent(squadEvent.PLAYER_INVITED, { uid = uid })
-    ::broadcastEvent(squadEvent.INVITES_CHANGED)
-    ::broadcastEvent(squadEvent.DATA_UPDATED)
+    broadcastEvent(squadEvent.PLAYER_INVITED, { uid = uid })
+    broadcastEvent(squadEvent.INVITES_CHANGED)
+    broadcastEvent(squadEvent.DATA_UPDATED)
   }
 
   function removeInvitedPlayers(uid) {
@@ -1083,8 +1089,8 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
       return
 
     this.squadData.invitedPlayers.rawdelete(uid)
-    ::broadcastEvent(squadEvent.INVITES_CHANGED)
-    ::broadcastEvent(squadEvent.DATA_UPDATED)
+    broadcastEvent(squadEvent.INVITES_CHANGED)
+    broadcastEvent(squadEvent.DATA_UPDATED)
   }
 
   function addApplication(uid) {
@@ -1099,12 +1105,12 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
         format(loc("squad/player_application"),
           platformModule.getPlayerName(this.squadData.applications[uid]?.name ?? ""))))
 
-    ::broadcastEvent(squadEvent.APPLICATIONS_CHANGED, { uid = uid })
-    ::broadcastEvent(squadEvent.DATA_UPDATED)
+    broadcastEvent(squadEvent.APPLICATIONS_CHANGED, { uid = uid })
+    broadcastEvent(squadEvent.DATA_UPDATED)
   }
 
   function removeApplication(applications) {
-    if (!::u.isArray(applications))
+    if (!u.isArray(applications))
       applications = [applications]
     local isApplicationsChanged = false
     foreach (uid in applications) {
@@ -1120,8 +1126,8 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
     if (this.getSquadSize(true) == 1)
       ::g_squad_manager.disbandSquad()
     this.checkNewApplications()
-    ::broadcastEvent(squadEvent.APPLICATIONS_CHANGED, {})
-    ::broadcastEvent(squadEvent.DATA_UPDATED)
+    broadcastEvent(squadEvent.APPLICATIONS_CHANGED, {})
+    broadcastEvent(squadEvent.DATA_UPDATED)
   }
 
   function markAllApplicationsSeen() {
@@ -1139,7 +1145,7 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
         break
       }
     if (curHasNewApplication != this.hasNewApplication)
-      ::broadcastEvent(squadEvent.NEW_APPLICATIONS)
+      broadcastEvent(squadEvent.NEW_APPLICATIONS)
   }
 
   function addMember(uid) {
@@ -1149,8 +1155,8 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
     this.removeApplication(uid.tointeger())
     this.requestMemberData(uid)
 
-    ::broadcastEvent(squadEvent.STATUS_CHANGED)
-    ::broadcastEvent(squadEvent.DATA_UPDATED)
+    broadcastEvent(squadEvent.STATUS_CHANGED)
+    broadcastEvent(squadEvent.DATA_UPDATED)
   }
 
   function removeMember(uid) {
@@ -1161,8 +1167,8 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
     this.squadData.members.rawdelete(memberData.uid)
     ::update_contacts_by_list([memberData.getData()])
 
-    ::broadcastEvent(squadEvent.STATUS_CHANGED)
-    ::broadcastEvent(squadEvent.DATA_UPDATED)
+    broadcastEvent(squadEvent.STATUS_CHANGED)
+    broadcastEvent(squadEvent.DATA_UPDATED)
   }
 
   function onEventSquadDataReceived(resSquadData) {
@@ -1192,7 +1198,6 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
         newMembersData[uid] <- SquadMember(uid)
 
       this.membersNames[newMembersData[uid].name] <- uid
-
       if (uid != ::my_user_id_str)
         this.requestMemberData(uid)
     }
@@ -1209,7 +1214,7 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
     let chatInfo = resSquadData?.chat
     if (chatInfo != null) {
       let chatName = chatInfo?.id ?? ""
-      if (!::u.isEmpty(chatName))
+      if (!u.isEmpty(chatName))
         this.squadData.chatInfo.name = chatName
     }
 
@@ -1241,7 +1246,7 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
     this.updateLeaderGameModeId(resSquadData?.data.leaderGameModeId ?? "")
     this.squadData.leaderBattleRating = resSquadData?.data?.leaderBattleRating ?? 0
 
-    ::broadcastEvent(squadEvent.DATA_UPDATED)
+    broadcastEvent(squadEvent.DATA_UPDATED)
 
     let lastReadyness = this.isMeReady()
     let currentReadyness = lastReadyness || this.isSquadLeader()
@@ -1263,16 +1268,16 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
       this.squadData.properties.__update(DEFAULT_SQUAD_PROPERTIES)
       isPropertyChange = true
     }
-    if (::u.isTable(properties))
+    if (u.isTable(properties))
       foreach (key, value in properties) {
-        if (::u.isEqual(this.squadData?.properties?[key], value))
+        if (u.isEqual(this.squadData?.properties?[key], value))
           continue
 
         this.squadData.properties[key] <- value
         isPropertyChange = true
       }
     if (isPropertyChange)
-      ::broadcastEvent(squadEvent.PROPERTIES_CHANGED)
+      broadcastEvent(squadEvent.PROPERTIES_CHANGED)
     this.squadData.presence = data?.presence ?? clone DEFAULT_SQUAD_PRESENCE
     this.squadData.psnSessionId = data?.psnSessionId ?? ""
   }
@@ -1358,7 +1363,7 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
     }
 
     if (isChanged)
-      ::broadcastEvent(squadEvent.INVITES_CHANGED)
+      broadcastEvent(squadEvent.INVITES_CHANGED)
 
     isChanged = false
     foreach (uid, memberData in this.getApplicationsToSquad()) {
@@ -1370,7 +1375,7 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
         isChanged = true
     }
     if (isChanged)
-      ::broadcastEvent(squadEvent.APPLICATIONS_CHANGED {})
+      broadcastEvent(squadEvent.APPLICATIONS_CHANGED {})
   }
 
   function onEventMatchingConnect(_params) {
@@ -1427,6 +1432,6 @@ let DEFAULT_SQUAD_WW_OPERATION_INFO = { id = -1, country = "", battle = null }
 
 ::cross_call_api.squad_manger <- ::g_squad_manager
 
-::g_script_reloader.registerPersistentDataFromRoot("g_squad_manager")
+registerPersistentDataFromRoot("g_squad_manager")
 
-::subscribe_handler(::g_squad_manager, ::g_listener_priority.DEFAULT_HANDLER)
+subscribe_handler(::g_squad_manager, ::g_listener_priority.DEFAULT_HANDLER)

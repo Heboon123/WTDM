@@ -1,12 +1,12 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 let userstat = require("userstat")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { format, split_by_chars } = require("string")
 // warning disable: -file:forbidden-function
 
+let { reload } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let DataBlock  = require("DataBlock")
 let { blkFromPath } = require("%sqStdLibs/helpers/datablockUtils.nut")
 let dbgExportToFile = require("%scripts/debugTools/dbgExportToFile.nut")
@@ -26,15 +26,17 @@ let { getUnitMassPerSecValue } = require("%scripts/unit/unitWeaponryInfo.nut")
 let debugWnd = require("%scripts/debugTools/debugWnd.nut")
 let animBg = require("%scripts/loading/animBg.nut")
 let { register_command } = require("console")
-let { get_meta_mission_info_by_name } = require("guiMission")
+let { get_meta_mission_info_by_gm_and_name } = require("guiMission")
 let { hotasControlImagePath } = require("%scripts/controls/hotas.nut")
 let { getAllTips } = require("%scripts/loading/loadingTips.nut")
+let { startsWith, stripTags } = require("%sqstd/string.nut")
+let { multiplyDaguiColorStr } = require("%sqDagui/daguiUtil.nut")
 
 require("%scripts/debugTools/dbgLongestUnitTooltip.nut")
 
 let function reload_dagui() {
   ::get_cur_gui_scene()?.resetGamepadMouseTarget()
-  let res = ::g_script_reloader.reload(::reload_main_script_module)
+  let res = reload(::reload_main_script_module)
   ::update_objects_under_windows_state(::get_cur_gui_scene())
   dlog("Dagui reloaded")
   return res
@@ -124,7 +126,7 @@ let function debug_export_unit_weapons_descriptions() {
       let res = []
       let wpCost = ::get_wpcost_blk()
       for (local i = 0; i < wpCost.blockCount(); i++) {
-        let unit = ::getAircraftByName(wpCost.getBlock(i).getBlockName())
+        let unit = getAircraftByName(wpCost.getBlock(i).getBlockName())
         if (unit?.isInShop)
           res.append(unit)
       }
@@ -165,7 +167,7 @@ let function debug_export_unit_xray_parts_descriptions(partIdWhitelist = null) {
       let res = []
       let wpCost = ::get_wpcost_blk()
       for (local i = 0; i < wpCost.blockCount(); i++) {
-        let unit = ::getAircraftByName(wpCost.getBlock(i).getBlockName())
+        let unit = getAircraftByName(wpCost.getBlock(i).getBlockName())
         if (unit?.isInShop)
           res.append(unit)
       }
@@ -181,17 +183,17 @@ let function debug_export_unit_xray_parts_descriptions(partIdWhitelist = null) {
         for (local b = 0; b < damagePartsBlk.blockCount(); b++) {
           let partsBlk = damagePartsBlk.getBlock(b)
           for (local p = 0; p < partsBlk.blockCount(); p++)
-            ::u.appendOnce(partsBlk.getBlock(p).getBlockName(), partNames)
+            u.appendOnce(partsBlk.getBlock(p).getBlockName(), partNames)
         }
       partNames.sort()
 
       foreach (partName in partNames) {
-        if (partIdWhitelist != null && partIdWhitelist.findindex(@(v) ::g_string.startsWith(partName, v)) == null)
+        if (partIdWhitelist != null && partIdWhitelist.findindex(@(v) startsWith(partName, v)) == null)
           continue
         let params = { name = partName }
         let info = ::dmViewer.getPartTooltipInfo(::dmViewer.getPartNameId(params), params)
         if (info.desc != "")
-          blk[partName] <- ::g_string.stripTags(info.title + "\n" + info.desc)
+          blk[partName] <- stripTags(info.title + "\n" + info.desc)
       }
       return blk.paramCount() != 0 ? { key = unit.name, value = blk } : null
     }
@@ -207,12 +209,12 @@ let function gui_do_debug_unlock() {
   ::is_debug_mode_enabled = true
   ::update_all_units();
   ::add_warpoints(500000, false);
-  ::broadcastEvent("DebugUnlockEnabled")
+  broadcastEvent("DebugUnlockEnabled")
 }
 
-let function dbg_loading_brief(missionName = "malta_ship_mission", slidesAmount = 0) {
-  let missionBlk = get_meta_mission_info_by_name(missionName)
-  if (!::u.isDataBlock(missionBlk))
+let function dbg_loading_brief(gm = GM_SINGLE_MISSION, missionName = "east_china_s01", slidesAmount = 0) {
+  let missionBlk = get_meta_mission_info_by_gm_and_name(gm, missionName)
+  if (!u.isDataBlock(missionBlk))
     return dlog("Not found mission " + missionName) //warning disable: -dlog-warn
 
   let filePath = missionBlk?.mis_file
@@ -221,7 +223,7 @@ let function dbg_loading_brief(missionName = "malta_ship_mission", slidesAmount 
   let fullBlk = blkFromPath(filePath)
 
   let briefing = fullBlk?.mission_settings.briefing
-  if (!::u.isDataBlock(briefing) || !briefing.blockCount())
+  if (!u.isDataBlock(briefing) || !briefing.blockCount())
     return dlog("Mission does not have briefing") //warning disable: -dlog-warn
 
   let briefingClone = DataBlock()
@@ -265,14 +267,14 @@ let function debug_show_units_by_loc_name(unitLocName, needIncludeNotInShop = fa
   let units = shopSearchCore.findUnitsByLocName(unitLocName, true, needIncludeNotInShop)
   units.sort(function(a, b) { return a.name == b.name ? 0 : a.name < b.name ? -1 : 1 })
 
-  let res = ::u.map(units, function(unit) {
+  let res = u.map(units, function(unit) {
     let locName = ::getUnitName(unit)
     let army = unit.unitType.getArmyLocName()
     let country = loc(::getUnitCountry(unit))
     let rank = ::get_roman_numeral(unit?.rank ?? -1)
     let prem = (::isUnitSpecial(unit) || ::isUnitGift(unit)) ? loc("shop/premiumVehicle/short") : ""
     let hidden = !unit.isInShop ? loc("controls/NA") : unit.isVisibleInShop() ? "" : loc("worldWar/hided_logs")
-    return unit.name + "; \"" + locName + "\" (" + ::g_string.implode([ army, country, rank, prem, hidden ], ", ") + ")"
+    return unit.name + "; \"" + locName + "\" (" + ", ".join([ army, country, rank, prem, hidden ], true) + ")"
   })
 
   foreach (line in res)
@@ -281,7 +283,7 @@ let function debug_show_units_by_loc_name(unitLocName, needIncludeNotInShop = fa
 }
 
 let function debug_show_unit(unitId) {
-  let unit = ::getAircraftByName(unitId)
+  let unit = getAircraftByName(unitId)
   if (!unit)
     return "Not found"
   showedUnit(unit)
@@ -291,15 +293,15 @@ let function debug_show_unit(unitId) {
 
 let function debug_show_weapon(weaponName) {
   weaponName = getWeaponNameByBlkPath(weaponName)
-  foreach (u in ::all_units) {
-    if (!u.isInShop)
+  foreach (unit in ::all_units) {
+    if (!unit.isInShop)
       continue
-    let unitBlk = ::get_full_unit_blk(u.name)
+    let unitBlk = ::get_full_unit_blk(unit.name)
     let weapons = getUnitWeapons(unitBlk)
     foreach (weap in weapons)
       if (weaponName == getWeaponNameByBlkPath(weap?.blk ?? "")) {
-        ::open_weapons_for_unit(u)
-        return $"{u.name} / {weap.blk}"
+        ::open_weapons_for_unit(unit)
+        return $"{unit.name} / {weap.blk}"
       }
   }
   return null
@@ -332,7 +334,7 @@ let function debug_change_resolution(shouldIncrease = true) {
 }
 
 let function debug_multiply_color(colorStr, multiplier) {
-  let res = ::g_dagui_utils.multiplyDaguiColorStr(colorStr, multiplier)
+  let res = multiplyDaguiColorStr(colorStr, multiplier)
   ::copy_to_clipboard(res)
   return res
 }
@@ -392,7 +394,7 @@ let function debug_unit_rent(unitId = null, seconds = 60) {
 
   if (unitId) {
     ::_debug_unit_rent[unitId] <- { time = seconds, expire = ::get_charserver_time_sec() + seconds }
-    ::broadcastEvent("UnitRented", { unitName = unitId })
+    broadcastEvent("UnitRented", { unitName = unitId })
   }
   else
     ::_debug_unit_rent.clear()
@@ -492,7 +494,8 @@ register_command(show_hotas_window_image, "debug.show_hotas_window_image")
 register_command(debug_export_unit_weapons_descriptions, "debug.export_unit_weapons_descriptions")
 register_command(debug_export_unit_xray_parts_descriptions, "debug.export_unit_xray_parts_descriptions")
 register_command(gui_do_debug_unlock, "debug.gui_do_debug_unlock")
-register_command(dbg_loading_brief, "debug.loading_brief")
+register_command(@() dbg_loading_brief(), "debug.loading_brief")
+register_command(dbg_loading_brief, "debug.loading_brief_custom")
 register_command(debug_show_unit, "debug.show_unit")
 register_command(debug_show_units_by_loc_name, "debug.show_units_by_loc_name")
 register_command(debug_show_weapon, "debug.show_weapon")

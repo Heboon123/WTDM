@@ -1,8 +1,5 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { addOptionMode, addUserOption, setGuiOptionsMode, getGuiOptionsMode,
   set_gui_option, get_gui_option
@@ -481,6 +478,22 @@ global enum AIR_MOUSE_USAGE {
 ::USEROPT_HIT_INDICATOR_FADE_TIME <- 407
 ::USEROPT_FREE_CAMERA_ZOOM_SPEED <- 408
 ::USEROPT_REPLAY_FOV <- 409
+
+::USEROPT_DISPLAY_REAL_NICKS_PARTICIPANTS <- 410
+
+::USEROPT_LWS_IND_TIMEOUT <- 411
+::USEROPT_LWS_AZIMUTH_IND_TIMEOUT <- 412
+::USEROPT_LWS_IND_H_TIMEOUT <- 413
+::USEROPT_LWS_IND_AZIMUTH_H_TIMEOUT <- 414
+::USEROPT_LWS_IND_RADIUS <- 415
+::USEROPT_LWS_IND_ALPHA <- 416
+::USEROPT_LWS_IND_SCALE <- 417
+::USEROPT_LWS_IND_H_RADIUS <- 418
+::USEROPT_LWS_IND_H_ALPHA <- 419
+::USEROPT_LWS_IND_H_SCALE <- 420
+
+::USEROPT_SHOW_ACTION_BAR <- 421
+
 
 ::user_option_name_by_idx <- {}
 

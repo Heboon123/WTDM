@@ -1,10 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
-let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { broadcastEvent, addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 local shopDiffMode = null
 
@@ -28,7 +25,7 @@ let function storeShopDiffMode(value) {
   if (::g_login.isProfileReceived())
     ::save_local_account_settings("shopShowMode", shopDiffMode)
 
-  ::broadcastEvent("ShopDiffCodeChanged")
+  broadcastEvent("ShopDiffCodeChanged")
 }
 
 let isAutoDiff = @() shopDiffMode == -1

@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let { format } = require("string")
 let { getRgbStrFromHsv } = require("colorCorrector")
@@ -145,7 +143,7 @@ let { getRgbStrFromHsv } = require("colorCorrector")
     local markup = ""
     foreach (_sectionIdx, section in this.partsOrder) {
       foreach (partId in section.parts)
-        markup += ::handyman.renderCached(("%gui/hud/hudEnemyDamage.tpl"), {
+        markup += handyman.renderCached(("%gui/hud/hudEnemyDamage.tpl"), {
           id = partId
           text = loc($"dmg_msg_short/{partId}")
         })

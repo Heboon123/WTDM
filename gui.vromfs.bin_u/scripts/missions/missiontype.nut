@@ -1,15 +1,14 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let u = require("%sqStdLibs/helpers/u.nut")
 
 let { blkOptFromPath } = require("%sqStdLibs/helpers/datablockUtils.nut")
 let regexp2 = require("regexp2")
-let { get_current_mission_name } = require("mission")
+let { get_current_mission_name, get_game_mode } = require("mission")
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let { MISSION_GROUP } = require("%scripts/missions/missionsFilterData.nut")
 let { MISSION_OBJECTIVE } = require("%scripts/missions/missionsUtilsModule.nut")
+let { getUrlOrFileMissionMetaInfo } = require("%scripts/missions/missionsUtils.nut")
 
 ::g_mission_type <- {
   types = []
@@ -226,7 +225,7 @@ enums.addTypesByGlobalName("g_mission_type", {
   }
 }, null, "_typeName")
 
-::g_mission_type.getTypeByMissionName <- function getTypeByMissionName(misName) {
+::g_mission_type.getTypeByMissionName <- function getTypeByMissionName(misName, gm = null) {
   if (!misName)
     return this.UNKNOWN
   if (misName in this._cacheByMissionName)
@@ -238,7 +237,7 @@ enums.addTypesByGlobalName("g_mission_type", {
       res = val
       break
     }
-  if (res == this.UNKNOWN && ::is_mission_for_unittype(::get_mission_meta_info(misName), ES_UNIT_TYPE_TANK))
+  if (res == this.UNKNOWN && ::is_mission_for_unittype(getUrlOrFileMissionMetaInfo(misName, gm), ES_UNIT_TYPE_TANK))
     res = this.G_DOM
 
   this._cacheByMissionName[misName] <- res
@@ -246,7 +245,7 @@ enums.addTypesByGlobalName("g_mission_type", {
 }
 
 ::g_mission_type.getCurrent <- function getCurrent() {
-  return this.getTypeByMissionName(get_current_mission_name())
+  return this.getTypeByMissionName(get_current_mission_name(), get_game_mode())
 }
 
 ::g_mission_type.getCurrentObjectives <- function getCurrentObjectives() {
@@ -255,7 +254,7 @@ enums.addTypesByGlobalName("g_mission_type", {
 
 ::g_mission_type.getHelpPathForCurrentMission <- function getHelpPathForCurrentMission() {
   let path = this.getCurrent().helpBlkPath
-  if (path != "" && !::u.isEmpty(blkOptFromPath(path)))
+  if (path != "" && !u.isEmpty(blkOptFromPath(path)))
     return path
   return null
 }

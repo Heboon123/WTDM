@@ -1,10 +1,8 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { find_in_array } = require("%sqStdLibs/helpers/u.nut")
 let { format } = require("string")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { FAVORITE_UNLOCKS_LIMIT, getFavoriteUnlocksNum,
@@ -107,7 +105,7 @@ let function getSkillCategoryView(crewData, unit) {
     //Must be before replace fill tabs
     let buttonsPlace = this.scene.findObject("buttons_place")
     if (checkObj(buttonsPlace)) {
-      let data = "".join(slotInfoPanelButtons.value.map(@(view) ::handyman.renderCached("%gui/commonParts/button.tpl", view)))
+      let data = "".join(slotInfoPanelButtons.value.map(@(view) handyman.renderCached("%gui/commonParts/button.tpl", view)))
       this.guiScene.replaceContentFromText(buttonsPlace, data, data.len(), this)
     }
 
@@ -128,7 +126,7 @@ let function getSkillCategoryView(crewData, unit) {
           discountId = this.tabsInfo[i].discountId
         })
       }
-      let data = ::handyman.renderCached("%gui/SlotInfoTabItem.tpl", view)
+      let data = handyman.renderCached("%gui/SlotInfoTabItem.tpl", view)
       this.guiScene.replaceContentFromText(this.listboxObj, data, data.len(), this)
 
       let unit = this.getCurShowUnit()
@@ -357,7 +355,7 @@ let function getSkillCategoryView(crewData, unit) {
     if (!checkObj(contentObj) || (! contentObj.isVisible() && ! force))
       return
 
-    let crewCountryId = ::find_in_array(shopCountriesList, profileCountrySq.value, -1)
+    let crewCountryId = find_in_array(shopCountriesList, profileCountrySq.value, -1)
     let crewIdInCountry = getTblValue(crewCountryId, ::selected_crews, -1)
     let crewData = getCrew(crewCountryId, crewIdInCountry)
     if (crewData == null)
@@ -403,7 +401,7 @@ let function getSkillCategoryView(crewData, unit) {
       discountText = discountText
       discountTooltip = discountTooltip
     }
-    let blk = ::handyman.renderCached("%gui/crew/crewInfo.tpl", view)
+    let blk = handyman.renderCached("%gui/crew/crewInfo.tpl", view)
     this.guiScene.replaceContentFromText(contentObj, blk, blk.len(), this)
     this.showSceneBtn("crew_name", false)
     this.updateHeader(::g_crew.getCrewName(crewData))
@@ -483,7 +481,7 @@ let function getSkillCategoryView(crewData, unit) {
   }
 
   function onCrewButtonClicked(_obj) {
-    let crewCountryId = ::find_in_array(shopCountriesList, profileCountrySq.value, -1)
+    let crewCountryId = find_in_array(shopCountriesList, profileCountrySq.value, -1)
     let crewIdInCountry = getTblValue(crewCountryId, ::selected_crews, -1)
     if (crewCountryId != -1 && crewIdInCountry != -1)
       ::gui_modal_crew({ countryId = crewCountryId, idInCountry = crewIdInCountry })

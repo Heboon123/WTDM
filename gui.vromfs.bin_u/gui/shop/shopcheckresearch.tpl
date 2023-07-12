@@ -26,6 +26,7 @@ root {
     padByLine:t='yes'
 
     include '%gui/shop/shopInclude.blk'
+
   }
 
   gamercard_div {

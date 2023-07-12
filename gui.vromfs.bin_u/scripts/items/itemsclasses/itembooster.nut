@@ -1,9 +1,8 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
 let DataBlock  = require("DataBlock")
@@ -199,9 +198,7 @@ let { getFullUnlockCondsDesc,
     let savedThis = this
     handler.msgBox("activate_additional_booster", bodyText, [
       [
-        "yes", (@(handler, savedThis, checkParams) function () {
-          savedThis._activate(null, handler, checkParams)
-        })(handler, savedThis, checkParams).bindenv(this)
+        "yes", @() savedThis._activate(null, handler, checkParams)
       ], [
         "no", function () {}
       ]], "no", { cancel_fn = function() {} })
@@ -211,9 +208,7 @@ let { getFullUnlockCondsDesc,
     let bodyText = loc("msgbox/isInFlightBooster")
     let savedThis = this
     handler.msgBox("activate_in_flight_booster", bodyText, [[
-      "yes", (@(handler, savedThis, checkParams) function () {
-          savedThis._activate(null, handler, checkParams)
-        })(handler, savedThis, checkParams).bindenv(this)
+      "yes", @() savedThis._activate(null, handler, checkParams)
     ], [
         "no", function () {}
     ]], "no", { cancel_fn = function() {} })
@@ -290,9 +285,9 @@ let { getFullUnlockCondsDesc,
   }
 
   function getIcon(_addItemName = true) {
-    local res = ::LayersIcon.genDataFromLayer(this._getBaseIconCfg())
-    res += ::LayersIcon.genInsertedDataFromLayer({ w = "0", h = "0" }, this._getMulIconCfg())
-    res += ::LayersIcon.genDataFromLayer(this._getModifiersIconCfgs())
+    local res = LayersIcon.genDataFromLayer(this._getBaseIconCfg())
+    res += LayersIcon.genInsertedDataFromLayer({ w = "0", h = "0" }, this._getMulIconCfg())
+    res += LayersIcon.genDataFromLayer(this._getModifiersIconCfgs())
 
     return res
   }
@@ -302,7 +297,7 @@ let { getFullUnlockCondsDesc,
     if (this.personal)
       layerId = "booster_personal"
 
-    return ::LayersIcon.findLayerCfg(layerId)
+    return LayersIcon.findLayerCfg(layerId)
   }
 
   function _getModifiersIconCfgs() {
@@ -314,7 +309,7 @@ let { getFullUnlockCondsDesc,
     else if (this.xpRate > 0)
       layerId = "booster_exp_rate"
 
-    return ::LayersIcon.findLayerCfg(layerId)
+    return LayersIcon.findLayerCfg(layerId)
   }
 
   function _getMulIconCfg() {
@@ -322,18 +317,18 @@ let { getFullUnlockCondsDesc,
     let mul = max(this.wpRate, this.xpRate)
     let numsArray = ::getArrayFromInt(mul)
     if (numsArray.len() > 0) {
-      let plusLayer = ::LayersIcon.findLayerCfg("item_plus")
+      let plusLayer = LayersIcon.findLayerCfg("item_plus")
       if (plusLayer)
         layersArray.append(clone plusLayer)
 
       foreach (_idx, int in numsArray) {
-        let layer = ::LayersIcon.findLayerCfg("item_num_" + int)
+        let layer = LayersIcon.findLayerCfg("item_num_" + int)
         if (!layer)
           continue
         layersArray.append(clone layer)
       }
 
-      let percentLayer = ::LayersIcon.findLayerCfg("item_percent")
+      let percentLayer = LayersIcon.findLayerCfg("item_percent")
       if (percentLayer)
         layersArray.append(clone percentLayer)
 
@@ -373,7 +368,7 @@ let { getFullUnlockCondsDesc,
       else
         text.append(::getRpPriceText("+" + xpRateNum + "%", true))
 
-    return ::g_string.implode(text, ", ")
+    return ", ".join(text, true)
   }
 
   function getDescription() {
@@ -460,7 +455,7 @@ let { getFullUnlockCondsDesc,
     if (this.spentInSessionTimeMin)
       textsList.append(colorize("fadedTextColor", loc("booster/progressFrequency", { num = this.spentInSessionTimeMin })))
 
-    return ::g_string.implode(textsList, "\n")
+    return "\n".join(textsList, true)
   }
 
   function getEffectTypes() {
@@ -487,7 +482,7 @@ let { getFullUnlockCondsDesc,
     foreach (efType in boosterEffectType)
       if ((efType.getValue(this) > 0) != (efType.getValue(item) > 0))
         return false
-    return (this.eventConditions == item.eventConditions) || ::u.isEqual(this.eventConditions, item.eventConditions)
+    return (this.eventConditions == item.eventConditions) || u.isEqual(this.eventConditions, item.eventConditions)
   }
 
   function updateStackParams(stackParams) {
@@ -524,7 +519,7 @@ let { getFullUnlockCondsDesc,
                        }))
     }
     if (effects.len())
-      res += " (" + ::g_string.implode(effects, ", ") + ")"
+      res += " (" + ", ".join(effects, true) + ")"
     if (this.eventConditions)
       res += " (" + this.getEventConditionsText() + ")"
     return res
@@ -565,7 +560,7 @@ let { getFullUnlockCondsDesc,
     if (bonusArray.len()) {
       desc += "\n"
       desc += loc("item/FakeBoosterForNetCafeLevel/squad", { num = ::g_squad_manager.getSameCyberCafeMembersNum() }) + loc("ui/colon")
-      desc += ::g_string.implode(bonusArray, ", ")
+      desc += ", ".join(bonusArray, true)
     }
 
     return desc

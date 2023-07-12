@@ -1,11 +1,9 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let globalEnv = require("globalEnv")
+let { subscribe_handler } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 ::g_aircraft_helpers <- {
   /* PRIVATE */
@@ -219,4 +217,4 @@ let globalEnv = require("globalEnv")
   }
 }
 
-::subscribe_handler(::g_aircraft_helpers)
+subscribe_handler(::g_aircraft_helpers)

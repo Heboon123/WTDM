@@ -1,8 +1,5 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { is_stereo_mode } = require("vr")
 let { isPlatformPS4, isPlatformPS5, isPlatformPC } = require("%scripts/clientState/platform.nut")
@@ -61,7 +58,7 @@ return [
       let prev = joyParams.trackIrZoom
       joyParams.trackIrZoom = objValue
       if (prev != objValue)
-        ::set_controls_preset("")
+        ::g_controls_manager.commitControls()
     }
   }
   {
@@ -73,7 +70,7 @@ return [
       let prev = joyParams.trackIrForLateralMovement
       joyParams.trackIrForLateralMovement = objValue
       if (prev != objValue)
-        ::set_controls_preset("")
+        ::g_controls_manager.commitControls()
     }
   }
   {
@@ -84,7 +81,7 @@ return [
       let prev = joyParams.trackIrAsHeadInTPS
       joyParams.trackIrAsHeadInTPS = objValue
       if (joyParams.trackIrAsHeadInTPS != prev)
-        ::set_controls_preset("")
+        ::g_controls_manager.commitControls()
     }
   }
   {

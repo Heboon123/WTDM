@@ -1,16 +1,14 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { Cost } = require("%scripts/money.nut")
+let u = require("%sqStdLibs/helpers/u.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { get_time_msec } = require("dagor.time")
 let { format, split_by_chars } = require("string")
 let { abs, ceil, floor } = require("math")
 let { hangar_get_current_unit_name } = require("hangar")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-
 let shopTree = require("%scripts/shop/shopTree.nut")
 let shopSearchBox = require("%scripts/shop/shopSearchBox.nut")
 let slotActions = require("%scripts/slotbar/slotActions.nut")
@@ -22,7 +20,7 @@ let { getStatusTbl, getTimedStatusTbl, updateCellStatus, updateCellTimedStatus, 
 } = require("shopUnitCellFill.nut")
 let unitContextMenuState = require("%scripts/unit/unitContextMenuState.nut")
 let { hideWaitIcon } = require("%scripts/utils/delayedTooltip.nut")
-let { findChildIndex } = require("%sqDagui/daguiUtil.nut")
+let { findChildIndex, show_obj } = require("%sqDagui/daguiUtil.nut")
 let { isSmallScreen } = require("%scripts/clientState/touchScreen.nut")
 let getShopBlkData = require("%scripts/shop/getShopBlkData.nut")
 let { hasMarkerByUnitName, getUnlockIdByUnitName,
@@ -33,6 +31,7 @@ let bhvUnseen = require("%scripts/seen/bhvUnseen.nut")
 let seenList = require("%scripts/seen/seenList.nut").get(SEEN.UNLOCK_MARKERS)
 let { buildDateStr } = require("%scripts/time.nut")
 let { switchProfileCountry, profileCountrySq } = require("%scripts/user/playerCountry.nut")
+let { stripTags, cutPrefix } = require("%sqstd/string.nut")
 
 local lastUnitType = null
 
@@ -114,7 +113,7 @@ shopData = [
   function initScreen() {
     if (!this.curAirName.len()) {
       this.curCountry = profileCountrySq.value
-      let unit = ::getAircraftByName(hangar_get_current_unit_name())
+      let unit = getAircraftByName(hangar_get_current_unit_name())
       if (unit && unit.shopCountry == this.curCountry)
         this.curAirName = unit.name
     }
@@ -309,7 +308,7 @@ shopData = [
 
     this.updateButtons()
 
-    ::broadcastEvent("ShopUnitTypeSwitched", { esUnitType = this.getCurPageEsUnitType() })
+    broadcastEvent("ShopUnitTypeSwitched", { esUnitType = this.getCurPageEsUnitType() })
   }
 
   function fullReloadAircraftsList() {
@@ -438,8 +437,8 @@ shopData = [
       let endReleaseDate = reqAir.getEndRecentlyReleasedTime()
       if (endReleaseDate > 0) {
         let hasReqAir = (air?.reqAir ?? "") != ""
-        let locId = hasReqAir ? "shop/futureReqAir/desc" : "shop/futureReqAir/desc/withoutReqAir"
-        alarmTooltip = ::g_string.stripTags(loc(locId, {
+        let locId = air?.futureReqAirDesc ?? (hasReqAir ? "shop/futureReqAir/desc" : "shop/futureReqAir/desc/withoutReqAir")
+        alarmTooltip = stripTags(loc(locId, {
           futureReqAir = ::getUnitName(air.futureReqAir)
           curAir = ::getUnitName(air)
           reqAir = hasReqAir ? ::getUnitName(air.reqAir) : ""
@@ -612,7 +611,7 @@ shopData = [
         view.separators.append({ x = x })
     }
 
-    let data = ::handyman.renderCached("%gui/shop/treeHeadPlates.tpl", view)
+    let data = handyman.renderCached("%gui/shop/treeHeadPlates.tpl", view)
     this.guiScene.replaceContentFromText(obj, data, data.len(), this)
   }
 
@@ -691,7 +690,7 @@ shopData = [
       }
     }
 
-    local data = ::handyman.renderCached("%gui/shop/treeBgPlates.tpl", view)
+    local data = handyman.renderCached("%gui/shop/treeBgPlates.tpl", view)
     this.guiScene.replaceContentFromText(tblBgObj, data, data.len(), this)
   }
 
@@ -778,7 +777,7 @@ shopData = [
                     (treeData.ranksHeight[i - 2] + prevFakeRowRankCount).tostring(),
                     status,
                     texts.reqCounter,
-                    ::g_string.stripTags(texts.tooltipReqCounter)
+                    stripTags(texts.tooltipReqCounter)
                     )
       }
       let modBlockFormat = "modBlockTierNum { class:t='vehicleRanks' status:t='%s'; pos:t='0, %s@shop_height - 0.5h'; text:t='%s'; tooltip:t='%s'}"
@@ -794,7 +793,7 @@ shopData = [
                   status,
                   (prevEraPos + curFakeRowRankCount).tostring(),
                   loc("shop/age/num", { num = ::get_roman_numeral(i) }),
-                  ::g_string.stripTags(texts.tooltipRank))
+                  stripTags(texts.tooltipRank))
 
       data += arrowData
 
@@ -832,7 +831,7 @@ shopData = [
   function fillAirReq(item, reqUnit = null) {
     local req = true
     if (item?.reqAir)
-      req = ::isUnitBought(::getAircraftByName(item.reqAir))
+      req = ::isUnitBought(getAircraftByName(item.reqAir))
     if (req && reqUnit?.isFakeUnit)
       req = this.isUnlockedFakeUnit(reqUnit)
     if (::isUnitGroup(item)) {
@@ -936,7 +935,7 @@ shopData = [
     if (!unit)
       return false
 
-    let posNum = ::find_in_array(this.brokenList, unit)
+    let posNum = u.find_in_array(this.brokenList, unit)
     if (!this.getItemStatusData(unit).broken && posNum >= 0) {
       this.brokenList.remove(posNum)
       return true
@@ -1034,10 +1033,12 @@ shopData = [
     this.fillAircraftsList()
   }
 
-  function onCloseShop() {
+  function goBack() {
     if (this.closeShop)
       this.closeShop()
   }
+
+  onCloseShop = @() this.goBack()
 
   function fillPagesListBoxNoOpenGroup() {
     this.skipOpenGroup = true
@@ -1057,14 +1058,14 @@ shopData = [
 
     let unitType = this.forceUnitType
       ?? lastUnitType
-      ?? ::getAircraftByName(this.curAirName)?.unitType
+      ?? getAircraftByName(this.curAirName)?.unitType
       ?? unitTypes.INVALID
 
     this.forceUnitType = null //forceUnitType applyied only once
 
     local data = ""
     local curIdx = 0
-    let countryData = ::u.search(this.shopData, (@(curCountry) function(country) { return country.name == curCountry })(this.curCountry))
+    let countryData = u.search(this.shopData, (@(curCountry) function(country) { return country.name == curCountry })(this.curCountry)) //-ident-hides-ident
     if (countryData) {
       let ediff = this.getCurrentEdiff()
       let view = { tabs = [] }
@@ -1093,7 +1094,7 @@ shopData = [
       foreach (idx, tab in view.tabs)
         tab.navImagesText = ::get_navigation_images_text(idx, tabCount)
 
-      data = ::handyman.renderCached("%gui/frameHeaderTabs.tpl", view)
+      data = handyman.renderCached("%gui/frameHeaderTabs.tpl", view)
     }
     this.guiScene.replaceContentFromText(pagesObj, data, data.len(), this)
 
@@ -1250,7 +1251,7 @@ shopData = [
   }
 
   function onHighlightedCellClick(obj) {
-    let value = ::to_integer_safe(::g_string.cutPrefix(obj?.id, "high_") ?? "-1", -1, false)
+    let value = ::to_integer_safe(cutPrefix(obj?.id, "high_") ?? "-1", -1, false)
     if (value >= 0)
       this.selCellOnSearchQuit = value
     this.guiScene.performDelayed(this, function() {
@@ -1446,12 +1447,12 @@ shopData = [
 
     foreach (unit in item.airsGroup)
       if (::isUnitBroken(unit))
-        ::u.appendOnce(unit, this.brokenList)
+        u.appendOnce(unit, this.brokenList)
   }
 
   function fillUnitsInGroup(tblObj, unitList, selectUnitName = "") {
-    let selected = unitList.findindex(@(u) selectUnitName == u.name) ?? tblObj.getValue()
-    this.initUnitCells(tblObj, unitList.map(@(u) { id = u.name, position = "relative" }))
+    let selected = unitList.findindex(@(unit) selectUnitName == unit.name) ?? tblObj.getValue()
+    this.initUnitCells(tblObj, unitList.map(@(unit) { id = unit.name, position = "relative" }))
     foreach (idx, unit in unitList)
       this.updateUnitCell(tblObj.getChild(idx), unit)
 
@@ -1479,7 +1480,7 @@ shopData = [
     this.guiScene.destroyElement(this.groupChooseObj)
     this.groupChooseObj = null
     this.updateButtons()
-    ::broadcastEvent("ModalWndDestroy")
+    broadcastEvent("ModalWndDestroy")
     ::move_mouse_on_child_by_value(this.scene.findObject("shop_items_list"))
   }
 
@@ -1493,7 +1494,7 @@ shopData = [
   }
 
   function onRepairAll(_obj) {
-    let cost = ::Cost()
+    let cost = Cost()
     cost.wp = this.repairAllCost
 
     if (!::check_balance_msgBox(cost))
@@ -1546,7 +1547,7 @@ shopData = [
 
   function onEventUpdateResearchingUnit(params) {
     let unitName = getTblValue("unitName", params, ::shop_get_researchable_unit_name(this.curCountry, this.getCurPageEsUnitType()))
-    this.checkUnitItemAndUpdate(::getAircraftByName(unitName))
+    this.checkUnitItemAndUpdate(getAircraftByName(unitName))
   }
 
   function onOpenOnlineShop(_obj) {
@@ -1589,9 +1590,9 @@ shopData = [
     let unitName = getTblValue("unitName", params)
 
     if (prevUnitName && prevUnitName != unitName)
-      this.checkUnitItemAndUpdate(::getAircraftByName(prevUnitName))
+      this.checkUnitItemAndUpdate(getAircraftByName(prevUnitName))
 
-    let unit = ::getAircraftByName(unitName)
+    let unit = getAircraftByName(unitName)
     this.updateResearchVariables()
     this.checkUnitItemAndUpdate(unit)
 
@@ -1605,7 +1606,7 @@ shopData = [
 
   function onEventUnitBought(params) {
     let unitName = getTblValue("unitName", params)
-    let unit = unitName ? ::getAircraftByName(unitName) : null
+    let unit = unitName ? getAircraftByName(unitName) : null
     if (!unit)
       return
 
@@ -1643,7 +1644,7 @@ shopData = [
     if (unitId == null)
       return
 
-    let unit = ::getAircraftByName(unitId)
+    let unit = getAircraftByName(unitId)
     if (!unit || !unit.isVisibleInShop())
       return
 
@@ -1733,7 +1734,7 @@ shopData = [
     this.save(false)
   }
   function afterSave() {
-    this.goBack()
+    base.goBack()
   }
 
   function onUnitMainFunc(obj) {
@@ -1743,7 +1744,7 @@ shopData = [
     }
 
     this.selectCell(obj)
-    let unit = ::getAircraftByName(obj?.holderId) ?? this.getCurAircraft()
+    let unit = getAircraftByName(obj?.holderId) ?? this.getCurAircraft()
     if (!unit)
       return
 
@@ -1840,7 +1841,7 @@ shopData = [
       cb = "onChangeShowMode"
       options = this.showModeList
     }
-    let data = ::handyman.renderCached("%gui/options/spinnerOptions.tpl", view)
+    let data = handyman.renderCached("%gui/options/spinnerOptions.tpl", view)
     this.guiScene.replaceContentFromText(obj, data, data.len(), this)
     this.updateShowModeTooltip(obj)
   }
@@ -1916,9 +1917,9 @@ shopData = [
 
           if (!this.shopResearchMode) {
             let hasObjective = ::isUnitGroup(unit)
-              ? unit.airsGroup.findindex((@(u) hasMarkerByUnitName(u.name, curEdiff))) != null
-              : ::u.isUnit(unit) && hasMarkerByUnitName(unit.name, curEdiff)
-            ::show_obj(unitObj.findObject("unlockMarker"), hasObjective)
+              ? unit.airsGroup.findindex((@(groupUnit) hasMarkerByUnitName(groupUnit.name, curEdiff))) != null
+              : u.isUnit(unit) && hasMarkerByUnitName(unit.name, curEdiff)
+            show_obj(unitObj.findObject("unlockMarker"), hasObjective)
           }
         }
       }
@@ -1954,7 +1955,7 @@ shopData = [
   }
 
   function onEventSquadronExpChanged(_params) {
-    this.checkUnitItemAndUpdate(::getAircraftByName(::clan_get_researching_unit()))
+    this.checkUnitItemAndUpdate(getAircraftByName(::clan_get_researching_unit()))
   }
 
   function onEventFlushSquadronExp(params) {
@@ -1965,7 +1966,7 @@ shopData = [
     if (::clan_get_exp() <= 0)
       return null
 
-    let unit = ::getAircraftByName(::clan_get_researching_unit())
+    let unit = getAircraftByName(::clan_get_researching_unit())
     if (!unit)
       return null
 

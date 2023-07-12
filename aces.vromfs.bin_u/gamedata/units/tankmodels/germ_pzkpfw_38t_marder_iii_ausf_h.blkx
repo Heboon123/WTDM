@@ -2015,6 +2015,7 @@
           },
           {
             "onKill": {
+              "notDamageType": "overheat",
               "fire": 0.5,
               "nothing": 0.5,
               "fHitCritical": true
@@ -3037,6 +3038,36 @@
           "part": "ammo_body_60_dm"
         },
         {
+          "part": "ammo_body_61_dm"
+        },
+        {
+          "part": "ammo_body_62_dm"
+        },
+        {
+          "part": "ammo_body_63_dm"
+        },
+        {
+          "part": "ammo_body_64_dm"
+        },
+        {
+          "part": "ammo_body_65_dm"
+        },
+        {
+          "part": "ammo_body_66_dm"
+        },
+        {
+          "part": "ammo_body_67_dm"
+        },
+        {
+          "part": "ammo_body_68_dm"
+        },
+        {
+          "part": "ammo_body_69_dm"
+        },
+        {
+          "part": "ammo_body_70_dm"
+        },
+        {
           "part": "ammo_body_l_01_dm"
         },
         {
@@ -3288,14 +3319,14 @@
           "blk": "gameData/Weapons/groundModels_weapons/75mm_PaK40_3_L46_user_cannon.blk",
           "emitter": "bone_gun_barrel",
           "flash": "emtr_gun_flame",
-          "sleeveEmitter": "emtr_shell",
-          "sleeveMesh": "cartridge_case",
+          "shellCasingEmitter": "emtr_shell",
+          "shellCasingMesh": "cartridge_case",
           "hatchAnimVar": "gun_shutter_move",
           "openHatchTime": 0.3,
-          "sleevesLifeTime": 5.0,
-          "sleeveImpulse": [5.0,0.0,0.0],
-          "linkSleeveToGun": true,
-          "sleeveExtractSound": "shell_eject",
+          "shellCasingLifeTime": 5.0,
+          "shellCasingImpulse": [5.0,0.0,0.0],
+          "linkShellCasingToGun": true,
+          "shellCasingExtractSound": "shell_eject",
           "recoilMultiplier": 0.7,
           "recoilTimes": [0.1,0.65],
           "recoilOffset": 0.45,
@@ -3540,8 +3571,8 @@
         },
         "wheel": {
           "name": "bone_wheel_$1",
-          "limitMin": [-1000.0,0.0,0.0],
-          "limitMax": [1000.0,0.0,0.0]
+          "limitMin": [-1.0,-1.0,0.0],
+          "limitMax": [1.0,1.0,0.0]
         }
       },
       "constraints": {
@@ -4462,6 +4493,15 @@
           "fx": {
             "name": "smoke_after_hit_tiny",
             "setOrientation": true
+          }
+        }
+      },
+      {
+        "event": {
+          "name": "engine_overheat",
+          "fx": {
+            "name": "tank_radiator_steam",
+            "centerDmgPart": false
           }
         }
       },

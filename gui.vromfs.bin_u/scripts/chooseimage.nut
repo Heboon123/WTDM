@@ -1,10 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { adjustWindowSizeByConfig, countSizeInItems } = require("%sqDagui/daguiUtil.nut")
 let { ceil } = require("math")
 let bhvUnseen = require("%scripts/seen/bhvUnseen.nut")
 let seenList = require("%scripts/seen/seenList.nut")
@@ -84,7 +81,7 @@ let { getUnlockCost, buyUnlock } = require("%scripts/unlocks/unlocksModule.nut")
   function initItemsPerPage() {
     this.guiScene.applyPendingChanges(false)
     let listObj = this.scene.findObject("images_list")
-    let cfg = ::g_dagui_utils.countSizeInItems(listObj, this.imageButtonSize, this.imageButtonSize, this.imageButtonInterval, this.imageButtonInterval)
+    let cfg = countSizeInItems(listObj, this.imageButtonSize, this.imageButtonSize, this.imageButtonInterval, this.imageButtonInterval)
 
     //update size for single page
     if (cfg.itemsCountX * cfg.itemsCountY > this.options.len()) {
@@ -99,7 +96,7 @@ let { getUnlockCost, buyUnlock } = require("%scripts/unlocks/unlocksModule.nut")
       cfg.itemsCountY = rows
     }
 
-    ::g_dagui_utils.adjustWindowSizeByConfig(this.scene.findObject("wnd_frame"), listObj, cfg)
+    adjustWindowSizeByConfig(this.scene.findObject("wnd_frame"), listObj, cfg)
     this.itemsPerPage = cfg.itemsCountX * cfg.itemsCountY
   }
 
@@ -128,7 +125,7 @@ let { getUnlockCost, buyUnlock } = require("%scripts/unlocks/unlocksModule.nut")
     }
 
     this.isPageFill = true
-    let blk = ::handyman.renderCached("%gui/avatars.tpl", view)
+    let blk = handyman.renderCached("%gui/avatars.tpl", view)
     this.guiScene.replaceContentFromText(this.contentObj, blk, blk.len(), this)
     this.updatePaginator()
 

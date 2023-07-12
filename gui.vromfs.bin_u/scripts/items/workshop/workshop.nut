@@ -1,9 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let DataBlock  = require("DataBlock")
 let { frnd } = require("dagor.random")
@@ -28,6 +25,12 @@ local additionalRecipes = {}
 local customLocalizationPresets = {}
 local effectOnStartCraftPresets = {}
 local effectOnOpenChestPresets = {}
+
+let function checkBlkDuplicates(cfg, cfgName) {
+  foreach(key, val in cfg) {
+    assert(type(val) != "array", $"config/workshop.blk: Duplicate block in {cfgName}: {key}")
+  }
+}
 
 let function initOnce() {
   if (isInited || !::g_login.isProfileReceived())
@@ -69,6 +72,8 @@ let function initOnce() {
   customLocalizationPresets = ::buildTableFromBlk(wBlk?.customLocalizationPresets)
   effectOnStartCraftPresets = ::buildTableFromBlk(wBlk?.effectOnStartCraftPresets)
   effectOnOpenChestPresets = ::buildTableFromBlk(wBlk?.effectOnOpenChestPresets)
+
+  checkBlkDuplicates(customLocalizationPresets, "customLocalizationPresets")
 }
 
 let function invalidateCache() {

@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let DataBlock = require("DataBlock")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -17,6 +15,7 @@ let { getSeparateLeaderboardPlatformName } = require("%scripts/social/crossplay.
 let { refreshUserstatCustomLeaderboardStats, userstatCustomLeaderboardStats
 } = require("%scripts/userstat/userstat.nut")
 let { reqUnlockByClient } = require("%scripts/unlocks/unlocksModule.nut")
+let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
 ::leaderboards_list <- [
   ::g_lb_category.PVP_RATIO
@@ -372,7 +371,7 @@ let { reqUnlockByClient } = require("%scripts/unlocks/unlocksModule.nut")
  * @return markup ready for insertion into scene
  */
 ::getLeaderboardItemWidgets <- function getLeaderboardItemWidgets(view) {
-  return ::handyman.renderCached("%gui/leaderboard/leaderboardItemWidget.tpl", view)
+  return handyman.renderCached("%gui/leaderboard/leaderboardItemWidget.tpl", view)
 }
 
 ::gui_handlers.LeaderboardWindow <- class extends ::gui_handlers.BaseGuiHandlerWT {
@@ -424,7 +423,7 @@ let { reqUnlockByClient } = require("%scripts/unlocks/unlocksModule.nut")
     this.platformFilter = getSeparateLeaderboardPlatformName()
     this.setRowsInPage()
 
-    ::add_big_query_record("global_leaderboard.open", this.platformFilter)
+    sendBqEvent("CLIENT_POPUP_1", "global_leaderboard.open", { platformFilter = this.platformFilter })
 
     this.initTable()
     this.initModes()
@@ -593,7 +592,7 @@ let { reqUnlockByClient } = require("%scripts/unlocks/unlocksModule.nut")
       this.afterLoadSelfRow = this.requestSelfPage
       this.fetchLbData()
 
-      ::add_big_query_record("global_leaderboard.select_mode", this.lbMode);
+      sendBqEvent("CLIENT_POPUP_1", "global_leaderboard.select_mode", { select_mode = this.lbMode })
     }
   }
 
@@ -699,7 +698,7 @@ let { reqUnlockByClient } = require("%scripts/unlocks/unlocksModule.nut")
       return
 
     let tplView = this.getTopItemsTplView()
-    let data = ::handyman.renderCached("%gui/leaderboard/leaderboardTopItem.tpl", tplView)
+    let data = handyman.renderCached("%gui/leaderboard/leaderboardTopItem.tpl", tplView)
 
     this.guiScene.replaceContentFromText(holder, data, data.len(), this)
   }
@@ -834,7 +833,7 @@ let { reqUnlockByClient } = require("%scripts/unlocks/unlocksModule.nut")
         selected = idx == 0
       })
 
-    let data = ::handyman.renderCached("%gui/frameHeaderTabs.tpl", view)
+    let data = handyman.renderCached("%gui/frameHeaderTabs.tpl", view)
     this.guiScene.replaceContentFromText(nestObj, data, data.len(), this)
   }
 

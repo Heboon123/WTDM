@@ -1,9 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { get_player_tags } = require("auth_wt")
 let {
   isXboxScarlett,
   isXbox,
@@ -44,8 +41,8 @@ let getPlayerName = function(name) {
 let isPlayerFromXboxOne = @(name) isXbox && isXBoxPlayerName(name)
 let isPlayerFromPS4 = @(name) isSony && isPS4PlayerName(name)
 
-let isMePS4Player = @() ::get_player_tags().indexof("ps4") != null
-let isMeXBOXPlayer = @() ::get_player_tags().indexof("xbone") != null
+let isMePS4Player = @() get_player_tags().indexof("ps4") != null
+let isMeXBOXPlayer = @() get_player_tags().indexof("xbone") != null
 
 let canSpendRealMoney = @() !isPC || (!::has_entitlement("XBOXAccount") && !::has_entitlement("PSNAccount"))
 

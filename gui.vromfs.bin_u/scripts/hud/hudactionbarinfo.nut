@@ -1,12 +1,10 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { getWeaponDescTextByTriggerGroup, getDefaultBulletName } = require("%scripts/weaponry/weaponryDescription.nut")
 let { getBulletSetNameByBulletName } = require("%scripts/weaponry/bulletsInfo.nut")
 let { EII_BULLET, EII_ROCKET, EII_SMOKE_GRENADE, EII_FORCED_GUN } = require("hudActionBarConst")
+let { get_mission_difficulty_int } = require("guiMission")
 
 local cachedUnitId = ""
 let cache = {}
@@ -14,8 +12,8 @@ let cache = {}
 let LONG_ACTIONBAR_TEXT_LEN = 6;
 
 let cacheActionDescs = function(unitId) {
-  let unit = ::getAircraftByName(unitId)
-  let ediff = ::get_mission_difficulty_int()
+  let unit = getAircraftByName(unitId)
+  let ediff = get_mission_difficulty_int()
   cachedUnitId = unitId
   cache.clear()
   if (unit == null ||

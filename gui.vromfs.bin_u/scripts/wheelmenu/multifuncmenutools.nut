@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { getHudUnitType } = require("hudState")
 let { unitTypeByHudUnitType } = require("%scripts/hud/hudUnitType.nut")
@@ -52,7 +50,7 @@ let function makeMfmSection(cfg, id, unitId, hudUnitType) {
 
   let menu = []
   foreach (idx, item in sectionConfig.items) {
-    let c = ::u.isFunction(item) ? item() : item
+    let c = u.isFunction(item) ? item() : item
 
     let isShortcut = "shortcut" in c
     let isSection  = "section"  in c

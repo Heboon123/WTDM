@@ -1,9 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let { DECORATION } = require("%scripts/utils/genericTooltipTypes.nut")
@@ -111,8 +108,8 @@ options.addTypes({
     isShowForUnit = @(_p) true
     getUseropt = function(p) {
       let skinsOpt = getSkinsOption(p.unit?.name ?? "")
-      skinsOpt.items = skinsOpt.items.map(@(v, idx) v.__merge({
-        tooltipObj = { id = DECORATION.getTooltipId(skinsOpt.decorators[idx].id, UNLOCKABLE_SKIN) }
+      skinsOpt.items = skinsOpt.items.map(@(v, i) v.__merge({
+        tooltipObj = { id = DECORATION.getTooltipId(skinsOpt.decorators[i].id, UNLOCKABLE_SKIN) }
       }))
       return skinsOpt
     }

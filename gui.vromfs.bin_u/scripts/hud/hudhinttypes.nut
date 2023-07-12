@@ -1,9 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let enums = require("%sqStdLibs/helpers/enums.nut")
 ::g_hud_hint_types <- {
@@ -29,6 +26,15 @@ enums.addTypesByGlobalName("g_hud_hint_types", {
   MISSION_STANDARD = {
     nestId = "mission_hints"
     hintStyle = "hudHintCommon"
+    isReplaceableByPriority = true
+    isSameReplaceGroup = function (hint1, hint2) {
+      return hint1.hintType == hint2.hintType
+    }
+  }
+
+  MISSION_ACTION_HINTS = {
+    nestId = "mission_action_hints"
+    hintStyle = "hudHintAction"
     isReplaceableByPriority = true
     isSameReplaceGroup = function (hint1, hint2) {
       return hint1.hintType == hint2.hintType

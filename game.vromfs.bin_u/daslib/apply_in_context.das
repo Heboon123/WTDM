@@ -34,7 +34,7 @@ class AppendCondAnnotation : AstFunctionAnnotation
         if !(find_arg(ann.arguments,"patched") is nothing)
           return true
 
-    if args.length != 1
+    if args |> length != 1
       errors := "expecting one argument"
       return false
 
@@ -78,6 +78,7 @@ class AppendCondAnnotation : AstFunctionAnnotation
         verify(has_debug_agent_context($v(contextName)),"debug agent is not installed")
         verify(addr(get_debug_agent_context($v(contextName))) == addr(this_context()),"agent context mismatch")
         $b(ctxFnBlockList)
+    ctxFn.moreFlags |= MoreFunctionFlags pinvoke
     compiling_module() |> add_function(ctxFn)
 
     var inscope fn <- clone_function(func)

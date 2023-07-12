@@ -1,10 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-
-//checked for explicitness
-#no-root-fallback
-#explicit-this
-
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { getObjValidIndex, adjustWindowSize } = require("%sqDagui/daguiUtil.nut")
 let { ceil } = require("math")
 let { getCollectionsList } = require("%scripts/collections/collections.nut")
 let { updateDecoratorDescription } = require("%scripts/customization/decoratorDescription.nut")
@@ -52,7 +49,7 @@ local collectionsWnd = class extends ::gui_handlers.BaseGuiHandlerWT {
     let countRowInCollection = ceil(MAX_COLLECTION_ITEMS / (this.countItemsInRow * 1.0))
     this.collectionHeight = "".concat(countRowInCollection,
       "@collectionItemSizeWithIndent+1@buttonHeight-1@blockInterval")
-    let sizes = ::g_dagui_utils.adjustWindowSize(wndCollectionsObj, this.collectionsListObj,
+    let sizes = adjustWindowSize(wndCollectionsObj, this.collectionsListObj,
       "@collectionWidth", this.collectionHeight, "@blockInterval", "@blockInterval", { windowSizeX = 0 })
     this.collectionsPerPage = sizes.itemsCountY
   }
@@ -94,7 +91,7 @@ local collectionsWnd = class extends ::gui_handlers.BaseGuiHandlerWT {
     }
     view.hasCollections <- view.collections.len() > 0
 
-    let data = ::handyman.renderCached("%gui/collections/collection.tpl", view)
+    let data = handyman.renderCached("%gui/collections/collection.tpl", view)
     if (checkObj(this.collectionsListObj))
       this.guiScene.replaceContentFromText(this.collectionsListObj, data, data.len(), this)
 
@@ -146,7 +143,7 @@ local collectionsWnd = class extends ::gui_handlers.BaseGuiHandlerWT {
     if (::show_console_buttons && !this.collectionsListObj.isHovered())
       return null
 
-    let value = ::get_obj_valid_index(this.collectionsListObj)
+    let value = getObjValidIndex(this.collectionsListObj)
     if (value < 0)
       return null
 
@@ -175,7 +172,7 @@ local collectionsWnd = class extends ::gui_handlers.BaseGuiHandlerWT {
   }
 
   function onSelectDecorator() {
-    let value = ::get_obj_valid_index(this.collectionsListObj)
+    let value = getObjValidIndex(this.collectionsListObj)
     if (value >= 0)
       this.lastSelectedDecoratorObjId = this.collectionsListObj.getChild(value)?.id ?? ""
     this.updateDecoratorInfo()

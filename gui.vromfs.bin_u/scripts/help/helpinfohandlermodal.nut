@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 //wndInfoConfig = {
 //  textsBlk - blk with texts for this window
@@ -90,7 +88,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
     startObjContainer = this.scene
     endObjContainer = this.objContainer
     lineInterval = this.config?.lineInterval
-    links = ::u.keysReplace(this.config.links, { msgId = "start", obj = "end" })
+    links = u.keysReplace(this.config.links, { msgId = "start", obj = "end" })
   }
 
   function consoleNext() {

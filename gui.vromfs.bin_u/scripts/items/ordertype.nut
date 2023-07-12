@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { format } = require("string")
 let enums = require("%sqStdLibs/helpers/enums.nut")
@@ -11,6 +9,7 @@ let time = require("%scripts/time.nut")
 let { number_of_set_bits, round } = require("%sqstd/math.nut")
 let { getUnitClassTypesFromCodeMask, getUnitClassTypesByEsUnitType
 } = require("%scripts/unit/unitClassType.nut")
+let { get_mplayers_list } = require("mission")
 
 let allEsUnitTypes = [
   ES_UNIT_TYPE_AIRCRAFT,
@@ -41,7 +40,7 @@ let getUnitClassNamesByEsUnitTypes = @(esUnitTypes) esUnitTypes
   function getParametersDescription(typeParams, colorScheme) {
     local description = ""
     foreach (paramName, paramValue in typeParams) {
-      let checkValueType = !::u.isTable(paramValue) && !::u.isArray(paramValue)
+      let checkValueType = !u.isTable(paramValue) && !u.isArray(paramValue)
       if (paramName == "type" || !checkValueType)
         continue
       if (description.len() > 0)
@@ -88,11 +87,11 @@ let getUnitClassNamesByEsUnitTypes = @(esUnitTypes) esUnitTypes
   function getParameterDescription(paramName, paramValue, localizeStringValue, colorScheme) {
     let localizedParamName = loc(format("items/order/type/%s/param/%s", this.name, paramName))
     // If parameter has no value then it's name will be colored with value-color.
-    if (::u.isString(paramValue) && paramValue.len() == 0)
+    if (u.isString(paramValue) && paramValue.len() == 0)
       return colorize(colorScheme.parameterValueColor, localizedParamName)
 
     local description = colorize(colorScheme.parameterLabelColor, localizedParamName)
-    if (localizeStringValue && ::u.isString(paramValue))
+    if (localizeStringValue && u.isString(paramValue))
       paramValue = loc(format("items/order/type/%s/param/%s/value/%s", this.name, paramName, paramValue))
     description += colorize(colorScheme.parameterValueColor, paramValue)
     return description
@@ -122,7 +121,7 @@ let getUnitClassNamesByEsUnitTypes = @(esUnitTypes) esUnitTypes
         statusDescriptionKeyPostfix = "/self"
       else {
         let myTeam = ::get_mp_local_team()
-        let myTeamPlayers = ::get_mplayers_list(myTeam, true)
+        let myTeamPlayers = get_mplayers_list(myTeam, true)
         statusDescriptionKeyPostfix = "/enemy"
         foreach (_idx, teamMember in myTeamPlayers) {
           if (getTblValue("userId", teamMember, null) == targetPlayerUserId) {

@@ -1,9 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let ItemCouponBase = require("%scripts/items/itemsClasses/itemCouponBase.nut")
 
@@ -17,7 +14,7 @@ let ItemCouponBase = require("%scripts/items/itemsClasses/itemCouponBase.nut")
       return false
 
     let unitId = this.getRentedUnitId()
-    let unit = ::getAircraftByName(unitId)
+    let unit = getAircraftByName(unitId)
     return unit != null && !unit.isBought()
       && (unit.isVisibleInShop() || unit.showOnlyWhenBought)
   }

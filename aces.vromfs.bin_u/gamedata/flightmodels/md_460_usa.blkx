@@ -5,6 +5,7 @@
   "gearSinkRangeLR": 0.2,
   "gearSinkRangeC": 0.14,
   "jetEnginePowerFullScale": true,
+  "gyroSight": false,
   "type": "typeFighter",
   "paratrooper": "france_late_para",
   "advancedInstructor": true,
@@ -25,7 +26,6 @@
   "explosion_dmBlk": "gameData/FlightModels/DM/commonExplosion.blk",
   "fireParamsPreset": "1800kph",
   "fightAiBehaviour": "fighter",
-  "gyroscopicSightOverSensors": true,
   "weaponRetractVar": "p_open_launcher",
   "customClassIco": "!#ui/gameuiskin#md_460_ico.svg",
   "customImage": "!#ui/unitskin#md_460",
@@ -496,6 +496,22 @@
           }
         },
         {
+          "onHit": {
+            "damage": 60.0,
+            "fire": 0.25,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 100.0,
+            "fire": 0.5,
+            "leak_oil": 0.95,
+            "cut": 0.0
+          }
+        },
+        {
           "onKill": {
             "fire": 25.0,
             "leak_oil": 10.0,
@@ -506,6 +522,22 @@
           "onKill": {
             "damage": 30.0,
             "fire": 30.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 60.0,
+            "fire": 40.0,
+            "leak_oil": 10.0,
+            "cut": 0.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 100.0,
+            "fire": 50.0,
             "leak_oil": 10.0,
             "cut": 0.0
           }
@@ -703,6 +735,14 @@
           }
         },
         {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
+          }
+        },
+        {
           "onKill": {
             "wingcontrol_l_dm": 1.0,
             "wingcontrol_r_dm": 1.0,
@@ -748,6 +788,14 @@
             "wing_l_dm": 1.0,
             "wing_r_dm": 1.0
           }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
+          }
         }
       ]
     },
@@ -778,6 +826,14 @@
           "onHit": {
             "damage": 50.0,
             "tail_dm": 1.0
+          }
+        },
+        {
+          "onHit": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.2,
+            "wingcontrol_l_dm": 0.2,
+            "wingcontrol_r_dm": 0.2
           }
         },
         {
@@ -833,6 +889,14 @@
             "damage": 50.0,
             "tail_dm": 1.0,
             "nothing": 1.0
+          }
+        },
+        {
+          "onKill": {
+            "damage": 200.0,
+            "wingcontrol_dm": 0.4,
+            "wingcontrol_l_dm": 0.4,
+            "wingcontrol_r_dm": 0.4
           }
         }
       ]
@@ -2474,33 +2538,12 @@
       }
     ]
   },
-  "commonWeapons": [
-    {
-      "Weapon": {
-        "trigger": "cannon",
-        "blk": "gameData/Weapons/cannonDEFA552.blk",
-        "emitter": "flare1",
-        "flash": "flare1",
-        "dm": "cannon1_dm",
-        "bullets": 150,
-        "spread": 1.2,
-        "traceOffset": 1,
-        "counterIndex": 1
-      }
-    },
-    {
-      "Weapon": {
-        "trigger": "cannon",
-        "blk": "gameData/Weapons/cannonDEFA552.blk",
-        "emitter": "flare2",
-        "flash": "flare2",
-        "dm": "cannon2_dm",
-        "bullets": 150,
-        "spread": 1.2,
-        "traceOffset": 2
-      }
+  "commonWeapons": {
+    "Weapon": {
+      "slot": 0,
+      "preset": "default_common"
     }
-  ],
+  },
   "weapon_presets": [
     {
       "preset": {
@@ -2510,377 +2553,1227 @@
     },
     {
       "preset": {
-        "name": "md_460_2x500lbs",
-        "blk": "gameData/flightModels/weaponPresets/md_460_2x500lbs_bombs.blk",
-        "reqModification": "alkan_502_500lb"
-      }
-    },
-    {
-      "preset": {
-        "name": "md_460_2x1000lbs",
-        "blk": "gameData/flightModels/weaponPresets/md_460_2x1000lbs_bombs.blk",
-        "reqModification": "alkan_502_1000lb"
-      }
-    },
-    {
-      "preset": {
-        "name": "md_460_2x_460l_secan_63",
-        "blk": "gameData/flightModels/weaponPresets/md_460_2x_460l_secan_63.blk",
-        "reqModification": "fr_460l_secan_63"
-      }
-    },
-    {
-      "preset": {
-        "name": "md_460_matra_61",
-        "blk": "gameData/flightModels/weaponPresets/md_460_matra_61.blk",
-        "reqModification": "fr_matra_type61",
-        "weaponConfig": [
-          {
-            "Weapon": [
-              {
-                "blk": "gameData/Weapons/rocketGuns/fr_matra_t_10_151b.blk"
-              },
-              {
-                "amountPerTier": 2.0
-              },
-              {
-                "tier": {
-                  "idx": 3,
-                  "iconType": "rockets_ap_large_group_x2"
-                }
-              },
-              {
-                "tier": {
-                  "idx": 4,
-                  "iconType": "rockets_ap_large_group_x2"
-                }
-              },
-              {
-                "tier": {
-                  "idx": 5,
-                  "iconType": "rockets_ap_large_group_x2"
-                }
-              }
-            ]
-          },
-          {
-            "Weapon": [
-              {
-                "blk": "gameData/Weapons/rocketGuns/fr_matra_t_10_151a.blk"
-              },
-              {
-                "amountPerTier": 2.0
-              },
-              {
-                "tier": {
-                  "idx": 7,
-                  "iconType": "rockets_ap_large_group_x2"
-                }
-              },
-              {
-                "tier": {
-                  "idx": 8,
-                  "iconType": "rockets_ap_large_group_x2"
-                }
-              },
-              {
-                "tier": {
-                  "idx": 9,
-                  "iconType": "rockets_ap_large_group_x2"
-                }
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "preset": {
-        "name": "md_460_matra_116",
-        "blk": "gameData/flightModels/weaponPresets/md_460_matra_116.blk",
-        "reqModification": "fr_matra_type116",
-        "weaponConfig": {
-          "Weapon": {
-            "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23.blk",
-            "amountPerTier": 19.0
-          }
-        }
-      }
-    },
-    {
-      "preset": {
-        "name": "md_460_matra_105",
-        "blk": "gameData/flightModels/weaponPresets/md_460_matra_105.blk",
-        "reqModification": "fr_matra_type105",
-        "weaponConfig": {
-          "Weapon": {
-            "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
-            "amountPerTier": 35.0,
-            "iconType": "nar_ap_rocket_b"
-          }
-        }
+        "name": "md_460_2xAIM-9B",
+        "blk": "gameData/flightModels/weaponPresets/md_460_aim9.blk"
       }
     },
     {
       "preset": {
         "name": "md_460_aa20",
-        "blk": "gameData/flightModels/weaponPresets/md_460_aa20.blk",
-        "reqModification": "nord_aa_20"
+        "blk": "gameData/flightModels/weaponPresets/md_460_aa20.blk"
+      }
+    },
+    {
+      "preset": {
+        "name": "md_460_matra_61",
+        "blk": "gameData/flightModels/weaponPresets/md_460_matra_61.blk"
+      }
+    },
+    {
+      "preset": {
+        "name": "md_460_matra_116",
+        "blk": "gameData/flightModels/weaponPresets/md_460_matra_116.blk"
+      }
+    },
+    {
+      "preset": {
+        "name": "md_460_matra_105",
+        "blk": "gameData/flightModels/weaponPresets/md_460_matra_105.blk"
       }
     },
     {
       "preset": {
         "name": "md_460_as20",
-        "blk": "gameData/flightModels/weaponPresets/md_460_as20.blk",
-        "reqModification": "nord_as_20"
+        "blk": "gameData/flightModels/weaponPresets/md_460_as20.blk"
       }
     },
     {
       "preset": {
-        "name": "md_460_2xAIM-9B",
-        "blk": "gameData/flightModels/weaponPresets/md_460_aim9.blk",
-        "reqModification": "us_aim_9b"
+        "name": "md_460_2x500lbs",
+        "blk": "gameData/flightModels/weaponPresets/md_460_2x500lbs_bombs.blk"
       }
     },
     {
-      "preset": [
+      "preset": {
+        "name": "md_460_2x1000lbs",
+        "blk": "gameData/flightModels/weaponPresets/md_460_2x1000lbs_bombs.blk"
+      }
+    },
+    {
+      "preset": {
+        "name": "md_460_2x_460l_secan_63",
+        "blk": "gameData/flightModels/weaponPresets/md_460_2x_460l_secan_63.blk"
+      }
+    }
+  ],
+  "WeaponSlots": [
+    {
+      "maxloadMass": 1200.0
+    },
+    {
+      "maxloadMassLeftConsoles": 600.0
+    },
+    {
+      "maxloadMassRightConsoles": 600.0
+    },
+    {
+      "maxDisbalance": 450.0
+    },
+    {
+      "HideNodes": [
         {
-          "name": "md_460_aa20_matra_105"
+          "node": "pylon_bomb1"
         },
         {
-          "blk": "gameData/flightModels/weaponPresets/md_460_aa20_matra_105.blk"
+          "node": "pylon_bomb2"
         },
         {
-          "reqModification": "nord_aa_20"
+          "node": "pylon_rocket1_1_aim9"
         },
         {
-          "reqModification": "fr_matra_type105"
+          "node": "pylon_rocket1_aim9"
         },
         {
-          "weaponConfig": {
-            "Weapon": {
-              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
-              "amountPerTier": 35.0,
-              "iconType": "nar_ap_rocket_b"
-            }
-          }
+          "node": "pylon_rocket2_aim9"
+        },
+        {
+          "node": "pylon_rocket1_1_aim9"
+        },
+        {
+          "node": "pylon_rocket2_1_aim9"
+        },
+        {
+          "node": "pylon_rocket1_aa20"
+        },
+        {
+          "node": "pylon_rocket2_aa20"
+        },
+        {
+          "node": "pylon_rocket1_matra_61"
+        },
+        {
+          "node": "pylon_rocket2_matra_61"
+        },
+        {
+          "node": "pylon_rocket1_matra_105"
+        },
+        {
+          "node": "pylon_rocket2_matra_105"
+        },
+        {
+          "node": "pylon_rocket1_matra_116"
+        },
+        {
+          "node": "pylon_rocket2_matra_116"
         }
       ]
     },
     {
-      "preset": [
-        {
-          "name": "md_460_as20_matra_105"
-        },
-        {
-          "blk": "gameData/flightModels/weaponPresets/md_460_as20_matra_105.blk"
-        },
-        {
-          "reqModification": "nord_as_20"
-        },
-        {
-          "reqModification": "fr_matra_type105"
-        },
-        {
-          "weaponConfig": {
+      "WeaponSlot": {
+        "index": 0,
+        "WeaponPreset": [
+          {
+            "name": "default_common"
+          },
+          {
             "Weapon": {
-              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
-              "amountPerTier": 35.0,
-              "iconType": "nar_ap_rocket_b"
+              "trigger": "cannon",
+              "blk": "gameData/Weapons/cannonDEFA552.blk",
+              "emitter": "flare1",
+              "flash": "flare1",
+              "dm": "cannon1_dm",
+              "bullets": 150,
+              "spread": 1.2,
+              "traceOffset": 1,
+              "counterIndex": 1
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "cannon",
+              "blk": "gameData/Weapons/cannonDEFA552.blk",
+              "emitter": "flare2",
+              "flash": "flare2",
+              "dm": "cannon2_dm",
+              "bullets": 150,
+              "spread": 1.2,
+              "traceOffset": 2
             }
           }
-        }
-      ]
+        ]
+      }
     },
     {
-      "preset": [
+      "WeaponSlot": [
         {
-          "name": "md_460_2x500lbs_matra_105"
+          "index": 1
         },
         {
-          "blk": "gameData/flightModels/weaponPresets/md_460_2x500lbs_bombs_matra_105.blk"
+          "tier": 7
         },
         {
-          "reqModification": "alkan_502_500lb"
+          "order": 1
         },
         {
-          "reqModification": "fr_matra_type105"
-        },
-        {
-          "weaponConfig": {
+          "WeaponPreset": {
+            "iconType": "missile_air_to_air",
+            "name": "aim9",
+            "reqModification": "us_aim_9b",
+            "ShowNodes": [
+              {
+                "node": "pylon_rocket1_1_aim9"
+              },
+              {
+                "node": "pylon_rocket1_aim9"
+              }
+            ],
             "Weapon": {
-              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
-              "amountPerTier": 35.0,
-              "iconType": "nar_ap_rocket_b"
+              "trigger": "aam",
+              "external": true,
+              "separate": true,
+              "blk": "gameData/Weapons/rocketGuns/us_aim9b_sidewinder.blk",
+              "emitter": "rocket1_aim9",
+              "bullets": 1
             }
           }
-        }
-      ]
-    },
-    {
-      "preset": [
-        {
-          "name": "md_460_2x1000lbs_matra_105"
         },
         {
-          "blk": "gameData/flightModels/weaponPresets/md_460_2x1000lbs_bombs_matra_105.blk"
-        },
-        {
-          "reqModification": "alkan_502_1000lb"
-        },
-        {
-          "reqModification": "fr_matra_type105"
-        },
-        {
-          "weaponConfig": {
+          "WeaponPreset": {
+            "iconType": "missile_air_to_air_midrange",
+            "name": "aa20",
+            "reqModification": "nord_aa_20",
+            "ShowNodes": {
+              "node": "pylon_rocket1_aa20"
+            },
             "Weapon": {
-              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
-              "amountPerTier": 35.0,
-              "iconType": "nar_ap_rocket_b"
+              "trigger": "aam",
+              "external": true,
+              "separate": true,
+              "blk": "gameData/Weapons/rocketGuns/fr_aa20.blk",
+              "weaponType": "aam",
+              "emitter": "rocket1_aa20",
+              "bullets": 1
             }
           }
-        }
-      ]
-    },
-    {
-      "preset": [
-        {
-          "name": "md_460_matra_61_matra_105"
         },
         {
-          "blk": "gameData/flightModels/weaponPresets/md_460_matra_61_matra_105.blk"
-        },
-        {
-          "reqModification": "fr_matra_type61"
-        },
-        {
-          "reqModification": "fr_matra_type105"
-        },
-        {
-          "weaponConfig": [
+          "WeaponPreset": [
             {
-              "Weapon": {
-                "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
-                "amountPerTier": 35.0,
-                "tier": {
-                  "idx": 6,
-                  "iconType": "nar_ap_rocket_b"
-                }
+              "iconType": "rockets_ap_large_group_x6"
+            },
+            {
+              "name": "matra61"
+            },
+            {
+              "reqModification": "fr_matra_type61"
+            },
+            {
+              "ShowNodes": {
+                "node": "pylon_rocket1_matra_61"
               }
             },
             {
-              "Weapon": [
-                {
-                  "blk": "gameData/Weapons/rocketGuns/fr_matra_t_10_151b.blk"
-                },
-                {
-                  "amountPerTier": 2.0
-                },
-                {
-                  "tier": {
-                    "idx": 3,
-                    "iconType": "rockets_ap_large_group_x2"
-                  }
-                },
-                {
-                  "tier": {
-                    "idx": 4,
-                    "iconType": "rockets_ap_large_group_x2"
-                  }
-                },
-                {
-                  "tier": {
-                    "idx": 5,
-                    "iconType": "rockets_ap_large_group_x2"
-                  }
-                }
-              ]
+              "Weapon": {
+                "trigger": "rockets",
+                "external": true,
+                "separate": true,
+                "blk": "gameData/Weapons/rocketGuns/fr_matra_t_10_151b.blk",
+                "emitter": "rocket_t10_1",
+                "bullets": 1,
+                "blockingGroupId": 0
+              }
             },
             {
-              "Weapon": [
-                {
-                  "blk": "gameData/Weapons/rocketGuns/fr_matra_t_10_151a.blk"
-                },
-                {
-                  "amountPerTier": 2.0
-                },
-                {
-                  "tier": {
-                    "idx": 7,
-                    "iconType": "rockets_ap_large_group_x2"
-                  }
-                },
-                {
-                  "tier": {
-                    "idx": 8,
-                    "iconType": "rockets_ap_large_group_x2"
-                  }
-                },
-                {
-                  "tier": {
-                    "idx": 9,
-                    "iconType": "rockets_ap_large_group_x2"
-                  }
-                }
-              ]
+              "Weapon": {
+                "trigger": "rockets",
+                "external": true,
+                "separate": true,
+                "blk": "gameData/Weapons/rocketGuns/fr_matra_t_10_151b.blk",
+                "emitter": "rocket_t10_3",
+                "bullets": 1,
+                "blockingGroupId": 0
+              }
+            },
+            {
+              "Weapon": {
+                "trigger": "rockets",
+                "external": true,
+                "separate": true,
+                "blk": "gameData/Weapons/rocketGuns/fr_matra_t_10_151b.blk",
+                "emitter": "rocket_t10_5",
+                "bullets": 1,
+                "blockingGroupId": 0
+              }
+            },
+            {
+              "Weapon": {
+                "trigger": "rockets",
+                "external": true,
+                "separate": true,
+                "blk": "gameData/Weapons/rocketGuns/fr_matra_t_10_151a.blk",
+                "emitter": "rocket_t10_7",
+                "bullets": 1,
+                "blockedByGroupId": 0
+              }
+            },
+            {
+              "Weapon": {
+                "trigger": "rockets",
+                "external": true,
+                "separate": true,
+                "blk": "gameData/Weapons/rocketGuns/fr_matra_t_10_151a.blk",
+                "emitter": "rocket_t10_9",
+                "bullets": 1,
+                "blockedByGroupId": 0
+              }
+            },
+            {
+              "Weapon": {
+                "trigger": "rockets",
+                "external": true,
+                "separate": true,
+                "blk": "gameData/Weapons/rocketGuns/fr_matra_t_10_151a.blk",
+                "emitter": "rocket_t10_11",
+                "bullets": 1,
+                "blockedByGroupId": 0
+              }
             }
           ]
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "nar_ap_middle",
+            "name": "matra116",
+            "reqModification": "fr_matra_type116",
+            "ShowNodes": {
+              "node": "pylon_rocket1_matra_116"
+            },
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/containers/matra_116.blk",
+              "emitter": "matra_116_001",
+              "external": true,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "missile_air_to_uni",
+            "name": "as20",
+            "reqModification": "nord_as_20",
+            "ShowNodes": {
+              "node": "pylon_rocket1_aa20"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "external": true,
+              "separate": true,
+              "blk": "gameData/Weapons/rocketGuns/fr_as20.blk",
+              "emitter": "rocket1_aa20",
+              "bullets": 1
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_middle",
+            "name": "500lb",
+            "reqModification": "alkan_502_500lb",
+            "ShowNodes": {
+              "node": "pylon_bomb1"
+            },
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/us_500lb_anm64a1.blk",
+              "emitter": "bomb1",
+              "bullets": 1,
+              "external": true
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_heavy_middle",
+            "name": "1000lb",
+            "reqModification": "alkan_502_1000lb",
+            "ShowNodes": {
+              "node": "pylon_bomb1"
+            },
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/us_1000lb_anm65_cone.blk",
+              "emitter": "bomb1",
+              "bullets": 1,
+              "external": true
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "napalm_large",
+            "name": "secan",
+            "reqModification": "fr_460l_secan_63",
+            "ShowNodes": {
+              "node": "pylon_bomb1"
+            },
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/fr_460l_secan_63.blk",
+              "emitter": "bomb1",
+              "bullets": 1,
+              "external": true,
+              "machLimit": 1.01
+            }
+          }
         }
       ]
     },
     {
-      "preset": [
+      "WeaponSlot": {
+        "index": 2,
+        "tier": 6,
+        "order": 3,
+        "notUseforDisbalanceCalculation": true,
+        "WeaponPreset": [
+          {
+            "iconType": "nar_ap_rocket_b"
+          },
+          {
+            "name": "matra105"
+          },
+          {
+            "reqModification": "fr_matra_type105"
+          },
+          {
+            "ShowNodes": [
+              {
+                "node": "pylon_rocket1_matra_105"
+              },
+              {
+                "node": "pylon_rocket2_matra_105"
+              }
+            ]
+          },
+          {
+            "HideNodes": {
+              "node": "matra_105_cover"
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket1_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 101
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket2_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 102
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket3_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 103
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket4_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 104
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket5_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 105
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket6_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 106
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket7_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 107
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket8_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 108
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket9_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 109
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket10_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 110
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket11_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 111
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket12_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 112
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket13_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 113
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket14_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 114
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket15_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 115
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket16_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 116
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket17_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 117
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket18_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 118
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket19_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 119
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket20_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 120
+            }
+          },
+          {
+            "Weapon": [
+              {
+                "trigger": "rockets"
+              },
+              {
+                "separate": false
+              },
+              {
+                "separate": false
+              },
+              {
+                "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk"
+              },
+              {
+                "gearLimit": [0.0,0.1]
+              },
+              {
+                "gearName": "gear_c"
+              },
+              {
+                "jettisonable": false
+              },
+              {
+                "jettisonable": false
+              },
+              {
+                "emitter": "rocket21_sneb"
+              },
+              {
+                "launcher": true
+              },
+              {
+                "bullets": 1
+              },
+              {
+                "external": false
+              },
+              {
+                "sizeSalvo": 7
+              },
+              {
+                "order": 121
+              }
+            ]
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket22_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 122
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket23_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 123
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket24_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 124
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket25_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 125
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket26_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 126
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket27_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 127
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket28_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 128
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket29_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 129
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket30_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 130
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket31_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 131
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket32_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 132
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket33_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 133
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket34_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 134
+            }
+          },
+          {
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
+              "gearLimit": [0.0,0.1],
+              "gearName": "gear_c",
+              "emitter": "rocket35_sneb",
+              "launcher": true,
+              "bullets": 1,
+              "external": false,
+              "jettisonable": false,
+              "separate": false,
+              "sizeSalvo": 7,
+              "order": 135
+            }
+          }
+        ]
+      }
+    },
+    {
+      "WeaponSlot": [
         {
-          "name": "md_460_matra_116_matra_105"
+          "index": 3
         },
         {
-          "blk": "gameData/flightModels/weaponPresets/md_460_matra_116_matra_105.blk"
+          "tier": 5
         },
         {
-          "reqModification": "fr_matra_type116"
+          "order": 2
         },
         {
-          "reqModification": "fr_matra_type105"
+          "WeaponPreset": {
+            "iconType": "missile_air_to_air",
+            "name": "aim9",
+            "reqModification": "us_aim_9b",
+            "ShowNodes": [
+              {
+                "node": "pylon_rocket2_aim9"
+              },
+              {
+                "node": "pylon_rocket2_1_aim9"
+              }
+            ],
+            "Weapon": {
+              "trigger": "aam",
+              "external": true,
+              "separate": true,
+              "blk": "gameData/Weapons/rocketGuns/us_aim9b_sidewinder.blk",
+              "emitter": "rocket2_aim9",
+              "bullets": 1
+            }
+          }
         },
         {
-          "weaponConfig": [
+          "WeaponPreset": {
+            "iconType": "missile_air_to_air_midrange",
+            "name": "aa20",
+            "reqModification": "nord_aa_20",
+            "ShowNodes": {
+              "node": "pylon_rocket2_aa20"
+            },
+            "Weapon": {
+              "trigger": "aam",
+              "external": true,
+              "separate": true,
+              "blk": "gameData/Weapons/rocketGuns/fr_aa20.blk",
+              "weaponType": "aam",
+              "emitter": "rocket2_aa20",
+              "bullets": 1
+            }
+          }
+        },
+        {
+          "WeaponPreset": [
             {
-              "Weapon": {
-                "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
-                "amountPerTier": 35.0,
-                "iconType": "nar_ap_rocket_b"
+              "iconType": "rockets_ap_large_group_x6"
+            },
+            {
+              "name": "matra61"
+            },
+            {
+              "reqModification": "fr_matra_type61"
+            },
+            {
+              "ShowNodes": {
+                "node": "pylon_rocket2_matra_61"
               }
             },
             {
               "Weapon": {
-                "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23.blk",
-                "amountPerTier": 19.0
+                "trigger": "rockets",
+                "external": true,
+                "separate": true,
+                "blk": "gameData/Weapons/rocketGuns/fr_matra_t_10_151b.blk",
+                "emitter": "rocket_t10_2",
+                "bullets": 1,
+                "blockingGroupId": 0
+              }
+            },
+            {
+              "Weapon": {
+                "trigger": "rockets",
+                "external": true,
+                "separate": true,
+                "blk": "gameData/Weapons/rocketGuns/fr_matra_t_10_151b.blk",
+                "emitter": "rocket_t10_4",
+                "bullets": 1,
+                "blockingGroupId": 0
+              }
+            },
+            {
+              "Weapon": {
+                "trigger": "rockets",
+                "external": true,
+                "separate": true,
+                "blk": "gameData/Weapons/rocketGuns/fr_matra_t_10_151b.blk",
+                "emitter": "rocket_t10_6",
+                "bullets": 1,
+                "blockingGroupId": 0
+              }
+            },
+            {
+              "Weapon": {
+                "trigger": "rockets",
+                "external": true,
+                "separate": true,
+                "blk": "gameData/Weapons/rocketGuns/fr_matra_t_10_151a.blk",
+                "emitter": "rocket_t10_8",
+                "bullets": 1,
+                "blockedByGroupId": 0
+              }
+            },
+            {
+              "Weapon": {
+                "trigger": "rockets",
+                "external": true,
+                "separate": true,
+                "blk": "gameData/Weapons/rocketGuns/fr_matra_t_10_151a.blk",
+                "emitter": "rocket_t10_10",
+                "bullets": 1,
+                "blockedByGroupId": 0
+              }
+            },
+            {
+              "Weapon": {
+                "trigger": "rockets",
+                "external": true,
+                "separate": true,
+                "blk": "gameData/Weapons/rocketGuns/fr_matra_t_10_151a.blk",
+                "emitter": "rocket_t10_12",
+                "bullets": 1,
+                "blockedByGroupId": 0
               }
             }
           ]
-        }
-      ]
-    },
-    {
-      "preset": [
-        {
-          "name": "md_460_2xAIM-9B_matra_105"
         },
         {
-          "blk": "gameData/flightModels/weaponPresets/md_460_aim9_matra_105.blk"
-        },
-        {
-          "reqModification": "us_aim_9b"
-        },
-        {
-          "reqModification": "fr_matra_type105"
-        },
-        {
-          "weaponConfig": {
+          "WeaponPreset": {
+            "iconType": "nar_ap_middle",
+            "name": "matra116",
+            "reqModification": "fr_matra_type116",
+            "ShowNodes": {
+              "node": "pylon_rocket2_matra_116"
+            },
             "Weapon": {
-              "blk": "gameData/Weapons/rocketGuns/fr_sneb_type23_md_460.blk",
-              "amountPerTier": 35.0,
-              "iconType": "nar_ap_rocket_b"
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/containers/matra_116.blk",
+              "emitter": "matra_116_002",
+              "external": true,
+              "machLimit": 1.01
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "missile_air_to_uni",
+            "name": "as20",
+            "reqModification": "nord_as_20",
+            "ShowNodes": {
+              "node": "pylon_rocket2_aa20"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "external": true,
+              "separate": true,
+              "blk": "gameData/Weapons/rocketGuns/fr_as20.blk",
+              "emitter": "rocket2_aa20",
+              "bullets": 1
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_middle",
+            "name": "500lb",
+            "reqModification": "alkan_502_500lb",
+            "ShowNodes": {
+              "node": "pylon_bomb2"
+            },
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/us_500lb_anm64a1.blk",
+              "emitter": "bomb2",
+              "bullets": 1,
+              "external": true
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "bombs_heavy_middle",
+            "name": "1000lb",
+            "reqModification": "alkan_502_1000lb",
+            "ShowNodes": {
+              "node": "pylon_bomb2"
+            },
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/us_1000lb_anm65_cone.blk",
+              "emitter": "bomb2",
+              "bullets": 1,
+              "external": true
+            }
+          }
+        },
+        {
+          "WeaponPreset": {
+            "iconType": "napalm_large",
+            "name": "secan",
+            "reqModification": "fr_460l_secan_63",
+            "ShowNodes": {
+              "node": "pylon_bomb2"
+            },
+            "Weapon": {
+              "trigger": "bombs",
+              "blk": "gameData/Weapons/BombGuns/fr_460l_secan_63.blk",
+              "emitter": "bomb2",
+              "bullets": 1,
+              "external": true,
+              "machLimit": 1.01
             }
           }
         }
@@ -3147,13 +4040,8 @@
       "modClass": "weapon",
       "tier": 2
     },
-    "nord_aa_20": {
-      "reqModification": "alkan_502_1000lb",
-      "tier": 3,
-      "modClass": "weapon"
-    },
     "nord_as_20": {
-      "reqModification": "nord_aa_20",
+      "reqModification": "alkan_502_1000lb",
       "tier": 4,
       "modClass": "weapon"
     },
@@ -3171,8 +4059,12 @@
       "modClass": "weapon",
       "reqModification": "fr_matra_type116"
     },
+    "nord_aa_20": {
+      "tier": 3,
+      "modClass": "weapon"
+    },
     "us_aim_9b": {
-      "reqModification": "fr_matra_type105",
+      "prevModification": "nord_aa_20",
       "tier": 4,
       "modClass": "weapon"
     }

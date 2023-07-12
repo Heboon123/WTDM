@@ -1,11 +1,11 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
-let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { subscribe_handler } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { registerPersistentData, PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { write_number } = require("%xboxLib/impl/stats.nut")
+let { set_presence } = require("%xboxLib/impl/presence.nut")
 
 let playerInfoUpdater = {
   [PERSISTENT_DATA_PARAMS] = ["lastSendedData"]
@@ -33,7 +33,7 @@ let playerInfoUpdater = {
       return
 
     this.lastSendedData[id] <- value
-    ::xbox_set_user_stat(id, value)
+    write_number(id, value, null)
   }
 
   function updateStatistics() {
@@ -57,7 +57,7 @@ let playerInfoUpdater = {
       return
 
     this.lastSendedData.presence <- presence
-    ::xbox_set_presence(presence.presenceName)
+    set_presence(presence.presenceName, null)
   }
 
   function onEventMyStatsUpdated(_p) {
@@ -83,7 +83,7 @@ let playerInfoUpdater = {
   }
 }
 
-::g_script_reloader.registerPersistentData("PlayerInfoUpdater", playerInfoUpdater, playerInfoUpdater[PERSISTENT_DATA_PARAMS])
-::subscribe_handler(playerInfoUpdater, ::g_listener_priority.DEFAULT_HANDLER)
+registerPersistentData("PlayerInfoUpdater", playerInfoUpdater, playerInfoUpdater[PERSISTENT_DATA_PARAMS])
+subscribe_handler(playerInfoUpdater, ::g_listener_priority.DEFAULT_HANDLER)
 
 return playerInfoUpdater

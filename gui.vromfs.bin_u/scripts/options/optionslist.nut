@@ -1,9 +1,6 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 
 let safeAreaMenu = require("%scripts/options/safeAreaMenu.nut")
@@ -19,6 +16,7 @@ let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platfo
 
 let { getPlayerCurUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 let { havePremium } = require("%scripts/user/premium.nut")
+let { get_mission_difficulty_int, get_mission_difficulty } = require("guiMission")
 
 let getSystemOptions = @() {
   name = "graphicsParameters"
@@ -33,11 +31,12 @@ let privacyOptionsList = Computed(function() {
   let havePrem = havePremium.value
   let hasFeat = hasFeature("PrivacySettings")
   return [
-    ["options/header/privacy", null, hasFeat && havePrem],
+    ["options/header/privacy", null, hasFeat],
     [::USEROPT_DISPLAY_MY_REAL_NICK, "spinner", hasFeat && havePrem],
     [::USEROPT_SHOW_SOCIAL_NOTIFICATIONS, "spinner", hasFeat && havePrem],
     [::USEROPT_ALLOW_ADDED_TO_CONTACTS, "spinner", hasFeat && havePrem],
-    [::USEROPT_ALLOW_ADDED_TO_LEADERBOARDS, "spinner", hasFeat && havePrem]
+    [::USEROPT_ALLOW_ADDED_TO_LEADERBOARDS, "spinner", hasFeat && havePrem],
+    [::USEROPT_DISPLAY_REAL_NICKS_PARTICIPANTS, "spinner", hasFeat && is_platform_pc]
   ]
 })
 
@@ -137,6 +136,11 @@ let getMainOptions = function() {
       [::USEROPT_HELICOPTER_HELMET_AIM, "spinner", !(isPlatformSony || isPlatformXboxOne)],
       [::USEROPT_HELICOPTER_AUTOPILOT_ON_GUNNERVIEW, "spinner"],
       [::USEROPT_ALTERNATIVE_TPS_CAMERA, "spinner"],
+      [::USEROPT_LWS_IND_H_RADIUS, "slider"],
+      [::USEROPT_LWS_IND_H_ALPHA, "slider"],
+      [::USEROPT_LWS_IND_H_SCALE, "slider"],
+      [::USEROPT_LWS_IND_H_TIMEOUT, "slider"],
+      [::USEROPT_LWS_IND_AZIMUTH_H_TIMEOUT, "slider"],
 
       ["options/header/tank"],
       [::USEROPT_GRASS_IN_TANK_VISION, "spinner"],
@@ -161,6 +165,11 @@ let getMainOptions = function() {
       [::USEROPT_HIT_INDICATOR_ALPHA, "slider", hasFeature("advancedHitIndicator")],
       [::USEROPT_HIT_INDICATOR_SCALE, "slider", hasFeature("advancedHitIndicator")],
       [::USEROPT_HIT_INDICATOR_FADE_TIME, "slider", hasFeature("advancedHitIndicator")],
+      [::USEROPT_LWS_IND_RADIUS, "slider"],
+      [::USEROPT_LWS_IND_ALPHA, "slider"],
+      [::USEROPT_LWS_IND_SCALE, "slider"],
+      [::USEROPT_LWS_IND_TIMEOUT, "slider"],
+      [::USEROPT_LWS_AZIMUTH_IND_TIMEOUT, "slider"],
 
       ["options/header/ship"],
       [::USEROPT_DEPTHCHARGE_ACTIVATION_TIME, "spinner", ! ::is_in_flight()],
@@ -174,7 +183,7 @@ let getMainOptions = function() {
       [::USEROPT_BULLET_FALL_SOUND_SHIP, "spinner"],
       [::USEROPT_AUTO_TARGET_CHANGE_SHIP, "spinner"],
       [::USEROPT_REALISTIC_AIMING_SHIP, "spinner",
-        (!::is_in_flight() || ::get_mission_difficulty() == ::g_difficulty.ARCADE.gameTypeName)],
+        (!::is_in_flight() || get_mission_difficulty() == ::g_difficulty.ARCADE.gameTypeName)],
       // TODO: separate from tank [::USEROPT_TACTICAL_MAP_SIZE, "slider"],
       // TODO: separate from tank [::USEROPT_MAP_ZOOM_BY_LEVEL, "spinner"],
       [::USEROPT_FOLLOW_BULLET_CAMERA, "spinner", hasFeature("enableFollowBulletCamera")],
@@ -200,6 +209,7 @@ let getMainOptions = function() {
       [::USEROPT_HUD_VISIBLE_KILLLOG, "switchbox"],
       [::USEROPT_HUD_VISIBLE_STREAKS, "switchbox"],
       [::USEROPT_HUD_VISIBLE_CHAT_PLACE, "switchbox"],
+      [::USEROPT_SHOW_ACTION_BAR, "switchbox"],
 
       ["options/header/measureUnits"],
       [::USEROPT_MEASUREUNITS_SPEED, "spinner"],
@@ -287,7 +297,7 @@ let getSoundOptions = @() overrideSoundOptionsFn?() ?? {
     [::USEROPT_VOLUME_TINNITUS, "slider"],
     [::USEROPT_HANGAR_SOUND, "spinner"],
     [::USEROPT_PLAY_INACTIVE_WINDOW_SOUND, "spinner", is_platform_pc],
-    [::USEROPT_ENABLE_SOUND_SPEED, "spinner", (! ::is_in_flight()) || (::get_mission_difficulty_int() != DIFFICULTY_HARDCORE) ],
+    [::USEROPT_ENABLE_SOUND_SPEED, "spinner", (! ::is_in_flight()) || (get_mission_difficulty_int() != DIFFICULTY_HARDCORE) ],
     [::USEROPT_SOUND_RESET_VOLUMES, "button"]
   ]
 }

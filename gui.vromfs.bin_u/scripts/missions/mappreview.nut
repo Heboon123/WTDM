@@ -1,9 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let u = require("%sqStdLibs/helpers/u.nut")
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { dynamicLoadPreview, dynamicUnloadPreview, dynamicLoadSummary } = require("dynamicMission")
 let DataBlock = require("DataBlock")
@@ -51,7 +49,7 @@ let function createPreview(previewType, missionBlk, mapObj, param) {
 }
 
 let function findPreview(obj) {
-  return ::u.search(previewList, (@(p) checkObj(p.obj) && p.obj.isEqual(obj)))
+  return u.search(previewList, (@(p) checkObj(p.obj) && p.obj.isEqual(obj)))
 }
 
 let function hideCurPreview() {

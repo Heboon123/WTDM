@@ -33,10 +33,10 @@
     "jetEnginePowerFullScale": true
   },
   {
-    "radarCScope": true
+    "gyroSight": false
   },
   {
-    "gyroscopicSightOverSensors": true
+    "radarCScope": true
   },
   {
     "type": "typeFighter"
@@ -377,6 +377,22 @@
             }
           },
           {
+            "onHit": {
+              "damage": 60.0,
+              "fire": 0.25,
+              "leak_oil": 0.95,
+              "cut": 0.0
+            }
+          },
+          {
+            "onHit": {
+              "damage": 100.0,
+              "fire": 0.5,
+              "leak_oil": 0.95,
+              "cut": 0.0
+            }
+          },
+          {
             "onKill": {
               "fire": 25.0,
               "leak_oil": 10.0,
@@ -387,6 +403,22 @@
             "onKill": {
               "damage": 30.0,
               "fire": 30.0,
+              "leak_oil": 10.0,
+              "cut": 0.0
+            }
+          },
+          {
+            "onKill": {
+              "damage": 60.0,
+              "fire": 40.0,
+              "leak_oil": 10.0,
+              "cut": 0.0
+            }
+          },
+          {
+            "onKill": {
+              "damage": 100.0,
+              "fire": 50.0,
               "leak_oil": 10.0,
               "cut": 0.0
             }
@@ -414,6 +446,22 @@
             }
           },
           {
+            "onHit": {
+              "damage": 60.0,
+              "fire": 0.25,
+              "leak_oil": 0.95,
+              "cut": 0.0
+            }
+          },
+          {
+            "onHit": {
+              "damage": 100.0,
+              "fire": 0.5,
+              "leak_oil": 0.95,
+              "cut": 0.0
+            }
+          },
+          {
             "onKill": {
               "fire": 25.0,
               "leak_oil": 10.0,
@@ -424,6 +472,22 @@
             "onKill": {
               "damage": 30.0,
               "fire": 30.0,
+              "leak_oil": 10.0,
+              "cut": 0.0
+            }
+          },
+          {
+            "onKill": {
+              "damage": 60.0,
+              "fire": 40.0,
+              "leak_oil": 10.0,
+              "cut": 0.0
+            }
+          },
+          {
+            "onKill": {
+              "damage": 100.0,
+              "fire": 50.0,
               "leak_oil": 10.0,
               "cut": 0.0
             }
@@ -2737,6 +2801,12 @@
       },
       {
         "preset": {
+          "name": "buccaneer_s1_1000lb_bombs_n117",
+          "blk": "gameData/FlightModels/weaponPresets/buccaneer_s1_1000lb_bombs_n117.blk"
+        }
+      },
+      {
+        "preset": {
           "name": "buccaneer_s1_matra7",
           "blk": "gameData/FlightModels/weaponPresets/buccaneer_s1_matra7.blk"
         }
@@ -2764,7 +2834,7 @@
   {
     "WeaponSlots": [
       {
-        "maxloadMass": 3800.0
+        "maxloadMass": 3900.0
       },
       {
         "maxloadMassLeftConsoles": 1800.0
@@ -2806,6 +2876,9 @@
           },
           {
             "node": "early_short_pylon3"
+          },
+          {
+            "node": "uk_rp3_rocket_pylon3"
           },
           {
             "node": "early_short_pylon4"
@@ -2853,26 +2926,75 @@
             }
           },
           {
-            "WeaponPreset": {
-              "iconType": "rockets_ap_small_group",
-              "name": "rp3",
-              "reqModification": "uk_rp3_mk12",
-              "ShowNodes": [
-                {
-                  "node": "early_short_pylon1"
-                },
-                {
-                  "node": "uk_rp3_rocket_pylon1"
+            "WeaponPreset": [
+              {
+                "iconType": "rockets_ap_small_group"
+              },
+              {
+                "name": "rp3"
+              },
+              {
+                "reqModification": "uk_rp3_mk12"
+              },
+              {
+                "ShowNodes": [
+                  {
+                    "node": "early_short_pylon1"
+                  },
+                  {
+                    "node": "uk_rp3_rocket_pylon1"
+                  }
+                ]
+              },
+              {
+                "Weapon": {
+                  "trigger": "rockets",
+                  "external": true,
+                  "separate": true,
+                  "blk": "gameData/Weapons/rocketGuns/uk_rp3_2.blk",
+                  "emitter": "uk_rp3_rocket1",
+                  "bullets": 1,
+                  "dragCx": 0.002,
+                  "blockingGroupId": 0
                 }
-              ],
-              "Weapon": {
-                "trigger": "rockets",
-                "external": true,
-                "blk": "gameData/Weapons/containers/uk_rp3_late.blk",
-                "emitter": "uk_rp3_rocket_pylon1",
-                "machLimit": 1.01
+              },
+              {
+                "Weapon": {
+                  "trigger": "rockets",
+                  "external": true,
+                  "separate": true,
+                  "blk": "gameData/Weapons/rocketGuns/uk_rp3_2.blk",
+                  "emitter": "uk_rp3_rocket5",
+                  "bullets": 1,
+                  "dragCx": 0.002,
+                  "blockingGroupId": 0
+                }
+              },
+              {
+                "Weapon": {
+                  "trigger": "rockets",
+                  "external": true,
+                  "separate": true,
+                  "blk": "gameData/Weapons/rocketGuns/uk_rp3.blk",
+                  "emitter": "uk_rp3_rocket9",
+                  "bullets": 1,
+                  "dragCx": 0.002,
+                  "blockedByGroupId": 0
+                }
+              },
+              {
+                "Weapon": {
+                  "trigger": "rockets",
+                  "external": true,
+                  "separate": true,
+                  "blk": "gameData/Weapons/rocketGuns/uk_rp3.blk",
+                  "emitter": "uk_rp3_rocket13",
+                  "bullets": 1,
+                  "dragCx": 0.002,
+                  "blockedByGroupId": 0
+                }
               }
-            }
+            ]
           },
           {
             "WeaponPreset": {
@@ -2909,6 +3031,24 @@
                 "bullets": 1
               }
             }
+          },
+          {
+            "WeaponPreset": {
+              "iconType": "bombs_large_high_drag",
+              "name": "1000lbs_n117",
+              "reqModification": "uk_mk_10_1000lb",
+              "ShowNodes": {
+                "node": "early_short_pylon1"
+              },
+              "Weapon": {
+                "trigger": "bombs",
+                "external": true,
+                "separate": true,
+                "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp_n117.blk",
+                "emitter": "1000_lb_uk_ld_bomb5",
+                "bullets": 1
+              }
+            }
           }
         ]
       },
@@ -2941,26 +3081,75 @@
             }
           },
           {
-            "WeaponPreset": {
-              "iconType": "rockets_ap_small_group",
-              "name": "rp3",
-              "reqModification": "uk_rp3_mk12",
-              "ShowNodes": [
-                {
-                  "node": "early_short_pylon2"
-                },
-                {
-                  "node": "uk_rp3_rocket_pylon2"
+            "WeaponPreset": [
+              {
+                "iconType": "rockets_ap_small_group"
+              },
+              {
+                "name": "rp3"
+              },
+              {
+                "reqModification": "uk_rp3_mk12"
+              },
+              {
+                "ShowNodes": [
+                  {
+                    "node": "early_short_pylon2"
+                  },
+                  {
+                    "node": "uk_rp3_rocket_pylon2"
+                  }
+                ]
+              },
+              {
+                "Weapon": {
+                  "trigger": "rockets",
+                  "external": true,
+                  "separate": true,
+                  "blk": "gameData/Weapons/rocketGuns/uk_rp3_2.blk",
+                  "emitter": "uk_rp3_rocket3",
+                  "bullets": 1,
+                  "dragCx": 0.002,
+                  "blockingGroupId": 0
                 }
-              ],
-              "Weapon": {
-                "trigger": "rockets",
-                "external": true,
-                "blk": "gameData/Weapons/containers/uk_rp3_late.blk",
-                "emitter": "uk_rp3_rocket_pylon2",
-                "machLimit": 1.01
+              },
+              {
+                "Weapon": {
+                  "trigger": "rockets",
+                  "external": true,
+                  "separate": true,
+                  "blk": "gameData/Weapons/rocketGuns/uk_rp3_2.blk",
+                  "emitter": "uk_rp3_rocket7",
+                  "bullets": 1,
+                  "dragCx": 0.002,
+                  "blockingGroupId": 0
+                }
+              },
+              {
+                "Weapon": {
+                  "trigger": "rockets",
+                  "external": true,
+                  "separate": true,
+                  "blk": "gameData/Weapons/rocketGuns/uk_rp3.blk",
+                  "emitter": "uk_rp3_rocket11",
+                  "bullets": 1,
+                  "dragCx": 0.002,
+                  "blockedByGroupId": 0
+                }
+              },
+              {
+                "Weapon": {
+                  "trigger": "rockets",
+                  "external": true,
+                  "separate": true,
+                  "blk": "gameData/Weapons/rocketGuns/uk_rp3.blk",
+                  "emitter": "uk_rp3_rocket15",
+                  "bullets": 1,
+                  "dragCx": 0.002,
+                  "blockedByGroupId": 0
+                }
               }
-            }
+            ]
           },
           {
             "WeaponPreset": {
@@ -2997,63 +3186,140 @@
                 "bullets": 1
               }
             }
+          },
+          {
+            "WeaponPreset": {
+              "iconType": "bombs_large_high_drag",
+              "name": "1000lbs_n117",
+              "reqModification": "uk_mk_10_1000lb",
+              "ShowNodes": {
+                "node": "early_short_pylon2"
+              },
+              "Weapon": {
+                "trigger": "bombs",
+                "external": true,
+                "separate": true,
+                "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp_n117.blk",
+                "emitter": "1000_lb_uk_ld_bomb6",
+                "bullets": 1
+              }
+            }
           }
         ]
       },
       {
-        "WeaponSlot": {
-          "index": 3,
-          "tier": 6,
-          "order": 5,
-          "notUseforDisbalanceCalculation": true,
-          "WeaponPreset": [
-            {
-              "iconType": "bombs_large_group_x4"
-            },
-            {
-              "name": "1000lbs"
-            },
-            {
-              "reqModification": "uk_mk_10_1000lb"
-            },
-            {
-              "Weapon": {
-                "trigger": "bombs",
-                "separate": true,
-                "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp.blk",
-                "emitter": "1000_lb_uk_gp_bomb1",
-                "bullets": 1
+        "WeaponSlot": [
+          {
+            "index": 3
+          },
+          {
+            "tier": 6
+          },
+          {
+            "order": 5
+          },
+          {
+            "notUseforDisbalanceCalculation": true
+          },
+          {
+            "WeaponPreset": [
+              {
+                "iconType": "bombs_large_group_x4"
+              },
+              {
+                "name": "1000lbs"
+              },
+              {
+                "reqModification": "uk_mk_10_1000lb"
+              },
+              {
+                "Weapon": {
+                  "trigger": "bombs",
+                  "separate": true,
+                  "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp.blk",
+                  "emitter": "1000_lb_uk_gp_bomb1",
+                  "bullets": 1
+                }
+              },
+              {
+                "Weapon": {
+                  "trigger": "bombs",
+                  "separate": true,
+                  "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp.blk",
+                  "emitter": "1000_lb_uk_gp_bomb2",
+                  "bullets": 1
+                }
+              },
+              {
+                "Weapon": {
+                  "trigger": "bombs",
+                  "separate": true,
+                  "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp.blk",
+                  "emitter": "1000_lb_uk_gp_bomb3",
+                  "bullets": 1
+                }
+              },
+              {
+                "Weapon": {
+                  "trigger": "bombs",
+                  "separate": true,
+                  "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp.blk",
+                  "emitter": "1000_lb_uk_gp_bomb4",
+                  "bullets": 1
+                }
               }
-            },
-            {
-              "Weapon": {
-                "trigger": "bombs",
-                "separate": true,
-                "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp.blk",
-                "emitter": "1000_lb_uk_gp_bomb2",
-                "bullets": 1
+            ]
+          },
+          {
+            "WeaponPreset": [
+              {
+                "iconType": "bombs_large_high_drag_group_x4"
+              },
+              {
+                "name": "1000lbs_centr_n117"
+              },
+              {
+                "reqModification": "uk_mk_10_1000lb"
+              },
+              {
+                "Weapon": {
+                  "trigger": "bombs",
+                  "separate": true,
+                  "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp_n117.blk",
+                  "emitter": "1000_lb_uk_gp_bomb1",
+                  "bullets": 1
+                }
+              },
+              {
+                "Weapon": {
+                  "trigger": "bombs",
+                  "separate": true,
+                  "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp_n117.blk",
+                  "emitter": "1000_lb_uk_gp_bomb2",
+                  "bullets": 1
+                }
+              },
+              {
+                "Weapon": {
+                  "trigger": "bombs",
+                  "separate": true,
+                  "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp_n117.blk",
+                  "emitter": "1000_lb_uk_gp_bomb3",
+                  "bullets": 1
+                }
+              },
+              {
+                "Weapon": {
+                  "trigger": "bombs",
+                  "separate": true,
+                  "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp_n117.blk",
+                  "emitter": "1000_lb_uk_gp_bomb4",
+                  "bullets": 1
+                }
               }
-            },
-            {
-              "Weapon": {
-                "trigger": "bombs",
-                "separate": true,
-                "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp.blk",
-                "emitter": "1000_lb_uk_gp_bomb3",
-                "bullets": 1
-              }
-            },
-            {
-              "Weapon": {
-                "trigger": "bombs",
-                "separate": true,
-                "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp.blk",
-                "emitter": "1000_lb_uk_gp_bomb4",
-                "bullets": 1
-              }
-            }
-          ]
-        }
+            ]
+          }
+        ]
       },
       {
         "WeaponSlot": [
@@ -3084,26 +3350,75 @@
             }
           },
           {
-            "WeaponPreset": {
-              "iconType": "rockets_ap_small_group",
-              "name": "rp3",
-              "reqModification": "uk_rp3_mk12",
-              "ShowNodes": [
-                {
-                  "node": "early_short_pylon3"
-                },
-                {
-                  "node": "uk_rp3_rocket_pylon3"
+            "WeaponPreset": [
+              {
+                "iconType": "rockets_ap_small_group"
+              },
+              {
+                "name": "rp3"
+              },
+              {
+                "reqModification": "uk_rp3_mk12"
+              },
+              {
+                "ShowNodes": [
+                  {
+                    "node": "early_short_pylon3"
+                  },
+                  {
+                    "node": "uk_rp3_rocket_pylon3"
+                  }
+                ]
+              },
+              {
+                "Weapon": {
+                  "trigger": "rockets",
+                  "external": true,
+                  "separate": true,
+                  "blk": "gameData/Weapons/rocketGuns/uk_rp3_2.blk",
+                  "emitter": "uk_rp3_rocket4",
+                  "bullets": 1,
+                  "dragCx": 0.002,
+                  "blockingGroupId": 0
                 }
-              ],
-              "Weapon": {
-                "trigger": "rockets",
-                "external": true,
-                "blk": "gameData/Weapons/containers/uk_rp3_late.blk",
-                "emitter": "uk_rp3_rocket_pylon3",
-                "machLimit": 1.01
+              },
+              {
+                "Weapon": {
+                  "trigger": "rockets",
+                  "external": true,
+                  "separate": true,
+                  "blk": "gameData/Weapons/rocketGuns/uk_rp3_2.blk",
+                  "emitter": "uk_rp3_rocket8",
+                  "bullets": 1,
+                  "dragCx": 0.002,
+                  "blockingGroupId": 0
+                }
+              },
+              {
+                "Weapon": {
+                  "trigger": "rockets",
+                  "external": true,
+                  "separate": true,
+                  "blk": "gameData/Weapons/rocketGuns/uk_rp3.blk",
+                  "emitter": "uk_rp3_rocket12",
+                  "bullets": 1,
+                  "dragCx": 0.002,
+                  "blockedByGroupId": 0
+                }
+              },
+              {
+                "Weapon": {
+                  "trigger": "rockets",
+                  "external": true,
+                  "separate": true,
+                  "blk": "gameData/Weapons/rocketGuns/uk_rp3.blk",
+                  "emitter": "uk_rp3_rocket16",
+                  "bullets": 1,
+                  "dragCx": 0.002,
+                  "blockedByGroupId": 0
+                }
               }
-            }
+            ]
           },
           {
             "WeaponPreset": {
@@ -3140,6 +3455,24 @@
                 "bullets": 1
               }
             }
+          },
+          {
+            "WeaponPreset": {
+              "iconType": "bombs_large_high_drag",
+              "name": "1000lbs_n117",
+              "reqModification": "uk_mk_10_1000lb",
+              "ShowNodes": {
+                "node": "early_short_pylon3"
+              },
+              "Weapon": {
+                "trigger": "bombs",
+                "external": true,
+                "separate": true,
+                "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp_n117.blk",
+                "emitter": "1000_lb_uk_ld_bomb7",
+                "bullets": 1
+              }
+            }
           }
         ]
       },
@@ -3172,26 +3505,75 @@
             }
           },
           {
-            "WeaponPreset": {
-              "iconType": "rockets_ap_small_group",
-              "name": "rp3",
-              "reqModification": "uk_rp3_mk12",
-              "ShowNodes": [
-                {
-                  "node": "early_short_pylon4"
-                },
-                {
-                  "node": "uk_rp3_rocket_pylon4"
+            "WeaponPreset": [
+              {
+                "iconType": "rockets_ap_small_group"
+              },
+              {
+                "name": "rp3"
+              },
+              {
+                "reqModification": "uk_rp3_mk12"
+              },
+              {
+                "ShowNodes": [
+                  {
+                    "node": "early_short_pylon4"
+                  },
+                  {
+                    "node": "uk_rp3_rocket_pylon4"
+                  }
+                ]
+              },
+              {
+                "Weapon": {
+                  "trigger": "rockets",
+                  "external": true,
+                  "separate": true,
+                  "blk": "gameData/Weapons/rocketGuns/uk_rp3_2.blk",
+                  "emitter": "uk_rp3_rocket2",
+                  "bullets": 1,
+                  "dragCx": 0.002,
+                  "blockingGroupId": 0
                 }
-              ],
-              "Weapon": {
-                "trigger": "rockets",
-                "external": true,
-                "blk": "gameData/Weapons/containers/uk_rp3_late.blk",
-                "emitter": "uk_rp3_rocket_pylon4",
-                "machLimit": 1.01
+              },
+              {
+                "Weapon": {
+                  "trigger": "rockets",
+                  "external": true,
+                  "separate": true,
+                  "blk": "gameData/Weapons/rocketGuns/uk_rp3_2.blk",
+                  "emitter": "uk_rp3_rocket6",
+                  "bullets": 1,
+                  "dragCx": 0.002,
+                  "blockingGroupId": 0
+                }
+              },
+              {
+                "Weapon": {
+                  "trigger": "rockets",
+                  "external": true,
+                  "separate": true,
+                  "blk": "gameData/Weapons/rocketGuns/uk_rp3.blk",
+                  "emitter": "uk_rp3_rocket10",
+                  "bullets": 1,
+                  "dragCx": 0.002,
+                  "blockedByGroupId": 0
+                }
+              },
+              {
+                "Weapon": {
+                  "trigger": "rockets",
+                  "external": true,
+                  "separate": true,
+                  "blk": "gameData/Weapons/rocketGuns/uk_rp3.blk",
+                  "emitter": "uk_rp3_rocket14",
+                  "bullets": 1,
+                  "dragCx": 0.002,
+                  "blockedByGroupId": 0
+                }
               }
-            }
+            ]
           },
           {
             "WeaponPreset": {
@@ -3224,6 +3606,24 @@
                 "external": true,
                 "separate": true,
                 "blk": "gameData/Weapons/BombGuns/uk_1000lb_ld_he_mc_mk_1.blk",
+                "emitter": "1000_lb_uk_ld_bomb8",
+                "bullets": 1
+              }
+            }
+          },
+          {
+            "WeaponPreset": {
+              "iconType": "bombs_large_high_drag",
+              "name": "1000lbs_n117",
+              "reqModification": "uk_mk_10_1000lb",
+              "ShowNodes": {
+                "node": "early_short_pylon4"
+              },
+              "Weapon": {
+                "trigger": "bombs",
+                "external": true,
+                "separate": true,
+                "blk": "gameData/Weapons/BombGuns/uk_1000lbs_gp_n117.blk",
                 "emitter": "1000_lb_uk_ld_bomb8",
                 "bullets": 1
               }

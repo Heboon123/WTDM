@@ -1,8 +1,8 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
+
+let { subscribe_handler } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { checkShowMatchingConnect } = require("%scripts/matching/matchingOnline.nut")
 
 enum LOGIN_PROGRESS {
   NOT_STARTED
@@ -31,7 +31,7 @@ let class LoginProcess {
     if (::g_login.isAuthorized())
       this.curProgress = LOGIN_PROGRESS.IN_LOGIN_WND
 
-    ::subscribe_handler(this, ::g_listener_priority.LOGIN_PROCESS)
+    subscribe_handler(this, ::g_listener_priority.LOGIN_PROCESS)
     this.nextStep()
   }
 
@@ -61,7 +61,7 @@ let class LoginProcess {
                           this.destroy()
                         }, this)
 
-      ::g_matching_connect.connect(successCb, errorCb, false)
+      checkShowMatchingConnect(successCb, errorCb, false)
     }
     else if (this.curProgress == LOGIN_PROGRESS.INIT_CONFIGS) {
       ::g_login.initConfigs(

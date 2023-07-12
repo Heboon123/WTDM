@@ -1,8 +1,5 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { animBgLoad } = require("%scripts/loading/animBg.nut")
 let showTitleLogo = require("%scripts/viewUtils/showTitleLogo.nut")
@@ -31,38 +28,11 @@ let { is_running } = require("steam")
     if (::g_login.isAuthorized())
       return
 
-    let useSteamLoginAuto = ::load_local_shared_settings(USE_STEAM_LOGIN_AUTO_SETTING_ID)
-    if (!hasFeature("AllowSteamAccountLinking")) {
-      if (!useSteamLoginAuto) //can be null or false
-        this.goToLoginWnd(useSteamLoginAuto == null)
-      else
-        this.authorizeSteam()
-      return
-    }
-
-    if (useSteamLoginAuto == true) {
-      this.authorizeSteam("steam-known")
-      return
-    }
-    else if (useSteamLoginAuto == false) {
-      this.goToLoginWnd(false)
-      return
-    }
-
-    this.showSceneBtn("button_exit", true)
-    this.showLoginProposal()
-  }
-
-  function showLoginProposal() {
-    ::scene_msg_box("steam_link_method_question",
-      this.guiScene,
-      loc("steam/login/linkQuestion" + (hasFeature("AllowSteamAccountLinking") ? "" : "/noLink")),
-      [["#mainmenu/loginWithGaijin", Callback(this.goToLoginWnd, this) ],
-       ["#mainmenu/loginWithSteam", Callback(this.authorizeSteam, this)],
-       ["exit", exitGame]
-      ],
-      "#mainmenu/loginWithGaijin"
-    )
+    let useSteamLoginAuto = ::load_local_shared_settings(USE_STEAM_LOGIN_AUTO_SETTING_ID, true)
+    if (!useSteamLoginAuto) //can be null or false
+      this.goToLoginWnd(useSteamLoginAuto == null)
+    else
+      this.steamAuthorization()
   }
 
   function proceedAuthorizationResult(result, no_dump_login) {
@@ -71,7 +41,7 @@ let { is_running } = require("steam")
         this.goToLoginWnd()
         break
       case YU2_OK:
-        if (is_running() && !hasFeature("AllowSteamAccountLinking"))
+        if (is_running())
           ::save_local_shared_settings(USE_STEAM_LOGIN_AUTO_SETTING_ID, true)
           // no break!
       default:  // warning disable: -missed-break
@@ -80,11 +50,7 @@ let { is_running } = require("steam")
   }
 
   function onLoginErrorTryAgain() {
-    this.showLoginProposal()
-  }
-
-  function authorizeSteam(steamKey = "steam") {
-    this.onSteamAuthorization(steamKey)
+    this.goToLoginWnd()
   }
 
   function goToLoginWnd(disableAutologin = true) {

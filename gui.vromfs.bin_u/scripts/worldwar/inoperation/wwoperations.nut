@@ -1,11 +1,9 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
 let { get_time_msec } = require("dagor.time")
+let { subscribe_handler } = require("%sqStdLibs/helpers/subscriptions.nut")
 let DataBlock  = require("DataBlock")
 
 ::g_operations <- {
@@ -75,7 +73,7 @@ let DataBlock  = require("DataBlock")
     return operationUnits
 
   foreach (unitName in sideBlk.unitsEverSeen % "item")
-    if (::getAircraftByName(unitName))
+    if (getAircraftByName(unitName))
       operationUnits[unitName] <- 0
 
   return operationUnits
@@ -106,4 +104,4 @@ let DataBlock  = require("DataBlock")
   this.getCurrentOperation().armies.updateArmyStatus(armyName)
 }
 
-::subscribe_handler(::g_operations, ::g_listener_priority.DEFAULT_HANDLER)
+subscribe_handler(::g_operations, ::g_listener_priority.DEFAULT_HANDLER)

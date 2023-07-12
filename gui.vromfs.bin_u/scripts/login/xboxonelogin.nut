@@ -1,14 +1,15 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-//checked for explicitness
-#no-root-fallback
-#explicit-this
 
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { animBgLoad } = require("%scripts/loading/animBg.nut")
 let showTitleLogo = require("%scripts/viewUtils/showTitleLogo.nut")
 let { setVersionText } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { setGuiOptionsMode } = require("guiOptions")
 let { forceHideCursor } = require("%scripts/controls/mousePointerVisibility.nut")
+let { get_gamertag } = require("%xboxLib/impl/user.nut")
+let { init_with_ui } = require("%xboxLib/user.nut")
+let { login } = require("%scripts/xbox/auth.nut")
 
 ::gui_handlers.LoginWndHandlerXboxOne <- class extends ::BaseGuiHandler {
   sceneBlkName = "%gui/loginBoxSimple.blk"
@@ -49,7 +50,7 @@ let { forceHideCursor } = require("%scripts/controls/mousePointerVisibility.nut"
 
     local data = ""
     foreach (view in buttonsView)
-      data += ::handyman.renderCached("%gui/commonParts/button.tpl", view)
+      data += handyman.renderCached("%gui/commonParts/button.tpl", view)
 
     this.guiScene.prependWithBlk(this.scene.findObject("authorization_button_place"), data, this)
     this.scene.findObject("user_notify_text").setValue(loc("xbox/reqInstantConnection"))
@@ -67,7 +68,7 @@ let { forceHideCursor } = require("%scripts/controls/mousePointerVisibility.nut"
   }
 
   function loginStep1_checkGamercard() {
-    if (::xbox_get_active_user_gamertag() == "") {
+    if (get_gamertag() == "") {
       this.isLoginInProcess = false
       this.needAutoLogin = true
       this.onChangeGamertag()
@@ -79,9 +80,11 @@ let { forceHideCursor } = require("%scripts/controls/mousePointerVisibility.nut"
 
   function performLogin() {
     this.needAutoLogin = false
-    ::xbox_on_login(
-      function(result, err_code) {
-        if (result == XBOX_LOGIN_STATE_SUCCESS) {
+    ::show_wait_screen("msgbox/please_wait")
+    login(
+      function(err_code) {
+        ::close_wait_screen()
+        if (err_code == 0) { // YU2_OK
           forceHideCursor(false)
           ::gui_start_modal_wnd(::gui_handlers.UpdaterModal,
               {
@@ -89,22 +92,21 @@ let { forceHideCursor } = require("%scripts/controls/mousePointerVisibility.nut"
                 onFinishCallback = ::xbox_complete_login
               })
         }
-        else if (result == XBOX_LOGIN_STATE_FAILED) {
+        else {
           this.msgBox("no_internet_connection", loc("xbox/noInternetConnection"), [["ok", function() {} ]], "ok")
           this.isLoginInProcess = false
           logerr($"XBOX: login failed with error - {err_code}")
         }
-
       }.bindenv(this)
     )
   }
 
   function onChangeGamertag(_obj = null) {
-    ::xbox_account_picker()
+    init_with_ui(null)
   }
 
   function updateGamertag() {
-    local text = ::xbox_get_active_user_gamertag()
+    local text = get_gamertag()
     if (text != "")
       text = loc("xbox/playAs", { name = text })
 
@@ -113,7 +115,7 @@ let { forceHideCursor } = require("%scripts/controls/mousePointerVisibility.nut"
 
   function onEventXboxActiveUserGamertagChanged(_params) {
     this.updateGamertag()
-    if (this.needAutoLogin && ::xbox_get_active_user_gamertag() != "")
+    if (this.needAutoLogin && get_gamertag() != "")
       this.onOk()
   }
 
@@ -127,6 +129,3 @@ let { forceHideCursor } = require("%scripts/controls/mousePointerVisibility.nut"
 
   function goBack(_obj) {}
 }
-
-//Calling from C++
-::xbox_on_gamertag_changed <- @() ::broadcastEvent("XboxActiveUserGamertagChanged")
