@@ -808,6 +808,11 @@
         },
         {
           "comment": {
+            "value": ""
+          }
+        },
+        {
+          "comment": {
             "value": "spachnim bomberov"
           }
         },
@@ -815,6 +820,12 @@
           "varSetBool": {
             "value": true,
             "var": "bt_t1_is_active"
+          }
+        },
+        {
+          "varSetBool": {
+            "value": false,
+            "var": "bt_t1_attack_done"
           }
         },
         {
@@ -1849,6 +1860,12 @@
             },
             {
               "target": "bt_t1_bombers_target_destroyed"
+            },
+            {
+              "target": "bt_t1_check_out_area"
+            },
+            {
+              "target": "bt_t1_check_attack_done"
             }
           ]
         },
@@ -1942,6 +1959,12 @@
             },
             {
               "target": "bt_t1_bombers_target_destroyed"
+            },
+            {
+              "target": "bt_t1_check_out_area"
+            },
+            {
+              "target": "bt_t1_check_attack_done"
             }
           ]
         },
@@ -2298,6 +2321,11 @@
         },
         {
           "comment": {
+            "value": ""
+          }
+        },
+        {
+          "comment": {
             "value": "spachnim bomberov"
           }
         },
@@ -2305,6 +2333,12 @@
           "varSetBool": {
             "value": true,
             "var": "bt_t2_is_active"
+          }
+        },
+        {
+          "varSetBool": {
+            "value": false,
+            "var": "bt_t2_attack_done"
           }
         },
         {
@@ -3341,6 +3375,12 @@
             },
             {
               "target": "bt_t2_bombers_target_destroyed"
+            },
+            {
+              "target": "bt_t2_check_out_area"
+            },
+            {
+              "target": "bt_t2_check_attack_done"
             }
           ]
         },
@@ -3430,6 +3470,12 @@
             },
             {
               "target": "bt_t2_bombers_target_destroyed"
+            },
+            {
+              "target": "bt_t2_check_out_area"
+            },
+            {
+              "target": "bt_t2_check_attack_done"
             }
           ]
         },
@@ -4975,7 +5021,7 @@
           {
             "varSetBool": {
               "value": false,
-              "var": "bt_t1_attack_done"
+              "var": "bt_t2_attack_done"
             }
           },
           {
@@ -7249,11 +7295,23 @@
             "check_objects": "all",
             "object": "@bt_t1_bomber_name",
             "target": "flt_battle_area"
+          },
+          "unitWhenCountMatches": {
+            "object_type": "isActive",
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "func": "more",
+            "value": 0,
+            "object": "@bt_t1_bomber_name"
           }
         },
         "actions": {
           "comment": {
             "value": "units are n area. do nothing"
+          },
+          "triggerDisable": {
+            "target": "bt_t1_check_attack_done"
           }
         },
         "else_actions": {
@@ -7278,13 +7336,22 @@
             "time": 1.0
           }
         },
-        "conditions": {
-          "varCompareBool": {
-            "var_value": "bt_t1_attack_done",
-            "value": true,
-            "comparasion_func": "equal"
+        "conditions": [
+          {
+            "varCompareBool": {
+              "var_value": "bt_t1_attack_done",
+              "value": true,
+              "comparasion_func": "equal"
+            }
+          },
+          {
+            "varCompareBool": {
+              "var_value": "bt_t1_is_active",
+              "value": true,
+              "comparasion_func": "equal"
+            }
           }
-        },
+        ],
         "actions": [
           {
             "comment": {
@@ -7393,11 +7460,23 @@
             "check_objects": "all",
             "object": "@bt_t2_bomber_name",
             "target": "flt_battle_area"
+          },
+          "unitWhenCountMatches": {
+            "object_type": "isActive",
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "func": "more",
+            "value": 0,
+            "object": "@bt_t2_bomber_name"
           }
         },
         "actions": {
           "comment": {
             "value": "units are n area. do nothing"
+          },
+          "triggerDisable": {
+            "target": "bt_t2_check_attack_done"
           }
         },
         "else_actions": {
@@ -7422,13 +7501,22 @@
             "time": 1.0
           }
         },
-        "conditions": {
-          "varCompareBool": {
-            "var_value": "bt_t2_attack_done",
-            "value": true,
-            "comparasion_func": "equal"
+        "conditions": [
+          {
+            "varCompareBool": {
+              "var_value": "bt_t2_attack_done",
+              "value": true,
+              "comparasion_func": "equal"
+            }
+          },
+          {
+            "varCompareBool": {
+              "var_value": "bt_t2_is_active",
+              "value": true,
+              "comparasion_func": "equal"
+            }
           }
-        },
+        ],
         "actions": [
           {
             "comment": {
