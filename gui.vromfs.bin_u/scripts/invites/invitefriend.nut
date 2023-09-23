@@ -1,19 +1,16 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-let u = require("%sqStdLibs/helpers/u.nut")
-
-
 let { addContact, rejectContact } = require("%scripts/contacts/contactsState.nut")
 let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { registerInviteClass } = require("%scripts/invites/invitesClasses.nut")
+let BaseInvite = require("%scripts/invites/inviteBase.nut")
 
-::g_invites_classes.Friend <- class extends ::BaseInvite {
+let Friend = class extends BaseInvite {
   static function getUidByParams(params) {
     return "FR_" + getTblValue("inviterUid", params, "")
   }
 
-  function updateCustomParams(params, initial = false) {
-    this.inviterName = params?.inviterName ?? this.inviterName
-    this.inviterUid = params?.inviterUid ?? this.inviterUid
+  function updateCustomParams(_params, initial = false) {
     this.isAutoAccepted = this.isAlreadyAccepted()
 
     if (initial)
@@ -26,7 +23,7 @@ let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
   }
 
   function isValid() {
-    return base.isValid() && !u.isEmpty(this.inviterUid)
+    return base.isValid() && this.inviterUid != null && this.inviterUid != ""
   }
 
   function isOutdated() {
@@ -38,11 +35,11 @@ let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
   }
 
   function getInviteText() {
-    return loc("contacts/friend_invitation_recieved/no_nick")
+    return loc("contacts/friend_invitation_received/no_nick")
   }
 
   function getPopupText() {
-    return loc("contacts/popup_friend_invitation_recieved",
+    return loc("contacts/popup_friend_invitation_received",
       { userName = colorize("goodTextColor", this.getInviterName()) })
   }
 
@@ -62,3 +59,5 @@ let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
     this.remove()
   }
 }
+
+registerInviteClass("Friend", Friend)

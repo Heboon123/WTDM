@@ -1,15 +1,20 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { Cost } = require("%scripts/money.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
-
-
 let { format } = require("string")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let DataBlock = require("DataBlock")
 let { get_game_mode } = require("mission")
 let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
+let { USEROPT_TIME_LIMIT } = require("%scripts/options/optionsExtNames.nut")
+let { getWeatherLocName } = require("%scripts/options/optionsView.nut")
+let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
+let { getUnitName } = require("%scripts/unit/unitInfo.nut")
+let { get_pve_awards_blk } = require("blkGetters")
 
 /* API:
   static create(nest, mission = null)
@@ -30,7 +35,7 @@ let { getMissionRewardsMarkup, getMissionLocName } = require("%scripts/missions/
 let { getTutorialFirstCompletRewardData } = require("%scripts/tutorials/tutorialsData.nut")
 let { getFullUnlockDescByName } = require("%scripts/unlocks/unlocksViewModule.nut")
 
-::gui_handlers.MissionDescription <- class extends ::gui_handlers.BaseGuiHandlerWT {
+gui_handlers.MissionDescription <- class extends gui_handlers.BaseGuiHandlerWT {
   wndType = handlerType.CUSTOM
   sceneBlkName = "%gui/missionDescr.blk"
 
@@ -54,7 +59,7 @@ let { getFullUnlockDescByName } = require("%scripts/unlocks/unlocksViewModule.nu
       scene = nest
       curMission = mission
     }
-    return ::handlersManager.loadHandler(::gui_handlers.MissionDescription, params)
+    return handlersManager.loadHandler(gui_handlers.MissionDescription, params)
   }
 
   function initScreen() {
@@ -208,7 +213,7 @@ let { getFullUnlockDescByName } = require("%scripts/unlocks/unlocksViewModule.nu
 
       local sm_weather = blk.getStr("weather", "")
       if (sm_weather != "")
-        sm_weather = loc("options/weather" + sm_weather)
+        sm_weather = getWeatherLocName(sm_weather)
 
       config.condition += sm_location
       config.condition += (config.condition != "" ? "; " : "") + sm_time
@@ -226,12 +231,12 @@ let { getFullUnlockDescByName } = require("%scripts/unlocks/unlocksViewModule.nu
     if ((aircraft != "") && !(gt & GT_VERSUS)
         && (this.gm != GM_EVENT) && (this.gm != GM_TOURNAMENT) && (this.gm != GM_DYNAMIC) && (this.gm != GM_BUILDER) && (this.gm != GM_BENCHMARK)) {
       config.aircraftItem <- loc("options/aircraft") + loc("ui/colon")
-      config.aircraft <- ::getUnitName(aircraft) + "; " +
+      config.aircraft <- getUnitName(aircraft) + "; " +
                  getWeaponNameText(aircraft, null, blk.getStr("player_weapons", ""), ", ")
 
       let country = ::getShopCountry(aircraft)
       log("aircraft = " + aircraft + " country = " + country)
-      config.flag <- ::get_country_icon(country, true)
+      config.flag <- getCountryIcon(country, true)
     }
 
 
@@ -241,7 +246,7 @@ let { getFullUnlockDescByName } = require("%scripts/unlocks/unlocksViewModule.nu
       config.maintext = ""
     }
     else if (this.gm == GM_DOMINATION && blk?.timeLimit) {
-      let option = ::get_option(::USEROPT_TIME_LIMIT)
+      let option = ::get_option(USEROPT_TIME_LIMIT)
       let timeLimitText = option.getTitle() + loc("ui/colon") + option.getValueLocText(blk.timeLimit)
       config.maintext += (config.maintext.len() ? "\n\n" : "") + timeLimitText
     }
@@ -253,7 +258,7 @@ let { getFullUnlockDescByName } = require("%scripts/unlocks/unlocksViewModule.nu
     if (blk.getStr("recommendedPlayers", "") != "")
       config.maintext += format(loc("players_recommended"), blk.getStr("recommendedPlayers", "1-4")) + "\n"
 
-    let rBlk = ::get_pve_awards_blk()
+    let rBlk = get_pve_awards_blk()
     if (this.gm == GM_CAMPAIGN || this.gm == GM_SINGLE_MISSION || this.gm == GM_TRAINING) {
       let status = max(mission.singleProgress, mission.onlineProgress)
       config.status <- status
@@ -315,14 +320,14 @@ let { getFullUnlockDescByName } = require("%scripts/unlocks/unlocksViewModule.nu
       let reqAir = ("player_class" in mission.blk ? mission.blk.player_class : "")
       if (reqAir != "") {
         config.aircraftItem <- loc("options/aircraft") + loc("ui/colon")
-        config.aircraft <- ::getUnitName(reqAir)
+        config.aircraft <- getUnitName(reqAir)
       }
     }
 
     if ((this.gm == GM_SINGLE_MISSION) && (mission.progress >= 4)) {
       config.requirementsItem <- loc("unlocks/requirements") + loc("ui/colon")
       if ("mustHaveUnit" in this.curMission) {
-        let unitNameLoc = colorize("activeTextColor", ::getUnitName(this.curMission.mustHaveUnit))
+        let unitNameLoc = colorize("activeTextColor", getUnitName(this.curMission.mustHaveUnit))
         config.requirements <- loc("conditions/char_unit_exist/single", { value = unitNameLoc })
       }
       else {

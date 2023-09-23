@@ -1,19 +1,18 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-let u = require("%sqStdLibs/helpers/u.nut")
-
-
 let { isInReloading } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { get_time_msec } = require("dagor.time")
 let platformModule = require("%scripts/clientState/platform.nut")
 let crossplayModule = require("%scripts/social/crossplay.nut")
 let { isChatEnableWithPlayer, isCrossNetworkMessageAllowed } = require("%scripts/chat/chatStates.nut")
+let { get_charserver_time_sec } = require("chard")
+let { OPTIONS_MODE_GAMEPLAY, USEROPT_SHOW_SOCIAL_NOTIFICATIONS
+} = require("%scripts/options/optionsExtNames.nut")
+let { getPlayerName } = require("%scripts/user/remapNick.nut")
+let { INVITE_CHAT_LINK_PREFIX, openInviteWnd } = require("%scripts/invites/invites.nut")
 
-::g_invites_classes <- {}
-
-::BaseInvite <- class {
+let BaseInvite = class {
   static lifeTimeMsec = 3600000
-  static chatLinkPrefix = "INV_"
 
   inviteColor = "@chatTextInviteColor"
   inviteActiveColor = "@chatTextInviteActiveColor"
@@ -36,6 +35,8 @@ let { isChatEnableWithPlayer, isCrossNetworkMessageAllowed } = require("%scripts
 
   reloadParams = null //params to reload invite on script reload
 
+  needShowPopup = true
+
   constructor(params) {
     this.uid = this.getUidByParams(params)
     this.updateParams(params, true)
@@ -48,8 +49,9 @@ let { isChatEnableWithPlayer, isCrossNetworkMessageAllowed } = require("%scripts
   function updateParams(params, initial = false) {
     this.reloadParams = params
     this.receivedTime = get_time_msec()
-    this.inviterName = getTblValue("inviterName", params, this.inviterName)
-    this.inviterUid = getTblValue("inviterUid", params, this.inviterUid)
+    this.inviterName = params?.inviterName ?? this.inviterName
+    this.inviterUid = params?.inviterUid ?? this.inviterUid
+    this.needShowPopup = params?.needShowPopup ?? true
 
     this.updateCustomParams(params, initial)
 
@@ -71,13 +73,13 @@ let { isChatEnableWithPlayer, isCrossNetworkMessageAllowed } = require("%scripts
       return true
     if (this.receivedTime + this.lifeTimeMsec < get_time_msec())
       return true
-    if (this.timedExpireStamp > 0 && this.timedExpireStamp <= ::get_charserver_time_sec())
+    if (this.timedExpireStamp > 0 && this.timedExpireStamp <= get_charserver_time_sec())
       return true
     return false
   }
 
   function getInviterName() {
-    return platformModule.getPlayerName(this.inviterName)
+    return getPlayerName(this.inviterName)
   }
 
   function isVisible() {
@@ -120,13 +122,13 @@ let { isChatEnableWithPlayer, isCrossNetworkMessageAllowed } = require("%scripts
   function setTimedParams(timedShowStamp_, timedExpireStamp_) {
     this.timedShowStamp = timedShowStamp_
     this.timedExpireStamp  = timedExpireStamp_
-    if (this.timedShowStamp > 0 && this.timedShowStamp > ::get_charserver_time_sec())
+    if (this.timedShowStamp > 0 && this.timedShowStamp > get_charserver_time_sec())
       this.setDelayed(true)
   }
 
 
   function getChatLink() {
-    return this.chatLinkPrefix + this.uid
+    return $"{INVITE_CHAT_LINK_PREFIX}{this.uid}"
   }
 
   function getChatInviterLink() {
@@ -152,7 +154,8 @@ let { isChatEnableWithPlayer, isCrossNetworkMessageAllowed } = require("%scripts
   function showInvitePopup() {
     if (!this.isVisible()
         || isInReloading()
-        || ::get_gui_option_in_mode(::USEROPT_SHOW_SOCIAL_NOTIFICATIONS, ::OPTIONS_MODE_GAMEPLAY) == false
+        || ::get_gui_option_in_mode(USEROPT_SHOW_SOCIAL_NOTIFICATIONS, OPTIONS_MODE_GAMEPLAY) == false
+        || !this.needShowPopup
       )
       return
     local msg = this.getPopupText()
@@ -176,7 +179,7 @@ let { isChatEnableWithPlayer, isCrossNetworkMessageAllowed } = require("%scripts
       )
     }
 
-    ::g_popups.add(null, "\n".join(msg, true), ::gui_start_invites, buttons, this, "invite_" + this.uid)
+    ::g_popups.add(null, "\n".join(msg, true), openInviteWnd, buttons, this, $"invite_{this.uid}")
   }
 
   function reject() {
@@ -211,7 +214,7 @@ let { isChatEnableWithPlayer, isCrossNetworkMessageAllowed } = require("%scripts
   }
 
   function hasInviter() {
-    return !u.isEmpty(this.inviterName)
+    return this.inviterName != ""
   }
 
   function isAvailableByCrossPlay() {
@@ -225,3 +228,5 @@ let { isChatEnableWithPlayer, isCrossNetworkMessageAllowed } = require("%scripts
       && isCrossNetworkMessageAllowed(this.inviterName)
   }
 }
+
+return BaseInvite

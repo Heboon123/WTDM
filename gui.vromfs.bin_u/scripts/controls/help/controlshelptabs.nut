@@ -5,6 +5,7 @@ let { search } = require("%sqStdLibs/helpers/u.nut")
 let platform = require("%scripts/clientState/platform.nut")
 let helpTypes = require("%scripts/controls/help/controlsHelpTypes.nut")
 let { getPlayerCurUnit } = require("%scripts/slotbar/playerCurUnit.nut")
+let { CONTROL_HELP_PATTERN } = require("%scripts/controls/controlsConsts.nut")
 
 let tabGroups = [
   {
@@ -14,6 +15,7 @@ let tabGroups = [
       helpTypes.CONTROLLER_AIRCRAFT
       helpTypes.KEYBOARD_AIRCRAFT
       helpTypes.RADAR_AIRBORNE
+      helpTypes.RWR_AIRBORNE
     ]
   }
   {
@@ -48,6 +50,7 @@ let tabGroups = [
       helpTypes.CONTROLLER_HELICOPTER
       helpTypes.KEYBOARD_HELICOPTER
       helpTypes.RADAR_AIRBORNE
+      helpTypes.RWR_AIRBORNE
     ]
   }
   {
@@ -105,10 +108,11 @@ let function getPrefferableType(contentSet) {
     CONTROL_HELP_PATTERN.SPECIAL_EVENT,
     CONTROL_HELP_PATTERN.HOTAS4,
     CONTROL_HELP_PATTERN.MISSION,
+    CONTROL_HELP_PATTERN.RWR,
+    CONTROL_HELP_PATTERN.RADAR,
     CONTROL_HELP_PATTERN.IMAGE,
     CONTROL_HELP_PATTERN.GAMEPAD,
     CONTROL_HELP_PATTERN.KEYBOARD_MOUSE,
-    CONTROL_HELP_PATTERN.RADAR,
   ]) {
     let helpType = search(helpTypes.types, @(t) t.helpPattern == pattern
       && t.needShow(contentSet)

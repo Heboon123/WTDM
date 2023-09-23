@@ -1,22 +1,23 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-let { reqUnlockByClient } = require("%scripts/unlocks/unlocksModule.nut")
+let { reqUnlockByClient, isUnlockOpened } = require("%scripts/unlocks/unlocksModule.nut")
+let { get_gui_regional_blk } = require("blkGetters")
 
 let function giveUnlocksAbTestOnce(abTestBlk) {
   let unlocksList = abTestBlk.unlocks
   let unlockId = unlocksList?[(::my_user_id_int64 % abTestBlk.divider).tostring()]
-  if (!unlockId || ::is_unlocked_scripted(UNLOCKABLE_ACHIEVEMENT, unlockId))
+  if (!unlockId || isUnlockOpened(unlockId, UNLOCKABLE_ACHIEVEMENT))
     return
 
   for (local i = 0; i < unlocksList.paramCount(); i++)
-    if (::is_unlocked_scripted(UNLOCKABLE_ACHIEVEMENT, unlocksList.getParamValue(i)))
+    if (isUnlockOpened(unlocksList.getParamValue(i), UNLOCKABLE_ACHIEVEMENT))
       return
 
   reqUnlockByClient(unlockId)
 }
 
 let function checkUnlocksByAbTestList() {
-  let abTestUnlocksListByUsersGroups = ::get_gui_regional_blk()?.abTestUnlocksListByUsersGroups
+  let abTestUnlocksListByUsersGroups = get_gui_regional_blk()?.abTestUnlocksListByUsersGroups
   if (!abTestUnlocksListByUsersGroups)
     return
 

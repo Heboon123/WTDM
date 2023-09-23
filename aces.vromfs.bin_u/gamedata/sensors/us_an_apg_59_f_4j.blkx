@@ -135,7 +135,7 @@
       "dynamicRange": [40.0,15.0],
       "groundClutter": true,
       "aircraftAsTarget": true,
-      "friendFoeId": false,
+      "friendFoeId": true,
       "absDopplerSpeed": false,
       "mainBeamDopplerSpeed": false,
       "zeroDopplerNotchWidth": 50.0,
@@ -267,8 +267,9 @@
           "setScanPatternSet": {
             "scanPatternSet": "common"
           },
-          "setIllumination": {
-            "illumination": false
+          "setFsmActive": {
+            "fsm": "illumination",
+            "active": false
           }
         },
         "setPulseStandbyMode": {
@@ -301,34 +302,53 @@
             "scopeRangeSet": "pulse"
           }
         },
-        "setSearchModeCommon": {
-          "setEnabled": {
-            "value": true
+        "setSearchModeCommon": [
+          {
+            "setEnabled": {
+              "value": true
+            }
           },
-          "setFsmActive": {
-            "fsm": "search",
-            "active": true
+          {
+            "setFsmActive": {
+              "fsm": "search",
+              "active": true
+            }
           },
-          "setCenterAzimuth": {
-            "source": "constant",
-            "value": 0.0
+          {
+            "setFsmActive": {
+              "fsm": "illumination",
+              "active": false
+            }
           },
-          "setCenterElevation": {
-            "source": "constant",
-            "value": -2.0
+          {
+            "setCenterAzimuth": {
+              "source": "constant",
+              "value": 0.0
+            }
           },
-          "clearTargets": [],
-          "clearTargetsOfInterest": [],
-          "setCueEnabled": {
-            "value": true
+          {
+            "setCenterElevation": {
+              "source": "constant",
+              "value": -2.0
+            }
           },
-          "setScanPatternSet": {
-            "scanPatternSet": "common"
+          {
+            "clearTargets": []
           },
-          "setIllumination": {
-            "illumination": false
+          {
+            "clearTargetsOfInterest": []
+          },
+          {
+            "setCueEnabled": {
+              "value": true
+            }
+          },
+          {
+            "setScanPatternSet": {
+              "scanPatternSet": "common"
+            }
           }
-        },
+        ],
         "setPulseSearchMode": {
           "setSearchModeCommon": [],
           "setModeName": {
@@ -368,39 +388,64 @@
             "value": false
           }
         },
-        "setDesignationLockModeCommon": {
-          "setEnabled": {
-            "value": true
+        "setDesignationLockModeCommon": [
+          {
+            "setEnabled": {
+              "value": true
+            }
           },
-          "clearTargetsOfInterest": [],
-          "setScanPatternSet": [],
-          "setScanPattern": {
-            "scanPattern": "designationLock"
+          {
+            "clearTargetsOfInterest": []
           },
-          "resetScanPhase": [],
-          "setCenterAzimuth": {
-            "source": "targetDesignation"
+          {
+            "setScanPatternSet": []
           },
-          "setCenterElevation": {
-            "source": "targetDesignation"
+          {
+            "setScanPattern": {
+              "scanPattern": "designationLock"
+            }
           },
-          "setDistGatePos": {
-            "source": "targetDesignation",
-            "width": 2000.0
+          {
+            "resetScanPhase": []
           },
-          "setRelSpeedGatePos": {
-            "source": "targetDesignation",
-            "width": 65.0
+          {
+            "setCenterAzimuth": {
+              "source": "targetDesignation"
+            }
           },
-          "setFsmActive": {
-            "fsm": "lock",
-            "active": true
+          {
+            "setCenterElevation": {
+              "source": "targetDesignation"
+            }
           },
-          "clearTargets": [],
-          "setIllumination": {
-            "illumination": false
+          {
+            "setDistGatePos": {
+              "source": "targetDesignation",
+              "width": 2000.0
+            }
+          },
+          {
+            "setRelSpeedGatePos": {
+              "source": "targetDesignation",
+              "width": 65.0
+            }
+          },
+          {
+            "setFsmActive": {
+              "fsm": "lock",
+              "active": true
+            }
+          },
+          {
+            "setFsmActive": {
+              "fsm": "illumination",
+              "active": false
+            }
+          },
+          {
+            "clearTargets": []
           }
-        },
+        ],
         "setPulseDesignationLockMode": {
           "setDesignationLockModeCommon": [],
           "setModeName": {
@@ -429,45 +474,70 @@
           },
           "setScopeRangeSet": []
         },
-        "setBoresightLockModeCommon": {
-          "setEnabled": {
-            "value": true
+        "setBoresightLockModeCommon": [
+          {
+            "setEnabled": {
+              "value": true
+            }
           },
-          "clearTargets": [],
-          "clearTargetsOfInterest": [],
-          "setScanPatternSet": {
-            "scanPatternSet": "boresightLock"
+          {
+            "clearTargets": []
           },
-          "resetScanPhase": [],
-          "setCenterAzimuth": {
-            "source": "constant",
-            "value": 0.0
+          {
+            "clearTargetsOfInterest": []
           },
-          "setCenterElevation": {
-            "source": "constant",
-            "value": -2.0
+          {
+            "setScanPatternSet": {
+              "scanPatternSet": "boresightLock"
+            }
           },
-          "setFsmActive": {
-            "fsm": "lock",
-            "active": true
+          {
+            "resetScanPhase": []
           },
-          "setDistGatePos": {
-            "source": "constRange",
-            "pos": 9250.0,
-            "width": 18500.0
+          {
+            "setCenterAzimuth": {
+              "source": "constant",
+              "value": 0.0
+            }
           },
-          "setRelSpeedGatePos": {
-            "source": "constRange",
-            "pos": 675.0,
-            "width": 1950.0
+          {
+            "setCenterElevation": {
+              "source": "constant",
+              "value": -2.0
+            }
           },
-          "setScopeRangeSet": {
-            "scopeRangeSet": "pulseBoresightLock"
+          {
+            "setFsmActive": {
+              "fsm": "lock",
+              "active": true
+            }
           },
-          "setIllumination": {
-            "illumination": false
+          {
+            "setFsmActive": {
+              "fsm": "illumination",
+              "active": false
+            }
+          },
+          {
+            "setDistGatePos": {
+              "source": "constRange",
+              "pos": 9250.0,
+              "width": 18500.0
+            }
+          },
+          {
+            "setRelSpeedGatePos": {
+              "source": "constRange",
+              "pos": 675.0,
+              "width": 1950.0
+            }
+          },
+          {
+            "setScopeRangeSet": {
+              "scopeRangeSet": "pulseBoresightLock"
+            }
           }
-        },
+        ],
         "setPulseBoresightLockMode": {
           "setBoresightLockModeCommon": [],
           "setModeName": {
@@ -498,40 +568,67 @@
             "scopeRangeSet": "pulseDopplerSearch"
           }
         },
-        "setTrackModeCommon": {
-          "setEnabled": {
-            "value": true
+        "setTrackModeCommon": [
+          {
+            "setEnabled": {
+              "value": true
+            }
           },
-          "setScanPatternSet": [],
-          "setScanPattern": {
-            "scanPattern": "track"
+          {
+            "setScanPatternSet": []
           },
-          "clearTargetsOfInterest": [],
-          "addTargetOfInterest": [],
-          "setLastTargetOfInterestActive": [],
-          "updateActiveTargetOfInterest": [],
-          "setCenterAzimuth": {
-            "source": "activeTargetOfInterest"
+          {
+            "setScanPattern": {
+              "scanPattern": "track"
+            }
           },
-          "setCenterElevation": {
-            "source": "activeTargetOfInterest"
+          {
+            "clearTargetsOfInterest": []
           },
-          "setDistGatePos": {
-            "source": "activeTargetOfInterest",
-            "width": 0.0
+          {
+            "addTargetOfInterest": []
           },
-          "setRelSpeedGatePos": {
-            "source": "activeTargetOfInterest",
-            "width": 0.0
+          {
+            "setLastTargetOfInterestActive": []
           },
-          "setFsmActive": {
-            "fsm": "track",
-            "active": true
+          {
+            "updateActiveTargetOfInterest": []
           },
-          "setIllumination": {
-            "illumination": true
+          {
+            "setCenterAzimuth": {
+              "source": "activeTargetOfInterest"
+            }
+          },
+          {
+            "setCenterElevation": {
+              "source": "activeTargetOfInterest"
+            }
+          },
+          {
+            "setDistGatePos": {
+              "source": "activeTargetOfInterest",
+              "width": 0.0
+            }
+          },
+          {
+            "setRelSpeedGatePos": {
+              "source": "activeTargetOfInterest",
+              "width": 0.0
+            }
+          },
+          {
+            "setFsmActive": {
+              "fsm": "track",
+              "active": true
+            }
+          },
+          {
+            "setFsmActive": {
+              "fsm": "illumination",
+              "active": true
+            }
           }
-        },
+        ],
         "setPulseTrackMode": {
           "setTrackModeCommon": [],
           "setModeName": {
@@ -562,38 +659,61 @@
             "scopeRangeSet": "pulse"
           }
         },
-        "setHmdStandbyModeCommon": {
-          "setEnabled": {
-            "value": false
+        "setHmdStandbyModeCommon": [
+          {
+            "setEnabled": {
+              "value": false
+            }
           },
-          "clearTargets": [],
-          "clearTargetsOfInterest": [],
-          "setScanPatternSet": [],
-          "setScanPattern": {
-            "scanPattern": "hmdLock"
+          {
+            "clearTargets": []
           },
-          "resetScanPhase": [],
-          "setDistGatePos": {
-            "source": "constRange",
-            "pos": 9250.0,
-            "width": 18500.0
+          {
+            "clearTargetsOfInterest": []
           },
-          "setRelSpeedGatePos": {
-            "source": "constRange",
-            "pos": 675.0,
-            "width": 1950.0
+          {
+            "setScanPatternSet": []
           },
-          "setFsmActive": {
-            "fsm": "helmetDesignation",
-            "active": true
+          {
+            "setScanPattern": {
+              "scanPattern": "hmdLock"
+            }
           },
-          "setScopeRangeSet": {
-            "scopeRangeSet": "pulseBoresightLock"
+          {
+            "resetScanPhase": []
           },
-          "setIllumination": {
-            "illumination": false
+          {
+            "setDistGatePos": {
+              "source": "constRange",
+              "pos": 9250.0,
+              "width": 18500.0
+            }
+          },
+          {
+            "setRelSpeedGatePos": {
+              "source": "constRange",
+              "pos": 675.0,
+              "width": 1950.0
+            }
+          },
+          {
+            "setFsmActive": {
+              "fsm": "helmetDesignation",
+              "active": true
+            }
+          },
+          {
+            "setFsmActive": {
+              "fsm": "illumination",
+              "active": false
+            }
+          },
+          {
+            "setScopeRangeSet": {
+              "scopeRangeSet": "pulseBoresightLock"
+            }
           }
-        },
+        ],
         "setPulseHmdStandbyMode": {
           "setHmdStandbyModeCommon": [],
           "setTransiver": {
@@ -618,38 +738,61 @@
             "name": "PD HMD"
           }
         },
-        "setHmdLockModeCommon": {
-          "setEnabled": {
-            "value": true
+        "setHmdLockModeCommon": [
+          {
+            "setEnabled": {
+              "value": true
+            }
           },
-          "clearTargets": [],
-          "clearTargetsOfInterest": [],
-          "setScanPatternSet": [],
-          "setScanPattern": {
-            "scanPattern": "hmdLock"
+          {
+            "clearTargets": []
           },
-          "resetScanPhase": [],
-          "setDistGatePos": {
-            "source": "constRange",
-            "pos": 9250.0,
-            "width": 18500.0
+          {
+            "clearTargetsOfInterest": []
           },
-          "setRelSpeedGatePos": {
-            "source": "constRange",
-            "pos": 675.0,
-            "width": 1950.0
+          {
+            "setScanPatternSet": []
           },
-          "setFsmActive": {
-            "fsm": "lock",
-            "active": true
+          {
+            "setScanPattern": {
+              "scanPattern": "hmdLock"
+            }
           },
-          "setScopeRangeSet": {
-            "scopeRangeSet": "pulseBoresightLock"
+          {
+            "resetScanPhase": []
           },
-          "setIllumination": {
-            "illumination": false
+          {
+            "setDistGatePos": {
+              "source": "constRange",
+              "pos": 9250.0,
+              "width": 18500.0
+            }
+          },
+          {
+            "setRelSpeedGatePos": {
+              "source": "constRange",
+              "pos": 675.0,
+              "width": 1950.0
+            }
+          },
+          {
+            "setFsmActive": {
+              "fsm": "lock",
+              "active": true
+            }
+          },
+          {
+            "setFsmActive": {
+              "fsm": "illumination",
+              "active": false
+            }
+          },
+          {
+            "setScopeRangeSet": {
+              "scopeRangeSet": "pulseBoresightLock"
+            }
           }
-        },
+        ],
         "setPulseHmdLockMode": {
           "setHmdLockModeCommon": [],
           "setTransiver": {
@@ -674,40 +817,67 @@
             "name": "PD HMD"
           }
         },
-        "setHmdTrackModeCommon": {
-          "setEnabled": {
-            "value": true
+        "setHmdTrackModeCommon": [
+          {
+            "setEnabled": {
+              "value": true
+            }
           },
-          "setScanPatternSet": [],
-          "setScanPattern": {
-            "scanPattern": "hmdTrack"
+          {
+            "setScanPatternSet": []
           },
-          "clearTargetsOfInterest": [],
-          "addTargetOfInterest": [],
-          "setLastTargetOfInterestActive": [],
-          "updateActiveTargetOfInterest": [],
-          "setCenterAzimuth": {
-            "source": "activeTargetOfInterest"
+          {
+            "setScanPattern": {
+              "scanPattern": "hmdTrack"
+            }
           },
-          "setCenterElevation": {
-            "source": "activeTargetOfInterest"
+          {
+            "clearTargetsOfInterest": []
           },
-          "setDistGatePos": {
-            "source": "activeTargetOfInterest",
-            "width": 0.0
+          {
+            "addTargetOfInterest": []
           },
-          "setRelSpeedGatePos": {
-            "source": "activeTargetOfInterest",
-            "width": 0.0
+          {
+            "setLastTargetOfInterestActive": []
           },
-          "setFsmActive": {
-            "fsm": "track",
-            "active": true
+          {
+            "updateActiveTargetOfInterest": []
           },
-          "setIllumination": {
-            "illumination": true
+          {
+            "setCenterAzimuth": {
+              "source": "activeTargetOfInterest"
+            }
+          },
+          {
+            "setCenterElevation": {
+              "source": "activeTargetOfInterest"
+            }
+          },
+          {
+            "setDistGatePos": {
+              "source": "activeTargetOfInterest",
+              "width": 0.0
+            }
+          },
+          {
+            "setRelSpeedGatePos": {
+              "source": "activeTargetOfInterest",
+              "width": 0.0
+            }
+          },
+          {
+            "setFsmActive": {
+              "fsm": "track",
+              "active": true
+            }
+          },
+          {
+            "setFsmActive": {
+              "fsm": "illumination",
+              "active": true
+            }
           }
-        },
+        ],
         "setPulseHmdTrackMode": {
           "setHmdTrackModeCommon": [],
           "setTransiver": {
@@ -1528,6 +1698,45 @@
             "setRelSpeedGatePos": {
               "source": "activeTargetOfInterest",
               "width": 0.0
+            }
+          }
+        }
+      }
+    },
+    "illumination": {
+      "stateInit": "init",
+      "transitions": {
+        "activate": {
+          "event": "fsmActivate",
+          "stateTo": "active",
+          "actions": {
+            "checkIlluminationTimeOut": {
+              "transiver": true
+            }
+          }
+        },
+        "deactivate": {
+          "event": "fsmDeactivate",
+          "stateTo": "inactive",
+          "actions": {
+            "setIllumination": {
+              "transiver": false
+            }
+          }
+        },
+        "activateIllumination": {
+          "event": "sarhMissileLaunch",
+          "actions": {
+            "setIlluminationTimeOut": {
+              "timeOut": 60.0
+            }
+          }
+        },
+        "updateIllumination": {
+          "event": "update",
+          "actions": {
+            "checkIlluminationTimeOut": {
+              "transiver": true
             }
           }
         }

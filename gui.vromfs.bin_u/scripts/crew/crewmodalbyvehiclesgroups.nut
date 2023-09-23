@@ -1,6 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { Cost } = require("%scripts/money.nut")
 
 
@@ -9,8 +10,10 @@ let { getSlotItem, getCurPreset, setUnit } = require("%scripts/slotbar/slotbarPr
 let slotbarWidget = require("%scripts/slotbar/slotbarWidgetByVehiclesGroups.nut")
 let { setColoredDoubleTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { utf8ToLower } = require("%sqstd/string.nut")
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 
-let class CrewModalByVehiclesGroups extends ::gui_handlers.CrewModalHandler {
+let class CrewModalByVehiclesGroups extends gui_handlers.CrewModalHandler {
   slotbarActions = ["aircraft", "changeUnitsGroup", "repair"]
 
   getSlotbarParams = @() {
@@ -40,7 +43,7 @@ let class CrewModalByVehiclesGroups extends ::gui_handlers.CrewModalHandler {
         else {
           sortData.append({
             unit = unit
-            locname = utf8ToLower(::getUnitName(unit))
+            locname = utf8ToLower(getUnitName(unit))
           })
         }
       }
@@ -115,13 +118,13 @@ let class CrewModalByVehiclesGroups extends ::gui_handlers.CrewModalHandler {
   }
 }
 
-::gui_handlers.CrewModalByVehiclesGroups <- CrewModalByVehiclesGroups
+gui_handlers.CrewModalByVehiclesGroups <- CrewModalByVehiclesGroups
 
 return {
   open = function(params = {}) {
     if (hasFeature("CrewSkills"))
-      ::handlersManager.loadHandler(CrewModalByVehiclesGroups, params)
+      handlersManager.loadHandler(CrewModalByVehiclesGroups, params)
     else
-      ::showInfoMsgBox(loc("msgbox/notAvailbleYet"))
+      showInfoMsgBox(loc("msgbox/notAvailbleYet"))
   }
 }

@@ -84,7 +84,7 @@ let function getBulletsIconView(bulletsSet, tooltipId = null, tooltipDelayed = f
     return view
 
   initBulletIcons()
-  view.bullets <- (@(bulletsSet, tooltipId, tooltipDelayed) function () {
+  view.bullets <- function() {
       let res = []
 
       let length = bulletsSet.bullets.len()
@@ -126,7 +126,7 @@ let function getBulletsIconView(bulletsSet, tooltipId = null, tooltipDelayed = f
       }
 
       return res
-    })(bulletsSet, tooltipId, tooltipDelayed)
+    }
 
   let bIconParam = bulletsSet?.bIconParam
   let isBelt = bulletsSet?.isBulletBelt ?? true
@@ -164,7 +164,7 @@ let function getArmorPiercingViewData(armorPiercing, dist) {
       angles.sort(@(a, b) a <=> b)
       let headRow = {
         text = ""
-        values = u.map(angles, function(v) { return { value = v + loc("measureUnits/deg") } })
+        values = angles.map(function(v) { return { value = v + loc("measureUnits/deg") } })
       }
       res.append(headRow)
     }
@@ -268,7 +268,7 @@ let function addAdditionalBulletsInfoToDesc(bulletsData, descTbl) {
     addProp(p, loc("guidanceSystemType/header"), loc(aimingTypeLocId))
     if ("irBeaconBand" in bulletsData)
       if (bulletsData.irBeaconBand != saclosMissileBeaconIRSourceBand.value)
-        addProp(p, loc("missile/eccm"), loc("options/yes"))
+        addProp(p, loc("missile/irccm"), loc("options/yes"))
   }
 
   if ("guidanceType" in bulletsData) {
@@ -279,7 +279,7 @@ let function addAdditionalBulletsInfoToDesc(bulletsData, descTbl) {
       if (bulletsData?.bulletType == "aam" || bulletsData?.bulletType == "sam_tank") {
         if ((bulletsData?.gateWidth != null && bulletsData.gateWidth < bulletsData.fov) ||
              bulletsData.bandMaskToReject != 0)
-          addProp(p, loc("missile/eccm"), loc("options/yes"))
+          addProp(p, loc("missile/irccm"), loc("options/yes"))
         addProp(p, loc("missile/aspect"), bulletsData.rangeBand1 > 0 ?
           loc("missile/aspect/allAspect") : loc("missile/aspect/rearAspect"))
         addProp(p, loc("missile/seekerRange/rearAspect"),
@@ -309,7 +309,7 @@ let function addAdditionalBulletsInfoToDesc(bulletsData, descTbl) {
         loc($"missile/guidance/{bulletsData?.isBeamRider ? "beamRiding" : "saclos"}"))
       if ("irBeaconBand" in bulletsData) {
         if (bulletsData.irBeaconBand != saclosMissileBeaconIRSourceBand.value)
-          addProp(p, loc("missile/eccm"), loc("options/yes"))
+          addProp(p, loc("missile/irccm"), loc("options/yes"))
       }
     }
     else {
@@ -471,7 +471,7 @@ let function buildBulletsData(bullet_parameters, bulletsSet = null) {
             continue
 
           if (d == idist || (d < idist && !i))
-            armor = u.map(bullet_params.armorPiercing[i], @(f) round(f).tointeger())
+            armor = bullet_params.armorPiercing[i].map(@(f) round(f).tointeger())
           else if (d < idist && i) {
             let prevDist = bullet_params.armorPiercingDist[i - 1].tointeger()
             if (d > prevDist) {

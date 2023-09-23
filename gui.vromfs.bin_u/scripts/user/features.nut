@@ -5,6 +5,7 @@ let { isDataBlock } = require("%sqStdLibs/helpers/u.nut")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { platformId } = require("%sqstd/platform.nut")
 let g_listener_priority = require("%scripts/g_listener_priority.nut")
+let { get_game_settings_blk } = require("blkGetters")
 
 let is_platform_windows = ["win32", "win64"].contains(platformId)
 
@@ -71,6 +72,7 @@ let defaults = Watched({  //def value when feature not found in game_settings.bl
   FranceTanksInFirstCountryChoice       = ::disable_network()
   FranceBoatsInFirstCountryChoice       = ::disable_network()
   FranceShipsInFirstCountryChoice       = ::disable_network()
+  DmViewerProtectionAnalysis            = ::disable_network()
 
   Helicopters = ::disable_network()
 
@@ -156,7 +158,6 @@ let defaults = Watched({  //def value when feature not found in game_settings.bl
   ItemsRoulette = false
   BattleTasks = false
   BattleTasksHard = true
-  PersonalUnlocks = false
   ItemsShopInTopMenu = true
   ItemModUpgrade = false
   ModUpgradeDifference = false
@@ -176,6 +177,7 @@ let defaults = Watched({  //def value when feature not found in game_settings.bl
   UnitInfo = true
   WikiUnitInfo = true
   ExpertToAce = false
+  repairCostUsesPlayTime = false
 
   HiddenLeaderboardRows = false
   LiveStats = false
@@ -212,7 +214,6 @@ let defaults = Watched({  //def value when feature not found in game_settings.bl
   ClanBattleSeasonAvailable = true
 
   CheckTwoStepAuth = false
-  CheckEmailVerified = false
   CheckGaijinPass = false
 
   AerobaticTricolorSmoke = ::disable_network()
@@ -277,7 +278,12 @@ let defaults = Watched({  //def value when feature not found in game_settings.bl
 
   DamageControl = false
 
+  ProtectionAnalysisShowTorpedoes = false
+  ProtectionAnalysisShowBombs = false
+
   ResearchHelicopterOnGroundVehicle = false
+  CaptchaAllowed = false
+  DevShopMode = false
 })
 
 let override = Watched({})
@@ -299,7 +305,7 @@ let function hasFeatureBasic(name) {
 }
 
 let function getFeaturePack(name) {
-  let sBlk = ::get_game_settings_blk()
+  let sBlk = get_game_settings_blk()
   let featureBlk = sBlk?.features[name]
   if (!isDataBlock(featureBlk))
     return null

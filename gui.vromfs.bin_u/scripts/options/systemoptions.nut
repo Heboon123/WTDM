@@ -14,6 +14,8 @@ let { eachBlock, eachParam } = require("%sqstd/datablock.nut")
 let { applyRestartClient, canRestartClient
 } = require("%scripts/utils/restartClient.nut")
 let { stripTags } = require("%sqstd/string.nut")
+let { create_option_switchbox } = require("%scripts/options/optionsExt.nut")
+let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 
 //------------------------------------------------------------------------------
 local mSettings = {}
@@ -365,7 +367,7 @@ let function localize(optionId, valueId) {
 let function parseResolution(resolution) {
   let sides = resolution == "auto"
     ? [ 0, 0 ] // To be sorted first.
-    : resolution.split("x").apply(@(v) ::to_integer_safe(strip(v), 0, false))
+    : resolution.split("x").apply(@(v) to_integer_safe(strip(v), 0, false))
   return {
     resolution = resolution
     w = sides?[0] ?? 0
@@ -484,7 +486,7 @@ mShared = {
         mShared.graphicsQualityClick()
         updateGuiNavbar(true)
       }
-      ::scene_msg_box("msg_sysopt_compatibility", null,
+      scene_msg_box("msg_sysopt_compatibility", null,
         loc("msgbox/compatibilityMode"),
         [
           ["yes", ok_func],
@@ -575,7 +577,7 @@ mShared = {
         mShared.presetCheck()
         updateGuiNavbar(true)
       }
-      ::scene_msg_box("msg_sysopt_ssaa", null, loc("msgbox/ssaa_warning"),
+      scene_msg_box("msg_sysopt_ssaa", null, loc("msgbox/ssaa_warning"),
         [
           ["ok", okFunc],
           ["cancel", cancelFunc],
@@ -596,7 +598,7 @@ mShared = {
         mShared.presetCheck()
         updateGuiNavbar(true)
       }
-      ::scene_msg_box("msg_sysopt_fxres", null,
+      scene_msg_box("msg_sysopt_fxres", null,
         loc("msgbox/fxres_warning"),
         [
           ["ok", okFunc],
@@ -620,7 +622,7 @@ mShared = {
         mShared.presetCheck()
         updateGuiNavbar(true)
       }
-      ::scene_msg_box("msg_sysopt_compatibility", null,
+      scene_msg_box("msg_sysopt_compatibility", null,
         loc("msgbox/compatibilityMode"),
         [
           ["yes", ok_func],
@@ -687,7 +689,7 @@ mShared = {
     if (value == "auto")
       return value
 
-    let screen = format("%d x %d", ::screen_width(), ::screen_height())
+    let screen = format("%d x %d", screen_width(), screen_height())
     return screen // Value damaged by user. Screen size can be wrong, but anyway, i guess user understands why it's broken.
 
     /*
@@ -922,7 +924,7 @@ mSettings = {
     getFromBlk = function(blk, desc) { return (get_blk_value_by_path(blk, desc.blk, desc.def / 100.0) * 100).tointeger() }
     setToBlk = function(blk, desc, val) { set_blk_value_by_path(blk, desc.blk, val / 100.0) }
   }
-  rendinstDistMul = { widgetType = "slider" def = 100 min = 50 max = 220 blk = "graphics/rendinstDistMul" restart = false
+  rendinstDistMul = { widgetType = "slider" def = 100 min = 50 max = 350 blk = "graphics/rendinstDistMul" restart = false
     getFromBlk = function(blk, desc) { return (get_blk_value_by_path(blk, desc.blk, desc.def / 100.0) * 100).tointeger() }
     setToBlk = function(blk, desc, val) { set_blk_value_by_path(blk, desc.blk, val / 100.0) }
   }
@@ -1007,7 +1009,7 @@ mSettings = {
   compatibilityMode = { widgetType = "checkbox" def = false blk = "video/compatibilityMode" restart = true
     onChanged = "compatibilityModeClick"
   }
-  enableHdr = { widgetType = "checkbox" def = false blk = "directx/enableHdr" restart = true enabled = @() ::is_hdr_available() }
+  enableHdr = { widgetType = "checkbox" def = false blk = (platformId == "macosx" ? "metal/enableHdr" : "directx/enableHdr") restart = true enabled = @() ::is_hdr_available() }
   enableVr = {
     widgetType = "checkbox"
     blk = "gameplay/enableVR"
@@ -1137,7 +1139,7 @@ let function validateInternalConfigs() {
     mValidationError = "\n".join(errorsList, true)
   if (!mScriptValid) {
     let errorString = "\n".join(errorsList, true) // warning disable: -declared-never-used
-    ::script_net_assert_once("system_options_not_valid", "not valid system option list")
+    script_net_assert_once("system_options_not_valid", "not valid system option list")
   }
 }
 
@@ -1290,14 +1292,14 @@ let function hotReloadOrRestart() {
 
     if (canRestartClient()) {
       let message = loc("msgbox/client_restart_required") + "\n" + loc("msgbox/restart_now")
-      ::scene_msg_box("sysopt_apply", null, message, [
+      scene_msg_box("sysopt_apply", null, message, [
           ["restart", func_restart],
           ["no"],
         ], "restart", { cancel_fn = @() null })
     }
     else {
       let message = loc("msgbox/client_restart_required")
-      ::scene_msg_box("sysopt_apply", null, message, [
+      scene_msg_box("sysopt_apply", null, message, [
           ["ok"],
         ], "ok", { cancel_fn = @() null })
     }
@@ -1437,7 +1439,7 @@ let function fillGuiOptions(containerObj, handler) {
             value = mCfgCurrent[id]
             cb = cb
           }
-          option = ::create_option_switchbox(config)
+          option = create_option_switchbox(config)
           break
         case "slider":
           desc.step <- desc?.step ?? max(1, round((desc.max - desc.min) / mMaxSliderSteps).tointeger())

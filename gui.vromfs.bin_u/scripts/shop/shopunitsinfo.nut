@@ -3,6 +3,8 @@ from "%scripts/dagui_library.nut" import *
 
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { getTimestampFromStringUtc } = require("%scripts/time.nut")
+let getAllUnits = require("%scripts/unit/allUnits.nut")
+let { get_shop_blk } = require("blkGetters")
 
 let shopPromoteUnits = persist("shopPromoteUnits", @() Watched({}))
 local countDefaultUnitsByCountry = null
@@ -18,7 +20,7 @@ let function fillPromoteUnitsList(blk, unit) {
 }
 
 let function generateUnitShopInfo() {
-  let blk = ::get_shop_blk()
+  let blk = get_shop_blk()
   let totalCountries = blk.blockCount()
 
   for (local c = 0; c < totalCountries; c++) {  //country
@@ -78,7 +80,7 @@ let function generateUnitShopInfo() {
 
 let function initCache() {
   countDefaultUnitsByCountry = {}
-  foreach (u in ::all_units) {
+  foreach (u in getAllUnits()) {
     if (u.isVisibleInShop() && ::isUnitDefault(u))
       countDefaultUnitsByCountry[u.shopCountry] <- (countDefaultUnitsByCountry?[u.shopCountry] ?? 0) + 1
   }
@@ -96,7 +98,7 @@ let function hasDefaultUnitsInCountry(country) {
 }
 
 let function isCountryHaveUnitType(country, unitType) {
-  foreach (unit in ::all_units)
+  foreach (unit in getAllUnits())
     if (unit.shopCountry == country && unit.esUnitType == unitType && unit.isVisibleInShop())
       return true
   return false

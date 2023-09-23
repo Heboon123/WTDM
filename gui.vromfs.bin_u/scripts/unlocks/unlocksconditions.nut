@@ -12,6 +12,7 @@ let { copyParamsToTable } = require("%sqstd/datablock.nut")
 let { isIPoint3 } = u
 let { Point2 } = require("dagor.math")
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
+let { get_game_settings_blk } = require("blkGetters")
 
 let missionModesList = [
   "missionsWon",
@@ -138,7 +139,7 @@ local mapIntDiffToName = null
 
 let function getDiffNameByInt(modeInt) {
   if (mapIntDiffToName == null) {
-    let blk = ::get_game_settings_blk()
+    let blk = get_game_settings_blk()
     if (!blk?.mapIntDiffToName)
       return ""
 
@@ -183,10 +184,10 @@ let function getRangeTextByPoint2(val, formatParams = {}, romanNumerals = false)
   formatParams = formatParamsDefault.__merge(formatParams)
   let { rangeStr, itemStr, valueStr, maxOnlyStr, minOnlyStr, bothStr } = formatParams
   let a = val.x.tointeger() > 0
-    ? romanNumerals ? ::get_roman_numeral(val.x) : format(valueStr, val.x)
+    ? romanNumerals ? get_roman_numeral(val.x) : format(valueStr, val.x)
     : ""
   let b = val.y.tointeger() > 0
-    ? romanNumerals ? ::get_roman_numeral(val.y) : format(valueStr, val.y)
+    ? romanNumerals ? get_roman_numeral(val.y) : format(valueStr, val.y)
     : ""
   if (a == "" && b == "")
     return ""
@@ -743,18 +744,25 @@ let function getTimeRangeCondition(unlockBlk) {
   return conds.findvalue(@(c) isTimeRangeCondition(c.type))
 }
 
+let function isStreak(id) {
+  let unlockType = getUnlockById(id)?.type ?? ""
+  if (unlockType == "")
+    return false
+
+  return ::get_unlock_type(unlockType) == UNLOCKABLE_STREAK
+}
+
 let function getMainConditionListPrefix(conditions) {
   let mainCondition = getMainProgressCondition(conditions)
-  if (mainCondition == null)
-    return ""
-  if (!mainCondition.values)
+  let values = mainCondition?.values
+  if (values == null)
     return ""
 
   let modeType = mainCondition.modeType
 
-  if (mainCondition.hasCustomUnlockableList ||
-      (isNestedUnlockMode(modeType) && mainCondition.values.len() > 1))
-    return loc("ui/awards") + loc("ui/colon")
+  if (mainCondition.hasCustomUnlockableList
+      || (isNestedUnlockMode(modeType) && (values.len() > 1 || isStreak(values[0]))))
+    return "".concat(loc("ui/awards"), loc("ui/colon"))
 
   return ""
 }
@@ -792,6 +800,7 @@ return {
   isNestedUnlockMode
   isTimeRangeCondition
   isBitModeType
+  isStreak
   addToText
   getDiffNameByInt
 }

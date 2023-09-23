@@ -1,9 +1,11 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
+let { INVALID_SQUAD_ID } = require("matching.errors")
 let u = require("%sqStdLibs/helpers/u.nut")
-
 let { format } = require("string")
-let platformModule = require("%scripts/clientState/platform.nut")
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let spectatorWatchedHero = require("%scripts/replays/spectatorWatchedHero.nut")
 let { getUnitRole } = require("%scripts/unit/unitInfoTexts.nut")
 let { WEAPON_TAG } = require("%scripts/weaponry/weaponryInfo.nut")
@@ -12,14 +14,17 @@ let { updateTopSquadScore, getSquadInfo, isShowSquad,
   getSquadInfoByMemberId, getTopSquadId } = require("%scripts/statistics/squadIcon.nut")
 let { is_replay_playing } = require("replays")
 let { get_game_mode } = require("mission")
-let { get_mission_difficulty_int, get_mission_difficulty } = require("guiMission")
+let { get_mission_difficulty_int, get_mission_difficulty, get_mp_session_info } = require("guiMission")
 let { stripTags } = require("%sqstd/string.nut")
+let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
+let { getUnitName } = require("%scripts/unit/unitInfo.nut")
+let { get_game_settings_blk } = require("blkGetters")
 
 ::gui_start_mpstatscreen_ <- function gui_start_mpstatscreen_(params = {}) { // used from native code
   let isFromGame = params?.isFromGame ?? false
-  let handler = ::handlersManager.loadHandler(::gui_handlers.MPStatisticsModal,
+  let handler = handlersManager.loadHandler(gui_handlers.MPStatisticsModal,
     {
-      backSceneFunc = isFromGame ? null : ::handlersManager.getLastBaseHandlerStartFunc(),
+      backSceneParams = isFromGame ? null : handlersManager.getLastBaseHandlerStartParams(),
     }.__update(params))
 
   if (isFromGame)
@@ -67,7 +72,7 @@ let function sort_units_for_br_tooltip(u1, u2) {
 }
 
 let function get_mp_country_by_team(team) {
-  let info = ::get_mp_session_info()
+  let info = get_mp_session_info()
   if (!info)
     return ""
   if (team == 1 && ("alliesCountry" in info))
@@ -78,13 +83,15 @@ let function get_mp_country_by_team(team) {
 }
 
 let function guiStartMPStatScreen() {
-  ::gui_start_mpstatscreen_({ isFromGame = false })
-  ::handlersManager.setLastBaseHandlerStartFunc(guiStartMPStatScreen)
+  let params = { isFromGame = false }
+  ::gui_start_mpstatscreen_(params)
+  handlersManager.setLastBaseHandlerStartParams({ globalFunctionName = "gui_start_mpstatscreen_", params })
 }
 
 let function guiStartMPStatScreenFromGame() {
-  ::gui_start_mpstatscreen_({ isFromGame = true })
-  ::handlersManager.setLastBaseHandlerStartFunc(guiStartMPStatScreenFromGame)
+  let params = { isFromGame = true }
+  ::gui_start_mpstatscreen_(params)
+  handlersManager.setLastBaseHandlerStartParams({ globalFunctionName = "gui_start_mpstatscreen_", params })
 }
 
 ::gui_start_mpstatscreen_from_game <- @() guiStartMPStatScreenFromGame() // used from native code
@@ -97,28 +104,28 @@ let function guiStartMPStatScreenFromGame() {
 
 ::get_time_to_kick_show_timer <- function get_time_to_kick_show_timer() {
   if (::time_to_kick_show_timer == null) {
-    ::time_to_kick_show_timer = ::get_game_settings_blk()?.time_to_kick.show_timer_threshold ?? 30
+    ::time_to_kick_show_timer = get_game_settings_blk()?.time_to_kick.show_timer_threshold ?? 30
   }
   return ::time_to_kick_show_timer
 }
 
 ::get_time_to_kick_show_alert <- function get_time_to_kick_show_alert() {
   if (::time_to_kick_show_alert == null) {
-    ::time_to_kick_show_alert = ::get_game_settings_blk()?.time_to_kick.show_alert_threshold ?? 15
+    ::time_to_kick_show_alert = get_game_settings_blk()?.time_to_kick.show_alert_threshold ?? 15
   }
   return ::time_to_kick_show_alert
 }
 
 ::get_in_battle_time_to_kick_show_timer <- function get_in_battle_time_to_kick_show_timer() {
   if (::in_battle_time_to_kick_show_timer == null) {
-    ::in_battle_time_to_kick_show_timer = ::get_game_settings_blk()?.time_to_kick.in_battle_show_timer_threshold ?? 150
+    ::in_battle_time_to_kick_show_timer = get_game_settings_blk()?.time_to_kick.in_battle_show_timer_threshold ?? 150
   }
   return ::in_battle_time_to_kick_show_timer
 }
 
 ::get_in_battle_time_to_kick_show_alert <- function get_in_battle_time_to_kick_show_alert() {
   if (::in_battle_time_to_kick_show_alert == null) {
-    ::in_battle_time_to_kick_show_alert = ::get_game_settings_blk()?.time_to_kick.in_battle_show_alert_threshold ?? 50
+    ::in_battle_time_to_kick_show_alert = get_game_settings_blk()?.time_to_kick.in_battle_show_alert_threshold ?? 50
   }
   return ::in_battle_time_to_kick_show_alert
 }
@@ -181,7 +188,7 @@ let function guiStartMPStatScreenFromGame() {
 
         local icon = ""
         if (!isEmpty && country != "")
-          icon = ::get_country_icon(country)
+          icon = getCountryIcon(country)
         tdData += format("size:t='ph%s,ph';"
           + "img{ pos:t='(pw-w)/2,(ph-h)/2'; position:t='relative'; size:t='@tableIcoSize,@tableIcoSize';"
           +   "background-image:t='%s'; background-svg-size:t='@cIco, @cIco';"
@@ -194,7 +201,7 @@ let function guiStartMPStatScreenFromGame() {
       else if (hdr[j] == "name") {
         local nameText = item
         if (!isEmpty && !isHeader && !table[i].isBot)
-          nameText = ::g_contacts.getPlayerFullName(platformModule.getPlayerName(nameText), table[i].clanTag)
+          nameText = ::g_contacts.getPlayerFullName(getPlayerName(nameText), table[i].clanTag)
 
         nameText = stripTags(nameText)
 
@@ -424,7 +431,7 @@ let function guiStartMPStatScreenFromGame() {
         let objImg = objTd.getChild(0)
         local icon = ""
         if (country != "")
-          icon = ::get_country_icon(country)
+          icon = getCountryIcon(country)
         objImg["background-image"] = icon
       }
       else if (hdr == "status") {
@@ -440,7 +447,7 @@ let function guiStartMPStatScreenFromGame() {
       else if (hdr == "name") {
         local nameText = item
         if (!table[i].isBot)
-          nameText = ::g_contacts.getPlayerFullName(platformModule.getPlayerName(nameText), table[i].clanTag)
+          nameText = ::g_contacts.getPlayerFullName(getPlayerName(nameText), table[i].clanTag)
 
         if (table[i]?.invitedName && table[i].invitedName != item) {
           local color = ""
@@ -451,8 +458,8 @@ let function guiStartMPStatScreenFromGame() {
               color = "teamBlueInactiveColor"
           }
 
-          local playerName = colorize(color, platformModule.getPlayerName(table[i].invitedName))
-          nameText = $"{platformModule.getPlayerName(nameText)}... {playerName}"
+          local playerName = colorize(color, getPlayerName(table[i].invitedName))
+          nameText = $"{getPlayerName(nameText)}... {playerName}"
         }
 
         let objName = objTd.findObject("name-text")
@@ -555,8 +562,8 @@ let function guiStartMPStatScreenFromGame() {
           }
           else {
             let unitId = getTblValue("aircraftName", table[i], "")
-            text = (unitId != "") ? loc(::getUnitName(unitId, true)) : "..."
-            tooltip = (unitId != "") ? loc(::getUnitName(unitId, false)) : ""
+            text = (unitId != "") ? loc(getUnitName(unitId, true)) : "..."
+            tooltip = (unitId != "") ? loc(getUnitName(unitId, false)) : ""
           }
           objText.setValue(text)
           objText.tooltip = tooltip

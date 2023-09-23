@@ -1,9 +1,11 @@
 from "%rGui/globals/ui_library.nut" import *
 
 let { IlsColor, TargetPosValid, TargetPos, IlsLineScale, DistToTarget, AimLockPos, AimLockValid } = require("%rGui/planeState/planeToolsState.nut")
-let { baseLineWidth } = require("ilsConstants.nut")
+let { SelectedTrigger } = require("%rGui/planeState/planeWeaponState.nut")
+let { baseLineWidth, weaponTriggerName } = require("ilsConstants.nut")
 let { cvt } = require("dagor.math")
 let { Roll } = require("%rGui/planeState/planeFlyState.nut");
+let hudUnitType = require("%rGui/hudUnitType.nut")
 
 let ASP17crosshair = @() {
   watch = IlsColor
@@ -70,21 +72,94 @@ let ASP17Distances = @() {
   ]
 }
 
-let function ASP17(width, height) {
-  return {
-    size = [width, height]
+let lockedReticle = {
+  size = [pw(50), ph(50)]
+  pos = [pw(50), ph(50)]
+  rendObj = ROBJ_VECTOR_CANVAS
+  color = Color(20, 10, 1, 0)
+  lineWidth = baseLineWidth * IlsLineScale.value * 0.5
+  fillColor = Color(0, 0, 0, 0)
+  commands = [
+    [VECTOR_ELLIPSE, 0, 0, 15, 15],
+    [VECTOR_ELLIPSE, 0, 0, 40, 40],
+    [VECTOR_LINE, 10, 0, 75, 0],
+    [VECTOR_LINE, -10, 0, -75, 0],
+    [VECTOR_LINE, 0, 10, 0, 100],
+    [VECTOR_LINE, 0, -10, 0, -50],
+    [VECTOR_LINE, 20, -5, 20, 5],
+    [VECTOR_LINE, 30, -5, 30, 5],
+    [VECTOR_LINE, 40, -5, 40, 5],
+    [VECTOR_LINE, 50, -5, 50, 5],
+    [VECTOR_LINE, 60, -5, 60, 5],
+    [VECTOR_LINE, 70, -5, 70, 5],
+    [VECTOR_LINE, -20, -5, -20, 5],
+    [VECTOR_LINE, -30, -5, -30, 5],
+    [VECTOR_LINE, -40, -5, -40, 5],
+    [VECTOR_LINE, -50, -5, -50, 5],
+    [VECTOR_LINE, -60, -5, -60, 5],
+    [VECTOR_LINE, -70, -5, -70, 5],
+    [VECTOR_LINE, -5, 20, 5, 20],
+    [VECTOR_LINE, -5, 30, 5, 30],
+    [VECTOR_LINE, -5, 40, 5, 40],
+    [VECTOR_LINE, -5, 50, 5, 50],
+    [VECTOR_LINE, -5, 60, 5, 60],
+    [VECTOR_LINE, -5, 70, 5, 70],
+    [VECTOR_LINE, -5, 80, 5, 80],
+    [VECTOR_LINE, -5, 90, 5, 90],
+    [VECTOR_LINE, -5, 100, 5, 100],
+    [VECTOR_LINE, -5, -20, 5, -20],
+    [VECTOR_LINE, -5, -30, 5, -30],
+    [VECTOR_LINE, -5, -40, 5, -40],
+    [VECTOR_WIDTH, baseLineWidth * IlsLineScale.value * 2.0],
+    [VECTOR_LINE, 0, 0, 0, 0]
+  ]
+}
+
+let NeedShowAimLock = Computed(@() SelectedTrigger.value == weaponTriggerName.AGM_TRIGGER || SelectedTrigger.value == -1)
+let function mainReticle(width, height) {
+return {
+    size = flex()
     children = [
       ASP17Distances,
       ASP17crosshair,
       ASP17Roll
     ]
     behavior = Behaviors.RtPropUpdate
-    update = @() {
-      transform = {
-        translate = TargetPosValid.value ? [TargetPos.value[0] - width * 0.5, TargetPos.value[1] - height * 0.5] :
-         (AimLockValid.value ? [AimLockPos[0] - width * 0.5, AimLockPos[1] - height * 0.5] : [0, 0])
+    update = function() {
+      if (hudUnitType.isHelicopter()) {
+        local lockPos = AimLockPos
+        if (lockPos[0] - width * 0.5 > width * 0.4)
+          lockPos[0] = width * 0.9
+        if (lockPos[0] - width * 0.5 < -width * 0.4)
+          lockPos[0] = width * 0.1
+        if (lockPos[1] - height * 0.5 > height * 0.4)
+          lockPos[1] = height * 0.9
+        if (lockPos[1] - height * 0.5 < -height * 0.4)
+          lockPos[1] = height * 0.1
+        return {
+          transform = {
+            translate = AimLockValid.value && NeedShowAimLock.value ? [lockPos[0] - width * 0.5, lockPos[1] - height * 0.5] :
+            (TargetPosValid.value ? [TargetPos.value[0] - width * 0.5, TargetPos.value[1] - height * 0.5] : [0, 0])
+          }
+        }
+      }
+      return {
+        transform = {
+          translate = TargetPosValid.value ? [TargetPos.value[0] - width * 0.5, TargetPos.value[1] - height * 0.5] :
+          (AimLockValid.value ? [AimLockPos[0] - width * 0.5, AimLockPos[1] - height * 0.5] : [0, 0])
+        }
       }
     }
+  }
+}
+
+let function ASP17(width, height) {
+  return {
+    size = [width, height]
+    children = [
+      mainReticle(width, height)
+      hudUnitType.isHelicopter() ? lockedReticle : null
+    ]
   }
 }
 

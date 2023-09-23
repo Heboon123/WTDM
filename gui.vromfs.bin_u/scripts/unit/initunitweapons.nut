@@ -6,6 +6,7 @@ let { eachBlock, eachParam } = require("%sqstd/datablock.nut")
 let { isModClassExpendable } = require("%scripts/weaponry/modificationInfo.nut")
 let { isDataBlock, isString, appendOnce } = require("%sqStdLibs/helpers/u.nut")
 let { getWeaponsByTypes } = require("%scripts/weaponry/weaponryPresets.nut")
+let { get_wpcost_blk, get_modifications_blk } = require("blkGetters")
 
 let weaponProperties = [
   "reqRank", "reqExp", "mass_per_sec", "mass_per_sec_diff",
@@ -54,7 +55,7 @@ let function initCustomPresetParams(unit, weapon) {
   let hasUnitCountermeasures = unitBlk?.commonWeapons == null ? false
     : getWeaponsByTypes(unitBlk, unitBlk.commonWeapons).findvalue (@(w) w.trigger == "countermeasures") != null
 
-  let { weapons = null, defaultCommonPresetMassPerSec = 0 } = ::get_wpcost_blk()?[unit.name]
+  let { weapons = null, defaultCommonPresetMassPerSec = 0 } = get_wpcost_blk()?[unit.name]
   local bombsNbr = 0
   local massPerSecValue = defaultCommonPresetMassPerSec
   foreach (w in (weapon?.weaponsBlk ? weapon.weaponsBlk % "Weapon" : [])) {
@@ -79,7 +80,7 @@ let function initCustomPresetParams(unit, weapon) {
 }
 
 let function initWeaponry(weaponry, blk, esUnitType) {
-  let weaponBlk = ::get_modifications_blk()?.modifications?[weaponry.name]
+  let weaponBlk = get_modifications_blk()?.modifications?[weaponry.name]
   weaponry.cost <- weaponry?.cost ?? 0
   if (blk?.value != null)
     weaponry.cost = blk.value
@@ -93,9 +94,15 @@ let function initWeaponry(weaponry, blk, esUnitType) {
   weaponry.requiresModelReload <- weaponBlk?.requiresModelReload ?? false
   weaponry.isHidden <- blk?.isHidden ?? weaponBlk?.isHidden ?? false
   weaponry.weaponmask <- blk?.weaponmask ?? 0
+  if (weaponry.type == weaponsItem.modification)
+    weaponry.modificationAnimation <- blk?.animation ?? weaponBlk?.animation
 
   if (weaponry.name == "tank_additional_armor")
     weaponry.requiresModelReload <- true
+
+  if (weaponry.name == "premExpMul")
+    weaponry.modificationAnimation <- (weaponBlk % "animationByUnit")
+      .findvalue(@(anim) anim.unitType == esUnitType)?.src
 
   foreach (p in weaponProperties) {
     let val = blk?[p] ?? weaponBlk?[p]
@@ -151,7 +158,7 @@ let function getCustomSumWeapons(weaponBlk, weaponsBlk) {
 }
 
 let function initUnitCustomPresetsWeapons(unit, weapons) {
-  let weaponsBlk = ::get_wpcost_blk()?[unit.name].weapons
+  let weaponsBlk = get_wpcost_blk()?[unit.name].weapons
   let { weaponsContainers, esUnitType } = unit
   foreach (weapon in weapons) {
     let weaponBlk = weapon?.weaponsBlk

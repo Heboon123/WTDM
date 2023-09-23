@@ -22,6 +22,9 @@ let { eachBlock } = require("%sqstd/datablock.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { GUI } = require("%scripts/utils/configs.nut")
 let { promoteUnits } = require("%scripts/unit/remainingTimeUnit.nut")
+let getAllUnits = require("%scripts/unit/allUnits.nut")
+let { get_charserver_time_sec } = require("chard")
+let { get_price_blk } = require("blkGetters")
 
 let platformMapForDiscountFromGuiBlk = {
   pc = isPlatformPC
@@ -95,7 +98,7 @@ local updateGiftUnitsDiscountTask = -1
 
       let startTime = getTimestampFromStringUtc(discountConfigBlk.beginDate)
       let endTime = getTimestampFromStringUtc(discountConfigBlk.endDate)
-      let currentTime = ::get_charserver_time_sec()
+      let currentTime = get_charserver_time_sec()
       if (currentTime >= endTime)
         continue
 
@@ -163,13 +166,13 @@ local updateGiftUnitsDiscountTask = -1
 
   this.updateDiscountData()
   //push event after current event completely finished
-  ::get_gui_scene().performDelayed(this, this.pushDiscountsUpdateEvent)
+  get_gui_scene().performDelayed(this, this.pushDiscountsUpdateEvent)
 }
 
 ::g_discount.updateDiscountData <- function updateDiscountData(isSilentUpdate = false) {
   this.clearDiscountsList()
 
-  let pBlk = ::get_price_blk()
+  let pBlk = get_price_blk()
 
   let chPath = ["exp_to_gold_rate"]
   chPath.append(shopCountriesList)
@@ -177,7 +180,7 @@ local updateGiftUnitsDiscountTask = -1
 
   let giftUnits = {}
 
-  foreach (air in ::all_units)
+  foreach (air in getAllUnits())
     if (::isCountryAvailable(air.shopCountry)
         && !air.isBought()
         && air.isVisibleInShop()) {
@@ -279,7 +282,7 @@ local updateGiftUnitsDiscountTask = -1
 ::g_discount.updateDiscountNotifications <- function updateDiscountNotifications(scene = null) {
   foreach (name in ["topmenu_research", "changeExp"]) {
     let id = this.getDiscountIconId(name)
-    let obj = checkObj(scene) ? scene.findObject(id) : ::get_cur_gui_scene()[id]
+    let obj = checkObj(scene) ? scene.findObject(id) : get_cur_gui_scene()[id]
     if (!(obj?.isValid() ?? false))
       continue
 
@@ -292,7 +295,7 @@ local updateGiftUnitsDiscountTask = -1
 
   let section = ::g_top_menu_right_side_sections.getSectionByName("shop")
   let sectionId = section.getTopMenuButtonDivId()
-  let shopObj = checkObj(scene) ? scene.findObject(sectionId) : ::get_cur_gui_scene()[sectionId]
+  let shopObj = checkObj(scene) ? scene.findObject(sectionId) : get_cur_gui_scene()[sectionId]
   if (!checkObj(shopObj))
     return
 
@@ -345,7 +348,7 @@ local updateGiftUnitsDiscountTask = -1
     return {}
 
   let discountsList = {}
-  foreach (unit in ::all_units)
+  foreach (unit in getAllUnits())
     if (!countryId || unit.shopCountry == countryId) {
       let discount = this.getUnitDiscount(unit)
       if (discount > 0)

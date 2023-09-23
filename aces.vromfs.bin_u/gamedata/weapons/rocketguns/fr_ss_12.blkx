@@ -1,7 +1,7 @@
 {
   "rocketGun": true,
   "preset_cost": 25,
-  "mesh": "ss11_rocket_deployed",
+  "mesh": "as12_missile",
   "helicopterGroup": 2,
   "shotFreq": 20.0,
   "sound": "atgm",
@@ -16,22 +16,19 @@
       "length": 1.87
     },
     {
-      "WdK": [0.1,0.1,0.1]
+      "CxK": 1.95
     },
     {
-      "CxK": 1.28
+      "wingAreaMult": 2.35
     },
     {
-      "CyK": 6.0
+      "finsAoaHor": 0.0
     },
     {
-      "CyMaxAoA": 1.75
+      "finsAoaVer": 0.0
     },
     {
-      "wingAreaMult": 2.8
-    },
-    {
-      "distFromCmToStab": 0.01
+      "distFromCmToStab": 0.005
     },
     {
       "mass": 76.0
@@ -49,13 +46,22 @@
       "timeFire1": 30.0
     },
     {
-      "force": 7400.0
+      "force": 8200.0
     },
     {
-      "force1": 400.0
+      "force1": 525.0
     },
     {
-      "timeLife": 35.0
+      "timeLife": 32.0
+    },
+    {
+      "thrustVectoringAngle": 0.005
+    },
+    {
+      "thrustVectoringAngle1": 0.05
+    },
+    {
+      "thrustDeviation": 0.0
     },
     {
       "useStartSpeed": true
@@ -70,43 +76,28 @@
       "endSpeed": 0.0
     },
     {
-      "maxDistance": 6200.0
+      "maxDistance": 7000.0
     },
     {
-      "minDistance": 30.0
+      "minDistance": 100.0
     },
     {
-      "operatedDist": 6000.0
+      "guaranteedRange": 6000.0
+    },
+    {
+      "operatedDist": 7000.0
     },
     {
       "visRotationFreqX": 5.0
     },
     {
-      "operated": true
+      "autoAimingMaxAngle": 1.0
     },
     {
-      "maxLateralAcceleration": 6.0
+      "guidanceType": "saclos"
     },
     {
-      "autoLeveling": true
-    },
-    {
-      "autoaimEnabled": false
-    },
-    {
-      "autoAiming": true
-    },
-    {
-      "autoAimTrackingSensitivity": 0.1
-    },
-    {
-      "aimCorrectionVelMin": 300.0
-    },
-    {
-      "aimSensitivity": 20.0
-    },
-    {
-      "maxAxisValues": 0.5
+      "launchZoneDistance": 100.0
     },
     {
       "maxDeltaAngle": 0.02
@@ -122,6 +113,9 @@
     },
     {
       "ricochetPreset": "atgm"
+    },
+    {
+      "groundRicochetPreset": "atgm"
     },
     {
       "secondaryShattersPreset": "ap"
@@ -241,7 +235,52 @@
       "amountPerTier": 1.0
     },
     {
-      "iconType": "missile_air_to_uni"
+      "iconType": "missile_air_to_uni_middle"
+    },
+    {
+      "guidance": {
+        "range": [100.0,7000.0],
+        "launchSector": 10.0,
+        "controlConeFov": 30.0,
+        "breakLockMaxTime": 3.0,
+        "lineOfSightAutopilot": [
+          {
+            "timeToGain0": [0.0,0.0]
+          },
+          {
+            "timeToGain1": [0.25,0.0]
+          },
+          {
+            "timeToGain2": [0.26,0.2]
+          },
+          {
+            "timeToGain3": [1.0,0.6]
+          },
+          {
+            "timeToGain3": [2.3,1.0]
+          },
+          {
+            "crossDistToReqCrossVelMult": 2.0
+          },
+          {
+            "reqCrossVelRationMax": 0.25
+          },
+          {
+            "velDiffToReqAccelMult": 4.0
+          },
+          {
+            "accelControl": {
+              "velFrameReference": true,
+              "baseIndSpeed": 1800.0,
+              "reqAccelMax": 3.0,
+              "accelControlProp": 0.006,
+              "accelControlIntg": 0.0,
+              "accelControlDiff": 0.0016,
+              "accelControlIntgLim": 0.0
+            }
+          }
+        ]
+      }
     },
     {
       "stabilityRicochetModifier": {
@@ -258,7 +297,7 @@
     {
       "DamageParts": {
         "body": {
-          "hp": 5.0,
+          "hp": 50.0,
           "armorClass": "tank_structural_steel",
           "armorThickness": 1.0
         }
@@ -266,15 +305,76 @@
     },
     {
       "DamageEffects": {
-        "part": {
-          "name": "body",
-          "onHit": {
-            "expl": 1.0
+        "part": [
+          {
+            "name": "body"
           },
-          "onKill": {
-            "destruction": 1.0
+          {
+            "onHit": {
+              "shellState": "inFlight",
+              "expl": 1.0
+            }
+          },
+          {
+            "onHit": {
+              "shellState": "onUnit",
+              "damageType": "generic",
+              "expl": 0.05,
+              "fire": 0.45,
+              "break": 0.5,
+              "damage": 3.0,
+              "fHitCritical": true
+            }
+          },
+          {
+            "onHit": {
+              "shellState": "onUnit",
+              "damageType": "generic",
+              "expl": 0.5,
+              "fire": 0.3,
+              "break": 0.2,
+              "damage": 30.0,
+              "fHitCritical": true
+            }
+          },
+          {
+            "onHit": {
+              "shellState": "onUnit",
+              "damageType": "explosion",
+              "expl": 0.45,
+              "fire": 0.45,
+              "break": 0.1,
+              "damage": 50.0,
+              "fHitCritical": true
+            }
+          },
+          {
+            "onHit": {
+              "shellState": "onUnit",
+              "damageType": "cumulative",
+              "expl": 0.4,
+              "fire": 0.4,
+              "break": 0.1,
+              "damage": 100.0,
+              "fHitCritical": true
+            }
+          },
+          {
+            "onKill": {
+              "shellState": "inFlight",
+              "destruction": 1.0
+            }
+          },
+          {
+            "onKill": {
+              "shellState": "onUnit",
+              "expl": 0.05,
+              "fire": 0.05,
+              "break": 0.9,
+              "fHitCritical": true
+            }
           }
-        }
+        ]
       }
     },
     {
@@ -575,7 +675,7 @@
     {
       "damage": {
         "explosive": {
-          "radius": 0.4,
+          "radius": 0.25,
           "offset": 0.2
         },
         "shatter": [
@@ -701,6 +801,11 @@
           "detachThreshold": 8.0,
           "rocketOffset": [0.0,0.0,0.0],
           "launcherOffset": [0.0,0.0,0.0]
+        },
+        "wire2": {
+          "basicGravity": 1.0,
+          "wireColor": [0.1,0.1,0.1],
+          "rocketOffset": [0.0,0.0,-0.1]
         }
       }
     }

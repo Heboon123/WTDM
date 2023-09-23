@@ -19,7 +19,7 @@ let { CannonMode, CannonSelectedArray, CannonSelected, CannonReloadTime, CannonC
   IsTrpEmpty, TorpedoesCount, TorpedoesSeconds, TorpedoesActualCount, TorpedoesSalvo, TorpedoesMode, TorpedoesName, TorpedoesSelected,
   IsHighRateOfFire, IsInsideLaunchZoneYawPitch, AgmLaunchZoneYawMin,
   AgmLaunchZonePitchMin, AgmLaunchZonePitchMax, AgmLaunchZoneYawMax, AgmRotatedLaunchZoneYawMin, AgmRotatedLaunchZoneYawMax,
-  AgmRotatedLaunchZonePitchMax, AgmRotatedLaunchZonePitchMin, TurretPitch, TurretYaw, IsZoomedAgmLaunchZoneVisible,
+  AgmRotatedLaunchZonePitchMax, AgmRotatedLaunchZonePitchMin, TurretPitch, TurretYaw, FovYaw, FovPitch, IsZoomedAgmLaunchZoneVisible,
   IsAgmLaunchZoneVisible, AgmLaunchZoneDistMax, IsLaunchZoneAvailable, IsOutLaunchZone, IsLaunchZoneOnTarget, LaunchZonePosX, LaunchZonePosY, LaunchZoneWatched,
   IsRangefinderEnabled, RangefinderDist,
   Rpm, IsRpmVisible, IsRpmCritical, TrtMode, Trt, Spd, WaterAlert, HorAngle, AgmLaunchZoneDistMin,
@@ -771,7 +771,7 @@ for (local i = 0; i < NUM_VISIBLE_ENGINES_MAX; ++i) {
   textParamsMapSecondary[AirParamsSecondary.OIL_1 + (i * numParamPerEngine)] <- {
     titleComputed = Computed(@() loc($"HUD/OIL_TEMPERATURE_SHORT{indexStr}"))
     valueComputed = Computed(@() !isInitializedMeasureUnits.value ? ""
-      : generateTemperatureTextFunction(oilTemperatureComputed.value, oilStateComputed.value, measureUnitsNames.value.temperature))
+      : generateTemperatureTextFunction(oilTemperatureComputed.value, oilStateComputed.value, measureUnitsNames.value.temperature)) //warning disable -param-pos
     selectedComputed = Computed (@() "")
     additionalComputed = Computed (@() "")
     alertStateCaptionComputed = Computed (@() oilAlertComputed.value)
@@ -784,7 +784,7 @@ for (local i = 0; i < NUM_VISIBLE_ENGINES_MAX; ++i) {
   textParamsMapSecondary[AirParamsSecondary.WATER_1 + (i * numParamPerEngine)] <- {
     titleComputed = Computed(@() loc($"HUD/WATER_TEMPERATURE_SHORT{indexStr}"))
     valueComputed = Computed(@() !isInitializedMeasureUnits.value ? ""
-      : generateTemperatureTextFunction(waterTemperatureComputed.value, waterStateComputed.value, measureUnitsNames.value.temperature))
+      : generateTemperatureTextFunction(waterTemperatureComputed.value, waterStateComputed.value, measureUnitsNames.value.temperature)) //warning disable -param-pos
     selectedComputed = Computed (@() "")
     additionalComputed = Computed (@() "")
     alertStateCaptionComputed = Computed (@() waterAlertComputed.value)
@@ -797,7 +797,7 @@ for (local i = 0; i < NUM_VISIBLE_ENGINES_MAX; ++i) {
   textParamsMapSecondary[AirParamsSecondary.ENGINE_1 + (i * numParamPerEngine)] <- {
     titleComputed = Computed(@() loc($"HUD/ENGINE_TEMPERATURE_SHORT{indexStr}"))
     valueComputed = Computed(@() !isInitializedMeasureUnits.value ? ""
-      : generateTemperatureTextFunction(engineTemperatureComputed.value, engineStateComputed.value, measureUnitsNames.value.temperature))
+      : generateTemperatureTextFunction(engineTemperatureComputed.value, engineStateComputed.value, measureUnitsNames.value.temperature)) //warning disable -param-pos
     selectedComputed = Computed (@() "")
     additionalComputed = Computed (@() "")
     alertStateCaptionComputed = Computed (@() engineAlertComputed.value)
@@ -975,7 +975,6 @@ let hl = 20
 let vl = 20
 
 const fullRangeMultInv = 0.7
-const outOfZoneLaunchShowTimeOut = 2.
 
 let function getAgmLaunchAngularRangeCommands(_visible, yawMin, yawMax, pitchMin, pitchMax) {
 
@@ -1196,10 +1195,10 @@ let function agmLaunchZone(colorWatch, _w, _h) {
   let function maxAngleBorder() {
     let px = TurretYaw.value
     let py = TurretPitch.value
-    let left  = max(0.0, AgmLaunchZoneYawMin.value) * 100.0 - px * 100.0 + 50.0
-    let right = min(1.0, AgmLaunchZoneYawMax.value) * 100.0 - px * 100.0 + 50.0
-    let lower = 100.0 - max(0.0, AgmLaunchZonePitchMin.value) * 100.0 + py * 100.0 - 50
-    let upper = 100.0 - min(1.0, AgmLaunchZonePitchMax.value) * 100.0 + py * 100.0 - 50
+    let left  = (max(0.0, AgmLaunchZoneYawMin.value) * 100.0 - px * 100.0) * FovYaw.value + 50.0
+    let right = (min(1.0, AgmLaunchZoneYawMax.value) * 100.0 - px * 100.0) * FovYaw.value + 50.0
+    let lower = 100.0 - (max(0.0, AgmLaunchZonePitchMin.value) * 100.0 - py * 100.0) * FovPitch.value - 50
+    let upper = 100.0 - (min(1.0, AgmLaunchZonePitchMax.value) * 100.0 - py * 100.0) * FovPitch.value - 50
     if (IsAgmLaunchZoneVisible.value) {
       return [
         [VECTOR_LINE, left,  upper, right, upper],
@@ -1222,6 +1221,7 @@ let function agmLaunchZone(colorWatch, _w, _h) {
       AgmLaunchZoneYawMin, AgmLaunchZoneYawMax,
       AgmLaunchZonePitchMin, AgmLaunchZonePitchMax,
       TurretYaw, TurretPitch, IsZoomedAgmLaunchZoneVisible,
+      FovYaw, FovPitch,
       colorWatch
     ]
     commands = IsZoomedAgmLaunchZoneVisible.value ? maxAngleBorder() : []

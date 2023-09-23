@@ -6,6 +6,7 @@ let u = require("%sqStdLibs/helpers/u.nut")
 
 let inventory = require("inventory")
 let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { format, split_by_chars } = require("string")
 let { get_time_msec } = require("dagor.time")
 let progressMsg = require("%sqDagui/framework/progressMsg.nut")
@@ -16,6 +17,8 @@ let DataBlock = require("DataBlock")
 let { json_to_string } = require("json")
 let { cutPrefix } = require("%sqstd/string.nut")
 let { TASK_CB_TYPE } = require("%scripts/tasker.nut")
+let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
+let { get_network_block } = require("blkGetters")
 
 enum validationCheckBitMask {
   VARTYPE            = 0x01
@@ -166,7 +169,7 @@ let function _validate(data, name) {
         foreach (key, defVal in keys) {
           let isExist = (key in item)
           let val = item?[key]
-          let isTypeCorrect = isExist && (type(val) == type(defVal) || ::is_numeric(val) == ::is_numeric(defVal))
+          let isTypeCorrect = isExist && (type(val) == type(defVal) || is_numeric(val) == is_numeric(defVal))
 
           let isMissing   = shouldCheckExistence && !isExist
           let isWrongType = shouldCheckType && isExist && !isTypeCorrect
@@ -210,7 +213,7 @@ let function _validate(data, name) {
     itemsBroken = ";".join(itemsBroken, true) // warning disable: -assigned-never-used
     keysMissing = ";".join(keysMissing.keys(), true) // warning disable: -assigned-never-used
     keysWrongType = ";".join(keysWrongType.topairs().map(@(i) i[0] + "=" + i[1])) // warning disable: -assigned-never-used
-    ::script_net_assert_once("inventory client bad response", $"InventoryClient: Response has errors: {name}")
+    script_net_assert_once("inventory client bad response", $"InventoryClient: Response has errors: {name}")
   }
 
   return data
@@ -283,7 +286,7 @@ let class InventoryClient {
 
   function getMarketplaceBaseUrl() {
     let circuit = ::get_cur_circuit_name();
-    let networkBlock = ::get_network_block();
+    let networkBlock = get_network_block();
     let url = networkBlock?[circuit]?.marketplaceURL ?? networkBlock?.marketplaceURL;
     if (!url)
       return null
@@ -422,7 +425,7 @@ let class InventoryClient {
           && (this._lastDelayedItemdefsRequestTime + LOST_DELAYED_ACTION_MSEC > get_time_msec())))
       return
     this._lastDelayedItemdefsRequestTime = get_time_msec()
-    ::handlersManager.doDelayed(function() {
+    handlersManager.doDelayed(function() {
       this._lastDelayedItemdefsRequestTime = 0
       this.requestItemDefsImpl()
     }.bindenv(this))
@@ -560,8 +563,8 @@ let class InventoryClient {
             if (!pair.len())
               continue
             parsedRecipe.reqItems.append({
-              itemdefid = ::to_integer_safe(pair[0])
-              quantity  = (1 in pair) ? ::to_integer_safe(pair[1]) : 1
+              itemdefid = to_integer_safe(pair[0])
+              quantity  = (1 in pair) ? to_integer_safe(pair[1]) : 1
             })
           }
           continue
@@ -571,8 +574,8 @@ let class InventoryClient {
         if (!pair.len())
           continue
         parsedRecipe.components.append({
-          itemdefid = ::to_integer_safe(pair[0])
-          quantity  = (1 in pair) ? ::to_integer_safe(pair[1]) : 1
+          itemdefid = to_integer_safe(pair[0])
+          quantity  = (1 in pair) ? to_integer_safe(pair[1]) : 1
         })
       }
       recipes.append(parsedRecipe)
@@ -648,9 +651,9 @@ let class InventoryClient {
       json["permission"] <- requirement
     }
 
-    let internalCb = Callback((@(cb, shouldCheckInventory) function(data) {
+    let internalCb = Callback( function(data) {
                                      this.handleItemsDelta(data, cb, errocCb, shouldCheckInventory)
-                                 })(cb, shouldCheckInventory), this)
+                                 }, this)
     let taskId = ::char_send_custom_action("cln_inventory_exchange_items",
                                              EATT_JSON_REQUEST,
                                              DataBlock(),
@@ -693,7 +696,7 @@ let class InventoryClient {
 
     let res = []
     foreach (recipeCfg in parsedRecipes) {
-      let id = ::to_integer_safe(recipeCfg.components?[0]?.itemdefid ?? "", -1)
+      let id = to_integer_safe(recipeCfg.components?[0]?.itemdefid ?? "", -1)
       if (id != -1)
         res.append(id)
     }

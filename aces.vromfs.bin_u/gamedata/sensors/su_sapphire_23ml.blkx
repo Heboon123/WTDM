@@ -1,6 +1,6 @@
 {
   "type": "radar",
-  "name": "Sapphire-23mla_tp_23m",
+  "name": "Sapphire-23ml_tp_23m",
   "showMissileLaunchZone": true,
   "transivers": {
     "pulse": {
@@ -8,7 +8,7 @@
       "pulsePower": 60000.0,
       "pulseWidth": 0.0,
       "prf": 1000.0,
-      "band": 8,
+      "band": 9,
       "rcs": 3.0,
       "range": 54000.0,
       "rangeMax": 100000.0,
@@ -23,7 +23,7 @@
       "power": 70000.0,
       "pulseWidth": 0.0,
       "prf": 1000.0,
-      "band": 8,
+      "band": 9,
       "rcs": 3.0,
       "range": 19000.0,
       "rangeMax": 30000.0,
@@ -289,7 +289,7 @@
       "dynamicRange": [40.0,12.0],
       "groundClutter": false,
       "aircraftAsTarget": true,
-      "friendFoeId": false,
+      "friendFoeId": true,
       "absDopplerSpeed": true,
       "mainBeamDopplerSpeed": true,
       "distance": {
@@ -467,8 +467,9 @@
           },
           "clearTargets": [],
           "clearTargetsOfInterest": [],
-          "setIllumination": {
-            "illumination": false
+          "setFsmActive": {
+            "fsm": "illumination",
+            "active": false
           }
         },
         "setBSVStandbyMode": [
@@ -636,30 +637,47 @@
             }
           }
         ],
-        "setSearchModeCommon": {
-          "setEnabled": {
-            "value": true
+        "setSearchModeCommon": [
+          {
+            "setEnabled": {
+              "value": true
+            }
           },
-          "setFsmActive": {
-            "fsm": "search",
-            "active": true
+          {
+            "setFsmActive": {
+              "fsm": "search",
+              "active": true
+            }
           },
-          "setCenterAzimuth": {
-            "source": "constant",
-            "value": 0.0
+          {
+            "setFsmActive": {
+              "fsm": "illumination",
+              "active": false
+            }
           },
-          "clearTargets": [],
-          "clearTargetsOfInterest": [],
-          "setCueEnabled": {
-            "value": true
+          {
+            "setCenterAzimuth": {
+              "source": "constant",
+              "value": 0.0
+            }
           },
-          "setScanPatternSet": {
-            "scanPatternSet": "searchUp"
+          {
+            "clearTargets": []
           },
-          "setIllumination": {
-            "illumination": false
+          {
+            "clearTargetsOfInterest": []
+          },
+          {
+            "setCueEnabled": {
+              "value": true
+            }
+          },
+          {
+            "setScanPatternSet": {
+              "scanPatternSet": "searchUp"
+            }
           }
-        },
+        ],
         "setBSVSearchMode": [
           {
             "setSearchModeCommon": []
@@ -846,27 +864,44 @@
             "active": false
           }
         },
-        "setLockModeCommon": {
-          "setEnabled": {
-            "value": true
+        "setLockModeCommon": [
+          {
+            "setEnabled": {
+              "value": true
+            }
           },
-          "clearTargetsOfInterest": [],
-          "setRelSpeedGatePos": {
-            "source": "constRange",
-            "pos": 765.0,
-            "width": 1470.0
+          {
+            "clearTargetsOfInterest": []
           },
-          "setScanPatternSet": [],
-          "resetScanPhase": [],
-          "clearTargets": [],
-          "setFsmActive": {
-            "fsm": "lock",
-            "active": true
+          {
+            "setRelSpeedGatePos": {
+              "source": "constRange",
+              "pos": 765.0,
+              "width": 1470.0
+            }
           },
-          "setIllumination": {
-            "illumination": false
+          {
+            "setScanPatternSet": []
+          },
+          {
+            "resetScanPhase": []
+          },
+          {
+            "clearTargets": []
+          },
+          {
+            "setFsmActive": {
+              "fsm": "lock",
+              "active": true
+            }
+          },
+          {
+            "setFsmActive": {
+              "fsm": "illumination",
+              "active": false
+            }
           }
-        },
+        ],
         "setDesignationLockModeCommon": [
           {
             "setLockModeCommon": []
@@ -1103,8 +1138,9 @@
           "setScanPattern": {
             "scanPattern": "track"
           },
-          "setIllumination": {
-            "illumination": true
+          "setFsmActive": {
+            "fsm": "illumination",
+            "active": true
           }
         },
         "setOLSTrackModeCommon": {
@@ -1112,8 +1148,9 @@
           "setScanPattern": {
             "scanPattern": "trackOLS"
           },
-          "setIllumination": {
-            "illumination": false
+          "setFsmActive": {
+            "fsm": "illumination",
+            "active": false
           }
         },
         "setBSVTrackMode": {
@@ -2867,6 +2904,45 @@
             "setRelSpeedGatePos": {
               "source": "activeTargetOfInterest",
               "width": 0.0
+            }
+          }
+        }
+      }
+    },
+    "illumination": {
+      "stateInit": "init",
+      "transitions": {
+        "activate": {
+          "event": "fsmActivate",
+          "stateTo": "active",
+          "actions": {
+            "checkIlluminationTimeOut": {
+              "transiver": true
+            }
+          }
+        },
+        "deactivate": {
+          "event": "fsmDeactivate",
+          "stateTo": "inactive",
+          "actions": {
+            "setIllumination": {
+              "transiver": false
+            }
+          }
+        },
+        "activateIllumination": {
+          "event": "sarhMissileLaunch",
+          "actions": {
+            "setIlluminationTimeOut": {
+              "timeOut": 60.0
+            }
+          }
+        },
+        "updateIllumination": {
+          "event": "update",
+          "actions": {
+            "checkIlluminationTimeOut": {
+              "transiver": true
             }
           }
         }

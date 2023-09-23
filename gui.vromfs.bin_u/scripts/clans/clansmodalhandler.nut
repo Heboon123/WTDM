@@ -1,8 +1,9 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
 let { Cost } = require("%scripts/money.nut")
-let u = require("%sqStdLibs/helpers/u.nut")
+let { isDataBlock, isFunction } = require("%sqStdLibs/helpers/u.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { countSizeInItems } = require("%sqDagui/daguiUtil.nut")
 let DataBlock  = require("DataBlock")
@@ -10,10 +11,16 @@ let { format } = require("string")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { get_blk_value_by_path } = require("%sqStdLibs/helpers/datablockUtils.nut")
 let { clearBorderSymbols, cutPrefix } = require("%sqstd/string.nut")
-let { getClanTableSortFields, getClanTableFieldsByPage, getClanTableHelpLinksByPage } = require("%scripts/clans/clanTablesConfig.nut")
+let { getClanTableSortFields, getClanTableFieldsByPage, getClanTableHelpLinksByPage
+} = require("%scripts/clans/clanTablesConfig.nut")
 let time = require("%scripts/time.nut")
 let clanContextMenu = require("%scripts/clans/clanContextMenu.nut")
 let { floor } = require("%sqstd/math.nut")
+let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
+let { convertBlk } = require("%sqstd/datablock.nut")
+let { saveLocalAccountSettings, loadLocalAccountSettings
+} = require("%scripts/clientState/localProfile.nut")
+let { get_game_settings_blk } = require("blkGetters")
 
 // how many top places rewards are displayed in clans list window
 let CLAN_SEASONS_TOP_PLACES_REWARD_PREVIEW = 3
@@ -34,7 +41,7 @@ local leaderboardFilterArray = [
   }
 ]
 
-::gui_handlers.ClansModalHandler <- class extends ::gui_handlers.clanPageModal {
+gui_handlers.ClansModalHandler <- class extends gui_handlers.clanPageModal {
   wndType = handlerType.MODAL
   sceneBlkName   = "%gui/clans/ClansModal.blk"
   pages          = ["clans_search", "clans_leaderboards", "my_clan"]
@@ -57,10 +64,9 @@ local leaderboardFilterArray = [
   isLastPage     = false
   clansLbSortByPage    = null
   curClanLbPage  = 0
-  curPageData    = null
 
-  clanByRow      = null
-  curClanId      = -1
+  clanInfoByRow      = null
+  curClanInfo = null
   lastHoveredDataIdx = -1
 
   rowsTexts      = null
@@ -69,7 +75,7 @@ local leaderboardFilterArray = [
   filterMask = null
 
   function initScreen() {
-    this.clanByRow = []
+    this.clanInfoByRow = []
     this.rowsTexts = {}
     this.tooltips  = {}
 
@@ -140,10 +146,9 @@ local leaderboardFilterArray = [
 
   function initClanLeaderboards() {
     this.clanLbInited = true
-    this.curPageData = null
     this.curClanLbPage = 0
-    this.clanByRow = []
-    this.curClanId = null
+    this.clanInfoByRow = []
+    this.curClanInfo = null
     this.isLastPage = false
     this.clansLbSortByPage = getClanTableSortFields()
   }
@@ -250,7 +255,7 @@ local leaderboardFilterArray = [
   function getClansLbFieldName(lbCategory = null, mode = null) {
     let actualCategory = lbCategory || this.clansLbSortByPage[this.curPage]
     let field = actualCategory?.field ?? actualCategory.id
-    local fieldName = u.isFunction(field) ? field() : field
+    local fieldName = isFunction(field) ? field() : field
     if (actualCategory.byDifficulty)
       fieldName += ::g_difficulty.getDifficultyByDiffCode(mode ?? this.curMode).clanDataEnding
     return fieldName
@@ -302,7 +307,7 @@ local leaderboardFilterArray = [
       this.myClanLbData = null
     if (updateMyClanRow && ::clan_get_my_clan_id() != "-1") {
       let requestPage = this.curPage
-      let cbSuccess = Callback((@(seasonOrdinalNumber) function(myClanRowBlk) {
+      let cbSuccess = Callback( function(myClanRowBlk) {
                                       if (requestPage != this.curPage)
                                         return
 
@@ -310,15 +315,15 @@ local leaderboardFilterArray = [
                                       local found = false
                                       foreach (row in myClanRowBlk % "clan")
                                         if (row?._id == myClanId) {
-                                          this.myClanLbData = ::buildTableFromBlk(row)
-                                          this.myClanLbData.astat <- ::buildTableFromBlk(row?.astat)
+                                          this.myClanLbData = convertBlk(row)
+                                          this.myClanLbData.astat <- isDataBlock(row?.astat) ? convertBlk(row.astat) : {}
                                           found = true
                                           break
                                         }
                                       if (!found)
                                         this.myClanLbData = null
                                       this.requestLbData(seasonOrdinalNumber)
-                                    })(seasonOrdinalNumber), this)
+                                    }, this)
 
       this.requestClanLBPosition(this.getClansLbFieldName(), seasonOrdinalNumber, cbSuccess)
     }
@@ -370,8 +375,8 @@ local leaderboardFilterArray = [
 
     if (this.isSearchMode && !("clan" in lbBlk)) {
       this.showEmptySearchResult(true)
-      this.clanByRow.clear()
-      this.curClanId = null
+      this.clanInfoByRow.clear()
+      this.curClanInfo = null
       this.updateButtons()
       return
     }
@@ -397,36 +402,42 @@ local leaderboardFilterArray = [
     local data = []
     this.rowsTexts = {}
     this.tooltips = {}
-    this.clanByRow.clear()
-    this.curClanId = null
+    this.clanInfoByRow.clear()
+    this.curClanInfo = null
     this.isLastPage = true
     foreach (_name, rowBlk in clanLbBlk % "clan") {
       if (type(rowBlk) != "instance")
         continue
 
-      if (this.clanByRow.len() >= this.clansPerPage) {
+      if (this.clanInfoByRow.len() >= this.clansPerPage) {
         this.isLastPage = false
         break
       }
 
       // Warning! getFilteredClanData() actualy mutates its parameter and returns it back
       let rowBlkFiltered = ::getFilteredClanData(rowBlk)
-      data.append(this.generateRowTableData(rowBlkFiltered, this.clanByRow.len()))
-      this.clanByRow.append(rowBlkFiltered._id.tostring())
+      data.append(this.generateRowTableData(rowBlkFiltered, this.clanInfoByRow.len()))
+      this.clanInfoByRow.append({
+        id = rowBlkFiltered._id.tostring()
+        isClosed = rowBlkFiltered?.status == "closed"
+      })
     }
 
-    for (local i = this.clanByRow.len(); i < this.clansPerPage; i++) {
+    for (local i = this.clanInfoByRow.len(); i < this.clansPerPage; i++) {
       data.append(::buildTableRow($"row_{i}", [], i % 2 == 1, "inactive:t='yes';"))
-      this.clanByRow.append(null)
+      this.clanInfoByRow.append(null)
     }
 
     if (this.myClanLbData != null) {
-      data.append(::buildTableRow($"row_{this.clanByRow.len()}", ["..."], null,
+      data.append(::buildTableRow($"row_{this.clanInfoByRow.len()}", ["..."], null,
         "inactive:t='yes'; commonTextColor:t='yes'; style:t='height:0.7@leaderboardTrHeight;';"))
-      this.clanByRow.append(null)
+      this.clanInfoByRow.append(null)
       this.myClanLbData = ::getFilteredClanData(this.myClanLbData)
-      data.append(this.generateRowTableData(this.myClanLbData, this.clanByRow.len()))
-      this.clanByRow.append(this.myClanLbData._id.tostring())
+      data.append(this.generateRowTableData(this.myClanLbData, this.clanInfoByRow.len()))
+      this.clanInfoByRow.append({
+        id = this.myClanLbData._id.tostring()
+        isClosed = this.myClanLbData?.status == "closed"
+      })
     }
     let headerRow = [{ text = "#multiplayer/place", width = "0.1@sf" }, { text = "" }, { text = "#clan/clan_name", tdalign = "left",  width = "@clanNameTableWidth" }]
 
@@ -466,7 +477,7 @@ local leaderboardFilterArray = [
     this.guiScene.setUpdatesEnabled(true, true)
 
     if (this.curPage == "clans_leaderboards" || this.curPage == "clans_search") {
-      lbTableObj.setValue(this.clanByRow.len() ? 1 : -1)
+      lbTableObj.setValue(this.clanInfoByRow.len() ? 1 : -1)
       this.onSelectClan(lbTableObj)
     }
   }
@@ -588,7 +599,7 @@ local leaderboardFilterArray = [
   function onFilterEditBoxChangeValue() {}
 
   function onSelectClan(obj) {
-    if (::show_console_buttons)
+    if (showConsoleButtons.value)
       return
     if (!checkObj(obj))
       return
@@ -598,13 +609,13 @@ local leaderboardFilterArray = [
   }
 
   function onRowHoverClan(obj) {
-    if (!::show_console_buttons)
+    if (!showConsoleButtons.value)
       return
     if (!checkObj(obj))
       return
 
     let isHover = obj.isHovered()
-    let dataIdx = ::to_integer_safe(cutPrefix(obj.id, "row_", ""), -1, false)
+    let dataIdx = to_integer_safe(cutPrefix(obj.id, "row_", ""), -1, false)
     if (isHover == (dataIdx == this.lastHoveredDataIdx))
      return
 
@@ -613,30 +624,26 @@ local leaderboardFilterArray = [
   }
 
   function onSelectedClanIdx(dataIdx) {
-    this.curClanId = this.clanByRow?[dataIdx]
+    this.curClanInfo = this.clanInfoByRow?[dataIdx]
     this.updateButtons()
   }
 
   function updateButtons() {
     showObjectsByTable(this.curPageObj, {
-      btn_clan_info       = this.curClanId != null
-      btn_clan_actions    = this.curClanId != null && ::show_console_buttons
-      btn_membership_req  = this.curClanId != null && !::is_in_clan() && ::clan_get_requested_clan_id() != this.curClanId
-      mid_nav_bar         = this.clanByRow.len() > 0
+      mid_nav_bar        = this.clanInfoByRow.len() > 0
+      btn_clan_info      = this.curClanInfo != null
+      btn_clan_actions   = this.curClanInfo != null && showConsoleButtons.value
+      btn_membership_req = this.curClanInfo != null && !::is_in_clan()
+        && (::clan_get_requested_clan_id() != this.curClanInfo.id)
     })
 
     let reqButton = this.curPageObj.findObject("btn_membership_req")
-    if (checkObj(reqButton)) {
-      local opened = true
-      if (this.curPageData)
-        foreach (rowBlk in this.curPageData % "clan")
-          if (rowBlk._id == this.clan) {
-            opened = rowBlk.status != "closed"
-            break
-          }
-      reqButton.enable(opened)
-      reqButton.tooltip = opened ? "" : loc("clan/was_closed")
-    }
+    if (!checkObj(reqButton))
+      return
+
+    let isClosed = this.curClanInfo?.isClosed ?? false
+    reqButton.inactiveColor = isClosed ? "yes" : "no"
+    reqButton.tooltip = isClosed ? loc("clan/was_closed") : ""
   }
 
   function onEventClanMembershipRequested(_p) {
@@ -648,8 +655,8 @@ local leaderboardFilterArray = [
   }
 
   function onClanInfo() {
-    if (this.curClanId != null)
-      ::showClanPage(this.curClanId, "", "")
+    if (this.curClanInfo != null)
+      ::showClanPage(this.curClanInfo.id, "", "")
   }
 
   function onSelectClansList(_obj) {
@@ -681,10 +688,10 @@ local leaderboardFilterArray = [
   }
 
   function onClanRclick(position = null) {
-    if (!this.curClanId)
+    if (!this.curClanInfo)
       return
 
-    let menu = clanContextMenu.getClanActions(this.curClanId)
+    let menu = clanContextMenu.getClanActions(this.curClanInfo.id)
     ::gui_right_click_menu(menu, this, position)
   }
 
@@ -806,7 +813,7 @@ local leaderboardFilterArray = [
     if (checkObj(objEndsDuel))
       objEndsDuel.setValue(loc("clan/battle_season/ends") + loc("ui/colon") + endsDate)
 
-    let blk = ::get_game_settings_blk()
+    let blk = get_game_settings_blk()
     if (!blk)
       return
     let curMode = this.getCurDMode()
@@ -850,7 +857,7 @@ local leaderboardFilterArray = [
   }
 
   function onHelp() {
-    ::gui_handlers.HelpInfoHandlerModal.openHelp(this)
+    gui_handlers.HelpInfoHandlerModal.openHelp(this)
   }
 
   function getWndHelpConfig() {
@@ -886,18 +893,18 @@ local leaderboardFilterArray = [
   }
 
   function loadLeaderboardFilter() {
-    this.filterMask = ::load_local_account_settings(CLAN_LEADERBOARD_FILTER_ID,
+    this.filterMask = loadLocalAccountSettings(CLAN_LEADERBOARD_FILTER_ID,
       (1 << leaderboardFilterArray.len()) - 1)
   }
 
   function onChangeLeaderboardFilter(obj) {
     let newFilterMask = obj.getValue()
     this.filterMask = newFilterMask
-    ::save_local_account_settings(CLAN_LEADERBOARD_FILTER_ID, this.filterMask)
+    saveLocalAccountSettings(CLAN_LEADERBOARD_FILTER_ID, this.filterMask)
 
     this.curClanLbPage = 0
     this.requestClansLbData()
   }
 
-  getCurClan = @() this.curClanId
+  getCurClan = @() this.curClanInfo?.id
 }

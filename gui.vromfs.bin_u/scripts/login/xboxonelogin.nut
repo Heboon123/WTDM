@@ -1,6 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-
+let { stripTags } = require("%sqstd/string.nut")
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { animBgLoad } = require("%scripts/loading/animBg.nut")
 let showTitleLogo = require("%scripts/viewUtils/showTitleLogo.nut")
@@ -10,8 +11,10 @@ let { forceHideCursor } = require("%scripts/controls/mousePointerVisibility.nut"
 let { get_gamertag } = require("%xboxLib/impl/user.nut")
 let { init_with_ui } = require("%xboxLib/user.nut")
 let { login } = require("%scripts/xbox/auth.nut")
+let { OPTIONS_MODE_GAMEPLAY } = require("%scripts/options/optionsExtNames.nut")
+let { openEulaWnd } = require("%scripts/eulaWnd.nut")
 
-::gui_handlers.LoginWndHandlerXboxOne <- class extends ::BaseGuiHandler {
+gui_handlers.LoginWndHandlerXboxOne <- class extends ::BaseGuiHandler {
   sceneBlkName = "%gui/loginBoxSimple.blk"
   needAutoLogin = false
   isLoginInProcess = false
@@ -24,39 +27,50 @@ let { login } = require("%scripts/xbox/auth.nut")
     setVersionText(this.scene)
     ::setProjectAwards(this)
     showTitleLogo(this.scene, 128)
-    setGuiOptionsMode(::OPTIONS_MODE_GAMEPLAY)
+    setGuiOptionsMode(OPTIONS_MODE_GAMEPLAY)
 
-    let buttonsView = [
-      {
-        id = "authorization_button"
-        text = "#HUD_PRESS_A_CNT"
-        shortcut = "AX"
-        funcName = "onOk"
-        delayed = true
-        visualStyle = "noBgr"
-        mousePointerCenteringBelowText = true
-        actionParamsMarkup = "bigBoldFont:t='yes'; shadeStyle:t='shadowed'"
-      },
-      {
-        id = "change_profile"
-        text = "#mainmenu/btnProfileChange"
-        shortcut = "Y"
-        visualStyle = "noBgr"
-        funcName = "onChangeGamertag"
-        mousePointerCenteringBelowText = true
-        actionParamsMarkup = "shadeStyle:t='shadowed'"
-      }
-    ]
+    this.scene.findObject("user_notify_text").setValue(loc("xbox/reqInstantConnection"))
 
-    local data = ""
-    foreach (view in buttonsView)
-      data += handyman.renderCached("%gui/commonParts/button.tpl", view)
+    let tipHint = stripTags(loc("ON_GAME_ENTER_YOU_APPLY_EULA", { sendShortcuts = "{{INPUT_BUTTON GAMEPAD_START}}"}))
+    let hintBlk = "".concat("loadingHint{pos:t='50%(pw-w), 0.5ph-0.5h' position:t='absolute' width:t='2/3sw' behaviour:t='bhvHint' value:t='", tipHint, "'}")
+
+    let data = handyman.renderCached("%gui/commonParts/buttonsList.tpl", {buttons = [{
+      id = "authorization_button"
+      text = "#HUD_PRESS_A_CNT"
+      shortcut = "AX"
+      funcName = "onOk"
+      delayed = true
+      visualStyle = "noBgr"
+      mousePointerCenteringBelowText = true
+      actionParamsMarkup = "bigBoldFont:t='yes'; shadeStyle:t='shadowed'"
+    },
+    {
+      id = "change_profile"
+      text = "#mainmenu/btnProfileChange"
+      shortcut = "Y"
+      visualStyle = "noBgr"
+      funcName = "onChangeGamertag"
+      mousePointerCenteringBelowText = true
+      actionParamsMarkup = "shadeStyle:t='shadowed'"
+    },{
+      id = "show_eula_button"
+      shortcut = "start"
+      funcName = "onEulaButton"
+      delayed = true
+      visualStyle = "noBgr"
+      mousePointerCenteringBelowText = true
+      actionParamsMarkup = $"bigBoldFont:t='yes'; shadeStyle:t='shadowed'; {hintBlk}"
+      showOnSelect = "no"
+    }]})
 
     this.guiScene.prependWithBlk(this.scene.findObject("authorization_button_place"), data, this)
-    this.scene.findObject("user_notify_text").setValue(loc("xbox/reqInstantConnection"))
     this.updateGamertag()
 
     ::move_mouse_on_obj("authorization_button")
+  }
+
+  function onEulaButton() {
+    openEulaWnd()
   }
 
   function onOk() {
@@ -86,7 +100,7 @@ let { login } = require("%scripts/xbox/auth.nut")
         ::close_wait_screen()
         if (err_code == 0) { // YU2_OK
           forceHideCursor(false)
-          ::gui_start_modal_wnd(::gui_handlers.UpdaterModal,
+          ::gui_start_modal_wnd(gui_handlers.UpdaterModal,
               {
                 configPath = "updater.blk"
                 onFinishCallback = ::xbox_complete_login

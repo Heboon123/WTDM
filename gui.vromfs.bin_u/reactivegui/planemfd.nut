@@ -28,7 +28,9 @@ let planeMFD = @() {
         relativCircleSize = 36,
         scale = RwrScale.value,
         needDrawCentralIcon = !RwrBackHide.value,
-        needDrawBackground = !RwrBackHide.value
+        needDrawBackground = !RwrBackHide.value,
+        fontSizeMult = 2.0,
+        needAdditionalLights = false
       })
       : null),
     mfdCamera,

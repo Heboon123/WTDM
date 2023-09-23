@@ -1,17 +1,19 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { format } = require("string")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let shopSearchCore = require("%scripts/shop/shopSearchCore.nut")
 let { getUnitRole } = require("%scripts/unit/unitInfoTexts.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { cutPrefix } = require("%sqstd/string.nut")
+let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
+let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
+let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 
-::gui_handlers.ShopSearchWnd <- class extends ::gui_handlers.BaseGuiHandlerWT {
+gui_handlers.ShopSearchWnd <- class extends gui_handlers.BaseGuiHandlerWT {
   wndType = handlerType.MODAL
   sceneTplName = "%gui/shop/shopSearchWnd.tpl"
 
@@ -74,7 +76,7 @@ let { cutPrefix } = require("%sqstd/string.nut")
         continue
 
       let countryView = {
-        countryIcon = ::get_country_icon(countryId)
+        countryIcon = getCountryIcon(countryId)
         armyTypes = []
       }
 
@@ -87,7 +89,7 @@ let { cutPrefix } = require("%sqstd/string.nut")
           armyName = colorize("fadedTextColor", unitType.getArmyLocName())
           unitPlates = this.isUseUnitPlates ? [] : null
           units      = this.isUseUnitPlates ? null : []
-          isTooltipByHold = ::show_console_buttons
+          isTooltipByHold = showConsoleButtons.value
         }
 
         foreach (u in unitsList) {
@@ -104,7 +106,7 @@ let { cutPrefix } = require("%sqstd/string.nut")
               type = getUnitRole(u)
               tooltipId = ::g_tooltip.getIdUnit(u.name)
               text = colorize("fadedTextColor", format("[%.1f]", u.getBattleRating(ediff))) +
-                ::nbsp + ::getUnitName(u, true)
+                ::nbsp + getUnitName(u, true)
               isUsable = u.isUsable()
               canBuy   = ::canBuyUnit(u) || ::canBuyUnitOnline(u)
             })
@@ -154,7 +156,7 @@ return {
     let units = shopSearchCore.findUnitsByLocName(searchString)
     if (!units.len())
       return false
-    ::handlersManager.loadHandler(::gui_handlers.ShopSearchWnd, {
+    handlersManager.loadHandler(gui_handlers.ShopSearchWnd, {
       searchString = searchString
       cbOwnerShowUnit = cbOwnerShowUnit
       getEdiffFunc = getEdiffFunc

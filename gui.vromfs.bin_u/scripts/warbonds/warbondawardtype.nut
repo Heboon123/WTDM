@@ -1,8 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
-
-
+let { isHardTaskIncomplete } = require("%scripts/unlocks/battleTasks.nut")
 let DataBlock = require("DataBlock")
 let { Balance } = require("%scripts/money.nut")
 let { format } = require("string")
@@ -10,6 +9,7 @@ let { getPurchaseLimitWb } = require("%scripts/warbonds/warbondShopState.nut")
 let { DECORATION, SPECIAL_TASK } = require("%scripts/utils/genericTooltipTypes.nut")
 let { getFullUnlockDescByName, getUnlockNameText } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { getDecorator } = require("%scripts/customization/decorCache.nut")
+let { getEsUnitType, getUnitName } = require("%scripts/unit/unitInfo.nut")
 
 let enums = require("%sqStdLibs/helpers/enums.nut")
 ::g_wb_award_type <- {
@@ -127,7 +127,7 @@ enums.addTypesByGlobalName("g_wb_award_type", {
   [EWBAT_UNIT] = {
     getLayeredImage = function(blk, _warbond) {
       let unit = getAircraftByName(blk.name)
-      let unitType = ::get_es_unit_type(unit)
+      let unitType = getEsUnitType(unit)
       let style = "reward_unit_" + ::getUnitTypeText(unitType).tolower()
       return LayersIcon.getIconData(style)
     }
@@ -139,7 +139,7 @@ enums.addTypesByGlobalName("g_wb_award_type", {
     }
     getIconHeaderText = function(blk) { return this.getNameText(blk) }
     getTooltipId = @(blk, warbond) ::g_tooltip.getIdUnit(blk?.name ?? "", { wbId = warbond.id, wbListId = warbond.listId })
-    getNameText = function(blk) { return ::getUnitName(blk?.name ?? "") }
+    getNameText = function(blk) { return getUnitName(blk?.name ?? "") }
 
     getDescriptionImage = function(blk, _warbond) {
       let unit = getAircraftByName(blk.name)
@@ -174,7 +174,7 @@ enums.addTypesByGlobalName("g_wb_award_type", {
   [EWBAT_ITEM]                 = makeWbAwardItem(),
   [EWBAT_TROPHY]               = makeWbAwardItem(),
   [EWBAT_EXT_INVENTORY_ITEM]   = makeWbAwardItem({
-    getItem = @(blk) ::ItemsManager.findItemById(::to_integer_safe(blk.name))
+    getItem = @(blk) ::ItemsManager.findItemById(to_integer_safe(blk.name))
   }),
 
   [EWBAT_SKIN] = {
@@ -301,7 +301,7 @@ enums.addTypesByGlobalName("g_wb_award_type", {
     getMaxBoughtCount = @(warbond, _blk) getPurchaseLimitWb(warbond)
     isReqSpecialTasks = true
     canBuyReasonLocId = @(warbond, blk)
-      ::g_battle_tasks.hasInCompleteHardTask.value
+      isHardTaskIncomplete.value
         ? "item/specialTasksPersonalUnlocks/purchaseRestriction"
         : (getPurchaseLimitWb(warbond) <= this.getBoughtCount(warbond, blk))
            ? "item/specialTasksPersonalUnlocks/limitRestriction"

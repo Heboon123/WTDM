@@ -7,144 +7,199 @@
       "size": "@modCellWidth, @modCellHeight",
       "position": "absolute"
     },
-    "frame": {
-      "id": "mods_frame",
-      "pos": "50%pw-50%w, 1@topBarHeight +0.01@sf +50%(1@maxWeaponsWindowHeight - h)",
-      "posWithoutSlotbar": "50%pw-50%w, 1@topBarHeight +0.01@sf +50%(1@maxWeaponsWindowHeightNoSlotbar - h)",
-      "position": "absolute",
-      "flow": "vertical",
-      "class": "wndNav",
-      "css-hier-invalidate": "yes",
-      "isHeaderHidden": "no",
-      "frame_header": {
-        "activeText": {
-          "id": "wnd_title",
-          "caption": "yes",
-          "text": ""
-        },
+    "frame": [
+      {
+        "id": "mods_frame"
+      },
+      {
+        "pos": "50%pw-50%w, 1@topBarHeight +0.01@sf +50%(1@maxWeaponsWindowHeight - h)"
+      },
+      {
+        "posWithoutSlotbar": "50%pw-50%w, 1@topBarHeight +0.01@sf +50%(1@maxWeaponsWindowHeightNoSlotbar - h)"
+      },
+      {
+        "position": "absolute"
+      },
+      {
+        "flow": "vertical"
+      },
+      {
+        "class": "wndNav"
+      },
+      {
+        "css-hier-invalidate": "yes"
+      },
+      {
+        "isHeaderHidden": "no"
+      },
+      {
+        "frame_header": {
+          "activeText": {
+            "id": "wnd_title",
+            "caption": "yes",
+            "text": ""
+          },
+          "Button_close": {
+            "id": "weaponry_close_btn"
+          }
+        }
+      },
+      {
+        "fadedImageFrame": {
+          "id": "researchMode_image_block",
+          "width": "pw - 2@framePadding",
+          "pos": "0, 1@frameTopPadding",
+          "posWithoutHeader": "0, 0",
+          "position": "absolute",
+          "margin": "1@framePadding, 0",
+          "img": {
+            "size": "3ph,ph",
+            "pos": "pw-2w, 50%ph-50%h",
+            "position": "relative",
+            "background-image": "#ui/images/engineer?P1",
+            "background-position": "2w,0,0,0",
+            "fadingBox": {
+              "size": "80,ph",
+              "pos": "pw, 0",
+              "position": "absolute"
+            }
+          }
+        }
+      },
+      {
+        "tdiv": {
+          "id": "overflow-div",
+          "width": "pw",
+          "overflow-x": "auto",
+          "modificationsBlock": {
+            "id": "main_modifications",
+            "position": "relative",
+            "margin-left": "1@modBlockTierNumHeight",
+            "behavior": "posNavigator",
+            "navigatorShortcuts": "noSelect",
+            "moveX": "closest",
+            "moveY": "linear",
+            "tdiv": {
+              "id": "bg_elems",
+              "position": "absolute",
+              "enable": "no"
+            }
+          }
+        }
+      },
+      {
+        "tdiv": {
+          "id": "progressMods",
+          "width": "pw",
+          "flow": "vertical",
+          "progressBonus": {
+            "class": "summary",
+            "progressCurrent": {
+              "id": "progressModsTrack",
+              "progressThumb": {
+                "id": "progressModsThumb",
+                "textareaNoTab": {
+                  "id": "progressModsPercent",
+                  "halign": "center",
+                  "valign": "center",
+                  "smallFont": "yes"
+                }
+              }
+            }
+          },
+          "textareaNoTab": {
+            "width": "pw",
+            "margin-top": "6@sf/@pf",
+            "id": "progressModsText",
+            "text-align": "right"
+          }
+        }
+      },
+      {
+        "navBar": {
+          "navLeft": [
+            {
+              "CheckBox": {
+                "id": "auto_purchase_mods",
+                "pos": "1@buttonMargin, 50%ph-50%h",
+                "position": "relative",
+                "text": "#mainmenu/autoPurchaseMods",
+                "tooltip": "#mainmenu/autoPurchaseMods/tooltip",
+                "on_change_value": "onChangeAutoPurchaseModsValue",
+                "value": "no",
+                "btnName": "Y",
+                "CheckBoxImg": [],
+                "ButtonImg": []
+              }
+            },
+            {
+              "Button_text": {
+                "id": "btn_buyAll",
+                "btnName": "L3",
+                "_on_click": "onBuyAllButton",
+                "hideText": "yes",
+                "visualStyle": "purchase",
+                "buttonWink": [],
+                "buttonGlance": [],
+                "textarea": {
+                  "id": "btn_buyAll_text",
+                  "class": "buttonText"
+                },
+                "ButtonImg": []
+              }
+            },
+            {
+              "Button_text": {
+                "id": "btn_spendExcessExp",
+                "_on_click": "automaticallySpendAllExcessiveExp",
+                "hideText": "yes",
+                "btnName": "X",
+                "textarea": {
+                  "id": "btn_spendExcessExp_text",
+                  "class": "buttonText"
+                },
+                "ButtonImg": []
+              }
+            }
+          ],
+          "navRight": [
+            {
+              "Button_text": {
+                "id": "btn_damage_control",
+                "display": "hide",
+                "text": "#ship/damage_control",
+                "_on_click": "onShowDamageControl",
+                "visualStyle": "secondary",
+                "buttonWink": [],
+                "ButtonImg": []
+              }
+            },
+            {
+              "Button_text": {
+                "id": "btn_exit",
+                "display": "show",
+                "text": "#mainmenu/finish",
+                "_on_click": "goBack",
+                "btnName": "B",
+                "visualStyle": "secondary",
+                "buttonWink": [],
+                "ButtonImg": []
+              }
+            }
+          ]
+        }
+      },
+      {
         "Button_close": {
-          "id": "weaponry_close_btn"
+          "id": "close_alt_btn",
+          "pos": "pw-w - 1@framePadding - 1@frameHeaderPad, 1@framePadding + 1@frameHeaderPad",
+          "on_click": "goBack",
+          "btnName": "B",
+          "display": "hide",
+          "enable": "no"
         }
-      },
-      "fadedImageFrame": {
-        "id": "researchMode_image_block",
-        "width": "pw - 2@framePadding",
-        "pos": "0, 1@frameTopPadding",
-        "posWithoutHeader": "0, 0",
-        "position": "absolute",
-        "margin": "1@framePadding, 0",
-        "img": {
-          "size": "3ph,ph",
-          "pos": "pw-2w, 50%ph-50%h",
-          "position": "relative",
-          "background-image": "#ui/images/engineer?P1",
-          "background-position": "2w,0,0,0",
-          "fadingBox": {
-            "size": "80,ph",
-            "pos": "pw, 0",
-            "position": "absolute"
-          }
-        }
-      },
-      "tdiv": {
-        "id": "overflow-div",
-        "width": "pw",
-        "modificationsBlock": {
-          "id": "main_modifications",
-          "position": "relative",
-          "pos": "pw-w, 0",
-          "behavior": "posNavigator",
-          "navigatorShortcuts": "noSelect",
-          "moveX": "closest",
-          "moveY": "linear",
-          "tdiv": {
-            "id": "bg_elems",
-            "position": "absolute",
-            "enable": "no"
-          }
-        }
-      },
-      "navBar": {
-        "navLeft": [
-          {
-            "CheckBox": {
-              "id": "auto_purchase_mods",
-              "pos": "1@buttonMargin, 50%ph-50%h",
-              "position": "relative",
-              "text": "#mainmenu/autoPurchaseMods",
-              "tooltip": "#mainmenu/autoPurchaseMods/tooltip",
-              "on_change_value": "onChangeAutoPurchaseModsValue",
-              "value": "no",
-              "btnName": "Y",
-              "CheckBoxImg": [],
-              "ButtonImg": []
-            }
-          },
-          {
-            "Button_text": {
-              "id": "btn_buyAll",
-              "btnName": "L3",
-              "_on_click": "onBuyAllButton",
-              "hideText": "yes",
-              "visualStyle": "purchase",
-              "buttonWink": [],
-              "buttonGlance": [],
-              "textarea": {
-                "id": "btn_buyAll_text",
-                "class": "buttonText"
-              },
-              "ButtonImg": []
-            }
-          },
-          {
-            "Button_text": {
-              "id": "btn_spendExcessExp",
-              "_on_click": "automaticallySpendAllExcessiveExp",
-              "hideText": "yes",
-              "btnName": "X",
-              "textarea": {
-                "id": "btn_spendExcessExp_text",
-                "class": "buttonText"
-              },
-              "ButtonImg": []
-            }
-          }
-        ],
-        "navRight": [
-          {
-            "Button_text": {
-              "id": "btn_damage_control",
-              "display": "hide",
-              "text": "#ship/damage_control",
-              "_on_click": "onShowDamageControl",
-              "visualStyle": "secondary",
-              "buttonWink": [],
-              "ButtonImg": []
-            }
-          },
-          {
-            "Button_text": {
-              "id": "btn_exit",
-              "display": "show",
-              "text": "#mainmenu/finish",
-              "_on_click": "goBack",
-              "btnName": "B",
-              "visualStyle": "secondary",
-              "buttonWink": [],
-              "ButtonImg": []
-            }
-          }
-        ]
-      },
-      "Button_close": {
-        "id": "close_alt_btn",
-        "pos": "pw-w - 1@framePadding - 1@frameHeaderPad, 1@framePadding + 1@frameHeaderPad",
-        "on_click": "goBack",
-        "btnName": "B",
-        "display": "hide",
-        "enable": "no"
       }
-    },
+    ],
     "gamercard_div": [
       {
         "gamercard": [

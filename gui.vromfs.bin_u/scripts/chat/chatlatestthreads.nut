@@ -1,11 +1,11 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 let u = require("%sqStdLibs/helpers/u.nut")
-
-
+let { loadLocalByAccount, saveLocalByAccount } = require("%scripts/clientState/localProfile.nut")
 let { split_by_chars } = require("string")
 let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { get_time_msec } = require("dagor.time")
+let { get_game_settings_blk } = require("blkGetters")
 
 ::g_chat_latest_threads <- {
   autoUpdatePeriodMsec = 60000
@@ -28,13 +28,11 @@ let { get_time_msec } = require("dagor.time")
 
 //refresh for usual players
 ::g_chat_latest_threads.refresh <- function refresh() {
-  let langTags = u.map(this.getSearchLangsList(),
-                           function(l) { return ::g_chat_thread_tag.LANG.prefix + l.chatId })
+  let langTags = this.getSearchLangsList().map(@(l) ::g_chat_thread_tag.LANG.prefix + l.chatId)
 
   local categoryTagsText = ""
   if (!::g_chat_categories.isSearchAnyCategory()) {
-    local categoryTags = u.map(::g_chat_categories.getSearchCategoriesLList(),
-                                function(cName) { return ::g_chat_thread_tag.CATEGORY.prefix + cName })
+    local categoryTags = ::g_chat_categories.getSearchCategoriesLList().map(@(cName) ::g_chat_thread_tag.CATEGORY.prefix + cName)
     categoryTagsText = ",".join(categoryTags, true)
   }
   this.refreshAdvanced("hidden", ",".join(langTags, true), categoryTagsText)
@@ -116,7 +114,7 @@ let { get_time_msec } = require("dagor.time")
     return
   }
 
-  let langsStr = ::loadLocalByAccount("chat/latestThreadsLangs", "")
+  let langsStr = loadLocalByAccount("chat/latestThreadsLangs", "")
   let savedLangs = split_by_chars(langsStr, ",")
 
   this.langsList.clear()
@@ -134,8 +132,8 @@ let { get_time_msec } = require("dagor.time")
 ::g_chat_latest_threads.saveCurLangs <- function saveCurLangs() {
   if (!this.langsInited || !this.isCustomLangsList)
     return
-  let chatIds = u.map(this.langsList, function (l) { return l.chatId })
-  ::saveLocalByAccount("chat/latestThreadsLangs", ",".join(chatIds, true))
+  let chatIds = this.langsList.map(@(l) l.chatId)
+  saveLocalByAccount("chat/latestThreadsLangs", ",".join(chatIds, true))
 }
 
 ::g_chat_latest_threads._setSearchLangs <- function _setSearchLangs(values) {
@@ -187,7 +185,7 @@ let { get_time_msec } = require("dagor.time")
 ::g_chat_latest_threads.onEventInitConfigs <- function onEventInitConfigs(_p) {
   this.langsInited = false
 
-  let blk = ::get_game_settings_blk()
+  let blk = get_game_settings_blk()
   if (u.isDataBlock(blk?.chat)) {
     this.autoUpdatePeriodMsec = blk.chat?.threadsListAutoUpdatePeriodMsec ?? this.autoUpdatePeriodMsec
     this.playerUpdateTimeoutMsec = blk.chat?.threadsListPlayerUpdateTimeoutMsec ?? this.playerUpdateTimeoutMsec

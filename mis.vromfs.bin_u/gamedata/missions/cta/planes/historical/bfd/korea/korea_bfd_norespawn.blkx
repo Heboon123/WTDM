@@ -542,6 +542,22 @@
         "showWayPoints": true,
         "excludes": []
       }
+    },
+    {
+      "import_record": {
+        "file": "gameData/missions/templates/air_templates/aat_aaa_template.blk",
+        "importAreas": true,
+        "importUnits": true,
+        "importTriggers": true,
+        "importMissionObjectives": true,
+        "importWayPoints": true,
+        "showAreas": true,
+        "showUnits": true,
+        "showTriggers": true,
+        "showMissionObjectives": true,
+        "showWayPoints": true,
+        "excludes": []
+      }
     }
   ],
   "triggers": {
@@ -586,6 +602,12 @@
               "set": true
             },
             {
+              "target": "bridge_05"
+            },
+            {
+              "target": "bridge_06"
+            },
+            {
               "target_marking": 0
             },
             {
@@ -598,12 +620,6 @@
               "object_var_value": 0
             },
             {
-              "target": "bridge_05"
-            },
-            {
-              "target": "bridge_06"
-            },
-            {
               "team": "A"
             }
           ]
@@ -611,38 +627,44 @@
         {
           "__unitSetIndication": {
             "set": true,
-            "target_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
             "target": "bridge_03",
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "team": "B"
           }
         },
         {
           "unitSetIndication": {
             "set": true,
-            "target_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
             "target": "t1_quest_units_squad",
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
             "team": "B"
           }
         },
         {
           "unitSetIndication": {
             "set": true,
+            "target": "t2_quest_units_squad",
             "target_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0,
-            "target": "t2_quest_units_squad",
             "team": "A"
           }
         },
         {
           "unitSetProperties": [
+            {
+              "object": "t1_aaa_squad"
+            },
+            {
+              "object": "t2_aaa_squad"
+            },
             {
               "object_marking": 0
             },
@@ -654,12 +676,6 @@
             },
             {
               "object_var_value": 0
-            },
-            {
-              "object": "t1_aaa_squad"
-            },
-            {
-              "object": "t2_aaa_squad"
             },
             {
               "accuracy": 0.1
@@ -684,18 +700,6 @@
         {
           "unitSetProperties": [
             {
-              "object_marking": 0
-            },
-            {
-              "object_var_name": ""
-            },
-            {
-              "object_var_comp_op": "equal"
-            },
-            {
-              "object_var_value": 0
-            },
-            {
               "object": "t1_tanks_squad"
             },
             {
@@ -708,31 +712,6 @@
               "object": "t2_bunkers_squad"
             },
             {
-              "accuracy": 0.0
-            },
-            {
-              "effShootingRate": 0.0
-            }
-          ]
-        },
-        {
-          "unitSetProperties": {
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "object": "t1_trucks_squad",
-            "targetGnd": false,
-            "accuracy": 0.1,
-            "effShootingRate": 0.1,
-            "fireRandom": true,
-            "targetChangeInterval": 5.0,
-            "targetChangeProb": 0.25
-          }
-        },
-        {
-          "unitSetProperties": [
-            {
               "object_marking": 0
             },
             {
@@ -745,10 +724,47 @@
               "object_var_value": 0
             },
             {
+              "accuracy": 0.0
+            },
+            {
+              "effShootingRate": 0.0
+            }
+          ]
+        },
+        {
+          "unitSetProperties": {
+            "object": "t1_trucks_squad",
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "targetGnd": false,
+            "accuracy": 0.1,
+            "effShootingRate": 0.1,
+            "fireRandom": true,
+            "targetChangeInterval": 5.0,
+            "targetChangeProb": 0.25
+          }
+        },
+        {
+          "unitSetProperties": [
+            {
               "object": "t1_movable_units_squad"
             },
             {
               "object": "t2_movable_units_squad"
+            },
+            {
+              "object_marking": 0
+            },
+            {
+              "object_var_name": ""
+            },
+            {
+              "object_var_comp_op": "equal"
+            },
+            {
+              "object_var_value": 0
             },
             {
               "minDistBetween": 100.0
@@ -790,14 +806,12 @@
             "name_for_respawn_base": "",
             "timeMultiplier": 2.0,
             "disableZone": false,
-            "showBorderOnMap": false,
-            "borderWidthCoef": 1.0,
-            "borderTransparencyCoef": 1.0,
             "target": "capture_area",
             "canCaptureOnGround": false,
             "canCaptureInAir": false,
             "canCaptureByGM": true,
             "captureNoPenalty": true,
+            "showBorderOnMap": false,
             "zoneDefenders": []
           }
         },
@@ -1021,6 +1035,7 @@
             "status": 3,
             "object_var_comp_op": "equal",
             "object_var_name": "",
+            "object_marking": 0,
             "team": "A"
           }
         },
@@ -1030,6 +1045,7 @@
             "status": 2,
             "object_var_comp_op": "equal",
             "object_var_name": "",
+            "object_marking": 0,
             "team": "B"
           }
         }
@@ -1068,6 +1084,7 @@
             "status": 2,
             "object_var_comp_op": "equal",
             "object_var_name": "",
+            "object_marking": 0,
             "team": "A"
           }
         },
@@ -1077,6 +1094,7 @@
             "status": 3,
             "object_var_comp_op": "equal",
             "object_var_name": "",
+            "object_marking": 0,
             "team": "B"
           }
         }
@@ -1115,6 +1133,7 @@
             "status": 2,
             "object_var_comp_op": "equal",
             "object_var_name": "",
+            "object_marking": 0,
             "team": "A"
           }
         },
@@ -1124,6 +1143,7 @@
             "status": 3,
             "object_var_comp_op": "equal",
             "object_var_name": "",
+            "object_marking": 0,
             "team": "B"
           }
         }
@@ -1202,6 +1222,7 @@
             "status": 2,
             "object_var_comp_op": "equal",
             "object_var_name": "",
+            "object_marking": 0,
             "team": "A"
           }
         },
@@ -1211,6 +1232,7 @@
             "status": 3,
             "object_var_comp_op": "equal",
             "object_var_name": "",
+            "object_marking": 0,
             "team": "B"
           }
         },
@@ -1329,6 +1351,7 @@
             "status": 2,
             "object_var_comp_op": "equal",
             "object_var_name": "",
+            "object_marking": 0,
             "team": "A"
           }
         },
@@ -1338,6 +1361,7 @@
             "status": 3,
             "object_var_comp_op": "equal",
             "object_var_name": "",
+            "object_marking": 0,
             "team": "B"
           }
         }
@@ -1376,6 +1400,7 @@
             "status": 3,
             "object_var_comp_op": "equal",
             "object_var_name": "",
+            "object_marking": 0,
             "team": "A"
           }
         },
@@ -1385,6 +1410,7 @@
             "status": 2,
             "object_var_comp_op": "equal",
             "object_var_name": "",
+            "object_marking": 0,
             "team": "B"
           }
         }
@@ -1423,6 +1449,7 @@
             "status": 3,
             "object_var_comp_op": "equal",
             "object_var_name": "",
+            "object_marking": 0,
             "team": "A"
           }
         },
@@ -1432,6 +1459,7 @@
             "status": 2,
             "object_var_comp_op": "equal",
             "object_var_name": "",
+            "object_marking": 0,
             "team": "B"
           }
         }
@@ -2988,13 +3016,13 @@
         ],
         "props": [
           {
-            "object_marking": 0
-          },
-          {
             "squad_members": "t1_aaa_squad"
           },
           {
             "squad_members": "t1_trucks_squad"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3010,13 +3038,13 @@
         ],
         "props": [
           {
-            "object_marking": 0
-          },
-          {
             "squad_members": "t2_artillery_squad"
           },
           {
             "squad_members": "t2_aaa_squad"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3031,9 +3059,6 @@
           [12945.2,73.35,-12911.0]
         ],
         "props": [
-          {
-            "object_marking": 0
-          },
           {
             "squad_members": "t2_tanks_01_01"
           },
@@ -3051,6 +3076,9 @@
           },
           {
             "squad_members": "t2_tanks_03_02"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3065,9 +3093,6 @@
           [7893.8,335.25,-1381.75]
         ],
         "props": [
-          {
-            "object_marking": 0
-          },
           {
             "squad_members": "t1_tanks_01_01"
           },
@@ -3097,6 +3122,9 @@
           },
           {
             "squad_members": "t1_tanks_05_02"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3112,13 +3140,13 @@
         ],
         "props": [
           {
-            "object_marking": 0
-          },
-          {
             "squad_members": "t1_aaa_01"
           },
           {
             "squad_members": "t1_aaa_02"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3134,9 +3162,6 @@
         ],
         "props": [
           {
-            "object_marking": 0
-          },
-          {
             "squad_members": "t1_truck_01"
           },
           {
@@ -3147,6 +3172,9 @@
           },
           {
             "squad_members": "t1_truck_04"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3161,9 +3189,6 @@
           [11809.9,66.3,-13621.0]
         ],
         "props": [
-          {
-            "object_marking": 0
-          },
           {
             "squad_members": "t2_artillery_01"
           },
@@ -3187,6 +3212,9 @@
           },
           {
             "squad_members": "t2_artillery_12"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3201,9 +3229,6 @@
           [7170.1,92.9,-12159.9]
         ],
         "props": [
-          {
-            "object_marking": 0
-          },
           {
             "squad_members": "t2_small_aaa_01"
           },
@@ -3227,6 +3252,9 @@
           },
           {
             "squad_members": "t2_big_aaa_04"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3242,13 +3270,13 @@
         ],
         "props": [
           {
-            "object_marking": 0
-          },
-          {
             "squad_members": "t1_tanks_squad"
           },
           {
             "squad_members": "t1_trucks_squad"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3263,8 +3291,8 @@
           [420.85,89.0,-498.5]
         ],
         "props": {
-          "object_marking": 0,
-          "squad_members": "t2_tanks_squad"
+          "squad_members": "t2_tanks_squad",
+          "object_marking": 0
         }
       }
     },
@@ -3278,8 +3306,8 @@
           [6308.75,152.9,3240.6]
         ],
         "props": {
-          "object_marking": 0,
-          "squad_members": "t1_aaa_squad"
+          "squad_members": "t1_aaa_squad",
+          "object_marking": 0
         }
       }
     },
@@ -3293,8 +3321,8 @@
           [729.65,152.9,564.75]
         ],
         "props": {
-          "object_marking": 0,
-          "squad_members": "t2_aaa_squad"
+          "squad_members": "t2_aaa_squad",
+          "object_marking": 0
         }
       }
     },
@@ -3309,13 +3337,13 @@
         ],
         "props": [
           {
-            "object_marking": 0
-          },
-          {
             "squad_members": "t1_heavy_units_squad"
           },
           {
             "squad_members": "t1_light_units_squad"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3331,13 +3359,13 @@
         ],
         "props": [
           {
-            "object_marking": 0
-          },
-          {
             "squad_members": "t2_heavy_units_squad"
           },
           {
             "squad_members": "t2_light_units_squad"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3353,13 +3381,13 @@
         ],
         "props": [
           {
-            "object_marking": 0
-          },
-          {
             "squad_members": "t2_tanks_01_01"
           },
           {
             "squad_members": "t2_tanks_01_02"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3375,9 +3403,6 @@
         ],
         "props": [
           {
-            "object_marking": 0
-          },
-          {
             "squad_members": "bridge_03"
           },
           {
@@ -3385,6 +3410,9 @@
           },
           {
             "squad_members": "bridge_08"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3400,13 +3428,13 @@
         ],
         "props": [
           {
-            "object_marking": 0
-          },
-          {
             "squad_members": "t1_movable_units_squad"
           },
           {
             "squad_members": "t2_movable_units_squad"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3422,13 +3450,13 @@
         ],
         "props": [
           {
-            "object_marking": 0
-          },
-          {
             "squad_members": "t2_bunkers_squad"
           },
           {
             "squad_members": "t2_tanks_squad"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3444,13 +3472,13 @@
         ],
         "props": [
           {
-            "object_marking": 0
-          },
-          {
             "squad_members": "t2_bunkers_01_squad"
           },
           {
             "squad_members": "t2_bunkers_02_squad"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3466,9 +3494,6 @@
         ],
         "props": [
           {
-            "object_marking": 0
-          },
-          {
             "squad_members": "t2_tanks_01_01"
           },
           {
@@ -3479,6 +3504,9 @@
           },
           {
             "squad_members": "t2_tanks_03_02"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3493,9 +3521,6 @@
           [11846.6,15.35,-2748.25]
         ],
         "props": [
-          {
-            "object_marking": 0
-          },
           {
             "squad_members": "t1_tanks_04_01"
           },
@@ -3513,6 +3538,9 @@
           },
           {
             "squad_members": "t1_tanks_05_02"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3527,9 +3555,6 @@
           [11810.1,52.35,218.5]
         ],
         "props": [
-          {
-            "object_marking": 0
-          },
           {
             "squad_members": "t1_tanks_01_01"
           },
@@ -3556,6 +3581,9 @@
           },
           {
             "squad_members": "t2_tanks_03_01"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3570,9 +3598,6 @@
           [11280.9,52.35,989.4]
         ],
         "props": [
-          {
-            "object_marking": 0
-          },
           {
             "squad_members": "t1_tanks_02_02"
           },
@@ -3590,6 +3615,9 @@
           },
           {
             "squad_members": "t2_tanks_03_02"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3605,13 +3633,13 @@
         ],
         "props": [
           {
-            "object_marking": 0
-          },
-          {
             "squad_members": "t1_quest_units_squad"
           },
           {
             "squad_members": "t2_quest_units_squad"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3627,9 +3655,6 @@
         ],
         "props": [
           {
-            "object_marking": 0
-          },
-          {
             "squad_members": "t2_bunker_01"
           },
           {
@@ -3643,6 +3668,9 @@
           },
           {
             "squad_members": "t2_bunker_05"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3657,9 +3685,6 @@
           [11175.0,76.3,-12877.5]
         ],
         "props": [
-          {
-            "object_marking": 0
-          },
           {
             "squad_members": "t2_bunker_06"
           },
@@ -3683,6 +3708,9 @@
           },
           {
             "squad_members": "t2_bunker_13"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3698,9 +3726,6 @@
         ],
         "props": [
           {
-            "object_marking": 0
-          },
-          {
             "squad_members": "t1_subquest_units_01"
           },
           {
@@ -3708,6 +3733,9 @@
           },
           {
             "squad_members": "t1_subquest_units_03"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3723,9 +3751,6 @@
         ],
         "props": [
           {
-            "object_marking": 0
-          },
-          {
             "squad_members": "t2_subquest_units_01"
           },
           {
@@ -3733,6 +3758,9 @@
           },
           {
             "squad_members": "t2_subquest_units_03"
+          },
+          {
+            "object_marking": 0
           }
         ]
       }
@@ -3747,8 +3775,41 @@
           [7289.15,88.498,2122.97]
         ],
         "props": {
-          "object_marking": 0,
-          "squad_members": "t1_tanks_squad"
+          "squad_members": "t1_tanks_squad",
+          "object_marking": 0
+        }
+      }
+    },
+    {
+      "squad": {
+        "name": "t1_all_aaa_squad",
+        "tm": [
+          [1.0,0.0,0.0],
+          [0.0,1.0,0.0],
+          [0.0,0.0,1.0],
+          [-40052.8,145.8,14522.5]
+        ],
+        "props": [
+          {
+            "squad_members": "t1_aaa_squad"
+          },
+          {
+            "squad_members": "t1_trucks_squad"
+          }
+        ]
+      }
+    },
+    {
+      "squad": {
+        "name": "t2_all_aaa_squad",
+        "tm": [
+          [1.0,0.0,0.0],
+          [0.0,1.0,0.0],
+          [0.0,0.0,1.0],
+          [-38307.1,145.8,18685.3]
+        ],
+        "props": {
+          "squad_members": "t2_aaa_squad"
         }
       }
     },
@@ -3798,9 +3859,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_19": {
@@ -3814,9 +3875,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_20": {
@@ -3830,9 +3891,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_21": {
@@ -3846,9 +3907,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_22": {
@@ -3862,9 +3923,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_23": {
@@ -3878,9 +3939,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_24": {
@@ -3894,9 +3955,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_25": {
@@ -3910,9 +3971,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_26": {
@@ -3926,9 +3987,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_27": {
@@ -3942,9 +4003,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_28": {
@@ -3958,9 +4019,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_29": {
@@ -3974,9 +4035,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_30": {
@@ -3990,9 +4051,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -4044,9 +4105,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_02_wp_03": {
@@ -4060,9 +4121,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_02_wp_04": {
@@ -4076,9 +4137,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_02_wp_05": {
@@ -4092,9 +4153,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_02_wp_06": {
@@ -4108,9 +4169,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_02_wp_07": {
@@ -4124,9 +4185,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -4178,9 +4239,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_04": {
@@ -4194,9 +4255,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_05": {
@@ -4210,9 +4271,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_06": {
@@ -4226,9 +4287,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_07": {
@@ -4242,9 +4303,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_08": {
@@ -4258,9 +4319,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_09": {
@@ -4274,9 +4335,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_10": {
@@ -4290,9 +4351,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_11": {
@@ -4306,9 +4367,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_12": {
@@ -4322,9 +4383,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_13": {
@@ -4338,9 +4399,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_14": {
@@ -4354,9 +4415,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_01_wp_15": {
@@ -4370,9 +4431,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_01_wp_01": {
@@ -4386,9 +4447,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_01_wp_02": {
@@ -4402,9 +4463,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_01_wp_03": {
@@ -4418,9 +4479,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_01_wp_04": {
@@ -4434,9 +4495,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -4488,9 +4549,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_wp_02": {
@@ -4504,9 +4565,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_wp_03": {
@@ -4520,9 +4581,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_wp_04": {
@@ -4536,9 +4597,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_wp_05": {
@@ -4552,9 +4613,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_wp_06": {
@@ -4568,9 +4629,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_wp_07": {
@@ -4584,9 +4645,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_wp_08": {
@@ -4600,9 +4661,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_wp_09": {
@@ -4616,9 +4677,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_wp_10": {
@@ -4632,9 +4693,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_wp_11": {
@@ -4648,9 +4709,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_wp_12": {
@@ -4664,9 +4725,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_wp_13": {
@@ -4680,9 +4741,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -4734,9 +4795,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_02": {
@@ -4750,9 +4811,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_07": {
@@ -4766,9 +4827,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_08": {
@@ -4782,9 +4843,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_09": {
@@ -4798,9 +4859,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_10": {
@@ -4814,9 +4875,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_11": {
@@ -4830,9 +4891,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_12": {
@@ -4846,9 +4907,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_13": {
@@ -4862,9 +4923,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_14": {
@@ -4878,9 +4939,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_15": {
@@ -4894,9 +4955,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_16": {
@@ -4910,9 +4971,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_17": {
@@ -4926,9 +4987,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_18": {
@@ -4942,9 +5003,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -4996,9 +5057,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_02": {
@@ -5012,9 +5073,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_03": {
@@ -5028,9 +5089,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_04": {
@@ -5044,9 +5105,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_05": {
@@ -5060,9 +5121,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_06": {
@@ -5076,9 +5137,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_07": {
@@ -5092,9 +5153,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_08": {
@@ -5108,9 +5169,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_09": {
@@ -5124,9 +5185,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_10": {
@@ -5140,9 +5201,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_11": {
@@ -5156,9 +5217,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_12": {
@@ -5172,9 +5233,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_13": {
@@ -5188,9 +5249,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_14": {
@@ -5204,9 +5265,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_15": {
@@ -5220,9 +5281,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_16": {
@@ -5236,9 +5297,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_17": {
@@ -5252,9 +5313,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -5306,9 +5367,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_wp_02": {
@@ -5322,9 +5383,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_wp_03": {
@@ -5338,9 +5399,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_wp_04": {
@@ -5354,9 +5415,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_wp_05": {
@@ -5370,9 +5431,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_wp_06": {
@@ -5386,9 +5447,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_wp_07": {
@@ -5402,9 +5463,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_wp_08": {
@@ -5418,9 +5479,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_wp_09": {
@@ -5434,9 +5495,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_wp_10": {
@@ -5450,9 +5511,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_wp_11": {
@@ -5466,9 +5527,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_wp_12": {
@@ -5482,9 +5543,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_wp_13": {
@@ -5498,9 +5559,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_wp_14": {
@@ -5514,9 +5575,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -5568,9 +5629,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_02": {
@@ -5584,9 +5645,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_03": {
@@ -5600,9 +5661,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_04": {
@@ -5616,9 +5677,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_05": {
@@ -5632,9 +5693,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_06": {
@@ -5648,9 +5709,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_07": {
@@ -5664,9 +5725,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_08": {
@@ -5680,9 +5741,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_09": {
@@ -5696,9 +5757,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_10": {
@@ -5712,9 +5773,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_11": {
@@ -5728,9 +5789,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_12": {
@@ -5744,9 +5805,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_13": {
@@ -5760,9 +5821,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_14": {
@@ -5776,9 +5837,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_15": {
@@ -5792,9 +5853,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_16": {
@@ -5808,9 +5869,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_17": {
@@ -5824,9 +5885,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_18": {
@@ -5840,9 +5901,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_05_wp_19": {
@@ -5856,9 +5917,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -5910,9 +5971,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_04": {
@@ -5926,9 +5987,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_05": {
@@ -5942,9 +6003,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_06": {
@@ -5958,9 +6019,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_19": {
@@ -5974,9 +6035,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_20": {
@@ -5990,9 +6051,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_21": {
@@ -6006,9 +6067,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_22": {
@@ -6022,9 +6083,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_23": {
@@ -6038,9 +6099,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_24": {
@@ -6054,9 +6115,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_25": {
@@ -6070,9 +6131,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_26": {
@@ -6086,9 +6147,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_02_wp_27": {
@@ -6102,9 +6163,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -6156,9 +6217,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_05_02_wp_02": {
@@ -6172,9 +6233,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_05_02_wp_03": {
@@ -6188,9 +6249,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_05_02_wp_04": {
@@ -6204,9 +6265,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_05_02_wp_05": {
@@ -6220,9 +6281,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_05_02_wp_06": {
@@ -6236,9 +6297,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_05_02_wp_07": {
@@ -6252,9 +6313,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_05_02_wp_08": {
@@ -6268,9 +6329,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_05_02_wp_09": {
@@ -6284,9 +6345,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_05_02_wp_10": {
@@ -6300,9 +6361,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_05_02_wp_11": {
@@ -6316,9 +6377,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_05_02_wp_12": {
@@ -6332,9 +6393,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_05_02_wp_13": {
@@ -6348,9 +6409,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_05_02_wp_14": {
@@ -6364,9 +6425,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -6418,9 +6479,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_02_wp_02": {
@@ -6434,9 +6495,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_02_wp_03": {
@@ -6450,9 +6511,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_02_wp_04": {
@@ -6466,9 +6527,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_02_wp_05": {
@@ -6482,9 +6543,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_02_wp_06": {
@@ -6498,9 +6559,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_02_wp_07": {
@@ -6514,9 +6575,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_02_wp_08": {
@@ -6530,9 +6591,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_02_wp_09": {
@@ -6546,9 +6607,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_02_wp_10": {
@@ -6562,9 +6623,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_02_wp_11": {
@@ -6578,9 +6639,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_02_wp_12": {
@@ -6594,9 +6655,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_02_02_wp_13": {
@@ -6610,9 +6671,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -6664,9 +6725,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_02_wp_02": {
@@ -6680,9 +6741,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_02_wp_03": {
@@ -6696,9 +6757,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_02_wp_04": {
@@ -6712,9 +6773,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_02_wp_05": {
@@ -6728,9 +6789,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_02_wp_06": {
@@ -6744,9 +6805,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_02_wp_07": {
@@ -6760,9 +6821,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_02_wp_08": {
@@ -6776,9 +6837,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_02_wp_09": {
@@ -6792,9 +6853,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_02_wp_10": {
@@ -6808,9 +6869,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_02_wp_11": {
@@ -6824,9 +6885,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_02_wp_12": {
@@ -6840,9 +6901,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_02_wp_13": {
@@ -6856,9 +6917,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_03_02_wp_14": {
@@ -6872,9 +6933,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -6926,9 +6987,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_02": {
@@ -6942,9 +7003,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_03": {
@@ -6958,9 +7019,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_04": {
@@ -6974,9 +7035,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_05": {
@@ -6990,9 +7051,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_06": {
@@ -7006,9 +7067,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_07": {
@@ -7022,9 +7083,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_08": {
@@ -7038,9 +7099,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_09": {
@@ -7054,9 +7115,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_10": {
@@ -7070,9 +7131,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_11": {
@@ -7086,9 +7147,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_12": {
@@ -7102,9 +7163,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_13": {
@@ -7118,9 +7179,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_14": {
@@ -7134,9 +7195,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_15": {
@@ -7150,9 +7211,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_16": {
@@ -7166,9 +7227,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_17": {
@@ -7182,9 +7243,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_18": {
@@ -7198,9 +7259,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_04_02_wp_19": {
@@ -7214,9 +7275,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -7268,9 +7329,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_02_02_wp_02": {
@@ -7284,9 +7345,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_02_02_wp_03": {
@@ -7300,9 +7361,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_02_02_wp_04": {
@@ -7316,9 +7377,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_02_02_wp_05": {
@@ -7332,9 +7393,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_02_02_wp_06": {
@@ -7348,9 +7409,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -7402,9 +7463,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_19": {
@@ -7418,9 +7479,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_20": {
@@ -7434,9 +7495,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_21": {
@@ -7450,9 +7511,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_22": {
@@ -7466,9 +7527,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_23": {
@@ -7482,9 +7543,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_24": {
@@ -7498,9 +7559,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_25": {
@@ -7514,9 +7575,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_26": {
@@ -7530,9 +7591,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_27": {
@@ -7546,9 +7607,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_28": {
@@ -7562,9 +7623,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_29": {
@@ -7578,9 +7639,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_30": {
@@ -7594,9 +7655,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_31": {
@@ -7610,9 +7671,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_32": {
@@ -7626,9 +7687,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_33": {
@@ -7642,9 +7703,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_01_02_wp_34": {
@@ -7658,9 +7719,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -7712,9 +7773,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_03_02_wp_02": {
@@ -7728,9 +7789,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_03_02_wp_03": {
@@ -7744,9 +7805,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_03_02_wp_04": {
@@ -7760,9 +7821,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_03_02_wp_05": {
@@ -7776,9 +7837,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_03_02_wp_06": {
@@ -7792,9 +7853,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_03_02_wp_07": {
@@ -7808,9 +7869,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_03_02_wp_08": {
@@ -7824,9 +7885,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_03_02_wp_09": {
@@ -7840,9 +7901,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_03_02_wp_10": {
@@ -7856,9 +7917,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_03_02_wp_11": {
@@ -7872,9 +7933,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_03_02_wp_12": {
@@ -7888,9 +7949,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_03_02_wp_13": {
@@ -7904,9 +7965,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_03_02_wp_14": {
@@ -7920,9 +7981,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_03_02_wp_15": {
@@ -7936,9 +7997,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_03_02_wp_16": {
@@ -7952,9 +8013,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t2_tanks_03_02_wp_17": {
@@ -7968,9 +8029,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -8318,9 +8379,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_02": {
@@ -8334,9 +8395,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_03": {
@@ -8350,9 +8411,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_04": {
@@ -8366,9 +8427,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_03_wp_01": {
@@ -8382,9 +8443,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_05": {
@@ -8398,9 +8459,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_06": {
@@ -8414,9 +8475,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_07": {
@@ -8430,9 +8491,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_08": {
@@ -8446,9 +8507,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_09": {
@@ -8462,9 +8523,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_10": {
@@ -8478,9 +8539,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_11": {
@@ -8494,9 +8555,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_12": {
@@ -8510,9 +8571,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -8564,9 +8625,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_03_wp_10": {
@@ -8580,9 +8641,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_03_wp_11": {
@@ -8596,9 +8657,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_03_wp_12": {
@@ -8612,9 +8673,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_03_wp_13": {
@@ -8628,9 +8689,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_03_wp_14": {
@@ -8644,9 +8705,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_03_wp_15": {
@@ -8660,9 +8721,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_03_wp_16": {
@@ -8676,9 +8737,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_03_wp_17": {
@@ -8692,9 +8753,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_03_wp_18": {
@@ -8708,9 +8769,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -8762,9 +8823,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_03_wp_02": {
@@ -8778,9 +8839,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_03_wp_07": {
@@ -8794,9 +8855,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_03_wp_08": {
@@ -8810,9 +8871,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_03_wp_09": {
@@ -8826,9 +8887,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_03_wp_10": {
@@ -8842,9 +8903,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_03_wp_11": {
@@ -8858,9 +8919,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_03_wp_12": {
@@ -8874,9 +8935,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_03_wp_13": {
@@ -8890,9 +8951,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_03_wp_14": {
@@ -8906,9 +8967,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_03_wp_15": {
@@ -8922,9 +8983,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_03_wp_16": {
@@ -8938,9 +8999,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_03_wp_17": {
@@ -8954,9 +9015,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_tanks_01_03_wp_18": {
@@ -8970,9 +9031,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -9024,9 +9085,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_01_wp_01": {
@@ -9040,9 +9101,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_14": {
@@ -9056,9 +9117,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_15": {
@@ -9072,9 +9133,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_16": {
@@ -9088,9 +9149,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_17": {
@@ -9104,9 +9165,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_18": {
@@ -9120,9 +9181,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_19": {
@@ -9136,9 +9197,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_20": {
@@ -9152,9 +9213,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_21": {
@@ -9168,9 +9229,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_22": {
@@ -9184,9 +9245,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_23": {
@@ -9200,9 +9261,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_24": {
@@ -9216,9 +9277,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_25": {
@@ -9232,9 +9293,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_26": {
@@ -9248,9 +9309,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_27": {
@@ -9264,9 +9325,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_28": {
@@ -9280,9 +9341,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_29": {
@@ -9296,9 +9357,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_02_wp_30": {
@@ -9312,9 +9373,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -9366,9 +9427,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_02_wp_02": {
@@ -9382,9 +9443,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_02_wp_03": {
@@ -9398,9 +9459,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_02_wp_04": {
@@ -9414,9 +9475,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_02_wp_05": {
@@ -9430,9 +9491,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_02_wp_06": {
@@ -9446,9 +9507,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_02_wp_07": {
@@ -9462,9 +9523,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_02_wp_08": {
@@ -9478,9 +9539,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_02_wp_09": {
@@ -9494,9 +9555,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_02_wp_10": {
@@ -9510,9 +9571,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_02_wp_11": {
@@ -9526,9 +9587,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }
@@ -9580,9 +9641,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_truck_01_wp_01": {
@@ -9596,9 +9657,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_05_wp_02": {
@@ -9612,9 +9673,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_05_wp_03": {
@@ -9628,9 +9689,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_05_wp_04": {
@@ -9644,9 +9705,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_05_wp_05": {
@@ -9660,9 +9721,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_05_wp_06": {
@@ -9676,9 +9737,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_05_wp_07": {
@@ -9692,9 +9753,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_05_wp_08": {
@@ -9708,9 +9769,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_05_wp_09": {
@@ -9724,9 +9785,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_05_wp_10": {
@@ -9740,9 +9801,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_05_wp_11": {
@@ -9756,9 +9817,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_05_wp_12": {
@@ -9772,9 +9833,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_05_wp_13": {
@@ -9788,9 +9849,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_05_wp_14": {
@@ -9804,9 +9865,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_05_wp_15": {
@@ -9820,9 +9881,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_05_wp_16": {
@@ -9836,9 +9897,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "USE_SPLINES",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_05_wp_17": {
@@ -9852,9 +9913,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "GATHER_TO",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           },
           "t1_aaa_05_wp_18": {
@@ -9868,9 +9929,9 @@
             "props": {
               "speed": 30.0,
               "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
               "shouldKeepFormation": false,
-              "canUsePathFinder": false,
-              "tas": false
+              "canUsePathFinder": false
             }
           }
         }

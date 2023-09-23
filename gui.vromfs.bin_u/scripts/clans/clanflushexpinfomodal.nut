@@ -1,15 +1,17 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { Cost } = require("%scripts/money.nut")
-
-
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { saveLocalAccountSettings } = require("%scripts/clientState/localProfile.nut")
 let { disableSeenUserlogs } = require("%scripts/userLog/userlogUtils.nut")
 let { format } = require("string")
+let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 
 const SKIP_CLAN_FLUSH_EXP_INFO_SAVE_ID = "skipped_msg/clanFlushExpInfo"
 
-let handlerClass = class extends ::gui_handlers.clanVehiclesModal {
+let handlerClass = class extends gui_handlers.clanVehiclesModal {
   sceneTplName  = "%gui/clans/clanFlushExpInfoModal.tpl"
   maxSlotCountY = 2
   userlog = null
@@ -21,7 +23,7 @@ let handlerClass = class extends ::gui_handlers.clanVehiclesModal {
   function getSceneTplView() {
     this.canQuitByGoBack = !this.needChoseResearch
     let flushExpText = "".concat(loc("userlog/clanUnits/flush/desc", {
-        unit = ::getUnitName(this.userlog.body.unit)
+        unit = getUnitName(this.userlog.body.unit)
         rp = Cost().setSap(this.userlog.body.rp).tostring()
       }),
       this.needChoseResearch ? $"\n{loc("mainmenu/nextResearchSquadronVehicle")}" : ""
@@ -56,7 +58,7 @@ let handlerClass = class extends ::gui_handlers.clanVehiclesModal {
   }
 
   function onSkipInfo(obj) {
-    ::save_local_account_settings(SKIP_CLAN_FLUSH_EXP_INFO_SAVE_ID, obj.getValue())
+    saveLocalAccountSettings(SKIP_CLAN_FLUSH_EXP_INFO_SAVE_ID, obj.getValue())
   }
 
   function onUnitActivate(obj) {
@@ -78,9 +80,9 @@ let handlerClass = class extends ::gui_handlers.clanVehiclesModal {
   }
 }
 
-::gui_handlers.clanFlushExpInfoModal <- handlerClass
+gui_handlers.clanFlushExpInfoModal <- handlerClass
 
 return {
   SKIP_CLAN_FLUSH_EXP_INFO_SAVE_ID
-  showClanFlushExpInfo = @(p) ::handlersManager.loadHandler(handlerClass, p)
+  showClanFlushExpInfo = @(p) handlersManager.loadHandler(handlerClass, p)
 }

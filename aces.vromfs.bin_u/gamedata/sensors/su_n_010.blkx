@@ -130,6 +130,19 @@
       "rowMajor": true,
       "indicate": true
     },
+    "radarDesignationLockTws": {
+      "type": "pyramide",
+      "azimuthLimits": [-85.0,85.0],
+      "elevationLimits": [-40.0,55.0],
+      "rollStabLimit": 90.0,
+      "pitchStabLimit": 60.0,
+      "period": 0.25,
+      "width": 4.0,
+      "barHeight": 2.5,
+      "barsCount": 2,
+      "rowMajor": true,
+      "indicate": true
+    },
     "radarVerticalLock": {
       "type": "pyramide",
       "azimuthLimits": [-85.0,85.0],
@@ -682,14 +695,19 @@
             "active": true
           }
         },
-        "setRadarDesignationLockModeCommon": {
+        "setRadarDesignationLockModeSearchCommon": {
           "setDesignationLockModeCommon": [],
           "setScanPattern": {
             "scanPattern": "radarDesignationLockSearch"
           }
         },
+        "setRadarDesignationLockModeTwsCommon": {
+          "setDesignationLockModeCommon": [],
+          "setScanPattern": {
+            "scanPattern": "radarDesignationLockTws"
+          }
+        },
         "setMprfDesignationLockModeCommon": {
-          "setRadarDesignationLockModeCommon": [],
           "setDistGatePos": {
             "source": "targetDesignation",
             "width": 2000.0
@@ -705,7 +723,6 @@
           "setRadarMprfSearch": []
         },
         "setHprfDesignationLockModeCommon": {
-          "setRadarDesignationLockModeCommon": [],
           "setDistGatePos": {
             "source": "targetDesignation",
             "width": 3000.0
@@ -721,24 +738,28 @@
           "setRadarHprfSearch": []
         },
         "setMprfDesignationLockMode": {
+          "setRadarDesignationLockModeSearchCommon": [],
           "setMprfDesignationLockModeCommon": [],
           "setModeName": {
             "name": "PD acquisition"
           }
         },
         "setHprfDesignationLockMode": {
+          "setRadarDesignationLockModeSearchCommon": [],
           "setHprfDesignationLockModeCommon": [],
           "setModeName": {
             "name": "PD HDN acquisition"
           }
         },
         "setMprfTwsDesignationLockMode": {
+          "setRadarDesignationLockModeTwsCommon": [],
           "setMprfDesignationLockModeCommon": [],
           "setModeName": {
             "name": "TWS acquisition"
           }
         },
         "setHprfTwsDesignationLockMode": {
+          "setRadarDesignationLockModeTwsCommon": [],
           "setHprfDesignationLockModeCommon": [],
           "setModeName": {
             "name": "TWS HDN acquisition"
@@ -1034,8 +1055,9 @@
         },
         "setRadarTrackModeCommon": {
           "setTrackMode": [],
-          "setIllumination": {
-            "illumination": true
+          "setFsmActive": {
+            "fsm": "illumination",
+            "active": true
           }
         },
         "setRadarDesignationTrackMode": {
@@ -1117,8 +1139,9 @@
         },
         "resetRadarTrackMode": {
           "resetTrackMode": [],
-          "setIllumination": {
-            "illumination": false
+          "setFsmActive": {
+            "fsm": "illumination",
+            "active": false
           }
         },
         "resetRadarDesignationTrackMode": {
@@ -1128,19 +1151,28 @@
             "active": false
           }
         },
-        "changeRadarToIrstTrackCommon": {
-          "setIllumination": {
-            "illumination": false
+        "changeRadarToIrstTrackCommon": [
+          {
+            "setFsmActive": {
+              "fsm": "illumination",
+              "active": false
+            }
           },
-          "setFsmActive": {
-            "fsm": "radarTrackModes",
-            "active": false
+          {
+            "setFsmActive": {
+              "fsm": "radarTrackModes",
+              "active": false
+            }
           },
-          "setIrstTrack": [],
-          "setModeName": {
-            "name": "IRST track"
+          {
+            "setIrstTrack": []
+          },
+          {
+            "setModeName": {
+              "name": "IRST track"
+            }
           }
-        },
+        ],
         "changeRadarToIrstDesignationAcmTrack": {
           "changeRadarToIrstTrackCommon": [],
           "setScanPattern": {
@@ -1153,21 +1185,29 @@
             "scanPattern": "irstHmdTrack"
           }
         },
-        "changeIrstToRadarDesignationTrack": {
-          "setIllumination": {
-            "illumination": true
+        "changeIrstToRadarDesignationTrack": [
+          {
+            "setFsmActive": {
+              "fsm": "illumination",
+              "active": true
+            }
           },
-          "setFsmActive": {
-            "fsm": "radarTrackModes",
-            "active": true
+          {
+            "setFsmActive": {
+              "fsm": "radarTrackModes",
+              "active": true
+            }
           },
-          "setScanPattern": {
-            "scanPattern": "radarTrack"
+          {
+            "setScanPattern": {
+              "scanPattern": "radarTrack"
+            }
           }
-        },
+        ],
         "changeIrstToRadarAcmHmdTrackCommon": {
-          "setIllumination": {
-            "illumination": true
+          "setFsmActive": {
+            "fsm": "illumination",
+            "active": true
           },
           "setTransiver": {
             "transiver": "mprf"
@@ -2554,7 +2594,7 @@
           "event": "targetDetected",
           "actions": {
             "updateTargetOfInterest": {
-              "limit": 12,
+              "limit": 10,
               "timeOut": 2.0,
               "radius": 1000.0,
               "blend": 0.5
@@ -2708,6 +2748,45 @@
             "setRelSpeedGatePos": {
               "source": "activeTargetOfInterest",
               "width": 0.0
+            }
+          }
+        }
+      }
+    },
+    "illumination": {
+      "stateInit": "init",
+      "transitions": {
+        "activate": {
+          "event": "fsmActivate",
+          "stateTo": "active",
+          "actions": {
+            "checkIlluminationTimeOut": {
+              "transiver": true
+            }
+          }
+        },
+        "deactivate": {
+          "event": "fsmDeactivate",
+          "stateTo": "inactive",
+          "actions": {
+            "setIllumination": {
+              "transiver": false
+            }
+          }
+        },
+        "activateIllumination": {
+          "event": "sarhMissileLaunch",
+          "actions": {
+            "setIlluminationTimeOut": {
+              "timeOut": 60.0
+            }
+          }
+        },
+        "updateIllumination": {
+          "event": "update",
+          "actions": {
+            "checkIlluminationTimeOut": {
+              "transiver": true
             }
           }
         }

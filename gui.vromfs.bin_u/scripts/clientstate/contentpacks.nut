@@ -1,7 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 let u = require("%sqStdLibs/helpers/u.nut")
-
+let { loadLocalByAccount, saveLocalByAccount } = require("%scripts/clientState/localProfile.nut")
 let { format } = require("string")
 let contentStateModule = require("%scripts/clientState/contentState.nut")
 let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
@@ -12,6 +12,7 @@ let { addPromoAction } = require("%scripts/promo/promoActions.nut")
 let { is_fully_translated } = require("acesInfo")
 let DataBlock = require("DataBlock")
 let { stripTags } = require("%sqstd/string.nut")
+let { get_game_settings_blk } = require("blkGetters")
 
 let function check_members_pkg(pack) {
   let members = ::g_squad_manager.checkMembersPkg(pack)
@@ -25,7 +26,7 @@ let function check_members_pkg(pack) {
                       members = colorize("userlogColoredText", mText)
                       package = colorize("activeTextColor", ::get_pkg_loc_name(pack))
                     })
-  ::showInfoMsgBox(msg, "members_req_new_content")
+  showInfoMsgBox(msg, "members_req_new_content")
 }
 
 ::check_package_full <- function check_package_full(pack, silent = false) {
@@ -119,7 +120,7 @@ let function request_packages_and_restart(packList) {
 
   eachBlock(::OnlineShopModel.getPriceBlk(),
     @(b, n) u.appendOnce(checkReqContent(n, b), reqPacksList, true))
-  eachBlock(::get_game_settings_blk()?.features,
+  eachBlock(get_game_settings_blk()?.features,
     @(b, n) u.appendOnce(checkReqContent(n, b), reqPacksList, true))
 
   //workaround - reqPack is missing again in ents
@@ -135,7 +136,7 @@ let function request_packages_and_restart(packList) {
     u.appendOnce(langPack, reqPacksList)
   }
 
-  let canceledBlk = ::loadLocalByAccount("canceledPacks")
+  let canceledBlk = loadLocalByAccount("canceledPacks")
   if (canceledBlk)
     for (local i = reqPacksList.len() - 1; i >= 0; i--)
       if (reqPacksList[i] in canceledBlk)
@@ -155,18 +156,18 @@ let function request_packages_and_restart(packList) {
     text += "\n" + pText
   }
 
-  ::scene_msg_box("new_content", null, text,
+  scene_msg_box("new_content", null, text,
     [["ok",
       function() {
         request_packages_and_restart(reqPacksList)
       }],
      ["cancel",
        function() {
-         let canceledPacks = ::loadLocalByAccount("canceledPacks") ?? DataBlock()
+         let canceledPacks = loadLocalByAccount("canceledPacks") ?? DataBlock()
          foreach (pack in reqPacksList)
            if (!(pack in canceledPacks))
              canceledPacks[pack] = true
-         ::saveLocalByAccount("canceledPacks", canceledPacks)
+         saveLocalByAccount("canceledPacks", canceledPacks)
        }]
     ],
     "ok")
@@ -208,10 +209,10 @@ let function set_asked_pack(pack, askTag = null) {
   }
 
   local defButton = "cancel"
-  let buttons = [[defButton, (@(cancelFunc, owner) function() {
+  let buttons = [[defButton,  function() {
                      if (cancelFunc)
                        ::call_for_handler(owner, cancelFunc)
-                   })(cancelFunc, owner)]
+                   }]
                   ]
 
   if (isPlatformSony) {
@@ -221,18 +222,18 @@ let function set_asked_pack(pack, askTag = null) {
     }
   }
   else if (!is_platform_xbox) {
-    buttons.insert(0, ["download", (@(pack) function() {
+    buttons.insert(0, ["download",  function() {
                        request_packages_and_restart([pack])
-                     })(pack)])
+                     }])
   }
 
   if (continueFunc) {
     defButton = "continue"
-    buttons.append(["continue", (@(continueFunc, owner) function() {
+    buttons.append(["continue",  function() {
                      ::call_for_handler(owner, continueFunc)
-                   })(continueFunc, owner)])
+                   }])
   }
-  ::scene_msg_box("req_new_content", null, _msg, buttons, defButton)
+  scene_msg_box("req_new_content", null, _msg, buttons, defButton)
   set_asked_pack(pack, askTag)
   return false
 }
@@ -260,7 +261,7 @@ let function set_asked_pack(pack, askTag = null) {
     }
   }
 
-  ::scene_msg_box("req_pkg_locatization", null, loc("yn1/have_new_content_lang"),
+  scene_msg_box("req_pkg_locatization", null, loc("yn1/have_new_content_lang"),
     [["download", function() { request_packages_and_restart([pack]) }], ["cancel"]], "cancel", params)
 }
 
@@ -279,7 +280,7 @@ let function set_asked_pack(pack, askTag = null) {
   if (reqPacksList.len() == 0)
     return
 
-  ::scene_msg_box(
+  scene_msg_box(
     "new_content",
     null,
     loc("yn1/have_new_crews_content_lang"),
@@ -317,7 +318,7 @@ let function restart_to_launcher() {
   local _msg = loc("msgbox/no_package/info")
   _msg = format(_msg, colorize("activeTextColor", model))
 
-  ::scene_msg_box(
+  scene_msg_box(
     "new_content",
     null,
     _msg,

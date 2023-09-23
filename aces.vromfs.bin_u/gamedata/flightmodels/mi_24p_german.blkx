@@ -8,6 +8,7 @@
   "gyroSight": true,
   "haveCCIPForGun": true,
   "haveCCIPForBombs": true,
+  "ilsASP17": true,
   "hasPointOfInterestMemory": false,
   "gearSinkRangeLR": 0.316,
   "gearSinkRangeC": 0.25,
@@ -1813,6 +1814,20 @@
       }
     },
     {
+      "multifunctionDisplays": {
+        "display": {
+          "textureArea": [0.0,0.0,1.0,1.0],
+          "page": {
+            "type": "plane_ils",
+            "ilsSize": [0.2,0.2],
+            "ilsOffsetForce": 0.2,
+            "brightnessMult": 3.5,
+            "ilsColor": "#ca650ab4"
+          }
+        }
+      }
+    },
+    {
       "parts_holes_dmg": {
         "part": "fuse"
       }
@@ -2057,14 +2072,9 @@
               "name": "gsh_30_2k_common"
             },
             {
-              "ShowNodes": [
-                {
-                  "node": "fuse2"
-                },
-                {
-                  "node": "fuse4"
-                }
-              ]
+              "ShowNodes": {
+                "node": "fuse4"
+              }
             },
             {
               "Weapon": {
@@ -2133,9 +2143,14 @@
               "name": "gsh_30_2k_exhaust_common"
             },
             {
-              "ShowNodes": {
-                "node": "fuse2"
-              }
+              "ShowNodes": [
+                {
+                  "node": "fuse2"
+                },
+                {
+                  "node": "fuse4"
+                }
+              ]
             },
             {
               "Weapon": {
@@ -2472,6 +2487,7 @@
           "WeaponPreset": {
             "iconType": "doublebarreled_box",
             "name": "upk250",
+            "reqModification": "il_28sh_upk23_gunpod",
             "ShowNodes": {
               "node": "upk_23_250_b001"
             },
@@ -2563,6 +2579,7 @@
           "WeaponPreset": {
             "iconType": "doublebarreled_box",
             "name": "upk250",
+            "reqModification": "il_28sh_upk23_gunpod",
             "ShowNodes": {
               "node": "upk_23_250_b002"
             },
@@ -2654,6 +2671,7 @@
           "WeaponPreset": {
             "iconType": "doublebarreled_box",
             "name": "upk250",
+            "reqModification": "il_28sh_upk23_gunpod",
             "ShowNodes": {
               "node": "upk_23_250_b003"
             },
@@ -2854,6 +2872,7 @@
           "WeaponPreset": {
             "iconType": "doublebarreled_box",
             "name": "upk250",
+            "reqModification": "il_28sh_upk23_gunpod",
             "ShowNodes": {
               "node": "upk_23_250_b004"
             },
@@ -5668,7 +5687,16 @@
       "invertEnableLogic": false,
       "reqModification": "heli_screen_exhaust_device",
       "group": "countermeasures",
-      "tier": 2
+      "tier": 2,
+      "effects": {
+        "enginesInfraRedBrightnessMult": 0.7,
+        "commonWeapons": {
+          "Weapon": {
+            "slot": 0,
+            "preset": "gsh_30_2k_exhaust_common"
+          }
+        }
+      }
     },
     "heli_counterMeasures": {
       "turn_it_off": false,

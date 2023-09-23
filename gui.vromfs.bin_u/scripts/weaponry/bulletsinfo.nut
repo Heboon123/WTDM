@@ -22,6 +22,10 @@ let { eachParam } = require("%sqstd/datablock.nut")
 let DataBlock = require("DataBlock")
 let { set_last_bullets } = require("unitCustomization")
 let { startsWith, slice } = require("%sqstd/string.nut")
+let { OPTIONS_MODE_TRAINING, USEROPT_BULLETS0
+} = require("%scripts/options/optionsExtNames.nut")
+let { shopIsModificationPurchased } = require("chardResearch")
+let { get_ranks_blk, get_modifications_blk } = require("blkGetters")
 
 let BULLET_TYPE = {
   ROCKET_AIR          = "rocket_aircraft"
@@ -100,7 +104,7 @@ let function setUnitLastBullets(unit, groupIndex, value) {
   let saveValue = getModificationByName(unit, value) ? value : "" //'' = default modification
   let curBullets = getSavedBullets(unit.name, groupIndex)
   if (curBullets != saveValue) {
-    set_unit_option(unit.name, ::USEROPT_BULLETS0 + groupIndex, saveValue)
+    set_unit_option(unit.name, USEROPT_BULLETS0 + groupIndex, saveValue)
     log($"Bullets Info: {unit.name}: bullet {groupIndex}: Set unit last bullets: change from '{curBullets}' to '{saveValue}'")
     set_last_bullets(unit.name, groupIndex, saveValue)
     broadcastEvent("UnitBulletsChanged", { unit = unit,
@@ -141,7 +145,7 @@ let function getBulletsSearchName(unit, modifName) { //need for default bullets,
 }
 
 let function getModificationBulletsEffect(modifName) {
-  let blk = ::get_modifications_blk()
+  let blk = get_modifications_blk()
   let modification = blk?.modifications?[modifName]
   if (modification?.effects) {
     for (local i = 0; i < modification.effects.paramCount(); i++) {
@@ -541,7 +545,7 @@ let function getBulletAnnotation(name, addName = null) {
 let function getUniqModificationText(modifName, isShortDesc) {
   if (modifName == "premExpMul") {
     let value = ::g_measure_type.PERCENT_FLOAT.getMeasureUnitsText(
-      (::get_ranks_blk()?.goldPlaneExpMul ?? 1.0) - 1.0, false)
+      (get_ranks_blk()?.goldPlaneExpMul ?? 1.0) - 1.0, false)
     let ending = isShortDesc ? "" : "/desc"
     return loc("modification/" + modifName + ending, "", { value = value })
   }
@@ -821,7 +825,7 @@ local function getBulletsList(airName, groupIdx, params = BULLETS_LIST_PARAMS) {
       continue
 
     let enabled = !params.isOnlyBought ||
-      ::shop_is_modification_purchased(airName, modifName) != 0
+      shopIsModificationPurchased(airName, modifName) != 0
     let amountText = params.needCheckUnitPurchase && ::is_game_mode_with_spendable_weapons()
       ? getAmmoAmountData(air, modifName, AMMO.MODIFICATION).text : ""
 
@@ -969,7 +973,7 @@ let function isBulletsGroupActiveByMod(air, mod) {
 
 //to get exact same bullets list as in standart options
 let function getOptionsBulletsList(air, groupIndex, needTexts = false, isForcedAvailable = false) {
-  let checkPurchased = getGuiOptionsMode() != ::OPTIONS_MODE_TRAINING
+  let checkPurchased = getGuiOptionsMode() != OPTIONS_MODE_TRAINING
   let res = getBulletsList(air.name, groupIndex, {
     isOnlyBought = checkPurchased
     needCheckUnitPurchase = checkPurchased
@@ -1000,7 +1004,7 @@ let function getFakeBulletsModByName(unit, modName) {
   if (isFakeBullet(modName)) {
     let groupIdxStr = slice(
       modName, ::fakeBullets_prefix.len(), ::fakeBullets_prefix.len() + 1)
-    let groupIdx = ::to_integer_safe(groupIdxStr, -1)
+    let groupIdx = to_integer_safe(groupIdxStr, -1)
     if (groupIdx < 0)
       return null
     return {

@@ -2,9 +2,15 @@
 from "%scripts/dagui_library.nut" import *
 
 let { broadcastEvent, addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
-let mkHardWatched = require("%globalScripts/mkHardWatched.nut")
+let { hardPersistWatched } = require("%sqstd/globalState.nut")
 let { request_nick_by_uid_batch } = require("%scripts/matching/requests.nut")
 let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
+let { get_charserver_time_sec } = require("chard")
+let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
+let { convertBlk } = require("%sqstd/datablock.nut")
+let { isDataBlock } = require("%sqStdLibs/helpers/u.nut")
+let { saveLocalAccountSettings, loadLocalAccountSettings
+} = require("%scripts/clientState/localProfile.nut")
 
 let contactsWndSizes = Watched(null)
 
@@ -17,11 +23,36 @@ let contactsGroupsDefault = [EPLX_SEARCH, EPL_FRIENDLIST, EPL_RECENT_SQUAD, EPL_
 
 local isDisableContactsBroadcastEvents = false
 
-let recentGroup = mkHardWatched("recentGroup", null)
-let psnApprovedUids = mkHardWatched("psnApprovedUids", {})
-let psnBlockedUids = mkHardWatched("psnBlockedUids", {})
-let xboxApprovedUids = mkHardWatched("xboxApprovedUids", {})
-let xboxBlockedUids = mkHardWatched("xboxBlockedUids", {})
+let recentGroup = hardPersistWatched("recentGroup", null)
+let psnApprovedUids = hardPersistWatched("psnApprovedUids", {})
+let psnBlockedUids = hardPersistWatched("psnBlockedUids", {})
+let xboxApprovedUids = hardPersistWatched("xboxApprovedUids", {})
+let xboxBlockedUids = hardPersistWatched("xboxBlockedUids", {})
+
+let contactsGroups = persist("contactsGroups", @() [])
+let contactsPlayers = persist("contactsPlayers", @() {})
+/*
+  "12345" = {  //uid
+    name = "WINLAY"
+    uid = "12345"
+    presence = { ... }
+  }
+*/
+let contactsByGroups = persist("contactsByGroups", @() {})
+/*
+{
+  friend = [
+    {  //uid
+      name = "WINLAY"
+      uid = "12345"
+      presence = { ... }
+    }
+  ]
+  met = []
+  block = []
+  search = []
+}
+*/
 
 let predefinedContactsGroupToWtGroup = { //To switch from contacts from a char to a contact service without changing in contacts group view.
   approved = EPL_FRIENDLIST
@@ -50,11 +81,11 @@ let function verifyContact(params) {
 }
 
 let function addContactGroup(group) {
-  if (::contacts_groups.contains(group))
+  if (contactsGroups.contains(group))
     return
 
-  ::contacts_groups.insert(2, group)
-  ::contacts[group] <- []
+  contactsGroups.insert(2, group)
+  contactsByGroups[group] <- []
   if (!isDisableContactsBroadcastEvents)
     broadcastEvent(contactEvent.CONTACTS_GROUP_ADDED)
 }
@@ -66,9 +97,9 @@ let function addContact(v_contact, groupName, params = {}) {
 
   addContactGroup(groupName) //Group can be not exist in list
 
-  let existContactIdx = ::contacts[groupName].findindex(@(c) c.isSameContact(contact.uid))
+  let existContactIdx = contactsByGroups[groupName].findindex(@(c) c.isSameContact(contact.uid))
   if (existContactIdx == null)
-    ::contacts[groupName].append(contact)
+    contactsByGroups[groupName].append(contact)
 
   contact?.updateMuteStatus()
   return contact
@@ -77,7 +108,7 @@ let function addContact(v_contact, groupName, params = {}) {
 let function updateRecentGroup(recentGroupV) {
   if (recentGroupV == null)
     return
-  ::contacts[EPL_RECENT_SQUAD] <- []
+  contactsByGroups[EPL_RECENT_SQUAD] <- []
   foreach(uid, _ in recentGroupV) {
     addContact(::getContact(uid), EPL_RECENT_SQUAD)
   }
@@ -89,8 +120,8 @@ recentGroup.subscribe(updateRecentGroup)
 let function loadRecentGroupOnce() {
   if (recentGroup.value != null)
     return
-  local group = ::load_local_account_settings($"contacts/{EPL_RECENT_SQUAD}")
-  group = group != null ? ::buildTableFromBlk(group) : {}
+  local group = loadLocalAccountSettings($"contacts/{EPL_RECENT_SQUAD}")
+  group = isDataBlock(group) ? convertBlk(group) : {}
   recentGroup(group)
   if (group.len() == 0)
     return
@@ -122,7 +153,7 @@ let function addRecentContacts(contacts) {
     return
 
   loadRecentGroupOnce()
-  let serverTime = ::get_charserver_time_sec()
+  let serverTime = get_charserver_time_sec()
   local uidsToSave = {}
   foreach (contact in contacts) {
     let uid = contact?.userId ?? contact?.uid
@@ -137,17 +168,17 @@ let function addRecentContacts(contacts) {
       uidsToSave.rawdelete(resArray[i].uid)
   }
 
-  ::save_local_account_settings($"contacts/{EPL_RECENT_SQUAD}", uidsToSave)
+  saveLocalAccountSettings($"contacts/{EPL_RECENT_SQUAD}", uidsToSave)
   recentGroup(uidsToSave)
 }
 
 let function clear_contacts() {
-  ::contacts_groups = []
+  contactsGroups.clear()
   foreach (_num, group in contactsGroupsDefault)
-    ::contacts_groups.append(group)
-  ::contacts = {}
-  foreach (list in ::contacts_groups)
-    ::contacts[list] <- []
+    contactsGroups.append(group)
+  contactsByGroups.clear()
+  foreach (list in contactsGroups)
+    contactsByGroups[list] <- []
 
   if (!isDisableContactsBroadcastEvents)
     broadcastEvent("ContactsCleared")
@@ -188,7 +219,7 @@ let function updateContactsGroups(groups) {
       if (!contact) {
         let myUserId = ::my_user_id_int64 // warning disable: -declared-never-used
         let errText = playerUid ? "player not found" : "not valid data"
-        ::script_net_assert_once("not found contact for group", errText)
+        script_net_assert_once("not found contact for group", errText)
         continue
       }
 
@@ -200,6 +231,9 @@ let function updateContactsGroups(groups) {
 
   isDisableContactsBroadcastEvents = false
 }
+
+if (contactsByGroups.len() == 0)
+  clear_contacts()
 
 addListenersWithoutEnv({
   function SignOut(_) {
@@ -230,4 +264,7 @@ return {
   psnBlockedUids
   xboxApprovedUids
   xboxBlockedUids
+  contactsGroups
+  contactsPlayers
+  contactsByGroups
 }

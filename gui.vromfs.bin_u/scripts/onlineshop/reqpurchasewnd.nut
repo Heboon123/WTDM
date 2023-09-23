@@ -1,12 +1,14 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
-
 
 let { get_blk_by_path_array } = require("%sqStdLibs/helpers/datablockUtils.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { cutPrefix } = require("%sqstd/string.nut")
+let { get_gui_regional_blk } = require("blkGetters")
 
 /*
   config {
@@ -19,7 +21,7 @@ let { cutPrefix } = require("%sqstd/string.nut")
   }
 */
 
-::gui_handlers.ReqPurchaseWnd <- class extends ::gui_handlers.BaseGuiHandlerWT {
+gui_handlers.ReqPurchaseWnd <- class extends gui_handlers.BaseGuiHandlerWT {
   wndType = handlerType.MODAL
   sceneBlkName = "%gui/showUnlock.blk"
 
@@ -34,7 +36,7 @@ let { cutPrefix } = require("%sqstd/string.nut")
   static function open(config) {
     if (!("purchaseData" in config) || !config.purchaseData.canBePurchased)
       return
-    ::handlersManager.loadHandler(::gui_handlers.ReqPurchaseWnd, config)
+    handlersManager.loadHandler(gui_handlers.ReqPurchaseWnd, config)
   }
 
   function initScreen() {
@@ -72,7 +74,7 @@ let { cutPrefix } = require("%sqstd/string.nut")
 
     this.image = "#ui/images/login_reward?P1"
     let imgBlk = get_blk_by_path_array(["entitlementsAdvert", this.purchaseData.sourceEntitlement],
-                                           ::get_gui_regional_blk())
+                                           get_gui_regional_blk())
     if (!u.isDataBlock(imgBlk))
       return
 
@@ -81,7 +83,7 @@ let { cutPrefix } = require("%sqstd/string.nut")
       let country = profileCountrySq.value
       this.image = rndImg.subst({ country = cutPrefix(country, "country_", country) })
     }
-    if (::is_numeric(imgBlk?.imageRatio))
+    if (is_numeric(imgBlk?.imageRatio))
       this.imageRatioHeight = imgBlk.imageRatio
   }
 

@@ -203,12 +203,21 @@
     "transitionFadeOutTime": 0.2,
     "viscosity": 0.01,
     "condition": {
-      "and": {
-        "isFlightModel": [],
-        "not": {
-          "hasEjectionSeats": []
+      "and": [
+        {
+          "not": {
+            "isInVr": []
+          }
+        },
+        {
+          "not": {
+            "hasEjectionSeats": []
+          }
+        },
+        {
+          "isFlightModel": []
         }
-      }
+      ]
     }
   },
   "ejected": {
@@ -225,6 +234,9 @@
     "viscosity": 0.01,
     "condition": {
       "and": {
+        "not": {
+          "isInVr": []
+        },
         "isFlightModel": [],
         "hasEjectionSeats": []
       }
@@ -2408,9 +2420,18 @@
     },
     {
       "condition": {
-        "not": {
-          "isFlightModel": []
-        }
+        "and": [
+          {
+            "not": {
+              "isInVr": []
+            }
+          },
+          {
+            "not": {
+              "isFlightModel": []
+            }
+          }
+        ]
       }
     },
     {
@@ -2609,7 +2630,12 @@
     },
     {
       "condition": {
-        "isShip": []
+        "and": {
+          "not": {
+            "isInVr": []
+          },
+          "isShip": []
+        }
       }
     }
   ],
@@ -4366,7 +4392,12 @@
     "rotationPeriod": 60.0,
     "viscosity": 0.2,
     "condition": {
-      "wormEaten": []
+      "and": {
+        "wormEaten": [],
+        "not": {
+          "isInVr": []
+        }
+      }
     }
   },
   "cameraLists": {

@@ -1,8 +1,9 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 let u = require("%sqStdLibs/helpers/u.nut")
-
-
+let { saveLocalAccountSettings, loadLocalAccountSettings,
+  loadLocalByAccount, saveLocalByAccount
+} = require("%scripts/clientState/localProfile.nut")
 let seenTitles = require("%scripts/seen/seenList.nut").get(SEEN.TITLES)
 let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let DataBlock = require("DataBlock")
@@ -13,6 +14,8 @@ let { getFirstChosenUnitType } = require("%scripts/firstChoice/firstChoice.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { get_time_msec } = require("dagor.time")
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
+let { getEsUnitType } = require("%scripts/unit/unitInfo.nut")
+let { get_game_settings_blk } = require("blkGetters")
 
 /*
 my_stats API
@@ -130,7 +133,7 @@ local summaryNameArray = [
 
   //newbie stats
   function onEventInitConfigs(_p) {
-    let settingsBlk = ::get_game_settings_blk()
+    let settingsBlk = get_game_settings_blk()
     let blk = settingsBlk?.newPlayersBattles
     if (!blk)
       return
@@ -174,7 +177,7 @@ local summaryNameArray = [
     if (!::g_login.isProfileReceived())
       return
 
-    let newbieEndByArmyId = ::load_local_account_settings("myStats/newbieEndedByArmyId", null)
+    let newbieEndByArmyId = loadLocalAccountSettings("myStats/newbieEndedByArmyId", null)
     if (!newbieEndByArmyId)
       return
 
@@ -200,7 +203,7 @@ local summaryNameArray = [
     this._needRecountNewbie = false
 
     let newbieEndByArmyId = ::g_login.isProfileReceived()
-      ? ::load_local_account_settings("myStats/newbieEndedByArmyId", {})
+      ? loadLocalAccountSettings("myStats/newbieEndedByArmyId", {})
       : null
 
     this.newbieByUnitType.clear()
@@ -228,7 +231,7 @@ local summaryNameArray = [
     }
 
     if (newbieEndByArmyId)
-      ::save_local_account_settings("myStats/newbieEndedByArmyId", newbieEndByArmyId)
+      saveLocalAccountSettings("myStats/newbieEndedByArmyId", newbieEndByArmyId)
 
     this.newbie = this.__isNewbie()
 
@@ -286,7 +289,7 @@ local summaryNameArray = [
   }
 
   function onEventCrewTakeUnit(params) {
-    let unitType = ::get_es_unit_type(params.unit)
+    let unitType = getEsUnitType(params.unit)
     let unitRank = params.unit?.rank ?? -1
     let lastMaxRank = getTblValue(unitType.tostring(), this._maxUnitsUsedRank, 0)
     if (lastMaxRank >= unitRank)
@@ -296,7 +299,7 @@ local summaryNameArray = [
       this._maxUnitsUsedRank = this.calculateMaxUnitsUsedRanks()
 
     this._maxUnitsUsedRank[unitType.tostring()] = unitRank
-    ::saveLocalByAccount("tutor/newbieBattles/unitsRank", this._maxUnitsUsedRank)
+    saveLocalByAccount("tutor/newbieBattles/unitsRank", this._maxUnitsUsedRank)
     this._needRecountNewbie = true
   }
 
@@ -345,8 +348,7 @@ local summaryNameArray = [
     if (!pvpSummary)
       return res
 
-    let roles = u.map(getUnitClassTypesByEsUnitType(filter?.unitType),
-       @(t) t.expClassName)
+    let roles = getUnitClassTypesByEsUnitType(filter?.unitType).map(@(t) t.expClassName)
 
     foreach (_idx, diffData in pvpSummary)
       foreach (unitRole, data in diffData) {
@@ -463,7 +465,7 @@ local summaryNameArray = [
 
   function calculateMaxUnitsUsedRanks() {
     local needRecalculate = false
-    let loadedBlk = ::loadLocalByAccount("tutor/newbieBattles/unitsRank", DataBlock())
+    let loadedBlk = loadLocalByAccount("tutor/newbieBattles/unitsRank", DataBlock())
     foreach (unitType in unitTypes.types)
       if (unitType.isAvailable()
         && (loadedBlk?[unitType.esUnitType.tostring()] ?? 0) < ::max_country_rank) {
@@ -483,12 +485,12 @@ local summaryNameArray = [
         if (unit == null)
           continue
 
-        let curUnitType = ::get_es_unit_type(unit)
+        let curUnitType = getEsUnitType(unit)
         saveBlk[curUnitType.tostring()] = max(getTblValue(curUnitType.tostring(), saveBlk, 0), unit?.rank ?? -1)
       }
 
     if (!u.isEqual(saveBlk, loadedBlk))
-      ::saveLocalByAccount("tutor/newbieBattles/unitsRank", saveBlk)
+      saveLocalByAccount("tutor/newbieBattles/unitsRank", saveBlk)
 
     return saveBlk
   }

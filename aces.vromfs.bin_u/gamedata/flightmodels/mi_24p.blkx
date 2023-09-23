@@ -7,6 +7,7 @@
   "gyroSight": true,
   "haveCCIPForGun": true,
   "haveCCIPForBombs": true,
+  "ilsASP17": true,
   "hasPointOfInterestMemory": false,
   "gearSinkRangeLR": 0.316,
   "gearSinkRangeC": 0.25,
@@ -1684,7 +1685,62 @@
   },
   "Sound": {
     "Engine": "engine_mi24",
-    "gun": "gun_default"
+    "voiceWarningSystem": "rita",
+    "gun": "gun_default",
+    "voiceWarningSystemOverride": {
+      "vws_right": [],
+      "vws_left": [],
+      "vws_ahead": [],
+      "vws_behind": [],
+      "vws_high": [],
+      "vws_low": [],
+      "vws_missile": [],
+      "vws_counter": [],
+      "vws_lock": [],
+      "vws_chaff_flare": [],
+      "vws_chaff_flare_low": [],
+      "vws_out": [],
+      "vws_jammer": [],
+      "vws_critical_angle": [],
+      "vws_over_g": [],
+      "vws_critical_speed": [],
+      "vws_dangerous_close": [],
+      "vws_gear_down": [],
+      "vws_check_gear": [],
+      "vws_pull_up": [],
+      "vws_roll_left": [],
+      "vws_roll_right": [],
+      "vws_fire": [],
+      "vws_engine_fire": [],
+      "vws_engine_fire_left": [],
+      "vws_engine_fire_right": [],
+      "vws_decrease_engine_rpm": [],
+      "vws_decrease_left_engine_rpm": [],
+      "vws_decrease_right_engine_rpm": [],
+      "vws_critical_engine_vibration": [],
+      "vws_critical_left_engine_vibration": [],
+      "vws_critical_right_engine_vibration": [],
+      "vws_caution": [],
+      "vws_engine_overheat": [],
+      "vws_left_engine_overheat": [],
+      "vws_right_engine_overheat": [],
+      "vws_engine_failure": [],
+      "vws_left_engine_failure": [],
+      "vws_right_engine_failure": [],
+      "vws_warning": [],
+      "vws_generator_failure": [],
+      "vws_left_generator_failure": [],
+      "vws_right_generator_failure": [],
+      "vws_main_gearbox_failure": [],
+      "vws_tailrotor_gearbox_failure": [],
+      "vws_bingo": [],
+      "vws_check_fuel": [],
+      "vws_fuel_low": [],
+      "vws_lock_cockpit": [],
+      "vws_hydrosystem_failure": [],
+      "vws_increase_engine_rpm": [],
+      "vws_check_mech": []
+    }
   },
   "cockpit": [
     {
@@ -1809,6 +1865,20 @@
         "rpm": [0.0,17250.0],
         "prop_rpm": [0.0,275.0],
         "gears_lamp": [0.0,0.0]
+      }
+    },
+    {
+      "multifunctionDisplays": {
+        "display": {
+          "textureArea": [0.0,0.0,1.0,1.0],
+          "page": {
+            "type": "plane_ils",
+            "ilsSize": [0.2,0.2],
+            "ilsOffsetForce": 0.2,
+            "brightnessMult": 3.5,
+            "ilsColor": "#ca650ab4"
+          }
+        }
       }
     },
     {
@@ -2020,6 +2090,12 @@
         },
         {
           "node": "ub_57_16_b002"
+        },
+        {
+          "node": "fuse6"
+        },
+        {
+          "node": "fuse5"
         }
       ]
     },
@@ -2062,14 +2138,9 @@
               "name": "gsh_30_2k_common"
             },
             {
-              "ShowNodes": [
-                {
-                  "node": "fuse2"
-                },
-                {
-                  "node": "fuse4"
-                }
-              ]
+              "ShowNodes": {
+                "node": "fuse4"
+              }
             },
             {
               "Weapon": {
@@ -2138,9 +2209,14 @@
               "name": "gsh_30_2k_exhaust_common"
             },
             {
-              "ShowNodes": {
-                "node": "fuse2"
-              }
+              "ShowNodes": [
+                {
+                  "node": "fuse2"
+                },
+                {
+                  "node": "fuse4"
+                }
+              ]
             },
             {
               "Weapon": {
@@ -2495,6 +2571,7 @@
           "WeaponPreset": {
             "iconType": "doublebarreled_box",
             "name": "upk250",
+            "reqModification": "il_28sh_upk23_gunpod",
             "ShowNodes": {
               "node": "upk_23_250_b001"
             },
@@ -2604,6 +2681,7 @@
           "WeaponPreset": {
             "iconType": "doublebarreled_box",
             "name": "upk250",
+            "reqModification": "il_28sh_upk23_gunpod",
             "ShowNodes": {
               "node": "upk_23_250_b002"
             },
@@ -2713,6 +2791,7 @@
           "WeaponPreset": {
             "iconType": "doublebarreled_box",
             "name": "upk250",
+            "reqModification": "il_28sh_upk23_gunpod",
             "ShowNodes": {
               "node": "upk_23_250_b003"
             },
@@ -2931,6 +3010,7 @@
           "WeaponPreset": {
             "iconType": "doublebarreled_box",
             "name": "upk250",
+            "reqModification": "il_28sh_upk23_gunpod",
             "ShowNodes": {
               "node": "upk_23_250_b004"
             },
@@ -5752,7 +5832,16 @@
       "invertEnableLogic": false,
       "reqModification": "heli_screen_exhaust_device",
       "group": "countermeasures",
-      "tier": 2
+      "tier": 2,
+      "effects": {
+        "enginesInfraRedBrightnessMult": 0.7,
+        "commonWeapons": {
+          "Weapon": {
+            "slot": 0,
+            "preset": "gsh_30_2k_exhaust_common"
+          }
+        }
+      }
     },
     "heli_counterMeasures": {
       "turn_it_off": false,
@@ -5761,6 +5850,7 @@
       "tier": 3,
       "group": "countermeasures",
       "effects": {
+        "enginesInfraRedBrightnessMult": 0.7,
         "counterMeasures": {
           "counterMeasure": {
             "blk": "gameData/counterMeasures/l_166.blk"

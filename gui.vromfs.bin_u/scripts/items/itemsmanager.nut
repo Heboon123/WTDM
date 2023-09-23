@@ -1,10 +1,10 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 let u = require("%sqStdLibs/helpers/u.nut")
-
-
+let { loadLocalByAccount, saveLocalByAccount } = require("%scripts/clientState/localProfile.nut")
 let { loadOnce } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { get_time_msec } = require("dagor.time")
 let DataBlock  = require("DataBlock")
 let ItemGenerators = require("%scripts/items/itemsClasses/itemGenerators.nut")
@@ -20,6 +20,7 @@ let { PRICE } = require("%scripts/utils/configs.nut")
 let inventoryItemTypeByTag = require("%scripts/items/inventoryItemTypeByTag.nut")
 let { floor } = require("math")
 let { deferOnce } = require("dagor.workcycle")
+let { get_price_blk } = require("blkGetters")
 
 // Independent Modules
 require("%scripts/items/roulette/bhvRoulette.nut")
@@ -281,7 +282,7 @@ foreach (fn in [
   this.dbgTrophiesListInternal.clear()
   this.dbgUpdateInternalItemsCount++
 
-  let pBlk = ::get_price_blk()
+  let pBlk = get_price_blk()
   let trophyBlk = pBlk?.trophy
   if (trophyBlk)
     for (local i = 0; i < trophyBlk.blockCount(); i++) {
@@ -468,7 +469,7 @@ local lastItemDefsUpdatedelayedCall = 0
     return
 
   lastItemDefsUpdatedelayedCall = get_time_msec()
-  ::handlersManager.doDelayed(function() {
+  handlersManager.doDelayed(function() {
     lastItemDefsUpdatedelayedCall = 0
     this.markItemsDefsListUpdate()
   }.bindenv(this))
@@ -839,7 +840,7 @@ let function consumeItemFromPromo(handler, params) {
   let itemId = params?[0]
   if (itemId == null)
     return
-  let item = ::ItemsManager.getInventoryItemById(::to_integer_safe(itemId, itemId, false))
+  let item = ::ItemsManager.getInventoryItemById(to_integer_safe(itemId, itemId, false))
   if (!(item?.canConsume() ?? false))
     return
 
@@ -851,7 +852,7 @@ let function canConsumeItemFromPromo(params) {
   let itemId = params?[0]
   if (itemId == null)
     return false
-  let item = ::ItemsManager.getInventoryItemById(::to_integer_safe(itemId, itemId, false))
+  let item = ::ItemsManager.getInventoryItemById(to_integer_safe(itemId, itemId, false))
   return item?.canConsume() ?? false
 }
 
@@ -867,13 +868,13 @@ seenInventory.setListGetter(@() ::ItemsManager.getInventoryVisibleSeenIds())
 
 let makeSeenCompatibility = @(savePath) function() {
     let res = {}
-    let blk = ::loadLocalByAccount(savePath)
+    let blk = loadLocalByAccount(savePath)
     if (!u.isDataBlock(blk))
       return res
 
     for (local i = 0; i < blk.paramCount(); i++)
       res[blk.getParamName(i)] <- blk.getParamValue(i)
-    ::saveLocalByAccount(savePath, null)
+    saveLocalByAccount(savePath, null)
     return res
   }
 

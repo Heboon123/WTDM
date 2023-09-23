@@ -1,5 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { countSizeInItems } = require("%sqDagui/daguiUtil.nut")
@@ -7,7 +8,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { format } = require("string")
 let time = require("%scripts/time.nut")
-let { getPlayerName, isPlayerFromPS4, isPlayerFromXboxOne, isPlatformSony, isPlatformXboxOne
+let { isPlayerFromPS4, isPlayerFromXboxOne, isPlatformSony, isPlatformXboxOne
 } = require("%scripts/clientState/platform.nut")
 let playerContextMenu = require("%scripts/user/playerContextMenu.nut")
 let vehiclesModal = require("%scripts/unit/vehiclesModal.nut")
@@ -19,6 +20,11 @@ let { getSeparateLeaderboardPlatformValue } = require("%scripts/social/crossplay
 let lbDataType = require("%scripts/leaderboard/leaderboardDataType.nut")
 let { convertLeaderboardData } = require("%scripts/leaderboard/requestLeaderboardData.nut")
 let { cutPrefix } = require("%sqstd/string.nut")
+let { create_option_switchbox } = require("%scripts/options/optionsExt.nut")
+let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
+let { getPlayerName } = require("%scripts/user/remapNick.nut")
+let { loadLocalByAccount, saveLocalByAccount } = require("%scripts/clientState/localProfile.nut")
+let { get_warpoints_blk } = require("blkGetters")
 
 let clan_member_list = [
   { id = "onlineStatus", lbDataType = lbDataType.TEXT, myClanOnly = true, iconStyle = true, needHeader = false }
@@ -66,7 +72,7 @@ foreach (idx, item in clan_member_list) {
 }
 
 ::showClanPage <- function showClanPage(id, name, tag) {
-  ::gui_start_modal_wnd(::gui_handlers.clanPageModal,
+  ::gui_start_modal_wnd(gui_handlers.clanPageModal,
     {
       clanIdStrReq = id,
       clanNameReq = name,
@@ -74,7 +80,7 @@ foreach (idx, item in clan_member_list) {
     })
 }
 
-::gui_handlers.clanPageModal <- class extends ::gui_handlers.BaseGuiHandlerWT {
+gui_handlers.clanPageModal <- class extends gui_handlers.BaseGuiHandlerWT {
   wndType      = handlerType.MODAL
   sceneBlkName = "%gui/clans/clanPageModal.blk"
 
@@ -160,11 +166,11 @@ foreach (idx, item in clan_member_list) {
   }
 
   function initLbTable() {
-    this.lbTableWeak = ::gui_handlers.LeaderboardTable.create({
+    this.lbTableWeak = gui_handlers.LeaderboardTable.create({
       scene = this.scene.findObject("lb_table_nest")
       onCategoryCb = Callback(this.onCategory, this)
       onRowSelectCb = Callback(this.onSelectedPlayerIdxLb, this)
-      onRowHoverCb = ::show_console_buttons ? Callback(this.onSelectedPlayerIdxLb, this) : null
+      onRowHoverCb = showConsoleButtons.value ? Callback(this.onSelectedPlayerIdxLb, this) : null
       onRowDblClickCb = Callback(this.onUserCard, this)
       onRowRClickCb = Callback(this.onUserRClick, this)
     })
@@ -365,7 +371,7 @@ foreach (idx, item in clan_member_list) {
           let count = countSizeInItems(containerObj.getParent(), "@clanMedalSizeMin", 1, 0, 0).itemsCountX
           let medals = ::g_clans.getClanPlaceRewardLogData(clanData, count)
           local markup = ""
-          local rest = min(medals.len(), ::get_warpoints_blk()?.maxClanBestRewards ?? 6)
+          local rest = min(medals.len(), get_warpoints_blk()?.maxClanBestRewards ?? 6)
           foreach (m in medals)
             if (clanRewardsModal.isRewardVisible(m, clanData))
               if (rest-- > 0)
@@ -389,7 +395,7 @@ foreach (idx, item in clan_member_list) {
   function updateUserOptionButton() {
     showObjectsByTable(this.scene, {
       btn_usercard      = this.curPlayer != null && hasFeature("UserCards")
-      btn_user_options  = this.curPlayer != null && ::show_console_buttons
+      btn_user_options  = this.curPlayer != null && showConsoleButtons.value
     })
   }
 
@@ -423,11 +429,11 @@ foreach (idx, item in clan_member_list) {
   }
 
   function setCurDMode(mode) {
-    ::saveLocalByAccount("wnd/clanDiffMode", mode)
+    saveLocalByAccount("wnd/clanDiffMode", mode)
   }
 
   function getCurDMode() {
-    let diffMode = ::loadLocalByAccount(
+    let diffMode = loadLocalByAccount(
       "wnd/clanDiffMode",
       ::get_current_shop_difficulty().diffCode
     )
@@ -483,7 +489,7 @@ foreach (idx, item in clan_member_list) {
       if (!checkObj(containerObj))
         return
       let text = loc("clan/admin_mode")
-      let markup = ::create_option_switchbox({
+      let markup = create_option_switchbox({
         id = "admin_mode_switch"
         value = enable
         textChecked = text
@@ -724,7 +730,7 @@ foreach (idx, item in clan_member_list) {
     if (columnId == ::ranked_column_prefix)
       fieldName = $"{::ranked_column_prefix}{::g_difficulty.getDifficultyByDiffCode(this.curMode).clanDataEnding}"
     else {
-      let category = u.search(clan_member_list, (@(columnId) function(category) { return category.id == columnId })(columnId))
+      let category = u.search(clan_member_list,  function(category) { return category.id == columnId })
       let field = category?.field ?? columnId
       fieldName = u.isFunction(field) ? field() : field
     }
@@ -855,7 +861,7 @@ foreach (idx, item in clan_member_list) {
   }
 
   function getColumnDataById(id) {
-    return u.search(clan_member_list, (@(id) function(c) { return c.id == id })(id))
+    return u.search(clan_member_list,  function(c) { return c.id == id })
   }
 
   function onStatsCategory(obj) {
@@ -875,7 +881,7 @@ foreach (idx, item in clan_member_list) {
   }
 
   function onSelectUser(obj = null) {
-    if (::show_console_buttons)
+    if (showConsoleButtons.value)
       return
     obj = obj ?? this.scene.findObject("clan_members_list")
     if (!checkObj(obj))
@@ -886,13 +892,13 @@ foreach (idx, item in clan_member_list) {
   }
 
   function onRowHover(obj) {
-    if (!::show_console_buttons)
+    if (!showConsoleButtons.value)
       return
     if (!checkObj(obj))
       return
 
     let isHover = obj.isHovered()
-    let dataIdx = ::to_integer_safe(cutPrefix(obj.id, "row_", ""), -1, false)
+    let dataIdx = to_integer_safe(cutPrefix(obj.id, "row_", ""), -1, false)
     if (isHover == (dataIdx == this.lastHoveredDataIdx))
      return
 
@@ -912,7 +918,7 @@ foreach (idx, item in clan_member_list) {
 
   function onChangeMembershipRequirementsWnd() {
     if (hasFeature("Clans") && hasFeature("ClansMembershipEditor")) {
-      ::gui_start_modal_wnd(::gui_handlers.clanChangeMembershipReqWnd,
+      ::gui_start_modal_wnd(gui_handlers.clanChangeMembershipReqWnd,
         {
           clanData = this.clanData,
           owner = this,
@@ -958,7 +964,7 @@ foreach (idx, item in clan_member_list) {
 
   function onClanAverageActivity(_obj = null) {
     if (this.clanData)
-      ::gui_handlers.clanAverageActivityModal.open(this.clanData)
+      gui_handlers.clanAverageActivityModal.open(this.clanData)
   }
 
   function onClanVehicles(_obj = null) {
@@ -970,7 +976,7 @@ foreach (idx, item in clan_member_list) {
 
   function onClanSquads(_obj = null) {
     if (this.clanData)
-      ::gui_handlers.MyClanSquadsListModal.open()
+      gui_handlers.MyClanSquadsListModal.open()
   }
 
   function onClanLog(_obj = null) {

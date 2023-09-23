@@ -32,6 +32,11 @@ let { getReserveAircraftName } = require("%scripts/tutorials.nut")
 let { stripTags } = require("%sqstd/string.nut")
 let { reqUnlockByClient } = require("%scripts/unlocks/unlocksModule.nut")
 let { removeTextareaTags } = require("%sqDagui/daguiUtil.nut")
+let getAllUnits = require("%scripts/unit/allUnits.nut")
+let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
+let { loadLocalByAccount, saveLocalByAccount } = require("%scripts/clientState/localProfile.nut")
+let { shopIsModificationEnabled } = require("chardResearch")
+let { getEsUnitType, isUnitsEraUnlocked, getUnitName } = require("%scripts/unit/unitInfo.nut")
 
 /*
 if need - put commented in array above
@@ -120,9 +125,9 @@ registerPersistentData("SlotbarGlobals", getroottable(), ["selected_crews", "unl
     // Bottom button view
     //
 
-    let mainButtonAction = ::show_console_buttons ? "onOpenActionsList" : (params?.mainActionFunc ?? "")
-    let mainButtonText = ::show_console_buttons ? "" : (params?.mainActionText ?? "")
-    let mainButtonIcon = ::show_console_buttons ? "#ui/gameuiskin#slot_menu.svg" : (params?.mainActionIcon ?? "")
+    let mainButtonAction = showConsoleButtons.value ? "onOpenActionsList" : (params?.mainActionFunc ?? "")
+    let mainButtonText = showConsoleButtons.value ? "" : (params?.mainActionText ?? "")
+    let mainButtonIcon = showConsoleButtons.value ? "#ui/gameuiskin#slot_menu.svg" : (params?.mainActionIcon ?? "")
     let checkTexts = mainButtonAction.len() > 0 && (mainButtonText.len() > 0 || mainButtonIcon.len() > 0)
     let checkButton = !isVehicleInResearch || hasFeature("SpendGold")
     let bottomButtonView = {
@@ -253,11 +258,11 @@ registerPersistentData("SlotbarGlobals", getroottable(), ["selected_crews", "unl
       isElite             = (isLocalState && isOwn && ::isUnitElite(air)) || (!isOwn && special)
       unitRankText        = ::get_unit_rank_text(air, crew, showBR, curEdiff)
       bottomLineText      = params?.bottomLineText
-      isItemLocked        = isLocalState && !isUsable && !special && !isSquadronVehicle && !isMarketableVehicle && !::isUnitsEraUnlocked(air)
-      hasTalismanIcon     = isLocalState && (special || ::shop_is_modification_enabled(air.name, "premExpMul"))
+      isItemLocked        = isLocalState && !isUsable && !special && !isSquadronVehicle && !isMarketableVehicle && !isUnitsEraUnlocked(air)
+      hasTalismanIcon     = isLocalState && (special || shopIsModificationEnabled(air.name, "premExpMul"))
       itemButtons         = handyman.renderCached("%gui/slotbar/slotbarItemButtons.tpl", itemButtonsView)
       tooltipId           = ::g_tooltip.getIdUnit(air.name, params?.tooltipParams)
-      isTooltipByHold     = ::show_console_buttons
+      isTooltipByHold     = showConsoleButtons.value
       bottomButton        = handyman.renderCached("%gui/slotbar/slotbarItemBottomButton.tpl", bottomButtonView)
       extraInfoBlock      = handyman.renderCached("%gui/slotbar/slotExtraInfoBlock.tpl", extraInfoView)
       refuseOpenHoverMenu = !hasActions
@@ -291,7 +296,7 @@ registerPersistentData("SlotbarGlobals", getroottable(), ["selected_crews", "unl
 
     local nextAir = air.airsGroup[0]
     let country = nextAir.shopCountry
-    let esUnitType = ::get_es_unit_type(nextAir)
+    let esUnitType = getEsUnitType(nextAir)
     local forceUnitNameOnPlate = false
 
     let era = nextAir?.rank ?? -1
@@ -345,7 +350,7 @@ registerPersistentData("SlotbarGlobals", getroottable(), ["selected_crews", "unl
       isPkgDev = isPkgDev || a.isPkgDev
       isRecentlyReleased = isRecentlyReleased || a.isRecentlyReleased()
 
-      let hasTalisman = special || ::shop_is_modification_enabled(a.name, "premExpMul")
+      let hasTalisman = special || shopIsModificationEnabled(a.name, "premExpMul")
       hasTalismanIcon = hasTalismanIcon || hasTalisman
       talismanIncomplete = talismanIncomplete || !hasTalisman
 
@@ -378,7 +383,7 @@ registerPersistentData("SlotbarGlobals", getroottable(), ["selected_crews", "unl
 
     let bottomButtonView = {
       holderId            = id
-      hasButton           = ::show_console_buttons
+      hasButton           = showConsoleButtons.value
       mainButtonAction    = "onAircraftClick"
       mainButtonText      = ""
       mainButtonIcon      = "#ui/gameuiskin#slot_unfold.svg"
@@ -461,7 +466,7 @@ registerPersistentData("SlotbarGlobals", getroottable(), ["selected_crews", "unl
       bonusId             = id
       primaryUnitId       = nextAir.name
       tooltipId           = ::g_tooltip.getIdUnit(nextAir.name, params?.tooltipParams)
-      isTooltipByHold     = ::show_console_buttons
+      isTooltipByHold     = showConsoleButtons.value
       bottomButton        = handyman.renderCached("%gui/slotbar/slotbarItemBottomButton.tpl", bottomButtonView)
       hasFullGroupBlock   = params?.fullGroupBlock ?? true
       fullGroupBlockId    = "td_" + id
@@ -492,7 +497,7 @@ registerPersistentData("SlotbarGlobals", getroottable(), ["selected_crews", "unl
       isItemDisabled      = bitStatus == bit_unit_status.disabled
       needMultiLineName   = params?.needMultiLineName
       tooltipId           = params?.tooltipId ?? ""
-      isTooltipByHold     = ::show_console_buttons
+      isTooltipByHold     = showConsoleButtons.value
       bottomLineText      = params?.bottomLineText
       isElite             = params?.isElite
       hasTalismanIcon     = params?.hasTalismanIcon
@@ -649,7 +654,7 @@ registerPersistentData("SlotbarGlobals", getroottable(), ["selected_crews", "unl
 }
 
 ::get_slot_unit_name_text <- function get_slot_unit_name_text(unit, params) {
-  local res = ::getUnitName(unit)
+  local res = getUnitName(unit)
   let missionRules = getTblValue("missionRules", params)
   let groupName = missionRules ? missionRules.getRandomUnitsGroupName(unit.name) : null
   if (groupName)
@@ -803,13 +808,13 @@ registerPersistentData("SlotbarGlobals", getroottable(), ["selected_crews", "unl
     }
     return isReserve ? reserveText :
       showBR  ? (minBR != maxBR ? format("%.1f-%.1f", minBR, maxBR) : format("%.1f", minBR)) :
-      ::get_roman_numeral(rank)
+      get_roman_numeral(rank)
   }
 
   if (unit?.isFakeUnit)
     return unit?.isReqForFakeUnit || unit?.rank == null
       ? ""
-      : format(loc("events/rank"), ::get_roman_numeral(unit.rank))
+      : format(loc("events/rank"), get_roman_numeral(unit.rank))
 
   let isReserve = ::isUnitDefault(unit)
   let isSpare = crew && isInFlight ? ::is_spare_aircraft_in_slot(crew.idInCountry) : false
@@ -819,7 +824,7 @@ registerPersistentData("SlotbarGlobals", getroottable(), ["selected_crews", "unl
 
   return isReserve ?
            isSpare ? "" : reserveToShowStr :
-           showBR ? battleRatingStr : ::get_roman_numeral(unit.rank)
+           showBR ? battleRatingStr : get_roman_numeral(unit.rank)
 }
 
 ::is_crew_locked_by_prev_battle <- function is_crew_locked_by_prev_battle(crew) {
@@ -894,7 +899,7 @@ registerPersistentData("SlotbarGlobals", getroottable(), ["selected_crews", "unl
         if (("aircraft" in crew) && crew.aircraft != "") {
           let unit = getAircraftByName(crew.aircraft)
           if (unit)
-            u.appendOnce(::get_es_unit_type(unit), res)
+            u.appendOnce(getEsUnitType(unit), res)
         }
   return res
 }
@@ -913,14 +918,14 @@ registerPersistentData("SlotbarGlobals", getroottable(), ["selected_crews", "unl
   let blk = DataBlock()
   foreach (cIdx, country in ::g_crews_list.get())
     blk[country.country] = getTblValue(cIdx, ::selected_crews, 0)
-  ::saveLocalByAccount("selected_crews", blk)
+  saveLocalByAccount("selected_crews", blk)
 }
 
 ::init_selected_crews <- function init_selected_crews(forceReload = false) {
   if (!forceReload && (!::g_crews_list.get().len() || ::selected_crews.len() == ::g_crews_list.get().len()))
     return
 
-  let selCrewsBlk = ::loadLocalByAccount("selected_crews", null)
+  let selCrewsBlk = loadLocalByAccount("selected_crews", null)
   local needSave = false
 
   ::selected_crews = array(::g_crews_list.get().len(), 0)
@@ -1086,7 +1091,7 @@ registerPersistentData("SlotbarGlobals", getroottable(), ["selected_crews", "unl
 
 ::checkUnlockedCountriesByAirs <- function checkUnlockedCountriesByAirs() { //starter packs
   local haveUnlocked = false
-  foreach (air in ::all_units)
+  foreach (air in getAllUnits())
     if (!::isUnitDefault(air)
         && ::isUnitUsable(air)
         && !::isCountryAvailable(air.shopCountry)) {

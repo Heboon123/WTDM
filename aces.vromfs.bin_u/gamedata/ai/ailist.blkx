@@ -6591,6 +6591,9 @@
             "event": "regularCheck",
             "recalculateTree": []
           },
+          "not": {
+            "isPlayerReturnOrderActive": []
+          },
           "sequencer": {
             "selector": {
               "selectStrategy": "ordered",
@@ -6776,6 +6779,11 @@
             }
           },
           {
+            "not": {
+              "isPlayerReturnOrderActive": []
+            }
+          },
+          {
             "selector": [
               {
                 "selectStrategy": "ordered"
@@ -6785,6 +6793,20 @@
               },
               {
                 "sequencer": {
+                  "or": {
+                    "hasWeaponTypes": [
+                      {
+                        "weaponType": "bombs"
+                      },
+                      {
+                        "weaponType": "cannons"
+                      },
+                      {
+                        "weaponType": "rockets"
+                      }
+                    ],
+                    "hasDependentAttackers": []
+                  },
                   "setPlayerTargetAs": {
                     "varName": "playerTarget"
                   },
@@ -6807,8 +6829,11 @@
                     },
                     {
                       "sequencer": {
-                        "hasWeaponTypes": {
-                          "weaponType": "bombs"
+                        "or": {
+                          "hasWeaponTypes": {
+                            "weaponType": "bombs"
+                          },
+                          "hasDependentAttackers": []
                         },
                         "updateVipThreat": {
                           "vipVarName": "vip",
@@ -6820,14 +6845,17 @@
                     },
                     {
                       "sequencer": {
-                        "hasWeaponTypes": [
-                          {
-                            "weaponType": "cannons"
-                          },
-                          {
-                            "weaponType": "rockets"
-                          }
-                        ],
+                        "or": {
+                          "hasWeaponTypes": [
+                            {
+                              "weaponType": "cannons"
+                            },
+                            {
+                              "weaponType": "rockets"
+                            }
+                          ],
+                          "hasDependentAttackers": []
+                        },
                         "updateVipThreat": {
                           "vipVarName": "vip",
                           "targetType": "boat",
@@ -6837,6 +6865,34 @@
                       }
                     }
                   ]
+                }
+              },
+              {
+                "sequencer": {
+                  "or": {
+                    "hasWeaponTypes": [
+                      {
+                        "weaponType": "bombs"
+                      },
+                      {
+                        "weaponType": "cannons"
+                      },
+                      {
+                        "weaponType": "rockets"
+                      }
+                    ],
+                    "hasDependentAttackers": []
+                  },
+                  "setGroupLeaderAs": {
+                    "varName": "groupLeader"
+                  },
+                  "setUnitTargetAs": {
+                    "botVarName": "groupLeader",
+                    "varName": "groupLeaderTarget"
+                  },
+                  "setAsTarget": {
+                    "varName": "groupLeaderTarget"
+                  }
                 }
               }
             ]
@@ -6861,6 +6917,15 @@
                       "instantAttack": true,
                       "fireMode": "salvo",
                       "carpetBombing": false
+                    },
+                    "sequencer": {
+                      "hasDependentAttackers": [],
+                      "parallel": {
+                        "cycle": {
+                          "hasGroupWeaponForTarget": []
+                        },
+                        "attackGroundFake": []
+                      }
                     }
                   }
                 }
@@ -6880,6 +6945,15 @@
                     "fighterAttackGround": {
                       "instantAttack": true,
                       "fireMode": "salvo"
+                    },
+                    "sequencer": {
+                      "hasDependentAttackers": [],
+                      "parallel": {
+                        "cycle": {
+                          "hasGroupWeaponForTarget": []
+                        },
+                        "attackGroundFake": []
+                      }
                     }
                   }
                 }
@@ -7060,6 +7134,11 @@
             }
           },
           {
+            "not": {
+              "isPlayerReturnOrderActive": []
+            }
+          },
+          {
             "selector": [
               {
                 "selectStrategy": "ordered"
@@ -7069,6 +7148,20 @@
               },
               {
                 "sequencer": {
+                  "or": {
+                    "hasWeaponTypes": [
+                      {
+                        "weaponType": "bombs"
+                      },
+                      {
+                        "weaponType": "cannons"
+                      },
+                      {
+                        "weaponType": "rockets"
+                      }
+                    ],
+                    "hasDependentAttackers": []
+                  },
                   "setPlayerTargetAs": {
                     "varName": "playerTarget"
                   },
@@ -7091,8 +7184,11 @@
                     },
                     {
                       "sequencer": {
-                        "hasWeaponTypes": {
-                          "weaponType": "bombs"
+                        "or": {
+                          "hasWeaponTypes": {
+                            "weaponType": "bombs"
+                          },
+                          "hasDependentAttackers": []
                         },
                         "updateVipThreat": {
                           "vipVarName": "vip",
@@ -7104,14 +7200,17 @@
                     },
                     {
                       "sequencer": {
-                        "hasWeaponTypes": [
-                          {
-                            "weaponType": "cannons"
-                          },
-                          {
-                            "weaponType": "rockets"
-                          }
-                        ],
+                        "or": {
+                          "hasWeaponTypes": [
+                            {
+                              "weaponType": "cannons"
+                            },
+                            {
+                              "weaponType": "rockets"
+                            }
+                          ],
+                          "hasDependentAttackers": []
+                        },
                         "updateVipThreat": {
                           "vipVarName": "vip",
                           "targetType": "boat",
@@ -7121,6 +7220,34 @@
                       }
                     }
                   ]
+                }
+              },
+              {
+                "sequencer": {
+                  "or": {
+                    "hasWeaponTypes": [
+                      {
+                        "weaponType": "bombs"
+                      },
+                      {
+                        "weaponType": "cannons"
+                      },
+                      {
+                        "weaponType": "rockets"
+                      }
+                    ],
+                    "hasDependentAttackers": []
+                  },
+                  "setGroupLeaderAs": {
+                    "varName": "groupLeader"
+                  },
+                  "setUnitTargetAs": {
+                    "botVarName": "groupLeader",
+                    "varName": "groupLeaderTarget"
+                  },
+                  "setAsTarget": {
+                    "varName": "groupLeaderTarget"
+                  }
                 }
               }
             ]
@@ -7135,9 +7262,20 @@
                   "isTargetType": {
                     "type": "bigShip"
                   },
-                  "diveBombTarget": {
-                    "instantAttack": true,
-                    "fireMode": "salvo"
+                  "selector": {
+                    "diveBombTarget": {
+                      "instantAttack": true,
+                      "fireMode": "salvo"
+                    },
+                    "sequencer": {
+                      "hasDependentAttackers": [],
+                      "parallel": {
+                        "cycle": {
+                          "hasGroupWeaponForTarget": []
+                        },
+                        "attackGroundFake": []
+                      }
+                    }
                   }
                 }
               },
@@ -7155,6 +7293,15 @@
                     "fighterAttackGround": {
                       "instantAttack": true,
                       "fireMode": "salvo"
+                    },
+                    "sequencer": {
+                      "hasDependentAttackers": [],
+                      "parallel": {
+                        "cycle": {
+                          "hasGroupWeaponForTarget": []
+                        },
+                        "attackGroundFake": []
+                      }
                     }
                   }
                 }

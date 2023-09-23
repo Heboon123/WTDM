@@ -1,33 +1,36 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { Cost } = require("%scripts/money.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { toPixels } = require("%sqDagui/daguiUtil.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let slotbarWidget = require("%scripts/slotbar/slotbarWidgetByVehiclesGroups.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let slotbarPresets = require("%scripts/slotbar/slotbarPresetsByVehiclesGroups.nut")
 let tutorAction = require("%scripts/tutorials/tutorialActions.nut")
 let { placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { getSafearea } = require("%scripts/options/safeAreaMenu.nut")
 let { CrewTakeUnitProcess } = require("%scripts/crew/crewTakeUnitProcess.nut")
 let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
+let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 
 ::gui_start_selecting_crew <- function gui_start_selecting_crew(config) {
   if (CrewTakeUnitProcess.safeInterrupt())
-    ::handlersManager.destroyPrevHandlerAndLoadNew(::gui_handlers.SelectCrew, config)
+    handlersManager.destroyPrevHandlerAndLoadNew(gui_handlers.SelectCrew, config)
 }
 
 let function getObjPosInSafeArea(obj) {
   let pos = obj.getPosRC()
   let size = obj.getSize()
   let safeArea = getSafearea()
-  let screen = [::screen_width(), ::screen_height()]
+  let screen = [screen_width(), screen_height()]
   local border = safeArea.map(@(value, idx) (screen[idx] * (1.0 - value) / 2).tointeger())
   return pos.map(@(val, idx) clamp(val, border[idx], screen[idx] - border[idx] - size[idx]))
 }
 
-::gui_handlers.SelectCrew <- class extends ::gui_handlers.BaseGuiHandlerWT {
+gui_handlers.SelectCrew <- class extends gui_handlers.BaseGuiHandlerWT {
   wndType = handlerType.MODAL
   sceneBlkName = "%gui/shop/shopTakeAircraft.blk"
 
@@ -51,7 +54,7 @@ let function getObjPosInSafeArea(obj) {
   isSelectByGroups = false
 
   function initScreen() {
-    if (!this.unit || !this.unit.isUsable() || this.isUnitInSlotbar() || !checkObj(this.unitObj)) {
+    if (!this.unit || !this.unit.isUsable() || this.isUnitInSlotbar()) {
       this.goBack()
       return
     }
@@ -61,17 +64,26 @@ let function getObjPosInSafeArea(obj) {
 
     this.guiScene.setUpdatesEnabled(false, false)
 
-    let tdObj = this.unitObj.getParent()
-    let tdPos = getObjPosInSafeArea(tdObj)
+    local tdClone = null
+    if (this.unitObj != null) {
+      let tdObj = this.unitObj.getParent()
+      let tdPos = getObjPosInSafeArea(tdObj)
 
-    ::gui_handlers.ActionsList.removeActionsListFromObject(tdObj)
+      gui_handlers.ActionsList.removeActionsListFromObject(tdObj)
 
-    let tdClone = tdObj.getClone(this.scene, this)
-    tdClone.pos = tdPos[0] + ", " + tdPos[1]
-    tdClone["class"] = this.cellClass
-    tdClone.position = "root"
+      tdClone = tdObj.getClone(this.scene, this)
+      tdClone.pos = tdPos[0] + ", " + tdPos[1]
+      tdClone["class"] = this.cellClass
+      tdClone.position = "root"
+    } else {
+      local icon = ::build_aircraft_item(this.unit.name, this.unit, {})
+      this.guiScene.appendWithBlk(this.scene, icon, this)
+      tdClone = this.scene.findObject($"td_{this.unit.name}")
+      tdClone.position = "absolute"
+      tdClone.pos = "0.5sw - w/2, 0.5sh - h"
+    }
+
     ::fill_unit_item_timers(tdClone.findObject(this.unit.name), this.unit)
-
     if (!hasFeature("GlobalShowBattleRating") && hasFeature("SlotbarShowBattleRating")) {
       let rankObj = tdClone.findObject("rank_text")
       if (checkObj(rankObj)) {
@@ -127,7 +139,7 @@ let function getObjPosInSafeArea(obj) {
 
   createSlotbarHandler = @(params) this.isSelectByGroups
     ? slotbarWidget.create(params)
-    : ::gui_handlers.SlotbarWidget.create(params)
+    : gui_handlers.SlotbarWidget.create(params)
 
   function updateObjectsPositions(tdClone, legendObj, headerObj) {
     let rootSize = this.guiScene.getRoot().getSize()
@@ -266,7 +278,7 @@ let function getObjPosInSafeArea(obj) {
     let steps = [
       {
         obj = this.getSlotbar() && this.getSlotbar().getBoxOfUnits()
-        text = loc("help/takeAircraft", { unitName = ::getUnitName(this.unit) })
+        text = loc("help/takeAircraft", { unitName = getUnitName(this.unit) })
         nextActionShortcut = "help/NEXT_ACTION"
         actionType = tutorAction.ANY_CLICK
         haveArrow = false
@@ -364,7 +376,7 @@ let function getObjPosInSafeArea(obj) {
     })
 
     let view = {
-      header = loc("mainmenu/legend") + loc("ui/colon") + colorize("userlogColoredText", ::getUnitName(this.unit, false))
+      header = loc("mainmenu/legend") + loc("ui/colon") + colorize("userlogColoredText", getUnitName(this.unit, false))
       haveLegend = legendData.len() > 0
       legendData = legendData
     }

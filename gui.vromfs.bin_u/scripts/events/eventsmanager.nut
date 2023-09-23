@@ -1,19 +1,20 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { Cost } = require("%scripts/money.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
-
-
+let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { format, split_by_chars } = require("string")
 let { addListenersWithoutEnv, CONFIG_VALIDATION, subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { rnd } = require("dagor.random")
 let { get_blk_value_by_path } = require("%sqStdLibs/helpers/datablockUtils.nut")
 let time = require("%scripts/time.nut")
 let systemMsg = require("%scripts/utils/systemMsg.nut")
 let seenEvents = require("%scripts/seen/seenList.nut").get(SEEN.EVENTS)
 let crossplayModule = require("%scripts/social/crossplay.nut")
-let { getPlayerName, isPlatformSony, isPlatformXboxOne, isPlatformPC
+let { isPlatformSony, isPlatformXboxOne, isPlatformPC
 } = require("%scripts/clientState/platform.nut")
 let stdMath = require("%sqstd/math.nut")
 let { getUnitRole } = require("%scripts/unit/unitInfoTexts.nut")
@@ -34,6 +35,12 @@ let { get_meta_mission_info_by_name } = require("guiMission")
 let { toUpper } = require("%sqstd/string.nut")
 let { getGameModesByEconomicName, getModeById } = require("%scripts/matching/matchingGameModes.nut")
 let { debug_dump_stack } = require("dagor.debug")
+let getAllUnits = require("%scripts/unit/allUnits.nut")
+let { getPlayerName } = require("%scripts/user/remapNick.nut")
+let { loadLocalByAccount, saveLocalByAccount } = require("%scripts/clientState/localProfile.nut")
+let { getEsUnitType, getUnitName } = require("%scripts/unit/unitInfo.nut")
+let { get_gui_regional_blk } = require("blkGetters")
+let { getClusterLocName } = require("%scripts/onlineInfo/clustersManagement.nut")
 
 ::event_ids_for_main_game_mode_list <- [
   "tank_event_in_random_battles_arcade"
@@ -213,9 +220,9 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
 
   function openEventInfo(event) {
     if (this.isEventWithLobby(event))
-      ::gui_handlers.EventRoomsHandler.open(event)
+      gui_handlers.EventRoomsHandler.open(event)
     else
-      ::gui_start_modal_wnd(::gui_handlers.EventDescriptionWindow, { event = event })
+      ::gui_start_modal_wnd(gui_handlers.EventDescriptionWindow, { event = event })
   }
 
   /**
@@ -270,7 +277,7 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
   }
 
   function getMatchingUnitType(unit) {
-    let matchingUnitType = ::get_es_unit_type(unit)
+    let matchingUnitType = getEsUnitType(unit)
     // override boats as ships because there are no boats on the matching
     if (matchingUnitType == ES_UNIT_TYPE_BOAT)
       return ES_UNIT_TYPE_SHIP
@@ -545,7 +552,7 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
   }
 
   function getLastPlayedEvent() {
-    let eventData = ::loadLocalByAccount("lastPlayedEvent", null)
+    let eventData = loadLocalByAccount("lastPlayedEvent", null)
     if (eventData == null)
       return null
     let event = this.getEvent(eventData?.eventName)
@@ -607,7 +614,7 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
       let teamDataB = this.getTeamData(event, sides[1])
       if (teamDataA == null || teamDataB == null) {
         let economicName = event?.economicName  // warning disable: -declared-never-used
-        ::script_net_assert_once("not found event teamdata", "missing teamdata in event")
+        script_net_assert_once("not found event teamdata", "missing teamdata in event")
       }
       else
         isSymmetric = isSymmetric || this.isTeamsEqual(teamDataA, teamDataB)
@@ -1099,7 +1106,7 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
       return true
 
     let ediff = this.getEDiffByEvent(event)
-    foreach (unit in ::all_units)
+    foreach (unit in getAllUnits())
        if (::isUnitUsable(unit) && this.isUnitMatchesRule(unit, requirements, true, ediff))
          return true
     return false
@@ -1212,14 +1219,11 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
     foreach (idx, membersData in teamData.cantFlyData) {
       let teamCode = membersData?.team ?? idx
       let stacks = this.stackMemberErrors(membersData.members)
-      let teamLangConfig = u.map(
-        stacks,
-        @(s) [
-          systemMsg.makeColoredValue(COLOR_TAG.USERLOG, ", ".join(s.names, true)),
-          "ui/colon",
-          ::g_squad_utils.getMemberStatusLocTag(s.status)
-        ]
-      )
+      let teamLangConfig = stacks.map(@(s) [
+        systemMsg.makeColoredValue(COLOR_TAG.USERLOG, ", ".join(s.names, true)),
+        "ui/colon",
+        ::g_squad_utils.getMemberStatusLocTag(s.status)
+      ])
       langConfigByTeam[teamCode] <- teamLangConfig
       if (idx == 0)
         singleLangConfig = teamLangConfig
@@ -1239,7 +1243,7 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
     if (teamData.haveRestrictions && teamData.canFlyout)
       buttons.insert(0, ["yes", continueQueueFunc ])
 
-    ::scene_msg_box("members_cant_fly",
+    scene_msg_box("members_cant_fly",
                     null,
                     systemMsg.configToLang(langConfig, null, "\n"),
                     buttons,
@@ -1290,7 +1294,7 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
     }
 
     if (bestTeamsData && bestTeamsData.teamsData.len() > 1)
-      bestTeamsData.teamsData = u.filter(bestTeamsData.teamsData, @(t) t.countriesChanged == bestTeamsData.bestCountriesChanged)
+      bestTeamsData.teamsData = bestTeamsData.teamsData.filter(@(t) t.countriesChanged == bestTeamsData.bestCountriesChanged)
 
     return bestTeamsData
   }
@@ -1556,7 +1560,7 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
   }
 
   function getTextsBlock(economicName) {
-    return ::get_gui_regional_blk()?.eventsTexts?[economicName]
+    return get_gui_regional_blk()?.eventsTexts?[economicName]
   }
 
   //!!! function only for compatibility with version without gui_regional
@@ -1781,7 +1785,7 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
         logerr("Wrong unit name in event rule")
       }
       if (onlyText || !air)
-        ruleString = ::getUnitName(air, true)
+        ruleString = getUnitName(air, true)
 
       if (air && checkObj(ruleObj)) {
         let airNameObj = ruleObj.findObject("air_name")
@@ -1814,8 +1818,8 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
     if ("ranks" in rule) {
       let minRank = max(1, rule.ranks?.min ?? 1)
       let maxRank = rule.ranks?.max ?? ::max_country_rank
-      local rankText = ::get_roman_numeral(minRank)
-                     + ((minRank != maxRank) ? " - " + ::get_roman_numeral(maxRank) : "")
+      local rankText = get_roman_numeral(minRank)
+                     + ((minRank != maxRank) ? " - " + get_roman_numeral(maxRank) : "")
       rankText = format(loc("events/rank"), rankText)
       if (ruleString.len())
         ruleString += loc("ui/parentheses/space", { text = rankText })
@@ -1838,7 +1842,7 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
   }
 
   function getRulesText(rules, separator = "\n") {
-    let textsList = u.map(rules, function(rule) { return this.generateEventRule(rule, true) }.bindenv(this))
+    let textsList = rules.map(function(rule) { return this.generateEventRule(rule, true) }.bindenv(this))
     return separator.join(textsList, true)
   }
 
@@ -1951,7 +1955,7 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
         if (startTime > 0)
           messageText +=  "\n" + format(loc("events/event_starts_in"), colorize("activeTextColor",
             time.hoursToString(time.secondsToHours(startTime))))
-        ::scene_msg_box("cant_join", null, messageText,
+        scene_msg_box("cant_join", null, messageText,
             [["ok", function() {}]], "ok")
       }
     }
@@ -2038,12 +2042,12 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
     if (data.actionFunc == null && !data.checkStatus) {
       data.actionFunc = function(reasonData) {
         if (!reasonData.checkXboxOverlayMessage)
-          ::showInfoMsgBox(reasonData.msgboxReasonText || reasonData.reasonText, "cant_join")
+          showInfoMsgBox(reasonData.msgboxReasonText || reasonData.reasonText, "cant_join")
         else if (!isMultiplayerPrivilegeAvailable.value)
           checkAndShowMultiplayerPrivilegeWarning()
         else if (!isShowGoldBalanceWarning())
           checkAndShowCrossplayWarning(
-            @() ::showInfoMsgBox(reasonData.msgboxReasonText || reasonData.reasonText, "cant_join"))
+            @() showInfoMsgBox(reasonData.msgboxReasonText || reasonData.reasonText, "cant_join"))
       }
     }
 
@@ -2213,7 +2217,7 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
         eventName = this.getEventNameText(event)
       }
       let message = loc("msgbox/need_ticket/no_tickets", locParams)
-      ::showInfoMsgBox(message, "no_tickets")
+      showInfoMsgBox(message, "no_tickets")
     }
     // Player has to purchase one of available tickets via special window.
     else {
@@ -2222,7 +2226,7 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
         event = event
         tickets = purchasableTickets
       }
-      ::gui_start_modal_wnd(::gui_handlers.TicketBuyWindow, windowParams)
+      ::gui_start_modal_wnd(gui_handlers.TicketBuyWindow, windowParams)
     }
   }
 
@@ -2371,7 +2375,7 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
 
     if (mroom)
       textsList.append(this.descFormat(loc("options/cluster"),
-        ::g_clusters.getClusterLocName(::SessionLobby.getClusterName(mroom))))
+        getClusterLocName(::SessionLobby.getClusterName(mroom))))
 
     let isTesting = ("event_access" in event) ? isInArray("AccessTest", event.event_access) : false
     if (isTesting)
@@ -2488,7 +2492,7 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
 
     let purchData = ::OnlineShopModel.getFeaturePurchaseData(feature)
     if (!purchData.canBePurchased)
-      return ::showInfoMsgBox(loc("msgbox/notAvailbleYet"))
+      return showInfoMsgBox(loc("msgbox/notAvailbleYet"))
 
     let entitlementItem = getEntitlementConfig(purchData.sourceEntitlement)
     let msg = loc("msg/eventAccess/needEntitlements",
@@ -2496,7 +2500,7 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
                         event = colorize("activeTextColor", this.getEventNameText(event))
                         entitlement = colorize("userlogColoredText", getEntitlementName(entitlementItem))
                       })
-    ::gui_handlers.ReqPurchaseWnd.open({
+    gui_handlers.ReqPurchaseWnd.open({
       purchaseData = purchData
       checkPackage = getFeaturePack(feature)
       header = this.getEventNameText(event)
@@ -2557,7 +2561,7 @@ systemMsg.registerLocTags({ [SQUAD_NOT_READY_LOC_TAG] = "msgbox/squad_not_ready_
     if (!customMgm)
       return
 
-    ::handlersManager.loadHandler(::gui_handlers.CreateEventRoomWnd,
+    handlersManager.loadHandler(gui_handlers.CreateEventRoomWnd,
       { mGameMode = customMgm })
   }
 
@@ -2606,13 +2610,13 @@ seenEvents.setSubListGetter(SEEN.S_EVENTS_WINDOW,
 seenEvents.setCompatibilityLoadData(function() {
     let res = {}
     let savePath = "seen/events"
-    let blk = ::loadLocalByAccount(savePath)
+    let blk = loadLocalByAccount(savePath)
     if (!u.isDataBlock(blk))
       return res
 
     for (local i = 0; i < blk.paramCount(); i++)
       res[blk.getParamName(i)] <- blk.getParamValue(i)
-    ::saveLocalByAccount(savePath, null)
+    saveLocalByAccount(savePath, null)
     return res
   })
 

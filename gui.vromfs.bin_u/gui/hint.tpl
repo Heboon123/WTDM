@@ -48,7 +48,7 @@ hint {
       background-image:t='#ui/gameuiskin#circular_progress_1.svg'
 
       tdiv {
-        position:t='absolute'
+        position:t='relative'
         size:t='pw, ph'
         background-svg-size:t='0.06@shHud, 0.06@shHud'
         background-color:t='#33555555';
@@ -68,6 +68,10 @@ hint {
     <</image>>
     <<#text>>
     textareaNoTab {
+      <<#isVerticalAlignText>>
+      position:t='relative'
+      pos:t='0, ph/2 - h/2'
+      <</isVerticalAlignText>>
       text:t='<<textValue>>'
     }
     <</text>>

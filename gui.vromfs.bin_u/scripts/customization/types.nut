@@ -11,7 +11,9 @@ let { format } = require("string")
 let { get_last_skin, get_decal_in_slot, set_current_decal_slot, set_decal_in_slot,
   enter_decal_mode, add_attachable, remove_attachable, select_attachable_slot,
   exit_attachables_mode, get_attachable_name, get_attachable_group, focus_on_current_decal,
-  get_num_decal_slots, get_max_num_decal_slots, exit_decal_mode, save_decals
+  get_num_decal_slots, get_max_num_decal_slots, exit_decal_mode, save_decals,
+  enter_ship_flags_mode, exit_ship_flags_mode, get_default_ship_flag,
+  apply_ship_flag, get_ship_flag_in_slot, get_avail_ship_flags_blk
 } = require("unitCustomization")
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let guidParser = require("%scripts/guidParser.nut")
@@ -20,10 +22,13 @@ let skinLocations = require("%scripts/customization/skinLocations.nut")
 let memoizeByEvents = require("%scripts/utils/memoizeByEvents.nut")
 let { isPlatformSony } = require("%scripts/clientState/platform.nut")
 let { updateDownloadableSkins } = require("%scripts/customization/downloadableDecorators.nut")
-let { getPlaneBySkinId, getSkinNameBySkinId, isDefaultSkin
-} = require("%scripts/customization/decorCache.nut")
-let { get_decals_blk } = require("blkGetters")
-
+let { getPlaneBySkinId, getSkinNameBySkinId, isDefaultSkin, getDecorator
+  } = require("%scripts/customization/decorCache.nut")
+let { get_decals_blk, get_skins_blk, get_attachable_blk } = require("blkGetters")
+let { isUnlockOpened } = require("%scripts/unlocks/unlocksModule.nut")
+let { shopBuyUnlock } = require("unlocks")
+let { getUnitName } = require("%scripts/unit/unitInfo.nut")
+let getShipFlags = require("%scripts/customization/shipFlags.nut")
 let function memoizeByProfile(func, hashFunc = null) {
   // When player buys any decarator, profile always updates.
   return memoizeByEvents(func, hashFunc, [ "ProfileUpdated" ])
@@ -75,7 +80,7 @@ let function memoizeByProfile(func, hashFunc = null) {
       return text
     }
 
-    getCost = function(_decoratorName) { return Cost() }
+    getCost = function(_decorator) { return Cost() }
     getDecoratorNameInSlot = function(_slotIdx, _unitName, _skinId, _checkPremium = false) { return "" }
     getDecoratorGroupInSlot = function(_slotIdx, _unitName, _skinId, _checkPremium = false) { return "" }
 
@@ -112,7 +117,7 @@ let function memoizeByProfile(func, hashFunc = null) {
           return false
 
       if (!this.isPlayerHaveDecorator(decorator.id)) {
-        local isVisibleOnlyUnlocked = block?.hideUntilUnlocked || !decorator.canRecieve()
+        local isVisibleOnlyUnlocked = block?.hideUntilUnlocked || !decorator.canReceive()
         if (block?.beginDate || block?.endDate)
           isVisibleOnlyUnlocked = !time.isInTimerangeByUtcStrings(block?.beginDate, block?.endDate)
         if (isVisibleOnlyUnlocked)
@@ -149,6 +154,64 @@ enums.addTypesByGlobalName("g_decorator_type", {
   UNKNOWN = {
   }
 
+  FLAGS = {
+    unlockedItemType = UNLOCKABLE_SHIP_FLAG
+    resourceType = "ship_flag"
+    listId = "flags_list"
+    listHeaderLocId = "flags"
+    currentOpenedCategoryLocalSafePath = "wnd/flagsCategory"
+    categoryPathPrefix = "flags/category/"
+    userlogPurchaseIcon = "#ui/gameuiskin#unlock_mission"
+    getAvailableSlots = @(_unit) 1
+    getMaxSlots = @() 1
+
+    getImage = @(decorator) decorator ? $"@!{decorator.blk.texture}" : ""
+    getRatio = @(decorator) decorator?.aspect_ratio ?? 0.8
+    getImageSize = @(_decorator) "256@sf/@pf, 204@sf/@pf"
+    getLocName = @(decoratorName, ...) loc(getDecorator(decoratorName, this)?.blk.nameLocId ?? "")
+    getLocDesc = @(decoratorName) loc(getDecorator(decoratorName, this)?.blk.descLocId ?? "")
+    getTypeDesc = @(_decorator) ""
+    getCost = @(decorator) Cost().setGold(decorator?.unlockBlk.costGold ?? 0)
+    getDecoratorNameInSlot = @(_slotIdx, unitName, skinId, _checkPremium = false) get_ship_flag_in_slot(unitName, skinId)
+
+    isAllowed = @(decoratorName) ::is_decal_allowed(decoratorName, "")
+
+    isAvailable = @(unit, checkUnitUsable = true) !!unit && (!checkUnitUsable || unit.isUsable())
+    isPlayerHaveDecorator = @(id) isUnlockOpened(id) || id == get_default_ship_flag()
+    isVisible = @(_block, _decorator) true
+    function getBlk() {
+      let resBlk = DataBlock()
+      let flagsBlk = get_avail_ship_flags_blk() ?? getShipFlags()
+      if (flagsBlk != null)
+        resBlk.setFrom(flagsBlk)
+      return resBlk
+    }
+
+    enterEditMode = function(flagName) {
+      let enterResult = enter_ship_flags_mode()
+      apply_ship_flag(flagName, false)
+      return enterResult
+    }
+
+    exitEditMode = function(apply, save = false, callback = @() null) {
+      let res = exit_ship_flags_mode(apply, save)
+      if (res)
+        callback()
+      return res
+    }
+
+    buyFunc = function(_unitName, id, _cost, afterSuccessFunc) {
+      let taskId = shopBuyUnlock(id)
+      let taskOptions = { showProgressBox = true, progressBoxText = loc("charServer/purchase") }
+      ::g_tasker.addTask(taskId, taskOptions,
+        function() {
+          exit_ship_flags_mode(true, true)
+          afterSuccessFunc()
+        },
+        @() exit_ship_flags_mode(false, false))
+    }
+  }
+
   DECALS = {
     unlockedItemType = UNLOCKABLE_DECAL
     resourceType = "decal"
@@ -179,9 +242,9 @@ enums.addTypesByGlobalName("g_decorator_type", {
     getLocName = function(decoratorName, ...) { return loc("decals/" + decoratorName) }
     getLocDesc = function(decoratorName) { return loc("decals/" + decoratorName + "/desc", "") }
 
-    getCost = function(decoratorName) {
-      return Cost(max(0, ::get_decal_cost_wp(decoratorName)),
-                    max(0, ::get_decal_cost_gold(decoratorName)))
+    getCost = function(decorator) {
+      return Cost(max(0, ::get_decal_cost_wp(decorator.id)),
+                    max(0, ::get_decal_cost_gold(decorator.id)))
     }
     getDecoratorNameInSlot = function(slotIdx, unitName, skinId, checkPremium = false) {
       return get_decal_in_slot(unitName, skinId, slotIdx, checkPremium) //slow function
@@ -290,9 +353,9 @@ enums.addTypesByGlobalName("g_decorator_type", {
       return loc(paramPathPrefix + "maxSurfaceAngle", { value = angle })
     }
 
-    getCost = function(decoratorName) {
-      return Cost(max(0, ::get_attachable_cost_wp(decoratorName)),
-                    max(0, ::get_attachable_cost_gold(decoratorName)))
+    getCost = function(decorator) {
+      return Cost(max(0, ::get_attachable_cost_wp(decorator.id)),
+                    max(0, ::get_attachable_cost_gold(decorator.id)))
     }
     getDecoratorNameInSlot = function(slotIdx, ...) { return get_attachable_name(slotIdx) }
     getDecoratorGroupInSlot = function(slotIdx, ...) { return get_attachable_group(slotIdx) }
@@ -302,7 +365,7 @@ enums.addTypesByGlobalName("g_decorator_type", {
       && (!checkUnitUsable || unit.isUsable())
     isPlayerHaveDecorator = memoizeByProfile(::player_have_attachable)
 
-    getBlk = function() { return ::get_attachable_blk() }
+    getBlk = function() { return get_attachable_blk() }
 
     removeDecorator = function(slotIdx, save) {
       remove_attachable(slotIdx)
@@ -388,7 +451,7 @@ enums.addTypesByGlobalName("g_decorator_type", {
       }
 
       if (addUnitName && !u.isEmpty(unitName))
-        name += loc("ui/parentheses/space", { text = ::getUnitName(unit) })
+        name += loc("ui/parentheses/space", { text = getUnitName(unit) })
 
       return name
     }
@@ -418,13 +481,13 @@ enums.addTypesByGlobalName("g_decorator_type", {
       if (!unit)
         return loc("trophy/unlockables_names/skin")
       return loc("reward/skin_for") + " " +
-        ::getUnitName(unit) + loc("ui/comma") + loc(::getUnitCountry(unit))
+        getUnitName(unit) + loc("ui/comma") + loc(::getUnitCountry(unit))
     }
 
-    getCost = function(decoratorName) {
-      let unitName = getPlaneBySkinId(decoratorName)
-      return Cost(max(0, ::get_skin_cost_wp(unitName, decoratorName)),
-                    max(0, ::get_skin_cost_gold(unitName, decoratorName)))
+    getCost = function(decorator) {
+      let unitName = getPlaneBySkinId(decorator.id)
+      return Cost(max(0, ::get_skin_cost_wp(unitName, decorator.id)),
+                    max(0, ::get_skin_cost_gold(unitName, decorator.id)))
     }
 
     getFreeSlotIdx = @(...) 0
@@ -439,7 +502,7 @@ enums.addTypesByGlobalName("g_decorator_type", {
                                 getSkinNameBySkinId(decoratorName))
     })
 
-    getBlk = function() { return ::get_skins_blk() }
+    getBlk = function() { return get_skins_blk() }
 
     buyFunc = function(unitName, id, cost, afterSuccessFunc) {
       let blk = DataBlock()
@@ -490,8 +553,8 @@ enums.addTypesByGlobalName("g_decorator_type", {
   return enums.getCachedType("listId", listId, ::g_decorator_type.cache.byListId, ::g_decorator_type, ::g_decorator_type.UNKNOWN)
 }
 
-::g_decorator_type.getTypeByUnlockedItemType <- function getTypeByUnlockedItemType(UnlockedItemType) {
-  return enums.getCachedType("unlockedItemType", UnlockedItemType, ::g_decorator_type.cache.byUnlockedItemType, ::g_decorator_type, ::g_decorator_type.UNKNOWN)
+::g_decorator_type.getTypeByUnlockedItemType <- function getTypeByUnlockedItemType(unlockedItemType) {
+  return enums.getCachedType("unlockedItemType", unlockedItemType, ::g_decorator_type.cache.byUnlockedItemType, ::g_decorator_type, ::g_decorator_type.UNKNOWN)
 }
 
 ::g_decorator_type.getTypeByResourceType <- function getTypeByResourceType(resourceType) {

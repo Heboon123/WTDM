@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
 let { Cost } = require("%scripts/money.nut")
-
-
+let { isUnlockOpened } = require("%scripts/unlocks/unlocksModule.nut")
 let { split_by_chars } = require("string")
 let { eachBlock } = require("%sqstd/datablock.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
@@ -26,6 +24,11 @@ let { promoteUnits } = require("%scripts/unit/remainingTimeUnit.nut")
 let { shopPromoteUnits } = require("%scripts/shop/shopUnitsInfo.nut")
 let { get_skins_for_unit } = require("unitCustomization")
 let { getDecorator } = require("%scripts/customization/decorCache.nut")
+let { get_charserver_time_sec } = require("chard")
+let { shopIsModificationEnabled } = require("chardResearch")
+let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
+let { get_wpcost_blk, get_warpoints_blk, get_unittags_blk,
+get_modifications_blk } = require("blkGetters")
 
 let MOD_TIERS_COUNT = 4
 
@@ -162,7 +165,7 @@ local Unit = class {
       return null
     this.isInited = true
 
-    let warpoints = ::get_warpoints_blk()
+    let warpoints = get_warpoints_blk()
     let uWpCost = this.getUnitWpCostBlk()
 
     let expClassStr = uWpCost?.unitClass
@@ -205,11 +208,15 @@ local Unit = class {
     let errorsTextArray = initUnitModifications(this.modifications,
       uWpCost?.modifications ?? ::get_full_unit_blk(this.name)?.modifications, this.esUnitType)
     if (uWpCost?.spare != null) {
+      let spareBlk = get_modifications_blk()?.modifications.spare
+
       this.spare = {
         name = "spare"
         type = ::g_weaponry_types.SPARE.type
         cost = uWpCost?.spare.value || 0
-        image = ::get_weapon_image(this.esUnitType, ::get_modifications_blk()?.modifications.spare, uWpCost?.spare)
+        image = ::get_weapon_image(this.esUnitType, spareBlk, uWpCost?.spare)
+        animation = spareBlk && (spareBlk % "animationByUnit")
+          .findvalue((@(anim) anim.unitType == this.esUnitType).bindenv(this))?.src
       }
       if (uWpCost?.spare.costGold != null)
         this.spare.costGold <- uWpCost.spare.costGold
@@ -278,7 +285,7 @@ local Unit = class {
 
 
 
-  getUnitWpCostBlk      = @() ::get_wpcost_blk()?[this.name]
+  getUnitWpCostBlk      = @() get_wpcost_blk()?[this.name]
   isBought              = @() ::shop_is_aircraft_purchased(this.name)
   isUsable              = @() ::shop_is_player_has_unit(this.name)
   isRented              = @() ::shop_is_unit_rented(this.name)
@@ -297,7 +304,7 @@ local Unit = class {
       return this._endRecentlyReleasedTime
 
     this._endRecentlyReleasedTime = -1
-    let releaseDate = ::get_unittags_blk()?[this.name].releaseDate
+    let releaseDate = get_unittags_blk()?[this.name].releaseDate
     if (releaseDate == null)
       return this._endRecentlyReleasedTime
 
@@ -315,7 +322,7 @@ local Unit = class {
     if (this._isRecentlyReleased != null)
       return this._isRecentlyReleased
 
-    this._isRecentlyReleased = this.getEndRecentlyReleasedTime() > ::get_charserver_time_sec()
+    this._isRecentlyReleased = this.getEndRecentlyReleasedTime() > get_charserver_time_sec()
     return this._isRecentlyReleased
   }
 
@@ -323,8 +330,8 @@ local Unit = class {
   function getOperatorCountry() {
     if (this._operatorCountry)
       return this._operatorCountry
-    local res = ::get_unittags_blk()?[this.name].operatorCountry ?? ""
-    this._operatorCountry = res != "" && ::get_country_icon(res) != "" ? res : this.shopCountry
+    local res = get_unittags_blk()?[this.name].operatorCountry ?? ""
+    this._operatorCountry = res != "" && getCountryIcon(res) != "" ? res : this.shopCountry
     return this._operatorCountry
   }
 
@@ -339,8 +346,13 @@ local Unit = class {
     return ::calc_battle_rating_from_rank(mrank)
   }
 
+  function getCostRepairPerMin(diff) {
+    let wp = this.getUnitWpCostBlk()?[$"repairCostPerMin{diff.getEgdName()}"]
+    return wp ? Cost(wp) : null
+  }
+
   function getWpRewardMulList(difficulty = ::g_difficulty.ARCADE) {
-    let warpoints = ::get_warpoints_blk()
+    let warpoints = get_warpoints_blk()
     let uWpCost = this.getUnitWpCostBlk()
     let mode = difficulty.getEgdName()
 
@@ -378,7 +390,7 @@ local Unit = class {
       return false
     if (this.hideForLangs && this.hideForLangs.indexof(::g_language.getLanguageName()) != null)
       return false
-    if (this.showOnlyIfPlayerHasUnlock && !::is_unlocked_scripted(-1, this.showOnlyIfPlayerHasUnlock))
+    if (this.showOnlyIfPlayerHasUnlock && !isUnlockOpened(this.showOnlyIfPlayerHasUnlock))
       return false
     if (this.showOnlyWhenResearch && !this.isInResearch() && this.getExp() <= 0)
       return false
@@ -454,7 +466,7 @@ local Unit = class {
       contentPreview.showUnitSkin(this.name)
   }
 
-  isDepthChargeAvailable = @() this.hasDepthCharge || ::shop_is_modification_enabled(this.name, "ship_depth_charge")
+  isDepthChargeAvailable = @() this.hasDepthCharge || shopIsModificationEnabled(this.name, "ship_depth_charge")
 
   function getNVDSights(modName) {
     if (!this.isTank())

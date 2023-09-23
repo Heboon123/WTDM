@@ -1,13 +1,15 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 
-
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let DataBlock = require("DataBlock")
 let { json_to_string } = require("json")
 let { cutPrefix } = require("%sqstd/string.nut")
+let { get_warpoints_blk } = require("blkGetters")
 
 let function isRewardBest(medal, clanData) {
   if ((clanData?.clanBestRewards.len() ?? 0) > 0 && medal?.bestRewardsConfig)
@@ -29,7 +31,7 @@ let function isRewardVisible (medal, clanData) {
   return false
 }
 
-::gui_handlers.clanRewardsModal <- class extends ::gui_handlers.BaseGuiHandlerWT {
+gui_handlers.clanRewardsModal <- class extends gui_handlers.BaseGuiHandlerWT {
   wndType            = handlerType.MODAL
   sceneTplName       = "%gui/rewards/clanRewardsModal.tpl"
   rewards            = null
@@ -40,7 +42,7 @@ let function isRewardVisible (medal, clanData) {
   maxClanBestRewards = 6
 
   function getSceneTplView() {
-    this.maxClanBestRewards = ::get_warpoints_blk()?.maxClanBestRewards ?? this.maxClanBestRewards
+    this.maxClanBestRewards = get_warpoints_blk()?.maxClanBestRewards ?? this.maxClanBestRewards
     let blocksCount = this.rewards.len() > 3 ? 2 : 1
     let myClanRights = ::g_clans.getMyClanRights()
     this.canEditBestRewards = this.clanId == ::clan_get_my_clan_id() && isInArray("CHANGE_INFO", myClanRights)
@@ -137,7 +139,7 @@ let function isRewardVisible (medal, clanData) {
 
 return {
   open = function(params = null) {
-    ::handlersManager.loadHandler(::gui_handlers.clanRewardsModal, params)
+    handlersManager.loadHandler(gui_handlers.clanRewardsModal, params)
   }
   isRewardVisible = isRewardVisible
 }

@@ -46,6 +46,7 @@
     "mass": 17.0,
     "normalizationPreset": "heat",
     "ricochetPreset": "he",
+    "groundRicochetPreset": "he",
     "secondaryShattersPreset": "ap_rocket",
     "stabilityThreshold": 0.5,
     "stabilityCaliberToArmorThreshold": 5.0,
@@ -170,6 +171,9 @@
       },
       {
         "ricochetPreset": "he"
+      },
+      {
+        "groundRicochetPreset": "he"
       },
       {
         "secondaryShattersPreset": "ap_rocket"
@@ -327,7 +331,7 @@
       {
         "DamageParts": {
           "body": {
-            "hp": 5.0,
+            "hp": 50.0,
             "armorClass": "tank_structural_steel",
             "armorThickness": 1.0
           }
@@ -335,15 +339,76 @@
       },
       {
         "DamageEffects": {
-          "part": {
-            "name": "body",
-            "onHit": {
-              "expl": 1.0
+          "part": [
+            {
+              "name": "body"
             },
-            "onKill": {
-              "destruction": 1.0
+            {
+              "onHit": {
+                "shellState": "inFlight",
+                "expl": 1.0
+              }
+            },
+            {
+              "onHit": {
+                "shellState": "onUnit",
+                "damageType": "generic",
+                "expl": 0.05,
+                "fire": 0.45,
+                "break": 0.5,
+                "damage": 3.0,
+                "fHitCritical": true
+              }
+            },
+            {
+              "onHit": {
+                "shellState": "onUnit",
+                "damageType": "generic",
+                "expl": 0.5,
+                "fire": 0.3,
+                "break": 0.2,
+                "damage": 30.0,
+                "fHitCritical": true
+              }
+            },
+            {
+              "onHit": {
+                "shellState": "onUnit",
+                "damageType": "explosion",
+                "expl": 0.45,
+                "fire": 0.45,
+                "break": 0.1,
+                "damage": 50.0,
+                "fHitCritical": true
+              }
+            },
+            {
+              "onHit": {
+                "shellState": "onUnit",
+                "damageType": "cumulative",
+                "expl": 0.4,
+                "fire": 0.4,
+                "break": 0.1,
+                "damage": 100.0,
+                "fHitCritical": true
+              }
+            },
+            {
+              "onKill": {
+                "shellState": "inFlight",
+                "destruction": 1.0
+              }
+            },
+            {
+              "onKill": {
+                "shellState": "onUnit",
+                "expl": 0.05,
+                "fire": 0.05,
+                "break": 0.9,
+                "fHitCritical": true
+              }
             }
-          }
+          ]
         }
       },
       {
@@ -770,6 +835,7 @@
       "mass": 17.0,
       "normalizationPreset": "heat",
       "ricochetPreset": "he",
+      "groundRicochetPreset": "he",
       "secondaryShattersPreset": "ap_rocket",
       "stabilityThreshold": 0.5,
       "stabilityCaliberToArmorThreshold": 5.0,
@@ -894,6 +960,9 @@
         },
         {
           "ricochetPreset": "he"
+        },
+        {
+          "groundRicochetPreset": "he"
         },
         {
           "secondaryShattersPreset": "ap_rocket"
@@ -1051,7 +1120,7 @@
         {
           "DamageParts": {
             "body": {
-              "hp": 5.0,
+              "hp": 50.0,
               "armorClass": "tank_structural_steel",
               "armorThickness": 1.0
             }
@@ -1059,15 +1128,76 @@
         },
         {
           "DamageEffects": {
-            "part": {
-              "name": "body",
-              "onHit": {
-                "expl": 1.0
+            "part": [
+              {
+                "name": "body"
               },
-              "onKill": {
-                "destruction": 1.0
+              {
+                "onHit": {
+                  "shellState": "inFlight",
+                  "expl": 1.0
+                }
+              },
+              {
+                "onHit": {
+                  "shellState": "onUnit",
+                  "damageType": "generic",
+                  "expl": 0.05,
+                  "fire": 0.45,
+                  "break": 0.5,
+                  "damage": 3.0,
+                  "fHitCritical": true
+                }
+              },
+              {
+                "onHit": {
+                  "shellState": "onUnit",
+                  "damageType": "generic",
+                  "expl": 0.5,
+                  "fire": 0.3,
+                  "break": 0.2,
+                  "damage": 30.0,
+                  "fHitCritical": true
+                }
+              },
+              {
+                "onHit": {
+                  "shellState": "onUnit",
+                  "damageType": "explosion",
+                  "expl": 0.45,
+                  "fire": 0.45,
+                  "break": 0.1,
+                  "damage": 50.0,
+                  "fHitCritical": true
+                }
+              },
+              {
+                "onHit": {
+                  "shellState": "onUnit",
+                  "damageType": "cumulative",
+                  "expl": 0.4,
+                  "fire": 0.4,
+                  "break": 0.1,
+                  "damage": 100.0,
+                  "fHitCritical": true
+                }
+              },
+              {
+                "onKill": {
+                  "shellState": "inFlight",
+                  "destruction": 1.0
+                }
+              },
+              {
+                "onKill": {
+                  "shellState": "onUnit",
+                  "expl": 0.05,
+                  "fire": 0.05,
+                  "break": 0.9,
+                  "fHitCritical": true
+                }
               }
-            }
+            ]
           }
         },
         {
@@ -1495,6 +1625,7 @@
       "mass": 17.0,
       "normalizationPreset": "heat",
       "ricochetPreset": "he",
+      "groundRicochetPreset": "he",
       "secondaryShattersPreset": "ap_rocket",
       "stabilityThreshold": 0.5,
       "stabilityCaliberToArmorThreshold": 5.0,
@@ -1619,6 +1750,9 @@
         },
         {
           "ricochetPreset": "he"
+        },
+        {
+          "groundRicochetPreset": "he"
         },
         {
           "secondaryShattersPreset": "ap_rocket"
@@ -1776,7 +1910,7 @@
         {
           "DamageParts": {
             "body": {
-              "hp": 5.0,
+              "hp": 50.0,
               "armorClass": "tank_structural_steel",
               "armorThickness": 1.0
             }
@@ -1784,15 +1918,76 @@
         },
         {
           "DamageEffects": {
-            "part": {
-              "name": "body",
-              "onHit": {
-                "expl": 1.0
+            "part": [
+              {
+                "name": "body"
               },
-              "onKill": {
-                "destruction": 1.0
+              {
+                "onHit": {
+                  "shellState": "inFlight",
+                  "expl": 1.0
+                }
+              },
+              {
+                "onHit": {
+                  "shellState": "onUnit",
+                  "damageType": "generic",
+                  "expl": 0.05,
+                  "fire": 0.45,
+                  "break": 0.5,
+                  "damage": 3.0,
+                  "fHitCritical": true
+                }
+              },
+              {
+                "onHit": {
+                  "shellState": "onUnit",
+                  "damageType": "generic",
+                  "expl": 0.5,
+                  "fire": 0.3,
+                  "break": 0.2,
+                  "damage": 30.0,
+                  "fHitCritical": true
+                }
+              },
+              {
+                "onHit": {
+                  "shellState": "onUnit",
+                  "damageType": "explosion",
+                  "expl": 0.45,
+                  "fire": 0.45,
+                  "break": 0.1,
+                  "damage": 50.0,
+                  "fHitCritical": true
+                }
+              },
+              {
+                "onHit": {
+                  "shellState": "onUnit",
+                  "damageType": "cumulative",
+                  "expl": 0.4,
+                  "fire": 0.4,
+                  "break": 0.1,
+                  "damage": 100.0,
+                  "fHitCritical": true
+                }
+              },
+              {
+                "onKill": {
+                  "shellState": "inFlight",
+                  "destruction": 1.0
+                }
+              },
+              {
+                "onKill": {
+                  "shellState": "onUnit",
+                  "expl": 0.05,
+                  "fire": 0.05,
+                  "break": 0.9,
+                  "fHitCritical": true
+                }
               }
-            }
+            ]
           }
         },
         {

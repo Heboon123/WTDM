@@ -22,6 +22,8 @@
   "fxSnowDust": "dust_ground_wave_snow_big",
   "fxConcreteDust": "dust_ground_wave_asphalt_big",
   "fxWaterShockWave": "dust_waterwave_big",
+  "fxTypeEjector": "smoke_gunpowder_ejector",
+  "ejectionFxSpeedRange": [25.0,45.0],
   "shouldCollideWithRendinsts": true,
   "sound_path": "tanks/weapon_tanks/cannons",
   "sound_pathStudio": "ground/weapon/cannons",
@@ -40,6 +42,7 @@
     "maxDistance": 7000.0,
     "normalizationPreset": "heat",
     "ricochetPreset": "heat_fs",
+    "groundRicochetPreset": "heat_fs",
     "secondaryShattersPreset": "ap",
     "stabilityThreshold": 0.5,
     "stabilityCaliberToArmorThreshold": 5.0,
@@ -468,6 +471,7 @@
       "maxDistance": 10000.0,
       "normalizationPreset": "heat",
       "ricochetPreset": "he",
+      "groundRicochetPreset": "he",
       "secondaryShattersPreset": "ap",
       "stabilityThreshold": 0.5,
       "stabilityCaliberToArmorThreshold": 5.0,
@@ -871,6 +875,7 @@
       "maxDistance": 7000.0,
       "normalizationPreset": "heat",
       "ricochetPreset": "heat_fs",
+      "groundRicochetPreset": "heat_fs",
       "secondaryShattersPreset": "ap",
       "stabilityThreshold": 0.05,
       "stabilityCaliberToArmorThreshold": 5.0,
@@ -1057,6 +1062,7 @@
       "maxDistance": 10000.0,
       "normalizationPreset": "default",
       "ricochetPreset": "apds_fs_long",
+      "groundRicochetPreset": "apds_fs_long",
       "secondaryShattersPreset": "apds_fs_long",
       "bulletType": "apds_fs_long_l30_tank",
       "slopeEffectPreset": "apds_fs_long",
@@ -1261,13 +1267,14 @@
     "bullet": {
       "mass": 19.0,
       "explosiveType": "a_ix_1",
-      "explosiveMass": 1.64,
+      "explosiveMass": 1.65,
       "caliber": 0.125,
       "Cx": 0.66,
       "speed": 905.0,
       "maxDistance": 7000.0,
       "normalizationPreset": "heat",
       "ricochetPreset": "heat_fs",
+      "groundRicochetPreset": "heat_fs",
       "secondaryShattersPreset": "ap",
       "stabilityThreshold": 0.5,
       "stabilityCaliberToArmorThreshold": 5.0,
@@ -1697,6 +1704,7 @@
       "maxDistance": 10000.0,
       "normalizationPreset": "default",
       "ricochetPreset": "apds_fs_long",
+      "groundRicochetPreset": "apds_fs_long",
       "secondaryShattersPreset": "apds_fs_long",
       "bulletType": "apds_fs_tungsten_caliber_fins_tank",
       "slopeEffectPreset": "apds_fs_long",
@@ -1902,6 +1910,7 @@
       "mass": 17.2,
       "normalizationPreset": "heat",
       "ricochetPreset": "atgm",
+      "groundRicochetPreset": "atgm",
       "secondaryShattersPreset": "ap",
       "stabilityThreshold": 0.5,
       "stabilityCaliberToArmorThreshold": 5.0,
@@ -2006,7 +2015,7 @@
           "maxDeltaAngle": 0.02
         },
         {
-          "explosiveType": "comp_b"
+          "explosiveType": "ocfol"
         },
         {
           "explosiveMass": 3.6
@@ -2016,6 +2025,9 @@
         },
         {
           "ricochetPreset": "atgm"
+        },
+        {
+          "groundRicochetPreset": "atgm"
         },
         {
           "secondaryShattersPreset": "ap"
@@ -2169,7 +2181,7 @@
         {
           "DamageParts": {
             "body": {
-              "hp": 5.0,
+              "hp": 50.0,
               "armorClass": "tank_structural_steel",
               "armorThickness": 1.0
             }
@@ -2177,15 +2189,76 @@
         },
         {
           "DamageEffects": {
-            "part": {
-              "name": "body",
-              "onHit": {
-                "expl": 1.0
+            "part": [
+              {
+                "name": "body"
               },
-              "onKill": {
-                "destruction": 1.0
+              {
+                "onHit": {
+                  "shellState": "inFlight",
+                  "expl": 1.0
+                }
+              },
+              {
+                "onHit": {
+                  "shellState": "onUnit",
+                  "damageType": "generic",
+                  "expl": 0.05,
+                  "fire": 0.45,
+                  "break": 0.5,
+                  "damage": 3.0,
+                  "fHitCritical": true
+                }
+              },
+              {
+                "onHit": {
+                  "shellState": "onUnit",
+                  "damageType": "generic",
+                  "expl": 0.5,
+                  "fire": 0.3,
+                  "break": 0.2,
+                  "damage": 30.0,
+                  "fHitCritical": true
+                }
+              },
+              {
+                "onHit": {
+                  "shellState": "onUnit",
+                  "damageType": "explosion",
+                  "expl": 0.45,
+                  "fire": 0.45,
+                  "break": 0.1,
+                  "damage": 50.0,
+                  "fHitCritical": true
+                }
+              },
+              {
+                "onHit": {
+                  "shellState": "onUnit",
+                  "damageType": "cumulative",
+                  "expl": 0.4,
+                  "fire": 0.4,
+                  "break": 0.1,
+                  "damage": 100.0,
+                  "fHitCritical": true
+                }
+              },
+              {
+                "onKill": {
+                  "shellState": "inFlight",
+                  "destruction": 1.0
+                }
+              },
+              {
+                "onKill": {
+                  "shellState": "onUnit",
+                  "expl": 0.05,
+                  "fire": 0.05,
+                  "break": 0.9,
+                  "fHitCritical": true
+                }
               }
-            }
+            ]
           }
         },
         {
@@ -2481,7 +2554,7 @@
         {
           "damage": {
             "explosive": {
-              "radius": 0.4,
+              "radius": 0.25,
               "offset": 0.2
             },
             "shatter": [

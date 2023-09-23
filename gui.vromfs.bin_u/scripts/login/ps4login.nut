@@ -1,8 +1,9 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
-
+let { stripTags } = require("%sqstd/string.nut")
 let statsd = require("statsd")
 let { animBgLoad } = require("%scripts/loading/animBg.nut")
 let showTitleLogo = require("%scripts/viewUtils/showTitleLogo.nut")
@@ -11,8 +12,11 @@ let { targetPlatform } = require("%scripts/clientState/platform.nut")
 let { requestPackageUpdateStatus } = require("sony")
 let { setGuiOptionsMode } = require("guiOptions")
 let { forceHideCursor } = require("%scripts/controls/mousePointerVisibility.nut")
+let { OPTIONS_MODE_GAMEPLAY } = require("%scripts/options/optionsExtNames.nut")
+let { loadLocalSharedSettings } = require("%scripts/clientState/localProfile.nut")
+let { LOCAL_AGREED_EULA_VERSION_SAVE_ID, openEulaWnd } = require("%scripts/eulaWnd.nut")
 
-::gui_handlers.LoginWndHandlerPs4 <- class extends ::BaseGuiHandler {
+gui_handlers.LoginWndHandlerPs4 <- class extends ::BaseGuiHandler {
   sceneBlkName = "%gui/loginBoxSimple.blk"
   isLoggingIn = false
   isPendingPackageCheck = false
@@ -26,11 +30,15 @@ let { forceHideCursor } = require("%scripts/controls/mousePointerVisibility.nut"
     setVersionText(this.scene)
     ::setProjectAwards(this)
     showTitleLogo(this.scene, 128)
-    setGuiOptionsMode(::OPTIONS_MODE_GAMEPLAY)
+    setGuiOptionsMode(OPTIONS_MODE_GAMEPLAY)
 
-    this.isAutologin = !(getroottable()?.disable_autorelogin_once ?? false)
+    let haveAgreedEulaVersion = loadLocalSharedSettings(LOCAL_AGREED_EULA_VERSION_SAVE_ID, 0) > 0
+    this.isAutologin = !(getroottable()?.disable_autorelogin_once ?? false) && haveAgreedEulaVersion
 
-    let data = handyman.renderCached("%gui/commonParts/button.tpl", {
+    let tipHint = stripTags(loc("ON_GAME_ENTER_YOU_APPLY_EULA", { sendShortcuts = "{{INPUT_BUTTON GAMEPAD_START}}"}))
+    let hintBlk = "".concat("loadingHint{pos:t='50%(pw-w), 0.5ph-0.5h' position:t='absolute' width:t='2/3sw' behaviour:t='bhvHint' value:t='", tipHint, "'}")
+
+    let data = handyman.renderCached("%gui/commonParts/buttonsList.tpl", {buttons = [{
       id = "authorization_button"
       text = "#HUD_PRESS_A_CNT"
       shortcut = "A"
@@ -40,7 +48,17 @@ let { forceHideCursor } = require("%scripts/controls/mousePointerVisibility.nut"
       mousePointerCenteringBelowText = true
       actionParamsMarkup = "bigBoldFont:t='yes'; shadeStyle:t='shadowed'"
       isHidden = this.isAutologin
-    })
+    },{
+      id = "show_eula_button"
+      shortcut = "start"
+      funcName = "onEulaButton"
+      delayed = true
+      visualStyle = "noBgr"
+      mousePointerCenteringBelowText = true
+      actionParamsMarkup = $"bigBoldFont:t='yes'; shadeStyle:t='shadowed'; {hintBlk}"
+      showOnSelect = "no"
+    }]})
+
     this.guiScene.prependWithBlk(this.scene.findObject("authorization_button_place"), data, this)
     this.updateButtons(false)
 
@@ -58,6 +76,10 @@ let { forceHideCursor } = require("%scripts/controls/mousePointerVisibility.nut"
       loc("ps4/reqInstantConnection")
     ], true)
     this.scene.findObject("user_notify_text").setValue(text)
+  }
+
+  function onEulaButton() {
+    openEulaWnd()
   }
 
   function abortLogin(isUpdateAvailable) {
@@ -79,7 +101,7 @@ let { forceHideCursor } = require("%scripts/controls/mousePointerVisibility.nut"
         forceHideCursor(false)
         let cfgName = ::ps4_is_production_env() ? "updater.blk" : "updater_dev.blk"
 
-        ::gui_start_modal_wnd(::gui_handlers.UpdaterModal,
+        ::gui_start_modal_wnd(gui_handlers.UpdaterModal,
           {
             configPath = $"/app0/{targetPlatform}/{cfgName}"
             onFinishCallback = ::ps4_load_after_login

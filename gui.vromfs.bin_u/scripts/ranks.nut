@@ -1,18 +1,20 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
+let { isUnlockOpened } = require("%scripts/unlocks/unlocksModule.nut")
 let { format } = require("string")
 let { Balance } = require("%scripts/money.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { loadOnce, registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 loadOnce("%appGlobals/ranks_common_shared.nut")
-
 let { get_time_msec } = require("dagor.time")
 let avatars = require("%scripts/user/avatars.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { PT_STEP_STATUS } = require("%scripts/utils/pseudoThread.nut")
 let { getFullUnlockDescByName } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { getNumUnlocked } = require("unlocks")
+let { get_mp_session_info } = require("guiMission")
+let getAllUnits = require("%scripts/unit/allUnits.nut")
+let { get_wpcost_blk, get_warpoints_blk, get_ranks_blk } = require("blkGetters")
 
 ::max_player_rank <- 100
 ::max_country_rank <- 8
@@ -52,7 +54,7 @@ registerPersistentData("RanksGlobals", getroottable(),
   ])
 
 ::load_player_exp_table <- function load_player_exp_table() {
-  let ranks_blk = ::get_ranks_blk()
+  let ranks_blk = get_ranks_blk()
   let efr = ranks_blk?.exp_for_playerRank
 
   ::exp_per_rank = []
@@ -65,7 +67,7 @@ registerPersistentData("RanksGlobals", getroottable(),
 }
 
 ::init_prestige_by_rank <- function init_prestige_by_rank() {
-  let blk = ::get_ranks_blk()
+  let blk = get_ranks_blk()
   let prestigeByRank = blk?.prestige_by_rank
 
   ::prestige_by_rank = []
@@ -147,7 +149,7 @@ registerPersistentData("RanksGlobals", getroottable(),
 
 let function get_cur_session_country() {
   if (::is_multiplayer()) {
-    let sessionInfo = ::get_mp_session_info()
+    let sessionInfo = get_mp_session_info()
     let team = ::get_mp_local_team()
     if (team == 1)
       return sessionInfo.alliesCountry
@@ -240,7 +242,7 @@ let airTypes = [ES_UNIT_TYPE_AIRCRAFT, ES_UNIT_TYPE_HELICOPTER]
 }
 
 let function get_aircraft_rank(curAir) {
-  return ::get_wpcost_blk()?[curAir]?.rank ?? 0
+  return get_wpcost_blk()?[curAir]?.rank ?? 0
 }
 
 let minValuesToShowRewardPremium = persist("minValuesToShowRewardPremium", @() Watched({ wp = 0, exp = 0 }))
@@ -259,7 +261,7 @@ let function haveCountryRankAir(country, rank) {
 ::update_aircraft_warpoints <- function update_aircraft_warpoints(maxCallTimeMsec = 0) {
   let startTime = get_time_msec()
   let errorsTextArray = []
-  foreach (unit in ::all_units) {
+  foreach (unit in getAllUnits()) {
     if (unit.isInited)
       continue
 
@@ -275,7 +277,7 @@ let function haveCountryRankAir(country, rank) {
   }
 
   //update discounts info
-  let ws = ::get_warpoints_blk()
+  let ws = get_warpoints_blk()
   foreach (name, _value in ::discounts)
     if (ws?[name + "DiscountMul"] != null)
       ::discounts[name] = (100.0 * (1.0 - ws[name + "DiscountMul"]) + 0.5).tointeger()
@@ -304,14 +306,14 @@ let function haveCountryRankAir(country, rank) {
   if ("silentFeature" in tbl)
     if (!hasFeature(tbl.silentFeature)) {
       if (!silent)
-        ::showInfoMsgBox(loc("msgbox/notAvailbleInDemo"), "in_demo_only_feature")
+        showInfoMsgBox(loc("msgbox/notAvailbleInDemo"), "in_demo_only_feature")
       return false
     }
 
   if ("minLevel" in tbl)
     if (::get_profile_info().rank < tbl.minLevel) {
       if (!silent)
-        ::showInfoMsgBox(format(loc("charServer/needRankFmt"), tbl.minLevel), "in_demo_only_minlevel")
+        showInfoMsgBox(format(loc("charServer/needRankFmt"), tbl.minLevel), "in_demo_only_minlevel")
       return false
     }
 
@@ -319,7 +321,7 @@ let function haveCountryRankAir(country, rank) {
     let country = $"country_{tbl.rankCountry}"
     if (!haveCountryRankAir(country, tbl.minRank)) {
       if (!silent) {
-        ::showInfoMsgBox(
+        showInfoMsgBox(
           loc("charServer/needAirRankFmt", {
               tier = tbl.minRank,
               country = loc(country)
@@ -331,10 +333,10 @@ let function haveCountryRankAir(country, rank) {
   }
 
   if ("unlock" in tbl)
-    if (!::is_unlocked_scripted(UNLOCKABLE_SINGLEMISSION, tbl.unlock) && !::is_debug_mode_enabled) {
+    if (!isUnlockOpened(tbl.unlock, UNLOCKABLE_SINGLEMISSION) && !::is_debug_mode_enabled) {
       if (!silent) {
         let msg = loc("charServer/needUnlock") + "\n\n" + getFullUnlockDescByName(tbl.unlock, 1)
-        ::showInfoMsgBox(msg, "in_demo_only_singlemission_unlock")
+        showInfoMsgBox(msg, "in_demo_only_singlemission_unlock")
       }
       return false
     }
@@ -344,7 +346,7 @@ let function haveCountryRankAir(country, rank) {
     if (::has_entitlement(tbl.entitlement))
       return true
     else if (!silent && (tbl.entitlement == ::shop_get_premium_account_ent_name())) {
-      let guiScene = ::get_gui_scene()
+      let guiScene = get_gui_scene()
       local handler = this
       if (!handler || handler == getroottable())
         handler = ::get_cur_base_gui_handler()
@@ -360,7 +362,7 @@ let function haveCountryRankAir(country, rank) {
           ], "yes")
         }
         else
-          ::scene_msg_box("premium_not_available", null, loc("charServer/notAvailableYet"),
+          scene_msg_box("premium_not_available", null, loc("charServer/notAvailableYet"),
             [["cancel"]], "cancel")
       }
 

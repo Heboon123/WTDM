@@ -1,12 +1,15 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
+let { get_modifications_blk } = require("blkGetters")
 
 let { AMMO,
         getAmmoAmount,
         getAmmoMaxAmount } = require("%scripts/weaponry/ammoInfo.nut")
 
+let { shopIsModificationAvailable, shopIsModificationPurchased } = require("chardResearch")
+
 let isReqModificationsUnlocked = @(unit, mod) mod?.reqModification.findvalue(
-  @(req) !::shop_is_modification_purchased(unit.name, req)) == null
+  @(req) !shopIsModificationPurchased(unit.name, req)) == null
 
 let function canBuyMod(unit, mod) {
   if (!isReqModificationsUnlocked(unit, mod))
@@ -61,12 +64,12 @@ let function isModMounted(unitName, modName) {
 }
 
 let function isModAvailableOrFree(unitName, modName) {
-  return (::shop_is_modification_available(unitName, modName, true)
+  return (shopIsModificationAvailable(unitName, modName, true)
           || (!::wp_get_modification_cost(unitName, modName) && !::wp_get_modification_cost_gold(unitName, modName)))
 }
 
 let function getModBlock(modName, blockName, templateKey) {
-  let modsBlk = ::get_modifications_blk()
+  let modsBlk = get_modifications_blk()
   let modBlock = modsBlk?.modifications?[modName]
   if (!modBlock || modBlock?[blockName])
     return modBlock?[blockName]
@@ -90,7 +93,7 @@ let function getModificationByName(unit, modName) {
 }
 
 let function getModificationBulletsGroup(modifName) {
-  let blk = ::get_modifications_blk()
+  let blk = get_modifications_blk()
   let modification = blk?.modifications?[modifName]
   if (modification) {
     if (!modification?.group)
@@ -116,7 +119,7 @@ let function getModificationBulletsGroup(modifName) {
 let function updateRelationModificationList(unit, modifName) {
   let mod = getModificationByName(unit, modifName)
   if (mod && !("relationModification" in mod)) {
-    let blk = ::get_modifications_blk();
+    let blk = get_modifications_blk();
     mod.relationModification <- [];
     foreach (_ind, m in unit.modifications) {
       if ("reqModification" in m && isInArray(modifName, m.reqModification)) {

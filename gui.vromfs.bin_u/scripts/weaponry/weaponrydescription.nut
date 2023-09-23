@@ -15,6 +15,8 @@ let { getModificationBulletsGroup } = require("%scripts/weaponry/modificationInf
 let { reloadCooldownTimeByCaliber } = require("%scripts/weaponry/weaponsParams.nut")
 let { getPresetWeapons } = require("%scripts/weaponry/weaponryPresets.nut")
 let { utf8ToUpper } = require("%sqstd/string.nut")
+let { shopIsModificationPurchased } = require("chardResearch")
+let { getEsUnitType } = require("%scripts/unit/unitInfo.nut")
 
 let function getReloadTimeByCaliber(caliber, ediff = null) {
   let diff = ::get_difficulty_by_ediff(ediff ?? ::get_current_ediff())
@@ -38,7 +40,7 @@ local function getWeaponInfoText(unit, p = WEAPON_TEXT_PARAMS) {
     return text
 
   p = WEAPON_TEXT_PARAMS.__merge(p)
-  let unitType = ::get_es_unit_type(unit)
+  let unitType = getEsUnitType(unit)
   if (u.isEmpty(weapons) && p.needTextWhenNoWeapons)
     text += getTextNoWeapons(unit, p.isPrimary)
   let stackableWeapons = [WEAPON_TYPE.TURRETS]
@@ -190,7 +192,7 @@ let function getWeaponXrayDescText(weaponBlk, unit, ediff) {
   foreach (weaponType, weaponTypeList in (weaponTypes?.weaponsByTypes ?? {}))
     foreach (weapons in weaponTypeList)
       foreach (weapon in weapons.weaponBlocks)
-        return getWeaponExtendedInfo(weapon, weaponType, unit, ediff, "\n")
+        return getWeaponExtendedInfo(weapon, weaponType, unit, ediff, "\n") // -unconditional-terminated-loop
   return ""
 }
 
@@ -207,7 +209,7 @@ let function getWeaponDescTextByTriggerGroup(triggerGroup, unit, ediff) {
 
   foreach (weapons in (weaponTypes?.weaponsByTypes[triggerGroup] ?? []))
     foreach (weaponName, weapon in weapons.weaponBlocks)
-      return "".concat(
+      return "".concat( // -unconditional-terminated-loop
         loc($"weapons/{weaponName}"),
         format(loc("weapons/counter"), weapon.ammo),
         getWeaponExtendedInfo(weapon, triggerGroup, unit, ediff, "\n{0}{0}{0}{0}".subst(::nbsp))
@@ -283,7 +285,7 @@ let function getReqModsText(unit, item) {
         foreach (req in item[rp])
           if (rp == "reqWeapon" && !::shop_is_weapon_purchased(unit.name, req))
             reqText += ((reqText == "") ? "" : "\n") + loc(rp) + loc("ui/colon") + getWeaponNameText(unit.name, false, req, ", ")
-          else if (rp == "reqModification" && !::shop_is_modification_purchased(unit.name, req))
+          else if (rp == "reqModification" && !shopIsModificationPurchased(unit.name, req))
             reqText += ((reqText == "") ? "" : "\n") + loc(rp) + loc("ui/colon")
               + getModificationName(unit, req)
   return reqText

@@ -1,12 +1,11 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
-
-
 let { getEntitlementConfig, getEntitlementName } = require("%scripts/onlineShop/entitlements.nut")
 let DataBlock  = require("DataBlock")
 let { parseDiscountDescription, createDiscountDescriptionSortData,
   sortDiscountDescriptionItems } = require("%scripts/items/discountItemSortMethod.nut")
+let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 
 ::items_classes.Discount <- class extends ::BaseItem {
   static iType = itemType.DISCOUNT
@@ -75,10 +74,10 @@ let { parseDiscountDescription, createDiscountDescriptionSortData,
     blk.setStr("name", this.uids[0])
 
     let taskId = ::char_send_blk("cln_set_current_personal_discount", blk)
-    let taskCallback = Callback((@(cb) function() {
+    let taskCallback = Callback( function() {
       ::g_discount.updateDiscountData()
       cb({ success = true })
-    })(cb), handler)
+    }, handler)
 
     ::g_tasker.addTask(taskId, { showProgressBox = true }, taskCallback)
     return true
@@ -193,7 +192,7 @@ let { parseDiscountDescription, createDiscountDescriptionSortData,
     if (aircraftName != null) {
       let unit = getAircraftByName(aircraftName)
       if (unit != null) {
-        locParams.aircraftName <- ::getUnitName(unit, true)
+        locParams.aircraftName <- getUnitName(unit, true)
         locParams.unit <- unit
         if (this.showAmountInsteadPercent)
           locParams.discount = this._getDataItemDiscountText(dataItem,
@@ -203,7 +202,7 @@ let { parseDiscountDescription, createDiscountDescriptionSortData,
 
     let rank = dataItem?.rank
     if (rank != null)
-      locParams.rank <- ::get_roman_numeral(rank)
+      locParams.rank <- get_roman_numeral(rank)
 
     let entitlementName = dataItem?.entitlementName
     if (entitlementName != null) {

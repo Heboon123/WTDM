@@ -2,11 +2,13 @@
 
 
 from "%scripts/dagui_library.nut" import *
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
 let time = require("%scripts/time.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
+let { Timer } = require("%sqDagui/timer/timer.nut")
 let DataBlockAdapter = require("%scripts/dataBlockAdapter.nut")
 let sheets = require("%scripts/items/itemsShopSheets.nut")
 let daguiFonts = require("%scripts/viewUtils/daguiFonts.nut")
@@ -18,6 +20,8 @@ let preloaderOptionsModal = require("%scripts/options/handlers/preloaderOptionsM
 let { register_command } = require("console")
 let { initItemsRoulette, skipItemsRouletteAnimation } = require("%scripts/items/roulette/itemsRoulette.nut")
 let { getDecoratorByResource } = require("%scripts/customization/decorCache.nut")
+let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
+let { get_price_blk } = require("blkGetters")
 
 register_command(
   function () {
@@ -95,24 +99,24 @@ let function afterCloseTrophyWnd(configsTable) {
     let { dbgTrophiesListInternal, dbgLoadedTrophiesCount, itemsListInternal, // warning disable: -declared-never-used
       dbgLoadedItemsInternalCount, dbgUpdateInternalItemsCount // warning disable: -declared-never-used
     } = ::ItemsManager.getInternalItemsDebugInfo()  // warning disable: -declared-never-used
-    let trophiesBlk = ::get_price_blk()?.trophy
+    let trophiesBlk = get_price_blk()?.trophy
     let currentItemsInternalCount = itemsListInternal.len() // warning disable: -declared-never-used
     let currentTrophiesInternalCount = dbgTrophiesListInternal.len() // warning disable: -declared-never-used
     let trophiesListInternalString = toString(dbgTrophiesListInternal)  // warning disable: -declared-never-used
     let trophiesBlkString = toString(trophiesBlk)  // warning disable: -declared-never-used
     local trophyBlkString = toString(trophiesBlk?[itemId]) // warning disable: -declared-never-used
 
-    ::script_net_assert_once("not found trophyItem", "Trophy Reward: Not found item. Don't show reward.")
+    script_net_assert_once("not found trophyItem", "Trophy Reward: Not found item. Don't show reward.")
     return
   }
 
   params.trophyItem <- trophyItem
   params.configsArray <- configsArray
   params.afterFunc <- @() afterCloseTrophyWnd(localConfigsTable)
-  ::gui_start_modal_wnd(::gui_handlers.trophyRewardWnd, params)
+  ::gui_start_modal_wnd(gui_handlers.trophyRewardWnd, params)
 }
 
-::gui_handlers.trophyRewardWnd <- class extends ::gui_handlers.BaseGuiHandlerWT {
+gui_handlers.trophyRewardWnd <- class extends gui_handlers.BaseGuiHandlerWT {
   wndType = handlerType.MODAL
   sceneBlkName = "%gui/items/trophyReward.blk"
 
@@ -225,9 +229,9 @@ let function afterCloseTrophyWnd(configsTable) {
       animObj.animation = this.rewardImage == null ? "show" : "hide"
       if (this.useSingleAnimation) {
         this.guiScene.playSound(this.singleAnimationGuiSound ?? "chest_open")
-        let delay = ::to_integer_safe(animObj?.chestReplaceDelay, 0)
-        ::Timer(animObj, 0.001 * delay, this.openChest, this)
-        ::Timer(animObj, 1.0, this.onOpenAnimFinish, this) //!!FIX ME: Some times animation finish not apply css, and we miss onOpenAnimFinish
+        let delay = to_integer_safe(animObj?.chestReplaceDelay, 0)
+        Timer(animObj, 0.001 * delay, this.openChest, this)
+        Timer(animObj, 1.0, this.onOpenAnimFinish, this) //!!FIX ME: Some times animation finish not apply css, and we miss onOpenAnimFinish
       }
     }
     else

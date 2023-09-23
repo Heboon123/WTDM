@@ -1,10 +1,11 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { Cost } = require("%scripts/money.nut")
-
+let { shouldShowDynamicLutPopUpMessage, setIsUsingDynamicLut, getTonemappingMode, setTonemappingMode } = require("postFxSettings")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
-
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { format } = require("string")
 let DataBlock = require("DataBlock")
 let daguiFonts = require("%scripts/viewUtils/daguiFonts.nut")
@@ -42,8 +43,16 @@ let { isShowGoldBalanceWarning } = require("%scripts/user/balanceFeatures.nut")
 let { setGuiOptionsMode, getGuiOptionsMode } = require("guiOptions")
 let { select_mission, get_meta_mission_info_by_name } = require("guiMission")
 let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
+let tryOpenCaptchaHandler = require("%scripts/captcha/captchaHandler.nut")
+let { isPlatformShieldTv } = require("%scripts/clientState/platform.nut")
+let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
+let { OPTIONS_MODE_MP_DOMINATION, USEROPT_COUNTRY } = require("%scripts/options/optionsExtNames.nut")
+let { saveLocalAccountSettings, loadLocalAccountSettings
+} = require("%scripts/clientState/localProfile.nut")
+let { getEsUnitType } = require("%scripts/unit/unitInfo.nut")
+let { get_game_settings_blk } = require("blkGetters")
 
-::gui_handlers.InstantDomination <- class extends ::gui_handlers.BaseGuiHandlerWT {
+gui_handlers.InstantDomination <- class extends gui_handlers.BaseGuiHandlerWT {
   static keepLoaded = true
 
   sceneBlkName = "%gui/mainmenu/instantAction.blk"
@@ -74,9 +83,9 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
   gamercardDrawerHandler = null
   function getGamercardDrawerHandler() {
-    if (!::handlersManager.isHandlerValid(this.gamercardDrawerHandler))
+    if (!handlersManager.isHandlerValid(this.gamercardDrawerHandler))
       this.initGamercardDrawerHandler()
-    if (::handlersManager.isHandlerValid(this.gamercardDrawerHandler))
+    if (handlersManager.isHandlerValid(this.gamercardDrawerHandler))
       return this.gamercardDrawerHandler
     assert(false, "Failed to get gamercardDrawerHandler.")
     return null
@@ -84,9 +93,9 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
   queueTableHandler = null
   function getQueueTableHandler() {
-    if (!::handlersManager.isHandlerValid(this.queueTableHandler))
+    if (!handlersManager.isHandlerValid(this.queueTableHandler))
       this.initQueueTableHandler()
-    if (::handlersManager.isHandlerValid(this.queueTableHandler))
+    if (handlersManager.isHandlerValid(this.queueTableHandler))
       return this.queueTableHandler
     assert(false, "Failed to get queueTableHandler.")
     return null
@@ -96,12 +105,11 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
   slotbarPresetsTutorial = null
 
   function initScreen() {
-    ::enableHangarControls(true)
     // Causes drawer to initialize once.
     this.getGamercardDrawerHandler()
 
     this.mainOptionsMode = getGuiOptionsMode()
-    setGuiOptionsMode(::OPTIONS_MODE_MP_DOMINATION)
+    setGuiOptionsMode(OPTIONS_MODE_MP_DOMINATION)
 
     this.initToBattleButton()
     this.setCurrentGameModeName()
@@ -126,7 +134,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
   }
 
   function initQueueTableHandler() {
-    if (::handlersManager.isHandlerValid(this.queueTableHandler))
+    if (handlersManager.isHandlerValid(this.queueTableHandler))
       return
 
     let drawer = this.getGamercardDrawerHandler()
@@ -141,7 +149,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
       scene = queueTableContainer
       queueMask = this.queueMask
     }
-    this.queueTableHandler = ::handlersManager.loadHandler(::gui_handlers.QueueTable, params)
+    this.queueTableHandler = handlersManager.loadHandler(gui_handlers.QueueTable, params)
   }
 
   function initGamercardDrawerHandler() {
@@ -161,7 +169,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
     let params = {
       scene = gamercardDrawerContainer
     }
-    this.gamercardDrawerHandler = ::handlersManager.loadHandler(::gui_handlers.GamercardDrawer, params)
+    this.gamercardDrawerHandler = handlersManager.loadHandler(gui_handlers.GamercardDrawer, params)
     this.registerSubHandler(this.gamercardDrawerHandler)
   }
 
@@ -177,7 +185,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
     if (toBattleNest) {
       this.rootHandlerWeak.scene.findObject("top_gamercard_bg").needRedShadow = "no"
       let toBattleBlk = handyman.renderCached("%gui/mainmenu/toBattleButton.tpl", {
-        enableEnterKey = !::is_platform_shield_tv()
+        enableEnterKey = !isPlatformShieldTv()
       })
       this.guiScene.replaceContentFromText(toBattleNest, toBattleBlk, toBattleBlk.len(), this)
       this.toBattleButtonObj = this.rootHandlerWeak.scene.findObject("to_battle_button")
@@ -385,7 +393,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
     this.toBattleButtonObj.enable(value)
     let consoleImageObj = this.toBattleButtonObj.findObject("to_battle_console_image")
     if (checkObj(consoleImageObj))
-      consoleImageObj.show(value && ::show_console_buttons)
+      consoleImageObj.show(value && showConsoleButtons.value)
   }
 
   function startManualMission(manualMission) {
@@ -439,6 +447,26 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
   onEventOperationInfoUpdated = @(_) this.doWhenActiveOnce("updateStartButton")
 
+  function setSquadReadyFlag() {
+    if (getLeaderOperationState() == LEADER_OPERATION_STATES.OUT) {
+      //No need to check broken units when set unready
+      if (!::g_squad_manager.isMeReady()) {
+        let leaderEvent = ::events.getEvent(::g_squad_manager.getLeaderGameModeId())
+        if (leaderEvent == null) { //not found game mode of leader, skip check broken units
+          ::g_squad_manager.setReadyFlag()
+          return
+        }
+        let repairInfo = ::events.getCountryRepairInfo(leaderEvent, null, profileCountrySq.value)
+        ::checkBrokenAirsAndDo(repairInfo, this, @() ::g_squad_manager.setReadyFlag(), false)
+        return
+      }
+      ::g_squad_manager.setReadyFlag()
+    }
+    else if (::is_worldwar_enabled())
+      this.guiScene.performDelayed(this, @() ::g_world_war.joinOperationById(
+        ::g_squad_manager.getWwOperationId(), ::g_squad_manager.getWwOperationCountry()))
+  }
+
   function determineAndStartAction(isFromDebriefing = false) {
     if (changeStartMission) {
       this.startManualMission(changeStartMission)
@@ -446,24 +474,12 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
     }
 
     if (::g_squad_manager.isSquadMember()) {
-      if (getLeaderOperationState() == LEADER_OPERATION_STATES.OUT) {
-        //No need to check broken units when set unready
-        if (!::g_squad_manager.isMeReady()) {
-          let leaderEvent = ::events.getEvent(::g_squad_manager.getLeaderGameModeId())
-          if (leaderEvent == null) { //not found game mode of leader, skip check broken units
-            ::g_squad_manager.setReadyFlag()
-            return
-          }
-          let repairInfo = ::events.getCountryRepairInfo(leaderEvent, null, profileCountrySq.value)
-          ::checkBrokenAirsAndDo(repairInfo, this, @() ::g_squad_manager.setReadyFlag(), false)
-          return
-        }
-        ::g_squad_manager.setReadyFlag()
+      if(!::g_squad_manager.isMeReady()) {
+        let callback = Callback(@() this.setSquadReadyFlag(), this)
+        tryOpenCaptchaHandler(callback)
+        return
       }
-      else if (::is_worldwar_enabled())
-        this.guiScene.performDelayed(this, @() ::g_world_war.joinOperationById(
-          ::g_squad_manager.getWwOperationId(), ::g_squad_manager.getWwOperationCountry()))
-
+      this.setSquadReadyFlag()
       return
     }
 
@@ -476,7 +492,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
       return
 
     if (!this.isCrossPlayEventAvailable(event)) {
-      checkAndShowCrossplayWarning(@() ::showInfoMsgBox(loc("xbox/actionNotAvailableCrossNetworkPlay")))
+      checkAndShowCrossplayWarning(@() showInfoMsgBox(loc("xbox/actionNotAvailableCrossNetworkPlay")))
       return
     }
 
@@ -543,7 +559,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
       else if (countryGoodForMode && !this.testCurrentUnitForMode(this.getCurCountry()) && !multiSlotEnabled)
         this.showBadCurrentUnitMsgBox()
       else
-        ::gui_start_modal_wnd(::gui_handlers.ChangeCountry, {
+        ::gui_start_modal_wnd(gui_handlers.ChangeCountry, {
           currentCountry = this.getCurCountry()
           onCountryChooseCb = Callback(this.onCountryChoose, this)
         })
@@ -609,7 +625,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
     let buttonsArray = []
 
     // "Change mode" button
-    let curUnitType = ::get_es_unit_type(::get_cur_slotbar_unit())
+    let curUnitType = getEsUnitType(::get_cur_slotbar_unit())
     let gameMode = ::game_mode_manager.getGameModeByUnitType(curUnitType, -1, true)
     if (gameMode != null) {
       buttonsArray.append([
@@ -821,7 +837,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
   function testCurrentUnitForMode(country) {
     if (country == "country_0") {
-      let option = ::get_option(::USEROPT_COUNTRY)
+      let option = ::get_option(USEROPT_COUNTRY)
       foreach (idx, optionCountryName in option.values)
         if (optionCountryName != "country_0" && option.items[idx].enabled) {
           let unit = this.getQueueAircraft(optionCountryName)
@@ -839,7 +855,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
   function testCrewsForMode(country) {
     let countryToCheckArr = []
     if (country == "country_0") { //fill countryToCheckArr with countries, allowed by game mode
-      let option = ::get_option(::USEROPT_COUNTRY)
+      let option = ::get_option(USEROPT_COUNTRY)
       foreach (idx, optionCountryName in option.values)
         if (optionCountryName != "country_0" && option.items[idx].enabled)
           countryToCheckArr.append(optionCountryName)
@@ -1049,26 +1065,26 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
       let invitedPlayersBlk = DataBlock()
       ::get_invited_players_info(invitedPlayersBlk)
       if (invitedPlayersBlk.blockCount() == 0) {
-        let gmBlk = ::get_game_settings_blk()
+        let gmBlk = get_game_settings_blk()
         let reminderPeriod = gmBlk?.viralAcquisitionReminderPeriodDays ?? 10
         let today = time.getUtcDays()
         let never = 0
-        let lastLoginDay = ::load_local_account_settings("viralAcquisition/lastLoginDay", today)
-        local lastShowTime = ::load_local_account_settings("viralAcquisition/lastShowTime", never)
+        let lastLoginDay = loadLocalAccountSettings("viralAcquisition/lastLoginDay", today)
+        local lastShowTime = loadLocalAccountSettings("viralAcquisition/lastShowTime", never)
 
         // Game designers can force reset lastShowTime of all users by increasing this value in cfg:
         if (gmBlk?.resetViralAcquisitionDaysCounter) {
           let newResetVer = gmBlk.resetViralAcquisitionDaysCounter
-          let knownResetVer = ::load_local_account_settings("viralAcquisition/resetDays", 0)
+          let knownResetVer = loadLocalAccountSettings("viralAcquisition/resetDays", 0)
           if (newResetVer > knownResetVer) {
-            ::save_local_account_settings("viralAcquisition/resetDays", newResetVer)
+            saveLocalAccountSettings("viralAcquisition/resetDays", newResetVer)
             lastShowTime = never
           }
         }
 
-        ::save_local_account_settings("viralAcquisition/lastLoginDay", today)
+        saveLocalAccountSettings("viralAcquisition/lastLoginDay", today)
         if ((lastLoginDay - lastShowTime) > reminderPeriod) {
-          ::save_local_account_settings("viralAcquisition/lastShowTime", today)
+          saveLocalAccountSettings("viralAcquisition/lastShowTime", today)
           showViralAcquisitionWnd()
         }
       }
@@ -1078,8 +1094,25 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
   function checkShowChangelog() {
     this.guiScene.performDelayed({}, function() {
       if (needShowChangelog() && ::get_cur_base_gui_handler().isSceneActiveNoModals())
-        ::handlersManager.animatedSwitchScene(openChangelog())
+        handlersManager.animatedSwitchScene(openChangelog())
     })
+  }
+
+  function setUsingDynamicLut(value) {
+    setIsUsingDynamicLut(value); //need to be set first
+    setTonemappingMode(getTonemappingMode());
+  }
+
+  function checkShowDynamicLutSuggestion() {
+    let isShown = loadLocalAccountSettings("isDynamicLutSuggestionShown", false)
+    if (isShown || !shouldShowDynamicLutPopUpMessage())
+      return
+
+    this.msgBox("dynamic_lut_suggestion", loc("msgBox/dynamic_lut_suggestion/desc"), [
+      ["ok", @() this.setUsingDynamicLut(true)],
+      ["cancel"]], "ok")
+
+    saveLocalAccountSettings("isDynamicLutSuggestionShown", true)
   }
 
   function checkNewUnitTypeToBattleTutor() {
@@ -1137,7 +1170,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
       return
     }
 
-    ::scene_msg_box("new_unit_type_to_battle_tutorial_msgbox", null,
+    scene_msg_box("new_unit_type_to_battle_tutorial_msgbox", null,
       loc("msgBox/start_new_unit_type_to_battle_tutorial", { gameModeName = gameModeForTutorial.text }),
       [
         ["yes", function() {
@@ -1240,7 +1273,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
     this.checkQueue(
       @() ::g_squad_utils.checkSquadUnreadyAndDo(
-        @() ::gui_handlers.GameModeSelect.open(), null))
+        @() gui_handlers.GameModeSelect.open(), null))
   }
 
   onBackgroundModelHintTimer = @(obj, _dt) placeBackgroundModelHint(obj)

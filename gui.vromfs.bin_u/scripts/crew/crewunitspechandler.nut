@@ -1,13 +1,15 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 
 let { format } = require("string")
 let { trainCrewUnitWithoutSwitchCurrUnit } = require("%scripts/crew/crewActions.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
+let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 
-::gui_handlers.CrewUnitSpecHandler <- class extends ::gui_handlers.BaseGuiHandlerWT {
+gui_handlers.CrewUnitSpecHandler <- class extends gui_handlers.BaseGuiHandlerWT {
   wndType = handlerType.CUSTOM
   sceneBlkName = "%gui/empty.blk"
   crew = null
@@ -123,7 +125,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
       id = this.getRowName(idx)
       even = idx % 2 == 0
       holderId = idx
-      unitName = ::getUnitName(unit.name)
+      unitName = getUnitName(unit.name)
       hasProgressBar = true
       rowTooltipId   = ::g_tooltip.getIdCrewSpecialization(this.crew.id, unit.name, -1)
       buySpecTooltipId1 = ::g_crew_spec_type.EXPERT.getBtnBuyTooltipId(this.crew, unit)

@@ -1,15 +1,15 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { Cost } = require("%scripts/money.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
-
-
 let { format } = require("string")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
+let { getUnitTypeTextByUnit, getUnitName } = require("%scripts/unit/unitInfo.nut")
 
 let activityFeedPostFunc = require("%scripts/social/activityFeed/activityFeedPostFunc.nut")
+let { getCountryFlagImg } = require("%scripts/options/countryFlagsPreset.nut")
 
 ::gui_start_mod_tier_researched <- function gui_start_mod_tier_researched(config) {
   foreach (param, value in config) {
@@ -27,10 +27,10 @@ let activityFeedPostFunc = require("%scripts/social/activityFeed/activityFeedPos
     tier = config?.tier ?? []
     expReward = Cost().setRp(config?.expToInvUnit ?? 0)
   }
-  ::gui_start_modal_wnd(::gui_handlers.ModificationsTierResearched, wndParams)
+  ::gui_start_modal_wnd(gui_handlers.ModificationsTierResearched, wndParams)
 }
 
-::gui_handlers.ModificationsTierResearched <- class extends ::gui_handlers.BaseGuiHandlerWT {
+gui_handlers.ModificationsTierResearched <- class extends gui_handlers.BaseGuiHandlerWT {
   wndType = handlerType.MODAL
   sceneBlkName = "%gui/showUnlock.blk"
 
@@ -60,13 +60,13 @@ let activityFeedPostFunc = require("%scripts/social/activityFeed/activityFeedPos
 
     let imgObj = this.scene.findObject("award_image")
     if (checkObj(imgObj)) {
-      local imageId = ::getUnitCountry(this.unit) + "_" + ::getUnitTypeTextByUnit(this.unit).tolower()
+      local imageId = ::getUnitCountry(this.unit) + "_" + getUnitTypeTextByUnit(this.unit).tolower()
       if (isLastResearchedModule)
         imageId += "_unit"
       else
         imageId += "_modification"
 
-      local imagePath = ::get_country_flag_img(imageId)
+      local imagePath = getCountryFlagImg(imageId)
       if (imagePath == "")
         imagePath = "#ui/images/elite_" + (this.unit?.isTank() ? "tank" : "vehicle") + "_revard?P1"
 
@@ -78,7 +78,7 @@ let activityFeedPostFunc = require("%scripts/social/activityFeed/activityFeedPos
       if (this.tier.len() == 1)
         tierText = this.tier.top()
       else if (this.tier.len() == 2)
-        tierText = ::get_roman_numeral(this.tier[0]) + loc("ui/comma") + ::get_roman_numeral(this.tier[1])
+        tierText = get_roman_numeral(this.tier[0]) + loc("ui/comma") + get_roman_numeral(this.tier[1])
       else {
         local maxTier = 0
         local minTier = this.tier.len()
@@ -86,17 +86,17 @@ let activityFeedPostFunc = require("%scripts/social/activityFeed/activityFeedPos
           maxTier = max(maxTier, t)
           minTier = min(minTier, t)
         }
-        tierText = ::get_roman_numeral(minTier) + loc("ui/mdash") + ::get_roman_numeral(maxTier)
+        tierText = get_roman_numeral(minTier) + loc("ui/mdash") + get_roman_numeral(maxTier)
       }
     }
     else
-      tierText = ::get_roman_numeral(this.tier)
+      tierText = get_roman_numeral(this.tier)
 
-    local msgText = loc(locTextId, { tier = tierText, unitName = ::getUnitName(this.unit) })
+    local msgText = loc(locTextId, { tier = tierText, unitName = getUnitName(this.unit) })
     if (!this.expReward.isZero()) {
       msgText += "\n" + loc("reward") + loc("ui/colon") + loc("userlog/open_all_in_tier/resName",
                         { resUnitExpInvest = this.expReward.tostring(),
-                          resUnitName = ::getUnitName(this.unitInResearch)
+                          resUnitName = getUnitName(this.unitInResearch)
                         })
     }
 
@@ -116,7 +116,7 @@ let activityFeedPostFunc = require("%scripts/social/activityFeed/activityFeedPos
       this.postCustomConfig = {
         requireLocalization = ["unitName", "country"]
         unitName = this.unit.name + "_shop"
-        rank = ::get_roman_numeral(this.unit?.rank ?? -1)
+        rank = get_roman_numeral(this.unit?.rank ?? -1)
         country = ::getUnitCountry(this.unit)
         link = format(loc("url/wiki_objects"), this.unit.name)
       }

@@ -1,7 +1,7 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-
+let { hasXInputDevice } = require("controls")
 let { abs, round } = require("math")
 let DataBlock  = require("DataBlock")
 let enums = require("%sqStdLibs/helpers/enums.nut")
@@ -20,8 +20,11 @@ let { EII_BULLET, EII_ARTILLERY_TARGET, EII_EXTINGUISHER, EII_TOOLKIT,
 let { HUD_UNIT_TYPE } = require("%scripts/hud/hudUnitType.nut")
 let { get_game_mode } = require("mission")
 let { get_mission_difficulty_int } = require("guiMission")
+let { CONTROL_HELP_PATTERN } = require("%scripts/controls/controlsConsts.nut")
 
 let isKeyboardOrMouseConnected = @() is_keyboard_connected() || is_mouse_connected()
+
+let isInFlight = @() ::is_in_flight()
 
 let result = {
   types = []
@@ -45,17 +48,18 @@ let result = {
   }
 }
 
-let function isUnitWithRadarOrRwr(unit) {
+let function isUnitWithSensorTypes(unit, sensorTypes) {
   if (!unit)
     return false
   let unitBlk = ::get_full_unit_blk(unit?.name ?? "")
-  let sensorTypes = [ "radar", "rwr" ]
   if (unitBlk?.sensors)
     foreach (sensor in (unitBlk.sensors % "sensor"))
       if (sensorTypes.indexof(blkOptFromPath(sensor?.blk)?.type) != null)
         return true
   return false
 }
+let isUnitWithRadar = @(unit) isUnitWithSensorTypes(unit, [ "radar" ])
+let isUnitWithRwr = @(unit) isUnitWithSensorTypes(unit, [ "rwr" ])
 
 enums.addTypes(result, {
   MISSION_OBJECTIVES = {
@@ -63,7 +67,7 @@ enums.addTypes(result, {
     helpPattern = CONTROL_HELP_PATTERN.MISSION
 
     showByUnit = function(_unit, unitTag) {
-      let difficulty = ::is_in_flight() ? get_mission_difficulty_int() : ::get_current_shop_difficulty().diffCode
+      let difficulty = isInFlight() ? get_mission_difficulty_int() : ::get_current_shop_difficulty().diffCode
       let isAdvanced = difficulty == DIFFICULTY_HARDCORE
       return !::is_me_newbie() && unitTag == null && !isAdvanced
     }
@@ -520,7 +524,7 @@ enums.addTypes(result, {
     showInSets = [ HELP_CONTENT_SET.MISSION, HELP_CONTENT_SET.CONTROLS ]
     helpPattern = CONTROL_HELP_PATTERN.GAMEPAD
 
-    specificCheck = @() ::have_xinput_device()
+    specificCheck = @() hasXInputDevice()
     checkFeature = unitTypes.AIRCRAFT.isAvailable
     pageUnitTypeBit = unitTypes.AIRCRAFT.bit
 
@@ -533,7 +537,7 @@ enums.addTypes(result, {
     showInSets = [ HELP_CONTENT_SET.MISSION, HELP_CONTENT_SET.CONTROLS ]
     helpPattern = CONTROL_HELP_PATTERN.GAMEPAD
 
-    specificCheck = @() ::have_xinput_device()
+    specificCheck = @() hasXInputDevice()
     checkFeature = unitTypes.TANK.isAvailable
     pageUnitTypeBit = unitTypes.TANK.bit
 
@@ -546,7 +550,7 @@ enums.addTypes(result, {
     showInSets = [ HELP_CONTENT_SET.MISSION, HELP_CONTENT_SET.CONTROLS ]
     helpPattern = CONTROL_HELP_PATTERN.GAMEPAD
 
-    specificCheck = @() ::have_xinput_device()
+    specificCheck = @() hasXInputDevice()
     checkFeature = unitTypes.SHIP.isAvailable
     pageUnitTypeBit = unitTypes.SHIP.bit
 
@@ -559,7 +563,7 @@ enums.addTypes(result, {
     showInSets = [ HELP_CONTENT_SET.MISSION, HELP_CONTENT_SET.CONTROLS ]
     helpPattern = CONTROL_HELP_PATTERN.GAMEPAD
 
-    specificCheck = @() ::have_xinput_device()
+    specificCheck = @() hasXInputDevice()
     checkFeature = unitTypes.HELICOPTER.isAvailable
     pageUnitTypeBit = unitTypes.HELICOPTER.bit
 
@@ -572,7 +576,7 @@ enums.addTypes(result, {
     showInSets = [ HELP_CONTENT_SET.MISSION, HELP_CONTENT_SET.CONTROLS ]
     helpPattern = CONTROL_HELP_PATTERN.GAMEPAD
 
-    specificCheck = @() ::have_xinput_device()
+    specificCheck = @() hasXInputDevice()
     checkFeature = @() unitTypes.SHIP.isAvailable() && hasFeature("SpecialShips")
     pageUnitTypeBit = unitTypes.SHIP.bit
     pageUnitTag = "submarine"
@@ -651,7 +655,7 @@ enums.addTypes(result, {
     showInSets = [ HELP_CONTENT_SET.MISSION, HELP_CONTENT_SET.CONTROLS ]
     helpPattern = CONTROL_HELP_PATTERN.RADAR
 
-    specificCheck = @() !::is_in_flight() || isUnitWithRadarOrRwr(getPlayerCurUnit())
+    specificCheck = @() !isInFlight() || isUnitWithRadar(getPlayerCurUnit())
     checkFeature = @() unitTypes.AIRCRAFT.isAvailable
     pageUnitTypeBit = unitTypes.AIRCRAFT.bit
 
@@ -698,7 +702,7 @@ enums.addTypes(result, {
     showInSets = [ HELP_CONTENT_SET.MISSION, HELP_CONTENT_SET.CONTROLS ]
     helpPattern = CONTROL_HELP_PATTERN.RADAR
 
-    specificCheck = @() !::is_in_flight() || isUnitWithRadarOrRwr(getPlayerCurUnit())
+    specificCheck = @() !isInFlight() || isUnitWithRadar(getPlayerCurUnit())
     checkFeature = @() unitTypes.TANK.isAvailable
     pageUnitTypeBit = unitTypes.TANK.bit
 
@@ -725,6 +729,40 @@ enums.addTypes(result, {
         { start = "marker_target_tracking_label", end = "marker_target_tracking_point" }
         { start = "marker_distance_label", end = "marker_distance_value" }
         { start = "marker_approach_speed_label", end = "marker_approach_speed_value" }
+      ]
+    }
+  }
+  RWR_AIRBORNE = {
+    subTabName = "#avionics_sensor_rwr"
+
+    showInSets = [ HELP_CONTENT_SET.MISSION, HELP_CONTENT_SET.CONTROLS ]
+    helpPattern = CONTROL_HELP_PATTERN.RWR
+
+    specificCheck = @() !isInFlight() || isUnitWithRwr(getPlayerCurUnit())
+    checkFeature = @() unitTypes.AIRCRAFT.isAvailable
+    pageUnitTypeBit = unitTypes.AIRCRAFT.bit
+
+    pageBlkName = "%gui/help/rwrAircraft.blk"
+    imagePattern = "#ui/images/help/help_rwr.avif?P1"
+    defaultValues = { country = "ussr" }
+    hasImageByCountries = [ "ussr" ]
+    countryRelatedObjs = { ussr = [] }
+    linkLines = {
+      links = [
+        { start = "basic_direction_label", end = "basic_direction_point" }
+        { start = "basic_types_label", end = "basic_types_point" }
+        { start = "mode_track_label", end = "mode_track_1_point" }
+        { start = "mode_track_label", end = "mode_track_2_point" }
+        { start = "mode_launch_label", end = "mode_launch_1_point" }
+        { start = "mode_launch_label", end = "mode_launch_2_point" }
+        { start = "target_identified_1_label", end = "target_identified_1_1_point" }
+        { start = "target_identified_1_label", end = "target_identified_1_2_point" }
+        { start = "target_identified_1_label", end = "target_identified_1_3_point" }
+        { start = "target_identified_2_label", end = "target_identified_2_point" }
+        { start = "target_unidentified_label", end = "target_unidentified_point" }
+        { start = "types_and_modes_label", end = "types_and_modes_point" }
+        { start = "direction_precise_label", end = "direction_precise_point" }
+        { start = "direction_sector_label", end = "direction_sector_point" }
       ]
     }
   }

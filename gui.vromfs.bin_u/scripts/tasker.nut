@@ -32,15 +32,11 @@ let function addTaskData(taskId, taskCbType, onSuccess, onError, showProgressBox
   return taskData
 }
 
-let function isMsgBoxesAvailable() {
-  return "scene_msg_box" in getroottable()
-}
-
 let function showTaskProgressBox(text = null, cancelFunc = null, delayedButtons = -1) {
-  if (!isMsgBoxesAvailable() || checkObj(currentProgressBox))
+  if (checkObj(currentProgressBox))
     return
 
-  let guiScene = ::get_cur_gui_scene()
+  let guiScene = get_cur_gui_scene()
   if (guiScene == null)
     return
 
@@ -54,14 +50,14 @@ let function showTaskProgressBox(text = null, cancelFunc = null, delayedButtons 
     waitAnim = true
     delayedButtons = delayedButtons
   }
-  currentProgressBox = ::scene_msg_box(
+  currentProgressBox = scene_msg_box(
     "tasker_progress_box", guiScene,
     text, [["cancel", cancelFunc]],
     "cancel", progressBoxOptions)
 }
 
 let function hideTaskProgressBox() {
-  if (!isMsgBoxesAvailable() || !checkObj(currentProgressBox))
+  if (!checkObj(currentProgressBox))
     return
 
   let guiScene = currentProgressBox.getScene()
@@ -162,8 +158,8 @@ let function executeTaskCb(taskId, taskResult, taskCbType = TASK_CB_TYPE.BASIC, 
       taskData.onError()
   }
 
-  if (taskData.showErrorMessageBox && isMsgBoxesAvailable())
-    ::showInfoMsgBox(::getErrorText(taskResult), "char_connecting_error")
+  if (taskData.showErrorMessageBox)
+    showInfoMsgBox(::getErrorText(taskResult), "char_connecting_error")
 }
 
 let function charCallback(taskId, _taskType, taskResult, _taskCbType = TASK_CB_TYPE.BASIC, _data = null) {

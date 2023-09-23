@@ -1,6 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { Cost } = require("%scripts/money.nut")
 
 
@@ -14,8 +15,11 @@ let { setColoredDoubleTextToButton, placePriceTextToButton } = require("%scripts
 let { needUseHangarDof } = require("%scripts/viewUtils/hangarDof.nut")
 let { isSmallScreen } = require("%scripts/clientState/touchScreen.nut")
 let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
+let getAllUnits = require("%scripts/unit/allUnits.nut")
+let { getEsUnitType, getUnitName } = require("%scripts/unit/unitInfo.nut")
+let { get_ranks_blk, get_discounts_blk, get_shop_blk } = require("blkGetters")
 
-::gui_handlers.ShopCheckResearch <- class extends ::gui_handlers.ShopMenuHandler {
+gui_handlers.ShopCheckResearch <- class extends gui_handlers.ShopMenuHandler {
   wndType = handlerType.MODAL
   sceneTplName = "%gui/shop/shopCheckResearch.tpl"
   sceneNavBlkName = "%gui/shop/shopNav.blk"
@@ -43,7 +47,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
     this.curAirName = unitName
     this.researchedUnit = getAircraftByName(unitName)
     this.unitCountry = this.researchBlock.country
-    this.unitType = ::get_es_unit_type(this.researchedUnit)
+    this.unitType = getEsUnitType(this.researchedUnit)
     this.sendUnitResearchedStatistic(this.researchedUnit)
     this.updateResearchVariables()
 
@@ -66,9 +70,9 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
   }
 
   function getNotResearchedUnitByFeature() {
-    foreach (unit in ::all_units)
+    foreach (unit in getAllUnits())
       if ((!this.unitCountry || ::getUnitCountry(unit) == this.unitCountry)
-           && (this.unitType == null || ::get_es_unit_type(unit) == this.unitType)
+           && (this.unitType == null || getEsUnitType(unit) == this.unitType)
            && ::isUnitFeatureLocked(unit)
          )
         return unit
@@ -98,13 +102,13 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
     if (unitLockedByFeature && !::checkFeatureLock(unitLockedByFeature, CheckFeatureLockAction.RESEARCH))
       return
 
-    let ranksBlk = ::get_ranks_blk()
+    let ranksBlk = get_ranks_blk()
     let unitsCount = this.boughtVehiclesCount[rank]
     let unitsNeed = ::getUnitsNeedBuyToOpenNextInEra(this.unitCountry, this.unitType, rank, ranksBlk)
     let reqUnits = max(0, unitsNeed - unitsCount)
     if (reqUnits > 0) {
-      let text = loc("shop/unlockTier/locked", { rank = ::get_roman_numeral(nextRank) }) + "\n"
-                    + loc("shop/unlockTier/reqBoughtUnitsPrevRank", { amount = reqUnits, prevRank = ::get_roman_numeral(rank) })
+      let text = loc("shop/unlockTier/locked", { rank = get_roman_numeral(nextRank) }) + "\n"
+                    + loc("shop/unlockTier/reqBoughtUnitsPrevRank", { amount = reqUnits, prevRank = get_roman_numeral(rank) })
       this.msgBox("locked_rank", text, [["ok", function() {}]], "ok", { cancel_fn = function() {} })
     }
   }
@@ -146,10 +150,10 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
   function getMaxRankUnboughtUnitByCountry() {
     local unit = null
-    foreach (newUnit in ::all_units)
+    foreach (newUnit in getAllUnits())
       if (!this.unitCountry || this.unitCountry == ::getUnitCountry(newUnit))
         if (getTblValue("rank", newUnit, 0) > getTblValue("rank", unit, 0))
-          if (this.unitType == ::get_es_unit_type(newUnit)
+          if (this.unitType == getEsUnitType(newUnit)
               && !::isUnitSpecial(newUnit)
               && ::canBuyUnit(newUnit)
               && ::isPrevUnitBought(newUnit))
@@ -159,9 +163,9 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
   function getMaxRankResearchingUnitByCountry() {
     local unit = null
-    foreach (newUnit in ::all_units)
+    foreach (newUnit in getAllUnits())
       if (this.unitCountry == ::getUnitCountry(newUnit) && !newUnit.isSquadronVehicle()
-        && this.unitType == ::get_es_unit_type(newUnit) && ::canResearchUnit(newUnit))
+        && this.unitType == getEsUnitType(newUnit) && ::canResearchUnit(newUnit))
           unit = newUnit.rank > (unit?.rank ?? 0) ? newUnit : unit
     return unit
   }
@@ -219,9 +223,9 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
     let visibleBox = ::GuiBox().setFromDaguiObj(visibleObj)
     let unitsObj = []
-    foreach (newUnit in ::all_units)
+    foreach (newUnit in getAllUnits())
       if (this.unitCountry == ::getUnitCountry(newUnit) && !newUnit.isSquadronVehicle()
-        && this.unitType == ::get_es_unit_type(newUnit) && ::canResearchUnit(newUnit)) {
+        && this.unitType == getEsUnitType(newUnit) && ::canResearchUnit(newUnit)) {
         local newUnitName = ""
         if (::isGroupPart(newUnit))
           newUnitName = newUnit.group
@@ -287,7 +291,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
     let showBuyUnit = canBuyIngame || canBuyOnline
     this.showNavButton("btn_buy_unit", showBuyUnit)
     if (showBuyUnit) {
-      let locText = loc("shop/btnOrderUnit", { unit = ::getUnitName(unit.name) })
+      let locText = loc("shop/btnOrderUnit", { unit = getUnitName(unit.name) })
       let unitCost = (canBuyIngame && !canBuyOnline) ? ::getUnitCost(unit) : Cost()
       placePriceTextToButton(this.navBarObj,      "btn_buy_unit", locText, unitCost)
       placePriceTextToButton(this.navBarGroupObj, "btn_buy_unit", locText, unitCost)
@@ -301,7 +305,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
     if (showSpendBtn) {
       let reqExp = ::getUnitReqExp(unit) - ::getUnitExp(unit)
       let flushExp = reqExp < this.availableFlushExp ? reqExp : this.availableFlushExp
-      let textSample = loc("shop/researchUnit", { unit = ::getUnitName(unit.name) }) + "%s"
+      let textSample = loc("shop/researchUnit", { unit = getUnitName(unit.name) }) + "%s"
       let textValue = flushExp ? loc("ui/parentheses/space",
         { text = Cost().setRp(flushExp).tostring() }) : ""
       coloredText = format(textSample, textValue)
@@ -363,10 +367,10 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
   */
 
   function setUnitOnResearch(unit = null, afterDoneFunc = null) {
-    let executeAfterDoneFunc = (@(afterDoneFunc) function() {
+    let executeAfterDoneFunc =  function() {
         if (afterDoneFunc)
           afterDoneFunc()
-      })(afterDoneFunc)
+      }
 
     if (unit && ::isUnitResearched(unit)) {
       executeAfterDoneFunc()
@@ -419,7 +423,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
     this.selectRequiredUnit()
     let unit = this.getCurAircraft(true, true)
-    let unitName = ::getUnitName(unit.name)
+    let unitName = getUnitName(unit.name)
     let reqExp = ::getUnitReqExp(unit) - ::getUnitExp(unit)
     let flushExp = reqExp < this.availableFlushExp ? reqExp : this.availableFlushExp
     let expText = Cost().setRp(flushExp).tostring()
@@ -434,7 +438,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
     if (getTblValue("name", this.lastResearchUnit, "") != curResName)
       this.setUnitOnResearch(getAircraftByName(curResName))
 
-    ::gui_handlers.BaseGuiHandlerWT.goBack.call(this)
+    gui_handlers.BaseGuiHandlerWT.goBack.call(this)
   }
 
   goBack = @() this.onTryCloseShop()
@@ -444,7 +448,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
     if (!closedHandler)
       return
 
-    if (closedHandler.getclass() == ::gui_handlers.researchUnitNotification) {
+    if (closedHandler.getclass() == gui_handlers.researchUnitNotification) {
       this.showResearchUnitTutorial()
       this.selectRequiredUnit()
       this.showRankRestrictionMsgBox()
@@ -462,7 +466,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 }
 
 ::getSteamMarkUp <- function getSteamMarkUp() {
-  let blk = ::get_discounts_blk()
+  let blk = get_discounts_blk()
 
   let blocksCount = blk.blockCount()
   for (local i = 0; i < blocksCount; i++) {
@@ -476,7 +480,7 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 
 ::checkShopBlk <- function checkShopBlk() {
   local resText = ""
-  let shopBlk = ::get_shop_blk()
+  let shopBlk = get_shop_blk()
   for (local tree = 0; tree < shopBlk.blockCount(); tree++) {
     let tblk = shopBlk.getBlock(tree)
     let country = tblk.getBlockName()

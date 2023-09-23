@@ -3,6 +3,8 @@ from "%scripts/dagui_library.nut" import *
 
 
 let { format } = require("string")
+let { get_game_settings_blk } = require("blkGetters")
+
 ::tribunal <- {
   maxComplaintCount = 10
   minComplaintCount = 5
@@ -14,7 +16,7 @@ let { format } = require("string")
   lastDaySaveParam = "tribunalLastCheckDay"
 
   function init() {
-    let blk = ::get_game_settings_blk()?.tribunal
+    let blk = get_game_settings_blk()?.tribunal
     if (!blk)
       return
 
@@ -39,7 +41,7 @@ let { format } = require("string")
     ::tribunal.complaintsData = ::get_player_complaint_counts()
     if (this.complaintsData && this.complaintsData.complaint_count_own >= this.maxComplaintsFromMe) {
       let text = format(loc("charServer/complaintsLimitExpired"), this.maxComplaintsFromMe)
-      ::showInfoMsgBox(text, "tribunal_msg_box")
+      showInfoMsgBox(text, "tribunal_msg_box")
       return false
     }
     return true
@@ -76,6 +78,6 @@ let { format } = require("string")
 
     text = format(text, min(complaintsCount, this.maxComplaintCount)) + "\n" + textReasons
 
-    ::showInfoMsgBox(text, "tribunal_msg_box")
+    showInfoMsgBox(text, "tribunal_msg_box")
   }
 }

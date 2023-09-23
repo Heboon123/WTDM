@@ -24,19 +24,19 @@
       "WdK": [0.1,0.1,0.1]
     },
     {
-      "CxK": 1.75
+      "CxK": 1.455
     },
     {
       "wingAreaMult": 1.4
     },
     {
-      "finsAoaHor": 0.28
+      "finsAoaHor": 0.32
     },
     {
-      "finsAoaVer": 0.28
+      "finsAoaVer": 0.32
     },
     {
-      "finsLatAccel": 25.0
+      "finsLatAccel": 36.96
     },
     {
       "distFromCmToStab": 0.1
@@ -48,10 +48,10 @@
       "massEnd": 286.0
     },
     {
-      "timeFire": 2.0
+      "timeFire": 3.2
     },
     {
-      "force": 73600.0
+      "force": 55275.0
     },
     {
       "fireDelay": 0.0
@@ -69,7 +69,7 @@
       "machMax": 5.75
     },
     {
-      "endSpeed": 1700.0
+      "endSpeed": 1750.0
     },
     {
       "maxDistance": 67500.0
@@ -81,7 +81,7 @@
       "rangeMax": 100000.0
     },
     {
-      "loadFactorMax": 30.0
+      "loadFactorMax": 35.0
     },
     {
       "guidanceType": "radar"
@@ -97,6 +97,9 @@
     },
     {
       "ricochetPreset": "he"
+    },
+    {
+      "groundRicochetPreset": "he"
     },
     {
       "secondaryShattersPreset": "ap"
@@ -234,13 +237,13 @@
       "iconType": "missile_type_b_air_to_air_midrange"
     },
     {
-      "force1": 25575.0
+      "force1": 26630.0
     },
     {
-      "timeFire1": 7.0
+      "timeFire1": 4.8
     },
     {
-      "massEnd1": 208.0
+      "massEnd1": 211.5
     },
     {
       "arcadeProp": {
@@ -312,10 +315,10 @@
           "timeToGain0": [0.35,0.0],
           "timeToGain1": [0.4,1.0],
           "propNavMult": 4.0,
-          "reqAccelMax": 30.0,
+          "reqAccelMax": 35.0,
           "accelControlProp": 0.004,
           "accelControlIntg": 0.0301,
-          "accelControlDiff": 0.0008,
+          "accelControlDiff": 0.0012,
           "baseIndSpeed": 1800.0,
           "accelControlIntgLim": 1.0
         },
@@ -603,7 +606,7 @@
     {
       "DamageParts": {
         "body": {
-          "hp": 5.0,
+          "hp": 50.0,
           "armorClass": "tank_structural_steel",
           "armorThickness": 1.0
         }
@@ -611,15 +614,76 @@
     },
     {
       "DamageEffects": {
-        "part": {
-          "name": "body",
-          "onHit": {
-            "expl": 1.0
+        "part": [
+          {
+            "name": "body"
           },
-          "onKill": {
-            "destruction": 1.0
+          {
+            "onHit": {
+              "shellState": "inFlight",
+              "expl": 1.0
+            }
+          },
+          {
+            "onHit": {
+              "shellState": "onUnit",
+              "damageType": "generic",
+              "expl": 0.05,
+              "fire": 0.45,
+              "break": 0.5,
+              "damage": 3.0,
+              "fHitCritical": true
+            }
+          },
+          {
+            "onHit": {
+              "shellState": "onUnit",
+              "damageType": "generic",
+              "expl": 0.5,
+              "fire": 0.3,
+              "break": 0.2,
+              "damage": 30.0,
+              "fHitCritical": true
+            }
+          },
+          {
+            "onHit": {
+              "shellState": "onUnit",
+              "damageType": "explosion",
+              "expl": 0.45,
+              "fire": 0.45,
+              "break": 0.1,
+              "damage": 50.0,
+              "fHitCritical": true
+            }
+          },
+          {
+            "onHit": {
+              "shellState": "onUnit",
+              "damageType": "cumulative",
+              "expl": 0.4,
+              "fire": 0.4,
+              "break": 0.1,
+              "damage": 100.0,
+              "fHitCritical": true
+            }
+          },
+          {
+            "onKill": {
+              "shellState": "inFlight",
+              "destruction": 1.0
+            }
+          },
+          {
+            "onKill": {
+              "shellState": "onUnit",
+              "expl": 0.05,
+              "fire": 0.05,
+              "break": 0.9,
+              "fHitCritical": true
+            }
           }
-        }
+        ]
       }
     },
     {
@@ -730,8 +794,8 @@
     },
     {
       "proximityFuse": {
-        "timeOut": 1.7,
-        "radius": 10.0,
+        "timeOut": 2.0,
+        "radius": 8.0,
         "detectShells": true,
         "shellCaliberRange": [0.08,0.2]
       }

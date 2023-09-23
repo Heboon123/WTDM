@@ -1,5 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { countSizeInItems } = require("%sqDagui/daguiUtil.nut")
 let { updateModItem, createModItemLayout, updateItemBulletsSlider
@@ -11,8 +12,9 @@ let { getLastWeapon, setLastWeapon, isWeaponEnabled, isWeaponVisible,
 let { isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitStatus.nut")
 let { cutPrefix } = require("%sqstd/string.nut")
 let { checkShowShipWeaponsTutor } = require("%scripts/weaponry/shipWeaponsTutor.nut")
+let { getEsUnitType } = require("%scripts/unit/unitInfo.nut")
 
-::gui_handlers.unitWeaponsHandler <- class extends ::gui_handlers.BaseGuiHandlerWT {
+gui_handlers.unitWeaponsHandler <- class extends gui_handlers.BaseGuiHandlerWT {
   wndType = handlerType.CUSTOM
 
   unit = null
@@ -69,7 +71,7 @@ let { checkShowShipWeaponsTutor } = require("%scripts/weaponry/shipWeaponsTutor.
     this.bulletsManager.setUnit(this.unit)
 
     local columnsConfig = null
-    let unitType = ::get_es_unit_type(this.unit)
+    let unitType = getEsUnitType(this.unit)
     if (isInArray(unitType, [ES_UNIT_TYPE_AIRCRAFT, ES_UNIT_TYPE_HELICOPTER]))
       columnsConfig = this.getColumnsAircraft()
     else if (unitType == ES_UNIT_TYPE_TANK || unitType == ES_UNIT_TYPE_SHIP || unitType == ES_UNIT_TYPE_BOAT)
@@ -484,7 +486,7 @@ let { checkShowShipWeaponsTutor } = require("%scripts/weaponry/shipWeaponsTutor.
 
   function getBulletGroupByItemId(id) {
     let idxStr = cutPrefix(id, this.bulletsIdPrefix, -1)
-    return this.getBulletGroupByIndex(::to_integer_safe(idxStr, -1))
+    return this.getBulletGroupByIndex(to_integer_safe(idxStr, -1))
   }
 
   function openChangeWeaponryMenu(obj) {
@@ -512,7 +514,7 @@ let { checkShowShipWeaponsTutor } = require("%scripts/weaponry/shipWeaponsTutor.
         this.bulletsManager.openChooseBulletsWnd(group.groupIndex, this.getSelectionItemParams(), obj)
     }
     else
-      ::showInfoMsgBox(loc("msg/secondaryWeaponrequired"))
+      showInfoMsgBox(loc("msg/secondaryWeaponrequired"))
   }
 
   function onModItemClick(obj) {
@@ -528,7 +530,7 @@ let { checkShowShipWeaponsTutor } = require("%scripts/weaponry/shipWeaponsTutor.
   function onModChangeBulletsSlider(obj) {
     if (!checkObj(obj))
       return
-    let groupIndex = ::to_integer_safe(obj?.groupIdx ?? "", -1)
+    let groupIndex = to_integer_safe(obj?.groupIdx ?? "", -1)
     let bulGroup = this.getBulletGroupByIndex(groupIndex)
     if (!bulGroup)
       return
@@ -549,7 +551,7 @@ let { checkShowShipWeaponsTutor } = require("%scripts/weaponry/shipWeaponsTutor.
 
     let itemObj = listObj.getChild(idx)
     let id = cutPrefix(itemObj.id, this.bulletsIdPrefix, -1)
-    let groupIdx = ::to_integer_safe(id, -1)
+    let groupIdx = to_integer_safe(id, -1)
     let group = this.getBulletGroupByIndex(groupIdx)
     if (!group)
       return

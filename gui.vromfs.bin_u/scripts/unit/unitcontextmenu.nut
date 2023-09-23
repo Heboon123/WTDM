@@ -1,11 +1,11 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { Cost } = require("%scripts/money.nut")
 
-
-
 let { format } = require("string")
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { getShopItem,
         canUseIngameShop,
         getShopItemsTable } = require("%scripts/onlineShop/entitlementsStore.nut")
@@ -26,6 +26,7 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 let { getUnlockIdByUnitName, hasMarkerByUnitName } = require("%scripts/unlocks/unlockMarkers.nut")
 let { KWARG_NON_STRICT } = require("%sqstd/functools.nut")
 let openCrossPromoWnd = require("%scripts/openCrossPromoWnd.nut")
+let { getEsUnitType, getUnitName } = require("%scripts/unit/unitInfo.nut")
 
 let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = null, curEdiff = -1,
   isSlotbarEnabled = true, setResearchManually = null, needChosenResearchOfSquadron = false,
@@ -60,7 +61,7 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
         ::queues.checkAndStart(function () {
           broadcastEvent("BeforeStartShowroom")
           showedUnit(unit)
-          ::handlersManager.animatedSwitchScene(::gui_start_decals)
+          handlersManager.animatedSwitchScene(::gui_start_decals)
         }, null, "isCanModifyCrew")
       }
     }
@@ -228,7 +229,7 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
       if (isSquadronVehicle && isInClan && isInResearch && !canFlushSquadronExp && !needChosenResearchOfSquadron)
         continue
 
-      let countryExp = ::shop_get_country_excess_exp(::getUnitCountry(unit), ::get_es_unit_type(unit))
+      let countryExp = ::shop_get_country_excess_exp(::getUnitCountry(unit), getEsUnitType(unit))
       let getReqExp = reqExp < countryExp ? reqExp : countryExp
       let needToFlushExp = !isSquadronVehicle && shopResearchMode && countryExp > 0
       let squadronExpText = Cost().setSap(squadronExp).tostring()
@@ -289,7 +290,7 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
         if (hasFeature("WikiUnitInfo"))
           openUrl(format(loc("url/wiki_objects"), unit.name), false, false, "unit_actions")
         else
-          ::showInfoMsgBox(colorize("activeTextColor", ::getUnitName(unit, false)) + "\n" + loc("profile/wiki_link"))
+          showInfoMsgBox(colorize("activeTextColor", getUnitName(unit, false)) + "\n" + loc("profile/wiki_link"))
       }
     }
     else if (action == "find_in_market") {
@@ -338,7 +339,7 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
 
 let showMenu = function showMenu(params) {
   if (params == null) {
-    ::handlersManager.findHandlerClassInScene(::gui_handlers.ActionsList)?.close()
+    handlersManager.findHandlerClassInScene(gui_handlers.ActionsList)?.close()
     return
   }
 
@@ -346,7 +347,7 @@ let showMenu = function showMenu(params) {
   if (actions.len() == 0)
     return
 
-  ::gui_handlers.ActionsList.open(params.unitObj, {
+  gui_handlers.ActionsList.open(params.unitObj, {
     handler = null
     closeOnUnhover = params?.closeOnUnhover ?? true
     onDeactivateCb = @() unitContextMenuState(null)

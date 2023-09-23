@@ -13,6 +13,7 @@ let ExchangeRecipes = require("%scripts/items/exchangeRecipes.nut")
 let time = require("%scripts/time.nut")
 let workshop = require("%scripts/items/workshop/workshop.nut")
 let ItemLifetimeModifier = require("%scripts/items/itemLifetimeModifier.nut")
+let { get_game_settings_blk } = require("blkGetters")
 
 let collection = {}
 
@@ -70,7 +71,7 @@ local ItemGenerator = class {
       let allowableComponents = this.getAllowableRecipeComponents()
       let showRecipeAsProduct = this.tags?.showRecipeAsProduct
       let shouldSkipMsgBox = !!this.tags?.shouldSkipMsgBox
-      this._exchangeRecipes = u.map(parsedRecipes, @(parsedRecipe) ExchangeRecipes({
+      this._exchangeRecipes = parsedRecipes.map(@(parsedRecipe) ExchangeRecipes({
          parsedRecipe
          generatorId
          craftTime = generatorCraftTime
@@ -90,7 +91,7 @@ local ItemGenerator = class {
             ::ItemsManager.findItemById(itemdefId) // calls pending generators list update
             let gen = collection?[itemdefId]
             let additionalParsedRecipes = gen ? inventoryClient.parseRecipesString(gen.exchange) : []
-            this._exchangeRecipes.extend(u.map(additionalParsedRecipes, @(pr) ExchangeRecipes({
+            this._exchangeRecipes.extend(additionalParsedRecipes.map(@(pr) ExchangeRecipes({
               parsedRecipe = pr
               generatorId = gen.id
               craftTime = gen.getCraftTime()
@@ -117,7 +118,7 @@ local ItemGenerator = class {
 
       this._exchangeRecipesUpdateTime = get_time_msec()
     }
-    return u.filter(this._exchangeRecipes, @(ec) ec.isEnabled())
+    return this._exchangeRecipes.filter(@(ec) ec.isEnabled())
   }
 
   function getUsableRecipes() {
@@ -146,13 +147,13 @@ local ItemGenerator = class {
   }
 
   function getRecipesWithComponent(componentItemdefId) {
-    return u.filter(this.getRecipes(), @(ec) ec.hasComponent(componentItemdefId))
+    return this.getRecipes().filter(@(ec) ec.hasComponent(componentItemdefId))
   }
 
   function _unpackContent(contentRank = null, fromGenId = null) {
     this._contentUnpacked = []
     let parsedBundles = inventoryClient.parseRecipesString(this.bundle)
-    let trophyWeightsBlk = ::get_game_settings_blk()?.visualizationTrophyWeights
+    let trophyWeightsBlk = get_game_settings_blk()?.visualizationTrophyWeights
     let trophyWeightsBlockCount = trophyWeightsBlk?.blockCount() ?? 0
     foreach (set in parsedBundles)
       foreach (cfg in set.components) {
@@ -231,7 +232,7 @@ local ItemGenerator = class {
 
     let allowableItems = {}
     foreach (itemId in split_by_chars(allowableItemsForRecipes, "_"))
-      allowableItems[::to_integer_safe(itemId, itemId, false)] <- true
+      allowableItems[to_integer_safe(itemId, itemId, false)] <- true
 
     return allowableItems
   }

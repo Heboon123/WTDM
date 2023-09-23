@@ -1,6 +1,6 @@
 {
   "type": "radar",
-  "name": "Crotale",
+  "name": "Crotale TT",
   "transivers": {
     "radarTrack": {
       "power": 300.0,
@@ -31,6 +31,16 @@
       "antenna": {
         "angleHalfSens": 1.0,
         "sideLobesSensitivity": -60.0
+      }
+    }
+  },
+  "transmitters": {
+    "rc": {
+      "power": 100.0,
+      "band": 9,
+      "antenna": {
+        "angleHalfSens": 10.0,
+        "sideLobesSensitivity": -20.0
       }
     }
   },
@@ -691,6 +701,22 @@
               "name": "track"
             },
             "setRadar": []
+          }
+        },
+        "activateWeaponTracking": {
+          "event": "updateWeaponTracking",
+          "actions": {
+            "setWeaponRcTransmissionTimeOut": {
+              "timeOut": 2.0
+            }
+          }
+        },
+        "deactivateWeaponTracking": {
+          "event": "update",
+          "actions": {
+            "checkWeaponRcTransmissionTimeOut": {
+              "transmitter": "rc"
+            }
           }
         }
       }

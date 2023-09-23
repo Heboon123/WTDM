@@ -1,10 +1,9 @@
 //checked for plus_string
 from "%scripts/dagui_library.nut" import *
-
 let { Cost } = require("%scripts/money.nut")
-
 let { getAllModsCost } = require("%scripts/weaponry/itemInfo.nut")
 let { weaponsPurchase } = require("%scripts/weaponry/weaponsPurchase.nut")
+let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 
 local unitsTable = {} //unitName - unitBlock
 
@@ -22,7 +21,7 @@ local purchaseModifications = @(_unitsArray) null
 purchaseModifications = function(unitsArray) {
   if (unitsArray.len() == 0) {
     clear()
-    ::showInfoMsgBox(loc("msgbox/all_researched_modifications_bought"), "successfully_bought_mods")
+    showInfoMsgBox(loc("msgbox/all_researched_modifications_bought"), "successfully_bought_mods")
     return
   }
 
@@ -52,7 +51,7 @@ checkUnboughtMods = function(silent = false) {
 
     cost += modsCost
     unitsWithNBMods.append(unit)
-    stringOfUnits.append(colorize("userlogColoredText", ::getUnitName(unit, true)))
+    stringOfUnits.append(colorize("userlogColoredText", getUnitName(unit, true)))
   }
 
   if (unitsWithNBMods.len() == 0)
@@ -64,7 +63,7 @@ checkUnboughtMods = function(silent = false) {
     return
   }
 
-  ::scene_msg_box("buy_all_available_mods", null,
+  scene_msg_box("buy_all_available_mods", null,
     loc("msgbox/buy_all_researched_modifications",
       { unitsList = ",".join(stringOfUnits, true), cost = cost.getTextAccordingToBalance() }),
     [["yes", function() {

@@ -3,17 +3,13 @@ from "%scripts/dagui_library.nut" import *
 
 let { canLogout, startLogout } = require("%scripts/login/logout.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let exitGame = require("%scripts/utils/exitGame.nut")
 let logMC = log_with_prefix("[MATCHING_CONNECT] ")
 let { subscribe } = require("eventbus")
 
 const MATCHING_CONNECT_TIMEOUT = 30
 
-enum REASON_DOMAIN {
-  MATCHING = "matching"
-  CHAR = "char"
-  AUTH = "auth"
-}
 
 let isMatchingOnline = Watched(::is_online_available())
 
@@ -24,7 +20,7 @@ local onConnectCb = null
 local onDisconnectCb = null
 
 let function onMatchingConnect() {
-  ::destroyMsgBox(progressBox)
+  destroyMsgBox(progressBox)
   progressBox = null
 
   onConnectCb?()
@@ -43,7 +39,7 @@ let function onMatchingDisconnect() {
 }
 
 let function onFailToReconnect() {
-  ::destroyMsgBox(progressBox)
+  destroyMsgBox(progressBox)
   progressBox = null
 
   onDisconnectCb?()
@@ -55,11 +51,11 @@ let function showConnectProgress() {
   if (checkObj(progressBox))
     return
 
-  let cancelFunc = @() ::scene_msg_box("no_online_warning", null,
+  let cancelFunc = @() scene_msg_box("no_online_warning", null,
     loc("mainmenu/noOnlineWarning"),
     [["ok", onMatchingDisconnect]], "ok")
 
-  progressBox = ::scene_msg_box("matching_connect_progressbox", null,
+  progressBox = scene_msg_box("matching_connect_progressbox", null,
     loc("yn1/connecting_msg"),
     [["cancel", cancelFunc]], "cancel",
     {
@@ -94,7 +90,7 @@ let function logoutWithMsgBox(reason, message, _reasonDomain, forceExit = false)
 
   local needExit = forceExit
   if (!needExit) { // logout
-    let handler = ::handlersManager.getActiveBaseHandler()
+    let handler = handlersManager.getActiveBaseHandler()
     if (("isDelayedLogoutOnDisconnect" not in handler)
         || !handler.isDelayedLogoutOnDisconnect())
       needExit = !doLogout()
