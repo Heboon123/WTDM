@@ -28,7 +28,7 @@
       "showTriggers": true,
       "showMissionObjectives": true,
       "showWayPoints": true,
-      "excludes": []
+      "excludes": {}
     }
   },
   "triggers": {
@@ -43,7 +43,7 @@
         "enableAfterComplete": false
       },
       "events": {
-        "initMission": []
+        "initMission": {}
       },
       "conditions": {
         "missionNamePostfix": {
@@ -70,7 +70,7 @@
         "enableAfterComplete": false
       },
       "events": {
-        "initMission": []
+        "initMission": {}
       },
       "conditions": {
         "missionNamePostfix": {
@@ -100,221 +100,163 @@
           "enableAfterComplete": false
         },
         "events": {
-          "initMission": []
+          "initMission": {}
         },
-        "conditions": [],
-        "actions": [
-          {
-            "varSetString": {
+        "conditions": {},
+        "actions": {
+          "varSetString": [
+            {
               "value": "spawn_t1b01",
               "var": "t1_spawn_01"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "spawn_t1b02",
               "var": "t1_spawn_02"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "spawn_t2b01",
               "var": "t2_spawn_01"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "spawn_t2b02",
               "var": "t2_spawn_02"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "capture_point_b01",
               "var": "capture_point_01"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "capture_point_b02",
               "var": "capture_point_02"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "",
               "var": "t1_spawn_cur",
               "input_var": "t1_spawn_01"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "",
               "var": "t2_spawn_cur",
               "input_var": "t2_spawn_01"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "",
               "var": "capture_pt_cur",
               "input_var": "capture_point_01"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t2_safezone_01",
               "var": "t2_safezone_cur"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t1_at_gun_1st_sq",
               "var": "at_gun_1st_sq_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t1_at_gun_2nd_sq",
               "var": "at_gun_2nd_sq_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t1_at_gun_all_sq",
               "var": "at_gun_all_sq_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t1_at_gun_",
               "var": "at_gun_name_prefix"
             }
-          },
-          {
-            "__varSetString": {
+          ],
+          "__varSetString": [
+            {
               "value": "spawn_t1a01_t2b03",
               "var": "t1_spawn_03"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "spawn_t2a01_t1b03",
               "var": "t2_spawn_03"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "capture_point_a01_b03",
               "var": "capture_point_03"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "clear_respawn_",
               "var": "spawn_area_name"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "t1_rearm_",
               "var": "t1_rearm_name"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "t1_rearm_01",
               "var": "t1_rearm_cur"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "t2_rearm_",
               "var": "t2_rearm_name"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "t2_rearm_01",
               "var": "t2_rearm_cur"
             }
+          ],
+          "comment": {
+            "value": ""
           },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "varSetInt": {
+          "varSetInt": [
+            {
               "value": 15,
               "var": "teamA_antiTankGun_count",
               "fromDescriptor": "teamA_antiTankGun_count"
-            }
-          },
-          {
-            "varSetInt": {
+            },
+            {
               "value": 35,
               "var": "atGunFrontLinePercent",
               "fromDescriptor": "atGunFrontLinePercent"
-            }
-          },
-          {
-            "varSetInt": {
+            },
+            {
               "value": 0,
               "var": "at_gun_1st_line_count",
               "input_var": "teamA_antiTankGun_count"
-            }
-          },
-          {
-            "varSetInt": {
+            },
+            {
               "value": 0,
               "var": "at_gun_2nd_line_count",
               "input_var": "teamA_antiTankGun_count"
             }
-          },
-          {
-            "varModify": {
+          ],
+          "varModify": [
+            {
               "operator": "mul",
               "value": 1.0,
               "var": "at_gun_1st_line_count",
               "use_variable": true,
               "var_value": "atGunFrontLinePercent"
-            }
-          },
-          {
-            "varModify": {
+            },
+            {
               "operator": "divAB",
               "value": 100.0,
               "var": "at_gun_1st_line_count"
-            }
-          },
-          {
-            "varModify": {
+            },
+            {
               "operator": "subAB",
               "value": 1.0,
               "var": "at_gun_2nd_line_count",
               "use_variable": true,
               "var_value": "at_gun_1st_line_count"
             }
+          ],
+          "varSetBool": {
+            "value": true,
+            "var": "score_by_time_for_team_b"
           },
-          {
-            "varSetBool": {
-              "value": true,
-              "var": "score_by_time_for_team_b"
-            }
-          },
-          {
-            "triggerEnable": [
-              {
-                "target": "deepdefa_start"
-              },
-              {
-                "target": "deepdefa_spawn_at_gun"
-              }
+          "triggerEnable": {
+            "target": [
+              "deepdefa_start",
+              "deepdefa_spawn_at_gun"
             ]
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "deepdefa_start": {
         "is_enabled": false,
@@ -325,12 +267,12 @@
           "enableAfterComplete": false
         },
         "events": {
-          "initMission": []
+          "initMission": {}
         },
-        "conditions": [],
-        "actions": [
-          {
-            "missionMarkAsRespawnPoint": {
+        "conditions": {},
+        "actions": {
+          "missionMarkAsRespawnPoint": [
+            {
               "loc_name": "missions/spawn_01",
               "spawnEffect": false,
               "isAirfield": false,
@@ -353,10 +295,8 @@
               "tags": {
                 "tank": true
               }
-            }
-          },
-          {
-            "missionMarkAsRespawnPoint": {
+            },
+            {
               "loc_name": "missions/spawn_01",
               "spawnEffect": false,
               "isAirfield": false,
@@ -380,50 +320,46 @@
                 "tank": true
               }
             }
-          },
-          {
-            "missionMarkAsCaptureZone": {
-              "army": 1,
-              "name_for_respawn_base": "",
-              "timeMultiplier": 2.0,
-              "disableZone": false,
-              "target": "@capture_pt_cur",
-              "iconIndex": 0,
-              "canCaptureOnGround": true,
-              "playAirfieldSound": false,
-              "canCaptureInAir": false,
-              "canCaptureByGM": true,
-              "useHUDMarkers": true,
-              "captureNoPenalty": true,
-              "markUnitPreset": "tank_decal",
-              "markUnits": "cz_circle",
-              "zoneDefenders": [],
-              "capture_tags": {
-                "vtol_jet": true,
-                "type_attack_helicopter": true,
-                "type_utility_helicopter": true,
-                "tank": true
-              }
+          ],
+          "missionMarkAsCaptureZone": {
+            "army": 1,
+            "name_for_respawn_base": "",
+            "timeMultiplier": 2.0,
+            "disableZone": false,
+            "target": "@capture_pt_cur",
+            "iconIndex": 0,
+            "canCaptureOnGround": true,
+            "playAirfieldSound": false,
+            "canCaptureInAir": false,
+            "canCaptureByGM": true,
+            "useHUDMarkers": true,
+            "captureNoPenalty": true,
+            "markUnitPreset": "tank_decal",
+            "markUnits": "cz_circle",
+            "zoneDefenders": {},
+            "capture_tags": {
+              "vtol_jet": true,
+              "type_attack_helicopter": true,
+              "type_utility_helicopter": true,
+              "tank": true
             }
           },
-          {
-            "missionMarkAsRearmZone": {
+          "missionMarkAsRearmZone": [
+            {
               "army": 1,
               "area_name": "@t1_spawn_cur",
               "enabled": true,
               "hideMarkers": true
-            }
-          },
-          {
-            "missionMarkAsRearmZone": {
+            },
+            {
               "army": 2,
               "area_name": "@t2_spawn_cur",
               "enabled": true,
               "hideMarkers": true
             }
-          },
-          {
-            "missionBattleArea": {
+          ],
+          "missionBattleArea": [
+            {
               "air": false,
               "ground": false,
               "mapArea": false,
@@ -433,10 +369,8 @@
               "killOutOfBattleArea": false,
               "area": "@t2_safezone_cur",
               "team": "B"
-            }
-          },
-          {
-            "missionBattleArea": {
+            },
+            {
               "air": false,
               "ground": true,
               "mapArea": true,
@@ -446,60 +380,46 @@
               "killOutOfBattleArea": true,
               "area": "battle_area_b01"
             }
-          },
-          {
-            "comment": {
+          ],
+          "comment": [
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
               "value": ""
             }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "moAddMissionObjective": {
+          ],
+          "moAddMissionObjective": [
+            {
               "target": "@ATTACK_OBJECTIVE",
               "object_var_comp_op": "equal",
               "object_var_name": "",
               "object_marking": 0
-            }
-          },
-          {
-            "moAddMissionObjective": {
+            },
+            {
               "target": "@DEFEND_OBJECTIVE",
               "object_var_comp_op": "equal",
               "object_var_name": "",
               "object_marking": 0
             }
-          },
-          {
-            "unitPutToSleep": [
-              {
-                "target": "defense_objects_b_01"
-              },
-              {
-                "target": "defense_objects_b_02"
-              }
+          ],
+          "unitPutToSleep": {
+            "target": [
+              "defense_objects_b_01",
+              "defense_objects_b_02"
             ]
           },
-          {
-            "triggerEnable": [
-              {
-                "target": "deepdefa_check_capture"
-              },
-              {
-                "target": "deepdefa_t1_win"
-              }
+          "triggerEnable": {
+            "target": [
+              "deepdefa_check_capture",
+              "deepdefa_t1_win"
             ]
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "deepdefa_spawn_at_gun": {
         "is_enabled": false,
@@ -510,48 +430,40 @@
           "enableAfterComplete": false
         },
         "events": {
-          "initMission": []
+          "initMission": {}
         },
-        "conditions": [],
-        "actions": [
-          {
-            "unitPutToSleep": {
-              "target": "@at_gun_all_sq_name"
-            }
+        "conditions": {},
+        "actions": {
+          "unitPutToSleep": {
+            "target": "@at_gun_all_sq_name"
           },
-          {
-            "unitWakeUp": {
+          "unitWakeUp": [
+            {
               "target": "@at_gun_1st_sq_name",
               "varNameNumToWakeUp": "at_gun_1st_line_count",
               "order": "random"
-            }
-          },
-          {
-            "unitWakeUp": {
+            },
+            {
               "target": "@at_gun_2nd_sq_name",
               "varNameNumToWakeUp": "at_gun_2nd_line_count",
               "order": "random"
             }
+          ],
+          "unitSetProperties": {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "object": "@at_gun_all_sq_name",
+            "accuracy": 0.5,
+            "checkVisibilityTarget": true,
+            "visibilityTreeTransparencyThreshold": 0.01
           },
-          {
-            "unitSetProperties": {
-              "object_marking": 0,
-              "object_var_name": "",
-              "object_var_comp_op": "equal",
-              "object_var_value": 0,
-              "object": "@at_gun_all_sq_name",
-              "accuracy": 0.5,
-              "checkVisibilityTarget": true,
-              "visibilityTreeTransparencyThreshold": 0.01
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "deepdefa_at_gun_check"
-            }
+          "triggerEnable": {
+            "target": "deepdefa_at_gun_check"
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "deepdefa_at_gun_check": {
         "is_enabled": false,
@@ -573,49 +485,41 @@
             "comparasion_func": "less"
           }
         },
-        "actions": [
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "int_temp"
-            }
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "int_temp"
           },
-          {
-            "varSetString": {
+          "varSetString": [
+            {
               "value": "",
               "var": "str_temp",
               "input_var": "at_gun_name_prefix"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t2b_pit_",
               "var": "str_temp2"
             }
-          },
-          {
-            "varAddString": {
+          ],
+          "varAddString": [
+            {
               "value": "",
               "digits": 2,
               "var": "str_temp",
               "input_var": "int_temp"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "",
               "digits": 2,
               "var": "str_temp2",
               "input_var": "int_temp"
             }
-          },
-          {
-            "triggerEnable": {
-              "target": "deepdefa_at_gun_setup"
-            }
+          ],
+          "triggerEnable": {
+            "target": "deepdefa_at_gun_setup"
           }
-        ],
+        },
         "else_actions": {
           "varSetInt": {
             "value": 0,
@@ -749,45 +653,37 @@
             "time": 0.0
           }
         },
-        "conditions": [],
-        "actions": [
-          {
-            "duplicateAreaAtPos": {
-              "area": "sample_for_trench_parapet",
-              "target": "@str_temp2",
-              "var_out": "trench_parapet_name",
-              "spawnOffsetSpace": "object"
-            }
+        "conditions": {},
+        "actions": {
+          "duplicateAreaAtPos": {
+            "area": "sample_for_trench_parapet",
+            "target": "@str_temp2",
+            "var_out": "trench_parapet_name",
+            "spawnOffsetSpace": "object"
           },
-          {
-            "missionDestroyArea": {
-              "target_type": "permanent_rendinst",
-              "area": "@trench_parapet_name"
-            }
+          "missionDestroyArea": {
+            "target_type": "permanent_rendinst",
+            "area": "@trench_parapet_name"
           },
-          {
-            "missionTerraform": {
+          "missionTerraform": [
+            {
               "delta": 0.5,
               "deltaNoisePercent": 0,
               "smoothingAreaWidth": 0.0,
               "object": "@trench_parapet_name"
-            }
-          },
-          {
-            "missionTerraform": {
+            },
+            {
               "delta": -0.2,
               "deltaNoisePercent": 0,
               "smoothingAreaWidth": 0.0,
               "object": "@str_temp2"
             }
-          },
-          {
-            "triggerEnable": {
-              "target": "deepdefa_at_gun_check"
-            }
+          ],
+          "triggerEnable": {
+            "target": "deepdefa_at_gun_check"
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "deepdefa_wake_at_gun": {
         "is_enabled": false,
@@ -834,7 +730,11 @@
           },
           "unitRespawn": {
             "delay": 1.0,
-            "offset": [0.0,0.0,0.0],
+            "offset": [
+              0.0,
+              0.0,
+              0.0
+            ],
             "object": "@str_temp",
             "object_type": "isMarked",
             "object_marking": 0,
@@ -872,16 +772,14 @@
             "value": 1.0,
             "var": "captured_pts"
           },
-          "triggerEnable": [
-            {
-              "target": "deepdefa_check_next_pt"
-            },
-            {
-              "target": "deepdefa_t2_ticket_decrease"
-            }
-          ]
+          "triggerEnable": {
+            "target": [
+              "deepdefa_check_next_pt",
+              "deepdefa_t2_ticket_decrease"
+            ]
+          }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "deepdefa_check_next_pt": {
         "is_enabled": false,
@@ -904,101 +802,75 @@
             "var_value_other": "CAPTURE_POINTS_TOTAL"
           }
         },
-        "actions": [
-          {
-            "varSetInt": {
+        "actions": {
+          "varSetInt": [
+            {
               "value": 0,
               "var": "int_temp2",
               "input_var": "captured_pts"
-            }
-          },
-          {
-            "varSetInt": {
+            },
+            {
               "value": 0,
               "var": "int_temp",
               "input_var": "captured_pts"
             }
+          ],
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "int_temp"
           },
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "int_temp"
-            }
-          },
-          {
-            "varSetString": {
+          "varSetString": [
+            {
               "value": "",
               "var": "t2_rearm_cur",
               "input_var": "capture_pt_cur"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "capture_point_",
               "var": "str_temp"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t1_spawn_",
               "var": "str_temp"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t2_spawn_",
               "var": "str_temp"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t2_safezone_",
               "var": "t2_safezone_cur"
             }
-          },
-          {
-            "comment": {
+          ],
+          "comment": [
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
               "value": ""
             }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "missionMarkAsCaptureZone": {
+          ],
+          "missionMarkAsCaptureZone": [
+            {
               "army": 1,
               "name_for_respawn_base": "",
               "timeMultiplier": 2.0,
@@ -1012,17 +884,15 @@
               "captureNoPenalty": true,
               "markUnitPreset": "tank_decal",
               "markUnits": "cz_circle",
-              "zoneDefenders": [],
+              "zoneDefenders": {},
               "capture_tags": {
                 "vtol_jet": true,
                 "type_attack_helicopter": true,
                 "type_utility_helicopter": true,
                 "tank": true
               }
-            }
-          },
-          {
-            "missionMarkAsCaptureZone": {
+            },
+            {
               "army": 1,
               "name_for_respawn_base": "",
               "timeMultiplier": 2.0,
@@ -1037,7 +907,7 @@
               "captureNoPenalty": true,
               "markUnitPreset": "tank_decal",
               "markUnits": "cz_circle",
-              "zoneDefenders": [],
+              "zoneDefenders": {},
               "capture_tags": {
                 "vtol_jet": true,
                 "type_attack_helicopter": true,
@@ -1045,91 +915,75 @@
                 "tank": true
               }
             }
-          },
-          {
-            "varAddString": {
+          ],
+          "varAddString": [
+            {
               "value": "",
               "digits": 2,
               "var": "str_temp",
               "input_var": "int_temp"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "",
               "digits": 2,
               "var": "str_temp",
               "input_var": "int_temp"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "",
               "digits": 2,
               "var": "str_temp",
               "input_var": "int_temp"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "",
               "digits": 2,
               "var": "t2_safezone_cur",
               "input_var": "int_temp"
             }
-          },
-          {
-            "varGetStringValue": {
+          ],
+          "varGetStringValue": [
+            {
               "from_var_name": "@str_temp",
               "var": "capture_pt_cur"
-            }
-          },
-          {
-            "varGetStringValue": {
+            },
+            {
               "from_var_name": "@str_temp",
               "var": "t1_spawn_cur"
-            }
-          },
-          {
-            "varGetStringValue": {
+            },
+            {
               "from_var_name": "@str_temp",
               "var": "t2_spawn_cur"
             }
-          },
-          {
-            "missionMarkAsRearmZone": {
+          ],
+          "missionMarkAsRearmZone": [
+            {
               "army": 1,
               "area_name": "@t1_spawn_cur",
               "enabled": false,
               "hideMarkers": true
-            }
-          },
-          {
-            "missionMarkAsRearmZone": {
+            },
+            {
               "army": 1,
               "area_name": "@t1_spawn_cur",
               "enabled": true,
               "hideMarkers": true
-            }
-          },
-          {
-            "missionMarkAsRearmZone": {
+            },
+            {
               "army": 2,
               "area_name": "@t2_spawn_cur",
               "enabled": false,
               "hideMarkers": true
-            }
-          },
-          {
-            "missionMarkAsRearmZone": {
+            },
+            {
               "army": 2,
               "area_name": "@t2_rearm_cur",
               "enabled": true,
               "hideMarkers": false
             }
-          },
-          {
-            "missionMarkAsRespawnPoint": {
+          ],
+          "missionMarkAsRespawnPoint": [
+            {
               "loc_name": "missions/spawn_01",
               "spawnEffect": false,
               "isAirfield": false,
@@ -1152,10 +1006,8 @@
               "tags": {
                 "tank": true
               }
-            }
-          },
-          {
-            "missionMarkAsRespawnPoint": {
+            },
+            {
               "loc_name": "missions/spawn_01",
               "spawnEffect": false,
               "isAirfield": false,
@@ -1179,9 +1031,20 @@
                 "tank": true
               }
             }
-          },
-          {
-            "missionBattleArea": {
+          ],
+          "missionBattleArea": [
+            {
+              "air": false,
+              "ground": false,
+              "mapArea": false,
+              "airMapArea": false,
+              "killArea": false,
+              "detectionArea": true,
+              "killOutOfBattleArea": false,
+              "area": "@t2_safezone_cur",
+              "team": "B"
+            },
+            {
               "air": false,
               "ground": false,
               "mapArea": false,
@@ -1192,116 +1055,85 @@
               "area": "@t2_safezone_cur",
               "team": "B"
             }
+          ],
+          "triggerEnable": {
+            "target": "deepdefa_check_capture"
           },
-          {
-            "missionBattleArea": {
-              "air": false,
-              "ground": false,
-              "mapArea": false,
-              "airMapArea": false,
-              "killArea": false,
-              "detectionArea": true,
-              "killOutOfBattleArea": false,
-              "area": "@t2_safezone_cur",
-              "team": "B"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "deepdefa_check_capture"
-            }
-          },
-          {
-            "__missionMarkAsRearmZone": {
+          "__missionMarkAsRearmZone": [
+            {
               "army": 1,
               "area_name": "@t1_rearm_cur",
               "enabled": false,
               "hideMarkers": false
-            }
-          },
-          {
-            "__missionMarkAsRearmZone": {
+            },
+            {
               "army": 1,
               "area_name": "@t1_rearm_cur",
               "enabled": true,
               "hideMarkers": false
-            }
-          },
-          {
-            "__missionMarkAsRearmZone": {
+            },
+            {
               "army": 2,
               "area_name": "@t2_rearm_cur",
               "enabled": false,
               "hideMarkers": false
-            }
-          },
-          {
-            "__missionMarkAsRearmZone": {
+            },
+            {
               "army": 2,
               "area_name": "@t2_rearm_cur",
               "enabled": true,
               "hideMarkers": false
             }
-          },
-          {
-            "__varSetString": {
+          ],
+          "__varSetString": [
+            {
               "value": "",
               "var": "t1_rearm_cur",
               "input_var": "t1_rearm_name"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "",
               "var": "t2_rearm_cur",
               "input_var": "t2_rearm_name"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "",
               "var": "str_temp",
               "input_var": "battle_area_name"
             }
-          },
-          {
-            "__varAddString": {
+          ],
+          "__varAddString": [
+            {
               "value": "",
               "digits": 2,
               "var": "t1_rearm_cur",
               "input_var": "int_temp"
-            }
-          },
-          {
-            "__varAddString": {
+            },
+            {
               "value": "",
               "digits": 2,
               "var": "t2_rearm_cur",
               "input_var": "int_temp"
-            }
-          },
-          {
-            "__varAddString": {
+            },
+            {
               "value": "",
               "digits": 2,
               "var": "str_temp",
               "input_var": "int_temp"
             }
-          },
-          {
-            "__missionBattleArea": {
-              "air": false,
-              "ground": true,
-              "mapArea": true,
-              "airMapArea": false,
-              "killArea": false,
-              "detectionArea": false,
-              "killOutOfBattleArea": true,
-              "area": "@str_temp"
-            }
+          ],
+          "__missionBattleArea": {
+            "air": false,
+            "ground": true,
+            "mapArea": true,
+            "airMapArea": false,
+            "killArea": false,
+            "detectionArea": false,
+            "killOutOfBattleArea": true,
+            "area": "@str_temp"
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "deepdefa_t2_ticket_decrease": {
         "is_enabled": false,
@@ -1316,7 +1148,7 @@
             "time": 0.01
           }
         },
-        "conditions": [],
+        "conditions": {},
         "actions": {
           "gameMPChangeScore": {
             "value": -50,
@@ -1324,7 +1156,7 @@
             "team": "A"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "deepdefa_t1_win": {
         "is_enabled": false,
@@ -1354,7 +1186,7 @@
             "team": "A"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       }
     },
     "deepdefb": {
@@ -1369,221 +1201,163 @@
           "enableAfterComplete": false
         },
         "events": {
-          "initMission": []
+          "initMission": {}
         },
-        "conditions": [],
-        "actions": [
-          {
-            "varSetString": {
+        "conditions": {},
+        "actions": {
+          "varSetString": [
+            {
               "value": "spawn_t1a01",
               "var": "t1_spawn_01"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "spawn_t1a02",
               "var": "t1_spawn_02"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "spawn_t2a01",
               "var": "t2_spawn_01"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "spawn_t2a02",
               "var": "t2_spawn_02"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "capture_point_a01",
               "var": "capture_point_01"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "capture_point_a02",
               "var": "capture_point_02"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "",
               "var": "t1_spawn_cur",
               "input_var": "t1_spawn_01"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "",
               "var": "t2_spawn_cur",
               "input_var": "t2_spawn_01"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "",
               "var": "capture_pt_cur",
               "input_var": "capture_point_01"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t1_safezone_01",
               "var": "t1_safezone_cur"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t2_at_gun_1st_sq",
               "var": "at_gun_1st_sq_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t2_at_gun_2nd_sq",
               "var": "at_gun_2nd_sq_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t2_at_gun_all_sq",
               "var": "at_gun_all_sq_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t2_at_gun_",
               "var": "at_gun_name_prefix"
             }
-          },
-          {
-            "__varSetString": {
+          ],
+          "__varSetString": [
+            {
               "value": "spawn_t1a03_t2b01",
               "var": "t1_spawn_03"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "spawn_t2a03_t1b01",
               "var": "t2_spawn_03"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "capture_point_a03_b01",
               "var": "capture_point_03"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "clear_respawn_",
               "var": "spawn_area_name"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "t1_rearm_",
               "var": "t1_rearm_name"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "t1_rearm_01",
               "var": "t1_rearm_cur"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "t2_rearm_",
               "var": "t2_rearm_name"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "t2_rearm_01",
               "var": "t2_rearm_cur"
             }
+          ],
+          "comment": {
+            "value": ""
           },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "varSetInt": {
+          "varSetInt": [
+            {
               "value": 15,
               "var": "teamB_antiTankGun_count",
               "fromDescriptor": "teamB_antiTankGun_count"
-            }
-          },
-          {
-            "varSetInt": {
+            },
+            {
               "value": 35,
               "var": "atGunFrontLinePercent",
               "fromDescriptor": "atGunFrontLinePercent"
-            }
-          },
-          {
-            "varSetInt": {
+            },
+            {
               "value": 0,
               "var": "at_gun_1st_line_count",
               "input_var": "teamB_antiTankGun_count"
-            }
-          },
-          {
-            "varSetInt": {
+            },
+            {
               "value": 0,
               "var": "at_gun_2nd_line_count",
               "input_var": "teamB_antiTankGun_count"
             }
-          },
-          {
-            "varModify": {
+          ],
+          "varModify": [
+            {
               "operator": "mul",
               "value": 1.0,
               "var": "at_gun_1st_line_count",
               "use_variable": true,
               "var_value": "atGunFrontLinePercent"
-            }
-          },
-          {
-            "varModify": {
+            },
+            {
               "operator": "divAB",
               "value": 100.0,
               "var": "at_gun_1st_line_count"
-            }
-          },
-          {
-            "varModify": {
+            },
+            {
               "operator": "subAB",
               "value": 1.0,
               "var": "at_gun_2nd_line_count",
               "use_variable": true,
               "var_value": "at_gun_1st_line_count"
             }
+          ],
+          "varSetBool": {
+            "value": true,
+            "var": "score_by_time_for_team_a"
           },
-          {
-            "varSetBool": {
-              "value": true,
-              "var": "score_by_time_for_team_a"
-            }
-          },
-          {
-            "triggerEnable": [
-              {
-                "target": "deepdefb_start"
-              },
-              {
-                "target": "deepdefb_spawn_at_gun"
-              }
+          "triggerEnable": {
+            "target": [
+              "deepdefb_start",
+              "deepdefb_spawn_at_gun"
             ]
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "deepdefb_start": {
         "is_enabled": false,
@@ -1594,12 +1368,12 @@
           "enableAfterComplete": false
         },
         "events": {
-          "initMission": []
+          "initMission": {}
         },
-        "conditions": [],
-        "actions": [
-          {
-            "missionMarkAsRespawnPoint": {
+        "conditions": {},
+        "actions": {
+          "missionMarkAsRespawnPoint": [
+            {
               "loc_name": "missions/spawn_01",
               "spawnEffect": false,
               "isAirfield": false,
@@ -1622,10 +1396,8 @@
               "tags": {
                 "tank": true
               }
-            }
-          },
-          {
-            "missionMarkAsRespawnPoint": {
+            },
+            {
               "loc_name": "missions/spawn_01",
               "spawnEffect": false,
               "isAirfield": false,
@@ -1649,50 +1421,46 @@
                 "tank": true
               }
             }
-          },
-          {
-            "missionMarkAsCaptureZone": {
-              "army": 2,
-              "name_for_respawn_base": "",
-              "timeMultiplier": 2.0,
-              "disableZone": false,
-              "target": "@capture_pt_cur",
-              "iconIndex": 0,
-              "canCaptureOnGround": true,
-              "playAirfieldSound": false,
-              "canCaptureInAir": false,
-              "canCaptureByGM": true,
-              "useHUDMarkers": true,
-              "captureNoPenalty": true,
-              "markUnitPreset": "tank_decal",
-              "markUnits": "cz_circle",
-              "zoneDefenders": [],
-              "capture_tags": {
-                "vtol_jet": true,
-                "type_attack_helicopter": true,
-                "type_utility_helicopter": true,
-                "tank": true
-              }
+          ],
+          "missionMarkAsCaptureZone": {
+            "army": 2,
+            "name_for_respawn_base": "",
+            "timeMultiplier": 2.0,
+            "disableZone": false,
+            "target": "@capture_pt_cur",
+            "iconIndex": 0,
+            "canCaptureOnGround": true,
+            "playAirfieldSound": false,
+            "canCaptureInAir": false,
+            "canCaptureByGM": true,
+            "useHUDMarkers": true,
+            "captureNoPenalty": true,
+            "markUnitPreset": "tank_decal",
+            "markUnits": "cz_circle",
+            "zoneDefenders": {},
+            "capture_tags": {
+              "vtol_jet": true,
+              "type_attack_helicopter": true,
+              "type_utility_helicopter": true,
+              "tank": true
             }
           },
-          {
-            "missionMarkAsRearmZone": {
+          "missionMarkAsRearmZone": [
+            {
               "army": 1,
               "area_name": "@t1_spawn_cur",
               "enabled": true,
               "hideMarkers": true
-            }
-          },
-          {
-            "missionMarkAsRearmZone": {
+            },
+            {
               "army": 2,
               "area_name": "@t2_spawn_cur",
               "enabled": true,
               "hideMarkers": true
             }
-          },
-          {
-            "missionBattleArea": {
+          ],
+          "missionBattleArea": [
+            {
               "air": false,
               "ground": false,
               "mapArea": false,
@@ -1702,10 +1470,8 @@
               "killOutOfBattleArea": false,
               "area": "@t1_safezone_cur",
               "team": "A"
-            }
-          },
-          {
-            "missionBattleArea": {
+            },
+            {
               "air": false,
               "ground": true,
               "mapArea": true,
@@ -1715,60 +1481,46 @@
               "killOutOfBattleArea": true,
               "area": "battle_area_a01"
             }
-          },
-          {
-            "comment": {
+          ],
+          "comment": [
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
               "value": ""
             }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "moAddMissionObjective": {
+          ],
+          "moAddMissionObjective": [
+            {
               "target": "@ATTACK_OBJECTIVE",
               "object_var_comp_op": "equal",
               "object_var_name": "",
               "object_marking": 0
-            }
-          },
-          {
-            "moAddMissionObjective": {
+            },
+            {
               "target": "@DEFEND_OBJECTIVE",
               "object_var_comp_op": "equal",
               "object_var_name": "",
               "object_marking": 0
             }
-          },
-          {
-            "unitPutToSleep": [
-              {
-                "target": "defense_objects_a_01"
-              },
-              {
-                "target": "defense_objects_a_02"
-              }
+          ],
+          "unitPutToSleep": {
+            "target": [
+              "defense_objects_a_01",
+              "defense_objects_a_02"
             ]
           },
-          {
-            "triggerEnable": [
-              {
-                "target": "deepdefb_check_capture"
-              },
-              {
-                "target": "deepdefb_t1_win"
-              }
+          "triggerEnable": {
+            "target": [
+              "deepdefb_check_capture",
+              "deepdefb_t1_win"
             ]
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "deepdefb_spawn_at_gun": {
         "is_enabled": false,
@@ -1779,48 +1531,40 @@
           "enableAfterComplete": false
         },
         "events": {
-          "initMission": []
+          "initMission": {}
         },
-        "conditions": [],
-        "actions": [
-          {
-            "unitPutToSleep": {
-              "target": "@at_gun_all_sq_name"
-            }
+        "conditions": {},
+        "actions": {
+          "unitPutToSleep": {
+            "target": "@at_gun_all_sq_name"
           },
-          {
-            "unitWakeUp": {
+          "unitWakeUp": [
+            {
               "target": "@at_gun_1st_sq_name",
               "varNameNumToWakeUp": "at_gun_1st_line_count",
               "order": "random"
-            }
-          },
-          {
-            "unitWakeUp": {
+            },
+            {
               "target": "@at_gun_2nd_sq_name",
               "varNameNumToWakeUp": "at_gun_2nd_line_count",
               "order": "random"
             }
+          ],
+          "unitSetProperties": {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "object": "@at_gun_all_sq_name",
+            "accuracy": 0.5,
+            "checkVisibilityTarget": true,
+            "visibilityTreeTransparencyThreshold": 0.01
           },
-          {
-            "unitSetProperties": {
-              "object_marking": 0,
-              "object_var_name": "",
-              "object_var_comp_op": "equal",
-              "object_var_value": 0,
-              "object": "@at_gun_all_sq_name",
-              "accuracy": 0.5,
-              "checkVisibilityTarget": true,
-              "visibilityTreeTransparencyThreshold": 0.01
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "deepdefb_at_gun_check"
-            }
+          "triggerEnable": {
+            "target": "deepdefb_at_gun_check"
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "deepdefb_at_gun_check": {
         "is_enabled": false,
@@ -1842,49 +1586,41 @@
             "comparasion_func": "less"
           }
         },
-        "actions": [
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "int_temp"
-            }
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "int_temp"
           },
-          {
-            "varSetString": {
+          "varSetString": [
+            {
               "value": "",
               "var": "str_temp",
               "input_var": "at_gun_name_prefix"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t2a_pit_",
               "var": "str_temp2"
             }
-          },
-          {
-            "varAddString": {
+          ],
+          "varAddString": [
+            {
               "value": "",
               "digits": 2,
               "var": "str_temp",
               "input_var": "int_temp"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "",
               "digits": 2,
               "var": "str_temp2",
               "input_var": "int_temp"
             }
-          },
-          {
-            "triggerEnable": {
-              "target": "deepdefb_at_gun_setup"
-            }
+          ],
+          "triggerEnable": {
+            "target": "deepdefb_at_gun_setup"
           }
-        ],
+        },
         "else_actions": {
           "varSetInt": {
             "value": 0,
@@ -2018,45 +1754,37 @@
             "time": 0.0
           }
         },
-        "conditions": [],
-        "actions": [
-          {
-            "duplicateAreaAtPos": {
-              "area": "sample_for_trench_parapet",
-              "target": "@str_temp2",
-              "var_out": "trench_parapet_name",
-              "spawnOffsetSpace": "object"
-            }
+        "conditions": {},
+        "actions": {
+          "duplicateAreaAtPos": {
+            "area": "sample_for_trench_parapet",
+            "target": "@str_temp2",
+            "var_out": "trench_parapet_name",
+            "spawnOffsetSpace": "object"
           },
-          {
-            "missionDestroyArea": {
-              "target_type": "permanent_rendinst",
-              "area": "@trench_parapet_name"
-            }
+          "missionDestroyArea": {
+            "target_type": "permanent_rendinst",
+            "area": "@trench_parapet_name"
           },
-          {
-            "missionTerraform": {
+          "missionTerraform": [
+            {
               "delta": 0.5,
               "deltaNoisePercent": 0,
               "smoothingAreaWidth": 0.0,
               "object": "@trench_parapet_name"
-            }
-          },
-          {
-            "missionTerraform": {
+            },
+            {
               "delta": -0.2,
               "deltaNoisePercent": 0,
               "smoothingAreaWidth": 0.0,
               "object": "@str_temp2"
             }
-          },
-          {
-            "triggerEnable": {
-              "target": "deepdefb_at_gun_check"
-            }
+          ],
+          "triggerEnable": {
+            "target": "deepdefb_at_gun_check"
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "deepdefb_wake_at_gun": {
         "is_enabled": false,
@@ -2103,7 +1831,11 @@
           },
           "unitRespawn": {
             "delay": 1.0,
-            "offset": [0.0,0.0,0.0],
+            "offset": [
+              0.0,
+              0.0,
+              0.0
+            ],
             "object": "@str_temp",
             "object_type": "isMarked",
             "object_marking": 0,
@@ -2141,16 +1873,14 @@
             "value": 1.0,
             "var": "captured_pts"
           },
-          "triggerEnable": [
-            {
-              "target": "deepdefb_check_next_pt"
-            },
-            {
-              "target": "deepdefb_t2_ticket_decrease"
-            }
-          ]
+          "triggerEnable": {
+            "target": [
+              "deepdefb_check_next_pt",
+              "deepdefb_t2_ticket_decrease"
+            ]
+          }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "deepdefb_check_next_pt": {
         "is_enabled": false,
@@ -2173,101 +1903,75 @@
             "var_value_other": "CAPTURE_POINTS_TOTAL"
           }
         },
-        "actions": [
-          {
-            "varSetInt": {
+        "actions": {
+          "varSetInt": [
+            {
               "value": 0,
               "var": "int_temp2",
               "input_var": "captured_pts"
-            }
-          },
-          {
-            "varSetInt": {
+            },
+            {
               "value": 0,
               "var": "int_temp",
               "input_var": "captured_pts"
             }
+          ],
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "int_temp"
           },
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "int_temp"
-            }
-          },
-          {
-            "varSetString": {
+          "varSetString": [
+            {
               "value": "",
               "var": "t1_rearm_cur",
               "input_var": "capture_pt_cur"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "capture_point_",
               "var": "str_temp"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t1_spawn_",
               "var": "str_temp"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t2_spawn_",
               "var": "str_temp"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t1_safezone_",
               "var": "t1_safezone_cur"
             }
-          },
-          {
-            "comment": {
+          ],
+          "comment": [
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
               "value": ""
             }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "comment": {
-              "value": ""
-            }
-          },
-          {
-            "missionMarkAsCaptureZone": {
+          ],
+          "missionMarkAsCaptureZone": [
+            {
               "army": 2,
               "name_for_respawn_base": "",
               "timeMultiplier": 2.0,
@@ -2281,17 +1985,15 @@
               "captureNoPenalty": true,
               "markUnitPreset": "tank_decal",
               "markUnits": "cz_circle",
-              "zoneDefenders": [],
+              "zoneDefenders": {},
               "capture_tags": {
                 "vtol_jet": true,
                 "type_attack_helicopter": true,
                 "type_utility_helicopter": true,
                 "tank": true
               }
-            }
-          },
-          {
-            "missionMarkAsCaptureZone": {
+            },
+            {
               "army": 2,
               "name_for_respawn_base": "",
               "timeMultiplier": 2.0,
@@ -2306,7 +2008,7 @@
               "captureNoPenalty": true,
               "markUnitPreset": "tank_decal",
               "markUnits": "cz_circle",
-              "zoneDefenders": [],
+              "zoneDefenders": {},
               "capture_tags": {
                 "vtol_jet": true,
                 "type_attack_helicopter": true,
@@ -2314,91 +2016,75 @@
                 "tank": true
               }
             }
-          },
-          {
-            "varAddString": {
+          ],
+          "varAddString": [
+            {
               "value": "",
               "digits": 2,
               "var": "str_temp",
               "input_var": "int_temp"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "",
               "digits": 2,
               "var": "str_temp",
               "input_var": "int_temp"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "",
               "digits": 2,
               "var": "str_temp",
               "input_var": "int_temp"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "",
               "digits": 2,
               "var": "t1_safezone_cur",
               "input_var": "int_temp"
             }
-          },
-          {
-            "varGetStringValue": {
+          ],
+          "varGetStringValue": [
+            {
               "from_var_name": "@str_temp",
               "var": "capture_pt_cur"
-            }
-          },
-          {
-            "varGetStringValue": {
+            },
+            {
               "from_var_name": "@str_temp",
               "var": "t1_spawn_cur"
-            }
-          },
-          {
-            "varGetStringValue": {
+            },
+            {
               "from_var_name": "@str_temp",
               "var": "t2_spawn_cur"
             }
-          },
-          {
-            "missionMarkAsRearmZone": {
+          ],
+          "missionMarkAsRearmZone": [
+            {
               "army": 1,
               "area_name": "@t1_spawn_cur",
               "enabled": false,
               "hideMarkers": true
-            }
-          },
-          {
-            "missionMarkAsRearmZone": {
+            },
+            {
               "army": 1,
               "area_name": "@t1_rearm_cur",
               "enabled": true,
               "hideMarkers": false
-            }
-          },
-          {
-            "missionMarkAsRearmZone": {
+            },
+            {
               "army": 2,
               "area_name": "@t2_spawn_cur",
               "enabled": false,
               "hideMarkers": true
-            }
-          },
-          {
-            "missionMarkAsRearmZone": {
+            },
+            {
               "army": 2,
               "area_name": "@t2_spawn_cur",
               "enabled": true,
               "hideMarkers": true
             }
-          },
-          {
-            "missionMarkAsRespawnPoint": {
+          ],
+          "missionMarkAsRespawnPoint": [
+            {
               "loc_name": "missions/spawn_01",
               "spawnEffect": false,
               "isAirfield": false,
@@ -2421,10 +2107,8 @@
               "tags": {
                 "tank": true
               }
-            }
-          },
-          {
-            "missionMarkAsRespawnPoint": {
+            },
+            {
               "loc_name": "missions/spawn_01",
               "spawnEffect": false,
               "isAirfield": false,
@@ -2448,9 +2132,20 @@
                 "tank": true
               }
             }
-          },
-          {
-            "missionBattleArea": {
+          ],
+          "missionBattleArea": [
+            {
+              "air": false,
+              "ground": false,
+              "mapArea": false,
+              "airMapArea": false,
+              "killArea": false,
+              "detectionArea": true,
+              "killOutOfBattleArea": false,
+              "area": "@t1_safezone_cur",
+              "team": "A"
+            },
+            {
               "air": false,
               "ground": false,
               "mapArea": false,
@@ -2461,116 +2156,85 @@
               "area": "@t1_safezone_cur",
               "team": "A"
             }
+          ],
+          "triggerEnable": {
+            "target": "deepdefb_check_capture"
           },
-          {
-            "missionBattleArea": {
-              "air": false,
-              "ground": false,
-              "mapArea": false,
-              "airMapArea": false,
-              "killArea": false,
-              "detectionArea": true,
-              "killOutOfBattleArea": false,
-              "area": "@t1_safezone_cur",
-              "team": "A"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "deepdefb_check_capture"
-            }
-          },
-          {
-            "__missionMarkAsRearmZone": {
+          "__missionMarkAsRearmZone": [
+            {
               "army": 1,
               "area_name": "@t1_rearm_cur",
               "enabled": false,
               "hideMarkers": false
-            }
-          },
-          {
-            "__missionMarkAsRearmZone": {
+            },
+            {
               "army": 1,
               "area_name": "@t1_rearm_cur",
               "enabled": true,
               "hideMarkers": false
-            }
-          },
-          {
-            "__missionMarkAsRearmZone": {
+            },
+            {
               "army": 2,
               "area_name": "@t2_rearm_cur",
               "enabled": false,
               "hideMarkers": false
-            }
-          },
-          {
-            "__missionMarkAsRearmZone": {
+            },
+            {
               "army": 2,
               "area_name": "@t2_rearm_cur",
               "enabled": true,
               "hideMarkers": false
             }
-          },
-          {
-            "__varSetString": {
+          ],
+          "__varSetString": [
+            {
               "value": "",
               "var": "t1_rearm_cur",
               "input_var": "t1_rearm_name"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "",
               "var": "t2_rearm_cur",
               "input_var": "t2_rearm_name"
-            }
-          },
-          {
-            "__varSetString": {
+            },
+            {
               "value": "",
               "var": "str_temp",
               "input_var": "battle_area_name"
             }
-          },
-          {
-            "__varAddString": {
+          ],
+          "__varAddString": [
+            {
               "value": "",
               "digits": 2,
               "var": "t1_rearm_cur",
               "input_var": "int_temp"
-            }
-          },
-          {
-            "__varAddString": {
+            },
+            {
               "value": "",
               "digits": 2,
               "var": "t2_rearm_cur",
               "input_var": "int_temp"
-            }
-          },
-          {
-            "__varAddString": {
+            },
+            {
               "value": "",
               "digits": 2,
               "var": "str_temp",
               "input_var": "int_temp"
             }
-          },
-          {
-            "__missionBattleArea": {
-              "air": false,
-              "ground": true,
-              "mapArea": true,
-              "airMapArea": false,
-              "killArea": false,
-              "detectionArea": false,
-              "killOutOfBattleArea": true,
-              "area": "@str_temp"
-            }
+          ],
+          "__missionBattleArea": {
+            "air": false,
+            "ground": true,
+            "mapArea": true,
+            "airMapArea": false,
+            "killArea": false,
+            "detectionArea": false,
+            "killOutOfBattleArea": true,
+            "area": "@str_temp"
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "deepdefb_t2_ticket_decrease": {
         "is_enabled": false,
@@ -2585,7 +2249,7 @@
             "time": 0.01
           }
         },
-        "conditions": [],
+        "conditions": {},
         "actions": {
           "gameMPChangeScore": {
             "value": -50,
@@ -2593,7 +2257,7 @@
             "team": "B"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "deepdefb_t1_win": {
         "is_enabled": false,
@@ -2623,7 +2287,7 @@
             "team": "B"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       }
     }
   },
@@ -2682,18 +2346,34 @@
     "trench_parapet_name": "",
     "TERRAFORM_EXCLUDE_ZONE": "terraform_exclude_zone"
   },
-  "dialogs": [],
-  "airfields": [],
-  "effects": [],
-  "units": [
-    {
-      "tankModels": {
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {
+    "tankModels": [
+      {
         "name": "t1_at_gun_01",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [0.0,0.0,0.0]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -2716,22 +2396,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_02",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-5.90904,0.0,0.0]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -5.90904,
+            0.0,
+            0.0
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -2754,22 +2454,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_03",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-11.8181,0.0,0.0]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -11.8181,
+            0.0,
+            0.0
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -2792,22 +2512,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_04",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-17.7271,0.0,0.0]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -17.7271,
+            0.0,
+            0.0
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -2830,22 +2570,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_05",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-23.6362,0.0,0.0]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -23.6362,
+            0.0,
+            0.0
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -2868,22 +2628,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_06",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-29.5452,0.0,0.0]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -29.5452,
+            0.0,
+            0.0
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -2906,22 +2686,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_07",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-35.4543,0.0,0.0]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -35.4543,
+            0.0,
+            0.0
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -2944,22 +2744,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_08",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-41.3633,0.0,0.0]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -41.3633,
+            0.0,
+            0.0
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -2982,22 +2802,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_09",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-47.2724,0.0,0.0]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -47.2724,
+            0.0,
+            0.0
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3020,22 +2860,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_10",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-53.1814,0.0,0.0]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -53.1814,
+            0.0,
+            0.0
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3058,22 +2918,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_11",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-59.0904,0.0,0.0]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -59.0904,
+            0.0,
+            0.0
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3096,22 +2976,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_12",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-64.9995,0.0,0.0]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -64.9995,
+            0.0,
+            0.0
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3134,22 +3034,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_13",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-70.9085,0.0,0.0]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -70.9085,
+            0.0,
+            0.0
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3172,22 +3092,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_14",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-76.8176,0.0,0.0]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -76.8176,
+            0.0,
+            0.0
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3210,22 +3150,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_15",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-82.7266,0.0,0.0]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -82.7266,
+            0.0,
+            0.0
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3248,22 +3208,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_01",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [0.0,0.0,35.8422]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            35.8422
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3286,22 +3266,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_02",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-6.26104,0.0,35.8422]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -6.26104,
+            0.0,
+            35.8422
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3324,22 +3324,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_03",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-12.5221,0.0,35.8422]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -12.5221,
+            0.0,
+            35.8422
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3362,22 +3382,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_04",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-18.7831,0.0,35.8422]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -18.7831,
+            0.0,
+            35.8422
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3400,22 +3440,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_05",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-25.0442,0.0,35.8422]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -25.0442,
+            0.0,
+            35.8422
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3438,22 +3498,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_06",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-31.3052,0.0,35.8422]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -31.3052,
+            0.0,
+            35.8422
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3476,22 +3556,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_07",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-37.5662,0.0,35.8422]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -37.5662,
+            0.0,
+            35.8422
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3514,22 +3614,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_08",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-43.8273,0.0,35.8422]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -43.8273,
+            0.0,
+            35.8422
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3552,22 +3672,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_09",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-50.0883,0.0,35.8422]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -50.0883,
+            0.0,
+            35.8422
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3590,22 +3730,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_10",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-56.3494,0.0,35.8422]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -56.3494,
+            0.0,
+            35.8422
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3628,22 +3788,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_11",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-62.6104,0.0,35.8422]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -62.6104,
+            0.0,
+            35.8422
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3666,22 +3846,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_12",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-68.8714,0.0,35.8422]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -68.8714,
+            0.0,
+            35.8422
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3704,22 +3904,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_13",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-75.1325,0.0,35.8422]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -75.1325,
+            0.0,
+            35.8422
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3742,22 +3962,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_14",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-81.3935,0.0,35.8422]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -81.3935,
+            0.0,
+            35.8422
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3780,22 +4020,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_15",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-87.6546,0.0,35.8422]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -87.6546,
+            0.0,
+            35.8422
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -3818,246 +4078,306 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
+        "way": {}
       }
-    },
-    {
-      "squad": {
+    ],
+    "squad": [
+      {
         "name": "t1_at_gun_1st_sq",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-11.8181,0.0,-21.2639]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -11.8181,
+            0.0,
+            -21.2639
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "t1_at_gun_01"
-          },
-          {
-            "squad_members": "t1_at_gun_02"
-          },
-          {
-            "squad_members": "t1_at_gun_03"
-          },
-          {
-            "squad_members": "t1_at_gun_04"
-          },
-          {
-            "squad_members": "t1_at_gun_05"
-          }
-        ]
-      }
-    },
-    {
-      "squad": {
+        "props": {
+          "squad_members": [
+            "t1_at_gun_01",
+            "t1_at_gun_02",
+            "t1_at_gun_03",
+            "t1_at_gun_04",
+            "t1_at_gun_05"
+          ]
+        }
+      },
+      {
         "name": "t1_at_gun_2nd_sq",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-56.1359,0.0,-21.5861]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -56.1359,
+            0.0,
+            -21.5861
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "t1_at_gun_06"
-          },
-          {
-            "squad_members": "t1_at_gun_07"
-          },
-          {
-            "squad_members": "t1_at_gun_08"
-          },
-          {
-            "squad_members": "t1_at_gun_09"
-          },
-          {
-            "squad_members": "t1_at_gun_10"
-          },
-          {
-            "squad_members": "t1_at_gun_11"
-          },
-          {
-            "squad_members": "t1_at_gun_12"
-          },
-          {
-            "squad_members": "t1_at_gun_13"
-          },
-          {
-            "squad_members": "t1_at_gun_14"
-          },
-          {
-            "squad_members": "t1_at_gun_15"
-          }
-        ]
-      }
-    },
-    {
-      "squad": {
+        "props": {
+          "squad_members": [
+            "t1_at_gun_06",
+            "t1_at_gun_07",
+            "t1_at_gun_08",
+            "t1_at_gun_09",
+            "t1_at_gun_10",
+            "t1_at_gun_11",
+            "t1_at_gun_12",
+            "t1_at_gun_13",
+            "t1_at_gun_14",
+            "t1_at_gun_15"
+          ]
+        }
+      },
+      {
         "name": "t2_at_gun_1st_sq",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-12.5221,0.0,55.0605]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -12.5221,
+            0.0,
+            55.0605
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "t2_at_gun_01"
-          },
-          {
-            "squad_members": "t2_at_gun_02"
-          },
-          {
-            "squad_members": "t2_at_gun_03"
-          },
-          {
-            "squad_members": "t2_at_gun_04"
-          },
-          {
-            "squad_members": "t2_at_gun_05"
-          }
-        ]
-      }
-    },
-    {
-      "squad": {
+        "props": {
+          "squad_members": [
+            "t2_at_gun_01",
+            "t2_at_gun_02",
+            "t2_at_gun_03",
+            "t2_at_gun_04",
+            "t2_at_gun_05"
+          ]
+        }
+      },
+      {
         "name": "t2_at_gun_2nd_sq",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-59.4799,0.0,55.3396]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -59.4799,
+            0.0,
+            55.3396
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "t2_at_gun_06"
-          },
-          {
-            "squad_members": "t2_at_gun_07"
-          },
-          {
-            "squad_members": "t2_at_gun_08"
-          },
-          {
-            "squad_members": "t2_at_gun_09"
-          },
-          {
-            "squad_members": "t2_at_gun_10"
-          },
-          {
-            "squad_members": "t2_at_gun_11"
-          },
-          {
-            "squad_members": "t2_at_gun_12"
-          },
-          {
-            "squad_members": "t2_at_gun_13"
-          },
-          {
-            "squad_members": "t2_at_gun_14"
-          },
-          {
-            "squad_members": "t2_at_gun_15"
-          }
-        ]
-      }
-    },
-    {
-      "squad": {
+        "props": {
+          "squad_members": [
+            "t2_at_gun_06",
+            "t2_at_gun_07",
+            "t2_at_gun_08",
+            "t2_at_gun_09",
+            "t2_at_gun_10",
+            "t2_at_gun_11",
+            "t2_at_gun_12",
+            "t2_at_gun_13",
+            "t2_at_gun_14",
+            "t2_at_gun_15"
+          ]
+        }
+      },
+      {
         "name": "t1_at_gun_all_sq",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-33.977,0.0,-40.2912]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -33.977,
+            0.0,
+            -40.2912
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "t1_at_gun_1st_sq"
-          },
-          {
-            "squad_members": "t1_at_gun_2nd_sq"
-          }
-        ]
-      }
-    },
-    {
-      "squad": {
+        "props": {
+          "squad_members": [
+            "t1_at_gun_1st_sq",
+            "t1_at_gun_2nd_sq"
+          ]
+        }
+      },
+      {
         "name": "t2_at_gun_all_sq",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-36.001,0.0,72.8669]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -36.001,
+            0.0,
+            72.8669
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "t2_at_gun_1st_sq"
-          },
-          {
-            "squad_members": "t2_at_gun_2nd_sq"
-          }
-        ]
-      }
-    },
-    {
-      "objectGroups": {
-        "name": "cz_circle",
-        "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-158.844,0.0,22.5327]
-        ],
-        "unit_class": "capture_zone_circle",
-        "objLayer": 2,
         "props": {
-          "army": 2,
-          "active": true
+          "squad_members": [
+            "t2_at_gun_1st_sq",
+            "t2_at_gun_2nd_sq"
+          ]
         }
       }
+    ],
+    "objectGroups": {
+      "name": "cz_circle",
+      "tm": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -158.844,
+          0.0,
+          22.5327
+        ]
+      ],
+      "unit_class": "capture_zone_circle",
+      "objLayer": 2,
+      "props": {
+        "army": 2,
+        "active": true
+      }
     }
-  ],
+  },
   "areas": {
     "sample_for_trench_parapet": {
       "type": "Cylinder",
       "tm": [
-        [5.6,0.0,0.0],
-        [0.0,2.0,0.0],
-        [0.0,0.0,5.6],
-        [0.0,0.0,0.0]
+        [
+          5.6,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          2.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          5.6
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
       ],
       "objLayer": 0,
-      "props": []
+      "props": {}
     }
   },
-  "objLayers": [
-    {
-      "layer": {
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
         "enabled": true
       }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    }
-  ],
-  "wayPoints": []
+    ]
+  },
+  "wayPoints": {}
 }

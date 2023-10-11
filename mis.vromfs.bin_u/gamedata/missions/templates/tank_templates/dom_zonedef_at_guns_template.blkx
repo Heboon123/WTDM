@@ -17,7 +17,7 @@
       "optionalTakeOff": false
     }
   },
-  "imports": [],
+  "imports": {},
   "triggers": {
     "isCategory": true,
     "is_enabled": true,
@@ -33,83 +33,51 @@
           "enableAfterComplete": false
         },
         "events": {
-          "initMission": []
+          "initMission": {}
         },
-        "conditions": [],
-        "actions": [
-          {
-            "varSetInt": {
+        "conditions": {},
+        "actions": {
+          "varSetInt": [
+            {
               "value": 20,
               "var": "t1_at_gun_count",
               "fromDescriptor": "teamA_antiTankGun_count"
-            }
-          },
-          {
-            "varSetInt": {
+            },
+            {
               "value": 20,
               "var": "t2_at_gun_count",
               "fromDescriptor": "teamB_antiTankGun_count"
             }
+          ],
+          "unitSetProperties": {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "object": [
+              "t1_at_gun_squad",
+              "t2_at_gun_squad"
+            ],
+            "accuracy": 0.5,
+            "checkVisibilityTarget": true,
+            "visibilityTreeTransparencyThreshold": 0.01
           },
-          {
-            "unitSetProperties": [
-              {
-                "object_marking": 0
-              },
-              {
-                "object_var_name": ""
-              },
-              {
-                "object_var_comp_op": "equal"
-              },
-              {
-                "object_var_value": 0
-              },
-              {
-                "object": "t1_at_gun_squad"
-              },
-              {
-                "object": "t2_at_gun_squad"
-              },
-              {
-                "accuracy": 0.5
-              },
-              {
-                "checkVisibilityTarget": true
-              },
-              {
-                "visibilityTreeTransparencyThreshold": 0.01
-              }
+          "unitSetStealth": {
+            "set": true,
+            "radius": 0.1,
+            "target": [
+              "t1_at_gun_squad",
+              "t2_at_gun_squad"
             ]
           },
-          {
-            "unitSetStealth": [
-              {
-                "set": true
-              },
-              {
-                "radius": 0.1
-              },
-              {
-                "target": "t1_at_gun_squad"
-              },
-              {
-                "target": "t2_at_gun_squad"
-              }
-            ]
-          },
-          {
-            "triggerEnable": [
-              {
-                "target": "t1_at_gun_set_limit"
-              },
-              {
-                "target": "t2_at_gun_set_limit"
-              }
+          "triggerEnable": {
+            "target": [
+              "t1_at_gun_set_limit",
+              "t2_at_gun_set_limit"
             ]
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "t1_at_gun_set_limit": {
         "is_enabled": false,
@@ -120,7 +88,7 @@
           "enableAfterComplete": false
         },
         "events": {
-          "initMission": []
+          "initMission": {}
         },
         "conditions": {
           "varCompareInt": {
@@ -155,7 +123,7 @@
           "enableAfterComplete": false
         },
         "events": {
-          "initMission": []
+          "initMission": {}
         },
         "conditions": {
           "varCompareInt": {
@@ -174,7 +142,7 @@
             "target": "t1_at_gun_terraform_check"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "t1_at_gun_terraform_check": {
         "is_enabled": false,
@@ -197,48 +165,40 @@
             "var_value_other": "at_gun_count_max"
           }
         },
-        "actions": [
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "t1_at_gun_iter_idx"
-            }
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "t1_at_gun_iter_idx"
           },
-          {
-            "varSetString": {
+          "varSetString": [
+            {
               "value": "t1_at_gun_",
               "var": "t1_at_gun_iter_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t1_gun_pit_",
               "var": "t1_pit_iter_name"
             }
-          },
-          {
-            "varAddString": {
+          ],
+          "varAddString": [
+            {
               "value": "",
               "digits": 2,
               "var": "t1_at_gun_iter_name",
               "input_var": "t1_at_gun_iter_idx"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "",
               "digits": 2,
               "var": "t1_pit_iter_name",
               "input_var": "t1_at_gun_iter_idx"
             }
-          },
-          {
-            "triggerEnable": {
-              "target": "t1_at_gun_terraform_do"
-            }
+          ],
+          "triggerEnable": {
+            "target": "t1_at_gun_terraform_do"
           }
-        ],
+        },
         "else_actions": {
           "unitSetStealth": {
             "set": false,
@@ -273,57 +233,49 @@
             "object": "@t1_at_gun_iter_name"
           }
         },
-        "actions": [
-          {
-            "unitPutToSleep": {
-              "target": "@t1_at_gun_iter_name"
-            }
+        "actions": {
+          "unitPutToSleep": {
+            "target": "@t1_at_gun_iter_name"
           },
-          {
-            "duplicateAreaAtPos": {
-              "area": "sample_for_trench_parapet",
-              "target": "@t1_pit_iter_name",
-              "var_out": "t1_trench_parapet_name",
-              "spawnOffsetSpace": "object"
-            }
+          "duplicateAreaAtPos": {
+            "area": "sample_for_trench_parapet",
+            "target": "@t1_pit_iter_name",
+            "var_out": "t1_trench_parapet_name",
+            "spawnOffsetSpace": "object"
           },
-          {
-            "missionDestroyArea": {
-              "target_type": "permanent_rendinst",
-              "area": "@t1_trench_parapet_name"
-            }
+          "missionDestroyArea": {
+            "target_type": "permanent_rendinst",
+            "area": "@t1_trench_parapet_name"
           },
-          {
-            "missionTerraform": {
+          "missionTerraform": [
+            {
               "delta": 0.5,
               "deltaNoisePercent": 0,
               "smoothingAreaWidth": 0.0,
               "object": "@t1_trench_parapet_name"
-            }
-          },
-          {
-            "missionTerraform": {
+            },
+            {
               "delta": -0.2,
               "deltaNoisePercent": 0,
               "smoothingAreaWidth": 0.0,
               "object": "@t1_pit_iter_name"
             }
+          ],
+          "unitRespawn": {
+            "delay": 0.5,
+            "offset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "object": "@t1_at_gun_iter_name",
+            "target": "@t1_pit_iter_name",
+            "needStopOnRespawn": true
           },
-          {
-            "unitRespawn": {
-              "delay": 0.5,
-              "offset": [0.0,0.0,0.0],
-              "object": "@t1_at_gun_iter_name",
-              "target": "@t1_pit_iter_name",
-              "needStopOnRespawn": true
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "t1_at_gun_terraform_check"
-            }
+          "triggerEnable": {
+            "target": "t1_at_gun_terraform_check"
           }
-        ],
+        },
         "else_actions": {
           "triggerEnable": {
             "target": "t1_at_gun_terraform_check"
@@ -339,7 +291,7 @@
           "enableAfterComplete": false
         },
         "events": {
-          "initMission": []
+          "initMission": {}
         },
         "conditions": {
           "varCompareInt": {
@@ -374,7 +326,7 @@
           "enableAfterComplete": false
         },
         "events": {
-          "initMission": []
+          "initMission": {}
         },
         "conditions": {
           "varCompareInt": {
@@ -393,7 +345,7 @@
             "target": "t2_at_gun_terraform_check"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "t2_at_gun_terraform_check": {
         "is_enabled": false,
@@ -416,48 +368,40 @@
             "var_value_other": "at_gun_count_max"
           }
         },
-        "actions": [
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "t2_at_gun_iter_idx"
-            }
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "t2_at_gun_iter_idx"
           },
-          {
-            "varSetString": {
+          "varSetString": [
+            {
               "value": "t2_at_gun_",
               "var": "t2_at_gun_iter_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t2_gun_pit_",
               "var": "t2_pit_iter_name"
             }
-          },
-          {
-            "varAddString": {
+          ],
+          "varAddString": [
+            {
               "value": "",
               "digits": 2,
               "var": "t2_at_gun_iter_name",
               "input_var": "t2_at_gun_iter_idx"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "",
               "digits": 2,
               "var": "t2_pit_iter_name",
               "input_var": "t2_at_gun_iter_idx"
             }
-          },
-          {
-            "triggerEnable": {
-              "target": "t2_at_gun_terraform_do"
-            }
+          ],
+          "triggerEnable": {
+            "target": "t2_at_gun_terraform_do"
           }
-        ],
+        },
         "else_actions": {
           "unitSetStealth": {
             "set": false,
@@ -492,57 +436,49 @@
             "object": "@t2_at_gun_iter_name"
           }
         },
-        "actions": [
-          {
-            "unitPutToSleep": {
-              "target": "@t2_at_gun_iter_name"
-            }
+        "actions": {
+          "unitPutToSleep": {
+            "target": "@t2_at_gun_iter_name"
           },
-          {
-            "duplicateAreaAtPos": {
-              "area": "sample_for_trench_parapet",
-              "target": "@t2_pit_iter_name",
-              "var_out": "t2_trench_parapet_name",
-              "spawnOffsetSpace": "object"
-            }
+          "duplicateAreaAtPos": {
+            "area": "sample_for_trench_parapet",
+            "target": "@t2_pit_iter_name",
+            "var_out": "t2_trench_parapet_name",
+            "spawnOffsetSpace": "object"
           },
-          {
-            "missionDestroyArea": {
-              "target_type": "permanent_rendinst",
-              "area": "@t2_trench_parapet_name"
-            }
+          "missionDestroyArea": {
+            "target_type": "permanent_rendinst",
+            "area": "@t2_trench_parapet_name"
           },
-          {
-            "missionTerraform": {
+          "missionTerraform": [
+            {
               "delta": 0.5,
               "deltaNoisePercent": 0,
               "smoothingAreaWidth": 0.0,
               "object": "@t2_trench_parapet_name"
-            }
-          },
-          {
-            "missionTerraform": {
+            },
+            {
               "delta": -0.2,
               "deltaNoisePercent": 0,
               "smoothingAreaWidth": 0.0,
               "object": "@t2_pit_iter_name"
             }
+          ],
+          "unitRespawn": {
+            "delay": 0.5,
+            "offset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "object": "@t2_at_gun_iter_name",
+            "target": "@t2_pit_iter_name",
+            "needStopOnRespawn": true
           },
-          {
-            "unitRespawn": {
-              "delay": 0.5,
-              "offset": [0.0,0.0,0.0],
-              "object": "@t2_at_gun_iter_name",
-              "target": "@t2_pit_iter_name",
-              "needStopOnRespawn": true
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "t2_at_gun_terraform_check"
-            }
+          "triggerEnable": {
+            "target": "t2_at_gun_terraform_check"
           }
-        ],
+        },
         "else_actions": {
           "triggerEnable": {
             "target": "t2_at_gun_terraform_check"
@@ -568,18 +504,34 @@
     "t2_pit_iter_name": "",
     "t2_trench_parapet_name": ""
   },
-  "dialogs": [],
-  "airfields": [],
-  "effects": [],
-  "units": [
-    {
-      "tankModels": {
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {
+    "tankModels": [
+      {
         "name": "t1_at_gun_01",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1919.52,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1919.52,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -602,24 +554,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_02",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1890.04,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1890.04,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -642,24 +614,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_03",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1860.57,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1860.57,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -682,24 +674,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_04",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1831.1,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1831.1,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -722,24 +734,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_05",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1801.62,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1801.62,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -762,24 +794,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_06",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1772.15,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1772.15,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -802,24 +854,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_07",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1742.67,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1742.67,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -842,24 +914,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_08",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1713.2,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1713.2,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -882,24 +974,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_09",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1683.73,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1683.73,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -922,24 +1034,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_10",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1654.25,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1654.25,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -962,24 +1094,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_11",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1624.78,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1624.78,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1002,24 +1154,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_12",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1595.31,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1595.31,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1042,24 +1214,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_13",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1565.83,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1565.83,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1082,24 +1274,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_14",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1536.36,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1536.36,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1122,24 +1334,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_15",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1506.89,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1506.89,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1162,24 +1394,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_16",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1477.41,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1477.41,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1202,24 +1454,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_17",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1447.94,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1447.94,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1242,24 +1514,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_18",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1418.47,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1418.47,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1282,24 +1574,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_19",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1388.99,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1388.99,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1322,24 +1634,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t1_at_gun_20",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1359.52,4.49017,2425.04]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1359.52,
+            4.49017,
+            2425.04
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1362,24 +1694,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_01",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1919.52,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1919.52,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1402,24 +1754,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_02",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1889.54,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1889.54,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1442,24 +1814,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_03",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1859.55,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1859.55,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1482,24 +1874,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_04",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1829.57,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1829.57,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1522,24 +1934,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_05",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1799.59,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1799.59,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1562,24 +1994,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_06",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1769.6,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1769.6,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1602,24 +2054,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_07",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1739.62,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1739.62,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1642,24 +2114,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_08",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1709.63,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1709.63,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1682,24 +2174,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_09",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1679.65,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1679.65,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1722,24 +2234,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_10",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1649.67,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1649.67,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1762,24 +2294,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_11",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1619.68,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1619.68,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1802,24 +2354,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_12",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1589.7,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1589.7,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1842,24 +2414,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_13",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1559.72,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1559.72,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1882,24 +2474,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_14",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1529.73,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1529.73,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1922,24 +2534,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_15",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1499.75,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1499.75,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -1962,24 +2594,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_16",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1469.77,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1469.77,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -2002,24 +2654,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_17",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1439.78,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1439.78,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -2042,24 +2714,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_18",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1409.8,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1409.8,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -2082,24 +2774,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_19",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1379.81,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1379.81,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -2122,24 +2834,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
-      }
-    },
-    {
-      "tankModels": {
+        "way": {}
+      },
+      {
         "name": "t2_at_gun_20",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1349.83,4.49017,1992.11]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1349.83,
+            4.49017,
+            1992.11
+          ]
         ],
         "unit_class": "germ_at_gun_pak40",
         "objLayer": 1,
@@ -2162,197 +2894,167 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true,
           "unitReplacementType": "antiTankGun"
         },
-        "way": []
+        "way": {}
       }
-    },
-    {
-      "squad": {
+    ],
+    "squad": [
+      {
         "name": "t1_at_gun_squad",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1657.85,9.66663,2560.92]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1657.85,
+            9.66663,
+            2560.92
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "t1_at_gun_01"
-          },
-          {
-            "squad_members": "t1_at_gun_02"
-          },
-          {
-            "squad_members": "t1_at_gun_03"
-          },
-          {
-            "squad_members": "t1_at_gun_04"
-          },
-          {
-            "squad_members": "t1_at_gun_05"
-          },
-          {
-            "squad_members": "t1_at_gun_06"
-          },
-          {
-            "squad_members": "t1_at_gun_07"
-          },
-          {
-            "squad_members": "t1_at_gun_08"
-          },
-          {
-            "squad_members": "t1_at_gun_09"
-          },
-          {
-            "squad_members": "t1_at_gun_10"
-          },
-          {
-            "squad_members": "t1_at_gun_11"
-          },
-          {
-            "squad_members": "t1_at_gun_12"
-          },
-          {
-            "squad_members": "t1_at_gun_13"
-          },
-          {
-            "squad_members": "t1_at_gun_14"
-          },
-          {
-            "squad_members": "t1_at_gun_15"
-          },
-          {
-            "squad_members": "t1_at_gun_16"
-          },
-          {
-            "squad_members": "t1_at_gun_17"
-          },
-          {
-            "squad_members": "t1_at_gun_18"
-          },
-          {
-            "squad_members": "t1_at_gun_19"
-          },
-          {
-            "squad_members": "t1_at_gun_20"
-          }
-        ]
-      }
-    },
-    {
-      "squad": {
+        "props": {
+          "squad_members": [
+            "t1_at_gun_01",
+            "t1_at_gun_02",
+            "t1_at_gun_03",
+            "t1_at_gun_04",
+            "t1_at_gun_05",
+            "t1_at_gun_06",
+            "t1_at_gun_07",
+            "t1_at_gun_08",
+            "t1_at_gun_09",
+            "t1_at_gun_10",
+            "t1_at_gun_11",
+            "t1_at_gun_12",
+            "t1_at_gun_13",
+            "t1_at_gun_14",
+            "t1_at_gun_15",
+            "t1_at_gun_16",
+            "t1_at_gun_17",
+            "t1_at_gun_18",
+            "t1_at_gun_19",
+            "t1_at_gun_20"
+          ]
+        }
+      },
+      {
         "name": "t2_at_gun_squad",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [1634.68,4.49017,1822.28]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1634.68,
+            4.49017,
+            1822.28
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "t2_at_gun_01"
-          },
-          {
-            "squad_members": "t2_at_gun_02"
-          },
-          {
-            "squad_members": "t2_at_gun_03"
-          },
-          {
-            "squad_members": "t2_at_gun_04"
-          },
-          {
-            "squad_members": "t2_at_gun_05"
-          },
-          {
-            "squad_members": "t2_at_gun_06"
-          },
-          {
-            "squad_members": "t2_at_gun_07"
-          },
-          {
-            "squad_members": "t2_at_gun_08"
-          },
-          {
-            "squad_members": "t2_at_gun_09"
-          },
-          {
-            "squad_members": "t2_at_gun_10"
-          },
-          {
-            "squad_members": "t2_at_gun_11"
-          },
-          {
-            "squad_members": "t2_at_gun_12"
-          },
-          {
-            "squad_members": "t2_at_gun_13"
-          },
-          {
-            "squad_members": "t2_at_gun_14"
-          },
-          {
-            "squad_members": "t2_at_gun_15"
-          },
-          {
-            "squad_members": "t2_at_gun_16"
-          },
-          {
-            "squad_members": "t2_at_gun_17"
-          },
-          {
-            "squad_members": "t2_at_gun_18"
-          },
-          {
-            "squad_members": "t2_at_gun_19"
-          },
-          {
-            "squad_members": "t2_at_gun_20"
-          }
-        ]
+        "props": {
+          "squad_members": [
+            "t2_at_gun_01",
+            "t2_at_gun_02",
+            "t2_at_gun_03",
+            "t2_at_gun_04",
+            "t2_at_gun_05",
+            "t2_at_gun_06",
+            "t2_at_gun_07",
+            "t2_at_gun_08",
+            "t2_at_gun_09",
+            "t2_at_gun_10",
+            "t2_at_gun_11",
+            "t2_at_gun_12",
+            "t2_at_gun_13",
+            "t2_at_gun_14",
+            "t2_at_gun_15",
+            "t2_at_gun_16",
+            "t2_at_gun_17",
+            "t2_at_gun_18",
+            "t2_at_gun_19",
+            "t2_at_gun_20"
+          ]
+        }
       }
-    }
-  ],
+    ]
+  },
   "areas": {
     "sample_for_trench_parapet": {
       "type": "Cylinder",
       "tm": [
-        [5.6,0.0,0.0],
-        [0.0,2.0,0.0],
-        [0.0,0.0,5.6],
-        [0.0,0.0,0.0]
+        [
+          5.6,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          2.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          5.6
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
       ],
       "objLayer": 0,
-      "props": []
+      "props": {}
     }
   },
-  "objLayers": [
-    {
-      "layer": {
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
         "enabled": true
       }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    }
-  ],
-  "wayPoints": []
+    ]
+  },
+  "wayPoints": {}
 }

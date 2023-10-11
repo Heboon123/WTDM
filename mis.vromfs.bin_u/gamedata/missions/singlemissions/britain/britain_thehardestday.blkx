@@ -30,74 +30,48 @@
       "part": {
         "event": "",
         "minTime": 0,
-        "slide": [
-          {
-            "map": true
-          },
-          {
-            "minTime": 4
-          },
-          {
-            "picture": ""
-          },
-          {
-            "showAirMap": false
-          },
-          {
-            "arrow": [
-              {
-                "width": 1
-              },
-              {
-                "side": "player"
-              },
-              {
-                "point": "player"
-              },
-              {
-                "point": "waypoint00"
-              }
-            ]
-          },
-          {
-            "arrow": [
-              {
-                "width": 1
-              },
-              {
-                "side": "player"
-              },
-              {
-                "point": "waypoint00"
-              },
-              {
-                "point": "waypoint01"
-              },
-              {
-                "point": "waypoint01"
-              }
-            ]
-          },
-          {
-            "icon": {
+        "slide": {
+          "map": true,
+          "minTime": 4,
+          "picture": "",
+          "showAirMap": false,
+          "arrow": [
+            {
+              "width": 1,
+              "side": "player",
+              "point": [
+                "player",
+                "waypoint00"
+              ]
+            },
+            {
+              "width": 1,
+              "side": "player",
+              "point": [
+                "waypoint00",
+                "waypoint01",
+                "waypoint01"
+              ]
+            }
+          ],
+          "icon": [
+            {
               "icontype": "fighter",
               "side": "player",
               "target": "player",
               "lookAt": "waypoint00"
-            }
-          },
-          {
-            "icon": {
+            },
+            {
               "icontype": "building",
               "side": "ally",
               "target": "radar_icon"
             }
-          }
-        ]
+          ]
+        }
       }
     }
   },
-  "imports": [],
+  "imports": {},
   "triggers": {
     "isCategory": true,
     "is_enabled": true,
@@ -110,223 +84,167 @@
         "enableAfterComplete": false
       },
       "events": {
-        "initMission": []
+        "initMission": {}
       },
-      "conditions": [],
-      "actions": [
-        {
-          "comment": {
+      "conditions": {},
+      "actions": {
+        "comment": [
+          {
+            "value": ""
+          },
+          {
+            "value": ""
+          },
+          {
             "value": ""
           }
-        },
-        {
-          "comment": {
-            "value": ""
+        ],
+        "unitLoadBehTree": [
+          {
+            "name": "missionBomber",
+            "objects": [
+              "luftwaffe_bombers00",
+              "luftwaffe_bombers01",
+              "luftwaffe_bombers02"
+            ]
+          },
+          {
+            "name": "missionFighter",
+            "objects": [
+              "luftwaffe_fighters00",
+              "luftwaffe_fighters01",
+              "luftwaffe_fighters02",
+              "ally_planes"
+            ]
           }
+        ],
+        "missionMarkAsWaypoint": {
+          "visible": true,
+          "primary": true,
+          "oriented": false,
+          "ignoreDifficulty": false,
+          "scale": 1.0,
+          "target": "waypoint00"
         },
-        {
-          "comment": {
-            "value": ""
-          }
+        "triggerEnable": {
+          "target": "waypoint01"
         },
-        {
-          "unitLoadBehTree": [
-            {
-              "name": "missionBomber"
-            },
-            {
-              "objects": "luftwaffe_bombers00"
-            },
-            {
-              "objects": "luftwaffe_bombers01"
-            },
-            {
-              "objects": "luftwaffe_bombers02"
-            }
-          ]
-        },
-        {
-          "unitLoadBehTree": [
-            {
-              "name": "missionFighter"
-            },
-            {
-              "objects": "luftwaffe_fighters00"
-            },
-            {
-              "objects": "luftwaffe_fighters01"
-            },
-            {
-              "objects": "luftwaffe_fighters02"
-            },
-            {
-              "objects": "ally_planes"
-            }
-          ]
-        },
-        {
-          "missionMarkAsWaypoint": {
-            "visible": true,
-            "primary": true,
-            "oriented": false,
-            "ignoreDifficulty": false,
-            "scale": 1.0,
-            "target": "waypoint00"
-          }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint01"
-          }
-        },
-        {
-          "unitSetProperties": [
-            {
-              "object": "wave01"
-            },
-            {
-              "object": "wave02"
-            },
-            {
-              "object": "wave03"
-            },
-            {
-              "object_marking": 0
-            },
-            {
-              "object_var_name": ""
-            },
-            {
-              "object_var_comp_op": "equal"
-            },
-            {
-              "object_var_value": 0
-            },
-            {
-              "plane": [
+        "unitSetProperties": [
+          {
+            "object": [
+              "wave01",
+              "wave02",
+              "wave03"
+            ],
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "plane": {
+              "targetDeviation": [
                 {
-                  "targetDeviation": {
-                    "trigger": "machine gun",
-                    "defaultVal": 0.7,
-                    "limits": [0.1,1.0]
-                  }
+                  "trigger": "machine gun",
+                  "defaultVal": 0.7,
+                  "limits": [
+                    0.1,
+                    1.0
+                  ]
                 },
                 {
-                  "targetDeviation": {
-                    "trigger": "gunner",
-                    "defaultVal": 0.7,
-                    "limits": [0.1,1.0]
-                  }
+                  "trigger": "gunner",
+                  "defaultVal": 0.7,
+                  "limits": [
+                    0.1,
+                    1.0
+                  ]
                 }
               ]
             }
-          ]
-        },
-        {
-          "unitSetProperties": {
+          },
+          {
             "object": "radar_icon",
             "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0,
             "isImmortal": true
-          }
-        },
-        {
-          "unitSetProperties": [
-            {
-              "object": "air_def_squad"
-            },
-            {
-              "object": "ships_squad"
-            },
-            {
-              "object_marking": 0
-            },
-            {
-              "object_var_name": ""
-            },
-            {
-              "object_var_comp_op": "equal"
-            },
-            {
-              "object_var_value": 0
-            },
-            {
-              "effShootingRate": 0.01
-            },
-            {
-              "hasExhaust": false
-            }
-          ]
-        },
-        {
-          "unitPutToSleep": [
-            {
-              "target": "wave01"
-            },
-            {
-              "target": "wave02"
-            },
-            {
-              "target": "wave03"
-            }
-          ]
-        },
-        {
-          "wait": {
-            "time": 1.0
-          }
-        },
-        {
-          "moAddMissionObjective": {
-            "target": "single_britain_theHardestDay_fly00"
-          }
-        },
-        {
-          "unitMoveTo": {
+          },
+          {
+            "object": [
+              "air_def_squad",
+              "ships_squad"
+            ],
             "object_marking": 0,
-            "target": "player",
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "follow_target": true,
-            "teleportHeightType": "absolute",
-            "useUnitHeightForTele": true,
-            "shouldKeepFormation": true,
-            "teleportHeightValue": 1000.0,
-            "horizontalDirectionForTeleport": true,
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0,
-            "fastClimb": false,
-            "destTimeMode": false,
-            "target_var_name": "",
-            "target_var_comp_op": "equal",
-            "target_var_value": 0,
-            "object": "ally_planes",
-            "target_type": "isActive",
-            "follow_offset": [0.0,250.0,0.0]
+            "effShootingRate": 0.01,
+            "hasExhaust": false
           }
+        ],
+        "unitPutToSleep": {
+          "target": [
+            "wave01",
+            "wave02",
+            "wave03"
+          ]
         },
-        {
-          "unitAttackTarget": {
-            "playerAttracted": false,
-            "target_marking": 0,
-            "object": "ally_planes",
-            "target": "germany_planes",
-            "fireRandom": true,
-            "targetDistMax": 4000.0,
-            "maxNumAttackersPerTarget": 1,
-            "attackAltRange": [250.0,7000.0],
-            "keepDeadUnitsInTargetList": true,
-            "anchorTarget": "player",
-            "targetToAnchorDist": [3000.0,4000.0],
-            "resetObjectToFollow": false
-          }
+        "wait": {
+          "time": 1.0
+        },
+        "moAddMissionObjective": {
+          "target": "single_britain_theHardestDay_fly00"
+        },
+        "unitMoveTo": {
+          "object_marking": 0,
+          "target": "player",
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "follow_target": true,
+          "teleportHeightType": "absolute",
+          "useUnitHeightForTele": true,
+          "shouldKeepFormation": true,
+          "teleportHeightValue": 1000.0,
+          "horizontalDirectionForTeleport": true,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "object": "ally_planes",
+          "target_type": "isActive",
+          "follow_offset": [
+            0.0,
+            250.0,
+            0.0
+          ]
+        },
+        "unitAttackTarget": {
+          "playerAttracted": false,
+          "target_marking": 0,
+          "object": "ally_planes",
+          "target": "germany_planes",
+          "fireRandom": true,
+          "targetDistMax": 4000.0,
+          "maxNumAttackersPerTarget": 1,
+          "attackAltRange": [
+            250.0,
+            7000.0
+          ],
+          "keepDeadUnitsInTargetList": true,
+          "anchorTarget": "player",
+          "targetToAnchorDist": [
+            3000.0,
+            4000.0
+          ],
+          "resetObjectToFollow": false
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "if_offline": {
       "is_enabled": true,
@@ -354,19 +272,17 @@
           "object": "player"
         }
       },
-      "actions": [
-        {
-          "unitSetProperties": {
+      "actions": {
+        "unitSetProperties": [
+          {
             "object": "player",
             "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0,
             "targetableByAi": false
-          }
-        },
-        {
-          "unitSetProperties": {
+          },
+          {
             "object": "player_himself",
             "object_marking": 0,
             "object_var_name": "",
@@ -374,9 +290,9 @@
             "object_var_value": 0,
             "targetableByAi": true
           }
-        }
-      ],
-      "else_actions": []
+        ]
+      },
+      "else_actions": {}
     },
     "waypoint01": {
       "is_enabled": false,
@@ -403,24 +319,20 @@
           "target": "waypoint00"
         }
       },
-      "actions": [
-        {
-          "comment": {
-            "value": ""
-          }
+      "actions": {
+        "comment": {
+          "value": ""
         },
-        {
-          "missionMarkAsWaypoint": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "oriented": false,
             "ignoreDifficulty": false,
             "scale": 1.0,
             "target": "waypoint00"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "oriented": false,
@@ -428,14 +340,12 @@
             "scale": 1.0,
             "target": "waypoint01"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "wave_arrival"
-          }
+        ],
+        "triggerEnable": {
+          "target": "wave_arrival"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "wave_arrival": {
       "is_enabled": false,
@@ -466,78 +376,58 @@
           "target": "waypoint01"
         }
       },
-      "actions": [
-        {
-          "comment": {
+      "actions": {
+        "comment": [
+          {
+            "value": ""
+          },
+          {
+            "value": ""
+          },
+          {
+            "value": ""
+          },
+          {
+            "value": ""
+          },
+          {
+            "value": ""
+          },
+          {
+            "value": ""
+          },
+          {
             "value": ""
           }
+        ],
+        "missionMarkAsWaypoint": {
+          "visible": false,
+          "primary": true,
+          "oriented": false,
+          "ignoreDifficulty": false,
+          "scale": 1.0,
+          "target": "waypoint01"
         },
-        {
-          "comment": {
-            "value": ""
-          }
+        "moSetObjectiveStatus": {
+          "target": "single_britain_theHardestDay_fly00",
+          "status": 2,
+          "object_marking": 0,
+          "object_var_comp_op": "equal",
+          "object_var_name": ""
         },
-        {
-          "comment": {
-            "value": ""
-          }
-        },
-        {
-          "comment": {
-            "value": ""
-          }
-        },
-        {
-          "comment": {
-            "value": ""
-          }
-        },
-        {
-          "comment": {
-            "value": ""
-          }
-        },
-        {
-          "comment": {
-            "value": ""
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
-            "visible": false,
-            "primary": true,
-            "oriented": false,
-            "ignoreDifficulty": false,
-            "scale": 1.0,
-            "target": "waypoint01"
-          }
-        },
-        {
-          "moSetObjectiveStatus": {
-            "target": "single_britain_theHardestDay_fly00",
-            "status": 2,
-            "object_marking": 0,
-            "object_var_comp_op": "equal",
-            "object_var_name": ""
-          }
-        },
-        {
-          "unitWakeUp": {
+        "unitWakeUp": [
+          {
             "target": "wave01"
-          }
-        },
-        {
-          "unitWakeUp": {
+          },
+          {
             "target": "wave02"
-          }
-        },
-        {
-          "unitWakeUp": {
+          },
+          {
             "target": "wave03"
           }
-        },
-        {
-          "unitMoveTo": {
+        ],
+        "unitMoveTo": [
+          {
             "target": "radar_area",
             "follow_target": false,
             "teleportHeightType": "absolute",
@@ -559,10 +449,8 @@
             "horizontalDirectionForTeleport": true,
             "object": "luftwaffe_bombers00",
             "speed": 250.0
-          }
-        },
-        {
-          "unitMoveTo": {
+          },
+          {
             "object_marking": 0,
             "target": "luftwaffe_bombers00",
             "target_marking": 0,
@@ -584,11 +472,13 @@
             "target_var_value": 0,
             "object": "luftwaffe_fighters00",
             "target_type": "isActive",
-            "follow_offset": [0.0,250.0,0.0]
-          }
-        },
-        {
-          "unitMoveTo": {
+            "follow_offset": [
+              0.0,
+              250.0,
+              0.0
+            ]
+          },
+          {
             "target": "radar_area",
             "follow_target": false,
             "teleportHeightType": "absolute",
@@ -609,10 +499,8 @@
             "destTimeMode": false,
             "horizontalDirectionForTeleport": true,
             "object": "wave02"
-          }
-        },
-        {
-          "unitMoveTo": {
+          },
+          {
             "object_marking": 0,
             "target": "luftwaffe_bombers01",
             "target_marking": 0,
@@ -634,11 +522,13 @@
             "target_var_value": 0,
             "object": "luftwaffe_fighters01",
             "target_type": "isActive",
-            "follow_offset": [0.0,250.0,0.0]
-          }
-        },
-        {
-          "unitMoveTo": {
+            "follow_offset": [
+              0.0,
+              250.0,
+              0.0
+            ]
+          },
+          {
             "target": "radar_area",
             "follow_target": false,
             "teleportHeightType": "absolute",
@@ -659,10 +549,8 @@
             "destTimeMode": false,
             "horizontalDirectionForTeleport": true,
             "object": "wave03"
-          }
-        },
-        {
-          "unitMoveTo": {
+          },
+          {
             "object_marking": 0,
             "target": "luftwaffe_bombers02",
             "target_marking": 0,
@@ -684,11 +572,15 @@
             "target_var_value": 0,
             "object": "luftwaffe_fighters02",
             "target_type": "isActive",
-            "follow_offset": [0.0,250.0,0.0]
+            "follow_offset": [
+              0.0,
+              250.0,
+              0.0
+            ]
           }
-        },
-        {
-          "unitAttackTarget": {
+        ],
+        "unitAttackTarget": [
+          {
             "playerAttracted": false,
             "target_marking": 0,
             "object": "luftwaffe_fighters00",
@@ -696,15 +588,19 @@
             "fireRandom": true,
             "targetDistMax": 4000.0,
             "maxNumAttackersPerTarget": 1,
-            "attackAltRange": [250.0,7000.0],
+            "attackAltRange": [
+              250.0,
+              7000.0
+            ],
             "keepDeadUnitsInTargetList": true,
             "anchorTarget": "luftwaffe_bombers00",
-            "targetToAnchorDist": [3000.0,4000.0],
+            "targetToAnchorDist": [
+              3000.0,
+              4000.0
+            ],
             "resetObjectToFollow": false
-          }
-        },
-        {
-          "unitAttackTarget": {
+          },
+          {
             "playerAttracted": false,
             "target_marking": 0,
             "object": "luftwaffe_fighters01",
@@ -712,15 +608,19 @@
             "fireRandom": true,
             "targetDistMax": 4000.0,
             "maxNumAttackersPerTarget": 1,
-            "attackAltRange": [250.0,7000.0],
+            "attackAltRange": [
+              250.0,
+              7000.0
+            ],
             "keepDeadUnitsInTargetList": true,
             "anchorTarget": "luftwaffe_bombers01",
-            "targetToAnchorDist": [3000.0,4000.0],
+            "targetToAnchorDist": [
+              3000.0,
+              4000.0
+            ],
             "resetObjectToFollow": false
-          }
-        },
-        {
-          "unitAttackTarget": {
+          },
+          {
             "playerAttracted": false,
             "target_marking": 0,
             "object": "luftwaffe_fighters02",
@@ -728,35 +628,37 @@
             "fireRandom": true,
             "targetDistMax": 4000.0,
             "maxNumAttackersPerTarget": 1,
-            "attackAltRange": [250.0,7000.0],
+            "attackAltRange": [
+              250.0,
+              7000.0
+            ],
             "keepDeadUnitsInTargetList": true,
             "anchorTarget": "luftwaffe_bombers02",
-            "targetToAnchorDist": [3000.0,4000.0],
+            "targetToAnchorDist": [
+              3000.0,
+              4000.0
+            ],
             "resetObjectToFollow": false
           }
-        },
-        {
-          "unitSetIndication": {
+        ],
+        "unitSetIndication": [
+          {
             "set": true,
             "target_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0,
             "target": "luftwaffe_bombers00"
-          }
-        },
-        {
-          "unitSetIndication": {
+          },
+          {
             "set": true,
             "target_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0,
             "target": "luftwaffe_bombers01"
-          }
-        },
-        {
-          "unitSetIndication": {
+          },
+          {
             "set": true,
             "target_marking": 0,
             "object_var_name": "",
@@ -764,67 +666,49 @@
             "object_var_value": 0,
             "target": "luftwaffe_bombers02"
           }
-        },
-        {
-          "moAddMissionObjective": {
+        ],
+        "moAddMissionObjective": [
+          {
             "target": "single_britain_theHardestDay_att00"
-          }
-        },
-        {
-          "moAddMissionObjective": {
+          },
+          {
             "target": "single_britain_theHardestDay_att01"
           }
-        },
-        {
-          "wait": {
+        ],
+        "wait": [
+          {
             "time": 2.0
-          }
-        },
-        {
-          "wait": {
+          },
+          {
             "time": 180.0
-          }
-        },
-        {
-          "wait": {
+          },
+          {
             "time": 120.0
           }
-        },
-        {
-          "triggerEnable": [
-            {
-              "target": "01wave_turn"
-            },
-            {
-              "target": "01fighters_go_away"
-            }
-          ]
-        },
-        {
-          "triggerEnable": [
-            {
-              "target": "02wave_turn"
-            },
-            {
-              "target": "02fighters_go_away"
-            }
-          ]
-        },
-        {
-          "triggerEnable": [
-            {
-              "target": "mission_completed02"
-            },
-            {
-              "target": "03wave_turn"
-            },
-            {
-              "target": "03fighters_go_away"
-            }
-          ]
-        }
-      ],
-      "else_actions": []
+        ],
+        "triggerEnable": [
+          {
+            "target": [
+              "01wave_turn",
+              "01fighters_go_away"
+            ]
+          },
+          {
+            "target": [
+              "02wave_turn",
+              "02fighters_go_away"
+            ]
+          },
+          {
+            "target": [
+              "mission_completed02",
+              "03wave_turn",
+              "03fighters_go_away"
+            ]
+          }
+        ]
+      },
+      "else_actions": {}
     },
     "01wave_turn": {
       "is_enabled": false,
@@ -850,67 +734,57 @@
           "object": "luftwaffe_bombers00"
         }
       },
-      "actions": [
-        {
-          "triggerDisable": {
-            "target": "01wave_bomb"
-          }
+      "actions": {
+        "triggerDisable": {
+          "target": "01wave_bomb"
         },
-        {
-          "unitDropAmmo": {
-            "object": "luftwaffe_bombers00"
-          }
+        "unitDropAmmo": {
+          "object": "luftwaffe_bombers00"
         },
-        {
-          "unitMoveTo": {
-            "target": "way_to_france",
-            "follow_target": false,
-            "teleportHeightType": "absolute",
-            "useUnitHeightForTele": true,
-            "shouldKeepFormation": true,
-            "teleportHeightValue": 1000.0,
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target_var_name": "",
-            "target_var_comp_op": "equal",
-            "target_var_value": 0,
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "fastClimb": false,
-            "destTimeMode": false,
-            "horizontalDirectionForTeleport": true,
-            "object": "luftwaffe_bombers00"
-          }
+        "unitMoveTo": {
+          "target": "way_to_france",
+          "follow_target": false,
+          "teleportHeightType": "absolute",
+          "useUnitHeightForTele": true,
+          "shouldKeepFormation": true,
+          "teleportHeightValue": 1000.0,
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "horizontalDirectionForTeleport": true,
+          "object": "luftwaffe_bombers00"
         },
-        {
-          "unitSetIndication": {
-            "set": false,
-            "target_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target": "luftwaffe_bombers00"
-          }
+        "unitSetIndication": {
+          "set": false,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target": "luftwaffe_bombers00"
         },
-        {
-          "varModify": {
+        "varModify": [
+          {
             "operator": "add",
             "value": 1.0,
             "var": "waves_turned"
-          }
-        },
-        {
-          "varModify": {
+          },
+          {
             "operator": "add",
             "value": 1.0,
             "var": "waves_gone"
           }
-        }
-      ],
-      "else_actions": []
+        ]
+      },
+      "else_actions": {}
     },
     "02wave_turn": {
       "is_enabled": false,
@@ -936,67 +810,57 @@
           "object": "luftwaffe_bombers01"
         }
       },
-      "actions": [
-        {
-          "triggerDisable": {
-            "target": "02wave_bomb"
-          }
+      "actions": {
+        "triggerDisable": {
+          "target": "02wave_bomb"
         },
-        {
-          "unitDropAmmo": {
-            "object": "luftwaffe_bombers01"
-          }
+        "unitDropAmmo": {
+          "object": "luftwaffe_bombers01"
         },
-        {
-          "unitMoveTo": {
-            "target": "way_to_france",
-            "follow_target": false,
-            "teleportHeightType": "absolute",
-            "useUnitHeightForTele": true,
-            "shouldKeepFormation": true,
-            "teleportHeightValue": 1000.0,
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target_var_name": "",
-            "target_var_comp_op": "equal",
-            "target_var_value": 0,
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "fastClimb": false,
-            "destTimeMode": false,
-            "horizontalDirectionForTeleport": true,
-            "object": "luftwaffe_bombers01"
-          }
+        "unitMoveTo": {
+          "target": "way_to_france",
+          "follow_target": false,
+          "teleportHeightType": "absolute",
+          "useUnitHeightForTele": true,
+          "shouldKeepFormation": true,
+          "teleportHeightValue": 1000.0,
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "horizontalDirectionForTeleport": true,
+          "object": "luftwaffe_bombers01"
         },
-        {
-          "unitSetIndication": {
-            "set": false,
-            "target_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target": "luftwaffe_bombers01"
-          }
+        "unitSetIndication": {
+          "set": false,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target": "luftwaffe_bombers01"
         },
-        {
-          "varModify": {
+        "varModify": [
+          {
             "operator": "add",
             "value": 1.0,
             "var": "waves_turned"
-          }
-        },
-        {
-          "varModify": {
+          },
+          {
             "operator": "add",
             "value": 1.0,
             "var": "waves_gone"
           }
-        }
-      ],
-      "else_actions": []
+        ]
+      },
+      "else_actions": {}
     },
     "03wave_turn": {
       "is_enabled": false,
@@ -1022,67 +886,57 @@
           "object": "luftwaffe_bombers02"
         }
       },
-      "actions": [
-        {
-          "triggerDisable": {
-            "target": "03wave_bomb"
-          }
+      "actions": {
+        "triggerDisable": {
+          "target": "03wave_bomb"
         },
-        {
-          "unitDropAmmo": {
-            "object": "luftwaffe_bombers02"
-          }
+        "unitDropAmmo": {
+          "object": "luftwaffe_bombers02"
         },
-        {
-          "unitMoveTo": {
-            "target": "way_to_france",
-            "follow_target": false,
-            "teleportHeightType": "absolute",
-            "useUnitHeightForTele": true,
-            "shouldKeepFormation": true,
-            "teleportHeightValue": 1000.0,
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target_var_name": "",
-            "target_var_comp_op": "equal",
-            "target_var_value": 0,
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "fastClimb": false,
-            "destTimeMode": false,
-            "horizontalDirectionForTeleport": true,
-            "object": "luftwaffe_bombers02"
-          }
+        "unitMoveTo": {
+          "target": "way_to_france",
+          "follow_target": false,
+          "teleportHeightType": "absolute",
+          "useUnitHeightForTele": true,
+          "shouldKeepFormation": true,
+          "teleportHeightValue": 1000.0,
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "horizontalDirectionForTeleport": true,
+          "object": "luftwaffe_bombers02"
         },
-        {
-          "unitSetIndication": {
-            "set": false,
-            "target_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target": "luftwaffe_bombers02"
-          }
+        "unitSetIndication": {
+          "set": false,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target": "luftwaffe_bombers02"
         },
-        {
-          "varModify": {
+        "varModify": [
+          {
             "operator": "add",
             "value": 1.0,
             "var": "waves_turned"
-          }
-        },
-        {
-          "varModify": {
+          },
+          {
             "operator": "add",
             "value": 1.0,
             "var": "waves_gone"
           }
-        }
-      ],
-      "else_actions": []
+        ]
+      },
+      "else_actions": {}
     },
     "01wave_bomb": {
       "is_enabled": true,
@@ -1154,7 +1008,7 @@
           "var": "waves_gone"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "02wave_bomb": {
       "is_enabled": true,
@@ -1226,7 +1080,7 @@
           "var": "waves_gone"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "03wave_bomb": {
       "is_enabled": true,
@@ -1298,7 +1152,7 @@
           "var": "waves_gone"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "mission_completed01": {
       "is_enabled": true,
@@ -1313,128 +1167,78 @@
           "time": 1.0
         }
       },
-      "conditions": [
-        {
-          "varCompareInt": {
+      "conditions": {
+        "varCompareInt": [
+          {
             "var_value": "waves_turned",
             "value": 1,
             "comparasion_func": "more"
-          }
-        },
-        {
-          "varCompareInt": {
+          },
+          {
             "var_value": "waves_gone",
             "value": 2,
             "comparasion_func": "more"
           }
-        },
-        {
-          "unitWhenStatus": [
-            {
-              "object_type": "isAlive"
-            },
-            {
-              "object_marking": 0
-            },
-            {
-              "check_objects": "any"
-            },
-            {
-              "object_var_name": ""
-            },
-            {
-              "object_var_comp_op": "equal"
-            },
-            {
-              "object_var_value": 0
-            },
-            {
-              "target_type": "isAlive"
-            },
-            {
-              "check_period": 1.0
-            },
-            {
-              "object": "luftwaffe_bombers00"
-            },
-            {
-              "object": "luftwaffe_bombers01"
-            },
-            {
-              "object": "luftwaffe_bombers02"
-            }
+        ],
+        "unitWhenStatus": {
+          "object_type": "isAlive",
+          "object_marking": 0,
+          "check_objects": "any",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_type": "isAlive",
+          "check_period": 1.0,
+          "object": [
+            "luftwaffe_bombers00",
+            "luftwaffe_bombers01",
+            "luftwaffe_bombers02"
           ]
         }
-      ],
-      "actions": [
-        {
-          "triggerDisable": [
-            {
-              "target": "mission_failed"
-            },
-            {
-              "target": "mission_completed02"
-            }
+      },
+      "actions": {
+        "triggerDisable": {
+          "target": [
+            "mission_failed",
+            "mission_completed02"
           ]
         },
-        {
-          "moSetObjectiveStatus": {
+        "moSetObjectiveStatus": [
+          {
             "target": "single_britain_theHardestDay_att00",
             "status": 2,
             "object_marking": 0,
             "object_var_comp_op": "equal",
             "object_var_name": ""
-          }
-        },
-        {
-          "moSetObjectiveStatus": {
+          },
+          {
             "target": "single_britain_theHardestDay_att01",
             "status": 3,
             "object_marking": 0,
             "object_var_comp_op": "equal",
             "object_var_name": ""
           }
-        },
-        {
-          "unitSetIndication": [
-            {
-              "set": false
-            },
-            {
-              "target_marking": 0
-            },
-            {
-              "object_var_name": ""
-            },
-            {
-              "object_var_comp_op": "equal"
-            },
-            {
-              "object_var_value": 0
-            },
-            {
-              "target": "luftwaffe_bombers00"
-            },
-            {
-              "target": "luftwaffe_bombers01"
-            },
-            {
-              "target": "luftwaffe_bombers02"
-            }
+        ],
+        "unitSetIndication": {
+          "set": false,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target": [
+            "luftwaffe_bombers00",
+            "luftwaffe_bombers01",
+            "luftwaffe_bombers02"
           ]
         },
-        {
-          "wait": {
-            "time": 2.0
-          }
+        "wait": {
+          "time": 2.0
         },
-        {
-          "missionCompleted": {
-            "timer": false
-          }
+        "missionCompleted": {
+          "timer": false
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "mission_completed02": {
       "is_enabled": false,
@@ -1450,111 +1254,65 @@
         }
       },
       "conditions": {
-        "unitWhenStatus": [
-          {
-            "object_type": "isKilled"
-          },
-          {
-            "object_marking": 0
-          },
-          {
-            "check_objects": "all"
-          },
-          {
-            "object_var_name": ""
-          },
-          {
-            "object_var_comp_op": "equal"
-          },
-          {
-            "object_var_value": 0
-          },
-          {
-            "target_type": "isAlive"
-          },
-          {
-            "check_period": 1.0
-          },
-          {
-            "object": "luftwaffe_bombers00"
-          },
-          {
-            "object": "luftwaffe_bombers01"
-          },
-          {
-            "object": "luftwaffe_bombers02"
-          }
-        ]
+        "unitWhenStatus": {
+          "object_type": "isKilled",
+          "object_marking": 0,
+          "check_objects": "all",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_type": "isAlive",
+          "check_period": 1.0,
+          "object": [
+            "luftwaffe_bombers00",
+            "luftwaffe_bombers01",
+            "luftwaffe_bombers02"
+          ]
+        }
       },
-      "actions": [
-        {
-          "triggerDisable": [
-            {
-              "target": "mission_failed"
-            },
-            {
-              "target": "mission_completed01"
-            }
+      "actions": {
+        "triggerDisable": {
+          "target": [
+            "mission_failed",
+            "mission_completed01"
           ]
         },
-        {
-          "moSetObjectiveStatus": {
+        "moSetObjectiveStatus": [
+          {
             "target": "single_britain_theHardestDay_att00",
             "status": 2,
             "object_marking": 0,
             "object_var_comp_op": "equal",
             "object_var_name": ""
-          }
-        },
-        {
-          "moSetObjectiveStatus": {
+          },
+          {
             "target": "single_britain_theHardestDay_att01",
             "status": 2,
             "object_marking": 0,
             "object_var_comp_op": "equal",
             "object_var_name": ""
           }
-        },
-        {
-          "unitSetIndication": [
-            {
-              "set": false
-            },
-            {
-              "target_marking": 0
-            },
-            {
-              "object_var_name": ""
-            },
-            {
-              "object_var_comp_op": "equal"
-            },
-            {
-              "object_var_value": 0
-            },
-            {
-              "target": "luftwaffe_bombers00"
-            },
-            {
-              "target": "luftwaffe_bombers01"
-            },
-            {
-              "target": "luftwaffe_bombers02"
-            }
+        ],
+        "unitSetIndication": {
+          "set": false,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target": [
+            "luftwaffe_bombers00",
+            "luftwaffe_bombers01",
+            "luftwaffe_bombers02"
           ]
         },
-        {
-          "wait": {
-            "time": 2.0
-          }
+        "wait": {
+          "time": 2.0
         },
-        {
-          "missionCompleted": {
-            "timer": false
-          }
+        "missionCompleted": {
+          "timer": false
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "mission_failed": {
       "is_enabled": true,
@@ -1569,91 +1327,63 @@
           "time": 1.0
         }
       },
-      "conditions": [
-        {
-          "varCompareInt": {
+      "conditions": {
+        "varCompareInt": [
+          {
             "var_value": "waves_gone",
             "value": 2,
             "comparasion_func": "more"
-          }
-        },
-        {
-          "varCompareInt": {
+          },
+          {
             "var_value": "waves_turned",
             "value": 2,
             "comparasion_func": "less"
           }
-        }
-      ],
-      "actions": [
-        {
-          "triggerDisable": [
-            {
-              "target": "mission_completed01"
-            },
-            {
-              "target": "mission_completed02"
-            }
+        ]
+      },
+      "actions": {
+        "triggerDisable": {
+          "target": [
+            "mission_completed01",
+            "mission_completed02"
           ]
         },
-        {
-          "moSetObjectiveStatus": {
+        "moSetObjectiveStatus": [
+          {
             "target": "single_britain_theHardestDay_att00",
             "status": 3,
             "object_marking": 0,
             "object_var_comp_op": "equal",
             "object_var_name": ""
-          }
-        },
-        {
-          "moSetObjectiveStatus": {
+          },
+          {
             "target": "single_britain_theHardestDay_att01",
             "status": 3,
             "object_marking": 0,
             "object_var_comp_op": "equal",
             "object_var_name": ""
           }
-        },
-        {
-          "unitSetIndication": [
-            {
-              "set": false
-            },
-            {
-              "target_marking": 0
-            },
-            {
-              "object_var_name": ""
-            },
-            {
-              "object_var_comp_op": "equal"
-            },
-            {
-              "object_var_value": 0
-            },
-            {
-              "target": "luftwaffe_bombers00"
-            },
-            {
-              "target": "luftwaffe_bombers01"
-            },
-            {
-              "target": "luftwaffe_bombers02"
-            }
+        ],
+        "unitSetIndication": {
+          "set": false,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target": [
+            "luftwaffe_bombers00",
+            "luftwaffe_bombers01",
+            "luftwaffe_bombers02"
           ]
         },
-        {
-          "wait": {
-            "time": 2.0
-          }
+        "wait": {
+          "time": 2.0
         },
-        {
-          "missionFailed": {
-            "timer": false
-          }
+        "missionFailed": {
+          "timer": false
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "01fighters_go_away": {
       "is_enabled": false,
@@ -1668,7 +1398,7 @@
           "time": 300.0
         }
       },
-      "conditions": [],
+      "conditions": {},
       "actions": {
         "unitSetProperties": {
           "object": "luftwaffe_fighters00",
@@ -1701,7 +1431,7 @@
           "object": "luftwaffe_fighters00"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "02fighters_go_away": {
       "is_enabled": false,
@@ -1716,7 +1446,7 @@
           "time": 300.0
         }
       },
-      "conditions": [],
+      "conditions": {},
       "actions": {
         "unitSetProperties": {
           "object": "luftwaffe_fighters01",
@@ -1749,7 +1479,7 @@
           "object": "luftwaffe_fighters01"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "03fighters_go_away": {
       "is_enabled": false,
@@ -1764,7 +1494,7 @@
           "time": 300.0
         }
       },
-      "conditions": [],
+      "conditions": {},
       "actions": {
         "unitSetProperties": {
           "object": "luftwaffe_fighters02",
@@ -1797,7 +1527,7 @@
           "object": "luftwaffe_fighters02"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "00fighters_attack_player": {
       "is_enabled": true,
@@ -1837,7 +1567,7 @@
           "playerAttractedEffRate": 0.1
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "01fighters_attack_player": {
       "is_enabled": true,
@@ -1877,7 +1607,7 @@
           "playerAttractedEffRate": 0.1
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "02fighters_attack_player": {
       "is_enabled": true,
@@ -1917,7 +1647,7 @@
           "playerAttractedEffRate": 0.1
         }
       },
-      "else_actions": []
+      "else_actions": {}
     }
   },
   "mission_objectives": {
@@ -1933,8 +1663,8 @@
         "scoreConst": 100,
         "scoreTime": 400
       },
-      "onSuccess": [],
-      "onFailed": []
+      "onSuccess": {},
+      "onFailed": {}
     },
     "single_britain_theHardestDay_att00": {
       "is_enabled": false,
@@ -1946,8 +1676,8 @@
         "scoreConst": 100,
         "scoreTime": 400
       },
-      "onSuccess": [],
-      "onFailed": []
+      "onSuccess": {},
+      "onFailed": {}
     },
     "single_britain_theHardestDay_att01": {
       "is_enabled": false,
@@ -1959,26 +1689,42 @@
         "scoreConst": 100,
         "scoreTime": 400
       },
-      "onSuccess": [],
-      "onFailed": []
+      "onSuccess": {},
+      "onFailed": {}
     }
   },
   "variables": {
     "waves_turned": 0,
     "waves_gone": 0
   },
-  "dialogs": [],
-  "airfields": [],
-  "effects": [],
-  "units": [
-    {
-      "armada": {
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {
+    "armada": [
+      {
         "name": "player",
         "tm": [
-          [-0.422802,0.0,-0.906223],
-          [0.0,1.0,0.0],
-          [0.906223,0.0,-0.422802],
-          [35889.5,2155.05,2242.87]
+          [
+            -0.422802,
+            0.0,
+            -0.906223
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.906223,
+            0.0,
+            -0.422802
+          ],
+          [
+            35889.5,
+            2155.05,
+            2242.87
+          ]
         ],
         "unit_class": "spitfire_mk1",
         "closed_waypoints": false,
@@ -2017,17 +1763,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "luftwaffe_bombers00",
         "tm": [
-          [-0.866026,0.0,0.5],
-          [0.0,1.0,0.0],
-          [-0.5,0.0,-0.866026],
-          [44243.7,2155.05,-22413.3]
+          [
+            -0.866026,
+            0.0,
+            0.5
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.5,
+            0.0,
+            -0.866026
+          ],
+          [
+            44243.7,
+            2155.05,
+            -22413.3
+          ]
         ],
         "unit_class": "ju-87b-2",
         "closed_waypoints": false,
@@ -2065,17 +1825,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "luftwaffe_bombers01",
         "tm": [
-          [-0.382684,0.0,0.92388],
-          [0.0,1.0,0.0],
-          [-0.92388,0.0,-0.382684],
-          [40344.0,3585.3,-29541.6]
+          [
+            -0.382684,
+            0.0,
+            0.92388
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.92388,
+            0.0,
+            -0.382684
+          ],
+          [
+            40344.0,
+            3585.3,
+            -29541.6
+          ]
         ],
         "unit_class": "ju-87b-2",
         "closed_waypoints": false,
@@ -2113,17 +1887,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "luftwaffe_bombers02",
         "tm": [
-          [-0.707107,0.0,0.707107],
-          [0.0,1.0,0.0],
-          [-0.707107,0.0,-0.707107],
-          [49083.9,1530.4,-22341.7]
+          [
+            -0.707107,
+            0.0,
+            0.707107
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.707107,
+            0.0,
+            -0.707107
+          ],
+          [
+            49083.9,
+            1530.4,
+            -22341.7
+          ]
         ],
         "unit_class": "ju-87b-2",
         "closed_waypoints": false,
@@ -2161,17 +1949,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "luftwaffe_fighters00",
         "tm": [
-          [-0.866026,0.0,0.5],
-          [0.0,1.0,0.0],
-          [-0.5,0.0,-0.866026],
-          [45185.1,2237.8,-22957.3]
+          [
+            -0.866026,
+            0.0,
+            0.5
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.5,
+            0.0,
+            -0.866026
+          ],
+          [
+            45185.1,
+            2237.8,
+            -22957.3
+          ]
         ],
         "unit_class": "bf-110c-4",
         "closed_waypoints": false,
@@ -2209,17 +2011,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "luftwaffe_fighters01",
         "tm": [
-          [-0.642788,0.0,0.766045],
-          [0.0,1.0,0.0],
-          [-0.766045,0.0,-0.642788],
-          [40156.3,2237.8,-31076.3]
+          [
+            -0.642788,
+            0.0,
+            0.766045
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.766045,
+            0.0,
+            -0.642788
+          ],
+          [
+            40156.3,
+            2237.8,
+            -31076.3
+          ]
         ],
         "unit_class": "bf-110c-4",
         "closed_waypoints": false,
@@ -2257,17 +2073,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "luftwaffe_fighters02",
         "tm": [
-          [-0.819153,0.0,0.573576],
-          [0.0,1.0,0.0],
-          [-0.573576,0.0,-0.819153],
-          [49993.5,2237.8,-23462.8]
+          [
+            -0.819153,
+            0.0,
+            0.573576
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.573576,
+            0.0,
+            -0.819153
+          ],
+          [
+            49993.5,
+            2237.8,
+            -23462.8
+          ]
         ],
         "unit_class": "bf-110c-4",
         "closed_waypoints": false,
@@ -2305,17 +2135,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "ally_planes",
         "tm": [
-          [-0.215047,0.0,-0.976604],
-          [0.0,1.0,0.0],
-          [0.976604,0.0,-0.215047],
-          [35973.4,2155.06,2486.29]
+          [
+            -0.215047,
+            0.0,
+            -0.976604
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.976604,
+            0.0,
+            -0.215047
+          ],
+          [
+            35973.4,
+            2155.06,
+            2486.29
+          ]
         ],
         "unit_class": "spitfire_mk1",
         "closed_waypoints": false,
@@ -2353,17 +2197,33 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
+        "way": {}
       }
-    },
-    {
-      "structures": {
+    ],
+    "structures": [
+      {
         "name": "radar_icon",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [24062.9,177.733,481.25]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            24062.9,
+            177.733,
+            481.25
+          ]
         ],
         "unit_class": "dummy",
         "closed_waypoints": false,
@@ -2385,22 +2245,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "air_def05",
         "tm": [
-          [0.866025,0.0,-0.5],
-          [0.0,1.0,0.0],
-          [0.5,0.0,0.866025],
-          [22301.1,54.55,-1485.3]
+          [
+            0.866025,
+            0.0,
+            -0.5
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.5,
+            0.0,
+            0.866025
+          ],
+          [
+            22301.1,
+            54.55,
+            -1485.3
+          ]
         ],
         "unit_class": "uk_87mm_mkII",
         "closed_waypoints": false,
@@ -2422,22 +2302,42 @@
           "count": 2,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [4.0,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            4.0,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "air_def06",
         "tm": [
-          [0.422618,0.0,-0.906308],
-          [0.0,1.0,0.0],
-          [0.906308,0.0,0.422618],
-          [21046.4,80.1,-2299.6]
+          [
+            0.422618,
+            0.0,
+            -0.906308
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.906308,
+            0.0,
+            0.422618
+          ],
+          [
+            21046.4,
+            80.1,
+            -2299.6
+          ]
         ],
         "unit_class": "uk_87mm_mkII",
         "closed_waypoints": false,
@@ -2459,22 +2359,42 @@
           "count": 2,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [4.0,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            4.0,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "air_def07",
         "tm": [
-          [0.422618,0.0,-0.906308],
-          [0.0,1.0,0.0],
-          [0.906308,0.0,0.422618],
-          [23533.7,54.55,-870.45]
+          [
+            0.422618,
+            0.0,
+            -0.906308
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.906308,
+            0.0,
+            0.422618
+          ],
+          [
+            23533.7,
+            54.55,
+            -870.45
+          ]
         ],
         "unit_class": "uk_87mm_mkII",
         "closed_waypoints": false,
@@ -2496,22 +2416,42 @@
           "count": 2,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [4.0,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            4.0,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "air_def08",
         "tm": [
-          [0.0871558,0.0,-0.996195],
-          [0.0,1.0,0.0],
-          [0.996195,0.0,0.0871558],
-          [24108.3,176.8,334.95]
+          [
+            0.0871558,
+            0.0,
+            -0.996195
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.996195,
+            0.0,
+            0.0871558
+          ],
+          [
+            24108.3,
+            176.8,
+            334.95
+          ]
         ],
         "unit_class": "uk_87mm_mkII",
         "closed_waypoints": false,
@@ -2533,200 +2473,302 @@
           "count": 2,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [2.0,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.0,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
+        "way": {}
       }
-    },
-    {
-      "squad": {
+    ],
+    "squad": [
+      {
         "name": "wave01",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [47369.9,-1.0,-22373.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            47369.9,
+            -1.0,
+            -22373.8
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "luftwaffe_bombers00"
-          },
-          {
-            "squad_members": "luftwaffe_fighters00"
-          }
-        ]
-      }
-    },
-    {
-      "squad": {
+        "props": {
+          "squad_members": [
+            "luftwaffe_bombers00",
+            "luftwaffe_fighters00"
+          ]
+        }
+      },
+      {
         "name": "wave02",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [40760.0,50.6,-29510.4]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            40760.0,
+            50.6,
+            -29510.4
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "luftwaffe_bombers01"
-          },
-          {
-            "squad_members": "luftwaffe_fighters01"
-          }
-        ]
-      }
-    },
-    {
-      "squad": {
+        "props": {
+          "squad_members": [
+            "luftwaffe_bombers01",
+            "luftwaffe_fighters01"
+          ]
+        }
+      },
+      {
         "name": "wave03",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [49291.2,-1.0,-25881.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            49291.2,
+            -1.0,
+            -25881.8
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "luftwaffe_bombers02"
-          },
-          {
-            "squad_members": "luftwaffe_fighters02"
-          }
-        ]
-      }
-    },
-    {
-      "squad": {
+        "props": {
+          "squad_members": [
+            "luftwaffe_bombers02",
+            "luftwaffe_fighters02"
+          ]
+        }
+      },
+      {
         "name": "player_himself",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [40888.0,-1.0,-10173.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            40888.0,
+            -1.0,
+            -10173.7
+          ]
         ],
         "props": {
           "squad_members": "player",
           "object_type": "isPlayer"
         }
-      }
-    },
-    {
-      "squad": {
+      },
+      {
         "name": "air_def_squad",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [24281.4,152.1,1270.5]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            24281.4,
+            152.1,
+            1270.5
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "air_def05"
-          },
-          {
-            "squad_members": "air_def06"
-          },
-          {
-            "squad_members": "air_def07"
-          },
-          {
-            "squad_members": "air_def08"
-          }
-        ]
-      }
-    },
-    {
-      "squad": {
+        "props": {
+          "squad_members": [
+            "air_def05",
+            "air_def06",
+            "air_def07",
+            "air_def08"
+          ]
+        }
+      },
+      {
         "name": "ships_squad",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [23745.1,169.5,1245.55]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            23745.1,
+            169.5,
+            1245.55
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "crowd_ship00"
-          },
-          {
-            "squad_members": "crowd_ship01"
-          },
-          {
-            "squad_members": "crowd_ship02"
-          },
-          {
-            "squad_members": "crowd_ship03"
-          },
-          {
-            "squad_members": "crowd_ship04"
-          },
-          {
-            "squad_members": "crowd_ship05"
-          }
-        ]
-      }
-    },
-    {
-      "squad": {
+        "props": {
+          "squad_members": [
+            "crowd_ship00",
+            "crowd_ship01",
+            "crowd_ship02",
+            "crowd_ship03",
+            "crowd_ship04",
+            "crowd_ship05"
+          ]
+        }
+      },
+      {
         "name": "british_planes",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [47405.1,2155.06,-1898.61]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            47405.1,
+            2155.06,
+            -1898.61
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "player"
-          },
-          {
-            "squad_members": "ally_planes"
-          }
-        ]
-      }
-    },
-    {
-      "squad": {
+        "props": {
+          "squad_members": [
+            "player",
+            "ally_planes"
+          ]
+        }
+      },
+      {
         "name": "germany_planes",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [44834.4,2330.69,-25298.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            44834.4,
+            2330.69,
+            -25298.8
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "luftwaffe_bombers01"
-          },
-          {
-            "squad_members": "luftwaffe_fighters01"
-          },
-          {
-            "squad_members": "luftwaffe_bombers00"
-          },
-          {
-            "squad_members": "luftwaffe_fighters00"
-          },
-          {
-            "squad_members": "luftwaffe_bombers02"
-          },
-          {
-            "squad_members": "luftwaffe_fighters02"
-          }
-        ]
+        "props": {
+          "squad_members": [
+            "luftwaffe_bombers01",
+            "luftwaffe_fighters01",
+            "luftwaffe_bombers00",
+            "luftwaffe_fighters00",
+            "luftwaffe_bombers02",
+            "luftwaffe_fighters02"
+          ]
+        }
       }
-    },
-    {
-      "ships": {
+    ],
+    "ships": [
+      {
         "name": "crowd_ship00",
         "tm": [
-          [0.422618,0.0,-0.906308],
-          [0.0,1.0,0.0],
-          [0.906308,0.0,0.422618],
-          [23996.0,-1.0,-975.9]
+          [
+            0.422618,
+            0.0,
+            -0.906308
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.906308,
+            0.0,
+            0.422618
+          ],
+          [
+            23996.0,
+            -1.0,
+            -975.9
+          ]
         ],
         "unit_class": "hms_cargo_ship",
         "closed_waypoints": false,
@@ -2748,22 +2790,42 @@
           "count": 3,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [3.0,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            3.0,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "ships": {
+        "way": {}
+      },
+      {
         "name": "crowd_ship01",
         "tm": [
-          [0.866025,0.0,-0.5],
-          [0.0,1.0,0.0],
-          [0.5,0.0,0.866025],
-          [22816.4,-1.0,-1899.5]
+          [
+            0.866025,
+            0.0,
+            -0.5
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.5,
+            0.0,
+            0.866025
+          ],
+          [
+            22816.4,
+            -1.0,
+            -1899.5
+          ]
         ],
         "unit_class": "hms_leander",
         "closed_waypoints": false,
@@ -2785,22 +2847,42 @@
           "count": 1,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [3.0,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            3.0,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "ships": {
+        "way": {}
+      },
+      {
         "name": "crowd_ship02",
         "tm": [
-          [0.737277,0.0,-0.67559],
-          [0.0,1.0,0.0],
-          [0.67559,0.0,0.737277],
-          [22918.4,-1.0,-1660.15]
+          [
+            0.737277,
+            0.0,
+            -0.67559
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.67559,
+            0.0,
+            0.737277
+          ],
+          [
+            22918.4,
+            -1.0,
+            -1660.15
+          ]
         ],
         "unit_class": "uss_dd_georgetown",
         "closed_waypoints": false,
@@ -2822,22 +2904,42 @@
           "count": 1,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [3.0,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            3.0,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "ships": {
+        "way": {}
+      },
+      {
         "name": "crowd_ship03",
         "tm": [
-          [0.67559,0.0,-0.737277],
-          [0.0,1.0,0.0],
-          [0.737277,0.0,0.67559],
-          [22990.8,-1.0,-1585.1]
+          [
+            0.67559,
+            0.0,
+            -0.737277
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.737277,
+            0.0,
+            0.67559
+          ],
+          [
+            22990.8,
+            -1.0,
+            -1585.1
+          ]
         ],
         "unit_class": "hms_cargo_ship",
         "closed_waypoints": false,
@@ -2859,22 +2961,42 @@
           "count": 3,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [3.0,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            3.0,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "ships": {
+        "way": {}
+      },
+      {
         "name": "crowd_ship04",
         "tm": [
-          [0.5,0.0,-0.866025],
-          [0.0,1.0,0.0],
-          [0.866025,0.0,0.5],
-          [23734.2,-400.3,-1041.15]
+          [
+            0.5,
+            0.0,
+            -0.866025
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.866025,
+            0.0,
+            0.5
+          ],
+          [
+            23734.2,
+            -400.3,
+            -1041.15
+          ]
         ],
         "unit_class": "fishboat2",
         "closed_waypoints": false,
@@ -2896,22 +3018,42 @@
           "count": 3,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [5.0,3.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            5.0,
+            3.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "ships": {
+        "way": {}
+      },
+      {
         "name": "crowd_ship05",
         "tm": [
-          [0.5,0.0,-0.866025],
-          [0.0,1.0,0.0],
-          [0.866025,0.0,0.5],
-          [23075.7,-400.3,-1461.05]
+          [
+            0.5,
+            0.0,
+            -0.866025
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.866025,
+            0.0,
+            0.5
+          ],
+          [
+            23075.7,
+            -400.3,
+            -1461.05
+          ]
         ],
         "unit_class": "fishboat2",
         "closed_waypoints": false,
@@ -2933,95 +3075,173 @@
           "count": 3,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [5.0,3.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            5.0,
+            3.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
+        "way": {}
       }
-    },
-    {
-      "objectGroups": {
-        "name": "objectGroups_01",
-        "tm": [
-          [-0.634727,0.0,0.772737],
-          [0.0,1.0,0.0],
-          [-0.772737,0.0,-0.634727],
-          [23545.5,152.3,2696.1]
+    ],
+    "objectGroups": {
+      "name": "objectGroups_01",
+      "tm": [
+        [
+          -0.634727,
+          0.0,
+          0.772737
         ],
-        "unit_class": "dynaf_universal_1line_a",
-        "objLayer": 2,
-        "props": {
-          "army": 1,
-          "active": true
-        }
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -0.772737,
+          0.0,
+          -0.634727
+        ],
+        [
+          23545.5,
+          152.3,
+          2696.1
+        ]
+      ],
+      "unit_class": "dynaf_universal_1line_a",
+      "objLayer": 2,
+      "props": {
+        "army": 1,
+        "active": true
       }
     }
-  ],
+  },
   "areas": {
     "waypoint00": {
       "type": "Sphere",
       "tm": [
-        [1500.0,0.0,0.0],
-        [0.0,1500.0,0.0],
-        [0.0,0.0,1500.0],
-        [34573.8,2155.1,-3365.17]
+        [
+          1500.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1500.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1500.0
+        ],
+        [
+          34573.8,
+          2155.1,
+          -3365.17
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint01": {
       "type": "Sphere",
       "tm": [
-        [1500.0,0.0,0.0],
-        [0.0,1500.0,0.0],
-        [0.0,0.0,1500.0],
-        [34735.8,2155.1,-11071.0]
+        [
+          1500.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1500.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1500.0
+        ],
+        [
+          34735.8,
+          2155.1,
+          -11071.0
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "radar_area": {
       "type": "Sphere",
       "tm": [
-        [7000.0,0.0,0.0],
-        [0.0,7000.0,0.0],
-        [0.0,0.0,7000.0],
-        [24056.2,2150.25,491.5]
+        [
+          7000.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          7000.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          7000.0
+        ],
+        [
+          24056.2,
+          2150.25,
+          491.5
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "way_to_france": {
       "type": "Sphere",
       "tm": [
-        [2194.0,0.0,0.0],
-        [0.0,2194.0,0.0],
-        [0.0,0.0,2194.0],
-        [53220.4,2762.75,-38549.7]
+        [
+          2194.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          2194.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          2194.0
+        ],
+        [
+          53220.4,
+          2762.75,
+          -38549.7
+        ]
       ],
-      "props": []
+      "props": {}
     }
   },
-  "objLayers": [
-    {
-      "layer": {
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
         "enabled": true
       }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    }
-  ],
-  "wayPoints": []
+    ]
+  },
+  "wayPoints": {}
 }

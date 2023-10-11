@@ -17,7 +17,7 @@
       "optionalTakeOff": false
     }
   },
-  "imports": [],
+  "imports": {},
   "triggers": {
     "isCategory": true,
     "is_enabled": true,
@@ -30,46 +30,36 @@
         "enableAfterComplete": false
       },
       "events": {
-        "initMission": []
+        "initMission": {}
       },
-      "conditions": [
-        {
-          "missionNamePostfix": {
-            "postfix": "_DBttlA"
-          }
-        },
-        {
-          "missionNamePostfix": {
-            "postfix": "_CnvA"
-          }
-        },
-        {
-          "missionNamePostfix": {
-            "postfix": "_BDA"
-          }
-        },
-        {
-          "missionNamePostfix": {
-            "postfix": "_deepdefa"
-          }
-        },
-        {
-          "missionNamePostfix": {
-            "postfix": "_aadefa"
-          }
-        }
-      ],
-      "actions": {
-        "triggerEnable": [
+      "conditions": {
+        "missionNamePostfix": [
           {
-            "target": "t1_no_attackers_false"
+            "postfix": "_DBttlA"
           },
           {
-            "target": "t1_no_attackers_timer_renewable"
+            "postfix": "_CnvA"
+          },
+          {
+            "postfix": "_BDA"
+          },
+          {
+            "postfix": "_deepdefa"
+          },
+          {
+            "postfix": "_aadefa"
           }
         ]
       },
-      "else_actions": []
+      "actions": {
+        "triggerEnable": {
+          "target": [
+            "t1_no_attackers_false",
+            "t1_no_attackers_timer_renewable"
+          ]
+        }
+      },
+      "else_actions": {}
     },
     "defence_b_init": {
       "is_enabled": true,
@@ -80,46 +70,36 @@
         "enableAfterComplete": false
       },
       "events": {
-        "initMission": []
+        "initMission": {}
       },
-      "conditions": [
-        {
-          "missionNamePostfix": {
-            "postfix": "_DBttlB"
-          }
-        },
-        {
-          "missionNamePostfix": {
-            "postfix": "_CnvB"
-          }
-        },
-        {
-          "missionNamePostfix": {
-            "postfix": "_BDB"
-          }
-        },
-        {
-          "missionNamePostfix": {
-            "postfix": "_deepdefb"
-          }
-        },
-        {
-          "missionNamePostfix": {
-            "postfix": "_aadefb"
-          }
-        }
-      ],
-      "actions": {
-        "triggerEnable": [
+      "conditions": {
+        "missionNamePostfix": [
           {
-            "target": "t2_no_attackers_false"
+            "postfix": "_DBttlB"
           },
           {
-            "target": "t2_no_attackers_timer_renewable"
+            "postfix": "_CnvB"
+          },
+          {
+            "postfix": "_BDB"
+          },
+          {
+            "postfix": "_deepdefb"
+          },
+          {
+            "postfix": "_aadefb"
           }
         ]
       },
-      "else_actions": []
+      "actions": {
+        "triggerEnable": {
+          "target": [
+            "t2_no_attackers_false",
+            "t2_no_attackers_timer_renewable"
+          ]
+        }
+      },
+      "else_actions": {}
     },
     "t1_no_attackers_timer_enable": {
       "is_enabled": false,
@@ -147,16 +127,14 @@
         }
       },
       "actions": {
-        "triggerEnable": [
-          {
-            "target": "t1_no_attackers_timer_renewable"
-          },
-          {
-            "target": "t1_no_attackers_false"
-          }
-        ]
+        "triggerEnable": {
+          "target": [
+            "t1_no_attackers_timer_renewable",
+            "t1_no_attackers_false"
+          ]
+        }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "t1_no_attackers_false": {
       "is_enabled": false,
@@ -201,19 +179,17 @@
           "value": 60,
           "var": "no_attackers_timer_renewable"
         },
-        "triggerDisable": [
-          {
-            "target": "t1_no_attackers_timer_renewable"
-          },
-          {
-            "target": "t1_no_attackers_timer_accumulative"
-          }
-        ],
+        "triggerDisable": {
+          "target": [
+            "t1_no_attackers_timer_renewable",
+            "t1_no_attackers_timer_accumulative"
+          ]
+        },
         "triggerEnable": {
           "target": "t1_no_attackers_timer_enable"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "t1_no_attackers_timer_renewable": {
       "is_enabled": false,
@@ -321,7 +297,7 @@
           "time": 0.33
         }
       },
-      "conditions": [],
+      "conditions": {},
       "actions": {
         "gameMPChangeScore": {
           "value": -33,
@@ -329,7 +305,7 @@
           "team": "B"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "t2_no_attackers_timer_enable": {
       "is_enabled": false,
@@ -357,16 +333,14 @@
         }
       },
       "actions": {
-        "triggerEnable": [
-          {
-            "target": "t2_no_attackers_timer_renewable"
-          },
-          {
-            "target": "t2_no_attackers_false"
-          }
-        ]
+        "triggerEnable": {
+          "target": [
+            "t2_no_attackers_timer_renewable",
+            "t2_no_attackers_false"
+          ]
+        }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "t2_no_attackers_false": {
       "is_enabled": false,
@@ -411,19 +385,17 @@
           "value": 60,
           "var": "no_attackers_timer_renewable"
         },
-        "triggerDisable": [
-          {
-            "target": "t2_no_attackers_timer_renewable"
-          },
-          {
-            "target": "t2_no_attackers_timer_accumulative"
-          }
-        ],
+        "triggerDisable": {
+          "target": [
+            "t2_no_attackers_timer_renewable",
+            "t2_no_attackers_timer_accumulative"
+          ]
+        },
         "triggerEnable": {
           "target": "t2_no_attackers_timer_enable"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "t2_no_attackers_timer_renewable": {
       "is_enabled": false,
@@ -531,7 +503,7 @@
           "time": 0.33
         }
       },
-      "conditions": [],
+      "conditions": {},
       "actions": {
         "gameMPChangeScore": {
           "value": -33,
@@ -539,7 +511,7 @@
           "team": "A"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     }
   },
   "mission_objectives": {
@@ -550,32 +522,26 @@
     "no_attackers_timer_renewable": 60,
     "no_attackers_timer_accumulative": 60
   },
-  "dialogs": [],
-  "airfields": [],
-  "effects": [],
-  "units": [],
-  "areas": [],
-  "objLayers": [
-    {
-      "layer": {
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {},
+  "areas": {},
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
         "enabled": true
       }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    }
-  ],
-  "wayPoints": []
+    ]
+  },
+  "wayPoints": {}
 }

@@ -15,7 +15,7 @@
       "weather": "hazy"
     }
   },
-  "imports": [],
+  "imports": {},
   "triggers": {
     "isCategory": true,
     "is_enabled": true,
@@ -28,7 +28,7 @@
         "enableAfterComplete": false
       },
       "events": {
-        "initMission": []
+        "initMission": {}
       },
       "conditions": {
         "playerShortcutPressed": {
@@ -54,7 +54,7 @@
           "object_var_value": 0
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "init_mission_props": {
       "is_enabled": true,
@@ -75,9 +75,9 @@
           "check_players": "any"
         }
       },
-      "actions": [
-        {
-          "missionBattleArea": {
+      "actions": {
+        "missionBattleArea": [
+          {
             "air": true,
             "ground": false,
             "mapArea": true,
@@ -87,10 +87,8 @@
             "killOutOfBattleArea": true,
             "area": "player_battle_area",
             "team": "A"
-          }
-        },
-        {
-          "missionBattleArea": {
+          },
+          {
             "air": true,
             "ground": false,
             "mapArea": true,
@@ -101,47 +99,39 @@
             "area": "enemy_battle_area",
             "team": "B"
           }
+        ],
+        "unitSetProperties": {
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "object": "player",
+          "isImmortal": true
         },
-        {
-          "unitSetProperties": {
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "object": "player",
-            "isImmortal": true
-          }
+        "unitLoadBehTree": {
+          "name": "eventMissionSimpleEnergyAttack",
+          "objects": "enemy_sq",
+          "loadType": "tree"
         },
-        {
-          "unitLoadBehTree": {
-            "name": "eventMissionSimpleEnergyAttack",
-            "objects": "enemy_sq",
-            "loadType": "tree"
-          }
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/po_2op_event_mission/start",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0
         },
-        {
-          "playHint": {
-            "hintType": "standard",
-            "name": "hints/po_2op_event_mission/start",
-            "action": "show",
-            "shouldFadeOut": false,
-            "isOverFade": false,
-            "time": -1.0,
-            "priority": 0,
-            "target_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0
-          }
-        },
-        {
-          "missionSetTimeSpeed": {
-            "speed": 0.0,
-            "realtimeTriggers": false
-          }
+        "missionSetTimeSpeed": {
+          "speed": 0.0,
+          "realtimeTriggers": false
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "enemy_spawn_check_count": {
       "is_enabled": false,
@@ -259,7 +249,11 @@
         },
         "unitRespawn": {
           "delay": 0.0,
-          "offset": [0.0,0.0,0.0],
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
           "object": "enemy_sq",
           "object_type": "isDelayed",
           "target": "@enemy_spawn_str",
@@ -292,7 +286,7 @@
           "target": "enemy_spawn_check_idx"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "enemy_out_delay": {
       "is_enabled": true,
@@ -307,9 +301,9 @@
           "time": 0.2
         }
       },
-      "conditions": [
-        {
-          "unitWhenInArea": {
+      "conditions": {
+        "unitWhenInArea": [
+          {
             "math": "notNear2D",
             "object_type": "isAlive",
             "object_marking": 0,
@@ -318,10 +312,8 @@
             "check_objects": "any",
             "object": "enemy_sq",
             "target": "enemy_battle_area"
-          }
-        },
-        {
-          "unitWhenInArea": {
+          },
+          {
             "math": "3D",
             "object_type": "isAlive",
             "object_marking": 0,
@@ -331,15 +323,15 @@
             "object": "enemy_sq",
             "target": "enemy_too_high_area"
           }
-        }
-      ],
+        ]
+      },
       "actions": {
         "unitPutToSleep": {
           "target": "enemy_sq",
           "useForTriggerFiltered": true
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "enemy_killed_delay": {
       "is_enabled": true,
@@ -372,7 +364,7 @@
           "useForTriggerFiltered": true
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "player_reload": {
       "is_enabled": true,
@@ -403,7 +395,7 @@
           "ammoRestore": true
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "player_battlearea_handler": {
       "isCategory": true,
@@ -529,7 +521,7 @@
             "lookat": "spawn_02"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "player_too_high": {
         "is_enabled": true,
@@ -652,7 +644,7 @@
             "lookat": "spawn_02"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       }
     },
     "player_status_and_timers": {
@@ -700,7 +692,7 @@
             "target": "kill_add_op_time"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "kill_add_op_time": {
         "is_enabled": false,
@@ -745,7 +737,7 @@
             "var_name": "kill_op_timer_add"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "set_indicators": {
         "is_enabled": true,
@@ -760,7 +752,7 @@
             "time": 0.2
           }
         },
-        "conditions": [],
+        "conditions": {},
         "actions": {
           "missionSetTargetsIndicator": {
             "target_type": "any",
@@ -791,7 +783,7 @@
             "var": "op_timer"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "op_timer_tick": {
         "is_enabled": true,
@@ -875,7 +867,7 @@
             "debriefingTimer": 7
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "player_death": {
         "is_enabled": true,
@@ -909,9 +901,9 @@
           }
         },
         "actions": {
-          "missionFailed": []
+          "missionFailed": {}
         },
-        "else_actions": []
+        "else_actions": {}
       }
     },
     "d_point": {
@@ -978,7 +970,7 @@
             "target": "enable_d_point"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "enable_d_point": {
         "is_enabled": false,
@@ -993,7 +985,7 @@
             "time": 1.0
           }
         },
-        "conditions": [],
+        "conditions": {},
         "actions": {
           "missionMarkAsCaptureZone": {
             "army": 2,
@@ -1007,7 +999,7 @@
             "canCaptureInAir": false,
             "canCaptureByGM": true,
             "onlyPlayersCanCapture": true,
-            "zoneDefenders": []
+            "zoneDefenders": {}
           },
           "playHint": {
             "hintType": "standard",
@@ -1031,7 +1023,7 @@
             "target": "check_d_point"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "check_d_point": {
         "is_enabled": false,
@@ -1076,13 +1068,13 @@
             "canCaptureInAir": false,
             "canCaptureByGM": true,
             "onlyPlayersCanCapture": true,
-            "zoneDefenders": []
+            "zoneDefenders": {}
           },
           "triggerEnable": {
             "target": "capture_add_op_time"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "capture_add_op_time": {
         "is_enabled": false,
@@ -1130,7 +1122,7 @@
             "target": "player_too_far"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       }
     },
     "barrel_roll": {
@@ -1229,7 +1221,7 @@
             "target": "barrel_roll_check_necessity"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "do_barrel_roll": {
         "is_enabled": false,
@@ -1244,21 +1236,19 @@
             "time": 0.2
           }
         },
-        "conditions": [
-          {
-            "playerWhenManeuver": {
+        "conditions": {
+          "playerWhenManeuver": [
+            {
               "manName": "barrel_left"
-            }
-          },
-          {
-            "playerWhenManeuver": {
+            },
+            {
               "manName": "barrel_right"
             }
-          }
-        ],
-        "actions": [
-          {
-            "playHint": {
+          ]
+        },
+        "actions": {
+          "playHint": [
+            {
               "hintType": "standard",
               "name": "hints/po_2op_event_mission/do_a_barrel_roll",
               "action": "hide",
@@ -1270,10 +1260,8 @@
               "object_var_name": "",
               "object_var_comp_op": "equal",
               "object_var_value": 0
-            }
-          },
-          {
-            "playHint": {
+            },
+            {
               "hintType": "bottom",
               "name": "hints/po_2op_event_mission/to_op_timer",
               "action": "show",
@@ -1287,65 +1275,51 @@
               "object_var_value": 0,
               "var_name": "barrel_roll_op_timer_add"
             }
+          ],
+          "playSound": {
+            "name": "dialogs_crew_aircraft/voice2/voice_message_well_done_0",
+            "loop": false,
+            "start": true
           },
-          {
-            "playSound": {
-              "name": "dialogs_crew_aircraft/voice2/voice_message_well_done_0",
-              "loop": false,
-              "start": true
-            }
-          },
-          {
-            "varModify": {
+          "varModify": [
+            {
               "operator": "add",
               "value": 0.0,
               "var": "op_timer",
               "use_variable": true,
               "var_value": "barrel_roll_op_timer_add"
-            }
-          },
-          {
-            "varModify": {
+            },
+            {
               "operator": "add",
               "value": -1.0,
               "var": "barrel_roll_ability_count"
             }
+          ],
+          "varSetInt": {
+            "value": 0,
+            "var": "barrel_roll_timer",
+            "input_var": "barrel_roll_cooldown"
           },
-          {
-            "varSetInt": {
-              "value": 0,
-              "var": "barrel_roll_timer",
-              "input_var": "barrel_roll_cooldown"
-            }
+          "varSetBool": {
+            "value": true,
+            "var": "is_op"
           },
-          {
-            "varSetBool": {
-              "value": true,
-              "var": "is_op"
-            }
+          "unitSetProperties": {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "object": "player",
+            "isImmortal": true
           },
-          {
-            "unitSetProperties": {
-              "object_marking": 0,
-              "object_var_name": "",
-              "object_var_comp_op": "equal",
-              "object_var_value": 0,
-              "object": "player",
-              "isImmortal": true
-            }
-          },
-          {
-            "triggerEnable": [
-              {
-                "target": "barrel_roll_timer_tick"
-              },
-              {
-                "target": "op_timer_tick"
-              }
+          "triggerEnable": {
+            "target": [
+              "barrel_roll_timer_tick",
+              "op_timer_tick"
             ]
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       }
     },
     "mission_states": {
@@ -1371,30 +1345,26 @@
             "comparasion_func": "notLess"
           }
         },
-        "actions": [
-          {
-            "varModify": {
+        "actions": {
+          "varModify": [
+            {
               "operator": "add",
               "value": -2.0,
               "var": "kill_op_timer_add"
-            }
-          },
-          {
-            "varModify": {
+            },
+            {
               "operator": "add",
               "value": 5.0,
               "var": "barrel_roll_op_timer_add"
-            }
-          },
-          {
-            "varModify": {
+            },
+            {
               "operator": "add",
               "value": 10.0,
               "var": "enemies_max_count"
             }
-          }
-        ],
-        "else_actions": []
+          ]
+        },
+        "else_actions": {}
       },
       "second_up": {
         "is_enabled": true,
@@ -1416,30 +1386,26 @@
             "comparasion_func": "notLess"
           }
         },
-        "actions": [
-          {
-            "varModify": {
+        "actions": {
+          "varModify": [
+            {
               "operator": "add",
               "value": -2.0,
               "var": "kill_op_timer_add"
-            }
-          },
-          {
-            "varModify": {
+            },
+            {
               "operator": "add",
               "value": 5.0,
               "var": "barrel_roll_op_timer_add"
-            }
-          },
-          {
-            "varModify": {
+            },
+            {
               "operator": "add",
               "value": 10.0,
               "var": "enemies_max_count"
             }
-          }
-        ],
-        "else_actions": []
+          ]
+        },
+        "else_actions": {}
       }
     }
   },
@@ -1454,8 +1420,8 @@
         "isPrimary": true,
         "timeLimit": 1800
       },
-      "onSuccess": [],
-      "onFailed": []
+      "onSuccess": {},
+      "onFailed": {}
     }
   },
   "variables": {
@@ -1475,32 +1441,26 @@
     "barrel_roll_timer": 0,
     "barrel_roll_ability_count": 3
   },
-  "dialogs": [],
-  "airfields": [],
-  "effects": [],
-  "units": [],
-  "areas": [],
-  "objLayers": [
-    {
-      "layer": {
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {},
+  "areas": {},
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
         "enabled": true
       }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    }
-  ],
-  "wayPoints": []
+    ]
+  },
+  "wayPoints": {}
 }

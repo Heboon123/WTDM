@@ -2,115 +2,49 @@
   "selected_tag": "",
   "bin_dump_file": "",
   "mission_settings": {
-    "player": [
-      {
-        "army": 1
-      },
-      {
-        "wing": "t1_player01"
-      },
-      {
-        "wing": "t1_player02"
-      },
-      {
-        "wing": "t1_player03"
-      },
-      {
-        "wing": "t1_player04"
-      },
-      {
-        "wing": "t1_player05"
-      },
-      {
-        "wing": "t1_player06"
-      },
-      {
-        "wing": "t1_player07"
-      },
-      {
-        "wing": "t1_player08"
-      },
-      {
-        "wing": "t1_player09"
-      },
-      {
-        "wing": "t1_player10"
-      },
-      {
-        "wing": "t1_player11"
-      },
-      {
-        "wing": "t1_player12"
-      },
-      {
-        "wing": "t1_player13"
-      },
-      {
-        "wing": "t1_player14"
-      },
-      {
-        "wing": "t1_player15"
-      },
-      {
-        "wing": "t1_player16"
-      }
-    ],
-    "player_teamB": [
-      {
-        "army": 2
-      },
-      {
-        "wing": "t2_player01"
-      },
-      {
-        "wing": "t2_player02"
-      },
-      {
-        "wing": "t2_player03"
-      },
-      {
-        "wing": "t2_player04"
-      },
-      {
-        "wing": "t2_player05"
-      },
-      {
-        "wing": "t2_player06"
-      },
-      {
-        "wing": "t2_player07"
-      },
-      {
-        "wing": "t2_player08"
-      },
-      {
-        "wing": "t2_player09"
-      },
-      {
-        "wing": "t2_player10"
-      },
-      {
-        "wing": "t2_player11"
-      },
-      {
-        "wing": "t2_player12"
-      },
-      {
-        "wing": "t2_player13"
-      },
-      {
-        "wing": "t2_player14"
-      },
-      {
-        "wing": "t2_player15"
-      },
-      {
-        "wing": "t2_player16"
-      },
-      {
-        "wing": "t2_player17"
-      }
-    ],
+    "player": {
+      "army": 1,
+      "wing": [
+        "t1_player01",
+        "t1_player02",
+        "t1_player03",
+        "t1_player04",
+        "t1_player05",
+        "t1_player06",
+        "t1_player07",
+        "t1_player08",
+        "t1_player09",
+        "t1_player10",
+        "t1_player11",
+        "t1_player12",
+        "t1_player13",
+        "t1_player14",
+        "t1_player15",
+        "t1_player16"
+      ]
+    },
+    "player_teamB": {
+      "army": 2,
+      "wing": [
+        "t2_player01",
+        "t2_player02",
+        "t2_player03",
+        "t2_player04",
+        "t2_player05",
+        "t2_player06",
+        "t2_player07",
+        "t2_player08",
+        "t2_player09",
+        "t2_player10",
+        "t2_player11",
+        "t2_player12",
+        "t2_player13",
+        "t2_player14",
+        "t2_player15",
+        "t2_player16",
+        "t2_player17"
+      ]
+    },
     "mission": {
       "type": "singleMission",
       "level": "levels/water.bin",
@@ -118,7 +52,7 @@
       "weather": "hazy"
     }
   },
-  "imports": [],
+  "imports": {},
   "triggers": {
     "isCategory": true,
     "is_enabled": true,
@@ -131,84 +65,68 @@
         "enableAfterComplete": false
       },
       "events": {
-        "initMission": []
+        "initMission": {}
       },
-      "conditions": [],
-      "actions": [
-        {
-          "missionBattleArea": {
-            "air": false,
-            "ground": true,
-            "mapArea": true,
-            "killOutOfBattleArea": true,
-            "killArea": false,
-            "detectionArea": false,
-            "airMapArea": false,
-            "area": "battle_area",
-            "newGridHorizontalCellCount": 0
-          }
+      "conditions": {},
+      "actions": {
+        "missionBattleArea": {
+          "air": false,
+          "ground": true,
+          "mapArea": true,
+          "killOutOfBattleArea": true,
+          "killArea": false,
+          "detectionArea": false,
+          "airMapArea": false,
+          "area": "battle_area",
+          "newGridHorizontalCellCount": 0
         },
-        {
-          "varSetInt": {
+        "varSetInt": [
+          {
             "value": 420,
             "var": "jip_time_for_waiting",
             "fromDescriptor": "jip_time_for_waiting"
-          }
-        },
-        {
-          "varSetInt": {
+          },
+          {
             "value": 1,
             "var": "min_players_count",
             "fromDescriptor": "min_players_count"
-          }
-        },
-        {
-          "varSetInt": {
+          },
+          {
             "value": 300,
             "var": "half_match_time",
             "fromDescriptor": "half_match_time"
-          }
-        },
-        {
-          "varSetInt": {
+          },
+          {
             "value": 90,
             "var": "half_overtime_time",
             "fromDescriptor": "half_overtime_time"
-          }
-        },
-        {
-          "varSetInt": {
+          },
+          {
             "value": 300,
             "var": "current_timer",
             "input_var": "half_match_time"
-          }
-        },
-        {
-          "varSetInt": {
+          },
+          {
             "value": 10,
             "var": "ball_stopped_timer_from_desc",
             "fromDescriptor": "ball_stopped_timer"
           }
+        ],
+        "unitSetProperties": {
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "object": "ball",
+          "forceVisibleOnMap": true,
+          "forceLockTarget": true,
+          "registerCollisions": true
         },
-        {
-          "unitSetProperties": {
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "object": "ball",
-            "forceVisibleOnMap": true,
-            "forceLockTarget": true,
-            "registerCollisions": true
-          }
-        },
-        {
-          "triggerEnable": {
-            "target": "set_respawn_base_name"
-          }
+        "triggerEnable": {
+          "target": "set_respawn_base_name"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "no_match_no_shoot": {
       "is_enabled": true,
@@ -269,13 +187,13 @@
           "time": 0.2
         }
       },
-      "conditions": [],
+      "conditions": {},
       "actions": {
         "missionSetTimeIndicator": {
           "var": "current_timer"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "respawns": {
       "isCategory": true,
@@ -289,7 +207,7 @@
           "enableAfterComplete": false
         },
         "events": {
-          "initMission": [],
+          "initMission": {},
           "periodicEvent": {
             "time": 0.01
           }
@@ -301,74 +219,58 @@
             "comparasion_func": "equal"
           }
         },
-        "actions": [
-          {
-            "varSetRandomInt": {
-              "var": "random",
-              "from": 1,
-              "to_not_including": 3
-            }
+        "actions": {
+          "varSetRandomInt": {
+            "var": "random",
+            "from": 1,
+            "to_not_including": 3
           },
-          {
-            "varSetString": {
+          "varSetString": [
+            {
               "value": "t1_respawn_att_",
               "var": "t1_respawn_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t2_respawn_def",
               "var": "t2_respawn_name"
             }
+          ],
+          "varAddString": {
+            "value": "",
+            "digits": 1,
+            "var": "t1_respawn_name",
+            "input_var": "random"
           },
-          {
-            "varAddString": {
-              "value": "",
-              "digits": 1,
-              "var": "t1_respawn_name",
-              "input_var": "random"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "is_1v1_mode"
-            }
+          "triggerEnable": {
+            "target": "is_1v1_mode"
           }
-        ],
-        "else_actions": [
-          {
-            "varSetString": {
+        },
+        "else_actions": {
+          "varSetString": [
+            {
               "value": "t1_respawn_def",
               "var": "t1_respawn_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t2_respawn_att_",
               "var": "t2_respawn_name"
             }
+          ],
+          "varSetRandomInt": {
+            "var": "random",
+            "from": 1,
+            "to_not_including": 3
           },
-          {
-            "varSetRandomInt": {
-              "var": "random",
-              "from": 1,
-              "to_not_including": 3
-            }
+          "varAddString": {
+            "value": "",
+            "digits": 1,
+            "var": "t2_respawn_name",
+            "input_var": "random"
           },
-          {
-            "varAddString": {
-              "value": "",
-              "digits": 1,
-              "var": "t2_respawn_name",
-              "input_var": "random"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "is_1v1_mode"
-            }
+          "triggerEnable": {
+            "target": "is_1v1_mode"
           }
-        ]
+        }
       },
       "is_1v1_mode": {
         "is_enabled": false,
@@ -379,7 +281,7 @@
           "enableAfterComplete": false
         },
         "events": {
-          "initMission": [],
+          "initMission": {},
           "periodicEvent": {
             "time": 0.01
           }
@@ -391,25 +293,21 @@
             "comparasion_func": "equal"
           }
         },
-        "actions": [
-          {
-            "varSetString": {
+        "actions": {
+          "varSetString": [
+            {
               "value": "t1_respawn_1v1",
               "var": "t1_respawn_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "t2_respawn_1v1",
               "var": "t2_respawn_name"
             }
-          },
-          {
-            "triggerEnable": {
-              "target": "add_respawn_bases"
-            }
+          ],
+          "triggerEnable": {
+            "target": "add_respawn_bases"
           }
-        ],
+        },
         "else_actions": {
           "triggerEnable": {
             "target": "add_respawn_bases"
@@ -425,15 +323,15 @@
           "enableAfterComplete": false
         },
         "events": {
-          "initMission": [],
+          "initMission": {},
           "periodicEvent": {
             "time": 0.01
           }
         },
-        "conditions": [],
-        "actions": [
-          {
-            "missionMarkAsRespawnPoint": {
+        "conditions": {},
+        "actions": {
+          "missionMarkAsRespawnPoint": [
+            {
               "loc_name": "missions/respawn_outfield",
               "spawnEffect": false,
               "isStrictSpawn": true,
@@ -459,10 +357,8 @@
                 "type_tank_destroyer": true,
                 "type_spaa": true
               }
-            }
-          },
-          {
-            "missionMarkAsRespawnPoint": {
+            },
+            {
               "loc_name": "missions/respawn_outfield",
               "spawnEffect": false,
               "isStrictSpawn": true,
@@ -488,10 +384,8 @@
                 "type_tank_destroyer": true,
                 "type_spaa": true
               }
-            }
-          },
-          {
-            "missionMarkAsRespawnPoint": {
+            },
+            {
               "loc_name": "missions/respawn_keeper",
               "spawnEffect": false,
               "isStrictSpawn": false,
@@ -512,7 +406,11 @@
               "team": "A",
               "separate_fuel_time": false,
               "modular_airfield": false,
-              "offset": [0.0,0.0,0.0],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
               "tags": {
                 "type_heavy_tank": true,
                 "type_medium_tank": false,
@@ -520,10 +418,8 @@
                 "type_tank_destroyer": false,
                 "type_spaa": false
               }
-            }
-          },
-          {
-            "missionMarkAsRespawnPoint": {
+            },
+            {
               "loc_name": "missions/respawn_keeper",
               "spawnEffect": false,
               "isStrictSpawn": false,
@@ -544,7 +440,11 @@
               "team": "B",
               "separate_fuel_time": false,
               "modular_airfield": false,
-              "offset": [0.0,0.0,0.0],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
               "tags": {
                 "type_heavy_tank": true,
                 "type_medium_tank": false,
@@ -553,9 +453,9 @@
                 "type_spaa": false
               }
             }
-          }
-        ],
-        "else_actions": []
+          ]
+        },
+        "else_actions": {}
       },
       "activate_ingame_respawns": {
         "is_enabled": false,
@@ -570,10 +470,10 @@
             "time": 0.1
           }
         },
-        "conditions": [],
-        "actions": [
-          {
-            "missionMarkAsRespawnPoint": {
+        "conditions": {},
+        "actions": {
+          "missionMarkAsRespawnPoint": [
+            {
               "loc_name": "missions/respawn_outfield",
               "spawnEffect": false,
               "isStrictSpawn": true,
@@ -600,10 +500,8 @@
                 "type_tank_destroyer": true,
                 "type_spaa": true
               }
-            }
-          },
-          {
-            "missionMarkAsRespawnPoint": {
+            },
+            {
               "loc_name": "missions/respawn_outfield",
               "spawnEffect": false,
               "isStrictSpawn": true,
@@ -630,10 +528,8 @@
                 "type_tank_destroyer": true,
                 "type_spaa": true
               }
-            }
-          },
-          {
-            "missionMarkAsRespawnPoint": {
+            },
+            {
               "loc_name": "missions/respawn_keeper",
               "spawnEffect": false,
               "isStrictSpawn": false,
@@ -660,10 +556,8 @@
                 "type_tank_destroyer": false,
                 "type_spaa": false
               }
-            }
-          },
-          {
-            "missionMarkAsRespawnPoint": {
+            },
+            {
               "loc_name": "missions/respawn_keeper",
               "spawnEffect": false,
               "isStrictSpawn": false,
@@ -690,10 +584,8 @@
                 "type_tank_destroyer": false,
                 "type_spaa": false
               }
-            }
-          },
-          {
-            "missionMarkAsRespawnPoint": {
+            },
+            {
               "loc_name": "missions/respawn_ingame",
               "spawnEffect": false,
               "isStrictSpawn": false,
@@ -719,10 +611,8 @@
                 "type_tank_destroyer": true,
                 "type_spaa": true
               }
-            }
-          },
-          {
-            "missionMarkAsRespawnPoint": {
+            },
+            {
               "loc_name": "missions/respawn_ingame",
               "spawnEffect": false,
               "isStrictSpawn": false,
@@ -743,7 +633,11 @@
               "team": "B",
               "separate_fuel_time": false,
               "modular_airfield": false,
-              "offset": [0.0,0.0,0.0],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
               "tags": {
                 "type_heavy_tank": true,
                 "type_medium_tank": true,
@@ -752,9 +646,9 @@
                 "type_spaa": true
               }
             }
-          }
-        ],
-        "else_actions": []
+          ]
+        },
+        "else_actions": {}
       }
     },
     "kickoff": {
@@ -807,9 +701,9 @@
             "time": 1.0
           }
         },
-        "conditions": [
-          {
-            "unitWhenCountMatches": {
+        "conditions": {
+          "unitWhenCountMatches": [
+            {
               "object_type": "isTeamA",
               "object_marking": 0,
               "object_var_name": "",
@@ -820,10 +714,8 @@
               "unit_type_ex": "isActive",
               "object_var_value": 0,
               "var": "min_players_count"
-            }
-          },
-          {
-            "unitWhenCountMatches": {
+            },
+            {
               "object_type": "isTeamB",
               "object_marking": 0,
               "object_var_name": "",
@@ -835,22 +727,20 @@
               "object_var_value": 0,
               "var": "min_players_count"
             }
-          },
-          {
-            "varCompareInt": {
-              "var_value": "jip_time_for_waiting",
-              "value": 0,
-              "comparasion_func": "more"
-            }
+          ],
+          "varCompareInt": {
+            "var_value": "jip_time_for_waiting",
+            "value": 0,
+            "comparasion_func": "more"
           }
-        ],
+        },
         "actions": {
           "varSetBool": {
             "value": true,
             "var": "all_players_ready"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "all_players_ready_after_jip_off": {
         "is_enabled": true,
@@ -865,30 +755,28 @@
             "time": 1.0
           }
         },
-        "conditions": [
-          {
-            "varCompareInt": {
+        "conditions": {
+          "varCompareInt": [
+            {
               "var_value": "players_active_count_int",
               "value": 1,
               "comparasion_func": "notLess",
               "var_value_other": "players_online_count_int"
-            }
-          },
-          {
-            "varCompareInt": {
+            },
+            {
               "var_value": "jip_time_for_waiting",
               "value": 0,
               "comparasion_func": "notMore"
             }
-          }
-        ],
+          ]
+        },
         "actions": {
           "varSetBool": {
             "value": true,
             "var": "all_players_ready"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "start_kickoff_timer": {
         "is_enabled": true,
@@ -903,49 +791,43 @@
             "time": 1.0
           }
         },
-        "conditions": [
-          {
-            "varCompareBool": {
+        "conditions": {
+          "varCompareBool": [
+            {
               "var_value": "waiting_timer_gone",
               "value": true,
               "comparasion_func": "equal"
-            }
-          },
-          {
-            "varCompareBool": {
+            },
+            {
               "var_value": "all_players_ready",
               "value": true,
               "comparasion_func": "equal"
             }
-          }
-        ],
-        "actions": [
-          {
-            "varSetInt": {
+          ]
+        },
+        "actions": {
+          "varSetInt": [
+            {
               "value": 30,
               "var": "waiting_timer"
-            }
-          },
-          {
-            "varSetInt": {
+            },
+            {
               "value": 5,
               "var": "kickoff_timer"
             }
-          },
-          {
-            "varSetBool": {
+          ],
+          "varSetBool": [
+            {
               "value": false,
               "var": "waiting_timer_gone"
-            }
-          },
-          {
-            "varSetBool": {
+            },
+            {
               "value": false,
               "var": "all_players_ready"
             }
-          },
-          {
-            "playHint": {
+          ],
+          "playHint": [
+            {
               "hintType": "custom",
               "name": "hints/duel_waiting_for_players",
               "action": "hideCur",
@@ -958,10 +840,8 @@
               "object_var_comp_op": "equal",
               "object_var_value": 0,
               "team": "Both"
-            }
-          },
-          {
-            "playHint": {
+            },
+            {
               "hintType": "tutorialHint",
               "name": "hints/tank_football_how_to_play",
               "action": "hideCur",
@@ -975,43 +855,31 @@
               "object_var_value": 0,
               "team": "Both"
             }
+          ],
+          "triggerEnable": {
+            "target": "kickoff_timer"
           },
-          {
-            "triggerEnable": {
-              "target": "kickoff_timer"
-            }
+          "unitSetProperties": {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "object": "all_players_squad",
+            "cannotShoot": true,
+            "cannotMove": true
           },
-          {
-            "unitSetProperties": {
-              "object_marking": 0,
-              "object_var_name": "",
-              "object_var_comp_op": "equal",
-              "object_var_value": 0,
-              "object": "all_players_squad",
-              "cannotShoot": true,
-              "cannotMove": true
-            }
-          },
-          {
-            "triggerDisable": [
-              {
-                "target": "all_players_ready"
-              },
-              {
-                "target": "all_players_ready_after_jip_off"
-              },
-              {
-                "target": "waiting_timer"
-              },
-              {
-                "target": "start_kickoff_timer"
-              }
+          "triggerDisable": {
+            "target": [
+              "all_players_ready",
+              "all_players_ready_after_jip_off",
+              "waiting_timer",
+              "start_kickoff_timer"
             ]
           }
-        ],
-        "else_actions": [
-          {
-            "playHint": {
+        },
+        "else_actions": {
+          "playHint": [
+            {
               "hintType": "custom",
               "name": "hints/duel_waiting_for_players",
               "action": "show",
@@ -1023,10 +891,8 @@
               "object_var_name": "",
               "object_var_comp_op": "equal",
               "object_var_value": 0
-            }
-          },
-          {
-            "playHint": {
+            },
+            {
               "hintType": "tutorialHint",
               "name": "hints/tank_football_how_to_play",
               "action": "show",
@@ -1039,8 +905,8 @@
               "object_var_comp_op": "equal",
               "object_var_value": 0
             }
-          }
-        ]
+          ]
+        }
       },
       "kickoff_timer": {
         "is_enabled": false,
@@ -1099,107 +965,67 @@
             "var": "kickoff_timer"
           }
         },
-        "else_actions": [
-          {
-            "playSound": {
-              "name": "football_event/referee_start",
-              "loop": false,
-              "start": true,
-              "team": "Both"
-            }
+        "else_actions": {
+          "playSound": {
+            "name": "football_event/referee_start",
+            "loop": false,
+            "start": true,
+            "team": "Both"
           },
-          {
-            "playHint": {
-              "hintType": "standard",
-              "name": "",
-              "action": "hide",
-              "shouldFadeOut": false,
-              "time": -1.0,
-              "priority": 0,
-              "isOverFade": false,
-              "target_marking": 0,
-              "object_var_name": "",
-              "object_var_comp_op": "equal",
-              "object_var_value": 0
-            }
+          "playHint": {
+            "hintType": "standard",
+            "name": "",
+            "action": "hide",
+            "shouldFadeOut": false,
+            "time": -1.0,
+            "priority": 0,
+            "isOverFade": false,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0
           },
-          {
-            "triggerEnable": [
-              {
-                "target": "t1_goal"
-              },
-              {
-                "target": "t2_goal"
-              },
-              {
-                "target": "activate_ingame_respawns"
-              }
-            ]
-          },
-          {
-            "triggerEnable": {
+          "triggerEnable": [
+            {
+              "target": [
+                "t1_goal",
+                "t2_goal",
+                "activate_ingame_respawns"
+              ]
+            },
+            {
               "target": "match_timer"
+            },
+            {
+              "target": [
+                "t1_near_win_by_advantage",
+                "t2_near_win_by_advantage"
+              ]
             }
+          ],
+          "unitSetProperties": {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "object": [
+              "all_players_squad",
+              "ball"
+            ],
+            "isImmortal": true,
+            "calmDetection": true,
+            "forceVisibleOnMap": true,
+            "cannotShoot": false,
+            "cannotMove": false
           },
-          {
-            "triggerEnable": [
-              {
-                "target": "t1_near_win_by_advantage"
-              },
-              {
-                "target": "t2_near_win_by_advantage"
-              }
-            ]
+          "varSetBool": {
+            "value": true,
+            "var": "match_in_progress"
           },
-          {
-            "unitSetProperties": [
-              {
-                "object_marking": 0
-              },
-              {
-                "object_var_name": ""
-              },
-              {
-                "object_var_comp_op": "equal"
-              },
-              {
-                "object_var_value": 0
-              },
-              {
-                "object": "all_players_squad"
-              },
-              {
-                "object": "ball"
-              },
-              {
-                "isImmortal": true
-              },
-              {
-                "calmDetection": true
-              },
-              {
-                "forceVisibleOnMap": true
-              },
-              {
-                "cannotShoot": false
-              },
-              {
-                "cannotMove": false
-              }
-            ]
-          },
-          {
-            "varSetBool": {
-              "value": true,
-              "var": "match_in_progress"
-            }
-          },
-          {
-            "triggerDisable": {
-              "target": "kickoff_timer"
-            }
+          "triggerDisable": {
+            "target": "kickoff_timer"
           }
-        ]
+        }
       },
       "jip_timer": {
         "is_enabled": true,
@@ -1228,7 +1054,7 @@
             "var": "jip_time_for_waiting"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "t1_near_win_by_advantage": {
         "is_enabled": false,
@@ -1251,14 +1077,12 @@
             "var_value_other": "points_advantage_for_t1_near_win"
           }
         },
-        "actions": [
-          {
-            "wait": {
-              "time": 1.2
-            }
+        "actions": {
+          "wait": {
+            "time": 1.2
           },
-          {
-            "playHint": {
+          "playHint": [
+            {
               "hintType": "standard",
               "name": "@hint_ally_near_win_by_advantage",
               "action": "show",
@@ -1271,10 +1095,8 @@
               "object_var_comp_op": "equal",
               "object_var_value": 0,
               "team": "A"
-            }
-          },
-          {
-            "playHint": {
+            },
+            {
               "hintType": "standard",
               "name": "@hint_enemy_near_win_by_advantage",
               "action": "show",
@@ -1288,8 +1110,8 @@
               "object_var_value": 0,
               "team": "B"
             }
-          }
-        ],
+          ]
+        },
         "else_actions": {
           "triggerDisable": {
             "target": "t1_near_win_by_advantage"
@@ -1317,14 +1139,12 @@
             "var_value_other": "points_advantage_for_t2_near_win"
           }
         },
-        "actions": [
-          {
-            "wait": {
-              "time": 1.2
-            }
+        "actions": {
+          "wait": {
+            "time": 1.2
           },
-          {
-            "playHint": {
+          "playHint": [
+            {
               "hintType": "standard",
               "name": "@hint_ally_near_win_by_advantage",
               "action": "show",
@@ -1337,10 +1157,8 @@
               "object_var_comp_op": "equal",
               "object_var_value": 0,
               "team": "B"
-            }
-          },
-          {
-            "playHint": {
+            },
+            {
               "hintType": "standard",
               "name": "@hint_enemy_near_win_by_advantage",
               "action": "show",
@@ -1354,8 +1172,8 @@
               "object_var_value": 0,
               "team": "A"
             }
-          }
-        ],
+          ]
+        },
         "else_actions": {
           "triggerDisable": {
             "target": "t2_near_win_by_advantage"
@@ -1379,29 +1197,25 @@
             "time": 1.0
           }
         },
-        "conditions": [
-          {
-            "varCompareInt": {
+        "conditions": {
+          "varCompareInt": [
+            {
               "var_value": "current_timer",
               "value": 7,
               "comparasion_func": "notMore"
-            }
-          },
-          {
-            "varCompareInt": {
+            },
+            {
               "var_value": "current_timer",
               "value": 0,
               "comparasion_func": "more"
             }
-          },
-          {
-            "varCompareBool": {
-              "var_value": "match_in_progress",
-              "value": true,
-              "comparasion_func": "equal"
-            }
+          ],
+          "varCompareBool": {
+            "var_value": "match_in_progress",
+            "value": true,
+            "comparasion_func": "equal"
           }
-        ],
+        },
         "actions": {
           "playHint": {
             "hintType": "standard",
@@ -1419,7 +1233,7 @@
             "team": "Both"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "match_timer": {
         "is_enabled": false,
@@ -1453,7 +1267,7 @@
             "var": "current_timer"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "halftime_end": {
         "is_enabled": true,
@@ -1480,103 +1294,107 @@
             "comparasion_func": "equal"
           }
         },
-        "actions": [
-          {
-            "varSetBool": {
+        "actions": {
+          "varSetBool": [
+            {
               "value": false,
               "var": "match_in_progress"
-            }
-          },
-          {
-            "varSetBool": {
+            },
+            {
               "value": true,
               "var": "t1_goal"
             }
+          ],
+          "playSound": {
+            "name": "football_event/referee_end",
+            "loop": false,
+            "start": true,
+            "team": "Both"
           },
-          {
-            "playSound": {
-              "name": "football_event/referee_end",
-              "loop": false,
-              "start": true,
-              "team": "Both"
-            }
+          "playHint": {
+            "hintType": "standard",
+            "name": "hints/football_halftime",
+            "action": "show",
+            "shouldFadeOut": false,
+            "time": 3.0,
+            "priority": 1,
+            "isOverFade": false,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "var_name": "current_timer",
+            "team": "Both"
           },
-          {
-            "playHint": {
-              "hintType": "standard",
-              "name": "hints/football_halftime",
-              "action": "show",
-              "shouldFadeOut": false,
-              "time": 3.0,
-              "priority": 1,
-              "isOverFade": false,
-              "target_marking": 0,
-              "object_var_name": "",
-              "object_var_comp_op": "equal",
-              "object_var_value": 0,
-              "var_name": "current_timer",
-              "team": "Both"
-            }
-          },
-          {
-            "unitPlayEffect": {
+          "unitPlayEffect": [
+            {
               "effect_type": "specify",
               "effect": "firework_score_turquoise",
-              "offset": [0.0,0.0,0.0],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
               "show": true,
               "attach": false,
               "scale": 1.3,
               "loopSpawn": true,
-              "delay": [1.0,1.0],
+              "delay": [
+                1.0,
+                1.0
+              ],
               "target": "ball",
-              "radiusOffset": [0.0,0.0]
-            }
-          },
-          {
-            "unitPlayEffect": {
+              "radiusOffset": [
+                0.0,
+                0.0
+              ]
+            },
+            {
               "effect_type": "specify",
               "effect": "firework_score_ginger",
-              "offset": [0.0,0.0,0.0],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
               "show": true,
               "attach": false,
               "scale": 1.0,
               "loopSpawn": true,
-              "delay": [1.0,1.0],
+              "delay": [
+                1.0,
+                1.0
+              ],
               "target": "ball",
-              "radiusOffset": [0.0,0.0]
+              "radiusOffset": [
+                0.0,
+                0.0
+              ]
             }
+          ],
+          "triggerEnable": {
+            "target": "common_goal"
           },
-          {
-            "triggerEnable": {
-              "target": "common_goal"
-            }
+          "wait": {
+            "time": 6.0
           },
-          {
-            "wait": {
-              "time": 6.0
-            }
+          "varSetInt": {
+            "value": 300,
+            "var": "current_timer",
+            "input_var": "half_match_time"
           },
-          {
-            "varSetInt": {
-              "value": 300,
-              "var": "current_timer",
-              "input_var": "half_match_time"
-            }
-          },
-          {
-            "varSetString": {
+          "varSetString": [
+            {
               "value": "fulltime",
               "var": "match_stage_hint"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "hints/football_fulltime_counter",
               "var": "match_stage_end_full_hint"
             }
-          }
-        ],
-        "else_actions": []
+          ]
+        },
+        "else_actions": {}
       },
       "fulltime_end": {
         "is_enabled": true,
@@ -1603,68 +1421,56 @@
             "comparasion_func": "equal"
           }
         },
-        "actions": [
-          {
-            "varSetBool": {
+        "actions": {
+          "varSetBool": [
+            {
               "value": false,
               "var": "match_in_progress"
-            }
-          },
-          {
-            "varSetBool": {
+            },
+            {
               "value": false,
               "var": "t1_goal"
             }
+          ],
+          "playHint": {
+            "hintType": "standard",
+            "name": "hints/football_fulltime",
+            "action": "show",
+            "shouldFadeOut": false,
+            "time": 3.0,
+            "priority": 1,
+            "isOverFade": false,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "var_name": "current_timer",
+            "team": "Both"
           },
-          {
-            "playHint": {
-              "hintType": "standard",
-              "name": "hints/football_fulltime",
-              "action": "show",
-              "shouldFadeOut": false,
-              "time": 3.0,
-              "priority": 1,
-              "isOverFade": false,
-              "target_marking": 0,
-              "object_var_name": "",
-              "object_var_comp_op": "equal",
-              "object_var_value": 0,
-              "var_name": "current_timer",
-              "team": "Both"
-            }
+          "playSound": {
+            "name": "football_event/referee_end",
+            "loop": false,
+            "start": true,
+            "team": "Both"
           },
-          {
-            "playSound": {
-              "name": "football_event/referee_end",
-              "loop": false,
-              "start": true,
-              "team": "Both"
-            }
+          "triggerEnable": {
+            "target": "is_a_draw"
           },
-          {
-            "triggerEnable": {
-              "target": "is_a_draw"
-            }
+          "wait": {
+            "time": 6.0
           },
-          {
-            "wait": {
-              "time": 6.0
-            }
-          },
-          {
-            "varSetString": {
+          "varSetString": [
+            {
               "value": "half_overtime",
               "var": "match_stage_hint"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "hints/football_half_overtime_counter",
               "var": "match_stage_end_full_hint"
             }
-          }
-        ],
-        "else_actions": []
+          ]
+        },
+        "else_actions": {}
       },
       "is_a_draw": {
         "is_enabled": false,
@@ -1687,150 +1493,164 @@
             "var_value_other": "t2_points"
           }
         },
-        "actions": [
-          {
-            "playHint": {
-              "hintType": "standard",
-              "name": "hints/football_overtime",
-              "action": "show",
-              "shouldFadeOut": true,
-              "time": 3.0,
-              "priority": 1,
-              "isOverFade": false,
-              "target_marking": 0,
-              "object_var_name": "",
-              "object_var_comp_op": "equal",
-              "object_var_value": 0,
-              "team": "Both"
-            }
+        "actions": {
+          "playHint": {
+            "hintType": "standard",
+            "name": "hints/football_overtime",
+            "action": "show",
+            "shouldFadeOut": true,
+            "time": 3.0,
+            "priority": 1,
+            "isOverFade": false,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "team": "Both"
           },
-          {
-            "unitPlayEffect": {
+          "unitPlayEffect": [
+            {
               "effect_type": "specify",
               "effect": "firework_score_turquoise",
-              "offset": [0.0,0.0,0.0],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
               "show": true,
               "attach": false,
               "scale": 1.3,
               "loopSpawn": true,
-              "delay": [1.0,1.0],
+              "delay": [
+                1.0,
+                1.0
+              ],
               "target": "ball",
-              "radiusOffset": [0.0,0.0]
-            }
-          },
-          {
-            "unitPlayEffect": {
+              "radiusOffset": [
+                0.0,
+                0.0
+              ]
+            },
+            {
               "effect_type": "specify",
               "effect": "firework_score_ginger",
-              "offset": [0.0,0.0,0.0],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
               "show": true,
               "attach": false,
               "scale": 1.0,
               "loopSpawn": true,
-              "delay": [1.0,1.0],
+              "delay": [
+                1.0,
+                1.0
+              ],
               "target": "ball",
-              "radiusOffset": [0.0,0.0]
+              "radiusOffset": [
+                0.0,
+                0.0
+              ]
             }
+          ],
+          "triggerEnable": {
+            "target": "common_goal"
           },
-          {
-            "triggerEnable": {
-              "target": "common_goal"
-            }
+          "wait": {
+            "time": 6.0
           },
-          {
-            "wait": {
-              "time": 6.0
-            }
-          },
-          {
-            "varSetInt": {
-              "value": 90,
-              "var": "current_timer",
-              "input_var": "half_overtime_time"
-            }
+          "varSetInt": {
+            "value": 90,
+            "var": "current_timer",
+            "input_var": "half_overtime_time"
           }
-        ],
-        "else_actions": [
-          {
-            "triggerDisable": [
-              {
-                "target": "half_overtime_end"
-              },
-              {
-                "target": "overtime_end"
-              }
+        },
+        "else_actions": {
+          "triggerDisable": {
+            "target": [
+              "half_overtime_end",
+              "overtime_end"
             ]
           },
-          {
-            "playHint": {
-              "hintType": "standard",
-              "name": "hints/football_fulltime",
-              "action": "show",
-              "shouldFadeOut": true,
-              "time": 3.0,
-              "priority": 1,
-              "isOverFade": false,
-              "target_marking": 0,
-              "object_var_name": "",
-              "object_var_comp_op": "equal",
-              "object_var_value": 0
-            }
+          "playHint": {
+            "hintType": "standard",
+            "name": "hints/football_fulltime",
+            "action": "show",
+            "shouldFadeOut": true,
+            "time": 3.0,
+            "priority": 1,
+            "isOverFade": false,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0
           },
-          {
-            "unitPlayEffect": {
+          "unitPlayEffect": [
+            {
               "effect_type": "specify",
               "effect": "firework_score_turquoise",
-              "offset": [0.0,0.0,0.0],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
               "show": true,
               "attach": false,
               "scale": 1.3,
               "loopSpawn": true,
-              "delay": [1.0,1.0],
+              "delay": [
+                1.0,
+                1.0
+              ],
               "target": "ball",
-              "radiusOffset": [0.0,0.0]
-            }
-          },
-          {
-            "unitPlayEffect": {
+              "radiusOffset": [
+                0.0,
+                0.0
+              ]
+            },
+            {
               "effect_type": "specify",
               "effect": "firework_score_ginger",
-              "offset": [0.0,0.0,0.0],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
               "show": true,
               "attach": false,
               "scale": 1.0,
               "loopSpawn": true,
-              "delay": [1.0,1.0],
+              "delay": [
+                1.0,
+                1.0
+              ],
               "target": "ball",
-              "radiusOffset": [0.0,0.0]
+              "radiusOffset": [
+                0.0,
+                0.0
+              ]
             }
+          ],
+          "unitPutToSleep": {
+            "target": "ball"
           },
-          {
-            "unitPutToSleep": {
-              "target": "ball"
-            }
+          "unitSetProperties": {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "object": "all_players_squad",
+            "cannotShoot": true,
+            "cannotMove": true
           },
-          {
-            "unitSetProperties": {
-              "object_marking": 0,
-              "object_var_name": "",
-              "object_var_comp_op": "equal",
-              "object_var_value": 0,
-              "object": "all_players_squad",
-              "cannotShoot": true,
-              "cannotMove": true
-            }
+          "wait": {
+            "time": 5.0
           },
-          {
-            "wait": {
-              "time": 5.0
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "check_winner"
-            }
+          "triggerEnable": {
+            "target": "check_winner"
           }
-        ]
+        }
       },
       "half_overtime_end": {
         "is_enabled": true,
@@ -1857,103 +1677,107 @@
             "comparasion_func": "equal"
           }
         },
-        "actions": [
-          {
-            "varSetBool": {
+        "actions": {
+          "varSetBool": [
+            {
               "value": false,
               "var": "match_in_progress"
-            }
-          },
-          {
-            "varSetBool": {
+            },
+            {
               "value": true,
               "var": "t1_goal"
             }
+          ],
+          "playHint": {
+            "hintType": "standard",
+            "name": "hints/football_halftime",
+            "action": "show",
+            "shouldFadeOut": false,
+            "time": 3.0,
+            "priority": 1,
+            "isOverFade": false,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "var_name": "current_timer",
+            "team": "Both"
           },
-          {
-            "playHint": {
-              "hintType": "standard",
-              "name": "hints/football_halftime",
-              "action": "show",
-              "shouldFadeOut": false,
-              "time": 3.0,
-              "priority": 1,
-              "isOverFade": false,
-              "target_marking": 0,
-              "object_var_name": "",
-              "object_var_comp_op": "equal",
-              "object_var_value": 0,
-              "var_name": "current_timer",
-              "team": "Both"
-            }
+          "playSound": {
+            "name": "football_event/referee_end",
+            "loop": false,
+            "start": true,
+            "team": "Both"
           },
-          {
-            "playSound": {
-              "name": "football_event/referee_end",
-              "loop": false,
-              "start": true,
-              "team": "Both"
-            }
-          },
-          {
-            "unitPlayEffect": {
+          "unitPlayEffect": [
+            {
               "effect_type": "specify",
               "effect": "firework_score_turquoise",
-              "offset": [0.0,0.0,0.0],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
               "show": true,
               "attach": false,
               "scale": 1.3,
               "loopSpawn": true,
-              "delay": [1.0,1.0],
+              "delay": [
+                1.0,
+                1.0
+              ],
               "target": "ball",
-              "radiusOffset": [0.0,0.0]
-            }
-          },
-          {
-            "unitPlayEffect": {
+              "radiusOffset": [
+                0.0,
+                0.0
+              ]
+            },
+            {
               "effect_type": "specify",
               "effect": "firework_score_ginger",
-              "offset": [0.0,0.0,0.0],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
               "show": true,
               "attach": false,
               "scale": 1.0,
               "loopSpawn": true,
-              "delay": [1.0,1.0],
+              "delay": [
+                1.0,
+                1.0
+              ],
               "target": "ball",
-              "radiusOffset": [0.0,0.0]
+              "radiusOffset": [
+                0.0,
+                0.0
+              ]
             }
+          ],
+          "triggerEnable": {
+            "target": "common_goal"
           },
-          {
-            "triggerEnable": {
-              "target": "common_goal"
-            }
+          "wait": {
+            "time": 6.0
           },
-          {
-            "wait": {
-              "time": 6.0
-            }
+          "varSetInt": {
+            "value": 90,
+            "var": "current_timer",
+            "input_var": "half_overtime_time"
           },
-          {
-            "varSetInt": {
-              "value": 90,
-              "var": "current_timer",
-              "input_var": "half_overtime_time"
-            }
-          },
-          {
-            "varSetString": {
+          "varSetString": [
+            {
               "value": "overtime",
               "var": "match_stage_hint"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "hints/football_overtime_counter",
               "var": "match_stage_end_full_hint"
             }
-          }
-        ],
-        "else_actions": []
+          ]
+        },
+        "else_actions": {}
       },
       "overtime_end": {
         "is_enabled": true,
@@ -1980,88 +1804,94 @@
             "comparasion_func": "equal"
           }
         },
-        "actions": [
-          {
-            "varSetBool": {
-              "value": false,
-              "var": "match_in_progress"
-            }
+        "actions": {
+          "varSetBool": {
+            "value": false,
+            "var": "match_in_progress"
           },
-          {
-            "playHint": {
-              "hintType": "standard",
-              "name": "hints/football_fulltime",
-              "action": "show",
-              "shouldFadeOut": true,
-              "time": 3.0,
-              "priority": 1,
-              "isOverFade": false,
-              "target_marking": 0,
-              "object_var_name": "",
-              "object_var_comp_op": "equal",
-              "object_var_value": 0,
-              "team": "Both"
-            }
+          "playHint": {
+            "hintType": "standard",
+            "name": "hints/football_fulltime",
+            "action": "show",
+            "shouldFadeOut": true,
+            "time": 3.0,
+            "priority": 1,
+            "isOverFade": false,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "team": "Both"
           },
-          {
-            "playSound": {
-              "name": "football_event/referee_end",
-              "loop": false,
-              "start": true,
-              "team": "Both"
-            }
+          "playSound": {
+            "name": "football_event/referee_end",
+            "loop": false,
+            "start": true,
+            "team": "Both"
           },
-          {
-            "unitPlayEffect": {
+          "unitPlayEffect": [
+            {
               "effect_type": "specify",
               "effect": "firework_score_turquoise",
-              "offset": [0.0,0.0,0.0],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
               "show": true,
               "attach": false,
               "scale": 1.3,
               "loopSpawn": true,
-              "delay": [1.0,1.0],
+              "delay": [
+                1.0,
+                1.0
+              ],
               "target": "ball",
-              "radiusOffset": [0.0,0.0]
-            }
-          },
-          {
-            "unitPlayEffect": {
+              "radiusOffset": [
+                0.0,
+                0.0
+              ]
+            },
+            {
               "effect_type": "specify",
               "effect": "firework_score_ginger",
-              "offset": [0.0,0.0,0.0],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
               "show": true,
               "attach": false,
               "scale": 1.0,
               "loopSpawn": true,
-              "delay": [1.0,1.0],
+              "delay": [
+                1.0,
+                1.0
+              ],
               "target": "ball",
-              "radiusOffset": [0.0,0.0]
+              "radiusOffset": [
+                0.0,
+                0.0
+              ]
             }
+          ],
+          "unitPutToSleep": {
+            "target": "ball"
           },
-          {
-            "unitPutToSleep": {
-              "target": "ball"
-            }
+          "unitSetProperties": {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "object": "all_players_squad",
+            "cannotShoot": true,
+            "cannotMove": true
           },
-          {
-            "unitSetProperties": {
-              "object_marking": 0,
-              "object_var_name": "",
-              "object_var_comp_op": "equal",
-              "object_var_value": 0,
-              "object": "all_players_squad",
-              "cannotShoot": true,
-              "cannotMove": true
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "check_winner"
-            }
+          "triggerEnable": {
+            "target": "check_winner"
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "check_winner": {
         "is_enabled": false,
@@ -2084,19 +1914,17 @@
             "var_value_other": "t2_points"
           }
         },
-        "actions": [
-          {
-            "moSetObjectiveStatus": {
+        "actions": {
+          "moSetObjectiveStatus": [
+            {
               "target": "t1_football_score_the_goals",
               "status": 2,
               "object_var_comp_op": "equal",
               "object_var_name": "",
               "object_marking": 0,
               "team": "A"
-            }
-          },
-          {
-            "moSetObjectiveStatus": {
+            },
+            {
               "target": "t2_football_score_the_goals",
               "status": 3,
               "object_var_comp_op": "equal",
@@ -2104,29 +1932,23 @@
               "object_marking": 0,
               "team": "B"
             }
+          ],
+          "wait": {
+            "time": 5.0
           },
-          {
-            "wait": {
-              "time": 5.0
-            }
-          },
-          {
-            "missionCompleted": []
-          }
-        ],
-        "else_actions": [
-          {
-            "moSetObjectiveStatus": {
+          "missionCompleted": {}
+        },
+        "else_actions": {
+          "moSetObjectiveStatus": [
+            {
               "target": "t1_football_score_the_goals",
               "status": 3,
               "object_var_comp_op": "equal",
               "object_var_name": "",
               "object_marking": 0,
               "team": "A"
-            }
-          },
-          {
-            "moSetObjectiveStatus": {
+            },
+            {
               "target": "t2_football_score_the_goals",
               "status": 2,
               "object_var_comp_op": "equal",
@@ -2134,16 +1956,12 @@
               "object_marking": 0,
               "team": "B"
             }
+          ],
+          "wait": {
+            "time": 5.0
           },
-          {
-            "wait": {
-              "time": 5.0
-            }
-          },
-          {
-            "missionCompleted": []
-          }
-        ]
+          "missionCompleted": {}
+        }
       }
     },
     "goals": {
@@ -2180,69 +1998,65 @@
             "comparasion_func": "equal"
           }
         },
-        "actions": [
-          {
-            "playSound": {
+        "actions": {
+          "playSound": [
+            {
               "name": "football_event/horn_lose",
               "loop": false,
               "start": true,
               "team": "B"
-            }
-          },
-          {
-            "playSound": {
+            },
+            {
               "name": "football_event/horn_win",
               "loop": false,
               "start": true,
               "team": "A"
             }
+          ],
+          "varSetBool": {
+            "value": true,
+            "var": "t1_goal"
           },
-          {
-            "varSetBool": {
-              "value": true,
-              "var": "t1_goal"
-            }
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "t1_points"
           },
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "t1_points"
-            }
+          "gameMPChangeScore": {
+            "value": 1,
+            "valueSystem": "amount",
+            "team": "A"
           },
-          {
-            "gameMPChangeScore": {
-              "value": 1,
-              "valueSystem": "amount",
-              "team": "A"
-            }
+          "unitPlayEffect": {
+            "effect_type": "specify",
+            "effect": "firework_score_ginger",
+            "offset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "show": true,
+            "attach": false,
+            "scale": 1.0,
+            "loopSpawn": true,
+            "delay": [
+              1.0,
+              1.0
+            ],
+            "target": "ball",
+            "radiusOffset": [
+              0.0,
+              0.0
+            ]
           },
-          {
-            "unitPlayEffect": {
-              "effect_type": "specify",
-              "effect": "firework_score_ginger",
-              "offset": [0.0,0.0,0.0],
-              "show": true,
-              "attach": false,
-              "scale": 1.0,
-              "loopSpawn": true,
-              "delay": [1.0,1.0],
-              "target": "ball",
-              "radiusOffset": [0.0,0.0]
-            }
-          },
-          {
-            "triggerEnable": [
-              {
-                "target": "calc_t1_points_advantage"
-              },
-              {
-                "target": "t1_goal_hint"
-              }
+          "triggerEnable": {
+            "target": [
+              "calc_t1_points_advantage",
+              "t1_goal_hint"
             ]
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "t2_goal": {
         "is_enabled": false,
@@ -2275,69 +2089,65 @@
             "comparasion_func": "equal"
           }
         },
-        "actions": [
-          {
-            "playSound": {
+        "actions": {
+          "playSound": [
+            {
               "name": "football_event/horn_lose",
               "loop": false,
               "start": true,
               "team": "A"
-            }
-          },
-          {
-            "playSound": {
+            },
+            {
               "name": "football_event/horn_win",
               "loop": false,
               "start": true,
               "team": "B"
             }
+          ],
+          "varSetBool": {
+            "value": false,
+            "var": "t1_goal"
           },
-          {
-            "varSetBool": {
-              "value": false,
-              "var": "t1_goal"
-            }
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "t2_points"
           },
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "t2_points"
-            }
+          "gameMPChangeScore": {
+            "value": 1,
+            "valueSystem": "amount",
+            "team": "B"
           },
-          {
-            "gameMPChangeScore": {
-              "value": 1,
-              "valueSystem": "amount",
-              "team": "B"
-            }
+          "unitPlayEffect": {
+            "effect_type": "specify",
+            "effect": "firework_score_turquoise",
+            "offset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "show": true,
+            "attach": false,
+            "scale": 1.0,
+            "loopSpawn": true,
+            "delay": [
+              1.0,
+              1.0
+            ],
+            "target": "ball",
+            "radiusOffset": [
+              0.0,
+              0.0
+            ]
           },
-          {
-            "unitPlayEffect": {
-              "effect_type": "specify",
-              "effect": "firework_score_turquoise",
-              "offset": [0.0,0.0,0.0],
-              "show": true,
-              "attach": false,
-              "scale": 1.0,
-              "loopSpawn": true,
-              "delay": [1.0,1.0],
-              "target": "ball",
-              "radiusOffset": [0.0,0.0]
-            }
-          },
-          {
-            "triggerEnable": [
-              {
-                "target": "calc_t1_points_advantage"
-              },
-              {
-                "target": "t2_goal_hint"
-              }
+          "triggerEnable": {
+            "target": [
+              "calc_t1_points_advantage",
+              "t2_goal_hint"
             ]
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "calc_t1_points_advantage": {
         "is_enabled": false,
@@ -2352,7 +2162,7 @@
             "time": 0.01
           }
         },
-        "conditions": [],
+        "conditions": {},
         "actions": {
           "varSetInt": {
             "value": 0,
@@ -2370,7 +2180,7 @@
             "target": "t1_win_by_advantage"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "t1_win_by_advantage": {
         "is_enabled": false,
@@ -2393,74 +2203,56 @@
             "var_value_other": "points_advantage_for_t1_win"
           }
         },
-        "actions": [
-          {
-            "varSetBool": {
-              "value": false,
-              "var": "match_in_progress"
-            }
+        "actions": {
+          "varSetBool": {
+            "value": false,
+            "var": "match_in_progress"
           },
-          {
-            "triggerDisable": [
-              {
-                "target": "match_timer"
-              },
-              {
-                "target": "t1_goal"
-              },
-              {
-                "target": "t2_goal"
-              }
+          "triggerDisable": {
+            "target": [
+              "match_timer",
+              "t1_goal",
+              "t2_goal"
             ]
           },
-          {
-            "unitPutToSleep": {
-              "target": "ball"
-            }
+          "unitPutToSleep": {
+            "target": "ball"
           },
-          {
-            "unitSetProperties": {
-              "object_marking": 0,
-              "object_var_name": "",
-              "object_var_comp_op": "equal",
-              "object_var_value": 0,
-              "object": "all_players_squad",
-              "cannotShoot": true,
-              "cannotMove": true
-            }
+          "unitSetProperties": {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "object": "all_players_squad",
+            "cannotShoot": true,
+            "cannotMove": true
           },
-          {
-            "wait": {
+          "wait": [
+            {
               "time": 3.0
-            }
-          },
-          {
-            "wait": {
+            },
+            {
               "time": 2.0
             }
-          },
-          {
-            "moSetObjectiveStatus": {
+          ],
+          "moSetObjectiveStatus": [
+            {
               "target": "@objective_t1_win_by_advantage",
               "status": 2,
               "object_var_comp_op": "equal",
               "object_var_name": "",
               "object_marking": 0,
               "team": "A"
-            }
-          },
-          {
-            "moSetObjectiveStatus": {
+            },
+            {
               "target": "t2_football_score_the_goals",
               "status": 3,
               "object_var_comp_op": "equal",
               "object_var_name": "",
               "object_marking": 0,
               "team": "B"
-            }
-          },
-          {
-            "moSetObjectiveStatus": {
+            },
+            {
               "target": "@objective_t2_win_by_advantage",
               "status": 3,
               "object_var_comp_op": "equal",
@@ -2468,11 +2260,9 @@
               "object_marking": 0,
               "team": "B"
             }
-          },
-          {
-            "missionCompleted": []
-          }
-        ],
+          ],
+          "missionCompleted": {}
+        },
         "else_actions": {
           "triggerEnable": {
             "target": "t2_win_by_advantage"
@@ -2500,74 +2290,56 @@
             "var_value_other": "points_advantage_for_t2_win"
           }
         },
-        "actions": [
-          {
-            "varSetBool": {
-              "value": false,
-              "var": "match_in_progress"
-            }
+        "actions": {
+          "varSetBool": {
+            "value": false,
+            "var": "match_in_progress"
           },
-          {
-            "triggerDisable": [
-              {
-                "target": "match_timer"
-              },
-              {
-                "target": "t1_goal"
-              },
-              {
-                "target": "t2_goal"
-              }
+          "triggerDisable": {
+            "target": [
+              "match_timer",
+              "t1_goal",
+              "t2_goal"
             ]
           },
-          {
-            "unitPutToSleep": {
-              "target": "ball"
-            }
+          "unitPutToSleep": {
+            "target": "ball"
           },
-          {
-            "unitSetProperties": {
-              "object_marking": 0,
-              "object_var_name": "",
-              "object_var_comp_op": "equal",
-              "object_var_value": 0,
-              "object": "all_players_squad",
-              "cannotShoot": true,
-              "cannotMove": true
-            }
+          "unitSetProperties": {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "object": "all_players_squad",
+            "cannotShoot": true,
+            "cannotMove": true
           },
-          {
-            "wait": {
+          "wait": [
+            {
               "time": 3.0
-            }
-          },
-          {
-            "wait": {
+            },
+            {
               "time": 2.0
             }
-          },
-          {
-            "moSetObjectiveStatus": {
+          ],
+          "moSetObjectiveStatus": [
+            {
               "target": "@objective_t2_win_by_advantage",
               "status": 2,
               "object_var_comp_op": "equal",
               "object_var_name": "",
               "object_marking": 0,
               "team": "B"
-            }
-          },
-          {
-            "moSetObjectiveStatus": {
+            },
+            {
               "target": "t1_football_score_the_goals",
               "status": 3,
               "object_var_comp_op": "equal",
               "object_var_name": "",
               "object_marking": 0,
               "team": "A"
-            }
-          },
-          {
-            "moSetObjectiveStatus": {
+            },
+            {
               "target": "@objective_t1_win_by_advantage",
               "status": 3,
               "object_var_comp_op": "equal",
@@ -2575,11 +2347,9 @@
               "object_marking": 0,
               "team": "A"
             }
-          },
-          {
-            "missionCompleted": []
-          }
-        ],
+          ],
+          "missionCompleted": {}
+        },
         "else_actions": {
           "triggerEnable": {
             "target": "common_goal"
@@ -2599,45 +2369,33 @@
             "time": 0.01
           }
         },
-        "conditions": [],
-        "actions": [
-          {
-            "varSetBool": {
-              "value": false,
-              "var": "match_in_progress"
-            }
+        "conditions": {},
+        "actions": {
+          "varSetBool": {
+            "value": false,
+            "var": "match_in_progress"
           },
-          {
-            "triggerDisable": [
-              {
-                "target": "match_timer"
-              },
-              {
-                "target": "t1_goal"
-              },
-              {
-                "target": "t2_goal"
-              }
+          "triggerDisable": {
+            "target": [
+              "match_timer",
+              "t1_goal",
+              "t2_goal"
             ]
           },
-          {
-            "unitPutToSleep": {
-              "target": "ball"
-            }
+          "unitPutToSleep": {
+            "target": "ball"
           },
-          {
-            "unitSetProperties": {
-              "object_marking": 0,
-              "object_var_name": "",
-              "object_var_comp_op": "equal",
-              "object_var_value": 0,
-              "object": "all_players_squad",
-              "cannotShoot": true,
-              "cannotMove": true
-            }
+          "unitSetProperties": {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "object": "all_players_squad",
+            "cannotShoot": true,
+            "cannotMove": true
           },
-          {
-            "missionMarkAsRespawnPoint": {
+          "missionMarkAsRespawnPoint": [
+            {
               "loc_name": "missions/respawn_ingame",
               "spawnEffect": false,
               "isStrictSpawn": false,
@@ -2664,10 +2422,8 @@
                 "type_tank_destroyer": true,
                 "type_spaa": true
               }
-            }
-          },
-          {
-            "missionMarkAsRespawnPoint": {
+            },
+            {
               "loc_name": "missions/respawn_ingame",
               "spawnEffect": false,
               "isStrictSpawn": false,
@@ -2689,7 +2445,11 @@
               "separate_fuel_time": false,
               "modular_airfield": false,
               "disableAfter": 1,
-              "offset": [0.0,0.0,0.0],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
               "tags": {
                 "type_heavy_tank": true,
                 "type_medium_tank": true,
@@ -2698,51 +2458,39 @@
                 "type_spaa": true
               }
             }
-          },
-          {
-            "wait": {
+          ],
+          "wait": [
+            {
+              "time": 5.0
+            },
+            {
               "time": 5.0
             }
+          ],
+          "playerForceMoveToRespawnScreen": {
+            "target": "all_players_squad"
           },
-          {
-            "wait": {
-              "time": 5.0
-            }
-          },
-          {
-            "playerForceMoveToRespawnScreen": {
-              "target": "all_players_squad"
-            }
-          },
-          {
-            "triggerEnable": [
-              {
-                "target": "waiting_timer"
-              },
-              {
-                "target": "all_players_ready"
-              },
-              {
-                "target": "all_players_ready_after_jip_off"
-              },
-              {
-                "target": "start_kickoff_timer"
-              },
-              {
-                "target": "set_respawn_base_name"
-              }
+          "triggerEnable": {
+            "target": [
+              "waiting_timer",
+              "all_players_ready",
+              "all_players_ready_after_jip_off",
+              "start_kickoff_timer",
+              "set_respawn_base_name"
             ]
           },
-          {
-            "unitRespawn": {
-              "delay": 0.0,
-              "offset": [0.0,0.0,0.0],
-              "object": "ball",
-              "target": "center"
-            }
+          "unitRespawn": {
+            "delay": 0.0,
+            "offset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "object": "ball",
+            "target": "center"
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "t1_goal_hint": {
         "is_enabled": false,
@@ -2764,9 +2512,9 @@
             "comparasion_func": "more"
           }
         },
-        "actions": [
-          {
-            "playHint": {
+        "actions": {
+          "playHint": [
+            {
               "hintType": "standard",
               "name": "hints/football_scored_the_goal",
               "action": "show",
@@ -2781,10 +2529,8 @@
               "var_name": "mpPlayerIdGoal",
               "var_style": "playerId",
               "team": "A"
-            }
-          },
-          {
-            "playHint": {
+            },
+            {
               "hintType": "standard",
               "name": "hints/football_missed_the_goal",
               "action": "show",
@@ -2800,9 +2546,9 @@
               "var_style": "playerId",
               "team": "B"
             }
-          }
-        ],
-        "else_actions": []
+          ]
+        },
+        "else_actions": {}
       },
       "t2_goal_hint": {
         "is_enabled": false,
@@ -2824,9 +2570,9 @@
             "comparasion_func": "more"
           }
         },
-        "actions": [
-          {
-            "playHint": {
+        "actions": {
+          "playHint": [
+            {
               "hintType": "standard",
               "name": "hints/football_missed_the_goal",
               "action": "show",
@@ -2841,10 +2587,8 @@
               "var_name": "mpPlayerIdGoal",
               "var_style": "playerId",
               "team": "A"
-            }
-          },
-          {
-            "playHint": {
+            },
+            {
               "hintType": "standard",
               "name": "hints/football_scored_the_goal",
               "action": "show",
@@ -2860,9 +2604,9 @@
               "var_style": "playerId",
               "team": "B"
             }
-          }
-        ],
-        "else_actions": []
+          ]
+        },
+        "else_actions": {}
       }
     },
     "saves": {
@@ -2910,7 +2654,7 @@
             "var": "mpPlayerIdSave"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       }
     },
     "tech_defeat": {
@@ -2943,14 +2687,12 @@
           }
         },
         "actions": {
-          "triggerDisable": [
-            {
-              "target": "match_timer"
-            },
-            {
-              "target": "player_is_inactive_ingame_t2"
-            }
-          ],
+          "triggerDisable": {
+            "target": [
+              "match_timer",
+              "player_is_inactive_ingame_t2"
+            ]
+          },
           "triggerEnable": {
             "target": "timer_techdefeat_t1"
           }
@@ -3067,14 +2809,12 @@
           }
         },
         "actions": {
-          "triggerDisable": [
-            {
-              "target": "match_timer"
-            },
-            {
-              "target": "player_is_inactive_ingame_t1"
-            }
-          ],
+          "triggerDisable": {
+            "target": [
+              "match_timer",
+              "player_is_inactive_ingame_t1"
+            ]
+          },
           "triggerEnable": {
             "target": "timer_techdefeat_t2"
           }
@@ -3189,39 +2929,31 @@
           }
         },
         "actions": {
-          "triggerEnable": [
-            {
-              "target": "check_ball_stopped"
-            },
-            {
-              "target": "check_ball_out"
-            }
-          ]
+          "triggerEnable": {
+            "target": [
+              "check_ball_stopped",
+              "check_ball_out"
+            ]
+          }
         },
-        "else_actions": [
-          {
-            "triggerDisable": [
-              {
-                "target": "check_ball_stopped"
-              },
-              {
-                "target": "check_ball_out"
-              }
+        "else_actions": {
+          "triggerDisable": {
+            "target": [
+              "check_ball_stopped",
+              "check_ball_out"
             ]
           },
-          {
-            "varSetBool": {
+          "varSetBool": [
+            {
               "value": false,
               "var": "ball_stopped"
-            }
-          },
-          {
-            "varSetBool": {
+            },
+            {
               "value": false,
               "var": "ball_out"
             }
-          }
-        ]
+          ]
+        }
       },
       "check_ball_out": {
         "is_enabled": true,
@@ -3383,22 +3115,20 @@
             "time": 1.0
           }
         },
-        "conditions": [
-          {
-            "varCompareInt": {
+        "conditions": {
+          "varCompareInt": [
+            {
               "var_value": "ball_stopped_timer",
               "value": 1,
               "comparasion_func": "less"
-            }
-          },
-          {
-            "varCompareInt": {
+            },
+            {
               "var_value": "ball_out_timer",
               "value": 1,
               "comparasion_func": "less"
             }
-          }
-        ],
+          ]
+        },
         "actions": {
           "unitPutToSleep": {
             "target": "ball"
@@ -3406,19 +3136,15 @@
           "triggerEnable": {
             "target": "reset_ball_timer"
           },
-          "triggerDisable": [
-            {
-              "target": "check_match_in_progress"
-            },
-            {
-              "target": "check_ball_out"
-            },
-            {
-              "target": "check_ball_stopped"
-            }
-          ]
+          "triggerDisable": {
+            "target": [
+              "check_match_in_progress",
+              "check_ball_out",
+              "check_ball_stopped"
+            ]
+          }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "reset_ball_timer": {
         "is_enabled": false,
@@ -3461,84 +3187,68 @@
             "var": "reset_ball_timer"
           }
         },
-        "else_actions": [
-          {
-            "playHint": {
-              "hintType": "standard",
-              "name": "hints/football_ball_was_reset",
-              "action": "hide",
-              "shouldFadeOut": false,
-              "time": -1.0,
-              "priority": 2,
-              "isOverFade": false,
-              "target_marking": 0,
-              "object_var_name": "",
-              "object_var_comp_op": "equal",
-              "object_var_value": 0,
-              "var_name": "reset_ball_timer"
-            }
+        "else_actions": {
+          "playHint": {
+            "hintType": "standard",
+            "name": "hints/football_ball_was_reset",
+            "action": "hide",
+            "shouldFadeOut": false,
+            "time": -1.0,
+            "priority": 2,
+            "isOverFade": false,
+            "target_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "var_name": "reset_ball_timer"
           },
-          {
-            "varSetInt": {
+          "varSetInt": [
+            {
               "value": 5,
               "var": "reset_ball_timer"
-            }
-          },
-          {
-            "varSetInt": {
+            },
+            {
               "value": 10,
               "var": "ball_stopped_timer",
               "input_var": "ball_stopped_timer_from_desc"
-            }
-          },
-          {
-            "varSetInt": {
+            },
+            {
               "value": 5,
               "var": "ball_out_timer"
             }
-          },
-          {
-            "varSetBool": {
+          ],
+          "varSetBool": [
+            {
               "value": false,
               "var": "ball_stopped"
-            }
-          },
-          {
-            "varSetBool": {
+            },
+            {
               "value": false,
               "var": "ball_out"
             }
+          ],
+          "unitRespawn": {
+            "delay": 0.5,
+            "offset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "object": "ball",
+            "target": "center"
           },
-          {
-            "unitRespawn": {
-              "delay": 0.5,
-              "offset": [0.0,0.0,0.0],
-              "object": "ball",
-              "target": "center"
-            }
-          },
-          {
-            "triggerEnable": [
-              {
-                "target": "need_to_reset_ball"
-              },
-              {
-                "target": "check_match_in_progress"
-              },
-              {
-                "target": "check_ball_out"
-              },
-              {
-                "target": "check_ball_stopped"
-              }
+          "triggerEnable": {
+            "target": [
+              "need_to_reset_ball",
+              "check_match_in_progress",
+              "check_ball_out",
+              "check_ball_stopped"
             ]
           },
-          {
-            "triggerDisable": {
-              "target": "reset_ball_timer"
-            }
+          "triggerDisable": {
+            "target": "reset_ball_timer"
           }
-        ]
+        }
       }
     },
     "players_online_counter": {
@@ -3577,7 +3287,7 @@
             "var": "players_online_count_int"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "players_online_counter_more": {
         "is_enabled": true,
@@ -3612,7 +3322,7 @@
             "var": "players_online_count_int"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       }
     },
     "players_active_counter": {
@@ -3651,7 +3361,7 @@
             "var": "players_active_count_int"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "players_active_counter_more": {
         "is_enabled": true,
@@ -3686,7 +3396,7 @@
             "var": "players_active_count_int"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       }
     }
   },
@@ -3702,8 +3412,8 @@
         "timeLimit": 1800,
         "team": "A"
       },
-      "onSuccess": [],
-      "onFailed": []
+      "onSuccess": {},
+      "onFailed": {}
     },
     "t2_football_score_the_goals": {
       "is_enabled": true,
@@ -3714,8 +3424,8 @@
         "timeLimit": 1800,
         "team": "B"
       },
-      "onSuccess": [],
-      "onFailed": []
+      "onSuccess": {},
+      "onFailed": {}
     }
   },
   "variables": {
@@ -3752,18 +3462,34 @@
     "players_active_count_int": 0,
     "jip_time_for_waiting": 420
   },
-  "dialogs": [],
-  "airfields": [],
-  "effects": [],
-  "units": [
-    {
-      "armada": {
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {
+    "armada": [
+      {
         "name": "t1_player01",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [29647.0,450.6,29619.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            29647.0,
+            450.6,
+            29619.7
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -3802,17 +3528,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player02",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [29598.2,450.6,29619.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            29598.2,
+            450.6,
+            29619.7
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -3851,17 +3591,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player03",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [29523.2,450.6,29619.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            29523.2,
+            450.6,
+            29619.7
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -3900,17 +3654,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player04",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [29444.6,450.6,29619.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            29444.6,
+            450.6,
+            29619.7
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -3949,17 +3717,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player05",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [29355.8,450.6,29619.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            29355.8,
+            450.6,
+            29619.7
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -3998,17 +3780,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player06",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [29244.3,450.6,29619.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            29244.3,
+            450.6,
+            29619.7
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4047,17 +3843,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player07",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [29138.4,450.6,29619.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            29138.4,
+            450.6,
+            29619.7
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4096,17 +3906,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player08",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [29036.6,450.6,29619.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            29036.6,
+            450.6,
+            29619.7
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4145,17 +3969,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player09",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [28925.2,450.6,29619.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            28925.2,
+            450.6,
+            29619.7
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4194,17 +4032,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player10",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [28806.0,450.6,29619.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            28806.0,
+            450.6,
+            29619.7
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4243,17 +4095,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player11",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [28743.7,450.6,29619.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            28743.7,
+            450.6,
+            29619.7
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4292,17 +4158,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player12",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [28649.0,450.6,29619.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            28649.0,
+            450.6,
+            29619.7
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4341,17 +4221,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player13",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [28585.4,450.6,29619.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            28585.4,
+            450.6,
+            29619.7
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4390,17 +4284,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player14",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [28520.0,450.6,29619.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            28520.0,
+            450.6,
+            29619.7
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4439,17 +4347,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player15",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [28440.6,450.6,29619.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            28440.6,
+            450.6,
+            29619.7
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4488,17 +4410,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player16",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [28369.3,450.6,29619.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            28369.3,
+            450.6,
+            29619.7
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4537,17 +4473,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player01",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [29682.8,450.6,28971.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            29682.8,
+            450.6,
+            28971.3
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4586,17 +4536,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player02",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [29578.8,450.6,28971.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            29578.8,
+            450.6,
+            28971.3
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4635,17 +4599,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player03",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [29470.3,450.6,28971.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            29470.3,
+            450.6,
+            28971.3
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4684,17 +4662,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player04",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [29352.3,450.6,28971.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            29352.3,
+            450.6,
+            28971.3
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4733,17 +4725,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player05",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [29226.7,450.6,28971.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            29226.7,
+            450.6,
+            28971.3
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4782,17 +4788,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player06",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [29100.9,450.6,28971.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            29100.9,
+            450.6,
+            28971.3
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4831,17 +4851,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player07",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [29026.8,450.6,28971.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            29026.8,
+            450.6,
+            28971.3
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4880,17 +4914,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player08",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [28928.3,450.6,28971.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            28928.3,
+            450.6,
+            28971.3
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4929,17 +4977,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player09",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [28840.7,450.6,28971.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            28840.7,
+            450.6,
+            28971.3
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -4978,17 +5040,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player10",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [28727.4,450.6,28971.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            28727.4,
+            450.6,
+            28971.3
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -5027,17 +5103,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player11",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [28639.5,450.6,28971.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            28639.5,
+            450.6,
+            28971.3
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -5076,17 +5166,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player12",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [28539.3,450.6,28971.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            28539.3,
+            450.6,
+            28971.3
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -5125,17 +5229,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player13",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [28442.1,450.6,28971.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            28442.1,
+            450.6,
+            28971.3
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -5174,17 +5292,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player14",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [28322.0,450.6,28971.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            28322.0,
+            450.6,
+            28971.3
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -5223,17 +5355,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player15",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [28204.1,450.6,28971.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            28204.1,
+            450.6,
+            28971.3
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -5272,17 +5418,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player16",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [28108.6,450.6,28971.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            28108.6,
+            450.6,
+            28971.3
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -5321,17 +5481,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player17",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [27957.6,450.6,28971.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            27957.6,
+            450.6,
+            28971.3
+          ]
         ],
         "unit_class": "dummy_plane",
         "closed_waypoints": false,
@@ -5370,17 +5544,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player18",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [6900.91,1839.1,1278.85]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            6900.91,
+            1839.1,
+            1278.85
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -5420,17 +5608,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player19",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [6900.91,1839.1,1278.85]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            6900.91,
+            1839.1,
+            1278.85
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -5470,17 +5672,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player20",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [7120.39,1839.1,1278.85]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            7120.39,
+            1839.1,
+            1278.85
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -5520,17 +5736,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player21",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [7339.88,1839.1,1278.85]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            7339.88,
+            1839.1,
+            1278.85
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -5570,17 +5800,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player22",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [7559.36,1839.1,1278.85]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            7559.36,
+            1839.1,
+            1278.85
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -5620,17 +5864,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player23",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [7778.84,1839.1,1278.85]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            7778.84,
+            1839.1,
+            1278.85
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -5670,17 +5928,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player24",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [7998.32,1839.1,1278.85]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            7998.32,
+            1839.1,
+            1278.85
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -5720,17 +5992,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player25",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [8217.8,1839.1,1278.85]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            8217.8,
+            1839.1,
+            1278.85
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -5770,17 +6056,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player26",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [8437.28,1839.1,1278.85]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            8437.28,
+            1839.1,
+            1278.85
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -5820,17 +6120,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player27",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [8656.76,1839.1,1278.85]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            8656.76,
+            1839.1,
+            1278.85
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -5870,17 +6184,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player28",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [8876.25,1839.1,1278.85]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            8876.25,
+            1839.1,
+            1278.85
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -5920,17 +6248,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player29",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [9095.73,1839.1,1278.85]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            9095.73,
+            1839.1,
+            1278.85
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -5970,17 +6312,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player30",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [9315.21,1839.1,1278.85]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            9315.21,
+            1839.1,
+            1278.85
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6020,17 +6376,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player31",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [9534.69,1839.1,1278.85]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            9534.69,
+            1839.1,
+            1278.85
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6070,17 +6440,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t2_player32",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [9754.17,1839.1,1278.85]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            9754.17,
+            1839.1,
+            1278.85
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6120,17 +6504,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player17",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [5768.95,1839.1,886.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            5768.95,
+            1839.1,
+            886.8
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6170,17 +6568,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player18",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [5936.45,1839.1,886.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            5936.45,
+            1839.1,
+            886.8
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6220,17 +6632,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player19",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [6103.96,1839.1,886.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            6103.96,
+            1839.1,
+            886.8
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6270,17 +6696,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player20",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [6271.46,1839.1,886.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            6271.46,
+            1839.1,
+            886.8
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6320,17 +6760,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player21",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [6438.96,1839.1,886.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            6438.96,
+            1839.1,
+            886.8
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6370,17 +6824,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player22",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [6606.46,1839.1,886.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            6606.46,
+            1839.1,
+            886.8
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6420,17 +6888,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player23",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [6773.96,1839.1,886.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            6773.96,
+            1839.1,
+            886.8
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6470,17 +6952,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player24",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [6941.47,1839.1,886.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            6941.47,
+            1839.1,
+            886.8
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6520,17 +7016,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player25",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [7108.97,1839.1,886.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            7108.97,
+            1839.1,
+            886.8
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6570,17 +7080,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player26",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [7276.47,1839.1,886.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            7276.47,
+            1839.1,
+            886.8
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6620,17 +7144,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player27",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [7443.97,1839.1,886.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            7443.97,
+            1839.1,
+            886.8
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6670,17 +7208,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player28",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [7611.47,1839.1,886.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            7611.47,
+            1839.1,
+            886.8
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6720,17 +7272,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player29",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [7778.98,1839.1,886.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            7778.98,
+            1839.1,
+            886.8
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6770,17 +7336,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player30",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [7946.48,1839.1,886.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            7946.48,
+            1839.1,
+            886.8
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6820,17 +7400,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player31",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [8113.98,1839.1,886.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            8113.98,
+            1839.1,
+            886.8
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6870,17 +7464,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "t1_player32",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [8281.48,1839.1,886.8]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            8281.48,
+            1839.1,
+            886.8
+          ]
         ],
         "unit_class": "dummy_plane",
         "objLayer": 1,
@@ -6920,662 +7528,312 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
+        "way": {}
       }
-    },
-    {
-      "squad": {
+    ],
+    "squad": [
+      {
         "name": "t1_players_squad",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [40874.1,47.8,29857.3]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            40874.1,
+            47.8,
+            29857.3
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "t1_player01"
-          },
-          {
-            "squad_members": "t1_player02"
-          },
-          {
-            "squad_members": "t1_player03"
-          },
-          {
-            "squad_members": "t1_player04"
-          },
-          {
-            "squad_members": "t1_player05"
-          },
-          {
-            "squad_members": "t1_player06"
-          },
-          {
-            "squad_members": "t1_player07"
-          },
-          {
-            "squad_members": "t1_player08"
-          },
-          {
-            "squad_members": "t1_player09"
-          },
-          {
-            "squad_members": "t1_player10"
-          },
-          {
-            "squad_members": "t1_player11"
-          },
-          {
-            "squad_members": "t1_player12"
-          },
-          {
-            "squad_members": "t1_player13"
-          },
-          {
-            "squad_members": "t1_player14"
-          },
-          {
-            "squad_members": "t1_player15"
-          },
-          {
-            "squad_members": "t1_player16"
-          },
-          {
-            "squad_members": "t1_player17"
-          },
-          {
-            "squad_members": "t1_player18"
-          },
-          {
-            "squad_members": "t1_player19"
-          },
-          {
-            "squad_members": "t1_player20"
-          },
-          {
-            "squad_members": "t1_player21"
-          },
-          {
-            "squad_members": "t1_player22"
-          },
-          {
-            "squad_members": "t1_player23"
-          },
-          {
-            "squad_members": "t1_player24"
-          },
-          {
-            "squad_members": "t1_player25"
-          },
-          {
-            "squad_members": "t1_player26"
-          },
-          {
-            "squad_members": "t1_player27"
-          },
-          {
-            "squad_members": "t1_player28"
-          },
-          {
-            "squad_members": "t1_player29"
-          },
-          {
-            "squad_members": "t1_player30"
-          },
-          {
-            "squad_members": "t1_player31"
-          },
-          {
-            "squad_members": "t1_player32"
-          },
-          {
-            "squad_members": "t2_player01"
-          },
-          {
-            "squad_members": "t2_player02"
-          },
-          {
-            "squad_members": "t2_player03"
-          },
-          {
-            "squad_members": "t2_player04"
-          },
-          {
-            "squad_members": "t2_player05"
-          },
-          {
-            "squad_members": "t2_player06"
-          },
-          {
-            "squad_members": "t2_player07"
-          },
-          {
-            "squad_members": "t2_player08"
-          },
-          {
-            "squad_members": "t2_player09"
-          },
-          {
-            "squad_members": "t2_player10"
-          },
-          {
-            "squad_members": "t2_player11"
-          },
-          {
-            "squad_members": "t2_player12"
-          },
-          {
-            "squad_members": "t2_player13"
-          },
-          {
-            "squad_members": "t2_player14"
-          },
-          {
-            "squad_members": "t2_player15"
-          },
-          {
-            "squad_members": "t2_player16"
-          },
-          {
-            "squad_members": "t2_player17"
-          },
-          {
-            "squad_members": "t2_player18"
-          },
-          {
-            "squad_members": "t2_player19"
-          },
-          {
-            "squad_members": "t2_player20"
-          },
-          {
-            "squad_members": "t2_player21"
-          },
-          {
-            "squad_members": "t2_player22"
-          },
-          {
-            "squad_members": "t2_player23"
-          },
-          {
-            "squad_members": "t2_player24"
-          },
-          {
-            "squad_members": "t2_player25"
-          },
-          {
-            "squad_members": "t2_player26"
-          },
-          {
-            "squad_members": "t2_player27"
-          },
-          {
-            "squad_members": "t2_player28"
-          },
-          {
-            "squad_members": "t2_player29"
-          },
-          {
-            "squad_members": "t2_player30"
-          },
-          {
-            "squad_members": "t2_player31"
-          },
-          {
-            "squad_members": "t2_player32"
-          },
-          {
-            "object_type": "isTeamA"
-          },
-          {
-            "object_marking": 0
-          }
-        ]
-      }
-    },
-    {
-      "squad": {
+        "props": {
+          "squad_members": [
+            "t1_player01",
+            "t1_player02",
+            "t1_player03",
+            "t1_player04",
+            "t1_player05",
+            "t1_player06",
+            "t1_player07",
+            "t1_player08",
+            "t1_player09",
+            "t1_player10",
+            "t1_player11",
+            "t1_player12",
+            "t1_player13",
+            "t1_player14",
+            "t1_player15",
+            "t1_player16",
+            "t1_player17",
+            "t1_player18",
+            "t1_player19",
+            "t1_player20",
+            "t1_player21",
+            "t1_player22",
+            "t1_player23",
+            "t1_player24",
+            "t1_player25",
+            "t1_player26",
+            "t1_player27",
+            "t1_player28",
+            "t1_player29",
+            "t1_player30",
+            "t1_player31",
+            "t1_player32",
+            "t2_player01",
+            "t2_player02",
+            "t2_player03",
+            "t2_player04",
+            "t2_player05",
+            "t2_player06",
+            "t2_player07",
+            "t2_player08",
+            "t2_player09",
+            "t2_player10",
+            "t2_player11",
+            "t2_player12",
+            "t2_player13",
+            "t2_player14",
+            "t2_player15",
+            "t2_player16",
+            "t2_player17",
+            "t2_player18",
+            "t2_player19",
+            "t2_player20",
+            "t2_player21",
+            "t2_player22",
+            "t2_player23",
+            "t2_player24",
+            "t2_player25",
+            "t2_player26",
+            "t2_player27",
+            "t2_player28",
+            "t2_player29",
+            "t2_player30",
+            "t2_player31",
+            "t2_player32"
+          ],
+          "object_type": "isTeamA",
+          "object_marking": 0
+        }
+      },
+      {
         "name": "t2_players_squad",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [34354.4,47.8,29894.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            34354.4,
+            47.8,
+            29894.7
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "t1_player01"
-          },
-          {
-            "squad_members": "t1_player02"
-          },
-          {
-            "squad_members": "t1_player03"
-          },
-          {
-            "squad_members": "t1_player04"
-          },
-          {
-            "squad_members": "t1_player05"
-          },
-          {
-            "squad_members": "t1_player06"
-          },
-          {
-            "squad_members": "t1_player07"
-          },
-          {
-            "squad_members": "t1_player08"
-          },
-          {
-            "squad_members": "t1_player09"
-          },
-          {
-            "squad_members": "t1_player10"
-          },
-          {
-            "squad_members": "t1_player11"
-          },
-          {
-            "squad_members": "t1_player12"
-          },
-          {
-            "squad_members": "t1_player13"
-          },
-          {
-            "squad_members": "t1_player14"
-          },
-          {
-            "squad_members": "t1_player15"
-          },
-          {
-            "squad_members": "t1_player16"
-          },
-          {
-            "squad_members": "t1_player17"
-          },
-          {
-            "squad_members": "t1_player18"
-          },
-          {
-            "squad_members": "t1_player19"
-          },
-          {
-            "squad_members": "t1_player20"
-          },
-          {
-            "squad_members": "t1_player21"
-          },
-          {
-            "squad_members": "t1_player22"
-          },
-          {
-            "squad_members": "t1_player23"
-          },
-          {
-            "squad_members": "t1_player24"
-          },
-          {
-            "squad_members": "t1_player25"
-          },
-          {
-            "squad_members": "t1_player26"
-          },
-          {
-            "squad_members": "t1_player27"
-          },
-          {
-            "squad_members": "t1_player28"
-          },
-          {
-            "squad_members": "t1_player29"
-          },
-          {
-            "squad_members": "t1_player30"
-          },
-          {
-            "squad_members": "t1_player31"
-          },
-          {
-            "squad_members": "t1_player32"
-          },
-          {
-            "squad_members": "t2_player01"
-          },
-          {
-            "squad_members": "t2_player02"
-          },
-          {
-            "squad_members": "t2_player03"
-          },
-          {
-            "squad_members": "t2_player04"
-          },
-          {
-            "squad_members": "t2_player05"
-          },
-          {
-            "squad_members": "t2_player06"
-          },
-          {
-            "squad_members": "t2_player07"
-          },
-          {
-            "squad_members": "t2_player08"
-          },
-          {
-            "squad_members": "t2_player09"
-          },
-          {
-            "squad_members": "t2_player10"
-          },
-          {
-            "squad_members": "t2_player11"
-          },
-          {
-            "squad_members": "t2_player12"
-          },
-          {
-            "squad_members": "t2_player13"
-          },
-          {
-            "squad_members": "t2_player14"
-          },
-          {
-            "squad_members": "t2_player15"
-          },
-          {
-            "squad_members": "t2_player16"
-          },
-          {
-            "squad_members": "t2_player17"
-          },
-          {
-            "squad_members": "t2_player18"
-          },
-          {
-            "squad_members": "t2_player19"
-          },
-          {
-            "squad_members": "t2_player20"
-          },
-          {
-            "squad_members": "t2_player21"
-          },
-          {
-            "squad_members": "t2_player22"
-          },
-          {
-            "squad_members": "t2_player23"
-          },
-          {
-            "squad_members": "t2_player24"
-          },
-          {
-            "squad_members": "t2_player25"
-          },
-          {
-            "squad_members": "t2_player26"
-          },
-          {
-            "squad_members": "t2_player27"
-          },
-          {
-            "squad_members": "t2_player28"
-          },
-          {
-            "squad_members": "t2_player29"
-          },
-          {
-            "squad_members": "t2_player30"
-          },
-          {
-            "squad_members": "t2_player31"
-          },
-          {
-            "squad_members": "t2_player32"
-          },
-          {
-            "object_type": "isTeamB"
-          },
-          {
-            "object_marking": 0
-          }
-        ]
-      }
-    },
-    {
-      "squad": {
+        "props": {
+          "squad_members": [
+            "t1_player01",
+            "t1_player02",
+            "t1_player03",
+            "t1_player04",
+            "t1_player05",
+            "t1_player06",
+            "t1_player07",
+            "t1_player08",
+            "t1_player09",
+            "t1_player10",
+            "t1_player11",
+            "t1_player12",
+            "t1_player13",
+            "t1_player14",
+            "t1_player15",
+            "t1_player16",
+            "t1_player17",
+            "t1_player18",
+            "t1_player19",
+            "t1_player20",
+            "t1_player21",
+            "t1_player22",
+            "t1_player23",
+            "t1_player24",
+            "t1_player25",
+            "t1_player26",
+            "t1_player27",
+            "t1_player28",
+            "t1_player29",
+            "t1_player30",
+            "t1_player31",
+            "t1_player32",
+            "t2_player01",
+            "t2_player02",
+            "t2_player03",
+            "t2_player04",
+            "t2_player05",
+            "t2_player06",
+            "t2_player07",
+            "t2_player08",
+            "t2_player09",
+            "t2_player10",
+            "t2_player11",
+            "t2_player12",
+            "t2_player13",
+            "t2_player14",
+            "t2_player15",
+            "t2_player16",
+            "t2_player17",
+            "t2_player18",
+            "t2_player19",
+            "t2_player20",
+            "t2_player21",
+            "t2_player22",
+            "t2_player23",
+            "t2_player24",
+            "t2_player25",
+            "t2_player26",
+            "t2_player27",
+            "t2_player28",
+            "t2_player29",
+            "t2_player30",
+            "t2_player31",
+            "t2_player32"
+          ],
+          "object_type": "isTeamB",
+          "object_marking": 0
+        }
+      },
+      {
         "name": "all_players_squad",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [37979.7,56.5,29793.9]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            37979.7,
+            56.5,
+            29793.9
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "t1_player01"
-          },
-          {
-            "squad_members": "t1_player02"
-          },
-          {
-            "squad_members": "t1_player03"
-          },
-          {
-            "squad_members": "t1_player04"
-          },
-          {
-            "squad_members": "t1_player05"
-          },
-          {
-            "squad_members": "t1_player06"
-          },
-          {
-            "squad_members": "t1_player07"
-          },
-          {
-            "squad_members": "t1_player08"
-          },
-          {
-            "squad_members": "t1_player09"
-          },
-          {
-            "squad_members": "t1_player10"
-          },
-          {
-            "squad_members": "t1_player11"
-          },
-          {
-            "squad_members": "t1_player12"
-          },
-          {
-            "squad_members": "t1_player13"
-          },
-          {
-            "squad_members": "t1_player14"
-          },
-          {
-            "squad_members": "t1_player15"
-          },
-          {
-            "squad_members": "t1_player16"
-          },
-          {
-            "squad_members": "t1_player17"
-          },
-          {
-            "squad_members": "t1_player18"
-          },
-          {
-            "squad_members": "t1_player19"
-          },
-          {
-            "squad_members": "t1_player20"
-          },
-          {
-            "squad_members": "t1_player21"
-          },
-          {
-            "squad_members": "t1_player22"
-          },
-          {
-            "squad_members": "t1_player23"
-          },
-          {
-            "squad_members": "t1_player24"
-          },
-          {
-            "squad_members": "t1_player25"
-          },
-          {
-            "squad_members": "t1_player26"
-          },
-          {
-            "squad_members": "t1_player27"
-          },
-          {
-            "squad_members": "t1_player28"
-          },
-          {
-            "squad_members": "t1_player29"
-          },
-          {
-            "squad_members": "t1_player30"
-          },
-          {
-            "squad_members": "t1_player31"
-          },
-          {
-            "squad_members": "t1_player32"
-          },
-          {
-            "squad_members": "t2_player01"
-          },
-          {
-            "squad_members": "t2_player02"
-          },
-          {
-            "squad_members": "t2_player03"
-          },
-          {
-            "squad_members": "t2_player04"
-          },
-          {
-            "squad_members": "t2_player05"
-          },
-          {
-            "squad_members": "t2_player06"
-          },
-          {
-            "squad_members": "t2_player07"
-          },
-          {
-            "squad_members": "t2_player08"
-          },
-          {
-            "squad_members": "t2_player09"
-          },
-          {
-            "squad_members": "t2_player10"
-          },
-          {
-            "squad_members": "t2_player11"
-          },
-          {
-            "squad_members": "t2_player12"
-          },
-          {
-            "squad_members": "t2_player13"
-          },
-          {
-            "squad_members": "t2_player14"
-          },
-          {
-            "squad_members": "t2_player15"
-          },
-          {
-            "squad_members": "t2_player16"
-          },
-          {
-            "squad_members": "t2_player17"
-          },
-          {
-            "squad_members": "t2_player18"
-          },
-          {
-            "squad_members": "t2_player19"
-          },
-          {
-            "squad_members": "t2_player20"
-          },
-          {
-            "squad_members": "t2_player21"
-          },
-          {
-            "squad_members": "t2_player22"
-          },
-          {
-            "squad_members": "t2_player23"
-          },
-          {
-            "squad_members": "t2_player24"
-          },
-          {
-            "squad_members": "t2_player25"
-          },
-          {
-            "squad_members": "t2_player26"
-          },
-          {
-            "squad_members": "t2_player27"
-          },
-          {
-            "squad_members": "t2_player28"
-          },
-          {
-            "squad_members": "t2_player29"
-          },
-          {
-            "squad_members": "t2_player30"
-          },
-          {
-            "squad_members": "t2_player31"
-          },
-          {
-            "squad_members": "t2_player32"
-          },
-          {
-            "object_marking": 0
-          }
-        ]
+        "props": {
+          "squad_members": [
+            "t1_player01",
+            "t1_player02",
+            "t1_player03",
+            "t1_player04",
+            "t1_player05",
+            "t1_player06",
+            "t1_player07",
+            "t1_player08",
+            "t1_player09",
+            "t1_player10",
+            "t1_player11",
+            "t1_player12",
+            "t1_player13",
+            "t1_player14",
+            "t1_player15",
+            "t1_player16",
+            "t1_player17",
+            "t1_player18",
+            "t1_player19",
+            "t1_player20",
+            "t1_player21",
+            "t1_player22",
+            "t1_player23",
+            "t1_player24",
+            "t1_player25",
+            "t1_player26",
+            "t1_player27",
+            "t1_player28",
+            "t1_player29",
+            "t1_player30",
+            "t1_player31",
+            "t1_player32",
+            "t2_player01",
+            "t2_player02",
+            "t2_player03",
+            "t2_player04",
+            "t2_player05",
+            "t2_player06",
+            "t2_player07",
+            "t2_player08",
+            "t2_player09",
+            "t2_player10",
+            "t2_player11",
+            "t2_player12",
+            "t2_player13",
+            "t2_player14",
+            "t2_player15",
+            "t2_player16",
+            "t2_player17",
+            "t2_player18",
+            "t2_player19",
+            "t2_player20",
+            "t2_player21",
+            "t2_player22",
+            "t2_player23",
+            "t2_player24",
+            "t2_player25",
+            "t2_player26",
+            "t2_player27",
+            "t2_player28",
+            "t2_player29",
+            "t2_player30",
+            "t2_player31",
+            "t2_player32"
+          ],
+          "object_marking": 0
+        }
       }
-    }
-  ],
-  "areas": [],
-  "objLayers": [
-    {
-      "layer": {
+    ]
+  },
+  "areas": {},
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
         "enabled": true
       }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    }
-  ],
-  "wayPoints": []
+    ]
+  },
+  "wayPoints": {}
 }

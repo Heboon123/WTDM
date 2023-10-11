@@ -30,66 +30,44 @@
       "part": {
         "event": "",
         "minTime": 0,
-        "slide": [
-          {
-            "map": true
-          },
-          {
-            "minTime": 4
-          },
-          {
-            "picture": ""
-          },
-          {
-            "showAirMap": false
-          },
-          {
-            "arrow": [
-              {
-                "width": 1
-              },
-              {
-                "side": "ally"
-              },
-              {
-                "point": "target_vehicles"
-              },
-              {
-                "point": "end_of_route"
-              }
+        "slide": {
+          "map": true,
+          "minTime": 4,
+          "picture": "",
+          "showAirMap": false,
+          "arrow": {
+            "width": 1,
+            "side": "ally",
+            "point": [
+              "target_vehicles",
+              "end_of_route"
             ]
           },
-          {
-            "icon": {
+          "icon": [
+            {
               "icontype": "fighter",
               "side": "player",
               "target": "player",
               "lookAt": "end_of_route"
-            }
-          },
-          {
-            "icon": {
+            },
+            {
               "icontype": "truck",
               "side": "ally",
               "target": "target_vehicles",
               "lookAt": "end_of_route"
-            }
-          },
-          {
-            "icon": {
+            },
+            {
               "icontype": "artillery",
               "side": "ally",
               "target": "friendly_air_defence_00"
-            }
-          },
-          {
-            "icon": {
+            },
+            {
               "icontype": "artillery",
               "side": "ally",
               "target": "friendly_air_defence_03"
             }
-          }
-        ]
+          ]
+        }
       }
     }
   },
@@ -106,7 +84,7 @@
       "showTriggers": true,
       "showMissionObjectives": true,
       "showWayPoints": true,
-      "excludes": []
+      "excludes": {}
     }
   },
   "triggers": {
@@ -121,94 +99,54 @@
         "enableAfterComplete": false
       },
       "events": {
-        "initMission": []
+        "initMission": {}
       },
-      "conditions": [],
-      "actions": [
-        {
-          "unitSetIndication": {
-            "set": true,
-            "target_marking": 0,
+      "conditions": {},
+      "actions": {
+        "unitSetIndication": {
+          "set": true,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target": "target_vehicles"
+        },
+        "unitSetProperties": [
+          {
+            "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0,
-            "target": "target_vehicles"
-          }
-        },
-        {
-          "unitSetProperties": [
-            {
-              "object_marking": 0
-            },
-            {
-              "object_var_name": ""
-            },
-            {
-              "object_var_comp_op": "equal"
-            },
-            {
-              "object_var_value": 0
-            },
-            {
-              "object": "bridge_24"
-            },
-            {
-              "object": "bridge_25"
-            },
-            {
-              "isImmortal": true
-            }
-          ]
-        },
-        {
-          "unitSetProperties": {
+            "object": [
+              "bridge_24",
+              "bridge_25"
+            ],
+            "isImmortal": true
+          },
+          {
             "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0,
             "object": "evil_fighters00",
             "effShootingRate": 0.05
-          }
-        },
-        {
-          "unitSetProperties": [
-            {
-              "object_marking": 0
-            },
-            {
-              "object_var_name": ""
-            },
-            {
-              "object_var_comp_op": "equal"
-            },
-            {
-              "object_var_value": 0
-            },
-            {
-              "object": "evil_vehicles_squad"
-            },
-            {
-              "object": "light_evil_vehicles_squad"
-            },
-            {
-              "stealthRadius": 0.0
-            },
-            {
-              "attack_type": "hold_fire"
-            },
-            {
-              "effShootingRate": 0.02
-            },
-            {
-              "speed": 0.0
-            },
-            {
-              "lockSpeed": true
-            }
-          ]
-        },
-        {
-          "unitSetProperties": {
+          },
+          {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "object": [
+              "evil_vehicles_squad",
+              "light_evil_vehicles_squad"
+            ],
+            "stealthRadius": 0.0,
+            "attack_type": "hold_fire",
+            "effShootingRate": 0.02,
+            "speed": 0.0,
+            "lockSpeed": true
+          },
+          {
             "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
@@ -217,31 +155,25 @@
             "stealthRadius": 2000.0,
             "effShootingRate": 0.02
           }
+        ],
+        "unitAttackTarget": {
+          "playerAttracted": true,
+          "object": "evil_fighters00",
+          "target": "player",
+          "playerAttractedCount": 1,
+          "playerAttractedEffRate": 0.1
         },
-        {
-          "unitAttackTarget": {
-            "playerAttracted": true,
-            "object": "evil_fighters00",
-            "target": "player",
-            "playerAttractedCount": 1,
-            "playerAttractedEffRate": 0.1
-          }
+        "wait": {
+          "time": 3.0
         },
-        {
-          "wait": {
-            "time": 3.0
-          }
-        },
-        {
-          "moAddMissionObjective": {
-            "target": "single_bulge_m02_secondary",
-            "object_marking": 0,
-            "object_var_comp_op": "equal",
-            "object_var_name": ""
-          }
+        "moAddMissionObjective": {
+          "target": "single_bulge_m02_secondary",
+          "object_marking": 0,
+          "object_var_comp_op": "equal",
+          "object_var_name": ""
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "offline_trigger": {
       "is_enabled": true,
@@ -252,7 +184,7 @@
         "enableAfterComplete": false
       },
       "events": {
-        "initMission": []
+        "initMission": {}
       },
       "conditions": {
         "unitWhenStatus": {
@@ -277,7 +209,7 @@
           "targetableByAi": true
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "still_alive_vehicles": {
       "is_enabled": true,
@@ -292,7 +224,7 @@
           "time": 1.0
         }
       },
-      "conditions": [],
+      "conditions": {},
       "actions": {
         "missionSetTargetsIndicator": {
           "target_type": "isAlive",
@@ -307,7 +239,7 @@
           "target": "target_vehicles"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "secondary_completed": {
       "is_enabled": true,
@@ -357,7 +289,7 @@
           "object_var_name": ""
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "secondary_failed": {
       "is_enabled": true,
@@ -397,7 +329,7 @@
           "object_var_name": ""
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "mission_completed": {
       "is_enabled": true,
@@ -425,14 +357,12 @@
         }
       },
       "actions": {
-        "triggerDisable": [
-          {
-            "target": "still_alive_vehicles"
-          },
-          {
-            "target": "mission_failed"
-          }
-        ],
+        "triggerDisable": {
+          "target": [
+            "still_alive_vehicles",
+            "mission_failed"
+          ]
+        },
         "missionSetTargetsIndicator": {
           "target_type": "isAlive",
           "target_marking": 0,
@@ -467,7 +397,7 @@
           "timer": false
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "mission_failed": {
       "is_enabled": true,
@@ -494,17 +424,13 @@
         }
       },
       "actions": {
-        "triggerDisable": [
-          {
-            "target": "secondary_completed"
-          },
-          {
-            "target": "still_alive_vehicles"
-          },
-          {
-            "target": "mission_completed"
-          }
-        ],
+        "triggerDisable": {
+          "target": [
+            "secondary_completed",
+            "still_alive_vehicles",
+            "mission_completed"
+          ]
+        },
         "missionSetTargetsIndicator": {
           "target_type": "isAlive",
           "target_marking": 0,
@@ -527,9 +453,9 @@
         "wait": {
           "time": 3.0
         },
-        "missionFailed": []
+        "missionFailed": {}
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "debug_timer": {
       "is_enabled": false,
@@ -544,7 +470,7 @@
           "time": 1.0
         }
       },
-      "conditions": [],
+      "conditions": {},
       "actions": {
         "varModify": {
           "operator": "add",
@@ -555,7 +481,7 @@
           "var": "time"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "trap00": {
       "is_enabled": true,
@@ -582,9 +508,9 @@
           "target": "trap00"
         }
       },
-      "actions": [
-        {
-          "unitSetProperties": {
+      "actions": {
+        "unitSetProperties": [
+          {
             "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
@@ -592,10 +518,8 @@
             "object": "target_vehicles",
             "speed": 0.0,
             "lockSpeed": true
-          }
-        },
-        {
-          "unitSetProperties": {
+          },
+          {
             "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
@@ -606,24 +530,20 @@
             "speed": 60.0,
             "lockSpeed": true
           }
+        ],
+        "triggerEnable": {
+          "target": "trap00_done"
         },
-        {
-          "triggerEnable": {
-            "target": "trap00_done"
-          }
-        },
-        {
-          "unitSetIndication": {
+        "unitSetIndication": [
+          {
             "set": false,
             "target_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0,
             "target": "target_vehicles"
-          }
-        },
-        {
-          "unitSetIndication": {
+          },
+          {
             "set": true,
             "target_marking": 0,
             "object_var_name": "",
@@ -631,17 +551,15 @@
             "object_var_value": 0,
             "target": "trap00_evil_vehicles00"
           }
-        },
-        {
-          "unitAttackTarget": {
-            "playerAttracted": false,
-            "object": "trap00_evil_vehicles00",
-            "target": "target_vehicles",
-            "fireRandom": true
-          }
+        ],
+        "unitAttackTarget": {
+          "playerAttracted": false,
+          "object": "trap00_evil_vehicles00",
+          "target": "target_vehicles",
+          "fireRandom": true
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "trap00_done": {
       "is_enabled": false,
@@ -669,30 +587,26 @@
           "object": "trap00_evil_vehicles00"
         }
       },
-      "actions": [
-        {
-          "unitSetProperties": {
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "object": "target_vehicles",
-            "speed": 30.0,
-            "lockSpeed": true
-          }
+      "actions": {
+        "unitSetProperties": {
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "object": "target_vehicles",
+          "speed": 30.0,
+          "lockSpeed": true
         },
-        {
-          "unitSetIndication": {
+        "unitSetIndication": [
+          {
             "set": false,
             "target_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0,
             "target": "trap00_evil_vehicles00"
-          }
-        },
-        {
-          "unitSetIndication": {
+          },
+          {
             "set": true,
             "target_marking": 0,
             "object_var_name": "",
@@ -700,14 +614,12 @@
             "object_var_value": 0,
             "target": "target_vehicles"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "trap01"
-          }
+        ],
+        "triggerEnable": {
+          "target": "trap01"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "trap01": {
       "is_enabled": false,
@@ -734,9 +646,9 @@
           "target": "trap01"
         }
       },
-      "actions": [
-        {
-          "unitSetProperties": {
+      "actions": {
+        "unitSetProperties": [
+          {
             "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
@@ -744,10 +656,8 @@
             "object": "target_vehicles",
             "speed": 0.0,
             "lockSpeed": true
-          }
-        },
-        {
-          "unitSetProperties": {
+          },
+          {
             "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
@@ -758,24 +668,20 @@
             "speed": 60.0,
             "lockSpeed": true
           }
+        ],
+        "triggerEnable": {
+          "target": "trap01_done"
         },
-        {
-          "triggerEnable": {
-            "target": "trap01_done"
-          }
-        },
-        {
-          "unitSetIndication": {
+        "unitSetIndication": [
+          {
             "set": false,
             "target_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0,
             "target": "target_vehicles"
-          }
-        },
-        {
-          "unitSetIndication": {
+          },
+          {
             "set": true,
             "target_marking": 0,
             "object_var_name": "",
@@ -783,17 +689,15 @@
             "object_var_value": 0,
             "target": "trap01_evil_vehicles00"
           }
-        },
-        {
-          "unitAttackTarget": {
-            "playerAttracted": false,
-            "object": "trap01_evil_vehicles00",
-            "target": "target_vehicles",
-            "fireRandom": true
-          }
+        ],
+        "unitAttackTarget": {
+          "playerAttracted": false,
+          "object": "trap01_evil_vehicles00",
+          "target": "target_vehicles",
+          "fireRandom": true
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "trap01_done": {
       "is_enabled": false,
@@ -821,30 +725,26 @@
           "object": "trap01_evil_vehicles00"
         }
       },
-      "actions": [
-        {
-          "unitSetProperties": {
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "object": "target_vehicles",
-            "speed": 30.0,
-            "lockSpeed": true
-          }
+      "actions": {
+        "unitSetProperties": {
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "object": "target_vehicles",
+          "speed": 30.0,
+          "lockSpeed": true
         },
-        {
-          "unitSetIndication": {
+        "unitSetIndication": [
+          {
             "set": false,
             "target_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0,
             "target": "trap01_evil_vehicles00"
-          }
-        },
-        {
-          "unitSetIndication": {
+          },
+          {
             "set": true,
             "target_marking": 0,
             "object_var_name": "",
@@ -852,14 +752,12 @@
             "object_var_value": 0,
             "target": "target_vehicles"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "trap02"
-          }
+        ],
+        "triggerEnable": {
+          "target": "trap02"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "trap02": {
       "is_enabled": false,
@@ -886,9 +784,9 @@
           "target": "trap02"
         }
       },
-      "actions": [
-        {
-          "unitSetProperties": {
+      "actions": {
+        "unitSetProperties": [
+          {
             "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
@@ -896,69 +794,43 @@
             "object": "target_vehicles",
             "speed": 0.0,
             "lockSpeed": true
+          },
+          {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "object": [
+              "trap02_evil_vehicles00",
+              "trap02_evil_vehicles01"
+            ],
+            "stealthRadius": 10000.0,
+            "attack_type": "fire_at_will_gnd",
+            "speed": 60.0,
+            "lockSpeed": true
           }
+        ],
+        "triggerEnable": {
+          "target": "trap02_done"
         },
-        {
-          "unitSetProperties": [
-            {
-              "object_marking": 0
-            },
-            {
-              "object_var_name": ""
-            },
-            {
-              "object_var_comp_op": "equal"
-            },
-            {
-              "object_var_value": 0
-            },
-            {
-              "object": "trap02_evil_vehicles00"
-            },
-            {
-              "object": "trap02_evil_vehicles01"
-            },
-            {
-              "stealthRadius": 10000.0
-            },
-            {
-              "attack_type": "fire_at_will_gnd"
-            },
-            {
-              "speed": 60.0
-            },
-            {
-              "lockSpeed": true
-            }
-          ]
-        },
-        {
-          "triggerEnable": {
-            "target": "trap02_done"
-          }
-        },
-        {
-          "unitSetIndication": {
+        "unitSetIndication": [
+          {
             "set": false,
             "target_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0,
             "target": "target_vehicles"
-          }
-        },
-        {
-          "unitSetIndication": {
+          },
+          {
             "set": true,
             "target_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0,
             "target": "trap02_evil_vehicles00"
-          }
-        },
-        {
-          "unitSetIndication": {
+          },
+          {
             "set": true,
             "target_marking": 0,
             "object_var_name": "",
@@ -966,33 +838,21 @@
             "object_var_value": 0,
             "target": "trap02_evil_vehicles01"
           }
+        ],
+        "unitAttackTarget": {
+          "playerAttracted": false,
+          "object": [
+            "trap02_evil_vehicles00",
+            "trap02_evil_vehicles01"
+          ],
+          "target": "target_vehicles",
+          "fireRandom": true
         },
-        {
-          "unitAttackTarget": [
-            {
-              "playerAttracted": false
-            },
-            {
-              "object": "trap02_evil_vehicles00"
-            },
-            {
-              "object": "trap02_evil_vehicles01"
-            },
-            {
-              "target": "target_vehicles"
-            },
-            {
-              "fireRandom": true
-            }
-          ]
-        },
-        {
-          "wait": {
-            "time": 10.0
-          }
+        "wait": {
+          "time": 10.0
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "trap02_done": {
       "is_enabled": false,
@@ -1020,45 +880,29 @@
           "object": "trap02_evil_vehicles00"
         }
       },
-      "actions": [
-        {
-          "unitSetProperties": {
-            "object_marking": 0,
+      "actions": {
+        "unitSetProperties": {
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "object": "target_vehicles",
+          "speed": 30.0,
+          "lockSpeed": true
+        },
+        "unitSetIndication": [
+          {
+            "set": false,
+            "target_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0,
-            "object": "target_vehicles",
-            "speed": 30.0,
-            "lockSpeed": true
-          }
-        },
-        {
-          "unitSetIndication": [
-            {
-              "set": false
-            },
-            {
-              "target_marking": 0
-            },
-            {
-              "object_var_name": ""
-            },
-            {
-              "object_var_comp_op": "equal"
-            },
-            {
-              "object_var_value": 0
-            },
-            {
-              "target": "trap02_evil_vehicles00"
-            },
-            {
-              "target": "trap02_evil_vehicles01"
-            }
-          ]
-        },
-        {
-          "unitSetIndication": {
+            "target": [
+              "trap02_evil_vehicles00",
+              "trap02_evil_vehicles01"
+            ]
+          },
+          {
             "set": true,
             "target_marking": 0,
             "object_var_name": "",
@@ -1066,38 +910,34 @@
             "object_var_value": 0,
             "target": "target_vehicles"
           }
+        ],
+        "unitMoveTo": {
+          "target": "target_vehicles",
+          "follow_target": true,
+          "teleportHeightType": "absolute",
+          "useUnitHeightForTele": true,
+          "shouldKeepFormation": false,
+          "teleportHeightValue": 1000.0,
+          "horizontalDirectionForTeleport": true,
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "object": "trap02_evil_vehicles01"
         },
-        {
-          "unitMoveTo": {
-            "target": "target_vehicles",
-            "follow_target": true,
-            "teleportHeightType": "absolute",
-            "useUnitHeightForTele": true,
-            "shouldKeepFormation": false,
-            "teleportHeightValue": 1000.0,
-            "horizontalDirectionForTeleport": true,
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target_var_name": "",
-            "target_var_comp_op": "equal",
-            "target_var_value": 0,
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "fastClimb": false,
-            "destTimeMode": false,
-            "object": "trap02_evil_vehicles01"
-          }
-        },
-        {
-          "triggerEnable": {
-            "target": "trap03"
-          }
+        "triggerEnable": {
+          "target": "trap03"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "trap03": {
       "is_enabled": false,
@@ -1124,9 +964,9 @@
           "target": "trap03"
         }
       },
-      "actions": [
-        {
-          "unitSetProperties": {
+      "actions": {
+        "unitSetProperties": [
+          {
             "object_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
@@ -1134,62 +974,36 @@
             "object": "target_vehicles",
             "speed": 0.0,
             "lockSpeed": true
+          },
+          {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "object": [
+              "trap03_evil_vehicles00",
+              "trap03_evil_vehicles01",
+              "trap03_evil_vehicles02"
+            ],
+            "stealthRadius": 10000.0,
+            "attack_type": "fire_at_will_gnd",
+            "speed": 60.0,
+            "lockSpeed": true
           }
+        ],
+        "triggerEnable": {
+          "target": "trap03_done"
         },
-        {
-          "unitSetProperties": [
-            {
-              "object_marking": 0
-            },
-            {
-              "object_var_name": ""
-            },
-            {
-              "object_var_comp_op": "equal"
-            },
-            {
-              "object_var_value": 0
-            },
-            {
-              "object": "trap03_evil_vehicles00"
-            },
-            {
-              "object": "trap03_evil_vehicles01"
-            },
-            {
-              "object": "trap03_evil_vehicles02"
-            },
-            {
-              "stealthRadius": 10000.0
-            },
-            {
-              "attack_type": "fire_at_will_gnd"
-            },
-            {
-              "speed": 60.0
-            },
-            {
-              "lockSpeed": true
-            }
-          ]
-        },
-        {
-          "triggerEnable": {
-            "target": "trap03_done"
-          }
-        },
-        {
-          "unitSetIndication": {
+        "unitSetIndication": [
+          {
             "set": false,
             "target_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0,
             "target": "target_vehicles"
-          }
-        },
-        {
-          "unitSetIndication": {
+          },
+          {
             "set": true,
             "target_marking": 0,
             "object_var_name": "",
@@ -1197,28 +1011,18 @@
             "object_var_value": 0,
             "target": "trap03_evil_vehicles00"
           }
-        },
-        {
-          "unitAttackTarget": [
-            {
-              "playerAttracted": false
-            },
-            {
-              "object": "trap03_evil_vehicles00"
-            },
-            {
-              "object": "trap03_evil_vehicles01"
-            },
-            {
-              "object": "trap03_evil_vehicles02"
-            },
-            {
-              "target": "target_vehicles"
-            }
-          ]
+        ],
+        "unitAttackTarget": {
+          "playerAttracted": false,
+          "object": [
+            "trap03_evil_vehicles00",
+            "trap03_evil_vehicles01",
+            "trap03_evil_vehicles02"
+          ],
+          "target": "target_vehicles"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "trap03_done": {
       "is_enabled": false,
@@ -1246,30 +1050,26 @@
           "object": "trap03_evil_vehicles00"
         }
       },
-      "actions": [
-        {
-          "unitSetProperties": {
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "object": "target_vehicles",
-            "speed": 30.0,
-            "lockSpeed": true
-          }
+      "actions": {
+        "unitSetProperties": {
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "object": "target_vehicles",
+          "speed": 30.0,
+          "lockSpeed": true
         },
-        {
-          "unitSetIndication": {
+        "unitSetIndication": [
+          {
             "set": false,
             "target_marking": 0,
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0,
             "target": "trap03_evil_vehicles00"
-          }
-        },
-        {
-          "unitSetIndication": {
+          },
+          {
             "set": true,
             "target_marking": 0,
             "object_var_name": "",
@@ -1277,76 +1077,34 @@
             "object_var_value": 0,
             "target": "target_vehicles"
           }
-        },
-        {
-          "unitMoveTo": [
-            {
-              "target": "target_vehicles"
-            },
-            {
-              "follow_target": true
-            },
-            {
-              "teleportHeightType": "absolute"
-            },
-            {
-              "useUnitHeightForTele": true
-            },
-            {
-              "shouldKeepFormation": false
-            },
-            {
-              "teleportHeightValue": 1000.0
-            },
-            {
-              "horizontalDirectionForTeleport": true
-            },
-            {
-              "object_marking": 0
-            },
-            {
-              "object_var_name": ""
-            },
-            {
-              "object_var_comp_op": "equal"
-            },
-            {
-              "object_var_value": 0
-            },
-            {
-              "target_var_name": ""
-            },
-            {
-              "target_var_comp_op": "equal"
-            },
-            {
-              "target_var_value": 0
-            },
-            {
-              "target_marking": 0
-            },
-            {
-              "waypointReachedDist": 10.0
-            },
-            {
-              "recalculatePathDist": -1.0
-            },
-            {
-              "fastClimb": false
-            },
-            {
-              "destTimeMode": false
-            },
-            {
-              "object": "trap03_evil_vehicles01"
-            },
-            {
-              "object": "trap03_evil_vehicles02"
-            }
+        ],
+        "unitMoveTo": {
+          "target": "target_vehicles",
+          "follow_target": true,
+          "teleportHeightType": "absolute",
+          "useUnitHeightForTele": true,
+          "shouldKeepFormation": false,
+          "teleportHeightValue": 1000.0,
+          "horizontalDirectionForTeleport": true,
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "object": [
+            "trap03_evil_vehicles01",
+            "trap03_evil_vehicles02"
           ]
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "raise_evil": {
       "is_enabled": true,
@@ -1391,7 +1149,7 @@
           "lockSpeed": true
         }
       },
-      "else_actions": []
+      "else_actions": {}
     }
   },
   "mission_objectives": {
@@ -1407,8 +1165,8 @@
         "scoreConst": 100,
         "scoreTime": 400
       },
-      "onSuccess": [],
-      "onFailed": []
+      "onSuccess": {},
+      "onFailed": {}
     },
     "single_bulge_m02_secondary": {
       "is_enabled": false,
@@ -1420,25 +1178,41 @@
         "scoreConst": 100,
         "scoreTime": 400
       },
-      "onSuccess": [],
-      "onFailed": []
+      "onSuccess": {},
+      "onFailed": {}
     }
   },
   "variables": {
     "time": 0
   },
-  "dialogs": [],
-  "airfields": [],
-  "effects": [],
-  "units": [
-    {
-      "armada": {
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {
+    "armada": [
+      {
         "name": "player",
         "tm": [
-          [0.5373,0.0,0.843391],
-          [0.0,1.0,0.0],
-          [-0.843391,0.0,0.5373],
-          [4922.75,908.1,10543.2]
+          [
+            0.5373,
+            0.0,
+            0.843391
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.843391,
+            0.0,
+            0.5373
+          ],
+          [
+            4922.75,
+            908.1,
+            10543.2
+          ]
         ],
         "unit_class": "p-51d-5",
         "closed_waypoints": false,
@@ -1478,17 +1252,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "evil_fighters00",
         "tm": [
-          [-0.382683,0.0,0.92388],
-          [0.0,1.0,0.0],
-          [-0.92388,0.0,-0.382683],
-          [10504.0,1057.35,5461.05]
+          [
+            -0.382683,
+            0.0,
+            0.92388
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.92388,
+            0.0,
+            -0.382683
+          ],
+          [
+            10504.0,
+            1057.35,
+            5461.05
+          ]
         ],
         "unit_class": "fw-190f-8",
         "closed_waypoints": false,
@@ -1527,17 +1315,33 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
+        "way": {}
       }
-    },
-    {
-      "wheeled_vehicles": {
+    ],
+    "wheeled_vehicles": [
+      {
         "name": "target_vehicles",
         "tm": [
-          [0.461749,0.0,0.887011],
-          [0.0,1.0,0.0],
-          [-0.887011,0.0,0.461749],
-          [5819.09,287.782,12032.2]
+          [
+            0.461749,
+            0.0,
+            0.887011
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.887011,
+            0.0,
+            0.461749
+          ],
+          [
+            5819.09,
+            287.782,
+            12032.2
+          ]
         ],
         "unit_class": "us_ambulance",
         "closed_waypoints": false,
@@ -1559,8 +1363,14 @@
           "count": 9,
           "formation_type": "cols",
           "formation_div": 1,
-          "formation_step": [2.5,3.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            3.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -1568,10 +1378,26 @@
           "target_vehicles_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [5849.68,287.031,12093.3]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                5849.68,
+                287.031,
+                12093.3
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -1581,10 +1407,26 @@
           "target_vehicles_wp_28": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [9503.75,143.433,13226.1]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                9503.75,
+                143.433,
+                13226.1
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -1595,10 +1437,26 @@
           "target_vehicles_wp_79": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12760.4,269.561,14332.1]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12760.4,
+                269.561,
+                14332.1
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -1609,10 +1467,26 @@
           "target_vehicles_wp_99": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [13839.9,285.583,15468.1]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                13839.9,
+                285.583,
+                15468.1
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -1623,10 +1497,26 @@
           "target_vehicles_wp_100": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [13838.3,293.926,15508.9]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                13838.3,
+                293.926,
+                15508.9
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -1636,10 +1526,26 @@
           "target_vehicles_wp_101": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [13804.7,298.765,15547.2]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                13804.7,
+                298.765,
+                15547.2
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -1647,16 +1553,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "wheeled_vehicles": {
+      },
+      {
         "name": "trap00_evil_vehicles01",
         "tm": [
-          [0.5,0.0,0.866026],
-          [0.0,1.0,0.0],
-          [-0.866026,0.0,0.5],
-          [5593.95,224.51,11619.1]
+          [
+            0.5,
+            0.0,
+            0.866026
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.866026,
+            0.0,
+            0.5
+          ],
+          [
+            5593.95,
+            224.51,
+            11619.1
+          ]
         ],
         "unit_class": "germ_sdKfz_222",
         "closed_waypoints": false,
@@ -1678,8 +1598,14 @@
           "count": 3,
           "formation_type": "cols",
           "formation_div": 1,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will",
           "isDelayed": true
@@ -1688,10 +1614,26 @@
           "trap00_evil_vehicles01_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [5625.11,242.299,11677.6]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                5625.11,
+                242.299,
+                11677.6
+              ]
             ],
             "props": {
               "speed": 35.0,
@@ -1701,10 +1643,26 @@
           "trap00_evil_vehicles01_wp_05": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [5848.32,285.593,12088.9]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                5848.32,
+                285.593,
+                12088.9
+              ]
             ],
             "props": {
               "speed": 35.0,
@@ -1714,10 +1672,26 @@
           "trap00_evil_vehicles01_wp_03": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [8634.88,198.847,12547.4]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                8634.88,
+                198.847,
+                12547.4
+              ]
             ],
             "props": {
               "speed": 35.0,
@@ -1728,10 +1702,26 @@
           "trap00_evil_vehicles01_wp_06": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [8756.16,155.58,12649.4]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                8756.16,
+                155.58,
+                12649.4
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -1739,16 +1729,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "wheeled_vehicles": {
+      },
+      {
         "name": "trap00_evil_vehicles02",
         "tm": [
-          [0.945815,0.0,-0.324705],
-          [0.0,1.0,0.0],
-          [0.324705,0.0,0.945815],
-          [6641.8,277.667,12819.5]
+          [
+            0.945815,
+            0.0,
+            -0.324705
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.324705,
+            0.0,
+            0.945815
+          ],
+          [
+            6641.8,
+            277.667,
+            12819.5
+          ]
         ],
         "unit_class": "germ_sdKfz_222",
         "closed_waypoints": false,
@@ -1770,8 +1774,14 @@
           "count": 4,
           "formation_type": "cols",
           "formation_div": 1,
-          "formation_step": [3.0,3.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            3.0,
+            3.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -1779,10 +1789,26 @@
           "trap00_evil_vehicles02_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [6822.53,266.912,12737.9]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                6822.53,
+                266.912,
+                12737.9
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -1792,10 +1818,26 @@
           "trap00_evil_vehicles02_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [6879.5,263.969,12722.3]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                6879.5,
+                263.969,
+                12722.3
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -1805,10 +1847,26 @@
           "trap00_evil_vehicles02_wp_08": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [8481.67,212.539,12573.8]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                8481.67,
+                212.539,
+                12573.8
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -1819,10 +1877,26 @@
           "trap00_evil_vehicles02_wp_09": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [8576.69,220.215,12475.5]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                8576.69,
+                220.215,
+                12475.5
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -1830,16 +1904,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "wheeled_vehicles": {
+      },
+      {
         "name": "trap00_evil_vehicles03",
         "tm": [
-          [0.495364,0.0,0.868686],
-          [0.0,1.0,0.0],
-          [-0.868686,0.0,0.495364],
-          [8185.42,239.834,12403.0]
+          [
+            0.495364,
+            0.0,
+            0.868686
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.868686,
+            0.0,
+            0.495364
+          ],
+          [
+            8185.42,
+            239.834,
+            12403.0
+          ]
         ],
         "unit_class": "germ_sdKfz_222",
         "closed_waypoints": false,
@@ -1861,8 +1949,14 @@
           "count": 3,
           "formation_type": "cols",
           "formation_div": 1,
-          "formation_step": [3.0,3.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            3.0,
+            3.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -1870,10 +1964,26 @@
           "trap00_evil_vehicles03_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [8272.62,221.673,12562.6]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                8272.62,
+                221.673,
+                12562.6
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -1883,10 +1993,26 @@
           "trap00_evil_vehicles03_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [8366.21,199.722,12616.0]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                8366.21,
+                199.722,
+                12616.0
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -1896,10 +2022,26 @@
           "trap00_evil_vehicles03_wp_07": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [8858.93,152.392,12613.6]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                8858.93,
+                152.392,
+                12613.6
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -1910,10 +2052,26 @@
           "trap00_evil_vehicles03_wp_08": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [8966.8,105.066,12712.3]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                8966.8,
+                105.066,
+                12712.3
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -1921,16 +2079,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "wheeled_vehicles": {
+      },
+      {
         "name": "trap01_evil_vehicles01",
         "tm": [
-          [-0.21644,0.0,0.976296],
-          [0.0,1.0,0.0],
-          [-0.976296,0.0,-0.21644],
-          [10199.8,210.67,12766.8]
+          [
+            -0.21644,
+            0.0,
+            0.976296
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.976296,
+            0.0,
+            -0.21644
+          ],
+          [
+            10199.8,
+            210.67,
+            12766.8
+          ]
         ],
         "unit_class": "germ_sdKfz_222",
         "closed_waypoints": false,
@@ -1952,8 +2124,14 @@
           "count": 4,
           "formation_type": "cols",
           "formation_div": 1,
-          "formation_step": [3.0,3.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            3.0,
+            3.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -1961,10 +2139,26 @@
           "trap01_evil_vehicles01_wp_04": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [10063.0,232.508,12979.2]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                10063.0,
+                232.508,
+                12979.2
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -1974,10 +2168,26 @@
           "trap01_evil_vehicles01_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [10050.5,222.495,13051.8]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                10050.5,
+                222.495,
+                13051.8
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -1987,10 +2197,26 @@
           "trap01_evil_vehicles01_wp_05": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [10285.0,167.689,13622.6]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                10285.0,
+                167.689,
+                13622.6
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2001,10 +2227,26 @@
           "trap01_evil_vehicles01_wp_06": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [10329.3,149.677,13722.2]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                10329.3,
+                149.677,
+                13722.2
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2012,16 +2254,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "wheeled_vehicles": {
+      },
+      {
         "name": "trap01_evil_vehicles02",
         "tm": [
-          [-0.043619,0.0,-0.999049],
-          [0.0,1.0,0.0],
-          [0.999049,0.0,-0.043619],
-          [9596.2,259.884,13708.0]
+          [
+            -0.043619,
+            0.0,
+            -0.999049
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.999049,
+            0.0,
+            -0.043619
+          ],
+          [
+            9596.2,
+            259.884,
+            13708.0
+          ]
         ],
         "unit_class": "germ_sdKfz_222",
         "closed_waypoints": false,
@@ -2043,8 +2299,14 @@
           "count": 3,
           "formation_type": "cols",
           "formation_div": 1,
-          "formation_step": [3.0,3.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            3.0,
+            3.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -2052,10 +2314,26 @@
           "trap01_evil_vehicles02_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [9650.8,218.951,13430.7]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                9650.8,
+                218.951,
+                13430.7
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2066,10 +2344,26 @@
           "trap01_evil_vehicles02_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [9723.4,205.235,13303.2]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                9723.4,
+                205.235,
+                13303.2
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2080,10 +2374,26 @@
           "trap01_evil_vehicles02_wp_03": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [9748.3,196.112,13193.8]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                9748.3,
+                196.112,
+                13193.8
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2093,10 +2403,26 @@
           "trap01_evil_vehicles02_wp_04": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [9782.83,187.495,13130.4]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                9782.83,
+                187.495,
+                13130.4
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2106,10 +2432,26 @@
           "trap01_evil_vehicles02_wp_09": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [10185.9,209.461,13317.6]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                10185.9,
+                209.461,
+                13317.6
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2120,10 +2462,26 @@
           "trap01_evil_vehicles02_wp_10": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [10180.9,195.084,13406.2]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                10180.9,
+                195.084,
+                13406.2
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2134,10 +2492,26 @@
           "trap01_evil_vehicles02_wp_11": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [10187.0,193.564,13455.8]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                10187.0,
+                193.564,
+                13455.8
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2148,10 +2522,26 @@
           "trap01_evil_vehicles02_wp_12": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [10129.3,208.126,13512.2]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                10129.3,
+                208.126,
+                13512.2
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2162,10 +2552,26 @@
           "trap01_evil_vehicles02_wp_13": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [10036.0,229.951,13558.0]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                10036.0,
+                229.951,
+                13558.0
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2176,10 +2582,26 @@
           "trap01_evil_vehicles02_wp_14": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [9919.25,249.385,13572.3]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                9919.25,
+                249.385,
+                13572.3
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2190,10 +2612,26 @@
           "trap01_evil_vehicles02_wp_15": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [9847.0,250.206,13504.5]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                9847.0,
+                250.206,
+                13504.5
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2202,16 +2640,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "wheeled_vehicles": {
+      },
+      {
         "name": "trap02_evil_vehicles02",
         "tm": [
-          [-0.21644,0.0,0.976296],
-          [0.0,1.0,0.0],
-          [-0.976296,0.0,-0.21644],
-          [11546.7,225.219,13665.5]
+          [
+            -0.21644,
+            0.0,
+            0.976296
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.976296,
+            0.0,
+            -0.21644
+          ],
+          [
+            11546.7,
+            225.219,
+            13665.5
+          ]
         ],
         "unit_class": "germ_sdKfz_222",
         "closed_waypoints": false,
@@ -2233,8 +2685,14 @@
           "count": 4,
           "formation_type": "cols",
           "formation_div": 1,
-          "formation_step": [3.0,3.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            3.0,
+            3.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -2242,10 +2700,26 @@
           "trap02_evil_vehicles02_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [11459.3,236.819,13837.2]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                11459.3,
+                236.819,
+                13837.2
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2256,10 +2730,26 @@
           "trap02_evil_vehicles02_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [11499.0,239.385,13943.5]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                11499.0,
+                239.385,
+                13943.5
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2269,10 +2759,26 @@
           "trap02_evil_vehicles02_wp_03": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [11551.0,238.835,14052.6]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                11551.0,
+                238.835,
+                14052.6
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2282,10 +2788,26 @@
           "trap02_evil_vehicles02_wp_07": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [11940.8,266.535,14059.8]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                11940.8,
+                266.535,
+                14059.8
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2296,10 +2818,26 @@
           "trap02_evil_vehicles02_wp_08": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12066.2,271.03,14086.0]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12066.2,
+                271.03,
+                14086.0
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2307,16 +2845,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "wheeled_vehicles": {
+      },
+      {
         "name": "trap02_evil_vehicles03",
         "tm": [
-          [0.5373,0.0,-0.843392],
-          [0.0,1.0,0.0],
-          [0.843392,0.0,0.5373],
-          [12061.0,283.739,14739.2]
+          [
+            0.5373,
+            0.0,
+            -0.843392
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.843392,
+            0.0,
+            0.5373
+          ],
+          [
+            12061.0,
+            283.739,
+            14739.2
+          ]
         ],
         "unit_class": "germ_sdKfz_222",
         "closed_waypoints": false,
@@ -2338,8 +2890,14 @@
           "count": 4,
           "formation_type": "cols",
           "formation_div": 1,
-          "formation_step": [3.0,3.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            3.0,
+            3.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -2347,10 +2905,26 @@
           "trap02_evil_vehicles03_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [11996.8,280.707,14974.2]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                11996.8,
+                280.707,
+                14974.2
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2361,10 +2935,26 @@
           "trap02_evil_vehicles03_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12036.5,279.96,15080.5]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12036.5,
+                279.96,
+                15080.5
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2375,10 +2965,26 @@
           "trap02_evil_vehicles03_wp_03": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12117.2,283.228,15161.9]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12117.2,
+                283.228,
+                15161.9
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2389,10 +2995,26 @@
           "trap02_evil_vehicles03_wp_04": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12183.5,290.221,15168.1]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12183.5,
+                290.221,
+                15168.1
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2403,10 +3025,26 @@
           "trap02_evil_vehicles03_wp_05": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12281.6,300.227,15157.9]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12281.6,
+                300.227,
+                15157.9
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2417,10 +3055,26 @@
           "trap02_evil_vehicles03_wp_06": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12360.1,306.691,15157.0]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12360.1,
+                306.691,
+                15157.0
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2431,10 +3085,26 @@
           "trap02_evil_vehicles03_wp_07": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12439.7,307.065,15194.3]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12439.7,
+                307.065,
+                15194.3
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2445,10 +3115,26 @@
           "trap02_evil_vehicles03_wp_08": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12502.5,306.892,15232.5]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12502.5,
+                306.892,
+                15232.5
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2459,10 +3145,26 @@
           "trap02_evil_vehicles03_wp_09": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12148.2,280.34,14555.0]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12148.2,
+                280.34,
+                14555.0
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2473,10 +3175,26 @@
           "trap02_evil_vehicles03_wp_10": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12145.5,276.635,14441.0]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12145.5,
+                276.635,
+                14441.0
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2487,10 +3205,26 @@
           "trap02_evil_vehicles03_wp_11": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12137.5,275.309,14316.1]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12137.5,
+                275.309,
+                14316.1
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2501,10 +3235,26 @@
           "trap02_evil_vehicles03_wp_12": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12114.0,274.297,14258.8]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12114.0,
+                274.297,
+                14258.8
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2515,10 +3265,26 @@
           "trap02_evil_vehicles03_wp_13": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12123.7,274.197,14231.0]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12123.7,
+                274.197,
+                14231.0
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2527,16 +3293,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "wheeled_vehicles": {
+      },
+      {
         "name": "trap02_evil_vehicles04",
         "tm": [
-          [0.5373,0.0,-0.843392],
-          [0.0,1.0,0.0],
-          [0.843392,0.0,0.5373],
-          [11282.5,202.692,14472.7]
+          [
+            0.5373,
+            0.0,
+            -0.843392
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.843392,
+            0.0,
+            0.5373
+          ],
+          [
+            11282.5,
+            202.692,
+            14472.7
+          ]
         ],
         "unit_class": "germ_sdKfz_222",
         "closed_waypoints": false,
@@ -2558,8 +3338,14 @@
           "count": 3,
           "formation_type": "cols",
           "formation_div": 1,
-          "formation_step": [3.0,3.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            3.0,
+            3.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -2567,10 +3353,26 @@
           "trap02_evil_vehicles04_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [11482.4,227.078,14301.7]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                11482.4,
+                227.078,
+                14301.7
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2581,10 +3383,26 @@
           "trap02_evil_vehicles04_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [11592.5,240.169,14247.2]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                11592.5,
+                240.169,
+                14247.2
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2595,10 +3413,26 @@
           "trap02_evil_vehicles04_wp_03": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [11691.5,253.435,14105.7]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                11691.5,
+                253.435,
+                14105.7
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2609,10 +3443,26 @@
           "trap02_evil_vehicles04_wp_04": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [11758.0,261.875,14036.0]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                11758.0,
+                261.875,
+                14036.0
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2622,10 +3472,26 @@
           "trap02_evil_vehicles04_wp_07": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [11938.4,266.308,14058.4]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                11938.4,
+                266.308,
+                14058.4
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2636,10 +3502,26 @@
           "trap02_evil_vehicles04_wp_08": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12019.0,270.612,14146.5]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12019.0,
+                270.612,
+                14146.5
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2647,16 +3529,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "wheeled_vehicles": {
+      },
+      {
         "name": "trap03_evil_vehicles03",
         "tm": [
-          [-0.130526,0.0,0.991445],
-          [0.0,1.0,0.0],
-          [-0.991445,0.0,-0.130526],
-          [12835.4,262.725,13934.0]
+          [
+            -0.130526,
+            0.0,
+            0.991445
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.991445,
+            0.0,
+            -0.130526
+          ],
+          [
+            12835.4,
+            262.725,
+            13934.0
+          ]
         ],
         "unit_class": "germ_sdKfz_222",
         "closed_waypoints": false,
@@ -2678,8 +3574,14 @@
           "count": 4,
           "formation_type": "cols",
           "formation_div": 1,
-          "formation_step": [3.0,3.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            3.0,
+            3.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -2687,10 +3589,26 @@
           "trap03_evil_vehicles03_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12828.4,255.16,13980.4]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12828.4,
+                255.16,
+                13980.4
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2700,10 +3618,26 @@
           "trap03_evil_vehicles03_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12773.1,268.934,14330.9]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12773.1,
+                268.934,
+                14330.9
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2714,10 +3648,26 @@
           "trap03_evil_vehicles03_wp_10": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [13157.0,279.182,14815.5]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                13157.0,
+                279.182,
+                14815.5
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2728,10 +3678,26 @@
           "trap03_evil_vehicles03_wp_13": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [13317.8,279.791,14806.0]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                13317.8,
+                279.791,
+                14806.0
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2739,16 +3705,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "wheeled_vehicles": {
+      },
+      {
         "name": "trap03_evil_vehicles04",
         "tm": [
-          [0.422619,0.0,-0.906308],
-          [0.0,1.0,0.0],
-          [0.906308,0.0,0.422619],
-          [12543.1,298.98,14544.7]
+          [
+            0.422619,
+            0.0,
+            -0.906308
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.906308,
+            0.0,
+            0.422619
+          ],
+          [
+            12543.1,
+            298.98,
+            14544.7
+          ]
         ],
         "unit_class": "germ_sdKfz_222",
         "closed_waypoints": false,
@@ -2770,8 +3750,14 @@
           "count": 3,
           "formation_type": "cols",
           "formation_div": 1,
-          "formation_step": [3.0,3.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            3.0,
+            3.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -2779,10 +3765,26 @@
           "trap03_evil_vehicles04_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12561.0,287.382,14427.9]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12561.0,
+                287.382,
+                14427.9
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2793,10 +3795,26 @@
           "trap03_evil_vehicles04_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12563.5,282.668,14385.0]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12563.5,
+                282.668,
+                14385.0
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -2806,15 +3824,31 @@
           }
         }
       }
-    },
-    {
-      "air_defence": {
+    ],
+    "air_defence": [
+      {
         "name": "air_defence_01",
         "tm": [
-          [-0.999048,0.0,-0.0436192],
-          [0.0,1.0,0.0],
-          [0.0436192,0.0,-0.999048],
-          [10947.6,236.995,11379.0]
+          [
+            -0.999048,
+            0.0,
+            -0.0436192
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0436192,
+            0.0,
+            -0.999048
+          ],
+          [
+            10947.6,
+            236.995,
+            11379.0
+          ]
         ],
         "unit_class": "germ_88mm_flak36",
         "closed_waypoints": false,
@@ -2836,22 +3870,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "air_defence": {
+        "way": {}
+      },
+      {
         "name": "air_defence_02",
         "tm": [
-          [0.382684,0.0,0.923879],
-          [0.0,1.0,0.0],
-          [-0.923879,0.0,0.382684],
-          [11131.0,248.037,11501.8]
+          [
+            0.382684,
+            0.0,
+            0.923879
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.923879,
+            0.0,
+            0.382684
+          ],
+          [
+            11131.0,
+            248.037,
+            11501.8
+          ]
         ],
         "unit_class": "germ_88mm_flak36",
         "closed_waypoints": false,
@@ -2873,22 +3927,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "air_defence": {
+        "way": {}
+      },
+      {
         "name": "air_defence_03",
         "tm": [
-          [1.0,0.0,-3.7998e-07],
-          [0.0,1.0,0.0],
-          [3.7998e-07,0.0,1.0],
-          [11161.8,279.3,11252.5]
+          [
+            1.0,
+            0.0,
+            -3.7998e-7
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            3.7998e-7,
+            0.0,
+            1.0
+          ],
+          [
+            11161.8,
+            279.3,
+            11252.5
+          ]
         ],
         "unit_class": "germ_88mm_flak36",
         "closed_waypoints": false,
@@ -2910,22 +3984,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "air_defence": {
+        "way": {}
+      },
+      {
         "name": "air_defence_04",
         "tm": [
-          [-0.537299,0.0,0.843391],
-          [0.0,1.0,0.0],
-          [-0.843391,0.0,-0.537299],
-          [11881.5,238.251,12260.8]
+          [
+            -0.537299,
+            0.0,
+            0.843391
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.843391,
+            0.0,
+            -0.537299
+          ],
+          [
+            11881.5,
+            238.251,
+            12260.8
+          ]
         ],
         "unit_class": "germ_88mm_flak36",
         "closed_waypoints": false,
@@ -2947,22 +4041,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "air_defence": {
+        "way": {}
+      },
+      {
         "name": "air_defence_05",
         "tm": [
-          [0.21644,0.0,0.976296],
-          [0.0,1.0,0.0],
-          [-0.976296,0.0,0.21644],
-          [12318.4,279.464,12423.4]
+          [
+            0.21644,
+            0.0,
+            0.976296
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.976296,
+            0.0,
+            0.21644
+          ],
+          [
+            12318.4,
+            279.464,
+            12423.4
+          ]
         ],
         "unit_class": "germ_88mm_flak36",
         "closed_waypoints": false,
@@ -2984,22 +4098,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "air_defence": {
+        "way": {}
+      },
+      {
         "name": "air_defence_06",
         "tm": [
-          [0.642787,0.0,-0.766044],
-          [0.0,1.0,0.0],
-          [0.766044,0.0,0.642787],
-          [9516.25,273.761,15174.8]
+          [
+            0.642787,
+            0.0,
+            -0.766044
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.766044,
+            0.0,
+            0.642787
+          ],
+          [
+            9516.25,
+            273.761,
+            15174.8
+          ]
         ],
         "unit_class": "germ_88mm_flak36",
         "closed_waypoints": false,
@@ -3021,22 +4155,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "air_defence": {
+        "way": {}
+      },
+      {
         "name": "air_defence_07",
         "tm": [
-          [0.642787,0.0,-0.766044],
-          [0.0,1.0,0.0],
-          [0.766044,0.0,0.642787],
-          [9184.3,309.406,15313.9]
+          [
+            0.642787,
+            0.0,
+            -0.766044
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.766044,
+            0.0,
+            0.642787
+          ],
+          [
+            9184.3,
+            309.406,
+            15313.9
+          ]
         ],
         "unit_class": "germ_88mm_flak36",
         "closed_waypoints": false,
@@ -3058,22 +4212,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "air_defence": {
+        "way": {}
+      },
+      {
         "name": "air_defence_08",
         "tm": [
-          [0.642787,0.0,-0.766044],
-          [0.0,1.0,0.0],
-          [0.766044,0.0,0.642787],
-          [9366.3,311.545,15636.2]
+          [
+            0.642787,
+            0.0,
+            -0.766044
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.766044,
+            0.0,
+            0.642787
+          ],
+          [
+            9366.3,
+            311.545,
+            15636.2
+          ]
         ],
         "unit_class": "germ_88mm_flak36",
         "closed_waypoints": false,
@@ -3095,22 +4269,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "air_defence": {
+        "way": {}
+      },
+      {
         "name": "friendly_air_defence_00",
         "tm": [
-          [-0.906308,0.0,-0.422618],
-          [0.0,1.0,0.0],
-          [0.422618,0.0,-0.906308],
-          [13423.9,285.364,15482.9]
+          [
+            -0.906308,
+            0.0,
+            -0.422618
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.422618,
+            0.0,
+            -0.906308
+          ],
+          [
+            13423.9,
+            285.364,
+            15482.9
+          ]
         ],
         "unit_class": "us_90mm_m1",
         "closed_waypoints": false,
@@ -3132,22 +4326,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "air_defence": {
+        "way": {}
+      },
+      {
         "name": "friendly_air_defence_01",
         "tm": [
-          [-0.300706,0.0,-0.953717],
-          [0.0,1.0,0.0],
-          [0.953717,0.0,-0.300706],
-          [13488.7,288.68,15375.9]
+          [
+            -0.300706,
+            0.0,
+            -0.953717
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.953717,
+            0.0,
+            -0.300706
+          ],
+          [
+            13488.7,
+            288.68,
+            15375.9
+          ]
         ],
         "unit_class": "us_90mm_m1",
         "closed_waypoints": false,
@@ -3169,22 +4383,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "air_defence": {
+        "way": {}
+      },
+      {
         "name": "friendly_air_defence_02",
         "tm": [
-          [-0.939692,0.0,0.34202],
-          [0.0,1.0,0.0],
-          [-0.34202,0.0,-0.939692],
-          [13464.5,284.464,15651.9]
+          [
+            -0.939692,
+            0.0,
+            0.34202
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.34202,
+            0.0,
+            -0.939692
+          ],
+          [
+            13464.5,
+            284.464,
+            15651.9
+          ]
         ],
         "unit_class": "us_90mm_m1",
         "closed_waypoints": false,
@@ -3206,22 +4440,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "air_defence": {
+        "way": {}
+      },
+      {
         "name": "friendly_air_defence_03",
         "tm": [
-          [0.707107,0.0,-0.707107],
-          [0.0,1.0,0.0],
-          [0.707107,0.0,0.707107],
-          [13849.9,276.108,15438.3]
+          [
+            0.707107,
+            0.0,
+            -0.707107
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.707107,
+            0.0,
+            0.707107
+          ],
+          [
+            13849.9,
+            276.108,
+            15438.3
+          ]
         ],
         "unit_class": "us_90mm_m1",
         "closed_waypoints": false,
@@ -3243,22 +4497,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "air_defence": {
+        "way": {}
+      },
+      {
         "name": "friendly_air_defence_04",
         "tm": [
-          [-0.0871557,0.0,-0.996195],
-          [0.0,1.0,0.0],
-          [0.996195,0.0,-0.0871557],
-          [13726.0,276.806,15259.3]
+          [
+            -0.0871557,
+            0.0,
+            -0.996195
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.996195,
+            0.0,
+            -0.0871557
+          ],
+          [
+            13726.0,
+            276.806,
+            15259.3
+          ]
         ],
         "unit_class": "us_90mm_m1",
         "closed_waypoints": false,
@@ -3280,22 +4554,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "air_defence": {
+        "way": {}
+      },
+      {
         "name": "air_defence_09",
         "tm": [
-          [0.707107,0.0,-0.707107],
-          [0.0,1.0,0.0],
-          [0.707107,0.0,0.707107],
-          [7415.1,287.0,14618.0]
+          [
+            0.707107,
+            0.0,
+            -0.707107
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.707107,
+            0.0,
+            0.707107
+          ],
+          [
+            7415.1,
+            287.0,
+            14618.0
+          ]
         ],
         "unit_class": "germ_88mm_flak36",
         "closed_waypoints": false,
@@ -3317,22 +4611,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "air_defence": {
+        "way": {}
+      },
+      {
         "name": "air_defence_10",
         "tm": [
-          [0.0871555,0.0,-0.996195],
-          [0.0,1.0,0.0],
-          [0.996195,0.0,0.0871555],
-          [7368.05,283.561,14440.9]
+          [
+            0.0871555,
+            0.0,
+            -0.996195
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.996195,
+            0.0,
+            0.0871555
+          ],
+          [
+            7368.05,
+            283.561,
+            14440.9
+          ]
         ],
         "unit_class": "germ_88mm_flak36",
         "closed_waypoints": false,
@@ -3354,22 +4668,44 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
+        "way": {}
       }
-    },
-    {
-      "tracked_vehicles": {
+    ],
+    "tracked_vehicles": [
+      {
         "name": "trap00_evil_vehicles00",
         "tm": [
-          [-0.525203,0.0,-0.850977],
-          [0.0,1.0,0.0],
-          [0.850977,0.0,-0.525203],
-          [7296.76,272.105,12977.8]
+          [
+            -0.525203,
+            0.0,
+            -0.850977
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.850977,
+            0.0,
+            -0.525203
+          ],
+          [
+            7296.76,
+            272.105,
+            12977.8
+          ]
         ],
         "unit_class": "germ_hummel",
         "closed_waypoints": false,
@@ -3391,8 +4727,14 @@
           "count": 3,
           "formation_type": "rows",
           "formation_div": 1,
-          "formation_step": [1.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            1.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -3400,10 +4742,26 @@
           "trap00_evil_vehicles00_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [7259.21,283.412,12919.0]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                7259.21,
+                283.412,
+                12919.0
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3413,10 +4771,26 @@
           "trap00_evil_vehicles00_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [6865.21,272.511,12779.4]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                6865.21,
+                272.511,
+                12779.4
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3424,16 +4798,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "tracked_vehicles": {
+      },
+      {
         "name": "trap01_evil_vehicles00",
         "tm": [
-          [-0.0436195,0.0,-0.999048],
-          [0.0,1.0,0.0],
-          [0.999048,0.0,-0.0436195],
-          [9416.7,120.349,13250.8]
+          [
+            -0.0436195,
+            0.0,
+            -0.999048
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.999048,
+            0.0,
+            -0.0436195
+          ],
+          [
+            9416.7,
+            120.349,
+            13250.8
+          ]
         ],
         "unit_class": "germ_hummel",
         "closed_waypoints": false,
@@ -3455,8 +4843,14 @@
           "count": 4,
           "formation_type": "cols",
           "formation_div": 2,
-          "formation_step": [1.0,2.0],
-          "formation_noise": [0.2,0.3],
+          "formation_step": [
+            1.0,
+            2.0
+          ],
+          "formation_noise": [
+            0.2,
+            0.3
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -3464,10 +4858,26 @@
           "trap01_evil_vehicles00_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [9390.86,95.0184,13154.1]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                9390.86,
+                95.0184,
+                13154.1
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3477,10 +4887,26 @@
           "trap01_evil_vehicles00_wp_03": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [9379.86,64.9889,13081.0]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                9379.86,
+                64.9889,
+                13081.0
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3490,10 +4916,26 @@
           "trap01_evil_vehicles00_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [9101.04,60.7468,12750.1]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                9101.04,
+                60.7468,
+                12750.1
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3503,10 +4945,26 @@
           "trap01_evil_vehicles00_wp_04": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [9082.28,66.1082,12747.3]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                9082.28,
+                66.1082,
+                12747.3
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3514,16 +4972,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "tracked_vehicles": {
+      },
+      {
         "name": "trap02_evil_vehicles00",
         "tm": [
-          [-0.0436195,0.0,-0.999048],
-          [0.0,1.0,0.0],
-          [0.999048,0.0,-0.0436195],
-          [11028.0,104.154,13733.0]
+          [
+            -0.0436195,
+            0.0,
+            -0.999048
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.999048,
+            0.0,
+            -0.0436195
+          ],
+          [
+            11028.0,
+            104.154,
+            13733.0
+          ]
         ],
         "unit_class": "germ_hummel",
         "closed_waypoints": false,
@@ -3545,8 +5017,14 @@
           "count": 3,
           "formation_type": "cols",
           "formation_div": 2,
-          "formation_step": [1.0,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            1.0,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -3554,10 +5032,26 @@
           "trap02_evil_vehicles00_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [11025.0,101.3,13691.2]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                11025.0,
+                101.3,
+                13691.2
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3568,10 +5062,26 @@
           "trap02_evil_vehicles00_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [10986.2,79.8525,13659.6]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                10986.2,
+                79.8525,
+                13659.6
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3581,10 +5091,26 @@
           "trap02_evil_vehicles00_wp_03": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [10544.5,64.9094,13664.5]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                10544.5,
+                64.9094,
+                13664.5
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3594,10 +5120,26 @@
           "trap02_evil_vehicles00_wp_04": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [10505.0,81.7736,13707.9]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                10505.0,
+                81.7736,
+                13707.9
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3605,16 +5147,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "tracked_vehicles": {
+      },
+      {
         "name": "trap02_evil_vehicles01",
         "tm": [
-          [0.461748,0.0,-0.887011],
-          [0.0,1.0,0.0],
-          [0.887011,0.0,0.461748],
-          [10197.8,180.662,13913.4]
+          [
+            0.461748,
+            0.0,
+            -0.887011
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.887011,
+            0.0,
+            0.461748
+          ],
+          [
+            10197.8,
+            180.662,
+            13913.4
+          ]
         ],
         "unit_class": "germ_hummel",
         "closed_waypoints": false,
@@ -3636,8 +5192,14 @@
           "count": 3,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.1,2.2],
-          "formation_noise": [-0.3,0.4],
+          "formation_step": [
+            2.1,
+            2.2
+          ],
+          "formation_noise": [
+            -0.3,
+            0.4
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -3645,10 +5207,26 @@
           "trap02_evil_vehicles01_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [10241.8,171.608,13837.5]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                10241.8,
+                171.608,
+                13837.5
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3659,10 +5237,26 @@
           "trap02_evil_vehicles01_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [10299.2,159.745,13745.2]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                10299.2,
+                159.745,
+                13745.2
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3673,10 +5267,26 @@
           "trap02_evil_vehicles01_wp_03": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [10337.7,146.592,13725.8]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                10337.7,
+                146.592,
+                13725.8
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3687,10 +5297,26 @@
           "trap02_evil_vehicles01_wp_04": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [10366.7,136.184,13714.4]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                10366.7,
+                136.184,
+                13714.4
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3699,16 +5325,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "tracked_vehicles": {
+      },
+      {
         "name": "trap03_evil_vehicles00",
         "tm": [
-          [0.642787,0.0,0.766044],
-          [0.0,1.0,0.0],
-          [-0.766044,0.0,0.642787],
-          [11632.0,235.362,13661.7]
+          [
+            0.642787,
+            0.0,
+            0.766044
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.766044,
+            0.0,
+            0.642787
+          ],
+          [
+            11632.0,
+            235.362,
+            13661.7
+          ]
         ],
         "unit_class": "germ_hummel",
         "closed_waypoints": false,
@@ -3730,8 +5370,14 @@
           "count": 4,
           "formation_type": "rows",
           "formation_div": 2,
-          "formation_step": [5.1,2.0],
-          "formation_noise": [0.4,0.4],
+          "formation_step": [
+            5.1,
+            2.0
+          ],
+          "formation_noise": [
+            0.4,
+            0.4
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -3739,10 +5385,26 @@
           "trap03_evil_vehicles00_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [11683.0,257.181,13873.2]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                11683.0,
+                257.181,
+                13873.2
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3753,10 +5415,26 @@
           "trap03_evil_vehicles00_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [11793.0,264.341,14001.5]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                11793.0,
+                264.341,
+                14001.5
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3767,10 +5445,26 @@
           "trap03_evil_vehicles00_wp_03": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [11832.2,266.293,14026.2]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                11832.2,
+                266.293,
+                14026.2
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3779,16 +5473,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "tracked_vehicles": {
+      },
+      {
         "name": "trap03_evil_vehicles01",
         "tm": [
-          [0.939692,0.0,-0.34202],
-          [0.0,1.0,0.0],
-          [0.34202,0.0,0.939692],
-          [11641.5,265.776,14886.1]
+          [
+            0.939692,
+            0.0,
+            -0.34202
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.34202,
+            0.0,
+            0.939692
+          ],
+          [
+            11641.5,
+            265.776,
+            14886.1
+          ]
         ],
         "unit_class": "germ_hummel",
         "closed_waypoints": false,
@@ -3810,8 +5518,14 @@
           "count": 3,
           "formation_type": "cols",
           "formation_div": 2,
-          "formation_step": [3.4,2.0],
-          "formation_noise": [-0.1,-0.3],
+          "formation_step": [
+            3.4,
+            2.0
+          ],
+          "formation_noise": [
+            -0.1,
+            -0.3
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -3819,10 +5533,26 @@
           "trap03_evil_vehicles01_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [11870.3,274.888,14632.4]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                11870.3,
+                274.888,
+                14632.4
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3833,10 +5563,26 @@
           "trap03_evil_vehicles01_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12003.0,273.774,14422.2]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12003.0,
+                273.774,
+                14422.2
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3847,10 +5593,26 @@
           "trap03_evil_vehicles01_wp_03": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12045.0,272.425,14199.8]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12045.0,
+                272.425,
+                14199.8
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3859,16 +5621,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "tracked_vehicles": {
+      },
+      {
         "name": "trap03_evil_vehicles02",
         "tm": [
-          [-0.642787,0.0,-0.766044],
-          [0.0,1.0,0.0],
-          [0.766044,0.0,-0.642787],
-          [12312.3,280.785,14443.4]
+          [
+            -0.642787,
+            0.0,
+            -0.766044
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.766044,
+            0.0,
+            -0.642787
+          ],
+          [
+            12312.3,
+            280.785,
+            14443.4
+          ]
         ],
         "unit_class": "germ_hummel",
         "closed_waypoints": false,
@@ -3890,8 +5666,14 @@
           "count": 2,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [2.0,2.0],
-          "formation_noise": [-0.1,-0.3],
+          "formation_step": [
+            2.0,
+            2.0
+          ],
+          "formation_noise": [
+            -0.1,
+            -0.3
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -3899,10 +5681,26 @@
           "trap03_evil_vehicles02_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12260.7,276.395,14343.8]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12260.7,
+                276.395,
+                14343.8
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3913,10 +5711,26 @@
           "trap03_evil_vehicles02_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12240.5,276.858,14280.6]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12240.5,
+                276.858,
+                14280.6
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3927,10 +5741,26 @@
           "trap03_evil_vehicles02_wp_03": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12195.8,275.527,14230.6]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12195.8,
+                275.527,
+                14230.6
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3941,10 +5771,26 @@
           "trap03_evil_vehicles02_wp_04": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [12170.0,274.876,14213.3]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                12170.0,
+                274.876,
+                14213.3
+              ]
             ],
             "props": {
               "speed": 30.0,
@@ -3954,162 +5800,180 @@
           }
         }
       }
-    },
-    {
-      "squad": {
+    ],
+    "squad": [
+      {
         "name": "player_himself",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [9057.35,318.15,13319.5]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            9057.35,
+            318.15,
+            13319.5
+          ]
         ],
         "props": {
           "squad_members": "player",
           "object_type": "isPlayer"
         }
-      }
-    },
-    {
-      "squad": {
+      },
+      {
         "name": "evil_vehicles_squad",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [5532.1,284.265,12836.6]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            5532.1,
+            284.265,
+            12836.6
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "trap00_evil_vehicles00"
-          },
-          {
-            "squad_members": "trap01_evil_vehicles00"
-          },
-          {
-            "squad_members": "trap02_evil_vehicles00"
-          },
-          {
-            "squad_members": "trap02_evil_vehicles01"
-          },
-          {
-            "squad_members": "trap03_evil_vehicles00"
-          },
-          {
-            "squad_members": "trap03_evil_vehicles01"
-          },
-          {
-            "squad_members": "trap03_evil_vehicles02"
-          }
-        ]
-      }
-    },
-    {
-      "squad": {
+        "props": {
+          "squad_members": [
+            "trap00_evil_vehicles00",
+            "trap01_evil_vehicles00",
+            "trap02_evil_vehicles00",
+            "trap02_evil_vehicles01",
+            "trap03_evil_vehicles00",
+            "trap03_evil_vehicles01",
+            "trap03_evil_vehicles02"
+          ]
+        }
+      },
+      {
         "name": "light_evil_vehicles_squad",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [8111.15,264.196,12056.0]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            8111.15,
+            264.196,
+            12056.0
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "trap00_evil_vehicles01"
-          },
-          {
-            "squad_members": "trap00_evil_vehicles02"
-          },
-          {
-            "squad_members": "trap00_evil_vehicles03"
-          },
-          {
-            "squad_members": "trap01_evil_vehicles01"
-          },
-          {
-            "squad_members": "trap01_evil_vehicles02"
-          },
-          {
-            "squad_members": "trap02_evil_vehicles02"
-          },
-          {
-            "squad_members": "trap02_evil_vehicles03"
-          },
-          {
-            "squad_members": "trap02_evil_vehicles04"
-          },
-          {
-            "squad_members": "trap03_evil_vehicles03"
-          },
-          {
-            "squad_members": "trap03_evil_vehicles04"
-          }
-        ]
-      }
-    },
-    {
-      "squad": {
+        "props": {
+          "squad_members": [
+            "trap00_evil_vehicles01",
+            "trap00_evil_vehicles02",
+            "trap00_evil_vehicles03",
+            "trap01_evil_vehicles01",
+            "trap01_evil_vehicles02",
+            "trap02_evil_vehicles02",
+            "trap02_evil_vehicles03",
+            "trap02_evil_vehicles04",
+            "trap03_evil_vehicles03",
+            "trap03_evil_vehicles04"
+          ]
+        }
+      },
+      {
         "name": "evil_artillery_squad",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [11586.0,182.196,13257.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            11586.0,
+            182.196,
+            13257.7
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "evil_artillery00"
-          },
-          {
-            "squad_members": "evil_artillery01"
-          },
-          {
-            "squad_members": "evil_artillery02"
-          },
-          {
-            "squad_members": "evil_artillery03"
-          },
-          {
-            "squad_members": "evil_artillery04"
-          },
-          {
-            "squad_members": "evil_artillery05"
-          },
-          {
-            "squad_members": "evil_artillery06"
-          },
-          {
-            "squad_members": "evil_artillery07"
-          },
-          {
-            "squad_members": "evil_artillery08"
-          },
-          {
-            "squad_members": "evil_artillery09"
-          },
-          {
-            "squad_members": "evil_artillery10"
-          },
-          {
-            "squad_members": "evil_artillery11"
-          },
-          {
-            "squad_members": "evil_artillery12"
-          },
-          {
-            "squad_members": "evil_artillery13"
-          }
-        ]
+        "props": {
+          "squad_members": [
+            "evil_artillery00",
+            "evil_artillery01",
+            "evil_artillery02",
+            "evil_artillery03",
+            "evil_artillery04",
+            "evil_artillery05",
+            "evil_artillery06",
+            "evil_artillery07",
+            "evil_artillery08",
+            "evil_artillery09",
+            "evil_artillery10",
+            "evil_artillery11",
+            "evil_artillery12",
+            "evil_artillery13"
+          ]
+        }
       }
-    },
-    {
-      "structures": {
+    ],
+    "structures": [
+      {
         "name": "evil_artillery00",
         "tm": [
-          [-0.0871557,0.0,0.996195],
-          [0.0,1.0,0.0],
-          [-0.996195,0.0,-0.0871557],
-          [8517.1,214.425,12064.9]
+          [
+            -0.0871557,
+            0.0,
+            0.996195
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.996195,
+            0.0,
+            -0.0871557
+          ],
+          [
+            8517.1,
+            214.425,
+            12064.9
+          ]
         ],
         "unit_class": "germ_75mm_pak40",
         "closed_waypoints": false,
@@ -4131,22 +5995,42 @@
           "count": 2,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "evil_artillery01",
         "tm": [
-          [-0.258819,0.0,0.965926],
-          [0.0,1.0,0.0],
-          [-0.965926,0.0,-0.258819],
-          [10122.8,208.695,12755.5]
+          [
+            -0.258819,
+            0.0,
+            0.965926
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.965926,
+            0.0,
+            -0.258819
+          ],
+          [
+            10122.8,
+            208.695,
+            12755.5
+          ]
         ],
         "unit_class": "germ_75mm_pak40",
         "closed_waypoints": false,
@@ -4168,22 +6052,42 @@
           "count": 2,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "evil_artillery02",
         "tm": [
-          [0.5373,0.0,-0.843391],
-          [0.0,1.0,0.0],
-          [0.843391,0.0,0.5373],
-          [9815.25,265.162,13869.1]
+          [
+            0.5373,
+            0.0,
+            -0.843391
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.843391,
+            0.0,
+            0.5373
+          ],
+          [
+            9815.25,
+            265.162,
+            13869.1
+          ]
         ],
         "unit_class": "germ_75mm_pak40",
         "closed_waypoints": false,
@@ -4205,22 +6109,42 @@
           "count": 2,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "evil_artillery03",
         "tm": [
-          [-0.382683,0.0,-0.92388],
-          [0.0,1.0,0.0],
-          [0.92388,0.0,-0.382683],
-          [9346.75,269.746,13925.5]
+          [
+            -0.382683,
+            0.0,
+            -0.92388
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.92388,
+            0.0,
+            -0.382683
+          ],
+          [
+            9346.75,
+            269.746,
+            13925.5
+          ]
         ],
         "unit_class": "germ_37mm_pak36",
         "closed_waypoints": false,
@@ -4242,22 +6166,42 @@
           "count": 2,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "evil_artillery04",
         "tm": [
-          [-0.258819,0.0,0.965926],
-          [0.0,1.0,0.0],
-          [-0.965926,0.0,-0.258819],
-          [12392.0,281.919,12860.1]
+          [
+            -0.258819,
+            0.0,
+            0.965926
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.965926,
+            0.0,
+            -0.258819
+          ],
+          [
+            12392.0,
+            281.919,
+            12860.1
+          ]
         ],
         "unit_class": "germ_75mm_pak40",
         "closed_waypoints": false,
@@ -4279,22 +6223,42 @@
           "count": 2,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "evil_artillery05",
         "tm": [
-          [-0.258819,0.0,0.965926],
-          [0.0,1.0,0.0],
-          [-0.965926,0.0,-0.258819],
-          [12549.0,284.987,13120.3]
+          [
+            -0.258819,
+            0.0,
+            0.965926
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.965926,
+            0.0,
+            -0.258819
+          ],
+          [
+            12549.0,
+            284.987,
+            13120.3
+          ]
         ],
         "unit_class": "germ_75mm_pak40",
         "closed_waypoints": false,
@@ -4316,22 +6280,42 @@
           "count": 2,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "evil_artillery06",
         "tm": [
-          [-0.258819,0.0,0.965926],
-          [0.0,1.0,0.0],
-          [-0.965926,0.0,-0.258819],
-          [11941.5,233.977,13194.0]
+          [
+            -0.258819,
+            0.0,
+            0.965926
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.965926,
+            0.0,
+            -0.258819
+          ],
+          [
+            11941.5,
+            233.977,
+            13194.0
+          ]
         ],
         "unit_class": "germ_75mm_pak40",
         "closed_waypoints": false,
@@ -4353,22 +6337,42 @@
           "count": 1,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "evil_artillery07",
         "tm": [
-          [-0.258819,0.0,0.965926],
-          [0.0,1.0,0.0],
-          [-0.965926,0.0,-0.258819],
-          [12099.5,243.986,13341.8]
+          [
+            -0.258819,
+            0.0,
+            0.965926
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.965926,
+            0.0,
+            -0.258819
+          ],
+          [
+            12099.5,
+            243.986,
+            13341.8
+          ]
         ],
         "unit_class": "germ_75mm_pak40",
         "closed_waypoints": false,
@@ -4390,22 +6394,42 @@
           "count": 1,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "evil_artillery08",
         "tm": [
-          [-0.258819,0.0,0.965926],
-          [0.0,1.0,0.0],
-          [-0.965926,0.0,-0.258819],
-          [12562.6,272.834,13807.0]
+          [
+            -0.258819,
+            0.0,
+            0.965926
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.965926,
+            0.0,
+            -0.258819
+          ],
+          [
+            12562.6,
+            272.834,
+            13807.0
+          ]
         ],
         "unit_class": "germ_75mm_pak40",
         "closed_waypoints": false,
@@ -4427,22 +6451,42 @@
           "count": 2,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "evil_artillery09",
         "tm": [
-          [0.34202,0.0,-0.939693],
-          [0.0,1.0,0.0],
-          [0.939693,0.0,0.34202],
-          [12028.5,278.379,15249.1]
+          [
+            0.34202,
+            0.0,
+            -0.939693
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.939693,
+            0.0,
+            0.34202
+          ],
+          [
+            12028.5,
+            278.379,
+            15249.1
+          ]
         ],
         "unit_class": "germ_75mm_pak40",
         "closed_waypoints": false,
@@ -4464,22 +6508,42 @@
           "count": 2,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "evil_artillery10",
         "tm": [
-          [0.34202,0.0,-0.939693],
-          [0.0,1.0,0.0],
-          [0.939693,0.0,0.34202],
-          [12409.9,312.157,14870.8]
+          [
+            0.34202,
+            0.0,
+            -0.939693
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.939693,
+            0.0,
+            0.34202
+          ],
+          [
+            12409.9,
+            312.157,
+            14870.8
+          ]
         ],
         "unit_class": "germ_37mm_pak36",
         "closed_waypoints": false,
@@ -4501,22 +6565,42 @@
           "count": 2,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "evil_artillery11",
         "tm": [
-          [0.707107,0.0,-0.707107],
-          [0.0,1.0,0.0],
-          [0.707107,0.0,0.707107],
-          [11999.7,276.047,14560.0]
+          [
+            0.707107,
+            0.0,
+            -0.707107
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.707107,
+            0.0,
+            0.707107
+          ],
+          [
+            11999.7,
+            276.047,
+            14560.0
+          ]
         ],
         "unit_class": "germ_75mm_pak40",
         "closed_waypoints": false,
@@ -4538,22 +6622,42 @@
           "count": 1,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "evil_artillery12",
         "tm": [
-          [-0.5373,0.0,-0.843391],
-          [0.0,1.0,0.0],
-          [0.843391,0.0,-0.5373],
-          [11553.0,248.396,14496.6]
+          [
+            -0.5373,
+            0.0,
+            -0.843391
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.843391,
+            0.0,
+            -0.5373
+          ],
+          [
+            11553.0,
+            248.396,
+            14496.6
+          ]
         ],
         "unit_class": "germ_75mm_pak40",
         "closed_waypoints": false,
@@ -4575,22 +6679,42 @@
           "count": 2,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "evil_artillery13",
         "tm": [
-          [-0.999048,0.0,0.0436195],
-          [0.0,1.0,0.0],
-          [-0.0436195,0.0,-0.999048],
-          [11359.3,199.86,13732.3]
+          [
+            -0.999048,
+            0.0,
+            0.0436195
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.0436195,
+            0.0,
+            -0.999048
+          ],
+          [
+            11359.3,
+            199.86,
+            13732.3
+          ]
         ],
         "unit_class": "germ_75mm_pak40",
         "closed_waypoints": false,
@@ -4612,118 +6736,246 @@
           "count": 2,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
+        "way": {}
       }
-    }
-  ],
+    ]
+  },
   "areas": {
     "bastogne": {
       "type": "Sphere",
       "tm": [
-        [6280.7,0.0,0.0],
-        [0.0,6280.7,0.0],
-        [0.0,0.0,6280.7],
-        [1327.25,475.95,10598.7]
+        [
+          6280.7,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          6280.7,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          6280.7
+        ],
+        [
+          1327.25,
+          475.95,
+          10598.7
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "end_of_route": {
       "type": "Sphere",
       "tm": [
-        [935.5,0.0,0.0],
-        [0.0,935.5,0.0],
-        [0.0,0.0,935.5],
-        [13648.9,518.0,15527.2]
+        [
+          935.5,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          935.5,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          935.5
+        ],
+        [
+          13648.9,
+          518.0,
+          15527.2
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "trap00": {
       "type": "Sphere",
       "tm": [
-        [163.9,0.0,0.0],
-        [0.0,163.9,0.0],
-        [0.0,0.0,163.9],
-        [7178.45,279.58,12813.2]
+        [
+          163.9,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          163.9,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          163.9
+        ],
+        [
+          7178.45,
+          279.58,
+          12813.2
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "trap01": {
       "type": "Sphere",
       "tm": [
-        [92.7,0.0,0.0],
-        [0.0,92.7,0.0],
-        [0.0,0.0,92.7],
-        [9086.3,77.65,12740.3]
+        [
+          92.7,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          92.7,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          92.7
+        ],
+        [
+          9086.3,
+          77.65,
+          12740.3
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "center_of_evil": {
       "type": "Sphere",
       "tm": [
-        [7044.5,0.0,0.0],
-        [0.0,7044.5,0.0],
-        [0.0,0.0,7044.5],
-        [10435.8,423.75,5566.75]
+        [
+          7044.5,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          7044.5,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          7044.5
+        ],
+        [
+          10435.8,
+          423.75,
+          5566.75
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "trap02": {
       "type": "Sphere",
       "tm": [
-        [119.99,0.0,0.0],
-        [0.0,119.99,0.0],
-        [0.0,0.0,119.99],
-        [10526.4,73.05,13673.8]
+        [
+          119.99,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          119.99,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          119.99
+        ],
+        [
+          10526.4,
+          73.05,
+          13673.8
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "trap03": {
       "type": "Sphere",
       "tm": [
-        [173.1,0.0,0.0],
-        [0.0,173.1,0.0],
-        [0.0,0.0,173.1],
-        [12083.7,272.564,14142.4]
+        [
+          173.1,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          173.1,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          173.1
+        ],
+        [
+          12083.7,
+          272.564,
+          14142.4
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "area_01": {
       "type": "Sphere",
       "tm": [
-        [1400.0,0.0,0.0],
-        [0.0,1400.0,0.0],
-        [0.0,0.0,1400.0],
-        [6125.95,469.15,12862.0]
+        [
+          1400.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1400.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1400.0
+        ],
+        [
+          6125.95,
+          469.15,
+          12862.0
+        ]
       ],
-      "props": []
+      "props": {}
     }
   },
-  "objLayers": [
-    {
-      "layer": {
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
         "enabled": true
       }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    }
-  ],
-  "wayPoints": []
+    ]
+  },
+  "wayPoints": {}
 }

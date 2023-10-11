@@ -14,7 +14,11 @@
       "type": "singleMission",
       "environment": "Day",
       "weather": "hazy",
-      "windDirection": [1.0,0.0,0.0],
+      "windDirection": [
+        1.0,
+        0.0,
+        0.0
+      ],
       "restoreType": "tactical control",
       "optionalTakeOff": false
     },
@@ -22,7 +26,7 @@
       "pressure": 760.0,
       "temperature": 0.0
     },
-    "spectator_points": [],
+    "spectator_points": {},
     "briefing": {
       "place_loc": "",
       "date_loc": "",
@@ -31,59 +35,39 @@
       "part": {
         "event": "",
         "minTime": 0,
-        "slide": [
-          {
-            "map": true
-          },
-          {
-            "minTime": 4
-          },
-          {
-            "picture": ""
-          },
-          {
-            "showAirMap": false
-          },
-          {
-            "arrow": [
-              {
-                "width": 1
-              },
-              {
-                "side": "player"
-              },
-              {
-                "point": "player"
-              },
-              {
-                "point": "waypoint24"
-              }
+        "slide": {
+          "map": true,
+          "minTime": 4,
+          "picture": "",
+          "showAirMap": false,
+          "arrow": {
+            "width": 1,
+            "side": "player",
+            "point": [
+              "player",
+              "waypoint24"
             ]
           },
-          {
-            "icon": {
+          "icon": [
+            {
               "icontype": "fighter",
               "side": "player",
               "target": "player",
               "lookAt": "waypoint24"
-            }
-          },
-          {
-            "icon": {
+            },
+            {
               "icontype": "fighter",
               "side": "enemy",
               "target": "enemy",
               "lookAt": "player"
-            }
-          },
-          {
-            "icon": {
+            },
+            {
               "icontype": "artillery",
               "side": "ally",
               "target": "structures_01"
             }
-          }
-        ]
+          ]
+        }
       }
     }
   },
@@ -100,7 +84,7 @@
       "showTriggers": true,
       "showMissionObjectives": true,
       "showWayPoints": true,
-      "excludes": []
+      "excludes": {}
     }
   },
   "triggers": {
@@ -115,50 +99,48 @@
         "enableAfterComplete": false
       },
       "events": {
-        "initMission": []
+        "initMission": {}
       },
-      "conditions": [],
-      "actions": [
-        {
-          "unitDamage": {
-            "part": 2,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [1.0,1.0],
-            "offset": [0.0,0.0,0.0],
-            "radiusOffset": [10.0,15.0],
-            "target": "player"
-          }
+      "conditions": {},
+      "actions": {
+        "unitDamage": {
+          "part": 2,
+          "power": 1.0,
+          "useEffect": false,
+          "countEffects": 1,
+          "delay": [
+            1.0,
+            1.0
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "radiusOffset": [
+            10.0,
+            15.0
+          ],
+          "target": "player"
         },
-        {
-          "unitAttackTarget": [
-            {
-              "playerAttracted": false
-            },
-            {
-              "object": "enemy"
-            },
-            {
-              "object": "enemy01"
-            },
-            {
-              "target": "player"
-            }
-          ]
+        "unitAttackTarget": {
+          "playerAttracted": false,
+          "object": [
+            "enemy",
+            "enemy01"
+          ],
+          "target": "player"
         },
-        {
-          "missionMarkAsWaypoint": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint00"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -166,54 +148,28 @@
             "ignoreDifficulty": true,
             "target": "waypoint01"
           }
+        ],
+        "triggerEnable": {
+          "target": "waypoint01"
         },
-        {
-          "triggerEnable": {
-            "target": "waypoint01"
-          }
-        },
-        {
-          "unitSetProperties": [
-            {
-              "object_marking": 0
-            },
-            {
-              "object_var_name": ""
-            },
-            {
-              "object_var_comp_op": "equal"
-            },
-            {
-              "object_var_value": 0
-            },
-            {
-              "object": "enemy"
-            },
-            {
-              "object": "enemy01"
-            },
-            {
-              "object": "enemy02"
-            },
-            {
-              "object": "enemy03"
-            },
-            {
-              "object": "enemy04"
-            },
-            {
-              "object": "enemy05"
-            },
-            {
-              "object": "enemy06"
-            },
-            {
-              "effShootingRate": 0.1
-            }
-          ]
+        "unitSetProperties": {
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "object": [
+            "enemy",
+            "enemy01",
+            "enemy02",
+            "enemy03",
+            "enemy04",
+            "enemy05",
+            "enemy06"
+          ],
+          "effShootingRate": 0.1
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint01": {
       "is_enabled": false,
@@ -242,29 +198,25 @@
           "target": "waypoint00"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint00"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint01"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -272,14 +224,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint02"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint02"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint02"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint02": {
       "is_enabled": false,
@@ -308,29 +258,25 @@
           "target": "waypoint01"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint01"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint02"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -338,14 +284,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint03"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint03"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint03"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint03": {
       "is_enabled": false,
@@ -374,29 +318,25 @@
           "target": "waypoint02"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint02"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint03"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -404,14 +344,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint04"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint04"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint04"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint04": {
       "is_enabled": false,
@@ -440,29 +378,25 @@
           "target": "waypoint03"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint03"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint04"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -470,14 +404,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint05"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint05"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint05"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint05": {
       "is_enabled": false,
@@ -506,29 +438,25 @@
           "target": "waypoint04"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint04"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint05"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -536,14 +464,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint06"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint06"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint06"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint06": {
       "is_enabled": false,
@@ -572,29 +498,25 @@
           "target": "waypoint05"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint05"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint06"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -602,14 +524,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint07"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint07"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint07"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint07": {
       "is_enabled": false,
@@ -638,29 +558,25 @@
           "target": "waypoint06"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint06"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint07"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -668,14 +584,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint08"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint08"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint08"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint08": {
       "is_enabled": false,
@@ -704,29 +618,25 @@
           "target": "waypoint07"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint07"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint08"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -734,14 +644,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint09"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint09"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint09"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint09": {
       "is_enabled": false,
@@ -770,29 +678,25 @@
           "target": "waypoint08"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint08"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint09"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -800,14 +704,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint10"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint10"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint10"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint10": {
       "is_enabled": false,
@@ -836,29 +738,25 @@
           "target": "waypoint09"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint09"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint10"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -866,14 +764,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint11"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint11"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint11"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint11": {
       "is_enabled": false,
@@ -902,29 +798,25 @@
           "target": "waypoint10"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint10"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint11"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -932,14 +824,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint12"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint12"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint12"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint12": {
       "is_enabled": false,
@@ -968,29 +858,25 @@
           "target": "waypoint11"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint11"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint12"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -998,14 +884,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint13"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint13"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint13"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint13": {
       "is_enabled": false,
@@ -1034,29 +918,25 @@
           "target": "waypoint12"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint12"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint13"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -1064,14 +944,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint14"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint14"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint14"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint14": {
       "is_enabled": false,
@@ -1100,29 +978,25 @@
           "target": "waypoint13"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint13"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint14"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -1130,14 +1004,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint15"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint15"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint15"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint15": {
       "is_enabled": false,
@@ -1166,29 +1038,25 @@
           "target": "waypoint14"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint14"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint15"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -1196,14 +1064,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint16"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint16"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint16"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint16": {
       "is_enabled": false,
@@ -1232,29 +1098,25 @@
           "target": "waypoint15"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint15"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint16"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -1262,14 +1124,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint17"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint17"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint17"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint17": {
       "is_enabled": false,
@@ -1298,29 +1158,25 @@
           "target": "waypoint16"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint16"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint17"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -1328,14 +1184,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint18"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint18"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint18"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint18": {
       "is_enabled": false,
@@ -1364,29 +1218,25 @@
           "target": "waypoint17"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint17"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint18"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -1394,14 +1244,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint19"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint19"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint19"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint19": {
       "is_enabled": false,
@@ -1430,29 +1278,25 @@
           "target": "waypoint18"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint18"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint19"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -1460,14 +1304,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint20"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint20"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint20"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint20": {
       "is_enabled": false,
@@ -1496,29 +1338,25 @@
           "target": "waypoint19"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint19"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint20"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -1526,14 +1364,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint21"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint21"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint21"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint21": {
       "is_enabled": false,
@@ -1562,29 +1398,25 @@
           "target": "waypoint20"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint20"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint21"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -1592,14 +1424,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint22"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint22"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint22"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint22": {
       "is_enabled": false,
@@ -1628,29 +1458,25 @@
           "target": "waypoint21"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint21"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint22"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -1658,14 +1484,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint23"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint23"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint23"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint23": {
       "is_enabled": false,
@@ -1694,29 +1518,25 @@
           "target": "waypoint22"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint22"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint23"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": false,
             "scale": 0.3,
@@ -1724,14 +1544,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint24"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "waypoint24"
-          }
+        ],
+        "triggerEnable": {
+          "target": "waypoint24"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "waypoint24": {
       "is_enabled": false,
@@ -1760,19 +1578,17 @@
           "target": "waypoint23"
         }
       },
-      "actions": [
-        {
-          "missionMarkAsWaypoint": {
+      "actions": {
+        "missionMarkAsWaypoint": [
+          {
             "visible": false,
             "primary": true,
             "scale": 0.3,
             "oriented": true,
             "ignoreDifficulty": true,
             "target": "waypoint23"
-          }
-        },
-        {
-          "missionMarkAsWaypoint": {
+          },
+          {
             "visible": true,
             "primary": true,
             "scale": 0.3,
@@ -1780,14 +1596,12 @@
             "ignoreDifficulty": true,
             "target": "waypoint24"
           }
-        },
-        {
-          "triggerEnable": {
-            "target": "mission_completed"
-          }
+        ],
+        "triggerEnable": {
+          "target": "mission_completed"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "mission_completed": {
       "is_enabled": false,
@@ -1837,7 +1651,7 @@
           "debriefingTimer": 2
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "enemies_wake01": {
       "is_enabled": true,
@@ -1874,7 +1688,7 @@
           "target": "player"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "enemies_wake02": {
       "is_enabled": true,
@@ -1911,7 +1725,7 @@
           "target": "player"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "enemies_wake03": {
       "is_enabled": true,
@@ -1948,7 +1762,7 @@
           "target": "player"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "enemies_wake04": {
       "is_enabled": true,
@@ -1985,7 +1799,7 @@
           "target": "player"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "enemies_wake05": {
       "is_enabled": true,
@@ -2022,7 +1836,7 @@
           "target": "player"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     }
   },
   "mission_objectives": {
@@ -2038,23 +1852,39 @@
         "scoreConst": 100,
         "scoreTime": 400
       },
-      "onSuccess": [],
-      "onFailed": []
+      "onSuccess": {},
+      "onFailed": {}
     }
   },
-  "variables": [],
-  "dialogs": [],
-  "airfields": [],
-  "effects": [],
-  "units": [
-    {
-      "armada": {
+  "variables": {},
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {
+    "armada": [
+      {
         "name": "player",
         "tm": [
-          [-0.300706,0.0,-0.953717],
-          [0.0,1.0,0.0],
-          [0.953717,0.0,-0.300706],
-          [8721.8,544.95,11504.3]
+          [
+            -0.300706,
+            0.0,
+            -0.953717
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.953717,
+            0.0,
+            -0.300706
+          ],
+          [
+            8721.8,
+            544.95,
+            11504.3
+          ]
         ],
         "unit_class": "la-5fn",
         "closed_waypoints": false,
@@ -2091,17 +1921,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "enemy",
         "tm": [
-          [-0.258819,0.0,-0.965926],
-          [0.0,1.0,0.0],
-          [0.965926,0.0,-0.258819],
-          [8822.05,592.2,11823.3]
+          [
+            -0.258819,
+            0.0,
+            -0.965926
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.965926,
+            0.0,
+            -0.258819
+          ],
+          [
+            8822.05,
+            592.2,
+            11823.3
+          ]
         ],
         "unit_class": "fw-190f-8",
         "closed_waypoints": false,
@@ -2139,17 +1983,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "enemy01",
         "tm": [
-          [-0.984808,0.0,-0.173648],
-          [0.0,1.0,0.0],
-          [0.173648,0.0,-0.984808],
-          [10410.2,2038.75,7990.1]
+          [
+            -0.984808,
+            0.0,
+            -0.173648
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.173648,
+            0.0,
+            -0.984808
+          ],
+          [
+            10410.2,
+            2038.75,
+            7990.1
+          ]
         ],
         "unit_class": "fw-190f-8",
         "closed_waypoints": false,
@@ -2187,17 +2045,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "enemy02",
         "tm": [
-          [-0.382684,0.0,0.92388],
-          [0.0,1.0,0.0],
-          [-0.92388,0.0,-0.382684],
-          [6484.0,1039.05,4542.65]
+          [
+            -0.382684,
+            0.0,
+            0.92388
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.92388,
+            0.0,
+            -0.382684
+          ],
+          [
+            6484.0,
+            1039.05,
+            4542.65
+          ]
         ],
         "unit_class": "fw-190f-8",
         "closed_waypoints": false,
@@ -2236,17 +2108,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "enemy03",
         "tm": [
-          [0.766045,0.0,-0.642788],
-          [0.0,1.0,0.0],
-          [0.642788,0.0,0.766045],
-          [4340.95,710.95,4064.35]
+          [
+            0.766045,
+            0.0,
+            -0.642788
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.642788,
+            0.0,
+            0.766045
+          ],
+          [
+            4340.95,
+            710.95,
+            4064.35
+          ]
         ],
         "unit_class": "fw-190f-8",
         "closed_waypoints": false,
@@ -2285,17 +2171,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "enemy04",
         "tm": [
-          [0.21644,0.0,0.976296],
-          [0.0,1.0,0.0],
-          [-0.976296,0.0,0.21644],
-          [6295.1,1084.45,-158.0]
+          [
+            0.21644,
+            0.0,
+            0.976296
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.976296,
+            0.0,
+            0.21644
+          ],
+          [
+            6295.1,
+            1084.45,
+            -158.0
+          ]
         ],
         "unit_class": "fw-190f-8",
         "closed_waypoints": false,
@@ -2334,17 +2234,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "enemy05",
         "tm": [
-          [-1.0,0.0,2.98023e-08],
-          [0.0,1.0,0.0],
-          [-2.98023e-08,0.0,-1.0],
-          [10502.5,554.4,-273.25]
+          [
+            -1.0,
+            0.0,
+            2.98023e-8
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -2.98023e-8,
+            0.0,
+            -1.0
+          ],
+          [
+            10502.5,
+            554.4,
+            -273.25
+          ]
         ],
         "unit_class": "fw-190f-8",
         "closed_waypoints": false,
@@ -2383,17 +2297,31 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
-      }
-    },
-    {
-      "armada": {
+        "way": {}
+      },
+      {
         "name": "enemy06",
         "tm": [
-          [-0.707107,0.0,0.707107],
-          [0.0,1.0,0.0],
-          [-0.707107,0.0,-0.707107],
-          [11690.0,975.5,-2358.6]
+          [
+            -0.707107,
+            0.0,
+            0.707107
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.707107,
+            0.0,
+            -0.707107
+          ],
+          [
+            11690.0,
+            975.5,
+            -2358.6
+          ]
         ],
         "unit_class": "fw-190f-8",
         "closed_waypoints": false,
@@ -2432,17 +2360,33 @@
             "task": "FLY_WAYPOINT"
           }
         },
-        "way": []
+        "way": {}
       }
-    },
-    {
-      "structures": {
+    ],
+    "structures": [
+      {
         "name": "structures_01",
         "tm": [
-          [0.642788,0.0,0.766044],
-          [0.0,1.0,0.0],
-          [-0.766044,0.0,0.642788],
-          [9142.5,78.8,-5565.7]
+          [
+            0.642788,
+            0.0,
+            0.766044
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.766044,
+            0.0,
+            0.642788
+          ],
+          [
+            9142.5,
+            78.8,
+            -5565.7
+          ]
         ],
         "unit_class": "ussr_57mm_zis2",
         "closed_waypoints": false,
@@ -2464,22 +2408,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "structures_02",
         "tm": [
-          [0.642788,0.0,0.766044],
-          [0.0,1.0,0.0],
-          [-0.766044,0.0,0.642788],
-          [9719.75,107.0,-5580.8]
+          [
+            0.642788,
+            0.0,
+            0.766044
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.766044,
+            0.0,
+            0.642788
+          ],
+          [
+            9719.75,
+            107.0,
+            -5580.8
+          ]
         ],
         "unit_class": "ussr_57mm_zis2",
         "closed_waypoints": false,
@@ -2501,22 +2465,42 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "structures_03",
         "tm": [
-          [-0.422619,0.0,-0.906308],
-          [0.0,1.0,0.0],
-          [0.906308,0.0,-0.422619],
-          [9464.65,171.25,-4569.15]
+          [
+            -0.422619,
+            0.0,
+            -0.906308
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.906308,
+            0.0,
+            -0.422619
+          ],
+          [
+            9464.65,
+            171.25,
+            -4569.15
+          ]
         ],
         "unit_class": "ussr_57mm_zis2",
         "closed_waypoints": false,
@@ -2538,317 +2522,803 @@
           "count": 2,
           "formation_type": "cols",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
-        "way": []
+        "way": {}
       }
-    }
-  ],
+    ]
+  },
   "areas": {
     "waypoint00": {
       "type": "Sphere",
       "tm": [
-        [-33.8095,0.0,-72.5046],
-        [0.0,80.0,0.0],
-        [72.5046,0.0,-33.8095],
-        [8191.05,324.25,8830.95]
+        [
+          -33.8095,
+          0.0,
+          -72.5046
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          72.5046,
+          0.0,
+          -33.8095
+        ],
+        [
+          8191.05,
+          324.25,
+          8830.95
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint01": {
       "type": "Sphere",
       "tm": [
-        [-20.7055,0.0,-77.2741],
-        [0.0,80.0,0.0],
-        [77.2741,0.0,-20.7055],
-        [7646.35,400.0,7416.2]
+        [
+          -20.7055,
+          0.0,
+          -77.2741
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          77.2741,
+          0.0,
+          -20.7055
+        ],
+        [
+          7646.35,
+          400.0,
+          7416.2
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint02": {
       "type": "Sphere",
       "tm": [
-        [-56.5685,0.0,-56.5685],
-        [0.0,80.0,0.0],
-        [56.5685,0.0,-56.5685],
-        [7468.55,414.65,6752.6]
+        [
+          -56.5685,
+          0.0,
+          -56.5685
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          56.5685,
+          0.0,
+          -56.5685
+        ],
+        [
+          7468.55,
+          414.65,
+          6752.6
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint03": {
       "type": "Sphere",
       "tm": [
-        [-77.2741,0.0,-20.7055],
-        [0.0,80.0,0.0],
-        [20.7055,0.0,-77.2741],
-        [7055.75,414.65,6343.35]
+        [
+          -77.2741,
+          0.0,
+          -20.7055
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          20.7055,
+          0.0,
+          -77.2741
+        ],
+        [
+          7055.75,
+          414.65,
+          6343.35
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint04": {
       "type": "Sphere",
       "tm": [
-        [-72.5046,0.0,-33.8095],
-        [0.0,80.0,0.0],
-        [33.8095,0.0,-72.5046],
-        [6331.7,452.05,6125.95]
+        [
+          -72.5046,
+          0.0,
+          -33.8095
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          33.8095,
+          0.0,
+          -72.5046
+        ],
+        [
+          6331.7,
+          452.05,
+          6125.95
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint05": {
       "type": "Sphere",
       "tm": [
-        [-54.0472,0.0,-58.9822],
-        [0.0,80.0,0.0],
-        [58.9822,0.0,-54.0472],
-        [5705.35,485.2,5789.9]
+        [
+          -54.0472,
+          0.0,
+          -58.9822
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          58.9822,
+          0.0,
+          -54.0472
+        ],
+        [
+          5705.35,
+          485.2,
+          5789.9
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint06": {
       "type": "Sphere",
       "tm": [
-        [-10.4421,0.0,-79.3156],
-        [0.0,80.0,0.0],
-        [79.3156,0.0,-10.4421],
-        [5324.25,485.2,5352.25]
+        [
+          -10.4421,
+          0.0,
+          -79.3156
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          79.3156,
+          0.0,
+          -10.4421
+        ],
+        [
+          5324.25,
+          485.2,
+          5352.25
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint07": {
       "type": "Sphere",
       "tm": [
-        [-13.8918,0.0,-78.7846],
-        [0.0,80.0,0.0],
-        [78.7846,0.0,-13.8918],
-        [5211.85,514.75,4525.7]
+        [
+          -13.8918,
+          0.0,
+          -78.7846
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          78.7846,
+          0.0,
+          -13.8918
+        ],
+        [
+          5211.85,
+          514.75,
+          4525.7
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint08": {
       "type": "Sphere",
       "tm": [
-        [13.8919,0.0,-78.7846],
-        [0.0,80.0,0.0],
-        [78.7846,0.0,13.8919],
-        [5061.5,514.75,3829.0]
+        [
+          13.8919,
+          0.0,
+          -78.7846
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          78.7846,
+          0.0,
+          13.8919
+        ],
+        [
+          5061.5,
+          514.75,
+          3829.0
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint09": {
       "type": "Sphere",
       "tm": [
-        [45.8861,0.0,-65.5322],
-        [0.0,80.0,0.0],
-        [65.5322,0.0,45.8861],
-        [5216.35,553.3,2912.0]
+        [
+          45.8861,
+          0.0,
+          -65.5322
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          65.5322,
+          0.0,
+          45.8861
+        ],
+        [
+          5216.35,
+          553.3,
+          2912.0
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint10": {
       "type": "Sphere",
       "tm": [
-        [45.8861,0.0,-65.5322],
-        [0.0,80.0,0.0],
-        [65.5322,0.0,45.8861],
-        [5531.44,599.027,2413.63]
+        [
+          45.8861,
+          0.0,
+          -65.5322
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          65.5322,
+          0.0,
+          45.8861
+        ],
+        [
+          5531.44,
+          599.027,
+          2413.63
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint11": {
       "type": "Sphere",
       "tm": [
-        [51.423,0.0,-61.2836],
-        [0.0,80.0,0.0],
-        [61.2836,0.0,51.423],
-        [5983.95,618.531,2104.2]
+        [
+          51.423,
+          0.0,
+          -61.2836
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          61.2836,
+          0.0,
+          51.423
+        ],
+        [
+          5983.95,
+          618.531,
+          2104.2
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint12": {
       "type": "Sphere",
       "tm": [
-        [65.5322,0.0,-45.8861],
-        [0.0,80.0,0.0],
-        [45.8861,0.0,65.5322],
-        [6462.78,652.76,1395.9]
+        [
+          65.5322,
+          0.0,
+          -45.8861
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          45.8861,
+          0.0,
+          65.5322
+        ],
+        [
+          6462.78,
+          652.76,
+          1395.9
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint13": {
       "type": "Sphere",
       "tm": [
-        [79.3156,0.0,-10.4421],
-        [0.0,80.0,0.0],
-        [10.4421,0.0,79.3156],
-        [6953.72,760.251,1073.9]
+        [
+          79.3156,
+          0.0,
+          -10.4421
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          10.4421,
+          0.0,
+          79.3156
+        ],
+        [
+          6953.72,
+          760.251,
+          1073.9
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint14": {
       "type": "Sphere",
       "tm": [
-        [65.5322,0.0,-45.8861],
-        [0.0,80.0,0.0],
-        [45.8861,0.0,65.5322],
-        [7716.25,616.0,838.45]
+        [
+          65.5322,
+          0.0,
+          -45.8861
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          45.8861,
+          0.0,
+          65.5322
+        ],
+        [
+          7716.25,
+          616.0,
+          838.45
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint15": {
       "type": "Sphere",
       "tm": [
-        [56.5685,0.0,-56.5685],
-        [0.0,80.0,0.0],
-        [56.5685,0.0,56.5685],
-        [8461.3,634.85,285.35]
+        [
+          56.5685,
+          0.0,
+          -56.5685
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          56.5685,
+          0.0,
+          56.5685
+        ],
+        [
+          8461.3,
+          634.85,
+          285.35
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint16": {
       "type": "Sphere",
       "tm": [
-        [72.5046,0.0,-33.8095],
-        [0.0,80.0,0.0],
-        [33.8095,0.0,72.5046],
-        [9046.95,627.8,-306.1]
+        [
+          72.5046,
+          0.0,
+          -33.8095
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          33.8095,
+          0.0,
+          72.5046
+        ],
+        [
+          9046.95,
+          627.8,
+          -306.1
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint17": {
       "type": "Sphere",
       "tm": [
-        [63.4683,0.0,-48.7009],
-        [0.0,80.0,0.0],
-        [48.7009,0.0,63.4683],
-        [9616.85,635.85,-582.95]
+        [
+          63.4683,
+          0.0,
+          -48.7009
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          48.7009,
+          0.0,
+          63.4683
+        ],
+        [
+          9616.85,
+          635.85,
+          -582.95
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint18": {
       "type": "Sphere",
       "tm": [
-        [45.8861,0.0,-65.5322],
-        [0.0,80.0,0.0],
-        [65.5322,0.0,45.8861],
-        [10195.1,635.85,-1028.8]
+        [
+          45.8861,
+          0.0,
+          -65.5322
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          65.5322,
+          0.0,
+          45.8861
+        ],
+        [
+          10195.1,
+          635.85,
+          -1028.8
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint19": {
       "type": "Sphere",
       "tm": [
-        [20.7055,0.0,-77.2741],
-        [0.0,80.0,0.0],
-        [77.2741,0.0,20.7055],
-        [10654.4,635.85,-1782.15]
+        [
+          20.7055,
+          0.0,
+          -77.2741
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          77.2741,
+          0.0,
+          20.7055
+        ],
+        [
+          10654.4,
+          635.85,
+          -1782.15
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint20": {
       "type": "Sphere",
       "tm": [
-        [-13.8919,0.0,-78.7846],
-        [0.0,80.0,0.0],
-        [78.7846,0.0,-13.8919],
-        [10766.9,679.55,-2360.85]
+        [
+          -13.8919,
+          0.0,
+          -78.7846
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          78.7846,
+          0.0,
+          -13.8919
+        ],
+        [
+          10766.9,
+          679.55,
+          -2360.85
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint21": {
       "type": "Sphere",
       "tm": [
-        [-40.0,0.0,-69.282],
-        [0.0,80.0,0.0],
-        [69.282,0.0,-40.0],
-        [10597.7,782.0,-3166.45]
+        [
+          -40.0,
+          0.0,
+          -69.282
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          69.282,
+          0.0,
+          -40.0
+        ],
+        [
+          10597.7,
+          782.0,
+          -3166.45
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint22": {
       "type": "Sphere",
       "tm": [
-        [-42.984,0.0,-67.4713],
-        [0.0,80.0,0.0],
-        [67.4713,0.0,-42.984],
-        [10172.5,390.65,-4054.15]
+        [
+          -42.984,
+          0.0,
+          -67.4713
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          67.4713,
+          0.0,
+          -42.984
+        ],
+        [
+          10172.5,
+          390.65,
+          -4054.15
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint23": {
       "type": "Sphere",
       "tm": [
-        [-63.4683,0.0,-48.7009],
-        [0.0,80.0,0.0],
-        [48.7009,0.0,-63.4683],
-        [9852.8,268.45,-4580.8]
+        [
+          -63.4683,
+          0.0,
+          -48.7009
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          48.7009,
+          0.0,
+          -63.4683
+        ],
+        [
+          9852.8,
+          268.45,
+          -4580.8
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "waypoint24": {
       "type": "Sphere",
       "tm": [
-        [-54.0472,0.0,-58.9822],
-        [0.0,80.0,0.0],
-        [58.9822,0.0,-54.0472],
-        [9279.6,164.45,-5106.35]
+        [
+          -54.0472,
+          0.0,
+          -58.9822
+        ],
+        [
+          0.0,
+          80.0,
+          0.0
+        ],
+        [
+          58.9822,
+          0.0,
+          -54.0472
+        ],
+        [
+          9279.6,
+          164.45,
+          -5106.35
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "point01": {
       "type": "Box",
       "tm": [
-        [2459.27,0.0,-1872.45],
-        [0.0,2851.3,0.0],
-        [174.94,3.05176e-05,63.6448],
-        [6709.4,22.05,6138.6]
+        [
+          2459.27,
+          0.0,
+          -1872.45
+        ],
+        [
+          0.0,
+          2851.3,
+          0.0
+        ],
+        [
+          174.94,
+          0.0000305176,
+          63.6448
+        ],
+        [
+          6709.4,
+          22.05,
+          6138.6
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "point02": {
       "type": "Box",
       "tm": [
-        [2806.25,0.0,-1295.78],
-        [0.0,2851.3,0.0],
-        [157.018,3.05176e-05,100.0],
-        [5179.95,22.05,4212.5]
+        [
+          2806.25,
+          0.0,
+          -1295.78
+        ],
+        [
+          0.0,
+          2851.3,
+          0.0
+        ],
+        [
+          157.018,
+          0.0000305176,
+          100.0
+        ],
+        [
+          5179.95,
+          22.05,
+          4212.5
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "point03": {
       "type": "Box",
       "tm": [
-        [1977.94,0.0,2375.26],
-        [0.0,2851.3,0.0],
-        [-55.9534,3.05176e-05,177.549],
-        [6248.8,22.05,2016.75]
+        [
+          1977.94,
+          0.0,
+          2375.26
+        ],
+        [
+          0.0,
+          2851.3,
+          0.0
+        ],
+        [
+          -55.9534,
+          0.0000305176,
+          177.549
+        ],
+        [
+          6248.8,
+          22.05,
+          2016.75
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "point04": {
       "type": "Box",
       "tm": [
-        [1650.99,0.0,2613.11],
-        [0.0,2851.3,0.0],
-        [-78.6496,3.05176e-05,168.727],
-        [8528.2,22.05,374.8]
+        [
+          1650.99,
+          0.0,
+          2613.11
+        ],
+        [
+          0.0,
+          2851.3,
+          0.0
+        ],
+        [
+          -78.6496,
+          0.0000305176,
+          168.727
+        ],
+        [
+          8528.2,
+          22.05,
+          374.8
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "point05": {
       "type": "Box",
       "tm": [
-        [1650.99,0.0,2613.11],
-        [0.0,2851.3,0.0],
-        [-78.6496,3.05176e-05,168.727],
-        [10523.0,22.05,-1591.8]
+        [
+          1650.99,
+          0.0,
+          2613.11
+        ],
+        [
+          0.0,
+          2851.3,
+          0.0
+        ],
+        [
+          -78.6496,
+          0.0000305176,
+          168.727
+        ],
+        [
+          10523.0,
+          22.05,
+          -1591.8
+        ]
       ],
-      "props": []
+      "props": {}
     }
   },
-  "objLayers": [],
-  "wayPoints": []
+  "objLayers": {},
+  "wayPoints": {}
 }

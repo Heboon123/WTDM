@@ -15,7 +15,7 @@
       "weather": "hazy"
     }
   },
-  "imports": [],
+  "imports": {},
   "triggers": {
     "isCategory": true,
     "is_enabled": true,
@@ -28,7 +28,7 @@
         "enableAfterComplete": false
       },
       "events": {
-        "initMission": []
+        "initMission": {}
       },
       "conditions": {
         "unitWhenStatus": {
@@ -43,73 +43,57 @@
           "object": "all_players_squad"
         }
       },
-      "actions": [
-        {
-          "varSetInt": {
+      "actions": {
+        "varSetInt": [
+          {
             "value": 0,
             "var": "player_score_decrease_per_10sec",
             "fromDescriptor": "scoreLimit"
-          }
-        },
-        {
-          "varSetInt": {
+          },
+          {
             "value": 0,
             "var": "mission_time_left_cur",
             "source_var": "timeLeft"
-          }
-        },
-        {
-          "varSetInt": {
+          },
+          {
             "value": 0,
             "var": "mission_time_left_for_next_step",
             "input_var": "mission_time_left_cur"
           }
-        },
-        {
-          "varModify": {
+        ],
+        "varModify": [
+          {
             "operator": "mul",
             "value": 10.0,
             "var": "player_score_decrease_per_10sec"
-          }
-        },
-        {
-          "varModify": {
+          },
+          {
             "operator": "divAB",
             "value": 0.0,
             "var": "player_score_decrease_per_10sec",
             "use_variable": true,
             "var_value": "mission_time_left_cur"
-          }
-        },
-        {
-          "varModify": {
+          },
+          {
             "operator": "mul",
             "value": -1.0,
             "var": "player_score_decrease_per_10sec"
-          }
-        },
-        {
-          "varModify": {
+          },
+          {
             "operator": "add",
             "value": -10.0,
             "var": "mission_time_left_for_next_step"
           }
-        },
-        {
-          "triggerEnable": [
-            {
-              "target": "get_mission_time_left"
-            },
-            {
-              "target": "mission_time_out"
-            },
-            {
-              "target": "check_next_step"
-            }
+        ],
+        "triggerEnable": {
+          "target": [
+            "get_mission_time_left",
+            "mission_time_out",
+            "check_next_step"
           ]
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "get_mission_time_left": {
       "is_enabled": false,
@@ -124,7 +108,7 @@
           "time": 0.5
         }
       },
-      "conditions": [],
+      "conditions": {},
       "actions": {
         "varSetInt": {
           "value": 0,
@@ -132,7 +116,7 @@
           "source_var": "timeLeft"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "check_next_step": {
       "is_enabled": false,
@@ -161,16 +145,14 @@
           "value": -10.0,
           "var": "mission_time_left_for_next_step"
         },
-        "triggerEnable": [
-          {
-            "target": "team_a_score_decrease"
-          },
-          {
-            "target": "team_b_score_decrease"
-          }
-        ]
+        "triggerEnable": {
+          "target": [
+            "team_a_score_decrease",
+            "team_b_score_decrease"
+          ]
+        }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "team_a_score_decrease": {
       "is_enabled": false,
@@ -200,7 +182,7 @@
           "team": "A"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "team_b_score_decrease": {
       "is_enabled": false,
@@ -230,7 +212,7 @@
           "team": "B"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "mission_time_out": {
       "is_enabled": false,
@@ -253,16 +235,14 @@
         }
       },
       "actions": {
-        "triggerEnable": [
-          {
-            "target": "team_a_score_to_zero"
-          },
-          {
-            "target": "team_b_score_to_zero"
-          }
-        ]
+        "triggerEnable": {
+          "target": [
+            "team_a_score_to_zero",
+            "team_b_score_to_zero"
+          ]
+        }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "team_a_score_to_zero": {
       "is_enabled": false,
@@ -291,7 +271,7 @@
           "team": "A"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "team_b_score_to_zero": {
       "is_enabled": false,
@@ -320,7 +300,7 @@
           "team": "B"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     }
   },
   "mission_objectives": {
@@ -334,32 +314,26 @@
     "score_by_time_for_team_a": false,
     "score_by_time_for_team_b": false
   },
-  "dialogs": [],
-  "airfields": [],
-  "effects": [],
-  "units": [],
-  "areas": [],
-  "objLayers": [
-    {
-      "layer": {
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {},
+  "areas": {},
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
         "enabled": true
       }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    }
-  ],
-  "wayPoints": []
+    ]
+  },
+  "wayPoints": {}
 }

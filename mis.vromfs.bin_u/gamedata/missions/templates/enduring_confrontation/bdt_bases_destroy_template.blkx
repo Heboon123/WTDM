@@ -15,7 +15,7 @@
       "weather": "hazy"
     }
   },
-  "imports": [],
+  "imports": {},
   "triggers": {
     "isCategory": true,
     "is_enabled": true,
@@ -28,188 +28,102 @@
         "enableAfterComplete": false
       },
       "events": {
-        "initMission": []
+        "initMission": {}
       },
-      "conditions": [],
-      "actions": [
-        {
-          "comment": {
+      "conditions": {},
+      "actions": {
+        "comment": [
+          {
             "value": "maksimal'noe kolichestvo aktivnyh baz - TRI"
-          }
-        },
-        {
-          "comment": {
+          },
+          {
             "value": "poluchaem balansnyj uroven' missii"
-          }
-        },
-        {
-          "comment": {
+          },
+          {
             "value": "bdt_army_both_zero: -1 -vsegda dlya obeih armij. 0 - dlya obeih armij no mozhet menyat'sya upravlyayushchim shablonom, 1 i 2 - dlya armii A i B"
-          }
-        },
-        {
-          "comment": {
+          },
+          {
             "value": "bdt_t1_total_bases_max_count - maksimal'neo kolichestvo baz dostupnyh dlya vybora."
-          }
-        },
-        {
-          "comment": {
+          },
+          {
             "value": "bdt_t1_active_bases_max_count - maksimal'noe kolichestvo odnovremenno aktivnyh baz"
-          }
-        },
-        {
-          "comment": {
+          },
+          {
             "value": "naznachaem svojstva celyam"
-          }
-        },
-        {
-          "comment": {
+          },
+          {
             "value": "naznachaem svojstva zenitkam"
-          }
-        },
-        {
-          "comment": {
+          },
+          {
             "value": "putting targets to sleep"
-          }
-        },
-        {
-          "comment": {
+          },
+          {
             "value": "zapuskaem  shablon"
           }
+        ],
+        "missionGetBalanceLevel": {
+          "input_var": "bdt_balance_level"
         },
-        {
-          "missionGetBalanceLevel": {
-            "input_var": "bdt_balance_level"
-          }
-        },
-        {
-          "triggerEnable": [
-            {
-              "target": "bomb_areas_0_3_check"
-            },
-            {
-              "target": "bomb_areas_4_7_check"
-            },
-            {
-              "target": "bomb_areas_8_11_check"
-            },
-            {
-              "target": "bomb_areas_12_16_check"
-            },
-            {
-              "target": "bomb_areas_17_20_check"
-            },
-            {
-              "target": "bomb_areas_21_50_check"
-            }
-          ]
-        },
-        {
-          "triggerEnable": {
+        "triggerEnable": [
+          {
+            "target": [
+              "bomb_areas_0_3_check",
+              "bomb_areas_4_7_check",
+              "bomb_areas_8_11_check",
+              "bomb_areas_12_16_check",
+              "bomb_areas_17_20_check",
+              "bomb_areas_21_50_check"
+            ]
+          },
+          {
             "target": "bdt_start"
           }
-        },
-        {
-          "unitSetProperties": [
-            {
-              "object": "bdt_t1_targets_squad"
-            },
-            {
-              "object": "bdt_t2_targets_squad"
-            },
-            {
-              "object_marking": 0
-            },
-            {
-              "object_var_name": ""
-            },
-            {
-              "object_var_comp_op": "equal"
-            },
-            {
-              "object_var_value": 0
-            },
-            {
-              "targetableByAi": false
-            },
-            {
-              "isImmortal": true
-            },
-            {
-              "stealthRadius": 0.0
-            }
-          ]
-        },
-        {
-          "unitSetProperties": [
-            {
-              "object": "bdt_t1_aaa_squad"
-            },
-            {
-              "object": "bdt_t2_aaa_squad"
-            },
-            {
-              "object_marking": 0
-            },
-            {
-              "object_var_name": ""
-            },
-            {
-              "object_var_comp_op": "equal"
-            },
-            {
-              "object_var_value": 0
-            },
-            {
-              "accuracy": 0.1
-            },
-            {
-              "airAccuracy": 0.1
-            },
-            {
-              "maxDeviationAngle": 15.0
-            },
-            {
-              "checkVisibilityTarget": true
-            },
-            {
-              "visibilityTreeTransparencyThreshold": 0.1
-            },
-            {
-              "effShootingRate": 0.1
-            },
-            {
-              "airEffShootingRate": 0.1
-            },
-            {
-              "fireRandom": true
-            },
-            {
-              "targetChangeInterval": 5.0
-            },
-            {
-              "targetChangeProb": 0.25
-            },
-            {
-              "ChainfireTime": 1.0
-            },
-            {
-              "DelayAfterShoot": 2.0
-            }
-          ]
-        },
-        {
-          "unitPutToSleep": [
-            {
-              "target": "bdt_t1_targets_squad"
-            },
-            {
-              "target": "bdt_t2_targets_squad"
-            }
+        ],
+        "unitSetProperties": [
+          {
+            "object": [
+              "bdt_t1_targets_squad",
+              "bdt_t2_targets_squad"
+            ],
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "targetableByAi": false,
+            "isImmortal": true,
+            "stealthRadius": 0.0
+          },
+          {
+            "object": [
+              "bdt_t1_aaa_squad",
+              "bdt_t2_aaa_squad"
+            ],
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "accuracy": 0.1,
+            "airAccuracy": 0.1,
+            "maxDeviationAngle": 15.0,
+            "checkVisibilityTarget": true,
+            "visibilityTreeTransparencyThreshold": 0.1,
+            "effShootingRate": 0.1,
+            "airEffShootingRate": 0.1,
+            "fireRandom": true,
+            "targetChangeInterval": 5.0,
+            "targetChangeProb": 0.25,
+            "ChainfireTime": 1.0,
+            "DelayAfterShoot": 2.0
+          }
+        ],
+        "unitPutToSleep": {
+          "target": [
+            "bdt_t1_targets_squad",
+            "bdt_t2_targets_squad"
           ]
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "bdt_start": {
       "is_enabled": false,
@@ -224,86 +138,60 @@
           "time": 1.0
         }
       },
-      "conditions": [],
-      "actions": [
-        {
-          "varSetBool": {
-            "value": true,
-            "var": "bdt_is_template_active"
-          }
+      "conditions": {},
+      "actions": {
+        "varSetBool": {
+          "value": true,
+          "var": "bdt_is_template_active"
         },
-        {
-          "comment": {
+        "comment": [
+          {
             "value": "special'no ne delayed chtoby pervaya pachka celej poyavilas'  srazu"
-          }
-        },
-        {
-          "comment": {
+          },
+          {
             "value": ""
-          }
-        },
-        {
-          "comment": {
+          },
+          {
             "value": "zapuskaem proverku unichtozheniya"
-          }
-        },
-        {
-          "comment": {
+          },
+          {
             "value": "zapuskaem proverku vosstanovleniya"
-          }
-        },
-        {
-          "comment": {
+          },
+          {
             "value": "capturing routine"
           }
-        },
-        {
-          "triggerEnable": [
-            {
-              "target": "bdt_t1_spawn_start"
-            },
-            {
-              "target": "bdt_t2_spawn_start"
-            }
-          ]
-        },
-        {
-          "triggerEnable": [
-            {
-              "target": "bdt_destroy_t1_start"
-            },
-            {
-              "target": "bdt_destroy_t2_start"
-            }
-          ]
-        },
-        {
-          "triggerEnable": [
-            {
-              "target": "bdt_t1_restore_start"
-            },
-            {
-              "target": "bdt_t2_restore_start"
-            }
-          ]
-        },
-        {
-          "triggerEnable": [
-            {
-              "target": "bdt_capture_t1_start"
-            },
-            {
-              "target": "bdt_capture_t2_start"
-            }
-          ]
-        },
-        {
-          "wait": {
-            "time": 20.0
+        ],
+        "triggerEnable": [
+          {
+            "target": [
+              "bdt_t1_spawn_start",
+              "bdt_t2_spawn_start"
+            ]
+          },
+          {
+            "target": [
+              "bdt_destroy_t1_start",
+              "bdt_destroy_t2_start"
+            ]
+          },
+          {
+            "target": [
+              "bdt_t1_restore_start",
+              "bdt_t2_restore_start"
+            ]
+          },
+          {
+            "target": [
+              "bdt_capture_t1_start",
+              "bdt_capture_t2_start"
+            ]
           }
+        ],
+        "wait": {
+          "time": 20.0
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "bdt_spawn_routine": {
       "isCategory": true,
@@ -322,7 +210,7 @@
             "var": "bdt_delay_timer"
           }
         },
-        "conditions": [],
+        "conditions": {},
         "actions": {
           "comment": {
             "value": "aktiviruem spavnery baz"
@@ -331,7 +219,7 @@
             "target": "bdt_t1_spawn_start"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "bdt_t1_spawn_start": {
         "is_enabled": false,
@@ -358,7 +246,7 @@
             "target": "bdt_t1_spawn_rotator"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "bdt_t1_spawn_restart": {
         "is_enabled": false,
@@ -393,7 +281,7 @@
             "target": "bdt_t1_spawn_start"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "bdt_t1_spawn_rotator": {
         "is_enabled": false,
@@ -408,223 +296,163 @@
             "time": 1.0
           }
         },
-        "conditions": [
-          {
-            "varCompareInt": {
+        "conditions": {
+          "varCompareInt": [
+            {
               "var_value": "bdt_t1_cur_base_spawn_idx",
               "value": 0,
               "comparasion_func": "less",
               "var_value_other": "bdt_t1_total_bases_max_count"
-            }
-          },
-          {
-            "varCompareInt": {
+            },
+            {
               "var_value": "bdt_t1_cur_bases_count",
               "value": 0,
               "comparasion_func": "less",
               "var_value_other": "bdt_t1_active_bases_max_count"
             }
-          }
-        ],
-        "actions": [
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "bdt_t1_cur_base_spawn_idx"
-            }
+          ]
+        },
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "bdt_t1_cur_base_spawn_idx"
           },
-          {
-            "comment": {
+          "comment": [
+            {
               "value": "kolichestvo aktivnyh zon men'she razreshennogo"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "vybiraem sluchajnyj indeks zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sobiraem imya zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sobiraem imya ob'ekta"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sobiraem imya tajmera"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "poluchaem znachenie tajmera"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sobiraem imya peremennoj zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sobiraem imya zenitok"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "getting target name by bomber IDX not by actual name"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "vypolnyaem proverku dostupno li imya"
             }
+          ],
+          "varSetRandomInt": {
+            "var": "bdt_t1_cur_spawn_random_idx",
+            "from": 1,
+            "to_not_including": 10,
+            "var_to_not_including": "bdt_t1_total_bases_max_count"
           },
-          {
-            "varSetRandomInt": {
-              "var": "bdt_t1_cur_spawn_random_idx",
-              "from": 1,
-              "to_not_including": 10,
-              "var_to_not_including": "bdt_t1_total_bases_max_count"
-            }
-          },
-          {
-            "varSetString": {
+          "varSetString": [
+            {
               "value": "bdt_t1_bomb_zone_",
               "var": "bdt_t1_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t1_bomb_object_",
               "var": "bdt_spawn_t1_bombing_zone_object_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t1_zone_",
               "var": "bdt_spawn_t1_timer_var_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t1_zone_",
               "var": "bdt_spawn_t1_zone_var_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t1_bomb_zone_",
               "var": "bdt_t1_cur_spawn_aaa_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t1_bomb_zone_",
               "var": "bdt_spawn_t1_bombing_zone_target_name"
             }
-          },
-          {
-            "varAddString": {
+          ],
+          "varAddString": [
+            {
               "digits": 0,
               "value": "@bdt_base_name_suffix",
               "var": "bdt_t1_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 2,
               "value": "@bdt_t1_cur_spawn_random_idx",
               "var": "bdt_t1_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 0,
               "value": "@bdt_base_name_suffix",
               "var": "bdt_spawn_t1_bombing_zone_object_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 2,
               "value": "@bdt_t1_cur_spawn_random_idx",
               "var": "bdt_spawn_t1_bombing_zone_object_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "@bdt_t1_cur_base_spawn_idx",
               "digits": 2,
               "var": "bdt_spawn_t1_timer_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_timer",
               "digits": 0,
               "var": "bdt_spawn_t1_timer_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "@bdt_t1_cur_base_spawn_idx",
               "digits": 2,
               "var": "bdt_spawn_t1_zone_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_name",
               "digits": 0,
               "var": "bdt_spawn_t1_zone_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 2,
               "value": "@bdt_t1_cur_spawn_random_idx",
               "var": "bdt_t1_cur_spawn_aaa_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 0,
               "value": "_aaa_point_",
               "var": "bdt_t1_cur_spawn_aaa_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 2,
               "value": "@bdt_t1_cur_base_spawn_idx",
               "var": "bdt_spawn_t1_bombing_zone_target_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 0,
               "value": "_bomb_target",
               "var": "bdt_spawn_t1_bombing_zone_target_name"
             }
+          ],
+          "varSetInt": {
+            "value": 0,
+            "var": "bdt_spawn_t1_timer",
+            "input_var": "@bdt_spawn_t1_timer_var_name"
           },
-          {
-            "varSetInt": {
-              "value": 0,
-              "var": "bdt_spawn_t1_timer",
-              "input_var": "@bdt_spawn_t1_timer_var_name"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_t1_spawn_check_mirror"
-            }
+          "triggerEnable": {
+            "target": "bdt_t1_spawn_check_mirror"
           }
-        ],
+        },
         "else_actions": {
           "comment": {
             "value": "dostigli maksimuma zon"
@@ -686,102 +514,78 @@
             "var_value_other": "bdt_t1_total_bases_max_count"
           }
         },
-        "actions": [
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "bdt_t1_mirror_idx"
-            }
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "bdt_t1_mirror_idx"
           },
-          {
-            "varSetInt": {
-              "value": 0,
-              "var": "bdt_t1_cur_spawn_random_idx",
-              "input_var": "bdt_t1_mirror_idx"
-            }
+          "varSetInt": {
+            "value": 0,
+            "var": "bdt_t1_cur_spawn_random_idx",
+            "input_var": "bdt_t1_mirror_idx"
           },
-          {
-            "varSetString": {
+          "varSetString": [
+            {
               "value": "bdt_t1_bomb_zone_",
               "var": "bdt_t1_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t1_bomb_zone_",
               "var": "bdt_t1_cur_spawn_aaa_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t1_bomb_object_",
               "var": "bdt_spawn_t1_bombing_zone_object_name"
             }
-          },
-          {
-            "varAddString": {
+          ],
+          "varAddString": [
+            {
               "digits": 0,
               "value": "@bdt_base_name_suffix",
               "var": "bdt_t1_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 2,
               "value": "@bdt_t1_cur_spawn_random_idx",
               "var": "bdt_t1_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 2,
               "value": "@bdt_t1_cur_spawn_random_idx",
               "var": "bdt_t1_cur_spawn_aaa_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 0,
               "value": "_aaa_point_",
               "var": "bdt_t1_cur_spawn_aaa_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 0,
               "value": "@bdt_base_name_suffix",
               "var": "bdt_spawn_t1_bombing_zone_object_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 2,
               "value": "@bdt_t1_cur_spawn_random_idx",
               "var": "bdt_spawn_t1_bombing_zone_object_name"
             }
-          },
-          {
-            "comment": {
+          ],
+          "comment": [
+            {
               "value": "sobiraem imya zenitok"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sobiraem imya ob'ekta"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": ""
             }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_t1_spawn_check_empty"
-            }
+          ],
+          "triggerEnable": {
+            "target": "bdt_t1_spawn_check_empty"
           }
-        ],
+        },
         "else_actions": {
           "varSetInt": {
             "value": 0,
@@ -842,45 +646,37 @@
             "time": 0.0
           }
         },
-        "conditions": [
-          {
-            "varCompareString": {
+        "conditions": {
+          "varCompareString": [
+            {
               "var_value": "bdt_t1_zone_01_name",
               "value": "",
               "comparasion_func": "notEqual",
               "var_value_other": "bdt_t1_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varCompareString": {
+            },
+            {
               "var_value": "bdt_t1_zone_02_name",
               "value": "",
               "comparasion_func": "notEqual",
               "var_value_other": "bdt_t1_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varCompareString": {
+            },
+            {
               "var_value": "bdt_t1_zone_03_name",
               "value": "",
               "comparasion_func": "notEqual",
               "var_value_other": "bdt_t1_cur_spawn_zone_name"
             }
+          ],
+          "objectExists": {
+            "target": "@bdt_t1_cur_spawn_zone_name",
+            "type": "area"
           },
-          {
-            "objectExists": {
-              "target": "@bdt_t1_cur_spawn_zone_name",
-              "type": "area"
-            }
-          },
-          {
-            "varCompareInt": {
-              "var_value": "bdt_spawn_t1_timer",
-              "value": 1,
-              "comparasion_func": "less"
-            }
+          "varCompareInt": {
+            "var_value": "bdt_spawn_t1_timer",
+            "value": 1,
+            "comparasion_func": "less"
           }
-        ],
+        },
         "actions": {
           "comment": {
             "value": "imya zony - validno"
@@ -938,61 +734,45 @@
             "comparasion_func": "equal"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "gotovimsya k proverke ne nahoditsya li zona na chuzhoj territorii"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "poluchaem imya peremennoj s armiej"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "poluchaem indeks armii"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "proveryaem armiyu"
             }
+          ],
+          "getOwnArea": {
+            "name": "@bdt_t1_cur_spawn_zone_name",
+            "template": "flt_area_",
+            "out_var": "bdt_t1_frontline_name"
           },
-          {
-            "getOwnArea": {
-              "name": "@bdt_t1_cur_spawn_zone_name",
-              "template": "flt_area_",
-              "out_var": "bdt_t1_frontline_name"
-            }
+          "varSetString": {
+            "value": "",
+            "var": "bdt_t1_frontline_state_name",
+            "input_var": "bdt_t1_frontline_name"
           },
-          {
-            "varSetString": {
-              "value": "",
-              "var": "bdt_t1_frontline_state_name",
-              "input_var": "bdt_t1_frontline_name"
-            }
+          "varAddString": {
+            "value": "_state",
+            "digits": 0,
+            "var": "bdt_t1_frontline_state_name"
           },
-          {
-            "varAddString": {
-              "value": "_state",
-              "digits": 0,
-              "var": "bdt_t1_frontline_state_name"
-            }
+          "varSetInt": {
+            "value": 0,
+            "var": "bdt_t1_frontline_zone_idx",
+            "input_var": "@bdt_t1_frontline_state_name"
           },
-          {
-            "varSetInt": {
-              "value": 0,
-              "var": "bdt_t1_frontline_zone_idx",
-              "input_var": "@bdt_t1_frontline_state_name"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_t1_frontline_check_idx"
-            }
+          "triggerEnable": {
+            "target": "bdt_t1_frontline_check_idx"
           }
-        ],
+        },
         "else_actions": {
           "triggerEnable": {
             "target": "bdt_t1_spawn_distance_check"
@@ -1019,41 +799,31 @@
             "comparasion_func": "equal"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "v predelah zon komandy A"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sozdaem imya zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "need to check distance"
             }
+          ],
+          "varSetString": {
+            "value": "flt_area_",
+            "var": "bdt_t1_frontline_name"
           },
-          {
-            "varSetString": {
-              "value": "flt_area_",
-              "var": "bdt_t1_frontline_name"
-            }
+          "varAddString": {
+            "value": "@bdt_t1_frontline_zone_idx",
+            "digits": 2,
+            "var": "bdt_t1_frontline_name"
           },
-          {
-            "varAddString": {
-              "value": "@bdt_t1_frontline_zone_idx",
-              "digits": 2,
-              "var": "bdt_t1_frontline_name"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_t1_spawn_distance_check"
-            }
+          "triggerEnable": {
+            "target": "bdt_t1_spawn_distance_check"
           }
-        ],
+        },
         "else_actions": {
           "comment": {
             "value": "vyshli za predely territorii A"
@@ -1081,23 +851,21 @@
             "time": 1.0
           }
         },
-        "conditions": [
-          {
-            "varCompareReal": {
+        "conditions": {
+          "varCompareReal": [
+            {
               "var_value": "t1_distance_check_variable",
               "value": 0.0,
               "comparasion_func": "notLess",
               "var_value_other": "bdt_t1_min_zone_distance"
-            }
-          },
-          {
-            "varCompareReal": {
+            },
+            {
               "var_value": "t1_distance_check_variable",
               "value": -1.0,
               "comparasion_func": "equal"
             }
-          }
-        ],
+          ]
+        },
         "actions": {
           "comment": {
             "value": "distance is ok. no active bases near"
@@ -1133,120 +901,94 @@
             "time": 0.0
           }
         },
-        "conditions": [],
-        "actions": [
-          {
-            "comment": {
+        "conditions": {},
+        "actions": {
+          "comment": [
+            {
               "value": "showing base model"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "placing bomb_target unit for AI"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "proverili chto ob'ekt sushchestvuet"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "zapominaem imya zony v odnu iz peremennyh"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "zapominaem imya zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "uvelichivaem peremennuyu kolichestva tekushchih zon na odnu"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "govorim chto cel' dostupna dlya bomberov"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "zapuskaem spavny zenitok"
             }
+          ],
+          "unitWakeUp": {
+            "target": "@bdt_spawn_t1_bombing_zone_object_name"
           },
-          {
-            "unitWakeUp": {
-              "target": "@bdt_spawn_t1_bombing_zone_object_name"
-            }
+          "unitRespawn": {
+            "delay": 0.0,
+            "offset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "object": "@bdt_spawn_t1_bombing_zone_target_name",
+            "target": "@bdt_t1_cur_spawn_zone_name",
+            "isStealth": true
           },
-          {
-            "unitRespawn": {
-              "delay": 0.0,
-              "offset": [0.0,0.0,0.0],
-              "object": "@bdt_spawn_t1_bombing_zone_target_name",
-              "target": "@bdt_t1_cur_spawn_zone_name",
-              "isStealth": true
-            }
+          "missionSetBombingArea": {
+            "army": 1,
+            "target": "@bdt_t1_cur_spawn_zone_name",
+            "hp": 2000.0,
+            "hpFireMult": 0.1,
+            "fireSpeed": 0.03,
+            "use_variable": true,
+            "var_value": "bdt_base_hp"
           },
-          {
-            "missionSetBombingArea": {
-              "army": 1,
-              "target": "@bdt_t1_cur_spawn_zone_name",
-              "hp": 2000.0,
-              "hpFireMult": 0.1,
-              "fireSpeed": 0.03,
-              "use_variable": true,
-              "var_value": "bdt_base_hp"
-            }
-          },
-          {
-            "varSetString": {
+          "varSetString": [
+            {
               "value": "bdt_t1_zone_",
               "var": "bdt_t1_spawn_zone_var_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "",
               "var": "@bdt_t1_spawn_zone_var_name",
               "input_var": "bdt_t1_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "",
               "var": "bdt_t1_base_as_target_for_t2_name",
               "input_var": "bdt_t1_cur_spawn_zone_name"
             }
-          },
-          {
-            "varAddString": {
+          ],
+          "varAddString": [
+            {
               "value": "@bdt_t1_cur_base_spawn_idx",
               "digits": 2,
               "var": "bdt_t1_spawn_zone_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_name",
               "digits": 0,
               "var": "bdt_t1_spawn_zone_var_name"
             }
+          ],
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "bdt_t1_cur_bases_count"
           },
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "bdt_t1_cur_bases_count"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_t1_aaa_spawn_start"
-            }
+          "triggerEnable": {
+            "target": "bdt_t1_aaa_spawn_start"
           }
-        ],
+        },
         "else_actions": {
           "comment": {
             "value": "ob'ekta ne sushchestvuet. zapuskaem golovnoj skript"
@@ -1275,7 +1017,7 @@
             "var": "bdt_delay_timer"
           }
         },
-        "conditions": [],
+        "conditions": {},
         "actions": {
           "comment": {
             "value": "aktiviruem spavnery baz"
@@ -1284,7 +1026,7 @@
             "target": "bdt_t2_spawn_start"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "bdt_t2_spawn_start": {
         "is_enabled": false,
@@ -1311,7 +1053,7 @@
             "target": "bdt_t2_spawn_rotator"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "bdt_t2_spawn_restart": {
         "is_enabled": false,
@@ -1346,7 +1088,7 @@
             "target": "bdt_t2_spawn_start"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "bdt_t2_spawn_rotator": {
         "is_enabled": false,
@@ -1361,223 +1103,163 @@
             "time": 1.0
           }
         },
-        "conditions": [
-          {
-            "varCompareInt": {
+        "conditions": {
+          "varCompareInt": [
+            {
               "var_value": "bdt_t2_cur_base_spawn_idx",
               "value": 0,
               "comparasion_func": "less",
               "var_value_other": "bdt_t2_total_bases_max_count"
-            }
-          },
-          {
-            "varCompareInt": {
+            },
+            {
               "var_value": "bdt_t2_cur_bases_count",
               "value": 0,
               "comparasion_func": "less",
               "var_value_other": "bdt_t2_active_bases_max_count"
             }
-          }
-        ],
-        "actions": [
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "bdt_t2_cur_base_spawn_idx"
-            }
+          ]
+        },
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "bdt_t2_cur_base_spawn_idx"
           },
-          {
-            "comment": {
+          "comment": [
+            {
               "value": "kolichestvo aktivnyh zon men'she razreshennogo"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "vybiraem sluchajnyj indeks zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sobiraem imya zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sobiraem imya ob'ekta"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sobiraem imya tajmera"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "poluchaem znachenie tajmera"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sobiraem imya peremennoj zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sobiraem imya zenitok"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "getting target name by bomber IDX not by actual name"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "vypolnyaem proverku dostupno li imya"
             }
+          ],
+          "varSetRandomInt": {
+            "var": "bdt_t2_cur_spawn_random_idx",
+            "from": 1,
+            "to_not_including": 10,
+            "var_to_not_including": "bdt_t2_total_bases_max_count"
           },
-          {
-            "varSetRandomInt": {
-              "var": "bdt_t2_cur_spawn_random_idx",
-              "from": 1,
-              "to_not_including": 10,
-              "var_to_not_including": "bdt_t2_total_bases_max_count"
-            }
-          },
-          {
-            "varSetString": {
+          "varSetString": [
+            {
               "value": "bdt_t2_bomb_zone_",
               "var": "bdt_t2_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t2_bomb_object_",
               "var": "bdt_spawn_t2_bombing_zone_object_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t2_zone_",
               "var": "bdt_spawn_t2_timer_var_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t2_zone_",
               "var": "bdt_spawn_t2_zone_var_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t2_bomb_zone_",
               "var": "bdt_t2_cur_spawn_aaa_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t2_bomb_zone_",
               "var": "bdt_spawn_t2_bombing_zone_target_name"
             }
-          },
-          {
-            "varAddString": {
+          ],
+          "varAddString": [
+            {
               "digits": 0,
               "value": "@bdt_base_name_suffix",
               "var": "bdt_t2_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 2,
               "value": "@bdt_t2_cur_spawn_random_idx",
               "var": "bdt_t2_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 0,
               "value": "@bdt_base_name_suffix",
               "var": "bdt_spawn_t2_bombing_zone_object_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 2,
               "value": "@bdt_t2_cur_spawn_random_idx",
               "var": "bdt_spawn_t2_bombing_zone_object_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "@bdt_t2_cur_base_spawn_idx",
               "digits": 2,
               "var": "bdt_spawn_t2_timer_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_timer",
               "digits": 0,
               "var": "bdt_spawn_t2_timer_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "@bdt_t2_cur_base_spawn_idx",
               "digits": 2,
               "var": "bdt_spawn_t2_zone_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_name",
               "digits": 0,
               "var": "bdt_spawn_t2_zone_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 2,
               "value": "@bdt_t2_cur_spawn_random_idx",
               "var": "bdt_t2_cur_spawn_aaa_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 0,
               "value": "_aaa_point_",
               "var": "bdt_t2_cur_spawn_aaa_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 2,
               "value": "@bdt_t2_cur_base_spawn_idx",
               "var": "bdt_spawn_t2_bombing_zone_target_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 0,
               "value": "_bomb_target",
               "var": "bdt_spawn_t2_bombing_zone_target_name"
             }
+          ],
+          "varSetInt": {
+            "value": 0,
+            "var": "bdt_spawn_t2_timer",
+            "input_var": "@bdt_spawn_t2_timer_var_name"
           },
-          {
-            "varSetInt": {
-              "value": 0,
-              "var": "bdt_spawn_t2_timer",
-              "input_var": "@bdt_spawn_t2_timer_var_name"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_t2_spawn_check_mirror"
-            }
+          "triggerEnable": {
+            "target": "bdt_t2_spawn_check_mirror"
           }
-        ],
+        },
         "else_actions": {
           "comment": {
             "value": "dostigli maksimuma zon"
@@ -1639,102 +1321,78 @@
             "var_value_other": "bdt_t2_total_bases_max_count"
           }
         },
-        "actions": [
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "bdt_t2_mirror_idx"
-            }
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "bdt_t2_mirror_idx"
           },
-          {
-            "varSetInt": {
-              "value": 0,
-              "var": "bdt_t2_cur_spawn_random_idx",
-              "input_var": "bdt_t2_mirror_idx"
-            }
+          "varSetInt": {
+            "value": 0,
+            "var": "bdt_t2_cur_spawn_random_idx",
+            "input_var": "bdt_t2_mirror_idx"
           },
-          {
-            "varSetString": {
+          "varSetString": [
+            {
               "value": "bdt_t2_bomb_zone_",
               "var": "bdt_t2_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t2_bomb_zone_",
               "var": "bdt_t2_cur_spawn_aaa_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t2_bomb_object_",
               "var": "bdt_spawn_t2_bombing_zone_object_name"
             }
-          },
-          {
-            "varAddString": {
+          ],
+          "varAddString": [
+            {
               "digits": 0,
               "value": "@bdt_base_name_suffix",
               "var": "bdt_t2_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 2,
               "value": "@bdt_t2_cur_spawn_random_idx",
               "var": "bdt_t2_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 2,
               "value": "@bdt_t2_cur_spawn_random_idx",
               "var": "bdt_t2_cur_spawn_aaa_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 0,
               "value": "_aaa_point_",
               "var": "bdt_t2_cur_spawn_aaa_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 0,
               "value": "@bdt_base_name_suffix",
               "var": "bdt_spawn_t2_bombing_zone_object_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "digits": 2,
               "value": "@bdt_t2_cur_spawn_random_idx",
               "var": "bdt_spawn_t2_bombing_zone_object_name"
             }
-          },
-          {
-            "comment": {
+          ],
+          "comment": [
+            {
               "value": "sobiraem imya zenitok"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sobiraem imya ob'ekta"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": ""
             }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_t2_spawn_check_empty"
-            }
+          ],
+          "triggerEnable": {
+            "target": "bdt_t2_spawn_check_empty"
           }
-        ],
+        },
         "else_actions": {
           "varSetInt": {
             "value": 0,
@@ -1795,45 +1453,37 @@
             "time": 0.0
           }
         },
-        "conditions": [
-          {
-            "varCompareString": {
+        "conditions": {
+          "varCompareString": [
+            {
               "var_value": "bdt_t2_zone_01_name",
               "value": "",
               "comparasion_func": "notEqual",
               "var_value_other": "bdt_t2_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varCompareString": {
+            },
+            {
               "var_value": "bdt_t2_zone_02_name",
               "value": "",
               "comparasion_func": "notEqual",
               "var_value_other": "bdt_t2_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varCompareString": {
+            },
+            {
               "var_value": "bdt_t2_zone_03_name",
               "value": "",
               "comparasion_func": "notEqual",
               "var_value_other": "bdt_t2_cur_spawn_zone_name"
             }
+          ],
+          "objectExists": {
+            "target": "@bdt_t2_cur_spawn_zone_name",
+            "type": "area"
           },
-          {
-            "objectExists": {
-              "target": "@bdt_t2_cur_spawn_zone_name",
-              "type": "area"
-            }
-          },
-          {
-            "varCompareInt": {
-              "var_value": "bdt_spawn_t2_timer",
-              "value": 1,
-              "comparasion_func": "less"
-            }
+          "varCompareInt": {
+            "var_value": "bdt_spawn_t2_timer",
+            "value": 1,
+            "comparasion_func": "less"
           }
-        ],
+        },
         "actions": {
           "comment": {
             "value": "imya zony - validno"
@@ -1891,61 +1541,45 @@
             "comparasion_func": "equal"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "gotovimsya k proverke ne nahoditsya li zona na chuzhoj territorii"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "poluchaem imya peremennoj s armiej"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "poluchaem indeks armii"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "proveryaem armiyu"
             }
+          ],
+          "getOwnArea": {
+            "name": "@bdt_t2_cur_spawn_zone_name",
+            "template": "flt_area_",
+            "out_var": "bdt_t2_frontline_name"
           },
-          {
-            "getOwnArea": {
-              "name": "@bdt_t2_cur_spawn_zone_name",
-              "template": "flt_area_",
-              "out_var": "bdt_t2_frontline_name"
-            }
+          "varSetString": {
+            "value": "",
+            "var": "bdt_t2_frontline_state_name",
+            "input_var": "bdt_t2_frontline_name"
           },
-          {
-            "varSetString": {
-              "value": "",
-              "var": "bdt_t2_frontline_state_name",
-              "input_var": "bdt_t2_frontline_name"
-            }
+          "varAddString": {
+            "value": "_state",
+            "digits": 0,
+            "var": "bdt_t2_frontline_state_name"
           },
-          {
-            "varAddString": {
-              "value": "_state",
-              "digits": 0,
-              "var": "bdt_t2_frontline_state_name"
-            }
+          "varSetInt": {
+            "value": 0,
+            "var": "bdt_t2_frontline_zone_idx",
+            "input_var": "@bdt_t2_frontline_state_name"
           },
-          {
-            "varSetInt": {
-              "value": 0,
-              "var": "bdt_t2_frontline_zone_idx",
-              "input_var": "@bdt_t2_frontline_state_name"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_t2_frontline_check_idx"
-            }
+          "triggerEnable": {
+            "target": "bdt_t2_frontline_check_idx"
           }
-        ],
+        },
         "else_actions": {
           "triggerEnable": {
             "target": "bdt_t2_spawn_distance_check"
@@ -1972,41 +1606,31 @@
             "comparasion_func": "equal"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "v predelah zon komandy A"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sozdaem imya zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "spavnim zonu"
             }
+          ],
+          "varSetString": {
+            "value": "flt_area_",
+            "var": "bdt_t2_frontline_name"
           },
-          {
-            "varSetString": {
-              "value": "flt_area_",
-              "var": "bdt_t2_frontline_name"
-            }
+          "varAddString": {
+            "value": "@bdt_t2_frontline_zone_idx",
+            "digits": 2,
+            "var": "bdt_t2_frontline_name"
           },
-          {
-            "varAddString": {
-              "value": "@bdt_t2_frontline_zone_idx",
-              "digits": 2,
-              "var": "bdt_t2_frontline_name"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_t2_spawn_distance_check"
-            }
+          "triggerEnable": {
+            "target": "bdt_t2_spawn_distance_check"
           }
-        ],
+        },
         "else_actions": {
           "comment": {
             "value": "vyshli za predely territorii A"
@@ -2034,23 +1658,21 @@
             "time": 1.0
           }
         },
-        "conditions": [
-          {
-            "varCompareReal": {
+        "conditions": {
+          "varCompareReal": [
+            {
               "var_value": "t2_distance_check_variable",
               "value": 0.0,
               "comparasion_func": "notLess",
               "var_value_other": "bdt_t2_min_zone_distance"
-            }
-          },
-          {
-            "varCompareReal": {
+            },
+            {
               "var_value": "t2_distance_check_variable",
               "value": -1.0,
               "comparasion_func": "equal"
             }
-          }
-        ],
+          ]
+        },
         "actions": {
           "comment": {
             "value": "distance is ok. no active bases near"
@@ -2086,120 +1708,94 @@
             "time": 0.0
           }
         },
-        "conditions": [],
-        "actions": [
-          {
-            "comment": {
+        "conditions": {},
+        "actions": {
+          "comment": [
+            {
               "value": "showing base model"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "placing bomb_target unit for AI"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "proverili chto ob'ekt sushchestvuet"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "zapominaem imya zony v odnu iz peremennyh"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "zapominaem imya zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "uvelichivaem peremennuyu kolichestva tekushchih zon na odnu"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "govorim chto cel' dostupna dlya bomberov"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "spavnim zenitki"
             }
+          ],
+          "unitWakeUp": {
+            "target": "@bdt_spawn_t2_bombing_zone_object_name"
           },
-          {
-            "unitWakeUp": {
-              "target": "@bdt_spawn_t2_bombing_zone_object_name"
-            }
+          "unitRespawn": {
+            "delay": 0.0,
+            "offset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "object": "@bdt_spawn_t2_bombing_zone_target_name",
+            "target": "@bdt_t2_cur_spawn_zone_name",
+            "isStealth": true
           },
-          {
-            "unitRespawn": {
-              "delay": 0.0,
-              "offset": [0.0,0.0,0.0],
-              "object": "@bdt_spawn_t2_bombing_zone_target_name",
-              "target": "@bdt_t2_cur_spawn_zone_name",
-              "isStealth": true
-            }
+          "missionSetBombingArea": {
+            "army": 2,
+            "target": "@bdt_t2_cur_spawn_zone_name",
+            "hp": 2000.0,
+            "hpFireMult": 0.1,
+            "fireSpeed": 0.03,
+            "use_variable": true,
+            "var_value": "bdt_base_hp"
           },
-          {
-            "missionSetBombingArea": {
-              "army": 2,
-              "target": "@bdt_t2_cur_spawn_zone_name",
-              "hp": 2000.0,
-              "hpFireMult": 0.1,
-              "fireSpeed": 0.03,
-              "use_variable": true,
-              "var_value": "bdt_base_hp"
-            }
-          },
-          {
-            "varSetString": {
+          "varSetString": [
+            {
               "value": "bdt_t2_zone_",
               "var": "bdt_t2_spawn_zone_var_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "",
               "var": "@bdt_t2_spawn_zone_var_name",
               "input_var": "bdt_t2_cur_spawn_zone_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "",
               "var": "bdt_t2_base_as_target_for_t1_name",
               "input_var": "bdt_t2_cur_spawn_zone_name"
             }
-          },
-          {
-            "varAddString": {
+          ],
+          "varAddString": [
+            {
               "value": "@bdt_t2_cur_base_spawn_idx",
               "digits": 2,
               "var": "bdt_t2_spawn_zone_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_name",
               "digits": 0,
               "var": "bdt_t2_spawn_zone_var_name"
             }
+          ],
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "bdt_t2_cur_bases_count"
           },
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "bdt_t2_cur_bases_count"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_t2_aaa_spawn_start"
-            }
+          "triggerEnable": {
+            "target": "bdt_t2_aaa_spawn_start"
           }
-        ],
+        },
         "else_actions": {
           "comment": {
             "value": "ob'ekta ne sushchestvuet. zapuskaem golovnoj skript"
@@ -2319,7 +1915,11 @@
           "actions": {
             "unitRespawn": {
               "delay": 0.0,
-              "offset": [0.0,0.0,0.0],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
               "object": "bdt_t1_aaa_squad",
               "object_type": "isInactive",
               "target": "@bdt_t1_aaa_spawn_name",
@@ -2440,7 +2040,11 @@
           "actions": {
             "unitRespawn": {
               "delay": 0.0,
-              "offset": [0.0,0.0,0.0],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
               "object": "bdt_t2_aaa_squad",
               "object_type": "isInactive",
               "target": "@bdt_t2_aaa_spawn_name",
@@ -2484,39 +2088,29 @@
             "comparasion_func": "equal"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "zahvatili territoriyu komandy A"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "proveryaem ne nado li ubrat' bazu"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "imya zahvachennoj zony v peremennoj bdt_capture_t1_frontline_name"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "nachinaem poisk"
             }
+          ],
+          "varSetInt": {
+            "value": 0,
+            "var": "bdt_capture_t1_bombing_zone_idx"
           },
-          {
-            "varSetInt": {
-              "value": 0,
-              "var": "bdt_capture_t1_bombing_zone_idx"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_capture_t1_rotator"
-            }
+          "triggerEnable": {
+            "target": "bdt_capture_t1_rotator"
           }
-        ],
+        },
         "else_actions": {
           "triggerDisable": {
             "target": "bdt_capture_t1_start"
@@ -2544,66 +2138,50 @@
             "var_value_other": "bdt_t1_active_bases_max_count"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "uvelichivaem indeks na 1"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sostavlyaem imya peremennoj, v kotoroj hranitsya imya airfilda"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "poluchaem imya bombovoj zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "checking zone name"
             }
+          ],
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "bdt_capture_t1_bombing_zone_idx"
           },
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "bdt_capture_t1_bombing_zone_idx"
-            }
+          "varSetString": {
+            "value": "bdt_t1_zone_",
+            "var": "bdt_capture_t1_bombing_zone_var_name"
           },
-          {
-            "varSetString": {
-              "value": "bdt_t1_zone_",
-              "var": "bdt_capture_t1_bombing_zone_var_name"
-            }
-          },
-          {
-            "varAddString": {
+          "varAddString": [
+            {
               "value": "@bdt_capture_t1_bombing_zone_idx",
               "digits": 2,
               "var": "bdt_capture_t1_bombing_zone_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_name",
               "digits": 0,
               "var": "bdt_capture_t1_bombing_zone_var_name"
             }
+          ],
+          "varGetStringValue": {
+            "from_var_name": "@bdt_capture_t1_bombing_zone_var_name",
+            "var": "bdt_capture_t1_bombing_zone_name"
           },
-          {
-            "varGetStringValue": {
-              "from_var_name": "@bdt_capture_t1_bombing_zone_var_name",
-              "var": "bdt_capture_t1_bombing_zone_name"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_capture_t1_zone_check"
-            }
+          "triggerEnable": {
+            "target": "bdt_capture_t1_zone_check"
           }
-        ],
+        },
         "else_actions": {
           "comment": {
             "value": "index is out of range, restarting"
@@ -2632,128 +2210,94 @@
             "type": "area"
           }
         },
-        "actions": [
-          {
-            "getOwnArea": {
-              "name": "@bdt_capture_t1_bombing_zone_name",
-              "template": "flt_area_",
-              "out_var": "bdt_capture_t1_own_area_name"
-            }
+        "actions": {
+          "getOwnArea": {
+            "name": "@bdt_capture_t1_bombing_zone_name",
+            "template": "flt_area_",
+            "out_var": "bdt_capture_t1_own_area_name"
           },
-          {
-            "comment": {
+          "comment": [
+            {
               "value": "polchaem imya peremennoj gde hranitsya armiya zony v kotoroj fild"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "poluchaem armiyu"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "getting target name"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "getting aaa name"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "getting real index"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "getting object name"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "proveryaem ne nahoditsya li airfild v iskomoj zone"
             }
-          },
-          {
-            "varSetString": {
+          ],
+          "varSetString": [
+            {
               "value": "",
               "var": "bdt_capture_t1_own_state_name",
               "input_var": "bdt_capture_t1_own_area_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t1_bomb_target_",
               "var": "bdt_capture_t1_aaa_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t1_bomb_object_",
               "var": "bdt_capture_t1_object_name"
             }
-          },
-          {
-            "varAddString": {
+          ],
+          "varAddString": [
+            {
               "value": "_state",
               "digits": 0,
               "var": "bdt_capture_t1_own_state_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_bomb_target",
               "digits": 0,
               "var": "bdt_capture_t1_bombing_zone_target_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "@bdt_capture_t1_bombing_zone_idx",
               "digits": 2,
               "var": "bdt_capture_t1_aaa_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_aaa",
               "digits": 0,
               "var": "bdt_capture_t1_aaa_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "bdt_capture_t1_bombing_zone_real_idx",
               "digits": 2,
               "var": "@bdt_capture_t1_object_name"
             }
+          ],
+          "varSetInt": {
+            "value": 0,
+            "var": "bdt_capture_t1_own_state_idx",
+            "input_var": "@bdt_capture_t1_own_state_name"
           },
-          {
-            "varSetInt": {
-              "value": 0,
-              "var": "bdt_capture_t1_own_state_idx",
-              "input_var": "@bdt_capture_t1_own_state_name"
-            }
+          "varGetStringValue": {
+            "from_var_name": "@bdt_capture_t1_bombing_zone_var_name",
+            "var": "bdt_capture_t1_bombing_zone_target_name"
           },
-          {
-            "varGetStringValue": {
-              "from_var_name": "@bdt_capture_t1_bombing_zone_var_name",
-              "var": "bdt_capture_t1_bombing_zone_target_name"
-            }
+          "varGetIntFromString": {
+            "value": "@bdt_capture_t1_bombing_zone_name",
+            "var": "bdt_capture_t1_bombing_zone_real_idx"
           },
-          {
-            "varGetIntFromString": {
-              "value": "@bdt_capture_t1_bombing_zone_name",
-              "var": "bdt_capture_t1_bombing_zone_real_idx"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_capture_t1_frontline_check"
-            }
+          "triggerEnable": {
+            "target": "bdt_capture_t1_frontline_check"
           }
-        ],
+        },
         "else_actions": {
           "comment": {
             "value": "zone doesn't exist"
@@ -2783,97 +2327,84 @@
             "comparasion_func": "equal"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "bombovaya zona v isomoj zone. nado ee otklyuchit'"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sozdaem imya zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "ubivaem zonu"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "pryachem zentiku"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "continue rotator"
             }
+          ],
+          "varGetStringValue": {
+            "from_var_name": "bdt_capture_t1_bombing_zone_name",
+            "var": "bdt_capture_t1_bomb_zone_name"
           },
-          {
-            "varGetStringValue": {
-              "from_var_name": "bdt_capture_t1_bombing_zone_name",
-              "var": "bdt_capture_t1_bomb_zone_name"
-            }
+          "__varAddString": {
+            "value": "_bomb_zone",
+            "digits": 0,
+            "var": "bdt_capture_t1_bomb_zone_name"
           },
-          {
-            "__varAddString": {
-              "value": "_bomb_zone",
-              "digits": 0,
-              "var": "bdt_capture_t1_bomb_zone_name"
-            }
+          "missionBombingAreaDamage": {
+            "target": "@bdt_capture_t1_bomb_zone_name",
+            "damageHP": 900000.0
           },
-          {
-            "missionBombingAreaDamage": {
-              "target": "@bdt_capture_t1_bomb_zone_name",
-              "damageHP": 900000.0
-            }
-          },
-          {
-            "unitPutToSleep": [
-              {
-                "target": "@bdt_capture_t1_object_name"
-              },
-              {
-                "target": "@bdt_capture_t1_bombing_zone_target_name"
-              }
+          "unitPutToSleep": {
+            "target": [
+              "@bdt_capture_t1_object_name",
+              "@bdt_capture_t1_bombing_zone_target_name"
             ]
           },
-          {
-            "__unitDamage": {
-              "power": 1.0,
-              "useEffect": false,
-              "countEffects": 1,
-              "delay": [1.0,1.0],
-              "offset": [0.0,0.0,0.0],
-              "radiusOffset": [10.0,15.0],
-              "target": "@bdt_capture_t1_aaa_name",
-              "partName": "body",
-              "delayForObjects": [2.0,5.0]
-            }
+          "__unitDamage": {
+            "power": 1.0,
+            "useEffect": false,
+            "countEffects": 1,
+            "delay": [
+              1.0,
+              1.0
+            ],
+            "offset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "radiusOffset": [
+              10.0,
+              15.0
+            ],
+            "target": "@bdt_capture_t1_aaa_name",
+            "partName": "body",
+            "delayForObjects": [
+              2.0,
+              5.0
+            ]
           },
-          {
-            "triggerEnable": {
-              "target": "bdt_capture_t1_rotator"
-            }
+          "triggerEnable": {
+            "target": "bdt_capture_t1_rotator"
           }
-        ],
-        "else_actions": [
-          {
-            "comment": {
+        },
+        "else_actions": {
+          "comment": [
+            {
               "value": "aerodrom ne v iskomoj zone otklyuchat' ne nado"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "proveryaem sleduyushchij"
             }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_capture_t1_rotator"
-            }
+          ],
+          "triggerEnable": {
+            "target": "bdt_capture_t1_rotator"
           }
-        ]
+        }
       },
       "bdt_capture_t2_start": {
         "is_enabled": false,
@@ -2895,39 +2426,29 @@
             "comparasion_func": "equal"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "zahvatili territoriyu komandy A"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "proveryaem ne nado li ubrat' bazu"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "imya zahvachennoj zony v peremennoj bdt_capture_t1_frontline_name"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "nachinaem poisk"
             }
+          ],
+          "varSetInt": {
+            "value": 0,
+            "var": "bdt_capture_t2_bombing_zone_idx"
           },
-          {
-            "varSetInt": {
-              "value": 0,
-              "var": "bdt_capture_t2_bombing_zone_idx"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_capture_t2_rotator"
-            }
+          "triggerEnable": {
+            "target": "bdt_capture_t2_rotator"
           }
-        ],
+        },
         "else_actions": {
           "triggerDisable": {
             "target": "bdt_capture_t2_start"
@@ -2955,66 +2476,50 @@
             "var_value_other": "bdt_t1_active_bases_max_count"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "uvelichivaem indeks na 1"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sostavlyaem imya peremennoj, v kotoroj hranitsya imya airfilda"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "poluchaem imya bombovoj zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "checking zone name"
             }
+          ],
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "bdt_capture_t2_bombing_zone_idx"
           },
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "bdt_capture_t2_bombing_zone_idx"
-            }
+          "varSetString": {
+            "value": "bdt_t2_zone_",
+            "var": "bdt_capture_t2_bombing_zone_var_name"
           },
-          {
-            "varSetString": {
-              "value": "bdt_t2_zone_",
-              "var": "bdt_capture_t2_bombing_zone_var_name"
-            }
-          },
-          {
-            "varAddString": {
+          "varAddString": [
+            {
               "value": "@bdt_capture_t2_bombing_zone_idx",
               "digits": 2,
               "var": "bdt_capture_t2_bombing_zone_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_name",
               "digits": 0,
               "var": "bdt_capture_t2_bombing_zone_var_name"
             }
+          ],
+          "varGetStringValue": {
+            "from_var_name": "@bdt_capture_t2_bombing_zone_var_name",
+            "var": "bdt_capture_t2_bombing_zone_name"
           },
-          {
-            "varGetStringValue": {
-              "from_var_name": "@bdt_capture_t2_bombing_zone_var_name",
-              "var": "bdt_capture_t2_bombing_zone_name"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_capture_t2_zone_check"
-            }
+          "triggerEnable": {
+            "target": "bdt_capture_t2_zone_check"
           }
-        ],
+        },
         "else_actions": {
           "comment": {
             "value": "index is out of range, restarting"
@@ -3043,128 +2548,94 @@
             "type": "area"
           }
         },
-        "actions": [
-          {
-            "getOwnArea": {
-              "name": "@bdt_capture_t2_bombing_zone_name",
-              "template": "flt_area_",
-              "out_var": "bdt_capture_t2_own_area_name"
-            }
+        "actions": {
+          "getOwnArea": {
+            "name": "@bdt_capture_t2_bombing_zone_name",
+            "template": "flt_area_",
+            "out_var": "bdt_capture_t2_own_area_name"
           },
-          {
-            "comment": {
+          "comment": [
+            {
               "value": "polchaem imya peremennoj gde hranitsya armiya zony v kotoroj fild"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "poluchaem armiyu"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "getting target name"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "getting aaa name"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "getting real index"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "getting object name"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "proveryaem ne nahoditsya li airfild v iskomoj zone"
             }
-          },
-          {
-            "varSetString": {
+          ],
+          "varSetString": [
+            {
               "value": "",
               "var": "bdt_capture_t2_own_state_name",
               "input_var": "bdt_capture_t2_own_area_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t2_bomb_target_",
               "var": "bdt_capture_t2_aaa_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t2_bomb_object_",
               "var": "bdt_capture_t2_object_name"
             }
-          },
-          {
-            "varAddString": {
+          ],
+          "varAddString": [
+            {
               "value": "_state",
               "digits": 0,
               "var": "bdt_capture_t1_own_state_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_bomb_target",
               "digits": 0,
               "var": "bdt_capture_t2_bombing_zone_target_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "@bdt_capture_t2_bombing_zone_idx",
               "digits": 2,
               "var": "bdt_capture_t2_aaa_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_aaa",
               "digits": 0,
               "var": "bdt_capture_t2_aaa_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "bdt_capture_t2_bombing_zone_real_idx",
               "digits": 2,
               "var": "@bdt_capture_t2_object_name"
             }
+          ],
+          "varSetInt": {
+            "value": 0,
+            "var": "bdt_capture_t2_own_state_idx",
+            "input_var": "@bdt_capture_t2_own_state_name"
           },
-          {
-            "varSetInt": {
-              "value": 0,
-              "var": "bdt_capture_t2_own_state_idx",
-              "input_var": "@bdt_capture_t2_own_state_name"
-            }
+          "varGetStringValue": {
+            "from_var_name": "@bdt_capture_t2_bombing_zone_var_name",
+            "var": "bdt_capture_t2_bombing_zone_target_name"
           },
-          {
-            "varGetStringValue": {
-              "from_var_name": "@bdt_capture_t2_bombing_zone_var_name",
-              "var": "bdt_capture_t2_bombing_zone_target_name"
-            }
+          "varGetIntFromString": {
+            "value": "@bdt_capture_t2_bombing_zone_name",
+            "var": "bdt_capture_t2_bombing_zone_real_idx"
           },
-          {
-            "varGetIntFromString": {
-              "value": "@bdt_capture_t2_bombing_zone_name",
-              "var": "bdt_capture_t2_bombing_zone_real_idx"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_capture_t2_frontline_check"
-            }
+          "triggerEnable": {
+            "target": "bdt_capture_t2_frontline_check"
           }
-        ],
+        },
         "else_actions": {
           "comment": {
             "value": "zone doesn't exist"
@@ -3194,97 +2665,84 @@
             "comparasion_func": "equal"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "aerodrom v isomoj zone. nado ego otklyuchit'"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sozdaem imya zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "ubivaem zonu"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "pryachem zenitku"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "continue rotator"
             }
+          ],
+          "varGetStringValue": {
+            "from_var_name": "bdt_capture_t2_bombing_zone_name",
+            "var": "bdt_capture_t2_bomb_zone_name"
           },
-          {
-            "varGetStringValue": {
-              "from_var_name": "bdt_capture_t2_bombing_zone_name",
-              "var": "bdt_capture_t2_bomb_zone_name"
-            }
+          "__varAddString": {
+            "value": "_bomb_zone",
+            "digits": 0,
+            "var": "bdt_capture_t2_bomb_zone_name"
           },
-          {
-            "__varAddString": {
-              "value": "_bomb_zone",
-              "digits": 0,
-              "var": "bdt_capture_t2_bomb_zone_name"
-            }
+          "missionBombingAreaDamage": {
+            "target": "@bdt_capture_t2_bomb_zone_name",
+            "damageHP": 900000.0
           },
-          {
-            "missionBombingAreaDamage": {
-              "target": "@bdt_capture_t2_bomb_zone_name",
-              "damageHP": 900000.0
-            }
-          },
-          {
-            "unitPutToSleep": [
-              {
-                "target": "@bdt_capture_t2_object_name"
-              },
-              {
-                "target": "@bdt_capture_t2_bombing_zone_target_name"
-              }
+          "unitPutToSleep": {
+            "target": [
+              "@bdt_capture_t2_object_name",
+              "@bdt_capture_t2_bombing_zone_target_name"
             ]
           },
-          {
-            "__unitDamage": {
-              "power": 1.0,
-              "useEffect": false,
-              "countEffects": 1,
-              "delay": [1.0,1.0],
-              "offset": [0.0,0.0,0.0],
-              "radiusOffset": [10.0,15.0],
-              "target": "@bdt_capture_t2_aaa_name",
-              "partName": "body",
-              "delayForObjects": [2.0,5.0]
-            }
+          "__unitDamage": {
+            "power": 1.0,
+            "useEffect": false,
+            "countEffects": 1,
+            "delay": [
+              1.0,
+              1.0
+            ],
+            "offset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "radiusOffset": [
+              10.0,
+              15.0
+            ],
+            "target": "@bdt_capture_t2_aaa_name",
+            "partName": "body",
+            "delayForObjects": [
+              2.0,
+              5.0
+            ]
           },
-          {
-            "triggerEnable": {
-              "target": "bdt_capture_t2_rotator"
-            }
+          "triggerEnable": {
+            "target": "bdt_capture_t2_rotator"
           }
-        ],
-        "else_actions": [
-          {
-            "comment": {
+        },
+        "else_actions": {
+          "comment": [
+            {
               "value": "aerodrom ne v iskomoj zone otklyuchat' ne nado"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "proveryaem sleduyushchij"
             }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_capture_t2_rotator"
-            }
+          ],
+          "triggerEnable": {
+            "target": "bdt_capture_t2_rotator"
           }
-        ]
+        }
       }
     },
     "bdt_balance_routine": {
@@ -3310,115 +2768,59 @@
             "comparasion_func": "less"
           }
         },
-        "actions": [
-          {
-            "triggerDisable": [
-              {
-                "target": "bomb_areas_4_7_check"
-              },
-              {
-                "target": "bomb_areas_8_11_check"
-              },
-              {
-                "target": "bomb_areas_12_16_check"
-              },
-              {
-                "target": "bomb_areas_17_20_check"
-              },
-              {
-                "target": "bomb_areas_21_50_check"
-              }
+        "actions": {
+          "triggerDisable": {
+            "target": [
+              "bomb_areas_4_7_check",
+              "bomb_areas_8_11_check",
+              "bomb_areas_12_16_check",
+              "bomb_areas_17_20_check",
+              "bomb_areas_21_50_check"
             ]
           },
-          {
-            "comment": {
+          "comment": [
+            {
               "value": "4000 dlya istorii"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
+              "value": ""
+            },
+            {
               "value": ""
             }
+          ],
+          "varSetReal": {
+            "value": 4000.0,
+            "var": "bdt_base_hp"
           },
-          {
-            "comment": {
-              "value": ""
-            }
+          "unitSetProperties": {
+            "object": [
+              "bdt_t1_aaa_squad",
+              "bdt_t2_aaa_squad"
+            ],
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "accuracy": 0.1,
+            "airAccuracy": 0.1,
+            "maxDeviationAngle": 35.0,
+            "checkVisibilityTarget": true,
+            "visibilityTreeTransparencyThreshold": 0.1,
+            "effShootingRate": 0.1,
+            "airEffShootingRate": 0.1,
+            "adaptiveAccuracyTime": 10.0,
+            "fireRandom": true,
+            "targetChangeInterval": 5.0,
+            "targetChangeProb": 0.25,
+            "ChainfireTime": 1.0,
+            "DelayAfterShoot": 2.0
           },
-          {
-            "varSetReal": {
-              "value": 4000.0,
-              "var": "bdt_base_hp"
-            }
-          },
-          {
-            "unitSetProperties": [
-              {
-                "object": "bdt_t1_aaa_squad"
-              },
-              {
-                "object": "bdt_t2_aaa_squad"
-              },
-              {
-                "object_marking": 0
-              },
-              {
-                "object_var_name": ""
-              },
-              {
-                "object_var_comp_op": "equal"
-              },
-              {
-                "object_var_value": 0
-              },
-              {
-                "accuracy": 0.1
-              },
-              {
-                "airAccuracy": 0.1
-              },
-              {
-                "maxDeviationAngle": 35.0
-              },
-              {
-                "checkVisibilityTarget": true
-              },
-              {
-                "visibilityTreeTransparencyThreshold": 0.1
-              },
-              {
-                "effShootingRate": 0.1
-              },
-              {
-                "airEffShootingRate": 0.1
-              },
-              {
-                "adaptiveAccuracyTime": 10.0
-              },
-              {
-                "fireRandom": true
-              },
-              {
-                "targetChangeInterval": 5.0
-              },
-              {
-                "targetChangeProb": 0.25
-              },
-              {
-                "ChainfireTime": 1.0
-              },
-              {
-                "DelayAfterShoot": 2.0
-              }
-            ]
-          },
-          {
-            "triggerEnable": {
-              "target": "bomb_areas_helicpoters_check"
-            }
+          "triggerEnable": {
+            "target": "bomb_areas_helicpoters_check"
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "bomb_areas_4_7_check": {
         "is_enabled": false,
@@ -3433,131 +2835,73 @@
             "time": 1.0
           }
         },
-        "conditions": [
-          {
-            "varCompareInt": {
+        "conditions": {
+          "varCompareInt": [
+            {
               "var_value": "bdt_balance_level",
               "value": 3,
               "comparasion_func": "more"
-            }
-          },
-          {
-            "varCompareInt": {
+            },
+            {
               "var_value": "bdt_balance_level",
               "value": 8,
               "comparasion_func": "less"
             }
-          }
-        ],
-        "actions": [
-          {
-            "triggerDisable": [
-              {
-                "target": "bomb_areas_0_3_check"
-              },
-              {
-                "target": "bomb_areas_8_11_check"
-              },
-              {
-                "target": "bomb_areas_12_16_check"
-              },
-              {
-                "target": "bomb_areas_17_20_check"
-              },
-              {
-                "target": "bomb_areas_21_50_check"
-              }
+          ]
+        },
+        "actions": {
+          "triggerDisable": {
+            "target": [
+              "bomb_areas_0_3_check",
+              "bomb_areas_8_11_check",
+              "bomb_areas_12_16_check",
+              "bomb_areas_17_20_check",
+              "bomb_areas_21_50_check"
             ]
           },
-          {
-            "comment": {
+          "comment": [
+            {
               "value": "6000 dlya istorii"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
+              "value": ""
+            },
+            {
               "value": ""
             }
+          ],
+          "varSetReal": {
+            "value": 6000.0,
+            "var": "bdt_base_hp"
           },
-          {
-            "comment": {
-              "value": ""
-            }
+          "unitSetProperties": {
+            "object": [
+              "bdt_t1_aaa_squad",
+              "bdt_t2_aaa_squad"
+            ],
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "accuracy": 0.1,
+            "airAccuracy": 0.1,
+            "maxDeviationAngle": 35.0,
+            "checkVisibilityTarget": true,
+            "visibilityTreeTransparencyThreshold": 0.1,
+            "effShootingRate": 0.1,
+            "airEffShootingRate": 0.1,
+            "adaptiveAccuracyTime": 10.0,
+            "fireRandom": true,
+            "targetChangeInterval": 5.0,
+            "targetChangeProb": 0.25,
+            "ChainfireTime": 1.0,
+            "DelayAfterShoot": 2.0
           },
-          {
-            "varSetReal": {
-              "value": 6000.0,
-              "var": "bdt_base_hp"
-            }
-          },
-          {
-            "unitSetProperties": [
-              {
-                "object": "bdt_t1_aaa_squad"
-              },
-              {
-                "object": "bdt_t2_aaa_squad"
-              },
-              {
-                "object_marking": 0
-              },
-              {
-                "object_var_name": ""
-              },
-              {
-                "object_var_comp_op": "equal"
-              },
-              {
-                "object_var_value": 0
-              },
-              {
-                "accuracy": 0.1
-              },
-              {
-                "airAccuracy": 0.1
-              },
-              {
-                "maxDeviationAngle": 35.0
-              },
-              {
-                "checkVisibilityTarget": true
-              },
-              {
-                "visibilityTreeTransparencyThreshold": 0.1
-              },
-              {
-                "effShootingRate": 0.1
-              },
-              {
-                "airEffShootingRate": 0.1
-              },
-              {
-                "adaptiveAccuracyTime": 10.0
-              },
-              {
-                "fireRandom": true
-              },
-              {
-                "targetChangeInterval": 5.0
-              },
-              {
-                "targetChangeProb": 0.25
-              },
-              {
-                "ChainfireTime": 1.0
-              },
-              {
-                "DelayAfterShoot": 2.0
-              }
-            ]
-          },
-          {
-            "triggerEnable": {
-              "target": "bomb_areas_helicpoters_check"
-            }
+          "triggerEnable": {
+            "target": "bomb_areas_helicpoters_check"
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "bomb_areas_8_11_check": {
         "is_enabled": false,
@@ -3572,131 +2916,73 @@
             "time": 1.0
           }
         },
-        "conditions": [
-          {
-            "varCompareInt": {
+        "conditions": {
+          "varCompareInt": [
+            {
               "var_value": "bdt_balance_level",
               "value": 7,
               "comparasion_func": "more"
-            }
-          },
-          {
-            "varCompareInt": {
+            },
+            {
               "var_value": "bdt_balance_level",
               "value": 12,
               "comparasion_func": "less"
             }
-          }
-        ],
-        "actions": [
-          {
-            "triggerDisable": [
-              {
-                "target": "bomb_areas_0_3_check"
-              },
-              {
-                "target": "bomb_areas_4_7_check"
-              },
-              {
-                "target": "bomb_areas_12_16_check"
-              },
-              {
-                "target": "bomb_areas_17_20_check"
-              },
-              {
-                "target": "bomb_areas_21_50_check"
-              }
+          ]
+        },
+        "actions": {
+          "triggerDisable": {
+            "target": [
+              "bomb_areas_0_3_check",
+              "bomb_areas_4_7_check",
+              "bomb_areas_12_16_check",
+              "bomb_areas_17_20_check",
+              "bomb_areas_21_50_check"
             ]
           },
-          {
-            "comment": {
+          "comment": [
+            {
               "value": "10000 dlya istorii"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
+              "value": ""
+            },
+            {
               "value": ""
             }
+          ],
+          "varSetReal": {
+            "value": 10000.0,
+            "var": "bdt_base_hp"
           },
-          {
-            "comment": {
-              "value": ""
-            }
+          "unitSetProperties": {
+            "object": [
+              "bdt_t1_aaa_squad",
+              "bdt_t2_aaa_squad"
+            ],
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "accuracy": 0.1,
+            "airAccuracy": 0.1,
+            "maxDeviationAngle": 35.0,
+            "checkVisibilityTarget": true,
+            "visibilityTreeTransparencyThreshold": 0.1,
+            "effShootingRate": 0.1,
+            "airEffShootingRate": 0.1,
+            "adaptiveAccuracyTime": 10.0,
+            "fireRandom": true,
+            "targetChangeInterval": 5.0,
+            "targetChangeProb": 0.25,
+            "ChainfireTime": 1.0,
+            "DelayAfterShoot": 2.0
           },
-          {
-            "varSetReal": {
-              "value": 10000.0,
-              "var": "bdt_base_hp"
-            }
-          },
-          {
-            "unitSetProperties": [
-              {
-                "object": "bdt_t1_aaa_squad"
-              },
-              {
-                "object": "bdt_t2_aaa_squad"
-              },
-              {
-                "object_marking": 0
-              },
-              {
-                "object_var_name": ""
-              },
-              {
-                "object_var_comp_op": "equal"
-              },
-              {
-                "object_var_value": 0
-              },
-              {
-                "accuracy": 0.1
-              },
-              {
-                "airAccuracy": 0.1
-              },
-              {
-                "maxDeviationAngle": 35.0
-              },
-              {
-                "checkVisibilityTarget": true
-              },
-              {
-                "visibilityTreeTransparencyThreshold": 0.1
-              },
-              {
-                "effShootingRate": 0.1
-              },
-              {
-                "airEffShootingRate": 0.1
-              },
-              {
-                "adaptiveAccuracyTime": 10.0
-              },
-              {
-                "fireRandom": true
-              },
-              {
-                "targetChangeInterval": 5.0
-              },
-              {
-                "targetChangeProb": 0.25
-              },
-              {
-                "ChainfireTime": 1.0
-              },
-              {
-                "DelayAfterShoot": 2.0
-              }
-            ]
-          },
-          {
-            "triggerEnable": {
-              "target": "bomb_areas_helicpoters_check"
-            }
+          "triggerEnable": {
+            "target": "bomb_areas_helicpoters_check"
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "bomb_areas_12_16_check": {
         "is_enabled": false,
@@ -3711,131 +2997,73 @@
             "time": 1.0
           }
         },
-        "conditions": [
-          {
-            "varCompareInt": {
+        "conditions": {
+          "varCompareInt": [
+            {
               "var_value": "bdt_balance_level",
               "value": 11,
               "comparasion_func": "more"
-            }
-          },
-          {
-            "varCompareInt": {
+            },
+            {
               "var_value": "bdt_balance_level",
               "value": 17,
               "comparasion_func": "less"
             }
-          }
-        ],
-        "actions": [
-          {
-            "triggerDisable": [
-              {
-                "target": "bomb_areas_0_3_check"
-              },
-              {
-                "target": "bomb_areas_4_7_check"
-              },
-              {
-                "target": "bomb_areas_8_11_check"
-              },
-              {
-                "target": "bomb_areas_17_20_check"
-              },
-              {
-                "target": "bomb_areas_21_50_check"
-              }
+          ]
+        },
+        "actions": {
+          "triggerDisable": {
+            "target": [
+              "bomb_areas_0_3_check",
+              "bomb_areas_4_7_check",
+              "bomb_areas_8_11_check",
+              "bomb_areas_17_20_check",
+              "bomb_areas_21_50_check"
             ]
           },
-          {
-            "comment": {
+          "comment": [
+            {
               "value": "16000 dlya istorii"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
+              "value": ""
+            },
+            {
               "value": ""
             }
+          ],
+          "varSetReal": {
+            "value": 16000.0,
+            "var": "bdt_base_hp"
           },
-          {
-            "comment": {
-              "value": ""
-            }
+          "unitSetProperties": {
+            "object": [
+              "bdt_t1_aaa_squad",
+              "bdt_t2_aaa_squad"
+            ],
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "accuracy": 0.1,
+            "airAccuracy": 0.1,
+            "maxDeviationAngle": 35.0,
+            "checkVisibilityTarget": true,
+            "visibilityTreeTransparencyThreshold": 0.1,
+            "effShootingRate": 0.05,
+            "airEffShootingRate": 0.05,
+            "adaptiveAccuracyTime": 10.0,
+            "fireRandom": true,
+            "targetChangeInterval": 5.0,
+            "targetChangeProb": 0.25,
+            "ChainfireTime": 0.5,
+            "DelayAfterShoot": 2.0
           },
-          {
-            "varSetReal": {
-              "value": 16000.0,
-              "var": "bdt_base_hp"
-            }
-          },
-          {
-            "unitSetProperties": [
-              {
-                "object": "bdt_t1_aaa_squad"
-              },
-              {
-                "object": "bdt_t2_aaa_squad"
-              },
-              {
-                "object_marking": 0
-              },
-              {
-                "object_var_name": ""
-              },
-              {
-                "object_var_comp_op": "equal"
-              },
-              {
-                "object_var_value": 0
-              },
-              {
-                "accuracy": 0.1
-              },
-              {
-                "airAccuracy": 0.1
-              },
-              {
-                "maxDeviationAngle": 35.0
-              },
-              {
-                "checkVisibilityTarget": true
-              },
-              {
-                "visibilityTreeTransparencyThreshold": 0.1
-              },
-              {
-                "effShootingRate": 0.05
-              },
-              {
-                "airEffShootingRate": 0.05
-              },
-              {
-                "adaptiveAccuracyTime": 10.0
-              },
-              {
-                "fireRandom": true
-              },
-              {
-                "targetChangeInterval": 5.0
-              },
-              {
-                "targetChangeProb": 0.25
-              },
-              {
-                "ChainfireTime": 0.5
-              },
-              {
-                "DelayAfterShoot": 2.0
-              }
-            ]
-          },
-          {
-            "triggerEnable": {
-              "target": "bomb_areas_helicpoters_check"
-            }
+          "triggerEnable": {
+            "target": "bomb_areas_helicpoters_check"
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "bomb_areas_17_20_check": {
         "is_enabled": false,
@@ -3850,131 +3078,73 @@
             "time": 1.0
           }
         },
-        "conditions": [
-          {
-            "varCompareInt": {
+        "conditions": {
+          "varCompareInt": [
+            {
               "var_value": "bdt_balance_level",
               "value": 16,
               "comparasion_func": "more"
-            }
-          },
-          {
-            "varCompareInt": {
+            },
+            {
               "var_value": "bdt_balance_level",
               "value": 21,
               "comparasion_func": "less"
             }
-          }
-        ],
-        "actions": [
-          {
-            "triggerDisable": [
-              {
-                "target": "bomb_areas_0_3_check"
-              },
-              {
-                "target": "bomb_areas_4_7_check"
-              },
-              {
-                "target": "bomb_areas_8_11_check"
-              },
-              {
-                "target": "bomb_areas_12_16_check"
-              },
-              {
-                "target": "bomb_areas_21_50_check"
-              }
+          ]
+        },
+        "actions": {
+          "triggerDisable": {
+            "target": [
+              "bomb_areas_0_3_check",
+              "bomb_areas_4_7_check",
+              "bomb_areas_8_11_check",
+              "bomb_areas_12_16_check",
+              "bomb_areas_21_50_check"
             ]
           },
-          {
-            "comment": {
+          "comment": [
+            {
               "value": "22000 dlya istorii"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
+              "value": ""
+            },
+            {
               "value": ""
             }
+          ],
+          "varSetReal": {
+            "value": 22000.0,
+            "var": "bdt_base_hp"
           },
-          {
-            "comment": {
-              "value": ""
-            }
+          "unitSetProperties": {
+            "object": [
+              "bdt_t1_aaa_squad",
+              "bdt_t2_aaa_squad"
+            ],
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "accuracy": 0.1,
+            "airAccuracy": 0.1,
+            "maxDeviationAngle": 35.0,
+            "checkVisibilityTarget": true,
+            "visibilityTreeTransparencyThreshold": 0.1,
+            "effShootingRate": 0.05,
+            "airEffShootingRate": 0.05,
+            "adaptiveAccuracyTime": 10.0,
+            "fireRandom": true,
+            "targetChangeInterval": 5.0,
+            "targetChangeProb": 0.25,
+            "ChainfireTime": 0.25,
+            "DelayAfterShoot": 2.0
           },
-          {
-            "varSetReal": {
-              "value": 22000.0,
-              "var": "bdt_base_hp"
-            }
-          },
-          {
-            "unitSetProperties": [
-              {
-                "object": "bdt_t1_aaa_squad"
-              },
-              {
-                "object": "bdt_t2_aaa_squad"
-              },
-              {
-                "object_marking": 0
-              },
-              {
-                "object_var_name": ""
-              },
-              {
-                "object_var_comp_op": "equal"
-              },
-              {
-                "object_var_value": 0
-              },
-              {
-                "accuracy": 0.1
-              },
-              {
-                "airAccuracy": 0.1
-              },
-              {
-                "maxDeviationAngle": 35.0
-              },
-              {
-                "checkVisibilityTarget": true
-              },
-              {
-                "visibilityTreeTransparencyThreshold": 0.1
-              },
-              {
-                "effShootingRate": 0.05
-              },
-              {
-                "airEffShootingRate": 0.05
-              },
-              {
-                "adaptiveAccuracyTime": 10.0
-              },
-              {
-                "fireRandom": true
-              },
-              {
-                "targetChangeInterval": 5.0
-              },
-              {
-                "targetChangeProb": 0.25
-              },
-              {
-                "ChainfireTime": 0.25
-              },
-              {
-                "DelayAfterShoot": 2.0
-              }
-            ]
-          },
-          {
-            "triggerEnable": {
-              "target": "bomb_areas_helicpoters_check"
-            }
+          "triggerEnable": {
+            "target": "bomb_areas_helicpoters_check"
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "bomb_areas_21_50_check": {
         "is_enabled": false,
@@ -3996,115 +3166,59 @@
             "comparasion_func": "more"
           }
         },
-        "actions": [
-          {
-            "triggerDisable": [
-              {
-                "target": "bomb_areas_0_3_check"
-              },
-              {
-                "target": "bomb_areas_4_7_check"
-              },
-              {
-                "target": "bomb_areas_8_11_check"
-              },
-              {
-                "target": "bomb_areas_12_16_check"
-              },
-              {
-                "target": "bomb_areas_17_20_check"
-              }
+        "actions": {
+          "triggerDisable": {
+            "target": [
+              "bomb_areas_0_3_check",
+              "bomb_areas_4_7_check",
+              "bomb_areas_8_11_check",
+              "bomb_areas_12_16_check",
+              "bomb_areas_17_20_check"
             ]
           },
-          {
-            "comment": {
+          "comment": [
+            {
               "value": "25900 dlya istorii"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
+              "value": ""
+            },
+            {
               "value": ""
             }
+          ],
+          "varSetReal": {
+            "value": 25900.0,
+            "var": "bdt_base_hp"
           },
-          {
-            "comment": {
-              "value": ""
-            }
+          "unitSetProperties": {
+            "object": [
+              "bdt_t1_aaa_squad",
+              "bdt_t2_aaa_squad"
+            ],
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "accuracy": 0.1,
+            "airAccuracy": 0.1,
+            "maxDeviationAngle": 35.0,
+            "checkVisibilityTarget": true,
+            "visibilityTreeTransparencyThreshold": 0.1,
+            "effShootingRate": 0.05,
+            "airEffShootingRate": 0.05,
+            "adaptiveAccuracyTime": 10.0,
+            "fireRandom": true,
+            "targetChangeInterval": 5.0,
+            "targetChangeProb": 0.25,
+            "ChainfireTime": 0.25,
+            "DelayAfterShoot": 2.0
           },
-          {
-            "varSetReal": {
-              "value": 25900.0,
-              "var": "bdt_base_hp"
-            }
-          },
-          {
-            "unitSetProperties": [
-              {
-                "object": "bdt_t1_aaa_squad"
-              },
-              {
-                "object": "bdt_t2_aaa_squad"
-              },
-              {
-                "object_marking": 0
-              },
-              {
-                "object_var_name": ""
-              },
-              {
-                "object_var_comp_op": "equal"
-              },
-              {
-                "object_var_value": 0
-              },
-              {
-                "accuracy": 0.1
-              },
-              {
-                "airAccuracy": 0.1
-              },
-              {
-                "maxDeviationAngle": 35.0
-              },
-              {
-                "checkVisibilityTarget": true
-              },
-              {
-                "visibilityTreeTransparencyThreshold": 0.1
-              },
-              {
-                "effShootingRate": 0.05
-              },
-              {
-                "airEffShootingRate": 0.05
-              },
-              {
-                "adaptiveAccuracyTime": 10.0
-              },
-              {
-                "fireRandom": true
-              },
-              {
-                "targetChangeInterval": 5.0
-              },
-              {
-                "targetChangeProb": 0.25
-              },
-              {
-                "ChainfireTime": 0.25
-              },
-              {
-                "DelayAfterShoot": 2.0
-              }
-            ]
-          },
-          {
-            "triggerEnable": {
-              "target": "bomb_areas_helicpoters_check"
-            }
+          "triggerEnable": {
+            "target": "bomb_areas_helicpoters_check"
           }
-        ],
-        "else_actions": []
+        },
+        "else_actions": {}
       },
       "bomb_areas_helicpoters_check": {
         "is_enabled": false,
@@ -4133,7 +3247,7 @@
             "var": "bdt_base_hp"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       }
     },
     "bdt_destroy_routine": {
@@ -4152,7 +3266,7 @@
             "time": 1.0
           }
         },
-        "conditions": [],
+        "conditions": {},
         "actions": {
           "varSetInt": {
             "value": 0,
@@ -4165,7 +3279,7 @@
             "target": "bdt_destroy_t1_rotator"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "bdt_destroy_t1_rotator": {
         "is_enabled": false,
@@ -4188,71 +3302,53 @@
             "var_value_other": "bdt_t1_active_bases_max_count"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "indeks men'she treh proveryaem"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "uvelichivaem indeks na 1"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sostavlyaem imya peremennoj, v kotoroj hranitsya imya airfilda"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "poluchaem imya bombovoj zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "proveryaem imya zony"
             }
+          ],
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "bdt_destroy_t1_bombing_zone_idx"
           },
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "bdt_destroy_t1_bombing_zone_idx"
-            }
+          "varSetString": {
+            "value": "bdt_t1_zone_",
+            "var": "bdt_destroy_t1_bombing_zone_var_name"
           },
-          {
-            "varSetString": {
-              "value": "bdt_t1_zone_",
-              "var": "bdt_destroy_t1_bombing_zone_var_name"
-            }
-          },
-          {
-            "varAddString": {
+          "varAddString": [
+            {
               "value": "@bdt_destroy_t1_bombing_zone_idx",
               "digits": 2,
               "var": "bdt_destroy_t1_bombing_zone_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_name",
               "digits": 0,
               "var": "bdt_destroy_t1_bombing_zone_var_name"
             }
+          ],
+          "varGetStringValue": {
+            "from_var_name": "@bdt_destroy_t1_bombing_zone_var_name",
+            "var": "bdt_destroy_t1_bombing_zone_name"
           },
-          {
-            "varGetStringValue": {
-              "from_var_name": "@bdt_destroy_t1_bombing_zone_var_name",
-              "var": "bdt_destroy_t1_bombing_zone_name"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_destroy_t1_check_exist"
-            }
+          "triggerEnable": {
+            "target": "bdt_destroy_t1_check_exist"
           }
-        ],
+        },
         "else_actions": {
           "comment": {
             "value": "indeks vyshel za diapazon. restartim"
@@ -4281,53 +3377,41 @@
             "type": "area"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "zapolnyaem imya zenitki"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "zona est' - proveryaem status"
             }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_destroy_t1_check_status"
-            }
+          ],
+          "triggerEnable": {
+            "target": "bdt_destroy_t1_check_status"
           }
-        ],
-        "else_actions": [
-          {
-            "comment": {
-              "value": "net takoj zony idem dal'she"
-            }
+        },
+        "else_actions": {
+          "comment": {
+            "value": "net takoj zony idem dal'she"
           },
-          {
-            "triggerEnable": {
-              "target": "bdt_destroy_t1_rotator"
-            }
+          "triggerEnable": {
+            "target": "bdt_destroy_t1_rotator"
           },
-          {
-            "__systemLog": {
+          "__systemLog": [
+            {
               "value": "wrong name is:",
               "logtype": "screen_and_log"
-            }
-          },
-          {
-            "__systemLog": {
+            },
+            {
               "value": "@bdt_destroy_t1_bombing_zone_name",
               "logtype": "screen_and_log"
-            }
-          },
-          {
-            "__systemLog": {
+            },
+            {
               "value": "",
               "logtype": "screen_and_log"
             }
-          }
-        ]
+          ]
+        }
       },
       "bdt_destroy_t1_check_status": {
         "is_enabled": false,
@@ -4347,180 +3431,128 @@
             "target": "@bdt_destroy_t1_bombing_zone_name"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "zona unichtozhena"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "opustoshaem imya zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "getting object name"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "getting target name"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sobiraem imya obzhektiva"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "govorim chto obzhektiv vypolnen"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sobiraem imya tajmera"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "naznachaem tajmer"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "set object and target to sleep"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "ubivaem zenitki"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "umen'shaem kolichestvo aktivnyh baz"
             }
-          },
-          {
-            "triggerEnable": {
+          ],
+          "triggerEnable": [
+            {
               "target": "t2_minor_task_completed"
-            }
-          },
-          {
-            "triggerEnable": {
+            },
+            {
               "target": "bdt_t1_aaa_destroy_start"
             }
-          },
-          {
-            "varSetString": {
+          ],
+          "varSetString": [
+            {
               "value": "",
               "var": "@bdt_destroy_t1_bombing_zone_var_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t1_bomb_object_",
               "var": "bdt_destroy_t1_bombing_zone_object_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t1_bomb_zone_",
               "var": "bdt_destroy_t1_bombing_zone_target_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t2_destroy_zone_",
               "var": "bdt_t2_destroy_objective_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t1_zone_",
               "var": "bdt_destroy_t1_timer_var_name"
             }
+          ],
+          "varGetIntFromString": {
+            "value": "@bdt_destroy_t1_bombing_zone_name",
+            "var": "bdt_destroy_t1_real_idx"
           },
-          {
-            "varGetIntFromString": {
-              "value": "@bdt_destroy_t1_bombing_zone_name",
-              "var": "bdt_destroy_t1_real_idx"
-            }
-          },
-          {
-            "varAddString": {
+          "varAddString": [
+            {
               "value": "@bdt_destroy_t1_real_idx",
               "digits": 2,
               "var": "bdt_destroy_t1_bombing_zone_object_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "@bdt_destroy_t1_bombing_zone_idx",
               "digits": 2,
               "var": "bdt_destroy_t1_bombing_zone_target_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_bomb_target",
               "digits": 0,
               "var": "bdt_destroy_t1_bombing_zone_target_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "@bdt_destroy_t1_bombing_zone_idx",
               "digits": 2,
               "var": "bdt_t2_destroy_objective_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "@bdt_destroy_t1_bombing_zone_idx",
               "digits": 2,
               "var": "bdt_destroy_t1_timer_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_timer",
               "digits": 0,
               "var": "bdt_destroy_t1_timer_var_name"
             }
+          ],
+          "__triggerEnable": {
+            "target": "bdt_t1_set_objectvie"
           },
-          {
-            "__triggerEnable": {
-              "target": "bdt_t1_set_objectvie"
-            }
+          "varSetInt": {
+            "value": 0,
+            "var": "@bdt_destroy_t1_timer_var_name",
+            "input_var": "bdt_respawn_time"
           },
-          {
-            "varSetInt": {
-              "value": 0,
-              "var": "@bdt_destroy_t1_timer_var_name",
-              "input_var": "bdt_respawn_time"
-            }
-          },
-          {
-            "unitPutToSleep": [
-              {
-                "target": "@bdt_destroy_t1_bombing_zone_object_name"
-              },
-              {
-                "target": "@bdt_destroy_t1_bombing_zone_target_name"
-              }
+          "unitPutToSleep": {
+            "target": [
+              "@bdt_destroy_t1_bombing_zone_object_name",
+              "@bdt_destroy_t1_bombing_zone_target_name"
             ]
           },
-          {
-            "varModify": {
-              "operator": "add",
-              "value": -1.0,
-              "var": "bdt_t1_cur_bases_count"
-            }
+          "varModify": {
+            "operator": "add",
+            "value": -1.0,
+            "var": "bdt_t1_cur_bases_count"
           }
-        ],
+        },
         "else_actions": {
           "comment": {
             "value": "zona cela - idem dal'she po ciklu"
@@ -4543,7 +3575,7 @@
             "time": 1.0
           }
         },
-        "conditions": [],
+        "conditions": {},
         "actions": {
           "varSetInt": {
             "value": 0,
@@ -4556,7 +3588,7 @@
             "target": "bdt_destroy_t2_rotator"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "bdt_destroy_t2_rotator": {
         "is_enabled": false,
@@ -4579,71 +3611,53 @@
             "var_value_other": "bdt_t2_active_bases_max_count"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "indeks men'she treh proveryaem"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "uvelichivaem indeks na 1"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sostavlyaem imya peremennoj, v kotoroj hranitsya imya airfilda"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "poluchaem imya bombovoj zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "proveryaem imya zony"
             }
+          ],
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "bdt_destroy_t2_bombing_zone_idx"
           },
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "bdt_destroy_t2_bombing_zone_idx"
-            }
+          "varSetString": {
+            "value": "bdt_t2_zone_",
+            "var": "bdt_destroy_t2_bombing_zone_var_name"
           },
-          {
-            "varSetString": {
-              "value": "bdt_t2_zone_",
-              "var": "bdt_destroy_t2_bombing_zone_var_name"
-            }
-          },
-          {
-            "varAddString": {
+          "varAddString": [
+            {
               "value": "@bdt_destroy_t2_bombing_zone_idx",
               "digits": 2,
               "var": "bdt_destroy_t2_bombing_zone_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_name",
               "digits": 0,
               "var": "bdt_destroy_t2_bombing_zone_var_name"
             }
+          ],
+          "varGetStringValue": {
+            "from_var_name": "@bdt_destroy_t2_bombing_zone_var_name",
+            "var": "bdt_destroy_t2_bombing_zone_name"
           },
-          {
-            "varGetStringValue": {
-              "from_var_name": "@bdt_destroy_t2_bombing_zone_var_name",
-              "var": "bdt_destroy_t2_bombing_zone_name"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_destroy_t2_check_exist"
-            }
+          "triggerEnable": {
+            "target": "bdt_destroy_t2_check_exist"
           }
-        ],
+        },
         "else_actions": {
           "comment": {
             "value": "indeks vyshel za diapazon. restartim"
@@ -4672,29 +3686,23 @@
             "type": "area"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "poluchaem ob'ekta targeta bombovoj zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "zona est' - proveryaem status"
             }
+          ],
+          "__varGetStringValue": {
+            "from_var_name": "bdt_destroy_t2_bombing_zone_name",
+            "var": "bdt_destroy_t2_bombing_zone_target_name"
           },
-          {
-            "__varGetStringValue": {
-              "from_var_name": "bdt_destroy_t2_bombing_zone_name",
-              "var": "bdt_destroy_t2_bombing_zone_target_name"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_destroy_t2_check_status"
-            }
+          "triggerEnable": {
+            "target": "bdt_destroy_t2_check_status"
           }
-        ],
+        },
         "else_actions": {
           "comment": {
             "value": "net takoj zony idem dal'she"
@@ -4722,180 +3730,128 @@
             "target": "@bdt_destroy_t2_bombing_zone_name"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "zona unichtozhena"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "opustoshaem imya zony"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "pryachem ob'ekt"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "getting target name"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sobiraem imya obzhektiva"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "govorim chto obzhektiv vypolnen"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "sobiraem imya tajmera"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "naznachaem tajmer"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "set object and target to sleep"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "ubivaem zenitki"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "umen'shaem kolichestvo aktivnyh baz"
             }
-          },
-          {
-            "triggerEnable": {
+          ],
+          "triggerEnable": [
+            {
               "target": "t1_minor_task_completed"
-            }
-          },
-          {
-            "triggerEnable": {
+            },
+            {
               "target": "bdt_t2_aaa_destroy_start"
             }
-          },
-          {
-            "varSetString": {
+          ],
+          "varSetString": [
+            {
               "value": "",
               "var": "@bdt_destroy_t2_bombing_zone_var_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t2_bomb_object_",
               "var": "bdt_destroy_t2_bombing_zone_object_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t2_bomb_zone_",
               "var": "bdt_destroy_t2_bombing_zone_target_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t1_destroy_zone_",
               "var": "bdt_t1_destroy_objective_name"
-            }
-          },
-          {
-            "varSetString": {
+            },
+            {
               "value": "bdt_t2_zone_",
               "var": "bdt_destroy_t2_timer_var_name"
             }
+          ],
+          "varGetIntFromString": {
+            "value": "@bdt_destroy_t2_bombing_zone_name",
+            "var": "bdt_destroy_t2_real_idx"
           },
-          {
-            "varGetIntFromString": {
-              "value": "@bdt_destroy_t2_bombing_zone_name",
-              "var": "bdt_destroy_t2_real_idx"
-            }
-          },
-          {
-            "varAddString": {
+          "varAddString": [
+            {
               "value": "@bdt_destroy_t2_real_idx",
               "digits": 2,
               "var": "bdt_destroy_t2_bombing_zone_object_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "@bdt_destroy_t2_bombing_zone_idx",
               "digits": 2,
               "var": "bdt_destroy_t2_bombing_zone_target_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_bomb_target",
               "digits": 0,
               "var": "bdt_destroy_t2_bombing_zone_target_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "@bdt_destroy_t2_bombing_zone_idx",
               "digits": 2,
               "var": "bdt_t1_destroy_objective_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "@bdt_destroy_t2_bombing_zone_idx",
               "digits": 2,
               "var": "bdt_destroy_t2_timer_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_timer",
               "digits": 0,
               "var": "bdt_destroy_t2_timer_var_name"
             }
+          ],
+          "__triggerEnable": {
+            "target": "bdt_t2_set_objectvie"
           },
-          {
-            "__triggerEnable": {
-              "target": "bdt_t2_set_objectvie"
-            }
+          "varSetInt": {
+            "value": 0,
+            "var": "@bdt_destroy_t2_timer_var_name",
+            "input_var": "bdt_respawn_time"
           },
-          {
-            "varSetInt": {
-              "value": 0,
-              "var": "@bdt_destroy_t2_timer_var_name",
-              "input_var": "bdt_respawn_time"
-            }
-          },
-          {
-            "unitPutToSleep": [
-              {
-                "target": "@bdt_destroy_t2_bombing_zone_object_name"
-              },
-              {
-                "target": "@bdt_destroy_t2_bombing_zone_target_name"
-              }
+          "unitPutToSleep": {
+            "target": [
+              "@bdt_destroy_t2_bombing_zone_object_name",
+              "@bdt_destroy_t2_bombing_zone_target_name"
             ]
           },
-          {
-            "varModify": {
-              "operator": "add",
-              "value": -1.0,
-              "var": "bdt_t2_cur_bases_count"
-            }
+          "varModify": {
+            "operator": "add",
+            "value": -1.0,
+            "var": "bdt_t2_cur_bases_count"
           }
-        ],
+        },
         "else_actions": {
           "comment": {
             "value": "zona cela - idem dal'she po ciklu"
@@ -4962,41 +3918,33 @@
               "comparasion_func": "less"
             }
           },
-          "actions": [
-            {
-              "varModify": {
-                "operator": "add",
-                "value": 1.0,
-                "var": "bdt_t1_aaa_destroy_idx"
-              }
+          "actions": {
+            "varModify": {
+              "operator": "add",
+              "value": 1.0,
+              "var": "bdt_t1_aaa_destroy_idx"
             },
-            {
-              "varSetString": {
-                "value": "",
-                "var": "bdt_t1_aaa_destroy_name",
-                "input_var": "bdt_destroy_t1_bombing_zone_name"
-              }
+            "varSetString": {
+              "value": "",
+              "var": "bdt_t1_aaa_destroy_name",
+              "input_var": "bdt_destroy_t1_bombing_zone_name"
             },
-            {
-              "varAddString": {
+            "varAddString": [
+              {
                 "value": "_aaa_point_",
                 "digits": 2,
                 "var": "bdt_t1_aaa_destroy_name"
-              }
-            },
-            {
-              "varAddString": {
+              },
+              {
                 "value": "@bdt_t1_aaa_destroy_idx",
                 "digits": 2,
                 "var": "bdt_t1_aaa_destroy_name"
               }
-            },
-            {
-              "triggerEnable": {
-                "target": "bdt_t1_aaa_destroy_go"
-              }
+            ],
+            "triggerEnable": {
+              "target": "bdt_t1_aaa_destroy_go"
             }
-          ],
+          },
           "else_actions": {
             "triggerEnable": {
               "target": "bdt_destroy_t1_rotator"
@@ -5039,9 +3987,19 @@
               "power": 1.0,
               "useEffect": false,
               "countEffects": 1,
-              "delay": [1.0,1.0],
-              "offset": [0.0,0.0,0.0],
-              "radiusOffset": [10.0,15.0],
+              "delay": [
+                1.0,
+                1.0
+              ],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "radiusOffset": [
+                10.0,
+                15.0
+              ],
               "target": "bdt_t1_aaa_squad",
               "doExplosion": true,
               "useForTriggerFiltered": true
@@ -5110,41 +4068,33 @@
               "comparasion_func": "less"
             }
           },
-          "actions": [
-            {
-              "varModify": {
-                "operator": "add",
-                "value": 1.0,
-                "var": "bdt_t2_aaa_destroy_idx"
-              }
+          "actions": {
+            "varModify": {
+              "operator": "add",
+              "value": 1.0,
+              "var": "bdt_t2_aaa_destroy_idx"
             },
-            {
-              "varSetString": {
-                "value": "",
-                "var": "bdt_t2_aaa_destroy_name",
-                "input_var": "bdt_destroy_t2_bombing_zone_name"
-              }
+            "varSetString": {
+              "value": "",
+              "var": "bdt_t2_aaa_destroy_name",
+              "input_var": "bdt_destroy_t2_bombing_zone_name"
             },
-            {
-              "varAddString": {
+            "varAddString": [
+              {
                 "value": "_aaa_point_",
                 "digits": 2,
                 "var": "bdt_t2_aaa_destroy_name"
-              }
-            },
-            {
-              "varAddString": {
+              },
+              {
                 "value": "@bdt_t2_aaa_destroy_idx",
                 "digits": 2,
                 "var": "bdt_t2_aaa_destroy_name"
               }
-            },
-            {
-              "triggerEnable": {
-                "target": "bdt_t2_aaa_destroy_go"
-              }
+            ],
+            "triggerEnable": {
+              "target": "bdt_t2_aaa_destroy_go"
             }
-          ],
+          },
           "else_actions": {
             "triggerEnable": {
               "target": "bdt_destroy_t2_rotator"
@@ -5188,9 +4138,19 @@
               "power": 1.0,
               "useEffect": false,
               "countEffects": 1,
-              "delay": [1.0,1.0],
-              "offset": [0.0,0.0,0.0],
-              "radiusOffset": [10.0,15.0],
+              "delay": [
+                1.0,
+                1.0
+              ],
+              "offset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "radiusOffset": [
+                10.0,
+                15.0
+              ],
               "target": "bdt_t2_aaa_squad",
               "doExplosion": true,
               "useForTriggerFiltered": true
@@ -5223,7 +4183,7 @@
             "time": 1.0
           }
         },
-        "conditions": [],
+        "conditions": {},
         "actions": {
           "varSetInt": {
             "value": 0,
@@ -5233,7 +4193,7 @@
             "target": "bdt_t1_clear_rotator"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "bdt_t1_clear_rotator": {
         "is_enabled": false,
@@ -5256,43 +4216,33 @@
             "var_value_other": "bdt_t1_active_bases_max_count"
           }
         },
-        "actions": [
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "bdt_t1_clear_idx"
-            }
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "bdt_t1_clear_idx"
           },
-          {
-            "comment": {
+          "comment": [
+            {
               "value": "sobiraem imya obzhektiva"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "proveryaem status"
             }
+          ],
+          "varSetString": {
+            "value": "bdt_t1_destroy_zone_",
+            "var": "bdt_t1_clear_name"
           },
-          {
-            "varSetString": {
-              "value": "bdt_t1_destroy_zone_",
-              "var": "bdt_t1_clear_name"
-            }
+          "varAddString": {
+            "value": "@bdt_t1_clear_idx",
+            "digits": 2,
+            "var": "bdt_t1_clear_name"
           },
-          {
-            "varAddString": {
-              "value": "@bdt_t1_clear_idx",
-              "digits": 2,
-              "var": "bdt_t1_clear_name"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_t1_clear_check"
-            }
+          "triggerEnable": {
+            "target": "bdt_t1_clear_check"
           }
-        ],
+        },
         "else_actions": {
           "triggerEnable": {
             "target": "bdt_destroy_t1_start"
@@ -5349,7 +4299,7 @@
             "time": 1.0
           }
         },
-        "conditions": [],
+        "conditions": {},
         "actions": {
           "varSetInt": {
             "value": 0,
@@ -5359,7 +4309,7 @@
             "target": "bdt_t2_clear_rotator"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "bdt_t2_clear_rotator": {
         "is_enabled": false,
@@ -5382,43 +4332,33 @@
             "var_value_other": "bdt_t2_active_bases_max_count"
           }
         },
-        "actions": [
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "bdt_t2_clear_idx"
-            }
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "bdt_t2_clear_idx"
           },
-          {
-            "comment": {
+          "comment": [
+            {
               "value": "sobiraem imya obzhektiva"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "proveryaem status"
             }
+          ],
+          "varSetString": {
+            "value": "bdt_t2_destroy_zone_",
+            "var": "bdt_t2_clear_name"
           },
-          {
-            "varSetString": {
-              "value": "bdt_t2_destroy_zone_",
-              "var": "bdt_t2_clear_name"
-            }
+          "varAddString": {
+            "value": "@bdt_t2_clear_idx",
+            "digits": 2,
+            "var": "bdt_t2_clear_name"
           },
-          {
-            "varAddString": {
-              "value": "@bdt_t2_clear_idx",
-              "digits": 2,
-              "var": "bdt_t2_clear_name"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_t2_clear_check"
-            }
+          "triggerEnable": {
+            "target": "bdt_t2_clear_check"
           }
-        ],
+        },
         "else_actions": {
           "triggerEnable": {
             "target": "bdt_destroy_t2_start"
@@ -5625,7 +4565,7 @@
             "time": 1.0
           }
         },
-        "conditions": [],
+        "conditions": {},
         "actions": {
           "varSetInt": {
             "value": 0,
@@ -5635,7 +4575,7 @@
             "target": "bdt_t1_restore_rotator"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "bdt_t1_restore_rotator": {
         "is_enabled": false,
@@ -5658,62 +4598,48 @@
             "var_value_other": "bdt_t1_active_bases_max_count"
           }
         },
-        "actions": [
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "bdt_t1_restore_cur_idx"
-            }
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "bdt_t1_restore_cur_idx"
           },
-          {
-            "comment": {
+          "comment": [
+            {
               "value": "sobiraem imya peremennoj gde hranitsya tajmer"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "poluchaem znachenie tajmera"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "proveryaem znachenie tajmera"
             }
+          ],
+          "varSetString": {
+            "value": "bdt_t1_zone_",
+            "var": "bdt_t1_restore_timer_var_name"
           },
-          {
-            "varSetString": {
-              "value": "bdt_t1_zone_",
-              "var": "bdt_t1_restore_timer_var_name"
-            }
-          },
-          {
-            "varAddString": {
+          "varAddString": [
+            {
               "value": "@bdt_t1_restore_cur_idx",
               "digits": 2,
               "var": "bdt_t1_restore_timer_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_timer",
               "digits": 0,
               "var": "bdt_t1_restore_timer_var_name"
             }
+          ],
+          "varSetInt": {
+            "value": 0,
+            "var": "bdt_t1_restore_timer",
+            "input_var": "@bdt_t1_restore_timer_var_name"
           },
-          {
-            "varSetInt": {
-              "value": 0,
-              "var": "bdt_t1_restore_timer",
-              "input_var": "@bdt_t1_restore_timer_var_name"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_t1_retore_timer_check"
-            }
+          "triggerEnable": {
+            "target": "bdt_t1_retore_timer_check"
           }
-        ],
+        },
         "else_actions": {
           "triggerEnable": {
             "target": "bdt_t1_restore_start"
@@ -5740,30 +4666,24 @@
             "comparasion_func": "more"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "tajmer bol'she nulya - umen'shaem ego"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "idem dal'she po ciklu"
             }
+          ],
+          "varModify": {
+            "operator": "add",
+            "value": -1.0,
+            "var": "@bdt_t1_restore_timer_var_name"
           },
-          {
-            "varModify": {
-              "operator": "add",
-              "value": -1.0,
-              "var": "@bdt_t1_restore_timer_var_name"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_t1_restore_rotator"
-            }
+          "triggerEnable": {
+            "target": "bdt_t1_restore_rotator"
           }
-        ],
+        },
         "else_actions": {
           "comment": {
             "value": "idem dal'she pociklu"
@@ -5786,7 +4706,7 @@
             "time": 1.0
           }
         },
-        "conditions": [],
+        "conditions": {},
         "actions": {
           "varSetInt": {
             "value": 0,
@@ -5796,7 +4716,7 @@
             "target": "bdt_t2_restore_rotator"
           }
         },
-        "else_actions": []
+        "else_actions": {}
       },
       "bdt_t2_restore_rotator": {
         "is_enabled": false,
@@ -5819,62 +4739,48 @@
             "var_value_other": "bdt_t2_active_bases_max_count"
           }
         },
-        "actions": [
-          {
-            "varModify": {
-              "operator": "add",
-              "value": 1.0,
-              "var": "bdt_t2_restore_cur_idx"
-            }
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "bdt_t2_restore_cur_idx"
           },
-          {
-            "comment": {
+          "comment": [
+            {
               "value": "sobiraem imya peremennoj gde hranitsya tajmer"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "poluchaem znachenie tajmera"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "proveryaem znachenie tajmera"
             }
+          ],
+          "varSetString": {
+            "value": "bdt_t2_zone_",
+            "var": "bdt_t2_restore_timer_var_name"
           },
-          {
-            "varSetString": {
-              "value": "bdt_t2_zone_",
-              "var": "bdt_t2_restore_timer_var_name"
-            }
-          },
-          {
-            "varAddString": {
+          "varAddString": [
+            {
               "value": "@bdt_t2_restore_cur_idx",
               "digits": 2,
               "var": "bdt_t2_restore_timer_var_name"
-            }
-          },
-          {
-            "varAddString": {
+            },
+            {
               "value": "_timer",
               "digits": 0,
               "var": "bdt_t2_restore_timer_var_name"
             }
+          ],
+          "varSetInt": {
+            "value": 0,
+            "var": "bdt_t2_restore_timer",
+            "input_var": "@bdt_t2_restore_timer_var_name"
           },
-          {
-            "varSetInt": {
-              "value": 0,
-              "var": "bdt_t2_restore_timer",
-              "input_var": "@bdt_t2_restore_timer_var_name"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_t2_retore_timer_check"
-            }
+          "triggerEnable": {
+            "target": "bdt_t2_retore_timer_check"
           }
-        ],
+        },
         "else_actions": {
           "triggerEnable": {
             "target": "bdt_t2_restore_start"
@@ -5901,30 +4807,24 @@
             "comparasion_func": "more"
           }
         },
-        "actions": [
-          {
-            "comment": {
+        "actions": {
+          "comment": [
+            {
               "value": "tajmer bol'she nulya - umen'shaem ego"
-            }
-          },
-          {
-            "comment": {
+            },
+            {
               "value": "idem dal'she po ciklu"
             }
+          ],
+          "varModify": {
+            "operator": "add",
+            "value": -1.0,
+            "var": "@bdt_t2_restore_timer_var_name"
           },
-          {
-            "varModify": {
-              "operator": "add",
-              "value": -1.0,
-              "var": "@bdt_t2_restore_timer_var_name"
-            }
-          },
-          {
-            "triggerEnable": {
-              "target": "bdt_t2_restore_rotator"
-            }
+          "triggerEnable": {
+            "target": "bdt_t2_restore_rotator"
           }
-        ],
+        },
         "else_actions": {
           "comment": {
             "value": "idem dal'she pociklu"
@@ -5948,8 +4848,8 @@
         "timeLimit": 18000,
         "team": "A"
       },
-      "onSuccess": [],
-      "onFailed": []
+      "onSuccess": {},
+      "onFailed": {}
     },
     "bdt_t1_destroy_zone_02": {
       "is_enabled": false,
@@ -5960,8 +4860,8 @@
         "timeLimit": 18000,
         "team": "A"
       },
-      "onSuccess": [],
-      "onFailed": []
+      "onSuccess": {},
+      "onFailed": {}
     },
     "bdt_t1_destroy_zone_03": {
       "is_enabled": false,
@@ -5972,8 +4872,8 @@
         "timeLimit": 18000,
         "team": "A"
       },
-      "onSuccess": [],
-      "onFailed": []
+      "onSuccess": {},
+      "onFailed": {}
     },
     "bdt_t2_destroy_zone_01": {
       "is_enabled": false,
@@ -5984,8 +4884,8 @@
         "timeLimit": 18000,
         "team": "B"
       },
-      "onSuccess": [],
-      "onFailed": []
+      "onSuccess": {},
+      "onFailed": {}
     },
     "bdt_t2_destroy_zone_02": {
       "is_enabled": false,
@@ -5996,8 +4896,8 @@
         "timeLimit": 18000,
         "team": "B"
       },
-      "onSuccess": [],
-      "onFailed": []
+      "onSuccess": {},
+      "onFailed": {}
     },
     "bdt_t2_destroy_zone_03": {
       "is_enabled": false,
@@ -6008,8 +4908,8 @@
         "timeLimit": 18000,
         "team": "B"
       },
-      "onSuccess": [],
-      "onFailed": []
+      "onSuccess": {},
+      "onFailed": {}
     }
   },
   "variables": {
@@ -6158,18 +5058,34 @@
     "t1_distance_check_variable": 0.0,
     "t2_distance_check_variable": 0.0
   },
-  "dialogs": [],
-  "airfields": [],
-  "effects": [],
-  "units": [
-    {
-      "structures": {
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {
+    "structures": [
+      {
         "name": "bdt_t1_bomb_zone_01_bomb_target",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [149790.0,2589.22,16492.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            149790.0,
+            2589.22,
+            16492.7
+          ]
         ],
         "unit_class": "dummy_immortal",
         "objLayer": 1,
@@ -6192,23 +5108,43 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "stealthRadius": 0.0,
           "setStealth": true
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "bdt_t1_bomb_zone_02_bomb_target",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [149914.0,2589.22,16492.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            149914.0,
+            2589.22,
+            16492.7
+          ]
         ],
         "unit_class": "dummy_immortal",
         "objLayer": 1,
@@ -6231,23 +5167,43 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "stealthRadius": 0.0,
           "setStealth": true
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "bdt_t1_bomb_zone_03_bomb_target",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [150060.0,2589.22,16492.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            150060.0,
+            2589.22,
+            16492.7
+          ]
         ],
         "unit_class": "dummy_immortal",
         "objLayer": 1,
@@ -6270,23 +5226,43 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "stealthRadius": 0.0,
           "setStealth": true
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "bdt_t1_bomb_zone_04_bomb_target",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [150213.0,2589.22,16492.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            150213.0,
+            2589.22,
+            16492.7
+          ]
         ],
         "unit_class": "dummy_immortal",
         "objLayer": 1,
@@ -6309,23 +5285,43 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "stealthRadius": 0.0,
           "setStealth": true
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "bdt_t1_bomb_zone_05_bomb_target",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [150372.0,2589.22,16492.7]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            150372.0,
+            2589.22,
+            16492.7
+          ]
         ],
         "unit_class": "dummy_immortal",
         "objLayer": 1,
@@ -6348,23 +5344,43 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "stealthRadius": 0.0,
           "setStealth": true
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "bdt_t2_bomb_zone_01_bomb_target",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [149790.0,2589.22,17308.1]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            149790.0,
+            2589.22,
+            17308.1
+          ]
         ],
         "unit_class": "dummy_immortal",
         "objLayer": 1,
@@ -6387,23 +5403,43 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "stealthRadius": 0.0,
           "setStealth": true
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "bdt_t2_bomb_zone_02_bomb_target",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [149910.0,2589.22,17308.1]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            149910.0,
+            2589.22,
+            17308.1
+          ]
         ],
         "unit_class": "dummy_immortal",
         "objLayer": 1,
@@ -6426,23 +5462,43 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "stealthRadius": 0.0,
           "setStealth": true
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "bdt_t2_bomb_zone_03_bomb_target",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [150073.0,2589.22,17308.1]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            150073.0,
+            2589.22,
+            17308.1
+          ]
         ],
         "unit_class": "dummy_immortal",
         "objLayer": 1,
@@ -6465,23 +5521,43 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "stealthRadius": 0.0,
           "setStealth": true
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "bdt_t2_bomb_zone_04_bomb_target",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [150216.0,2589.22,17308.1]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            150216.0,
+            2589.22,
+            17308.1
+          ]
         ],
         "unit_class": "dummy_immortal",
         "objLayer": 1,
@@ -6504,23 +5580,43 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "stealthRadius": 0.0,
           "setStealth": true
         },
-        "way": []
-      }
-    },
-    {
-      "structures": {
+        "way": {}
+      },
+      {
         "name": "bdt_t2_bomb_zone_05_bomb_target",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [150369.0,2589.22,17308.1]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            150369.0,
+            2589.22,
+            17308.1
+          ]
         ],
         "unit_class": "dummy_immortal",
         "objLayer": 1,
@@ -6543,94 +5639,108 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "isDelayed": true,
           "stealthRadius": 0.0,
           "setStealth": true
         },
-        "way": []
+        "way": {}
       }
-    },
-    {
-      "squad": {
+    ],
+    "squad": [
+      {
         "name": "bdt_t1_targets_squad",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [150313.0,2589.22,15102.1]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            150313.0,
+            2589.22,
+            15102.1
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "bdt_t1_bomb_zone_01_bomb_target"
-          },
-          {
-            "squad_members": "bdt_t1_bomb_zone_02_bomb_target"
-          },
-          {
-            "squad_members": "bdt_t1_bomb_zone_03_bomb_target"
-          },
-          {
-            "squad_members": "bdt_t1_bomb_zone_04_bomb_target"
-          },
-          {
-            "squad_members": "bdt_t1_bomb_zone_05_bomb_target"
-          }
-        ]
-      }
-    },
-    {
-      "squad": {
+        "props": {
+          "squad_members": [
+            "bdt_t1_bomb_zone_01_bomb_target",
+            "bdt_t1_bomb_zone_02_bomb_target",
+            "bdt_t1_bomb_zone_03_bomb_target",
+            "bdt_t1_bomb_zone_04_bomb_target",
+            "bdt_t1_bomb_zone_05_bomb_target"
+          ]
+        }
+      },
+      {
         "name": "bdt_t2_targets_squad",
         "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [150904.0,2589.22,17308.1]
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            150904.0,
+            2589.22,
+            17308.1
+          ]
         ],
-        "props": [
-          {
-            "squad_members": "bdt_t2_bomb_zone_01_bomb_target"
-          },
-          {
-            "squad_members": "bdt_t2_bomb_zone_02_bomb_target"
-          },
-          {
-            "squad_members": "bdt_t2_bomb_zone_03_bomb_target"
-          },
-          {
-            "squad_members": "bdt_t2_bomb_zone_04_bomb_target"
-          },
-          {
-            "squad_members": "bdt_t2_bomb_zone_05_bomb_target"
-          }
-        ]
+        "props": {
+          "squad_members": [
+            "bdt_t2_bomb_zone_01_bomb_target",
+            "bdt_t2_bomb_zone_02_bomb_target",
+            "bdt_t2_bomb_zone_03_bomb_target",
+            "bdt_t2_bomb_zone_04_bomb_target",
+            "bdt_t2_bomb_zone_05_bomb_target"
+          ]
+        }
       }
-    }
-  ],
-  "areas": [],
-  "objLayers": [
-    {
-      "layer": {
+    ]
+  },
+  "areas": {},
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
         "enabled": true
       }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    }
-  ],
-  "wayPoints": []
+    ]
+  },
+  "wayPoints": {}
 }

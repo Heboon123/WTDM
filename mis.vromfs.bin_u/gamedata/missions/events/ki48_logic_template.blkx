@@ -15,7 +15,7 @@
       "weather": "hazy"
     }
   },
-  "imports": [],
+  "imports": {},
   "triggers": {
     "isCategory": true,
     "is_enabled": true,
@@ -28,13 +28,17 @@
         "enableAfterComplete": false
       },
       "events": {
-        "initMission": []
+        "initMission": {}
       },
-      "conditions": [],
+      "conditions": {},
       "actions": {
         "unitRespawn": {
           "delay": 1.0,
-          "offset": [0.0,0.0,0.0],
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
           "object": "player",
           "target": "player_respawn_pt"
         },
@@ -45,16 +49,14 @@
           "setStatus": "disable",
           "control": "ALL"
         },
-        "triggerEnable": [
-          {
-            "target": "target_random_spawn"
-          },
-          {
-            "target": "player_lock_control"
-          }
-        ]
+        "triggerEnable": {
+          "target": [
+            "target_random_spawn",
+            "player_lock_control"
+          ]
+        }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "player_lock_control": {
       "is_enabled": false,
@@ -69,26 +71,24 @@
           "time": 0.01
         }
       },
-      "conditions": [],
-      "actions": [
-        {
-          "unitSetControls": {
+      "conditions": {},
+      "actions": {
+        "unitSetControls": [
+          {
             "controls": "rudder",
             "value": 0.0,
             "force": true,
             "objects": "player"
-          }
-        },
-        {
-          "unitSetControls": {
+          },
+          {
             "controls": "power",
             "value": 0.32,
             "force": true,
             "objects": "player"
           }
-        }
-      ],
-      "else_actions": []
+        ]
+      },
+      "else_actions": {}
     },
     "target_random_spawn": {
       "is_enabled": false,
@@ -103,7 +103,7 @@
           "time": 0.01
         }
       },
-      "conditions": [],
+      "conditions": {},
       "actions": {
         "varSetRandomInt": {
           "var": "random_int_d11",
@@ -122,7 +122,11 @@
         },
         "unitRespawn": {
           "delay": 1.0,
-          "offset": [0.0,0.0,0.0],
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
           "object": "ship_target",
           "target": "@target_spawn_area_name"
         },
@@ -130,7 +134,7 @@
           "target": "check_skip_check"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "check_skip_check": {
       "is_enabled": false,
@@ -161,39 +165,27 @@
           "object": "ship_target",
           "element": ""
         },
-        "playerControls": [
-          {
-            "setStatus": "enable"
-          },
-          {
-            "control": "AXIS_WEAPON_AIM_HEADING"
-          },
-          {
-            "control": "AXIS_WEAPON_AIM_PITCH"
-          }
-        ],
+        "playerControls": {
+          "setStatus": "enable",
+          "control": [
+            "AXIS_WEAPON_AIM_HEADING",
+            "AXIS_WEAPON_AIM_PITCH"
+          ]
+        },
         "triggerEnable": {
           "target": "up_down_done"
         }
       },
       "else_actions": {
-        "varSetBool": [
-          {
-            "value": false
-          },
-          {
-            "var": "is_control_checked_left"
-          },
-          {
-            "var": "is_control_checked_right"
-          },
-          {
-            "var": "is_control_checked_up"
-          },
-          {
-            "var": "is_control_checked_down"
-          }
-        ],
+        "varSetBool": {
+          "value": false,
+          "var": [
+            "is_control_checked_left",
+            "is_control_checked_right",
+            "is_control_checked_up",
+            "is_control_checked_down"
+          ]
+        },
         "triggerEnable": {
           "target": "rocket_check_init"
         }
@@ -212,7 +204,7 @@
           "time": 0.01
         }
       },
-      "conditions": [],
+      "conditions": {},
       "actions": {
         "wait": {
           "time": 2.0
@@ -242,7 +234,7 @@
           "target": "rocket_check_controls"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "rocket_check_controls": {
       "is_enabled": false,
@@ -280,19 +272,15 @@
           "setStatus": "enable",
           "control": "AXIS_WEAPON_AIM_HEADING"
         },
-        "triggerEnable": [
-          {
-            "target": "check_left"
-          },
-          {
-            "target": "check_right"
-          },
-          {
-            "target": "left_right_done"
-          }
-        ]
+        "triggerEnable": {
+          "target": [
+            "check_left",
+            "check_right",
+            "left_right_done"
+          ]
+        }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "check_left": {
       "is_enabled": false,
@@ -320,7 +308,7 @@
           "var": "is_control_checked_left"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "check_right": {
       "is_enabled": false,
@@ -348,7 +336,7 @@
           "var": "is_control_checked_right"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "left_right_done": {
       "is_enabled": false,
@@ -363,22 +351,20 @@
           "time": 0.01
         }
       },
-      "conditions": [
-        {
-          "varCompareBool": {
+      "conditions": {
+        "varCompareBool": [
+          {
             "var_value": "is_control_checked_left",
             "value": true,
             "comparasion_func": "equal"
-          }
-        },
-        {
-          "varCompareBool": {
+          },
+          {
             "var_value": "is_control_checked_right",
             "value": true,
             "comparasion_func": "equal"
           }
-        }
-      ],
+        ]
+      },
       "actions": {
         "wait": {
           "time": 1.0
@@ -400,19 +386,15 @@
           "setStatus": "enable",
           "control": "AXIS_WEAPON_AIM_PITCH"
         },
-        "triggerEnable": [
-          {
-            "target": "check_up"
-          },
-          {
-            "target": "check_down"
-          },
-          {
-            "target": "up_down_done"
-          }
-        ]
+        "triggerEnable": {
+          "target": [
+            "check_up",
+            "check_down",
+            "up_down_done"
+          ]
+        }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "check_up": {
       "is_enabled": false,
@@ -440,7 +422,7 @@
           "var": "is_control_checked_up"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "check_down": {
       "is_enabled": false,
@@ -468,7 +450,7 @@
           "var": "is_control_checked_down"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "up_down_done": {
       "is_enabled": false,
@@ -483,22 +465,20 @@
           "time": 0.01
         }
       },
-      "conditions": [
-        {
-          "varCompareBool": {
+      "conditions": {
+        "varCompareBool": [
+          {
             "var_value": "is_control_checked_up",
             "value": true,
             "comparasion_func": "equal"
-          }
-        },
-        {
-          "varCompareBool": {
+          },
+          {
             "var_value": "is_control_checked_down",
             "value": true,
             "comparasion_func": "equal"
           }
-        }
-      ],
+        ]
+      },
       "actions": {
         "wait": {
           "time": 1.0
@@ -524,7 +504,7 @@
           "target": "rocket_launched"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "rocket_launched": {
       "is_enabled": false,
@@ -544,20 +524,16 @@
           "control": "ID_AGM"
         }
       },
-      "actions": [
-        {
-          "missionSetTimeSpeed": {
-            "speed": 1.0,
-            "realtimeTriggers": true
-          }
+      "actions": {
+        "missionSetTimeSpeed": {
+          "speed": 1.0,
+          "realtimeTriggers": true
         },
-        {
-          "hudElementSelectionShade": {
-            "element": ""
-          }
+        "hudElementSelectionShade": {
+          "element": ""
         },
-        {
-          "playHint": {
+        "playHint": [
+          {
             "hintType": "standard",
             "name": "hints/ki_148_missile/destroy_target",
             "action": "show",
@@ -569,10 +545,8 @@
             "object_var_name": "",
             "object_var_comp_op": "equal",
             "object_var_value": 0
-          }
-        },
-        {
-          "playHint": {
+          },
+          {
             "hintType": "standard",
             "name": "missions/tutorial_destroyer_battle/zoom",
             "action": "show",
@@ -585,54 +559,38 @@
             "object_var_comp_op": "equal",
             "object_var_value": 0
           }
-        },
-        {
-          "playerControls": {
+        ],
+        "playerControls": [
+          {
             "setStatus": "enable",
             "control": "ALL"
+          },
+          {
+            "setStatus": "disable",
+            "control": [
+              "AXIS_AILERONS",
+              "AXIS_ELEVATOR",
+              "AXIS_THROTTLE"
+            ]
           }
-        },
-        {
-          "playerControls": [
-            {
-              "setStatus": "disable"
-            },
-            {
-              "control": "AXIS_AILERONS"
-            },
-            {
-              "control": "AXIS_ELEVATOR"
-            },
-            {
-              "control": "AXIS_THROTTLE"
-            }
-          ]
-        },
-        {
-          "wait": {
+        ],
+        "wait": [
+          {
             "time": 1.0
-          }
-        },
-        {
-          "wait": {
+          },
+          {
             "time": 6.0
           }
-        },
-        {
-          "triggerEnable": [
-            {
-              "target": "target_hit"
-            },
-            {
-              "target": "time_out_timer"
-            },
-            {
-              "target": "target_missed"
-            }
+        ],
+        "triggerEnable": {
+          "target": [
+            "target_hit",
+            "time_out_timer",
+            "target_missed"
           ]
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "target_hit": {
       "is_enabled": false,
@@ -659,24 +617,30 @@
         }
       },
       "actions": {
-        "triggerDisable": [
-          {
-            "target": "target_missed"
-          },
-          {
-            "target": "time_out_timer"
-          },
-          {
-            "target": "rocket_launched"
-          }
-        ],
+        "triggerDisable": {
+          "target": [
+            "target_missed",
+            "time_out_timer",
+            "rocket_launched"
+          ]
+        },
         "unitDamage": {
           "power": 1.0,
           "useEffect": false,
           "countEffects": 1,
-          "delay": [1.0,1.0],
-          "offset": [0.0,0.0,0.0],
-          "radiusOffset": [10.0,15.0],
+          "delay": [
+            1.0,
+            1.0
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "radiusOffset": [
+            10.0,
+            15.0
+          ],
           "target": "ship_target",
           "doExplosion": true
         },
@@ -684,7 +648,7 @@
           "target": "mission_completed"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "time_out_timer": {
       "is_enabled": false,
@@ -699,7 +663,7 @@
           "time": 0.01
         }
       },
-      "conditions": [],
+      "conditions": {},
       "actions": {
         "wait": {
           "time": 30.0
@@ -711,7 +675,7 @@
           "after_activation": "disable"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "target_missed": {
       "is_enabled": false,
@@ -743,17 +707,13 @@
         "wait": {
           "time": 1.0
         },
-        "triggerDisable": [
-          {
-            "target": "target_hit"
-          },
-          {
-            "target": "time_out_timer"
-          },
-          {
-            "target": "rocket_launched"
-          }
-        ],
+        "triggerDisable": {
+          "target": [
+            "target_hit",
+            "time_out_timer",
+            "rocket_launched"
+          ]
+        },
         "missionSetTimeSpeed": {
           "speed": 0.0,
           "realtimeTriggers": true
@@ -766,16 +726,14 @@
           "value": 15,
           "var": "mission_end_time"
         },
-        "triggerEnable": [
-          {
-            "target": "mission_end_timer"
-          },
-          {
-            "target": "mission_restart"
-          }
-        ]
+        "triggerEnable": {
+          "target": [
+            "mission_end_timer",
+            "mission_restart"
+          ]
+        }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "mission_end_timer": {
       "is_enabled": false,
@@ -868,98 +826,86 @@
           "control": "ID_CONTINUE"
         }
       },
-      "actions": [
-        {
-          "triggerDisable": {
-            "target": "mission_end_timer"
-          }
+      "actions": {
+        "triggerDisable": {
+          "target": "mission_end_timer"
         },
-        {
-          "missionSetTimeSpeed": {
-            "speed": 1.0,
-            "realtimeTriggers": true
-          }
+        "missionSetTimeSpeed": {
+          "speed": 1.0,
+          "realtimeTriggers": true
         },
-        {
-          "hudElementSelectionShade": {
-            "element": ""
-          }
+        "hudElementSelectionShade": {
+          "element": ""
         },
-        {
-          "playHint": {
-            "hintType": "standard",
-            "name": "",
-            "action": "hideCur",
-            "shouldFadeOut": false,
-            "isOverFade": false,
-            "time": -1.0,
-            "priority": 0,
-            "target_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0
-          }
+        "playHint": {
+          "hintType": "standard",
+          "name": "",
+          "action": "hideCur",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0
         },
-        {
-          "missionSetFade": {
+        "missionSetFade": [
+          {
             "mode": "fadeOut",
-            "color": [0.0,0.0,0.0],
+            "color": [
+              0.0,
+              0.0,
+              0.0
+            ],
             "time": 1.0
-          }
-        },
-        {
-          "missionSetFade": {
+          },
+          {
             "mode": "fadeIn",
-            "color": [0.0,0.0,0.0],
+            "color": [
+              0.0,
+              0.0,
+              0.0
+            ],
             "time": 1.0
           }
-        },
-        {
-          "wait": {
+        ],
+        "wait": [
+          {
             "time": 1.0
-          }
-        },
-        {
-          "wait": {
+          },
+          {
             "time": 0.1
           }
+        ],
+        "unitSetProperties": {
+          "object": "player",
+          "speed": 300.0
         },
-        {
-          "unitSetProperties": {
-            "object": "player",
-            "speed": 300.0
-          }
+        "unitRespawn": {
+          "delay": 1.0,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "object": "player",
+          "target": "player_respawn_pt"
         },
-        {
-          "unitRespawn": {
-            "delay": 1.0,
-            "offset": [0.0,0.0,0.0],
-            "object": "player",
-            "target": "player_respawn_pt"
-          }
+        "playerControls": {
+          "setStatus": "disable",
+          "control": "ALL"
         },
-        {
-          "playerControls": {
-            "setStatus": "disable",
-            "control": "ALL"
-          }
+        "playerCenterMouseAim": {},
+        "varSetBool": {
+          "value": true,
+          "var": "skip_controls_check"
         },
-        {
-          "playerCenterMouseAim": []
-        },
-        {
-          "varSetBool": {
-            "value": true,
-            "var": "skip_controls_check"
-          }
-        },
-        {
-          "triggerEnable": {
-            "target": "target_random_spawn"
-          }
+        "triggerEnable": {
+          "target": "target_random_spawn"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "mission_completed": {
       "is_enabled": false,
@@ -974,14 +920,14 @@
           "time": 0.01
         }
       },
-      "conditions": [],
+      "conditions": {},
       "actions": {
         "missionCompleted": {
           "timer": false,
           "debriefingTimer": 5
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "mission_failed": {
       "is_enabled": false,
@@ -996,14 +942,14 @@
           "time": 0.01
         }
       },
-      "conditions": [],
+      "conditions": {},
       "actions": {
         "missionFailed": {
           "debriefingTimer": 5,
           "timer": false
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "debug": {
       "isCategory": true,
@@ -1037,7 +983,11 @@
         "actions": {
           "unitRespawn": {
             "delay": 1.0,
-            "offset": [0.0,0.0,0.0],
+            "offset": [
+              0.0,
+              0.0,
+              0.0
+            ],
             "object": "player",
             "target": "player_respawn_pt"
           },
@@ -1045,7 +995,7 @@
             "time": 1.0
           }
         },
-        "else_actions": []
+        "else_actions": {}
       }
     }
   },
@@ -1063,17 +1013,33 @@
     "mission_end_time": 0,
     "skip_controls_check": false
   },
-  "dialogs": [],
-  "airfields": [],
-  "effects": [],
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
   "units": {
     "structures": {
       "name": "ship_target",
       "tm": [
-        [0.813934,0.0,-0.580958],
-        [0.0,1.0,0.0],
-        [0.580958,0.0,0.813934],
-        [1819.7,-2.99902,1682.75]
+        [
+          0.813934,
+          0.0,
+          -0.580958
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.580958,
+          0.0,
+          0.813934
+        ],
+        [
+          1819.7,
+          -2.99902,
+          1682.75
+        ]
       ],
       "unit_class": "ship_target_1_char",
       "objLayer": 1,
@@ -1096,18 +1062,40 @@
         "count": 1,
         "formation_type": "rows",
         "formation_div": 3,
-        "formation_step": [2.5,2.0],
-        "formation_noise": [0.1,0.1]
+        "formation_step": [
+          2.5,
+          2.0
+        ],
+        "formation_noise": [
+          0.1,
+          0.1
+        ]
       },
-      "way": []
+      "way": {}
     },
     "ships": {
       "name": "ship_carrier",
       "tm": [
-        [-0.793354,0.0,-0.608761],
-        [0.0,1.0,0.0],
-        [0.608761,0.0,-0.793354],
-        [4911.45,-3.00146,3623.92]
+        [
+          -0.793354,
+          0.0,
+          -0.608761
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.608761,
+          0.0,
+          -0.793354
+        ],
+        [
+          4911.45,
+          -3.00146,
+          3623.92
+        ]
       ],
       "unit_class": "ijn_cv_soryu",
       "objLayer": 1,
@@ -1130,200 +1118,440 @@
         "count": 1,
         "formation_type": "rows",
         "formation_div": 3,
-        "formation_step": [2.5,2.0],
-        "formation_noise": [0.1,0.1]
+        "formation_step": [
+          2.5,
+          2.0
+        ],
+        "formation_noise": [
+          0.1,
+          0.1
+        ]
       },
-      "way": []
+      "way": {}
     }
   },
   "areas": {
     "area_01": {
       "type": "Sphere",
       "tm": [
-        [317.793,0.0,-508.928],
-        [0.0,600.0,0.0],
-        [508.928,0.0,317.793],
-        [1702.86,-3.00146,1604.84]
+        [
+          317.793,
+          0.0,
+          -508.928
+        ],
+        [
+          0.0,
+          600.0,
+          0.0
+        ],
+        [
+          508.928,
+          0.0,
+          317.793
+        ],
+        [
+          1702.86,
+          -3.00146,
+          1604.84
+        ]
       ],
       "objLayer": 0,
-      "props": []
+      "props": {}
     },
     "player_respawn_pt": {
       "type": "Sphere",
       "tm": [
-        [-5.44901,0.0,-8.385],
-        [0.0,10.0,0.0],
-        [8.385,0.0,-5.44901],
-        [3103.89,59.9985,3692.12]
+        [
+          -5.44901,
+          0.0,
+          -8.385
+        ],
+        [
+          0.0,
+          10.0,
+          0.0
+        ],
+        [
+          8.385,
+          0.0,
+          -5.44901
+        ],
+        [
+          3103.89,
+          59.9985,
+          3692.12
+        ]
       ],
       "objLayer": 0,
-      "props": []
+      "props": {}
     },
     "area_02": {
       "type": "Sphere",
       "tm": [
-        [4149.19,0.0,-2790.02],
-        [0.0,5000.0,0.0],
-        [2790.02,0.0,4149.19],
-        [1709.13,-3.00146,1617.36]
+        [
+          4149.19,
+          0.0,
+          -2790.02
+        ],
+        [
+          0.0,
+          5000.0,
+          0.0
+        ],
+        [
+          2790.02,
+          0.0,
+          4149.19
+        ],
+        [
+          1709.13,
+          -3.00146,
+          1617.36
+        ]
       ],
       "objLayer": 0,
-      "props": []
+      "props": {}
     },
     "target_spawn_pt_01": {
       "type": "Sphere",
       "tm": [
-        [66.9961,0.0,-43.5375],
-        [0.0,79.8999,0.0],
-        [43.5375,0.0,66.9961],
-        [1875.75,-3.00146,1426.31]
+        [
+          66.9961,
+          0.0,
+          -43.5375
+        ],
+        [
+          0.0,
+          79.8999,
+          0.0
+        ],
+        [
+          43.5375,
+          0.0,
+          66.9961
+        ],
+        [
+          1875.75,
+          -3.00146,
+          1426.31
+        ]
       ],
       "objLayer": 0,
-      "props": []
+      "props": {}
     },
     "target_spawn_pt_02": {
       "type": "Sphere",
       "tm": [
-        [-66.9961,0.0,43.5375],
-        [0.0,79.8999,0.0],
-        [-43.5375,0.0,-66.9961],
-        [1779.69,-3.00146,1373.99]
+        [
+          -66.9961,
+          0.0,
+          43.5375
+        ],
+        [
+          0.0,
+          79.8999,
+          0.0
+        ],
+        [
+          -43.5375,
+          0.0,
+          -66.9961
+        ],
+        [
+          1779.69,
+          -3.00146,
+          1373.99
+        ]
       ],
       "objLayer": 0,
-      "props": []
+      "props": {}
     },
     "target_spawn_pt_03": {
       "type": "Sphere",
       "tm": [
-        [66.9961,0.0,-43.5375],
-        [0.0,79.8999,0.0],
-        [43.5375,0.0,66.9961],
-        [1838.45,-3.00097,1519.26]
+        [
+          66.9961,
+          0.0,
+          -43.5375
+        ],
+        [
+          0.0,
+          79.8999,
+          0.0
+        ],
+        [
+          43.5375,
+          0.0,
+          66.9961
+        ],
+        [
+          1838.45,
+          -3.00097,
+          1519.26
+        ]
       ],
       "objLayer": 0,
-      "props": []
+      "props": {}
     },
     "target_spawn_pt_04": {
       "type": "Sphere",
       "tm": [
-        [-68.8315,0.0,40.5738],
-        [0.0,79.8999,0.0],
-        [-40.5738,0.0,-68.8315],
-        [1490.61,-3.00146,1690.76]
+        [
+          -68.8315,
+          0.0,
+          40.5738
+        ],
+        [
+          0.0,
+          79.8999,
+          0.0
+        ],
+        [
+          -40.5738,
+          0.0,
+          -68.8315
+        ],
+        [
+          1490.61,
+          -3.00146,
+          1690.76
+        ]
       ],
       "objLayer": 0,
-      "props": []
+      "props": {}
     },
     "target_spawn_pt_05": {
       "type": "Sphere",
       "tm": [
-        [-66.9961,0.0,43.5375],
-        [0.0,79.8999,0.0],
-        [-43.5375,0.0,-66.9961],
-        [1547.94,-3.00146,1785.62]
+        [
+          -66.9961,
+          0.0,
+          43.5375
+        ],
+        [
+          0.0,
+          79.8999,
+          0.0
+        ],
+        [
+          -43.5375,
+          0.0,
+          -66.9961
+        ],
+        [
+          1547.94,
+          -3.00146,
+          1785.62
+        ]
       ],
       "objLayer": 0,
-      "props": []
+      "props": {}
     },
     "target_spawn_pt_06": {
       "type": "Sphere",
       "tm": [
-        [66.9961,0.0,-43.5375],
-        [0.0,79.8999,0.0],
-        [43.5375,0.0,66.9961],
-        [1459.82,-3.00048,1587.71]
+        [
+          66.9961,
+          0.0,
+          -43.5375
+        ],
+        [
+          0.0,
+          79.8999,
+          0.0
+        ],
+        [
+          43.5375,
+          0.0,
+          66.9961
+        ],
+        [
+          1459.82,
+          -3.00048,
+          1587.71
+        ]
       ],
       "objLayer": 0,
-      "props": []
+      "props": {}
     },
     "target_spawn_pt_07": {
       "type": "Sphere",
       "tm": [
-        [66.9961,0.0,-43.5375],
-        [0.0,79.8999,0.0],
-        [43.5375,0.0,66.9961],
-        [1587.75,-2.99877,1693.29]
+        [
+          66.9961,
+          0.0,
+          -43.5375
+        ],
+        [
+          0.0,
+          79.8999,
+          0.0
+        ],
+        [
+          43.5375,
+          0.0,
+          66.9961
+        ],
+        [
+          1587.75,
+          -2.99877,
+          1693.29
+        ]
       ],
       "objLayer": 0,
-      "props": []
+      "props": {}
     },
     "target_spawn_pt_08": {
       "type": "Sphere",
       "tm": [
-        [66.9961,0.0,-43.5375],
-        [0.0,79.8999,0.0],
-        [43.5375,0.0,66.9961],
-        [1642.56,-3.00146,1848.47]
+        [
+          66.9961,
+          0.0,
+          -43.5375
+        ],
+        [
+          0.0,
+          79.8999,
+          0.0
+        ],
+        [
+          43.5375,
+          0.0,
+          66.9961
+        ],
+        [
+          1642.56,
+          -3.00146,
+          1848.47
+        ]
       ],
       "objLayer": 0,
-      "props": []
+      "props": {}
     },
     "target_spawn_pt_09": {
       "type": "Sphere",
       "tm": [
-        [66.9961,0.0,-43.5375],
-        [0.0,79.8999,0.0],
-        [43.5375,0.0,66.9961],
-        [1945.04,-2.99902,1626.73]
+        [
+          66.9961,
+          0.0,
+          -43.5375
+        ],
+        [
+          0.0,
+          79.8999,
+          0.0
+        ],
+        [
+          43.5375,
+          0.0,
+          66.9961
+        ],
+        [
+          1945.04,
+          -2.99902,
+          1626.73
+        ]
       ],
       "objLayer": 0,
-      "props": []
+      "props": {}
     },
     "target_spawn_pt_10": {
       "type": "Sphere",
       "tm": [
-        [-66.9961,0.0,43.5376],
-        [0.0,79.8999,0.0],
-        [-43.5376,0.0,-66.9961],
-        [1935.75,-2.99976,1517.89]
+        [
+          -66.9961,
+          0.0,
+          43.5376
+        ],
+        [
+          0.0,
+          79.8999,
+          0.0
+        ],
+        [
+          -43.5376,
+          0.0,
+          -66.9961
+        ],
+        [
+          1935.75,
+          -2.99976,
+          1517.89
+        ]
       ],
       "objLayer": 0,
-      "props": []
+      "props": {}
     },
     "target_spawn_pt_11": {
       "type": "Sphere",
       "tm": [
-        [-66.9961,0.0,43.5375],
-        [0.0,79.8999,0.0],
-        [-43.5375,0.0,-66.9961],
-        [1489.24,-3.00146,1490.07]
+        [
+          -66.9961,
+          0.0,
+          43.5375
+        ],
+        [
+          0.0,
+          79.8999,
+          0.0
+        ],
+        [
+          -43.5375,
+          0.0,
+          -66.9961
+        ],
+        [
+          1489.24,
+          -3.00146,
+          1490.07
+        ]
       ],
       "objLayer": 0,
-      "props": []
+      "props": {}
     },
     "target_spawn_pt_12": {
       "type": "Sphere",
       "tm": [
-        [66.9961,0.0,-43.5375],
-        [0.0,79.8999,0.0],
-        [43.5375,0.0,66.9961],
-        [1685.78,-3.00146,1363.45]
+        [
+          66.9961,
+          0.0,
+          -43.5375
+        ],
+        [
+          0.0,
+          79.8999,
+          0.0
+        ],
+        [
+          43.5375,
+          0.0,
+          66.9961
+        ],
+        [
+          1685.78,
+          -3.00146,
+          1363.45
+        ]
       ],
       "objLayer": 0,
-      "props": []
+      "props": {}
     }
   },
-  "objLayers": [
-    {
-      "layer": {
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
         "enabled": true
       }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    }
-  ],
-  "wayPoints": []
+    ]
+  },
+  "wayPoints": {}
 }

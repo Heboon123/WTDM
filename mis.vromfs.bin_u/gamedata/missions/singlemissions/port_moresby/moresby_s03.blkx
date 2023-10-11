@@ -14,7 +14,11 @@
       "type": "singleMission",
       "environment": "Evening",
       "weather": "hazy",
-      "windDirection": [1.0,0.0,0.0],
+      "windDirection": [
+        1.0,
+        0.0,
+        0.0
+      ],
       "restoreType": "manual",
       "optionalTakeOff": false
     },
@@ -22,7 +26,7 @@
       "pressure": 760.0,
       "temperature": 0.0
     },
-    "spectator_points": [],
+    "spectator_points": {},
     "briefing": {
       "place_loc": "",
       "date_loc": "",
@@ -32,56 +36,38 @@
       "part": {
         "event": "",
         "minTime": 0,
-        "slide": [
-          {
-            "map": true
-          },
-          {
-            "minTime": 4
-          },
-          {
-            "picture": ""
-          },
-          {
-            "showAirMap": false
-          },
-          {
-            "arrow": [
-              {
-                "width": 1
-              },
-              {
-                "side": "player"
-              },
-              {
-                "point": "player"
-              },
-              {
-                "point": "target"
-              }
+        "slide": {
+          "map": true,
+          "minTime": 4,
+          "picture": "",
+          "showAirMap": false,
+          "arrow": {
+            "width": 1,
+            "side": "player",
+            "point": [
+              "player",
+              "target"
             ]
           },
-          {
-            "icon": {
+          "icon": [
+            {
               "icontype": "fighter",
               "side": "player",
               "target": "player",
               "lookAt": "target"
-            }
-          },
-          {
-            "icon": {
+            },
+            {
               "icontype": "destroyer",
               "side": "enemy",
               "target": "target",
               "lookAt": "final_area"
             }
-          }
-        ]
+          ]
+        }
       }
     }
   },
-  "imports": [],
+  "imports": {},
   "triggers": {
     "isCategory": true,
     "is_enabled": true,
@@ -94,12 +80,12 @@
         "enableAfterComplete": false
       },
       "events": {
-        "initMission": []
+        "initMission": {}
       },
-      "conditions": [],
-      "actions": [
-        {
-          "unitSetProperties": {
+      "conditions": {},
+      "actions": {
+        "unitSetProperties": [
+          {
             "object": "ships_squad",
             "object_marking": 0,
             "object_var_name": "",
@@ -109,55 +95,55 @@
             "accuracy": 0.3,
             "effShootingRate": 0.01,
             "speed": 30.0
-          }
-        },
-        {
-          "unitSetProperties": {
+          },
+          {
             "object": "player",
             "bombDelayExplosion": 1.0
           }
+        ],
+        "unitSetStealth": {
+          "set": true,
+          "radius": 10000.0,
+          "target": "target"
         },
-        {
-          "unitSetStealth": {
-            "set": true,
-            "radius": 10000.0,
-            "target": "target"
-          }
+        "unitDamage": {
+          "part": 0,
+          "power": 0.9,
+          "useEffect": false,
+          "countEffects": 1,
+          "delay": [
+            1.0,
+            1.0
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "radiusOffset": [
+            10.0,
+            15.0
+          ],
+          "target": "target"
         },
-        {
-          "unitDamage": {
-            "part": 0,
-            "power": 0.9,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [1.0,1.0],
-            "offset": [0.0,0.0,0.0],
-            "radiusOffset": [10.0,15.0],
-            "target": "target"
-          }
+        "unitAttackTarget": {
+          "playerAttracted": false,
+          "object": "ships_squad",
+          "attack_type": "fire_zone",
+          "fireZone": "area_01",
+          "effShootingRateInZone": 1.0,
+          "accuracyInZone": 1.5
         },
-        {
-          "unitAttackTarget": {
-            "playerAttracted": false,
-            "object": "ships_squad",
-            "attack_type": "fire_zone",
-            "fireZone": "area_01",
-            "effShootingRateInZone": 1.0,
-            "accuracyInZone": 1.5
-          }
-        },
-        {
-          "unitSetIndication": {
-            "set": true,
-            "target_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target": "target"
-          }
+        "unitSetIndication": {
+          "set": true,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target": "target"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "death00": {
       "is_enabled": true,
@@ -200,7 +186,7 @@
           "target": "respawn00"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "respawn00": {
       "is_enabled": false,
@@ -215,71 +201,61 @@
           "time": 0.0
         }
       },
-      "conditions": [
-        {
-          "playerShortcutPressed": {
+      "conditions": {
+        "playerShortcutPressed": [
+          {
             "control": "ID_CONTINUE"
-          }
-        },
-        {
-          "playerShortcutPressed": {
+          },
+          {
             "control": "ID_CONTINUE_SETUP"
           }
-        }
-      ],
-      "actions": [
-        {
-          "unitRestore": {
-            "ressurectIfDead": true,
-            "fullRestore": true,
-            "target_marking": 0,
-            "target": "player"
-          }
+        ]
+      },
+      "actions": {
+        "unitRestore": {
+          "ressurectIfDead": true,
+          "fullRestore": true,
+          "target_marking": 0,
+          "target": "player"
         },
-        {
-          "wait": {
+        "wait": [
+          {
             "time": 0.2
-          }
-        },
-        {
-          "wait": {
+          },
+          {
             "time": 5.0
           }
+        ],
+        "unitMoveTo": {
+          "target": "portal01",
+          "follow_target": false,
+          "teleportHeightType": "target",
+          "useUnitHeightForTele": false,
+          "shouldKeepFormation": false,
+          "teleportHeightValue": 0.0,
+          "horizontalDirectionForTeleport": true,
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "object": "player",
+          "move_type": "teleport",
+          "lookat": "target",
+          "velocity": 300.0
         },
-        {
-          "unitMoveTo": {
-            "target": "portal01",
-            "follow_target": false,
-            "teleportHeightType": "target",
-            "useUnitHeightForTele": false,
-            "shouldKeepFormation": false,
-            "teleportHeightValue": 0.0,
-            "horizontalDirectionForTeleport": true,
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "target_var_name": "",
-            "target_var_comp_op": "equal",
-            "target_var_value": 0,
-            "fastClimb": false,
-            "destTimeMode": false,
-            "object": "player",
-            "move_type": "teleport",
-            "lookat": "target",
-            "velocity": 300.0
-          }
-        },
-        {
-          "triggerEnable": {
-            "target": "death01"
-          }
+        "triggerEnable": {
+          "target": "death01"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "death01": {
       "is_enabled": false,
@@ -322,7 +298,7 @@
           "target": "respawn01"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "respawn01": {
       "is_enabled": false,
@@ -337,71 +313,61 @@
           "time": 0.0
         }
       },
-      "conditions": [
-        {
-          "playerShortcutPressed": {
+      "conditions": {
+        "playerShortcutPressed": [
+          {
             "control": "ID_CONTINUE"
-          }
-        },
-        {
-          "playerShortcutPressed": {
+          },
+          {
             "control": "ID_CONTINUE_SETUP"
           }
-        }
-      ],
-      "actions": [
-        {
-          "unitRestore": {
-            "ressurectIfDead": true,
-            "fullRestore": true,
-            "target_marking": 0,
-            "target": "player"
-          }
+        ]
+      },
+      "actions": {
+        "unitRestore": {
+          "ressurectIfDead": true,
+          "fullRestore": true,
+          "target_marking": 0,
+          "target": "player"
         },
-        {
-          "wait": {
+        "wait": [
+          {
             "time": 0.2
-          }
-        },
-        {
-          "wait": {
+          },
+          {
             "time": 5.0
           }
+        ],
+        "unitMoveTo": {
+          "target": "portal02",
+          "follow_target": false,
+          "teleportHeightType": "target",
+          "useUnitHeightForTele": false,
+          "shouldKeepFormation": false,
+          "teleportHeightValue": 0.0,
+          "horizontalDirectionForTeleport": true,
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "object": "player",
+          "move_type": "teleport",
+          "lookat": "target",
+          "velocity": 300.0
         },
-        {
-          "unitMoveTo": {
-            "target": "portal02",
-            "follow_target": false,
-            "teleportHeightType": "target",
-            "useUnitHeightForTele": false,
-            "shouldKeepFormation": false,
-            "teleportHeightValue": 0.0,
-            "horizontalDirectionForTeleport": true,
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "target_var_name": "",
-            "target_var_comp_op": "equal",
-            "target_var_value": 0,
-            "fastClimb": false,
-            "destTimeMode": false,
-            "object": "player",
-            "move_type": "teleport",
-            "lookat": "target",
-            "velocity": 300.0
-          }
-        },
-        {
-          "triggerEnable": {
-            "target": "death02"
-          }
+        "triggerEnable": {
+          "target": "death02"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "death02": {
       "is_enabled": false,
@@ -444,7 +410,7 @@
           "target": "respawn02"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "respawn02": {
       "is_enabled": false,
@@ -459,71 +425,61 @@
           "time": 0.0
         }
       },
-      "conditions": [
-        {
-          "playerShortcutPressed": {
+      "conditions": {
+        "playerShortcutPressed": [
+          {
             "control": "ID_CONTINUE"
-          }
-        },
-        {
-          "playerShortcutPressed": {
+          },
+          {
             "control": "ID_CONTINUE_SETUP"
           }
-        }
-      ],
-      "actions": [
-        {
-          "unitRestore": {
-            "ressurectIfDead": true,
-            "fullRestore": true,
-            "target_marking": 0,
-            "target": "player"
-          }
+        ]
+      },
+      "actions": {
+        "unitRestore": {
+          "ressurectIfDead": true,
+          "fullRestore": true,
+          "target_marking": 0,
+          "target": "player"
         },
-        {
-          "wait": {
+        "wait": [
+          {
             "time": 0.2
-          }
-        },
-        {
-          "wait": {
+          },
+          {
             "time": 5.0
           }
+        ],
+        "unitMoveTo": {
+          "target": "portal03",
+          "follow_target": false,
+          "teleportHeightType": "target",
+          "useUnitHeightForTele": false,
+          "shouldKeepFormation": false,
+          "teleportHeightValue": 0.0,
+          "horizontalDirectionForTeleport": true,
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "object": "player",
+          "move_type": "teleport",
+          "lookat": "target",
+          "velocity": 300.0
         },
-        {
-          "unitMoveTo": {
-            "target": "portal03",
-            "follow_target": false,
-            "teleportHeightType": "target",
-            "useUnitHeightForTele": false,
-            "shouldKeepFormation": false,
-            "teleportHeightValue": 0.0,
-            "horizontalDirectionForTeleport": true,
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "target_var_name": "",
-            "target_var_comp_op": "equal",
-            "target_var_value": 0,
-            "fastClimb": false,
-            "destTimeMode": false,
-            "object": "player",
-            "move_type": "teleport",
-            "lookat": "target",
-            "velocity": 300.0
-          }
-        },
-        {
-          "triggerEnable": {
-            "target": "death03"
-          }
+        "triggerEnable": {
+          "target": "death03"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "death03": {
       "is_enabled": false,
@@ -566,7 +522,7 @@
           "target": "respawn03"
         }
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "respawn03": {
       "is_enabled": false,
@@ -581,71 +537,61 @@
           "time": 0.0
         }
       },
-      "conditions": [
-        {
-          "playerShortcutPressed": {
+      "conditions": {
+        "playerShortcutPressed": [
+          {
             "control": "ID_CONTINUE"
-          }
-        },
-        {
-          "playerShortcutPressed": {
+          },
+          {
             "control": "ID_CONTINUE_SETUP"
           }
-        }
-      ],
-      "actions": [
-        {
-          "unitRestore": {
-            "ressurectIfDead": true,
-            "fullRestore": true,
-            "target_marking": 0,
-            "target": "player"
-          }
+        ]
+      },
+      "actions": {
+        "unitRestore": {
+          "ressurectIfDead": true,
+          "fullRestore": true,
+          "target_marking": 0,
+          "target": "player"
         },
-        {
-          "wait": {
+        "wait": [
+          {
             "time": 0.2
-          }
-        },
-        {
-          "wait": {
+          },
+          {
             "time": 5.0
           }
+        ],
+        "unitMoveTo": {
+          "target": "portal04",
+          "follow_target": false,
+          "teleportHeightType": "target",
+          "useUnitHeightForTele": false,
+          "shouldKeepFormation": false,
+          "teleportHeightValue": 0.0,
+          "horizontalDirectionForTeleport": true,
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "object": "player",
+          "move_type": "teleport",
+          "lookat": "target",
+          "velocity": 300.0
         },
-        {
-          "unitMoveTo": {
-            "target": "portal04",
-            "follow_target": false,
-            "teleportHeightType": "target",
-            "useUnitHeightForTele": false,
-            "shouldKeepFormation": false,
-            "teleportHeightValue": 0.0,
-            "horizontalDirectionForTeleport": true,
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "target_var_name": "",
-            "target_var_comp_op": "equal",
-            "target_var_value": 0,
-            "fastClimb": false,
-            "destTimeMode": false,
-            "object": "player",
-            "move_type": "teleport",
-            "lookat": "target",
-            "velocity": 300.0
-          }
-        },
-        {
-          "triggerEnable": {
-            "target": "final_death"
-          }
+        "triggerEnable": {
+          "target": "final_death"
         }
-      ],
-      "else_actions": []
+      },
+      "else_actions": {}
     },
     "final_death": {
       "is_enabled": false,
@@ -660,9 +606,9 @@
           "time": 2.0
         }
       },
-      "conditions": [
-        {
-          "unitWhenStatus": {
+      "conditions": {
+        "unitWhenStatus": [
+          {
             "object_type": "isKilled",
             "object_marking": 0,
             "check_objects": "all",
@@ -672,10 +618,8 @@
             "target_type": "isAlive",
             "check_period": 1.0,
             "object": "player"
-          }
-        },
-        {
-          "unitWhenStatus": {
+          },
+          {
             "object_type": "isAlive",
             "object_marking": 0,
             "check_objects": "any",
@@ -686,20 +630,18 @@
             "check_period": 1.0,
             "object": "target"
           }
-        }
-      ],
+        ]
+      },
       "actions": {
         "wait": {
           "time": 2.0
         },
-        "triggerDisable": [
-          {
-            "target": "mission_failed"
-          },
-          {
-            "target": "mission_completed"
-          }
-        ],
+        "triggerDisable": {
+          "target": [
+            "mission_failed",
+            "mission_completed"
+          ]
+        },
         "moSetObjectiveStatus": {
           "target": "single_moresby_m03_att00",
           "status": 3,
@@ -707,9 +649,9 @@
           "object_var_comp_op": "equal",
           "object_var_name": ""
         },
-        "missionFailed": []
+        "missionFailed": {}
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "mission_failed": {
       "is_enabled": true,
@@ -738,26 +680,16 @@
         }
       },
       "actions": {
-        "triggerDisable": [
-          {
-            "target": "final_death"
-          },
-          {
-            "target": "death00"
-          },
-          {
-            "target": "death01"
-          },
-          {
-            "target": "death02"
-          },
-          {
-            "target": "death03"
-          },
-          {
-            "target": "mission_completed"
-          }
-        ],
+        "triggerDisable": {
+          "target": [
+            "final_death",
+            "death00",
+            "death01",
+            "death02",
+            "death03",
+            "mission_completed"
+          ]
+        },
         "unitSetIndication": {
           "set": false,
           "target_marking": 0,
@@ -773,9 +705,9 @@
           "object_var_comp_op": "equal",
           "object_var_name": ""
         },
-        "missionFailed": []
+        "missionFailed": {}
       },
-      "else_actions": []
+      "else_actions": {}
     },
     "mission_completed": {
       "is_enabled": true,
@@ -804,26 +736,16 @@
         }
       },
       "actions": {
-        "triggerDisable": [
-          {
-            "target": "death00"
-          },
-          {
-            "target": "death01"
-          },
-          {
-            "target": "death02"
-          },
-          {
-            "target": "death03"
-          },
-          {
-            "target": "final_death"
-          },
-          {
-            "target": "mission_failed"
-          }
-        ],
+        "triggerDisable": {
+          "target": [
+            "death00",
+            "death01",
+            "death02",
+            "death03",
+            "final_death",
+            "mission_failed"
+          ]
+        },
         "moSetObjectiveStatus": {
           "target": "single_moresby_m03_att00",
           "status": 2,
@@ -839,7 +761,7 @@
           "debriefingTimer": 2
         }
       },
-      "else_actions": []
+      "else_actions": {}
     }
   },
   "mission_objectives": {
@@ -855,71 +777,101 @@
         "scoreConst": 100,
         "scoreTime": 400
       },
-      "onSuccess": [],
-      "onFailed": []
+      "onSuccess": {},
+      "onFailed": {}
     }
   },
-  "variables": [],
-  "dialogs": [],
-  "airfields": [],
-  "effects": [],
-  "units": [
-    {
-      "armada": {
-        "name": "player",
-        "tm": [
-          [-0.866025,0.0,0.5],
-          [0.0,1.0,0.0],
-          [-0.5,0.0,-0.866025],
-          [-6398.55,90.0,-20104.2]
+  "variables": {},
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {
+    "armada": {
+      "name": "player",
+      "tm": [
+        [
+          -0.866025,
+          0.0,
+          0.5
         ],
-        "unit_class": "a6m5_zero",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "a6m5_bombs",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "count": 1,
-          "uniqueName": "",
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 1.5,
-            "col_distances": 1.5,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": []
-      }
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -0.5,
+          0.0,
+          -0.866025
+        ],
+        [
+          -6398.55,
+          90.0,
+          -20104.2
+        ]
+      ],
+      "unit_class": "a6m5_zero",
+      "closed_waypoints": false,
+      "isShipSpline": false,
+      "shipTurnRadius": 100.0,
+      "weapons": "a6m5_bombs",
+      "bullets0": "",
+      "bullets1": "",
+      "bullets2": "",
+      "bullets3": "",
+      "bulletsCount0": 0,
+      "bulletsCount1": 0,
+      "bulletsCount2": 0,
+      "bulletsCount3": 0,
+      "crewSkillK": 0.0,
+      "applyAllMods": false,
+      "props": {
+        "army": 1,
+        "free_distance": 70.0,
+        "floating_distance": 50.0,
+        "minimum_distance_to_earth": 20.0,
+        "altLimit": 6000.0,
+        "attack_type": "fire_at_will",
+        "skill": 4,
+        "count": 1,
+        "uniqueName": "",
+        "plane": {
+          "wing_formation": "Diamond",
+          "row_distances": 1.5,
+          "col_distances": 1.5,
+          "super_formation": "Diamond",
+          "super_row_distances": 1.5,
+          "super_col_distances": 1.5,
+          "ai_skill": "NORMAL",
+          "task": "FLY_WAYPOINT"
+        }
+      },
+      "way": {}
     },
-    {
-      "ships": {
+    "ships": [
+      {
         "name": "target",
         "tm": [
-          [-0.573576,0.0,0.819152],
-          [0.0,1.0,0.0],
-          [-0.819152,0.0,-0.573576],
-          [-10548.5,0.0,-18815.7]
+          [
+            -0.573576,
+            0.0,
+            0.819152
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.819152,
+            0.0,
+            -0.573576
+          ],
+          [
+            -10548.5,
+            0.0,
+            -18815.7
+          ]
         ],
         "unit_class": "uss_dd_sims",
         "closed_waypoints": false,
@@ -941,8 +893,14 @@
           "count": 3,
           "formation_type": "rows",
           "formation_div": 2,
-          "formation_step": [15.0,3.0],
-          "formation_noise": [0.3,-0.4],
+          "formation_step": [
+            15.0,
+            3.0
+          ],
+          "formation_noise": [
+            0.3,
+            -0.4
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -950,10 +908,26 @@
           "target_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-11227.9,0.0,-16914.8]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -11227.9,
+                0.0,
+                -16914.8
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -968,10 +942,26 @@
           "target_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-12198.9,0.0,-13493.4]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -12198.9,
+                0.0,
+                -13493.4
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -986,10 +976,26 @@
           "target_wp_03": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-12511.8,0.0,-10614.0]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -12511.8,
+                0.0,
+                -10614.0
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1004,10 +1010,26 @@
           "target_wp_04": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-12376.8,0.0,-7845.9]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -12376.8,
+                0.0,
+                -7845.9
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1020,16 +1042,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "ships": {
+      },
+      {
         "name": "target_escort00",
         "tm": [
-          [-0.573576,0.0,0.819152],
-          [0.0,1.0,0.0],
-          [-0.819152,0.0,-0.573576],
-          [-9819.75,0.0,-18909.6]
+          [
+            -0.573576,
+            0.0,
+            0.819152
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.819152,
+            0.0,
+            -0.573576
+          ],
+          [
+            -9819.75,
+            0.0,
+            -18909.6
+          ]
         ],
         "unit_class": "uss_dd_sims",
         "closed_waypoints": false,
@@ -1051,8 +1087,14 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -1060,10 +1102,26 @@
           "target01_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-10682.0,0.0,-16836.2]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -10682.0,
+                0.0,
+                -16836.2
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1078,10 +1136,26 @@
           "target01_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-11653.0,0.0,-13414.8]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -11653.0,
+                0.0,
+                -13414.8
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1096,10 +1170,26 @@
           "target01_wp_03": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-11966.0,0.0,-10535.3]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -11966.0,
+                0.0,
+                -10535.3
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1114,10 +1204,26 @@
           "target01_wp_04": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-11830.9,0.0,-7767.25]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -11830.9,
+                0.0,
+                -7767.25
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1130,16 +1236,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "ships": {
+      },
+      {
         "name": "target_escort01",
         "tm": [
-          [-0.5,0.0,0.866025],
-          [0.0,1.0,0.0],
-          [-0.866025,0.0,-0.5],
-          [-11138.3,0.0,-18970.0]
+          [
+            -0.5,
+            0.0,
+            0.866025
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.866025,
+            0.0,
+            -0.5
+          ],
+          [
+            -11138.3,
+            0.0,
+            -18970.0
+          ]
         ],
         "unit_class": "uss_dd_sims",
         "closed_waypoints": false,
@@ -1161,8 +1281,14 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -1170,10 +1296,26 @@
           "target_escort01_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-12000.5,0.0,-16896.6]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -12000.5,
+                0.0,
+                -16896.6
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1188,10 +1330,26 @@
           "target_escort01_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-12971.5,0.0,-13475.2]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -12971.5,
+                0.0,
+                -13475.2
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1206,10 +1364,26 @@
           "target_escort01_wp_03": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-13284.5,0.0,-10595.7]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -13284.5,
+                0.0,
+                -10595.7
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1224,10 +1398,26 @@
           "target_escort01_wp_04": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-13149.4,0.0,-7827.65]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -13149.4,
+                0.0,
+                -7827.65
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1240,16 +1430,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "ships": {
+      },
+      {
         "name": "target_escort02",
         "tm": [
-          [-0.573576,0.0,0.819152],
-          [0.0,1.0,0.0],
-          [-0.819152,0.0,-0.573576],
-          [-10536.1,0.0,-19753.3]
+          [
+            -0.573576,
+            0.0,
+            0.819152
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.819152,
+            0.0,
+            -0.573576
+          ],
+          [
+            -10536.1,
+            0.0,
+            -19753.3
+          ]
         ],
         "unit_class": "uss_ca_sanfrancisco",
         "closed_waypoints": false,
@@ -1271,8 +1475,14 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -1280,10 +1490,26 @@
           "target_escort02_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-11398.4,0.0,-17679.9]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -11398.4,
+                0.0,
+                -17679.9
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1298,10 +1524,26 @@
           "target_escort02_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-12369.4,0.0,-14258.5]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -12369.4,
+                0.0,
+                -14258.5
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1316,10 +1558,26 @@
           "target_escort02_wp_03": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-12682.3,0.0,-11379.0]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -12682.3,
+                0.0,
+                -11379.0
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1334,10 +1592,26 @@
           "target_escort02_wp_04": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-12547.3,0.0,-8610.95]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -12547.3,
+                0.0,
+                -8610.95
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1350,16 +1624,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "ships": {
+      },
+      {
         "name": "target_escort03",
         "tm": [
-          [-0.573576,0.0,0.819152],
-          [0.0,1.0,0.0],
-          [-0.819152,0.0,-0.573576],
-          [-10513.4,0.0,-18078.4]
+          [
+            -0.573576,
+            0.0,
+            0.819152
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.819152,
+            0.0,
+            -0.573576
+          ],
+          [
+            -10513.4,
+            0.0,
+            -18078.4
+          ]
         ],
         "unit_class": "uss_dd_georgetown",
         "closed_waypoints": false,
@@ -1381,8 +1669,14 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -1390,10 +1684,26 @@
           "target_escort03_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-11375.7,0.0,-16005.0]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -11375.7,
+                0.0,
+                -16005.0
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1408,10 +1718,26 @@
           "target_escort03_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-12346.6,0.0,-12583.5]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -12346.6,
+                0.0,
+                -12583.5
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1426,10 +1752,26 @@
           "target_escort03_wp_03": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-12659.6,0.0,-9704.1]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -12659.6,
+                0.0,
+                -9704.1
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1444,10 +1786,26 @@
           "target_escort03_wp_04": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-12524.6,0.0,-6936.05]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -12524.6,
+                0.0,
+                -6936.05
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1460,16 +1818,30 @@
             }
           }
         }
-      }
-    },
-    {
-      "ships": {
+      },
+      {
         "name": "target_escort04",
         "tm": [
-          [-0.573576,0.0,0.819152],
-          [0.0,1.0,0.0],
-          [-0.819152,0.0,-0.573576],
-          [-9465.35,0.0,-18456.7]
+          [
+            -0.573576,
+            0.0,
+            0.819152
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.819152,
+            0.0,
+            -0.573576
+          ],
+          [
+            -9465.35,
+            0.0,
+            -18456.7
+          ]
         ],
         "unit_class": "uss_dd_sims",
         "closed_waypoints": false,
@@ -1491,8 +1863,14 @@
           "count": 1,
           "formation_type": "rows",
           "formation_div": 3,
-          "formation_step": [2.5,2.0],
-          "formation_noise": [0.1,0.1],
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
           "uniqueName": "",
           "attack_type": "fire_at_will"
         },
@@ -1500,10 +1878,26 @@
           "target_escort04_wp_01": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-10327.6,0.0,-16383.2]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -10327.6,
+                0.0,
+                -16383.2
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1518,10 +1912,26 @@
           "target_escort04_wp_02": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-11298.6,0.0,-12961.8]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -11298.6,
+                0.0,
+                -12961.8
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1536,10 +1946,26 @@
           "target_escort04_wp_03": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-11611.6,0.0,-10082.4]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -11611.6,
+                0.0,
+                -10082.4
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1554,10 +1980,26 @@
           "target_escort04_wp_04": {
             "type": "normal",
             "tm": [
-              [1.0,0.0,0.0],
-              [0.0,1.0,0.0],
-              [0.0,0.0,1.0],
-              [-11476.5,0.0,-7314.3]
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -11476.5,
+                0.0,
+                -7314.3
+              ]
             ],
             "props": {
               "speed": 300.0,
@@ -1571,122 +2013,216 @@
           }
         }
       }
-    },
-    {
-      "squad": {
-        "name": "ships_squad",
-        "tm": [
-          [1.0,0.0,0.0],
-          [0.0,1.0,0.0],
-          [0.0,0.0,1.0],
-          [-11901.9,0.0,-21099.1]
+    ],
+    "squad": {
+      "name": "ships_squad",
+      "tm": [
+        [
+          1.0,
+          0.0,
+          0.0
         ],
-        "props": [
-          {
-            "squad_members": "target"
-          },
-          {
-            "squad_members": "target_escort00"
-          },
-          {
-            "squad_members": "target_escort01"
-          },
-          {
-            "squad_members": "target_escort02"
-          },
-          {
-            "squad_members": "target_escort03"
-          },
-          {
-            "squad_members": "target_escort04"
-          }
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -11901.9,
+          0.0,
+          -21099.1
+        ]
+      ],
+      "props": {
+        "squad_members": [
+          "target",
+          "target_escort00",
+          "target_escort01",
+          "target_escort02",
+          "target_escort03",
+          "target_escort04"
         ]
       }
     }
-  ],
+  },
   "areas": {
     "final_area": {
       "type": "Sphere",
       "tm": [
-        [2869.2,0.0,0.0],
-        [0.0,2869.2,0.0],
-        [0.0,0.0,2869.2],
-        [-12460.0,0.0,-8091.45]
+        [
+          2869.2,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          2869.2,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          2869.2
+        ],
+        [
+          -12460.0,
+          0.0,
+          -8091.45
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "portal01": {
       "type": "Sphere",
       "tm": [
-        [200.0,0.0,0.0],
-        [0.0,200.0,0.0],
-        [0.0,0.0,200.0],
-        [-7533.55,50.0,-17486.0]
+        [
+          200.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          200.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          200.0
+        ],
+        [
+          -7533.55,
+          50.0,
+          -17486.0
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "portal02": {
       "type": "Sphere",
       "tm": [
-        [200.0,0.0,0.0],
-        [0.0,200.0,0.0],
-        [0.0,0.0,200.0],
-        [-14839.0,70.0,-17166.9]
+        [
+          200.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          200.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          200.0
+        ],
+        [
+          -14839.0,
+          70.0,
+          -17166.9
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "portal03": {
       "type": "Sphere",
       "tm": [
-        [200.0,0.0,0.0],
-        [0.0,200.0,0.0],
-        [0.0,0.0,200.0],
-        [-9228.95,50.0,-20974.3]
+        [
+          200.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          200.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          200.0
+        ],
+        [
+          -9228.95,
+          50.0,
+          -20974.3
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "portal04": {
       "type": "Sphere",
       "tm": [
-        [200.0,0.0,0.0],
-        [0.0,200.0,0.0],
-        [0.0,0.0,200.0],
-        [-11818.3,80.0,-13771.2]
+        [
+          200.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          200.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          200.0
+        ],
+        [
+          -11818.3,
+          80.0,
+          -13771.2
+        ]
       ],
-      "props": []
+      "props": {}
     },
     "area_01": {
       "type": "Box",
       "tm": [
-        [355901.0,0.0,-3529.2],
-        [0.0,2844.55,0.0],
-        [2323.67,0.0,100000.0],
-        [-10950.1,100.0,-12094.9]
+        [
+          355901.0,
+          0.0,
+          -3529.2
+        ],
+        [
+          0.0,
+          2844.55,
+          0.0
+        ],
+        [
+          2323.67,
+          0.0,
+          100000.0
+        ],
+        [
+          -10950.1,
+          100.0,
+          -12094.9
+        ]
       ],
-      "props": []
+      "props": {}
     }
   },
-  "objLayers": [
-    {
-      "layer": {
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
         "enabled": true
       }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    },
-    {
-      "layer": {
-        "enabled": true
-      }
-    }
-  ],
-  "wayPoints": []
+    ]
+  },
+  "wayPoints": {}
 }

@@ -42,8 +42,14 @@
   "scanPatterns": {
     "searchWideATM": {
       "type": "cylinder",
-      "azimuthLimits": [-180.0,180.0],
-      "elevationLimits": [-25.0,25.0],
+      "azimuthLimits": [
+        -180.0,
+        180.0
+      ],
+      "elevationLimits": [
+        -25.0,
+        25.0
+      ],
       "yawStabLimit": 180.0,
       "pitchStabLimit": 25.0,
       "rollStabLimit": 20.0,
@@ -53,51 +59,42 @@
       "rowMajor": true,
       "preciseMinor": true
     },
-    "searchMediumATM": [
-      {
-        "type": "pyramide"
-      },
-      {
-        "azimuthLimits": [-180.0,180.0]
-      },
-      {
-        "azimuthLimits": [-180.0,180.0]
-      },
-      {
-        "elevationLimits": [-25.0,25.0]
-      },
-      {
-        "yawStabLimit": 180.0
-      },
-      {
-        "pitchStabLimit": 25.0
-      },
-      {
-        "rollStabLimit": 20.0
-      },
-      {
-        "period": 3.0
-      },
-      {
-        "width": 90.0
-      },
-      {
-        "barHeight": 20.0
-      },
-      {
-        "barsCount": 1
-      },
-      {
-        "rowMajor": true
-      },
-      {
-        "preciseMinor": true
-      }
-    ],
+    "searchMediumATM": {
+      "type": "pyramide",
+      "azimuthLimits": [
+        [
+          -180.0,
+          180.0
+        ],
+        [
+          -180.0,
+          180.0
+        ]
+      ],
+      "elevationLimits": [
+        -25.0,
+        25.0
+      ],
+      "yawStabLimit": 180.0,
+      "pitchStabLimit": 25.0,
+      "rollStabLimit": 20.0,
+      "period": 3.0,
+      "width": 90.0,
+      "barHeight": 20.0,
+      "barsCount": 1,
+      "rowMajor": true,
+      "preciseMinor": true
+    },
     "searchNarrowATM": {
       "type": "pyramide",
-      "azimuthLimits": [-180.0,180.0],
-      "elevationLimits": [-25.0,25.0],
+      "azimuthLimits": [
+        -180.0,
+        180.0
+      ],
+      "elevationLimits": [
+        -25.0,
+        25.0
+      ],
       "yawStabLimit": 180.0,
       "pitchStabLimit": 25.0,
       "rollStabLimit": 20.0,
@@ -110,8 +107,14 @@
     },
     "searchZoomATM": {
       "type": "pyramide",
-      "azimuthLimits": [-180.0,180.0],
-      "elevationLimits": [-25.0,25.0],
+      "azimuthLimits": [
+        -180.0,
+        180.0
+      ],
+      "elevationLimits": [
+        -25.0,
+        25.0
+      ],
       "yawStabLimit": 180.0,
       "pitchStabLimit": 25.0,
       "rollStabLimit": 20.0,
@@ -124,8 +127,14 @@
     },
     "searchWideGTM": {
       "type": "pyramide",
-      "azimuthLimits": [-45.0,45.0],
-      "elevationLimits": [-25.0,25.0],
+      "azimuthLimits": [
+        -45.0,
+        45.0
+      ],
+      "elevationLimits": [
+        -25.0,
+        25.0
+      ],
       "pitchStabLimit": 25.0,
       "rollStabLimit": 20.0,
       "period": 1.5,
@@ -137,8 +146,14 @@
     },
     "searchMediumGTM": {
       "type": "pyramide",
-      "azimuthLimits": [-45.0,45.0],
-      "elevationLimits": [-25.0,25.0],
+      "azimuthLimits": [
+        -45.0,
+        45.0
+      ],
+      "elevationLimits": [
+        -25.0,
+        25.0
+      ],
       "pitchStabLimit": 25.0,
       "rollStabLimit": 20.0,
       "period": 0.75,
@@ -150,8 +165,14 @@
     },
     "searchNarrowGTM": {
       "type": "pyramide",
-      "azimuthLimits": [-45.0,45.0],
-      "elevationLimits": [-25.0,25.0],
+      "azimuthLimits": [
+        -45.0,
+        45.0
+      ],
+      "elevationLimits": [
+        -25.0,
+        25.0
+      ],
       "pitchStabLimit": 25.0,
       "rollStabLimit": 20.0,
       "period": 0.5,
@@ -163,8 +184,14 @@
     },
     "searchZoomGTM": {
       "type": "pyramide",
-      "azimuthLimits": [-45.0,45.0],
-      "elevationLimits": [-25.0,25.0],
+      "azimuthLimits": [
+        -45.0,
+        45.0
+      ],
+      "elevationLimits": [
+        -25.0,
+        25.0
+      ],
       "pitchStabLimit": 25.0,
       "rollStabLimit": 20.0,
       "period": 0.25,
@@ -226,148 +253,128 @@
     }
   },
   "fsms": {
-    "main": [
-      {
-        "stateInit": "init"
-      },
-      {
-        "stateInit": "init"
-      },
-      {
-        "actionsTemplates": {
-          "init": {
-            "setEnabled": {
-              "value": false
+    "main": {
+      "stateInit": [
+        "init",
+        "init"
+      ],
+      "actionsTemplates": {
+        "init": {
+          "setEnabled": {
+            "value": false
+          },
+          "setTransiver": {
+            "transiver": "GTM"
+          },
+          "setSignal": {
+            "signal": "GTM"
+          },
+          "setCenterElevation": {
+            "source": "constant",
+            "value": -6.25
+          },
+          "setScopeRangeSet": {
+            "scopeRangeSet": "common"
+          },
+          "setFsmActive": {
+            "fsm": "mode",
+            "active": true
+          }
+        },
+        "setStandbyMode": {
+          "setModeName": {
+            "name": "standby"
+          },
+          "setEnabled": {
+            "value": false
+          },
+          "setCenterAzimuth": {
+            "source": "constant",
+            "value": 0.0
+          },
+          "clearTargets": {},
+          "setFsmActive": {
+            "fsm": "mode",
+            "active": false
+          }
+        },
+        "setSearchMode": {
+          "setEnabled": {
+            "value": true
+          },
+          "clearTargets": {},
+          "setFsmActive": [
+            {
+              "fsm": "search",
+              "active": true
             },
-            "setTransiver": {
-              "transiver": "GTM"
-            },
-            "setSignal": {
-              "signal": "GTM"
-            },
-            "setCenterElevation": {
-              "source": "constant",
-              "value": -6.25
-            },
-            "setScopeRangeSet": {
-              "scopeRangeSet": "common"
-            },
-            "setFsmActive": {
+            {
               "fsm": "mode",
               "active": true
             }
-          },
-          "setStandbyMode": {
-            "setModeName": {
-              "name": "standby"
-            },
-            "setEnabled": {
-              "value": false
-            },
-            "setCenterAzimuth": {
-              "source": "constant",
-              "value": 0.0
-            },
-            "clearTargets": [],
-            "setFsmActive": {
-              "fsm": "mode",
-              "active": false
-            }
-          },
-          "setSearchMode": [
-            {
-              "setEnabled": {
-                "value": true
-              }
-            },
-            {
-              "clearTargets": []
-            },
-            {
-              "setFsmActive": {
-                "fsm": "search",
-                "active": true
-              }
-            },
-            {
-              "setFsmActive": {
-                "fsm": "mode",
-                "active": true
-              }
-            },
-            {
-              "setCueEnabled": {
-                "value": true,
-                "updateActiveTargetUnderCue": true
-              }
-            }
           ],
-          "resetSearchMode": {
-            "setFsmActive": {
-              "fsm": "search",
-              "active": false
-            },
-            "setCueEnabled": {
-              "value": false
-            }
+          "setCueEnabled": {
+            "value": true,
+            "updateActiveTargetUnderCue": true
+          }
+        },
+        "resetSearchMode": {
+          "setFsmActive": {
+            "fsm": "search",
+            "active": false
+          },
+          "setCueEnabled": {
+            "value": false
           }
         }
       },
-      {
-        "transitions": {
-          "init": {
-            "stateFrom": "init",
-            "event": "init",
-            "stateTo": "standby",
-            "actions": {
-              "init": [],
-              "setStandbyMode": []
-            }
-          },
-          "switchOn": {
-            "stateFrom": "standby",
-            "command": "switch",
-            "event": "enable",
-            "stateTo": "search",
-            "actions": {
-              "setSearchMode": []
-            }
-          },
-          "switchOff": {
-            "stateFrom": "search",
-            "command": "switch",
-            "event": "disable",
-            "stateTo": "standby",
-            "actions": {
-              "resetSearchMode": [],
-              "setStandbyMode": []
-            }
-          },
-          "switchScanPattern": [
-            {
-              "stateFrom": "standby"
-            },
-            {
-              "stateFrom": "search"
-            },
-            {
-              "command": "scanPatternSwitch"
-            },
-            {
-              "actions": {
-                "setNextScanPattern": []
-              }
-            }
+      "transitions": {
+        "init": {
+          "stateFrom": "init",
+          "event": "init",
+          "stateTo": "standby",
+          "actions": {
+            "init": {},
+            "setStandbyMode": {}
+          }
+        },
+        "switchOn": {
+          "stateFrom": "standby",
+          "command": "switch",
+          "event": "enable",
+          "stateTo": "search",
+          "actions": {
+            "setSearchMode": {}
+          }
+        },
+        "switchOff": {
+          "stateFrom": "search",
+          "command": "switch",
+          "event": "disable",
+          "stateTo": "standby",
+          "actions": {
+            "resetSearchMode": {},
+            "setStandbyMode": {}
+          }
+        },
+        "switchScanPattern": {
+          "stateFrom": [
+            "standby",
+            "search"
           ],
-          "switchScopeRange": {
-            "command": "rangeSwitch",
-            "actions": {
-              "setNextScopeRange": []
-            }
+          "command": "scanPatternSwitch",
+          "actions": {
+            "setNextScanPattern": {}
+          }
+        },
+        "switchScopeRange": {
+          "command": "rangeSwitch",
+          "actions": {
+            "setNextScopeRange": {}
           }
         }
       }
-    ],
+    },
     "search": {
       "stateInit": "search",
       "transitions": {
@@ -391,114 +398,100 @@
               "source": "continuousScale",
               "width": 0.0
             },
-            "detectTarget": []
+            "detectTarget": {}
           }
         },
         "addTarget": {
           "event": "targetDetected",
           "actions": {
-            "addTarget": [],
-            "updateActiveDetectedTarget": []
+            "addTarget": {},
+            "updateActiveDetectedTarget": {}
           }
         },
         "switchSelectedTarget": {
           "command": "switchTarget",
           "actions": {
-            "setNextDetectedTargetActive": []
+            "setNextDetectedTargetActive": {}
           }
         },
         "setCueAzimuth": {
           "command": "cueAxisX",
           "actions": {
-            "setCueAzimuth": []
+            "setCueAzimuth": {}
           }
         },
         "setCueDist": {
           "command": "cueAxisY",
           "actions": {
-            "setCueDist": []
+            "setCueDist": {}
           }
         },
         "setCueElevation": {
           "command": "cueAxisZ",
           "actions": {
-            "setCueElevation": []
+            "setCueElevation": {}
           }
         },
         "setSelectedTarget": {
           "command": "switchToTarget",
           "actions": {
-            "setDetectedTargetActive": []
+            "setDetectedTargetActive": {}
           }
         },
         "designateTarget": {
           "command": "selectTarget",
-          "actions": [
-            {
-              "designateActiveDetectedTarget": {
+          "actions": {
+            "designateActiveDetectedTarget": [
+              {
                 "type": 0,
                 "sensorIndex": 1
-              }
-            },
-            {
-              "designateActiveDetectedTarget": {
+              },
+              {
                 "type": 0,
                 "self": true,
                 "sensorIndex": 0
               }
-            }
-          ]
+            ]
+          }
         }
       },
       "actionsTemplates": {
-        "scanGTM": [
-          {
-            "scan": []
-          },
-          {
-            "setCenterAzimuth": {
+        "scanGTM": {
+          "scan": {},
+          "setCenterAzimuth": [
+            {
               "source": "constant",
               "value": 0.0
-            }
-          },
-          {
-            "setCenterAzimuth": {
+            },
+            {
               "source": "designationCue"
             }
-          },
-          {
-            "setCenterElevation": {
+          ],
+          "setCenterElevation": [
+            {
               "source": "constant",
               "value": 0.0
-            }
-          },
-          {
-            "setCenterElevation": {
+            },
+            {
               "source": "designationCue"
             }
-          }
-        ],
-        "scanATM": [
-          {
-            "setCenterAzimuth": {
-              "source": "body"
-            }
+          ]
+        },
+        "scanATM": {
+          "setCenterAzimuth": {
+            "source": "body"
           },
-          {
-            "scan": []
-          },
-          {
-            "setCenterElevation": {
+          "scan": {},
+          "setCenterElevation": [
+            {
               "source": "constant",
               "value": 0.0
-            }
-          },
-          {
-            "setCenterElevation": {
+            },
+            {
               "source": "designationCue"
             }
-          }
-        ]
+          ]
+        }
       }
     },
     "mode": {
@@ -522,10 +515,19 @@
             "value": -6.25
           },
           "setTargetDesignationRange": {
-            "azimuthRange": [-45.0,45.0],
+            "azimuthRange": [
+              -45.0,
+              45.0
+            ],
             "azimuthRelWidthMin": 0.03,
-            "elevationRange": [-20.0,20.0],
-            "distanceRange": [500.0,8000.0],
+            "elevationRange": [
+              -20.0,
+              20.0
+            ],
+            "distanceRange": [
+              500.0,
+              8000.0
+            ],
             "fromBody": false
           },
           "setCustomActionTemplate": {
@@ -533,7 +535,7 @@
             "name": "scan",
             "actionTemplateName": "scanGTM"
           },
-          "clearTargets": []
+          "clearTargets": {}
         },
         "setATMMode": {
           "setModeName": {
@@ -553,10 +555,19 @@
             "value": 0.0
           },
           "setTargetDesignationRange": {
-            "azimuthRange": [-180.0,180.0],
+            "azimuthRange": [
+              -180.0,
+              180.0
+            ],
             "azimuthRelWidthMin": 0.03,
-            "elevationRange": [-20.0,20.0],
-            "distanceRange": [500.0,8000.0],
+            "elevationRange": [
+              -20.0,
+              20.0
+            ],
+            "distanceRange": [
+              500.0,
+              8000.0
+            ],
             "fromBody": true
           },
           "setCustomActionTemplate": {
@@ -564,7 +575,7 @@
             "name": "scan",
             "actionTemplateName": "scanATM"
           },
-          "clearTargets": []
+          "clearTargets": {}
         }
       },
       "transitions": {
@@ -573,7 +584,7 @@
           "event": "fsmActivate",
           "stateTo": "gtm",
           "actions": {
-            "setGTMMode": []
+            "setGTMMode": {}
           }
         },
         "showGTM": {
@@ -581,7 +592,7 @@
           "event": "fsmActivate",
           "stateTo": "gtm",
           "actions": {
-            "setGTMMode": []
+            "setGTMMode": {}
           }
         },
         "showATM": {
@@ -589,7 +600,7 @@
           "event": "fsmActivate",
           "stateTo": "atm",
           "actions": {
-            "setATMMode": []
+            "setATMMode": {}
           }
         },
         "switchToATM": {
@@ -597,7 +608,7 @@
           "command": "modeSwitch",
           "stateTo": "atm",
           "actions": {
-            "setATMMode": []
+            "setATMMode": {}
           }
         },
         "switchToGTM": {
@@ -605,7 +616,7 @@
           "command": "modeSwitch",
           "stateTo": "gtm",
           "actions": {
-            "setGTMMode": []
+            "setGTMMode": {}
           }
         }
       }
