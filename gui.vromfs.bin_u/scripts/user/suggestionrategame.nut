@@ -134,12 +134,11 @@ let function setNeedShowRate(debriefingResult, myPlace) {
   }
 }
 
-let function openSteamRateReview(descLocId, reason = "") {
-  steamOpenReviewWnd.open({
+let function openSteamRateReview(params) {
+  steamOpenReviewWnd.open(params.__merge({
     onApplyFunc = @(openedBrowser) sendBqEvent("CLIENT_POPUP_1", "rate",
-      { from = "steam", openedBrowser, reason })
-    descLocId
-  })
+      { from = "steam", openedBrowser, reason = params?.reason ?? "" })
+  }))
 }
 
 let function tryOpenXboxRateReviewWnd() {
@@ -158,7 +157,7 @@ let function tryOpenSteamRateReview() {
 
   saveLocalAccountSettings(RATE_WND_TIME_SAVE_ID, get_charserver_time_sec())
   sendBqEvent("CLIENT_POPUP_1", "rate", { from = "steam" })
-  openSteamRateReview("msgbox/steam/rate_review")
+  openSteamRateReview({ descLocId = "msgbox/steam/rate_review" })
   return true
 }
 
@@ -169,7 +168,11 @@ let function tryOpenSteamAfterImprovementRateReview() {
   saveLocalAccountSettings(AFTER_IMPROVMENT_RATE_WND_TIME_SAVE_ID, get_charserver_time_sec())
   let reasonForShow = "SteamRateImprove"
   sendBqEvent("CLIENT_POPUP_1", "rate", { from = "steam", reason = reasonForShow })
-  openSteamRateReview("msgbox/steam/rate_review_after_improve", reasonForShow)
+  openSteamRateReview({
+    descLocId = "msgbox/steam/rate_review_after_improve"
+    backgroundImg = "#ui/images/cat_fix"
+    reason = reasonForShow
+  })
   return true
 }
 
@@ -180,7 +183,11 @@ let function tryOpenSteamMoreImprovementRateReview() {
   saveLocalAccountSettings(MORE_IMPROVMENT_RATE_WND_TIME_SAVE_ID, get_charserver_time_sec())
   let reasonForShow = "SteamRateMoreImprove"
   sendBqEvent("CLIENT_POPUP_1", "rate", { from = "steam", reason = reasonForShow })
-  openSteamRateReview("msgbox/steam/rate_review_more_improvement", reasonForShow)
+  openSteamRateReview({
+    descLocId = "msgbox/steam/rate_review_more_improvement"
+    backgroundImg = "#ui/images/cat_fix"
+    reason = reasonForShow
+  })
   return true
 }
 
