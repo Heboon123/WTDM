@@ -1,9 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
 let { Cost, Money, money_type } = require("%scripts/money.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
-
 let { fabs } = require("math")
 let DataBlock = require("DataBlock")
 let { get_mp_session_id_str, is_mplayer_peer } = require("multiplayer")
@@ -15,6 +13,7 @@ let { isGameModeVersus } = require("%scripts/matchingRooms/matchingGameModesUtil
 let { havePremium } = require("%scripts/user/premium.nut")
 let { is_replay_playing } = require("replays")
 let { subscribe } = require("eventbus")
+let { getSkillBonusTooltipText } = require("%scripts/statistics/mpStatisticsUtil.nut")
 let { getMplayersList } = require("%scripts/statistics/mplayersList.nut")
 let { is_benchmark_game_mode, get_game_mode, get_game_type } = require("mission")
 let { get_mission_difficulty_int, stat_get_benchmark,
@@ -23,7 +22,9 @@ let { get_mission_difficulty_int, stat_get_benchmark,
 let { dynamicApplyStatus } = require("dynamicMission")
 let { toUpper } = require("%sqstd/string.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
-let { get_current_mission_info_cached, get_warpoints_blk  } = require("blkGetters")
+let { get_current_mission_info_cached, get_warpoints_blk, get_ranks_blk } = require("blkGetters")
+let { isInSessionRoom } = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { getEventEconomicName } = require("%scripts/events/eventInfo.nut")
 
 global enum debrState {
   init
@@ -102,6 +103,7 @@ let debriefingRowDefault = {
   }
   isVisibleWhenEmpty = function() { return this.showEvenEmpty }
   getName = function() { return loc(getTblValue("text", this, "debriefing/" + this.id)) }
+  getNameIcon = null
 }
 
 local debriefingRows = [] //!!!FIX ME debriefingRows used for some rows tooltip
@@ -213,6 +215,62 @@ debriefingRows = [
     infoName = "score"
     infoType = ""
   }
+  { id = "SkillBonusTotal"
+    customValueName = "expSkillBonusTotal"
+    rowType = "exp"
+    showByModes = function(gm) { return gm == GM_DOMINATION }
+    showOnlyWhenFullResult = true
+    canShowRewardAsValue = true
+    hideUnitSessionTimeInTooltip = true
+    getName = function() {
+      return loc("expSkillBonus")
+    }
+
+    getNameIcon = function() {
+      let expSkillBonusLevel = debriefingResult?.exp.expSkillBonusLevel
+      return  expSkillBonusLevel ? $"#ui/gameuiskin#skill_bonus_level_{expSkillBonusLevel}.svg" : ""
+    }
+
+    tooltipRowBonuses = function(_unitId, unitData) {
+      let noBonusExp = unitData.tblTotal.noBonusExp
+      let blk = get_ranks_blk()
+      let expSkillBonusLevel = debriefingResult?.exp.expSkillBonusLevel
+
+      let eventName = debriefingResult?.roomEvent ? getEventEconomicName(debriefingResult.roomEvent) : "tank_event_in_random_battles_arcade"
+      let skillBonusData = blk?.ExpSkillBonus[eventName][$"BonusLevel{expSkillBonusLevel}"]
+
+      return skillBonusData && expSkillBonusLevel ? {
+        sources = [
+          {
+            text = $"{noBonusExp}"
+            textColor = "@commonTextColor"
+            currencyImg = "#ui/gameuiskin#item_type_RP.svg"
+          },
+          {
+            text = "x"
+            textColor = "@chapterUnlockedColor"
+          },
+          {
+            text = $"{skillBonusData.bonusPercent}%"
+            currencyImg = $"#ui/gameuiskin#skill_bonus_level_{expSkillBonusLevel}.svg"
+            textColor = "@chapterUnlockedColor"
+          }
+        ]
+      } : null
+    }
+
+    tooltipComment = function() {
+      let eventName = debriefingResult?.roomEvent.name ?? "tank_event_in_random_battles_arcade"
+      return getSkillBonusTooltipText(eventName)
+    }
+
+    rowProps = function() {
+      if (debriefingResult.exp.result == STATS_RESULT_SUCCESS)
+        return { winAwardColor = "yes" }
+      return null
+    }
+
+  }
   { id = "Mission"
     rowType = "exp"
     showByModes = function(gm) { return gm == GM_DOMINATION }
@@ -276,8 +334,8 @@ debriefingRows = [
       let firstWinMulRp = (debriefingResult?.xpFirstWinInDayMul ?? 1.0).tointeger()
       let firstWinMulWp = (debriefingResult?.wpFirstWinInDayMul ?? 1.0).tointeger()
       return loc("reward") + loc("ui/colon") + loc("ui/comma").join([
-        firstWinMulRp > 1 ? ::getRpPriceText("x" + firstWinMulRp, true) : "",
-        firstWinMulWp > 1 ? ::getWpPriceText("x" + firstWinMulWp, true) : "",
+        firstWinMulRp > 1 ? $"x{Cost().setRp(firstWinMulRp).tostring()}" : "",
+        firstWinMulWp > 1 ? $"x{Cost(firstWinMulWp).tostring()}" : "",
       ], true)
     }
     canShowRewardAsValue = true
@@ -741,7 +799,7 @@ let function debriefingJoinRowsIntoRow(exp, destRowId, srcRowIdsArray) {
           else if (isTable)
             foreach (i, v in val)
               if (is_numeric(v))
-              tbl[keyTo][i] += v
+                tbl[keyTo][i] += v
         }
       }
     }
@@ -898,10 +956,9 @@ let function gatherDebriefingResult() {
   debriefingResult.gameType <- get_game_type()
   debriefingResult.isTeamplay <- ::is_mode_with_teams(debriefingResult.gameType)
 
-  let isInRoom = ::SessionLobby.isInRoom()
-  debriefingResult.isInRoom <- isInRoom
-  debriefingResult.roomEvent <- isInRoom ? ::SessionLobby.getRoomEvent() : null
-  debriefingResult.isSpectator <- isInRoom && ::SessionLobby.spectator
+  debriefingResult.isInRoom <- isInSessionRoom.get()
+  debriefingResult.roomEvent <- isInSessionRoom.get() ? ::SessionLobby.getRoomEvent() : null
+  debriefingResult.isSpectator <- isInSessionRoom.get() && ::SessionLobby.spectator
 
   debriefingResult.isMp <- ::is_multiplayer()
   debriefingResult.isReplay <- is_replay_playing()
@@ -1020,6 +1077,7 @@ let function gatherDebriefingResult() {
 
   debriefingResult.exp.expMission <- getTblValue("expMission", exp, 0) + getTblValue("expRace", exp, 0)
   debriefingResult.exp.wpMission <- getTblValue("wpMission", exp, 0) + getTblValue("wpRace", exp, 0)
+  debriefingResult.exp.expSkillBonus <- getTblValue("expSkillBonusTotal", exp, 0)
 
   let missionRules = ::g_mis_custom_state.getCurMissionRules()
   debriefingResult.overrideCountryIconByTeam <- {

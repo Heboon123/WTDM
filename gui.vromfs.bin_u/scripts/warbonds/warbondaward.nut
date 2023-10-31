@@ -1,11 +1,11 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-
 let bhvUnseen = require("%scripts/seen/bhvUnseen.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { fillItemDescr } = require("%scripts/items/itemVisual.nut")
 let DataBlock = require("DataBlock")
+let purchaseConfirmation = require("%scripts/purchase/purchaseConfirmationHandler.nut")
+let { addTask } = require("%scripts/tasker.nut")
 
 let WarbondAward = class {
   id = ""
@@ -142,15 +142,7 @@ let WarbondAward = class {
                           { purchase = colorize("userlogColoredText", this.getNameText()),
                             cost = colorize("activeTextColor", this.getCostText())
                           })
-
-    scene_msg_box("purchase_ask", null, msgText,
-      [
-        ["purchase", Callback(this._buy, this) ],
-        ["cancel", function() {} ]
-      ],
-      "purchase",
-      { cancel_fn = function() {} }
-    )
+    purchaseConfirmation("purchase_ask", msgText, Callback(this._buy, this))
   }
 
   function _buy() {
@@ -159,7 +151,7 @@ let WarbondAward = class {
 
     let taskId = this.awardType.requestBuy(this.warbondWeak, this.blk)
     let cb = Callback(this.onBought, this)
-    ::g_tasker.addTask(taskId, { showProgressBox = true }, cb)
+    addTask(taskId, { showProgressBox = true }, cb)
   }
 
   function onBought() {

@@ -4,10 +4,15 @@ from "%scripts/dagui_library.nut" import *
 let { Cost } = require("%scripts/money.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { get_warpoints_blk } = require("blkGetters")
-
-
 let { ceil } = require("math")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { decimalFormat } = require("%scripts/langUtils/textFormat.nut")
+let { addTask } = require("%scripts/tasker.nut")
+let { warningIfGold } = require("%scripts/viewUtils/objectTextUpdate.nut")
+
+let getCrewSpText = @(sp) $"{decimalFormat(sp)}{loc("currency/skillPoints/sign/colored")}"
+
+let getCrewSpTextIfNotZero = @(sp) sp == 0 ? "" : getCrewSpText(sp)
 
 ::g_crew_points <- {}
 
@@ -40,11 +45,11 @@ let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
     cost += pack.cost
   }
   let locParams = {
-    amount = ::getCrewSpText(amount)
+    amount = getCrewSpTextIfNotZero(amount)
     cost = cost.getTextAccordingToBalance()
   }
 
-  let msgText = ::warningIfGold(loc("shop/needMoneyQuestion_buySkillPoints", locParams), cost)
+  let msgText = warningIfGold(loc("shop/needMoneyQuestion_buySkillPoints", locParams), cost)
   scene_msg_box("purchase_ask", null, msgText,
     [["yes", Callback(function() {
         if (::check_balance_msgBox(cost))
@@ -63,7 +68,7 @@ let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
     else if (onSuccess)
       onSuccess()
   }, this)
-  ::g_tasker.addTask(taskId, { showProgressBox = true }, cb)
+  addTask(taskId, { showProgressBox = true }, cb)
 }
 
 ::g_crew_points.getPacksToBuyAmount <- function getPacksToBuyAmount(country, skillPoints) {
@@ -73,4 +78,9 @@ let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 
   let bestPack = packs.top() //while it only for developers it enough
   return array(ceil(skillPoints.tofloat() / bestPack.skills), bestPack)
+}
+
+return {
+  getCrewSpText
+  getCrewSpTextIfNotZero
 }

@@ -12,7 +12,7 @@ let callback = require("%sqStdLibs/helpers/callback.nut")
 let selectUnitHandler = require("%scripts/slotbar/selectUnitHandler.nut")
 let { getWeaponsStatusName, checkUnitWeapons } = require("%scripts/weaponry/weaponryInfo.nut")
 let { getNearestSelectableChildIndex } = require("%sqDagui/guiBhv/guiBhvUtils.nut")
-let { getBitStatus, isRequireUnlockForUnit } = require("%scripts/unit/unitStatus.nut")
+let { getBitStatus } = require("%scripts/unit/unitStatus.nut")
 let { getUnitItemStatusText } = require("%scripts/unit/unitInfoTexts.nut")
 let { getUnitRequireUnlockShortText } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { startLogout } = require("%scripts/login/logout.nut")
@@ -30,6 +30,9 @@ let { startsWith } = require("%sqstd/string.nut")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
+let { isInFlight } = require("gameplayBinding")
+let { bit_unit_status, isRequireUnlockForUnit } = require("%scripts/unit/unitInfo.nut")
+let { warningIfGold } = require("%scripts/viewUtils/objectTextUpdate.nut")
 
 const SLOT_NEST_TAG = "unitItemContainer { {0} }"
 
@@ -77,7 +80,7 @@ gui_handlers.SlotbarWidget <- class extends gui_handlers.BaseGuiHandlerWT {
   totalSpawnScore = -1 //to disable slots by spawn score //!!FIX ME: should to take this from mission rules
   sessionWpBalance = 0 //!!FIX ME: should to take this from mission rules
 
-  shouldCheckQueue = null //bool.  should check queue before select unit. !::is_in_flight by default.
+  shouldCheckQueue = null //bool.  should check queue before select unit. !isInFlight by default.
   needActionsWithEmptyCrews = true //allow create crew and choose unit to crew while select empty crews.
   applySlotSelectionOverride = null //full override slot selection instead of select_crew
   beforeSlotbarSelect = null //function(onContinueCb, onCancelCb) to do before apply slotbar select.
@@ -169,9 +172,9 @@ gui_handlers.SlotbarWidget <- class extends gui_handlers.BaseGuiHandlerWT {
     this.showNewSlot = this.showNewSlot ?? !this.singleCountry
     this.showEmptySlot = this.showEmptySlot ?? !this.singleCountry
     this.hasExtraInfoBlock = this.hasExtraInfoBlock ?? !this.singleCountry
-    this.shouldSelectAvailableUnit = this.shouldSelectAvailableUnit ?? ::is_in_flight()
+    this.shouldSelectAvailableUnit = this.shouldSelectAvailableUnit ?? isInFlight()
     this.needPresetsPanel = this.needPresetsPanel ?? (!this.singleCountry && this.isCountryChoiceAllowed)
-    this.shouldCheckQueue = this.shouldCheckQueue ?? !::is_in_flight()
+    this.shouldCheckQueue = this.shouldCheckQueue ?? !isInFlight()
     this.onSlotDblClick = this.onSlotDblClick ?? this.getDefaultDblClickFunc()
     this.onSlotActivate = this.onSlotActivate ?? this.defaultOnSlotActivateFunc
 
@@ -715,7 +718,7 @@ gui_handlers.SlotbarWidget <- class extends gui_handlers.BaseGuiHandlerWT {
       return
     }
 
-    let msgText = ::warningIfGold(
+    let msgText = warningIfGold(
       format(loc("shop/needMoneyQuestion_purchaseCrew"),
         cost.getTextAccordingToBalance()),
       cost)

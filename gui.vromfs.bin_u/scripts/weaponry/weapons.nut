@@ -52,6 +52,7 @@ let { decoratorTypes } = require("%scripts/customization/types.nut")
 let { canDoUnlock } = require("%scripts/unlocks/unlocksModule.nut")
 let { defer } = require("dagor.workcycle")
 let { get_balance } = require("%scripts/user/balance.nut")
+let { addTask } = require("%scripts/tasker.nut")
 
 local timerPID = dagui_propid_add_name_id("_size-timer")
 ::header_len_per_cell <- 16
@@ -196,9 +197,10 @@ gui_handlers.WeaponsModalHandler <- class extends gui_handlers.BaseGuiHandlerWT 
       imageBlock.show(this.researchMode)
     }
 
+    let textSpendExp = loc("mainmenu/spendExcessExp")
     setDoubleTextToButton(this.scene, "btn_spendExcessExp",
-        ::getRpPriceText(loc("mainmenu/spendExcessExp") + " ", false),
-        ::getRpPriceText(loc("mainmenu/spendExcessExp") + " ", true))
+      $"{textSpendExp} {loc("currency/researchPoints/sign")}",
+      $"{textSpendExp} {loc("currency/researchPoints/sign/colored")}")
 
     this.airName = ::aircraft_for_weapons
     this.air = getAircraftByName(this.airName)
@@ -1508,7 +1510,7 @@ gui_handlers.WeaponsModalHandler <- class extends gui_handlers.BaseGuiHandlerWT 
     }
 
     let taskId = ::enable_modifications(this.airName, [item.name], !equipped)
-    ::g_tasker.addTask(taskId, { showProgressBox = true }, taskSuccessCallback)
+    addTask(taskId, { showProgressBox = true }, taskSuccessCallback)
   }
 
   function onEventModificationChanged(_p) {
@@ -1542,7 +1544,7 @@ gui_handlers.WeaponsModalHandler <- class extends gui_handlers.BaseGuiHandlerWT 
       this.taskId = ::save_online_single_job(SAVE_WEAPON_JOB_DIGIT)
       if (this.taskId >= 0 && func) {
         let cb = u.isFunction(func) ? Callback(func, this) : func
-        ::g_tasker.addTask(this.taskId, { showProgressBox = true }, cb)
+        addTask(this.taskId, { showProgressBox = true }, cb)
       }
     }
     else if (func)

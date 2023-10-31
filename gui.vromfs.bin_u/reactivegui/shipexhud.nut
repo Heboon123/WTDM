@@ -6,7 +6,13 @@ let { floor } = require("math")
 let activeOrder = require("activeOrder.nut")
 let shipStateModule = require("shipStateModule.nut")
 let hudLogs = require("hudLogs.nut")
-let { depthLevel, waterDist, wishDist, buoyancyEx } = require("shipState.nut")
+let { depthLevel, waterDist, wishDist, buoyancyEx
+//
+
+
+ } = require("shipState.nut")
+ let fireControl = require("submarineFireControl.nut")
+
 let { isAimCamera, GimbalX, GimbalY, GimbalSize, altitude, isActiveSensor,
   remainingDist, isOperated, isTrackingTarget, wireLoseTime, isWireConnected,
   IsGimbalVisible, TrackerSize, TrackerX, TrackerY, IsTrackerVisible } = require("shellState.nut")
@@ -91,11 +97,28 @@ let function depthLevelLineCmp() {
     ]
   })
 }
+//
+
+
+
+
+
+
+
+
+
+
+
+
+
 let childrenShVerSpeed = [
   depthLevelCmp
   { size = [shVertSpeedScaleWidth * 3, shVertSpeedScaleWidth] }
   { children = [depthLevelLineCmp, buoyancyExCmp] }
   wishDistCmp
+  //
+
+
 ]
 
 let function ShipVertSpeed() {
@@ -253,6 +276,7 @@ return {
   size = flex()
   children = [
     shipHud
+    fireControl
     sensorsHud
     aimHud
   ]

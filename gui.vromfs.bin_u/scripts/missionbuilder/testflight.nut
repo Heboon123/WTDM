@@ -6,7 +6,7 @@ let { getLastWeapon } = require("%scripts/weaponry/weaponryInfo.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
-let { bombNbr, hasCountermeasures, getCurrentPreset } = require("%scripts/unit/unitStatus.nut")
+let { bombNbr, hasCountermeasures, getCurrentPreset, hasBombDelayExplosion } = require("%scripts/unit/unitStatus.nut")
 let { isTripleColorSmokeAvailable } = require("%scripts/options/optionsManager.nut")
 let actionBarInfo = require("%scripts/hud/hudActionBarInfo.nut")
 let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
@@ -17,10 +17,12 @@ let { select_training_mission, get_meta_mission_info_by_name } = require("guiMis
 let { isPreviewingLiveSkin, setCurSkinToHangar
 } = require("%scripts/customization/skins.nut")
 let { stripTags } = require("%sqstd/string.nut")
-let { set_option } = require("%scripts/options/optionsExt.nut")
+let { set_option, create_options_container } = require("%scripts/options/optionsExt.nut")
 let { sendStartTestFlightToBq } = require("%scripts/missionBuilder/testFlightBQInfo.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 let { get_game_settings_blk } = require("blkGetters")
+let { isInSessionRoom } = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { getLanguageName } = require("%scripts/langUtils/language.nut")
 
 ::missionBuilderVehicleConfigForBlk <- {} //!!FIX ME: Should to remove this
 ::last_called_gui_testflight <- null
@@ -244,7 +246,7 @@ gui_handlers.TestFlight <- class extends gui_handlers.GenericOptionsModal {
     ::aircraft_for_weapons = this.unit.name
     set_gui_option(USEROPT_AIRCRAFT, this.unit.name)
 
-    let container = ::create_options_container("testflight_options", this.options, true, 0.5, true, this.optionsConfig)
+    let container = create_options_container("testflight_options", this.options, true, 0.5, true, this.optionsConfig)
     this.guiScene.replaceContentFromText(optListObj, container.tbl, container.tbl.len(), this)
 
     this.optionsContainers = [container.descr]
@@ -314,7 +316,7 @@ gui_handlers.TestFlight <- class extends gui_handlers.GenericOptionsModal {
     if (this.unit)
       set_gui_option(USEROPT_WEAPONS, getLastWeapon(this.unit.name))
 
-    if (::SessionLobby.isInRoom())
+    if (isInSessionRoom.get())
       return this.goBack()
 
     ::queues.checkAndStart(
@@ -345,7 +347,7 @@ gui_handlers.TestFlight <- class extends gui_handlers.GenericOptionsModal {
     if (!misBlk)
       return assert(false, "Error: wrong testflight mission " + misName)
 
-    ::current_campaign_mission <- misName
+    ::current_campaign_mission = misName
 
     this.saveAircraftOptions()
     setCurSkinToHangar(this.unit.name)
@@ -370,7 +372,7 @@ gui_handlers.TestFlight <- class extends gui_handlers.GenericOptionsModal {
   }
 
   function getTestFlightMisName(misName) {
-    let lang = ::g_language.getLanguageName()
+    let lang = getLanguageName()
     return get_game_settings_blk()?.testFlight_override?[lang]?[misName] ?? misName
   }
 
@@ -548,7 +550,7 @@ gui_handlers.TestFlight <- class extends gui_handlers.GenericOptionsModal {
     if (!option)
       return
 
-    this.showOptionRow(option, !!this.unit && (getCurrentPreset(this.unit)?.bomb ?? false))
+    this.showOptionRow(option, hasBombDelayExplosion(this.unit))
   }
 
   function checkBombSeriesRow() {

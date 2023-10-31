@@ -2,13 +2,14 @@
 from "%scripts/dagui_library.nut" import *
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
-let { convertBlk } = require("%sqstd/datablock.nut")
 let userstat = require("userstat")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { format, split_by_chars } = require("string")
 // warning disable: -file:forbidden-function
 
+let { setGameLocalization, getGameLocalizationInfo } = require("%scripts/langUtils/language.nut")
+let { getCurrentLanguage } = require("dagor.localize")
 let { reload } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let DataBlock  = require("DataBlock")
 let { blkFromPath } = require("%sqStdLibs/helpers/datablockUtils.nut")
@@ -39,6 +40,7 @@ let { get_charserver_time_sec } = require("chard")
 let { getUnitName, getUnitCountry, isUnitGift } = require("%scripts/unit/unitInfo.nut")
 let { get_wpcost_blk } = require("blkGetters")
 require("%scripts/debugTools/dbgLongestUnitTooltip.nut")
+let { userIdInt64 } = require("%scripts/user/myUser.nut")
 
 let function reload_dagui() {
   get_cur_gui_scene()?.resetGamepadMouseTarget()
@@ -109,15 +111,6 @@ let function debug_reload_and_restart_debriefing() {
 
 let function debug_debriefing_unlocks(unlocksAmount = 5) {
   ::gui_start_debriefingFull({ debugUnlocks = unlocksAmount })
-}
-
-let function debug_trophy_rewards_list(id = "shop_test_multiple_types_reward") {
-  let trophy = ::ItemsManager.findItemById(id)
-  local content = trophy.getContent()
-    .map(@(i) convertBlk(i))
-    .sort(::trophyReward.rewardsSortComparator)
-
-  ::gui_start_open_trophy_rewards_list({ rewardsArray = content })
 }
 
 let function show_hotas_window_image() {
@@ -314,12 +307,12 @@ let function debug_show_weapon(weaponName) {
 }
 
 let function debug_change_language(isNext = true) {
-  let list = ::g_language.getGameLocalizationInfo()
-  let curLang = ::get_current_language()
+  let list = getGameLocalizationInfo()
+  let curLang = getCurrentLanguage()
   let curIdx = list.findindex(@(l) l.id == curLang) ?? 0
   let newIdx = curIdx + (isNext ? 1 : -1 + list.len())
   let newLang = list[newIdx % list.len()]
-  ::g_language.setGameLocalization(newLang.id, true, false)
+  setGameLocalization(newLang.id, true, false)
   dlog("Set language: " + newLang.id)
 }
 
@@ -495,7 +488,6 @@ register_command(charAddAllItems, "debug.char_add_all_items")
 register_command(switch_on_debug_debriefing_recount, "debug.switch_on_debug_debriefing_recount")
 register_command(debug_reload_and_restart_debriefing, "debug.reload_and_restart_debriefing")
 register_command(debug_debriefing_unlocks, "debug.debriefing_unlocks")
-register_command(debug_trophy_rewards_list, "debug.trophy_rewards_list")
 register_command(show_hotas_window_image, "debug.show_hotas_window_image")
 register_command(debug_export_unit_weapons_descriptions, "debug.export_unit_weapons_descriptions")
 register_command(debug_export_unit_xray_parts_descriptions, "debug.export_unit_xray_parts_descriptions")

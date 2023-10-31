@@ -7,15 +7,18 @@ let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { getMyStateData } = require("%scripts/user/userUtils.nut")
 let { isNeedFirstCountryChoice } = require("%scripts/firstChoice/firstChoice.nut")
 let { get_time_msec } = require("dagor.time")
+let { isInFlight } = require("gameplayBinding")
+let { userName } = require("%scripts/user/myUser.nut")
+let { calcBattleRatingFromRank } = require("%appGlobals/ranks_common_shared.nut")
 
 const MATCHING_REQUEST_LIFETIME = 30000
 local lastRequestTimeMsec = 0
 local isUpdating = false
 local userData = null
 
-let brInfoByGamemodeId = persist("brInfoByGamemodeId", @() Watched({}))
-let recentBrGameModeId = persist("recentBrGameModeId", @() Watched(""))
-let recentBrSourceGameModeId = persist("recentBrSourceGameModeId", @() Watched(null))
+let brInfoByGamemodeId = mkWatched(persist, "brInfoByGamemodeId", {})
+let recentBrGameModeId = mkWatched(persist, "recentBrGameModeId", "")
+let recentBrSourceGameModeId = mkWatched(persist, "recentBrSourceGameModeId", null)
 let recentBR = Computed(@() brInfoByGamemodeId.value?[recentBrSourceGameModeId.value].br ?? 0)
 let recentBRData = Computed(@() brInfoByGamemodeId.value?[recentBrSourceGameModeId.value].brData)
 
@@ -38,7 +41,7 @@ let function calcSquadMrank(brData) {
 let function calcSquadBattleRating(brData) {
   let mrank = calcSquadMrank(brData)
   // mrank < 0  means empty received data and no BR string needed in game mode header
-  return mrank < 0 ? 0 : ::calc_battle_rating_from_rank(mrank)
+  return mrank < 0 ? 0 : calcBattleRatingFromRank(mrank)
 }
 
 let function getBRDataByMrankDiff(diff = 3) {
@@ -48,17 +51,17 @@ let function getBRDataByMrankDiff(diff = 3) {
 
   return recentBRData.value
     .filter(@(v, _n) (v?[0].mrank ?? -1) >= 0 && (squadMrank - v[0].mrank >= diff))
-    .map(@(v) ::calc_battle_rating_from_rank(v[0].mrank))
+    .map(@(v) calcBattleRatingFromRank(v[0].mrank))
 }
 
 let function calcBattleRating(brData) {
   if (::g_squad_manager.isInSquad())
     return calcSquadBattleRating(brData)
 
-  let name = ::my_user_name
+  let name = userName.value
   let myData = brData?[name]
 
-  return myData?[0] == null ? 0 : ::calc_battle_rating_from_rank(myData[0].mrank)
+  return myData?[0] == null ? 0 : calcBattleRatingFromRank(myData[0].mrank)
 }
 
 let function getCrafts(data, country = null) {
@@ -203,7 +206,7 @@ updateBattleRating = function(gameMode = null, brData = null) { //!!FIX ME: why 
 
 local isRequestDelayed = false
 let function updateBattleRatingDelayed() {
-  if (isRequestDelayed || ::is_in_flight() || isNeedFirstCountryChoice()) //do not recalc while in the battle
+  if (isRequestDelayed || isInFlight() || isNeedFirstCountryChoice()) //do not recalc while in the battle
     return
   isRequestDelayed = true
   handlersManager.doDelayed(function() {

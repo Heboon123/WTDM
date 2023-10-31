@@ -45,6 +45,7 @@ let {
   isUnitGroup, isGroupPart,canResearchUnit
 } = require("%scripts/unit/unitInfo.nut")
 let { get_ranks_blk } = require("blkGetters")
+let { addTask } = require("%scripts/tasker.nut")
 
 local lastUnitType = null
 
@@ -227,7 +228,7 @@ gui_handlers.ShopMenuHandler <- class extends gui_handlers.BaseGuiHandlerWT {
                 if (isUnitGroup(air)) {
                   foreach (gAir in air.airsGroup)
                     if (gAir.isUsable() && ::shop_get_aircraft_hp(gAir.name) < 1.0)
-                    this.repairAllCost += ::wp_get_repair_cost(gAir.name)
+                      this.repairAllCost += ::wp_get_repair_cost(gAir.name)
                 }
                 else if (air.isUsable() && ::shop_get_aircraft_hp(air.name) < 1.0)
                   this.repairAllCost += ::wp_get_repair_cost(air.name)
@@ -1881,7 +1882,7 @@ gui_handlers.ShopMenuHandler <- class extends gui_handlers.BaseGuiHandlerWT {
     blk.setInt("destType", destType);
     blk.setInt("srcType", ES_UNIT_TYPE_TANK);
 
-    ::g_tasker.addTask(charSendBlk("cln_set_dest_rp_unit_type", blk), { showProgressBox = true })
+    addTask(charSendBlk("cln_set_dest_rp_unit_type", blk), { showProgressBox = true })
 
   }
 

@@ -10,12 +10,13 @@ let seenList = require("%scripts/seen/seenList.nut")
 let stdMath = require("%sqstd/math.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { isUnlockFav, toggleUnlockFav } = require("%scripts/unlocks/favoriteUnlocks.nut")
-let { placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
+let { placePriceTextToButton, warningIfGold } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { getUnlockTitle } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { getUnlockConditions } = require("%scripts/unlocks/unlocksConditions.nut")
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
 let { getUnlockCost, buyUnlock } = require("%scripts/unlocks/unlocksModule.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
+let purchaseConfirmation = require("%scripts/purchase/purchaseConfirmationHandler.nut")
 
 /*
   config = {
@@ -243,13 +244,13 @@ gui_handlers.ChooseImage <- class extends gui_handlers.BaseGuiHandlerWT {
     let cost = getUnlockCost(unlockId)
     let unlockBlk = getUnlockById(unlockId)
     let unlockCfg = ::build_conditions_config(unlockBlk)
-    let title = ::warningIfGold(loc("onlineShop/needMoneyQuestion", {
+    let title = warningIfGold(loc("onlineShop/needMoneyQuestion", {
       purchase = colorize("unlockHeaderColor", getUnlockTitle(unlockCfg)),
       cost = cost.getTextAccordingToBalance()
     }), cost)
     let onSuccess = Callback(@() this.chooseImage(idx), this)
     let onOk = @() buyUnlock(unlockId, onSuccess)
-    this.msgBox("question_buy_unlock", title, [["ok", onOk], ["cancel"]], "cancel")
+    purchaseConfirmation("question_buy_unlock", title, onOk)
   }
 
   function goToMarketplace(item) {

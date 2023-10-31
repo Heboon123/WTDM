@@ -20,6 +20,8 @@ let { get_game_mode } = require("mission")
 let { OPTIONS_MODE_SEARCH, USEROPT_SEARCH_GAMEMODE, USEROPT_SEARCH_DIFFICULTY
 } = require("%scripts/options/optionsExtNames.nut")
 let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
+let { sessionLobbyStatus } = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { create_options_container } = require("%scripts/options/optionsExt.nut")
 
 ::match_search_gm <- -1
 
@@ -158,7 +160,7 @@ gui_handlers.SessionsList <- class extends gui_handlers.GenericOptions {
     if (!options)
       return
 
-    let container = ::create_options_container(this.optionsContainer, options, false, 0.5, false)
+    let container = create_options_container(this.optionsContainer, options, false, 0.5, false)
     let optObj = this.scene.findObject("session-options")
     if (checkObj(optObj))
       this.guiScene.replaceContentFromText(optObj, container.tbl, container.tbl.len(), this)
@@ -199,7 +201,7 @@ gui_handlers.SessionsList <- class extends gui_handlers.GenericOptions {
   function onSessionsUpdate(_obj = null, _dt = 0.0) {
     if (handlersManager.isAnyModalHandlerActive()
         || ::is_multiplayer()
-        || ::SessionLobby.status != lobbyStates.NOT_IN_ROOM)
+        || sessionLobbyStatus.get() != lobbyStates.NOT_IN_ROOM)
       return
 
     this.roomsListData.requestList(this.getCurFilter())

@@ -1,12 +1,12 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { format } = require("string")
 let lobbyStates = require("%scripts/matchingRooms/lobbyStates.nut")
 let { set_game_mode, get_game_mode, get_cur_game_mode_name } = require("mission")
+let { isInJoiningGame, sessionLobbyStatus } = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { getEventDisplayType } = require("%scripts/events/eventInfo.nut")
 
 gui_handlers.JoiningGameWaitBox <- class extends gui_handlers.BaseGuiHandlerWT {
   wndType = handlerType.MODAL
@@ -29,7 +29,7 @@ gui_handlers.JoiningGameWaitBox <- class extends gui_handlers.BaseGuiHandlerWT {
   }
 
   function updateInfo() {
-    if (!::SessionLobby.isInJoiningGame())
+    if (!isInJoiningGame.get())
       return this.goBack()
 
     this.resetTimer() //statusChanged
@@ -37,7 +37,7 @@ gui_handlers.JoiningGameWaitBox <- class extends gui_handlers.BaseGuiHandlerWT {
 
     let misData = ::SessionLobby.getMissionParams()
     local msg = loc("wait/sessionJoin")
-    if (::SessionLobby.status == lobbyStates.UPLOAD_CONTENT)
+    if (sessionLobbyStatus.get() == lobbyStates.UPLOAD_CONTENT)
       msg = loc("wait/sessionUpload")
     if (misData)
       msg = "".concat(msg, "\n\n", colorize("activeTextColor", this.getCurrentMissionGameMode()),
@@ -53,7 +53,7 @@ gui_handlers.JoiningGameWaitBox <- class extends gui_handlers.BaseGuiHandlerWT {
       if (event == null)
         return ""
 
-      if (::events.getEventDisplayType(event) != ::g_event_display_type.RANDOM_BATTLE)
+      if (getEventDisplayType(event) != ::g_event_display_type.RANDOM_BATTLE)
         gameModeName = "event"
     }
     return loc("multiplayer/" + gameModeName + "Mode")

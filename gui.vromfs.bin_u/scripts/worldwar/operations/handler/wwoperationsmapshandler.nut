@@ -18,7 +18,7 @@ let { refreshGlobalStatusData,
   actionWithGlobalStatusRequest } = require("%scripts/worldWar/operations/model/wwGlobalStatus.nut")
 let { addClanTagToNameInLeaderbord } = require("%scripts/leaderboard/leaderboardView.nut")
 let { needUseHangarDof } = require("%scripts/viewUtils/hangarDof.nut")
-let { getUnlockLocName, getUnlockMainCondDesc,
+let { getUnlockLocName, getUnlockMainCondDesc, getUnlockImageConfig,
   getUnlockNameText } = require("%scripts/unlocks/unlocksViewModule.nut")
 let wwAnimBgLoad = require("%scripts/worldWar/wwAnimBg.nut")
 let { addPopupOptList } = require("%scripts/worldWar/operations/handler/wwClustersList.nut")
@@ -29,10 +29,11 @@ let seenWWOperationAvailable = require("%scripts/seen/seenList.nut").get(SEEN.WW
 let wwVehicleSetModal = require("%scripts/worldWar/operations/handler/wwVehicleSetModal.nut")
 let { get_charserver_time_sec } = require("chard")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
-let { USEROPT_CLUSTER } = require("%scripts/options/optionsExtNames.nut")
+let { USEROPT_CLUSTERS } = require("%scripts/options/optionsExtNames.nut")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
 let { get_gui_regional_blk, get_es_custom_blk } = require("blkGetters")
+let { charRequestJson } = require("%scripts/tasker.nut")
 
 const MY_CLUSRTERS = "ww/clusters"
 
@@ -296,7 +297,7 @@ gui_handlers.WwOperationsMapsHandler <- class extends gui_handlers.BaseGuiHandle
     let unlocksArray = getAllUnlocks()
     foreach (blk in unlocksArray) {
       let unlConf = ::build_conditions_config(blk)
-      let imgConf = ::g_unlock_view.getUnlockImageConfig(unlConf)
+      let imgConf = getUnlockImageConfig(unlConf)
       let mainCond = getMainProgressCondition(unlConf.conditions)
       let progressTxt = getUnlockMainCondDesc(
         mainCond, unlConf.curVal, unlConf.maxVal, { isProgressTextOnly = true })
@@ -670,7 +671,7 @@ gui_handlers.WwOperationsMapsHandler <- class extends gui_handlers.BaseGuiHandle
     if (reasonData.canJoin)
       return operation.join(country)
 
-    showInfoMsgBox(loc(reasonData.reasonText), "cant_join_operation")
+    return showInfoMsgBox(loc(reasonData.reasonText), "cant_join_operation")
   }
 
   onBackOperation = @(obj)
@@ -687,7 +688,7 @@ gui_handlers.WwOperationsMapsHandler <- class extends gui_handlers.BaseGuiHandle
 
     let myClusters = clustersStr.split(",")
     let forbiddenClusters = ::g_world_war.getSetting("forbiddenClusters", null)?.split(",") ?? []
-    let clusters = ::get_option(USEROPT_CLUSTER).items
+    let clusters = ::get_option(USEROPT_CLUSTERS).items
       .filter(@(c) !c.isAuto && !forbiddenClusters.contains(c.name))
       .map(@(c) c?.name)
     let allovedClusters = myClusters.filter(@(v) clusters.contains(v))
@@ -725,7 +726,7 @@ gui_handlers.WwOperationsMapsHandler <- class extends gui_handlers.BaseGuiHandle
 
     local clustersTxt = ""
     if (this.clustersList) {
-      let optItems = ::get_option(USEROPT_CLUSTER).items
+      let optItems = ::get_option(USEROPT_CLUSTERS).items
       let txtList = []
       foreach (name in this.clustersList.split(",")) {
         let item = optItems.findvalue(@(v) v.name == name)
@@ -807,7 +808,7 @@ gui_handlers.WwOperationsMapsHandler <- class extends gui_handlers.BaseGuiHandle
     }
 
     log($"cln_ww_autoselect_operation(clusters={this.clustersList}; country={countryId})")
-    ::g_tasker.charRequestJson("cln_ww_autoselect_operation", requestBlk, null,
+    charRequestJson("cln_ww_autoselect_operation", requestBlk, null,
       Callback(@(data) this.findRandomOperationCB(data, countryId, progressBox), this))
   }
 

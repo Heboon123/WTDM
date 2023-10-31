@@ -40,20 +40,23 @@ let { getUnlockIds } = require("%scripts/unlocks/unlockMarkers.nut")
 let { getShopDiffCode } = require("%scripts/shop/shopDifficulty.nut")
 let seenList = require("%scripts/seen/seenList.nut")
 let { havePlayerTag, isGuestLogin } = require("%scripts/user/userUtils.nut")
-let { placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
+let { placePriceTextToButton, warningIfGold } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { isCollectionItem } = require("%scripts/collections/collections.nut")
 let { openCollectionsWnd } = require("%scripts/collections/collectionsWnd.nut")
 let { launchEmailRegistration, canEmailRegistration, emailRegistrationTooltip,
   needShowGuestEmailRegistration
 } = require("%scripts/user/suggestionEmailRegistration.nut")
 let { getUnlockCondsDescByCfg, getUnlockMultDescByCfg, getUnlockNameText, getUnlockMainCondDescByCfg,
-  getLocForBitValues } = require("%scripts/unlocks/unlocksViewModule.nut")
+  getLocForBitValues, buildUnlockDesc, fillUnlockManualOpenButton, updateUnseenIcon, updateLockStatus,
+  fillUnlockImage, fillUnlockProgressBar, fillUnlockDescription, doPreviewUnlockPrize, fillReward,
+  fillUnlockTitle, fillUnlockPurchaseButton
+} = require("%scripts/unlocks/unlocksViewModule.nut")
 let { APP_ID } = require("app")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { isUnlockVisible, openUnlockManually, getUnlockCost, getUnlockRewardText, buyUnlock, canDoUnlock,
   canOpenUnlockManually, isUnlockOpened } = require("%scripts/unlocks/unlocksModule.nut")
 let openUnlockUnitListWnd = require("%scripts/unlocks/unlockUnitListWnd.nut")
-let { isUnlockFav, canAddFavorite, unlockToFavorites,
+let { isUnlockFav, canAddFavorite, unlockToFavorites, fillUnlockFav,
   toggleUnlockFav } = require("%scripts/unlocks/favoriteUnlocks.nut")
 let { getManualUnlocks } = require("%scripts/unlocks/personalUnlocks.nut")
 let { getCachedDataByType, getDecorator, getDecoratorById,
@@ -62,7 +65,6 @@ let { getPlaneBySkinId } = require("%scripts/customization/skinUtils.nut")
 let { cutPrefix } = require("%sqstd/string.nut")
 let { getPlayerSsoShortTokenAsync } = require("auth_wt")
 let { set_option } = require("%scripts/options/optionsExt.nut")
-let { doPreviewUnlockPrize } = require("%scripts/unlocks/unlocksView.nut")
 let { isBattleTask } = require("%scripts/unlocks/battleTasks.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { OPTIONS_MODE_GAMEPLAY, USEROPT_PILOT } = require("%scripts/options/optionsExtNames.nut")
@@ -70,6 +72,11 @@ let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
 let { getEsUnitType, getUnitName, getUnitCountry } = require("%scripts/unit/unitInfo.nut")
 let { get_gui_regional_blk } = require("blkGetters")
 let { decoratorTypes } = require("%scripts/customization/types.nut")
+let { userIdStr } = require("%scripts/user/myUser.nut")
+let purchaseConfirmation = require("%scripts/purchase/purchaseConfirmationHandler.nut")
+let { openTrophyRewardsList } = require("%scripts/items/trophyRewardList.nut")
+let { rewardsSortComparator } = require("%scripts/items/trophyReward.nut")
+
 enum profileEvent {
   AVATAR_CHANGED = "AvatarChanged"
 }
@@ -668,7 +675,7 @@ gui_handlers.Profile <- class extends gui_handlers.UserCardHandler {
     infoObj.findObject("decalDesc").setValue(desc)
 
     let cfg = decor.unlockBlk != null
-      ? ::build_unlock_desc(::build_conditions_config(decor.unlockBlk))
+      ? buildUnlockDesc(::build_conditions_config(decor.unlockBlk))
       : null
 
     let progressObj = infoObj.findObject("decalProgress")
@@ -681,7 +688,7 @@ gui_handlers.Profile <- class extends gui_handlers.UserCardHandler {
     else
       progressObj.show(false)
 
-    infoObj.findObject("decalMainCond").setValue(getUnlockMainCondDescByCfg(cfg))
+    infoObj.findObject("decalMainCond").setValue(getUnlockMainCondDescByCfg(cfg , { showSingleStreakCondText = true }))
     infoObj.findObject("decalMultDecs").setValue(getUnlockMultDescByCfg(cfg))
     infoObj.findObject("decalConds").setValue(getUnlockCondsDescByCfg(cfg))
     infoObj.findObject("decalPrice").setValue(this.getDecalObtainInfo(decor))
@@ -1240,7 +1247,7 @@ gui_handlers.Profile <- class extends gui_handlers.UserCardHandler {
       unlockProgress = progressData?.value
       hasProgress = progressData?.show
       skinPrice = decorator.getCostText()
-      mainCond = getUnlockMainCondDescByCfg(config)
+      mainCond = getUnlockMainCondDescByCfg(config, { showSingleStreakCondText = true })
       multDesc = getUnlockMultDescByCfg(config)
       conds = getUnlockCondsDescByCfg(config)
       conditions = this.getSubUnlocksView(config)
@@ -1253,7 +1260,7 @@ gui_handlers.Profile <- class extends gui_handlers.UserCardHandler {
     this.guiScene.replaceContentFromText(objDesc, markUpData, markUpData.len(), this)
 
     if (canAddFav)
-      ::g_unlock_view.fillUnlockFav(name, objDesc)
+      fillUnlockFav(name, objDesc)
 
     this.showSceneBtn("unlocks_list", false)
     this.guiScene.setUpdatesEnabled(true, true)
@@ -1306,20 +1313,15 @@ gui_handlers.Profile <- class extends gui_handlers.UserCardHandler {
       return
 
     let cost = getUnlockCost(unlockId)
-    this.msgBox("question_buy_unlock",
-      ::warningIfGold(
-        loc("onlineShop/needMoneyQuestion",
-          { purchase = colorize("unlockHeaderColor", getUnlockNameText(-1, unlockId)),
-            cost = cost.getTextAccordingToBalance()
-          }),
-        cost),
-      [
-        ["ok", @() buyUnlock(unlockId,
-            Callback(@() this.updateUnlockBlock(unlockId), this),
-            Callback(@() this.onUnlockGroupSelect(null), this))
-        ],
-        ["cancel", @() null]
-      ], "cancel")
+
+    let title = warningIfGold(
+      loc("onlineShop/needMoneyQuestion", { purchase = colorize("unlockHeaderColor",
+        getUnlockNameText(-1, unlockId)),
+        cost = cost.getTextAccordingToBalance()
+      }), cost)
+    purchaseConfirmation("question_buy_unlock", title, @() buyUnlock(unlockId,
+      Callback(@() this.updateUnlockBlock(unlockId), this),
+      Callback(@() this.onUnlockGroupSelect(null), this)))
   }
 
   function updateUnlockBlock(unlockData) {
@@ -1342,9 +1344,9 @@ gui_handlers.Profile <- class extends gui_handlers.UserCardHandler {
     let trophy = ::ItemsManager.findItemById(obj.trophyId)
     let content = trophy.getContent()
       .map(@(i) u.isDataBlock(i) ? convertBlk(i) : {})
-      .sort(::trophyReward.rewardsSortComparator)
+      .sort(rewardsSortComparator)
 
-    ::gui_start_open_trophy_rewards_list({ rewardsArray = content })
+    openTrophyRewardsList({ rewardsArray = content })
   }
 
   function showUnlockUnits(obj) {
@@ -1361,22 +1363,22 @@ gui_handlers.Profile <- class extends gui_handlers.UserCardHandler {
 
   function fillUnlockInfo(unlockBlk, unlockObj) {
     let itemData = ::build_conditions_config(unlockBlk)
-    ::build_unlock_desc(itemData)
+    buildUnlockDesc(itemData)
     unlockObj.show(true)
     unlockObj.enable(true)
 
     ::g_unlock_view.fillUnlockConditions(itemData, unlockObj, this)
-    ::g_unlock_view.fillUnlockProgressBar(itemData, unlockObj)
-    ::g_unlock_view.fillUnlockDescription(itemData, unlockObj)
-    ::g_unlock_view.fillUnlockImage(itemData, unlockObj)
-    ::g_unlock_view.fillReward(itemData, unlockObj)
+    fillUnlockProgressBar(itemData, unlockObj)
+    fillUnlockDescription(itemData, unlockObj)
+    fillUnlockImage(itemData, unlockObj)
+    fillReward(itemData, unlockObj)
     ::g_unlock_view.fillStages(itemData, unlockObj, this)
-    ::g_unlock_view.fillUnlockTitle(itemData, unlockObj)
-    ::g_unlock_view.fillUnlockFav(itemData.id, unlockObj)
-    ::g_unlock_view.fillUnlockPurchaseButton(itemData, unlockObj)
-    ::g_unlock_view.fillUnlockManualOpenButton(itemData, unlockObj)
-    ::g_unlock_view.updateLockStatus(itemData, unlockObj)
-    ::g_unlock_view.updateUnseenIcon(itemData, unlockObj)
+    fillUnlockTitle(itemData, unlockObj)
+    fillUnlockFav(itemData.id, unlockObj)
+    fillUnlockPurchaseButton(itemData, unlockObj)
+    fillUnlockManualOpenButton(itemData, unlockObj)
+    updateLockStatus(itemData, unlockObj)
+    updateUnseenIcon(itemData, unlockObj)
   }
 
   function printUnlocksList(unlocksList) {
@@ -1454,7 +1456,7 @@ gui_handlers.Profile <- class extends gui_handlers.UserCardHandler {
     if (!this.isPageFilling)
       selMedalIdx[this.curFilter] <- idx
 
-    let config = ::build_unlock_desc(::build_conditions_config(unlock))
+    let config = buildUnlockDesc(::build_conditions_config(unlock))
     let rewardText = getUnlockRewardText(name)
     let progressData = config.getProgressBarData()
 
@@ -1463,7 +1465,7 @@ gui_handlers.Profile <- class extends gui_handlers.UserCardHandler {
       image = ::get_image_for_unlockable_medal(name, true)
       unlockProgress = progressData.value
       hasProgress = progressData.show
-      mainCond = getUnlockMainCondDescByCfg(config)
+      mainCond = getUnlockMainCondDescByCfg(config, { showSingleStreakCondText = true })
       multDesc = getUnlockMultDescByCfg(config)
       conds = getUnlockCondsDescByCfg(config)
       rewardText = rewardText != "" ? rewardText : null
@@ -1472,7 +1474,7 @@ gui_handlers.Profile <- class extends gui_handlers.UserCardHandler {
     let markup = handyman.renderCached("%gui/profile/profileMedal.tpl", view)
     this.guiScene.setUpdatesEnabled(false, false)
     this.guiScene.replaceContentFromText(descObj, markup, markup.len(), this)
-    ::g_unlock_view.fillUnlockFav(name, containerObj)
+    fillUnlockFav(name, containerObj)
     this.guiScene.setUpdatesEnabled(true, true)
   }
 
@@ -1611,7 +1613,7 @@ gui_handlers.Profile <- class extends gui_handlers.UserCardHandler {
 
   function fillProfileStats(stats) {
     this.fillTitleName(stats.titles.len() > 0 ? stats.title : "no_titles")
-    if ("uid" in stats && stats.uid != ::my_user_id_str)
+    if ("uid" in stats && stats.uid != userIdStr.value)
       externalIDsService.reqPlayerExternalIDsByUserId(stats.uid)
     this.fillClanInfo(::get_profile_info())
     this.fillModeListBox(this.scene.findObject("profile-container"), this.curMode)

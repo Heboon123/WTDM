@@ -4,15 +4,17 @@ from "%scripts/dagui_library.nut" import *
 // warning disable: -file:forbidden-function
 let { refreshGlobalStatusData } = require("%scripts/worldWar/operations/model/wwGlobalStatus.nut")
 let DataBlock  = require("DataBlock")
+let { wwGetOperationId, wwIsOperationLoaded } = require("worldwar")
+let { charSimpleAction } = require("%scripts/tasker.nut")
 
 ::dbg_ww_destroy_cur_operation <- function dbg_ww_destroy_cur_operation() {
-  if (!::ww_is_operation_loaded())
+  if (!wwIsOperationLoaded())
     return dlog("No operation loaded!")
 
   let blk = DataBlock()
-  blk.operationId = ::ww_get_operation_id().tointeger()
+  blk.operationId = wwGetOperationId().tointeger()
   blk.status = 3 //ES_FAILED
-  ::g_tasker.charSimpleAction("adm_ww_set_operation_status", blk, { showProgressBox = true },
+  charSimpleAction("adm_ww_set_operation_status", blk, { showProgressBox = true },
     function() {
       dlog("success")
       ::g_world_war.stopWar()

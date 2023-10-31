@@ -24,6 +24,22 @@
     0.6,
     1.0
   ],
+  "shipFuelLeakFxName": "fire_burning_fuel_water_smoke",
+  "shipFuelLeakStayFxName": "fire_burning_fuel_water",
+  "shipFuelLeakFxTimeout": [
+    0.2,
+    0.6
+  ],
+  "shipFuelLeakLifetime": [
+    20.0,
+    4.0,
+    7.0
+  ],
+  "shipFuelLeakSpeed": [
+    8.0,
+    0.9,
+    3.5
+  ],
   "grassAlphaSuffix": "_a",
   "enableRiExplosionDamage": true,
   "simpleSinking": false,
@@ -335,6 +351,7 @@
   "depthChargeMaxDepth": 1.0,
   "torpedoDestroyParent": false,
   "shipTorpedoAutoDepthTraceDist": 150.0,
+  "torpedoLaunchMaxDepth": 20.0,
   "timeBlinkingOfDeadIcon": 2.5,
   "opacityOfDeadIcon": 70,
   "timeIconForDeadOnMap": 12.0,
@@ -421,7 +438,7 @@
     7.0,
     3.0
   ],
-  "arrestorHookTouchAirfieldFx": "sparks_ground_track_friction",
+  "arrestorHookTouchAirfieldFx": "sparks_deck_hook",
   "enableFlightModelDamageTexture": false,
   "maxDistanceForUpdateWithShipPhys": 800.0,
   "maxDistanceForDetailedUpdateShipPhys": 400.0,
@@ -11065,8 +11082,8 @@
     }
   },
   "ambientWindParams": {
-    "maxWindNoiseSpeed": 1.197,
-    "minWindNoiseSpeed": 0.95,
+    "maxWindNoiseSpeed": 2.332,
+    "minWindNoiseSpeed": 1.95,
     "maxWindNoiseScale": 15.709,
     "minWindNoiseScale": 15.423,
     "minWindNoiseStrength": 3.528,
@@ -11088,7 +11105,10 @@
       2048.0,
       2048.0
     ],
-    "windFlowTextureName": ""
+    "windFlowTextureName": "",
+    "treeWindBlendScale": 1.0,
+    "treeWindBlendOutStart": 0.3,
+    "treeWindBlendOutLength": 0.2
   },
   "commonScenes": {
     "scene": "gameData/scenes/common_scene.blk"
@@ -11107,6 +11127,16 @@
     ]
   },
   "shipMediumCaliberPenetrationDistances": {
+    "dist": [
+      100.0,
+      1000.0,
+      2000.0,
+      3000.0,
+      4000.0,
+      5000.0
+    ]
+  },
+  "bombPenetrationDistances": {
     "dist": [
       100.0,
       1000.0,
@@ -12211,7 +12241,11 @@
     "maxAltitude": 45.0,
     "speedMul": 0.7,
     "drownSpeedK": 0.05,
-    "reflectionMaxSpeed": 10.0
+    "reflectionMaxSpeed": 10.0,
+    "underwaterBounce": 1.0,
+    "underwaterBounceFriction": 1.0,
+    "underwaterReflectionMaxSpeed": 5.0,
+    "drownRotationK": 0.01
   },
   "news": {
     "host": "yunetwork3.yuplay.com"
@@ -20474,6 +20508,78 @@
           "modelNames": "btr_80a_hungary"
         },
         {
+          "name": "wheel_r_01_",
+          "modelNames": "zis_152d"
+        },
+        {
+          "name": "wheel_l_01_",
+          "modelNames": "zis_152d"
+        },
+        {
+          "name": "wheel_r_02_",
+          "modelNames": "zis_152d"
+        },
+        {
+          "name": "wheel_l_02_",
+          "modelNames": "zis_152d"
+        },
+        {
+          "name": "wheel_r_03_",
+          "modelNames": "zis_152d"
+        },
+        {
+          "name": "wheel_l_03_",
+          "modelNames": "zis_152d"
+        },
+        {
+          "name": "wheel_r_01_",
+          "modelNames": "vickers_mk_11"
+        },
+        {
+          "name": "wheel_l_01_",
+          "modelNames": "vickers_mk_11"
+        },
+        {
+          "name": "wheel_r_02_",
+          "modelNames": "vickers_mk_11"
+        },
+        {
+          "name": "wheel_l_02_",
+          "modelNames": "vickers_mk_11"
+        },
+        {
+          "name": "wheel_r_03_",
+          "modelNames": "vickers_mk_11"
+        },
+        {
+          "name": "wheel_l_03_",
+          "modelNames": "vickers_mk_11"
+        },
+        {
+          "name": "wheel_r_01_",
+          "modelNames": "type_81_tansam"
+        },
+        {
+          "name": "wheel_l_01_",
+          "modelNames": "type_81_tansam"
+        },
+        {
+          "name": "wheel_r_02_",
+          "modelNames": "type_81_tansam"
+        },
+        {
+          "name": "wheel_l_02_",
+          "modelNames": "type_81_tansam"
+        },
+        {
+          "name": "wheel_r_03_",
+          "modelNames": "type_81_tansam"
+        },
+        {
+          "name": "wheel_l_03_",
+          "modelNames": "type_81_tansam"
+        },
+        {
           "name": "wheel_l_01_",
           "modelNames": "breda_52_autocannone"
         },
@@ -21559,14 +21665,6 @@
     "minBoundRadForMode2": 3.0,
     "hideForMode2re": {
       "incRE": [
-        "berlin_reichstag_back_center",
-        "berlin_reichstag_back_left",
-        "berlin_reichstag_back_right",
-        "berlin_reichstag_corner",
-        "berlin_reichstag_front_center",
-        "berlin_reichstag_front_left",
-        "berlin_reichstag_front_right",
-        "berlin_reichstag_side_right_center",
         "backyard_fence_a_w1500",
         "backyard_fence_b",
         "american_lamp_post_high_a_dmg",
@@ -21677,14 +21775,6 @@
     },
     "hideForMode0re": {
       "incRE": [
-        "berlin_reichstag_back_center",
-        "berlin_reichstag_back_left",
-        "berlin_reichstag_back_right",
-        "berlin_reichstag_corner",
-        "berlin_reichstag_front_center",
-        "berlin_reichstag_front_left",
-        "berlin_reichstag_front_right",
-        "berlin_reichstag_side_right_center",
         "backyard_fence_a_w1500",
         "backyard_fence_b",
         "american_lamp_post_high_a_dmg",
@@ -22266,7 +22356,10 @@
         "ussr_village_public_building_a",
         "ussr_village_public_building_b",
         "ussr_village_public_building_c",
-        "ussr_village_public_building_d"
+        "ussr_village_public_building_d",
+        "us_zeppelin_whale_frame_nose_damaged_a",
+        "us_zeppelin_whale_frame_middle_damaged_a",
+        "us_zeppelin_whale_frame_tail_damaged_a"
       ]
     },
     "badLod1ForStaticShadow": {
@@ -24147,6 +24240,18 @@
       "location_ground_leaves",
       "location_ground_papers",
       "dust_pieces"
+    ]
+  },
+  "tankAimNodesNames": {
+    "node": [
+      "cannon_breech",
+      "drive_turret_h",
+      "engine",
+      "gunner",
+      "driver",
+      "loader",
+      "machine_gunner",
+      "commander"
     ]
   }
 }

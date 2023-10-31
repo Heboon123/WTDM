@@ -13,6 +13,8 @@ let { get_time_msec } = require("dagor.time")
 let { rnd } = require("dagor.random")
 let { matchingRpcSubscribe } = require("%scripts/matching/api.nut")
 let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
+let { isInSessionRoom, isWaitForQueueRoom, sessionLobbyStatus } = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { isEventForClan } = require("%scripts/events/eventInfo.nut")
 
 global enum queueStates {
   ERROR,
@@ -341,10 +343,9 @@ matchingRpcSubscribe("mkeeper.notify_service_started", function(params) {
         // This check is a workaround that fixes
         // player being able to perform some action
          // split second before battle begins.
-         if (!::SessionLobby.isWaitForQueueRoom()
-           && !::SessionLobby.isInRoom()) {
-            if (postAction)
-              postAction()
+         if (!isWaitForQueueRoom.get() && !isInSessionRoom.get()) {
+           if (postAction)
+             postAction()
          }
          else {
            if (postCancelAction)
@@ -471,7 +472,7 @@ matchingRpcSubscribe("mkeeper.notify_service_started", function(params) {
     let event = ::events.getEvent(queue.name)
     if (event == null)
       return false
-    return ::events.isEventForClan(event)
+    return isEventForClan(event)
   }
 
   function getQueueEvent(queue) {
@@ -544,7 +545,7 @@ matchingRpcSubscribe("mkeeper.notify_service_started", function(params) {
     let event = this.getQueueEvent(queue)
     if (!event)
       return defaultHandler
-    if (!::events.isEventForClan(event) && ::events.isEventSymmetricTeams(event))
+    if (!isEventForClan(event) && ::events.isEventSymmetricTeams(event))
       return gui_handlers.QiHandlerByCountries
     return defaultHandler
   }
@@ -644,7 +645,7 @@ matchingRpcSubscribe("mkeeper.notify_service_started", function(params) {
   }
 
   function onEventLobbyStatusChange(_p) {
-    if (::SessionLobby.status == lobbyStates.IN_SESSION)
+    if (sessionLobbyStatus.get() == lobbyStates.IN_SESSION)
       this.lastQueueReqParams = null
   }
 }

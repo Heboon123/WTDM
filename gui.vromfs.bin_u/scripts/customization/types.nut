@@ -29,6 +29,8 @@ let { isUnlockOpened } = require("%scripts/unlocks/unlocksModule.nut")
 let { shopBuyUnlock } = require("unlocks")
 let { getUnitName, getUnitCountry } = require("%scripts/unit/unitInfo.nut")
 let getShipFlags = require("%scripts/customization/shipFlags.nut")
+let { getLanguageName } = require("%scripts/langUtils/language.nut")
+let { addTask } = require("%scripts/tasker.nut")
 
 let function memoizeByProfile(func, hashFunc = null) {
   // When player buys any decarator, profile always updates.
@@ -107,7 +109,7 @@ let decoratorTypes = {
         return false
       if (block?.showByEntitlement && !::has_entitlement(block.showByEntitlement))
         return false
-      if ((block % "hideForLang").indexof(::g_language.getLanguageName()) != null)
+      if ((block % "hideForLang").indexof(getLanguageName()) != null)
         return false
       foreach (feature in block % "reqFeature")
         if (!hasFeature(feature))
@@ -203,7 +205,7 @@ enums.addTypes(decoratorTypes, {
     buyFunc = function(_unitName, id, _cost, afterSuccessFunc) {
       let taskId = shopBuyUnlock(id)
       let taskOptions = { showProgressBox = true, progressBoxText = loc("charServer/purchase") }
-      ::g_tasker.addTask(taskId, taskOptions,
+      addTask(taskId, taskOptions,
         function() {
           exit_ship_flags_mode(true, true)
           afterSuccessFunc()
@@ -299,7 +301,7 @@ enums.addTypes(decoratorTypes, {
 
       let taskId = ::char_send_blk("cln_buy_resource", blk)
       let taskOptions = { showProgressBox = true, progressBoxText = loc("charServer/purchase") }
-      ::g_tasker.addTask(taskId, taskOptions, afterSuccessFunc)
+      addTask(taskId, taskOptions, afterSuccessFunc)
     }
 
     save = function(unitName, showProgressBox) {
@@ -308,7 +310,7 @@ enums.addTypes(decoratorTypes, {
 
       let taskId = save_decals(unitName)
       let taskOptions = { showProgressBox = showProgressBox }
-      ::g_tasker.addTask(taskId, taskOptions)
+      addTask(taskId, taskOptions)
     }
 
     canRotate = @() true
@@ -391,7 +393,7 @@ enums.addTypes(decoratorTypes, {
 
       let taskId = ::char_send_blk("cln_buy_resource", blk)
       let taskOptions = { showProgressBox = true, progressBoxText = loc("charServer/purchase") }
-      ::g_tasker.addTask(taskId, taskOptions, afterSuccessFunc)
+      addTask(taskId, taskOptions, afterSuccessFunc)
     }
 
     save = function(unitName, showProgressBox) {
@@ -400,7 +402,7 @@ enums.addTypes(decoratorTypes, {
 
       let taskId = ::save_attachables(unitName)
       let taskOptions = { showProgressBox = showProgressBox }
-      ::g_tasker.addTask(taskId, taskOptions)
+      addTask(taskId, taskOptions)
     }
 
     canRotate = @() true
@@ -514,7 +516,7 @@ enums.addTypes(decoratorTypes, {
 
       let taskId = ::char_send_blk("cln_buy_resource", blk)
       let taskOptions = { showProgressBox = true, progressBoxText = loc("charServer/purchase") }
-      ::g_tasker.addTask(taskId, taskOptions, afterSuccessFunc)
+      addTask(taskId, taskOptions, afterSuccessFunc)
     }
 
     getSpecialDecorator = function(id) {

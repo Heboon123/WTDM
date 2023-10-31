@@ -11,7 +11,8 @@ let { DAY, getTourParams, getTourCommonViewParams, getOverlayTextColor, isTourSt
   getMatchingEventId, fetchLbData } = require("%scripts/events/eSport.nut")
 let { suggestAndAllowPsnPremiumFeatures } = require("%scripts/user/psnFeatures.nut")
 let { resetSlotbarOverrided, updateOverrideSlotbar } = require("%scripts/slotbar/slotbarOverride.nut")
-let { needShowOverrideSlotbar, isLeaderboardsAvailable } = require("%scripts/events/eventInfo.nut")
+let { needShowOverrideSlotbar, isLeaderboardsAvailable, getEventEconomicName
+} = require("%scripts/events/eventInfo.nut")
 let { getUnitRole } = require("%scripts/unit/unitInfoTexts.nut")
 let QUEUE_TYPE_BIT = require("%scripts/queue/queueTypeBit.nut")
 let { setModalBreadcrumbGoBackParams } = require("%scripts/breadcrumb.nut")
@@ -21,6 +22,8 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 let { getCombineLocNameMission } = require("%scripts/missions/missionsUtils.nut")
+let { userIdStr } = require("%scripts/user/myUser.nut")
+let { addTask } = require("%scripts/tasker.nut")
 
 let function getActiveTicketTxt(event) {
   if (!event)
@@ -160,7 +163,7 @@ local ESportTournament = class extends gui_handlers.BaseGuiHandlerWT {
       if (idx > 2)
         break
 
-      let txt = row._id == ::my_user_id_str
+      let txt = row._id == userIdStr.value
         ? colorize("totalTextColor", row.name) : row.name
       texts.append({ text = $"{idx + 1} {txt}" })
     }
@@ -295,7 +298,7 @@ local ESportTournament = class extends gui_handlers.BaseGuiHandlerWT {
       progressBoxText = loc("tournaments/registration_in_progress")
     }
     let onSuccess = @() broadcastEvent("TourRegistrationComplete", { id = tourId })
-    ::g_tasker.addTask(taskId, taskOptions, onSuccess)
+    addTask(taskId, taskOptions, onSuccess)
   }
 
   function onEventTourRegistrationComplete(_param) {
@@ -324,7 +327,7 @@ local ESportTournament = class extends gui_handlers.BaseGuiHandlerWT {
 
     let configForStatistic = {
       actionPlace = actionPlace
-      economicName = ::events.getEventEconomicName(this.curEvent)
+      economicName = getEventEconomicName(this.curEvent)
       difficulty = this.curEvent?.difficulty ?? ""
       canIntoToBattle = true
       missionsComplete = ::my_stats.getMissionsComplete()

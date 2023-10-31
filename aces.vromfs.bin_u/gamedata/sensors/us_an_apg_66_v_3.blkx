@@ -2,6 +2,7 @@
   "type": "radar",
   "name": "AN/APG-66(V)3",
   "showMissileLaunchZone": true,
+  "showMissileDgftLaunchZone": true,
   "transivers": {
     "mprf": {
       "sideLobesAttenuation": -22.0,
@@ -1577,7 +1578,29 @@
         "track": {
           "event": "targetDetected",
           "actions": {
-            "updateActiveTargetOfInterest": {},
+            "updateActiveTargetOfInterest": {
+              "dirFilter": {
+                "rateLim": [
+                  0.78,
+                  0.35
+                ],
+                "limTimeOut": 1.0
+              },
+              "distFilter": {
+                "accelLim": [
+                  100.0,
+                  35.0
+                ],
+                "limTimeOut": 1.0
+              },
+              "dopplerSpeedFilter": {
+                "rateLim": [
+                  100.0,
+                  50.0
+                ],
+                "limTimeOut": 1.0
+              }
+            },
             "setCenterAzimuth": {
               "source": "activeTargetOfInterest"
             },
@@ -1627,7 +1650,8 @@
           "stateTo": "active",
           "actions": {
             "checkIlluminationTimeOut": {
-              "transiver": true
+              "transiver": true,
+              "pauseMax": 5.0
             }
           }
         },
@@ -1652,7 +1676,8 @@
           "event": "update",
           "actions": {
             "checkIlluminationTimeOut": {
-              "transiver": true
+              "transiver": true,
+              "pauseMax": 5.0
             }
           }
         }

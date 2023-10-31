@@ -28,12 +28,13 @@ let { utf8ToLower } = require("%sqstd/string.nut")
 let { setShortcutsAndSaveControls } = require("%scripts/controls/controlsCompatibility.nut")
 let { OPTIONS_MODE_GAMEPLAY, USEROPT_PTT, USEROPT_SKIP_LEFT_BULLETS_WARNING,
   USEROPT_SKIP_WEAPON_WARNING } = require("%scripts/options/optionsExtNames.nut")
+let { isInFlight } = require("gameplayBinding")
+let { create_options_container } = require("%scripts/options/optionsExt.nut")
 
 const MAX_NUM_VISIBLE_FILTER_OPTIONS = 25
 
 let function getOptionsWndOpenParams(group) {
-  let isInFlight = ::is_in_flight()
-  if (isInFlight)
+  if (isInFlight())
     ::init_options()
 
   let options = optionsListModule.getOptionsList()
@@ -43,7 +44,7 @@ let function getOptionsWndOpenParams(group) {
         o.selected <- true
 
   return {
-    titleText = isInFlight
+    titleText = isInFlight()
       ? ::is_multiplayer() ? null : loc("flightmenu/title")
       : loc("mainmenu/btnGameplay")
     optGroups = options
@@ -101,7 +102,7 @@ gui_handlers.Options <- class extends gui_handlers.GenericOptionsModal {
     groupsObj.show(true)
     groupsObj.setValue(curOption)
 
-    let showWebUI = is_platform_pc && ::is_in_flight() && ::WebUI.get_port() != 0
+    let showWebUI = is_platform_pc && isInFlight() && ::WebUI.get_port() != 0
     this.showSceneBtn("web_ui_button", showWebUI)
   }
 
@@ -435,7 +436,7 @@ gui_handlers.Options <- class extends gui_handlers.GenericOptionsModal {
       }
 
     this.currentContainerName = "options_" + config.name
-    let container = ::create_options_container(this.currentContainerName, config.options, true, this.columnsRatio,
+    let container = create_options_container(this.currentContainerName, config.options, true, this.columnsRatio,
       true, this.optionsConfig)
     this.optionsContainers = [container.descr]
 

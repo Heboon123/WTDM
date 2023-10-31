@@ -7,8 +7,9 @@ let { getRegionalUnlockProgress, isRegionalUnlock } = require("%scripts/unlocks/
 let DataBlock = require("DataBlock")
 let { format } = require("string")
 let { getUnlockLocName, getSubUnlockLocName, getUnlockDesc, getFullUnlockDesc, getUnlockCondsDescByCfg,
-  getUnlockMultDescByCfg, getUnlockMainCondDesc, getUnlockMainCondDescByCfg, getUnlockMultDesc,
-  getUnlockNameText, getUnlockTypeText, getUnlockCostText } = require("%scripts/unlocks/unlocksViewModule.nut")
+  getUnlockMultDescByCfg, getUnlockMainCondDescByCfg, getUnlockMultDesc,
+  getUnlockNameText, getUnlockTypeText, getUnlockCostText, buildUnlockDesc
+} = require("%scripts/unlocks/unlocksViewModule.nut")
 let { getMainProgressCondition, getProgressBarData, loadMainProgressCondition, isNestedUnlockMode,
   loadConditionsFromBlk, getMultipliersTable, isBitModeType, isStreak, isTimeRangeCondition
 } = require("%scripts/unlocks/unlocksConditions.nut")
@@ -26,6 +27,8 @@ let { get_charserver_time_sec } = require("chard")
 let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 let { decoratorTypes, getTypeByUnlockedItemType, getTypeByResourceType } = require("%scripts/customization/types.nut")
+let { getLocTextFromConfig } = require("%scripts/langUtils/language.nut")
+let { getCrewSpTextIfNotZero } = require("%scripts/crew/crewPoints.nut")
 
 let getEmptyConditionsConfig = @() {
   id = ""
@@ -188,13 +191,6 @@ let function setRewardIconCfg(cfg, blk, unlocked) {
 
 ::unlocks_punctuation_without_space <- ","
 
-::build_unlock_desc <- function build_unlock_desc(item) {
-  let mainCond = getMainProgressCondition(item.conditions)
-  let progressText = getUnlockMainCondDesc(mainCond, item.curVal, item.maxVal)
-  item.showProgress <- progressText != ""
-  return item
-}
-
 ::get_image_for_unlockable_medal <- function get_image_for_unlockable_medal(id, big = false) {
   return big ? $"!@ui/medals/{id}_big.ddsx" : $"!@ui/medals/{id}.ddsx"
 }
@@ -211,7 +207,7 @@ let function setRewardIconCfg(cfg, blk, unlocked) {
   config.locStagesDescId = blk.getStr("locStagesDescId", "")
   config.useSubUnlockName = blk?.useSubUnlockName ?? false
   config.hideSubunlocks = blk?.hideSubunlocks ?? false
-  config.link = ::g_language.getLocTextFromConfig(blk, "link", "")
+  config.link = getLocTextFromConfig(blk, "link", "")
   config.forceExternalBrowser = blk?.forceExternalBrowser ?? false
   config.needToFillStages = blk?.needToFillStages ?? true
   config.needToAddCurStageToName = blk?.needToAddCurStageToName ?? true
@@ -223,14 +219,14 @@ let function setRewardIconCfg(cfg, blk, unlocked) {
 
   config.iconStyle <- blk?.iconStyle ?? config?.iconStyle
   config.image = blk?.icon ?? ""
-  if (config.image != "")
-    config.lockStyle = blk?.lockStyle ?? "" // lock, darkened, desaturated, none
 
   let unlocked = isUnlockOpened(id, config.unlockType)
   if (config.image == "")
     setRewardIconCfg(config, blk, unlocked)
   if (config.image == "" && !config?.iconData)
     setUnlockIconCfg(config, blk)
+  if (config.image != "")
+    config.lockStyle = blk?.lockStyle ?? "" // lock, darkened, desaturated, none
 
   setDescriptionByUnlockType(config, blk)
 
@@ -545,7 +541,7 @@ let function setRewardIconCfg(cfg, blk, unlocked) {
     let haveProgress = getTblValue("show", progressData, false)
     if (haveProgress)
       res.progressBar <- progressData
-    unlockCfg = ::build_unlock_desc(unlockCfg)
+    unlockCfg = buildUnlockDesc(unlockCfg)
     unlockCfg.showProgress = unlockCfg.showProgress && haveProgress
     res.link = unlockCfg.link
     res.forceExternalBrowser = unlockCfg.forceExternalBrowser
@@ -712,7 +708,7 @@ let function setRewardIconCfg(cfg, blk, unlocked) {
             loc("award/money_back/unit", { unitName = getUnitName(unitName) }))
       }
       if (config?.isAerobaticSmoke) {
-        res.name = ::ItemsManager.smokeItems.value.findvalue(@(inst) inst.id = config.unlockId)
+        res.name = ::ItemsManager.smokeItems.value.findvalue(@(inst) inst.id == config.unlockId)
             ?.getDescriptionTitle() ?? ""
         res.image = "#ui/gameuiskin#item_type_aerobatic_smoke.svg"
       }
@@ -743,7 +739,7 @@ let function setRewardIconCfg(cfg, blk, unlocked) {
       let crewName = crew ? ::g_crew.getCrewName(crew) : loc("options/crew")
       let country = crew ? crew.country : config?.country ?? ""
       let skillPoints = getTblValue("sp", config, 0)
-      let skillPointsStr = ::getCrewSpText(skillPoints)
+      let skillPointsStr = getCrewSpTextIfNotZero(skillPoints)
 
       if (::checkCountry(country, "userlog EULT_*_CREW"))
         res.image2 = getCountryIcon(country)
@@ -897,7 +893,7 @@ let function setRewardIconCfg(cfg, blk, unlocked) {
         res.frp = (type(rBlock.amount_exp) == "instance") ? rBlock.amount_exp.x : rBlock.amount_exp
     }
 
-    let popupImage = ::g_language.getLocTextFromConfig(rBlock, "popupImage", "")
+    let popupImage = getLocTextFromConfig(rBlock, "popupImage", "")
     if (popupImage != "")
       res.popupImage <- popupImage
   }

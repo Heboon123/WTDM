@@ -23,8 +23,11 @@ let { getWeatherLocName } = require("%scripts/options/optionsView.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 let { get_current_mission_info } = require("blkGetters")
 let { getClustersList } = require("%scripts/onlineInfo/clustersManagement.nut")
+let { isInSessionRoom } = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { create_options_container } = require("%scripts/options/optionsExt.nut")
+let { getMissionTimeText } = require("%scripts/options/optionsUtils.nut")
 
-let backFromBriefingParams = persist("backFromBriefingParams", @() Watched({ globalFunctionName = "gui_start_mainmenu"}))
+let backFromBriefingParams = mkWatched(persist, "backFromBriefingParams", { globalFunctionName = "gui_start_mainmenu"})
 
 ::mission_settings <- {
   name = null
@@ -119,7 +122,7 @@ let backFromBriefingParams = persist("backFromBriefingParams", @() Watched({ glo
   let gt = get_game_type()
   let gm = get_game_mode()
   if (gm == GM_SINGLE_MISSION || gm == GM_DYNAMIC) {
-    if (::SessionLobby.isInRoom()) {
+    if (isInSessionRoom.get()) {
       if (!isHostInRoom())
         ::SessionLobby.continueCoopWithSquad(::mission_settings);
       else
@@ -152,7 +155,7 @@ let backFromBriefingParams = persist("backFromBriefingParams", @() Watched({ glo
     return
   }
 
-  if (::SessionLobby.isInRoom()) {
+  if (isInSessionRoom.get()) {
     ::SessionLobby.updateRoomAttributes(::mission_settings)
     ::get_cur_base_gui_handler().goForward(::gui_start_mp_lobby)
     return
@@ -267,7 +270,7 @@ registerPersistentData("mission_settings", getroottable(), ["mission_settings"])
 
     optionItems.append([USEROPT_KEEP_DEAD, "spinner"])
 
-    if (!::SessionLobby.isInRoom())
+    if (!isInSessionRoom.get())
       optionItems.append([USEROPT_MAX_PLAYERS, "spinner"])
 
     if (gm == GM_SKIRMISH) {
@@ -281,7 +284,7 @@ registerPersistentData("mission_settings", getroottable(), ["mission_settings"])
   }
 
   if (gm == GM_SKIRMISH || (::g_squad_manager.isInSquad() && isGameModeCoop(gm)))
-    optionItems.append([USEROPT_CLUSTER, "spinner"])
+    optionItems.append([USEROPT_CLUSTERS, "spinner"])
 
   if ((gt & GT_SP_USE_SKIN) && !(gt & GT_VERSUS)) {
     let aircraft = missionBlk.getStr("player_class", "")
@@ -338,7 +341,7 @@ let function get_mission_desc_text(missionBlk) {
 
   let sm_time = missionBlk.getStr("time", missionBlk.getStr("environment", ""))
   if (sm_time != "")
-    descrAdd += (descrAdd != "" ? "; " : "") + ::get_mission_time_text(sm_time)
+    descrAdd += (descrAdd != "" ? "; " : "") + getMissionTimeText(sm_time)
 
   let sm_weather = missionBlk.getStr("weather", "")
   if (sm_weather != "")
@@ -430,7 +433,7 @@ gui_handlers.Briefing <- class extends gui_handlers.GenericOptions {
     this.optionsContainers = []
 
     let optionItems = ::get_briefing_options(gm, gt, this.missionBlk)
-    let container = ::create_options_container("briefing_options", optionItems, true)
+    let container = create_options_container("briefing_options", optionItems, true)
     this.guiScene.replaceContentFromText(this.scene.findObject("optionslist"), container.tbl, container.tbl.len(), this)
     if (optionItems.len() > 0) {
       let listObj = this.showSceneBtn("optionslist", true)
@@ -625,7 +628,7 @@ gui_handlers.Briefing <- class extends gui_handlers.GenericOptions {
       misBlk.setInt("_players", value)
     }
     else if (gt & GT_VERSUS) {
-      if (::SessionLobby.isInRoom()) {
+      if (isInSessionRoom.get()) {
         misBlk.setInt("maxPlayers", ::SessionLobby.getMaxMembersCount())
         ::mission_settings.players = ::SessionLobby.getMaxMembersCount()
       }
@@ -635,7 +638,7 @@ gui_handlers.Briefing <- class extends gui_handlers.GenericOptions {
       }
     }
 
-    value = this.getOptValue(USEROPT_CLUSTER, false)
+    value = this.getOptValue(USEROPT_CLUSTERS, false)
     if (value != null)
       ::mission_settings.cluster <- value == "auto"
         ? getClustersList().filter(@(info) info.isDefault)[0].name
@@ -657,7 +660,7 @@ gui_handlers.Briefing <- class extends gui_handlers.GenericOptions {
       misBlk.setBool("isPrivate", ::mission_settings.friendOnly)
       misBlk.setBool("allowJIP", ! ::mission_settings.friendOnly)
     }
-    else if ((gm != GM_DYNAMIC) && !::SessionLobby.isInRoom())
+    else if ((gm != GM_DYNAMIC) && !isInSessionRoom.get())
       ::mission_settings.friendOnly = false
 
     value = this.getOptValue(USEROPT_TIME, false)
@@ -703,7 +706,7 @@ gui_handlers.Briefing <- class extends gui_handlers.GenericOptions {
     }
 
     misBlk.setInt("_gameMode", gm)
-    if (::SessionLobby.isInRoom()) {
+    if (isInSessionRoom.get()) {
       misBlk.setBool("isPrivate", ::mission_settings.friendOnly)
       misBlk.setBool("allowJIP", ::mission_settings.allowJIP)
     }

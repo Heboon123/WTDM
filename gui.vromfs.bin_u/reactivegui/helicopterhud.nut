@@ -17,6 +17,8 @@ let {
 let { radarElement, twsElement } = require("airHudComponents.nut")
 let leftPanel = require("airHudLeftPanel.nut")
 let missileSalvoTimer = require("missileSalvoTimer.nut")
+let actionBarTopPanel = require("hud/actionBarTopPanel.nut")
+let { PNL_ID_ILS, PNL_ID_MFD } = require("%rGui/globals/panelIds.nut")
 
 let compassSize = [hdpx(420), hdpx(40)]
 
@@ -63,7 +65,7 @@ let function helicopterMainHud() {
       vertSpeed(sh(4.0), sh(15), sw(50) + hdpx(315), sh(42.5), HudColor.value)
       horSpeed(HudColor.value)
       helicopterParamsTable(HudColor)
-      taTarget(sw(25), sh(25))
+      taTarget(sw(25), sh(25), false)
     ]
     : null
   }
@@ -170,16 +172,17 @@ let helicopterRoot = {
   size = [sw(100), sh(100)]
   children = [
     leftPanel
+    actionBarTopPanel
     indicatorsCtor
   ]
 
   function onAttach() {
-    gui_scene.addPanel(0, mfdHud)
-    gui_scene.addPanel(1, planeIls)
+    gui_scene.addPanel(PNL_ID_MFD, mfdHud)
+    gui_scene.addPanel(PNL_ID_ILS, planeIls)
   }
   function onDetach() {
-    gui_scene.removePanel(0)
-    gui_scene.removePanel(1)
+    gui_scene.removePanel(PNL_ID_MFD)
+    gui_scene.removePanel(PNL_ID_ILS)
   }
 }
 

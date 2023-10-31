@@ -12,6 +12,7 @@ let { EPLX_PS4_FRIENDS, contactsPlayers, contactsByGroups
 } = require("%scripts/contacts/contactsManager.nut")
 let { requestUserInfoData } = require("%scripts/user/usersInfoManager.nut")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
+let { addTask } = require("%scripts/tasker.nut")
 
 ::g_contacts <- {
   findContactByPSNId = @(psnId) contactsPlayers.findvalue(@(player) player.psnId == psnId)
@@ -24,7 +25,7 @@ foreach (fn in [
     "contactsHandler.nut"
     "searchForSquadHandler.nut"
   ])
-loadOnce("%scripts/contacts/" + fn)
+  loadOnce("%scripts/contacts/" + fn)
 
 ::g_contacts.onEventUserInfoManagerDataUpdated <- function onEventUserInfoManagerDataUpdated(params) {
   let usersInfoData = getTblValue("usersInfo", params, null)
@@ -114,7 +115,7 @@ loadOnce("%scripts/contacts/" + fn)
   }
 
   let taskId = ::find_nicks_by_prefix(playerName, 1, false)
-  ::g_tasker.addTask(taskId, null, taskCallback, taskCallback)
+  addTask(taskId, null, taskCallback, taskCallback)
   return taskId
 }
 

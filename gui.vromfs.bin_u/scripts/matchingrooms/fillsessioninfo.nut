@@ -4,11 +4,13 @@ let u = require("%sqStdLibs/helpers/u.nut")
 let { isSlotbarOverrided } = require("%scripts/slotbar/slotbarOverride.nut")
 let { USEROPT_TIME_LIMIT, USEROPT_LIMITED_FUEL, USEROPT_LIMITED_AMMO,
   USEROPT_VERSUS_RESPAWN, USEROPT_IS_BOTS_ALLOWED, USEROPT_ALLOW_EMPTY_TEAMS,
-  USEROPT_CLUSTER, USEROPT_DISABLE_AIRFIELDS, USEROPT_SPAWN_AI_TANK_ON_TANK_MAPS,
+  USEROPT_CLUSTERS, USEROPT_DISABLE_AIRFIELDS, USEROPT_SPAWN_AI_TANK_ON_TANK_MAPS,
   USEROPT_CONTENT_ALLOWED_PRESET
 } = require("%scripts/options/optionsExtNames.nut")
 let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { getWeatherLocName } = require("%scripts/options/optionsView.nut")
+let { isInSessionRoom, isInSessionLobbyEventRoom } = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { getMissionTimeText } = require("%scripts/options/optionsUtils.nut")
 
 let function clearInfo(scene) {
   foreach (name in ["session_creator", "session_mapName", "session_hasPassword",
@@ -62,7 +64,7 @@ return function(scene, sessionInfo) {
 
   let gt = ::SessionLobby.getGameType(sessionInfo)
   let missionInfo = ("mission" in sessionInfo) ? sessionInfo.mission : {}
-  let isEventRoom = ::SessionLobby.isInRoom() && ::SessionLobby.isEventRoom
+  let isEventRoom = isInSessionRoom.get() && isInSessionLobbyEventRoom.get()
 
   let nameObj = scene.findObject("session_creator")
   let creatorName = getPlayerName(sessionInfo?.creator ?? "")
@@ -115,7 +117,7 @@ return function(scene, sessionInfo) {
   if ("weather" in missionInfo)
     envTexts.append(getWeatherLocName(missionInfo.weather))
   if ("environment" in missionInfo)
-    envTexts.append(::get_mission_time_text(missionInfo.environment))
+    envTexts.append(getMissionTimeText(missionInfo.environment))
   setTextToObj(envObj, loc("sm_conditions") + loc("ui/colon"), ", ".join(envTexts, true))
 
   let difObj = scene.findObject("session_difficulty")
@@ -162,7 +164,7 @@ return function(scene, sessionInfo) {
   setTextToObj(bObj, loc("options/allow_jip") + loc("ui/colon"),
                getTblValue("allowJIP", sessionInfo, true))
 
-  setTextToObjByOption("session_cluster", USEROPT_CLUSTER, getTblValue("cluster", sessionInfo))
+  setTextToObjByOption("session_cluster", USEROPT_CLUSTERS, getTblValue("cluster", sessionInfo))
 
   setTextToObjByOption("disable_airfields", USEROPT_DISABLE_AIRFIELDS, getTblValue("disableAirfields", missionInfo))
 

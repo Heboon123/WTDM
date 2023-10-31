@@ -4,12 +4,13 @@ let u = require("%sqStdLibs/helpers/u.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { get_gui_option } = require("guiOptions")
-let { USEROPT_CLUSTER, USEROPT_RANK, USEROPT_COUNTRIES_SET,
+let { USEROPT_CLUSTERS, USEROPT_RANK, USEROPT_COUNTRIES_SET,
   USEROPT_BIT_COUNTRIES_TEAM_A, USEROPT_BIT_COUNTRIES_TEAM_B
 } = require("%scripts/options/optionsExtNames.nut")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
 let { getClustersList } = require("%scripts/onlineInfo/clustersManagement.nut")
+let { getEventEconomicName } = require("%scripts/events/eventInfo.nut")
 
 enum CREWS_READY_STATUS {
   HAS_ALLOWED              = 0x0001
@@ -49,7 +50,7 @@ const CHOSEN_EVENT_MISSIONS_SAVE_KEY = "mission"
 
   function getOptionsList() {
     let options = [
-      [USEROPT_CLUSTER],
+      [USEROPT_CLUSTERS],
       [USEROPT_RANK],
     ]
 
@@ -198,7 +199,7 @@ const CHOSEN_EVENT_MISSIONS_SAVE_KEY = "mission"
   }
 
   getMissionsSaveId = @()
-    "".concat(CHOSEN_EVENT_MISSIONS_SAVE_ID, ::events.getEventEconomicName(this.mGameMode))
+    "".concat(CHOSEN_EVENT_MISSIONS_SAVE_ID, getEventEconomicName(this.mGameMode))
 
   function loadChosenMissions() {
     this.chosenMissionsList.clear()
@@ -289,7 +290,7 @@ const CHOSEN_EVENT_MISSIONS_SAVE_KEY = "mission"
     if (this.getCurBrRange())
       res.mranks <- this.getCurBrRange()
 
-    let clusterOpt = ::get_option(USEROPT_CLUSTER)
+    let clusterOpt = ::get_option(USEROPT_CLUSTERS)
     res.cluster <- getTblValue(clusterOpt.value, clusterOpt.values, "")
     if (res.cluster == "auto")
       res.cluster = getClustersList().filter(@(info) info.isDefault)[0].name

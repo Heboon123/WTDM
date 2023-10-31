@@ -21,6 +21,8 @@ let { switchProfileCountry, profileCountrySq } = require("%scripts/user/playerCo
 let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
 let getAllUnits = require("%scripts/unit/allUnits.nut")
 let { loadLocalByAccount, saveLocalByAccount } = require("%scripts/clientState/localProfile.nut")
+let { wwGetOperationId, wwGetPlayerSide } = require("worldwar")
+let { checkSquadUnreadyAndDo } = require("%scripts/squads/squadUtils.nut")
 
 // Temporary image. Has to be changed after receiving correct art
 const WW_OPERATION_DEFAULT_BG_IMAGE = "#ui/bkg/login_layer_h1_0?P1"
@@ -358,7 +360,7 @@ gui_handlers.WwBattleDescription <- class extends gui_handlers.BaseGuiHandlerWT 
 
   function updateSlotbar() {
     let side = this.getPlayerSide()
-    let availableCountries = getOperationById(::ww_get_operation_id())?.getCountriesByTeams()[side]
+    let availableCountries = getOperationById(wwGetOperationId())?.getCountriesByTeams()[side]
     let isSlotbarVisible = (availableCountries?.len() ?? 0) > 0
     this.showSceneBtn("nav-slotbar", isSlotbarVisible)
     if (!isSlotbarVisible)
@@ -411,7 +413,7 @@ gui_handlers.WwBattleDescription <- class extends gui_handlers.BaseGuiHandlerWT 
   }
 
   function getMap() {
-    let operation = getOperationById(::ww_get_operation_id())
+    let operation = getOperationById(wwGetOperationId())
     if (operation == null)
       return null
 
@@ -423,7 +425,7 @@ gui_handlers.WwBattleDescription <- class extends gui_handlers.BaseGuiHandlerWT 
   }
 
   function getCustomUnitsListNameText() {
-    let operation = getOperationById(::ww_get_operation_id())
+    let operation = getOperationById(wwGetOperationId())
     if (operation)
       return operation.getMapText()
 
@@ -485,7 +487,7 @@ gui_handlers.WwBattleDescription <- class extends gui_handlers.BaseGuiHandlerWT 
   }
 
   function getOperationBackground() {
-    let curOperation = getOperationById(::ww_get_operation_id())
+    let curOperation = getOperationById(wwGetOperationId())
     if (!curOperation)
       return WW_OPERATION_DEFAULT_BG_IMAGE
 
@@ -754,7 +756,7 @@ gui_handlers.WwBattleDescription <- class extends gui_handlers.BaseGuiHandlerWT 
 
   function onOpenSquadsListModal(_obj) {
     gui_handlers.WwMyClanSquadInviteModal.open(
-      ::ww_get_operation_id(), this.operationBattle.id, profileCountrySq.value)
+      wwGetOperationId(), this.operationBattle.id, profileCountrySq.value)
   }
 
   function onEventWWUpdateWWQueues(params) {
@@ -1085,7 +1087,7 @@ gui_handlers.WwBattleDescription <- class extends gui_handlers.BaseGuiHandlerWT 
   }
 
   static function getPlayerSide(_battle = null) {
-    return ::ww_get_player_side()
+    return wwGetPlayerSide()
   }
 
   function hasChangedInBattleListMap(newBattleListMap) {
@@ -1115,7 +1117,7 @@ gui_handlers.WwBattleDescription <- class extends gui_handlers.BaseGuiHandlerWT 
     let cb = Callback(this.generateAutoPreset, this)
     ::queues.checkAndStart(
       Callback(function() {
-        ::g_squad_utils.checkSquadUnreadyAndDo(cb, @() null, true)
+        checkSquadUnreadyAndDo(cb, @() null, true)
       }, this),
       @() null,
       "isCanModifyCrew"

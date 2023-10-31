@@ -14,18 +14,19 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 let { get_charserver_time_sec } = require("chard")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
+let { getLanguageName } = require("%scripts/langUtils/language.nut")
 
 let steamOpenReviewWnd = require("%scripts/user/steamRateGameWnd.nut")
 
 let { addPromoAction } = require("%scripts/promo/promoActions.nut")
 
 let logP = log_with_prefix("[ShowRate] ")
-let needShowRateWnd = persist("needShowRateWnd", @() Watched(false)) //need this, because debriefing data destroys after debriefing modal is closed
+let needShowRateWnd = mkWatched(persist, "needShowRateWnd", false) //need this, because debriefing data destroys after debriefing modal is closed
 
-let winsInARow = persist("winsInARow", @() Watched(0))
-let haveMadeKills = persist("haveMadeKills", @() Watched(false))
-let havePurchasedSpecUnit = persist("havePurchasedSpecUnit", @() Watched(false))
-let havePurchasedPremium = persist("havePurchasedPremium", @() Watched(false))
+let winsInARow = mkWatched(persist, "winsInARow", 0)
+let haveMadeKills = mkWatched(persist, "haveMadeKills", false)
+let havePurchasedSpecUnit = mkWatched(persist, "havePurchasedSpecUnit", false)
+let havePurchasedPremium = mkWatched(persist, "havePurchasedPremium", false)
 
 const RATE_WND_SAVE_ID = "seen/rateWnd"
 const RATE_WND_TIME_SAVE_ID = "seen/rateWndTime"
@@ -65,7 +66,8 @@ let configSteamReviewWnd = {
 
 let sortedAdditionalSteamRateReview = [
   configSteamReviewWnd.SteamRateMoreImprove,
-  configSteamReviewWnd.SteamRateImprove
+  configSteamReviewWnd.SteamRateImprove,
+  configSteamReviewWnd.SteamRateImproveB
 ]
 
 local isConfigInited = false
@@ -219,7 +221,7 @@ let function checkShowRateWnd() {
 
   if (!is_running())
     return
-  if (cfg.hideSteamRateLanguagesArray.contains(::g_language.getLanguageName()))
+  if (cfg.hideSteamRateLanguagesArray.contains(getLanguageName()))
     return
 
   foreach (config in sortedAdditionalSteamRateReview)

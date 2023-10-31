@@ -8,7 +8,7 @@ let DataBlock = require("DataBlock")
 let { charSendBlk, get_charserver_time_sec } = require("chard")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
-let { placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
+let { placePriceTextToButton, warningIfGold } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { format }  = require("string")
 let { getUnitRoleIcon, getFullUnitRoleText } = require("%scripts/unit/unitInfoTexts.nut")
 let { getStringWidthPx } = require("%scripts/viewUtils/daguiFonts.nut")
@@ -25,6 +25,8 @@ let { getUnlockCost } = require("%scripts/unlocks/unlocksModule.nut")
 let { convertBlk, copyParamsToTable } = require("%sqstd/datablock.nut")
 let { getUnitName, getUnitCountryIcon } = require("%scripts/unit/unitInfo.nut")
 let { getTypeByResourceType } = require("%scripts/customization/types.nut")
+let purchaseConfirmation = require("%scripts/purchase/purchaseConfirmationHandler.nut")
+let { addTask } = require("%scripts/tasker.nut")
 
 let offerTypes = {
   unit = "shop/section/premium"
@@ -223,25 +225,20 @@ let class PersonalOfferHandler extends gui_handlers.BaseGuiHandlerWT {
       this.goBack()
       prizesRewardWnd({ configsArray = (this.offerBlk % "i").map(@(v) convertBlk(v)) })
     }, this)
-    ::g_tasker.addTask(taskId, { showProgressBox = true }, cb)
+    addTask(taskId, { showProgressBox = true }, cb)
   }
 
   function onBuy() {
-    let msgText = ::warningIfGold(
+    let msgText = warningIfGold(
       loc("onlineShop/needMoneyQuestion", {
           purchase = loc("specialOffer"),
           cost = this.costGold.getTextAccordingToBalance()
         }),
         this.costGold)
-    this.msgBox("purchase_ask", msgText,
-      [
-        ["yes", function() {
-          if (::check_balance_msgBox(this.costGold))
-            this.onBuyImpl()
-        }],
-        ["no", @() null ]
-      ], "yes", { cancel_fn = @() null }
-    )
+    purchaseConfirmation("purchase_ask", msgText, Callback(function() {
+      if (::check_balance_msgBox(this.costGold))
+        this.onBuyImpl()
+    }, this))
   }
 
   function onTimer(_obj, _dt) {

@@ -1,13 +1,14 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 let u = require("%sqStdLibs/helpers/u.nut")
-
-
 let { get_time_msec } = require("dagor.time")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { requestEventLeaderboardData, requestEventLeaderboardSelfRow,
   requestCustomEventLeaderboardData, convertLeaderboardData
 } = require("%scripts/leaderboard/requestLeaderboardData.nut")
+let { userIdInt64 } = require("%scripts/user/myUser.nut")
+let { getEventEconomicName, getEventTournamentMode, isEventForClan
+} = require("%scripts/events/eventInfo.nut")
 
 ::events._leaderboards = {
   cashLifetime = 60000
@@ -171,7 +172,7 @@ let { requestEventLeaderboardData, requestEventLeaderboardSelfRow,
       requestData.__merge({
         pos = null
         rowsInPage = 0
-        userId = ::my_user_id_int64
+        userId = userIdInt64.value
       }),
       onSuccessCb, onErrorCb)
   }
@@ -263,9 +264,9 @@ let { requestEventLeaderboardData, requestEventLeaderboardSelfRow,
     if (!event)
       return newRequest
 
-    newRequest.economicName <- ::events.getEventEconomicName(event)
+    newRequest.economicName <- getEventEconomicName(event)
     newRequest.tournament <- getTblValue("tournament", event, false)
-    newRequest.tournament_mode <- ::events.getEventTournamentMode(event)
+    newRequest.tournament_mode <- getEventTournamentMode(event)
     newRequest.forClans <- this.isClanLeaderboard(event)
 
     let sortLeaderboard = getTblValue("sort_leaderboard", event, null)
@@ -307,7 +308,7 @@ let { requestEventLeaderboardData, requestEventLeaderboardSelfRow,
   }
 
   function dropLbCache(event) {
-    let economicName = ::events.getEventEconomicName(event)
+    let economicName = getEventEconomicName(event)
 
     if (economicName in this.__cache.leaderboards)
       this.__cache.leaderboards.rawdelete(economicName)
@@ -360,8 +361,8 @@ let { requestEventLeaderboardData, requestEventLeaderboardSelfRow,
 
   function isClanLeaderboard(event) {
     if (!getTblValue("tournament", event, false))
-      return ::events.isEventForClan(event)
-    return ::events.getEventTournamentMode(event) == GAME_EVENT_TYPE.TM_ELO_GROUP
+      return isEventForClan(event)
+    return getEventTournamentMode(event) == GAME_EVENT_TYPE.TM_ELO_GROUP
   }
 
   function postProcessClanLbRow(lbRow) {

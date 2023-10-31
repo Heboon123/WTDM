@@ -20,6 +20,8 @@ let { isRegionalUnlock, isRegionalUnlockReadyToOpen, getRegionalUnlockTypeById,
 } = require("%scripts/unlocks/regionalUnlocks.nut")
 let { Status, get_status } = require("%xboxLib/impl/achievements.nut")
 let { receiveRewards } = require("%scripts/unlocks/userstatUnlocksState.nut")
+let { getLanguageName } = require("%scripts/langUtils/language.nut")
+let { addTask } = require("%scripts/tasker.nut")
 
 let multiStageLocIdConfig = {
   multi_kill_air =    { [2] = "double_kill_air",    [3] = "triple_kill_air",    def = "multi_kill_air" }
@@ -179,7 +181,7 @@ let function isUnlockVisible(unlockBlk, needCheckVisibilityByPlatform = true) {
     return false
   if (unlockBlk?.showByEntitlement && !::has_entitlement(unlockBlk.showByEntitlement))
     return false
-  if ((unlockBlk % "hideForLang").indexof(::g_language.getLanguageName()) != null)
+  if ((unlockBlk % "hideForLang").indexof(getLanguageName()) != null)
     return false
 
   foreach (feature in unlockBlk % "reqFeature")
@@ -243,7 +245,7 @@ let function openUnlockManually(unlockId, onSuccess = null) {
   let blk = DataBlock()
   blk.addStr("unlock", unlockId)
   let taskId = charSendBlk("cln_manual_reward_unlock", blk)
-  ::g_tasker.addTask(taskId, { showProgressBox = true }, onSuccess)
+  addTask(taskId, { showProgressBox = true }, onSuccess)
 }
 
 let function getUnlockCost(id) {
@@ -281,7 +283,7 @@ let function buyUnlock(unlock, onSuccessCb = null, onAfterCheckCb = null) {
     return
 
   let taskId = shopBuyUnlock(unlockBlk.id)
-  ::g_tasker.addTask(taskId, {
+  addTask(taskId, {
       showProgressBox = true
       showErrorMessageBox = false
       progressBoxText = loc("charServer/purchase")
