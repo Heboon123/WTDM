@@ -22,7 +22,7 @@ def setup_cluster(var unit : Unit?; cluster_id : int; var num_ammos : int&; num_
                     ammo_slots__numAmmo : IPoint2List- const
                   >) : bool
   var is_changed = false
-  set_flag(v.ammo_clusters__state[cluster_id], AmmoClusterState EMPTY, num_ammos == 0)
+  set_flag(v.ammo_clusters__state[cluster_id], AmmoClusterState EMPTY, num_ammos <= 0)
   let cluster_state = v.ammo_clusters__state[cluster_id]
   let reverse_fill = get_flag(cluster_state, AmmoClusterState REVERSE_FILL)
   let slots_range = v.ammo_clusters__slotsRange[cluster_id]
@@ -88,7 +88,7 @@ def iter_clusters_in_order(stowage_id : int;
 
 
 [with_bundle(v)]
-def public setup_ammo_stowage(var unit : Unit?; can_load_to_breech : bool; init_num : bool; is_refill : bool;
+def public setup_ammo_stowage(var unit : Unit?; init_num : bool; is_refill : bool;
                               v : tuple<
                                 ammo_stowage__ammoLost : int-const;
 
@@ -106,6 +106,9 @@ def public setup_ammo_stowage(var unit : Unit?; can_load_to_breech : bool; init_
                                 ammo_slots__partId : PartIdList;
                                 ammo_slots__numAmmo : IPoint2List- const
                               >) : bool
+  // this can be an ammo stowage flag instead
+  let can_load_to_breech = !get_app().isInHangar
+
   let eid = unit.eid
   let weapon_controller = unit.weap
   var is_dm_changed = false
@@ -137,7 +140,7 @@ def public setup_ammo_stowage(var unit : Unit?; can_load_to_breech : bool; init_
             num_ammo_loaded += 1
             max_ammo_loaded += 1
 
-    if get_flag(state, AmmoStowageState REMOVE_LOADED_AMMO)
+    if get_flag(state, AmmoStowageState REMOVE_LOADED_AMMO) && can_load_to_breech
       num_ammo -= num_ammo_loaded
 
     if is_refill || num_ammo > stowage_num_ammo.x
@@ -151,14 +154,13 @@ def public setup_ammo_stowage(var unit : Unit?; can_load_to_breech : bool; init_
 
       if stowage_num_ammo_first_stage.z > 0
         if is_refill
-          stowage_num_ammo_first_stage.x = min(num_ammo, stowage_num_ammo_first_stage.z)
+          stowage_num_ammo_first_stage.x = max(0, min(num_ammo, stowage_num_ammo_first_stage.z))
         else
-          stowage_num_ammo_first_stage.x = min(stowage_num_ammo_first_stage.x + num_ammo - stowage_num_ammo.x,  stowage_num_ammo_first_stage.z)
+          stowage_num_ammo_first_stage.x = max(0, min(stowage_num_ammo_first_stage.x + num_ammo - stowage_num_ammo.x,  stowage_num_ammo_first_stage.z))
         is_sync_required = true
 
     if stowage_num_ammo_first_stage.z > 0 && num_ammo < stowage_num_ammo.x
-      stowage_num_ammo_first_stage.x = max(get_flag(state, AmmoStowageState HAS_AUTO_LOAD) && get_flag(state, AmmoStowageState REMOVE_LOADED_AMMO) && can_load_to_breech ? -1 : 0,
-                                            stowage_num_ammo_first_stage.x + num_ammo - stowage_num_ammo.x)
+      stowage_num_ammo_first_stage.x = max(0, stowage_num_ammo_first_stage.x + num_ammo - stowage_num_ammo.x)
       is_sync_required = true
 
     stowage_num_ammo.x = num_ammo
@@ -227,7 +229,6 @@ def ammo_stowage_setup_stowage_es(evt : EventAmmoStowageSetup; active : bool; ei
   var unit = get_unit(uid)
   if unit != null && !unit.isDelayed
     let sync_required = setup_ammo_stowage(unit,
-      evt.canLoadToBreach,
       evt.initNum,
       evt.isRefill) <| v
     if evt.netSyncIfRequired && sync_required
@@ -256,7 +257,7 @@ def ammo_stowage_bullets_amount_changed_es(evt : EventBulletsAmountChanged; acti
     return
   var unit = get_unit(uid)
   if unit != null && !unit.isDelayed
-    let sync_required = setup_ammo_stowage(unit, !get_app().isInHangar, false, evt.isRefill) <| v
+    let sync_required = setup_ammo_stowage(unit, false, evt.isRefill) <| v
     if sync_required
       ammo_stowage_send_net_sync(eid) <| v
 
@@ -283,7 +284,7 @@ def ammo_stowage_apply_slot_effect_es(evt : EventAmmoStowageApplySlotEffect;
   var unit = get_unit(uid)
   if unit != null && !unit.isDelayed
     apply_slot_effect_by_part_id(unit, evt.partId, evt.effect) <| v
-    setup_ammo_stowage(unit, true, false, false) <| v
+    setup_ammo_stowage(unit, false, false) <| v
 
 
 [with_bundle(v)]
