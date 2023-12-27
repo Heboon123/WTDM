@@ -118,13 +118,13 @@
       },
       {
         "type": "steeringWheel",
-        "turnSpeed": -0.5,
+        "turnSpeed": -0.2,
         "node": "bone_roll_driver_l_01",
         "absoluteValue": true
       },
       {
         "type": "steeringWheel",
-        "turnSpeed": -0.2,
+        "turnSpeed": -0.09,
         "node": "bone_roll_driver_l_02",
         "absoluteValue": true
       },
@@ -142,13 +142,13 @@
       },
       {
         "type": "steeringWheel",
-        "turnSpeed": -0.5,
+        "turnSpeed": -0.2,
         "node": "bone_roll_driver_r_01",
         "absoluteValue": true
       },
       {
         "type": "steeringWheel",
-        "turnSpeed": -0.2,
+        "turnSpeed": -0.09,
         "node": "bone_roll_driver_r_02",
         "absoluteValue": true
       },
@@ -2234,31 +2234,107 @@
     }
   },
   "PhysSys": {
-    "find": "^bone_suspension_(._\\d\\d)$",
-    "points": {
-      "suspension": {
-        "name": "bone_suspension_$1"
+    "group": [
+      {
+        "find": "^bone_suspension_(._\\d\\d)$",
+        "points": {
+          "lever": {
+            "limitMin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "limitMax": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "name": "bone_suspension_$1"
+          },
+          "suspension_01": {
+            "limitMin": [
+              -1.0,
+              -1.0,
+              0.0
+            ],
+            "limitMax": [
+              1.0,
+              1.0,
+              0.0
+            ],
+            "name": "bone_suspension_$1_01"
+          },
+          "wheel": {
+            "searchChildren": {
+              "occurence": 1,
+              "limitMin": [
+                -1.0,
+                -1.0,
+                0.0
+              ],
+              "limitMax": [
+                1.0,
+                1.0,
+                0.0
+              ],
+              "parent": "lever",
+              "find": "bone_wheel_"
+            }
+          }
+        },
+        "constraints": {
+          "edge": [
+            {
+              "to": "wheel",
+              "from": "lever"
+            },
+            {
+              "point": "suspension_01",
+              "to": "wheel",
+              "from": "suspension_01",
+              "moveNodes": false
+            }
+          ]
+        }
       },
-      "wheel": {
-        "name": "bone_wheel_$1",
-        "limitMin": [
-          -1.0,
-          -1.0,
-          0.0
-        ],
-        "limitMax": [
-          1.0,
-          1.0,
-          0.0
-        ]
+      {
+        "find": "^bone_suspension_(\\w)_back_(\\d+)$",
+        "points": {
+          "lever": {
+            "limitMin": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "limitMax": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "name": "bone_suspension_$1_back_$2"
+          },
+          "wheel": {
+            "limitMin": [
+              -1.0,
+              -1.0,
+              0.0
+            ],
+            "limitMax": [
+              1.0,
+              1.0,
+              0.0
+            ],
+            "name": "bone_wheel_$1_back_$2"
+          }
+        },
+        "constraints": {
+          "edge": {
+            "to": "wheel",
+            "from": "lever"
+          }
+        }
       }
-    },
-    "constraints": {
-      "edge": {
-        "from": "suspension",
-        "to": "wheel"
-      }
-    }
+    ]
   },
   "chainIK": {
     "points": [
@@ -3240,7 +3316,7 @@
         "ammo_body_02_dm": {
           "count": 200
         },
-        "ammo_turret_03_dm": {
+        "ammo_turret_06_dm": {
           "count": 200
         }
       }
