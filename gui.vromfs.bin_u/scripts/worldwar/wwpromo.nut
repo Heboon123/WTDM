@@ -1,3 +1,4 @@
+//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 let { setPromoButtonText, isPromoCollapsed, togglePromoItem, getShowAllPromoBlocks
 } = require("%scripts/promo/promo.nut")
@@ -5,7 +6,7 @@ let { addPromoAction } = require("%scripts/promo/promoActions.nut")
 let { addPromoButtonConfig } = require("%scripts/promo/promoButtonsConfig.nut")
 let { getTextWithCrossplayIcon, needShowCrossPlayInfo } = require("%scripts/social/crossplay.nut")
 
-function getWorldWarPromoText(isWwEnabled = null) {
+let function getWorldWarPromoText(isWwEnabled = null) {
   local text = loc("mainmenu/btnWorldwar")
   if (!::is_worldwar_enabled())
     return text
@@ -45,7 +46,7 @@ addPromoButtonConfig({
       return
 
     if (::g_world_war.hasNewNearestAvailableMapToBattle())
-      togglePromoItem(buttonObj.findObject($"{id}_toggle"))
+      togglePromoItem(buttonObj.findObject(id + "_toggle"))
   }
   updateByEvents = ["WWLoadOperation", "WWStopWorldWar",
     "WWGlobalStatusChanged", "CrossPlayOptionChanged"]

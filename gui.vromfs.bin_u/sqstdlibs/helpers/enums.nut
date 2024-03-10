@@ -1,9 +1,9 @@
-let u = require("u.nut")
 
-function isTable(v) {return type(v)=="table"}
-function isArray(v) {return type(v)=="array"}
-function isString(v) {return type(v)=="string"}
-function isFunction(v) {return type(v)=="function"}
+let u = require("u.nut")
+local function isTable(v) {return type(v)=="table"}
+local function isArray(v) {return type(v)=="array"}
+local function isString(v) {return type(v)=="string"}
+local function isFunction(v) {return type(v)=="function"}
 
 
 /**
@@ -13,8 +13,8 @@ function isFunction(v) {return type(v)=="function"}
 
 local assertOnce = function(_uniqId, errorText) { throw(errorText) }
 
-function getPropValue(propName, typeObject) {
-  let value = typeObject?[propName]
+local function getPropValue(propName, typeObject) {
+  local value = typeObject?[propName]
 
   // Calling 'value()' instead of 'typeObject[propName]()'
   // caused function to be called in a wrong environment.
@@ -22,7 +22,7 @@ function getPropValue(propName, typeObject) {
 }
 
 //caseSensitive work only with string propValues
-function getCachedType(propName, propValue, cacheTable, enumTable, defaultVal, caseSensitive = true) {
+local function getCachedType(propName, propValue, cacheTable, enumTable, defaultVal, caseSensitive = true) {
   if (!caseSensitive) {
     if (isString(propValue))
       propValue = propValue.tolower()
@@ -73,8 +73,8 @@ function getCachedType(propName, propValue, cacheTable, enumTable, defaultVal, c
   return cacheTable?[propValue] ?? defaultVal
 }
 
-function addType(enumTable, typeTemplate, typeName, typeDefinition, enumTablePersistId) {
-  let typeTbl = enumTablePersistId != null
+local function addType(enumTable, typeTemplate, typeName, typeDefinition, enumTablePersistId) {
+  local typeTbl = enumTablePersistId != null
     ? persist($"{enumTablePersistId}/{typeName}", @() {})
     : (enumTable?[typeName] ?? {})
 
@@ -107,7 +107,7 @@ function addType(enumTable, typeTemplate, typeName, typeDefinition, enumTablePer
  *        On reload, each type's table is preserved (as a container), cleared, and refilled.
  */
 function addTypes(enumTable, typesToAdd, typeConstructor = null, addTypeNameKey = null, enumTablePersistId = null) {
-  let typeTemplate = enumTable?.template
+  local typeTemplate = enumTable?.template
   foreach (typeName, typeDefinition in typesToAdd) {
     local typeTbl = addType(enumTable, typeTemplate, typeName, typeDefinition, enumTablePersistId)
     if (addTypeNameKey)
@@ -126,10 +126,10 @@ function addTypes(enumTable, typesToAdd, typeConstructor = null, addTypeNameKey 
  * @param {bool} [shouldPersistTypes] - true if need to persist all types in typesToAdd,
           to preserve the existing links on type tables during scripts reloads. True by default.
  */
-function addTypesByGlobalName(enumTableName, typesToAdd, typeConstructor = null, addTypeNameKey = null,
+let function addTypesByGlobalName(enumTableName, typesToAdd, typeConstructor = null, addTypeNameKey = null,
                                     shouldPersistTypes = true) {
 
-  let enumTable = getroottable()?[enumTableName]
+  local enumTable = getroottable()?[enumTableName]
   if (!isTable(enumTable)) {
     assertOnce("not found enum table", $"enums: not found enum table '{enumTableName}'")
     return
@@ -140,10 +140,6 @@ function addTypesByGlobalName(enumTableName, typesToAdd, typeConstructor = null,
 }
 
 return {
-  enumsGetCachedType = getCachedType
-  enumsAddTypes = addTypes
-
-  //deprecated
   getCachedType
   addTypes
   addTypesByGlobalName

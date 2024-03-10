@@ -57,7 +57,7 @@ let offStyle = {
   }
 }
 
-function textButton(text, handler, params = {}){
+let function textButton(text, handler, params = {}){
   let stateFlags = Watched(0)
   let disabled = params?.disabled
   let offRestyle = params?.off ? offStyle : {}

@@ -1,3 +1,4 @@
+//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 from "%scripts/events/eventsConsts.nut" import EVENT_TYPE
 

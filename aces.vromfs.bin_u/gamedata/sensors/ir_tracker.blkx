@@ -159,9 +159,6 @@
             "source": "const",
             "value": true
           },
-          "setDesignatedTarget": {
-            "set": true
-          },
           "setEnabled": {
             "value": true
           },
@@ -215,9 +212,6 @@
           "setWeaponDetectionAllowance": {
             "source": "targetDesignation"
           },
-          "setDesignatedTarget": {
-            "set": false
-          },
           "setDistGatePos": {
             "source": "constRange",
             "pos": 7500.0,
@@ -235,9 +229,6 @@
             "source": "const",
             "value": true
           },
-          "setDesignatedTarget": {
-            "set": true
-          },
           "setDistGatePos": {
             "source": "targetDesignation",
             "width": 50.0
@@ -253,9 +244,6 @@
           "setWeaponDetectionAllowance": {
             "source": "const",
             "value": true
-          },
-          "setDesignatedTarget": {
-            "set": false
           },
           "setScanPattern": {
             "scanPattern": "track"
@@ -414,10 +402,7 @@
         "detect": {
           "event": "targetInSight",
           "actions": {
-            "detectTarget": {
-              "ignoreOwnWeapon": true,
-              "rangeMult": 1.0
-            }
+            "detectTarget": {}
           }
         }
       }
@@ -428,24 +413,14 @@
         "detect": {
           "event": "update",
           "actions": {
-            "detectTarget": {
-              "ignoreOwnWeapon": true,
-              "rangeMult": 1.0
-            }
+            "detectTarget": {}
           }
         },
         "track": {
           "event": "targetDetected",
           "actions": {
             "updateActiveTargetOfInterest": {
-              "dirFilter": {
-                "rateLim": [
-                  0.78,
-                  0.78
-                ],
-                "limTimeOut": 1.0,
-                "inertialTimeMax": 1.0
-              },
+              "dirFilter": {},
               "distFilter": {},
               "dopplerSpeedFilter": {}
             },
@@ -470,8 +445,7 @@
           "actions": {
             "extrapolateTargetsOfInterest": {},
             "clearTargetsOfInterest": {
-              "timeOut": 2.0,
-              "dirRateLim": 0.78
+              "timeOut": 1.0
             },
             "setCenterAzimuth": {
               "source": "activeTargetOfInterest"

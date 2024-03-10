@@ -566,8 +566,6 @@ def private walk_and_convert_basic ( data : uint8?; info:TypeDeclPtr; at:LineInf
             return new [[ExprConstURange64() at=at, value=*reinterpret<urange64?> data]]
         elif info.baseType == Type tString
             return new [[ExprConstString() at=at, value:=*reinterpret<string?> data]]
-        elif info.baseType == Type tBitfield
-            return new [[ExprConstBitfield() at=at, value=*reinterpret<bitfield?> data]]
         else
             panic("unsupported {info.baseType}")
             return [[ExpressionPtr]]
@@ -575,11 +573,13 @@ def private walk_and_convert_basic ( data : uint8?; info:TypeDeclPtr; at:LineInf
 def private walk_and_convert_enumeration ( data : uint8?; info:TypeDeclPtr; at:LineInfo ) : ExpressionPtr
     var eval = 0
     if info.baseType == Type tEnumeration
-        eval = * unsafe(reinterpret<int?> data)
+        unsafe
+            eval = int(* reinterpret<uint?> data)
     elif info.baseType == Type tEnumeration8
-        eval = int(*data)
+        eval = int(* data)
     elif info.baseType == Type tEnumeration16
-        eval = int(*unsafe(reinterpret<int16?> data))
+        unsafe
+            eval = int(* reinterpret<uint16?> data)
     else
         panic("unsupported enumeration")
     return <- new [[ExprConstEnumeration() enumType:=info.enumType, value:=info.enumType.list[eval].name]]

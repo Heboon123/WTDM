@@ -12,16 +12,16 @@ let toolboxShown = Watched(false)
 let toolboxStates = Watched({})
 let toolBoxComponent = makeToolBox(toolboxShown)
 
-function getToolboxState(key){
+let function getToolboxState(key){
   return toolboxStates.value?[key]
 }
 
-function setToolboxState(key, val) {
+let function setToolboxState(key, val) {
   toolboxStates.value[key] = val
   toolboxStates.trigger()
 }
 
-function runToolboxCmd(cmd, cmd2 = null, key = null, val = null) {
+let function runToolboxCmd(cmd, cmd2 = null, key = null, val = null) {
   if (cmd2 == "close")
     toolboxShown(false)
   console_command(cmd)
@@ -31,36 +31,36 @@ function runToolboxCmd(cmd, cmd2 = null, key = null, val = null) {
     setToolboxState(key, val)
 }
 
-function runToolboxCmd_toggleCollGeom() {
+let function runToolboxCmd_toggleCollGeom() {
   if (!getToolboxState("coll"))
     runToolboxCmd("app.debug_collision", null, "coll", true)
   else
     runToolboxCmd("app.debug_collision", null, "coll", false)
 }
 
-function runToolboxCmd_toggleNavMesh() {
+let function runToolboxCmd_toggleNavMesh() {
   if (!getToolboxState("nav"))
     runToolboxCmd("app.debug_navmesh 1", null, "nav", true)
   else
     runToolboxCmd("app.debug_navmesh 0", null, "nav", false)
 }
 
-function setToolboxPopupPos(x, y) {
+let function setToolboxPopupPos(x, y) {
   toolBoxComponent.setPos(x, y)
 }
 
-function clearToolboxOptions() {
+let function clearToolboxOptions() {
   toolBoxComponent.clearOptions()
   toolboxStates.value = []
 }
 
-function addToolboxOption(on, key, val, name, cb, content, tooltip) {
+let function addToolboxOption(on, key, val, name, cb, content, tooltip) {
   if (key != null)
     toolboxStates.value[key] <- val
   toolBoxComponent.addOption(on, name, cb, content, tooltip)
 }
 
-function addToolboxOptions_CollGeomAndNavMesh() {
+let function addToolboxOptions_CollGeomAndNavMesh() {
   addToolboxOption(@() getToolboxState("coll"), "coll", false, "CollGeom", @(_) runToolboxCmd_toggleCollGeom(), null, "Toggle collision geometry")
   addToolboxOption(@() getToolboxState("nav"),  "nav",  false, "NavMesh",  @(_) runToolboxCmd_toggleNavMesh(),  null, "Toggle navigation mesh")
 }

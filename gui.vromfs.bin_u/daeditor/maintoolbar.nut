@@ -14,8 +14,8 @@ let {DE4_MODE_CREATE_ENTITY, get_instance} = require("entity_editor")
 let {DE4_MODE_MOVE, DE4_MODE_ROTATE, DE4_MODE_SCALE, DE4_MODE_MOVE_SURF, DE4_MODE_SELECT,
      DE4_MODE_POINT_ACTION, getEditMode, setEditMode} = daEditor
 
-function toolbarButton(image, action, tooltip_text, checked=null, styles = {}) {
-  function onHover(on) {
+let function toolbarButton(image, action, tooltip_text, checked=null, styles = {}) {
+  let function onHover(on) {
     cursors.setTooltip(on ? tooltip_text : null)
   }
   let defParams = {
@@ -29,7 +29,7 @@ function toolbarButton(image, action, tooltip_text, checked=null, styles = {}) {
   return pictureButton(params)
 }
 
-function modeButton(image, mode, tooltip_text, next_mode=null, next_action=null) {
+let function modeButton(image, mode, tooltip_text, next_mode=null, next_action=null) {
   local params = (type(image)=="table") ? image : {image}
   params = params.__merge({
     checked = mode==getEditMode()
@@ -58,16 +58,16 @@ let separator = {
 }
 
 let svg = @(name) {image = $"!%daeditor/images/{name}.svg"} //Atlas is not working %daeditor/editor#
-function mainToolbar() {
-  function toggleEntitySelect() {
+let function mainToolbar() {
+  let function toggleEntitySelect() {
     if (getEditMode() == DE4_MODE_CREATE_ENTITY || getEditMode() == DE4_MODE_POINT_ACTION)
       setEditMode(DE4_MODE_SELECT)
     showEntitySelect.update(!showEntitySelect.value);
   }
-  function toggleLogsWindows() {
+  let function toggleLogsWindows() {
     showLogsWindow(!showLogsWindow.value)
   }
-  function toggleCreateEntityMode() {
+  let function toggleCreateEntityMode() {
     showEntitySelect.update(false)
     local mode = DE4_MODE_CREATE_ENTITY
     if (DE4_MODE_CREATE_ENTITY==getEditMode())

@@ -1,10 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_natives.nut" import get_game_mode_name, get_mission_progress
 from "%scripts/dagui_library.nut" import *
-
-let { g_difficulty } = require("%scripts/difficulty.nut")
-let { getGlobalModule } = require("%scripts/global_modules.nut")
-let g_squad_manager = getGlobalModule("g_squad_manager")
 let { Cost } = require("%scripts/money.nut")
 let { format } = require("string")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -15,9 +11,10 @@ let { set_game_mode, get_game_mode } = require("mission")
 let { getUnlockRewardCostByName, isUnlockOpened } = require("%scripts/unlocks/unlocksModule.nut")
 let { getDecoratorByResource } = require("%scripts/customization/decorCache.nut")
 let { USEROPT_DIFFICULTY } = require("%scripts/options/optionsExtNames.nut")
+let { saveLocalByAccount } = require("%scripts/clientState/localProfile.nut")
 let { get_pve_awards_blk } = require("blkGetters")
-let { guiStartFlight } = require("%scripts/missions/startMissionsList.nut")
-let { isDiffUnlocked, getReqTutorial } = require("%scripts/tutorials/tutorialsState.nut")
+
+let skipTutorialBitmaskId = "skip_tutorial_bitmask"
 
 let checkTutorialsList = [ //idx in this array used for local profile option skipTutorialBitmaskId
   {
@@ -113,13 +110,20 @@ let checkTutorialsList = [ //idx in this array used for local profile option ski
   }
 ]
 
+let reqTutorial = {
+  [ES_UNIT_TYPE_AIRCRAFT] = "tutorialB_takeoff_and_landing",
+  //[ES_UNIT_TYPE_TANK] = "",
+}
+
+let getReqTutorial = @(unitType) reqTutorial?[unitType] ?? ""
+
 let tutorialRewardData = mkWatched(persist, "tutorialRewardData", null)
 let clearTutorialRewardData = @() tutorialRewardData(null)
 
 let launchedTutorialQuestionsPeerSession = mkWatched(persist, "launchedTutorialQuestionsPeerSession", 0)
 let setLaunchedTutorialQuestionsValue = @(newValue) launchedTutorialQuestionsPeerSession(newValue)
 
-function getTutorialFirstCompletRewardData(misDataBlk, params = {}) {
+let function getTutorialFirstCompletRewardData(misDataBlk, params = {}) {
   let { hasRewardImage = true, needVerticalAlign = false, highlighted = null,
     showFullReward = false, isMissionComplete = false } = params
   let res = {
@@ -169,7 +173,7 @@ function getTutorialFirstCompletRewardData(misDataBlk, params = {}) {
   return res
 }
 
-function saveTutorialToCheckReward(mission) {
+let function saveTutorialToCheckReward(mission) {
   let mainGameMode = get_game_mode()
   set_game_mode(GM_TRAINING)  //req to check progress
   let campId = get_game_mode_name(GM_TRAINING)
@@ -204,7 +208,7 @@ function saveTutorialToCheckReward(mission) {
 
 let isRequireFeature = @(data, featureId) (featureId in data) && !hasFeature(data[featureId])
 
-function getTutorialsTblWithMissions (diff = -1, misName = null) {
+let function getTutorialsTblWithMissions (diff = -1, misName = null) {
   let tutorialsTbl = checkTutorialsList
     .reduce(@(res, v, idx) res
       .__update({ [v.tutorial] = {
@@ -238,7 +242,7 @@ function getTutorialsTblWithMissions (diff = -1, misName = null) {
   return tutorialsTbl
 }
 
-function getTutorialRewardMarkup(tutorialData) {
+let function getTutorialRewardMarkup(tutorialData) {
   if (tutorialData.progress != 3) //tutorials have reward only once
     return ""
 
@@ -260,7 +264,7 @@ function getTutorialRewardMarkup(tutorialData) {
   return getMissionRewardsMarkup(dataBlk, tutorialData.mission.name, rewardsConfig)
 }
 
-function getUncompletedTutorialData(misName, diff = -1) {
+let function getUncompletedTutorialData(misName, diff = -1) {
   if (!hasFeature("Tutorials"))
     return null
 
@@ -271,7 +275,7 @@ function getUncompletedTutorialData(misName, diff = -1) {
   return tutorialData
 }
 
-function getSuitableUncompletedTutorialData(unit, diff = -1) {
+let function getSuitableUncompletedTutorialData(unit, diff = -1) {
   if (!hasFeature("Tutorials"))
     return null
 
@@ -293,12 +297,45 @@ function getSuitableUncompletedTutorialData(unit, diff = -1) {
   return tutorialData
 }
 
-function checkDiffTutorial(diff, unitType, needMsgBox = true, cancelCb = null) {
+let function resetTutorialSkip() {
+  saveLocalByAccount(skipTutorialBitmaskId, 0)
+}
+
+let reqTimeInMode = 60 //req time in mode when no need check tutorial
+let function isDiffUnlocked(diff, checkUnitType) {
+  //check played before
+  for (local d = diff; d < 3; d++)
+    if (::my_stats.getTimePlayed(checkUnitType, d) >= reqTimeInMode)
+      return true
+
+  let reqName = getReqTutorial(checkUnitType)
+  if (reqName == "")
+    return true
+
+  let mainGameMode = get_game_mode()
+  set_game_mode(GM_TRAINING)  //req to check progress
+
+  let chapters = get_meta_missions_info_by_chapters(GM_TRAINING)
+  foreach (chapter in chapters)
+    foreach (m in chapter)
+      if (reqName == m.name) {
+        let fullMissionName = m.getStr("chapter", get_game_mode_name(GM_TRAINING)) + "/" + m.name
+        let progress = get_mission_progress(fullMissionName)
+        if (mainGameMode >= 0)
+          set_game_mode(mainGameMode)
+        return (progress < 3 && progress >= diff) // 3 == unlocked, 0-2 - completed at difficulty
+      }
+  assert(false, $"Error: Not found mission req_tutorial_name = {reqName}")
+  set_game_mode(mainGameMode)
+  return true
+}
+
+let function checkDiffTutorial(diff, unitType, needMsgBox = true, cancelCb = null) {
   if (!::check_diff_pkg(diff, !needMsgBox))
     return true
-  if (!g_difficulty.getDifficultyByDiffCode(diff).needCheckTutorial)
+  if (!::g_difficulty.getDifficultyByDiffCode(diff).needCheckTutorial)
     return false
-  if (g_squad_manager.isNotAloneOnline())
+  if (::g_squad_manager.isNotAloneOnline())
     return false
 
   if (isDiffUnlocked(diff, unitType))
@@ -322,7 +359,7 @@ function checkDiffTutorial(diff, unitType, needMsgBox = true, cancelCb = null) {
           select_mission(mData.mission, true)
           ::current_campaign_mission = mData.mission.name
           saveTutorialToCheckReward(mData.mission)
-          handlersManager.animatedSwitchScene(guiStartFlight)
+          handlersManager.animatedSwitchScene(::gui_start_flight)
         }],
         ["cancel", cancelCb]
       ], "cancel")
@@ -339,7 +376,9 @@ addListenersWithoutEnv({
 })
 
 return {
+  skipTutorialBitmaskId = skipTutorialBitmaskId
   checkTutorialsList = checkTutorialsList
+  reqTutorial = reqTutorial
   clearTutorialRewardData = clearTutorialRewardData
   tutorialRewardData = tutorialRewardData
   setLaunchedTutorialQuestionsValue = setLaunchedTutorialQuestionsValue
@@ -347,6 +386,7 @@ return {
   saveTutorialToCheckReward = saveTutorialToCheckReward
   getUncompletedTutorialData = getUncompletedTutorialData
   getSuitableUncompletedTutorialData = getSuitableUncompletedTutorialData
+  resetTutorialSkip = resetTutorialSkip
   isDiffUnlocked = isDiffUnlocked
   checkDiffTutorial = checkDiffTutorial
   getTutorialFirstCompletRewardData

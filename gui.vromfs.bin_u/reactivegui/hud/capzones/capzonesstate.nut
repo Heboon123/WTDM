@@ -7,7 +7,7 @@ const CAP_ZONES_STATE_POLLING_INTERVAL = 1
 
 let capZones = Watched([])
 
-function prevIfEqualList(cur, prev) {
+let function prevIfEqualList(cur, prev) {
   let minLen = min(cur.len(), prev.len())
   local hasChanges = cur.len() != prev.len()
   for (local i = 0; i < minLen; i++)
@@ -21,13 +21,13 @@ function prevIfEqualList(cur, prev) {
 let updateCapZones = @() capZones.set(
   prevIfEqualList(getCaptureZones().filter(@(c) (c.flags & CZ_IS_HIDDEN) == 0), capZones.value))
 
-function startPollingZonesState() {
+let function startPollingZonesState() {
   clearTimer(updateCapZones)
   updateCapZones()
   setInterval(CAP_ZONES_STATE_POLLING_INTERVAL, updateCapZones)
 }
 
-function stopPollingZonesState() {
+let function stopPollingZonesState() {
   clearTimer(updateCapZones)
 }
 

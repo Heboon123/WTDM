@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import clan_get_admin_editor_mode, clan_get_my_role, clan_get_role_rights, clan_get_my_clan_id
 from "%scripts/dagui_library.nut" import *
 
@@ -181,8 +182,8 @@ gui_handlers.EditClanModalhandler <- class (gui_handlers.ModifyClanModalHandler)
       placePriceTextToButton(this.scene, "btn_upg_members", loc("clan/members_upgrade_button", { step = upgStep }), cost)
     }
 
-    showObjById("btn_upg_members", upgradeMembersButtonVisible, this.scene)
-    showObjById("btn_disbandClan", (this.isMyClan && isInArray("DISBAND", this.myRights)) || this.adminMode, this.scene)
+    this.showSceneBtn("btn_upg_members", upgradeMembersButtonVisible)
+    this.showSceneBtn("btn_disbandClan", (this.isMyClan && isInArray("DISBAND", this.myRights)) || this.adminMode)
   }
 
   // Override

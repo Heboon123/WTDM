@@ -3,7 +3,6 @@ from "%scripts/dagui_library.nut" import *
 from "%scripts/unlocks/battleTasksWndConsts.nut" import BattleTasksWndTab
 from "%scripts/mainConsts.nut" import SEEN
 
-let { g_difficulty } = require("%scripts/difficulty.nut")
 let { isHandlerInScene } = require("%sqDagui/framework/baseGuiHandlerManager.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
@@ -29,9 +28,8 @@ let { isHardTaskIncomplete, getCurrentBattleTasks, getActiveBattleTasks, getWidg
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let newIconWidget = require("%scripts/newIconWidget.nut")
 let { checkBalanceMsgBox } = require("%scripts/user/balanceFeatures.nut")
-let { getCurrentGameMode } = require("%scripts/gameModes/gameModeManagerState.nut")
 
-function guiStartBattleTasksWnd(taskId = null, tabType = null) {
+::gui_start_battle_tasks_wnd <- function gui_start_battle_tasks_wnd(taskId = null, tabType = null) {
   if (!isBattleTasksAvailable())
     return showInfoMsgBox(loc("msgbox/notAvailbleYet"))
 
@@ -135,7 +133,7 @@ gui_handlers.BattleTasksWnd <- class (gui_handlers.BaseGuiHandlerWT) {
   function getSelectedGmDifficulty() {
     let obj = this.scene.findObject("battle_tasks_modes_radiobuttons")
     let diffCode = this.usingDifficulties?[obj.getValue()] ?? DIFFICULTY_ARCADE
-    return g_difficulty.getDifficultyByDiffCode(diffCode)
+    return ::g_difficulty.getDifficultyByDiffCode(diffCode)
   }
 
   function buildBattleTasksArray(tabType) {
@@ -290,8 +288,8 @@ gui_handlers.BattleTasksWnd <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function changeFrameVisibility() {
-    showObjById("tasks_list_frame", this.currentTabType != BattleTasksWndTab.HISTORY, this.scene)
-    showObjById("tasks_history_frame", this.currentTabType == BattleTasksWndTab.HISTORY, this.scene)
+    this.showSceneBtn("tasks_list_frame", this.currentTabType != BattleTasksWndTab.HISTORY)
+    this.showSceneBtn("tasks_history_frame", this.currentTabType == BattleTasksWndTab.HISTORY)
   }
 
   function onEventBattleTasksFinishedUpdate(_params) {
@@ -333,8 +331,8 @@ gui_handlers.BattleTasksWnd <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function updateButtons(config = null) {
-    showObjById("btn_warbonds_shop",
-      ::g_warbonds.isShopButtonVisible() && !isHandlerInScene(gui_handlers.WarbondsShop), this.scene)
+    this.showSceneBtn("btn_warbonds_shop",
+      ::g_warbonds.isShopButtonVisible() && !isHandlerInScene(gui_handlers.WarbondsShop))
 
     let task = getBattleTaskById(config)
     let isTask = isBattleTask(task)
@@ -349,14 +347,14 @@ gui_handlers.BattleTasksWnd <- class (gui_handlers.BaseGuiHandlerWT) {
     showObjById("btn_receive_reward", canGetReward, taskObj)
     if (showRerollButton)
       placePriceTextToButton(taskObj, "btn_reroll", loc("mainmenu/battleTasks/reroll"), getBattleTaskRerollCost())
-    showObjById("btn_requirements_list", showConsoleButtons.value && getTblValue("names", config, []).len() != 0, this.scene)
+    this.showSceneBtn("btn_requirements_list", showConsoleButtons.value && getTblValue("names", config, []).len() != 0)
   }
 
   function updateTabButtons() {
-    showObjById("show_all_tasks", hasFeature("ShowAllBattleTasks") && this.currentTabType != BattleTasksWndTab.HISTORY, this.scene)
-    showObjById("battle_tasks_modes_radiobuttons", this.currentTabType == BattleTasksWndTab.BATTLE_TASKS, this.scene)
-    showObjById("warbond_shop_progress_block", this.isBattleTasksTab(), this.scene)
-    showObjById("medal_icon", this.currentTabType == BattleTasksWndTab.BATTLE_TASKS_HARD, this.scene)
+    this.showSceneBtn("show_all_tasks", hasFeature("ShowAllBattleTasks") && this.currentTabType != BattleTasksWndTab.HISTORY)
+    this.showSceneBtn("battle_tasks_modes_radiobuttons", this.currentTabType == BattleTasksWndTab.BATTLE_TASKS)
+    this.showSceneBtn("warbond_shop_progress_block", this.isBattleTasksTab())
+    this.showSceneBtn("medal_icon", this.currentTabType == BattleTasksWndTab.BATTLE_TASKS_HARD)
   }
 
   function isBattleTasksTab() {
@@ -379,10 +377,10 @@ gui_handlers.BattleTasksWnd <- class (gui_handlers.BaseGuiHandlerWT) {
   function getRadioButtonsView() {
     this.usingDifficulties = []
     let tplView = []
-    let curMode = getCurrentGameMode()
-    let selDiff = g_difficulty.getDifficultyByDiffCode(curMode ? curMode.diffCode : DIFFICULTY_ARCADE)
+    let curMode = ::game_mode_manager.getCurrentGameMode()
+    let selDiff = ::g_difficulty.getDifficultyByDiffCode(curMode ? curMode.diffCode : DIFFICULTY_ARCADE)
 
-    foreach (_idx, diff in g_difficulty.types) {
+    foreach (_idx, diff in ::g_difficulty.types) {
       if (diff.diffCode < 0 || !diff.isAvailable(GM_DOMINATION))
         continue
 
@@ -506,13 +504,9 @@ gui_handlers.BattleTasksWnd <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 }
 
-function openBattleTasksWndFromPromo(params = [], obj = null) {
+let function openBattleTasksWndFromPromo(params = [], obj = null) {
   let taskId = obj?.task_id ?? params?[0]
-  guiStartBattleTasksWnd(taskId)
+  ::gui_start_battle_tasks_wnd(taskId)
 }
 
 addPromoAction("battle_tasks", @(_handler, params, obj) openBattleTasksWndFromPromo(params, obj))
-
-return {
-  guiStartBattleTasksWnd
-}

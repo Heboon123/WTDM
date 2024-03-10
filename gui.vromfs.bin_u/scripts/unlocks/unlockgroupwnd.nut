@@ -61,7 +61,7 @@ let class UnlockGroupWnd (gui_handlers.BaseGuiHandlerWT) {
 
 gui_handlers.UnlockGroupWnd <- UnlockGroupWnd
 
-function showUnlocksGroupWnd(unlocksList, title) {
+let function showUnlocksGroupWnd(unlocksList, title) {
   loadHandler(UnlockGroupWnd, { unlocksList, title })
 }
 

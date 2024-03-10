@@ -6,8 +6,6 @@ let u = require("%sqStdLibs/helpers/u.nut")
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let workshop = require("%scripts/items/workshop/workshop.nut")
 let seenList = require("%scripts/seen/seenList.nut")
-let { checkItemsMaskFeatures, getShopList, isItemVisible
-} = require("%scripts/items/itemsManager.nut")
 
 let shopSheets = {
   types = []
@@ -31,21 +29,21 @@ shopSheets.template <- {
 
   isAllowedForTab = @(shopTab) shopTab != itemsTab.WORKSHOP
   isEnabled = @(shopTab) this.isAllowedForTab(shopTab)
-    && checkItemsMaskFeatures(this.typeMask) != 0
+    && ::ItemsManager.checkItemsMaskFeatures(this.typeMask) != 0
     && (shopTab != itemsTab.SHOP || this.getItemsList(shopTab).len() > 0)
 
   getItemFilterFunc = @(shopTab)
     shopTab == itemsTab.SHOP
-    ? (@(item) isItemVisible(item, shopTab) && this.isDevItemsTab == item.isDevItem)
-    : (@(item) isItemVisible(item, shopTab))
+    ? (@(item) ::ItemsManager.isItemVisible(item, shopTab) && this.isDevItemsTab == item.isDevItem)
+    : (@(item) ::ItemsManager.isItemVisible(item, shopTab))
 
   getItemsList = function(shopTab, _subsetId = null) {
-    let visibleTypeMask = checkItemsMaskFeatures(this.typeMask)
+    let visibleTypeMask = ::ItemsManager.checkItemsMaskFeatures(this.typeMask)
     let filterFunc = this.getItemFilterFunc(shopTab).bindenv(this)
     if (shopTab == itemsTab.INVENTORY)
       return ::ItemsManager.getInventoryListByShopMask(visibleTypeMask, filterFunc)
     if (shopTab == itemsTab.SHOP)
-      return getShopList(visibleTypeMask, filterFunc)
+      return ::ItemsManager.getShopList(visibleTypeMask, filterFunc)
     return []
   }
   getSubsetsListParameters = @() null
@@ -53,7 +51,7 @@ shopSheets.template <- {
   getSubsetSeenListId = @(subsetId) "{0}/{1}".subst(this.getSeenId(), subsetId)
 }
 
-function getTabSeenId(tabIdx) { //!!FIX ME: move tabs to separate enum
+let function getTabSeenId(tabIdx) { //!!FIX ME: move tabs to separate enum
   if (tabIdx == itemsTab.SHOP)
     return SEEN.ITEMS_SHOP
   if (tabIdx == itemsTab.INVENTORY)

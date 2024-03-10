@@ -7,7 +7,7 @@ let math = require("math")
 //when event have parameter ttl it will be automatically removed on time finish
 //isEventsEqual = @(event1, event2) bool - used only to remove events not only by uid.
 //  Previous equal event will be removed on receive new event.
-function mkEventLogState(persistId, maxActiveEvents = 10, defTtl = 0, isEventsEqual = null
+let function mkEventLogState(persistId, maxActiveEvents = 10, defTtl = 0, isEventsEqual = null
 ) {
   let savedEvents = persist(persistId, @() { v = [] })
   let curEvents = Watched(savedEvents.v)
@@ -17,7 +17,7 @@ function mkEventLogState(persistId, maxActiveEvents = 10, defTtl = 0, isEventsEq
   let getEqualIndex = @(event) isEventsEqual == null ? null
     : curEvents.value.findindex(@(e) isEventsEqual(event, e))
 
-  function removeEvent(uidOrEvent) {
+  let function removeEvent(uidOrEvent) {
     let idx = type(uidOrEvent) == "integer" ? curEvents.value.findindex(@(e) e.uid == uidOrEvent)
       : getEqualIndex(uidOrEvent)
     if (idx != null)
@@ -25,7 +25,7 @@ function mkEventLogState(persistId, maxActiveEvents = 10, defTtl = 0, isEventsEq
   }
 
   let timersCb = {}
-  function startRemoveTimer(event) {
+  let function startRemoveTimer(event) {
     local { ttl = defTtl, uid, removeMsec = null } = event
     if (uid in timersCb) {
       clearTimer(timersCb[uid])
@@ -45,7 +45,7 @@ function mkEventLogState(persistId, maxActiveEvents = 10, defTtl = 0, isEventsEq
   }
   curEvents.value.each(startRemoveTimer)
 
-  function findFirstRemoveHint() {
+  let function findFirstRemoveHint() {
     local time = null
     local resIdx = null
     foreach(idx, evt in curEvents.value) {
@@ -59,7 +59,7 @@ function mkEventLogState(persistId, maxActiveEvents = 10, defTtl = 0, isEventsEq
     return resIdx
   }
 
-  function addEvent(eventExt) {
+  let function addEvent(eventExt) {
     let uid = ++lastEventUid
     let event = eventExt.__merge({ uid })
 
@@ -74,7 +74,7 @@ function mkEventLogState(persistId, maxActiveEvents = 10, defTtl = 0, isEventsEq
     startRemoveTimer(event)
   }
 
-  function modifyOrAddEvent(eventExt, isEventToModify) {
+  let function modifyOrAddEvent(eventExt, isEventToModify) {
     let idx = curEvents.value.findindex(isEventToModify)
     if (idx == null) {
       addEvent(eventExt)

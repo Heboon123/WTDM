@@ -1,10 +1,10 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { openMfm, getMfmSectionTitle, getMfmHandler } = require("%scripts/wheelmenu/multifuncMenuTools.nut")
 let cfg = require("%scripts/wheelmenu/multifuncmenuCfg.nut")
 let { emulateShortcut, isXInputDevice } = require("controls")
-let { eventbus_subscribe } = require("eventbus")
 
 //--------------------------------------------------------------------------------------------------
 
@@ -76,12 +76,13 @@ gui_handlers.multifuncMenuHandler <- class (gui_handlers.wheelMenuHandler) {
 
 //--------------------------------------------------------------------------------------------------
 
-eventbus_subscribe("on_multifunc_menu_request", function on_multifunc_menu_request(evt) {
-  let isShow = evt.show
+// Called from client
+::on_multifunc_menu_request <- function on_multifunc_menu_request(isShow) {
   if (isShow)
     return openMfm(cfg)
   getMfmHandler()?.quit()
-})
+  return true
+}
 
 // Called from client
 ::on_multifunc_menu_item_selected <- function on_multifunc_menu_item_selected(btnIdx, isDown) {
@@ -89,6 +90,8 @@ eventbus_subscribe("on_multifunc_menu_request", function on_multifunc_menu_reque
   return true
 }
 
-eventbus_subscribe("on_multifunc_menu_activate_item", function on_multifunc_menu_activate_item(...) {
+// Called from client
+::on_multifunc_menu_activate_item <- function on_multifunc_menu_activate_item() {
   getMfmHandler()?.onActivateItemCallback()
-})
+  return true
+}

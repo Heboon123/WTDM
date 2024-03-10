@@ -51,7 +51,7 @@ let altitude = @() {
 }
 
 let TangageAbsInt = Computed(@() fabs(Tangage.value).tointeger())
-function pitch(height) {
+let function pitch(height) {
   return {
     size = flex()
     children = [
@@ -286,7 +286,7 @@ let atgmLaunchPermitted = @() {
   : null
 }
 
-function Skval(width, height, line_width, font_scale) {
+let function Skval(width, height, line_width, font_scale) {
   curLineWidth = baseLineWidth * line_width
   fontScale = font_scale
   return {

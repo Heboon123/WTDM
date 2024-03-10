@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { request_nick_by_uid_batch } = require("%scripts/matching/requests.nut")
@@ -7,17 +8,17 @@ let wwEvent = require("%scripts/worldWar/wwEvent.nut")
 local armyManagersNames = {}
 local currentOperationID = 0
 
-function updateArmyManagersNames(namesByUids) {
+let function updateArmyManagersNames(namesByUids) {
   foreach (uid, name in namesByUids)
     armyManagersNames[uid.tointeger()] <- { name = name }
 }
 
-function updateArmyManagers(armyGroups) {
+let function updateArmyManagers(armyGroups) {
   foreach (group in armyGroups)
     group.updateManagerStat(armyManagersNames)
 }
 
-function updateManagers() {
+let function updateManagers() {
   let operationID = wwGetOperationId()
   if (operationID != currentOperationID) {
     currentOperationID = operationID

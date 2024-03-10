@@ -1,6 +1,7 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-let path = "%globalScripts/dirtyWords"
+let path = "%scripts/dirtyWords"
 let dirtyWordsFilter = require($"{path}/dirtyWords.nut")
 
 dirtyWordsFilter.init([

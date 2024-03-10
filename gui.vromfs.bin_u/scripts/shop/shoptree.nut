@@ -7,7 +7,7 @@ let { fatal } = require("dagor.debug")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { isUnitGift, isUnitGroup } = require("%scripts/unit/unitInfo.nut")
 
-function getReqAirPosInArray(reqName, arr) {
+let function getReqAirPosInArray(reqName, arr) {
   foreach (r, row in arr)
     foreach (c, item in row)
       if (item && type(item) != "integer" && reqName == item.name)
@@ -15,7 +15,7 @@ function getReqAirPosInArray(reqName, arr) {
   return null
 }
 
-function checkBranchPos(tree, branch, row, col) {
+let function checkBranchPos(tree, branch, row, col) {
   for (local i = 0; i < branch.len(); i++) {
     local idxMax = branch[i].len()
     if (idxMax > tree[i + row].len() - col)
@@ -27,7 +27,7 @@ function checkBranchPos(tree, branch, row, col) {
   return true
 }
 
-function getGoodBranchPos(tree, branch, offset, headerPos) {
+let function getGoodBranchPos(tree, branch, offset, headerPos) {
   //branch.
   if (headerPos) {
     if (checkBranchPos(tree, branch, headerPos[0], headerPos[1]))
@@ -50,7 +50,7 @@ function getGoodBranchPos(tree, branch, offset, headerPos) {
   return tree[0].len()
 }
 
-function makeTblByBranch(branch, ranksHeight, headRow = null) {
+let function makeTblByBranch(branch, ranksHeight, headRow = null) {
   if (branch.len() < 1)
     return null
 
@@ -94,7 +94,7 @@ function makeTblByBranch(branch, ranksHeight, headRow = null) {
   return res
 }
 
-function appendBranches(rangeData, headIdx, branches, brIdxTbl, prevItem = null) {
+let function appendBranches(rangeData, headIdx, branches, brIdxTbl, prevItem = null) {
   if (rangeData[headIdx].used)
     return
 
@@ -150,7 +150,7 @@ function appendBranches(rangeData, headIdx, branches, brIdxTbl, prevItem = null)
     appendBranches(rangeData, headers[h].id, branches, brIdxTbl, headers[h].prevItem)
 }
 
-function getBranchesTbl(rangeData) {
+let function getBranchesTbl(rangeData) {
   let branches = []
 
   if (rangeData.len() < 2)
@@ -203,7 +203,7 @@ function getBranchesTbl(rangeData) {
 }
 
 //returns an array of positions of each rank in page and each vertical section in page
-function calculateRanksAndSectionsPos(page) {
+let function calculateRanksAndSectionsPos(page) {
   let hasRankPosXY = page?.hasRankPosXY ?? false
   let res = array(::max_country_rank + 1, 0)
   let fakeRes = array(::max_country_rank + 1, 0)
@@ -278,7 +278,7 @@ function calculateRanksAndSectionsPos(page) {
   }
 }
 
-function getReqAirs(page) {
+let function getReqAirs(page) {
   let reqAirs = {}
   for (local i = page.tree.len() - 1; i >= 0; i--)
     for (local j = page.tree[i].len() - 1; j >= 0; j--) {
@@ -305,7 +305,7 @@ function getReqAirs(page) {
   return reqAirs
 }
 
-function fillLinesInPage(page) {
+let function fillLinesInPage(page) {
   let reqAirs = getReqAirs(page)
   let futureReqAirsByBranch = []
 
@@ -349,7 +349,7 @@ function fillLinesInPage(page) {
   }
 }
 
-function generatePageTreeByRank(page) {
+let function generatePageTreeByRank(page) {
   let treeSize = page.ranksHeight[page.ranksHeight.len() - 1]
   for (local range = 0; range < page.airList.len(); range++) {
     let rangeData = page.airList[range]
@@ -398,7 +398,7 @@ function generatePageTreeByRank(page) {
   }
 }
 
-function generatePageTreeByRankPosXY(page) {
+let function generatePageTreeByRankPosXY(page) {
   let unitsWithWrongPositions = []
   for (local range = 0; range < page.airList.len(); range++) {
     let rangeData = page.airList[range]
@@ -437,7 +437,7 @@ function generatePageTreeByRankPosXY(page) {
   }
 }
 
-function generateTreeData(page) {
+let function generateTreeData(page) {
   if (page.tree != null) //already generated
     return page
 

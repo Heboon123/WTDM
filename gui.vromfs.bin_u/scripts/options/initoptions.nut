@@ -21,7 +21,6 @@ let getAllUnits = require("%scripts/unit/allUnits.nut")
 let { get_shop_blk } = require("blkGetters")
 let { clearMapsCache } = require("%scripts/missions/missionsUtils.nut")
 let { update_aircraft_warpoints } = require("%scripts/ranks.nut")
-let { setUnlocksPunctuationWithoutSpace } = require("%scripts/langUtils/localization.nut")
 
 let allUnits = getAllUnits()
 //remap all units to new class on scripts reload
@@ -41,7 +40,7 @@ if (showedUnit.value != null)
     } while (stepStatus == PT_STEP_STATUS.SUSPEND)
 }
 
-function init_all_units() { //Not moved to allUnits.nut due to "require loops"
+let function init_all_units() { //Not moved to allUnits.nut due to "require loops"
   allUnits.clear()
   let all_units_array = gather_and_build_aircrafts_list()
   foreach (unitTbl in all_units_array) {
@@ -128,7 +127,7 @@ local usageAmountCounted = false
       getroottable()[name] = blk?[name] ? (blk[name] % "ending") : []
 
     if (type(blk?.unlocks_punctuation_without_space) == "string")
-      setUnlocksPunctuationWithoutSpace(blk.unlocks_punctuation_without_space)
+      ::unlocks_punctuation_without_space = blk.unlocks_punctuation_without_space
 
     LayersIcon.initConfigOnce(blk)
   }

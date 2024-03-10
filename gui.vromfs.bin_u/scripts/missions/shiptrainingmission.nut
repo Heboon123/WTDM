@@ -9,32 +9,28 @@ let { set_option } = require("%scripts/options/optionsExt.nut")
 let { OPTIONS_MODE_TRAINING, USEROPT_BULLETS0, USEROPT_BULLET_COUNT0,
   USEROPT_AIRCRAFT, USEROPT_WEAPONS, USEROPT_SKIN
 } = require("%scripts/options/optionsExtNames.nut")
-let { loadLocalByAccount, saveLocalByAccount
-} = require("%scripts/clientState/localProfileDeprecated.nut")
+let { loadLocalByAccount, saveLocalByAccount } = require("%scripts/clientState/localProfile.nut")
 let { getCrewsListByCountry } = require("%scripts/slotbar/slotbarState.nut")
 let { getPvpRespawnsOnUnitType, isStatsLoaded } = require("%scripts/myStats.nut")
-let { guiStartFlight } = require("%scripts/missions/startMissionsList.nut")
-let { getCurrentGameMode } = require("%scripts/gameModes/gameModeManagerState.nut")
-let { getCrewUnit } = require("%scripts/crew/crew.nut")
 
 const MIS_NAME = "tutorial_destroyer_battle_arcade"
 
-function isGmForUnitType(esUnitType) {
-  let gameMode = getCurrentGameMode()
+let function isGmForUnitType(esUnitType) {
+  let gameMode = ::game_mode_manager.getCurrentGameMode()
   return gameMode?.reqUnitTypes.contains(esUnitType) ?? false
 }
 
-function findUnitInSlotByType(esUnitType) {
+let function findUnitInSlotByType(esUnitType) {
   let crews = getCrewsListByCountry(profileCountrySq.value)
   let curUnit = getPlayerCurUnit()
-  let units = crews.map(@(c) getCrewUnit(c))
+  let units = crews.map(@(c) ::g_crew.getCrewUnit(c))
     .filter(@(u) u?.esUnitType == esUnitType)
   return units.contains(curUnit) ? curUnit : units?[0]
 }
 
 let isUnitTypeInSlot = @(esUnitType) findUnitInSlotByType(esUnitType) != null
 
-function canStartShipTrainingMission() {
+let function canStartShipTrainingMission() {
   if (!isStatsLoaded() || !::g_login.isProfileReceived())
     return false
 
@@ -56,7 +52,7 @@ function canStartShipTrainingMission() {
   return true
 }
 
-function updateBulletCountOptions(unit) {
+let function updateBulletCountOptions(unit) {
   local bulIdx = 0
   let bulletsManager = ::UnitBulletsManager(unit)
   let bulletGroups = bulletsManager.getBulletsGroups()
@@ -78,7 +74,7 @@ function updateBulletCountOptions(unit) {
   }
 }
 
-function startShipTrainingMission() {
+let function startShipTrainingMission() {
   let unit = findUnitInSlotByType(ES_UNIT_TYPE_SHIP)
   if (!unit)
     return
@@ -102,7 +98,7 @@ function startShipTrainingMission() {
   ::current_campaign_mission = MIS_NAME
   let misBlk = get_meta_mission_info_by_name(MIS_NAME)
   select_training_mission(misBlk)
-  guiStartFlight()
+  ::gui_start_flight()
 
   saveLocalByAccount($"tutor/mission_launched_{MIS_NAME}", true)
   save_profile(false)

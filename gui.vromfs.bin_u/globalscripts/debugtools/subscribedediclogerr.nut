@@ -8,7 +8,7 @@ let subscriptions = []
 let subscribeDedicLogerr = @(action) subscriptions.append(action)
 let onLogerr = @(text) subscriptions.each(@(a) a(text))
 
-function unsubscribeDedicLogerr(action) {
+let function unsubscribeDedicLogerr(action) {
   let idx = subscriptions.indexof(action)
   if (idx != null)
     subscriptions.remove(idx)

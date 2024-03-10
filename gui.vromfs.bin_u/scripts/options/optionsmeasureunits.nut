@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import get_option_unit_type
 from "%scripts/dagui_library.nut" import *
 let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
@@ -10,8 +11,7 @@ let updateExtWatched = require("%scripts/global/updateExtWatched.nut")
 let { floatToStringRounded } = require("%sqstd/string.nut")
 let { USEROPT_MEASUREUNITS_SPEED, USEROPT_MEASUREUNITS_ALT, USEROPT_MEASUREUNITS_DIST,
   USEROPT_MEASUREUNITS_CLIMBSPEED, USEROPT_MEASUREUNITS_TEMPERATURE,
-  USEROPT_MEASUREUNITS_WING_LOADING, USEROPT_MEASUREUNITS_POWER_TO_WEIGHT_RATIO,
-  USEROPT_MEASUREUNITS_RADIAL_SPEED
+  USEROPT_MEASUREUNITS_WING_LOADING, USEROPT_MEASUREUNITS_POWER_TO_WEIGHT_RATIO
 } = require("%scripts/options/optionsExtNames.nut")
 
 let persistent = {
@@ -28,10 +28,9 @@ let optionsByIndex = [
   { useroptId = USEROPT_MEASUREUNITS_TEMPERATURE,           optId = "temperature" },
   { useroptId = USEROPT_MEASUREUNITS_WING_LOADING,          optId = "wing_loading" },
   { useroptId = USEROPT_MEASUREUNITS_POWER_TO_WEIGHT_RATIO, optId = "power_to_weight_ratio" },
-  { useroptId = USEROPT_MEASUREUNITS_RADIAL_SPEED,          optId = "radial_speed"},
 ]
 
-function isInitialized() {
+let function isInitialized() {
   return (persistent.unitsCfg?.len() ?? 0) != 0
 }
 
@@ -39,7 +38,7 @@ let getMeasureUnitsNames = @() isInitialized()
   ? ::g_measure_type.types.reduce(@(acc, v) acc.__update({ [v.name] = v.getMeasureUnitsLocKey() }), {})
   : null
 
-function init() {
+let function init() {
   persistent.unitsCfg = []
   let blk = DataBlock()
   blk.load("config/measureUnits.blk")
@@ -63,7 +62,7 @@ function init() {
   updateExtWatched({ measureUnitsNames = getMeasureUnitsNames() })
 }
 
-function getOption(useroptId) {
+let function getOption(useroptId) {
   let unitNo = optionsByIndex.findindex(@(option) option.useroptId == useroptId) ?? 0
   let option = optionsByIndex[unitNo]
   let units = persistent.unitsCfg[unitNo]
@@ -77,7 +76,7 @@ function getOption(useroptId) {
   }
 }
 
-function getMeasureCfg(unitNo) {
+let function getMeasureCfg(unitNo) {
   let unitName = get_option_unit_type(unitNo)
   return persistent.unitsCfg[unitNo].findvalue(@(u) u.name == unitName)
 }
@@ -108,7 +107,7 @@ local function countMeasure(unitNo, value, separator = " - ", addMeasureUnits = 
   return result
 }
 
-function isMetricSystem(unitNo) {
+let function isMetricSystem(unitNo) {
   let unitName = get_option_unit_type(unitNo)
   return persistent.unitsCfg[unitNo].findindex(@(u) u.name == unitName) == 0
 }

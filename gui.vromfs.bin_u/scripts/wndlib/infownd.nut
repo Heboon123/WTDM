@@ -1,7 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let { BaseGuiHandler } = require("%sqDagui/framework/baseGuiHandler.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
@@ -81,7 +80,7 @@ gui_handlers.InfoWnd <- class (BaseGuiHandler) {
     this.scene.findObject("header").setValue(this.header)
     this.scene.findObject("message").setValue(this.message)
     if (!this.checkId)
-      showObjById("do_not_show_me_again", false, this.scene)
+      this.showSceneBtn("do_not_show_me_again", false)
     this.createButtons()
     this.buttonsContext = null //remove permanent link to context
 
@@ -117,7 +116,7 @@ gui_handlers.InfoWnd <- class (BaseGuiHandler) {
     //update navBar
     if (!markup.len()) {
       this.scene.findObject("info_wnd_frame")["class"] = "wnd"
-      showObjById("nav-help", false, this.scene)
+      this.showSceneBtn("nav-help", false)
     }
     else if (hasBigButton)
       this.scene.findObject("info_wnd_frame").largeNavBarHeight = "yes"
@@ -143,4 +142,4 @@ subscriptions.addListenersWithoutEnv({
   AccountReset = function(_p) {
     gui_handlers.InfoWnd.clearAllSaves()
   }
-}, g_listener_priority.CONFIG_VALIDATION)
+}, ::g_listener_priority.CONFIG_VALIDATION)

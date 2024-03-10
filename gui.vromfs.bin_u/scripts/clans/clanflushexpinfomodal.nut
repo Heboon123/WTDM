@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -54,7 +55,7 @@ let handlerClass = class (gui_handlers.clanVehiclesModal) {
   function updateButtons() {
     this.updateBuyBtn()
     this.updateSpendExpBtn()
-    showObjById("skip_info", !this.needChoseResearch, this.scene)
+    this.showSceneBtn("skip_info", !this.needChoseResearch)
   }
 
   function onSkipInfo(obj) {

@@ -7,7 +7,7 @@ let entity_editor = require("entity_editor")
 
 let getCompVal = @(eid, comp_name, path) path!=null ? getValFromObj(eid, comp_name, path) : _dbg_get_comp_val_inspect(eid, comp_name)
 
-function fieldEditText_(params={}) {
+let function fieldEditText_(params={}) {
   let {eid, comp_name, compVal, setVal, path, rawComponentName=null} = params
   local curRO = isCompReadOnly(eid, rawComponentName)
 
@@ -18,23 +18,23 @@ function fieldEditText_(params={}) {
   let stateFlags = Watched(0)
   let isValid = Computed(@() isValueTextValid(compType, curText.value))
 
-  function onChange(text){
+  let function onChange(text){
     curText.update(text)
   }
 
-  function updateTextFromEcs() {
+  let function updateTextFromEcs() {
     let val = getCompVal(eid, rawComponentName, path)
     let compTextVal = compValToString(val)
     curText.update(compTextVal)
   }
 
-  function updateTextFromEcsTimeout() {
+  let function updateTextFromEcsTimeout() {
     updateTextFromEcs()
     if (!isFocus.value)
       gui_scene.resetTimeout(0.1, updateTextFromEcsTimeout)
   }
 
-  function updateComponentByTimer() {
+  let function updateComponentByTimer() {
     if (rawComponentName == "transform") {
       if (isFocus.value)
         gui_scene.clearTimer(updateTextFromEcsTimeout)
@@ -46,7 +46,7 @@ function fieldEditText_(params={}) {
   isFocus.subscribe(@(_v) updateComponentByTimer())
   updateComponentByTimer()
 
-  function frame() {
+  let function frame() {
     let frameColor = (stateFlags.value & S_KB_FOCUS) ? colors.FrameActive : colors.FrameDefault
     return {
       rendObj = ROBJ_FRAME group=group size = [flex(), gridHeight] color = frameColor watch = stateFlags
@@ -54,7 +54,7 @@ function fieldEditText_(params={}) {
     }
   }
 
-  function doApply() {
+  let function doApply() {
     if (curRO)
       return
     let checkVal = getCompVal(eid, rawComponentName, path)
@@ -78,7 +78,7 @@ function fieldEditText_(params={}) {
     anim_start($"!{comp_name}{"".join(path??[])}")
   }
 
-  function textInput() {
+  let function textInput() {
     return {
       rendObj = ROBJ_TEXT
       size = [flex(), SIZE_TO_CONTENT]
@@ -141,9 +141,9 @@ function fieldEditText_(params={}) {
   }
 }
 
-function fieldEditText(params={}){
+local function fieldEditText(params={}){
   let {eid, comp_name, rawComponentName, path=null, onChange=null} = params
-  function setVal(val) {
+  let function setVal(val) {
     if (path != null) {
       setValToObj(eid, rawComponentName, path, val)
       entity_editor.save_component(eid, rawComponentName)

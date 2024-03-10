@@ -14,7 +14,7 @@ let mutedXuids = Watched([])
 let bannedXuids = Watched([])
 
 
-function retrieve_all_lists(callback) {
+let function retrieve_all_lists(callback) {
   retrieve_related_people_list(function(friends_xuids) {
     retrieve_muted_people_list(function(muted_xuids) {
       retrieve_avoid_people_list(function(banned_xuids) {
@@ -39,7 +39,7 @@ function retrieve_all_lists(callback) {
 }
 
 
-function update_relationships_impl(fire_events, callback) {
+let function update_relationships_impl(fire_events, callback) {
   if (!is_any_user_active()) {
     logX("There is no active user, skipping relationships update")
     return
@@ -57,7 +57,7 @@ function update_relationships_impl(fire_events, callback) {
 }
 
 
-function initialize_relationships() {
+let function initialize_relationships() {
   cleanup()
   friendsXuids.update([])
   mutedXuids.update([])
@@ -69,12 +69,12 @@ function initialize_relationships() {
 }
 
 
-function shutdown_relationships() {
+let function shutdown_relationships() {
   unsubscribe_from_changes()
 }
 
 
-function update_relationships() {
+let function update_relationships() {
   update_relationships_impl(false, null)
 }
 

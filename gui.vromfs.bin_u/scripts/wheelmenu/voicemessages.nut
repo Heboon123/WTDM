@@ -2,11 +2,7 @@
 from "%scripts/dagui_natives.nut" import set_option_favorite_voice_message, add_voice_message, get_player_unit_name, on_voice_message_button, get_option_favorite_voice_message
 from "%scripts/dagui_library.nut" import *
 
-let { getGlobalModule } = require("%scripts/global_modules.nut")
-let g_squad_manager = getGlobalModule("g_squad_manager")
 let { format } = require("string")
-let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
-let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let localDevoice = require("%scripts/penitentiary/localDevoice.nut")
 let { isPlatformSony } = require("%scripts/clientState/platform.nut")
 let { get_game_mode, get_game_type } = require("mission")
@@ -57,7 +53,7 @@ let voiceMessageNames = [
   { category = HIDDEN_CATEGORY_NAME, name = "voice_message_teamkill_forgive", blinkTime = 2, haveTarget = true, showPlace = false },
 ]
 
-function initVoiceMessageList() {
+let function initVoiceMessageList() {
   for (local i = 0; i < voiceMessageNames.len(); i++) {
     let line = voiceMessageNames[i];
     add_voice_message(line);
@@ -67,7 +63,7 @@ initVoiceMessageList()
 
 let getCategoryLoc = @(category) loc($"voice_message_category/{category}")
 
-function getFavoriteVoiceMessagesVariants() {
+let function getFavoriteVoiceMessagesVariants() {
   let result = ["#options/none"];
   local categoryName = "";
   local categoryIndex = 0;
@@ -88,7 +84,7 @@ function getFavoriteVoiceMessagesVariants() {
   return result;
 }
 
-function getVoiceMessageListLine(index, is_category, name, squad, targetName, _messageIndex = -1) {
+let function getVoiceMessageListLine(index, is_category, name, squad, targetName, _messageIndex = -1) {
   local scText = ""
   if (!isPlatformSony) {
     let shortcutNames = [];
@@ -109,52 +105,23 @@ function getVoiceMessageListLine(index, is_category, name, squad, targetName, _m
   }
 }
 
-function getCantUseVoiceMessagesReason(isForSquad) {
+let function getCantUseVoiceMessagesReason(isForSquad) {
   if (!::is_multiplayer())
     return loc("ui/unavailable")
   if (!::is_mode_with_teams(get_game_type()))
     return loc("chat/no_team")
   if (isForSquad && get_game_mode() == GM_SKIRMISH)
     return loc("squad/no_squads_in_custom_battles")
-  if (isForSquad && !g_squad_manager.isInSquad())
+  if (isForSquad && !::g_squad_manager.isInSquad())
     return loc("squad/not_a_member")
   return ""
 }
 
 let onVoiceMessageAnswer = @(index) on_voice_message_button(index) //-1 means "close"
 
-function guiStartVoicemenu(config) {
-  if (::isPlayerDedicatedSpectator())
-    return null
-
-  let joyParams = ::joystick_get_cur_settings()
-  let { menu = [], callbackFunc = null, squadMsg = false, category = ""} = config
-  let params = {
-    menu
-    callbackFunc
-    squadMsg
-    category
-    mouseEnabled = joyParams.useMouseForVoiceMessage || joyParams.useJoystickMouseForVoiceMessage
-    axisEnabled  = true
-  }
-
-  local handler = handlersManager.findHandlerClassInScene(gui_handlers.voiceMenuHandler)
-  if (handler)
-    handler.reinitScreen(params)
-  else
-    handler = handlersManager.loadHandler(gui_handlers.voiceMenuHandler, params)
-  return handler
-}
-
-function closeCurVoicemenu() {
-  let handler = handlersManager.findHandlerClassInScene(gui_handlers.voiceMenuHandler)
-  if (handler && handler.isActive)
-    handler.showScene(false)
-}
-
-function showVoiceMessageList(show, category, squad, targetName) {
+let function showVoiceMessageList(show, category, squad, targetName) {
   if (!show) {
-    closeCurVoicemenu()
+    ::close_cur_voicemenu()
     return false
   }
 
@@ -225,7 +192,7 @@ function showVoiceMessageList(show, category, squad, targetName) {
   if (!menu.len())
     return false
 
-  return guiStartVoicemenu({ menu = menu,
+  return ::gui_start_voicemenu({ menu = menu,
                                 callbackFunc = onVoiceMessageAnswer,
                                 squadMsg = squad,
                                 category = category }) != null
@@ -234,7 +201,7 @@ function showVoiceMessageList(show, category, squad, targetName) {
 
 let removeFavoriteVoiceMessage = @(index) set_option_favorite_voice_message(index, -1)
 
-function resetFastVoiceMessages() {
+let function resetFastVoiceMessages() {
   for (local i = 0; i < NUM_FAST_VOICE_MESSAGES; i++)
     removeFavoriteVoiceMessage(i)
 }
@@ -253,5 +220,4 @@ return {
   getFavoriteVoiceMessagesVariants = getFavoriteVoiceMessagesVariants
   getCantUseVoiceMessagesReason = getCantUseVoiceMessagesReason
   resetFastVoiceMessages = resetFastVoiceMessages
-  closeCurVoicemenu
 }

@@ -10,14 +10,13 @@ let shipExHud = require("shipExHud.nut")
 let tankExHud = require("tankExHud.nut")
 let shipObstacleRf = require("shipObstacleRangefinder.nut")
 let shipDeathTimer = require("shipDeathTimer.nut")
-let mkScoreboard = require("hud/scoreboard/mkScoreboard.nut")
+let scoreboard = require("hud/scoreboard/scoreboard.nut")
 let aircraftHud = require("aircraftHud.nut")
 let helicopterHud = require("helicopterHud.nut")
 let tankHud = require("tankHud.nut")
 let xrayIndicator = require("hud/xrayIndicator.nut")
 let changelog = require("changelog/changelog.ui.nut")
 let { cursorVisible } = require("%rGui/ctrlsState.nut")
-let { isInSpectatorMode } = require("%rGui/respawnWndState.nut")
 
 let widgetsMap = {
   [DargWidgets.HUD] = function() {
@@ -66,7 +65,7 @@ let widgetsMap = {
   [DargWidgets.SCOREBOARD] = @ () {
     size = flex()
     halign = ALIGN_CENTER
-    children = mkScoreboard()
+    children = scoreboard
   },
 
   [DargWidgets.CHANGE_LOG] = @() {
@@ -74,22 +73,7 @@ let widgetsMap = {
     children = changelog
   },
 
-  [DargWidgets.DAMAGE_PANEL] = @() xrayIndicator,
-
-  [DargWidgets.RESPAWN] = @() @() {
-    watch = isInSpectatorMode
-    size = flex()
-    children = [
-      isInSpectatorMode.get()
-        ? null
-        : {
-            size = flex()
-            rendObj = ROBJ_WORLD_BLUR
-            fillColor = 0xB2141A21
-          }
-      mkScoreboard()
-    ]
-  }
+  [DargWidgets.DAMAGE_PANEL] = @() xrayIndicator
 }
 
 // A stub to enable hover functionality

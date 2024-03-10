@@ -107,14 +107,14 @@ let redColor = Color(210, 20, 20, 250)
 let yellowColor = Color(210,210,0)
 let orangeColor = Color(210,120,20)
 
-function bearingAngleColor(delta) {
+let function bearingAngleColor(delta) {
   return delta > 5.0 ? redColor
     : delta > 3.5 ? orangeColor
     : delta > 1.0 ? yellowColor
     : greenColor
 }
 
-function distanceColor(current, total) {
+let function distanceColor(current, total) {
   return current > total ? redColor
     :  current > total * 0.9 ? orangeColor
     :  current > total * 0.8 ? yellowColor

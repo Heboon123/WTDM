@@ -1,7 +1,6 @@
 from "%scripts/dagui_library.nut" import *
 from "%scripts/mainConsts.nut" import SEEN
 
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
 let { broadcastEvent } = subscriptions
@@ -133,7 +132,7 @@ let haveDiscount = function() {
 // For updating single info and send event for updating it in shop, if opened
 // We can remake on array of item labels,
 // but for now require only for single item at once.
-function onSuccessCb(itemsArray) {
+let function onSuccessCb(itemsArray) {
   foreach (itemData in itemsArray) {
     let itemId = itemData.label
     let shopItem = getShopItem(itemId)
@@ -145,7 +144,7 @@ function onSuccessCb(itemsArray) {
   broadcastEvent("PS4IngameShopUpdate")
 }
 
-function updateSpecificItemInfo(id) {
+let updateSpecificItemInfo = function(id) {
   storeData.updateSpecificItemInfo([id], onSuccessCb)
 }
 
@@ -166,16 +165,15 @@ subscriptions.addListenersWithoutEnv({
     visibleSeenIds.clear()
     haveItemDiscount = null
   }
-}, g_listener_priority.CONFIG_VALIDATION)
+}, ::g_listener_priority.CONFIG_VALIDATION)
 
 return {
-  canUseIngameShop
-  haveDiscount
+  canUseIngameShop = canUseIngameShop
+  haveDiscount = haveDiscount
 
-  getShopData = @() persistent.categoriesData
+  getData = @() persistent.categoriesData
   getShopItemsTable = @() persistent.itemsList
-  getShopItem
+  getShopItem = getShopItem
 
   isItemsUpdated = @() isFinishedUpdateItems
-  needEntStoreDiscountIcon = true
 }

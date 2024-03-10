@@ -32,12 +32,18 @@ let { userName, userIdStr } = require("%scripts/user/profileStates.nut")
 let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { buildUnitSlot, fillUnitSlotTimers } = require("%scripts/slotbar/slotbarView.nut")
 let { isUnitInSlotbar } = require("%scripts/slotbar/slotbarState.nut")
-let { getNextAwardText } = require("%scripts/unlocks/unlocksModule.nut")
-let takeUnitInSlotbar = require("%scripts/unit/takeUnitInSlotbar.nut")
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 
-let delayedUnlockWnd = []
-function guiStartUnlockWnd(config) {
+::delayed_unlock_wnd <- []
+::showUnlockWnd <- function showUnlockWnd(config) {
+  if (isHandlerInScene(gui_handlers.ShowUnlockHandler) ||
+      isHandlerInScene(gui_handlers.RankUpModal) ||
+      isHandlerInScene(gui_handlers.TournamentRewardReceivedWnd))
+    return ::delayed_unlock_wnd.append(config)
+
+  ::gui_start_unlock_wnd(config)
+}
+
+::gui_start_unlock_wnd <- function gui_start_unlock_wnd(config) {
   let unlockType = getTblValue("type", config, -1)
   if (unlockType == UNLOCKABLE_COUNTRY) {
     if (isInArray(config.id, shopCountriesList))
@@ -51,23 +57,14 @@ function guiStartUnlockWnd(config) {
   return true
 }
 
-::showUnlockWnd <- function showUnlockWnd(config) {
-  if (isHandlerInScene(gui_handlers.ShowUnlockHandler) ||
-      isHandlerInScene(gui_handlers.RankUpModal) ||
-      isHandlerInScene(gui_handlers.TournamentRewardReceivedWnd))
-    return delayedUnlockWnd.append(config)
-
-  guiStartUnlockWnd(config)
-}
-
 ::check_delayed_unlock_wnd <- function check_delayed_unlock_wnd(prevUnlockData = null) {
   disableSeenUserlogs([prevUnlockData?.disableLogId])
 
-  if (!delayedUnlockWnd.len())
+  if (!::delayed_unlock_wnd.len())
     return
 
-  let unlockData = delayedUnlockWnd.remove(0)
-  if (!guiStartUnlockWnd(unlockData))
+  let unlockData = ::delayed_unlock_wnd.remove(0)
+  if (!::gui_start_unlock_wnd(unlockData))
     ::check_delayed_unlock_wnd(unlockData)
 }
 
@@ -114,7 +111,7 @@ gui_handlers.ShowUnlockHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     let data = buildUnitSlot(this.unit.name, this.unit, params)
     let airObj = this.scene.findObject("reward_aircrafts")
     this.guiScene.replaceContentFromText(airObj, data, data.len(), this)
-    airObj.tooltipId = getTooltipType("UNIT").getTooltipId(this.unit.name)
+    airObj.tooltipId = ::g_tooltip.getIdUnit(this.unit.name)
     airObj.setValue(0)
     fillUnitSlotTimers(airObj.findObject(this.unit.name), this.unit)
   }
@@ -140,7 +137,7 @@ gui_handlers.ShowUnlockHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
     let nObj = this.scene.findObject("next_award")
     if (checkObj(nObj) && ("id" in this.config))
-      nObj.setValue(getNextAwardText(this.config.id))
+      nObj.setValue(::get_next_award_text(this.config.id))
   }
 
   function updateImage() {
@@ -172,11 +169,11 @@ gui_handlers.ShowUnlockHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       this.config.ps4ActivityFeedData.params,
       bit_activity.PS4_ACTIVITY_FEED
     )
-    showObjById("btn_post_ps4_activity_feed", false, this.scene)
+    this.showSceneBtn("btn_post_ps4_activity_feed", false)
   }
 
   function updateButtons() {
-    showObjById("btn_sendEmail", this.config?.showSendEmail ?? false, this.scene)
+    this.showSceneBtn("btn_sendEmail", this.config?.showSendEmail ?? false)
 
     local linkText = getPromoLinkText(this.config)
     if (this.config?.pollId && this.config?.link) {
@@ -185,7 +182,7 @@ gui_handlers.ShowUnlockHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     }
 
     let show = linkText != "" && isPromoLinkVisible(this.config)
-    let linkObj = showObjById("btn_link_to_site", show, this.scene)
+    let linkObj = this.showSceneBtn("btn_link_to_site", show)
     if (show) {
       if (checkObj(linkObj)) {
         linkObj.link = linkText
@@ -199,22 +196,22 @@ gui_handlers.ShowUnlockHandler <- class (gui_handlers.BaseGuiHandlerWT) {
         imageObj.link = linkText
     }
     let showPs4ActivityFeed = isPlatformSony && ("ps4ActivityFeedData" in this.config)
-    showObjById("btn_post_ps4_activity_feed", showPs4ActivityFeed, this.scene)
+    this.showSceneBtn("btn_post_ps4_activity_feed", showPs4ActivityFeed)
 
 
     let showSetAir = this.unit != null && this.unit.isUsable() && !isUnitInSlotbar(this.unit)
     let canBuyOnline = this.unit != null && ::canBuyUnitOnline(this.unit)
     let canBuy = this.unit != null && !this.unit.isRented() && !this.unit.isBought() && (canBuyUnit(this.unit) || canBuyOnline)
-    showObjById("btn_set_air", showSetAir, this.scene)
-    let okObj = showObjById("btn_ok", !showSetAir, this.scene)
+    this.showSceneBtn("btn_set_air", showSetAir)
+    let okObj = this.showSceneBtn("btn_ok", !showSetAir)
     if (this.config?.okBtnText)
       okObj.setValue(loc(this.config.okBtnText))
     if (this.config?.okBtnStyle)
       okObj.visualStyle = this.config.okBtnStyle
 
-    showObjById("btn_close", !showSetAir || !this.needShowUnitTutorial, this.scene)
+    this.showSceneBtn("btn_close", !showSetAir || !this.needShowUnitTutorial)
 
-    let buyObj = showObjById("btn_buy_unit", canBuy, this.scene)
+    let buyObj = this.showSceneBtn("btn_buy_unit", canBuy)
     if (canBuy && checkObj(buyObj)) {
       let locText = loc("shop/btnOrderUnit", { unit = getUnitName(this.unit.name) })
       let unitCost = canBuyOnline ? Cost() : ::getUnitCost(this.unit)
@@ -223,11 +220,11 @@ gui_handlers.ShowUnlockHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
     let actionText = getLocTextFromConfig(this.config, "actionText", "")
     let showActionBtn = actionText != "" && this.config?.action
-    let actionObj = showObjById("btn_action", showActionBtn, this.scene)
+    let actionObj = this.showSceneBtn("btn_action", showActionBtn)
     if (showActionBtn)
       actionObj.setValue(actionText)
 
-    showObjById("btn_get_qr", this.config?.qrUrl != null, this.scene)
+    this.showSceneBtn("btn_get_qr", this.config?.qrUrl != null)
   }
 
   function onTake(unitToTake = null) {
@@ -240,11 +237,10 @@ gui_handlers.ShowUnlockHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if (this.needShowUnitTutorial)
       tutorialModule.saveShowedTutorial("takeUnit")
 
-    takeUnitInSlotbar(unitToTake, {
-      unitObj = this.scene.findObject(unitToTake.name)
-      isNewUnit = true
-      cellClass = "slotbarClone"
-      useTutorial = this.needShowUnitTutorial
+    base.onTake(unitToTake, {
+      isNewUnit = true,
+      cellClass = "slotbarClone",
+      useTutorial = this.needShowUnitTutorial,
       afterSuccessFunc = this.goBack.bindenv(this)
     })
     this.needShowUnitTutorial = false
@@ -345,8 +341,4 @@ gui_handlers.ShowUnlockHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onUseDecorator() {}
-}
-
-return {
-  guiStartUnlockWnd
 }

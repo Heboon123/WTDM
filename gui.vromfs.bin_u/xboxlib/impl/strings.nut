@@ -1,10 +1,10 @@
 let strings = require("xbox.strings")
-let {eventbus_subscribe_onehit} = require("eventbus")
+let {subscribe_onehit} = require("eventbus")
 
 
-function verify(string_to_check, callback) {
+let function verify(string_to_check, callback) {
   let eventName = "xbox_strings_verify"
-  eventbus_subscribe_onehit(eventName, function(result) {
+  subscribe_onehit(eventName, function(result) {
     let success = result?.success
     callback?(success)
   })
@@ -12,9 +12,9 @@ function verify(string_to_check, callback) {
 }
 
 
-function verify_multi(strings_to_check, callback) {
+let function verify_multi(strings_to_check, callback) {
   let eventName = "xbox_strings_verify_multi"
-  eventbus_subscribe_onehit(eventName, function(result) {
+  subscribe_onehit(eventName, function(result) {
     let success = result?.success
     callback?(success)
   })

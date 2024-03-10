@@ -1,7 +1,7 @@
 from "%sqstd/frp.nut" import *
 from "daRg" import *
 
-function dtext(val, params={}, addchildren = null) {
+let function dtext(val, params={}, addchildren = null) {
   if (val == null)
     return null
   if (type(val)=="table") {

@@ -18,7 +18,7 @@ let {split_by_chars, regexp} = require("string")
  *   normalize("a/.b/./c")            > "a/.b/c"
  *   normalize("/a/b///c\\d")         > "/a/b/c/d"
  */
-function normalize(path) {
+let function normalize(path) {
   let pathSegments = split_by_chars(path, "\\/")
   local isAbsolutePath = false
 
@@ -59,7 +59,7 @@ function normalize(path) {
 /**
  * Check is path already normalized
  */
-function isNormalized(path) {
+let function isNormalized(path) {
   return path == normalize(path)
 }
 
@@ -67,7 +67,7 @@ function isNormalized(path) {
 /**
  * Get last slash separator index in past string
  */
-function getLastSeparatorIndex(path) {
+let function getLastSeparatorIndex(path) {
   for (local j = path.len() - 1; j >= 0; j--)
     if (path[j] == '/')
       return j
@@ -86,7 +86,7 @@ function getLastSeparatorIndex(path) {
  *   parentPath("a")              > null
  *   parentPath("a/b")            > "a"
  */
-function parentPath(path) {
+let function parentPath(path) {
   if (path == "/")
     return null
 
@@ -111,7 +111,7 @@ function parentPath(path) {
  *   parentPath("a")              > "a"
  *   parentPath("a/b")            > "b"
  */
-function fileName(path) {
+let function fileName(path) {
   if (path == "/")
     return "/"
 
@@ -133,7 +133,7 @@ function fileName(path) {
  *   join("a/b", "c/d")          > "a/b/c/d"
  *   join("/", "/")              > "/"
  */
-function _join(basePath, other) {
+let function _join(basePath, other) {
   assert(type(basePath) == "string")
   assert(type(other) == "string")
   if (basePath == "")
@@ -158,11 +158,11 @@ function _join(basePath, other) {
  *   joinArray([])                   > ""
  *   joinArray(["/"])                > "/"
  */
-function joinArray(pathArray) {
+let function joinArray(pathArray) {
   return "/".join(pathArray)
 }
 
-function join(...) {
+let function join(...) {
   local path = ""
   foreach (pathSegment in vargv) {
     if (type(pathSegment) == "array") {
@@ -185,7 +185,7 @@ function join(...) {
  *   splitToArray("")           > []
  *   splitToArray("/")          > ["/"]
  */
-function splitToArray(path) {
+let function splitToArray(path) {
   if (path == "")
     return []
   assert(type(path)=="string", @() $"path type is not string ({type(path)})")

@@ -3,7 +3,6 @@ from "%scripts/dagui_natives.nut" import get_cur_circuit_name, char_send_custom_
 from "%scripts/dagui_library.nut" import *
 from "%scripts/mainConsts.nut" import LOST_DELAYED_ACTION_MSEC
 
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let { Cost } = require("%scripts/money.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let inventory = require("inventory")
@@ -40,7 +39,7 @@ const INVENTORY_PROGRESS_MSG_ID = "INVENTORY_REQUEST"
 const WAR_THUNDER_EAGLES = "WTE"
 const WAR_THUNDER_WARPOINTS = "WTS"
 
-function getPremultipliedAlphaIcon(icon) {
+let function getPremultipliedAlphaIcon(icon) {
   if (icon == "" || icon.slice(0, 1) == "!")
     return icon
   return $"!{icon}"
@@ -83,7 +82,7 @@ let prices = Computed(function() {
   return res
 })
 
-function notifyPricesChanged() {
+let function notifyPricesChanged() {
   broadcastEvent("ExtPricesChanged")
 }
 prices.subscribe(@(_) notifyPricesChanged())
@@ -146,7 +145,7 @@ let tagsValueRemap = {
 }
 
 
-function _validate(data, name) {
+let function _validate(data, name) {
   let validation = validateResponseData?[name]
   if (!data || !validation)
     return data
@@ -240,7 +239,7 @@ let class InventoryClient {
   haveInitializedPublicKeys = false
 
   constructor() {
-    subscribe_handler(this, g_listener_priority.DEFAULT_HANDLER)
+    subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
     if (::g_login.isProfileReceived())
       this.refreshDataOnAuthorization()
   }

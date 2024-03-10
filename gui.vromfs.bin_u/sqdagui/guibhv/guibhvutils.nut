@@ -4,7 +4,7 @@ let { memoize } = require("%sqstd/functools.nut")
 let { check_obj } = require("%sqDagui/daguiUtil.nut")
 let { fabs } = require("math")
 
-function getNearestSelectableChildIndex(listObj, curIndex, way) {
+let function getNearestSelectableChildIndex(listObj, curIndex, way) {
   if (!check_obj(listObj))
     return curIndex
 
@@ -21,7 +21,7 @@ function getNearestSelectableChildIndex(listObj, curIndex, way) {
   return curIndex
 }
 
-function isObjHaveActiveChilds(obj) {
+let function isObjHaveActiveChilds(obj) {
   for (local i = 0; i < obj.childrenCount(); i++) {
     let iObj = obj.getChild(i)
     if (iObj.isVisible() && iObj.isEnabled() && iObj?.inactive != "yes")
@@ -32,7 +32,7 @@ function isObjHaveActiveChilds(obj) {
 
 let markInteractive = @(obj, isInteractive) obj.interactive = isInteractive ? "yes" : "no"
 
-function markChildrenInteractive(obj, isInteractive) {
+let function markChildrenInteractive(obj, isInteractive) {
   for (local i = 0; i < obj.childrenCount(); i++) {
     let child = obj.getChild(i)
     if (child.isValid())
@@ -40,7 +40,7 @@ function markChildrenInteractive(obj, isInteractive) {
   }
 }
 
-function markObjShortcutOnHover(obj, isByHover) {
+let function markObjShortcutOnHover(obj, isByHover) {
   if (!obj.getScene().getIsShortcutOnHover())
     return;
   obj["shortcut-on-hover"] = isByHover ? "yes" : "no"
@@ -55,7 +55,7 @@ let centeringStrToArray = memoize(function(str) {
 
 let getObjCentering = @(obj) centeringStrToArray(obj.getFinalProp("mouse-pointer-centering") ?? "")
 
-function getObjCenteringPosRC(obj) {
+let function getObjCenteringPosRC(obj) {
   let pos = obj.getPosRC()
   let size = obj.getSize()
   return getObjCentering(obj).map(@(pointerMul, a) (pos[a] + pointerMul * size[a]).tointeger())

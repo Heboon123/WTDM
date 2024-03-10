@@ -1,6 +1,6 @@
 let sqdebugger = require_optional("sqdebugger")
 
-function do_register(printfn = null) {
+local function do_register(printfn = null) {
   if (sqdebugger == null)
     return
 

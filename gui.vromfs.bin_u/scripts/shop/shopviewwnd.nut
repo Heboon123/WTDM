@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 
@@ -54,7 +55,7 @@ gui_handlers.ShopViewWnd <- class (gui_handlers.ShopMenuHandler) {
   }
 }
 
-function openShopViewWndFromPromo(params) {
+let function openShopViewWndFromPromo(params) {
   let unitName = params?[0] ?? ""
   let unit = getAircraftByName(unitName)
   if (!unit)

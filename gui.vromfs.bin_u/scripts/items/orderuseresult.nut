@@ -1,12 +1,30 @@
+//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-let { enumsAddTypes, enumsGetCachedType } = require("%sqStdLibs/helpers/enums.nut")
 
-let g_order_use_result_cache = {
-  byCode = {}
+
+let enums = require("%sqStdLibs/helpers/enums.nut")
+::g_order_use_result <- {
+  types = []
 }
 
-let order_use_results = {
+::g_order_use_result._createResultMessage <- function _createResultMessage(addErrorHeader) {
+  local resultMessage = (this == ::g_order_use_result.OK || !addErrorHeader)
+    ? ""
+    : loc("orderUseResult/error") + "\n"
+  resultMessage += loc($"orderUseResult/result/{this.name}")
+  return resultMessage
+}
+
+::g_order_use_result.template <- {
+  /**
+   * Creates text message to show in order
+   * activation window, order tooltip, etc.
+   */
+  createResultMessage = ::g_order_use_result._createResultMessage
+}
+
+enums.addTypesByGlobalName("g_order_use_result", {
   OK = {
     code = ORDER_USE_RESULT_OK
     name = "ok"
@@ -66,32 +84,13 @@ let order_use_results = {
     code = -2
     name = "restricted_mission"
   }
+})
+
+::g_order_use_result.getOrderUseResultByCode <- function getOrderUseResultByCode(useResultCode) {
+  return enums.getCachedType("code", useResultCode, ::g_order_use_result_cache.byCode,
+    ::g_order_use_result, ::g_order_use_result.UNKNOWN)
 }
 
-let g_order_use_result = {
-  types = []
-
-  function _createResultMessage(addErrorHeader) {
-    return (this == order_use_results.OK || !addErrorHeader)
-      ? loc($"orderUseResult/result/{this.name}")
-      : "".concat(loc("orderUseResult/error"), "\n", loc($"orderUseResult/result/{this.name}"))
-  }
-
-  function getOrderUseResultByCode(useResultCode) {
-    return enumsGetCachedType("code", useResultCode, g_order_use_result_cache.byCode,
-      this, this.UNKNOWN)
-  }
+::g_order_use_result_cache <- {
+  byCode = {}
 }
-
-g_order_use_result.template <- {
-  /**
-   * Creates text message to show in order
-   * activation window, order tooltip, etc.
-   */
-  createResultMessage = g_order_use_result._createResultMessage
-}
-
-
-enumsAddTypes(g_order_use_result, order_use_results)
-
-return {g_order_use_result}

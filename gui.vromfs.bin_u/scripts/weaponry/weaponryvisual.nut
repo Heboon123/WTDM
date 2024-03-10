@@ -17,18 +17,17 @@ let { getModItemName, getFullItemCostText } = require("weaponryDescription.nut")
 let { MODIFICATION, WEAPON, SPARE, PRIMARY_WEAPON } = require("%scripts/weaponry/weaponryTooltips.nut")
 let { debug_dump_stack } = require("dagor.debug")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
+let { UNLOCK_SHORT } = require("%scripts/utils/genericTooltipTypes.nut")
 let { isInFlight } = require("gameplayBinding")
 let { canGoToNightBattleOnUnit, needShowUnseenNightBattlesForUnit
 } = require("%scripts/events/nightBattlesStates.nut")
 let { needShowUnseenModTutorialForUnitMod, hasAvailableModTutorial } = require("%scripts/missions/modificationTutorial.nut")
 let { getCurMissionRules } = require("%scripts/misCustomRules/missionCustomState.nut")
 let { getModificationByName } = require("%scripts/weaponry/modificationInfo.nut")
-let { getInventoryList } = require("%scripts/items/itemsManager.nut")
 
 dagui_propid_add_name_id("_iconBulletName")
 
-function getBulletsCountText(curVal, maxVal, unallocated, guns) {
+let function getBulletsCountText(curVal, maxVal, unallocated, guns) {
   local restText = ""
   if (unallocated && curVal < maxVal)
     restText = colorize("userlogColoredText", format(" %s", loc("ui/parentheses",
@@ -40,7 +39,7 @@ function getBulletsCountText(curVal, maxVal, unallocated, guns) {
   return format("%s/%s%s", valText, (guns * maxVal).tostring(), restText)
 }
 
-function getStatusIcon(unit, item) {
+let function getStatusIcon(unit, item) {
   if (needShowUnseenNightBattlesForUnit(unit, item.name) || needShowUnseenModTutorialForUnitMod(unit, item))
     return "#ui/gameuiskin#new_icon.svg"
   let misRules = getCurMissionRules()
@@ -54,7 +53,7 @@ function getStatusIcon(unit, item) {
   return ""
 }
 
-function getItemImage(unit, item) {
+let function getItemImage(unit, item) {
   if (!isBullets(item)) {
     let self = callee()
     if (item.type == weaponsItem.bundle)
@@ -75,7 +74,7 @@ let getTooltipId = @(unitName, mod, params)
     : MODIFICATION.getTooltipId(unitName, mod.name, params)
 
 
-function getBonusTierViewParams(item, params = {}) {
+let function getBonusTierViewParams(item, params = {}) {
   return item.__update({  // -unwanted-modification
     itemWidth = params?.itemWidth ?? 1
     posX = params?.posX ?? 0
@@ -83,7 +82,7 @@ function getBonusTierViewParams(item, params = {}) {
   })
 }
 
-function getWeaponItemViewParams(id, unit, item, params = {}) {
+let function getWeaponItemViewParams(id, unit, item, params = {}) {
   let res = {
     id                        = id
     itemWidth                 = params?.itemWidth ?? 1
@@ -221,7 +220,7 @@ function getWeaponItemViewParams(id, unit, item, params = {}) {
         loc("".concat("discount/", statusTbl.discountType, "/tooltip")), discount.tostring())
     }
     if (priceText != "")
-      priceText = $"<color=@goodTextColor>{priceText}</color>"
+      priceText = "<color=@goodTextColor>" + priceText + "</color>"
   }
   res.nameTextWithPrice = res.nameText
   let spawnScoreCost = getFullItemCostText(unit, item, true)
@@ -331,7 +330,7 @@ function getWeaponItemViewParams(id, unit, item, params = {}) {
     if (altBtnText != "")
       altBtnText = loc("mainmenu/btnBuy") + loc("ui/parentheses/space", { text = altBtnText })
     else if (visualItem.type == weaponsItem.spare && isOwn) {
-      if (getInventoryList(itemType.UNIVERSAL_SPARE).len() && statusTbl.canBuyMore) {
+      if (::ItemsManager.getInventoryList(itemType.UNIVERSAL_SPARE).len() && statusTbl.canBuyMore) {
         altBtnText = loc("items/universalSpare/activate", { icon = loc("icon/universalSpare") })
         altBtnTooltip = loc("items/universalSpare/activate/tooltip")
       }
@@ -341,7 +340,7 @@ function getWeaponItemViewParams(id, unit, item, params = {}) {
         altBtnText = loc("mainmenu/btnBuy")
     else if (visualItem.type == weaponsItem.modification && isOwn) {
       if (statusTbl.curUpgrade < statusTbl.maxUpgrade
-          && getInventoryList(itemType.MOD_UPGRADE).len())
+          && ::ItemsManager.getInventoryList(itemType.MOD_UPGRADE).len())
         altBtnText = loc("mainmenu/btnUpgrade")
       else if (statusTbl.unlocked && canGoToNightBattleOnUnit(unit, visualItem.name)) {
         altBtnText = loc("night_battles")
@@ -364,7 +363,7 @@ function getWeaponItemViewParams(id, unit, item, params = {}) {
   return res
 }
 
-function updateModItem(unit, item, itemObj, showButtons, handler, params = {}) {
+let function updateModItem(unit, item, itemObj, showButtons, handler, params = {}) {
   let id = itemObj?.id ?? ""
   let viewParams = getWeaponItemViewParams(id, unit, item,
     params.__merge({ showButtons = showButtons }))
@@ -528,14 +527,14 @@ function updateModItem(unit, item, itemObj, showButtons, handler, params = {}) {
   itemObj.findObject("goToModTutorial_new_icon").show(hasUnseenTutorial)
 }
 
-function getSkinModView(id, unit, item, pos) {
+let function getSkinModView(id, unit, item, pos) {
   let { decor, canDo, progress } = item
   return {
     id
     itemImg                = decor.decoratorType.getImage(decor)
     nameText               = "#skins"
     isTooltipByHold        = showConsoleButtons.value
-    tooltipId              = getTooltipType("UNLOCK_SHORT").getTooltipId(decor.unlockBlk.id)
+    tooltipId              = UNLOCK_SHORT.getTooltipId(decor.unlockBlk.id)
     optStatus              = canDo ? "research" : "owned"
     hideProgressBlock      = !canDo
     researchProgress       = progress
@@ -550,7 +549,7 @@ function getSkinModView(id, unit, item, pos) {
   }.__update(pos)
 }
 
-function createModItemLayout(id, unit, item, iType, params = {}) {
+let function createModItemLayout(id, unit, item, iType, params = {}) {
   if (!("type" in item))
     item.type <- iType
 
@@ -564,7 +563,7 @@ function createModItemLayout(id, unit, item, iType, params = {}) {
   return handyman.renderCached("%gui/weaponry/weaponItem.tpl", getWeaponItemViewParams(id, unit, item, params))
 }
 
-function createModItem(id, unit, item, iType, holderObj, handler, params = {}) {
+let function createModItem(id, unit, item, iType, holderObj, handler, params = {}) {
   let data = createModItemLayout(id, unit, item, iType, params)
   holderObj.getScene().appendWithBlk(holderObj, data, handler)
   return holderObj.findObject(id)
@@ -629,7 +628,7 @@ local function createModBundle(id, unit, itemsList, itemsType, holderObj, handle
   return bundleItem
 }
 
-function updateItemBulletsSlider(itemObj, bulletsManager, bulGroup) {
+let function updateItemBulletsSlider(itemObj, bulletsManager, bulGroup) {
   let show = bulGroup != null && bulletsManager != null && bulletsManager.canChangeBulletsCount()
   let holderObj = showObjById("bullets_amount_choice_block", show, itemObj)
   if (!show || !holderObj)

@@ -20,8 +20,7 @@ return {
     FrameDefault =  Color(100,100,100,100)
 
     TextReadOnly = Color(100,100,100)
-    TextDefault = Color(235,235,235)
-    TextDarker = Color(150,150,150)
+    TextDefault = Color(255,255,255)
     TextError = Color(255, 20, 20)
 
     GridBg = [

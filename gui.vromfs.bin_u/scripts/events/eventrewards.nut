@@ -10,7 +10,6 @@ let { addToText } = require("%scripts/unlocks/unlocksConditions.nut")
 let DataBlock = require("DataBlock")
 let { getEventEconomicName } = require("%scripts/events/eventInfo.nut")
 let { getLbCategoryTypeByField } = require("%scripts/leaderboard/leaderboardCategoryType.nut")
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 
                                  //param name in tournament configs //param name in userlogs configs
 let getRewardConditionId = @(rewardBlk) rewardBlk?.condition_type ?? rewardBlk?.awardType ?? ""
@@ -24,13 +23,13 @@ let getConditionField = @(rewardBlk) rewardBlk?.fieldName ?? ""
 
 let getConditionIcon = @(condition) condition?.icon ?? ""
 
-function getTournamentInfoBlk(eventEconomicName) {
+let function getTournamentInfoBlk(eventEconomicName) {
   let blk = DataBlock()
   get_tournament_info_blk(eventEconomicName, blk)
   return blk
 }
 
-function getLeaderboardConditionText(rewardBlk, progress = null) {
+let function getLeaderboardConditionText(rewardBlk, progress = null) {
   let conditionId = getRewardConditionId(rewardBlk)
   let value = getConditionValue(rewardBlk)
   let valueMin = rewardBlk?.valueMin
@@ -47,7 +46,7 @@ function getLeaderboardConditionText(rewardBlk, progress = null) {
   return $"{res}{progressTxt}"
 }
 
-function getSequenceWinsText(rewardBlk, progress = null) {
+let function getSequenceWinsText(rewardBlk, progress = null) {
   let value = getConditionValue(rewardBlk)
   local res = loc("conditions/sequence_wins", { value = value })
 
@@ -193,7 +192,7 @@ let rewardsConfig = [ //first in list have higher priority to show icon or to ge
       return value.count + "x " + value.trophy.getName()
     }
     getTooltipId = function (value) {
-      return value ? getTooltipType("ITEM").getTooltipId(value.trophy.id) : null
+      return value ? ::g_tooltip.getIdItem(value.trophy.id) : null
     }
   }
   {
@@ -220,12 +219,12 @@ let rewardsConfig = [ //first in list have higher priority to show icon or to ge
       return value.count + "x " + value.item.getName()
     }
     getTooltipId = function (value) {
-      return value ? getTooltipType("ITEM").getTooltipId(value.item.id) : null
+      return value ? ::g_tooltip.getIdItem(value.item.id) : null
     }
   }
 ]
 
-function initConfigs() {
+let function initConfigs() {
   foreach (cfg in rewardsConfig) {
     let id = cfg.id
     if (!("locId" in cfg))
@@ -238,16 +237,16 @@ function initConfigs() {
 }
 initConfigs()
 
-function getRewardsBlk(event) {
+let function getRewardsBlk(event) {
   return getBlkValueByPath(get_tournaments_blk(), getEventEconomicName(event) + "/awards")
 }
 
-function haveRewards(event) {
+let function haveRewards(event) {
   let blk = getRewardsBlk(event)
   return blk != null && blk.blockCount() > 0
 }
 
-function getBaseVictoryReward(event) {
+let function getBaseVictoryReward(event) {
   let rewardsBlk = getBlkValueByPath(get_tournaments_blk(), getEventEconomicName(event))
   if (!rewardsBlk)
     return null
@@ -257,7 +256,7 @@ function getBaseVictoryReward(event) {
   return (wp || gold) ? Cost(wp, gold) : null
 }
 
-function getSortedRewardsByConditions(event, awardsBlk  = null) {
+let function getSortedRewardsByConditions(event, awardsBlk  = null) {
   let res = {}
   let rBlk = awardsBlk ?? getRewardsBlk(event)
   if (!rBlk)
@@ -289,7 +288,7 @@ function getSortedRewardsByConditions(event, awardsBlk  = null) {
   return res
 }
 
-function getRewardIcon(rewardBlk) {
+let function getRewardIcon(rewardBlk) {
   foreach (cfg in rewardsConfig) {
     let value = cfg.getValue(rewardBlk)
     if (value == null)
@@ -300,7 +299,7 @@ function getRewardIcon(rewardBlk) {
   return ""
 }
 
-function getRewardRowIcon(rewardBlk) {
+let function getRewardRowIcon(rewardBlk) {
   foreach (cfg in rewardsConfig) {
     let value = cfg.getValue(rewardBlk)
     if (value == null)
@@ -311,7 +310,7 @@ function getRewardRowIcon(rewardBlk) {
   return ""
 }
 
-function getRewardDescText(rewardBlk) {
+let function getRewardDescText(rewardBlk) {
   local text = ""
   foreach (cfg in rewardsConfig) {
     let value = cfg.getValue(rewardBlk)
@@ -325,7 +324,7 @@ function getRewardDescText(rewardBlk) {
   return text
 }
 
-function getRewardTooltipId(reward_blk) {
+let function getRewardTooltipId(reward_blk) {
   foreach (cfg in rewardsConfig) {
     let value = cfg.getValue(reward_blk)
     if (value != null)
@@ -334,7 +333,7 @@ function getRewardTooltipId(reward_blk) {
   return null
 }
 
-function getTotalRewardDescText(rewardsBlksArray) {
+let function getTotalRewardDescText(rewardsBlksArray) {
   local text = ""
   local money = Cost()
   foreach (rewardBlk in rewardsBlksArray)
@@ -356,7 +355,7 @@ function getTotalRewardDescText(rewardsBlksArray) {
   return text
 }
 
-function getConditionText(rewardBlk, progress = null) {
+let function getConditionText(rewardBlk, progress = null) {
   let condition = getRewardCondition(rewardBlk)
   if (!condition)
     return ""
@@ -364,7 +363,7 @@ function getConditionText(rewardBlk, progress = null) {
   return condition.getText(rewardBlk, progress)
 }
 
-function isRewardReceived(reward_blk, eventEconomicName) {
+let function isRewardReceived(reward_blk, eventEconomicName) {
   let infoBlk = getTournamentInfoBlk(eventEconomicName)
   if (!infoBlk?.awards)
     return false
@@ -399,7 +398,7 @@ function isRewardReceived(reward_blk, eventEconomicName) {
 /**
  * Retures next reward for specified
  */
-function getNextReward(rewardBlk, event) {
+let function getNextReward(rewardBlk, event) {
   if (!event || !haveRewards(event))
     return null
 

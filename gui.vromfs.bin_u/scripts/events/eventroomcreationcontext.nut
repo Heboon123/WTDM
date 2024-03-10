@@ -1,6 +1,5 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
-
-let { g_mislist_type } =  require("%scripts/missions/misListType.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
@@ -14,7 +13,6 @@ let { getClustersList } = require("%scripts/onlineInfo/clustersManagement.nut")
 let { getEventEconomicName } = require("%scripts/events/eventInfo.nut")
 let { isCrewLockedByPrevBattle } = require("%scripts/crew/crewInfo.nut")
 let { getCrewsListByCountry } = require("%scripts/slotbar/slotbarState.nut")
-let { getCrewUnit } = require("%scripts/crew/crew.nut")
 
 enum CREWS_READY_STATUS {
   HAS_ALLOWED              = 0x0001
@@ -31,7 +29,7 @@ const CHOSEN_EVENT_MISSIONS_SAVE_KEY = "mission"
   mGameMode = null
   onUnitAvailabilityChanged = null
 
-  misListType = g_mislist_type.BASE
+  misListType = ::g_mislist_type.BASE
   fullMissionsList = null
   chosenMissionsList = null
 
@@ -136,7 +134,7 @@ const CHOSEN_EVENT_MISSIONS_SAVE_KEY = "mission"
       foreach (crew in crews) {
         if (isCrewLockedByPrevBattle(crew))
           continue
-        let unit = getCrewUnit(crew)
+        let unit = ::g_crew.getCrewUnit(crew)
         if (!unit)
           continue
 

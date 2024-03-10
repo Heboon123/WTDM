@@ -78,7 +78,7 @@ let ASPCompassMark = @() {
 }
 
 let DistToTargetBuc = Computed(@() cvt(TimeBeforeBombRelease.value, 0, 10.0, -90, 250).tointeger())
-function ASPTargetMark(width, height, is_radar, isIpp, is_aam = false) {
+let function ASPTargetMark(width, height, is_radar, isIpp, is_aam = false) {
   let watchVar = is_aam ? IlsTrackerVisible : (is_radar ? RadarTargetPosValid : TargetPosValid)
   return @() {
     watch = watchVar
@@ -121,7 +121,7 @@ function ASPTargetMark(width, height, is_radar, isIpp, is_aam = false) {
   }
 }
 
-function basicASP23(width, height) {
+let function basicASP23(width, height) {
   return @() {
     size = [width, height]
     children = [
@@ -162,7 +162,7 @@ let ASPLRGrid = @() {
   ]
 }
 
-function ASPRadarDist(is_ru, w_pos) {
+let function ASPRadarDist(is_ru, w_pos) {
   return @() {
     watch = [DistanceMax, IlsColor]
     size = SIZE_TO_CONTENT
@@ -205,7 +205,7 @@ let ASPRadarRoll = @() {
   }
 }
 
-function createTargetDistASP23(index) {
+let function createTargetDistASP23(index) {
   let target = targets[index]
   let dist = HasDistanceScale.value ? target.distanceRel : 0.9;
   let distanceRel = IsCScopeVisible.value ? target.elevationRel : dist
@@ -263,7 +263,7 @@ function createTargetDistASP23(index) {
   }
 }
 
-function ASP23LongRange(width, height) {
+let function ASP23LongRange(width, height) {
   return @() {
     watch = [Irst, IlsColor]
     size = [width * 0.5, height * 0.35]
@@ -289,7 +289,7 @@ function ASP23LongRange(width, height) {
   }
 }
 
-function ASPCCIPDistanceGrid() {
+let function ASPCCIPDistanceGrid() {
   let minDist = Computed(@() Altitude.value - DistToSafety.value)
   return @() {
     watch = [IlsColor, minDist]
@@ -343,7 +343,7 @@ let ASPCCIPDistanceMark = @() {
   }
 }
 
-function IPPCCRPLine(_width, height) {
+let function IPPCCRPLine(_width, height) {
   return @() {
     watch = [TargetPosValid, BombCCIPMode, BombingMode, IlsColor]
     rendObj = ROBJ_VECTOR_CANVAS
@@ -364,7 +364,7 @@ function IPPCCRPLine(_width, height) {
   }
 }
 
-function ASP23CCIP(width, height, isIpp) {
+let function ASP23CCIP(width, height, isIpp) {
   return {
     size = [width, height]
     children = [
@@ -494,7 +494,7 @@ let IPPAimLockPos = @() {
   ] : null
 }
 
-function basicIPP253(width, height) {
+let function basicIPP253(width, height) {
   return {
     size = [width, height]
     children = [
@@ -505,7 +505,7 @@ function basicIPP253(width, height) {
   }
 }
 
-function ASP23ModeSelector(width, height, isIPP) {
+let function ASP23ModeSelector(width, height, isIPP) {
   return @() {
     watch = [CCIPMode, IsRadarVisible, BombingMode]
     size = [width, height]
@@ -551,7 +551,7 @@ let createTargetDistJ7E = @(index) function() {
   }
 }
 
-function J7ERadar(width, height) {
+let function J7ERadar(width, height) {
   return {
     size = [width * 0.7, height * 0.4]
     pos = [width * 0.15, height * 0.3]
@@ -565,7 +565,7 @@ function J7ERadar(width, height) {
   }
 }
 
-function J7EAdditionalHud(width, height) {
+let function J7EAdditionalHud(width, height) {
   return @() {
     watch = IsRadarVisible
     size = [width, height]

@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import set_context_to_player
 from "%scripts/dagui_library.nut" import *
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -10,7 +11,7 @@ let { format } = require("string")
 let DataBlock = require("DataBlock")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { get_gui_option } = require("guiOptions")
-let { move_mouse_on_obj } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { move_mouse_on_obj, loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { getLastWeapon, isWeaponVisible } = require("%scripts/weaponry/weaponryInfo.nut")
 let { getWeaponInfoText, getWeaponNameText } = require("%scripts/weaponry/weaponryDescription.nut")
 let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
@@ -22,8 +23,10 @@ let { getLastSkin, getSkinsOption } = require("%scripts/customization/skins.nut"
 let getAllUnits = require("%scripts/unit/allUnits.nut")
 let { USEROPT_DIFFICULTY } = require("%scripts/options/optionsExtNames.nut")
 let { isInSessionRoom } = require("%scripts/matchingRooms/sessionLobbyState.nut")
-let { guiStartFlight, guiStartMpLobby, guiStartCdOptions
-} = require("%scripts/missions/startMissionsList.nut")
+
+::gui_start_builder_tuner <- function gui_start_builder_tuner() {
+  loadHandler(gui_handlers.MissionBuilderTuner)
+}
 
 gui_handlers.MissionBuilderTuner <- class (gui_handlers.BaseGuiHandlerWT) {
   wndType = handlerType.MODAL
@@ -310,16 +313,16 @@ gui_handlers.MissionBuilderTuner <- class (gui_handlers.BaseGuiHandlerWT) {
     let appFunc = function() {
       broadcastEvent("BeforeStartMissionBuilder")
       if (isInSessionRoom.get())
-        this.goForward(guiStartMpLobby)
+        this.goForward(::gui_start_mp_lobby);
       else if (::mission_settings.coop) {
         // ???
       }
       else
-        this.goForward(guiStartFlight)
+        this.goForward(::gui_start_flight)
     }
 
     if (get_gui_option(USEROPT_DIFFICULTY) == "custom")
-      guiStartCdOptions(appFunc, this)
+      ::gui_start_cd_options(appFunc, this)
     else
       appFunc()
   }

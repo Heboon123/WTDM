@@ -15,7 +15,6 @@ let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 let { get_warpoints_blk, get_ranks_blk } = require("blkGetters")
 let { getLanguageName } = require("%scripts/langUtils/language.nut")
 let { getShopPriceBlk } = require("%scripts/onlineShop/onlineShopState.nut")
-let { measureType } = require("%scripts/measureType.nut")
 
 let exchangedWarpointsExpireDays = {
   ["Japanese"] = 180
@@ -69,7 +68,7 @@ let premiumAccountDescriptionArr = [
   }
 ]
 
-function getEntitlementConfig(name) {
+let function getEntitlementConfig(name) {
   if (!name || name == "")
     return null
 
@@ -100,11 +99,11 @@ function getEntitlementConfig(name) {
   return res
 }
 
-function getEntitlementLocId(ent) {
+let function getEntitlementLocId(ent) {
   return ("alias" in ent) ? ent.alias : ("group" in ent) ? ent.group : (ent?.name ?? "unknown")
 }
 
-function getEntitlementAmount(ent) {
+let function getEntitlementAmount(ent) {
   if ("httl" in ent)
     return ent.httl.tofloat() / 24.0
 
@@ -115,7 +114,7 @@ function getEntitlementAmount(ent) {
   return 1
 }
 
-function getEntitlementTimeText(ent) { // -return-different-types
+let function getEntitlementTimeText(ent) { // -return-different-types
   if ("ttl" in ent)
     return ent.ttl + loc("measureUnits/days")
   if ("httl" in ent)
@@ -123,7 +122,7 @@ function getEntitlementTimeText(ent) { // -return-different-types
   return ""
 }
 
-function getEntitlementShortName(ent) {
+let function getEntitlementShortName(ent) {
   local name = ""
   if (("useGroupAmount" in ent) && ent.useGroupAmount && ("group" in ent)) {
     name = loc($"charServer/entitlement/{ent.group}")
@@ -135,7 +134,7 @@ function getEntitlementShortName(ent) {
   return loc($"charServer/entitlement/{getEntitlementLocId(ent)}")
 }
 
-function getEntitlementName(ent) {
+let function getEntitlementName(ent) {
   local name = getEntitlementShortName(ent)
   let timeText = getEntitlementTimeText(ent)
   if (timeText != "")
@@ -143,14 +142,14 @@ function getEntitlementName(ent) {
   return name
 }
 
-function getFirstPurchaseAdditionalAmount(ent) {
+let function getFirstPurchaseAdditionalAmount(ent) {
   if (!has_entitlement(ent.name))
     return getTblValue("goldIncomeFirstBuy", ent, 0)
 
   return 0
 }
 
-function getEntitlementPrice(ent) {
+let function getEntitlementPrice(ent) {
   if (ent?.onlinePurchase ?? false) {
     let info = bundlesShopInfo.value?[ent.name]
     if (info) {
@@ -177,9 +176,9 @@ function getEntitlementPrice(ent) {
   return ""
 }
 
-local bonusPercentText = @(v) "+{0}".subst(measureType.PERCENT_FLOAT.getMeasureUnitsText(v - 1.0))
+local bonusPercentText = @(v) "+{0}".subst(::g_measure_type.PERCENT_FLOAT.getMeasureUnitsText(v - 1.0))
 
-function getEntitlementPriceFloat(ent) {
+let function getEntitlementPriceFloat(ent) {
   local cost = -1.0
   if (ent?.onlinePurchase) {
     local costText = ""
@@ -197,7 +196,7 @@ function getEntitlementPriceFloat(ent) {
   return cost
 }
 
-function getPricePerEntitlement(ent) {
+let function getPricePerEntitlement(ent) {
   let amount = getEntitlementAmount(ent)
   if (amount <= 0)
     return 0.0
@@ -205,7 +204,7 @@ function getPricePerEntitlement(ent) {
   return getEntitlementPriceFloat(ent) / amount
 }
 
-function  getEntitlementLocParams() {
+let function  getEntitlementLocParams() {
   let rBlk = get_ranks_blk()
   let wBlk = get_warpoints_blk()
 
@@ -228,7 +227,7 @@ let canBuyEntitlement = @(ent)
     || ent?.chapter == "license"
     || ent?.chapter == "bonuses"
 
-function getEntitlementBundles() {
+let function getEntitlementBundles() {
   let bundles = {}
   let eblk = getShopPriceBlk()
   let numBlocks = eblk.blockCount()
@@ -241,7 +240,7 @@ function getEntitlementBundles() {
   return bundles
 }
 
-function isBoughtEntitlement(ent) {
+let function isBoughtEntitlement(ent) {
   let bundles = getEntitlementBundles()
   if (ent?.name != null && bundles?[ent.name] != null) {
     let isBought = callee()
@@ -254,7 +253,7 @@ function isBoughtEntitlement(ent) {
   return (canBuyEntitlement(ent) && has_entitlement(realname))
 }
 
-function getEntitlementDescription(product, _productId) {
+let function getEntitlementDescription(product, _productId) {
   if (product == null)
     return ""
 

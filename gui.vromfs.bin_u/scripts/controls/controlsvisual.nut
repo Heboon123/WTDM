@@ -1,7 +1,7 @@
 from "%scripts/dagui_natives.nut" import get_axis_index
 from "%scripts/dagui_library.nut" import *
 
-function getLocalizedShortcutName(shortcutId) {
+let function getLocalizedShortcutName(shortcutId) {
   return loc($"hotkeys/{shortcutId}")
 }
 
@@ -14,7 +14,7 @@ let getFirstShortcutText = @(shortcutId) ::get_shortcut_text({
   colored = false
 })
 
-function getAxisTextOrAxisName(shortcutId) {
+let function getAxisTextOrAxisName(shortcutId) {
   let comma = loc("ui/comma")
   let shortcuts = []
   let joyParams = ::joystick_get_cur_settings()

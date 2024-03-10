@@ -1,6 +1,6 @@
 from "%rGui/globals/ui_library.nut" import *
 
-let { eventbus_send } = require("eventbus")
+let { send } = require("eventbus")
 let { mkRadar } = require("radarComponent.nut")
 let aamAim = require("rocketAamAim.nut")
 let agmAim = require("agmAim.nut")
@@ -9,15 +9,13 @@ let tws = require("tws.nut")
 let { IsMlwsLwsHudVisible, CollapsedIcon } = require("twsState.nut")
 let sightIndicators = require("hud/tankSightIndicators.nut")
 let activeProtectionSystem = require("%rGui/hud/activeProtectionSystem.nut")
-let { isVisibleDmgIndicator, dmgIndicatorStates, isPlayingReplay } = require("%rGui/hudState.nut")
+let { isVisibleDmgIndicator, dmgIndicatorStates } = require("%rGui/hudState.nut")
 let { IndicatorsVisible } = require("%rGui/hud/tankState.nut")
 let { lockSight, targetSize } = require("%rGui/hud/targetTracker.nut")
 let { bw, bh } = require("style/screenState.nut")
-let { AzimuthRange, IsRadarVisible, IsRadar2Visible, IsRadarHudVisible, IsCScopeVisible, IsBScopeVisible, isCollapsedRadarInReplay } = require("radarState.nut")
+let { AzimuthRange, IsRadarVisible, IsRadar2Visible, IsRadarHudVisible, IsCScopeVisible, IsBScopeVisible } = require("radarState.nut")
 let { PI } = require("%sqstd/math.nut")
-let { radarHud, radarIndication } = require("%rGui/radar.nut")
-let sensorViewIndicators = require("%rGui/hud/sensorViewIndicator.nut")
-let { mkCollapseButton } = require("airHudComponents.nut")
+let radarHud = require("%rGui/radar.nut")
 //
 
 
@@ -32,7 +30,7 @@ let styleAamAim = {
   lineWidth = hdpx(2.0)
 }
 
-let radarPosComputed = Computed(@() isPlayingReplay.value ? [bw.value + sw(12), bh.value + sh(5)] : [bw.value, bh.value])
+let radarPosComputed = Computed(@() [bw.value, bh.value])
 
 let tankXrayIndicator = @() {
   rendObj = ROBJ_XRAYDOLL
@@ -45,7 +43,7 @@ let xraydoll = {
   size = [1, 1]
 }
 
-function tankDmgIndicator() {
+let function tankDmgIndicator() {
   if (!isVisibleDmgIndicator.value)
     return {
       watch = isVisibleDmgIndicator
@@ -82,23 +80,23 @@ function tankDmgIndicator() {
     behavior = Behaviors.RecalcHandler
     function onRecalcLayout(_initial, elem) {
       if (elem.getWidth() > 1 && elem.getHeight() > 1) {
-        eventbus_send("update_damage_panel_state", {
+        send("update_damage_panel_state", {
           pos = [elem.getScreenPosX(), elem.getScreenPosY()]
           size = [elem.getWidth(), elem.getHeight()]
           visible = isVisibleDmgIndicator.value
         })
       }
       else
-        eventbus_send("update_damage_panel_state", {})
+        send("update_damage_panel_state", {})
     }
   }
 }
 
 let radarPic = Picture("!ui/gameuiskin#radar_stby_icon")
 let isBScope = Computed(@() AzimuthRange.value > PI)
-let needRadarCollapsedIcon = Computed(@() IsRadarHudVisible.value && ((!IsRadarVisible.value && !IsRadar2Visible.value) || isCollapsedRadarInReplay.value) &&
+let needRadarCollapsedIcon = Computed(@() IsRadarHudVisible.value && !IsRadarVisible.value && !IsRadar2Visible.value &&
  CollapsedIcon.value && (IsCScopeVisible.value || IsBScopeVisible.value))
-function Root() {
+let function Root() {
   let colorWacthed = Watched(greenColor)
   let colorAlertWatched = Watched(redColor)
   let radarColor = Watched(Color(0, 255, 0, 255))
@@ -108,37 +106,25 @@ function Root() {
     watch = [IndicatorsVisible, isBScope]
     size = [sw(100), sh(100)]
     children = [
-      mkRadar()
+      mkRadar(radarPosComputed)
       @(){
         watch = needRadarCollapsedIcon
-        children = needRadarCollapsedIcon.value ? @(){
-            watch = isPlayingReplay
-            pos = [radarPosComputed.value[0] + sw(10), radarPosComputed.value[1] + (isPlayingReplay.value ? sh(5) : 0) ]
+        children = needRadarCollapsedIcon.value ? {
+            pos = radarPosComputed.value
             size = [sh(5), sh(5)]
             rendObj = ROBJ_IMAGE
             image = radarPic
             color = radarColor.value
-            children = isPlayingReplay.value ? mkCollapseButton([sh(5), sh(1)], isCollapsedRadarInReplay) : null
           } : null
       }
       aamAim(colorWacthed, colorAlertWatched)
-      agmAim(colorWacthed, colorAlertWatched)
+      agmAim(colorWacthed)
       tankDmgIndicator
       actionBarTopPanel
-      sensorViewIndicators
       //
 
 
-      @(){
-        watch = [isCollapsedRadarInReplay, isPlayingReplay]
-        size = flex()
-        children = !isCollapsedRadarInReplay.value ?
-        [
-          radarHud(isBScope.value ? sh(40) : sh(32), isBScope.value ? sh(40) : sh(32), radarPosComputed.value[0], radarPosComputed.value[1], radarColor, true)
-          isPlayingReplay.value ? mkCollapseButton([radarPosComputed.value[0] + (isBScope.value ? sh(40) : sh(32)), radarPosComputed.value[1]], isCollapsedRadarInReplay) : null
-        ] : null
-      }
-      radarIndication(radarColor)
+      radarHud(isBScope.value ? sh(40) : sh(32), isBScope.value ? sh(40) : sh(32), radarPosComputed.value[0], radarPosComputed.value[1], radarColor)
       IndicatorsVisible.value
         ? @() {
             children = [

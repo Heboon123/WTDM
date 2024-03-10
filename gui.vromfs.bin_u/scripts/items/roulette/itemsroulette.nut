@@ -11,7 +11,6 @@ let { GUI } = require("%scripts/utils/configs.nut")
 let ItemGenerators = require("%scripts/items/itemsClasses/itemGenerators.nut")
 let rouletteAnim = require("%scripts/items/roulette/rouletteAnim.nut")
 let { updateTransparencyRecursive } = require("%sqDagui/guiBhv/guiBhvUtils.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
 /*
 ItemsRoulette API:
   resetData() - rewrite params for future usage;
@@ -54,7 +53,7 @@ let itemRouletteParams = {
   items_roulette_min_trophy_drop_mult = -1
 }
 
-function resetData() {
+let function resetData() {
   insertRewardIdx = 0
   topPrizeLayout = null
   mainAnimationTimerWeekref = null
@@ -72,7 +71,7 @@ function resetData() {
 
 resetData()
 
-function reinitParams() {
+let function reinitParams() {
   if (itemRouletteParams.findvalue(@(v) v == -1) == null)
     return
 
@@ -84,7 +83,7 @@ function reinitParams() {
   }
 }
 
-function getRandomItem(trophyData) {
+let function getRandomItem(trophyData) {
   local res = null
   local rndChance = frnd() * trophyData.trophy.reduce(@(resChance, v) resChance + v.dropChance, 0.0)
 
@@ -99,19 +98,19 @@ function getRandomItem(trophyData) {
   return res
 }
 
-function getRandomItems(trophyData) {
+let function getRandomItems(trophyData) {
   let self = callee()
   return array(trophyData.count, null)
     .map(@(_) getRandomItem(trophyData))
     .reduce(@(acc, v) acc.extend(v?.trophy ? self(v) : [v]), [])
 }
 
-function logDebugData() {
+let function logDebugData() {
   log("ItemsRoulette: Print debug data of previously finished roulette")
   debugTableData(debugData, { recursionLevel = 10 })
 }
 
-function getUniqueTableKey(rewardBlock) {
+let function getUniqueTableKey(rewardBlock) {
   if (!rewardBlock) {
     logDebugData()
     assert(false, "Bad block for unique key")
@@ -123,7 +122,7 @@ function getUniqueTableKey(rewardBlock) {
   return $"{tKey}_{tVal}"
 }
 
-function getRewardLayout(block, shouldOnlyImage = false) {
+let function getRewardLayout(block, shouldOnlyImage = false) {
   let config = block?.reward.reward ?? block
   let rType = ::trophyReward.getType(config)
   if (::trophyReward.isRewardItem(rType))
@@ -133,8 +132,8 @@ function getRewardLayout(block, shouldOnlyImage = false) {
   return LayersIcon.genDataFromLayer(LayersIcon.findLayerCfg("roulette_item_place"), image)
 }
 
-function generateItemsArray(trophyName) {
-  let trophy = findItemById(trophyName) || ItemGenerators.get(trophyName)
+let function generateItemsArray(trophyName) {
+  let trophy = ::ItemsManager.findItemById(trophyName) || ItemGenerators.get(trophyName)
   if (!trophy) {
     log("ItemsRoulette: Cannot find trophy by name " + trophyName)
     return {}
@@ -184,7 +183,7 @@ function generateItemsArray(trophyName) {
   }
 }
 
-function getTopItem(trophyBlock) {
+let function getTopItem(trophyBlock) {
   if ("reward" in trophyBlock)
     return trophyBlock
 
@@ -193,7 +192,7 @@ function getTopItem(trophyBlock) {
          : null
 }
 
-function getChanceMultiplier(isTrophy, dropChance) {
+let function getChanceMultiplier(isTrophy, dropChance) {
   local chanceMult = 0.5
   if (isTrophy)
     chanceMult = pow(0.5, 1.0 / dropChance)
@@ -210,7 +209,7 @@ function getChanceMultiplier(isTrophy, dropChance) {
    is set as Current trophy Items Length * items_roulette_min_trophy_drop_mult (set in gui.blk)
 */
 
-function fillDropChances(trophyBlock) {
+let function fillDropChances(trophyBlock) {
   local trophyBlockTrophiesItemsCount = 0
 
   let isSingleReward = "reward" in trophyBlock
@@ -280,7 +279,7 @@ function fillDropChances(trophyBlock) {
   }
 }
 
-function getItemsStack(trophyData) {
+let function getItemsStack(trophyData) {
   let rndItemsArray = getRandomItems(trophyData)
   foreach (item in rndItemsArray) {
     let tKey = getUniqueTableKey(item?.reward)
@@ -296,7 +295,7 @@ function getItemsStack(trophyData) {
   return rndItemsArray
 }
 
-function gatherItemsArray(trophyData, mainLength) {
+let function gatherItemsArray(trophyData, mainLength) {
   debugData.mainLength = mainLength
 
   local topItem = getTopItem(trophyData.trophy)
@@ -337,7 +336,7 @@ function gatherItemsArray(trophyData, mainLength) {
   return resultArray
 }
 
-function getCurrentReward(rewardsArray) {
+let function getCurrentReward(rewardsArray) {
   let res = []
   let shouldOnlyImage = rewardsArray.len() > 1
   foreach (idx, reward in rewardsArray) {
@@ -347,11 +346,11 @@ function getCurrentReward(rewardsArray) {
   return res
 }
 
-function insertCurrentReward(readyItemsArray, rewardsArray) {
+let function insertCurrentReward(readyItemsArray, rewardsArray) {
   readyItemsArray[insertRewardIdx] = getCurrentReward(rewardsArray)
 }
 
-function getHiddenTopPrizeReward(trophyItem, showType) {
+let function getHiddenTopPrizeReward(trophyItem, showType) {
   let layerCfg = clone LayersIcon.findLayerCfg("item_place_single")
   layerCfg.img <- $"#ui/gameuiskin#item_{showType}"
   let image = LayersIcon.genDataFromLayer(layerCfg)
@@ -364,7 +363,7 @@ function getHiddenTopPrizeReward(trophyItem, showType) {
   }
 }
 
-function insertHiddenTopPrize(readyItemsArray, trophyItem, isGotTopPrize) {
+let function insertHiddenTopPrize(readyItemsArray, trophyItem, isGotTopPrize) {
   let hiddenTopPrizeParams = trophyItem.getHiddenTopPrizeParams()
   if (!hiddenTopPrizeParams)
     return
@@ -396,7 +395,7 @@ function insertHiddenTopPrize(readyItemsArray, trophyItem, isGotTopPrize) {
   }
 }
 
-function showTopPrize(rewardsArray, handler, rouletteObj, isGotTopPrize) {
+let function showTopPrize(rewardsArray, handler, rouletteObj, isGotTopPrize) {
   if (!(handler?.isValid() ?? false) || !(rouletteObj?.isValid() ?? false))
     return
   if (!topPrizeLayout)
@@ -415,7 +414,7 @@ function showTopPrize(rewardsArray, handler, rouletteObj, isGotTopPrize) {
     topPrizeLayout.len(), handler)
 }
 
-function createItemsMarkup(completeArray) {
+let function createItemsMarkup(completeArray) {
   local result = ""
   foreach (idx, slot in completeArray) {
     let slotRes = []
@@ -440,7 +439,7 @@ function createItemsMarkup(completeArray) {
   return result
 }
 
-function initItemsRoulette(trophyName, rewardsArray, imageObj, handler, afterDoneFunc = null) {
+let function initItemsRoulette(trophyName, rewardsArray, imageObj, handler, afterDoneFunc = null) {
   if (!(imageObj?.isValid() ?? false))
     return false
 
@@ -464,7 +463,7 @@ function initItemsRoulette(trophyName, rewardsArray, imageObj, handler, afterDon
     return false
   }
 
-  let trophyItem = findItemById(trophyName)
+  let trophyItem = ::ItemsManager.findItemById(trophyName)
   if (!trophyItem || trophyItem.skipRoulette())
     return false
 
@@ -498,7 +497,7 @@ function initItemsRoulette(trophyName, rewardsArray, imageObj, handler, afterDon
   if ((blackoutObj?.isValid() ?? false))
     blackoutObj.animation = "show"
 
-  function afterDoneCb() {
+  let function afterDoneCb() {
     showTopPrize(rewardsArray, handler, rouletteObj, isGotTopPrize)
     afterDoneFunc?()
   }
@@ -513,7 +512,7 @@ function initItemsRoulette(trophyName, rewardsArray, imageObj, handler, afterDon
   return true
 }
 
-function skipItemsRouletteAnimation(obj) {
+let function skipItemsRouletteAnimation(obj) {
   rouletteAnim.DEFAULT.skipAnim(obj)
   if (mainAnimationTimerWeekref?.ref() != null)
     mainAnimationTimerWeekref.ref().destroy()

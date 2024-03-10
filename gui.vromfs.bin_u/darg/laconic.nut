@@ -53,7 +53,7 @@ let Style = class { //to be able distinguish style elements from components
 let extendable = ["watch", "behavior"]
 let toArray = @(v) type(v) == "array" ? v : [v]
 
-function comp(...) {
+let function comp(...) {
   local [styles, children] = partition(flatten(vargv), @(v) v instanceof Style)
   local ret = styles.reduce(function(a,b) {
     foreach (k, v in b.value){
@@ -114,7 +114,7 @@ let Watch = @(...) Style({watch = flatten(vargv)})
 let OnClick = @(func) Style({onClick = func})
 let Button = Style({behavior = Behaviors.Button})
 
-function Size(...) {
+let function Size(...) {
   assert(vargv.len()<3)
   local size = vargv
   if (size.len()==1 && type(size?[0]) != "array")
@@ -130,7 +130,7 @@ let Pos = @(...) Style({pos=vargv})
 let YOfs = @(y) Style({pos=[0,y]})
 let XOfs = @(x) Style({pos=[0,x]})
 
-function updateWithStyle(obj, style){
+let function updateWithStyle(obj, style){
   if (type(style) == "table") {
     foreach (k in style)
       assert(k not in obj)
@@ -147,14 +147,14 @@ function updateWithStyle(obj, style){
     return obj
 }
 
-function txt(text, style = null) {
+let function txt(text, style = null) {
   let obj = (type(text) == "table")
     ? text.__merge({rendObj = ROBJ_TEXT})
     : {rendObj = ROBJ_TEXT text}
   return updateWithStyle(obj, style)
 }
 
-function img(image, style = null) {
+let function img(image, style = null) {
   let obj = (type(image) == "table") ? image.__merge({rendObj = ROBJ_IMAGE}) : {rendObj = ROBJ_IMAGE image}
   return updateWithStyle(obj, style)
 }

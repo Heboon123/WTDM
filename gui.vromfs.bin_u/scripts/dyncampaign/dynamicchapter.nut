@@ -9,7 +9,7 @@ let DataBlock = require("DataBlock")
 let { format } = require("string")
 let { getFullUnlockDescByName } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-let { move_mouse_on_child_by_value } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { move_mouse_on_child_by_value, handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { get_gui_option } = require("guiOptions")
 let { dynamicInit, dynamicGetList } = require("dynamicMission")
 let { get_cur_game_mode_name } = require("mission")
@@ -19,9 +19,11 @@ let { OPTIONS_MODE_DYNAMIC, USEROPT_YEAR, USEROPT_MP_TEAM_COUNTRY,
 } = require("%scripts/options/optionsExtNames.nut")
 let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
 let { get_game_settings_blk } = require("blkGetters")
-let { getDynamicLayouts } = require("%scripts/missions/missionsUtils.nut")
-let { DYNAMIC_REQ_COUNTRY_RANK, guiStartDynamicSummary, guiStartCdOptions
-} = require("%scripts/missions/startMissionsList.nut")
+let { DYNAMIC_REQ_COUNTRY_RANK, getDynamicLayouts } = require("%scripts/missions/missionsUtils.nut")
+
+::gui_start_dynamic_layouts <- function gui_start_dynamic_layouts() {
+  handlersManager.loadHandler(gui_handlers.DynamicLayouts)
+}
 
 gui_handlers.DynamicLayouts <- class (gui_handlers.CampaignChapter) {
   wndType = handlerType.MODAL
@@ -218,7 +220,7 @@ gui_handlers.DynamicLayouts <- class (gui_handlers.CampaignChapter) {
     let hoveredMission = this.isMouseMode ? null : this.missions?[this.hoveredIdx]
     let isCurItemInFocus = this.isMouseMode || (hoveredMission != null && hoveredMission == selectedMission)
 
-    showObjById("btn_select_console", !isCurItemInFocus && hoveredMission != null, this.scene)
+    this.showSceneBtn("btn_select_console", !isCurItemInFocus && hoveredMission != null)
 
     let canStart = isCurItemInFocus && (selectedMission?.descConfig.canStart ?? false)
     showObjById("btn_start", isCurItemInFocus && selectedMission != null, this.scene)
@@ -291,7 +293,7 @@ gui_handlers.DynamicLayouts <- class (gui_handlers.CampaignChapter) {
 
     this.checkedNewFlight(function() {
       if (get_gui_option(USEROPT_DIFFICULTY) == "custom")
-        guiStartCdOptions(this.finalApplyCallback, this)
+        ::gui_start_cd_options(this.finalApplyCallback, this)
       else
         this.finalApplyCallback()
     })
@@ -347,7 +349,7 @@ gui_handlers.DynamicLayouts <- class (gui_handlers.CampaignChapter) {
     ::add_mission_list_full(GM_DYNAMIC, add, ::mission_settings.dynlist)
     ::first_generation = true
 
-    this.goForwardCheckEntitlement(guiStartDynamicSummary, {
+    this.goForwardCheckEntitlement(::gui_start_dynamic_summary, {
       minRank = DYNAMIC_REQ_COUNTRY_RANK
       rankCountry = playerCountry
       silentFeature = "ModeDynamic"

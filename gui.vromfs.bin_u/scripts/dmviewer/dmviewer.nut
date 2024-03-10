@@ -1,9 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_natives.nut" import hangar_show_external_dm_parts_change, hangar_show_hidden_xray_parts_change
 from "%scripts/dagui_library.nut" import *
-
-let { get_difficulty_by_ediff } = require("%scripts/difficulty.nut")
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
@@ -27,7 +24,7 @@ let { unique } = require("%sqstd/underscore.nut")
 let { fileName } = require("%sqstd/path.nut")
 let { GUI } = require("%scripts/utils/configs.nut")
 let { getUnitWeapons } = require("%scripts/weaponry/weaponryPresets.nut")
-let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { registerPersistentDataFromRoot, PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let tutorAction = require("%scripts/tutorials/tutorialActions.nut")
 let { TIME_DAY_IN_SECONDS } = require("%scripts/time.nut")
 let { utf8ToUpper, startsWith, utf8ToLower } = require("%sqstd/string.nut")
@@ -39,9 +36,6 @@ let { get_game_params_blk, get_wpcost_blk, get_unittags_blk, get_modifications_b
 let { round_by_value } = require("%sqstd/math.nut")
 let { getCrewByAir } = require("%scripts/slotbar/slotbarState.nut")
 let { isStatsLoaded, isMeNewbieOnUnitType } = require("%scripts/myStats.nut")
-let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
-let { measureType } = require("%scripts/measureType.nut")
-let { eventbus_subscribe } = require("eventbus")
 
 /*
   dmViewer API:
@@ -168,16 +162,17 @@ let weaponPartsIds = {
 }
 
 let armorPartsIds = {
-  firewall_armor = true
   composite_armor_hull = true
   composite_armor_turret = true
   ex_era_hull = true
   ex_era_turret = true
 }
 
-eventbus_subscribe("on_check_protection", @(p) broadcastEvent("ProtectionAnalysisResult", p))
+::on_check_protection <- function(params) { // called from client
+  broadcastEvent("ProtectionAnalysisResult", params)
+}
 
-function isViewModeTutorAvailableForUser() {
+let function isViewModeTutorAvailableForUser() {
   if (!isStatsLoaded())
     return false
 
@@ -198,12 +193,14 @@ let descByPartId = {
   }
 }
 
-function distanceToStr(val) {
-  return measureType.DISTANCE.getMeasureUnitsText(val)
+let function distanceToStr(val) {
+  return ::g_measure_type.DISTANCE.getMeasureUnitsText(val)
 }
 
-local dmViewer
-dmViewer = {
+::dmViewer <- {
+  [PERSISTENT_DATA_PARAMS] = [ "active", "view_mode", "_currentViewMode", "isDebugMode",
+    "isVisibleExternalPartsArmor", "isVisibleExternalPartsXray" ]
+
   active = false
   // This is saved view mode. It is used to restore
   // view mode after player returns from somewhere.
@@ -338,7 +335,7 @@ dmViewer = {
     this.armorClassToSteel = this.collectArmorClassToSteelMuls()
     this.resetXrayCache()
     this.clearHint()
-    this.difficulty = get_difficulty_by_ediff(getCurrentGameModeEdiff())
+    this.difficulty = ::get_difficulty_by_ediff(::get_current_ediff())
     this.updateSecondaryMods()
   }
 
@@ -983,12 +980,7 @@ dmViewer = {
 
     let detectTracking = sensorPropsBlk.getBool("detectTracking", true)
     let detectLaunch = sensorPropsBlk.getBool("detectLaunch", false)
-    local rangeFinder = false
-    foreach (rangeFinderParamName in ["targetRangeFinder", "searchRangeFinder", "trackRangeFinder", "launchRangeFinder"])
-      if (sensorPropsBlk.getBool(rangeFinderParamName, false)) {
-        rangeFinder = true
-        break
-      }
+    let rangeFinder = sensorPropsBlk.getBool("targetRangeFinder", false)
     let iff = sensorPropsBlk.getBool("friendFoeId", false)
 
     local launchingThreatTypes = {}
@@ -1275,7 +1267,7 @@ dmViewer = {
         let currentParams = this.unit?.modificators[this.difficulty.crewSkillName]
         if (this.isSecondaryModsValid && currentParams && currentParams.horsePowers && currentParams.maxHorsePowersRPM) {
           desc.append(format("%s %s (%s %d %s)", loc("engine_power") + loc("ui/colon"),
-            measureType.HORSEPOWERS.getMeasureUnitsText(currentParams.horsePowers),
+            ::g_measure_type.HORSEPOWERS.getMeasureUnitsText(currentParams.horsePowers),
             loc("shop/unitValidCondition"), currentParams.maxHorsePowersRPM.tointeger(), loc("measureUnits/rpm")))
         }
         if (infoBlk)
@@ -1404,18 +1396,18 @@ dmViewer = {
                 if (powerMax > 0) {
                   powerMax += horsepowerModDelta
                   desc.append(loc("engine_power_max") + loc("ui/colon")
-                    + measureType.HORSEPOWERS.getMeasureUnitsText(powerMax))
+                    + ::g_measure_type.HORSEPOWERS.getMeasureUnitsText(powerMax))
                 }
                 if (powerTakeoff > 0) {
                   powerTakeoff += horsepowerModDelta
                   desc.append(loc("engine_power_takeoff") + loc("ui/colon")
-                    + measureType.HORSEPOWERS.getMeasureUnitsText(powerTakeoff))
+                    + ::g_measure_type.HORSEPOWERS.getMeasureUnitsText(powerTakeoff))
                 }
                 if (thrustMax > 0) {
                       thrustMax += thrustModDelta
                   thrustMax *= thrustMaxCoef
                   desc.append(loc("engine_thrust_max") + loc("ui/colon")
-                    + measureType.THRUST_KGF.getMeasureUnitsText(thrustMax))
+                    + ::g_measure_type.THRUST_KGF.getMeasureUnitsText(thrustMax))
                 }
                 if (thrustTakeoff > 0) {
                   let afterburnerBlk = engineBlk?.Afterburner
@@ -1427,7 +1419,7 @@ dmViewer = {
                   thrustTakeoff += thrustModDelta
                   thrustTakeoff *= thrustMaxCoef * afterburneThrustMaxCoef
                   desc.append(loc(thrustTakeoffLocId) + loc("ui/colon")
-                    + measureType.THRUST_KGF.getMeasureUnitsText(thrustTakeoff))
+                    + ::g_measure_type.THRUST_KGF.getMeasureUnitsText(thrustTakeoff))
                 }
 
                 // mass
@@ -1748,7 +1740,7 @@ dmViewer = {
           desc.append(loc("shop/ammo") + loc("ui/colon") + ammo)
 
         if (isSpecialBullet || isSpecialBulletEmitter)
-          desc[desc.len() - 1] += getWeaponXrayDescText(weaponInfoBlk, this.unit, getCurrentGameModeEdiff())
+          desc[desc.len() - 1] += getWeaponXrayDescText(weaponInfoBlk, this.unit, ::get_current_ediff())
         else {
           let status = this.getWeaponStatus(weaponPartName, weaponInfoBlk)
           desc.extend(this.getWeaponShotFreqAndReloadTimeDesc(weaponName, weaponInfoBlk, status))
@@ -2136,7 +2128,7 @@ dmViewer = {
       let isMachinegun = !!blk?.bullet?.caliber && !isCaliberCannon(1000 * blk.bullet.caliber)
       local isPrimary = !isRocketGun && !isMachinegun
       if (!isPrimary)
-        foreach (weapon in getCommonWeapons(dmViewer.unitBlk, "")) {
+        foreach (weapon in getCommonWeapons(::dmViewer.unitBlk, "")) {
           if (!weapon?.blk || weapon?.dummy)
             continue
           isPrimary = weapon.blk == blkPath
@@ -2326,7 +2318,7 @@ dmViewer = {
       }
 
       if (!reloadTimeS) {
-        cyclicShotFreqS = u.search(getCommonWeapons(dmViewer.unitBlk, ""),
+        cyclicShotFreqS = u.search(getCommonWeapons(::dmViewer.unitBlk, ""),
           @(inst) inst.trigger  == weaponInfoBlk.trigger)?.shotFreq ?? cyclicShotFreqS
         shotFreqRPM = cyclicShotFreqS * 60
 
@@ -2411,7 +2403,7 @@ dmViewer = {
 
   function getModernArmorParamsByDmPartName(partName) {
     local res = {
-      isComposite = startsWith(partName, "composite_armor") || startsWith(partName, "firewall_armor")
+      isComposite = startsWith(partName, "composite_armor")
       titleLoc = ""
       armorClass = ""
       referenceProtectionArray = []
@@ -2438,8 +2430,6 @@ dmViewer = {
         let info = this.getDamagePartParamsByDmPartName(layer?.dmPart, armorParams)
         if (layer?.xrayTextThickness != null)
           info.armorThickness = layer.xrayTextThickness
-        if (layer?.xrayArmorClass != null)
-          info.armorClass = layer.xrayArmorClass
         res.layersArray.append(info)
       }
     }
@@ -2563,7 +2553,7 @@ dmViewer = {
   }
 
   function onEventCurrentGameModeIdChanged(_p) {
-    this.difficulty = get_difficulty_by_ediff(getCurrentGameModeEdiff())
+    this.difficulty = ::get_difficulty_by_ediff(::get_current_ediff())
     this.resetXrayCache()
   }
 
@@ -2572,10 +2562,9 @@ dmViewer = {
   }
 }
 
-registerPersistentData("dmViewer", dmViewer, [ "active", "view_mode", "_currentViewMode", "isDebugMode",
-    "isVisibleExternalPartsArmor", "isVisibleExternalPartsXray" ])
-subscribe_handler(dmViewer, g_listener_priority.DEFAULT_HANDLER)
+registerPersistentDataFromRoot("dmViewer")
+subscribe_handler(::dmViewer, ::g_listener_priority.DEFAULT_HANDLER)
 
-eventbus_subscribe("on_hangar_damage_part_pick", @(p) dmViewer.updateHint(p))
-
-::dmViewer <- dmViewer
+::on_hangar_damage_part_pick <- function on_hangar_damage_part_pick(params) { // Called from API
+  ::dmViewer.updateHint(params)
+}

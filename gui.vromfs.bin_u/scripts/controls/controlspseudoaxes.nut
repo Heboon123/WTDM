@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 let u = require("%sqStdLibs/helpers/u.nut")
 let { getEsUnitType } = require("%scripts/unit/unitInfo.nut")
@@ -61,14 +62,14 @@ enums.addTypes(pseudoAxesList, {
   }
 })
 
-function isPseudoAxis(shortcutId) {
+let function isPseudoAxis(shortcutId) {
   foreach (pseudoAxis in pseudoAxesList.types)
     if (shortcutId == pseudoAxis.id)
       return true
   return false
 }
 
-function getPseudoAxisById(shortcutId) {
+let function getPseudoAxisById(shortcutId) {
   return u.search(pseudoAxesList.types, (@(item) item.id == shortcutId))
 }
 

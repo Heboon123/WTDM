@@ -10,7 +10,7 @@ let { mkVersionFromString, versionToInt } = require("%sqstd/version.nut")
 let { isInBattleState } = require("%scripts/clientState/clientStates.nut")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
-let { eventbus_send, eventbus_subscribe } = require("eventbus")
+let eventbus = require("eventbus")
 let { httpRequest, HTTP_SUCCESS } = require("dagor.http")
 let { send_counter } = require("statsd")
 let { get_time_msec } = require("dagor.time")
@@ -41,7 +41,7 @@ let requestMadeTime = persist("requestMadeTime", @() { value = null })
 let lastSeenVersionInfoNum = Watched(-1)
 let lastLoadedVersionInfoNum = Watched(-1)
 
-function loadSavedVersionInfoNum() {
+let function loadSavedVersionInfoNum() {
   if (!::g_login.isProfileReceived())
     return
 
@@ -54,7 +54,7 @@ let platformMap = {
   win64  = "pc"
 }
 
-function logError(event, params = {}) {
+let function logError(event, params = {}) {
   local txt = $"{event}: "
   foreach (idx, p in params)
     if (type(p) == "string")
@@ -70,7 +70,7 @@ let remapPlatform = @(v) platformMap?[v] ?? v
 let getUrl = @(p = "")
   $"{BASE_URL}{getCurLangShortName()}{p}/?platform={remapPlatform(targetPlatform)}"
 
-function mkVersion(v) {
+let function mkVersion(v) {
   local tVersion = v?.version ?? ""
   let versionl = tVersion.split(".").len()
   local versionType = v?.type
@@ -94,7 +94,7 @@ function mkVersion(v) {
   return { version, title, tVersion, versionType, titleshort, iVersion = versionToInt(version), id = v.id, date }
 }
 
-function filterVersions(vers) {
+let function filterVersions(vers) {
   let res = []
   local foundMajor = false
   foreach (idx, version in vers) {
@@ -111,7 +111,7 @@ function filterVersions(vers) {
   return res
 }
 
-function processPatchnotesList(response) {
+let function processPatchnotesList(response) {
   let status = response?.status ?? -1
   let http_code = response?.http_code ?? -1
   if (status != HTTP_SUCCESS || http_code < 200 || 300 <= http_code) {
@@ -140,7 +140,7 @@ function processPatchnotesList(response) {
   patchnotesReceived(true)
 }
 
-function requestAllPatchnotes() {
+let function requestAllPatchnotes() {
   let currTimeMsec = get_time_msec()
   if (requestMadeTime.value
     && (currTimeMsec - requestMadeTime.value < MSEC_BETWEEN_REQUESTS))
@@ -157,7 +157,7 @@ function requestAllPatchnotes() {
   requestMadeTime.value = currTimeMsec
 }
 
-function clearCache() {
+let function clearCache() {
   requestMadeTime.value = null
   patchnotesCache({})
 }
@@ -195,7 +195,7 @@ let haveUnseenVersions = Computed(@() unseenPatchnote.value != null)
 let needShowChangelog = @() !isInBattleState.value && hasFeature("Changelog")
   && haveNewVersions.value && isNewbieInited() && !isMeNewbie()
 
-function afterGetRequestedPatchnote(result) {
+let function afterGetRequestedPatchnote(result) {
   chosenPatchnoteContent({ title = result?.title ?? "", text = result?.content ?? [] })
   chosenPatchnoteLoaded(true)
 
@@ -207,7 +207,7 @@ function afterGetRequestedPatchnote(result) {
   lastSeenVersionInfoNum(v.iVersion)
 }
 
-function cachePatchnote(response) {
+let function cachePatchnote(response) {
   let status = response?.status ?? -1
   let http_code = response?.http_code ?? -1
   if (status != HTTP_SUCCESS || http_code < 200 || 300 <= http_code) {
@@ -231,7 +231,7 @@ function cachePatchnote(response) {
     patchnotesCache.mutate(@(value) value[result.id] <- result)
 }
 
-function requestPatchnote(v) {
+let function requestPatchnote(v) {
   if (!v)
     return
 
@@ -247,14 +247,14 @@ function requestPatchnote(v) {
   httpRequest(request)
 }
 
-function choosePatchnote(v) {
+let function choosePatchnote(v) {
   if (!v)
     return
   requestPatchnote(v)
   chosenPatchnote(v)
 }
 
-function changePatchNote(delta = 1) {
+let function changePatchNote(delta = 1) {
   if (versions.value.len() == 0)
     return
   let nextIdx = clamp(curPatchnoteIdx.value - delta, 0, versions.value.len() - 1)
@@ -262,7 +262,7 @@ function changePatchNote(delta = 1) {
   choosePatchnote(patchnote)
 }
 
-function openChangelog() {
+let function openChangelog() {
   local curr = curPatchnote.value
   if (haveNewVersions.value) {
     curr = versions.value[0]
@@ -276,29 +276,29 @@ function openChangelog() {
 let canShowChangelog = @() handlersManager.findHandlerClassInScene(
   gui_handlers.MainMenu)?.isSceneActiveNoModals() ?? false
 
-function openChangelogInActiveMainMenuImpl() {
+let function openChangelogInActiveMainMenuImpl() {
   if (!canShowChangelog())
     return
 
   openChangelog()
 }
 
-function openChangelogInActiveMainMenuIfNeed() {
+let function openChangelogInActiveMainMenuIfNeed() {
   if (!needShowChangelog() || !canShowChangelog())
     return
 
   deferOnce(openChangelogInActiveMainMenuImpl)
 }
 
-chosenPatchnoteContent.subscribe(@(value) eventbus_send("updateChosenPatchnoteContent", { value }))
-versions.subscribe(@(value) eventbus_send("updateChangelogsVersions", { value }))
-curPatchnote.subscribe(@(value) eventbus_send("updateCurPatchnote", { value }))
+chosenPatchnoteContent.subscribe(@(value) eventbus.send("updateChosenPatchnoteContent", { value }))
+versions.subscribe(@(value) eventbus.send("updateChangelogsVersions", { value }))
+curPatchnote.subscribe(@(value) eventbus.send("updateCurPatchnote", { value }))
 chosenPatchnoteLoaded.subscribe(function (value) {
-  eventbus_send("updateChosenPatchnoteLoaded", { value })
+  eventbus.send("updateChosenPatchnoteLoaded", { value })
   openChangelogInActiveMainMenuIfNeed()
 })
 patchnotesReceived.subscribe(function(value) {
-  eventbus_send("updatePatchnotesReceived", { value })
+  eventbus.send("updatePatchnotesReceived", { value })
   if (!value || !haveUnseenVersions.value)
     return
   requestPatchnote(curPatchnote.value)
@@ -315,18 +315,18 @@ addListenersWithoutEnv({
 
 loadSavedVersionInfoNum()
 
-eventbus_subscribe("getChangeLogsStates", @(_) eventbus_send("updateChangeLogsStates", {
+eventbus.subscribe("getChangeLogsStates", @(_) eventbus.send("updateChangeLogsStates", {
   versions = versions.value
   chosenPatchnoteContent = chosenPatchnoteContent.value
   curPatchnote = curPatchnote.value
   chosenPatchnoteLoaded = chosenPatchnoteLoaded.value
   patchnotesReceived = patchnotesReceived.value
 }))
-eventbus_subscribe("choosePatchnote", @(data) choosePatchnote(data.value))
-eventbus_subscribe("changePatchNote", @(data) changePatchNote(data.delta))
+eventbus.subscribe("choosePatchnote", @(data) choosePatchnote(data.value))
+eventbus.subscribe("changePatchNote", @(data) changePatchNote(data.delta))
 
-eventbus_subscribe(PatchnoteIds, processPatchnotesList)
-eventbus_subscribe(PatchnoteReceived, cachePatchnote)
+eventbus.subscribe(PatchnoteIds, processPatchnotesList)
+eventbus.subscribe(PatchnoteReceived, cachePatchnote)
 
 return {
   openChangelog

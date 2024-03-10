@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import get_tournament_desk_blk
 from "%scripts/dagui_library.nut" import *
 

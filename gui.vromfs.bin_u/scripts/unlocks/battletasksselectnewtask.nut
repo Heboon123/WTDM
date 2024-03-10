@@ -1,7 +1,9 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import char_send_blk
 from "%scripts/dagui_library.nut" import *
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
-let { mkUnlockConfigByBattleTask, filterBattleTasksByGameModeId,
+let u = require("%sqStdLibs/helpers/u.nut")
+let { isBattleTasksAvailable, mkUnlockConfigByBattleTask, filterBattleTasksByGameModeId,
   getBattleTaskView
 } = require("%scripts/unlocks/battleTasks.nut")
 let DataBlock = require("DataBlock")
@@ -11,7 +13,14 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { addTask } = require("%scripts/tasker.nut")
-let { getCurrentGameModeId } = require("%scripts/gameModes/gameModeManagerState.nut")
+let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
+
+::gui_start_battle_tasks_select_new_task_wnd <- function gui_start_battle_tasks_select_new_task_wnd(battleTasksArray = null) {
+  if (!isBattleTasksAvailable() || u.isEmpty(battleTasksArray))
+    return
+
+  loadHandler(gui_handlers.BattleTasksSelectNewTaskWnd, { battleTasksArray = battleTasksArray })
+}
 
 gui_handlers.BattleTasksSelectNewTaskWnd <- class (gui_handlers.BaseGuiHandlerWT) {
   wndType = handlerType.MODAL
@@ -39,7 +48,7 @@ gui_handlers.BattleTasksSelectNewTaskWnd <- class (gui_handlers.BaseGuiHandlerWT
   function initScreen() {
     let listObj = this.getConfigsListObj()
     if (listObj) {
-      let currentGameModeId = getCurrentGameModeId()
+      let currentGameModeId = ::game_mode_manager.getCurrentGameModeId()
       let filteredTasksArray = filterBattleTasksByGameModeId(this.battleTasksArray, currentGameModeId)
 
       local index = 0
@@ -63,7 +72,7 @@ gui_handlers.BattleTasksSelectNewTaskWnd <- class (gui_handlers.BaseGuiHandlerWT
     let taskObj = this.getCurrentTaskObj()
 
     showObjById("btn_reroll", false, taskObj)
-    showObjById("btn_requirements_list", showConsoleButtons.value && this.isConfigHaveConditions(config), this.scene)
+    this.showSceneBtn("btn_requirements_list", showConsoleButtons.value && this.isConfigHaveConditions(config))
   }
 
   function onSelect(_obj) {

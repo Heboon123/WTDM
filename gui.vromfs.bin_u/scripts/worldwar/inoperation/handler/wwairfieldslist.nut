@@ -306,9 +306,9 @@ gui_handlers.WwAirfieldsList <- class (BaseGuiHandler) {
     let hasEnoughToFly = airfield.hasEnoughUnitsToFly()
     let limitReached = this.selectedGroupAirArmiesNumber.cur == this.selectedGroupAirArmiesNumber.max
 
-    showObjById("control_help", hasEnoughToFly && !limitReached, this.scene)
+    this.showSceneBtn("control_help", hasEnoughToFly && !limitReached)
     let isVisibleAlertText = limitReached || !hasEnoughToFly
-    let alertObj = showObjById("alert_text", isVisibleAlertText, this.scene)
+    let alertObj = this.showSceneBtn("alert_text", isVisibleAlertText)
     if (isVisibleAlertText && alertObj != null)
       alertObj.setValue(limitReached ? loc($"worldwar/reached_{airfield.airfieldType.locId}_armies_limit")
       : loc("worldwar/airfield/not_enough_units_to_send"))

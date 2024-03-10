@@ -18,7 +18,7 @@ let { getPrizeChanceConfig } = require("%scripts/items/prizeChance.nut")
 let { MODIFICATION, SPARE } = require("%scripts/weaponry/weaponryTooltips.nut")
 let { isLoadingBgUnlock } = require("%scripts/loading/loadingBgData.nut")
 let TrophyMultiAward = require("%scripts/items/trophyMultiAward.nut")
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
+let { UNLOCK, UNIT, DECORATION } = require("%scripts/utils/genericTooltipTypes.nut")
 let { formatLocalizationArrayToDescription } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { getFullUnlockDescByName, getUnlockNameText,
   getUnlockRewardsText } = require("%scripts/unlocks/unlocksViewModule.nut")
@@ -31,8 +31,6 @@ let { decoratorTypes, getTypeByUnlockedItemType, getTypeByResourceType } = requi
 let { buildUnitSlot } = require("%scripts/slotbar/slotbarView.nut")
 let { getCrewById } = require("%scripts/slotbar/slotbarState.nut")
 let { BaseItem } = require("%scripts/items/itemsClasses/itemsBase.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
-let { getCrewName } = require("%scripts/crew/crew.nut")
 
 //prize - blk or table in format of trophy prizes from trophies.blk
 //content - array of prizes (better to rename it)
@@ -154,21 +152,21 @@ let prizeViewConfig = {
   },
   [PRIZE_TYPE.UNLOCK] = {
     getDescription = @(config) getFullUnlockDescByName(config.unlock)
-    getTooltipConfig = @(prize) { tooltipId = getTooltipType("UNLOCK").getTooltipId(prize.unlock) }
+    getTooltipConfig = @(prize) { tooltipId = UNLOCK.getTooltipId(prize.unlock) }
   },
   [PRIZE_TYPE.UNLOCK_TYPE] = {
     getDescription = @(config) loc($"trophy/unlockables_names/{config.unlockType}")
-    getTooltipConfig = @(prize) { tooltipId = getTooltipType("UNLOCK").getTooltipId(prize.unlockType) }
+    getTooltipConfig = @(prize) { tooltipId = UNLOCK.getTooltipId(prize.unlockType) }
   },
   [PRIZE_TYPE.UNIT] = {
     getDescriptionMarkup = function(config) {
       let data = ::PrizesView.getPrizesViewData(config, true)
       return handyman.renderCached(template, { list = [data] })
     }
-    getTooltipConfig = @(prize) { tooltipId = getTooltipType("UNIT").getTooltipId(prize.unit) }
+    getTooltipConfig = @(prize) { tooltipId = UNIT.getTooltipId(prize.unit) }
   },
   [PRIZE_TYPE.RENTED_UNIT] = {
-    getTooltipConfig = @(prize) { tooltipId = getTooltipType("UNIT").getTooltipId(prize.rentedUnit) }
+    getTooltipConfig = @(prize) { tooltipId = UNIT.getTooltipId(prize.rentedUnit) }
   },
   [PRIZE_TYPE.RESOURCE] = {
     function getDescription(config) {
@@ -178,7 +176,7 @@ let prizeViewConfig = {
     function getTooltipConfig(prize) {
       let decoratorType = getTypeByResourceType(prize.resourceType)
       let decorator = getDecorator(prize.resource, decoratorType)
-      return { tooltipId = getTooltipType("DECORATION").getTooltipId(decorator.id, decoratorType.unlockedItemType) }
+      return { tooltipId = DECORATION.getTooltipId(decorator.id, decoratorType.unlockedItemType) }
     }
   },
   [PRIZE_TYPE.UNLOCK_PROGRESS] = {
@@ -644,7 +642,7 @@ let prizeViewConfig = {
   }
   else if (prize?.item || prize?.trophy) {
     let id = prize?.item || prize?.trophy
-    local item = findItemById(id)
+    local item = ::ItemsManager.findItemById(id)
     if (v_typeName) {
       name = this._getItemTypeName(item)
       color = item ? "activeTextColor" : "red"
@@ -768,11 +766,11 @@ let prizeViewConfig = {
   if (prize?.rentedUnit)
     return "#ui/gameuiskin#item_type_rent.svg"
   if (prize?.item) {
-    let item = findItemById(prize.item)
+    let item = ::ItemsManager.findItemById(prize.item)
     return item?.getSmallIconName() ?? BaseItem.typeIcon
   }
   if (prize?.trophy) {
-    let item = findItemById(prize.trophy)
+    let item = ::ItemsManager.findItemById(prize.trophy)
     if (!item)
       return BaseItem.typeIcon
     let topPrize = item.getTopPrize()
@@ -867,7 +865,7 @@ let prizeViewConfig = {
 }
 
 ::PrizesView._findAndStackPrizeItem <- function _findAndStackPrizeItem(prize, stackList, stackLevel) {
-  let item = findItemById(prize?.item)
+  let item = ::ItemsManager.findItemById(prize?.item)
   if (!item)
     return true
 
@@ -1179,14 +1177,14 @@ let prizeViewConfig = {
 
   let { showTooltip = true } = params
   let crew = getCrewById(prize?.crew ?? 0)
-  let title = colorize("userlogColoredText", getCrewName(crew)) + loc("ui/colon")
+  let title = colorize("userlogColoredText", ::g_crew.getCrewName(crew)) + loc("ui/colon")
               + colorize("activeTextColor", getUnitName(unit))
               + ", " + colorize("userlogColoredText", loc("crew/qualification/" + specLevel))
   return {
     icon = (specLevel == 2) ? "#ui/gameuiskin#item_type_crew_aces.svg" : "#ui/gameuiskin#item_type_crew_experts.svg"
     icon2 = getUnitCountryIcon(unit)
     title = title
-    tooltipId = showTooltip ? getTooltipType("UNIT").getTooltipId(unitName) : null
+    tooltipId = showTooltip ? ::g_tooltip.getIdUnit(unitName) : null
   }
 }
 
@@ -1202,7 +1200,7 @@ let prizeViewConfig = {
   return {
     icon  = decoratorType.prizeTypeIcon
     title = this.getPrizeText(prize)
-    tooltipId = showTooltip ? getTooltipType("DECORATION").getTooltipId(id, decoratorType.unlockedItemType, params) : null
+    tooltipId = showTooltip ? ::g_tooltip.getIdDecorator(id, decoratorType.unlockedItemType, params) : null
     commentText = !isReceivedPrizes && isHave ?  colorize("badTextColor", loc(receiveOnce)) : null
     buttons = buttons
     buttonsCount = buttons.len()
@@ -1213,7 +1211,7 @@ let prizeViewConfig = {
   let { showTooltip = true } = params
   let primaryIcon = prize?.primaryIcon
   let buttons = this.getPrizeActionButtonsView(prize, params)
-  let item = findItemById(prize?.item)
+  let item = ::ItemsManager.findItemById(prize?.item)
   let itemIcon = (params?.isShowItemIconInsteadItemType ?? false) && item
     ? item.getIconName()
     : this.getPrizeTypeIcon(prize)
@@ -1223,7 +1221,7 @@ let prizeViewConfig = {
     title = (params?.needShowItemName ?? true)
       ? this.getPrizeText(prize, !params?.isLocked, false, showCount, true)
       : prize?.commentText ?? ""
-    tooltipId = showTooltip ? getTooltipType("ITEM").getTooltipId(prize?.item) : null
+    tooltipId = showTooltip ? ::g_tooltip.getIdItem(prize?.item) : null
     buttons = buttons
     buttonsCount = buttons.len()
   }
@@ -1245,8 +1243,8 @@ let prizeViewConfig = {
   local needShowFullTitle = true
   local needShowIcon = true
   let tooltipId = !showTooltip ? null
-    : prize?.trophy ? getTooltipType("UNLOCK").getTooltipId(prize.trophy)
-    : prize?.unlock ? getTooltipType("SUBTROPHY").getTooltipId(prize.unlock, params)
+    : prize?.trophy ? ::g_tooltip.getIdSubtrophy(prize.trophy)
+    : prize?.unlock ? ::g_tooltip.getIdUnlock(prize.unlock, params)
     : null
 
   local previewImage = null
@@ -1351,7 +1349,7 @@ let prizeViewConfig = {
 
   let itemId = prize?.item ?? params?.relatedItem
   if (itemId) {
-    let item = findItemById(itemId)
+    let item = ::ItemsManager.findItemById(itemId)
     if (!item || workshop.shouldDisguiseItem(item))
       return view
     if (item.canPreview() && isInMenu()) {

@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -6,7 +7,7 @@ let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
 local lastBaseHandlerStartData = null
 
-function updateBackSceneObj(handler) {
+let function updateBackSceneObj(handler) {
   handler.backSceneParams = lastBaseHandlerStartData?.handlerLocId
     ? lastBaseHandlerStartData?.startParams : backToMainScene()
   let handlerLocId = lastBaseHandlerStartData?.handlerLocId ?? "mainmenu/hangar"
@@ -17,7 +18,7 @@ function updateBackSceneObj(handler) {
   backSceneObj.setValue(loc(handlerLocId))
 }
 
-function setBreadcrumbGoBackParams(handler) {
+let function setBreadcrumbGoBackParams(handler) {
   if (!handler.isValid())
     return
 
@@ -26,7 +27,7 @@ function setBreadcrumbGoBackParams(handler) {
   updateBackSceneObj(handler)
 }
 
-function setModalBreadcrumbGoBackParams(handler) {
+let function setModalBreadcrumbGoBackParams(handler) {
   if (!handler.isValid())
     return
 

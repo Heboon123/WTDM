@@ -2,17 +2,13 @@ from "%scripts/dagui_natives.nut" import gchat_raw_command
 from "%scripts/dagui_library.nut" import *
 from "%scripts/chat/chatConsts.nut" import chatUpdateState
 
-let { g_chat_categories } = require("%scripts/chat/chatCategories.nut")
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
-let { loadLocalByAccount, saveLocalByAccount } = require("%scripts/clientState/localProfileDeprecated.nut")
+let { loadLocalByAccount, saveLocalByAccount } = require("%scripts/clientState/localProfile.nut")
 let { split_by_chars } = require("string")
 let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { get_time_msec } = require("dagor.time")
 let { get_game_settings_blk } = require("blkGetters")
 let { getCurLangInfo, getGameLocalizationInfo } = require("%scripts/langUtils/language.nut")
-let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
-let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 
 ::g_chat_latest_threads <- {
   autoUpdatePeriodMsec = 60000
@@ -38,8 +34,8 @@ let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
   let langTags = this.getSearchLangsList().map(@(l) ::g_chat_thread_tag.LANG.prefix + l.chatId)
 
   local categoryTagsText = ""
-  if (!g_chat_categories.isSearchAnyCategory()) {
-    local categoryTags = g_chat_categories.getSearchCategoriesLList().map(@(cName) ::g_chat_thread_tag.CATEGORY.prefix + cName)
+  if (!::g_chat_categories.isSearchAnyCategory()) {
+    local categoryTags = ::g_chat_categories.getSearchCategoriesLList().map(@(cName) ::g_chat_thread_tag.CATEGORY.prefix + cName)
     categoryTagsText = ",".join(categoryTags, true)
   }
   this.refreshAdvanced("hidden", ",".join(langTags, true), categoryTagsText)
@@ -171,7 +167,7 @@ let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
         selected = isInArray(lang, curLangs)
       })
 
-  loadHandler(gui_handlers.MultiSelectMenu, {
+  ::gui_start_multi_select_menu({
     list = optionsList
     onFinalApplyCb = function(values) { ::g_chat_latest_threads._setSearchLangs(values) }
     align = align
@@ -225,4 +221,4 @@ let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
     ::g_chat_latest_threads.forceAutoRefreshInSecond()
 }
 
-subscribe_handler(::g_chat_latest_threads, g_listener_priority.DEFAULT_HANDLER)
+subscribe_handler(::g_chat_latest_threads, ::g_listener_priority.DEFAULT_HANDLER)

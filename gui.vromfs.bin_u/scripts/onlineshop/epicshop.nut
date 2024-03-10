@@ -10,8 +10,7 @@ let statsd = require("statsd")
 let seenEnumId = SEEN.EXT_EPIC_SHOP
 
 let seenList = require("%scripts/seen/seenList.nut").get(seenEnumId)
-let { catalog, canUseIngameShop, getShopItem, requestData, isLoadingInProgress
-} = require("%scripts/onlineShop/epicShopData.nut")
+let shopData = require("%scripts/onlineShop/epicShopData.nut")
 
 let sheetsArray = [
   {
@@ -45,7 +44,7 @@ let sheetsArray = [
 foreach (sh in sheetsArray) {
   local sheet = sh
   seenList.setSubListGetter(sheet.getSeenId(), @() (
-    catalog.value?[sheet.mediaType] ?? []).filter(@(item) !item.canBeUnseen()).map(@(item) item.getSeenId())
+    shopData.catalog.value?[sheet.mediaType] ?? []).filter(@(item) !item.canBeUnseen()).map(@(item) item.getSeenId())
   )
 }
 
@@ -76,12 +75,12 @@ let openIngameStore = kwarg(
     if (!isInArray(chapter, [null, "", "eagles"]))
       return false
 
-    if (canUseIngameShop()) {
+    if (shopData.canUseIngameShop()) {
       statsd.send_counter("sq.ingame_store.open", 1, { origin = statsdMetric })
-      let item = getShopItem(curItemId)
-      requestData(@() handlersManager.loadHandler(gui_handlers.EpicShop, {
-        itemsCatalog = catalog.value
-        isLoadingInProgress = isLoadingInProgress.value
+      let item = shopData.getShopItem(curItemId)
+      shopData.requestData(@() handlersManager.loadHandler(gui_handlers.EpicShop, {
+        itemsCatalog = shopData.catalog.value
+        isLoadingInProgress = shopData.isLoadingInProgress.value
         chapter = chapter
         curItem = item
         afterCloseFunc = afterCloseFunc
@@ -98,11 +97,12 @@ let openIngameStore = kwarg(
   }
 )
 
-return {
-  openIngameStore
-  getEntStoreLocId = @() canUseIngameShop() ? "#topmenu/xboxIngameShop" : "#msgbox/btn_onlineShop"
-  getEntStoreIcon = @() canUseIngameShop() ? "#ui/gameuiskin#xbox_store_icon.svg" : "#ui/gameuiskin#store_icon.svg"
-  isEntStoreTopMenuItemHidden = @(...) !canUseIngameShop() || !isInMenu()
+return shopData.__merge({
+  openIngameStore = openIngameStore
+  getEntStoreLocId = @() shopData.canUseIngameShop() ? "#topmenu/xboxIngameShop" : "#msgbox/btn_onlineShop"
+  getEntStoreIcon = @() shopData.canUseIngameShop() ? "#ui/gameuiskin#xbox_store_icon.svg" : "#ui/gameuiskin#store_icon.svg"
+  isEntStoreTopMenuItemHidden = @(...) !shopData.canUseIngameShop() || !isInMenu()
   getEntStoreUnseenIcon = @() seenEnumId
+  needEntStoreDiscountIcon = true
   openEntStoreTopMenuFunc = @(_obj, _handler) openIngameStore({ statsdMetric = "topmenu" })
-}
+})

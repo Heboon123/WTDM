@@ -1,8 +1,9 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import is_mouse_last_time_used, periodic_task_unregister, periodic_task_register
 from "%scripts/dagui_library.nut" import *
 
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
-let { eventbus_subscribe } = require("eventbus")
+let { subscribe } = require("eventbus")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 
@@ -16,7 +17,7 @@ local offset = [ 0, 0 ]
 
 local hintObj = null
 
-function initBackgroundModelHint(handler) {
+let function initBackgroundModelHint(handler) {
   let cursorOffset = handler.guiScene.calcString("22@dp", null)
   screen = [ screen_width(), screen_height() ]
   unsafe = [ handler.guiScene.calcString("@bw", null), handler.guiScene.calcString("@bh", null) ]
@@ -24,7 +25,7 @@ function initBackgroundModelHint(handler) {
   handler.scene.findObject("background_model_hint")?.setUserData(handler)
 }
 
-function getHintObj() {
+let function getHintObj() {
   if (hintObj?.isValid())
     return hintObj
   let handler = handlersManager.getActiveBaseHandler()
@@ -35,7 +36,7 @@ function getHintObj() {
 }
 
 
-function placeBackgroundModelHint(obj) {
+let function placeBackgroundModelHint(obj) {
   if (!isVisibleHint)
     return
 
@@ -45,7 +46,7 @@ function placeBackgroundModelHint(obj) {
   obj.top = clamp(cursorPos[1] + offset[1], unsafe[1], max(unsafe[1], screen[1] - unsafe[1] - size[1])).tointeger()
 }
 
-function showHint() {
+let function showHint() {
   let obj = getHintObj()
   if (!obj)
     return
@@ -56,24 +57,24 @@ function showHint() {
 }
 
 local hoverHintTask = -1
-function removeHintTask() {
+let function removeHintTask() {
   if (hoverHintTask != -1)
     periodic_task_unregister(hoverHintTask)
   hoverHintTask = -1
 }
-function startHintTask(cb) {
+let function startHintTask(cb) {
   removeHintTask()
   hoverHintTask = periodic_task_register({}, cb, DELAYED_SHOW_HINT_SEC)
 }
 
-function hideHint() {
+let function hideHint() {
   isVisibleHint = false
   removeHintTask()
   getHintObj()?.show(false)
   hintObj = null
 }
 
-function showBackgroundModelHint(params) {
+let function showBackgroundModelHint(params) {
   let { isHovered = false } = params
   if (!isHovered) {
     hideHint()
@@ -90,7 +91,7 @@ function showBackgroundModelHint(params) {
   })
 }
 
-eventbus_subscribe("backgroundHangarVehicleHoverChanged", showBackgroundModelHint)
+subscribe("backgroundHangarVehicleHoverChanged", showBackgroundModelHint)
 
 addListenersWithoutEnv({
   ActiveHandlersChanged = @(_p) hideHint()

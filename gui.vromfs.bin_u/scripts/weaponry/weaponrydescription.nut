@@ -3,7 +3,6 @@ from "%scripts/dagui_natives.nut" import shop_is_weapon_purchased
 from "%scripts/dagui_library.nut" import *
 from "%scripts/weaponry/weaponryConsts.nut" import INFO_DETAIL
 
-let { g_difficulty, get_difficulty_by_ediff } = require("%scripts/difficulty.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { format } = require("string")
 let { round_by_value } = require("%sqstd/math.nut")
@@ -22,11 +21,10 @@ let { shopIsModificationPurchased } = require("chardResearch")
 let { getEsUnitType } = require("%scripts/unit/unitInfo.nut")
 let { isInFlight } = require("gameplayBinding")
 let { getCurMissionRules } = require("%scripts/misCustomRules/missionCustomState.nut")
-let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
 
-function getReloadTimeByCaliber(caliber, ediff = null) {
-  let diff = get_difficulty_by_ediff(ediff ?? getCurrentGameModeEdiff())
-  if (diff != g_difficulty.ARCADE)
+let function getReloadTimeByCaliber(caliber, ediff = null) {
+  let diff = ::get_difficulty_by_ediff(ediff ?? ::get_current_ediff())
+  if (diff != ::g_difficulty.ARCADE)
     return null
   return reloadCooldownTimeByCaliber.value?[caliber]
 }
@@ -83,29 +81,13 @@ local function getWeaponInfoText(unit, p = WEAPON_TEXT_PARAMS) {
     let isShortDesc = p.detail <= INFO_DETAIL.SHORT //for weapons SHORT == LIMITED_11
     local weapTypeCount = 0 //for shortDesc only
     let gunNames = {}     //for shortDesc only
-
     foreach (trigger in triggers) {
       local tText = ""
-      let newWeaponBlocks = {}
       foreach (weaponName, weapon in trigger.weaponBlocks) {
-        local hasWeapon = false
-        foreach (newWeapon in newWeaponBlocks) {
-          if (newWeapon?.bulletName && newWeapon.bulletName == weapon?.bulletName) {
-            newWeapon.ammo += weapon.ammo
-            hasWeapon = true
-            break
-          }
-        }
-        if (!hasWeapon) {
-          newWeaponBlocks[weaponName] <- (weapon)
-        }
-      }
-
-      foreach (weaponName, weapon in newWeaponBlocks) {
         if (tText != "" && weapTypeCount == 0)
           tText += p.newLine
 
-        if (isInArray(weaponType, CONSUMABLE_TYPES) || weaponType == WEAPON_TYPE.CONTAINER_ITEM) {
+        if (isInArray(weaponType, CONSUMABLE_TYPES)) {
           if (isShortDesc) {
             tText = "".concat(tText, loc($"weapons/{weaponName}/short"))
             if (!p.isSingle && weapon.ammo > 1)
@@ -147,7 +129,7 @@ local function getWeaponInfoText(unit, p = WEAPON_TEXT_PARAMS) {
               local rTime = getReloadTimeByCaliber(weapon.caliber, p.ediff)
               if (rTime) {
                 if (p.isLocalState) {
-                  let difficulty = get_difficulty_by_ediff(p.ediff ?? getCurrentGameModeEdiff())
+                  let difficulty = ::get_difficulty_by_ediff(p.ediff ?? ::get_current_ediff())
                   let key = isCaliberCannon(weapon.caliber) ? "cannonReloadSpeedK" : "gunReloadSpeedK"
                   let speedK = unit.modificators?[difficulty.crewSkillName]?[key] ?? 1.0
                   if (speedK)
@@ -201,13 +183,13 @@ local function getWeaponInfoText(unit, p = WEAPON_TEXT_PARAMS) {
   return text
 }
 
-function getWeaponNameText(unit, isPrimary = null, weaponPreset = -1, newLine = ", ") {
+let function getWeaponNameText(unit, isPrimary = null, weaponPreset = -1, newLine = ", ") {
   return getWeaponInfoText(unit,
     { isPrimary = isPrimary, weaponPreset = weaponPreset, newLine = newLine, detail = INFO_DETAIL.SHORT })
 }
 
 
-function getWeaponXrayDescText(weaponBlk, unit, ediff) {
+let function getWeaponXrayDescText(weaponBlk, unit, ediff) {
   let weaponsArr = []
   u.appendOnce((u.copy(weaponBlk)), weaponsArr)
   let weaponTypes = addWeaponsFromBlk({}, weaponsArr, unit)
@@ -219,7 +201,7 @@ function getWeaponXrayDescText(weaponBlk, unit, ediff) {
 }
 
 
-function getWeaponDescTextByTriggerGroup(triggerGroup, unit, ediff) {
+let function getWeaponDescTextByTriggerGroup(triggerGroup, unit, ediff) {
   let unitBlk = ::get_full_unit_blk(unit.name)
   let primaryWeapon = getLastPrimaryWeapon(unit)
   let secondaryWeapon = getLastWeapon(unit.name)
@@ -274,7 +256,7 @@ local function getWeaponShortTypeFromWpName(wpName, unit = null) {
   return ""
 }
 
-function getDefaultBulletName(unit) {
+let function getDefaultBulletName(unit) {
   if (!("modifications" in unit))
     return ""
 
@@ -296,11 +278,11 @@ function getDefaultBulletName(unit) {
   return ""
 }
 
-function getModItemName(unit, item, limitedName = true) {
+let function getModItemName(unit, item, limitedName = true) {
   return ::g_weaponry_types.getUpgradeTypeByItem(item).getLocName(unit, item, limitedName)
 }
 
-function getReqModsText(unit, item) {
+let function getReqModsText(unit, item) {
   local reqText = ""
   foreach (rp in ["reqWeapon", "reqModification"])
       if (rp in item)
@@ -313,7 +295,7 @@ function getReqModsText(unit, item) {
   return reqText
 }
 
-function getBulletsListHeader(unit, bulletsList) {
+let function getBulletsListHeader(unit, bulletsList) {
   local locId = ""
   if (bulletsList.weaponType == WEAPON_TYPE.ROCKETS)
     locId = "modification/_rockets"
@@ -335,7 +317,7 @@ function getBulletsListHeader(unit, bulletsList) {
 }
 
 //include spawn score cost
-function getFullItemCostText(unit, item, spawnScoreOnly = false) {
+let function getFullItemCostText(unit, item, spawnScoreOnly = false) {
   local res = ""
   let wType = ::g_weaponry_types.getUpgradeTypeByItem(item)
   let misRules = getCurMissionRules()

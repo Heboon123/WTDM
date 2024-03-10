@@ -17,7 +17,7 @@ const PRESET_DEFAULT_VERSION = 4
 const BACKUP_OLD_CONTROLS_DEFAULT = 0 // false
 
 
-function getJoystickBlockV4(blk) {
+let function getJoystickBlockV4(blk) {
   if (u.isDataBlock(blk?["joysticks"]))
     return blk["joysticks"]?["joystickSettings"]
   return null
@@ -66,7 +66,7 @@ let deviceIdByType = {
 }
 
 
-function getDefaultParams() {
+let function getDefaultParams() {
   return {
     isXInput                          = false
     trackIrZoom                       = true
@@ -84,7 +84,7 @@ function getDefaultParams() {
 }
 
 
-function isSameMapping(lhs, rhs) {
+let function isSameMapping(lhs, rhs) {
   let noValue = {}
   let deviceMapAttr = [
     "name",

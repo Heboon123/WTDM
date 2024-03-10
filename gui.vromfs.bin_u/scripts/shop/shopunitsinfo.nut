@@ -10,7 +10,7 @@ let { isUnitDefault, isUnitGift } = require("%scripts/unit/unitInfo.nut")
 let shopPromoteUnits = mkWatched(persist, "shopPromoteUnits", {})
 local countDefaultUnitsByCountry = null
 
-function fillPromoteUnitsList(blk, unit) {
+let function fillPromoteUnitsList(blk, unit) {
   if (blk?.beginPurchaseDate != null && blk?.endPurchaseDate != null) {
     shopPromoteUnits.mutate(@(v) v[unit.name] <- {
       unit = unit
@@ -20,7 +20,7 @@ function fillPromoteUnitsList(blk, unit) {
   }
 }
 
-function generateUnitShopInfo() {
+let function generateUnitShopInfo() {
   let blk = get_shop_blk()
   let totalCountries = blk.blockCount()
 
@@ -79,7 +79,7 @@ function generateUnitShopInfo() {
   }
 }
 
-function initCache() {
+let function initCache() {
   countDefaultUnitsByCountry = {}
   foreach (u in getAllUnits()) {
     if (u.isVisibleInShop() && isUnitDefault(u))
@@ -87,18 +87,18 @@ function initCache() {
   }
 }
 
-function invalidateCache() {
+let function invalidateCache() {
   countDefaultUnitsByCountry = null
 }
 
-function hasDefaultUnitsInCountry(country) {
+let function hasDefaultUnitsInCountry(country) {
   if (countDefaultUnitsByCountry == null)
     initCache()
 
   return (countDefaultUnitsByCountry?[country] ?? 0) > 0
 }
 
-function isCountryHaveUnitType(country, unitType) {
+let function isCountryHaveUnitType(country, unitType) {
   foreach (unit in getAllUnits())
     if (unit.shopCountry == country && unit.esUnitType == unitType && unit.isVisibleInShop())
       return true

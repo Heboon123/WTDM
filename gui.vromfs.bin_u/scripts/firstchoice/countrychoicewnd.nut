@@ -5,7 +5,7 @@ from "%scripts/dagui_library.nut" import *
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
-let { move_mouse_on_child } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { move_mouse_on_child, handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { find_in_array } = require("%sqStdLibs/helpers/u.nut")
 let { format } = require("string")
 let { rnd } = require("dagor.random")
@@ -23,7 +23,6 @@ let { getCountryFlagImg } = require("%scripts/options/countryFlagsPreset.nut")
 let { userIdStr } = require("%scripts/user/profileStates.nut")
 let { addTask } = require("%scripts/tasker.nut")
 let { getReserveAircraftName } = require("%scripts/slotbar/slotbarState.nut")
-let { getCrewUnit } = require("%scripts/crew/crew.nut")
 
 local MIN_ITEMS_IN_ROW = 3
 
@@ -31,6 +30,10 @@ enum CChoiceState {
   UNIT_TYPE_SELECT
   COUNTRY_SELECT
   APPLY
+}
+
+::gui_start_countryChoice <- function gui_start_countryChoice() {
+  handlersManager.loadHandler(gui_handlers.CountryChoiceHandler)
 }
 
 gui_handlers.CountryChoiceHandler <- class (gui_handlers.BaseGuiHandlerWT) {
@@ -102,7 +105,7 @@ gui_handlers.CountryChoiceHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function updateButtons() {
-    showObjById("back_button", !this.isFixedUnitType && this.state > 0, this.scene)
+    this.showSceneBtn("back_button", !this.isFixedUnitType && this.state > 0)
   }
 
   function checkSelection(country, unitType) {
@@ -324,7 +327,7 @@ gui_handlers.CountryChoiceHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       foreach (_idInCountry, crewBlock in c.crews) {
         local unitName = ""
         if (checkCurrentCrewAircrafts) {
-          let trainedUnit = getCrewUnit(crewBlock)
+          let trainedUnit = ::g_crew.getCrewUnit(crewBlock)
           if (trainedUnit && trainedUnit.unitType == unitType)
             unitName = trainedUnit.name
         }

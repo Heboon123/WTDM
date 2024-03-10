@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { getTimestampFromStringUtc, buildDateStr } = require("%scripts/time.nut")
@@ -9,10 +10,8 @@ let { getUnlockConditions, getHeaderCondition, isTimeRangeCondition } = require(
 let { getUnlockNameText, buildUnlockDesc } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { isUnlockFav } = require("%scripts/unlocks/favoriteUnlocks.nut")
 let { isUnlockVisible, isUnlockOpened } = require("%scripts/unlocks/unlocksModule.nut")
-let { getAllUnlocksWithBlkOrder, getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
+let { getAllUnlocksWithBlkOrder } = require("%scripts/unlocks/unlocksCache.nut")
 let { get_charserver_time_sec } = require("chard")
-let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
-let { addTooltipTypes } = require("%scripts/utils/genericTooltipTypes.nut")
 
 let battlePassChallenges = Watched([])
 let curSeasonChallenges = Computed(@() battlePassChallenges.value
@@ -28,7 +27,7 @@ curSeasonChallenges.subscribe(function(value) {
   }
 })
 
-function getLevelFromConditions(conditions) {
+let function getLevelFromConditions(conditions) {
   let battlepassLevel = conditions.findvalue(@(cond) cond?.type == "battlepassLevel")
   if (battlepassLevel)
     return battlepassLevel.level
@@ -60,7 +59,7 @@ let mainChallengeOfSeasonId = Computed(@() $"battlepass_season_{season.value}_ch
 let mainChallengeOfSeason = Computed(@() curSeasonChallenges.value
   .findvalue(@(challenge) challenge.id == mainChallengeOfSeasonId.value))
 
-function invalidateUnlocksCache() {
+let function invalidateUnlocksCache() {
   battlePassChallenges([])
   broadcastEvent("BattlePassCacheInvalidate")
 }
@@ -69,13 +68,13 @@ addListenersWithoutEnv({
   UnlocksCacheInvalidate = @(_p) invalidateUnlocksCache()
 })
 
-function updateChallenges() {
+let function updateChallenges() {
   if (::g_login.isLoggedIn())
     battlePassChallenges(getAllUnlocksWithBlkOrder()
       .filter(@(unlock) (unlock?.battlePassSeason != null) && isUnlockVisible(unlock)))
 }
 
-function getChallengeStatus(userstatUnlock, unlockConfig) {
+let function getChallengeStatus(userstatUnlock, unlockConfig) {
   if (userstatUnlock?.hasReward ?? false)
     return "complete"
   if (userstatUnlock?.isCompleted ?? false)
@@ -85,7 +84,7 @@ function getChallengeStatus(userstatUnlock, unlockConfig) {
   return null
 }
 
-function getConditionInTitleConfig(unlockBlk) {
+let function getConditionInTitleConfig(unlockBlk) {
   let res = {
     addTitle = ""
     titleIcon = "#ui/gameuiskin#challenge_medal.svg"
@@ -121,7 +120,7 @@ function getConditionInTitleConfig(unlockBlk) {
   return res
 }
 
-function getChallengeView(config, paramsCfg = {}) {
+let function getChallengeView(config, paramsCfg = {}) {
   let id = config.id
   let userstatUnlock = activeUnlocks.value?[id]
   let unlockConfig = ::build_conditions_config(config)
@@ -162,28 +161,6 @@ function getChallengeView(config, paramsCfg = {}) {
 
 let hasChallengesReward = Computed(@() battlePassChallenges.value
   .findindex(@(unlock) activeUnlocks.value?[unlock.id].hasReward ?? false) != null)
-
-addTooltipTypes({
-  BATTLE_PASS_CHALLENGE = {
-    isCustomTooltipFill = true
-    fillTooltip = function(obj, handler, id, _params) {
-      if (!checkObj(obj))
-        return false
-
-      let unlockBlk = id && id != "" && getUnlockById(id)
-      let view = {
-        items = [getChallengeView(unlockBlk, { isOnlyInfo = true, isInteractive = false })]
-        isSmallText = true
-      }
-      let data = handyman.renderCached("%gui/unlocks/battleTasksItem.tpl", view)
-
-      let guiScene = obj.getScene()
-      obj.width = "1@unlockBlockWidth"
-      guiScene.replaceContentFromText(obj, data, data.len(), handler)
-      return true
-    }
-  }
-})
 
 return {
   updateChallenges

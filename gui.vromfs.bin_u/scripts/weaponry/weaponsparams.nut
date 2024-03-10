@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let DataBlock = require("DataBlock")
@@ -6,7 +7,7 @@ let saclosMissileBeaconIRSourceBand = mkWatched(persist, "saclosMissileBeaconIRS
 let reloadCooldownTimeByCaliber = mkWatched(persist, "reloadCooldownTimeByCaliber", {})
 
 
-function initWeaponParams() {
+let function initWeaponParams() {
   let blk = DataBlock()
   blk.load("config/gameplay.blk")
   if (blk?.sensorsConstants)

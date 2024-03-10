@@ -4,9 +4,8 @@ from "%scripts/dagui_library.nut" import *
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let DataBlock = require("DataBlock")
-let { checkTutorialsList, tutorialRewardData, clearTutorialRewardData
+let { checkTutorialsList, reqTutorial, tutorialRewardData, clearTutorialRewardData
 } = require("%scripts/tutorials/tutorialsData.nut")
-let { reqTutorial } = require("%scripts/tutorials/tutorialsState.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { getDecoratorByResource } = require("%scripts/customization/decorCache.nut")
 let { getMissionRewardsMarkup } = require("%scripts/missions/missionsUtilsModule.nut")
@@ -20,8 +19,6 @@ let { getCountryFlagImg } = require("%scripts/options/countryFlagsPreset.nut")
 let { get_pve_awards_blk } = require("blkGetters")
 let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { checkUnlockedCountries } = require("%scripts/firstChoice/firstChoice.nut")
-let { isAnyAwardReceivedByModeType } = require("%scripts/unlocks/unlocksModule.nut")
-let { getPlayerRankByCountry } = require("%scripts/user/userInfoStats.nut")
 
 register_command(
   function (misName) {
@@ -93,7 +90,7 @@ local TutorialRewardHandler = class (gui_handlers.BaseGuiHandlerWT) {
         break
       }
 
-    if (!isAnyAwardReceivedByModeType("char_versus_battles_end_count_and_rank_test"))
+    if (!::is_any_award_received_by_mode_type("char_versus_battles_end_count_and_rank_test"))
       this.afterRewardText = loc("award/tutorial_fighter_next_award/desc")
 
     let nObj = this.scene.findObject("next_award")
@@ -125,7 +122,7 @@ local TutorialRewardHandler = class (gui_handlers.BaseGuiHandlerWT) {
 
   function updateDecoratorButton() {
     local canUseDecorator = this.decorator != null && canStartPreviewScene(false)
-    let obj = showObjById("btn_use_decorator", canUseDecorator, this.scene)
+    let obj = this.showSceneBtn("btn_use_decorator", canUseDecorator)
     if (!canUseDecorator)
       return
 
@@ -149,7 +146,7 @@ local TutorialRewardHandler = class (gui_handlers.BaseGuiHandlerWT) {
 
 gui_handlers.TutorialRewardHandler <- TutorialRewardHandler
 
-function tryOpenTutorialRewardHandler() {
+let function tryOpenTutorialRewardHandler() {
   if (tutorialRewardData.value == null)
     return false
 
@@ -200,7 +197,7 @@ function tryOpenTutorialRewardHandler() {
     if (u.search(reqTutorial, @(val) val == misName) != null) {
       newCountries = checkUnlockedCountries()
       foreach (c in newCountries)
-        checkRankUpWindow(c, -1, getPlayerRankByCountry(c))
+        checkRankUpWindow(c, -1, ::get_player_rank_by_country(c))
     }
   }
 

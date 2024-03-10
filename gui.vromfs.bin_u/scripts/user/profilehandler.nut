@@ -7,10 +7,9 @@ from "%scripts/mainConsts.nut" import SEEN
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { convertBlk } = require("%sqstd/datablock.nut")
-let { saveLocalSharedSettings, loadLocalAccountSettings
+let { saveLocalSharedSettings, loadLocalAccountSettings, saveLocalByAccount, loadLocalByAccount
 } = require("%scripts/clientState/localProfile.nut")
-let { loadLocalByAccount, saveLocalByAccount
-} = require("%scripts/clientState/localProfileDeprecated.nut")
+let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { broadcastEvent, addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { deferOnce } = require("dagor.workcycle")
@@ -34,7 +33,7 @@ let { askPurchaseDecorator, askConsumeDecoratorCoupon,
   findDecoratorCouponOnMarketplace } = require("%scripts/customization/decoratorAcquire.nut")
 let { getViralAcquisitionDesc, showViralAcquisitionWnd } = require("%scripts/user/viralAcquisition.nut")
 let { addPromoAction } = require("%scripts/promo/promoActions.nut")
-let { fillProfileSummary, getProfileInfo } = require("%scripts/user/userInfoStats.nut")
+let { fillProfileSummary } = require("%scripts/user/userInfoStats.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { setGuiOptionsMode, getGuiOptionsMode } = require("guiOptions")
 let { canStartPreviewScene, useDecorator, showDecoratorAccessRestriction,
@@ -54,7 +53,7 @@ let { launchEmailRegistration, canEmailRegistration, emailRegistrationTooltip,
 let { getUnlockCondsDescByCfg, getUnlockMultDescByCfg, getUnlockNameText, getUnlockMainCondDescByCfg,
   getLocForBitValues, buildUnlockDesc, fillUnlockManualOpenButton, updateUnseenIcon, updateLockStatus,
   fillUnlockImage, fillUnlockProgressBar, fillUnlockDescription, doPreviewUnlockPrize, fillReward,
-  fillUnlockTitle, fillUnlockPurchaseButton,getUnlockableMedalImage
+  fillUnlockTitle, fillUnlockPurchaseButton
 } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { APP_ID } = require("app")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
@@ -83,11 +82,7 @@ let purchaseConfirmation = require("%scripts/purchase/purchaseConfirmationHandle
 let { openTrophyRewardsList } = require("%scripts/items/trophyRewardList.nut")
 let { rewardsSortComparator } = require("%scripts/items/trophyReward.nut")
 let { getStats } = require("%scripts/myStats.nut")
-let { findItemById, canGetDecoratorFromTrophy } = require("%scripts/items/itemsManager.nut")
-let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 
-require("%scripts/user/userCard.nut") //for load UserCardHandler before Profile handler
 
 enum profileEvent {
   AVATAR_CHANGED = "AvatarChanged"
@@ -108,12 +103,12 @@ let selMedalIdx = {}
 let seenUnlockMarkers = seenList.get(SEEN.UNLOCK_MARKERS)
 let seenManualUnlocks = seenList.get(SEEN.MANUAL_UNLOCKS)
 
-function getSkinCountry(skinName) {
+let function getSkinCountry(skinName) {
   let len0 = skinName.indexof("/")
   return len0 ? ::getShopCountry(skinName.slice(0, len0)) : ""
 }
 
-function getUnlockFiltersList(uType, getCategoryFunc) {
+let function getUnlockFiltersList(uType, getCategoryFunc) {
   let categories = []
   let unlocks = getUnlocksByTypeInBlkOrder(uType)
   foreach (unlock in unlocks)
@@ -123,7 +118,7 @@ function getUnlockFiltersList(uType, getCategoryFunc) {
   return categories
 }
 
-function guiStartProfile(params = {}) {
+::gui_start_profile <- function gui_start_profile(params = {}) {
   loadHandler(gui_handlers.Profile, params)
 }
 
@@ -382,14 +377,14 @@ gui_handlers.Profile <- class (gui_handlers.UserCardHandler) {
     let canFindOnMarketplace = !canBuy && !canConsumeCoupon
       && decor.canBuyCouponOnMarketplace(null)
     let canFindInStore = !canBuy && !canConsumeCoupon && !canFindOnMarketplace
-      && canGetDecoratorFromTrophy(decor)
+      && ::ItemsManager.canGetDecoratorFromTrophy(decor)
 
-    let buyBtnObj = showObjById("btn_buy_decorator", canBuy, this.scene)
+    let buyBtnObj = this.showSceneBtn("btn_buy_decorator", canBuy)
     if (canBuy && buyBtnObj?.isValid())
       placePriceTextToButton(this.scene, "btn_buy_decorator", loc("mainmenu/btnOrder"), decor.getCost())
 
     let canFav = !decor.isUnlocked() && canDoUnlock(decor.unlockBlk)
-    let favBtnObj = showObjById("btn_fav", canFav, this.scene)
+    let favBtnObj = this.showSceneBtn("btn_fav", canFav)
     if (canFav)
       favBtnObj.setValue(isUnlockFav(decor.unlockId)
         ? loc("preloaderSettings/untrackProgress")
@@ -480,7 +475,7 @@ gui_handlers.Profile <- class (gui_handlers.UserCardHandler) {
     let sheet = this.getCurSheet()
     this.curFilterType = ""
     foreach (btn in ["btn_top_place", "btn_pagePrev", "btn_pageNext", "checkbox_only_for_bought"])
-      showObjById(btn, false, this.scene)
+      this.showSceneBtn(btn, false)
 
     if (sheet == "Profile") {
       this.showSheetDiv("profile")
@@ -607,8 +602,8 @@ gui_handlers.Profile <- class (gui_handlers.UserCardHandler) {
           this.updateDifficultySwitch(divObj)
       }
     }
-    showObjById("pages_list", pages, this.scene)
-    showObjById("unit_type_list", subPages, this.scene)
+    this.showSceneBtn("pages_list", pages)
+    this.showSceneBtn("unit_type_list", subPages)
   }
 
   function onDecalCategorySelect(listObj) {
@@ -682,7 +677,7 @@ gui_handlers.Profile <- class (gui_handlers.UserCardHandler) {
   }
 
   function updateDecalInfo(decor) {
-    let infoObj = showObjById("decal_info", decor != null, this.scene)
+    let infoObj = this.showSceneBtn("decal_info", decor != null)
     if (!decor)
       return
 
@@ -731,7 +726,7 @@ gui_handlers.Profile <- class (gui_handlers.UserCardHandler) {
       return " ".concat(loc("currency/gc/sign/colored"),
         colorize("currencyGCColor", loc("shop/object/can_be_found_on_marketplace")))
 
-    if (canGetDecoratorFromTrophy(decor))
+    if (::ItemsManager.canGetDecoratorFromTrophy(decor))
       return loc("mainmenu/itemCanBeReceived")
 
     return ""
@@ -1092,7 +1087,7 @@ gui_handlers.Profile <- class (gui_handlers.UserCardHandler) {
           id = name
           tag = "imgSelectable"
           unlocked = isUnlockOpened(name, unlockTypeId)
-          image = getUnlockableMedalImage(name)
+          image = ::get_image_for_unlockable_medal(name)
           imgClass = "smallMedals"
           focusBorder = true
         })
@@ -1120,7 +1115,7 @@ gui_handlers.Profile <- class (gui_handlers.UserCardHandler) {
     let view = {
       items = decorators.map(@(decorator) {
         id = decorator.id
-        tooltipId = getTooltipType("DECORATION").getTooltipId(decorator.id, decorator.decoratorType.unlockedItemType)
+        tooltipId = ::g_tooltip.getIdDecorator(decorator.id, decorator.decoratorType.unlockedItemType)
         unlocked = true
         tag = "imgSelectable"
         image = decorator.decoratorType.getImage(decorator)
@@ -1278,13 +1273,13 @@ gui_handlers.Profile <- class (gui_handlers.UserCardHandler) {
 
     this.guiScene.setUpdatesEnabled(false, false)
     let markUpData = handyman.renderCached("%gui/profile/profileSkins.tpl", skinView)
-    let objDesc = showObjById("item_desc", true, this.scene)
+    let objDesc = this.showSceneBtn("item_desc", true)
     this.guiScene.replaceContentFromText(objDesc, markUpData, markUpData.len(), this)
 
     if (canAddFav)
       fillUnlockFav(name, objDesc)
 
-    showObjById("unlocks_list", false, this.scene)
+    this.showSceneBtn("unlocks_list", false)
     this.guiScene.setUpdatesEnabled(true, true)
   }
 
@@ -1363,7 +1358,7 @@ gui_handlers.Profile <- class (gui_handlers.UserCardHandler) {
   }
 
   function showUnlockPrizes(obj) {
-    let trophy = findItemById(obj.trophyId)
+    let trophy = ::ItemsManager.findItemById(obj.trophyId)
     let content = trophy.getContent()
       .map(@(i) u.isDataBlock(i) ? convertBlk(i) : {})
       .sort(rewardsSortComparator)
@@ -1405,8 +1400,8 @@ gui_handlers.Profile <- class (gui_handlers.UserCardHandler) {
 
   function printUnlocksList(unlocksList) {
     let achievaAmount = unlocksList.len()
-    let unlocksListObj = showObjById("unlocks_list", true, this.scene)
-    showObjById("item_desc", false, this.scene)
+    let unlocksListObj = this.showSceneBtn("unlocks_list", true)
+    this.showSceneBtn("item_desc", false)
     local blockAmount = unlocksListObj.childrenCount()
 
     this.guiScene.setUpdatesEnabled(false, false)
@@ -1423,26 +1418,36 @@ gui_handlers.Profile <- class (gui_handlers.UserCardHandler) {
       }
     }
 
+    local currentItemNum = 0
     local selIdx = null
-    for (local i = 0; i < unlocksList.len(); ++i) {
-      let curUnlock = getUnlockById(unlocksList[i])
-      let unlockObj = unlocksListObj.getChild(i)
-      unlockObj.id = this.getUnlockBlockId(curUnlock.id)
-      unlockObj.holderId = curUnlock.id
-      this.fillUnlockInfo(curUnlock, unlockObj)
+    foreach (unlock in getAllUnlocksWithBlkOrder()) {
+      if (unlock?.id == null) {
+        let unlockConfigString = toString(unlock, 2) // warning disable: -declared-never-used
+        script_net_assert_once("missing id in unlock after cashed", "ProfileHandler: Missing id in unlock after cashed")
+        continue
+      }
+
+      if (!isInArray(unlock.id, unlocksList))
+        continue
+
+      let unlockObj = unlocksListObj.getChild(currentItemNum)
+      unlockObj.id = this.getUnlockBlockId(unlock.id)
+      unlockObj.holderId = unlock.id
+      this.fillUnlockInfo(unlock, unlockObj)
 
       if (selIdx == null
-          && (this.initialUnlockId == curUnlock.id
-            || (this.initialUnlockId == "" && canOpenUnlockManually(curUnlock))))
-        selIdx = i
+          && (this.initialUnlockId == unlock.id || (this.initialUnlockId == "" && canOpenUnlockManually(unlock))))
+        selIdx = currentItemNum
+
+      currentItemNum++
     }
+
     this.guiScene.setUpdatesEnabled(true, true)
 
     if (unlocksListObj.childrenCount() > 0)
       unlocksListObj.setValue(selIdx ?? 0)
 
-    seenUnlockMarkers.markSeen(getUnlockIds(getCurrentGameModeEdiff())
-      .filter(@(unlock) unlocksList.contains(unlock)))
+    seenUnlockMarkers.markSeen(getUnlockIds(::get_current_ediff()).filter(@(unlock) unlocksList.contains(unlock)))
   }
 
   function getUnlockBlockId(unlockId) {
@@ -1474,7 +1479,7 @@ gui_handlers.Profile <- class (gui_handlers.UserCardHandler) {
 
     let view = {
       title = loc(name + "/name")
-      image = getUnlockableMedalImage(name, true)
+      image = ::get_image_for_unlockable_medal(name, true)
       unlockProgress = progressData.value
       hasProgress = progressData.show
       mainCond = getUnlockMainCondDescByCfg(config, { showSingleStreakCondText = true })
@@ -1627,9 +1632,9 @@ gui_handlers.Profile <- class (gui_handlers.UserCardHandler) {
     this.fillTitleName(stats.titles.len() > 0 ? stats.title : "no_titles")
     if ("uid" in stats && stats.uid != userIdStr.value)
       externalIDsService.reqPlayerExternalIDsByUserId(stats.uid)
-    this.fillClanInfo(getProfileInfo())
+    this.fillClanInfo(::get_profile_info())
     this.fillModeListBox(this.scene.findObject("profile-container"), this.curMode)
-    ::fill_gamer_card(getProfileInfo(), "profile-", this.scene)
+    ::fill_gamer_card(::get_profile_info(), "profile-", this.scene)
     this.fillAwardsBlock(stats)
     this.fillShortCountryStats(stats)
     this.scene.findObject("profile_loading").show(false)
@@ -1714,7 +1719,7 @@ gui_handlers.Profile <- class (gui_handlers.UserCardHandler) {
 
     let obj = this.scene.findObject("profile-icon")
     if (obj)
-      obj.setValue(getProfileInfo().icon)
+      obj.setValue(::get_profile_info().icon)
 
     broadcastEvent(profileEvent.AVATAR_CHANGED)
   }
@@ -1727,7 +1732,7 @@ gui_handlers.Profile <- class (gui_handlers.UserCardHandler) {
   }
 
   function onEventClanInfoUpdate(_params) {
-    this.fillClanInfo(getProfileInfo())
+    this.fillClanInfo(::get_profile_info())
   }
 
   function initAirStats() {
@@ -1817,7 +1822,7 @@ gui_handlers.Profile <- class (gui_handlers.UserCardHandler) {
 
   function onOpenAchievementsUrl() {
     openUrl(loc("url/achievements",
-        { appId = APP_ID, name = getProfileInfo().name }),
+        { appId = APP_ID, name = ::get_profile_info().name }),
       false, false, "profile_page")
   }
 }
@@ -1841,7 +1846,7 @@ local function openProfileFromPromo(params, sheet = null) {
   let launchParams = openProfileSheetParamsFromPromo?[sheet](
     params?[1], params?[2] ?? "", params?[3] ?? "") ?? {}
   launchParams.__update({ initialSheet = sheet })
-  guiStartProfile(launchParams)
+  ::gui_start_profile(launchParams)
 }
 
 addPromoAction("profile", @(_handler, params, _obj) openProfileFromPromo(params))
@@ -1849,7 +1854,3 @@ addPromoAction("profile", @(_handler, params, _obj) openProfileFromPromo(params)
 addListenersWithoutEnv({
   SignOut = @(_p) profileSelectedFiltersCache.each(@(f) f.clear())
 })
-
-return {
-  guiStartProfile
-}

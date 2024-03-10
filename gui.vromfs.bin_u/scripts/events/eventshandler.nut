@@ -3,8 +3,6 @@ from "%scripts/dagui_natives.nut" import is_mouse_last_time_used
 from "%scripts/dagui_library.nut" import *
 from "%scripts/mainConsts.nut" import SEEN
 
-let { getGlobalModule } = require("%scripts/global_modules.nut")
-let g_squad_manager = getGlobalModule("g_squad_manager")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let DataBlock = require("DataBlock")
@@ -39,12 +37,9 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 let { setPromoButtonText, getPromoVisibilityById } = require("%scripts/promo/promo.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { OPTIONS_MODE_MP_DOMINATION } = require("%scripts/options/optionsExtNames.nut")
-let { saveLocalAccountSettings, loadLocalAccountSettings
+let { saveLocalAccountSettings, loadLocalAccountSettings, loadLocalByAccount, saveLocalByAccount
 } = require("%scripts/clientState/localProfile.nut")
-let { loadLocalByAccount, saveLocalByAccount
-} = require("%scripts/clientState/localProfileDeprecated.nut")
 let { getMissionsComplete } = require("%scripts/myStats.nut")
-let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
 
 const COLLAPSED_CHAPTERS_SAVE_ID = "events_collapsed_chapters"
 const ROOMS_LIST_OPEN_COUNT_SAVE_ID = "tutor/roomsListOpenCount"
@@ -58,7 +53,7 @@ const SHOW_RLIST_BEFORE_OPEN_DEFAULT = 10
  * Chapter has greater priority but it's bad prctice to use both options
  * simultaneously.
  */
-function guiStartModalEvents(options = {}) {
+::gui_start_modal_events <- function gui_start_modal_events(options = {}) {
   if (!suggestAndAllowPsnPremiumFeatures())
     return
 
@@ -486,7 +481,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!this.queueToShow || handlersManager.isHandlerValid(this.queueInfoHandlerWeak))
       return
 
-    let queueObj = showObjById("div_before_chapters_list", true, this.scene)
+    let queueObj = this.showSceneBtn("div_before_chapters_list", true)
     queueObj.height = "ph"
     let queueHandlerClass = this.queueToShow && ::queues.getQueuePreferredViewClass(this.queueToShow)
     let queueHandler = loadHandler(queueHandlerClass, {
@@ -530,11 +525,11 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     let isCurItemInFocus = (isEvent || isHeader) && (this.isMouseMode || this.hoveredIdx == this.selectedIdx || isInQueue)
 
     let reasonData = ::events.getCantJoinReasonData(isCurItemInFocus ? event : null)
-    let isReady = g_squad_manager.isMeReady()
-    let isSquadMember = g_squad_manager.isSquadMember()
+    let isReady = ::g_squad_manager.isMeReady()
+    let isSquadMember = ::g_squad_manager.isSquadMember()
 
     this.scheduleUpdateButtonsIfNeeded(event)
-    showObjById("btn_select_console", !isCurItemInFocus && (isEvent || isHeader), this.scene)
+    this.showSceneBtn("btn_select_console", !isCurItemInFocus && (isEvent || isHeader))
 
     let showJoinBtn = isCurItemInFocus && (isEvent && (!isInQueue || (isSquadMember && !isReady)))
     let joinButtonObj = this.scene.findObject("btn_join_event")
@@ -565,7 +560,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     leaveButtonObj.enable(isInQueue)
 
     let isShowCollapseBtn = isCurItemInFocus && isHeader
-    let collapsedButtonObj = showObjById("btn_collapsed_chapter", isShowCollapseBtn, this.scene)
+    let collapsedButtonObj = this.showSceneBtn("btn_collapsed_chapter", isShowCollapseBtn)
     if (isShowCollapseBtn) {
       let isCollapsedChapter = this.getCollapsedChapters()?[this.curChapterId]
       startText = loc(isCollapsedChapter ? "mainmenu/btnExpand" : "mainmenu/btnCollapse")
@@ -576,18 +571,18 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     reasonTextObj.setValue(reasonData.reasonText)
     reasonTextObj.show(reasonData.reasonText.len() > 0 && !isInQueue)
 
-    showObjById("btn_rooms_list", isCurItemInFocus && isEvent && isEventWithLobby(event), this.scene)
+    this.showSceneBtn("btn_rooms_list", isCurItemInFocus && isEvent && isEventWithLobby(event))
 
     let pack = isCurItemInFocus && isEvent ? getEventReqPack(event, true) : null
     let needDownloadPack = pack != null && !::have_package(pack)
-    let packBtn = showObjById("btn_download_pack", needDownloadPack, this.scene)
+    let packBtn = this.showSceneBtn("btn_download_pack", needDownloadPack)
     if (needDownloadPack && packBtn) {
       packBtn.tooltip = ::get_pkg_loc_name(pack)
       packBtn.setValue(loc("msgbox/btn_download") + " " + ::get_pkg_loc_name(pack, true))
     }
 
-    showObjById("btn_queue_options", isCurItemInFocus && isEvent
-      && ::queue_classes.Event.hasOptions(event.name), this.scene)
+    this.showSceneBtn("btn_queue_options", isCurItemInFocus && isEvent
+      && ::queue_classes.Event.hasOptions(event.name))
   }
 
   function fillEventsList() {
@@ -664,7 +659,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   function getCurrentEdiff() {
     let event = ::events.getEvent(this.curEventId)
     let ediff = event ? ::events.getEDiffByEvent(event) : -1
-    return ediff != -1 ? ediff : getCurrentGameModeEdiff()
+    return ediff != -1 ? ediff : ::get_current_ediff()
   }
 
   function onEventCountryChanged(_p) {
@@ -727,10 +722,19 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   //----END_VIEW----//
 }
 
-function openEventsWndFromPromo(owner, params = []) {
+::get_events_handler <- function get_events_handler() {
+  local handler = handlersManager.findHandlerClassInScene(gui_handlers.EventsHandler)
+  if (!handler) {
+    ::gui_start_modal_events(null)
+    handler = handlersManager.findHandlerClassInScene(gui_handlers.EventsHandler)
+  }
+  return handler
+}
+
+let function openEventsWndFromPromo(owner, params = []) {
   let eventId = params.len() > 0 ? params[0] : null
   owner.checkedForward(@() this.goForwardIfOnline(
-    @() guiStartModalEvents({ event = eventId }), false, true))
+    @() ::gui_start_modal_events({ event = eventId }), false, true))
 }
 
 let getEventsPromoText = @() ::events.getEventsVisibleInEventsWindowCount() == 0
@@ -767,7 +771,3 @@ addPromoButtonConfig({
   }
   updateByEvents = ["EventsDataUpdated", "MyStatsUpdated", "UnlockedCountriesUpdate"]
 })
-
-return {
-  guiStartModalEvents
-}

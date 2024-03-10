@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 let { getCountryCode } = require("auth_wt")
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -13,7 +14,7 @@ let countryCodeToLocId = {
 }
 
 // restrictedInCountries - array of countries codes
-function hasLegalRestictions(restrictedInCountries) {
+let function hasLegalRestictions(restrictedInCountries) {
   if (restrictedInCountries.len() == 0)
     return false
 
@@ -21,12 +22,12 @@ function hasLegalRestictions(restrictedInCountries) {
   return restrictedInCountries.findindex(@(c) c == userCountry) != null
 }
 
-function showLegalRestrictionsNotice() {
+let function showLegalRestrictionsNotice() {
   scene_msg_box("legalRestrictionsNotice", null, loc("msgbox/legalRestrictionsNotice"),
     [["ok"]], "ok")
 }
 
-function getCountryName(countryCode) {
+let function getCountryName(countryCode) {
   if (countryCode not in countryCodeToLocId) {
     script_net_assert_once("Legal restrictions: unsupported country code",
       $"Random rewards functionality is limited in {countryCode}, but no loc key was defined")
@@ -41,7 +42,7 @@ function getCountryName(countryCode) {
   return res
 }
 
-function checkLegalRestrictions(restrictedInCountries, onSuccessCb) {
+let function checkLegalRestrictions(restrictedInCountries, onSuccessCb) {
   if (!hasLegalRestictions(restrictedInCountries))
     return onSuccessCb()
 

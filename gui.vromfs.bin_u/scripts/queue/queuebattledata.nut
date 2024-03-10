@@ -1,3 +1,4 @@
+//checked for plus_string
 
 from "%scripts/dagui_library.nut" import *
 let { resetTimeout } = require("dagor.workcycle")
@@ -30,7 +31,7 @@ addListenersWithoutEnv({
   SignOut                    = @(_) successResultByCountry({})
 }, CONFIG_VALIDATION)
 
-function printQueueDataResult() {
+let function printQueueDataResult() {
   if (queueProfileJwt.value == null) {
     log($"[queueProfileJwt] SuccessResult for {profileCountrySq.value} is null")
     return
@@ -39,11 +40,11 @@ function printQueueDataResult() {
   debugTableData(decodeJwtAndHandleErrors(queueProfileJwt.value))
 }
 
-function actualizeQueueData(cb = null) {
+let function actualizeQueueData(cb = null) {
   isInRequestQueueData(true)
   needRefresh(false)
   let curCountry = profileCountrySq.value
-  function fullSuccessCb(res) {
+  let function fullSuccessCb(res) {
     isInRequestQueueData(false)
     let { decodError = null } = decodeJwtAndHandleErrors(res)
     if (decodError == null) {
@@ -55,10 +56,10 @@ function actualizeQueueData(cb = null) {
 
     cb?(res)
   }
-  function fullErrorCb(res) {
+  let function fullErrorCb(res) {
     isInRequestQueueData(false)
     lastResult(res)
-    cb?(res)
+    cb?(successResultByCountry.value?[curCountry])
   }
   let requestBlk = DataBlock()
   requestBlk.infoTypes = "battleStartInfo;clanInfo;penaltyInfo;playerInfo"
@@ -69,12 +70,12 @@ function actualizeQueueData(cb = null) {
     { showErrorMessageBox = false }, fullSuccessCb, fullErrorCb)
 }
 
-function actualizeQueueDataIfNeed() {
+let function actualizeQueueDataIfNeed() {
   if (needActualize.value)
     actualizeQueueData()
 }
 
-function delayedActualize() {
+let function delayedActualize() {
   if (needActualize.value)
     resetTimeout(SILENT_ACTUALIZE_DELAY, actualizeQueueDataIfNeed)
 }

@@ -49,7 +49,7 @@ let windowState = Watched({
 })
 
 
-function onMoveResize(dx, dy, dw, dh) {
+let function onMoveResize(dx, dy, dw, dh) {
   let w = windowState.value
   w.pos[0] = math.clamp(w.pos[0]+dx, -(sw(100)-w.size[0]), 0)
   w.pos[1] = math.max(w.pos[1]+dy, 0)
@@ -58,7 +58,7 @@ function onMoveResize(dx, dy, dw, dh) {
   return w
 }
 
-function get_tags(comp_flags){
+local function get_tags(comp_flags){
   let tags = []
   comp_flags = comp_flags ?? 0
   if (comp_flags & COMP_FLAG_REPLICATED)
@@ -68,7 +68,7 @@ function get_tags(comp_flags){
   return tags
 }
 
-function get_tagged_comp_name(comp_flags, comp_name) {
+let function get_tagged_comp_name(comp_flags, comp_name) {
   local tags = get_tags(comp_flags).map(@(v) $"[{v}]")
   tags = "".join(tags)
   if (tags.len() <= 0)
@@ -76,9 +76,9 @@ function get_tagged_comp_name(comp_flags, comp_name) {
   return $"{tags} {comp_name}"
 }
 
-function makeBgToggle(initial=true) {
+let function makeBgToggle(initial=true) {
   local showBg = !initial
-  function toggleBg() {
+  let function toggleBg() {
     showBg = !showBg
     return showBg
   }
@@ -99,10 +99,10 @@ let getModComps = function() {
 let modifiedComponents = Watched(getModComps())
 let updateModComps = @() modifiedComponents(getModComps())
 
-function isNonSceneEntity() {
+let function isNonSceneEntity() {
   return modifiedComponents.value == null
 }
-function isModifiedComponent(cname, cpath) {
+let function isModifiedComponent(cname, cpath) {
   if (cname == null || (cpath?.len()??0) > 0)
     return false
   if (cname == "transform")
@@ -112,14 +112,14 @@ function isModifiedComponent(cname, cpath) {
   return modifiedComponents.value?[cname] == true
 }
 
-function doResetComponent(eid, comp_name) {
+let function doResetComponent(eid, comp_name) {
   entity_editor.reset_component(eid, comp_name)
   selectedCompName(null)
   selectedCompComp(null)
   selectedCompPath(null)
   selectedCompName.trigger()
 }
-function doResetSelectedComponent() {
+let function doResetSelectedComponent() {
   let eid = selectedEntity.value ?? INVALID_ENTITY_ID
   if (eid == INVALID_ENTITY_ID)
     return
@@ -129,7 +129,7 @@ function doResetSelectedComponent() {
 }
 
 
-function panelRowColorC(comp_fullname, stateFlags, selectedCompNameVal, isOdd){
+let function panelRowColorC(comp_fullname, stateFlags, selectedCompNameVal, isOdd){
   local color = 0
   if (comp_fullname == selectedCompNameVal) {
     color = colors.Active
@@ -157,7 +157,6 @@ let mkCompNameText = function(comp_name, comp_name_text, metaInfo, modified, gro
   return {
     rendObj = ROBJ_TEXT
     text = $"{prefix}{comp_name_text}{suffix}"
-    color = colors.TextDefault
     size = [flex(), fontH(100)]
     margin = fsh(0.5)
     group = group
@@ -170,7 +169,7 @@ let mkCompNameText = function(comp_name, comp_name_text, metaInfo, modified, gro
 
 local toggleBg = makeBgToggle()
 
-function mkCompTooltip(metaInfo) {
+let function mkCompTooltip(metaInfo) {
   local text = metaInfo?.desc
   if (text == null)
     return null
@@ -197,7 +196,7 @@ function mkCompTooltip(metaInfo) {
   }
 }
 
-function panelCompRow(params={}) {
+let function panelCompRow(params={}) {
   let comp_name_ext = params?.comp_name_ext
   let comp_flags = params?.comp_flags ?? 0
   let {eid, comp_sq_type, rawComponentName, path, obj=null} = params
@@ -259,7 +258,7 @@ let removeSelectedByEditorTemplate = @(tname) tname.replace("+daeditor_selected+
 
 const attrPanelAddEntityTemplateUID = "attr_panel_add_entity_template"
 
-function doAddTemplate(templateName) {
+let function doAddTemplate(templateName) {
   let eid = selectedEntity.value
   if (eid != INVALID_ENTITY_ID) {
     if (g_entity_mgr.getTemplateDB().getTemplateByName(templateName) == null) {
@@ -277,7 +276,7 @@ function doAddTemplate(templateName) {
   selectedEntity.trigger()
 }
 
-function openAddTemplateDialog() {
+let function openAddTemplateDialog() {
   let templateName = Watched("")
   let templateNameComp = textInput(templateName, {onAttach = @(elem) set_kb_focus(elem)})
   let close = @() removeModalWindow(attrPanelAddEntityTemplateUID)
@@ -307,7 +306,7 @@ function openAddTemplateDialog() {
 
 const attrPanelDelEntityTemplateUID = "attr_panel_del_entity_template"
 
-function doDelTemplate(templateName) {
+let function doDelTemplate(templateName) {
   let eid = selectedEntity.value
   if (eid != INVALID_ENTITY_ID) {
     local tname = removeSelectedByEditorTemplate(g_entity_mgr.getEntityTemplateName(eid))
@@ -328,7 +327,7 @@ function doDelTemplate(templateName) {
   selectedEntity.trigger()
 }
 
-function openDelTemplateDialog() {
+let function openDelTemplateDialog() {
   let templateName = Watched("")
   let templateNameComp = textInput(templateName, {onAttach = @(elem) set_kb_focus(elem)})
   let close = @() removeModalWindow(attrPanelDelEntityTemplateUID)
@@ -358,7 +357,7 @@ function openDelTemplateDialog() {
 
 let templateTooltip = Watched(null)
 
-function panelCaption(text, tpl_name) {
+let function panelCaption(text, tpl_name) {
   return {
     size = [flex(), SIZE_TO_CONTENT]
     rendObj = ROBJ_BOX
@@ -387,7 +386,7 @@ function panelCaption(text, tpl_name) {
   }
 }
 
-function warningGenerated() {
+let function warningGenerated() {
   return {
     size = [flex(), SIZE_TO_CONTENT]
     rendObj = ROBJ_BOX
@@ -406,12 +405,12 @@ function warningGenerated() {
   }
 }
 
-function closePropPanel() {
+let function closePropPanel() {
   propPanelVisible(false)
   propPanelClosed(true)
 }
 
-function panelButtons() {
+let function panelButtons() {
   return {
     size = [flex(), fsh(3.3)]
     rendObj = ROBJ_BOX
@@ -452,7 +451,7 @@ let hiddenComponents = {
   daeditor__selected = true
 }
 
-function isComponentHidden(k){
+let function isComponentHidden(k){
   if (hiddenComponents?[k] || k.slice(0,1)=="_")
     return true
   if (endswith(k, "$copy"))
@@ -460,7 +459,7 @@ function isComponentHidden(k){
   return false
 }
 
-function isKeyInFilter(key, filterStr=null){
+let function isKeyInFilter(key, filterStr=null){
   if (filterStr==null || filterStr.len()==0 || key.tolower().contains(filterStr.tolower()))
     return true
   return false
@@ -497,7 +496,7 @@ selectedEntity.subscribe(function(_eid){
     isOpenedCache.clear()
 })
 
-function getOpenedCacheEntry(eid, cname, cpath) {
+let function getOpenedCacheEntry(eid, cname, cpath) {
   local cachekey = clone cname
   foreach (key in (cpath ?? []))
     cachekey = $"{cachekey}.{key}"
@@ -514,7 +513,7 @@ let addPropValueTypes = ["text" "real" "bool" "integer" "array" "object"]
 
 const attrPanelAddObjectValueUID = "attr_panel_add_object_value"
 
-function doAddObjectValue(eid, cname, cpath, value_name, value_type) {
+let function doAddObjectValue(eid, cname, cpath, value_name, value_type) {
   local object = _dbg_get_comp_val_inspect(eid, cname)
   local ccobj = object
   foreach (key in (cpath ?? []))
@@ -548,7 +547,7 @@ function doAddObjectValue(eid, cname, cpath, value_name, value_type) {
   removeModalWindow(attrPanelAddObjectValueUID)
 }
 
-function openAddObjectValueDialog(eid, cname, cpath, ccobj) {
+let function openAddObjectValueDialog(eid, cname, cpath, ccobj) {
   let valueName = Watched("")
   let valueType = Watched(addPropValueTypes[0])
   let valueNameComp = textInput(valueName, {onAttach = @(elem) set_kb_focus(elem)})
@@ -584,7 +583,7 @@ function openAddObjectValueDialog(eid, cname, cpath, ccobj) {
 
 const attrPanelAddArrayValueUID = "attr_panel_add_array_value"
 
-function doAddArrayValue(eid, cname, cpath, ckey, value_type) {
+let function doAddArrayValue(eid, cname, cpath, ckey, value_type) {
   local object = _dbg_get_comp_val_inspect(eid, cname)
   local ccobj = object
   foreach (key in (cpath ?? []))
@@ -637,7 +636,7 @@ function doAddArrayValue(eid, cname, cpath, ckey, value_type) {
   removeModalWindow(attrPanelAddArrayValueUID)
 }
 
-function openAddArrayValueDialog(eid, cname, cpath, ckey) {
+let function openAddArrayValueDialog(eid, cname, cpath, ckey) {
   let valueType = Watched(addPropValueTypes[0])
   let valueTypeComp = combobox(valueType, addPropValueTypes)
   let close = @() removeModalWindow(attrPanelAddArrayValueUID)
@@ -665,7 +664,7 @@ function openAddArrayValueDialog(eid, cname, cpath, ckey) {
   })
 }
 
-function doContainerOp(eid, comp_name, cont_path, op) {
+let function doContainerOp(eid, comp_name, cont_path, op) {
   local cname = comp_name
   local cpath = cont_path
   local ckey  = null
@@ -830,7 +829,7 @@ let collapsibleButtonsStyleDark = {
   }
 }
 
-function mkCollapsible(isConst, caption, childrenCtor=@() null, len=0, tags = null, eid=null, rawComponentName=null, path=null){
+let function mkCollapsible(isConst, caption, childrenCtor=@() null, len=0, tags = null, eid=null, rawComponentName=null, path=null){
   let empty = len==0
   tags = tags ?? []
   let isRoot = (path?.len()??0) < 1
@@ -933,7 +932,7 @@ let mkCompFlagTag = memoize(@(text) mkTagFromTextColor(text, Color(40,90,90, 50)
 let mkFlagTags = @(eid, rawComponentName)
   get_tags(get_comp_flags(eid, rawComponentName)).map(mkCompFlagTag)
 
-function updateAttrComponent(eid, cname) {
+let function updateAttrComponent(eid, cname) {
   updateComp(eid, cname)
   gui_scene.resetTimeout(0.1, @() selectedCompName.trigger())
 }
@@ -947,7 +946,7 @@ mkCompObject = function(eid, rawComponentName, rawObject, caption=null, onChange
   let objData = object?.getAll() ?? object
   let objLen = objData.len()
   path = path ?? []
-  function childrenCtor() {
+  let function childrenCtor() {
     let contentChildren = []
     let objKeys = objData.keys().filter(@(v) !isComponentHidden(v)).sort(@(a, b) a <=> b)
     foreach (ok in objKeys) {
@@ -993,7 +992,7 @@ mkCompList = function(eid, rawComponentName, rawObject, caption=null, onChange=n
   let object = getValFromObj(eid, rawComponentName, path)
   let len = object?.len() ?? 0
   path = path ?? []
-  function childrenCtor(){
+  let function childrenCtor(){
     let res = []
     foreach (num, _val in (object?.getAll() ?? object)) {
       let nkeys = (clone path).append(num)
@@ -1038,7 +1037,7 @@ mkComp = function(eid, rawComponentName, rawObject, caption=null, onChange = nul
   return panelCompRow(params)
 }
 
-function ecsObjToQuirrel(x) {
+let function ecsObjToQuirrel(x) {
   return x.map(@(val) val?.getAll() ?? val)
 }
 
@@ -1075,7 +1074,7 @@ let filteredCurComponents = Computed(function(){
 })
 
 
-function mkEntityRow(eid, template_name, name, is_odd) {
+let function mkEntityRow(eid, template_name, name, is_odd) {
   let group = ElemGroup()
   let stateFlags = Watched(0)
 
@@ -1146,7 +1145,7 @@ let sortedEntites = Computed(function() {
   return entitiesList
 })
 
-function compPanel() {
+let function compPanel() {
 
   if (!propPanelVisible.value) {
     return {

@@ -1,3 +1,4 @@
+//-file:plus-string
 from "%scripts/dagui_natives.nut" import get_profile_country, ww_side_val_to_name
 from "%scripts/dagui_library.nut" import *
 from "%scripts/worldWar/worldWarConst.nut" import *
@@ -21,7 +22,7 @@ let { checkSquadUnreadyAndDo } = require("%scripts/squads/squadUtils.nut")
 
 const WW_VEHICLE_SET_OUT_OF_DATE_DAYS = 90
 
-function getAvailableUnits(map, country) {
+let function getAvailableUnits(map, country) {
   let res = {}
   let curPreset = getCurPreset()
   let countryGroups = map.getUnitsGroupsByCountry()?[country]
@@ -156,7 +157,7 @@ local handlerClass = class (gui_handlers.BaseGuiHandlerWT) {
     let wData = getWarningTextTbl(
       availableUnits, getCurPreset().countryPresets?[country].units, true)
     let isVisibleBtnAutoPreset = wData.needMsgBox
-    let btnAutoPreset = showObjById("btn_auto_preset", isVisibleBtnAutoPreset, this.scene)
+    let btnAutoPreset = this.showSceneBtn("btn_auto_preset", isVisibleBtnAutoPreset)
     if (isVisibleBtnAutoPreset) {
       let bestPresetData = getBestPresetData(availableUnits, country, true)
       let hasChangeInPreset = bestPresetData?.hasChangeInPreset ?? false
@@ -164,10 +165,10 @@ local handlerClass = class (gui_handlers.BaseGuiHandlerWT) {
       btnAutoPreset.hasUnseenIcon = hasChangeInPreset ? "yes" : "no"
       showObjById("auto_preset_warning_icon", hasChangeInPreset, btnAutoPreset)
     }
-    let warningTextObj = showObjById("cant_join_reason_txt", wData.warningText != "", this.scene)
+    let warningTextObj = this.showSceneBtn("cant_join_reason_txt", wData.warningText != "")
     warningTextObj.setValue(wData.warningText)
 
-    let warningIconObj = showObjById("warning_icon", wData.fullWarningText != "", this.scene)
+    let warningIconObj = this.showSceneBtn("warning_icon", wData.fullWarningText != "")
     warningIconObj.tooltip = wData.fullWarningText
   }
 

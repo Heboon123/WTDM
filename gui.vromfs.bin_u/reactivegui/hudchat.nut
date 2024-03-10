@@ -36,8 +36,8 @@ let chatModeConfig = {
   }
 }
 
-function makeInputField(form_state, send_function) {
-  function send () {
+let function makeInputField(form_state, send_function) {
+  let function send () {
     send_function(form_state.value)
     form_state.update("")
   }
@@ -47,7 +47,7 @@ function makeInputField(form_state, send_function) {
 }
 
 
-function chatBase(log_state, send_message_fn) {
+let function chatBase(log_state, send_message_fn) {
   let chatMessageState = Watched("")
   let logInstance = scrollableData.make(log_state)
 
@@ -64,18 +64,18 @@ function chatBase(log_state, send_message_fn) {
 let chatLog = state.hudLog
 
 
-function modeColor(mode) {
+let function modeColor(mode) {
   let colorId = chatModeConfig?[mode].colorId
   return colorId == null ? colors.white
     : colors.hud?[colorId] ?? teamColors.value[colorId]
 }
 
-function getModeNameText(mode) {
+let function getModeNameText(mode) {
   let name = chatModeConfig?[mode].name
   return name == null ? "" : loc($"chat/{name}")
 }
 
-function sendFunc(_message) {
+let function sendFunc(_message) {
   if (!penalty.isDevoiced()) {
     chat_on_send()
   }
@@ -91,7 +91,7 @@ state.input.subscribe(function (new_val) {
 })
 
 
-function chatInputCtor(field, send) {
+let function chatInputCtor(field, send) {
   let restoreControle = function () {
     toggle_ingame_chat(false)
   }
@@ -143,7 +143,7 @@ let shadow = {
   fontFxOffsY = hdpx(1)
 }
 
-function getHintText() {
+let function getHintText() {
   let config = hints(
     cross_call.mp_chat_mode.getChatHint() ?? "",
     { font = fontsState.get("small")

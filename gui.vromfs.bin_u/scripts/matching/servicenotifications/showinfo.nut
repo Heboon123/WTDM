@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 
@@ -7,7 +8,7 @@ let exitGame = require("%scripts/utils/exitGame.nut")
 let { web_rpc } = require("%scripts/webRPC.nut")
 let { isInFlight } = require("gameplayBinding")
 
-function showMessageBox(params) {
+let function showMessageBox(params) {
   if (isInFlight())
     return { error = { message = "Can not be shown in battle" } }
 
@@ -27,7 +28,7 @@ function showMessageBox(params) {
   return { result = "ok" }
 }
 
-function showUrl(params) {
+let function showUrl(params) {
   if (isInFlight())
     return { error = { message = "Can not be shown in battle" } }
 

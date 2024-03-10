@@ -32,7 +32,7 @@ userstatStats.subscribe(function(d) {
   captchaLastAttemptTimestamp.set(time)
 })
 
-function updateCaptchaUserstats(params) {
+let function updateCaptchaUserstats(params) {
   let { blockCounter = null, banCounter = null time = get_charserver_time_sec() } = params
   captchaLastAttemptTimestamp.set(time)
 
@@ -59,35 +59,35 @@ function updateCaptchaUserstats(params) {
   userstat.request(userstatRequestData, @(_) refreshUserstatStats())
  }
 
-function increaseCaptchaFailsCount() {
+let function increaseCaptchaFailsCount() {
   updateCaptchaUserstats({
     blockCounter = captchaFailsBlockCounter.get() + 1
     banCounter = captchFailsBanCounter.get() + 1
   })
 }
 
-function resetAllCaptchaFailsCounters() {
+let function resetAllCaptchaFailsCounters() {
   updateCaptchaUserstats({
     blockCounter = 0
     banCounter = 0
   })
 }
 
-function resetCaptchaFailsBlockCounter() {
+let function resetCaptchaFailsBlockCounter() {
   updateCaptchaUserstats({
     blockCounter = 0
     time = 0 // resets time after block period passed to properly compute hasSuccessfullyTry
   })
 }
 
-function resetCaptchaFailsBanCounter() {
+let function resetCaptchaFailsBanCounter() {
   updateCaptchaUserstats({
     banCounter = 0
     time = 0 // resets time on ban to properly compute hasSuccessfullyTry
   })
 }
 
-function setLastAttemptTime(time) {
+let function setLastAttemptTime(time) {
   updateCaptchaUserstats({ time })
 }
 

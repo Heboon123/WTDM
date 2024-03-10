@@ -1,8 +1,6 @@
+//-file:plus-string
 from "%scripts/dagui_natives.nut" import add_rta_localization
 from "%scripts/dagui_library.nut" import *
-
-let { eventbus_subscribe } = require("eventbus")
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { addListenersWithoutEnv, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { isEmpty } = require("%sqStdLibs/helpers/u.nut")
@@ -12,7 +10,7 @@ let cache = {} // todo: consider adding persist
 let liveDecoratorsCache = {}
 local waitingItemdefs = {}
 
-function cacheDecor(decType, unitTypeTag) {
+let function cacheDecor(decType, unitTypeTag) {
   let curCache = {
     categories      = []
     decoratorsList  = {}
@@ -73,7 +71,7 @@ function cacheDecor(decType, unitTypeTag) {
   return curCache
 }
 
-function getCachedDataByType(decType, unitTypeTag = null) {
+let function getCachedDataByType(decType, unitTypeTag = null) {
   let id = unitTypeTag != null
     ? $"proceedData_{decType.name}_{unitTypeTag}"
     : $"proceedData_{decType.name}"
@@ -86,15 +84,15 @@ function getCachedDataByType(decType, unitTypeTag = null) {
   return curCache
 }
 
-function getCachedOrderByType(decType, unitTypeTag = null) {
+let function getCachedOrderByType(decType, unitTypeTag = null) {
   return getCachedDataByType(decType, unitTypeTag).categories
 }
 
-function getCachedDecoratorsListByType(decType) {
+let function getCachedDecoratorsListByType(decType) {
   return getCachedDataByType(decType).decoratorsList
 }
 
-function getDecorator(decorId, decType) {
+let function getDecorator(decorId, decType) {
   if (isEmpty(decorId))
     return null
 
@@ -106,7 +104,7 @@ function getDecorator(decorId, decType) {
   return res
 }
 
-function getDecoratorById(decorId) {
+let function getDecoratorById(decorId) {
   if (isEmpty(decorId))
     return null
 
@@ -119,11 +117,11 @@ function getDecoratorById(decorId) {
   return null
 }
 
-function getDecoratorByResource(resource, resourceType) {
+let function getDecoratorByResource(resource, resourceType) {
   return getDecorator(resource, ::g_decorator_type.getTypeByResourceType(resourceType))
 }
 
-function addDecorToCache(decorator, decCache) {
+let function addDecorToCache(decorator, decCache) {
   let category = decorator.category
   if (category not in decCache.catToGroups) {
     decCache.categories.append(category)
@@ -145,7 +143,7 @@ function addDecorToCache(decorator, decCache) {
 }
 
 // todo get rid of 'params'
-function buildLiveDecoratorFromResource(resource, resourceType, itemDef, params) {
+let function buildLiveDecoratorFromResource(resource, resourceType, itemDef, params) {
   if (!resource || !resourceType)
     return
 
@@ -167,18 +165,18 @@ function buildLiveDecoratorFromResource(resource, resourceType, itemDef, params)
     liveDecoratorsCache[resource] <- decorator
 }
 
-function invalidateCache() {
+let function invalidateCache() {
   cache.clear()
   broadcastEvent("DecorCacheInvalidate")
 }
 
-function invalidateFlagCache() {
+let function invalidateFlagCache() {
   let id = $"proceedData_{::g_decorator_type.FLAGS.name}"
   if (id in cache)
     cache.$rawdelete(id)
 }
 
-function updateDecorVisible(decorId, decType) {
+let function updateDecorVisible(decorId, decType) {
   let decCache = getCachedDataByType(decType)
   let decorator = decCache.decoratorsList?[decorId]
   if (!decorator || !decorator.isVisible())
@@ -193,17 +191,17 @@ function updateDecorVisible(decorId, decType) {
   }
 }
 
-function onEventDecalReceived(params) {
+let function onEventDecalReceived(params) {
   if (params?.id != null)
     updateDecorVisible(params.id, ::g_decorator_type.DECALS)
 }
 
-function onEventAttachableReceived(params) {
+let function onEventAttachableReceived(params) {
   if (params?.id != null)
     updateDecorVisible(params.id, ::g_decorator_type.ATTACHABLES)
 }
 
-function onEventItemsShopUpdate(_) {
+let function onEventItemsShopUpdate(_) {
   foreach (itemDefId, decorator in waitingItemdefs) {
     let couponItem = ::ItemsManager.findItemById(itemDefId)
     if (couponItem) {
@@ -221,7 +219,7 @@ addListenersWithoutEnv({
   LoginComplete = @(_) invalidateCache()
   SignOut = @(_) invalidateCache()
   HangarModelLoaded = @(_) invalidateFlagCache()
-}, g_listener_priority.CONFIG_VALIDATION)
+}, ::g_listener_priority.CONFIG_VALIDATION)
 
 // native code callback
 ::on_dl_content_skins_invalidate <- function on_dl_content_skins_invalidate() {
@@ -229,9 +227,9 @@ addListenersWithoutEnv({
 }
 
 // native code callback
-eventbus_subscribe("update_unit_skins_list", function update_unit_skins_list(evt) {
-  getAircraftByName(evt.unitName)?.resetSkins()
-})
+::update_unit_skins_list <- function update_unit_skins_list(unitName) {
+  getAircraftByName(unitName)?.resetSkins()
+}
 
 return {
   getDecorator

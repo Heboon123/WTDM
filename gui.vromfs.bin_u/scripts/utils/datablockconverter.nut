@@ -42,7 +42,7 @@ let strToKey = function(str) { // -return-different-types seems like it is by de
 }
 
 let simpleDataTypes = {bool=1, integer=1, float=1, string=1}
-function dataToBlk(data) {
+let function dataToBlk(data) {
   let dataType = isDataBlock(data) ? "DataBlock" : type(data)
   if (dataType == "null")
     return "__null"
@@ -66,7 +66,7 @@ function dataToBlk(data) {
   return $"__unsupported {toString(data)}"
 }
 
-function blkToData(blk) {
+let function blkToData(blk) {
   if (u.isString(blk) && startsWith(blk, "__unsupported")) {
     return null
   }

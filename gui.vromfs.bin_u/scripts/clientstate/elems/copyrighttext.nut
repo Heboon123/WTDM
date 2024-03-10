@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let elemViewType = require("%sqDagui/elemUpdater/elemViewType.nut")

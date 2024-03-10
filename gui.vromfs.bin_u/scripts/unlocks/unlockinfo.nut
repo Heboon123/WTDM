@@ -1,11 +1,12 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
 
-function getMedalRibbonImg(unlockId) {
+let function getMedalRibbonImg(unlockId) {
   return $"!@ui/medals/{unlockId}_ribbon.ddsx"
 }
 
-function hasMedalRibbonImg(unlockId) {
+let function hasMedalRibbonImg(unlockId) {
   let unlock = getUnlockById(unlockId)
   return unlock?.hasRibbonImg ?? (unlock?.type == "medal")
 }

@@ -1,6 +1,7 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
+let { UNIT_GROUP } = require("%scripts/utils/genericTooltipTypes.nut")
 let { buildUnitSlot } = require("%scripts/slotbar/slotbarView.nut")
 
 local function getGroupUnitMarkUp(name, unit, group, overrideParams = {}) {
@@ -10,7 +11,7 @@ local function getGroupUnitMarkUp(name, unit, group, overrideParams = {}) {
     isLocalState = false
     needMultiLineName = true
     tooltipParams = { showLocalState = false }
-    tooltipId = getTooltipType("UNIT_GROUP").getTooltipId(group)
+    tooltipId = UNIT_GROUP.getTooltipId(group)
   }.__update(overrideParams)
 
   if (group != null)

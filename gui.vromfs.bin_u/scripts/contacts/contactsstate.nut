@@ -15,7 +15,6 @@ let { setInterval, clearTimer } = require("dagor.workcycle")
 let { addFriendInvite } = require("%scripts/invites/invites.nut")
 let { userIdStr } = require("%scripts/user/profileStates.nut")
 let { contactEvent, statusGroupsToRequest, GAME_GROUP_NAME } = require("%scripts/contacts/contactsConsts.nut")
-let { addPopup } = require("%scripts/popups/popups.nut")
 
 let logC = log_with_prefix("[CONTACTS STATE] ")
 
@@ -24,7 +23,7 @@ let searchContactsResults = Watched({})
 
 let isMeAllowedToBeAddedToContacts = mkWatched(persist, "isMeAllowedToBeAddedToContacts", false)
 
-function setAbilityToBeAddedToContacts(isAvailable) {
+let function setAbilityToBeAddedToContacts(isAvailable) {
   if (isAvailable == isMeAllowedToBeAddedToContacts.get())
     return
 
@@ -50,7 +49,7 @@ let contactsGroupToRequestRemoveAction = {
   myBlacklist = "contacts_remove_from_blacklist"
 }
 
-function updatePresencesByList(presences) {
+let function updatePresencesByList(presences) {
   let contactsDataList = []
   foreach (p in presences) {
     let player = {
@@ -102,7 +101,7 @@ function updatePresencesByList(presences) {
   ::update_contacts_by_list(contactsDataList, false)
 }
 
-function onUpdateContactsCb(result) {
+let function onUpdateContactsCb(result) {
   if ("presences" not in result && "groups" not in result)
     return
 
@@ -115,13 +114,13 @@ function onUpdateContactsCb(result) {
   ::update_gamercards()
 }
 
-function fetchContacts() {
+let function fetchContacts() {
   matchingApiFunc("mpresence.reload_contact_list", function(result) {
     onUpdateContactsCb(result)
   })
 }
 
-function execContactsCharAction(userId, charAction, successCb = null) {
+let function execContactsCharAction(userId, charAction, successCb = null) {
   if (userId == ::INVALID_USER_ID) {
     logC($"trying to do {charAction} with invalid contact")
     return
@@ -141,7 +140,7 @@ let defaultSearchRequestParams = {
   specificAppId = ";".join(appIdsList)
 }
 
-function searchContactsOnline(request, callback = null) {
+let function searchContactsOnline(request, callback = null) {
   request = defaultSearchRequestParams.__merge(request)
   logC(request)
   contactsClient.contacts_request(
@@ -180,7 +179,7 @@ function searchContactsOnline(request, callback = null) {
 let sendFriendChangedEvent = @(friendId)
   matchingApiNotify("mpresence.notify_friend_added", { friendId })
 
-function verifiedContactAndDoIfNeed(player, groupName, cb) {
+let function verifiedContactAndDoIfNeed(player, groupName, cb) {
   if (!player)
     return
 
@@ -202,7 +201,7 @@ function verifiedContactAndDoIfNeed(player, groupName, cb) {
   cb(contact, groupName)
 }
 
-function addContactImpl(contact, groupName) {
+let function addContactImpl(contact, groupName) {
   if (::isPlayerInContacts(contact.uid, groupName))
     return //no need to do something
 
@@ -210,21 +209,21 @@ function addContactImpl(contact, groupName) {
   if (action == null)
     return
 
-  function successCb() {
+  let function successCb() {
     sendFriendChangedEvent(contact.uidInt64)
-    addPopup(null, format(loc($"msg/added_to_{groupName}"), contact.getName()))
+    ::g_popups.add(null, format(loc($"msg/added_to_{groupName}"), contact.getName()))
   }
   execContactsCharAction(contact.uid, action, successCb)
 }
 
-function addContact(player, groupName) { //playerConfig: { uid, name }
+let function addContact(player, groupName) { //playerConfig: { uid, name }
   if (!::can_add_player_to_contacts_list(groupName))
     return //Too many contacts
 
   verifiedContactAndDoIfNeed(player, groupName, addContactImpl)
 }
 
-function removeContactImpl(contact, groupName) {
+let function removeContactImpl(contact, groupName) {
   if (!::isPlayerInContacts(contact.uid, groupName))
     return //no need to do something
 
@@ -247,7 +246,7 @@ function removeContactImpl(contact, groupName) {
   )
 }
 
-function addInvitesToFriend(inviters) {
+let function addInvitesToFriend(inviters) {
   if (inviters == null)
     return
 
@@ -255,8 +254,8 @@ function addInvitesToFriend(inviters) {
   fetchContacts()
 }
 
-function requestContactsListAndDo(cb) {
-  function callback(res) {
+let function requestContactsListAndDo(cb) {
+  let function callback(res) {
      updateContactsListFromContactsServer(res)
      cb(res)
   }
@@ -324,7 +323,7 @@ register_command(function(count) {
 
 local updateFakePresenceCount = 0
 local updateFakePresenceTimeSec = 0
-function updateFakePresence() {
+let function updateFakePresence() {
   let startTime = get_time_msec()
   for(local i = 0; i < updateFakePresenceCount; i++) {
     let f = chooseRandom(fakeFriendsList.value)
@@ -334,7 +333,7 @@ function updateFakePresence() {
   broadcastEvent(contactEvent.CONTACTS_GROUP_UPDATE, { groupName = EPL_FRIENDLIST })
   logC($"{updateFakePresenceCount} friends presence update by separate events time: {get_time_msec() - startTime}")
 }
-function changeFakePresence(count, updateCycleTimeSec) {
+let function changeFakePresence(count, updateCycleTimeSec) {
   clearTimer(updateFakePresence)
   updateFakePresenceCount = count
   updateFakePresenceTimeSec = updateCycleTimeSec

@@ -3,9 +3,11 @@ from "%scripts/dagui_library.nut" import *
 
 let { isInMenu } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { launchOnlineShop } = require("%scripts/onlineShop/onlineShopModel.nut")
-let { get_gui_balance, hasMultiplayerRestritionByBalance } = require("%scripts/user/balance.nut")
+let { get_gui_balance } = require("%scripts/user/balance.nut")
 
-function isShowGoldBalanceWarning() {
+let hasMultiplayerRestritionByBalance = @() get_cur_rank_info().gold < 0
+
+let function isShowGoldBalanceWarning() {
   if (!hasMultiplayerRestritionByBalance())
     return false
 
@@ -65,6 +67,7 @@ function checkBalanceMsgBox(cost, afterCheck = null, silent = false) {
 }
 
 return {
+  hasMultiplayerRestritionByBalance
   isShowGoldBalanceWarning
   checkBalanceMsgBox
 }

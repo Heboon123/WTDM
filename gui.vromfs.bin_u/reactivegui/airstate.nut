@@ -31,8 +31,6 @@ let GunInDeadZone = Watched(false)
 let GunSightMode = Watched(0)
 
 let HorAngle = Watched(0.0)
-let HorVelX = Watched(0.0)
-let HorVelY = Watched(0.0)
 
 let TurretYaw   = Watched(0.0)
 let TurretPitch = Watched(0.0)
@@ -277,8 +275,6 @@ let helicopterState = {
   GunSightMode,
 
   HorAngle,
-  HorVelX,
-  HorVelY,
 
   isAllCannonsEmpty,
   isAllMachineGunsEmpty,

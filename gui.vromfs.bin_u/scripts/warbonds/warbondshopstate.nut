@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import warbonds_get_purchase_limit
 from "%scripts/dagui_library.nut" import *
 

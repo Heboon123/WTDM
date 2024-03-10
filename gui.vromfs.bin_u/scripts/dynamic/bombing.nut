@@ -12,7 +12,7 @@ let { mgBeginMission, mgGetPlayerSide, mgAcceptMission, mgFullLogs, mgSetStr, mg
   mgSetMinMaxAircrafts
 } = require("dynamicMission")
 
-function generateBombingMission(isFreeFlight, ground_type, createGroundUnitsProc) {
+let function generateBombingMission(isFreeFlight, ground_type, createGroundUnitsProc) {
   let mission_preset_name = "bombing_preset01"
   mgBeginMission($"gameData/missions/dynamic_campaign/objectives/{mission_preset_name}.blk")
   let playerSide = mgGetPlayerSide()
@@ -232,7 +232,7 @@ function generateBombingMission(isFreeFlight, ground_type, createGroundUnitsProc
   mgAcceptMission()
 }
 
-function genBombingVehiclesMission(isFreeFlight) {
+let function genBombingVehiclesMission(isFreeFlight) {
   generateBombingMission(isFreeFlight, "tank",
     function(enemySide) {
       mgSetStr("mission_settings/mission/name", "dynamic_bombing_vehicles")
@@ -251,7 +251,7 @@ function genBombingVehiclesMission(isFreeFlight) {
   )
 }
 
-function genBombingAntiTankMission(isFreeFlight) {
+let function genBombingAntiTankMission(isFreeFlight) {
   generateBombingMission(isFreeFlight, "artillery",
     function(enemySide) {
       mgSetStr("mission_settings/mission/name", "dynamic_bombing_anti_tank")
@@ -270,7 +270,7 @@ function genBombingAntiTankMission(isFreeFlight) {
   )
 }
 
-function genBombingBuildingsMission(isFreeFlight) {
+let function genBombingBuildingsMission(isFreeFlight) {
   generateBombingMission(isFreeFlight, "building",
     function(enemySide) {
       mgSetStr("mission_settings/mission/name", "dynamic_bombing_buildings")
@@ -289,7 +289,7 @@ function genBombingBuildingsMission(isFreeFlight) {
   )
 }
 
-function genBombingShipsMission(isFreeFlight) {
+let function genBombingShipsMission(isFreeFlight) {
   generateBombingMission(isFreeFlight, "destroyer",
     function(enemySide) {
       mgSetStr("mission_settings/mission/name", "dynamic_bombing_ships")
@@ -308,7 +308,7 @@ function genBombingShipsMission(isFreeFlight) {
   )
 }
 
-function genBombingCarrierMission(isFreeFlight) {
+let function genBombingCarrierMission(isFreeFlight) {
   generateBombingMission(isFreeFlight, "carrier",
     function(enemySide) {
       mgSetStr("mission_settings/mission/name", "dynamic_bombing_carrier")

@@ -16,7 +16,7 @@ let isTable = @(v) type(v)=="table"
 let isArray = @(v) type(v)=="array"
 let isString = @(v) type(v)=="string"
 let isFunction = @(v) type(v)=="function"
-function isDataBlock(obj) {
+let function isDataBlock(obj) {
   //prefer this as it can handle any DataBlock binding and implementation
   if (obj?.paramCount!=null && obj?.blockCount != null)
     return true
@@ -26,11 +26,11 @@ function isDataBlock(obj) {
 let callableTypes = ["function","table","instance"]
 let recursivetypes =["table","array","class"]
 
-function isCallable(v) {
+let function isCallable(v) {
   return callableTypes.indexof(type(v)) != null && (v.getfuncinfos() != null)
 }
 
-function mkIteratee(func){
+let function mkIteratee(func){
   let infos = func.getfuncinfos()
   let params = infos.parameters.len()-1
   assert(params>0 && params<3)
@@ -45,7 +45,7 @@ function mkIteratee(func){
 /**
   Check for proper iteratee and so on - under construction
 */
-function funcCheckArgsNum(func, numRequired){
+let function funcCheckArgsNum(func, numRequired){
   let infos = func.getfuncinfos()
   local plen = infos.parameters.len() - 1
   let deplen = infos.defparams.len()
@@ -72,7 +72,7 @@ Split list into two arrays:
 one whose elements all satisfy predicate and one whose elements all do not satisfy predicate.
 predicate is transformed through iteratee to facilitate shorthand syntaxes.
 */
-function partition(list, predicate){
+let function partition(list, predicate){
   let ok = []
   let not_ok = []
   predicate = mkIteratee(predicate)
@@ -97,7 +97,7 @@ function partition(list, predicate){
   => ["moe", "larry", "curly"]
   if entry doesnt have property it skipped in return value
  */
-function pluck(list, propertyName){
+let function pluck(list, propertyName){
   return list.map(function(v){
     if (propertyName not in v)
       throw null
@@ -117,7 +117,7 @@ function pluck(list, propertyName){
  * values the keys. For this to work, all of your table's values should be
  * unique and string serializable.
  */
-function invert(table) {
+let function invert(table) {
   let res = {}
   foreach (key, val in table)
     res[val] <- key
@@ -129,7 +129,7 @@ function invert(table) {
    if addParams=true), and for each key maps value func(tbl1Value, tbl2Value)
  * If value not exist in one of table it will be pushed to func as defValue
  */
-function tablesCombine(tbl1, tbl2, func=null, defValue = null, addParams = true) {
+let function tablesCombine(tbl1, tbl2, func=null, defValue = null, addParams = true) {
   let res = {}
   if (func == null)
     func = function (_val1, val2) {return val2}
@@ -143,7 +143,7 @@ function tablesCombine(tbl1, tbl2, func=null, defValue = null, addParams = true)
   return res
 }
 
-function isEqual(val1, val2, customIsEqual={}){
+let function isEqual(val1, val2, customIsEqual={}){
   if (val1 == val2)
     return true
   let valType = type(val1)
@@ -179,7 +179,7 @@ function isEqual(val1, val2, customIsEqual={}){
 * equals to python list(set(<list>)), and with optional hash function
 * (for example to extract key form list of tables to make unique by that)
 */
-function unique(list, hashfunc=null){
+let function unique(list, hashfunc=null){
   let values = {}
   let res = []
   hashfunc = hashfunc ?? @(v) v
@@ -198,7 +198,7 @@ foreach (k, v in range(-1, -5, -1))
 print("\n")
 // -1  -2  -3  -4
 */
-function range(m, n=null, step=1) {
+let function range(m, n=null, step=1) {
   let start = n==null ? 0 : m
   let end = n==null ? m : n
   for (local i=start; (end>start) ? i<end : i>end; i+=step) // -potentially-nulled-ops
@@ -206,7 +206,7 @@ function range(m, n=null, step=1) {
 }
 
 //not recursive isEqual, for simple lists or tables
-function isEqualSimple(list1, list2, compareFunc=null) {
+let function isEqualSimple(list1, list2, compareFunc=null) {
   compareFunc = compareFunc ?? @(a,b) a!=b
   if (list1 == list2)
     return true
@@ -220,7 +220,7 @@ function isEqualSimple(list1, list2, compareFunc=null) {
 }
 
 //create from one-dimentional array two-dimentional array by slice it to rows with fixed amount of columns
-function arrayByRows(arr, columns) {
+let function arrayByRows(arr, columns) {
   let res = []
   for(local i = 0; i < arr.len(); i += columns)
     res.append(arr.slice(i, i + columns))
@@ -231,7 +231,7 @@ function arrayByRows(arr, columns) {
 **Chunk a single array into multiple arrays, each containing count or fewer items.
 */
 
-function chunk(list, count) {
+let function chunk(list, count) {
   if (count == null || count < 1) return []
   let result = []
   local i = 0
@@ -249,7 +249,7 @@ function chunk(list, count) {
  * element in the array (or a property name), returns an object with an index
  * of each item.
  */
-function indexBy(list, iteratee) {
+let function indexBy(list, iteratee) {
   let res = {}
   if (isString(iteratee)){
     foreach (val in list)
@@ -263,7 +263,7 @@ function indexBy(list, iteratee) {
   return res
 }
 
-function deep_clone(val) {
+let function deep_clone(val) {
   if (!recursivetypes.contains(type(val)))
     return val
   return val.map(deep_clone)
@@ -278,7 +278,7 @@ function deep_clone(val) {
  * - new key value pairs from source table will be added to target table
  * - it's impossible to delete key from target table, only overwrite with null value
  */
-function deep_update(target, source) {
+let function deep_update(target, source) {
   if ((recursivetypes.indexof(type(source)) == null)) {
     target = source
     return target
@@ -302,12 +302,12 @@ function deep_update(target, source) {
 }
 
 //Creates new value from target and source, by merges (mutates) target arrays and tables recursively with source
-function deep_merge(target, source) {
+let function deep_merge(target, source) {
   let ret = deep_clone(target)
   return deep_update(ret, source)
 }
 //
-function flatten(list, depth = -1, level=0){
+let function flatten(list, depth = -1, level=0){
   if (!isArray(list))
     return list
   let res = []
@@ -343,7 +343,7 @@ local a = do_in_scope(ChangeAllocThres(8<<10), @(...) array(10000000, {foo=10}))
 ```
 */
 
-function do_in_scope(obj, doFn){
+let function do_in_scope(obj, doFn){
   assert(
     type(obj)=="instance" &&  "__enter__" in obj && "__exit__" in obj,
     "to support 'do_in_scope' object passed as first argument should implement '__enter__' and '__exit__' methods"
@@ -366,7 +366,7 @@ function do_in_scope(obj, doFn){
   return res
 }
 
-function insertGap(list, gap){
+let function insertGap(list, gap){
   let res = []
   let len = list.len()
   foreach (idx, l in list){

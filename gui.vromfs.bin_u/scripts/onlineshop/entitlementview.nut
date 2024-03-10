@@ -13,7 +13,6 @@ let { getDecorator } = require("%scripts/customization/decorCache.nut")
 let { getUnitTypeTextByUnit } = require("%scripts/unit/unitInfo.nut")
 let { decoratorTypes, getTypeByUnlockedItemType } = require("%scripts/customization/types.nut")
 let { buildUnitSlot } = require("%scripts/slotbar/slotbarView.nut")
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 
 let template = "%gui/items/trophyDesc.tpl"
 let singleItemIconLayer = "item_place_single"
@@ -22,7 +21,7 @@ let itemContainerLayer = "trophy_reward_place"
 const MIN_ITEMS_OFFSET = 0.5
 const MAX_ITEMS_OFFSET = 1
 
-function getIncomeView(gold, wp) {
+let function getIncomeView(gold, wp) {
   let res = []
   if (gold)
     res.append({
@@ -71,7 +70,7 @@ let getUnlockView = @(entitlement) (entitlement?.unlockGift ?? []).map(function(
   }
 })
 
-function getDecoratorActionButtonsView(decorator, decoratorType) {
+let function getDecoratorActionButtonsView(decorator, decoratorType) {
   if (!(decorator?.canPreview() ?? false))
     return []
 
@@ -97,14 +96,14 @@ let getDecoratorGiftView = @(giftArray, decoratorType, params) (giftArray ?? [])
   return {
     title = colorize(nameColor, locName)
     icon = decoratorType.prizeTypeIcon
-    tooltipId = getTooltipType("DECORATION").getTooltipId(giftId, decoratorType.unlockedItemType)
+    tooltipId = ::g_tooltip.getIdDecorator(giftId, decoratorType.unlockedItemType)
     commentText = isHave ? colorize("badTextColor", loc("mainmenu/receiveOnlyOnce")) : null
     buttons = buttons
     buttonsCount = buttons.len()
   }
 })
 
-function getUnitActionButtonsView(unit) {
+let function getUnitActionButtonsView(unit) {
   if ((unit.isInShop ?? false) == false)
     return []
 

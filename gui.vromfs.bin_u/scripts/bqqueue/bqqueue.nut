@@ -1,6 +1,6 @@
 from "%scripts/dagui_library.nut" import *
 let { APP_ID } = require("app")
-let { eventbus_subscribe } = require("eventbus")
+let { subscribe } = require("eventbus")
 let { get_time_msec } = require("dagor.time")
 let { resetTimeout, defer } = require("dagor.workcycle")
 let { httpRequest, HTTP_SUCCESS } = require("dagor.http")
@@ -28,18 +28,18 @@ let currentUrlIndex = hardPersistWatched("bqQueue.currentUrlIndex", 0)
 let urls = Watched([])
 let url = Computed(@() urls.value?[currentUrlIndex.value] ?? urls.value?[0])
 
-function initUrl() {
+let function initUrl() {
   urls(shuffle((get_cur_circuit_block() ?? DataBlock()) % "charServer"))
   currentUrlIndex(0)
 }
 
 initUrl()
 
-function changeUrl() {
+let function changeUrl() {
   currentUrlIndex((currentUrlIndex.value + 1) % max(urls.value.len(), 1))
 }
 
-function sendAll() {
+let function sendAll() {
   if (queue.value.len() == 0)
     return
 
@@ -99,7 +99,7 @@ function sendAll() {
   })
 }
 
-function startSendTimer() {
+let function startSendTimer() {
   if (queue.value.len() == 0)
     return
   let timeLeft = nextCanSendMsec.value - get_time_msec()
@@ -110,7 +110,7 @@ function startSendTimer() {
 }
 startSendTimer()
 
-eventbus_subscribe(RESPONSE_EVENT, function(res) {
+subscribe(RESPONSE_EVENT, function(res) {
   let { status = -1, http_code = -1, context = null } = res
   if (status == HTTP_SUCCESS && http_code >= 200 && http_code < 300) {
     logBQ($"Success send {context?.list.len()} events")
@@ -144,12 +144,12 @@ queue.subscribe(function(v) {
   wasQueueLen = v.len()
 })
 
-eventbus_subscribe("app.shutdown", @(_) sendAll())
+subscribe("app.shutdown", @(_) sendAll())
 
 let addToQueue = @(msg) queueByUserId.mutate(
   @(v) v[userIdStr.value] <- (clone (v?[userIdStr.value] ?? [])).append(msg))
 
-function sendBqEvent(tableId, event, data = {}) {
+let function sendBqEvent(tableId, event, data = {}) {
   let msg = { tableId, data = { clientTime = get_charserver_time_sec(), event, params = json_to_string(data) } }
   addToQueue(msg)
 }

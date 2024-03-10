@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import clan_can_register_to_ww, clan_get_my_clan_id
 from "%scripts/dagui_library.nut" import *
 

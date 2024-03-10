@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { activeUnlocks, unlockProgress, emptyProgress, receiveRewards, getStageByIndex
@@ -21,7 +22,7 @@ let premiumProgress = keepref(Computed(function() {
   return unlockProgress.value?[premiumUnlockId.value] ?? emptyProgress
 }))
 
-function receiveEmtyRewards(unlock, progressData) {
+let function receiveEmtyRewards(unlock, progressData) {
   if (!(unlock?.hasReward ?? false))
     return
 

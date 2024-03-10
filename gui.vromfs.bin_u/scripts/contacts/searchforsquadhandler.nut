@@ -1,7 +1,5 @@
+//-file:plus-string
 from "%scripts/dagui_library.nut" import *
-let { eventbus_subscribe } = require("eventbus")
-let { getGlobalModule } = require("%scripts/global_modules.nut")
-let g_squad_manager = getGlobalModule("g_squad_manager")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { canInteractCrossConsole, isXBoxPlayerName, isPlatformSony } = require("%scripts/clientState/platform.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
@@ -16,11 +14,9 @@ let { getPromoVisibilityById } = require("%scripts/promo/promo.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let ContactsHandler = require("%scripts/contacts/contactsHandler.nut")
 let { isMeNewbie } = require("%scripts/myStats.nut")
-let QUEUE_TYPE_BIT = require("%scripts/queue/queueTypeBit.nut")
-let { queues } = require("%scripts/queue/queueManager.nut")
 
-function guiStartSearchSquadPlayer(_ = null) {
-  if (!g_squad_manager.canInviteMember()) {
+::gui_start_search_squadPlayer <- function gui_start_search_squadPlayer() {
+  if (!::g_squad_manager.canInviteMember()) {
     showInfoMsgBox(loc("squad/not_a_leader"), "squad_not_available")
     return
   }
@@ -28,13 +24,6 @@ function guiStartSearchSquadPlayer(_ = null) {
   updateContacts()
   handlersManager.loadHandler(gui_handlers.SearchForSquadHandler)
 }
-
-function openSearchSquadPlayer() {
-  queues.checkAndStart(guiStartSearchSquadPlayer, null,
-    "isCanModifyQueueParams", QUEUE_TYPE_BIT.DOMINATION | QUEUE_TYPE_BIT.NEWBIE)
-}
-
-eventbus_subscribe("guiStartSearchSquadPlayer", guiStartSearchSquadPlayer)
 
 gui_handlers.SearchForSquadHandler <- class (ContactsHandler) {
   wndType = handlerType.MODAL
@@ -95,13 +84,13 @@ gui_handlers.SearchForSquadHandler <- class (ContactsHandler) {
       && !isBlock
       && canInteractCrossConsole(contactName)
       && canInteractCrossPlatform
-      && g_squad_manager.canInviteMember(this.curPlayer?.uid ?? "")
-      && g_squad_manager.canInviteMemberByPlatform(contactName)
-      && !g_squad_manager.isPlayerInvited(this.curPlayer?.uid ?? "", contactName)
+      && ::g_squad_manager.canInviteMember(this.curPlayer?.uid ?? "")
+      && ::g_squad_manager.canInviteMemberByPlatform(contactName)
+      && !::g_squad_manager.isPlayerInvited(this.curPlayer?.uid ?? "", contactName)
       && canInvite
       && ::g_squad_utils.canSquad()
 
-    showObjById("btn_squadInvite_bottom", showSquadInvite, this.scene)
+    this.showSceneBtn("btn_squadInvite_bottom", showSquadInvite)
   }
 
   function onPlayerMsg(obj) {
@@ -142,7 +131,7 @@ gui_handlers.SearchForSquadHandler <- class (ContactsHandler) {
   getContactsGroups = @() this.sg_groups
 }
 
-addPromoAction("squad_contacts", @(_handler, _params, _obj) openSearchSquadPlayer())
+addPromoAction("squad_contacts", @(_handler, _params, _obj) ::open_search_squad_player())
 
 let promoButtonId = "invite_squad_mainmenu_button"
 
@@ -159,7 +148,3 @@ addPromoButtonConfig({
   }
   updateByEvents = ["QueueChangeState"]
 })
-
-return {
-  openSearchSquadPlayer
-}

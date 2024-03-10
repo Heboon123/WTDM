@@ -2,11 +2,10 @@
 from "%scripts/dagui_natives.nut" import is_decals_disabled, get_time_till_decals_disabled
 from "%scripts/dagui_library.nut" import *
 
-let { isInMenu } = require("%scripts/baseGuiHandlerManagerWT.nut")
-let { eventbus_send, eventbus_subscribe } = require("eventbus")
 let { format } = require("string")
 let time = require("%scripts/time.nut")
 let penalty = require("penalty")
+let { startLogout } = require("%scripts/login/logout.nut")
 
 //  local penalist = penalty.getPenaltyList()
 //  [
@@ -25,7 +24,7 @@ let penalty = require("penalty")
 //  (but only certain types, i.e. "SILENT_DEVOICE" shouldn't be shown to user')
 
 
-function getDevoiceMessage(activeColor = "chatActiveInfoColor") {
+let getDevoiceMessage = function (activeColor = "chatActiveInfoColor") {
   let st = penalty.getPenaltyStatus()
   //st = { status = penalty.DEVOICE, duration = 360091, category="FOUL", comment="test ban", seconds_left=2012}
   if (st.status != penalty.DEVOICE) {
@@ -48,7 +47,7 @@ function getDevoiceMessage(activeColor = "chatActiveInfoColor") {
         txt += " " + format(loc("charServer/ban/timeLeft"), timeText)
       }
     }
-    else if (isInMenu()) {
+    else if (::isInMenu()) {
       ::update_entitlements_limited()
     }
 
@@ -64,7 +63,7 @@ function getDevoiceMessage(activeColor = "chatActiveInfoColor") {
 }
 
 
-function showBannedStatusMsgBox(showBanOnly = false) {
+let showBannedStatusMsgBox = function(showBanOnly = false) {
   let st = penalty.getPenaltyStatus()
   if (showBanOnly && st.status != penalty.BAN) {
     return
@@ -79,7 +78,7 @@ function showBannedStatusMsgBox(showBanOnly = false) {
 
   if (st.status == penalty.BAN) {
     banType  = "ban"
-    fn = @() eventbus_send("request_logout", {})
+    fn = startLogout
     ::queues.leaveAllQueuesSilent()
     ::SessionLobby.leaveRoom()
   }
@@ -100,12 +99,12 @@ function showBannedStatusMsgBox(showBanOnly = false) {
   }
 
   if (st.duration >= penalty.BAN_USER_INFINITE_PENALTY || onlyDecalsDisabled) {
-    txt += loc($"charServer/{banType}/permanent")
+    txt += loc("charServer/" + banType + "/permanent")
   }
   else {
     let timeLeft = time.secondsToHours(get_time_till_decals_disabled() || st.seconds_left)
     let durationHours = time.secondsToHours(st.duration)
-    txt += format(loc($"charServer/{banType}/timed"), time.hoursToString(durationHours, false))
+    txt += format(loc("charServer/" + banType + "/timed"), time.hoursToString(durationHours, false))
     txt += " " + format(loc("charServer/ban/timeLeft"), time.hoursToString(timeLeft, false, true))
   }
 
@@ -120,16 +119,16 @@ function showBannedStatusMsgBox(showBanOnly = false) {
   }
 }
 
-eventbus_subscribe("request_show_banned_status_msgbox", @(event) showBannedStatusMsgBox(event?.showBanOnly ?? false))
-
-function isMeBanned() {
+let isMeBanned = function() {
   return penalty.getPenaltyStatus().status == penalty.BAN
 }
 
 
-return {
-  getDevoiceMessage
-  showBannedStatusMsgBox
-  isMeBanned
+let export = {
+  getDevoiceMessage = getDevoiceMessage
+  showBannedStatusMsgBox = showBannedStatusMsgBox
+  isMeBanned = isMeBanned
 }
 
+
+return export

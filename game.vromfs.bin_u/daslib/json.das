@@ -30,10 +30,6 @@ variant Token
     _symbol : int
     _error  : string
 
-struct TokenAt
-    value : Token
-    line, row : int
-
 let private
     Token_string = typeinfo(variant_index<_string> type<Token>) //! index of the
     Token_symbol = typeinfo(variant_index<_symbol> type<Token>)
@@ -66,38 +62,25 @@ def private lexer ( text : array<uint8> )
     let stext = string(text)
     return <- _lexer(stext)
 
-def private next(var text : iterator<int>; var character, line, row : int&) : bool
-
-    if next(text, character)
-        if is_new_line(character)
-            line++
-            row = 0
-        else
-            row++
-        return true
-    return false
-
 def private _lexer ( var stext : string implicit )
-    return <- generator<TokenAt>() <|
+    return <- generator<Token>() <|
         var tin : iterator<int>
         unsafe
             tin <- each(stext)
         var ahead : int = ' '
         var str : array<uint8>
-        var line : int = 1
-        var row : int = 0
         while !empty(tin)
-            while is_white_space(ahead) && next(tin,ahead,line,row)
+            while is_white_space(ahead) && next(tin,ahead)
                 pass
             if empty(tin)
                 return false
             if ahead=='[' || ahead==']' || ahead=='{' || ahead=='}' || ahead==':' || ahead==','
-                yield [[TokenAt value=[[Token _symbol=ahead]],line=line,row=row]]
+                yield [[Token _symbol=ahead]]
                 next(tin, ahead)
             elif ahead=='"'
-                while next(tin,ahead,line,row) && ahead!='"'
+                while next(tin,ahead) && ahead!='"'
                     if ahead == '\\'
-                        if next(tin,ahead,line,row)
+                        if next(tin,ahead)
                             if ahead=='b'
                                 ahead = '\b'
                             elif ahead=='f'
@@ -112,117 +95,117 @@ def private _lexer ( var stext : string implicit )
                                 ahead = int(0x5c)
                             push(str,uint8(ahead))
                         else
-                            yield [[TokenAt value=[[Token _error = "string escape sequence exceeds text"]],line=line,row=row]]
+                            yield [[Token _error = "string escape sequence exceeds text"]]
                             return false
                     else
                         push(str,uint8(ahead))
                 if empty(tin)
-                    yield [[TokenAt value=[[Token _error = "string exceeds text"]],line=line,row=row]]
+                    yield [[Token _error = "string exceeds text"]]
                     return false
-                yield [[TokenAt value=[[Token _string = string(str)]],line=line,row=row]]
+                yield [[Token _string = string(str)]]
                 clear(str)
                 next(tin, ahead)
             elif ahead=='+' || ahead=='-' || is_number(ahead)
                 push(str,uint8(ahead))
                 var anyNumbers = is_number(ahead)
-                while next(tin,ahead,line,row) && is_number(ahead)
+                while next(tin,ahead) && is_number(ahead)
                     push(str,uint8(ahead))
                     anyNumbers = true
                 if !empty(tin) && ahead=='.'
                     push(str,uint8(ahead))
-                    while next(tin,ahead,line,row) && is_number(ahead)
+                    while next(tin,ahead) && is_number(ahead)
                         push(str,uint8(ahead))
                         anyNumbers = true
                 if !empty(tin) && (ahead=='e' || ahead=='E')
                     push(str,uint8(ahead))
-                    next(tin,ahead,line,row)
+                    next(tin,ahead)
                     if ahead=='+' || ahead=='-' || is_number(ahead)
                         push(str,uint8(ahead))
-                    while next(tin,ahead,line,row) && is_number(ahead)
+                    while next(tin,ahead) && is_number(ahead)
                         push(str,uint8(ahead))
                         anyNumbers = true
                 var num = string(str)
                 if !anyNumbers
-                    yield [[TokenAt value=[[Token _error = "invalid number {num}"]],line=line,row=row]]
+                    yield [[Token _error = "invalid number {num}"]]
                     return false
-                yield [[TokenAt value=[[Token _number = double(num)]],line=line,row=row]]
+                yield [[Token _number = double(num)]]
                 clear(str)
                 unsafe
                     delete_string(num)
             elif is_alpha(ahead)
                 push(str,uint8(ahead))
-                while next(tin,ahead,line,row) && is_alpha(ahead)
+                while next(tin,ahead) && is_alpha(ahead)
                     push(str,uint8(ahead))
                 var name = string(str)
                 if name == "true"
-                    yield [[TokenAt value=[[Token _bool=true]],line=line,row=row]]
+                    yield [[Token _bool=true]]
                 elif name == "false"
-                    yield [[TokenAt value=[[Token _bool=false]],line=line,row=row]]
+                    yield [[Token _bool=false]]
                 elif name == "null"
-                    yield [[TokenAt value=[[Token _null = null]],line=line,row=row]]
+                    yield [[Token _null = null]]
                 else
-                    yield [[TokenAt value=[[Token _error = "invalid name {name}"]],line=line,row=row]]
+                    yield [[Token _error = "invalid name {name}"]]
                     return false
                 unsafe
                     delete_string(name)
                 clear(str)
             else
-                yield [[TokenAt value=[[Token _error = "invalid character `{to_char(ahead)}` aka ASCII {ahead}"]],line=line,row=row]]
+                yield [[Token _error = "invalid character `{to_char(ahead)}` aka ASCII {ahead}"]]
                 return false
         return false
     finally
         unsafe
             delete_string(stext)
 
-def private expect_token ( var itv : iterator<TokenAt>; var ahead : TokenAt; vindex : int; var error : string & ) : bool
+def private expect_token ( var itv : iterator<Token>; var ahead : Token; vindex : int; var error : string & ) : bool
     if !next(itv, ahead)
         error = "unexected eos"
         return false
-    elif variant_index(ahead.value) != vindex
-        error = "unexpected {ahead.value}, expecting variant {vindex} at {ahead.line}:{ahead.row}"
+    elif variant_index(ahead) != vindex
+        error = "unexpected {ahead}, expecting variant {vindex}"
         return false
     else
         return true
 
-def private expect_symbol ( var itv : iterator<TokenAt>; var ahead : TokenAt; sym : int; var error : string & ) : bool
+def private expect_symbol ( var itv : iterator<Token>; var ahead : Token; sym : int; var error : string & ) : bool
     if !next(itv, ahead)
         error = "unexected eos"
         return false
-    elif ! ahead.value is _symbol
-        error = "unexpected {ahead.value}, expecting symbol at {ahead.line}:{ahead.row}"
+    elif ! ahead is _symbol
+        error = "unexpected {ahead}, expecting symbol"
         return false
-    elif !(ahead.value as _symbol == sym)
-        error = "unexpected {ahead.value}, expecting symbol `{to_char(sym)}` aka ASCII {sym} at {ahead.line}:{ahead.row}"
+    elif !(ahead as _symbol == sym)
+        error = "unexpected {ahead}, expecting symbol `{to_char(sym)}` aka ASCII {sym}"
         return true
     else
         return true
 
-def private parse_value ( var itv : iterator<TokenAt>; var error : string & ) : JsonValue?
-    var ahead : TokenAt
+def private parse_value ( var itv : iterator<Token>; var error : string & ) : JsonValue?
+    var ahead : Token
     if !next(itv, ahead)
         return null
-    if ahead.value is _symbol
-        let sym = ahead.value as _symbol
+    if ahead is _symbol
+        let sym = ahead as _symbol
         if sym == ']'
-            error = "unexpected ] at {ahead.line}:{ahead.row}"
+            error = "unexpected ]"
             return null
         if sym == '['
             var arr : array<JsonValue?>
             while !empty(itv)
                 let value = parse_value(itv, error)
                 if value == null
-                    if error |> starts_with("unexpected ]") && length(arr)==0
+                    if error=="unexpected ]" && length(arr)==0
                         error = ""
                         return JV(arr)
                     return null
                 push(arr, value)
                 if !expect_token(itv, ahead, Token_symbol, error)
                     return null
-                let sepsym = ahead.value as _symbol
+                let sepsym = ahead as _symbol
                 if sepsym == ']'
                     break
                 elif sepsym != ','
-                    error = "unsepected array seaprator symbol `{to_char(sepsym)}` aka ASCII {sepsym} at {ahead.line}:{ahead.row}"
+                    error = "unsepected array seaprator symbol `{to_char(sepsym)}` aka ASCII {sepsym}"
                     return null
             if empty(itv)
                 error = "unexpected eos"
@@ -232,45 +215,45 @@ def private parse_value ( var itv : iterator<TokenAt>; var error : string & ) : 
             var tab : table<string; JsonValue?>
             while !empty(itv)
                 if !expect_token(itv, ahead, Token_string, error)
-                    if (ahead.value is _symbol) && (ahead.value as _symbol)=='}' && length(tab)==0
+                    if (ahead is _symbol) && (ahead as _symbol)=='}' && length(tab)==0
                         error = ""
                         return JV(tab)
                     return null
-                let key = ahead.value as _string
+                let key = ahead as _string
                 if !expect_symbol(itv, ahead, ':', error)
                     return null
                 let value = parse_value(itv, error)
                 if value == null
                     return null
                 if !allow_duplicate_keys && key_exists(tab,key)
-                    error = "duplicate key {key} at {ahead.line}:{ahead.row}"
+                    error = "duplicate key {key}"
                     return null
                 tab[key] = value
                 if !expect_token(itv, ahead, Token_symbol, error)
                     return null
-                let sepsym = ahead.value as _symbol
+                let sepsym = ahead as _symbol
                 if sepsym == '}'
                     break
                 elif sepsym != ','
-                    error = "unsepected object seaprator symbol `{to_char(sepsym)}` aka ASCII {sepsym} at {ahead.line}:{ahead.row}"
+                    error = "unsepected object seaprator symbol `{to_char(sepsym)}` aka ASCII {sepsym}"
                     return null
             if empty(itv)
                 error = "unexpected eos"
                 return null
             return JV(tab)
         else
-            error = "unexpected symbol `{to_char(sym)}` aka ASCII {sym} at {ahead.line}:{ahead.row}"
+            error = "unexpected symbol `{to_char(sym)}` aka ASCII {sym}"
             return null
-    elif ahead.value is _string
-        return JV(ahead.value as _string)
-    elif ahead.value is _number
-        return JV(ahead.value as _number)
-    elif ahead.value is _bool
-        return JV(ahead.value as _bool)
-    elif ahead.value is _null
+    elif ahead is _string
+        return JV(ahead as _string)
+    elif ahead is _number
+        return JV(ahead as _number)
+    elif ahead is _bool
+        return JV(ahead as _bool)
+    elif ahead is _null
         return JVNull()
     else
-        error = "{ahead.value} at {ahead.line}:{ahead.row}"
+        error = "{ahead}"
         return null
 
 def read_json ( text : string implicit; var error : string& ) : JsonValue?

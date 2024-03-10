@@ -7,10 +7,10 @@ let { isUnitSpecial } = require("%appGlobals/ranks_common_shared.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { Cost } = require("%scripts/money.nut")
 let { format } = require("string")
-let { isInMenu, handlersManager, is_in_loading_screen, loadHandler
-} = require("%scripts/baseGuiHandlerManagerWT.nut")
-let { getShopItem, canUseIngameShop, getShopItemsTable
-} = require("%scripts/onlineShop/entitlementsShopData.nut")
+let { isInMenu, handlersManager, is_in_loading_screen } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { getShopItem,
+        canUseIngameShop,
+        getShopItemsTable } = require("%scripts/onlineShop/entitlementsStore.nut")
 let { broadcastEvent, addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let unitActions = require("%scripts/unit/unitActions.nut")
 let slotbarPresets = require("%scripts/slotbar/slotbarPresetsByVehiclesGroups.nut")
@@ -37,10 +37,6 @@ let { needShowUnseenModTutorialForUnit } = require("%scripts/missions/modificati
 let { showUnitGoods } = require("%scripts/onlineShop/onlineShopModel.nut")
 let takeUnitInSlotbar = require("%scripts/unit/takeUnitInSlotbar.nut")
 let { getCrewByAir, isUnitInSlotbar } = require("%scripts/slotbar/slotbarState.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
-let { gui_start_decals } = require("%scripts/customization/contentPreview.nut")
-let { guiStartTestflight } = require("%scripts/missionBuilder/testFlightState.nut")
-let { getCrewMaxDiscountByInfo, getCrewDiscountInfo } = require("%scripts/crew/crew.nut")
 
 let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = null, curEdiff = -1,
   isSlotbarEnabled = true, setResearchManually = null, needChosenResearchOfSquadron = false,
@@ -75,7 +71,7 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
         ::queues.checkAndStart(function () {
           broadcastEvent("BeforeStartShowroom")
           showedUnit(unit)
-          handlersManager.animatedSwitchScene(gui_start_decals)
+          handlersManager.animatedSwitchScene(::gui_start_decals)
         }, null, "isCanModifyCrew")
       }
     }
@@ -105,12 +101,12 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
       if (crew == null)
         continue
 
-      let discountInfo = getCrewDiscountInfo(crew.idCountry, crew.idInCountry)
+      let discountInfo = ::g_crew.getDiscountInfo(crew.idCountry, crew.idInCountry)
 
       actionText = loc("mainmenu/btnCrew")
       icon       = "#ui/gameuiskin#slot_crew.svg"
       haveWarning = isInArray(::get_crew_status(crew, unit), [ "ready", "full" ])
-      haveDiscount = getCrewMaxDiscountByInfo(discountInfo) > 0
+      haveDiscount = ::g_crew.getMaxDiscountByInfo(discountInfo) > 0
       showAction = inMenu
       let params = {
         countryId = crew.idCountry,
@@ -146,7 +142,7 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
       icon = "#ui/gameuiskin#sh_unlockachievement.svg"
       showAction = inMenu
       isObjective = true
-      actionFunc = @() loadHandler(gui_handlers.Profile, {
+      actionFunc = @() ::gui_start_profile({
         initialSheet = "UnlockAchievement"
         initialUnlockId = getUnlockIdByUnitName(unit.name, curEdiff)
       })
@@ -287,7 +283,7 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
       icon       = unit.unitType.testFlightIcon
       showAction = inMenu && ::isTestFlightAvailable(unit, shouldSkipUnitCheck)
       actionFunc = function () {
-        ::queues.checkAndStart(@() guiStartTestflight({ unit, shouldSkipUnitCheck }),
+        ::queues.checkAndStart(@() ::gui_start_testflight({ unit, shouldSkipUnitCheck }),
           null, "isCanNewflight")
       }
     }
@@ -314,7 +310,7 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
       showAction = ::canBuyUnitOnMarketplace(unit)
       isLink     = true
       actionFunc = function() {
-        let item = findItemById(unit.marketplaceItemdefId)
+        let item = ::ItemsManager.findItemById(unit.marketplaceItemdefId)
         if (item && item.hasLink())
           item.openLink()
       }

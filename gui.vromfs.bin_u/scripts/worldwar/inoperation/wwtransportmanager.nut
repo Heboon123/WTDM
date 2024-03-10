@@ -1,27 +1,27 @@
+from "%scripts/dagui_natives.nut" import ww_get_loaded_transport
 from "%scripts/dagui_library.nut" import *
 
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
-let DataBlock = require("DataBlock")
-let { wwGetLoadedTransport } = require("worldwar")
+let DataBlock  = require("DataBlock")
 
 local cachedLoadedTransport = null
-function getLoadedTransport() {
+let function getLoadedTransport() {
   if (cachedLoadedTransport != null)
     return cachedLoadedTransport?.loadedTransport ?? {}
 
   let blk = DataBlock()
-  wwGetLoadedTransport(blk)
+  ww_get_loaded_transport(blk)
   cachedLoadedTransport = blk
   return cachedLoadedTransport?.loadedTransport ?? {}
 }
 
 let clearCacheLoadedTransport = @() cachedLoadedTransport = null
 
-function isEmptyTransport(armyName) {
+let function isEmptyTransport(armyName) {
   return !(armyName in getLoadedTransport())
 }
 
-function isFullLoadedTransport(armyName) {
+let function isFullLoadedTransport(armyName) {
   return armyName in getLoadedTransport()
 }
 
@@ -33,5 +33,4 @@ return {
   getLoadedTransport
   isEmptyTransport
   isFullLoadedTransport
-  clearCacheLoadedTransport
 }

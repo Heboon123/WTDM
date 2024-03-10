@@ -2,11 +2,9 @@ from "%scripts/dagui_natives.nut" import request_leaderboard_blk, get_leaderboar
 from "%scripts/dagui_library.nut" import *
 from "%scripts/leaderboard/leaderboardConsts.nut" import LEADERBOARD_VALUE_TOTAL, LEADERBOARD_VALUE_INHISTORY
 
-let { g_difficulty } = require("%scripts/difficulty.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
-let { loadLocalByAccount, saveLocalByAccount
-} = require("%scripts/clientState/localProfileDeprecated.nut")
+let { loadLocalByAccount, saveLocalByAccount } = require("%scripts/clientState/localProfile.nut")
 let DataBlock = require("DataBlock")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { ceil, floor } = require("math")
@@ -24,7 +22,6 @@ let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { lbCategoryTypes, getLbCategoryTypeByField, getLbCategoryTypeById, eventsTableConfig
 } = require("%scripts/leaderboard/leaderboardCategoryType.nut")
-let { addBgTaskCb } = require("%scripts/tasker.nut")
 
 ::leaderboards_list <- [
   lbCategoryTypes.PVP_RATIO
@@ -208,7 +205,7 @@ let { addBgTaskCb } = require("%scripts/tasker.nut")
     db.setInt("start", requestData.pos)
 
     let taskId = request_leaderboard_blk(db)
-    addBgTaskCb(taskId, @() ::leaderboardModel.handleLbRequest(requestData))
+    ::add_bg_task_cb(taskId, @() ::leaderboardModel.handleLbRequest(requestData))
   }
 
   function loadSeflRow(requestData) {
@@ -226,7 +223,7 @@ let { addBgTaskCb } = require("%scripts/tasker.nut")
     db.setStr("platform",       requestData.platformFilter)  // deprecated, remove after lb-server release
 
     let taskId = request_leaderboard_blk(db)
-    addBgTaskCb(taskId, @() ::leaderboardModel.handleSelfRowLbRequest(requestData))
+    ::add_bg_task_cb(taskId, @() ::leaderboardModel.handleSelfRowLbRequest(requestData))
   }
 
   function handleLbRequest(requestData) {
@@ -674,7 +671,7 @@ gui_handlers.LeaderboardWindow <- class (gui_handlers.BaseGuiHandlerWT) {
     local data = []
     foreach (_idx, mode in ::leaderboard_modes) {
       let diffCode = getTblValue("diffCode", mode)
-      if (!g_difficulty.isDiffCodeAvailable(diffCode, GM_DOMINATION))
+      if (!::g_difficulty.isDiffCodeAvailable(diffCode, GM_DOMINATION))
         continue
       let reqFeature = getTblValue("reqFeature", mode)
       if (!hasAllFeatures(reqFeature))
@@ -684,7 +681,7 @@ gui_handlers.LeaderboardWindow <- class (gui_handlers.BaseGuiHandlerWT) {
       data.append(format("option {text:t='%s'}", mode.text))
     }
 
-    let modesObj = showObjById("modes_list", true, this.scene)
+    let modesObj = this.showSceneBtn("modes_list", true)
     let markup = "".join(data)
     this.guiScene.replaceContentFromText(modesObj, markup, markup.len(), this)
     modesObj.setValue(0)

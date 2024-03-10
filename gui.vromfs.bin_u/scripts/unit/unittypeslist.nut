@@ -1,3 +1,4 @@
+//-file:plus-string
 from "%scripts/dagui_natives.nut" import is_unlocked
 from "%scripts/dagui_library.nut" import *
 
@@ -59,7 +60,7 @@ local unitTypes = {
     getBailoutQuestionText = @() loc($"flightmenu/{this.bailoutQuestion}")
     getArmyLocId = @() $"mainmenu/{this.armyId}"
     getArmyLocName = @() loc(this.getArmyLocId(), "")
-    getCrewArmyLocName = @() loc("".concat("unit_type/", (crewUnitTypeConfig?[this.crewUnitType]?.crewTag ?? "")))
+    getCrewArmyLocName = @() loc("unit_type/" + (crewUnitTypeConfig?[this.crewUnitType]?.crewTag ?? ""))
     getCrewTag = @() crewUnitTypeConfig?[this.crewUnitType]?.crewTag ?? ""
     getLocName = @() loc($"unit_type/{this.tag}", "")
     canUseSeveralBulletsForGun = false

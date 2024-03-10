@@ -1,3 +1,4 @@
+//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -74,7 +75,7 @@ gui_handlers.WwMapDescription <- class (gui_handlers.BaseGuiHandlerWT) {
     if (this.scene.id == this.rootDescId)
       this.scene.show(isShow)
     else
-      showObjById(this.rootDescId, isShow, this.scene)
+      this.showSceneBtn(this.rootDescId, isShow)
   }
 
   function updateName() {
@@ -110,7 +111,7 @@ gui_handlers.WwMapDescription <- class (gui_handlers.BaseGuiHandlerWT) {
       sides.append(this.mapCountriesToView(cuntriesByTeams?[side] ?? []))
     let view = {
       sides = sides
-      vsText = "".concat(loc("country/VS"), "\n ")
+      vsText = loc("country/VS") + "\n "
     }
 
     let data = handyman.renderCached("%gui/worldWar/wwOperationCountriesInfo.tpl", view)

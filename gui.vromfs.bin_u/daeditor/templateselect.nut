@@ -23,19 +23,19 @@ let scrollHandler = ScrollHandler()
 
 addEntityCreatedCallback(@(_eid) set_kb_focus(null))
 
-function scrollByName(text) {
+let function scrollByName(text) {
   scrollHandler.scrollToChildren(function(desc) {
     return ("tpl_name" in desc) && desc.tpl_name.indexof(text)!=null
   }, 2, false, true)
 }
 
-function scrollBySelection() {
+let function scrollBySelection() {
   scrollHandler.scrollToChildren(function(desc) {
     return ("tpl_name" in desc) && desc.tpl_name==selectedItem.value
   }, 2, false, true)
 }
 
-function doSelectTemplate(tpl_name) {
+let function doSelectTemplate(tpl_name) {
   selectedItem(tpl_name)
   if (selectedItem.value) {
     let finalTemplateName = selectedItem.value + templatePostfixText.value
@@ -94,7 +94,7 @@ let templPostfix = nameFilter(templatePostfixText, {
 
 let templateTooltip = Watched(null)
 
-function listRow(tpl_name, idx) {
+let function listRow(tpl_name, idx) {
   let stateFlags = Watched(0)
 
   return function() {
@@ -122,7 +122,6 @@ function listRow(tpl_name, idx) {
       children = {
         rendObj = ROBJ_TEXT
         text = tpl_name
-        color = colors.TextDefault
         margin = fsh(0.5)
       }
     }
@@ -149,7 +148,7 @@ local showWholeList = false
 local showWholeListGroup = ""
 filterText.subscribe(@(_) showWholeList = false)
 
-function listMore() {
+let function listMore() {
   return {
     rendObj = ROBJ_SOLID
     size = [flex(), SIZE_TO_CONTENT]
@@ -164,7 +163,6 @@ function listMore() {
     children = {
       rendObj = ROBJ_TEXT
       text = "... (show all)"
-      color = colors.TextDarker
       margin = fsh(0.5)
     }
   }
@@ -172,7 +170,7 @@ function listMore() {
 
 
 local doRepeatValidateTemplates = @(_idx) null
-function doValidateTemplates(idx) {
+let function doValidateTemplates(idx) {
   const validateAfterName = ""
   local skipped = 0
   while (idx < selectedGroupTemplates.value.len()) {
@@ -201,11 +199,11 @@ function doValidateTemplates(idx) {
 doRepeatValidateTemplates = doValidateTemplates
 
 
-function dialogRoot() {
+let function dialogRoot() {
   let templatesGroups = entity_editor.get_instance().getEcsTemplatesGroups()
   let maxTemplatesInList = 1000
 
-  function listContent() {
+  let function listContent() {
     if (selectedTemplatesGroup.value != showWholeListGroup) {
       showWholeList = false
       showWholeListGroup = selectedTemplatesGroup.value
@@ -243,13 +241,13 @@ function dialogRoot() {
   })
 
 
-  function doClose() {
+  let function doClose() {
     showTemplateSelect(false)
     filterText("")
     daEditor.setEditMode(DE4_MODE_SELECT)
   }
 
-  function doCancel() {
+  let function doCancel() {
     if (selectedItem.value != null) {
       selectedItem(null)
       entity_editor.get_instance().selectEcsTemplate("")

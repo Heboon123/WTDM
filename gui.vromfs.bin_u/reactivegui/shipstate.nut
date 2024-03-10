@@ -65,7 +65,7 @@ let shipState = {
   gunStatesSecondRow
 }
 
-function isDiff(time1, time2) {
+let function isDiff(time1, time2) {
   return fabs(time1 - time2) >= 0.02;
 }
 

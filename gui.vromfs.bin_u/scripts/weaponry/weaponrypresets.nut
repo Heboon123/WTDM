@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 let u = require("%sqStdLibs/helpers/u.nut")
 
@@ -18,7 +19,7 @@ let isEqualWeapon = @(a, b) a.slot == b.slot
   && a?.flash == b?.flash
   && a?.emitter == b?.emitter
 
-function addSlotWeaponsFromPreset(res, slotBlk, preset, tiersCount, isEqualFunc = isEqualWeapon) {
+let function addSlotWeaponsFromPreset(res, slotBlk, preset, tiersCount, isEqualFunc = isEqualWeapon) {
   let reqModifications = preset % "reqModification"
   let presetsWeapons = []
   foreach (weapon in (preset % "Weapon")) {
@@ -55,7 +56,7 @@ let getUnitWeaponSlots = @(blk)(blk?.WeaponSlots == null ? [] : blk.WeaponSlots 
 
 // For now weapon data can be two different types
 // depends of whether or not unit config contains the weaponPilons block.
-function getWeaponsByTypes(unitBlk, weaponsBlk, isCommon = true) {
+let function getWeaponsByTypes(unitBlk, weaponsBlk, isCommon = true) {
   let res = []
   local slots = getUnitWeaponSlots(unitBlk)             // All unit weapons
   if (!isCommon)
@@ -100,7 +101,7 @@ let getPresetWeapons = @(unitBlk, weapon) weapon == null ? []
   : "weaponsBlk" in weapon ? getWeaponsByTypes(unitBlk, weapon.weaponsBlk)
   : getPresetWeaponsByName(unitBlk, weapon.name)
 
-function getSlotWeapons(slotBlk, tiersCount = MIN_TIERS_COUNT) {
+let function getSlotWeapons(slotBlk, tiersCount = MIN_TIERS_COUNT) {
   let res = []
   if (slotBlk == null)
     return res
@@ -110,7 +111,7 @@ function getSlotWeapons(slotBlk, tiersCount = MIN_TIERS_COUNT) {
   return res
 }
 
-function getUnitWeapons(unitBlk) { // Pesets weapon only
+let function getUnitWeapons(unitBlk) { // Pesets weapon only
   let res = []
   let slots = getUnitWeaponSlots(unitBlk).filter(@(s) s?.tier != null)
   if (slots.len() > 0)
@@ -132,7 +133,7 @@ let isEqualEditSlots = @(a, b) a.slot == b.slot
   && a.presetId == b.presetId
   && a?.blk == b?.blk
 
-function getSlotsWeaponsForEditPreset(unitBlk) {
+let function getSlotsWeaponsForEditPreset(unitBlk) {
   let res = []
   let slots = getUnitWeaponSlots(unitBlk).filter(@(s) s?.tier != null)
   foreach (slot in slots) {
@@ -145,7 +146,7 @@ function getSlotsWeaponsForEditPreset(unitBlk) {
   return res
 }
 
-function getWeaponBlkParams(weaponBlkPath, weaponBlkCache, params = {}) {
+let function getWeaponBlkParams(weaponBlkPath, weaponBlkCache, params = {}) {
   let self = callee()
   let { containersCount = 1, containerMassKg = 0 } = params
   local { bulletsCount = 1 } = params
@@ -172,7 +173,7 @@ function getWeaponBlkParams(weaponBlkPath, weaponBlkCache, params = {}) {
   }
 }
 
-function getUnitWeaponsByTier(unit, blkPath, tierId) {
+let function getUnitWeaponsByTier(unit, blkPath, tierId) {
     let unitBlk = ::get_full_unit_blk(unit.name)
     let tiersCount = unitBlk?.WeaponSlots?.weaponsSlotCount ?? MIN_TIERS_COUNT
 
@@ -183,7 +184,7 @@ function getUnitWeaponsByTier(unit, blkPath, tierId) {
     : null
   }
 
-function getUnitWeaponsByPreset(unit, blkPath, presetName) {
+let function getUnitWeaponsByPreset(unit, blkPath, presetName) {
   let unitBlk = ::get_full_unit_blk(unit.name)
   if (unit.hasWeaponSlots) {
     local res = []
@@ -200,7 +201,7 @@ function getUnitWeaponsByPreset(unit, blkPath, presetName) {
   ).filter(@(w) w.blk == blkPath) ?? []
 }
 
-function getDefaultPresetId(unitBlk) {
+let function getDefaultPresetId(unitBlk) {
   foreach (block in getUnitPresets(unitBlk))
     if (block.name.indexof("default") != null || block?.tags?.free)
       return block.name

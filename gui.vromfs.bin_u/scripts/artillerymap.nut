@@ -1,14 +1,12 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-from "app" import is_dev_version
 
-let { g_hud_event_manager } = require("%scripts/hud/hudEventManager.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { isXInputDevice } = require("controls")
 let { find_in_array } = require("%sqStdLibs/helpers/u.nut")
-let { eventbus_subscribe } = require("eventbus")
+let { subscribe } = require("eventbus")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { round } = require("math")
 let { format } = require("string")
@@ -96,7 +94,7 @@ gui_handlers.ArtilleryMap <- class (gui_handlers.BaseGuiHandlerWT) {
     this.canUseShortcuts = !useTouchscreen || isXInputDevice()
     this.shouldMapClickDoApply = !useTouchscreen && !isXInputDevice()
 
-    g_hud_event_manager.subscribe("LocalPlayerDead", @(_data) this.doQuitDelayed(), this)
+    ::g_hud_event_manager.subscribe("LocalPlayerDead", @(_data) this.doQuitDelayed(), this)
 
     this.reinitScreen()
   }
@@ -242,7 +240,7 @@ gui_handlers.ArtilleryMap <- class (gui_handlers.BaseGuiHandlerWT) {
         title = "hotkeys/ID_SHOOT_ARTILLERY"
         shortcuts = ["ID_SHOOT_ARTILLERY"]
         buttonCb = "onApply"
-        buttonExtraMarkup = is_dev_version() ? "accessKey:t='Enter';" : ""
+        buttonExtraMarkup = ::is_dev_version ? "accessKey:t='Enter';" : ""
         buttonId = "btn_apply"
       },
       {
@@ -421,7 +419,7 @@ gui_handlers.ArtilleryMap <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 }
 
-function guiStartArtilleryMap(params = {}) {
+::gui_start_artillery_map <- function gui_start_artillery_map(params = {}) {
   handlersManager.loadHandler(gui_handlers.ArtilleryMap,
   {
     mapSizeMeters = params?.mapSizeMeters ?? 1400
@@ -432,9 +430,9 @@ function guiStartArtilleryMap(params = {}) {
   })
 }
 
-eventbus_subscribe("artilleryMapOpen", @(p) isInFlight() ? guiStartArtilleryMap(p) : null)
-eventbus_subscribe("artilleryMapClose", @(_) broadcastEvent("CloseArtilleryRequest"))
-eventbus_subscribe("artilleryCallByShortcut", function(_) {
+subscribe("artilleryMapOpen", @(p) isInFlight() ? ::gui_start_artillery_map(p) : null)
+subscribe("artilleryMapClose", @(_) broadcastEvent("CloseArtilleryRequest"))
+subscribe("artilleryCallByShortcut", function(_) {
   let handler = handlersManager.getActiveBaseHandler()
   if (handler && (handler instanceof gui_handlers.ArtilleryMap))
     handler.onApplyByShortcut()

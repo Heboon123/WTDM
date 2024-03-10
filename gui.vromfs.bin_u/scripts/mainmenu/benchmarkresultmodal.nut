@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import d3d_enable_vsync
 from "%scripts/dagui_library.nut" import *
 

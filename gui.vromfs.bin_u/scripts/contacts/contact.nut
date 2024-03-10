@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import gchat_voice_mute_peer_by_name, can_use_text_chat_with_target
 from "%scripts/dagui_library.nut" import *
 let { isPlayerFromXboxOne, isPlayerFromPS4, isPlatformSony
@@ -7,7 +8,7 @@ let { getXboxChatEnableStatus, isChatEnabled, isCrossNetworkMessageAllowed
 } = require("%scripts/chat/chatStates.nut")
 let updateContacts = require("%scripts/contacts/updateContacts.nut")
 let { isEmpty, isInteger } = require("%sqStdLibs/helpers/u.nut")
-let { eventbus_subscribe } = require("eventbus")
+let { subscribe } = require("eventbus")
 let { isMultiplayerPrivilegeAvailable } = require("%scripts/user/xboxFeatures.nut")
 let psnSocial = require("sony.social")
 let { EPLX_PS4_FRIENDS, contactsByGroups, blockedMeUids } = require("%scripts/contacts/contactsManager.nut")
@@ -16,11 +17,10 @@ let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { show_profile_card } = require("%xboxLib/impl/user.nut")
 let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { userName, userIdStr, userIdInt64 } = require("%scripts/user/profileStates.nut")
-let { contactPresence } = require("%scripts/contacts/contactPresence.nut")
 
-let contactsByName = persist("contactsByName", @() {})
+let contactsByName = {}
 
-eventbus_subscribe("playerProfileDialogClosed", function(r) {
+subscribe("playerProfileDialogClosed", function(r) {
   if (r?.result.wasCanceled)
     return
   updateContacts(true)
@@ -33,7 +33,7 @@ eventbus_subscribe("playerProfileDialogClosed", function(r) {
   clanTag = ""
   title = ""
 
-  presence = contactPresence.UNKNOWN
+  presence = ::g_contact_presence.UNKNOWN
   forceOffline = false
   isForceOfflineChecked = !is_platform_xbox
 
@@ -95,7 +95,7 @@ eventbus_subscribe("playerProfileDialogClosed", function(r) {
   }
 
   function resetMatchingParams() {
-    this.presence = contactPresence.UNKNOWN
+    this.presence = ::g_contact_presence.UNKNOWN
 
     this.online = null
     this.unknown = true
@@ -118,8 +118,8 @@ eventbus_subscribe("playerProfileDialogClosed", function(r) {
 
   function getPresenceText() {
     local locParams = {}
-    if (this.presence == contactPresence.IN_QUEUE
-        || this.presence == contactPresence.IN_GAME) {
+    if (this.presence == ::g_contact_presence.IN_QUEUE
+        || this.presence == ::g_contact_presence.IN_GAME) {
       let event = ::events.getEvent(getTblValue("eventId", this.gameConfig))
       locParams = {
         gameMode = event ? ::events.getEventNameText(event) : ""
@@ -224,7 +224,7 @@ eventbus_subscribe("playerProfileDialogClosed", function(r) {
   function needCheckForceOffline() {
     if (this.isForceOfflineChecked
         || !this.isInFriendGroup()
-        || this.presence == contactPresence.UNKNOWN)
+        || this.presence == ::g_contact_presence.UNKNOWN)
       return false
 
     return isPlayerFromXboxOne(this.name)
@@ -240,40 +240,51 @@ eventbus_subscribe("playerProfileDialogClosed", function(r) {
       || this.name == userName.value
   }
 
-  function getInteractionStatus() {
+  function getInteractionStatus(needShowSystemMessage = false) {
     if (!is_platform_xbox || this.isMe())
       return XBOX_COMMUNICATIONS_ALLOWED
 
     if (this.xboxId == "") {
-      let status = getXboxChatEnableStatus()
+      let status = getXboxChatEnableStatus(needShowSystemMessage)
       if (status == XBOX_COMMUNICATIONS_ONLY_FRIENDS && !this.isInFriendGroup())
         return XBOX_COMMUNICATIONS_BLOCKED
 
       return isChatEnabled() ? XBOX_COMMUNICATIONS_ALLOWED : XBOX_COMMUNICATIONS_BLOCKED
     }
 
-    if (this.interactionStatus == null)
-      this.interactionStatus = can_use_text_chat_with_target(this.xboxId, false)
+    if (!needShowSystemMessage && this.interactionStatus != null)
+      return this.interactionStatus
+
+    this.interactionStatus = can_use_text_chat_with_target(this.xboxId, needShowSystemMessage)
     return this.interactionStatus
   }
 
-  function canChat() {
-    if (((isMultiplayerPrivilegeAvailable.value && !isCrossNetworkMessageAllowed(this.name)) || this.isBlockedMe()))
+  function canChat(needShowSystemMessage = false) {
+    if (!needShowSystemMessage
+      && ((isMultiplayerPrivilegeAvailable.value && !isCrossNetworkMessageAllowed(this.name))
+          || this.isBlockedMe())
+      )
       return false
 
     if (!isCrossNetworkMessageAllowed(this.name)) {
+      if (needShowSystemMessage)
+        this.getInteractionStatus(needShowSystemMessage) //just to show overlay message
       return false
     }
 
-    let intSt = this.getInteractionStatus()
-    return intSt == XBOX_COMMUNICATIONS_ALLOWED || (intSt == XBOX_COMMUNICATIONS_ONLY_FRIENDS && this.isInFriendGroup())
+    let intSt = this.getInteractionStatus(needShowSystemMessage)
+    return intSt == XBOX_COMMUNICATIONS_ALLOWED
+      || (intSt == XBOX_COMMUNICATIONS_ONLY_FRIENDS && this.isInFriendGroup())
   }
 
-  function canInvite() {
-    if ((!isMultiplayerPrivilegeAvailable.value || !isCrossNetworkMessageAllowed(this.name)))
+  function canInvite(needShowSystemMessage = false) {
+    if (!needShowSystemMessage
+      && (!isMultiplayerPrivilegeAvailable.value
+          || !isCrossNetworkMessageAllowed(this.name))
+      )
       return false
 
-    let intSt = this.getInteractionStatus()
+    let intSt = this.getInteractionStatus(needShowSystemMessage)
     return intSt == XBOX_COMMUNICATIONS_ALLOWED || intSt == XBOX_COMMUNICATIONS_MUTED
   }
 

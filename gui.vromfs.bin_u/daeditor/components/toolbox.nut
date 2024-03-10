@@ -16,12 +16,12 @@ let panelW = hdpx(230)
 let rowDiv = { size = [panelW, hdpx(5)] }
 let tooltipDX = -hdpx(20)
 
-function clearToolboxOptions(tb_shown, tb_state) {
+let function clearToolboxOptions(tb_shown, tb_state) {
   tb_state.options = []
   tb_shown.trigger()
 }
 
-function addToolboxOption(tb_shown, tb_state, opt_enabled, opt_name, opt_click, opt_content, opt_tooltip) {
+let function addToolboxOption(tb_shown, tb_state, opt_enabled, opt_name, opt_click, opt_content, opt_tooltip) {
   tb_state.options.append({
     on = opt_enabled,
     name = opt_name,
@@ -32,13 +32,13 @@ function addToolboxOption(tb_shown, tb_state, opt_enabled, opt_name, opt_click, 
   tb_shown.trigger()
 }
 
-function addToolboxNextRow(tb_state) {
+let function addToolboxNextRow(tb_state) {
   if (tb_state.options.len() % 2 == 0)
     return
   tb_state.options.append(null)
 }
 
-function clickToolboxOption(opt, opt_near, trig) {
+let function clickToolboxOption(opt, opt_near, trig) {
   let opt_on = opt?.on ? opt.on() : false
   if (opt.click) {
     opt.click(!opt_on)
@@ -51,7 +51,7 @@ function clickToolboxOption(opt, opt_near, trig) {
   trig.trigger()
 }
 
-function mkOption(opt, opt_near, trig, tb_state) {
+let function mkOption(opt, opt_near, trig, tb_state) {
   let restyle = opt.name?.style
   let name = typeof opt.name == "function" ? opt.name() : opt.name?.text ? opt.name.text : opt.name
   let func = @() clickToolboxOption(opt, opt_near, trig)
@@ -108,7 +108,7 @@ let mkOptionsRow = @(opts, content, tooltip1, tooltip2) {
   ]
 }
 
-function mkOptions(opt1, opt2, trig, tb_state) {
+let function mkOptions(opt1, opt2, trig, tb_state) {
   let show1 = opt1?.content != null && opt1?.on ? opt1.on() : false
   let tooltip1 = mkToolboxTooltip(opt1, opt1.tooltip, tooltipDX, tb_state)
   if (opt2 == null) {
@@ -123,12 +123,12 @@ function mkOptions(opt1, opt2, trig, tb_state) {
   return mkOptionsRow(opts, show1 ? opt1.content : show2 ? opt2.content : null, tooltip1, tooltip2)
 }
 
-function setToolboxPos(tb_state, px, py) {
+let function setToolboxPos(tb_state, px, py) {
   tb_state.px = px
   tb_state.py = py
 }
 
-function mkToolboxPanelContent(tb_shown, tb_state) {
+let function mkToolboxPanelContent(tb_shown, tb_state) {
   let trig = tb_shown
   return @() {
     pos = [tb_state.px, tb_state.py]
@@ -174,7 +174,7 @@ function mkToolboxPanelContent(tb_shown, tb_state) {
   }
 }
 
-function mkToolboxButton(tb_state, text, func) {
+let function mkToolboxButton(tb_state, text, func) {
   local button = null
   button = textButton(text, func, buttonStyle.__merge({
     onHover = function(on) {
@@ -185,7 +185,7 @@ function mkToolboxButton(tb_state, text, func) {
   return button
 }
 
-function mkToolbox(tb_shown) {
+let function mkToolbox(tb_shown) {
   local toolBoxState = {
     px = 0
     py = 0

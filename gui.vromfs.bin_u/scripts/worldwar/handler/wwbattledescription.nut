@@ -3,8 +3,6 @@ from "%scripts/dagui_natives.nut" import tactical_map_set_team_for_briefing
 from "%scripts/dagui_library.nut" import *
 from "%scripts/worldWar/worldWarConst.nut" import *
 
-let { getGlobalModule } = require("%scripts/global_modules.nut")
-let g_squad_manager = getGlobalModule("g_squad_manager")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
@@ -25,15 +23,13 @@ let getLockedCountryData = require("%scripts/worldWar/inOperation/wwGetSlotbarLo
 let { switchProfileCountry, profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { setMapPreview } = require("%scripts/missions/mapPreview.nut")
 let getAllUnits = require("%scripts/unit/allUnits.nut")
-let { loadLocalByAccount, saveLocalByAccount
-} = require("%scripts/clientState/localProfileDeprecated.nut")
+let { loadLocalByAccount, saveLocalByAccount } = require("%scripts/clientState/localProfile.nut")
 let { wwGetOperationId, wwGetPlayerSide } = require("worldwar")
 let { checkSquadUnreadyAndDo } = require("%scripts/squads/squadUtils.nut")
 let wwEvent = require("%scripts/worldWar/wwEvent.nut")
 let { WwBattle } = require("%scripts/worldWar/inOperation/model/wwBattle.nut")
 let { isCountryAllCrewsUnlockedInHangar } = require("%scripts/slotbar/slotbarState.nut")
 let { get_mp_team_by_team_name } = require("%appGlobals/ranks_common_shared.nut")
-let { addPopup } = require("%scripts/popups/popups.nut")
 
 // Temporary image. Has to be changed after receiving correct art
 const WW_OPERATION_DEFAULT_BG_IMAGE = "#ui/bkg/login_layer_h1_0?P1"
@@ -92,12 +88,12 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
     if (battle.isValid()) {
       if (!battle.isStillInOperation()) {
         battle = WwBattle()
-        addPopup("", loc("worldwar/battle_finished"),
+        ::g_popups.add("", loc("worldwar/battle_finished"),
           null, null, null, "battle_finished")
       }
       else if (battle.isAutoBattle()) {
         battle = WwBattle()
-        addPopup("", loc("worldwar/battleIsInAutoMode"),
+        ::g_popups.add("", loc("worldwar/battleIsInAutoMode"),
           null, null, null, "battle_in_auto_mode")
       }
     }
@@ -156,7 +152,7 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
         this.curBattleInList = this.getBattleById(battleWithQueue.id)
     }
     else {
-      let wwBattleName = g_squad_manager.getWwOperationBattle()
+      let wwBattleName = ::g_squad_manager.getWwOperationBattle()
       if (wwBattleName && this.curBattleInList.id != wwBattleName)
         this.curBattleInList = this.getBattleById(wwBattleName)
     }
@@ -199,7 +195,7 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
     this.validateCurQueue()
 
     if (this.getViewMode() == WW_BATTLE_VIEW_MODES.BATTLE_LIST)
-      showObjById("items_list", this.curBattleListMap.len() > 0, this.scene)
+      this.showSceneBtn("items_list", this.curBattleListMap.len() > 0)
   }
 
   function validateCurQueue() {
@@ -213,9 +209,9 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function validateSquadInfo() {
-    let wwBattleName = g_squad_manager.getWwOperationBattle()
+    let wwBattleName = ::g_squad_manager.getWwOperationBattle()
     if (wwBattleName && (wwBattleName != this.operationBattle.id || !this.operationBattle.isValid()))
-      g_squad_manager.cancelWwBattlePrepare()
+      ::g_squad_manager.cancelWwBattlePrepare()
   }
 
   function getBattleById(battleId, _searchInCurList = true) {
@@ -308,7 +304,7 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
     for (local i = 0; i < total; i++)
       this.updateBattleInList(i, this.curBattleListItems?[i], newList?[i])
 
-    showObjById("no_active_battles_text", this.curBattleListMap.len() == 0, this.scene)
+    this.showSceneBtn("no_active_battles_text", this.curBattleListMap.len() == 0)
 
     this.guiScene.setUpdatesEnabled(true, true)
     if (!this.needUpdatePrefixWidth || view.items.len() <= 0)
@@ -374,7 +370,7 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
     let side = this.getPlayerSide()
     let availableCountries = getOperationById(wwGetOperationId())?.getCountriesByTeams()[side]
     let isSlotbarVisible = (availableCountries?.len() ?? 0) > 0
-    showObjById("nav-slotbar", isSlotbarVisible, this.scene)
+    this.showSceneBtn("nav-slotbar", isSlotbarVisible)
     if (!isSlotbarVisible)
       return
 
@@ -459,12 +455,12 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
     this.fillOperationBackground()
     this.fillOperationInfoText()
 
-    showObjById("operation_loading_wait_anim", battle.isValid() && !isOperationBattleLoaded && !battle.isFinished(), this.scene)
+    this.showSceneBtn("operation_loading_wait_anim", battle.isValid() && !isOperationBattleLoaded && !battle.isFinished())
 
     if (!battle.isValid() || !isOperationBattleLoaded || battle.isFinished()) {
-      showObjById("battle_info", battle.isFinished(), this.scene)
-      showObjById("teams_block", false, this.scene)
-      showObjById("tactical_map_block", false, this.scene)
+      this.showSceneBtn("battle_info", battle.isFinished())
+      this.showSceneBtn("teams_block", false)
+      this.showSceneBtn("tactical_map_block", false)
       if (battle.isFinished())
         this.updateBattleStatus(battleView)
       return
@@ -545,9 +541,9 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
 
     let isViewBattleList = this.currViewMode == WW_BATTLE_VIEW_MODES.BATTLE_LIST
     let isViewSquadInfo = this.currViewMode == WW_BATTLE_VIEW_MODES.SQUAD_INFO
-    showObjById("queue_info", this.currViewMode == WW_BATTLE_VIEW_MODES.QUEUE_INFO, this.scene)
-    showObjById("items_list", isViewBattleList, this.scene)
-    showObjById("squad_info", isViewSquadInfo, this.scene)
+    this.showSceneBtn("queue_info", this.currViewMode == WW_BATTLE_VIEW_MODES.QUEUE_INFO)
+    this.showSceneBtn("items_list", isViewBattleList)
+    this.showSceneBtn("squad_info", isViewSquadInfo)
     if (this.squadListHandlerWeak)
       this.squadListHandlerWeak.updateButtons(isViewSquadInfo)
     if (isViewBattleList)
@@ -560,9 +556,9 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
     if (::queues.hasActiveQueueWithType(QUEUE_TYPE_BIT.WW_BATTLE))
       return WW_BATTLE_VIEW_MODES.QUEUE_INFO
 
-    if (g_squad_manager.isInSquad() &&
-        g_squad_manager.getWwOperationBattle() &&
-        g_squad_manager.isMeReady())
+    if (::g_squad_manager.isInSquad() &&
+        ::g_squad_manager.getWwOperationBattle() &&
+        ::g_squad_manager.isMeReady())
       return WW_BATTLE_VIEW_MODES.SQUAD_INFO
 
     return WW_BATTLE_VIEW_MODES.BATTLE_LIST
@@ -570,21 +566,21 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function updateButtons() {
     let isViewBattleList = this.currViewMode == WW_BATTLE_VIEW_MODES.BATTLE_LIST
-    showObjById("btn_battles_filters", this.hasBattleFilter && isViewBattleList, this.scene)
-    showObjById("invite_squads_button",
-      this.hasSquadsInviteButton && ::g_world_war.isSquadsInviteEnable(), this.scene)
+    this.showSceneBtn("btn_battles_filters", this.hasBattleFilter && isViewBattleList)
+    this.showSceneBtn("invite_squads_button",
+      this.hasSquadsInviteButton && ::g_world_war.isSquadsInviteEnable())
 
     if (!this.curBattleInList.isValid()) {
-      showObjById("cant_join_reason_txt", false, this.scene)
-      showObjById("btn_join_battle", false, this.scene)
-      showObjById("btn_leave_battle", false, this.scene)
-      showObjById("btn_auto_preset", false, this.scene)
-      showObjById("btn_slotbar_help", false, this.scene)
-      showObjById("warning_icon", false, this.scene)
+      this.showSceneBtn("cant_join_reason_txt", false)
+      this.showSceneBtn("btn_join_battle", false)
+      this.showSceneBtn("btn_leave_battle", false)
+      this.showSceneBtn("btn_auto_preset", false)
+      this.showSceneBtn("btn_slotbar_help", false)
+      this.showSceneBtn("warning_icon", false)
       return
     }
 
-    local isJoinBattleVisible = !g_squad_manager.isSquadMember()
+    local isJoinBattleVisible = !::g_squad_manager.isSquadMember()
       && this.currViewMode != WW_BATTLE_VIEW_MODES.QUEUE_INFO
     local isLeaveBattleVisible = this.currViewMode == WW_BATTLE_VIEW_MODES.QUEUE_INFO
     local isJoinBattleActive = true
@@ -594,12 +590,12 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
       : loc("mainmenu/btnCancel")
 
     let cantJoinReasonData = this.operationBattle.getCantJoinReasonData(this.getPlayerSide(),
-      g_squad_manager.isSquadLeader())
+      ::g_squad_manager.isSquadLeader())
     let joinWarningData = this.operationBattle.getWarningReasonData(this.getPlayerSide())
     local warningText = ""
     local fullWarningText = ""
 
-    if (!g_squad_manager.isInSquad() || g_squad_manager.getOnlineMembersCount() == 1) {
+    if (!::g_squad_manager.isInSquad() || ::g_squad_manager.getOnlineMembersCount() == 1) {
       isJoinBattleActive = isJoinBattleVisible && cantJoinReasonData.canJoin
       warningText = this.currViewMode != WW_BATTLE_VIEW_MODES.QUEUE_INFO
         ? this.getWarningText(cantJoinReasonData, joinWarningData)
@@ -618,7 +614,7 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
           isJoinBattleActive = false
           warningText = cantJoinReasonData.reasonText
         }
-        else if (!g_squad_manager.readyCheck(false)) {
+        else if (!::g_squad_manager.readyCheck(false)) {
           isJoinBattleActive = false
           warningText = loc("squad/not_all_in_operation")
         }
@@ -626,10 +622,10 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
       }
 
       else if (this.currViewMode ==  WW_BATTLE_VIEW_MODES.SQUAD_INFO) {
-        if (g_squad_manager.isSquadMember()) {
-          isJoinBattleVisible = !g_squad_manager.getIsMyCrewsReady()
-          isLeaveBattleVisible = g_squad_manager.getIsMyCrewsReady()
-          battleText = g_squad_manager.getIsMyCrewsReady()
+        if (::g_squad_manager.isSquadMember()) {
+          isJoinBattleVisible = !::g_squad_manager.isMyCrewsReady
+          isLeaveBattleVisible = ::g_squad_manager.isMyCrewsReady
+          battleText = ::g_squad_manager.isMyCrewsReady
             ? loc("multiplayer/state/player_not_ready")
             : loc("multiplayer/state/crews_ready")
         }
@@ -639,7 +635,7 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
       }
 
       else if (this.currViewMode == WW_BATTLE_VIEW_MODES.QUEUE_INFO) {
-        if (g_squad_manager.isSquadMember()) {
+        if (::g_squad_manager.isSquadMember()) {
           isJoinBattleVisible = false
           isLeaveBattleVisible = true
           isLeaveBattleActive = false
@@ -654,29 +650,29 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
     if (isLeaveBattleVisible)
       this.scene.findObject("btn_leave_event_text").setValue(battleText)
 
-    let joinButtonObj = showObjById("btn_join_battle", isJoinBattleVisible, this.scene)
+    let joinButtonObj = this.showSceneBtn("btn_join_battle", isJoinBattleVisible)
     joinButtonObj.inactiveColor = isJoinBattleActive ? "no" : "yes"
-    let leaveButtonObj = showObjById("btn_leave_battle", isLeaveBattleVisible, this.scene)
+    let leaveButtonObj = this.showSceneBtn("btn_leave_battle", isLeaveBattleVisible)
     leaveButtonObj.enable(isLeaveBattleActive)
 
-    let warningTextObj = showObjById("cant_join_reason_txt", !u.isEmpty(warningText), this.scene)
+    let warningTextObj = this.showSceneBtn("cant_join_reason_txt", !u.isEmpty(warningText))
     warningTextObj.setValue(warningText)
 
-    let warningIconObj = showObjById("warning_icon", !u.isEmpty(fullWarningText), this.scene)
+    let warningIconObj = this.showSceneBtn("warning_icon", !u.isEmpty(fullWarningText))
     warningIconObj.tooltip = fullWarningText
 
     let unitAvailability = ::g_world_war.getSetting("checkUnitAvailability",
       WW_BATTLE_UNITS_REQUIREMENTS.BATTLE_UNITS)
-    showObjById("required_crafts_block",
+    this.showSceneBtn("required_crafts_block",
       unitAvailability == WW_BATTLE_UNITS_REQUIREMENTS.OPERATION_UNITS ||
-      unitAvailability == WW_BATTLE_UNITS_REQUIREMENTS.BATTLE_UNITS, this.scene)
+      unitAvailability == WW_BATTLE_UNITS_REQUIREMENTS.BATTLE_UNITS)
 
     this.updateAutoPresetButton(joinWarningData)
 
-    let btnSlotbarHelpObj = showObjById("btn_slotbar_help", this.hasSlotbarByUnitsGroups, this.scene)
+    let btnSlotbarHelpObj = this.showSceneBtn("btn_slotbar_help", this.hasSlotbarByUnitsGroups)
     if (this.hasSlotbarByUnitsGroups) {
       let isHelpUnseen = wwHelpSlotbarGroupsModal.isUnseen()
-      showObjById("btn_slotbar_help_unseen_icon", isHelpUnseen, this.scene)
+      this.showSceneBtn("btn_slotbar_help_unseen_icon", isHelpUnseen)
       btnSlotbarHelpObj.hasUnseenIcon = isHelpUnseen ? "yes" : "no"
     }
   }
@@ -714,7 +710,7 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
       statusObj.setValue(battleView.getBattleStatusWithCanJoinText())
 
     let needShowWinChance = battleView.needShowWinChance()
-    let winCahnceObj = showObjById("win_chance", needShowWinChance, this.scene)
+    let winCahnceObj = this.showSceneBtn("win_chance", needShowWinChance)
     if (needShowWinChance && winCahnceObj) {
       let winCahnceTextObj = winCahnceObj.findObject("win_chance_text")
       let percent = battleView.getAutoBattleWinChancePercentText()
@@ -757,7 +753,7 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
         : ""
 
     let hasInfo = !u.isEmpty(playersInfoText)
-    showObjById("teams_info", hasInfo, this.scene)
+    this.showSceneBtn("teams_info", hasInfo)
     if (hasInfo) {
       let playersTextObj = this.scene.findObject("number_of_players")
       if (checkObj(playersTextObj))
@@ -786,31 +782,31 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function updateAutoPresetButton(joinWarningData) {
     if (!this.curBattleInList.isValid()) {
-      showObjById("btn_auto_preset", false, this.scene)
+      this.showSceneBtn("btn_auto_preset", false)
       return
     }
 
     joinWarningData = joinWarningData ?? this.operationBattle.getWarningReasonData(this.getPlayerSide())
     let isVisibleBtnAutoPreset = joinWarningData.needMsgBox || this.hasSlotbarByUnitsGroups
-    let btnAutoPreset = showObjById("btn_auto_preset", isVisibleBtnAutoPreset, this.scene)
+    let btnAutoPreset = this.showSceneBtn("btn_auto_preset", isVisibleBtnAutoPreset)
     if (isVisibleBtnAutoPreset) {
       let bestPresetData = getBestPresetData(joinWarningData.availableUnits,
         joinWarningData.country, this.hasSlotbarByUnitsGroups)
       let hasChangeInPreset = bestPresetData?.hasChangeInPreset ?? false
       btnAutoPreset.inactiveColor = hasChangeInPreset ? "no" : "yes"
       btnAutoPreset.hasUnseenIcon = hasChangeInPreset ? "yes" : "no"
-      showObjById("auto_preset_warning_icon", hasChangeInPreset, btnAutoPreset, this.scene)
+      showObjById("auto_preset_warning_icon", hasChangeInPreset, btnAutoPreset)
     }
   }
 
   function goBack() {
-    if (g_squad_manager.isInSquad() && g_squad_manager.getOnlineMembersCount() > 1)
+    if (::g_squad_manager.isInSquad() && ::g_squad_manager.getOnlineMembersCount() > 1)
       if (WW_BATTLE_VIEW_MODES.SQUAD_INFO == this.currViewMode) {
-        if (g_squad_manager.isSquadLeader())
+        if (::g_squad_manager.isSquadLeader())
           this.msgBox("ask_leave_squad", loc("squad/ask/cancel_fight"),
             [
               ["yes", Callback(function() {
-                  g_squad_manager.cancelWwBattlePrepare()
+                  ::g_squad_manager.cancelWwBattlePrepare()
                 }, this)],
               ["no", @() null]
             ],
@@ -819,7 +815,7 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
           this.msgBox("ask_leave_squad", loc("squad/ask/leave"),
             [
               ["yes", Callback(function() {
-                  g_squad_manager.leaveSquad()
+                  ::g_squad_manager.leaveSquad()
                   this.goBack()
                 }, this)
               ],
@@ -849,10 +845,10 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
     let side = this.getPlayerSide()
     let cantJoinReasonData = this.operationBattle.getCantJoinReasonData(side, false)
     if (this.currViewMode == WW_BATTLE_VIEW_MODES.BATTLE_LIST) {
-      if (!g_squad_manager.isInSquad() || g_squad_manager.getOnlineMembersCount() == 1)
+      if (!::g_squad_manager.isInSquad() || ::g_squad_manager.getOnlineMembersCount() == 1)
         this.tryToJoin(side)
-      else if (g_squad_manager.isSquadLeader()) {
-        if (g_squad_manager.readyCheck(false)) {
+      else if (::g_squad_manager.isSquadLeader()) {
+        if (::g_squad_manager.readyCheck(false)) {
           if (!hasFeature("WorldWarSquadInfo"))
             this.tryToJoin(side)
           else {
@@ -861,7 +857,7 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
             else if (this.canPrerareSquadForBattle(cantJoinReasonData))
               showInfoMsgBox(cantJoinReasonData.reasonText)
             else
-              g_squad_manager.startWWBattlePrepare(this.operationBattle.id)
+              ::g_squad_manager.startWWBattlePrepare(this.operationBattle.id)
           }
         }
         else {
@@ -872,12 +868,12 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
         }
       }
       else
-        g_squad_manager.setReadyFlag()
+        ::g_squad_manager.setReadyFlag()
       return
     }
 
     if (this.currViewMode == WW_BATTLE_VIEW_MODES.SQUAD_INFO) {
-      if (g_squad_manager.isSquadLeader())
+      if (::g_squad_manager.isSquadLeader())
         this.tryToJoin(side)
       else {
         if (cantJoinReasonData.canJoin)
@@ -912,18 +908,18 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function setCrewsReadyFlag() {
-    g_squad_manager.setCrewsReadyFlag()
+    ::g_squad_manager.setCrewsReadyFlag()
   }
 
   function onLeaveBattle() {
     if (WW_BATTLE_VIEW_MODES.BATTLE_LIST == this.currViewMode) {
-      if (g_squad_manager.isInSquad() && g_squad_manager.isSquadMember())
-        g_squad_manager.setReadyFlag()
+      if (::g_squad_manager.isInSquad() && ::g_squad_manager.isSquadMember())
+        ::g_squad_manager.setReadyFlag()
     }
 
     else if (this.currViewMode == WW_BATTLE_VIEW_MODES.SQUAD_INFO) {
-      if (g_squad_manager.isInSquad() && g_squad_manager.isSquadMember())
-        g_squad_manager.setCrewsReadyFlag()
+      if (::g_squad_manager.isInSquad() && ::g_squad_manager.isSquadMember())
+        ::g_squad_manager.setCrewsReadyFlag()
     }
     else if (this.currViewMode == WW_BATTLE_VIEW_MODES.QUEUE_INFO) {
       ::g_world_war.leaveWWBattleQueues()
@@ -980,25 +976,25 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function syncSquadCountry() {
-    if (!g_squad_manager.isInSquad() || g_squad_manager.isSquadLeader())
+    if (!::g_squad_manager.isInSquad() || ::g_squad_manager.isSquadLeader())
       return
     if (this.getViewMode() != WW_BATTLE_VIEW_MODES.SQUAD_INFO)
       return
 
-    let squadCountry = g_squad_manager.getWwOperationCountry()
+    let squadCountry = ::g_squad_manager.getWwOperationCountry()
     if (!u.isEmpty(squadCountry) && profileCountrySq.value != squadCountry)
       switchProfileCountry(squadCountry)
   }
 
   function onEventSquadDataUpdated(_params) {
-    let wwBattleName = g_squad_manager.getWwOperationBattle()
-    let squadCountry = g_squad_manager.getWwOperationCountry()
+    let wwBattleName = ::g_squad_manager.getWwOperationBattle()
+    let squadCountry = ::g_squad_manager.getWwOperationCountry()
     let selectedBattleName = this.curBattleInList.id
     this.updateViewMode()
 
     if (wwBattleName) {
-      if (!g_squad_manager.isInSquad() || g_squad_manager.getOnlineMembersCount() == 1) {
-        g_squad_manager.cancelWwBattlePrepare()
+      if (!::g_squad_manager.isInSquad() || ::g_squad_manager.getOnlineMembersCount() == 1) {
+        ::g_squad_manager.cancelWwBattlePrepare()
         return
       }
 
@@ -1026,10 +1022,10 @@ gui_handlers.WwBattleDescription <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function onEventCancelBattlePrepare(_p) {
     if (::queues.hasActiveQueueWithType(QUEUE_TYPE_BIT.WW_BATTLE)
-      || !g_squad_manager.isSquadMember())
+      || !::g_squad_manager.isSquadMember())
       return
 
-    g_squad_manager.setCrewsReadyFlag(false)
+    ::g_squad_manager.setCrewsReadyFlag(false)
     this.msgBox("cancel_fight", loc("squad/message/cancel_fight"),
       [ ["yes", Callback(@() this.goBack(), this)] ], "yes", { cancel_fn = null })
   }

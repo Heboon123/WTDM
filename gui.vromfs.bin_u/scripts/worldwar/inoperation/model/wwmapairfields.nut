@@ -6,11 +6,11 @@ let { wwGetPlayerSide, wwGetZoneName } = require("worldwar")
 
 let savedAirfields = {}
 
-function reset() {
+let function reset() {
   savedAirfields.clear()
 }
 
-function updateMapIcons() {
+let function updateMapIcons() {
   if (!::g_world_war.haveManagementAccessForAnyGroup())
     return
 

@@ -1,6 +1,6 @@
 from "%rGui/globals/ui_library.nut" import *
 
-function defTab(tab_item, is_current, handler) {
+let function defTab(tab_item, is_current, handler) {
   let grp = ElemGroup()
   let stateFlags = Watched(0)
 
@@ -45,7 +45,7 @@ function defTab(tab_item, is_current, handler) {
 }
 
 
-function defHolder(_params) {
+let function defHolder(_params) {
   return {
     rendObj = ROBJ_SOLID
     size = [flex(), SIZE_TO_CONTENT]
@@ -58,7 +58,7 @@ function defHolder(_params) {
 }
 
 
-function tabs(holder = defHolder, tab = defTab) {
+let function tabs(holder = defHolder, tab = defTab) {
   return function(params) {
     let children = params.tabs.map(function(item) {
       return tab(item, item.id == params.currentTab, @() params.onChange(item))

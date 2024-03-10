@@ -30,4 +30,12 @@ groupBottom {
     color-factor:t='180'
     talign:t='right'
   }
+
+  textarea {
+    id:t='group_<<groupName>>_search_advice'
+    text:t='#contacts/search_advice'
+    display:t='hide'
+    width:t='pw'
+    removeParagraphIndent:t='yes'
+  }
 }

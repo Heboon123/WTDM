@@ -19,7 +19,7 @@ let mkWeaponsTutorStep = @(target, text) {
   nextActionShortcut = "help/NEXT_ACTION"
 }
 
-function getIdsByItemType(itemType, config) {
+let function getIdsByItemType(itemType, config) {
   let ids = []
   foreach (column in config.columns)
     foreach (cell in column)
@@ -31,7 +31,7 @@ function getIdsByItemType(itemType, config) {
   return ids
 }
 
-function checkShowShipWeaponsTutor(weaponsHandler, columnsConfig) {
+let function checkShowShipWeaponsTutor(weaponsHandler, columnsConfig) {
   if (!weaponsHandler.scene?.isValid())
     return
 

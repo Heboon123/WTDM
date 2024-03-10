@@ -1,7 +1,7 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import get_file_modify_time_sec
 from "%scripts/dagui_library.nut" import *
 
-let { eventbus_send } = require("eventbus")
 let { file_exists } = require("dagor.fs")
 let { frnd } = require("dagor.random")
 let DataBlock = require("DataBlock")
@@ -24,11 +24,11 @@ local isDebugMode = false
 local debugLastModified = MODIFY_UNKNOWN
 local loadErrorText = null
 
-function invalidateCache() {
+let function invalidateCache() {
   lastBg = ""
 }
 
-function loadBgBlk(name) {
+let function loadBgBlk(name) {
   loadErrorText = null
   local res = DataBlock()
   let fullName = getFullFileName(name)
@@ -101,7 +101,7 @@ local function load(blkFilePath = "", obj = null, curBgData = null) {
   debugLastModified = MODIFY_UNKNOWN
 }
 
-function enableDebugUpdate() {
+let function enableDebugUpdate() {
   SecondsUpdater(
     get_cur_gui_scene()["bg_picture_container"],
     function(_tObj, _params) {
@@ -124,12 +124,12 @@ function enableDebugUpdate() {
 }
 
 //blkFilePath == null - swith debug mode off.
-function debugLoad(blkFilePath = "") {
+let function debugLoad(blkFilePath = "") {
   isDebugMode = blkFilePath != null
   if (!isDebugMode)
     return
 
-  eventbus_send("gui_start_loading", {})
+  ::gui_start_loading()
   load(blkFilePath)
   enableDebugUpdate()
 }

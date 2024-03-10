@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -12,7 +13,7 @@ let { handlersManager, get_cur_base_gui_handler } = require("%scripts/baseGuiHan
  *
 **/
 
-function debug_show_workshop_event_preview(id) {
+let function debug_show_workshop_event_preview(id) {
   let workshopPreview = require("%scripts/items/workshop/workshopPreview.nut")
   let workshop = require("%scripts/items/workshop/workshop.nut")
   let ws = workshop.getSetById(id)

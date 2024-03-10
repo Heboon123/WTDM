@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 from "%scripts/items/itemsConsts.nut" import itemType
 
@@ -14,7 +15,7 @@ let trophyRewardListByCategory = require("%scripts/items/listPopupWnd/trophyRewa
 let { register_command } = require("console")
 let { stashBhvValueConfig } = require("%sqDagui/guiBhv/guiBhvValueConfig.nut")
 let { activeUnlocks, receiveRewards } = require("%scripts/unlocks/userstatUnlocksState.nut")
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
+let { ITEM } = require("%scripts/utils/genericTooltipTypes.nut")
 let { getUnitName, getUnitCountryIcon } = require("%scripts/unit/unitInfo.nut")
 let { getFullUnitRoleText, getUnitTooltipImage, getUnitClassColor } = require("%scripts/unit/unitInfoTexts.nut")
 let { getEntitlementConfig, getEntitlementShortName } = require("%scripts/onlineShop/entitlements.nut")
@@ -305,7 +306,7 @@ function getPrizesView(prizes) {
   return { prizes = res.map(@(val, idx) val.__update({idx})) }
 }
 
-function getStageViewData(stageData, currentProgress) {
+let function getStageViewData(stageData, currentProgress) {
   let { progress = 0, rewards = null } = stageData
   let itemId = rewards?.keys()[0]
   let item = itemId != null ? ::ItemsManager.findItemById(itemId.tointeger()) : null
@@ -322,7 +323,7 @@ function getStageViewData(stageData, currentProgress) {
         showRarity = false
         count = rewards[itemId]
       })]
-    stageTooltipId = itemId != null ? getTooltipType("ITEM").getTooltipId(itemId.tointeger()) : null
+    stageTooltipId = itemId != null ? ITEM.getTooltipId(itemId.tointeger()) : null
   }
 }
 

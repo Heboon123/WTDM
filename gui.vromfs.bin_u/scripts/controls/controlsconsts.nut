@@ -1,3 +1,4 @@
+//checked for plus_string
 const MAX_DEADZONE = 0.5
 const MAX_NONLINEARITY = 4
 const MAX_CAMERA_SMOOTH = 0.9

@@ -39,7 +39,7 @@ let scrollHandler = ScrollHandler()
 let scrollStep = fpx(75)
 let maxPatchnoteWidth = fpx(300)
 
-function getTabColorCtor(sf, style, isCurrent) {
+let function getTabColorCtor(sf, style, isCurrent) {
   if (isCurrent)
     return style.current
   if (sf & S_ACTIVE)
@@ -49,7 +49,7 @@ function getTabColorCtor(sf, style, isCurrent) {
   return style.normal
 }
 
-function patchnote(v) {
+let function patchnote(v) {
   let stateFlags = Watched(0)
   let isCurrent = Computed(@() curPatchnote.value.id == v.id)
   return @() {
@@ -96,7 +96,7 @@ let patchnoteSelectorGamepadButton = @(hotkey, actionFunc) topBorder({
 })
 
 let isVersionsExists = Computed(@() patchnotesReceived.value && (versions.value?.len() ?? 0) > 0)
-function getPatchoteSelectorChildren(versionsConf, needAddGamepadButtons) {
+let function getPatchoteSelectorChildren(versionsConf, needAddGamepadButtons) {
   let children = versionsConf.map(patchnote)
   if (!needAddGamepadButtons)
     return children
@@ -128,7 +128,7 @@ let seeMoreUrl = {
 
 let scrollPatchnoteWatch = Watched(0)
 
-function scrollPatchnote() {  //FIX ME: Remove this code, when native scroll will have opportunity to scroll by hotkeys.
+let function scrollPatchnote() {  //FIX ME: Remove this code, when native scroll will have opportunity to scroll by hotkeys.
   let element = scrollHandler.elem
   if (element != null)
     scrollHandler.scrollToY(element.getScrollOffsY() + scrollPatchnoteWatch.value * scrollStep)
@@ -161,7 +161,7 @@ let patchnoteLoading = freeze({
   padding = sh(2)
 })
 
-function selPatchnote() {
+let function selPatchnote() {
   local text = (chosenPatchnoteContent.value.text ?? "") != ""
     ? chosenPatchnoteContent.value.text : missedPatchnoteText
   if (cross_call.hasFeature("AllowExternalLink")) {
@@ -188,7 +188,7 @@ function selPatchnote() {
   }
 }
 
-function onCloseAction() {
+let function onCloseAction() {
   cross_call.startMainmenu()
 }
 

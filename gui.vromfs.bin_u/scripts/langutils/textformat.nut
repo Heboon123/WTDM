@@ -1,8 +1,9 @@
+//checked for plus_string
 let { currentLanguageW } = require("language.nut")
 let { getDecimalFormat, getShortTextFromNum } = require("%sqstd/textFormatByLang.nut")
 
 let curLangFunctions = {}
-function updateByLang(lang) {
+let function updateByLang(lang) {
   curLangFunctions.decimalFormat <- getDecimalFormat(lang)
   curLangFunctions.shortTextFromNum <- getShortTextFromNum(lang)
 }

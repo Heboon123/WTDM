@@ -1,14 +1,11 @@
 from "%scripts/dagui_library.nut" import *
-
+let logCH = log_with_prefix("[CLUSTER_HOSTS] ")
 let regexp2 = require("regexp2")
 let { resetTimeout } = require("dagor.workcycle")
 let { OPERATION_COMPLETE } = require("matching.errors")
 let { hardPersistWatched } = require("%sqstd/globalState.nut")
 let { isInBattleState } = require("%scripts/clientState/clientStates.nut")
 let { isMatchingOnline } = require("%scripts/matching/matchingOnline.nut")
-let { matchingApiFunc, matchingRpcSubscribe } = require("%scripts/matching/api.nut")
-
-let logCH = log_with_prefix("[CLUSTER_HOSTS] ")
 
 const MAX_FETCH_RETRIES = 5
 const MAX_FETCH_DELAY_SEC = 60
@@ -22,14 +19,15 @@ local failedFetches = 0
 
 let reIP = regexp2(@"^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$")
 
-function fetchClusterHosts() {
+let function fetchClusterHosts() {
   if (!canFetchHosts.value || isFetching)
     return
 
   isFetching = true
   logCH($"fetchClusterHosts (try {failedFetches})")
   let again = callee()
-  matchingApiFunc("hmanager.fetch_hosts_list",
+  ::matching.rpc_call("hmanager.fetch_hosts_list",
+    { timeout = MAX_FETCH_DELAY_SEC },
     function (result) {
       isFetching = false
 
@@ -48,10 +46,10 @@ function fetchClusterHosts() {
         failedFetches = 0
         resetTimeout(OUT_OF_RETRIES_DELAY_SEC, again)
       }
-    }, { timeout = MAX_FETCH_DELAY_SEC })
+    })
 }
 
-function tryFetchHosts() {
+let function tryFetchHosts() {
   isFetching = false
   failedFetches = 0
   if (canFetchHosts.value && clusterHosts.value.len() == 0)
@@ -60,7 +58,7 @@ function tryFetchHosts() {
 
 canFetchHosts.subscribe(@(_) tryFetchHosts())
 
-function tryApplyChangedHosts() {
+let function tryApplyChangedHosts() {
   if (isInBattleState.value || clusterHostsChangePending.value.len() == 0)
     return
   logCH($"Applying changed hosts")
@@ -70,7 +68,7 @@ function tryApplyChangedHosts() {
 
 isInBattleState.subscribe(@(_) tryApplyChangedHosts())
 
-matchingRpcSubscribe("hmanager.notify_hosts_list_changed", function(result) {
+::matching.subscribe("hmanager.notify_hosts_list_changed", function(result) {
   logCH($"Changed hosts:", result)
   let hosts = result.filter(@(_, ip) reIP.match(ip))
   clusterHostsChangePending(hosts)

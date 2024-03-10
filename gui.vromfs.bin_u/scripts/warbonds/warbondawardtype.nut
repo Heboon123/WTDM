@@ -7,20 +7,19 @@ let DataBlock = require("DataBlock")
 let { Balance } = require("%scripts/money.nut")
 let { format } = require("string")
 let { getPurchaseLimitWb } = require("%scripts/warbonds/warbondShopState.nut")
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
+let { DECORATION, SPECIAL_TASK } = require("%scripts/utils/genericTooltipTypes.nut")
 let { getFullUnlockDescByName, getUnlockNameText } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { getDecorator } = require("%scripts/customization/decorCache.nut")
 let { getEsUnitType, getUnitName } = require("%scripts/unit/unitInfo.nut")
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let { decoratorTypes } = require("%scripts/customization/types.nut")
 let { buildUnitSlot } = require("%scripts/slotbar/slotbarView.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
 
 ::g_wb_award_type <- {
   types = []
 }
 
-function requestBuyByName(warbond, blk) {
+let function requestBuyByName(warbond, blk) {
   let reqBlk = DataBlock()
   reqBlk.warbond = warbond.id
   reqBlk.stage = warbond.listId
@@ -30,7 +29,7 @@ function requestBuyByName(warbond, blk) {
   return char_send_blk("cln_exchange_warbonds", reqBlk)
 }
 
-function requestBuyByAmount(warbond, blk) {
+let function requestBuyByAmount(warbond, blk) {
   let reqBlk = DataBlock()
   reqBlk.warbond = warbond.id
   reqBlk.stage = warbond.listId
@@ -86,7 +85,7 @@ let makeWbAwardItem = function(changesTbl = null) {
   let res = {
     hasCommonDesc = false
 
-    getItem = @(blk) findItemById(blk.name)
+    getItem = @(blk) ::ItemsManager.findItemById(blk.name)
     getDescItem = @(blk) this.getItem(blk)
 
     getNameText = function(blk) {
@@ -105,7 +104,7 @@ let makeWbAwardItem = function(changesTbl = null) {
     }
 
     getTooltipId = @(blk, warbond)
-      getTooltipType("ITEM").getTooltipId(blk?.name ?? "", { wbId = warbond.id, wbListId = warbond.listId })
+      ::g_tooltip.getIdItem(blk?.name ?? "", { wbId = warbond.id, wbListId = warbond.listId })
 
     getUserlogBuyText = function(blk, priceText) {
       let item = this.getItem(blk)
@@ -142,8 +141,7 @@ enums.addTypesByGlobalName("g_wb_award_type", {
       }
     }
     getIconHeaderText = function(blk) { return this.getNameText(blk) }
-    getTooltipId = @(blk, warbond) getTooltipType("UNIT").getTooltipId(blk?.name ?? "",
-      { wbId = warbond.id, wbListId = warbond.listId })
+    getTooltipId = @(blk, warbond) ::g_tooltip.getIdUnit(blk?.name ?? "", { wbId = warbond.id, wbListId = warbond.listId })
     getNameText = function(blk) { return getUnitName(blk?.name ?? "") }
 
     getDescriptionImage = function(blk, _warbond) {
@@ -179,7 +177,7 @@ enums.addTypesByGlobalName("g_wb_award_type", {
   [EWBAT_ITEM]                 = makeWbAwardItem(),
   [EWBAT_TROPHY]               = makeWbAwardItem(),
   [EWBAT_EXT_INVENTORY_ITEM]   = makeWbAwardItem({
-    getItem = @(blk) findItemById(to_integer_safe(blk.name))
+    getItem = @(blk) ::ItemsManager.findItemById(to_integer_safe(blk.name))
   }),
 
   [EWBAT_SKIN] = {
@@ -187,7 +185,7 @@ enums.addTypesByGlobalName("g_wb_award_type", {
     getLayeredImage = function(_blk, _warbond) {
       return LayersIcon.getIconData(decoratorTypes.SKINS.defaultStyle)
     }
-    getTooltipId = @(blk, warbond) getTooltipType("DECORATION").getTooltipId(blk?.name ?? "",
+    getTooltipId = @(blk, warbond) DECORATION.getTooltipId(blk?.name ?? "",
                                                                             UNLOCKABLE_SKIN,
                                                                             {
                                                                               wbId = warbond.id,
@@ -217,7 +215,7 @@ enums.addTypesByGlobalName("g_wb_award_type", {
         return LayersIcon.getIconData(null, decoratorTypes.DECALS.getImage(decorator))
       return LayersIcon.getIconData(decoratorTypes.DECALS.defaultStyle)
     }
-    getTooltipId = @(blk, warbond) getTooltipType("DECORATION").getTooltipId(blk?.name ?? "",
+    getTooltipId = @(blk, warbond) DECORATION.getTooltipId(blk?.name ?? "",
                                                                             UNLOCKABLE_DECAL,
                                                                             {
                                                                               wbId = warbond.id,
@@ -249,7 +247,7 @@ enums.addTypesByGlobalName("g_wb_award_type", {
         return LayersIcon.getIconData(null, decoratorTypes.ATTACHABLES.getImage(decorator))
       return LayersIcon.getIconData(decoratorTypes.ATTACHABLES.defaultStyle)
     }
-    getTooltipId = @(blk, warbond) getTooltipType("DECORATION").getTooltipId(blk?.name ?? "",
+    getTooltipId = @(blk, warbond) DECORATION.getTooltipId(blk?.name ?? "",
                                                                             UNLOCKABLE_ATTACHABLE,
                                                                             {
                                                                               wbId = warbond.id,
@@ -299,7 +297,7 @@ enums.addTypesByGlobalName("g_wb_award_type", {
   [EWBAT_BATTLE_TASK] = {
     getLayeredImage = @(_blk, warbond) warbond.getLayeredIconStyle()
     getNameText = @(blk) loc($"item/{blk.name}")
-    getDescText = @(blk) loc($"item/{blk.name}/desc")
+    getDescText = @(blk) loc("item/" + blk.name + "/desc")
     hasIncreasingLimit = true
     canBuy = @(warbond, blk) warbonds_can_buy_battle_task(blk.name)
       && (getPurchaseLimitWb(warbond) > this.getBoughtCount(warbond, blk))
@@ -311,7 +309,7 @@ enums.addTypesByGlobalName("g_wb_award_type", {
         : (getPurchaseLimitWb(warbond) <= this.getBoughtCount(warbond, blk))
            ? "item/specialTasksPersonalUnlocks/limitRestriction"
            : ""
-    getTooltipId = @(blk, warbond) getTooltipType("SPECIAL_TASK").getTooltipId(blk.name, {
+    getTooltipId = @(blk, warbond) SPECIAL_TASK.getTooltipId(blk.name, {
       wbId = warbond.id,
       wbListId = warbond.listId
     })

@@ -20,7 +20,7 @@ let reqNames = ["reqWeapon", "reqModification"]
 
 let upgradeNames = ["weaponUpgrade1", "weaponUpgrade2", "weaponUpgrade3", "weaponUpgrade4"]
 
-function addReqParamsToWeaponry(weaponry, blk) {
+let function addReqParamsToWeaponry(weaponry, blk) {
   if (!isDataBlock(blk))
     return
 
@@ -36,7 +36,7 @@ function addReqParamsToWeaponry(weaponry, blk) {
   }
 }
 
-function initPresetParams(weapon, blk = null) {
+let function initPresetParams(weapon, blk = null) {
   let weaponmask = weapon.weaponmask
   weapon.hasMines <- (weaponmask & WeaponMask.MINE_MASK) != 0
   weapon.bomb <- (weaponmask & WeaponMask.ALL_BOMBS_MASK) != 0
@@ -50,7 +50,7 @@ function initPresetParams(weapon, blk = null) {
     weapon[p] <- weapon?[p] ?? blk?[p]
 }
 
-function initCustomPresetParams(unit, weapon) {
+let function initCustomPresetParams(unit, weapon) {
   let unitBlk = ::get_full_unit_blk(unit.name)
   let hasUnitCountermeasures = unitBlk?.commonWeapons == null ? false
     : getWeaponsByTypes(unitBlk, unitBlk.commonWeapons).findvalue (@(w) w.trigger == "countermeasures") != null
@@ -79,7 +79,7 @@ function initCustomPresetParams(unit, weapon) {
   weapon.mass_per_sec <- massPerSecValue
 }
 
-function initWeaponry(weaponry, blk, esUnitType) {
+let function initWeaponry(weaponry, blk, esUnitType) {
   let weaponBlk = get_modifications_blk()?.modifications?[weaponry.name]
   weaponry.cost <- weaponry?.cost ?? 0
   if (blk?.value != null)
@@ -124,7 +124,7 @@ function initWeaponry(weaponry, blk, esUnitType) {
   addReqParamsToWeaponry(weaponry, blk)
 }
 
-function addReqParamsByContainers(weaponsContainers, name, reqParams) {
+let function addReqParamsByContainers(weaponsContainers, name, reqParams) {
   foreach (rp in reqNames)
     if (rp in weaponsContainers[name]) {
       reqParams[rp] <- reqParams?[rp] ?? []
@@ -133,7 +133,7 @@ function addReqParamsByContainers(weaponsContainers, name, reqParams) {
     }
 }
 
-function initUnitWeapons(unit, weapons, weaponsBlk) {
+let function initUnitWeapons(unit, weapons, weaponsBlk) {
   let { weaponsContainers, esUnitType } = unit
   foreach (weapon in weapons) {
     let weaponBlk = weaponsBlk?[weapon.name]
@@ -148,7 +148,7 @@ function initUnitWeapons(unit, weapons, weaponsBlk) {
   }
 }
 
-function getCustomSumWeapons(weaponBlk, weaponsBlk) {
+let function getCustomSumWeapons(weaponBlk, weaponsBlk) {
   let res = []
   if (weaponBlk == null || weaponsBlk?.custom_presets == null)
     return res
@@ -163,7 +163,7 @@ function getCustomSumWeapons(weaponBlk, weaponsBlk) {
   return res
 }
 
-function initUnitCustomPresetsWeapons(unit, weapons) {
+let function initUnitCustomPresetsWeapons(unit, weapons) {
   let weaponsBlk = get_wpcost_blk()?[unit.name].weapons
   let { weaponsContainers, esUnitType } = unit
   foreach (weapon in weapons) {
@@ -180,7 +180,7 @@ function initUnitCustomPresetsWeapons(unit, weapons) {
   }
 }
 
-function initWeaponryUpgrades(upgradesTarget, blk) {
+let function initWeaponryUpgrades(upgradesTarget, blk) {
   foreach (upgradeName in upgradeNames) {
     if (blk?[upgradeName] == null)
       break
@@ -191,7 +191,7 @@ function initWeaponryUpgrades(upgradesTarget, blk) {
   }
 }
 
-function initUnitModifications(modifications, modificationsBlk, esUnitType) {
+let function initUnitModifications(modifications, modificationsBlk, esUnitType) {
   let errorsTextArray = []
   if (modificationsBlk == null)
     return errorsTextArray
@@ -215,7 +215,7 @@ function initUnitModifications(modifications, modificationsBlk, esUnitType) {
   return errorsTextArray
 }
 
-function initUnitWeaponsContainers(weaponsContainers, weaponsBlk) {
+let function initUnitWeaponsContainers(weaponsContainers, weaponsBlk) {
   eachBlock(weaponsBlk, function(weaponBlk, weaponName) {
     if (!(weaponBlk?.isWeaponForCustomSlot ?? false))
       return

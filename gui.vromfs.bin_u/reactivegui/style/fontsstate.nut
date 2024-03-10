@@ -14,7 +14,6 @@ let baseNameFontsById = {
 
 let fontGenId = extWatched("fontGenId", "")
 let fontSizePx = extWatched("fontSizePx", 0)
-let fontSizeMultiplier = extWatched("fontSizeMultiplier", 1)
 
 let get = @(fontId) Fonts?["".concat((baseNameFontsById?[fontId] ?? ""), fontGenId.value)]
 let getSizePx = @(val = 1) round(val * fontSizePx.value / 1080.0).tointeger()
@@ -26,5 +25,4 @@ return {
   getSizePx
   getSizeByScrnTgt
   getSizeByDp
-  fontSizeMultiplier
 }

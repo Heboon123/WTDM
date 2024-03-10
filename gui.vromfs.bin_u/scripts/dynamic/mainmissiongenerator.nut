@@ -1,5 +1,5 @@
+//checked for plus_string
 
-let { registerRespondent } = require("scriptRespondent")
 let { genHeadToHeadMission } = require("%scripts/dynamic/headtohead.nut")
 let { genCombatPatrolMission } = require("%scripts/dynamic/combat_patrol.nut")
 let { genBombingVehiclesMission, genBombingAntiTankMission, genBombingBuildingsMission,
@@ -37,15 +37,14 @@ let missionGenFunctions = [
 local currentMissionNo = 0
 
 //functions used in native code
-registerRespondent("beginMissionsGeneration", function beginMissionsGeneration() {
+::beginMissionsGeneration <- function beginMissionsGeneration() {
   currentMissionNo = 0
-})
-
-registerRespondent("generateNextMission", function generateNextMission(isFreeFlight) { // isFreeFlight = Mission Editor
+}
+::generateNextMission <- function generateNextMission(isFreeFlight) { // isFreeFlight = Mission Editor
   if (currentMissionNo >= missionGenFunctions.len())
     return false
 
   missionGenFunctions[currentMissionNo](isFreeFlight)
   currentMissionNo++
   return true
-})
+}

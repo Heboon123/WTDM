@@ -1,4 +1,4 @@
-let { eventbus_subscribe, eventbus_send } = require("eventbus")
+let { subscribe, send } = require("eventbus")
 let { updateUidsMapping } = require("%xboxLib/userIds.nut")
 let {rnd_int} = require("dagor.random")
 let logX = require("%sqstd/log.nut")().with_prefix("[EXT_IDS] ")
@@ -9,14 +9,14 @@ let cachedDataXuids = persist("cachedDataXuids", @() { callbacks = {}, cachedNul
 let cachedDataUids = persist("cachedDataUids", @() { callbacks = {}})
 
 
-function subscribe_to_xuid_requests(callback) {
-  eventbus_subscribe(eventNameXuids, function(res) {
+let function subscribe_to_xuid_requests(callback) {
+  subscribe(eventNameXuids, function(res) {
     callback?(res?.uid)
   })
 }
 
 
-function request_xuid_for_uid(uid, callback) {
+let function request_xuid_for_uid(uid, callback) {
   if (uid in cachedDataXuids.cachedNulls) {
     logX($"UserID {uid} was requested already and doesn't have known xuid")
     callback?(uid, null)
@@ -25,11 +25,11 @@ function request_xuid_for_uid(uid, callback) {
 
   logX($"Requesting xuid for {uid}")
   cachedDataXuids.callbacks[uid] <- callback
-  eventbus_send(eventNameXuids, { uid = uid })
+  send(eventNameXuids, { uid = uid })
 }
 
 
-function on_xuid_request_response(uid, xuid) {
+let function on_xuid_request_response(uid, xuid) {
   local callback = null
   if (uid in cachedDataXuids.callbacks) {
     callback = cachedDataXuids.callbacks[uid]
@@ -48,14 +48,14 @@ function on_xuid_request_response(uid, xuid) {
 }
 
 
-function subscribe_to_batch_uids_requests(callback) {
-  eventbus_subscribe(eventNameUids, function(res) {
+let function subscribe_to_batch_uids_requests(callback) {
+  subscribe(eventNameUids, function(res) {
     callback?(res?.xuids, res?.requestId)
   })
 }
 
 
-function batch_request_uids_by_xuids(xuids, callback) {
+let function batch_request_uids_by_xuids(xuids, callback) {
   let REQUEST_ID_MAX = 100000
   local requestId = rnd_int(0, REQUEST_ID_MAX)
   while (requestId in cachedDataUids.callbacks) {
@@ -64,11 +64,11 @@ function batch_request_uids_by_xuids(xuids, callback) {
 
   logX($"Requesting {xuids.len()} uids by xuids. RequestId: {requestId}")
   cachedDataUids.callbacks[requestId] <- callback
-  eventbus_send(eventNameUids, {xuids = xuids, requestId = requestId})
+  send(eventNameUids, {xuids = xuids, requestId = requestId})
 }
 
 
-function on_batch_uids_request_response(xuids2uids, requestId) {
+let function on_batch_uids_request_response(xuids2uids, requestId) {
   local callback = null
   if (requestId in cachedDataUids.callbacks) {
     callback = cachedDataUids.callbacks[requestId]

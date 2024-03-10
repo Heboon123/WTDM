@@ -3,9 +3,9 @@ let { Watched } = require("frp")
 let { resetTimeout } = require("dagor.workcycle")
 let { get_time_msec } = require("dagor.time")
 
-function mkCountdownTimer(endTimeWatch, timeProcess = @(v) v, step = 1.0, curTimeFunc = get_time_msec) {
+let function mkCountdownTimer(endTimeWatch, timeProcess = @(v) v, step = 1.0, curTimeFunc = get_time_msec) {
   let countdownTimer = Watched(0)
-  function updateTimer() {
+  let function updateTimer() {
     let leftTime = max(endTimeWatch.value - curTimeFunc(), 0)
     if (leftTime > 0)
       resetTimeout(step, updateTimer)

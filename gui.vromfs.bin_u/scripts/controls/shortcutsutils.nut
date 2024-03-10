@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let shortcutsListModule = require("%scripts/controls/shortcutsList/shortcutsList.nut")
@@ -8,11 +9,11 @@ let unitTypes = require("%scripts/unit/unitTypesList.nut")
 
 let getShortcutById = @(shortcutId) shortcutsListModule?[shortcutId]
 
-function isAxisBoundToMouse(shortcutId) {
+let function isAxisBoundToMouse(shortcutId) {
   return ::is_axis_mapped_on_mouse(shortcutId)
 }
 
-function getBitArrayAxisIdByShortcutId(joyParams, shortcutId) {
+let function getBitArrayAxisIdByShortcutId(joyParams, shortcutId) {
   let shortcutData = getShortcutById(shortcutId)
   let axis = joyParams.getAxis(shortcutData?.axisIndex ?? -1)
   if (axis.axisId < 0)
@@ -24,7 +25,7 @@ function getBitArrayAxisIdByShortcutId(joyParams, shortcutId) {
   return 1 << axis.axisId
 }
 
-function getComplexAxesId(shortcutComponents) {
+let function getComplexAxesId(shortcutComponents) {
   let joyParams = ::joystick_get_cur_settings()
   local axesId = 0
   foreach (shortcutId in shortcutComponents)
@@ -47,7 +48,7 @@ let getTextMarkup = @(symbol) symbol == "" ? ""
   : "".concat("textareaNoTab {text:t='<color=@axisSymbolColor>", symbol,
     "</color>'; position:t='relative'; top:t='0.45@kbh-0.5h'}")
 
-function getInputsMarkup(inputs) {
+let function getInputsMarkup(inputs) {
   local res = ""
   foreach (input in inputs) {
     let curMk = input.getMarkup() ?? ""
@@ -58,7 +59,7 @@ function getInputsMarkup(inputs) {
   return res
 }
 
-function getAxisActivationShortcutData(shortcuts, item, preset) {
+let function getAxisActivationShortcutData(shortcuts, item, preset) {
   preset = preset ?? ::g_controls_manager.getCurPreset()
   let inputs = []
   let axisDescr = ::g_shortcut_type._getDeviceAxisDescription(item.id)
@@ -84,7 +85,7 @@ function getAxisActivationShortcutData(shortcuts, item, preset) {
   return getInputsMarkup(inputs)
 }
 
-function getShortcutData(shortcuts, shortcutId, cantBeEmpty = true, preset = null) {
+let function getShortcutData(shortcuts, shortcutId, cantBeEmpty = true, preset = null) {
   if (shortcuts?[shortcutId] == null)
     return cantBeEmpty ? getTextMarkup(loc("ui/not_applicable")) : ""
 
@@ -107,7 +108,7 @@ function getShortcutData(shortcuts, shortcutId, cantBeEmpty = true, preset = nul
   return cantBeEmpty && markup == "" ? getTextMarkup(loc("ui/not_applicable")) : markup
 }
 
-function isShortcutEqual(sc1, sc2) {
+let function isShortcutEqual(sc1, sc2) {
   if (sc1.len() != sc2.len())
     return false
 
@@ -117,7 +118,7 @@ function isShortcutEqual(sc1, sc2) {
   return true
 }
 
-function isShortcutMapped(shortcut) {
+let function isShortcutMapped(shortcut) {
   foreach (button in shortcut)
     if (button && button.dev.len() >= 0)
       foreach (d in button.dev)
@@ -126,7 +127,7 @@ function isShortcutMapped(shortcut) {
   return false
 }
 
-function restoreShortcuts(scList, scNames) {
+let function restoreShortcuts(scList, scNames) {
   let changeList = []
   let changeNames = []
   let curScList = ::get_shortcuts(scNames)
@@ -148,7 +149,7 @@ function restoreShortcuts(scList, scNames) {
   broadcastEvent("ControlsPresetChanged")
 }
 
-function hasMappedSecondaryWeaponSelector(unitType) {
+let function hasMappedSecondaryWeaponSelector(unitType) {
   local shortcuts = []
 
   if (unitType == unitTypes.AIRCRAFT)

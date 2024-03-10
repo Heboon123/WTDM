@@ -1,18 +1,16 @@
 //-file:plus-string
 from "%scripts/dagui_natives.nut" import stat_get_value_respawns, ps4_is_ugc_enabled, disable_network, pause_game, run_reactive_gui, epic_is_running, get_player_user_id_str, set_show_attachables, fetch_devices_inited_once, steam_is_running, steam_process_dlc, set_host_cb, ps4_is_chat_enabled, get_num_real_devices, fetch_profile_inited_once, get_localization_blk_copy
-from "app" import is_dev_version
 from "%scripts/dagui_library.nut" import *
 from "%scripts/login/loginConsts.nut" import LOGIN_STATE
 
-let { is_user_mission } = require("%scripts/missions/missionsUtilsModule.nut")
-let { eventbus_subscribe } = require("eventbus")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { format } = require("string")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
-let { handlersManager, loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let statsd = require("statsd")
 let DataBlock = require("DataBlock")
 let { get_authenticated_url_sso } = require("url")
+let { PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let penalties = require("%scripts/penitentiary/penalties.nut")
 let tutorialModule = require("%scripts/user/newbieTutorialDisplay.nut")
 let contentStateModule = require("%scripts/clientState/contentState.nut")
@@ -35,6 +33,7 @@ let { get_meta_missions_info } = require("guiMission")
 let { forceUpdateGameModes } = require("%scripts/matching/matchingGameModes.nut")
 let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 let { disableMarkSeenAllResourcesForNewUser } = require("%scripts/seen/markSeenResources.nut")
+let { resetBattleTasks } = require("%scripts/unlocks/battleTasks.nut")
 let getAllUnits = require("%scripts/unit/allUnits.nut")
 let { get_charserver_time_sec } = require("chard")
 let { LOCAL_AGREED_EULA_VERSION_SAVE_ID, getEulaVersion, openEulaWnd, localAgreedEulaVersion } = require("%scripts/eulaWnd.nut")
@@ -44,21 +43,19 @@ let { getAgreedEulaVersion, setAgreedEulaVersion } = require("sqEulaUtils")
 let { get_user_skins_blk, get_user_skins_profile_blk } = require("blkGetters")
 let { is_running } = require("steam")
 let { userIdStr, havePlayerTag } = require("%scripts/user/profileStates.nut")
-let { getProfileInfo } = require("%scripts/user/userInfoStats.nut")
 let { getCurLangShortName } = require("%scripts/langUtils/language.nut")
 let samsung = require("samsung")
 let { initSelectedCrews } = require("%scripts/slotbar/slotbarState.nut")
 let { isMeNewbie } = require("%scripts/myStats.nut")
-let { gui_start_mainmenu } = require("%scripts/mainmenu/guiStartMainmenu.nut")
-let { gui_start_controls_type_choice } = require("%scripts/controls/startControls.nut")
-let { addPopup } = require("%scripts/popups/popups.nut")
 
 const EMAIL_VERIFICATION_SEEN_DATE_SETTING_PATH = "emailVerification/lastSeenDate"
 let EMAIL_VERIFICATION_INTERVAL_SEC = 7 * 24 * 60 * 60
 
-let loginWTState = persist("loginWTState", @(){ initOptionsPseudoThread = null, shouldRestartPseudoThread = true})
+::g_login.initOptionsPseudoThread <- null
+::g_login.shouldRestartPseudoThread <- false
+::g_login[PERSISTENT_DATA_PARAMS].append("initOptionsPseudoThread")
 
-function gui_start_startscreen(_) {
+::gui_start_startscreen <- function gui_start_startscreen() {
   bqSendStart()
 
   log($"platformId is '{platformId }'")
@@ -69,15 +66,24 @@ function gui_start_startscreen(_) {
   ::g_login.startLoginProcess()
 }
 
-function gui_start_after_scripts_reload(_) {
+::gui_start_after_scripts_reload <- function gui_start_after_scripts_reload() {
   ::g_login.setState(LOGIN_STATE.AUTHORIZED) //already authorized to char
   ::g_login.startLoginProcess(true)
 }
 
-eventbus_subscribe("gui_start_startscreen", gui_start_startscreen)
-eventbus_subscribe("gui_start_after_scripts_reload", gui_start_after_scripts_reload)
+::on_sign_out <- function on_sign_out() {  //!!FIX ME: better to full replace this function by SignOut event
+  if (!("resetChat" in getroottable())) //scripts not loaded
+    return
 
-function go_to_account_web_page(bqKey = "") {
+  ::resetChat()
+  ::SessionLobby.leaveRoom()
+  resetBattleTasks()
+  if (::g_recent_items)
+    ::g_recent_items.reset()
+  ::abandoned_researched_items_for_session.clear()
+}
+
+let function go_to_account_web_page(bqKey = "") {
   let urlBase = format("https://store.gaijin.net/user.php?skin_lang=%s", getCurLangShortName())
   openUrl(get_authenticated_url_sso(urlBase, "any").url, false, true, bqKey)
 }
@@ -102,8 +108,8 @@ function go_to_account_web_page(bqKey = "") {
 
 ::g_login.onAuthorizeChanged <- function onAuthorizeChanged() {
   if (!this.isAuthorized()) {
-    if (loginWTState.initOptionsPseudoThread)
-      loginWTState.initOptionsPseudoThread.clear()
+    if (::g_login.initOptionsPseudoThread)
+      ::g_login.initOptionsPseudoThread.clear()
     broadcastEvent("SignOut")
     return
   }
@@ -120,11 +126,11 @@ function go_to_account_web_page(bqKey = "") {
   run_reactive_gui()
   userIdStr.set(get_player_user_id_str())
 
-  loginWTState.initOptionsPseudoThread =  [
+  this.initOptionsPseudoThread =  [
     function() { ::initEmptyMenuChat() }
   ]
-  loginWTState.initOptionsPseudoThread.extend(::init_options_steps)
-  loginWTState.initOptionsPseudoThread.append(
+  this.initOptionsPseudoThread.extend(::init_options_steps)
+  this.initOptionsPseudoThread.append(
     function() {
       if (!::g_login.hasState(LOGIN_STATE.PROFILE_RECEIVED | LOGIN_STATE.CONFIGS_RECEIVED))
         return PT_STEP_STATUS.SUSPEND
@@ -135,7 +141,7 @@ function go_to_account_web_page(bqKey = "") {
     }
     function() {
       contentStateModule.updateConsoleClientDownloadStatus()
-      getProfileInfo() //update userName
+      ::get_profile_info() //update userName
       initSelectedCrews(true)
       set_show_attachables(hasFeature("AttachablesUse"))
 
@@ -172,7 +178,7 @@ function go_to_account_web_page(bqKey = "") {
       if (steam_is_running())
         steam_process_dlc()
 
-      if (is_dev_version())
+      if (::is_dev_version)
         ::checkShopBlk()
 
       updatePlayerRankByCountries()
@@ -229,7 +235,7 @@ function go_to_account_web_page(bqKey = "") {
       if (isNeedFirstCountryChoice()) {
         disableMarkSeenAllResourcesForNewUser()
         forceUpdateGameModes()
-        loadHandler(gui_handlers.CountryChoiceHandler)
+        ::gui_start_countryChoice()
         gui_handlers.FontChoiceWnd.markSeen()
         tutorialModule.saveVersion()
 
@@ -245,32 +251,32 @@ function go_to_account_web_page(bqKey = "") {
       return null
     }
     function() {
-      loginWTState.initOptionsPseudoThread = null
+      ::g_login.initOptionsPseudoThread = null
       cb()
     }
   )
 
-  startPseudoThread(loginWTState.initOptionsPseudoThread, startLogout)
+  startPseudoThread(this.initOptionsPseudoThread, startLogout)
 }
 
 ::g_login.onEventGuiSceneCleared <- function onEventGuiSceneCleared(_p) {
   //work only after scripts reload
-  if (!loginWTState.shouldRestartPseudoThread)
+  if (!this.shouldRestartPseudoThread)
     return
-  loginWTState.shouldRestartPseudoThread = false
-  if (!loginWTState.initOptionsPseudoThread)
+  this.shouldRestartPseudoThread = false
+  if (!this.initOptionsPseudoThread)
     return
 
   get_cur_gui_scene().performDelayed(getroottable(),
     function() {
       handlersManager.loadHandler(gui_handlers.WaitForLoginWnd)
-      startPseudoThread(loginWTState.initOptionsPseudoThread, startLogout)
+      startPseudoThread(::g_login.initOptionsPseudoThread, startLogout)
     })
 }
 
 ::g_login.afterScriptsReload <- function afterScriptsReload() {
-  if (loginWTState.initOptionsPseudoThread)
-    loginWTState.shouldRestartPseudoThread = true
+  if (this.initOptionsPseudoThread)
+    this.shouldRestartPseudoThread = true
 }
 
 ::g_login.onLoggedInChanged <- function onLoggedInChanged() {
@@ -290,7 +296,7 @@ function go_to_account_web_page(bqKey = "") {
   })
 }
 
-function needAutoStartBattle() {
+let function needAutoStartBattle() {
   if (!isFirstChoiceShown.value
       || !hasFeature("BattleAutoStart")
       || disable_network()
@@ -305,9 +311,9 @@ function needAutoStartBattle() {
 
 ::g_login.firstMainMenuLoad <- function firstMainMenuLoad() {
   let isAutoStart = needAutoStartBattle()
-  local handler = isAutoStart
+  let handler = isAutoStart
     ? handlersManager.loadHandler(gui_handlers.AutoStartBattleHandler)
-    : gui_start_mainmenu({ allowMainmenuActions = false })
+    : ::gui_start_mainmenu(false)
 
   if (!handler)
     return //was error on load mainmenu, and was called signout on such error
@@ -324,10 +330,10 @@ function needAutoStartBattle() {
     else if (isPlatformShieldTv())
       ::setControlTypeByID("ct_xinput")
     else if (!isPlatformSteamDeck)
-      handler.doWhenActive(function() { gui_start_controls_type_choice(false) })
+      handler.doWhenActive(function() { ::gui_start_controls_type_choice(false) })
   }
   else if (!fetch_devices_inited_once() && !isPlatformSteamDeck)
-    handler.doWhenActive(function() { gui_start_controls_type_choice() })
+    handler.doWhenActive(function() { ::gui_start_controls_type_choice() })
 
   if (showConsoleButtons.value) {
     if (::g_login.isProfileReceived() && gui_handlers.GampadCursorControlsSplash.shouldDisplay())
@@ -357,7 +363,7 @@ function needAutoStartBattle() {
 
   if (hasFeature("CheckTwoStepAuth") && !havePlayerTag("2step"))
     handler.doWhenActive(function () {
-      addPopup(
+      ::g_popups.add(
         loc("mainmenu/two_step_popup_header"),
         loc("mainmenu/two_step_popup_text"),
         null,
@@ -396,7 +402,7 @@ function needAutoStartBattle() {
 
     let mis_array = get_meta_missions_info(GM_SINGLE_MISSION)
     foreach (misBlk in mis_array)
-      if (is_user_mission(misBlk)) {
+      if (::is_user_mission(misBlk)) {
         statsd.send_counter("sq.ug.goodum", 1)
         anyUG = true
         log("statsd_on_login ug.goodum " + (misBlk?.name ?? "null"))

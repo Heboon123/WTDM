@@ -1,9 +1,6 @@
 from "%scripts/dagui_natives.nut" import get_language, set_language, get_localization_blk_copy
-from "app" import is_dev_version
 from "%scripts/dagui_library.nut" import *
 
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
-let { eventbus_subscribe } = require("eventbus")
 let DataBlock = require("DataBlock")
 let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
@@ -13,8 +10,6 @@ let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platfo
 let { get_default_lang } = require("platform")
 let { GUI } = require("%scripts/utils/configs.nut")
 let { get_settings_blk } = require("blkGetters")
-let { setSystemConfigOption } = require("%globalScripts/systemConfig.nut")
-let { registerRespondent } = require("scriptRespondent")
 
 let steamLanguages = freeze({
   English = "english"
@@ -61,17 +56,17 @@ let langsList = []
 let langsById = {}
 
 
-function getLanguageName() {
+let function getLanguageName() {
   return currentLanguage
 }
 
-function getCurLangShortName() {
+let function getCurLangShortName() {
   return curLangShortName.value
 }
 
 let isChineseHarmonized = @() getLanguageName() == "HChinese" //we need to check language too early when get_language from profile not work
 
-function isChineseVersion() {
+let function isChineseVersion() {
   let language = getLanguageName()
   return language == "Chinese"
     || language == "TChinese"
@@ -80,7 +75,7 @@ function isChineseVersion() {
 
 let canSwitchGameLocalization = @() !isPlatformSony && !isPlatformXboxOne && !isChineseHarmonized()
 
-function _addLangOnce(id, icon = null, chatId = null, hasUnitSpeech = null, isDev = false) {
+let function _addLangOnce(id, icon = null, chatId = null, hasUnitSpeech = null, isDev = false) {
   if (id in langsById)
     return
 
@@ -101,7 +96,7 @@ function _addLangOnce(id, icon = null, chatId = null, hasUnitSpeech = null, isDe
     langInfo.isMainChatId = false
 }
 
-function checkInitList() {
+let function checkInitList() {
   if (isListInited)
     return
   isListInited = true
@@ -124,7 +119,7 @@ function checkInitList() {
       _addLangOnce(lang.id, lang.icon, lang.chatId, lang.hasUnitSpeech)
   }
 
-  if (is_dev_version()) {
+  if (::is_dev_version) {
     let blk = guiBlk?.game_localization ?? DataBlock()
     for (local p = 0; p < blk.blockCount(); p++) {
       let devPreset = blk.getBlock(p)
@@ -153,7 +148,7 @@ function checkInitList() {
 }
 
 
-function getLangInfoById(id) {
+let function getLangInfoById(id) {
   checkInitList()
   return langsById?[id]
 }
@@ -162,12 +157,12 @@ function getCurLangInfo() {
   return getLangInfoById(currentLanguage)
 }
 
-function onChangeLanguage() {
+let function onChangeLanguage() {
   currentSteamLanguage = steamLanguages?[currentLanguage] ?? "english"
   currentLanguageW(currentLanguage)
 }
 
-function saveLanguage(langName) {
+let function saveLanguage(langName) {
   if (currentLanguage == langName)
     return
   currentLanguage = langName
@@ -183,7 +178,7 @@ function setGameLocalization(langId, reloadScene = false, suggestPkgDownload = f
     return
 
   handlersManager.shouldResetFontsCache = true
-  setSystemConfigOption("language", langId)
+  ::setSystemConfigOption("language", langId)
   set_language(langId)
   saveLanguage(langId)
 
@@ -266,11 +261,14 @@ let getCurrentSteamLanguage = @() currentSteamLanguage
 }
 
 // called from native playerProfile on language change, so at this point we can use get_language
-eventbus_subscribe("on_language_changed", function on_language_changed(...) {
+::on_language_changed <- function on_language_changed() {
   saveLanguage(get_language())
-})
+}
 
-registerRespondent("get_current_steam_language", getCurrentSteamLanguage)
+// used in native code
+::get_current_steam_language <- function get_current_steam_language() {
+  return getCurrentSteamLanguage()
+}
 
 
 let g_language = {
@@ -308,7 +306,9 @@ let g_language = {
   canSwitchGameLocalization
 }
 
-subscribe_handler(g_language, g_listener_priority.DEFAULT_HANDLER)
+::cross_call_api.language <- g_language
+
+subscribe_handler(g_language, ::g_listener_priority.DEFAULT_HANDLER)
 
 register_command(@() reload(), "ui.language_reload")
 

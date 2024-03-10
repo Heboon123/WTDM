@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 let { CONTROL_TYPE } = require("%scripts/controls/controlsConsts.nut")
 let { USEROPT_FREE_CAMERA_INERTIA, USEROPT_REPLAY_CAMERA_WIGGLE, USEROPT_FREE_CAMERA_ZOOM_SPEED
@@ -76,10 +77,6 @@ return [
   }
   {
     id = "ID_REPLAY_CAMERA_ZOOM_OUT"
-    checkAssign = false
-  }
-  {
-    id = "ID_REPLAY_TOGGLE_SENSOR_VIEW"
     checkAssign = false
   }
   {

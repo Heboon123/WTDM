@@ -6,7 +6,6 @@ let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { cutPrefix } = require("%sqstd/string.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { getPlayerName } = require("%scripts/user/remapNick.nut")
-let { getCustomNick } = require("%scripts/contacts/customNicknames.nut")
 let time = require("%scripts/time.nut")
 let stdMath = require("%sqstd/math.nut")
 
@@ -48,9 +47,9 @@ gui_handlers.LeaderboardTable <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function showLoadingAnimation() {
-    showObjById("wait_animation", true, this.scene)
-    showObjById("no_leaderboads_text", false, this.scene)
-    showObjById("lb_table", false, this.scene)
+    this.showSceneBtn("wait_animation", true)
+    this.showSceneBtn("no_leaderboads_text", false)
+    this.showSceneBtn("lb_table", false)
   }
 
   function fillTable(lbRows, selfRow, selfPos, hasHeader, hasTable) {
@@ -99,17 +98,16 @@ gui_handlers.LeaderboardTable <- class (gui_handlers.BaseGuiHandlerWT) {
     if (hasTable)
       this.onRowSelect(lbTable)
 
-    showObjById("wait_animation", !hasHeader && !hasTable, this.scene)
-    showObjById("no_leaderboads_text", hasHeader && !hasTable, this.scene)
-    showObjById("lb_table", hasHeader && hasTable, this.scene)
+    this.showSceneBtn("wait_animation", !hasHeader && !hasTable)
+    this.showSceneBtn("no_leaderboads_text", hasHeader && !hasTable)
+    this.showSceneBtn("lb_table", hasHeader && hasTable)
   }
 
   function getTableRowMarkup(row, rowIdx, selfPos) {
     let needAddClanTag = row?.needAddClanTag ?? false
     let clanTag = row?.clanTag ?? ""
     let rowName = row?.name ?? ""
-    let playerName = getCustomNick(::Contact.getByName(rowName))
-      ?? (this.isClanLb ? rowName : getPlayerName(rowName))
+    let playerName = this.isClanLb ? rowName : getPlayerName(rowName)
     let rowData = [
       {
         text = row.pos >= 0 ? (row.pos + 1).tostring() : loc("leaderboards/notAvailable")

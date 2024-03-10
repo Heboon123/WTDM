@@ -11,7 +11,7 @@ let { floor } = require("math")
 
 let statsd = require("statsd")
 let time = require("%scripts/time.nut")
-let { eventbus_subscribe } = require("eventbus")
+let eventbus = require("eventbus")
 let { animBgLoad } = require("%scripts/loading/animBg.nut")
 
 // contentUpdater module is optional and don't available on PC
@@ -26,7 +26,7 @@ let { start_updater_with_config_once, stop_updater,
 
 const ContentUpdaterEventId = "contentupdater.modal.event"
 
-eventbus_subscribe(ContentUpdaterEventId, function (evt) {
+eventbus.subscribe(ContentUpdaterEventId, function (evt) {
   let handler = handlersManager.findHandlerClassInScene(gui_handlers.UpdaterModal)
   if ((handler?.isValid() ?? false))
     handler?.onUpdaterCallback(evt)
@@ -61,8 +61,8 @@ gui_handlers.UpdaterModal <- class (BaseGuiHandler) {
   onFinishCallback = null
 
   function initScreen() {
-    showObjById(this.buttonOkId, false, this.scene)
-    showObjById(this.buttonCancelId, false, this.scene)
+    this.showSceneBtn(this.buttonOkId, false)
+    this.showSceneBtn(this.buttonCancelId, false)
 
     this.scene.findObject("updater_timer").setUserData(this)
 
@@ -83,7 +83,7 @@ gui_handlers.UpdaterModal <- class (BaseGuiHandler) {
 
   function resetTimer() {
     this.timer = this.timeToShowCancel
-    showObjById(this.buttonCancelId, false, this.scene)
+    this.showSceneBtn(this.buttonCancelId, false)
   }
 
   function onUpdaterCallback(evt) {
@@ -113,14 +113,14 @@ gui_handlers.UpdaterModal <- class (BaseGuiHandler) {
   function allowCancelCurrentStage() {
     if (this.stage == UPDATER_DOWNLOADING || this.stage == UPDATER_DOWNLOADING_YUP) {
       if (!this.isCancelButtonVisible) {
-        showObjById(this.buttonCancelId, true, this.scene)
+        this.showSceneBtn(this.buttonCancelId, true)
         this.isCancelButtonVisible = true
       }
       return true
     }
 
     if (this.isCancelButtonVisible) {
-      showObjById(this.buttonCancelId, false, this.scene)
+      this.showSceneBtn(this.buttonCancelId, false)
       this.isCancelButtonVisible = false
     }
     return false
@@ -207,7 +207,7 @@ gui_handlers.UpdaterModal <- class (BaseGuiHandler) {
     this.isCancel = true
     statsd.send_counter("sq.updater.cancelled", 1)
     stop_updater()
-    showObjById(this.buttonCancelId, false, this.scene)
+    this.showSceneBtn(this.buttonCancelId, false)
   }
 
   function onEventSignOut() {

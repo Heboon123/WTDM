@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let inventoryClient = require("%scripts/inventory/inventoryClient.nut")
@@ -9,7 +10,7 @@ let { showGuestEmailRegistration, needShowGuestEmailRegistration
 let isMarketplaceEnabled = @() hasFeature("Marketplace")
   && hasFeature("AllowExternalLink") && inventoryClient.getMarketplaceBaseUrl() != null
 
-function goToMarketplace() {
+let function goToMarketplace() {
   if (!isMarketplaceEnabled())
     return
 

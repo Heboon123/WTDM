@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { xboxPrefixNameRegexp, psnPrefixNameRegexp, xboxPostfixNameRegexp,
@@ -13,7 +14,7 @@ let TV_ICON = "⋇"
 let PSN_ICON = "⋊"
 let NBSP = " " // Non-breaking space character
 
-function remapNick(name) {
+let function remapNick(name) {
   if (type(name) != "string" || name == "")
     return ""
 
@@ -50,7 +51,7 @@ function remapNick(name) {
   return NBSP.join([platformIcon, name], true)
 }
 
-function getPlayerName(name) {
+let function getPlayerName(name) {
   if (name == userName.value || getRealName(name) == userName.value) { //local usage
     if (!::get_gui_option_in_mode(USEROPT_DISPLAY_MY_REAL_NICK, OPTIONS_MODE_GAMEPLAY, true))
       return loc("multiplayer/name")

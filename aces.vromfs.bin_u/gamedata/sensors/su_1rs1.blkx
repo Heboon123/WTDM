@@ -108,46 +108,34 @@
       }
     }
   },
-  "scopeRangeSets": {
-    "search": {
-      "range1": 15000.0,
-      "range2": 30000.0,
-      "range3": 50000.0
-    }
+  "scopeRanges": {
+    "range1": 15000.0,
+    "range2": 30000.0,
+    "range3": 50000.0
   },
   "fsms": {
     "main": {
-      "stateInit": "init",
+      "stateInit": [
+        "init",
+        "init"
+      ],
       "actionsTemplates": {
         "init": {
           "setEnabled": {
             "value": false
-          },
-          "setCenterAzimuth": {
-            "source": "constant",
-            "value": 0.0
-          },
-          "setCenterElevation": [
-            {
-              "source": "constant",
-              "value": 0.0
-            },
-            {
-              "source": "constant",
-              "value": -4.0
-            }
-          ],
-          "setScanPatternSet": {
-            "scanPatternSet": "search"
-          },
-          "setScopeRangeSet": {
-            "scopeRangeSet": "search"
           },
           "setTransiver": {
             "transiver": "search"
           },
           "setSignal": {
             "signal": "search"
+          },
+          "setCenterElevation": {
+            "source": "constant",
+            "value": -4.0
+          },
+          "setScanPatternSet": {
+            "scanPatternSet": "search"
           },
           "setTargetDesignationRange": {
             "azimuthRange": [
@@ -173,9 +161,13 @@
           },
           "setEnabled": {
             "value": false
-          }
+          },
+          "setCenterAzimuth": {
+            "source": "constant",
+            "value": 0.0
+          },
+          "clearTargets": {}
         },
-        "resetStandbyMode": {},
         "setSearchMode": {
           "setModeName": {
             "name": "search"
@@ -183,6 +175,7 @@
           "setEnabled": {
             "value": true
           },
+          "clearTargets": {},
           "setFsmActive": {
             "fsm": "search",
             "active": true
@@ -196,7 +189,6 @@
           }
         },
         "resetSearchMode": {
-          "clearTargets": {},
           "setFsmActive": {
             "fsm": "search",
             "active": false

@@ -1,7 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_natives.nut" import is_hud_visible
 from "%scripts/dagui_library.nut" import *
-from "app" import is_dev_version
 
 let { subscribe_handler } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { format } = require("string")
@@ -23,12 +22,12 @@ let mainSceneObjects = {}
 let loadingSceneObjects = {}
 
 
-function getFpsColor(_fps) {
+let function getFpsColor(_fps) {
   return "constantColorFps"
 }
 
 
-function getPingColor(ping) {
+let function getPingColor(ping) {
   if (ping <= 50)
     return QUALITY_COLOR_EPIC
   else if (ping <= 100)
@@ -39,7 +38,7 @@ function getPingColor(ping) {
 }
 
 
-function getPacketlossColor(pl) {
+let function getPacketlossColor(pl) {
   if (pl <= 1)
     return QUALITY_COLOR_EPIC
   else if (pl <= 10)
@@ -50,7 +49,7 @@ function getPacketlossColor(pl) {
 }
 
 
-function validateObjects(objects, guiScene) {
+let function validateObjects(objects, guiScene) {
   if (checkObj(getTblValue(paramsList[0], objects)))
     return true
 
@@ -65,7 +64,7 @@ function validateObjects(objects, guiScene) {
 }
 
 
-function getCurSceneObjects() {
+let function getCurSceneObjects() {
   let guiScene = get_cur_gui_scene()
   if (!guiScene)
     return null
@@ -82,13 +81,13 @@ function getCurSceneObjects() {
 
 
 //validate objects before calling this
-function updateTexts(objects, params) {
+let function updateTexts(objects, params) {
   let { fps, ping, pl, sessionId, latency, latencyA, latencyR } = params
   let fpsInt = (fps + 0.5).tointeger();
   local fpsText = ""
   let isAllowedForPlatform = !isPlatformSony && !isPlatformXboxOne && !is_platform_android
   let isAllowedForUser = hasFeature("FpsCounterOverride")
-  if ((is_dev_version() || isAllowedForPlatform || isAllowedForUser) && fpsInt < 10000 && fpsInt > 0)
+  if ((::is_dev_version || isAllowedForPlatform || isAllowedForUser) && fpsInt < 10000 && fpsInt > 0)
     fpsText = colorize(getFpsColor(fpsInt), format("FPS: %d", fpsInt))
   objects.fps.setValue(fpsText)
 
@@ -114,7 +113,7 @@ function updateTexts(objects, params) {
 }
 
 
-function checkVisibility(objects) {
+let function checkVisibility(objects) {
   let show = is_hud_visible()
   if (objects.show == show)
     return
@@ -125,7 +124,7 @@ function checkVisibility(objects) {
 }
 
 
-function updateStatus(params) {
+let function updateStatus(params) {
   let objects = getCurSceneObjects()
   if (!objects)
     return
@@ -136,7 +135,7 @@ function updateStatus(params) {
 
 
 
-function init() {
+let function init() {
   subscribe_handler({
     function onEventShowHud(_p) {
       let objects = getCurSceneObjects()

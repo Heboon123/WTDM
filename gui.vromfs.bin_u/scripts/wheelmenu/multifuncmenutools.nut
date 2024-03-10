@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import get_player_unit_name
 from "%scripts/dagui_library.nut" import *
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -15,7 +16,7 @@ local isDebugMode = false
 
 ::debug_multifunc_menu <- @(enable) isDebugMode = enable
 
-function isEnabledByUnit(config, c, unitId) {
+let function isEnabledByUnit(config, c, unitId) {
   if (c == null)
     return false
   if (c?.enable)
@@ -33,7 +34,7 @@ function isEnabledByUnit(config, c, unitId) {
 }
 
 
-function handleWheelMenuApply(idx) {
+let function handleWheelMenuApply(idx) {
   if (idx < 0)
     getMfmHandler()?.gotoPrevMenuOrQuit()
   else if (this.menu?[idx].sectionId)
@@ -45,7 +46,7 @@ function handleWheelMenuApply(idx) {
 }
 
 
-function makeMfmSection(cfg, id, unitId, hudUnitType) {
+let function makeMfmSection(cfg, id, unitId, hudUnitType) {
   let allowedShortcutIds = getControlsList(unitTypeByHudUnitType?[hudUnitType]).map(@(s) s.id)
   let sectionConfig = cfg[id]
 
@@ -65,7 +66,7 @@ function makeMfmSection(cfg, id, unitId, hudUnitType) {
 
     if (isShortcut) {
       shortcutId = c.shortcut.findvalue(@(i) allowedShortcutIds.indexof(i) != null)
-      label = item?.getText ? item.getText() : (loc("hotkeys/{0}".subst(shortcutId ?? c.shortcut?[0] ?? "")))
+      label = loc("hotkeys/{0}".subst(shortcutId ?? c.shortcut?[0] ?? ""))
       isEnabled = shortcutId != null && isEnabledByUnit(cfg, c, unitId)
     }
     else if (isSection) {
@@ -101,22 +102,14 @@ function makeMfmSection(cfg, id, unitId, hudUnitType) {
         colored = isEnabled
       })
 
-    let menuItem = isEmpty ? null : {
+    menu.append(isEmpty ? null : {
       sectionId
       shortcutId
-      onDestroy = item?.onDestroy
-      onCreate = item?.onCreate
-      eventName = item?.eventName
-      itemName = item?.itemName
-      onUpdate = item?.onUpdate
       action
-      color
       name = colorize(color, label)
       shortcutText
       wheelmenuEnabled = isEnabled
-    }
-
-    menu.append(menuItem)
+    })
   }
 
   return menu

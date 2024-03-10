@@ -1,9 +1,9 @@
 let { Watched } = require("frp")
-let { eventbus_subscribe } = require("eventbus")
+let { subscribe } = require("eventbus")
 let { is_app_loaded } = require("app")
 
 let isAppLoaded = Watched(is_app_loaded())
 
-eventbus_subscribe("isAppLoaded", @(_) isAppLoaded(true))
+subscribe("isAppLoaded", @(_) isAppLoaded(true))
 
 return isAppLoaded

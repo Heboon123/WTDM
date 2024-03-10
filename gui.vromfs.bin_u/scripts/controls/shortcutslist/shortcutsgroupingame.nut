@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import gchat_is_voice_enabled
 from "%scripts/dagui_library.nut" import *
 

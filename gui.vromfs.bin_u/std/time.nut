@@ -26,7 +26,7 @@ let hoursToSeconds = @(seconds) seconds * TIME_HOUR_IN_SECONDS
 let daysToSeconds = @(days) days * TIME_DAY_IN_SECONDS
 let secondsToDays = @(seconds) seconds / TIME_DAY_IN_SECONDS_F
 
-function secondsToTime(time){
+let function secondsToTime(time){
   if(type(time)=="table" && "seconds" in time)
     return time
   let s = time.tointeger()
@@ -39,7 +39,7 @@ function secondsToTime(time){
   }
 }
 
-function secondsToTimeSimpleString(time) {
+let function secondsToTimeSimpleString(time) {
   let sign = time >= 0 ? "" : "-"
   let { days=0, hours=0, minutes=0, seconds=0 } = secondsToTime(abs(time.tointeger()))
   let totalHours = days * TIME_DAY_IN_HOURS + hours
@@ -50,7 +50,7 @@ function secondsToTimeSimpleString(time) {
   return $"{sign}{res}"
 }
 
-function roundTime(time){
+let function roundTime(time){
   let t = (type(time)=="table" && "seconds" in time) ? clone time : secondsToTime(time)
   if (t.days > 2)
     t.hours = 0
@@ -70,7 +70,7 @@ let timeTbl = {
   w = TIME_WEEK_IN_SECONDS
 }
 
-function getSecondsFromTemplate(str, errorValue = null) {
+let function getSecondsFromTemplate(str, errorValue = null) {
  // "1w 1d 1h 1m 1s"
   if (!str.len())
     return errorValue
@@ -91,7 +91,7 @@ function getSecondsFromTemplate(str, errorValue = null) {
   return seconds
 }
 
-function secondsToTimeFormatString(time) {
+let function secondsToTimeFormatString(time) {
   let {days=0, hours=0, minutes=0, seconds=0} = secondsToTime(time)
   let res = []
   if (days>0)

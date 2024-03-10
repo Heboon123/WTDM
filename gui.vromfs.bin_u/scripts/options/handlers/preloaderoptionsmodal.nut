@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import is_mouse_last_time_used
 from "%scripts/dagui_library.nut" import *
 
@@ -10,7 +11,7 @@ let { animBgLoad } = require("%scripts/loading/animBg.nut")
 let { isLoadingScreenBanned,
   toggleLoadingScreenBan } = require("%scripts/options/preloaderOptions.nut")
 let { havePremium } = require("%scripts/user/premium.nut")
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
+let { UNLOCK_SHORT } = require("%scripts/utils/genericTooltipTypes.nut")
 let { isUnlockFav, toggleUnlockFav } = require("%scripts/unlocks/favoriteUnlocks.nut")
 let { utf8ToLower, trim } = require("%sqstd/string.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
@@ -27,7 +28,7 @@ local class PreloaderOptionsModal (gui_handlers.BaseGuiHandlerWT) {
     this.guiScene.replaceContent(listboxFilterHolder, "%gui/chapter_include_filter.blk", this)
 
     this.fillLoadingScreenList()
-    showObjById("items_list_msg", false, this.scene).setValue(loc("shop/search/global/notFound"))
+    this.showSceneBtn("items_list_msg", false).setValue(loc("shop/search/global/notFound"))
 
     this.updateListItems()
     this.updateButtons()
@@ -43,7 +44,7 @@ local class PreloaderOptionsModal (gui_handlers.BaseGuiHandlerWT) {
         id = screenId
         itemText = getLoadingBgName(screenId)
         tooltip = isUnlocked ? getLoadingBgTooltip(screenId) : null
-        tooltipObjId = !isUnlocked ? getTooltipType("UNLOCK_SHORT").getTooltipId(getUnlockIdByLoadingBg(screenId)) : null
+        tooltipObjId = !isUnlocked ? UNLOCK_SHORT.getTooltipId(getUnlockIdByLoadingBg(screenId)) : null
         isNeedOnHover = showConsoleButtons.value
       })
     }
@@ -82,15 +83,15 @@ local class PreloaderOptionsModal (gui_handlers.BaseGuiHandlerWT) {
     let isBanBtnVisible = isUnlocked && isBtnVisible
     let isFavBtnVisible = !isUnlocked && isBtnVisible
 
-    showObjById("btn_select", !isMouseMode && this.hoveredId != this.selectedId && this.isHovered, this.scene)
+    this.showSceneBtn("btn_select", !isMouseMode && this.hoveredId != this.selectedId && this.isHovered)
 
-    let banBtnObj = showObjById("btn_ban", isBanBtnVisible, this.scene)
+    let banBtnObj = this.showSceneBtn("btn_ban", isBanBtnVisible)
     if (isBanBtnVisible)
       banBtnObj.setValue(havePremium.value && isLoadingScreenBanned(this.selectedId)
         ? loc("maps/preferences/removeBan")
         : loc("maps/preferences/ban"))
 
-    let favBtnObj = showObjById("btn_fav", isFavBtnVisible, this.scene)
+    let favBtnObj = this.showSceneBtn("btn_fav", isFavBtnVisible)
     if (isFavBtnVisible) {
       let unlockId = getUnlockIdByLoadingBg(this.selectedId)
       favBtnObj.setValue(isUnlockFav(unlockId)
@@ -178,8 +179,8 @@ local class PreloaderOptionsModal (gui_handlers.BaseGuiHandlerWT) {
       isFound = isFound || isVisible
     }
 
-    showObjById("filter_edit_cancel_btn", value.len() != 0, this.scene)
-    showObjById("items_list_msg", !isFound, this.scene)
+    this.showSceneBtn("filter_edit_cancel_btn", value.len() != 0)
+    this.showSceneBtn("items_list_msg", !isFound)
     this.guiScene.setUpdatesEnabled(true, true)
 
     this.updateButtons()

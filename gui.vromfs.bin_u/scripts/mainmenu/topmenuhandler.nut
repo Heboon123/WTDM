@@ -1,8 +1,6 @@
 from "%scripts/dagui_natives.nut" import is_news_adver_actual, req_news, get_news_blk
 from "%scripts/dagui_library.nut" import *
 
-let { getGlobalModule } = require("%scripts/global_modules.nut")
-let g_squad_manager = getGlobalModule("g_squad_manager")
 let { get_current_base_gui_handler } = require("%sqDagui/framework/baseGuiHandlerManager.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let SecondsUpdater = require("%sqDagui/timer/secondsUpdater.nut")
@@ -23,10 +21,8 @@ let { isUsedCustomLocalization, getLocalization } = require("%scripts/langUtils/
 let { getUnlockedCountries } = require("%scripts/firstChoice/firstChoice.nut")
 let math = require("math")
 let { getDaguiObjAabb } = require("%sqDagui/daguiUtil.nut")
-let { addBgTaskCb } = require("%scripts/tasker.nut")
-let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
 
-class TopMenu (gui_handlers.BaseGuiHandlerWT) {
+local class TopMenu (gui_handlers.BaseGuiHandlerWT) {
   wndType = handlerType.ROOT
   keepLoaded = true
   sceneBlkName = "%gui/mainmenu/topMenuScene.blk"
@@ -90,7 +86,7 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
         "nav-topMenu"
       )
 
-      showObjById("topmenu_psn_update", isPlatformPS4 && isRunningOnPS5(), this.scene)
+      this.showSceneBtn("topmenu_psn_update", isPlatformPS4 && isRunningOnPS5())
     }
   }
 
@@ -108,7 +104,7 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
     this.checkAdvert()
 
     let hasResearch = getTblValue("hasTopMenuResearch", handler, true)
-    showObjById("topmenu_btn_shop_wnd", hasResearch, this.scene)
+    this.showSceneBtn("topmenu_btn_shop_wnd", hasResearch)
     if (!hasResearch)
       this.closeShop()
 
@@ -135,7 +131,7 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
     if (!is_news_adver_actual()) {
       let t = req_news()
       if (t >= 0)
-        return addBgTaskCb(t, this.updateAdvert, this)
+        return ::add_bg_task_cb(t, this.updateAdvert, this)
     }
     this.updateAdvert()
   }
@@ -185,7 +181,7 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function getCurrentEdiff() {
-    return (topMenuShopActive.value && this.shopWeak) ? this.shopWeak.getCurrentEdiff() : getCurrentGameModeEdiff()
+    return (topMenuShopActive.value && this.shopWeak) ? this.shopWeak.getCurrentEdiff() : ::get_current_ediff()
   }
 
   function canShowShop() {
@@ -208,7 +204,7 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
 
   function updateCustomLangInfo() {
     let isShowInfo = !topMenuShopActive.value && isUsedCustomLocalization()
-    let infoObj = showObjById("custom_lang_info", isShowInfo, this.scene)
+    let infoObj = this.showSceneBtn("custom_lang_info", isShowInfo)
     if (!isShowInfo)
       return
 
@@ -239,7 +235,7 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
     if (checkObj(closeResearch))
       closeResearch.show(showButton)
     this.activateShopImpl(topMenuShopActive.value, unitType)
-    if (this.shopWeak && this.shopWeak.getCurrentEdiff() != getCurrentGameModeEdiff())
+    if (this.shopWeak && this.shopWeak.getCurrentEdiff() != ::get_current_ediff())
       this.shopWeak.updateSlotbarDifficulty()
 
     this.updateCustomLangInfo()
@@ -443,7 +439,7 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
       { obj = ["gc_invites_btn", "gc_contacts", "gc_chat_btn", "gc_userlog_btn"]
         msgId = "hint_social"
       }
-      { obj = topMenuShopActive.value || g_squad_manager.isInSquad() ? null : "btn_squadPlus"
+      { obj = topMenuShopActive.value || ::g_squad_manager.isInSquad() ? null : "btn_squadPlus"
         msgId = "hint_play_with_friends"
       }
       { obj = "air_info_dmviewer_armor"

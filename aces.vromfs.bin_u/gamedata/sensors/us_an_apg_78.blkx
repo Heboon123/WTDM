@@ -370,41 +370,34 @@
     }
   },
   "scopeRangeSets": {
-    "search": {
+    "common": {
       "range1": 8000.0,
       "range2": 4000.0
     }
   },
   "fsms": {
     "main": {
-      "stateInit": "init",
+      "stateInit": [
+        "init",
+        "init"
+      ],
       "actionsTemplates": {
         "init": {
           "setEnabled": {
             "value": false
-          },
-          "setCenterAzimuth": {
-            "source": "constant",
-            "value": 0.0
-          },
-          "setCenterElevation": [
-            {
-              "source": "constant",
-              "value": 0.0
-            },
-            {
-              "source": "constant",
-              "value": -6.25
-            }
-          ],
-          "setScopeRangeSet": {
-            "scopeRangeSet": "search"
           },
           "setTransiver": {
             "transiver": "GTM"
           },
           "setSignal": {
             "signal": "GTM"
+          },
+          "setCenterElevation": {
+            "source": "constant",
+            "value": -6.25
+          },
+          "setScopeRangeSet": {
+            "scopeRangeSet": "common"
           },
           "setFsmActive": {
             "fsm": "mode",
@@ -418,16 +411,21 @@
           "setEnabled": {
             "value": false
           },
+          "setCenterAzimuth": {
+            "source": "constant",
+            "value": 0.0
+          },
+          "clearTargets": {},
           "setFsmActive": {
             "fsm": "mode",
             "active": false
           }
         },
-        "resetStandbyMode": {},
         "setSearchMode": {
           "setEnabled": {
             "value": true
           },
+          "clearTargets": {},
           "setFsmActive": [
             {
               "fsm": "search",
@@ -444,7 +442,6 @@
           }
         },
         "resetSearchMode": {
-          "clearTargets": {},
           "setFsmActive": {
             "fsm": "search",
             "active": false

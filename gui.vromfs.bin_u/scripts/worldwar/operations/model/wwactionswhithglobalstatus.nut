@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 let u = require("%sqStdLibs/helpers/u.nut")
 
@@ -27,12 +28,12 @@ let getNearestMapToBattle = @()
 
 let isReceivedGlobalStatusMaps = @() ::g_ww_global_status_type.MAPS.getList().len() > 0
 
-function getOperationById(operationId) {
+let function getOperationById(operationId) {
   return u.search(::g_ww_global_status_type.ACTIVE_OPERATIONS.getList(),
     @(o) o.id == operationId)
 }
 
-function getMyClanOperation() {
+let function getMyClanOperation() {
   return u.search(::g_ww_global_status_type.ACTIVE_OPERATIONS.getList(),
     @(o) o.isMyClanParticipate())
 }

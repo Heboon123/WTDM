@@ -5,14 +5,13 @@ let { check_obj } = require("%sqDagui/daguiUtil.nut")
 let { get_time_msec } = require("dagor.time")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { stripTags } =  require("%sqstd/string.nut")
-let { open_url_by_obj } = require("open_url_by_obj.nut")
 
 let scene_msg_boxes_list = [] //FIX ME need to make it part of handler manager
 
 //  {id, text, buttons, defBtn}
 let gui_scene_boxes = []
 
-function remove_scene_box(id) {
+let function remove_scene_box(id) {
   for (local i = gui_scene_boxes.len()-1; i >= 0 ; i--) {
     if (gui_scene_boxes[i].id == id) {
       gui_scene_boxes.remove(i)
@@ -21,7 +20,7 @@ function remove_scene_box(id) {
   }
 }
 
-function destroyMsgBox(boxObj) {
+let function destroyMsgBox(boxObj) {
   if (!check_obj(boxObj))
     return
   local guiScene = boxObj.getScene()
@@ -29,13 +28,13 @@ function destroyMsgBox(boxObj) {
   broadcastEvent("ModalWndDestroy")
 }
 
-function clear_msg_boxes_list() {
+let function clear_msg_boxes_list() {
   for (local i = scene_msg_boxes_list.len() - 1; i >= 0; i--)
     if (!check_obj(scene_msg_boxes_list[i]))
       scene_msg_boxes_list.remove(i)
 }
 
-function get_text_urls_data(text) {
+let function get_text_urls_data(text) {
   if (!text.len())
     return null
 
@@ -73,15 +72,15 @@ let saved_scene_msg_box = {
 
 local last_scene_msg_box_time = -1
 
-function need_new_msg_box_anim() {
+let function need_new_msg_box_anim() {
   return get_time_msec() - last_scene_msg_box_time > 200
 }
 
-function reset_msg_box_check_anim_time() {
+let function reset_msg_box_check_anim_time() {
   last_scene_msg_box_time = get_time_msec()
 }
 
-function scene_msg_box(id, gui_scene, text, buttons, def_btn, options = null) {
+let function scene_msg_box(id, gui_scene, text, buttons, def_btn, options = null) {
   gui_scene = gui_scene || get_cur_gui_scene()
   if (options?.checkDuplicateId && check_obj(gui_scene[id]))
     return null
@@ -109,7 +108,7 @@ function scene_msg_box(id, gui_scene, text, buttons, def_btn, options = null) {
     text = bottomLinks.text
     let bottomMarkups = bottomLinks.urls
       .map(@(urlData, idx)
-        format("button { id:t='msgLink%d'; text:t='%s'; link:t='%s'; on_click:t = 'onMsgLink'; underline{} }",
+        format("button { id:t='msgLink%d'; text:t='%s'; link:t='%s'; on_click:t = '::open_url_by_obj'; underline{} }",
           idx, stripTags(urlData.text), stripTags(urlData.url)))
     if (data_below_text != null)
       bottomMarkups.insert(0, data_below_text)
@@ -222,8 +221,6 @@ function scene_msg_box(id, gui_scene, text, buttons, def_btn, options = null) {
         }
       }
 
-      onMsgLink = open_url_by_obj
-
       sourceHandlerObj = null
       guiScene = null
       boxId = null
@@ -323,8 +320,7 @@ function scene_msg_box(id, gui_scene, text, buttons, def_btn, options = null) {
   if (data_below_text) {
     let containerObj = msgbox.findObject("msg_div_after_text")
     if (containerObj) {
-      gui_scene.replaceContentFromText(containerObj, data_below_text, data_below_text.len(),
-        baseHandler ?? handlerObj ?? {onMsgLink = open_url_by_obj})
+      gui_scene.replaceContentFromText(containerObj, data_below_text, data_below_text.len(), baseHandler || handlerObj)
       containerObj.show(true)
     }
   }
@@ -359,7 +355,7 @@ function scene_msg_box(id, gui_scene, text, buttons, def_btn, options = null) {
   return msgbox
 }
 
-function destroy_all_msg_boxes(guiScene = null) {
+let function destroy_all_msg_boxes(guiScene = null) {
   for (local i = scene_msg_boxes_list.len() - 1; i >= 0; i--) {
     let msgBoxObj = scene_msg_boxes_list[i]
     if (check_obj(msgBoxObj)) {
@@ -373,14 +369,14 @@ function destroy_all_msg_boxes(guiScene = null) {
   }
 }
 
-function is_active_msg_box_in_scene(guiScene) {
+let function is_active_msg_box_in_scene(guiScene) {
   foreach (msgBoxObj in scene_msg_boxes_list)
    if (check_obj(msgBoxObj) && guiScene.isEqual(msgBoxObj.getScene()))
      return true
   return false
 }
 
-function update_msg_boxes() {
+let function update_msg_boxes() {
   let guiScene = get_gui_scene()
   if (guiScene == null)
     return
@@ -409,7 +405,7 @@ function update_msg_boxes() {
   }
 }
 
-function add_msg_box(id, text, buttons, def_btn, options = null) {
+let function add_msg_box(id, text, buttons, def_btn, options = null) {
   for (local i = 0; i < gui_scene_boxes.len(); i++) {
     if (gui_scene_boxes[i].id == id) {
       update_msg_boxes()
@@ -427,7 +423,7 @@ function add_msg_box(id, text, buttons, def_btn, options = null) {
   update_msg_boxes()
 }
 
-function showInfoMsgBox(text, id = "info_msg_box", checkDuplicateId = false) {
+let function showInfoMsgBox(text, id = "info_msg_box", checkDuplicateId = false) {
   scene_msg_box(id, null, text, [["ok", function() {} ]], "ok",
                   { cancel_fn = function() {}, checkDuplicateId = checkDuplicateId })
 }

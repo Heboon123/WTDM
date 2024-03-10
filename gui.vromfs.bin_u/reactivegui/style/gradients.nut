@@ -210,7 +210,7 @@ let mkFontGradient = @(colorTop, colorBottom, height = 11, middle = 6, spread = 
       }
     })
 
-function mkRingGradientLazy(radius, outherWidth, innerWidth) {
+let function mkRingGradientLazy(radius, outherWidth, innerWidth) {
   let center = radius + outherWidth + 1
   let size = 2 * center
   return mkBitmapPictureLazy(size, size,

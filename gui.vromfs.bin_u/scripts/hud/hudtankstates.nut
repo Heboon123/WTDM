@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
@@ -5,7 +6,6 @@ let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let hudTankStates = require("hudTankStates")
 let { hudTankMovementStatesVisible } = require("%scripts/hud/hudConfigByGame.nut")
 let { stashBhvValueConfig } = require("%sqDagui/guiBhv/guiBhvValueConfig.nut")
-let { measureType } = require("%scripts/measureType.nut")
 
 enum ORDER { //order for movement state info
   GEAR
@@ -64,7 +64,7 @@ let tankStatesByObjId = {
     updateConfigs = [{
         watch = hudTankStates.getSpeedObservable()
         updateObj = @(obj, value) obj.findObject("state_value").setValue(
-          "".concat(value.tostring(), " ", measureType.SPEED.getMeasureUnitsName()))
+          "".concat(value.tostring(), " ", ::g_measure_type.SPEED.getMeasureUnitsName()))
       },
       {
         objName = "speed"
@@ -105,7 +105,7 @@ let tankStatesByObjId = {
   }
 }
 
-function updateState(obj, watchConfig, value) {
+let function updateState(obj, watchConfig, value) {
   let isVisible = watchConfig?.isVisible(value) ?? true
   if (!checkObj(obj))
     return
@@ -116,7 +116,7 @@ function updateState(obj, watchConfig, value) {
   watchConfig.updateObj(obj, value)
 }
 
-function getValueForObjUpdate(updateConfigs) {
+let function getValueForObjUpdate(updateConfigs) {
   let stateValue = []
   foreach (updateConfig in updateConfigs) {
     let config = updateConfig
@@ -136,7 +136,7 @@ function getValueForObjUpdate(updateConfigs) {
   return stashBhvValueConfig(stateValue)
 }
 
-function getMovementViewArray() {
+let function getMovementViewArray() {
   let statesArray = []
   foreach (id, state in tankStatesByObjId) {
     if (!(id in hudTankMovementStatesVisible.value) || state?.orderView == null)
@@ -157,7 +157,7 @@ function getMovementViewArray() {
   return statesArray
 }
 
-function showHudTankMovementStates(scene) {
+let function showHudTankMovementStates(scene) {
   let movementStatesObj = scene.findObject("hud_movement_info")
   if (!checkObj(movementStatesObj))
     return

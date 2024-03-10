@@ -1,3 +1,4 @@
+//-file:plus-string
 from "%scripts/dagui_natives.nut" import copy_to_clipboard
 from "%scripts/dagui_library.nut" import *
 
@@ -31,7 +32,7 @@ local function getViralAcquisitionDesc(locId = "msgbox/linkCopied") {
   return desc
 }
 
-function showViralAcquisitionWnd() {
+let function showViralAcquisitionWnd() {
   if (!hasFeature("Invites") || isGuestLogin.value)
     return
 
@@ -57,7 +58,7 @@ function showViralAcquisitionWnd() {
     name = loc("mainmenu/getLinkTitle")
     desc = getViralAcquisitionDesc()
     descAlign = "center"
-    popupImage = $"#{image}"
+    popupImage = "#" + image
     ratioHeight = (height.tofloat() / 800).tostring()
     showSendEmail = true
     showPostLink = true

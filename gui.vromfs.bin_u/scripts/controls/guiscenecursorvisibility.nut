@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { isMouseCursorVisible, forceHideCursor } = require("%scripts/controls/mousePointerVisibility.nut")
@@ -8,7 +9,7 @@ let updateExtWatched = require("%scripts/global/updateExtWatched.nut")
 let guiSceneCursorVisible = keepref(Computed(@() (isHudVisible.value || !isInBattleState.value)
   && isMouseCursorVisible.value && !forceHideCursor.value))
 
-function onGuiSceneCursorVisible(isVisible) {
+let function onGuiSceneCursorVisible(isVisible) {
   updateExtWatched({ cursorVisible = isVisible })
   get_cur_gui_scene()?.showCursor(isVisible)
 }

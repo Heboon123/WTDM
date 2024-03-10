@@ -28,8 +28,6 @@ let purchaseConfirmation = require("%scripts/purchase/purchaseConfirmationHandle
 let { warningIfGold } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { buildUnitSlot, fillUnitSlotTimers } = require("%scripts/slotbar/slotbarView.nut")
 let { isCountryAvailable } = require("%scripts/firstChoice/firstChoice.nut")
-let guiStartSelectingCrew = require("%scripts/slotbar/guiStartSelectingCrew.nut")
-let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
 
 enum windowState {
   research,
@@ -124,7 +122,7 @@ gui_handlers.ConvertExpHandler <- class (gui_handlers.BaseGuiHandlerWT) {
           && !unitForList.isSquadronVehicle()
           && getEsUnitType(unitForList) == unitType)
         this.unitList.append(unitForList)
-    let ediff = getCurrentGameModeEdiff()
+    let ediff = ::get_current_ediff()
     this.unitList.sort(@(a, b) a.getBattleRating(ediff) <=> b.getBattleRating(ediff))
   }
 
@@ -374,14 +372,14 @@ gui_handlers.ConvertExpHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     let isMaxSet = this.curGoldValue == this.maxGoldValue
 
     let curGold = this.curGoldValue - this.minGoldValue
-    let btnApply = showObjById("btn_apply", this.currentState == windowState.research && curGold <= this.playersGold, this.scene)
+    let btnApply = this.showSceneBtn("btn_apply", this.currentState == windowState.research && curGold <= this.playersGold)
     btnApply.inactiveColor = !isMinSet ? "no" : "yes"
-    showObjById("btn_buy_unit", this.currentState == windowState.canBuy, this.scene)
+    this.showSceneBtn("btn_buy_unit", this.currentState == windowState.canBuy)
 
     let isVisibleBuyGoldBtn = this.currentState == windowState.research &&
       curGold > this.playersGold && curGold > 0
 
-    showObjById("not_enought_gold_holder", isVisibleBuyGoldBtn, this.scene)
+    this.showSceneBtn("not_enought_gold_holder", isVisibleBuyGoldBtn)
     if (isVisibleBuyGoldBtn) {
       let loctext = loc("exp/convert/notEnoughGold")
       let goldText = Cost(0, curGold - this.playersGold).getTextAccordingToBalance()
@@ -626,7 +624,7 @@ gui_handlers.ConvertExpHandler <- class (gui_handlers.BaseGuiHandlerWT) {
         })(this.unit)
     }
 
-    guiStartSelectingCrew(config)
+    ::gui_start_selecting_crew(config)
   }
 
   function onEventOnlineShopPurchaseSuccessful(_params) {

@@ -3,7 +3,6 @@ from "%scripts/dagui_library.nut" import *
 from "%scripts/teamsConsts.nut" import Team
 from "%scripts/queue/queueConsts.nut" import queueStates
 
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { SERVER_ERROR_REQUEST_REJECTED } = require("matching.errors")
 let u = require("%sqStdLibs/helpers/u.nut")
@@ -16,7 +15,7 @@ let { getSelSlotsData } = require("%scripts/slotbar/slotbarState.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { get_time_msec } = require("dagor.time")
 let { rnd } = require("dagor.random")
-let { checkMatchingError, matchingErrorString, matchingRpcSubscribe } = require("%scripts/matching/api.nut")
+let { matchingRpcSubscribe } = require("%scripts/matching/api.nut")
 let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 let { isInSessionRoom, isWaitForQueueRoom, sessionLobbyStatus } = require("%scripts/matchingRooms/sessionLobbyState.nut")
 let { isEventForClan } = require("%scripts/events/eventInfo.nut")
@@ -59,7 +58,7 @@ let QueueManager = class {
   constructor() {
     this.init()
     registerPersistentData("QueueManager", this, ["queuesList", "lastId", "state"])
-    subscribe_handler(this, g_listener_priority.DEFAULT_HANDLER)
+    subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
   }
 
   function init() {
@@ -320,8 +319,8 @@ let QueueManager = class {
         ::SessionLobby.setWaitForQueueRoom(true)
       }
       else {
-        if ((response?.error_id ?? matchingErrorString(response.error)) not in hiddenMatchingError)
-          checkMatchingError(response, !silent)
+        if ((response?.error_id ?? ::matching.error_string(response.error)) not in hiddenMatchingError)
+          ::checkMatchingError(response, !silent)
         this.afterLeaveQueues({})
 
         // This check is a workaround that fixes
@@ -383,8 +382,8 @@ let QueueManager = class {
         return
       }
 
-      if ((response?.error_id ?? matchingErrorString(response.error)) not in hiddenMatchingError)
-        checkMatchingError(response)
+      if ((response?.error_id ?? ::matching.error_string(response.error)) not in hiddenMatchingError)
+        ::checkMatchingError(response)
       this.removeQueue(queue)
     }, this)
   }
@@ -648,6 +647,11 @@ matchingRpcSubscribe("mkeeper.notify_service_started", function(params) {
 
 ::checkIsInQueue <- function checkIsInQueue() {
   return queues.isAnyQueuesActive()
+}
+
+::open_search_squad_player <- function open_search_squad_player() {
+  queues.checkAndStart(::gui_start_search_squadPlayer, null,
+    "isCanModifyQueueParams", QUEUE_TYPE_BIT.DOMINATION | QUEUE_TYPE_BIT.NEWBIE)
 }
 
 ::queues <- queues

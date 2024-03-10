@@ -18,7 +18,6 @@ let mkHoverHoldAction = require("%sqDagui/timer/mkHoverHoldAction.nut")
 let { openBattlePassWnd } = require("%scripts/battlePass/battlePassWnd.nut")
 let { canStartPreviewScene } = require("%scripts/customization/contentPreview.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
-let { guiStartBattleTasksWnd } = require("%scripts/unlocks/battleTasksHandler.nut")
 
 gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
   wndType = handlerType.MODAL
@@ -232,32 +231,32 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
     this.markAwardSeen(award)
     this.fillItemDesc(award)
     this.fillCommonDesc(award)
-    showObjById("jumpToDescPanel", showConsoleButtons.value && award != null, this.scene)
+    this.showSceneBtn("jumpToDescPanel", showConsoleButtons.value && award != null)
     this.updateButtons()
   }
 
   function updateButtonsBar() {
     let obj = this.getItemsListObj()
     let isButtonsVisible =  this.isMouseMode || (checkObj(obj) && obj.isHovered())
-    showObjById("item_actions_bar", isButtonsVisible, this.scene)
+    this.showSceneBtn("item_actions_bar", isButtonsVisible)
     return isButtonsVisible
   }
 
   function updateButtons() {
-    showObjById("btn_battlePass", !isHandlerInScene(gui_handlers.BattlePassWnd), this.scene)
+    this.showSceneBtn("btn_battlePass", !isHandlerInScene(gui_handlers.BattlePassWnd))
 
     if (!this.updateButtonsBar()) //buttons below are hidden if item action bar is hidden
       return
 
     let award = this.getCurAward()
-    showObjById("btn_specialTasks", award != null
+    this.showSceneBtn("btn_specialTasks", award != null
       && award.isRequiredSpecialTasksComplete()
-      && !isHandlerInScene(gui_handlers.BattleTasksWnd), this.scene
+      && !isHandlerInScene(gui_handlers.BattleTasksWnd)
     )
 
-    showObjById("btn_preview", (award?.canPreview() ?? false) && isInMenu(), this.scene)
+    this.showSceneBtn("btn_preview", (award?.canPreview() ?? false) && isInMenu())
 
-    let mainActionBtn = showObjById("btn_main_action", award != null, this.scene)
+    let mainActionBtn = this.showSceneBtn("btn_main_action", award != null)
     if (!award)
       return
 
@@ -395,7 +394,7 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onShowSpecialTasks(_obj) {
-    guiStartBattleTasksWnd(null, BattleTasksWndTab.BATTLE_TASKS_HARD)
+    ::gui_start_battle_tasks_wnd(null, BattleTasksWndTab.BATTLE_TASKS_HARD)
   }
 
   function onEventWarbondAwardBought(_p) {

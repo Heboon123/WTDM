@@ -12,13 +12,13 @@ let enabledGamepadCursorControlInScene = keepref(Computed(
 
 let enabledKBCursorControlInScene = keepref(Computed(@() cursorVisible.value))
 
-function updateSceneGamepadCursorControl(value) {
+let function updateSceneGamepadCursorControl(value) {
   log($"ctrlsState: updateSceneGamepadCursorControl: {value} ({gamepadCursorControl.value}, {haveXinputDevice.value}, {cursorVisible.value})")
   gui_scene.setConfigProps({ gamepadCursorControl = value })
 }
 updateSceneGamepadCursorControl(enabledGamepadCursorControlInScene.value)
 
-function updateSceneKBCursorControl(value) {
+let function updateSceneKBCursorControl(value) {
   gui_scene.setConfigProps({ kbCursorControl = value })
 }
 updateSceneKBCursorControl(true)

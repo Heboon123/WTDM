@@ -10,9 +10,6 @@ let { format } = require("string")
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 let { get_warpoints_blk, get_skills_blk, get_price_blk } = require("blkGetters")
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
-let { getSkillCrewLevel, getCrewMaxSkillValue, getCrewLevel, unitCrewTrainReq, crewSkillPages
-} = require("%scripts/crew/crew.nut")
 
 ::g_crew_spec_type <- {
   types = []
@@ -97,14 +94,14 @@ let { getSkillCrewLevel, getCrewMaxSkillValue, getCrewLevel, unitCrewTrainReq, c
     prevSpecTypeCode = this.code - 1
   let specMul = this.getMulValue(prevSpecTypeCode)
   let rowsArray = []
-  foreach (page in crewSkillPages) {
+  foreach (page in ::crew_skills) {
     if (!page.isVisible(crewUnitType))
       continue
 
     let textsArray = []
     foreach (item in page.items)
       if (item.isVisible(crewUnitType) && item.useSpecializations) {
-        let skillCrewLevel = getSkillCrewLevel(item, specMul * getCrewMaxSkillValue(item))
+        let skillCrewLevel = ::g_crew.getSkillCrewLevel(item, specMul * ::g_crew.getMaxSkillValue(item))
         let skillText = loc("crew/" + item.name) + " "
                           + colorize("goodTextColor", "+" + skillCrewLevel)
         textsArray.append(::stringReplace(skillText, " ", nbsp))
@@ -122,7 +119,7 @@ let { getSkillCrewLevel, getCrewMaxSkillValue, getCrewLevel, unitCrewTrainReq, c
 ::g_crew_spec_type._getReqCrewLevelByCode <- function _getReqCrewLevelByCode(unit, upgradeFromCode) {
   ::load_crew_skills_once()
   let crewUnitType = unit?.getCrewUnitType?() ?? CUT_INVALID
-  let reqTbl = unitCrewTrainReq?[crewUnitType]
+  let reqTbl = ::crew_air_train_req?[crewUnitType]
   let ranksTbl = getTblValue(upgradeFromCode, reqTbl)
   return getTblValue(unit.rank, ranksTbl, 0)
 }
@@ -296,7 +293,7 @@ let { getSkillCrewLevel, getCrewMaxSkillValue, getCrewLevel, unitCrewTrainReq, c
 }
 
 ::g_crew_spec_type._getBtnBuyTooltipId <- function _getBtnBuyTooltipId(crew, unit) {
-  return getTooltipType("BUY_CREW_SPEC").getTooltipId(crew.id, unit.name, this.code)
+  return ::g_tooltip.getIdBuyCrewSpec(crew.id, unit.name, this.code)
 }
 
 ::g_crew_spec_type._getBtnBuyTooltipContent <- function _getBtnBuyTooltipContent(crew, unit) {
@@ -399,7 +396,7 @@ let { getSkillCrewLevel, getCrewMaxSkillValue, getCrewLevel, unitCrewTrainReq, c
 
   function getCurAndReqLevel(crew, unit) {
     let reqLevel = this.getReqCrewLevel(unit)
-    let curLevel = getCrewLevel(crew, unit, unit?.getCrewUnitType?() ?? CUT_INVALID)
+    let curLevel = ::g_crew.getCrewLevel(crew, unit, unit?.getCrewUnitType?() ?? CUT_INVALID)
     return {reqLevel, curLevel}
   }
 

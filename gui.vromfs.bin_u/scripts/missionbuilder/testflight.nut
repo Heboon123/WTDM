@@ -3,15 +3,12 @@ from "%scripts/dagui_natives.nut" import enable_bullets_modifications, get_optio
 from "%scripts/dagui_library.nut" import *
 from "%scripts/options/optionsExtNames.nut" import *
 
-let { g_difficulty } = require("%scripts/difficulty.nut")
-let { getGlobalModule } = require("%scripts/global_modules.nut")
-let g_squad_manager = getGlobalModule("g_squad_manager")
 let { isUnitSpecial } = require("%appGlobals/ranks_common_shared.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { getLastWeapon } = require("%scripts/weaponry/weaponryInfo.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-let { move_mouse_on_obj, loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { move_mouse_on_obj, handlersManager, loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { bombNbr, hasCountermeasures, getCurrentPreset, hasBombDelayExplosion } = require("%scripts/unit/unitStatus.nut")
 let { isTripleColorSmokeAvailable } = require("%scripts/options/optionsManager.nut")
 let actionBarInfo = require("%scripts/hud/hudActionBarInfo.nut")
@@ -31,11 +28,14 @@ let { isInSessionRoom } = require("%scripts/matchingRooms/sessionLobbyState.nut"
 let { getLanguageName } = require("%scripts/langUtils/language.nut")
 let { buildUnitSlot, fillUnitSlotTimers, getUnitSlotRankText } = require("%scripts/slotbar/slotbarView.nut")
 let { getCurSlotbarUnit, isUnitInSlotbar } = require("%scripts/slotbar/slotbarState.nut")
-let { guiStartBuilder, guiStartFlight, guiStartCdOptions
-} = require("%scripts/missions/startMissionsList.nut")
-let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
+let { set_last_called_gui_testflight } = require("%scripts/missionBuilder/testFlightState.nut")
 
 ::missionBuilderVehicleConfigForBlk <- {} //!!FIX ME: Should to remove this
+
+::gui_start_testflight <- function gui_start_testflight(params = {}) {
+  loadHandler(gui_handlers.TestFlight, params)
+  set_last_called_gui_testflight(handlersManager.getLastBaseHandlerStartParams())
+}
 
 function mergeToBlk(sourceTable, blk) {
   foreach (idx, val in sourceTable)
@@ -67,10 +67,10 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
 
     gui_handlers.GenericOptions.initScreen.bindenv(this)()
 
-    let btnBuilder = showObjById("btn_builder", this.hasMissionBuilder, this.scene)
+    let btnBuilder = this.showSceneBtn("btn_builder", this.hasMissionBuilder)
     if (this.hasMissionBuilder)
       btnBuilder.setValue(loc("mainmenu/btnBuilder"))
-    showObjById("btn_select", true, this.scene)
+    this.showSceneBtn("btn_select", true)
 
     this.needSlotbar = this.needSlotbar && !isPreviewingLiveSkin() && isUnitInSlotbar(this.unit)
     if (this.needSlotbar) {
@@ -80,7 +80,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
       frameObj.withSlotbar = "yes"
     }
 
-    showObjById("unit_weapons_selector", true, this.scene)
+    this.showSceneBtn("unit_weapons_selector", true)
     this.guiScene.applyPendingChanges(false)
 
     this.guiScene.setUpdatesEnabled(false, false)
@@ -202,7 +202,6 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
         [USEROPT_BOMB_SERIES, "spinner"],
         [USEROPT_ROCKET_FUSE_DIST, "spinner"],
         [USEROPT_LOAD_FUEL_AMOUNT, "spinner"],
-        [USEROPT_FUEL_AMOUNT_CUSTOM, "slider"],
         [USEROPT_COUNTERMEASURES_SERIES_PERIODS, "spinner"],
         [USEROPT_COUNTERMEASURES_PERIODS, "spinner"],
         [USEROPT_COUNTERMEASURES_SERIES, "spinner"]
@@ -295,7 +294,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
     this.applyFunc = function() {
       this.saveAircraftOptions()
 
-      guiStartBuilder()
+      ::gui_start_builder()
       this.applyFunc = null
     }
     this.applyOptions()
@@ -308,14 +307,14 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
 
     broadcastEvent("BeforeStartTestFlight")
 
-    if (g_squad_manager.isNotAloneOnline())
+    if (::g_squad_manager.isNotAloneOnline())
       return this.onMissionBuilder()
 
     if (!this.isTestFlightAvailable())
       return this.msgBox("not_available", this.getCantFlyText(this.unit), [["ok", function() {} ]], "ok", { cancel_fn = function() {} })
 
     if (isInArray(this.getSceneOptValue(USEROPT_DIFFICULTY), ["hardcore", "custom"]))
-      if (!::check_diff_pkg(g_difficulty.SIMULATOR.diffCode))
+      if (!::check_diff_pkg(::g_difficulty.SIMULATOR.diffCode))
         return
 
     if (this.unit)
@@ -328,7 +327,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
       Callback(function() {
         this.applyFunc = function() {
           if (get_gui_option(USEROPT_DIFFICULTY) == "custom") {
-            guiStartCdOptions(this.startTestFlight, this) // See "MissionDescriptor::loadFromBlk"
+            ::gui_start_cd_options(this.startTestFlight, this) // See "MissionDescriptor::loadFromBlk"
             this.doWhenActiveOnce("updateSceneDifficulty")
           }
           else
@@ -371,7 +370,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
     actionBarInfo.cacheActionDescs(getActionBarUnitName())
 
     select_training_mission(misBlk)
-    this.guiScene.performDelayed(this, guiStartFlight)
+    this.guiScene.performDelayed(this, ::gui_start_flight)
 
     sendStartTestFlightToBq(this.unit.name)
   }
@@ -443,7 +442,6 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
     set_option(USEROPT_DIFFICULTY, obj.getValue(), diffOptionCont)
     this.optionsConfig.diffCode <- diffOptionCont.diffCode[obj.getValue()]
     this.updateOption(USEROPT_LOAD_FUEL_AMOUNT)
-    this.updateOption(USEROPT_FUEL_AMOUNT_CUSTOM)
     this.updateOption(USEROPT_BOMB_ACTIVATION_TIME)
   }
 
@@ -462,13 +460,13 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
   function getCurrentEdiff() {
     let diffValue = this.getSceneOptValue(USEROPT_DIFFICULTY)
     let difficulty = (diffValue == "custom") ?
-      g_difficulty.getDifficultyByDiffCode(getCdBaseDifficulty()) :
-      g_difficulty.getDifficultyByName(diffValue)
+      ::g_difficulty.getDifficultyByDiffCode(getCdBaseDifficulty()) :
+      ::g_difficulty.getDifficultyByName(diffValue)
     if (difficulty.diffCode != -1) {
       let battleType = ::get_battle_type_by_unit(this.unit)
       return difficulty.getEdiff(battleType)
     }
-    return getCurrentGameModeEdiff()
+    return ::get_current_ediff()
   }
 
   function afterModalDestroy() {
@@ -630,7 +628,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
       return
 
     foreach (option in optList)
-      this.showOptionRow(option, diffName != g_difficulty.ARCADE.name)
+      this.showOptionRow(option, diffName != ::g_difficulty.ARCADE.name)
   }
 
   function onEventUnitWeaponChanged(_p) {

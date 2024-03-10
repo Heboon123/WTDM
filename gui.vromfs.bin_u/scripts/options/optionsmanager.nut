@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import get_option_aerobatics_smoke_type
 from "%scripts/dagui_library.nut" import *
 
@@ -5,7 +6,7 @@ let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
 
 let checkUnitSpeechLangPackWatch = mkWatched(persist, "checkUnitSpeechLangPackWatch", false)
 
-function checkUnitSpeechLangPack(_params) {
+let function checkUnitSpeechLangPack(_params) {
   if (!checkUnitSpeechLangPackWatch.value)
     return
 

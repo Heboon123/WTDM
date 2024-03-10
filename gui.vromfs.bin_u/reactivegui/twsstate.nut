@@ -208,7 +208,7 @@ interop.updateRwrTarget <- function(index, x, y, age0, age, enemy, track, launch
   }
 }
 
-function sqr(val) { return val * val }
+let function sqr(val) { return val * val }
 
 let distSqMax = sqr(0.34)
 

@@ -1,7 +1,6 @@
 from "%scripts/dagui_library.nut" import *
 from "%scripts/weaponry/weaponryConsts.nut" import weaponsItem
 
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let DataBlock = require("DataBlock")
 let { hangar_force_reload_model } = require("hangar")
 let { initUnitCustomPresetsWeapons } = require("%scripts/unit/initUnitWeapons.nut")
@@ -13,7 +12,7 @@ let customPresetsConfigByUnit = mkWatched(persist, "customPresetsConfigByUnit", 
 let customPresetsByUnit = mkWatched(persist, "customPresetsByUnit", {})
 let { addTask } = require("%scripts/tasker.nut")
 
-function loadCustomPresets(unitName) {
+let function loadCustomPresets(unitName) {
   if (!::g_login.isProfileReceived())
     return
 
@@ -24,20 +23,20 @@ function loadCustomPresets(unitName) {
   customPresetsConfigByUnit.mutate(@(val) val[unitName] <- blk)
 }
 
-function invalidateCache() {
+let function invalidateCache() {
   customPresetsConfigByUnit({})
   customPresetsByUnit({})
 }
 
-function invalidateUnitCache(unit) {
+let function invalidateUnitCache(unit) {
   customPresetsConfigByUnit.mutate(@(val) val.$rawdelete(unit.name))
   customPresetsByUnit.mutate(@(val) val.$rawdelete(unit.name))
 }
 
-function savePresetInProfile(unit, id, presetBlk, successCb) {
+let function savePresetInProfile(unit, id, presetBlk, successCb) {
   let blk = DataBlock()
   blk.addBlock(unit.name).addBlock(id).setFrom(presetBlk)
-  function taskSuccessCb() {
+  let function taskSuccessCb() {
     invalidateUnitCache(unit)
     successCb()
   }
@@ -45,7 +44,7 @@ function savePresetInProfile(unit, id, presetBlk, successCb) {
   addTask(taskId, { showProgressBox = true }, taskSuccessCb)
 }
 
-function getCustomPresetsConfig(unit) {
+let function getCustomPresetsConfig(unit) {
   if (!unit.hasWeaponSlots)
     return []
 
@@ -55,7 +54,7 @@ function getCustomPresetsConfig(unit) {
   return customPresetsConfigByUnit.value?[unit.name] ?? []
 }
 
-function convertPresetToBlk(preset) {
+let function convertPresetToBlk(preset) {
   let presetBlk = DataBlock()
   presetBlk["name"] = preset.customNameText ?? ""
   foreach (tier in preset.tiers) {
@@ -66,7 +65,7 @@ function convertPresetToBlk(preset) {
   return presetBlk
 }
 
-function isPresetChanged(oldPreset, newPreset) {
+let function isPresetChanged(oldPreset, newPreset) {
   if (oldPreset.customNameText != newPreset.customNameText)
     return true
 
@@ -84,10 +83,10 @@ function isPresetChanged(oldPreset, newPreset) {
   return false
 }
 
-function addCustomPreset(unit, preset) {
+let function addCustomPreset(unit, preset) {
   let presetBlk = convertPresetToBlk(preset)
   let presetId = preset.name
-  function cb() {
+  let function cb() {
     if (presetId == getLastWeapon(unit.name))
       hangar_force_reload_model()
 
@@ -97,7 +96,7 @@ function addCustomPreset(unit, preset) {
   savePresetInProfile(unit, presetId, presetBlk, cb)
 }
 
-function deleteCustomPreset(unit, presetId) {
+let function deleteCustomPreset(unit, presetId) {
   let presets = getCustomPresetsConfig(unit)
   if (presetId not in presets)
     return
@@ -106,7 +105,7 @@ function deleteCustomPreset(unit, presetId) {
   savePresetInProfile(unit, presetId, DataBlock(), cb)
 }
 
-function renameCustomPreset(unit, presetId, name) {
+let function renameCustomPreset(unit, presetId, name) {
   let presets = getCustomPresetsConfig(unit)
   if (presetId not in presets)
     return
@@ -126,7 +125,7 @@ let getBaseCustomPresetConfig = @(presetName, presetBlk) {
   image = "#ui/gameuiskin#custom_preset"
 }
 
-function initCustomPreset(unit) {
+let function initCustomPreset(unit) {
   let presetConfig = getCustomPresetsConfig(unit)
   let weapons = []
   foreach (presetName, preset in presetConfig)
@@ -136,7 +135,7 @@ function initCustomPreset(unit) {
   customPresetsByUnit.mutate(@(val) val[unit.name] <- weapons)
 }
 
-function getWeaponryCustomPresets(unit) {
+let function getWeaponryCustomPresets(unit) {
   if (!unit.hasWeaponSlots)
     return []
 
@@ -146,7 +145,7 @@ function getWeaponryCustomPresets(unit) {
   return customPresetsByUnit.value[unit.name]
 }
 
-function getCustomPresetByPresetBlk(unit, presetName, presetBlk) {
+let function getCustomPresetByPresetBlk(unit, presetName, presetBlk) {
   let weapons = [getBaseCustomPresetConfig(presetName, presetBlk)]
   initUnitCustomPresetsWeapons(unit, weapons)
   return weapons[0]
@@ -155,7 +154,7 @@ function getCustomPresetByPresetBlk(unit, presetName, presetBlk) {
 addListenersWithoutEnv({
   SignOut = @(_p) invalidateCache()
   ProfileReceived = @(_p) invalidateCache()
-}, g_listener_priority.CONFIG_VALIDATION)
+}, ::g_listener_priority.CONFIG_VALIDATION)
 
 
 return {

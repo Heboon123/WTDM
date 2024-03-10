@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import fill_joysticks_desc, set_current_controls
 from "%scripts/dagui_library.nut" import *
 
@@ -16,7 +17,7 @@ let { set_option } = require("%scripts/options/optionsExt.nut")
 let { CONTROL_TYPE } = require("%scripts/controls/controlsConsts.nut")
 let { OPTIONS_MODE_GAMEPLAY } = require("%scripts/options/optionsExtNames.nut")
 
-function getLoadedPresetBlk() {
+let function getLoadedPresetBlk() {
   let presetBlk = DataBlock()
   getCurrentPreset(presetBlk)
   return presetBlk

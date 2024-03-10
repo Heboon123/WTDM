@@ -30,7 +30,7 @@ let styleShipHudText = {
   fontFx = FFT_GLOW
 }
 
-function getDepthColor(depth) {
+let function getDepthColor(depth) {
   let green = depth < 2 ? 255 : 0
   let blue =  depth < 1 ? 255 : 0
   return Color(255, green, blue, 255)
@@ -40,7 +40,7 @@ function getDepthColor(depth) {
 let shVertSpeedScaleWidth = sh(1)
 let shVertSpeedHeight = sh(20)
 
-function depthLevelCmp() {
+let function depthLevelCmp() {
   return styleShipHudText.__merge({
     color = getDepthColor(depthLevel.value)
     watch = [depthLevel, waterDist]
@@ -48,7 +48,7 @@ function depthLevelCmp() {
     text = floor(waterDist.value).tostring()
   })
 }
-function wishDistCmp() {
+let function wishDistCmp() {
   return styleShipHudText.__merge({
     watch = [depthLevel, wishDist]
     color = getDepthColor(depthLevel.value)
@@ -57,7 +57,7 @@ function wishDistCmp() {
   })
 }
 
-function buoyancyExCmp() {
+let function buoyancyExCmp() {
   let height = sh(1.)
   return styleLine.__merge({
     pos = [-shVertSpeedScaleWidth, -height * 0.5]
@@ -73,7 +73,7 @@ function buoyancyExCmp() {
     ]
   })
 }
-function depthLevelLineCmp() {
+let function depthLevelLineCmp() {
   return styleLine.__merge({
     watch = depthLevel
     size = [shVertSpeedScaleWidth, shVertSpeedHeight]
@@ -115,7 +115,7 @@ let childrenShVerSpeed = [
   periscopeDepthInd
 ]
 
-function ShipVertSpeed() {
+let function ShipVertSpeed() {
   return {
     watch = isAimCamera
     valign = ALIGN_CENTER
@@ -170,7 +170,7 @@ let shellAimTracker = function(line_style, color_func) {
     children = IsTrackerVisible.value ? [circle] : null
   }
 }
-function mkShellComp(watches, textCtor) {
+let function mkShellComp(watches, textCtor) {
   return @() styleShipHudText.__merge({
     watch = watches
     text = textCtor()
@@ -201,7 +201,7 @@ let shellChildren = [
               loc("hud/wireIsLost"))
 ]
 
-function ShipShellState() {
+let function ShipShellState() {
   return {
     watch = isAimCamera
     flow = FLOW_VERTICAL
@@ -223,7 +223,7 @@ let shellAimChildren = [
   shellAimTracker(styleShellAim, getColor)
 ]
 
-function ShipShellAimState() {
+let function ShipShellAimState() {
   return {
     watch = isAimCamera
     children = isAimCamera.value ? shellAimChildren : null

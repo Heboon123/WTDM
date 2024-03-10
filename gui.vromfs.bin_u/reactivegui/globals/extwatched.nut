@@ -1,10 +1,10 @@
 let { Watched } = require("frp")
-let { eventbus_subscribe } = require("eventbus")
+let eventbus = require("eventbus")
 let { ndbWrite, ndbRead, ndbExists } = require("nestdb")
 
 let sharedData = {}
 
-function make(name, val) {
+let function make(name, val) {
   if (sharedData?[name].watch != null) {
     assert(false, $"extWatched: duplicate name: {name}")
     return sharedData[name].watch
@@ -23,7 +23,7 @@ function make(name, val) {
   return res
 }
 
-eventbus_subscribe("extWatched.update",
+eventbus.subscribe("extWatched.update",
   function(config) {
     foreach (name, value in config) {
       let data = sharedData?[name]

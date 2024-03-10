@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import get_player_unit_name
 from "%scripts/dagui_library.nut" import *
 
@@ -13,7 +14,7 @@ let { isInFlight } = require("gameplayBinding")
 local isFallbackUnitInHangar = null
 let hangarDefaultUnits = {}
 
-function getCountryHangarDefaultUnit(countryId, esUnitType) {
+let function getCountryHangarDefaultUnit(countryId, esUnitType) {
   if (hangarDefaultUnits?[countryId] == null) {
     hangarDefaultUnits[countryId] <- {}
     foreach (needReserveUnit in [ true, false ]) {
@@ -30,7 +31,7 @@ function getCountryHangarDefaultUnit(countryId, esUnitType) {
     ?? hangarDefaultUnits[countryId].findvalue(@(_u) true)
 }
 
-function getFallbackUnitForHangar(params) {
+let function getFallbackUnitForHangar(params) {
   // Trying a currently loaded hangar unit
   let countryId = params?.country ?? profileCountrySq.value
   let curHangarUnit = getAircraftByName(hangar_get_current_unit_name())
@@ -57,7 +58,7 @@ let getShowedUnitName = @() showedUnit.value?.name ??
 let getShowedUnit = @() showedUnit.value ??
   (isFallbackUnitInHangar ? null : getAircraftByName(hangar_get_current_unit_name()))
 
-function setShowUnit(unit, params = null) {
+let function setShowUnit(unit, params = null) {
   showedUnit(unit)
   isFallbackUnitInHangar = unit == null
   loadModel(unit?.name ?? getFallbackUnitForHangar(params)?.name ?? "")
@@ -67,7 +68,7 @@ showedUnit.subscribe(function(_v) {
   broadcastEvent("ShowedUnitChanged")
 })
 
-function getPlayerCurUnit() {
+let function getPlayerCurUnit() {
   local unit = null
   if (isInFlight())
     unit = getAircraftByName(get_player_unit_name())

@@ -7,14 +7,12 @@ let { broadcastEvent, addListenersWithoutEnv } = require("%sqStdLibs/helpers/sub
 let seenList = require("%scripts/seen/seenList.nut").get(SEEN.ITEMS_SHOP)
 let { TIME_DAY_IN_SECONDS, TIME_WEEK_IN_SECONDS } = require("%scripts/time.nut")
 let { get_charserver_time_sec } = require("chard")
-let { checkItemsMaskFeatures, invalidateShopVisibleSeenIds, getShopList
-} = require("%scripts/items/itemsManager.nut")
 
 local trophies = []
 
 let onShowTimer = @() broadcastEvent("UpdateTrophiesVisibility")
 
-function resetShowTimer() {
+let function resetShowTimer() {
   clearTimer(onShowTimer)
 
   let curTime = get_charserver_time_sec()
@@ -31,13 +29,13 @@ function resetShowTimer() {
   setTimeout(nextTime - curTime + 2, onShowTimer)
 }
 
-function onAlarmTimer() {
-  invalidateShopVisibleSeenIds()
+let function onAlarmTimer() {
+  ::ItemsManager.invalidateShopVisibleSeenIds()
   seenList.onListChanged()
   broadcastEvent("UpdateTrophyUnseenIcons")
 }
 
-function resetAlarmTimer() {
+let function resetAlarmTimer() {
   clearTimer(onAlarmTimer)
 
   let deltaTime = trophies
@@ -59,19 +57,19 @@ function resetAlarmTimer() {
     setTimeout(deltaTime + 2, onAlarmTimer)
 }
 
-function clearTimers() {
+let function clearTimers() {
   clearTimer(onShowTimer)
   clearTimer(onAlarmTimer)
 }
 
-function resetTimers() {
+let function resetTimers() {
   resetShowTimer()
   resetAlarmTimer()
 }
 
-function updateTrophyList() {
-  let typeMask = checkItemsMaskFeatures(itemType.TROPHY)
-  trophies = getShopList(typeMask, @(i) i.beginDate != null)
+let function updateTrophyList() {
+  let typeMask = ::ItemsManager.checkItemsMaskFeatures(itemType.TROPHY)
+  trophies = ::ItemsManager.getShopList(typeMask, @(i) i.beginDate != null)
 
   if (trophies.len() == 0) {
     clearTimers()

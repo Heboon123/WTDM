@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 from "modules" import on_module_unload
 
@@ -8,14 +9,12 @@ let controllerState = require("controllerState")
 let { isPlatformSony, isPlatformXboxOne, isPlatformSteamDeck } = require("%scripts/clientState/platform.nut")
 let { get_gui_option } = require("guiOptions")
 let updateExtWatched = require("%scripts/global/updateExtWatched.nut")
-let { eventbus_subscribe } = require("eventbus")
+let { subscribe } = require("eventbus")
 let { DeviceType, register_for_devices_change } = require("%xboxLib/impl/input.nut")
 let { CONTROL_TYPE } = require("%scripts/controls/controlsConsts.nut")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { USEROPT_MOUSE_USAGE, USEROPT_MOUSE_USAGE_NO_AIM } = require("%scripts/options/optionsExtNames.nut")
 let { add_msg_box } = require("%sqDagui/framework/msgBox.nut")
-let { gui_start_controls_type_choice } = require("%scripts/controls/startControls.nut")
-let { addPopup } = require("%scripts/popups/popups.nut")
 
 const CLASSIC_PRESET = "classic"
 const SHOOTER_PRESET = "shooter"
@@ -47,20 +46,20 @@ let presetsNamesByTypes =
     [SHOOTER_PRESET] = "keyboard_shooter"
   }
 
-function getMouseUsageMask() {
+let function getMouseUsageMask() {
   let usage = ::g_aircraft_helpers.getOptionValue(USEROPT_MOUSE_USAGE)
   let usageNoAim = ::g_aircraft_helpers.getOptionValue(USEROPT_MOUSE_USAGE_NO_AIM)
   return (usage ?? 0) | (usageNoAim ?? 0)
 }
 
-function checkOptionValue(optName, checkValue) {
+let function checkOptionValue(optName, checkValue) {
   let val = get_gui_option(optName)
   if (val != null)
     return val == checkValue
   return ::get_option(optName).value == checkValue
 }
 
-function getControlsList(unitType, unitTags = []) {
+let function getControlsList(unitType, unitTags = []) {
   local isHeaderPassed = true
   local isSectionPassed = true
   let controlsList = ::shortcutsList.filter(function(sc) {
@@ -94,11 +93,11 @@ function getControlsList(unitType, unitTags = []) {
   return controlsList
 }
 
-function onJoystickConnected() {
+let function onJoystickConnected() {
   updateExtWatched({ haveXinputDevice = hasXInputDevice() })
   if (!isInMenu() || !hasFeature("ControlsDeviceChoice"))
     return
-  let action = function() { gui_start_controls_type_choice() }
+  let action = function() { ::gui_start_controls_type_choice() }
   let buttons = [{
       id = "change_preset",
       text = loc("msgbox/btn_yes"),
@@ -109,7 +108,7 @@ function onJoystickConnected() {
       func = null
     }]
 
-  addPopup(
+  ::g_popups.add(
     loc("popup/newcontroller"),
     loc("popup/newcontroller/message"),
     action,
@@ -122,7 +121,7 @@ function onJoystickConnected() {
 
 local isKeyboardOrMouseConnectedBefore = false
 
-function onControllerEvent() {
+let function onControllerEvent() {
   if (!hasFeature("ControlsDeviceChoice") || !hasFeature("ControlsPresets"))
     return
   let isKeyboardOrMouseConnected = controllerState.is_keyboard_connected()
@@ -143,7 +142,7 @@ function onControllerEvent() {
       func = null
     }]
 
-  addPopup(
+  ::g_popups.add(
     loc("popup/keyboard_or_mouse_connected"),
     loc("popup/keyboard_or_mouse_connected/message"),
     action,
@@ -157,7 +156,7 @@ function onControllerEvent() {
 controllerState.add_event_handler(onControllerEvent)
 on_module_unload(@(_) controllerState.remove_event_handler(onControllerEvent))
 
-function getControlsPresetBySelectedType(cType) {
+let function getControlsPresetBySelectedType(cType) {
   local preset = ""
   if (cType in presetsNamesByTypes) {
     preset = presetsNamesByTypes[cType]
@@ -176,8 +175,8 @@ local function onJoystickDisconnected() {
   add_msg_box("cannot_session", loc("pl1/lostController"), [["ok", function() {}]], "ok")
 }
 
-eventbus_subscribe("controls.joystickDisconnected", @(_) onJoystickDisconnected())
-eventbus_subscribe("controls.joystickConnected", @(_) onJoystickConnected())
+subscribe("controls.joystickDisconnected", @(_) onJoystickDisconnected())
+subscribe("controls.joystickConnected", @(_) onJoystickConnected())
 
 local xboxInputDevicesData = persist("xboxInputDevicesData", @() { gamepads = 0, keyboards = 0, user_notified = false })
 

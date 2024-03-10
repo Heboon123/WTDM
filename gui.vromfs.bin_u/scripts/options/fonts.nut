@@ -16,7 +16,6 @@ let { isPlatformSony, isPlatformXboxOne, isPlatformSteamDeck, isPlatformShieldTv
 } = require("%scripts/clientState/platform.nut")
 let { isSmallScreen } = require("%scripts/clientState/touchScreen.nut")
 let { setScrnTgt } = require("%scripts/utils/screenUtils.nut")
-let { getSystemConfigOption, setSystemConfigOption } = require("%globalScripts/systemConfig.nut")
 
 const FONTS_SAVE_PATH = "fonts_css"
 const FONTS_SAVE_PATH_CONFIG = "video/fonts"
@@ -54,7 +53,7 @@ let getFontsSh = screenInfo.getScreenHeightForFonts
 local appliedFontsSh = 0
 local appliedFontsScale = 0
 
-function update_font_heights(font) {
+let function update_font_heights(font) {
   let fontsSh = getFontsSh(screen_width(), screen_height())
   if (appliedFontsSh == fontsSh && appliedFontsScale == font.sizeMultiplier)
     return font;
@@ -175,7 +174,7 @@ null,
 
 ::g_font.types.sort(@(a, b) a.sizeOrder <=> b.sizeOrder)
 
-function getAvailableFontBySaveId(saveId) {
+let function getAvailableFontBySaveId(saveId) {
   let res = enums.getCachedType("saveId", saveId, ::g_font.cache.bySaveId, ::g_font, null)
   if (res && res.isAvailable(screen_width(), screen_height()))
     return res
@@ -208,11 +207,11 @@ function getAvailableFontBySaveId(saveId) {
   return availableFonts.len() == 1 ? availableFonts[0] : null
 }
 
-function canChange() {
+let function canChange() {
   return ::g_font.getFixedFont() == null
 }
 
-function getDefault() {
+let function getDefault() {
   let { getFixedFont, SMALL, LARGE, MEDIUM, HUGE, COMPACT } = ::g_font //-ident-hides-ident
   let fixedFont = getFixedFont()
   if (fixedFont)
@@ -242,7 +241,7 @@ function getDefault() {
     return update_font_heights(getDefault())
 
   if (!::g_login.isProfileReceived()) {
-    let fontSaveId = getSystemConfigOption(FONTS_SAVE_PATH_CONFIG)
+    let fontSaveId = ::getSystemConfigOption(FONTS_SAVE_PATH_CONFIG)
     return update_font_heights((fontSaveId && getAvailableFontBySaveId(fontSaveId))
       || getDefault())
   }
@@ -261,9 +260,9 @@ function getDefault() {
   return update_font_heights(res || getDefault())
 }
 
-function saveFontToConfig(font) {
-  if (getSystemConfigOption(FONTS_SAVE_PATH_CONFIG) != font.saveId)
-    setSystemConfigOption(FONTS_SAVE_PATH_CONFIG, font.saveId)
+let function saveFontToConfig(font) {
+  if (::getSystemConfigOption(FONTS_SAVE_PATH_CONFIG) != font.saveId)
+    ::setSystemConfigOption(FONTS_SAVE_PATH_CONFIG, font.saveId)
 }
 
 //return isChanged

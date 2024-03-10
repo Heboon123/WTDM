@@ -3,20 +3,16 @@ from "%scripts/dagui_library.nut" import *
 
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
-let { getCurrentShopDifficulty } = require("%scripts/gameModes/gameModeManagerState.nut")
+
 let { format } = require("string")
 let stdMath = require("%sqstd/math.nut")
 let { getSkillDescriptionView } = require("%scripts/crew/crewSkillParameters.nut")
+let { getSkillValue } = require("%scripts/crew/crewSkills.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { getCrewSpTextIfNotZero } = require("%scripts/crew/crewPoints.nut")
 let { upgradeUnitSpec } = require("%scripts/crew/crewActionsWithMsgBox.nut")
-let { getCrewMaxSkillValue, getNextCrewSkillStepCost, crewSkillValueToStep,
-  getCrewButtonRow, getCrewSkillCost, getNextCrewSkillStepValue, getMaxAvailbleCrewStepValue,
-  getSkillCrewLevel, getSkillMaxCrewLevel, createCrewBuyPointsHandler, crewSkillStepToValue,
-  getCrewLevel, getCrewTotalSteps, getCrewSkillValue
-} = require("%scripts/crew/crew.nut")
 
 local class CrewSkillsPageHandler (gui_handlers.BaseGuiHandlerWT) {
   wndType = handlerType.CUSTOM
@@ -109,7 +105,7 @@ local class CrewSkillsPageHandler (gui_handlers.BaseGuiHandlerWT) {
     let curSpecMul = specType.getMulValue()
     if (page.id == "gunner") {
       let airGunners = getTblValue("gunnersCount", this.unit, 0)
-      local curGunners = getCrewSkillValue(this.crew.id, this.unit, "gunner", "members")
+      local curGunners = getSkillValue(this.crew.id, this.unit, "gunner", "members")
       foreach (item in page.items)
         if (item.name == "members" && "newValue" in item) {
           curGunners = item.newValue
@@ -123,7 +119,7 @@ local class CrewSkillsPageHandler (gui_handlers.BaseGuiHandlerWT) {
     foreach (item in page.items) {
       let hasSpecMul = item.useSpecializations && item.isVisible(this.curCrewUnitType)
       bonuses.append({
-        add =  hasSpecMul ? curSpecMul * getCrewMaxSkillValue(item) : 0.0
+        add =  hasSpecMul ? curSpecMul * ::g_crew.getMaxSkillValue(item) : 0.0
         mul = (item.name == "members") ? 1.0 : curGunnersMul
         haveSpec = item.useSpecializations
         specType = specType
@@ -149,9 +145,9 @@ local class CrewSkillsPageHandler (gui_handlers.BaseGuiHandlerWT) {
       if (!checkObj(rowObj))
         continue
 
-      let newCost = getNextCrewSkillStepCost(item, item?.newValue ?? getCrewSkillValue(this.crew.id, this.unit, this.curPage.id, item.name))
+      let newCost = ::g_crew.getNextSkillStepCost(item, item?.newValue ?? getSkillValue(this.crew.id, this.unit, this.curPage.id, item.name))
       rowObj.findObject($"buttonInc_{idx}").inactiveColor = (newCost > 0 && newCost <= this.getCurPoints()) ? "no" : "yes"
-      rowObj.findObject("availableSkillProgress").setValue(crewSkillValueToStep(item, this.getSkillMaxAvailable(item)))
+      rowObj.findObject("availableSkillProgress").setValue(::g_crew.skillValueToStep(item, this.getSkillMaxAvailable(item)))
     }
   }
 
@@ -167,19 +163,19 @@ local class CrewSkillsPageHandler (gui_handlers.BaseGuiHandlerWT) {
     if (!this.isRecrutedCurCrew())
       return
 
-    let row = getCrewButtonRow(obj, this.scene, this.scene)
+    let row = ::g_crew.getButtonRow(obj, this.scene, this.scene)
     if (this.curPage.items.len() > 0 && (!this.repeatButton || isRepeat)) {
       let item = this.curPage.items[row]
-      let value = getCrewSkillValue(this.crew.id, this.unit, this.curPage.id, item.name)
+      let value = getSkillValue(this.crew.id, this.unit, this.curPage.id, item.name)
       local newValue = item.newValue
       if (limit)
         newValue += inc ? this.getSkillMaxAvailable(item) : item.value
       else
-        newValue = getNextCrewSkillStepValue(item, newValue, inc)
-      newValue = clamp(newValue, value, getCrewMaxSkillValue(item))
+        newValue = ::g_crew.getNextSkillStepValue(item, newValue, inc)
+      newValue = clamp(newValue, value, ::g_crew.getMaxSkillValue(item))
       if (newValue == item.newValue)
         return
-      let changeCost = getCrewSkillCost(item, newValue, item.newValue)
+      let changeCost = ::g_crew.getSkillCost(item, newValue, item.newValue)
       if (this.getCurPoints() - changeCost < 0) {
         if (isRepeat)
           this.needAskBuySkills = true
@@ -214,7 +210,7 @@ local class CrewSkillsPageHandler (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function getSkillMaxAvailable(skillItem) {
-    return getMaxAvailbleCrewStepValue(skillItem, skillItem.newValue, this.getCurPoints())
+    return ::g_crew.getMaxAvailbleStepValue(skillItem, skillItem.newValue, this.getCurPoints())
   }
 
   function updateSkills(row = null, needUpdateIncButton = true) {
@@ -231,17 +227,17 @@ local class CrewSkillsPageHandler (gui_handlers.BaseGuiHandlerWT) {
     if (this.pageOnInit || !obj || !this.isRecrutedCurCrew())
       return
 
-    let row = getCrewButtonRow(obj, this.scene, this.scene)
+    let row = ::g_crew.getButtonRow(obj, this.scene, this.scene)
     if (this.curPage.items.len() == 0)
       return
 
     let item = this.curPage.items[row]
     let newStep = obj.getValue()
-    if (newStep == crewSkillValueToStep(item, item.newValue))
+    if (newStep == ::g_crew.skillValueToStep(item, item.newValue))
       return
 
-    local newValue = crewSkillStepToValue(item, newStep)
-    let value = getCrewSkillValue(this.crew.id, this.unit, this.curPage.id, item.name)
+    local newValue = ::g_crew.skillStepToValue(item, newStep)
+    let value = getSkillValue(this.crew.id, this.unit, this.curPage.id, item.name)
     let maxValue = this.getSkillMaxAvailable(item)
     if (newValue < value)
       newValue = value
@@ -257,7 +253,7 @@ local class CrewSkillsPageHandler (gui_handlers.BaseGuiHandlerWT) {
       })
       return
     }
-    let changeCost = getCrewSkillCost(item, newValue, item.newValue)
+    let changeCost = ::g_crew.getSkillCost(item, newValue, item.newValue)
     if (this.getCurPoints() - changeCost < 0) {
       this.askBuySkills()
       return
@@ -280,7 +276,7 @@ local class CrewSkillsPageHandler (gui_handlers.BaseGuiHandlerWT) {
     local defaultButton = "ok"
     if (spendGold) {
       text += "\n" + loc("shop/purchaseMoreSkillPoints")
-      buttonsArray.insert(0, ["yes", (@(crew) function() { createCrewBuyPointsHandler(crew) })(this.crew)]) //-ident-hides-ident
+      buttonsArray.insert(0, ["yes", (@(crew) function() { ::g_crew.createCrewBuyPointsHandler(crew) })(this.crew)]) //-ident-hides-ident
       defaultButton = "yes"
     }
     this.msgBox("buySkillPoints", text, buttonsArray, defaultButton)
@@ -301,7 +297,7 @@ local class CrewSkillsPageHandler (gui_handlers.BaseGuiHandlerWT) {
   function onSkillRowTooltipOpen(obj) {
     let memberName = obj?.memberName ?? ""
     let skillName = obj?.skillName ?? ""
-    let difficulty = getCurrentShopDifficulty()
+    let difficulty = ::get_current_shop_difficulty()
     let view = getSkillDescriptionView(
       this.crew, difficulty, memberName, skillName, this.curCrewUnitType, this.unit)
     let data = handyman.renderCached("%gui/crew/crewSkillParametersTooltip.tpl", view)
@@ -313,17 +309,17 @@ local class CrewSkillsPageHandler (gui_handlers.BaseGuiHandlerWT) {
     if (!item)
       return null
 
-    let value = getCrewSkillValue(this.crew.id, this.unit, this.curPage.id, item.name)
+    let value = getSkillValue(this.crew.id, this.unit, this.curPage.id, item.name)
     if (!("newValue" in item))
       item.newValue <- value
-    local curValue = getSkillCrewLevel(item, item.newValue)
-    let newProgressValue = crewSkillValueToStep(item, item.newValue)
+    local curValue = ::g_crew.getSkillCrewLevel(item, item.newValue)
+    let newProgressValue = ::g_crew.skillValueToStep(item, item.newValue)
     let bonusData = this.pageBonuses?[idx]
     local bonusTooltip = ""
     if (bonusData) {
       let totalSkill = bonusData.mul * item.newValue + bonusData.add
-      let bonusLevel = getSkillCrewLevel(item, totalSkill, item.newValue)
-      let addLevel   = getSkillCrewLevel(item, totalSkill, totalSkill - bonusData.add)
+      let bonusLevel = ::g_crew.getSkillCrewLevel(item, totalSkill, item.newValue)
+      let addLevel   = ::g_crew.getSkillCrewLevel(item, totalSkill, totalSkill - bonusData.add)
 
       if ((totalSkill - item.newValue).tointeger() != 0 && bonusData.add != 0)
         curValue += stdMath.round_by_value(bonusLevel, 0.01)
@@ -335,10 +331,10 @@ local class CrewSkillsPageHandler (gui_handlers.BaseGuiHandlerWT) {
       let lvlDiffByGunners = stdMath.round_by_value(bonusLevel - addLevel, 0.01)
       if (lvlDiffByGunners < 0)
         bonusTooltip += ((bonusTooltip != "") ? "\n" : "") + loc("crew/notEnoughGunners") + loc("ui/colon")
-          + $"<color=@badTextColor>{lvlDiffByGunners}</color>"
+          + "<color=@badTextColor>" + lvlDiffByGunners + "</color>"
     }
 
-    let level = getCrewLevel(this.crew, this.unit, this.unit?.getCrewUnitType?() ?? CUT_INVALID)
+    let level = ::g_crew.getCrewLevel(this.crew, this.unit, this.unit?.getCrewUnitType?() ?? CUT_INVALID)
     let isRecrutedCrew = this.isRecrutedCurCrew()
 
     return {
@@ -348,22 +344,22 @@ local class CrewSkillsPageHandler (gui_handlers.BaseGuiHandlerWT) {
       skillName = item.name
       memberName = this.curPage.id
       name = loc($"crew/{item.name}")
-      progressMax = getCrewTotalSteps(item)
-      maxSkillCrewLevel = getSkillMaxCrewLevel(item)
-      maxValue = getCrewMaxSkillValue(item)
+      progressMax = ::g_crew.getTotalSteps(item)
+      maxSkillCrewLevel = ::g_crew.getSkillMaxCrewLevel(item)
+      maxValue = ::g_crew.getMaxSkillValue(item)
       bonusTooltip = bonusTooltip
       progressEnable = isRecrutedCrew ? "yes" : "no"
       skillProgressValue = value
       shadeSkillProgressValue = value
       newSkillProgressValue = newProgressValue
       glowSkillProgressValue = newProgressValue
-      skillSliderValue = crewSkillValueToStep(item, item.newValue)
+      skillSliderValue = ::g_crew.skillValueToStep(item, item.newValue)
       curValue = curValue.tostring()
       visibleButtonDec = (item.newValue > value && isRecrutedCrew)
         ? "show" : "hide"
       visibleButtonInc = (item.newValue < item.costTbl.len() && isRecrutedCrew)
         ? "show" : "hide"
-      incCost = getCrewSpTextIfNotZero(getNextCrewSkillStepCost(item, item.newValue))
+      incCost = getCrewSpTextIfNotZero(::g_crew.getNextSkillStepCost(item, item.newValue))
 
       btnSpec = [
         this.getRowSpecButtonConfig(::g_crew_spec_type.EXPERT, level, bonusData),

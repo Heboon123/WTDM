@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
@@ -27,7 +28,7 @@ let uidsListByGroupName = {
 local onReceivedXboxListCallback = function(_playersList, _group) {} // fwd decl
 
 
-function updateContactPresence(contact, isAllowed) {
+let function updateContactPresence(contact, isAllowed) {
   if (!contact)
     return
 
@@ -42,12 +43,12 @@ function updateContactPresence(contact, isAllowed) {
   })
 }
 
-function updateContactXBoxPresence(xboxId, isAllowed) {
+let function updateContactXBoxPresence(xboxId, isAllowed) {
   let contact = ::findContactByXboxId(xboxId)
   updateContactPresence(contact, isAllowed)
 }
 
-function fetchContactsList() {
+let function fetchContactsList() {
   pendingXboxContactsToUpdate.clear()
   //No matter what will be done first,
   //anyway, we will wait all groups data.
@@ -61,7 +62,7 @@ function fetchContactsList() {
   })
 }
 
-function updateContacts(needIgnoreInitedFlag = false) {
+let function updateContacts(needIgnoreInitedFlag = false) {
   if (!is_platform_xbox || !isInMenu()) {
     if (needIgnoreInitedFlag && persistent.isInitedXboxContacts)
       persistent.isInitedXboxContacts = false
@@ -75,7 +76,7 @@ function updateContacts(needIgnoreInitedFlag = false) {
   fetchContactsList()
 }
 
-function xboxUpdateContactsList(usersTable) {
+let function xboxUpdateContactsList(usersTable) {
   //Create or update exist contacts
   let contactsTable = {}
   foreach (uid, playerData in usersTable) {
@@ -115,7 +116,7 @@ function xboxUpdateContactsList(usersTable) {
   fetchContacts()
 }
 
-function proceedXboxPlayersList() {
+let function proceedXboxPlayersList() {
   if (!(EPL_FRIENDLIST in pendingXboxContactsToUpdate)
       || !(EPL_BLOCKLIST in pendingXboxContactsToUpdate))
     return
@@ -147,7 +148,14 @@ onReceivedXboxListCallback = function(playersList, group) {
   proceedXboxPlayersList()
 }
 
-function on_presences_update(success, presences) {
+let function xboxOverlayContactClosedCallback(playerStatus) {
+  if (playerStatus == XBOX_PERSON_STATUS_CANCELED)
+    return
+
+  fetchContactsList()
+}
+
+let function on_presences_update(success, presences) {
   if (!success) {
     logX("Failed to update presences for users")
     return
@@ -221,6 +229,8 @@ addListenersWithoutEnv({
 
 return {
   fetchContactsList = fetchContactsList
+
+  xboxOverlayContactClosedCallback = xboxOverlayContactClosedCallback
 
   updateContactXBoxPresence = updateContactXBoxPresence
   updateContacts = updateContacts

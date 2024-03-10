@@ -16,28 +16,28 @@ let {addToolboxOption, getToolboxState, setToolboxState,
      runToolboxCmd, toolboxStyles} = require("panelElem_buttonToolbox.nut")
 
 
-function toolboxCmd_togglePolyBattleAreas() {
+let function toolboxCmd_togglePolyBattleAreas() {
   if (!getToolboxState("polyAreas"))
     runToolboxCmd("battleAreas.draw_active_poly_areas 1", null, "polyAreas", true)
   else
     runToolboxCmd("battleAreas.draw_active_poly_areas 0", null, "polyAreas", false)
 }
 
-function toolboxCmd_toggleCapZonesPoly() {
+let function toolboxCmd_toggleCapZonesPoly() {
   if (!getToolboxState("capZonesPoly"))
     runToolboxCmd("capzone.draw_active_poly_areas 1", null, "capZonesPoly", true)
   else
     runToolboxCmd("capzone.draw_active_poly_areas 0", null, "capZonesPoly", false)
 }
 
-function toolboxCmd_toggleCapZones() {
+let function toolboxCmd_toggleCapZones() {
   if (!getToolboxState("capZones"))
     runToolboxCmd("capzone.debug", null, "capZones", true)
   else
     runToolboxCmd("capzone.debug", null, "capZones", false)
 }
 
-function toolboxCmd_toggleRespawns() {
+let function toolboxCmd_toggleRespawns() {
   let mode = getToolboxState("respawns")
   if (mode == 1)
     runToolboxCmd("respbase.respbase_debug 1", "respbase.respbase_only_active_debug 0", "respawns", 2)
@@ -47,7 +47,7 @@ function toolboxCmd_toggleRespawns() {
     runToolboxCmd("respbase.respbase_debug 0", "respbase.respbase_only_active_debug 1", "respawns", 1)
 }
 
-function toolboxCmd_toggleGroups() {
+let function toolboxCmd_toggleGroups() {
   if (!getToolboxState("showGroups"))
     updateGroupsList()
   setToolboxState("showGroups", !getToolboxState("showGroups"))
@@ -58,7 +58,7 @@ let respawnsBtnText = function() {
   return mode == 1 ? "Respawns +" : mode == 2 ? "Respawns..." : "Respawns"
 }
 
-function groupsContent() {
+let function groupsContent() {
   local childs = []
   childs.append(toolboxStyles.rowDiv)
   foreach (item in groupsList.value) {
@@ -90,7 +90,7 @@ function groupsContent() {
   }
 }
 
-function addToolboxOptions_Shooter() {
+let function addToolboxOptions_Shooter() {
   addToolboxOption(@() getToolboxState("polyAreas"),    "polyAreas", false,    "PolyBattleAreas", @(_) toolboxCmd_togglePolyBattleAreas(), null, "Toggle show polygonal battle areas")
   addToolboxOption(@() false,                           null, null,            faRefresh,         @(_) runToolboxCmd("battleAreas.reinit_active_poly_areas"), null, null)
   addToolboxOption(@() getToolboxState("capZonesPoly"), "capZonesPoly", false, "CapZonesPoly",    @(_) toolboxCmd_toggleCapZonesPoly(), null, "Toggle show polygonal capture zones")

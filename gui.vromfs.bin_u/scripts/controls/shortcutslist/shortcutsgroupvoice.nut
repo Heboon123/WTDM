@@ -7,7 +7,7 @@ let { CONTROL_TYPE } = require("%scripts/controls/controlsConsts.nut")
 
 let MAX_VOICE_MESSAGE_BUTTONS = 8
 
-function getIdVoiceMessageOption(index) {
+let function getIdVoiceMessageOption(index) {
   return {
     id = "ID_VOICE_MESSAGE_" + index
     checkAssign = false
@@ -60,7 +60,7 @@ groupList.append(
   }
 )
 
-function getFavoriteVoiceMessageOption(index) {
+let function getFavoriteVoiceMessageOption(index) {
   return {
     id = "favorite_voice_message_" + index
     type = CONTROL_TYPE.SPINNER
@@ -70,7 +70,7 @@ function getFavoriteVoiceMessageOption(index) {
   }
 }
 
-function getFastVoiceMessageOption(index) {
+let function getFastVoiceMessageOption(index) {
   return {
     id = "ID_FAST_VOICE_MESSAGE_" + index
     checkAssign = false

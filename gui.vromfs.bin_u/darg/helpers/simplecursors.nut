@@ -12,7 +12,7 @@ let tooltipBox = @(content) {
 
 let tooltipGen = Watched(0)
 let tooltipComp = {value = null}
-function setTooltip(val){
+let function setTooltip(val){
   tooltipComp.value = val
   tooltipGen(tooltipGen.value+1)
 }
@@ -54,7 +54,7 @@ let cursor = {
   }
 }
 
-function mkCursor(...){
+let function mkCursor(...){
   return Cursor({
     size = [sh(2), sh(2)]
     hotspot = [0, 0]

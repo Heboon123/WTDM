@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { rnd } = require("dagor.random")
@@ -9,7 +10,7 @@ let { isDataBlock } = require("%sqstd/underscore.nut")
 
 const WW_BG_PATH = "config/worldwar_bg/"
 
-function wwAnimBgLoad(name) {
+let function wwAnimBgLoad(name) {
   let worldwar_bg = GUI.get()?.worldwar_bg
   let wwBg = isDataBlock(worldwar_bg) ? convertBlk(worldwar_bg) : {}
   let fullPath = (name ?? "") == ""

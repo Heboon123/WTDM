@@ -1,3 +1,4 @@
+//checked for plus_string
 
 from "%scripts/dagui_library.nut" import *
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -106,7 +107,7 @@ gui_handlers.UnlockRewardWnd <- class (gui_handlers.BaseGuiHandlerWT) {
     let obj = this.scene.findObject("btn_use_decorator")
     if (obj?.isValid()) {
       obj.setValue(loc($"decorator/use/{this.decorator.decoratorType.resourceType}"))
-      showObjById("btn_use_decorator", true, this.scene)
+      this.showSceneBtn("btn_use_decorator", true)
     }
   }
 
@@ -213,12 +214,12 @@ gui_handlers.UnlockRewardWnd <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!checkObj(this.scene))
       return
     let isShowRewardListBtn = this.opened && (this.unlocks.len() > 1) && this.animFinished
-    local btnObj = showObjById("btn_rewards_list", isShowRewardListBtn, this.scene)
+    local btnObj = this.showSceneBtn("btn_rewards_list", isShowRewardListBtn)
     if (isShowRewardListBtn)
       btnObj.setValue(loc("mainmenu/rewardsList"))
-    showObjById("open_chest_animation", !this.animFinished, this.scene)
-    showObjById("btn_ok", this.animFinished, this.scene)
-    showObjById("btn_back", this.animFinished, this.scene)
+    this.showSceneBtn("open_chest_animation", !this.animFinished)
+    this.showSceneBtn("btn_ok", this.animFinished)
+    this.showSceneBtn("btn_back", this.animFinished)
   }
 
   function onViewRewards() {

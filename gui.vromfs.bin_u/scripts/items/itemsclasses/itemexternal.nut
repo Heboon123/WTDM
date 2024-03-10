@@ -35,7 +35,6 @@ let { get_cur_base_gui_handler } = require("%scripts/baseGuiHandlerManagerWT.nut
 let { checkBalanceMsgBox } = require("%scripts/user/balanceFeatures.nut")
 let { BaseItem } = require("%scripts/items/itemsClasses/itemsBase.nut")
 let { showBuyAndOpenChestWndWhenReceive } = require("%scripts/items/buyAndOpenChestWnd.nut")
-let { addPopup } = require("%scripts/popups/popups.nut")
 
 let emptyBlk = DataBlock()
 
@@ -893,7 +892,7 @@ let ItemExternal = class (BaseItem) {
       return false
 
     if (this.isGoldPurchaseInProgress()) {
-      addPopup(null, loc("items/msg/waitPreviousGoldTransaction"), null, null, null, "waitPrevGoldTrans")
+      ::g_popups.add(null, loc("items/msg/waitPreviousGoldTransaction"), null, null, null, "waitPrevGoldTrans")
       return true
     }
     let cost = this.getCost()

@@ -3,7 +3,7 @@ let { is_pc, platformId } = require("%sqstd/platform.nut")
 
 let formatters = require("textFormatters.nut")
 let { defStyle } = formatters
-function filter(object) {
+let function filter(object) {
   return !(object?.platform == null || object.platform.indexof(platformId) != null
     || (is_pc && object.platform.indexof("pc") != null))
 }

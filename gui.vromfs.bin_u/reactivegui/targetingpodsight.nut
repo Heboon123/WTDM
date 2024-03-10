@@ -14,7 +14,7 @@ let aircraftParamsTable = paramsTable(TargetPodMask, EmptyMask,
         aircraftParamsTablePos,
         hdpx(1), true, false, true)
 
-function Root(width, height) {
+let function Root(width, height) {
   return {
     size = [width, height]
     children = [

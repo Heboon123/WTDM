@@ -3,8 +3,6 @@ from "%scripts/dagui_library.nut" import *
 from "%scripts/worldWar/worldWarConst.nut" import *
 from "%scripts/mainConsts.nut" import SEEN
 
-let { getGlobalModule } = require("%scripts/global_modules.nut")
-let g_squad_manager = getGlobalModule("g_squad_manager")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
@@ -40,9 +38,6 @@ let { saveLocalAccountSettings, loadLocalAccountSettings
 let { get_gui_regional_blk, get_es_custom_blk } = require("blkGetters")
 let { charRequestJson } = require("%scripts/tasker.nut")
 let { move_mouse_on_child_by_value, loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
-let { guiStartProfile } = require("%scripts/user/profileHandler.nut")
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 
 const MY_CLUSRTERS = "ww/clusters"
 
@@ -89,10 +84,10 @@ gui_handlers.WwOperationsMapsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   autoselectOperationTimeout    = 0
 
   function initScreen() {
-    this.backSceneParams = { eventbusName = "gui_start_mainmenu" }
+    this.backSceneParams = { globalFunctionName = "gui_start_mainmenu" }
     this.mapsTbl = {}
     this.mapsListObj = this.scene.findObject("maps_list")
-    this.mapsListNestObj = showObjById("operation_list", this.isDeveloperMode, this.scene)
+    this.mapsListNestObj = this.showSceneBtn("operation_list", this.isDeveloperMode)
 
     foreach (timerObjId in [
         "ww_status_check_timer",  // periodic ww status updates check
@@ -274,7 +269,7 @@ gui_handlers.WwOperationsMapsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     for (local i = 0; i < this.trophiesAmount; i++) {
       let trophy = trophiesBlk.getBlock(i)
       let trophyId = trophy?.itemName || trophy?.trophyName || trophy?.mainTrophyId
-      let trophyItem = findItemById(trophyId)
+      let trophyItem = ::ItemsManager.findItemById(trophyId)
       if (!trophyItem)
         continue
 
@@ -292,7 +287,7 @@ gui_handlers.WwOperationsMapsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
         trophyDesc = $"{this.getTrophyDesc(trophy)} {progressText}"
         status = isProgressReached ? "received" : ""
         descTooltipText = this.getTrophyTooltip(trophy, updStatsText)
-        tooltipId = getTooltipType("ITEM").getTooltipId(trophyId)
+        tooltipId = ::g_tooltip.getIdItem(trophyId)
         iconTooltipText = this.getTrophyTooltip(trophiesBlk, updStatsText)
         rewardImage = trophyItem.getIcon()
         isTrophy = true
@@ -527,7 +522,7 @@ gui_handlers.WwOperationsMapsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function updateButtons() {
-    showObjById("gamercard_logo", true, this.scene)
+    this.showSceneBtn("gamercard_logo", true)
 
     let hasMap = this.selMap != null
     let isInQueue = isMyClanInQueue()
@@ -537,9 +532,9 @@ gui_handlers.WwOperationsMapsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     let needShowBeginMapWaitTime = !(this.nearestAvailableMapToBattle?.isActive?() ?? true)
     if ((this.queuesJoinTime > 0) != isInQueue)
       this.queuesJoinTime = isInQueue ? this.getLatestQueueJoinTime() : 0
-    showObjById("queues_wait_time_div", isInQueue, this.scene)
+    this.showSceneBtn("queues_wait_time_div", isInQueue)
     this.updateQueuesWaitTime()
-    showObjById("begin_map_wait_time_div", needShowBeginMapWaitTime, this.scene)
+    this.showSceneBtn("begin_map_wait_time_div", needShowBeginMapWaitTime)
     this.updateBeginMapWaitTime()
     this.updateWwarUrlButton()
 
@@ -547,7 +542,7 @@ gui_handlers.WwOperationsMapsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       let selectedMapObj = this.getSelectedMapObj()
       let isMapActionVisible = !hasMap ||
         (this.selMap.isActive() && isQueueJoiningEnabled && !isInQueue)
-      let btnMapActionObj = showObjById("btn_map_action", isMapActionVisible && this.isDeveloperMode, this.scene)
+      let btnMapActionObj = this.showSceneBtn("btn_map_action", isMapActionVisible && this.isDeveloperMode)
       btnMapActionObj.setValue(this.getSelectedMapEditBtnText(selectedMapObj))
     }
 
@@ -555,7 +550,7 @@ gui_handlers.WwOperationsMapsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     let cantJoinAnyQueues = ::WwQueue.getCantJoinAnyQueuesReasonData()
-    let isSquadMember = g_squad_manager.isSquadMember()
+    let isSquadMember = ::g_squad_manager.isSquadMember()
     let isClanQueueAvaliable = this.selMap?.isClanQueueAvaliable()
     let myClanOperation = getMyClanOperation()
     let isMyClanOperation = myClanOperation != null && myClanOperation.data.map == this.selMap?.name
@@ -809,10 +804,10 @@ gui_handlers.WwOperationsMapsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     let requestBlk = DataBlock()
     requestBlk.country = countryId
     requestBlk.clusters = this.clustersList
-    if (g_squad_manager.isInSquad()) {
-      let leaderUid = g_squad_manager.getLeaderUid()
+    if (::g_squad_manager.isInSquad()) {
+      let leaderUid = ::g_squad_manager.getLeaderUid()
       let members = [leaderUid].extend(
-        g_squad_manager.getMembers().keys().filter(@(v) v != leaderUid))
+        ::g_squad_manager.getMembers().keys().filter(@(v) v != leaderUid))
       requestBlk.squadMembers = ";".join(members)
     }
 
@@ -856,7 +851,7 @@ gui_handlers.WwOperationsMapsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function onOperationListSwitch() {
     this.isDeveloperMode = !this.isDeveloperMode
-    showObjById("operation_list", this.isDeveloperMode, this.scene)
+    this.showSceneBtn("operation_list", this.isDeveloperMode)
     let countriesContainerObj = this.scene.findObject("countries_container")
     local selObj = this.canEditMapCountries(countriesContainerObj) ? countriesContainerObj : null
 
@@ -1119,7 +1114,7 @@ gui_handlers.WwOperationsMapsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
     let worldWarUrlBtnKey = get_gui_regional_blk()?.worldWarUrlBtnKey ?? ""
     let isVisibleBtn = !u.isEmpty(worldWarUrlBtnKey)
-    let btnObj = showObjById("ww_wiki", isVisibleBtn, this.scene)
+    let btnObj = this.showSceneBtn("ww_wiki", isVisibleBtn)
     if (!isVisibleBtn || !btnObj?.isValid())
       return
 
@@ -1130,7 +1125,7 @@ gui_handlers.WwOperationsMapsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   function updateRewardsPanel() {
     let rewards = this.fillTrophyList().extend(this.fillUnlocksList())
     let isRewardsVisible = rewards.len() > 0
-    showObjById("rewards_panel", isRewardsVisible, this.scene)
+    this.showSceneBtn("rewards_panel", isRewardsVisible)
     if (isRewardsVisible)
       this.fillRewards(rewards)
   }
@@ -1165,7 +1160,7 @@ gui_handlers.WwOperationsMapsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onOpenAchievements() {
-    guiStartProfile({
+    ::gui_start_profile({
       initialSheet = "UnlockAchievement"
       curAchievementGroupName = unlocksChapterName
     })

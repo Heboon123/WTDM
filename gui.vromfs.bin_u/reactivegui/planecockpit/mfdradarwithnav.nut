@@ -205,7 +205,7 @@ let styleLine = {
   fontSize = 30
 }
 
-function compassElem(width, height) {
+let function compassElem(width, height) {
   return {
     size = flex()
     pos = [pw(15), ph(3)]
@@ -265,7 +265,7 @@ let targetsComponent = function(createTargetDistFunc) {
   }
 }
 
-function Root(width, height, posX = 0, posY = 0) {
+let function Root(width, height, posX = 0, posY = 0) {
   return {
     pos = [posX, posY]
     size = [width, height]

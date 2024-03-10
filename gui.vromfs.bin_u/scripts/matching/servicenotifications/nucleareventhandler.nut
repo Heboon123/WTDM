@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { get_base_game_version } = require("app")
@@ -17,12 +18,12 @@ let newClientVersionEvent = persist("newClientVersionEvent ", @() {
   hasMessage = false
 })
 
-function isNewClientFunc() {
+let function isNewClientFunc() {
   let cur = get_base_game_version()
   return cur == 0 || cur >= Version("2.0.0.0").toint()
 }
 
-function onNewClientVersion(params) {
+let function onNewClientVersion(params) {
   newClientVersionEvent.hasMessage = true
   if (!isInFlight())
     broadcastEvent("NewClientVersion", params)
@@ -30,7 +31,7 @@ function onNewClientVersion(params) {
   return { result = "ok" }
 }
 
-function checkNuclearEvent(params = {}) {
+let function checkNuclearEvent(params = {}) {
   let needShowNuclearEventAfterStreak = need_show_after_streak()
   if (needShowNuclearEventAfterStreak) {
     airRaidWndScene({ hasVisibleNuclearTimer = false })
@@ -54,7 +55,7 @@ function checkNuclearEvent(params = {}) {
   airRaidWndScene({ hasVisibleNuclearTimer = params?.showTimer ?? !isNewClient })
 }
 
-function bigQuerryForNuclearEvent() {
+let function bigQuerryForNuclearEvent() {
   if (!::g_login.isProfileReceived())
     return
 

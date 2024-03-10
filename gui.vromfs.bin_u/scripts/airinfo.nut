@@ -3,7 +3,6 @@ from "%scripts/dagui_natives.nut" import wp_get_repair_cost_by_mode, shop_get_ai
 from "%scripts/dagui_library.nut" import *
 from "%scripts/gameModes/gameModeConsts.nut" import BATTLE_TYPES
 
-let { get_battle_type_by_ediff, get_difficulty_by_ediff } = require("%scripts/difficulty.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { Cost } = require("%scripts/money.nut")
@@ -43,7 +42,7 @@ let { havePremium } = require("%scripts/user/premium.nut")
 let { getUnitMassPerSecValue, getUnitWeaponPresetsCount } = require("%scripts/unit/unitWeaponryInfo.nut")
 let { isPlatformPC } = require("%scripts/clientState/platform.nut")
 let { getBundleId } = require("%scripts/onlineShop/onlineBundles.nut")
-let { getShopItem } = require("%scripts/onlineShop/entitlementsShopData.nut")
+let { getShopItem } = require("%scripts/onlineShop/entitlementsStore.nut")
 let { getUnitFileName } = require("vehicleModel")
 let { fillPromUnitInfo } = require("%scripts/unit/remainingTimeUnit.nut")
 let { approversUnitToPreviewLiveResource } = require("%scripts/customization/skins.nut")
@@ -67,14 +66,6 @@ let { getCurMissionRules } = require("%scripts/misCustomRules/missionCustomState
 let { checkBalanceMsgBox } = require("%scripts/user/balanceFeatures.nut")
 let { buildUnitSlot, fillUnitSlotTimers } = require("%scripts/slotbar/slotbarView.nut")
 let { getCrewById, getCrewByAir, isUnitInSlotbar, getCrewUnlockTimeByUnit } = require("%scripts/slotbar/slotbarState.nut")
-let { getBestItemSpecialOfferByUnit, findItemById } = require("%scripts/items/itemsManager.nut")
-let { addBgTaskCb } = require("%scripts/tasker.nut")
-let { hideBonus } = require("%scripts/bonusModule.nut")
-let { getProfileInfo } = require("%scripts/user/userInfoStats.nut")
-let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
-let { addPopup } = require("%scripts/popups/popups.nut")
-let { measureType } = require("%scripts/measureType.nut")
-let { getCrewLevel, getCrewName } = require("%scripts/crew/crew.nut")
 
 const MODIFICATORS_REQUEST_TIMEOUT_MSEC = 20000
 
@@ -83,7 +74,7 @@ enum CheckFeatureLockAction {
   RESEARCH
 }
 
-function afterUpdateAirModificators(unit, callback) {
+let function afterUpdateAirModificators(unit, callback) {
   if (unit.secondaryWeaponMods)
     unit.secondaryWeaponMods = null //invalidate secondary weapons cache
   broadcastEvent("UnitModsRecount", { unit = unit })
@@ -91,7 +82,7 @@ function afterUpdateAirModificators(unit, callback) {
     callback()
 }
 
-function fillProgressBar(obj, curExp, newExp, maxExp, isPaused = false) {
+let function fillProgressBar(obj, curExp, newExp, maxExp, isPaused = false) {
   if (!checkObj(obj) || !maxExp)
     return
 
@@ -140,7 +131,7 @@ let isEventUnit = @(unit) unit.event != null
   return unit.marketplaceItemdefId != null
     && !::isUnitBought(unit)
     && isMarketplaceEnabled()
-    && (findItemById(unit.marketplaceItemdefId)?.hasLink() ?? false)
+    && (::ItemsManager.findItemById(unit.marketplaceItemdefId)?.hasLink() ?? false)
 }
 
 ::isUnitInResearch <- function isUnitInResearch(unit) {
@@ -167,7 +158,7 @@ let isEventUnit = @(unit) unit.event != null
     return false
   if (hasFeature("WikiUnitInfo"))
     return true // Because there is link to wiki.
-  let desc = unit ? loc($"encyclopedia/{unit.name}/desc", "") : ""
+  let desc = unit ? loc("encyclopedia/" + unit.name + "/desc", "") : ""
   return desc != "" && desc != loc("encyclopedia/no_unit_description")
 }
 
@@ -273,7 +264,7 @@ let isEventUnit = @(unit) unit.event != null
     taskId = shop_purchase_aircraft(unitName)
 
   let progressBox = scene_msg_box("char_connecting", null, loc("charServer/purchase"), null, null)
-  addBgTaskCb(taskId, function() {
+  ::add_bg_task_cb(taskId, function() {
     destroyMsgBox(progressBox)
     broadcastEvent("UnitBought", { unitName = unit.name })
   })
@@ -284,7 +275,7 @@ let isEventUnit = @(unit) unit.event != null
   if (unit.unitType.canSpendGold())
     return true
 
-  addPopup(getUnitName(unit), loc("msgbox/unitTypeRestrictFromSpendGold"),
+  ::g_popups.add(getUnitName(unit), loc("msgbox/unitTypeRestrictFromSpendGold"),
     null, null, null, "cant_spend_gold_on_unit")
   return false
 }
@@ -410,7 +401,7 @@ let isEventUnit = @(unit) unit.event != null
     return loc(::isUnitInResearch(unit) ? "mainmenu/needResearch/researching" : "mainmenu/needResearch")
 
   if (!isShopTooltip) {
-    let info = getProfileInfo()
+    let info = ::get_profile_info()
     let balance = info?.balance ?? 0
     let balanceG = info?.gold ?? 0
 
@@ -729,7 +720,7 @@ let isEventUnit = @(unit) unit.event != null
   return [text, weaponModText, vMin, vMax, value, air.shop[characteristicName[0]], showReferenceText]
 }
 
-function setReferenceMarker(obj, vMin, vMax, refer, modeName) {
+let function setReferenceMarker(obj, vMin, vMax, refer, modeName) {
   if (!checkObj(obj))
     return
 
@@ -746,7 +737,7 @@ function setReferenceMarker(obj, vMin, vMax, refer, modeName) {
   }
 }
 
-function fillAirCharProgress(progressObj, vMin, vMax, cur) {
+let function fillAirCharProgress(progressObj, vMin, vMax, cur) {
   if (!checkObj(progressObj))
     return
   if (vMin == vMax)
@@ -802,7 +793,7 @@ function fillAirCharProgress(progressObj, vMin, vMax, cur) {
 
     // unit special offer
     let haveDiscount = ::g_discount.getUnitDiscountByName(air.name)
-    let specialOfferItem = haveDiscount > 0 ? getBestItemSpecialOfferByUnit(air) : null
+    let specialOfferItem = haveDiscount > 0 ? ::ItemsManager.getBestSpecialOfferItemByUnit(air) : null
     isActive = isActive || specialOfferItem != null
     let discountObj = obj.findObject("special_offer_time")
     if (checkObj(rentObj)) {
@@ -859,8 +850,8 @@ function fillAirCharProgress(progressObj, vMin, vMax, cur) {
     rentTimeHours = -1, isReceivedPrizes = false, researchExpInvest = 0, numSpares = 0 } = params
   let warbondId = params?.wbId
   let getEdiffFunc = handler?.getCurrentEdiff
-  let ediff = getEdiffFunc ? getEdiffFunc.call(handler) : getCurrentGameModeEdiff()
-  let difficulty = get_difficulty_by_ediff(ediff)
+  let ediff = getEdiffFunc ? getEdiffFunc.call(handler) : ::get_current_ediff()
+  let difficulty = ::get_difficulty_by_ediff(ediff)
   let diffCode = difficulty.diffCode
 
   let unitType = getEsUnitType(air)
@@ -1153,7 +1144,7 @@ function fillAirCharProgress(progressObj, vMin, vMax, cur) {
     let horsePowers = currentParams.horsePowers;
     let horsePowersRPM = currentParams.maxHorsePowersRPM;
     holderObj.findObject("aircraft-horsePowers").setValue(
-      format("%s %s %d %s", measureType.HORSEPOWERS.getMeasureUnitsText(horsePowers),
+      format("%s %s %d %s", ::g_measure_type.HORSEPOWERS.getMeasureUnitsText(horsePowers),
         loc("shop/unitValidCondition"), horsePowersRPM.tointeger(), loc("measureUnits/rpm")))
     local thickness = currentParams.armorThicknessHull;
     holderObj.findObject("aircraft-armorThicknessHull").setValue(format("%d / %d / %d %s", thickness[0].tointeger(), thickness[1].tointeger(), thickness[2].tointeger(), loc("measureUnits/mm")))
@@ -1208,7 +1199,7 @@ function fillAirCharProgress(progressObj, vMin, vMax, cur) {
     let displacementKilos = unitTags?.Shop?.displacement
     holderObj.findObject("ship-displacement-tr").show(displacementKilos != null)
     if (displacementKilos != null) {
-      let displacementString = measureType.SHIP_DISPLACEMENT_TON.getMeasureUnitsText(displacementKilos / 1000, true)
+      let displacementString = ::g_measure_type.SHIP_DISPLACEMENT_TON.getMeasureUnitsText(displacementKilos / 1000, true)
       holderObj.findObject("ship-displacement-title").setValue(loc("info/ship/displacement") + loc("ui/colon"))
       holderObj.findObject("ship-displacement-value").setValue(displacementString)
     }
@@ -1375,16 +1366,16 @@ function fillAirCharProgress(progressObj, vMin, vMax, cur) {
       if (!hasTimedAward && f.isTimedAward)
         hasTimedAward = true
       let result = f.multiplier * f.premUnitMul * (f.noBonus + f.premAccBonus + f.premModBonus + f.boosterBonus)
-      local resultText = f.isTimedAward ? result : measureType.PERCENT_FLOAT.getMeasureUnitsText(result)
+      local resultText = f.isTimedAward ? result : ::g_measure_type.PERCENT_FLOAT.getMeasureUnitsText(result)
       resultText = "".concat(colorize("activeTextColor", resultText), loc(f.currency), f.isTimedAward ? loc("measureUnits/perMinute") : "")
 
-      let sources = [NO_BONUS.__merge({ text = measureType.PERCENT_FLOAT.getMeasureUnitsText(f.noBonus) })]
+      let sources = [NO_BONUS.__merge({ text = ::g_measure_type.PERCENT_FLOAT.getMeasureUnitsText(f.noBonus) })]
       if (f.premAccBonus  > 0)
-        sources.append(PREM_ACC.__merge({ text = measureType.PERCENT_FLOAT.getMeasureUnitsText(f.premAccBonus) }))
+        sources.append(PREM_ACC.__merge({ text = ::g_measure_type.PERCENT_FLOAT.getMeasureUnitsText(f.premAccBonus) }))
       if (f.premModBonus  > 0)
-        sources.append(PREM_MOD.__merge({ text = measureType.PERCENT_FLOAT.getMeasureUnitsText(f.premModBonus) }))
+        sources.append(PREM_MOD.__merge({ text = ::g_measure_type.PERCENT_FLOAT.getMeasureUnitsText(f.premModBonus) }))
       if (f.boosterBonus  > 0)
-        sources.append(BOOSTER.__merge({ text = measureType.PERCENT_FLOAT.getMeasureUnitsText(f.boosterBonus) }))
+        sources.append(BOOSTER.__merge({ text = ::g_measure_type.PERCENT_FLOAT.getMeasureUnitsText(f.boosterBonus) }))
       sources[sources.len() - 1].isLastBlock <- true
       let formula = handyman.renderCached("%gui/debriefing/rewardSources.tpl", {
         multiplier = f.multText
@@ -1468,7 +1459,7 @@ function fillAirCharProgress(progressObj, vMin, vMax, cur) {
     else {
       holderObj.findObject("aircraft-full_repair_time_crew-tr").show(false)
       holderObj.findObject("aircraft-free_repairs-tr").show(false)
-      hideBonus(holderObj.findObject("aircraft-full_repair_cost-discount"))
+      ::hideBonus(holderObj.findObject("aircraft-full_repair_cost-discount"))
     }
   }
 
@@ -1618,7 +1609,7 @@ function fillAirCharProgress(progressObj, vMin, vMax, cur) {
 
   if (needCrewInfo && crew) {
     let crewUnitType = air.getCrewUnitType()
-    let crewLevel = getCrewLevel(crew, air, crewUnitType)
+    let crewLevel = ::g_crew.getCrewLevel(crew, air, crewUnitType)
     let crewStatus = ::get_crew_status(crew, air)
     let specType = ::g_crew_spec_type.getTypeByCrewAndUnit(crew, air)
     let crewSpecIcon = specType.trainedIcon
@@ -1630,7 +1621,7 @@ function fillAirCharProgress(progressObj, vMin, vMax, cur) {
 
     obj = holderObj.findObject("aircraft-crew_name")
     if (checkObj(obj))
-      obj.setValue(getCrewName(crew))
+      obj.setValue(::g_crew.getCrewName(crew))
 
     obj = holderObj.findObject("aircraft-crew_level")
     if (checkObj(obj))
@@ -1741,7 +1732,7 @@ function fillAirCharProgress(progressObj, vMin, vMax, cur) {
 
   obj = showObjById("current_game_mode_footnote_text", !showShortestUnitInfo, holderObj)
   if (checkObj(obj)) {
-    let battleType = get_battle_type_by_ediff(ediff)
+    let battleType = ::get_battle_type_by_ediff(ediff)
     let fonticon = !CAN_USE_EDIFF ? "" :
       loc(battleType == BATTLE_TYPES.AIR ? "icon/unittype/aircraft" : "icon/unittype/tank")
     let diffName = nbsp.join([ fonticon, difficulty.getLocName() ], true)
@@ -1801,7 +1792,7 @@ local __types_for_coutries = null //for avoid recalculations
   return res
 }
 
-function isUnitAvailableForRank(unit, rank, esUnitType, country, exact_rank, needBought) {
+let function isUnitAvailableForRank(unit, rank, esUnitType, country, exact_rank, needBought) {
   // Keep this in sync with getUnitsCountAtRank() in chard
   return (esUnitType == getEsUnitType(unit) || esUnitType == ES_UNIT_TYPE_TOTAL)
     && (country == unit.shopCountry || country == "")
@@ -1809,7 +1800,7 @@ function isUnitAvailableForRank(unit, rank, esUnitType, country, exact_rank, nee
     && ((!needBought || ::isUnitBought(unit)) && unit.isVisibleInShop())
 }
 
-function hasUnitAtRank(rank, esUnitType, country, exact_rank, needBought = true) {
+let function hasUnitAtRank(rank, esUnitType, country, exact_rank, needBought = true) {
   foreach (unit in getAllUnits())
     if (isUnitAvailableForRank(unit, rank, esUnitType, country, exact_rank, needBought))
       return true

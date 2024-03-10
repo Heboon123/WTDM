@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
@@ -7,7 +8,7 @@ let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { getCurEsUnitTypesList } = require("%scripts/queue/curEsUnitTypesMask.nut")
 let FULL_CIRCLE_GRAD = 360
 
-function getQueueWaitIconImageMarkup() {
+let function getQueueWaitIconImageMarkup() {
   let esUnitTypes = getCurEsUnitTypesList(false)
   let esUnitTypesOrder = [
     ES_UNIT_TYPE_SHIP

@@ -6,7 +6,7 @@ let { safeAreaSizeHud } = require("style/screenState.nut")
 let activeOrder = require("activeOrder.nut")
 let voiceChat = require("chat/voiceChat.nut")
 let hudLogs = require("hudLogs.nut")
-let { eventbus_send } = require("eventbus")
+let { send } = require("eventbus")
 // Need add ROBJ_XRAYDOLL in scene for correct update isVisibleDmgIndicator state
 let xraydoll = {
   rendObj = ROBJ_XRAYDOLL
@@ -19,14 +19,14 @@ let xrayIndicator = @() {
   behavior = Behaviors.RecalcHandler
   function onRecalcLayout(_initial, elem) {
     if (elem.getWidth() > 1 && elem.getHeight() > 1) {
-      eventbus_send("update_damage_panel_state", {
+      send("update_damage_panel_state", {
         pos = [elem.getScreenPosX(), elem.getScreenPosY()]
         size = [elem.getWidth(), elem.getHeight()]
         visible = isVisibleDmgIndicator.value
       })
     }
     else
-      eventbus_send("update_damage_panel_state", {})
+      send("update_damage_panel_state", {})
   }
   children = isVisibleDmgIndicator.value
     ? {

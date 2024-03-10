@@ -6,7 +6,7 @@ let { isUnlockOpened } = require("%scripts/unlocks/unlocksModule.nut")
 let { isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { TIME_HOUR_IN_SECONDS } = require("%sqstd/time.nut")
-let { getShopItem } = require("%scripts/onlineShop/entitlementsShopData.nut")
+let { getShopItem } = require("%scripts/onlineShop/entitlementsStore.nut")
 let { debriefingRows } = require("%scripts/debriefing/debriefingFull.nut")
 let { GUI } = require("%scripts/utils/configs.nut")
 let { register_command } = require("console")
@@ -84,7 +84,7 @@ let cfg = { // Overridden by gui.blk values
   reqUnlock = ""
 }
 
-function initConfig() {
+let function initConfig() {
   if (isConfigInited)
     return
   isConfigInited = true
@@ -96,7 +96,7 @@ function initConfig() {
   cfg.hideSteamRateLanguagesArray = cfg.hideSteamRateLanguages.split(";")
 }
 
-function setNeedShowRate(debriefingResult, myPlace) {
+let function setNeedShowRate(debriefingResult, myPlace) {
   //can be on any platform in future,
   //no need to specify platform in func name
   if ((!isPlatformXboxOne && !is_running()) || debriefingResult == null)
@@ -175,7 +175,7 @@ function setNeedShowRate(debriefingResult, myPlace) {
   }
 }
 
-function tryOpenXboxRateReviewWnd() {
+let function tryOpenXboxRateReviewWnd() {
   if (!isPlatformXboxOne || loadLocalAccountSettings(RATE_WND_TIME_SAVE_ID, 0) > 0)
     return false
 
@@ -185,7 +185,7 @@ function tryOpenXboxRateReviewWnd() {
   return true
 }
 
-function implOpenSteamRateReview(popupConfig) {
+let function implOpenSteamRateReview(popupConfig) {
   let { wndTimeSaveId, feedbackRateSaveId, feature, descLocId, backgroundImg = null } = popupConfig
   saveLocalAccountSettings(wndTimeSaveId, get_charserver_time_sec())
   sendBqEvent("CLIENT_POPUP_1", "rate", { from = "steam", reason = feature })
@@ -200,7 +200,7 @@ function implOpenSteamRateReview(popupConfig) {
   })
 }
 
-function tryOpenSteamRateReview(popupConfig) {
+let function tryOpenSteamRateReview(popupConfig) {
   if (!hasFeature(popupConfig.feature) || loadLocalAccountSettings(popupConfig.wndTimeSaveId, 0) > 0)
     return false
 
@@ -208,13 +208,13 @@ function tryOpenSteamRateReview(popupConfig) {
   return true
 }
 
-function openSteamRateReviewFromPromoBlock(popupConfig) {
+let function openSteamRateReviewFromPromoBlock(popupConfig) {
   implOpenSteamRateReview(popupConfig)
   saveLocalAccountSettings(popupConfig.showRateFromPromoBlockSaveId, true)
   return true
 }
 
-function checkShowRateWnd() {
+let function checkShowRateWnd() {
   if (needShowRateWnd.value && isPlatformXboxOne) {
     tryOpenXboxRateReviewWnd()
     needShowRateWnd(false)

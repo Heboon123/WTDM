@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let inventoryClient = require("%scripts/inventory/inventoryClient.nut")
@@ -19,12 +20,12 @@ let DEFAULT_BRANCH_CONFIG = {
   itemsIdList = {}
 }
 
-function getHeaderItems(branchBlk) {
+let function getHeaderItems(branchBlk) {
   let headerItems = branchBlk?.headerItems
   return headerItems != null ? (headerItems % "headerItem") : []
 }
 
-function getArrowConfigByItems(item, reqItem) {
+let function getArrowConfigByItems(item, reqItem) {
   let reqItemPos = reqItem.posXY
   let itemPos = item.posXY
   return {
@@ -39,7 +40,7 @@ function getArrowConfigByItems(item, reqItem) {
   }
 }
 
-function addDownOutArrow(reqItemsWithDownOutArrows, arrowConfig) {
+let function addDownOutArrow(reqItemsWithDownOutArrows, arrowConfig) {
   if (arrowConfig.sizeY != 0) { //not horizontal arrow
     let reqItemId = arrowConfig.reqItemId
     reqItemsWithDownOutArrows[reqItemId] <-
@@ -49,7 +50,7 @@ function addDownOutArrow(reqItemsWithDownOutArrows, arrowConfig) {
   return reqItemsWithDownOutArrows
 }
 
-function getReqItemsArray(reqItems) {
+let function getReqItemsArray(reqItems) {
   let itemsIdArray = []
   let fullItemsIdList = {}
   foreach (reqItemsString in reqItems) {
@@ -68,13 +69,13 @@ function getReqItemsArray(reqItems) {
   }
 }
 
-function addItemConfigToTree(treeRows, bodyIdx, posX, posY, itemConfig) {
+let function addItemConfigToTree(treeRows, bodyIdx, posX, posY, itemConfig) {
   if (treeRows[bodyIdx][posY][posX] == null)
     treeRows[bodyIdx][posY][posX] = []
   appendOnce(itemConfig, treeRows[bodyIdx][posY][posX], true, @(arrValue, value) arrValue.id == value.id)
 }
 
-function generateRows(branchBlk, treeRows, treeBlk) {
+let function generateRows(branchBlk, treeRows, treeBlk) {
   let branchItems = {}
   let textBlocks = []
   let notFoundReqForItems = {}
@@ -242,7 +243,7 @@ function generateRows(branchBlk, treeRows, treeBlk) {
   }
 }
 
-function getAllowableResources(resourcesBlk, resourcesName) {
+let function getAllowableResources(resourcesBlk, resourcesName) {
   if (resourcesBlk == null)
     return null
 
@@ -253,7 +254,7 @@ function getAllowableResources(resourcesBlk, resourcesName) {
   return allowableResources
 }
 
-function getCraftResult(treeBlk) {
+let function getCraftResult(treeBlk) {
   let craftResult = treeBlk?.craftResult
   if (!craftResult || !craftResult?.item)
     return null
@@ -265,7 +266,7 @@ function getCraftResult(treeBlk) {
   }
 }
 
-function generateTreeConfig(blk) {
+let function generateTreeConfig(blk) {
   let branches = []
   local treeRowsByBodies = []
   foreach (branchBlk in blk % "treeBlock") {

@@ -1,7 +1,5 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-let { g_clan_type } = require("%scripts/clans/clanType.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
@@ -12,7 +10,6 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { get_charserver_time_sec } = require("chard")
 let { openTrophyRewardsList } = require("%scripts/items/trophyRewardList.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
 
 const USERSTAT_REQUEST_TIMEOUT = 600
 
@@ -68,7 +65,7 @@ gui_handlers.WwRewards <- class (gui_handlers.BaseGuiHandlerWT) {
     ], true) + " " + loc("ui/mdash") + " " + loc("worldwar/btn_rewards")
     this.scene.findObject("wnd_title").setValue(wndTitle)
 
-    showObjById("nav-help", true, this.scene)
+    this.showSceneBtn("nav-help", true)
 
     this.rewards = []
     foreach (rewardBlk in this.rewardsBlk) {
@@ -118,7 +115,7 @@ gui_handlers.WwRewards <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function getPlaceText(tillPlace, prevPlace, isClan = false) {
     if (!tillPlace)
-      tillPlace = g_clan_type.NORMAL.maxMembers
+      tillPlace = ::g_clan_type.NORMAL.maxMembers
     return loc(isClan ? "multiplayer/clan_place" : "multiplayer/place") + loc("ui/colon")
       + ((tillPlace - prevPlace == 1) ? tillPlace : (prevPlace + 1) + loc("ui/mdash") + tillPlace)
   }
@@ -147,7 +144,7 @@ gui_handlers.WwRewards <- class (gui_handlers.BaseGuiHandlerWT) {
 
         let trophyId = reward?.itemdefid
         if (trophyId) {
-          let trophyItem = findItemById(trophyId)
+          let trophyItem = ::ItemsManager.findItemById(trophyId)
           if (trophyItem) {
               rewardRowView.trophyMarkup <- this.getItemsMarkup([trophyItem])
               rewardRowView.trophyName <- trophyItem.getName()
@@ -163,7 +160,7 @@ gui_handlers.WwRewards <- class (gui_handlers.BaseGuiHandlerWT) {
           foreach (internalReward in internalRewards) {
             let internalTrophyId = internalReward?.itemdefid
             if (internalTrophyId) {
-              let internalTrophyItem = findItemById(internalTrophyId)
+              let internalTrophyItem = ::ItemsManager.findItemById(internalTrophyId)
               if (internalTrophyItem)
                 internalRewardsList.append({
                   internalTrophyMarkup = this.getItemsMarkup([internalTrophyItem])

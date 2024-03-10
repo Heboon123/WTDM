@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { FRP_INITIAL } = require("frp")
@@ -11,7 +12,7 @@ let skipedParameters = {
   blockedCooldown = true
 }
 
-function actionIsEqual(a, b) {
+let function actionIsEqual(a, b) {
   if (type(a) != type(b))
     return false
   if (type(a) != "table")

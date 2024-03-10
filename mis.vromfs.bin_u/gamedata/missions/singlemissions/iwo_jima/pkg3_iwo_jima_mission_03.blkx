@@ -2,6 +2,10 @@
   "selected_tag": "",
   "bin_dump_file": "",
   "mission_settings": {
+    "atmosphere": {
+      "pressure": 760.0,
+      "temperature": 0.0
+    },
     "player": {
       "army": 1,
       "wing": "player"
@@ -12,14 +16,14 @@
     "mission": {
       "level": "levels/iwo_jima.bin",
       "type": "singleMission",
+      "restoreType": "attempts",
+      "optionalTakeOff": false,
       "environment": "Evening",
       "weather": "good",
-      "restoreType": "attempts",
-      "optionalTakeOff": false
-    },
-    "atmosphere": {
-      "pressure": 760.0,
-      "temperature": 0.0
+      "windSpeed": [
+        6.0,
+        7.0
+      ]
     },
     "spectator_points": {},
     "briefing": {
@@ -34,7 +38,6 @@
           "map": true,
           "minTime": 4,
           "picture": "",
-          "showAirMap": false,
           "icon": [
             {
               "icontype": "fighter",
@@ -84,10 +87,6 @@
       },
       "conditions": {},
       "actions": {
-        "missionSetWeatherParams": {
-          "waterWindStrengtMin": 6.0,
-          "waterWindStrengtMax": 7.0
-        },
         "addAirfield": [
           {
             "runwayStart": "airfield_start",
@@ -328,10 +327,7 @@
       "actions": {
         "moSetObjectiveStatus": {
           "target": "pkg3_iwo_jima_mission_03_takeoff",
-          "status": 2,
-          "object_marking": 0,
-          "object_var_comp_op": "equal",
-          "object_var_name": ""
+          "status": 2
         },
         "wait": {
           "time": 3.0
@@ -376,9 +372,6 @@
           "icon": "bomber",
           "icon army": 2,
           "set": true,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
           "target": "us_b24_land"
         },
         "varModify": {
@@ -409,8 +402,6 @@
             "object_marking": 0,
             "func": "more",
             "value": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
             "object": "us_b24_land"
           },
           {
@@ -418,8 +409,6 @@
             "object_marking": 0,
             "func": "more",
             "value": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
             "object": "us_b24_land"
           },
           {
@@ -427,8 +416,6 @@
             "object_marking": 0,
             "func": "more",
             "value": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
             "object": "us_air_def_squad"
           },
           {
@@ -436,8 +423,6 @@
             "object_marking": 0,
             "func": "more",
             "value": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
             "object": "us_air_def_squad"
           },
           {
@@ -445,8 +430,6 @@
             "object_marking": 0,
             "func": "more",
             "value": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
             "object": "us_fighters_squad"
           },
           {
@@ -454,8 +437,6 @@
             "object_marking": 0,
             "func": "more",
             "value": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
             "object": "us_fighters_squad"
           }
         ]
@@ -484,12 +465,12 @@
           },
           {
             "object": "us_air_def_squad",
+            "attack_type": "fire_at_will",
+            "accuracy": 0.3,
             "delayForObjects": [
               5.0,
               15.0
             ],
-            "attack_type": "fire_at_will",
-            "accuracy": 0.3,
             "effShootingRate": 0.1
           }
         ],
@@ -533,18 +514,13 @@
           "object_marking": 0,
           "func": "less",
           "value": 8,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
           "object": "us_b24_land"
         }
       },
       "actions": {
         "moSetObjectiveStatus": {
           "target": "pkg3_iwo_jima_mission_03_destroy_bombers",
-          "status": 2,
-          "object_marking": 0,
-          "object_var_comp_op": "equal",
-          "object_var_name": ""
+          "status": 2
         },
         "unitSetIndication": {
           "set": false,
@@ -560,9 +536,6 @@
           "icon": "bomber",
           "icon army": 2,
           "set": false,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
           "target": "us_b24_land"
         },
         "wait": {
@@ -620,10 +593,7 @@
         },
         "moSetObjectiveStatus": {
           "target": "pkg3_iwo_jima_mission_03_retreat",
-          "status": 2,
-          "object_marking": 0,
-          "object_var_comp_op": "equal",
-          "object_var_name": ""
+          "status": 2
         },
         "wait": {
           "time": 3.0
@@ -658,8 +628,6 @@
           "object_marking": 0,
           "func": "less",
           "value": 4,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
           "object": "us_air_def_squad"
         }
       },
@@ -730,8 +698,6 @@
           "object_marking": 0,
           "func": "more",
           "value": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
           "object": "us_b24_land"
         }
       },
@@ -771,8 +737,6 @@
           "object_marking": 1,
           "func": "more",
           "value": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
           "object": "us_b24_land"
         },
         "varCompareInt": {
@@ -892,8 +856,6 @@
         ],
         "unit_class": "a6m5_zero",
         "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -903,8 +865,6 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
         "props": {
           "army": 1,
           "count": 1,
@@ -954,8 +914,6 @@
         ],
         "unit_class": "b_24d",
         "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
         "weapons": "b_24d_20x100lbs",
         "bullets0": "",
         "bullets1": "",
@@ -965,8 +923,6 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 32,
@@ -1016,8 +972,6 @@
         ],
         "unit_class": "f4u-1a",
         "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
         "weapons": "f4u-1a_default",
         "bullets0": "",
         "bullets1": "",
@@ -1027,8 +981,6 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 4,
@@ -1078,8 +1030,6 @@
         ],
         "unit_class": "f4u-1a",
         "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
         "weapons": "f4u-1a_default",
         "bullets0": "",
         "bullets1": "",
@@ -1089,8 +1039,6 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 4,
@@ -1140,8 +1088,6 @@
         ],
         "unit_class": "f4u-1a",
         "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
         "weapons": "f4u-1a_default",
         "bullets0": "",
         "bullets1": "",
@@ -1151,8 +1097,6 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 4,
@@ -1202,8 +1146,6 @@
         ],
         "unit_class": "f4u-1a",
         "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
         "weapons": "f4u-1a_default",
         "bullets0": "",
         "bullets1": "",
@@ -1213,8 +1155,6 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 4,
@@ -1264,8 +1204,6 @@
         ],
         "unit_class": "f4u-1a",
         "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
         "weapons": "f4u-1a_default",
         "bullets0": "",
         "bullets1": "",
@@ -1275,8 +1213,6 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 4,
@@ -1401,8 +1337,6 @@
         ],
         "unit_class": "us_40mm_bofors",
         "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -1412,8 +1346,6 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -1458,8 +1390,6 @@
         ],
         "unit_class": "us_40mm_bofors",
         "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -1469,8 +1399,6 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -1515,8 +1443,6 @@
         ],
         "unit_class": "us_40mm_bofors",
         "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -1526,8 +1452,6 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -1572,8 +1496,6 @@
         ],
         "unit_class": "us_40mm_bofors",
         "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -1583,8 +1505,6 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -1629,8 +1549,6 @@
         ],
         "unit_class": "us_40mm_bofors",
         "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -1640,8 +1558,6 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -1686,8 +1602,6 @@
         ],
         "unit_class": "us_40mm_bofors",
         "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -1697,8 +1611,6 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -1743,8 +1655,6 @@
         ],
         "unit_class": "us_40mm_bofors",
         "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -1754,8 +1664,6 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,
@@ -1800,8 +1708,6 @@
         ],
         "unit_class": "us_40mm_bofors",
         "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
         "weapons": "",
         "bullets0": "",
         "bullets1": "",
@@ -1811,8 +1717,6 @@
         "bulletsCount1": 0,
         "bulletsCount2": 0,
         "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
         "props": {
           "army": 2,
           "count": 1,

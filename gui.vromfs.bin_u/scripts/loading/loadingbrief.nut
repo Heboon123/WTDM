@@ -2,8 +2,6 @@
 from "%scripts/dagui_natives.nut" import stop_gui_sound, start_gui_sound, set_presence_to_player, gchat_is_enabled, get_game_type_by_mode, map_to_location
 from "%scripts/dagui_library.nut" import *
 from "%scripts/mainConsts.nut" import HELP_CONTENT_SET
-
-let { g_mission_type } = require("%scripts/missions/missionType.nut")
 let { get_game_params_blk } = require("blkGetters")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { find_in_array } = require("%sqStdLibs/helpers/u.nut")
@@ -30,11 +28,9 @@ let { getUrlOrFileMissionMetaInfo, locCurrentMissionName, getMissionTimeText, ge
 let { get_current_mission_desc } = require("guiMission")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { USEROPT_WEAPONS } = require("%scripts/options/optionsExtNames.nut")
-let { loadLocalByAccount, saveLocalByAccount
-} = require("%scripts/clientState/localProfileDeprecated.nut")
+let { loadLocalByAccount, saveLocalByAccount } = require("%scripts/clientState/localProfile.nut")
 let { getCountryFlagsPresetName, getCountryFlagImg } = require("%scripts/options/countryFlagsPreset.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
-let { gui_start_mainmenu } = require("%scripts/mainmenu/guiStartMainmenu.nut")
 
 const MIN_SLIDE_TIME = 2.0
 
@@ -191,12 +187,12 @@ gui_handlers.LoadingBrief <- class (gui_handlers.BaseGuiHandlerWT) {
       ::switchMenuChatObjIfVisible(::getChatDiv(this.scene))
 
     if (this.gt & GT_VERSUS) {
-      let missionHelpPath = g_mission_type.getHelpPathForCurrentMission()
-      let controlHelpName = g_mission_type.getControlHelpName()
+      let missionHelpPath = ::g_mission_type.getHelpPathForCurrentMission()
+      let controlHelpName = ::g_mission_type.getControlHelpName()
       let haveHelp = hasFeature("ControlsHelp")
         && (missionHelpPath != null || controlHelpName != null)
 
-      let helpBtnObj = showObjById("btn_help", haveHelp, this.scene)
+      let helpBtnObj = this.showSceneBtn("btn_help", haveHelp)
       if (helpBtnObj && !showConsoleButtons.value)
         helpBtnObj.setValue(loc("flightmenu/btnControlsHelp") + loc("ui/parentheses/space", { text = "F1" }))
 
@@ -272,8 +268,8 @@ gui_handlers.LoadingBrief <- class (gui_handlers.BaseGuiHandlerWT) {
       if ((this.applyReady && !showStart) || this.finished)
         this.finishLoading()
       else {
-        showObjById("btn_select", this.applyReady && showStart, this.scene)
-        showObjById("loadanim", !this.applyReady, this.scene)
+        this.showSceneBtn("btn_select", this.applyReady && showStart)
+        this.showSceneBtn("loadanim", !this.applyReady)
       }
     }
 
@@ -485,7 +481,7 @@ gui_handlers.LoadingBrief <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onTestBack(_obj) {
-    this.goForward(gui_start_mainmenu)
+    this.goForward(::gui_start_mainmenu)
   }
 
   testTimer = 0

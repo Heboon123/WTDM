@@ -1,5 +1,5 @@
+//-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
 let { format } = require("string")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { loading_play_voice } = require("loading")
@@ -7,12 +7,9 @@ let { is_replay_playing } = require("replays")
 let { decimalFormat } = require("%scripts/langUtils/textFormat.nut")
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
 let { getMultiStageLocId } = require("%scripts/unlocks/unlocksModule.nut")
-let { getUnlockIconConfig } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { OPTIONS_MODE_GAMEPLAY, USEROPT_HUD_VISIBLE_STREAKS
 } = require("%scripts/options/optionsExtNames.nut")
 let { getPlayerName } = require("%scripts/user/remapNick.nut")
-let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
-let { eventbus_subscribe } = require("eventbus")
 
 const STREAK_LIFE_TIME = 5.0
 const STREAK_DELAY_TIME = 0.5
@@ -32,7 +29,7 @@ enum hudStreakState {
   scene = null
 }
 
-function updateAnimTimer() {
+let function updateAnimTimer() {
   let obj = ::g_streaks.getSceneObj()
   if (!obj)
     return
@@ -117,10 +114,8 @@ function updateAnimTimer() {
   contentObj.show(true) //need to correct update textarea positions and sizes
   obj.findObject("streak_header").setValue(streak.header)
   obj.findObject("streak_score").setValue(streak.score)
-  let config = { iconStyle = $"streak_{streak.id}" }
-
-  let { iconStyle, image, ratio, iconParams, iconConfig } = getUnlockIconConfig(config)
-  LayersIcon.replaceIcon(obj.findObject("streak_icon"), iconStyle, image, ratio, null, iconParams, iconConfig)
+  let config = { iconStyle = "streak_" + streak.id }
+  ::set_unlock_icon_by_config(obj.findObject("streak_icon"), config)
 
   contentObj._blink = "yes"
   updateAnimTimer()
@@ -200,8 +195,7 @@ function updateAnimTimer() {
 ///////////////////Function called from code///////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-function add_streak_message(data) { // called from client
-  let { header, wp, exp, id = "" } = data
+::add_streak_message <- function add_streak_message(header, wp, exp, id = "") { // called from client
   let messageArr = []
   if (wp)
     messageArr.append(loc("warpoints/received/by_param", {
@@ -211,11 +205,9 @@ function add_streak_message(data) { // called from client
   if (exp)
     messageArr.append(loc("exp_received/by_param", { value = decimalFormat(exp) }))
 
-  broadcastEvent("StreakArrived", { id })
+  broadcastEvent("StreakArrived", { id = id })
   ::g_streaks.addStreak(id, header, loc("ui/comma").join(messageArr, true))
 }
-
-eventbus_subscribe("add_streak_message", @(p) add_streak_message(p))
 
 ::get_loc_for_streak <- function get_loc_for_streak(StreakNameType, name, stageparam, playerNick = "", colorId = 0) {
   let stageId = getMultiStageLocId(name, stageparam)
@@ -224,9 +216,9 @@ eventbus_subscribe("add_streak_message", @(p) add_streak_message(p))
   if (isMyStreak)
     text = loc($"streaks/{stageId}")
   else { //SNT_OTHER_STREAK_TEXT
-    text = loc($"streaks/{stageId}/other")
+    text = loc("streaks/" + stageId + "/other")
     if (text == "")
-      text = format(loc("streaks/default/other"), loc($"streaks/{stageId}"))
+      text = format(loc("streaks/default/other"), loc("streaks/" + stageId))
   }
 
   if (stageparam)
@@ -234,8 +226,4 @@ eventbus_subscribe("add_streak_message", @(p) add_streak_message(p))
   if (!isMyStreak && colorId != 0)
     text = format("\x1b%03d%s\x1b %s", colorId, getPlayerName(playerNick), text)
   return text
-}
-
-return {
-  add_streak_message
 }

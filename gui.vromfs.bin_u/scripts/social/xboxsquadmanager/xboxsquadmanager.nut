@@ -1,8 +1,6 @@
 from "%scripts/dagui_library.nut" import *
 from "%scripts/squads/squadsConsts.nut" import squadState
 
-let { getGlobalModule } = require("%scripts/global_modules.nut")
-let g_squad_manager = getGlobalModule("g_squad_manager")
 let logX = require("%sqstd/log.nut")().with_prefix("[MPA_MANAGER] ")
 let { addListenersWithoutEnv, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { set_activity, clear_activity, send_invitations, JoinRestriction } = require("%scripts/xbox/mpa.nut")
@@ -13,14 +11,13 @@ let { isInFlight } = require("gameplayBinding")
 let { userIdStr } = require("%scripts/user/profileStates.nut")
 let { isInMenu } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { add_msg_box } = require("%sqDagui/framework/msgBox.nut")
-let { quitMission } = require("%scripts/hud/startHud.nut")
 
 local needCheckSquadInvites = false // It required 'in moment', no need to save in persist
 let postponedInvitation = mkWatched(persist, "postponedInvitation", "0")
 
-let getCurSquadId = @() g_squad_manager.isInSquad() ? g_squad_manager.getLeaderUid().tostring() : userIdStr.value
+let getCurSquadId = @() ::g_squad_manager.isInSquad() ? ::g_squad_manager.getLeaderUid().tostring() : userIdStr.value
 
-function sendInvitation(xuid) {
+let function sendInvitation(xuid) {
   if (xuid == "") {
     logX($"Invitation sent: error, xuid is empty string")
     return
@@ -32,16 +29,16 @@ function sendInvitation(xuid) {
 }
 
 
-function updateActivity() {
+let function updateActivity() {
   local maxPlayers = 4
   local curPlayers = 1
   let squadId = getCurSquadId()
-  if (g_squad_manager.isInSquad()) {
-    maxPlayers = g_squad_manager.getMaxSquadSize()
-    curPlayers = g_squad_manager.getSquadSize()
+  if (::g_squad_manager.isInSquad()) {
+    maxPlayers = ::g_squad_manager.getMaxSquadSize()
+    curPlayers = ::g_squad_manager.getSquadSize()
   }
   let haveUser = is_any_user_active()
-  let shouldSetActivity = g_squad_manager.isSquadLeader() || !g_squad_manager.isInSquad()
+  let shouldSetActivity = ::g_squad_manager.isSquadLeader() || !::g_squad_manager.isInSquad()
   if (shouldSetActivity && haveUser) {
     set_activity(squadId, JoinRestriction.InviteOnly, maxPlayers, curPlayers, squadId, function(success) {
       logX($"Set activity succeeded: {success}",
@@ -56,7 +53,7 @@ function updateActivity() {
   }
 }
 
-function clearActivity(callback = null) {
+let function clearActivity(callback = null) {
   if (!is_any_user_active()) {
     logX("Not logged in, skip activity clear")
     callback?()
@@ -70,21 +67,21 @@ function clearActivity(callback = null) {
 }
 
 
-function onSquadJoin() {
+let function onSquadJoin() {
   logX("onSquadJoin")
   clearActivity(updateActivity)
 }
 
 
-function onSquadLeave() {
+let function onSquadLeave() {
   logX("onSquadLeave")
   clearActivity(updateActivity)
 }
 
 
-function onSquadStatusChanged() {
+let function onSquadStatusChanged() {
   logX("onSquadStatusChanged")
-  let state = g_squad_manager.getState()
+  let state = ::g_squad_manager.state
   if (state == squadState.IN_SQUAD)
     onSquadJoin()
   else if (squadState.LEAVING == state)
@@ -92,24 +89,24 @@ function onSquadStatusChanged() {
 }
 
 
-function onSquadSizeChange() {
+let function onSquadSizeChange() {
   logX("onSquadSizeChange")
   updateActivity()
 }
 
 
-function onSquadLeadershipTransfer() {
+let function onSquadLeadershipTransfer() {
   logX("onSquadLeadershipTransfer")
   clearActivity(updateActivity)
 }
 
-function acceptExistingIngameInvite(uid) {
+let function acceptExistingIngameInvite(uid) {
   let inviteUid = findInviteClass("Squad")?.getUidByParams({ squadId = uid })
   let invite = ::g_invites.findInviteByUid(inviteUid)
   logX($"Accept ingame invite: uid {uid}, invite {invite}")
   if (!invite) {
     logX($"invite not found. Try join squad.")
-    g_squad_manager.joinToSquad(uid)
+    ::g_squad_manager.joinToSquad(uid)
     return
   }
 
@@ -119,7 +116,7 @@ function acceptExistingIngameInvite(uid) {
   needCheckSquadInvites = false
 }
 
-function requestPlayerAndDo(uid, name, cb) {
+let function requestPlayerAndDo(uid, name, cb) {
   let newContact = ::getContact(uid, name)
 
   if (newContact.needCheckXboxId())
@@ -128,7 +125,7 @@ function requestPlayerAndDo(uid, name, cb) {
     cb(newContact.xboxId)
 }
 
-function requestXboxPlayerAndDo(xuid, cb) {
+let function requestXboxPlayerAndDo(xuid, cb) {
   let newContact = ::findContactByXboxId(xuid)
   if (newContact) {
     cb(newContact.uid)
@@ -144,7 +141,7 @@ function requestXboxPlayerAndDo(xuid, cb) {
 }
 
 
-function onSystemInviteAccept(xuid) {
+let function onSystemInviteAccept(xuid) {
   logX($"onSquadInviteAccept: sender {xuid}")
 
   if (!::g_login.isLoggedIn() || !isInMenu()) {
@@ -154,7 +151,7 @@ function onSystemInviteAccept(xuid) {
       add_msg_box($"xbox_accept_squad_in_game_{xuid}", loc("xbox/acceptSquadInGame"), [
         ["ok", function() {
             logX("In flight: quit mission")
-            quitMission()
+            ::quit_mission()
           }
         ],
         ["no", @() null]

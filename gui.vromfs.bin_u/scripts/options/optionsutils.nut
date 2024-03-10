@@ -12,6 +12,8 @@ let { get_gui_option } = require("guiOptions")
 let { get_game_mode } = require("mission")
 let { startsWith } = require("%sqstd/string.nut")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
+let { OPTIONS_MODE_GAMEPLAY, USEROPT_HUD_SHOW_TANK_GUNS_AMMO
+} = require("%scripts/options/optionsExtNames.nut")
 let { getDynamicLayouts } = require("%scripts/missions/missionsUtils.nut")
 
 let changedOptionReqRestart = mkWatched(persist, "changedOptionReqRestart", {})
@@ -42,11 +44,8 @@ let createDefaultOption = function() {
     items = null
     values = null
     needShowValueText = false
-    needCommonCallback = true
     needRestartClient = false
     diffCode = null
-    defaultValue = null
-    prevValue = null
 
     getTrId = @() this.id + "_tr"
 
@@ -108,14 +107,14 @@ let fillHSVOption_ThermovisionColor = function(descr) {
   descr.value = get_thermovision_index()
 }
 
-function addHueParamsToOptionDescr(descr, hue, text = null, sat = null, val = null) {
+let function addHueParamsToOptionDescr(descr, hue, text = null, sat = null, val = null) {
   let defV = hue > 360 ? 1.0 : 0.7
   descr.items.append({ hue, sat = sat ?? defV, val = val ?? defV, text })
   descr.values.append(hue)
 }
 
 //Allow White and Black color
-function fillHueSaturationBrightnessOption(descr, id, defHue = null, defSat = null, defBri = null,
+let function fillHueSaturationBrightnessOption(descr, id, defHue = null, defSat = null, defBri = null,
   curHue = null) {
   let hueStep = 22.5
   if (curHue == null)
@@ -150,7 +149,7 @@ function fillHueSaturationBrightnessOption(descr, id, defHue = null, defSat = nu
     descr.value = valueIdx
 }
 
-function fillHueOption(descr, id, curHue = null, defHue = null, defSat = null, defBri = null) {
+let function fillHueOption(descr, id, curHue = null, defHue = null, defSat = null, defBri = null) {
   let hueStep = 22.5
   if (curHue == null)
     curHue = get_gui_option(descr.type)
@@ -178,7 +177,7 @@ function fillHueOption(descr, id, curHue = null, defHue = null, defSat = null, d
     descr.value = valueIdx
 }
 
-function fillMultipleHueOption(descr, id, currentHueIndex) {
+let function fillMultipleHueOption(descr, id, currentHueIndex) {
   descr.id = id
   descr.items = []
   descr.values = []
@@ -242,17 +241,24 @@ let fillDynMapOption = function(descr) {
   }
 }
 
-function setOptionReqRestartValue(option) {
+let function setOptionReqRestartValue(option) {
   if (option.type in changedOptionReqRestart.value)
     return
 
   changedOptionReqRestart.value[option.type] <- option.value
 }
 
-function isOptionReqRestartChanged(option, newValue) {
+let function isOptionReqRestartChanged(option, newValue) {
   let baseValue = changedOptionReqRestart.value?[option.type]
   return baseValue != null && baseValue != newValue
 }
+
+let function isVisibleTankGunsAmmoIndicator() {
+  return hasFeature("MachineGunsAmmoIndicator")
+    && ::get_gui_option_in_mode(USEROPT_HUD_SHOW_TANK_GUNS_AMMO, OPTIONS_MODE_GAMEPLAY, false)
+}
+
+::cross_call_api.isVisibleTankGunsAmmoIndicator <- @() isVisibleTankGunsAmmoIndicator()
 
 return {
   checkArgument
@@ -266,4 +272,5 @@ return {
   fillHSVOption_ThermovisionColor
   isOptionReqRestartChanged
   setOptionReqRestartValue
+  isVisibleTankGunsAmmoIndicator
 }

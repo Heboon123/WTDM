@@ -2,7 +2,6 @@
 from "%scripts/dagui_natives.nut" import is_default_aircraft
 from "%scripts/dagui_library.nut" import *
 
-let { g_difficulty } = require("%scripts/difficulty.nut")
 let { isUnitSpecial } = require("%appGlobals/ranks_common_shared.nut")
 let { Cost } = require("%scripts/money.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
@@ -22,7 +21,6 @@ let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { getUnitMassPerSecValue, getUnitWeaponPresetsCount } = require("%scripts/unit/unitWeaponryInfo.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 let { get_wpcost_blk, get_warpoints_blk, get_ranks_blk, get_unittags_blk } = require("blkGetters")
-let { measureType } = require("%scripts/measureType.nut")
 
 let UNIT_INFO_ARMY_TYPE  = {
   AIR        = unitTypes.AIRCRAFT.bit
@@ -116,7 +114,7 @@ const COMPARE_NO_COMPARE = "no"
   addToExportTankDataBlock = function(blk, unit, unitConfiguration) {
     blk.value = DataBlock()
     blk.valueText = DataBlock()
-    foreach (diff in g_difficulty.types)
+    foreach (diff in ::g_difficulty.types)
       if (diff.egdCode != EGD_NONE) {
         let mode = diff.getEgdName()
 
@@ -159,7 +157,7 @@ const COMPARE_NO_COMPARE = "no"
     blk.value = DataBlock()
     blk.valueText = DataBlock()
     blk.cppValue = DataBlock()
-    foreach (diff in g_difficulty.types)
+    foreach (diff in ::g_difficulty.types)
       if (diff.egdCode != EGD_NONE) {
         let mode = diff.getEgdName()
         let characteristicArr = ::getCharacteristicActualValue(unit, [item.id, item.id2], function(_value) { return "" }, diff.crewSkillName, false)
@@ -173,7 +171,7 @@ const COMPARE_NO_COMPARE = "no"
   addSingleValue = function(blk, _unit, value, valueText) {
     blk.value = DataBlock()
     blk.valueText = DataBlock()
-    foreach (diff in g_difficulty.types)
+    foreach (diff in ::g_difficulty.types)
       if (diff.egdCode != EGD_NONE) {
         let mode = diff.getEgdName()
         blk.value[mode] = value
@@ -235,7 +233,7 @@ enums.addTypesByGlobalName("g_unit_info_type", [
     addToExportDataBlock = function(blk, unit, _unitConfiguration) {
       blk.value = DataBlock()
       blk.valueText = DataBlock()
-      foreach (diff in g_difficulty.types)
+      foreach (diff in ::g_difficulty.types)
         if (diff.egdCode != EGD_NONE) {
           let mode = diff.getEgdName()
           blk.value[mode] = unit.getBattleRating(diff.getEdiff())
@@ -253,7 +251,7 @@ enums.addTypesByGlobalName("g_unit_info_type", [
           return
       }
       blk.valueText = DataBlock()
-      foreach (diff in g_difficulty.types)
+      foreach (diff in ::g_difficulty.types)
         if (diff.egdCode != EGD_NONE)
           blk.valueText[diff.getEgdName()] = valueText
 
@@ -270,7 +268,7 @@ enums.addTypesByGlobalName("g_unit_info_type", [
     addToExportDataBlock = function(blk, unit, _unitConfiguration) {
       blk.value = DataBlock()
       blk.valueText = DataBlock()
-      foreach (diff in g_difficulty.types)
+      foreach (diff in ::g_difficulty.types)
         if (diff.egdCode != EGD_NONE) {
           let mode = diff.getEgdName()
           let wpMuls = unit.getWpRewardMulList(diff)
@@ -295,7 +293,7 @@ enums.addTypesByGlobalName("g_unit_info_type", [
       let valueText = format("%d%%", value)
       blk.value = DataBlock()
       blk.valueText = DataBlock()
-      foreach (diff in g_difficulty.types)
+      foreach (diff in ::g_difficulty.types)
         if (diff.egdCode != EGD_NONE) {
           let mode = diff.getEgdName()
           blk.value[mode] = value
@@ -318,7 +316,7 @@ enums.addTypesByGlobalName("g_unit_info_type", [
       let valueText = Cost(value).getUncoloredText()
       blk.value = DataBlock()
       blk.valueText = DataBlock()
-      foreach (diff in g_difficulty.types)
+      foreach (diff in ::g_difficulty.types)
         if (diff.egdCode != EGD_NONE) {
           let mode = diff.getEgdName()
           blk.value[mode] = value
@@ -344,7 +342,7 @@ enums.addTypesByGlobalName("g_unit_info_type", [
           })
       }
 
-      foreach (diff in g_difficulty.types)
+      foreach (diff in ::g_difficulty.types)
         if (diff.egdCode != EGD_NONE) {
           let mode = diff.getEgdName()
           let field = "repairCost" + mode
@@ -370,7 +368,7 @@ enums.addTypesByGlobalName("g_unit_info_type", [
       let valueText = toString(value)
       blk.value = DataBlock()
       blk.valueText = DataBlock()
-      foreach (diff in g_difficulty.types)
+      foreach (diff in ::g_difficulty.types)
         if (diff.egdCode != EGD_NONE) {
           let mode = diff.getEgdName()
           blk.value[mode] = value
@@ -386,7 +384,7 @@ enums.addTypesByGlobalName("g_unit_info_type", [
     addToExportDataBlock = function(blk, unit, _unitConfiguration) {
       blk.value = DataBlock()
       blk.valueText = DataBlock()
-      foreach (diff in g_difficulty.types)
+      foreach (diff in ::g_difficulty.types)
         if (diff.egdCode != EGD_NONE) {
           let mode = diff.getEgdName()
           let field = "repairTimeHrs" + mode
@@ -405,7 +403,7 @@ enums.addTypesByGlobalName("g_unit_info_type", [
     order = UNIT_INFO_ORDER.WEAPON_INFO_TEXT
     getValueText = function(_value, unit) {
       let valueText = DataBlock()
-      foreach (diff in g_difficulty.types)
+      foreach (diff in ::g_difficulty.types)
         if (diff.egdCode != EGD_NONE)
           valueText[diff.getEgdName()] = getWeaponInfoText(unit.name)
       return valueText
@@ -598,7 +596,7 @@ enums.addTypesByGlobalName("g_unit_info_type", [
 
         blk.value[mode] = horsePowers
         blk.valueText[mode] = format("%s %s %d %s",
-          measureType.HORSEPOWERS.getMeasureUnitsText(horsePowers),
+          ::g_measure_type.HORSEPOWERS.getMeasureUnitsText(horsePowers),
           loc("shop/unitValidCondition"), horsePowersRPM.tointeger(), loc("measureUnits/rpm"))
     }
 
@@ -945,7 +943,7 @@ enums.addTypesByGlobalName("g_unit_info_type", [
       let value = ::get_full_unit_blk(unit.name)?.ShipPhys?.mass?.TakeOff
       local valueText = ""
       if (value != null) {
-        valueText = measureType.SHIP_DISPLACEMENT_TON.getMeasureUnitsText(value / 1000, true)
+        valueText = ::g_measure_type.SHIP_DISPLACEMENT_TON.getMeasureUnitsText(value / 1000, true)
         this.addSingleValue(blk, unit, value, valueText)
       }
       else {

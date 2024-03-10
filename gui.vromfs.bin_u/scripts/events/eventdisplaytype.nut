@@ -1,8 +1,22 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-let { enumsAddTypes, enumsGetCachedType} = require("%sqStdLibs/helpers/enums.nut")
 
-let eventsTypes = {
+let enums = require("%sqStdLibs/helpers/enums.nut")
+::g_event_display_type <- {
+  types = []
+  cache = {
+    byName = {}
+  }
+  template = {
+    name = ""
+    showInEventsWindow = false
+    showInGamercardDrawer = false
+    canBeSelectedInGcDrawer = @() this.showInGamercardDrawer && !this.showInEventsWindow
+  }
+}
+
+enums.addTypesByGlobalName("g_event_display_type", {
   //hidden event
   NONE = {
     name = "none"
@@ -40,28 +54,9 @@ let eventsTypes = {
     name = "pve_battle"
     showInGamercardDrawer = true
   }
-}
+})
 
-let g_event_display_type = {
-  types = []
-  cache = {
-    byName = {}
-  }
-  template = {
-    name = ""
-    showInEventsWindow = false
-    showInGamercardDrawer = false
-    canBeSelectedInGcDrawer = @() this.showInGamercardDrawer && !this.showInEventsWindow
-  }
-
-  function getTypeByName(name) {
-    return enumsGetCachedType("name", name, this.cache.byName,
-      this, eventsTypes.REGULAR)
-  }
-}
-
-enumsAddTypes(g_event_display_type, eventsTypes)
-
-return {
-  g_event_display_type
+::g_event_display_type.getTypeByName <- function getTypeByName(name) {
+  return enums.getCachedType("name", name, ::g_event_display_type.cache.byName,
+    ::g_event_display_type, ::g_event_display_type.REGULAR)
 }

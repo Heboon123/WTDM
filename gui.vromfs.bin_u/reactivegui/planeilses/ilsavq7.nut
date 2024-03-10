@@ -9,7 +9,7 @@ let { IlsColor, TargetPos, DistToSafety, IlsLineScale,
 let { mpsToKnots, metrToFeet, mpsToFpm, baseLineWidth } = require("ilsConstants.nut")
 let { floor } = require("%sqstd/math.nut")
 
-function speedometer(width, height) {
+let function speedometer(width, height) {
   let grid = @() {
     watch = IlsColor
     pos = [width * 0.5, height * 0.5]
@@ -118,7 +118,7 @@ let climbMark = @() {
   ]
 }
 
-function altmeter(width, height) {
+let function altmeter(width, height) {
   return {
     size = [width * 0.08, height * 0.5]
     pos = [width * 0.8, height * 0.3]
@@ -152,7 +152,7 @@ function altmeter(width, height) {
   }
 }
 
-function generatePitchLine(num) {
+let function generatePitchLine(num) {
   let sign = num > 0 ? 1 : -1
   let newNum = num >= 0 ? num : (num - 5)
   return {
@@ -198,7 +198,7 @@ function generatePitchLine(num) {
 }
 
 let AoaForTang = Computed(@() Speed.value > 30.0 ? Aoa.value : 0.0)
-function pitch(width, height) {
+let function pitch(width, height) {
   const step = 5.0
   let children = []
 
@@ -252,7 +252,7 @@ let maverickAim = @() {
   children = IlsAtgmTrackerVisible.value ? [maverickAimMark] : []
 }
 
-function basicInformation(width, height) {
+let function basicInformation(width, height) {
   return {
     halign = ALIGN_LEFT
     valign = ALIGN_TOP
@@ -269,7 +269,7 @@ function basicInformation(width, height) {
 }
 
 let pullupAnticipPos = Computed(@() clamp(0.35 + DistToSafety.value * 0.001, 0.1, 0.5))
-function pullupAnticipation(height) {
+let function pullupAnticipation(height) {
   return @() {
     watch = [IlsColor, pullupAnticipPos]
     size = [pw(10), ph(5)]
@@ -293,7 +293,7 @@ let solutionCue = @() {
   lineWidth = baseLineWidth * IlsLineScale.value
 }
 
-function rotatedBombReleaseReticle(width, height) {
+let function rotatedBombReleaseReticle(width, height) {
   return {
     size = flex()
     children = [
@@ -317,7 +317,7 @@ function rotatedBombReleaseReticle(width, height) {
   }
 }
 
-function CCIP(width, height) {
+let function CCIP(width, height) {
   return {
     size = [width, height]
     children = [
@@ -328,7 +328,7 @@ function CCIP(width, height) {
   }
 }
 
-function bombingMode(width, height) {
+let function bombingMode(width, height) {
   return {
     size = [width, height]
     children = [

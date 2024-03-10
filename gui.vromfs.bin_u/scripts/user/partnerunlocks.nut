@@ -1,6 +1,5 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
-
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { convertBlk } = require("%sqstd/datablock.nut")
 let { isUnlockOpened } = require("%scripts/unlocks/unlocksModule.nut")
@@ -8,31 +7,28 @@ let time = require("%scripts/time.nut")
 let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let DataBlock = require("DataBlock")
 let { get_time_msec } = require("dagor.time")
+let { registerPersistentDataFromRoot, PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { get_charserver_time_sec } = require("chard")
 let { charRequestBlk } = require("%scripts/tasker.nut")
 
-let partnerExectutedUnlocks = persist("partnerExectutedUnlocks", @() {})
-
-let partnerUnlocksTimes = persist("partnerUnlocksTimes", @() {
-  lastRequestTime = -9999999999
-  lastUpdateTime = -9999999999
-})
-
 ::g_partner_unlocks <- {
+  [PERSISTENT_DATA_PARAMS] = ["partnerExectutedUnlocks", "lastUpdateTime", "lastRequestTime"]
 
   REQUEST_TIMEOUT_MSEC = 45000
   UPDATE_TIMEOUT_MSEC = 60000
 
-  partnerExectutedUnlocks
+  lastRequestTime = -9999999999
+  lastUpdateTime = -9999999999
+  partnerExectutedUnlocks = {}
 }
 
 ::g_partner_unlocks.requestPartnerUnlocks <- function requestPartnerUnlocks() {
   if (!this.canRefreshData())
     return
 
-  partnerUnlocksTimes.lastRequestTime = get_time_msec()
+  this.lastRequestTime = get_time_msec()
   let successCb = function(result) {
-    partnerUnlocksTimes.lastUpdateTime = get_time_msec()
+    ::g_partner_unlocks.lastUpdateTime = get_time_msec()
     if (!::g_partner_unlocks.applyNewPartnerUnlockData(result))
       return
 
@@ -47,9 +43,9 @@ let partnerUnlocksTimes = persist("partnerUnlocksTimes", @() {
 }
 
 ::g_partner_unlocks.canRefreshData <- function canRefreshData() {
-  if (partnerUnlocksTimes.lastRequestTime > partnerUnlocksTimes.lastUpdateTime && partnerUnlocksTimes.lastRequestTime + this.REQUEST_TIMEOUT_MSEC > get_time_msec())
+  if (this.lastRequestTime > this.lastUpdateTime && this.lastRequestTime + this.REQUEST_TIMEOUT_MSEC > get_time_msec())
     return false
-  if (partnerUnlocksTimes.lastUpdateTime + this.UPDATE_TIMEOUT_MSEC > get_time_msec())
+  if (this.lastUpdateTime + this.UPDATE_TIMEOUT_MSEC > get_time_msec())
     return false
 
   return true
@@ -59,13 +55,13 @@ let partnerUnlocksTimes = persist("partnerUnlocksTimes", @() {
   if (u.isEmpty(unlockId))
     return null
 
-  if (!(unlockId in partnerExectutedUnlocks)) {
+  if (!(unlockId in this.partnerExectutedUnlocks)) {
     if (isUnlockOpened(unlockId))
       this.requestPartnerUnlocks()
     return null
   }
 
-  return partnerExectutedUnlocks[unlockId]
+  return this.partnerExectutedUnlocks[unlockId]
 }
 
 ::g_partner_unlocks.applyNewPartnerUnlockData <- function applyNewPartnerUnlockData(result) {
@@ -73,11 +69,10 @@ let partnerUnlocksTimes = persist("partnerUnlocksTimes", @() {
     return false
 
   let newPartnerUnlocks = convertBlk(result)
-  if (u.isEqual(partnerExectutedUnlocks, newPartnerUnlocks))
+  if (u.isEqual(this.partnerExectutedUnlocks, newPartnerUnlocks))
     return false
 
-  partnerExectutedUnlocks.clear()
-  partnerExectutedUnlocks.__update(newPartnerUnlocks)
+  this.partnerExectutedUnlocks = newPartnerUnlocks
   return true
 }
 
@@ -98,9 +93,10 @@ let partnerUnlocksTimes = persist("partnerUnlocksTimes", @() {
 }
 
 ::g_partner_unlocks.onEventSignOut <- function onEventSignOut(_p) {
-  partnerUnlocksTimes.lastRequestTime = -9999999999
-  partnerUnlocksTimes.lastUpdateTime = -9999999999
-  partnerExectutedUnlocks.clear()
+  this.lastRequestTime = -9999999999
+  this.lastUpdateTime = -9999999999
+  this.partnerExectutedUnlocks = {}
 }
 
-subscribe_handler(::g_partner_unlocks, g_listener_priority.CONFIG_VALIDATION)
+registerPersistentDataFromRoot("g_partner_unlocks")
+subscribe_handler(::g_partner_unlocks, ::g_listener_priority.CONFIG_VALIDATION)

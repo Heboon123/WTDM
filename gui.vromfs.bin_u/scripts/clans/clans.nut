@@ -3,9 +3,6 @@ from "%scripts/dagui_natives.nut" import clan_get_role_rank, ps4_is_ugc_enabled,
 from "%scripts/dagui_library.nut" import *
 from "%scripts/clans/clansConsts.nut" import CLAN_SEASON_NUM_IN_YEAR_SHIFT
 
-let { g_clan_type } = require("%scripts/clans/clanType.nut")
-let { g_difficulty } = require("%scripts/difficulty.nut")
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -28,12 +25,10 @@ let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
 let { get_game_settings_blk } = require("blkGetters")
+let { addTask } = require("%scripts/tasker.nut")
 let { userIdStr } = require("%scripts/user/profileStates.nut")
 let { openClanRequestsWnd } = require("%scripts/clans/clanRequestsModal.nut")
 let { openCommentModal } = require("%scripts/wndLib/commentModal.nut")
-let { addTask, addBgTaskCb } = require("%scripts/tasker.nut")
-let { contactPresence } = require("%scripts/contacts/contactPresence.nut")
-let { addPopup, removePopupByHandler } = require("%scripts/popups/popups.nut")
 
 const CLAN_ID_NOT_INITED = ""
 const CLAN_SEEN_CANDIDATES_SAVE_ID = "seen_clan_candidates"
@@ -77,7 +72,7 @@ registerPersistentData("ClansGlobals", getroottable(),
 
 ::g_clans.getMyClanType <- function getMyClanType() {
   let code = clan_get_my_clan_type()
-  return g_clan_type.getTypeByCode(code)
+  return ::g_clan_type.getTypeByCode(code)
 }
 
 ::g_clans.createClan <- function createClan(params, handler) {
@@ -458,7 +453,7 @@ registerPersistentData("ClansGlobals", getroottable(),
   }
 
   if (newCandidatesNicknames.len())
-    addPopup(null,
+    ::g_popups.add(null,
       loc("clan/requestReceived") + loc("ui/colon") + ", ".join(newCandidatesNicknames, true) +
       " " + extraText,
       function() {
@@ -473,7 +468,7 @@ registerPersistentData("ClansGlobals", getroottable(),
 
 ::g_clans.onClanCandidatesChanged <- function onClanCandidatesChanged() {
   if (! this.getUnseenCandidatesCount())
-    removePopupByHandler(::g_clans)
+    ::g_popups.removeByHandler(::g_clans)
 
   this.saveCandidates()
   ::update_clan_alert_icon()
@@ -582,7 +577,7 @@ registerPersistentData("ClansGlobals", getroottable(),
     function(comment) {
       let onSuccess = function() {
         broadcastEvent("ClanMemberDismissed")
-        addPopup("", loc("clan/memberDismissed"))
+        ::g_popups.add("", loc("clan/memberDismissed"))
       }
 
       let taskId = clan_request_dismiss_member(contact.uid, comment)
@@ -619,7 +614,7 @@ registerPersistentData("ClansGlobals", getroottable(),
       return
     }
 
-    addPopup("", loc("clan/requestSent"))
+    ::g_popups.add("", loc("clan/requestSent"))
     broadcastEvent("ClanMembershipRequested")
   }
   addTask(taskId, { showProgressBox = true }, onSuccess)
@@ -630,7 +625,7 @@ registerPersistentData("ClansGlobals", getroottable(),
     return
 
   let onSuccess = function() {
-    addPopup("", loc("clan/requestApproved"))
+    ::g_popups.add("", loc("clan/requestApproved"))
     broadcastEvent("ClanCandidatesListChanged", { userId = playerUid })
   }
 
@@ -649,7 +644,7 @@ registerPersistentData("ClansGlobals", getroottable(),
     loc("clan/requestReject"),
     function(comment) {
       let onSuccess = function() {
-        addPopup("", loc("clan/requestRejected"))
+        ::g_popups.add("", loc("clan/requestRejected"))
         broadcastEvent("ClanCandidatesListChanged", { userId = playerUid })
       }
 
@@ -668,7 +663,7 @@ registerPersistentData("ClansGlobals", getroottable(),
     function(comment) {
       let onSuccess = function() {
         let text = actionAdd ? loc("clan/blacklistAddSuccess") : loc("clan/blacklistRemoveSuccess")
-        addPopup("", text)
+        ::g_popups.add("", text)
         broadcastEvent("ClanCandidatesListChanged", { userId = playerUid })
       }
 
@@ -736,7 +731,7 @@ registerPersistentData("ClansGlobals", getroottable(),
   ::last_update_my_clan_time = get_time_msec()
   let taskId = clan_request_my_info()
   get_my_clan_data_free = false
-  addBgTaskCb(taskId, function() {
+  ::add_bg_task_cb(taskId, function() {
     let wasCreated = !::my_clan_info
     ::my_clan_info = ::get_clan_info_table()
     ::handle_new_my_clan_data()
@@ -901,7 +896,7 @@ registerPersistentData("ClansGlobals", getroottable(),
 
   clan.spentForMemberUpgrades <- getTblValue("mspent", clanInfo, 0)
   clan.regionLastUpdate <- getTblValue("region_last_updated", clanInfo, 0)
-  clan.clanType   <- g_clan_type.getTypeByName(clanInfo?.type ?? "")
+  clan.clanType   <- ::g_clan_type.getTypeByName(clanInfo?.type ?? "")
   clan.autoAcceptMembership <- getTblValue("autoaccept",   clanInfo, false)
   clan.membershipRequirements <- DataBlock()
   let membReqs = clan_get_membership_requirements(clanInfo)
@@ -932,7 +927,7 @@ registerPersistentData("ClansGlobals", getroottable(),
     let ratingTable = getTblValue(memberItem.uid, member_ratings, {})
     foreach (key, value in ::empty_rating)
       memberItem[key] <- round(getTblValue(key, ratingTable, value))
-    memberItem.onlineStatus <- contactPresence.UNKNOWN
+    memberItem.onlineStatus <- ::g_contact_presence.UNKNOWN
 
     //get members activity
     let memberActivityInfo = clanActivityInfo.getBlockByName(memberItem.uid) || DataBlock()
@@ -1010,7 +1005,7 @@ registerPersistentData("ClansGlobals", getroottable(),
   return ::getFilteredClanData(clan)
 }
 
-function getSeasonName(blk) {
+let function getSeasonName(blk) {
   local name = ""
   if (blk?.type == "worldWar")
     name = loc("worldwar/season_name/" + (split_by_chars(blk.titles, "@")?[2] ?? ""))
@@ -1036,7 +1031,7 @@ function getSeasonName(blk) {
   }
 
   function getBattleTypeTitle() {
-    let difficulty = g_difficulty.getDifficultyByEgdLowercaseName(this.difficultyName)
+    let difficulty = ::g_difficulty.getDifficultyByEgdLowercaseName(this.difficultyName)
     return loc(difficulty.abbreviation)
   }
 
@@ -1254,9 +1249,9 @@ function getSeasonName(blk) {
   if (isInArray(nick, clanActiveUsers)) {
     let contact = ::Contact.getByName(nick)
     if (!(contact?.forceOffline ?? false))
-      return contactPresence.ONLINE
+      return ::g_contact_presence.ONLINE
   }
-  return contactPresence.OFFLINE
+  return ::g_contact_presence.OFFLINE
 }
 
 ::get_show_in_squadron_statistics <- function get_show_in_squadron_statistics(diff) {
@@ -1275,4 +1270,4 @@ function getSeasonName(blk) {
 // Independent Modules
 require("%scripts/slotbar/elems/squadronExpIconElem.nut")
 
-subscribe_handler(::g_clans, g_listener_priority.DEFAULT_HANDLER)
+subscribe_handler(::g_clans, ::g_listener_priority.DEFAULT_HANDLER)

@@ -11,8 +11,6 @@
   "haveCCRPForRocket": false,
   "haveCCRPForGun": false,
   "haveCCRPForTurret": true,
-  "hmdAH64": true,
-  "hasHelmetDesignator": true,
   "gearSinkRangeLR": 0.245,
   "gearSinkRangeC": 0.242,
   "tpsCameraTargetOffsetAtZoom": [
@@ -1172,6 +1170,7 @@
     "gun": "gun_default"
   },
   "cockpit": {
+    "textToShowInCockpit": "msg/textToShowInCockpit",
     "headPos": [
       1.08,
       0.895,
@@ -1182,7 +1181,6 @@
       0.895,
       0.0
     ],
-    "hmdEnabledByDefault": true,
     "lightPos": [
       1.882572,
       0.389432,
@@ -1200,29 +1198,9 @@
     "sightInFov": 1.15998,
     "sightOutFov": 24.74,
     "devices": {
-      "stick_ailerons": [
-        -3.0,
-        3.0
-      ],
-      "stick_elevator": [
-        -1.0,
-        1.0
-      ],
-      "pedals": [
-        -1.0,
-        1.0
-      ],
-      "pedals1": [
-        -1.0,
-        1.0
-      ],
-      "throttle": [
-        -1.0,
-        1.0
-      ],
       "speed": [
         0.0,
-        128.611
+        257.222
       ],
       "bank": [
         -8.0,
@@ -1379,20 +1357,20 @@
         {
           "textureArea": [
             0.0,
-            0.0,
-            0.33,
+            0.5,
+            0.5,
             1.0
           ],
           "page": [
+            {
+              "type": "map"
+            },
             {
               "type": "rwr"
             },
             {
               "type": "radar",
-              "scale": 0.95
-            },
-            {
-              "type": "map"
+              "scale": 0.85
             },
             {
               "type": "devices",
@@ -1716,30 +1694,18 @@
                   }
                 }
               ]
-            },
-            {
-              "type": "thermal",
-              "turretIdx": 0
-            },
-            {
-              "type": "target_tracking",
-              "turretIdx": 0
             }
           ]
         },
         {
           "textureArea": [
-            0.33333334,
-            0.0,
-            0.6666666,
+            0.5,
+            0.5,
+            1.0,
             1.0
           ],
           "page": [
             {
-              "type": "thermal",
-              "turretIdx": 0
-            },
-            {
               "type": "target_tracking",
               "turretIdx": 0
             },
@@ -2065,18 +2031,35 @@
                   }
                 }
               ]
+            },
+            {
+              "type": "thermal",
+              "turretIdx": 0
             }
           ]
         },
         {
           "textureArea": [
-            0.6666666,
             0.0,
-            1.0,
-            1.0
+            0.0,
+            0.8,
+            0.8
           ],
           "page": {
-            "type": "map"
+            "type": "plane_ils",
+            "ilsNode": "ils",
+            "ilsSize": [
+              0.2,
+              0.2
+            ],
+            "ilsOffsetForce": 0.2,
+            "brightnessMult": 3.5,
+            "ilsColor": [
+              10,
+              30,
+              202,
+              120
+            ]
           }
         }
       ]
@@ -2285,60 +2268,61 @@
                   -86.0,
                   -75.0,
                   -50.0,
-                  11.0
+                  19.0
                 ],
                 "lim2": [
                   -75.0,
                   -52.0,
                   -50.0,
-                  11.0
+                  24.0
                 ],
                 "lim3": [
                   -52.0,
                   -35.0,
                   -50.0,
-                  11.0
+                  25.0
                 ],
                 "lim4": [
                   -35.0,
                   -15.0,
                   -50.0,
-                  11.0
+                  23.0
                 ],
                 "lim5": [
                   -15.0,
                   15.0,
                   -50.0,
-                  11.0
+                  20.0
                 ],
                 "lim6": [
                   15.0,
                   35.0,
                   -50.0,
-                  11.0
+                  23.0
                 ],
                 "lim7": [
                   35.0,
                   52.0,
                   -50.0,
-                  11.0
+                  25.0
                 ],
                 "lim8": [
                   52.0,
                   75.0,
                   -50.0,
-                  11.0
+                  24.0
                 ],
                 "lim9": [
                   75.0,
                   86.0,
                   -50.0,
-                  11.0
+                  19.0
                 ]
               }
             },
             {
               "trigger": "countermeasures",
+              "startFx": "",
               "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher.blk",
               "emitter": "emtr_flare1",
               "bullets": 30,

@@ -5,7 +5,7 @@ let { isFunction, isDataBlock } = require("underscore.nut")
 // It saves order of items in tables as an array,
 // and block can easily be found by header as in table.
 
-function fillBlock(id, block, data, arrayKey = "array") {
+let function fillBlock(id, block, data, arrayKey = "array") {
   if (type(data) == "array") {
     let newBl = id == arrayKey? block.addNewBlock(id) : block.addBlock(id)
     foreach (v in data)
@@ -25,7 +25,7 @@ function fillBlock(id, block, data, arrayKey = "array") {
 }
 
 // callback(blockValue[, blockName[, index]])
-function eachBlock(db, callback, thisArg = null) {
+let function eachBlock(db, callback, thisArg = null) {
   if (db == null)
     return
 
@@ -47,7 +47,7 @@ function eachBlock(db, callback, thisArg = null) {
 }
 
 // callback(paramValue[, paramName[, index]])
-function eachParam(db, callback, thisArg = null) {
+let function eachParam(db, callback, thisArg = null) {
   if (db == null)
     return
 
@@ -66,13 +66,13 @@ function eachParam(db, callback, thisArg = null) {
       callback.call(thisArg, db.getParamValue(i), db.getParamName(i), i)
 }
 
-function copyParamsToTable(db, table = null) {
+local function copyParamsToTable(db, table = null) {
   table = table ?? {}
   eachParam(db, @(v, n) table[n] <- v)
   return table
 }
 
-function blk2SquirrelObjNoArrays(blk){
+let function blk2SquirrelObjNoArrays(blk){
   let res = {}
   for (local i=0; i<blk.paramCount(); i++){
     let paramName = blk.getParamName(i)
@@ -90,7 +90,7 @@ function blk2SquirrelObjNoArrays(blk){
 }
 
 
-function blk2SquirrelObj(blk){
+let function blk2SquirrelObj(blk){
   let res = {}
   for (local i=0; i<blk.blockCount(); i++){
     let block = blk.getBlock(i)
@@ -109,7 +109,7 @@ function blk2SquirrelObj(blk){
   return res
 }
 
-function normalizeConvertedBlk(obj){
+let function normalizeConvertedBlk(obj){
   let t = type(obj)
   if (t == "array" && obj.len()==1) {
     return normalizeConvertedBlk(obj[0])
@@ -120,7 +120,7 @@ function normalizeConvertedBlk(obj){
   return obj
 }
 
-function normalizeAndFlattenConvertedBlk(obj){
+let function normalizeAndFlattenConvertedBlk(obj){
   let t = type(obj)
   if (t == "array" && obj.len()==1) {
     let el = obj[0]
@@ -143,7 +143,7 @@ function normalizeAndFlattenConvertedBlk(obj){
 let convertBlkFlat = @(blk) normalizeAndFlattenConvertedBlk(blk2SquirrelObj(blk))
 let convertBlk = @(blk) normalizeConvertedBlk(blk2SquirrelObj(blk))
 
-function getParamsListByName(blk, name){
+let function getParamsListByName(blk, name){
   let res = []
   for (local j = 0; j < blk.paramCount(); j++) {
     if (blk.getParamName(j)!=name)
@@ -154,7 +154,7 @@ function getParamsListByName(blk, name){
 }
 
 
-function getBlkByPathArray(path, blk, defaultValue = null) {
+let function getBlkByPathArray(path, blk, defaultValue = null) {
   local currentBlk = blk
   foreach (p in path) {
     if (!isDataBlock(currentBlk))
@@ -164,7 +164,7 @@ function getBlkByPathArray(path, blk, defaultValue = null) {
   return currentBlk ?? defaultValue
 }
 
-function getBlkValueByPath(blk, path, defVal=null) {
+local function getBlkValueByPath(blk, path, defVal=null) {
   if (!blk || !path)
     return defVal
 
@@ -182,14 +182,14 @@ function getBlkValueByPath(blk, path, defVal=null) {
 }
 
  //blk in path shoud exist and be correct
-function blkFromPath(path){
+local function blkFromPath(path){
   local blk = DataBlock()
   blk.load(path)
   return blk
 }
 
 //blk in path be correct or should not be existing
-function blkOptFromPath(path) {
+local function blkOptFromPath(path) {
   local blk = DataBlock()
   if (path != null && path != ""){
     if (!blk.tryLoad(path, true))

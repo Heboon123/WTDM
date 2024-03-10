@@ -1,4 +1,5 @@
 //-file:plus-string
+from "%scripts/dagui_natives.nut" import ww_get_map_cell_by_coords
 from "%scripts/dagui_library.nut" import *
 from "%scripts/worldWar/worldWarConst.nut" import *
 
@@ -17,11 +18,6 @@ let { getMaxFlyTime } = require("%scripts/worldWar/inOperation/wwActionsWithUnit
 let { getGroupUnitMarkUp } = require("%scripts/unit/groupUnit.nut")
 let wwOperationUnitsGroups = require("%scripts/worldWar/inOperation/wwOperationUnitsGroups.nut")
 let airfieldTypes = require("%scripts/worldWar/inOperation/model/airfieldTypes.nut")
-let { guiStartChooseUnitWeapon } = require("%scripts/weaponry/weaponrySelectModal.nut")
-let { addBgTaskCb } = require("%scripts/tasker.nut")
-let { wwGetMapCellByCoords } = require("worldwar")
-let { addPopup } = require("%scripts/popups/popups.nut")
-
 
 let unitsTypesList = {
   [airfieldTypes.AT_HELIPAD] = [
@@ -260,8 +256,8 @@ gui_handlers.WwAirfieldFlyOut <- class (gui_handlers.BaseGuiHandlerWT) {
 
     let selUnitsInfo = this.getSelectedUnitsInfo()
     foreach (_idx, unitTable in this.unitsList) {
-      let unitSliderObj = showObjById(unitTable.unitName + "_" + unitTable.armyGroupIdx,
-        unitTable.armyGroupIdx == this.selectedGroupIdx, this.scene)
+      let unitSliderObj = this.showSceneBtn(unitTable.unitName + "_" + unitTable.armyGroupIdx,
+        unitTable.armyGroupIdx == this.selectedGroupIdx)
 
       this.setUnitSliderEnable(unitSliderObj, selUnitsInfo, unitTable)
       this.fillUnitWeaponPreset(unitTable)
@@ -705,7 +701,7 @@ gui_handlers.WwAirfieldFlyOut <- class (gui_handlers.BaseGuiHandlerWT) {
     let cb = Callback(function (unitName, weaponName) {
       this.changeUnitWeapon(unitName, weaponName)
     }, this)
-    guiStartChooseUnitWeapon(unit, cb, {
+    ::gui_start_choose_unit_weapon(unit, cb, {
       alignObj = obj
       align = "right"
       isForcedAvailable = true
@@ -783,15 +779,15 @@ gui_handlers.WwAirfieldFlyOut <- class (gui_handlers.BaseGuiHandlerWT) {
       errorLocId = "worldWar/error/uncontrollableArmyGroup"
 
     if (errorLocId != "") {
-      addPopup("", loc(errorLocId), null, null, null, "WwFlyoutError")
+      ::g_popups.add("", loc(errorLocId), null, null, null, "WwFlyoutError")
       return
     }
 
-    let cellIdx = wwGetMapCellByCoords(this.position.x, this.position.y)
+    let cellIdx = ww_get_map_cell_by_coords(this.position.x, this.position.y)
     let taskId = ::g_world_war.moveSelectedAircraftsToCell(
       cellIdx, units, group.owner, this.armyTargetName)
     if (this.onSuccessfullFlyoutCb)
-      addBgTaskCb(taskId, this.onSuccessfullFlyoutCb)
+      ::add_bg_task_cb(taskId, this.onSuccessfullFlyoutCb)
     this.goBack()
   }
 

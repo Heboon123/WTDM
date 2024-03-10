@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import disable_network, copy_to_clipboard
 from "%scripts/dagui_library.nut" import *
 
@@ -21,6 +22,7 @@ let { checkShowEmailRegistration,
   checkShowGuestEmailRegistrationAfterLogin } = require("%scripts/user/suggestionEmailRegistration.nut")
 let { checkShowGpuBenchmarkWnd } = require("%scripts/options/gpuBenchmarkWnd.nut")
 let { checkAfterFlight } = require("%scripts/social/xboxSquadManager/xboxSquadManager.nut")
+let checkReconnect = require("%scripts/matchingRooms/checkReconnect.nut")
 let { checkShowPersonalOffers } = require("%scripts/user/personalOffers.nut")
 let { steamCheckNewItems } = require("%scripts/inventory/steamCheckNewItems.nut")
 let { checkTutorialOnStart } = require("%scripts/tutorials.nut")
@@ -29,10 +31,9 @@ let { getFromSettingsBlk } = require("%scripts/clientState/clientStates.nut")
 let { checkUnlockedCountriesByAirs } = require("%scripts/firstChoice/firstChoice.nut")
 let { searchAndRepairInvalidPresets } = require("%scripts/weaponry/weaponryPresetsRepair.nut")
 let { checkDecalsOnOtherPlayersOptions }  = require("%scripts/customization/suggestionShowDecalsOnOtherPlayers.nut")
-let { addPopup } = require("%scripts/popups/popups.nut")
 
 let delayed_gblk_error_popups = []
-function showGblkErrorPopup(errCode, path) {
+let function showGblkErrorPopup(errCode, path) {
   if (!::g_login.isLoggedIn()) {
     delayed_gblk_error_popups.append({ type = errCode, path = path })
     return
@@ -40,13 +41,13 @@ function showGblkErrorPopup(errCode, path) {
 
   let title = loc("gblk/saveError/title")
   let msg = loc(format("gblk/saveError/text/%d", errCode), { path = path })
-  addPopup(title, msg, null, [{ id = "copy_button",
+  ::g_popups.add(title, msg, null, [{ id = "copy_button",
                               text = loc("gblk/saveError/copy"),
                               func = @() copy_to_clipboard(msg) }])
 }
 ::show_gblk_error_popup <- showGblkErrorPopup //called from the native code
 
-function popGblkErrorPopups() {
+let function popGblkErrorPopups() {
   if (!::g_login.isLoggedIn())
     return
 
@@ -66,7 +67,7 @@ local function onMainMenuReturn(handler, isAfterLogin) {
   local isAllowPopups = ::g_login.isProfileReceived() && !getFromSettingsBlk("debug/skipPopups")
   local guiScene = handler.guiScene
   if (isAfterLogin && isAllowPopups)
-    ::SessionLobby.checkReconnect()
+    checkReconnect()
 
   if (!isAfterLogin) {
     checkUnlockedCountriesByAirs()

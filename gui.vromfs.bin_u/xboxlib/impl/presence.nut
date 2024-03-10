@@ -1,10 +1,10 @@
 let pres = require("xbox.presence")
-let {eventbus_subscribe, eventbus_subscribe_onehit} = require("eventbus")
+let {subscribe, subscribe_onehit} = require("eventbus")
 
 
-function set_presence(presence, callback) {
+let function set_presence(presence, callback) {
   let eventName = "xbox_set_presence"
-  eventbus_subscribe_onehit(eventName, function(result) {
+  subscribe_onehit(eventName, function(result) {
     let success = result?.success
     callback?(success)
   })
@@ -12,8 +12,8 @@ function set_presence(presence, callback) {
 }
 
 
-function subscribe_to_presence_update_events(callback) {
-  eventbus_subscribe(pres.presence_update_event_name, function(res) {
+let function subscribe_to_presence_update_events(callback) {
+  subscribe(pres.presence_update_event_name, function(res) {
     let success = res?.success
     let presences = res?.presences
     callback?(success, presences)
@@ -21,8 +21,8 @@ function subscribe_to_presence_update_events(callback) {
 }
 
 
-function subscribe_to_device_change_events(callback) {
-  eventbus_subscribe(pres.device_change_event_name, function(res) {
+let function subscribe_to_device_change_events(callback) {
+  subscribe(pres.device_change_event_name, function(res) {
     let xuid = res?.xuid
     let devType = res?.dev_type
     let loggedIn = res?.logged_in
@@ -31,8 +31,8 @@ function subscribe_to_device_change_events(callback) {
 }
 
 
-function subscribe_to_title_change_events(callback) {
-  eventbus_subscribe(pres.title_change_event_name, function(res) {
+let function subscribe_to_title_change_events(callback) {
+  subscribe(pres.title_change_event_name, function(res) {
     let xuid = res?.xuid
     let titleId = res?.title_id
     let titleState = res?.title_state

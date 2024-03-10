@@ -16,7 +16,7 @@ local getClientDownloadProgressText = @() ""
 local isHistoricalCampaignDownloading = @() false
 
 
-function getSonyTotalProgress(chunks) {
+let function getSonyTotalProgress(chunks) {
   local downloaded = 0.0
   local total = 100.0 * chunks.len()
   foreach (chunk in chunks)
@@ -25,7 +25,7 @@ function getSonyTotalProgress(chunks) {
   return 100 * (downloaded / total)
 }
 
-function getSonyProgressText(chunks) {
+let function getSonyProgressText(chunks) {
   let percent = getSonyTotalProgress(chunks)
   local text = loc("msgbox/downloadPercent", { percent = percent })
   if (percent >= 100)

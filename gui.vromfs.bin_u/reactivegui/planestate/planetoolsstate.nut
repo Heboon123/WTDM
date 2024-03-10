@@ -39,7 +39,6 @@ let AimLockPos = [0, 0]
 let AimLockValid = Watched(false)
 let AimLockDist = Watched(-1)
 let TvvMark = [0, 0]
-let TvvHMDMark = [0, 0]
 let AtgmTargetDist = Watched(0.0)
 let MfdVdiVisible = Watched(false)
 let MfdVdiPosSize = [0, 0, 0, 0]
@@ -49,15 +48,9 @@ let DigitalDevicesVisible = Watched(false)
 let DigDevicesPosSize = [0, 0, 0, 0]
 let MfdCameraZoom = Watched(0.0)
 let HmdYaw = Watched(0.0)
-let HmdPitch = Watched(0.0)
 let HmdVisible = Watched(false)
 let HmdBlockIls = Watched(false)
 let RwrBlkName = Watched("")
-let AimLockYaw = Watched(0.0)
-let AimLockPitch = Watched(0.0)
-let ScreenFwdDirPos = [0, 0]
-let HmdTargetPos = [0, 0]
-let HmdTargetPosValid = Watched(false)
 
 let planeState = {
   BlkFileName,
@@ -95,7 +88,6 @@ let planeState = {
   AimLockDist,
   AimLockPos,
   TvvMark,
-  TvvHMDMark,
   AtgmTargetDist,
   MfdVdiVisible,
   MfdVdiPosSize,
@@ -106,15 +98,9 @@ let planeState = {
   DigDevicesPosSize,
   MfdCameraZoom,
   HmdYaw,
-  HmdPitch,
   HmdVisible,
   HmdBlockIls,
-  RwrBlkName,
-  AimLockYaw,
-  AimLockPitch,
-  ScreenFwdDirPos,
-  HmdTargetPos,
-  HmdTargetPosValid
+  RwrBlkName
 }
 
 interop.updatePlaneIlsPosSize <- function(x, y, w, h) {
@@ -150,11 +136,6 @@ interop.updateAimLockPos <- function(x, y) {
   AimLockPos[1] = y
 }
 
-interop.updateScreenFwdDirPos <- function(x, y) {
-  ScreenFwdDirPos[0] = x
-  ScreenFwdDirPos[1] = y
-}
-
 interop.updateRadarTargetPos <- function(x, y) {
   RadarTargetPos[0] = x
   RadarTargetPos[1] = y
@@ -173,16 +154,6 @@ interop.updateIlsAtgmTargetPos <- function(x, y) {
 interop.updateTvvTarget <- function(x, y) {
   TvvMark[0] = x
   TvvMark[1] = y
-}
-
-interop.updateTvvHmd <- function(x, y) {
-  TvvHMDMark[0] = x
-  TvvHMDMark[1] = y
-}
-
-interop.updateHmdTargetPos <- function(x, y) {
-  HmdTargetPos[0] = x
-  HmdTargetPos[1] = y
 }
 
 interopGen({

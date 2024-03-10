@@ -1,7 +1,8 @@
+//-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
 let u = require("%sqStdLibs/helpers/u.nut")
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
+
+
 let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 const ITEM_RARITY_DEFAULT = 1
@@ -25,11 +26,11 @@ local Rarity = class {
   }
 
   function updateTag() {
-    this.tag = this.isRare ? colorize(this.color, loc($"item/rarity{this.value}")) : null
+    this.tag = this.isRare ? colorize(this.color, loc("item/rarity" + this.value)) : null
   }
 
   _cmp = @(other) this.value <=> other.value
-  _tostring = @() $"Rarity {this.value}"
+  _tostring = @() "Rarity " + this.value
 }
 
 local get = function(value = null, color = null) {
@@ -45,7 +46,7 @@ let onGameLocalizationChanged = function() {
 }
 
 add_event_listener("GameLocalizationChanged", @(_p) onGameLocalizationChanged(),
-  null, g_listener_priority.CONFIG_VALIDATION)
+  null, ::g_listener_priority.CONFIG_VALIDATION)
 
 return {
   get = get

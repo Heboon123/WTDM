@@ -3,7 +3,7 @@ let { logerr } = require("dagor.debug")
 //let { log } = require("log.nut")()
 
 let callableTypes = ["function","table","instance"]
-function isCallable(v) {
+let function isCallable(v) {
   return callableTypes.indexof(type(v)) != null && (v.getfuncinfos() != null)
 }
 /*
@@ -12,7 +12,7 @@ function isCallable(v) {
   partial(f(x,y,z), 1, 2) == @(z) f(1,2,z)
   partial(f(x,y,z), 1, 2, 3) == @() f(1,2,3) or f(1,2,3)
 */
-function partial(func, ...){
+let function partial(func, ...){
   assert(isCallable(func), "partial can be applied only to functions as first arguments")
   let infos = func.getfuncinfos()
   let argsnum = infos.parameters.len()-1
@@ -42,7 +42,7 @@ function partial(func, ...){
 */
 let allowedKwargTypes = { table = true, ["class"] = true, instance = true }
 let KWARG_NON_STRICT = persist("KWARG_NON_STRICT", @() freeze({}))
-function kwarg(func){
+let function kwarg(func){
   assert(isCallable(func), "kwarg can be applied only to functions as first arguments")
   let infos = func.getfuncinfos()
   let funcName = infos.name
@@ -82,11 +82,11 @@ function kwarg(func){
 }
 /*
  kwpartial
-  function foo(a,b,c){(a+b)*c}
+  local function foo(a,b,c){(a+b)*c}
   kwpartial(foo, {b=3})(1,5) == (1+3)*5
   kwpartial(foo, {b=3}, 2)(5) == (2+3)*5
 */
-function kwpartial(func, partparams, ...){
+let function kwpartial(func, partparams, ...){
   assert(isCallable(func), "partial can be applied only to functions as first arguments")
   assert(["table", "class","instance"].indexof(type(partparams))!=null, "kwpartial second argument of function can be only hashable (table, class, instance)")
   let infos = func.getfuncinfos()
@@ -122,7 +122,7 @@ function kwpartial(func, partparams, ...){
 // pipe:
 //  pipe(f,g) =  @(x) f(g(x))
 //it can be replaced with oneliner pipe = @(...) @(x) vargv.reduce(@(a,b) b(a), x)
-function pipe(...){
+let function pipe(...){
   let args = vargv.filter(isCallable)
   assert(args.len() == vargv.len() && args.len()>0, "pipe should be called with functions")
   let finfos = args[0].getfuncinfos()
@@ -134,7 +134,7 @@ function pipe(...){
 // compose (reverse to pipe):
 //  compose(f,g) =  @(x) g(f(x))
 //it can be replaced with oneliner compose = @(...) @(x) vargv.reverse().reduce(@(a,b) b(a), x)
-function compose(...){
+let function compose(...){
   let args = vargv.filter(isCallable)
   assert(args.len() == vargv.len() && args.len()>0, "compose should be called with functions")
   args.reverse()
@@ -147,7 +147,7 @@ function compose(...){
 /*
   tryCatch(tryer function, catcher function) return function that will operate on input safely
 */
-function tryCatch(tryer, catcher){
+let function tryCatch(tryer, catcher){
   return function(...) {
     try{
       return tryer.pacall([null].extend(vargv))
@@ -177,7 +177,7 @@ local sum = curry(@(a,b,c) a+b+c)
 sum(1)(2)(3) == sum(1)(2,3) == sum(1,2,3) == sum(1,2)(3)
 unfortunately returning function are now use vargv, instead of rest of parameters (the same issue goes to partial)
 */
-function curry(fn) {
+let function curry(fn) {
   let finfos = fn.getfuncinfos()
   assert(!finfos.native || finfos.paramscheck >= 0, "Cannot curry native function with varargs")
   let arity = (finfos.native ? finfos.paramscheck : finfos.parameters.len())-1
@@ -215,7 +215,7 @@ let NullKey = persist("NullKey", @() {})
 let Leaf = persist("Leaf", @() {})
 let NO_VALUE = persist("NO_VALUE", @() {})
 
-function setValInCacheVargved(path, value, cache) {
+let function setValInCacheVargved(path, value, cache) {
   local curTbl = cache
   foreach (p in path){
     local pathPart = p ?? NullKey
@@ -227,7 +227,7 @@ function setValInCacheVargved(path, value, cache) {
   return value
 }
 
-function getValInCacheVargved(path, cache) {
+let function getValInCacheVargved(path, cache) {
   local curTbl = cache
   foreach (p in path) {
     let key = p ?? NullKey
@@ -239,7 +239,7 @@ function getValInCacheVargved(path, cache) {
   return (Leaf in curTbl) ? curTbl[Leaf] : NO_VALUE
 }
 
-function setValInCache(path, value, cache) {
+let function setValInCache(path, value, cache) {
   local curTbl = cache
   let n = path.len()-1
   foreach (idx, p in path){
@@ -255,7 +255,7 @@ function setValInCache(path, value, cache) {
   return value
 }
 
-function getValInCache(path, cache) {
+let function getValInCache(path, cache) {
   local curTbl = cache
   foreach (p in path) {
     let key = p ?? NullKey
@@ -268,7 +268,7 @@ function getValInCache(path, cache) {
 }
 
 const DEF_MAX_CACHE_ENTRIES = 10000
-function memoize(func, hashfunc = null, cacheExternal=null, maxCacheNum=DEF_MAX_CACHE_ENTRIES) {
+let function memoize(func, hashfunc = null, cacheExternal=null, maxCacheNum=DEF_MAX_CACHE_ENTRIES) {
   let cache = cacheExternal ?? {}
   local simpleCache = null
   local simpleCacheUsed = false
@@ -413,10 +413,10 @@ function memoize(func, hashfunc = null, cacheExternal=null, maxCacheNum=DEF_MAX_
 //Creates a version of the function that can only be called one time.
 //Repeated calls to the modified function will have no effect, returning the value from the original call.
 //Useful for initialization functions, instead of having to set a boolean flag and then check it later.
-function once(func){
+let function once(func){
   local result
   local called = false
-  function memoizedfunc(...){
+  let function memoizedfunc(...){
     if (called)
       return result
     let res = func.acall([null].extend(vargv))
@@ -430,7 +430,7 @@ function once(func){
 //the same function as in underscore.js
 //Creates a version of the function that can be called no more than count times.
 //The result of the last function call is memoized and returned when count has been reached.
-function before(count, func){
+let function before(count, func){
   local called = 0
   local res
   return function beforeTimes(...){
@@ -445,7 +445,7 @@ function before(count, func){
 //the same function as in underscore.js
 //Creates a version of the function that will only be run after being called count times.
 //Useful for grouping asynchronous responses, where you want to be sure that all the async calls have finished, before proceeding.
-function after(count, func){
+let function after(count, func){
   local called = 0
   return function beforeTimes(...){
     if (called < count) {
@@ -469,7 +469,7 @@ local BreakValue = class{
 }
 
 local MemoNotInited = class{}
-function breakable_reduce(obj, func, memo=MemoNotInited()) {
+local function breakable_reduce(obj, func, memo=MemoNotInited()) {
   local firstInited = !(memo instanceof MemoNotInited)
   local argsnum = func.getfuncinfos().parameters.len()-1
   local nfunc
@@ -504,7 +504,7 @@ let combine = @(...) @() vargv.each(@(v) v.call(null))
 //creates function that will do map 'set' ({key:key}) to table with provided function
 //function result will be cached for each key, until key disappears, than cache result for this key would be cleaned
 
-function mkMemoizedMapSet(func){
+let function mkMemoizedMapSet(func){
   let cache = {}
   let funcParams = func.getfuncinfos().parameters.len()-1
   return function memoizedMapSet(set){

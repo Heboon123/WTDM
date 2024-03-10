@@ -6,11 +6,10 @@ let u = require("%sqStdLibs/helpers/u.nut")
 let stdMath = require("%sqstd/math.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
-let { checkTutorialsList, saveTutorialToCheckReward,
+let { skipTutorialBitmaskId, checkTutorialsList, saveTutorialToCheckReward,
   launchedTutorialQuestionsPeerSession, setLaunchedTutorialQuestionsValue,
   getUncompletedTutorialData, getTutorialRewardMarkup, getSuitableUncompletedTutorialData
 } = require("%scripts/tutorials/tutorialsData.nut")
-let { skipTutorialBitmaskId } = require("%scripts/tutorials/tutorialsState.nut")
 let { addPromoAction } = require("%scripts/promo/promoActions.nut")
 let { addPromoButtonConfig } = require("%scripts/promo/promoButtonsConfig.nut")
 let { getShowedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
@@ -21,10 +20,8 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 let { setPromoButtonText, getPromoActionParamsKey, setPromoActionsParamsData,
   getPromoVisibilityById
 } = require("%scripts/promo/promo.nut")
-let { loadLocalByAccount, saveLocalByAccount
-} = require("%scripts/clientState/localProfileDeprecated.nut")
+let { loadLocalByAccount, saveLocalByAccount } = require("%scripts/clientState/localProfile.nut")
 let { getCountryFlagImg } = require("%scripts/options/countryFlagsPreset.nut")
-let { guiStartTutorial, guiStartFlight } = require("%scripts/missions/startMissionsList.nut")
 
 const NEW_PLAYER_TUTORIAL_CHOICE_STATISTIC_SAVE_ID = "statistic:new_player_tutorial_choice"
 
@@ -91,7 +88,7 @@ local NextTutorialHandler = class (gui_handlers.BaseGuiHandlerWT) {
     set_game_mode(GM_TRAINING)
     select_mission(this.tutorialMission, true)
     ::current_campaign_mission = this.tutorialMission.name
-    this.guiScene.performDelayed(this, function() { this.goForward(guiStartFlight); })
+    this.guiScene.performDelayed(this, function() { this.goForward(::gui_start_flight); })
     save_profile(false)
   }
 
@@ -139,7 +136,7 @@ local NextTutorialHandler = class (gui_handlers.BaseGuiHandlerWT) {
 
 gui_handlers.NextTutorialHandler <- NextTutorialHandler
 
-function tryOpenNextTutorialHandler(checkId, checkSkip = true) {
+let function tryOpenNextTutorialHandler(checkId, checkSkip = true) {
   if ((checkSkip && hasFeature("BattleAutoStart")) || !(topMenuHandler.value?.isSceneActive() ?? false))
     return false
 
@@ -179,7 +176,7 @@ function tryOpenNextTutorialHandler(checkId, checkSkip = true) {
   return true
 }
 
-function onOpenTutorialFromPromo(owner, params = []) {
+let function onOpenTutorialFromPromo(owner, params = []) {
   local tutorialId = ""
   if (u.isString(params))
     tutorialId = params
@@ -188,11 +185,11 @@ function onOpenTutorialFromPromo(owner, params = []) {
 
   owner.checkedNewFlight(function() {
     if (!tryOpenNextTutorialHandler(tutorialId, false))
-      guiStartTutorial()
+      ::gui_start_tutorial()
   })
 }
 
-function getTutorialData() {
+let function getTutorialData() {
   let curUnit = getShowedUnit()
   let {
     mission = null,

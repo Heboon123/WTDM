@@ -1,20 +1,21 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
-let enums = require("%sqStdLibs/helpers/enums.nut")
 
-let objectiveStatus = {
+
+
+let enums = require("%sqStdLibs/helpers/enums.nut")
+::g_objective_status <- {
   types = []
-  cache = {
-    byCode = {}
-  }
-  template = {
-    code = -1
-    name = ""
-    missionObjImg = ""
-    wwMissionObjImg = ""
-  }
 }
 
-enums.addTypes(objectiveStatus, {
+::g_objective_status.template <- {
+  code = -1
+  name = ""
+  missionObjImg = ""
+  wwMissionObjImg = ""
+}
+
+enums.addTypesByGlobalName("g_objective_status", {
   DELAYED = {
     code = MISSION_OBJECTIVE_STATUS_DELAYED
     name = "delayed"
@@ -42,12 +43,11 @@ enums.addTypes(objectiveStatus, {
   }
 })
 
-function getObjectiveStatusByCode(statusCode) {
-  return enums.getCachedType("code", statusCode, objectiveStatus.cache.byCode,
-  objectiveStatus, objectiveStatus.UNKNOWN)
+::g_objective_status.getObjectiveStatusByCode <- function getObjectiveStatusByCode(statusCode) {
+  return enums.getCachedType("code", statusCode, ::g_objective_status_cache.byCode,
+    ::g_objective_status, ::g_objective_status.UNKNOWN)
 }
 
-return {
-  objectiveStatus
-  getObjectiveStatusByCode
+::g_objective_status_cache <- {
+  byCode = {}
 }

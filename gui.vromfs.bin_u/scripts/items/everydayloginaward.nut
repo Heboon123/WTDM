@@ -63,7 +63,7 @@ let class EveryDayLoginAward (gui_handlers.BaseGuiHandlerWT) {
     let tipHint = loc("dailyAward/playWTM", {sendShortcuts})
     let textObjName = showConsoleButtons.value ? "wtm_text_console" : "wtm_text"
 
-    showObjById(textObjName, true, this.scene).setValue(tipHint)
+    this.showSceneBtn(textObjName, true).setValue(tipHint)
   }
 
   function updateHeader() {
@@ -374,9 +374,9 @@ let class EveryDayLoginAward (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function updateButtons() {
-    showObjById("btn_open", !this.isOpened, this.scene)
-    showObjById("open_chest_animation", !this.rouletteAnimationFinished, this.scene)
-    showObjById("btn_rewards_list", this.isOpened && this.rouletteAnimationFinished && (this.rewardsArray.len() > 1 || this.haveItems), this.scene)
+    this.showSceneBtn("btn_open", !this.isOpened)
+    this.showSceneBtn("open_chest_animation", !this.rouletteAnimationFinished)
+    this.showSceneBtn("btn_rewards_list", this.isOpened && this.rouletteAnimationFinished && (this.rewardsArray.len() > 1 || this.haveItems))
 
     if (this.isOpened)
       this.scene.findObject("btn_nav_open").setValue(this.rouletteAnimationFinished || this.useSingleAnimation
@@ -432,10 +432,10 @@ let class EveryDayLoginAward (gui_handlers.BaseGuiHandlerWT) {
 
   function updateReward() {
     let haveUnit = this.unit != null || this.periodUnit != null
-    let withoutUnitObj = showObjById("block_without_unit", !haveUnit && this.isOpened, this.scene)
+    let withoutUnitObj = this.showSceneBtn("block_without_unit", !haveUnit && this.isOpened)
 
-    let withUnitObj = showObjById("block_with_unit", haveUnit && this.isOpened, this.scene)
-    showObjById("reward_join_img", this.periodicRewardsArray.len() > 0, this.scene)
+    let withUnitObj = this.showSceneBtn("block_with_unit", haveUnit && this.isOpened)
+    this.showSceneBtn("reward_join_img", this.periodicRewardsArray.len() > 0)
 
     if (!this.isOpened)
       return
@@ -708,7 +708,7 @@ let class EveryDayLoginAward (gui_handlers.BaseGuiHandlerWT) {
 
 gui_handlers.EveryDayLoginAward <- EveryDayLoginAward
 
-function showEveryDayLoginAwardWnd(blk) {
+let function showEveryDayLoginAwardWnd(blk) {
   if (!blk || isInArray(blk.id, ::shown_userlog_notifications))
     return
 
@@ -718,7 +718,7 @@ function showEveryDayLoginAwardWnd(blk) {
   loadHandler(EveryDayLoginAward, { userlog = blk })
 }
 
-function hasEveryDayLoginAward() {
+let function hasEveryDayLoginAward() {
   let total = get_user_logs_count()
   for (local i = total - 1; i >= 0; --i) {
     let blk = DataBlock()
@@ -730,7 +730,7 @@ function hasEveryDayLoginAward() {
   return false
 }
 
-function debugEveryDayLoginAward(numAwardsToSkip = 0, launchWindow = true) {
+let function debugEveryDayLoginAward(numAwardsToSkip = 0, launchWindow = true) {
   let total = get_user_logs_count()
   for (local i = total - 1; i > 0; i--) {
     let blk = DataBlock()

@@ -320,7 +320,7 @@ let { getLocalizedControlName } = require("%scripts/controls/controlsVisual.nut"
   loadHandler(gui_handlers.controlsWizardModalHandler)
 }
 
-function isInArrayRecursive(v, arr) {
+let function isInArrayRecursive(v, arr) {
   foreach (i in arr) {
     if (v == i)
       return true
@@ -557,8 +557,8 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
       this.prevItems.append(this.curIdx)
 
     this.updateButtons()
-    showObjById("btn_prevItem", this.prevItems.len() > 0, this.scene)
-    showObjById("btn_controlsWizard", this.prevItems.len() == 0, this.scene)
+    this.showSceneBtn("btn_prevItem", this.prevItems.len() > 0)
+    this.showSceneBtn("btn_controlsWizard", this.prevItems.len() == 0)
   }
 
   function onPrevItem() {
@@ -635,7 +635,7 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
   }
 
   function enableListenerObj(isEnable) {
-    let obj = showObjById("input-listener", isEnable, this.scene)
+    let obj = this.showSceneBtn("input-listener", isEnable)
     if (isEnable)
       obj.select()
   }
@@ -652,7 +652,7 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
       textObj.show(true)
     }
     this.scene.findObject("shortcut_image")["background-image"] = ""
-    showObjById("btn-reset-axis-input", false, this.scene)
+    this.showSceneBtn("btn-reset-axis-input", false)
     this.clearShortcutInfo()
 
     this.isButtonsListenInCurBox = true
@@ -748,7 +748,7 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
       this.switchListenButton(false)
     }
 
-    showObjById("btn-reset-axis-input", this.selectedAxisNum >= 0 || this.axisMaxChoosen, this.scene)
+    this.showSceneBtn("btn-reset-axis-input", this.selectedAxisNum >= 0 || this.axisMaxChoosen)
   }
 
   function switchListenButton(value) {
@@ -776,12 +776,12 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
       if (reinitPresetup)
         this.initAxisPresetup()
     }
-    showObjById("btn-reset-axis-input", this.axisMaxChoosen, this.scene)
+    this.showSceneBtn("btn-reset-axis-input", this.axisMaxChoosen)
   }
 
   function updateSwitchModesButton() {
     let isShow = this.curDivName == "shortcut-wnd" && this.selectedAxisNum < 0 && !this.axisMaxChoosen
-    showObjById("btn_switchAllModes", isShow, this.scene)
+    this.showSceneBtn("btn_switchAllModes", isShow)
 
     if (!isShow)
       return
@@ -833,9 +833,9 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
     }
 
     this.updateSwitchModesButton()
-    showObjById("keep_assign_btn", isInListenWnd, this.scene)
-    showObjById("btn-reset-axis-input", isInListenWnd && (this.axisMaxChoosen || this.selectedAxisNum >= 0), this.scene)
-    showObjById("btn_back", !isListening, this.scene)
+    this.showSceneBtn("keep_assign_btn", isInListenWnd)
+    this.showSceneBtn("btn-reset-axis-input", isInListenWnd && (this.axisMaxChoosen || this.selectedAxisNum >= 0))
+    this.showSceneBtn("btn_back", !isListening)
   }
 
   function onButtonDone() {
@@ -1037,7 +1037,7 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
   function onAxisDone() {
     this.switchListenAxis(false)
     foreach (name in ["keep_assign_btn", "btn_prevItem", "btn_controlsWizard", "btn_selectPreset", "btn-reset-axis-input"])
-      showObjById(name, false, this.scene)
+      this.showSceneBtn(name, false)
 
     let config = this.presetupAxisRawValues[this.selectedAxisNum]
 
@@ -1279,7 +1279,7 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
       return
     this.selectedAxisNum = -1
     this.axisMaxChoosen = false
-    showObjById("btn-reset-axis-input", false, this.scene)
+    this.showSceneBtn("btn-reset-axis-input", false)
     this.initAxisPresetup()
     this.askAxis()
   }
@@ -1437,13 +1437,13 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
 
   function askPresetsWnd() {
     this.curIdx = -1
-    showObjById("nav-help", false, this.scene)
+    this.showSceneBtn("nav-help", false)
     this.switchToDiv("options-wnd")
     let optObj = this.scene.findObject("optionlist")
     if (!checkObj(optObj))
       return
 
-    showObjById("btn_prevItem", false, this.scene)
+    this.showSceneBtn("btn_prevItem", false)
 
     let optionItems = [
       [USEROPT_CONTROLS_PRESET, "spinner"],
@@ -1466,8 +1466,8 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
     let opdata = ::get_option(USEROPT_CONTROLS_PRESET)
     if (presetValue in opdata.values) {
       this.presetSelected = opdata.values[presetValue]
-      showObjById("btn_controlsWizard", this.presetSelected == "", this.scene)
-      showObjById("btn_selectPreset", this.presetSelected != "", this.scene)
+      this.showSceneBtn("btn_controlsWizard", this.presetSelected == "")
+      this.showSceneBtn("btn_selectPreset", this.presetSelected != "")
 
       if (this.presetSelected == "") {
         ::g_controls_manager.clearPreviewPreset()
@@ -1499,7 +1499,7 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
   }
 
   function startManualSetup() {
-    showObjById("nav-help", true, this.scene)
+    this.showSceneBtn("nav-help", true)
     scene_msg_box("ask_unit_type", null, loc("mainmenu/askWizardForUnitType"),
       [
         [ "aviation", (@() this.startManualSetupForUnitType(ES_UNIT_TYPE_AIRCRAFT)).bindenv(this) ],

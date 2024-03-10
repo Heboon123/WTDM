@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import entitlement_expires_in, shop_get_premium_account_ent_name
 from "%scripts/dagui_library.nut" import *
 
@@ -13,7 +14,7 @@ let forcePremium = Watched(null)
 
 let getTimerUpdateTime = @(expTime) expTime * timeBase.TIME_MINUTE_IN_SECONDS
 
-function updatePremium() {
+let function updatePremium() {
   let premAccName = shop_get_premium_account_ent_name()
   let premiumExpireTimeMinutes = entitlement_expires_in(premAccName)
 
@@ -24,7 +25,7 @@ function updatePremium() {
     setTimeout(getTimerUpdateTime(premiumExpireTimeMinutes), updatePremium, PREM_TIMER_ID)
 }
 
-function resetInfo() {
+let function resetInfo() {
   haveProfilePremium(null)
   clearTimer(PREM_TIMER_ID)
 }

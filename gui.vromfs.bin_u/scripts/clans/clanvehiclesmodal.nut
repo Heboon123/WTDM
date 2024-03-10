@@ -1,5 +1,7 @@
+//-file:plus-string
 from "%scripts/dagui_natives.nut" import clan_get_exp, clan_get_researching_unit
 from "%scripts/dagui_library.nut" import *
+
 
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { Cost, Balance } = require("%scripts/money.nut")
@@ -32,7 +34,7 @@ local handlerClass = class (vehiclesModal.handlerClass) {
 
     local expText = flushExp ? loc("ui/parentheses/space",
         { text = Balance(0, 0, 0, 0, flushExp).getTextAccordingToBalance() }) : ""
-    expText = "".concat(loc(locId), expText)
+    expText = loc(locId) + expText
 
     return expText
   }
@@ -76,12 +78,12 @@ local handlerClass = class (vehiclesModal.handlerClass) {
 
   function updateBuyBtn() {
     if (!this.lastSelectedUnit)
-      return showObjById("btn_buy_unit", false, this.scene)
+      return this.showSceneBtn("btn_buy_unit", false)
 
     let canBuyIngame = canBuyUnit(this.lastSelectedUnit)
     let canBuyOnline = ::canBuyUnitOnline(this.lastSelectedUnit)
     let needShowBuyUnitBtn = canBuyIngame || canBuyOnline
-    showObjById("btn_buy_unit", needShowBuyUnitBtn, this.scene)
+    this.showSceneBtn("btn_buy_unit", needShowBuyUnitBtn)
     if (!needShowBuyUnitBtn)
       return
 
@@ -92,13 +94,13 @@ local handlerClass = class (vehiclesModal.handlerClass) {
 
   function updateSpendExpBtn() {
     if (!this.lastSelectedUnit)
-      return showObjById("btn_spend_exp", false, this.scene)
+      return this.showSceneBtn("btn_spend_exp", false)
 
     let flushExp = min(clan_get_exp(), ::getUnitReqExp(this.lastSelectedUnit) - ::getUnitExp(this.lastSelectedUnit))
     let needShowSpendBtn = (flushExp > 0 || this.needChosenResearchOfSquadron())
       && this.lastSelectedUnit.isSquadronVehicle() && canResearchUnit(this.lastSelectedUnit)
 
-    showObjById("btn_spend_exp", needShowSpendBtn, this.scene)
+    this.showSceneBtn("btn_spend_exp", needShowSpendBtn)
     if (!needShowSpendBtn)
       return
 
@@ -109,7 +111,7 @@ local handlerClass = class (vehiclesModal.handlerClass) {
       { unit = getUnitName(this.lastSelectedUnit.name) })
     let textValue = flushExp > 0 ? loc("ui/parentheses/space",
       { text = Cost().setSap(flushExp).tostring() }) : ""
-    let coloredText = "".concat(textWord, textValue)
+    let coloredText = textWord + textValue
 
     setColoredDoubleTextToButton(this.scene, "btn_spend_exp", coloredText)
   }

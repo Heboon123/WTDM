@@ -1,3 +1,4 @@
+//-file:plus-string
 from "%scripts/dagui_natives.nut" import can_receive_pve_trophy
 from "%scripts/dagui_library.nut" import *
 from "%scripts/items/itemsConsts.nut" import itemType
@@ -24,14 +25,6 @@ let nightBattlesOptionsWnd = require("%scripts/events/nightBattlesOptionsWnd.nut
 let newIconWidget = require("%scripts/newIconWidget.nut")
 let { move_mouse_on_child, loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { isMeNewbie } = require("%scripts/myStats.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
-let { guiStartModalEvents } = require("%scripts/events/eventsHandler.nut")
-let { getCurrentGameModeId, setCurrentGameModeById, getCurrentGameMode, getGameModeById,
-  getGameModesPartitions, getFeaturedGameModes, getDebugGameModes, getPveBattlesGameModes,
-  getClanBattlesGameModes, markShowingGameModeAsSeen, isGameModeSeen, getFeaturedModesConfig,
-  getRequiredUnitTypes, getGameModeItemId, getGameModeEvent
-} = require("%scripts/gameModes/gameModeManagerState.nut")
-let { getGameModeStartFunction } = require("%scripts/gameModes/gameModeManagerView.nut")
 
 dagui_propid_add_name_id("modeId")
 
@@ -80,7 +73,7 @@ gui_handlers.GameModeSelect <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function initScreen() {
-    this.backSceneParams = { eventbusName = "gui_start_mainmenu" }
+    this.backSceneParams = { globalFunctionName = "gui_start_mainmenu" }
     this.updateContent()
   }
 
@@ -122,13 +115,13 @@ gui_handlers.GameModeSelect <- class (gui_handlers.BaseGuiHandlerWT) {
     this.registerNewIconWidgets()
     this.updateClusters()
     this.updateButtons()
-    this.updateEventDescriptionConsoleButton(getCurrentGameMode())
+    this.updateEventDescriptionConsoleButton(::game_mode_manager.getCurrentGameMode())
 
     this.updateSelection()
   }
 
   function updateSelection() {
-    let curGM = getCurrentGameMode()
+    let curGM = ::game_mode_manager.getCurrentGameMode()
     if (curGM == null)
       return
 
@@ -152,16 +145,16 @@ gui_handlers.GameModeSelect <- class (gui_handlers.BaseGuiHandlerWT) {
 
       let widget = newIconWidget(this.guiScene, widgetObj)
       this.newIconWidgetsByGameModeID[gameMode.id] <- widget
-      widget.setWidgetVisible(!isGameModeSeen(gameMode.id))
+      widget.setWidgetVisible(!::game_mode_manager.isSeen(gameMode.id))
     }
   }
 
   function createFeaturedModesView() {
     let view = []
-    view.extend(this.getViewArray(getPveBattlesGameModes()))
-    view.extend(this.getViewArray(getFeaturedGameModes()))
+    view.extend(this.getViewArray(::game_mode_manager.getPveBattlesGameModes()))
+    view.extend(this.getViewArray(::game_mode_manager.getFeaturedGameModes()))
     view.extend(this.createFeaturedLinksView())
-    view.extend(this.getViewArray(getClanBattlesGameModes()))
+    view.extend(this.getViewArray(::game_mode_manager.getClanBattlesGameModes()))
     return view
   }
 
@@ -207,7 +200,7 @@ gui_handlers.GameModeSelect <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function createDebugGameModesView() {
     let view = []
-    let debugGameModes = getDebugGameModes()
+    let debugGameModes = ::game_mode_manager.getDebugGameModes()
     foreach (gameMode in debugGameModes)
       view.append(this.createGameModeView(gameMode))
     return view
@@ -215,12 +208,12 @@ gui_handlers.GameModeSelect <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function createFeaturedLinksView() {
     let res = []
-    foreach (_idx, mode in getFeaturedModesConfig()) {
+    foreach (_idx, mode in ::featured_modes) {
       if (!mode.isVisible())
         continue
 
-      let id = getGameModeItemId(mode.modeId)
-      let hasNewIconWidget = mode.hasNewIconWidget && !isGameModeSeen(id)
+      let id = ::game_mode_manager.getGameModeItemId(mode.modeId)
+      let hasNewIconWidget = mode.hasNewIconWidget && !::game_mode_manager.isSeen(id)
       let newIconWidgetContent = hasNewIconWidget ? newIconWidget.createLayout() : null
 
       res.append({
@@ -255,7 +248,7 @@ gui_handlers.GameModeSelect <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function createGameModesView() {
     let gameModesView = []
-    let partitions = getGameModesPartitions()
+    let partitions = ::game_mode_manager.getGameModesPartitions()
     foreach (partition in partitions) {
       let partitionView = this.createGameModesPartitionView(partition)
       if (partitionView)
@@ -274,11 +267,11 @@ gui_handlers.GameModeSelect <- class (gui_handlers.BaseGuiHandlerWT) {
 
     let countries = this.createGameModeCountriesView(gameMode)
     let isLink = gameMode.displayType.showInEventsWindow
-    let event = getGameModeEvent(gameMode)
+    let event = ::game_mode_manager.getGameModeEvent(gameMode)
     let trophyName = getEventPVETrophyName(event)
 
-    let id = getGameModeItemId(gameMode.id)
-    let hasNewIconWidget = !isGameModeSeen(id)
+    let id = ::game_mode_manager.getGameModeItemId(gameMode.id)
+    let hasNewIconWidget = !::game_mode_manager.isSeen(id)
     let newIconWidgetContent = hasNewIconWidget ? newIconWidget.createLayout() : null
 
     let crossPlayRestricted = isMultiplayerPrivilegeAvailable.value && !this.isCrossPlayEventAvailable(event)
@@ -319,7 +312,7 @@ gui_handlers.GameModeSelect <- class (gui_handlers.BaseGuiHandlerWT) {
       tooltip = gameMode.getTooltipText()
       hasCountries = countries.len() != 0
       countries = countries
-      isCurrentGameMode = gameMode.id == getCurrentGameModeId()
+      isCurrentGameMode = gameMode.id == ::game_mode_manager.getCurrentGameModeId()
       isWide = gameMode.displayWide
       isNarrow = isNarrow
       image = gameMode.image
@@ -369,14 +362,14 @@ gui_handlers.GameModeSelect <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function getWidgetId(gameModeId) {
-    return $"{gameModeId}_widget"
+    return gameModeId + "_widget"
   }
 
   function getTrophyMarkUpData(trophyName) {
     if (u.isEmpty(trophyName))
       return null
 
-    let trophyItem = findItemById(trophyName, itemType.TROPHY)
+    let trophyItem = ::ItemsManager.findItemById(trophyName, itemType.TROPHY)
     if (!trophyItem)
       return null
 
@@ -431,7 +424,7 @@ gui_handlers.GameModeSelect <- class (gui_handlers.BaseGuiHandlerWT) {
    */
   function chooseGameModeEsUnitType(gameModes, esUnitType, esUnitTypesFilter) {
     return this.getGameModeByCondition(gameModes,
-      @(gameMode) u.max(getRequiredUnitTypes(gameMode).filter(
+      @(gameMode) u.max(::game_mode_manager.getRequiredUnitTypes(gameMode).filter(
         @(esUType) isInArray(esUType, esUnitTypesFilter))) == esUnitType)
   }
 
@@ -458,7 +451,7 @@ gui_handlers.GameModeSelect <- class (gui_handlers.BaseGuiHandlerWT) {
         !::check_package_and_ask_download("pkg_main"))
       return
 
-    let event = getGameModeEvent(gameMode)
+    let event = ::game_mode_manager.getGameModeEvent(gameMode)
     if (event && !this.isCrossPlayEventAvailable(event)) {
       checkAndShowCrossplayWarning(@() showInfoMsgBox(loc("xbox/actionNotAvailableCrossNetworkPlay")))
       return
@@ -469,25 +462,24 @@ gui_handlers.GameModeSelect <- class (gui_handlers.BaseGuiHandlerWT) {
         return
       this.goBack()
 
-      let startFunction = getGameModeStartFunction(gameMode?.id ?? gameMode?.modeId)
-      if (startFunction != null)
-        startFunction(gameMode)
+      if ("startFunction" in gameMode)
+        gameMode.startFunction()
       else if (gameMode?.displayType?.showInEventsWindow)
-        guiStartModalEvents({ event = event?.name })
+        ::gui_start_modal_events({ event = event?.name })
       else
-        setCurrentGameModeById(gameMode.modeId, true)
+        ::game_mode_manager.setCurrentGameModeById(gameMode.modeId, true)
     })
   }
 
   function markGameModeSeen(obj) {
-    if (!obj?.id || isGameModeSeen(obj.id))
+    if (!obj?.id || ::game_mode_manager.isSeen(obj.id))
       return
 
     let widget = getTblValue(obj.id, this.newIconWidgetsByGameModeID)
     if (!widget)
       return
 
-    markShowingGameModeAsSeen(obj.id)
+    ::game_mode_manager.markShowingGameModeAsSeen(obj.id)
     widget.setWidgetVisible(false)
   }
 
@@ -531,7 +523,7 @@ gui_handlers.GameModeSelect <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onEventDescription(obj) {
-    this.openEventDescription(getGameModeById(obj.modeId))
+    this.openEventDescription(::game_mode_manager.getGameModeById(obj.modeId))
   }
 
   function onGamepadEventDescription(_obj) {
@@ -547,7 +539,7 @@ gui_handlers.GameModeSelect <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function openEventDescription(gameMode) {
-    let event = getGameModeEvent(gameMode)
+    let event = ::game_mode_manager.getGameModeEvent(gameMode)
     if (event != null) {
       this.restoreFromModal = true
       ::events.openEventInfo(event)
@@ -555,17 +547,16 @@ gui_handlers.GameModeSelect <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function updateEventDescriptionConsoleButton(gameMode) {
-    showObjById("event_description_console_button", gameMode != null
+    this.showSceneBtn("event_description_console_button", gameMode != null
       && gameMode?.forClan
       && showConsoleButtons.value
-      && isMultiplayerPrivilegeAvailable.value, this.scene
+      && isMultiplayerPrivilegeAvailable.value
     )
-    showObjById("night_battles_console_button", showConsoleButtons.value
-      && hasNightGameModes(gameMode?.getEvent()), this.scene)
+    this.showSceneBtn("night_battles_console_button", showConsoleButtons.value
+      && hasNightGameModes(gameMode?.getEvent()))
 
-    let prefObj = showObjById("map_preferences_console_button",
-      this.isShowMapPreferences(gameMode?.getEvent()) && showConsoleButtons.value,
-      this.scene)
+    let prefObj = this.showSceneBtn("map_preferences_console_button", this.isShowMapPreferences(gameMode?.getEvent())
+      && showConsoleButtons.value)
 
     if (!checkObj(prefObj))
       return
@@ -607,8 +598,8 @@ gui_handlers.GameModeSelect <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function onMapPreferences(obj) {
     let curEvent = obj?.modeId != null
-      ? getGameModeById(obj.modeId)?.getEvent()
-      : getCurrentGameMode()?.getEvent()
+      ? ::game_mode_manager.getGameModeById(obj.modeId)?.getEvent()
+      : ::game_mode_manager.getCurrentGameMode()?.getEvent()
     checkSquadUnreadyAndDo(
       Callback(@() mapPreferencesModal.open({ curEvent = curEvent }), this),
       null, this.shouldCheckCrewsReady)

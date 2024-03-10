@@ -3,7 +3,7 @@ from "%scripts/dagui_library.nut" import *
 
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 
-function canChange(clanData) {
+let function canChange(clanData) {
   if (!clanData)
     return false
   if (clan_get_admin_editor_mode())
@@ -13,14 +13,14 @@ function canChange(clanData) {
   return myRights.indexof("CHANGE_INFO") != null
 }
 
-function getValue(clanData) {
+let function getValue(clanData) {
   return (clanData?.status ?? "closed") != "closed"
 }
 
 let LOC_CLAN_CLOSED = loc("clan/was_closed")
 let LOC_CLAN_OPENED = loc("clan/was_opened")
 
-function setValue(clanData, value, handler) {
+let function setValue(clanData, value, handler) {
   if (!canChange(clanData) || value == getValue(clanData))
     return
 

@@ -1,21 +1,21 @@
 //-file:plus-string
-from "%scripts/dagui_natives.nut" import get_player_army_for_hud
+from "%scripts/dagui_natives.nut" import get_usefull_total_time, get_player_army_for_hud
 from "%scripts/dagui_library.nut" import *
 from "hudMessages" import *
 from "%scripts/teamsConsts.nut" import Team
 
-let { g_hud_event_manager } = require("%scripts/hud/hudEventManager.nut")
+
 let { format, split_by_chars } = require("string")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let regexp2 = require("regexp2")
 let time = require("%scripts/time.nut")
 let spectatorWatchedHero = require("%scripts/replays/spectatorWatchedHero.nut")
 let { is_replay_playing } = require("replays")
-let { eventbus_send } = require("eventbus")
+let { registerPersistentDataFromRoot, PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+let { send } = require("eventbus")
 let { doesLocTextExist } = require("dagor.localize")
-let { get_mission_time, get_mplayer_by_id, get_local_mplayer } = require("mission")
-let { OPTIONS_MODE_GAMEPLAY, USEROPT_HUD_SHOW_NAMES_IN_KILLLOG,
-  USEROPT_HUD_SHOW_AMMO_TYPE_IN_KILLLOG, USEROPT_HUD_SHOW_SQUADRON_NAMES_IN_KILLLOG
+let { get_mplayer_by_id, get_local_mplayer } = require("mission")
+let { OPTIONS_MODE_GAMEPLAY, USEROPT_HUD_SHOW_NAMES_IN_KILLLOG
 } = require("%scripts/options/optionsExtNames.nut")
 let { userName, userIdInt64 } = require("%scripts/user/profileStates.nut")
 
@@ -30,7 +30,7 @@ enum BATTLE_LOG_FILTER {
   ALL       = 0x001F
 }
 
-function getActionColor(isKill, isLoss) {
+let function getActionColor(isKill, isLoss) {
   if (isKill)
     return isLoss ? "hudColorDeathAlly" : "hudColorDeathEnemy"
   return isLoss ? "hudColorDarkRed" : "hudColorDarkBlue"
@@ -41,11 +41,10 @@ let supportedMsgTypes = {
   [HUD_MSG_STREAK_EX] = true,
 }
 
-let battleLog = persist("battleLog", @() [])
+::HudBattleLog <- {
+  [PERSISTENT_DATA_PARAMS] = ["battleLog"]
 
-let HudBattleLog = {
-
-  battleLog
+  battleLog = []
 
   logMaxLen = 2000
   skipDuplicatesSec = 10
@@ -207,16 +206,16 @@ let HudBattleLog = {
   function init() {
     this.reset(true)
 
-    g_hud_event_manager.subscribe("HudMessage", function(msg) {
+    ::g_hud_event_manager.subscribe("HudMessage", function(msg) {
         this.onHudMessage(msg)
       }, this)
   }
 
   function reset(safe = false) {
-    if (safe && this.battleLog.len() && this.battleLog[this.battleLog.len() - 1].time < get_mission_time())
+    if (safe && this.battleLog.len() && this.battleLog[this.battleLog.len() - 1].time < get_usefull_total_time())
       return
     this.battleLog = []
-    eventbus_send("clearBattleLog", {})
+    send("clearBattleLog", {})
   }
 
   function onHudMessage(msg) {
@@ -228,7 +227,7 @@ let HudBattleLog = {
     if (!("text" in msg))
       msg.text <- ""
 
-    let now = get_mission_time()
+    let now = get_usefull_total_time()
     if (msg.id != -1)
       foreach (logEntry in this.battleLog)
         if (logEntry.msg.id == msg.id)
@@ -297,7 +296,7 @@ let HudBattleLog = {
     if (this.battleLog.len() == this.logMaxLen)
       this.battleLog.remove(0)
     this.battleLog.append(logEntry)
-    eventbus_send("pushBattleLogEntry", logEntry)
+    send("pushBattleLogEntry", logEntry)
     broadcastEvent("BattleLogMessage", logEntry)
   }
 
@@ -345,10 +344,8 @@ let HudBattleLog = {
     }
 
     let showNamesInKilllog = ::get_gui_option_in_mode(USEROPT_HUD_SHOW_NAMES_IN_KILLLOG, OPTIONS_MODE_GAMEPLAY, true)
-    if(showNamesInKilllog) {
-      let showClan = ::get_gui_option_in_mode(USEROPT_HUD_SHOW_SQUADRON_NAMES_IN_KILLLOG, OPTIONS_MODE_GAMEPLAY, true)
-      return ::build_mplayer_name(player, true, showClan, true, unitNameLoc)
-    }
+    if(showNamesInKilllog)
+      return ::build_mplayer_name(player, true, true, true, unitNameLoc)
 
     return this.buildPlayerUnitName(player, unitNameLoc)
   }
@@ -382,9 +379,6 @@ let HudBattleLog = {
 
     let killerProjectileKey = msg?.killerProjectileName ?? ""
     if (killerProjectileKey == "")
-      return colorize(actionColor, icon)
-
-    if(!::get_gui_option_in_mode(USEROPT_HUD_SHOW_AMMO_TYPE_IN_KILLLOG, OPTIONS_MODE_GAMEPLAY, true))
       return colorize(actionColor, icon)
 
     let killerProjectileName = doesLocTextExist(killerProjectileKey)
@@ -438,6 +432,4 @@ let HudBattleLog = {
   }
 }
 
-return {
-  HudBattleLog
-}
+registerPersistentDataFromRoot("HudBattleLog")

@@ -70,7 +70,7 @@ let compass = function(width, height) {
   }
 }
 
-function generatePitchLine(num, width) {
+let function generatePitchLine(num, width) {
   let sign = num > 0 ? 1 : -1
   return {
     size = [pw(100), ph(100)]
@@ -117,7 +117,7 @@ function generatePitchLine(num, width) {
   }
 }
 
-function pitch(width, height) {
+let function pitch(width, height) {
   const step = 10.0
   let children = []
 
@@ -143,7 +143,7 @@ function pitch(width, height) {
   }
 }
 
-function Root(width, height, posX = 0, posY = 0) {
+let function Root(width, height, posX = 0, posY = 0) {
   return {
     pos = [posX, posY]
     size = [width, height]

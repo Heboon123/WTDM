@@ -12,12 +12,10 @@ let getUserLogBattleRewardTooltip = require("%scripts/userLog/getUserLogBattleRe
 let { getClearUnitName } = require("%scripts/userLog/unitNameSymbolRestrictions.nut")
 let { intToHexString } = require("%sqStdLibs/helpers/toString.nut")
 let { eventsTableConfig } = require("%scripts/leaderboard/leaderboardCategoryType.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
-let { measureType } = require("%scripts/measureType.nut")
 
 let tab = "    "
 
-function getBonus(exp, wp) {
+let function getBonus(exp, wp) {
   exp = roundToDigits(exp, 2)
   wp = roundToDigits(wp, 2)
   let texts = []
@@ -28,7 +26,7 @@ function getBonus(exp, wp) {
   return "\n".join(texts)
 }
 
-function resolveFormula(sources) {
+let function resolveFormula(sources) {
   let formula = sources.map(function(v) {
     local res = ""
     let prefix = v?.prefix
@@ -43,7 +41,7 @@ function resolveFormula(sources) {
   return "".join(formula)
 }
 
-function prepareTableForFormating(data) {
+let function prepareTableForFormating(data) {
   let table = []
   foreach(row in data.rows) {
     let tableRow = []
@@ -56,7 +54,7 @@ function prepareTableForFormating(data) {
   return table
 }
 
-function formatCell(text, width) {
+let function formatCell(text, width) {
   let spacesCount = width - utf8(text).charCount()
   if(spacesCount == 0)
     return text
@@ -64,7 +62,7 @@ function formatCell(text, width) {
   return "".concat(text, spaces)
 }
 
-function formatBattleRewardDetails(reward) {
+let function formatBattleRewardDetails(reward) {
   let data = getUserLogBattleRewardTooltip(reward.battleRewardDetails, reward.id, true)
   let rawTable = prepareTableForFormating(data)
   let colWidths = []
@@ -86,7 +84,7 @@ function formatBattleRewardDetails(reward) {
   return "\n".join(table)
 }
 
-function formatText(text, frm) {
+let function formatText(text, frm) {
   let { width, align } = frm
   let spacesCount = width - utf8(text).charCount()
   if(spacesCount == 0)
@@ -95,7 +93,7 @@ function formatText(text, frm) {
   return align == "left" ? "".concat(text, spaces) : "".concat(spaces, text)
 }
 
-function formatRewards(battleRewards) {
+let function formatRewards(battleRewards) {
   if (battleRewards.len() == 0)
     return ""
 
@@ -132,7 +130,7 @@ function formatRewards(battleRewards) {
   return res
 }
 
-function get_userlog_plain_text(logObj) {
+let function get_userlog_plain_text(logObj) {
   let colon = loc("ui/colon")
   let res = {
     name = ""
@@ -170,7 +168,7 @@ function get_userlog_plain_text(logObj) {
     desc = "".concat(desc, "\n", loc("userlog/earned"), colon, earnedText)
 
   if (logObj.type == EULT_SESSION_RESULT && ("activity" in logObj)) {
-    let activity = measureType.PERCENT_FLOAT.getMeasureUnitsText(logObj.activity)
+    let activity = ::g_measure_type.PERCENT_FLOAT.getMeasureUnitsText(logObj.activity)
     desc = "".concat(desc, "\n", loc("debriefing/Activity"), colon, activity)
   }
 
@@ -302,7 +300,7 @@ function get_userlog_plain_text(logObj) {
       foreach (effectType in boosterEffectType) {
         let boostersArray = []
         foreach (_idx, block in activeBoosters) {
-          let item = findItemById(block.itemId)
+          let item = ::ItemsManager.findItemById(block.itemId)
           if (item && effectType.checkBooster(item))
             boostersArray.append(item)
         }

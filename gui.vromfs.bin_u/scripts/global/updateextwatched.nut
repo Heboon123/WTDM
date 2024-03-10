@@ -1,8 +1,9 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
-let { eventbus_send } = require("eventbus")
+let { send } = require("eventbus")
 let { ndbWrite, ndbRead, ndbExists } = require("nestdb")
 
-function update(config) {
+let function update(config) {
   local hasValueChanged = false
   foreach (name, value in config) {
     let key = ["EXT_WATCHED_STATE", name]
@@ -10,7 +11,7 @@ function update(config) {
       || !ndbExists(key) || (ndbRead(key) != value)
     ndbWrite(key, value)
   }
-  eventbus_send("extWatched.update", config)
+  send("extWatched.update", config)
   return hasValueChanged
 }
 

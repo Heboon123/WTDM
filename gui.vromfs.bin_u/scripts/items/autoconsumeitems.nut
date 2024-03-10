@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -28,7 +29,7 @@ autoConsumeItems = function() {
     }
 }
 
-function checkAutoConsume() {
+let function checkAutoConsume() {
   if (!shouldCheckAutoConsume)
     return
   shouldCheckAutoConsume = false

@@ -13,7 +13,7 @@ let { mgBeginMission, mgGetPlayerSide, mgAcceptMission, mgFullLogs, mgSetInt, mg
 } = require("dynamicMission")
 let { get_warpoints_blk } = require("blkGetters")
 
-function generateCoverMission(isFreeFlight, createGroundUnitsProc) {
+let function generateCoverMission(isFreeFlight, createGroundUnitsProc) {
   let mission_preset_name = "cover_bombers_preset01"
   mgBeginMission($"gameData/missions/dynamic_campaign/objectives/{mission_preset_name}.blk")
   let playerSide = mgGetPlayerSide()
@@ -275,7 +275,7 @@ function generateCoverMission(isFreeFlight, createGroundUnitsProc) {
   mgAcceptMission()
 }
 
-function genCoverMission(isFreeFlight) {
+let function genCoverMission(isFreeFlight) {
   generateCoverMission(isFreeFlight,
     function(enemySide) {
       return mgCreateGroundUnits(enemySide, false, false,

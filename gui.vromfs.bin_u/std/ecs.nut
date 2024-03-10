@@ -7,7 +7,6 @@
 // }
 let { logerr } = require("dagor.debug")
 let { kwarg } = require("%sqstd/functools.nut")
-//let { flatten } = require("%sqstd/underscore.nut")
 let { DBGLEVEL } = require("dagor.system")
 let ecs = require("ecs")
 
@@ -19,7 +18,7 @@ let sqEvents = {}
 const VERBOSE_PRINT = false //getroottable()?.__is_stub__
 let verbose_print = VERBOSE_PRINT ? @(val) print(val) : @(_) null
 
-function mkEsFuncNamed(esname, func) {
+let function mkEsFuncNamed(esname, func) {
   assert(["function", "instance", "table"].indexof(type(func)) != null, $"esHandler can be only function or callable, for ES '{esname}', got type: {type(func)}")
   let infos = func?.getfuncinfos?()
   assert(infos!=null, "esHandler can be only function or callable, ES:{0}".subst(esname))
@@ -34,7 +33,7 @@ function mkEsFuncNamed(esname, func) {
     return function(_evt, eid, comp) {func(eid, comp)}
 }
 
-function gatherComponentNames(component_list){
+let function gatherComponentNames(component_list){
   let res = []
   foreach (component in component_list){
     if (type(component) =="string")
@@ -53,7 +52,7 @@ if (INTERNAL_REGISTER_ECS not in ecs) {
 
 let ecs_register_entity_system = ecs[INTERNAL_REGISTER_ECS]
 
-function register_es(name, onEvents={}, compsDesc={}, params = {}) {
+local function register_es(name, onEvents={}, compsDesc={}, params = {}) {
   const DOTS_ERROR = "dots in ES components"
   try{
     foreach (k, _v in compsDesc)
@@ -67,9 +66,6 @@ function register_es(name, onEvents={}, compsDesc={}, params = {}) {
       onChange = [ecs.EventComponentChanged],
       onDestroy = [ecs.EventEntityDestroyed, ecs.EventComponentsDisappear]
     }
-//    let keys = flatten(onEvents.keys()).reduce(function(res, k) {res[k] <- k; return res;}, {})
-//    if (("onInit" in keys || "onChange" in keys) && "onDestroy" not in keys)
-//      println($"ES requires destroy: {name}")
     foreach (k, func in onEvents) {
       if (k in remap) {
         foreach (j in remap[k])
@@ -165,7 +161,7 @@ function register_es(name, onEvents={}, compsDesc={}, params = {}) {
   }
 }
 
-function makeTemplate(params={}){
+let function makeTemplate(params={}){
   let addTemplates = params?.addTemplates ?? []
   let removeTemplates = [].extend(params?.removeTemplates ?? [], addTemplates)
   let baseTemplates = params?.baseTemplate.split("+") ?? []
@@ -239,7 +235,7 @@ let recreateEntityWithTemplates = kwarg(function(eid=ecs.INVALID_ENTITY_ID, remo
     ecs.g_entity_mgr.reCreateEntityFrom(eid, newTemplatesName, comps, callback)
 })
 
-function query_map(query, func, filter_str = null){
+let function query_map(query, func, filter_str = null){
   assert(query instanceof ecs.SqQuery, "need SqQuery instance as first argument")
   assert(filter_str == null  || type(filter_str) == "string", "filter string should be string or null")
   let res = []
@@ -250,7 +246,7 @@ function query_map(query, func, filter_str = null){
   return res
 }
 
-function list2array(list){
+let function list2array(list){
   let res = []
   foreach (v in list){
     res.append(v)
@@ -258,14 +254,14 @@ function list2array(list){
   return res
 }
 
-function set_array2list(array_, list){
+let function set_array2list(array_, list){
   list.clear()
   foreach (v in array_)
     list.append(v)
   return list
 }
 
-function register_event(name, eventType, structure=null){
+let function register_event(name, eventType, structure=null){
 
   assert(ecs.EVCAST_UNICAST == eventType || ecs.EVCAST_BROADCAST == eventType,
             "eventType should be ecs.EVCAST_UNICAST or ecs.EVCAST_BROADCAST")
@@ -274,7 +270,7 @@ function register_event(name, eventType, structure=null){
   assert(!(name in sqEvents), @() $"event: '{name}' already registered!")
   sqEvents[name] <- name
   let eventRegisteredName = ecs.register_sq_event(name, eventType)
-  function mkEvent(payload=null){
+  let function mkEvent(payload=null){
 //  todo - add type checking
     if (structure == null) {
       assert (payload == null)
@@ -296,7 +292,7 @@ let mkRegisterEventByType = @(eventType) function(payload, eventName){
 }
 let _registerUnicastEvent = mkRegisterEventByType(ecs.EVCAST_UNICAST)
 unicastSqEvents.clear()
-function registerUnicastEvent(payload, eventName){
+let function registerUnicastEvent(payload, eventName){
   unicastSqEvents[eventName] <- payload
   return _registerUnicastEvent(payload, eventName)
 }

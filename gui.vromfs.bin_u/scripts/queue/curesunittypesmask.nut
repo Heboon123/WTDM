@@ -1,15 +1,14 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-let { getCurrentGameModeId, getGameModeById, getUnitTypesByGameMode
-} = require("%scripts/gameModes/gameModeManagerState.nut")
 
-function getCurEsUnitTypesList(needRequiredOnly = false) {
-  let gameModeId = getCurrentGameModeId()
-  let gameMode = getGameModeById(gameModeId)
-  return getUnitTypesByGameMode(gameMode, true, needRequiredOnly)
+let function getCurEsUnitTypesList(needRequiredOnly = false) {
+  let gameModeId = ::game_mode_manager.getCurrentGameModeId()
+  let gameMode = ::game_mode_manager.getGameModeById(gameModeId)
+  return ::game_mode_manager._getUnitTypesByGameMode(gameMode, true, needRequiredOnly)
 }
 
-function getCurEsUnitTypesMask() {
+let function getCurEsUnitTypesMask() {
   local esUnitTypes = getCurEsUnitTypesList(true)
   if (!esUnitTypes.len())
     esUnitTypes = getCurEsUnitTypesList(false)

@@ -3,7 +3,7 @@ from "%scripts/dagui_library.nut" import *
 local contactsHandlerClass = null // class for load contacts window
 local contactsHandler = null  // loaded contacts window
 
-function loadContactsToObj(obj, owner) {
+let function loadContactsToObj(obj, owner) {
   if (!checkObj(obj) || contactsHandlerClass == null)
     return
 
@@ -14,7 +14,7 @@ function loadContactsToObj(obj, owner) {
   contactsHandler.initScreen(obj)
 }
 
-function switchContactsObj(scene, owner) {
+let function switchContactsObj(scene, owner) {
   let objName = "contacts_scene"
   local obj = null
   if (checkObj(scene)) {

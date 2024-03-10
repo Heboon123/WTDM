@@ -1,6 +1,7 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-let { eventbus_subscribe } = require("eventbus")
+let eventbus = require("eventbus")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { hangar_load_model, hangar_get_current_unit_name, hangar_get_loaded_unit_name } = require("hangar")
 
@@ -13,7 +14,7 @@ let isLoading = mkWatched(persist, "isLoading", false)
 
 let hangarUnitName = Watched(hangar_get_current_unit_name())
 
-function getLoadState() {
+let function getLoadState() {
   // First check covers case when model was loaded from within C++.
   // Flag "isLoading" covers model loading from Squirrel.
   return hangar_get_loaded_unit_name() == "" || isLoading.value
@@ -21,7 +22,7 @@ function getLoadState() {
     : HangarModelLoadState.LOADED
 }
 
-function loadModel(modelName) {
+let function loadModel(modelName) {
   if (modelName == "" || modelName == hangar_get_current_unit_name())
     return
   isLoading(true)
@@ -29,7 +30,7 @@ function loadModel(modelName) {
   broadcastEvent("HangarModelLoading", { modelName })
 }
 
-function onHangarModelLoaded() {
+let function onHangarModelLoaded() {
   let modelName = hangar_get_current_unit_name()
   if (hangar_get_loaded_unit_name() == modelName) {
     isLoading(false)
@@ -38,7 +39,7 @@ function onHangarModelLoaded() {
   }
 }
 
-eventbus_subscribe("onHangarModelLoaded", @(_) onHangarModelLoaded())
+eventbus.subscribe("onHangarModelLoaded", @(_) onHangarModelLoaded())
 
 return {
   loadModel

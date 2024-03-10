@@ -1,11 +1,11 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import send_error_log, script_net_assert, get_dyncampaign_b64blk, connect_to_host_list
 from "%scripts/dagui_library.nut" import *
-
 let { INVALID_ROOM_ID } = require("matching.errors")
 let crossplayModule = require("%scripts/social/crossplay.nut")
 let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
 let { format } = require("string")
-let { checkMatchingError, matchingApiFunc, matchingRpcSubscribe } = require("%scripts/matching/api.nut")
+let { matchingApiFunc, matchingRpcSubscribe } = require("%scripts/matching/api.nut")
 let { userIdStr, userIdInt64 } = require("%scripts/user/profileStates.nut")
 let { isInMenu } = require("%scripts/baseGuiHandlerManagerWT.nut")
 
@@ -75,7 +75,7 @@ let roomState = persist("roomState", @() {
   isLeaving = false
 })
 
-function cleanupRoomState() {
+let function cleanupRoomState() {
   if (roomState.room == null)
     return
 
@@ -95,27 +95,27 @@ function cleanupRoomState() {
 let hasSession = @() roomState.hostId != null
 let isHostInRoom = @() hasSession()
 
-function isMyUserId(userId) {
+let function isMyUserId(userId) {
   if (type(userId) == "string")
     return userId == userIdStr.value
   return userId == userIdInt64.value
 }
 
-function getRoomMember(userId) {
+let function getRoomMember(userId) {
   foreach (_idx, member in roomState.roomMembers)
     if (member.userId == userId)
       return member
   return null
 }
 
-function getMyRoomMember() {
+let function getMyRoomMember() {
   foreach (_idx, member in roomState.roomMembers)
     if (isMyUserId(member.userId))
       return member
   return null
 }
 
-function connectToHost() {
+let function connectToHost() {
   log("connectToHost")
   if (!hasSession())
     return
@@ -160,26 +160,26 @@ function connectToHost() {
     getTblValue("sessionId", roomPub, roomState.roomId))
 }
 
-function isNotifyForCurrentRoom(notify) {
+let function isNotifyForCurrentRoom(notify) {
   // ignore all room notifcations after leave has been called
   return !roomState.isLeaving
     && roomState.roomId != INVALID_ROOM_ID
     && roomState.roomId == notify.roomId
 }
 
-function onHostConnectReady() {
+let function onHostConnectReady() {
   roomState.isHostReady = true
   if (roomState.isSelfReady)
     connectToHost()
 }
 
-function onSelfReady() {
+let function onSelfReady() {
   roomState.isSelfReady = true
   if (roomState.isHostReady)
     connectToHost()
 }
 
-function mergeAttribs(attrFrom, attrTo) {
+let function mergeAttribs(attrFrom, attrTo) {
   let updateAttribs = function(updData, attribs) {
     foreach (key, value in updData) {
       if (value == null && (key in attribs))
@@ -206,7 +206,7 @@ function mergeAttribs(attrFrom, attrTo) {
   }
 }
 
-function removeRoomMember(userId) {
+let function removeRoomMember(userId) {
   foreach (idx, member in roomState.roomMembers) {
     if (member.userId == userId) {
       roomState.roomMembers.remove(idx)
@@ -227,7 +227,7 @@ function removeRoomMember(userId) {
     cleanupRoomState()
 }
 
-function updateMemberAttributes(member, curMember = null) {
+let function updateMemberAttributes(member, curMember = null) {
   if (curMember == null)
     curMember = getRoomMember(member.userId)
   if (curMember == null) {
@@ -250,7 +250,7 @@ function updateMemberAttributes(member, curMember = null) {
   }
 }
 
-function addRoomMember(member) {
+let function addRoomMember(member) {
   if (getTblValue("operator", member.public))
     roomState.roomOps[member.userId] <- true
 
@@ -266,7 +266,7 @@ function addRoomMember(member) {
 }
 
 // notifications
-function onRoomInvite(notify, sendResp) {
+let function onRoomInvite(notify, sendResp) {
   local inviteData = notify.invite_data
   if (type(inviteData) != "table")
     inviteData = {}
@@ -278,7 +278,7 @@ function onRoomInvite(notify, sendResp) {
     sendResp({ accept = false })
 }
 
-function onRoomMemberJoined(member) {
+let function onRoomMemberJoined(member) {
   if (!isNotifyForCurrentRoom(member))
     return
 
@@ -288,7 +288,7 @@ function onRoomMemberJoined(member) {
   notify_room_member_joined(member)
 }
 
-function onRoomMemberLeft(member) {
+let function onRoomMemberLeft(member) {
   if (!isNotifyForCurrentRoom(member))
     return
 
@@ -297,7 +297,7 @@ function onRoomMemberLeft(member) {
   notify_room_member_leaved(member)
 }
 
-function onRoomMemberKicked(member) {
+let function onRoomMemberKicked(member) {
   if (!isNotifyForCurrentRoom(member))
     return
 
@@ -306,7 +306,7 @@ function onRoomMemberKicked(member) {
   notify_room_member_kicked(member)
 }
 
-function onRoomAttrChanged(notify) {
+let function onRoomAttrChanged(notify) {
   if (!isNotifyForCurrentRoom(notify))
     return
 
@@ -314,7 +314,7 @@ function onRoomAttrChanged(notify) {
   notify_room_attribs_changed(notify)
 }
 
-function onRoomMemberAttrChanged(notify) {
+let function onRoomMemberAttrChanged(notify) {
   if (!isNotifyForCurrentRoom(notify))
     return
 
@@ -322,13 +322,13 @@ function onRoomMemberAttrChanged(notify) {
   notify_room_member_attribs_changed(notify)
 }
 
-function onRoomDestroyed(notify) {
+let function onRoomDestroyed(notify) {
   if (!isNotifyForCurrentRoom(notify))
     return
   cleanupRoomState()
 }
 
-function onHostNotify(notify) {
+let function onHostNotify(notify) {
   debugTableData(notify)
   if (!isNotifyForCurrentRoom(notify))
     return
@@ -349,7 +349,7 @@ function onHostNotify(notify) {
   }
 }
 
-function onRoomJoinCb(resp) {
+let function onRoomJoinCb(resp) {
   cleanupRoomState()
 
   roomState.room = resp
@@ -364,7 +364,7 @@ function onRoomJoinCb(resp) {
   }
 }
 
-function onRoomLeaveCb() {
+let function onRoomLeaveCb() {
   cleanupRoomState()
 }
 
@@ -379,7 +379,7 @@ matchingRpcSubscribe("mrooms.on_room_member_kicked", onRoomMemberKicked)
 
 // mrooms API
 
-function requestCreateRoom(params, cb) {
+let function requestCreateRoom(params, cb) {
   if ((isPlatformXboxOne || isPlatformSony)
       && !crossplayModule.isCrossPlayEnabled()) {
     params["crossplayRestricted"] <- true
@@ -387,21 +387,21 @@ function requestCreateRoom(params, cb) {
 
   matchingApiFunc("mrooms.create_room",
     function(resp) {
-      if (checkMatchingError(resp, false))
+      if (::checkMatchingError(resp, false))
         onRoomJoinCb(resp)
       cb(resp)
     },
     params)
 }
 
-function requestDestroyRoom(params, cb) {
+let function requestDestroyRoom(params, cb) {
   matchingApiFunc("mrooms.destroy_room", cb, params)
 }
 
-function requestJoinRoom(params, cb) {
+let function requestJoinRoom(params, cb) {
   matchingApiFunc("mrooms.join_room",
     function(resp) {
-      if (checkMatchingError(resp, false))
+      if (::checkMatchingError(resp, false))
         onRoomJoinCb(resp)
       else {
         resp.roomId <- params?.roomId
@@ -412,7 +412,7 @@ function requestJoinRoom(params, cb) {
     params)
 }
 
-function requestLeaveRoom(params, cb) {
+let function requestLeaveRoom(params, cb) {
   let oldRoomId = roomState.roomId
   roomState.isLeaving = true
 
@@ -425,39 +425,39 @@ function requestLeaveRoom(params, cb) {
     params)
 }
 
-function setMemberAttributes(params, cb) {
+let function setMemberAttributes(params, cb) {
   matchingApiFunc("mrooms.set_member_attributes", cb, params)
 }
 
-function setRoomAttributes(params, cb) {
+let function setRoomAttributes(params, cb) {
   log($"[PSMT] setting room attributes: {params?.public?.psnMatchId}")
   matchingApiFunc("mrooms.set_attributes", cb, params)
 }
 
-function kickMember(params, cb) {
+let function kickMember(params, cb) {
   matchingApiFunc("mrooms.kick_from_room", cb, params)
 }
 
-function roomStartSession(params, cb) {
+let function roomStartSession(params, cb) {
   matchingApiFunc("mrooms.start_session", cb, params)
 }
 
-function roomSetPassword(params, cb) {
+let function roomSetPassword(params, cb) {
   matchingApiFunc("mrooms.set_password", cb, params)
 }
 
-function roomSetReadyState(params, cb) {
+let function roomSetReadyState(params, cb) {
   matchingApiFunc("mrooms.set_ready_state", cb, params)
 }
 
-function invitePlayerToRoom(params, cb) {
+let function invitePlayerToRoom(params, cb) {
   matchingApiFunc("mrooms.invite_player", cb, params)
 }
 
-function fetchRoomsList(params, cb) {
+let function fetchRoomsList(params, cb) {
   matchingApiFunc("mrooms.fetch_rooms_digest2",
     function (resp) {
-      if (checkMatchingError(resp, false)) {
+      if (::checkMatchingError(resp, false)) {
         foreach (room in getTblValue("digest", resp, [])) {
           let hasPassword = room?.public.hasPassword
           if (hasPassword != null)
@@ -469,7 +469,7 @@ function fetchRoomsList(params, cb) {
     params)
 }
 
-function serializeDyncampaign(cb) {
+let function serializeDyncampaign(cb) {
   let priv = {
     dyncamp = {
       data = get_dyncampaign_b64blk()

@@ -21,10 +21,10 @@ shortKeyValue(t, 32) == "{success- data{count:1 flags[+,+*"
 //#strict
 
 
-function Comma(char = ',') {
+let function Comma(char = ',') {
   let ch = char
   local i  = 0
-  return function(stream) { if (i++ > 0) stream.writen(ch, 'b') }
+  return function(stream) { if (i++ > 0) stream.writen(ch, 'c') }
 }
 
 let dumpValWrite = {
@@ -38,24 +38,24 @@ let dumpValWrite = {
   "instance" : @(v, _, fEach) fEach(v, "< >")
 }
 
-function dumpValue(value) {
+let function dumpValue(value) {
   let stream = blob()
 
-  function fEach(val, decor) {
-    stream.writen(decor[0], 'b')
+  let function fEach(val, decor) {
+    stream.writen(decor[0], 'c')
     let comma = Comma(decor[1])
     foreach (v in val) {
       comma(stream)
       dumpValWrite?[type(v)](v, stream, fEach)
     }
-    stream.writen(decor[2], 'b')
+    stream.writen(decor[2], 'c')
   }
 
   dumpValWrite?[type(value)](value, stream, fEach)
   return stream
 }
 
-function writeKeyValue(key, separator, str, stream) {
+let function writeKeyValue(key, separator, str, stream) {
   if (key != "") {
     stream.writestring(key)
     stream.writestring(separator)
@@ -74,25 +74,25 @@ let dumpKeyValWrite = {
   "instance" : @(k, v, _, wList) wList(k, v, "< >")
 }
 
-function dumpKeyValue(value) {
+let function dumpKeyValue(value) {
   let stream = blob()
 
-  function writeList(key, val, decor, short = false) {
+  let function writeList(key, val, decor, short = false) {
     stream.writestring(key)
-    stream.writen(decor[0], 'b')
+    stream.writen(decor[0], 'c')
     let comma = Comma(decor[1])
     foreach (k, v in val) {
       comma(stream)
       dumpKeyValWrite?[type(v)](short ? "" : k, v, stream, writeList)
     }
-    stream.writen(decor[2], 'b')
+    stream.writen(decor[2], 'c')
   }
 
   dumpKeyValWrite?[type(value)]("", value, stream, writeList)
   return stream
 }
 
-function cut(stream, maxLen) {
+let function cut(stream, maxLen) {
   if (stream.len() > maxLen) {
     stream.resize(maxLen)
     stream.writestring("*")

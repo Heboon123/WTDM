@@ -13,8 +13,6 @@ let { round, round_by_value } = require("%sqstd/math.nut")
 let DataBlock  = require("DataBlock")
 let { wwGetOperationWinner, wwGetSpeedupFactor } = require("worldwar")
 let { g_ww_unit_type } = require("%scripts/worldWar/model/wwUnitType.nut")
-let { getObjectiveStatusByCode } = require("%scripts/misObjectives/objectiveStatus.nut")
-let { getMeasureTypeByName } = require("%scripts/measureType.nut")
 
 ::g_ww_objective_type <- {
   types = []
@@ -113,9 +111,9 @@ let { getMeasureTypeByName } = require("%scripts/measureType.nut")
       holdTimeSec = @(value, _blk)
         time.hoursToString(time.secondsToHours(value), false, true)
       zonePercent_ = @(value, _blk)
-        getMeasureTypeByName("percent", true).getMeasureUnitsText(value)
+        ::g_measure_type.getTypeByName("percent", true).getMeasureUnitsText(value)
       zonesPercent = @(value, _blk)
-        getMeasureTypeByName("percent", true).getMeasureUnitsText(value)
+        ::g_measure_type.getTypeByName("percent", true).getMeasureUnitsText(value)
       unitCount = @(value, blk)
         value + g_ww_unit_type.getUnitTypeByTextCode(blk?.unitType).fontIcon
       advantage = @(value, _blk)
@@ -158,7 +156,7 @@ let { getMeasureTypeByName } = require("%scripts/measureType.nut")
       local statusCode = -1
       if (sideValue)
         statusCode = sideValue == side ? MISSION_OBJECTIVE_STATUS_COMPLETED : MISSION_OBJECTIVE_STATUS_FAILED
-      return getObjectiveStatusByCode(statusCode)
+      return ::g_objective_status.getObjectiveStatusByCode(statusCode)
     }
 
     getUpdatableZonesParams = function(_dataBlk, _statusBlk, _side) {

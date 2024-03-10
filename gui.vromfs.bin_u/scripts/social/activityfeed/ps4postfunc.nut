@@ -23,7 +23,7 @@ let requestsTable = {
 }
 
 // specialization getters below expect valid data, validated by the caller
-function getActivityFeedImageByParam(feed, imagesConfig) {
+let function getActivityFeedImageByParam(feed, imagesConfig) {
   let config = imagesConfig.other?[feed.blkParamName]
 
   if (u.isString(config))
@@ -40,7 +40,7 @@ function getActivityFeedImageByParam(feed, imagesConfig) {
   return ""
 }
 
-function getActivityFeedImageByCountry(feed, imagesConfig) {
+let function getActivityFeedImageByCountry(feed, imagesConfig) {
   let aircraft = getAircraftByName(feed.unitNameId)
   let esUnitType = getEsUnitType(aircraft)
   let unit = ::getUnitTypeText(esUnitType)
@@ -55,7 +55,7 @@ function getActivityFeedImageByCountry(feed, imagesConfig) {
   return ""
 }
 
-function getActivityFeedImages(feed) {
+let function getActivityFeedImages(feed) {
   let guiBlk = GUI.get()
   let imagesConfig = guiBlk?.activity_feed_image_url
   if (u.isEmpty(imagesConfig)) {

@@ -17,7 +17,6 @@ let { abs } = require("math")
 let { find_files } = require("dagor.fs")
 let { lastIndexOf, INVALID_INDEX, utf8ToUpper, endsWith } = require("%sqstd/string.nut")
 let { select_editbox, move_mouse_on_child_by_value } = require("%scripts/baseGuiHandlerManagerWT.nut")
-let { measureType } = require("%scripts/measureType.nut")
 
 gui_handlers.FileDialog <- class (gui_handlers.BaseGuiHandlerWT) {
   static wndType = handlerType.MODAL
@@ -254,8 +253,8 @@ gui_handlers.FileDialog <- class (gui_handlers.BaseGuiHandlerWT) {
         local text = ""
         local tooltip = "#filesystem/fileSizeNotSpecified"
         if (value != null) {
-          text = measureType.FILE_SIZE.getMeasureUnitsText(value, true, false);
-          tooltip = measureType.FILE_SIZE.getMeasureUnitsText(value, true, true);
+          text = ::g_measure_type.FILE_SIZE.getMeasureUnitsText(value, true, false);
+          tooltip = ::g_measure_type.FILE_SIZE.getMeasureUnitsText(value, true, true);
         }
         return {
           text = text
@@ -1106,8 +1105,8 @@ gui_handlers.FileDialog <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!this.isNavigationVisible && this.getObj("nav_list").isFocused())
       this.setFocusToFileTable()
 
-    showObjById("nav_list", this.isNavigationVisible, this.scene)
-    showObjById("nav_seperator", this.isNavigationVisible, this.scene)
+    this.showSceneBtn("nav_list", this.isNavigationVisible)
+    this.showSceneBtn("nav_seperator", this.isNavigationVisible)
 
     let navListObj = this.getObj("nav_list")
     if (!navListObj || (this.isNavListObjFilled && !forceUpdate))
@@ -1123,10 +1122,10 @@ gui_handlers.FileDialog <- class (gui_handlers.BaseGuiHandlerWT) {
     if (navListData.len() == 0) {
       this.isNavigationToggleAllowed = false
       this.isNavigationVisible = false
-      showObjById("nav_list", false, this.scene)
-      showObjById("nav_seperator", false, this.scene)
+      this.showSceneBtn("nav_list", false)
+      this.showSceneBtn("nav_seperator", false)
     }
-    showObjById("btn_navigation", this.isNavigationToggleAllowed, this.scene)
+    this.showSceneBtn("btn_navigation", this.isNavigationToggleAllowed)
 
     let view = { items = [] }
     this.cachedPathByNavItemId.clear()
@@ -1151,7 +1150,7 @@ gui_handlers.FileDialog <- class (gui_handlers.BaseGuiHandlerWT) {
   isFiltersObjFilled = false
   function fillFiltersObj(forceUpdate = false) {
     let shouldUseFilters = this.filters.len() > 1
-    let fileFilterObj = showObjById("file_filter", shouldUseFilters, this.scene)
+    let fileFilterObj = this.showSceneBtn("file_filter", shouldUseFilters)
     if (!fileFilterObj || !shouldUseFilters || (this.isFiltersObjFilled && !forceUpdate))
       return
 

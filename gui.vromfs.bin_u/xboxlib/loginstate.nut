@@ -1,37 +1,37 @@
 let {hardPersistWatched} = require("%sqstd/globalState.nut")
 let logX = require("%sqstd/log.nut")().with_prefix("[XBOX_LOGIN] ")
-let {eventbus_subscribe, eventbus_send} = require("eventbus")
+let {subscribe, send} = require("eventbus")
 
 let isLoggedIn = hardPersistWatched("xbox.isLoggedIn", false)
 let loginEventName = "XBOX_LOGIN_EVENT"
 let logoutEventName = "XBOX_LOGOUT_EVENT"
 
 
-function login() {
+let function login() {
   logX("Start login")
   let updated = !isLoggedIn.value
   isLoggedIn.update(true)
-  eventbus_send(loginEventName, { updated = updated })
+  send(loginEventName, { updated = updated })
 }
 
 
-function logout() {
+let function logout() {
   logX("Start logout")
   let updated = isLoggedIn.value
   isLoggedIn.update(false)
-  eventbus_send(logoutEventName, { updated = updated })
+  send(logoutEventName, { updated = updated })
 }
 
 
-function subscribe_to_login(callback) {
-  eventbus_subscribe(loginEventName, function(res) {
+let function subscribe_to_login(callback) {
+  subscribe(loginEventName, function(res) {
     callback?(res?.updated)
   })
 }
 
 
-function subscribe_to_logout(callback) {
-  eventbus_subscribe(logoutEventName, function(res) {
+let function subscribe_to_logout(callback) {
+  subscribe(logoutEventName, function(res) {
     callback?(res?.updated)
   })
 }

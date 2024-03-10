@@ -7,8 +7,7 @@ require("%scripts/onlineShop/ingameConsoleStore.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { isInMenu, handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let seenList = require("%scripts/seen/seenList.nut").get(SEEN.EXT_XBOX_SHOP)
-let { xboxProceedItems, canUseIngameShop, requestData, getShopItem
-} = require("%scripts/onlineShop/xboxShopData.nut")
+let shopData = require("%scripts/onlineShop/xboxShopData.nut")
 let statsd = require("statsd")
 let { set_xbox_on_purchase_cb } = require("%scripts/xbox/purch.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
@@ -22,7 +21,7 @@ let { getLanguageName } = require("%scripts/langUtils/language.nut")
 let { addTask } = require("%scripts/tasker.nut")
 
 let sheetsArray = []
-xboxProceedItems.subscribe(function(val) {
+shopData.xboxProceedItems.subscribe(function(val) {
   sheetsArray.clear()
 
   if (xboxMediaItemType.GameConsumable in val)
@@ -150,7 +149,7 @@ gui_handlers.XboxShop <- class (gui_handlers.IngameConsoleStore) {
 }
 
 let isChapterSuitable = @(chapter) isInArray(chapter, [null, "", "eagles"])
-let getEntStoreLocId = @() canUseIngameShop() ? "#topmenu/xboxIngameShop" : "#msgbox/btn_onlineShop"
+let getEntStoreLocId = @() shopData.canUseIngameShop() ? "#topmenu/xboxIngameShop" : "#msgbox/btn_onlineShop"
 
 let openIngameStoreImpl = kwarg(
   function(chapter = null, curItemId = "", afterCloseFunc = null, statsdMetric = "unknown",
@@ -158,11 +157,11 @@ let openIngameStoreImpl = kwarg(
     if (!isChapterSuitable(chapter))
       return false
 
-    if (canUseIngameShop() && !forceExternalShop) {
-      requestData(
+    if (shopData.canUseIngameShop() && !forceExternalShop) {
+      shopData.requestData(
         false,
         function() {
-          let curItem = getShopItem(curItemId)
+          let curItem = shopData.getShopItem(curItemId)
           local curSheetId = null
           if (curItem?.categoriesList) {
             let unitTypeName = getAircraftByName(unitName).unitType.typeName
@@ -173,7 +172,7 @@ let openIngameStoreImpl = kwarg(
           }
 
           handlersManager.loadHandler(gui_handlers.XboxShop, {
-            itemsCatalog = xboxProceedItems.value
+            itemsCatalog = shopData.xboxProceedItems.value
             chapter = chapter
             curItem
             curSheetId
@@ -194,7 +193,7 @@ let openIngameStoreImpl = kwarg(
       set_xbox_on_purchase_cb(afterCloseFunc)
       get_gui_scene().performDelayed(getroottable(),
         function() {
-          local curItem = getShopItem(curItemId)
+          local curItem = shopData.getShopItem(curItemId)
           if (curItem)
             curItem.showDetails(statsdMetric)
           else {
@@ -209,7 +208,7 @@ let openIngameStoreImpl = kwarg(
   }
 )
 
-function openIngameStore(params = {}) {
+let function openIngameStore(params = {}) {
   if (isChapterSuitable(params?.chapter)
     && getLanguageName() == "Russian"
     && isPlayerRecommendedEmailRegistration()) {
@@ -235,11 +234,12 @@ function openIngameStore(params = {}) {
   return openIngameStoreImpl(params)
 }
 
-return {
-  openIngameStore
-  getEntStoreLocId
-  getEntStoreIcon = @() canUseIngameShop() ? "#ui/gameuiskin#xbox_store_icon.svg" : "#ui/gameuiskin#store_icon.svg"
-  isEntStoreTopMenuItemHidden = @(...) !canUseIngameShop() || !isInMenu()
+return shopData.__merge({
+  openIngameStore = openIngameStore
+  getEntStoreLocId = getEntStoreLocId
+  getEntStoreIcon = @() shopData.canUseIngameShop() ? "#ui/gameuiskin#xbox_store_icon.svg" : "#ui/gameuiskin#store_icon.svg"
+  isEntStoreTopMenuItemHidden = @(...) !shopData.canUseIngameShop() || !isInMenu()
   getEntStoreUnseenIcon = @() SEEN.EXT_XBOX_SHOP
+  needEntStoreDiscountIcon = true
   openEntStoreTopMenuFunc = @(_obj, _handler) openIngameStore({ statsdMetric = "topmenu" })
-}
+})

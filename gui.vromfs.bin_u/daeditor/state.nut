@@ -68,11 +68,11 @@ editorTimeStop.subscribe(function(v) {
 })
 
 let editorUnpauseData = {timerRunning = false}
-function editorUnpauseEnd() {
+let function editorUnpauseEnd() {
   editorUnpauseData.timerRunning = false
   editorTimeStop(true)
 }
-function editorUnpause(time) {
+let function editorUnpause(time) {
   if (time <= 0) {
     editorTimeStop(false)
     gui_scene.clearTimer(editorUnpauseEnd)
@@ -90,7 +90,7 @@ let showPointAction = mkWatched(persist, "showPointAction", false)
 let typePointAction = mkWatched(persist, "typePointAction", "")
 let namePointAction = mkWatched(persist, "namePointAction", "")
 local funcPointAction = null
-function setPointActionMode(actionType, actionName, cb) {
+let function setPointActionMode(actionType, actionName, cb) {
   showEntitySelect(false)
   setEditMode(DE4_MODE_POINT_ACTION)
   setPointActionPreview("", 0.0) // default
@@ -98,13 +98,13 @@ function setPointActionMode(actionType, actionName, cb) {
   namePointAction(actionName)
   funcPointAction = cb
 }
-function updatePointActionPreview(shape, param) {
+let function updatePointActionPreview(shape, param) {
   setPointActionPreview(shape, param)
 }
-function callPointActionCallback(action) {
+let function callPointActionCallback(action) {
   funcPointAction?(action)
 }
-function resetPointActionMode() {
+let function resetPointActionMode() {
   local funcFinish = funcPointAction
   if (getEditMode() == DE4_MODE_POINT_ACTION)
     setEditMode(DE4_MODE_SELECT)
@@ -117,30 +117,30 @@ function resetPointActionMode() {
 }
 
 let funcsEntityCreated = []
-function addEntityCreatedCallback(cb) {
+let function addEntityCreatedCallback(cb) {
   funcsEntityCreated.append(cb)
 }
-function handleEntityCreated(eid) {
+let function handleEntityCreated(eid) {
   foreach (func in funcsEntityCreated) {
     func?(eid)
   }
 }
 
 let funcsEntityRemoved = []
-function addEntityRemovedCallback(cb) {
+let function addEntityRemovedCallback(cb) {
   funcsEntityRemoved.append(cb)
 }
-function handleEntityRemoved(eid) {
+let function handleEntityRemoved(eid) {
   foreach (func in funcsEntityRemoved) {
     func?(eid)
   }
 }
 
 let funcsEntityMoved = []
-function addEntityMovedCallback(cb) {
+let function addEntityMovedCallback(cb) {
   funcsEntityMoved.append(cb)
 }
-function handleEntityMoved(eid) {
+let function handleEntityMoved(eid) {
   foreach (func in funcsEntityMoved) {
     func?(eid)
   }

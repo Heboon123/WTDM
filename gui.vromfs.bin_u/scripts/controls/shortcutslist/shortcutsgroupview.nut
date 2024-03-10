@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 let { get_option_multiplier, set_option_multiplier,
   OPTION_CAMERA_SMOOTH, OPTION_CAMERA_MOUSE_SPEED

@@ -5,8 +5,12 @@ let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let topMenuHandlerClass = require("%scripts/mainmenu/topMenuHandler.nut")
 
-function guiStartCredits() {
+::gui_start_credits <- function gui_start_credits() {
   handlersManager.loadHandler(gui_handlers.CreditsMenu)
+}
+
+::gui_start_credits_ingame <- function gui_start_credits_ingame() {
+  handlersManager.loadHandler(gui_handlers.CreditsMenu, { backSceneParams = null })
 }
 
 gui_handlers.CreditsMenu <- class (gui_handlers.BaseGuiHandlerWT) {
@@ -22,8 +26,4 @@ gui_handlers.CreditsMenu <- class (gui_handlers.BaseGuiHandlerWT) {
   function onScreenClick() {
     ::on_credits_finish(true)
   }
-}
-
-return {
-  guiStartCredits
 }

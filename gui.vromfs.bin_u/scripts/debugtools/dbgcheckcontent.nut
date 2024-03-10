@@ -1,6 +1,5 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-from "app" import is_dev_version
 let u = require("%sqStdLibs/helpers/u.nut")
 
 
@@ -26,8 +25,8 @@ let { isInFlight } = require("gameplayBinding")
 
 local skyquakePath = debug_get_skyquake_path()
 
-function debug_check_unlocalized_resources() {
-  if (!is_dev_version())
+let function debug_check_unlocalized_resources() {
+  if (!::is_dev_version)
     return
 
   dlog($"debug_check_unlocalized_resources() // {getLocalLanguage()} // listed in log")
@@ -98,8 +97,8 @@ function debug_check_unlocalized_resources() {
   dlog(count + " decals")
 }
 
-function debug_check_unit_naming() {
-  if (!is_dev_version())
+let function debug_check_unit_naming() {
+  if (!::is_dev_version)
     return 0
 
   local ids = {}
@@ -347,7 +346,7 @@ local function unitImagesSearchEverywhere(fn, files, unit, cfg) {
   return res
 }
 
-function debug_check_unit_images(verbose = false) {
+let function debug_check_unit_images(verbose = false) {
   local unitsList = getAllUnits().values().filter(@(unit) unit.isInShop)
   local errors    = 0
   local warnings  = 0
@@ -444,7 +443,7 @@ function debug_check_unit_images(verbose = false) {
   return errors
 }
 
-function debug_cur_level_auto_skins() {
+let function debug_cur_level_auto_skins() {
   local level = isInFlight() ? get_current_mission_info_cached()?.level : null
   local fullDebugtext = "Auto skins for " + (level || "TestFlight")
   if (level)
@@ -462,7 +461,7 @@ function debug_cur_level_auto_skins() {
   dlog($"Total units found = {total}")
 }
 
-function debug_all_skins_without_location_mask() {
+let function debug_all_skins_without_location_mask() {
   local totalList = []
   foreach (unit in getAllUnits())
     if (unit.unitType.isSkinAutoSelectAvailable())

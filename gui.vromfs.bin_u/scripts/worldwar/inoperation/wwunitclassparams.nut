@@ -34,7 +34,7 @@ let wwUnitClassParams = {
 
 let getSortIdx = @(expClass) sortIdxByExpClass?[expClass] ?? sortIdxByExpClass.len()
 let getText = @(unitClass) wwUnitClassParams?[unitClass].name ?? "unknown"
-function getIconText(unitClass, needColorize = false) {
+let function getIconText(unitClass, needColorize = false) {
   let params = wwUnitClassParams?[unitClass]
   if (params == null)
     return ""
@@ -80,14 +80,14 @@ let classDataByExpClass = {
   }
 }
 
-function getDefaultUnitClassData(unit) {
+let function getDefaultUnitClassData(unit) {
   if (!unit.isAir())
     return unknownClassData
 
   return classDataByExpClass?[unit.expClass] ?? unknownClassData
 }
 
-function getUnitClassData(unit, weapPreset = null) {
+let function getUnitClassData(unit, weapPreset = null) {
   let res = {}.__update(getDefaultUnitClassData(unit))
 
   if (unit.expClass == "fighter" && weapPreset != null) {
@@ -102,12 +102,12 @@ function getUnitClassData(unit, weapPreset = null) {
   return res
 }
 
-function getFighterToAssaultWeapon(unit) {
+let function getFighterToAssaultWeapon(unit) {
   let customClassWeaponMask = ::g_world_war.getWWConfigurableValue("fighterToAssaultWeaponMask", 0)
   return unit?.getWeapons().findvalue(@(w) (w?.weaponmask ?? 0) & customClassWeaponMask)
 }
 
-function getAvailableClasses(unit) {
+let function getAvailableClasses(unit) {
   let res = [getDefaultUnitClassData(unit)]
 
   if (unit.expClass == "fighter" && getFighterToAssaultWeapon(unit.unit) != null)
@@ -116,7 +116,7 @@ function getAvailableClasses(unit) {
   return res
 }
 
-function getWeaponNameByExpClass(unit, expClass) {
+let function getWeaponNameByExpClass(unit, expClass) {
   return expClass == "assault" ? getFighterToAssaultWeapon(unit)?.name ?? "" : ""
 }
 

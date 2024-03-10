@@ -1,17 +1,18 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import get_replay_status, get_replay_version, start_replay
 from "%scripts/dagui_library.nut" import *
 let { web_rpc } = require("%scripts/webRPC.nut")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 
 
-function replay_status(_params) {
+let function replay_status(_params) {
   return {
     status = get_replay_status(),
     version = get_replay_version()
   }
 }
 
-function replay_start(params) {
+let function replay_start(params) {
   let status = get_replay_status()
   if (status != "ok")
     return replay_status(null)

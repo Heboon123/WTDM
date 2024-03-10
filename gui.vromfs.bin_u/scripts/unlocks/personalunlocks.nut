@@ -1,7 +1,6 @@
 from "%scripts/dagui_library.nut" import *
 from "%scripts/mainConsts.nut" import SEEN
 
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { getAllUnlocksWithBlkOrder } = require("%scripts/unlocks/unlocksCache.nut")
 let { isUnlockExpired, canOpenUnlockManually, isUnlockOpened, isUnlockVisible
@@ -13,7 +12,7 @@ let manualUnlocks = persist("manualUnlocksCache", @() [])
 let nightBattlesUnlocks = persist("nightBattlesUnlocks", @() [])
 let isCacheValid = persist("isPersonalUnlocksCacheValid", @() { value = false })
 
-function cache() {
+let function cache() {
   if (isCacheValid.value || !::g_login.isLoggedIn())
     return
 
@@ -33,22 +32,22 @@ function cache() {
   isCacheValid.value = true
 }
 
-function getMarkerUnlocks() {
+let function getMarkerUnlocks() {
   cache()
   return markerUnlocks
 }
 
-function getManualUnlocks() {
+let function getManualUnlocks() {
   cache()
   return manualUnlocks
 }
 
-function getNightBattlesUnlocks() {
+let function getNightBattlesUnlocks() {
   cache()
   return nightBattlesUnlocks
 }
 
-function invalidateCache() {
+let function invalidateCache() {
   if (!isCacheValid.value)
     return
 
@@ -64,7 +63,7 @@ manualUnlocksSeenList.setListGetter(@() getManualUnlocks().map(@(u) u.id))
 
 addListenersWithoutEnv({
   UnlocksCacheInvalidate = @(_p) invalidateCache()
-}, g_listener_priority.CONFIG_VALIDATION)
+}, ::g_listener_priority.CONFIG_VALIDATION)
 
 return {
   getMarkerUnlocks

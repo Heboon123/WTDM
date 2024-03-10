@@ -10,11 +10,12 @@ let { get_game_version_str } = require("app")
 let time = require("%scripts/time.nut")
 let promoConditions = require("%scripts/promo/promoConditions.nut")
 let { isPollVoted } = require("%scripts/web/webpoll.nut")
+let { registerPersistentDataFromRoot, PERSISTENT_DATA_PARAMS
+} = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { startsWith } = require("%sqstd/string.nut")
 let { get_charserver_time_sec } = require("chard")
 let { getPlayerName } = require("%scripts/user/remapNick.nut")
-let { loadLocalByAccount, saveLocalByAccount
-} = require("%scripts/clientState/localProfileDeprecated.nut")
+let { loadLocalByAccount, saveLocalByAccount } = require("%scripts/clientState/localProfile.nut")
 let { get_gui_regional_blk } = require("blkGetters")
 let { userName, userIdStr } = require("%scripts/user/profileStates.nut")
 let { isAvailableForCurLang, getLocTextFromConfig } = require("%scripts/langUtils/language.nut")
@@ -25,21 +26,21 @@ enum POPUP_VIEW_TYPES {
   EVERY_DAY = "every_day"
   ONCE = "once"
 }
-let passedPopups = persist("passedPopups", @() {})
 
-let g_popup_msg = {
+::g_popup_msg <- {
+  [PERSISTENT_DATA_PARAMS] = ["passedPopups"]
 
-  passedPopups
+  passedPopups = {}
   days = 0
 }
 
-function getTimeIntByString(stringDate, defaultValue = 0) {
+let function getTimeIntByString(stringDate, defaultValue = 0) {
   let t = stringDate ? time.getTimestampFromStringUtc(stringDate) : -1
   return t >= 0 ? t : defaultValue
 }
 
 
-g_popup_msg.ps4ActivityFeedFromPopup <- function ps4ActivityFeedFromPopup(blk) {
+::g_popup_msg.ps4ActivityFeedFromPopup <- function ps4ActivityFeedFromPopup(blk) {
   if (blk?.ps4ActivityFeedType != "update")
     return null
 
@@ -69,11 +70,11 @@ g_popup_msg.ps4ActivityFeedFromPopup <- function ps4ActivityFeedFromPopup(blk) {
   return feed
 }
 
-g_popup_msg.verifyPopupBlk <- function verifyPopupBlk(blk, hasModalObject, needDisplayCheck = true) {
+::g_popup_msg.verifyPopupBlk <- function verifyPopupBlk(blk, hasModalObject, needDisplayCheck = true) {
   let popupId = blk.getBlockName()
 
   if (needDisplayCheck) {
-    if (popupId in passedPopups)
+    if (popupId in this.passedPopups)
       return null
 
     if (hasModalObject && !blk.getBool("showOverModalObject", false))
@@ -106,7 +107,7 @@ g_popup_msg.verifyPopupBlk <- function verifyPopupBlk(blk, hasModalObject, needD
                     || (viewType == POPUP_VIEW_TYPES.ONCE && !viewDay)
                     || (viewType == POPUP_VIEW_TYPES.EVERY_DAY && viewDay < this.days)
     if (!canShow || !promoConditions.isVisibleByConditions(blk)) {
-      passedPopups[popupId] <- true
+      this.passedPopups[popupId] <- true
       return null
     }
 
@@ -115,7 +116,7 @@ g_popup_msg.verifyPopupBlk <- function verifyPopupBlk(blk, hasModalObject, needD
       return null
 
     if (getTimeIntByString(blk?.endTime, 2114380800) < secs) {
-      passedPopups[popupId] <- true
+      this.passedPopups[popupId] <- true
       return null
     }
   }
@@ -152,7 +153,7 @@ g_popup_msg.verifyPopupBlk <- function verifyPopupBlk(blk, hasModalObject, needD
   return popupTable
 }
 
-g_popup_msg.showPopupWndIfNeed <- function showPopupWndIfNeed(hasModalObject) {
+::g_popup_msg.showPopupWndIfNeed <- function showPopupWndIfNeed(hasModalObject) {
   this.days = time.getUtcDays()
   if (!get_gui_regional_blk())
     return false
@@ -167,7 +168,7 @@ g_popup_msg.showPopupWndIfNeed <- function showPopupWndIfNeed(hasModalObject) {
     let popupId = popupBlk.getBlockName()
     let popupConfig = this.verifyPopupBlk(popupBlk, hasModalObject)
     if (popupConfig) {
-      passedPopups[popupId] <- true
+      this.passedPopups[popupId] <- true
       popupConfig["type"] <- "regionalPromoPopup"
       ::showUnlockWnd(popupConfig)
       saveLocalByAccount("".concat("popup/", (popupBlk?.saveId ?? popupId)), this.days)
@@ -177,7 +178,7 @@ g_popup_msg.showPopupWndIfNeed <- function showPopupWndIfNeed(hasModalObject) {
   return result
 }
 
-g_popup_msg.showPopupDebug <- function showPopupDebug(dbgId) {
+::g_popup_msg.showPopupDebug <- function showPopupDebug(dbgId) {
   let debugLog = dlog // warning disable: -forbidden-function
   let popupsBlk = get_gui_regional_blk()?.popupItems
   if (!u.isDataBlock(popupsBlk)) {
@@ -199,5 +200,4 @@ g_popup_msg.showPopupDebug <- function showPopupDebug(dbgId) {
   return false
 }
 
-::g_popup_msg <- g_popup_msg
-return { g_popup_msg }
+registerPersistentDataFromRoot("g_popup_msg")

@@ -1,20 +1,25 @@
 from "%sqDagui/daguiNativeApi.nut" import *
 
 let { check_obj } = require("%sqDagui/daguiUtil.nut")
+let { PERSISTENT_DATA_PARAMS, registerPersistentData
+} = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
+
 
 const TIME_INTERVAL_SWITCH_OFF = 1000000.0
 
-let DaguiSceneTimers = class {
+local DaguiSceneTimers = class {
+  [PERSISTENT_DATA_PARAMS] = ["timersList", "curTime"]
 
   timersList = null
   updaterObj = null
   updateInterval = 1.0
-  curTime = null
+  curTime = 0.0
 
   constructor(updateInterval_, persistentDataUid = null) {
-    this.timersList = persistentDataUid != null ? persist($"DaguiSceneTimers_{persistentDataUid}_timerList", @() []) : []
-    this.curTime = persistentDataUid != null ? persist($"DaguiSceneTimers_{persistentDataUid}_curTime", @() {v = 0.0}) : {v = 0.0}
+    this.timersList = []
     this.updateInterval = updateInterval_
+    if (persistentDataUid)
+      registerPersistentData($"DaguiSceneTimers_{persistentDataUid}", this, [PERSISTENT_DATA_PARAMS])
   }
 
   /*************************************************************************************************/
@@ -23,7 +28,7 @@ let DaguiSceneTimers = class {
 
   function addTimer(time, action) {
     let timer = {
-      time = time + this.curTime.v
+      time = time + this.curTime
       action = action
     }
     this.timersList.append(timer)
@@ -38,7 +43,7 @@ let DaguiSceneTimers = class {
   }
 
   function setTimerTime(timer, time) {
-    timer.time = time + this.curTime.v
+    timer.time = time + this.curTime
     this.sortTimers()
   }
 
@@ -71,7 +76,7 @@ let DaguiSceneTimers = class {
 
   function resetTimers() {
     this.timersList.clear()
-    this.curTime.v = 0.0
+    this.curTime = 0.0
   }
 
   /*************************************************************************************************/
@@ -79,9 +84,9 @@ let DaguiSceneTimers = class {
   /*************************************************************************************************/
 
   function onUpdate(_obj, dt) {
-    this.curTime.v += dt
+    this.curTime += dt
     foreach (timer in this.timersList) {
-      if (timer.time > this.curTime.v)
+      if (timer.time > this.curTime)
         break
 
       timer.action()

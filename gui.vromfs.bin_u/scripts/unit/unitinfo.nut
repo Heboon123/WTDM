@@ -114,7 +114,7 @@ let isRequireUnlockForUnit = @(unit) unit?.reqUnlock != null && !isUnlockOpened(
 
 let unitSensorsCache = {}
 
-function isUnitWithSensorType(unit, sensorType) {
+let function isUnitWithSensorType(unit, sensorType) {
   if (!unit)
     return false
   let unitName = unit.name

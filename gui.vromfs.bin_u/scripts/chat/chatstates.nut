@@ -1,20 +1,24 @@
-from "%scripts/dagui_natives.nut" import ps4_show_chat_restriction, gchat_is_voice_enabled, gchat_is_enabled, ps4_is_chat_enabled
+//checked for plus_string
+from "%scripts/dagui_natives.nut" import ps4_show_chat_restriction, gchat_is_voice_enabled, gchat_is_enabled, can_use_text_chat_with_target, ps4_is_chat_enabled
 from "%scripts/dagui_library.nut" import *
 
 let platformModule = require("%scripts/clientState/platform.nut")
 let crossplayModule = require("%scripts/social/crossplay.nut")
+let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
 let { hasChat } = require("%scripts/user/matchingFeature.nut")
 let { isGuestLogin } = require("%scripts/user/profileStates.nut")
-let { check_communications_privilege, check_crossnetwork_communications_permission } = require("%scripts/xbox/permissions.nut")
 
-
-function getXboxChatEnableStatus() {
+local xboxChatEnabledCache = null
+let function getXboxChatEnableStatus(needOverlayMessage = false) {
   if (!is_platform_xbox || !::g_login.isLoggedIn())
     return XBOX_COMMUNICATIONS_ALLOWED
-  return check_crossnetwork_communications_permission()
+
+  if (xboxChatEnabledCache == null || (needOverlayMessage && xboxChatEnabledCache == XBOX_COMMUNICATIONS_BLOCKED))
+    xboxChatEnabledCache = can_use_text_chat_with_target("", needOverlayMessage) //myself, block by parent advisory
+  return xboxChatEnabledCache
 }
 
-function isChatEnabled(needOverlayMessage = false) {
+let function isChatEnabled(needOverlayMessage = false) {
   if (!gchat_is_enabled())
     return false
 
@@ -23,10 +27,10 @@ function isChatEnabled(needOverlayMessage = false) {
       ps4_show_chat_restriction()
     return false
   }
-  return getXboxChatEnableStatus() != XBOX_COMMUNICATIONS_BLOCKED
+  return getXboxChatEnableStatus(needOverlayMessage) != XBOX_COMMUNICATIONS_BLOCKED
 }
 
-function isCrossNetworkMessageAllowed(playerName) {
+let function isCrossNetworkMessageAllowed(playerName) {
   if (platformModule.isPlayerFromXboxOne(playerName)
       || platformModule.isPlayerFromPS4(playerName))
     return true
@@ -39,12 +43,12 @@ function isCrossNetworkMessageAllowed(playerName) {
   return crossnetStatus == XBOX_COMMUNICATIONS_ALLOWED
 }
 
-function isChatEnableWithPlayer(playerName) { //when you have contact, you can use direct contact.canInteract
+let function isChatEnableWithPlayer(playerName) { //when you have contact, you can use direct contact.canInteract
   let contact = ::Contact.getByName(playerName)
   if (contact)
     return contact.canChat()
 
-  if (getXboxChatEnableStatus() == XBOX_COMMUNICATIONS_ONLY_FRIENDS)
+  if (getXboxChatEnableStatus(false) == XBOX_COMMUNICATIONS_ONLY_FRIENDS)
     return ::isPlayerInFriendsGroup(null, false, playerName)
 
   if (!isCrossNetworkMessageAllowed(playerName))
@@ -53,15 +57,31 @@ function isChatEnableWithPlayer(playerName) { //when you have contact, you can u
   return isChatEnabled()
 }
 
-function attemptShowOverlayMessage() { //tries to display Xbox overlay message
-  check_communications_privilege(true, null)
+let function attemptShowOverlayMessage(playerName, needCheckInvite = false) { //tries to display Xbox overlay message
+  let contact = ::Contact.getByName(playerName)
+  if (contact) {
+    if (needCheckInvite)
+      contact.canInvite(true)
+    else
+      contact.canChat(true)
+  }
+  else
+    getXboxChatEnableStatus(true)
 }
 
-function canUseVoice() {
+let function invalidateCache() {
+  xboxChatEnabledCache = null
+}
+
+let function canUseVoice() {
   return hasFeature("Voice") && gchat_is_voice_enabled()
 }
 
 let hasMenuChat = Computed(@() hasChat.value && !isGuestLogin.value)
+
+subscriptions.addListenersWithoutEnv({
+  SignOut = @(_p) invalidateCache()
+})
 
 return {
   getXboxChatEnableStatus = getXboxChatEnableStatus

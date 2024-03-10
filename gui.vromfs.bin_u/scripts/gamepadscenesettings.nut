@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let config = get_cur_gui_scene()?.getSceneConfig()

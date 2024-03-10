@@ -72,7 +72,7 @@ let additionalConsolesContacts = //TO DO: save wt groups to watched and use comp
     }
   : {}
 
-function verifyContact(params) {
+let function verifyContact(params) {
   let name = params?.playerName
   local newContact = ::getContact(params?.uid, name, params?.clanTag)
   if (!newContact && name)
@@ -81,7 +81,7 @@ function verifyContact(params) {
   return newContact
 }
 
-function addContactGroup(group) {
+let function addContactGroup(group) {
   if (contactsGroups.contains(group))
     return
 
@@ -91,7 +91,7 @@ function addContactGroup(group) {
     broadcastEvent(contactEvent.CONTACTS_GROUP_ADDED)
 }
 
-function addContact(v_contact, groupName, params = {}) {
+let function addContact(v_contact, groupName, params = {}) {
   let contact = v_contact || verifyContact(params)
   if (!contact)
     return null
@@ -106,7 +106,7 @@ function addContact(v_contact, groupName, params = {}) {
   return contact
 }
 
-function updateRecentGroup(recentGroupV) {
+let function updateRecentGroup(recentGroupV) {
   if (recentGroupV == null)
     return
   contactsByGroups[EPL_RECENT_SQUAD] <- {}
@@ -119,7 +119,7 @@ function updateRecentGroup(recentGroupV) {
 
 recentGroup.subscribe(updateRecentGroup)
 
-function loadRecentGroupOnce() {
+let function loadRecentGroupOnce() {
   if (recentGroup.value != null)
     return
   local group = loadLocalAccountSettings($"contacts/{EPL_RECENT_SQUAD}")
@@ -150,7 +150,7 @@ function loadRecentGroupOnce() {
   })
 }
 
-function addRecentContacts(contacts) {
+let function addRecentContacts(contacts) {
   if (!::g_login.isLoggedIn())
     return
 
@@ -174,7 +174,7 @@ function addRecentContacts(contacts) {
   recentGroup(uidsToSave)
 }
 
-function clear_contacts() {
+let function clear_contacts() {
   contactsGroups.clear()
   foreach (_num, group in contactsGroupsDefault)
     contactsGroups.append(group)
@@ -188,7 +188,7 @@ function clear_contacts() {
 
 let buildFullListName = @(name) $"#{GAME_GROUP_NAME}#{name}"
 
-function updateConsolesGroups() {
+let function updateConsolesGroups() {
   foreach (wtGroup, group in additionalConsolesContacts) {
     addContactGroup(wtGroup) //always show console group on consoles
     foreach (uid, _ in group.value)
@@ -196,7 +196,7 @@ function updateConsolesGroups() {
   }
 }
 
-function updateContactsGroups(groups) {
+let function updateContactsGroups(groups) {
   isDisableContactsBroadcastEvents = true
 
   clear_contacts()
@@ -236,7 +236,7 @@ function updateContactsGroups(groups) {
 
 blockedMeUids.subscribe(@(_) broadcastEvent("ContactsBlockStatusUpdated"))
 
-function updateContactsListFromContactsServer(res) {
+let function updateContactsListFromContactsServer(res) {
   let blockedMe = res?[GAME_GROUP_NAME].meInBlacklist ?? []
   let newBlockedMeUids = {}
   let uidsChanged = {}

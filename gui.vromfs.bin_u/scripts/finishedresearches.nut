@@ -1,23 +1,22 @@
 from "%scripts/dagui_natives.nut" import shop_set_researchable_unit_module, shop_get_units_list_with_autoset_modules, get_auto_buy_modifications, shop_get_countries_list_with_autoset_units
 from "%scripts/dagui_library.nut" import *
 
-let { eventbus_subscribe } = require("eventbus")
 let { isHandlerInScene } = require("%sqDagui/framework/baseGuiHandlerManager.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let prepareUnitsForPurchaseMods = require("%scripts/weaponry/prepareUnitsForPurchaseMods.nut")
+let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 let { isInMenu, loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { buildUnitSlot, fillUnitSlotTimers } = require("%scripts/slotbar/slotbarView.nut")
-let guiStartSelectingCrew = require("%scripts/slotbar/guiStartSelectingCrew.nut")
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 
-let researched_items_table = persist("researched_items_table", @() [])
-let abandoned_researched_items_for_session = persist("abandoned_researched_items_for_session", @() [])
+local researched_items_table = null
+::abandoned_researched_items_for_session <- []
 ::researchedModForCheck <- "prevMod"
 ::researchedUnitForCheck <- "prevUnit"
 
-eventbus_subscribe("on_sign_out", @(...) abandoned_researched_items_for_session.clear())
+registerPersistentData("finishedResearchesGlobals", getroottable(),
+  ["researched_items_table", "abandoned_researched_items_for_session"])
 
 let isResearchForModification = @(research)
   "name" in research && ::researchedModForCheck in research
@@ -25,9 +24,9 @@ let isResearchForModification = @(research)
 let getUnitNameFromResearchItem = @(research)
   research?[isResearchForModification(research) ? "name" : "unit"] ?? ""
 
-function guiStartChooseNextResearch(researchBlock = null) {
+::gui_start_choose_next_research <- function gui_start_choose_next_research(researchBlock = null) {
   if (!isResearchForModification(researchBlock)) {
-    loadHandler(gui_handlers.ShopCheckResearch, { researchBlock = researchBlock })
+    ::gui_start_shop_research({ researchBlock = researchBlock })
     loadHandler(gui_handlers.researchUnitNotification, { researchBlock = researchBlock })
   }
   else {
@@ -36,7 +35,7 @@ function guiStartChooseNextResearch(researchBlock = null) {
   }
 }
 
-function isResearchEqual(research1, research2) {
+let function isResearchEqual(research1, research2) {
   foreach (key in ["name", ::researchedModForCheck, ::researchedUnitForCheck]) {
     let haveValue = key in research1
     if (haveValue != (key in research2))
@@ -47,14 +46,14 @@ function isResearchEqual(research1, research2) {
   return true
 }
 
-function isResearchAbandoned(research) {
-  foreach (_idx, abandoned in abandoned_researched_items_for_session)
+let function isResearchAbandoned(research) {
+  foreach (_idx, abandoned in ::abandoned_researched_items_for_session)
     if (isResearchEqual(research, abandoned))
       return true
   return false
 }
 
-function isResearchLast(research, checkUnit = false) {
+let function isResearchLast(research, checkUnit = false) {
   if (isResearchForModification(research))
     return getTblValue("mod", research, "") == ""
   else if (checkUnit)
@@ -62,12 +61,12 @@ function isResearchLast(research, checkUnit = false) {
   return false
 }
 
-function removeResearchBlock(researchBlock) {
+let function removeResearchBlock(researchBlock) {
   if (!researchBlock)
     return
 
   if (!isResearchAbandoned(researchBlock))
-    abandoned_researched_items_for_session.append(researchBlock)
+    ::abandoned_researched_items_for_session.append(researchBlock)
 
   foreach (idx, newResearch in researched_items_table)
     if (isResearchEqual(researchBlock, newResearch)) {
@@ -75,18 +74,17 @@ function removeResearchBlock(researchBlock) {
       break
     }
 }
-::abandoned_researched_items_for_session <- abandoned_researched_items_for_session //used only for debug dump
 
 ::checkNonApprovedResearches <- function checkNonApprovedResearches(needUpdateResearchTable = false, needResearchAction = true) {
   if (!isInMenu() || ::checkIsInQueue())
     return false
 
   if (needUpdateResearchTable) {
-    researched_items_table.replace(shop_get_countries_list_with_autoset_units())
+    researched_items_table = shop_get_countries_list_with_autoset_units()
     researched_items_table.extend(shop_get_units_list_with_autoset_modules())
   }
 
-  if (!researched_items_table?.len())
+  if (!researched_items_table || !researched_items_table.len())
     return false
 
   for (local i = researched_items_table.len() - 1; i >= 0; --i) {
@@ -132,7 +130,7 @@ function removeResearchBlock(researchBlock) {
     if (isHandlerInScene(gui_handlers.ShopCheckResearch))
       return true
 
-    guiStartChooseNextResearch(resBlock)
+    ::gui_start_choose_next_research(resBlock)
     removeResearchBlock(resBlock)
   }
 
@@ -170,7 +168,7 @@ gui_handlers.researchUnitNotification <- class (gui_handlers.BaseGuiHandlerWT) {
 
     let unit_blk = buildUnitSlot(this.unit.name, this.unit)
     this.guiScene.replaceContentFromText(placeObj, unit_blk, unit_blk.len(), this)
-    placeObj.tooltipId = getTooltipType("UNIT").getTooltipId(this.unit.name)
+    placeObj.tooltipId = ::g_tooltip.getIdUnit(this.unit.name)
     fillUnitSlotTimers(placeObj.findObject(this.unit.name), this.unit)
   }
 
@@ -200,9 +198,9 @@ gui_handlers.researchUnitNotification <- class (gui_handlers.BaseGuiHandlerWT) {
     let isBought = ::isUnitBought(this.unit)
     let isUsable = ::isUnitUsable(this.unit)
 
-    showObjById("btn_buy", !isBought, this.scene)
-    showObjById("btn_exit", isBought, this.scene)
-    showObjById("btn_trainCrew", isUsable, this.scene)
+    this.showSceneBtn("btn_buy", !isBought)
+    this.showSceneBtn("btn_exit", isBought)
+    this.showSceneBtn("btn_trainCrew", isUsable)
   }
 
   function purchaseUnit() {
@@ -213,7 +211,7 @@ gui_handlers.researchUnitNotification <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!::isUnitUsable(this.unit))
       return
 
-    guiStartSelectingCrew({
+    ::gui_start_selecting_crew({
       unit = this.unit
       unitObj = this.scene.findObject(this.unit.name)
       cellClass = "slotbarClone"

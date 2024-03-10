@@ -242,7 +242,7 @@ function tostring_any(input, tostringfunc=null, compact=true) {
   return input.tostring()
 }
 let FOO = {}
-function tableLen(t){
+let function tableLen(t){
   return FOO.len.call(t)
 }
 
@@ -317,7 +317,7 @@ function tostring_r(inp, params=defTostringParams) {
     newline = " "
     indentOnNewline = ""
   }
-  function sub_tostring_r(input, indent, curdeeplevel, arrayElem = false, sep = newline, arrInd=null) {
+  let function sub_tostring_r(input, indent, curdeeplevel, arrayElem = false, sep = newline, arrInd=null) {
     if (arrInd==null)
       arrInd=indent
     local out = []
@@ -684,12 +684,12 @@ if (utf8 != null) {
   }
 }
 else {
-  function noUtf8Module(...) { assert("No 'utf8' module") }
+  local function noUtf8Module(...) { assert("No 'utf8' module") }
   utf8ToUpper = noUtf8Module
   utf8ToLower = noUtf8Module
 }
 
-function intToUtf8Char(c) {
+let function intToUtf8Char(c) {
   if (c <= 0x7F)
     return c.tochar()
   if (c <= 0x7FF)
@@ -803,7 +803,7 @@ function escape(str) {
 
 function pprint(...){
   //most of this code should be part of tostring_r probably - at least part of braking long lines
-  function findlast(str, substr, startidx=0){
+  local function findlast(str, substr, startidx=0){
     local ret = null
     for(local i=startidx; i<str.len(); i++) {
       local k = str.indexof(substr, i)

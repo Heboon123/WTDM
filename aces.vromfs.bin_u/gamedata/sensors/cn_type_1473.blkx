@@ -440,7 +440,6 @@
             "name": "PD HDN search"
           }
         },
-        "resetSearchModeEmpty": {},
         "resetSearchMode": {
           "clearTargets": {},
           "setFsmActive": {
@@ -493,7 +492,6 @@
           }
         },
         "resetRadarTwsMode": {
-          "clearTargets": {},
           "clearTargetsOfInterest": {},
           "setFsmActive": [
             {
@@ -823,11 +821,6 @@
           "stateFrom": "init",
           "event": "init",
           "actions": {
-            "setCustomActionTemplate": {
-              "fsm": "main",
-              "name": "resetSearchMode",
-              "actionTemplateName": "resetSearchModeEmpty"
-            },
             "setEnabled": {
               "value": false
             }
@@ -1199,10 +1192,16 @@
           "stateFrom": "search",
           "event": "fsmActivate",
           "actions": {
-            "doCustomActionTemplate": {
-              "fsm": "main",
-              "name": "setSearchMode"
-            }
+            "doCustomActionTemplate": [
+              {
+                "fsm": "main",
+                "name": "resetSearchMode"
+              },
+              {
+                "fsm": "main",
+                "name": "setSearchMode"
+              }
+            ]
           }
         },
         "updateAcmLockMode": {
@@ -1451,10 +1450,6 @@
               "actionTemplateName": "resetRadarTrackMode"
             }
           ],
-          "doCustomActionTemplate": {
-            "fsm": "main",
-            "name": "resetSearchMode"
-          },
           "setFsmActive": [
             {
               "fsm": "main",
@@ -1495,10 +1490,6 @@
               "actionTemplateName": "resetRadarTrackMode"
             }
           ],
-          "doCustomActionTemplate": {
-            "fsm": "main",
-            "name": "resetSearchMode"
-          },
           "setFsmActive": [
             {
               "fsm": "main",
@@ -1539,10 +1530,6 @@
               "actionTemplateName": "resetRadarTrackMode"
             }
           ],
-          "doCustomActionTemplate": {
-            "fsm": "main",
-            "name": "resetSearchMode"
-          },
           "setFsmActive": [
             {
               "fsm": "main",
@@ -1583,10 +1570,6 @@
               "actionTemplateName": "resetRadarTrackMode"
             }
           ],
-          "doCustomActionTemplate": {
-            "fsm": "main",
-            "name": "resetSearchMode"
-          },
           "setFsmActive": [
             {
               "fsm": "main",
@@ -1621,10 +1604,6 @@
               "fsm": "radarSearchModes",
               "name": "restoreRadarSearchMode",
               "actionTemplateName": "setMprfTws"
-            },
-            "doCustomActionTemplate": {
-              "fsm": "main",
-              "name": "resetSearchMode"
             },
             "setMprfTws": {}
           }
@@ -1790,8 +1769,7 @@
         "setCueDist": {
           "command": "cueAxisY",
           "actions": {
-            "setCueDist": {},
-            "setCueDopplerSpeed": {}
+            "setCueDist": {}
           }
         },
         "setCueElevation": {
@@ -1827,9 +1805,6 @@
               },
               {
                 "source": "designationCue"
-              },
-              {
-                "source": "activeTargetOfInterest"
               }
             ],
             "setCenterElevation": [
@@ -1839,9 +1814,6 @@
               },
               {
                 "source": "designationCue"
-              },
-              {
-                "source": "activeTargetOfInterest"
               }
             ]
           }
@@ -1888,8 +1860,7 @@
         "setCueDist": {
           "command": "cueAxisY",
           "actions": {
-            "setCueDist": {},
-            "setCueDopplerSpeed": {}
+            "setCueDist": {}
           }
         },
         "setCueElevation": {
@@ -1932,7 +1903,6 @@
           "event": "targetInSight",
           "actions": {
             "detectTarget": {
-              "ignoreOwnWeapon": true,
               "rangeMult": 1.0
             }
           }
@@ -1976,7 +1946,6 @@
           "event": "update",
           "actions": {
             "detectTarget": {
-              "ignoreOwnWeapon": true,
               "rangeMult": 1.0
             }
           }
@@ -2010,8 +1979,7 @@
           "actions": {
             "extrapolateTargetsOfInterest": {},
             "clearTargetsOfInterest": {
-              "timeOut": 3.0,
-              "dirRateLim": 1.0
+              "timeOut": 3.0
             },
             "setCenterAzimuth": {
               "source": "activeTargetOfInterest"

@@ -237,9 +237,6 @@
             "source": "const",
             "value": true
           },
-          "setDesignatedTarget": {
-            "set": true
-          },
           "setEnabled": {
             "value": true
           },
@@ -305,9 +302,6 @@
           },
           "setWeaponDetectionAllowance": {
             "source": "targetDesignation"
-          },
-          "setDesignatedTarget": {
-            "set": false
           }
         },
         "setRadarLosLockMode": {
@@ -342,9 +336,6 @@
           "setWeaponDetectionAllowance": {
             "source": "const",
             "value": true
-          },
-          "setDesignatedTarget": {
-            "set": true
           }
         },
         "setRadarVisualLockMode": {
@@ -368,9 +359,6 @@
           "setWeaponDetectionAllowance": {
             "source": "const",
             "value": true
-          },
-          "setDesignatedTarget": {
-            "set": false
           },
           "clearTargetsOfInterest": {},
           "addTargetOfInterest": {},
@@ -715,10 +703,7 @@
         "detect": {
           "event": "targetInSight",
           "actions": {
-            "detectTarget": {
-              "ignoreOwnWeapon": true,
-              "rangeMult": 1.0
-            }
+            "detectTarget": {}
           }
         }
       }
@@ -729,24 +714,14 @@
         "detect": {
           "event": "update",
           "actions": {
-            "detectTarget": {
-              "ignoreOwnWeapon": true,
-              "rangeMult": 1.0
-            }
+            "detectTarget": {}
           }
         },
         "track": {
           "event": "targetDetected",
           "actions": {
             "updateActiveTargetOfInterest": {
-              "dirFilter": {
-                "rateLim": [
-                  0.78,
-                  0.78
-                ],
-                "limTimeOut": 1.0,
-                "inertialTimeMax": 1.0
-              },
+              "dirFilter": {},
               "distFilter": {},
               "dopplerSpeedFilter": {}
             },
@@ -771,8 +746,7 @@
           "actions": {
             "extrapolateTargetsOfInterest": {},
             "clearTargetsOfInterest": {
-              "timeOut": 2.0,
-              "dirRateLim": 0.78
+              "timeOut": 2.0
             },
             "setCenterAzimuth": {
               "source": "activeTargetOfInterest"

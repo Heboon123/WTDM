@@ -8,7 +8,7 @@ let { capZones } = require("%rGui/hud/capZones/capZonesState.nut")
 
 let getScoresForOneKillW = @() Computed(@() deathPenaltyMul.get() * ctaDeathTicketPenalty.get())
 
-function getCountKillsToWinW() {
+let function getCountKillsToWinW() {
   let scoresOneKillW = getScoresForOneKillW()
   return Computed(@() scoresOneKillW.get() == 0 ? 0 : ceil(scoreLimit.get() / scoresOneKillW.get()).tointeger())
 }
@@ -32,7 +32,7 @@ let getCapZoneColorW = @(zoneStateW, allyColorW, enemyColorW)
       : enemyColorW.get()
   })
 
-function getKillsCount(oppositeTeamTicketsW) {
+let function getKillsCount(oppositeTeamTicketsW) {
   let scoresOneKillW = getScoresForOneKillW()
   return Computed(function() {
     if (scoresOneKillW.get() <= 0)

@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import get_axis_name
 from "%scripts/dagui_library.nut" import *
 let u = require("%sqStdLibs/helpers/u.nut")
@@ -30,7 +31,7 @@ let u = require("%sqStdLibs/helpers/u.nut")
 }
 
 
-function setShortcutsAndSaveControls(shortcutList, nameList) {
+let function setShortcutsAndSaveControls(shortcutList, nameList) {
   let preset = ::g_controls_manager.getCurPreset()
   foreach (i, name in nameList) {
     let hotkey = []
@@ -109,7 +110,7 @@ let joystick_params_template = {
 u.extend(joystick_params_template, ::ControlsPreset.getDefaultParams())
 
 
-function JoystickParams() {
+let function JoystickParams() {
   return u.copy(joystick_params_template)
 }
 
@@ -119,7 +120,7 @@ function JoystickParams() {
   return result
 }
 
-function joystickSetCurSettings(other) {
+let function joystickSetCurSettings(other) {
   let params = ::g_controls_manager.getCurPreset().params
   foreach (name, value in other)
     if (!u.isFunction(value) && params?[name] != value)

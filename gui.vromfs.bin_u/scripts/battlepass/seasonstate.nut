@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { activeUnlocks, getStageByIndex } = require("%scripts/unlocks/userstatUnlocksState.nut")
@@ -8,8 +9,6 @@ let inventoryClient = require("%scripts/inventory/inventoryClient.nut")
 let { floor } = require("math")
 
 let expStatId = "battlepass_exp"
-
-const LOGIN_UNLOCK_ID = "battlepass_login_streak_1"
 
 let season = Computed(@() userstatStats.value?.stats.seasons["$index"] ?? 0)
 
@@ -26,7 +25,7 @@ season.subscribe(function(seasonIndex) {
 
 let totalProgressExp = Computed(@() basicUnlock.value?.current ?? 0)
 
-function getLevelByExp(exp) {
+let function getLevelByExp(exp) {
   let stages = basicUnlock.value?.stages ?? []
   if (stages.len() == 0)
     return 0
@@ -77,7 +76,8 @@ let seasonLevel = Computed(@() levelExp.value.level)
 let maxSeasonLvl = Computed(@() max(basicUnlock.value?.meta.mainPrizeStage ?? 1,
   premiumUnlock.value?.meta.mainPrizeStage ?? 1))
 
-let loginUnlock = Computed(@() activeUnlocks.value?[LOGIN_UNLOCK_ID])
+let loginUnlockId = Computed(@() $"battlepass_login_streak_1")
+let loginUnlock = Computed(@() activeUnlocks.value?[loginUnlockId.value])
 let loginStreak = Computed(@() loginUnlock.value?.stage ?? 0)
 
 let getExpRewardStage = @(stageState) stageState?.updStats
@@ -88,7 +88,7 @@ let todayLoginExp = Computed(@() getExpRewardStage(
 let tomorowLoginExp = Computed(@() getExpRewardStage(
   getStageByIndex(loginUnlock.value, (loginUnlock.value?.stage ?? 0))))
 
-function getExpRangeTextOfLoginStreak() {
+let function getExpRangeTextOfLoginStreak() {
   let stages = loginUnlock.value?.stages
   if (stages == null)
     return ""
@@ -150,6 +150,7 @@ return {
   todayLoginExp
   loginStreak
   tomorowLoginExp
+  loginUnlockId
   season
   seasonMainPrizesData
   hasBattlePass

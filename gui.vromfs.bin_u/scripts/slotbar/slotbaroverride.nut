@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import is_country_available
 from "%scripts/dagui_library.nut" import *
 let { isDataBlock, isEmpty, isEqual } = require("%sqStdLibs/helpers/u.nut")
@@ -18,7 +19,7 @@ overrideSlotbar.subscribe(@(_) broadcastEvent("OverrideSlotbarChanged"))
 
 let makeCrewsCountryData = @(country) { country = country, crews = [] }
 
-function addCrewToCountryData(countryData, crewId, countryId, crewUnitName) {
+let function addCrewToCountryData(countryData, crewId, countryId, crewUnitName) {
   countryData.crews.append({
     id = crewId
     idCountry = countryId
@@ -36,7 +37,7 @@ function addCrewToCountryData(countryData, crewId, countryId, crewUnitName) {
   })
 }
 
-function getMissionEditSlotbarBlk(missionName) {
+let function getMissionEditSlotbarBlk(missionName) {
   let misBlk = getUrlOrFileMissionMetaInfo(missionName)
   let editSlotbar = misBlk?.editSlotbar
   //override slotbar does not support keepOwnUnits atm.
@@ -45,7 +46,7 @@ function getMissionEditSlotbarBlk(missionName) {
   return editSlotbar
 }
 
-function calcSlotbarOverrideByMissionName(missionName, event = null) {
+let function calcSlotbarOverrideByMissionName(missionName, event = null) {
   local res = null
   let gmEditSlotbar = event?.mission_decl.editSlotbar
   let editSlotbar = gmEditSlotbar ? ::build_blk_from_container(gmEditSlotbar) //!!!FIX ME Will be better to turn editSlotbar data block from missions config into table
@@ -73,7 +74,7 @@ function calcSlotbarOverrideByMissionName(missionName, event = null) {
   return res
 }
 
-function getSlotbarOverrideCountriesByMissionName(missionName) {
+let function getSlotbarOverrideCountriesByMissionName(missionName) {
   let res = []
   let editSlotbar = getMissionEditSlotbarBlk(missionName)
   if (!editSlotbar)
@@ -88,7 +89,7 @@ function getSlotbarOverrideCountriesByMissionName(missionName) {
   return res
 }
 
-function getSlotbarOverrideData(missionName = "", event = null) {
+let function getSlotbarOverrideData(missionName = "", event = null) {
   if (missionName == "" || missionName == overrrideSlotbarMissionName.value)
     return overrideSlotbar.value
 
@@ -97,7 +98,7 @@ function getSlotbarOverrideData(missionName = "", event = null) {
 
 let isSlotbarOverrided = @(missionName = "", event = null) getSlotbarOverrideData(missionName, event) != null
 
-function updateOverrideSlotbar(missionName, event = null) {
+let function updateOverrideSlotbar(missionName, event = null) {
   if (missionName == overrrideSlotbarMissionName.value)
     return
   overrrideSlotbarMissionName(missionName)
@@ -114,7 +115,7 @@ function updateOverrideSlotbar(missionName, event = null) {
     switchProfileCountry(missionCountry)
 }
 
-function resetSlotbarOverrided() {
+let function resetSlotbarOverrided() {
   overrrideSlotbarMissionName("")
   overrideSlotbar(null)
   if (userSlotbarCountry.value != "")
@@ -122,7 +123,7 @@ function resetSlotbarOverrided() {
   userSlotbarCountry("")
 }
 
-function getEventSlotbarHint(event, country) {
+let function getEventSlotbarHint(event, country) {
   if (!needShowOverrideSlotbar(event))
     return ""
 
@@ -141,7 +142,7 @@ function getEventSlotbarHint(event, country) {
   return hasNotUnlockedUnit ? loc("event/unlockAircrafts") : ""
 }
 
-function selectCountryForCurrentOverrideSlotbar(country) {
+let function selectCountryForCurrentOverrideSlotbar(country) {
   if (overrrideSlotbarMissionName.get() == "")
     return
   selectedCountryByMissionName.mutate(@(v) v[overrrideSlotbarMissionName.get()] <- country)

@@ -1,7 +1,7 @@
 from "iostream" import blob
 let {file} = require("io")
 
-function readFileAsBlob(fileName, mode = "") {
+let function readFileAsBlob(fileName, mode = "") {
   let f = file(fileName, $"r{mode}")
   let len = f.len()
   let contents = f.readblob(len)
@@ -11,7 +11,7 @@ function readFileAsBlob(fileName, mode = "") {
 
 let readFileAsString = @(fileName, mode = "") readFileAsBlob(fileName, mode).as_string()
 
-function writeBlobToFile(fileName, contents, mode = "") {
+let function writeBlobToFile(fileName, contents, mode = "") {
   let f = file(fileName, $"w{mode}")
   f.writeblob(contents)
   let len = f.len()
@@ -19,7 +19,7 @@ function writeBlobToFile(fileName, contents, mode = "") {
   return len
 }
 
-function writeStringToFile(fileName, contentsStr, mode = "") {
+let function writeStringToFile(fileName, contentsStr, mode = "") {
   let contents = blob()
   contents.writestring(contentsStr)
   return writeBlobToFile(fileName, contents, mode)

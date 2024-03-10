@@ -5,9 +5,14 @@ from "%scripts/dagui_library.nut" import *
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { Cost } = require("%scripts/money.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
+
 let { dynamicGetVisual } = require("dynamicMission")
 let DataBlock = require("DataBlock")
-let { gui_start_mainmenu } = require("%scripts/mainmenu/guiStartMainmenu.nut")
+
+::gui_start_dynamic_results <- function gui_start_dynamic_results() {
+  handlersManager.loadHandler(gui_handlers.CampaignResults)
+}
+
 let { getDynamicResult } = require("%scripts/debriefing/debriefingFull.nut")
 
 gui_handlers.CampaignResults <- class (gui_handlers.BaseGuiHandlerWT) {
@@ -54,14 +59,10 @@ gui_handlers.CampaignResults <- class (gui_handlers.BaseGuiHandlerWT) {
   }
   function afterSave() {
     log("gui_handlers.CampaignResults afterSave")
-    this.goForward(gui_start_mainmenu)
+    this.goForward(::gui_start_mainmenu)
   }
   function onBack() {
     log("gui_handlers.CampaignResults goBack")
     this.goBack()
   }
-}
-
-return {
-  guiStartDynamicResults = @() handlersManager.loadHandler(gui_handlers.CampaignResults)
 }

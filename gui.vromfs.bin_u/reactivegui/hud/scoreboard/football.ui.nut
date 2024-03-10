@@ -17,7 +17,7 @@ let scoreParamsByTeam = {
   }
 }
 
-function getScoreObj(teamName) {
+let function getScoreObj(teamName) {
   let scoreParams = scoreParamsByTeam[teamName]
   return @() {
     watch = teamColors

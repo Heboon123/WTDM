@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import ps4_is_production_env, periodic_task_register_ex
 from "%scripts/dagui_library.nut" import *
 
@@ -5,13 +6,13 @@ let { hasPremium, requestPremiumStatusUpdate, reportPremiumFeatureUsage } = requ
 let { isPlatformPS5 } = require("%scripts/clientState/platform.nut")
 let { suggest_psplus } = require("sony.store")
 let { isCrossPlayEnabled } = require("%scripts/social/crossplay.nut")
-let { eventbus_subscribe } = require("eventbus")
+let { subscribe } = require("eventbus")
 let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 
-eventbus_subscribe("psPlusSuggested", @(_r) requestPremiumStatusUpdate(@(_r) null))
+subscribe("psPlusSuggested", @(_r) requestPremiumStatusUpdate(@(_r) null))
 
-function suggestAndAllowPsnPremiumFeatures() {
+let function suggestAndAllowPsnPremiumFeatures() {
   if (isPlatformPS5 && !ps4_is_production_env() && !hasPremium()) {
     suggest_psplus("psPlusSuggested", {})
     return false
@@ -19,7 +20,7 @@ function suggestAndAllowPsnPremiumFeatures() {
   return true
 }
 
-function startPremiumFeatureReporting() {
+let function startPremiumFeatureReporting() {
   if (hasPremium())
     periodic_task_register_ex(
       {},
@@ -33,10 +34,10 @@ function startPremiumFeatureReporting() {
       true)
 }
 
-function enablePremiumFeatureReporting() {
+let function enablePremiumFeatureReporting() {
   log("[PLUS] enable multiplayer reporting")
   add_event_listener("LobbyStatusChange", function(_p) {
-      if (::SessionLobby.getMyState() == PLAYER_IN_FLIGHT) {
+      if (::SessionLobby.myState == PLAYER_IN_FLIGHT) {
         log("[PLUS] start reporting")
         startPremiumFeatureReporting()
       }

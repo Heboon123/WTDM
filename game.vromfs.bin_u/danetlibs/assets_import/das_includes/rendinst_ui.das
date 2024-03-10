@@ -2,7 +2,6 @@ module rendinst_ui shared
 
 require ecs
 require ecs.extra_set
-require EcsUtils
 require math
 require math.base
 require imgui/imgui_boost
@@ -14,7 +13,6 @@ require danetlibs.assets_import.main.import_rendinst_common
 require danetlibs.assets_import.das_includes.utility
 require danetlibs.assets_import.das_includes.dag_ui
 require AssetsImport
-require DagorEditor
 require DagorDataBlock
 require stddlg
 
@@ -25,25 +23,7 @@ def create_rendinst(name : string; transform : float3x4; template_name : string)
 
 def spawn_rendinst()
   view_dag_assets("rendInst") <| $(assetName)
-    init_entity_object_editor()
-    let callback <- @ <| (eid : EntityId)
-      scene_insert_empty_entity_record(get_active_scene(), eid, "rendinst")
-      entity_object_editor_addEntityWithUndo(eid)
-      entity_obj_editor_saveComponent(eid, "transform")
-      entity_obj_editor_saveComponent(eid, "ri_extra__name")
-    createEntity("rendinst", callback) <| $(init)
-      set(init, "transform", find_transform())
-      set(init, "ri_extra__name", assetName)
-
-def create_gameobj(transform : float3x4; template_name : string)
-  if getTemplateByName(template_name) == null
-    return INVALID_ENTITY_ID
-
-  let finalTemplateName = add_sub_template_name(template_name, "game_object");
-  let eid = createEntity(finalTemplateName) <| $(init)
-    set(init, "transform", transform)
-
-  return eid
+    create_rendinst(assetName, find_transform(), "rendinst")
 
 
 def create_new_rendinst_asset()
@@ -100,7 +80,7 @@ def create_new_rendinst_asset()
       activeRI__lodFiles |> clear()
 
 
-def composit_tree(asset__manager : DagorAssetMgr; var entities : EidList; node : DataBlock; transform : float3x4)
+def composit_tree(asset__manager : DagorAssetMgr; var entities : array<EntityId>; node : DataBlock; transform : float3x4)
 
   let nodeName = datablock_getStr(node, "name", "")
   let localTransform = datablock_getTm(node, "tm", IDENT_TM)
@@ -119,11 +99,7 @@ def composit_tree(asset__manager : DagorAssetMgr; var entities : EidList; node :
       if nodeType == "rendInst"
         entities |> push(create_rendinst(assetName, nodeTransform, "composit_child_rendinst"))
       elif nodeType == "composit"
-        entities |> push(create_composit_entity(assetName, nodeTransform, true))
-      elif nodeType == "gameObj"
-        let eid = create_gameobj(nodeTransform, assetName)
-        if eid != INVALID_ENTITY_ID
-          entities |> push(eid)
+        entities |> push(create_composit_entity(assetName, nodeTransform))
 
 
   datablock_for_each_block(node, "node") <| $(blk)
@@ -131,22 +107,21 @@ def composit_tree(asset__manager : DagorAssetMgr; var entities : EidList; node :
 
 
 
-def create_composit_entity(name : string; transform : float3x4; nested : bool = false)
-  let initList = $ <| (var init : ComponentsInitializer)
-    set(init, "transform", transform)
-    set(init, "composit__name", name)
+def create_composit_entity(name : string; transform : float3x4)
 
-  if nested
-    return createEntity("composit_rendinst", initList)
-  else
-    init_entity_object_editor()
-    // sync creation is required to correctly save components for f12 ecs object editor
-    let eid = createEntitySync("composit_rendinst", initList)
-    scene_insert_empty_entity_record(get_active_scene(), eid, "composit_rendinst")
-    entity_object_editor_addEntityWithUndo(eid)
-    entity_obj_editor_saveComponent(eid, "transform")
-    entity_obj_editor_saveComponent(eid, "composit__name")
-    return eid
+  var eid : EntityId
+  query() <| $ [es] (asset__manager : DagorAssetMgr)
+    let asset = asset__manager |> findAsset(name)
+    var entities : array<EntityId>
+
+    composit_tree(asset__manager, entities, asset.props, transform)
+
+    eid = createEntity("composit_rendinst") <| $(init)
+      set(init, "transform", transform)
+      set(init, "composit__name", name)
+      set(init, "composit__prevTransform", transform)
+      set(init, "composit__entities", entities)
+  return eid
 
 
 def spawn_composit()

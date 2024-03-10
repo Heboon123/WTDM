@@ -1,8 +1,9 @@
+//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-let { enumsAddTypes, enumsGetCachedType } = require("%sqStdLibs/helpers/enums.nut")
 
-let g_player_state = {
+let enums = require("%sqStdLibs/helpers/enums.nut")
+::g_player_state <- {
   types = []
   cache = {
     byState = {}
@@ -18,14 +19,14 @@ let g_player_state = {
 
     isSpectator = @(playerInfo) getTblValue("spectator", playerInfo, false)
     getText = function(playerInfo = {}) {
-      let stateLoc = this.stateText.len() ? loc($"multiplayer/state/{this.stateText}") : ""
+      let stateLoc = this.stateText.len() ? loc("multiplayer/state/" + this.stateText) : ""
       let roleLoc = this.isSpectator(playerInfo) ? loc("multiplayer/state/player_referee") : ""
       return loc("ui/semicolon").join([ roleLoc, stateLoc ], true)
     }
   }
 }
 
-enumsAddTypes(g_player_state, {
+enums.addTypesByGlobalName("g_player_state", {
   UNKNOWN = {
     getIcon = @(_playerInfo) ""
     getText = @(_playerInfo) ""
@@ -78,17 +79,13 @@ enumsAddTypes(g_player_state, {
   }
 }, null, "name")
 
-g_player_state.getStateByPlayerInfo <- function getStateByPlayerInfo(playerInfo) {
+::g_player_state.getStateByPlayerInfo <- function getStateByPlayerInfo(playerInfo) {
   if (getTblValue("isBot", playerInfo, false))
-    return g_player_state.BOT
+    return ::g_player_state.BOT
 
-  return enumsGetCachedType("state",
+  return enums.getCachedType("state",
                                       getTblValue("state", playerInfo, ""),
-                                      g_player_state.cache.byState,
-                                      g_player_state,
-                                      g_player_state.UNKNOWN)
-}
-
-return {
-  g_player_state
+                                      ::g_player_state.cache.byState,
+                                      ::g_player_state,
+                                      ::g_player_state.UNKNOWN)
 }

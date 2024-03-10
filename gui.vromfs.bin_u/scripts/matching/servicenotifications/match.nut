@@ -1,6 +1,6 @@
+//-file:plus-string
 from "%scripts/dagui_natives.nut" import is_online_available, get_forced_network_mission
 from "%scripts/dagui_library.nut" import *
-
 let { rnd } = require("dagor.random")
 let crossplayModule = require("%scripts/social/crossplay.nut")
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -13,7 +13,7 @@ let changedGameModes = persist("changedGameModes", @() [])
 
 let clearChangedGameModesParams = @() changedGameModes.clear()
 
-function notifyGameModesChanged(params) {
+let function notifyGameModesChanged(params) {
   if (!is_online_available()) {
     clearChangedGameModesParams()
     return
@@ -29,47 +29,47 @@ function notifyGameModesChanged(params) {
   broadcastEvent("NotifyGameModesChanged", params)
 }
 
-function onClustersChanged(params) {
+let function onClustersChanged(params) {
   log("notify_clusters_changed")
   broadcastEvent("ClustersChanged", params)
 }
 
-function onGameModesChangedRndDelay(params) {
+let function onGameModesChangedRndDelay(params) {
   let maxFetchDelaySec = 60
   let rndDelaySec = rnd() % maxFetchDelaySec
   log($"notify_game_modes_changed_rnd_delay {rndDelaySec}")
   ::g_delayed_actions.add(@() notifyGameModesChanged(params), rndDelaySec * 1000)
 }
 
-function onQueueInfoUpdated(params) {
+let function onQueueInfoUpdated(params) {
   broadcastEvent("QueueInfoRecived", { queue_info = params })
 }
 
-function onQueueJoin(params) {
+let function onQueueJoin(params) {
   let queue = ::queues.createQueue(params)
   ::queues.afterJoinQueue(queue)
 }
 
-function notifyQueueLeave(params) {
+let function notifyQueueLeave(params) {
   ::queues.afterLeaveQueues(params)
 }
 
-function fetchClustersList(params, cb) {
+let function fetchClustersList(params, cb) {
   matchingApiFunc("wtmm_static.fetch_clusters_list", cb, params)
 }
 
-function fetchGameModesInfo(params, cb) {
+let function fetchGameModesInfo(params, cb) {
   matchingApiFunc("match.fetch_game_modes_info", cb, params)
 }
 
-function fetchGameModesDigest(params, cb) {
+let function fetchGameModesDigest(params, cb) {
   matchingApiFunc("wtmm_static.fetch_game_modes_digest", cb, params)
 }
 
 local debug_mm = null
 register_command(@(enable) debug_mm = enable, "matchmacking.set_debug_mm")
 
-function enqueueInSession(params, cb) {
+let function enqueueInSession(params, cb) {
   let missionName = get_forced_network_mission()
   if (missionName.len() > 0)
     params["forced_network_mission"] <- missionName

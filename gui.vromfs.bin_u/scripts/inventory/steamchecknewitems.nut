@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -7,7 +8,6 @@ let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { isInMenu, handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { register_command } = require("console")
 let logS = log_with_prefix("[Steam Items] ")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
 
 let steamNewItems = mkWatched(persist, "steamNewItems", [])
 wlog(steamNewItems, "[Steam Items]: newitems ")
@@ -43,7 +43,7 @@ let showSteamItemNotification = function(itemInfo) {
   })
 }
 
-function tryShowSteamItemsNotification(items = []) {
+let function tryShowSteamItemsNotification(items = []) {
   if (!isInMenu() || ::checkIsInQueue())
     return
 
@@ -54,7 +54,7 @@ function tryShowSteamItemsNotification(items = []) {
   steamNewItems.update([])
 }
 
-function tryShowSteamItemsNotificationOnUpdate(items = []) {
+let function tryShowSteamItemsNotificationOnUpdate(items = []) {
   let newItems = items
   let handler = handlersManager.getActiveBaseHandler()
   let handlerClass = handler?.getclass()
@@ -62,7 +62,7 @@ function tryShowSteamItemsNotificationOnUpdate(items = []) {
     handler.doWhenActive(@() tryShowSteamItemsNotification(newItems))
 }
 
-function steamCheckNewItems() {
+let function steamCheckNewItems() {
   let newItems = []
   foreach (sItem in steamNewItems.value) {
     let steamItem = sItem
@@ -90,21 +90,21 @@ function steamCheckNewItems() {
   tryShowSteamItemsNotificationOnUpdate(newItems)
 }
 
-function requestRewardsAndCheckSteamInventory() {
+let function requestRewardsAndCheckSteamInventory() {
   requestAllItems(function(res) {
     steamNewItems.update(res?.items ?? [])
     steamCheckNewItems()
   })
 }
 
-function checkUnknownItems() {
+let function checkUnknownItems() {
   if (unknownSteamNewItems.value.len() == 0)
     return
 
   logS("Check unknown items", unknownSteamNewItems.value)
   let knownItems = []
   foreach (itemDef, sItem in unknownSteamNewItems.value) {
-    if (findItemById(itemDef)) {
+    if (::ItemsManager.findItemById(itemDef)) {
       knownItems.append(sItem)
       let itemDefId = itemDef
       unknownSteamNewItems.mutate(@(v) v.$rawdelete(itemDefId))

@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let u = require("%sqStdLibs/helpers/u.nut")
@@ -7,19 +8,19 @@ const SUBSCRIPTIONS_TO_CHECK_CLEAR = 10
 
 let subscriptions = {} //<listId> = { <entityId> = array of callbacks }
 
-function getListSubscriptions(listId) {
+let function getListSubscriptions(listId) {
   if (!(listId in subscriptions))
     subscriptions[listId] <- {}
   return subscriptions[listId]
 }
 
-function validateSubscriptionsArray(subArr) {
+let function validateSubscriptionsArray(subArr) {
   for (local i = subArr.len() - 1; i >= 0; i--)
     if (!subArr[i].isValid())
       subArr.remove(i)
 }
 
-function addSubscription(subList, entityName, cb) {
+let function addSubscription(subList, entityName, cb) {
   if (!(entityName in subList))
     subList[entityName] <- []
   let subArr = subList[entityName]
@@ -28,7 +29,7 @@ function addSubscription(subList, entityName, cb) {
     validateSubscriptionsArray(subArr)
 }
 
-function subscribe(listId, entitiesList, cb) {
+let function subscribe(listId, entitiesList, cb) {
   let subList = getListSubscriptions(listId)
   if (!entitiesList) {
     addSubscription(subList, ANY_CHANGED_ID, cb)
@@ -39,7 +40,7 @@ function subscribe(listId, entitiesList, cb) {
     addSubscription(subList, entityName, cb)
 }
 
-function gatherCbFromList(subArr, resList) {
+let function gatherCbFromList(subArr, resList) {
   if (!subArr)
     return
   for (local i = subArr.len() - 1; i >= 0; i--)
@@ -49,7 +50,7 @@ function gatherCbFromList(subArr, resList) {
       subArr.remove(i)
 }
 
-function notifyChanged(listId, entitiesList) {
+let function notifyChanged(listId, entitiesList) {
   let subList = getListSubscriptions(listId)
   let notifyList = []
   if (entitiesList) {

@@ -1,6 +1,6 @@
 from "%scripts/dagui_library.nut" import *
 
-function showPcStorePromo() {
+let function showPcStorePromo() {
   ::showUnlockWnd({
     name = loc("pc_store_promo/title")
     desc = loc("pc_store_promo/desc")

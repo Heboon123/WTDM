@@ -11,7 +11,7 @@ let textWithAnonUser = Watched(cn.CommunicationState.Blocked)
 let voiceWithAnonUser = Watched(cn.CommunicationState.Blocked)
 
 
-function update_or_trigger(what, new_value) {
+let function update_or_trigger(what, new_value) {
   let updated = what.value != new_value
   if (updated)
     what.update(new_value)

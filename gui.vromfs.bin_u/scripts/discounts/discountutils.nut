@@ -5,7 +5,6 @@ let personalDiscount = require("%scripts/discounts/personalDiscount.nut")
 let { shopIsModificationPurchased } = require("chardResearch")
 let { get_price_blk } = require("blkGetters")
 let { isUnitGroup } = require("%scripts/unit/unitInfo.nut")
-let { showCurBonus } = require("%scripts/bonusModule.nut")
 
 //you can use array in any path part - in result will be max discount from them.
 ::getDiscountByPath <- function getDiscountByPath(path, blk = null, _idx = 0) {
@@ -61,14 +60,14 @@ let { showCurBonus } = require("%scripts/bonusModule.nut")
   if (groupValue)
     path.append(groupValue)
   let discount = ::getDiscountByPath(path)
-  showCurBonus(obj, discount, group ? group : "buy", true, fullUpdate)
+  ::showCurBonus(obj, discount, group ? group : "buy", true, fullUpdate)
 }
 
 ::showUnitDiscount <- function showUnitDiscount(obj, unitOrGroup) {
   let discount = isUnitGroup(unitOrGroup)
     ? ::g_discount.getGroupDiscount(unitOrGroup.airsGroup)
     : ::g_discount.getUnitDiscount(unitOrGroup)
-  showCurBonus(obj, discount, "buy")
+  ::showCurBonus(obj, discount, "buy")
 }
 
 ::showDiscount <- function showDiscount(obj, name, group = null, groupValue = null, fullUpdate = false) {
@@ -78,5 +77,5 @@ let { showCurBonus } = require("%scripts/bonusModule.nut")
   if (groupValue)
     path.append(groupValue)
   let discount = ::getDiscountByPath(path)
-  showCurBonus(obj, discount, name, true, fullUpdate)
+  ::showCurBonus(obj, discount, name, true, fullUpdate)
 }

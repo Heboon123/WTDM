@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 let inventory = require("inventory")
 
@@ -15,7 +16,7 @@ j+eTYc35NQIDAQAB
 "
 ]
 
-function initPublicKeys() {
+let function initPublicKeys() {
   if (is_platform_xbox) {
     log("Content signature verification temporary disabled for xboxone")
     return false

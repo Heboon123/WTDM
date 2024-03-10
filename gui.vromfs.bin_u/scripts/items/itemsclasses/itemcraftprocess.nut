@@ -1,7 +1,6 @@
 from "%scripts/dagui_library.nut" import *
 from "%scripts/items/itemsConsts.nut" import itemType
 
-let { eventbus_send } = require("eventbus")
 let ItemExternal = require("%scripts/items/itemsClasses/itemExternal.nut")
 let inventoryClient = require("%scripts/inventory/inventoryClient.nut")
 
@@ -65,8 +64,7 @@ let CraftProcess = class (ItemExternal) {
         item = extItem?.itemdef?.itemdefid
         count = extItem?.quantity ?? 0
       })
-      eventbus_send("guiStartOpenTrophy", {
-        [trophyId] = openTrophyWndConfigs,
+      ::gui_start_open_trophy({ [trophyId] = openTrophyWndConfigs,
         rewardTitle = loc(this.getLocIdsList().cancelTitle),
         rewardListLocId = this.getItemsListLocId(),
         isHidePrizeActionBtn = params?.isHidePrizeActionBtn ?? false

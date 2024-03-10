@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import wp_get_cost_gold
 from "%scripts/dagui_library.nut" import *
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -20,7 +21,7 @@ let { addPromoAction } = require("%scripts/promo/promoActions.nut")
 let { addPromoButtonConfig } = require("%scripts/promo/promoButtonsConfig.nut")
 let { stashBhvValueConfig } = require("%sqDagui/guiBhv/guiBhvValueConfig.nut")
 let prizesRewardWnd = require("%scripts/items/prizesRewardWnd.nut")
-let { performPromoAction, togglePromoItem } = require("%scripts/promo/promo.nut")
+let { performPromoAction } = require("%scripts/promo/promo.nut")
 let { getUnlockCost } = require("%scripts/unlocks/unlocksModule.nut")
 let { convertBlk, copyParamsToTable } = require("%sqstd/datablock.nut")
 let { getUnitName, getUnitCountryIcon } = require("%scripts/unit/unitInfo.nut")
@@ -30,9 +31,6 @@ let { addTask } = require("%scripts/tasker.nut")
 let { checkBalanceMsgBox } = require("%scripts/user/balanceFeatures.nut")
 let { getWarpointsGoldCost } = require("%scripts/onlineShop/entitlements.nut")
 let { buildUnitSlot } = require("%scripts/slotbar/slotbarView.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
-let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 
 let offerTypes = {
   unit = "shop/section/premium"
@@ -156,7 +154,7 @@ let class PersonalOfferHandler (gui_handlers.BaseGuiHandlerWT) {
             unitRarity = "premium"
             isElite = true
             hasTalismanIcon = true
-            tooltipId = getTooltipType("UNIT").getTooltipId(localConfig.unit)
+            tooltipId = ::g_tooltip.getIdUnit(localConfig.unit)
           })
         itemData.unitFullName <- getUnitName(unit, false)
         itemData.image <- unitPlate
@@ -164,7 +162,7 @@ let class PersonalOfferHandler (gui_handlers.BaseGuiHandlerWT) {
         let fonticon = getUnitRoleIcon(unit)
         let typeText = getFullUnitRoleText(unit)
         itemData.unitType <- colorize(getUnitClassColor(unit), $"{typeText} {fonticon}")
-        itemData.br <- format("%.1f", unit.getBattleRating(getCurrentGameModeEdiff()))
+        itemData.br <- format("%.1f", unit.getBattleRating(::get_current_ediff()))
         itemData.unitRank <- "".concat(loc("shop/age"), loc("ui/colon"), get_roman_numeral(unit.rank))
         itemData.btnTooltip <- button[0].tooltip
         itemData.funcName <- button[0].funcName
@@ -185,7 +183,7 @@ let class PersonalOfferHandler (gui_handlers.BaseGuiHandlerWT) {
       return Cost().setGold(unit?.costGold ?? 0) //real cost without discount
     }
     if(offerType == "item") {
-      let item = findItemById(localConfig.item)
+      let item = ::ItemsManager.findItemById(localConfig.item)
       if(item != null)
         return item.getCost().multiply(localConfig.count)
       return Cost()
@@ -213,9 +211,9 @@ let class PersonalOfferHandler (gui_handlers.BaseGuiHandlerWT) {
 
   function updateTimeLeftText() {
     let timeLeftSec = this.timeExpired - get_charserver_time_sec()
-    let timeDiscountExpiredObj = showObjById("time_discount_expired_text", timeLeftSec > 0, this.scene)
-    let timeExpiredObj = showObjById("time_expired_value", timeLeftSec > 0, this.scene)
-    showObjById("time_expired_text", timeLeftSec > 0, this.scene)
+    let timeDiscountExpiredObj = this.showSceneBtn("time_discount_expired_text", timeLeftSec > 0)
+    let timeExpiredObj = this.showSceneBtn("time_expired_value", timeLeftSec > 0)
+    this.showSceneBtn("time_expired_text", timeLeftSec > 0)
     if (timeLeftSec <= 0)
       return
 
@@ -298,8 +296,8 @@ let PersonalOfferPromoHandler = class (gui_handlers.BaseGuiHandlerWT) {
 
   function updateTimeLeftText() {
     let timeLeftSec = this.timeExpired - get_charserver_time_sec()
-    let timeExpiredObj = showObjById("time_expired_value", timeLeftSec > 0, this.scene)
-    showObjById("time_expired_text", timeLeftSec > 0, this.scene)
+    let timeExpiredObj = this.showSceneBtn("time_expired_value", timeLeftSec > 0)
+    this.showSceneBtn("time_expired_text", timeLeftSec > 0)
     if (timeLeftSec <= 0)
       return
 
@@ -322,19 +320,13 @@ let PersonalOfferPromoHandler = class (gui_handlers.BaseGuiHandlerWT) {
     this.updateTimeLeftText()
   }
 
-  onToggleItem = @(obj) togglePromoItem(obj)
-
   function performAction(obj) { performPromoAction(this, obj) }
-  function performActionCollapsed() {
-    if (this.isValid())
-      performPromoAction(this, this.scene.findObject("perform_action_personal_offer_mainmenu_button"))
-  }
 }
 
 let openCurPersonalOfferWnd = @()
   handlersManager.loadHandler(PersonalOfferHandler, curPersonalOffer.value)
 
-function checkShowPersonalOffers() {
+let function checkShowPersonalOffers() {
   cachePersonalOfferIfNeed()
   if (curPersonalOffer.value != null && !isSeenOffer(curPersonalOffer.value.offerName))
     openCurPersonalOfferWnd()

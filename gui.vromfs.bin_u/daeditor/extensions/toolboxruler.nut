@@ -19,13 +19,13 @@ let isRulerMode = Computed(@() isRulerDirectMode.value || isRulerNavmeshMode.val
 
 
 local rulerDisableCmd = function() {}
-function callRulerDisableFn() {
+let function callRulerDisableFn() {
   rulerDisableCmd()
   rulerDisableCmd = function() {}
 }
 
 
-function onRulerAction(action) {
+let function onRulerAction(action) {
   if (!isRulerMode.value)
     return
 
@@ -41,7 +41,7 @@ function onRulerAction(action) {
 }
 
 
-function toggleRuler(enabled, mode, toggle_cmd_fn) {
+let function toggleRuler(enabled, mode, toggle_cmd_fn) {
   if (!enabled) {
     callRulerDisableFn()
     return
@@ -57,7 +57,7 @@ function toggleRuler(enabled, mode, toggle_cmd_fn) {
   }
 }
 
-function toolboxCmd_toggleRuler(mode) {
+let function toolboxCmd_toggleRuler(mode) {
   let newEnabled = getToolboxState("ruler")?.mode == mode
                  ? !(getToolboxState("ruler")?.enabled ?? false)
                  : true
@@ -65,7 +65,7 @@ function toolboxCmd_toggleRuler(mode) {
   toggleRuler(newEnabled, mode, @(enabled) runToolboxCmd(cmd, null, "ruler", { enabled mode }))
 }
 
-function addToolboxOptions_Ruler() {
+let function addToolboxOptions_Ruler() {
   addToolboxOption(@() isRulerDirectMode.value,  "ruler", { enabled = false, mode = 0 }, "Ruler",           @(_) toolboxCmd_toggleRuler(RULER_MODE_DIRECT),  null, "Toggle direct ruler")
   addToolboxOption(@() isRulerNavmeshMode.value, null, null,                             "Ruler Navmesh",   @(_) toolboxCmd_toggleRuler(RULER_MODE_NAVMESH), null, "Toggle navmesh ruler")
 }

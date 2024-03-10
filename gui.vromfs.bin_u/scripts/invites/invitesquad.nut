@@ -1,9 +1,5 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
-let { g_chat_room_type } = require("%scripts/chat/chatRoomType.nut")
-let { getGlobalModule } = require("%scripts/global_modules.nut")
-let g_squad_manager = getGlobalModule("g_squad_manager")
 let platformModule = require("%scripts/clientState/platform.nut")
 let { checkAndShowMultiplayerPrivilegeWarning,
   isMultiplayerPrivilegeAvailable } = require("%scripts/user/xboxFeatures.nut")
@@ -27,7 +23,7 @@ let Squad = class (BaseInvite) {
   needCheckSystemRestriction = true
 
   roomId = ""
-  roomType = g_chat_room_type.SQUAD
+  roomType = ::g_chat_room_type.SQUAD
 
   static function getUidByParams(params) {
     return "SQ_" + getTblValue("squadId", params, "")
@@ -64,8 +60,8 @@ let Squad = class (BaseInvite) {
     if (initial)
       add_event_listener("SquadStatusChanged",
         function (_p) {
-          if (g_squad_manager.isInSquad()
-              && g_squad_manager.getLeaderUid() == this.squadId.tostring())
+          if (::g_squad_manager.isInSquad()
+              && ::g_squad_manager.getLeaderUid() == this.squadId.tostring())
             this.onSuccessfulAccept()
         }, this)
 
@@ -129,10 +125,10 @@ let Squad = class (BaseInvite) {
       if (!invite.isValid())
         return
 
-      if (!g_squad_manager.isInSquad())
+      if (!::g_squad_manager.isInSquad())
         invite.autoacceptInviteImpl()
       else
-        g_squad_manager.leaveSquad(@() invite.isValid() && invite.autoacceptInviteImpl())
+        ::g_squad_manager.leaveSquad(@() invite.isValid() && invite.autoacceptInviteImpl())
     })
   }
 
@@ -167,7 +163,7 @@ let Squad = class (BaseInvite) {
   }
 
   function haveRestrictions() {
-    return !g_squad_manager.canManageSquad()
+    return !::g_squad_manager.canManageSquad()
     || !this.isAvailableByCrossPlay()
     || !this.isAvailableByChatRestriction()
     || !isMultiplayerPrivilegeAvailable.value
@@ -211,7 +207,7 @@ let Squad = class (BaseInvite) {
       return this.remove()
 
     this.isRejected = true
-    g_squad_manager.rejectSquadInvite(this.squadId)
+    ::g_squad_manager.rejectSquadInvite(this.squadId)
     this.remove()
     ::g_invites.removeInviteToSquad(this.squadId)
     this.onSuccessfulReject()
@@ -222,10 +218,10 @@ let Squad = class (BaseInvite) {
       ::g_invites.showExpiredInvitePopup()
       return false
     }
-    if (!g_squad_manager.canJoinSquad())
+    if (!::g_squad_manager.canJoinSquad())
       return false
 
-    g_squad_manager.acceptSquadInvite(this.squadId)
+    ::g_squad_manager.acceptSquadInvite(this.squadId)
     return true
   }
 }

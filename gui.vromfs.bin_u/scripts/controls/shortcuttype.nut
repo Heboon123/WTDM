@@ -13,7 +13,7 @@ let { endsWith } = require("%sqstd/string.nut")
 let { isXInputDevice } = require("controls")
 let { CONTROL_TYPE, AXIS_MODIFIERS } = require("%scripts/controls/controlsConsts.nut")
 
-function getNullInput(shortcutId, showShortcutsNameIfNotAssign) {
+let function getNullInput(shortcutId, showShortcutsNameIfNotAssign) {
   let nullInput = ::Input.NullInput()
   nullInput.shortcutId = shortcutId
   nullInput.showPlaceholder = showShortcutsNameIfNotAssign
@@ -70,12 +70,12 @@ let imageRe = regexp2(@"^#[\w/_]*#[\w\d_]+")
   return markup
 }
 
-function isAssignedToJoyAxis(shortcutId) {
+let function isAssignedToJoyAxis(shortcutId) {
   let axisDesc = ::g_shortcut_type._getDeviceAxisDescription(shortcutId)
   return axisDesc.axisId >= 0
 }
 
-function isAssignedToAxis(shortcutId, showKeyBoardShortcutsForMouseAim = false) {
+let function isAssignedToAxis(shortcutId, showKeyBoardShortcutsForMouseAim = false) {
   let isMouseAimMode = ::getCurrentHelpersMode() == globalEnv.EM_MOUSE_AIM
   if ((!showKeyBoardShortcutsForMouseAim || !isMouseAimMode)
     && isAxisBoundToMouse(shortcutId))
@@ -83,7 +83,7 @@ function isAssignedToAxis(shortcutId, showKeyBoardShortcutsForMouseAim = false) 
   return isAssignedToJoyAxis(shortcutId)
 }
 
-function transformAxisToShortcuts(axisId) {
+let function transformAxisToShortcuts(axisId) {
   let result = []
   let axisShortcutPostfixes = ["rangeMin", "rangeMax"]
   foreach (postfix in axisShortcutPostfixes)
@@ -92,11 +92,7 @@ function transformAxisToShortcuts(axisId) {
   return result
 }
 
-function isHalfAxisAssignedToShortcuts(shortcutId) {
-  return ::g_shortcut_type.COMMON_SHORTCUT.isAssigned(shortcutId)
-}
-
-function isAxisAssignedToShortcuts(shortcutId) {
+let function isAxisAssignedToShortcuts(shortcutId) {
   let shortcuts = transformAxisToShortcuts(shortcutId)
   foreach (axisBorderShortcut in shortcuts)
     if (!::g_shortcut_type.COMMON_SHORTCUT.isAssigned(axisBorderShortcut))
@@ -104,7 +100,7 @@ function isAxisAssignedToShortcuts(shortcutId) {
   return true
 }
 
-function splitCompositAxis(compositAxis) {
+let function splitCompositAxis(compositAxis) {
   return split_by_chars(compositAxis, "+")
 }
 
@@ -352,8 +348,7 @@ enums.addTypesByGlobalName("g_shortcut_type", {
     }
 
     isAssigned = function (shortcutId, preset = null) {
-      let fullAxisId = this.getAxisName(shortcutId)
-      return isAssignedToAxis(fullAxisId, preset) || isHalfAxisAssignedToShortcuts(this.transformHalfAxisToShortcuts(shortcutId))
+      return ::g_shortcut_type.AXIS.isAssigned(this.getAxisName(shortcutId), preset)
     }
 
     expand = function (shortcutId, showKeyBoardShortcutsForMouseAim) {

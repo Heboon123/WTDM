@@ -1,3 +1,4 @@
+//checked for plus_string
 let { loc } = require("dagor.localize")
 
 /*
@@ -108,7 +109,7 @@ local function secondsToString(value, useAbbreviations = true, dontShowZeroParam
 }
 
 
-function buildDateStr(timeTable) {
+let function buildDateStr(timeTable) {
   let year = timeTable?.year ?? -1
   let locId = year > 0 ? "date_format" : "date_format_short"
   return loc(locId, {
@@ -119,7 +120,7 @@ function buildDateStr(timeTable) {
   })
 }
 
-function buildTimeStr(timeTable, showZeroSeconds = false, showSeconds = true) {
+let function buildTimeStr(timeTable, showZeroSeconds = false, showSeconds = true) {
   let sec = timeTable?.sec ?? -1
   if (showSeconds && (sec > 0 || (showZeroSeconds && sec == 0)))
     return format("%d:%02d:%02d", timeTable.hour, timeTable.min, timeTable.sec)
@@ -130,7 +131,7 @@ function buildTimeStr(timeTable, showZeroSeconds = false, showSeconds = true) {
 let buildDateTimeStr = @(timeTable, showZeroSeconds = false, showSeconds = true, formatStr = "{date}.{time}") //warning disable: -forgot-subst
   formatStr.subst({ date = buildDateStr(timeTable), time = buildTimeStr(timeTable, showZeroSeconds, showSeconds) })
 
-function buidPartialTimeStr(timeSec) {
+let function buidPartialTimeStr(timeSec) {
   local tmp = timeSec
   let secs = tmp - floor(tmp / 60) * 60
   tmp = floor(tmp / 60)

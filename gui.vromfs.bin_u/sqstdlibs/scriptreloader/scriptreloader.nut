@@ -1,10 +1,14 @@
+
+const PERSISTENT_DATA_PARAMS = "PERSISTENT_DATA_PARAMS"
+
+let { file_exists } = require("dagor.fs")
 let { ScriptReloaderStorage } = require("%sqStdLibs/scriptReloader/scriptReloaderStorage.nut")
 
 let isInReloading = persist("isInReloading", @() { value = false })
 let storagesList = persist("storagesList", @() {})
 let loadedScripts = persist("loadedScripts", @() {}) //table only for faster search
 
-function _runScript(scriptPath) {
+let function _runScript(scriptPath) {
   loadedScripts[scriptPath] <- true
   local res = false
   try {
@@ -17,30 +21,53 @@ function _runScript(scriptPath) {
   return res
 }
 
-function loadOnce(scriptPath) {
+let function loadOnce(scriptPath) {
   if (scriptPath in loadedScripts)
     return false
   return _runScript(scriptPath)
 }
 
+let function loadIfExist(scriptPath) {
+  if (scriptPath in loadedScripts)
+    return false
+  let isExist = file_exists(scriptPath)
+  loadedScripts[scriptPath] <- isExist
+  if (isExist)
+    return _runScript(scriptPath)
+  return false
+}
 
 //all persistent data will restore after reload script on call this function
 //storageId - uniq id where to save storage. you can use here handler or file name to avoid same id from other structures
 //context - structure to save/load data from
 //paramsArray - array of params id to take/set to current context
-function registerPersistentData(storageId, context, paramsArray) {
+let function registerPersistentData(storageId, context, paramsArray) {
   if (storageId in storagesList)
     storagesList[storageId].switchToNewContext(context, paramsArray)
   else
     storagesList[storageId] <- ScriptReloaderStorage(context, paramsArray)
+  }
+
+//structureId - context will be taken from root table by structure id
+//              storageid = structureId
+//ParamsArrayId - will be takenFromContext
+let function registerPersistentDataFromRoot(structureId, paramsArrayId = PERSISTENT_DATA_PARAMS) {
+  if (!(structureId in getroottable()))
+    return assert(false, $"scriptReloader: not found structure {structureId} in root table to register data")
+
+  local context = getroottable()[structureId]
+  if (!(paramsArrayId in context))
+    return assert(false, $"scriptReloader: not found paramsArray {paramsArrayId} in {structureId}")
+
+  registerPersistentData(structureId, context, context[paramsArrayId])
 }
 
-function saveAllDataToStorages() {
+let function saveAllDataToStorages() {
   foreach(storage in storagesList)
     storage.saveDataToStorage()
 }
 
-function reload(scriptPathOrStartFunc) {
+let function reload(scriptPathOrStartFunc) {
   isInReloading.value = true
   saveAllDataToStorages()
   loadedScripts.clear()
@@ -59,7 +86,10 @@ function reload(scriptPathOrStartFunc) {
 
 return {
   loadOnce
+  loadIfExist
   registerPersistentData
+  registerPersistentDataFromRoot
   reload
   isInReloading = @() isInReloading.value
+  PERSISTENT_DATA_PARAMS
 }

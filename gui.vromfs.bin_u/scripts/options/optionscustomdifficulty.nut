@@ -2,13 +2,15 @@ from "%scripts/dagui_library.nut" import *
 from "%scripts/options/optionsExtNames.nut" import *
 from "%scripts/controls/controlsConsts.nut" import optionControlType
 
-let { g_difficulty } = require("%scripts/difficulty.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
-let { getCustomDifficultyOptions } = require("%scripts/matchingRooms/matchingGameModesUtils.nut")
+let { isGameModeCoop, isGameModeVersus } = require("%scripts/matchingRooms/matchingGameModesUtils.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { get_cd_preset, set_cd_preset, getCdOption, getCdBaseDifficulty } = require("guiOptions")
+let { get_game_mode } = require("mission")
 let { reload_cd } = require("guiMission")
 let { set_option } = require("%scripts/options/optionsExt.nut")
+let { isInSessionRoom } = require("%scripts/matchingRooms/sessionLobbyState.nut")
 
 gui_handlers.OptionsCustomDifficultyModal <- class (gui_handlers.GenericOptionsModal) {
   wndType = handlerType.MODAL
@@ -24,7 +26,7 @@ gui_handlers.OptionsCustomDifficultyModal <- class (gui_handlers.GenericOptionsM
 
   function initScreen() {
     this.scene.findObject("header_name").setValue(this.titleText)
-    this.options = getCustomDifficultyOptions()
+    this.options = ::get_custom_difficulty_options()
     base.initScreen()
     this.updateCurBaseDifficulty()
   }
@@ -33,7 +35,7 @@ gui_handlers.OptionsCustomDifficultyModal <- class (gui_handlers.GenericOptionsM
     let optListObj = this.scene.findObject(this.currentContainerName)
     if (!checkObj(optListObj))
       return
-    this.options = getCustomDifficultyOptions()
+    this.options = ::get_custom_difficulty_options()
 
     this.ignoreUiCallbacks = true
     foreach (o in this.options) {
@@ -129,7 +131,7 @@ gui_handlers.OptionsCustomDifficultyModal <- class (gui_handlers.GenericOptionsM
     for (local i = 0; i < option.items.len(); i++) {
       if (option.diffCode[i] == DIFFICULTY_CUSTOM)
         continue
-      let difficulty = g_difficulty.getDifficultyByDiffCode(option.diffCode[i])
+      let difficulty = ::g_difficulty.getDifficultyByDiffCode(option.diffCode[i])
       let cdPresetValue = difficulty.cdPresetValue
       menu.actions.append({
         actionName  = option.values[i]
@@ -146,4 +148,80 @@ gui_handlers.OptionsCustomDifficultyModal <- class (gui_handlers.GenericOptionsM
     set_cd_preset(cdValue)
     this.reinitScreen()
   }
+}
+
+//------------------------------------------------------------------------------
+
+::get_custom_difficulty_options <- function get_custom_difficulty_options() {
+  let gm = get_game_mode()
+  let canChangeTpsViews = isGameModeCoop(gm) || isGameModeVersus(gm) || gm == GM_TEST_FLIGHT
+
+  return [
+      [USEROPT_CD_ENGINE],
+      [USEROPT_CD_GUNNERY],
+      [USEROPT_CD_DAMAGE],
+      [USEROPT_CD_STALLS],
+      [USEROPT_CD_BOMBS],
+      [USEROPT_CD_FLUTTER],
+      [USEROPT_CD_REDOUT],
+      [USEROPT_CD_MORTALPILOT],
+      [USEROPT_CD_BOOST],
+      [USEROPT_CD_TPS, null, canChangeTpsViews],
+      [USEROPT_CD_AIR_HELPERS],
+      [USEROPT_CD_ALLOW_CONTROL_HELPERS],
+      [USEROPT_CD_FORCE_INSTRUCTOR],
+      [USEROPT_CD_COLLECTIVE_DETECTION],
+      [USEROPT_CD_DISTANCE_DETECTION],
+      [USEROPT_CD_AIM_PRED],
+      //[USEROPT_CD_SPEED_VECTOR],
+      [USEROPT_CD_MARKERS],
+      [USEROPT_CD_ARROWS],
+      [USEROPT_CD_AIRCRAFT_MARKERS_MAX_DIST],
+      [USEROPT_CD_INDICATORS],
+      [USEROPT_CD_TANK_DISTANCE],
+      [USEROPT_CD_MAP_AIRCRAFT_MARKERS],
+      [USEROPT_CD_MAP_GROUND_MARKERS],
+      [USEROPT_CD_MARKERS_BLINK],
+      [USEROPT_CD_RADAR],
+      [USEROPT_CD_DAMAGE_IND],
+      [USEROPT_CD_LARGE_AWARD_MESSAGES],
+      [USEROPT_CD_WARNINGS],
+      //
+
+
+    ]
+}
+
+//------------------------------------------------------------------------------
+
+::gui_start_cd_options <- function gui_start_cd_options(afterApplyFunc, owner = null) {
+  log("gui_start_cd_options called")
+  if (isInSessionRoom.get()) {
+    let curDiff = ::SessionLobby.getMissionParam("custDifficulty", null)
+    if (curDiff)
+      set_cd_preset(curDiff)
+  }
+
+  handlersManager.loadHandler(gui_handlers.OptionsCustomDifficultyModal, {
+    owner = owner
+    afterApplyFunc = Callback(afterApplyFunc, owner)
+  })
+}
+
+::get_custom_difficulty_tooltip_text <- function get_custom_difficulty_tooltip_text(custDifficulty) {
+  let wasDiff = get_cd_preset(DIFFICULTY_CUSTOM)
+  set_cd_preset(custDifficulty)
+
+  local text = ""
+  let options = ::get_custom_difficulty_options()
+  foreach (o in options) {
+    let opt = ::get_option(o[0])
+    let valueText = opt.items ?
+      loc(opt.items[opt.value]) :
+      loc(opt.value ? "options/yes" : "options/no")
+    text = "".concat(text, (text != "") ? "\n" : "", loc($"options/{opt.id}"), loc("ui/colon"), colorize("userlogColoredText", valueText))
+  }
+
+  set_cd_preset(wasDiff)
+  return text
 }

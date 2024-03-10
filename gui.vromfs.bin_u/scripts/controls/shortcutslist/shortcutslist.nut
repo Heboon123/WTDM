@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let shortcutsEnumData = require("%scripts/controls/shortcutsList/shortcutsEnumData.nut")
@@ -10,7 +11,7 @@ let shortcutsList = {
   addShortcuts = shortcutsEnumData.definitionFunc
 }
 
-function updateShortcutsList(value) {
+let function updateShortcutsList(value) {
   foreach (list in value)
     shortcutsList.addShortcuts(list, shortcutsList)
 }

@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import disable_user_log_entry
 from "%scripts/dagui_library.nut" import *
 
@@ -9,7 +10,7 @@ let { getOperationById } = require("%scripts/worldWar/operations/model/wwActions
 let { actionWithGlobalStatusRequest } = require("%scripts/worldWar/operations/model/wwGlobalStatus.nut")
 let { findInviteClass } = require("%scripts/invites/invitesClasses.nut")
 
-function checkOperationParams(params) {
+let function checkOperationParams(params) {
   if (params.operationId < 0)
     return false
 
@@ -20,7 +21,7 @@ function checkOperationParams(params) {
   return false
 }
 
-function addWWInvite(p) {
+let function addWWInvite(p) {
   let inviteClass = findInviteClass(p.inviteClassName)
   let params = p?.params
   if (!inviteClass || !params)

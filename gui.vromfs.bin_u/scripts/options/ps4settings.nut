@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import ps4_save_user_config
 from "%scripts/dagui_library.nut" import *
 

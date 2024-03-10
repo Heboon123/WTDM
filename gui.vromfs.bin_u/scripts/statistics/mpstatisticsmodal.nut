@@ -1,7 +1,7 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import close_ingame_gui, set_mute_sound_in_flight_menu, in_flight_menu, get_multiplayer_time_left
 from "%scripts/dagui_library.nut" import *
 
-let { g_hud_event_manager } = require("%scripts/hud/hudEventManager.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
@@ -11,10 +11,8 @@ let { quit_to_debriefing, interrupt_multiplayer, quit_mission_after_complete,
   get_mission_status} = require("guiMission")
 let { openPersonalTasks } = require("%scripts/unlocks/personalTasks.nut")
 let { create_ObjMoveToOBj } = require("%sqDagui/guiBhv/bhvAnim.nut")
-let { showActivateOrderButton, orderCanBeActivated } = require("%scripts/items/orders.nut")
-let { registerRespondent } = require("scriptRespondent")
 
-let MPStatisticsModal = class (gui_handlers.MPStatistics) {
+local MPStatisticsModal = class (gui_handlers.MPStatistics) {
   sceneBlkName = "%gui/mpStatistics.blk"
   sceneNavBlkName = "%gui/navMpStat.blk"
   shouldBlurSceneBgFn = needUseHangarDof
@@ -50,7 +48,7 @@ let MPStatisticsModal = class (gui_handlers.MPStatistics) {
     this.setSceneMissionEnviroment()
     this.refreshPlayerInfo()
 
-    showObjById("btn_back", true, this.scene)
+    this.showSceneBtn("btn_back", true)
 
     this.wasTimeLeft = -1
     this.scene.findObject("stat_update").setUserData(this)
@@ -60,15 +58,15 @@ let MPStatisticsModal = class (gui_handlers.MPStatistics) {
 
     this.updateStats()
 
-    showObjById("btn_activateorder", !this.isResultMPStatScreen && showActivateOrderButton(), this.scene)
+    this.showSceneBtn("btn_activateorder", !this.isResultMPStatScreen && ::g_orders.showActivateOrderButton())
     let ordersButton = this.scene.findObject("btn_activateorder")
     if (checkObj(ordersButton)) {
       ordersButton.setUserData(this)
-      ordersButton.inactiveColor = !orderCanBeActivated() ? "yes" : "no"
+      ordersButton.inactiveColor = !::g_orders.orderCanBeActivated() ? "yes" : "no"
     }
 
     let canUseUnlocks = (get_game_type() & GT_USE_UNLOCKS) != 0
-    showObjById("btn_personal_tasks", !this.isResultMPStatScreen && canUseUnlocks, this.scene)
+    this.showSceneBtn("btn_personal_tasks", !this.isResultMPStatScreen && canUseUnlocks)
 
     this.showMissionResult()
     this.selectLocalPlayer()
@@ -149,7 +147,7 @@ let MPStatisticsModal = class (gui_handlers.MPStatistics) {
     this.scene.findObject("flight_menu_bgd").hasMissionResultPadding = "yes"
     this.scene.findObject("btn_back").setValue(loc("flightmenu/btnQuitMission"))
     this.updateMissionResultText()
-    g_hud_event_manager.subscribe("MissionResult", this.updateMissionResultText, this)
+    ::g_hud_event_manager.subscribe("MissionResult", this.updateMissionResultText, this)
   }
 
   function updateMissionResultText(_eventData = null) {
@@ -180,9 +178,9 @@ let MPStatisticsModal = class (gui_handlers.MPStatistics) {
 
 gui_handlers.MPStatisticsModal <- MPStatisticsModal
 
-registerRespondent("is_mpstatscreen_active", function is_mpstatscreen_active() { // used from native code
+::is_mpstatscreen_active <- function is_mpstatscreen_active() { // used from native code
   if (!::g_login.isLoggedIn())
     return false
   let curHandler = handlersManager.getActiveBaseHandler()
   return curHandler != null && (curHandler instanceof gui_handlers.MPStatisticsModal)
-})
+}

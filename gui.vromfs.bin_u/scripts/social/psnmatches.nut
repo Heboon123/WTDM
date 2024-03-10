@@ -24,7 +24,7 @@ let match = {
   players = {}
 }
 
-function processMemberList(members) {
+let function processMemberList(members) {
   let players = {}
   local minMemberId = null
   foreach (m in members) {
@@ -51,13 +51,13 @@ function processMemberList(members) {
   return { players, isOwner }
 }
 
-function addPlayerToMatch(uid) {
+let function addPlayerToMatch(uid) {
   let player = match.players[uid]
   log($"[PSMT] adding {uid}/{player.playerId} to {player.teamId} for {match.id}")
   psn.send(psn.matches.join(match.id, player))
 }
 
-function onReceivedExternalIds(data) {
+let function onReceivedExternalIds(data) {
   if (match.id == null)
     return
 
@@ -68,8 +68,8 @@ function onReceivedExternalIds(data) {
   }
 }
 
-function updateMatchData() {
-  let updated = processMemberList(::SessionLobby.getMembers())
+let function updateMatchData() {
+  let updated = processMemberList(::SessionLobby.members)
   if (!updated.isOwner || match.id == null)
     return
 
@@ -91,7 +91,7 @@ function updateMatchData() {
 }
 
 
-function tryCreateMatch(info) {
+let function tryCreateMatch(info) {
   match.props.activityId = getActivityByGameMode(info?.public?.game_mode_name)
   if (match.props.activityId == null)
     return
@@ -107,14 +107,14 @@ function tryCreateMatch(info) {
   }
 }
 
-function markMatchCompleted() {
+let function markMatchCompleted() {
   match.lastId = match.id
   match.id = null
   match.teamId = null
   match.players = {}
 }
 
-function leaveMatch(reason = psn.matches.LeaveReason.FINISHED) {
+let function leaveMatch(reason = psn.matches.LeaveReason.FINISHED) {
   if (match.id == null)
     return
 
@@ -127,17 +127,17 @@ function leaveMatch(reason = psn.matches.LeaveReason.FINISHED) {
   markMatchCompleted()
 }
 
-function updateMatchStatus(_eventData) {
+let function updateMatchStatus(_eventData) {
   if (match.id == null)
     return
 
-  if (::SessionLobby.getMyState() == PLAYER_IN_FLIGHT) {
+  if (::SessionLobby.myState == PLAYER_IN_FLIGHT) {
     log($"starting match {match.id}")
     psn.send(psn.matches.updateStatus(match.id, "PLAYING"))
   }
 }
 
-function onBattleEnded(p) {
+let function onBattleEnded(p) {
   if (match.id == null || p?.battleResult == null)
     return
 
@@ -155,7 +155,7 @@ function onBattleEnded(p) {
   markMatchCompleted()
 }
 
-function enableMatchesReporting() {
+let function enableMatchesReporting() {
   log("[PSMT] enabling matches reporting")
   add_event_listener("RoomJoined", tryCreateMatch)
   add_event_listener("LobbyMembersChanged", @(_p) updateMatchData())

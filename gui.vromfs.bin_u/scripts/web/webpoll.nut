@@ -1,6 +1,6 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let { setBlkValueByPath } = require("%globalScripts/dataBlockExt.nut")
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
 let { broadcastEvent } = subscriptions
@@ -22,16 +22,16 @@ let pollBaseUrlById = {}
 let pollIdByFullUrl = {}
 let authorizedPollsRequestTimeOut = {}  //0 when already authorized
 
-function setPollBaseUrl(pollId, pollUrl) {
+let function setPollBaseUrl(pollId, pollUrl) {
   if (!(pollId in pollBaseUrlById))
     pollBaseUrlById[pollId] <- pollUrl
 }
 
-function getPollBaseUrl(pollId) {
+let function getPollBaseUrl(pollId) {
   return pollBaseUrlById?[pollId]
 }
 
-function canRequestAuthorization(pollId) {
+let function canRequestAuthorization(pollId) {
   let requestTimeOut = authorizedPollsRequestTimeOut?[pollId]
   if (requestTimeOut == null)
     return true
@@ -39,19 +39,19 @@ function canRequestAuthorization(pollId) {
   return requestTimeOut < get_time_msec()
 }
 
-function loadVotedPolls() {
+let function loadVotedPolls() {
   if (!::g_login.isProfileReceived())
     return
   votedPolls = loadLocalAccountSettings(VOTED_POLLS_SAVE_ID, DataBlock())
 }
 
-function saveVotedPolls() {
+let function saveVotedPolls() {
   if (!::g_login.isProfileReceived())
     return
   saveLocalAccountSettings(VOTED_POLLS_SAVE_ID, votedPolls)
 }
 
-function getVotedPolls() {
+let function getVotedPolls() {
   if (!::g_login.isProfileReceived())
     return DataBlock()
   if (votedPolls == null)
@@ -78,18 +78,18 @@ local function webpollEvent(id, token, voted) {
   broadcastEvent("WebPollAuthResult", { pollId = idString })
 }
 
-function onCanVoteResponse(response) {
+let function onCanVoteResponse(response) {
   if (response?.status == "OK" && response?.data != null)
     foreach (id, data in response.data)
       if (data?.can_vote ?? false)
         webpollEvent(id, data?.disposable_token, data?.has_vote ?? false)
 }
 
-function onSurveyVoteResult(params) {
+let function onSurveyVoteResult(params) {
   webpollEvent(params.survey_id, "", params.has_vote)
 }
 
-function invalidateTokensCache(pollId = null) {
+let function invalidateTokensCache(pollId = null) {
 
   if (pollId == null) { //invalidate all tokens
     cachedTokenById.clear()
@@ -104,22 +104,22 @@ function invalidateTokensCache(pollId = null) {
     function() { broadcastEvent("WebPollTokenInvalidated", { pollId = pollId?.tostring() }) })
 }
 
-function checkTokensCacheTimeout(pollId) {
+let function checkTokensCacheTimeout(pollId) {
   if ((cachedTokenById?[pollId] ?? "") != ""
     && (tokenInvalidationTimeById?[pollId] ?? -1) < get_time_msec())
     invalidateTokensCache(pollId)
 }
 
-function getPollToken(pollId) {
+let function getPollToken(pollId) {
   checkTokensCacheTimeout(pollId)
   return cachedTokenById?[pollId] ?? ""
 }
 
-function getPollIdByFullUrl(url) {
+let function getPollIdByFullUrl(url) {
   return pollIdByFullUrl?[url]
 }
 
-function requestPolls() {
+let function requestPolls() {
   let pollsForRequestByBaseUrl = {}
   foreach (pollId, baseUrl in pollBaseUrlById) {
     let pollIdInt = pollId.tointeger()
@@ -134,7 +134,7 @@ function requestPolls() {
   }
 }
 
-function generatePollUrl(pollId, needAuthorization = true) {
+let function generatePollUrl(pollId, needAuthorization = true) {
   let pollBaseUrl = getPollBaseUrl(pollId)
   if (pollBaseUrl == null)
     return ""
@@ -157,11 +157,11 @@ function generatePollUrl(pollId, needAuthorization = true) {
   return ""
 }
 
-function isPollVoted(pollId) {
+let function isPollVoted(pollId) {
   return pollId in getVotedPolls()
 }
 
-function clearOldVotedPolls(pollsTable) {
+let function clearOldVotedPolls(pollsTable) {
   let votedCount = getVotedPolls().paramCount() - 1
   for (local i = votedCount; i >= 0; i--) {
     let savedId = getVotedPolls().getParamName(i)
@@ -171,7 +171,7 @@ function clearOldVotedPolls(pollsTable) {
   saveVotedPolls()
 }
 
-function invalidateData() {
+let function invalidateData() {
   votedPolls = null
   authorizedPollsRequestTimeOut.clear()
   invalidateTokensCache()
@@ -181,7 +181,7 @@ function invalidateData() {
 subscriptions.addListenersWithoutEnv({
   LoginComplete = @(_p) invalidateData()
   SignOut = @(_p) invalidateData()
-}, g_listener_priority.CONFIG_VALIDATION)
+}, ::g_listener_priority.CONFIG_VALIDATION)
 
 web_rpc.register_handler("survey_vote_result", onSurveyVoteResult)
 

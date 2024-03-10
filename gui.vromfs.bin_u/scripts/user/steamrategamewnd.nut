@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import steam_get_app_id
 from "%scripts/dagui_library.nut" import *
 
@@ -6,7 +7,7 @@ let { openUrl } = require("%scripts/onlineShop/url.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
-let { eventbus_subscribe } = require("eventbus")
+let { subscribe } = require("eventbus")
 let { format } = require("string")
 
 gui_handlers.SteamRateGame <- class (gui_handlers.BaseGuiHandlerWT) {
@@ -25,7 +26,7 @@ gui_handlers.SteamRateGame <- class (gui_handlers.BaseGuiHandlerWT) {
       return
     textObj.top = "ph-h-1@frameFooterHeight"
 
-    let obj = showObjById("backgroundImg", this.backgroundImg != null, this.scene)
+    let obj = this.showSceneBtn("backgroundImg", this.backgroundImg != null)
     obj["background-image"] = this.backgroundImg
   }
 
@@ -45,7 +46,7 @@ gui_handlers.SteamRateGame <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 }
 
-eventbus_subscribe("steam.overlay_activation", @(p) broadcastEvent("SteamOverlayStateChanged", p))
+subscribe("steam.overlay_activation", @(p) broadcastEvent("SteamOverlayStateChanged", p))
 
 return {
   open = @(params = {}) handlersManager.loadHandler(gui_handlers.SteamRateGame, params)

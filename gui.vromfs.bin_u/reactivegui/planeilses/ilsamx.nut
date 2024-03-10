@@ -7,7 +7,7 @@ let { IlsColor, IlsLineScale, TargetPos, RocketMode, CannonMode, BombCCIPMode, B
   AimLockPos, AimLockValid, TimeBeforeBombRelease } = require("%rGui/planeState/planeToolsState.nut")
 let { baseLineWidth, mpsToFpm, metrToFeet, mpsToKnots } = require("ilsConstants.nut")
 let string = require("string")
-let { GuidanceLockResult } = require("guidanceConstants")
+let { GuidanceLockResult } = require("%rGui/guidanceConstants.nut")
 let { IlsTrackerVisible, IlsTrackerX, IlsTrackerY, GuidanceLockState } = require("%rGui/rocketAamAimState.nut")
 let { AamLaunchZoneDistMaxVal, AamLaunchZoneDistMinVal, IsAamLaunchZoneVisible } = require("%rGui/radarState.nut")
 let { BulletImpactPoints, BulletImpactLineEnable } = require("%rGui/planeState/planeWeaponState.nut")
@@ -196,7 +196,7 @@ let speed = @(){
   text = speedValue.value.tostring()
 }
 
-function pitch(width, height, generateFunc) {
+let function pitch(width, height, generateFunc) {
   const step = 5.0
   let children = []
 
@@ -222,7 +222,7 @@ function pitch(width, height, generateFunc) {
   }
 }
 
-function angleTxt(num, isLeft, invVPlace = 1, x = 0, y = 0) {
+let function angleTxt(num, isLeft, invVPlace = 1, x = 0, y = 0) {
   return @() {
     watch = IlsColor
     pos = [x, y]
@@ -236,7 +236,7 @@ function angleTxt(num, isLeft, invVPlace = 1, x = 0, y = 0) {
   }
 }
 
-function generatePitchLine(num) {
+let function generatePitchLine(num) {
   let newNum = num <= 0 ? num : (num - 5)
   return {
     size = [pw(100), ph(60)]
@@ -539,7 +539,7 @@ let safe = @(){
   text = "SAFE"
 }
 
-function getBulletImpactLineCommand() {
+let function getBulletImpactLineCommand() {
   let commands = []
   for (local i = 0; i < BulletImpactPoints.value.len() - 2; ++i) {
     let point1 = BulletImpactPoints.value[i]
@@ -597,7 +597,7 @@ let generateCompassMark = function(num) {
 }
 
 
-function compass(width, generateFunc) {
+let function compass(width, generateFunc) {
   let children = []
   let step = 5.0
 
@@ -622,7 +622,7 @@ function compass(width, generateFunc) {
   }
 }
 
-function compassWrap(width, height, generateFunc) {
+let function compassWrap(width, height, generateFunc) {
   return @(){
     watch = isAAMMode
     size = [width * 0.5, height * 0.1]
@@ -661,7 +661,7 @@ let timeToReleaseBar = @() {
   } : null
 }
 
-function IlsAmx(width, height) {
+let function IlsAmx(width, height) {
   return {
     size = [width, height]
     children = [

@@ -1,3 +1,4 @@
+//checked for plus_string
 
 /**
  * Temporary hack, for NEW Year 2021 Football event.
@@ -22,25 +23,25 @@ let { hasXInputDevice, isXInputDevice } = require("controls")
 
 const FOOTBALL_NY2021_BACKUP_SAVE_ID = "footballNy2021Backup"
 
-function shouldManageControls() {
+let function shouldManageControls() {
   return (isXInputDevice() || hasXInputDevice()) && ::g_login.isProfileReceived()
 }
 
-function removeSingleGamepadBtnId(hc, btnId) {
+let function removeSingleGamepadBtnId(hc, btnId) {
   return hc.filter(@(sc) sc.len() != 1 || sc[0]?.deviceId != JOYSTICK_DEVICE_0_ID || sc[0]?.buttonId != btnId)
 }
 
-function addSingleGamepadBtnId(hc, btnId) {
+let function addSingleGamepadBtnId(hc, btnId) {
   return removeSingleGamepadBtnId(hc, btnId).append([ { deviceId = JOYSTICK_DEVICE_0_ID, buttonId = btnId } ])
 }
 
-function isHotkeyEmpty(hc) {
+let function isHotkeyEmpty(hc) {
   return hc.len() == 0 || (hc.len() == 1 && hc[0].len() == 0)
 }
 
 //==============================================================================
 
-function tryControlsOverride() {
+let function tryControlsOverride() {
   if (!shouldManageControls())
     return false
   if (get_game_mode() != GM_DOMINATION || !::SessionLobby.getMissionName().contains("football"))
@@ -170,7 +171,7 @@ function tryControlsOverride() {
 
 //==============================================================================
 
-function tryControlsRestore() {
+let function tryControlsRestore() {
   if (!shouldManageControls())
     return false
 

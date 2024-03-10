@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import ps4_get_region, has_entitlement
 from "%scripts/dagui_library.nut" import *
 let { get_player_tags } = require("auth_wt")
@@ -57,7 +58,7 @@ let canInteractCrossConsole = function(name) {
   return hasFeature("XboxCrossConsoleInteraction")
 }
 
-function isPlatformShieldTv() {
+let function isPlatformShieldTv() {
   return is_platform_android && getFromSettingsBlk("deviceType", "") == "shieldTv"
 }
 

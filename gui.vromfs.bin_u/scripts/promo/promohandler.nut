@@ -1,6 +1,4 @@
 from "%scripts/dagui_library.nut" import *
-
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { getShowAllPromoBlocks, setShowAllPromoBlocks, canSwitchShowAllPromoBlocksFlag,
   selectNextPromoBlock, manualSwitchPromoBlock, switchPromoBlock, getPromoConfig, enablePromoPlayMenuMusic,
@@ -57,7 +55,7 @@ let Promo = class {
     }
     clearOldVotedPolls(pollsTable)
 
-    subscribe_handler(this, g_listener_priority.DEFAULT_HANDLER)
+    subscribe_handler(this, ::g_listener_priority.DEFAULT_HANDLER)
   }
 
   function initScreen(forceReplaceContent = false) {
@@ -331,7 +329,7 @@ let Promo = class {
   }
 }
 
-function create_promo_blocks(handler) {
+let function create_promo_blocks(handler) {
   if (!handlersManager.isHandlerValid(handler))
     return null
 

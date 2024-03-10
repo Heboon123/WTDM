@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let MISSION_GROUP = {
@@ -70,8 +71,19 @@ let missionGroupToLocKey =
   [MISSION_GROUP.OTHER]            = "other",
 }
 
+let getMissionGroupByChapter = @(missionChapter) chapterToGroup?[missionChapter] ?? MISSION_GROUP.OTHER
+let getMissionGroupName = @(missionGroup) loc($"chapters/{missionGroupToLocKey[missionGroup]}")
+
+let function getMissionGroup(mission) {
+  let group = getMissionGroupByChapter(mission.chapter)
+  if (group != MISSION_GROUP.OTHER)
+    return group
+
+  return ::g_mission_type.getTypeByMissionName(mission.id).filterGroup
+}
+
 return {
-  chapterToGroup
-  missionGroupToLocKey
+  getMissionGroup
+  getMissionGroupName
   MISSION_GROUP
 }

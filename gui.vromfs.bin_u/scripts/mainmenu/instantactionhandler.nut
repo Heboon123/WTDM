@@ -2,8 +2,6 @@
 from "%scripts/dagui_natives.nut" import shop_get_unlock_crew_cost, stat_get_value_missions_completed, is_online_available, set_presence_to_player, disable_network, sync_handler_simulate_signal, shop_get_unlock_crew_cost_gold, set_char_cb, get_invited_players_info, clan_get_my_clan_id
 from "%scripts/dagui_library.nut" import *
 
-let { getGlobalModule } = require("%scripts/global_modules.nut")
-let g_squad_manager = getGlobalModule("g_squad_manager")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { Cost } = require("%scripts/money.nut")
 let { shouldShowDynamicLutPopUpMessage, setIsUsingDynamicLut, getTonemappingMode, setTonemappingMode } = require("postFxSettings")
@@ -64,15 +62,6 @@ let { isCountryAvailable } = require("%scripts/firstChoice/firstChoice.nut")
 let { isStatsLoaded, getNextNewbieEvent, isMeNewbie, getPvpRespawns, getMissionsComplete,
   getTimePlayedOnUnitType
 } = require("%scripts/myStats.nut")
-let { guiStartSessionList, setMatchSearchGm, guiStartFlight
-} = require("%scripts/missions/startMissionsList.nut")
-let { getCurrentGameModeId, getUserGameModeId, setUserGameModeId, setCurrentGameModeById,
-  getCurrentGameMode, getGameModeById, getGameModeByUnitType, getUnseenGameModeCount,
-  setLeaderGameMode, isUnitAllowedForGameMode, getGameModeEvent, findPresetValidForGameMode
-} = require("%scripts/gameModes/gameModeManagerState.nut")
-let { getGameModeOnBattleButtonClick } = require("%scripts/gameModes/gameModeManagerView.nut")
-let { getCrewSkillPageIdToRunTutorial, isAllCrewsMinLevel, getCrewUnit } = require("%scripts/crew/crew.nut")
-let { showMultiplayerLimitByAasMsg, hasMultiplayerLimitByAas } = require("%scripts/user/antiAddictSystem.nut")
 
 gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
   static keepLoaded = true
@@ -227,7 +216,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
 
   _lastGameModeId = null
   function setGameMode(modeId) {
-    let gameMode = getGameModeById(modeId)
+    let gameMode = ::game_mode_manager.getGameModeById(modeId)
     if (gameMode == null || modeId == this._lastGameModeId)
       return
     this._lastGameModeId = modeId
@@ -244,15 +233,15 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
     local name = ""
 
     if (isMultiplayerPrivilegeAvailable.value) {
-      let gameMode = getCurrentGameMode()
+      let gameMode = ::game_mode_manager.getCurrentGameMode()
       let br = recentBR.value
       name = gameMode && gameMode?.text != ""
         ? gameMode.text + (br > 0 ? loc("mainmenu/BR", { br = format("%.1f", br) }) : "") : ""
 
-      if (g_squad_manager.isSquadMember() && g_squad_manager.isMeReady()) {
-        let gameModeId = g_squad_manager.getLeaderGameModeId()
+      if (::g_squad_manager.isSquadMember() && ::g_squad_manager.isMeReady()) {
+        let gameModeId = ::g_squad_manager.getLeaderGameModeId()
         let event = ::events.getEvent(gameModeId)
-        let leaderBR = g_squad_manager.getLeaderBattleRating()
+        let leaderBR = ::g_squad_manager.getLeaderBattleRating()
         if (event)
           name = ::events.getEventNameText(event)
         if (leaderBR > 0)
@@ -274,7 +263,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!this.newGameModeIconWidget)
       this.newGameModeIconWidget = newIconWidget(this.guiScene, this.newGameModesWidgetsPlaceObj)
 
-    this.newGameModeIconWidget.setValue(getUnseenGameModeCount())
+    this.newGameModeIconWidget.setValue(::game_mode_manager.getUnseenGameModeCount())
   }
 
   function goToBattleFromDebriefing() {
@@ -342,12 +331,12 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onEventCurrentGameModeIdChanged(_params) {
-    this.setGameMode(getCurrentGameModeId())
+    this.setGameMode(::game_mode_manager.getCurrentGameModeId())
     this.updateNoticeGMChanged()
   }
 
   function onEventGameModesUpdated(_params) {
-    this.setGameMode(getCurrentGameModeId())
+    this.setGameMode(::game_mode_manager.getCurrentGameModeId())
     this.updateUnseenGameModesCounter()
     this.guiScene.performDelayed(this, function() {
       if (!this.isValid())
@@ -363,14 +352,14 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
   function onCountrySelectAction() {
     if (!checkObj(this.scene))
       return
-    let currentGameMode = getCurrentGameMode()
+    let currentGameMode = ::game_mode_manager.getCurrentGameMode()
     if (currentGameMode == null)
       return
     let multiSlotEnabled = this.isCurrentGameModeMultiSlotEnabled()
     this.setCurCountry(profileCountrySq.value)
     let countryEnabled = isCountryAvailable(this.getCurCountry())
       && ::events.isCountryAvailable(
-          getGameModeEvent(currentGameMode),
+          ::game_mode_manager.getGameModeEvent(currentGameMode),
           this.getCurCountry()
         )
     let crewsGoodForMode = this.testCrewsForMode(this.getCurCountry())
@@ -385,15 +374,15 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
     if (slots && (country in slots)) {
       foreach (_cIdx, c in ::g_crews_list.get())
         if (c.country == country)
-          return getCrewUnit(country.crews?[slots[country]])
+          return ::g_crew.getCrewUnit(country.crews?[slots[country]])
       return null
     }
     return getSelAircraftByCountry(country)
   }
 
   function onTopMenuGoBack(checkTopMenuButtons = false) {
-    if (!this.getCurQueue() && g_squad_manager.isSquadMember() && g_squad_manager.isMeReady())
-      return g_squad_manager.setReadyFlag()
+    if (!this.getCurQueue() && ::g_squad_manager.isSquadMember() && ::g_squad_manager.isMeReady())
+      return ::g_squad_manager.setReadyFlag()
 
     if (this.leaveCurQueue({ isLeaderCanJoin = true
       msgId = "squad/only_leader_can_cancel"
@@ -428,7 +417,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
         missionBlk[name] <- value
     select_mission(missionBlk, false)
     ::current_campaign_mission = missionBlk.name
-    this.guiScene.performDelayed(this, function() { this.goForward(guiStartFlight) })
+    this.guiScene.performDelayed(this, function() { this.goForward(::gui_start_flight) })
   }
 
   function onStart() {
@@ -443,27 +432,27 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
     if (isShowGoldBalanceWarning())
       return
 
-    if (!g_squad_manager.isMeReady())
-      setUserGameModeId(getCurrentGameModeId())
+    if (!::g_squad_manager.isMeReady())
+      ::game_mode_manager.setUserGameModeId(::game_mode_manager.getCurrentGameModeId())
 
     this.determineAndStartAction()
   }
 
   function onEventSquadDataUpdated(_params) {
-    if (g_squad_manager.isSquadLeader())
+    if (::g_squad_manager.isSquadLeader())
       return
 
-    if (g_squad_manager.isMeReady()) {
-      let id = g_squad_manager.getLeaderGameModeId()
-      if (id == "" || id == getCurrentGameModeId())
+    if (::g_squad_manager.isMeReady()) {
+      let id = ::g_squad_manager.getLeaderGameModeId()
+      if (id == "" || id == ::game_mode_manager.getCurrentGameModeId())
         this.updateNoticeGMChanged()
       else
-        setLeaderGameMode(id)
+        ::game_mode_manager.setLeaderGameMode(id)
     }
     else {
-      let id = getUserGameModeId()
+      let id = ::game_mode_manager.getUserGameModeId()
       if (id && id != "")
-        setCurrentGameModeById(id, true)
+        ::game_mode_manager.setCurrentGameModeById(id, true)
     }
     this.setCurrentGameModeName()
     this.doWhenActiveOnce("updateStartButton")
@@ -474,21 +463,21 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
   function setSquadReadyFlag() {
     if (getLeaderOperationState() == LEADER_OPERATION_STATES.OUT) {
       //No need to check broken units when set unready
-      if (!g_squad_manager.isMeReady()) {
-        let leaderEvent = ::events.getEvent(g_squad_manager.getLeaderGameModeId())
+      if (!::g_squad_manager.isMeReady()) {
+        let leaderEvent = ::events.getEvent(::g_squad_manager.getLeaderGameModeId())
         if (leaderEvent == null) { //not found game mode of leader, skip check broken units
-          g_squad_manager.setReadyFlag()
+          ::g_squad_manager.setReadyFlag()
           return
         }
         let repairInfo = ::events.getCountryRepairInfo(leaderEvent, null, profileCountrySq.value)
-        ::checkBrokenAirsAndDo(repairInfo, this, @() g_squad_manager.setReadyFlag(), false)
+        ::checkBrokenAirsAndDo(repairInfo, this, @() ::g_squad_manager.setReadyFlag(), false)
         return
       }
-      g_squad_manager.setReadyFlag()
+      ::g_squad_manager.setReadyFlag()
     }
     else if (::is_worldwar_enabled())
       this.guiScene.performDelayed(this, @() ::g_world_war.joinOperationById(
-        g_squad_manager.getWwOperationId(), g_squad_manager.getWwOperationCountry()))
+        ::g_squad_manager.getWwOperationId(), ::g_squad_manager.getWwOperationCountry()))
   }
 
   function determineAndStartAction(isFromDebriefing = false) {
@@ -497,8 +486,8 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
       return
     }
 
-    if (g_squad_manager.isSquadMember()) {
-      if(!g_squad_manager.isMeReady()) {
+    if (::g_squad_manager.isSquadMember()) {
+      if(!::g_squad_manager.isMeReady()) {
         let callback = Callback(@() this.setSquadReadyFlag(), this)
         tryOpenCaptchaHandler(callback)
         return
@@ -510,24 +499,18 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
     if (this.leaveCurQueue({ isLeaderCanJoin = true, isCanceledByPlayer = true }))
       return
 
-    let curGameMode = getCurrentGameMode()
-    let event = getGameModeEvent(curGameMode)
+    let curGameMode = ::game_mode_manager.getCurrentGameMode()
+    let event = ::game_mode_manager.getGameModeEvent(curGameMode)
     if (!antiCheat.showMsgboxIfEacInactive(event) || !showMsgboxIfSoundModsNotAllowed(event))
       return
-
-    if (hasMultiplayerLimitByAas.get()) {
-      showMultiplayerLimitByAasMsg()
-      return
-    }
 
     if (!this.isCrossPlayEventAvailable(event)) {
       checkAndShowCrossplayWarning(@() showInfoMsgBox(loc("xbox/actionNotAvailableCrossNetworkPlay")))
       return
     }
 
-    let onBattleButtonClick = getGameModeOnBattleButtonClick(curGameMode?.id)
-    if (onBattleButtonClick != null)
-      return onBattleButtonClick(curGameMode)
+    if ("onBattleButtonClick" in curGameMode)
+      return curGameMode.onBattleButtonClick()
 
     let configForStatistic = {
       actionPlace = isFromDebriefing ? "debriefing" : "hangar"
@@ -567,13 +550,13 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
 
     if (::g_squad_utils.canJoinFlightMsgBox({ isLeaderCanJoin = true })) {
       this.setCurCountry(profileCountrySq.value)
-      let gameMode = getCurrentGameMode()
+      let gameMode = ::game_mode_manager.getCurrentGameMode()
       if (gameMode == null)
         return
       if (this.checkGameModeTutorial(gameMode))
         return
 
-      let event = getGameModeEvent(gameMode)
+      let event = ::game_mode_manager.getGameModeEvent(gameMode)
       if (!::events.checkEventFeature(event))
         return
 
@@ -619,12 +602,12 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function getRequirementsMsgText() {
-    let gameMode = getCurrentGameMode()
+    let gameMode = ::game_mode_manager.getCurrentGameMode()
     if (!gameMode || gameMode.type != RB_GM_TYPE.EVENT)
       return ""
 
     local requirements = []
-    let event = getGameModeEvent(gameMode)
+    let event = ::game_mode_manager.getGameModeEvent(gameMode)
     if (!event)
       return ""
 
@@ -656,12 +639,12 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
 
     // "Change mode" button
     let curUnitType = getEsUnitType(getCurSlotbarUnit())
-    let gameMode = getGameModeByUnitType(curUnitType, -1, true)
+    let gameMode = ::game_mode_manager.getGameModeByUnitType(curUnitType, -1, true)
     if (gameMode != null) {
       buttonsArray.append([
         "#mainmenu/changeMode",
         function () {
-          setCurrentGameModeById(gameMode.id)
+          ::game_mode_manager.setCurrentGameModeById(gameMode.id)
           this.checkCountries()
           this.onStart()
         }
@@ -669,10 +652,10 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
     }
 
     // "Change vehicle" button
-    let currentGameMode = getCurrentGameMode()
+    let currentGameMode = ::game_mode_manager.getCurrentGameMode()
     local properUnitType = null
     if (currentGameMode.type == RB_GM_TYPE.EVENT) {
-      let event = getGameModeEvent(currentGameMode)
+      let event = ::game_mode_manager.getGameModeEvent(currentGameMode)
       foreach (unitType in unitTypes.types)
         if (::events.isUnitTypeRequired(event, unitType.esUnitType)) {
           properUnitType = unitType
@@ -697,7 +680,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function isCurrentGameModeMultiSlotEnabled() {
-    let gameMode = getCurrentGameMode()
+    let gameMode = ::game_mode_manager.getCurrentGameMode()
     return ::events.isEventMultiSlotEnabled(getTblValue("source", gameMode, null))
   }
 
@@ -726,7 +709,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!multiSlotEnabled && !this.testCurrentUnitForMode(this.getCurCountry()))
       return this.showBadCurrentUnitMsgBox()
 
-    let gameMode = getCurrentGameMode()
+    let gameMode   = ::game_mode_manager.getCurrentGameMode()
     if (gameMode == null)
       return
     if (::events.checkEventDisableSquads(this, gameMode.id))
@@ -735,13 +718,13 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     if (gameMode.type == RB_GM_TYPE.EVENT)
-      return this.startEventBattle(getGameModeEvent(gameMode)) //better to do completely the same here as we do n events.
+      return this.startEventBattle(::game_mode_manager.getGameModeEvent(gameMode)) //better to do completely the same here as we do n events.
                                                // but better to refactor this place after remove old gamemodes
   }
 
   function checkGameModeTutorial(gameMode) {
     let checkTutorUnitType = (gameMode.unitTypes.len() == 1) ? gameMode.unitTypes[0] : null
-    let diffCode = ::events.getEventDiffCode(getGameModeEvent(gameMode))
+    let diffCode = ::events.getEventDiffCode(::game_mode_manager.getGameModeEvent(gameMode))
     return checkDiffTutorial(diffCode, checkTutorUnitType)
   }
 
@@ -755,10 +738,10 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
     local isCancel = false
 
     if (!inQueue) {
-      if (g_squad_manager.isSquadMember()) {
-        let isReady = g_squad_manager.isMeReady()
+      if (::g_squad_manager.isSquadMember()) {
+        let isReady = ::g_squad_manager.isMeReady()
         if (getLeaderOperationState() != LEADER_OPERATION_STATES.OUT) {
-          let operationId = g_squad_manager.getWwOperationId()
+          let operationId = ::g_squad_manager.getWwOperationId()
           txt = operationId >= 0 ? "".concat(loc("ui/number_sign"), operationId) : ""
           isCancel = false
         }
@@ -789,9 +772,9 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function afterCountryApply(membersData = null, team = null, event = null) {
     if (disable_network()) {
-      setMatchSearchGm(GM_DOMINATION)
+      ::match_search_gm = GM_DOMINATION
       this.guiScene.performDelayed(this, function() {
-        this.goForwardIfOnline(guiStartSessionList, false)
+        this.goForwardIfOnline(::gui_start_session_list, false)
       })
       return
     }
@@ -806,7 +789,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
     if (event)
       modeName = event.name
     else {
-      let gameMode = getCurrentGameMode()
+      let gameMode = ::game_mode_manager.getCurrentGameMode()
       modeName = getTblValue("id", gameMode, "")
     }
     if (!query) {
@@ -873,13 +856,13 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
           let unit = this.getQueueAircraft(optionCountryName)
           if (!unit)
             continue
-          if (isUnitAllowedForGameMode(unit))
+          if (::game_mode_manager.isUnitAllowedForGameMode(unit))
             return true
         }
       return false
     }
     let unit = getSelAircraftByCountry(country)
-    return isUnitAllowedForGameMode(unit)
+    return ::game_mode_manager.isUnitAllowedForGameMode(unit)
   }
 
   function testCrewsForMode(country) {
@@ -901,7 +884,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
         if (!("aircraft" in crew))
           continue
         let unit = getAircraftByName(crew.aircraft)
-        if (isUnitAllowedForGameMode(unit))
+        if (::game_mode_manager.isUnitAllowedForGameMode(unit))
           return true
       }
     }
@@ -910,8 +893,8 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function checkRequiredUnits(country) {
-    let gameMode = getCurrentGameMode()
-    return gameMode ? ::events.checkRequiredUnits(getGameModeEvent(gameMode), null, country) : true
+    let gameMode = ::game_mode_manager.getCurrentGameMode()
+    return gameMode ? ::events.checkRequiredUnits(::game_mode_manager.getGameModeEvent(gameMode), null, country) : true
   }
 
   function getIaBlockSelObj(obj) {
@@ -985,7 +968,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!::g_login.isLoggedIn())
       return
 
-    if (!isAllCrewsMinLevel())
+    if (!::g_crew.isAllCrewsMinLevel())
       return
 
     this.tryToStartUpgradeCrewTutorial()
@@ -1005,7 +988,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!curCrewSlot)
       return
 
-    let tutorialPageId = getCrewSkillPageIdToRunTutorial(curCrew)
+    let tutorialPageId = ::g_crew.getSkillPageIdToRunTutorial(curCrew)
     if (!tutorialPageId)
       return
 
@@ -1061,7 +1044,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
     if (tutorialCounter >= ::SlotbarPresetsTutorial.MAX_TUTORIALS)
       return false
 
-    let currentGameMode = getCurrentGameMode()
+    let currentGameMode = ::game_mode_manager.getCurrentGameMode()
     if (currentGameMode == null)
       return false
 
@@ -1079,7 +1062,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
     tutorial.onComplete = function (_params) {
       this.slotbarPresetsTutorial = null
     }.bindenv(this)
-    tutorial.preset = findPresetValidForGameMode(this.getCurCountry())
+    tutorial.preset = ::game_mode_manager.findPresetValidForGameMode(this.getCurCountry())
     if (tutorial.startTutorial()) {
       this.slotbarPresetsTutorial = tutorial
       return true
@@ -1154,7 +1137,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!tutorialModule.needShowTutorial("newUnitTypetoBattle", 1)
       || getMissionsComplete(["pvp_played", "skirmish_played"])
            < ::SlotbarPresetsTutorial.MIN_PLAYS_GAME_FOR_NEW_UNIT_TYPE
-      || g_squad_manager.isNotAloneOnline()
+      || ::g_squad_manager.isNotAloneOnline()
       || !isCountrySlotbarHasUnits(profileCountrySq.value)
       || !isCountryAllCrewsUnlockedInHangar(profileCountrySq.value))
       return
@@ -1163,7 +1146,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function startNewUnitTypeToBattleTutorial() {
-    let currentGameMode = getCurrentGameMode()
+    let currentGameMode = ::game_mode_manager.getCurrentGameMode()
     if (!currentGameMode)
       return
 
@@ -1178,13 +1161,13 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
         continue
 
       isNotFoundUnitTypeForTutorial = false
-      gameModeForTutorial = getGameModeById(getEventEconomicName(
+      gameModeForTutorial = ::game_mode_manager.getGameModeById(getEventEconomicName(
         getNextNewbieEvent(currentCountry, unitType.esUnitType)))
 
       if (!gameModeForTutorial)
         continue
 
-      validPreset = findPresetValidForGameMode(currentCountry, gameModeForTutorial)
+      validPreset = ::game_mode_manager.findPresetValidForGameMode(currentCountry, gameModeForTutorial)
       if (validPreset)
         break
 
@@ -1231,16 +1214,16 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
 
     local notice = null
     let alertObj = this.scene.findObject("game_mode_notice")
-    if (g_squad_manager.isSquadMember() && g_squad_manager.isMeReady()) {
-      let gameModeId = g_squad_manager.getLeaderGameModeId()
+    if (::g_squad_manager.isSquadMember() && ::g_squad_manager.isMeReady()) {
+      let gameModeId = ::g_squad_manager.getLeaderGameModeId()
       if (gameModeId && gameModeId != "")
         notice = loc("mainmenu/leader_gamemode_notice")
       alertObj.hideConsoleImage = "yes"
     }
     else {
-      let id = getUserGameModeId()
-      let gameMode = getGameModeById(id)
-      if ((id != "" && gameMode && id != getCurrentGameModeId()))
+      let id = ::game_mode_manager.getUserGameModeId()
+      let gameMode = ::game_mode_manager.getGameModeById(id)
+      if ((id != "" && gameMode && id != ::game_mode_manager.getCurrentGameModeId()))
         notice = format(loc("mainmenu/gamemode_change_notice"), gameMode.text)
       alertObj.hideConsoleImage = "no"
     }
@@ -1251,12 +1234,12 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onGMNoticeClick() {
-    if (g_squad_manager.isSquadMember() && g_squad_manager.isMeReady())
+    if (::g_squad_manager.isSquadMember() && ::g_squad_manager.isMeReady())
       return
 
-    let id = getUserGameModeId()
+    let id = ::game_mode_manager.getUserGameModeId()
     if (id != "") {
-      setCurrentGameModeById(id, true)
+      ::game_mode_manager.setCurrentGameModeById(id, true)
     }
   }
 

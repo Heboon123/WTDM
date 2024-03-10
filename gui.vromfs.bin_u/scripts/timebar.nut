@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 
@@ -14,9 +15,6 @@ let { fabs } = require("math")
     }
     forward = {
       incSignMultiplier = 1
-    }
-    stationary = {
-      incSignMultiplier = 0
     }
   }
 
@@ -84,14 +82,6 @@ let { fabs } = require("math")
    */
   function setDirectionBackward(timeBarObj) {
     this._setDirection(timeBarObj, "backward")
-  }
-
-  /**
-   * Set timer stationary.
-   * @time_bar_obj - timeBar object
-   */
-  function pauseTimer(timeBarObj) {
-    this._setSpeed(timeBarObj, 0)
   }
 
   /**

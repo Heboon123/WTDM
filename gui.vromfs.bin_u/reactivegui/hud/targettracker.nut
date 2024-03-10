@@ -20,7 +20,7 @@ let styleLineForeground = {
 }
 
 
-function lockSight(colorWatched, width, height, _posX, _posY) {
+let function lockSight(colorWatched, width, height, _posX, _posY) {
   return @() styleLineForeground.__merge({
     rendObj = ROBJ_VECTOR_CANVAS
     size = [width, height]
@@ -149,7 +149,7 @@ let targetSize = @(colorWatched, width, height, is_static_pos) function() {
 let targetSizeTrigger = {}
 TargetAge.subscribe(@(v) v >= 0.2 ? anim_start(targetSizeTrigger) : anim_request_stop(targetSizeTrigger))
 
-function targetSizeComponent(
+let function targetSizeComponent(
   colorWatched,
   width,
   height,

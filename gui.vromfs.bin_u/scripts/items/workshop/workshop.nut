@@ -1,7 +1,6 @@
 from "%scripts/dagui_library.nut" import *
 from "%scripts/mainConsts.nut" import SEEN
 
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let DataBlock  = require("DataBlock")
 let { frnd } = require("dagor.random")
 let u = require("%sqStdLibs/helpers/u.nut")
@@ -27,13 +26,13 @@ local customLocalizationPresets = {}
 local effectOnStartCraftPresets = {}
 local effectOnOpenChestPresets = {}
 
-function checkBlkDuplicates(cfg, cfgName) {
+let function checkBlkDuplicates(cfg, cfgName) {
   foreach(key, val in cfg) {
     assert(type(val) != "array", $"config/workshop.blk: Duplicate block in {cfgName}: {key}")
   }
 }
 
-function initOnce() {
+let function initOnce() {
   if (isInited || !::g_login.isProfileReceived())
     return
   isInited = true
@@ -84,7 +83,7 @@ function initOnce() {
   checkBlkDuplicates(customLocalizationPresets, "customLocalizationPresets")
 }
 
-function invalidateCache() {
+let function invalidateCache() {
   setsList.clear()
   markingPresetsList = {}
   customLocalizationPresets = {}
@@ -94,24 +93,24 @@ function invalidateCache() {
   isInited = false
 }
 
-function getSetsList() {
+let function getSetsList() {
   initOnce()
   return setsList
 }
 
-function getMarkingPresetsById(presetName) {
+let function getMarkingPresetsById(presetName) {
   initOnce()
   return markingPresetsList?[presetName]
 }
 
-function shouldDisguiseItem(item) {
+let function shouldDisguiseItem(item) {
   foreach (set in getSetsList())
     if (set.isItemInSet(item))
       return set.shouldDisguiseItem(item)
   return false
 }
 
-function getVisibleSeenIds() {
+let function getVisibleSeenIds() {
   if (!visibleSeenIds) {
     visibleSeenIds = {}
     foreach (set in getSetsList())
@@ -121,7 +120,7 @@ function getVisibleSeenIds() {
   return visibleSeenIds
 }
 
-function invalidateItemsCache() {
+let function invalidateItemsCache() {
   visibleSeenIds = null
   seenIdCanBeNew.clear()
   foreach (set in getSetsList())
@@ -131,7 +130,7 @@ function invalidateItemsCache() {
   seenWorkshop.onListChanged()
 }
 
-function canSeenIdBeNew(seenId) {
+let function canSeenIdBeNew(seenId) {
   if (!(seenId in seenIdCanBeNew)) {
     let id = to_integer_safe(seenId, seenId, false) //ext inventory items id need to convert to integer.
     let item = ::ItemsManager.findItemById(id)
@@ -145,7 +144,7 @@ let getCustomLocalizationPresets = function(name) {
   return customLocalizationPresets?[name] ?? {}
 }
 
-function getItemAdditionalRecipesById(id) {
+let function getItemAdditionalRecipesById(id) {
   initOnce()
   return additionalRecipes?[id] ?? []
 }
@@ -160,7 +159,7 @@ let getEffectOnOpenChestPresetById = function(name) {
   return effectOnOpenChestPresets?[name] ?? {}
 }
 
-function getRandomEffect(effects) {
+let function getRandomEffect(effects) {
   return isArray(effects)
     ? effects?[(frnd() * effects.len()).tointeger()] ?? ""
     : effects
@@ -170,7 +169,7 @@ subscriptions.addListenersWithoutEnv({
   SignOut = @(_p) invalidateCache()
   InventoryUpdate = @(_p) invalidateItemsCache()
   ItemsShopUpdate = @(_p) invalidateItemsCache()
-}, g_listener_priority.CONFIG_VALIDATION)
+}, ::g_listener_priority.CONFIG_VALIDATION)
 
 seenWorkshop.setListGetter(getVisibleSeenIds)
 seenWorkshop.setCanBeNewFunc(canSeenIdBeNew)

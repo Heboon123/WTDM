@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import is_cursor_visible_in_gui, is_mouse_last_time_used
 from "%scripts/dagui_library.nut" import *
 
@@ -29,7 +30,7 @@ isMouseCursorVisible.subscribe(function(isVisible) {
     lastMousePointerTimeHide = now
 })
 
-function setMousePointerInitialPos(obj) {
+let function setMousePointerInitialPos(obj) {
   let now = get_time_msec()
   let isMouseMode = !showConsoleButtons.value || is_mouse_last_time_used()
   let isCursorVisible = is_cursor_visible_in_gui()
@@ -48,7 +49,7 @@ function setMousePointerInitialPos(obj) {
   return true
 }
 
-function setMousePointerInitialPosOnChildByValue(obj) {
+let function setMousePointerInitialPosOnChildByValue(obj) {
   let idx = obj?.isValid() ? obj.getValue() : -1
   if (idx < 0 || idx >= obj.childrenCount())
     return false

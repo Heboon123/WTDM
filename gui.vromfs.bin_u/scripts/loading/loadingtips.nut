@@ -1,7 +1,6 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let { isInMenu } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { format } = require("string")
 let { rnd } = require("dagor.random")
@@ -30,7 +29,7 @@ local nextTipTime = -1
 local isTipsValid = false
 
 // for global tips typeName = null
-function getKeyFormat(typeName, isNewbie) {
+let function getKeyFormat(typeName, isNewbie) {
   let path = typeName ? [ typeName.tolower() ] : []
   if (isNewbie)
     path.append("newbie")
@@ -39,7 +38,7 @@ function getKeyFormat(typeName, isNewbie) {
 }
 
 // for global tips unitType = null
-function loadTipsKeysByUnitType(unitType, isNeedOnlyNewbieTips) {
+let function loadTipsKeysByUnitType(unitType, isNeedOnlyNewbieTips) {
   let res = []
 
   let configs = []
@@ -76,7 +75,7 @@ function loadTipsKeysByUnitType(unitType, isNeedOnlyNewbieTips) {
   return res
 }
 
-function getNewbieUnitTypeMask() {
+let function getNewbieUnitTypeMask() {
   local mask = 0
   foreach (unitType in unitTypes.types) {
     if (unitType == unitTypes.INVALID)
@@ -87,7 +86,7 @@ function getNewbieUnitTypeMask() {
   return mask
 }
 
-function validate() {
+let function validate() {
   if (isTipsValid)
     return
 
@@ -113,7 +112,7 @@ function validate() {
   }
 }
 
-function getDefaultUnitTypeMask() {
+let function getDefaultUnitTypeMask() {
   if (!::g_login.isLoggedIn() || isInMenu())
     return existTipsMask
 
@@ -133,7 +132,7 @@ function getDefaultUnitTypeMask() {
   return (res & existTipsMask) || existTipsMask
 }
 
-function generateNewTip(unitTypeMask = 0) {
+let function generateNewTip(unitTypeMask = 0) {
   nextTipTime = get_time_msec() + TIP_LIFE_TIME_MSEC
 
   if (curNewbieUnitTypeMask && curNewbieUnitTypeMask != getNewbieUnitTypeMask())
@@ -194,13 +193,13 @@ function generateNewTip(unitTypeMask = 0) {
   }
 }
 
-function getTip(unitTypeMask = 0) {
+let function getTip(unitTypeMask = 0) {
   if (unitTypeMask != curTipUnitTypeMask || nextTipTime <= get_time_msec())
     generateNewTip(unitTypeMask)
   return curTip
 }
 
-function getAllTips() {
+let function getAllTips() {
   let tipsKeysByUnitType = {}
   tipsKeysByUnitType[GLOBAL_LOADING_TIP_BIT] <- loadTipsKeysByUnitType(null, false)
 
@@ -237,7 +236,7 @@ addListenersWithoutEnv({
   GameLocalizationChanged = @(_) invalidateTips()
   LoginComplete = @(_) invalidateTips()
   ProfileReceived = @(_) invalidateTips()
-}, g_listener_priority.DEFAULT_HANDLER)
+}, ::g_listener_priority.DEFAULT_HANDLER)
 
 return {
   getAllTips

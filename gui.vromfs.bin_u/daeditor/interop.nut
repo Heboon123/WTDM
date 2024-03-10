@@ -6,17 +6,17 @@ let {editorIsActive, editorFreeCam, entitiesListUpdateTrigger, showTemplateSelec
 let daEditor = require("daEditorEmbedded")
 let entity_editor = require("entity_editor")
 
-let { eventbus_subscribe } = require("eventbus")
+let eventbus = require("eventbus")
 
 let {DE4_MODE_POINT_ACTION, isFreeCamMode=null} = daEditor
 let {DE4_MODE_CREATE_ENTITY, get_point_action_op} = entity_editor
 
 
-eventbus_subscribe("daEditorEmbedded.onDeSetWorkMode", function onDeSetWorkMode(mode) {
+eventbus.subscribe("daEditorEmbedded.onDeSetWorkMode", function onDeSetWorkMode(mode) {
   de4workMode(mode)
 })
 
-eventbus_subscribe("daEditorEmbedded.onDeSetEditMode", function onDeSetEditMode(mode) {
+eventbus.subscribe("daEditorEmbedded.onDeSetEditMode", function onDeSetEditMode(mode) {
   de4editMode(mode)
   showTemplateSelect(mode == DE4_MODE_CREATE_ENTITY)
 
@@ -25,11 +25,11 @@ eventbus_subscribe("daEditorEmbedded.onDeSetEditMode", function onDeSetEditMode(
     resetPointActionMode()
 })
 
-eventbus_subscribe("entity_editor.onEditorActivated", function onEditorActivated(on) {
+eventbus.subscribe("entity_editor.onEditorActivated", function onEditorActivated(on) {
   editorIsActive.update(on)
 })
 
-eventbus_subscribe("entity_editor.onEditorChanged", function onEditorChanged(_) {
+eventbus.subscribe("entity_editor.onEditorChanged", function onEditorChanged(_) {
   editorFreeCam.update(isFreeCamMode?() ?? false)
 
   local paOp = get_point_action_op()
@@ -56,19 +56,19 @@ eventbus_subscribe("entity_editor.onEditorChanged", function onEditorChanged(_) 
   }
 })
 
-eventbus_subscribe("entity_editor.onEntityAdded", function onEntityAdded(_eid) {
+eventbus.subscribe("entity_editor.onEntityAdded", function onEntityAdded(_eid) {
   entitiesListUpdateTrigger(entitiesListUpdateTrigger.value+1)
 })
 
-eventbus_subscribe("entity_editor.onEntityRemoved", function onEntityRemoved(eid) {
+eventbus.subscribe("entity_editor.onEntityRemoved", function onEntityRemoved(eid) {
   entitiesListUpdateTrigger(entitiesListUpdateTrigger.value+1)
   handleEntityRemoved(eid)
 })
 
-eventbus_subscribe("entity_editor.onEntityNewBySample", function onEntityNewBySample(eid) {
+eventbus.subscribe("entity_editor.onEntityNewBySample", function onEntityNewBySample(eid) {
   handleEntityCreated(eid)
 })
 
-eventbus_subscribe("entity_editor.onEntityMoved", function onEntityMoved(eid) {
+eventbus.subscribe("entity_editor.onEntityMoved", function onEntityMoved(eid) {
   handleEntityMoved(eid)
 })

@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { Cost } = require("%scripts/money.nut")
@@ -36,7 +37,7 @@ local function setDoubleTextToButton(nestObj, firstBtnId, firstText, secondText 
   return fObj
 }
 
-function setColoredDoubleTextToButton(nestObj, btnId, coloredText) {
+let function setColoredDoubleTextToButton(nestObj, btnId, coloredText) {
   return setDoubleTextToButton(nestObj, btnId, removeTextareaTags(coloredText), coloredText)
 }
 
@@ -46,7 +47,7 @@ function setColoredDoubleTextToButton(nestObj, btnId, coloredText) {
  * placePriceTextToButton(nestObj, btnId, localizedText, wpCost (int), goldCost (int))
  * placePriceTextToButton(nestObj, btnId, localizedText, cost (Cost) )
  */
-function placePriceTextToButton(nestObj, btnId, localizedText, arg1 = 0, arg2 = 0, fullCost = null) {
+let function placePriceTextToButton(nestObj, btnId, localizedText, arg1 = 0, arg2 = 0, fullCost = null) {
   let cost = u.isMoney(arg1) ? arg1 : Cost(arg1, arg2)
   let needShowPrice = !cost.isZero()
   let needShowDiscount = needShowPrice && fullCost != null && (fullCost.gold > cost.gold || fullCost.wp > cost.wp)
@@ -68,7 +69,7 @@ function placePriceTextToButton(nestObj, btnId, localizedText, arg1 = 0, arg2 = 
   setDoubleTextToButton(nestObj, btnId, priceText, priceTextColored, textBlock)
 }
 
-function setHelpTextOnLoading(nestObj = null) {
+let function setHelpTextOnLoading(nestObj = null) {
   if (!checkObj(nestObj))
     return
 
@@ -76,13 +77,13 @@ function setHelpTextOnLoading(nestObj = null) {
   nestObj.setValue(text)
 }
 
-function setVersionText(scene = null) {
+let function setVersionText(scene = null) {
   let verObj = scene ? scene.findObject("version_text") : get_cur_gui_scene()["version_text"]
   if (checkObj(verObj))
     verObj.setValue(format(loc("mainmenu/version"), get_game_version_str()))
 }
 
-function formatLocalizationArrayToDescription(locArr) {
+let function formatLocalizationArrayToDescription(locArr) {
   local descr = ""
 
   foreach (idx, locObj in locArr) {

@@ -1,8 +1,7 @@
 //-file:plus-string
 from "%scripts/dagui_library.nut" import *
 let u = require("%sqStdLibs/helpers/u.nut")
-let { loadLocalByAccount, saveLocalByAccount
-} = require("%scripts/clientState/localProfileDeprecated.nut")
+let { loadLocalByAccount, saveLocalByAccount } = require("%scripts/clientState/localProfile.nut")
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
 let { topMenuHandler } = require("%scripts/mainmenu/topMenuStates.nut")
 let tutorAction = require("%scripts/tutorials/tutorialActions.nut")
@@ -11,9 +10,6 @@ let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 let { getSlotObj } = require("%scripts/slotbar/slotbarView.nut")
 let { getCrewById } = require("%scripts/slotbar/slotbarState.nut")
-let { getCurrentGameModeId, setCurrentGameModeById, getCurrentGameMode,
-  getRequiredUnitTypes, getGameModeItemId, isUnitAllowedForGameMode
-} = require("%scripts/gameModes/gameModeManagerState.nut")
 
 ::SlotbarPresetsTutorial <- class {
   /** Total maximum times to show this tutorial. */
@@ -61,7 +57,7 @@ let { getCurrentGameModeId, setCurrentGameModeById, getCurrentGameMode,
    */
   function startTutorial() {
     this.currentStepsName = "startTutorial"
-    this.currentGameModeId = getCurrentGameModeId()
+    this.currentGameModeId = ::game_mode_manager.getCurrentGameModeId()
     if (this.preset == null)
       return false
     let currentPresetIndex = getTblValue(this.currentCountry, ::slotbarPresets.selected, -1)
@@ -173,7 +169,7 @@ let { getCurrentGameModeId, setCurrentGameModeById, getCurrentGameMode,
 
     // Switching preset causes game mode to switch as well.
     // So we need to restore it to it's previous value.
-    setCurrentGameModeById(this.currentGameModeId)
+    ::game_mode_manager.setCurrentGameModeById(this.currentGameModeId)
 
     // This update shows player that preset was
     // actually changed behind tutorial dim.
@@ -196,7 +192,7 @@ let { getCurrentGameModeId, setCurrentGameModeById, getCurrentGameMode,
   }
 
   function createMessageWhithUnitType(partLocId = "selectPreset") {
-    let types = getRequiredUnitTypes(this.tutorialGameMode)
+    let types = ::game_mode_manager.getRequiredUnitTypes(this.tutorialGameMode)
     let unitType = unitTypes.getByEsUnitType(u.max(types))
     let unitTypeLocId = "options/chooseUnitsType/" + unitType.lowerName
     return loc("slotbarPresetsTutorial/" + partLocId, { unitType = loc(unitTypeLocId) })
@@ -220,7 +216,7 @@ let { getCurrentGameModeId, setCurrentGameModeById, getCurrentGameMode,
     let slotbarHandler = this.currentHandler.getSlotbar()
     if (!slotbarHandler)
       return false
-    if (isUnitAllowedForGameMode(showedUnit.value))
+    if (::game_mode_manager.isUnitAllowedForGameMode(showedUnit.value))
       return false
     let currentPreset = ::slotbarPresets.getCurrentPreset(this.currentCountry)
     if (currentPreset == null)
@@ -266,7 +262,7 @@ let { getCurrentGameModeId, setCurrentGameModeById, getCurrentGameMode,
       return -1
     for (local i = 0; i < units.len(); ++i) {
       let unit = getAircraftByName(units[i])
-      if (isUnitAllowedForGameMode(unit))
+      if (::game_mode_manager.isUnitAllowedForGameMode(unit))
         return i
     }
     return -1
@@ -293,7 +289,7 @@ let { getCurrentGameModeId, setCurrentGameModeById, getCurrentGameMode,
   function startOpenGameModeSelectStep() {
     if (!this.isNewUnitTypeToBattleTutorial)
       return false
-    let currentGameMode = getCurrentGameMode()
+    let currentGameMode = ::game_mode_manager.getCurrentGameMode()
     if (currentGameMode == this.tutorialGameMode)
       return false
     let gameModeChangeButtonObj = this.currentHandler?.gameModeChangeButtonObj
@@ -336,7 +332,7 @@ let { getCurrentGameModeId, setCurrentGameModeById, getCurrentGameMode,
     let gameModeSelectHandler = this.currentHandler?.gameModeSelectHandler
     if (!gameModeSelectHandler)
       return
-    let gameModeItemId = getGameModeItemId(this.tutorialGameMode.id)
+    let gameModeItemId = ::game_mode_manager.getGameModeItemId(this.tutorialGameMode.id)
     let gameModeObj = gameModeSelectHandler.scene.findObject(gameModeItemId)
     if (!checkObj(gameModeObj))
       return
@@ -360,7 +356,7 @@ let { getCurrentGameModeId, setCurrentGameModeById, getCurrentGameMode,
     let gameModeSelectHandler = this.currentHandler?.gameModeSelectHandler
     if (!gameModeSelectHandler)
       return
-    let gameModeItemId = getGameModeItemId(this.tutorialGameMode.id)
+    let gameModeItemId = ::game_mode_manager.getGameModeItemId(this.tutorialGameMode.id)
     let gameModeObj = gameModeSelectHandler.scene.findObject(gameModeItemId)
     if (!checkObj(gameModeObj))
       return

@@ -2,7 +2,7 @@ from "%darg/ui_imports.nut" import *
 
 let defHeight = calc_str_box("A")[1]
 
-function listItem(text, action, is_current, _params={}) {
+let function listItem(text, action, is_current, _params={}) {
   let group = ElemGroup()
   let stateFlags = Watched(0)
   let xmbNode = XmbNode()
@@ -36,7 +36,7 @@ function listItem(text, action, is_current, _params={}) {
 }
 
 
-function closeButton(action) {
+let function closeButton(action) {
   return {
     size = flex()
     behavior = Behaviors.Button
@@ -48,7 +48,7 @@ function closeButton(action) {
 }
 
 
-function boxCtor(params=null) {
+let function boxCtor(params=null) {
   let color = params?.disabled ? Color(160,160,160,255) : Color(255,255,255,255)
 
   let labelText = {
@@ -63,7 +63,7 @@ function boxCtor(params=null) {
   }
 
 
-  function popupArrow() {
+  let function popupArrow() {
     return {
       rendObj = ROBJ_VECTOR_CANVAS
       size = [defHeight/3,defHeight/3]
@@ -88,7 +88,7 @@ function boxCtor(params=null) {
 }
 
 
-function onOpenDropDown(_itemXmbNode) {
+let function onOpenDropDown(_itemXmbNode) {
   gui_scene.setXmbFocus(null)
 }
 

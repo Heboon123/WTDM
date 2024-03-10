@@ -9,7 +9,7 @@ enum HINT_PIECE_TYPE {
   LINK
 }
 
-function getTextSlice(textsArray) {
+let function getTextSlice(textsArray) {
   return { text = textsArray.map(
     @(text, idx) { textValue = textsArray?[idx + 1] != null ? $"{text} " : text }) }
 }
@@ -141,7 +141,7 @@ function getTextSlice(textsArray) {
 }
 
 
-function findLinks(oldSlices) {
+let function findLinks(oldSlices) {
   let oldlen = oldSlices.len()
   let slices = []
   for ( local i = 0; i < oldlen; i++) {

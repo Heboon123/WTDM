@@ -10,7 +10,6 @@ let fcsState = {
   CalcProgress = Watched(-1.0)
 
   IsTargetSelected = Watched(false)
-  IsTargetDead = Watched(false)
   IsTargetDataAvailable = Watched(false)
   TargetType = Watched("")
   TargetLength = Watched(0.0)
@@ -28,7 +27,6 @@ let fcsState = {
   TargetAzimuthAngle = Watched(0.0)
   ShotState = Watched(FCSShotState.SHOT_NONE)
   ShotDiscrepancy = Watched(0.0)
-  ShotDirection = Watched(0.0)
   HasFcsIndication = Watched(false)
   IsFcsVisible = Watched(false)
 

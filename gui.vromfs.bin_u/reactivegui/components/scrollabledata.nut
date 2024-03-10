@@ -1,6 +1,6 @@
 from "%rGui/globals/ui_library.nut" import *
 
-function make(log_state) {
+let function make(log_state) {
   let scrollHandler = ScrollHandler()
   local scrolledTo = null
   local shouldScroll = false

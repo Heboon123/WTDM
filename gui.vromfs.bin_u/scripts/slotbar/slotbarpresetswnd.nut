@@ -14,9 +14,6 @@ let { ceil } = require("math")
 let { stripTags } = require("%sqstd/string.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { buildUnitSlot, fillUnitSlotTimers } = require("%scripts/slotbar/slotbarView.nut")
-let { enableObjsByTable } = require("%sqDagui/daguiUtil.nut")
-let { getCurrentGameMode, getGameModeById, getCurrentGameModeEdiff
-} = require("%scripts/gameModes/gameModeManagerState.nut")
 
 ::gui_choose_slotbar_preset <- function gui_choose_slotbar_preset(owner = null) {
   return handlersManager.loadHandler(gui_handlers.ChooseSlotbarPreset, { ownerWeak = owner })
@@ -101,7 +98,8 @@ gui_handlers.ChooseSlotbarPreset <- class (gui_handlers.BaseGuiHandlerWT) {
         presetBattleRatingText = loc("shop/battle_rating") + loc("ui/colon") + battleRatingRange + "\n"
       }
 
-      let gameMode = getGameModeById(preset.gameModeId) ?? getCurrentGameMode()
+      let gameMode = ::game_mode_manager.getGameModeById(preset.gameModeId) ??
+                       ::game_mode_manager.getCurrentGameMode()
       let presetGameMode = gameMode != null ? loc("options/mp_mode") +
                                                 loc("ui/colon") + gameMode.text + "\n" : ""
 
@@ -153,7 +151,7 @@ gui_handlers.ChooseSlotbarPreset <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function getCurrentEdiff() {
     let slotbar = this.ownerWeak && this.ownerWeak.getSlotbar()
-    return slotbar ? slotbar.getCurrentEdiff() : getCurrentGameModeEdiff()
+    return slotbar ? slotbar.getCurrentEdiff() : ::get_current_ediff()
   }
 
   restoreFocusDelayed = @() this.guiScene.performDelayed(this, function() {
@@ -183,7 +181,7 @@ gui_handlers.ChooseSlotbarPreset <- class (gui_handlers.BaseGuiHandlerWT) {
     let selectedPresetEnabled = isCurrentPresetSelected || ((this.chosenValue in this.presets) ? this.presets[this.chosenValue].enabled : false)
     let canEdit = ::slotbarPresets.canEditCountryPresets(profileCountrySq.value)
 
-    enableObjsByTable(this.scene, {
+    ::enableBtnTable(this.scene, {
         btn_preset_create = canEdit
         btn_preset_copy = canEdit
         btn_preset_rename = canEdit

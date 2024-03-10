@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import xbox_find_friends_result, ps4_find_friends_result, xbox_find_friends, ps4_find_friends
 from "%scripts/dagui_library.nut" import *
 
@@ -36,7 +37,7 @@ requestUnknownXboxIds = function(playersList, knownUsers, cb) {
   )
 }
 
-function requestUnknownPSNIds(playersList, knownUsers, cb) {
+let function requestUnknownPSNIds(playersList, knownUsers, cb) {
   if (!playersList.len()) {
     cb(knownUsers)
     return

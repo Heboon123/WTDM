@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import ww_preview_operation, ww_stop_preview
 from "%scripts/dagui_library.nut" import *
 let { get_time_msec } = require("dagor.time")

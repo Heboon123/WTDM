@@ -16,7 +16,7 @@ let typeMap = {
   ["!"]     = @(a, b) b != a,
 }
 
-function checkVersion(verWildcard, verCurrent, compFn) {
+let function checkVersion(verWildcard, verCurrent, compFn) {
   if (arrToInt(verCurrent) == 0)
     return true
 
@@ -37,7 +37,7 @@ function checkVersion(verWildcard, verCurrent, compFn) {
   return compFn(intCheck, intCurrent)
 }
 
-function stripVerCondition(str) {
+let function stripVerCondition(str) {
   let allowed = "0123456789Xx"
   for (local i = 0; i < str.len(); ++i) {
     let char = str.slice(i, i + 1)
@@ -47,7 +47,7 @@ function stripVerCondition(str) {
   return ""
 }
 
-function check_version(vermask, game_version) {
+let function check_version(vermask, game_version) {
   if (type(vermask) != "string" || type(game_version) != "string") {
     logerr($"Try to call check_version with not string parameters. (vermask = {vermask}, game_version = {game_version})")
     return false
@@ -60,7 +60,7 @@ function check_version(vermask, game_version) {
   return checkVersion(maskVer, checkVer, cmpFn)
 }
 
-function test() {
+let function test() {
   assert(check_version("1.2.3.4", "1.2.3.4"))
   assert(check_version("1.2.x.4", "1.2.3.4"))
   assert(check_version("1.2.3.X", "1.2.3.5"))

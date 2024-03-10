@@ -1,20 +1,20 @@
 let impl = require("%xboxLib/impl/store.nut")
-let {eventbus_subscribe, eventbus_send} = require("eventbus")
+let {subscribe, send} = require("eventbus")
 
 let eventName = "XBOX_STORE_INITIALIZED_EVENT"
 
 
-function subscribe_to_store_init(callback) {
-  eventbus_subscribe(eventName, function(res) {
+let function subscribe_to_store_init(callback) {
+  subscribe(eventName, function(res) {
     callback?(res?.success ?? false)
   })
 }
 
 
-function initialize(callback) {
+let function initialize(callback) {
   impl.initialize(function(success) {
     callback?(success)
-    eventbus_send(eventName, {success = success})
+    send(eventName, {success = success})
   })
 }
 

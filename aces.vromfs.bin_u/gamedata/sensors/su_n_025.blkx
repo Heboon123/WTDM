@@ -241,41 +241,31 @@
     }
   },
   "scopeRangeSets": {
-    "search": {
+    "common": {
       "range1": 12000.0,
       "range2": 6000.0
     }
   },
   "fsms": {
     "main": {
-      "stateInit": "init",
+      "stateInit": [
+        "init",
+        "init"
+      ],
       "actionsTemplates": {
         "init": {
           "setEnabled": {
             "value": false
-          },
-          "setCenterAzimuth": {
-            "source": "constant",
-            "value": 0.0
-          },
-          "setCenterElevation": [
-            {
-              "source": "constant",
-              "value": 0.0
-            },
-            {
-              "source": "constant",
-              "value": -6.25
-            }
-          ],
-          "setScopeRangeSet": {
-            "scopeRangeSet": "search"
           },
           "setTransiver": {
             "transiver": "GTM"
           },
           "setSignal": {
             "signal": "GTM"
+          },
+          "setCenterElevation": {
+            "source": "constant",
+            "value": -6.25
           },
           "setTargetDesignationRange": {
             "azimuthRange": [
@@ -292,6 +282,9 @@
               12000.0
             ]
           },
+          "setScopeRangeSet": {
+            "scopeRangeSet": "common"
+          },
           "setFsmActive": {
             "fsm": "mode",
             "active": true
@@ -304,16 +297,21 @@
           "setEnabled": {
             "value": false
           },
+          "setCenterAzimuth": {
+            "source": "constant",
+            "value": 0.0
+          },
+          "clearTargets": {},
           "setFsmActive": {
             "fsm": "mode",
             "active": false
           }
         },
-        "resetStandbyMode": {},
         "setSearchMode": {
           "setEnabled": {
             "value": true
           },
+          "clearTargets": {},
           "setFsmActive": [
             {
               "fsm": "search",
@@ -330,7 +328,6 @@
           }
         },
         "resetSearchMode": {
-          "clearTargets": {},
           "setFsmActive": {
             "fsm": "search",
             "active": false
@@ -450,8 +447,7 @@
         "setCueDist": {
           "command": "cueAxisY",
           "actions": {
-            "setCueDist": {},
-            "setCueDopplerSpeed": {}
+            "setCueDist": {}
           }
         },
         "setCueElevation": {

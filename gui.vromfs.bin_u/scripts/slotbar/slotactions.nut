@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import clan_get_exp
 from "%scripts/dagui_library.nut" import *
 

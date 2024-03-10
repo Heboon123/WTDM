@@ -9,7 +9,7 @@ let PT_STEP_STATUS = {
   SUSPEND = 2
 }
 
-function startPseudoThread(actionsList, onCrash = null, step = 0) {
+let function startPseudoThread(actionsList, onCrash = null, step = 0) {
   let self = callee()
   handlersManager.doDelayed(function() {
     local curStep = step

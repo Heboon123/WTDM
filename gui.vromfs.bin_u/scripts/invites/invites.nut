@@ -1,41 +1,32 @@
 //-file:plus-string
 from "%scripts/dagui_natives.nut" import get_user_log_blk_body, periodic_task_unregister, get_user_logs_count, periodic_task_register
 from "%scripts/dagui_library.nut" import *
-
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let DataBlock = require("DataBlock")
 let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { registerPersistentDataFromRoot, PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { startsWith } = require("%sqstd/string.nut")
 let { get_charserver_time_sec } = require("chard")
-let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
-let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { findInviteClass, invitesClasses } = require("%scripts/invites/invitesClasses.nut")
-let { MAX_POPUPS_ON_SCREEN, addPopup } = require("%scripts/popups/popups.nut")
+let { MAX_POPUPS_ON_SCREEN } = require("%scripts/popups/popups.nut")
 
 const INVITE_CHAT_LINK_PREFIX = "INV_"
 
-let openInviteWnd = @() loadHandler(gui_handlers.InvitesWnd)
+let openInviteWnd = @() ::gui_start_invites()
 
-function showPopupFriendsInvites(count) {
-  addPopup(null, loc("contacts/popup_has_friend_invitations", {count}),
+let function showPopupFriendsInvites(count) {
+  ::g_popups.add(null, loc("contacts/popup_has_friend_invitations", {count}),
     openInviteWnd, [{ id = "gotoInvites", text = loc("mainmenu/invites"), func = openInviteWnd }])
 }
 
-let invitesList = persist("invitesList", @() [])
-let invitesAmount = persist("invitesAmount", @() {val = 0})
-let getNewInvitesAmount = @() invitesAmount.val
-let setNewInvitesAmount = @(val) invitesAmount.val = val
-
 ::g_invites <- {
+  [PERSISTENT_DATA_PARAMS] = ["list", "newInvitesAmount"]
 
   popupTextColor = "@chatInfoColor"
 
-  list = invitesList
+  list = []
   newInvitesAmount = 0
   refreshInvitesTask = -1
   userlogHandlers = {}
-  getNewInvitesAmount
-  setNewInvitesAmount
 
   function updateOrCreateInvite(inviteClass, params) {
     let uid = inviteClass.getUidByParams(params)
@@ -48,7 +39,7 @@ let setNewInvitesAmount = @(val) invitesAmount.val = val
 
     invite = inviteClass(params)
     if (invite.isValid()) {
-      invitesList.append(invite)
+      this.list.append(invite)
       this.broadcastInviteReceived(invite)
     }
     return invite
@@ -88,8 +79,8 @@ let setNewInvitesAmount = @(val) invitesAmount.val = val
   }
 
   function onEventSignOut(_p) {
-    invitesList.clear()
-    setNewInvitesAmount(0)
+    this.list = []
+    this.newInvitesAmount = 0
   }
 
 }
@@ -142,9 +133,9 @@ let setNewInvitesAmount = @(val) invitesAmount.val = val
 ::g_invites._lastCleanTime <- -1
 ::g_invites.checkCleanList <- function checkCleanList() {
   local isRemoved = false
-  for (local i = invitesList.len() - 1; i >= 0; i--)
+  for (local i = this.list.len() - 1; i >= 0; i--)
     if (this.list[i].isOutdated()) {
-      invitesList.remove(i)
+      this.list.remove(i)
       isRemoved = true
     }
   if (isRemoved)
@@ -152,10 +143,10 @@ let setNewInvitesAmount = @(val) invitesAmount.val = val
 }
 
 ::g_invites.remove <- function remove(invite) {
-  foreach (idx, inv in invitesList)
+  foreach (idx, inv in this.list)
     if (inv == invite) {
       invite.onRemove()
-      invitesList.remove(idx)
+      this.list.remove(idx)
       this.updateNewInvitesAmount()
       broadcastEvent("InviteRemoved")
       break
@@ -163,14 +154,14 @@ let setNewInvitesAmount = @(val) invitesAmount.val = val
 }
 
 ::g_invites.findInviteByChatLink <- function findInviteByChatLink(link) {
-  foreach (invite in invitesList)
+  foreach (invite in this.list)
     if (invite.checkChatLink(link))
       return invite
   return null
 }
 
 ::g_invites.findInviteByUid <- function findInviteByUid(uid) {
-  foreach (invite in invitesList)
+  foreach (invite in this.list)
     if (invite.uid == uid)
       return invite
   return null
@@ -189,16 +180,16 @@ let setNewInvitesAmount = @(val) invitesAmount.val = val
 }
 
 ::g_invites.showExpiredInvitePopup <- function showExpiredInvitePopup() {
-  addPopup(null, colorize(this.popupTextColor, loc("multiplayer/invite_is_overtimed")))
+  ::g_popups.add(null, colorize(this.popupTextColor, loc("multiplayer/invite_is_overtimed")))
 }
 
 ::g_invites.showLeaveSessionFirstPopup <- function showLeaveSessionFirstPopup() {
-  addPopup(null, colorize(this.popupTextColor, loc("multiplayer/leave_session_first")))
+  ::g_popups.add(null, colorize(this.popupTextColor, loc("multiplayer/leave_session_first")))
 }
 
 ::g_invites.markAllSeen <- function markAllSeen() {
   local changed = false
-  foreach (invite in invitesList)
+  foreach (invite in this.list)
     if (invite.markSeen(true))
       changed = true
 
@@ -211,10 +202,10 @@ let setNewInvitesAmount = @(val) invitesAmount.val = val
   foreach (invite in this.list)
     if (invite.isNew() && invite.isVisible())
       amount++
-  if (amount == getNewInvitesAmount())
+  if (amount == this.newInvitesAmount)
     return
 
-  setNewInvitesAmount(amount)
+  this.newInvitesAmount = amount
   ::do_with_all_gamercards(::update_gc_invites)
 }
 
@@ -222,7 +213,7 @@ let setNewInvitesAmount = @(val) invitesAmount.val = val
   let now = get_charserver_time_sec()
   this.checkCleanList()
 
-  foreach (invite in invitesList)
+  foreach (invite in this.list)
     invite.updateDelayedState(now)
 
   this.updateNewInvitesAmount()
@@ -239,7 +230,7 @@ let setNewInvitesAmount = @(val) invitesAmount.val = val
   this.checkCleanList()
 
   local nextTriggerTimestamp = -1
-  foreach (invite in invitesList) {
+  foreach (invite in this.list) {
     let  ts = invite.getNextTriggerTimestamp()
     if (ts < 0)
       continue
@@ -288,7 +279,7 @@ let setNewInvitesAmount = @(val) invitesAmount.val = val
 }
 
 ::g_invites.onEventScriptsReloaded <- function onEventScriptsReloaded(_p) {
-  invitesList.replace(invitesList.map(function(invite) {
+  this.list = this.list.map(function(invite) {
     let params = invite.reloadParams
     foreach (inviteClass in invitesClasses)
       if (inviteClass.getUidByParams(params) == invite.uid) {
@@ -297,12 +288,13 @@ let setNewInvitesAmount = @(val) invitesAmount.val = val
         return newInvite
       }
     return invite
-  }))
+  })
 }
 
-subscribe_handler(::g_invites, g_listener_priority.DEFAULT_HANDLER)
+subscribe_handler(::g_invites, ::g_listener_priority.DEFAULT_HANDLER)
+registerPersistentDataFromRoot("g_invites")
 
-function addFriendInvite(name, uid) {
+let function addFriendInvite(name, uid) {
   if (name == "" || uid == "")
     return
   ::g_invites.addInvite(findInviteClass("Friend"), { inviterName = name, inviterUid = uid })

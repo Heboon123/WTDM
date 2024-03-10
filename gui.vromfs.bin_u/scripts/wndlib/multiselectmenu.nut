@@ -1,9 +1,10 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { setPopupMenuPosAndAlign } = require("%sqDagui/daguiUtil.nut")
 let stdMath = require("%sqstd/math.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-let { move_mouse_on_child } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { move_mouse_on_child, handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 
 /*
   config = {
@@ -27,6 +28,10 @@ let { move_mouse_on_child } = require("%scripts/baseGuiHandlerManagerWT.nut")
     ]
   }
 */
+::gui_start_multi_select_menu <- function gui_start_multi_select_menu(config) {
+  handlersManager.loadHandler(gui_handlers.MultiSelectMenu, config)
+}
+
 gui_handlers.MultiSelectMenu <- class (gui_handlers.BaseGuiHandlerWT) {
   wndType      = handlerType.MODAL
   sceneTplName = "%gui/multiSelectMenu.tpl"

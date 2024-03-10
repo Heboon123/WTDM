@@ -1,6 +1,7 @@
+//-file:plus-string
 from "%scripts/dagui_library.nut" import *
-
 let u = require("%sqStdLibs/helpers/u.nut")
+
 let { format } = require("string")
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
 let { calc_crew_parameters } = require("unitCalculcation")
@@ -14,7 +15,7 @@ let skillGroups = { //skills which have completely the same parameters for diffe
   machine_gunner = ["driver", "tank_gunner", "commander", "loader", "radio_gunner"]
 }
 
-function getParametersByCrewId(crewId, unitName) {
+let function getParametersByCrewId(crewId, unitName) {
   local parameters = parametersByCrewId?[crewId][unitName]
   if (parameters == null) {
     /*local values =
@@ -45,24 +46,24 @@ function getParametersByCrewId(crewId, unitName) {
   return parameters
 }
 
-function removeParametersByCrew(params) {
+let function removeParametersByCrew(params) {
   let crewId = params.crew.id
   parametersByCrewId?.$rawdelete(crewId)
 }
 
-function onEventCrewSkillsChanged(params) {
+let function onEventCrewSkillsChanged(params) {
   removeParametersByCrew(params)
 }
 
-function onEventQualificationIncreased(params) {
+let function onEventQualificationIncreased(params) {
   removeParametersByCrew(params)
 }
 
-function onEventSignOut(_params) {
+let function onEventSignOut(_params) {
   parametersByCrewId.clear()
 }
 
-function getBaseDescriptionText(memberName, skillName, _crew) {
+let function getBaseDescriptionText(memberName, skillName, _crew) {
   local locId = format("crew/%s/%s/tooltip", memberName, skillName)
   local locParams = null
 
@@ -81,7 +82,7 @@ function getBaseDescriptionText(memberName, skillName, _crew) {
   return loc(locId, locParams)
 }
 
-function getTooltipText(memberName, skillName, crewUnitType, crew, difficulty, unit) {
+let function getTooltipText(memberName, skillName, crewUnitType, crew, difficulty, unit) {
   let resArray = [getBaseDescriptionText(memberName, skillName, crew)]
   if (unit && unit.unitType.crewUnitType != crewUnitType) {
     let text = loc("crew/skillsWorkWithUnitsSameType")
@@ -111,7 +112,7 @@ function getTooltipText(memberName, skillName, crewUnitType, crew, difficulty, u
 }
 
 //skillsList = [{ memberName = "", skillName = "" }]
-function getColumnsTypesList(skillsList, crewUnitType) {
+let function getColumnsTypesList(skillsList, crewUnitType) {
   let columnTypes = []
   foreach (columnType in ::g_skill_parameters_column_type.types) {
     if (!columnType.checkCrewUnitType(crewUnitType))
@@ -126,7 +127,7 @@ function getColumnsTypesList(skillsList, crewUnitType) {
   return columnTypes
 }
 
-function getSkillListHeaderRow(crew, columnTypes, unit) {
+let function getSkillListHeaderRow(crew, columnTypes, unit) {
   let res = {
     descriptionLabel = loc("crewSkillParameterTable/descriptionLabel")
     valueItems = []
@@ -151,7 +152,7 @@ function getSkillListHeaderRow(crew, columnTypes, unit) {
 }
 
 //skillsList = [{ memberName = "", skillName = "" }]
-function getParametersByRequestType(crewId, skillsList, difficulty, requestType, useSelectedParameters, unit) {
+let function getParametersByRequestType(crewId, skillsList, difficulty, requestType, useSelectedParameters, unit) {
   let res = {}
   let fullParamsList = useSelectedParameters
                          ? requestType.getSelectedParameters(crewId, unit)
@@ -175,7 +176,7 @@ function getParametersByRequestType(crewId, skillsList, difficulty, requestType,
   return res
 }
 
-function getSortedArrayByParamsTable(parameters, crewUnitType) {
+let function getSortedArrayByParamsTable(parameters, crewUnitType) {
   let res = []
   foreach (name, valuesArr in parameters) {
     if (crewUnitType != CUT_AIRCRAFT && name == "airfieldMinRepairTime")
@@ -195,7 +196,7 @@ function getSortedArrayByParamsTable(parameters, crewUnitType) {
   return res
 }
 
-function parseParameters(columnTypes,
+let function parseParameters(columnTypes,
   currentParametersByRequestType, selectedParametersByRequestType, crewUnitType) {
   let res = []
   let currentParameters = currentParametersByRequestType[::g_skill_parameters_request_type.CURRENT_VALUES]
@@ -211,7 +212,7 @@ function parseParameters(columnTypes,
   return res
 }
 
-function filterSkillsList(skillsList) {
+let function filterSkillsList(skillsList) {
   let res = []
   foreach (skill in skillsList) {
     let group = getTblValue(skill.skillName, skillGroups)
@@ -228,7 +229,7 @@ function filterSkillsList(skillsList) {
 }
 
 //skillsList = [{ memberName = "", skillName = "" }]
-function getSkillListParameterRowsView(crew, difficulty, notFilteredSkillsList, crewUnitType, unit) {
+let function getSkillListParameterRowsView(crew, difficulty, notFilteredSkillsList, crewUnitType, unit) {
   let skillsList = filterSkillsList(notFilteredSkillsList)
 
   let columnTypes = getColumnsTypesList(skillsList, crewUnitType)
@@ -260,7 +261,7 @@ function getSkillListParameterRowsView(crew, difficulty, notFilteredSkillsList, 
   return res
 }
 
-function getSkillDescriptionView(crew, difficulty, memberName, skillName, crewUnitType, unit) {
+let function getSkillDescriptionView(crew, difficulty, memberName, skillName, crewUnitType, unit) {
   let skillsList = [{
     memberName = memberName
     skillName = skillName
@@ -272,8 +273,8 @@ function getSkillDescriptionView(crew, difficulty, memberName, skillName, crewUn
 
     // First item in this array is table's header.
     parameterRows = getSkillListParameterRowsView(crew, difficulty, skillsList, crewUnitType, unit)
-    footnoteText = "".concat(loc("shop/all_info_relevant_to_current_game_mode"),
-      loc("ui/colon"), difficulty.getLocName())
+    footnoteText = loc("shop/all_info_relevant_to_current_game_mode")
+      + loc("ui/colon") + difficulty.getLocName()
   }
 
   if (!view.parameterRows.len())

@@ -1,3 +1,4 @@
+//checked for plus_string
 
 return {
   DEFAULT = 0

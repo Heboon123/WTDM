@@ -5,16 +5,16 @@ let compass = require("compass.nut")
 let { format } = require("string")
 let { mkBitmapPicture } = require("%darg/helpers/bitmap.nut")
 let { PI, cos, sin, fabs, sqrt, lerpClamped } = require("%sqstd/math.nut")
-let { get_mission_time } = require("mission")
+let { get_mission_time } = require("%rGui/globals/mission.nut")
 let { CompassValue } = require("compassState.nut")
 let { greenColor, greenColorGrid } = require("style/airHudStyle.nut")
 let { fwdAngle, fov, gunStatesFirstNumber, gunStatesSecondNumber, gunStatesFirstRow, gunStatesSecondRow, artilleryType } = require("shipState.nut")
 let { IsRadarVisible } = require("radarState.nut")
 let fcsState = require("%rGui/fcsState.nut")
 let { actionBarPos, isActionBarCollapsed } = require("%rGui/hud/actionBarState.nut")
-let { eventbus_send } = require("eventbus")
+let { send } = require("eventbus")
 
-function mkCirclePicture(radius, thickness) {
+let function mkCirclePicture(radius, thickness) {
   let getDistance = @(x, y) sqrt(x * x + y * y)
   return  mkBitmapPicture(radius * 2, radius * 2,
   function(_, bmp) {
@@ -27,7 +27,7 @@ function mkCirclePicture(radius, thickness) {
     })
 }
 
-function mkFilledCirclePicture(radius) {
+let function mkFilledCirclePicture(radius) {
   let getDistance = @(x, y) sqrt(x * x + y * y)
   return  mkBitmapPicture(radius * 2, radius * 2,
   function(_, bmp) {
@@ -41,9 +41,9 @@ function mkFilledCirclePicture(radius) {
 }
 
 let redColor = Color(255, 109, 108, 255)
-let greyColor = Color(15, 25, 25, 255)
-let highlightColor = Color(255, 255, 255, 180)
-let highlightScale = 2.5
+let greyColor = Color(45, 60, 60, 255)
+let highlightColor = Color(255, 255, 255, 255)
+let highlightScale = 1.5
 let compassSize = [hdpx(500), hdpx(32)]
 let compassPos = [sw(50) - 0.5 * compassSize[0], sh(0.5)]
 let fcsWidth = sh(28)
@@ -95,7 +95,7 @@ let background = {
   ]
 }
 
-function mkDashes(width, centerX, centerY, radius, angleStart, angleFinish, length, count) {
+let function mkDashes(width, centerX, centerY, radius, angleStart, angleFinish, length, count) {
   let dashCommands = []
 
   let startRad = angleStart * PI / 180.0;
@@ -136,7 +136,7 @@ let angle5 = 38.0
 let angle6 = 142.0
 
 let shipFireControlCachedPos = mkWatched(persist, "shipFireControlCachedPos", [0,0])
-shipFireControlCachedPos.subscribe(@(v) eventbus_send("update_ship_fire_control_panel", {pos = v}))
+shipFireControlCachedPos.subscribe(@(v) send("update_ship_fire_control_panel", {pos = v}))
 
 let fcsMarkers = {
   rendObj = ROBJ_VECTOR_CANVAS
@@ -156,7 +156,7 @@ let fcsMarkers = {
   ]
 }
 
-function drawShipIcon(iconSize, iconPos, iconColor, absBearing) {
+let function drawShipIcon(iconSize, iconPos, iconColor, absBearing) {
   return {
     rendObj = ROBJ_VECTOR_CANVAS
     size = iconSize
@@ -257,7 +257,7 @@ let progressBar = @() {
   }
 }
 
-function drawArrow(x, y, dirX, dirY, color, fill = false, scale = 1) {
+let function drawArrow(x, y, dirX, dirY, color, fill = false, scale = 1) {
   let arrowSize = sh(2)
   local arrowCommands = []
 
@@ -268,8 +268,8 @@ function drawArrow(x, y, dirX, dirY, color, fill = false, scale = 1) {
   }
   else {
     arrowCommands = dirX == 0 ? [
-        [VECTOR_LINE, 0, dirY * 5, 35,  dirY * 55],
-        [VECTOR_LINE, 0, dirY * 5, -35, dirY * 55]
+        [VECTOR_LINE, 0, dirY * 5, 25,  dirY * 55],
+        [VECTOR_LINE, 0, dirY * 5, -25, dirY * 55]
       ] : [
         [VECTOR_LINE, -dirX * 5, 0, -dirX * 55, 25],
         [VECTOR_LINE, -dirX * 5, 0, -dirX * 55, -25]
@@ -287,7 +287,7 @@ function drawArrow(x, y, dirX, dirY, color, fill = false, scale = 1) {
   }
 }
 
-function drawDashLineToCircle(fromX, fromY, toX, toY, radius) {
+let function drawDashLineToCircle(fromX, fromY, toX, toY, radius) {
   local dirX = (toX - fromX)
   local dirY = (toY - fromY)
   let len = sqrt(dirX * dirX + dirY * dirY)
@@ -317,12 +317,12 @@ function drawDashLineToCircle(fromX, fromY, toX, toY, radius) {
 
 let crosshairZeroMark = {
   children = [
-    drawArrow(sw(50), sh(50), 0, 1.6, highlightColor, false, highlightScale)
-    drawArrow(sw(50), sh(50), 0, 1.6, greyColor)
+    drawArrow(sw(50), sh(50), 0, 1, highlightColor, false, highlightScale)
+    drawArrow(sw(50), sh(50), 0, 1, greyColor)
   ]
 }
 
-function drawForestallIndicator(
+let function drawForestallIndicator(
   forestallX,
   forestallY,
   targetX,
@@ -406,7 +406,7 @@ let forestallIndicator = @() {
     fcsState.IsBinocular.value)
 }
 
-function mkFilledCircle(size, color) {
+let function mkFilledCircle(size, color) {
   return {
     size = [size, size]
     rendObj = ROBJ_IMAGE
@@ -418,7 +418,7 @@ function mkFilledCircle(size, color) {
   }
 }
 
-function mkCircle(size, color, fValue = 1) {
+let function mkCircle(size, color, fValue = 1) {
   return {
     size = [size, size]
     rendObj = ROBJ_PROGRESS_CIRCULAR
@@ -431,7 +431,7 @@ function mkCircle(size, color, fValue = 1) {
   }
 }
 
-function mkProgressCircle(size, startTime, endTime, curTime, color) {
+let function mkProgressCircle(size, startTime, endTime, curTime, color) {
   let timeLeft = endTime - curTime
   local startValue = startTime >= endTime ? 1.0
     : lerpClamped(startTime, endTime, 0.0, 1.0, curTime)
@@ -449,14 +449,14 @@ function mkProgressCircle(size, startTime, endTime, curTime, color) {
   }
 }
 
-function getReloadText(endTime) {
+let function getReloadText(endTime) {
   let timeToReload = endTime - get_mission_time()
   return timeToReload <= 0 ? ""
     : timeToReload > 9.5 ? format("%.0f", timeToReload)
     : format("%.1f", timeToReload)
 }
 
-function mkProgressText(textColor, endTime) {
+let function mkProgressText(textColor, endTime) {
   return {
     color = textColor
     vplace = ALIGN_CENTER
@@ -532,7 +532,7 @@ let mkGunStatus = @(gunStates) function() {
   }
 }
 
-function mkWeaponsStatus(size, gunStatesNumber, gunStatesArray, icon) {
+let function mkWeaponsStatus(size, gunStatesNumber, gunStatesArray, icon) {
   if (gunStatesNumber <= 0) {
     return null
   }
@@ -560,7 +560,7 @@ function mkWeaponsStatus(size, gunStatesNumber, gunStatesArray, icon) {
 }
 
 
-function weaponsStatus(){
+let function weaponsStatus(){
   let firstGunsRowHeight = hdpx(38)
   let secondGunsRowHeight = hdpx(32)
   let gap = hdpx(11)

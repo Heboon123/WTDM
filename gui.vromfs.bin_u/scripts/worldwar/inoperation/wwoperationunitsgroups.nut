@@ -1,11 +1,12 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { getUnitRole } = require("%scripts/unit/unitInfoTexts.nut")
 let { getOperationById } = require("%scripts/worldWar/operations/model/wwActionsWhithGlobalStatus.nut")
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
+let { UNIT_GROUP } = require("%scripts/utils/genericTooltipTypes.nut")
 let { wwGetOperationId } = require("worldwar")
 
-function getUnitsGroups() {
+let function getUnitsGroups() {
   let unitsGroupByCountry = getOperationById(
     wwGetOperationId())?.getMap().getUnitsGroupsByCountry()
   if (unitsGroupByCountry == null)
@@ -17,7 +18,7 @@ function getUnitsGroups() {
   return fullGroupsList
 }
 
-function overrideUnitViewParamsByGroups(wwUnitViewParams, unitsGroups) {
+let function overrideUnitViewParamsByGroups(wwUnitViewParams, unitsGroups) {
   let group = unitsGroups?[wwUnitViewParams.id]
   if (group == null)
     return wwUnitViewParams
@@ -26,12 +27,12 @@ function overrideUnitViewParamsByGroups(wwUnitViewParams, unitsGroups) {
   wwUnitViewParams.name         = loc(group.name)
   wwUnitViewParams.icon         = ::getUnitClassIco(defaultUnit)
   wwUnitViewParams.shopItemType = getUnitRole(defaultUnit)
-  wwUnitViewParams.tooltipId    = getTooltipType("UNIT_GROUP").getTooltipId(group)
+  wwUnitViewParams.tooltipId    = UNIT_GROUP.getTooltipId(group)
   wwUnitViewParams.hasPresetWeapon = false
   return wwUnitViewParams
 }
 
-function overrideUnitsViewParamsByGroups(wwUnitsViewParams) {
+let function overrideUnitsViewParamsByGroups(wwUnitsViewParams) {
   let unitsGroups = getUnitsGroups()
   if (unitsGroups == null)
     return wwUnitsViewParams

@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import ps4_is_circle_selected_as_enter_button
 from "%scripts/dagui_library.nut" import *
 

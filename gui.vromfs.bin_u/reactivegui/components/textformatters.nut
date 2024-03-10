@@ -1,10 +1,10 @@
 from "%rGui/globals/ui_library.nut" import *
 
-let { eventbus_send } = require("eventbus")
+let cross_call = require("%rGui/globals/cross_call.nut")
 let fontsState = require("%rGui/style/fontsState.nut")
 let colors = require("%rGui/style/colors.nut")
 let { toIntegerSafe } = require("%sqstd/string.nut")
-let wordHyphenation = require("%globalScripts/wordHyphenation.nut")
+let { text_wordwrap_process } = require("%appGlobals/text_wordwrap_process.nut")
 
 let blockInterval = fpx(6)
 let headerMargin = 2 * blockInterval
@@ -33,12 +33,10 @@ let defStyle = {
 
 let noTextFormatFunc = @(object, _style = defStyle) object
 
-let openUrl = @(baseUrl) eventbus_send("open_url", { baseUrl })
-
-function textArea(params, _formatTextFunc = noTextFormatFunc, style = defStyle) {
+let function textArea(params, _formatTextFunc = noTextFormatFunc, style = defStyle) {
   return {
     rendObj = ROBJ_TEXTAREA
-    text = wordHyphenation(params?.v ?? "")
+    text = text_wordwrap_process(params?.v ?? "")
     behavior = Behaviors.TextArea
     color = style?.defTextColor ?? defStyle.defTextColor
     font = defStyle.textFont
@@ -46,11 +44,11 @@ function textArea(params, _formatTextFunc = noTextFormatFunc, style = defStyle) 
   }.__update(params)
 }
 
-function url(data, fmtFunc = noTextFormatFunc, style = defStyle) {
+let function url(data, fmtFunc = noTextFormatFunc, style = defStyle) {
   if (data?.url == null)
     return textArea(data, fmtFunc, style)
   let stateFlags = Watched(0)
-  let onClick = @() openUrl(data.url)
+  let onClick = @() cross_call.openUrl(data.url)
   return function() {
     let color = stateFlags.value & S_HOVER ? style.urlHoverColor : style.urlColor
     return {
@@ -69,7 +67,7 @@ function url(data, fmtFunc = noTextFormatFunc, style = defStyle) {
   }
 }
 
-function mkUlElement(bullet) {
+let function mkUlElement(bullet) {
   return function (elem, formatTextFunc = noTextFormatFunc, _style = defStyle) {
     local res = formatTextFunc(elem)
     if (res == null)
@@ -83,7 +81,7 @@ function mkUlElement(bullet) {
     }
   }
 }
-function mkList(elemFunc) {
+let function mkList(elemFunc) {
   return function(obj, formatTextFunc = noTextFormatFunc, style = defStyle) {
     return obj.__merge({
       flow = FLOW_VERTICAL
@@ -92,7 +90,7 @@ function mkList(elemFunc) {
     })
   }
 }
-function horizontal(obj, formatTextFunc = noTextFormatFunc, _style = defStyle) {
+let function horizontal(obj, formatTextFunc = noTextFormatFunc, _style = defStyle) {
   return obj.__merge({
     flow = FLOW_HORIZONTAL
     size = [flex(), SIZE_TO_CONTENT]
@@ -100,7 +98,7 @@ function horizontal(obj, formatTextFunc = noTextFormatFunc, _style = defStyle) {
   })
 }
 
-function accent(obj, formatTextFunc = noTextFormatFunc, _style = defStyle) {
+let function accent(obj, formatTextFunc = noTextFormatFunc, _style = defStyle) {
   return obj.__merge({
     flow = FLOW_HORIZONTAL
     size = [flex(), SIZE_TO_CONTENT]
@@ -110,7 +108,7 @@ function accent(obj, formatTextFunc = noTextFormatFunc, _style = defStyle) {
   })
 }
 
-function vertical(obj, formatTextFunc = noTextFormatFunc, _style = defStyle) {
+let function vertical(obj, formatTextFunc = noTextFormatFunc, _style = defStyle) {
   return obj.__merge({
     flow = FLOW_VERTICAL
     size = [flex(), SIZE_TO_CONTENT]
@@ -124,13 +122,13 @@ let bullets = mkList(mkUlElement(defStyle.ulBullet))
 let indent = mkList(mkUlElement(defStyle.ulNoBullet))
 let separatorCmp = { rendObj = ROBJ_FRAME borderWidth = [0, 0, borderWidth, 0] size = [flex(), blockInterval], opacity = 0.2, margin = [blockInterval, blockInterval, fpx(20), 0] }
 
-function textParsed(params, formatTextFunc = noTextFormatFunc, style = defStyle) {
+let function textParsed(params, formatTextFunc = noTextFormatFunc, style = defStyle) {
   if (params?.v == "----")
     return separatorCmp
   return textArea(params, formatTextFunc, style)
 }
 
-function column(obj, formatTextFunc = noTextFormatFunc, _style = defStyle) {
+let function column(obj, formatTextFunc = noTextFormatFunc, _style = defStyle) {
   return {
     flow = FLOW_VERTICAL
     size = [flex(), SIZE_TO_CONTENT]
@@ -140,7 +138,7 @@ function column(obj, formatTextFunc = noTextFormatFunc, _style = defStyle) {
 
 let getColWeightByPresetAndIdx = @(idx, preset) toIntegerSafe(preset?[idx + 1], 100, false)
 
-function columns(obj, formatTextFunc = noTextFormatFunc, _style = defStyle) {
+let function columns(obj, formatTextFunc = noTextFormatFunc, _style = defStyle) {
   local preset = obj?.preset ?? "single"
   preset = preset.split("_")
   local cols = obj.v.filter(@(v) v?.t == "column")
@@ -159,7 +157,7 @@ function columns(obj, formatTextFunc = noTextFormatFunc, _style = defStyle) {
   }
 }
 
-function video(obj, _formatTextFunc, style = defStyle) {
+let function video(obj, _formatTextFunc, style = defStyle) {
   let stateFlags = Watched(0)
   let width = fpx(obj?.imageWidth ?? 300)
   let height = fpx(obj?.imageHeight ?? 80)
@@ -187,12 +185,12 @@ function video(obj, _formatTextFunc, style = defStyle) {
     })
     onClick = function() {
       if (obj?.v)
-        openUrl(obj.v)
+        cross_call.openUrl(obj.v)
     }
   }.__update(obj)
 }
 
-function image(obj, _formatTextFunc = noTextFormatFunc, style = defStyle) {
+let function image(obj, _formatTextFunc = noTextFormatFunc, style = defStyle) {
   return {
     rendObj = ROBJ_IMAGE
     image = Picture(obj.v)

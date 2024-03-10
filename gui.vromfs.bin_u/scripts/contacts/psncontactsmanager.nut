@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 let u = require("%sqStdLibs/helpers/u.nut")
 
@@ -32,7 +33,7 @@ let uidsListByGroupName = {
 
 let console2uid = {}
 
-function onPresencesReceived(response, _err) {
+let function onPresencesReceived(response, _err) {
   let updPresences = []
   foreach (userInfo in (response?.basicPresences ?? [])) {
     if (userInfo.accountId not in console2uid)
@@ -46,7 +47,7 @@ function onPresencesReceived(response, _err) {
   updatePresencesByList(updPresences)
 }
 
-function gatherPresences(entries) {
+let function gatherPresences(entries) {
   local accounts = entries.map(@(e) e.accountId)
   while (accounts.len() > 0) {
     let chunk = accounts.slice(0, LIMIT_FOR_ONE_TASK_GET_USERS)
@@ -55,7 +56,7 @@ function gatherPresences(entries) {
   }
 }
 
-function psnUpdateContactsList(usersTable) {
+let function psnUpdateContactsList(usersTable) {
   //Create or update exist contacts
   let contactsTable = {}
   foreach (uid, playerData in usersTable) {
@@ -96,7 +97,7 @@ function psnUpdateContactsList(usersTable) {
   fetchContacts()
 }
 
-function proceedPlayersList() {
+let function proceedPlayersList() {
   foreach (groupName in checkGroups)
     if (!(groupName in pendingContactsChanges) || !pendingContactsChanges[groupName].isFinished)
       return
@@ -123,7 +124,7 @@ function proceedPlayersList() {
   )
 }
 
-function onReceviedUsersList(groupName, responseInfoName, response, err) {
+let function onReceviedUsersList(groupName, responseInfoName, response, err) {
   let size = (response?.size || 0) + (response?.start || 0)
   let total = response?.totalResults || size
 
@@ -147,7 +148,7 @@ function onReceviedUsersList(groupName, responseInfoName, response, err) {
   proceedPlayersList()
 }
 
-function fetchFriendlist() {
+let function fetchFriendlist() {
   checkGroups.append(EPL_FRIENDLIST)
   psn.fetch(
     psn.profile.listFriends(),
@@ -156,7 +157,7 @@ function fetchFriendlist() {
   )
 }
 
-function fetchBlocklist() {
+let function fetchBlocklist() {
   checkGroups.append(EPL_BLOCKLIST)
   psn.fetch(
     psn.profile.listBlockedUsers(),
@@ -165,7 +166,7 @@ function fetchBlocklist() {
   )
 }
 
-function fetchContactsList() {
+let function fetchContactsList() {
   pendingContactsChanges.clear()
   checkGroups.clear()
 
@@ -173,7 +174,7 @@ function fetchContactsList() {
   fetchBlocklist()
 }
 
-function updateContacts(needIgnoreInitedFlag = false) {
+let function updateContacts(needIgnoreInitedFlag = false) {
   if (!isPlatformSony)
     return
 
@@ -194,7 +195,7 @@ function updateContacts(needIgnoreInitedFlag = false) {
   fetchContactsList()
 }
 
-function onPresenceUpdate(accountId) {
+let function onPresenceUpdate(accountId) {
   let userId = console2uid?[accountId.tostring()]
   let contact = ::getContact(userId)
   if (contact == null)
@@ -206,14 +207,14 @@ function onPresenceUpdate(accountId) {
   }])
 }
 
-function initHandlers() {
+let function initHandlers() {
   updateContacts(true)
   psn.subscribe.friendslist(@() updateContacts(true))
   psn.subscribe.blocklist(@() updateContacts(true))
   psn.subscribeToPresenceUpdates(onPresenceUpdate)
 }
 
-function disposeHandlers() {
+let function disposeHandlers() {
   pendingContactsChanges.clear()
   isContactsUpdated(false)
   psnApprovedUids({})

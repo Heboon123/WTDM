@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import clan_get_exp
 from "%scripts/dagui_library.nut" import *
 let { blkFromPath } = require("%sqstd/datablock.nut")
@@ -16,7 +17,7 @@ let canBuyNotResearched = @(unit) unit.isVisibleInShop()
   && !unit.getOpenCost().isZero()
 
 
-function isUnitHaveSecondaryWeapons(unit) {
+let function isUnitHaveSecondaryWeapons(unit) {
   local foundWeapon = false
   foreach (weapon in unit.getWeapons())
     if (!isWeaponAux(weapon))
@@ -27,7 +28,7 @@ function isUnitHaveSecondaryWeapons(unit) {
   return "" != getWeaponInfoText(unit, { isPrimary = false, weaponPreset = 0, needTextWhenNoWeapons = false })
 }
 
-function isShipWithoutPurshasedTorpedoes(unit) {
+let function isShipWithoutPurshasedTorpedoes(unit) {
   if (!unit?.isShipOrBoat())
     return false
 
@@ -44,7 +45,7 @@ function isShipWithoutPurshasedTorpedoes(unit) {
   return true
 }
 
-function getBitStatus(unit, params = {}) {
+let function getBitStatus(unit, params = {}) {
   let isLocalState = params?.isLocalState ?? true
   let forceNotInResearch  = params?.forceNotInResearch ?? false
   let shopResearchMode    = params?.shopResearchMode ?? false
@@ -109,7 +110,7 @@ let defaultPrimaryWeaponsMod = {
   chaffs = null
 }
 
-function isAvailablePrimaryWeapon(unit, weaponName) {
+let function isAvailablePrimaryWeapon(unit, weaponName) {
   local availableWeapons = availablePrimaryWeaponsMod?[unit.name]
   if (availableWeapons != null)
     return getLastPrimaryWeapon(unit) == availableWeapons[weaponName]
@@ -167,12 +168,12 @@ function isAvailablePrimaryWeapon(unit, weaponName) {
   return getLastPrimaryWeapon(unit) == availableWeapons[weaponName]
 }
 
-function getCurrentPreset(unit) {
+let function getCurrentPreset(unit) {
   let secondaryWep = getLastWeapon(unit?.name ?? "")
   return secondaryWep != "" ? unit.getWeapons().findvalue(@(w) w.name == secondaryWep) : null
 }
 
-function hasCountermeasures(unit) {
+let function hasCountermeasures(unit) {
   if (unit == null)
     return false
 
@@ -180,7 +181,7 @@ function hasCountermeasures(unit) {
     || isAvailablePrimaryWeapon(unit, "flares") || isAvailablePrimaryWeapon(unit, "chaffs")
 }
 
-function hasBombDelayExplosion(unit) {
+let function hasBombDelayExplosion(unit) {
   if (!unit?.isAir() && !unit?.isHelicopter())
     return false
 
@@ -201,7 +202,7 @@ function hasBombDelayExplosion(unit) {
   return false
 }
 
-function bombNbr(unit) {
+let function bombNbr(unit) {
   if (unit == null)
     return -1
 

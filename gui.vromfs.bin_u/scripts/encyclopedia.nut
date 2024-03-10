@@ -8,11 +8,14 @@ let { format } = require("string")
 let DataBlock = require("DataBlock")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { reqUnlockByClient } = require("%scripts/unlocks/unlocksModule.nut")
+let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { isChineseHarmonized } = require("%scripts/langUtils/language.nut")
 let { move_mouse_on_child_by_value, move_mouse_on_child, loadHandler
 } = require("%scripts/baseGuiHandlerManagerWT.nut")
 
-let persistent = persist("persistent", @() { encyclopediaData = [] })
+let persistent = { encyclopediaData = [] }
+
+registerPersistentData("EncyclopediaGlobals", persistent, ["encyclopediaData"])
 
 let initEncyclopediaData = function() {
   if (persistent.encyclopediaData.len() || !hasFeature("Encyclopedia"))
@@ -100,7 +103,7 @@ gui_handlers.Encyclopedia <- class (gui_handlers.BaseGuiHandlerWT) {
 
     let canShowLinkButtons = !isChineseHarmonized() && hasFeature("AllowExternalLink")
     foreach (btn in ["faq", "support", "wiki"])
-      showObjById("button_" + btn, canShowLinkButtons, this.scene)
+      this.showSceneBtn("button_" + btn, canShowLinkButtons)
     move_mouse_on_child_by_value(this.scene.findObject("items_list"))
   }
 
@@ -141,7 +144,7 @@ gui_handlers.Encyclopedia <- class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     let article = this.curChapter.articles[index]
-    let txtDescr = loc($"encyclopedia/{article.id}/desc")
+    let txtDescr = loc("encyclopedia/" + article.id + "/desc")
     let objDesc = this.scene.findObject("item_desc")
     objDesc.findObject("item_desc_text").setValue(txtDescr)
     objDesc.findObject("item_name").setValue(loc("encyclopedia/" + article.id))

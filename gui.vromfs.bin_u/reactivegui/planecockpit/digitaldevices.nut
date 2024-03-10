@@ -5,23 +5,15 @@ let { round_by_value, round } = require("%sqstd/math.nut")
 let { Point2, IPoint3 } = require("dagor.math")
 let {BlkFileName} = require("%rGui/planeState/planeToolsState.nut")
 let { Speed, Altitude, CompassValue, Mach, FuelConsume, FuelInternal, FuelTotal,
-  RpmRel, WaterTemp, Nozzle0, OilTemp0 } = require("%rGui/planeState/planeFlyState.nut")
+  RpmRel, WaterTemp } = require("%rGui/planeState/planeFlyState.nut")
 let string = require("string")
 let { mpsToKnots, metrToFeet } = require("%rGui/planeIlses/ilsConstants.nut")
-let { get_local_unixtime, unixtime_to_local_timetbl } = require("dagor.time")
 
 let SpeedKnots = Computed(@() round(Speed.value * mpsToKnots).tointeger())
 let MachRounded = Computed(@() round_by_value(Mach.value, 0.01))
 let Course = Computed(@() round(CompassValue.value < 0. ? (360.0 + CompassValue.value) : CompassValue.value).tointeger())
 let AltFeet = Computed(@() (Altitude.value * metrToFeet).tointeger())
 let FuelConsM = Computed(@() (FuelConsume.value * 60.0).tointeger())
-
-function clockUpdate() {
-  let time = unixtime_to_local_timetbl(get_local_unixtime())
-  return {
-    text = string.format("%02d:%02d:%02d", time.hour, time.min, time.sec)
-  }
-}
 
 let valueTable = {
   ["speed"] = Speed,
@@ -34,14 +26,7 @@ let valueTable = {
   ["fuel"] = FuelInternal,
   ["total_fuel"] = FuelTotal,
   ["relative_rpm"] = RpmRel,
-  ["water_temperature"] = WaterTemp,
-  ["nozzle"] = Nozzle0,
-  ["oil"] = OilTemp0,
-  ["clock"] = Watched(0)
-}
-
-let updateFuncs = {
-  ["clock"] = clockUpdate
+  ["water_temperature"] = WaterTemp
 }
 
 let devicesSetting = Computed(function() {
@@ -80,7 +65,6 @@ let devicesSetting = Computed(function() {
 let mkChildren = @(devices_config)
   devices_config.map(function(v){
     let watch = valueTable?[v.value] ?? Watched(0)
-    let upd = updateFuncs?[v.value]
     return @() {
       watch = watch
       pos = [pw(v.pos.x), ph(v.pos.y)]
@@ -92,12 +76,10 @@ let mkChildren = @(devices_config)
       fontSize = v.fontSize
       font = Fonts.digital
       text = string.format(v.formatStr, watch.value)
-      behavior = Behaviors.RtPropUpdate
-      update = upd
     }
   })
 
-function devices(width, height, posX = 0, posY = 0) {
+let function devices(width, height, posX = 0, posY = 0) {
   return @(){
     watch = devicesSetting
     pos = [posX, posY]

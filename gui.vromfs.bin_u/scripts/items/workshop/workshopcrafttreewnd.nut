@@ -175,7 +175,7 @@ let sizeAndPosViewConfig = {
   })
 }
 
-function getConfigByItemBlock(itemBlock, itemsList, workshopSet) {
+let function getConfigByItemBlock(itemBlock, itemsList, workshopSet) {
   local item = itemsList?[itemBlock?.id]
   if (item?.showAsEmptyItem() ?? false)
     item = null
@@ -293,7 +293,7 @@ let getItemBlockView = kwarg(
     }
 })
 
-function hasTextBlockAt(textBlocks, x, y, workshopSet, itemsList) {
+let function hasTextBlockAt(textBlocks, x, y, workshopSet, itemsList) {
   foreach (block in textBlocks)
     if (x >= block.posX && x <= block.endPosX && y >= block.posY && y <= block.endPosY
         && !workshopSet.isRequireExistItemsForDisplaying(block, itemsList))
@@ -399,7 +399,7 @@ let sizePrefixNames = {
   }
 }
 
-function getMaxBodyWidthConfig(craftTreeWidthStringByBodies, prefix) {
+let function getMaxBodyWidthConfig(craftTreeWidthStringByBodies, prefix) {
   return craftTreeWidthStringByBodies
     .map(@(v, idx) {
       maxBodyWidth = to_pixels(v.subst(prefix)),
@@ -408,7 +408,7 @@ function getMaxBodyWidthConfig(craftTreeWidthStringByBodies, prefix) {
     ?? { maxBodyWidth = null, maxBodyIdx = -1 }
 }
 
-function getHeaderView (headerItems, localItemsList, baseEff) {
+let function getHeaderView (headerItems, localItemsList, baseEff) {
   let getItemEff = function(item) {
     return item?.getAmount() ? item.getBoostEfficiency() ?? 0 : 0
   }
@@ -441,7 +441,7 @@ function getHeaderView (headerItems, localItemsList, baseEff) {
   }
 }
 
-function getBranchSeparator(branch, itemSizes, branchHeight) {
+let function getBranchSeparator(branch, itemSizes, branchHeight) {
   let posX = branch.minPosX - 1
   if (posX == 0)
     return null
@@ -454,7 +454,7 @@ function getBranchSeparator(branch, itemSizes, branchHeight) {
   }
 }
 
-function getBodyItemsTitles(titlesConfig, itemSizes) {
+let function getBodyItemsTitles(titlesConfig, itemSizes) {
   let titlesView = []
   foreach (body in titlesConfig)
     if (body.title != "" && itemSizes.visibleItemsCountYByBodies[body.bodyIdx] > 0)
@@ -471,7 +471,7 @@ let getAvailableRecipe = @(genId) ::ItemsManager.findItemById(genId)
   ?.getVisibleRecipes()
   .findvalue(@(r) r.isUsable && !r.isRecipeLocked())
 
-function getTextBlocksView(textBlocks, itemSizes, workshopSet, itemsList) {
+let function getTextBlocksView(textBlocks, itemSizes, workshopSet, itemsList) {
   return textBlocks
     .filter(@(block) !workshopSet.isRequireExistItemsForDisplaying(block, itemsList))
     .map(@(block) sizeAndPosViewConfig.textBlock(block.__merge({ itemSizes }), KWARG_NON_STRICT))
@@ -500,7 +500,7 @@ let buttonViewParams = {
   showOnSelect = "hover"
   actionParamsMarkup = ""
 }
-function getButtonView(bodyConfig, itemSizes) {
+let function getButtonView(bodyConfig, itemSizes) {
   let button = bodyConfig.button
   if (button == null)
     return null
@@ -521,7 +521,7 @@ function getButtonView(bodyConfig, itemSizes) {
   return buttonView
 }
 
-function getBodyBackground(bodiesConfig, itemSizes, fullBodiesHeight) {
+let function getBodyBackground(bodiesConfig, itemSizes, fullBodiesHeight) {
   let backgroundView = []
   foreach (body in bodiesConfig)
     if (body.bodyTiledBackImage != "") {

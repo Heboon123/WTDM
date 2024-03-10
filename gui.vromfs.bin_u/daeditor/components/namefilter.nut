@@ -2,7 +2,7 @@ from "%darg/ui_imports.nut" import *
 let {colors} = require("style.nut")
 
 
-function nameFilter(watched_text, params) {
+let function nameFilter(watched_text, params) {
   let group = ElemGroup()
   let stateFlags = Watched(0)
   let stateFlagsClear = Watched(0)

@@ -1,6 +1,6 @@
 from "daRg" import Picture
 
-function PictureAtlas(atlas_path_base) {
+let function PictureAtlas(atlas_path_base) {
   let pictures = {}
 
   let cls = class {

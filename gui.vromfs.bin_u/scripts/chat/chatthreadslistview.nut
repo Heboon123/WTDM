@@ -2,8 +2,6 @@
 from "%scripts/dagui_library.nut" import *
 from "%scripts/chat/chatConsts.nut" import chatUpdateState
 
-let { g_chat_categories } = require("%scripts/chat/chatCategories.nut")
-let { g_chat_room_type } = require("%scripts/chat/chatRoomType.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
@@ -96,7 +94,7 @@ gui_handlers.ChatThreadsListView <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function updateLangsButton() {
     let show = ::g_chat.canChooseThreadsLang()
-    let langsBtn = showObjById("threads_search_langs_btn", show, this.scene)
+    let langsBtn = this.showSceneBtn("threads_search_langs_btn", show)
     if (!show)
       return
 
@@ -109,17 +107,17 @@ gui_handlers.ChatThreadsListView <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function updateCategoriesButton() {
-    let show = g_chat_categories.isEnabled()
-    showObjById("buttons_separator", !show, this.scene)
-    let catBtn = showObjById("btn_categories_filter", show, this.scene)
+    let show = ::g_chat_categories.isEnabled()
+    this.showSceneBtn("buttons_separator", !show)
+    let catBtn = this.showSceneBtn("btn_categories_filter", show)
     if (!show)
       return
 
     local text = ""
-    if (g_chat_categories.isSearchAnyCategory())
+    if (::g_chat_categories.isSearchAnyCategory())
       text = loc("chat/allCategories")
     else {
-      let textsList = g_chat_categories.getSearchCategoriesLList().map(@(cName) g_chat_categories.getCategoryNameText(cName))
+      let textsList = ::g_chat_categories.getSearchCategoriesLList().map(@(cName) ::g_chat_categories.getCategoryNameText(cName))
       text = ", ".join(textsList, true)
     }
     catBtn.setValue(text)
@@ -228,11 +226,11 @@ gui_handlers.ChatThreadsListView <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onCategoriesBtn(_obj) {
-    g_chat_categories.openChooseCategoriesMenu("top", this.scene.findObject("btn_categories_filter"))
+    ::g_chat_categories.openChooseCategoriesMenu("top", this.scene.findObject("btn_categories_filter"))
   }
 
   function updateRoomInList(room) {
-    if (room && room.type == g_chat_room_type.THREAD)
+    if (room && room.type == ::g_chat_room_type.THREAD)
       this.updateThreadInList(room.id)
   }
 

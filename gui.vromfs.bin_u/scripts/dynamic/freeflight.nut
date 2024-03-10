@@ -1,3 +1,4 @@
+//checked for plus_string
 
 let { Point3 } = require("dagor.math")
 let { slidesReplace } = require("%scripts/dynamic/misGenFuncTools.nut")
@@ -8,7 +9,7 @@ let { mgBeginMission, mgGetPlayerSide, mgAcceptMission, mgFullLogs, mgSetInt,
   mgThisIsFreeFlight, mgSetMinMaxAircrafts
 } = require("dynamicMission")
 
-function genFreeFlightMission(isFreeFlight) { // isFreeFlight = Mission Editor
+let function genFreeFlightMission(isFreeFlight) { // isFreeFlight = Mission Editor
   if (!isFreeFlight)
     return
 

@@ -1,3 +1,4 @@
+//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 let { BaseGuiHandler } = require("%sqDagui/framework/baseGuiHandler.nut")
@@ -24,7 +25,7 @@ enum avatarPlace { //higher index has more priority to show icon when same icons
 
 let roundVal = @(val) stdMath.round_by_value(clamp(val, 0.0, 1.0), 0.01)
 
-function debugAvatars(filePath) {
+let function debugAvatars(filePath) {
   let blk = DataBlock()
   if (!blk.tryLoad(filePath))
     return $"Failed to load avatars config from {filePath}"
@@ -112,7 +113,7 @@ gui_handlers.DbgAvatars <- class (BaseGuiHandler) {
       ["menu/pkg_dev/images/images/avatars"] = avatarPlace.IN_PKG_DEV,
     }
     foreach (dirPath, place in dirs) {
-      let filePaths = dagor_fs.scan_folder({ root = "".concat(guiPath, dirPath), vromfs = false, realfs = true, recursive = true, files_suffix = fileMask })
+      let filePaths = dagor_fs.scan_folder({ root = guiPath + dirPath, vromfs = false, realfs = true, recursive = true, files_suffix = fileMask })
       foreach (path in filePaths)
         this.addAvatarConfig(stdPath.fileName(path).slice(0, -4), place, path)
     }
@@ -199,12 +200,12 @@ gui_handlers.DbgAvatars <- class (BaseGuiHandler) {
     let avatarBlk = this.getSelAvatarBlk()
     foreach (s in this.sliders) {
       let value = s.getValue.call(this)
-      this.scene.findObject($"{s.id}_text").setValue(value.tostring())
+      this.scene.findObject(s.id + "_text").setValue(value.tostring())
     }
 
     if (this.shouldUpdateBorder) {
-      let editBorder = showObjById("edit_border", this.isInEditMode, this.scene)
-      let mainBorder = showObjById("main_border", !this.isInEditMode && avatarBlk.size < 1, this.scene)
+      let editBorder = this.showSceneBtn("edit_border", this.isInEditMode)
+      let mainBorder = this.showSceneBtn("main_border", !this.isInEditMode && avatarBlk.size < 1)
       let curBorder = this.isInEditMode ? editBorder : mainBorder
       curBorder.pos = format("%.2fpw, %.2fph", avatarBlk.pos.x, avatarBlk.pos.y)
       curBorder.size = format("%.2fpw,%.2fph", avatarBlk.size, avatarBlk.size)

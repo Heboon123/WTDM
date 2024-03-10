@@ -7,7 +7,6 @@ let { getRoleText } = require("%scripts/unit/unitInfoTexts.nut")
 let { getWeaponInfoText } = require("%scripts/weaponry/weaponryDescription.nut")
 let { getWeaponTypeIcoByWeapon } = require("%scripts/statistics/mpStatisticsUtil.nut")
 let { g_ww_unit_type } = require("%scripts/worldWar/model/wwUnitType.nut")
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 
 let strength_unit_expclass_group = {
   bomber = "bomber"
@@ -124,7 +123,7 @@ let WwUnit = class {
       presetCount = addPreset && this.weaponCount < this.count ? this.weaponCount : null
       hasIndent = hasIndent
       country = this.unit?.shopCountry ?? ""
-      tooltipId = getTooltipType("UNIT").getTooltipId(this.name, {
+      tooltipId = ::g_tooltip.getIdUnit(this.name, {
         showLocalState = needShopInfo
         needShopInfo = needShopInfo
       })

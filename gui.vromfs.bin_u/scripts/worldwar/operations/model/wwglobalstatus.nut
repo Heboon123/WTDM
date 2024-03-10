@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import clan_get_my_clan_id
 from "%scripts/dagui_library.nut" import *
 from "%scripts/worldWar/worldWarConst.nut" import *
@@ -22,18 +23,18 @@ let lastUpdatetTime = mkWatched(persist, "lastUpdatetTime", -1)
 let lastRequestTime = mkWatched(persist, "lastRequestTime", -1)
 let isDeveloperMode = mkWatched(persist, "isDeveloperMode", false)
 
-function reset() {
+let function reset() {
   curData(null)
   validListsMask(0)
   lastUpdatetTime(-1)
   lastRequestTime(-1)
 }
 
-function pushStatusChangedEvent(changedListsMask) {
+let function pushStatusChangedEvent(changedListsMask) {
   wwEvent("GlobalStatusChanged", { changedListsMask = changedListsMask })
 }
 
-function canRefreshData(refreshDelay = null) {
+let function canRefreshData(refreshDelay = null) {
   if (!hasFeature("WorldWar"))
     return false
 
@@ -49,7 +50,7 @@ function canRefreshData(refreshDelay = null) {
   return true
 }
 
-function updateCurData(newData) {
+let function updateCurData(newData) {
   let data = curData.value ?? {}
   foreach (name, value in newData)
     data[name] <- value
@@ -57,7 +58,7 @@ function updateCurData(newData) {
   curData(data)
 }
 
-function onGlobalStatusReceived(newData) {
+let function onGlobalStatusReceived(newData) {
   lastUpdatetTime(get_time_msec())
   local changedListsMask = 0
   foreach (gsType in ::g_ww_global_status_type.types)
@@ -77,7 +78,7 @@ function onGlobalStatusReceived(newData) {
 }
 
 //special actions with global status in successCb
-function actionWithGlobalStatusRequest(actionName, requestBlk = null, taskOptions = null, onSuccessCb = null) {
+let function actionWithGlobalStatusRequest(actionName, requestBlk = null, taskOptions = null, onSuccessCb = null) {
   if (isDeveloperMode.value) { // Force full global status request in developer mode
     actionName = "cln_ww_global_status"
     requestBlk = null
@@ -96,7 +97,7 @@ function actionWithGlobalStatusRequest(actionName, requestBlk = null, taskOption
   charRequestJson(actionName, requestBlk, taskOptions, cb)
 }
 
-function onEventMyClanIdChanged(_p) {
+let function onEventMyClanIdChanged(_p) {
   foreach (op in ::g_ww_global_status_type.ACTIVE_OPERATIONS.getList())
     op.resetCache()
   foreach (q in ::g_ww_global_status_type.QUEUE.getList())
@@ -112,7 +113,7 @@ subscriptions.addListenersWithoutEnv({
   MyClanIdChanged = onEventMyClanIdChanged
 })
 
-function refreshGlobalStatusData(refreshDelay = null) {
+let function refreshGlobalStatusData(refreshDelay = null) {
   if (!canRefreshData(refreshDelay))
     return
 

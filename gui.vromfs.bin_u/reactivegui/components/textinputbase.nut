@@ -10,20 +10,20 @@ from "string" import regexp, split_by_chars
     - replace editor in enlisted with this component (it should be already suitable)
 */
 let rexInt = regexp(@"[\+\-]?[0-9]+")
-function isStringInt(strv) {
+let function isStringInt(strv) {
   return rexInt.match(strv) //better use one from string.nut
 }
 
 let rexFloat = regexp(@"(\+|-)?([0-9]+\.?[0-9]*|\.[0-9]+)([eE](\+|-)?[0-9]+)?")
-function isStringFloat(strv) {
+let function isStringFloat(strv) {
   return rexFloat.match(strv) //better use one from string.nut
 }
 
 let rexEng = regexp(@"[a-z,A-Z]*")
-function isStringEng(strv) {
+let function isStringEng(strv) {
   return rexEng.match(strv)
 }
-function isStringLikelyEmail(strv, _verbose = true) {
+let function isStringLikelyEmail(strv, _verbose = true) {
 // this check is not rfc fully compatible. We check that @ exist and correctly used, and that let and domain parts exist and they are correct length.
 // Domain part also have at least one period and main domain at least 2 symbols
 // also come correct emails on google are against RFC, for example a.a.a@gmail.com.
@@ -51,7 +51,7 @@ function isStringLikelyEmail(strv, _verbose = true) {
   return true
 }
 
-function defaultFrame(inputObj, group, sf) {
+let function defaultFrame(inputObj, group, sf) {
   return {
     rendObj = ROBJ_FRAME
     borderWidth = [hdpx(1), hdpx(1), 0, hdpx(1)]
@@ -71,7 +71,7 @@ function defaultFrame(inputObj, group, sf) {
   }
 }
 
-function isValidStrByType(strv, inputType) {
+let function isValidStrByType(strv, inputType) {
   if (strv == "")
     return true
   if (inputType == "mail")
@@ -105,7 +105,7 @@ let failAnim = @(trigger) {
 
 let interactiveValidTypes = ["num", "lat", "integer", "float"]
 
-function textInput(text_state, options = {}, frameCtor = defaultFrame) {
+let function textInput(text_state, options = {}, frameCtor = defaultFrame) {
   let group = ElemGroup()
   let {
     setValue = @(v) text_state(v), inputType = null,
@@ -134,25 +134,25 @@ function textInput(text_state, options = {}, frameCtor = defaultFrame) {
 
   let stateFlags = Watched(0)
 
-  function onBlurExt() {
+  let function onBlurExt() {
     if (!isValidResult(text_state.value))
       anim_start(text_state)
     onBlur?()
   }
 
-  function onReturnExt() {
+  let function onReturnExt() {
     if (!isValidResult(text_state.value))
       anim_start(text_state)
     onReturn?()
   }
 
-  function onEscapeExt() {
+  let function onEscapeExt() {
     if (!isValidResult(text_state.value))
       anim_start(text_state)
     onEscape()
   }
 
-  function onChangeExt(new_val) {
+  let function onChangeExt(new_val) {
     onChange?(new_val)
     if (!isValidChange(new_val))
       anim_start(text_state)

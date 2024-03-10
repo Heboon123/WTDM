@@ -1,6 +1,4 @@
 from "%scripts/dagui_library.nut" import *
-
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let { broadcastEvent, addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { regionalUnlocks } = require("%scripts/unlocks/regionalUnlocks.nut")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
@@ -12,7 +10,7 @@ let cacheArray = persist("unlocksCacheArray", @() [])
 let cacheByType = persist("unlocksCacheByType", @() {})
 let isCacheValid = persist("unlocksIsCacheValid", @() { value = false })
 
-function addUnlockToCache(unlock) {
+let function addUnlockToCache(unlock) {
   if (unlock?.id == null) {
     let unlockConfigString = toString(unlock, 2) // warning disable: -declared-never-used
     script_net_assert_once("missing id in unlock", "Unlocks: Missing id in unlock. Cannot cache unlock.")
@@ -27,12 +25,12 @@ function addUnlockToCache(unlock) {
   cacheByType[typeName].append(unlock)
 }
 
-function convertBlkToCache(blk) {
+let function convertBlkToCache(blk) {
   foreach (unlock in (blk % "unlockable"))
     addUnlockToCache(unlock)
 }
 
-function cache() {
+let function cache() {
   if (isCacheValid.value)
     return
 
@@ -49,17 +47,17 @@ function cache() {
     addUnlockToCache(unlock)
 }
 
-function invalidateCache() {
+let function invalidateCache() {
   isCacheValid.value = false
   broadcastEvent("UnlocksCacheInvalidate")
 }
 
-function getAllUnlocks() {
+let function getAllUnlocks() {
   cache()
   return cacheById
 }
 
-function getAllUnlocksWithBlkOrder() {
+let function getAllUnlocksWithBlkOrder() {
   cache()
   return cacheArray
 }
@@ -104,7 +102,7 @@ addListenersWithoutEnv({
   SignOut = @(_) invalidateCache()
   LoginComplete = @(_) invalidateCache()
   ProfileUpdated = @(_) invalidateCache()
-}, g_listener_priority.CONFIG_VALIDATION)
+}, ::g_listener_priority.CONFIG_VALIDATION)
 
 return {
   getAllUnlocks

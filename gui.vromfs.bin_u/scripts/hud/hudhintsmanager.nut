@@ -2,8 +2,6 @@ from "%scripts/dagui_natives.nut" import set_hint_options_by_blk, disable_hint
 from "%scripts/dagui_library.nut" import *
 from "%scripts/hud/hudConsts.nut" import HINT_INTERVAL
 
-let { g_hud_event_manager } = require("%scripts/hud/hudEventManager.nut")
-let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { get_charserver_time_sec } = require("chard")
 let { subscribe_handler } = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -11,15 +9,16 @@ let DataBlock = require("DataBlock")
 let { get_time_msec } = require("dagor.time")
 let SecondsUpdater = require("%sqDagui/timer/secondsUpdater.nut")
 let DaguiSceneTimers = require("%sqDagui/timer/daguiSceneTimers.nut")
+let { registerPersistentDataFromRoot, PERSISTENT_DATA_PARAMS } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { getHudElementAabb, dmPanelStatesAabb } = require("%scripts/hud/hudElementsAabb.nut")
 let { getHudUnitType } = require("hudState")
 let { HUD_UNIT_TYPE } = require("%scripts/hud/hudUnitType.nut")
 let { getPlayerCurUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 let { isInFlight } = require("gameplayBinding")
 let { getHintSeenCount, increaseHintShowCount, resetHintShowCount, getHintSeenTime,
-  getHintByShowEvent, g_hud_hints} = require("%scripts/hud/hudHints.nut")
+  getHintByShowEvent} = require("%scripts/hud/hudHints.nut")
 let { register_command } = require("console")
-let { eventbus_subscribe } = require("eventbus")
+let { subscribe } = require("eventbus")
 
 const TIMERS_CHECK_INTEVAL = 0.25
 
@@ -29,7 +28,7 @@ enum HintShowState {
   DISABLE   = 2
 }
 
-function isHintDisabledByUnitTags(hint) {
+let function isHintDisabledByUnitTags(hint) {
   if (hint.disabledByUnitTags == null)
     return false
 
@@ -40,14 +39,14 @@ function isHintDisabledByUnitTags(hint) {
   return hint.disabledByUnitTags.findvalue(@(v) unit.tags.contains(v)) != null
 }
 
-let activeHints = persist("activeHints", @() [])
+::g_hud_hints_manager <- {
+  [PERSISTENT_DATA_PARAMS] = ["activeHints"]
 
-let g_hud_hints_manager = {
   nest = null
   scene = null
   guiScene = null
 
-  activeHints = activeHints
+  activeHints = []
   animatedRemovedHints = [] //hints set to remove animation. to be able instant finish them
 
   timers = DaguiSceneTimers(TIMERS_CHECK_INTEVAL, "hudHintsTimers")
@@ -92,7 +91,7 @@ let g_hud_hints_manager = {
     }
     else {
       let hintOptionsBlk = DataBlock()
-      foreach (hint in g_hud_hints.types)
+      foreach (hint in ::g_hud_hints.types)
         hint.updateHintOptionsBlk(hintOptionsBlk)
       set_hint_options_by_blk(hintOptionsBlk)
     }
@@ -208,15 +207,15 @@ let g_hud_hints_manager = {
   }
 
   function subscribe() {
-    g_hud_event_manager.subscribe("LocalPlayerDead", function (_eventData) {
+    ::g_hud_event_manager.subscribe("LocalPlayerDead", function (_eventData) {
       this.onLocalPlayerDead()
     }, this)
 
-    g_hud_event_manager.subscribe("WatchedHeroChanged", function (_eventData) {
+    ::g_hud_event_manager.subscribe("WatchedHeroChanged", function (_eventData) {
       this.onWatchedHeroChanged()
     }, this)
 
-    foreach (hintType in g_hud_hints.types) {
+    foreach (hintType in ::g_hud_hints.types) {
       let isExceeded = this.isHintShowCountExceeded(hintType, { dontWriteLog=true })
       if (!hintType.isEnabled() || (hintType.totalCount > 0 && isExceeded && hintType.secondsOfForgetting == 0)) {
         log($"Hints: {(hintType?.showEvent ?? "_")} is disabled")
@@ -233,7 +232,7 @@ let g_hud_hints_manager = {
       }
 
       if (hint.showEvent != "")
-        g_hud_event_manager.subscribe(hint.showEvent, function (eventData) {
+        ::g_hud_event_manager.subscribe(hint.showEvent, function (eventData) {
 
           let hintUid = this.getUidForSeenCount(hint, eventData)
           if (eventData?.hidden) {
@@ -255,7 +254,7 @@ let g_hud_hints_manager = {
         }, this)
 
       if (!u.isNull(hint.hideEvent))
-        g_hud_event_manager.subscribe(hint.hideEvent, function (eventData) {
+        ::g_hud_event_manager.subscribe(hint.hideEvent, function (eventData) {
           if (!hint.isCurrent(eventData, true))
             return
 
@@ -270,7 +269,7 @@ let g_hud_hints_manager = {
       if (hint.updateCbs)
         foreach (eventName, func in hint.updateCbs) {
           let cbFunc = func
-          g_hud_event_manager.subscribe(eventName, function (eventData) {
+          ::g_hud_event_manager.subscribe(eventName, function (eventData) {
             if (!hint.isCurrent(eventData, false))
               return
 
@@ -523,7 +522,7 @@ let g_hud_hints_manager = {
 
   function onEventScriptsReloaded(_p) {
     foreach (hintData in this.activeHints)
-      hintData.hint = g_hud_hints.getByName(hintData.hint.name)
+      hintData.hint = ::g_hud_hints.getByName(hintData.hint.name)
   }
 
 
@@ -597,13 +596,13 @@ let g_hud_hints_manager = {
 
 }
 
-eventbus_subscribe("update_ship_fire_control_panel", @(value) g_hud_hints_manager.onUpdateShipFireControlPanel(value))
+subscribe("update_ship_fire_control_panel", @(value) ::g_hud_hints_manager.onUpdateShipFireControlPanel(value))
 
 dmPanelStatesAabb.subscribe(function(value) {
-  g_hud_hints_manager.changeMissionHintsPosition(value)
-  g_hud_hints_manager.changeCommonHintsPosition(value)
+  ::g_hud_hints_manager.changeMissionHintsPosition(value)
+  ::g_hud_hints_manager.changeCommonHintsPosition(value)
 })
 
-subscribe_handler(g_hud_hints_manager, g_listener_priority.DEFAULT_HANDLER)
-register_command(@(hintName) g_hud_hints_manager.isHintShowAllowed(hintName, null), "smart_hints.isHintShowAllowed")
-::g_hud_hints_manager <- g_hud_hints_manager
+registerPersistentDataFromRoot("g_hud_hints_manager")
+subscribe_handler(::g_hud_hints_manager, ::g_listener_priority.DEFAULT_HANDLER)
+register_command(@(hintName) ::g_hud_hints_manager.isHintShowAllowed(hintName, null), "smart_hints.isHintShowAllowed")

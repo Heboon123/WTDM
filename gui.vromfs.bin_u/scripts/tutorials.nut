@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 
@@ -5,7 +6,7 @@ let { tryOpenNextTutorialHandler } = require("%scripts/tutorials/nextTutorialHan
 let { checkTutorialsList } = require("%scripts/tutorials/tutorialsData.nut")
 let { getShowedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 
-function checkTutorialOnStart() {
+let function checkTutorialOnStart() {
   let unit = getShowedUnit()
   foreach (tutorial in checkTutorialsList) {
     if (!(tutorial?.isNeedAskInMainmenu ?? false))

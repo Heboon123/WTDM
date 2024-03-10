@@ -45,6 +45,13 @@ function isCrewAvailableInSession(crew, unit = null, needDebug = false) {
   return isAvailable || canUseUniversalSpare
 }
 
+function getCrewSlotReadyMask() {
+  if (!::g_mis_loading_state.isCrewsListReceived())
+    return 0
+
+  return getWasReadySlotsMask() & ~getDisabledSlotsMask()
+}
+
 let isRespawnWithUniversalSpare = @(crew, unit) is_bit_set(getDisabledSlotsMask(), crew.idInCountry)
   && canRespawnWithUniversalSpares(crew, unit)
 
@@ -53,8 +60,7 @@ let isRespawnWithUniversalSpare = @(crew, unit) is_bit_set(getDisabledSlotsMask(
 return {
   isCrewAvailableInSession
   isSpareAircraftInSlot
-  getWasReadySlotsMask
-  getDisabledSlotsMask
+  getCrewSlotReadyMask
   isRespawnWithUniversalSpare
 }
 

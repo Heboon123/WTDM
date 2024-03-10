@@ -287,9 +287,14 @@
             "source": "constant",
             "value": 0.0
           },
+          "clearTargets": {},
           "clearTargetsOfInterest": {},
           "setScanPatternSet": {
             "scanPatternSet": "search"
+          },
+          "setFsmActive": {
+            "fsm": "illumination",
+            "active": false
           }
         },
         "setMediumAltStandbyMode": {
@@ -320,10 +325,16 @@
           "setEnabled": {
             "value": true
           },
-          "setFsmActive": {
-            "fsm": "search",
-            "active": true
-          },
+          "setFsmActive": [
+            {
+              "fsm": "search",
+              "active": true
+            },
+            {
+              "fsm": "illumination",
+              "active": false
+            }
+          ],
           "setCenterAzimuth": {
             "source": "constant",
             "value": 0.0
@@ -332,6 +343,7 @@
             "source": "constant",
             "value": 0.0
           },
+          "clearTargets": {},
           "clearTargetsOfInterest": {},
           "setCueEnabled": {
             "value": true
@@ -365,7 +377,6 @@
           }
         },
         "resetSearchMode": {
-          "clearTargets": {},
           "setFsmActive": {
             "fsm": "search",
             "active": false
@@ -381,16 +392,10 @@
           }
         },
         "resetTrackMode": {
-          "setFsmActive": [
-            {
-              "fsm": "track",
-              "active": false
-            },
-            {
-              "fsm": "illumination",
-              "active": false
-            }
-          ]
+          "setFsmActive": {
+            "fsm": "track",
+            "active": false
+          }
         },
         "setLockModeCommon": {
           "setEnabled": {
@@ -404,10 +409,17 @@
           },
           "setScanPatternSet": {},
           "resetScanPhase": {},
-          "setFsmActive": {
-            "fsm": "lock",
-            "active": true
-          }
+          "clearTargets": {},
+          "setFsmActive": [
+            {
+              "fsm": "lock",
+              "active": true
+            },
+            {
+              "fsm": "illumination",
+              "active": false
+            }
+          ]
         },
         "setDesignationLockModeCommon": {
           "setLockModeCommon": {},
@@ -1007,24 +1019,12 @@
           "event": "update",
           "actions": {
             "scan": {},
-            "setCenterAzimuth": [
-              {
-                "source": "constant",
-                "value": 0.0
-              },
-              {
-                "source": "designationCue"
-              }
-            ],
-            "setCenterElevation": [
-              {
-                "source": "constant",
-                "value": 0.0
-              },
-              {
-                "source": "designationCue"
-              }
-            ]
+            "setCenterAzimuth": {
+              "source": "designationCue"
+            },
+            "setCenterElevation": {
+              "source": "designationCue"
+            }
           }
         },
         "detect": {
@@ -1063,8 +1063,7 @@
         "setCueDist": {
           "command": "cueAxisY",
           "actions": {
-            "setCueDist": {},
-            "setCueDopplerSpeed": {}
+            "setCueDist": {}
           }
         },
         "setCueElevation": {
@@ -1094,7 +1093,6 @@
           "event": "targetInSight",
           "actions": {
             "detectTarget": {
-              "ignoreOwnWeapon": true,
               "rangeMult": 1.0
             }
           }
@@ -1108,7 +1106,6 @@
           "event": "update",
           "actions": {
             "detectTarget": {
-              "ignoreOwnWeapon": true,
               "rangeMult": 1.0
             }
           }
@@ -1142,8 +1139,7 @@
           "actions": {
             "extrapolateTargetsOfInterest": {},
             "clearTargetsOfInterest": {
-              "timeOut": 3.0,
-              "dirRateLim": 1.0
+              "timeOut": 3.0
             },
             "setCenterAzimuth": {
               "source": "activeTargetOfInterest"
@@ -1172,7 +1168,7 @@
           "actions": {
             "checkIlluminationTimeOut": {
               "transiver": true,
-              "pauseMax": 20.0
+              "pauseMax": 5.0
             }
           }
         },

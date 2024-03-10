@@ -1,7 +1,8 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
-
 let u = require("%sqStdLibs/helpers/u.nut")
-let { g_mislist_type } =  require("%scripts/missions/misListType.nut")
+
+
 let { dynamicLoadPreview, dynamicUnloadPreview, dynamicLoadSummary } = require("dynamicMission")
 let DataBlock = require("DataBlock")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -15,7 +16,7 @@ enum MAP_PREVIEW_TYPE {
 let previewList = []
 local curPreview = null
 
-function validateList() {
+let function validateList() {
   for (local i = previewList.len() - 1; i >= 0; i--)
     if (!previewList[i].isValid() || previewList[i].isEmpty())
       previewList.remove(i)
@@ -28,7 +29,7 @@ function validateList() {
   })
 }
 
-function createPreview(previewType, missionBlk, mapObj, param) {
+let function createPreview(previewType, missionBlk, mapObj, param) {
   let preview = {
     type = previewType
     blk = missionBlk
@@ -47,11 +48,11 @@ function createPreview(previewType, missionBlk, mapObj, param) {
   return preview
 }
 
-function findPreview(obj) {
+let function findPreview(obj) {
   return u.search(previewList, (@(p) checkObj(p.obj) && p.obj.isEqual(obj)))
 }
 
-function hideCurPreview() {
+let function hideCurPreview() {
   if (!curPreview)
     return
   curPreview.show(false)
@@ -59,7 +60,7 @@ function hideCurPreview() {
   curPreview = null
 }
 
-function refreshCurPreview(isForced = false) {
+let function refreshCurPreview(isForced = false) {
   validateList()
   let newPreview = previewList?[0]
   if (!newPreview || !newPreview.isInCurGuiScene()) {
@@ -79,9 +80,9 @@ function refreshCurPreview(isForced = false) {
     dynamicLoadSummary(curPreview.param, curPreview.blk)
 }
 
-function getMissionBriefingConfig(mission) {
+let function getMissionBriefingConfig(mission) {
   let config = DataBlock()
-  let blk = g_mislist_type.isUrlMission(mission)
+  let blk = ::g_mislist_type.isUrlMission(mission)
     ? mission.urlMission.getMetaInfo()
     : mission?.blk
   if (!blk)
@@ -91,7 +92,7 @@ function getMissionBriefingConfig(mission) {
   return config
 }
 
-function setPreview(previewType, mapObj, missionBlk, param = null) {
+let function setPreview(previewType, mapObj, missionBlk, param = null) {
   if (!checkObj(mapObj))
     return
 
@@ -111,11 +112,11 @@ function setPreview(previewType, mapObj, missionBlk, param = null) {
 
 //add or replace (by scene) preview to show.
 //obj is scene to check visibility and modal counter (not a obj with tqactical map behavior)
-function setMapPreview(mapObj, missionBlk) {
+let function setMapPreview(mapObj, missionBlk) {
   setPreview(MAP_PREVIEW_TYPE.MISSION_MAP, mapObj, missionBlk)
 }
 
-function setSummaryPreview(mapObj, missionBlk, mapName) {
+let function setSummaryPreview(mapObj, missionBlk, mapName) {
   setPreview(MAP_PREVIEW_TYPE.DYNAMIC_SUMMARY, mapObj, missionBlk, mapName)
 }
 

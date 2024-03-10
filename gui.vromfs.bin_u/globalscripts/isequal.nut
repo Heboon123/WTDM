@@ -35,7 +35,7 @@ let dagorClasses = {
 }
 
 let customIsEqual = {}
-function registerIsEqualClass(classRef, isEqualFunc) {
+let function registerIsEqualClass(classRef, isEqualFunc) {
   customIsEqual[classRef] <- isEqualFunc
 }
 

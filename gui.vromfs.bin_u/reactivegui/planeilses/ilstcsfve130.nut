@@ -7,7 +7,7 @@ let { IlsColor, IlsLineScale, CannonMode, TargetPosValid, TargetPos, BombingMode
   DistToTarget, RocketMode, BombCCIPMode, RadarTargetPosValid, RadarTargetPos,
    RadarTargetDistRate, RadarTargetDist } = require("%rGui/planeState/planeToolsState.nut")
 let { baseLineWidth, mpsToKnots, metrToFeet, metrToNavMile } = require("ilsConstants.nut")
-let { GuidanceLockResult } = require("guidanceConstants")
+let { GuidanceLockResult } = require("%rGui/guidanceConstants.nut")
 let { Speed, Mach, BarAltitude, Altitude, Overload, Tangage, Roll,
   Accel } = require("%rGui/planeState/planeFlyState.nut")
 let { floor, round } = require("%sqstd/math.nut")
@@ -92,7 +92,7 @@ let overload = @() {
   text = string.format("%.1fG", OverloadWatch.value / 10.0)
 }
 
-function pitch(width, height, generateFunc) {
+let function pitch(width, height, generateFunc) {
   const step = 5.0
   let children = []
 
@@ -118,7 +118,7 @@ function pitch(width, height, generateFunc) {
   }
 }
 
-function angleTxt(num, isLeft, invVPlace = 1, x = 0, y = 0) {
+let function angleTxt(num, isLeft, invVPlace = 1, x = 0, y = 0) {
   return @() {
     watch = IlsColor
     pos = [x, y]
@@ -132,7 +132,7 @@ function angleTxt(num, isLeft, invVPlace = 1, x = 0, y = 0) {
   }
 }
 
-function generatePitchLine(num) {
+let function generatePitchLine(num) {
   let sign = num > 0 ? 1 : -1
   let newNum = num >= 0 ? num : (num - 5)
   return {
@@ -263,7 +263,7 @@ let shellName = @() {
   text = RocketMode.value ? "RK" : (CannonMode.value ? "CAS" : (isAAMMode.value ? loc(CurWeaponName.value) :  "CAN"))
 }
 
-function bombImpactLine(width, height) {
+let function bombImpactLine(width, height) {
   return @() {
     watch = TargetPosValid
     size = flex()
@@ -282,7 +282,7 @@ function bombImpactLine(width, height) {
   }
 }
 
-function groundReticles(width, height) {
+let function groundReticles(width, height) {
   return @() {
     watch = [CCIPMode, BombCCIPMode]
     size = flex()
@@ -396,7 +396,7 @@ let aamTargetMarker = @() {
 let CalcFlightTime = Computed(@() AamLaunchZoneDistMaxVal.value == 0 ? 0
   : round(AamTimeOfFlightMax.value * (RadarTargetDist.value / AamLaunchZoneDistMaxVal.value)).tointeger())
 let AamIsLocking = Computed(@() GuidanceLockState.value >= GuidanceLockResult.RESULT_LOCKING)
-function AamReady(is_left) {
+let function AamReady(is_left) {
   return @() {
     watch = AamIsLocking
     size = flex()
@@ -446,7 +446,7 @@ function AamReady(is_left) {
 }
 
 
-function targetDistScale(height) {
+let function targetDistScale(height) {
   let MinDistPos = Computed(@() (clamp(1.0 - AamLaunchZoneDistMinVal.value / 40000.0, 0.0, 1.0) * height * 0.3).tointeger())
   let MaxDistPos = Computed(@() (clamp(1.0 - AamLaunchZoneDistMaxVal.value / 40000.0, 0.0, 1.0) * height * 0.3).tointeger())
   let CurDistPos = Computed(@() (clamp(1.0 - RadarTargetDist.value / 40000.0, 0.0, 1.0) * height * 0.3).tointeger())
@@ -511,7 +511,7 @@ function targetDistScale(height) {
   }
 }
 
-function aamInfo(height) {
+let function aamInfo(height) {
   return @() {
     watch = isAAMMode
     size = flex()
@@ -525,7 +525,7 @@ function aamInfo(height) {
   }
 }
 
-function gunBulletsCnt(is_left, watch_var) {
+let function gunBulletsCnt(is_left, watch_var) {
   return {
     size = flex()
     hplace = ALIGN_CENTER
@@ -555,7 +555,7 @@ let gunBullets = @() {
     (GunBullets1.value >= 0 ? gunBulletsCnt(false, GunBullets1) : null)
   ] : null
 }
-function getBulletImpactLineCommand() {
+let function getBulletImpactLineCommand() {
   let commands = []
   for (local i = 0; i < BulletImpactPoints.value.len() - 2; ++i) {
     let point1 = BulletImpactPoints.value[i]
@@ -584,7 +584,7 @@ let bulletsImpactLine = @() {
   ] : null
 }
 
-function TCSFVE130(width, height) {
+let function TCSFVE130(width, height) {
   return {
     size = [width, height]
     children = [

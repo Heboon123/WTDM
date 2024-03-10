@@ -43,7 +43,7 @@ let generateSpdMarkShimadzu = function(num) {
   }
 }
 
-function ShimadzuSpeed(height, generateFunc) {
+let function ShimadzuSpeed(height, generateFunc) {
   let children = []
 
   for (local i = 0; i <= 1000; i += 10) {
@@ -64,7 +64,7 @@ function ShimadzuSpeed(height, generateFunc) {
   }
 }
 
-function ShimadzuSpeedWrap(width, height, generateFunc) {
+let function ShimadzuSpeedWrap(width, height, generateFunc) {
   return {
     size = [width * 0.17, height * 0.5]
     pos = [width * 0.1, height * 0.2]
@@ -116,7 +116,7 @@ let generateAltMarkShimadzu = function(num) {
   }
 }
 
-function ShimadzuAltWrap(width, height, generateFunc) {
+let function ShimadzuAltWrap(width, height, generateFunc) {
   return {
     size = [width * 0.17, height * 0.5]
     pos = [width * 0.75, height * 0.2]
@@ -160,7 +160,7 @@ let ShimadzuOverload = @() {
   text = string.format("%.1fG", OverloadWatch.value / 10.0)
 }
 
-function generatePitchLineShim(num) {
+let function generatePitchLineShim(num) {
   let sign = num > 0 ? 1 : -1
   let newNum = num >= 0 ? num : (num - 5)
   return {
@@ -205,7 +205,7 @@ function generatePitchLineShim(num) {
   }
 }
 
-function f16CcipMark(width, height) {
+let function f16CcipMark(width, height) {
   return @() {
     watch = [IlsColor, TargetPosValid]
     size = [pw(3), ph(3)]
@@ -228,7 +228,7 @@ function f16CcipMark(width, height) {
   }
 }
 
-function f16CcrpMark(_width, height) {
+let function f16CcrpMark(_width, height) {
   return {
     size = flex()
     children = [
@@ -284,7 +284,7 @@ let ShimadzuMode = @() {
   text = CCIPMode.value ? "CCIP" : (BombingMode.value ? "CCRP" : "NAV")
 }
 
-function ShimadzuIls(width, height) {
+let function ShimadzuIls(width, height) {
   return {
     size = [width, height]
     children = [

@@ -16,7 +16,6 @@ let DataBlock  = require("DataBlock")
 let { addTask } = require("%scripts/tasker.nut")
 let { warningIfGold } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { checkBalanceMsgBox } = require("%scripts/user/balanceFeatures.nut")
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 
 /* Item API:
   getCost                    - return item cost
@@ -291,7 +290,7 @@ let BaseItem = class {
     return handyman.renderCached("%gui/items/itemString.tpl", {
       title = showTitle ? colorize("activeTextColor", this.getName()) : null
       icon = this.getSmallIconName()
-      tooltipId = getTooltipType("ITEM").getTooltipId(this.id, { isDisguised = this.isDisguised })
+      tooltipId = ::g_tooltip.getIdItem(this.id, { isDisguised = this.isDisguised })
       count = count > 1 ? (colorize("activeTextColor", " x") + colorize("userlogColoredText", count)) : null
       hasPadding = hasPadding
     })
@@ -314,7 +313,7 @@ let BaseItem = class {
   }
 
   function getShortItemTypeDescription() {
-    return loc($"item/{this.id}/shortTypeDesc", loc($"item/{this.blkType}/shortTypeDesc", ""))
+    return loc("item/" + this.id + "/shortTypeDesc", loc("item/" + this.blkType + "/shortTypeDesc", ""))
   }
 
   function getItemTypeDescription(loc_params = {}) {
@@ -325,11 +324,11 @@ let BaseItem = class {
         return idText
     }
 
-    idText = loc($"item/{this.id}/typeDesc", "", loc_params)
+    idText = loc("item/" + this.id + "/typeDesc", "", loc_params)
     if (idText != "")
       return idText
 
-    idText = loc($"item/{this.blkType}/typeDesc", "", loc_params)
+    idText = loc("item/" + this.blkType + "/typeDesc", "", loc_params)
     if (idText != "")
       return idText
 
@@ -337,7 +336,7 @@ let BaseItem = class {
   }
 
   function getDescription() {
-    return loc($"item/{this.id}/desc", "")
+    return loc("item/" + this.id + "/desc", "")
   }
 
   function getDescriptionUnderTable() { return "" }
@@ -366,8 +365,8 @@ let BaseItem = class {
 
     if (getTblValue("showTooltip", params, true))
       res.tooltipId <- this.isInventoryItem && this.uids && this.uids.len()
-                       ? getTooltipType("INVENTORY").getTooltipId(this.uids[0])
-                       : getTooltipType("ITEM").getTooltipId(this.id, { isDisguised = this.isDisguised })
+                       ? ::g_tooltip.getIdInventoryItem(this.uids[0])
+                       : ::g_tooltip.getIdItem(this.id, { isDisguised = this.isDisguised })
 
     if (getTblValue("showPrice", params, true))
       res.price <- this.getCost().getTextAccordingToBalance()

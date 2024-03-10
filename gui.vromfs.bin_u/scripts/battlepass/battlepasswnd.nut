@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { isHandlerInScene } = require("%sqDagui/framework/baseGuiHandlerManager.nut")
@@ -33,7 +34,6 @@ let { getCurrentBattleTasks, isBattleTasksAvailable, setBattleTasksUpdateTimer
 } = require("%scripts/unlocks/battleTasks.nut")
 require("%scripts/promo/battlePassPromoHandler.nut") // Independed Modules
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
-let { guiStartBattleTasksWnd } = require("%scripts/unlocks/battleTasksHandler.nut")
 
 let battlePassRewardTitleLocId = "battlePass/rewardsTitle"
 
@@ -254,11 +254,10 @@ local BattlePassWnd = class (gui_handlers.BaseGuiHandlerWT) {
     foreach (objId, config in watchObjInfoBattleTasksConfig)
       this.scene.findObject(objId).setValue(stashBhvValueConfig(config))
 
-    showObjById("btn_warbondsShop",
-      ::g_warbonds.isShopAvailable() && !isHandlerInScene(gui_handlers.WarbondsShop),
-      this.scene)
-    showObjById("btn_battleTask", true, this.scene)
-    showObjById("battle_tasks_info_nest", true, this.scene)
+    this.showSceneBtn("btn_warbondsShop",
+      ::g_warbonds.isShopAvailable() && !isHandlerInScene(gui_handlers.WarbondsShop))
+    this.showSceneBtn("btn_battleTask", true)
+    this.showSceneBtn("battle_tasks_info_nest", true)
 
     setBattleTasksUpdateTimer(
       getCurrentBattleTasks().findvalue(@(v) v._puType == "Easy"),
@@ -296,7 +295,7 @@ local BattlePassWnd = class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   onWarbondsShop = @() ::g_warbonds.openShop()
-  onBattleTask = @() guiStartBattleTasksWnd()
+  onBattleTask = @() ::gui_start_battle_tasks_wnd()
 
   function updateMainPrizeData(mainPrizesValue) {
     let countMainPrizes = mainPrizesValue.len()
@@ -314,8 +313,8 @@ local BattlePassWnd = class (gui_handlers.BaseGuiHandlerWT) {
     if (promoImage != null)
       this.scene.findObject("promo_img")["background-image"] = promoImage
 
-    showObjById("congrat_content", false, this.scene)
-    showObjById("promo_preview", getAircraftByName(this.mainPrizeData?.mainPrizeId) != null, this.scene)
+    this.showSceneBtn("congrat_content", false)
+    this.showSceneBtn("promo_preview", getAircraftByName(this.mainPrizeData?.mainPrizeId) != null)
   }
 
   function onMainPrizePreview(_obj) {
@@ -375,7 +374,7 @@ local BattlePassWnd = class (gui_handlers.BaseGuiHandlerWT) {
     let curId = obj.getValue()
     foreach (idx, sheetData in this.sheetsList) {
       let isVisible = curId == idx
-      showObjById(sheetData.objId, isVisible, this.scene)
+      this.showSceneBtn(sheetData.objId, isVisible)
       if (isVisible)
         this[sheetData.fillFunc]()
     }
@@ -534,9 +533,9 @@ local BattlePassWnd = class (gui_handlers.BaseGuiHandlerWT) {
 
   function congratulationBattlePassPurchased() {
     this.scene.findObject("sheet_list").setValue(0)
-    showObjById("congrat_content", true, this.scene)
+    this.showSceneBtn("congrat_content", true)
     this.scene.findObject("promo_img")["background-image"] = "#ui/images/bp_bg?P1"
-    showObjById("promo_preview", false, this.scene)
+    this.showSceneBtn("promo_preview", false)
   }
 
   function onEventBattlePassPurchased(_p) {
@@ -569,13 +568,13 @@ local BattlePassWnd = class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function updateButtons() {
-    showObjById("btn_wiki_link", hasFeature("AllowExternalLink"), this.scene)
+    this.showSceneBtn("btn_wiki_link", hasFeature("AllowExternalLink"))
   }
 }
 
 gui_handlers.BattlePassWnd <- BattlePassWnd
 
-function openBattlePassWnd(params = {}) {
+let function openBattlePassWnd(params = {}) {
   if (isUserstatMissingData.value) {
     showInfoMsgBox(loc("userstat/missingDataMsg"), "userstat_missing_data_msgbox")
     return

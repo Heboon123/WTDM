@@ -46,7 +46,7 @@ let isRegionalUnlock = @(unlockId) unlockId in acceptedUnlocks.value
 let isRegionalUnlockCompleted = @(unlockId) acceptedUnlocks.value?[unlockId].isCompleted ?? false
 let isRegionalUnlockReadyToOpen = @(unlockId) unlockId in unclaimedUnlocks.value
 
-function getRegionalUnlockProgress(unlockId) {
+let function getRegionalUnlockProgress(unlockId) {
   let res = {
     curVal = 0
     maxVal = 1
@@ -66,7 +66,7 @@ function getRegionalUnlockProgress(unlockId) {
 let getRegionalUnlockTypeById = @(unlockId)
   get_unlock_type(acceptedUnlocksBlk.value?[unlockId].type)
 
-function claimRegionalUnlockRewards() {
+let function claimRegionalUnlockRewards() {
   let unlocks = unclaimedUnlocks.value.filter(@(u) !(u?.manualOpen ?? false))
   if (unlocks.len() == 0)
     return
@@ -81,7 +81,7 @@ function claimRegionalUnlockRewards() {
     handler.doWhenActive(@() receiveRewards(unlockId))
 }
 
-function acceptRegionalUnlock(unlockName, callback) {
+let function acceptRegionalUnlock(unlockName, callback) {
   let userstatRequestData = {
     add_token = true
     headers = { appid = APP_ID, userId = userIdInt64.value }

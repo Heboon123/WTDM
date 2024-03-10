@@ -1,8 +1,6 @@
 from "%scripts/dagui_library.nut" import *
 from "%scripts/squads/squadsConsts.nut" import squadState
 
-let { getGlobalModule } = require("%scripts/global_modules.nut")
-let g_squad_manager = getGlobalModule("g_squad_manager")
 let { is_in_loading_screen } = require("%sqDagui/framework/baseGuiHandlerManager.nut")
 let psnsm = require("%scripts/social/psnSessionManager/psnSessionManagerApi.nut")
 let { isInMenu } = require("%scripts/baseGuiHandlerManagerWT.nut")
@@ -10,7 +8,7 @@ let psnNotify = require("%sonyLib/notifications.nut")
 let { getFilledFeedTextByLang } = require("%scripts/langUtils/localization.nut")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { isEmpty, copy } = require("%sqStdLibs/helpers/u.nut")
-let { eventbus_subscribe } = require("eventbus")
+let { subscribe } = require("eventbus")
 let { findInviteClass } = require("%scripts/invites/invitesClasses.nut")
 let { isRoomInSession } = require("%scripts/matchingRooms/sessionLobbyState.nut")
 let { userIdStr } = require("%scripts/user/profileStates.nut")
@@ -52,14 +50,14 @@ let getLocalizedTextInfo = function(locIdsArray) {
 
 let getCustomDataByType = @(sType) sType == PSN_SESSION_TYPE.SKIRMISH
   ? [
-      { roomId = ::SessionLobby.getRoomId() }
+      { roomId = ::SessionLobby.roomId }
       { inviterUid = userIdStr.value }
       { sType = PSN_SESSION_TYPE.SKIRMISH }
     ]
   : sType == PSN_SESSION_TYPE.SQUAD
     ? [
         { squadId = userIdStr.value }
-        { leaderId = g_squad_manager.getLeaderUid() }
+        { leaderId = ::g_squad_manager.getLeaderUid() }
         { sType = PSN_SESSION_TYPE.SQUAD }
       ]
     : []
@@ -131,13 +129,13 @@ let getSessionData = @(sType, pushContextId) sType == PSN_SESSION_TYPE.SKIRMISH
           "UPDATE_JOINABLE_USER_TYPE"
           "UPDATE_INVITABLE_USER_TYPE"
         ]
-        swapSupported = !::SessionLobby.getIsSpectatorSelectLocked()
+        swapSupported = !::SessionLobby.isSpectatorSelectLocked
         customData1 = encodeDataToBase64Like(getCustomDataByType(PSN_SESSION_TYPE.SKIRMISH))
         /*customData1 = base64.encodeJson({
-          roomId = ::SessionLobby.getRoomId(),
+          roomId = ::SessionLobby.roomId,
           inviterUid = userIdStr.value,
           inviterName = userName.value
-          password = ::SessionLobby.getPassword()
+          password = ::SessionLobby.password
           key = PSN_SESSION_TYPE.SKIRMISH
         })?.result ?? ""*/
       }]
@@ -146,7 +144,7 @@ let getSessionData = @(sType, pushContextId) sType == PSN_SESSION_TYPE.SKIRMISH
   ? {
       playerSessions = [{
         supportedPlatforms = ["PS4", "PS5"]
-        maxPlayers = g_squad_manager.getMaxSquadSize()
+        maxPlayers = ::g_squad_manager.getMaxSquadSize()
         maxSpectators = 0
         joinDisabled = false
         member = {
@@ -265,7 +263,7 @@ let afterAcceptInviteCb = function(sessionId, pushContextId, _r, err) {
         if (invite != null)
           invite.accept()
         else
-          g_squad_manager.joinToSquad(squadId)
+          ::g_squad_manager.joinToSquad(squadId)
       }
     }
   }))
@@ -307,17 +305,17 @@ let proceedInvite = function(p) {
   )
 }
 
-eventbus_subscribe("psnEventGameIntentJoinSession", proceedInvite)
+subscribe("psnEventGameIntentJoinSession", proceedInvite)
 
 addListenersWithoutEnv({
   SquadStatusChanged = function(_p) {
-    let state = g_squad_manager.getState()
+    let {state} = ::g_squad_manager
     if (state == squadState.IN_SQUAD) {
       if (PSN_SESSION_TYPE.SQUAD not in pendingSessions.value) {
-        let sessionId = g_squad_manager.getPsnSessionId()
-        let isLeader = g_squad_manager.isSquadLeader()
+        let sessionId = ::g_squad_manager.getPsnSessionId()
+        let isLeader = ::g_squad_manager.isSquadLeader()
         let isInPsnSession = sessionId in createdSessionData.value
-        log($"[PSSM] onEventSquadStatusChanged {g_squad_manager.getState()} for {sessionId}")
+        log($"[PSSM] onEventSquadStatusChanged {::g_squad_manager.state} for {sessionId}")
         log($"[PSSM] onEventSquadStatusChanged leader: {isLeader}, psnSessions: {createdSessionData.value.len()}")
         log($"[PSSM] onEventSquadStatusChanged session bound to PSN: {isInPsnSession}")
 
@@ -335,8 +333,8 @@ addListenersWithoutEnv({
             PSN_SESSION_TYPE.SQUAD,
             function(sId, err) {
               if (!err)
-                g_squad_manager.setPsnSessionId(sId)
-              g_squad_manager.processDelayedInvitations()
+                ::g_squad_manager.setPsnSessionId(sId)
+              ::g_squad_manager.processDelayedInvitations()
             }
           )
         }
@@ -347,24 +345,24 @@ addListenersWithoutEnv({
     }
   }
   SquadSizeChanged = function(_p) {
-    if (!g_squad_manager.isSquadLeader())
+    if (!::g_squad_manager.isSquadLeader())
       return
 
-    let sessionId = g_squad_manager.getPsnSessionId()
+    let sessionId = ::g_squad_manager.getPsnSessionId()
     if (!isEmpty(sessionId))
       update(sessionId, PSN_SESSION_TYPE.SQUAD)
   }
   SquadLeadershipTransfer = function(p) {
-    if (!g_squad_manager.isSquadLeader())
+    if (!::g_squad_manager.isSquadLeader())
       return
 
-    let newLeaderData = g_squad_manager.getMemberData(p?.uid)
+    let newLeaderData = ::g_squad_manager.getMemberData(p?.uid)
     if (!newLeaderData) {
       log($"PSN: Session Manager: Didn't found any info for new leader {p?.uid}")
       return
     }
 
-    let sessionId = g_squad_manager.getPsnSessionId()
+    let sessionId = ::g_squad_manager.getPsnSessionId()
     let contact = ::getContact(p.uid)
     contact.updatePSNIdAndDo(function() {
       psnsm.changeLeadership(

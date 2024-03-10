@@ -46,7 +46,7 @@ let targetWrap = @()
   }
 }
 
-function mig17pf(width, height) {
+let function mig17pf(width, height) {
   return {
     size = [width, height]
     children = [

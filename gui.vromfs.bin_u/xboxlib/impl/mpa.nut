@@ -1,10 +1,10 @@
 let mpa = require("xbox.mpa")
-let { eventbus_subscribe_onehit } = require("eventbus")
+let { subscribe_onehit } = require("eventbus")
 
 
-function clear_activity(callback) {
+let function clear_activity(callback) {
   let eventName = "xbox_mpa_clear_activity"
-  eventbus_subscribe_onehit(eventName, function(result) {
+  subscribe_onehit(eventName, function(result) {
     let success = result?.success
     callback?(success)
   })
@@ -12,9 +12,9 @@ function clear_activity(callback) {
 }
 
 
-function set_activity(connection_string, join_restrictions, max_players, players, group_id, crossplatform, callback) {
+let function set_activity(connection_string, join_restrictions, max_players, players, group_id, crossplatform, callback) {
   let eventName = "xbox_mpa_set_activity"
-  eventbus_subscribe_onehit(eventName, function(result) {
+  subscribe_onehit(eventName, function(result) {
     let success = result?.success
     callback?(success)
   })
@@ -22,9 +22,9 @@ function set_activity(connection_string, join_restrictions, max_players, players
 }
 
 //xuids - array of uints
-function send_invitations(connection_string, xuids, crossplatform, callback) {
+let function send_invitations(connection_string, xuids, crossplatform, callback) {
   let eventName = "xbox_mpa_send_invitations"
-  eventbus_subscribe_onehit(eventName, function(result) {
+  subscribe_onehit(eventName, function(result) {
     let success = result?.success
     callback?(success)
   })
@@ -32,9 +32,9 @@ function send_invitations(connection_string, xuids, crossplatform, callback) {
 }
 
 
-function update_encounters(encounters, callback) {
+let function update_encounters(encounters, callback) {
   let eventName = "xbox_mpa_update_encounters"
-  eventbus_subscribe_onehit(eventName, function(result) {
+  subscribe_onehit(eventName, function(result) {
     let success = result?.success
     callback?(success)
   })

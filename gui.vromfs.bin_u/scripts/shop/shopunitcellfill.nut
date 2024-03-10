@@ -23,22 +23,20 @@ let { getEsUnitType, isUnitsEraUnlocked, getUnitName, isUnitGift, isUnitGroup, c
 } = require("%scripts/unit/unitInfo.nut")
 let { isUnitPriceTextLong, getUnitSlotRankText } = require("%scripts/slotbar/slotbarView.nut")
 let { isUnitInSlotbar } = require("%scripts/slotbar/slotbarState.nut")
-let { getBonusImage } = require("%scripts/bonusModule.nut")
-let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
-let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
+
 
 let sectorAngle1PID = dagui_propid_add_name_id("sector-angle-1")
 
 let setBool = @(obj, prop, val) obj[prop] = val ? "yes" : "no"
 
-function showInObj(obj, id, val) {
+let function showInObj(obj, id, val) {
   let tgtObj = obj.findObject(id)
   tgtObj.show(val)
   tgtObj.enable(val)
   return tgtObj
 }
 
-function updateProgressInObj(cell, id, progress, isPaused) {
+let function updateProgressInObj(cell, id, progress, isPaused) {
   let obj = cell.findObject(id)
   let isVisible = progress >= 0
   obj.show(isVisible)
@@ -49,7 +47,7 @@ function updateProgressInObj(cell, id, progress, isPaused) {
   obj.setValue(progress)
 }
 
-function updateSector1InObj(cell, id, angle) {
+let function updateSector1InObj(cell, id, angle) {
   let obj = cell.findObject(id)
   if (angle != (obj.getFinalProp(sectorAngle1PID) ?? -1).tointeger()) {
     obj.set_prop_latent(sectorAngle1PID, angle)
@@ -58,7 +56,7 @@ function updateSector1InObj(cell, id, angle) {
   return obj
 }
 
-function initCell(cell, initData) {
+let function initCell(cell, initData) {
   let { id, posX = 0, posY = 0, position = "relative" } = initData
   cell.pos = $"{posX}w, {posY}h"
   cell.position = position
@@ -74,7 +72,7 @@ function initCell(cell, initData) {
   cardObj.findObject("mainActionButton").holderId = id
 }
 
-function updateCardStatus(obj, _id, statusTbl) {
+let function updateCardStatus(obj, _id, statusTbl) {
   let {
     isGroup             = false,
     unitName            = "",
@@ -197,7 +195,7 @@ function updateCardStatus(obj, _id, statusTbl) {
     bonusObj.bonusType = expMul > 1 && wpMul > 1 ? "wp_exp"
       : expMul > 1 ? "exp"
       : "wp"
-    bonusObj["background-image"] = getBonusImage("item", max(expMul, wpMul), "air")
+    bonusObj["background-image"] = ::getBonusImage("item", max(expMul, wpMul), "air")
     let locEnd = isGroup ? "/group/tooltip" : "/tooltip"
     let tooltipArr = []
     if (expMul > 1)
@@ -208,7 +206,7 @@ function updateCardStatus(obj, _id, statusTbl) {
   }
 }
 
-function updateCellStatus(cell, statusTbl) {
+let function updateCellStatus(cell, statusTbl) {
   let { isInactive = false, isVisible = true, tooltipId = "" } = statusTbl
   setBool(cell, "inactive", isInactive)
   cell.enable(isVisible && !isInactive)
@@ -223,7 +221,7 @@ function updateCellStatus(cell, statusTbl) {
   updateCardStatus(cardObj, id, statusTbl)
 }
 
-function updateCellTimedStatusImpl(cell, timedTbl) {
+let function updateCellTimedStatusImpl(cell, timedTbl) {
   let { rentProgress = -1 } = timedTbl
 
   let rentIcon = showInObj(cell, "rentIcon", rentProgress >= 0)
@@ -242,12 +240,12 @@ let getUnitFixedParams = function(unit, params) {
     unitClass           = getUnitRole(unit)
     isPkgDev            = unit.isPkgDev
     isRecentlyReleased  = unit.isRecentlyReleased()
-    tooltipId           = getTooltipType("UNIT").getTooltipId(unit.name, tooltipParams)
+    tooltipId           = ::g_tooltip.getIdUnit(unit.name, tooltipParams)
     hasActionsMenu      = true
   }
 }
 
-function getUnitRankText(unit, showBR, ediff) {
+let function getUnitRankText(unit, showBR, ediff) {
   return getShopDevMode() && hasFeature("DevShopMode")
     ? getUnitDebugRankText(unit)
     : getUnitSlotRankText(unit, null, showBR, ediff)
@@ -255,7 +253,7 @@ function getUnitRankText(unit, showBR, ediff) {
 
 let getUnitStatusTbl = function(unit, params) {
   let { shopResearchMode = false, forceNotInResearch = false, mainActionText = "",
-    showBR = false, getEdiffFunc = getCurrentGameModeEdiff
+    showBR = false, getEdiffFunc = ::get_current_ediff
   } = params
 
   let isOwn           = unit.isBought()
@@ -304,7 +302,7 @@ let getUnitStatusTbl = function(unit, params) {
   return res
 }
 
-function getUnitResearchStatusTbl(unit, params) {
+let function getUnitResearchStatusTbl(unit, params) {
   if(params?.hideProgress)
     return {}
   if (unit.isBought() || !canResearchUnit(unit))
@@ -340,7 +338,7 @@ function getUnitResearchStatusTbl(unit, params) {
   }
 }
 
-function getUnitTimedStatusTbl(unit) {
+let function getUnitTimedStatusTbl(unit) {
   let isRented = unit.isRented()
   return {
     rentProgress = isRented
@@ -350,8 +348,8 @@ function getUnitTimedStatusTbl(unit) {
   }
 }
 
-function getFakeUnitStatusTbl(unit, params) {
-  let { showBR = false, getEdiffFunc = getCurrentGameModeEdiff } = params
+let function getFakeUnitStatusTbl(unit, params) {
+  let { showBR = false, getEdiffFunc = ::get_current_ediff } = params
 
   let nameForLoc = unit?.isReqForFakeUnit ? split_by_chars(unit.name, "_")?[0] : unit.name
   let { esUnitType } = unitTypes.getByName(unit.name, false)
@@ -370,9 +368,9 @@ function getFakeUnitStatusTbl(unit, params) {
   }
 }
 
-function getGroupStatusTbl(group, params) {
+let function getGroupStatusTbl(group, params) {
   let { forceNotInResearch = false, shopResearchMode = false, tooltipParams = {},
-    showBR = false, getEdiffFunc = getCurrentGameModeEdiff
+    showBR = false, getEdiffFunc = ::get_current_ediff
   } = params
   let unitsList = group.airsGroup
 
@@ -470,7 +468,7 @@ function getGroupStatusTbl(group, params) {
     unitRarity          = getUnitRarity(primaryUnit)
     unitClassIcon       = getUnitRoleIcon(primaryUnit)
     unitClass           = getUnitRole(primaryUnit)
-    tooltipId           = getTooltipType("UNIT").getTooltipId(primaryUnit.name, tooltipParams)
+    tooltipId           = ::g_tooltip.getIdUnit(primaryUnit.name, tooltipParams)
 
     //complex params
     shopStatus          = getUnitItemStatusText(bitStatus, true),
@@ -493,7 +491,7 @@ function getGroupStatusTbl(group, params) {
   }.__update(researchStatusTbl)
 }
 
-function getGroupTimedStatusTbl(group) {
+let function getGroupTimedStatusTbl(group) {
   local unit = null
   local rentLeft = 0
   foreach (u in group.airsGroup)
@@ -520,7 +518,7 @@ let getTimedStatusTbl = @(unitOrGroup, _params) unitOrGroup == null ? {}
   : unitOrGroup?.isFakeUnit ? {}
   : getUnitTimedStatusTbl(unitOrGroup)
 
-function updateCellTimedStatus(cell, getTimedStatus) {
+let function updateCellTimedStatus(cell, getTimedStatus) {
   local timedStatus = getTimedStatus()
   updateCellTimedStatusImpl(cell, timedStatus)
   if (!timedStatus?.needUpdateByTime)

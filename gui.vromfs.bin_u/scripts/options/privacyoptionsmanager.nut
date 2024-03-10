@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let { havePremium } = require("%scripts/user/premium.nut")
@@ -9,7 +10,7 @@ local privacyOptionsList = [
   USEROPT_DISPLAY_MY_REAL_NICK
 ]
 
-function resetPrivacyOptionsToDefault() {
+let function resetPrivacyOptionsToDefault() {
   foreach (optName in privacyOptionsList) {
     let opt = ::get_option(optName)
     set_option(opt.type, opt.defVal, opt)

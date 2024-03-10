@@ -20,7 +20,6 @@ let { isWeaponAux, getWeaponNameByBlkPath } = require("%scripts/weaponry/weaponr
 let { userstatStats, userstatDescList, userstatUnlocks, refreshUserstatStats
 } = require("%scripts/userstat/userstat.nut")
 let { getDebriefingResult, setDebriefingResult } = require("%scripts/debriefing/debriefingFull.nut")
-let { guiStartDebriefingFull } = require("%scripts/debriefing/debriefingModal.nut")
 let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 let { getUnitWeapons } = require("%scripts/weaponry/weaponryPresets.nut")
 let { getUnitMassPerSecValue } = require("%scripts/unit/unitWeaponryInfo.nut")
@@ -35,11 +34,8 @@ let { get_wpcost_blk } = require("blkGetters")
 require("%scripts/debugTools/dbgLongestUnitTooltip.nut")
 let { userIdInt64 } = require("%scripts/user/profileStates.nut")
 let { reload_dagui } = require("%scripts/debugTools/dbgUtils.nut")
-let { gui_start_decals } = require("%scripts/customization/contentPreview.nut")
-let { guiStartImageWnd } = require("%scripts/showImage.nut")
-let { addBgTaskCb } = require("%scripts/tasker.nut")
 
-function _charAddAllItemsHelper(params) {
+let function _charAddAllItemsHelper(params) {
   if (params.currentIndex >= params.items.len())
     return
   let item = params.items[params.currentIndex]
@@ -53,7 +49,7 @@ function _charAddAllItemsHelper(params) {
 
   let __charAddAllItemsHelper = _charAddAllItemsHelper // for lambda capture
 
-  addBgTaskCb(taskId, function () {
+  ::add_bg_task_cb(taskId, function () {
     ++params.currentIndex
     if ((params.currentIndex == params.items.len() ||
          params.currentIndex % 10 == 0) &&
@@ -64,7 +60,7 @@ function _charAddAllItemsHelper(params) {
 }
 
 
-function charAddAllItems(count = 1) {
+let function charAddAllItems(count = 1) {
   let params = {
     items = ::ItemsManager.getItemsList()
     currentIndex = 0
@@ -75,7 +71,7 @@ function charAddAllItems(count = 1) {
 
 //must to be switched on before we get to debrifing.
 //but after it you can restart derifing with full recalc by usual reload()
-function switch_on_debug_debriefing_recount() {
+let function switch_on_debug_debriefing_recount() {
   if ("_stat_get_exp" in getroottable())
     return
 
@@ -87,7 +83,7 @@ function switch_on_debug_debriefing_recount() {
   }
 }
 
-function debug_reload_and_restart_debriefing() {
+let function debug_reload_and_restart_debriefing() {
   let result = getDebriefingResult()
   reload_dagui()
 
@@ -95,18 +91,18 @@ function debug_reload_and_restart_debriefing() {
   if (!canRecount)
     setDebriefingResult(result)
 
-  guiStartDebriefingFull()
+  ::gui_start_debriefingFull()
 }
 
-function debug_debriefing_unlocks(unlocksAmount = 5) {
-  guiStartDebriefingFull({ debugUnlocks = unlocksAmount })
+let function debug_debriefing_unlocks(unlocksAmount = 5) {
+  ::gui_start_debriefingFull({ debugUnlocks = unlocksAmount })
 }
 
-function show_hotas_window_image() {
-  guiStartImageWnd(hotasControlImagePath, 1.41)
+let function show_hotas_window_image() {
+    ::gui_start_image_wnd(hotasControlImagePath, 1.41)
 }
 
-function debug_export_unit_weapons_descriptions() {
+let function debug_export_unit_weapons_descriptions() {
   dbgExportToFile.export({
     resultFilePath = "export/unitsWeaponry.blk"
     itemsPerFrame = 10
@@ -145,7 +141,7 @@ function debug_export_unit_weapons_descriptions() {
   })
 }
 
-function debug_export_unit_xray_parts_descriptions(partIdWhitelist = null) {
+let function debug_export_unit_xray_parts_descriptions(partIdWhitelist = null) {
   ::dmViewer.isDebugBatchExportProcess = true
   ::dmViewer.toggle(DM_VIEWER_XRAY)
   dbgExportToFile.export({
@@ -192,7 +188,7 @@ function debug_export_unit_xray_parts_descriptions(partIdWhitelist = null) {
   })
 }
 
-function dbg_loading_brief(gm = GM_SINGLE_MISSION, missionName = "east_china_s01", slidesAmount = 0) {
+let function dbg_loading_brief(gm = GM_SINGLE_MISSION, missionName = "east_china_s01", slidesAmount = 0) {
   let missionBlk = get_meta_mission_info_by_gm_and_name(gm, missionName)
   if (!u.isDataBlock(missionBlk))
     return dlog("Not found mission " + missionName) //warning disable: -dlog-warn
@@ -243,7 +239,7 @@ function dbg_loading_brief(gm = GM_SINGLE_MISSION, missionName = "east_china_s01
 }
 
 
-function debug_show_units_by_loc_name(unitLocName, needIncludeNotInShop = false) {
+let function debug_show_units_by_loc_name(unitLocName, needIncludeNotInShop = false) {
   let units = shopSearchCore.findUnitsByLocName(unitLocName, true, needIncludeNotInShop)
   units.sort(function(a, b) { return a.name == b.name ? 0 : a.name < b.name ? -1 : 1 })
 
@@ -262,16 +258,16 @@ function debug_show_units_by_loc_name(unitLocName, needIncludeNotInShop = false)
   return res.len()
 }
 
-function debug_show_unit(unitId) {
+let function debug_show_unit(unitId) {
   let unit = getAircraftByName(unitId)
   if (!unit)
     return "Not found"
   showedUnit(unit)
-  gui_start_decals()
+  ::gui_start_decals()
   return "Done"
 }
 
-function debug_show_weapon(weaponName) {
+let function debug_show_weapon(weaponName) {
   weaponName = getWeaponNameByBlkPath(weaponName)
   foreach (unit in getAllUnits()) {
     if (!unit.isInShop)
@@ -287,7 +283,7 @@ function debug_show_weapon(weaponName) {
   return null
 }
 
-function debug_get_last_userlogs(num = 1) {
+let function debug_get_last_userlogs(num = 1) {
   let total = get_user_logs_count()
   let res = []
   for (local i = total - 1; i > (total - num - 1); i--) {
@@ -301,7 +297,7 @@ function debug_get_last_userlogs(num = 1) {
 }
 
 /*
-function debug_unit_rent(unitId = null, seconds = 60) {
+let function debug_unit_rent(unitId = null, seconds = 60) {
   if (!("_debug_unit_rent" in getroottable())) {
     ::_debug_unit_rent <- {}
     ::_shop_is_unit_rented <- shop_is_unit_rented
@@ -351,7 +347,7 @@ function debug_unit_rent(unitId = null, seconds = 60) {
 
 
 
-function consoleAndDebugTableData(text, data) {
+let function consoleAndDebugTableData(text, data) {
   console_print(text)
   debugTableData(data)
   return "Look in debug"

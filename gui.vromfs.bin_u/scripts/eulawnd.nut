@@ -16,7 +16,7 @@ let { defer } = require("dagor.workcycle")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { hardPersistWatched } = require("%sqstd/globalState.nut")
 let { read_text_from_file, file_exists } = require("dagor.fs")
-let wordHyphenation = require("%globalScripts/wordHyphenation.nut")
+let { text_wordwrap_process } = require("%appGlobals/text_wordwrap_process.nut")
 const LOCAL_AGREED_EULA_VERSION_SAVE_ID = "agreedEulaVersion" //For break auto login on PS for new user, if no EULA has been accepted on this console.
 
 local eulaVesion = -1
@@ -30,7 +30,7 @@ function getEulaVersion() {
   return eulaVesion
 }
 
-function loadAndProcessText(){
+let function loadAndProcessText(){
   const locId = "eula_filename"
   local fileName = loc(locId)
   if (!file_exists(fileName)) {
@@ -39,7 +39,7 @@ function loadAndProcessText(){
     if (!file_exists(fileName))
       return ""
   }
-  return wordHyphenation(read_text_from_file(fileName))
+  return text_wordwrap_process(read_text_from_file(fileName))
 }
 
 gui_handlers.EulaWndHandler <- class (BaseGuiHandler) {
@@ -74,9 +74,9 @@ gui_handlers.EulaWndHandler <- class (BaseGuiHandler) {
     }
 
     let hasOneOkBtn = this.isForView || this.isNewEulaVersion
-    showObjById("acceptNewEulaVersion", hasOneOkBtn, this.scene)
-    showObjById("accept", !hasOneOkBtn, this.scene)
-    showObjById("decline", !hasOneOkBtn, this.scene)
+    this.showSceneBtn("acceptNewEulaVersion", hasOneOkBtn)
+    this.showSceneBtn("accept", !hasOneOkBtn)
+    this.showSceneBtn("decline", !hasOneOkBtn)
 
     if (this.isNewEulaVersion)
       this.scene.findObject("eula_title").setValue(loc("eula/eulaUpdateTitle"))

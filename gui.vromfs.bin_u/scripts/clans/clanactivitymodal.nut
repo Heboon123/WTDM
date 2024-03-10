@@ -9,9 +9,8 @@ let time = require("%scripts/time.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
-let { measureType } = require("%scripts/measureType.nut")
 
-function guiStartClanActivityWnd(uid = null, clanData = null) {
+::gui_start_clan_activity_wnd <- function gui_start_clan_activity_wnd(uid = null, clanData = null) {
   if (!uid || !clanData)
     return
 
@@ -115,7 +114,7 @@ gui_handlers.clanActivityModal <- class (gui_handlers.BaseGuiHandlerWT) {
           tooltip = hasBoost
             ? loc("clan/activity_reward/wasBoost",
               { bonus = colorize("activeTextColor",
-                "+" + measureType.PERCENT_FLOAT.getMeasureUnitsText(boost)) })
+                "+" + ::g_measure_type.PERCENT_FLOAT.getMeasureUnitsText(boost)) })
             : ""
         })
       }
@@ -124,8 +123,4 @@ gui_handlers.clanActivityModal <- class (gui_handlers.BaseGuiHandlerWT) {
     }
     this.guiScene.replaceContentFromText(tableObj, rowBlock, rowBlock.len(), this)
   }
-}
-
-return {
-  guiStartClanActivityWnd
 }

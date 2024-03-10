@@ -10,53 +10,15 @@
       "army": 2
     },
     "mission": {
-      "type": "training",
-      "gt_training": false,
+      "type": "testFlight",
       "level": "levels/avg_iberian_castle.bin",
       "environment": "16",
       "weather": "clear",
+      "locName": "missions/missile_test",
       "gt_reload_explosives": false,
       "isLimitedFuel": false,
       "isLimitedAmmo": false,
       "timeLimit": 30
-    },
-    "briefing": {
-      "place_loc": "",
-      "date_loc": "",
-      "objective_loc": "",
-      "music": "action_01",
-      "viewAreaScale": 3.0,
-      "part": {
-        "event": "",
-        "minTime": 0,
-        "slide": {
-          "map": true,
-          "minTime": 4,
-          "picture": "",
-          "showAirMap": true,
-          "arrow": {
-            "width": 1,
-            "side": "player",
-            "point": [
-              "player",
-              "target_tank01"
-            ]
-          },
-          "icon": [
-            {
-              "icontype": "fighter",
-              "side": "player",
-              "target": "player",
-              "lookAt": "target_tank01"
-            },
-            {
-              "icontype": "tank",
-              "side": "enemy",
-              "target": "target_tank01"
-            }
-          ]
-        }
-      }
     }
   },
   "imports": {},
@@ -107,7 +69,7 @@
         },
         "unitSetProperties": {
           "object": "player",
-          "speed": 500.0
+          "speed": 800.0
         },
         "playerSetMouseAim": {
           "lookat": "target_tank01"
@@ -146,9 +108,6 @@
         }
       },
       "else_actions": {
-        "wait": {
-          "time": 0.5
-        },
         "missionSetTimeSpeed": {
           "speed": 0.0,
           "realtimeTriggers": true
@@ -390,28 +349,23 @@
             "item": "ID_CONTINUE"
           }
         ],
-        "__unitSetControls": {
-          "controls": "rudder",
-          "value": 0.0,
-          "force": true,
-          "objects": "player"
-        },
-        "unitSetControls": {
-          "controls": "power",
-          "value": 0.8,
-          "force": true,
-          "objects": "player"
-        },
-        "wait": {
-          "time": 0.5
-        },
+        "unitSetControls": [
+          {
+            "controls": "rudder",
+            "value": 0.0,
+            "force": true,
+            "objects": "player"
+          },
+          {
+            "controls": "power",
+            "value": 0.35,
+            "force": true,
+            "objects": "player"
+          }
+        ],
         "missionSetTimeSpeed": {
           "speed": 0.0,
           "realtimeTriggers": true
-        },
-        "hudElementSelectionShade": {
-          "element": "curTarget",
-          "targetName": "target_tank01"
         },
         "triggerEnable": {
           "target": "start_mission"
@@ -503,12 +457,7 @@
           "setStatus": "enable",
           "control": [
             "ID_AGM",
-            "ID_FIRE_SECONDARY",
-            "AXIS_AILERONS",
-            "AXIS_ELEVATOR",
-            "AXIS_RUDDER",
-            "AXIS_MOUSE_AIM_X",
-            "AXIS_MOUSE_AIM_Y"
+            "ID_FIRE_SECONDARY"
           ]
         },
         "triggerEnable": {
@@ -1269,7 +1218,6 @@
             "time": 0.1
           }
         ],
-        "missionRestart": {},
         "unitMoveTo": {
           "target": "player_respawn_pt",
           "follow_target": false,
@@ -1463,12 +1411,12 @@
           -2927.2
         ]
       ],
-      "unit_class": "saab_sk60b",
+      "unit_class": "f-4c",
       "objLayer": 1,
       "closed_waypoints": false,
       "isShipSpline": false,
       "shipTurnRadius": 100.0,
-      "weapons": "saab_sk60b_rb_05a",
+      "weapons": "f_4c_rockets_agm12",
       "bullets0": "",
       "bullets1": "",
       "bullets2": "",
@@ -1522,38 +1470,9 @@
           1.74176
         ],
         [
-          2209.55,
+          2209.54,
           2759.35,
-          -2331.75
-        ]
-      ],
-      "objLayer": 0,
-      "props": {
-        "forceReplication": true
-      }
-    },
-    "player_look": {
-      "type": "Sphere",
-      "tm": [
-        [
-          1.72705,
-          -5.87661,
-          7.9046
-        ],
-        [
-          0.591485,
-          8.07258,
-          5.87227
-        ],
-        [
-          -9.83196,
-          -0.546621,
-          1.74176
-        ],
-        [
-          2800.7,
-          66.5,
-          389.9
+          -1893.32
         ]
       ],
       "objLayer": 0,

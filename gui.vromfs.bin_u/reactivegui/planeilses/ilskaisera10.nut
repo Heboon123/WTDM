@@ -6,7 +6,7 @@ let { IlsColor, IlsLineScale, TvvMark, IlsAtgmTrackerVisible,
       TargetPos, RocketMode, CannonMode, BombCCIPMode, DistToTarget,
       BombingMode } = require("%rGui/planeState/planeToolsState.nut")
 let { baseLineWidth, metrToFeet, mpsToKnots, metrToMile } = require("ilsConstants.nut")
-let { GuidanceLockResult } = require("guidanceConstants")
+let { GuidanceLockResult } = require("%rGui/guidanceConstants.nut")
 let { compassWrap, generateCompassMarkShim } = require("ilsCompasses.nut")
 let { Tangage, BarAltitude, Altitude, Speed, Roll } = require("%rGui/planeState/planeFlyState.nut");
 let { round, cos, sin, PI } = require("%sqstd/math.nut")
@@ -62,7 +62,7 @@ let a10Altitude = @() {
   text = $"{a10AltValue.value}0R"
 }
 
-function pitch(width, height, generateFunc) {
+let function pitch(width, height, generateFunc) {
   const step = 5.0
   let children = []
 
@@ -88,7 +88,7 @@ function pitch(width, height, generateFunc) {
   }
 }
 
-function angleTxt(num, isLeft, invVPlace = 1, x = 0, y = 0) {
+let function angleTxt(num, isLeft, invVPlace = 1, x = 0, y = 0) {
   return @() {
     watch = IlsColor
     pos = [x, y]
@@ -102,7 +102,7 @@ function angleTxt(num, isLeft, invVPlace = 1, x = 0, y = 0) {
   }
 }
 
-function generatePitchLine(num) {
+let function generatePitchLine(num) {
   let sign = num > 0 ? 1 : -1
   let newNum = num >= 0 ? num : (num - 5)
   return {
@@ -236,7 +236,7 @@ let maverickAim = @() {
   children = IlsAtgmTrackerVisible.value && !CannonMode.value ? [maverickAimMark] : []
 }
 
-function impactLine(_width, height) {
+let function impactLine(_width, height) {
   return @() {
     watch = [TargetPosValid, BombCCIPMode, BombingMode, RocketMode, IlsColor]
     rendObj = ROBJ_VECTOR_CANVAS
@@ -257,7 +257,7 @@ function impactLine(_width, height) {
   }
 }
 
-function KaiserTvvLinked(width, height) {
+let function KaiserTvvLinked(width, height) {
   return {
     size = flex()
     children = [
@@ -345,7 +345,7 @@ let aamTargetMarker = @() {
   }
 }
 
-function KaiserA10(width, height) {
+let function KaiserA10(width, height) {
   return {
     size = [width, height]
     children = [

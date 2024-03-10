@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_natives.nut" import periodic_task_unregister, periodic_task_register
 from "%scripts/dagui_library.nut" import *
 
@@ -60,17 +61,17 @@ updateActiveCustomConfig = function() {
       @(_dt) updateActiveCustomConfig(), minUpdateTimeSec)
 }
 
-function initActiveConfigeOnce() {
+let function initActiveConfigeOnce() {
   if (activeConfig.value == null)
     updateActiveCustomConfig()
 }
 
-function getToBattleLocId() {
+let function getToBattleLocId() {
   initActiveConfigeOnce()
   return toBattleLocId.value
 }
 
-function getToBattleLocIdShort() {
+let function getToBattleLocIdShort() {
   initActiveConfigeOnce()
   return toBattleLocIdShort.value
 }

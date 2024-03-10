@@ -1,7 +1,6 @@
 from "%scripts/dagui_natives.nut" import fetch_first_builder
 from "%scripts/dagui_library.nut" import *
 
-let { g_difficulty } = require("%scripts/difficulty.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let DataBlock = require("DataBlock")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
@@ -22,7 +21,10 @@ let { OPTIONS_MODE_DYNAMIC, USEROPT_DYN_MAP, USEROPT_DYN_ZONE, USEROPT_DYN_SURRO
 } = require("%scripts/options/optionsExtNames.nut")
 let { create_options_container } = require("%scripts/options/optionsExt.nut")
 let { getCurSlotbarUnit } = require("%scripts/slotbar/slotbarState.nut")
-let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
+
+::gui_start_builder <- function gui_start_builder(params = {}) {
+  loadHandler(gui_handlers.MissionBuilder, params)
+}
 
 function mergeToBlk(sourceTable, blk) {
   foreach (idx, val in sourceTable)
@@ -140,7 +142,7 @@ gui_handlers.MissionBuilder <- class (gui_handlers.GenericOptionsModal) {
         [["ok"]], "ok")
 
     if (isInArray(this.getSceneOptValue(USEROPT_DIFFICULTY), ["hardcore", "custom"]))
-      if (!::check_diff_pkg(g_difficulty.SIMULATOR.diffCode))
+      if (!::check_diff_pkg(::g_difficulty.SIMULATOR.diffCode))
         return
 
     this.applyOptions()
@@ -403,7 +405,7 @@ gui_handlers.MissionBuilder <- class (gui_handlers.GenericOptionsModal) {
 
     //dlog("missionBlk:"); debugTableData(missionBlk)
 
-    loadHandler(gui_handlers.MissionBuilderTuner)
+    ::gui_start_builder_tuner()
   }
 
   function onLayoutChange(obj) {
@@ -442,13 +444,13 @@ gui_handlers.MissionBuilder <- class (gui_handlers.GenericOptionsModal) {
   function getCurrentEdiff() {
     let diffValue = this.getSceneOptValue(USEROPT_DIFFICULTY)
     let difficulty = (diffValue == "custom") ?
-      g_difficulty.getDifficultyByDiffCode(getCdBaseDifficulty()) :
-      g_difficulty.getDifficultyByName(diffValue)
+      ::g_difficulty.getDifficultyByDiffCode(getCdBaseDifficulty()) :
+      ::g_difficulty.getDifficultyByName(diffValue)
     if (difficulty.diffCode != -1) {
       let battleType = ::get_battle_type_by_unit(showedUnit.value)
       return difficulty.getEdiff(battleType)
     }
-    return getCurrentGameModeEdiff()
+    return ::get_current_ediff()
   }
 
   function getHandlerRestoreData() {

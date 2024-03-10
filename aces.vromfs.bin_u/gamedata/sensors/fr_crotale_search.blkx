@@ -61,44 +61,29 @@
       }
     }
   },
-  "scanPatternSets": {
-    "search": {
-      "scanPattern1": "search"
-    }
-  },
-  "scopeRangeSets": {
-    "search": {
-      "range1": 10000.0,
-      "range2": 20000.0
-    }
+  "scopeRanges": {
+    "range1": 10000.0,
+    "range2": 20000.0
   },
   "fsms": {
     "main": {
-      "stateInit": "init",
+      "stateInit": [
+        "init",
+        "init"
+      ],
       "actionsTemplates": {
         "init": {
           "setEnabled": {
             "value": false
-          },
-          "setCenterAzimuth": {
-            "source": "constant",
-            "value": 0.0
-          },
-          "setCenterElevation": {
-            "source": "constant",
-            "value": 0.0
-          },
-          "setScanPatternSet": {
-            "scanPatternSet": "search"
-          },
-          "setScopeRangeSet": {
-            "scopeRangeSet": "search"
           },
           "setTransiver": {
             "transiver": "search"
           },
           "setSignal": {
             "signal": "search"
+          },
+          "setScanPattern": {
+            "scanPattern": "search"
           },
           "setTargetDesignationRange": {
             "azimuthRange": [
@@ -118,9 +103,13 @@
           },
           "setEnabled": {
             "value": false
-          }
+          },
+          "setCenterAzimuth": {
+            "source": "constant",
+            "value": 0.0
+          },
+          "clearTargets": {}
         },
-        "resetStandbyMode": {},
         "setSearchMode": {
           "setModeName": {
             "name": "search"
@@ -128,6 +117,7 @@
           "setEnabled": {
             "value": true
           },
+          "clearTargets": {},
           "setFsmActive": {
             "fsm": "search",
             "active": true
@@ -135,13 +125,15 @@
           "setCueEnabled": {
             "value": true
           },
+          "setScanPattern": {
+            "scanPattern": "search"
+          },
           "setScanDirectionPhase": {
             "azimuth": -180.0,
             "elevation": 0.0
           }
         },
         "resetSearchMode": {
-          "clearTargets": {},
           "setFsmActive": {
             "fsm": "search",
             "active": false
@@ -206,6 +198,9 @@
             "setFsmActive": {
               "fsm": "parkAntenna",
               "active": false
+            },
+            "setScanPattern": {
+              "scanPattern": "search"
             },
             "setScanDirectionPhase": {
               "azimuth": -180.0,

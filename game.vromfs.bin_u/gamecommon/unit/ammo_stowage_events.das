@@ -104,8 +104,7 @@ struct EventAmmoStowageSetup
 
 [event(unicast, routing=ROUTING_SERVER_TO_CLIENT, filter=target_entity_conn)]
 struct EventAmmoStowageNetSync
-  ammo : IntList const?
-  replenishment : FloatList const?
+  data : IntList const?
 
 [event(unicast, routing=ROUTING_SERVER_TO_CLIENT)]
 struct EventAmmoStowageForceReloadGun

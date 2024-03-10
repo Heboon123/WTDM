@@ -1,3 +1,4 @@
+//checked for plus_string
 from "%scripts/dagui_library.nut" import *
 
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -7,7 +8,7 @@ let DataBlock = require("DataBlock")
 let collectionsList = []
 local isInited = false
 
-function initOnce() {
+let function initOnce() {
   if (isInited || !::g_login.isProfileReceived())
     return
   isInited = true
@@ -25,21 +26,21 @@ function initOnce() {
   }
 }
 
-function invalidateCache() {
+let function invalidateCache() {
   collectionsList.clear()
   isInited = false
 }
 
-function getCollectionsList() {
+let function getCollectionsList() {
   initOnce()
   return collectionsList
 }
 
-function isCollectionPrize(decorator) {
+let function isCollectionPrize(decorator) {
   return getCollectionsList().findindex(@(c) c.prize == decorator) != null
 }
 
-function isCollectionItem(decorator) {
+let function isCollectionItem(decorator) {
   return decorator != null
     ? getCollectionsList().findindex(@(c) c.findDecoratorById(decorator.id).decorator != null) != null
     : false

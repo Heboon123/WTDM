@@ -1,3 +1,4 @@
+//checked for plus_string
 
 let { Point3 } = require("dagor.math")
 let { getEnemyPlaneByWpCost, planeCostCalculate, warpointCalculate, slidesReplace
@@ -13,7 +14,7 @@ let { mgBeginMission, mgGetPlayerSide, mgAcceptMission, mgFullLogs, mgSetInt,
 } = require("dynamicMission")
 let { get_warpoints_blk } = require("blkGetters")
 
-function generateCoverGattackMission(isFreeFlight, createGroundUnitsProc) {
+let function generateCoverGattackMission(isFreeFlight, createGroundUnitsProc) {
   let mission_preset_name = "cover_gattack_preset01"
   mgBeginMission($"gameData/missions/dynamic_campaign/objectives/{mission_preset_name}.blk")
   let playerSide = mgGetPlayerSide()
@@ -202,7 +203,7 @@ function generateCoverGattackMission(isFreeFlight, createGroundUnitsProc) {
   mgAcceptMission()
 }
 
-function genCoverGattackMission(isFreeFlight) {
+let function genCoverGattackMission(isFreeFlight) {
   generateCoverGattackMission(isFreeFlight,
     function(enemySide) {
       return mgCreateGroundUnits(enemySide, false, false,
