@@ -19,7 +19,7 @@ let twoStepModal = require("%scripts/login/twoStepModal.nut")
 let exitGame = require("%scripts/utils/exitGame.nut")
 let { setFocusToNextObj, getObjValue } = require("%sqDagui/daguiUtil.nut")
 let { setGuiOptionsMode } = require("guiOptions")
-let { getDistr } = require("auth_wt")
+let { getDistr, convertPixelJwtToAuthJwt = @(_) null, isPixClient = @() false } = require("auth_wt")
 let { dgs_get_settings } = require("dagor.system")
 let { get_user_system_info } = require("sysinfo")
 let regexp2 = require("regexp2")
@@ -33,11 +33,13 @@ let { saveLocalSharedSettings, loadLocalSharedSettings
 let { OPTIONS_MODE_GAMEPLAY } = require("%scripts/options/optionsExtNames.nut")
 let { getGameLocalizationInfo, setGameLocalization, canSwitchGameLocalization } = require("%scripts/langUtils/language.nut")
 let { get_network_block } = require("blkGetters")
-let { getCurCircuitUrl } = require("%appGlobals/urlCustom.nut")
+let { getCurCircuitOverride } = require("%appGlobals/curCircuitOverride.nut")
 let { steam_is_running } = require("steam")
+let { havePlayerTag } = require("%scripts/user/profileStates.nut")
 
 const MAX_GET_2STEP_CODE_ATTEMPTS = 10
 const GUEST_LOGIN_SAVE_ID = "guestLoginId"
+const MIGRATION_URL = "migration.warthunder.com"
 
 let validateNickRegexp = regexp2(@"[^_0-9a-zA-Z]")
 
@@ -53,6 +55,15 @@ function setDbgGuestLoginIdPrefix(prefix) {
   console_print(getGuestLoginId())
 }
 register_command(setDbgGuestLoginIdPrefix, "debug.set_guest_login_id_prefix")
+
+function isShowMessageAboutProfileMoved() {
+  if (isPixClient() || !havePlayerTag("pix_wt"))
+    return false
+  scene_msg_box("errorMessageBox", get_gui_scene(),
+    "\n".concat(loc("msgbox/error_login_migrated_player_profile"), $"<url={MIGRATION_URL}>{MIGRATION_URL}</url>"),
+    [["exit", exitGame], ["tryAgain", @() null]], "tryAgain", { cancel_fn = @() null })
+  return true
+}
 
 gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
   sceneBlkName = "%gui/loginBox.blk"
@@ -147,8 +158,8 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
     let isVisibleLinks = !isPlatformShieldTv()
     let linksObj = showObjById("links_block", isVisibleLinks, this.scene)
     if (isVisibleLinks && (linksObj?.isValid() ?? false)) {
-      linksObj.findObject("btn_faq_link").link = getCurCircuitUrl("faqURL", loc("url/faq"))
-      linksObj.findObject("btn_support_link").link = getCurCircuitUrl("supportURL", loc("url/support"))
+      linksObj.findObject("btn_faq_link").link = getCurCircuitOverride("faqURL", loc("url/faq"))
+      linksObj.findObject("btn_support_link").link = getCurCircuitOverride("supportURL", loc("url/support"))
     }
 
     if ("dgs_get_argv" in getroottable()) {
@@ -377,6 +388,16 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
   }
 
   function continueLogin(no_dump_login) {
+    if (isShowMessageAboutProfileMoved())
+      return
+
+    if (isPixClient())
+      convertPixelJwtToAuthJwt("ConvertPixJwt")
+    else
+      this.finishLogin(no_dump_login)
+  }
+
+  function finishLogin(no_dump_login) {
     if (this.shardItems) {
       if (this.shardItems.len() == 1)
         set_network_circuit(this.shardItems[0].item)
@@ -456,7 +477,8 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
 
     if (params.success) {
       let no_dump_login = getObjValue(this.scene, "loginbox_username", "")
-      load_local_settings()
+      if (!isPixClient())
+        load_local_settings()
       this.continueLogin(no_dump_login);
     }
   }
@@ -529,7 +551,7 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
         return;
       ::error_message_box("yn1/connect_error", result, // auth error
       [
-        ["recovery", @() openUrl(getCurCircuitUrl("recoveryPasswordURL", loc("url/recovery")), false, false, "login_wnd")],
+        ["recovery", @() openUrl(getCurCircuitOverride("recoveryPasswordURL", loc("url/recovery")), false, false, "login_wnd")],
         ["exit", exitGame],
         ["tryAgain", Callback(this.onLoginErrorTryAgain, this)]
       ], "tryAgain", { cancel_fn = Callback(this.onLoginErrorTryAgain, this) })
@@ -603,11 +625,11 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
     else
       urlLocId = "url/signUp"
 
-    openUrl(getCurCircuitUrl("signUpURL", loc(urlLocId)).subst({ distr = getDistr() }), false, false, "login_wnd")
+    openUrl(getCurCircuitOverride("signUpURL", loc(urlLocId)).subst({ distr = getDistr() }), false, false, "login_wnd")
   }
 
   function onForgetPassword() {
-    openUrl(getCurCircuitUrl("recoveryPasswordURL", loc("url/recovery")), false, false, "login_wnd")
+    openUrl(getCurCircuitOverride("recoveryPasswordURL", loc("url/recovery")), false, false, "login_wnd")
   }
 
   function onChangeLogin(obj) {
@@ -693,4 +715,12 @@ eventbus_subscribe("ProceedGetTwoStepCode", function ProceedGetTwoStepCode(p) {
   if (loginWnd == null)
     return
   loginWnd.proceedGetTwoStepCode(p)
+})
+
+eventbus_subscribe("ConvertPixJwt", function ContinuePixLogin(_) {
+  let loginWnd = handlersManager.findHandlerClassInScene(gui_handlers.LoginWndHandler)
+  if (loginWnd == null)
+    return
+  let no_dump_login = getObjValue(loginWnd.scene, "loginbox_username", "")
+  loginWnd.finishLogin(no_dump_login)
 })
