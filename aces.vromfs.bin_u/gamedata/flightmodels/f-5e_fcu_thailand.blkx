@@ -1932,7 +1932,7 @@
           ],
           "page": {
             "type": "rwr",
-            "hideRwrBackground": true,
+            "hideBackground": true,
             "scale": 1.15
           }
         },
@@ -1956,7 +1956,32 @@
             },
             {
               "type": "radar",
-              "scale": 1.2
+              "font": "usa_ils",
+              "fontScale": 0.65,
+              "scale": 0.75,
+              "lineColor": [
+                0,
+                255,
+                7
+              ],
+              "hasAviaHorizont": true,
+              "hideBackground": true,
+              "hideScale": false,
+              "hideHorAngle": false,
+              "hideVerAngle": false,
+              "netRowCnt": 4,
+              "netColor": [
+                0,
+                255,
+                0
+              ],
+              "hideWeaponIndication": true,
+              "modeColor": [
+                0,
+                255,
+                0
+              ],
+              "centerRadar": true
             }
           ]
         },
@@ -2113,7 +2138,10 @@
     "HideDmParts": {
       "node": [
         "cannon3_dm",
-        "cover2_dm"
+        "cover2_dm",
+        "tank3_dm",
+        "tank4_dm",
+        "tank5_dm"
       ]
     },
     "WeaponSlot": [
@@ -2182,9 +2210,19 @@
             },
             {
               "trigger": "countermeasures",
-              "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
+              "blk": "gameData/Weapons/rocketGuns/countermeasure_split_launcher_jet.blk",
               "emitter": "emtr_flare1",
-              "bullets": 45,
+              "bullets": 30,
+              "bulletsCartridge": 1,
+              "external": true,
+              "separate": false
+            },
+            {
+              "trigger": "countermeasures",
+              "blk": "gameData/Weapons/rocketGuns/countermeasure_large_split_launcher_jet.blk",
+              "emitter": "emtr_flare1",
+              "bullets": 10,
+              "bulletsCartridge": 1,
               "external": true,
               "separate": false
             }
@@ -2504,6 +2542,31 @@
               "separate": true,
               "machLimit": 1.4
             }
+          },
+          {
+            "iconType": "ptb",
+            "name": "ptb_slot3",
+            "showInWeaponMenu": true,
+            "ShowNodes": {
+              "node": [
+                "pylon_002",
+                "pylon_002_upor"
+              ]
+            },
+            "ShowDmParts": {
+              "node": "tank3_dm"
+            },
+            "Weapon": {
+              "trigger": "fuel tanks",
+              "blk": "gameData/Weapons/drop_tank/us_150gal_early_drop_tank_1.blk",
+              "emitter": "us_150gal_early_drop_tank_001",
+              "bullets": 1,
+              "external": true
+            },
+            "DependentWeaponPreset": {
+              "slot": 5,
+              "preset": "ptb_slot5"
+            }
           }
         ]
       },
@@ -2661,6 +2724,27 @@
               ],
               "gearName": "gear_c"
             }
+          },
+          {
+            "iconType": "ptb",
+            "name": "ptb_slot4",
+            "showInWeaponMenu": true,
+            "ShowNodes": {
+              "node": [
+                "pylon_003",
+                "pylon_003_upor"
+              ]
+            },
+            "ShowDmParts": {
+              "node": "tank4_dm"
+            },
+            "Weapon": {
+              "trigger": "fuel tanks",
+              "blk": "gameData/Weapons/drop_tank/us_150gal_fuse_drop_tank.blk",
+              "emitter": "us_150gal_fuse_drop_tank_001",
+              "bullets": 1,
+              "external": true
+            }
           }
         ]
       },
@@ -2800,6 +2884,31 @@
               "external": true,
               "separate": true,
               "machLimit": 1.4
+            }
+          },
+          {
+            "iconType": "ptb",
+            "name": "ptb_slot5",
+            "showInWeaponMenu": true,
+            "ShowNodes": {
+              "node": [
+                "pylon_004",
+                "pylon_004_upor"
+              ]
+            },
+            "ShowDmParts": {
+              "node": "tank5_dm"
+            },
+            "Weapon": {
+              "trigger": "fuel tanks",
+              "blk": "gameData/Weapons/drop_tank/us_150gal_early_drop_tank_2.blk",
+              "emitter": "us_150gal_early_drop_tank_002",
+              "bullets": 1,
+              "external": true
+            },
+            "DependentWeaponPreset": {
+              "slot": 3,
+              "preset": "ptb_slot3"
             }
           }
         ]
@@ -3213,10 +3322,8 @@
       "tier": 1,
       "modClass": "weapon"
     },
-    "countermeasures_launcher_chaff_only": {},
-    "countermeasures_launcher_flare_only": {},
-    "countermeasures_launcher_chaff_priority": {},
-    "countermeasures_launcher_flare_priority": {},
+    "countermeasures_launcher_chaff_large": {},
+    "countermeasures_launcher_chaff": {},
     "countermeasures_belt_pack": {
       "prevModification": "us_blu_1",
       "modClass": "weapon",

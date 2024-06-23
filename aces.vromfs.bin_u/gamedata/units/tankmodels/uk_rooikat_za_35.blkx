@@ -450,11 +450,12 @@
       "fireProtectionHp": 5.0,
       "hidableInViewer": false,
       "drive_turret_v_dm": {
-        "hp": 150.0,
         "armorThrough": 15.0
       },
       "drive_turret_h_dm": {
-        "hp": 150.0,
+        "armorThrough": 15.0
+      },
+      "driver_controls_dm": {
         "armorThrough": 15.0
       },
       "drive_turret_v_01_dm": {
@@ -473,21 +474,57 @@
         "hp": 40.0,
         "armorThrough": 15.0
       },
-      "radiator_dm": {
+      "drive_turret_v_03_dm": {
         "hp": 40.0,
+        "armorThrough": 15.0
+      },
+      "drive_turret_h_03_dm": {
+        "hp": 40.0,
+        "armorThrough": 15.0
+      },
+      "drive_turret_v_04_dm": {
+        "hp": 40.0,
+        "armorThrough": 15.0
+      },
+      "drive_turret_h_04_dm": {
+        "hp": 40.0,
+        "armorThrough": 15.0
+      },
+      "drive_turret_v_05_dm": {
+        "hp": 40.0,
+        "armorThrough": 15.0
+      },
+      "drive_turret_h_05_dm": {
+        "hp": 40.0,
+        "armorThrough": 15.0
+      },
+      "radiator_dm": {
+        "hp": 50.0,
         "armorThrough": 5.0
       },
       "radiator_l_dm": {
-        "hp": 40.0,
+        "hp": 50.0,
         "armorThrough": 5.0
       },
       "radiator_r_dm": {
-        "hp": 40.0,
+        "hp": 50.0,
         "armorThrough": 5.0
       },
       "radio_station_dm": {
-        "hp": 20.0,
+        "hp": 50.0,
         "armorThrough": 3.0
+      },
+      "electronic_equipment_dm": {
+        "hp": 60.0,
+        "armorThrough": 3.0
+      },
+      "fire_control_system_dm": {
+        "hp": 60.0,
+        "armorThrough": 3.0
+      },
+      "power_system_dm": {
+        "hp": 60.0,
+        "armorThrough": 15.0
       }
     },
     "cannon_breech": {
@@ -513,6 +550,10 @@
       },
       "cannon_breech_05_dm": {
         "armorThickness": 10.0
+      },
+      "autoloader_dm": {
+        "armorThickness": 5.0,
+        "armorThrough": 5.0
       }
     },
     "power_block": {
@@ -717,7 +758,7 @@
     },
     "fuel_tanks": {
       "armorClass": "tank_structural_steel",
-      "hp": 250.0,
+      "hp": 400.0,
       "armorThickness": 2.0,
       "armorThrough": 12.0,
       "fireProtectionHp": 15.0,
@@ -1128,6 +1169,19 @@
             "fHitCritical": true
           },
           {
+            "damageType": "cumulative",
+            "expl": 0.5,
+            "fire": 0.5,
+            "damage": 400.0,
+            "fHitCritical": true
+          },
+          {
+            "damageType": "cumulative",
+            "expl": 1.0,
+            "damage": 800.0,
+            "fHitCritical": true
+          },
+          {
             "damageType": "explosion",
             "expl": 0.125,
             "fire": 0.225,
@@ -1161,22 +1215,21 @@
           },
           {
             "damageType": "generic",
-            "fire": 0.7,
-            "expl": 0.1,
+            "fire": 0.5,
+            "expl": 0.5,
+            "damage": 250.0,
+            "fHitCritical": true
+          },
+          {
+            "damageType": "generic",
+            "fire": 0.3,
+            "expl": 0.7,
             "damage": 300.0,
             "fHitCritical": true
           },
           {
             "damageType": "generic",
-            "fire": 0.5,
-            "expl": 0.5,
-            "damage": 400.0,
-            "fHitCritical": true
-          },
-          {
-            "damageType": "generic",
-            "fire": 0.2,
-            "expl": 0.8,
+            "expl": 1.0,
             "damage": 600.0,
             "fHitCritical": true
           },
@@ -1186,9 +1239,7 @@
           }
         ],
         "onKill": {
-          "fire": 0.5,
-          "expl": 0.3,
-          "nothing": 0.2,
+          "fire": 1.0,
           "fHitCritical": true
         }
       },
@@ -1520,6 +1571,31 @@
             }
           }
         ]
+      },
+      {
+        "name": [
+          "wheel_l_drive_dm",
+          "wheel_r_drive_dm",
+          "wheel_r_back_dm",
+          "wheel_r_front_dm",
+          "wheel_l_back_dm",
+          "wheel_l_front_dm",
+          "wheel_l_01_dm",
+          "wheel_r_01_dm",
+          "wheel_l_02_dm",
+          "wheel_r_02_dm",
+          "wheel_l_03_dm",
+          "wheel_r_03_dm",
+          "wheel_l_04_dm",
+          "wheel_r_04_dm",
+          "wheel_l_05_dm",
+          "wheel_r_05_dm",
+          "wheel_l_06_dm",
+          "wheel_r_06_dm"
+        ],
+        "onKill": {
+          "cut": 1.0
+        }
       }
     ]
   },
@@ -2103,7 +2179,7 @@
         "radarParkingAzimuth": 180.0
       },
       {
-        "blk": "gameData/sensors/sam_tv_ir_track.blk",
+        "blk": "gameData/sensors/rooikat_AA_EOT_track.blk",
         "turretIndex": 0,
         "dmPart": "optic_gun_dm"
       },
@@ -2215,6 +2291,18 @@
         "wheel_r_03": 0.4,
         "wheel_r_04": 0.4
       },
+      "wheelsDamageWeight": {
+        "wheel_l_01": 0.05,
+        "wheel_r_01": 0.05,
+        "wheel_l_02": 0.05,
+        "wheel_r_02": 0.05,
+        "wheel_l_03": 0.05,
+        "wheel_r_03": 0.05,
+        "wheel_l_04": 0.05,
+        "wheel_r_04": 0.05,
+        "wheel_r_drive": 0.25,
+        "wheel_l_drive": 0.25
+      },
       "driven": {
         "wheel_l_01": true,
         "wheel_r_01": true,
@@ -2234,16 +2322,6 @@
         "wheel_l_03": true,
         "wheel_r_04": true,
         "wheel_l_04": true
-      },
-      "wheelsDamageWeight": {
-        "wheel_l_01": 0.2,
-        "wheel_r_01": 0.2,
-        "wheel_l_02": 0.2,
-        "wheel_r_02": 0.2,
-        "wheel_l_03": 0.2,
-        "wheel_r_03": 0.2,
-        "wheel_l_04": 0.2,
-        "wheel_r_04": 0.2
       }
     }
   },
@@ -3075,6 +3153,27 @@
         }
       },
       {
+        "name": "hydraulic_internal",
+        "fx": {
+          "name": "tank_ex_fuel_explosion",
+          "centerDmgPart": true
+        }
+      },
+      {
+        "name": "powersystem_internal",
+        "fx": {
+          "name": "tank_ex_fuel_explosion",
+          "centerDmgPart": true
+        }
+      },
+      {
+        "name": "powersystem_exterior",
+        "fx": {
+          "name": "tank_ex_fuel_explosion",
+          "centerDmgPart": true
+        }
+      },
+      {
         "name": "big_bang",
         "lifetime": 10.0,
         "fx": [
@@ -3374,7 +3473,7 @@
               "radarParkingAzimuth": 180.0
             },
             {
-              "blk": "gameData/sensors/sam_tv_ir_track.blk",
+              "blk": "gameData/sensors/rooikat_AA_EOT_track.blk",
               "turretIndex": 0,
               "dmPart": "optic_gun_dm"
             },

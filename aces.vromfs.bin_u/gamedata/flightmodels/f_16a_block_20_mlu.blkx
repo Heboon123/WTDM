@@ -14,6 +14,7 @@
   "isBwOpticSight": true,
   "havePointOfInterestDesignator": true,
   "ilsElbit967": true,
+  "mfdCamTads": true,
   "jetEnginePowerFullScale": true,
   "standardExhaustFxType": "jet_exhaust",
   "afterburnerExhaustFxType": "jet_afterburner_exhaust",
@@ -1862,7 +1863,7 @@
     ]
   },
   "ikPilot": {
-    "model": "pilot_italy_late_char",
+    "model": "usaf_pilot_1977_1991_char",
     "maxHeadHorAngle": 60.0,
     "maxHeadDownAngle": 60.0,
     "maxHeadUpAngle": 10.0,
@@ -1878,7 +1879,7 @@
         "flexionDir": [
           0.0,
           -1.0,
-          0.2
+          0.3
         ],
         "type": "leftHand",
         "detachedNodeYpr": [
@@ -1900,7 +1901,7 @@
         "flexionDir": [
           0.0,
           -1.0,
-          -0.5
+          -0.3
         ],
         "type": "rightHand",
         "detachedNodeYpr": [
@@ -1922,7 +1923,7 @@
         "flexionDir": [
           0.0,
           1.0,
-          0.3
+          0.2
         ]
       },
       {
@@ -1933,7 +1934,7 @@
         "flexionDir": [
           0.0,
           1.0,
-          -0.3
+          -0.2
         ]
       }
     ]
@@ -2289,7 +2290,7 @@
           ],
           "monoDisplayColor": [
             0.37,
-            0.45,
+            0.5,
             0.4
           ],
           "cameraFromShell": true,
@@ -2301,7 +2302,44 @@
             {
               "type": "radar",
               "scale": 0.92,
-              "hideRadarBackground": true
+              "hideBackground": true,
+              "hasAviaHorizont": true,
+              "hideBeam": false,
+              "beamShape": "caret",
+              "fontScale": 0.65,
+              "lineColor": [
+                0,
+                255,
+                7
+              ],
+              "targetForm": "square",
+              "modeColor": [
+                0,
+                255,
+                7
+              ],
+              "verAngleColor": [
+                0,
+                255,
+                7
+              ],
+              "horAngleColor": [
+                0,
+                255,
+                7
+              ],
+              "scaleColor": [
+                0,
+                255,
+                7
+              ],
+              "targetColor": [
+                0,
+                255,
+                7
+              ],
+              "centerRadar": true,
+              "showCueHeights": true
             }
           ]
         },
@@ -2325,7 +2363,8 @@
           ],
           "page": {
             "type": "rwr",
-            "scale": 1.1
+            "scale": 1.1,
+            "hideBackground": true
           }
         },
         {
@@ -2532,19 +2571,21 @@
             },
             {
               "trigger": "countermeasures",
-              "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
+              "blk": "gameData/Weapons/rocketGuns/countermeasure_split_launcher_jet.blk",
               "emitter": "emtr_flare1",
-              "bullets": 60,
+              "bullets": 30,
               "external": true,
-              "separate": false
+              "separate": false,
+              "bulletsCartridge": 1
             },
             {
               "trigger": "countermeasures",
-              "blk": "gameData/Weapons/rocketGuns/countermeasure_launcher_jet.blk",
+              "blk": "gameData/Weapons/rocketGuns/countermeasure_split_launcher_jet.blk",
               "emitter": "emtr_flare2",
               "bullets": 30,
               "external": true,
-              "separate": false
+              "separate": false,
+              "bulletsCartridge": 1
             }
           ]
         }
@@ -3324,10 +3365,7 @@
       "tier": 3,
       "modClass": "lth"
     },
-    "countermeasures_launcher_chaff_only": {},
-    "countermeasures_launcher_flare_only": {},
-    "countermeasures_launcher_chaff_priority": {},
-    "countermeasures_launcher_flare_priority": {},
+    "countermeasures_launcher_chaff": {},
     "countermeasures_belt_pack": {
       "modClass": "armor",
       "turn_it_off": false,
@@ -3339,12 +3377,6 @@
       "prevModification": "countermeasures_belt_pack",
       "tier": 2,
       "modClass": "armor"
-    },
-    "air_extinguisher": {
-      "prevModification": "f_4c_g_suit",
-      "tier": 4,
-      "modClass": "armor",
-      "invertEnableLogic": false
     },
     "M60_air_targets": {},
     "M60_armor_targets": {},

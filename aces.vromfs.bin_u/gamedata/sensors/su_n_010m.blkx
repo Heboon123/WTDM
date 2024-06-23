@@ -1,8 +1,10 @@
 {
   "type": "radar",
   "name": "N010M Zhuk-M",
+  "weaponTargetsMax": 4,
   "showMissileLaunchZone": true,
   "showMissileDgftLaunchZone": true,
+  "launchedMissilesPredictedPositionsMax": 6,
   "fsms": {
     "main": {
       "stateInit": "init",
@@ -1028,20 +1030,32 @@
           "stateFrom": "standby",
           "event": "fsmActivate",
           "actions": {
-            "doCustomActionTemplate": {
-              "fsm": "main",
-              "name": "setStandbyMode"
-            }
+            "doCustomActionTemplate": [
+              {
+                "fsm": "main",
+                "name": "resetStandbyMode"
+              },
+              {
+                "fsm": "main",
+                "name": "setStandbyMode"
+              }
+            ]
           }
         },
         "updateSearchMode": {
           "stateFrom": "search",
           "event": "fsmActivate",
           "actions": {
-            "doCustomActionTemplate": {
-              "fsm": "main",
-              "name": "setSearchMode"
-            }
+            "doCustomActionTemplate": [
+              {
+                "fsm": "main",
+                "name": "resetSearchMode"
+              },
+              {
+                "fsm": "main",
+                "name": "setSearchMode"
+              }
+            ]
           }
         },
         "switchScanPattern": {
@@ -1979,10 +1993,6 @@
         },
         "setIrst": {
           "setIrstLockTrack": {},
-          "doCustomActionTemplate": {
-            "fsm": "main",
-            "name": "resetSearchMode"
-          },
           "clearTargets": {},
           "setFsmActive": [
             {
@@ -2902,6 +2912,12 @@
       "rcs": 5.0,
       "range": 43000.0,
       "rangeMax": 55000.0,
+      "multipathEffect": [
+        0.0,
+        1.0,
+        60.0,
+        0.0
+      ],
       "antenna": {
         "angleHalfSens": 3.3,
         "sideLobesSensitivity": -32.0
@@ -2914,6 +2930,12 @@
       "rcs": 5.0,
       "range": 100000.0,
       "rangeMax": 120000.0,
+      "multipathEffect": [
+        0.0,
+        1.0,
+        60.0,
+        0.0
+      ],
       "antenna": {
         "angleHalfSens": 3.3,
         "sideLobesSensitivity": -32.0
@@ -2950,8 +2972,8 @@
     "radarSearchManualNarrow": {
       "type": "pyramide",
       "azimuthLimits": [
-        -90.0,
-        90.0
+        -85.0,
+        85.0
       ],
       "elevationLimits": [
         -40.0,
@@ -2968,8 +2990,8 @@
     "radarSearchManualMedium": {
       "type": "pyramide",
       "azimuthLimits": [
-        -90.0,
-        90.0
+        -85.0,
+        85.0
       ],
       "elevationLimits": [
         -40.0,
@@ -2986,8 +3008,8 @@
     "radarSearchManualWide": {
       "type": "pyramide",
       "azimuthLimits": [
-        -90.0,
-        90.0
+        -85.0,
+        85.0
       ],
       "elevationLimits": [
         -40.0,
@@ -3004,8 +3026,8 @@
     "radarTwsNarrow": {
       "type": "pyramide",
       "azimuthLimits": [
-        -90.0,
-        90.0
+        -85.0,
+        85.0
       ],
       "elevationLimits": [
         -40.0,
@@ -3024,8 +3046,8 @@
     "radarTwsWide": {
       "type": "pyramide",
       "azimuthLimits": [
-        -90.0,
-        90.0
+        -85.0,
+        85.0
       ],
       "elevationLimits": [
         -40.0,
@@ -3044,8 +3066,8 @@
     "radarBvrLockSearch": {
       "type": "pyramide",
       "azimuthLimits": [
-        -90.0,
-        90.0
+        -85.0,
+        85.0
       ],
       "elevationLimits": [
         -40.0,
@@ -3063,8 +3085,8 @@
     "radarBvrLockTws": {
       "type": "pyramide",
       "azimuthLimits": [
-        -90.0,
-        90.0
+        -85.0,
+        85.0
       ],
       "elevationLimits": [
         -40.0,
@@ -3082,8 +3104,8 @@
     "radarVerticalLock": {
       "type": "pyramide",
       "azimuthLimits": [
-        -90.0,
-        90.0
+        -85.0,
+        85.0
       ],
       "elevationLimits": [
         -40.0,
@@ -3100,8 +3122,8 @@
     "radarHmdLock": {
       "type": "pyramide",
       "azimuthLimits": [
-        -90.0,
-        90.0
+        -85.0,
+        85.0
       ],
       "elevationLimits": [
         -40.0,
@@ -3118,8 +3140,8 @@
     "radarBoresightLock": {
       "type": "cone",
       "azimuthLimits": [
-        -90.0,
-        90.0
+        -85.0,
+        85.0
       ],
       "elevationLimits": [
         -45.0,
@@ -3132,8 +3154,8 @@
     "radarHudLock": {
       "type": "pyramide",
       "azimuthLimits": [
-        -90.0,
-        90.0
+        -85.0,
+        85.0
       ],
       "elevationLimits": [
         -45.0,
@@ -3149,8 +3171,8 @@
     "radarTrack": {
       "type": "no",
       "azimuthLimits": [
-        -90.0,
-        90.0
+        -85.0,
+        85.0
       ],
       "elevationLimits": [
         -40.0,
@@ -3160,8 +3182,8 @@
     "radarHmdTrack": {
       "type": "no",
       "azimuthLimits": [
-        -90.0,
-        90.0
+        -85.0,
+        85.0
       ],
       "elevationLimits": [
         -40.0,
@@ -3251,7 +3273,7 @@
       ],
       "elevationLimits": [
         -15.0,
-        15.0
+        30.0
       ],
       "period": 0.2,
       "width": 2.0,

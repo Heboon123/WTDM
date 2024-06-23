@@ -9,7 +9,7 @@ let ww_leaderboard = require("ww_leaderboard")
 let { get_local_unixtime, ref_time_ticks } = require("dagor.time")
 let { rnd, get_rnd_seed, set_rnd_seed }    = require("dagor.random")
 let { format               } = require("string")
-let { json_to_string       } = require("json")
+let { object_to_json_string} = require("json")
 let { getDistr             } = require("auth_wt")
 let { get_user_system_info } = require("sysinfo")
 let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
@@ -81,7 +81,7 @@ function add_user_info(table) {
 function bq_client_no_auth(event, uniqueId, table) {
   add_user_info(table)
 
-  let params = json_to_string(table, false)
+  let params = object_to_json_string(table, false)
   let request =
   {
     action = "noa_bigquery_client_noauth"
@@ -163,7 +163,7 @@ function bqSendLoginState(table) {
     table.auto <- true
 
   add_user_info(table)
-  let params = json_to_string(table)
+  let params = object_to_json_string(table)
 
   sendBqEvent("CLIENT_LOGIN_2", "login_state", table)
   log($"BQ CLIENT login_state {params}")

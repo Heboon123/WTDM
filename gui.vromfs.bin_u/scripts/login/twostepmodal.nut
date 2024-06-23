@@ -17,11 +17,11 @@ let { isExternalApp2StepAllowed, isHasEmail2StepTypeSync, isHasWTAssistant2StepT
 let { getCurCircuitOverride } = require("%appGlobals/curCircuitOverride.nut")
 
 local authDataByTypes = {
-  mail = { text = "#mainmenu/2step/confirmMail", img = "#ui/images/{prefix}two_step_email" } // warning disable: -forgot-subst
-  ga = { text = "#mainmenu/2step/confirmGA", img = "#ui/images/{prefix}two_step_phone_ga" }  // warning disable: -forgot-subst
+  mail = { text = "#mainmenu/2step/confirmMail", img = "{prefix}two_step_email" } // warning disable: -forgot-subst
+  ga = { text = "#mainmenu/2step/confirmGA", img = "{prefix}two_step_phone_ga" }  // warning disable: -forgot-subst
   gp = {
     getText = @() loc("mainmenu/2step/confirmPass", { passName = getCurCircuitOverride("passName", "Gaijin Pass") })
-    img = "#ui/images/{prefix}two_step_phone_gp" // warning disable: -forgot-subst
+    img = "{prefix}two_step_phone_gp" // warning disable: -forgot-subst
   }
   unknown = { text = "#mainmenu/2step/confirmUnknown", img = "" }
 }
@@ -40,11 +40,11 @@ gui_handlers.twoStepModal <- class (BaseGuiHandler) {
       : isExt2StepAllowed && isHasGaijinPass2StepTypeSync() ? authDataByTypes.gp
       : authDataByTypes.unknown
 
-    let prefix = getCurCircuitOverride("passImgPrefix", "")
+    let prefix = getCurCircuitOverride("passImgPrefix", "#ui/images/")
     return {
       verStatusText = data?.getText() ?? data.text
       authTypeImg = data.img.subst({ prefix })
-      backgroundImg = $"#ui/images/{prefix}two_step_form_bg"
+      backgroundImg = $"{prefix}two_step_form_bg"
       isShowRestoreLink = isExt2StepAllowed
       isRememberDevice = getObjValue(this.loginScene, "loginbox_code_remember_this_device", false)
       timerWidth = daguiFonts.getStringWidthPx("99:99:99", "fontNormal", this.guiScene)
