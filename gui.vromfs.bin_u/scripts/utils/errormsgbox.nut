@@ -5,6 +5,8 @@ let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platfo
 let { isMatchingError, matchingErrorString } = require("%scripts/matching/api.nut")
 let { get_last_session_debug_info } = require("%scripts/matchingRooms/sessionDebugInfo.nut")
 let { getCurCircuitOverride } = require("%appGlobals/curCircuitOverride.nut")
+let { getBannedMessage } = require("%scripts/penitentiary/penalties.nut")
+let { SERVER_ERROR_PLAYER_BANNED } = require("matching.errors")
 
 let errCodeToStringMap = {
   [YU2_TIMEOUT] = "80130182",
@@ -87,12 +89,23 @@ function get_error_data(header, error_code) {
   if (checkObj(guiScene["errorMessageBox"]))
     return
 
+  if (error_code == SERVER_ERROR_PLAYER_BANNED) {
+    let banMessage = getBannedMessage()
+    if (banMessage != "") {
+      scene_msg_box("errorMessageBox", guiScene, banMessage, buttons, def_btn, options)
+      return
+    }
+  }
+
   let errData = get_error_data(header, error_code)
 
   if (!isPlatformXboxOne) {
-    errData.text = "".concat(errData.text, "\n\n", (isPlatformSony ? "" : ("".concat(loc("msgbox/error_link_format_game"), loc("ui/colon")))))
-    let link = "".concat(getCurCircuitOverride("knowledgebaseUrl", loc("url/knowledgebase")), errData.errCode)
-    let linkText = isPlatformSony ? loc("msgbox/error_link_format_game") : link
+    let errorLinkFormatText = loc(getCurCircuitOverride($"errorLinkFormatLocId_{errData.errCode}", "msgbox/error_link_format_game"))
+    errData.text = "".concat(errData.text, "\n\n",
+      (isPlatformSony ? "" : ("".concat(errorLinkFormatText, loc("ui/colon")))))
+    let link = getCurCircuitOverride($"knowledgebaseUrl_{errData.errCode}")
+      ?? "".concat(getCurCircuitOverride("knowledgebaseUrl") ?? loc("url/knowledgebase"), errData.errCode)
+    let linkText = isPlatformSony ? errorLinkFormatText : link
     errData.text = "".concat(errData.text, $"<url={link}>{linkText}</url>")
   }
 
