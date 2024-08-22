@@ -11,6 +11,7 @@ let { addTooltipTypes } = require("%scripts/utils/genericTooltipTypes.nut")
 let { getBattleRewardDetails, getBattleRewardTable } = require("%scripts/userLog/userlogUtils.nut")
 let { Cost } = require("%scripts/money.nut")
 let { getRomanNumeralRankByUnitName } = require("%scripts/unit/unitInfo.nut")
+let { getBulletBeltShortLocId } = require("%scripts/weaponry/weaponryVisual.nut")
 
 enum UnitControl {
   UNIT_CONTROL_BOT = 1
@@ -63,6 +64,36 @@ let tableColumns = [
     }
   }
   {
+    id = "weaponName"
+    titleLocId = "logs/ammunition"
+    cellTransformFn = function(cellValue, reward) {
+      if (doesLocTextExist(cellValue))
+        return {text = loc(cellValue)}
+
+      let weaponShortName = $"weapons/{cellValue}/short"
+      if (doesLocTextExist(weaponShortName))
+        return {text = loc(weaponShortName)}
+
+      let bulletBeltLocId = getBulletBeltShortLocId(cellValue)
+      if (doesLocTextExist(bulletBeltLocId))
+        return {text = reward?.weaponCaliber == null
+          ? loc(bulletBeltLocId)
+          : "".concat(loc(bulletBeltLocId),
+            loc("ui/parentheses/space", {
+              text = "".concat(reward.weaponCaliber * 1000, loc("measureUnits/mm"))
+            }))
+        }
+
+      if (reward?.bulletType != null) {
+        let locId = $"{reward.bulletType}/name/short"
+        if (doesLocTextExist(locId))
+          return {text = loc(locId)}
+      }
+
+      return cellValue
+    }
+  }
+  {
     id = "victimUnit"
     titleLocId = "hud/iconOrderTarget"
     cellTransformFn = function(cellValue, reward) {
@@ -98,12 +129,26 @@ let tableColumns = [
   {
     id = "explTNT"
     titleLocId = "userlog/award_tip_col/damage_tnt"
-    cellTransformFn = @(cellValue, _reward) { text = cellValue.tostring() }
+    cellTransformFn = @(cellValue, reward) { text = reward.isPlainText
+      ? "".concat(cellValue.tostring(), " ", loc("measureUnits/kg"))
+      : cellValue.tostring()
+    }
   }
   {
     id = "zoneDamage"
     titleLocId = "userlog/award_tip_col/damage_zone"
-    cellTransformFn = @(cellValue, _reward) { text = cellValue.tostring() }
+    cellTransformFn = @(cellValue, reward) { text = reward.isPlainText
+      ? "".concat(cellValue.tostring(), " ", loc("logs/damage"))
+      : cellValue.tostring()
+    }
+  }
+  {
+    id = "score"
+    titleLocId = "icon/mpstats/score"
+    cellTransformFn = @(cellValue, reward) { text = reward.isPlainText
+      ? loc("logs/mission_points", {num = cellValue})
+      : cellValue.tostring()
+    }
   }
   {
     id = "streak"
