@@ -5,6 +5,21 @@
   "showMissileLaunchZone": true,
   "showMissileDgftLaunchZone": true,
   "launchedMissilesPredictedPositionsMax": 6,
+  "scopeRangeSets": {
+    "acm": {
+      "range1": 10000.0
+    },
+    "hmd": {
+      "range1": 20000.0
+    },
+    "common": {
+      "range1": 50000.0,
+      "range2": 100000.0,
+      "range3": 200000.0,
+      "range4": 10000.0,
+      "range5": 25000.0
+    }
+  },
   "fsms": {
     "main": {
       "stateInit": "init",
@@ -475,8 +490,8 @@
           },
           "setDistGatePos": {
             "source": "constRange",
-            "pos": 5000.0,
-            "width": 10000.0
+            "pos": 10000.0,
+            "width": 20000.0
           },
           "setRelSpeedGatePos": {
             "source": "constRange",
@@ -688,12 +703,12 @@
           "clearTargetsOfInterest": {},
           "setScanPatternSet": {},
           "resetScanPhase": {},
-          "setScopeRangeSet": {
-            "scopeRangeSet": "acm"
-          },
           "setFsmActive": {
             "fsm": "helmetDesignation",
             "active": true
+          },
+          "setScopeRangeSet": {
+            "scopeRangeSet": "hmd"
           }
         },
         "resetHmdStandbyMode": {
@@ -721,7 +736,7 @@
             }
           ],
           "setScopeRangeSet": {
-            "scopeRangeSet": "acm"
+            "scopeRangeSet": "hmd"
           }
         },
         "resetHmdLockMode": {
@@ -742,7 +757,7 @@
             "transiver": "mprf"
           },
           "setSignal": {
-            "signal": "acmLock"
+            "signal": "hmdLock"
           }
         },
         "setRadarHmdLockCommon": {
@@ -770,8 +785,8 @@
           "setRadarHmdLockCommon": {},
           "setDistGatePos": {
             "source": "constRange",
-            "pos": 5000.0,
-            "width": 10000.0
+            "pos": 10000.0,
+            "width": 20000.0
           },
           "setRelSpeedGatePos": {
             "source": "constRange",
@@ -804,8 +819,8 @@
           "setRadarHmdLockCommon": {},
           "setDistGatePos": {
             "source": "constRange",
-            "pos": 5000.0,
-            "width": 10000.0
+            "pos": 10000.0,
+            "width": 20000.0
           },
           "setRelSpeedGatePos": {
             "source": "constRange",
@@ -1950,13 +1965,13 @@
         "setIrstLockTrack": {
           "setTargetDesignationRange": {
             "azimuthRange": [
-              -30.0,
-              30.0
+              -90.0,
+              90.0
             ],
             "azmithWidth": 2.0,
             "elevationRange": [
               -15.0,
-              15.0
+              60.0
             ],
             "elevationWidth": 3.0,
             "distanceRange": [
@@ -2959,11 +2974,11 @@
       "antenna": {
         "azimuth": {
           "angleHalfSens": 4.0,
-          "sideLobesSensitivity": -80.0
+          "sideLobesSensitivity": -120.0
         },
         "elevation": {
           "angleHalfSens": 0.3,
-          "sideLobesSensitivity": -80.0
+          "sideLobesSensitivity": -120.0
         }
       }
     }
@@ -3201,12 +3216,12 @@
     "irstSearchWide": {
       "type": "pyramide",
       "azimuthLimits": [
-        -30.0,
-        30.0
+        -90.0,
+        90.0
       ],
       "elevationLimits": [
         -15.0,
-        15.0
+        60.0
       ],
       "period": 2.5,
       "width": 15.0,
@@ -3214,17 +3229,19 @@
       "barsCount": 15,
       "rowMajor": false,
       "isSmoothMajor": true,
-      "barsOneWay": false
+      "barsOneWay": false,
+      "rollStabLimit": 90.0,
+      "pitchStabLimit": 60.0
     },
     "irstSearchNarrow": {
       "type": "pyramide",
       "azimuthLimits": [
-        -30.0,
-        30.0
+        -90.0,
+        90.0
       ],
       "elevationLimits": [
         -15.0,
-        15.0
+        60.0
       ],
       "period": 1.25,
       "width": 15.0,
@@ -3232,34 +3249,38 @@
       "barsCount": 8,
       "rowMajor": false,
       "isSmoothMajor": true,
-      "barsOneWay": false
+      "barsOneWay": false,
+      "rollStabLimit": 90.0,
+      "pitchStabLimit": 60.0
     },
     "irstBvrLock": {
       "type": "pyramide",
       "azimuthLimits": [
-        -30.0,
-        30.0
+        -90.0,
+        90.0
       ],
       "elevationLimits": [
         -15.0,
-        15.0
+        60.0
       ],
-      "period": 0.3,
-      "width": 3.0,
+      "period": 1.0,
+      "width": 15.0,
       "barHeight": 4.0,
       "barsCount": 1,
       "rowMajor": false,
-      "indicate": true
+      "indicate": true,
+      "rollStabLimit": 90.0,
+      "pitchStabLimit": 60.0
     },
     "irstVerticalLock": {
       "type": "pyramide",
       "azimuthLimits": [
-        -30.0,
-        30.0
+        -90.0,
+        90.0
       ],
       "elevationLimits": [
         -15.0,
-        15.0
+        60.0
       ],
       "period": 0.3,
       "width": 15.0,
@@ -3275,12 +3296,12 @@
         "pyramide"
       ],
       "azimuthLimits": [
-        -30.0,
-        30.0
+        -90.0,
+        90.0
       ],
       "elevationLimits": [
         -15.0,
-        30.0
+        60.0
       ],
       "period": 0.2,
       "width": 2.0,
@@ -3294,23 +3315,23 @@
     "irstTrack": {
       "type": "no",
       "azimuthLimits": [
-        -30.0,
-        30.0
+        -90.0,
+        90.0
       ],
       "elevationLimits": [
         -15.0,
-        30.0
+        60.0
       ]
     },
     "irstHmdTrack": {
       "type": "no",
       "azimuthLimits": [
-        -30.0,
-        30.0
+        -90.0,
+        90.0
       ],
       "elevationLimits": [
         -15.0,
-        30.0
+        60.0
       ],
       "hmd": true
     }
@@ -3424,6 +3445,26 @@
         "width": 24.0
       }
     },
+    "hmdLock": {
+      "groundClutter": false,
+      "aircraftAsTarget": true,
+      "angularAccuracy": 0.05,
+      "distanceAccuracy": 15.0,
+      "mainBeamNotchWidth": 40.0,
+      "distance": {
+        "presents": true,
+        "minValue": 250.0,
+        "maxValue": 20000.0,
+        "width": 250.0
+      },
+      "dopplerSpeed": {
+        "presents": true,
+        "minValue": -900.0,
+        "maxValue": 900.0,
+        "signalWidthMin": 2.0,
+        "width": 24.0
+      }
+    },
     "acmTrack": {
       "groundClutter": false,
       "aircraftAsTarget": true,
@@ -3488,18 +3529,6 @@
     },
     "irstHmdLock": {
       "scanPattern1": "irstHmdLock"
-    }
-  },
-  "scopeRangeSets": {
-    "acm": {
-      "range1": 10000.0
-    },
-    "common": {
-      "range1": 50000.0,
-      "range2": 100000.0,
-      "range3": 200000.0,
-      "range4": 10000.0,
-      "range5": 25000.0
     }
   }
 }
