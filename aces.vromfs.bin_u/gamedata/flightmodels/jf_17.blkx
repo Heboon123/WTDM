@@ -198,8 +198,13 @@
         "hp": 44.4
       }
     },
+    "steel_cooling_sys": {
+      "oil1_dm": {
+        "hp": 11.5
+      }
+    },
     "steel_pilot": {
-      "pilot1_dm": {
+      "pilot_dm": {
         "fireProtectionHp": 20.0,
         "hp": 20.0
       }
@@ -807,7 +812,16 @@
         }
       },
       {
-        "name": "pilot1_dm"
+        "name": "oil1_dm",
+        "onHit": {
+          "leak_oil": 0.95
+        },
+        "onKill": {
+          "leak_oil": 1.0
+        }
+      },
+      {
+        "name": "pilot_dm"
       },
       {
         "name": "radar_dm"
@@ -1843,7 +1857,7 @@
     ]
   },
   "ikPilot": {
-    "model": "su_pilot_late_char",
+    "model": "usaf_pilot_1977_1991_char",
     "maxHeadHorAngle": 60.0,
     "maxHeadDownAngle": 60.0,
     "maxHeadUpAngle": 10.0,
@@ -1901,9 +1915,9 @@
         "upNode": "Bip01 L Thigh",
         "targetNode": "pedal_lfoot_1",
         "flexionDir": [
-          0.3,
+          0.0,
           1.0,
-          0.0
+          0.3
         ]
       },
       {
@@ -1912,15 +1926,15 @@
         "upNode": "Bip01 R Thigh",
         "targetNode": "pedal_rfoot_1",
         "flexionDir": [
-          -0.3,
+          0.0,
           1.0,
-          0.0
+          -0.3
         ]
       }
     ]
   },
   "attach": {
-    "pilot1": "pilot_china_500"
+    "pilot1": "pilot_it_late_500"
   },
   "Params": {
     "Range": 1200.0
@@ -1987,14 +2001,490 @@
       "vws_check_mech": {}
     }
   },
+  "cockpit": {
+    "headPos": [
+      4.91,
+      0.546,
+      0.0
+    ],
+    "headPosOnShooting": [
+      5.01,
+      0.546,
+      0.0
+    ],
+    "shadowSphereMultiplier": 2.0,
+    "gunLightRadiusMul": 0.05,
+    "mirror": true,
+    "mirrorPos": [
+      5.52,
+      0.546,
+      0.0
+    ],
+    "mirrorNorm": [
+      -1.0,
+      0.0,
+      0.0
+    ],
+    "mirrorNode": [
+      "blister7",
+      "blister8",
+      "blister9"
+    ],
+    "lightPos": [
+      8.97,
+      0.285,
+      0.0
+    ],
+    "lightColor": [
+      0.7,
+      0.01,
+      0.0
+    ],
+    "lightRadius": 0.33,
+    "lightPos1": [
+      8.97,
+      0.1,
+      -0.35
+    ],
+    "lightColor1": [
+      0.7,
+      0.01,
+      0.0
+    ],
+    "lightRadius1": 0.3,
+    "lightPos2": [
+      8.97,
+      0.1,
+      0.35
+    ],
+    "lightColor2": [
+      0.7,
+      0.01,
+      0.0
+    ],
+    "lightRadius2": 0.3,
+    "lightPos3": [
+      9.035,
+      0.25,
+      0.0
+    ],
+    "lightColor3": [
+      0.81,
+      0.81,
+      0.05
+    ],
+    "lightRadius3": 0.33,
+    "devices": {
+      "stick_ailerons": [
+        -1.0,
+        1.0
+      ],
+      "stick_elevator": [
+        -1.0,
+        1.0
+      ],
+      "pedals1": [
+        -1.0,
+        1.0
+      ],
+      "pedals2": [
+        -1.0,
+        1.0
+      ],
+      "pedals3": [
+        -1.0,
+        1.0
+      ],
+      "pedals4": [
+        -1.0,
+        1.0
+      ],
+      "pedals5": [
+        -1.0,
+        1.0
+      ],
+      "pedals6": [
+        -1.0,
+        1.0
+      ],
+      "throttle": [
+        0.0,
+        1.0
+      ],
+      "trimmer": [
+        -1.0,
+        1.0
+      ],
+      "weapon2": [
+        0.0,
+        1.0
+      ],
+      "weapon4": [
+        0.0,
+        1.0
+      ],
+      "gears": [
+        0.0,
+        1.0
+      ],
+      "gear_fixed": true,
+      "speed": [
+        0.0,
+        694.444
+      ],
+      "mach": [
+        0.0,
+        2.5
+      ],
+      "compass": [
+        0.0,
+        360.0
+      ],
+      "vario": [
+        -200.0,
+        200.0
+      ],
+      "g_meter": [
+        -5.0,
+        10.0
+      ],
+      "g_meter_min": [
+        -5.0,
+        10.0
+      ],
+      "g_meter_max": [
+        -5.0,
+        10.0
+      ],
+      "altitude_10k": [
+        0.0,
+        30000.0
+      ],
+      "altitude_hour": [
+        0.0,
+        10000.0
+      ],
+      "altitude_min": [
+        0.0,
+        1000.0
+      ],
+      "altitude1_10k": [
+        0.0,
+        30000.0
+      ],
+      "radio_altitude": [
+        0.0,
+        2000.0
+      ],
+      "altitude_koef": 1.0,
+      "bank": [
+        -8.0,
+        8.0
+      ],
+      "turn": [
+        -0.23562,
+        0.23562
+      ],
+      "aviahorizon_pitch": [
+        -80.0,
+        80.0
+      ],
+      "aviahorizon_roll": [
+        -180.0,
+        180.0
+      ],
+      "aviahorizon_pitch1": [
+        -80.0,
+        80.0
+      ],
+      "aviahorizon_roll1": [
+        -180.0,
+        180.0
+      ],
+      "aoa": [
+        -5.0,
+        10.0
+      ],
+      "clock_hour": [
+        0.0,
+        12.0
+      ],
+      "clock_min": [
+        0.0,
+        60.0
+      ],
+      "clock_sec": [
+        0.0,
+        60.0
+      ],
+      "rpm": [
+        0.0,
+        13800.0
+      ],
+      "rpm1": [
+        0.0,
+        13800.0
+      ],
+      "oil_pressure": [
+        0.0,
+        120.0
+      ],
+      "oil_pressure1": [
+        0.0,
+        120.0
+      ],
+      "oil_temperature": [
+        -50.0,
+        150.0
+      ],
+      "oil_temperature1": [
+        -50.0,
+        150.0
+      ],
+      "water_temperature": [
+        0.0,
+        900.0
+      ],
+      "water_temperature1": [
+        0.0,
+        900.0
+      ],
+      "fuel": [
+        0.0,
+        4000.0
+      ],
+      "fuel_consume": [
+        0.0,
+        130.0
+      ],
+      "fuel_pressure": [
+        0.0,
+        15.0
+      ],
+      "fuel_pressure1": [
+        0.0,
+        15.0
+      ]
+    },
+    "multifunctionDisplays": {
+      "display": [
+        {
+          "textureArea": [
+            0.0,
+            0.0,
+            0.5,
+            0.5
+          ],
+          "cameraFromTargetingPod": true,
+          "page": [
+            {
+              "type": "thermal",
+              "turretIdx": 0
+            },
+            {
+              "type": "target_tracking",
+              "turretIdx": 0
+            },
+            {
+              "type": "ils_on_camera"
+            },
+            {
+              "type": "rwr",
+              "scale": 1.0,
+              "relativCircleRadius": 3.0
+            },
+            {
+              "type": "map",
+              "hideBackground": true
+            },
+            {
+              "type": "radar",
+              "font": "usa_ils",
+              "fontScale": 0.65,
+              "scale": 0.9,
+              "lineColor": [
+                0,
+                255,
+                7
+              ],
+              "hasAviaHorizont": true,
+              "hideBackground": true,
+              "hideScale": false,
+              "hideHorAngle": false,
+              "hideVerAngle": false,
+              "netRowCnt": 4,
+              "netColor": [
+                0,
+                255,
+                0
+              ],
+              "hideWeaponIndication": true,
+              "modeColor": [
+                0,
+                255,
+                0
+              ],
+              "centerRadar": true
+            }
+          ]
+        },
+        {
+          "textureArea": [
+            0.5,
+            0.0,
+            1.0,
+            0.5
+          ],
+          "cameraFromShell": true,
+          "page": [
+            {
+              "type": "radar",
+              "font": "usa_ils",
+              "fontScale": 0.65,
+              "scale": 0.9,
+              "lineColor": [
+                0,
+                255,
+                7
+              ],
+              "hasAviaHorizont": true,
+              "hideBackground": true,
+              "hideScale": false,
+              "hideHorAngle": false,
+              "hideVerAngle": false,
+              "netRowCnt": 4,
+              "netColor": [
+                0,
+                255,
+                0
+              ],
+              "hideWeaponIndication": true,
+              "modeColor": [
+                0,
+                255,
+                0
+              ],
+              "centerRadar": true
+            },
+            {
+              "type": "rwr",
+              "scale": 1.0,
+              "relativCircleRadius": 3.0
+            },
+            {
+              "type": "map",
+              "hideBackground": true
+            },
+            {
+              "type": "ils_on_camera"
+            },
+            {
+              "type": "target_tracking",
+              "turretIdx": 0
+            }
+          ]
+        },
+        {
+          "textureArea": [
+            0.0,
+            0.5,
+            0.5,
+            1.0
+          ],
+          "cameraFromShell": true,
+          "page": [
+            {
+              "type": "rwr",
+              "scale": 1.0,
+              "relativCircleRadius": 3.0
+            },
+            {
+              "type": "map",
+              "hideBackground": true
+            },
+            {
+              "type": "radar",
+              "font": "usa_ils",
+              "fontScale": 0.65,
+              "scale": 0.9,
+              "lineColor": [
+                0,
+                255,
+                7
+              ],
+              "hasAviaHorizont": true,
+              "hideBackground": true,
+              "hideScale": false,
+              "hideHorAngle": false,
+              "hideVerAngle": false,
+              "netRowCnt": 4,
+              "netColor": [
+                0,
+                255,
+                0
+              ],
+              "hideWeaponIndication": true,
+              "modeColor": [
+                0,
+                255,
+                0
+              ],
+              "centerRadar": true
+            },
+            {
+              "type": "ils_on_camera"
+            },
+            {
+              "type": "target_tracking",
+              "turretIdx": 0
+            }
+          ]
+        },
+        {
+          "textureArea": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          "page": {
+            "type": "plane_ils",
+            "ilsSize": [
+              0.22,
+              0.22
+            ],
+            "ilsOffsetForce": 0.0,
+            "brightnessMult": 3.5,
+            "ilsColor": [
+              10,
+              255,
+              10,
+              100
+            ]
+          }
+        }
+      ]
+    },
+    "parts_holes_dmg": {
+      "part": "fuse"
+    },
+    "parts_oil_dmg": {
+      "part": [
+        "engine1",
+        "engine2",
+        "engine3",
+        "engine4"
+      ]
+    }
+  },
   "gunnerOpticFps": {
     "Target": {
       "pos": [
-        0.4,
-        -0.2,
+        -6.2,
+        -0.7,
         0.0
       ],
-      "head": "optic1_gun",
+      "head": "optic2_turret",
       "crosshairPreset": "test_crosshair",
       "angularLimits": [
         -90.0,
@@ -2031,7 +2521,8 @@
         "node": "optic1_gun"
       },
       {
-        "blk": "gameData/sensors/LaserDesignatorSensor.blk"
+        "blk": "gameData/sensors/LaserDesignatorSensor.blk",
+        "node": "optic1_gun"
       }
     ]
   },
@@ -2090,6 +2581,14 @@
       {
         "name": "jf_17_gbu10",
         "blk": "gameData/FlightModels/weaponPresets/jf_17_gbu10.blk"
+      },
+      {
+        "name": "jf_17_ls_6_250",
+        "blk": "gameData/FlightModels/weaponPresets/jf_17_ls_6_250.blk"
+      },
+      {
+        "name": "jf_17_ls6",
+        "blk": "gameData/FlightModels/weaponPresets/jf_17_ls6.blk"
       },
       {
         "name": "jf_17_lgb1",
@@ -2152,7 +2651,7 @@
               "trigger": "gunner0",
               "triggerGroup": "primary",
               "blk": "gameData/Weapons/dummy_weapon.blk",
-              "emitter": "optic1_gun",
+              "emitter": "optic2_gun",
               "defaultYaw": 0.0,
               "defaultPitch": 0.0,
               "speedYaw": 200.0,
@@ -2160,8 +2659,8 @@
               "parkInDeadzone": true,
               "aimForOperatedShell": true,
               "turret": {
-                "head": "optic1_turret",
-                "gun": "optic1_gun",
+                "head": "optic2_turret",
+                "gun": "optic2_gun",
                 "mainTurret": true
               },
               "limits": {
@@ -2190,7 +2689,7 @@
               "trigger": "countermeasures",
               "blk": "gameData/Weapons/rocketGuns/countermeasure_large_split_launcher_jet.blk",
               "emitter": "emtr_flare1",
-              "bullets": 18,
+              "bullets": 17,
               "bulletsCartridge": 1,
               "external": true,
               "separate": true
@@ -2199,7 +2698,7 @@
               "trigger": "countermeasures",
               "blk": "gameData/Weapons/rocketGuns/countermeasure_large_split_launcher_jet.blk",
               "emitter": "emtr_flare2",
-              "bullets": 18,
+              "bullets": 17,
               "bulletsCartridge": 1,
               "external": true,
               "separate": true
@@ -2208,7 +2707,7 @@
               "trigger": "countermeasures",
               "blk": "gameData/Weapons/rocketGuns/countermeasure_large_split_launcher_jet.blk",
               "emitter": "emtr_flare3",
-              "bullets": 16,
+              "bullets": 17,
               "bulletsCartridge": 1,
               "external": true,
               "separate": true
@@ -2217,7 +2716,7 @@
               "trigger": "countermeasures",
               "blk": "gameData/Weapons/rocketGuns/countermeasure_large_split_launcher_jet.blk",
               "emitter": "emtr_flare4",
-              "bullets": 16,
+              "bullets": 17,
               "bulletsCartridge": 1,
               "external": true,
               "separate": true
@@ -2333,7 +2832,6 @@
             "reqModification": "cn_sd10",
             "ShowNodes": {
               "node": [
-                "bomb_pylon_1",
                 "rocket_adapter_001",
                 "aero_4a_003",
                 "aero_4a_004"
@@ -2361,7 +2859,7 @@
           {
             "iconType": "bombs_middle",
             "name": "mk82",
-            "reqModification": "us_500lb_mk82",
+            "reqModification": "us_500lb_mk82_ls_6_250",
             "ShowNodes": {
               "node": "bomb_pylon_1"
             },
@@ -2378,7 +2876,7 @@
           {
             "iconType": "bombs_middle_group_x2",
             "name": "mk82_x2",
-            "reqModification": "us_500lb_mk82",
+            "reqModification": "us_500lb_mk82_ls_6_250",
             "ShowNodes": {
               "node": [
                 "bomb_pylon_1",
@@ -2409,7 +2907,7 @@
           {
             "iconType": "bombs_large",
             "name": "mk83",
-            "reqModification": "us_1000lb_mk83",
+            "reqModification": "us_1000lb_mk83_ls_6_500",
             "ShowNodes": {
               "node": "bomb_pylon_1"
             },
@@ -2421,6 +2919,46 @@
               "external": true,
               "separate": true,
               "machLimit": 1.01
+            }
+          },
+          {
+            "iconType": "guided_bomb_middle_jdam",
+            "name": "ls_6_250",
+            "reqModification": "us_500lb_mk82_ls_6_250",
+            "ShowNodes": {
+              "node": "bomb_pylon_1"
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/BombGuns/cn_ls_6_250.blk",
+              "emitter": "250kg_mk_082_001",
+              "bullets": 1,
+              "external": true,
+              "separate": true
+            },
+            "DependentWeaponPreset": {
+              "slot": 4,
+              "preset": "aselpod"
+            }
+          },
+          {
+            "iconType": "guided_bomb_large_jdam",
+            "name": "ls_6_500",
+            "reqModification": "us_1000lb_mk83_ls_6_500",
+            "ShowNodes": {
+              "node": "bomb_pylon_1"
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/BombGuns/cn_ls_6_500.blk",
+              "emitter": "250kg_mk_082_001",
+              "bullets": 1,
+              "external": true,
+              "separate": true
+            },
+            "DependentWeaponPreset": {
+              "slot": 4,
+              "preset": "aselpod"
             }
           },
           {
@@ -2577,7 +3115,7 @@
           {
             "iconType": "bombs_middle",
             "name": "mk82",
-            "reqModification": "us_500lb_mk82",
+            "reqModification": "us_500lb_mk82_ls_6_250",
             "ShowNodes": {
               "node": "bomb_pylon_2"
             },
@@ -2594,7 +3132,7 @@
           {
             "iconType": "bombs_large",
             "name": "mk83",
-            "reqModification": "us_1000lb_mk83",
+            "reqModification": "us_1000lb_mk83_ls_6_500",
             "ShowNodes": {
               "node": "bomb_pylon_2"
             },
@@ -2623,6 +3161,46 @@
               "external": true,
               "separate": true,
               "machLimit": 1.01
+            }
+          },
+          {
+            "iconType": "guided_bomb_middle_jdam",
+            "name": "ls_6_250",
+            "reqModification": "us_500lb_mk82_ls_6_250",
+            "ShowNodes": {
+              "node": "bomb_pylon_2"
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/BombGuns/cn_ls_6_250.blk",
+              "emitter": "250kg_mk_082_002",
+              "bullets": 1,
+              "external": true,
+              "separate": true
+            },
+            "DependentWeaponPreset": {
+              "slot": 4,
+              "preset": "aselpod"
+            }
+          },
+          {
+            "iconType": "guided_bomb_large_jdam",
+            "name": "ls_6_500",
+            "reqModification": "us_1000lb_mk83_ls_6_500",
+            "ShowNodes": {
+              "node": "bomb_pylon_2"
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/BombGuns/cn_ls_6_500.blk",
+              "emitter": "250kg_mk_082_002",
+              "bullets": 1,
+              "external": true,
+              "separate": true
+            },
+            "DependentWeaponPreset": {
+              "slot": 4,
+              "preset": "aselpod"
             }
           },
           {
@@ -2761,7 +3339,7 @@
           {
             "iconType": "bombs_middle",
             "name": "mk82",
-            "reqModification": "us_500lb_mk82",
+            "reqModification": "us_500lb_mk82_ls_6_250",
             "ShowNodes": {
               "node": "bomb_pylon_3"
             },
@@ -2778,7 +3356,7 @@
           {
             "iconType": "bombs_large",
             "name": "mk83",
-            "reqModification": "us_1000lb_mk83",
+            "reqModification": "us_1000lb_mk83_ls_6_500",
             "ShowNodes": {
               "node": "bomb_pylon_3"
             },
@@ -2890,7 +3468,7 @@
           {
             "iconType": "bombs_middle",
             "name": "mk82",
-            "reqModification": "us_500lb_mk82",
+            "reqModification": "us_500lb_mk82_ls_6_250",
             "ShowNodes": {
               "node": "bomb_pylon_4"
             },
@@ -2907,7 +3485,7 @@
           {
             "iconType": "bombs_large",
             "name": "mk83",
-            "reqModification": "us_1000lb_mk83",
+            "reqModification": "us_1000lb_mk83_ls_6_500",
             "ShowNodes": {
               "node": "bomb_pylon_4"
             },
@@ -2936,6 +3514,46 @@
               "external": true,
               "separate": true,
               "machLimit": 1.01
+            }
+          },
+          {
+            "iconType": "guided_bomb_middle_jdam",
+            "name": "ls_6_250",
+            "reqModification": "us_500lb_mk82_ls_6_250",
+            "ShowNodes": {
+              "node": "bomb_pylon_4"
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/BombGuns/cn_ls_6_250.blk",
+              "emitter": "250kg_mk_082_004",
+              "bullets": 1,
+              "external": true,
+              "separate": true
+            },
+            "DependentWeaponPreset": {
+              "slot": 4,
+              "preset": "aselpod"
+            }
+          },
+          {
+            "iconType": "guided_bomb_large_jdam",
+            "name": "ls_6_500",
+            "reqModification": "us_1000lb_mk83_ls_6_500",
+            "ShowNodes": {
+              "node": "bomb_pylon_4"
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/BombGuns/cn_ls_6_500.blk",
+              "emitter": "250kg_mk_082_004",
+              "bullets": 1,
+              "external": true,
+              "separate": true
+            },
+            "DependentWeaponPreset": {
+              "slot": 4,
+              "preset": "aselpod"
             }
           },
           {
@@ -3156,7 +3774,6 @@
             "reqModification": "cn_sd10",
             "ShowNodes": {
               "node": [
-                "bomb_pylon_5",
                 "rocket_adapter_002",
                 "aero_4a_005",
                 "aero_4a_006"
@@ -3184,7 +3801,7 @@
           {
             "iconType": "bombs_middle",
             "name": "mk82",
-            "reqModification": "us_500lb_mk82",
+            "reqModification": "us_500lb_mk82_ls_6_250",
             "ShowNodes": {
               "node": "bomb_pylon_5"
             },
@@ -3201,7 +3818,7 @@
           {
             "iconType": "bombs_middle_group_x2",
             "name": "mk82_x2",
-            "reqModification": "us_500lb_mk82",
+            "reqModification": "us_500lb_mk82_ls_6_250",
             "ShowNodes": {
               "node": [
                 "bomb_pylon_5",
@@ -3232,7 +3849,7 @@
           {
             "iconType": "bombs_large",
             "name": "mk83",
-            "reqModification": "us_1000lb_mk83",
+            "reqModification": "us_1000lb_mk83_ls_6_500",
             "ShowNodes": {
               "node": "bomb_pylon_5"
             },
@@ -3244,6 +3861,46 @@
               "external": true,
               "separate": true,
               "machLimit": 1.01
+            }
+          },
+          {
+            "iconType": "guided_bomb_middle_jdam",
+            "name": "ls_6_250",
+            "reqModification": "us_500lb_mk82_ls_6_250",
+            "ShowNodes": {
+              "node": "bomb_pylon_5"
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/BombGuns/cn_ls_6_250.blk",
+              "emitter": "250kg_mk_082_005",
+              "bullets": 1,
+              "external": true,
+              "separate": true
+            },
+            "DependentWeaponPreset": {
+              "slot": 4,
+              "preset": "aselpod"
+            }
+          },
+          {
+            "iconType": "guided_bomb_large_jdam",
+            "name": "ls_6_500",
+            "reqModification": "us_1000lb_mk83_ls_6_500",
+            "ShowNodes": {
+              "node": "bomb_pylon_5"
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/BombGuns/cn_ls_6_500.blk",
+              "emitter": "250kg_mk_082_005",
+              "bullets": 1,
+              "external": true,
+              "separate": true
+            },
+            "DependentWeaponPreset": {
+              "slot": 4,
+              "preset": "aselpod"
             }
           },
           {
@@ -3698,18 +4355,18 @@
       "modClass": "weapon",
       "tier": 2
     },
-    "us_500lb_mk82": {
+    "us_500lb_mk82_ls_6_250": {
       "modClass": "weapon",
       "tier": 3
     },
-    "us_1000lb_mk83": {
-      "reqModification": "us_500lb_mk82",
+    "us_1000lb_mk83_ls_6_500": {
+      "reqModification": "us_500lb_mk82_ls_6_250",
       "modClass": "weapon",
       "tier": 4
     },
     "us_2000lb_mk84": {
       "prevModification": "cn_sd10",
-      "reqModification": "us_1000lb_mk83",
+      "reqModification": "us_1000lb_mk83_ls_6_500",
       "modClass": "weapon",
       "tier": 4
     },

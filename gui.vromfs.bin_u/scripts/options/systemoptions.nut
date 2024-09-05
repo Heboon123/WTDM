@@ -146,6 +146,7 @@ local mUiStruct = [
       "lenseFlares"
       "alpha_to_coverage"
       "jpegShots"
+      "hiResShots"
       "compatibilityMode"
       "enableHdr"
       "enableVr"
@@ -427,12 +428,18 @@ function getAvailableAmdFsrModes() {
 function getAvailableDlssModes() {
   let values = ["off"]
   let selectedResolution = parseResolution(getGuiValue("resolution", "auto"))
-  if (is_dlss_quality_available_at_resolution(0, selectedResolution.w, selectedResolution.h))
-    values.append("performance")
-  if (is_dlss_quality_available_at_resolution(1, selectedResolution.w, selectedResolution.h))
-    values.append("balanced")
+  if (is_dlss_quality_available_at_resolution(5, selectedResolution.w, selectedResolution.h))
+    values.append("dlaa")
+  if (is_dlss_quality_available_at_resolution(4, selectedResolution.w, selectedResolution.h))
+    values.append("ultra_quality")
   if (is_dlss_quality_available_at_resolution(2, selectedResolution.w, selectedResolution.h))
     values.append("quality")
+  if (is_dlss_quality_available_at_resolution(1, selectedResolution.w, selectedResolution.h))
+    values.append("balanced")
+  if (is_dlss_quality_available_at_resolution(0, selectedResolution.w, selectedResolution.h))
+    values.append("performance")
+  if (is_dlss_quality_available_at_resolution(3, selectedResolution.w, selectedResolution.h))
+    values.append("ultra_performance")
 
   return values;
 }
@@ -931,11 +938,11 @@ mSettings = {
       return getBlkValueByPath(blk, desc.blk, -1)
     }
     setGuiValueToConfig = function(blk, desc, val) {
-      let quality = (val == "performance") ? 0 : (val == "balanced") ? 1 : (val == "quality") ? 2 : -1
+      let quality = (val == "performance") ? 0 : (val == "balanced") ? 1 : (val == "quality") ? 2 : (val == "ultra_performance") ? 3 : (val == "ultra_quality") ? 4 : (val == "dlaa") ? 5 : -1
       setBlkValueByPath(blk, desc.blk, quality)
     }
     configValueToGuiValue = function(val) {
-      return (val == 0) ? "performance" : (val == 1) ? "balanced" : (val == 2) ? "quality" : "off"
+      return (val == 0) ? "performance" : (val == 1) ? "balanced" : (val == 2) ? "quality" : (val == 3) ? "ultra_performance" : (val == 4) ? "ultra_quality" : (val == 5) ? "dlaa" : "off"
     }
   }
   dlssSharpness = { widgetType = "slider" def = 0 min = 0 max = 100 blk = "video/dlssSharpness" restart = false
@@ -977,7 +984,7 @@ mSettings = {
   }
     onChanged = "antiAliasingClick"
     values = [ "none", "fxaa", "high_fxaa", "low_taa"]
-    enabled = @() !getGuiValue("compatibilityMode") && getGuiValue("dlss", "off") == "off" && getGuiValue("xess", "off") == "off"
+    enabled = @() !getGuiValue("compatibilityMode") && getGuiValue("dlss", "off") == "off" && getGuiValue("xess", "off") == "off" && getGuiValue("amdfsr", "off") == "off"
   }
   taau_ratio = { widgetType = "slider" def = 100 min = 50 max = 100 blk = "video/temporalResolutionScale" restart = false
     enabled = @() !getGuiValue("compatibilityMode")
@@ -1187,6 +1194,7 @@ mSettings = {
   lenseFlares = { widgetType = "checkbox" def = false blk = "graphics/lenseFlares" restart = false
   }
   jpegShots = { widgetType = "checkbox" def = true blk = "debug/screenshotAsJpeg" restart = false }
+  hiResShots = { widgetType = "checkbox" def = false blk = "debug/screenshotHiRes" restart = false enabled = @() getGuiValue("ssaa") == "4X" }
   compatibilityMode = { widgetType = "checkbox" def = false blk = "video/compatibilityMode" restart = true
     onChanged = "compatibilityModeClick"
   }

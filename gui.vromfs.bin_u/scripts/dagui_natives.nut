@@ -1,4 +1,6 @@
 //pseudo-module for native code
+//ATTENTION! This file cannot be increased. Need to remove functions from root of dagui VM, not add them.
+//shouldDecreaseSize, allowedSizeIncrease = 5
 
 let r = getroottable()
 
@@ -373,6 +375,7 @@ return freeze({
   get_option_depthcharge_activation_time = r["get_option_depthcharge_activation_time"]
   get_option_favorite_voice_message = r["get_option_favorite_voice_message"]
   get_option_gamma = r["get_option_gamma"]
+  get_option_console_preset = r["get_option_console_preset"]
   get_option_grass_in_tank_vision = r["get_option_grass_in_tank_vision"]
   get_option_ground_radar_target_cycling = r["get_option_ground_radar_target_cycling"]
   get_option_gunVerticalTargeting = r["get_option_gunVerticalTargeting"]
@@ -635,6 +638,7 @@ return freeze({
   set_option_depthcharge_activation_time = r["set_option_depthcharge_activation_time"]
   set_option_favorite_voice_message = r["set_option_favorite_voice_message"]
   set_option_gamma = r["set_option_gamma"]
+  set_option_console_preset = r["set_option_console_preset"]
   set_option_grass_in_tank_vision = r["set_option_grass_in_tank_vision"]
   set_option_ground_radar_target_cycling = r["set_option_ground_radar_target_cycling"]
   set_option_gunVerticalTargeting = r["set_option_gunVerticalTargeting"]
