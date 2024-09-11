@@ -23,9 +23,9 @@ let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 local switch_damage = false
 local allow_cutting = false
 local explosionTest = false
-local testProjectileProps = false
 
 const CB_VERTICAL_ANGLE = "protectionAnalysis/cbVerticalAngleValue"
+const CB_TEST_PROJECTILE = "protectionAnalysis/cbTestProjectileValue"
 
 let helpHintsParams = [
   {hintName = "hint_filter_edit_box", objName = "filter_edit_box", shiftX = "- 1@bw", shiftY = "- 1@bh -h - 1.5@helpInterval"}
@@ -85,7 +85,6 @@ gui_handlers.ProtectionAnalysis <- class (gui_handlers.BaseGuiHandlerWT) {
     switch_damage = true //value is off by default it will be changed in AllowSimulation
     allow_cutting = false
     explosionTest = false
-    testProjectileProps = false
 
     this.scene.findObject("checkboxSaveChoice").setValue(protectionAnalysisOptions.isSaved)
 
@@ -100,6 +99,13 @@ gui_handlers.ProtectionAnalysis <- class (gui_handlers.BaseGuiHandlerWT) {
       cbVerticalAngleObj.setValue(value)
       if (!value) //Need change because y_nulling value is true by default
         set_protection_map_y_nulling(!value)
+    }
+
+    let cbTestProjectileObj = showObjById("checkboxTestProjectileProps", true)
+    if (cbTestProjectileObj?.isValid()) {
+      let testProjectileProps = loadLocalAccountSettings(CB_TEST_PROJECTILE, false)
+      cbTestProjectileObj.setValue(testProjectileProps)
+      set_test_projectile_props(testProjectileProps)
     }
 
     let isSimulationEnabled = this.unit?.unitType.canShowVisualEffectInProtectionAnalysis() ?? false
@@ -166,8 +172,9 @@ gui_handlers.ProtectionAnalysis <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function onTestProjectileProps(sObj) {
     if (checkObj(sObj)) {
-      testProjectileProps = !testProjectileProps
-      set_test_projectile_props(testProjectileProps)
+      let value = sObj.getValue()
+      set_test_projectile_props(value)
+      saveLocalAccountSettings(CB_TEST_PROJECTILE, value)
     }
   }
 
