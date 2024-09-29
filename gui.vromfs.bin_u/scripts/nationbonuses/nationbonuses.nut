@@ -37,7 +37,7 @@ function getUnitsWithNationBonuses() {
     let currentMaxRank = maxRanks[shopCountry]?[unitType.armyId] ?? 0
     maxRanks[shopCountry][unitType.armyId] <- max(currentMaxRank, rank)
 
-    if(!::isUnitInResearch(unit))
+    if(!::isUnitInResearch(unit) || unit.isRecentlyReleased())
       continue
 
     let countryBonusesData = getBonusesCountryData(shopCountry)
@@ -59,9 +59,6 @@ function getUnitsWithNationBonuses() {
   }
   return unitsWithBonusData
 }
-
-let hasNationBonus = @(country, armyId) getUnitsWithNationBonuses().units
-  .findindex(@(item) item.unit.shopCountry == country && item.unit.unitType.armyId == armyId) != null
 
 function loadNationBonusMarksState() {
   nationBonusMarkState = convertBlk(loadLocalAccountSettings("nationBonusMarkState", DataBlock()))
@@ -99,7 +96,6 @@ addListenersWithoutEnv({
 
 return {
   getUnitsWithNationBonuses
-  hasNationBonus
   getNationBonusMarkState
   setNationBonusMarkState
 }

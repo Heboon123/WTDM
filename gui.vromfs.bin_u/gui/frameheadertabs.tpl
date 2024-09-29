@@ -47,20 +47,18 @@ shopFilter {
     text:t='<<tabName>>'
   }
 
-  infoMarker {
-    id:t='remainingPageMarker'
-    type:t='remainingTimeMarker'
-    place:t='inTab'
-    countryId:t='<<countryId>>'
-    armyId:t='<<armyId>>'
-    value:t='{"viewId": "SHOP_PAGES_REMAINING_TIME_UNIT"}'
-  }
-
   <<#seenIconCfg>>
   infoMarker {
     type:t='unlockMarker'
     place:t='inTab'
     value:t='<<seenIconCfg>>'
+    tooltip:t='$tooltipObj'
+    tooltipObj {
+      tooltipId:t='{"id":"unlockMarker", "ttype":"UNLOCK_MARKER", "countryId": "<<countryId>>", "armyId": "<<armyId>>"}'
+      on_tooltip_open:t='onGenericTooltipOpen'
+      on_tooltip_close:t='onTooltipObjClose'
+      display:t='hide'
+    }
   }
   <</seenIconCfg>>
 
@@ -80,13 +78,35 @@ shopFilter {
     }
   }
 
+  infoMarker {
+    id:t='remainingPageMarker'
+    type:t='remainingTimeMarker'
+    place:t='inTab'
+    countryId:t='<<countryId>>'
+    armyId:t='<<armyId>>'
+    value:t='{"viewId": "SHOP_PAGES_REMAINING_TIME_UNIT"}'
+    tooltip:t='$tooltipObj'
+    tooltipObj {
+      tooltipId:t='{"id":"remainingTimeUnit", "ttype":"REMAINING_TIME_UNIT", "countryId": "<<countryId>>", "armyId": "<<armyId>>"}'
+      on_tooltip_open:t='onGenericTooltipOpen'
+      on_tooltip_close:t='onTooltipObjClose'
+      display:t='hide'
+    }
+  }
+
   <<#discount>>
   infoMarker {
     type:t='discountNotificationMarker'
     place:t='inTab'
     id:t='<<#discountId>><<discountId>><</discountId>><<^discountId>><<id>>_discount<</discountId>>'
     text:t='<<text>>'
-    tooltip:t='<<tooltip>>'
+    tooltip:t='$tooltipObj'
+    tooltipObj {
+      tooltipId:t='{"id":"discountsMarker", "ttype":"DISCOUNTS", "countryId": "<<countryId>>", "armyId": "<<armyId>>"}'
+      on_tooltip_open:t='onGenericTooltipOpen'
+      on_tooltip_close:t='onTooltipObjClose'
+      display:t='hide'
+    }
   }
  <</discount>>
 

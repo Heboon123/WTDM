@@ -7,7 +7,13 @@ let elemViewType = require("%sqDagui/elemUpdater/elemViewType.nut")
 let { topMenuShopActive } = require("%scripts/mainmenu/topMenuStates.nut")
 let { promoteUnits } = require("%scripts/unit/remainingTimeUnit.nut")
 let { isUnitSpecial } = require("%appGlobals/ranks_common_shared.nut")
-let { isUnitGift } = require("%scripts/unit/unitInfo.nut")
+let { isUnitGift, getUnitName, getUnitCountryIcon } = require("%scripts/unit/unitInfo.nut")
+let { addTooltipTypes } = require("%scripts/utils/genericTooltipTypes.nut")
+let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let { getSortedUnits, createMoreText
+  maxElementsInSimpleTooltip } = require("%scripts/markers/markerTooltipUtils.nut")
+let { getUnitClassIco } = require("%scripts/unit/unitInfoTexts.nut")
+let { buildTimeTextValue } = require("%scripts/markers/markerUtils.nut")
 
 elemModelType.addTypes({
   REMAINING_TIME_UNIT = {
@@ -15,13 +21,10 @@ elemModelType.addTypes({
       subscribe_handler(this, g_listener_priority.DEFAULT_HANDLER)
     }
 
-    isVisible = @() promoteUnits.value.findvalue(@(d) d.isActive) != null
-
-    getTooltip = @() loc("mainmenu/promoteUnit")
+    isVisible = @() promoteUnits.get().findvalue(@(d) d.isActive) != null
 
     onEventShopWndSwitched = @(_p) this.notify([])
     onEventPromoteUnitsChanged = @(_p) this.notify([])
-    onEventDiscountsDataUpdated = @(_p) this.notify([])
   }
 })
 
@@ -34,7 +37,6 @@ elemViewType.addTypes({
       obj.show(isVisible)
       if (!isVisible)
         return
-      obj.tooltip = loc("mainmenu/promoteUnit")
     }
   }
 
@@ -49,12 +51,10 @@ elemViewType.addTypes({
       }
 
       let countryId = obj.countryId
-      let havePromoteUnitCountry = promoteUnits.value.findvalue(@(u) u.unit.shopCountry == countryId) != null
+      let havePromoteUnitCountry = promoteUnits.get().findvalue(@(u) u.unit.shopCountry == countryId) != null
       obj.show(havePromoteUnitCountry)
       if (!havePromoteUnitCountry)
         return
-
-      obj.tooltip = loc("mainmenu/promoteUnit")
     }
   }
 
@@ -68,10 +68,9 @@ elemViewType.addTypes({
         return
       }
 
-      foreach (promUnit in promoteUnits.value) {
+      foreach (promUnit in promoteUnits.get()) {
         if (promUnit.unit.shopCountry == obj.countryId && promUnit.unit.unitType.armyId == obj.armyId) {
           obj.show(true)
-          obj.tooltip = loc("mainmenu/promoteUnit")
           return
         }
       }
@@ -124,8 +123,68 @@ elemViewType.addTypes({
     model = elemModelType.REMAINING_TIME_UNIT
 
     function updateView(obj, params) {
-      obj.show(promoteUnits.value?[params?.unitName].isActive)
+      obj.show(promoteUnits.get()?[params?.unitName].isActive)
       obj.tooltip = loc("mainmenu/promoteUnit")
+    }
+  }
+})
+
+addTooltipTypes({
+  REMAINING_TIME_UNIT = {
+    isCustomTooltipFill = true
+
+    updateTimeLeft = function(timer, _dt) {
+      let unitsCount = timer.unitsCount.tointeger()
+      let parent = timer.getParent()
+      for (local i = 1; i <= unitsCount; i++) {
+        let valueObj = parent.findObject($"id_{i}")
+        if (valueObj == null)
+          continue
+        valueObj.setValue(buildTimeTextValue(valueObj.endDate))
+      }
+    }
+
+    fillTooltip = function(obj, handler, _id, params) {
+      if (obj.getParent()?["stacked"] == "yes")
+        return false
+      local idCounter = 0
+      let { countryId = "", armyId = "" } = params
+      let units = getSortedUnits(promoteUnits.get().values())
+      local remainingUnits = countryId == "" ? units : units.filter(@(val) val.unit.shopCountry == countryId)
+      remainingUnits = armyId == "" ? remainingUnits : remainingUnits.filter(@(val) val.unit.unitType.armyId == armyId)
+      remainingUnits = remainingUnits
+      .map(function(val, idx) {
+        idCounter++
+        return {
+          hasCountry = countryId == ""
+          countryIcon = getUnitCountryIcon(val.unit)
+          isWideIco = val.unit.unitType.isWideUnitIco
+          unitTypeIco = getUnitClassIco(val.unit)
+          unitName = getUnitName(val.unit.name, true)
+          value = buildTimeTextValue(val.timeEnd)
+          endDate = val.timeEnd
+          id = $"id_{idCounter}"
+          even = idx % 2 == 0
+        }
+      })
+
+      let unitsCount = min(remainingUnits.len(), maxElementsInSimpleTooltip)
+      let view = {
+        header = "#mainmenu/promoteUnit"
+        isTooltipWide = true
+        units = remainingUnits.slice(0, maxElementsInSimpleTooltip)
+        hasMoreVehicles = remainingUnits.len() > maxElementsInSimpleTooltip
+        moreVehicles = createMoreText(remainingUnits.len() - maxElementsInSimpleTooltip)
+      }
+      let data = handyman.renderCached("%gui/markers/markersTooltipSimple.tpl", {
+        blocks = [view]
+        isTooltipWide = true
+        needTimer = true
+        unitsCount
+      })
+      obj.getScene().replaceContentFromText(obj, data, data.len(), handler)
+      obj.findObject("timeLeftTimer").setUserData(this)
+      return true
     }
   }
 })
