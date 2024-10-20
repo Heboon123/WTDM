@@ -579,11 +579,15 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     let skinDecorator = this.skinList?.decorators[skinIndex]
     let curUserSkin = getCurUserSkin()
 
-    let needDisableEditing = skinDecorator?.blk.needDisableEditing ?? false
+    let isMarketSkin = skinDecorator?.getCouponItemdefId() ?? false
+    let needDisableEditing = skinDecorator?.blk.needDisableEditing
+    let canAlterSkin = !(needDisableEditing ?? isMarketSkin)
+
     let have_premium = havePremium.value
     let hasSkinCondition = curUserSkin?.condition != null
-    let canScale = curUserSkin?.scale == null && skinDecorator?.getCouponItemdefId() == null && !needDisableEditing
-    let canRotate = curUserSkin?.rotation == null && skinDecorator?.getCouponItemdefId() == null && !needDisableEditing
+
+    let canScale = curUserSkin?.scale == null && canAlterSkin
+    let canRotate = curUserSkin?.rotation == null && canAlterSkin
     let canChangeCondition = have_premium && !hasSkinCondition && !needDisableEditing
 
     local option = null
@@ -1683,7 +1687,7 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     let skinNum = obj.getValue()
     if (!this.skinList || !(skinNum in this.skinList.values)) {
       debug_dump_stack()
-      assert(false, "Error: try to set incorrect skin " + this.skinList + ", value = " + skinNum)
+      assert(false, $"Error: try to set incorrect skin {this.skinList}, value = {skinNum}")
       return
     }
 
