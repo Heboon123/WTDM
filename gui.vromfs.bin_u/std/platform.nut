@@ -78,6 +78,7 @@ return {
   is_xbox_anaconda = isModel(platform.XBOX_ANACONDA)
   is_ps4_simple = oneOf("ps4") && isModel(platform.PS4)
   is_ps4_pro = oneOf("ps4") && isModel(platform.PS4_PRO)
+  is_ps5_pro = oneOf("ps5") && isModel(platform.PS5_PRO)
   is_console
   aliases
   SCE_REGION
