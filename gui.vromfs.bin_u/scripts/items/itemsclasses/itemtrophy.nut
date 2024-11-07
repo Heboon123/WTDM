@@ -1,7 +1,6 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import char_send_blk, get_trophy_info, wp_get_trophy_cost, wp_get_trophy_cost_gold
 from "%scripts/dagui_library.nut" import *
-from "%scripts/items/itemsConsts.nut" import itemType
+from "%scripts/items/itemsConsts.nut" import *
 
 let { isHandlerInScene, handlersManager } = require("%sqDagui/framework/baseGuiHandlerManager.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -9,7 +8,7 @@ let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
 let { Cost } = require("%scripts/money.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let DataBlock  = require("DataBlock")
-let { getPrizeChanceLegendMarkup } = require("%scripts/items/prizeChance.nut")
+let { getPrizeChanceLegendMarkup, getTrophyChancesData, isTrophyChancesCalculated } = require("%scripts/items/prizeChance.nut")
 let { hoursToString, secondsToHours, getTimestampFromStringUtc, calculateCorrectTimePeriodYears,
   TIME_DAY_IN_SECONDS, TIME_WEEK_IN_SECONDS } = require("%scripts/time.nut")
 let { getLocIdsArray } = require("%scripts/langUtils/localization.nut")
@@ -17,6 +16,36 @@ let { get_charserver_time_sec } = require("chard")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
 let { BaseItem } = require("%scripts/items/itemsClasses/itemsBase.nut")
+let { roundToDigits } = require("%sqstd/math.nut")
+
+function fillContentRaw(contentRaw, blksArray) {
+  foreach (datablock in blksArray) {
+    let addContent = (datablock % "d").map(function(item) {
+      let prize = DataBlock()
+      prize.setFrom(item)
+      prize.availableIfAllPrizesReceived = true
+      return prize
+    })
+
+    let content = (datablock % "i").extend(addContent)
+    foreach (p in content) {
+      let prize = DataBlock()
+      prize.setFrom(p)
+
+      let needMultiAwardInfo = p?.ranksRange != null && p?.resourceType != null && p.blockCount() == 0
+      if (needMultiAwardInfo) {
+        prize["multiAwardsOnWorthGold"] = 0
+        prize.addBlock(p.resourceType).setFrom(p)
+      }
+
+      contentRaw.append(prize)
+    }
+  }
+}
+
+let oneHundredPercentFloat = 100.0
+
+let findItemById = @(id) ::ItemsManager.findItemById(id)
 
 let Trophy = class (BaseItem) {
   static iType = itemType.TROPHY
@@ -47,6 +76,7 @@ let Trophy = class (BaseItem) {
   groupTrophyStyle = ""
   numTotal = -1
   showDropChance = false
+  showChances = false
   showTillValue = false
   showNameAsSingleAward = false
   isCrossPromo = false
@@ -56,7 +86,6 @@ let Trophy = class (BaseItem) {
 
   constructor(blk, invBlk = null, slotData = null) {
     base.constructor(blk, invBlk, slotData)
-
     this.subtrophyShowAsPack = blk?.subtrophyShowAsPack
     this.showTypeInName = blk?.showTypeInName
     this.showRangePrize = blk?.showRangePrize ?? false
@@ -67,6 +96,7 @@ let Trophy = class (BaseItem) {
     this.groupTrophyStyle = blk?.groupTrophyStyle ?? this.iconStyle
     this.openingCaptionLocId = blk?.captionLocId
     this.showDropChance = blk?.showDropChance ?? false
+    this.showChances = blk?.showChances || false
     this.showTillValue = blk?.showTillValue ?? false
     this.showNameAsSingleAward = blk?.showNameAsSingleAward ?? false
     this.isCrossPromo = blk?.isCrossPromo
@@ -84,28 +114,7 @@ let Trophy = class (BaseItem) {
       blksArray.insert(0, blk.prizes) //if prizes block exist, it's content must be shown in the first place
 
     this.contentRaw = []
-    foreach (datablock in blksArray) {
-      let addContent = (datablock % "d").map(function(item) {
-        let prize = DataBlock()
-        prize.setFrom(item)
-        prize.availableIfAllPrizesReceived = true
-        return prize
-      })
-
-      let content = (datablock % "i").extend(addContent)
-      foreach (p in content) {
-        let prize = DataBlock()
-        prize.setFrom(p)
-
-        let needMultiAwardInfo = p?.ranksRange != null && p?.resourceType != null && p.blockCount() == 0
-        if (needMultiAwardInfo) {
-          prize["multiAwardsOnWorthGold"] = 0
-          prize.addBlock(p.resourceType).setFrom(p)
-        }
-
-        this.contentRaw.append(prize)
-      }
-    }
+    fillContentRaw(this.contentRaw, blksArray)
   }
 
   hasLifetime = @() this.beginDate != null
@@ -200,7 +209,7 @@ let Trophy = class (BaseItem) {
       log($"id = {this.id}")
       debugTableData(recursionUsedIds)
       script_net_assert_once("trophy recursion",
-                               $"Infinite recursion detected in trophy: {this.id}. Array " + toString(recursionUsedIds))
+        $"Infinite recursion detected in trophy: {this.id}. Array {toString(recursionUsedIds)}")
       return null
     }
 
@@ -212,7 +221,7 @@ let Trophy = class (BaseItem) {
         continue
       }
 
-      let subTrophy = ::ItemsManager.findItemById(i?.trophy)
+      let subTrophy = findItemById(i?.trophy)
       let countMul = i?.count ?? 1
       if (subTrophy) {
         if (getTblValue("subtrophyShowAsPack", subTrophy) || !useRecursion)
@@ -225,7 +234,6 @@ let Trophy = class (BaseItem) {
 
             if (countMul != 1)
               si.count = (si?.count ?? 1) * countMul
-
             content.append(si)
           }
         }
@@ -235,9 +243,79 @@ let Trophy = class (BaseItem) {
     return content
   }
 
-  function getContent(recursionUsedIds = []) {
-    if (!this.contentUnpacked.len())
-      this.contentUnpacked = this._unpackContent(recursionUsedIds)
+  function _unpackContentWithChances(recursionUsedIds, useRecursion = true, openCount = 0) {
+    if (isInArray(this.id, recursionUsedIds)) {
+      log($"id = {this.id}")
+      debugTableData(recursionUsedIds)
+      script_net_assert_once("trophy recursion",
+        $"Infinite recursion detected in trophy: {this.id}. Array {toString(recursionUsedIds)}")
+      return null
+    }
+
+    recursionUsedIds.append(this.id)
+
+    let blkWithChances = getTrophyChancesData(this.id, { prevOpencount = openCount })
+    if (!blkWithChances) {
+      logerr($"Didn't found trophie's prize chances for id = {this.id}")
+      return null
+    }
+    let blksArray = [blkWithChances]
+    if (u.isDataBlock(blkWithChances?.prizes))
+      blksArray.insert(0, blkWithChances.prizes)
+
+    let contentRawWithPrize = []
+    fillContentRaw(contentRawWithPrize, blksArray)
+
+    let contentWithChances = []
+    foreach (i in contentRawWithPrize) {
+      let percentStr = $"{roundToDigits((i?.percent ?? 0) / oneHundredPercentFloat, 3)}%"
+      if (i?.percent != null && i.percent >= 0)
+        i.percentStr = percentStr
+      if (!i?.trophy || i?.showAsPack) {
+        contentWithChances.append(i)
+        continue
+      }
+
+      let trophyPercent = (i?.percent ?? 0) / oneHundredPercentFloat
+      let subTrophy = findItemById(i?.trophy)
+      let countMul = i?.count ?? 1
+      if (subTrophy) {
+        if (getTblValue("subtrophyShowAsPack", subTrophy) || !useRecursion)
+          contentWithChances.append(i)
+        else {
+          let subContent = subTrophy.getContent(recursionUsedIds, true)
+          foreach (sc in subContent) {
+            let si = DataBlock()
+            si.setFrom(sc)
+
+            if (countMul != 1)
+              si.count = (si?.count ?? 1) * countMul
+
+            if (si?.percent != null && si.percent >= 0) {
+              let siPercent = si.percent / oneHundredPercentFloat
+              let siPercentStr = roundToDigits(trophyPercent * siPercent / oneHundredPercentFloat , 3)
+              si.percentStr = $"{siPercentStr}%"
+            }
+            contentWithChances.append(si)
+          }
+        }
+      }
+    }
+    recursionUsedIds.pop()
+    return contentWithChances
+  }
+
+  function getContent(recursionUsedIds = [], showChances = null) {
+    showChances = showChances ?? this.showChances
+    if (!showChances) {
+      if (!this.contentUnpacked.len())
+        this.contentUnpacked = this._unpackContent(recursionUsedIds)
+      return this.contentUnpacked
+    }
+
+    let openCount = get_trophy_info(this.id)?.openCount ?? 0
+    if (!isTrophyChancesCalculated(this.id, openCount))
+      this.contentUnpacked = this._unpackContentWithChances(recursionUsedIds, true, openCount)
     return this.contentUnpacked
   }
 
@@ -250,7 +328,7 @@ let Trophy = class (BaseItem) {
       log($"id = {this.id}")
       debugTableData(recursionUsedIds)
       script_net_assert_once("trophy recursion",
-                               $"Infinite recursion detected in trophy: {this.id}. Array " + toString(recursionUsedIds))
+        $"Infinite recursion detected in trophy: {this.id}. Array {toString(recursionUsedIds)}")
       return
     }
 
@@ -261,7 +339,7 @@ let Trophy = class (BaseItem) {
         continue
 
       if (prize?.trophy) {
-        let subTrophy = ::ItemsManager.findItemById(prize.trophy)
+        let subTrophy = findItemById(prize.trophy)
         topPrizeBlk = subTrophy ? subTrophy.getTopPrize(recursionUsedIds) : null
       }
       else {
@@ -309,15 +387,15 @@ let Trophy = class (BaseItem) {
   }
 
   function getBigIcon() {
-    return this.getTrophyImage(this.getUsingStyle() + "_big")
+    return this.getTrophyImage($"{this.getUsingStyle()}_big")
   }
 
   function getOpenedIcon() {
-    return this.getTrophyImage(this.getUsingStyle() + "_opened")
+    return this.getTrophyImage($"{this.getUsingStyle()}_opened")
   }
 
   function getOpenedBigIcon() {
-    return this.getTrophyImage(this.getUsingStyle() + "_opened_big")
+    return this.getTrophyImage($"{this.getUsingStyle()}_opened_big")
   }
 
   function getName(colored = true) {
@@ -345,7 +423,7 @@ let Trophy = class (BaseItem) {
 
       local comment = prizeTypeName.len() ? loc("ui/parentheses/space", { text = prizeTypeName }) : ""
       comment = colored ? colorize("commonTextColor", comment) : comment
-      name += comment
+      name = $"{name}{comment}"
     }
     return name
   }
@@ -368,7 +446,8 @@ let Trophy = class (BaseItem) {
     params = params || {}
     params.showAsTrophyContent <- true
     params.receivedPrizes <- false
-    params.needShowDropChance <- this.needShowDropChance()
+    params.dropChanceType <- this.getDropChanceType()
+    params.needShowChance <- this.showChances && !params?.needHideChances
 
     let prizesList = this.getContent()
     let mainPrizes = prizesList.filter(@(prize) !prize?.availableIfAllPrizesReceived)
@@ -455,10 +534,20 @@ let Trophy = class (BaseItem) {
   function getHiddenTopPrizeParams() { return null }
   function isHiddenTopPrize(_prize) { return false }
 
-  needShowDropChance = @() hasFeature("ShowDropChanceInTrophy") && this.showDropChance
+  function needShowTextChances() {
+    return this.showChances
+  }
+
+  function getDropChanceType() {
+    if (this.needShowTextChances())
+      return CHANCE_VIEW_TYPE.TEXT
+    if (hasFeature("ShowDropChanceInTrophy") && this.showDropChance)
+     return CHANCE_VIEW_TYPE.ICON
+    return CHANCE_VIEW_TYPE.NONE
+  }
 
   function getTableData() {
-    if (!this.needShowDropChance())
+    if (this.getDropChanceType() != CHANCE_VIEW_TYPE.ICON)
       return null
 
     let markup = getPrizeChanceLegendMarkup()

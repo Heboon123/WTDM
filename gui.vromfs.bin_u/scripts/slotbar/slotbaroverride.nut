@@ -1,12 +1,15 @@
 from "%scripts/dagui_natives.nut" import is_country_available
 from "%scripts/dagui_library.nut" import *
+
+let { getGlobalModule } = require("%scripts/global_modules.nut")
+let events = getGlobalModule("events")
 let { isDataBlock, isEmpty, isEqual } = require("%sqStdLibs/helpers/u.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { switchProfileCountry, profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { getUrlOrFileMissionMetaInfo, isMissionExtrByName } = require("%scripts/missions/missionsUtils.nut")
 let { needShowOverrideSlotbar } = require("%scripts/events/eventInfo.nut")
-let { isRequireUnlockForUnit } = require("%scripts/unit/unitInfo.nut")
+let { isRequireUnlockForUnit } = require("%scripts/unit/unitStatus.nut")
 let { hardPersistWatched } = require("%sqstd/globalState.nut")
 
 let overrrideSlotbarMissionName = mkWatched(persist, "overrrideSlotbarMissionName", "") //recalc slotbar only on mission change
@@ -129,7 +132,7 @@ function getEventSlotbarHint(event, country) {
   if (!needShowOverrideSlotbar(event))
     return ""
 
-  let overrideSlotbarData = getSlotbarOverrideData(::events.getEventMission(event.name), event)
+  let overrideSlotbarData = getSlotbarOverrideData(events.getEventMission(event.name), event)
   if ((overrideSlotbarData?.len() ?? 0) == 0)
     return ""
 

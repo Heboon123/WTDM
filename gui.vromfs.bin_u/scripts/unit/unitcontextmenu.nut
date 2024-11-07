@@ -21,21 +21,23 @@ let { getBundleId } = require("%scripts/onlineShop/onlineBundles.nut")
 let { openUrl } = require("%scripts/onlineShop/url.nut")
 let weaponryPresetsWnd = require("%scripts/weaponry/weaponryPresetsWnd.nut")
 let { checkUnitWeapons, checkUnitSecondaryWeapons,
-        needSecondaryWeaponsWnd } = require("%scripts/weaponry/weaponryInfo.nut")
-let { canBuyNotResearched, isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitStatus.nut")
+  needSecondaryWeaponsWnd } = require("%scripts/weaponry/weaponryInfo.nut")
+let { canBuyNotResearched, isUnitInSlotbar, canResearchUnit, isUnitInResearch,
+  isUnitDescriptionValid, isUnitUsable
+} = require("%scripts/unit/unitStatus.nut")
+let { isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitWeaponryInfo.nut")
 let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 let { getUnlockIdByUnitName, hasMarkerByUnitName } = require("%scripts/unlocks/unlockMarkers.nut")
 let { KWARG_NON_STRICT } = require("%sqstd/functools.nut")
 let openCrossPromoWnd = require("%scripts/openCrossPromoWnd.nut")
-let {
-  getEsUnitType, getUnitName, getUnitCountry, isUnitGift, canResearchUnit, canBuyUnit
-} = require("%scripts/unit/unitInfo.nut")
+let { getEsUnitType, getUnitName, getUnitCountry, getUnitReqExp,
+  getUnitExp, getUnitCost } = require("%scripts/unit/unitInfo.nut")
+let { canBuyUnit, isUnitGift } = require("%scripts/unit/unitShopInfo.nut")
 let { checkSquadUnreadyAndDo } = require("%scripts/squads/squadUtils.nut")
 let { needShowUnseenNightBattlesForUnit } = require("%scripts/events/nightBattlesStates.nut")
 let { needShowUnseenModTutorialForUnit } = require("%scripts/missions/modificationTutorial.nut")
 let { showUnitGoods } = require("%scripts/onlineShop/onlineShopModel.nut")
 let takeUnitInSlotbar = require("%scripts/unit/takeUnitInSlotbar.nut")
-let { getCrewByAir, isUnitInSlotbar } = require("%scripts/slotbar/slotbarState.nut")
 let { findItemById } = require("%scripts/items/itemsManager.nut")
 let { gui_start_decals } = require("%scripts/customization/contentPreview.nut")
 let { guiStartTestflight } = require("%scripts/missionBuilder/testFlightState.nut")
@@ -48,6 +50,7 @@ let { getCurCircuitOverride } = require("%appGlobals/curCircuitOverride.nut")
 let { getUnitCoupon, hasUnitCoupon } = require("%scripts/items/unitCoupons.nut")
 let { getMaxWeaponryDiscountByUnitName } = require("%scripts/discounts/discountUtils.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
+let { getCrewByAir } = require("%scripts/crew/crewInfo.nut")
 
 let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = null, curEdiff = -1,
   isSlotbarEnabled = true, setResearchManually = null, needChosenResearchOfSquadron = false,
@@ -199,14 +202,14 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
       let isGift   = isUnitGift(unit)
       local canBuyOnline = ::canBuyUnitOnline(unit)
       let canBuyNotResearchedUnit = canBuyNotResearched(unit)
-      let canBuyAfterPrevUnit = !::isUnitUsable(unit) && !::canBuyUnitOnMarketplace(unit)
+      let canBuyAfterPrevUnit = !isUnitUsable(unit) && !::canBuyUnitOnMarketplace(unit)
         && (isSpecial || ::isUnitResearched(unit))
       let canBuyIngame = !canBuyOnline && (canBuyUnit(unit) || canBuyNotResearchedUnit || canBuyAfterPrevUnit)
       local forceShowBuyButton = false
       local priceText = ""
 
       if (canBuyIngame) {
-        let price = canBuyNotResearchedUnit ? unit.getOpenCost() : ::getUnitCost(unit)
+        let price = canBuyNotResearchedUnit ? unit.getOpenCost() : getUnitCost(unit)
         priceText = price.getTextAccordingToBalance()
         if (priceText.len())
           priceText = "".concat(loc("ui/colon"), priceText)
@@ -248,10 +251,10 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
       if (::isUnitResearched(unit))
         continue
 
-      let isInResearch = ::isUnitInResearch(unit)
+      let isInResearch = isUnitInResearch(unit)
       let isSquadronVehicle = unit.isSquadronVehicle()
       let isInClan = ::is_in_clan()
-      let reqExp = ::getUnitReqExp(unit) - ::getUnitExp(unit)
+      let reqExp = getUnitReqExp(unit) - getUnitExp(unit)
       let squadronExp = min(clan_get_exp(), reqExp)
       let canFlushSquadronExp = hasFeature("ClanVehicles") && isSquadronVehicle
         && squadronExp > 0
@@ -313,7 +316,7 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
     else if (action == "info") {
       actionText = loc("mainmenu/btnAircraftInfo")
       icon       = "#ui/gameuiskin#btn_info.svg"
-      showAction = ::isUnitDescriptionValid(unit)
+      showAction = isUnitDescriptionValid(unit)
       isLink     = hasFeature("WikiUnitInfo")
       actionFunc = function () {
         if (hasFeature("WikiUnitInfo"))

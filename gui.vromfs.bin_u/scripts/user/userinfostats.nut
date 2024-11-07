@@ -19,6 +19,7 @@ let { getUnlocksByTypeInBlkOrder } = require("%scripts/unlocks/unlocksCache.nut"
 let { userName } = require("%scripts/user/profileStates.nut")
 let { ranksPersist, expPerRank, getRankByExp, getPrestigeByRank
 } = require("%scripts/ranks.nut")
+let { isUnitEliteByStatus } = require("%scripts/unit/unitStatus.nut")
 
 let statsFm = ["fighter", "bomber", "assault"]
 let statsTanks = ["tank", "tank_destroyer", "heavy_tank", "SPAA"]
@@ -309,8 +310,9 @@ function buildProfileSummaryRowData(config, summary, diffCode, textId = "") {
     : value.tostring()
 
   let row = [
-    { id = textId, text = $"#{config.name}", tdalign = "left" },
-    { text = s, tooltip = diff.getLocName() }
+    { id = textId, text = $"#{config.name}", tdalign = "left",
+      rawParam = "isTableStatsName:t='yes'", textType = "text" },
+    { text = s, textType = "text", rawParam = "isTableStatsVal:t='yes'" }
   ]
 
   return ::buildTableRowNoPad("", row)
@@ -328,7 +330,7 @@ function fillProfileSummary(sObj, summary, diff) {
       continue
 
     if (item.header)
-      data += ::buildTableRowNoPad("", [$"#{item.name}"], null,
+      data += ::buildTableRowNoPad("", [{ text = $"#{item.name}", textType = "text"}], null,
                   format("headerRow:t='%s'; ", idx ? "yes" : "first"))
     else if (item.separateRowsByFm)
       for (local i = 0; i < statsFm.len(); i++) {
@@ -339,7 +341,7 @@ function fillProfileSummary(sObj, summary, diff) {
           continue
 
         data += row
-        textsToSet[$"txt_{rowId}"] <- loc(item.name) + " (" + loc("mainmenu/type_" + statsFm[i].tolower()) + ")"
+        textsToSet[$"txt_{rowId}"] <- "".concat(loc(item.name), " (", loc($"mainmenu/type_{statsFm[i].tolower()}"), ")")
       }
     else {
       let row = buildProfileSummaryRowData(item, summary, diff)
@@ -385,9 +387,6 @@ function getPlayerStatsFromBlk(blk) {
 
     icon = avatars.getIconById(blk?.icon)
 
-    aircrafts = []
-    crews = []
-
     //stats & leaderboards
     summary = isDataBlock(blk?.summary) ? convertBlk(blk.summary) : {}
     userstat = blk?.userstat ? getAirsStatsFromBlk(blk.userstat) : {}
@@ -422,22 +421,12 @@ function getPlayerStatsFromBlk(blk) {
     if (blk?.aircrafts?[country]) {
       cData.unitsCount = blk.aircrafts[country].paramCount()
       eachParam(blk.aircrafts[country], function(unitEliteStatus) {
-        if (::isUnitEliteByStatus(unitEliteStatus))
+        if (isUnitEliteByStatus(unitEliteStatus))
           cData.eliteUnitsCount++
       })
     }
     player.countryStats[country] <- cData
   }
-
-  //aircrafts list
-  eachBlock(blk?.aircrafts, @(_, airName) player.aircrafts.append(airName))
-
-  //same with getCrewsList()
-  eachBlock(blk?.slots, function(crewBlk, country) {
-    let countryData = { country, crews = [] }
-    eachParam(crewBlk, @(_, aircraft) countryData.crews.append({ aircraft }))
-    player.crews.append(countryData)
-  })
 
   return player
 }

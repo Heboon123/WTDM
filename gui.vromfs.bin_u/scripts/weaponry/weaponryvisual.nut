@@ -1,6 +1,7 @@
 from "%scripts/dagui_library.nut" import *
 from "%scripts/weaponry/weaponryConsts.nut" import weaponsItem
 from "%scripts/items/itemsConsts.nut" import itemType
+from "%scripts/utils_sa.nut" import getAmountAndMaxAmountText
 
 let { Cost } = require("%scripts/money.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
@@ -24,6 +25,7 @@ let { needShowUnseenModTutorialForUnitMod, hasAvailableModTutorial } = require("
 let { getCurMissionRules } = require("%scripts/misCustomRules/missionCustomState.nut")
 let { getModificationByName } = require("%scripts/weaponry/modificationInfo.nut")
 let { getInventoryList } = require("%scripts/items/itemsManager.nut")
+let { isUnitUsable } = require("%scripts/unit/unitStatus.nut")
 
 dagui_propid_add_name_id("_iconBulletName")
 
@@ -192,7 +194,7 @@ function getWeaponItemViewParams(id, unit, item, params = {}) {
     canShowGoToModTutorialBtn = ""
     hasUnseenTutorial         = false
   }
-  let isOwn = ::isUnitUsable(unit)
+  let isOwn = isUnitUsable(unit)
   local visualItem = item
   res.isBundle = item.type == weaponsItem.bundle
   if (res.isBundle) {
@@ -298,7 +300,9 @@ function getWeaponItemViewParams(id, unit, item, params = {}) {
     }
   }
   local optStatus = "locked"
-  if (params?.visualDisabled ?? false)
+  if (params?.researchFinished && !(statusTbl.amount || statusTbl.unlocked))
+    optStatus = "researchFinished"
+  else if (params?.visualDisabled ?? false)
     optStatus = "disabled"
   else if (statusTbl.amount)
     optStatus = "owned"
@@ -312,7 +316,7 @@ function getWeaponItemViewParams(id, unit, item, params = {}) {
     optStatus = "researchable"
   res.optStatus = optStatus
   if (!isForceHidePlayerInfo) {
-    res.amountText = ::getAmountAndMaxAmountText(statusTbl.amount,
+    res.amountText = getAmountAndMaxAmountText(statusTbl.amount,
       statusTbl.maxAmount, statusTbl.showMaxAmount)
     res.amountTextColor = statusTbl.amount < statusTbl.amountWarningValue ? "weaponWarning" : ""
   }
@@ -353,7 +357,7 @@ function getWeaponItemViewParams(id, unit, item, params = {}) {
       let pairVisualItem = linkedBulGroup.getSelBullet()
       pairModName = pairVisualItem.name
       let pairStatusTbl = getItemStatusTbl(unit, pairVisualItem)
-      let amountText = ::getAmountAndMaxAmountText(pairStatusTbl.amount,
+      let amountText = getAmountAndMaxAmountText(pairStatusTbl.amount,
         pairStatusTbl.maxAmount, pairStatusTbl.showMaxAmount)
       let amountTextColor = pairStatusTbl.amount < pairStatusTbl.amountWarningValue
         ? "weaponWarning" : ""
@@ -646,7 +650,7 @@ function createModItem(id, unit, item, iType, holderObj, handler, params = {}) {
   return holderObj.findObject(id)
 }
 
-local function createModBundle(id, unit, itemsList, itemsType, holderObj, handler, params = {}) {
+function createModBundle(id, unit, itemsList, itemsType, holderObj, handler, params = {}) {
   if (itemsList.len() == 0)
     return null
 

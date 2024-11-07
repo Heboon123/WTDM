@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import shop_upgrade_crew, purchase_crew_slot, get_training_cost, get_aircraft_crew_by_id
 from "%scripts/dagui_library.nut" import *
 
@@ -39,6 +38,8 @@ let maxCrewLevel = {
   [CUT_SHIP] = 100
 }
 
+let getCrewList = @() ::g_crews_list.getCrewsList()
+
 function isCountryHasAnyEsUnitType(country, esUnitTypeMask) {
   let typesList = getTblValue(country, ::get_unit_types_in_countries(), {})
   foreach (esUnitType, isInCountry in typesList)
@@ -47,7 +48,7 @@ function isCountryHasAnyEsUnitType(country, esUnitTypeMask) {
   return false
 }
 
-let getCrew = @(countryId, idInCountry) ::g_crews_list.getCrewsList()?[countryId].crews[idInCountry]
+let getCrew = @(countryId, idInCountry) getCrewList()?[countryId].crews[idInCountry]
 
 function createCrewBuyPointsHandler(crew) {
   return handlersManager.loadHandler(gui_handlers.CrewBuyPointsHandler, { crew })
@@ -122,7 +123,7 @@ function getCrewSkillCost(skillItem, value, prevValue = -1) {
 
 function getCrewName(crew) {
   let number =  getTblValue("idInCountry", crew, -1) + 1
-  return loc("options/crewName") + number
+  return $"{loc("options/crewName")}{number}"
 }
 
 function getCrewUnit(crew) {
@@ -130,7 +131,7 @@ function getCrewUnit(crew) {
 }
 
 function getCrewCountry(crew) {
-  let countryData = getTblValue(crew.idCountry, ::g_crews_list.getCrewsList())
+  let countryData = getTblValue(crew.idCountry, getCrewList())
   return countryData ? countryData.country : ""
 }
 
@@ -278,7 +279,7 @@ function getCrewLevel(crew, unit, crewUnitType, countByNewValues = false) {
 }
 
 function isAllCrewsMinLevel() {
-  foreach (checkedCountrys in ::g_crews_list.getCrewsList())
+  foreach (checkedCountrys in getCrewList())
     foreach (crew in checkedCountrys.crews)
       foreach (unitType in unitTypes.types)
         if (unitType.isAvailable()
@@ -522,7 +523,7 @@ function updateCrewSkillsAvailable(forceUpdate = false) {
   loadCrewSkillsOnce()
   availableCrewSkills.clear()
   unseenIconsNeeds.clear()
-  foreach (cList in ::g_crews_list.getCrewsList())
+  foreach (cList in getCrewList())
     foreach (_idx, crew in cList?.crews || []) {
       let data = {}
       let unseenIconsData = {}

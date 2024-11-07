@@ -1,48 +1,40 @@
-from "%scripts/dagui_natives.nut" import clan_get_exp
+from "%scripts/dagui_natives.nut" import clan_get_exp, get_unit_elite_status, is_default_aircraft, shop_unit_research_status, is_era_available, wp_get_repair_cost
 from "%scripts/dagui_library.nut" import *
-let { blkFromPath } = require("%sqstd/datablock.nut")
-let { isWeaponAux, getLastPrimaryWeapon, getLastWeapon } = require("%scripts/weaponry/weaponryInfo.nut")
-let { getWeaponInfoText } = require("%scripts/weaponry/weaponryDescription.nut")
-let { canResearchUnit, bit_unit_status, canBuyUnit } = require("%scripts/unit/unitInfo.nut")
+let { bit_unit_status, getUnitReqExp, getUnitExp, getUnitCountry, getEsUnitType } = require("%scripts/unit/unitInfo.nut")
+let { canBuyUnit } = require("%scripts/unit/unitShopInfo.nut")
 let { isInFlight } = require("gameplayBinding")
-let { getPresetWeapons, getWeaponBlkParams } = require("%scripts/weaponry/weaponryPresets.nut")
-let { isUnitInSlotbar } = require("%scripts/slotbar/slotbarState.nut")
+let { getCrewByAir } = require("%scripts/crew/crewInfo.nut")
+let { isUnitSpecial } = require("%appGlobals/ranks_common_shared.nut")
+let { isUnlockOpened } = require("%scripts/unlocks/unlocksModule.nut")
 
-const USE_DELAY_EXPLOSION_DEFAULT = true
+let isUnitInSlotbar = @(unit) getCrewByAir(unit) != null
+
+function isUnitMaxExp(unit) { //temporary while not exist correct status between in_research and canBuy
+  return isUnitSpecial(unit) || (getUnitReqExp(unit) <= getUnitExp(unit))
+}
+
+function canResearchUnit(unit) {
+  let isInShop = unit?.isInShop
+  if (isInShop == null) {
+    debugTableData(unit)
+    assert(false, "not existing isInShop param")
+    return false
+  }
+
+  if (!isInShop)
+    return false
+
+  if (unit.reqUnlock && !isUnlockOpened(unit.reqUnlock))
+    return false
+
+  let status = shop_unit_research_status(unit.name)
+  return (0 != (status & (ES_ITEM_STATUS_IN_RESEARCH | ES_ITEM_STATUS_CAN_RESEARCH))) && !isUnitMaxExp(unit)
+}
 
 let canBuyNotResearched = @(unit) unit.isVisibleInShop()
   && canResearchUnit(unit)
   && unit.isSquadronVehicle()
   && !unit.getOpenCost().isZero()
-
-
-function isUnitHaveSecondaryWeapons(unit) {
-  local foundWeapon = false
-  foreach (weapon in unit.getWeapons())
-    if (!isWeaponAux(weapon))
-      if (foundWeapon)
-        return true
-      else
-        foundWeapon = true
-  return "" != getWeaponInfoText(unit, { isPrimary = false, weaponPreset = 0, needTextWhenNoWeapons = false })
-}
-
-function isShipWithoutPurshasedTorpedoes(unit) {
-  if (!unit?.isShipOrBoat())
-    return false
-
-  local torpedoes = null
-  if (isUnitHaveSecondaryWeapons(unit))
-    torpedoes = unit.getWeapons().findvalue(@(weapon) weapon.name == "torpedoes")    //!!! FIX ME: Need determine weapons by weapon mask. WeaponMask now available only for air
-
-  if (!torpedoes)
-    return false
-
-  if (::g_weaponry_types.getUpgradeTypeByItem(torpedoes).getAmount(unit, torpedoes) > 0)
-    return false
-
-  return true
-}
 
 function getBitStatus(unit, params = {}) {
   let isLocalState = params?.isLocalState ?? true
@@ -60,7 +52,7 @@ function getBitStatus(unit, params = {}) {
 
   let unitExpGranted      = unit.getExp()
   let diffExp = isSquadVehicle
-    ? min(clan_get_exp(), ::getUnitReqExp(unit) - unitExpGranted)
+    ? min(clan_get_exp(), getUnitReqExp(unit) - unitExpGranted)
     : (params?.diffExp ?? 0)
   let isLockedSquadronVehicle = isSquadVehicle && !::is_in_clan() && diffExp <= 0
 
@@ -103,118 +95,88 @@ function getBitStatus(unit, params = {}) {
   return bitStatus
 }
 
-let availablePrimaryWeaponsMod = {}
-let defaultPrimaryWeaponsMod = {
-  flares = null,
-  chaffs = null
+function isUnitEliteByStatus(status) {
+  return status > ES_UNIT_ELITE_STAGE1
 }
 
-function isAvailablePrimaryWeapon(unit, weaponName) {
-  local availableWeapons = availablePrimaryWeaponsMod?[unit.name]
-  if (availableWeapons != null)
-    return getLastPrimaryWeapon(unit) == availableWeapons[weaponName]
+function isUnitElite(unit) {
+  let unitName = unit?.name
+  return unitName ? isUnitEliteByStatus(get_unit_elite_status(unitName)) : false
+}
 
-  let unitBlk = ::get_full_unit_blk(unit.name)
-  if (!unitBlk)
+function isUnitDefault(unit) {
+  if (!("name" in unit))
+    return false
+  return is_default_aircraft(unit.name)
+}
+
+function isUnitLocked(unit) {
+  let status = shop_unit_research_status(unit.name)
+  return 0 != (status & ES_ITEM_STATUS_LOCKED)
+}
+
+function isUnitInResearch(unit) {
+  if (!unit)
     return false
 
-  availableWeapons = clone defaultPrimaryWeaponsMod
-  if (unitBlk?.modifications != null) {
-    let modificationsCount = unitBlk.modifications.blockCount()
-    for (local i = 0; i < modificationsCount; i++) {
-      let modification = unitBlk.modifications.getBlock(i)
-      let modName = modification.getBlockName()
-      let commonWeapons = modification?.effects?.commonWeapons
-      if (commonWeapons == null)
-        continue
-      foreach (weap in (commonWeapons % "Weapon")) {
-
-        let weapons = []
-        if (unitBlk?.WeaponSlots != null) {
-          foreach (weaponSlot in (unitBlk.WeaponSlots % "WeaponSlot")) {
-            if (weap?.slot == weaponSlot?.index) {
-              foreach (weaponPreset in (weaponSlot % "WeaponPreset")) {
-                if (weap?.preset == weaponPreset?.name) {
-                  foreach (weapon in (weaponPreset % "Weapon"))
-                    weapons.append(weapon)
-                  break
-                }
-              }
-              break
-            }
-          }
-        }
-        else
-          weapons.append(weap)
-
-        foreach (weapon in weapons) {
-           if (!weapon?.blk || weapon?.dummy)
-            continue
-          let weapBlk = blkFromPath(weapon.blk)
-          if (availableWeapons != null && (weapBlk?.rocket.isFlare ?? false))
-            availableWeapons.flares = modName
-          if (availableWeapons != null && (weapBlk?.rocket.isChaff ?? false))
-            availableWeapons.chaffs = modName
-          if (availableWeapons != null && (weapBlk?.bullet.rocket.isChaff ?? false))
-            availableWeapons.chaffs = modName
-          if (availableWeapons != null && (weapBlk?.bullet.rocket.isFlare ?? false))
-            availableWeapons.flares = modName
-        }
-      }
-    }
-  }
-  availablePrimaryWeaponsMod[unit.name] <- availableWeapons
-  return getLastPrimaryWeapon(unit) == availableWeapons[weaponName]
-}
-
-function getCurrentPreset(unit) {
-  let secondaryWep = getLastWeapon(unit?.name ?? "")
-  return secondaryWep != "" ? unit.getWeapons().findvalue(@(w) w.name == secondaryWep) : null
-}
-
-function hasCountermeasures(unit) {
-  if (unit == null)
+  if (!("name" in unit))
     return false
 
-  return (getCurrentPreset(unit)?.hasCountermeasures ?? false)
-    || isAvailablePrimaryWeapon(unit, "flares") || isAvailablePrimaryWeapon(unit, "chaffs")
+  local status = shop_unit_research_status(unit.name)
+  return ((status & ES_ITEM_STATUS_IN_RESEARCH) != 0) && !isUnitMaxExp(unit)
 }
 
-function hasBombDelayExplosion(unit) {
-  if (!unit?.isAir() && !unit?.isHelicopter())
-    return false
-
-  let curPreset = getCurrentPreset(unit)
-  if (!curPreset?.bomb)
-    return false
-
-  let unitBlk = ::get_full_unit_blk(unit.name)
-  let weapons = getPresetWeapons(unitBlk, curPreset)
-  let weaponCache = {}
-
-  foreach(weapon in weapons) {
-    let params = getWeaponBlkParams(weapon.blk, weaponCache)
-    if ((params?.weaponBlk.bomb.useDelayExplosion ?? USE_DELAY_EXPLOSION_DEFAULT))
-      return true
-  }
-
-  return false
+function isUnitsEraUnlocked(unit) {
+  return is_era_available(getUnitCountry(unit), unit?.rank ?? -1, getEsUnitType(unit))
 }
 
-function bombNbr(unit) {
-  if (unit == null)
-    return -1
+function isUnitGroup(unit) {
+  return unit && "airsGroup" in unit
+}
 
-  return getCurrentPreset(unit)?.bombsNbr ?? -1
+function isGroupPart(unit) {
+  return unit && unit.group != null
+}
+
+let isRequireUnlockForUnit = @(unit) unit?.reqUnlock != null && !isUnlockOpened(unit.reqUnlock)
+
+let getUnitRepairCost = @(unit) ("name" in unit) ? wp_get_repair_cost(unit.name) : 0
+
+let isUnitBroken = @(unit) getUnitRepairCost(unit) > 0
+
+function isUnitDescriptionValid(unit) {
+  if (!hasFeature("UnitInfo"))
+    return false
+  if (hasFeature("WikiUnitInfo"))
+    return true // Because there is link to wiki.
+  let desc = unit ? loc($"encyclopedia/{unit.name}/desc", "") : ""
+  return desc != "" && desc != loc("encyclopedia/no_unit_description")
+}
+
+/**
+ * Returns true if unit can be installed in slotbar,
+ * unit can be decorated with decals, etc...
+ */
+function isUnitUsable(unit) {
+  return unit ? unit.isUsable() : false
 }
 
 return {
   canBuyNotResearched
-  isShipWithoutPurshasedTorpedoes
   getBitStatus
-  hasCountermeasures
-  bombNbr
-  isUnitHaveSecondaryWeapons
-  getCurrentPreset
-  hasBombDelayExplosion
+  isUnitEliteByStatus
+  isUnitElite
+  isUnitInSlotbar
+  isUnitDefault
+  isUnitLocked
+  isUnitMaxExp
+  canResearchUnit
+  isUnitInResearch
+  isUnitsEraUnlocked
+  isUnitGroup
+  isGroupPart
+  isRequireUnlockForUnit
+  isUnitBroken
+  isUnitDescriptionValid
+  isUnitUsable
 }

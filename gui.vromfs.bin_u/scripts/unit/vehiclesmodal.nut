@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { format } = require("string")
@@ -11,7 +10,7 @@ let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { ceil } = require("%sqstd/math.nut")
 let getAllUnits = require("%scripts/unit/allUnits.nut")
 let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
-let { isUnitGroup } = require("%scripts/unit/unitInfo.nut")
+let { isUnitGroup } = require("%scripts/unit/unitStatus.nut")
 let { buildUnitSlot, fillUnitSlotTimers } = require("%scripts/slotbar/slotbarView.nut")
 let { showAirExpWpBonus } = require("%scripts/bonusModule.nut")
 let { showUnitDiscount } = require("%scripts/discounts/discountUtils.nut")
@@ -144,12 +143,12 @@ local handlerClass = class (gui_handlers.BaseGuiHandlerWT) {
       this.filteredUnits.append(unit)
     }
 
-    local data = ""
+    let data = []
     foreach (unit in this.filteredUnits)
-      data += format("unitItemContainer{id:t='cont_%s' %s}", unit.name,
-        buildUnitSlot(unit.name, unit, this.getUnitItemParams(unit)))
+      data.append(format("unitItemContainer{id:t='cont_%s' %s}", unit.name,
+        buildUnitSlot(unit.name, unit, this.getUnitItemParams(unit))))
 
-    return data
+    return "".join(data)
   }
 
   function fillUnitsList() {

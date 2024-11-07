@@ -70,7 +70,7 @@ interop.clearLwsTargets <- function() {
   }
 }
 
-interop.updateMlwsTarget <- function(index, x, y, _age0, age, enemy, _track, _launch, sector, _group_id = null, _range_rel = null) {
+interop.updateMlwsTarget <- function(index, x, y, _age0, age, enemy, _track, _launch, sector, _group_id = null, _range_rel = null, _priority = null) {
   if (index >= warningSystemState.mlwsTargets.len())
     warningSystemState.mlwsTargets.resize(index + 1)
   warningSystemState.mlwsTargets[index] = {
@@ -84,7 +84,7 @@ interop.updateMlwsTarget <- function(index, x, y, _age0, age, enemy, _track, _la
   warningSystemState.mlwsTargetsTriggers.trigger()
 }
 
-interop.updateLwsTarget <- function(index, x, y, _age0, age, enemy, _track, _launch, sector, _group_id = null, _range_rel = null) {
+interop.updateLwsTarget <- function(index, x, y, _age0, age, enemy, _track, _launch, sector, _group_id = null, _range_rel = null, _priority = null) {
   if (index >= warningSystemState.lwsTargets.len())
    warningSystemState.lwsTargets.resize(index + 1)
   warningSystemState.lwsTargets[index] = {
@@ -125,7 +125,8 @@ interop.clearRwrTargets <- function() {
     for (local i = 0; i < warningSystemState.rwrTargetsPresence.len(); ++i) {
       warningSystemState.rwrTargetsPresence[i] = {
         presents = false,
-        age = 1000.0
+        age = 1000.0,
+        priority = false
       }
     }
     needUpdateTargetsPresence = true
@@ -135,6 +136,7 @@ interop.clearRwrTargets <- function() {
       if (warningSystemState.rwrTargetsPresence[i].presents) {
         warningSystemState.rwrTargetsPresence[i].presents = false
         warningSystemState.rwrTargetsPresence[i].age = 1000.0
+        warningSystemState.rwrTargetsPresence[i].priority = false
         needUpdateTargetsPresence = true
       }
     }
@@ -145,7 +147,7 @@ interop.clearRwrTargets <- function() {
   }
 }
 
-interop.updateRwrTarget <- function(index, x, y, age0, age, enemy, track, launch, sector, group_id = null, range_rel = null) {
+interop.updateRwrTarget <- function(index, x, y, age0, age, enemy, track, launch, sector, group_id = null, range_rel = null, priority = null) {
 
   local showDirection = true
   local targetGroupId = null // indicated as abstract source
@@ -179,7 +181,8 @@ interop.updateRwrTarget <- function(index, x, y, age0, age, enemy, track, launch
     launch = launch,
     enemy = enemy,
     sector = sector,
-    groupId = targetGroupId
+    groupId = targetGroupId,
+    priority = priority
   }
 
   warningSystemState.rwrTargetsTriggers.trigger()
@@ -202,8 +205,10 @@ interop.updateRwrTarget <- function(index, x, y, age0, age, enemy, track, launch
         presents = false
       local targetPresence = warningSystemState.rwrTargetsPresence[presenceGroupId]
       targetPresence.presents = targetPresence.presents || presents
-      if (presents)
+      if (presents) {
         targetPresence.age = min(targetPresence.age, age)
+        targetPresence.priority = targetPresence.priority || priority
+      }
     }
     warningSystemState.rwrTargetsPresenceTriggers.trigger()
   }

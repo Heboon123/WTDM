@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import clan_get_my_clan_tag
 from "%scripts/dagui_library.nut" import *
 from "%scripts/clans/clansConsts.nut" import CLAN_SEASON_MEDAL_TYPE
@@ -34,7 +33,7 @@ gui_handlers.clanSeasonInfoModal <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!checkObj(this.rewardsListObj))
       return this.goBack()
 
-    this.scene.findObject("wnd_title").setValue(loc("clan/battle_season/title") + " - " + loc("mainmenu/rewardsList"))
+    this.scene.findObject("wnd_title").setValue("".concat(loc("clan/battle_season/title"), " - ", loc("mainmenu/rewardsList")))
 
     this.fillRewardsList()
     this.selectListItem()
@@ -73,18 +72,19 @@ gui_handlers.clanSeasonInfoModal <- class (gui_handlers.BaseGuiHandlerWT) {
 
       local condition = ""
       if (reward.placeMin)
-        condition = loc("multiplayer/place") + loc("ui/colon") + reward.placeMin + loc("ui/mdash") + reward.placeMax
+        condition = "".concat(loc("multiplayer/place"), loc("ui/colon"), reward.placeMin,
+          loc("ui/mdash"), reward.placeMax)
       else if (reward.place)
-        condition = loc("multiplayer/place") + loc("ui/colon") + reward.place
+        condition = "".concat(loc("multiplayer/place"), loc("ui/colon"), reward.place)
       else if (reward.rating)
-        condition = loc("userLog/clanDuelRewardClanRating") + " " + reward.rating
+        condition =  " ".concat(loc("userLog/clanDuelRewardClanRating"), reward.rating)
 
       local gold = ""
       if (reward.gold) {
-        let value = reward.goldMin ?
-          (Cost(0, reward.goldMin).tostring() + loc("ui/mdash") + Cost(0, reward.goldMax).tostring()) :
-          Cost(0, reward.gold).tostring()
-        gold = loc("charServer/chapter/eagles") + loc("ui/colon") + value
+        let value = reward.goldMin
+          ? "".concat(Cost(0, reward.goldMin).tostring(), loc("ui/mdash"), Cost(0, reward.goldMax).tostring())
+          : Cost(0, reward.gold).tostring()
+        gold = "".concat(loc("charServer/chapter/eagles"), loc("ui/colon"), value)
       }
 
       let prizesList = {}
@@ -97,14 +97,14 @@ gui_handlers.clanSeasonInfoModal <- class (gui_handlers.BaseGuiHandlerWT) {
         if (prizeType == "clanTag") {
           let myClanTagUndecorated = ::g_clans.stripClanTagDecorators(clan_get_my_clan_tag())
           let tagTxt = u.isEmpty(myClanTagUndecorated) ? loc("clan/clan_tag/short") : myClanTagUndecorated
-          let tooltipBase = loc("clan/clan_tag_decoration") + loc("ui/colon")
+          let tooltipBase = $"{loc("clan/clan_tag_decoration")}{loc("ui/colon")}"
           let tagDecorators = ::g_clan_tag_decorator.getDecoratorsForClanDuelRewards(prize.list)
           foreach (decorator in tagDecorators)
             collection.append({
               start = decorator.start
               tag   = tagTxt
               end   = decorator.end
-              tooltip = tooltipBase + colorize("activeTextColor", decorator.start + tagTxt + decorator.end)
+              tooltip = "".concat(tooltipBase, colorize("activeTextColor", $"{decorator.start}{tagTxt}{decorator.end}"))
             })
         }
         else if (prizeType == "decal") {
@@ -165,7 +165,8 @@ gui_handlers.clanSeasonInfoModal <- class (gui_handlers.BaseGuiHandlerWT) {
     bonusesObj["toggled"] = isShow ? "yes" : "no"
     bonusesObj.show(isShow)
 
-    obj.setValue(isShow ? loc("mainmenu/btnCollapse") : (loc("clan/season_award/desc/lower_places_awards_included") + loc("ui/ellipsis")))
+    obj.setValue(isShow ? loc("mainmenu/btnCollapse")
+      : "".concat(loc("clan/season_award/desc/lower_places_awards_included"), loc("ui/ellipsis")))
     obj["tooltip"] = isShow ? "" : loc("mainmenu/btnExpand")
   }
 

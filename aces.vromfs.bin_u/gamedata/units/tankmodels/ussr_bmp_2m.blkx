@@ -19,11 +19,8 @@
   "damagedExhaustFx": "tank_broken_exhaust",
   "thermalExhaustFx": "tank_exhaust_nightvision",
   "dustFx": "",
-  "rearmTimeOnField": 70.0,
-  "canReloadNonGuns": [
-    true,
-    true
-  ],
+  "canReloadNonGuns": true,
+  "rearmSmokeTimeOnField": 60.0,
   "support_unit_class": "structures/ussr_152mm_d1",
   "support_unit_tag": "artillery",
   "useSimpleDeathConditionsAndEffects": false,
@@ -53,7 +50,6 @@
   "waterBreakerToggleTime": 4.0,
   "radarCanLockTargetFromTPV": false,
   "type": "typeLightTank",
-  "rearmSmokeTimeOnField": 60.0,
   "smokeScreenActivateTime": 5.0,
   "smokeScreenEffectTime": 7.0,
   "smokeScreenRad": 12.0,
@@ -65,6 +61,8 @@
   "smokeScreenDmPart": "engine_dm",
   "smokeScreenFxType": "tank_smokescreen",
   "smokeScreenFx": "smokescreen_no_therm_small",
+  "smokeVisibilityType1": "visual",
+  "smokeVisibilityType2": "optic",
   "DamageParts": {
     "formatVersion": 2,
     "armorClass": "RHAHH_tank_modern",
@@ -137,6 +135,16 @@
         "armorThickness": 6.0
       },
       "composite_armor_hull_01_dm": {
+        "armorThickness": 5.0,
+        "hidableInXrayViewer": true,
+        "armorClass": "aluminium"
+      },
+      "composite_armor_hull_02_dm": {
+        "armorThickness": 5.0,
+        "hidableInXrayViewer": true,
+        "armorClass": "aluminium"
+      },
+      "composite_armor_hull_03_dm": {
         "armorThickness": 5.0,
         "hidableInXrayViewer": true,
         "armorClass": "aluminium"
@@ -242,18 +250,6 @@
         "hp": 20.0
       },
       "optic_body_01_dm": {
-        "armorThickness": 3.0,
-        "hp": 20.0
-      },
-      "optic_body_02_dm": {
-        "armorThickness": 3.0,
-        "hp": 20.0
-      },
-      "optic_body_03_dm": {
-        "armorThickness": 3.0,
-        "hp": 20.0
-      },
-      "optic_body_04_dm": {
         "armorThickness": 3.0,
         "hp": 20.0
       }
@@ -454,9 +450,14 @@
         "hp": 60.0,
         "armorThrough": 3.0
       },
+      "fire_control_system_01_dm": {
+        "hp": 60.0,
+        "armorThrough": 3.0
+      },
       "power_system_dm": {
         "hp": 60.0,
-        "armorThrough": 15.0
+        "armorThrough": 15.0,
+        "fireParamsPreset": "powersystem_internal"
       }
     },
     "cannon_breech": {
@@ -793,16 +794,38 @@
     "ex_armor_turret_l_02_dm": true
   },
   "xray_viewer_data": {
-    "armorArrayHull": {
-      "xrayDmPart": "composite_armor_hull_01_dm",
-      "titleLoc": "aluminium",
-      "armorArrayText": {
-        "layer": {
-          "dmPart": "composite_armor_hull_01_dm",
-          "xrayTextThickness": 2.0
+    "armorArrayHull": [
+      {
+        "xrayDmPart": "composite_armor_hull_01_dm",
+        "titleLoc": "aluminium",
+        "armorArrayText": {
+          "layer": {
+            "dmPart": "composite_armor_hull_01_dm",
+            "xrayTextThickness": 2.0
+          }
+        }
+      },
+      {
+        "xrayDmPart": "composite_armor_hull_02_dm",
+        "titleLoc": "aluminium",
+        "armorArrayText": {
+          "layer": {
+            "dmPart": "composite_armor_hull_02_dm",
+            "xrayTextThickness": 2.0
+          }
+        }
+      },
+      {
+        "xrayDmPart": "composite_armor_hull_03_dm",
+        "titleLoc": "aluminium",
+        "armorArrayText": {
+          "layer": {
+            "dmPart": "composite_armor_hull_03_dm",
+            "xrayTextThickness": 2.0
+          }
         }
       }
-    }
+    ]
   },
   "sound": {
     "EngineName": "engine_bmp",
@@ -1251,6 +1274,60 @@
         "onKill": {
           "track_l_dm": 1.0
         }
+      },
+      {
+        "name": "power_system_dm",
+        "onHit": [
+          {
+            "damageType": "cumulative",
+            "fire": 0.2,
+            "damage": 75.0,
+            "fHitCritical": true
+          },
+          {
+            "damageType": "explosion",
+            "fire": 0.3,
+            "damage": 30.0,
+            "fHitCritical": true
+          },
+          {
+            "damageType": "generic",
+            "fire": 0.05,
+            "damage": 20.0,
+            "fHitCritical": true
+          },
+          {
+            "damageType": "generic",
+            "fire": 0.1,
+            "damage": 70.0,
+            "fHitCritical": true
+          },
+          {
+            "damageType": "generic",
+            "fire": 0.3,
+            "damage": 200.0,
+            "fHitCritical": true
+          },
+          {
+            "damageType": "generic",
+            "fire": 0.4,
+            "damage": 300.0,
+            "fHitCritical": true
+          },
+          {
+            "damageType": "fire",
+            "fire": 0.1
+          }
+        ],
+        "onKill": {
+          "fire": 1.0,
+          "fHitCritical": true,
+          "action": {
+            "kill": true,
+            "type": "secondaryDamage",
+            "part": "fire_control_system_dm"
+          }
+        }
       }
     ]
   },
@@ -1347,6 +1424,10 @@
         "defaultPitch": 0.0,
         "barrelDP": "gun_barrel_dm",
         "breechDP": "cannon_breech_dm",
+        "stabilizerDmPart": [
+          "fire_control_system_dm",
+          "power_system_dm"
+        ],
         "speedYaw": 60.0,
         "speedPitch": 35.0,
         "fireConeAngle": 1.0,
@@ -1373,6 +1454,15 @@
           "barrel": "bone_gun_barrel",
           "gunnerDm": "gunner_dm",
           "secondGunnerDm": "commander_dm",
+          "verDriveDm": [
+            "drive_turret_v_dm",
+            "fire_control_system_dm"
+          ],
+          "horDriveDm": [
+            "drive_turret_h_dm",
+            "fire_control_system_dm"
+          ],
+          "shootingDmPart": "fire_control_system_dm",
           "rotatedTurret": "bone_turret",
           "linkedAnimPart": [
             {
@@ -1498,7 +1588,16 @@
           "head": "bone_mg_gun_twin_01",
           "gun": "bone_mg_gun_twin_01",
           "gunnerDm": "gunner_dm",
-          "secondGunnerDm": "commander_dm"
+          "secondGunnerDm": "commander_dm",
+          "verDriveDm": [
+            "drive_turret_v_dm",
+            "fire_control_system_dm"
+          ],
+          "horDriveDm": [
+            "drive_turret_h_dm",
+            "fire_control_system_dm"
+          ],
+          "shootingDmPart": "fire_control_system_dm"
         },
         "limits": {
           "yaw": [
@@ -1556,7 +1655,8 @@
           "gun": "bone_gun_02",
           "gunnerDm": "gunner_dm",
           "secondGunnerDm": "commander_dm",
-          "rotatedTurret": "bone_turret"
+          "rotatedTurret": "bone_turret",
+          "shootingDmPart": "fire_control_system_dm"
         },
         "limits": {
           "yaw": [
@@ -1602,6 +1702,7 @@
           "gun": "bone_gun_01",
           "gunnerDm": "gunner_dm",
           "secondGunnerDm": "commander_dm",
+          "shootingDmPart": "fire_control_system_dm",
           "rotatedTurret": "bone_turret"
         },
         "limits": {
@@ -1684,10 +1785,14 @@
         "blk": "gameData/sensors/su_bmp_auto_target_tracker.blk",
         "turretIndex": 0,
         "designationTurretIndex": 0,
-        "dmPart": "optic_gun_dm"
+        "dmPart": [
+          "optic_gun_dm",
+          "fire_control_system_dm"
+        ]
       },
       {
-        "blk": "gameData/sensors/LaserBeamRidingSensor.blk"
+        "blk": "gameData/sensors/LaserBeamRidingSensor.blk",
+        "dmPart": "fire_control_system_dm"
       }
     ]
   },
@@ -1803,6 +1908,30 @@
         "type": "steeringWheel",
         "turnSpeed": 0.2,
         "node": "bone_roll_driver_r_04",
+        "absoluteValue": true
+      },
+      {
+        "type": "steeringWheel",
+        "turnSpeed": 0.2,
+        "node": "bone_roll_driver_l_05",
+        "absoluteValue": true
+      },
+      {
+        "type": "steeringWheel",
+        "turnSpeed": 0.2,
+        "node": "bone_roll_driver_l_06",
+        "absoluteValue": true
+      },
+      {
+        "type": "steeringWheel",
+        "turnSpeed": 0.2,
+        "node": "bone_roll_driver_l_07",
+        "absoluteValue": true
+      },
+      {
+        "type": "steeringWheel",
+        "turnSpeed": 0.2,
+        "node": "bone_roll_driver_l_08",
         "absoluteValue": true
       }
     ]
@@ -2448,6 +2577,7 @@
   "unitFx": {
     "event": [
       {
+        "lifetime": 120.0,
         "name": "engine_fire",
         "fx": [
           {
@@ -2466,6 +2596,7 @@
       },
       {
         "name": "ammo_fire",
+        "lifetime": 9.0,
         "fx": [
           {
             "name": "tank_ammo_fire",
@@ -2623,7 +2754,7 @@
       },
       {
         "name": "total_fire",
-        "lifetime": 60.0,
+        "lifetime": 40.0,
         "fx": [
           {
             "name": "tank_fire_big",
@@ -2771,6 +2902,7 @@
       },
       {
         "name": "fuel_exterior",
+        "lifetime": 50.0,
         "fx": {
           "name": "tank_ex_fuel_explosion",
           "centerDmgPart": true
@@ -2778,6 +2910,7 @@
       },
       {
         "name": "fuel_internal",
+        "lifetime": 50.0,
         "fx": {
           "name": "tank_ex_fuel_explosion",
           "centerDmgPart": true
@@ -2785,6 +2918,7 @@
       },
       {
         "name": "hydraulic_internal",
+        "lifetime": 30.0,
         "fx": {
           "name": "tank_ex_fuel_explosion",
           "centerDmgPart": true
@@ -2792,6 +2926,7 @@
       },
       {
         "name": "powersystem_internal",
+        "lifetime": 30.0,
         "fx": {
           "name": "tank_ex_fuel_explosion",
           "centerDmgPart": true
@@ -2799,6 +2934,7 @@
       },
       {
         "name": "powersystem_exterior",
+        "lifetime": 30.0,
         "fx": {
           "name": "tank_ex_fuel_explosion",
           "centerDmgPart": true
@@ -2806,7 +2942,7 @@
       },
       {
         "name": "big_bang",
-        "lifetime": 10.0,
+        "lifetime": 20.0,
         "fx": [
           {
             "name": "tank_explosion",
@@ -2826,7 +2962,7 @@
       },
       {
         "name": "big_bang",
-        "lifetime": 10.0,
+        "lifetime": 20.0,
         "fx": [
           {
             "name": "tank_explosion",
@@ -2846,7 +2982,7 @@
       },
       {
         "name": "big_bang",
-        "lifetime": 10.0,
+        "lifetime": 20.0,
         "fx": {
           "name": "tank_explosion_small",
           "emitter": "emtr_explosion_center"
@@ -2860,7 +2996,7 @@
       },
       {
         "name": "big_bang",
-        "lifetime": 10.0,
+        "lifetime": 20.0,
         "fx": [
           {
             "name": "tank_explosion_ammo",
@@ -2880,7 +3016,7 @@
       },
       {
         "name": "big_bang",
-        "lifetime": 10.0,
+        "lifetime": 20.0,
         "fx": [
           {
             "name": "tank_explosion_ammo_small",
@@ -2900,7 +3036,7 @@
       },
       {
         "name": "full_expl",
-        "lifetime": 10.0,
+        "lifetime": 20.0,
         "fx": {
           "name": "explosion_ship_big",
           "emitter": "emtr_explosion_center"
@@ -2978,6 +3114,7 @@
       },
       {
         "name": "engine_overheat",
+        "lifetime": 5.0,
         "fx": {
           "name": "tank_radiator_steam",
           "centerDmgPart": false
@@ -3126,6 +3263,7 @@
       "effects": {
         "rangefinderMounted": true,
         "isLaser": true,
+        "rangefinderDmPart": "fire_control_system_dm",
         "distanceError": [
           1.0,
           1.0,
@@ -3173,13 +3311,18 @@
               "blk": "gameData/sensors/su_bmp_auto_target_tracker.blk",
               "turretIndex": 0,
               "designationTurretIndex": 0,
-              "dmPart": "optic_gun_dm"
+              "dmPart": [
+                "optic_gun_dm",
+                "fire_control_system_dm"
+              ]
             },
             {
-              "blk": "gameData/sensors/LaserBeamRidingSensor.blk"
+              "blk": "gameData/sensors/LaserBeamRidingSensor.blk",
+              "dmPart": "fire_control_system_dm"
             },
             {
-              "blk": "gameData/sensors/LaserDesignatorSensor.blk"
+              "blk": "gameData/sensors/LaserDesignatorSensor.blk",
+              "dmPart": "fire_control_system_dm"
             }
           ]
         }
@@ -3267,6 +3410,10 @@
               "defaultPitch": 0.0,
               "barrelDP": "gun_barrel_dm",
               "breechDP": "cannon_breech_dm",
+              "stabilizerDmPart": [
+                "fire_control_system_dm",
+                "power_system_dm"
+              ],
               "speedYaw": 60.0,
               "speedPitch": 35.0,
               "fireConeAngle": 1.0,
@@ -3293,6 +3440,15 @@
                 "barrel": "bone_gun_barrel",
                 "gunnerDm": "gunner_dm",
                 "secondGunnerDm": "commander_dm",
+                "verDriveDm": [
+                  "drive_turret_v_dm",
+                  "fire_control_system_dm"
+                ],
+                "horDriveDm": [
+                  "drive_turret_h_dm",
+                  "fire_control_system_dm"
+                ],
+                "shootingDmPart": "fire_control_system_dm",
                 "rotatedTurret": "bone_turret",
                 "linkedAnimPart": [
                   {
@@ -3418,7 +3574,16 @@
                 "head": "bone_mg_gun_twin_01",
                 "gun": "bone_mg_gun_twin_01",
                 "gunnerDm": "gunner_dm",
-                "secondGunnerDm": "commander_dm"
+                "secondGunnerDm": "commander_dm",
+                "verDriveDm": [
+                  "drive_turret_v_dm",
+                  "fire_control_system_dm"
+                ],
+                "horDriveDm": [
+                  "drive_turret_h_dm",
+                  "fire_control_system_dm"
+                ],
+                "shootingDmPart": "fire_control_system_dm"
               },
               "limits": {
                 "yaw": [
@@ -3476,7 +3641,8 @@
                 "gun": "bone_gun_02",
                 "gunnerDm": "gunner_dm",
                 "secondGunnerDm": "commander_dm",
-                "rotatedTurret": "bone_turret"
+                "rotatedTurret": "bone_turret",
+                "shootingDmPart": "fire_control_system_dm"
               },
               "limits": {
                 "yaw": [
@@ -3522,6 +3688,7 @@
                 "gun": "bone_gun_01",
                 "gunnerDm": "gunner_dm",
                 "secondGunnerDm": "commander_dm",
+                "shootingDmPart": "fire_control_system_dm",
                 "rotatedTurret": "bone_turret"
               },
               "limits": {
@@ -3683,6 +3850,27 @@
       "disableModEffects": {
         "allowSupportPlane": false
       }
+    }
+  },
+  "nightVision": {
+    "nightVisionDmPart": "fire_control_system_dm",
+    "commanderViewIr": {
+      "resolution": [
+        1600,
+        1200
+      ],
+      "lightMult": 9.0,
+      "ghosting": 0.6,
+      "noiseFactor": 0.2
+    },
+    "driverIr": {
+      "resolution": [
+        800,
+        600
+      ],
+      "lightMult": 5.0,
+      "ghosting": 0.6,
+      "noiseFactor": 0.2
     }
   },
   "supportPlane": {

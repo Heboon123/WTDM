@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import enable_bullets_modifications, get_option_torpedo_dive_depth_auto
 from "%scripts/dagui_library.nut" import *
 from "%scripts/options/optionsExtNames.nut" import *
@@ -13,7 +12,7 @@ let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { move_mouse_on_obj, loadHandler, handlersManager
 } = require("%scripts/baseGuiHandlerManagerWT.nut")
-let { bombNbr, hasCountermeasures, getCurrentPreset, hasBombDelayExplosion } = require("%scripts/unit/unitStatus.nut")
+let { getCurrentPreset, bombNbr, hasCountermeasures, hasBombDelayExplosion } = require("%scripts/unit/unitWeaponryInfo.nut")
 let { isTripleColorSmokeAvailable } = require("%scripts/options/optionsManager.nut")
 let actionBarInfo = require("%scripts/hud/hudActionBarInfo.nut")
 let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
@@ -24,14 +23,15 @@ let { select_training_mission, get_meta_mission_info_by_name } = require("guiMis
 let { isPreviewingLiveSkin, setCurSkinToHangar
 } = require("%scripts/customization/skins.nut")
 let { stripTags } = require("%sqstd/string.nut")
-let { set_option, create_options_container } = require("%scripts/options/optionsExt.nut")
+let { set_option, get_option, create_options_container } = require("%scripts/options/optionsExt.nut")
 let { sendStartTestFlightToBq } = require("%scripts/missionBuilder/testFlightBQInfo.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
-let { get_game_settings_blk } = require("blkGetters")
+let { get_game_settings_blk, get_unittags_blk } = require("blkGetters")
 let { isInSessionRoom } = require("%scripts/matchingRooms/sessionLobbyState.nut")
 let { getLanguageName } = require("%scripts/langUtils/language.nut")
 let { buildUnitSlot, fillUnitSlotTimers, getUnitSlotRankText } = require("%scripts/slotbar/slotbarView.nut")
-let { getCurSlotbarUnit, isUnitInSlotbar } = require("%scripts/slotbar/slotbarState.nut")
+let { getCurSlotbarUnit } = require("%scripts/slotbar/slotbarState.nut")
+let { isUnitInSlotbar } = require("%scripts/unit/unitStatus.nut")
 let { guiStartBuilder, guiStartFlight, guiStartCdOptions, setCurrentCampaignMission
 } = require("%scripts/missions/startMissionsList.nut")
 let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
@@ -39,6 +39,7 @@ let { getBattleTypeByUnit } = require("%scripts/airInfo.nut")
 let { hasInWishlist, isWishlistFull } = require("%scripts/wishlist/wishlistManager.nut")
 let { addToWishlist } = require("%scripts/wishlist/addWishWnd.nut")
 let DataBlock = require("DataBlock")
+let { unitNameForWeapons } = require("%scripts/weaponry/unitForWeapons.nut")
 
 ::missionBuilderVehicleConfigForBlk <- {} //!!FIX ME: Should to remove this
 
@@ -133,9 +134,10 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
   }
 
   function checkBulletsRows() {
-    if (type(::aircraft_for_weapons) != "string")
+    let unitName = unitNameForWeapons.get() ?? ""
+    if (unitName == "")
       return
-    let air = getAircraftByName(::aircraft_for_weapons)
+    let air = getAircraftByName(unitName)
     if (!air)
       return
 
@@ -172,13 +174,22 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
 
   function updateOptionsArray() {
     if (this.optionsConfig == null) {
-      let diffOpt = ::get_option(USEROPT_DIFFICULTY)
+      let diffOpt = get_option(USEROPT_DIFFICULTY)
       this.optionsConfig = { diffCode = diffOpt.diffCode[diffOpt.value] }
     }
     this.options = [
       [USEROPT_DIFFICULTY, "spinner"],
     ]
-    if (this.unit?.isAir() || this.unit?.isHelicopter?()) {
+
+    let isAir = this.unit?.isAir()
+    let isHelicopter = this.unit?.isHelicopter()
+    if ((isAir || isHelicopter) && this.unit.testFlight == "") {
+      this.options.append([USEROPT_TEST_FLIGHT_NAME, "spinner"], [USEROPT_AIR_SPAWN_POINT, "spinner"])
+      if (isAir)
+        this.options.append([USEROPT_TARGET_RANK, "spinner"])
+    }
+
+    if (isAir || isHelicopter) {
       this.options.append([USEROPT_LIMITED_FUEL, "spinner"])
       this.options.append([USEROPT_LIMITED_AMMO, "spinner"])
     }
@@ -191,7 +202,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
 
     this.options.extend(skin_options)
 
-    if (this.unit?.isAir())
+    if (isAir)
       this.options.append(
         [USEROPT_AEROBATICS_SMOKE_TYPE, "spinner"],
         [USEROPT_AEROBATICS_SMOKE_LEFT_COLOR, "spinner"],
@@ -199,7 +210,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
         [USEROPT_AEROBATICS_SMOKE_TAIL_COLOR, "spinner"]
       )
 
-    if (this.unit?.isAir() || this.unit?.isHelicopter?())
+    if (isAir || isHelicopter)
       this.options.append(
         [USEROPT_GUN_TARGET_DISTANCE, "spinner"],
         [USEROPT_GUN_VERTICAL_TARGETING, "spinner"],
@@ -244,7 +255,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
     if (!checkObj(hObj))
       return
 
-    let headerText = this.unit.unitType.getTestFlightText() + " " + loc("ui/mdash") + " " + getUnitName(this.unit.name)
+    let headerText = " ".concat(this.unit.unitType.getTestFlightText(), loc("ui/mdash"), getUnitName(this.unit.name))
     hObj.setValue(headerText)
 
     if (!showOptions)
@@ -252,9 +263,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
 
     this.updateOptionsArray()
 
-    ::update_test_flight_unit_info({unit = this.unit})
-    ::cur_aircraft_name = this.unit.name
-    ::aircraft_for_weapons = this.unit.name
+    unitNameForWeapons.set(this.unit.name)
     set_gui_option(USEROPT_AIRCRAFT, this.unit.name)
 
     let container = create_options_container("testflight_options", this.options, true, 0.5, true, this.optionsConfig)
@@ -352,7 +361,15 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
   }
 
   function startTestFlight() {
-    let misName = this.getTestFlightMisName(this.unit.testFlight)
+    local testFlightName = this.unit.testFlight
+    let isAir = this.unit.isAir()
+    let isHelicopter = this.unit.isHelicopter()
+    let isUniversalTestFlight = (isAir || isHelicopter) && testFlightName == ""
+    if (isUniversalTestFlight) {
+      let testFlightNameOpt = get_option(USEROPT_TEST_FLIGHT_NAME)
+      testFlightName = testFlightNameOpt.values[testFlightNameOpt.value]
+    }
+    let misName = this.getTestFlightMisName(testFlightName)
     let misBlkBase = get_meta_mission_info_by_name(misName)
     if (!misBlkBase)
       return assert(false,$"Error: wrong testflight mission {misName}")
@@ -373,6 +390,20 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
         environment = this.getSceneOptValue(USEROPT_TIME)
       }, misBlk)
 
+    if (isUniversalTestFlight) {
+      let airSpawnOpt = get_option(USEROPT_AIR_SPAWN_POINT)
+      let airSpawnValue = airSpawnOpt.values[airSpawnOpt.value]
+      misBlk.is_airfield_spawn = airSpawnValue == 0
+      if (airSpawnValue != 0)
+        misBlk.air_spawn_point = airSpawnValue
+
+      if (isAir)
+        misBlk.is_high = get_gui_option(USEROPT_TARGET_RANK) == 0
+      let testFlightShip = get_unittags_blk()?[this.unit.name].testFlightShip ?? ""
+      if (testFlightShip != "")
+        misBlk.aircraft_ship_name = testFlightShip
+    }
+
     mergeToBlk(::missionBuilderVehicleConfigForBlk, misBlk)
 
     actionBarInfo.cacheActionDescs(getActionBarUnitName())
@@ -392,24 +423,26 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
     if (!this.unit)
       return
 
-    let dif = ::get_option(USEROPT_DIFFICULTY)
+    let dif = get_option(USEROPT_DIFFICULTY)
     let difValue = dif.values[dif.value]
 
-    let skin = ::get_option(USEROPT_SKIN)
+    let skin = get_option(USEROPT_SKIN)
     let skinValue = skin.values[skin.value]
     let fuelValue = this.getSceneOptValue(USEROPT_LOAD_FUEL_AMOUNT)
-    let limitedFuel = ::get_option(USEROPT_LIMITED_FUEL)
-    let limitedAmmo = ::get_option(USEROPT_LIMITED_AMMO)
+    let limitedFuel = get_option(USEROPT_LIMITED_FUEL)
+    let limitedAmmo = get_option(USEROPT_LIMITED_AMMO)
 
-    ::aircraft_for_weapons = this.unit.name
+    let unitName = this.unit.name
+    unitNameForWeapons.set(unitName)
 
     if(this.weaponsSelectorWeak)
       this.weaponsSelectorWeak.bulletsManager.updateBulletCountOptions()
     else
       ::UnitBulletsManager(this.unit).updateBulletCountOptions([])
 
-    enable_bullets_modifications(::aircraft_for_weapons)
-    ::enable_current_modifications(::aircraft_for_weapons)
+
+    enable_bullets_modifications(unitName)
+    ::enable_current_modifications(unitName)
 
     ::missionBuilderVehicleConfigForBlk = {
         selectedSkin  = skinValue,
@@ -557,19 +590,19 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
   }
 
   function checkCountermeasurePeriodsRow() {
-    let option = ::get_option(USEROPT_COUNTERMEASURES_PERIODS)
+    let option = get_option(USEROPT_COUNTERMEASURES_PERIODS)
     if (option)
       this.showOptionRow(option, hasCountermeasures(this.unit))
   }
 
   function checkCountermeasureSeriesRow() {
-    let option = ::get_option(USEROPT_COUNTERMEASURES_SERIES)
+    let option = get_option(USEROPT_COUNTERMEASURES_SERIES)
     if (option)
       this.showOptionRow(option, hasCountermeasures(this.unit))
   }
 
   function checkCountermeasureSeriesPeriodsRow() {
-    let option = ::get_option(USEROPT_COUNTERMEASURES_SERIES_PERIODS)
+    let option = get_option(USEROPT_COUNTERMEASURES_SERIES_PERIODS)
     if (option)
       this.showOptionRow(option, hasCountermeasures(this.unit))
   }

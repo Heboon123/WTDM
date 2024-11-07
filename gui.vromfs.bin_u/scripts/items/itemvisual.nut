@@ -73,7 +73,7 @@ function fillItemDescUnderTable(item, descObj) {
     obj.setValue(item.getDescriptionUnderTable())
 }
 
-local function fillItemDescr(item, holderObj, handler = null, shopDesc = false, preferMarkup = false, params = null) {
+function fillItemDescr(item, holderObj, handler = null, shopDesc = false, preferMarkup = false, params = null) {
   handler = handler || get_cur_base_gui_handler()
   item = item?.getSubstitutionItem() ?? item
 
@@ -213,10 +213,9 @@ function getActiveBoostersDescription(boostersArray, effectType, selectedItem = 
         : loc("mainmenu/boosterType/common")
 
       local subHeader = "".concat("* ", loc($"mainmenu/booster/{arrayName}"))
-      if (isBothBoosterTypesAvailable) {
-        subHeader += loc("ui/colon")
-        subHeader += getColoredNumByType(boostNum)
-      }
+      if (isBothBoosterTypesAvailable)
+        subHeader = loc("ui/colon").concat(subHeader, getColoredNumByType(boostNum))
+
 
       detailedArray.append(subHeader)
 

@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { format } = require("string")
@@ -11,7 +10,8 @@ let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { cutPrefix } = require("%sqstd/string.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
-let { getUnitName, getUnitCountry, canBuyUnit } = require("%scripts/unit/unitInfo.nut")
+let { getUnitName, getUnitCountry } = require("%scripts/unit/unitInfo.nut")
+let { canBuyUnit } = require("%scripts/unit/unitShopInfo.nut")
 let { buildUnitSlot, fillUnitSlotTimers } = require("%scripts/slotbar/slotbarView.nut")
 let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 
@@ -32,7 +32,7 @@ gui_handlers.ShopSearchWnd <- class (gui_handlers.BaseGuiHandlerWT) {
     let countriesView = this.getCountriesView(unitsData)
 
     return {
-      windowTitle = loc("shop/search/results") + loc("ui/colon") + this.searchString
+      windowTitle = loc("ui/colon").concat(loc("shop/search/results"), this.searchString)
       countriesCount = countriesView.len()
       countriesTotal = shopCountriesList.len()
       countries = countriesView
@@ -107,8 +107,8 @@ gui_handlers.ShopSearchWnd <- class (gui_handlers.BaseGuiHandlerWT) {
               ico = ::getUnitClassIco(u)
               type = getUnitRole(u)
               tooltipId = getTooltipType("UNIT").getTooltipId(u.name)
-              text = colorize("fadedTextColor", format("[%.1f]", u.getBattleRating(ediff))) +
-                nbsp + getUnitName(u, true)
+              text = nbsp.concat(colorize("fadedTextColor", format("[%.1f]", u.getBattleRating(ediff))),
+                getUnitName(u, true))
               isUsable = u.isUsable()
               canBuy   = canBuyUnit(u) || ::canBuyUnitOnline(u)
             })

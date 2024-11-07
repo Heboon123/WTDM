@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import get_axis_name, joystick_get_default
 from "%scripts/dagui_library.nut" import *
 let u = require("%sqStdLibs/helpers/u.nut")
@@ -7,7 +6,6 @@ let { loadOnce } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 loadOnce("%scripts/controls/controlsPresets.nut")
 let DataBlock  = require("DataBlock")
 let { copyParamsToTable, eachBlock, eachParam, blkFromPath } = require("%sqstd/datablock.nut")
-let controlsPresetConfigPath = require("%scripts/controls/controlsPresetConfigPath.nut")
 let { startsWith } = require("%sqstd/string.nut")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 
@@ -331,8 +329,8 @@ function isSameMapping(lhs, rhs) {
 
     // Check preset load recursion
     if (presetChain.indexof(presetPath) != null) {
-      assert(false, "Controls preset require itself. " +
-        "Preset chain: " + toString(presetChain) + " > " + presetPath)
+      assert(false, "".concat("Controls preset require itself. ",
+        "Preset chain: ", toString(presetChain), " > ", presetPath))
       return
     }
 
@@ -382,7 +380,7 @@ function isSameMapping(lhs, rhs) {
 
     this.loadBasePresetsFromBlk(controlsBlk, version, presetChain)
 
-    log("ControlsPreset: LoadControls v" + version.tostring())
+    log($"ControlsPreset: LoadControls v{version}")
 
     this.loadHotkeysFromBlk    (controlsBlk, version)
     this.loadAxesFromBlk       (controlsBlk, version)
@@ -422,12 +420,12 @@ function isSameMapping(lhs, rhs) {
 
 
   function debugPresetStats() {
-    log("ControlsPreset: Stats:"
-      + " hotkeys=" + this.hotkeys.len()
-      + " axes=" + this.axes.len()
-      + " params=" + this.params.len()
-      + " joyticks=" + this.deviceMapping.len()
-    )
+    log("".concat("ControlsPreset: Stats:",
+      " hotkeys=", this.hotkeys.len(),
+      " axes=", this.axes.len(),
+      " params=", this.params.len(),
+      " joyticks=", this.deviceMapping.len()
+    ))
   }
 
 
@@ -546,7 +544,7 @@ function isSameMapping(lhs, rhs) {
 
     if (presetChain.len() == 1) {
       this.basePresetPaths["default"] <- presetChain[0]
-      log("ControlsPreset: InitialPreset = " + presetChain[0])
+      log($"ControlsPreset: InitialPreset = {presetChain[0]}")
     }
   }
 
@@ -827,16 +825,14 @@ function isSameMapping(lhs, rhs) {
         connected = true
 
       if (name == null || !connected)
-        name = ("C" + (idx + 1).tostring() + ":" +
-          buttonLocalized + (buttonId - joy.buttonsOffset + 1).tostring())
-
+        name = $"C{idx + 1}:{buttonLocalized}{buttonId - joy.buttonsOffset + 1}"
       break
     }
 
     if (name == null)
-      name = "?:" + buttonLocalized + (buttonId + 1).tostring()
+      name = "".concat("?:", buttonLocalized, buttonId + 1)
     if (!connected)
-      name += " (" + loc("composite/device_is_offline_short") + ")"
+      name = "".concat(name, " (", loc("composite/device_is_offline_short"), ")")
     return name
   }
 
@@ -858,16 +854,15 @@ function isSameMapping(lhs, rhs) {
         connected = true
 
       if (name == null || !connected)
-        name = ("C" + (idx + 1).tostring() + ":" + joy.name + ":" +
-          axisLocalized + (axisId - joy.axesOffset + 1).tostring())
+        name = $"C{idx + 1}:{joy.name}:{axisLocalized}{axisId - joy.axesOffset + 1}"
 
       break
     }
 
     if (name == null)
-      name = "?:" + axisLocalized + (axisId + 1).tostring()
+      name = "".concat("?:", axisLocalized, axisId + 1)
     if (!connected)
-      name += " (" + loc("composite/device_is_offline") + ")"
+      name = "".concat(name, " (", loc("composite/device_is_offline"), ")")
     return name
   }
 
@@ -970,14 +965,18 @@ function isSameMapping(lhs, rhs) {
   static compatibility = {
     function getActualPresetName(presetPath) {
       if (presetPath == "hotkey.gamepad.blk")
-        return "wt/config/hotkeys/hotkey.default.blk"
+        return "config/hotkeys/hotkey.default.blk"
       return presetPath
     }
 
     function getActualBasePresetPaths(presetPath) {
-      let indexConfigFolder = presetPath.indexof("config/hotkeys/hotkey")
-      if (indexConfigFolder == 0)
-        presetPath = $"{controlsPresetConfigPath.value}{presetPath}"
+      let legacyPerGamePrefix = "wt/"
+      let legacyPrefixPos = presetPath.indexof(legacyPerGamePrefix)
+      if (legacyPrefixPos == 0) {
+        let modernPath = presetPath.slice(legacyPerGamePrefix.len())
+        log($"[CTRL] legacy path '{presetPath}' corrected to '{modernPath}'")
+        return modernPath
+      }
 
       return presetPath
     }
@@ -992,7 +991,4 @@ function isSameMapping(lhs, rhs) {
       "helicopter_collective"
     ]
   }
-
-
-
 }

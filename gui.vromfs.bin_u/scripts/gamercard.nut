@@ -54,9 +54,15 @@ let { getCustomNick } = require("%scripts/contacts/customNicknames.nut")
         obj["background-image"] = getCountryIcon(val)
       else if (name == "rankProgress") {
         let value = val.tointeger()
-        if (value >= 0)
-          obj.setValue(val.tointeger())
-        obj.show(value >= 0)
+        let isProgressVisible = !isGamercard || value >= 0
+        if (isProgressVisible)
+          obj.setValue(value != -1 ? value : 1000)
+        obj.show(isProgressVisible)
+
+        let expTable = getCurExpTable(cfg)
+        obj.tooltip = expTable
+          ? nbsp.concat(decimalFormat(expTable.exp), "/", decimalFormat(expTable.rankExp))
+          : "".concat(loc("ugm/total"), loc("ui/colon"), decimalFormat(cfg.exp))
       }
       else if (name ==  "prestige") {
         if (val != null)

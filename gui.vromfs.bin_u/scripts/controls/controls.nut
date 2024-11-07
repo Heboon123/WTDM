@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import set_option_mouse_joystick_square, set_control_helpers_mode, set_current_controls, import_current_layout_by_path, get_cur_unit_weapon_preset, import_current_layout, set_option_gain, fetch_devices_inited_once, get_save_load_path, get_axis_index, fill_joysticks_desc, export_current_layout, export_current_layout_by_path
 from "%scripts/dagui_library.nut" import *
 from "gameOptions" import *
@@ -27,7 +26,6 @@ let { TRIGGER_TYPE, getLastWeapon, getCommonWeapons, getLastPrimaryWeapon
 let { isBulletGroupActive } = require("%scripts/weaponry/bulletsInfo.nut")
 let { resetFastVoiceMessages } = require("%scripts/wheelmenu/voiceMessages.nut")
 let { unitClassType } = require("%scripts/unit/unitClassType.nut")
-let controlsPresetConfigPath = require("%scripts/controls/controlsPresetConfigPath.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { isPlatformSony, isPlatformPS4, isPlatformXboxOne, isPlatformPC, isPlatformShieldTv
 } = require("%scripts/clientState/platform.nut")
@@ -51,7 +49,7 @@ let { recomendedControlPresets, getControlsPresetBySelectedType
 let { joystickSetCurSettings, setShortcutsAndSaveControls
 } = require("%scripts/controls/controlsCompatibility.nut")
 let { openUrl } = require("%scripts/onlineShop/url.nut")
-let { set_option, create_option_switchbox } = require("%scripts/options/optionsExt.nut")
+let { set_option, create_option_switchbox, create_option_list } = require("%scripts/options/optionsExt.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { OPTIONS_MODE_GAMEPLAY, USEROPT_HELPERS_MODE, USEROPT_CONTROLS_PRESET, USEROPT_MOUSE_USAGE,
   USEROPT_MOUSE_USAGE_NO_AIM, USEROPT_INSTRUCTOR_GEAR_CONTROL, USEROPT_SEPERATED_ENGINE_CONTROL_SHIP,
@@ -353,7 +351,7 @@ gui_handlers.Hotkeys <- class (gui_handlers.GenericOptions) {
     let view = { items = [] }
     foreach (idx, item in options.items)
       view.items.append({
-        id = "option_" + options.values[idx]
+        id = $"option_{options.values[idx]}"
         text = item.text
         selected = options.value == idx
         tooltip = item.tooltip
@@ -549,7 +547,7 @@ gui_handlers.Hotkeys <- class (gui_handlers.GenericOptions) {
         if (!isSectionShowed)
           continue
 
-        let hotkeyData = ::buildHotkeyItem(i, this.shortcuts, entry, joyParams, gRow % 2 == 0)
+        let hotkeyData = ::buildHotkeyItem(i, this.shortcuts, entry, joyParams)
         if(entry.type == CONTROL_TYPE.SECTION) {
           headerId = hotkeyData.id
           hotkeyData.isHeader <- true
@@ -561,7 +559,7 @@ gui_handlers.Hotkeys <- class (gui_handlers.GenericOptions) {
         if (hotkeyData.markup == "")
           continue
 
-        data += hotkeyData.markup
+        data = $"{data}{hotkeyData.markup}"
         gRow++
       }
 
@@ -638,7 +636,7 @@ gui_handlers.Hotkeys <- class (gui_handlers.GenericOptions) {
 
       axisScNames.append(item.id)
       if ("symbol" in item)
-        this.modifierSymbols[item.id] <- loc(item.symbol) + loc("ui/colon")
+        this.modifierSymbols[item.id] <- $"{loc(item.symbol)}{loc("ui/colon")}"
     }
 
     this.shortcutNames = []
@@ -664,7 +662,7 @@ gui_handlers.Hotkeys <- class (gui_handlers.GenericOptions) {
       item.modifiersId = {}
       foreach (name in axisScNames) {
         item.modifiersId[name] <- this.shortcutNames.len()
-        this.shortcutNames.append(item.axisName + ((name == "") ? "" : "_" + name))
+        this.shortcutNames.append($"{item.axisName}{name == "" ? "" : "_"}{name}")
         this.shortcutItems.append(item)
       }
     }
@@ -1075,7 +1073,7 @@ gui_handlers.Hotkeys <- class (gui_handlers.GenericOptions) {
       return
 
     let item = this.shortcutItems[shortcutId]
-    let itemObj = this.scene.findObject("sc_" + this.shortcutNames[shortcutId])
+    let itemObj = this.scene.findObject($"sc_{this.shortcutNames[shortcutId]}")
 
     if (itemObj?.isValid()) {
       let data = getShortcutData(this.shortcuts, shortcutId)
@@ -1102,7 +1100,7 @@ gui_handlers.Hotkeys <- class (gui_handlers.GenericOptions) {
 
     let msg = loc("hotkeys/msg/unbind_question", {
       action = loc("ui/comma").join(
-        curBinding.map((@(b) loc("hotkeys/" + this.shortcutNames[b[0]])).bindenv(this)),
+        curBinding.map((@(b) loc($"hotkeys/{this.shortcutNames[b[0]]}")).bindenv(this)),
         true
       )
     })
@@ -1292,7 +1290,7 @@ gui_handlers.Hotkeys <- class (gui_handlers.GenericOptions) {
       }
 
       if (item.type == CONTROL_TYPE.SHORTCUT)
-        unmappedGroup.list.append("hotkeys/" + this.shortcutNames[item.shortcutId])
+        unmappedGroup.list.append($"hotkeys/{this.shortcutNames[item.shortcutId]}")
       else if (item.type == CONTROL_TYPE.AXIS)
         unmappedGroup.list.append($"controls/{item.axisName}")
     }
@@ -1312,7 +1310,7 @@ gui_handlers.Hotkeys <- class (gui_handlers.GenericOptions) {
     if ("showValueMul" in item)
       valueText = (item.showValueMul * value).tostring()
     else
-      valueText = value * (("showValuePercMul" in item) ? item.showValuePercMul : 1) + "%"
+      valueText = "".concat(value * (("showValuePercMul" in item) ? item.showValuePercMul : 1), "%")
     valueObj.setValue(valueText)
   }
 
@@ -1414,12 +1412,12 @@ gui_handlers.Hotkeys <- class (gui_handlers.GenericOptions) {
     let colonLocalized = loc("ui/colon")
     foreach (groupIdx, group in list) {
       if (groupIdx > 0)
-        text += "\n"
-      text += loc(group.id) + colonLocalized + "\n"
+        text = "".concat(text, "\n")
+      text = "".concat(text, loc(group.id), colonLocalized, "\n")
       foreach (idx, locId in group.list) {
         if (idx != 0)
-          text += ", "
-        text += loc(locId)
+          text = "".concat(text, ", ")
+        text = "".concat(text, loc(locId))
       }
     }
     return text
@@ -1456,8 +1454,8 @@ gui_handlers.Hotkeys <- class (gui_handlers.GenericOptions) {
     if (!reqList.len())
       return this.closeWnd()
 
-    let msg = loc("controls/warningUnmapped") + loc("ui/colon") + "\n" +
-      this.buildMsgFromGroupsList(reqList)
+    let msg = "".concat(loc("controls/warningUnmapped"), loc("ui/colon"), "\n",
+      this.buildMsgFromGroupsList(reqList))
     this.msgBox("not_all_mapped", msg,
     [
       ["resetToDefaults", function() {
@@ -1688,16 +1686,17 @@ gui_handlers.Hotkeys <- class (gui_handlers.GenericOptions) {
 
 let mkTextShortcutRow = kwarg(@(scId, id, trAdd, trName, scData = "")
   "\n".concat("tr { {0} ".subst(trAdd),
-    "td { width:t='@controlsLeftRow'; overflow:t='hidden'; optiontext{id:t='{0}'; text:t='{1}'; }}"
+    "td { width:t='@controlsLeftRow'; overflow:t='hidden'; cellType:t='left'; optiontext{id:t='{0}'; text:t='{1}'; }}"
       .subst($"txt_{id}", trName),
     "td { width:t='pw-1@controlsLeftRow'; cellType:t='right'; padding-left:t='@optPad';",
+      "cellSeparator{}",
       "shortcutCell { scId:t='{0}';".subst(scId),
         "on_hover:t='onScHover'; on_unhover:t='onScUnHover'; ",
         "on_click:t='onScClick'; on_dbl_click:t='onScDblClick'; ",
         "tdiv { id:t='{0}'; {1}}".subst($"sc_{id}", scData),
   "} } }\n"))
 
-::buildHotkeyItem <- function buildHotkeyItem(rowIdx, shortcuts, item, params, even, rowParams = "") {
+::buildHotkeyItem <- function buildHotkeyItem(rowIdx, shortcuts, item, params, rowParams = "") {
   let hotkeyData = {
     id = $"table_row_{rowIdx}"
     markup = ""
@@ -1707,24 +1706,25 @@ let mkTextShortcutRow = kwarg(@(scId, id, trAdd, trName, scData = "")
   if (("condition" in item) && !item.condition())
     return hotkeyData
 
-  let trAdd = format("id:t='%s'; even:t='%s'; %s", hotkeyData.id, even ? "yes" : "no", rowParams)
+  let trAdd = format("id:t='%s'; optContainer:t='yes'; %s", hotkeyData.id, rowParams)
   local res = ""
   local elemTxt = ""
   local elemIdTxt =$"controls/{item.id}"
 
   if (item.type == CONTROL_TYPE.SECTION) {
     let hotkeyId =$"hotkeys/{item.id}"
-    res = format("tr { %s inactive:t='yes';" +
-                   "td { width:t='@controlsLeftRow'; overflow:t='visible';" +
-                     "optionBlockHeader { text:t='#%s'; }}\n" +
-                   "td { width:t='pw-1@controlsLeftRow'; }\n" +
-                 "}\n", trAdd, hotkeyId)
+    res = format(
+      "".concat("tr { %s inactive:t='yes'; headerRow:t='yes';",
+        "td { width:t='@controlsLeftRow'; overflow:t='visible';",
+        "optionBlockHeader { text:t='#%s'; } }\n", "td { width:t='pw-1@controlsLeftRow';}\n",
+        "optionHeaderLine {} }\n"),
+      trAdd, hotkeyId)
 
     hotkeyData.text = utf8ToLower(loc(hotkeyId))
     hotkeyData.markup = res
   }
   else if (item.type == CONTROL_TYPE.SHORTCUT || item.type == CONTROL_TYPE.AXIS_SHORTCUT) {
-    let trName = "hotkeys/" + ((item.id == "") ? "enable" : item.id)
+    let trName = "".concat("hotkeys/", ((item.id == "") ? "enable" : item.id))
     res = mkTextShortcutRow({
       scId = rowIdx
       id = item.id
@@ -1746,7 +1746,7 @@ let mkTextShortcutRow = kwarg(@(scId, id, trAdd, trName, scData = "")
     hotkeyData.markup = res
   }
   else if (item.type == CONTROL_TYPE.SPINNER || item.type == CONTROL_TYPE.DROPRIGHT) {
-    local createOptFunc = ::create_option_list
+    local createOptFunc = create_option_list
     if (item.type == CONTROL_TYPE.DROPRIGHT)
       createOptFunc = ::create_option_dropright
 
@@ -1775,7 +1775,9 @@ let mkTextShortcutRow = kwarg(@(scId, id, trAdd, trName, scData = "")
       elemTxt = ::create_option_slider(item.id, value.tointeger(), "onSliderChange", true, "slider", item)
     }
 
-    elemTxt += format("activeText{ id:t='%s'; margin-left:t='0.01@sf' } ",$"{item.id}_value")
+    elemTxt = "".concat(
+      elemTxt,
+      format("activeText{ id:t='%s'; margin-left:t='0.01@sf' } ", $"{item.id}_value"))
   }
   else if (item.type == CONTROL_TYPE.SWITCH_BOX) {
     local config = null
@@ -1799,11 +1801,11 @@ let mkTextShortcutRow = kwarg(@(scId, id, trAdd, trName, scData = "")
     let callBack = ("onChangeValue" in item) ? item.onChangeValue : null
     let options = []
     for (local i = 0; i < item.values.len(); i++)
-      options.append("#controls/" + item.values[i])
+      options.append($"#controls/{item.values[i]}")
     local sel = u.find_in_array(item.values, value)
     if (!(sel in item.values))
       sel = 0
-    elemTxt = ::create_option_list(item.id, options, sel, callBack, true)
+    elemTxt = create_option_list(item.id, options, sel, callBack, true)
   }
   else if (item.type == CONTROL_TYPE.BUTTON) {
     elemIdTxt = "";
@@ -1819,11 +1821,15 @@ let mkTextShortcutRow = kwarg(@(scId, id, trAdd, trName, scData = "")
   }
 
   if (elemTxt != "") {
-    res = format("tr { css-hier-invalidate:t='all'; width:t='pw'; %s " +
-                   "td { width:t='@controlsLeftRow'; overflow:t='hidden'; optiontext { text:t ='%s'; }} " +
-                   "td { width:t='pw-1@controlsLeftRow'; cellType:t='right'; padding-left:t='@optPad'; %s } " +
-                 "}\n",
-                 trAdd, elemIdTxt != "" ? $"#{elemIdTxt}" : "", elemTxt)
+    let elemCellWidth = item.type == CONTROL_TYPE.SHORTCUT || item.type == CONTROL_TYPE.AXIS_SHORTCUT
+      ? "pw-1@controlsLeftRow" : "@optContainerRightCellWidth"
+    res = format(
+      "".concat(
+          "tr { css-hier-invalidate:t='all'; width:t='pw'; %s ",
+          "td { width:t='@controlsLeftRow'; cellType:t='left'; overflow:t='hidden'; optiontext { text:t ='%s'; }} ",
+          $"td \{ width:t='{elemCellWidth}'; cellType:t='right'; padding-left:t='@optPad'; cellSeparator\{\} %s \} ",
+          "}\n"),
+      trAdd, elemIdTxt != "" ? $"#{elemIdTxt}" : "", elemTxt)
     hotkeyData.text = utf8ToLower(loc(elemIdTxt))
     hotkeyData.markup = res
   }
@@ -1838,15 +1844,16 @@ let mkTextShortcutRow = kwarg(@(scId, id, trAdd, trName, scData = "")
   preset = preset || ::g_controls_manager.getCurPreset()
   local data = ""
   for (local i = 0; i < shortcuts[shortcutId].len(); i++) {
-    local text = ""
+    let textArr = []
     let sc = shortcuts[shortcutId][i]
 
     for (local j = 0; j < sc.dev.len(); j++)
-      text += ((j != 0) ? " + " : "") + getLocalizedControlName(preset, sc.dev[j], sc.btn[j])
+      textArr.append(getLocalizedControlName(preset, sc.dev[j], sc.btn[j]))
 
-    if (text == "")
+    if (textArr.len() == 0)
       continue
 
+    let text = " + ".join(textArr)
     data = ::addHotkeyTxt(strip_tags ? stripTags(text) : text, data, colored)
   }
 
@@ -1864,16 +1871,16 @@ let mkTextShortcutRow = kwarg(@(scId, id, trAdd, trName, scData = "")
 //works like get_shortcut_text, but returns only first bound shortcut for action
 //needed wor hud
 ::get_first_shortcut_text <- function get_first_shortcut_text(shortcutData) {
-  local text = ""
+  let textArr = []
   if (shortcutData.len() > 0) {
     let sc = shortcutData[0]
 
     let curPreset = ::g_controls_manager.getCurPreset()
     for (local j = 0; j < sc.btn.len(); j++)
-      text += ((j != 0) ? " + " : "") + getLocalizedControlName(curPreset, sc.dev[j], sc.btn[j])
+      textArr.append(getLocalizedControlName(curPreset, sc.dev[j], sc.btn[j]))
   }
 
-  return text
+  return " + ".join(textArr)
 }
 
 ::get_shortcut_gamepad_textures <- function get_shortcut_gamepad_textures(shortcutData) {
@@ -1894,7 +1901,7 @@ let mkTextShortcutRow = kwarg(@(scId, id, trAdd, trName, scData = "")
 ::applySelectedPreset <- function applySelectedPreset(presetName) {
   if (isInArray(presetName, ["keyboard", "keyboard_shooter"]))
     set_option(USEROPT_HELPERS_MODE, globalEnv.EM_MOUSE_AIM)
-  return ($"{controlsPresetConfigPath.value}config/hotkeys/hotkey." + presetName + ".blk")
+  return ($"config/hotkeys/hotkey.{presetName}.blk")
 }
 
 ::remapAxisName <- function remapAxisName(preset, axisId) {
@@ -1928,9 +1935,9 @@ let mkTextShortcutRow = kwarg(@(scId, id, trAdd, trName, scData = "")
     if (mainText.len() >= hack.len()) {
       let replaceButtonText = getLocaliazedPS4ControlName("R2")
       if (mainText.slice(0, hack.len()) == hack)
-        mainText = replaceButtonText + mainText.slice(hack.len())
+        mainText = "".concat(replaceButtonText, mainText.slice(hack.len()))
       else if (mainText.slice(mainText.len() - hack.len()) == hack)
-        mainText = mainText.slice(0, mainText.len() - hack.len()) + replaceButtonText
+        mainText = "".concat(mainText.slice(0, mainText.len() - hack.len()), replaceButtonText)
     }
   }
   return mainText
@@ -2441,7 +2448,7 @@ function getWeaponFeatures(weaponsList) {
         if (isMapped)
           continue
 
-        unmapped.append((getLocNames ? "hotkeys/" : "") + item.id)
+        unmapped.append("".concat(getLocNames ? "hotkeys/" : "", item.id))
       }
       else if (item.type == CONTROL_TYPE.AXIS) {
         if (::is_axis_mapped_on_mouse(item.id, helpersMode, joyParams))
@@ -2461,7 +2468,7 @@ function getWeaponFeatures(weaponsList) {
             }
           }
           if (shortcutsCount < modifiers.len())
-            unmapped.append((getLocNames ? "controls/" : "") + item.axisName)
+            unmapped.append("".concat(getLocNames ? "controls/" : "", item.axisName))
         }
       }
     }

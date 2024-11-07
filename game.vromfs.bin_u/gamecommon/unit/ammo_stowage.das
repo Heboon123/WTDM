@@ -68,7 +68,6 @@ def ammo_stowage_gather_and_update_ammo(unit : Unit?;
                                           ammo_stowage__ammoTypeRemap : IPoint4List;
                                           ammo_stowage__weaponsIds : IntList;
                                           ammo_stowage__relatedPartsIds : PartIdList;
-                                          ammo_stowages__state : UInt32List;
                                           ammo_stowages__clustersRange : IPoint2List;
                                           ammo_clusters__state : UInt32List;
                                           ammo_clusters__typeAndStage : UInt16List;
@@ -80,7 +79,6 @@ def ammo_stowage_gather_and_update_ammo(unit : Unit?;
                                           ammo_per_type_data__numAmmoFs : IntList -const
                                           >) : tuple<hash : uint; data_range : int2>
   let clusters_range = v.ammo_stowages__clustersRange[stowage_id]
-  let stowage_has_auto_load = get_flag(v.ammo_stowages__state[stowage_id], AmmoStowageState HAS_AUTO_LOAD)
   let enable_per_ammo_types = get_flag(v.ammo_stowage__ammoState, AmmoState ENABLE_PER_AMMO_TYPES)
 
   var stowage_any_parts_broken = false
@@ -91,11 +89,16 @@ def ammo_stowage_gather_and_update_ammo(unit : Unit?;
   var stage_present : bool[4]
   for p in stage_present
     p = false
+  var auto_load_present = false
   for cluster_id in clusters_range.x..clusters_range.y
     let cluster_state = v.ammo_clusters__state[cluster_id]
     let cluster_stage = get_ammo_cluster_stage(cluster_id, v)
     let parts_range = v.ammo_clusters__relatedPartsRange[cluster_id]
+    if get_flag(cluster_state, AmmoClusterState EXCLUDED)
+      continue
     stage_present[cluster_stage] = true
+    if get_flag(cluster_state, AmmoClusterState AUTO_LOAD)
+      auto_load_present = true
 
     stowage_has_autoloader_parts = get_flag(cluster_state, AmmoClusterState HAS_AUTOLOADER_PARTS) || stowage_has_autoloader_parts
     stowage_has_elevator_parts = get_flag(cluster_state, AmmoClusterState HAS_ELEVATOR_PARTS) || stowage_has_elevator_parts
@@ -121,12 +124,12 @@ def ammo_stowage_gather_and_update_ammo(unit : Unit?;
           uint(AmmoStowagePerAmmoState EMPTY_FIRST_STAGE) |
           uint(AmmoStowagePerAmmoState EMPTY_SECOND_STAGE)
         )
+    set_flag(v.ammo_per_type_data__state[glob_ammo_idx], AmmoStowagePerAmmoState EMPTY_AUTO_LOAD, auto_load_present)
 
     if ammo_type_remap.x != stowage_id
       // ammo type from other stowage - skip
       continue
 
-    set_flag(v.ammo_per_type_data__state[glob_ammo_idx], AmmoStowagePerAmmoState EMPTY_AUTO_LOAD, stowage_has_auto_load)
     var loaded_ammo_cnt = 0
     var is_ready_to_shoot = false
     for weapon_i in ammo_type_remap.y..ammo_type_remap.z
@@ -275,9 +278,8 @@ def find_next_slots_to_replenish(stowage_id : int; amount : int;
 
 [es, with_bundle(v)]
 def ammo_stowage_update_replenishment_and_state_es(info : ParallelUpdateFrameDelayed;
-                                                   active : bool;
                                                    eid : EntityId;
-                                                   uid : int;
+                                                   var unit__ref : UnitRef;
                                                    v : tuple<
                                                      ammo_stowage__ammoState : uint;
                                                      ammo_stowage__weaponTriggers : IntList;
@@ -306,8 +308,8 @@ def ammo_stowage_update_replenishment_and_state_es(info : ParallelUpdateFrameDel
                                                      ammo_per_type_data__state : UInt32List -const;
                                                      ammo_per_type_data__numAmmoFs : IntList -const
                                                      >)
-  var unit = get_unit(uid)
-  if unit == null || unit.isDelayed || !active
+  var unit = unit__ref.unit
+  if unit.isDelayed
     return
   let allow_replenishment = !is_in_hangar()
 
@@ -428,15 +430,14 @@ def ammo_stowage_sync_num_ammo_fs_es(act : UpdateStageInfoAct;
 
 [es(on_event=EventOnStopBurn)]
 def ammo_stowage_on_stop_burn_es(evt : Event;
-                                 uid : int; active : bool;
+                                 var unit__ref : UnitRef;
                                  var unit_fx : UnitFx;
                                  var ammo_clusters__state : UInt32List&;
                                  ammo_clusters__fireEvtId : IntList)
 
-  let unit = get_unit(uid)
-  if !active || unit == null || unit.isDelayed || !unit.isAuthority
+  let unit = unit__ref.unit
+  if unit.isDelayed || !unit.isAuthority
     return
-
   for state, fire_event_id in ammo_clusters__state, ammo_clusters__fireEvtId
     if !get_flag(state, AmmoClusterState FIRE_FATAL)
       unit_fx |> stopFxEvent(fire_event_id)

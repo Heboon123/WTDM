@@ -1,13 +1,15 @@
 from "%scripts/dagui_natives.nut" import clan_get_exp
 from "%scripts/dagui_library.nut" import *
 
-let unitStatus = require("%scripts/unit/unitStatus.nut")
+let { isUnitInSlotbar, canBuyNotResearched, isUnitMaxExp, canResearchUnit,
+  isUnitInResearch, isUnitGroup, isUnitBroken, isUnitUsable
+} = require("%scripts/unit/unitStatus.nut")
 let unitActions = require("%scripts/unit/unitActions.nut")
 let openCrossPromoWnd = require("%scripts/openCrossPromoWnd.nut")
-let { isUnitGift, isUnitGroup, canResearchUnit, canBuyUnit } = require("%scripts/unit/unitInfo.nut")
+let { getUnitExp } = require("%scripts/unit/unitInfo.nut")
+let { canBuyUnit, isUnitGift } = require("%scripts/unit/unitShopInfo.nut")
 let { showUnitGoods } = require("%scripts/onlineShop/onlineShopModel.nut")
 let takeUnitInSlotbar = require("%scripts/unit/takeUnitInSlotbar.nut")
-let { isUnitInSlotbar } = require("%scripts/slotbar/slotbarState.nut")
 
 let ACTION_FUNCTION_PARAMS = {
   availableFlushExp = 0
@@ -26,10 +28,10 @@ let MAIN_FUNC_PARAMS = {
   curEdiff = 0
 }
 
-local function getSlotActionFunctionName(unit, params) {
+function getSlotActionFunctionName(unit, params) {
   params = ACTION_FUNCTION_PARAMS.__merge(params)
 
-  if (::isUnitBroken(unit))
+  if (isUnitBroken(unit))
     return "mainmenu/btnRepair"
   if (isUnitInSlotbar(unit))
     return ""
@@ -39,9 +41,9 @@ local function getSlotActionFunctionName(unit, params) {
     return "mainmenu/btnOrder"
 
   let isSquadronVehicle = unit.isSquadronVehicle()
-  let isInResearch = ::isUnitInResearch(unit)
+  let isInResearch = isUnitInResearch(unit)
   let canFlushSquadronExp = hasFeature("ClanVehicles") && isSquadronVehicle
-    && min(clan_get_exp(), unit.reqExp - ::getUnitExp(unit)) > 0
+    && min(clan_get_exp(), unit.reqExp - getUnitExp(unit)) > 0
   if ((params.availableFlushExp > 0 || !params.setResearchManually
       || (params.isSquadronResearchMode && params.needChosenResearchOfSquadron)
       || (isSquadronVehicle && !::is_in_clan() && !canFlushSquadronExp))
@@ -54,20 +56,20 @@ local function getSlotActionFunctionName(unit, params) {
 
   if (canFlushSquadronExp && (isInResearch || params.isSquadronResearchMode))
     return "mainmenu/btnInvestSquadronExp"
-  if (isInResearch && unitStatus.canBuyNotResearched(unit))
+  if (isInResearch && canBuyNotResearched(unit))
     return "mainmenu/btnOrder"
-  if (!::isUnitUsable(unit) && !isUnitGift(unit) && (!isSquadronVehicle || !isInResearch))
-    return (::isUnitResearched(unit) || ::isUnitMaxExp(unit)) ? "mainmenu/btnOrder" : "mainmenu/btnResearch"
+  if (!isUnitUsable(unit) && !isUnitGift(unit) && (!isSquadronVehicle || !isInResearch))
+    return (::isUnitResearched(unit) || isUnitMaxExp(unit)) ? "mainmenu/btnOrder" : "mainmenu/btnResearch"
   return ""
 }
 
-local function slotMainAction(unit, params = MAIN_FUNC_PARAMS) {
+function slotMainAction(unit, params = MAIN_FUNC_PARAMS) {
   if (!unit || isUnitGroup(unit) || unit?.isFakeUnit)
     return
 
   params = MAIN_FUNC_PARAMS.__merge(params)
 
-  if (::isUnitBroken(unit))
+  if (isUnitBroken(unit))
     return unitActions.repairWithMsgBox(unit)
   if (isUnitInSlotbar(unit))
     return ::open_weapons_for_unit(unit, { curEdiff = params.curEdiff })
@@ -79,9 +81,9 @@ local function slotMainAction(unit, params = MAIN_FUNC_PARAMS) {
     return unitActions.buy(unit, "slotAction")
 
   let isSquadronVehicle = unit.isSquadronVehicle()
-  let isInResearch = ::isUnitInResearch(unit)
+  let isInResearch = isUnitInResearch(unit)
   let canFlushSquadronExp = hasFeature("ClanVehicles") && isSquadronVehicle
-    && min(clan_get_exp(), unit.reqExp - ::getUnitExp(unit)) > 0
+    && min(clan_get_exp(), unit.reqExp - getUnitExp(unit)) > 0
   if ((params.availableFlushExp > 0
       || !params.setResearchManually
       || (params.isSquadronResearchMode && (canFlushSquadronExp || params.needChosenResearchOfSquadron)))
@@ -93,7 +95,7 @@ local function slotMainAction(unit, params = MAIN_FUNC_PARAMS) {
 
   if (canFlushSquadronExp && isInResearch)
     return unitActions.flushSquadronExp(unit)
-  if (isInResearch && unitStatus.canBuyNotResearched(unit)
+  if (isInResearch && canBuyNotResearched(unit)
     && isSquadronVehicle && ::is_in_clan())
     return unitActions.buy(unit, "slot_action_squad")
   if (unit.isCrossPromo)

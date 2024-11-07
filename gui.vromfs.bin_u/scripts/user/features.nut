@@ -280,9 +280,15 @@ let defaults = Watched({  //def value when feature not found in game_settings.bl
   DevShopMode = false
   CustomNicks = false
   Wishlist = false
-  optionMotionBlur = true
   optionRT = has_ray_query()
   amdfsr = true
+  HitsAnalysis = false
+
+  optionBVH = true
+  optionBVH_AO = true
+  optionBVH_SM = true
+  optionGFXAPI = true
+  optionGFXAPIVulkan = true
 })
 
 let override = Watched({})

@@ -5,6 +5,7 @@ from "%scripts/mainConsts.nut" import COLOR_TAG
 
 let { registerGlobalModule } = require("%scripts/global_modules.nut")
 registerGlobalModule("g_squad_manager")
+registerGlobalModule("events")
 
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 require("%scripts/mainConsts.nut")
@@ -18,15 +19,6 @@ let colorTagToColors = {
   [COLOR_TAG.TEAM_BLUE] = "teamBlueColor",
   [COLOR_TAG.TEAM_RED] = "teamRedColor",
 }
-
-let test_flight_unit_info = {}
-::get_test_flight_unit_info <- @() freeze(test_flight_unit_info)
-::update_test_flight_unit_info <- function(info) {
-  test_flight_unit_info.clear()
-  test_flight_unit_info.__update(info)
-}
-
-::get_mp_kick_countdown <- @() 1000000
 
 let u = require("%sqStdLibs/helpers/u.nut")
 let { loadOnce, registerPersistentData, isInReloading
@@ -49,7 +41,6 @@ let { ref_time_ticks } = require("dagor.time")
 let { set_rnd_seed } = require("dagor.random")
 
 ::INVALID_USER_ID <- make_invalid_user_id()
-::RESPAWNS_UNLIMITED <- -1
 
 ::custom_miss_flight <- false
 ::is_debug_mode_enabled <- false
@@ -173,7 +164,6 @@ require("%scripts/debugTools/dbgAvatarsList.nut")
 require("%scripts/debugTools/dbgFonts.nut")
 require("%scripts/debugTools/dbgUtils.nut")
 require("%scripts/debugTools/dbgImage.nut")
-require("%scripts/debugTools/dbgMarketplace.nut")
 require("%scripts/debugTools/dbgCrewLock.nut")
 require("%scripts/debugTools/dbgDedicLogerrs.nut")
 require("%sqstd/regScriptProfiler.nut")("dagui", dlog) // warning disable: -forbidden-function

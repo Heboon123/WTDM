@@ -1,4 +1,4 @@
-from "%scripts/dagui_natives.nut" import is_tank_damage_indicator_visible, is_hud_visible, is_freecam_enabled, is_hero_highquality, set_option_hud_screen_safe_area, is_cursor_visible_in_gui, set_hud_width_limit, hud_is_in_cutscene
+from "%scripts/dagui_natives.nut" import is_tank_damage_indicator_visible, is_hud_visible, is_freecam_enabled, is_hero_highquality, set_option_hud_screen_safe_area, is_cursor_visible_in_gui, set_hud_width_limit, hud_is_in_cutscene, get_mp_kick_countdown
 from "%scripts/dagui_library.nut" import *
 from "%scripts/hud/hudConsts.nut" import HUD_VIS_PART, HUD_TYPE
 
@@ -403,7 +403,8 @@ gui_handlers.Hud <- class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     let unmappedLocalized = unmapped.map(@(v) loc(v))
-    let text = loc("controls/warningUnmapped") + loc("ui/colon") + "\n" + loc("ui/comma").join(unmappedLocalized, true)
+    let text = "".concat(loc("controls/warningUnmapped"), loc("ui/colon"), "\n",
+      loc("ui/comma").join(unmappedLocalized, true))
     warningObj.setValue(text)
     warningObj.show(true)
     warningObj.wink = "yes"
@@ -512,7 +513,7 @@ gui_handlers.Hud <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function updateAFKTimeKick() {
-    this.afkTimeToKick = ::get_mp_kick_countdown()
+    this.afkTimeToKick = get_mp_kick_countdown()
   }
 
   function updateAFKTimeKickText(sec) {

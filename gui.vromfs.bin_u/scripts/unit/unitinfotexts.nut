@@ -1,12 +1,13 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 let { isUnitSpecial } = require("%appGlobals/ranks_common_shared.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { round, fabs } = require("math")
 let { utf8ToLower } = require("%sqstd/string.nut")
-let { getEsUnitType, isUnitDefault, isUnitGift, bit_unit_status } = require("%scripts/unit/unitInfo.nut")
+let { getEsUnitType, bit_unit_status } = require("%scripts/unit/unitInfo.nut")
 let { get_wpcost_blk } = require("blkGetters")
+let { isUnitDefault } = require("%scripts/unit/unitStatus.nut")
+let { isUnitGift } = require("%scripts/unit/unitShopInfo.nut")
 
 let basicUnitRoles = {
   [ES_UNIT_TYPE_AIRCRAFT] = ["type_fighter", "type_assault", "type_bomber"],
@@ -217,13 +218,13 @@ function getShipMaterialTexts(unitId) {
     let thickness = blk?[$"{part}Thickness"] ?? 0.0
     if (thickness && material) {
       res[$"{part}Label"] <- loc($"info/ship/part/{part}")
-      res[$"{part}Value"] <- loc($"armor_class/{material}/short", loc($"armor_class/{material}")) +
-        loc("ui/comma") + round(thickness) + " " + loc("measureUnits/mm")
+      res[$"{part}Value"] <- "".concat(loc($"armor_class/{material}/short", loc($"armor_class/{material}")),
+        loc("ui/comma"), round(thickness), " ", loc("measureUnits/mm"))
     }
   }
   if (res?.superstructureValue && res?.superstructureValue == res?.hullValue) {
-    res.hullLabel += " " + loc("clan/rankReqInfoCondType_and") + " " +
-      utf8ToLower(res.superstructureLabel)
+    res.hullLabel = " ".concat(res.hullLabel, loc("clan/rankReqInfoCondType_and"),
+      utf8ToLower(res.superstructureLabel))
     res.$rawdelete("superstructureLabel")
     res.$rawdelete("superstructureValue")
   }

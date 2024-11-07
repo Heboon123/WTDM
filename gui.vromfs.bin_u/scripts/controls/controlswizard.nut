@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import joystick_get_default, set_bind_mode, is_axis_digital, get_axis_index, is_app_active
 from "%scripts/dagui_library.nut" import *
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -15,7 +14,6 @@ let globalEnv = require("globalEnv")
 let { setDoubleTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-let controlsPresetConfigPath = require("%scripts/controls/controlsPresetConfigPath.nut")
 let { getHelpPreviewHandler } = require("%scripts/help/helpPreview.nut")
 let { recomendedControlPresets, getControlsPresetBySelectedType
 } = require("%scripts/controls/controlsUtils.nut")
@@ -465,7 +463,7 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
     if (item.type == CONTROL_TYPE.AXIS)
       return $"controls/{item.id}"
     else if ("optionType" in item)
-      return "options/" + ::get_option(item.optionType).id
+      return $"options/{::get_option(item.optionType).id}"
 
     return $"hotkeys/{item.id}"
   }
@@ -708,11 +706,13 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
         cantBeEmpty = false
       })
 
-    local assignText = axisAssignText + ((buttonAssignText == "" || axisAssignText == "") ? "" : loc("ui/semicolon")) + buttonAssignText
+    local assignText = "".concat(axisAssignText,
+      (buttonAssignText == "" || axisAssignText == "") ? "" : loc("ui/semicolon"),
+      buttonAssignText)
     if (assignText == "")
       assignText = "---"
 
-    this.scene.findObject("curAssign_text").setValue(loc("controls/currentAssign") + loc("ui/colon") + assignText)
+    this.scene.findObject("curAssign_text").setValue("".concat(loc("controls/currentAssign"), loc("ui/colon"), assignText))
   }
 
   function updateAxisPressKey() {
@@ -728,7 +728,7 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
         imgId = 1
       }
     if ("msgType" in this.curItem)
-      msgLocId += this.curItem.msgType
+      msgLocId = "".concat(msgLocId, this.curItem.msgType)
 
     let textObj = this.scene.findObject("hold_axis")
     if (checkObj(textObj)) {
@@ -790,8 +790,8 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
       return
 
     let isEnabled = this.isListenAxis || this.isListenButton
-    let sampleText = loc("mainmenu/shortcuts") + " (%s" + loc("options/" + (isEnabled ? "enabled" : "disabled")) + "%s)"
-    let coloredText = format(sampleText, "<color=@" + (isEnabled ? "goodTextColor" : "warningTextColor") + ">", "</color>")
+    let sampleText = "".concat(loc("mainmenu/shortcuts"), " (%s", loc($"options/{isEnabled ? "enabled" : "disabled"}"), "%s)")
+    let coloredText = format(sampleText, $"<color=@{isEnabled ? "goodTextColor" : "warningTextColor"}>", "</color>")
     let NotColoredText = format(sampleText, "", "")
 
     setDoubleTextToButton(this.scene, "btn_switchAllModes", NotColoredText, coloredText)
@@ -917,10 +917,10 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
       return false
     }
 
-    local actionText = ""
+    let actionText = []
     foreach (binding in curBinding)
-      actionText += ((actionText == "") ? "" : ", ") + loc("hotkeys/" + this.shortcutNames[binding[0]])
-    let msg = loc("hotkeys/msg/unbind_question", { action = actionText })
+      actionText.append(loc($"hotkeys/{this.shortcutNames[binding[0]]}"))
+    let msg = loc("hotkeys/msg/unbind_question", { action = ", ".join(actionText) })
     this.msgBox("controls_wizard_bind_existing_shortcut", msg, [
       ["add", function() {
         this.doBind(devs, btns, shortcutId)
@@ -995,16 +995,16 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
       return
 
     let sc = this.readShortcutInfo(obj)
-    this.curBtnText = this.getShortcutText(sc) + ((this.lastNumButtons >= 3) ? "" : (this.lastNumButtons > 0) ? " + ?" : "?")
+    this.curBtnText = "".concat(this.getShortcutText(sc), ((this.lastNumButtons >= 3) ? "" : (this.lastNumButtons > 0) ? " + ?" : "?"))
     this.scene.findObject("shortcut_current_button").setValue(this.curBtnText)
   }
 
   function getShortcutText(sc) {
-    local text = ""
+    let text = []
     let curPreset = ::g_controls_manager.getCurPreset()
     for (local i = 0; i < sc.dev.len(); i++)
-      text += ((i != 0) ? " + " : "") + getLocalizedControlName(curPreset, sc.dev[i], sc.btn[i])
-    return text
+      text.append(getLocalizedControlName(curPreset, sc.dev[i], sc.btn[i]))
+    return " + ".join(text)
   }
 
   function readShortcutInfo(obj) {
@@ -1070,7 +1070,7 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
 
     let curPreset = ::g_controls_manager.getCurPreset()
     this.curBtnText = ::remapAxisName(curPreset, this.selectedAxisNum)
-    this.showMsg(loc("hotkeys/msg/axis_choosen") + "\n" + this.curBtnText, config)
+    this.showMsg("\n".concat(loc("hotkeys/msg/axis_choosen"), this.curBtnText), config)
   }
 
   function bindAxis() {
@@ -1113,11 +1113,11 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
       return false
     }
 
-    local actionText = ""
+    let actionText = []
     foreach (binding in curBinding)
-      actionText += ((actionText == "") ? "" : ", ") + loc(this.getItemName(binding))
+      actionText.append(loc(this.getItemName(binding)))
     let msg = loc("hotkeys/msg/unbind_axis_question", {
-      button = this.curBtnText, action = actionText
+      button = this.curBtnText, action = ", ".join(actionText)
     })
     this.msgBox("controls_wizard_bind_existing_axis", msg, [
       ["add", function() { this.bindAxis() }],
@@ -1294,9 +1294,9 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
       value = -value
 
     if (this.isAxisVertical)
-      obj.pos = "0.5pw-0.5w, " + format("%.3f(ph - h)", ((32000 - value).tofloat() / 64000))
+      obj.pos = "".concat("0.5pw-0.5w, ", format("%.3f(ph - h)", ((32000 - value).tofloat() / 64000)))
     else
-      obj.pos = format("%.3f(pw - w)", ((value + 32000).tofloat() / 64000)) + ", 0.5ph- 0.5h"
+      obj.pos = "".concat(format("%.3f(pw - w)", ((value + 32000).tofloat() / 64000)), ", 0.5ph- 0.5h")
   }
 
   function initAxisPresetup(fullInit = true) {
@@ -1346,8 +1346,8 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
       local data = ""
       foreach (idx, btn in this.msgButtons) {
         let text = (btn.len() > 0 && btn.slice(0, 1) != "#") ? $"#{btn}" : btn
-        data += format("Button_text { id:t='%d'; text:t='%s'; on_click:t='onMsgButton'; }",
-                  idx, text)
+        data = "".concat(data, format("Button_text { id:t='%d'; text:t='%s'; on_click:t='onMsgButton'; }",
+          idx, text))
       }
       let btnsHolder = this.scene.findObject("msgBox_buttons")
       this.guiScene.replaceContentFromText(btnsHolder, data, data.len(), this)
@@ -1478,7 +1478,7 @@ gui_handlers.controlsWizardModalHandler <- class (gui_handlers.BaseGuiHandlerWT)
         return
       }
 
-      let presetPath = ($"{controlsPresetConfigPath.value}config/hotkeys/hotkey.{this.presetSelected}.blk")
+      let presetPath = ($"config/hotkeys/hotkey.{this.presetSelected}.blk")
       let previewPreset = ::ControlsPreset(presetPath)
       let currentPreset = ::g_controls_manager.getCurPreset()
 

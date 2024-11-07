@@ -1,10 +1,9 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import char_send_blk, wp_get_item_cost_gold, wp_get_item_cost
 from "%scripts/items/itemsConsts.nut" import itemType
 from "%scripts/dagui_library.nut" import *
 
 let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
-let { Cost } = require("%scripts/money.nut")
+let { zero_money, Cost } = require("%scripts/money.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -150,7 +149,7 @@ let BaseItem = class {
     this.isInventoryItem = invBlk != null
     this.purchaseFeature = blk?.purchase_feature ?? ""
     this.isDevItem = !this.isInventoryItem && this.purchaseFeature == "devItemShop"
-    this.canBuy = this.canBuy && !this.isInventoryItem && this.getCost(true) > ::zero_money
+    this.canBuy = this.canBuy && !this.isInventoryItem && this.getCost(true) > zero_money
     this.isHideInShop = blk?.hideInShop ?? false
     this.iconStyle = blk?.iconStyle ?? this.id
     this.lottieAnimation = blk?.lottieAnimation
@@ -281,21 +280,21 @@ let BaseItem = class {
   function getNameWithCount(colored = true, count = 0) {
     local counttext = ""
     if (count > 1)
-      counttext = colorize("activeTextColor", " x") + colorize("userlogColoredText", count)
+      counttext = "".concat(colorize("activeTextColor", " x"), colorize("userlogColoredText", count))
 
-    return this.getName(colored) + counttext
+    return "".concat(this.getName(colored), counttext)
   }
 
   function getTypeName() {
     return loc($"item/{this.defaultLocId}")
   }
 
-  function getNameMarkup(count = 0, showTitle = true, hasPadding = false) {
+  function getNameMarkup(count = 0, showTitle = true, hasPadding = false, tooltipParams = {}) {
     return handyman.renderCached("%gui/items/itemString.tpl", {
       title = showTitle ? colorize("activeTextColor", this.getName()) : null
       icon = this.getSmallIconName()
-      tooltipId = getTooltipType("ITEM").getTooltipId(this.id, { isDisguised = this.isDisguised })
-      count = count > 1 ? (colorize("activeTextColor", " x") + colorize("userlogColoredText", count)) : null
+      tooltipId = getTooltipType("ITEM").getTooltipId(this.id, tooltipParams.__merge({isDisguised = this.isDisguised}))
+      count = count > 1 ? "".concat(colorize("activeTextColor", " x"), colorize("userlogColoredText", count)) : null
       hasPadding = hasPadding
     })
   }
@@ -430,15 +429,15 @@ let BaseItem = class {
         && (!u.isInteger(amountVal) || this.shouldShowAmount(amountVal))) {
       res.amount <- isSelfAmount && this.hasReachedMaxAmount()
         ? colorize("goodTextColor",
-          loc("ui/parentheses/space", { text = amountVal + loc("ui/slash") + this.maxAmount }))
-        : amountVal.tostring() + additionalTextInAmmount
+          loc("ui/parentheses/space", { text = loc("ui/slash").concat(amountVal, this.maxAmount) }))
+        : $"{amountVal}{additionalTextInAmmount}"
       if (isSelfAmount && this.transferAmount > 0)
         res.isInTransfer <- true
     }
     if (getTblValue("showSellAmount", params, false)) {
       let sellAmount = this.getSellAmount()
       if (sellAmount > 1)
-        res.amount <- sellAmount + additionalTextInAmmount
+        res.amount <- $"{sellAmount}{additionalTextInAmmount}"
     }
 
     if (!res?.isItemLocked)
@@ -446,9 +445,8 @@ let BaseItem = class {
 
     let boostEfficiency = this.getBoostEfficiency()
     if (params?.hasBoostEfficiency && boostEfficiency)
-      res.boostEfficiency <- colorize(this.getAmount() > 0
-        ? "activeTextColor"
-        : "commonTextColor", loc("keysPlus") + boostEfficiency + loc("measureUnits/percent"))
+      res.boostEfficiency <- colorize(this.getAmount() > 0 ? "activeTextColor" : "commonTextColor",
+        "".concat(loc("keysPlus"), boostEfficiency, loc("measureUnits/percent")))
 
     return res
   }
@@ -550,7 +548,7 @@ let BaseItem = class {
 
     cost = cost ?? this.getCost()
     let costText = colored ? cost.getTextAccordingToBalance() : cost.getUncoloredText()
-    return res + ((costText == "") ? "" : " (" + costText + ")")
+    return "".concat(res, (costText == "") ? "" : $" ({costText})")
   }
 
   function getMainActionData(isShort = false, _params = {}) {
@@ -608,7 +606,7 @@ let BaseItem = class {
 
     res = hoursToString(this.expiredTimeAfterActivationH, true, false, true)
     if (withTitle)
-      res = loc("items/expireTimeAfterActivation") + loc("ui/colon") + colorize("activeTextColor", res)
+      res = "".concat(loc("items/expireTimeAfterActivation"), loc("ui/colon"), colorize("activeTextColor", res))
     return res
   }
 
@@ -621,8 +619,8 @@ let BaseItem = class {
         this.onItemExpire()
       return loc(this.itemExpiredLocId)
     }
-    let resStr = loc("icon/hourglass") + nbsp +
-      hoursToString(secondsToHours(deltaSeconds), false, true, true).replace(" ", nbsp)
+    let resStr = "".concat(loc("icon/hourglass"), nbsp,
+      hoursToString(secondsToHours(deltaSeconds), false, true, true).replace(" ", nbsp))
     let expireTimeColor = this.getExpireType()?.color
     return expireTimeColor ? colorize(expireTimeColor, resStr) : resStr
   }
@@ -631,13 +629,13 @@ let BaseItem = class {
     local res = ""
     let active = this.isActive()
     if (!active)
-      res += this.getExpireAfterActivationText()
+      res = $"{res}{this.getExpireAfterActivationText()}"
 
     let timeText = this.getExpireTimeTextShort()
     if (timeText != "") {
       let labelLocId = active ? "items/expireTimeLeft" : "items/expireTimeBeforeActivation"
-      res += ((res != "") ? "\n" : "") + loc(labelLocId) + loc("ui/colon") +
-        colorize("activeTextColor", timeText)
+      res = "".concat(res, ((res != "") ? "\n" : ""), loc(labelLocId), loc("ui/colon"),
+        colorize("activeTextColor", timeText))
     }
     return res
   }

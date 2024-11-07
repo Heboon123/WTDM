@@ -1,6 +1,6 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import get_unlock_type, get_name_by_unlock_type
 from "%scripts/dagui_library.nut" import *
+from "%scripts/items/itemsConsts.nut" import *
 
 let { Cost } = require("%scripts/money.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
@@ -26,6 +26,7 @@ let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
 let { getDecorator } = require("%scripts/customization/decorCache.nut")
 let { getGiftSparesCost } = require("%scripts/shop/giftSpares.nut")
 let { getUnitName, getUnitCountryIcon } = require("%scripts/unit/unitInfo.nut")
+let { isUnitBought } = require("%scripts/unit/unitShopInfo.nut")
 let { decoratorTypes, getTypeByUnlockedItemType, getTypeByResourceType } = require("%scripts/customization/types.nut")
 let { buildUnitSlot } = require("%scripts/slotbar/slotbarView.nut")
 let { getCrewById } = require("%scripts/slotbar/slotbarState.nut")
@@ -56,6 +57,7 @@ enum prizesStack {
   NOT_STACKED
   DETAILED
   BY_TYPE
+  BY_CHANCE
 }
 
 enum PRIZE_TYPE {
@@ -85,6 +87,7 @@ enum STACK_TYPE {
   ITEM      // Item params min-max range
   CURRENCY  // Currency min-max range
   VEHICLE   // Complete list of units
+  CHANCE    // Drop chance
 }
 
 const UNITS_STACK_DETAILED_COUNT = 3
@@ -240,7 +243,17 @@ let getItemPrizeRarityText = @(categoryText, tag = null) "".concat(categoryText,
 let getItemTypePrizeText = @(itemBlkType) loc(
   $"trophy/unlockables_names/{itemBlkType == "unit" ? "aircraft" : itemBlkType}")
 
+function getStackTypeBasedOnPercentChance(prize) {
+  let prizeType = getPrizeType(prize)
+  if (isInArray(prizeType, [ PRIZE_TYPE.UNIT, PRIZE_TYPE.RENTED_UNIT ]))
+    return STACK_TYPE.CHANCE
+  return STACK_TYPE.UNKNOWN
+}
+
 function getStackType(prize) {
+  if (prize?.percent != null && prize.percent >= 0)
+    return getStackTypeBasedOnPercentChance(prize)
+
   let prizeType = getPrizeType(prize)
   if (prizeType == PRIZE_TYPE.ITEM)
     return STACK_TYPE.ITEM
@@ -316,7 +329,8 @@ function getPrizeText(prize, colored = true, v_typeName = false,
     }
   }
   else if (prize?.premium_in_hours) {
-    name = loc("charServer/entitlement/PremiumAccount") + loc("ui/colon") + time.hoursToString(prize.premium_in_hours)
+    name = "".concat(loc("charServer/entitlement/PremiumAccount"), loc("ui/colon"),
+      time.hoursToString(prize.premium_in_hours))
     color = "userlogColoredText"
   }
   else if (prize?.entitlement) {
@@ -339,10 +353,10 @@ function getPrizeText(prize, colored = true, v_typeName = false,
       if (colored)
         nameText = colorize(typeValid ? "userlogColoredText" : "red", nameText)
       if (unlockType != UNLOCKABLE_SLOT && nameText != "")
-        name += loc("ui/colon") + nameText
+        name = "".concat(name, loc("ui/colon"), nameText)
     }
     if (full)
-      name += "\n" + getFullUnlockDescByName(unlockId)
+      name = "\n".concat(name, getFullUnlockDescByName(unlockId))
     color = "commonTextColor"
   }
   else if (prize?.unlockType)
@@ -590,11 +604,40 @@ function findAndStackPrizeUnit(prize, stackList, stackLevel, shopDesc) {
   return true
 }
 
-function stackContent(content, stackLevel = prizesStack.BY_TYPE, shopDesc = false) {
+function findAndStackPrizeChance(prize, stackList, stackLevel, shopDesc) {
+  if (shopDesc || !prize?.unit)
+    return false
+
+  let prizeType = getPrizeType(prize)
+
+  local stack = null
+  if (prize?.percent != null && prize.percent == 0)
+    stack = findOneStack(stackList, prizeType, @(stk) stk?.prize.percent == 0)
+  if (prize?.percent != null && prize.percent > 0)
+    stack = findOneStack(stackList, prizeType, @(stk) stk?.prize.percent != null && stk.prize.percent > 0 && stk?.prize.weight == prize?.weight)
+
+  if (stack) {
+    stack.params.prizes.append(prize)
+    stack.size++
+    stack.level = max(prizesStack.BY_CHANCE, stackLevel)
+    return true
+  }
+
+  stack = createStack(prize)
+  stack.params = {
+    prizes = [ prize ]
+  }
+  stackList.append(stack)
+  return true
+}
+
+function stackContent(content, stackLevel = prizesStack.BY_TYPE, shopDesc = false, needShowChance = false) {
   let res = []
   foreach (prize in content) {
     let stackType = getStackType(prize)
 
+    if (stackType == STACK_TYPE.CHANCE && findAndStackPrizeChance(prize, res, stackLevel, shopDesc))
+      continue
     if (stackType == STACK_TYPE.ITEM && findAndStackPrizeItem(prize, res, stackLevel))
       continue
     if (stackType == STACK_TYPE.CURRENCY && findAndStackPrizeCurrency(prize, res))
@@ -604,6 +647,19 @@ function stackContent(content, stackLevel = prizesStack.BY_TYPE, shopDesc = fals
 
     res.append(createStack(prize))
   }
+
+  if (!needShowChance)
+    return res
+
+  local isNotStacked = true
+  foreach (st in res) {
+    if (st?.level != null && st.level != 0) {
+      isNotStacked = false
+      break
+    }
+  }
+  if (!isNotStacked)
+    return res.sort(@(a ,b) b.prize.percent <=> a.prize.percent)
   return res
 }
 
@@ -616,7 +672,7 @@ function getStackCurrencyText(stack) {
   let printFunc = stack.params.printFunc
   local res = printFunc(stack.countMin)
   if (stack.countMin != stack.countMax)
-    res += " - " + printFunc(stack.countMax)
+    res = " - ".concat(res, printFunc(stack.countMax))
   return colorize("activeTextColor", res)
 }
 
@@ -697,7 +753,7 @@ function getViewDataUnit(unitName, params = null, rentTimeHours = 0, numSpares =
   if (!unit)
     return null
 
-  let isBought = ::isUnitBought(unit)
+  let isBought = isUnitBought(unit)
   let receivedPrizes = getTblValue("receivedPrizes", params, true)
   let classIco = getTblValue("singlePrize", params, false) ? null : ::getUnitClassIco(unit)
   let countryIco = getUnitCountryIcon(unit, false)
@@ -711,7 +767,7 @@ function getViewDataUnit(unitName, params = null, rentTimeHours = 0, numSpares =
   else if (rentTimeHours == 0 && numSpares > 0)
     infoText = getUnitSparesComment(unit, numSpares)
   if (!receivedPrizes && isBought)
-    infoText += (infoText.len() ? "\n" : "") + colorize("badTextColor", loc(receiveOnce))
+    infoText = "".concat(infoText, infoText.len() ? "\n" : "", colorize("badTextColor", loc(receiveOnce)))
 
   let unitPlate = buildUnitSlot(unitName, unit, {
     status = (!receivedPrizes && isBought) ? "locked" : "canBuy",
@@ -752,10 +808,10 @@ function getViewDataSpare(unitName, count, params) {
     return null
 
   let { showTooltip = true } = params
-  local title = colorize("activeTextColor", getUnitName(unitName, true)) + loc("ui/colon")
-              + colorize("userlogColoredText", loc("spare/spare"))
+  local title = "".concat(colorize("activeTextColor", getUnitName(unitName, true)),
+    loc("ui/colon"), colorize("userlogColoredText", loc("spare/spare")))
   if (count && count > 1)
-    title += colorize("activeTextColor",$" x{count}")
+    title = "".concat(title, colorize("activeTextColor",$" x{count}"))
   return {
     icon = "#ui/gameuiskin#item_type_spare.svg"
     icon2 = getUnitCountryIcon(unit)
@@ -774,9 +830,9 @@ function getViewDataSpecialization(prize, params) {
 
   let { showTooltip = true } = params
   let crew = getCrewById(prize?.crew ?? 0)
-  let title = colorize("userlogColoredText", getCrewName(crew)) + loc("ui/colon")
-              + colorize("activeTextColor", getUnitName(unit))
-              + ", " + colorize("userlogColoredText", loc($"crew/qualification/{specLevel}"))
+  let title = "".concat(colorize("userlogColoredText", getCrewName(crew)), loc("ui/colon"),
+    colorize("activeTextColor", getUnitName(unit)), ", ",
+    colorize("userlogColoredText", loc($"crew/qualification/{specLevel}")))
   return {
     icon = (specLevel == 2) ? "#ui/gameuiskin#item_type_crew_aces.svg" : "#ui/gameuiskin#item_type_crew_experts.svg"
     icon2 = getUnitCountryIcon(unit)
@@ -821,9 +877,8 @@ function getViewDataMod(unitName, modName, params) {
     classIco = ::getUnitClassIco(unit)
     icon2 = getUnitCountryIcon(unit)
     shopItemType = getUnitRole(unit)
-    title = colorize("activeTextColor", getUnitName(unitName, true)) + loc("ui/colon")
-      + colorize("userlogColoredText",
-        getModificationName(unit, modName))
+    title = "".concat(colorize("activeTextColor", getUnitName(unitName, true)), loc("ui/colon"),
+      colorize("userlogColoredText", getModificationName(unit, modName)))
     tooltipId = showTooltip ? MODIFICATION.getTooltipId(unitName, modName) : null
   }
 }
@@ -881,7 +936,7 @@ addTooltipTypes({
         continue
 
       let prizeType = getPrizeType(prize)
-      let isReceived = prizeType == PRIZE_TYPE.UNIT && ::isUnitBought(getAircraftByName(prize.unit))
+      let isReceived = prizeType == PRIZE_TYPE.UNIT && isUnitBought(getAircraftByName(prize.unit))
       let locId = isReceived ? "trophy/prizeAlreadyReceived" : "trophy/openCountTillPrize"
       res.append(loc(locId, {
         prizeText = getPrizeText(prize, false, false, !isReceived)
@@ -935,15 +990,15 @@ addTooltipTypes({
     let view = clone params
     local stacksList = stackContent(content, stackLevel, shopDesc)
     let fixedAmount = fixedAmountHeaderFunc ? getContentFixedAmount(content) : 1
-    let isFitByItemType = function(prize, itemType) {
+    let isFitByItemType = function(prize, typeOfItem) {
       if (prize.prizeType != PRIZE_TYPE.ITEM)
         return false
 
       let blkType = prize?.item.blkType
-      if (itemType == blkType)
+      if (typeOfItem == blkType)
         return true
 
-      return itemType == "unit" && unitItemTypes.contains(blkType)
+      return typeOfItem == "unit" && unitItemTypes.contains(blkType)
     }
     let isFitByRarity = @(prize, rarity) rarity == prize?.item.getQuality()
 
@@ -952,11 +1007,11 @@ addTooltipTypes({
       view.header <- fixedAmountHeaderFunc(fixedAmount)
 
     params = clone params
-    params.needShowDropChance <- false
     params.hasChanceIcon <- false
     params.fixedAmount <- fixedAmount
     params.categoryId <- 0
 
+    let defaultWeight = params.dropChanceType != CHANCE_VIEW_TYPE.ICON ? "none" : "low"
     let notFoundPrizes = []
     local prizeListView = []
     foreach (category in categoryWeight) {
@@ -1011,7 +1066,7 @@ addTooltipTypes({
         byTypeArray = byRarityLists.lostPrizesList
         params.categoryId++
         prizeListView.extend(this.getPrizesViewArrayByWeightCategory(byRarityArray,
-          { weight = "low" },
+          { weight = defaultWeight },
           getItemPrizeRarityText(categoryText, byRarityArray[0]?.item.rarity.tag), params))
       }
     }
@@ -1034,13 +1089,14 @@ addTooltipTypes({
       stacksList = byTypeLists.lostPrizesList
       params.categoryId++
       prizeListView.extend(this.getPrizesViewArrayByWeightCategory(byTypeArray,
-        { weight = "low" }, getItemTypePrizeText(itemBlkType), params))
+        { weight = defaultWeight }, getItemTypePrizeText(itemBlkType), params))
     }
 
     if (notFoundPrizes.len() > 0) {
       params.categoryId++
       prizeListView.extend(this.getPrizesViewArrayByWeightCategory(
-        stacksList, { weight = "low" }, loc("attachables/category/other"), params))
+        stacksList, { weight = defaultWeight },
+        loc("attachables/category/other"), params))
     }
 
     let maxButtonsCount = prizeListView.reduce(@(res, p) max(p?.buttonsCount ?? 0, res), 0)
@@ -1056,10 +1112,10 @@ addTooltipTypes({
 
   function getPrizesStacksArrayForView(content, params = null) {
     local { shopDesc = false, stackLevel = prizesStack.DETAILED, fixedAmount = 1,
-      needShowDropChance = false, stacksList = null,
+      needShowDropChance = false, stacksList = null, needShowChance = false
       isFirstHighlightedLine = false } = params
 
-    stacksList = stacksList ?? stackContent(content, stackLevel, shopDesc)
+    stacksList = stacksList ?? stackContent(content, stackLevel, shopDesc, needShowChance)
     let showCount = fixedAmount == 1
 
     local maxButtonsCount = 0
@@ -1083,11 +1139,11 @@ addTooltipTypes({
 
         let kinds = detailed ? "" : colorize("fadedTextColor", loc("ui/parentheses/space", { text = loc("trophy/item_type_different_kinds") }))
         data = {
-          title = name + countText + kinds
+          title = $"{name}{countText}{kinds}"
           icon = this.getPrizeTypeIcon(st.prize)
         }
       }
-      else if (st.stackType == STACK_TYPE.VEHICLE) {
+      else if (st.stackType == STACK_TYPE.VEHICLE || st.stackType == STACK_TYPE.CHANCE) {
         data = {
           title = this._getStackUnitsText(st)
         }
@@ -1099,6 +1155,28 @@ addTooltipTypes({
         }
       }
       if (data != null) {
+        if (params?.dropChanceType == CHANCE_VIEW_TYPE.TEXT) {
+          data.categoryId <- params?.categoryId ?? "no"
+          if (st.prize?.bundle)
+            data.itemId <- $"{st.prize.bundle}_{st.prize?.item}"
+          else
+            data.itemId <- st.prize?.item
+        }
+        if (params?.dropChanceType == CHANCE_VIEW_TYPE.TEXT && needShowChance) {
+          let trophyChanceStr = st.prize?.percentStr
+          if (trophyChanceStr) {
+            if (st.size == 1)
+              data.trophyChance <- trophyChanceStr
+            if (data?.title) {
+              if (st.size > 1)
+                data.title = "\n".concat(data.title, loc("trophy/chest_contents/drop_chances/multiple", {amount = st.size, percentStr = trophyChanceStr}))
+              if (st.prize.percent == 0)
+                data.title = "\n".concat(data.title, colorize("badTextColor", loc("mainmenu/receiveOnlyOnce")))
+              if (stacksList.len() > 1)
+                data.listOfTrophies <- true
+            }
+          }
+        }
         maxButtonsCount = max(data?.buttonsCount ?? 0, maxButtonsCount)
         if (needShowDropChance) {
           let chanceConfig = getPrizeChanceConfig(st.prize)
@@ -1250,18 +1328,17 @@ addTooltipTypes({
   let units = []
   foreach (p in stack.params.prizes) {
     let unitId = isRent ? p.rentedUnit : p.unit
-    let color = getUnitClassColor(unitId)
-    local name = colorize(color, getUnitName(unitId))
+    local name = colorize("currencyGCColor", getUnitName(unitId))
     if (isRent)
       name = "".concat(name, getUnitRentComment(getAircraftByName(unitId), p.timeHours, p.numSpares, true))
     units.append(name)
   }
 
   let header = this.getPrizeTypeName(stack.prize)
-  let headerSeparator = loc("ui/colon") + (isDetailed ? "\n" : "")
+  let headerSeparator = "".concat(loc("ui/colon"), (isDetailed ? "\n" : ""))
   let unitsSeparator  = isDetailed ? "\n" : loc("ui/comma")
 
-  return header + headerSeparator + unitsSeparator.join(units, true)
+  return "".concat(header, headerSeparator, unitsSeparator.join(units, true))
 }
 
 ::PrizesView.getPrizesListText <- function getPrizesListText(content, fixedAmountHeaderFunc = null, hasHeaderWithoutContent = true) {
@@ -1276,10 +1353,10 @@ addTooltipTypes({
   if (fixedAmountHeaderFunc)
     list.append(fixedAmountHeaderFunc(fixedAmount))
 
-  let listMarker = nbsp + colorize("grayOptionColor", loc("ui/mdash")) + nbsp
+  let listMarker = "".concat(nbsp, colorize("grayOptionColor", loc("ui/mdash")), nbsp)
   foreach (st in stacksList) {
     if (st.level == prizesStack.NOT_STACKED)
-      list.append(listMarker + getPrizeText(st.prize, true, false, showCount))
+      list.append("".concat(listMarker, getPrizeText(st.prize, true, false, showCount)))
     else if (st.stackType == STACK_TYPE.ITEM) { //onl stack by items atm, so this only to do last check.
       let detailed = st.level == prizesStack.DETAILED
 
@@ -1294,13 +1371,13 @@ addTooltipTypes({
         countText = (st.countMin < st.countMax) ? ($" x{st.countMin}-x{st.countMax}") : ($" x{st.countMax}")
 
       let kinds = detailed ? "" : colorize("fadedTextColor", loc("ui/parentheses/space", { text = loc("trophy/item_type_different_kinds") }))
-      list.append(listMarker + name + countText + kinds)
+      list.append("".concat(listMarker, name, countText, kinds))
     }
     else if (st.stackType == STACK_TYPE.VEHICLE) {
-      list.append(listMarker + this._getStackUnitsText(st))
+      list.append("".concat(listMarker, this._getStackUnitsText(st)))
     }
     else if (st.stackType == STACK_TYPE.CURRENCY) {
-      list.append(listMarker + getStackCurrencyText(st))
+      list.append("".concat(listMarker, getStackCurrencyText(st)))
     }
   }
 
@@ -1323,7 +1400,7 @@ function getMarkingPreset(item) {
 }
 
 ::PrizesView.getViewDataItem <- function getViewDataItem(prize, showCount, params = null) {
-  let { showTooltip = true, useMarkingPresetIconForResources = false } = params
+  let { showTooltip = true, useMarkingPresetIconForResources = false, needHideChances = false } = params
   let primaryIcon = prize?.primaryIcon
   let buttons = getPrizeActionButtonsView(prize, params)
   let item = findItemById(prize?.item)
@@ -1338,7 +1415,7 @@ function getMarkingPreset(item) {
     title = (params?.needShowItemName ?? true)
       ? getPrizeText(prize, !params?.isLocked, false, showCount, true)
       : prize?.commentText ?? ""
-    tooltipId = showTooltip ? getTooltipType("ITEM").getTooltipId(prize?.item) : null
+    tooltipId = showTooltip ? getTooltipType("ITEM").getTooltipId(prize?.item, { needHideChances }) : null
     buttons = buttons
     buttonsCount = buttons.len()
   }
@@ -1348,11 +1425,11 @@ function getMarkingPreset(item) {
   //!!FIX ME: better to refactor this. it used only here, but each function try do detect prize type by self
   //much faster will be to get viewData array and gen desc by it than in each function detect prize type.
   //Now we have function getPrizeType() for prize type detection.
-  let { showTooltip = true } = params
+  let { showTooltip = true,  needHideChances = false } = params
   local needShowFullTitle = true
   local needShowIcon = true
   let tooltipId = !showTooltip ? null
-    : prize?.trophy ? getTooltipType("ITEM").getTooltipId(prize.trophy)
+    : prize?.trophy ? getTooltipType("ITEM").getTooltipId(prize.trophy, { needHideChances })
     : prize?.unlock ? getTooltipType("SUBTROPHY").getTooltipId(prize.unlock, params)
     : getTooltipType("PRIZE").getTooltipId(isDataBlock(prize) ? convertBlk(prize) : prize)
 
@@ -1364,7 +1441,7 @@ function getMarkingPreset(item) {
     if (getUnlockType(prize.unlock) == UNLOCKABLE_PILOT) {
       needShowFullTitle = false
       needShowIcon = false
-      previewImage = "cardAvatar { value:t='" + prize.unlock + "'}"
+      previewImage = "".concat("cardAvatar { value:t='", prize.unlock, "'}")
     }
   }
 
@@ -1430,8 +1507,15 @@ function getMarkingPreset(item) {
   view.list <- []
   foreach (prize in content) {
     let data = this.getPrizesViewData(prize, true, params)
-    if (data)
+    if (data) {
+      if (params?.dropChanceType == CHANCE_VIEW_TYPE.TEXT) {
+        if (prize?.bundle)
+          data.itemId <- $"{prize.bundle}_{prize?.item}"
+        else
+          data.itemId <- prize?.item
+      }
       view.list.append(data)
+    }
   }
   return handyman.renderCached(template, view)
 }

@@ -163,6 +163,7 @@ tdiv {
       interactive:t='yes'
       font-bold:t='@fontSmall'
       text:t='<<title>>'
+      <<#listOfTrophies>>margin-bottom:t='1@blockInterval'<</listOfTrophies>>
     }
     <</title>>
 
@@ -213,6 +214,26 @@ tdiv {
       }
     }
     <</unitPlate>>
+
+    <<#itemId>>
+    textareaNoTab {
+      id:t='chance_<<itemId>>'
+      <<#categoryId>>
+      categoryId:t='<<categoryId>>'
+      <</categoryId>>
+      pos:t='0, ph/2-h/2'
+      position:t='relative'
+      display:t='hide'
+    }
+    <</itemId>>
+
+    <<#trophyChance>>
+    textareaNoTab {
+      pos:t='0, ph/2-h/2'
+      position:t='relative'
+      text:t='<<trophyChance>>'
+    }
+    <</trophyChance>>
 
     <<#chanceIcon>>
     chanceIconPlace {

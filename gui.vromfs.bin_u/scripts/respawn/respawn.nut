@@ -54,7 +54,8 @@ let { onSpectatorMode, switchSpectatorTarget,
 } = require("guiSpectator")
 let { getMplayersList } = require("%scripts/statistics/mplayersList.nut")
 let { quit_to_debriefing, get_mission_difficulty_int,
-  get_unit_wp_to_respawn, get_mp_respawn_countdown, get_mission_status } = require("guiMission")
+  get_unit_wp_to_respawn, get_mp_respawn_countdown, get_mission_status,
+  OBJECTIVE_TYPE_PRIMARY, OBJECTIVE_TYPE_SECONDARY } = require("guiMission")
 let { setCurSkinToHangar, getRealSkin, getSkinsOption
 } = require("%scripts/customization/skins.nut")
 let { reqUnlockByClient } = require("%scripts/unlocks/unlocksModule.nut")
@@ -92,6 +93,7 @@ let { createAdditionalUnitsViewData, updateUnitSelection, isLockedUnit, setUnitU
 let { getCrewsList } = require("%scripts/slotbar/crewsList.nut")
 let { loadGameChatToObj, detachGameChatSceneData, hideGameChatSceneInput
 } = require("%scripts/chat/mpChat.nut")
+let { unitNameForWeapons } = require("%scripts/weaponry/unitForWeapons.nut")
 
 let AdditionalUnits = require("%scripts/misCustomRules/ruleAdditionalUnits.nut")
 
@@ -100,6 +102,10 @@ function getCrewSlotReadyMask() {
     return 0
 
   return getWasReadySlotsMask() & ~getDisabledSlotsMask()
+}
+
+function getCompoundedText(firstPart, secondPart, color) {
+  return "".concat(firstPart, colorize(color, secondPart))
 }
 
 
@@ -757,7 +763,7 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
     if (checkObj(balanceObj)) {
       local text = ""
       if (wpBalance != "")
-        text = ::getCompoundedText(loc("multiplayer/wp_header"), wpBalance, "activeTextColor")
+        text = getCompoundedText(loc("multiplayer/wp_header"), wpBalance, "activeTextColor")
       balanceObj.setValue(text)
     }
   }
@@ -879,7 +885,6 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
 
     if (this.slotbarInited)
       this.prevUnitAutoChangeTimeMsec = -1
-    ::cur_aircraft_name = unit.name
 
     this.slotbarInited = true
     this.onAircraftUpdate()
@@ -1016,7 +1021,7 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
     if (!air)
       return
 
-    ::aircraft_for_weapons = air.name
+    unitNameForWeapons.set(air.name)
 
     let option = respawnOptions.get(obj?.id)
     if (option.userOption != -1) {
@@ -1063,9 +1068,8 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
     let unit = this.getCurSlotUnit()
     local isUnitChanged = false
     if (unit) {
-      isUnitChanged = ::aircraft_for_weapons != unit.name
-      ::cur_aircraft_name = unit.name //used in some options
-      ::aircraft_for_weapons = unit.name
+      isUnitChanged = unitNameForWeapons.get() != unit.name
+      unitNameForWeapons.set(unit.name)
       showedUnit(unit)
 
       if (isUnitChanged || this.isFirstUnitOptionsInSession)

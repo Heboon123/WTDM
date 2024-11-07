@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 let u = require("%sqStdLibs/helpers/u.nut")
@@ -85,7 +84,7 @@ let getActionDescByWeaponTriggerGroup = function(actionItem, triggerGroup) {
   local res = actionBarInfo.getActionDesc(getActionBarUnitName(), triggerGroup)
   let cooldownTime = actionItem?.cooldownTime
   if (cooldownTime)
-    res += ("\n" + loc("shop/reloadTime") + " " + time.secondsToString(cooldownTime, true, true))
+    res = "".concat(res, "\n", loc("shop/reloadTime"), " ", time.secondsToString(cooldownTime, true, true))
   return res
 }
 
@@ -170,10 +169,10 @@ g_hud_action_bar_type.template <- {
   getIcon        = @(_actionItem, _killStreakTag = null, _unit = null, _hudUnitType = null) this._icon
   getTitle       = @(_actionItem, _killStreakTag = null) this._title
   getTooltipText = function(actionItem = null) {
-    local res = loc("actionBarItem/" + this.getName(actionItem, actionItem?.killStreakUnitTag))
+    local res = loc($"actionBarItem/{this.getName(actionItem, actionItem?.killStreakUnitTag)}")
     res = $"{res}{getCooldownText(actionItem)}"
     if (actionItem?.automatic)
-      res += "\n" + loc("actionBar/action/automatic")
+      res = "\n".concat(res, loc("actionBar/action/automatic"))
     return res
   }
 
@@ -184,14 +183,14 @@ g_hud_action_bar_type.template <- {
       return null
 
     if (hudUnitType == HUD_UNIT_TYPE.SHIP_EX)
-      return "ID_SUBMARINE_ACTION_BAR_ITEM_" + (shortcutIdx + 1)
+      return $"ID_SUBMARINE_ACTION_BAR_ITEM_{shortcutIdx + 1}"
     if (hudUnitType == HUD_UNIT_TYPE.SHIP)
-      return "ID_SHIP_ACTION_BAR_ITEM_" + (shortcutIdx + 1)
+      return $"ID_SHIP_ACTION_BAR_ITEM_{shortcutIdx + 1}"
     //
 
 
 
-    return "ID_ACTION_BAR_ITEM_" + (shortcutIdx + 1)
+    return $"ID_ACTION_BAR_ITEM_{shortcutIdx + 1}"
   }
 
   getVisualShortcut = function(actionItem = null, hudUnitType = null) {
@@ -636,13 +635,12 @@ enumsAddTypes(g_hud_action_bar_type, {
     isForWheelMenu = @() true
     canSwitchAutomaticMode = @() false
     getTitle = @(actionItem, _killStreakTag = null)
-      loc("hotkeys/ID_SHIP_DAMAGE_CONTROL_PRESET_" + (actionItem.userHandle >> 3).tostring())
-    getName = @(actionItem, _killStreakTag = null)
-      "ship_damage_control" + (actionItem.userHandle >> 3).tostring()
+      loc($"hotkeys/ID_SHIP_DAMAGE_CONTROL_PRESET_{actionItem.userHandle >> 3}")
+    getName = @(actionItem, _killStreakTag = null) $"ship_damage_control{actionItem.userHandle >> 3}"
     getShortcut = @(actionItem, _hudUnitType = null)
-      "ID_SHIP_DAMAGE_CONTROL_PRESET_" + (actionItem.userHandle >> 3).tostring()
+      $"ID_SHIP_DAMAGE_CONTROL_PRESET_{actionItem.userHandle >> 3}"
     getIcon = function (actionItem, _killStreakTag = null, _unit = null, _hudUnitType = null) {
-      return "#ui/gameuiskin#ship_damage_control_" + ((actionItem.userHandle & 7) + 1).tostring() + ""
+      return "".concat("#ui/gameuiskin#ship_damage_control_", (actionItem.userHandle & 7) + 1)
     }
   }
 
@@ -1215,15 +1213,15 @@ enumsAddTypes(g_hud_action_bar_type, {
     isForWheelMenu = @() true
     getShortcut = @(_actionItem, _hudUnitType = null) "ID_ACTION_BAR_ITEM_9"
   }
-  //
 
-
-
-
-
-
-
-
+  BUILDING = {
+    code = EII_BUILDING
+    _name = "building"
+    _title = loc("hotkeys/ID_TOGGLE_CONSTRUCTION_MODE")
+    _icon = "#ui/gameuiskin#tank_ammo"
+    isForWheelMenu = @() true
+    getShortcut = @(_actionItem, _hudUnitType = null) "ID_TOGGLE_CONSTRUCTION_MODE"
+  }
 
 })
 
