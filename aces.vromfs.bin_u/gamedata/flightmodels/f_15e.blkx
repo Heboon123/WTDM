@@ -14,7 +14,7 @@
   "havePointOfInterestDesignator": true,
   "isBwOpticSight": true,
   "laserDesignator": true,
-  "ilsF15a": true,
+  "ilsF15e": true,
   "hmdF16c": true,
   "rwrIndicator": "TEWS",
   "mfdCamTads": true,
@@ -2291,10 +2291,10 @@
     "hasAirCannonIlsMode": true,
     "isDoubleBulletImpactLine": true,
     "hmdBlockIlsArea": [
-      0.37,
-      0.37,
-      0.63,
-      0.63
+      0.15,
+      -0.5,
+      0.73,
+      0.85
     ],
     "hmdEnabledByDefault": true,
     "mirror": true,
@@ -2873,6 +2873,11 @@
             ]
           },
           {
+            "name": "JF-17",
+            "detectLaunch": true,
+            "type": "KLJ-7"
+          },
+          {
             "name": "2S6",
             "detectLaunch": true,
             "type": [
@@ -2881,6 +2886,14 @@
               "PGZ-09 TA",
               "PGZ-09 TT"
             ]
+          },
+          {
+            "name": "ADATS",
+            "type": "ADATS TA"
+          },
+          {
+            "name": "ASRAD",
+            "type": "ASRAD TA"
           },
           {
             "name": "ARH",
@@ -2981,8 +2994,20 @@
             "group": "J-39"
           },
           {
+            "text": "J17",
+            "group": "JF-17"
+          },
+          {
             "text": "2S6",
             "group": "2S6"
+          },
+          {
+            "text": "ADS",
+            "group": "ADATS"
+          },
+          {
+            "text": "ASR",
+            "group": "ASRAD"
           },
           {
             "text": "MSL",
@@ -3009,21 +3034,25 @@
               "Harrier",
               "Mirage 2000",
               "J-39",
+              "JF-17",
               "ARH"
             ],
             "trackLamp": 0,
-            "launchLamp": 0
+            "launchLamp": 0,
+            "launchLampBlinkingPeriod": 0.25
           },
           {
             "group": [
               "S-125",
               "9K330",
               "9K33",
+              "2S6",
               "Roland",
               "Crotal"
             ],
             "trackLamp": 1,
-            "launchLamp": 1
+            "launchLamp": 1,
+            "launchLampBlinkingPeriod": 0.25
           }
         ]
       }
@@ -3227,71 +3256,6 @@
             },
             {
               "type": "map"
-            },
-            {
-              "type": "custom",
-              "pageName": "f15cWpn"
-            },
-            {
-              "type": "thermal",
-              "turretIdx": 0
-            },
-            {
-              "type": "target_tracking",
-              "turretIdx": 0
-            },
-            {
-              "type": "radar",
-              "font": "usa_ils",
-              "scale": 0.9,
-              "hideBackground": true,
-              "hasAviaHorizont": true,
-              "hideBeam": false,
-              "beamShape": "caret",
-              "targetForm": "square",
-              "fontScale": 0.65,
-              "lineColor": [
-                0,
-                255,
-                7
-              ],
-              "modeColor": [
-                0,
-                255,
-                7
-              ],
-              "verAngleColor": [
-                0,
-                255,
-                7
-              ],
-              "horAngleColor": [
-                0,
-                255,
-                7
-              ],
-              "scaleColor": [
-                0,
-                255,
-                7
-              ],
-              "targetColor": [
-                0,
-                255,
-                7
-              ],
-              "netRowCnt": 4,
-              "netColor": [
-                0,
-                255,
-                7
-              ],
-              "hideWeaponIndication": true,
-              "centerRadar": true,
-              "showCueHeights": true
-            },
-            {
-              "type": "ils_duplicate"
             }
           ]
         },
@@ -3328,7 +3292,7 @@
               120
             ],
             "bloomForce": 0.115,
-            "lineWidthScale": 0.6
+            "lineWidthScale": 1.0
           }
         }
       ]
@@ -3545,7 +3509,7 @@
       },
       {
         "blk": "gameData/sensors/LaserDesignatorSensor.blk",
-        "node": "optic1_gun"
+        "node": "optic2_gun"
       }
     ]
   },
@@ -3565,27 +3529,64 @@
       ],
       "noiseFactor": 0.04,
       "index": 2
+    },
+    "gunnerIr": {
+      "resolution": [
+        1600,
+        1200
+      ],
+      "lightMult": 9.0,
+      "ghosting": 0.6,
+      "noiseFactor": 0.2
+    },
+    "pilotIr": {
+      "resolution": [
+        1600,
+        1200
+      ],
+      "lightMult": 9.0,
+      "ghosting": 0.6,
+      "noiseFactor": 0.2
     }
   },
   "gunnerOpticFps": {
-    "TV": {
-      "pos": [
-        2.6,
-        -0.15,
-        0.0
-      ],
-      "head": "optic1_turret",
-      "crosshairPreset": "test_crosshair",
-      "angularLimits": [
-        -30.0,
-        30.0,
-        -30.0,
-        30.0
-      ],
-      "opticType": "tv",
-      "turretNo": 0,
-      "nvIndex": 1
-    },
+    "TV": [
+      {
+        "pos": [
+          2.6,
+          -0.15,
+          0.0
+        ],
+        "head": "optic1_turret",
+        "crosshairPreset": "test_crosshair",
+        "angularLimits": [
+          -30.0,
+          30.0,
+          -30.0,
+          30.0
+        ],
+        "opticType": "tv",
+        "turretNo": 0
+      },
+      {
+        "pos": [
+          2.6,
+          -0.15,
+          0.0
+        ],
+        "head": "optic1_turret",
+        "crosshairPreset": "test_crosshair",
+        "angularLimits": [
+          -30.0,
+          30.0,
+          -30.0,
+          30.0
+        ],
+        "opticType": "tv",
+        "turretNo": 0,
+        "nvIndex": 0
+      }
+    ],
     "Target": {
       "pos": [
         1.0,
@@ -3720,6 +3721,8 @@
         "us_lau_129aa_004",
         "pylon_3",
         "pylon_3_holder",
+        "adu578_adapter_001",
+        "adu578_adapter_002",
         "pylon_2",
         "lau_7_003",
         "lau_7_004",
@@ -3770,12 +3773,12 @@
         "us_lantirn_pod_anaaq14",
         "optic2_turret",
         "optic2_gun",
-        "chaff_cap_l",
-        "chaff_cap_r",
         "pylon_1_aim_9_l",
         "pylon_1_aim_9_r",
         "pylon_2_aim_9_l",
-        "pylon_2_aim_9_r"
+        "pylon_2_aim_9_r",
+        "adu578_adapter_001",
+        "adu578_adapter_002"
       ]
     },
     "HideDmParts": {
@@ -4006,7 +4009,8 @@
               "bullets": 1,
               "external": true,
               "separate": true,
-              "machLimit": 1.01
+              "machLimit": 1.01,
+              "dragCx": 0.02
             },
             "DependentWeaponPreset": {
               "slot": 8,
@@ -4233,7 +4237,10 @@
             "name": "agm_65d_x3",
             "reqModification": "us_agm_65d",
             "ShowNodes": {
-              "node": "pylon_1"
+              "node": [
+                "pylon_1",
+                "adu578_adapter_001"
+              ]
             },
             "Weapon": {
               "trigger": "atgm",
@@ -5233,7 +5240,7 @@
             ]
           },
           {
-            "iconType": "bombs_heavy_middle_drag_group",
+            "iconType": "bombs_heavy_high_drag_group",
             "name": "us_mk84_air_tank_slot5",
             "reqModification": "us_2000lb_mk84_gbu31_jdam",
             "ShowNodes": {
@@ -5450,7 +5457,8 @@
                 "bullets": 1,
                 "external": true,
                 "separate": true,
-                "machLimit": 1.01
+                "machLimit": 1.01,
+                "dragCx": 0.02
               }
             ],
             "DependentWeaponPreset": {
@@ -5633,34 +5641,7 @@
               {
                 "trigger": "guided bombs",
                 "blk": "gameData/Weapons/BombGuns/us_500lb_gbu38_usaf.blk",
-                "emitter": "250lb_mk_81_001",
-                "bullets": 1,
-                "external": true,
-                "separate": true,
-                "machLimit": 1.01
-              },
-              {
-                "trigger": "guided bombs",
-                "blk": "gameData/Weapons/BombGuns/us_500lb_gbu38_usaf.blk",
-                "emitter": "250lb_mk_81_003",
-                "bullets": 1,
-                "external": true,
-                "separate": true,
-                "machLimit": 1.01
-              },
-              {
-                "trigger": "guided bombs",
-                "blk": "gameData/Weapons/BombGuns/us_500lb_gbu38_usaf.blk",
                 "emitter": "250lb_mk_81_006",
-                "bullets": 1,
-                "external": true,
-                "separate": true,
-                "machLimit": 1.01
-              },
-              {
-                "trigger": "guided bombs",
-                "blk": "gameData/Weapons/BombGuns/us_500lb_gbu38_usaf.blk",
-                "emitter": "250lb_mk_81_002",
                 "bullets": 1,
                 "external": true,
                 "separate": true,
@@ -5990,7 +5971,8 @@
               "bullets": 1,
               "external": true,
               "separate": true,
-              "machLimit": 1.01
+              "machLimit": 1.01,
+              "dragCx": 0.02
             },
             "DependentWeaponPreset": {
               "slot": 6,
@@ -6148,34 +6130,7 @@
               {
                 "trigger": "guided bombs",
                 "blk": "gameData/Weapons/BombGuns/us_500lb_gbu38_usaf.blk",
-                "emitter": "250lb_mk_81_001",
-                "bullets": 1,
-                "external": true,
-                "separate": true,
-                "machLimit": 1.01
-              },
-              {
-                "trigger": "guided bombs",
-                "blk": "gameData/Weapons/BombGuns/us_500lb_gbu38_usaf.blk",
-                "emitter": "250lb_mk_81_003",
-                "bullets": 1,
-                "external": true,
-                "separate": true,
-                "machLimit": 1.01
-              },
-              {
-                "trigger": "guided bombs",
-                "blk": "gameData/Weapons/BombGuns/us_500lb_gbu38_usaf.blk",
                 "emitter": "250lb_mk_81_006",
-                "bullets": 1,
-                "external": true,
-                "separate": true,
-                "machLimit": 1.01
-              },
-              {
-                "trigger": "guided bombs",
-                "blk": "gameData/Weapons/BombGuns/us_500lb_gbu38_usaf.blk",
-                "emitter": "250lb_mk_81_002",
                 "bullets": 1,
                 "external": true,
                 "separate": true,
@@ -6375,24 +6330,22 @@
             "reqModification": "us_lantirn_pod",
             "hasTargetingPod": true,
             "removeGunnerOpticFps": 0,
-            "ShowNodes": [
-              {
-                "node": [
-                  "pylon_12",
-                  "us_lantirn_pod_anaaq14",
-                  "optic2_turret",
-                  "optic2_gun"
-                ]
-              },
-              {
-                "node": "chaff_cap_l"
-              }
-            ],
+            "ShowNodes": {
+              "node": [
+                "pylon_12",
+                "us_lantirn_pod_anaaq14",
+                "optic2_turret",
+                "optic2_gun",
+                "chaff_cap_l1",
+                "chaff_cap_l"
+              ]
+            },
             "Weapon": {
               "trigger": "targetingPod",
               "blk": "gameData/Weapons/equipment/an_aaq_25_lantirn.blk",
               "emitter": "fuel_tank1",
-              "bullets": 1
+              "bullets": 1,
+              "dragCx": 0.035
             },
             "sensors": {
               "sensor": [
@@ -6401,14 +6354,54 @@
                 },
                 {
                   "blk": "gameData/sensors/ir_tracker_tgp.blk",
-                  "node": "optic1_gun"
+                  "node": "optic2_gun"
                 }
               ]
-            }
+            },
+            "BannedWeaponPreset": [
+              {
+                "slot": 4,
+                "preset": "aim_7m_slot4"
+              },
+              {
+                "slot": 4,
+                "preset": "aim_7m_tank_slot4"
+              },
+              {
+                "slot": 4,
+                "preset": "aim_120b_slot4"
+              },
+              {
+                "slot": 4,
+                "preset": "aim_120b_tank_slot4"
+              },
+              {
+                "slot": 10,
+                "preset": "aim_7m_slot10"
+              },
+              {
+                "slot": 10,
+                "preset": "aim_120b_slot10"
+              },
+              {
+                "slot": 10,
+                "preset": "aim_7m_tank_slot10"
+              },
+              {
+                "slot": 10,
+                "preset": "aim_120b_tank_slot10"
+              }
+            ]
           },
           {
             "iconType": "ltc",
             "name": "ltc_left",
+            "HideNodes": {
+              "node": [
+                "chaff_cap_l1",
+                "chaff_cap_l"
+              ]
+            },
             "Weapon": {
               "trigger": "countermeasures",
               "blk": "gameData/Weapons/rocketGuns/countermeasure_split_launcher_jet.blk",
@@ -6508,7 +6501,8 @@
               "bullets": 1,
               "external": true,
               "separate": true,
-              "machLimit": 1.01
+              "machLimit": 1.01,
+              "dragCx": 0.02
             },
             "DependentWeaponPreset": {
               "slot": 6,
@@ -6625,6 +6619,9 @@
         "WeaponPreset": {
           "iconType": "ltc",
           "name": "ltc_right",
+          "HideNodes": {
+            "node": "chaff_cap_r"
+          },
           "Weapon": {
             "trigger": "countermeasures",
             "blk": "gameData/Weapons/rocketGuns/countermeasure_split_launcher_jet.blk",
@@ -7402,7 +7399,7 @@
             ]
           },
           {
-            "iconType": "bombs_heavy_middle_drag_group",
+            "iconType": "bombs_heavy_high_drag_group",
             "name": "us_mk84_air_tank_slot9",
             "reqModification": "us_2000lb_mk84_gbu31_jdam",
             "ShowNodes": {
@@ -7619,7 +7616,8 @@
                 "bullets": 1,
                 "external": true,
                 "separate": true,
-                "machLimit": 1.01
+                "machLimit": 1.01,
+                "dragCx": 0.02
               }
             ],
             "DependentWeaponPreset": {
@@ -7802,34 +7800,7 @@
               {
                 "trigger": "guided bombs",
                 "blk": "gameData/Weapons/BombGuns/us_500lb_gbu38_usaf.blk",
-                "emitter": "250lb_mk_81_012",
-                "bullets": 1,
-                "external": true,
-                "separate": true,
-                "machLimit": 1.01
-              },
-              {
-                "trigger": "guided bombs",
-                "blk": "gameData/Weapons/BombGuns/us_500lb_gbu38_usaf.blk",
-                "emitter": "250lb_mk_81_014",
-                "bullets": 1,
-                "external": true,
-                "separate": true,
-                "machLimit": 1.01
-              },
-              {
-                "trigger": "guided bombs",
-                "blk": "gameData/Weapons/BombGuns/us_500lb_gbu38_usaf.blk",
                 "emitter": "250lb_mk_81_010",
-                "bullets": 1,
-                "external": true,
-                "separate": true,
-                "machLimit": 1.01
-              },
-              {
-                "trigger": "guided bombs",
-                "blk": "gameData/Weapons/BombGuns/us_500lb_gbu38_usaf.blk",
-                "emitter": "250lb_mk_81_013",
                 "bullets": 1,
                 "external": true,
                 "separate": true,
@@ -8159,7 +8130,8 @@
               "bullets": 1,
               "external": true,
               "separate": true,
-              "machLimit": 1.01
+              "machLimit": 1.01,
+              "dragCx": 0.02
             },
             "DependentWeaponPreset": {
               "slot": 6,
@@ -8317,34 +8289,7 @@
               {
                 "trigger": "guided bombs",
                 "blk": "gameData/Weapons/BombGuns/us_500lb_gbu38_usaf.blk",
-                "emitter": "250lb_mk_81_012",
-                "bullets": 1,
-                "external": true,
-                "separate": true,
-                "machLimit": 1.01
-              },
-              {
-                "trigger": "guided bombs",
-                "blk": "gameData/Weapons/BombGuns/us_500lb_gbu38_usaf.blk",
-                "emitter": "250lb_mk_81_014",
-                "bullets": 1,
-                "external": true,
-                "separate": true,
-                "machLimit": 1.01
-              },
-              {
-                "trigger": "guided bombs",
-                "blk": "gameData/Weapons/BombGuns/us_500lb_gbu38_usaf.blk",
                 "emitter": "250lb_mk_81_010",
-                "bullets": 1,
-                "external": true,
-                "separate": true,
-                "machLimit": 1.01
-              },
-              {
-                "trigger": "guided bombs",
-                "blk": "gameData/Weapons/BombGuns/us_500lb_gbu38_usaf.blk",
-                "emitter": "250lb_mk_81_013",
                 "bullets": 1,
                 "external": true,
                 "separate": true,
@@ -8812,7 +8757,8 @@
               "bullets": 1,
               "external": true,
               "separate": true,
-              "machLimit": 1.01
+              "machLimit": 1.01,
+              "dragCx": 0.02
             },
             "DependentWeaponPreset": {
               "slot": 6,
@@ -9039,7 +8985,10 @@
             "name": "agm_65d_x3",
             "reqModification": "us_agm_65d",
             "ShowNodes": {
-              "node": "pylon_2"
+              "node": [
+                "pylon_2",
+                "adu578_adapter_002"
+              ]
             },
             "Weapon": {
               "trigger": "atgm",

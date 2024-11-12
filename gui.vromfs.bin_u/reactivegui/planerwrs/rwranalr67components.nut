@@ -4,7 +4,7 @@ let rwrSetting = require("%rGui/rwrSetting.nut")
 
 let { rwrTargetsTriggers, rwrTargets, CurrentTime } = require("%rGui/twsState.nut")
 
-let { color, outerCircle,  middleCircle, innerCircle } = require("rwrAnAlr67Parameters.nut")
+let { color, baseLineWidth, outerCircle,  middleCircle, innerCircle } = require("rwrAnAlr67Parameters.nut")
 
 let ThreatType = {
   AI = 0,
@@ -18,7 +18,7 @@ let styleText = {
   color = color
   font = Fonts.hud
   fontFxColor = Color(0, 0, 0, 255)
-  fontFxFactor = max(70, hdpx(90))
+  fontFxFactor = max(70, baseLineWidth * 90)
   fontFx = FFT_GLOW
   fontSize = getFontDefHt("hud") * 2.5
 }
@@ -81,7 +81,7 @@ function createRwrTarget(index, settings, objectStyle) {
       color = color
       opacity = attackOpacityRwr.get()
       rendObj = ROBJ_VECTOR_CANVAS
-      lineWidth = hdpx(4 * objectStyle.lineWidthScale)
+      lineWidth = baseLineWidth * 4 * objectStyle.lineWidthScale
       fillColor = 0
       size = flex()
       commands = [
@@ -168,7 +168,7 @@ function createRwrTarget(index, settings, objectStyle) {
       icon = @() {
         color = color
         rendObj = ROBJ_VECTOR_CANVAS
-        lineWidth = hdpx(4 * objectStyle.lineWidthScale)
+        lineWidth = baseLineWidth * 4 * objectStyle.lineWidthScale
         fillColor = 0
         size = flex()
         commands = commands
@@ -253,7 +253,7 @@ function createRwrPriorityTarget(settings, objectStyle) {
   local priority = @() {
     color = color
     rendObj = ROBJ_VECTOR_CANVAS
-    lineWidth = hdpx(4 * objectStyle.lineWidthScale)
+    lineWidth = baseLineWidth * 4 * objectStyle.lineWidthScale
     fillColor = 0
     size = flex()
     pos = [pw(0), ph(0)]
@@ -369,6 +369,18 @@ let directionGroups = [
     type = ThreatType.AI,
     lethalRangeMax = 40000.0
   },
+  {
+    text = "39",
+    originalName = "J39",
+    type = ThreatType.AI,
+    lethalRangeMax = 40000.0
+  },
+  {
+    text = "JF",
+    originalName = "J17",
+    type = ThreatType.AI,
+    lethalRangeMax = 40000.0
+  },
   //
 
 
@@ -413,10 +425,25 @@ let directionGroups = [
     lethalRangeMax = 8000.0
   },
   {
+    text = "AD",
+    originalName = "ADS",
+    lethalRangeMax = 8000.0
+  },
+  {
+    text = "AR",
+    originalName = "ASR",
+    lethalRangeMax = 8000.0
+  },
+  {
     text = "A",
     originalName = "hud/rwr_threat_aaa",
     type = ThreatType.AAA,
     lethalRangeMax = 4000.0
+  },
+  {
+    originalName = "hud/rwr_threat_sam",
+    type = ThreatType.SAM,
+    lethalRangeMax = 16000.0
   },
   {
     text = "S",
@@ -426,7 +453,7 @@ let directionGroups = [
   },
   {
     text = "M",
-    originalName = "M",
+    originalName = "MSL",
     type = ThreatType.WEAPON
   }
 ]
@@ -439,7 +466,7 @@ let settings = Computed(function() {
     if (directionGroupIndex != null) {
       let directionGroup = directionGroups[directionGroupIndex]
       directionGroupOut[i] = {
-        text = directionGroup.text
+        text = directionGroup?.text
         type = directionGroup?.type
         lethalRangeRel = directionGroup?.lethalRangeMax != null ? (directionGroup.lethalRangeMax - rwrSetting.get().range.x) / (rwrSetting.get().range.y - rwrSetting.get().range.x) : null
       }
@@ -466,6 +493,7 @@ let rwrPriorityTargetComponent = function(objectStyle) {
 
 return {
   color,
+  baseLineWidth,
   outerCircle,
   middleCircle,
   innerCircle,

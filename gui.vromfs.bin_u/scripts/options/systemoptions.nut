@@ -1,5 +1,5 @@
 //-file:param-pos
-from "%scripts/dagui_natives.nut" import get_dgs_tex_quality, is_hdr_available, is_perf_metrics_available, is_low_latency_available, get_config_name, is_gpu_nvidia, get_video_modes
+from "%scripts/dagui_natives.nut" import get_dgs_tex_quality, is_hdr_available, is_perf_metrics_available, is_low_latency_available, is_vrr_available, get_config_name, is_gpu_nvidia, get_video_modes
 from "app" import is_dev_version
 from "%scripts/dagui_library.nut" import *
 let u = require("%sqStdLibs/helpers/u.nut")
@@ -75,6 +75,8 @@ let platformDependentOpts = {
   vsync = true
 }
 
+let initialGfxApi = blkOptFromPath(get_config_name())?.video.driver ?? "auto"
+
 //------------------------------------------------------------------------------
 local mUiStruct = [
   {
@@ -132,6 +134,8 @@ local mUiStruct = [
   }
   {
     title = "options/rt"
+    addTitleInfo = is_win64 && initialGfxApi == "auto"
+      ? "options/dx12_only" : null
     items = [
       "rayTracing"
       "bvhDistance"
@@ -311,13 +315,26 @@ function setValue(id, value, skipUI = false) {
   setGuiValue(id, configValueToGuiValue(id, value), skipUI)
 }
 
+function getDisabledOptionTooltip(id) {
+  let locKey = $"guiHints/{id}/disabled"
+  return doesLocTextExist(locKey) ? loc(locKey) : null
+}
+
 function enableGuiOption(id, state) {
-  if (mSkipUI)
+  if (mSkipUI || !mContainerObj?.isValid())
     return
-  let rowObj = checkObj(mContainerObj) ? mContainerObj.findObject($"{id}_tr") : null
-  if (checkObj(rowObj))
-    rowObj.enable(state)
-  }
+  let rowObj = mContainerObj.findObject($"{id}_tr")
+  let controlObj = mContainerObj.findObject($"sysopt_{id}")
+  if (!controlObj?.isValid() || !rowObj?.isValid())
+    return
+
+  rowObj.disabled = state ? "no" : "yes"
+  controlObj.enable(state)
+
+  let disabledTooltip = getDisabledOptionTooltip(id)
+  if (disabledTooltip != null)
+    rowObj.tooltip = state ? null : disabledTooltip
+}
 
 function checkChanges(config1, config2) {
   let changes = {
@@ -449,7 +466,18 @@ function parseResolution(resolution) {
 
 function antiAliasingOptions() {
   let modesString = get_antialiasing_options(getGuiValue("enableVr"))
-  return modesString.split(";")
+  return modesString.split(";").map(@(mode) mode.split("|")[0])
+}
+
+function antiAliasingOptionsWithVersion() {
+  let modesString = get_antialiasing_options(getGuiValue("enableVr"))
+  return modesString.split(";").map(function(mode) {
+    let [name, version = null] = mode.split("|")
+    let locName = localize("antialiasingMode", name)
+    return version != null
+      ? " - v".concat(locName, version)
+      : locName
+  })
 }
 
 function antiAliasingUpscalingOptions(blk) {
@@ -486,7 +514,8 @@ function getAvailableLatencyModes() {
 
 let getAvailablePerfMetricsModes = @() perfValues.filter(@(_, id) id <= 1 || is_perf_metrics_available(id))
 
-let hasRT = @() hasFeature("optionRT") && !is_platform_macosx
+let hasRT = @() hasFeature("optionRT") && !is_platform_macosx && getGuiValue("graphicsQuality", "high") != "ultralow"
+  && getGuiValue("gfx_api") == "dx12"
 let hasRTGUI = @() getGuiValue("rayTracing", "off") != "off" && hasRT()
 let hasRTR = @() getGuiValue("rtr", "off") != "off" && hasRTGUI()
 let hasRTRWater = @() getGuiValue("rtrWater", false) != false && hasRTGUI()
@@ -585,6 +614,7 @@ mShared = {
     let quality = getGuiValue("graphicsQuality", "high")
     if (!silent && quality == "ultralow") {
       function ok_func() {
+        setGuiValue("rayTracing", "off")
         mShared.graphicsQualityClick(true)
         updateGuiNavbar(true)
       }
@@ -594,8 +624,8 @@ mShared = {
         mShared.graphicsQualityClick()
         updateGuiNavbar(true)
       }
-      scene_msg_box("msg_sysopt_compatibility", null,
-        loc("msgbox/compatibilityMode"),
+      scene_msg_box("msg_ultra_low_quality_preset", null,
+        loc("msgbox/ultra_low_quality_preset"),
         [
           ["yes", ok_func],
           ["no", cancel_func],
@@ -603,7 +633,7 @@ mShared = {
         { cancel_fn = cancel_func, checkDuplicateId = true })
     }
     mShared.setCustomSettings()
-    mShared.rayTracingClick()
+    mShared.rayTracingClick(silent)
   }
 
   presetCheck = function() {
@@ -618,15 +648,17 @@ mShared = {
   modeClick = @() enableGuiOption("monitor", getOptionDesc("monitor")?.enabled() ?? true)
 
   antialiasingModeClick = function() {
-    aaUseGui = true;
+    aaUseGui = true
 
+    let canBgScale = canDoBackgroundScale()
+    enableGuiOption("ssaa", canBgScale)
     enableGuiOption("antialiasingUpscaling", hasAntialiasingUpscaling())
     enableGuiOption("antialiasingSharpening", hasAntialiasingSharpening())
 
     changeOptions("antialiasingUpscaling")
     setGuiValue("antialiasingSharpening", 0)
 
-    if (!canDoBackgroundScale()) {
+    if (!canBgScale) {
       setGuiValue("ssaa", "none")
       setGuiValue("backgroundScale", 1.0)
     }
@@ -733,6 +765,16 @@ mShared = {
       mShared.setCompatibilityMode()
   }
 
+  gfxApiClick = function() {
+    let api = getGuiValue("gfx_api")
+    let isSupportedApi = api == "dx12"
+    enableGuiOption("rayTracing", isSupportedApi)
+    if (!isSupportedApi) {
+      setGuiValue("rayTracing", "off")
+      mShared.rayTracingClick()
+    }
+  }
+
   rtOptionChanged = function() {
     setGuiValue("rayTracing", "custom")
   }
@@ -747,20 +789,8 @@ mShared = {
     mShared.rtOptionChanged()
   }
 
-  rayTracingClick = function() {
-    let rt = getGuiValue("rayTracing", "off")
+  rayTracingPresetHandler = function(rt) {
     let rtIsOn = rt != "off"
-    enableGuiOption("bvhDistance", rtIsOn)
-    enableGuiOption("rtr", rtIsOn)
-    enableGuiOption("rtao", rtIsOn)
-    enableGuiOption("rtsm", rtIsOn)
-
-    enableGuiOption("rtrWater", rtIsOn)
-    enableGuiOption("rtrWaterRes", getGuiValue("rtrWater") && rtIsOn)
-
-    enableGuiOption("rtrTranslucent", rtIsOn)
-    enableGuiOption("rtrRes", getGuiValue("rtr") != "off" && rtIsOn)
-
     setBlkValueByPath(mBlk, "graphics/enableBVH", rtIsOn)
 
     if (!rtIsOn) {
@@ -809,6 +839,39 @@ mShared = {
       setGuiValue("rtrWaterRes", "full")
       setGuiValue("rtrTranslucent", "high")
     }
+
+    enableGuiOption("bvhDistance", rtIsOn)
+    enableGuiOption("rtr", rtIsOn)
+    enableGuiOption("rtao", rtIsOn)
+    enableGuiOption("rtsm", rtIsOn)
+
+    enableGuiOption("rtrWater", rtIsOn)
+    enableGuiOption("rtrWaterRes", getGuiValue("rtrWater") && rtIsOn)
+
+    enableGuiOption("rtrTranslucent", rtIsOn)
+    enableGuiOption("rtrRes", getGuiValue("rtr") != "off" && rtIsOn)
+  }
+
+  rayTracingClick = function(silent = false) {
+    let rt = getGuiValue("rayTracing", "off")
+    if (silent || rt == "off") {
+      mShared.rayTracingPresetHandler(rt)
+      return;
+    }
+
+    function okFunc() {
+      mShared.rayTracingPresetHandler(rt)
+    }
+    function cancelFunc() {
+      setGuiValue("rayTracing", "off")
+      mShared.rayTracingPresetHandler("off")
+    }
+    scene_msg_box("msg_sysopt_rt", null, loc("msgbox/rt_warning"),
+      [
+        ["ok", okFunc],
+        ["cancel", cancelFunc],
+      ], "cancel",
+      { cancel_fn = cancelFunc, checkDuplicateId = true })
   }
 
   vrModeClick = function() {
@@ -818,11 +881,11 @@ mShared = {
     setGuiValue("antialiasingUpscaling", "native")
     if (getGuiValue("enableVr")) {
       setGuiValue("rayTracing", "off")
-      mShared.rayTracingClick();
+      mShared.rayTracingClick(true);
       enableGuiOption("rayTracing", false)
     } else if (hasRT()) {
       enableGuiOption("rayTracing", true)
-      mShared.rayTracingClick();
+      mShared.rayTracingClick(true);
     }
   }
 
@@ -932,7 +995,7 @@ mShared = {
 mSettings = {
   gfx_api = { widgetType = "list" def = "auto" blk = "video/driver" restart = true
     init = function(_blk, desc) {
-      desc.values <- is_win64 ? [ "auto", "dx11", "dx12" ]
+      desc.values <- is_win64 ? [ "auto", "dx12" ]
         : is_win32 ? [ "dx11" ]
         : is_platform_macosx ? [ "metal" ]
         : [ "vulkan" ]
@@ -942,6 +1005,7 @@ mSettings = {
 
       desc.def <- desc.values[0]
     }
+    onChanged = "gfxApiClick"
     isVisible = @() is_win64 && hasFeature("optionGFXAPI")
   }
   resolution = { widgetType = "list" def = "1024 x 768" blk = "video/resolution" restart = true
@@ -984,18 +1048,18 @@ mSettings = {
     enabled = @() getGuiValue("mode", "fullscreen") != "windowed"
     isVisible = @() (get_available_monitors()?.list ?? []).len() > 2
   }
-  vsync = { widgetType = "list" def = "vsync_off" blk = "video/vsync" restart = false
+  vsync = { widgetType = "list" def = is_vrr_available() ? "vsync_vrr" : "vsync_off" blk = "video/vsync" restart = false
     getValueFromConfig = function(blk, _desc) {
+      let vrr = is_vrr_available() && getBlkValueByPath(blk, "video/vrr", false)
       let vsync = getBlkValueByPath(blk, "video/vsync", false)
-      let adaptive = is_gpu_nvidia() && getBlkValueByPath(blk, "video/adaptive_vsync", true)
-      return (vsync && adaptive) ? "vsync_adaptive" : (vsync) ? "vsync_on" : "vsync_off"
+      return vrr ? "vsync_vrr" : vsync ? "vsync_on" : "vsync_off"
     }
     setGuiValueToConfig = function(blk, _desc, val) {
-      setBlkValueByPath(blk, "video/vsync", val != "vsync_off")
-      setBlkValueByPath(blk, "video/adaptive_vsync", val == "vsync_adaptive")
+      setBlkValueByPath(blk, "video/vrr", val == "vsync_vrr")
+      setBlkValueByPath(blk, "video/vsync", val == "vsync_on")
     }
     init = function(_blk, desc) {
-      desc.values <- is_gpu_nvidia() ? [ "vsync_off", "vsync_on", "vsync_adaptive" ] : [ "vsync_off", "vsync_on" ]
+      desc.values <- is_vrr_available() ? [ "vsync_vrr", "vsync_off" ] : [ "vsync_off", "vsync_on" ]
     }
     enabled = @() getGuiValue("latency", "off") != "on" && getGuiValue("latency", "off") != "boost"
   }
@@ -1008,6 +1072,7 @@ mSettings = {
   antialiasingMode = { widgetType = "list" def = "off" blk = "video/antialiasing_mode" restart = false
     init = function(_blk, desc) {
       desc.values <- antiAliasingOptions()
+      desc.items <- antiAliasingOptionsWithVersion()
     }
     onChanged = "antialiasingModeClick"
     hidden_values = { low_fxaa = "low_fxaa", high_fxaa = "high_fxaa", taa = "taa" }
@@ -1746,7 +1811,10 @@ function fillGuiOptions(containerObj, handler) {
       continue
     let isTable = ("items" in section)
     let ids = isTable ? section.items : [ section.id ]
-    let sectionHeader = format("optionBlockHeader { text:t='#%s'; }", section.title)
+    let addTitleInfo = section?.addTitleInfo
+      ? loc("ui/parentheses/space", { text = loc(section.addTitleInfo) }) : ""
+    let titleText = "".concat(loc(section.title), addTitleInfo)
+    let sectionHeader = format("optionBlockHeader { text:t='%s'; }", titleText)
     let sectionRow = format(
       "tr { optContainer:t='yes'; headerRow:t='yes'; td { cellType:t='left'; %s } optionHeaderLine{} }",
       sectionHeader
@@ -1808,15 +1876,17 @@ function fillGuiOptions(containerObj, handler) {
       }
 
       if (isTable) {
-        let enable = (desc?.enabled() ?? true) ? "yes" : "no"
+        let disabled = (desc?.enabled() ?? true) ? "no" : "yes"
         let requiresRestart = getTblValue("restart", desc, false)
         let optionName = loc($"options/{id}")
+        let disabledTooltip = disabled == "yes" ? getDisabledOptionTooltip(id) : null
+        let tooltipProp = disabledTooltip != null ? $" tooltip:t='{disabledTooltip}';" : ""
         let label = stripTags("".join([optionName, requiresRestart ? $"{nbsp}*" : $"{nbsp}{nbsp}"]))
-        option = "".concat("tr { id:t='", id, "_tr'; enable:t='", enable, "' selected:t='no' size:t='pw, ", mRowHeightScale,
-          "@optConatainerHeight' overflow:t='hidden' optContainer:t='yes'  on_hover:t='onOptionContainerHover' on_unhover='onOptionContainerUnhover'",
+        option = "".concat("tr { id:t='", id, "_tr'; disabled:t='", disabled, "' selected:t='no'", tooltipProp, "size:t='pw, ", mRowHeightScale,
+          "@optContainerHeight' overflow:t='hidden' optContainer:t='yes'  on_hover:t='onOptionContainerHover' on_unhover='onOptionContainerUnhover'",
           " td { width:t='0.55pw'; cellType:t='left'; overflow:t='hidden'; height:t='", mRowHeightScale,
-          "@optConatainerHeight' optiontext {text:t='", label, "'} }",  " td { width:t='0.45pw'; cellType:t='right';  height:t='",
-          mRowHeightScale, "@optConatainerHeight' padding-left:t='@optPad'; cellSeparator{}", option, " } }"
+          "@optContainerHeight' optiontext {text:t='", label, "'} }",  " td { width:t='0.45pw'; cellType:t='right';  height:t='",
+          mRowHeightScale, "@optContainerHeight' padding-left:t='@optPad'; cellSeparator{}", option, " } }"
         )
       }
       data = "".concat(data, option)

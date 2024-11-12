@@ -3,7 +3,6 @@ from "%scripts/dagui_library.nut" import *
 from "%scripts/leaderboard/leaderboardConsts.nut" import LEADERBOARD_VALUE_TOTAL, LEADERBOARD_VALUE_INHISTORY
 from "%scripts/mainConsts.nut" import SEEN
 
-let { g_clan_type } = require("%scripts/clans/clanType.nut")
 let { g_difficulty } = require("%scripts/difficulty.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
@@ -52,6 +51,11 @@ let { isUnlockVisible, getUnlockRewardText } = require("%scripts/unlocks/unlocks
 let { isBattleTask } = require("%scripts/unlocks/battleTasks.nut")
 let { setBreadcrumbGoBackParams } = require("%scripts/breadcrumb.nut")
 let { isInBattleState } = require("%scripts/clientState/clientStates.nut")
+let { getLbItemCell } = require("%scripts/leaderboard/leaderboardHelpers.nut")
+let { getPlayerName } = require("%scripts/user/remapNick.nut")
+let { requestUserInfoData, getUserInfo, userInfoEventName } = require("%scripts/user/usersInfoManager.nut")
+let { getShowcaseTitleViewData, getShowcaseViewData, trySetBestShowcaseMode } = require("%scripts/user/profileShowcase.nut")
+let { add_event_listener, removeEventListenersByEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 
 ::gui_modal_userCard <- function gui_modal_userCard(playerInfo) {  // uid, id (in session), name
   if (!hasFeature("UserCards"))
@@ -119,7 +123,6 @@ gui_handlers.UserCardHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   isFilterVisible = false
 
   ribbonsRowLength = 3
-
   filterTypes = {}
   applyFilterTimer = null
   medalsByCountry = null
@@ -131,6 +134,7 @@ gui_handlers.UserCardHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   medalsFilters = []
   curFilter = null
   selMedalIdx = null
+  terseInfo = null
 
   function initScreen() {
     if (isInBattleState.get())
@@ -155,8 +159,8 @@ gui_handlers.UserCardHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
     let customNick = getCustomNick(this.player)
     let profileName = customNick == null
-      ? this.player.name
-      : $"{this.player.name}{loc("ui/parentheses/space", { text = customNick })}"
+      ? getPlayerName(this.player.name)
+      : $"{getPlayerName(this.player.name)}{loc("ui/parentheses/space", { text = customNick })}"
     this.scene.findObject("profile-name").setValue(profileName)
     this.scene.findObject("usercard-container").show(false)
     let breadCrumbTitle = this.scene.findObject("breadcrumb_title")
@@ -281,6 +285,7 @@ gui_handlers.UserCardHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     this.scene.findObject("profile_sheet_list").show(true)
     this.scene.findObject("profile_header").show(true)
     this.onSheetChange(null)
+    this.updateShowcase()
   }
 
   function showSheetDiv(name) {
@@ -406,12 +411,11 @@ gui_handlers.UserCardHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!hasFeature("Clans"))
       return
 
-    let clanTagObj = this.scene.findObject("profile-clanTag");
+    let clanTagObj = this.scene.findObject("profile-clanTag")
     if (clanTagObj) {
-      let clanType = g_clan_type.getTypeByCode(playerData.clanType)
-      let text = ::checkClanTagForDirtyWords(playerData.clanTag);
-      clanTagObj.setValue(colorize(clanType.color, text));
-      clanTagObj.tooltip = ::ps4CheckAndReplaceContentDisabledText(playerData.clanName);
+      let text = ::checkClanTagForDirtyWords(playerData.clanTag)
+      clanTagObj.setValue(text)
+      clanTagObj.tooltip = ::ps4CheckAndReplaceContentDisabledText(playerData.clanName)
     }
   }
 
@@ -778,7 +782,7 @@ gui_handlers.UserCardHandler <- class (gui_handlers.BaseGuiHandlerWT) {
           continue
 
         if (this.isOwnStats || !("ownProfileOnly" in item) || !item.ownProfileOnly) {
-          let cell = ::getLbItemCell(item.id, airData[item.id], item.type)
+          let cell = getLbItemCell(item.id, airData[item.id], item.type)
           cell.active <- this.statsSortBy == item.id
           cell.tdalign <- "center"
           if ("tooltip" in cell) {
@@ -810,11 +814,6 @@ gui_handlers.UserCardHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     this.curStatsPage = obj.to_page.tointeger()
     this.updateStatPage()
   }
-
-  function checkLbRowVisibility(row) {
-    return ::leaderboardModel.checkLbRowVisibility(row, this)
-  }
-
 
   function onChangePilotIcon(_obj) {}
   function openChooseTitleWnd() {}
@@ -861,6 +860,7 @@ gui_handlers.UserCardHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       btn_complain = showProfBar && !isMe
       btn_friendChangeNick = hasFeature("CustomNicks") && showProfBar && !isMe
       btn_achievements_url = isVisibleAchievementsUrlBtn
+      btn_leaderboard = sheet == "Records" && hasFeature("Leaderboards")
     })
 
     if (isVisibleAchievementsUrlBtn)
@@ -1072,7 +1072,6 @@ gui_handlers.UserCardHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     this.isPageFilling = false
   }
 
-
   function fillMedalsByCountry() {
     this.medalsByCountry = {}
     let unlocks = getAllUnlocksWithBlkOrder()
@@ -1108,6 +1107,75 @@ gui_handlers.UserCardHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function isMedalUnlocked(name) {
     return this.player?.unlocks.medal[name] != null
+  }
+
+  function onLeaderboard() {
+    let userId = (this.player?.uid ?? "-1").tointeger()
+    if (userId >= 0)
+      loadHandler(gui_handlers.LeaderboardWindow, { userId })
+  }
+
+  function fillShowcaseMid(terseInfo, userStats) {
+    let data = getShowcaseViewData(userStats, terseInfo)
+    let midNest = this.scene.findObject("showcase_mid_nest")
+    this.guiScene.replaceContentFromText(midNest, data, data.len(), this)
+  }
+
+  function fillShowcaseTitle(terseInfo) {
+    let nest = this.scene.findObject("showcase_title_nest")
+    let data = getShowcaseTitleViewData(terseInfo)
+    this.guiScene.replaceContentFromText(nest, data, data.len(), this)
+  }
+
+  function fillShowcase(terseInfo, userStats) {
+    this.fillShowcaseTitle(terseInfo)
+    this.fillShowcaseMid(terseInfo, userStats)
+  }
+
+  function onUserInfoRequestComplete(responce, stats = null) {
+    if (this.terseInfo != null) {
+      removeEventListenersByEnv(userInfoEventName.UPDATED, this)
+      return
+    }
+    stats = stats ?? this.getPageProfileStats()
+    let infos = responce?.usersInfo[stats.uid]
+    if (infos == null)
+      return
+
+    this.terseInfo = {}
+    this.terseInfo.schType <- infos.shcType
+    this.terseInfo.showcase <- infos?.showcase
+      ? clone infos.showcase
+      : {}
+    trySetBestShowcaseMode(stats, this.terseInfo)
+    this.updateShowcase()
+    removeEventListenersByEnv(userInfoEventName.UPDATED, this)
+  }
+
+  function updateShowcase() {
+    let userStats = this.getPageProfileStats()
+    if (userStats == null)
+      return
+
+    if (this.terseInfo == null) {
+      let userInfo = getUserInfo(userStats.uid)
+      if (userInfo != null) {
+        let data = {}
+        data[userStats.uid] <- userInfo
+        this.onUserInfoRequestComplete({usersInfo = data}, userStats)
+      }
+    }
+
+    if (this.terseInfo) {
+      this.fillShowcase(this.terseInfo, userStats)
+      return
+    }
+    add_event_listener(userInfoEventName.UPDATED, this.onUserInfoRequestComplete, this)
+    requestUserInfoData(userStats.uid)
+  }
+
+  function getPageProfileStats() {
+    return this.player
   }
 
 }

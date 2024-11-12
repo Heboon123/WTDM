@@ -21,7 +21,9 @@ let { getEsUnitType, getUnitName, getUnitCountry, getUnitsNeedBuyToOpenNextInEra
   getUnitReqExp, getUnitExp, getUnitCost
 } = require("%scripts/unit/unitInfo.nut")
 let { canBuyUnit } = require("%scripts/unit/unitShopInfo.nut")
-let { canResearchUnit, isUnitGroup, isGroupPart } = require("%scripts/unit/unitStatus.nut")
+let { canResearchUnit, isUnitGroup, isGroupPart, isUnitFeatureLocked, isUnitResearched,
+  isPrevUnitBought
+} = require("%scripts/unit/unitStatus.nut")
 let { get_ranks_blk, get_discounts_blk, get_shop_blk } = require("blkGetters")
 let { MAX_COUNTRY_RANK } = require("%scripts/ranks.nut")
 
@@ -84,7 +86,7 @@ gui_handlers.ShopCheckResearch <- class (gui_handlers.ShopMenuHandler) {
     foreach (unit in getAllUnits())
       if ((!this.unitCountry || getUnitCountry(unit) == this.unitCountry)
            && (this.unitType == null || getEsUnitType(unit) == this.unitType)
-           && ::isUnitFeatureLocked(unit)
+           && isUnitFeatureLocked(unit)
          )
         return unit
     return null
@@ -156,7 +158,7 @@ gui_handlers.ShopCheckResearch <- class (gui_handlers.ShopMenuHandler) {
 
   function hasNextResearch() {
     return this.availableFlushExp > 0 &&
-      (this.curResearchingUnit == null || ::isUnitResearched(this.curResearchingUnit))
+      (this.curResearchingUnit == null || isUnitResearched(this.curResearchingUnit))
   }
 
   function getMaxRankUnboughtUnitByCountry() {
@@ -167,7 +169,7 @@ gui_handlers.ShopCheckResearch <- class (gui_handlers.ShopMenuHandler) {
           if (this.unitType == getEsUnitType(newUnit)
               && !isUnitSpecial(newUnit)
               && canBuyUnit(newUnit)
-              && ::isPrevUnitBought(newUnit))
+              && isPrevUnitBought(newUnit))
             unit = newUnit
     return unit
   }
@@ -184,14 +186,14 @@ gui_handlers.ShopCheckResearch <- class (gui_handlers.ShopMenuHandler) {
   function selectRequiredUnit() {
     local unit = null
     if (this.availableFlushExp > 0) {
-      if (this.curResearchingUnit && !::isUnitResearched(this.curResearchingUnit))
+      if (this.curResearchingUnit && !isUnitResearched(this.curResearchingUnit))
         unit = this.curResearchingUnit
       else {
         unit = this.getMaxRankResearchingUnitByCountry()
         this.setUnitOnResearch(unit)
       }
     }
-    else if (!this.curResearchingUnit || ::isUnitResearched(this.curResearchingUnit)) {
+    else if (!this.curResearchingUnit || isUnitResearched(this.curResearchingUnit)) {
       let nextResearchingUnit = this.getMaxRankResearchingUnitByCountry()
       if (nextResearchingUnit)
         unit = nextResearchingUnit
@@ -386,7 +388,7 @@ gui_handlers.ShopCheckResearch <- class (gui_handlers.ShopMenuHandler) {
           afterDoneFunc()
       }
 
-    if (unit && ::isUnitResearched(unit)) {
+    if (unit && isUnitResearched(unit)) {
       executeAfterDoneFunc()
       return
     }

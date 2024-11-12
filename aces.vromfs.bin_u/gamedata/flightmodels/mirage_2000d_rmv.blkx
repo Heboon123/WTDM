@@ -15,6 +15,7 @@
   "havePointOfInterestDesignator": true,
   "hasPointOfInterestMemory": true,
   "hasOpticTurret": true,
+  "isBwOpticSight": true,
   "hasHelmetDesignator": [
     true,
     true
@@ -81,9 +82,6 @@
   "laserDesignator": true,
   "autopilotImpl": "FBW",
   "paratrooper": "usa_irvin_5000_ejection_para",
-  "customClassIco": "!#ui/gameuiskin#image_in_progress_ico.svg",
-  "customImage": "!#ui/unitskin#image_in_progress",
-  "customTooltipImage": "ui/aircrafts/image_in_progress",
   "DamageParts": {
     "armor10": {
       "cannon1_dm": {
@@ -2073,13 +2071,13 @@
     "sightInFov": 1.0,
     "sightOutFov": 18.0,
     "sightFov": 1.0,
-    "hmdBlockIlsArea": [
-      0.37,
-      0.37,
-      0.63,
-      0.63
-    ],
     "hmdEnabledByDefault": true,
+    "hmdBlockIlsArea": [
+      0.5,
+      -0.4,
+      0.55,
+      0.6
+    ],
     "headPos": [
       4.12,
       0.57,
@@ -2388,9 +2386,24 @@
             1.0,
             1.0
           ],
-          "page": {
-            "type": "map"
-          }
+          "page": [
+            {
+              "type": "map"
+            },
+            {
+              "type": "rwr",
+              "grid": {
+                "scale": 1.3,
+                "lineWidthScale": 0.8,
+                "fontScale": 0.8
+              },
+              "object": {
+                "scale": 0.8,
+                "lineWidthScale": 0.4,
+                "fontScale": 0.4
+              }
+            }
+          ]
         },
         {
           "textureArea": [
@@ -2432,11 +2445,11 @@
   "sensors": {
     "sensor": [
       {
-        "blk": "gameData/sensors/fr_thales_rdy.blk",
+        "blk": "gameData/sensors/fr_antilope_5_hmd.blk",
         "dmPart": "radar_dm"
       },
       {
-        "blk": "gameData/sensors/tv_tracker_tgp.blk",
+        "blk": "gameData/sensors/ir_tracker_tgp.blk",
         "node": "optic1_gun"
       },
       {
@@ -2464,8 +2477,7 @@
         15.0
       ],
       "opticType": "targeting",
-      "turretNo": 0,
-      "nvIndex": 2
+      "turretNo": 0
     },
     "TV": {
       "pos": [
@@ -2486,10 +2498,28 @@
     }
   },
   "nightVision": {
-    "sightTPodThermal": {
+    "gunnerIr": {
       "resolution": [
-        800,
-        600
+        1920,
+        1080
+      ],
+      "lightMult": 10.0,
+      "ghosting": 0.7,
+      "noiseFactor": 0.15
+    },
+    "pilotIr": {
+      "resolution": [
+        1920,
+        1080
+      ],
+      "lightMult": 10.0,
+      "ghosting": 0.7,
+      "noiseFactor": 0.15
+    },
+    "sightThermal": {
+      "resolution": [
+        1200,
+        800
       ],
       "noiseFactor": 0.04
     }
@@ -2541,6 +2571,14 @@
       {
         "name": "mirage_2000d_rmv_gbu_49",
         "blk": "gameData/FlightModels/weaponPresets/mirage_2000d_rmv_gbu_49.blk"
+      },
+      {
+        "name": "mirage_2000d_rmv_gbu_48",
+        "blk": "gameData/FlightModels/weaponPresets/mirage_2000d_rmv_gbu_48.blk"
+      },
+      {
+        "name": "mirage_2000d_rmv_gbu_50",
+        "blk": "gameData/FlightModels/weaponPresets/mirage_2000d_rmv_gbu_50.blk"
       },
       {
         "name": "mirage_2000d_rmv_gbu_24",
@@ -2614,7 +2652,9 @@
         "pylon_mica_001_lift",
         "pylon_mica_002_lift",
         "pylon_mica_003_lift",
-        "pylon_mica_004_lift"
+        "pylon_mica_004_lift",
+        "pylon_ddm_001",
+        "pylon_ddm_002"
       ]
     },
     "HideDmParts": {
@@ -2704,32 +2744,6 @@
                 "bullets": 8,
                 "external": true,
                 "separate": true,
-                "bulletsCartridge": 1
-              },
-              {
-                "trigger": "countermeasures",
-                "blk": "gameData/Weapons/rocketGuns/countermeasure_split_launcher_jet_only_chaff_large.blk",
-                "emitter": "emtr_flare7",
-                "bullets": 56,
-                "external": true,
-                "separate": true,
-                "brakeChuteRange": [
-                  0.0,
-                  0.0
-                ],
-                "bulletsCartridge": 1
-              },
-              {
-                "trigger": "countermeasures",
-                "blk": "gameData/Weapons/rocketGuns/countermeasure_split_launcher_jet_only_chaff_large.blk",
-                "emitter": "emtr_flare6",
-                "bullets": 56,
-                "external": true,
-                "separate": true,
-                "brakeChuteRange": [
-                  0.0,
-                  0.0
-                ],
                 "bulletsCartridge": 1
               }
             ]
@@ -2881,7 +2895,7 @@
             }
           },
           {
-            "iconType": "nar_ap_small",
+            "iconType": "nar_ap_large",
             "name": "lr_f4",
             "reqModification": "fr_jl_100r",
             "ShowNodes": {
@@ -2896,7 +2910,7 @@
           },
           {
             "iconType": "bombs_middle",
-            "name": "bomb_250",
+            "name": "fr_250_slot1",
             "ShowNodes": {
               "node": "pylon_clb_lat_001"
             },
@@ -2912,7 +2926,7 @@
           },
           {
             "iconType": "bombs_middle",
-            "name": "us_500lb_mk_82_ldgp",
+            "name": "mk82_slot1",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_lat_001"
@@ -2929,7 +2943,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag",
-            "name": "bomb_250_200",
+            "name": "fr_250_drag_slot1",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_lat_001"
@@ -2946,7 +2960,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag",
-            "name": "us_500lb_mk_82_ldgp_snakeye",
+            "name": "mk82_snakeye_slot1",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_lat_001"
@@ -2969,8 +2983,42 @@
         "order": 3,
         "WeaponPreset": [
           {
+            "iconType": "nar_ap_large",
+            "name": "lr_f4",
+            "reqModification": "fr_jl_100r",
+            "ShowNodes": {
+              "node": "pylon_clb_lat_002"
+            },
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/containers/matra_lr_f4.blk",
+              "emitter": "matra_lr_f4_002",
+              "external": true
+            }
+          },
+          {
+            "iconType": "missile_air_to_uni",
+            "name": "as_30l_slot2",
+            "reqModification": "fr_as_30l",
+            "ShowNodes": {
+              "node": "pylon_as_30_001"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "external": true,
+              "separate": true,
+              "blk": "gameData/Weapons/rocketGuns/fr_as30l.blk",
+              "emitter": "rocket_as30_001",
+              "bullets": 1
+            },
+            "DependentWeaponPreset": {
+              "slot": 6,
+              "preset": "damocles"
+            }
+          },
+          {
             "iconType": "bombs_middle",
-            "name": "bomb_250",
+            "name": "fr_250_slot2",
             "ShowNodes": {
               "node": "pylon_clb_lat_002"
             },
@@ -2986,7 +3034,7 @@
           },
           {
             "iconType": "bombs_middle",
-            "name": "us_500lb_mk_82_ldgp",
+            "name": "mk82_slot2",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_lat_002"
@@ -3003,7 +3051,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag",
-            "name": "bomb_250_200",
+            "name": "fr_250_drag_slot2",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_lat_002"
@@ -3020,7 +3068,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag",
-            "name": "us_500lb_mk_82_ldgp_snakeye",
+            "name": "mk82_snakeye_slot2",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_lat_002"
@@ -3036,61 +3084,9 @@
             }
           },
           {
-            "iconType": "nar_ap_small",
-            "name": "lr_f4",
-            "reqModification": "fr_jl_100r",
-            "ShowNodes": {
-              "node": "pylon_clb_lat_002"
-            },
-            "Weapon": {
-              "trigger": "rockets",
-              "blk": "gameData/Weapons/containers/matra_lr_f4.blk",
-              "emitter": "matra_lr_f4_002",
-              "external": true
-            }
-          },
-          {
-            "iconType": "missile_air_to_uni",
-            "name": "as_30l",
-            "reqModification": "fr_as_30l",
-            "ShowNodes": {
-              "node": "pylon_as_30_001"
-            },
-            "Weapon": {
-              "trigger": "atgm",
-              "external": true,
-              "separate": true,
-              "blk": "gameData/Weapons/rocketGuns/fr_as30l.blk",
-              "emitter": "rocket_as30_001",
-              "bullets": 1
-            },
-            "DependentWeaponPreset": {
-              "slot": 6,
-              "preset": "damocles"
-            },
-            "BannedWeaponPreset": [
-              {
-                "slot": 4,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_500_centr"
-              },
-              {
-                "slot": 8,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_2000"
-              }
-            ]
-          },
-          {
-            "iconType": "guided_bomb_middle_laser",
-            "name": "bgl_400",
-            "reqModification": "fr_bgl1000",
+            "iconType": "guided_bomb_large_laser",
+            "name": "bgl_400_slot2",
+            "reqModification": "fr_bgl400_gbu_48",
             "ShowNodes": {
               "node": "pylon_clb_lat_002"
             },
@@ -3106,37 +3102,36 @@
             "DependentWeaponPreset": {
               "slot": 6,
               "preset": "damocles"
-            },
-            "BannedWeaponPreset": [
-              {
-                "slot": 4,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_500_centr"
-              },
-              {
-                "slot": 8,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_2000"
-              }
-            ]
+            }
           },
           {
             "iconType": "guided_bomb_yellow",
-            "name": "pgm_500",
+            "name": "pgm_500_slot2",
             "reqModification": "fr_pgm_500",
             "ShowNodes": {
               "node": "pylon_clb_lat_002"
             },
             "Weapon": {
               "trigger": "atgm",
-              "blk": "gameData/Weapons/BombGuns/uk_pgm_500.blk",
-              "emitter": "bomb7",
+              "blk": "gameData/Weapons/BombGuns/uk_pgm_500_iir.blk",
+              "emitter": "bomb_pgm_500_3",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          },
+          {
+            "iconType": "guided_bomb_grey",
+            "name": "pgm_2000_slot2",
+            "reqModification": "fr_pgm_2000",
+            "ShowNodes": {
+              "node": "pylon_clb_lat_002"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "blk": "gameData/Weapons/BombGuns/uk_pgm_2000_iir.blk",
+              "emitter": "bomb_pgm_2000_2",
               "bullets": 1,
               "external": true,
               "separate": true,
@@ -3145,7 +3140,7 @@
           },
           {
             "iconType": "guided_bomb_middle_laser",
-            "name": "us_gbu_12",
+            "name": "gbu_12_slot2",
             "reqModification": "us_gbu_12_49",
             "ShowNodes": {
               "node": "pylon_clb_lat_002"
@@ -3162,29 +3157,11 @@
             "DependentWeaponPreset": {
               "slot": 6,
               "preset": "damocles"
-            },
-            "BannedWeaponPreset": [
-              {
-                "slot": 4,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_500_centr"
-              },
-              {
-                "slot": 8,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_2000"
-              }
-            ]
+            }
           },
           {
             "iconType": "guided_bomb_middle_laser",
-            "name": "us_gbu_49",
+            "name": "gbu_49_slot2",
             "reqModification": "us_gbu_12_49",
             "ShowNodes": {
               "node": "pylon_clb_lat_002"
@@ -3201,25 +3178,7 @@
             "DependentWeaponPreset": {
               "slot": 6,
               "preset": "damocles"
-            },
-            "BannedWeaponPreset": [
-              {
-                "slot": 4,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_500_centr"
-              },
-              {
-                "slot": 8,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_2000"
-              }
-            ]
+            }
           }
         ]
       },
@@ -3231,7 +3190,7 @@
         "WeaponPreset": [
           {
             "iconType": "bombs_middle",
-            "name": "bomb_250",
+            "name": "fr_250_slot3",
             "ShowNodes": {
               "node": "pylon_clb_513_001"
             },
@@ -3247,7 +3206,7 @@
           },
           {
             "iconType": "bombs_middle",
-            "name": "us_500lb_mk_82_ldgp",
+            "name": "mk82_slot3",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_513_001"
@@ -3264,7 +3223,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag",
-            "name": "bomb_250_200",
+            "name": "fr_250_drag_slot3",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_513_001"
@@ -3281,7 +3240,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag",
-            "name": "us_500lb_mk_82_ldgp_snakeye",
+            "name": "mk82_snakeye_slot3",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_513_001"
@@ -3306,7 +3265,7 @@
         "WeaponPreset": [
           {
             "iconType": "bombs_middle",
-            "name": "bomb_250",
+            "name": "fr_250_slot4",
             "ShowNodes": {
               "node": "pylon_clb_503_001"
             },
@@ -3322,7 +3281,7 @@
           },
           {
             "iconType": "bombs_middle",
-            "name": "us_500lb_mk_82_ldgp",
+            "name": "mk82_slot4",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_503_001"
@@ -3339,7 +3298,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag",
-            "name": "bomb_250_200",
+            "name": "fr_250_drag_slot4",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_503_001"
@@ -3356,7 +3315,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag",
-            "name": "us_500lb_mk_82_ldgp_snakeye",
+            "name": "mk82_snakeye_slot4",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_503_001"
@@ -3373,24 +3332,42 @@
           },
           {
             "iconType": "guided_bomb_yellow",
-            "name": "pgm_500",
+            "name": "pgm_500_slot4",
             "reqModification": "fr_pgm_500",
             "ShowNodes": {
               "node": "pylon_clb_503_001"
             },
             "Weapon": {
               "trigger": "atgm",
-              "blk": "gameData/Weapons/BombGuns/uk_pgm_500.blk",
-              "emitter": "bomb1",
+              "blk": "gameData/Weapons/BombGuns/uk_pgm_500_iir.blk",
+              "emitter": "bomb_pgm_500_1",
               "bullets": 1,
               "external": true,
               "separate": true,
               "machLimit": 1.01
-            }
+            },
+            "BannedWeaponPreset": [
+              {
+                "slot": 5,
+                "preset": "mk82_x2_slot5"
+              },
+              {
+                "slot": 5,
+                "preset": "mk82_snakeye_x2_slot5"
+              },
+              {
+                "slot": 5,
+                "preset": "gbu_12_x2_slot5"
+              },
+              {
+                "slot": 5,
+                "preset": "gbu_49_x2_slot5"
+              }
+            ]
           },
           {
             "iconType": "guided_bomb_middle_laser",
-            "name": "us_gbu_12",
+            "name": "gbu_12_slot4",
             "reqModification": "us_gbu_12_49",
             "ShowNodes": {
               "node": "pylon_clb_503_001"
@@ -3407,29 +3384,11 @@
             "DependentWeaponPreset": {
               "slot": 6,
               "preset": "damocles"
-            },
-            "BannedWeaponPreset": [
-              {
-                "slot": 2,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_500_centr"
-              },
-              {
-                "slot": 8,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_2000"
-              }
-            ]
+            }
           },
           {
             "iconType": "guided_bomb_middle_laser",
-            "name": "us_gbu_49",
+            "name": "gbu_49_slot4",
             "reqModification": "us_gbu_12_49",
             "ShowNodes": {
               "node": "pylon_clb_503_001"
@@ -3446,25 +3405,7 @@
             "DependentWeaponPreset": {
               "slot": 6,
               "preset": "damocles"
-            },
-            "BannedWeaponPreset": [
-              {
-                "slot": 2,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_500_centr"
-              },
-              {
-                "slot": 8,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_2000"
-              }
-            ]
+            }
           },
           {
             "iconType": "machine_gun",
@@ -3502,7 +3443,7 @@
         "WeaponPreset": [
           {
             "iconType": "bombs_middle",
-            "name": "bomb_250",
+            "name": "fr_250_slot5",
             "ShowNodes": {
               "node": "pylon_central"
             },
@@ -3518,7 +3459,7 @@
           },
           {
             "iconType": "bombs_middle",
-            "name": "us_500lb_mk_82_ldgp",
+            "name": "mk82_slot5",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_central"
@@ -3535,7 +3476,7 @@
           },
           {
             "iconType": "bombs_middle_group_x2",
-            "name": "us_500lb_mk_82_ldgp_x2",
+            "name": "mk82_x2_slot5",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_central"
@@ -3551,24 +3492,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag",
-            "name": "bomb_250_200",
-            "reqModification": "fr_250kg_type_25c",
-            "ShowNodes": {
-              "node": "pylon_central"
-            },
-            "Weapon": {
-              "trigger": "bombs",
-              "external": true,
-              "separate": true,
-              "blk": "gameData/Weapons/BombGuns/fr_250_samp_type_25_200.blk",
-              "emitter": "bomb3",
-              "bullets": 1,
-              "machLimit": 1.01
-            }
-          },
-          {
-            "iconType": "bombs_middle_high_drag",
-            "name": "us_500lb_mk_82_ldgp_snakeye",
+            "name": "mk82_snakeye_slot5",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_central"
@@ -3585,7 +3509,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag_group_x2",
-            "name": "us_500lb_mk_82_ldgp_x2_snakeye",
+            "name": "mk82_snakeye_x2_slot5",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_central"
@@ -3600,8 +3524,25 @@
             }
           },
           {
+            "iconType": "bombs_middle_high_drag",
+            "name": "fr_250_drag_slot5",
+            "reqModification": "fr_250kg_type_25c",
+            "ShowNodes": {
+              "node": "pylon_central"
+            },
+            "Weapon": {
+              "trigger": "bombs",
+              "external": true,
+              "separate": true,
+              "blk": "gameData/Weapons/BombGuns/fr_250_samp_type_25_200.blk",
+              "emitter": "bomb3",
+              "bullets": 1,
+              "machLimit": 1.01
+            }
+          },
+          {
             "iconType": "guided_bomb_middle_laser_group_x2",
-            "name": "us_gbu_12_x2",
+            "name": "gbu_12_x2_slot5",
             "reqModification": "us_gbu_12_49",
             "ShowNodes": {
               "node": "pylon_central"
@@ -3620,22 +3561,18 @@
             },
             "BannedWeaponPreset": [
               {
-                "slot": 2,
-                "preset": "pgm_500"
-              },
-              {
                 "slot": 4,
-                "preset": "pgm_500"
+                "preset": "pgm_500_slot4"
               },
               {
-                "slot": 8,
-                "preset": "pgm_500"
+                "slot": 6,
+                "preset": "pgm_500_slot6"
               }
             ]
           },
           {
             "iconType": "guided_bomb_middle_laser_group_x2",
-            "name": "us_gbu_49_x2",
+            "name": "gbu_49_x2_slot5",
             "reqModification": "us_gbu_12_49",
             "ShowNodes": {
               "node": "pylon_central"
@@ -3651,26 +3588,12 @@
             "DependentWeaponPreset": {
               "slot": 6,
               "preset": "damocles"
-            },
-            "BannedWeaponPreset": [
-              {
-                "slot": 2,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 4,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 8,
-                "preset": "pgm_500"
-              }
-            ]
+            }
           },
           {
             "iconType": "guided_bomb_heavy_laser",
-            "name": "fr_bgl1000",
-            "reqModification": "fr_bgl1000",
+            "name": "fr_bgl1000_slot5",
+            "reqModification": "us_gbu_24_gbu_50",
             "ShowNodes": {
               "node": "pylon_central"
             },
@@ -3680,7 +3603,8 @@
               "emitter": "bomb3",
               "bullets": 1,
               "external": true,
-              "separate": true
+              "separate": true,
+              "machLimit": 1.01
             },
             "DependentWeaponPreset": {
               "slot": 6,
@@ -3688,23 +3612,19 @@
             },
             "BannedWeaponPreset": [
               {
-                "slot": 2,
-                "preset": "pgm_500"
-              },
-              {
                 "slot": 4,
-                "preset": "pgm_500"
+                "preset": "pgm_500_slot4"
               },
               {
-                "slot": 8,
-                "preset": "pgm_500"
+                "slot": 6,
+                "preset": "pgm_500_slot6"
               }
             ]
           },
           {
-            "iconType": "guided_bomb_special_laser",
-            "name": "us_gbu_24",
-            "reqModification": "us_gbu_24",
+            "iconType": "guided_bomb_heavy_laser",
+            "name": "gbu_24_slot5",
+            "reqModification": "us_gbu_24_gbu_50",
             "ShowNodes": {
               "node": "pylon_central"
             },
@@ -3723,60 +3643,103 @@
             },
             "BannedWeaponPreset": [
               {
-                "slot": 2,
-                "preset": "pgm_500"
-              },
-              {
                 "slot": 4,
-                "preset": "pgm_500"
+                "preset": "pgm_500_slot4"
               },
               {
-                "slot": 8,
-                "preset": "pgm_500"
+                "slot": 6,
+                "preset": "pgm_500_slot6"
               }
             ]
           },
           {
-            "iconType": "guided_bomb_yellow",
-            "name": "pgm_500_centr",
-            "reqModification": "fr_pgm_500",
+            "iconType": "guided_bomb_heavy_laser",
+            "name": "gbu_50_slot5",
+            "reqModification": "us_gbu_24_gbu_50",
             "ShowNodes": {
               "node": "pylon_central"
             },
             "Weapon": {
-              "trigger": "atgm",
-              "blk": "gameData/Weapons/BombGuns/uk_pgm_500.blk",
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/BombGuns/us_gbu_50_paveway_2.blk",
               "emitter": "bomb3",
               "bullets": 1,
               "external": true,
               "separate": true,
               "machLimit": 1.01
             },
-            "BannedWeaponPreset": {
-              "slot": 4,
-              "preset": "pgm_500"
-            }
+            "DependentWeaponPreset": {
+              "slot": 6,
+              "preset": "damocles"
+            },
+            "BannedWeaponPreset": [
+              {
+                "slot": 4,
+                "preset": "pgm_500_slot4"
+              },
+              {
+                "slot": 6,
+                "preset": "pgm_500_slot6"
+              }
+            ]
+          },
+          {
+            "iconType": "guided_bomb_large_laser",
+            "name": "gbu_48_slot5",
+            "reqModification": "fr_bgl400_gbu_48",
+            "ShowNodes": {
+              "node": "pylon_central"
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/BombGuns/us_gbu_48_paveway_2.blk",
+              "emitter": "bomb3",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            },
+            "DependentWeaponPreset": {
+              "slot": 6,
+              "preset": "damocles"
+            },
+            "BannedWeaponPreset": [
+              {
+                "slot": 4,
+                "preset": "pgm_500_slot4"
+              },
+              {
+                "slot": 6,
+                "preset": "pgm_500_slot6"
+              }
+            ]
           },
           {
             "iconType": "guided_bomb_grey",
-            "name": "pgm_2000",
+            "name": "pgm_2000_slot5",
             "reqModification": "fr_pgm_2000",
             "ShowNodes": {
               "node": "pylon_central"
             },
             "Weapon": {
               "trigger": "atgm",
-              "blk": "gameData/Weapons/BombGuns/uk_pgm_2000.blk",
-              "emitter": "bomb3",
+              "blk": "gameData/Weapons/BombGuns/uk_pgm_2000_iir.blk",
+              "emitter": "bomb_pgm_2000_1",
               "bullets": 1,
               "external": true,
               "separate": true,
               "machLimit": 1.01
             },
-            "BannedWeaponPreset": {
-              "slot": 4,
-              "preset": "pgm_500"
-            }
+            "BannedWeaponPreset": [
+              {
+                "slot": 4,
+                "preset": "pgm_500_slot4"
+              },
+              {
+                "slot": 6,
+                "preset": "pgm_500_slot6"
+              }
+            ]
           },
           {
             "iconType": "ptb",
@@ -3796,10 +3759,16 @@
               "external": true,
               "separate": true
             },
-            "BannedWeaponPreset": {
-              "slot": 4,
-              "preset": "pgm_500"
-            }
+            "BannedWeaponPreset": [
+              {
+                "slot": 4,
+                "preset": "pgm_500_slot4"
+              },
+              {
+                "slot": 6,
+                "preset": "pgm_500_slot6"
+              }
+            ]
           }
         ]
       },
@@ -3811,7 +3780,7 @@
         "WeaponPreset": [
           {
             "iconType": "bombs_middle",
-            "name": "bomb_250",
+            "name": "fr_250_slot6",
             "ShowNodes": {
               "node": "pylon_clb_503_002"
             },
@@ -3827,7 +3796,7 @@
           },
           {
             "iconType": "bombs_middle",
-            "name": "us_500lb_mk_82_ldgp",
+            "name": "mk82_slot6",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_503_002"
@@ -3844,7 +3813,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag",
-            "name": "bomb_250_200",
+            "name": "fr_250_drag_slot6",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_503_002"
@@ -3861,7 +3830,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag",
-            "name": "us_500lb_mk_82_ldgp_snakeye",
+            "name": "mk82_snakeye_slot6",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_503_002"
@@ -3875,6 +3844,41 @@
               "separate": true,
               "machLimit": 1.01
             }
+          },
+          {
+            "iconType": "guided_bomb_yellow",
+            "name": "pgm_500_slot6",
+            "reqModification": "fr_pgm_500",
+            "ShowNodes": {
+              "node": "pylon_clb_503_002"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "blk": "gameData/Weapons/BombGuns/uk_pgm_500_iir.blk",
+              "emitter": "bomb_pgm_500_5",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            },
+            "BannedWeaponPreset": [
+              {
+                "slot": 5,
+                "preset": "mk82_x2_slot5"
+              },
+              {
+                "slot": 5,
+                "preset": "mk82_snakeye_x2_slot5"
+              },
+              {
+                "slot": 5,
+                "preset": "gbu_12_x2_slot5"
+              },
+              {
+                "slot": 5,
+                "preset": "gbu_49_x2_slot5"
+              }
+            ]
           },
           {
             "iconType": "flir_container",
@@ -3910,7 +3914,7 @@
         "WeaponPreset": [
           {
             "iconType": "bombs_middle",
-            "name": "bomb_250",
+            "name": "fr_250_slot7",
             "ShowNodes": {
               "node": "pylon_clb_513_002"
             },
@@ -3926,7 +3930,7 @@
           },
           {
             "iconType": "bombs_middle",
-            "name": "us_500lb_mk_82_ldgp",
+            "name": "mk82_slot7",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_513_002"
@@ -3943,7 +3947,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag",
-            "name": "bomb_250_200",
+            "name": "fr_250_drag_slot7",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_513_002"
@@ -3960,7 +3964,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag",
-            "name": "us_500lb_mk_82_ldgp_snakeye",
+            "name": "mk82_snakeye_slot7",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_513_002"
@@ -3983,8 +3987,42 @@
         "order": 4,
         "WeaponPreset": [
           {
+            "iconType": "nar_ap_large",
+            "name": "lr_f4",
+            "reqModification": "fr_jl_100r",
+            "ShowNodes": {
+              "node": "pylon_clb_lat_003"
+            },
+            "Weapon": {
+              "trigger": "rockets",
+              "blk": "gameData/Weapons/containers/matra_lr_f4.blk",
+              "emitter": "matra_lr_f4_003",
+              "external": true
+            }
+          },
+          {
+            "iconType": "missile_air_to_uni",
+            "name": "as_30l_slot8",
+            "reqModification": "fr_as_30l",
+            "ShowNodes": {
+              "node": "pylon_as_30_002"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "external": true,
+              "separate": true,
+              "blk": "gameData/Weapons/rocketGuns/fr_as30l.blk",
+              "emitter": "rocket_as30_002",
+              "bullets": 1
+            },
+            "DependentWeaponPreset": {
+              "slot": 6,
+              "preset": "damocles"
+            }
+          },
+          {
             "iconType": "bombs_middle",
-            "name": "bomb_250",
+            "name": "fr_250_slot8",
             "ShowNodes": {
               "node": "pylon_clb_lat_003"
             },
@@ -4000,7 +4038,7 @@
           },
           {
             "iconType": "bombs_middle",
-            "name": "us_500lb_mk_82_ldgp",
+            "name": "mk82_slot8",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_lat_003"
@@ -4017,7 +4055,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag",
-            "name": "bomb_250_200",
+            "name": "fr_250_drag_slot8",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_lat_003"
@@ -4034,7 +4072,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag",
-            "name": "us_500lb_mk_82_ldgp_snakeye",
+            "name": "mk82_snakeye_slot8",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_lat_003"
@@ -4050,61 +4088,9 @@
             }
           },
           {
-            "iconType": "nar_ap_small",
-            "name": "lr_f4",
-            "reqModification": "fr_jl_100r",
-            "ShowNodes": {
-              "node": "pylon_clb_lat_003"
-            },
-            "Weapon": {
-              "trigger": "rockets",
-              "blk": "gameData/Weapons/containers/matra_lr_f4.blk",
-              "emitter": "matra_lr_f4_003",
-              "external": true
-            }
-          },
-          {
-            "iconType": "missile_air_to_uni",
-            "name": "as_30l",
-            "reqModification": "fr_as_30l",
-            "ShowNodes": {
-              "node": "pylon_as_30_002"
-            },
-            "Weapon": {
-              "trigger": "atgm",
-              "external": true,
-              "separate": true,
-              "blk": "gameData/Weapons/rocketGuns/fr_as30l.blk",
-              "emitter": "rocket_as30_002",
-              "bullets": 1
-            },
-            "DependentWeaponPreset": {
-              "slot": 6,
-              "preset": "damocles"
-            },
-            "BannedWeaponPreset": [
-              {
-                "slot": 2,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 4,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_500_centr"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_2000"
-              }
-            ]
-          },
-          {
-            "iconType": "guided_bomb_middle_laser",
-            "name": "bgl_400",
-            "reqModification": "fr_bgl1000",
+            "iconType": "guided_bomb_large_laser",
+            "name": "bgl_400_slot8",
+            "reqModification": "fr_bgl400_gbu_48",
             "ShowNodes": {
               "node": "pylon_clb_lat_003"
             },
@@ -4120,37 +4106,36 @@
             "DependentWeaponPreset": {
               "slot": 6,
               "preset": "damocles"
-            },
-            "BannedWeaponPreset": [
-              {
-                "slot": 2,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 4,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_500_centr"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_2000"
-              }
-            ]
+            }
           },
           {
             "iconType": "guided_bomb_yellow",
-            "name": "pgm_500",
+            "name": "pgm_500_slot8",
             "reqModification": "fr_pgm_500",
             "ShowNodes": {
               "node": "pylon_clb_lat_003"
             },
             "Weapon": {
               "trigger": "atgm",
-              "blk": "gameData/Weapons/BombGuns/uk_pgm_500.blk",
-              "emitter": "bomb8",
+              "blk": "gameData/Weapons/BombGuns/uk_pgm_500_iir.blk",
+              "emitter": "bomb_pgm_500_4",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          },
+          {
+            "iconType": "guided_bomb_grey",
+            "name": "pgm_2000_slot8",
+            "reqModification": "fr_pgm_2000",
+            "ShowNodes": {
+              "node": "pylon_clb_lat_003"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "blk": "gameData/Weapons/BombGuns/uk_pgm_2000_iir.blk",
+              "emitter": "bomb_pgm_2000_3",
               "bullets": 1,
               "external": true,
               "separate": true,
@@ -4159,7 +4144,7 @@
           },
           {
             "iconType": "guided_bomb_middle_laser",
-            "name": "us_gbu_12",
+            "name": "gbu_12_slot8",
             "reqModification": "us_gbu_12_49",
             "ShowNodes": {
               "node": "pylon_clb_lat_003"
@@ -4176,29 +4161,11 @@
             "DependentWeaponPreset": {
               "slot": 6,
               "preset": "damocles"
-            },
-            "BannedWeaponPreset": [
-              {
-                "slot": 2,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 4,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_500_centr"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_2000"
-              }
-            ]
+            }
           },
           {
             "iconType": "guided_bomb_middle_laser",
-            "name": "us_gbu_49",
+            "name": "gbu_49_slot8",
             "reqModification": "us_gbu_12_49",
             "ShowNodes": {
               "node": "pylon_clb_lat_003"
@@ -4215,25 +4182,7 @@
             "DependentWeaponPreset": {
               "slot": 6,
               "preset": "damocles"
-            },
-            "BannedWeaponPreset": [
-              {
-                "slot": 2,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 4,
-                "preset": "pgm_500"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_500_centr"
-              },
-              {
-                "slot": 5,
-                "preset": "pgm_2000"
-              }
-            ]
+            }
           }
         ]
       },
@@ -4258,7 +4207,7 @@
             }
           },
           {
-            "iconType": "nar_ap_small",
+            "iconType": "nar_ap_large",
             "name": "lr_f4",
             "reqModification": "fr_jl_100r",
             "ShowNodes": {
@@ -4273,7 +4222,7 @@
           },
           {
             "iconType": "bombs_middle",
-            "name": "bomb_250",
+            "name": "fr_250_slot9",
             "ShowNodes": {
               "node": "pylon_clb_lat_004"
             },
@@ -4289,7 +4238,7 @@
           },
           {
             "iconType": "bombs_middle",
-            "name": "us_500lb_mk_82_ldgp",
+            "name": "mk82_slot9",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_lat_004"
@@ -4306,7 +4255,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag",
-            "name": "bomb_250_200",
+            "name": "fr_250_drag_slot9",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_lat_004"
@@ -4323,7 +4272,7 @@
           },
           {
             "iconType": "bombs_middle_high_drag",
-            "name": "us_500lb_mk_82_ldgp_snakeye",
+            "name": "mk82_snakeye_slot9",
             "reqModification": "fr_250kg_type_25c",
             "ShowNodes": {
               "node": "pylon_clb_lat_004"
@@ -4494,11 +4443,11 @@
         "sensors": {
           "sensor": [
             {
-              "blk": "gameData/sensors/fr_thales_rdy.blk",
+              "blk": "gameData/sensors/fr_antilope_5_hmd.blk",
               "dmPart": "radar_dm"
             },
             {
-              "blk": "gameData/sensors/tv_tracker_tgp.blk",
+              "blk": "gameData/sensors/ir_tracker_tgp.blk",
               "node": "optic1_gun"
             },
             {
@@ -4519,43 +4468,8 @@
       "tier": 2,
       "modClass": "armor"
     },
-    "heli_night_vision_system": {
-      "tier": 3,
-      "modClass": "armor",
-      "prevModification": "f_4c_g_suit",
-      "effects": {
-        "nightVision": {
-          "gunnerIr": {
-            "resolution": [
-              1920,
-              1080
-            ],
-            "lightMult": 10.0,
-            "ghosting": 0.7,
-            "noiseFactor": 0.15
-          },
-          "pilotIr": {
-            "resolution": [
-              1920,
-              1080
-            ],
-            "lightMult": 10.0,
-            "ghosting": 0.7,
-            "noiseFactor": 0.15
-          },
-          "sightThermal": {
-            "resolution": [
-              1200,
-              800
-            ],
-            "noiseFactor": 0.04,
-            "index": 2
-          }
-        }
-      }
-    },
     "air_extinguisher": {
-      "prevModification": "heli_night_vision_system",
+      "prevModification": "f_4c_g_suit",
       "tier": 4,
       "modClass": "armor",
       "invertEnableLogic": false
@@ -4589,13 +4503,13 @@
       "modClass": "weapon",
       "tier": 2
     },
-    "fr_bgl1000": {
+    "fr_bgl400_gbu_48": {
       "reqModification": "us_gbu_12_49",
       "modClass": "weapon",
       "tier": 3
     },
-    "us_gbu_24": {
-      "reqModification": "fr_bgl1000",
+    "us_gbu_24_gbu_50": {
+      "reqModification": "fr_bgl400_gbu_48",
       "modClass": "weapon",
       "tier": 4
     },
@@ -4692,7 +4606,7 @@
     "emtr_break_wing2_l_from": [
       -1.26286,
       -0.328882,
-      2.93074
+      2.53074
     ],
     "emtr_break_wing2_l_to": [
       -1.26286,
@@ -4722,7 +4636,7 @@
     "emtr_break_wing2_r_from": [
       -1.26286,
       -0.328882,
-      -2.93074
+      -2.53074
     ],
     "emtr_break_wing2_r_to": [
       -1.26286,

@@ -16,7 +16,7 @@ let { loadedTransport, cursorPosition } = require("%rGui/wwMap/wwMapStates.nut")
 let { getArmyGroupsInfo } = require("%rGui/wwMap/wwArmyGroups.nut")
 let { selectedAirfield } = require("%rGui/wwMap/wwAirfieldsStates.nut")
 let { getZoneById } = require("%rGui/wwMap/wwMapZonesData.nut")
-let { calcAngleBetweenVectors } = require("%rGui/wwMap/wwUtils.nut")
+let { calcAngleBetweenVectors, even } = require("%rGui/wwMap/wwUtils.nut")
 
 let partSize = hdpx(20)
 
@@ -151,6 +151,7 @@ function mkActionCircle(pos, r1, r2) {
     pos = [pos[0] - actualRadius / 2, pos[1] - actualRadius / 2]
     lineWidth
     color = Color(0, 0, 0, 128)
+    subPixel = true
     fillColor = 0
     commands = [
       [VECTOR_ELLIPSE, 50, 50, 100, 100]
@@ -167,12 +168,11 @@ let mkArtilleryStrikeCircles = @(areaBounds) function() {
 
   let { areaWidth, areaHeight } = areaBounds
   let artillery = getArtilleryParams(armyData)
-  let armySize = floor(armyData.specs.battleStartRadiusN * mapZoom.get())
-  let radiusMin = floor(artillery.minAttackRange * mapZoom.get())
-  let radiusMax = floor(artillery.maxAttackRange * mapZoom.get())
+  let armySize = even(armyData.specs.battleStartRadiusN * mapZoom.get())
+  let radiusMin = even(artillery.minAttackRange * mapZoom.get())
+  let radiusMax = even(artillery.maxAttackRange * mapZoom.get())
   let armyPos = convertToRelativeMapCoords(armyData.pathTracker.pos)
-  let pos = [floor(armyPos.x * areaWidth), floor(armyPos.y * areaHeight)]
-
+  let pos = [areaWidth * armyPos.x, areaHeight * armyPos.y]
   return {
     watch = [artilleryReadyToStrike, mapZoom]
     size = flex()
@@ -193,11 +193,10 @@ let mkTransportCircles = @(areaBounds) function() {
   let armyData = getArmyByName(armyName)
 
   let { areaWidth, areaHeight } = areaBounds
-  let armySize = floor(armyData.specs.battleStartRadiusN * mapZoom.get())
-  let radiusMax = floor(armyData.specs.transportInfo.loadDistance * mapZoom.get())
+  let armySize = even(armyData.specs.battleStartRadiusN * mapZoom.get())
+  let radiusMax = even(armyData.specs.transportInfo.loadDistance * mapZoom.get())
   let armyPos = convertToRelativeMapCoords(armyData.pathTracker.pos)
-  let pos = [floor(armyPos.x * areaWidth), floor(armyPos.y * areaHeight)]
-
+  let pos = [areaWidth * armyPos.x, areaHeight * armyPos.y]
   return {
     watch = [transportReadyToUnload, transportReadyToLoad, mapZoom]
     size = flex()
@@ -273,22 +272,20 @@ function mkArmyArrow(arrowPos, radius, arrowAngle, color, fillColor) {
 
 let mkFlyOutArrow = @(areaBounds) function() {
   let airfield = selectedAirfield.get()
+  let { areaWidth, areaHeight } = areaBounds
+  let posTo = convertAbsoluteToMapCoords(cursorPosition.get(), areaBounds)
+  posTo.x = posTo.x / areaWidth
+  posTo.y = posTo.y / areaHeight
 
-  if (airfield == null || isOperationPaused.get() || !isPlayerSide(zoneSideType[airfield.side]))
+  let isPointerInMap = (posTo.x > 0 && posTo.x < 1) && (posTo.y > 0 && posTo.y < 1)
+  if (airfield == null || isOperationPaused.get() || !isPlayerSide(zoneSideType[airfield.side]) || !isPointerInMap)
     return {
       watch = [cursorPosition, selectedAirfield, isOperationPaused, mapZoom]
     }
 
   let { airfieldType, ownedZoneId } = airfield
-
   let ownedZone = getZoneById(ownedZoneId)
-  let { areaWidth, areaHeight } = areaBounds
-
   let posFrom = { x = ownedZone.center.x, y = ownedZone.center.y }
-  let posTo = convertAbsoluteToMapCoords(cursorPosition.get(), areaBounds)
-  posTo.x = posTo.x / areaWidth
-  posTo.y = posTo.y / areaHeight
-
   let airfieldArrowArmyShowK = getSettings("airfieldArrowArmyShowK")
   let lineLen = lineLength(posFrom, posTo, [areaWidth, areaHeight])
   let radius = getSettings("airfieldArrowFirstCircleRadius") * mapZoom.get()
