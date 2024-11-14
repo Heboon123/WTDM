@@ -179,6 +179,7 @@ let ItemExternal = class (BaseItem) {
 
   function tryAddItem(itemDefDesc, itemDesc) {
     if (this.id != itemDefDesc.itemdefid
+        || (this.itemDef?.tags.showItemIdInName ?? false)
         || this.expireTimestamp != this.getExpireTimestamp(itemDefDesc, itemDesc)
         || this.tradeableTimestamp != this.getTradebleTimestamp(itemDesc))
       return false
@@ -214,7 +215,7 @@ let ItemExternal = class (BaseItem) {
     return (tShop != -1 && (tInv == -1 || tShop < tInv)) ? tShop : tInv
   }
 
-  updateNameLoc = @(locName) !this.shouldAutoConsume && this.combinedNameLocId
+  updateNameLoc = @(locName) !this.shouldAutoConsume && this.combinedNameLocId && !u.isEmpty(this.itemDef?.meta)
     ? loc(this.combinedNameLocId, { name = locName })
     : locName
 
@@ -226,8 +227,12 @@ let ItemExternal = class (BaseItem) {
     local res = ""
     if (this.isDisguised)
       res = loc("item/disguised")
-    else
-      res = this.updateNameLoc(this.itemDef?.name ?? "")
+    else {
+      local locName = this.itemDef?.name ?? ""
+      if (this.isInventoryItem && (this.itemDef?.tags.showItemIdInName ?? false))
+        locName = "".concat(locName, nbsp, loc("ui/number_sign"), this.uids?[0] ?? "")
+      res = this.updateNameLoc(locName)
+    }
 
     if (colored)
       res = colorize(this.getRarityColor(), res)
