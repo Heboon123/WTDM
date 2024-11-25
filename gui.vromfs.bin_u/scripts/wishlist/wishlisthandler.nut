@@ -14,15 +14,17 @@ let { getWishList, getMaxWishListSize } = require("chard")
 let { requestRemoveFromWishlist } = require("%scripts/wishlist/wishlistManager.nut")
 let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
 let { getCountryFlagForUnitTooltip } = require("%scripts/options/countryFlagsPreset.nut")
-let { getUnitName, getUnitCountry, getEsUnitType, canBuyUnit } = require("%scripts/unit/unitInfo.nut")
-let { getUnitTooltipImage, getUnitRoleIcon, getFullUnitRoleText, getUnitClassColor } = require("%scripts/unit/unitInfoTexts.nut")
+let { getUnitName, getUnitCountry, getEsUnitType, getUnitCost } = require("%scripts/unit/unitInfo.nut")
+let { canBuyUnit } = require("%scripts/unit/unitShopInfo.nut")
+let { getUnitTooltipImage } = require("%scripts/unit/unitInfoTexts.nut")
+let { getUnitRoleIcon, getFullUnitRoleText, getUnitClassColor } = require("%scripts/unit/unitInfoRoles.nut")
 let { buildDateTimeStr } = require("%scripts/time.nut")
 let { openPopupFilter } = require("%scripts/popups/popupFilterWidget.nut")
 let { setTimeout, clearTimer } = require("dagor.workcycle")
 let { isUnitLocNameMatchSearchStr } = require("%scripts/shop/shopSearchCore.nut")
 let { getFiltersView, applyFilterChange, getSelectedFilters } = require("%scripts/wishlist/wishlistFilter.nut")
 let { showAirInfo } = require("%scripts/airInfo.nut")
-let unitStatus = require("%scripts/unit/unitStatus.nut")
+let { isUnitResearched, canBuyNotResearched } = require("%scripts/unit/unitStatus.nut")
 let { getUnitBuyTypes, isIntersects, isFullyIncluded, getUnitAvailabilityForBuyType } = require("%scripts/wishlist/filterUtils.nut")
 let { canStartPreviewScene } = require("%scripts/customization/contentPreview.nut")
 let { findItemById } = require("%scripts/items/itemsManager.nut")
@@ -96,8 +98,8 @@ function getUnitButtonType(unit, friendUid) {
     })
   }
 
-  let canBuyNotResearchedUnit = unitStatus.canBuyNotResearched(unit)
-  let unitPrice = canBuyNotResearchedUnit ? unit.getOpenCost() : ::getUnitCost(unit)
+  let canBuyNotResearchedUnit = canBuyNotResearched(unit)
+  let unitPrice = canBuyNotResearchedUnit ? unit.getOpenCost() : getUnitCost(unit)
 
   let hasUseCouponButton = unit.name in unitCoupons
   let hasMarketPlaceButton = !hasUseCouponButton && buyTypes.contains("marketPlace")
@@ -334,7 +336,7 @@ let class WishListWnd (gui_handlers.BaseGuiHandlerWT) {
 
     if(hasBuyButton) {
       placePriceTextToButton(this.scene, "btnBuy", loc("mainmenu/btnOrder"), unitPrice)
-      if(unit.isSquadronVehicle() && !::isUnitResearched(unit)) {
+      if(unit.isSquadronVehicle() && !isUnitResearched(unit)) {
         this.scene.findObject("buy_discount").show(false)
         return
       }

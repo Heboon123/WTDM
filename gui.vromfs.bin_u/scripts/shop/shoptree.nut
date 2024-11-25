@@ -1,12 +1,13 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 
 let { isUnitSpecial } = require("%appGlobals/ranks_common_shared.nut")
 let { format } = require("string")
 let { fatal } = require("dagor.debug")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
-let { isUnitGift, isUnitGroup } = require("%scripts/unit/unitInfo.nut")
+let { isUnitGroup } = require("%scripts/unit/unitStatus.nut")
+let { isUnitGift } = require("%scripts/unit/unitShopInfo.nut")
 let { MAX_COUNTRY_RANK } = require("%scripts/ranks.nut")
+let { get_shop_blk } = require("blkGetters")
 
 function getReqAirPosInArray(reqName, arr) {
   foreach (r, row in arr)
@@ -116,7 +117,7 @@ function appendBranches(rangeData, headIdx, branches, brIdxTbl, prevItem = null)
     if (next.len() == 0)
       idx = -1
     else if (rangeData[next[0]].used)
-      fatal("Cycled requirements in shop!!!  look at " + rangeData[next[0]].name)
+      fatal($"Cycled requirements in shop!!!  look at {rangeData[next[0]].name}")
     else if (next.len() == 1)
         idx = next[0]
     else {
@@ -196,8 +197,8 @@ function getBranchesTbl(rangeData) {
   local test = "GP: branches:"
   foreach(b in branches)
     foreach(idx, item in b)
-      test += ((idx==0)? "\n" : ", ") + item.air.name + " ("+item.air.rank+","+item.childs+")"
-               + (item?.reqAir ? "("+item.reqAir+")":"")
+      test = "".concat(idx==0 ? "\n" : ", ", item.air.name, " (", item.air.rank, ",", item.childs, ")",
+        item?.reqAir ? $"({item.reqAir})" : "")
   log(test)
 */
   return branches
@@ -482,14 +483,15 @@ function generateTreeData(page) {
   foreach(row in page.tree)
     foreach(idx, item in row)
     {
-      testText += ((idx==0)? "\n":"")
+      testText = "".concat(testText, idx==0 ? "\n" : "")
       if (item==null)
-        testText+=" "
+        testText = $"{testText} "
+      else if (type(item)=="integer")
+        testText = $"{testText}."
       else
-      if (type(item)=="integer") testText += "."
-      else testText += "A"
+        testText = $"{testText}A"
     }
-  log(testText + "\n done.")
+  log($"{testText}\n done.")
 */
   //fill Lines and clear table
   fillLinesInPage(page)
@@ -498,6 +500,53 @@ function generateTreeData(page) {
   return page
 }
 
+function checkShopBlk() {
+  let resArray = []
+  let shopBlk = get_shop_blk()
+  for (local tree = 0; tree < shopBlk.blockCount(); tree++) {
+    let tblk = shopBlk.getBlock(tree)
+    let country = tblk.getBlockName()
+
+    for (local page = 0; page < tblk.blockCount(); page++) {
+      let pblk = tblk.getBlock(page)
+      let groups = []
+      for (local range = 0; range < pblk.blockCount(); range++) {
+        let rblk = pblk.getBlock(range)
+        for (local a = 0; a < rblk.blockCount(); a++) {
+          let airBlk = rblk.getBlock(a)
+          let airName = airBlk.getBlockName()
+          local air = getAircraftByName(airName)
+          if (!air) {
+            let groupTotal = airBlk.blockCount()
+            if (groupTotal == 0) {
+              resArray.append($"Not found aircraft {airName} in {country}")
+              continue
+            }
+            groups.append(airName)
+            for (local ga = 0; ga < groupTotal; ga++) {
+              let gAirBlk = airBlk.getBlock(ga)
+              air = getAircraftByName(gAirBlk.getBlockName())
+              if (!air)
+                resArray.append($"Not found aircraft {gAirBlk.getBlockName()} in {country}")
+            }
+          }
+          else if ((airBlk?.reqAir ?? "") != "") {
+              let reqAir = getAircraftByName(airBlk.reqAir)
+              if (!reqAir && !isInArray(airBlk.reqAir, groups))
+                resArray.append($"Not found reqAir {airBlk.reqAir} for {airName} in {country}")
+          }
+        }
+      }
+    }
+  }
+  let resText = "\n".join(resArray, true)
+  if (resText == "")
+    log("Shop.blk checked.")
+  else
+    fatal($"Incorrect shop.blk!\n{resText}")
+}
+
 return {
-  generateTreeData = generateTreeData
+  generateTreeData
+  checkShopBlk
 }

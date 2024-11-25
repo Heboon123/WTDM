@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import get_user_logs_count, get_current_personal_discount_count, get_user_log_blk_body, item_get_type_id_by_type_name, get_item_data_by_uid, periodic_task_register_ex, get_current_personal_discount_uid, get_items_blk, get_items_cache, get_cyber_cafe_level, periodic_task_unregister
 from "app" import is_dev_version
 from "%scripts/dagui_library.nut" import *
@@ -34,6 +33,7 @@ let { isInFlight } = require("gameplayBinding")
 let { BaseItem } = require("%scripts/items/itemsClasses/itemsBase.nut")
 let { items_classes } = require("%scripts/items/itemsClasses/itemsClasses.nut")
 let { isMeNewbie } = require("%scripts/myStats.nut")
+let { eventbus_subscribe } = require("eventbus")
 
 let seenInventory = seenList.get(SEEN.INVENTORY)
 let seenItems = seenList.get(SEEN.ITEMS_SHOP)
@@ -147,7 +147,7 @@ function fillFakeItemsList() {
         wpRate = floor(100.0 * ::get_cyber_cafe_bonus_by_effect_type(boosterEffectType.WP, level) + 0.5)
       }
     }
-    fakeItemsList["FakeBoosterForNetCafeLevel" + (i || "")] <- ::build_blk_from_container(table)
+    fakeItemsList[$"FakeBoosterForNetCafeLevel{i || ""}"] <- ::build_blk_from_container(table)
   }
 
   for (local i = 2; i <= g_squad_manager.getMaxSquadSize(); ++i) {
@@ -798,8 +798,7 @@ function onItemsLoaded() {
   isInventoryInternalUpdated = true
   markInventoryUpdate()
 }
-::on_items_loaded <- @() deferOnce(onItemsLoaded)
-
+eventbus_subscribe("on_items_loaded", @(_) deferOnce(onItemsLoaded))
 
 ::ItemsManager <- {
   // circ reft and some other issues with the export

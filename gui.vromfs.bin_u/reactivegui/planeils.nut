@@ -1,15 +1,12 @@
 from "%rGui/globals/ui_library.nut" import *
 
-let { IlsVisible, IlsPosSize, CannonMode, RocketMode, BombCCIPMode,
-        BlkFileName, BombingMode } = require("planeState/planeToolsState.nut")
+let { IlsVisible, IlsPosSize, BlkFileName } = require("planeState/planeToolsState.nut")
 let DataBlock = require("DataBlock")
-let { TrackerVisible } = require("rocketAamAimState.nut")
-let { compassWrap, generateCompassMark } = require("planeIlses/ilsCompasses.nut")
 
-let { AVQ7Basic, AVQ7BombingMode, AVQ7CCIPMode } = require("planeIlses/ilsAVQ7.nut")
+let { ilsAVQ7 } = require("planeIlses/ilsAVQ7.nut")
 let ASP17 = require("planeIlses/ilsASP17.nut")
 let buccaneerHUD = require("planeIlses/ilsBuccaneer.nut")
-let { basic410SUM, SUMCCIPMode, SumAAMMode, SumBombingSight, SUMGunReticle } = require("planeIlses/ils410Sum.nut")
+let ilsSum410 = require("planeIlses/ils410Sum.nut")
 let { LCOSS, ASG23 } = require("planeIlses/ilsLcoss.nut")
 let { J7EAdditionalHud, ASP23ModeSelector } = require("planeIlses/ilsASP23.nut")
 let swedishEPIls = require("planeIlses/ilsEP.nut")
@@ -28,11 +25,14 @@ let Elbit = require("planeIlses/ilsElbit967.nut")
 let StockHeliIls = require("heliIls.nut")
 let Ils28K = require("planeIlses/ils28k.nut")
 let ilsF15a = require("planeIlses/ilsF15a.nut")
+let ilsF15e = require("planeIlses/ilsF15e.nut")
 let ilsEP17 = require("planeIlses/ilsEP17.nut")
 let ilsAmx = require("planeIlses/ilsAmx.nut")
 let KaiserVDO = require("planeIlses/ilsKaiserVDO.nut")
 let ilsKai24p = require("planeIlses/ilsKai24p.nut")
 let ilsF20 = require("planeIlses/ilsF20.nut")
+let ilsF117 = require("planeIlses/ilsF117.nut")
+let ilsSu34 = require("planeIlses/ilsSu34.nut")
 
 let ilsSetting = Computed(function() {
   let res = {
@@ -70,6 +70,9 @@ let ilsSetting = Computed(function() {
     isKai24p = false
     isF20 = false
     isMetric = false
+    isF15e = false
+    isF117 = false
+    isSu34 = false
   }
   if (BlkFileName.value == "")
     return res
@@ -113,10 +116,11 @@ let ilsSetting = Computed(function() {
     isF20 = blk.getBool("ilsF20", false)
     isChinaLang = blk.getBool("chinaLang", false)
     isMetric = blk.getBool("isMetricIls", false)
+    isF15e = blk.getBool("ilsF15e", false)
+    isF117 = blk.getBool("ilsF117", false)
+    isSu34 = blk.getBool("ilsSu34", false)
   }
 })
-
-let CCIPMode = Computed(@() RocketMode.value || CannonMode.value || BombCCIPMode.value)
 
 let planeIls = @(width, height) function() {
 
@@ -124,32 +128,23 @@ let planeIls = @(width, height) function() {
     is410SUM1Ils, isLCOSS, isASP23, haveJ7ERadar, isEP12, isEP08, isShimadzu, isIPP2_53,
     isTCSF196, isJ8HK, isKaiserA10, isF14, isMig17pf, isTcsfVe130, isSu145, isIls31,
     isMarconi, isTornado, isElbit, isIls28K, isASG23, isF15a, isEP17, isAmx, isVDO,
-    isKai24p, isF20, isChinaLang, isMetric, isKaiserA10c } = ilsSetting.value
+    isKai24p, isF20, isChinaLang, isMetric, isKaiserA10c, isF15e, isF117, isSu34 } = ilsSetting.value
   let isStockHeli = !(isASP17 || isAVQ7 || isBuccaneerIls || is410SUM1Ils || isLCOSS ||
       isASP23 || isEP12 || isEP08 || isShimadzu || isIPP2_53 || isTCSF196 || isJ8HK ||
       isKaiserA10 || isF14 || isMig17pf || isTcsfVe130 || isSu145 || isIls31 || isMarconi ||
       isTornado || isElbit || isIls28K || isASG23 || isF15a || isEP17 || isAmx || isVDO || isKai24p ||
-      isF20 || isKaiserA10c)
+      isF20 || isKaiserA10c || isF15e || isF117 || isSu34)
   return {
-    watch = [BombingMode, CCIPMode, TrackerVisible, ilsSetting]
+    watch = ilsSetting
     children = [
-      (isAVQ7 ? AVQ7Basic(width, height) : null),
-      (haveAVQ7Bombing && BombingMode.value ? AVQ7BombingMode(width, height) : null),
-      (haveAVQ7CCIP && CCIPMode.value ? AVQ7CCIPMode(width, height) : null),
-      (isAVQ7 && (!BombingMode.value || !haveAVQ7Bombing) &&
-       (!CCIPMode.value || !haveAVQ7CCIP) ? compassWrap(width, height, 0.1, generateCompassMark) : null),
+      (isAVQ7 ? ilsAVQ7(width, height, haveAVQ7Bombing, haveAVQ7CCIP) : null),
       (isASP17 ? ASP17(width, height) : null),
       (isBuccaneerIls ? buccaneerHUD(width, height) : null),
-      (is410SUM1Ils ? basic410SUM(width, height) : null),
-      (is410SUM1Ils && CCIPMode.value ? SUMCCIPMode(width, height) : null),
-      (is410SUM1Ils && TrackerVisible.value ? SumAAMMode(width, height) : null),
-      (is410SUM1Ils && BombingMode.value ? SumBombingSight(width, height) : null),
-      (is410SUM1Ils && !BombingMode.value && !CCIPMode.value ? SUMGunReticle(width, height) : null),
+      (is410SUM1Ils ? ilsSum410(width, height) : null),
       (isLCOSS ? LCOSS(width, height) : null),
       (isASG23 ? ASG23(width, height) : null),
       (isASP23 || isIPP2_53 ? ASP23ModeSelector(width, height, isIPP2_53) : null),
-      (haveJ7ERadar && (!BombingMode.value || !haveAVQ7Bombing) &&
-       (!CCIPMode.value || !haveAVQ7CCIP) ? J7EAdditionalHud(width, height) : null),
+      (haveJ7ERadar ? J7EAdditionalHud(width, height) : null),
       (isEP08 || isEP12 ? swedishEPIls(width, height, isEP08) : null),
       (isShimadzu ? ShimadzuIls(width, height) : null),
       (isTCSF196 ? TCSF196(width, height) : null),
@@ -171,6 +166,9 @@ let planeIls = @(width, height) function() {
       (isKai24p ? ilsKai24p(width, height) : null),
       (isF20 ? ilsF20(width, height) : null),
       (isKaiserA10c ? KaiserA10(width, height, true) : null),
+      (isF15e ? ilsF15e(width, height) : null),
+      (isF117 ? ilsF117(width, height) : null),
+      (isSu34 ? ilsSu34(width, height) : null),
       (isStockHeli ? StockHeliIls() : null)
     ]
   }

@@ -27,12 +27,17 @@ let { Timer } = require("%sqDagui/timer/timer.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { create_ObjMoveToOBj } = require("%sqDagui/guiBhv/bhvAnim.nut")
 let { wwGetOperationId, wwGetPlayerSide, wwIsOperationPaused, wwGetOperationWinner,
-  wwGetZoneName, wwGetSelectedAirfield, wwClearOutlinedZones, wwGetSpeedupFactor,
-  wwGetMapCellByCoords } = require("worldwar")
+  wwGetZoneName, wwGetSelectedAirfield, wwClearOutlinedZones, wwGetSpeedupFactor } = require("worldwar")
 let wwEvent = require("%scripts/worldWar/wwEvent.nut")
 let { worldWarMapControls } = require("%scripts/worldWar/bhvWorldWarMap.nut")
 let { WwBattle } = require("%scripts/worldWar/inOperation/model/wwBattle.nut")
 let { g_ww_unit_type } = require("%scripts/worldWar/model/wwUnitType.nut")
+let g_world_war_render = require("%scripts/worldWar/worldWarRender.nut")
+let { setWWMapParams, dargMapVisible } = require("%scripts/worldWar/wwMapDataBridge.nut")
+let { mapCellUnderCursor } = require("%appGlobals/wwObjectsUnderCursor.nut")
+let { register_command } = require("console")
+let { getWwSetting } = require("%scripts/worldWar/worldWarStates.nut")
+let wwTopMenuLeftSideSections = require("%scripts/worldWar/externalServices/worldWarTopMenuSectionsConfigs.nut")
 
 const WW_LOG_REQUEST_DELAY = 1
 const WW_LOG_EVENT_LOAD_AMOUNT = 10
@@ -81,7 +86,7 @@ gui_handlers.WwMap <- class (gui_handlers.BaseGuiHandlerWT) {
       g_squad_manager.setReadyFlag(true)
 
     this.backSceneParams = { eventbusName = "gui_start_mainmenu" }
-    ::g_world_war_render.init()
+    g_world_war_render.init()
     this.registerSubHandler(handlersManager.loadHandler(gui_handlers.wwMapTooltip,
       { scene = this.scene.findObject("hovered_map_object_info"),
         controllerScene = this.scene.findObject("hovered_map_object_controller") }))
@@ -89,7 +94,7 @@ gui_handlers.WwMap <- class (gui_handlers.BaseGuiHandlerWT) {
     this.leftSectionHandlerWeak = gui_handlers.TopMenuButtonsHandler.create(
       this.scene.findObject("topmenu_menu_panel"),
       this,
-      ::g_ww_top_menu_left_side_sections,
+      wwTopMenuLeftSideSections,
       this.scene.findObject("left_gc_panel_free_width")
     )
     this.registerSubHandler(this.leftSectionHandlerWeak)
@@ -119,13 +124,16 @@ gui_handlers.WwMap <- class (gui_handlers.BaseGuiHandlerWT) {
     ::g_ww_logs.requestNewLogs(WW_LOG_MAX_LOAD_AMOUNT, !::g_ww_logs.loaded.len())
 
     this.scene.findObject("update_timer").setUserData(this)
-    if (::g_world_war_render.isCategoryEnabled(ERC_ARMY_RADIUSES))
-      ::g_world_war_render.setCategory(ERC_ARMY_RADIUSES, false)
+    if (g_world_war_render.isCategoryEnabled(ERC_ARMY_RADIUSES))
+      g_world_war_render.setCategory(ERC_ARMY_RADIUSES, false)
 
     this.guiScene.performDelayed(this, function() {
       if (this.isValid())
         ::checkNonApprovedResearches(true)
     })
+
+    this.scene.findObject("worldwar_map").show(false)
+    dargMapVisible.set(true)
   }
 
   function clearSavedData() {
@@ -307,7 +315,7 @@ gui_handlers.WwMap <- class (gui_handlers.BaseGuiHandlerWT) {
 
     local markUp = ""
     foreach (buttonView in ::g_ww_map_controls_buttons.types)
-      markUp += handyman.renderCached("%gui/commonParts/button.tpl", buttonView)
+      markUp = "".concat(markUp, handyman.renderCached("%gui/commonParts/button.tpl", buttonView))
 
     this.guiScene.replaceContentFromText(obj, markUp, markUp.len(), this)
   }
@@ -483,7 +491,7 @@ gui_handlers.WwMap <- class (gui_handlers.BaseGuiHandlerWT) {
         ww_find_army_name_by_coordinates(cursorPos[0], cursorPos[1]))
     else if (this.currentSelectedObject == mapObjectSelect.REINFORCEMENT)
       wwEvent("MapRequestReinforcement", {
-        cellIdx = wwGetMapCellByCoords(cursorPos[0], cursorPos[1])
+        cellIdx = mapCellUnderCursor.get()
       })
     else if (this.currentSelectedObject == mapObjectSelect.AIRFIELD) {
       let mapObj = this.scene.findObject("worldwar_map")
@@ -509,14 +517,14 @@ gui_handlers.WwMap <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onForceShowArmiesPath(_obj) {
-    this.isArmiesPathSwitchedOn = ::g_world_war_render.isCategoryEnabled(ERC_ARROWS_FOR_SELECTED_ARMIES)
+    this.isArmiesPathSwitchedOn = g_world_war_render.isCategoryEnabled(ERC_ARROWS_FOR_SELECTED_ARMIES)
     if (this.isArmiesPathSwitchedOn)
-      ::g_world_war_render.setCategory(ERC_ARROWS_FOR_SELECTED_ARMIES, false)
+      g_world_war_render.setCategory(ERC_ARROWS_FOR_SELECTED_ARMIES, false)
   }
 
   function onRemoveForceShowArmiesPath(_obj) {
-    if (this.isArmiesPathSwitchedOn != ::g_world_war_render.isCategoryEnabled(ERC_ARROWS_FOR_SELECTED_ARMIES))
-      ::g_world_war_render.setCategory(ERC_ARROWS_FOR_SELECTED_ARMIES, true)
+    if (this.isArmiesPathSwitchedOn != g_world_war_render.isCategoryEnabled(ERC_ARROWS_FOR_SELECTED_ARMIES))
+      g_world_war_render.setCategory(ERC_ARROWS_FOR_SELECTED_ARMIES, true)
   }
 
   function collectArmyStrengthData() {
@@ -706,7 +714,7 @@ gui_handlers.WwMap <- class (gui_handlers.BaseGuiHandlerWT) {
     foreach (fieldId, func in armyView.getRedrawArmyStatusData()) {
       let redrawFieldObj = blockObj.findObject(fieldId)
       if (checkObj(redrawFieldObj))
-        redrawFieldObj.setValue(func.call(armyView))
+        redrawFieldObj.setValue(func.call(armyView) ?? "")
     }
 
     this.updateArmyActionButtons()
@@ -820,7 +828,7 @@ gui_handlers.WwMap <- class (gui_handlers.BaseGuiHandlerWT) {
 
     foreach (side, isEmpty in emptySidesReinforcementList)
       if (isEmpty)
-        ::ww_turn_off_sector_sprites("Reinforcement", rearZones[ww_side_val_to_name(side)])
+        ww_turn_off_sector_sprites("Reinforcement", rearZones[ww_side_val_to_name(side)])
       else {
         ww_turn_off_sector_sprites("Reinforcement", ::g_world_war.getRearZonesLostBySide(side))
         if (!(side in arrivingReinforcementSides))
@@ -889,7 +897,7 @@ gui_handlers.WwMap <- class (gui_handlers.BaseGuiHandlerWT) {
     let operStatObj = this.scene.findObject("wwmap_operation_status")
     if (checkObj(operStatObj))
       operStatObj.animation = "hide"
-    let afkLoseTimeShowSec = (::g_world_war.getSetting("afkLoseTimeShowSec", 0)
+    let afkLoseTimeShowSec = (getWwSetting("afkLoseTimeShowSec", 0)
       / wwGetSpeedupFactor()).tointeger()
     let delayTime = max(time.millisecondsToSecondsInt(this.afkData.afkLoseTimeMsec)
       - ::g_world_war.getOperationTimeSec() - afkLoseTimeShowSec, 0)
@@ -1149,6 +1157,12 @@ gui_handlers.WwMap <- class (gui_handlers.BaseGuiHandlerWT) {
     let rootObj = obj.getParent()
     rootObj.collapsed = this.isRightPanelVisible ? "no" : "yes"
     this.updateGamercardType()
+
+    this.guiScene.applyPendingChanges(false)
+    let placeholderObj = this.scene.findObject("worldwar_map")
+    let pos = placeholderObj.getPosRC()
+    let size = placeholderObj.getSize()
+    setWWMapParams({ pos, size })
   }
 
   function onEventWWShowLogArmy(params) {
@@ -1167,7 +1181,7 @@ gui_handlers.WwMap <- class (gui_handlers.BaseGuiHandlerWT) {
 
     local text = loc("mainmenu/log/short")
     if (params.amount > 0)
-      text += loc("ui/parentheses/space", { text = params.amount })
+      text = "".concat(text, loc("ui/parentheses/space", { text = params.amount }))
     tabObj.setValue(text)
   }
 
@@ -1407,4 +1421,26 @@ gui_handlers.WwMap <- class (gui_handlers.BaseGuiHandlerWT) {
 
   onEventWWHoverLostArmyItem = @(_) this.showSelectHint(false)
   onEventWWHoverLostAirfieldItem = @(_) this.showSelectHint(false)
+
+  function getWidgetParams(placeholderId) {
+    let { pos, size } = base.getWidgetParams(placeholderId)
+    setWWMapParams({ pos, size })
+    return { pos = [0, 0], size = [screen_width(), screen_height()] }
+  }
+
+  widgetsList = [
+    {
+      widgetId = DargWidgets.WORLDWAR_MAP
+      placeholderId = "worldwar_map"
+    }
+  ]
 }
+
+register_command(function() {
+    dargMapVisible.set(!dargMapVisible.get())
+    let handler = handlersManager.findHandlerClassInScene(gui_handlers.WwMap)
+    if (handler == null)
+      return
+
+    handler.scene.findObject("worldwar_map").show(!dargMapVisible.get())
+}, "wwmap.switch")

@@ -2,6 +2,7 @@ from "%scripts/dagui_natives.nut" import get_option_torpedo_dive_depth_auto, sho
 from "%scripts/dagui_library.nut" import *
 from "%scripts/weaponry/weaponryConsts.nut" import UNIT_WEAPONS_ZERO, UNIT_WEAPONS_READY, UNIT_WEAPONS_WARNING, INFO_DETAIL
 
+let { zero_money } = require("%scripts/money.nut")
 let { get_difficulty_by_ediff } = require("%scripts/difficulty.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { Point2 } = require("dagor.math")
@@ -29,6 +30,7 @@ let getAllUnits = require("%scripts/unit/allUnits.nut")
 let { USEROPT_WEAPONS } = require("%scripts/options/optionsExtNames.nut")
 let { shopIsModificationPurchased } = require("chardResearch")
 let { getEsUnitType } = require("%scripts/unit/unitInfo.nut")
+let { isUnitUsable } = require("%scripts/unit/unitStatus.nut")
 let { isInFlight } = require("gameplayBinding")
 let { getCurMissionRules } = require("%scripts/misCustomRules/missionCustomState.nut")
 let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
@@ -152,7 +154,7 @@ function isWeaponVisible(unit, weapon, onlySelectable = true, weaponTags = null)
 
   if (onlySelectable
       && ((!shop_is_weapon_purchased(unit.name, weapon.name)
-        && getAmmoCost(unit, weapon.name, AMMO.WEAPON) > ::zero_money)
+        && getAmmoCost(unit, weapon.name, AMMO.WEAPON) > zero_money)
         || getWeaponDisabledMods(unit, weapon).len() > 0))
     return false
 
@@ -495,8 +497,11 @@ function addWeaponsFromBlk(weapons, weaponsArr, unit, weaponsFilterFunc = null, 
               item.sideLobesSensitivity <- 0.0
               item.dopplerSpeed <- false
             }
-            if (itemBlk.guidance?.inertialNavigation)
+            if (itemBlk.guidance?.inertialNavigation) {
               item.guidanceType = "".concat(item.guidanceType, "+IOG")
+              if (itemBlk.guidance?.inertialNavigationDriftSpeed == 0)
+                item.guidanceType = "".concat(item.guidanceType, "+GNSS")
+            }
             if (itemBlk.guidance?.inertialGuidance.datalink != null)
               item.guidanceType = "".concat(item.guidanceType, "+DL")
           }
@@ -614,7 +619,7 @@ function addWeaponsFromBlk(weapons, weaponsArr, unit, weaponsFilterFunc = null, 
 }
 
 //weapon - is a weaponData gathered by addWeaponsFromBlk
-local function getWeaponExtendedInfo(weapon, weaponType, unit, ediff, newLine) {
+function getWeaponExtendedInfo(weapon, weaponType, unit, ediff, newLine) {
   let res = []
   let colon = loc("ui/colon")
 
@@ -825,7 +830,7 @@ function getCommonWeapons(unitBlk, primaryMod) {
   return res
 }
 
-local function getUnitWeaponry(unit, p = WEAPON_TEXT_PARAMS) {
+function getUnitWeaponry(unit, p = WEAPON_TEXT_PARAMS) {
   if (!unit)
     return null
 
@@ -921,7 +926,7 @@ function isUnitHaveAnyWeaponsTags(unit, tags, checkPurchase = true) {
 function checkUnitSecondaryWeapons(unit) {
   foreach (weapon in getSecondaryWeaponsList(unit))
     if (isWeaponEnabled(unit, weapon) ||
-      (::isUnitUsable(unit) && isWeaponUnlocked(unit, weapon))) {
+      (isUnitUsable(unit) && isWeaponUnlocked(unit, weapon))) {
       let res = checkAmmoAmount(unit, weapon.name, AMMO.WEAPON)
       if (res != UNIT_WEAPONS_READY)
         return res
@@ -964,7 +969,7 @@ function checkBadWeapons() {
     if (curWeapon == "")
       continue
 
-    if (!::shop_is_weapon_available(unit.name, curWeapon, false, false) && !shop_is_weapon_purchased(unit.name, curWeapon))
+    if (!shop_is_weapon_available(unit.name, curWeapon, false, false) && !shop_is_weapon_purchased(unit.name, curWeapon))
       setLastWeapon(unit.name, "")
   }
 }

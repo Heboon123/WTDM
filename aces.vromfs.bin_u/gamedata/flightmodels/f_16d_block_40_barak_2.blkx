@@ -11,13 +11,14 @@
   "haveCCIPForGun": true,
   "haveCCRPForBombs": true,
   "haveCCRPForGun": true,
-  "ilsElbit967": true,
-  "hmdF16c": true,
-  "mfdCamTads": true,
   "hasMissileCommandLine": false,
   "havePointOfInterestDesignator": true,
-  "isBwOpticSight": true,
   "hasPointOfInterestMemory": true,
+  "ilsElbit967": true,
+  "mfdCamTads": true,
+  "hmdF16c": true,
+  "rwrIndicator": "AN/ALR-56",
+  "isBwOpticSight": true,
   "needTpsNightVision": true,
   "jetEnginePowerFullScale": true,
   "standardExhaustFxType": "jet_exhaust",
@@ -2160,10 +2161,10 @@
     "sightFov": 1.0,
     "isDoubleBulletImpactLine": true,
     "hmdBlockIlsArea": [
-      0.37,
-      0.37,
-      0.63,
-      0.63
+      0.15,
+      -0.5,
+      0.73,
+      0.85
     ],
     "headPos": [
       4.25,
@@ -2437,6 +2438,12 @@
         0.0
       ]
     },
+    "rwr": {
+      "modeLamps": {
+        "launchLamp": 0,
+        "launchLampBlinkingPeriod": 0.25
+      }
+    },
     "multifunctionDisplays": {
       "display": [
         {
@@ -2619,6 +2626,32 @@
     }
   },
   "nightVision": {
+    "gunnerIr": {
+      "resolution": [
+        1920,
+        1080
+      ],
+      "lightMult": 10.0,
+      "ghosting": 0.7,
+      "noiseFactor": 0.15
+    },
+    "pilotIr": {
+      "resolution": [
+        1920,
+        1080
+      ],
+      "lightMult": 10.0,
+      "ghosting": 0.7,
+      "noiseFactor": 0.15
+    },
+    "sightTPodThermal": {
+      "resolution": [
+        800,
+        600
+      ],
+      "noiseFactor": 0.04,
+      "index": 1
+    },
     "sightThermal": {
       "resolution": [
         500,
@@ -2626,14 +2659,6 @@
       ],
       "noiseFactor": 0.05,
       "index": 2
-    },
-    "sightTPodThermal": {
-      "resolution": [
-        800,
-        600
-      ],
-      "noiseFactor": 0.05,
-      "index": 1
     }
   },
   "sensors": {
@@ -2771,6 +2796,10 @@
       {
         "name": "f_16d_block_40_barak_2_gbu_31",
         "blk": "gameData/FlightModels/weaponPresets/f_16d_block_40_barak_2_gbu_31.blk"
+      },
+      {
+        "name": "f_16d_block_40_barak_2_gbu_39",
+        "blk": "gameData/FlightModels/weaponPresets/f_16d_block_40_barak_2_gbu_39.blk"
       }
     ]
   },
@@ -2903,7 +2932,7 @@
               "trigger": "countermeasures",
               "blk": "gameData/Weapons/rocketGuns/countermeasure_split_launcher_jet.blk",
               "emitter": "emtr_flare1",
-              "bullets": 30,
+              "bullets": 45,
               "external": true,
               "separate": false,
               "bulletsCartridge": 1
@@ -2912,7 +2941,7 @@
               "trigger": "countermeasures",
               "blk": "gameData/Weapons/rocketGuns/countermeasure_split_launcher_jet.blk",
               "emitter": "emtr_flare2",
-              "bullets": 30,
+              "bullets": 45,
               "external": true,
               "separate": false,
               "bulletsCartridge": 1
@@ -2921,7 +2950,7 @@
               "trigger": "countermeasures",
               "blk": "gameData/Weapons/rocketGuns/countermeasure_split_launcher_jet.blk",
               "emitter": "emtr_flare3",
-              "bullets": 30,
+              "bullets": 45,
               "external": true,
               "separate": false,
               "bulletsCartridge": 1
@@ -2930,25 +2959,7 @@
               "trigger": "countermeasures",
               "blk": "gameData/Weapons/rocketGuns/countermeasure_split_launcher_jet.blk",
               "emitter": "emtr_flare4",
-              "bullets": 30,
-              "external": true,
-              "separate": false,
-              "bulletsCartridge": 1
-            },
-            {
-              "trigger": "countermeasures",
-              "blk": "gameData/Weapons/rocketGuns/countermeasure_split_launcher_jet.blk",
-              "emitter": "emtr_flare3",
-              "bullets": 30,
-              "external": true,
-              "separate": false,
-              "bulletsCartridge": 1
-            },
-            {
-              "trigger": "countermeasures",
-              "blk": "gameData/Weapons/rocketGuns/countermeasure_split_launcher_jet.blk",
-              "emitter": "emtr_flare4",
-              "bullets": 30,
+              "bullets": 45,
               "external": true,
               "separate": false,
               "bulletsCartridge": 1
@@ -3144,7 +3155,7 @@
           {
             "iconType": "bombs_small_group_x4",
             "name": "ver_mk82",
-            "reqModification": "us_500lb_mk82",
+            "reqModification": "us_mk82_gbu39",
             "ShowNodes": {
               "node": "pylon2"
             },
@@ -3255,7 +3266,7 @@
           {
             "iconType": "bombs_small_high_drag_group_x4",
             "name": "ver_mk82_snakeye",
-            "reqModification": "us_500lb_mk82",
+            "reqModification": "us_mk82_gbu39",
             "ShowNodes": {
               "node": "pylon2"
             },
@@ -3382,6 +3393,25 @@
               "separate": true,
               "machLimit": 1.01
             }
+          },
+          {
+            "iconType": "glide_guided_bomb_small_jdam_group_x4",
+            "name": "us_gbu_39_slot3",
+            "reqModification": "us_mk82_gbu39",
+            "ShowNodes": {
+              "node": [
+                "pylon2",
+                "pylon2_holder"
+              ]
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/containers/bru_61_bomb_pylon_gbu_39_x4.blk",
+              "emitter": "bomb_2000lb_001",
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
           }
         ]
       },
@@ -3393,7 +3423,7 @@
           {
             "iconType": "bombs_small_group_x4",
             "name": "ver_mk82",
-            "reqModification": "us_500lb_mk82",
+            "reqModification": "us_mk82_gbu39",
             "ShowNodes": {
               "node": "pylon4"
             },
@@ -3504,7 +3534,7 @@
           {
             "iconType": "bombs_small_high_drag_group_x4",
             "name": "ver_mk82_snakeye",
-            "reqModification": "us_500lb_mk82",
+            "reqModification": "us_mk82_gbu39",
             "ShowNodes": {
               "node": "pylon4"
             },
@@ -3696,7 +3726,7 @@
           {
             "iconType": "bombs_small_group_x4",
             "name": "ver_mk82",
-            "reqModification": "us_500lb_mk82",
+            "reqModification": "us_mk82_gbu39",
             "ShowNodes": {
               "node": "pylon5"
             },
@@ -3807,7 +3837,7 @@
           {
             "iconType": "bombs_small_high_drag_group_x4",
             "name": "ver_mk82_snakeye",
-            "reqModification": "us_500lb_mk82",
+            "reqModification": "us_mk82_gbu39",
             "ShowNodes": {
               "node": "pylon5"
             },
@@ -4016,7 +4046,7 @@
           {
             "iconType": "bombs_small_group_x4",
             "name": "ver_mk82",
-            "reqModification": "us_500lb_mk82",
+            "reqModification": "us_mk82_gbu39",
             "ShowNodes": {
               "node": "pylon6"
             },
@@ -4127,7 +4157,7 @@
           {
             "iconType": "bombs_small_high_drag_group_x4",
             "name": "ver_mk82_snakeye",
-            "reqModification": "us_500lb_mk82",
+            "reqModification": "us_mk82_gbu39",
             "ShowNodes": {
               "node": "pylon6"
             },
@@ -4250,6 +4280,25 @@
               "blk": "gameData/Weapons/BombGuns/us_2000lb_gbu31_usaf.blk",
               "emitter": "bomb_2000lb_004",
               "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
+          },
+          {
+            "iconType": "glide_guided_bomb_small_jdam_group_x4",
+            "name": "us_gbu_39_slot8",
+            "reqModification": "us_mk82_gbu39",
+            "ShowNodes": {
+              "node": [
+                "pylon6",
+                "pylon6_holder"
+              ]
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/containers/bru_61_bomb_pylon_gbu_39_x4.blk",
+              "emitter": "bomb_2000lb_004",
               "external": true,
               "separate": true,
               "machLimit": 1.01
@@ -4513,57 +4562,14 @@
       "tier": 2,
       "modClass": "armor"
     },
-    "heli_night_vision_system": {
-      "tier": 3,
-      "modClass": "armor",
-      "prevModification": "f_4c_g_suit",
-      "effects": {
-        "nightVision": {
-          "gunnerIr": {
-            "resolution": [
-              1920,
-              1080
-            ],
-            "lightMult": 10.0,
-            "ghosting": 0.7,
-            "noiseFactor": 0.15
-          },
-          "pilotIr": {
-            "resolution": [
-              1920,
-              1080
-            ],
-            "lightMult": 10.0,
-            "ghosting": 0.7,
-            "noiseFactor": 0.15
-          },
-          "sightTPodThermal": {
-            "resolution": [
-              800,
-              600
-            ],
-            "noiseFactor": 0.05,
-            "index": 1
-          },
-          "sightThermal": {
-            "resolution": [
-              500,
-              300
-            ],
-            "noiseFactor": 0.05,
-            "index": 2
-          }
-        }
-      }
-    },
-    "us_500lb_mk82": {
+    "us_mk82_gbu39": {
       "modClass": "weapon",
       "tier": 1
     },
     "us_750lb_m117a1": {
       "modClass": "weapon",
       "tier": 2,
-      "reqModification": "us_500lb_mk82"
+      "reqModification": "us_mk82_gbu39"
     },
     "us_1000lb_mk83": {
       "modClass": "weapon",
@@ -4790,5 +4796,378 @@
       0.181167,
       5.79572e-7
     ]
+  },
+  "lerxVapors": {
+    "lerxVapor": [
+      {
+        "entryPoint": [
+          3.928,
+          0.05,
+          0.786
+        ],
+        "exitPoint": [
+          -9.0,
+          0.594,
+          2.0
+        ],
+        "entryTangent": [
+          1.316,
+          0.23,
+          1.1
+        ],
+        "exitTangent": [
+          -3.0,
+          0.4,
+          2.0
+        ],
+        "exitTangentHeight": [
+          1.0,
+          0.0
+        ],
+        "exitTangentWidth": [
+          -0.5,
+          0.52
+        ],
+        "exitPointHeight": [
+          0.0,
+          2.0
+        ],
+        "exitPointWidth": [
+          -2.0,
+          3.0
+        ],
+        "maxRadius": [
+          0.05,
+          0.7
+        ],
+        "minRadius": [
+          0.05,
+          0.3
+        ],
+        "noiseParms": [
+          0.1,
+          0.8
+        ],
+        "smoothIntensityParams": [
+          2.0,
+          3.0,
+          0.219
+        ],
+        "density": 1.0,
+        "intensityMult": 10.0,
+        "criticalAOA": [
+          5.0,
+          25.0,
+          35.0,
+          50.0
+        ],
+        "absoluteCriticalAOS": [
+          2.0,
+          30.0
+        ],
+        "absoluteCriticalAOA": [
+          5.0,
+          40.0
+        ]
+      },
+      {
+        "entryPoint": [
+          3.928,
+          0.05,
+          -0.786
+        ],
+        "exitPoint": [
+          -9.0,
+          0.594,
+          -2.0
+        ],
+        "entryTangent": [
+          1.316,
+          0.23,
+          -1.1
+        ],
+        "exitTangent": [
+          -3.0,
+          0.4,
+          -2.0
+        ],
+        "exitTangentHeight": [
+          1.0,
+          0.0
+        ],
+        "exitTangentWidth": [
+          0.5,
+          -0.52
+        ],
+        "exitPointHeight": [
+          0.0,
+          2.0
+        ],
+        "exitPointWidth": [
+          2.0,
+          -3.0
+        ],
+        "maxRadius": [
+          0.05,
+          0.7
+        ],
+        "minRadius": [
+          0.05,
+          0.3
+        ],
+        "noiseParms": [
+          0.1,
+          0.8
+        ],
+        "smoothIntensityParams": [
+          2.0,
+          3.0,
+          0.219
+        ],
+        "density": 1.0,
+        "intensityMult": 10.0,
+        "criticalAOA": [
+          5.0,
+          25.0,
+          35.0,
+          50.0
+        ],
+        "absoluteCriticalAOS": [
+          2.0,
+          30.0
+        ],
+        "absoluteCriticalAOA": [
+          5.0,
+          40.0
+        ]
+      },
+      {
+        "entryPoint": [
+          3.907,
+          -0.1,
+          0.794
+        ],
+        "exitPoint": [
+          -1.649,
+          -0.5,
+          1.8
+        ],
+        "entryTangent": [
+          1.237,
+          -0.2,
+          1.5
+        ],
+        "exitTangent": [
+          -0.205,
+          -0.4,
+          1.6
+        ],
+        "exitTangentHeight": [
+          0.0,
+          0.0
+        ],
+        "exitTangentWidth": [
+          -0.3,
+          0.3
+        ],
+        "exitPointHeight": [
+          0.0,
+          0.0
+        ],
+        "exitPointWidth": [
+          -0.6,
+          0.6
+        ],
+        "maxRadius": [
+          0.05,
+          0.4
+        ],
+        "minRadius": [
+          0.05,
+          0.2
+        ],
+        "noiseParms": [
+          0.2,
+          0.7
+        ],
+        "smoothIntensityParams": [
+          0.46,
+          1.248,
+          0.275
+        ],
+        "density": 1.0,
+        "intensityMult": 3.0,
+        "criticalAOA": [
+          -4.0,
+          -15.0,
+          -25.0,
+          -35.0
+        ],
+        "absoluteCriticalAOS": [
+          2.0,
+          25.0
+        ],
+        "absoluteCriticalAOA": [
+          -4.0,
+          -35.0
+        ]
+      },
+      {
+        "entryPoint": [
+          3.907,
+          -0.1,
+          -0.794
+        ],
+        "exitPoint": [
+          -1.649,
+          -0.5,
+          -1.8
+        ],
+        "entryTangent": [
+          1.237,
+          -0.2,
+          -1.5
+        ],
+        "exitTangent": [
+          -0.205,
+          -0.4,
+          -1.6
+        ],
+        "exitTangentHeight": [
+          0.0,
+          0.0
+        ],
+        "exitTangentWidth": [
+          0.3,
+          -0.3
+        ],
+        "exitPointHeight": [
+          0.0,
+          0.0
+        ],
+        "exitPointWidth": [
+          0.6,
+          -0.6
+        ],
+        "maxRadius": [
+          0.05,
+          0.4
+        ],
+        "minRadius": [
+          0.05,
+          0.2
+        ],
+        "noiseParms": [
+          0.2,
+          0.7
+        ],
+        "smoothIntensityParams": [
+          0.46,
+          1.248,
+          0.275
+        ],
+        "density": 1.0,
+        "intensityMult": 3.0,
+        "criticalAOA": [
+          -4.0,
+          -15.0,
+          -25.0,
+          -35.0
+        ],
+        "absoluteCriticalAOS": [
+          2.0,
+          25.0
+        ],
+        "absoluteCriticalAOA": [
+          -4.0,
+          -35.0
+        ]
+      }
+    ]
+  },
+  "AfterBurner0": {
+    "volumetricAfterBurner": {
+      "name": "jet_blue_modern",
+      "maxHeight": 11.0,
+      "minHeight": 8.0,
+      "heightNoiseStrength": 0.0,
+      "heightNoiseSpeed": 20.0,
+      "maxRadius": 0.32,
+      "minRadius": 0.35,
+      "maxBaseRadius": 0.4,
+      "minBaseRadius": 0.35,
+      "relativeCylinderHeightMax": 0.36,
+      "relativeCylinderHeightMin": 0.36,
+      "outerCylinderAbsorptionMax": 0.5,
+      "outerCylinderAbsorptionMin": 0.7,
+      "outerCylinderHeightFadeMax": 7.5,
+      "outerCylinderHeightFadeMin": 5.0,
+      "tailHeightFadeMax": 2.0,
+      "tailHeightFadeMin": 0.2,
+      "outerCylinderHeightFadeNoiseStrength": 2.0,
+      "outerCylinderHeightFadeNoiseSpeed": 10.0,
+      "minOuterCylinderRadius": 0.4,
+      "maxOuterCylinderRadius": 0.48,
+      "absorption": 1.0,
+      "colorIntensityMax": 10.0,
+      "colorIntensityMin": 2.0,
+      "colorOverHeightMult": 0.5,
+      "colorOverDepthMult": 3.0,
+      "colorOverRadiusMult": 6.0,
+      "colorOverRadiusFadeOverHeight": 2.0,
+      "maxRingOffset": 0.0,
+      "minRingOffset": 20.0,
+      "ringAbsorption": 1.2,
+      "maxRingCount": 17,
+      "minRingCount": 14,
+      "ringIntensityMin": 0.0,
+      "ringIntensityMax": 1.0,
+      "ringIntensityNoiseStrength": 0.0,
+      "ringIntensityNoiseSpeed": 1.0,
+      "ringOffsetNoiseStrength": 1.0,
+      "ringOffsetNoiseSpeed": 20.0,
+      "rampTextureOffset": 0,
+      "radiusNoiseStrength": 0.06,
+      "radiusNoiseSpeed": 20.0,
+      "shakeNoiseStrength": 0.01,
+      "shakeNoiseSpeed": 30.0,
+      "ringAngleFadeMult": 0.7,
+      "colorOverHeightNoiseStrength": 0.1,
+      "colorOverHeightNoiseSpeed": 10.0,
+      "colorOverRadiusNoiseStrength": 0.15,
+      "colorOverRadiusNoiseSpeed": 10.0,
+      "colorOverDepthNoiseStrength": 0.03,
+      "colorOverDepthNoiseSpeed": 10.0,
+      "colorIntensityNoiseStrength": 2.0,
+      "colorIntensityNoiseSpeed": 30.0,
+      "minStartingRingHeight": 1.7,
+      "maxStartingRingHeight": 1.7,
+      "ringIntensity": 2.0,
+      "ringFrequency": 11.3097,
+      "preNominalEasingParams": {
+        "animationTime": 2.0,
+        "ascendingSmoothIntensityParams": 0.5
+      },
+      "postNominalEasingParams": {
+        "animationTime": 1.5,
+        "ascendingSmoothIntensityParams": 1.0
+      },
+      "lightProperties": {
+        "color": [
+          1.0,
+          0.889273,
+          0.686275
+        ],
+        "angle": 1.0,
+        "brightness": 20.0,
+        "radius": 20.0,
+        "attenuation": 0.8,
+        "brightnessNoiseStrength": 3.0,
+        "brightnessNoiseSpeed": 6.0,
+        "ignitionTextureIntensity": 1.0,
+        "ignitionBrightnessNoiseStrength": 0.5,
+        "ignitionBrightnessNoiseSpeed": 16.0
+      }
+    }
   }
 }

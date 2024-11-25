@@ -20,11 +20,13 @@ let { OPTIONS_MODE_DYNAMIC, USEROPT_DYN_MAP, USEROPT_DYN_ZONE, USEROPT_DYN_SURRO
   USEROPT_LIMITED_AMMO, USEROPT_WEAPONS, USEROPT_SKIN, USEROPT_DYN_ALLIES,
   USEROPT_DYN_ENEMIES
 } = require("%scripts/options/optionsExtNames.nut")
-let { create_options_container } = require("%scripts/options/optionsExt.nut")
+let { create_options_container, create_option_list } = require("%scripts/options/optionsExt.nut")
 let { getCurSlotbarUnit } = require("%scripts/slotbar/slotbarState.nut")
 let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
-let { setCurrentCampaignMission } = require("%scripts/missions/startMissionsList.nut")
+let { currentCampaignMission } = require("%scripts/missions/missionsStates.nut")
 let { getBattleTypeByUnit } = require("%scripts/airInfo.nut")
+let { unitNameForWeapons } = require("%scripts/weaponry/unitForWeapons.nut")
+let { isUnitAvailableForGM } = require("%scripts/unit/unitStatus.nut")
 
 function mergeToBlk(sourceTable, blk) {
   foreach (idx, val in sourceTable)
@@ -119,7 +121,7 @@ gui_handlers.MissionBuilder <- class (gui_handlers.GenericOptionsModal) {
   }
 
   function isBuilderAvailable() {
-    return ::isUnitAvailableForGM(showedUnit.value, GM_BUILDER)
+    return isUnitAvailableForGM(showedUnit.value, GM_BUILDER)
   }
 
   function updateButtons() {
@@ -179,7 +181,7 @@ gui_handlers.MissionBuilder <- class (gui_handlers.GenericOptionsModal) {
     if (showedUnit.value == null)
       return
 
-    ::aircraft_for_weapons = showedUnit.value.name
+    unitNameForWeapons.set(showedUnit.value.name)
 
     let settings = DataBlock();
     settings.setStr("player_class", showedUnit.value.name)
@@ -210,7 +212,7 @@ gui_handlers.MissionBuilder <- class (gui_handlers.GenericOptionsModal) {
 
   function update_dynamic_map() {
     let descr = ::get_option(USEROPT_DYN_MAP)
-    let txt = ::create_option_list(descr.id, descr.items, descr.value, descr.cb, false)
+    let txt = create_option_list(descr.id, descr.items, descr.value, descr.cb, false)
     let dObj = this.scene.findObject(descr.id)
     this.guiScene.replaceContentFromText(dObj, txt, txt.len(), this)
 
@@ -224,7 +226,7 @@ gui_handlers.MissionBuilder <- class (gui_handlers.GenericOptionsModal) {
     this.init_builder_map()
 
     let descrWeap = ::get_option(USEROPT_DYN_ZONE)
-    let txt = ::create_option_list(descrWeap.id, descrWeap.items, descrWeap.value, "onSectorChange", false)
+    let txt = create_option_list(descrWeap.id, descrWeap.items, descrWeap.value, "onSectorChange", false)
     let dObj = this.scene.findObject(descrWeap.id)
     guiScene.replaceContentFromText(dObj, txt, txt.len(), this)
     return descrWeap
@@ -233,7 +235,7 @@ gui_handlers.MissionBuilder <- class (gui_handlers.GenericOptionsModal) {
   function update_dynamic_sector(guiScene, _obj, _descr) {
     this.generate_builder_list(true)
     let descrWeap = ::get_option(USEROPT_DMP_MAP)
-    let txt = ::create_option_list(descrWeap.id, descrWeap.items, descrWeap.value, null, false)
+    let txt = create_option_list(descrWeap.id, descrWeap.items, descrWeap.value, null, false)
     let dObj = this.scene.findObject(descrWeap.id)
     guiScene.replaceContentFromText(dObj, txt, txt.len(), this)
 
@@ -398,7 +400,7 @@ gui_handlers.MissionBuilder <- class (gui_handlers.GenericOptionsModal) {
     missionBlk.setBool("isLimitedFuel", ::get_option(USEROPT_LIMITED_FUEL).value)
     missionBlk.setBool("isLimitedAmmo", ::get_option(USEROPT_LIMITED_AMMO).value)
 
-    setCurrentCampaignMission(missionBlk.getStr("name", ""))
+    currentCampaignMission.set(missionBlk.getStr("name", ""))
     ::mission_settings.mission = missionBlk
     ::mission_settings.missionFull = fullMissionBlk
     select_mission_full(missionBlk, fullMissionBlk);

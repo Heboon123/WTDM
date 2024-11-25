@@ -6,6 +6,7 @@ from "mission" import get_game_mode, get_game_type
 let { g_mislist_type } =  require("%scripts/missions/misListType.nut")
 let { eventbus_subscribe } = require("eventbus")
 let { getGlobalModule } = require("%scripts/global_modules.nut")
+let events = getGlobalModule("events")
 let g_squad_manager = getGlobalModule("g_squad_manager")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { isInMenu, handlersManager, loadHandler, get_cur_base_gui_handler
@@ -20,29 +21,12 @@ let { isHostInRoom } = require("%scripts/matching/serviceNotifications/mrooms.nu
 let lobbyStates = require("%scripts/matchingRooms/lobbyStates.nut")
 let { g_url_missions } = require("%scripts/missions/urlMissionsList.nut")
 let { web_rpc } = require("%scripts/webRPC.nut")
+let { isRemoteMissionVar, matchSearchGm, currentCampaignId } = require("%scripts/missions/missionsStates.nut")
 
 const DYNAMIC_REQ_COUNTRY_RANK = 1
 
 let needCheckForVictory = Watched(false)
 let backFromBriefingParams = mkWatched(persist, "backFromBriefingParams", { eventbusName = "gui_start_mainmenu"})
-
-let missionsUtilsVar = persist("missionsUtilsVar", @() {
-  matchSearchGm = -1
-  isRemoteMissionVar = false
-  currentCampaignId = null
-  currentCampaignMission = null
-})
-
-let isRemoteMission = @() missionsUtilsVar.isRemoteMissionVar
-let setIsRemoteMission = @(v) missionsUtilsVar.isRemoteMissionVar = !!v
-let setMatchSearchGm = @(gm) missionsUtilsVar.matchSearchGm = gm
-let getMatchSearchGm = @() missionsUtilsVar.matchSearchGm
-
-let setCurrentCampaignId = @(id) missionsUtilsVar.currentCampaignId = id
-let getCurrentCampaignId = @() missionsUtilsVar.currentCampaignId
-
-let setCurrentCampaignMission = @(id) missionsUtilsVar.currentCampaignMission = id
-let getCurrentCampaignMission = @() missionsUtilsVar.currentCampaignMission
 
 function guiStartSessionList() {
   loadHandler(gui_handlers.SessionsList,
@@ -52,7 +36,7 @@ function guiStartSessionList() {
                   })
 }
 
-let prepareStartSkirmish = @() setMatchSearchGm(GM_SKIRMISH)
+let prepareStartSkirmish = @() matchSearchGm.set(GM_SKIRMISH)
 
 
 function fastStartSkirmishMission(mission) {
@@ -64,7 +48,7 @@ function fastStartSkirmishMission(mission) {
   }
 
   prepareStartSkirmish()
-  setIsRemoteMission(true)
+  isRemoteMissionVar.set(true)
   handlersManager.loadHandler(gui_handlers.RemoteMissionModalHandler, params)
 }
 
@@ -122,7 +106,7 @@ function guiStartMislist(isModal = false, setGameMode = null, addParams = {}) {
   params.canSwitchMisListType <- gm == GM_SKIRMISH
 
   let showAllCampaigns = gm == GM_CAMPAIGN || gm == GM_SINGLE_MISSION
-  setCurrentCampaignId(showAllCampaigns ? null : get_game_mode_name(gm))
+  currentCampaignId.set(showAllCampaigns ? null : get_game_mode_name(gm))
   params.showAllCampaigns <- showAllCampaigns
 
   if (!isModal) {
@@ -156,17 +140,17 @@ function guiStartMpLobby() {
   }
 
   local backFromLobby = { eventbusName = "gui_start_mainmenu" }
-  if (::SessionLobby.getGameMode() == GM_SKIRMISH && !isRemoteMission())
+  if (::SessionLobby.getGameMode() == GM_SKIRMISH && !isRemoteMissionVar.get())
     backFromLobby = { eventbusName = "guiStartSkirmish" }
   else {
     let lastEvent = ::SessionLobby.getRoomEvent()
-    if (lastEvent && ::events.eventRequiresTicket(lastEvent) && ::events.getEventActiveTicket(lastEvent) == null) {
+    if (lastEvent && events.eventRequiresTicket(lastEvent) && events.getEventActiveTicket(lastEvent) == null) {
       gui_start_mainmenu()
       return
     }
   }
 
-  setIsRemoteMission(false)
+  isRemoteMissionVar.set(false)
   loadHandler(gui_handlers.MPLobby, { backSceneParams = backFromLobby })
 }
 
@@ -319,7 +303,7 @@ function guiStartBuilder(params = {}) {
 }
 
 function startCreateWndByGamemode(_handler, _obj) {
-  let gm = getMatchSearchGm()
+  let gm = matchSearchGm.get()
   if (gm == GM_EVENT)
     guiStartBriefing()
   else if (gm == GM_DYNAMIC)
@@ -376,7 +360,7 @@ function checkAndCreateGamemodeWnd(handler, gm) {
     let tbl = buildCheckTable(null, gm)
     tbl.silent <- false
     if (isRanksAllowed.bindenv(handler)(tbl)) {
-      setMatchSearchGm(gm)
+      matchSearchGm.set(gm)
       startCreateWndByGamemode(handler, null)
     }
   })
@@ -390,8 +374,6 @@ return {
   guiStartSkirmish
   prepareStartSkirmish
   checkAndCreateGamemodeWnd
-  setMatchSearchGm
-  getMatchSearchGm
   guiStartCampaign
   guiStartMenuCampaign
   guiStartMenuSingleMissions
@@ -406,10 +388,4 @@ return {
   briefingOptionsApply
   guiStartMpLobby
   guiStartCdOptions
-  setIsRemoteMission
-  isRemoteMission
-  setCurrentCampaignId
-  getCurrentCampaignId
-  setCurrentCampaignMission
-  getCurrentCampaignMission
 }

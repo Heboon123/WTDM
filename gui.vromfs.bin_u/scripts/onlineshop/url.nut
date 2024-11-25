@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import send_error_log, use_embedded_browser
 from "%scripts/dagui_library.nut" import *
 let u = require("%sqStdLibs/helpers/u.nut")
@@ -110,7 +109,7 @@ eventbus_subscribe("openUrlImpl", function(urlConfig) {
   log($"[URL] Base Url = {baseUrl}")
   let hasFeat = urlType.isOnlineShop ? hasFeature("EmbeddedBrowserOnlineShop")
     : hasFeature("EmbeddedBrowser")
-  if (!useExternalBrowser && ::use_embedded_browser() && !steam_is_running() && hasFeat) {
+  if (!useExternalBrowser && use_embedded_browser() && !steam_is_running() && hasFeat) {
     // Embedded browser
     ::open_browser_modal(urlToOpen, urlTags, baseUrl)
     broadcastEvent("BrowserOpened", { url = urlToOpen, external = false })
@@ -160,7 +159,7 @@ function validateLink(link) {
     return null
 
   if (!u.isString(link)) {
-    log("CHECK LINK result: " + toString(link))
+    log($"CHECK LINK result: {toString(link)}")
     assert(false, "CHECK LINK: Link received not as text")
     return null
   }

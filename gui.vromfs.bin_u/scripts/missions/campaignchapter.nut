@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import add_video_seen, was_video_seen, get_game_mode_name, is_mouse_last_time_used, play_movie
 from "%scripts/dagui_library.nut" import *
 
@@ -40,13 +39,14 @@ let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 let { isInSessionRoom } = require("%scripts/matchingRooms/sessionLobbyState.nut")
 let { getDynamicLayouts } = require("%scripts/missions/missionsUtils.nut")
 let { openBrowserForFirstFoundEntitlement } = require("%scripts/onlineShop/onlineShopModel.nut")
-let { guiStartDynamicSummary, briefingOptionsApply, guiStartMpLobby, guiStartCdOptions, setIsRemoteMission,
-  getCurrentCampaignId, setCurrentCampaignId, setCurrentCampaignMission, getCurrentCampaignMission
+let { guiStartDynamicSummary, briefingOptionsApply, guiStartMpLobby, guiStartCdOptions
 } = require("%scripts/missions/startMissionsList.nut")
+let { isRemoteMissionVar, currentCampaignId, currentCampaignMission
+} = require("%scripts/missions/missionsStates.nut")
+let { setTimeout, clearTimer } = require("dagor.workcycle")
 
 ::current_campaign <- null
-::current_campaign_name <- ""
-registerPersistentData("current_campaign_globals", getroottable(), ["current_campaign", "current_campaign_name"])
+registerPersistentData("current_campaign_globals", getroottable(), ["current_campaign"])
 
 const SAVEDATA_PROGRESS_MSG_ID = "SAVEDATA_IO_OPERATION"
 let MODIFICATION_TUTORIAL_CHAPTERS = ["tutorial_aircraft_modification", "tutorial_tank_modification"]
@@ -94,6 +94,7 @@ let CampaignChapter = class (gui_handlers.BaseGuiHandlerWT) {
   filterText = ""
 
   needCheckDiffAfterOptions = false
+  applyFilterTimer = null
 
   function initScreen() {
     this.showWaitAnimation(true)
@@ -131,7 +132,7 @@ let CampaignChapter = class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function getCollapseListSaveId() {
-    return "mislist_collapsed_chapters/" + get_game_mode_name(this.gm)
+    return $"mislist_collapsed_chapters/{get_game_mode_name(this.gm)}"
   }
 
   function updateWindow() {
@@ -145,13 +146,13 @@ let CampaignChapter = class (gui_handlers.BaseGuiHandlerWT) {
     else if (this.gm == GM_SKIRMISH)
       title = loc("mainmenu/btnSkirmish")
     else
-      title = loc($"chapters/{getCurrentCampaignId()}")
+      title = loc($"chapters/{currentCampaignId.get()}")
 
     this.initMissionsList(title)
   }
 
   function initMissionsList(title) {
-    let customChapterId = (this.gm == GM_DYNAMIC) ? getCurrentCampaignId() : missionsListCampaignId.value
+    let customChapterId = (this.gm == GM_DYNAMIC) ? currentCampaignId.get() : missionsListCampaignId.value
     local customChapters = null
     if (!this.showAllCampaigns && (this.gm == GM_CAMPAIGN || this.gm == GM_SINGLE_MISSION))
       customChapters = ::current_campaign
@@ -163,7 +164,7 @@ let CampaignChapter = class (gui_handlers.BaseGuiHandlerWT) {
       let dynLayouts = getDynamicLayouts()
       for (local i = 0; i < dynLayouts.len(); i++)
         if (dynLayouts[i].mis_file == l_file) {
-          title = loc("dynamic/" + dynLayouts[i].name)
+          title = loc($"dynamic/{dynLayouts[i].name}")
           break
         }
     }
@@ -490,14 +491,14 @@ let CampaignChapter = class (gui_handlers.BaseGuiHandlerWT) {
       if (showMsgbox) {
         let unitNameLoc = colorize("activeTextColor", getUnitName(this.curMission.mustHaveUnit))
         let requirements = loc("conditions/char_unit_exist/single", { value = unitNameLoc })
-        showInfoMsgBox(loc("charServer/needUnlock") + "\n\n" + requirements)
+        showInfoMsgBox($"{loc("charServer/needUnlock")}\n\n{requirements}")
       }
       return false
     }
     if ((this.gm == GM_SINGLE_MISSION) && (this.curMission.progress >= 4)) {
       if (showMsgbox) {
-        let unlockId = this.curMission.blk.chapter + "/" + this.curMission.blk.name
-        let msg = loc("charServer/needUnlock") + "\n\n" + getFullUnlockDescByName(unlockId, 1)
+        let unlockId = $"{this.curMission.blk.chapter}/{this.curMission.blk.name}"
+        let msg = $"{loc("charServer/needUnlock")}\n\n{getFullUnlockDescByName(unlockId, 1)}"
         showInfoMsgBox(msg, "in_demo_only_singlemission_unlock")
       }
       return false
@@ -568,8 +569,8 @@ let CampaignChapter = class (gui_handlers.BaseGuiHandlerWT) {
 
   function setMission() {
     ::mission_settings.postfix = null
-    setCurrentCampaignId(this.curMission.chapter)
-    setCurrentCampaignMission(this.curMission.id)
+    currentCampaignId.set(this.curMission.chapter)
+    currentCampaignMission.set(this.curMission.id)
     if (this.gm == GM_DYNAMIC)
       ::mission_settings.currentMissionIdx <- this.curMissionIdx
 
@@ -735,9 +736,9 @@ let CampaignChapter = class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function openMissionOptions(mission) {
-    let campaignName = getCurrentCampaignId()
+    let campaignName = currentCampaignId.get()
 
-    this.missionName = getCurrentCampaignMission()
+    this.missionName = currentCampaignMission.get()
 
     if (campaignName == null || this.missionName == null)
       return
@@ -906,7 +907,20 @@ let CampaignChapter = class (gui_handlers.BaseGuiHandlerWT) {
 
   onFilterEditBoxActivate = @() null
 
-  function onFilterEditBoxChangeValue() {
+  function onFilterEditBoxChangeValue(_) {
+    clearTimer(this.applyFilterTimer)
+    let filterEditBox = this.scene.findObject("filter_edit_box")
+    let filterText = utf8ToLower(filterEditBox.getValue())
+    if(filterText == "") {
+      this.applyFilterImpl()
+      return
+    }
+
+    let applyCallback = Callback(@() this.applyFilterImpl(), this)
+    this.applyFilterTimer = setTimeout(0.8, @() applyCallback())
+  }
+
+  function applyFilterImpl() {
     this.applyMissionFilter()
     this.updateCollapsedItems()
     this.updateButtons()
@@ -1158,7 +1172,7 @@ let RemoteMissionModalHandler = class (CampaignChapter) {
       owner = this
       applyFunc = applyFunc
       cancelFunc = Callback(function() {
-                                setIsRemoteMission(false)
+                                isRemoteMissionVar.set(false)
                                 this.goBack()
                               }, this)
     }

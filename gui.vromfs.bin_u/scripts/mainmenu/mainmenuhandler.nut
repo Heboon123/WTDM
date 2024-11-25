@@ -13,7 +13,7 @@ let { topMenuHandler } = require("%scripts/mainmenu/topMenuStates.nut")
 let exitGame = require("%scripts/utils/exitGame.nut")
 let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
 let { tryOpenTutorialRewardHandler } = require("%scripts/tutorials/tutorialRewardHandler.nut")
-let { getCrewUnlockTime } = require("%scripts/crew/crewInfo.nut")
+let { getCrewUnlockTime, getCrewByAir } = require("%scripts/crew/crewInfo.nut")
 let { placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { getSuggestedSkin } = require("%scripts/customization/suggestedSkins.nut")
 let { startFleetTrainingMission, canStartFleetTrainingMission
@@ -22,8 +22,9 @@ let { create_promo_blocks } = require("%scripts/promo/promoHandler.nut")
 let { get_warpoints_blk } = require("blkGetters")
 let { isInSessionRoom } = require("%scripts/matchingRooms/sessionLobbyState.nut")
 let { userName, userIdStr } = require("%scripts/user/profileStates.nut")
-let { getCrewByAir, getCrewUnlockTimeByUnit } = require("%scripts/slotbar/slotbarState.nut")
+let { getCrewUnlockTimeByUnit } = require("%scripts/slotbar/slotbarState.nut")
 let { invalidateCrewsList, reinitAllSlotbars } = require("%scripts/slotbar/crewsList.nut")
+let { checkPackageAndAskDownloadOnce } = require("%scripts/clientState/contentPacks.nut")
 
 gui_handlers.MainMenu <- class (gui_handlers.InstantDomination) {
   rootHandlerClass = topMenuHandlerClass.getHandler()
@@ -90,8 +91,10 @@ gui_handlers.MainMenu <- class (gui_handlers.InstantDomination) {
     let isReqButtonDisplay = haveRights && ::g_clans.getMyClanCandidates().len() > 0
     let obj = showObjById("btn_main_menu_showRequests", isReqButtonDisplay, this.scene)
     if (checkObj(obj) && isReqButtonDisplay)
-      obj.setValue(loc("clan/btnShowRequests") + loc("ui/parentheses/space",
-        { text = ::g_clans.getMyClanCandidates().len() }))
+      obj.setValue("".concat(
+        loc("clan/btnShowRequests"),
+        loc("ui/parentheses/space",
+          { text = ::g_clans.getMyClanCandidates().len() })))
   }
 
   function onExit() {
@@ -138,7 +141,7 @@ gui_handlers.MainMenu <- class (gui_handlers.InstantDomination) {
     let lowQuality = !::is_loaded_model_high_quality()
     showObjById("low-quality-model-warning", lowQuality, this.scene)
     if (lowQuality && this.isSceneActive() && isInMenu())
-      ::check_package_and_ask_download_once("pkg_main", "air_in_hangar")
+      checkPackageAndAskDownloadOnce("pkg_main", "air_in_hangar")
   }
 
   forceUpdateSelUnitInfo = @() this.updateSelUnitInfo(true)
@@ -181,7 +184,7 @@ gui_handlers.MainMenu <- class (gui_handlers.InstantDomination) {
 
   function updateUnitRentInfo(unit) {
     let rentInfoObj = this.scene.findObject("rented_unit_info_text")
-    let messageTemplate = loc("mainmenu/unitRentTimeleft") + loc("ui/colon") + "%s"
+    let messageTemplate = "".concat(loc("mainmenu/unitRentTimeleft"), loc("ui/colon"), "%s")
     SecondsUpdater(rentInfoObj, function(obj, _params) {
       let isVisible = !!unit && unit.isRented()
       obj.show(isVisible)

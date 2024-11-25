@@ -96,7 +96,7 @@ gui_handlers.LoginWndHandlerPs4 <- class (BaseGuiHandler) {
     this.isPendingPackageCheck = false
 
     local loginStatus = 0
-    if (!isUpdateAvailable && ::ps4_initial_check_network() >= 0) {
+    if (!isUpdateAvailable && ps4_initial_check_network() >= 0) {
       statsd.send_counter("sq.game_start.request_login", 1, { login_type = "ps4" })
       log("PS4 Login: ps4_login")
       this.isLoggingIn = true
@@ -128,11 +128,15 @@ gui_handlers.LoginWndHandlerPs4 <- class (BaseGuiHandler) {
       return
 
     this.isPendingPackageCheck = true
-    requestPackageUpdateStatus(this.onPackageUpdateCheckResult.bindenv(this))
+    requestPackageUpdateStatus(@(isUpdateAvailable) broadcastEvent("PackageUpdateStatusReceived", { isUpdateAvailable }))
   }
 
   function onEventPs4AutoLoginRequested(_p) {
     this.onOk()
+  }
+
+  function onEventPackageUpdateStatusReceived(p) {
+    this.onPackageUpdateCheckResult(p.isUpdateAvailable)
   }
 
   function onDestroy() {

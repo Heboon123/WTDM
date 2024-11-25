@@ -36,6 +36,8 @@ let { checkSquadUnreadyAndDo } = require("%scripts/squads/squadUtils.nut")
 let { getCrewById } = require("%scripts/slotbar/slotbarState.nut")
 let { openGenericTooltip, closeGenericTooltip } = require("%scripts/utils/genericTooltip.nut")
 let { steamContactsGroup } = require("%scripts/contacts/contactsManager.nut")
+let { defer } = require("dagor.workcycle")
+let { fill_gamer_card } = require("%scripts/gamercard.nut")
 
 local stickedDropDown = null
 let defaultSlotbarActions = [
@@ -127,7 +129,7 @@ let BaseGuiHandlerWT = class (BaseGuiHandler) {
   function getNavbarTplView() { return null }
 
   function fillGamercard() {
-    ::fill_gamer_card(null, "gc_", this.scene)
+    fill_gamer_card(null, "gc_", this.scene)
     this.initGcBackButton()
     this.initSquadWidget()
     this.initVoiceChatWidget()
@@ -354,6 +356,11 @@ let BaseGuiHandlerWT = class (BaseGuiHandler) {
       initialSheet = "UnlockAchievement"
       initialUnlockId = getManualUnlocks()[0].id
     } : {}
+
+    if (this.guiScene?.isInAct()) {
+      defer(@() loadHandler(gui_handlers.Profile, params))
+      return
+    }
     loadHandler(gui_handlers.Profile, params)
   }
 

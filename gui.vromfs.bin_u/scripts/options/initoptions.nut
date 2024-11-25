@@ -11,7 +11,6 @@ let { initBulletIcons } = require("%scripts/weaponry/bulletsVisual.nut")
 let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 let { updateShopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { initWeaponParams } = require("%scripts/weaponry/weaponsParams.nut")
-let controlsPresetConfigPath = require("%scripts/controls/controlsPresetConfigPath.nut")
 let { PT_STEP_STATUS } = require("%scripts/utils/pseudoThread.nut")
 let { GUI } = require("%scripts/utils/configs.nut")
 let { generateUnitShopInfo } = require("%scripts/shop/shopUnitsInfo.nut")
@@ -50,16 +49,8 @@ function init_all_units() { //Not moved to allUnits.nut due to "require loops"
   }
 }
 
-::update_all_units <- function update_all_units() {
-  updateShopCountriesList()
-  ::countUsageAmountOnce()
-  generateUnitShopInfo()
-
-  log("update_all_units called, got", allUnits.len(), "items");
-}
-
 local usageAmountCounted = false
-::countUsageAmountOnce <- function countUsageAmountOnce() {
+function countUsageAmountOnce() {
   if (usageAmountCounted)
     return
 
@@ -104,6 +95,14 @@ local usageAmountCounted = false
   usageAmountCounted = true
 }
 
+::update_all_units <- function update_all_units() {
+  updateShopCountriesList()
+  countUsageAmountOnce()
+  generateUnitShopInfo()
+
+  log("update_all_units called, got", allUnits.len(), "items");
+}
+
 ::init_options_steps <- [
   init_all_units
   ::update_all_units
@@ -135,7 +134,7 @@ local usageAmountCounted = false
 
   function() {
     let blk = DataBlock()
-    blk.load($"{controlsPresetConfigPath.value}config/hud.blk")
+    blk.load("config/hud.blk")
     if (blk?.crosshair) {
       let crosshairs = blk.crosshair % "pictureTpsView"
       foreach (crosshair in crosshairs)

@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import is_replay_markers_enabled, get_player_army_for_hud, is_game_paused, mpstat_get_sort_func, is_spectator_rotation_forced
 from "app" import is_dev_version
 from "%scripts/dagui_library.nut" import *
@@ -28,7 +27,7 @@ let u = require("%sqStdLibs/helpers/u.nut")
 let time = require("%scripts/time.nut")
 let spectatorWatchedHero = require("%scripts/replays/spectatorWatchedHero.nut")
 let replayMetadata = require("%scripts/replays/replayMetadata.nut")
-let { getUnitRole } = require("%scripts/unit/unitInfoTexts.nut")
+let { getUnitRole } = require("%scripts/unit/unitInfoRoles.nut")
 let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { useTouchscreen } = require("%scripts/clientState/touchScreen.nut")
 let { toggleShortcut } = require("%globalScripts/controls/shortcutActions.nut")
@@ -56,6 +55,7 @@ let { gui_start_tactical_map } = require("%scripts/tacticalMap.nut")
 let { showOrdersContainer } = require("%scripts/items/orders.nut")
 let { getLogForBanhammer } = require("%scripts/chat/mpChatModel.nut")
 let { loadGameChatToObj } = require("%scripts/chat/mpChat.nut")
+let { register_command } = require("console")
 
 enum SPECTATOR_MODE {
   RESPAWN     // Common multiplayer battle participant between respawns or after death.
@@ -385,8 +385,8 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
           strip_tags = true
         })
         if (hotkeys.len())
-          hotkeys = "<color=@hotkeyColor>" + loc("ui/parentheses/space", { text = hotkeys }) + "</color>"
-        obj.tooltip = loc($"hotkeys/{obj.id}") + hotkeys
+          hotkeys = "".concat("<color=@hotkeyColor>", loc("ui/parentheses/space", { text = hotkeys }), "</color>")
+        obj.tooltip = "".concat(loc($"hotkeys/{obj.id}"), hotkeys)
       }
     }
 
@@ -1105,7 +1105,7 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
           this.statTblUpdateInfo(tblObj, info, infoPrev)
         if (info.active != (infoPrev?.active ?? true)) {
           tblObj.getParent().getParent().show(info.active)
-          this.scene.findObject("btnToggleStats" + (idx + 1)).show(info.active)
+          this.scene.findObject($"btnToggleStats{idx + 1}").show(info.active)
         }
       }
     }
@@ -1186,12 +1186,11 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
       obj.dead = player.canBeSwitchedTo ? "no" : "yes"
       obj.isBot = player.isBot ? "yes" : "no"
       obj.findObject("unit").setValue(getUnitName(unitId || "dummy_plane"))
-      obj.tooltip = playerName + (unitId ? loc("ui/parentheses/space", { text = getUnitName(unitId, false) }) : "")
-        + (stateDesc != "" ? ("\n" + stateDesc) : "")
-        + (malfunctionDesc != "" ? ("\n" + malfunctionDesc) : "")
+      obj.tooltip = "".concat(playerName, unitId ? loc("ui/parentheses/space", { text = getUnitName(unitId, false) }) : "",
+        stateDesc != "" ? $"\n{stateDesc}" : "", malfunctionDesc != "" ? $"\n{malfunctionDesc}" : "")
 
       if (this.debugMode)
-        obj.tooltip += "\n\n" + this.getPlayerDebugTooltipText(player)
+        obj.tooltip = "\n\n".concat(obj.tooltip, this.getPlayerDebugTooltipText(player))
 
       let unitIcoObj = obj.findObject("unit-ico")
       unitIcoObj["background-image"] = iconImg
@@ -1441,7 +1440,7 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function buildHistoryLogMessage(msg) {
-    let timestamp = time.secondsToString(msg.time, false) + " "
+    let timestamp = "".concat(time.secondsToString(msg.time, false), " ")
     // All players messages
     if (msg.type == HUD_MSG_MULTIPLAYER_DMG) { // Any player or ai unit damaged or destroyed
       let text = HudBattleLog.msgMultiplayerDmgToText(msg)
@@ -1451,13 +1450,13 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
 
     if (msg.type == HUD_MSG_STREAK_EX) { // Any player got streak
       let text = HudBattleLog.msgStreakToText(msg, true)
-      return "".concat(timestamp, colorize("streakTextColor", loc("unlocks/streak") + loc("ui/colon") + text))
+      return "".concat(timestamp, colorize("streakTextColor", loc("ui/colon").concat(loc("unlocks/streak"), text)))
     }
 
     // Mission objectives
     if (msg.type == HUD_MSG_OBJECTIVE) { // Hero team mission objective
       let text = HudBattleLog.msgEscapeCodesToCssColors(msg.text)
-      return "".concat(timestamp, colorize("white", loc("sm_objective") + loc("ui/colon") + text))
+      return "".concat(timestamp, colorize("white", loc("ui/colon").concat(loc("sm_objective"), text)))
     }
 
     // Team progress
@@ -1501,8 +1500,8 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
 
           if (hotkeys != "") {
             let tooltip = obj?.tooltip ?? ""
-            let add = "<color=@hotkeyColor>" + loc("ui/parentheses/space", { text = hotkeys }) + "</color>"
-            obj.tooltip = tooltip + add
+            let add = "".concat("<color=@hotkeyColor>", loc("ui/parentheses/space", { text = hotkeys }), "</color>")
+            obj.tooltip = $"{tooltip}{add}"
           }
         }
       }
@@ -1555,13 +1554,15 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
 
 gui_handlers.Spectator <- Spectator
 
-::spectator_debug_mode <- function spectator_debug_mode() {
+function spectatorDebugMode() {
   let handler = is_dev_version() && handlersManager.findHandlerClassInScene(gui_handlers.Spectator)
   if (!handler)
     return null
   handler.debugMode = !handler.debugMode
   return handler.debugMode
 }
+
+register_command(spectatorDebugMode, "debug.spectatorDebugMode")
 
 ::isPlayerDedicatedSpectator <- function isPlayerDedicatedSpectator(name = null) {
   if (name) {

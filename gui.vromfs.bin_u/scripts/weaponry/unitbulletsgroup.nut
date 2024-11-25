@@ -12,8 +12,9 @@ let { AMMO,
         isAmmoFree } = require("%scripts/weaponry/ammoInfo.nut")
 let { getSavedBullets } = require("%scripts/weaponry/savedWeaponry.nut")
 let { USEROPT_BULLETS0, USEROPT_BULLET_COUNT0 } = require("%scripts/options/optionsExtNames.nut")
+let { unitNameForWeapons } = require("%scripts/weaponry/unitForWeapons.nut")
 
-::BulletGroup <- class {
+class BulletGroup {
   unit = null
   groupIndex = -1
   selectedName = ""   //selected bullet name
@@ -147,7 +148,7 @@ let { USEROPT_BULLETS0, USEROPT_BULLET_COUNT0 } = require("%scripts/options/opti
 
   function getOption() {
     if (!this.option) {
-      ::aircraft_for_weapons = this.unit.name
+      unitNameForWeapons.set(this.unit.name)
       this.option = ::get_option(USEROPT_BULLETS0 + this.groupIndex)
     }
     return this.option
@@ -206,3 +207,5 @@ let { USEROPT_BULLETS0, USEROPT_BULLET_COUNT0 } = require("%scripts/options/opti
     return needSetWeaponName ? this.gunInfo?.weapName ?? "" : ""
   }
 }
+
+return BulletGroup

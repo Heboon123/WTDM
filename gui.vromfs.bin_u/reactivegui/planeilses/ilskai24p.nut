@@ -289,6 +289,7 @@ function basicInfo(width, height) {
   }
 }
 
+let drawAdvancedReticle = Computed(@() CCIPMode.value || BombingMode.value)
 let distSectorAng = Computed(@() cvt(DistToTarget.value >= 10000.0 ? 5000.0 : DistToTarget.value, 0.0, 8000.0, -90.0, 270.0).tointeger())
 let distValue = Computed(@() (DistToTarget.value >= 10000.0 ? 50.0 : DistToTarget.value * 0.01).tointeger())
 let CVisible = Computed(@() DistToTarget.value < 2000.0 )
@@ -308,8 +309,6 @@ let reticle = @(){
       [VECTOR_LINE, 130, 0, 70, 0],
       [VECTOR_LINE, 0, 100, 0, 70],
       [VECTOR_LINE, 0, -100, 0, -70],
-      [VECTOR_LINE, 49.9, -98, 59, -115.8],
-      [VECTOR_LINE, -28.5, 106.3, -33.6, 125.6]
     ]
     behavior = Behaviors.RtPropUpdate
     update = @() {
@@ -318,9 +317,9 @@ let reticle = @(){
       }
     }
     children = @(){
-      watch = [CCIPMode, CVisible]
+      watch = [CVisible, drawAdvancedReticle]
       size = flex()
-      children = [
+      children = drawAdvancedReticle.value ? [
         @(){
           watch = distSectorAng
           rendObj = ROBJ_VECTOR_CANVAS
@@ -329,7 +328,9 @@ let reticle = @(){
           fillColor = Color(0, 0, 0, 0)
           lineWidth = baseLineWidth * IlsLineScale.value
           commands = [
-            [VECTOR_SECTOR, 0, 0, 110, 110, -90, distSectorAng.value]
+            [VECTOR_SECTOR, 0, 0, 110, 110, -90, distSectorAng.value],
+            [VECTOR_LINE, 49.9, -98, 59, -115.8],
+            [VECTOR_LINE, -28.5, 106.3, -33.6, 125.6]
           ]
         },
         @(){
@@ -354,7 +355,7 @@ let reticle = @(){
             [VECTOR_LINE, 150, 50, 190, 50]
           ]
         } : null)
-      ]
+      ] : []
     }
   } : null
 }
@@ -567,58 +568,59 @@ let aimLockX = @(){
   } : null
 }
 
-function getWeaponSlotCnt() {
+function getWeaponSlotCnt(weaponSlotsV) {
   local cnt = 0
-  for (local i = 0; i < WeaponSlots.value.len(); ++i) {
-    if (WeaponSlots.value[i] != null && WeaponSlots.value[i] > cnt)
-      cnt = WeaponSlots.value[i]
-  }
+  foreach (weaponCnt in weaponSlotsV)
+    if (weaponCnt != null && weaponCnt > cnt)
+      cnt = weaponCnt
   return cnt
 }
 
-function getWeaponSlotCommands() {
+function getWeaponSlotCommands(weaponSlotsV) {
   let commands = []
-  for (local i = 0; i < WeaponSlots.value.len(); ++i) {
-    if (WeaponSlots.value[i] != null)
-      commands.append([VECTOR_LINE, 15 * (WeaponSlots.value[i] - 1), 100, 15 * (WeaponSlots.value[i] - 1) + 8, 100])
-  }
+  foreach (weaponCnt in weaponSlotsV)
+    if (weaponCnt != null)
+      commands.append([VECTOR_LINE, 15 * (weaponCnt - 1), 100, 15 * (weaponCnt - 1) + 8, 100])
   return commands
 }
 
-function getWeaponSlotNumber() {
+function getWeaponSlotNumber(weaponSlotsV, weaponSlotActiveV) {
   let numbers = []
-  for (local i = 0; i < WeaponSlots.value.len(); ++i) {
-    if (WeaponSlots.value[i] != null && WeaponSlotActive.value[i] == true) {
-      let pos = 15 * (WeaponSlots.value[i] - 1)
-      numbers.append(
-        {
-          rendObj = ROBJ_TEXT
-          size = SIZE_TO_CONTENT
-          pos = [pw(pos), 0]
-          color = IlsColor.value
-          fontSize = 30
-          font = Fonts.ils31
-          text = (i + 1).tostring()
-        }
-      )
-    }
+  foreach (i, weaponCnt in weaponSlotsV) {
+    if (weaponCnt == null || !weaponSlotActiveV?[i])
+      continue
+
+    let pos = 15 * (weaponCnt - 1)
+    let text = (i + 1).tostring()
+    numbers.append(
+      @() {
+        watch = IlsColor
+        rendObj = ROBJ_TEXT
+        size = SIZE_TO_CONTENT
+        pos = [pw(pos), 0]
+        color = IlsColor.value
+        fontSize = 30
+        font = Fonts.ils31
+        text
+      }
+    )
   }
   return numbers
 }
 
 let connectors = @() {
-  watch = [WeaponSlots, IlsColor]
+  watch = [WeaponSlots, IlsColor, IlsLineScale]
   size = [pw(24), ph(3)]
-  pos = [pw(50 - 12 * getWeaponSlotCnt() / 7), ph(86)]
+  pos = [pw(50 - 12 * getWeaponSlotCnt(WeaponSlots.get()) / 7), ph(86)]
   rendObj = ROBJ_VECTOR_CANVAS
   color = IlsColor.value
   lineWidth = baseLineWidth * IlsLineScale.value
-  commands = getWeaponSlotCommands()
+  commands = getWeaponSlotCommands(WeaponSlots.get())
   children = [
     @() {
-      watch = WeaponSlotActive
+      watch = [WeaponSlots, WeaponSlotActive]
       size = flex()
-      children = getWeaponSlotNumber()
+      children = getWeaponSlotNumber(WeaponSlots.get(), WeaponSlotActive.get())
     }
   ]
 }

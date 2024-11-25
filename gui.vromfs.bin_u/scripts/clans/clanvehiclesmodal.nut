@@ -8,7 +8,10 @@ let vehiclesModal = require("%scripts/unit/vehiclesModal.nut")
 let unitActions = require("%scripts/unit/unitActions.nut")
 let { isAllClanUnitsResearched } = require("%scripts/unit/squadronUnitAction.nut")
 let { setColoredDoubleTextToButton, placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
-let { getUnitName, canResearchUnit, canBuyUnit } = require("%scripts/unit/unitInfo.nut")
+let { getUnitName, getUnitReqExp, getUnitExp, getUnitCost
+} = require("%scripts/unit/unitInfo.nut")
+let { canBuyUnit } = require("%scripts/unit/unitShopInfo.nut")
+let { canResearchUnit, isUnitInResearch } = require("%scripts/unit/unitStatus.nut")
 
 local handlerClass = class (vehiclesModal.handlerClass) {
   canQuitByGoBack       = false
@@ -86,7 +89,7 @@ local handlerClass = class (vehiclesModal.handlerClass) {
       return
 
     let locText = loc("shop/btnOrderUnit", { unit = getUnitName(this.lastSelectedUnit.name) })
-    let unitCost = (canBuyIngame && !canBuyOnline) ? ::getUnitCost(this.lastSelectedUnit) : Cost()
+    let unitCost = (canBuyIngame && !canBuyOnline) ? getUnitCost(this.lastSelectedUnit) : Cost()
     placePriceTextToButton(this.scene.findObject("nav-help"),      "btn_buy_unit", locText, unitCost)
   }
 
@@ -94,7 +97,7 @@ local handlerClass = class (vehiclesModal.handlerClass) {
     if (!this.lastSelectedUnit)
       return showObjById("btn_spend_exp", false, this.scene)
 
-    let flushExp = min(clan_get_exp(), ::getUnitReqExp(this.lastSelectedUnit) - ::getUnitExp(this.lastSelectedUnit))
+    let flushExp = min(clan_get_exp(), getUnitReqExp(this.lastSelectedUnit) - getUnitExp(this.lastSelectedUnit))
     let needShowSpendBtn = (flushExp > 0 || this.needChosenResearchOfSquadron())
       && this.lastSelectedUnit.isSquadronVehicle() && canResearchUnit(this.lastSelectedUnit)
 
@@ -125,12 +128,12 @@ local handlerClass = class (vehiclesModal.handlerClass) {
     this.hasSpendExpProcess = true
 
     let afterDoneFunc = Callback(function() { this.hasSpendExpProcess = false }, this)
-    if (!::isUnitInResearch(unit)) {
+    if (!isUnitInResearch(unit)) {
       unitActions.setResearchClanVehicleWithAutoFlush(unit, afterDoneFunc)
       return
     }
 
-    let flushExp = min(clan_get_exp(), ::getUnitReqExp(unit) - ::getUnitExp(unit))
+    let flushExp = min(clan_get_exp(), getUnitReqExp(unit) - getUnitExp(unit))
     if (flushExp > 0) {
       unitActions.flushSquadronExp(unit, { afterDoneFunc })
       return

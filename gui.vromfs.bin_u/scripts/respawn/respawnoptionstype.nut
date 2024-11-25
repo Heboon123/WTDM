@@ -2,10 +2,11 @@ from "%scripts/dagui_natives.nut" import is_gun_vertical_convergence_allowed, ge
 from "%scripts/dagui_library.nut" import *
 from "%scripts/controls/controlsConsts.nut" import optionControlType
 from "%scripts/respawn/respawnConsts.nut" import RespawnOptUpdBit
+from "radarOptions" import get_radar_mode_names, set_option_radar_name, get_radar_scan_pattern_names, set_option_radar_scan_pattern_name, get_radar_range_values
 
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
-let { bombNbr, hasCountermeasures, getCurrentPreset, hasBombDelayExplosion } = require("%scripts/unit/unitStatus.nut")
+let { getCurrentPreset, bombNbr, hasCountermeasures, hasBombDelayExplosion } = require("%scripts/unit/unitWeaponryInfo.nut")
 let { isTripleColorSmokeAvailable } = require("%scripts/options/optionsManager.nut")
 let { getSkinsOption } = require("%scripts/customization/skins.nut")
 let { USEROPT_USER_SKIN, USEROPT_GUN_TARGET_DISTANCE, USEROPT_AEROBATICS_SMOKE_TAIL_COLOR,
@@ -13,10 +14,11 @@ let { USEROPT_USER_SKIN, USEROPT_GUN_TARGET_DISTANCE, USEROPT_AEROBATICS_SMOKE_T
   USEROPT_DEPTHCHARGE_ACTIVATION_TIME, USEROPT_ROCKET_FUSE_DIST, USEROPT_TORPEDO_DIVE_DEPTH,
   USEROPT_LOAD_FUEL_AMOUNT, USEROPT_COUNTERMEASURES_PERIODS, USEROPT_COUNTERMEASURES_SERIES,
   USEROPT_COUNTERMEASURES_SERIES_PERIODS, USEROPT_AEROBATICS_SMOKE_TYPE, USEROPT_SKIN,
-  USEROPT_AEROBATICS_SMOKE_LEFT_COLOR, USEROPT_AEROBATICS_SMOKE_RIGHT_COLOR, USEROPT_FUEL_AMOUNT_CUSTOM
+  USEROPT_AEROBATICS_SMOKE_LEFT_COLOR, USEROPT_AEROBATICS_SMOKE_RIGHT_COLOR, USEROPT_FUEL_AMOUNT_CUSTOM,
+  USEROPT_RADAR_MODE_SELECTED_UNIT_SELECT, USEROPT_RADAR_SCAN_PATTERN_SELECTED_UNIT_SELECT, USEROPT_RADAR_SCAN_RANGE_SELECTED_UNIT_SELECT
 } = require("%scripts/options/optionsExtNames.nut")
 let { isSkinBanned } = require("%scripts/customization/bannedSkins.nut")
-let { get_option } = require("%scripts/options/optionsExt.nut")
+let { get_option, create_option_list } = require("%scripts/options/optionsExt.nut")
 
 let options = {
   types = []
@@ -32,6 +34,14 @@ let _isVisible = @(p) p.unit != null
 
 let _isNeedUpdateByTrigger = @(trigger) this.isAvailableInMission() && (trigger & this.triggerUpdateBitMask) != 0
 let _isNeedUpdContentByTrigger = @(trigger, _p) (trigger & this.triggerUpdContentBitMask) != 0
+
+function hasRadarOptions(name) {
+  let radarModesCount = get_radar_mode_names(name).len()
+  return hasFeature("allowRadarModeOptions") && radarModesCount > 0
+    && (radarModesCount > 1
+      || get_radar_scan_pattern_names(name).len() > 1
+      || get_radar_range_values(name).len() > 1)
+}
 
 function _update(p, trigger, isAlreadyFilled) {
   if (!this.isNeedUpdateByTrigger(trigger))
@@ -50,7 +60,7 @@ function _update(p, trigger, isAlreadyFilled) {
       let objOptionValue = obj.getValue()
       if (isNeedUpdateContent) {
         if (this.cType == optionControlType.LIST) {
-          let markup = ::create_option_list(null, opt.items, opt.value, null, false)
+          let markup = create_option_list(null, opt.items, opt.value, null, false)
           p.handler.guiScene.replaceContentFromText(obj, markup, markup.len(), p.handler)
         }
         else if (this.cType == optionControlType.SLIDER) {
@@ -319,6 +329,38 @@ options.addTypes({
     triggerUpdateBitMask = RespawnOptUpdBit.UNIT_ID | RespawnOptUpdBit.SMOKE_TYPE
     triggerUpdContentBitMask = RespawnOptUpdBit.NEVER
     isShowForUnit = @(p) p.unit.isAir() && isTripleColorSmokeAvailable()
+  }
+  radar_mode_select = {
+    sortIdx = idx++
+    userOption = USEROPT_RADAR_MODE_SELECTED_UNIT_SELECT
+    triggerUpdateBitMask = RespawnOptUpdBit.UNIT_WEAPONS | RespawnOptUpdBit.UNIT_ID
+    triggerUpdContentBitMask = RespawnOptUpdBit.UNIT_WEAPONS | RespawnOptUpdBit.UNIT_ID
+    needSetToReqData = true
+    isShowForRandomUnit = false
+    needCheckValueWhenOptionUpdate = true
+    isShowForUnit = @(p) (hasRadarOptions(p.unit.name))
+    cb="onChangeRadarModeSelectedUnit"
+  }
+  radar_scan_pattern_select = {
+    sortIdx = idx++
+    userOption = USEROPT_RADAR_SCAN_PATTERN_SELECTED_UNIT_SELECT
+    triggerUpdateBitMask = RespawnOptUpdBit.UNIT_WEAPONS | RespawnOptUpdBit.UNIT_ID
+    triggerUpdContentBitMask = RespawnOptUpdBit.UNIT_WEAPONS | RespawnOptUpdBit.UNIT_ID
+    needSetToReqData = true
+    isShowForRandomUnit = false
+    needCheckValueWhenOptionUpdate = true
+    isShowForUnit = @(p) (hasRadarOptions(p.unit.name))
+    cb="onChangeRadarScanRangeSelectedUnit"
+  }
+  radar_scan_range_select = {
+    sortIdx = idx++
+    userOption = USEROPT_RADAR_SCAN_RANGE_SELECTED_UNIT_SELECT
+    triggerUpdateBitMask = RespawnOptUpdBit.UNIT_WEAPONS | RespawnOptUpdBit.UNIT_ID
+    triggerUpdContentBitMask = RespawnOptUpdBit.UNIT_WEAPONS | RespawnOptUpdBit.UNIT_ID
+    needSetToReqData = true
+    isShowForRandomUnit = false
+    needCheckValueWhenOptionUpdate = true
+    isShowForUnit = @(p) (hasRadarOptions(p.unit.name))
   }
 })
 

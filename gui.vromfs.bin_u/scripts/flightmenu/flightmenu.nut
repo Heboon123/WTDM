@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import do_player_bailout, toggle_freecam, pause_game, is_game_paused, in_flight_menu, set_context_to_player
 from "app" import is_offline_version
 from "%scripts/dagui_library.nut" import *
@@ -32,14 +31,15 @@ let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 let { getCurMissionRules } = require("%scripts/misCustomRules/missionCustomState.nut")
 let { gui_start_controls } = require("%scripts/controls/startControls.nut")
-let { guiStartCdOptions, getCurrentCampaignMission } = require("%scripts/missions/startMissionsList.nut")
+let { guiStartCdOptions } = require("%scripts/missions/startMissionsList.nut")
+let { currentCampaignMission } = require("%scripts/missions/missionsStates.nut")
 let { disableOrders } = require("%scripts/items/orders.nut")
 let { get_current_mission_info_cached } = require("blkGetters")
 let { isMissionExtr } = require("%scripts/missions/missionsUtils.nut")
 
 function gui_start_briefing_restart(_ = {}) {
   log("gui_start_briefing_restart")
-  let missionName = getCurrentCampaignMission()
+  let missionName = currentCampaignMission.get()
   if (missionName != null) {
     let missionBlk = DataBlock()
     let gm = get_game_mode()
@@ -256,11 +256,11 @@ gui_handlers.FlightMenu <- class (gui_handlers.BaseGuiHandlerWT) {
         let unitsTexts = unitsData.map(function(ud) {
           local res = colorize("userlogColoredText", getUnitName(ud.unit))
           if (ud.comment.len())
-            res += loc("ui/parentheses/space", { text = ud.comment })
+            res = "".concat(res, loc("ui/parentheses/space", { text = ud.comment }))
           return res
         })
         if (unitsTexts.len())
-          text = loc("flightmenu/haveAvailableCrews") + "\n" + ", ".join(unitsTexts, true) + "\n\n"
+          text = "".concat(loc("flightmenu/haveAvailableCrews"), "\n", ", ".join(unitsTexts, true), "\n\n")
 
         text = "".concat(text, (misBlk?.gt_use_wp && misBlk?.gt_use_xp)
           ? loc("flightmenu/questionQuitMissionInProgress")

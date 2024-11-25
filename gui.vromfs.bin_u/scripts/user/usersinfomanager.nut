@@ -5,6 +5,7 @@ let DataBlock = require("DataBlock")
 let avatars = require("%scripts/user/avatars.nut")
 let { setTimeout, clearTimer } = require("dagor.workcycle")
 let { charRequestBlk } = require("%scripts/tasker.nut")
+let { isDataBlock, convertBlk } = require("%sqstd/datablock.nut")
 
 /**
   client api:
@@ -31,13 +32,19 @@ let usersInfo = {}
 let usersForRequest = {}
 local haveRequest = false
 
+function isUserNeedUpdateInfo(userInfo, curTime = -1) {
+  if (userInfo == null)
+    return true
+  curTime = curTime == -1 ? get_time_msec() : curTime
+  return curTime - userInfo.updatingLastTime > MIN_TIME_BETWEEN_SAME_REQUESTS_MSEC
+}
+
 function _getResponseWidthoutRequest(users) {
   local fastResponse = {}
   let currentTime = get_time_msec()
   foreach (userId in users) {
     let curUserInfo = usersInfo?[userId]
-    if (curUserInfo == null ||
-        currentTime - curUserInfo.updatingLastTime > MIN_TIME_BETWEEN_SAME_REQUESTS_MSEC) {
+    if (isUserNeedUpdateInfo(curUserInfo, currentTime)) {
       fastResponse = null
       break
     }
@@ -85,8 +92,11 @@ function _convertServerResponse(response) {
       title = userInfo?.title ?? ""
       clanTag =  userInfo?.clanTag ?? ""
       clanName =  userInfo?.clanName ?? ""
+      shcType = userInfo?.shcType ?? ""
+      showcase = isDataBlock(userInfo?.showcase)
+        ? convertBlk(userInfo.showcase)
+        : {}
     }
-
     res[uid] <- convertedData
   }
 
@@ -161,7 +171,8 @@ function updateUsersInfo() {
 function requestUserInfoData(userId) {
   clearTimer(updateUsersInfo)
 
-  if ((userId not in usersForRequest) && (userId not in usersInfo))
+  let cachedInfo = usersInfo?[userId]
+  if (userId not in usersForRequest && isUserNeedUpdateInfo(cachedInfo))
     usersForRequest[userId] <- true
 
   if (usersForRequest.len() == 0)
@@ -170,7 +181,16 @@ function requestUserInfoData(userId) {
   setTimeout(0.3, updateUsersInfo)
 }
 
+function getUserInfo(uid) {
+  let userInfo = usersInfo?[uid]
+  if (isUserNeedUpdateInfo(userInfo))
+    return null
+  return userInfo
+}
+
 return {
   requestUserInfoData
   requestUsersInfo
+  getUserInfo
+  userInfoEventName
 }

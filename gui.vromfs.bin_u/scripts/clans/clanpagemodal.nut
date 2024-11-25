@@ -38,6 +38,8 @@ let { openEditClanWnd } = require("%scripts/clans/modify/editClanModalhandler.nu
 let { openUpgradeClanWnd } = require("%scripts/clans/modify/upgradeClanModalHandler.nut")
 let { lbCategoryTypes } = require("%scripts/leaderboard/leaderboardCategoryType.nut")
 let { contactPresence } = require("%scripts/contacts/contactPresence.nut")
+let { leaderboardModel } = require("%scripts/leaderboard/leaderboardHelpers.nut")
+let { isWorldWarEnabled } = require("%scripts/globalWorldWarScripts.nut")
 
 let clan_member_list = [
   { id = "onlineStatus", lbDataType = lbDataType.TEXT, myClanOnly = true, iconStyle = true, needHeader = false }
@@ -637,7 +639,7 @@ gui_handlers.clanPageModal <- class (gui_handlers.BaseGuiHandlerWT) {
     if (this.curWwMembers == null)
       this.updateCurWwMembers() //fill default wwMembers list
     this.lbTableWeak.updateParams(
-      ::leaderboardModel,
+      leaderboardModel,
       ::ww_leaderboards_list,
       this.curWwCategory,
       { lbMode = "ww_users_clan" })
@@ -721,7 +723,7 @@ gui_handlers.clanPageModal <- class (gui_handlers.BaseGuiHandlerWT) {
       this.playerByRow.append(member.nick)
     }
 
-    markup.insert(0, ::buildTableRowNoPad("row_header", headerRow, null, "isLeaderBoardHeader:t='yes'"))
+    markup.insert(0, ::buildTableRowNoPad("row_header", headerRow, null, "isShortLeaderBoardHeader:t='yes'"))
     markup = "".join(markup)
 
     this.guiScene.setUpdatesEnabled(false, false)
@@ -807,10 +809,13 @@ gui_handlers.clanPageModal <- class (gui_handlers.BaseGuiHandlerWT) {
     members.sort(function(left, right) {
       local res = 0
       if (sortId != "" && sortId != "nick") {
-        if (left[sortId] < right[sortId])
-          res = 1
-        else if (left[sortId] > right[sortId])
-          res = -1
+        local leftSort = left[sortId]
+        local rightSort = right[sortId]
+        if (sortId == "onlineStatus") {
+          leftSort = leftSort.sortOrder
+          rightSort = rightSort.sortOrder
+        }
+        res = rightSort <=> leftSort
       }
 
       if (!res) {
@@ -1125,7 +1130,7 @@ gui_handlers.clanPageModal <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function getAdditionalTabsArray() {
-    if (!::is_worldwar_enabled() || !hasFeature("WorldWarLeaderboards"))
+    if (!isWorldWarEnabled() || !hasFeature("WorldWarLeaderboards"))
       return []
 
     if (getSeparateLeaderboardPlatformValue() && !hasFeature("ConsoleSeparateWWLeaderboards"))

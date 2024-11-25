@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import clan_get_role_rank, ps4_is_ugc_enabled, clan_request_edit_black_list, clan_get_my_clan_type, sync_handler_simulate_signal, clan_action_blk, clan_get_my_role, set_char_cb, clan_request_log, clan_request_accept_membership_request, clan_request_membership_request, clan_request_change_info_blk, clan_get_my_clan_tag, clan_request_my_info, clan_request_disband, clan_get_my_clan_name, clan_request_reject_membership_request, clan_get_clan_log, clan_request_dismiss_member, clan_get_clan_info, char_send_blk, clan_get_membership_requirements, char_send_clan_oneway_blk, clan_get_exp, clan_request_info, clan_get_role_rights, clan_get_requested_clan_id, clan_get_my_clan_id, clan_get_admin_editor_mode
 from "%scripts/dagui_library.nut" import *
 from "%scripts/clans/clansConsts.nut" import CLAN_SEASON_NUM_IN_YEAR_SHIFT
@@ -101,7 +100,7 @@ registerPersistentData("ClansGlobals", getroottable(),
 /**
  * Edit specified clan.
  * clanId @string - id of clan to edit, -1 if your clan
- * params @DataBlock - result of g_clan::prepareEditRequest function
+ * params @DataBlock - result of g_clan->prepareEditRequest function
  */
 ::g_clans.editClan <- function editClan(clanId, params, handler) {
   let isMyClan = ::my_clan_info != null && clanId == "-1"
@@ -267,7 +266,7 @@ registerPersistentData("ClansGlobals", getroottable(),
   params.count = rowsCount
 
   //Allow to display only clan info changes
-  if ((::clan_get_my_clan_id() != clanId) && !clan_get_admin_editor_mode())
+  if ((clan_get_my_clan_id() != clanId) && !clan_get_admin_editor_mode())
     params.events = "create;info"
 
   if (requestMarker != null)
@@ -459,8 +458,8 @@ registerPersistentData("ClansGlobals", getroottable(),
 
   if (newCandidatesNicknames.len())
     addPopup(null,
-      loc("clan/requestReceived") + loc("ui/colon") + ", ".join(newCandidatesNicknames, true) +
-      $" {extraText}",
+      "".concat(loc("clan/requestReceived"), loc("ui/colon"),
+        ", ".join(newCandidatesNicknames, true), $" {extraText}"),
       function() {
         if (this.getMyClanCandidates().len())
           openClanRequestsWnd(this.getMyClanCandidates(), clan_get_my_clan_id(), null)
@@ -710,6 +709,26 @@ registerPersistentData("ClansGlobals", getroottable(),
 
 ::ranked_column_prefix <- "dr_era5"  //really used only rank 5, but in lb exist 5
 
+function handleNewMyClanData() {
+  ::g_clans.parseSeenCandidates()
+  contactsByGroups[EPLX_CLAN] <- {}
+  if ("members" in ::my_clan_info) {
+    foreach (_mem, block in ::my_clan_info.members) {
+      if (!(block.uid in contactsPlayers))
+        ::getContact(block.uid, block.nick)
+
+      let contact = contactsPlayers[block.uid]
+      if (!::isPlayerInFriendsGroup(block.uid) || contact.unknown)
+        contact.presence = ::getMyClanMemberPresence(block.nick)
+
+      if (userIdStr.value != block.uid)
+        addContact(contact, EPLX_CLAN)
+
+      ::clanUserTable[block.nick] <- ::my_clan_info.tag
+    }
+  }
+}
+
 ::requestMyClanData <- function requestMyClanData(forceUpdate = false) {
   if (!get_my_clan_data_free)
     return
@@ -739,7 +758,7 @@ registerPersistentData("ClansGlobals", getroottable(),
   addBgTaskCb(taskId, function() {
     let wasCreated = !::my_clan_info
     ::my_clan_info = ::get_clan_info_table()
-    ::handle_new_my_clan_data()
+    handleNewMyClanData()
     get_my_clan_data_free = true
     broadcastEvent("ClanInfoUpdate")
     ::update_gamercards()
@@ -750,26 +769,6 @@ registerPersistentData("ClansGlobals", getroottable(),
 
 ::is_in_clan <- function is_in_clan() {
   return clan_get_my_clan_id() != "-1"
-}
-
-::handle_new_my_clan_data <- function handle_new_my_clan_data() {
-  ::g_clans.parseSeenCandidates()
-  contactsByGroups[EPLX_CLAN] <- {}
-  if ("members" in ::my_clan_info) {
-    foreach (_mem, block in ::my_clan_info.members) {
-      if (!(block.uid in contactsPlayers))
-        ::getContact(block.uid, block.nick)
-
-      let contact = contactsPlayers[block.uid]
-      if (!::isPlayerInFriendsGroup(block.uid) || contact.unknown)
-        contact.presence = ::getMyClanMemberPresence(block.nick)
-
-      if (userIdStr.value != block.uid)
-        addContact(contact, EPLX_CLAN)
-
-      ::clanUserTable[block.nick] <- ::my_clan_info.tag
-    }
-  }
 }
 
 ::is_in_my_clan <- function is_in_my_clan(name = null, uid = null) {
@@ -792,19 +791,19 @@ registerPersistentData("ClansGlobals", getroottable(),
   { id = "date", type = lbDataType.DATE }
 ];
 
-::empty_rating <- {
+let emptyRating = {
   [($"{::ranked_column_prefix}_arc")]   = 0,
   [($"{::ranked_column_prefix}_hist")]  = 0,
   [($"{::ranked_column_prefix}_sim")]   = 0
 }
 
-::empty_activity <- {
+let emptyActivity = {
   cur = 0
   total = 0
 }
 
 
-::clanInfoTemplate <- {
+let clanInfoTemplate = {
   function isRegionChangeAvailable() {
     if (this.regionLastUpdate == 0) // warning disable: -never-declared
       return true
@@ -882,7 +881,7 @@ registerPersistentData("ClansGlobals", getroottable(),
   if (!clanInfo?._id)
     return null
 
-  let clan = clone ::clanInfoTemplate
+  let clan = clone clanInfoTemplate
   clan.id     <- clanInfo._id
   clan.name   <- getTblValue("name",   clanInfo, "")
   clan.tag    <- getTblValue("tag",    clanInfo, "")
@@ -930,13 +929,13 @@ registerPersistentData("ClansGlobals", getroottable(),
 
     //get members ELO
     let ratingTable = getTblValue(memberItem.uid, member_ratings, {})
-    foreach (key, value in ::empty_rating)
+    foreach (key, value in emptyRating)
       memberItem[key] <- round(getTblValue(key, ratingTable, value))
     memberItem.onlineStatus <- contactPresence.UNKNOWN
 
     //get members activity
     let memberActivityInfo = clanActivityInfo.getBlockByName(memberItem.uid) || DataBlock()
-    foreach (key, value in ::empty_activity)
+    foreach (key, value in emptyActivity)
       memberItem[$"{key}Activity"] <- memberActivityInfo.getInt(key, value)
     let history = memberActivityInfo.getBlockByName("history")
     memberItem["activityHistory"] <- u.isDataBlock(history) ? convertBlk(history) : {}
@@ -1013,7 +1012,7 @@ registerPersistentData("ClansGlobals", getroottable(),
 function getSeasonName(blk) {
   local name = ""
   if (blk?.type == "worldWar")
-    name = loc("worldwar/season_name/" + (split_by_chars(blk.titles, "@")?[2] ?? ""))
+    name = loc($"worldwar/season_name/{split_by_chars(blk.titles, "@")?[2] ?? ""}")
   else {
     let year = unixtime_to_utc_timetbl(blk?.seasonStartTimestamp ?? 0).year.tostring()
     let num  = get_roman_numeral(to_integer_safe(blk?.numInYear ?? 0)
@@ -1023,7 +1022,7 @@ function getSeasonName(blk) {
   return name
 }
 
-::ClanSeasonTitle <- class {
+class ClanSeasonTitle {
   clanTag = ""
   clanName = ""
   seasonName = ""
@@ -1055,7 +1054,7 @@ function getSeasonName(blk) {
 }
 
 
-::ClanSeasonPlaceTitle <- class (::ClanSeasonTitle) {
+::ClanSeasonPlaceTitle <- class (ClanSeasonTitle) {
   place = ""
   seasonType = ""
   seasonTag = null
@@ -1152,13 +1151,13 @@ function getSeasonName(blk) {
     let params = {
       place = placeTitleColored
       top = placeTitleColored
-      squadron = colorize("activeTextColor", this.clanTag + nbsp + this.clanName)
+      squadron = colorize("activeTextColor", nbsp.concat(this.clanTag, this.clanName))
       season = colorize("activeTextColor", this.seasonName)
     }
     let winner = this.isWinner() ? "place" : "top"
     let path = this.seasonType == "worldWar" ? "clan/season_award_ww/desc/" : "clan/season_award/desc/"
 
-    return loc(path + winner, this.seasonType == "worldWar"
+    return loc("".concat(path, winner), this.seasonType == "worldWar"
       ? params
       : params.__merge({ battleType = colorize("activeTextColor", this.getBattleTypeTitle()) }))
   }

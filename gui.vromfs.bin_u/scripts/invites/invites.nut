@@ -10,6 +10,7 @@ let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { findInviteClass, invitesClasses } = require("%scripts/invites/invitesClasses.nut")
 let { MAX_POPUPS_ON_SCREEN, addPopup } = require("%scripts/popups/popups.nut")
+let { doWithAllGamercards, updateGcInvites } = require("%scripts/gamercard.nut")
 
 const INVITE_CHAT_LINK_PREFIX = "INV_"
 
@@ -205,17 +206,19 @@ let setNewInvitesAmount = @(val) invitesAmount.val = val
     this.updateNewInvitesAmount()
 }
 
-::g_invites.updateNewInvitesAmount <- function updateNewInvitesAmount() {
+function updateNewInvitesAmount() {
   local amount = 0
-  foreach (invite in this.list)
+  foreach (invite in invitesList)
     if (invite.isNew() && invite.isVisible())
       amount++
   if (amount == getNewInvitesAmount())
     return
 
   setNewInvitesAmount(amount)
-  ::do_with_all_gamercards(::update_gc_invites)
+  doWithAllGamercards(updateGcInvites)
 }
+
+::g_invites.updateNewInvitesAmount <- updateNewInvitesAmount
 
 ::g_invites._timedInvitesUpdate <- function _timedInvitesUpdate(_dt = 0) {
   let now = get_charserver_time_sec()
@@ -311,4 +314,5 @@ return {
   INVITE_CHAT_LINK_PREFIX
   addFriendInvite
   openInviteWnd
+  updateNewInvitesAmount
 }

@@ -9,6 +9,8 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 
 let { getOperationById } = require("%scripts/worldWar/operations/model/wwActionsWhithGlobalStatus.nut")
 let { wwGetOperationId, wwGetPlayerSide } = require("worldwar")
+let { showArmiesIndex } = require("%scripts/worldWar/wwMapDataBridge.nut")
+let WwArmyGroupHandler = require("%scripts/worldWar/inOperation/handler/wwArmyGroupHandler.nut")
 
 gui_handlers.WwCommanders <- class (gui_handlers.BaseGuiHandlerWT) {
   wndType = handlerType.CUSTOM
@@ -54,7 +56,7 @@ gui_handlers.WwCommanders <- class (gui_handlers.BaseGuiHandlerWT) {
         if (!isInArray(country, armyCountry))
           armyCountry.append(country)
 
-        let groupHandler = ::WwArmyGroupHandler(this.scene, group)
+        let groupHandler = WwArmyGroupHandler(this.scene, group)
         this.groupsHandlers.append(groupHandler)
 
         let groupView = group.getView()
@@ -136,6 +138,7 @@ gui_handlers.WwCommanders <- class (gui_handlers.BaseGuiHandlerWT) {
         armyGroupIdx = group.owner.armyGroupIdx
       }))
     ww_update_popuped_armies_name(groupArmyNames)
+    showArmiesIndex(groups.map(@(group) group.owner.armyGroupIdx), true)
   }
 
   function onClickArmy(obj) {
@@ -144,6 +147,7 @@ gui_handlers.WwCommanders <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function onHoverLostArmyItem(_obj) {
     ww_update_popuped_armies_name([])
+    showArmiesIndex([], false)
   }
 
   function onEventWWArmyManagersInfoUpdated(_p) {

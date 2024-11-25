@@ -15,11 +15,12 @@
   "gyroSight": true,
   "haveCCIPForGun": true,
   "haveCCRPForBombs": true,
-  "ilsTornado": true,
-  "isBwOpticSight": true,
   "haveCCRPForGun": true,
   "hasOpticTurret": true,
   "havePointOfInterestDesignator": true,
+  "ilsTornado": true,
+  "rwrIndicator": "ARI-18241",
+  "isBwOpticSight": true,
   "type": "typeFighter",
   "simplifiedJoyAileronMult": 1.0,
   "simplifiedJoyElevatorMult": 1.0,
@@ -2355,7 +2356,7 @@
   },
   "ikPilot": [
     {
-      "model": "pilot_italy_late_char",
+      "model": "usaf_pilot_1977_1991_char",
       "maxHeadHorAngle": 60.0,
       "maxHeadDownAngle": 60.0,
       "maxHeadUpAngle": 10.0,
@@ -2432,7 +2433,7 @@
       ]
     },
     {
-      "model": "pilot_italy_late_char",
+      "model": "usaf_pilot_1977_1991_char",
       "maxHeadHorAngle": 60.0,
       "maxHeadDownAngle": 60.0,
       "maxHeadUpAngle": 10.0,
@@ -2713,6 +2714,10 @@
         -1.0,
         23.0
       ],
+      "aoa_indexer1": [
+        14.0,
+        90.0
+      ],
       "compass": [
         0.0,
         360.0
@@ -2868,9 +2873,7 @@
           ],
           "page": {
             "type": "rwr",
-            "scale": 1.15,
-            "circleCnt": 2,
-            "centralMark": "cross"
+            "scale": 1.15
           }
         },
         {
@@ -2922,7 +2925,7 @@
         800,
         600
       ],
-      "noiseFactor": 0.05
+      "noiseFactor": 0.04
     }
   },
   "gunnerOpticFps": {
@@ -2987,6 +2990,10 @@
       {
         "name": "tornado_ids_assta1_gbu_24",
         "blk": "gameData/FlightModels/weaponPresets/tornado_ids_assta1_gbu_24.blk"
+      },
+      {
+        "name": "tornado_ids_assta1_gbu_54b",
+        "blk": "gameData/FlightModels/weaponPresets/tornado_ids_assta1_gbu_54b.blk"
       },
       {
         "name": "tornado_ids_assta1_4x_1000_default",
@@ -3123,10 +3130,10 @@
             {
               "trigger": "countermeasures",
               "blk": "gameData/Weapons/rocketGuns/countermeasure_chaff_only_large.blk",
-              "emitter": "emtr_inversion_r",
-              "bullets": 340,
+              "emitter": "emtr_inversion_l",
+              "bullets": 600,
               "external": true,
-              "separate": false,
+              "separate": true,
               "bulletsCartridge": 1
             }
           ]
@@ -3243,6 +3250,27 @@
             "Weapon": {
               "trigger": "guided bombs",
               "blk": "gameData/Weapons/BombGuns/us_gbu_16_paveway_2.blk",
+              "emitter": "bomb1_ld",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            },
+            "DependentWeaponPreset": {
+              "slot": 4,
+              "preset": "litening_pod"
+            }
+          },
+          {
+            "iconType": "guided_bomb_middle_jdam",
+            "name": "500lbs_gbu_54b_slot3",
+            "reqModification": "gr_assta_3_0_gbu54b",
+            "ShowNodes": {
+              "node": "pylon_bomb2"
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/BombGuns/us_500lb_gbu_54b.blk",
               "emitter": "bomb1_ld",
               "bullets": 1,
               "external": true,
@@ -3494,6 +3522,30 @@
               "blk": "gameData/Weapons/containers/uk_tsc_1000_mk83_air_x2.blk",
               "emitter": "pylon_tsc_5"
             }
+          },
+          {
+            "iconType": "guided_bomb_middle_jdam",
+            "name": "500lbs_gbu_54b_slot5",
+            "reqModification": "gr_assta_3_0_gbu54b",
+            "ShowNodes": {
+              "node": [
+                "pylon_bomb3",
+                "pylon_bomb3_lap"
+              ]
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "machLimit": 1.01,
+              "external": true,
+              "separate": true,
+              "blk": "gameData/Weapons/BombGuns/us_500lb_gbu_54b.blk",
+              "emitter": "bomb9_ld",
+              "bullets": 1
+            },
+            "DependentWeaponPreset": {
+              "slot": 4,
+              "preset": "litening_pod"
+            }
           }
         ]
       },
@@ -3684,6 +3736,72 @@
                 "preset": "1000lbs_mk83_air_x2"
               }
             ]
+          },
+          {
+            "iconType": "guided_bomb_middle_jdam",
+            "name": "500lbs_gbu_54b_slot6",
+            "reqModification": "gr_assta_3_0_gbu54b",
+            "ShowNodes": {
+              "node": [
+                "pylon_bomb4",
+                "pylon_bomb4_lap"
+              ]
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "machLimit": 1.01,
+              "external": true,
+              "separate": true,
+              "blk": "gameData/Weapons/BombGuns/us_500lb_gbu_54b.blk",
+              "emitter": "bomb11_ld",
+              "bullets": 1
+            },
+            "DependentWeaponPreset": {
+              "slot": 4,
+              "preset": "litening_pod"
+            },
+            "BannedWeaponPreset": [
+              {
+                "slot": 4,
+                "preset": "1000lbs_mk83_x2"
+              },
+              {
+                "slot": 5,
+                "preset": "1000lbs_mk83_x2"
+              },
+              {
+                "slot": 7,
+                "preset": "1000lbs_mk83_x2_slot7"
+              },
+              {
+                "slot": 8,
+                "preset": "1000lbs_mk83_x2"
+              },
+              {
+                "slot": 4,
+                "preset": "1000lbs_mk83_air_x2"
+              },
+              {
+                "slot": 5,
+                "preset": "1000lbs_mk83_air_x2"
+              },
+              {
+                "slot": 7,
+                "preset": "1000lbs_mk83_air_x2_slot7"
+              },
+              {
+                "slot": 8,
+                "preset": "1000lbs_mk83_air_x2"
+              },
+              {
+                "slot": 8,
+                "preset": "1000lb_gbu_16"
+              },
+              {
+                "slot": 8,
+                "preset": "us_2000lb_gbu_24"
+              }
+            ]
           }
         ]
       },
@@ -3798,6 +3916,31 @@
               "separate": true,
               "blk": "gameData/Weapons/containers/uk_tsc_1000_mk83_air_x2.blk",
               "emitter": "pylon_tsc_6"
+            },
+            "BannedWeaponPreset": {
+              "slot": 8,
+              "preset": "us_2000lb_gbu_24"
+            }
+          },
+          {
+            "iconType": "guided_bomb_middle_jdam",
+            "name": "500lbs_gbu_54b_slot7",
+            "reqModification": "gr_assta_3_0_gbu54b",
+            "ShowNodes": {
+              "node": "pylon_bomb5"
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "machLimit": 1.01,
+              "external": true,
+              "separate": true,
+              "blk": "gameData/Weapons/BombGuns/us_500lb_gbu_54b.blk",
+              "emitter": "bomb10_ld",
+              "bullets": 1
+            },
+            "DependentWeaponPreset": {
+              "slot": 4,
+              "preset": "litening_pod"
             },
             "BannedWeaponPreset": {
               "slot": 8,
@@ -3976,6 +4119,30 @@
                 "preset": "1000lbs_mk83_default_slot7"
               }
             ]
+          },
+          {
+            "iconType": "guided_bomb_middle_jdam",
+            "name": "500lbs_gbu_54b_slot8",
+            "reqModification": "gr_assta_3_0_gbu54b",
+            "ShowNodes": {
+              "node": [
+                "pylon_bomb5",
+                "pylon_bomb5_lap"
+              ]
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/BombGuns/us_500lb_gbu_54b.blk",
+              "emitter": "bomb4_ld",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            },
+            "DependentWeaponPreset": {
+              "slot": 4,
+              "preset": "litening_pod"
+            }
           }
         ]
       },
@@ -4078,6 +4245,27 @@
             }
           },
           {
+            "iconType": "guided_bomb_middle_jdam",
+            "name": "500lbs_gbu_54b_slot9",
+            "reqModification": "gr_assta_3_0_gbu54b",
+            "ShowNodes": {
+              "node": "pylon_bomb6"
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/BombGuns/us_500lb_gbu_54b.blk",
+              "emitter": "bomb2_ld",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            },
+            "DependentWeaponPreset": {
+              "slot": 4,
+              "preset": "litening_pod"
+            }
+          },
+          {
             "iconType": "ptb",
             "name": "ptb_2",
             "showInWeaponMenu": true,
@@ -4152,10 +4340,10 @@
             {
               "trigger": "countermeasures",
               "blk": "gameData/Weapons/rocketGuns/countermeasure_chaff_only_large.blk",
-              "emitter": "emtr_inversion_l",
-              "bullets": 340,
+              "emitter": "emtr_inversion_r",
+              "bullets": 600,
               "external": true,
-              "separate": false,
+              "separate": true,
               "bulletsCartridge": 1
             }
           ]
@@ -4487,12 +4675,7 @@
       "reqModification": "bk_27_belt_pack",
       "tier": 3
     },
-    "us_1000lb_mk83": {
-      "modClass": "weapon",
-      "tier": 1
-    },
     "gr_litening_pod": {
-      "prevModification": "us_1000lb_mk83",
       "modClass": "weapon",
       "tier": 2
     },
@@ -4505,6 +4688,15 @@
       "reqModification": "us_gbu_16",
       "tier": 4,
       "modClass": "weapon"
+    },
+    "us_1000lb_mk83": {
+      "modClass": "weapon",
+      "tier": 1
+    },
+    "gr_assta_3_0_gbu54b": {
+      "reqModification": "gr_litening_pod",
+      "modClass": "weapon",
+      "tier": 2
     }
   },
   "parachutes": {
@@ -4633,5 +4825,90 @@
       -0.164461,
       0.0
     ]
+  },
+  "AfterBurner0": {
+    "volumetricAfterBurner": {
+      "name": "jet_blue_red_tornado",
+      "maxHeight": 10.0,
+      "minHeight": 6.0,
+      "heightNoiseStrength": 0.0,
+      "heightNoiseSpeed": 20.0,
+      "maxRadius": 0.3,
+      "minRadius": 0.3,
+      "maxBaseRadius": 0.38,
+      "minBaseRadius": 0.32,
+      "relativeCylinderHeightMax": 0.35,
+      "relativeCylinderHeightMin": 0.35,
+      "outerCylinderAbsorptionMax": 0.5,
+      "outerCylinderAbsorptionMin": 0.7,
+      "outerCylinderHeightFadeMax": 5.0,
+      "outerCylinderHeightFadeMin": 3.0,
+      "tailHeightFadeMax": 2.3,
+      "tailHeightFadeMin": 0.5,
+      "outerCylinderHeightFadeNoiseStrength": 1.0,
+      "outerCylinderHeightFadeNoiseSpeed": 10.0,
+      "minOuterCylinderRadius": 0.36,
+      "maxOuterCylinderRadius": 0.38,
+      "absorption": 1.0,
+      "colorIntensityMax": 9.0,
+      "colorIntensityMin": 1.0,
+      "colorOverHeightMult": 0.5,
+      "colorOverDepthMult": 4.0,
+      "colorOverRadiusMult": 6.0,
+      "colorOverRadiusFadeOverHeight": 2.0,
+      "maxRingOffset": 0.0,
+      "minRingOffset": 9.0,
+      "ringAbsorption": 0.66,
+      "maxRingCount": 16,
+      "minRingCount": 15,
+      "ringIntensityMin": 0.0,
+      "ringIntensityMax": 2.0,
+      "ringIntensityNoiseStrength": 0.0,
+      "ringIntensityNoiseSpeed": 1.0,
+      "ringOffsetNoiseStrength": 1.0,
+      "ringOffsetNoiseSpeed": 10.0,
+      "rampTextureOffset": 3,
+      "radiusNoiseStrength": 0.1,
+      "radiusNoiseSpeed": 20.0,
+      "shakeNoiseStrength": 0.05,
+      "shakeNoiseSpeed": 30.0,
+      "ringAngleFadeMult": 0.7,
+      "colorOverHeightNoiseStrength": 0.02,
+      "colorOverHeightNoiseSpeed": 5.0,
+      "colorOverRadiusNoiseStrength": 0.03,
+      "colorOverRadiusNoiseSpeed": 10.0,
+      "colorOverDepthNoiseStrength": 0.0,
+      "colorOverDepthNoiseSpeed": 2.0,
+      "colorIntensityNoiseStrength": 2.0,
+      "colorIntensityNoiseSpeed": 40.0,
+      "minStartingRingHeight": 0.5,
+      "maxStartingRingHeight": 0.5,
+      "ringIntensity": 2.0,
+      "ringFrequency": 11.3097,
+      "preNominalEasingParams": {
+        "animationTime": 3.0,
+        "ascendingSmoothIntensityParams": 0.6
+      },
+      "postNominalEasingParams": {
+        "animationTime": 1.5,
+        "ascendingSmoothIntensityParams": 1.0
+      },
+      "lightProperties": {
+        "color": [
+          1.0,
+          0.339389,
+          0.22549
+        ],
+        "angle": 1.0,
+        "brightness": 20.0,
+        "radius": 20.0,
+        "attenuation": 0.8,
+        "brightnessNoiseStrength": 3.0,
+        "brightnessNoiseSpeed": 6.0,
+        "ignitionTextureIntensity": 1.0,
+        "ignitionBrightnessNoiseStrength": 0.5,
+        "ignitionBrightnessNoiseSpeed": 16.0
+      }
+    }
   }
 }

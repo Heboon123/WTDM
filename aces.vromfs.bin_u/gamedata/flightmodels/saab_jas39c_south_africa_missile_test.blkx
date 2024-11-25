@@ -13,12 +13,14 @@
   "haveCCIPForBombs": true,
   "haveCCRPForBombs": true,
   "haveCCRPForGun": true,
-  "ilsEP17": true,
   "havePointOfInterestDesignator": true,
   "hasPointOfInterestMemory": true,
+  "ilsEP17": true,
+  "rwrIndicator": "Ar830",
+  "hmdJas39": true,
+  "mfdCamTads": true,
   "isBwOpticSight": true,
   "needTpsNightVision": true,
-  "hmdJas39": true,
   "isMetricHmd": false,
   "isMetricIls": false,
   "hasHelmetDesignator": true,
@@ -1968,7 +1970,7 @@
     }
   },
   "ikPilot": {
-    "model": "pilot_sweden_late_char",
+    "model": "usaf_pilot_1977_1991_char",
     "maxHeadHorAngle": 60.0,
     "maxHeadDownAngle": 60.0,
     "maxHeadUpAngle": 10.0,
@@ -2074,10 +2076,14 @@
       0.0
     ],
     "hmdBlockIlsArea": [
-      0.37,
-      0.37,
-      0.63,
-      0.63
+      0.15,
+      -0.5,
+      0.73,
+      0.85
+    ],
+    "mfdTextureSize": [
+      1024,
+      1024
     ],
     "hmdEnabledByDefault": true,
     "shadowSphereMultiplier": 2.0,
@@ -2257,7 +2263,7 @@
           "page": [
             {
               "type": "thermal",
-              "turretIdx": 0
+              "turretIdx": 1
             },
             {
               "type": "target_tracking",
@@ -2265,8 +2271,8 @@
             },
             {
               "type": "radar",
-              "scale": 0.7,
-              "hideBackground": true
+              "customRadar": "jas39radar",
+              "font": "jas39"
             },
             {
               "type": "rwr",
@@ -2297,8 +2303,8 @@
             },
             {
               "type": "radar",
-              "scale": 0.7,
-              "hideBackground": true
+              "customRadar": "jas39radar",
+              "font": "jas39"
             }
           ]
         },
@@ -2315,8 +2321,8 @@
             },
             {
               "type": "radar",
-              "scale": 0.7,
-              "hideBackground": true
+              "customRadar": "jas39radar",
+              "font": "jas39"
             },
             {
               "type": "rwr",
@@ -2418,8 +2424,44 @@
       ]
     }
   },
+  "nightVision": {
+    "sightThermal": {
+      "resolution": [
+        500,
+        300
+      ],
+      "noiseFactor": 0.05,
+      "index": 1
+    },
+    "sightTPodThermal": {
+      "resolution": [
+        800,
+        600
+      ],
+      "noiseFactor": 0.04,
+      "index": 2
+    },
+    "gunnerIr": {
+      "resolution": [
+        1600,
+        1200
+      ],
+      "lightMult": 9.0,
+      "ghosting": 0.6,
+      "noiseFactor": 0.2
+    },
+    "pilotIr": {
+      "resolution": [
+        1600,
+        1200
+      ],
+      "lightMult": 9.0,
+      "ghosting": 0.6,
+      "noiseFactor": 0.2
+    }
+  },
   "gunnerOpticFps": {
-    "TV": {
+    "TV1": {
       "pos": [
         2.6,
         -0.15,
@@ -2434,7 +2476,26 @@
         30.0
       ],
       "opticType": "tv",
-      "turretNo": 0
+      "turretNo": 1
+    },
+    "TV2": {
+      "pos": [
+        2.6,
+        -0.15,
+        0.0
+      ],
+      "head": "optic1_turret",
+      "crosshairPreset": "test_crosshair",
+      "angularLimits": [
+        -30.0,
+        30.0,
+        -30.0,
+        30.0
+      ],
+      "opticType": "tv",
+      "turretNo": 1,
+      "nvIndex": 1,
+      "name": "AGM65G"
     },
     "Target": {
       "pos": [
@@ -2451,18 +2512,8 @@
         34.0
       ],
       "opticType": "targeting",
-      "turretNo": 0,
-      "nvIndex": 1
-    }
-  },
-  "nightVision": {
-    "sightTPodThermal": {
-      "resolution": [
-        800,
-        600
-      ],
-      "noiseFactor": 0.05,
-      "index": 1
+      "turretNo": 1,
+      "nvIndex": 2
     }
   },
   "sensors": {
@@ -2472,7 +2523,7 @@
         "dmPart": "radar_dm"
       },
       {
-        "blk": "gameData/sensors/swd_ar830.blk"
+        "blk": "gameData/sensors/swd_bow_21.blk"
       },
       {
         "blk": "gameData/sensors/ir_tracker_tgp.blk"
@@ -2679,41 +2730,6 @@
       "reqModification": "akan_85_belt_pack",
       "tier": 3
     },
-    "heli_night_vision_system": {
-      "tier": 4,
-      "modClass": "weapon",
-      "prevModification": "akan_85_new_gun",
-      "effects": {
-        "nightVision": {
-          "gunnerIr": {
-            "resolution": [
-              1920,
-              1080
-            ],
-            "lightMult": 10.0,
-            "ghosting": 0.7,
-            "noiseFactor": 0.15
-          },
-          "pilotIr": {
-            "resolution": [
-              1920,
-              1080
-            ],
-            "lightMult": 10.0,
-            "ghosting": 0.7,
-            "noiseFactor": 0.15
-          },
-          "sightTPodThermal": {
-            "resolution": [
-              800,
-              600
-            ],
-            "noiseFactor": 0.05,
-            "index": 1
-          }
-        }
-      }
-    },
     "us_aim_9l": {
       "tier": 1,
       "modClass": "weapon"
@@ -2728,12 +2744,12 @@
       "tier": 4,
       "modClass": "weapon"
     },
-    "us_500lb_mk82_gbu38_jdam": {
+    "us_mk82_gbu38_gbu39": {
       "modClass": "weapon",
       "tier": 1
     },
     "us_1000lb_mk83_gbu31_jdam": {
-      "reqModification": "us_500lb_mk82_gbu38_jdam",
+      "reqModification": "us_mk82_gbu38_gbu39",
       "modClass": "weapon",
       "tier": 2
     },
@@ -2884,6 +2900,663 @@
       -0.0792358,
       0.0
     ]
+  },
+  "lerxVapors": {
+    "lerxVapor": [
+      {
+        "entryPoint": [
+          1.639,
+          -0.05,
+          1.2
+        ],
+        "exitPoint": [
+          -3.711,
+          0.2,
+          3.0
+        ],
+        "entryTangent": [
+          0.5,
+          0.0,
+          2.0
+        ],
+        "exitTangent": [
+          -1.031,
+          0.1,
+          2.7
+        ],
+        "exitTangentHeight": [
+          0.5,
+          0.0
+        ],
+        "exitTangentWidth": [
+          -1.0,
+          1.0
+        ],
+        "exitPointHeight": [
+          0.0,
+          1.0
+        ],
+        "exitPointWidth": [
+          -1.0,
+          1.0
+        ],
+        "maxRadius": [
+          0.05,
+          0.6
+        ],
+        "minRadius": [
+          0.05,
+          0.1
+        ],
+        "noiseParms": [
+          0.0,
+          0.8
+        ],
+        "smoothIntensityParams": [
+          1.177,
+          1.556,
+          0.301
+        ],
+        "density": 1.0,
+        "intensityMult": 7.0,
+        "criticalAOA": [
+          3.0,
+          22.0,
+          28.0,
+          35.0
+        ],
+        "absoluteCriticalAOS": [
+          2.0,
+          25.0
+        ],
+        "absoluteCriticalAOA": [
+          5.0,
+          40.0
+        ]
+      },
+      {
+        "entryPoint": [
+          1.639,
+          -0.05,
+          -1.2
+        ],
+        "exitPoint": [
+          -3.711,
+          0.2,
+          -3.0
+        ],
+        "entryTangent": [
+          0.5,
+          0.0,
+          -2.0
+        ],
+        "exitTangent": [
+          -1.031,
+          0.1,
+          -2.7
+        ],
+        "exitTangentHeight": [
+          0.5,
+          0.0
+        ],
+        "exitTangentWidth": [
+          1.0,
+          -1.0
+        ],
+        "exitPointHeight": [
+          0.0,
+          1.0
+        ],
+        "exitPointWidth": [
+          1.0,
+          -1.0
+        ],
+        "maxRadius": [
+          0.05,
+          0.6
+        ],
+        "minRadius": [
+          0.05,
+          0.1
+        ],
+        "noiseParms": [
+          0.0,
+          0.8
+        ],
+        "smoothIntensityParams": [
+          1.177,
+          1.556,
+          0.301
+        ],
+        "density": 1.0,
+        "intensityMult": 7.0,
+        "criticalAOA": [
+          3.0,
+          22.0,
+          28.0,
+          35.0
+        ],
+        "absoluteCriticalAOS": [
+          2.0,
+          25.0
+        ],
+        "absoluteCriticalAOA": [
+          5.0,
+          40.0
+        ]
+      },
+      {
+        "entryPoint": [
+          3.907,
+          0.206,
+          1.0
+        ],
+        "exitPoint": [
+          -0.0,
+          0.0,
+          2.443
+        ],
+        "entryTangent": [
+          1.639,
+          0.6,
+          2.443
+        ],
+        "exitTangent": [
+          0.825,
+          0.206,
+          1.825
+        ],
+        "exitTangentHeight": [
+          0.0,
+          0.0
+        ],
+        "exitTangentWidth": [
+          0.0,
+          0.0
+        ],
+        "exitPointHeight": [
+          0.0,
+          0.0
+        ],
+        "exitPointWidth": [
+          0.0,
+          0.0
+        ],
+        "maxRadius": [
+          0.05,
+          0.4
+        ],
+        "minRadius": [
+          0.05,
+          0.2
+        ],
+        "noiseParms": [
+          0.02,
+          0.5
+        ],
+        "smoothIntensityParams": [
+          0.505,
+          2.717,
+          0.214
+        ],
+        "density": 1.0,
+        "intensityMult": 5.0,
+        "criticalAOA": [
+          15.0,
+          25.0,
+          32.0,
+          40.0
+        ],
+        "absoluteCriticalAOS": [
+          5.0,
+          8.0
+        ],
+        "absoluteCriticalAOA": [
+          5.0,
+          8.0
+        ]
+      },
+      {
+        "entryPoint": [
+          3.907,
+          0.206,
+          -1.0
+        ],
+        "exitPoint": [
+          -0.0,
+          0.0,
+          -2.443
+        ],
+        "entryTangent": [
+          1.639,
+          0.6,
+          -2.443
+        ],
+        "exitTangent": [
+          0.825,
+          0.206,
+          -1.825
+        ],
+        "exitTangentHeight": [
+          0.0,
+          0.0
+        ],
+        "exitTangentWidth": [
+          -0.0,
+          -0.0
+        ],
+        "exitPointHeight": [
+          0.0,
+          0.0
+        ],
+        "exitPointWidth": [
+          -0.0,
+          -0.0
+        ],
+        "maxRadius": [
+          0.05,
+          0.4
+        ],
+        "minRadius": [
+          0.05,
+          0.2
+        ],
+        "noiseParms": [
+          0.02,
+          0.5
+        ],
+        "smoothIntensityParams": [
+          0.505,
+          2.717,
+          0.214
+        ],
+        "density": 1.0,
+        "intensityMult": 5.0,
+        "criticalAOA": [
+          15.0,
+          25.0,
+          32.0,
+          40.0
+        ],
+        "absoluteCriticalAOS": [
+          5.0,
+          8.0
+        ],
+        "absoluteCriticalAOA": [
+          5.0,
+          8.0
+        ]
+      },
+      {
+        "entryPoint": [
+          1.639,
+          -0.35,
+          1.2
+        ],
+        "exitPoint": [
+          -1.5,
+          -0.5,
+          1.8
+        ],
+        "entryTangent": [
+          0.8,
+          -0.4,
+          1.5
+        ],
+        "exitTangent": [
+          -0.5,
+          -0.45,
+          1.8
+        ],
+        "exitTangentHeight": [
+          0.0,
+          0.0
+        ],
+        "exitTangentWidth": [
+          0.0,
+          0.0
+        ],
+        "exitPointHeight": [
+          0.0,
+          0.0
+        ],
+        "exitPointWidth": [
+          0.0,
+          0.0
+        ],
+        "maxRadius": [
+          0.05,
+          0.3
+        ],
+        "minRadius": [
+          0.05,
+          0.2
+        ],
+        "noiseParms": [
+          0.0,
+          0.6
+        ],
+        "smoothIntensityParams": [
+          1.0,
+          1.0,
+          0.5
+        ],
+        "density": 1.0,
+        "intensityMult": 5.0,
+        "criticalAOA": [
+          -3.0,
+          -10.0,
+          -20.0,
+          -30.0
+        ],
+        "absoluteCriticalAOS": [
+          5.0,
+          8.0
+        ],
+        "absoluteCriticalAOA": [
+          5.0,
+          8.0
+        ]
+      },
+      {
+        "entryPoint": [
+          1.639,
+          -0.35,
+          -1.2
+        ],
+        "exitPoint": [
+          -1.5,
+          -0.5,
+          -1.8
+        ],
+        "entryTangent": [
+          0.8,
+          -0.4,
+          -1.5
+        ],
+        "exitTangent": [
+          -0.5,
+          -0.45,
+          -1.8
+        ],
+        "exitTangentHeight": [
+          0.0,
+          0.0
+        ],
+        "exitTangentWidth": [
+          -0.0,
+          -0.0
+        ],
+        "exitPointHeight": [
+          0.0,
+          0.0
+        ],
+        "exitPointWidth": [
+          -0.0,
+          -0.0
+        ],
+        "maxRadius": [
+          0.05,
+          0.3
+        ],
+        "minRadius": [
+          0.05,
+          0.2
+        ],
+        "noiseParms": [
+          0.0,
+          0.6
+        ],
+        "smoothIntensityParams": [
+          1.0,
+          1.0,
+          0.5
+        ],
+        "density": 1.0,
+        "intensityMult": 5.0,
+        "criticalAOA": [
+          -3.0,
+          -10.0,
+          -20.0,
+          -30.0
+        ],
+        "absoluteCriticalAOS": [
+          5.0,
+          8.0
+        ],
+        "absoluteCriticalAOA": [
+          5.0,
+          8.0
+        ]
+      },
+      {
+        "entryPoint": [
+          0.619,
+          0.1,
+          1.5
+        ],
+        "exitPoint": [
+          -3.917,
+          0.6,
+          4.031
+        ],
+        "entryTangent": [
+          -0.619,
+          0.2,
+          2.5
+        ],
+        "exitTangent": [
+          -1.443,
+          0.4,
+          2.5
+        ],
+        "exitTangentHeight": [
+          0.0,
+          0.0
+        ],
+        "exitTangentWidth": [
+          0.0,
+          0.0
+        ],
+        "exitPointHeight": [
+          0.0,
+          0.0
+        ],
+        "exitPointWidth": [
+          0.0,
+          0.0
+        ],
+        "maxRadius": [
+          0.3,
+          1.2
+        ],
+        "minRadius": [
+          0.3,
+          0.8
+        ],
+        "noiseParms": [
+          0.4,
+          0.8
+        ],
+        "smoothIntensityParams": [
+          0.904,
+          1.768,
+          0.286
+        ],
+        "density": 1.0,
+        "intensityMult": 0.5,
+        "criticalAOA": [
+          10.0,
+          35.0,
+          90.0,
+          120.0
+        ],
+        "absoluteCriticalAOS": [
+          5.0,
+          8.0
+        ],
+        "absoluteCriticalAOA": [
+          5.0,
+          8.0
+        ]
+      },
+      {
+        "entryPoint": [
+          0.619,
+          0.1,
+          -1.5
+        ],
+        "exitPoint": [
+          -3.917,
+          0.6,
+          -4.031
+        ],
+        "entryTangent": [
+          -0.619,
+          0.2,
+          -2.5
+        ],
+        "exitTangent": [
+          -1.443,
+          0.4,
+          -2.5
+        ],
+        "exitTangentHeight": [
+          0.0,
+          0.0
+        ],
+        "exitTangentWidth": [
+          -0.0,
+          -0.0
+        ],
+        "exitPointHeight": [
+          0.0,
+          0.0
+        ],
+        "exitPointWidth": [
+          -0.0,
+          -0.0
+        ],
+        "maxRadius": [
+          0.3,
+          1.2
+        ],
+        "minRadius": [
+          0.3,
+          0.8
+        ],
+        "noiseParms": [
+          0.4,
+          0.8
+        ],
+        "smoothIntensityParams": [
+          0.904,
+          1.768,
+          0.286
+        ],
+        "density": 1.0,
+        "intensityMult": 0.5,
+        "criticalAOA": [
+          10.0,
+          35.0,
+          90.0,
+          120.0
+        ],
+        "absoluteCriticalAOS": [
+          5.0,
+          8.0
+        ],
+        "absoluteCriticalAOA": [
+          5.0,
+          8.0
+        ]
+      }
+    ]
+  },
+  "AfterBurner0": {
+    "volumetricAfterBurner": {
+      "maxHeight": 11.0,
+      "minHeight": 8.0,
+      "heightNoiseStrength": 0.0,
+      "heightNoiseSpeed": 20.0,
+      "maxBaseRadius": 0.4,
+      "minBaseRadius": 0.35,
+      "relativeCylinderHeightMax": 0.36,
+      "relativeCylinderHeightMin": 0.36,
+      "outerCylinderAbsorptionMax": 0.5,
+      "outerCylinderAbsorptionMin": 0.7,
+      "outerCylinderHeightFadeMax": 7.5,
+      "outerCylinderHeightFadeMin": 5.0,
+      "tailHeightFadeMax": 2.0,
+      "tailHeightFadeMin": 0.2,
+      "outerCylinderHeightFadeNoiseStrength": 2.0,
+      "outerCylinderHeightFadeNoiseSpeed": 10.0,
+      "absorption": 1.0,
+      "colorIntensityMax": 10.0,
+      "colorIntensityMin": 2.0,
+      "colorOverHeightMult": 0.5,
+      "colorOverDepthMult": 3.0,
+      "colorOverRadiusMult": 6.0,
+      "colorOverRadiusFadeOverHeight": 2.0,
+      "maxRingOffset": 0.0,
+      "minRingOffset": 20.0,
+      "ringAbsorption": 1.2,
+      "maxRingCount": 17,
+      "minRingCount": 14,
+      "ringIntensityMin": 0.0,
+      "ringIntensityMax": 1.0,
+      "ringIntensityNoiseStrength": 0.0,
+      "ringIntensityNoiseSpeed": 1.0,
+      "ringOffsetNoiseStrength": 1.0,
+      "ringOffsetNoiseSpeed": 20.0,
+      "rampTextureOffset": 0,
+      "radiusNoiseStrength": 0.06,
+      "radiusNoiseSpeed": 20.0,
+      "shakeNoiseStrength": 0.01,
+      "shakeNoiseSpeed": 30.0,
+      "ringAngleFadeMult": 0.7,
+      "colorOverHeightNoiseStrength": 0.1,
+      "colorOverHeightNoiseSpeed": 10.0,
+      "colorOverRadiusNoiseStrength": 0.15,
+      "colorOverRadiusNoiseSpeed": 10.0,
+      "colorOverDepthNoiseStrength": 0.03,
+      "colorOverDepthNoiseSpeed": 10.0,
+      "colorIntensityNoiseStrength": 2.0,
+      "colorIntensityNoiseSpeed": 30.0,
+      "minStartingRingHeight": 1.7,
+      "maxStartingRingHeight": 1.7,
+      "ringIntensity": 2.0,
+      "ringFrequency": 11.3097,
+      "name": "jet_blue_modern_jas39",
+      "maxOuterCylinderRadius": 0.42,
+      "minOuterCylinderRadius": 0.38,
+      "maxRadius": 0.3,
+      "minRadius": 0.3,
+      "preNominalEasingParams": {
+        "animationTime": 2.0,
+        "ascendingSmoothIntensityParams": 0.5
+      },
+      "postNominalEasingParams": {
+        "animationTime": 1.5,
+        "ascendingSmoothIntensityParams": 1.0
+      },
+      "lightProperties": {
+        "color": [
+          1.0,
+          0.889273,
+          0.686275
+        ],
+        "angle": 1.0,
+        "brightness": 20.0,
+        "radius": 20.0,
+        "attenuation": 0.8,
+        "brightnessNoiseStrength": 3.0,
+        "brightnessNoiseSpeed": 6.0,
+        "ignitionTextureIntensity": 1.0,
+        "ignitionBrightnessNoiseStrength": 0.5,
+        "ignitionBrightnessNoiseSpeed": 16.0
+      }
+    }
   },
   "weapon_presets": {
     "preset": {

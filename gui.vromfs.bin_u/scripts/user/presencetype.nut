@@ -1,5 +1,9 @@
+from "%scripts/dagui_natives.nut" import get_game_mode_name
 from "%scripts/dagui_library.nut" import *
+
+let { format } = require("string")
 let { getGlobalModule } = require("%scripts/global_modules.nut")
+let events = getGlobalModule("events")
 let g_squad_manager = getGlobalModule("g_squad_manager")
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let QUEUE_TYPE_BIT = require("%scripts/queue/queueTypeBit.nut")
@@ -9,6 +13,7 @@ let { isInFlight } = require("gameplayBinding")
 let { isInSessionRoom } = require("%scripts/matchingRooms/sessionLobbyState.nut")
 let { getEventEconomicName } = require("%scripts/events/eventInfo.nut")
 let { getCurMissionRules } = require("%scripts/misCustomRules/missionCustomState.nut")
+let { isWorldWarEnabled } = require("%scripts/globalWorldWarScripts.nut")
 
 enum presenceCheckOrder {
   IN_GAME_WW
@@ -17,6 +22,8 @@ enum presenceCheckOrder {
   IN_WW_BATTLE_PREPARE
   IDLE
 }
+
+let getGameModeLocName = @(gm) loc(format("multiplayer/%sMode", get_game_mode_name(gm)))
 
 ::g_presence_type <- {
   types = []
@@ -56,7 +63,7 @@ enums.addTypesByGlobalName("g_presence_type", {
       params.country <- ::queues.getQueueCountry(queue)
     }
     getLocText = @(presenceParams) loc(this.locId, {
-      gameMode = ::events.getNameByEconomicName(presenceParams?.eventName ?? "")
+      gameMode = events.getNameByEconomicName(presenceParams?.eventName ?? "")
       country = loc(presenceParams?.country ?? "")
     })
   }
@@ -76,8 +83,8 @@ enums.addTypesByGlobalName("g_presence_type", {
     getLocText = function (presenceParams) {
       let eventName = presenceParams?.eventName ?? ""
       return loc(this.locId,
-        { gameMode = eventName == "" ? ::get_game_mode_loc_name(presenceParams?.gameMod)
-          : ::events.getNameByEconomicName(presenceParams?.eventName)
+        { gameMode = eventName == "" ? getGameModeLocName(presenceParams?.gameMod)
+          : events.getNameByEconomicName(presenceParams?.eventName)
           country = loc(presenceParams?.country ?? "")
         })
     }
@@ -87,7 +94,7 @@ enums.addTypesByGlobalName("g_presence_type", {
     checkOrder = presenceCheckOrder.IN_QUEUE
     locId = "status/in_queue_ww"
     queueTypeMask = QUEUE_TYPE_BIT.WW_BATTLE
-    isMatch = @() ::is_worldwar_enabled() && ::queues.isAnyQueuesActive(this.queueTypeMask)
+    isMatch = @() isWorldWarEnabled() && ::queues.isAnyQueuesActive(this.queueTypeMask)
     updateParams = function(params) {
       let queue = ::queues.getActiveQueueWithType(this.queueTypeMask)
       let operationId = ::queues.getQueueOperationId(queue)
@@ -115,7 +122,7 @@ enums.addTypesByGlobalName("g_presence_type", {
     checkOrder = presenceCheckOrder.IN_GAME_WW
     locId = "status/in_game_ww"
     isInBattle = true
-    isMatch = @() ::is_worldwar_enabled() && isInFlight() && getCurMissionRules().isWorldWar
+    isMatch = @() isWorldWarEnabled() && isInFlight() && getCurMissionRules().isWorldWar
     canInviteToWWBattle = false
     updateParams = function(params) {
       let operationId = ::SessionLobby.getOperationId()
@@ -141,7 +148,7 @@ enums.addTypesByGlobalName("g_presence_type", {
   IN_WW_BATTLE_PREPARE = {
     checkOrder = presenceCheckOrder.IN_WW_BATTLE_PREPARE
     locId = "status/in_prepare_ww"
-    isMatch = @() ::is_worldwar_enabled() && g_squad_manager.getWwOperationBattle() != null
+    isMatch = @() isWorldWarEnabled() && g_squad_manager.getWwOperationBattle() != null
     updateParams = function(params) {
       params.operationId <- g_squad_manager.getWwOperationId()
       params.battleId <- g_squad_manager.getWwOperationBattle()

@@ -1,10 +1,9 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import get_cur_circuit_name, char_send_custom_action
 from "%scripts/dagui_library.nut" import *
 from "%scripts/mainConsts.nut" import LOST_DELAYED_ACTION_MSEC
 
 let g_listener_priority = require("%scripts/g_listener_priority.nut")
-let { Cost } = require("%scripts/money.nut")
+let { zero_money, Cost } = require("%scripts/money.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let inventory = require("inventory")
 let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -99,7 +98,6 @@ let validateResponseData = {
     },
     [ validationCheckBitMask.REQUIRED ] = {
       accountid = ""
-      position = 0
       quantity = 0
       state = "none"
       timestamp = ""
@@ -115,15 +113,12 @@ let validateResponseData = {
       type = ""
       Timestamp = ""
       marketable = false
-      tradable = false
       exchange = ""
       background_color = ""
       name_color = ""
-      promo = ""
       item_quality = 0
       meta = ""
       tags = ""
-      item_slot = ""
     },
     [ validationCheckBitMask.REQUIRED_AND_VALUE ] = {
       icon_url = ""
@@ -203,9 +198,9 @@ function _validate(data, name) {
         if (checks & validationCheckBitMask.INVALIDATE)
           foreach (key, _val in keys)
             if (key in item)
-              itemDebug.append($"{key}=" + item[key])
+              itemDebug.append($"{key}={item[key]}")
       itemDebug.append(isItemValid ? ($"err={itemErrors}") : "INVALID")
-      itemDebug.append(u.isTable(item) ? ("len=" + item.len()) : ("var=" + type(item)))
+      itemDebug.append(u.isTable(item) ? $"len={item.len()}" : $"var={type(item)}")
 
       itemsBroken.append(",".join(itemDebug, true))
     }
@@ -217,7 +212,7 @@ function _validate(data, name) {
   if (itemsBroken.len() || keysMissing.len() || keysWrongType.len()) {
     itemsBroken = ";".join(itemsBroken, true) // warning disable: -assigned-never-used
     keysMissing = ";".join(keysMissing.keys(), true) // warning disable: -assigned-never-used
-    keysWrongType = ";".join(keysWrongType.topairs().map(@(i) i[0] + "=" + i[1])) // warning disable: -assigned-never-used
+    keysWrongType = ";".join(keysWrongType.topairs().map(@(i) $"{i[0]}={i[1]}")) // warning disable: -assigned-never-used
     script_net_assert_once("inventory client bad response", $"InventoryClient: Response has errors: {name}")
   }
 
@@ -297,8 +292,8 @@ let class InventoryClient {
     if (!url)
       return null
 
-    return $"auto_login auto_local sso_service=any {url}" + "?a=" + APP_ID +
-      (steam_is_running() ? $"&app_id={steam_get_app_id()}&steam_id={steam_get_my_id()}" : "")
+    return "".concat($"auto_login auto_local sso_service=any {url}", "?a=", APP_ID,
+      (steam_is_running() ? $"&app_id={steam_get_app_id()}&steam_id={steam_get_my_id()}" : ""))
   }
 
   function getMarketplaceItemUrl(itemdefid, _itemid = null) {
@@ -504,7 +499,7 @@ let class InventoryClient {
 
   getItems             = @() this.items
   getItemdefs          = @() this.itemdefs
-  getItemCost          = @(itemdefid) prices.value?[itemdefid] ?? ::zero_money
+  getItemCost          = @(itemdefid) prices.value?[itemdefid] ?? zero_money
 
   function addItemDefIdToRequest(itemdefid) {
     if (itemdefid == null || itemdefid in this.itemdefs || itemdefid in this.itemsForRequest)

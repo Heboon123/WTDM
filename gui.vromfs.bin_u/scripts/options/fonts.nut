@@ -16,6 +16,7 @@ let { isPlatformSony, isPlatformXboxOne, isPlatformSteamDeck, isPlatformShieldTv
 let { isSmallScreen } = require("%scripts/clientState/touchScreen.nut")
 let { setScrnTgt } = require("%scripts/utils/screenUtils.nut")
 let { getSystemConfigOption, setSystemConfigOption } = require("%globalScripts/systemConfig.nut")
+let { eventbus_subscribe } = require("eventbus")
 
 const FONTS_SAVE_PATH = "fonts_css"
 const FONTS_SAVE_PATH_CONFIG = "video/fonts"
@@ -113,8 +114,10 @@ function update_font_heights(font) {
   }
 
   //text visible in options
-  getOptionText = @() loc("fontSize/" + this.id.tolower())
-    + loc("ui/parentheses/space", { text = "{0}%".subst(round(100 * this.sizeMultiplier).tointeger()) })
+  getOptionText = @() "".concat(
+    loc($"fontSize/{this.id.tolower()}"),
+    loc("ui/parentheses/space", { text = "{0}%".subst(round(100 * this.sizeMultiplier).tointeger()) }))
+
   getFontExample = @() "small_text; font-pixht: {0}".subst(round(getFontInitialHt("small_text") * this.sizeMultiplier).tointeger())
 }
 
@@ -286,8 +289,10 @@ function saveFontToConfig(font) {
     saveFontToConfig(this.getCurrent())
 }
 
-::reset_applied_fonts_scale <- function reset_applied_fonts_scale() {
+function resetAppliedFontsScale(_) {
   log("[fonts] Resetting appliedFontsSh, sizes of font will be set again")
   appliedFontsSh = 0;
   update_font_heights(::g_font.getCurrent());
 }
+
+eventbus_subscribe("reset_applied_fonts_scale", resetAppliedFontsScale)

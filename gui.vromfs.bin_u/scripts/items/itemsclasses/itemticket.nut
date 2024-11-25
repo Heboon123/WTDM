@@ -1,8 +1,9 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import get_tournament_info_blk, get_tournaments_blk
 from "%scripts/dagui_library.nut" import *
 from "%scripts/items/itemsConsts.nut" import itemType
 
+let { getGlobalModule } = require("%scripts/global_modules.nut")
+let events = getGlobalModule("events")
 let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { getBlkValueByPath } = require("%sqstd/datablock.nut")
@@ -54,9 +55,9 @@ let Ticket = class (BaseItem) {
       log("Item Ticket: empty tournamentTicketParams",$"Items: missing any tournamentName in ticket tournamentTicketParams, {this.id}")
     else {
       let tournamentBlk = get_tournaments_blk()
-      this.clanTournament = this.clanTournament || getBlkValueByPath(tournamentBlk, this.eventEconomicNamesArray[0] + "/clanTournament", false)
+      this.clanTournament = this.clanTournament || getBlkValueByPath(tournamentBlk, $"{this.eventEconomicNamesArray[0]}/clanTournament", false)
       //handling closed sales
-      this.canBuy = this.canBuy && !getBlkValueByPath(tournamentBlk, this.eventEconomicNamesArray[0] + "/saleClosed", false)
+      this.canBuy = this.canBuy && !getBlkValueByPath(tournamentBlk, $"{this.eventEconomicNamesArray[0]}/saleClosed", false)
 
       if (this.isInventoryItem && !this.isActiveTicket) {
         let tBlk = DataBlock()
@@ -95,7 +96,7 @@ let Ticket = class (BaseItem) {
   function getLayersData(small = true, addItemName = true) {
     local iconTable = null
     foreach (eventId in this.eventEconomicNamesArray) {
-      let event = ::events.getEventByEconomicName(eventId)
+      let event = events.getEventByEconomicName(eventId)
       let eventIconTable = this.getIconTableForEvent(event, eventId)
       if (!iconTable)
         iconTable = eventIconTable
@@ -110,7 +111,7 @@ let Ticket = class (BaseItem) {
     if (!iconTable)
       iconTable = this.getIconTableForEvent(null)
 
-    let unitTypeLayer = getTblValue("unitType", this.customLayers) ? "_" + this.customLayers.unitType : iconTable.unitType
+    let unitTypeLayer = getTblValue("unitType", this.customLayers) ? $"_{this.customLayers.unitType}" : iconTable.unitType
     let insertLayersArrayCfg = []
     insertLayersArrayCfg.append(this._getUnitTypeLayer(unitTypeLayer, small))
     insertLayersArrayCfg.append(this._getDifficultyLayer(getTblValue("diffCode", this.customLayers) || iconTable.diffCode, small))
@@ -122,7 +123,7 @@ let Ticket = class (BaseItem) {
   }
 
   function getBasePartOfLayerId(small) {
-    return this.iconStyle + (small ? "_shop" : "")
+    return $"{this.iconStyle}{small ? "_shop" : ""}"
   }
 
   function _getBackground(small) {
@@ -133,28 +134,28 @@ let Ticket = class (BaseItem) {
     if (!event)
       return null
 
-    let unitTypeMask = ::events.getEventUnitTypesMask(event)
+    let unitTypeMask = events.getEventUnitTypesMask(event)
 
     local unitsString = ""
     foreach (unitType in unitTypes.types)
       if (unitType.bit & unitTypeMask)
-        unitsString +=$"_{unitType.name}"
+        unitsString = $"{unitsString}_{unitType.name}"
 
     return unitsString
   }
 
   function _getUnitTypeLayer(unitsString, small) {
-    return LayersIcon.findLayerCfg(this.getBasePartOfLayerId(small) + unitsString)
+    return LayersIcon.findLayerCfg($"{this.getBasePartOfLayerId(small)}{unitsString}")
   }
 
   function _getDiffCode(event) {
-    return event ? ::events.getEventDiffCode(event) : null
+    return event ? events.getEventDiffCode(event) : null
   }
 
   function _getDifficultyLayer(diffCode, small) {
     if (diffCode == null)
       return null
-    return LayersIcon.findLayerCfg(this.getBasePartOfLayerId(small) + "_diff" + diffCode)
+    return LayersIcon.findLayerCfg($"{this.getBasePartOfLayerId(small)}_diff{diffCode}")
   }
 
   function _getTournamentMode(event) {
@@ -163,7 +164,7 @@ let Ticket = class (BaseItem) {
 
     if (getTblValue("clans_only", event, false))
       return "clan"
-    if (::events.getMaxTeamSize(event) == 1)
+    if (events.getMaxTeamSize(event) == 1)
       return "pvp"
     if (getTblValue("squads_only", event, false))
       return "squad"
@@ -172,7 +173,7 @@ let Ticket = class (BaseItem) {
   }
 
   function _getTournamentModeLayer(mode, small) {
-    return LayersIcon.findLayerCfg(this.getBasePartOfLayerId(small) + "_gm_" + mode)
+    return LayersIcon.findLayerCfg($"{this.getBasePartOfLayerId(small)}_gm_{mode}")
   }
 
   function _getTournamentType(event) {
@@ -186,13 +187,13 @@ let Ticket = class (BaseItem) {
   }
 
   function _getTournamentTypeLayer(lType, small) {
-    return LayersIcon.findLayerCfg(this.getBasePartOfLayerId(small) + "_gt_" + lType)
+    return LayersIcon.findLayerCfg($"{this.getBasePartOfLayerId(small)}_gt_{lType}")
   }
 
   function _getNameForLayer(_event, eventEconomicName = "") {
     local text = this.locId ? loc($"{this.locId}/short", loc(this.locId, "")) : ""
     if (text == "")
-      text = ::events.getNameByEconomicName(eventEconomicName)
+      text = events.getNameByEconomicName(eventEconomicName)
     if (text == "")
       text = loc($"item/{this.id}", loc($"item/{this.defaultLocId}", ""))
     return text
@@ -216,7 +217,7 @@ let Ticket = class (BaseItem) {
       if (this.eventEconomicNamesArray.len() > 1)
         name = loc($"item/{this.defaultLocId}/multipleEvents")
       else {
-        local eventName = ::events.getNameByEconomicName(this.eventEconomicNamesArray[0])
+        local eventName = events.getNameByEconomicName(this.eventEconomicNamesArray[0])
         eventName = colored ? colorize("userlogColoredText", eventName) : eventName
         name = loc($"item/{this.defaultLocId}", { name = eventName })
       }
@@ -322,18 +323,18 @@ let Ticket = class (BaseItem) {
 
   function getTournamentRewardsText(eventId) {
     local text = ""
-    let event = ::events.getEventByEconomicName(eventId)
+    let event = events.getEventByEconomicName(eventId)
     if (event) {
       let baseReward = getBaseVictoryReward(event)
       if (baseReward)
-        text += (text.len() ? "\n" : "") + loc("tournaments/reward/everyVictory",  { reward = baseReward })
+        text = "".concat(text, text.len() ? "\n" : "", loc("tournaments/reward/everyVictory",  { reward = baseReward }))
 
       if (haveRewards(event)) {
-        text += (text.len() ? "\n\n" : "") + loc("tournaments/specialRewards") + loc("ui/colon")
+        text = "".concat(text, (text.len() ? "\n\n" : ""), loc("tournaments/specialRewards"), loc("ui/colon"))
         let specialRewards = getSortedRewardsByConditions(event)
         foreach (_conditionId, rewardsList in specialRewards)
           foreach (reward in rewardsList)
-            text += "\n" + getConditionText(reward) + " - " + getRewardDescText(reward)
+            text = "".concat(text, "\n", getConditionText(reward), " - ", getRewardDescText(reward))
       }
     }
     return text
@@ -346,7 +347,7 @@ let Ticket = class (BaseItem) {
         desc.append("\n")
 
       if (this.eventEconomicNamesArray.len() > 1)
-        desc.append(colorize("activeTextColor", ::events.getNameByEconomicName(eventId)))
+        desc.append(colorize("activeTextColor", events.getNameByEconomicName(eventId)))
       desc.append(this.getAvailableDefeatsText(eventId))
     }
 
@@ -361,7 +362,7 @@ let Ticket = class (BaseItem) {
         desc.append("\n")
 
       if (this.eventEconomicNamesArray.len() > 1)
-        desc.append(colorize("activeTextColor", ::events.getNameByEconomicName(eventId)))
+        desc.append(colorize("activeTextColor", events.getNameByEconomicName(eventId)))
       desc.append(this.getAvailableDefeatsText(eventId))
       desc.append(this.getTournamentRewardsText(eventId))
     }

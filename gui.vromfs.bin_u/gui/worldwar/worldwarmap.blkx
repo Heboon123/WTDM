@@ -1,13 +1,12 @@
 {
   "root": {
     "flow": "vertical",
-    "background-color": "@black",
     "tdiv": {
       "pos": "50%pw-50%w, 0",
       "position": "relative",
       "size": "1@wwMapActiveWidth, ph",
       "padding": "1@framePadding, 1@topBarHeight, 1@framePadding, 1@bottomBarHeight",
-      "frameBlock_dark": {
+      "tdiv": {
         "pos": "0, 0",
         "position": "relative",
         "size": "fw, ph",
@@ -43,18 +42,24 @@
             }
           ]
         },
-        "tdiv": {
-          "id": "control_block_visibility_switch",
-          "pos": "pw-w-1@blockInterval, 1@blockInterval",
-          "position": "absolute",
-          "background-color": "@frameDarkBackgroundColor",
-          "collapsed": "no",
-          "baseToggleButton": {
-            "on_click": "onChangeInfoBlockVisibility",
-            "type": "right",
-            "directionImg": {}
+        "tdiv": [
+          {
+            "behaviour": "darg",
+            "size": "pw, ph"
+          },
+          {
+            "id": "control_block_visibility_switch",
+            "pos": "pw-w-1@blockInterval, 1@blockInterval",
+            "position": "absolute",
+            "background-color": "@frameDarkBackgroundColor",
+            "collapsed": "no",
+            "baseToggleButton": {
+              "on_click": "onChangeInfoBlockVisibility",
+              "type": "right",
+              "directionImg": {}
+            }
           }
-        }
+        ]
       },
       "MapRightPanel": {
         "id": "ww-right-panel",
@@ -708,14 +713,6 @@
                     }
                   }
                 ]
-              },
-              {
-                "id": "chatPopupNest",
-                "size": "0.4@sf+10, 0.075*@sf+10",
-                "position": "absolute",
-                "pos": "1@bw + 0.5@rw-w-0.55@titleLogoPlateWidth, @topBarHeight",
-                "flow": "vertical",
-                "skip-cursor": "skip"
               }
             ],
             "infoBlock": {
@@ -742,6 +739,12 @@
                 "on_tooltip_close": "onTooltipObjClose",
                 "display": "hide"
               }
+            },
+            "chatPopupNest": {
+              "id": "chatPopupNest",
+              "position": "absolute",
+              "pos": "1@bw + 0.5@rw-w-0.55@titleLogoPlateWidth, @topBarHeight",
+              "skip-cursor": "skip"
             }
           }
         },

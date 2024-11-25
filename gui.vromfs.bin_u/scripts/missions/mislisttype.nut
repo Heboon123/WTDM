@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import toggle_fav_mission, is_mission_favorite, has_entitlement, get_last_played, get_mission_progress, scan_user_missions
 from "%scripts/dagui_library.nut" import *
 from "app" import is_dev_version
@@ -20,6 +19,7 @@ let { toUpper } = require("%sqstd/string.nut")
 let { isMissionComplete, getCombineLocNameMission, is_user_mission } = require("%scripts/missions/missionsUtilsModule.nut")
 let { isInSessionRoom } = require("%scripts/matchingRooms/sessionLobbyState.nut")
 let { getCurCircuitOverride } = require("%appGlobals/curCircuitOverride.nut")
+let { isUnitUsable } = require("%scripts/unit/unitStatus.nut")
 
 enum mislistTabsOrder {
   BASE
@@ -94,7 +94,7 @@ g_mislist_type._getMissionsByBlkArray <- function _getMissionsByBlkArray(campaig
       let reqUnit = misBlk.getStr("player_class", "")
       if (reqUnit != "") {
         let unit = ::findUnitNoCase(reqUnit)
-        if (unit && !::isUnitUsable(unit)) {
+        if (unit && !isUnitUsable(unit)) {
           misDescr.isUnlocked = false
           misDescr.mustHaveUnit <- unit.name
         }
@@ -102,7 +102,7 @@ g_mislist_type._getMissionsByBlkArray <- function _getMissionsByBlkArray(campaig
     }
 
     if (gm == GM_CAMPAIGN || gm == GM_SINGLE_MISSION || gm == GM_TRAINING) {
-      let missionFullName = $"{campaignName}/" + (misDescr?.id ?? "")
+      let missionFullName = $"{campaignName}/{misDescr?.id ?? ""}"
       misDescr.progress <- get_mission_progress(missionFullName)
       if (!is_user_mission(misBlk))
         misDescr.isUnlocked = misDescr?.progress != 4
@@ -158,7 +158,7 @@ g_mislist_type._getMissionsList <- function _getMissionsList(isShowCampaigns, ca
       let isChapterSpecial = isInArray(chapterName, [ "hidden", "test" ])
       local canShowChapter = true
       if (!::is_debug_mode_enabled && isChapterSpecial) {
-        let featureName = "MissionsChapter" + toUpper(chapterName, 1)
+        let featureName = $"MissionsChapter{toUpper(chapterName, 1)}"
         canShowChapter = is_dev_version() || hasFeature(featureName)
       }
       if (!canShowChapter)
@@ -225,11 +225,12 @@ g_mislist_type._getCurMission <- function _getCurMission() {
 }
 
 g_mislist_type._getMissionNameText <- function _getMissionNameText(mission) {
+  let { id = "" } = mission
   if (mission?.isHeader)
-    return loc((mission?.isCampaign ? "campaigns/" : "chapters/") + (mission?.id ?? ""))
+    return mission?.isCampaign ? loc($"campaigns/{id}") : loc($"chapters/{id}")
   if ("blk" in mission)
     return getCombineLocNameMission(mission.blk)
-  return loc("missions/" + (mission?.id ?? ""))
+  return loc($"missions/{id}")
 }
 
 g_mislist_type.template <- {

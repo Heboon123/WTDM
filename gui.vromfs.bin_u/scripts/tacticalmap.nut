@@ -9,10 +9,11 @@ let { setMousePointerInitialPos } = require("%scripts/controls/mousePointerIniti
 let { useTouchscreen } = require("%scripts/clientState/touchScreen.nut")
 let { get_game_type, get_cur_game_mode_name } = require("mission")
 let { get_mission_restore_type, get_pilot_name, is_aircraft_delayed, is_aircraft_active,
-  is_aircraft_player, set_tactical_screen_player, get_player_group } = require("guiMission")
+  is_aircraft_player, set_tactical_screen_player, get_player_group,
+  OBJECTIVE_TYPE_PRIMARY, OBJECTIVE_TYPE_SECONDARY } = require("guiMission")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
-let { locCurrentMissionName } = require("%scripts/missions/missionsUtils.nut")
+let { locCurrentMissionName, setMissionEnviroment } = require("%scripts/missions/missionsUtils.nut")
 let { isInFlight } = require("gameplayBinding")
 let { registerRespondent } = require("scriptRespondent")
 
@@ -127,6 +128,7 @@ eventbus_subscribe("gui_start_tactical_map_tc", gui_start_tactical_map_tc)
         titleText = loc($"multiplayer/{get_cur_game_mode_name()}Mode")
 
       this.setSceneTitle(titleText, this.scene, "menu-title")
+      setMissionEnviroment(this.scene.findObject("conditions_text"))
     }
 
     function update(obj, dt) {
@@ -390,13 +392,6 @@ eventbus_subscribe("gui_start_tactical_map_tc", gui_start_tactical_map_tc)
 
       this.onStart(obj)
     }
-  }
-
-  ::addHideToObjStringById <- function addHideToObjStringById(data, objId) {
-    let pos = data.indexof($"id:t = '{objId}';")
-    if (pos)
-      return "".concat(data.slice(0, pos), "display:t='hide'; ", data.slice(pos))
-    return data
   }
 
   registerRespondent("is_tactical_map_active", function is_tactical_map_active() {

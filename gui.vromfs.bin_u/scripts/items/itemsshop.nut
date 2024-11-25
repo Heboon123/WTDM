@@ -1,8 +1,8 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import is_mouse_last_time_used
 from "%scripts/dagui_library.nut" import *
 from "%scripts/items/itemsConsts.nut" import itemsTab
 from "%scripts/mainConsts.nut" import SEEN
+from "%scripts/controls/rawShortcuts.nut" import GAMEPAD_ENTER_SHORTCUT
 
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
@@ -31,6 +31,7 @@ let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { findItemById } = require("%scripts/items/itemsManager.nut")
 let { gui_start_items_list } = require("%scripts/items/startItemsShop.nut")
+let { defer } = require("dagor.workcycle")
 
 let tabIdxToName = {
   [itemsTab.SHOP] = "items/shop",
@@ -98,7 +99,6 @@ gui_handlers.ItemsList <- class (gui_handlers.BaseGuiHandlerWT) {
 
   // Used to avoid expensive get...List and further sort.
   itemsListValid = false
-
   infoHandler = null
   isMouseMode = true
   isCraftTreeWndOpen = false
@@ -473,7 +473,7 @@ gui_handlers.ItemsList <- class (gui_handlers.BaseGuiHandlerWT) {
               adviseMarketplace ? "items/shop/emptyTab/noItemsAdvice/marketplaceEnabled"
             : adviseShop        ? "items/shop/emptyTab/noItemsAdvice/shopEnabled"
             :                     "items/shop/emptyTab/noItemsAdvice/shopDisabled"
-          caption += " " + loc(noItemsAdviceLocId)
+          caption = " ".concat(caption, loc(noItemsAdviceLocId))
         }
         emptyListTextObj.setValue(caption)
       }
@@ -742,11 +742,13 @@ gui_handlers.ItemsList <- class (gui_handlers.BaseGuiHandlerWT) {
     if (item.canCraftOnlyInCraftTree() && this.curSheet?.getSet().getCraftTree() != null)
       this.openCraftTree(item)
     else {
-      let updateFn = item?.needUpdateListAfterAction ? this.updateItemsList : this.updateItemInfo
-      item.doMainAction(
-        Callback(@(_result) updateFn(), this),
-        this,
-        { obj = obj })
+      let prevActiveStatus = item.isActive()
+      let callBackFn = Callback(function() {
+        let updateFn = item?.needUpdateListAfterAction || item.isActive() != prevActiveStatus ? this.updateItemsList
+          : this.updateItemInfo
+        updateFn()
+      }, this)
+      item.doMainAction(@(_result) defer(@() callBackFn()), this, { obj = obj })
     }
 
     this.markItemSeen(item)
@@ -994,7 +996,7 @@ gui_handlers.ItemsList <- class (gui_handlers.BaseGuiHandlerWT) {
       text = loc("workshop/accentCraftTreeButton", {
         buttonName = loc(curSet.getCraftTree()?.openButtonLocId ?? "")
       })
-      shortcut = ::GAMEPAD_ENTER_SHORTCUT
+      shortcut = GAMEPAD_ENTER_SHORTCUT
       actionType = tutorAction.OBJ_CLICK
       cb = @() this.openCraftTree(null, tutorialItem)
     }]

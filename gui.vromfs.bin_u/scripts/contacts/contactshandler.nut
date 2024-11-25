@@ -39,6 +39,7 @@ let { addPopup } = require("%scripts/popups/popups.nut")
 let { CommunicationState } = require("%scripts/xbox/permissions.nut")
 let { tryOpenFriendWishlist } = require("%scripts/wishlist/friendsWishlistManager.nut")
 let { is_console } = require("%sqstd/platform.nut")
+let { isWorldWarEnabled } = require("%scripts/globalWorldWarScripts.nut")
 
 ::contacts_prev_scenes <- [] //{ scene, show }
 ::last_contacts_scene_show <- false
@@ -114,15 +115,13 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
     return contactsByGroups[gName].values().sort(sortContacts)
   }
 
-  function initScreen(obj, resetList = true) {
+  function initScreen(obj) {
     if (checkObj(this.scene) && this.scene.isEqual(obj))
       return
 
     this.sceneShow(false)
     this.scene = obj
     this.sceneChanged = true
-    if (resetList)
-      ::friend_prev_scenes <- []
     this.sceneShow(true)
     this.closeSearchGroup()
   }
@@ -159,7 +158,7 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
     else {
       ::contacts_prev_scenes.append({ scene = this.scene, show = ::last_contacts_scene_show, owner = this.owner })
       this.owner = newOwner
-      this.initScreen(obj, false)
+      this.initScreen(obj)
     }
   }
 
@@ -421,7 +420,7 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onWwOperationInvite(obj) {
-    if (!::is_worldwar_enabled())
+    if (!isWorldWarEnabled())
       return
 
     this.updateCurPlayer(obj)
@@ -474,7 +473,7 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
                            && !isBlock
                            && isChatEnabled()
                            && canChat, contact_buttons_holder)
-    showObjById("btn_ww_invite", ::is_worldwar_enabled()
+    showObjById("btn_ww_invite", isWorldWarEnabled()
       && ::g_world_war.isWwOperationInviteEnable(), contact_buttons_holder)
 
     let showSquadInvite = hasFeature("SquadInviteIngame")

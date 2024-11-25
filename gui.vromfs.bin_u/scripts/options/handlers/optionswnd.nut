@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import get_option_gamma, is_internet_radio_station_removable, remove_internet_radio_station, get_internet_radio_options, set_option_gamma, gchat_voice_echo_test
 from "%scripts/dagui_library.nut" import *
 from "%scripts/controls/controlsConsts.nut" import optionControlType
@@ -34,6 +33,7 @@ let { isInFlight } = require("gameplayBinding")
 let { create_options_container } = require("%scripts/options/optionsExt.nut")
 let { guiStartPostfxSettings } = require("%scripts/postFxSettings.nut")
 let { addPopup } = require("%scripts/popups/popups.nut")
+let { chatStatesCanUseVoice } = require("%scripts/chat/chatStates.nut")
 
 const MAX_NUM_VISIBLE_FILTER_OPTIONS = 25
 
@@ -55,7 +55,7 @@ function getOptionsWndOpenParams(group) {
     wndOptionsMode = OPTIONS_MODE_GAMEPLAY
     sceneNavBlkName = "%gui/options/navOptionsIngame.blk"
     function cancelFunc() {
-      ::set_option_gamma(get_option_gamma(), false)
+      set_option_gamma(get_option_gamma(), false)
       for (local i = 0; i < SND_NUM_TYPES; i++)
         set_sound_volume(i, get_sound_volume(i), false)
     }
@@ -77,6 +77,8 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
   needMoveMouseOnButtonApply = false
 
   filterText = ""
+
+  getOptionInfoViewFn = null
 
   function initScreen() {
     if (!this.optGroups)
@@ -139,21 +141,58 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
   function fillOptions(group) {
     let config = this.optGroups[group]
 
+    this.getOptionInfoViewFn = config?.getOptionInfoView
+
     if ("fillFuncName" in config) {
       this.curGroup = group
-      this[config.fillFuncName](group);
+      this[config.fillFuncName](group)
+      this.updateOptionsListStyle(group)
       return;
     }
 
-    if ("options" in config)
-      this.fillOptionsList(group, "optionslist")
-
+    this.fillOptionsList(group)
     this.updateLinkedOptions()
   }
 
+  function updateOptionsListStyle(group) {
+    let { isInfoOnTheRight = false } = this.optGroups[group]
+    let optsListObj = this.scene.findObject("optionslist")
+    optsListObj.alignMode = isInfoOnTheRight ? "left" : "center"
+    optsListObj.width = isInfoOnTheRight ? "0.45pw" : "pw"
+  }
+
   function fillInternetRadioOptions(group) {
-    this.guiScene.replaceContent(this.scene.findObject("optionslist"), "%gui/options/internetRadioOptions.blk", this);
-    this.fillLocalInternetRadioOptions(group)
+    this.fillOptionsList(group)
+
+    let hotkeyOpts = [
+      {
+        shortcutTextareaId = "internet_radio_shortcut"
+        optionText = "#options/internet_radio_shortcut"
+        tip = "#guiHints/internet_radio_shortcut"
+        shortcutText = this.getShortcutText("ID_INTERNET_RADIO")
+        onAssignFnName = "onAssignInternetRadioButton"
+        onResetFnName = "onClearInternetRadioButton"
+      }
+      {
+        shortcutTextareaId = "internet_radio_prev_shortcut"
+        optionText = "#options/internet_radio_prev_shortcut"
+        tip = "#guiHints/internet_radio_prev_shortcut"
+        shortcutText = this.getShortcutText("ID_INTERNET_RADIO_PREV")
+        onAssignFnName = "onAssignInternetRadioPrevButton"
+        onResetFnName = "onClearInternetRadioPrevButton"
+      }
+      {
+        shortcutTextareaId = "internet_radio_next_shortcut"
+        optionText = "#options/internet_radio_next_shortcut"
+        tip = "#guiHints/internet_radio_next_shortcut"
+        shortcutText = this.getShortcutText("ID_INTERNET_RADIO_NEXT")
+        onAssignFnName = "onAssignInternetRadioNextButton"
+        onResetFnName = "onClearInternetRadioNextButton"
+      }
+    ]
+
+    let markup = handyman.renderCached("%gui/options/internetRadioOptions.tpl", { hotkeyOpts })
+    this.guiScene.appendWithBlk(this.scene.findObject(this.currentContainerName), markup, this);
     this.updateInternerRadioButtons()
   }
 
@@ -250,13 +289,12 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
     base.showOptionRow(id, show)
   }
 
-  function fillShortcutInfo(shortcut_id_name, shortcut_object_name) {
-    let shortcut = ::get_shortcuts([shortcut_id_name]);
-    local data = ::get_shortcut_text({ shortcuts = shortcut, shortcutId = 0 })
-    if (data == "")
-      data = "---";
-    this.scene.findObject(shortcut_object_name).setValue(data);
-  }
+  function getShortcutText(shortcut_id_name) {
+    let shortcut = ::get_shortcuts([shortcut_id_name])
+    let data = ::get_shortcut_text({ shortcuts = shortcut, shortcutId = 0 })
+    return data == "" ? "---" : data
+}
+
   function bindShortcutButton(devs, btns, shortcut_id_name, shortcut_object_name) {
     let shortcut = ::get_shortcuts([shortcut_id_name]);
 
@@ -282,17 +320,6 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
     this.save(false);
 
     this.scene.findObject(shortcut_object_name).setValue("---");
-  }
-
-  function fillLocalInternetRadioOptions(group) {
-    let config = this.optGroups[group]
-
-    if ("options" in config)
-      this.fillOptionsList(group, "internetRadioOptions")
-
-    this.fillShortcutInfo("ID_INTERNET_RADIO", "internet_radio_shortcut");
-    this.fillShortcutInfo("ID_INTERNET_RADIO_PREV", "internet_radio_prev_shortcut");
-    this.fillShortcutInfo("ID_INTERNET_RADIO_NEXT", "internet_radio_next_shortcut");
   }
 
   function onAssignInternetRadioButton() {
@@ -323,34 +350,38 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
     this.onClearShortcutButton("ID_INTERNET_RADIO_NEXT", "internet_radio_next_shortcut");
   }
 
-  function fillVoiceChatOptions(group) {
-    let config = this.optGroups[group]
+  function fillSoundOptions(group) {
+    this.fillOptionsList(group)
 
-    this.guiScene.replaceContent(this.scene.findObject("optionslist"), "%gui/options/voicechatOptions.blk", this)
-
-    let needShowOptions = isCrossNetworkChatEnabled() || isPlatformXboxOne
-    showObjById("voice_disable_warning", !needShowOptions, this.scene)
-
-    showObjById("voice_options_block", needShowOptions, this.scene)
-    if (!needShowOptions)
+    if (!chatStatesCanUseVoice())
       return
 
-    if ("options" in config)
-      this.fillOptionsList(group, "voiceOptions")
+    let needShowOptions = isCrossNetworkChatEnabled() || isPlatformXboxOne
+    let hotkeyOpts = needShowOptions ? {
+      shortcutTextareaId = "ptt_shortcut"
+      optRowId = "ptt_buttons_block"
+      optionText = "#options/ptt_shortcut"
+      tip = "#guiHints/ptt_shortcut"
+      resetTip = "#guiHints/ptt_shortcut_reset"
+      onAssignFnName = "onAssignVoiceButton"
+      onResetFnName = "onClearVoiceButton"
+      shortcutText = this.getPttShortcutText()
+    } : null
 
+    let markup = handyman.renderCached("%gui/options/voicechatOptions.tpl", {
+      needShowOptions, hotkeyOpts
+    })
+    this.guiScene.appendWithBlk(this.scene.findObject(this.currentContainerName), markup, this)
+    if (needShowOptions)
+      showObjById("ptt_buttons_block", ::get_option(USEROPT_PTT).value, this.scene)
+  }
+
+  function getPttShortcutText() {
     let ptt_shortcut = ::get_shortcuts(["ID_PTT"]);
-    local data = ::get_shortcut_text({ shortcuts = ptt_shortcut, shortcutId = 0, cantBeEmpty = false });
-    if (data == "")
-      data = "---";
-    else
-      data = "<color=@hotkeyColor>" + ::hackTextAssignmentForR2buttonOnPS4(data) + "</color>"
-
-    this.scene.findObject("ptt_shortcut").setValue(data)
-    showObjById("ptt_buttons_block", ::get_option(USEROPT_PTT).value, this.scene)
-
-    let echoButton = this.scene.findObject("joinEchoButton");
-    if (echoButton)
-      echoButton.enable(true)
+    let pttShortcutText = ::get_shortcut_text({ shortcuts = ptt_shortcut, shortcutId = 0, cantBeEmpty = false });
+    return pttShortcutText == ""
+      ? "---"
+      : $"<color=@hotkeyColor>{::hackTextAssignmentForR2buttonOnPS4(pttShortcutText)}</color>"
   }
 
   function onAssignVoiceButton() {
@@ -370,19 +401,12 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
     this.save(false);
 
     local data = ::get_shortcut_text({ shortcuts = ptt_shortcut, shortcutId = 0, cantBeEmpty = false })
-    data = "<color=@hotkeyColor>" + ::hackTextAssignmentForR2buttonOnPS4(data) + "</color>"
+    data = $"<color=@hotkeyColor>{::hackTextAssignmentForR2buttonOnPS4(data)}</color>"
     this.scene.findObject("ptt_shortcut").setValue(data);
   }
 
   function onClearVoiceButton() {
-    let ptt_shortcut = ::get_shortcuts(["ID_PTT"]);
-
-    ptt_shortcut[0] = [];
-
-    setShortcutsAndSaveControls(ptt_shortcut, ["ID_PTT"]);
-    this.save(false);
-
-    this.scene.findObject("ptt_shortcut").setValue("---");
+    this.onClearShortcutButton("ID_PTT", "ptt_shortcut")
   }
 
   function joinEchoChannel(join) {
@@ -429,9 +453,37 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
       objParent.setValue(val)
   }
 
-  function fillOptionsList(group, objName) {
+  onOptionContainerUnhover = @() this.scene.findObject("option_info_container").show(false)
+
+  function onOptionContainerHover(obj) {
+    if (obj?.disabled == "yes")
+      return
+    let id = obj.id.split("_tr")[0]
+    let infoContainerObj = this.scene.findObject("option_info_container")
+
+    this.guiScene.performDelayed(this, function() {  // To ensure that showing info block happens after hiding the previous one
+      if (!infoContainerObj?.isValid())
+        return
+
+      let opt = this.get_option_by_id(id)
+      let view = this.getOptionInfoViewFn?(id)
+        ?? {
+              title = opt?.text ?? loc($"options/{id}")
+              description = opt?.hint ?? loc($"guiHints/{id}", "")
+           }
+      let markup = handyman.renderCached("%gui/options/optionInfo.tpl", view)
+
+      this.guiScene.replaceContentFromText(infoContainerObj, markup, markup.len(), this)
+      infoContainerObj.show(true)
+    })
+  }
+
+  function fillOptionsList(group) {
     this.curGroup = group
     let config = this.optGroups[group]
+
+    if ("options" not in config)
+      return
 
     if (this.optionsConfig == null)
       this.optionsConfig = {
@@ -439,16 +491,25 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
         containerCb = "onChangeOptionValue"
       }
 
+    this.optionsConfig.__update({
+      onHoverFnName = config?.isInfoOnTheRight ? "onOptionContainerHover" : null
+      onUnhoverFnName = config?.isInfoOnTheRight ? "onOptionContainerUnhover" : null
+    })
+
     this.currentContainerName =$"options_{config.name}"
-    let container = create_options_container(this.currentContainerName, config.options, true, this.columnsRatio,
+    let ratio = config?.isInfoOnTheRight ? 0.55 : 0.5
+    let container = create_options_container(this.currentContainerName, config.options, true, ratio,
       true, this.optionsConfig)
     this.optionsContainers = [container.descr]
 
     this.guiScene.setUpdatesEnabled(false, false)
     this.optionIdToObjCache.clear()
-    this.guiScene.replaceContentFromText(this.scene.findObject(objName), container.tbl, container.tbl.len(), this)
-    this.setNavigationItems()
-    this.showOptionsSelectedNavigation()
+    this.guiScene.replaceContentFromText(this.scene.findObject("optionsList"), container.tbl, container.tbl.len(), this)
+    this.updateOptionsListStyle(group)
+    if (config?.showNav) {
+      this.setNavigationItems()
+      this.showOptionsSelectedNavigation()
+    }
     this.updateNavbar()
     this.guiScene.setUpdatesEnabled(true, true)
   }
@@ -540,7 +601,7 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
     let obj = this.scene.findObject("groups_list")
     if (!obj)
       return
-    this.fillOptionsList(obj.getValue(), "internetRadioOptions")
+    this.fillInternetRadioOptions(obj.getValue())
     this.updateInternerRadioButtons()
   }
 
@@ -580,7 +641,7 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
 
   function resetVolumes() {
     reset_volumes()
-    this.fillOptionsList(this.curGroup, "optionslist")
+    this.fillSoundOptions(this.curGroup)
   }
 
   function isRestartPending() {

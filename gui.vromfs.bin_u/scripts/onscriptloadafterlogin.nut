@@ -64,7 +64,6 @@ foreach (fn in [
   "%scripts/events/eventRewardsWnd.nut"
   "%scripts/events/rewardProgressManager.nut"
   "%scripts/events/eventDescription.nut"
-  "%scripts/events/eventTicketBuyOfferProcess.nut"
   "%scripts/events/eventDescriptionWindow.nut"
   "%scripts/vehiclesWindow.nut"
   "%scripts/events/eventJoinProcess.nut"
@@ -187,7 +186,6 @@ foreach (fn in [
   "%scripts/shop/shopViewWnd.nut"
   "%scripts/convertExpHandler.nut"
 
-  "%scripts/weaponry/unitBulletsGroup.nut"
   "%scripts/weaponry/unitBulletsManager.nut"
   "%scripts/dmViewer/dmViewer.nut"
   "%scripts/weaponry/weaponryTypes.nut"
@@ -300,7 +298,6 @@ foreach (fn in [
   "%scripts/hud/hudBattleLog.nut"
   "%scripts/hud/hudLiveStats.nut"
   "%scripts/hud/hudTutorialElements.nut"
-  "%scripts/hud/hudTutorialObject.nut"
   "%scripts/streaks.nut"
   "%scripts/wheelmenu/voicemenu.nut"
   "%scripts/wheelmenu/multifuncmenu.nut"
@@ -310,7 +307,6 @@ foreach (fn in [
 
   "%scripts/warbonds/warbondAwardType.nut"
   "%scripts/warbonds/warbondsManager.nut"
-  "%scripts/warbonds/warbondsView.nut"
   "%scripts/warbonds/warbondShop.nut"
 
   "%scripts/utils/popupMessages.nut"
@@ -363,6 +359,7 @@ require("%scripts/debugTools/dbgHudObjects.nut")
 require("%scripts/debugTools/dbgVoiceChat.nut")
 require("%scripts/debugTools/dbgDumpTools.nut")
 require("%scripts/debugTools/dbgUtilsAfterLogin.nut")
+require("%scripts/debugTools/dbgMarketplace.nut")
 
 require("%scripts/exportInfo/skinsLocExporter.nut")
 

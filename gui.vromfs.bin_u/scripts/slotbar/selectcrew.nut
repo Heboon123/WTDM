@@ -1,6 +1,7 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import get_crew_count, get_crew_slot_cost
 from "%scripts/dagui_library.nut" import *
+from "%scripts/controls/rawShortcuts.nut" import GAMEPAD_ENTER_SHORTCUT
+
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { Cost } = require("%scripts/money.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
@@ -17,12 +18,14 @@ let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 let { getUnitName, getUnitCountry } = require("%scripts/unit/unitInfo.nut")
 let { get_gui_balance } = require("%scripts/user/balance.nut")
 let { buildUnitSlot, fillUnitSlotTimers, getUnitSlotRankText } = require("%scripts/slotbar/slotbarView.nut")
-let { getCrewsListByCountry, isUnitInSlotbar, getBestTrainedCrewIdxForUnit, getFirstEmptyCrewSlot, getCrewByAir
+let { getCrewsListByCountry, getBestTrainedCrewIdxForUnit, getFirstEmptyCrewSlot
 } = require("%scripts/slotbar/slotbarState.nut")
+let { isUnitInSlotbar } = require("%scripts/unit/unitStatus.nut")
 let { getProfileInfo } = require("%scripts/user/userInfoStats.nut")
 let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
 let fillSlotbarLegend = require("%scripts/slotbar/fillSlotbarLegend.nut")
 let slotbarBaseCfg = require("%scripts/slotbar/selectCrewSlotbarBaseCfg.nut")
+let { getCrewByAir } = require("%scripts/crew/crewInfo.nut")
 
 function getObjPosInSafeArea(obj) {
   let pos = obj.getPosRC()
@@ -80,7 +83,7 @@ gui_handlers.SelectCrew <- class (gui_handlers.BaseGuiHandlerWT) {
       gui_handlers.ActionsList.removeActionsListFromObject(tdObj)
 
       tdClone = tdObj.getClone(this.scene, this)
-      tdClone.pos = tdPos[0] + ", " + tdPos[1]
+      tdClone.pos = $"{tdPos[0]}, {tdPos[1]}"
       tdClone["class"] = this.cellClass
       tdClone.position = "root"
       if (this.dragAndDropMode) {
@@ -289,14 +292,14 @@ gui_handlers.SelectCrew <- class (gui_handlers.BaseGuiHandlerWT) {
         nextActionShortcut = "help/NEXT_ACTION"
         actionType = tutorAction.ANY_CLICK
         haveArrow = false
-        shortcut = ::GAMEPAD_ENTER_SHORTCUT
+        shortcut = GAMEPAD_ENTER_SHORTCUT
       },
       {
         obj = "btn_set_air"
         text = loc("help/pressOnReady")
         nextActionShortcut = "help/NEXT_ACTION"
         actionType = tutorAction.ANY_CLICK
-        shortcut = ::GAMEPAD_ENTER_SHORTCUT
+        shortcut = GAMEPAD_ENTER_SHORTCUT
       }
     ]
 

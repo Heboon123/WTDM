@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_library.nut" import *
 from "app" import is_dev_version
 let u = require("%sqStdLibs/helpers/u.nut")
@@ -39,7 +38,7 @@ function debug_check_unlocalized_resources() {
   foreach (unit in getAllUnits())
     if (unit.isInShop)
       foreach (suffix in ["_shop", "_0", "_1", "_2"]) {
-        local localeId = unit.name + suffix
+        local localeId = $"{unit.name}{suffix}"
         if (loc(localeId, "") == "") {
           log($"    {localeId}")
           count++
@@ -89,7 +88,7 @@ function debug_check_unlocalized_resources() {
   local total = blk.blockCount()
   for (local i = 0; i < total; i++) {
     local dblk = blk.getBlock(i)
-    local localeId = "decals/" + dblk.getBlockName()
+    local localeId = "".concat("decals/", dblk.getBlockName())
     if (loc(localeId, "") == "") {
       log($"    {localeId}")
       count++
@@ -130,7 +129,7 @@ function debug_check_unit_naming() {
   foreach (c, unitIds in ids)
     foreach (unitId in unitIds)
       foreach (suffix in suffixes) {
-        local locId = unitId + suffix
+        local locId = $"{unitId}{suffix}"
         local locName = loc(locId)
         if (locName == locId) {
           locName = ""
@@ -332,7 +331,7 @@ local unitImagesCheckCfgs = [
   },
 ]
 
-local function unitImagesSearchEverywhere(fn, files, unit, cfg) {
+function unitImagesSearchEverywhere(fn, files, unit, cfg) {
   local res = []
   foreach (pathKey in [ "pathRel", "pathDev" ])
     foreach (unitTag, subDir in cfg.subDirs)
@@ -446,9 +445,10 @@ function debug_check_unit_images(verbose = false) {
 
 function debug_cur_level_auto_skins() {
   local level = isInFlight() ? get_current_mission_info_cached()?.level : null
-  local fullDebugtext = "Auto skins for " + (level || "TestFlight")
+  local fullDebugtext = "".concat("Auto skins for ", (level || "TestFlight"))
   if (level)
-    fullDebugtext += " ( " + skinLocations.debugLocationMask(skinLocations.getMaskByLevel(level)) + " )"
+    fullDebugtext = "".concat(fullDebugtext, " ( ",
+      skinLocations.debugLocationMask(skinLocations.getMaskByLevel(level)), " )")
 
   local total = 0
   foreach (unit in getAllUnits())

@@ -59,7 +59,7 @@ function getVotedPolls() {
   return votedPolls
 }
 
-local function webpollEvent(id, token, voted) {
+function webpollEvent(id, token, voted) {
   id = to_integer_safe(id)
   if (!id || token == null)
     return
@@ -184,10 +184,6 @@ subscriptions.addListenersWithoutEnv({
 }, g_listener_priority.CONFIG_VALIDATION)
 
 web_rpc.register_handler("survey_vote_result", onSurveyVoteResult)
-
-::webpoll_event <- function webpoll_event(id, token, voted) { //use in native code
-  webpollEvent(id, token, voted)
-}
 
 return {
   setPollBaseUrl

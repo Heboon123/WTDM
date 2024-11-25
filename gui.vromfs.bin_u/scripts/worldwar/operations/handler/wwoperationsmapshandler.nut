@@ -42,6 +42,8 @@ let { move_mouse_on_child_by_value, loadHandler } = require("%scripts/baseGuiHan
 let { findItemById } = require("%scripts/items/itemsManager.nut")
 let { guiStartProfile } = require("%scripts/user/profileHandler.nut")
 let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
+let { getWwSetting } = require("%scripts/worldWar/worldWarStates.nut")
+let wwTopMenuOperationMap = require("%scripts/worldWar/externalServices/wwTopMenuOperationMapConfig.nut")
 
 const MY_CLUSRTERS = "ww/clusters"
 
@@ -115,7 +117,7 @@ gui_handlers.WwOperationsMapsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     this.topMenuHandlerWeak = gui_handlers.TopMenuButtonsHandler.create(
       this.scene.findObject("topmenu_menu_panel"),
       this,
-      ::g_ww_top_menu_operation_map,
+      wwTopMenuOperationMap,
       this.scene.findObject("left_gc_panel_free_width")
     )
     this.registerSubHandler(this.topMenuHandlerWeak)
@@ -258,7 +260,7 @@ gui_handlers.WwOperationsMapsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function fillTrophyList() {
     let res = []
-    let trophiesBlk = ::g_world_war.getSetting("dailyTrophies", DataBlock())
+    let trophiesBlk = getWwSetting("dailyTrophies", DataBlock())
     let reqFeatureId = trophiesBlk?.reqFeature
     if (reqFeatureId && !hasFeature(reqFeatureId))
       return res
@@ -695,7 +697,7 @@ gui_handlers.WwOperationsMapsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     let myClusters = clustersStr.split(",")
-    let forbiddenClusters = ::g_world_war.getSetting("forbiddenClusters", null)?.split(",") ?? []
+    let forbiddenClusters = getWwSetting("forbiddenClusters", null)?.split(",") ?? []
     let clusters = ::get_option(USEROPT_CLUSTERS).items
       .filter(@(c) !c.isAuto && !forbiddenClusters.contains(c.name))
       .map(@(c) c?.name)
@@ -705,7 +707,7 @@ gui_handlers.WwOperationsMapsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function createClustersList() {
     let myClusters = this.clustersList?.split(",")
-    let forbiddenClusters = ::g_world_war.getSetting("forbiddenClusters", null)?.split(",")
+    let forbiddenClusters = getWwSetting("forbiddenClusters", null)?.split(",")
     let title = "".concat(loc("worldwar/cluster"), " ", loc("ui/number_sign"))
     let addText = [
       loc("ui/parentheses", { text = loc("worldwar/max_priority") }),
@@ -749,7 +751,7 @@ gui_handlers.WwOperationsMapsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
 
   function onClusterApply(values) {
-    this.clustersList = values ? ",".join(values) : null
+    this.clustersList = values.len() > 0 ? ",".join(values) : null
     saveLocalAccountSettings(MY_CLUSRTERS, this.clustersList)
     this.updateButtons()
     this.updateClustersTxt()

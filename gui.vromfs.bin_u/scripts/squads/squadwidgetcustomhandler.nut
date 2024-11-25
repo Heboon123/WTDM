@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import ps4_is_ugc_enabled, ps4_is_chat_enabled
 from "%scripts/dagui_library.nut" import *
 from "%scripts/worldWar/worldWarConst.nut" import WW_GLOBAL_STATUS_TYPE
@@ -106,7 +105,7 @@ gui_handlers.SquadWidgetCustomHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if (member.isActualData()) {
       let contact = ::getContact(member.uid)
       local countryIcon = ""
-      if (::checkCountry(member.country, "squad member data ( uid = " + member.uid + ")", true))
+      if (::checkCountry(member.country, $"squad member data ( uid = {member.uid})", true))
         countryIcon = getCountryIcon(member.country)
 
       let status = g_squad_manager.getPlayerStatusInMySquad(member.uid)
@@ -134,7 +133,7 @@ gui_handlers.SquadWidgetCustomHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
     let plusButtonObj = showObjById("btn_squadPlus", canInvite, this.scene)
     if (plusButtonObj && canInvite)
-      plusButtonObj.enable(::ps4_is_ugc_enabled() && ps4_is_chat_enabled())
+      plusButtonObj.enable(ps4_is_ugc_enabled() && ps4_is_chat_enabled())
 
     showObjById("wait_icon", isInTransition, this.scene)
 
@@ -171,7 +170,7 @@ gui_handlers.SquadWidgetCustomHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function onSquadPlus() {
     if (is_platform_xbox && !hasFeature("SquadInviteIngame")) {
-      // MPSD-based code used ::xbox_show_invite_window() here, but we switched to MPA.
+      // MPSD-based code used xbox_show_invite_window() here, but we switched to MPA.
       // MPA doesn't have such window and we should use ingame invitations and system
       // invitations together.
       return

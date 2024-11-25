@@ -1,5 +1,4 @@
-//-file:plus-string
-from "%scripts/dagui_natives.nut" import is_myself_chat_moderator, clan_request_sync_profile, get_cyber_cafe_level, is_online_available, update_entitlements, is_tanks_allowed, wp_shop_get_aircraft_xp_rate, direct_launch, chard_request_profile, char_send_blk, get_player_army_for_hud, is_myself_grand_moderator, exit_game, wp_shop_get_aircraft_wp_rate, clan_get_my_clan_id, sync_handler_simulate_request, is_myself_moderator
+from "%scripts/dagui_natives.nut" import is_myself_chat_moderator, clan_request_sync_profile, get_cyber_cafe_level, is_online_available, update_entitlements, is_tanks_allowed, wp_shop_get_aircraft_xp_rate, direct_launch, chard_request_profile, get_player_army_for_hud, is_myself_grand_moderator, exit_game, wp_shop_get_aircraft_wp_rate, clan_get_my_clan_id, sync_handler_simulate_request, is_myself_moderator
 from "%scripts/dagui_library.nut" import *
 
 let { eventbus_subscribe } = require("eventbus")
@@ -14,19 +13,16 @@ let { isInMenu, handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nu
 let { format } = require("string")
 let DataBlock = require("DataBlock")
 let { get_time_msec } = require("dagor.time")
-let { floor, fabs } = require("math")
+let { fabs } = require("math")
 let { rnd } = require("dagor.random")
 let { object_to_json_string } = require("json")
 //ATTENTION! this file is coupling things to much! Split it!
 //shouldDecreaseSize, allowedSizeIncrease = 100
 let { is_mplayer_host, is_mplayer_peer, destroy_session } = require("multiplayer")
 let penalty = require("penalty")
-let { isPlatformSony } = require("%scripts/clientState/platform.nut")
-let { isCrossPlayEnabled } = require("%scripts/social/crossplay.nut")
 let { startLogout } = require("%scripts/login/logout.nut")
 let { boosterEffectType, getActiveBoostersArray } = require("%scripts/items/boosterEffect.nut")
 let { getActiveBoostersDescription } = require("%scripts/items/itemVisual.nut")
-let { setGuiOptionsMode, getGuiOptionsMode } = require("guiOptions")
 let { havePremium } = require("%scripts/user/premium.nut")
 let { get_game_mode, get_game_type } = require("mission")
 let { quit_to_debriefing, interrupt_multiplayer } = require("guiMission")
@@ -53,44 +49,10 @@ local gui_start_logout_scheduled = false
 
 dagui_propid_add_name_id("tooltipId")
 
-::cssColorsMapDark <- {
-  ["commonTextColor"] = "black",
-  ["white"] = "black",
-  ["activeTextColor"] = "activeTextColorDark",
-  ["unlockActiveColor"] = "activeTextColorDark",
-  ["highlightedTextColor"] = "activeTextColorDark",
-  ["goodTextColor"] = "goodTextColorDark",
-  ["badTextColor"] = "badTextColorDark",
-  ["userlogColoredText"] = "userlogColoredTextDark",
-  ["fadedTextColor"] = "fadedTextColorDark",
-  ["warningTextColor"] = "warningTextColorDark",
-  ["currencyGoldColor"] = "currencyGoldColorDark",
-  ["currencyWpColor"] = "currencyWpColorDark",
-  ["currencyRpColor"] = "currencyRpColorDark",
-  ["currencyFreeRpColor"] = "currencyFreeRpColorDark",
-  ["hotkeyColor"] = "hotkeyColorDark",
-  ["axisSymbolColor"] = "axisSymbolColorDark",
-}
-::cssColorsMapLigth <- {}
-foreach (i, v in ::cssColorsMapDark)
-    ::cssColorsMapLigth[v] <- i
-
 ::global_max_players_versus <- 64
-::global_max_players_coop <- 4
 
 ::locOrStrip <- function locOrStrip(text) {
   return (text.len() && text.slice(0, 1) != "#") ? stripTags(text) : text
-}
-
-::locEnding <- function locEnding(locId, ending, defValue = null) {
-  local res = loc(locId + ending, "")
-  if (res == "" && ending != "")
-    res = loc(locId, defValue)
-  return res
-}
-
-::getCompoundedText <- function getCompoundedText(firstPart, secondPart, color) {
-  return "".concat(firstPart, colorize(color, secondPart))
 }
 
 local current_wait_screen_txt = ""
@@ -228,35 +190,35 @@ let optionsModeByGameMode = {
     local rate = ""
     if (effectType == boosterEffectType.WP) {
       let blk = get_warpoints_blk()
-      rate = "+" + measureType.PERCENT_FLOAT.getMeasureUnitsText((blk?.wpMultiplier ?? 1.0) - 1.0)
+      rate = "".concat("+", measureType.PERCENT_FLOAT.getMeasureUnitsText((blk?.wpMultiplier ?? 1.0) - 1.0))
       rate = $"{colorize("activeTextColor", rate)}{loc("warpoints/short/colored")}"
     }
     else if (effectType == boosterEffectType.RP) {
       let blk = get_ranks_blk()
-      rate = "+" + measureType.PERCENT_FLOAT.getMeasureUnitsText((blk?.xpMultiplier ?? 1.0) - 1.0)
+      rate = "".concat("+", measureType.PERCENT_FLOAT.getMeasureUnitsText((blk?.xpMultiplier ?? 1.0) - 1.0))
       rate = $"{colorize("activeTextColor", rate)}{loc("currency/researchPoints/sign/colored")}"
     }
-    tooltipText.append(loc("mainmenu/activePremium") + loc("ui/colon") + rate)
+    tooltipText.append("".concat(loc("mainmenu/activePremium"), loc("ui/colon"), rate))
   }
 
   local value = ::get_cyber_cafe_bonus_by_effect_type(effectType)
   if (value > 0.0) {
     value = measureType.PERCENT_FLOAT.getMeasureUnitsText(value)
     value = effectType.getText(colorize("activeTextColor", value), true)
-    tooltipText.append(loc("mainmenu/bonusCyberCafe") + loc("ui/colon") + value)
+    tooltipText.append("".concat(loc("mainmenu/bonusCyberCafe"), loc("ui/colon"), value))
   }
 
   value = ::get_squad_bonus_for_same_cyber_cafe(effectType)
   if (value > 0.0) {
     value = measureType.PERCENT_FLOAT.getMeasureUnitsText(value)
     value = effectType.getText(colorize("activeTextColor", value), true)
-    tooltipText.append(loc("item/FakeBoosterForNetCafeLevel/squad", { num = g_squad_manager.getSameCyberCafeMembersNum() }) + loc("ui/colon") + value)
+    tooltipText.append(loc("item/FakeBoosterForNetCafeLevel/squad", { num = loc("ui/colon").concat(g_squad_manager.getSameCyberCafeMembersNum(), value) }))
   }
 
   let boostersArray = getActiveBoostersArray(effectType)
   let boostersDescription = getActiveBoostersDescription(boostersArray, effectType)
   if (boostersDescription != "")
-    tooltipText.append((havePremium.value ? "\n" : "") + boostersDescription)
+    tooltipText.append("".concat((havePremium.value ? "\n" : ""), boostersDescription))
 
   local bonusText = "\n".join(tooltipText, true)
   if (bonusText != "")
@@ -276,13 +238,6 @@ let optionsModeByGameMode = {
 ::getShopCountry <- function getShopCountry(airName) {
   let air = getAircraftByName(airName)
   return air?.shopCountry ?? ""
-}
-
-::getAmountAndMaxAmountText <- function getAmountAndMaxAmountText(amount, maxAmount, showMaxAmount = false) {
-  local amountText = ""
-  if (maxAmount > 1 || showMaxAmount)
-    amountText = amount.tostring() + (showMaxAmount && maxAmount > 1 ? "/" + maxAmount : "")
-  return amountText;
 }
 
 ::is_game_mode_with_spendable_weapons <- function is_game_mode_with_spendable_weapons() {
@@ -305,31 +260,6 @@ local last_update_entitlements_time = get_time_msec()
   return -1
 }
 
-::get_flush_exp_text <- function get_flush_exp_text(exp_value) {
-  if (exp_value == null || exp_value < 0)
-    return ""
-  let rpPriceText = exp_value.tostring() + loc("currency/researchPoints/sign/colored")
-  let coloredPriceText = ::colorTextByValues(rpPriceText, exp_value, 0)
-  return format(loc("mainmenu/availableFreeExpForNewResearch"), coloredPriceText)
-}
-
-::colorTextByValues <- function colorTextByValues(text, val1, val2, useNeutral = true, useGood = true) {
-  local color = ""
-  if (val1 >= val2) {
-    if (val1 == val2 && useNeutral)
-      color = "activeTextColor"
-    else if (useGood)
-      color = "goodTextColor"
-  }
-  else
-    color = "badTextColor"
-
-  if (color == "")
-    return text
-
-  return format("<color=@%s>%s</color>", color, text)
-}
-
 ::getObjIdByPrefix <- function getObjIdByPrefix(obj, prefix, idProp = "id") {
   if (!obj)
     return null
@@ -348,13 +278,25 @@ local last_update_entitlements_time = get_time_msec()
   return blk
 }
 
+function createNewPairKeyValueToBlk(blk, index, value) {
+  /*Known feature - cannot create a pair, if index is used for other type
+   i.e. ["string", 1, 2, 3, "string"] in this case will be ("string", "string") result
+   on other case [1, 2, 3, "string"] will be (1, 2, 3) result. */
+
+  blk[index] <- value
+}
+
+function assignValueToBlk(blk, index, value) {
+  blk[index] = value
+}
+
 ::build_blk_from_container <- function build_blk_from_container(container, arrayKey = "array") {
   let blk = DataBlock()
   let isContainerArray = u.isArray(container)
 
-  local addValue = ::assign_value_to_blk
+  local addValue = assignValueToBlk
   if (isContainerArray)
-    addValue = ::create_new_pair_key_value_to_blk
+    addValue = createNewPairKeyValueToBlk
 
   foreach (key, value in container) {
     local newValue = value
@@ -368,17 +310,6 @@ local last_update_entitlements_time = get_time_msec()
   return blk
 }
 
-::create_new_pair_key_value_to_blk <- function create_new_pair_key_value_to_blk(blk, index, value) {
-  /*Known feature - cannot create a pair, if index is used for other type
-   i.e. ["string", 1, 2, 3, "string"] in this case will be ("string", "string") result
-   on other case [1, 2, 3, "string"] will be (1, 2, 3) result. */
-
-  blk[index] <- value
-}
-
-::assign_value_to_blk <- function assign_value_to_blk(blk, index, value) {
-  blk[index] = value
-}
 
 ::buildTableRow <- function buildTableRow(rowName, rowData, even = null, trParams = "", _tablePad = "@tblPad") {
   //tablePad not using, but passed through many calls of this function
@@ -416,19 +347,13 @@ local last_update_entitlements_time = get_time_msec()
 
 ::save_to_json <- function save_to_json(obj) {
   assert(isInArray(type(obj), [ "table", "array" ]),
-    "Data type not suitable for save_to_json: " + type(obj))
+    $"Data type not suitable for save_to_json: {type(obj)}")
 
   return object_to_json_string(obj, false)
 }
 
 ::roman_numerals <- ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
                          "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"]
-
-::increment_parameter <- function increment_parameter(object, parameter) {
-  if (!(parameter in object))
-    object[parameter] <- 0;
-  object[parameter]++;
-}
 
 ::get_number_of_units_by_years <- function get_number_of_units_by_years(country, years) {
   let result = {}
@@ -447,7 +372,7 @@ local last_update_entitlements_time = get_time_msec()
 
     local maxYear = 0
     foreach (year in years) {
-      let parameter = "year" + year;
+      let parameter = $"year{year}";
       foreach (tag in air.tags)
         if (tag == parameter) {
           result[parameter]++
@@ -496,14 +421,14 @@ local last_update_entitlements_time = get_time_msec()
 
   for (local i = 0; i <= lastShowPage; i++) {
     if (i == cur_page)
-      buttonsMid += format(numPageText, (i + 1).tostring(), (i == my_page ? "mainPlayer:t='yes';" : ""))
+      buttonsMid = "".concat(buttonsMid, format(numPageText, (i + 1).tostring(), (i == my_page ? "mainPlayer:t='yes';" : "")))
     else if ((cur_page - 1 <= i && i <= cur_page + 1)       //around current page
              || (i == my_page)                              //equal my page
              || (i < 3)                                     //always show first 2 entrys
              || (show_last_page && i == lastShowPage))      //show last entry if show_last_page
-      buttonsMid += format(numButtonText, i.tostring(), (i + 1).tostring(), (i == my_page ? "mainPlayer:t='yes';" : ""))
+      buttonsMid = "".concat(buttonsMid, format(numButtonText, i.tostring(), (i + 1).tostring(), (i == my_page ? "mainPlayer:t='yes';" : "")))
     else {
-      buttonsMid += format(numPageText, "...", "")
+      buttonsMid = "".concat(buttonsMid, format(numPageText, "...", ""))
       if (my_page != null && i < my_page && (my_page < cur_page || i > cur_page))
         i = my_page - 1
       else if (i < cur_page)
@@ -571,30 +496,6 @@ local last_update_entitlements_time = get_time_msec()
   }
 }
 
-::getValueForMode <- function getValueForMode(optionsMode, oType) {
-  let mainOptionsMode = getGuiOptionsMode()
-  setGuiOptionsMode(optionsMode)
-  local value = ::get_option(oType)
-  value = value.values[value.value]
-  setGuiOptionsMode(mainOptionsMode)
-  return value
-}
-
-::flushExcessExpToUnit <- function flushExcessExpToUnit(unit) {
-  let blk = DataBlock()
-  blk.setStr("unit", unit)
-
-  return char_send_blk("cln_move_exp_to_unit", blk)
-}
-
-::flushExcessExpToModule <- function flushExcessExpToModule(unit, module) {
-  let blk = DataBlock()
-  blk.setStr("unit", unit)
-  blk.setStr("mod", module)
-
-  return char_send_blk("cln_move_exp_to_module", blk)
-}
-
 ::quit_and_run_cmd <- function quit_and_run_cmd(cmd) {
   direct_launch(cmd); //FIXME: mac???
   exit_game();
@@ -624,12 +525,6 @@ local last_update_entitlements_time = get_time_msec()
   return func()
 }
 
-::is_worldwar_enabled <- function is_worldwar_enabled() {
-  return hasFeature("WorldWar")
-    && ("g_world_war" in getroottable())
-    && (!isPlatformSony || isCrossPlayEnabled())
-}
-
 ::check_tanks_available <- function check_tanks_available(silent = false) {
   if (is_platform_pc && "is_tanks_allowed" in getroottable() && !is_tanks_allowed()) {
     if (!silent)
@@ -639,7 +534,7 @@ local last_update_entitlements_time = get_time_msec()
   return true
 }
 
-::find_nearest <- function find_nearest(val, arrayOfVal) {
+function findNearest(val, arrayOfVal) {
   if (arrayOfVal.len() == 0)
     return -1;
 
@@ -655,31 +550,10 @@ local last_update_entitlements_time = get_time_msec()
 
   return bestIdx;
 }
-
-local informTexQualityRestrictedDone = false
-::informTexQualityRestricted <- function informTexQualityRestricted() {
-  if (informTexQualityRestrictedDone)
-    return
-  let message = loc("msgbox/graphicsOptionValueReduced/lowVideoMemory", {
-    name =  colorize("userlogColoredText", loc("options/texQuality"))
-    value = colorize("userlogColoredText", loc("options/quality_medium"))
-  })
-  showInfoMsgBox(message, "sysopt_tex_quality_restricted")
-  informTexQualityRestrictedDone = true
-}
+::find_nearest <- findNearest
 
 ::is_myself_anyof_moderators <- function is_myself_anyof_moderators() {
-  return ::is_myself_moderator() || ::is_myself_grand_moderator() || is_myself_chat_moderator()
-}
-
-::unlockCrew <- function unlockCrew(crewId, byGold, cost) {
-  let blk = DataBlock()
-  blk["crew"] = crewId
-  blk["gold"] = byGold
-  blk["cost"] = cost?.wp ?? 0
-  blk["costGold"] = cost?.gold ?? 0
-
-  return char_send_blk("cln_unlock_crew", blk)
+  return is_myself_moderator() || is_myself_grand_moderator() || is_myself_chat_moderator()
 }
 
 ::get_navigation_images_text <- function get_navigation_images_text(cur, total) {
@@ -691,12 +565,12 @@ local informTexQualityRestrictedDone = false
     else
       style = (cur < total - 1) ? "right" : null
     if (style)
-      res += "navImgStyle:t='" + style + "'; "
+      res = $"navImgStyle:t='{style}'; "
   }
   if (cur > 0)
-    res += "navigationImage{ type:t='left' } "
+    res = "".concat(res, "navigationImage{ type:t='left' } ")
   if (cur < total - 1)
-    res += "navigationImage{ type:t='right' } "
+    res = "".concat(res, "navigationImage{ type:t='right' } ")
   return res
 }
 
@@ -730,29 +604,13 @@ local server_message_end_time = 0
   return text != ""
 }
 
-::getArrayFromInt <- function getArrayFromInt(intNum) {
-  let arr = []
-  do {
-    let div = intNum % 10
-    arr.append(div)
-    intNum = floor(intNum / 10).tointeger()
-  } while (intNum != 0)
-
-  arr.reverse()
-  return arr
-}
-
 const PASSWORD_SYMBOLS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 ::gen_rnd_password <- function gen_rnd_password(charsAmount) {
   local res = ""
   let total = PASSWORD_SYMBOLS.len()
   for (local i = 0; i < charsAmount; i++)
-    res += PASSWORD_SYMBOLS[rnd() % total].tochar()
+    res = "".concat(res, PASSWORD_SYMBOLS[rnd() % total].tochar())
   return res
-}
-
-::inherit_table <- function inherit_table(parent_table, child_table) {
-  return u.extend(u.copy(parent_table), child_table)
 }
 
 ::is_mode_with_teams <- function is_mode_with_teams(gt = null) {
@@ -815,3 +673,5 @@ const PASSWORD_SYMBOLS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQR
 ::show_not_available_msg_box <- function show_not_available_msg_box() {
   showInfoMsgBox(loc("msgbox/notAvailbleYet"), "not_available", true)
 }
+
+return { findNearest }

@@ -7,9 +7,13 @@ let { Cost } = require("%scripts/money.nut")
 let { format, split_by_chars } = require("string")
 let { round } = require("math")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
-let { getBitStatus, canBuyNotResearched } = require("%scripts/unit/unitStatus.nut")
-let { getUnitRole, getUnitRoleIcon, getUnitItemStatusText, getUnitRarity
+let { getBitStatus, canBuyNotResearched, isUnitElite, isUnitInSlotbar, canResearchUnit,
+  isUnitInResearch, isUnitsEraUnlocked, isUnitGroup, isUnitBroken,
+  isUnitUsable
+} = require("%scripts/unit/unitStatus.nut")
+let { getUnitItemStatusText, getUnitRarity
 } = require("%scripts/unit/unitInfoTexts.nut")
+let { getUnitRole, getUnitRoleIcon } = require("%scripts/unit/unitInfoRoles.nut")
 let { checkUnitWeapons, getWeaponsStatusName } = require("%scripts/weaponry/weaponryInfo.nut")
 let { getUnitShopPriceText } = require("unitCardPkg.nut")
 let SecondsUpdater = require("%sqDagui/timer/secondsUpdater.nut")
@@ -18,11 +22,11 @@ let { stashBhvValueConfig } = require("%sqDagui/guiBhv/guiBhvValueConfig.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { getShopDevMode, getUnitDebugRankText } = require("%scripts/debugTools/dbgShop.nut")
 let { shopIsModificationEnabled } = require("chardResearch")
-let { getEsUnitType, isUnitsEraUnlocked, getUnitName, isUnitGroup, canResearchUnit,
-  bit_unit_status, canBuyUnit
+let { getEsUnitType, getUnitName,
+  bit_unit_status, getUnitReqExp, getUnitExp
 } = require("%scripts/unit/unitInfo.nut")
+let { canBuyUnit } = require("%scripts/unit/unitShopInfo.nut")
 let { isUnitPriceTextLong, getUnitSlotRankText } = require("%scripts/slotbar/slotbarView.nut")
-let { isUnitInSlotbar } = require("%scripts/slotbar/slotbarState.nut")
 let { getBonusImage } = require("%scripts/bonusModule.nut")
 let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
 let { getTooltipType, addTooltipTypes } = require("%scripts/utils/genericTooltipTypes.nut")
@@ -387,7 +391,7 @@ let getUnitStatusTbl = function(unit, params) {
   } = params
 
   let isOwn           = unit.isBought()
-  let isUsable        = ::isUnitUsable(unit)
+  let isUsable        = isUnitUsable(unit)
   let isSpecial       = isUnitSpecial(unit)
   let bitStatus       = getBitStatus(unit, params)
 
@@ -396,13 +400,13 @@ let getUnitStatusTbl = function(unit, params) {
     unitRankText        = getUnitRankText(unit, showBR, getEdiffFunc())
     isInactive          = (bit_unit_status.disabled & bitStatus) != 0
       || (shopResearchMode && (bit_unit_status.locked & bitStatus) != 0)
-    isBroken            = ::isUnitBroken(unit)
+    isBroken            = isUnitBroken(unit)
     isLocked            = !isUsable && !isSpecial && !unit.isSquadronVehicle() && !::canBuyUnitOnMarketplace(unit)
       && !isUnitsEraUnlocked(unit) && !unit.isCrossPromo
     needInService       = isUsable
     isMounted           = isUsable && isUnitInSlotbar(unit)
     weaponsStatus       = getWeaponsStatusName(isUsable ? checkUnitWeapons(unit) : UNIT_WEAPONS_READY)
-    isElite             = isOwn ? ::isUnitElite(unit) : isSpecial
+    isElite             = isOwn ? isUnitElite(unit) : isSpecial
     hasTalismanIcon     = isSpecial || shopIsModificationEnabled(unit.name, "premExpMul")
     priceText           = getUnitShopPriceText(unit)
 
@@ -416,7 +420,7 @@ let getUnitStatusTbl = function(unit, params) {
   if (canBuyNotResearched(unit)) {
     if(!::is_in_clan()) {
       res.priceText = unit.getOpenCost().getTextAccordingToBalance()
-      params.hideProgress <- ::getUnitExp(unit) > 0
+      params.hideProgress <- getUnitExp(unit) > 0
     }
     else if(::is_in_clan() && (bitStatus & bit_unit_status.inResearch) == 0 ) {
       res.priceText = unit.getOpenCost().getTextAccordingToBalance()
@@ -424,7 +428,7 @@ let getUnitStatusTbl = function(unit, params) {
     }
   }
 
-  if (forceNotInResearch || !::isUnitInResearch(unit) || hasFeature("SpendGold")) //it not look like good idea to calc it here
+  if (forceNotInResearch || !isUnitInResearch(unit) || hasFeature("SpendGold")) //it not look like good idea to calc it here
     if (showConsoleButtons.value)
       res.mainButtonIcon <- "#ui/gameuiskin#slot_menu.svg"
     else
@@ -437,16 +441,16 @@ function getUnitResearchStatusTbl(unit, params) {
     return {}
   if (unit.isBought() || !canResearchUnit(unit))
     return {}
-  let unitReqExp = ::getUnitReqExp(unit)
+  let unitReqExp = getUnitReqExp(unit)
   if (unitReqExp <= 0)
     return {}
 
   let { forceNotInResearch = false, flushExp = 0, unitTypeName,
     nationBonusBattlesRemain, maxRank, hasNationBonus} = params
 
-  let isVehicleInResearch = ::isUnitInResearch(unit) && !forceNotInResearch
+  let isVehicleInResearch = isUnitInResearch(unit) && !forceNotInResearch
   let isSquadronVehicle = unit.isSquadronVehicle()
-  let unitCurExp = ::getUnitExp(unit)
+  let unitCurExp = getUnitExp(unit)
   let diffExp = isSquadronVehicle ? min(clan_get_exp(), unitReqExp - unitCurExp) : 0
   let isLockedSquadronVehicle = isSquadronVehicle && !::is_in_clan() && diffExp <= 0
   if (isLockedSquadronVehicle && unitCurExp <= 0)
@@ -532,8 +536,8 @@ function getGroupStatusTbl(group, params) {
   local markerHolderId     = ""
 
   foreach (unit in unitsList) {
-    let isInResearch = !forceNotInResearch && ::isUnitInResearch(unit)
-    let isUsable = ::isUnitUsable(unit)
+    let isInResearch = !forceNotInResearch && isUnitInResearch(unit)
+    let isUsable = isUnitUsable(unit)
 
     if (isInResearch || (canResearchUnit(unit) && !researchingUnit)) {
       researchingUnit = unit
@@ -557,7 +561,7 @@ function getGroupStatusTbl(group, params) {
     bitStatus = bitStatus | curBitStatus
     isPkgDev = isPkgDev || unit.isPkgDev
     isRecentlyReleased = isRecentlyReleased || unit.isRecentlyReleased()
-    isElite = isElite && ::isUnitElite(unit)
+    isElite = isElite && isUnitElite(unit)
     let hasTalisman = isUnitSpecial(unit) || shopIsModificationEnabled(unit.name, "premExpMul")
     hasTalismanIcon = hasTalismanIcon || hasTalisman
     isTalismanComplete = isTalismanComplete && hasTalisman

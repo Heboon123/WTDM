@@ -3,6 +3,8 @@ from "%scripts/dagui_library.nut" import *
 from "%scripts/items/itemsConsts.nut" import itemType
 from "%scripts/mainConsts.nut" import SEEN
 
+let { getGlobalModule } = require("%scripts/global_modules.nut")
+let events = getGlobalModule("events")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let getShipFlags = require("%scripts/customization/shipFlags.nut")
 let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
@@ -11,7 +13,6 @@ let { ceil } = require("math")
 let { number_of_set_bits, round_by_value } = require("%sqstd/math.nut")
 let { buildDateStrShort, buildDateTimeStr } = require("%scripts/time.nut")
 let { processUnitTypeArray } = require("%scripts/unit/unitClassType.nut")
-let { getRoleText } = require("%scripts/unit/unitInfoTexts.nut")
 let { isLoadingBgUnlock, getLoadingBgName,
   getLoadingBgIdByUnlockId } = require("%scripts/loading/loadingBgData.nut")
 let { getEntitlementConfig, getEntitlementName } = require("%scripts/onlineShop/entitlements.nut")
@@ -30,6 +31,7 @@ let { getLocIdsArray } = require("%scripts/langUtils/localization.nut")
 let { getUnlockProgressSnapshot } = require("%scripts/unlocks/unlockProgressSnapshots.nut")
 let { season, seasonLevel, getLevelByExp } = require("%scripts/battlePass/seasonState.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
+let { getRoleText } = require("%scripts/unit/unitInfoRoles.nut")
 let { getMissionTimeText } = require("%scripts/missions/missionsUtils.nut")
 let { hasActiveUnlock, getUnitListByUnlockId } = require("%scripts/unlocks/unlockMarkers.nut")
 let { placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
@@ -39,7 +41,7 @@ let { getTypeByUnlockedItemType, decoratorTypes, getTypeByResourceType
 } = require("%scripts/customization/types.nut")
 let { is_in_loading_screen } = require("%sqDagui/framework/baseGuiHandlerManager.nut")
 let { addTooltipTypes } = require("%scripts/utils/genericTooltipTypes.nut")
-let { Cost } = require("%scripts/money.nut")
+let { zero_money, Cost } = require("%scripts/money.nut")
 let { MAX_COUNTRY_RANK } = require("%scripts/ranks.nut")
 
 let customLocTypes = ["gameModeInfoString", "missionPostfix"]
@@ -166,7 +168,7 @@ function getIconByUnlockBlk(unlockBlk) {
       return unit.getUnlockImage()
   }
   else if (unlockType == UNLOCKABLE_PILOT)
-    return $"#ui/images/avatars/{unlockBlk.id}"
+    return $"#ui/images/avatars/{unlockBlk.id}.avif"
 
   return unlockBlk?.icon
 }
@@ -568,7 +570,7 @@ function getUsualCondValueText(condType, v, condition) {
   if (condType in eraAndRnakCondType)
     return get_roman_numeral(v)
   if (condType == "events")
-    return ::events.getNameByEconomicName(v)
+    return events.getNameByEconomicName(v)
   if (["offenderIsSupportGun", "offenderIsStealthBelt"].contains(condType))
     return loc(v)
   if (condType == "operationMap")
@@ -763,7 +765,7 @@ function getUnlockCostText(cfg) {
     return ""
 
   let cost = getUnlockCost(cfg.id)
-  if (cost > ::zero_money)
+  if (cost > zero_money)
     return "".concat(
       loc("ugm/price"),
       loc("ui/colon"),

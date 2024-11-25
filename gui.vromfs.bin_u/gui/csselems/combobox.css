@@ -1,14 +1,15 @@
 @const comboListPadding:0;
 @const comboOptionPadding:5@sf/@pf_outdated;
 @const comboBtnWidth:@baseTrHeight - 4@dp;
-@const comboBtnHeight: 11@sf/@pf;
+@const comboBtnHeight:11@sf/@pf;
+@const comboOptContainerHeight:32@sf/@pf;
 
-@const comboBgColor:               #000000;
-@const comboHoveredBgColor:        #303030;
-@const comboExpanedBgColor:        #505050;
-@const comboOptionColor:           #585858;
-@const comboSelOptionColor:        #f1f1f1;
-@const comboListBgColor:           #212121;
+@const comboBgColor:                 #000000;
+@const comboHoveredBgColor:          #303030;
+@const comboExpanedBgColor:          #505050;
+@const comboOptionColor:             #585858;
+@const comboSelOptionColor:          #f1f1f1;
+@const comboListBgColor:             #212121;
 
 @const comboExpandedTextColor:       #e0e0e0;
 @const comboExpandedSelTextColor:    #3b3b3b;
@@ -26,7 +27,7 @@ ComboBox {
   css-hier-invalidate:yes;
   total-input-transparent:yes;
 
-  _needBtnPos:yes;
+  btnPos:right;
   screen-offset:@bh;
 
   background-color:@comboBgColor;
@@ -86,17 +87,10 @@ tr > tdiv > ComboBox {
   btnName:X;
 }
 
-ComboBox[btnPos] {
-  _needBtnPos:no;
-}
-
-ComboBox[_needBtnPos=yes] {
-  btnPos:right;
-}
-
 ComboBox[btnPos=left] {
   padding-left:@comboBtnWidth;
 }
+
 ComboBox[btnPos=right] {
   padding-right:@comboBtnWidth;
 }
@@ -306,6 +300,10 @@ tr:hover > td > ComboBox > option > optiontext {
   color:@hoverTextColor;
 }
 
+tr[optContainer=yes][disabled=yes] > td > ComboBox > option > optiontext {
+  color:@disabledTextColor;
+}
+
 ComboBox:expanded > option,
 ComboBox:expanded > option > optiontext,
 ComboBox > listBox > option,
@@ -327,4 +325,9 @@ ComboBox > listBox > option:current {
 ComboBox > listBox > option:disabled > optiontext
 {
   color:#000000;
+}
+
+[optContainer=yes] ComboBox {
+  width:@optContainerControlWidth;
+  max-height:@comboOptContainerHeight;
 }

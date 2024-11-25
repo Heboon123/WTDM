@@ -1,4 +1,3 @@
-//-file:plus-string
 from "app" import is_dev_version
 from "%scripts/dagui_natives.nut" import stop_gui_sound, show_highlights, save_profile, get_premium_reward_wp, is_online_available, entitlement_expires_in, start_gui_sound, set_presence_to_player, disable_network, get_session_warpoints, shop_get_premium_account_ent_name, set_char_cb, is_highlights_inited, get_premium_reward_xp, purchase_entitlement_and_get_award
 from "%scripts/dagui_library.nut" import *
@@ -12,6 +11,7 @@ let { is_user_mission } = require("%scripts/missions/missionsUtilsModule.nut")
 let { HudBattleLog } = require("%scripts/hud/hudBattleLog.nut")
 let { eventbus_subscribe } = require("eventbus")
 let { getGlobalModule } = require("%scripts/global_modules.nut")
+let events = getGlobalModule("events")
 let g_squad_manager = getGlobalModule("g_squad_manager")
 let { get_pve_trophy_name, get_mission_mode } = require("%appGlobals/ranks_common_shared.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -56,11 +56,13 @@ let { getDebriefingResult, getDynamicResult, debriefingRows, isDebriefingResultF
   gatherDebriefingResult, getCountedResultId, debriefingAddVirtualPremAcc, getTableNameById,
   updateDebriefingResultGiftItemsInfo, setDebriefingResult
 } = require("%scripts/debriefing/debriefingFull.nut")
-let { locCurrentMissionName, isMissionExtrByName } = require("%scripts/missions/missionsUtils.nut")
+let { locCurrentMissionName, isMissionExtrByName, selectNextAvailCampaignMission
+} = require("%scripts/missions/missionsUtils.nut")
 let { needCheckForVictory, guiStartMenuCampaign, guiStartMenuSingleMissions,
   guiStartMenuUserMissions, guiStartDynamicSummary, guiStartDynamicSummaryF,
-  guiStartMpLobby, getCurrentCampaignId, getCurrentCampaignMission
+  guiStartMpLobby
 } = require("%scripts/missions/startMissionsList.nut")
+let { currentCampaignId, currentCampaignMission } = require("%scripts/missions/missionsStates.nut")
 let { getTournamentRewardData } = require("%scripts/userLog/userlogUtils.nut")
 let { goToBattleAction,
   openLastTournamentWnd } = require("%scripts/debriefing/toBattleAction.nut")
@@ -98,6 +100,7 @@ let { loadLocalByAccount, saveLocalByAccount
 let { blendProp } = require("%sqDagui/guiBhv/guiBhvUtils.nut")
 let { create_ObjMoveToOBj } = require("%sqDagui/guiBhv/bhvAnim.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
+let { isUnitInResearch } = require("%scripts/unit/unitStatus.nut")
 let { get_current_mission_info_cached, get_warpoints_blk, get_ranks_blk, get_game_settings_blk
 } = require("blkGetters")
 let { isInSessionRoom, sessionLobbyStatus } = require("%scripts/matchingRooms/sessionLobbyState.nut")
@@ -128,6 +131,10 @@ let { guiStartOpenTrophy } = require("%scripts/items/trophyRewardWnd.nut")
 let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 let { getTooltipObjId } = require("%scripts/utils/genericTooltip.nut")
 let { invalidateCrewsList } = require("%scripts/slotbar/crewsList.nut")
+let { canOpenHitsAnalysisWindow, openHitsAnalysisWindow } = require("%scripts/dmViewer/hitsAnalysis.nut")
+let { getLbDiff, getLeaderboardItemView, getLeaderboardItemWidgets
+} = require("%scripts/leaderboard/leaderboardHelpers.nut")
+let { isWorldWarEnabled } = require("%scripts/globalWorldWarScripts.nut")
 
 const DEBR_LEADERBOARD_LIST_COLUMNS = 2
 const DEBR_AWARDS_LIST_COLUMNS = 3
@@ -466,7 +473,8 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
               break
             }
           let winner = ((myTeam == Team.A) == this.debriefingResult.isSucceed) ? "A" : "B"
-          resTitle = loc("multiplayer/team_won") + loc("ui/colon") + loc($"multiplayer/team{winner}")
+          resTitle = "".concat(loc("multiplayer/team_won"), loc("ui/colon"),
+            loc($"multiplayer/team{winner}"))
           resTheme = DEBR_THEME.WIN
         }
         else {
@@ -739,9 +747,11 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     this.totalTarValues = {}
 
     foreach (currency in [ "exp", "wp" ]) {
-      foreach (suffix in [ "", "Teaser" ])
-        if (!(currency + suffix in this.totalCurValues))
-          this.totalCurValues[currency + suffix] <- 0
+      foreach (suffix in [ "", "Teaser" ]) {
+        let finalName = $"{currency}{suffix}"
+        if (!(finalName in this.totalCurValues))
+          this.totalCurValues[finalName] <- 0
+      }
 
       let totalKey = getCountedResultId(this.totalRow, this.state, currency)
       this.totalCurValues[currency] <- getTblValue(currency, this.totalCurValues, 0)
@@ -759,7 +769,8 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
         currencies.append(Cost().setRp(premTeaser.exp).tostring())
       if (premTeaser.wp  > 0)
         currencies.append(Cost(premTeaser.wp).tostring())
-      tooltip = loc("debriefing/PremiumNotEarned") + loc("ui/colon") + "\n" + loc("ui/comma").join(currencies, true)
+      tooltip = "".concat(loc("debriefing/PremiumNotEarned"), loc("ui/colon"), "\n",
+        loc("ui/comma").join(currencies, true))
     }
 
     this.totalObj = this.scene.findObject("wnd_total")
@@ -813,16 +824,18 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     if (!isWagerHasResult)
       containerObj.tooltip = loc("debriefing/wager_result_will_be_later")
     else if (isWagerEnded) {
-      local endedWagerText = activeWagerData.wagerText
-      endedWagerText += "\n" + loc("items/wager/numWins", {
-        numWins = activeWagerData.wagerNumWins,
-        maxWins = wager.maxWins
-      })
-      endedWagerText += "\n" + loc("items/wager/numFails", {
-        numFails = activeWagerData.wagerNumFails,
-        maxFails = wager.maxFails
-      })
-      containerObj.tooltip = endedWagerText
+      let endedWagerText = [
+        activeWagerData.wagerText,
+        loc("items/wager/numWins", {
+          numWins = activeWagerData.wagerNumWins,
+          maxWins = wager.maxWins
+        }),
+        loc("items/wager/numFails", {
+          numFails = activeWagerData.wagerNumFails,
+          maxFails = wager.maxFails
+        })
+      ]
+      containerObj.tooltip = "\n".join(endedWagerText)
     }
 
     this.handleActiveWagerText(activeWagerData)
@@ -933,7 +946,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     for (local i = 0; i < showLen; i++) {
       let markup = ::trophyReward.getImageByConfig(this.giftItems[i], false)
       this.isAllGiftItemsKnown = this.isAllGiftItemsKnown && markup != ""
-      giftsMarkup += markup
+      giftsMarkup = $"{giftsMarkup}{markup}"
     }
     this.guiScene.replaceContentFromText(obj, giftsMarkup, giftsMarkup.len(), this)
   }
@@ -1062,7 +1075,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     foreach (logObj in filteredLogs) {
       let layer = ::trophyReward.getImageByConfig(logObj, false)
       if (layer != "") {
-        layersData += layer
+        layersData = $"{layersData}{layer}"
         break
       }
     }
@@ -1270,8 +1283,8 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
         let bonusWp  = getTblValue($"{bonusType}Wp",  tblTotal, 0)
         if (!bonusExp && !bonusWp)
           continue
-        bonusesTotal.append(loc(getTblValue(bonusType, bonusNames, "")) + loc("ui/colon") +
-          Cost(bonusWp, 0, bonusExp).tostring())
+        bonusesTotal.append("".concat(loc(getTblValue(bonusType, bonusNames, "")), loc("ui/colon"),
+          Cost(bonusWp, 0, bonusExp).tostring()))
       }
       if (!u.isEmpty(bonusesTotal))
         textArray.append("\n".join(bonusesTotal, true))
@@ -1354,8 +1367,8 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       config.subType = ps4_activity_feed.MISSION_SUCCESS_AFTER_UPDATE
       customConfig.blkParamName = "MAJOR_UPDATE"
       let ver = split_by_chars(get_game_version_str(), ".")
-      customConfig.version <- ver[0] + "." + ver[1]
-      customConfig.imgSuffix <- "_" + ver[0] + "_" + ver[1]
+      customConfig.version <- $"{ver[0]}.{ver[1]}"
+      customConfig.imgSuffix <- $"_{ver[0]}_{ver[1]}"
       customConfig.shouldForceLogo <- true
     }
 
@@ -1559,7 +1572,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     foreach (ut in unitTypes.types) {
       let unitItem = this.getResearchUnitMarkupData(ut.name)
       if (unitItem) {
-        data += buildUnitSlot(unitItem.id, unitItem.unit, unitItem.params)
+        data = "".concat(data, buildUnitSlot(unitItem.id, unitItem.unit, unitItem.params))
         unitItems.append(unitItem)
       }
     }
@@ -1600,7 +1613,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       return false
     foreach (ut in unitTypes.types) {
       let unit = getTblValue("unit", this.getResearchUnitInfo(ut.name))
-      if (unit && !::isUnitInResearch(unit))
+      if (unit && !isUnitInResearch(unit))
         return true
     }
     foreach (unitId, unitData in this.debriefingResult.exp.aircrafts) {
@@ -1754,7 +1767,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       return
 
     let { tournamentResult = null, eventId = null } = logs[0]
-    if (tournamentResult == null || ::events.getEvent(eventId)?.leaderboardEventTable != null)
+    if (tournamentResult == null || events.getEvent(eventId)?.leaderboardEventTable != null)
       return
 
     let gapSides = this.guiScene.calcString("@tablePad", null)
@@ -1772,24 +1785,24 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     let now = tournamentResult.newStat
     let was = tournamentResult.oldStat
 
-    let lbDiff = ::leaderboarsdHelpers.getLbDiff(now, was)
+    let lbDiff = getLbDiff(now, was)
     let items = []
     foreach (lbFieldsConfig in eventsTableConfig) {
       if (!(lbFieldsConfig.field in now)
-        || !::events.checkLbRowVisibility(lbFieldsConfig, { eventId }))
+        || !events.checkLbRowVisibility(lbFieldsConfig, { eventId }))
         continue
 
       let isFirstInRow = items.len() % DEBR_LEADERBOARD_LIST_COLUMNS == 0
       itemParams.pos = isFirstInRow ? posFirst : posCommon
 
-      items.append(::getLeaderboardItemView(lbFieldsConfig,
+      items.append(getLeaderboardItemView(lbFieldsConfig,
         now[lbFieldsConfig.field],
         getTblValue(lbFieldsConfig.field, lbDiff, null),
         itemParams))
     }
     lbWindgetsNestObj.show(true)
 
-    let blk = ::getLeaderboardItemWidgets({ items = items })
+    let blk = getLeaderboardItemWidgets({ items = items })
     this.guiScene.replaceContentFromText(lbWindgetsNestObj, blk, blk.len(), this)
     lbWindgetsNestObj.scrollToView()
   }
@@ -1901,9 +1914,9 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
             continue
           local extra = ""
           if (source == "booster") {
-            let effect = getTblValue((currency == "exp" ? "xp" : currency) + "Rate", boosterEffects, 0)
+            let effect = boosterEffects?[$"{currency == "exp" ? "xp" : currency}Rate"] ?? 0
             if (effect)
-              extra = colorize("fadedTextColor", loc("ui/parentheses", { text = effect.tointeger().tostring() + "%" }))
+              extra = colorize("fadedTextColor", loc("ui/parentheses", { text = $"{effect.tointeger()}%" }))
           }
           let { text, image } = getViewByType(val, currency)
           currencySourcesView.append((sourcesConfig?[source] ?? {}).__merge({
@@ -2007,7 +2020,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
 
     let btnObj = obj.findObject("btn_buy_premium_award")
     if (checkObj(btnObj))
-      btnObj.findObject("label").setValue(loc("mainmenu/earn") + "\n" + curAwardText)
+      btnObj.findObject("label").setValue($"{loc("mainmenu/earn")}\n{curAwardText}")
 
     this.updateMyStatsTopBarArrangement()
   }
@@ -2326,7 +2339,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     let hasPlace = place != 0
 
     let label = hasPlace && this.isTeamplay ? loc("debriefing/placeInMyTeam")
-      : hasPlace && !this.isTeamplay ? (loc("mainmenu/btnMyPlace") + loc("ui/colon"))
+      : hasPlace && !this.isTeamplay ? "".concat(loc("mainmenu/btnMyPlace"), loc("ui/colon"))
       : !isDebriefingResultFull() ? loc("debriefing/preliminaryResults")
       : loc(this.debriefingResult.isSucceed ? "debriefing/victory" : "debriefing/defeat")
 
@@ -2403,7 +2416,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       if (checkObj(obj)) {
         local data = ""
         foreach (f in filters)
-          data += format("RadioButton { text:t='#%s'; style:t='color:@white'; RadioButtonImg{} }\n", f.title)
+          data = "".concat(data, "RadioButton { text:t='#", f.title, "'; style:t='color:@white'; RadioButtonImg{} }\n")
         this.guiScene.replaceContentFromText(obj, data, data.len(), this)
         obj.setValue(filterIdx)
       }
@@ -2611,7 +2624,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
   }
 
   function loadWwCasualtiesHistory() {
-    if (!::is_worldwar_enabled())
+    if (!isWorldWarEnabled())
       return
 
     let wwBattleResults = this.getWwBattleResults()
@@ -2706,7 +2719,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     return !this.isCurMissionExtr && (this.giftItems != null)
   }
   function is_show_ww_casualties() {
-    return this.needPlayersTbl && ::is_worldwar_enabled() && getCurMissionRules().isWorldWar
+    return this.needPlayersTbl && isWorldWarEnabled() && getCurMissionRules().isWorldWar
   }
   function is_show_research_list() {
     foreach (unitId, _unitData in this.debriefingResult.exp.aircrafts)
@@ -2754,6 +2767,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     let buttonsList = {
       btn_view_replay = isAnimDone && isReplayReady
       btn_save_replay = isAnimDone && isReplayReady && !is_replay_saved()
+      btn_parse_replay = isAnimDone && isReplayReady && canOpenHitsAnalysisWindow()
       btn_user_options = isAnimDone && (this.curTab == "players_stats") && player && !player.isBot && showConsoleButtons.value
       btn_view_highlights = isAnimDone && is_highlights_inited()
     }
@@ -2816,6 +2830,12 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     guiModalNameAndSaveReplay(this, afterFunc)
   }
 
+  function onParseReplay(_obj) {
+    if (this.isInProgress || !is_replay_present())
+      return
+    this.guiScene.performDelayed(this, @() openHitsAnalysisWindow())
+  }
+
   function onViewHighlights() {
     if (!is_highlights_inited())
       return
@@ -2848,13 +2868,13 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
 
     if (this.gm == GM_CAMPAIGN) {
       if (this.debriefingResult.isSucceed) {
-        let currentCampaignId = getCurrentCampaignId()
-        let currentCampaignMission = getCurrentCampaignMission()
-        log($"VIDEO: campaign = {currentCampaignId} mission = {currentCampaignMission}")
-        if ((currentCampaignMission == "jpn_guadalcanal_m4")
-            || (currentCampaignMission == "us_guadalcanal_m4"))
+        let currentCampId = currentCampaignId.get()
+        let currentCampMission = currentCampaignMission.get()
+        log($"VIDEO: campaign = {currentCampId} mission = {currentCampMission}")
+        if ((currentCampMission == "jpn_guadalcanal_m4")
+            || (currentCampMission == "us_guadalcanal_m4"))
           needCheckForVictory(true)
-        ::select_next_avail_campaign_mission(currentCampaignId, currentCampaignMission)
+        selectNextAvailCampaignMission(currentCampId, currentCampMission)
       }
       goDebriefingNextFunc = guiStartMenuCampaign
       return
@@ -3028,7 +3048,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
   }
 
   function needShowWorldWarOperationBtn() {
-    return ::is_worldwar_enabled() && ::g_world_war.isLastFlightWasWwBattle
+    return isWorldWarEnabled() && ::g_world_war.isLastFlightWasWwBattle
   }
 
   function switchWwOperationToCurrent() {
@@ -3195,7 +3215,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       local hasAnyReward = false
       foreach (source in [ "Total", "Mission" ])
         foreach (currency in [ "exp", "wp", "gold" ])
-          if (getTblValue(currency + source, this.debriefingResult.exp, 0) > 0)
+          if ((this.debriefingResult.exp?[$"{currency}{source}"] ?? 0) > 0)
             hasAnyReward = true
 
       if (!hasAnyReward) {
@@ -3344,7 +3364,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
   }
 
   function getCurAwardText() {
-    return Cost(::get_premium_reward_wp(), 0, get_premium_reward_xp()).tostring()
+    return Cost(get_premium_reward_wp(), 0, get_premium_reward_xp()).tostring()
   }
 
   getLocalTeam = @() ::get_local_team_for_mpstats(this.debriefingResult.localTeam)

@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import has_entitlement, get_entitlement_cost_gold
 from "%scripts/dagui_library.nut" import *
 
@@ -10,7 +9,7 @@ let { decimalFormat } = require("%scripts/langUtils/textFormat.nut")
 let { doesLocTextExist } = require("dagor.localize")
 let { utf8ToUpper } = require("%sqstd/string.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
-let { get_warpoints_blk, get_ranks_blk } = require("blkGetters")
+let { get_warpoints_blk, get_ranks_blk, get_discounts_blk } = require("blkGetters")
 let { getLanguageName } = require("%scripts/langUtils/language.nut")
 let { getShopPriceBlk } = require("%scripts/onlineShop/onlineShopState.nut")
 let { measureType } = require("%scripts/measureType.nut")
@@ -131,9 +130,9 @@ function getEntitlementAmount(ent) {
 
 function getEntitlementTimeText(ent) { // -return-different-types
   if ("ttl" in ent)
-    return ent.ttl + loc("measureUnits/days")
+    return "".concat(ent.ttl, loc("measureUnits/days"))
   if ("httl" in ent)
-    return ent.httl + loc("measureUnits/hours")
+    return "".concat(ent.httl, loc("measureUnits/hours"))
   return ""
 }
 
@@ -153,13 +152,26 @@ function getEntitlementName(ent) {
   local name = getEntitlementShortName(ent)
   let timeText = getEntitlementTimeText(ent)
   if (timeText != "")
-    name += $" {timeText}"
+    name = $"{name} {timeText}"
   return name
 }
 
 function getFirstPurchaseAdditionalAmount(ent) {
   if (!has_entitlement(ent.name))
     return getTblValue("goldIncomeFirstBuy", ent, 0)
+
+  return 0
+}
+
+function getSteamMarkUp() {
+  let blk = get_discounts_blk()
+
+  let blocksCount = blk.blockCount()
+  for (local i = 0; i < blocksCount; i++) {
+    let block = blk.getBlock(i)
+    if (block.getBlockName() == "steam_markup")
+      return block.all
+  }
 
   return 0
 }
@@ -177,7 +189,7 @@ function getEntitlementPrice(ent) {
     if (priceText == "")
       return ""
 
-    let markup = steam_is_running() ? 1.0 + ::getSteamMarkUp() / 100.0 : 1.0
+    let markup = steam_is_running() ? 1.0 + getSteamMarkUp() / 100.0 : 1.0
     local totalPrice = priceText.tofloat() * markup
     let discount = ::g_discount.getEntitlementDiscount(ent.name)
     if (discount)

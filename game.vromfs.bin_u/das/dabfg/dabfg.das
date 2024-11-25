@@ -127,7 +127,7 @@ def registerNode(var self : NameSpace; name : string; var declaration_callback :
   return <- registry.nodes |> get(nodeId) <| $(var node_data : NodeData&)
     getTracker() |> unregisterNode(nodeId, node_data.generation)
     getTracker() |> registerNode(nodeId)
-    node_data |> registerNodeDeclaration(self.nameSpaceId) <| @ [[ <- declaration_callback, =registry ]] ()
+    node_data |> registerNodeDeclaration(self.nameSpaceId) <| @ [[ <- declaration_callback, =registry]] ()
       return <- declaration_callback |> invoke() <| [[Registry
         nameSpaceId = self.nameSpaceId,
         nodeId = nodeId,
@@ -369,13 +369,15 @@ def private tryAddBlobSpecializations(var blobType : TypeDeclPtr) : void
   let blobTypeHash = hash(mangledBlobTypeName)
 
   // We add 2 new types per blob type: blob request and blob handle
-  let vrrBase = typeinfo(ast_typedecl type<VirtualResourceRequest>).structType
+  var inscope vrr_type <- typeinfo(ast_typedecl type<VirtualResourceRequest>)
+  let vrrBase = vrr_type.structType
   var inscope blobRequestStruct <- clone_structure(vrrBase)
   blobRequestStruct.name := "VirtualBlobRequest`{blobTypeHash}"
   blobRequestStruct.parent := vrrBase
   blobRequestStruct.flags |= StructureFlags generated
 
-  let vrhBase = typeinfo(ast_typedecl type<VirtualResourceHandleBase>).structType
+  var inscope vrhb_type <- typeinfo(ast_typedecl type<VirtualResourceHandleBase>)
+  let vrhBase = vrhb_type.structType
   var inscope blobHandleStruct <- clone_structure(vrhBase)
   blobHandleStruct.name := "VirtualBlobHandle`{blobTypeHash}"
   blobHandleStruct.parent := vrhBase
@@ -477,8 +479,8 @@ class BlobMacro : AstCallMacro
                 res |> setDescription($v(mangledBlobTypeName), $v(blobType.sizeOf), $v(blobType.alignOf),
                   getTypeInfo(type<$t(blobType)>), @@$c("ctor`{blobTypeHash}"), @@$c("dtor`{blobTypeHash}"), @@$c("copy`{blobTypeHash}"));
               } else {
-                let nullFunc = [[function<(var arg0 : void?) : void> ]];
-                let nullCopyFunc = [[function<(var arg0 : void?; arg1 : void const?) : void> ]];
+                let nullFunc = [[function<(var arg0 : void?) : void>]];
+                let nullCopyFunc = [[function<(var arg0 : void?; arg1 : void const?) : void>]];
                 res |> setDescription($v(mangledBlobTypeName), $v(blobType.sizeOf), $v(blobType.alignOf),
                   getTypeInfo(type<$t(blobType)>), nullFunc, nullFunc, nullCopyFunc);
               }
@@ -531,7 +533,7 @@ def bindToShaderVar(var self : auto(TT); name : string = "") : TT
   if (name == "")
     svName = self.registry.knownNames |> getShortName(self.resUid.nameId)
 
-  let svId = get_shader_variable_id(svName)
+  let svId = DagorShaders::get_shader_variable_id(svName)
   assume bindings = self.registry.nodes[self.nodeId].bindings
   if !(bindings |> key_exists(svId))
     using() <| $(var info : Binding#)

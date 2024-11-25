@@ -512,12 +512,10 @@ return [
     id = "ID_UNLIMITED_CONTROL"
     checkAssign = false
   }
-  //
-
-
-
-
-
+  {
+    id = "ID_TOGGLE_CONSTRUCTION_MODE"
+    checkAssign = false
+  }
   {
     id = "ID_TOGGLE_STEALTH"
     checkAssign = false
@@ -563,10 +561,8 @@ return [
     showFunc = hasXInputDevice
     checkAssign = @() isXInputDevice()
   }
-  //
-
-
-
-
-
+  {
+    id = "ID_TANK_SWITCH_FUSE_MODE"
+    checkAssign = false
+  }
 ]

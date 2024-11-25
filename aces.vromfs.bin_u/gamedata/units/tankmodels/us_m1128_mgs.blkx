@@ -158,6 +158,30 @@
         "turnSpeed": 0.2,
         "node": "bone_roll_driver_r_04",
         "absoluteValue": true
+      },
+      {
+        "type": "steeringWheel",
+        "turnSpeed": 0.2,
+        "node": "bone_roll_driver_l_05",
+        "absoluteValue": true
+      },
+      {
+        "type": "steeringWheel",
+        "turnSpeed": 0.2,
+        "node": "bone_roll_driver_l_06",
+        "absoluteValue": true
+      },
+      {
+        "type": "steeringWheel",
+        "turnSpeed": 0.2,
+        "node": "bone_roll_driver_l_07",
+        "absoluteValue": true
+      },
+      {
+        "type": "steeringWheel",
+        "turnSpeed": 0.2,
+        "node": "bone_roll_driver_l_08",
+        "absoluteValue": true
       }
     ]
   },
@@ -200,6 +224,11 @@
       "superstructure_back_dm": {},
       "turret_01_bottom_dm": {},
       "composite_armor_hull_16_dm": {
+        "armorThickness": 5.0,
+        "armorClass": "RHA_tank",
+        "hidableInXrayViewer": true
+      },
+      "composite_armor_hull_17_dm": {
         "armorThickness": 5.0,
         "armorClass": "RHA_tank",
         "hidableInXrayViewer": true
@@ -563,6 +592,10 @@
         "armorThrough": 3.0
       },
       "fire_control_system_dm": {
+        "hp": 60.0,
+        "armorThrough": 3.0
+      },
+      "fire_control_system_01_dm": {
         "hp": 60.0,
         "armorThrough": 3.0
       },
@@ -1699,6 +1732,15 @@
             "dmPart": "composite_armor_hull_16_dm"
           }
         }
+      },
+      {
+        "xrayDmPart": "composite_armor_hull_17_dm",
+        "titleLoc": "RHA_tank",
+        "armorArrayText": {
+          "layer": {
+            "dmPart": "composite_armor_hull_17_dm"
+          }
+        }
       }
     ],
     "armorArrayTurret": [
@@ -2045,6 +2087,7 @@
   },
   "class_tags": {},
   "commonWeapons": {
+    "updateAnimBonesAlways": true,
     "Weapon": [
       {
         "trigger": "gunner0",
@@ -2310,7 +2353,13 @@
           }
         }
       }
-    ]
+    ],
+    "animatedBones": {
+      "node": [
+        "bone_roll_19_01",
+        "bone_roll_19_02"
+      ]
+    }
   },
   "weapon_presets": {
     "preset": {
@@ -2990,6 +3039,7 @@
   "unitFx": {
     "event": [
       {
+        "lifetime": 120.0,
         "name": "engine_fire",
         "fx": [
           {
@@ -3008,6 +3058,7 @@
       },
       {
         "name": "ammo_fire",
+        "lifetime": 9.0,
         "fx": [
           {
             "name": "tank_ammo_fire",
@@ -3165,7 +3216,7 @@
       },
       {
         "name": "total_fire",
-        "lifetime": 60.0,
+        "lifetime": 40.0,
         "fx": [
           {
             "name": "tank_fire_big",
@@ -3313,6 +3364,7 @@
       },
       {
         "name": "fuel_exterior",
+        "lifetime": 50.0,
         "fx": {
           "name": "tank_ex_fuel_explosion",
           "centerDmgPart": true
@@ -3320,6 +3372,7 @@
       },
       {
         "name": "fuel_internal",
+        "lifetime": 50.0,
         "fx": {
           "name": "tank_ex_fuel_explosion",
           "centerDmgPart": true
@@ -3327,6 +3380,7 @@
       },
       {
         "name": "hydraulic_internal",
+        "lifetime": 30.0,
         "fx": {
           "name": "tank_ex_fuel_explosion",
           "centerDmgPart": true
@@ -3334,6 +3388,7 @@
       },
       {
         "name": "powersystem_internal",
+        "lifetime": 30.0,
         "fx": {
           "name": "tank_ex_fuel_explosion",
           "centerDmgPart": true
@@ -3341,6 +3396,7 @@
       },
       {
         "name": "powersystem_exterior",
+        "lifetime": 30.0,
         "fx": {
           "name": "tank_ex_fuel_explosion",
           "centerDmgPart": true
@@ -3348,7 +3404,7 @@
       },
       {
         "name": "big_bang",
-        "lifetime": 10.0,
+        "lifetime": 20.0,
         "fx": [
           {
             "name": "tank_explosion",
@@ -3368,7 +3424,7 @@
       },
       {
         "name": "big_bang",
-        "lifetime": 10.0,
+        "lifetime": 20.0,
         "fx": [
           {
             "name": "tank_explosion",
@@ -3388,7 +3444,7 @@
       },
       {
         "name": "big_bang",
-        "lifetime": 10.0,
+        "lifetime": 20.0,
         "fx": {
           "name": "tank_explosion_small",
           "emitter": "emtr_explosion_center"
@@ -3402,7 +3458,7 @@
       },
       {
         "name": "big_bang",
-        "lifetime": 10.0,
+        "lifetime": 20.0,
         "fx": [
           {
             "name": "tank_explosion_ammo",
@@ -3422,7 +3478,7 @@
       },
       {
         "name": "big_bang",
-        "lifetime": 10.0,
+        "lifetime": 20.0,
         "fx": [
           {
             "name": "tank_explosion_ammo_small",
@@ -3442,7 +3498,7 @@
       },
       {
         "name": "full_expl",
-        "lifetime": 10.0,
+        "lifetime": 20.0,
         "fx": {
           "name": "explosion_ship_big",
           "emitter": "emtr_explosion_center"
@@ -3520,6 +3576,7 @@
       },
       {
         "name": "engine_overheat",
+        "lifetime": 5.0,
         "fx": {
           "name": "tank_radiator_steam",
           "centerDmgPart": false
@@ -3572,6 +3629,10 @@
       "shells": [
         {
           "autoLoad": true,
+          "fireEvent": "ammo_fire",
+          "explosionEvent": "ammo_explosion",
+          "wreckedPartId": 0,
+          "autoloader": "autoloader_dm",
           "ammo_turret_01_dm": {
             "count": 1
           },
@@ -3729,6 +3790,7 @@
       "modClass": "protection",
       "effects": {
         "commonWeapons": {
+          "updateAnimBonesAlways": true,
           "Weapon": [
             {
               "trigger": "gunner0",
@@ -4047,7 +4109,13 @@
                 ]
               }
             }
-          ]
+          ],
+          "animatedBones": {
+            "node": [
+              "bone_roll_19_01",
+              "bone_roll_19_02"
+            ]
+          }
         }
       }
     },
@@ -4091,6 +4159,7 @@
       }
     }
   },
+  "nightVision": {},
   "supportPlane": {
     "supportPlaneClass": "ucav_recon_micro_flir",
     "behTreeName": "recon_micro",
@@ -4174,6 +4243,15 @@
       "replace_tex": {
         "from": "us_camo_olive*",
         "to": "usa_modern_summer_verdant*"
+      }
+    },
+    {
+      "name": "us_camo_modern_winter_tan",
+      "nameLocId": "skin/us_camo_modern_winter_tan",
+      "descLocId": "skin/us_camo_modern_winter_tan/desc",
+      "replace_tex": {
+        "from": "us_camo_olive*",
+        "to": "us_camo_modern_winter_tan*"
       }
     }
   ],

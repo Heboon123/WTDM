@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import clan_get_current_season_info, clan_get_my_clan_tag, ps4_is_ugc_enabled, ps4_show_ugc_restriction, clan_get_requested_clan_id, clan_get_my_clan_name, clan_get_my_clan_id
 from "%scripts/dagui_library.nut" import *
 
@@ -28,6 +27,7 @@ let { charRequestBlk } = require("%scripts/tasker.nut")
 let { openCreateClanWnd } = require("%scripts/clans/modify/createClanModalHandler.nut")
 let { openClanSeasonInfoWnd } = require("%scripts/clans/clanSeasonInfoModal.nut")
 let { lbCategoryTypes, getLbCategoryTypeById } = require("%scripts/leaderboard/leaderboardCategoryType.nut")
+let { getLbItemCell } = require("%scripts/leaderboard/leaderboardHelpers.nut")
 
 // how many top places rewards are displayed in clans list window
 let CLAN_SEASONS_TOP_PLACES_REWARD_PREVIEW = 3
@@ -162,8 +162,8 @@ gui_handlers.ClansModalHandler <- class (gui_handlers.clanPageModal) {
 
   function calculateRowNumber() {
     this.guiScene.applyPendingChanges(false)
-    let reserveY = "0.05sh"
-      + ((::my_clan_info != null && this.curPage == "clans_leaderboards") ? " + 1.7@leaderboardTrHeight" : "")
+    let reserveY = "".concat("0.05sh",
+      (::my_clan_info != null && this.curPage == "clans_leaderboards") ? " + 1.7@leaderboardTrHeight" : "")
     let clanLboard = this.scene.findObject("clan_lboard_table")
     this.clansPerPage = countSizeInItems(clanLboard, 1, "@leaderboardTrHeight", 0, 0, 0, reserveY).itemsCountY
     this.requestingClansCount = this.clansPerPage + 1
@@ -247,7 +247,7 @@ gui_handlers.ClansModalHandler <- class (gui_handlers.clanPageModal) {
       local requestSent = false
       if (::clan_get_requested_clan_id() != "-1" && clan_get_my_clan_name() != "") {
         requestSent = true
-        this.curPageObj.findObject("req_clan_name").setValue(::clan_get_my_clan_tag() + " " + clan_get_my_clan_name())
+        this.curPageObj.findObject("req_clan_name").setValue(" ".concat(clan_get_my_clan_tag(), clan_get_my_clan_name()))
       }
       this.curPageObj.findObject("reques_to_clan_sent").show(requestSent)
       this.curPageObj.findObject("how_to_get_membership").show(!requestSent)
@@ -264,7 +264,7 @@ gui_handlers.ClansModalHandler <- class (gui_handlers.clanPageModal) {
     let field = actualCategory?.field ?? actualCategory.id
     local fieldName = isFunction(field) ? field() : field
     if (actualCategory.byDifficulty)
-      fieldName += g_difficulty.getDifficultyByDiffCode(mode ?? this.curMode).clanDataEnding
+      fieldName = "".concat(fieldName, g_difficulty.getDifficultyByDiffCode(mode ?? this.curMode).clanDataEnding)
     return fieldName
   }
 
@@ -469,7 +469,7 @@ gui_handlers.ClansModalHandler <- class (gui_handlers.clanPageModal) {
         block.width <- item.width
       headerRow.append(block)
     }
-    data.insert(0, ::buildTableRow("row_header", headerRow, null, "isLeaderBoardHeader:t='yes'"))
+    data.insert(0, ::buildTableRow("row_header", headerRow, null, "isShortLeaderBoardHeader:t='yes'"))
     data = "".join(data)
 
     this.guiScene.setUpdatesEnabled(false, false)
@@ -521,7 +521,7 @@ gui_handlers.ClansModalHandler <- class (gui_handlers.clanPageModal) {
       if (this.isColForDisplay(item))
         rowData.append(this.getItemCell(item, rowBlk, rowName))
 
-    assert(type(rowBlk._id) == "string", "leaderboards receive _id type " + type(rowBlk._id) + ", instead of string on clan_request_page_of_leaderboard")
+    assert(type(rowBlk._id) == "string", $"leaderboards receive _id type {type(rowBlk._id)}, instead of string on clan_request_page_of_leaderboard")
     return ::buildTableRow(rowName, rowData, rowIdx % 2 != 0, highlightRow ? "mainPlayer:t='yes';" : "")
   }
 
@@ -539,7 +539,7 @@ gui_handlers.ClansModalHandler <- class (gui_handlers.clanPageModal) {
       : itemId == "fits_requirements" ? ""
       : rowBlk.astat?[itemId] ?? 0
 
-    let res = ::getLbItemCell(item.id, value, item.type)
+    let res = getLbItemCell(item.id, value, item.type)
     res.active <- this.clansLbSortByPage[this.curPage].id == item.id
     if (item?.width != null) {
       res.width <- item.width
@@ -738,7 +738,7 @@ gui_handlers.ClansModalHandler <- class (gui_handlers.clanPageModal) {
     //Fill current season name
     let objSeasonName = this.scene.findObject("clan_battle_season_name")
     if (checkObj(objSeasonName) && showAttributes)
-      objSeasonName.setValue(loc("clan/battle_season/title") + loc("ui/colon") + colorize("userlogColoredText", seasonName))
+      objSeasonName.setValue(loc("ui/colon").concat(loc("clan/battle_season/title"), colorize("userlogColoredText", seasonName)))
 
     //Fill season logo medal
     let objTopMedal = this.scene.findObject("clan_battle_season_logo_medal")
@@ -752,7 +752,8 @@ gui_handlers.ClansModalHandler <- class (gui_handlers.clanPageModal) {
     //Fill current seasons end date
     let objEndsDuel = this.scene.findObject("clan_battle_season_ends")
     if (checkObj(objEndsDuel)) {
-      let endDateText = loc("clan/battle_season/ends") + loc("ui/colon") + " " + ::g_clan_seasons.getSeasonEndDate()
+      let endDateText = "".concat(loc("clan/battle_season/ends"), loc("ui/colon"), " ",
+        ::g_clan_seasons.getSeasonEndDate())
       objEndsDuel.setValue(endDateText)
     }
 
@@ -779,17 +780,17 @@ gui_handlers.ClansModalHandler <- class (gui_handlers.clanPageModal) {
         let rewardText = Cost(0, reward.gold).tostring()
         rowData.append({
           needText = false,
-          rawParam = @"text {
+          rawParam = "".concat(@"text {
             text-align:t='right';
-            text:t='" + rewardText + @"';
+            text:t='", rewardText, @"';
             size:t='pw, ph';
             margin-left:t='1@blockInterval'
             style:t='re-type:textarea;behaviour:textarea;';
-          }",
+          }"),
           active = false
         })
       }
-      rowBlock += ::buildTableRowNoPad("row_0", rowData, null, "")
+      rowBlock = "".concat(rowBlock, ::buildTableRowNoPad("row_0", rowData, null, ""))
       this.guiScene.replaceContentFromText(clanTableObj, rowBlock, rowBlock.len(), this)
     }
 
@@ -819,7 +820,7 @@ gui_handlers.ClansModalHandler <- class (gui_handlers.clanPageModal) {
     let endsDate = time.buildDateTimeStr(dateDuel, false, false)
     let objEndsDuel = this.scene.findObject("clan_battle_season_ends")
     if (checkObj(objEndsDuel))
-      objEndsDuel.setValue(loc("clan/battle_season/ends") + loc("ui/colon") + endsDate)
+      objEndsDuel.setValue(loc("ui/colon").concat(loc("clan/battle_season/ends"), endsDate))
 
     let blk = get_game_settings_blk()
     if (!blk)
@@ -847,13 +848,13 @@ gui_handlers.ClansModalHandler <- class (gui_handlers.clanPageModal) {
       rowData.append({ text = loc($"clan/battle_season/place_{i}"), active = false, tdalign = "right" })
       rowData.append({
         needText = false,
-        rawParam = "text { text-align:t='right'; text:t='" +
-          Cost(0, getTblValue($"place{i}Gold", rewards, 0)).tostring() +
-          "'; size:t='pw,ph'; style:t='re-type:textarea; behaviour:textarea;'; }",
+        rawParam = "".concat("text { text-align:t='right'; text:t='",
+          Cost(0, getTblValue($"place{i}Gold", rewards, 0)).tostring(),
+          "'; size:t='pw,ph'; style:t='re-type:textarea; behaviour:textarea;'; }"),
         active = false
       })
     }
-    rowBlock += ::buildTableRowNoPad("row_0", rowData, null, "")
+    rowBlock = "".concat(rowBlock, ::buildTableRowNoPad("row_0", rowData, null, ""))
     this.guiScene.replaceContentFromText(clanTableObj, rowBlock, rowBlock.len(), this)
   }
 

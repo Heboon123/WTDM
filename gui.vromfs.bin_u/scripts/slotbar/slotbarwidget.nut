@@ -4,7 +4,7 @@ from "%scripts/weaponry/weaponryConsts.nut" import UNIT_WEAPONS_READY
 from "%scripts/mainConsts.nut" import SEEN
 
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
-let { Cost } = require("%scripts/money.nut")
+let { zero_money, Cost } = require("%scripts/money.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { format } = require("string")
@@ -15,14 +15,15 @@ let callback = require("%sqStdLibs/helpers/callback.nut")
 let selectUnitHandler = require("%scripts/slotbar/selectUnitHandler.nut")
 let { getWeaponsStatusName, checkUnitWeapons } = require("%scripts/weaponry/weaponryInfo.nut")
 let { getNearestSelectableChildIndex } = require("%sqDagui/guiBhv/guiBhvUtils.nut")
-let { getBitStatus } = require("%scripts/unit/unitStatus.nut")
+let { getBitStatus, isUnitElite, isRequireUnlockForUnit, isUnitUsable
+} = require("%scripts/unit/unitStatus.nut")
 let { getUnitItemStatusText } = require("%scripts/unit/unitInfoTexts.nut")
 let { getUnitRequireUnlockShortText } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { startLogout } = require("%scripts/login/logout.nut")
 let { isCountrySlotbarHasUnits, isUnitUnlockedInSlotbar, initSelectedCrews,
   selectCrew, getSelectedCrews, getCrewById
 } = require("%scripts/slotbar/slotbarState.nut")
-let { setShowUnit, getShowedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
+let { setShowUnit, getPlayerCurUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 let { getAvailableRespawnBases } = require("guiRespawn")
 let { getShopVisibleCountries } = require("%scripts/shop/shopCountriesList.nut")
 let { getShopDiffCode } = require("%scripts/shop/shopDifficulty.nut")
@@ -35,7 +36,7 @@ let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
 let { isInFlight } = require("gameplayBinding")
-let { bit_unit_status, isRequireUnlockForUnit } = require("%scripts/unit/unitInfo.nut")
+let { bit_unit_status } = require("%scripts/unit/unitInfo.nut")
 let { warningIfGold } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { selectCountryForCurrentOverrideSlotbar } = require("%scripts/slotbar/slotbarOverride.nut")
 let { checkBalanceMsgBox } = require("%scripts/user/balanceFeatures.nut")
@@ -416,7 +417,7 @@ gui_handlers.SlotbarWidget <- class (gui_handlers.BaseGuiHandlerWT) {
   function calcSelectedCrewData(crewsConfig) {
     let forcedCountry = this.getForcedCountry()
     local unitShopCountry = forcedCountry || profileCountrySq.value
-    local curUnit = getShowedUnit()
+    local curUnit = getPlayerCurUnit()
     local curCrewId = this.crewId
 
     if (!forcedCountry && !curCrewId) {
@@ -816,7 +817,7 @@ gui_handlers.SlotbarWidget <- class (gui_handlers.BaseGuiHandlerWT) {
       return
     }
 
-    if (cost <= ::zero_money) {
+    if (cost <= zero_money) {
       this.purchaseNewSlot(country)
       return
     }
@@ -1164,7 +1165,7 @@ gui_handlers.SlotbarWidget <- class (gui_handlers.BaseGuiHandlerWT) {
         || this.curSlotIdInCountry != getSelectedCrews(this.curSlotCountryId)
         || (this.getCurSlotUnit() == null && isCountrySlotbarHasUnits(curCountry)))
       this.updateSlotbarImpl()
-    else if (this.selectedCrewData && this.selectedCrewData?.unit != getShowedUnit())
+    else if (this.selectedCrewData && this.selectedCrewData?.unit != getPlayerCurUnit())
       this.refreshAll()
   }
 
@@ -1449,7 +1450,7 @@ gui_handlers.SlotbarWidget <- class (gui_handlers.BaseGuiHandlerWT) {
 
   onEventAllModificationsPurchased = @(params) this.getSlotsData(params.unit.name)
     .map(@(slot) slot.obj)
-    .filter(@(obj) obj?.isValid() && ::isUnitElite(params.unit))
+    .filter(@(obj) obj?.isValid() && isUnitElite(params.unit))
     .each(@(obj) obj.isElite = "yes")
 
   function onOpenCrewWindow(obj) {
@@ -1608,7 +1609,7 @@ gui_handlers.SlotbarWidget <- class (gui_handlers.BaseGuiHandlerWT) {
       if (!checkObj(obj) || unit == null)
         continue
 
-      let weaponsStatus = getWeaponsStatusName((slot.crew?.isLocalState ?? true) && ::isUnitUsable(unit)
+      let weaponsStatus = getWeaponsStatusName((slot.crew?.isLocalState ?? true) && isUnitUsable(unit)
         ? checkUnitWeapons(unit)
         : UNIT_WEAPONS_READY
       )

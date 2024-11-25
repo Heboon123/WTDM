@@ -181,13 +181,18 @@ addTypes(measureType, {
 
     getMeasureUnitsLocKey = @() "measureUnits/bytes"
   }
+
+  MM_HG = {
+    name = "mmHg"
+    presize = 1
+  }
 })
 
 function getMeasureTypeByName(name, createIfNotFound = false) {
   local res = enumsGetCachedType("name", name, measureType.cache.byName,
     measureType, measureType.UNKNOWN)
   if (res == measureType.UNKNOWN && createIfNotFound) {
-    res = ::inherit_table(measureType.template, { name })
+    res = measureType.template.__merge({ name })
     measureType.types.append(res)
   }
   return res

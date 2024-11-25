@@ -19,7 +19,7 @@ let { HUD_UNIT_TYPE } = require("%scripts/hud/hudUnitType.nut")
 let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { startsWith } = require("%sqstd/string.nut")
 let { get_mplayer_by_id } = require("mission")
-let { get_mission_difficulty } = require("guiMission")
+let { get_mission_difficulty, OBJECTIVE_TYPE_PRIMARY, OBJECTIVE_TYPE_SECONDARY } = require("guiMission")
 let { loadLocalAccountSettings, saveLocalAccountSettings} = require("%scripts/clientState/localProfile.nut")
 let { register_command } = require("console")
 let { isEqual } = require("%sqstd/underscore.nut")
@@ -477,6 +477,7 @@ g_hud_hints.template <- {
 
   showEvent = ""
   hideEvent = null
+  toggleHint = null
   updateCbs = null //{ <hudEventName> = function(hintData, eventData) { return <needUpdate (bool)>} } //hintData can be null
 
   countIntervals = null // for example [{count = 5, timeInterval = 60.0 }, { ... }, ...]
@@ -1103,6 +1104,7 @@ enums.addTypes(g_hud_hints, {
         res = $"{res} ({timer})"
       return res
     }
+    isShowedInVR = true
   }
 
   RELOAD_ON_AIRFIELD_HINT = {
@@ -1615,7 +1617,17 @@ enums.addTypes(g_hud_hints, {
     hintType = g_hud_hint_types.COMMON
     locId = "HUD/TXT_BUILDING_EXIT"
     noKeyLocId = "HUD/TXT_BUILDING_EXIT_NOKEY"
-    shortcuts = "ID_TOGGLE_CONSTRUCTION_MODE"
+    getShortcuts = @(_data) g_hud_action_bar_type.BUILDING.getVisualShortcut()
+    showEvent = "hint:building_exit:show"
+    hideEvent = "hint:building_exit:hide"
+    shouldBlink = true
+    delayTime = 1.0
+  }
+
+  BUILDING_APPLY_HINT = {
+    hintType = g_hud_hint_types.COMMON
+    locId = "HUD/TXT_BUILDING_APPLY"
+    shortcuts = "ID_FIRE_GM"
     showEvent = "hint:building_exit:show"
     hideEvent = "hint:building_exit:hide"
     shouldBlink = true
@@ -2603,6 +2615,147 @@ enums.addTypes(g_hud_hints, {
     isHideOnWatchedHeroChanged = false
   }
 
+  AIRCRAFT_HAS_BOOSTERS = {
+    hintType = g_hud_hint_types.COMMON
+    getLocId = @(hintData) hintData.isOnGround ? "hints/aircraft_has_boosters_ground" : "hints/aircraft_has_boosters_air"
+    showEvent = "hint:aircraft_has_boosters"
+    shortcuts = "ID_IGNITE_BOOSTERS"
+    lifeTime = 15.0
+    isHideOnDeath = true
+  }
+
+  SHIP_COVER_DESTROYED = {
+    hintType = g_hud_hint_types.MISSION_ACTION_HINTS
+    locId = "hints/cover_destroyed"
+    showEvent = "hint:cover_destroyed:show"
+    lifeTime = 5.0
+    isHideOnDeath = true
+  }
+
+  AMMO_USED_EXIT_ZONE = {
+    hintType = g_hud_hint_types.MISSION_ACTION_HINTS
+    showEvent = "hint:ammo_used_exit_zone:show"
+    locId = "hints/ammo_used_exit_zone"
+    lifeTime = 15.0
+    isHideOnDeath = true
+    isHideOnWatchedHeroChanged = true
+  }
+
+  GENERAL_WARNING_HIT = {
+    hintType = g_hud_hint_types.WARNING_HINTS
+    getLocId = @(eventData) eventData.text
+    toggleHint = [
+      "warn:net_slow",
+      "warn:net_unresponsive",
+      "warn:crit_airbrake",
+      "warn:crit_flutter",
+      "warn:high_engine_rpm",
+      "warn:low_main_rotor_rpm",
+      "warn:main_rotor_vortex_ring",
+      "warn:tail_rotor_vortex_ring",
+      "warn:art_warning",
+      "warn:missile_warning",
+      "warn:gun_breech_malfunction",
+      "warn:gun_barrel_malfunction",
+      "warn:rocket_launcher_malfunction",
+      "warn:too_heavy_for_vtol",
+      "warn:laser_warning",
+      "warn:owned_unit_dead",
+      "warn:visible_by_zone",
+      "warn:crit_speed",
+      "warn:stamina_loose_control",
+      "warn:follow_the_path"
+    ]
+    isHideOnDeath = false
+    shouldBlink = true
+    isAllowedByDiff = { [g_difficulty.SIMULATOR.name] = false }
+  }
+
+  WARNING_RETURN_TO_ZONE = {
+    hintType = g_hud_hint_types.WARNING_HINTS
+    getLocId = @(eventData) eventData.text
+    toggleHint = ["warn:return_to_zone"]
+    isHideOnDeath = false
+    shouldBlink = true
+    isAllowedByDiff = { [g_difficulty.SIMULATOR.name] = false }
+  }
+
+  WARNING_CUSTOM = {
+    hintType = g_hud_hint_types.WARNING_HINTS
+    getLocId = @(eventData) eventData.text
+    toggleHint = ["warn:custom"]
+    isHideOnDeath = false
+    shouldBlink = true
+    isAllowedByDiff = { [g_difficulty.SIMULATOR.name] = false }
+  }
+
+  WARNING_FLAPS = {
+    hintType = g_hud_hint_types.WARNING_HINTS
+    getLocId = @(eventData) eventData.text
+    toggleHint = ["warn:crit_flaps"]
+    shortcuts = "ID_FLAPS"
+    isHideOnDeath = false
+    shouldBlink = true
+    isAllowedByDiff = { [g_difficulty.SIMULATOR.name] = false }
+  }
+
+  WARNING_GEAR = {
+    hintType = g_hud_hint_types.WARNING_HINTS
+    getLocId = @(eventData) eventData.text
+    toggleHint = ["warn:crit_gears"]
+    shortcuts = "ID_GEAR"
+    isHideOnDeath = false
+    shouldBlink = true
+    isAllowedByDiff = { [g_difficulty.SIMULATOR.name] = false }
+  }
+
+  WARNING_FLAPS_TAKEOFF = {
+    hintType = g_hud_hint_types.WARNING_HINTS
+    getLocId = @(eventData) eventData.text
+    toggleHint = ["warn:set_takeoff_flaps_for_takeoff"]
+    shortcuts = "ID_FLAPS"
+    isHideOnDeath = false
+    shouldBlink = true
+    isAllowedByDiff = { [g_difficulty.SIMULATOR.name] = false }
+  }
+
+  WARNING_COCKPIT_DOOR = {
+    hintType = g_hud_hint_types.WARNING_HINTS
+    getLocId = @(eventData) eventData.text
+    toggleHint = ["warn:crit_cockpit_door"]
+    shortcuts = "ID_TOGGLE_COCKPIT_DOOR"
+    isHideOnDeath = false
+    shouldBlink = true
+    isAllowedByDiff = { [g_difficulty.SIMULATOR.name] = false }
+  }
+
+  WARNING_OVERLOAD = {
+    hintType = g_hud_hint_types.WARNING_HINTS
+    getLocId = @(eventData) "".concat(loc("HUD_DANGEROUS_OVERLOAD")," ", eventData?.val ?? "", loc("HUD_CRIT_OVERLOAD_G"))
+    toggleHint = ["warn:danger_overload"]
+    isHideOnDeath = false
+    shouldBlink = true
+    isAllowedByDiff = { [g_difficulty.SIMULATOR.name] = false }
+  }
+
+  WARNING_OVERLOAD_CRIT = {
+    hintType = g_hud_hint_types.WARNING_HINTS
+    getLocId = @(eventData) "".concat(loc("HUD_CRIT_OVERLOAD")," ", eventData?.val ?? "", loc("HUD_CRIT_OVERLOAD_G"))
+    toggleHint = ["warn:crit_overload"]
+    isHideOnDeath = false
+    shouldBlink = true
+    isAllowedByDiff = { [g_difficulty.SIMULATOR.name] = false }
+  }
+
+  WARNING_ROYAL_AREA = {
+    hintType = g_hud_hint_types.WARNING_HINTS
+    getLocId = @(eventData) eventData.text
+    toggleHint = ["warn:royal_area"]
+    isHideOnDeath = false
+    buildText = @(data) data.isShrinkZone ? colorize("@red", data.text) : colorize("@white", data.text)
+    shouldBlink = true
+    isAllowedByDiff = { [g_difficulty.SIMULATOR.name] = false }
+  }
 },
 function() {
   this.name = $"hint_{this.typeName.tolower()}"

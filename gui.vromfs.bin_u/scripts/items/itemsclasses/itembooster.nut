@@ -1,4 +1,3 @@
-//-file:plus-string
 from "%scripts/dagui_natives.nut" import set_char_cb, get_current_booster_count, char_send_blk, get_current_booster_uid
 from "%scripts/dagui_library.nut" import *
 from "%scripts/items/itemsConsts.nut" import itemType
@@ -21,6 +20,19 @@ let { getFullUnlockCondsDesc,
 let { isInFlight } = require("gameplayBinding")
 let { BaseItem } = require("%scripts/items/itemsClasses/itemsBase.nut")
 let { measureType } = require("%scripts/measureType.nut")
+let { floor } = require("math")
+
+function getArrayFromInt(intNum) {
+  let arr = []
+  do {
+    let div = intNum % 10
+    arr.append(div)
+    intNum = floor(intNum / 10).tointeger()
+  } while (intNum != 0)
+
+  arr.reverse()
+  return arr
+}
 
 let Booster = class (BaseItem) {
   static name = "Booster"
@@ -227,7 +239,7 @@ let Booster = class (BaseItem) {
   function getBoosterDescriptionForMessageBox(booster) {
     local result = booster.getName()
     if (this.hasTimer())
-      result += " - " + booster.getTimeLeftText()
+      result = " - ".concat(result, booster.getTimeLeftText())
     return result
   }
 
@@ -295,9 +307,9 @@ let Booster = class (BaseItem) {
   }
 
   function getIcon(_addItemName = true) {
-    local res = LayersIcon.genDataFromLayer(this._getBaseIconCfg())
-    res += LayersIcon.genInsertedDataFromLayer({ w = "0", h = "0" }, this._getMulIconCfg())
-    res += LayersIcon.genDataFromLayer(this._getModifiersIconCfgs())
+    let res = "".concat(LayersIcon.genDataFromLayer(this._getBaseIconCfg()),
+      LayersIcon.genInsertedDataFromLayer({ w = "0", h = "0" }, this._getMulIconCfg()),
+      LayersIcon.genDataFromLayer(this._getModifiersIconCfgs()))
 
     return res
   }
@@ -325,7 +337,7 @@ let Booster = class (BaseItem) {
   function _getMulIconCfg() {
     let layersArray = []
     let mul = max(this.wpRate, this.xpRate)
-    let numsArray = ::getArrayFromInt(mul)
+    let numsArray = getArrayFromInt(mul)
     if (numsArray.len() > 0) {
       let plusLayer = LayersIcon.findLayerCfg("item_plus")
       if (plusLayer)
@@ -357,12 +369,12 @@ let Booster = class (BaseItem) {
       : this.getEffectText(this.wpRate, this.xpRate, colored)
 
     if (!this.personal)
-      desc += format(" (%s)", loc("boostEffect/group"))
+      desc = "".concat(desc, format(" (%s)", loc("boostEffect/group")))
     return desc
   }
 
   function _formatEffectText(value, currencyMark) {
-    return colorize("activeTextColor", "+" + value + "%") + currencyMark
+    return "".concat(colorize("activeTextColor", $"+{value}%"), currencyMark)
   }
 
   function getEffectText(wpRateNum = 0, xpRateNum = 0, colored = true) {
@@ -400,17 +412,17 @@ let Booster = class (BaseItem) {
       effectDesc = this.getEffectDesc()
     }
     if (this.wpRate != 0 || this.xpRate != 0)
-      desc += loc(locString, locParams)
+      desc = "".concat(desc, loc(locString, locParams))
     if (this.eventConditions != null)
-      desc += " " + this.getEventConditionsText()
+      desc = " ".concat(desc, this.getEventConditionsText())
 
-    desc += "\n"
+    desc = "".concat(desc, "\n")
 
     let expireText = this.getCurExpireTimeText()
     if (expireText != "")
-      desc += "\n" + expireText
+      desc = "\n".concat(desc, expireText)
     if (this.stopConditions != null)
-      desc += "\n" + this.getStopConditions()
+      desc = "\n".concat(desc, this.getStopConditions())
 
     if (this.isActive(true)) {
       let effectTypes = this.getEffectTypes()
@@ -423,13 +435,13 @@ let Booster = class (BaseItem) {
   }
 
   function getName(colored = true) {
-    return base.getName(colored) + " " + this.getEffectDesc()
+    return  " ".concat(base.getName(colored), this.getEffectDesc())
   }
 
   function getShortDescription(colored = true) {
     local desc = this.getName(colored)
     if (this.eventConditions)
-      desc += loc("ui/parentheses/space", { text = this.getEventConditionsText() })
+      desc = "".concat(desc, loc("ui/parentheses/space", { text = this.getEventConditionsText() }))
     return desc
   }
 
@@ -539,9 +551,9 @@ let Booster = class (BaseItem) {
                        }))
     }
     if (effects.len())
-      res += " (" + ", ".join(effects, true) + ")"
+      res = "".concat(res, " (", ", ".join(effects, true), ")")
     if (this.eventConditions)
-      res += " (" + this.getEventConditionsText() + ")"
+      res = "".concat(res, " (", this.getEventConditionsText(), ")")
     return res
   }
 }
@@ -565,7 +577,7 @@ let FakeBooster = class (Booster) {
   }
 
   function getDescription() {
-    local desc = base.getDescription() + loc("ui/colon") + this.getEffectDesc()
+    local desc = "".concat(base.getDescription(), loc("ui/colon"), this.getEffectDesc())
     if (!this.isInventoryItem)
       return desc
 
@@ -579,9 +591,9 @@ let FakeBooster = class (Booster) {
     }
 
     if (bonusArray.len()) {
-      desc += "\n"
-      desc += loc("item/FakeBoosterForNetCafeLevel/squad", { num = g_squad_manager.getSameCyberCafeMembersNum() }) + loc("ui/colon")
-      desc += ", ".join(bonusArray, true)
+      desc = "".concat(desc, "\n",
+        loc("item/FakeBoosterForNetCafeLevel/squad", { num = g_squad_manager.getSameCyberCafeMembersNum() }),
+        loc("ui/colon"), ", ".join(bonusArray, true))
     }
 
     return desc
@@ -600,7 +612,7 @@ let FakeBooster = class (Booster) {
         : this.getEffectText(this.wpRate, this.xpRate, colored)
 
     if (!this.personal)
-      desc += format(" (%s)", loc("boostEffect/group"))
+      desc = "".concat(desc, format(" (%s)", loc("boostEffect/group")))
     return desc
   }
 

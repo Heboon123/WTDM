@@ -3,6 +3,7 @@ from "%scripts/dagui_library.nut" import *
 from "%scripts/controls/controlsConsts.nut" import optionControlType
 from "%scripts/items/itemsConsts.nut" import itemType
 from "%scripts/respawn/respawnConsts.nut" import RespawnOptUpdBit
+from "radarOptions" import set_option_radar_name, set_option_radar_scan_pattern_name
 
 let { g_mis_loading_state } = require("%scripts/respawn/misLoadingState.nut")
 let { eventbus_subscribe } = require("eventbus")
@@ -54,7 +55,8 @@ let { onSpectatorMode, switchSpectatorTarget,
 } = require("guiSpectator")
 let { getMplayersList } = require("%scripts/statistics/mplayersList.nut")
 let { quit_to_debriefing, get_mission_difficulty_int,
-  get_unit_wp_to_respawn, get_mp_respawn_countdown, get_mission_status } = require("guiMission")
+  get_unit_wp_to_respawn, get_mp_respawn_countdown, get_mission_status,
+  OBJECTIVE_TYPE_PRIMARY, OBJECTIVE_TYPE_SECONDARY } = require("guiMission")
 let { setCurSkinToHangar, getRealSkin, getSkinsOption
 } = require("%scripts/customization/skins.nut")
 let { reqUnlockByClient } = require("%scripts/unlocks/unlocksModule.nut")
@@ -62,7 +64,7 @@ let { openPersonalTasks } = require("%scripts/unlocks/personalTasks.nut")
 let { set_option, get_option } = require("%scripts/options/optionsExt.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { USEROPT_SKIP_WEAPON_WARNING, USEROPT_FUEL_AMOUNT_CUSTOM,
-  USEROPT_LOAD_FUEL_AMOUNT } = require("%scripts/options/optionsExtNames.nut")
+  USEROPT_LOAD_FUEL_AMOUNT} = require("%scripts/options/optionsExtNames.nut")
 let { loadLocalByScreenSize, saveLocalByScreenSize
 } = require("%scripts/clientState/localProfile.nut")
 let { getEsUnitType, getUnitName } = require("%scripts/unit/unitInfo.nut")
@@ -92,6 +94,7 @@ let { createAdditionalUnitsViewData, updateUnitSelection, isLockedUnit, setUnitU
 let { getCrewsList } = require("%scripts/slotbar/crewsList.nut")
 let { loadGameChatToObj, detachGameChatSceneData, hideGameChatSceneInput
 } = require("%scripts/chat/mpChat.nut")
+let { unitNameForWeapons } = require("%scripts/weaponry/unitForWeapons.nut")
 
 let AdditionalUnits = require("%scripts/misCustomRules/ruleAdditionalUnits.nut")
 
@@ -102,6 +105,10 @@ function getCrewSlotReadyMask() {
   return getWasReadySlotsMask() & ~getDisabledSlotsMask()
 }
 
+function getCompoundedText(firstPart, secondPart, color) {
+  return "".concat(firstPart, colorize(color, secondPart))
+}
+
 
 let respawnWndState = persist("respawnWndState", @() {
   lastCaAircraft = null
@@ -110,7 +117,7 @@ let respawnWndState = persist("respawnWndState", @() {
 })
 let usedPlanes = persist("usedPlanes", @() {})
 
-::on_mission_started_mp <- function on_mission_started_mp() {
+function onMissionStartedMp(_) {
   log("on_mission_started_mp - CLIENT")
   ::g_streaks.clear()
   respawnWndState.beforeFirstFlightInSession = true
@@ -118,6 +125,8 @@ let usedPlanes = persist("usedPlanes", @() {})
   reset_cur_mission_mode()
   broadcastEvent("MissionStarted")
 }
+
+eventbus_subscribe("on_mission_started_mp", onMissionStartedMp)
 
 enum ESwitchSpectatorTarget {
   E_DO_NOTHING,
@@ -757,7 +766,7 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
     if (checkObj(balanceObj)) {
       local text = ""
       if (wpBalance != "")
-        text = ::getCompoundedText(loc("multiplayer/wp_header"), wpBalance, "activeTextColor")
+        text = getCompoundedText(loc("multiplayer/wp_header"), wpBalance, "activeTextColor")
       balanceObj.setValue(text)
     }
   }
@@ -879,7 +888,6 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
 
     if (this.slotbarInited)
       this.prevUnitAutoChangeTimeMsec = -1
-    ::cur_aircraft_name = unit.name
 
     this.slotbarInited = true
     this.onAircraftUpdate()
@@ -1016,7 +1024,7 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
     if (!air)
       return
 
-    ::aircraft_for_weapons = air.name
+    unitNameForWeapons.set(air.name)
 
     let option = respawnOptions.get(obj?.id)
     if (option.userOption != -1) {
@@ -1063,9 +1071,8 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
     let unit = this.getCurSlotUnit()
     local isUnitChanged = false
     if (unit) {
-      isUnitChanged = ::aircraft_for_weapons != unit.name
-      ::cur_aircraft_name = unit.name //used in some options
-      ::aircraft_for_weapons = unit.name
+      isUnitChanged = unitNameForWeapons.get() != unit.name
+      unitNameForWeapons.set(unit.name)
       showedUnit(unit)
 
       if (isUnitChanged || this.isFirstUnitOptionsInSession)
@@ -1468,6 +1475,18 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
     fuelAmountObj.setValue(newValue)
     this.checkReady(obj)
     this.isInUpdateLoadFuelOptions = false
+  }
+
+  function onChangeRadarModeSelectedUnit(obj) {
+    set_option_radar_name(unitNameForWeapons.get(), obj.getValue())
+
+    this.updateOptions(RespawnOptUpdBit.UNIT_WEAPONS)
+  }
+
+  function onChangeRadarScanRangeSelectedUnit(obj) {
+    set_option_radar_scan_pattern_name(unitNameForWeapons.get(), obj.getValue())
+
+    this.updateOptions(RespawnOptUpdBit.UNIT_WEAPONS)
   }
 
   function onSkinSelect(obj = null) {
@@ -2405,11 +2424,13 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
   }
 }
 
-::cant_respawn_anymore <- function cant_respawn_anymore() { // called when no more respawn bases left
+function cantRespawnAnymore(_) { // called when no more respawn bases left
   let current_base_gui_handler = get_current_base_gui_handler()
   if (current_base_gui_handler && ("stayOnRespScreen" in current_base_gui_handler))
     current_base_gui_handler.stayOnRespScreen = true
 }
+
+eventbus_subscribe("cant_respawn_anymore", cantRespawnAnymore)
 
 ::get_mouse_relative_coords_on_obj <- function get_mouse_relative_coords_on_obj(obj) {
   if (!checkObj(obj))

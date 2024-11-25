@@ -11,15 +11,16 @@ let enums = require("%sqStdLibs/helpers/enums.nut")
 let { eachBlock } = require("%sqstd/datablock.nut")
 let time = require("%scripts/time.nut")
 let { PI, round, roundToDigits } = require("%sqstd/math.nut")
-let { getUnitRole, getUnitBasicRole, getRoleText, getUnitTooltipImage,
-  getFullUnitRoleText, getShipMaterialTexts, getUnitClassColor } = require("%scripts/unit/unitInfoTexts.nut")
+let { getUnitTooltipImage, getShipMaterialTexts } = require("%scripts/unit/unitInfoTexts.nut")
+let { getUnitRole, getUnitBasicRole, getRoleText, getFullUnitRoleText, getUnitClassColor
+} = require("%scripts/unit/unitInfoRoles.nut")
 let { countMeasure } = require("%scripts/options/optionsMeasureUnits.nut")
 let { getWeaponInfoText } = require("%scripts/weaponry/weaponryDescription.nut")
 let { getModificationByName } = require("%scripts/weaponry/modificationInfo.nut")
 let { isBullets, getModificationInfo, getModificationName } = require("%scripts/weaponry/bulletsInfo.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { getUnitMassPerSecValue, getUnitWeaponPresetsCount } = require("%scripts/unit/unitWeaponryInfo.nut")
-let { getUnitName } = require("%scripts/unit/unitInfo.nut")
+let { getUnitName, getUnitCost } = require("%scripts/unit/unitInfo.nut")
 let { get_wpcost_blk, get_warpoints_blk, get_ranks_blk, get_unittags_blk } = require("blkGetters")
 let { measureType } = require("%scripts/measureType.nut")
 
@@ -246,7 +247,7 @@ enums.addTypesByGlobalName("g_unit_info_type", [
     id = "price"
     headerLocId = "ugm/price"
     addToExportDataBlock = function(blk, unit, _unitConfiguration) {
-      let valueText = ::getUnitCost(unit).getUncoloredText()
+      let valueText = getUnitCost(unit).getUncoloredText()
       if (valueText == "") {
           blk.hide = true
           return
@@ -256,7 +257,7 @@ enums.addTypesByGlobalName("g_unit_info_type", [
         if (diff.egdCode != EGD_NONE)
           blk.valueText[diff.getEgdName()] = valueText
 
-      let cost = ::getUnitCost(unit)
+      let cost = getUnitCost(unit)
       blk.wp = cost.wp
       blk.gold = cost.gold
     }
@@ -264,7 +265,8 @@ enums.addTypesByGlobalName("g_unit_info_type", [
   {
     id = "wp_bonus"
     getHeader = function(_unit) {
-      return loc("reward") + loc("ui/parentheses/space", { text = loc("charServer/chapter/warpoints") }) + ":"
+      return "".concat(loc("reward"),
+        loc("ui/parentheses/space", { text = loc("charServer/chapter/warpoints") }), ":")
     }
     addToExportDataBlock = function(blk, unit, _unitConfiguration) {
       blk.value = DataBlock()
@@ -282,7 +284,8 @@ enums.addTypesByGlobalName("g_unit_info_type", [
   {
     id = "exp_bonus"
     getHeader = function(_unit) {
-      return loc("reward") + loc("ui/parentheses/space", { text = loc("currency/researchPoints/name") }) + ":"
+      return "".concat(loc("reward"),
+        loc("ui/parentheses/space", { text = loc("currency/researchPoints/name") }), ":")
     }
     addToExportDataBlock = function(blk, unit, _unitConfiguration) {
       let talismanMul = isUnitSpecial(unit) ? (get_ranks_blk()?.goldPlaneExpMul ?? 1.0) : 1.0
