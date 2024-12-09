@@ -124,7 +124,10 @@ let suspendSlotbarUpdates = @() isSlotbarUpdateSuspended = true
   getCrewsList
 }
 
-isInBattleState.subscribe(@(_v) invalidateCrewsList())
+isInBattleState.subscribe(function(_v) {
+  if (invalidateCrewsList())
+    reinitSlotbars()
+})
 
 addListenersWithoutEnv({
   function ProfileUpdated(p) {
