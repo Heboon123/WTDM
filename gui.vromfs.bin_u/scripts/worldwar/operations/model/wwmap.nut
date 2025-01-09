@@ -1,4 +1,5 @@
 from "%scripts/dagui_library.nut" import *
+from "%scripts/clans/clanState.nut" import is_in_clan
 
 let u = require("%sqStdLibs/helpers/u.nut")
 let { format } = require("string")
@@ -14,6 +15,7 @@ let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { get_charserver_time_sec } = require("chard")
 let { getWwSetting } = require("%scripts/worldWar/worldWarStates.nut")
 let { getUnitClassIco } = require("%scripts/unit/unitInfoTexts.nut")
+let g_world_war = require("%scripts/worldWar/worldWarUtils.nut")
 
 let WwMap = class {
   name = ""
@@ -186,7 +188,7 @@ let WwMap = class {
       return wwUnitsList
 
     unitsList = wwActionsWithUnitsList.loadUnitsFromNameCountTbl(unitsList).filter(@(unit) !unit.isControlledByAI())
-    unitsList.sort(::g_world_war.sortUnitsBySortCodeAndCount)
+    unitsList.sort(g_world_war.sortUnitsBySortCodeAndCount)
     if (unitsGroupsByCountry != null) {
       foreach (wwUnit in unitsList) {
         let country = wwUnit?.unit.shopCountry
@@ -342,7 +344,7 @@ let WwMap = class {
     let reasonData = ::WwQueue.getCantJoinAnyQueuesReasonData()
     return hasFeature("WorldWarClansQueue") &&
            hasFeature("Clans") &&
-           ::is_in_clan() && this.isActive() &&
+           is_in_clan() && this.isActive() &&
            (reasonData.canJoin || reasonData.hasRestrictClanRegister)
   }
 }

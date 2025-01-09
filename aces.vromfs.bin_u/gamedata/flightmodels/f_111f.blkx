@@ -19,7 +19,6 @@
   "hasPointOfInterestMemory": true,
   "ilsASG23": true,
   "isBwOpticSight": true,
-  "viewDistKInSight": 6.0,
   "tpsCameraTargetOffsetAtZoom": [
     30.0,
     20.0,
@@ -30,6 +29,7 @@
     1.5,
     0.0
   ],
+  "viewDistKInSight": 6.0,
   "type": "typeFighter",
   "simplifiedJoyAileronMult": 1.0,
   "simplifiedJoyElevatorMult": 1.0,
@@ -2983,14 +2983,16 @@
         500,
         300
       ],
-      "noiseFactor": 0.05
+      "noiseFactor": 0.05,
+      "index": 1
     },
     "sightTPodThermal": {
       "resolution": [
         500,
         300
       ],
-      "noiseFactor": 0.05
+      "noiseFactor": 0.05,
+      "index": 2
     }
   },
   "gunnerOpticFps": {
@@ -3009,7 +3011,8 @@
         38.0
       ],
       "opticType": "tv",
-      "turretNo": 0
+      "turretNo": 0,
+      "nvIndex": 1
     },
     "TV1": {
       "pos": [
@@ -3027,7 +3030,27 @@
       ],
       "opticType": "tv",
       "turretNo": 0,
+      "nvIndex": 1,
       "name": "AGM65G"
+    },
+    "TV2": {
+      "pos": [
+        1.5,
+        0.0,
+        0.0
+      ],
+      "head": "optic2_turret",
+      "crosshairPreset": "test_crosshair",
+      "angularLimits": [
+        -38.0,
+        38.0,
+        -55.0,
+        38.0
+      ],
+      "opticType": "tv",
+      "turretNo": 0,
+      "nvIndex": 1,
+      "name": "GBU15V2"
     },
     "Target": {
       "pos": [
@@ -3044,8 +3067,27 @@
         14.0
       ],
       "opticType": "targeting",
-      "turretNo": 0
+      "turretNo": 0,
+      "nvIndex": 2
     }
+  },
+  "sensors": {
+    "sensor": [
+      {
+        "blk": "gameData/sensors/us_an_apq_169.blk",
+        "dmPart": "radar_dm"
+      },
+      {
+        "blk": "gameData/sensors/us_an_alr_2002_rwr.blk"
+      },
+      {
+        "blk": "gameData/sensors/us_an_alr_2002_mlws.blk"
+      },
+      {
+        "blk": "gameData/sensors/ir_tracker_tgp.blk",
+        "node": "optic2_gun"
+      }
+    ]
   },
   "commonWeapons": {
     "Weapon": {
@@ -3110,6 +3152,10 @@
       {
         "name": "f_111f_gbu_15_ir",
         "blk": "gameData/FlightModels/weaponPresets/f_111f_gbu_15_ir.blk"
+      },
+      {
+        "name": "f_111f_agm_130",
+        "blk": "gameData/FlightModels/weaponPresets/f_111f_agm_130.blk"
       }
     ]
   },
@@ -3330,6 +3376,10 @@
             {
               "slot": 2,
               "preset": "agm_65d_x3"
+            },
+            {
+              "slot": 2,
+              "preset": "agm_130_slot2"
             }
           ]
         }
@@ -3549,6 +3599,26 @@
                 0.0,
                 0.1
               ]
+            }
+          },
+          {
+            "iconType": "guided_bomb_grey",
+            "name": "agm_130_slot2",
+            "reqModification": "us_agm_130",
+            "ShowNodes": {
+              "node": [
+                "pylon_pivot1_lapa",
+                "pylon_pivot1"
+              ]
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "blk": "gameData/Weapons/BombGuns/us_2000lb_agm_130a_12.blk",
+              "emitter": "bomb3_gbu",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.4
             }
           },
           {
@@ -4528,6 +4598,26 @@
             }
           },
           {
+            "iconType": "guided_bomb_grey",
+            "name": "agm_130_slot6",
+            "reqModification": "us_agm_130",
+            "ShowNodes": {
+              "node": [
+                "pylon_pivot4_lapa",
+                "pylon_pivot4"
+              ]
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "blk": "gameData/Weapons/BombGuns/us_2000lb_agm_130a_12.blk",
+              "emitter": "bomb6_gbu",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.4
+            }
+          },
+          {
             "iconType": "missile_air_to_uni",
             "name": "agm_65d",
             "reqModification": "us_agm_65d",
@@ -4641,6 +4731,10 @@
             {
               "slot": 6,
               "preset": "agm_65d_x3"
+            },
+            {
+              "slot": 6,
+              "preset": "agm_130_slot6"
             }
           ]
         }
@@ -4653,20 +4747,6 @@
     "timeToLive": 45.0,
     "maxPower": 6.0,
     "maxSegments": 50
-  },
-  "sensors": {
-    "sensor": [
-      {
-        "blk": "gameData/sensors/us_an_apq_169.blk",
-        "dmPart": "radar_dm"
-      },
-      {
-        "blk": "gameData/sensors/us_an_alr_2002_rwr.blk"
-      },
-      {
-        "blk": "gameData/sensors/us_an_alr_2002_mlws.blk"
-      }
-    ]
   },
   "turbulence": {
     "segmentlength": 100.0,
@@ -4963,8 +5043,13 @@
     },
     "us_gbu_10_gbu_24": {
       "reqModification": "us_gbu_12",
-      "tier": 4,
+      "tier": 3,
       "modClass": "weapon"
+    },
+    "us_gbu_15v1": {
+      "modClass": "weapon",
+      "tier": 4,
+      "reqModification": "us_gbu_10_gbu_24"
     },
     "us_500lb_mk82": {
       "modClass": "weapon",
@@ -4980,11 +5065,11 @@
       "tier": 3,
       "reqModification": "us_750lb_m117a1"
     },
-    "us_gbu_15v1": {
-      "modClass": "weapon",
-      "tier": 4,
+    "us_agm_130": {
       "prevModification": "us_2000lb_mk84",
-      "reqModification": "us_gbu_10_gbu_24"
+      "reqModification": "us_gbu_15v1",
+      "tier": 4,
+      "modClass": "weapon"
     },
     "us_aim_9l": {
       "tier": 1,
@@ -5211,7 +5296,7 @@
         "brightnessNoiseStrength": 3.0,
         "brightnessNoiseSpeed": 6.0,
         "ignitionTextureIntensity": 0.8,
-        "ignitionBrightnessNoiseStrength": 0.5,
+        "ignitionBrightnessNoiseStrength": 0.05,
         "ignitionBrightnessNoiseSpeed": 16.0
       }
     }

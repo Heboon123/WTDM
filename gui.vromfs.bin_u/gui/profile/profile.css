@@ -1,7 +1,9 @@
 @const profileHeaderPadding:28@sf/@pf;
+@const profileHeaderTopPadding:20@sf/@pf;
+@const profileHeaderBottomPadding:20@sf/@pf;
 @const medalItemMargin:21@sf/@pf;
 @const unlockListRightMargin:13@sf/@pf;
-@const maxAccountHeaderHeight:78@sf/@pf + 1@frameHeaderHeight + 1@avatarButtonSize + 2@profileHeaderPadding + 1@bh;
+@const maxAccountHeaderHeight:54@sf/@pf + 1@frameHeaderHeight + 1@avatarButtonSize + 1@profileHeaderTopPadding + 1@profileHeaderBottomPadding + 1@bh;
 @const minAccountHeaderHeight:126@sf/@pf + 1@bh;
 @const accountHeaderWidth:720@sf/@pf;
 
@@ -18,11 +20,13 @@
 @const profileSeparatorExtraWidth: 128@sf/@pf;
 @const maxProfileFrameWidth: 2560@sf/@pf - 2@framePadding;
 @const beyondScrollbarSize: 10@sf/@pf;
-@const showcaseBoxBorder: #6f767d;
+@const showcaseBoxBorder: #1B161719;
 @const showcaseGreyText: #7C8389;
 @const showcaseBlue: #FF17CBFC;
 @const countriesSmallListHeight:50@sf/@pf;
+@const comboboxSmallFontPixHt:22@sf/@pf \ 1;
 
+@const frameSeparatorHeight: 1@sf/@pf;
 
 profileContent {
   position:relative;
@@ -330,12 +334,12 @@ profilePageTitle {
 
 frameSeparator {
   background-color:#4B4F53;
-  size:pw, 3@sf/@pf;
+  size:pw, 1@frameSeparatorHeight;
 }
 
 frame[needShortSeparators=yes] frameSeparator {
   re-type:9rect;
-  size:pw + 1@profileSeparatorExtraWidth, 3@sf/@pf;
+  size:pw + 1@profileSeparatorExtraWidth, 1@frameSeparatorHeight;
   background-image:!ui/images/profile/separator_gradient.svg;
   background-repeat:expand-svg;
   background-color:#FFFFFF;
@@ -344,17 +348,27 @@ frame[needShortSeparators=yes] frameSeparator {
 }
 
 frameSeparator[position=root] {
-  size:sw, 3@sf/@pf;
+  size:sw, 1@frameSeparatorHeight;
 }
 
 frame[needShortSeparators=yes] frameSeparator[position=root] {
-  size:sw + 1@profileSeparatorExtraWidth, 3@sf/@pf;
+  size:sw + 1@profileSeparatorExtraWidth, 1@frameSeparatorHeight;
   max-width:1@maxProfileFrameWidth + 1@profileSeparatorExtraWidth;
   left:(sw-w)/2;
 }
 
 frame[profilePage=yes] navBar{
   background-color:@transparent;
+}
+
+frame[profilePage=yes] > frame_header {
+  position: relative;
+  margin-bottom: 7@sf/@pf;
+}
+
+frame_header > Breadcrumb,
+frame_header > Button_close {
+  top: ph/2 - h/2;
 }
 
 profileEditBtn {
@@ -365,7 +379,7 @@ profileEditBtn {
   background-image:"!#ui/images/profile/ic_change.svg";
   background-color:#FFFFFF;
   display:hide;
-  interactive:yes;
+  interactive:no;
 }
 
 profileEditBtn[type=big] {
@@ -375,10 +389,6 @@ profileEditBtn[type=big] {
 
 [isEditModeEnabled=yes] profileEditBtn {
   display:show;
-}
-
-[show_console_buttons=yes] [btnName=''] profileEditBtn {
-  interactive:no;
 }
 
 profileEditBtnShadow {
@@ -407,6 +417,61 @@ profileEditBtnShadow[type=big]  {
   display:show;
 }
 
+Button_text[isProfileTitleBtn=yes] {
+  min-width:0.5@buttonWidth;
+}
+
 [show_console_buttons=yes] Button_text[isProfileTitleBtn=yes] {
   left:0;
+}
+
+ComboBox[isProfileSmallSize=yes] {
+  min-height:25@sf/@pf;
+}
+
+avatarImageTypeItem:hover,
+headerBackgroundItem:hover {
+  background-color: @listboxHoverOptionColor;
+}
+
+avatarImageTypeItem[selected=yes],
+headerBackgroundItem[selected=yes] {
+  background-color: @listboxSelOptionColor;
+  color: @white;
+}
+
+avatarImageTypeItem[selected=yes] > textarea,
+headerBackgroundItem[selected=yes] > textarea {
+  color: @white;
+}
+
+headerBackgroundItem[disabled=yes] > textarea {
+  color: @disabledTextColor;
+}
+
+profileHeaderBackground {
+  behaviour: basicTransparency;
+  transp-base: 0;
+  transp-end: 255;
+  transp-func: squareInv;
+  _transp-timer: 1;
+}
+
+profileHeaderBackground[headerAnim=hide] {
+  transp-time: -250;
+  _transp-timer: 1;
+}
+
+profileHeaderBackground[headerAnim=show] {
+  transp-time: 250;
+  _transp-timer: 0;
+}
+
+avatar > avatarFrame {
+  size: 1.2 * pw, 1.2 * ph;
+  pos: (pw-w)/2, (ph-h)/2;
+  position: absolute;
+  background-color: @white;
+  background-scale: aspect-ratio;
+  background-svg-size: 1.2 * pw, 1.2 * ph;
 }

@@ -22,6 +22,7 @@ let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { getShowedUnit, getShowedUnitName } = require("%scripts/slotbar/playerCurUnit.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { getUnitName, getUnitCountry } = require("%scripts/unit/unitInfo.nut")
+let { check_unit_mods_update } = require("%scripts/unit/unitChecks.nut")
 let { getCrewSpText } = require("%scripts/crew/crewPointsText.nut")
 let { needShowUnseenNightBattlesForUnit } = require("%scripts/events/nightBattlesStates.nut")
 let { needShowUnseenModTutorialForUnit } = require("%scripts/missions/modificationTutorial.nut")
@@ -35,6 +36,7 @@ let { getCrewDiscountInfo, getCrewMaxDiscountByInfo, getCrewDiscountsTooltipByIn
 } = require("%scripts/crew/crewDiscount.nut")
 let { getSpecTypeByCrewAndUnit } = require("%scripts/crew/crewSpecType.nut")
 let { getMaxWeaponryDiscountByUnitName } = require("%scripts/discounts/discountUtils.nut")
+let { isProfileReceived } = require("%scripts/login/loginStates.nut")
 
 function getSkillCategoryView(crewData, unit) {
   let unitType = unit?.unitType ?? unitTypes.INVALID
@@ -126,7 +128,7 @@ let class SlotInfoPanel (gui_handlers.BaseGuiHandlerWT) {
       let unit = this.getCurShowUnit()
       this.updateUnitIcon(unit)
 
-      let savedIndex = ::g_login.isProfileReceived() ?
+      let savedIndex = isProfileReceived.get() ?
         loadLocalAccountSettings(this.configSavePath, 0) : 0
       this.listboxObj.setValue(min(savedIndex, showTabsCount - 1))
       this.updateContentVisibility()
@@ -208,7 +210,7 @@ let class SlotInfoPanel (gui_handlers.BaseGuiHandlerWT) {
       collapseBtnContainer.collapsed = isPanelHidden ? "yes" : "no"
     showObjById("slot_info_content", ! isPanelHidden, this.scene)
     this.updateVisibleTabContent(true)
-    if (::g_login.isProfileReceived())
+    if (isProfileReceived.get())
       saveLocalAccountSettings(this.configSavePath, currentIndex)
   }
 
@@ -264,7 +266,7 @@ let class SlotInfoPanel (gui_handlers.BaseGuiHandlerWT) {
     if (!unit)
       return
 
-    let isAirInfoValid = ::check_unit_mods_update(unit)
+    let isAirInfoValid = check_unit_mods_update(unit)
                            && ::check_secondary_weapon_mods_recount(unit)
     if (!isAirInfoValid)
       this.doWhenActiveOnce("updateAirInfo")

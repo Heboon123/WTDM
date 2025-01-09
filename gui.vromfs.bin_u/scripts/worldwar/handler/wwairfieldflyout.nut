@@ -20,6 +20,9 @@ let airfieldTypes = require("%scripts/worldWar/inOperation/model/airfieldTypes.n
 let { guiStartChooseUnitWeapon } = require("%scripts/weaponry/weaponrySelectModal.nut")
 let { addBgTaskCb } = require("%scripts/tasker.nut")
 let { addPopup } = require("%scripts/popups/popups.nut")
+let { RenderCategory } = require("worldwarConst")
+let g_world_war = require("%scripts/worldWar/worldWarUtils.nut")
+let { getWWConfigurableValue } = require("%scripts/worldWar/worldWarStates.nut")
 
 let unitsTypesList = {
   [airfieldTypes.AT_HELIPAD] = [
@@ -81,7 +84,7 @@ gui_handlers.WwAirfieldFlyOut <- class (gui_handlers.BaseGuiHandlerWT) {
   unitsGroups = null
 
   static function open(index, position, armyTargetName, cellIdx, onSuccessfullFlyoutCb = null) {
-    let airfield = ::g_world_war.getAirfieldByIndex(index)
+    let airfield = g_world_war.getAirfieldByIndex(index)
     let availableArmiesArray = airfield.getAvailableFormations()
     if (!availableArmiesArray.len())
       return
@@ -101,7 +104,7 @@ gui_handlers.WwAirfieldFlyOut <- class (gui_handlers.BaseGuiHandlerWT) {
   function getSceneTplContainerObj() { return this.scene.findObject("root-box") }
 
   function getSceneTplView() {
-    this.accessList = ::g_world_war.getMyAccessLevelListForCurrentBattle()
+    this.accessList = g_world_war.getMyAccessLevelListForCurrentBattle()
     this.currentOperation = ::g_operations.getCurrentOperation()
     this.unitsGroups = wwOperationUnitsGroups.getUnitsGroups()
 
@@ -119,14 +122,14 @@ gui_handlers.WwAirfieldFlyOut <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function getUnitsList() {
-    let flightTimeFactor = ::g_world_war.getWWConfigurableValue("maxFlightTimeMinutesMul", 1.0)
+    let flightTimeFactor = getWWConfigurableValue("maxFlightTimeMinutesMul", 1.0)
     this.unitsList = []
     foreach (airfieldFormation in this.availableArmiesArray)
       foreach (unit in airfieldFormation.units) {
         let name = unit.name
         let group = this.unitsGroups?[name]
         let displayUnit = group?.defaultUnit ?? unit.unit
-        let unitWeapon = ::g_world_war.get_last_weapon_preset(name)
+        let unitWeapon = g_world_war.get_last_weapon_preset(name)
         let unitClassData = wwUnitClassParams.getUnitClassData(unit, unitWeapon)
         let maxFlyTime = (getMaxFlyTime(displayUnit) * flightTimeFactor).tointeger()
         let value = 0
@@ -224,7 +227,7 @@ gui_handlers.WwAirfieldFlyOut <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function initScreen() {
-    g_world_war_render.setCategory(ERC_AIRFIELD_ARROW, false)
+    g_world_war_render.setCategory(RenderCategory.ERC_AIRFIELD_ARROW, false)
 
     this.sendButtonObj = this.scene.findObject("send_aircrafts_button")
     this.updateVisibleUnits()
@@ -277,8 +280,8 @@ gui_handlers.WwAirfieldFlyOut <- class (gui_handlers.BaseGuiHandlerWT) {
   function calcSelectedGroupAirArmiesNumber() {
     local armyCount = ::g_operations.getAirArmiesNumberByGroupIdx(this.selectedGroupIdx,
       this.airfield.airfieldType.overrideUnitType)
-    for (local idx = 0; idx < ::g_world_war.getAirfieldsCount(); idx++) {
-      let af = ::g_world_war.getAirfieldByIndex(idx)
+    for (local idx = 0; idx < g_world_war.getAirfieldsCount(); idx++) {
+      let af = g_world_war.getAirfieldByIndex(idx)
       if (this.airfield.airfieldType == af.airfieldType)
         armyCount += af.getCooldownArmiesNumberByGroupIdx(this.selectedGroupIdx)
     }
@@ -632,7 +635,7 @@ gui_handlers.WwAirfieldFlyOut <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onDestroy() {
-    g_world_war_render.setCategory(ERC_AIRFIELD_ARROW, true)
+    g_world_war_render.setCategory(RenderCategory.ERC_AIRFIELD_ARROW, true)
   }
 
   function fillUnitWeaponPreset(unitTable) {
@@ -658,7 +661,7 @@ gui_handlers.WwAirfieldFlyOut <- class (gui_handlers.BaseGuiHandlerWT) {
       canShowPrice = false
       isForceHidePlayerInfo = true
       hasMenu = this.hasPresetToChoose(unit)
-      curEdiff = ::g_world_war.defaultDiffCode
+      curEdiff = g_world_war.defaultDiffCode
     }
     if (!checkObj(modItemObj))
       modItemObj = createModItem(
@@ -709,14 +712,14 @@ gui_handlers.WwAirfieldFlyOut <- class (gui_handlers.BaseGuiHandlerWT) {
       alignObj = obj
       align = "right"
       isForcedAvailable = true
-      setLastWeapon = @(unitName, weaponName) ::g_world_war.set_last_weapon_preset(unitName, weaponName)
-      getLastWeapon = @(unitName) ::g_world_war.get_last_weapon_preset(unitName)
+      setLastWeapon = @(unitName, weaponName) g_world_war.set_last_weapon_preset(unitName, weaponName)
+      getLastWeapon = @(unitName) g_world_war.get_last_weapon_preset(unitName)
       itemParams = {
         canShowStatusImage = false
         canShowResearch = false
         canShowPrice = false
         isForceHidePlayerInfo = true
-        curEdiff = ::g_world_war.defaultDiffCode
+        curEdiff = g_world_war.defaultDiffCode
       }
     })
   }
@@ -779,7 +782,7 @@ gui_handlers.WwAirfieldFlyOut <- class (gui_handlers.BaseGuiHandlerWT) {
       errorLocId = "worldWar/error/noUnitChoosen"
 
     let group = this.getAvailableGroup(armyGroupIdx)
-    if (!group || !::g_world_war.isGroupAvailable(group, this.accessList))
+    if (!group || !g_world_war.isGroupAvailable(group, this.accessList))
       errorLocId = "worldWar/error/uncontrollableArmyGroup"
 
     if (errorLocId != "") {
@@ -787,7 +790,7 @@ gui_handlers.WwAirfieldFlyOut <- class (gui_handlers.BaseGuiHandlerWT) {
       return
     }
 
-    let taskId = ::g_world_war.moveSelectedAircraftsToCell(
+    let taskId = g_world_war.moveSelectedAircraftsToCell(
       this.cellIdx, units, group.owner, this.armyTargetName)
     if (this.onSuccessfullFlyoutCb)
       addBgTaskCb(taskId, this.onSuccessfullFlyoutCb)
@@ -819,7 +822,7 @@ gui_handlers.WwAirfieldFlyOut <- class (gui_handlers.BaseGuiHandlerWT) {
     let optionsObj = obj.getChild(value)
     let weaponName = wwUnitClassParams.getWeaponNameByExpClass(unit, optionsObj.id)
 
-    ::g_world_war.set_last_weapon_preset(unit.name, weaponName)
+    g_world_war.set_last_weapon_preset(unit.name, weaponName)
     this.changeUnitWeapon(unit.name, weaponName)
   }
 }

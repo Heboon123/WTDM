@@ -19,7 +19,8 @@ let { getFirstChosenUnitType } = require("%scripts/firstChoice/firstChoice.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { get_time_msec } = require("dagor.time")
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
-let { getEsUnitType } = require("%scripts/unit/unitInfo.nut")
+let { getUnitTypeByText } = require("%scripts/unit/unitInfo.nut")
+let { getEsUnitType } = require("%scripts/unit/unitParams.nut")
 let { get_game_settings_blk } = require("blkGetters")
 let { userIdStr } = require("%scripts/user/profileStates.nut")
 let { getSlotbarUnitTypes } = require("%scripts/slotbar/slotbarState.nut")
@@ -29,7 +30,7 @@ let { getCrewsList } = require("%scripts/slotbar/crewsList.nut")
 let { MAX_COUNTRY_RANK } = require("%scripts/ranks.nut")
 let { getGlobalModule } = require("%scripts/global_modules.nut")
 let events = getGlobalModule("events")
-
+let { isLoggedIn, isProfileReceived } = require("%scripts/login/loginStates.nut")
 /*
   getStats() - Returns stats or null if stats have not been received yet. Requests stats update when needed.
     Broadcasts the event "MyStatsUpdated" after receiving the result.
@@ -78,7 +79,7 @@ function getTitles(showHidden = false) {
 }
 
 function updateMyStats() {
-  if (!::g_login.isLoggedIn())
+  if (!isLoggedIn.get())
     return
 
   let blk = DataBlock()
@@ -93,7 +94,7 @@ function updateMyStats() {
 }
 
 function requestMyStats() {
-  if (!::g_login.isLoggedIn())
+  if (!isLoggedIn.get())
     return
 
   let time = get_time_msec()
@@ -126,7 +127,7 @@ function getIsNewbie() {
 }
 
 function loadLocalNewbieData() {
-  if (!::g_login.isProfileReceived())
+  if (!isProfileReceived.get())
     return
 
   let newbieEndByArmyId = loadLocalAccountSettings("myStats/newbieEndedByArmyId", null)
@@ -289,7 +290,7 @@ function checkRecountNewbie() {
 
   needRecountNewbie = false
 
-  let newbieEndByArmyId = ::g_login.isProfileReceived()
+  let newbieEndByArmyId = isProfileReceived.get()
     ? loadLocalAccountSettings("myStats/newbieEndedByArmyId", {})
     : null
 
@@ -311,7 +312,7 @@ function checkRecountNewbie() {
     local kills = getKillsOnUnitType(unitType.esUnitType)
     let additionalUnitTypes = newPlayersBattles?[unitType.esUnitType].additionalUnitTypes ?? []
     foreach (addEsUnitType in additionalUnitTypes)
-      kills += getKillsOnUnitType(::getUnitTypeByText(addEsUnitType))
+      kills += getKillsOnUnitType(getUnitTypeByText(addEsUnitType))
 
     newbieByUnitType[unitType.esUnitType] <- (kills < killsReq)
     killsOnUnitTypes[unitType.esUnitType] <- {
@@ -335,8 +336,8 @@ function checkRecountNewbie() {
     local timePlayed = getTimePlayedOnUnitType(unitType)
     let additionalUnitTypes = config?.additionalUnitTypes ?? []
     foreach (addEsUnitType in additionalUnitTypes) {
-      kills += getKillsOnUnitType(::getUnitTypeByText(addEsUnitType))
-      timePlayed += getTimePlayedOnUnitType(::getUnitTypeByText(addEsUnitType))
+      kills += getKillsOnUnitType(getUnitTypeByText(addEsUnitType))
+      timePlayed += getTimePlayedOnUnitType(getUnitTypeByText(addEsUnitType))
     }
     foreach (evData in config.battles) {
       if (kills >= evData.kills)

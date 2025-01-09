@@ -2,6 +2,7 @@ from "%scripts/dagui_natives.nut" import shop_get_unlock_crew_cost, stat_get_val
 from "%scripts/dagui_library.nut" import *
 from "%scripts/controls/rawShortcuts.nut" import SHORTCUT, GAMEPAD_ENTER_SHORTCUT
 
+let { getObjIdByPrefix } = require("%scripts/utils_sa.nut")
 let { getGlobalModule } = require("%scripts/global_modules.nut")
 let events = getGlobalModule("events")
 let g_squad_manager = getGlobalModule("g_squad_manager")
@@ -56,7 +57,7 @@ let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { OPTIONS_MODE_MP_DOMINATION, USEROPT_COUNTRY } = require("%scripts/options/optionsExtNames.nut")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
-let { getEsUnitType } = require("%scripts/unit/unitInfo.nut")
+let { getEsUnitType } = require("%scripts/unit/unitParams.nut")
 let { get_game_settings_blk } = require("blkGetters")
 let { getEventEconomicName, isEventPlatformOnlyAllowed } = require("%scripts/events/eventInfo.nut")
 let { checkSquadUnreadyAndDo } = require("%scripts/squads/squadUtils.nut")
@@ -78,6 +79,8 @@ let { getCrewsList } = require("%scripts/slotbar/crewsList.nut")
 let { isWorldWarEnabled } = require("%scripts/globalWorldWarScripts.nut")
 let { unlockCrew } = require("%scripts/crew/crewActions.nut")
 let { matchSearchGm, currentCampaignMission } = require("%scripts/missions/missionsStates.nut")
+let { isLoggedIn } = require("%scripts/login/loginStates.nut")
+let { joinOperationById } = require("%scripts/globalWorldwarUtils.nut")
 
 gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
   static keepLoaded = true
@@ -487,7 +490,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
       g_squad_manager.setReadyFlag()
     }
     else if (isWorldWarEnabled())
-      this.guiScene.performDelayed(this, @() ::g_world_war.joinOperationById(
+      this.guiScene.performDelayed(this, @() joinOperationById(
         g_squad_manager.getWwOperationId(), g_squad_manager.getWwOperationCountry()))
   }
 
@@ -914,7 +917,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
     if (obj.childrenCount() <= value)
       return null
 
-    let id = ::getObjIdByPrefix(obj.getChild(value), "block_")
+    let id = getObjIdByPrefix(obj.getChild(value), "block_")
     if (!id)
       return null
 
@@ -977,7 +980,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function checkUpgradeCrewTutorial() {
-    if (!::g_login.isLoggedIn())
+    if (!isLoggedIn.get())
       return
 
     if (!isAllCrewsMinLevel())

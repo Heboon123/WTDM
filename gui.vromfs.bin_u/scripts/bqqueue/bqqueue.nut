@@ -14,7 +14,9 @@ let DataBlock = require("DataBlock")
 let { userIdStr } = require("%scripts/user/profileStates.nut")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { get_charserver_time_sec } = require("chard")
+let { isLoggedIn } = require("%scripts/login/loginStates.nut")
 
+const MAX_TIME_STAMP_VALUE_SEC = 2145916800 //2038-01-01 This is the maximum number that can be stored in a timestamp value in table in BQ
 const MIN_TIME_BETWEEN_MSEC = 5000 //not send events more often than once per 5 sec
 const RETRY_MSEC = 30000 //retry send on all servers down
 const RETRY_ON_URL_ERROR_MSEC = 3000
@@ -27,6 +29,13 @@ let currentUrlIndex = hardPersistWatched("bqQueue.currentUrlIndex", 0)
 
 let urls = Watched([])
 let url = Computed(@() urls.value?[currentUrlIndex.value] ?? urls.value?[0])
+
+function getValidServerTime() {
+  let serverTime = get_charserver_time_sec()
+  if (serverTime < 0 || serverTime > MAX_TIME_STAMP_VALUE_SEC)
+    return 0
+  return serverTime
+}
 
 function initUrl() {
   urls(shuffle((get_cur_circuit_block() ?? DataBlock()) % "charServer"))
@@ -43,7 +52,7 @@ function sendAll() {
   if (queue.value.len() == 0)
     return
 
-  if(!::g_login.isLoggedIn())
+  if(!isLoggedIn.get())
     return
 
   let list = {}
@@ -148,7 +157,7 @@ let addToQueue = @(msg) queueByUserId.mutate(
   @(v) v[userIdStr.value] <- (clone (v?[userIdStr.value] ?? [])).append(msg))
 
 function sendBqEvent(tableId, event, data = {}) {
-  let msg = { tableId, data = { clientTime = get_charserver_time_sec(), event, params = object_to_json_string(data) } }
+  let msg = { tableId, data = { clientTime = getValidServerTime(), event, params = object_to_json_string(data) } }
   addToQueue(msg)
 }
 

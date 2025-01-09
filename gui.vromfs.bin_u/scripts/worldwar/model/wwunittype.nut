@@ -3,8 +3,11 @@ from "%scripts/worldWar/worldWarConst.nut" import *
 
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let { getUnitRole } = require("%scripts/unit/unitInfoRoles.nut")
-let { getEsUnitType, getUnitName } = require("%scripts/unit/unitInfo.nut")
+let { getUnitName } = require("%scripts/unit/unitInfo.nut")
+let { getEsUnitType } = require("%scripts/unit/unitParams.nut")
 let { getUnitClassIco } = require("%scripts/unit/unitInfoTexts.nut")
+let { getInfantryUnits, getArtilleryUnits, getTransportUnits
+} = require("%scripts/worldWar/worldWarStates.nut")
 
 let fakeInfantryUnitName = "fake_infantry"
 const ALL_WW_UNITS_CODE = -2
@@ -33,6 +36,7 @@ let g_ww_unit_type = {
 
     getUnitName = @(name) getUnitName(name)
     getUnitClassIcon = @(unit) getUnitClassIco(unit)
+    getUnitTypeIcon = @() ""
     getUnitRole
   }
 
@@ -77,11 +81,11 @@ let g_ww_unit_type = {
     let esUnitType = getEsUnitType(wwUnit.unit)
     if (esUnitType != ES_UNIT_TYPE_INVALID)
       return this.getUnitTypeByEsUnitCode(esUnitType)
-    else if (name == fakeInfantryUnitName || name in ::g_world_war.getInfantryUnits())
+    else if (name == fakeInfantryUnitName || name in getInfantryUnits())
       return this.INFANTRY
-    else if (name in ::g_world_war.getArtilleryUnits())
+    else if (name in getArtilleryUnits())
       return this.ARTILLERY
-    else if (name in ::g_world_war.getTransportUnits())
+    else if (name in getTransportUnits())
       return this.TRANSPORT
 
     return this.UNKNOWN
@@ -92,6 +96,9 @@ let g_ww_unit_type = {
     return this.getUnitTypeByCode(wwUnitTypeCode).fontIcon
   }
 
+  function getUnitTypeIcon(wwUnitTypeCode) {
+    return this.getUnitTypeByCode(wwUnitTypeCode).getUnitTypeIcon()
+  }
 
   function isAir(wwUnitTypeCode) {
     return wwUnitTypeCode == this.AIR.code || wwUnitTypeCode == this.HELICOPTER.code
@@ -137,6 +144,7 @@ enums.addTypes(g_ww_unit_type, {
     esUnitCode = ES_UNIT_TYPE_AIRCRAFT
     name = "Aircraft"
     fontIcon = loc("worldwar/iconAir")
+    getUnitTypeIcon = @() "ui/gameuiskin#army_fighter.svg"
     moveSound = "ww_unit_move_airplanes"
     deploySound = "ww_unit_move_airplanes"
     canBeControlledByPlayer = true
@@ -148,6 +156,7 @@ enums.addTypes(g_ww_unit_type, {
     esUnitCode = ES_UNIT_TYPE_HELICOPTER
     name = "Helicopter"
     fontIcon = loc("worldwar/iconHelicopter")
+    getUnitTypeIcon = @() "ui/gameuiskin#army_helicopter.svg"
     moveSound = "ww_unit_move_helicopters"
     deploySound = "ww_unit_move_helicopters"
     canBeControlledByPlayer = true
@@ -159,6 +168,7 @@ enums.addTypes(g_ww_unit_type, {
     esUnitCode = ES_UNIT_TYPE_TANK
     name = "Tank"
     fontIcon = loc("worldwar/iconGround")
+    getUnitTypeIcon = @() "ui/gameuiskin#army_tank.svg"
     moveSound = "ww_unit_move_tanks"
     deploySound = "ww_unit_move_tanks"
     canBeControlledByPlayer = true
@@ -170,6 +180,7 @@ enums.addTypes(g_ww_unit_type, {
     esUnitCode = ES_UNIT_TYPE_SHIP
     name = "Ship"
     fontIcon = loc("worldwar/iconWater")
+    getUnitTypeIcon = @() "ui/gameuiskin#army_boat.svg"
     canBeControlledByPlayer = true
   }
   COASTAL_WATER = {
@@ -179,6 +190,7 @@ enums.addTypes(g_ww_unit_type, {
     esUnitCode = ES_UNIT_TYPE_BOAT
     name = "Ship"
     fontIcon = loc("worldwar/iconWater")
+    getUnitTypeIcon = @() "ui/gameuiskin#army_boat.svg"
     canBeControlledByPlayer = true
   }
   INFANTRY = {
@@ -192,6 +204,7 @@ enums.addTypes(g_ww_unit_type, {
     deploySound = "ww_unit_move_infantry"
     getUnitName = @(_name) loc("mainmenu/type_infantry")
     getUnitClassIcon = @(_unit) "#ui/gameuiskin#icon_infantry.svg"
+    getUnitTypeIcon = @() "ui/gameuiskin#icon_infantry.svg"
     getUnitRole = @(_unit) "infantry"
   }
   ARTILLERY = {
@@ -205,6 +218,7 @@ enums.addTypes(g_ww_unit_type, {
     deploySound = "ww_unit_move_artillery"
     getUnitName = @(_name) loc("mainmenu/type_artillery")
     getUnitClassIcon = @(_unit) "#ui/gameuiskin#icon_artillery.svg"
+    getUnitTypeIcon = @() "ui/gameuiskin#icon_artillery.svg"
     getUnitRole = @(_unit) "artillery"
   }
   TRANSPORT = {
@@ -216,6 +230,7 @@ enums.addTypes(g_ww_unit_type, {
     expClass = "landing_craft"
     getUnitName = @(_name) loc("mainmenu/type_landing_craft")
     getUnitClassIcon = @(_unit) "#ui/gameuiskin#landing_craft.svg"
+    getUnitTypeIcon = @() "ui/gameuiskin#landing_craft.svg"
     getUnitRole = @(_unit) "transport"
   }
   ALL = {

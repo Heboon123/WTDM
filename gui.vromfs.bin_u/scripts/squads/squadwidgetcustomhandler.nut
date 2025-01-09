@@ -3,6 +3,7 @@ from "%scripts/dagui_library.nut" import *
 from "%scripts/worldWar/worldWarConst.nut" import WW_GLOBAL_STATUS_TYPE
 from "%scripts/squads/squadsConsts.nut" import squadMemberState
 from "%scripts/chat/chatConsts.nut" import voiceChatStats
+from "%scripts/shop/shopCountriesList.nut" import checkCountry
 
 let { getGlobalModule } = require("%scripts/global_modules.nut")
 let g_squad_manager = getGlobalModule("g_squad_manager")
@@ -20,6 +21,7 @@ let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
 let { wwGetOperationId } = require("worldwar")
 let { showSquadMemberMenu } = require("%scripts/user/playerContextMenu.nut")
 let { openSearchSquadPlayer } = require("%scripts/contacts/searchForSquadHandler.nut")
+let { joinOperationById } = require("%scripts/globalWorldwarUtils.nut")
 
 const SQUAD_MEMBERS_TO_HIDE_TITLE = 3
 
@@ -105,7 +107,7 @@ gui_handlers.SquadWidgetCustomHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if (member.isActualData()) {
       let contact = ::getContact(member.uid)
       local countryIcon = ""
-      if (::checkCountry(member.country, $"squad member data ( uid = {member.uid})", true))
+      if (checkCountry(member.country, $"squad member data ( uid = {member.uid})", true))
         countryIcon = getCountryIcon(member.country)
 
       let status = g_squad_manager.getPlayerStatusInMySquad(member.uid)
@@ -267,7 +269,7 @@ gui_handlers.SquadWidgetCustomHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if (squadLeaderOperationId == null || squadLeaderOperationId == wwGetOperationId())
       return
 
-    this.guiScene.performDelayed(this, @()::g_world_war.joinOperationById(squadLeaderOperationId,
+    this.guiScene.performDelayed(this, @() joinOperationById(squadLeaderOperationId,
       g_squad_manager.getWwOperationCountry()))
   }
 }

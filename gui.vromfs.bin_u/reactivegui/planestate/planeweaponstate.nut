@@ -18,7 +18,9 @@ let LaserAgmCnt = Watched(0)
 let LaserAgmSelectedCnt = Watched(-1)
 let ShellCnt = Watched(0)
 let AdlPoint = [0, 0]
+let FwdPoint = [0, 0]
 let CurWeaponName = Watched("")
+let CurWeaponGidanceType = Watched(-1)
 let GunBullets0 = Watched(0)
 let GunBullets1 = Watched(0)
 let BulletImpactPoints = Watched([])
@@ -31,6 +33,7 @@ let WeaponSlotsTrigger = Watched([])
 let WeaponSlotsCnt = Watched([])
 let WeaponSlotsTotalCnt = Watched([])
 let WeaponSlotsName = Watched([])
+let WeaponSlotsJettisoned = Watched([])
 let SelectedWeapSlot = Watched(-1)
 let SelectedTrigger = Watched(-1)
 let HasOperatedShell = Watched(false)
@@ -53,8 +56,10 @@ let planeState = {
   LaserAgmCnt,
   LaserAgmSelectedCnt,
   ShellCnt,
+  FwdPoint,
   AdlPoint,
   CurWeaponName,
+  CurWeaponGidanceType,
   GunBullets0,
   GunBullets1,
   BulletImpactPoints,
@@ -67,6 +72,7 @@ let planeState = {
   WeaponSlotsCnt,
   WeaponSlotsTotalCnt,
   WeaponSlotsName,
+  WeaponSlotsJettisoned,
   SelectedTrigger,
   HasOperatedShell,
   SelectedWeapSlot,
@@ -78,6 +84,11 @@ let planeState = {
 interop.updateLaserPoint <- function(x, y) {
   LaserPoint[0] = x
   LaserPoint[1] = y
+}
+
+interop.updateFwdPoint <- function(x, y) {
+  FwdPoint[0] = x
+  FwdPoint[1] = y
 }
 
 interop.updateAdlPoint <- function(x, y) {

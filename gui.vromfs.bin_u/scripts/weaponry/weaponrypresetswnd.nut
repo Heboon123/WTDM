@@ -712,8 +712,7 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
     }
 
     this.updateAllByFilters()
-    saveLocalAccountSettings($"{MY_FILTERS}/{this.unit.name}",
-      ::build_blk_from_container(this.filterStates))
+    saveLocalAccountSettings($"{MY_FILTERS}/{this.unit.name}", this.filterStates)
   }
 
   function editWeaponryPreset(preset) {

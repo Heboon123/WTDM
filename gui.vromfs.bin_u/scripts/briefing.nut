@@ -2,7 +2,9 @@ from "%scripts/dagui_natives.nut" import add_last_played, show_gui, string_to_re
 from "%scripts/dagui_library.nut" import *
 from "%scripts/options/optionsExtNames.nut" import *
 from "%scripts/gameModes/gameModeConsts.nut" import BATTLE_TYPES
+from "%scripts/mainConsts.nut" import global_max_players_versus
 
+let { fillBlock } = require("%sqstd/datablock.nut")
 let { is_user_mission } = require("%scripts/missions/missionsUtilsModule.nut")
 let { getGlobalModule } = require("%scripts/global_modules.nut")
 let g_squad_manager = getGlobalModule("g_squad_manager")
@@ -257,8 +259,12 @@ gui_handlers.Briefing <- class (gui_handlers.GenericOptions) {
     if (campaignName == null || this.missionName == null)
       return
 
+    let baseMissionBlk = get_meta_mission_info_by_gm_and_name(gm, this.missionName)
+    if (baseMissionBlk == null)
+      return
+
     this.missionBlk = DataBlock()
-    this.missionBlk.setFrom(get_meta_mission_info_by_gm_and_name(gm, this.missionName))
+    this.missionBlk.setFrom(baseMissionBlk)
 
     if (gm == GM_EVENT)
       ::mission_settings.coop = true;
@@ -513,8 +519,8 @@ gui_handlers.Briefing <- class (gui_handlers.GenericOptions) {
         ::mission_settings.players = ::SessionLobby.getMaxMembersCount()
       }
       else {
-        ::mission_settings.players = ::global_max_players_versus;
-        misBlk.setInt("_players", ::global_max_players_versus)
+        ::mission_settings.players = global_max_players_versus;
+        misBlk.setInt("_players", global_max_players_versus)
       }
     }
 
@@ -569,7 +575,7 @@ gui_handlers.Briefing <- class (gui_handlers.GenericOptions) {
 
     let mrankMin = this.getOptValue(USEROPT_BR_MIN, 0)
     let mrankMax = this.getOptValue(USEROPT_BR_MAX, 0)
-    misBlk.ranks = ::build_blk_from_container({ min = mrankMin, max = mrankMax })
+    fillBlock("ranks", misBlk, { min = mrankMin, max = mrankMax })
     if (mrankMin > 0 || mrankMax < getMaxEconomicRank()) {
       ::mission_settings.mrankMin <- mrankMin
       ::mission_settings.mrankMax <- mrankMax

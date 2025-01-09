@@ -1,7 +1,6 @@
 from "%scripts/dagui_natives.nut" import get_file_modify_time_sec
 from "%scripts/dagui_library.nut" import *
 
-let { eventbus_send } = require("eventbus")
 let { file_exists } = require("dagor.fs")
 let { frnd } = require("dagor.random")
 let DataBlock = require("DataBlock")
@@ -11,6 +10,9 @@ let SecondsUpdater = require("%sqDagui/timer/secondsUpdater.nut")
 let { getCurLoadingBgData, removeLoadingBgFromLists } = require("%scripts/loading/loadingBgData.nut")
 let { isLoadingScreenBanned } = require("%scripts/options/preloaderOptions.nut")
 let { havePremium } = require("%scripts/user/premium.nut")
+let { isLoggedIn, isProfileReceived } = require("%scripts/login/loginStates.nut")
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 
 const MODIFY_UNKNOWN = -1
 const MODIFY_NO_FILE = -2
@@ -61,9 +63,9 @@ function load(blkFilePath = "", obj = null, curBgData = null) {
 
   if (blkFilePath != "")
     lastBg = blkFilePath
-  else if (::g_login.isLoggedIn() || lastBg == "") { //no change bg during first load
+  else if (isLoggedIn.get() || lastBg == "") { //no change bg during first load
       if (hasFeature("LoadingBackgroundFilter")
-        && ::g_login.isProfileReceived() && havePremium.value) {
+        && isProfileReceived.get() && havePremium.value) {
         let filteredCurBgList = curBgList.filter(@(_v, id) !isLoadingScreenBanned(id))
         if (filteredCurBgList.len() > 0)
           curBgList = filteredCurBgList
@@ -129,7 +131,7 @@ function debugLoad(blkFilePath = "") {
   if (!isDebugMode)
     return
 
-  eventbus_send("gui_start_loading", {})
+  handlersManager.loadHandler(gui_handlers.LoadingHandler)
   load(blkFilePath)
   enableDebugUpdate()
 }

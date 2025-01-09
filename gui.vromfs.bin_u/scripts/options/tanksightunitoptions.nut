@@ -1,15 +1,16 @@
 from "%scripts/dagui_library.nut" import *
+from "%scripts/options/optionsCtors.nut" import create_option_combobox
+
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let { format } = require("string")
-let { getUnitName } = require("%scripts/unit/unitInfo.nut")
-let { hasUnitAtRank, get_units_list } = require("%scripts/airInfo.nut")
+let { hasUnitAtRank, get_units_list } = require("%scripts/shop/shopCountryInfo.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
 let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
 let { MAX_COUNTRY_RANK } = require("%scripts/ranks.nut")
 let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
-let { create_option_combobox, image_for_air } = require("%scripts/options/optionsExt.nut")
+let { getUnitName, image_for_air } = require("%scripts/unit/unitInfo.nut")
 let { getPlayerCurUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 
 local sightUnitOptions = {

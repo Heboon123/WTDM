@@ -18,13 +18,14 @@ let { isCrossPlayEnabled, needShowCrossPlayInfo } = require("%scripts/social/cro
 let { getFirstChosenUnitType } = require("%scripts/firstChoice/firstChoice.nut")
 let { isMultiplayerPrivilegeAvailable } = require("%scripts/user/xboxFeatures.nut")
 let { hasMultiplayerRestritionByBalance } = require("%scripts/user/balance.nut")
-let { getEsUnitType } = require("%scripts/unit/unitInfo.nut")
+let { getEsUnitType } = require("%scripts/unit/unitParams.nut")
 let { getEventDisplayType, isEventForClan, isEventForNewbies } = require("%scripts/events/eventInfo.nut")
 let { getCurSlotbarUnit } = require("%scripts/slotbar/slotbarState.nut")
 let { getNextNewbieEvent, getUnitTypeByNewbieEventId, isMeNewbie } = require("%scripts/myStats.nut")
 let { g_event_display_type } = require("%scripts/events/eventDisplayType.nut")
 let { isWorldWarEnabled, canPlayWorldwar } = require("%scripts/globalWorldWarScripts.nut")
 let { deferOnce } = require("dagor.workcycle")
+let { isLoggedIn, isProfileReceived } = require("%scripts/login/loginStates.nut")
 
 /**
  * Game mode manager incapsulates working
@@ -392,7 +393,7 @@ function findCurrentGameModeId(ignoreLocalProfile = false, preferredDiffCode = -
 
   local idFromAccount = null
   local unitType = ES_UNIT_TYPE_INVALID
-  if (!ignoreLocalProfile && ::g_login.isProfileReceived()) {
+  if (!ignoreLocalProfile && isProfileReceived.get()) {
     // Step 1. Attempting to retrieve current game mode id from account.
     idFromAccount = loadLocalByAccount("selected_random_battle", null)
     if (idFromAccount in gameModeById)
@@ -613,7 +614,7 @@ function initShowingGameModesSeen() {
   if (seenShowingGameModesInited)
     return true
 
-  if (!::g_login.isLoggedIn())
+  if (!isLoggedIn.get())
     return false
 
   let blk = loadLocalByAccount(SEEN_MODES_SAVE_PATH, DataBlock())
@@ -785,7 +786,7 @@ addListenersWithoutEnv({
   UnitTypeChosen             = @(_) updateManager()
   CrewTakeUnit               = @(_) updateManager()
   function GameLocalizationChanged(_) {
-    if (!::g_login.isLoggedIn())
+    if (!isLoggedIn.get())
       return
     updateManager()
   }

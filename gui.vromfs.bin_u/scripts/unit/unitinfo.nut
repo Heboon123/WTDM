@@ -1,11 +1,12 @@
 from "%scripts/dagui_natives.nut" import is_era_available, shop_get_unit_exp, wp_get_cost, wp_get_cost_gold
 from "%scripts/dagui_library.nut" import *
-let u = require("%sqStdLibs/helpers/u.nut")
 
+let u = require("%sqStdLibs/helpers/u.nut")
+let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { get_ranks_blk } = require("blkGetters")
 let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
 let { Cost } = require("%scripts/money.nut")
-let { findUnitNoCase } = require("%scripts/unit/unitParams.nut")
+let { findUnitNoCase, getEsUnitType } = require("%scripts/unit/unitParams.nut")
 
 enum bit_unit_status {
   locked      = 1
@@ -21,12 +22,25 @@ enum bit_unit_status {
   empty       = 1024
 }
 
-function getEsUnitType(unit) {
-  return unit?.esUnitType ?? ES_UNIT_TYPE_INVALID
+let getUnitTypeText = @(esUnitType) unitTypes.getByEsUnitType(esUnitType).name
+let getUnitTypeByText = @(typeName, caseSensitive = false) unitTypes.getByName(typeName, caseSensitive).esUnitType
+
+function get_unit_icon_by_unit(unit, iconName) {
+  let esUnitType = getEsUnitType(unit)
+  let t = unitTypes.getByEsUnitType(esUnitType)
+  return $"{t.uiSkin}{iconName}.ddsx"
+}
+
+function image_for_air(air) {
+  if (type(air) == "string")
+    air = getAircraftByName(air)
+  if (!air)
+    return ""
+  return air.customImage ?? get_unit_icon_by_unit(air, air.name)
 }
 
 function getUnitTypeTextByUnit(unit) {
-  return ::getUnitTypeText(getEsUnitType(unit))
+  return getUnitTypeText(getEsUnitType(unit))
 }
 
 function getUnitCountry(unit) {
@@ -47,7 +61,7 @@ function getUnitCountryIcon(unit, needOperatorCountry = false) {
 
 function getUnitsNeedBuyToOpenNextInEra(countryId, unitType, rank, ranksBlk = null) {
   ranksBlk = ranksBlk || get_ranks_blk()
-  let unitTypeText = ::getUnitTypeText(unitType)
+  let unitTypeText = getUnitTypeText(unitType)
 
   local rankToOpen = ranksBlk?.needBuyToOpenNextInEra[countryId][$"needBuyToOpenNextInEra{unitTypeText}{rank}"]
   if (rankToOpen != null)
@@ -89,7 +103,7 @@ function getPrevUnit(unit) {
 
 return {
   bit_unit_status,
-  getEsUnitType, getUnitTypeTextByUnit, getUnitName,//next
+  getUnitTypeTextByUnit, getUnitName,//next
   getUnitCountry, getUnitCountryIcon, getUnitsNeedBuyToOpenNextInEra,
   getRomanNumeralRankByUnitName
   getUnitReqExp
@@ -97,4 +111,8 @@ return {
   getUnitRealCost
   getUnitCost
   getPrevUnit
+  get_unit_icon_by_unit
+  getUnitTypeText
+  getUnitTypeByText
+  image_for_air
 }

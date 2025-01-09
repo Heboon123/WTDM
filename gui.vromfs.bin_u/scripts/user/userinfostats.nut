@@ -1,5 +1,7 @@
 from "%scripts/dagui_natives.nut" import get_player_public_stats, get_cur_rank_info, clan_get_my_clan_name, clan_get_my_clan_id, clan_get_my_clan_tag, clan_get_my_clan_type, shop_get_free_exp
 from "%scripts/dagui_library.nut" import *
+from "%scripts/utils_sa.nut" import buildTableRowNoPad
+from "%scripts/utils_sa.nut" import is_multiplayer
 
 let { getNumUnlocked } = require("unlocks")
 let { get_mp_session_info } = require("guiMission")
@@ -20,6 +22,7 @@ let { userName } = require("%scripts/user/profileStates.nut")
 let { ranksPersist, expPerRank, getRankByExp, getPrestigeByRank
 } = require("%scripts/ranks.nut")
 let { isUnitEliteByStatus } = require("%scripts/unit/unitStatus.nut")
+let { clanUserTable } = require("%scripts/contacts/contactsManager.nut")
 
 let statsFm = ["fighter", "bomber", "assault"]
 let statsTanks = ["tank", "tank_destroyer", "heavy_tank", "SPAA"]
@@ -315,7 +318,19 @@ function buildProfileSummaryRowData(config, summary, diffCode, textId = "") {
     { text = s, textType = "text", rawParam = "isTableStatsVal:t='yes'" }
   ]
 
-  return ::buildTableRowNoPad("", row)
+  return buildTableRowNoPad("", row)
+}
+
+function checkAndToggleStatsBottomFade(sObj) {
+  let statsHeight = sObj.getSize()[1]
+
+  local statsContainerHeight = 0
+  let statsContainer = this.scene.findObject("stats-container")
+  if (!statsContainer?.isValid())
+    return
+
+  statsContainerHeight = statsContainer.getSize()[1]
+  showObjById("stats_bottom_fade", statsHeight >= statsContainerHeight * 0.9, statsContainer)
 }
 
 function fillProfileSummary(sObj, summary, diff) {
@@ -330,7 +345,7 @@ function fillProfileSummary(sObj, summary, diff) {
       continue
 
     if (item.header)
-      data = "".concat(data, ::buildTableRowNoPad("", [{ text = $"#{item.name}", textType = "text"}], null,
+      data = "".concat(data, buildTableRowNoPad("", [{ text = $"#{item.name}", textType = "text"}], null,
         format("headerRow:t='%s'; ", idx ? "yes" : "first")))
     else if (item.separateRowsByFm)
       for (local i = 0; i < statsFm.len(); i++) {
@@ -353,6 +368,8 @@ function fillProfileSummary(sObj, summary, diff) {
   guiScene.replaceContentFromText(sObj, data, data.len(), this)
   foreach (id, text in textsToSet)
     sObj.findObject(id).setValue(text)
+
+  checkAndToggleStatsBottomFade(sObj)
 }
 
 function getCountryMedals(countryId, profileData = null) {
@@ -432,7 +449,7 @@ function getPlayerStatsFromBlk(blk) {
 }
 
 function getCurSessionCountry() {
-  if (::is_multiplayer()) {
+  if (is_multiplayer()) {
     let sessionInfo = get_mp_session_info()
     let team = get_mp_local_team()
     if (team == 1)
@@ -472,7 +489,7 @@ function getProfileInfo() {
   currentUserProfile.clanTag <- isInClan ? clan_get_my_clan_tag() : ""
   currentUserProfile.clanName <- isInClan  ? clan_get_my_clan_name() : ""
   currentUserProfile.clanType <- isInClan  ? clan_get_my_clan_type() : ""
-  ::clanUserTable[userName.value] <- currentUserProfile.clanTag
+  clanUserTable.mutate(@(v) v[userName.get()] <- currentUserProfile.clanTag)
 
   currentUserProfile.exp <- info.exp
   currentUserProfile.free_exp <- shop_get_free_exp()

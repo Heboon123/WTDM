@@ -4,7 +4,7 @@ let { get_charserver_time_sec } = require("chard")
 let { get_last_skin } = require("unitCustomization")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
-let { getMaxUnitsRank } = require("%scripts/shop/shopUnitsInfo.nut")
+let { getMaxUnitsRank } = require("%scripts/shop/shopCountryInfo.nut")
 let { OPTIONS_MODE_GAMEPLAY, USEROPT_SHOW_OTHERS_DECALS
 } = require("%scripts/options/optionsExtNames.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -13,6 +13,7 @@ let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let getAllUnits = require("%scripts/unit/allUnits.nut")
 let { getCachedDataByType } = require("%scripts/customization/decorCache.nut")
 let { decoratorTypes } = require("%scripts/customization/types.nut")
+let { isProfileReceived } = require("%scripts/login/loginStates.nut")
 
 const SHOWED_SUGGESTED_SAVE_PATH = "seen/suggestionShowDecalsOnOtherPlayers"
 const SUGGESTED_DELAY_TIME_SEC = 15552000 //180 days
@@ -89,7 +90,7 @@ function hasInflictedForbiddenDecal() {
 }
 
 function checkDecalsOnOtherPlayersOptions() {
-  if (!::g_login.isProfileReceived())
+  if (!isProfileReceived.get())
     return
 
   if (loadLocalAccountSettings(SHOW_SAVE_ID)) //options already checked visible
@@ -110,7 +111,7 @@ function checkDecalsOnOtherPlayersOptions() {
 }
 
 function tryShowPeriodicPopupDecalsOnOtherPlayers() {
-  if (!::g_login.isProfileReceived())
+  if (!isProfileReceived.get())
     return
 
   if (isEnableDecalsOnOtherPlayersOpt())

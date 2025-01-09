@@ -6,6 +6,8 @@ let wwActionsWithUnitsList = require("%scripts/worldWar/inOperation/wwActionsWit
 let { WwBattleResultsView } = require("%scripts/worldWar/inOperation/view/wwBattleResultsView.nut")
 let { WwArmy } = require("%scripts/worldWar/inOperation/model/wwArmy.nut")
 let { g_ww_unit_type } = require("%scripts/worldWar/model/wwUnitType.nut")
+let { isOperationFinished } = require("%appGlobals/worldWar/wwOperationState.nut")
+let g_world_war = require("%scripts/worldWar/worldWarUtils.nut")
 
 let WwBattleResults = class {
   id = ""
@@ -224,7 +226,7 @@ let WwBattleResults = class {
     // Restoring team sides
 
     let localTeam  = getTblValue("localTeam", wwSharedPool, "")
-    let sidesOrder = ::g_world_war.getSidesOrder() // [ player, enemy ]
+    let sidesOrder = g_world_war.getSidesOrder() // [ player, enemy ]
     let winnerSide = getTblValue("win", userlog) ? sidesOrder[0] : sidesOrder[1]
 
     local sideInBattle = SIDE_NONE
@@ -251,7 +253,7 @@ let WwBattleResults = class {
       let clanTag = getTblValue("armyGroupName", armyState, "")
       let unitTypeTextCode = getTblValue("unitType", initialArmy, "")
       let wwUnitType = g_ww_unit_type.getUnitTypeByTextCode(unitTypeTextCode)
-      let wwArmy = ::g_world_war.getArmyByName(armyName)
+      let wwArmy = g_world_war.getArmyByName(armyName)
       let hasFoundArmy = wwArmy.getUnitType() != g_ww_unit_type.UNKNOWN.code
 
       let armyView = {
@@ -259,7 +261,7 @@ let WwBattleResults = class {
         isBelongsToMyClan = clanTag == clan_get_my_clan_tag()
         getTextAfterIcon  = clanTag
         getUnitTypeText   = hasFoundArmy ? wwArmy.getView().getUnitTypeText() : wwUnitType.fontIcon
-        getUnitTypeCustomText = hasFoundArmy ? wwArmy.getView().getUnitTypeCustomText() : wwUnitType.fontIcon
+        getUnitTypeIcon = hasFoundArmy ? wwArmy.getView().getUnitTypeIcon() : wwUnitType.getUnitTypeIcon()
       }
 
       return {
@@ -282,7 +284,7 @@ let WwBattleResults = class {
     this.playerSide = sideInBattle
     this.playerCountry = countryInBattle
     this.locName = getTblValue("locName", userlog, "")
-    this.isBattleResultsIgnored = ::g_world_war.isCurrentOperationFinished()
+    this.isBattleResultsIgnored = isOperationFinished()
 
     this.teams = {}
     foreach (side in sidesOrder) {

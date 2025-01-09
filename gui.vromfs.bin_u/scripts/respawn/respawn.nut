@@ -4,6 +4,7 @@ from "%scripts/controls/controlsConsts.nut" import optionControlType
 from "%scripts/items/itemsConsts.nut" import itemType
 from "%scripts/respawn/respawnConsts.nut" import RespawnOptUpdBit
 from "radarOptions" import set_option_radar_name, set_option_radar_scan_pattern_name
+from "%scripts/utils_sa.nut" import get_mplayer_color
 
 let { g_mis_loading_state } = require("%scripts/respawn/misLoadingState.nut")
 let { eventbus_subscribe } = require("eventbus")
@@ -67,7 +68,8 @@ let { USEROPT_SKIP_WEAPON_WARNING, USEROPT_FUEL_AMOUNT_CUSTOM,
   USEROPT_LOAD_FUEL_AMOUNT} = require("%scripts/options/optionsExtNames.nut")
 let { loadLocalByScreenSize, saveLocalByScreenSize
 } = require("%scripts/clientState/localProfile.nut")
-let { getEsUnitType, getUnitName } = require("%scripts/unit/unitInfo.nut")
+let { getUnitName } = require("%scripts/unit/unitInfo.nut")
+let { getEsUnitType } = require("%scripts/unit/unitParams.nut")
 let { getContactsHandler } = require("%scripts/contacts/contactsHandlerState.nut")
 let { register_command } = require("console")
 let { calcBattleRatingFromRank, reset_cur_mission_mode, clear_spawn_score, get_mission_mode } = require("%appGlobals/ranks_common_shared.nut")
@@ -95,8 +97,11 @@ let { getCrewsList } = require("%scripts/slotbar/crewsList.nut")
 let { loadGameChatToObj, detachGameChatSceneData, hideGameChatSceneInput
 } = require("%scripts/chat/mpChat.nut")
 let { unitNameForWeapons } = require("%scripts/weaponry/unitForWeapons.nut")
-
+let { setAllowMoveCenter, isAllowedMoveCenter, setForcedHudType, getCurHudType, isForcedHudType,
+  setPointSettingMode, isPointSettingMode, resetPointOfInterest, isPointOfInterestSet  } = require("guiTacticalMap")
+let { hasSightStabilization } = require("vehicleModel")
 let AdditionalUnits = require("%scripts/misCustomRules/ruleAdditionalUnits.nut")
+let { isGroundAndAirMission } = require("%scripts/missions/missionType.nut")
 
 function getCrewSlotReadyMask() {
   if (!g_mis_loading_state.isCrewsListReceived())
@@ -323,6 +328,7 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
 
     showObjById("screen_button_back", useTouchscreen && !this.isRespawn, this.scene)
     showObjById("gamercard_bottom", this.isRespawn, this.scene)
+    showObjById("btn_set_hud_type", isGroundAndAirMission(), this.scene)
 
     if (this.gameType & GT_RACE) {
       let finished = race_finished_by_local_player()
@@ -405,6 +411,15 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
     this.tmapRespawnBaseTimerObj.setValue(text)
   }
 
+  function resetPointOfInterestMode() {
+    setPointSettingMode(false)
+    showObjById("POI_resetter", false, this.scene)
+    let tacticalMapObj = this.scene.findObject("tactical-map")
+    tacticalMapObj.cursor = "normal"
+    let buttonImg = this.scene.findObject("hud_poi_img");
+    buttonImg["background-image"] =  isPointOfInterestSet() ? "#ui/gameuiskin#map_interestpoint_delete.svg" : "#ui/gameuiskin#map_interestpoint.svg"
+  }
+
   function initTeamUnitsLeftView() {
     if (!this.missionRules.hasCustomUnitRespawns())
       return
@@ -421,6 +436,8 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
     this.updateSpectatorRotationForced(show)
     this.updateTacticalMapUnitType(show ? null : false)
     base.onSceneActivate(show)
+    setAllowMoveCenter(false)
+    this.resetPointOfInterestMode()
   }
 
   function getOrderStatusObj() {
@@ -957,12 +974,16 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
     local hint = ""
     local hintIcon = showConsoleButtons.value ? gamepadIcons.getTexture("r_trigger") : "#ui/gameuiskin#mouse_left"
     local highlightSpawnMapId = -1
-    if (!this.isRespawn)
-      hint = colorize("activeTextColor", loc("voice_message_attention_to_point_2"))
+    if (!this.isRespawn) {
+      hint = isAllowedMoveCenter() ? colorize("activeTextColor", loc("hints/move_map_hint"))
+                                   : colorize("activeTextColor", loc("voice_message_attention_to_point_2"))
+    }
     else {
       let coords = ::get_mouse_relative_coords_on_obj(this.tmapBtnObj)
       if (!coords)
         hintIcon = ""
+      else if (isAllowedMoveCenter())
+        hint = colorize("activeTextColor", loc("hints/move_map_hint"))
       else if (!this.canChooseRespawnBase) {
         hint = colorize("commonTextColor", loc("guiHints/respawn_base/choice_disabled"))
         hintIcon = ""
@@ -1134,7 +1155,12 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
       if (unit)
         hudType = unit.unitType.hudTypeCode
     }
+    else
+      hudType = isForcedHudType() ? getCurHudType() : this.getCurSlotUnit()?.unitType.hudTypeCode ?? HUD_TYPE_UNKNOWN
+
     set_tactical_map_hud_type(hudType)
+    let buttonImg = this.scene.findObject("hud_type_img");
+    buttonImg["background-image"] = (hudType == HUD_TYPE_AIRPLANE) ? "#ui/gameuiskin#objective_tank.svg" : "#ui/gameuiskin#objective_fighter.svg"
   }
 
   function onDestroy() {
@@ -1478,13 +1504,13 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
   }
 
   function onChangeRadarModeSelectedUnit(obj) {
-    set_option_radar_name(unitNameForWeapons.get(), obj.getValue())
+    set_option_radar_name(unitNameForWeapons.get(), getLastWeapon(unitNameForWeapons.get()), obj.getValue())
 
     this.updateOptions(RespawnOptUpdBit.UNIT_WEAPONS)
   }
 
   function onChangeRadarScanRangeSelectedUnit(obj) {
-    set_option_radar_scan_pattern_name(unitNameForWeapons.get(), obj.getValue())
+    set_option_radar_scan_pattern_name(unitNameForWeapons.get(), getLastWeapon(unitNameForWeapons.get()), obj.getValue())
 
     this.updateOptions(RespawnOptUpdBit.UNIT_WEAPONS)
   }
@@ -1757,6 +1783,11 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
       return
     }
 
+    if (isPointOfInterestSet()) {
+      let tacticalMapObj = this.scene.findObject("tactical-map")
+      tacticalMapObj.cursor = isAllowedMoveCenter() ? "moveArrowCursor" : "normal"
+    }
+
     if (this.isApplyPressed) {
       if (this.checkSpawnInterrupt())
         return
@@ -1944,6 +1975,7 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
       btn_back =            this.showButtons && useTouchscreen && !this.isRespawn
       btn_activateorder =   this.showButtons && this.isRespawn && showActivateOrderButton() && (!this.isSpectate || !showConsoleButtons.value)
       btn_personal_tasks =  this.showButtons && this.isRespawn && canUseUnlocks
+      btn_set_point_of_interest = !(this.showButtons && this.isRespawn && !this.isNoRespawns && !this.stayOnRespScreen && !this.doRespawnCalled && !this.isSpectate) && hasSightStabilization()
     }
     foreach (id, value in buttons)
       showObjById(id, value, this.scene)
@@ -2115,7 +2147,7 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
 
     let targetId = getSpectatorTargetId()
     let player = get_mplayer_by_id(targetId)
-    let color = player != null ? ::get_mplayer_color(player) : "teamBlueColor"
+    let color = player != null ? get_mplayer_color(player) : "teamBlueColor"
 
     this.scene.findObject("spectator_name").setValue(colorize(color, text))
   }
@@ -2140,6 +2172,13 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
 
     if (this.isSpectate && this.onSpectator() && ::has_available_slots())
       return
+
+    if (isAllowedMoveCenter()) {
+      setAllowMoveCenter(false)
+      let tacticalMapObj = this.scene.findObject("tactical-map")
+      tacticalMapObj.cursor =  "normal"
+      return;
+    }
 
     this.guiScene.performDelayed(this, function() {
       disable_flight_menu(false)
@@ -2231,6 +2270,47 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
       return
     if (this.isRespawn && this.isSpectate)
       this.switchSpectatorTargetToPrev();
+  }
+
+  function onMoveMapActivate() {
+     setAllowMoveCenter(!isAllowedMoveCenter())
+     let tacticalMapObj = this.scene.findObject("tactical-map")
+     tacticalMapObj.cursor =  isAllowedMoveCenter() ? "moveArrowCursor" : "normal"
+  }
+
+  function onForcedSetHudType(obj) {
+    local curHudType = getCurHudType()
+    if (curHudType == HUD_TYPE_UNKNOWN) {
+      let unit = this.getCurSlotUnit()
+      if (unit)
+        curHudType = unit.unitType.hudTypeCode
+    }
+
+    let isSwitchToTankHud = curHudType == HUD_TYPE_AIRPLANE
+    setForcedHudType(isSwitchToTankHud ? HUD_TYPE_TANK : HUD_TYPE_AIRPLANE)
+    obj.findObject("hud_type_img")["background-image"] = isSwitchToTankHud  ? "#ui/gameuiskin#objective_fighter.svg" : "#ui/gameuiskin#objective_tank.svg"
+  }
+
+  function onSetPointOfInterest(obj) {
+    setAllowMoveCenter(false)
+    let buttonImg = obj.findObject("hud_poi_img");
+    if (isPointOfInterestSet()) {
+      resetPointOfInterest()
+      buttonImg["background-image"] = "#ui/gameuiskin#map_interestpoint.svg"
+      setPointSettingMode(false)
+      showObjById("POI_resetter", false, this.scene)
+      return
+    }
+    let isPointSettingModeOn = !isPointSettingMode()
+    setPointSettingMode(isPointSettingModeOn)
+    buttonImg["background-image"] = isPointSettingModeOn ? "#ui/gameuiskin#map_interestpoint_delete.svg" : "#ui/gameuiskin#map_interestpoint.svg"
+    let tacticalMapObj = this.scene.findObject("tactical-map")
+    tacticalMapObj.cursor =  isPointSettingModeOn ? "pointOfInterest" : "normal"
+    showObjById("POI_resetter", isPointSettingModeOn, this.scene)
+  }
+
+  function onRespawnScreenClick() {
+    this.resetPointOfInterestMode()
   }
 
   function onMpStatScreen(_obj) {

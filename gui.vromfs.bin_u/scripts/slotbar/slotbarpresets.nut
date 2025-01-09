@@ -1,4 +1,6 @@
 from "%scripts/dagui_library.nut" import *
+
+let { array_to_blk } = require("%scripts/utils_sa.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { loadLocalByAccount, saveLocalByAccount
 } = require("%scripts/clientState/localProfileDeprecated.nut")
@@ -21,7 +23,8 @@ let { isEqual } = u
 let logP = log_with_prefix("[SLOTBAR PRESETS] ")
 let { debug_dump_stack } = require("dagor.debug")
 let getAllUnits = require("%scripts/unit/allUnits.nut")
-let { getEsUnitType, getUnitCountry } = require("%scripts/unit/unitInfo.nut")
+let { getUnitCountry } = require("%scripts/unit/unitInfo.nut")
+let { getEsUnitType } = require("%scripts/unit/unitParams.nut")
 let { isUnitBought } = require("%scripts/unit/unitShopInfo.nut")
 let { isUnitUsable } = require("%scripts/unit/unitStatus.nut")
 let { isInMenu } = require("%scripts/baseGuiHandlerManagerWT.nut")
@@ -32,6 +35,7 @@ let { getCrewUnit } = require("%scripts/crew/crew.nut")
 let { flushSlotbarUpdate, suspendSlotbarUpdates, getCrewsList
 } = require("%scripts/slotbar/crewsList.nut")
 let openEditBoxDialog = require("%scripts/wndLib/editBoxHandler.nut")
+let { isProfileReceived } = require("%scripts/login/loginStates.nut")
 
 // Independed Modules
 require("%scripts/slotbar/hangarVehiclesPreset.nut")
@@ -407,7 +411,7 @@ let slotbarPresetsVersion = persist("slotbarPresetsVersion", @() {ver=0})
       if (presetsList.len() == 0)
         return false
 
-      blk = ::array_to_blk(presetsList, "preset")
+      blk = array_to_blk(presetsList, "preset")
       if (slotbarPresetsSeletected[countryId] != null)
         blk.selected <- slotbarPresetsSeletected[countryId]
     }
@@ -685,7 +689,7 @@ let slotbarPresetsVersion = persist("slotbarPresetsVersion", @() {ver=0})
           && hasDefaultUnitsInCountry(countryId)) {
         isAlreadySendMissingPresetError = true
         let blkString = toString(blk, 2)                      // warning disable: -declared-never-used
-        let isProfileReceived = ::g_login.isProfileReceived() // warning disable: -declared-never-used
+        let isProfileReceivedValue = isProfileReceived.get() // warning disable: -declared-never-used
         debug_dump_stack()
         logerr("[SLOTBAR PRESETS]: presets is missing")
       }

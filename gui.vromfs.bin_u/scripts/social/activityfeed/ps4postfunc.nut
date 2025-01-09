@@ -10,7 +10,8 @@ let statsd = require("statsd")
 let { GUI } = require("%scripts/utils/configs.nut")
 let { getEnumValName } = require("%scripts/debugTools/dbgEnum.nut")
 let { getLocalizedTextWithAbbreviation } = require("%scripts/langUtils/localization.nut")
-let { getEsUnitType } = require("%scripts/unit/unitInfo.nut")
+let { getUnitTypeText } = require("%scripts/unit/unitInfo.nut")
+let { getEsUnitType } = require("%scripts/unit/unitParams.nut")
 
 let requestsTable = {
   player = "$USER_NAME_OR_ID",
@@ -43,7 +44,7 @@ function getActivityFeedImageByParam(feed, imagesConfig) {
 function getActivityFeedImageByCountry(feed, imagesConfig) {
   let aircraft = getAircraftByName(feed.unitNameId)
   let esUnitType = getEsUnitType(aircraft)
-  let unit = ::getUnitTypeText(esUnitType)
+  let unit = getUnitTypeText(esUnitType)
   let country = feed.country
 
   let variants = imagesConfig?[country]?[unit]

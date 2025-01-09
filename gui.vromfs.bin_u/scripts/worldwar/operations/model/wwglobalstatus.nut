@@ -1,10 +1,10 @@
 from "%scripts/dagui_natives.nut" import clan_get_my_clan_id
 from "%scripts/dagui_library.nut" import *
 from "%scripts/worldWar/worldWarConst.nut" import *
+from "%scripts/clans/clanState.nut" import is_in_clan
 
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
-
 let { get_time_msec } = require("dagor.time")
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
 let { secondsToMilliseconds } = require("%scripts/time.nut")
@@ -12,6 +12,7 @@ let DataBlock  = require("DataBlock")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { charRequestJson } = require("%scripts/tasker.nut")
 let wwEvent = require("%scripts/worldWar/wwEvent.nut")
+let { getWWConfigurableValue, getLastPlayedOperationId } = require("%scripts/worldWar/worldWarStates.nut")
 
 local refreshMinTimeSec = 180
 const MULTIPLY_REQUEST_TIMEOUT_BY_REFRESH = 2  //!!!FIX ME: it is better to increase request timeout gradually starting from min request time
@@ -37,7 +38,7 @@ function canRefreshData(refreshDelay = null) {
   if (!hasFeature("WorldWar"))
     return false
 
-  refreshMinTimeSec = ::g_world_war.getWWConfigurableValue("refreshGlobalStatusTimeSec", refreshMinTimeSec)
+  refreshMinTimeSec = getWWConfigurableValue("refreshGlobalStatusTimeSec", refreshMinTimeSec)
   let refreshMinTime = secondsToMilliseconds(refreshMinTimeSec)
   refreshDelay = refreshDelay ?? refreshMinTime
   let requestTimeoutMsec = refreshMinTime * MULTIPLY_REQUEST_TIMEOUT_BY_REFRESH
@@ -120,10 +121,11 @@ function refreshGlobalStatusData(refreshDelay = null) {
     return actionWithGlobalStatusRequest("cln_ww_global_status")
 
   let requestBlk = DataBlock()
-  if (::is_in_clan())
+  if (is_in_clan())
     requestBlk.clanId = clan_get_my_clan_id()
-  if (::g_world_war.lastPlayedOperationId != null)
-    requestBlk.operationId = ::g_world_war.lastPlayedOperationId
+  let lastPlayedOperationId = getLastPlayedOperationId()
+  if (lastPlayedOperationId != null)
+    requestBlk.operationId = lastPlayedOperationId
   actionWithGlobalStatusRequest("cln_ww_global_status_short", requestBlk)
   if (handlersManager.findHandlerClassInScene(gui_handlers.WwOperationsMapsHandler) != null)
     actionWithGlobalStatusRequest("cln_ww_queue_status")

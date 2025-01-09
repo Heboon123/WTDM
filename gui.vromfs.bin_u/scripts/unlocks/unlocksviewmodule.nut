@@ -2,6 +2,7 @@ from "%scripts/dagui_natives.nut" import get_unlock_type, get_name_by_unlock_typ
 from "%scripts/dagui_library.nut" import *
 from "%scripts/items/itemsConsts.nut" import itemType
 from "%scripts/mainConsts.nut" import SEEN
+from "%scripts/utils_sa.nut" import roman_numerals, locOrStrip
 
 let { getGlobalModule } = require("%scripts/global_modules.nut")
 let events = getGlobalModule("events")
@@ -44,11 +45,13 @@ let { addTooltipTypes } = require("%scripts/utils/genericTooltipTypes.nut")
 let { zero_money, Cost } = require("%scripts/money.nut")
 let { MAX_COUNTRY_RANK } = require("%scripts/ranks.nut")
 
+let buildConditionsConfig = @(config, stage = -1) ::build_conditions_config(config, stage)
+
 let customLocTypes = ["gameModeInfoString", "missionPostfix"]
 
 let conditionsOrder = [
   "beginDate", "endDate", "battlepassProgress", "battlepassLevel",
-  "missionsWon", "mission", "char_mission_completed",
+  "missionsWon", "mission", "char_mission_completed", "char_unlock_open_count",
   "missionType", "atLeastOneUnitsRankOnStartMission", "maxUnitsRankOnStartMission",
   "unitExists", "additional", "unitClass",
   "gameModeInfoString", "missionPostfix", "missionEnvironment", "modes", "events", "tournamentMode",
@@ -350,7 +353,7 @@ function getUnlockTitle(unlockConfig, params = null) {
   let stage = (unlockConfig.needToAddCurStageToName && hasStages && (unlockConfig.curStage >= 0))
     ? unlockConfig.curStage + (isUnlockOpened(unlockConfig.id) ? 0 : 1)
     : 0
-  return $"{name} {::roman_numerals[stage]}"
+  return $"{name} {roman_numerals[stage]}"
 }
 
 function getUnlockChapterAndGroupText(unlockBlk) {
@@ -463,7 +466,8 @@ function addTextToCondTextList(condTextsList, group, valuesData, params = null) 
     groupLocId = "conditions/battlepassProgress"
   else if (group == "missionEnvironment")
     groupLocId = "options/time"
-
+  else if (group == "char_unlock_open_count" && valuesData.len() == 1)
+    groupLocId = loc($"conditions/{group}/single")
   local valuesText = loc("ui/comma").join(valuesData, true)
   if (valuesText != "") {
     let isExpired = group == "endDate" && params?.isExpired
@@ -598,6 +602,9 @@ function getUsualCondValueText(condType, v, condition) {
       ? $"{v} {curLevelText}"
       : $"{v} {colorize("red" ,curLevelText)}"
   }
+  if (condType == "char_unlock_open_count")
+    return loc(v)
+
   return condType ? loc($"{condType}/{v}") : ""
 }
 
@@ -1006,7 +1013,7 @@ function getFullUnlockDescByName(unlockName, forUnlockedStage = -1, params = {})
   if (!unlock)
     return ""
 
-  let config = ::build_conditions_config(unlock, forUnlockedStage)
+  let config = buildConditionsConfig(unlock, forUnlockedStage)
   return getFullUnlockDesc(config, params)
 }
 
@@ -1043,7 +1050,7 @@ function getUnitRequireUnlockText(unit) {
 
 function getUnitRequireUnlockShortText(unit) {
   let unlockBlk = getUnlockById(unit.reqUnlock)
-  let cfg = ::build_conditions_config(unlockBlk)
+  let cfg = buildConditionsConfig(unlockBlk)
   let mainCond = getMainProgressCondition(cfg.conditions)
   return getUnlockMainCondDesc(
     mainCond, cfg.curVal, cfg.maxVal, { isProgressTextOnly = true })
@@ -1197,12 +1204,12 @@ function fillUnlockProgressBar(unlockConfig, unlockObj) {
   let view = { markers = [] }
   for (local i = 0; $"costGoldDiscountProgress{i}" in unlockBlk; ++i) {
     view.markers.append({
-      markerText = ::roman_numerals[i + 1],
+      markerText = roman_numerals[i + 1],
       markerPosition = unlockBlk[$"costGoldDiscountProgress{i}"] / unlockConfig.maxVal / 1000.0
     })
 
     discountTooltip.append(loc("mainmenu/unlockDiscount", {
-      romanNumeral = ::roman_numerals[i + 1],
+      romanNumeral = roman_numerals[i + 1],
       discountProgress = unlockBlk[$"costGoldDiscountProgress{i}"] / 1000
       maxProgress = unlockConfig.maxVal
       cost = Cost(0, unlockBlk.costGold - unlockBlk[$"costGoldDiscountValue{i}"] * unlockBlk.costGold / 100.0)
@@ -1299,6 +1306,18 @@ function fillUnlockPurchaseButton(unlockData, unlockObj) {
   }
 }
 
+function getConditionsToUnlockShowcaseById(unlockId) {
+  let unlock = getUnlockById(unlockId)
+  if (unlock == null)
+    return ""
+
+  let config = buildConditionsConfig(unlock)
+  let subunlockCfg = getSubunlockCfg(config.conditions)
+  let conds = getUnlockCondsDescByCfg(subunlockCfg ?? config)
+
+  return conds
+}
+
 addTooltipTypes({
   UNLOCK = { //tooltip by unlock name
     isCustomTooltipFill = true
@@ -1327,7 +1346,7 @@ addTooltipTypes({
         return false
 
       let stage = params?.stage.tointeger() ?? -1
-      let config = ::build_conditions_config(unlock, stage)
+      let config = buildConditionsConfig(unlock, stage)
       let subunlockCfg = getSubunlockCfg(config.conditions)
 
       obj.getScene().replaceContent(obj, "%gui/unlocks/shortTooltip.blk", handler)
@@ -1359,7 +1378,7 @@ addTooltipTypes({
         pObj.show(progressData.show)
       }
       else if (hasAnyCond)
-        obj.findObject("challenge_complete").show(true)
+        obj.findObject("challenge_complete").show(isUnlocked)
 
       let reward = getRewardText(config, stage)
       obj.findObject("reward").setValue(reward)
@@ -1386,7 +1405,7 @@ addTooltipTypes({
       if (!unlockBlk)
         return false
 
-      let config = ::build_conditions_config(unlockBlk)
+      let config = buildConditionsConfig(unlockBlk)
       let name = config.id
       let unlockType = config.unlockType
       let decoratorType = getTypeByUnlockedItemType(unlockType)
@@ -1407,7 +1426,7 @@ addTooltipTypes({
           text.append($"{loc("reward/skin_for")} {getUnitName(unit)}")
         text.append(decoratorType.getLocDesc(name))
 
-        text = ::locOrStrip("\n".join(text, true))
+        text = locOrStrip("\n".join(text, true))
         let textBlock = "textareaNoTab {smallFont:t='yes'; max-width:t='0.5@sf'; text:t='%s';}"
         guiScene.appendWithBlk(obj, format(textBlock, text), this)
       }
@@ -1462,4 +1481,5 @@ return {
   fillReward
   fillUnlockTitle
   fillUnlockPurchaseButton
+  getConditionsToUnlockShowcaseById
 }

@@ -9,6 +9,7 @@ let actionModesManager = require("%scripts/worldWar/inOperation/wwActionModesMan
 let { addPopup } = require("%scripts/popups/popups.nut")
 let { eventbus_send } = require("eventbus")
 let { mapCellUnderCursor } = require("%appGlobals/wwObjectsUnderCursor.nut")
+let g_world_war = require("%scripts/worldWar/worldWarUtils.nut")
 
 let sendMapEvent = @(eventName, params = {}) wwEvent($"Map{eventName}", params)
 
@@ -78,7 +79,7 @@ function doAction(_params) {
 
 function moveArmy(params) {
   let { pos, targetArmyName, append } = params
-  ::g_world_war.moveSelectedArmes(pos.x, pos.y, targetArmyName, append, mapCellUnderCursor.get())
+  g_world_war.moveSelectedArmes(pos.x, pos.y, targetArmyName, append, mapCellUnderCursor.get())
 }
 
 function sendAircraft(params) {
@@ -100,6 +101,12 @@ function sendAircraft(params) {
       null, null, null, "send_air_army_error")
 }
 
+function showAirfieldTooltip(params) {
+  if (params?.airfieldIndex == null)
+    params.rawdelete("airfieldIndex")
+  sendMapEvent("UpdateCursorByTimer", params)
+}
+
 return {
   selectAirfield
   selectArmy
@@ -111,4 +118,5 @@ return {
   doAction
   moveArmy
   sendAircraft
+  showAirfieldTooltip
 }

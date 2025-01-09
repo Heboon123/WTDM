@@ -1,6 +1,8 @@
 from "%scripts/dagui_natives.nut" import clan_get_exp, shop_repair_all, shop_get_researchable_unit_name, shop_get_aircraft_hp, wp_get_repair_cost, clan_get_researching_unit, is_era_available, set_char_cb, is_mouse_last_time_used
 from "%scripts/mainConsts.nut" import SEEN
 from "%scripts/dagui_library.nut" import *
+
+let { defer } = require("dagor.workcycle")
 let { g_difficulty } = require("%scripts/difficulty.nut")
 let { isUnitSpecial } = require("%appGlobals/ranks_common_shared.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -18,7 +20,7 @@ let { move_mouse_on_child, move_mouse_on_child_by_value, handlersManager
 let shopTree = require("%scripts/shop/shopTree.nut")
 let shopSearchBox = require("%scripts/shop/shopSearchBox.nut")
 let slotActions = require("%scripts/slotbar/slotActions.nut")
-let { buy, research, canSpendGoldOnUnitWithPopup } = require("%scripts/unit/unitActions.nut")
+let { buy, research, canSpendGoldOnUnitWithPopup, buyUnit } = require("%scripts/unit/unitActions.nut")
 let { topMenuHandler, topMenuShopActive } = require("%scripts/mainmenu/topMenuStates.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
@@ -44,12 +46,14 @@ let getAllUnits = require("%scripts/unit/allUnits.nut")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { getShopDevMode, setShopDevMode, getShopDevModeOptions } = require("%scripts/debugTools/dbgShop.nut")
-let { getEsUnitType, getUnitCountry, getUnitsNeedBuyToOpenNextInEra,
+let { getUnitCountry, getUnitsNeedBuyToOpenNextInEra,
   getUnitName, getPrevUnit
 } = require("%scripts/unit/unitInfo.nut")
+let { getEsUnitType } = require("%scripts/unit/unitParams.nut")
 let { canResearchUnit, isUnitGroup, isGroupPart, isUnitBroken, isUnitResearched
 } = require("%scripts/unit/unitStatus.nut")
 let { isUnitGift, isUnitBought } = require("%scripts/unit/unitShopInfo.nut")
+let { checkForResearch } = require("%scripts/unit/unitChecks.nut")
 let { get_ranks_blk } = require("blkGetters")
 let { addTask } = require("%scripts/tasker.nut")
 let { showUnitGoods } = require("%scripts/onlineShop/onlineShopModel.nut")
@@ -61,8 +65,10 @@ let { saveLocalAccountSettings, loadLocalAccountSettings } = require("%scripts/c
 let { MAX_COUNTRY_RANK } = require("%scripts/ranks.nut")
 let { buildTimeStr, getUtcMidnight } = require("%scripts/time.nut")
 let { getShopVisibleCountries } = require("%scripts/shop/shopCountriesList.nut")
+let { get_units_count_at_rank } = require("%scripts/shop/shopCountryInfo.nut")
 let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 let { setNationBonusMarkState, getNationBonusMarkState } = require("%scripts/nationBonuses/nationBonuses.nut")
+let { isProfileReceived } = require("%scripts/login/loginStates.nut")
 
 local lastUnitType = null
 
@@ -381,12 +387,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       if (needCount > count)
         this.guiScene.createMultiElementsByObject(cellsContainer, "%gui/shop/shopUnitCell.blk", "unitCell", needCount - count, this)
 
-      count = max(count, needCount)
-      if (count != cellsContainer.childrenCount()) {
-        tableIndex += 1
-        continue //prevent crash on error, but anyway we will get assert in such case on update
-      }
-
+      count = cellsContainer.childrenCount()
       let parentPosY = maxCellY > 0 ? maxCellY + 1 : 0
       for (local i = 0; i < count; i++) {
         let cellObj = cellsContainer.getChild(i)
@@ -446,10 +447,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if (needCount > count)
       this.guiScene.createMultiElementsByObject(tableObj, "%gui/shop/shopUnitCell.blk", "unitCell", needCount - count, this)
 
-    count = max(count, needCount)
-    if (count != tableObj.childrenCount())
-      return //prevent crash on error, but anyway we will get assert in such case on update
-
+    count = tableObj.childrenCount()
     for (local i = 0; i < count; i++) {
       let cellObj = tableObj.getChild(i)
       if (i not in cellsList) {
@@ -1179,7 +1177,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function isUnlockedFakeUnit(unit) {
-    return ::get_units_count_at_rank(unit?.rank,
+    return get_units_count_at_rank(unit?.rank,
       unitTypes.getByName(unit?.isReqForFakeUnit ? split_by_chars(unit.name, "_")?[0] : unit.name,
         false).esUnitType,
       unit.country, true)
@@ -1568,6 +1566,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
           obj = cellData?.cellObj
           id = $"high_{slotIdx}"
           onClick = "onHighlightedCellClick"
+          onDragStart = "onHighlightedCellDragStart"
           isNoDelayOnClick = true
         }
         highlightList.append(::guiTutor.getBlockFromObjData(objData, tableObj))
@@ -1607,6 +1606,24 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     let shadingObj = this.scene.findObject("shop_dark_screen")
     if (checkObj(shadingObj))
       shadingObj.show(false)
+  }
+
+  function onHighlightedCellDragStart(obj) {
+    let value = to_integer_safe(cutPrefix(obj?.id, "high_"), -1, false)
+    if (value < 0)
+      return
+
+    let cellData = this.getCellDataByThreeIdx(value)
+    if (cellData == null)
+      return
+
+    let unit = getAircraftByName(cellData?.cellObj.holderId)
+    if (!unit)
+      return
+
+    takeUnitInSlotbar(unit, this.getOnTakeUnitParams(unit, { dragAndDropMode = true }))
+
+    this.highlightUnitsClear()
   }
 
   function onHighlightedCellClick(obj) {
@@ -1942,7 +1959,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function onResearch(_obj) {
     let unit = this.getCurAircraft()
-    if (!unit || isUnitGroup(unit) || unit?.isFakeUnit || !::checkForResearch(unit))
+    if (!unit || isUnitGroup(unit) || unit?.isFakeUnit || !checkForResearch(unit))
       return
 
     research(unit)
@@ -1975,7 +1992,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     this.selectCellByUnitName(unit)
 
     if (this.shopResearchMode && this.availableFlushExp <= 0) {
-      ::buyUnit(unit)
+      buyUnit(unit)
       this.onCloseShop()
     }
   }
@@ -2068,7 +2085,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
               if (!obj?.isValid())
                 return false
 
-              obj.scrollToView()
+              defer(@() obj?.isValid() ? obj.scrollToView() : null)
               tableObj.setValue(cellData.tableIndex)
               obj.setMouseCursorOnObject()
               if (checkObj(this.groupChooseObj))
@@ -2082,7 +2099,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
           if (!obj?.isValid())
             return false
 
-          obj.scrollToView()
+          defer(@() obj?.isValid() ? obj.scrollToView() : null)
           tableObj.setValue(cellData.tableIndex)
           obj.setMouseCursorOnObject()
           return true
@@ -2224,7 +2241,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function initShowMode(tgtNavBar) {
     let obj = tgtNavBar.findObject("show_mode")
-    if (!::g_login.isProfileReceived() || !checkObj(obj))
+    if (!isProfileReceived.get() || !checkObj(obj))
       return
 
     let storedMode = getShopDiffMode()
@@ -2448,7 +2465,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
     rankTable["height-base"] = needCollapse ? height : collapseHeight
     rankTable["height-end"] = needCollapse ? collapseHeight : height
-    rankTable.findObject("collapsed_icons").show(needCollapse ? true : false)
+    rankTable.findObject("collapsed_icons").show(needCollapse)
 
     if (isInstant)
       rankTable.height = $"{needCollapse ? collapseHeight : height }*sh/100.0"

@@ -1,7 +1,9 @@
 from "%scripts/dagui_natives.nut" import clan_get_role_name, get_name_by_unlock_type
 from "%scripts/dagui_library.nut" import *
 from "%scripts/social/psConsts.nut" import bit_activity, ps4_activity_feed
+from "%scripts/shop/shopCountriesList.nut" import checkCountry
 
+let { g_chat } = require("%scripts/chat/chat.nut")
 let { getGlobalModule } = require("%scripts/global_modules.nut")
 let events = getGlobalModule("events")
 let { g_team } = require("%scripts/teams.nut")
@@ -22,7 +24,7 @@ let { isCrossPlayEnabled, getTextWithCrossplayIcon, needShowCrossPlayInfo
 let activityFeedPostFunc = require("%scripts/social/activityFeed/activityFeedPostFunc.nut")
 let { boosterEffectType } = require("%scripts/items/boosterEffect.nut")
 let { getActiveBoostersDescription } = require("%scripts/items/itemVisual.nut")
-let { getTournamentRewardData } = require("%scripts/userLog/userlogUtils.nut")
+let { getTournamentRewardData, getLogNameByType, updateRepairCost } = require("%scripts/userLog/userlogUtils.nut")
 let { getTotalRewardDescText, getConditionText } = require("%scripts/events/eventRewards.nut")
 let { getUnlockNameText } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
@@ -155,16 +157,19 @@ function getLinkMarkup(text, url, acccessKeyName = null) {
   return handyman.renderCached("%gui/commonParts/button.tpl", btnParams)
 }
 
-::update_repair_cost <- function update_repair_cost(units, repairCost) {
-  local idx = 0
-  while (($"cost{idx}") in units) {
-    let cost = getTblValue($"cost{idx}", units, 0)
-    if (cost > 0)
-      repairCost.rCost += cost
-    else
-      repairCost.notEnoughCost -= cost
-    idx++
+function getUserlogImageItem(item, params = {}) {
+  let defaultParams = {
+    enableBackground = false,
+    showAction = false,
+    showPrice = false,
+    showSellAmount = (params?.type ?? -1) == EULT_BUY_ITEM,
+    bigPicture = false
+    contentIcon = false
+    interactive = true
   }
+
+  params = defaultParams.__merge(params)
+  return item ? handyman.renderCached(("%gui/items/item.tpl"), { items = item.getViewData(params) }) : ""
 }
 
 function getUserlogViewData(logObj) {
@@ -182,7 +187,7 @@ function getUserlogViewData(logObj) {
   }
 
   let isMissionExtrLog = isMissionExtrByName(logObj?.mission ?? "")
-  local logName = ::getLogNameByType(logObj.type)
+  local logName = getLogNameByType(logObj.type)
   local priceText = Cost(("wpCost" in logObj) ? logObj.wpCost : 0,
     ("goldCost" in logObj) ? logObj.goldCost : 0).tostring()
 
@@ -194,7 +199,7 @@ function getUserlogViewData(logObj) {
       logObj.type == EULT_SESSION_RESULT) {
     if (logObj?.container.countryFlag)
       res.logImg2 = getCountryIcon(logObj.container.countryFlag)
-    else if (::checkCountry(logObj?.country, "userlog EULT_SESSION_"))
+    else if (checkCountry(logObj?.country, "userlog EULT_SESSION_"))
       res.logImg2 = getCountryIcon(logObj.country)
 
     let eventId = logObj?.eventId
@@ -293,11 +298,11 @@ function getUserlogViewData(logObj) {
     let repairCost = { rCost = 0, notEnoughCost = 0 }
     let aircraftsRepaired = getTblValue("aircraftsRepaired", containerLog)
     if (aircraftsRepaired)
-      ::update_repair_cost(aircraftsRepaired, repairCost);
+      updateRepairCost(aircraftsRepaired, repairCost);
 
     let unitsRepairedManually = getTblValue("manuallySpentRepairCost", logObj)
     if (unitsRepairedManually)
-      ::update_repair_cost(unitsRepairedManually, repairCost);
+      updateRepairCost(unitsRepairedManually, repairCost);
 
     if (repairCost.rCost > 0) {
       desc = "".concat(desc, "\n", loc("shop/auto_repair_cost"), loc("ui/colon"),
@@ -474,7 +479,7 @@ function getUserlogViewData(logObj) {
   }
   else if (logObj.type == EULT_AWARD_FOR_PVE_MODE) {
     if ("country" in logObj)
-      if (::checkCountry(logObj.country,$"userlog EULT_AWARD_FOR_PVE_MODE, {logObj.mission}"))
+      if (checkCountry(logObj.country,$"userlog EULT_AWARD_FOR_PVE_MODE, {logObj.mission}"))
         res.logImg2 = getCountryIcon(logObj.country)
 
     local nameLoc = $"userlog/{logName}"
@@ -510,14 +515,14 @@ function getUserlogViewData(logObj) {
     res.name = "".concat(format(loc($"userlog/{logName}"), getUnitName(logObj.aname)), priceText)
     res.logImg = "#ui/gameuiskin#log_buy_aircraft"
     let country = ::getShopCountry(logObj.aname)
-    if (::checkCountry(country, "getShopCountry"))
+    if (checkCountry(country, "getShopCountry"))
       res.logImg2 = getCountryIcon(country)
   }
   else if (logObj.type == EULT_REPAIR_AIRCRAFT) {
     res.name = "".concat(format(loc($"userlog/{logName}"), getUnitName(logObj.aname)), priceText)
     res.logImg = "#ui/gameuiskin#log_repair_aircraft"
     let country = ::getShopCountry(logObj.aname)
-    if (::checkCountry(country, "getShopCountry"))
+    if (checkCountry(country, "getShopCountry"))
       res.logImg2 = getCountryIcon(country)
   }
   else if (logObj.type == EULT_REPAIR_AIRCRAFT_MULTI) {
@@ -553,7 +558,7 @@ function getUserlogViewData(logObj) {
       res.tooltip = desc
     }
     res.logImg = "#ui/gameuiskin#log_repair_aircraft"
-    if (oneCountry && ::checkCountry(country, "getShopCountry"))
+    if (oneCountry && checkCountry(country, "getShopCountry"))
       res.logImg2 = getCountryIcon(country)
   }
   else if (logObj.type == EULT_BUYING_WEAPON || logObj.type == EULT_BUYING_WEAPON_FAIL) {
@@ -637,7 +642,7 @@ function getUserlogViewData(logObj) {
     res.logImg = "#ui/gameuiskin#log_buy_weapon"
   }
   else if (logObj.type == EULT_NEW_RANK) {
-    if (("country" in logObj) && logObj.country != "common" && ::checkCountry(logObj.country, "EULT_NEW_RANK")) {
+    if (("country" in logObj) && logObj.country != "common" && checkCountry(logObj.country, "EULT_NEW_RANK")) {
       res.logImg2 = getCountryIcon(logObj.country)
       res.name = format(loc($"userlog/{logName}/country"), logObj.newRank.tostring())
     }
@@ -652,7 +657,7 @@ function getUserlogViewData(logObj) {
     let crewName = crew ? (crew.idInCountry + 1).tostring() : "?"
     let country = crew ? crew.country : ("country" in logObj) ? logObj.country : ""
     let airName = ("aname" in logObj) ? getUnitName(logObj.aname) : ("aircraft" in logObj) ? getUnitName(logObj.aircraft) : ""
-    if (::checkCountry(country, "userlog EULT_*_CREW"))
+    if (checkCountry(country, "userlog EULT_*_CREW"))
       res.logImg2 = getCountryIcon(country)
     res.logImg = "#ui/gameuiskin#log_crew"
 
@@ -704,7 +709,7 @@ function getUserlogViewData(logObj) {
     if (config.name != "")
       res.name = "".concat(res.name, loc("ui/colon"), "<color=@userlogColoredText>", config.name, "</color>")
     res.logImg = config.image
-    if ("country" in logObj && ::checkCountry(logObj.country, "EULT_NEW_UNLOCK"))
+    if ("country" in logObj && checkCountry(logObj.country, "EULT_NEW_UNLOCK"))
       res.logImg2 = getCountryIcon(logObj.country)
     else if ((config?.image2 ?? "") != "")
       res.logImg2 = config?.image2
@@ -764,7 +769,7 @@ function getUserlogViewData(logObj) {
                    }), priceText)
     res.logImg = "#ui/gameuiskin#log_buy_spare_aircraft"
     let country = ::getShopCountry(logObj.aname)
-    if (::checkCountry(country, "getShopCountry"))
+    if (checkCountry(country, "getShopCountry"))
       res.logImg2 = getCountryIcon(country)
   }
   else if (logObj.type == EULT_CLAN_ACTION) {
@@ -784,7 +789,7 @@ function getUserlogViewData(logObj) {
     res.name = "".concat(loc($"userlog/{logName}/{typeTxt}", info), priceText)
 
     if ("comment" in logObj && logObj.comment != "") {
-      res.description <- "".concat(loc("clan/userlogComment"), "\n", ::ps4CheckAndReplaceContentDisabledText(::g_chat.filterMessageText(logObj.comment, false)))
+      res.description <- "".concat(loc("clan/userlogComment"), "\n", ::ps4CheckAndReplaceContentDisabledText(g_chat.filterMessageText(logObj.comment, false)))
       res.tooltip = res.description
     }
   }
@@ -969,7 +974,7 @@ function getUserlogViewData(logObj) {
       if (item)
         lineReward = colorize("activeTextColor", item.getName())
       res.logImg = items_classes.Trophy.typeIcon
-      res.descriptionBlk <- ::get_userlog_image_item(item)
+      res.descriptionBlk <- getUserlogImageItem(item)
     }
     else if (isInArray(rewardType, ["WagerStageWin", "WagerStageFail", "WagerWin", "WagerFail"])) {
       let itemId = getTblValue("id", logObj)
@@ -986,7 +991,7 @@ function getUserlogViewData(logObj) {
 
         res.logImg = "#ui/gameuiskin#unlock_achievement"
         res.description = "".concat(res.description, res.description == "" ? "" : "\n", "\n".join(desc, true))
-        res.descriptionBlk <- ::get_userlog_image_item(item)
+        res.descriptionBlk <- getUserlogImageItem(item)
       }
     }
     else if (rewardType == "TournamentReward") {
@@ -1045,7 +1050,7 @@ function getUserlogViewData(logObj) {
     res.description <- "".concat(loc($"userlog/{logName}/desc", locTbl), desc)
 
     let country = ::getShopCountry(logObj.unit)
-    if (::checkCountry(country, "getShopCountry"))
+    if (checkCountry(country, "getShopCountry"))
       res.logImg2 = getCountryIcon(country)
   }
   else if (logObj.type == EULT_BUYING_MODIFICATION_MULTI) {
@@ -1120,14 +1125,14 @@ function getUserlogViewData(logObj) {
 
       res.logImg = item.getSmallIconName()
       if (isAutoConsume && "country" in tags
-        && ::checkCountry($"country_{tags.country}", "autoConsume EULT_OPEN_TROPHY"))
+        && checkCountry($"country_{tags.country}", "autoConsume EULT_OPEN_TROPHY"))
           res.logImg2 = getCountryIcon($"country_{tags.country}")
 
       let nameMarkup = item.getNameMarkup(0, true, false, {needHideChances = true})
       let rewardMarkup = format(textareaFormat,
         stripTags($"{loc("reward")}{loc("ui/colon")}"))
       res.descriptionBlk <- isAutoConsume
-        ? ::get_userlog_image_item(item)
+        ? getUserlogImageItem(item)
         : "".concat(format(textareaFormat,
           $"{stripTags(usedText)}{loc("ui/colon")}"), $"{nameMarkup}{rewardMarkup}")
 
@@ -1188,7 +1193,7 @@ function getUserlogViewData(logObj) {
       else if (prizeType == "item")
       {
         res.descriptionBlk = "".concat(res.descriptionBlk, format(textareaFormat, stripTags($"{loc("reward")}{loc("ui/colon")}")),
-          ::get_userlog_image_item(findItemById(prize.item)))
+          getUserlogImageItem(findItemById(prize.item)))
       }
       else if (prizeType == "unlock" && getTblValue("unlockType", logObj) == "decal")
       {
@@ -1220,7 +1225,7 @@ function getUserlogViewData(logObj) {
                      price = Cost(logObj.cost * logObj.count, logObj.costGold * logObj.count).tostring()
                      amount = logObj.count
                    })
-    res.descriptionBlk <- ::get_userlog_image_item(item, { type = logObj.type })
+    res.descriptionBlk <- getUserlogImageItem(item, { type = logObj.type })
     res.logImg = (item && item.getSmallIconName()) || BaseItem.typeIcon
   }
   else if (logObj.type == EULT_NEW_ITEM) {
@@ -1232,7 +1237,7 @@ function getUserlogViewData(logObj) {
                      itemName = colorize("userlogColoredText", item ? item.getName() : "")
                      amount = logObj.count
                    })
-    res.descriptionBlk <- ::get_userlog_image_item(item, { count = logObj.count })
+    res.descriptionBlk <- getUserlogImageItem(item, { count = logObj.count })
   }
   else if (logObj.type == EULT_ACTIVATE_ITEM) {
     let itemId = getTblValue("id", logObj, "")
@@ -1255,7 +1260,7 @@ function getUserlogViewData(logObj) {
       if (wager > 0 || wagerGold > 0)
         res.description <- " ".concat(loc($"userlog/{logName}_desc/wager"), Cost(wager, wagerGold).tostring())
     }
-    res.descriptionBlk <- ::get_userlog_image_item(item)
+    res.descriptionBlk <- getUserlogImageItem(item)
   }
   else if (logObj.type == EULT_REMOVE_ITEM) {
     let itemId = getTblValue("id", logObj, "")
@@ -1270,13 +1275,13 @@ function getUserlogViewData(logObj) {
                      itemName = colorize("userlogColoredText", item ? item.getName() : "")
                      replacedItemName = colorize("userlogColoredText", replaceItem ? replaceItem.getName() : "")
                    })
-      res.descriptionBlk <- "".concat(::get_userlog_image_item(item), ::get_userlog_image_item(replaceItem))
+      res.descriptionBlk <- "".concat(getUserlogImageItem(item), getUserlogImageItem(replaceItem))
     }
     else {
       res.name = loc(locId, {
                      itemName = colorize("userlogColoredText", item ? item.getName() : "")
                    })
-      res.descriptionBlk <- ::get_userlog_image_item(item)
+      res.descriptionBlk <- getUserlogImageItem(item)
     }
     let itemTypeValue = logObj?.itemType ?? ""
     if (itemTypeValue == "universalSpare" && reason == "unknown") {
@@ -1388,7 +1393,7 @@ function getUserlogViewData(logObj) {
     res.logImg = "#ui/gameuiskin#convert_xp.svg"
     let unitName = logObj["unit"]
     let country = ::getShopCountry(unitName)
-    if (::checkCountry(country, "getShopCountry"))
+    if (checkCountry(country, "getShopCountry"))
       res.logImg2 = getCountryIcon(country)
 
     let cost = Cost()
@@ -1408,7 +1413,7 @@ function getUserlogViewData(logObj) {
                      price = Cost(logObj.cost * logObj.count, logObj.costGold * logObj.count).tostring()
                      amount = logObj.count
                    })
-    res.descriptionBlk <- ::get_userlog_image_item(item)
+    res.descriptionBlk <- getUserlogImageItem(item)
   }
   else if (isInArray(logObj.type, [EULT_PUNLOCK_ACCEPT,
                                   EULT_PUNLOCK_CANCELED,
@@ -1468,11 +1473,11 @@ function getUserlogViewData(logObj) {
         continue
 
       let resItem = findItemById(unitData.result)
-      res.description = "".concat(res.description, "\n", loc($"{unitName}_0"), loc("ui/colon"), ::get_userlog_image_item(resItem))
+      res.description = "".concat(res.description, "\n", loc($"{unitName}_0"), loc("ui/colon"), getUserlogImageItem(resItem))
       local idx = 0
       while (($"source{idx}") in unitData) {
         let srcItem = findItemById(unitData[$"source{idx}"])
-        res.description = "".concat(res.description, ::get_userlog_image_item(srcItem))
+        res.description = "".concat(res.description, getUserlogImageItem(srcItem))
         idx++
       }
     }
@@ -1534,7 +1539,7 @@ function getUserlogViewData(logObj) {
       $"{loc("multiplayer/mission_wp_earned")}{colon}{logObj.userStats.wpEarned}"
     ]
 
-    let hasManager = logObj?.managerStats == null ? false : true
+    let hasManager = logObj?.managerStats != null
     if (hasManager) {
       let { actionsCount = 0, totalActionsCount = 0 } = logObj?.managerStats
       let activity = totalActionsCount > 0
@@ -1577,7 +1582,7 @@ function getUserlogViewData(logObj) {
               let item = findItemById(block)
               if (!("descriptionBlk" in res))
                 res.descriptionBlk <- ""
-              res.descriptionBlk = "".concat(res.descriptionBlk, ::get_userlog_image_item(item))
+              res.descriptionBlk = "".concat(res.descriptionBlk, getUserlogImageItem(item))
             }
           }
           if (award_val.type == "title")
@@ -1661,7 +1666,7 @@ function getUserlogViewData(logObj) {
     res.logImg = item?.getSmallIconName()
 
     let markupArr = []
-    let itemMarkup = ::get_userlog_image_item(item)
+    let itemMarkup = getUserlogImageItem(item)
     if (itemMarkup != "")
       markupArr.append(itemMarkup)
 
@@ -1777,4 +1782,5 @@ function getUserlogViewData(logObj) {
 
 return {
   getUserlogViewData
+  getUserlogImageItem
 }

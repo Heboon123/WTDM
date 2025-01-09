@@ -13,11 +13,13 @@ let { isCrewAvailableInSession } = require("%scripts/respawn/respawnState.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { loadLocalByAccount, saveLocalByAccount
 } = require("%scripts/clientState/localProfileDeprecated.nut")
-let { getEsUnitType } = require("%scripts/unit/unitInfo.nut")
+let { getEsUnitType } = require("%scripts/unit/unitParams.nut")
 let { isUnitInSlotbar, isUnitAvailableForGM } = require("%scripts/unit/unitStatus.nut")
 let getAllUnits = require("%scripts/unit/allUnits.nut")
 let { getCrewUnit } = require("%scripts/crew/crew.nut")
 let { getSpecTypeByCrewAndUnit } = require("%scripts/crew/crewSpecType.nut")
+let { isLoggedIn, isProfileReceived } = require("%scripts/login/loginStates.nut")
+
 let selectedCrews = persist("selectedCrews", @() [])
 
 function getCrewsListByCountry(country) {
@@ -59,7 +61,7 @@ function selectAvailableCrew(countryId) {
 }
 
 function saveSelectedCrews() {
-  if (!::g_login.isLoggedIn())
+  if (!isLoggedIn.get())
     return
 
   let blk = DataBlock()
@@ -112,6 +114,9 @@ function getReserveAircraftName(paramsTable) {
 }
 
 function initSelectedCrews(forceReload = false) {
+  if (!isProfileReceived.get())
+    return
+
   if (!forceReload && (!::g_crews_list.getCrewsList().len() || selectedCrews.len() == ::g_crews_list.getCrewsList().len()))
     return
 

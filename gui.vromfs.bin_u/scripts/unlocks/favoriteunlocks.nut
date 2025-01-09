@@ -10,6 +10,7 @@ let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
 let { addPopup } = require("%scripts/popups/popups.nut")
+let { isProfileReceived } = require("%scripts/login/loginStates.nut")
 
 const FAVORITE_UNLOCKS_LIST_SAVE_ID = "favorite_unlocks"
 const FAVORITE_UNLOCKS_LIMIT = 20
@@ -29,7 +30,7 @@ function loadFavorites() {
     favoriteInvisibleUnlocks = DataBlock()
   }
 
-  if (!::g_login.isProfileReceived())
+  if (!isProfileReceived.get())
     return
 
   isFavUnlockCacheValid = true
@@ -133,6 +134,8 @@ function fillUnlockFavCheckbox(obj) {
   obj.tooltip = isUnlockInFavorites
     ? loc("mainmenu/UnlockAchievementsRemoveFromFavorite/hint")
     : loc("mainmenu/UnlockAchievementsToFavorite/hint")
+
+  this.guiScene.updateTooltip(obj)
 }
 
 function fillUnlockFav(unlockId, unlockObj) {

@@ -9,6 +9,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let tutorAction = require("%scripts/tutorials/tutorialActions.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { Button } = require("%scripts/controls/input/button.nut")
 
 const TITOR_STEP_TIMEOUT_SEC  = 30
 
@@ -62,6 +63,7 @@ const TITOR_STEP_TIMEOUT_SEC  = 30
     block.box.incSize(sizeIncAdd, sizeIncMul)
     block.box.incPos(rootPosCompensation)
     block.onClick <- getTblValue("onClick", block) || defOnClick
+    block.onDragStart <- getTblValue("onDragStart", block)
     view.lightBlocks.append(this.blockToView(block))
 
     for (local i = darkBoxes.len() - 1; i >= 0; i--) {
@@ -83,9 +85,9 @@ const TITOR_STEP_TIMEOUT_SEC  = 30
   return scene.findObject(view.id)
 }
 
-::guiTutor.getBlockFromObjData <- function getBlockFromObjData(objData, scene = null, defOnClick = null) {
+::guiTutor.getBlockFromObjData <- function getBlockFromObjData(objData, scene = null, defOnClick = null, defOnDrag = null) {
   local res = null
-  local obj = getTblValue("obj", objData) || objData
+  local obj = objData?.obj ?? objData
   if (type(obj) == "string")
     obj = checkObj(scene) ? scene.findObject(obj) : null
   else if (type(obj) == "function")
@@ -121,10 +123,11 @@ const TITOR_STEP_TIMEOUT_SEC  = 30
   if (!res)
     return null
 
-  let id = getTblValue("id", objData)
+  let id = objData?.id
   if (id)
     res.id <- id
-  res.onClick <- getTblValue("onClick", objData, defOnClick)
+  res.onClick <- objData?.onClick ?? defOnClick
+  res.onDragStart <-objData?.onDragStart ?? defOnDrag
   res.isNoDelayOnClick <- objData?.isNoDelayOnClick ?? this._isNoDelayOnClick
   res.hasArrow <- objData?.hasArrow ?? false
   return res
@@ -235,7 +238,7 @@ gui_handlers.Tutor <- class (gui_handlers.BaseGuiHandlerWT) {
     if (nextActionShortcut) {
       markup = "".concat(
         markup,
-        showConsoleButtons.value ? ::Input.Button(shortcut.dev[0], shortcut.btn[0]).getMarkup() : "",
+        showConsoleButtons.value ? Button(shortcut.dev[0], shortcut.btn[0]).getMarkup() : "",
         "activeText {text:t='{text}'; caption:t='yes'; margin-left:t='1@framePadding'}".subst({ text = $"#{nextActionShortcut}" })
       )
     }

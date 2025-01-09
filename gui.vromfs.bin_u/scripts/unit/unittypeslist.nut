@@ -3,7 +3,7 @@ from "%scripts/dagui_library.nut" import *
 
 let { split_by_chars } = require("string")
 let enums = require("%sqStdLibs/helpers/enums.nut")
-let { isCountryHaveUnitType } = require("%scripts/shop/shopUnitsInfo.nut")
+let { isCountryHaveUnitType } = require("%scripts/shop/shopCountryInfo.nut")
 let { dynamic_content } = require("%sqstd/analyzer.nut")
 
 const BULLETS_SETS_QUANTITY_SHORT = 4
@@ -23,7 +23,7 @@ let crewUnitTypeConfig = {
   }
 }
 
-local unitTypes = {
+let unitTypes = {
   template = {
     typeName = "" //filled automatically by typeName
     name = ""

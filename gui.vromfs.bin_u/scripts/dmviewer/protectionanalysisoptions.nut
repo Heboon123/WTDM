@@ -1,6 +1,9 @@
 from "%scripts/dagui_natives.nut" import set_protection_checker_params
 from "%scripts/dagui_library.nut" import *
+from "%scripts/utils_sa.nut" import findNearest
+from "%scripts/options/optionsCtors.nut" import create_option_combobox
 
+let { getUnitName, image_for_air } = require("%scripts/unit/unitInfo.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { format } = require("string")
 let { calculate_tank_bullet_parameters } = require("unitCalculcation")
@@ -17,15 +20,13 @@ let { getBulletsList, getLinkedGunIdx,
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 let { SINGLE_WEAPON, MODIFICATION, SINGLE_BULLET } = require("%scripts/weaponry/weaponryTooltips.nut")
-let { hasUnitAtRank } = require("%scripts/airInfo.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
-let { isCountryHaveUnitType } = require("%scripts/shop/shopUnitsInfo.nut")
+let { isCountryHaveUnitType, hasUnitAtRank, get_units_list } = require("%scripts/shop/shopCountryInfo.nut")
 let { getUnitWeapons, getWeaponBlkParams } = require("%scripts/weaponry/weaponryPresets.nut")
 let { utf8ToUpper } = require("%sqstd/string.nut")
 let shopSearchCore = require("%scripts/shop/shopSearchCore.nut")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
-let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 let { getFullUnitBlk } = require("%scripts/unit/unitParams.nut")
 let { enableObjsByTable } = require("%sqDagui/daguiUtil.nut")
 let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
@@ -141,7 +142,7 @@ options.template <- {
 
   getLabel = @() this.labelLocId && loc(this.labelLocId)
   getControlMarkup = function() {
-    return ::create_option_combobox(this.id, [], -1, "onChangeOption", true,
+    return create_option_combobox(this.id, [], -1, "onChangeOption", true,
       { controlStyle = this.controlStyle })
   }
   getInfoRows = @() null
@@ -177,7 +178,7 @@ options.template <- {
 
   updateView = function(handler, scene) {
     let idx = this.values.indexof(this.value) ?? -1
-    let markup = ::create_option_combobox(null, this.items, idx, null, false)
+    let markup = create_option_combobox(null, this.items, idx, null, false)
     let obj = scene.findObject(this.id)
     if (checkObj(obj))
       obj.getScene().replaceContentFromText(obj, markup, markup.len(), handler)
@@ -265,7 +266,7 @@ options.addTypes({
         text = format(loc("conditions/unitRank/format"), get_roman_numeral(r))
       })
       let preferredRank = this.value ?? options.targetUnit.rank
-      this.value = this.values?[::find_nearest(preferredRank, this.values)] ?? 0
+      this.value = this.values?[findNearest(preferredRank, this.values)] ?? 0
     }
 
     updateParamsByUnit = function(unit, handler, scene){
@@ -283,14 +284,14 @@ options.addTypes({
       let rank = options.RANK.value
       let country = options.COUNTRY.value
       let ediff = getCurrentGameModeEdiff()
-      local list = ::get_units_list(@(unit) unit.esUnitType == unitType
+      local list = get_units_list(@(unit) unit.esUnitType == unitType
         && unit.shopCountry == country && unit.rank == rank && unit.isVisibleInShop())
       list = list.map(@(unit) { unit, id = unit.name, br = unit.getBattleRating(ediff) })
       list.sort(@(a, b) a.br <=> b.br)
       this.values = list.map(@(v) v.unit)
       this.items = list.map(@(v) {
         text  = format("[%.1f] %s", v.br, getUnitName(v.id))
-        image = ::image_for_air(v.unit)
+        image = image_for_air(v.unit)
         addDiv = getTooltipType("UNIT").getMarkup(v.id, { showLocalState = false })
       })
       let targetUnitId = options.targetUnit.name
@@ -318,7 +319,7 @@ options.addTypes({
       this.values = list.map(@(v) v.unit)
       this.items = list.map(@(v) {
         text = format("[%.1f] %s", v.br, getUnitName(v.id))
-        image = ::image_for_air(v.unit)
+        image = image_for_air(v.unit)
         addDiv = getTooltipType("UNIT").getMarkup(v.id, { showLocalState = false })
       })
       let targetUnitId = options.targetUnit.name
@@ -337,7 +338,7 @@ options.addTypes({
       if (!checkObj(obj))
         return
       let idx = this.values.indexof(this.value) ?? -1
-      let markup = this.items.len() > 0 ? ::create_option_combobox(null, this.items, idx, null, false)
+      let markup = this.items.len() > 0 ? create_option_combobox(null, this.items, idx, null, false)
         : create_empty_combobox()
       obj.getScene().replaceContentFromText(obj, markup, markup.len(), handler)
     }
@@ -353,7 +354,7 @@ options.addTypes({
         return
 
       let idx = this.values.indexof(this.value) ?? -1
-      let markup = ::create_option_combobox(null, this.items, idx, null, false)
+      let markup = create_option_combobox(null, this.items, idx, null, false)
 
       obj.getScene().replaceContentFromText(obj, markup, markup.len(), handler)
 

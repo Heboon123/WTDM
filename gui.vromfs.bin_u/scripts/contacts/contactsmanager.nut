@@ -12,6 +12,7 @@ let { isDataBlock } = require("%sqstd/underscore.nut")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
 let { userIdInt64 } = require("%scripts/user/profileStates.nut")
+let { isLoggedIn } = require("%scripts/login/loginStates.nut")
 
 let contactsWndSizes = Watched(null)
 
@@ -38,6 +39,7 @@ let psnBlockedUids = hardPersistWatched("psnBlockedUids", {})
 let xboxApprovedUids = hardPersistWatched("xboxApprovedUids", {})
 let xboxBlockedUids = hardPersistWatched("xboxBlockedUids", {})
 
+let clanUserTable = mkWatched(persist, "clanUserTable", {})
 let contactsGroups = persist("contactsGroups", @() [])
 let contactsByName = persist("contactsByName", @() {})
 let contactsPlayers = persist("contactsPlayers", @() {})
@@ -163,7 +165,7 @@ function loadRecentGroupOnce() {
 }
 
 function addRecentContacts(contacts) {
-  if (!::g_login.isLoggedIn())
+  if (!isLoggedIn.get())
     return
 
   loadRecentGroupOnce()
@@ -340,4 +342,5 @@ return {
   steamContactsGroup
   contactsGroupWithoutMaxCount
   getContactsGroupUidList
+  clanUserTable
 }

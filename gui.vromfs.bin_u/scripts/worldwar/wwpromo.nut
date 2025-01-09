@@ -5,6 +5,9 @@ let { addPromoAction } = require("%scripts/promo/promoActions.nut")
 let { addPromoButtonConfig } = require("%scripts/promo/promoButtonsConfig.nut")
 let { getTextWithCrossplayIcon, needShowCrossPlayInfo } = require("%scripts/social/crossplay.nut")
 let { isWorldWarEnabled, canJoinWorldwarBattle } = require("%scripts/worldWar/worldWarGlobalStates.nut")
+let { isProfileReceived } = require("%scripts/login/loginStates.nut")
+let g_world_war = require("%scripts/worldWar/worldWarUtils.nut")
+let { isWWSeasonActive } = require("%scripts/worldWar/operations/model/wwActionsWhithGlobalStatus.nut")
 
 function getWorldWarPromoText(isWwEnabled = null) {
   local text = loc("mainmenu/btnWorldwar")
@@ -12,7 +15,7 @@ function getWorldWarPromoText(isWwEnabled = null) {
     return text
 
   if ((isWwEnabled ?? canJoinWorldwarBattle())) {
-    let operationText = ::g_world_war.getPlayedOperationText(false)
+    let operationText = g_world_war.getPlayedOperationText(false)
     if (operationText != "")
       text = operationText
   }
@@ -21,7 +24,7 @@ function getWorldWarPromoText(isWwEnabled = null) {
   return "{0} {1}".subst(loc("icon/worldWar"), text)
 }
 
-addPromoAction("world_war", @(_handler, params, _obj) ::g_world_war.openMainWnd(params?[0] == "openMainMenu"))
+addPromoAction("world_war", @(_handler, params, _obj) g_world_war.openMainWnd(params?[0] == "openMainMenu"))
 
 let promoButtonId = "world_war_button"
 
@@ -34,7 +37,7 @@ addPromoButtonConfig({
     let id = promoButtonId
     let isWwEnabled = canJoinWorldwarBattle()
     let isVisible = getShowAllPromoBlocks()
-      || (isWwEnabled && ::g_world_war.isWWSeasonActive())
+      || (isWwEnabled && isWWSeasonActive())
 
     let buttonObj = showObjById(id, isVisible, this.scene)
     if (!isVisible || !checkObj(buttonObj))
@@ -42,10 +45,10 @@ addPromoButtonConfig({
 
     setPromoButtonText(buttonObj, id, getWorldWarPromoText(isWwEnabled))
 
-    if ((!::should_disable_menu() && !::g_login.isProfileReceived()) || !isPromoCollapsed(id))
+    if ((!::should_disable_menu() && !isProfileReceived.get()) || !isPromoCollapsed(id))
       return
 
-    if (::g_world_war.hasNewNearestAvailableMapToBattle())
+    if (g_world_war.hasNewNearestAvailableMapToBattle())
       togglePromoItem(buttonObj.findObject($"{id}_toggle"))
   }
   updateByEvents = ["WWLoadOperation", "WWStopWorldWar",

@@ -20,6 +20,7 @@
     true,
     true
   ],
+  "mfdCamDamocles": true,
   "hmdA10c": true,
   "ilsTCSFVE130": true,
   "rwrIndicator": "Serval",
@@ -1919,7 +1920,7 @@
   },
   "ikPilot": [
     {
-      "model": "usaf_pilot_1977_1991_char",
+      "model": "usaf_pilot_1985_2011_jhmcs_char",
       "maxHeadHorAngle": 60.0,
       "maxHeadDownAngle": 60.0,
       "maxHeadUpAngle": 10.0,
@@ -1996,7 +1997,7 @@
       ]
     },
     {
-      "model": "usaf_pilot_1977_1991_char",
+      "model": "usaf_pilot_1985_2011_jhmcs_char",
       "maxHeadHorAngle": 60.0,
       "maxHeadDownAngle": 60.0,
       "maxHeadUpAngle": 10.0,
@@ -2442,24 +2443,32 @@
       ]
     }
   },
-  "sensors": {
-    "sensor": [
-      {
-        "blk": "gameData/sensors/fr_antilope_5_hmd.blk",
-        "dmPart": "radar_dm"
-      },
-      {
-        "blk": "gameData/sensors/ir_tracker_tgp.blk",
-        "node": "optic1_gun"
-      },
-      {
-        "blk": "gameData/sensors/fr_serval_rwr.blk"
-      },
-      {
-        "blk": "gameData/sensors/LaserDesignatorSensor.blk",
-        "node": "optic1_gun"
-      }
-    ]
+  "nightVision": {
+    "sightThermal": {
+      "resolution": [
+        1200,
+        800
+      ],
+      "noiseFactor": 0.04
+    },
+    "gunnerIr": {
+      "resolution": [
+        1600,
+        1200
+      ],
+      "lightMult": 9.0,
+      "ghosting": 0.6,
+      "noiseFactor": 0.2
+    },
+    "pilotIr": {
+      "resolution": [
+        1600,
+        1200
+      ],
+      "lightMult": 9.0,
+      "ghosting": 0.6,
+      "noiseFactor": 0.2
+    }
   },
   "gunnerOpticFps": {
     "Target": {
@@ -2497,32 +2506,24 @@
       "turretNo": 1
     }
   },
-  "nightVision": {
-    "gunnerIr": {
-      "resolution": [
-        1920,
-        1080
-      ],
-      "lightMult": 10.0,
-      "ghosting": 0.7,
-      "noiseFactor": 0.15
-    },
-    "pilotIr": {
-      "resolution": [
-        1920,
-        1080
-      ],
-      "lightMult": 10.0,
-      "ghosting": 0.7,
-      "noiseFactor": 0.15
-    },
-    "sightThermal": {
-      "resolution": [
-        1200,
-        800
-      ],
-      "noiseFactor": 0.04
-    }
+  "sensors": {
+    "sensor": [
+      {
+        "blk": "gameData/sensors/fr_antilope_5_hmd.blk",
+        "dmPart": "radar_dm"
+      },
+      {
+        "blk": "gameData/sensors/ir_tracker_tgp.blk",
+        "node": "optic1_gun"
+      },
+      {
+        "blk": "gameData/sensors/fr_serval_rwr.blk"
+      },
+      {
+        "blk": "gameData/sensors/LaserDesignatorSensor.blk",
+        "node": "optic1_gun"
+      }
+    ]
   },
   "commonWeapons": {
     "Weapon": {
@@ -2603,6 +2604,18 @@
       {
         "name": "mirage_2000d_rmv_as_30l",
         "blk": "gameData/FlightModels/weaponPresets/mirage_2000d_rmv_as_30l.blk"
+      },
+      {
+        "name": "mirage_2000d_rmv_aasm_250_sbu_38",
+        "blk": "gameData/FlightModels/weaponPresets/mirage_2000d_rmv_aasm_250_sbu_38.blk"
+      },
+      {
+        "name": "mirage_2000d_rmv_aasm_250_sbu_64",
+        "blk": "gameData/FlightModels/weaponPresets/mirage_2000d_rmv_aasm_250_sbu_64.blk"
+      },
+      {
+        "name": "mirage_2000d_rmv_aasm_250_sbu_54",
+        "blk": "gameData/FlightModels/weaponPresets/mirage_2000d_rmv_aasm_250_sbu_54.blk"
       }
     ]
   },
@@ -3179,6 +3192,61 @@
               "slot": 6,
               "preset": "damocles"
             }
+          },
+          {
+            "iconType": "missile_air_to_uni",
+            "name": "aasm_250_sbu_38_slot2",
+            "reqModification": "fr_aasm_250_sbu_38",
+            "ShowNodes": {
+              "node": "pylon_clb_lat_002"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "blk": "gameData/Weapons/BombGuns/fr_250kg_aasm_250_hammer_gps.blk",
+              "emitter": "bomb7",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.4
+            }
+          },
+          {
+            "iconType": "missile_air_to_uni_middle",
+            "name": "aasm_250_sbu_64_slot2",
+            "reqModification": "fr_aasm_250_sbu_64",
+            "ShowNodes": {
+              "node": "pylon_clb_lat_002"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "blk": "gameData/Weapons/BombGuns/fr_250kg_aasm_250_hammer_ir.blk",
+              "emitter": "bomb7",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.4
+            }
+          },
+          {
+            "iconType": "missile_air_to_uni_smal",
+            "name": "aasm_250_sbu_54_slot2",
+            "reqModification": "fr_aasm_250_sbu_54",
+            "ShowNodes": {
+              "node": "pylon_clb_lat_002"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "blk": "gameData/Weapons/BombGuns/fr_250kg_aasm_250_hammer_laser.blk",
+              "emitter": "bomb7",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.4
+            },
+            "DependentWeaponPreset": {
+              "slot": 5,
+              "preset": "damocles"
+            }
           }
         ]
       },
@@ -3404,6 +3472,61 @@
             },
             "DependentWeaponPreset": {
               "slot": 6,
+              "preset": "damocles"
+            }
+          },
+          {
+            "iconType": "missile_air_to_uni",
+            "name": "aasm_250_sbu_38_slot4",
+            "reqModification": "fr_aasm_250_sbu_38",
+            "ShowNodes": {
+              "node": "pylon_clb_503_001"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "blk": "gameData/Weapons/BombGuns/fr_250kg_aasm_250_hammer_gps.blk",
+              "emitter": "bomb1",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.4
+            }
+          },
+          {
+            "iconType": "missile_air_to_uni_middle",
+            "name": "aasm_250_sbu_64_slot4",
+            "reqModification": "fr_aasm_250_sbu_64",
+            "ShowNodes": {
+              "node": "pylon_clb_503_001"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "blk": "gameData/Weapons/BombGuns/fr_250kg_aasm_250_hammer_ir.blk",
+              "emitter": "bomb1",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.4
+            }
+          },
+          {
+            "iconType": "missile_air_to_uni_smal",
+            "name": "aasm_250_sbu_54_slot4",
+            "reqModification": "fr_aasm_250_sbu_54",
+            "ShowNodes": {
+              "node": "pylon_clb_503_001"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "blk": "gameData/Weapons/BombGuns/fr_250kg_aasm_250_hammer_laser.blk",
+              "emitter": "bomb1",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.4
+            },
+            "DependentWeaponPreset": {
+              "slot": 5,
               "preset": "damocles"
             }
           },
@@ -3740,6 +3863,88 @@
                 "preset": "pgm_500_slot6"
               }
             ]
+          },
+          {
+            "iconType": "missile_air_to_uni_group",
+            "name": "aasm_250_sbu_38_x2_slot5",
+            "reqModification": "fr_aasm_250_sbu_38",
+            "ShowNodes": {
+              "node": "pylon_central"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "blk": "gameData/Weapons/containers/fr_auf2_sbu_38_x2.blk",
+              "emitter": "bomb3",
+              "external": true,
+              "separate": true,
+              "machLimit": 1.4
+            },
+            "BannedWeaponPreset": [
+              {
+                "slot": 4,
+                "preset": "pgm_500_slot4"
+              },
+              {
+                "slot": 6,
+                "preset": "pgm_500_slot6"
+              }
+            ]
+          },
+          {
+            "iconType": "missile_air_to_uni_middle_group",
+            "name": "aasm_250_sbu_64_x2_slot5",
+            "reqModification": "fr_aasm_250_sbu_64",
+            "ShowNodes": {
+              "node": "pylon_central"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "blk": "gameData/Weapons/containers/fr_auf2_sbu_64_x2.blk",
+              "emitter": "bomb3",
+              "external": true,
+              "separate": true,
+              "machLimit": 1.4
+            },
+            "BannedWeaponPreset": [
+              {
+                "slot": 4,
+                "preset": "pgm_500_slot4"
+              },
+              {
+                "slot": 6,
+                "preset": "pgm_500_slot6"
+              }
+            ]
+          },
+          {
+            "iconType": "missile_air_to_uni_smal_group",
+            "name": "aasm_250_sbu_54_x2_slot5",
+            "reqModification": "fr_aasm_250_sbu_54",
+            "ShowNodes": {
+              "node": "pylon_central"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "blk": "gameData/Weapons/containers/fr_auf2_sbu_54_x2.blk",
+              "emitter": "bomb3",
+              "external": true,
+              "separate": true,
+              "machLimit": 1.4
+            },
+            "BannedWeaponPreset": [
+              {
+                "slot": 4,
+                "preset": "pgm_500_slot4"
+              },
+              {
+                "slot": 6,
+                "preset": "pgm_500_slot6"
+              }
+            ],
+            "DependentWeaponPreset": {
+              "slot": 5,
+              "preset": "damocles"
+            }
           },
           {
             "iconType": "ptb",
@@ -4183,6 +4388,61 @@
               "slot": 6,
               "preset": "damocles"
             }
+          },
+          {
+            "iconType": "missile_air_to_uni",
+            "name": "aasm_250_sbu_38_slot8",
+            "reqModification": "fr_aasm_250_sbu_38",
+            "ShowNodes": {
+              "node": "pylon_clb_lat_003"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "blk": "gameData/Weapons/BombGuns/fr_250kg_aasm_250_hammer_gps.blk",
+              "emitter": "bomb8",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.4
+            }
+          },
+          {
+            "iconType": "missile_air_to_uni_middle",
+            "name": "aasm_250_sbu_64_slot8",
+            "reqModification": "fr_aasm_250_sbu_64",
+            "ShowNodes": {
+              "node": "pylon_clb_lat_003"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "blk": "gameData/Weapons/BombGuns/fr_250kg_aasm_250_hammer_ir.blk",
+              "emitter": "bomb8",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.4
+            }
+          },
+          {
+            "iconType": "missile_air_to_uni_smal",
+            "name": "aasm_250_sbu_54_slot8",
+            "reqModification": "fr_aasm_250_sbu_54",
+            "ShowNodes": {
+              "node": "pylon_clb_lat_003"
+            },
+            "Weapon": {
+              "trigger": "atgm",
+              "blk": "gameData/Weapons/BombGuns/fr_250kg_aasm_250_hammer_laser.blk",
+              "emitter": "bomb8",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.4
+            },
+            "DependentWeaponPreset": {
+              "slot": 5,
+              "preset": "damocles"
+            }
           }
         ]
       },
@@ -4518,9 +4778,22 @@
       "modClass": "weapon",
       "reqModification": "fr_damocles_pod"
     },
-    "fr_pgm_500": {
-      "prevModification": "fr_as_30l",
+    "fr_aasm_250_sbu_38": {
       "reqModification": "us_gbu_12_49",
+      "modClass": "weapon",
+      "tier": 2
+    },
+    "fr_aasm_250_sbu_64": {
+      "reqModification": "fr_aasm_250_sbu_38",
+      "modClass": "weapon",
+      "tier": 3
+    },
+    "fr_aasm_250_sbu_54": {
+      "reqModification": "fr_aasm_250_sbu_64",
+      "modClass": "weapon",
+      "tier": 4
+    },
+    "fr_pgm_500": {
       "modClass": "weapon",
       "tier": 2
     },
@@ -4737,7 +5010,7 @@
         "brightnessNoiseStrength": 3.0,
         "brightnessNoiseSpeed": 6.0,
         "ignitionTextureIntensity": 1.0,
-        "ignitionBrightnessNoiseStrength": 0.5,
+        "ignitionBrightnessNoiseStrength": 0.1,
         "ignitionBrightnessNoiseSpeed": 16.0
       }
     }

@@ -2,6 +2,7 @@ from "%scripts/dagui_natives.nut" import get_nicks_find_result_blk, find_nicks_b
 from "%scripts/dagui_library.nut" import *
 from "%scripts/contacts/contactsConsts.nut" import contactEvent
 from "%scripts/squads/squadsConsts.nut" import squadMemberState
+from "%scripts/shop/shopCountriesList.nut" import checkCountry
 
 let { getGlobalModule } = require("%scripts/global_modules.nut")
 let events = getGlobalModule("events")
@@ -17,7 +18,7 @@ let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { isEqual } = u
 let { EPLX_PS4_FRIENDS, contactsPlayers, contactsByGroups, getContactByName
 } = require("%scripts/contacts/contactsManager.nut")
-let { requestUserInfoData } = require("%scripts/user/usersInfoManager.nut")
+let { requestUserInfoData, getUserInfo } = require("%scripts/user/usersInfoManager.nut")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { addTask } = require("%scripts/tasker.nut")
 let { updateContactPresence } = require("%scripts/contacts/contactPresence.nut")
@@ -231,6 +232,12 @@ foreach (fn in [
       : loc("war_thunder_nickname", { name = getPlayerName(contact.name) })
   }
 
+  let userInfo = getUserInfo(contact.uid)
+  if (userInfo != null && userInfo.frame != "") {
+    view.hasAvatarFrame <- true
+    view.frame <- userInfo.frame
+  }
+
   let squadStatus = g_squad_manager.getPlayerStatusInMySquad(contact.uid)
   if (squadStatus != squadMemberState.NOT_IN_SQUAD && squadStatus != squadMemberState.SQUAD_MEMBER_OFFLINE) {
     let memberData = g_squad_manager.getMemberData(contact.uid)
@@ -242,7 +249,7 @@ foreach (fn in [
       view.unitList <- []
       view.hasUnitList = memberDataAirs.len() != 0
 
-      if (memberData?.country != null && ::checkCountry(memberData.country, $"memberData of contact = {contact.uid}")
+      if (memberData?.country != null && checkCountry(memberData.country, $"memberData of contact = {contact.uid}")
           && memberDataAirs.len() != 0) {
         view.unitList.append({ header = loc("conditions/playerTag") })
         if (!event?.multiSlot) {

@@ -1,7 +1,8 @@
 from "%rGui/globals/ui_library.nut" import *
 
-let { getArmyForHover, getArmyForSelection, selectedArmy, hoveredArmy } = require("%rGui/wwMap/wwArmyStates.nut")
-let { isOperationPaused } = require("%rGui/wwMap/wwOperationStates.nut")
+let { getArmyForHover, getArmyForSelection, selectedArmy, hoveredArmy, newPartOfArmyPath,
+  allowDrawNewPartOfArmyPath } = require("%rGui/wwMap/wwArmyStates.nut")
+let { isOperationPausedWatch } = require("%rGui/wwMap/wwOperationStates.nut")
 let { updateHoveredZone, getZoneByPoint, updateSelectedRearZone } = require("%rGui/wwMap/wwMapZonesData.nut")
 let mkMapZonesBackground = require("%rGui/wwMap/wwMapZonesBackground.nut")
 let { mkMapZonesEdges, mkMapHoveredZone } = require("%rGui/wwMap/wwMapZonesEdges.nut")
@@ -13,6 +14,7 @@ let { mkArmies } = require("%rGui/wwMap/wwArmies.nut")
 let { battles } = require("%rGui/wwMap/wwBattles.nut")
 let { mkBattlesMessages } = require("%rGui/wwMap/wwBattlesMessages.nut")
 let { artilleryStrikes } = require("%rGui/wwMap/wwArtilleryStrikes.nut")
+let { samVisualizations } = require("%rGui/wwMap/wwSAMVisualizations.nut")
 let { getBattleByPoint, updateHoveredBattle, updateSelectedBattle, hoveredBattle } = require("%rGui/wwMap/wwBattlesStates.nut")
 let { getAirfieldByPoint, updateHoveredAirfield, updateSelectedAirfield, selectedAirfield } = require("%rGui/wwMap/wwAirfieldsStates.nut")
 let { actionsLayer } = require("%rGui/wwMap/wwActionsLayer.nut")
@@ -39,6 +41,11 @@ function processPointerMove(evt, areaBounds) {
   }
 
   let pos = convertPointerCoords(evt, areaBounds)
+
+  if (evt.btnId == 0 && evt.shiftKey && selectedArmy.get() != null)
+    newPartOfArmyPath.set({ armyName = selectedArmy.get(), newPos = pos })
+  else
+    newPartOfArmyPath.set(null)
 
   let zoneUnderCursor = getZoneByPoint(pos)
   updateHoveredZone(zoneUnderCursor)
@@ -85,6 +92,8 @@ function processPointerPress(evt, areaBounds) {
   if (!evt.hit)
     return
 
+  newPartOfArmyPath.set(null)
+  allowDrawNewPartOfArmyPath.set(false)
   let { x, y } = evt
 
   mapCellUnderCursor.set(getMapCellByCoords(x, y, areaBounds))
@@ -96,7 +105,7 @@ function processPointerPress(evt, areaBounds) {
   }
 
   if (evt.btnId == 1) {
-    let armyTargetName = hoveredBattle.get()?.id ?? hoveredArmy.get()
+    let armyTargetName = hoveredBattle.get() ?? hoveredArmy.get()
     if (selectedArmy.get() != null)
       moveArmy(armyTargetName, { x, y }, false)
     else if (selectedAirfield.get() != null)
@@ -140,10 +149,10 @@ function processPointerPress(evt, areaBounds) {
 }
 
 let mapFOW = @() {
-  watch = isOperationPaused
+  watch = isOperationPausedWatch
   rendObj = ROBJ_SOLID
   size = flex()
-  color = isOperationPaused.get() ? Color(0, 0, 0, 64) : transparentColor
+  color = isOperationPausedWatch.get() ? Color(0, 0, 0, 64) : transparentColor
 }
 
 let mapBackground = @() {
@@ -153,6 +162,12 @@ let mapBackground = @() {
   vplace = ALIGN_CENTER
   hplace = ALIGN_CENTER
   image = Picture(getOperationMapImage())
+}
+
+let dummyShiftButtonUp = @() {
+  behavior = Behaviors.Button
+  hotkeys = ["^L.Shift", "^R.Shift"]
+  onClick = @() newPartOfArmyPath.set(null)
 }
 
 let mkMapContainer = function() {
@@ -167,6 +182,7 @@ let mkMapContainer = function() {
     size = [holderWidth, holderHeight]
     clipChildren = true
     children = [
+      dummyShiftButtonUp,
       mapBackground,
       mkMapZonesBackground,
       mkMapZonesEdges,
@@ -175,6 +191,7 @@ let mkMapContainer = function() {
       mkMapZoneNames,
       mkAirfields,
       mkSectorSprites,
+      samVisualizations,
       mkArmies,
       battles,
       artilleryStrikes,

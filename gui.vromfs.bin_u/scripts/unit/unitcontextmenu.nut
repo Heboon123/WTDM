@@ -1,6 +1,7 @@
 from "%scripts/dagui_natives.nut" import clan_get_exp, shop_get_country_excess_exp, wp_get_repair_cost
 from "%scripts/dagui_library.nut" import *
 from "%scripts/weaponry/weaponryConsts.nut" import UNIT_WEAPONS_READY
+from "%scripts/clans/clanState.nut" import is_in_clan
 
 let { isUnitSpecial } = require("%appGlobals/ranks_common_shared.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -11,7 +12,7 @@ let { isInMenu, handlersManager, is_in_loading_screen, loadHandler
 let { getShopItem, canUseIngameShop, getShopItemsTable
 } = require("%scripts/onlineShop/entitlementsShopData.nut")
 let { broadcastEvent, addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
-let unitActions = require("%scripts/unit/unitActions.nut")
+let { repairWithMsgBox, flushSquadronExp, buyUnit, research } = require("%scripts/unit/unitActions.nut")
 let slotbarPresets = require("%scripts/slotbar/slotbarPresetsByVehiclesGroups.nut")
 let unitContextMenuState = require("%scripts/unit/unitContextMenuState.nut")
 let selectUnitHandler = require("%scripts/slotbar/selectUnitHandler.nut")
@@ -26,12 +27,14 @@ let { canBuyNotResearched, isUnitInSlotbar, canResearchUnit, isUnitInResearch,
   isUnitDescriptionValid, isUnitUsable, isUnitFeatureLocked, isUnitResearched
 } = require("%scripts/unit/unitStatus.nut")
 let { isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitWeaponryInfo.nut")
+let { checkForResearch } = require("%scripts/unit/unitChecks.nut")
 let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 let { getUnlockIdByUnitName, hasMarkerByUnitName } = require("%scripts/unlocks/unlockMarkers.nut")
 let { KWARG_NON_STRICT } = require("%sqstd/functools.nut")
 let openCrossPromoWnd = require("%scripts/openCrossPromoWnd.nut")
-let { getEsUnitType, getUnitName, getUnitCountry, getUnitReqExp,
+let { getUnitName, getUnitCountry, getUnitReqExp,
   getUnitExp, getUnitCost } = require("%scripts/unit/unitInfo.nut")
+  let { getEsUnitType } = require("%scripts/unit/unitParams.nut")
 let { canBuyUnit, isUnitGift } = require("%scripts/unit/unitShopInfo.nut")
 let { checkSquadUnreadyAndDo } = require("%scripts/squads/squadUtils.nut")
 let { needShowUnseenNightBattlesForUnit } = require("%scripts/events/nightBattlesStates.nut")
@@ -195,7 +198,7 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
       icon       = "#ui/gameuiskin#slot_repair.svg"
       haveWarning = true
       showAction = inMenu && isUsable && repairCost > 0 && ::SessionLobby.canChangeCrewUnits()
-      actionFunc = @() unitActions.repairWithMsgBox(unit)
+      actionFunc = @() repairWithMsgBox(unit)
     }
     else if (action == "buy") {
       let isSpecial   = isUnitSpecial(unit)
@@ -245,7 +248,7 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
       if (canBuyOnline)
         actionFunc = @() showUnitGoods(unit.name, "unit_context_menu")
       else
-        actionFunc = @() ::buyUnit(unit)
+        actionFunc = @() buyUnit(unit)
     }
     else if (action == "research") {
       if (isUnitResearched(unit))
@@ -253,7 +256,7 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
 
       let isInResearch = isUnitInResearch(unit)
       let isSquadronVehicle = unit.isSquadronVehicle()
-      let isInClan = ::is_in_clan()
+      let isInClan = is_in_clan()
       let reqExp = getUnitReqExp(unit) - getUnitExp(unit)
       let squadronExp = min(clan_get_exp(), reqExp)
       let canFlushSquadronExp = hasFeature("ClanVehicles") && isSquadronVehicle
@@ -279,22 +282,22 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
               : loc("mainmenu/btnResearch")
       showAction = inMenu && (!isInResearch || hasFeature("SpendGold"))
         && (isUnitFeatureLocked(unit) || canResearchUnit(unit)
-          || canFlushSquadronExp || (isSquadronVehicle && !::is_in_clan()))
+          || canFlushSquadronExp || (isSquadronVehicle && !is_in_clan()))
       disabled = !showAction
       actionFunc = needToFlushExp
         || (isSquadronResearchMode && (needChosenResearchOfSquadron || canFlushSquadronExp))
         ? function() { onSpendExcessExp?() }
         : canFlushSquadronExp && isInResearch
-          ? function() { unitActions.flushSquadronExp(unit) }
+          ? function() { flushSquadronExp(unit) }
           : !setResearchManually
             ? function () { onCloseShop?() }
             : isInResearch && !isSquadronVehicle
               ? function () { ::gui_modal_convertExp(unit) }
               : function () {
-                  if (!::checkForResearch(unit))
+                  if (!checkForResearch(unit))
                     return
 
-                  unitActions.research(unit)
+                  research(unit)
                 }
     }
     else if (action == "testflight" || action == "testflightforced") {

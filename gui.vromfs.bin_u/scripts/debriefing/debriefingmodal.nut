@@ -99,7 +99,7 @@ let { loadLocalByAccount, saveLocalByAccount
 } = require("%scripts/clientState/localProfileDeprecated.nut")
 let { blendProp } = require("%sqDagui/guiBhv/guiBhvUtils.nut")
 let { create_ObjMoveToOBj } = require("%sqDagui/guiBhv/bhvAnim.nut")
-let { getUnitName } = require("%scripts/unit/unitInfo.nut")
+let { getUnitName, image_for_air } = require("%scripts/unit/unitInfo.nut")
 let { isUnitInResearch } = require("%scripts/unit/unitStatus.nut")
 let { get_current_mission_info_cached, get_warpoints_blk, get_ranks_blk, get_game_settings_blk
 } = require("blkGetters")
@@ -134,7 +134,10 @@ let { invalidateCrewsList } = require("%scripts/slotbar/crewsList.nut")
 let { canOpenHitsAnalysisWindow, openHitsAnalysisWindow } = require("%scripts/dmViewer/hitsAnalysis.nut")
 let { getLbDiff, getLeaderboardItemView, getLeaderboardItemWidgets
 } = require("%scripts/leaderboard/leaderboardHelpers.nut")
-let { isWorldWarEnabled } = require("%scripts/globalWorldWarScripts.nut")
+let { isWorldWarEnabled, saveLastPlayed } = require("%scripts/globalWorldWarScripts.nut")
+let { isLoggedIn, isProfileReceived } = require("%scripts/login/loginStates.nut")
+let { updateOperationPreviewAndDo, openOperationsOrQueues, isLastFlightWasWwBattle,
+  openWWMainWnd } = require("%scripts/globalWorldwarUtils.nut")
 
 const DEBR_LEADERBOARD_LIST_COLUMNS = 2
 const DEBR_AWARDS_LIST_COLUMNS = 3
@@ -149,8 +152,6 @@ enum DEBR_THEME {
   LOSE      = "lose"
   PROGRESS  = "progress"
 }
-
-let debriefingSkipAllAtOnce = true
 
 let statTooltipColumnParamByType = {
   time = @(rowConfig) {
@@ -227,7 +228,7 @@ function getViewByType(value, paramType, showEmpty = false) {
 }
 
 function checkRemnantPremiumAccount() {
-  if (!::g_login.isProfileReceived() || !hasFeature("EnablePremiumPurchase")
+  if (!isProfileReceived.get() || !hasFeature("EnablePremiumPurchase")
       || !hasFeature("SpendGold"))
     return
 
@@ -990,6 +991,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       show = [EULT_OPEN_TROPHY]
       currentRoomOnly = true
       disableVisible = true
+      needStackItems = false
       checkFunc = function(userlog) { return trophyItemId == userlog.body.id }
     })
 
@@ -997,6 +999,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       return
 
     guiStartOpenTrophy({ [trophyItemId] = filteredLogs })
+    this.skipRoulette = true
   }
 
   function onEventTrophyContentVisible(params) {
@@ -1069,6 +1072,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     let filteredLogs = ::getUserLogsList({
       show = [EULT_OPEN_TROPHY]
       currentRoomOnly = true
+      needStackItems = false
       checkFunc = function(userlog) { return trophyItem.id == userlog.body.id }
     })
 
@@ -1122,6 +1126,8 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
   }
 
   function showTab(tabName) {
+    if (this.curTab == tabName)
+      return
     foreach (name in this.tabsList) {
       let obj = this.scene.findObject($"{name}_tab")
       if (!obj)
@@ -1135,20 +1141,6 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
 
     if (this.state == debrState.done)
       this.isModeStat = tabName == "players_stats"
-  }
-
-  function animShowTab(tabName) {
-    let obj = this.scene.findObject($"{tabName}_tab")
-    if (!obj)
-      return
-
-    obj.show(true)
-    obj["color-factor"] = "0"
-    obj["_transp-timer"] = "0"
-    obj["animation"] = "show"
-    this.curTab = tabName
-
-    this.guiScene.playSound("deb_players_off")
   }
 
   function onUpdate(_obj, dt) {
@@ -1194,7 +1186,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
 
   function updateMyStatObjects() {
     this.showTab("my_stats")
-    this.skipAnim = this.skipAnim && debriefingSkipAllAtOnce
+
     showObjectsByTable(this.scene, {
       left_block              = this.is_show_left_block()
       inventory_gift_block    = this.is_show_inventory_gift()
@@ -1228,7 +1220,6 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
         return this.switchState()
 
       this.showTab("players_stats")
-      this.skipAnim = this.skipAnim && debriefingSkipAllAtOnce
       if (!this.skipAnim)
         this.guiScene.playSound("deb_players_on")
       this.initPlayersTable()
@@ -1243,7 +1234,6 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       if (!this.is_show_my_stats() || !this.is_show_awards_list())
         return this.switchState()
 
-      this.skipAnim = this.skipAnim && debriefingSkipAllAtOnce
       if (this.awardDelay * this.awardsList.len() > this.awardsAppearTime)
         this.awardDelay = this.awardsAppearTime / this.awardsList.len()
     }
@@ -1343,8 +1333,6 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       let tabsObj = this.getObj("tabs_list")
       move_mouse_on_child(tabsObj, tabsObj.getValue())
     }
-    else
-      this.skipAnim = this.skipAnim && debriefingSkipAllAtOnce
   }
 
   function ps4SendActivityFeed() {
@@ -1690,7 +1678,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
 
     let view = {
       id = unitId
-      unitImg = ::image_for_air(unit)
+      unitImg = image_for_air(unit)
       unitName = getUnitName(unit).replace(nbsp, " ")
       hasModItem = mod != null
       isCompleted = isCompleted
@@ -2641,7 +2629,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
 
     let operationId = wwBattleResults.operationId
     if (operationId)
-      ::g_world_war.updateOperationPreviewAndDo(operationId, taskCallback)
+      updateOperationPreviewAndDo(operationId, taskCallback)
   }
 
   function showTabsList() {
@@ -2761,15 +2749,16 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
   }
 
   function updateListsButtons() {
-    let isAnimDone = this.state == debrState.done
+    if (!this.skipAnim)
+      this.skipAnim = this.state == debrState.done
     let isReplayReady = hasFeature("ClientReplay") && is_replay_present() && is_replay_turned_on()
     let player = this.getSelectedPlayer()
     let buttonsList = {
-      btn_view_replay = isAnimDone && isReplayReady
-      btn_save_replay = isAnimDone && isReplayReady && !is_replay_saved()
-      btn_parse_replay = isAnimDone && isReplayReady && canOpenHitsAnalysisWindow()
-      btn_user_options = isAnimDone && (this.curTab == "players_stats") && player && !player.isBot && showConsoleButtons.value
-      btn_view_highlights = isAnimDone && is_highlights_inited()
+      btn_view_replay = this.skipAnim && isReplayReady
+      btn_save_replay = this.skipAnim && isReplayReady && !is_replay_saved()
+      btn_parse_replay = this.skipAnim && isReplayReady && canOpenHitsAnalysisWindow()
+      btn_user_options = this.skipAnim && (this.curTab == "players_stats") && player && !player.isBot && showConsoleButtons.value
+      btn_view_highlights = this.skipAnim && is_highlights_inited()
     }
 
     foreach (btn, show in buttonsList)
@@ -2833,6 +2822,14 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
   function onParseReplay(_obj) {
     if (this.isInProgress || !is_replay_present())
       return
+
+    handlersManager.setLastBaseHandlerStartParams({
+      handlerName = "DebriefingModal"
+      params = {
+        skipAnim  =  this.skipAnim
+        skipRoulette = this.skipRoulette
+      }
+    })
     this.guiScene.performDelayed(this, @() openHitsAnalysisWindow())
   }
 
@@ -2849,7 +2846,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       if (!g_squad_manager.isInSquad() || g_squad_manager.isSquadLeader())
         goDebriefingNextFunc = function() {
           handlersManager.setLastBaseHandlerStartParams({ eventbusName = "gui_start_mainmenu" }) //do not need to back to debriefing
-          ::g_world_war.openOperationsOrQueues(true)
+          openOperationsOrQueues(true)
         }
       return
     }
@@ -3048,7 +3045,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
   }
 
   function needShowWorldWarOperationBtn() {
-    return isWorldWarEnabled() && ::g_world_war.isLastFlightWasWwBattle
+    return isWorldWarEnabled() && isLastFlightWasWwBattle.get()
   }
 
   function switchWwOperationToCurrent() {
@@ -3057,19 +3054,19 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
 
     let wwBattleRes = this.getWwBattleResults()
     if (wwBattleRes)
-      ::g_world_war.saveLastPlayed(wwBattleRes.getOperationId(), wwBattleRes.getPlayerCountry())
+      saveLastPlayed(wwBattleRes.getOperationId(), wwBattleRes.getPlayerCountry())
     else {
       let missionRules = getCurMissionRules()
       let operationId = missionRules?.missionParams?.customRules?.operationId
       if (!operationId)
         return
 
-      ::g_world_war.saveLastPlayed(operationId.tointeger(), profileCountrySq.value)
+      saveLastPlayed(operationId.tointeger(), profileCountrySq.value)
     }
 
     goDebriefingNextFunc = function() {
       handlersManager.setLastBaseHandlerStartParams({ eventbusName = "gui_start_mainmenu" })
-      ::g_world_war.openMainWnd()
+      openWWMainWnd()
     }
   }
 
@@ -3186,7 +3183,8 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     foreach (rewardConfig in rewardsArray)
       ::showUnlockWnd(rewardConfig)
 
-    this.openGiftTrophy()
+    if (!this.skipRoulette)
+      this.openGiftTrophy()
   }
 
   function updateInfoText() {
@@ -3375,7 +3373,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
 
   function initStatsMissionParams() {
     this.gameMode = this.debriefingResult.gm
-    this.isOnline = ::g_login.isLoggedIn()
+    this.isOnline = isLoggedIn.get()
 
     this.isTeamsRandom = !this.isTeamplay || this.gameMode == GM_DOMINATION
     if (this.debriefingResult.isInRoom || this.isReplay)
@@ -3388,6 +3386,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
   isInited = true
   state = 0
   skipAnim = false
+  skipRoulette = false
   isMp = false
   isReplay = false
   isCurMissionExtr = false

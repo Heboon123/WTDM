@@ -1,6 +1,5 @@
 from "%scripts/dagui_natives.nut" import shop_get_country_excess_exp, shop_get_researchable_unit_name, is_era_available, shop_reset_researchable_unit, set_char_cb
 from "%scripts/dagui_library.nut" import *
-from "%scripts/airInfo.nut" import CheckFeatureLockAction
 from "%scripts/controls/rawShortcuts.nut" import GAMEPAD_ENTER_SHORTCUT
 from "%scripts/utils_sa.nut" import get_flush_exp_text
 
@@ -9,16 +8,17 @@ let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { Cost } = require("%scripts/money.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let tutorialModule = require("%scripts/user/newbieTutorialDisplay.nut")
-let { research, flushExcessExpToUnit } = require("%scripts/unit/unitActions.nut")
+let { research, flushExcessExpToUnit, CheckFeatureLockAction, checkFeatureLock } = require("%scripts/unit/unitActions.nut")
 let tutorAction = require("%scripts/tutorials/tutorialActions.nut")
 let { setColoredDoubleTextToButton, placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { needUseHangarDof } = require("%scripts/viewUtils/hangarDof.nut")
 let { isSmallScreen } = require("%scripts/clientState/touchScreen.nut")
 let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
 let getAllUnits = require("%scripts/unit/allUnits.nut")
-let { getEsUnitType, getUnitName, getUnitCountry, getUnitsNeedBuyToOpenNextInEra,
+let { getUnitName, getUnitCountry, getUnitsNeedBuyToOpenNextInEra,
   getUnitReqExp, getUnitExp, getUnitCost
 } = require("%scripts/unit/unitInfo.nut")
+let { getEsUnitType } = require("%scripts/unit/unitParams.nut")
 let { canBuyUnit } = require("%scripts/unit/unitShopInfo.nut")
 let { canResearchUnit, isUnitGroup, isGroupPart, isUnitFeatureLocked, isUnitResearched,
   isPrevUnitBought
@@ -111,7 +111,7 @@ gui_handlers.ShopCheckResearch <- class (gui_handlers.ShopMenuHandler) {
       return
 
     let unitLockedByFeature = this.getNotResearchedUnitByFeature()
-    if (unitLockedByFeature && !::checkFeatureLock(unitLockedByFeature, CheckFeatureLockAction.RESEARCH))
+    if (unitLockedByFeature && !checkFeatureLock(unitLockedByFeature, CheckFeatureLockAction.RESEARCH))
       return
 
     let ranksBlk = get_ranks_blk()

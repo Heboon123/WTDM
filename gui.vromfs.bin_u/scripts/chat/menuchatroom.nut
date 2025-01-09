@@ -1,6 +1,7 @@
 from "%scripts/dagui_natives.nut" import sync_handler_simulate_signal
 from "%scripts/dagui_library.nut" import *
 
+let { g_chat } = require("%scripts/chat/chat.nut")
 let { g_chat_room_type } = require("%scripts/chat/chatRoomType.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
@@ -12,6 +13,7 @@ let { USEROPT_MARK_DIRECT_MESSAGES_AS_PERSONAL, OPTIONS_MODE_GAMEPLAY
 } = require("%scripts/options/optionsExtNames.nut")
 let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { userName } = require("%scripts/user/profileStates.nut")
+let { clanUserTable } = require("%scripts/contacts/contactsManager.nut")
 
 enum MESSAGE_TYPE {
   MY          = "my"
@@ -71,7 +73,7 @@ function colorMyNameInText(msg) {
       let msgStart = msg.slice(0, nameStartPos)
       let msgEnd = msg.slice(nameEndPos)
       let msgName = msg.slice(nameStartPos, nameEndPos)
-      let msgProcessedPart = $"{msgStart}{colorize(::g_chat.color.senderMe[false], msgName)}"
+      let msgProcessedPart = $"{msgStart}{colorize(g_chat.color.senderMe[false], msgName)}"
       msg = $"{msgProcessedPart}{msgEnd}"
       counter = msgProcessedPart.len()
     }
@@ -116,10 +118,8 @@ function newMessage(from, msg, privateMsg, myPrivate, overlaySystemColor, import
 
   //from can be as string - Player nick, and as table - player contact.
   //after getting type, and acting accordingly, name must be string and mean name of player
-  if (type(from) != "instance") {
-    if (from in ::clanUserTable)
-      clanTag = ::clanUserTable[from]
-  }
+  if (type(from) != "instance")
+    clanTag = clanUserTable.get()?[from] ?? clanTag
   else {
     uid = from.uid
     clanTag = from.clanTag
@@ -137,7 +137,7 @@ function newMessage(from, msg, privateMsg, myPrivate, overlaySystemColor, import
     from = userName.value
   let myself = from == userName.value
 
-  if (::g_chat.isSystemUserName(from)) {
+  if (g_chat.isSystemUserName(from)) {
     from = ""
     msg = localizeSystemMsg(msg)
   }
@@ -147,11 +147,11 @@ function newMessage(from, msg, privateMsg, myPrivate, overlaySystemColor, import
     messageType = MESSAGE_TYPE.SYSTEM
   }
   else {
-    userColor = ::g_chat.getSenderColor(from, true, privateMsg)
+    userColor = g_chat.getSenderColor(from, true, privateMsg)
     messageType = myself ? MESSAGE_TYPE.MY : MESSAGE_TYPE.INCOMMING
 
     if (needCensore)
-      msg = ::g_chat.filterMessageText(msg, myself)
+      msg = g_chat.filterMessageText(msg, myself)
 
     msgColor = privateMsg ? privateColor : ""
 
@@ -166,7 +166,7 @@ function newMessage(from, msg, privateMsg, myPrivate, overlaySystemColor, import
 
       userColor = blockedColor
       msgColor = blockedColor
-      msg = ::g_chat.makeBlockedMsg(msg)
+      msg = g_chat.makeBlockedMsg(msg)
     }
     else if (!myself && !myPrivate) {
       checkChatEnableWithPlayer(from, function(canChat) {
@@ -178,7 +178,7 @@ function newMessage(from, msg, privateMsg, myPrivate, overlaySystemColor, import
 
           userColor = blockedColor
           msgColor = blockedColor
-          msg = ::g_chat.makeXBoxRestrictedMsg(msg)
+          msg = g_chat.makeXBoxRestrictedMsg(msg)
           callback?(createMessage())
         } else {
           msg = colorMyNameInText(msg)
@@ -237,11 +237,11 @@ function newRoom(id, customScene = null, ownerHandler = null) {
         this.mBlocks.append(mBlock)
       }
 
-      if (::g_chat.isRoomClan(id))
+      if (g_chat.isRoomClan(id))
         mBlock.clanTag = ""
 
       if (mBlock.text == "" && mBlock.from != "") {
-          let pLink = ::g_chat.generatePlayerLink(mBlock.from, mBlock.uid)
+          let pLink = g_chat.generatePlayerLink(mBlock.from, mBlock.uid)
           mBlock.text = format("<Link=%s><Color=%s>%s</Color>:</Link> ", pLink, mBlock.userColor,
             mBlock.fullName)
       }
@@ -249,7 +249,7 @@ function newRoom(id, customScene = null, ownerHandler = null) {
       mBlock.text = "".concat(mBlock.text, !this.isCustomScene ? "\n" : "", mBlock.msgs.top())
       mBlock.messageIndex = persistent.lastCreatedMessageIndex++
 
-      if (this.mBlocks.len() > ::g_chat.getMaxRoomMsgAmount())
+      if (this.mBlocks.len() > g_chat.getMaxRoomMsgAmount())
         this.mBlocks.remove(0)
     }
 
@@ -289,7 +289,7 @@ function newRoom(id, customScene = null, ownerHandler = null) {
 
 function initChatMessageListOn(sceneObject, handler, customRoomId = null) {
   let messages = []
-  for (local i = 0; i < ::g_chat.getMaxRoomMsgAmount(); i++) {
+  for (local i = 0; i < g_chat.getMaxRoomMsgAmount(); i++) {
     messages.append({ childIndex = i });
   }
   let view = { messages = messages, customRoomId = customRoomId }
