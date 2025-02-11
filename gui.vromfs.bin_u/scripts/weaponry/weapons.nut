@@ -1242,7 +1242,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       if (reqTierMods > 0)
         reason = format(loc("weaponry/action_not_allowed"),
                           loc("weaponry/unlockModTierReq",
-                                { tier = roman_numerals[item.tier], amount = (reqTierMods).tostring() }))
+                                { tier = roman_numerals[item.tier], amount = reqTierMods }))
       else if (reqMods.len() > 0)
         reason = format(loc("weaponry/action_not_allowed"), $"{loc("weaponry/unlockModsReq")}\n{reqMods}")
     }
@@ -2143,10 +2143,9 @@ gui_handlers.MultiplePurchase <- class (gui_handlers.BaseGuiHandlerWT) {
       this.buyFunc(this.curValue - this.minValue)
   }
 
-  function goBack() {
+  function onDestroy() {
     if (this.onExitFunc)
       this.onExitFunc()
-    base.goBack()
   }
 
   onEventModificationPurchased = @(_p) this.goBack()

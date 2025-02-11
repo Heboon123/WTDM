@@ -3,7 +3,9 @@
     position:t='relative'
     flow:t='horizontal'
     left:t='(pw-w)/2'
+    <<^isFirstLine>>
     padding-top:t='<<scale>>*13@sf/@pf'
+    <</isFirstLine>>
     css-hier-invalidate:t='yes'
 
     <<#labels>>
@@ -11,7 +13,16 @@
       text:t='<<text>>'
       font:t='@fontSmall'
       color:t='@showcaseGreyText'
+      showInEditMode:t='no'
     }
+    <<#comboBoxData>>
+    tdiv {
+      position:t='relative'
+      display:t='hide'
+      showInEditMode:t='yes'
+      include "%gui/commonParts/comboBox.tpl"
+    }
+    <</comboBoxData>>
     <</labels>>
 
     <<#statsBig>>
@@ -86,6 +97,9 @@
 
         <<#statValue>>
           blankTextArea {
+            <<#statValueId>>
+            id:t='<<statValueId>>'
+            <</statValueId>>
             padding-top:t='<<scale>>*4@sf/@pf'
             position:t='relative'
             left:t='(pw-w)/2'
@@ -138,7 +152,7 @@
         margin-top:t='<<scale>>*11@sf/@pf'
       <</isFirst>>
       <<#isFirst>>
-        margin-top:t='<<scale>>*36@sf/@pf'
+        margin-top:t='<<scale>>*46@sf/@pf'
       <</isFirst>>
 
       tdiv {
@@ -149,6 +163,7 @@
         text:t='<<text>>'
         color:t='#7C8389'
         left:t='<<scale>>*20@sf/@pf'
+        font-pixht:t='<<scale>>*24@sf/@pf \ 1'
         top:t='(ph-h)/2'
       }
       <<#value>>
@@ -157,6 +172,7 @@
         re-type:t='textarea'
         behaviour:t='textArea'
         font:t="tiny_text_hud"
+        font-pixht:t='<<scale>>*24@sf/@pf \ 1'
         text:t='<<value>>'
         color:t='#FFFFFF'
         left:t='pw - w - <<scale>>*18@sf/@pf'

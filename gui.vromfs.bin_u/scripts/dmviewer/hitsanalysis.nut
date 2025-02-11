@@ -83,8 +83,13 @@ function getBulletInfo(unit, hit) {
     return bulletInfoCache[key]
   }
 
-  let bullets = (hit.ammo == "" || weaponBlk.getBlockByName(hit.ammo) == null) ? weaponBlk % "bullet"
-    : weaponBlk[hit.ammo] % "bullet"
+  local bullets = null
+  if (hit.ammo != "" && weaponBlk.getBlockByName(hit.ammo) != null)
+    bullets = weaponBlk[hit.ammo] % "bullet"
+  else if ((bulletSetName ?? "") != "" && weaponBlk.getBlockByName(bulletSetName) != null)
+    bullets = weaponBlk[bulletSetName] % "bullet"
+  else
+    bullets = weaponBlk % "bullet"
 
   if (hit.ammoNo not in bullets) {
     bulletInfoCache[key] <- {
@@ -145,10 +150,13 @@ gui_handlers.HitsAnalysis <- class (gui_handlers.BaseGuiHandlerWT) {
     let diff = this.ediff
     let hitsData = this.currentHitsData
       .map(function(h, idx) {
+        let offenderUnit = getAircraftByName(h.offenderObject)
+        if (!offenderUnit)
+          return null
         let time = secondsToTimeSimpleString(h.time)
         let unit = getAircraftByName(h.object)
         let br = unit?.getBattleRating(diff) ?? 0
-        let { bulletDesc } = getBulletInfo(getAircraftByName(h.offenderObject), h)
+        let { bulletDesc } = getBulletInfo(offenderUnit, h)
         let unitAndWeapon = $"[{br}] {getUnitName(unit?.name)} - {bulletDesc}"
         return {
           time
@@ -157,7 +165,7 @@ gui_handlers.HitsAnalysis <- class (gui_handlers.BaseGuiHandlerWT) {
           idx
         }
       })
-      .filter(@(h) h.hasBulletDesc)
+      .filter(@(h) h != null && h.hasBulletDesc)
     let listObj = this.scene.findObject("shots_list")
     let data = handyman.renderCached("%gui/dmViewer/hitsAnalysisItems.tpl", { items = hitsData })
     this.guiScene.replaceContentFromText(listObj, data, data.len(), this)
