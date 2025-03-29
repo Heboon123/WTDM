@@ -26,7 +26,8 @@ let { setPostFxVignetteMultiplier, getPostFxVignetteMultiplier, getDefaultPostFx
       setLenseFlareHaloPower, getLenseFlareHaloPower, getDefaultLenseFlareHaloPower,
       setLenseFlareGhostsPower, getLenseFlareGhostsPower, getDefaultLenseFlareGhostsPower,
       setLenseFlareMode, getLenseFlareMode, getDefaultLenseFlareMode,
-      setIsUsingDynamicLut, getIsUsingDynamicLut } = require("postFxSettings")
+      setIsUsingDynamicLut, getIsUsingDynamicLut,
+      setEnableFilmGrain, getEnableFilmGrain } = require("postFxSettings")
 
 let tonemappingMode_list = freeze(["#options/hudDefault", "#options/reinard", "#options/polynom", "#options/logarithm"])
 let lenseFlareMode_list = freeze(["#options/disabled", "#options/enabled_in_replays", "#options/enabled_in_tps", "#options/enabled_everywhere"])
@@ -71,7 +72,7 @@ gui_handlers.PostFxSettings <- class (gui_handlers.BaseGuiHandlerWT) {
     this.scene.findObject("U_F").show(!isDynamicLut);
     this.scene.findObject("UWhite").show(!isDynamicLut);
 
-    //lensFlare
+    
     if (useLenseFlares()) {
       let lfm = getLenseFlareMode();
       let showLenseFlareSettings = lfm > 0;
@@ -82,7 +83,7 @@ gui_handlers.PostFxSettings <- class (gui_handlers.BaseGuiHandlerWT) {
     if (isDynamicLut)
       return;
 
-    //tonemapping
+    
     let tm = getTonemappingMode();
 
     let reinard = tm == 1;
@@ -181,6 +182,8 @@ gui_handlers.PostFxSettings <- class (gui_handlers.BaseGuiHandlerWT) {
     this.createOneSlider("U_F", getUF() * scale, "onUFChanged", { min = 0.01 * scale, max = 5 * scale }, true)
     this.createOneSlider("UWhite", getUWhite() * scale, "onUWhiteChanged", { min = 0.01 * scale, max = 4 * scale }, true)
 
+    this.createOneCheckbox("enableFilmGrain", getEnableFilmGrain(), "onFilmGrainChanged")
+
     this.updateVisibility();
   }
 
@@ -195,7 +198,7 @@ gui_handlers.PostFxSettings <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function initScreen() {
-    //change shader variables
+    
     setTonemappingMode(getTonemappingMode());
     if (useLenseFlares())
       setLenseFlareMode(getLenseFlareMode());
@@ -226,6 +229,7 @@ gui_handlers.PostFxSettings <- class (gui_handlers.BaseGuiHandlerWT) {
       this.setValue("postfx_settings_lenseFlareHaloPower", getDefaultLenseFlareHaloPower() * scale);
       this.setValue("postfx_settings_lenseFlareGhostsPower", getDefaultLenseFlareGhostsPower() * scale);
     }
+    this.setValue("postfx_settings_enableFilmGrain", false);
 
     setPostFxVignetteMultiplier(getDefaultPostFxVignetteMultiplier());
     setSharpenTps(getDefaultSharpenTps());
@@ -241,13 +245,14 @@ gui_handlers.PostFxSettings <- class (gui_handlers.BaseGuiHandlerWT) {
     setUF(getDefaultUF(), true);
     setUWhite(getDefaultUWhite(), true);
     setLutTexture(getDefaultLutTexture());
-    setIsUsingDynamicLut(true); // need to be before setTonemappingMode
+    setIsUsingDynamicLut(true); 
     setTonemappingMode(getDefaultTonemappingMode());
     if (useLenseFlares()) {
       setLenseFlareMode(getDefaultLenseFlareMode());
       setLenseFlareHaloPower(getDefaultLenseFlareHaloPower());
       setLenseFlareGhostsPower(getDefaultLenseFlareGhostsPower());
     }
+    setEnableFilmGrain(false);
   }
 
   function goBack() {
@@ -259,7 +264,7 @@ gui_handlers.PostFxSettings <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!obj)
       return;
 
-    setIsUsingDynamicLut(obj.getValue()); //need to be set first
+    setIsUsingDynamicLut(obj.getValue()); 
     setTonemappingMode(getTonemappingMode());
     this.updateVisibility();
   }
@@ -370,6 +375,11 @@ gui_handlers.PostFxSettings <- class (gui_handlers.BaseGuiHandlerWT) {
       return;
     setUWhite(obj.getValue() * recScale, true);
     this.updateSliderValue("UWhite", obj.getValue() * recScale)
+  }
+  function onFilmGrainChanged(obj) {
+    if (!obj)
+      return;
+    setEnableFilmGrain(obj.getValue());
   }
 }
 

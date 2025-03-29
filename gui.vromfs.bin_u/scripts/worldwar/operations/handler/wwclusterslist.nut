@@ -7,6 +7,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { cutPrefix } = require("%sqstd/string.nut")
 let { USEROPT_CLUSTERS } = require("%scripts/options/optionsExtNames.nut")
+let { get_option } = require("%scripts/options/optionsExt.nut")
 
 const SELECTOR_OBJ = "selector_obj"
 const ACTION_BTN = "action_btn"
@@ -31,7 +32,7 @@ local popupOptList = class (gui_handlers.BaseGuiHandlerWT) {
   resetId              = null
   isForcedSelect       = false
 
-  //init params
+  
   actionText           = null
   optionsList          = null
   onActionFn           = null
@@ -42,7 +43,7 @@ local popupOptList = class (gui_handlers.BaseGuiHandlerWT) {
     foreach (idx, inst in this.optionsList) {
       let { title, exceptions = [] } = inst
       let objId = $"cb_{idx}"
-      let option = ::get_option(USEROPT_CLUSTERS)
+      let option = get_option(USEROPT_CLUSTERS)
       let items = [deafaulEmptyOpt].extend(option.items)
         .filter(@(v) !exceptions.contains(v.text) && !(v?.isAuto ?? false))
       let valBySelector = inst.name
@@ -57,7 +58,7 @@ local popupOptList = class (gui_handlers.BaseGuiHandlerWT) {
         name = inst.name
         val = option.values
           .filter(@(v) v != "auto")
-          .findindex(@(v) v == inst.name) // Actual option value. Need to return only.
+          .findindex(@(v) v == inst.name) 
       }
     }
     return {
@@ -97,10 +98,10 @@ local popupOptList = class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     let optObj = obj.getChild(obj.getValue())
-    let val = ::get_option(USEROPT_CLUSTERS).values
+    let val = get_option(USEROPT_CLUSTERS).values
       .filter(@(v) v != "auto")
       .findindex(@(t) t == optObj?.optName)
-    // Need to reset duplicates for non-empty items only
+    
     if (val != null) {
       let stateId = this.tmpStates.findindex(@(c) c.val == val)
       if (stateId && stateId != obj.id)
@@ -116,7 +117,7 @@ local popupOptList = class (gui_handlers.BaseGuiHandlerWT) {
   function onApply() {
     this.stateList = u.copy(this.tmpStates)
     this.tmpStates = null
-    let clusterOpt = ::get_option(USEROPT_CLUSTERS)
+    let clusterOpt = get_option(USEROPT_CLUSTERS)
     let res = []
     for (local i = 0; i < this.optionsList.len(); i++) {
       let state = this.stateList?[$"cb_{i}"]

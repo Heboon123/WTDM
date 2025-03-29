@@ -16,10 +16,10 @@ const SKIPPED_AAS_WARNING_MSG = "skipped_msg/aasWarningMessage"
 local showMultiplayerAvailableMsgTimer = null
 
 let antiAddictSystemVariable = mkWatched(persist, "antiAddictSystemVariable", {
-  curMin = 0         // current activity level in minutes
-  warnMin = 120      // level from which a warning is sent before the fight
-  limitMin = 300     // the level at which the game will be forbidden
-  nextCanPlayTs = 0  // unix timestamp when it is possible to play, comes only if the possibility to play is forbidden
+  curMin = 0         
+  warnMin = 120      
+  limitMin = 300     
+  nextCanPlayTs = 0  
 })
 
 let needCheckShowAasLimitMessage = mkWatched(persist, "needCheckShowAasLimitMessage", false)
@@ -58,7 +58,8 @@ function showMultiplayerLimitByAasMsg(onAcceptCb, onCancelCb) {
     parentHandler = {}
     message = loc(messageLocId,
       { playTime = getExpireText(curMin), limitTime = buidPartialTimeStr(limitSec) })
-    startBtnText = loc("msgbox/btn_continue")
+    cancelBtnText = isDeniedProfileJwtDueToAasLimits.get() ? loc("mainmenu/btnOk") : loc("msgbox/btn_yes")
+    startBtnText = loc("msgbox/btn_no")
     ableToStartAndSkip = onAcceptCb != null && !isDeniedProfileJwtDueToAasLimits.get()
     onStartPressed = onAcceptCb
     cancelFunc = onCancelCb
@@ -91,7 +92,8 @@ function checkShowMultiplayerAasWarningMsg(onAcceptCb, onCancelCb = null) {
   loadHandler(gui_handlers.SkipableMsgBox, {
     parentHandler = {}
     message = loc("antiAddictSystem/warningMsgOnlyPlayTime", { playTime = getExpireText(curMin) })
-    startBtnText = loc("msgbox/btn_continue")
+    cancelBtnText = loc("msgbox/btn_yes")
+    startBtnText = loc("msgbox/btn_no")
     skipFunc = @(value) saveLocalAccountSettings(SKIPPED_AAS_WARNING_MSG, value)
     onStartPressed = onAcceptCb
     cancelFunc = onCancelCb

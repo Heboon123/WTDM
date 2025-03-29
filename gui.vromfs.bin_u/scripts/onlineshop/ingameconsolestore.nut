@@ -28,7 +28,7 @@ gui_handlers.IngameConsoleStore <- class (gui_handlers.BaseGuiHandlerWT) {
   titleLocId = ""
   storeLocId = ""
   openStoreLocId = ""
-  seenEnumId = "other" // replacable
+  seenEnumId = "other" 
 
   curSheet = null
   curSheetId = null
@@ -43,7 +43,7 @@ gui_handlers.IngameConsoleStore <- class (gui_handlers.BaseGuiHandlerWT) {
   headerOffsetX = null
   isNavCollapsed = false
 
-  // Used to avoid expensive get...List and further sort.
+  
   itemsListValid = false
 
   sortBoxId = "sort_params_list"
@@ -53,6 +53,11 @@ gui_handlers.IngameConsoleStore <- class (gui_handlers.BaseGuiHandlerWT) {
   isLoadingInProgress = false
   hoverHoldAction = null
   isMouseMode = true
+
+  currentHoveredItemId = -1
+  currentSelectedId = -1
+  lastMousePos = [0, 0]
+  lastMouseDelta = [0, 0]
 
   function initScreen() {
     this.updateMouseMode()
@@ -66,6 +71,8 @@ gui_handlers.IngameConsoleStore <- class (gui_handlers.BaseGuiHandlerWT) {
     show_obj(this.getTabsListObj(), false)
     show_obj(this.getSheetsListObj(), false)
     this.hoverHoldAction = mkHoverHoldAction(this.scene.findObject("hover_hold_timer"))
+    if (showConsoleButtons.value)
+      this.scene.findObject("mouse_timer").setUserData(this)
 
     this.fillItemsList()
     this.moveMouseToMainList()
@@ -112,7 +119,7 @@ gui_handlers.IngameConsoleStore <- class (gui_handlers.BaseGuiHandlerWT) {
     let sheetIdx = this.sheetsArray.indexof(this.curSheet) ?? 0
     this.getSheetsListObj().setValue(sheetIdx)
 
-    //Update this objects only once. No need to do it on each updateButtons
+    
     showObjById("btn_preview", false, this.scene)
     let warningTextObj = this.scene.findObject("warning_text")
     if (checkObj(warningTextObj))
@@ -167,7 +174,7 @@ gui_handlers.IngameConsoleStore <- class (gui_handlers.BaseGuiHandlerWT) {
     let subsetId = this.curSubsetId
     this.navigationHandlerWeak.onCollapse(collapseBtnObj)
     if (collapseBtnObj.getParent().collapsed == "no")
-      this.getSheetsListObj().setValue( //set selection on chapter item if not found item with subsetId just in case to avoid crash
+      this.getSheetsListObj().setValue( 
         u.search(this.navItems, @(item) item?.subsetId == subsetId)?.idx ?? obj.idx)
   }
 
@@ -192,6 +199,8 @@ gui_handlers.IngameConsoleStore <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function fillPage() {
+    this.currentSelectedId = -1
+    this.currentHoveredItemId = -1
     let view = { items = [], hasFocusBorder = true, onHover = "onItemHover" }
 
     if (!this.isLoadingInProgress) {
@@ -231,7 +240,7 @@ gui_handlers.IngameConsoleStore <- class (gui_handlers.BaseGuiHandlerWT) {
     else {
       this.recalcCurPage()
       generatePaginator(this.scene.findObject("paginator_place"), this,
-        this.curPage, this.getPageNum(this.itemsList.len() - 1), null, true /*show last page*/ )
+        this.curPage, this.getPageNum(this.itemsList.len() - 1), null, true  )
     }
 
     if (!this.itemsList?.len() && this.sheetsArray.len())
@@ -391,6 +400,9 @@ gui_handlers.IngameConsoleStore <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function updateItemInfo() {
+    let obj = this.getItemsListObj()
+    if (obj?.isValid())
+      this.currentSelectedId = obj.getValue() + this.curPage * this.itemsPerPage
     let item = this.getCurItem()
     this.fillItemInfo(item)
     showObjById("jumpToDescPanel", showConsoleButtons.value && item != null, this.scene)
@@ -430,7 +442,7 @@ gui_handlers.IngameConsoleStore <- class (gui_handlers.BaseGuiHandlerWT) {
   function getPriceBlock(item) {
     if (item?.isBought)
       return ""
-    //Generate price string as PSN requires and return blk format to replace it.
+    
     return handyman.renderCached("%gui/commonParts/discount.tpl", item)
   }
 
@@ -514,8 +526,10 @@ gui_handlers.IngameConsoleStore <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onItemsListFocusChange() {
-    if (this.isValid())
-      this.updateItemInfo()
+    if (!this.isValid())
+      return
+    this.updateItemInfo()
+    this.currentHoveredItemId = this.currentSelectedId
   }
 
   function onJumpToDescPanelAccessKey(_obj) {
@@ -535,18 +549,34 @@ gui_handlers.IngameConsoleStore <- class (gui_handlers.BaseGuiHandlerWT) {
     this.updateMouseMode()
     if (wasMouseMode != this.isMouseMode)
       this.updateShowItemButton()
-    if (this.isMouseMode)
+    let id = obj.holderId.tointeger()
+    this.currentHoveredItemId = obj.isHovered() ? id
+      : this.currentHoveredItemId == id ? -1
+      : this.currentHoveredItemId
+  }
+
+  function onHoverTimerUpdate(_obj, _dt) {
+    if (this.isMouseMode || this.currentSelectedId == this.currentHoveredItemId || this.currentHoveredItemId == -1)
       return
 
-    if (obj.holderId == this.getCurItemObj()?.holderId)
+    let mousePos = get_dagui_mouse_cursor_pos_RC()
+    let mouseDelta = [mousePos[0] - this.lastMousePos[0], mousePos[1] - this.lastMousePos[1]]
+    this.lastMousePos = mousePos
+
+    if (mouseDelta[0] != 0 || mouseDelta[1] != 0) {
+      this.lastMouseDelta = mouseDelta
       return
-    this.hoverHoldAction(obj, function(focusObj) {
-      let idx = focusObj.holderId.tointeger()
-      let value = idx - this.curPage * this.itemsPerPage
-      let listObj = this.getItemsListObj()
-      if (listObj.getValue() != value && value >= 0 && value < listObj.childrenCount())
-        listObj.setValue(value)
-    }.bindenv(this))
+    }
+
+    if (this.lastMouseDelta[0] == 0 && this.lastMouseDelta[1] == 0)
+      return
+
+    this.lastMouseDelta = mouseDelta
+    let value = this.currentHoveredItemId - this.curPage * this.itemsPerPage
+    let listObj = this.getItemsListObj()
+    if (listObj.getValue() != value && value >= 0 && value < listObj.childrenCount())
+      listObj.setValue(value)
+    this.currentSelectedId = this.currentHoveredItemId
   }
 
   updateMouseMode = @() this.isMouseMode = !showConsoleButtons.value || is_mouse_last_time_used()

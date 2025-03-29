@@ -23,6 +23,8 @@ let { isEventForClan } = require("%scripts/events/eventInfo.nut")
 let { calcBattleRatingFromRank } = require("%appGlobals/ranks_common_shared.nut")
 let { isMeNewbie } = require("%scripts/myStats.nut")
 let { MAX_COUNTRY_RANK } = require("%scripts/ranks.nut")
+let { createQueueViewByCountries, updateQueueViewByCountries } = require("%scripts/queue/queueInfo/qiViewUtils.nut")
+let { fillCountriesList } = require("%scripts/matchingRooms/fillCountriesList.nut")
 
 dagui_propid_add_name_id("_queueTableGenCode")
 
@@ -86,7 +88,7 @@ gui_handlers.QueueTable <- class (gui_handlers.BaseGuiHandlerWT) {
     if (value && this.scene.isVisible())
       return
 
-    if (value) { // Queue wnd opening animation start
+    if (value) { 
       this.updateTip()
       this.updateQueueWaitIconImage()
     }
@@ -254,9 +256,9 @@ gui_handlers.QueueTable <- class (gui_handlers.BaseGuiHandlerWT) {
     if (isEventForClan(event))
       this.createQueueTableClan(nestObj)
     else
-      ::g_qi_view_utils.createViewByCountries(nestObj.findObject("ia_tooltip_table"), queue, event)
+      createQueueViewByCountries(nestObj.findObject("ia_tooltip_table"), queue, event)
 
-    // Forces table to refill.
+    
     this.updateTabContent()
 
     let obj = this.getObj("inQueue-topmenu-text")
@@ -269,7 +271,7 @@ gui_handlers.QueueTable <- class (gui_handlers.BaseGuiHandlerWT) {
     this.guiScene.replaceContent(queueBoxObj, "%gui/events/eventQueue.blk", this)
 
     foreach (team in events.getSidesList())
-      queueBoxObj.findObject($"{team}_block").show(team == Team.A) //clan queue always symmetric
+      queueBoxObj.findObject($"{team}_block").show(team == Team.A) 
   }
 
   function updateTabContent() {
@@ -311,7 +313,7 @@ gui_handlers.QueueTable <- class (gui_handlers.BaseGuiHandlerWT) {
     if (isClanQueue)
       this.updateClanQueueTable()
     else if (curCluster != null)
-        ::g_qi_view_utils.updateViewByCountries(tableObj, this.getCurQueue(), curCluster)
+      updateQueueViewByCountries(tableObj, this.getCurQueue(), curCluster)
   }
 
   function updateClanQueueTable() {
@@ -333,14 +335,14 @@ gui_handlers.QueueTable <- class (gui_handlers.BaseGuiHandlerWT) {
     this.fillQueueTeam(statsObj, teamData, tableMarkup, playersCountText)
   }
 
-  //!!FIX ME copypaste from events handler
+  
   function fillQueueTeam(teamObj, teamData, tableMarkup, playersCountText,  teamColor = "any", teamName = "") {
     if (!checkObj(teamObj))
       return
 
     teamObj.bgTeamColor = teamColor
     teamObj.show(teamData && teamData.len())
-    ::fillCountriesList(teamObj.findObject("countries"), events.getCountries(teamData))
+    fillCountriesList(teamObj.findObject("countries"), events.getCountries(teamData))
     teamObj.findObject("team_name").setValue(teamName)
     teamObj.findObject("players_count").setValue(playersCountText)
 
@@ -350,7 +352,7 @@ gui_handlers.QueueTable <- class (gui_handlers.BaseGuiHandlerWT) {
     this.guiScene.replaceContentFromText(queueTableObj, tableMarkup, tableMarkup.len(), this)
   }
 
-  //!!FIX ME copypaste from events handler
+  
   function getClanQueueTableMarkup(queueStats) {
     let totalClans = queueStats.getClansCount()
     if (!totalClans)
@@ -384,7 +386,7 @@ gui_handlers.QueueTable <- class (gui_handlers.BaseGuiHandlerWT) {
     return res
   }
 
-  //!!FIX ME copypaste from events handler
+  
   function buildQueueStatsRowData(queueStatData, clusterNameLoc = "") {
     let params = []
     params.append({
@@ -401,7 +403,7 @@ gui_handlers.QueueTable <- class (gui_handlers.BaseGuiHandlerWT) {
     return params
   }
 
-  //!!FIX ME copypaste from events handler
+  
   function buildQueueStatsHeader() {
     let headerData = []
     for (local i = 0; i <= MAX_COUNTRY_RANK; i++) {
@@ -413,9 +415,9 @@ gui_handlers.QueueTable <- class (gui_handlers.BaseGuiHandlerWT) {
     return buildTableRow("", headerData, 0, "inactive:t='yes'; commonTextColor:t='yes';", "0")
   }
 
-  //
-  // Event handlers
-  //
+  
+  
+  
 
   function onEventQueueChangeState(p) {
     let queue = p?.queue
@@ -429,7 +431,7 @@ gui_handlers.QueueTable <- class (gui_handlers.BaseGuiHandlerWT) {
     }
 
     if (::queues.isQueueActive(this.getCurQueue()))
-      return //do not switch queue visual when current queue active.
+      return 
 
     this.setCurQueue(queue)
   }

@@ -5,8 +5,9 @@ let { removeUserstatItemRewardToShow } = require("%scripts/userstat/userstatItem
 let { broadcastEvent, addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { resetTimeout } = require("dagor.workcycle")
 let { isInMenu } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { getUserLogsList } = require("%scripts/userLog/userlogUtils.nut")
 
-//this module collect all prizes from userlogs if chest has prizes with auto consume prizes and show trophy window
+
 
 const MAX_DELAYED_TIME_SEC = 10
 const PROGRESS_BOX_BUTTONS_DELAY_SEC = 15
@@ -56,7 +57,7 @@ function checkRecivedAllPrizes(config) {
   let { trophyItemDefId, expectedPrizes, time = -1, } = config
   let receivedPrizes = "receivedPrizes" in config ? clone config.receivedPrizes : []
   let notReceivedPrizes = []
-  let userLogs = ::getUserLogsList({
+  let userLogs = getUserLogsList({
     show = [ EULT_OPEN_TROPHY ]
     needStackItems = false
     checkFunc = @(userLog) expectedPrizes.findvalue(

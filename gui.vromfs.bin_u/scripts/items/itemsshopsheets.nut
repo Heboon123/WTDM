@@ -6,8 +6,9 @@ let u = require("%sqStdLibs/helpers/u.nut")
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let workshop = require("%scripts/items/workshop/workshop.nut")
 let seenList = require("%scripts/seen/seenList.nut")
-let { checkItemsMaskFeatures, getShopList, isItemVisible
-} = require("%scripts/items/itemsManager.nut")
+let { getShopList } = require("%scripts/items/itemsManagerGetters.nut")
+let { isItemVisible, checkItemsMaskFeatures } = require("%scripts/items/itemsChecks.nut")
+let { getInventoryListByShopMask } = require("%scripts/items/itemsManager.nut")
 
 let shopSheets = {
   types = []
@@ -16,11 +17,11 @@ let shopSheets = {
 let isOnlyExtInventory = @(shopTab) shopTab != itemsTab.WORKSHOP && hasFeature("ExtInventory")
 
 shopSheets.template <- {
-  id = "" //used from type name
+  id = "" 
   sortId = 0
-  searchId = null // To Identify externally, because typeMask is not work
-  locId = null //default: $"itemTypes/{id.tolower()}"
-  emptyTabLocId = null //default: $"items/shop/emptyTab/{id.tolower()}"
+  searchId = null 
+  locId = null 
+  emptyTabLocId = null 
 
   typeMask = itemType.INVENTORY_ALL
   isDevItemsTab = false
@@ -44,7 +45,7 @@ shopSheets.template <- {
     let visibleTypeMask = checkItemsMaskFeatures(this.typeMask)
     let filterFunc = this.getItemFilterFunc(shopTab).bindenv(this)
     if (shopTab == itemsTab.INVENTORY || shopTab == itemsTab.RECYCLING)
-      return ::ItemsManager.getInventoryListByShopMask(visibleTypeMask, filterFunc)
+      return getInventoryListByShopMask(visibleTypeMask, filterFunc)
     if (shopTab == itemsTab.SHOP)
       return getShopList(visibleTypeMask, filterFunc)
     return []
@@ -54,7 +55,7 @@ shopSheets.template <- {
   getSubsetSeenListId = @(subsetId) "{0}/{1}".subst(this.getSeenId(), subsetId)
 }
 
-function getTabSeenId(tabIdx) { //!!FIX ME: move tabs to separate enum
+function getTabSeenId(tabIdx) { 
   if (tabIdx == itemsTab.SHOP)
     return SEEN.ITEMS_SHOP
   if (tabIdx == itemsTab.INVENTORY)
@@ -66,7 +67,7 @@ function getTabSeenId(tabIdx) { //!!FIX ME: move tabs to separate enum
   return null
 }
 
-let isTabVisible = @(tabIdx) tabIdx != itemsTab.WORKSHOP || workshop.isAvailable() //!!FIX ME: move tabs to separate enum
+let isTabVisible = @(tabIdx) tabIdx != itemsTab.WORKSHOP || workshop.isAvailable() 
 
 shopSheets.addSheets <- function(sheetsTable) {
   enums.addTypes(this, sheetsTable,
@@ -81,7 +82,7 @@ shopSheets.addSheets <- function(sheetsTable) {
     "id")
   shopSheets.types.sort(@(a, b) a.sortId <=> b.sortId)
 
-  //register seen sublist getters
+  
   for (local tab = 0; tab < itemsTab.TOTAL; tab++)
     if (isTabVisible(tab)) {
       let curTab = tab
@@ -105,7 +106,7 @@ shopSheets.findSheet <- function(config, defSheet = null) {
   local res = null
   foreach (sh in this.types) {
     if (config == sh) {
-      res = sh //this is already sheet
+      res = sh 
       break
     }
 

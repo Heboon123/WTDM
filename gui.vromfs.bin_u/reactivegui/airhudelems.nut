@@ -36,7 +36,7 @@ let HudStyle = require("style/airHudStyle.nut")
 
 let { AimLockPos, AimLockValid } = require("%rGui/planeState/planeToolsState.nut")
 
-let { IsTargetTracked, TargetAge, TargetX, TargetY } = require("%rGui/hud/targetTrackerState.nut")
+let { IsTargetTracked, TargetAge, TargetX, TargetY, TargetInZone } = require("%rGui/hud/targetTrackerState.nut")
 let { lockSight, targetSize } = require("%rGui/hud/targetTracker.nut")
 
 let { isInitializedMeasureUnits, measureUnitsNames } = require("options/optionsMeasureUnits.nut")
@@ -44,6 +44,7 @@ let { isInitializedMeasureUnits, measureUnitsNames } = require("options/optionsM
 let { GuidanceLockResult } = require("guidanceConstants")
 
 let aamGuidanceLockState = require("rocketAamAimState.nut").GuidanceLockState
+let { HasTOFInHud } = require("%rGui/rocketAamAimState.nut")
 
 let agmAimState = require("agmAimState.nut")
 let agmGuidanceLockState = agmAimState.GuidanceLockStateBlinked
@@ -298,7 +299,7 @@ function getBombModeCaption(mode) {
     texts.append(loc("HUD/WEAPON_MODE_CCIP"))
   }
 
-  //check both ccip/rp and bombBay
+  
   let ballisticModeBits = mode & (1 << (WeaponMode.CCRP_MODE + 1))
   if (ballisticModeBits > 0 && (mode ^ ballisticModeBits) > 0)
     texts.append("  ")
@@ -570,8 +571,8 @@ function createParam(param, width, height, style, colorWatch, needCaption, for_i
   }
 }
 
-//thoses local values are used for direct subscription
-//Rpm
+
+
 let TrtModeForRpm = TrtMode[0]
 
 let agmBlinkComputed = Computed(@() (IsAgmLaunchZoneVisible.value &&
@@ -686,7 +687,7 @@ let textParamsMapMain = {
   [AirParamsMain.AAM] = {
     titleComputed = Computed(@() AamCount.value <= 0 ? loc("HUD/TXT_AAM_SHORT") : getAACaption(aamGuidanceLockState.value))
     valueComputed = Computed(@() generateGuidedWeaponBulletsTextFunction(AamCount.value, AamSeconds.value,
-      AamTimeToHit.value, 0, AamActualCount.value))
+      HasTOFInHud.value ? AamTimeToHit.value : -1.0, 0, AamActualCount.value))
     selectedComputed = Computed(@() AamSelected.value ? ">" : "")
     additionalComputed = Computed(@() loc(AamName.value))
     alertStateCaptionComputed = Computed(@() (IsAamEmpty.value || aamGuidanceLockState.value == GuidanceLockResult.RESULT_TRACKING) ?
@@ -795,7 +796,7 @@ for (local i = 0; i < NUM_VISIBLE_ENGINES_MAX; ++i) {
   textParamsMapSecondary[AirParamsSecondary.OIL_1 + (i * numParamPerEngine)] <- {
     titleComputed = WatchedRo(loc($"HUD/OIL_TEMPERATURE_SHORT{indexStr}"))
     valueComputed = Computed(@() !isInitializedMeasureUnits.value ? ""
-      : generateTemperatureTextFunction(oilTemperatureComputed.value, oilStateComputed.value, measureUnitsNames.value.temperature)) //warning disable -param-pos
+      : generateTemperatureTextFunction(oilTemperatureComputed.value, oilStateComputed.value, measureUnitsNames.value.temperature)) 
     selectedComputed = WatchedRo("")
     additionalComputed = WatchedRo("")
     alertStateCaptionComputed = Computed(@() oilAlertComputed.value)
@@ -808,7 +809,7 @@ for (local i = 0; i < NUM_VISIBLE_ENGINES_MAX; ++i) {
   textParamsMapSecondary[AirParamsSecondary.WATER_1 + (i * numParamPerEngine)] <- {
     titleComputed = WatchedRo(loc($"HUD/WATER_TEMPERATURE_SHORT{indexStr}"))
     valueComputed = Computed(@() !isInitializedMeasureUnits.value ? ""
-      : generateTemperatureTextFunction(waterTemperatureComputed.value, waterStateComputed.value, measureUnitsNames.value.temperature)) //warning disable -param-pos
+      : generateTemperatureTextFunction(waterTemperatureComputed.value, waterStateComputed.value, measureUnitsNames.value.temperature)) 
     selectedComputed = WatchedRo("")
     additionalComputed = WatchedRo("")
     alertStateCaptionComputed = Computed(@() waterAlertComputed.value)
@@ -821,7 +822,7 @@ for (local i = 0; i < NUM_VISIBLE_ENGINES_MAX; ++i) {
   textParamsMapSecondary[AirParamsSecondary.ENGINE_1 + (i * numParamPerEngine)] <- {
     titleComputed = WatchedRo(loc($"HUD/ENGINE_TEMPERATURE_SHORT{indexStr}"))
     valueComputed = Computed(@() !isInitializedMeasureUnits.value ? ""
-      : generateTemperatureTextFunction(engineTemperatureComputed.value, engineStateComputed.value, measureUnitsNames.value.temperature)) //warning disable -param-pos
+      : generateTemperatureTextFunction(engineTemperatureComputed.value, engineStateComputed.value, measureUnitsNames.value.temperature)) 
     selectedComputed = WatchedRo("")
     additionalComputed = WatchedRo("")
     alertStateCaptionComputed = Computed(@() engineAlertComputed.value)
@@ -1230,7 +1231,7 @@ let turretAnglesComponent = function(colorWatch, width, height, posX, posY, blin
 }
 
 
-// agm launch zone rectange in optic sight
+
 function agmLaunchZone(colorWatch, _w, _h) {
   let isLaunchZoneBlinking = Computed(@() !IsInsideLaunchZoneYawPitch.value)
   let isLaunchZoneTrigger = {}
@@ -1268,7 +1269,7 @@ function agmLaunchZone(colorWatch, _w, _h) {
           [VECTOR_LINE, left,  lower, left,  upper]
         ]
       } else {
-        // out of zone arrow
+        
         let ax = ((left + right) * 0.5 - 50) * 0.100
         let ay = ((lower + upper) * 0.5 - 50) * 0.100
         local x1, y1;
@@ -1489,22 +1490,27 @@ function rangeFinderComponent(colorWatch, posX, posY) {
   return resCompoment
 }
 
-let triggerTATarget = {}
-TargetAge.subscribe(@(v) v < 0.2 ? anim_request_stop(triggerTATarget) : anim_start(triggerTATarget))
+let triggerTATargetAge = {}
+TargetAge.subscribe(@(v) v > 0.2 ? anim_start(triggerTATargetAge) : anim_request_stop(triggerTATargetAge))
+let triggerTATargetInGimbal = {}
+TargetInZone.subscribe(@(v) !v ? anim_start(triggerTATargetInGimbal) : anim_request_stop(triggerTATargetInGimbal))
 let HelicopterTATarget = @(w, h, isForIls) function() {
 
   let VisibleWatch = isForIls ? AimLockValid : TATargetVisible
   let res = {
-    watch = [VisibleWatch, TargetX, TargetY, IsTargetTracked,
+    watch = [VisibleWatch, TargetX, TargetY, TargetInZone, IsTargetTracked,
       TargetAge, AlertColorHigh, IsLaserDesignatorEnabled]
-    animations = [{ prop = AnimProp.opacity, from = 0, to = 1, duration = 0.5, play = TargetAge.value > 0.2, loop = true, easing = InOutSine, trigger = triggerTATarget }]
-    key = TargetAge
+    animations = [
+      { prop = AnimProp.opacity, from = 0, to = 1, duration = 0.50, play = TargetAge.value > 0.2, loop = true, easing = InOutSine, trigger = triggerTATargetAge },
+      { prop = AnimProp.opacity, from = 0, to = 1, duration = 0.25, play = !TargetInZone.value, loop = true, easing = InOutSine, trigger = triggerTATargetInGimbal }
+    ]
+    key = [TargetAge, TargetInZone]
   }
 
   if (!VisibleWatch.value && TargetAge.value < 0.2)
     return res
 
-  // border
+  
   let taTargetcommands = [
     [VECTOR_LINE, -10, -10, 10, -10],
     [VECTOR_LINE, 10, -10, 10, 10],

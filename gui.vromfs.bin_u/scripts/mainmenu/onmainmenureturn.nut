@@ -1,7 +1,8 @@
 from "%scripts/dagui_natives.nut" import disable_network, copy_to_clipboard
 from "%scripts/dagui_library.nut" import *
 
-//checked for explicitness
+
+let { DM_VIEWER_ARMOR, DM_VIEWER_XRAY } = require("hangar")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { createSlotInfoPanel } = require("%scripts/slotInfoPanel.nut")
 let { claimRegionalUnlockRewards } = require("%scripts/unlocks/regionalUnlocks.nut")
@@ -30,7 +31,11 @@ let { checkUnlockedCountriesByAirs } = require("%scripts/firstChoice/firstChoice
 let { searchAndRepairInvalidPresets } = require("%scripts/weaponry/weaponryPresetsRepair.nut")
 let { checkDecalsOnOtherPlayersOptions }  = require("%scripts/customization/suggestionShowDecalsOnOtherPlayers.nut")
 let { addPopup } = require("%scripts/popups/popups.nut")
-let { isLoggedIn, isProfileReceived } = require("%scripts/login/loginStates.nut")
+let { isLoggedIn, isProfileReceived } = require("%appGlobals/login/loginState.nut")
+let { checkNonApprovedResearches } = require("%scripts/researches/researchActions.nut")
+let { checkReconnect } =require("%scripts/matchingRooms/sessionLobbyManager.nut")
+let { initUserPresence } = require("%scripts/userPresence.nut")
+let dmViewer = require("%scripts/dmViewer/dmViewer.nut")
 
 let delayed_gblk_error_popups = []
 function showGblkErrorPopup(errCode, path) {
@@ -45,7 +50,7 @@ function showGblkErrorPopup(errCode, path) {
                               text = loc("gblk/saveError/copy"),
                               func = @() copy_to_clipboard(msg) }])
 }
-::show_gblk_error_popup <- showGblkErrorPopup //called from the native code
+::show_gblk_error_popup <- showGblkErrorPopup 
 
 function popGblkErrorPopups() {
   if (!isLoggedIn.get())
@@ -60,14 +65,14 @@ function popGblkErrorPopups() {
 }
 
 
-//called after all first mainmenu actions
+
 function onMainMenuReturn(handler, isAfterLogin) {
   if (!handler)
     return
   local isAllowPopups = isProfileReceived.get() && !getFromSettingsBlk("debug/skipPopups")
   local guiScene = handler.guiScene
   if (isAfterLogin && isAllowPopups)
-    ::SessionLobby.checkReconnect()
+    checkReconnect()
 
   if (!isAfterLogin) {
     checkUnlockedCountriesByAirs()
@@ -81,13 +86,13 @@ function onMainMenuReturn(handler, isAfterLogin) {
   ::check_logout_scheduled()
 
   systemOptionsMaintain()
-  ::g_user_presence.init()
+  initUserPresence()
 
   if (isAllowPopups)
     handler.doWhenActive(@() checkShowGpuBenchmarkWnd())
 
   handler.doWhenActive(@() ::checkNewNotificationUserlogs())
-  handler.doWhenActive(@() ::checkNonApprovedResearches(true))
+  handler.doWhenActive(@() checkNonApprovedResearches(true))
 
   if (isAllowPopups) {
     handler.doWhenActive(@() checkNuclearEvent())
@@ -135,8 +140,8 @@ function onMainMenuReturn(handler, isAfterLogin) {
   }
 
   if (!isAfterLogin && isAllowPopups) {
-    handler.doWhenActive(@() ::dmViewer.checkShowViewModeTutor(DM_VIEWER_XRAY))
-    handler.doWhenActive(@() ::dmViewer.checkShowViewModeTutor(DM_VIEWER_ARMOR))
+    handler.doWhenActive(@() dmViewer.checkShowViewModeTutor(DM_VIEWER_XRAY))
+    handler.doWhenActive(@() dmViewer.checkShowViewModeTutor(DM_VIEWER_ARMOR))
   }
 
   if (isAfterLogin && isAllowPopups) {

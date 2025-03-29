@@ -4,7 +4,7 @@ from "%scripts/contacts/contactsConsts.nut" import contactEvent, GAME_GROUP_NAME
 let { broadcastEvent, addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { hardPersistWatched } = require("%sqstd/globalState.nut")
 let { request_nick_by_uid_batch } = require("%scripts/matching/requests.nut")
-let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
+let { isPlatformSony, is_gdk } = require("%scripts/clientState/platform.nut")
 let { get_charserver_time_sec } = require("chard")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { convertBlk } = require("%sqstd/datablock.nut")
@@ -12,7 +12,7 @@ let { isDataBlock } = require("%sqstd/underscore.nut")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
 let { userIdInt64 } = require("%scripts/user/profileStates.nut")
-let { isLoggedIn } = require("%scripts/login/loginStates.nut")
+let { isLoggedIn } = require("%appGlobals/login/loginState.nut")
 
 let contactsWndSizes = Watched(null)
 
@@ -43,41 +43,41 @@ let clanUserTable = mkWatched(persist, "clanUserTable", {})
 let contactsGroups = persist("contactsGroups", @() [])
 let contactsByName = persist("contactsByName", @() {})
 let contactsPlayers = persist("contactsPlayers", @() {})
-/*
-  "12345" = {  //uid
-    name = "WINLAY"
-    uid = "12345"
-    presence = { ... }
-  }
-*/
-let contactsByGroups = persist("contactsByGroups", @() {})
-/*
-{
-  friend = [
-    {  //uid
-      name = "WINLAY"
-      uid = "12345"
-      presence = { ... }
-    }
-  ]
-  met = []
-  block = []
-  search = []
-}
-*/
 
-let predefinedContactsGroupToWtGroup = { //To switch from contacts from a char to a contact service without changing in contacts group view.
+
+
+
+
+
+
+let contactsByGroups = persist("contactsByGroups", @() {})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let predefinedContactsGroupToWtGroup = { 
   approved = EPL_FRIENDLIST
   myRequests = EPL_FRIENDLIST
   myBlacklist = EPL_BLOCKLIST
 }
 
-let additionalConsolesContacts = //TO DO: save wt groups to watched and use computed instead of this table
+let additionalConsolesContacts = 
   isPlatformSony ? {
       [EPLX_PS4_FRIENDS] = psnApprovedUids,
       [EPL_BLOCKLIST] = psnBlockedUids
     }
-  : isPlatformXboxOne ? {
+  : is_gdk ? {
       [EPL_FRIENDLIST] = xboxApprovedUids,
       [EPL_BLOCKLIST] = xboxBlockedUids
     }
@@ -85,6 +85,15 @@ let additionalConsolesContacts = //TO DO: save wt groups to watched and use comp
 
 let cacheContactByName = @(contact) contactsByName[contact.name] <- contact
 let getContactByName = @(name) contactsByName?[name]
+
+let findContactByPSNId = @(psnId) contactsPlayers.findvalue(@(player) player.psnId == psnId)
+
+function findContactByXboxId(xboxId) {
+  foreach (_uid, player in contactsPlayers)
+    if (player.xboxId == xboxId)
+      return player
+  return null
+}
 
 function verifyContact(params) {
   let name = params?.playerName
@@ -110,7 +119,7 @@ function addContact(v_contact, groupName, params = {}) {
   if (!contact)
     return null
 
-  addContactGroup(groupName) //Group can be not exist in list
+  addContactGroup(groupName) 
 
   let uid = contact.uid
   if (uid not in contactsByGroups[groupName])
@@ -152,13 +161,13 @@ function loadRecentGroupOnce() {
   if (uidsForNickRequest.len() == 0)
     return
 
-  request_nick_by_uid_batch(uidsForNickRequest, function(resp) { //TO DO: Need to replace this with a contact request from a contact service
+  request_nick_by_uid_batch(uidsForNickRequest, function(resp) { 
     let nicksByUids = resp?.result
     if (nicksByUids == null)
       return
 
     foreach (uid, nick in nicksByUids)
-      ::getContact(uid, nick)  //create contact
+      ::getContact(uid, nick)  
 
     updateRecentGroup(recentGroup.value)
   })
@@ -204,7 +213,7 @@ let buildFullListName = @(name) $"#{GAME_GROUP_NAME}#{name}"
 
 function updateConsolesGroups() {
   foreach (wtGroup, group in additionalConsolesContacts) {
-    addContactGroup(wtGroup) //always show console group on consoles
+    addContactGroup(wtGroup) 
     foreach (uid, _ in group.value)
       addContact(::getContact(uid), wtGroup)
   }
@@ -246,7 +255,7 @@ function updateContactsGroups(groups) {
       })
 
       if (!contact) {
-        let myUserId = userIdInt64.value // warning disable: -declared-never-used
+        let myUserId = userIdInt64.value 
         let errText = playerUid ? "player not found" : "not valid data"
         script_net_assert_once("not found contact for group", errText)
         continue
@@ -277,7 +286,7 @@ function updateContactsListFromContactsServer(res) {
     if (uidStr not in blockedMeUids.value)
       uidsChanged[uidStr] <- true
   }
-  if (uidsChanged.len() == 0 && newBlockedMeUids.len() == blockedMeUids.value.len()) //no changed
+  if (uidsChanged.len() == 0 && newBlockedMeUids.len() == blockedMeUids.value.len()) 
     return
 
   foreach (uid, _ in blockedMeUids.value)
@@ -343,4 +352,6 @@ return {
   contactsGroupWithoutMaxCount
   getContactsGroupUidList
   clanUserTable
+  findContactByPSNId
+  findContactByXboxId
 }

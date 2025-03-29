@@ -1,6 +1,6 @@
 from "%scripts/dagui_natives.nut" import get_login_pass, check_login_pass, save_profile, dgs_argv, dgs_argc, dgs_get_argv, get_cur_circuit_name, set_login_pass, load_local_settings, enable_keyboard_layout_change_tracking, is_steam_big_picture, enable_keyboard_locks_change_tracking, get_two_step_code_async2, set_network_circuit
 from "%scripts/dagui_library.nut" import *
-from "%scripts/login/loginConsts.nut" import LOGIN_STATE, USE_STEAM_LOGIN_AUTO_SETTING_ID
+from "%appGlobals/login/loginConsts.nut" import LOGIN_STATE, USE_STEAM_LOGIN_AUTO_SETTING_ID
 from "%scripts/options/optionsCtors.nut" import create_option_combobox
 
 let { BaseGuiHandler } = require("%sqDagui/framework/baseGuiHandler.nut")
@@ -30,7 +30,8 @@ let { isPlatformShieldTv } = require("%scripts/clientState/platform.nut")
 let { saveLocalSharedSettings, loadLocalSharedSettings
 } = require("%scripts/clientState/localProfile.nut")
 let { OPTIONS_MODE_GAMEPLAY } = require("%scripts/options/optionsExtNames.nut")
-let { getGameLocalizationInfo, setGameLocalization, canSwitchGameLocalization } = require("%scripts/langUtils/language.nut")
+let { getGameLocalizationInfo, setGameLocalization, canSwitchGameLocalization, getCurLangShortName
+} = require("%scripts/langUtils/language.nut")
 let { get_network_block } = require("blkGetters")
 let { getCurCircuitOverride } = require("%appGlobals/curCircuitOverride.nut")
 let { steam_is_running } = require("steam")
@@ -38,6 +39,10 @@ let { havePlayerTag } = require("%scripts/user/profileStates.nut")
 let { bqSendNoAuth, bqSendNoAuthWeb } = require("%scripts/bigQuery/bigQueryClient.nut")
 let { webauth_start, webauth_stop, webauth_get_url, webauth_completion_event } = require("webauth")
 let openEditBoxDialog = require("%scripts/wndLib/editBoxHandler.nut")
+let { close_browser_modal, browser_set_external_url } = require("%scripts/onlineShop/browserWndActions.nut")
+let { addLoginState } = require("%scripts/login/loginManager.nut")
+let { set_autologin_enabled, is_autologin_enabled } = require("%scripts/options/optionsBeforeLogin.nut")
+let { setProjectAwards } = require("%scripts/viewUtils/projectAwards.nut")
 
 const MAX_GET_2STEP_CODE_ATTEMPTS = 10
 const GUEST_LOGIN_SAVE_ID = "guestLoginId"
@@ -81,7 +86,7 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
   localizationInfo = null
 
   initial_autologin = false
-  stoken = "" //note: it's safe to keep it here even if it's dumped to log
+  stoken = "" 
   was_using_stoken = false
   isLoginRequestInprogress = false
   requestGet2stepCodeAtempt = 0
@@ -100,7 +105,7 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
   function initScreen() {
     animBgLoad()
     setVersionText()
-    ::setProjectAwards(this)
+    setProjectAwards(this)
     showTitleLogo(this.scene, 128)
     this.initLanguageSwitch()
     this.checkShardingCircuits()
@@ -111,7 +116,7 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
 
     let bugDiscObj = this.scene.findObject("browser_bug_disclaimer")
     if (checkObj(bugDiscObj))
-      bugDiscObj.show(platformId == "linux64" && is_steam_big_picture()) //STEAM_OS
+      bugDiscObj.show(platformId == "linux64" && is_steam_big_picture()) 
 
     let lp = get_login_pass()
     let disableSSLCheck = lp.autoSave & AUTO_SAVE_FLG_NOSSLCERT
@@ -149,7 +154,7 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
     showObjById("sso_login_action_button", showWebLogin, this.scene)
     showObjById("btn_signUp_link", !showSteamLogin, this.scene)
 
-    this.initial_autologin = ::is_autologin_enabled()
+    this.initial_autologin = is_autologin_enabled()
 
     let saveLoginAndPassMask = AUTO_SAVE_FLG_LOGIN | AUTO_SAVE_FLG_PASS
     let autoLoginEnable = (lp.autoSave & saveLoginAndPassMask) == saveLoginAndPassMask
@@ -325,6 +330,9 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
       handler = this
       closeOnUnhover = true
       actions = []
+      cssParams = {
+        hasAnim = "yes"
+      }
     }
     for (local i = 0; i < this.localizationInfo.len(); i++) {
       let lang = this.localizationInfo[i]
@@ -382,10 +390,10 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
   function requestLoginWithCode(no_dump_login, code) {
     statsd.send_counter("sq.game_start.request_login", 1, { login_type = "regular" })
     log("Login: check_login_pass")
-    ::g_login.addState(LOGIN_STATE.LOGIN_STARTED)
+    addLoginState(LOGIN_STATE.LOGIN_STARTED)
     return check_login_pass(no_dump_login,
                               getObjValue(this.scene, "loginbox_password", ""),
-                              this.check2StepAuthCode ? "" : this.stoken, //after trying use stoken it's set to "", but to be sure - use "" for 2stepAuth
+                              this.check2StepAuthCode ? "" : this.stoken, 
                               code,
                               this.check2StepAuthCode
                                 ? getObjValue(this.scene, "loginbox_code_remember_this_device", false)
@@ -426,17 +434,17 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
       saveLocalSharedSettings(GUEST_LOGIN_SAVE_ID, getGuestLoginId())
 
     set_login_pass(no_dump_login.tostring(), getObjValue(this.scene, "loginbox_password", ""), autoSave)
-    if (!checkObj(this.scene)) //set_login_pass start onlineJob
+    if (!checkObj(this.scene)) 
       return
 
     let autoLogin = (autoSaveLogin && autoSavePassword) ?
                 getObjValue(this.scene, "loginbox_autologin", this.defaultSaveAutologinFlagVal)
                 : false
-    ::set_autologin_enabled(autoLogin)
+    set_autologin_enabled(autoLogin)
     if (this.initial_autologin != autoLogin)
       save_profile(false)
 
-    ::g_login.addState(LOGIN_STATE.AUTHORIZED)
+    addLoginState(LOGIN_STATE.AUTHORIZED)
   }
 
   function onOk() {
@@ -466,7 +474,7 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
     set_disable_autorelogin_once(false)
     statsd.send_counter("sq.game_start.request_login", 1, { login_type = "steam" })
     log($"Steam Login: check_login_pass with code {steamSpecCode}")
-    ::g_login.addState(LOGIN_STATE.LOGIN_STARTED)
+    addLoginState(LOGIN_STATE.LOGIN_STARTED)
     let result = check_login_pass("", "", "steam", steamSpecCode, false, false)
     this.proceedAuthorizationResult(result, "")
   }
@@ -477,11 +485,11 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
     let no_dump_login = getObjValue(this.scene, "loginbox_username", "")
     let no_dump_url = webauth_get_url(no_dump_login)
     openUrl(no_dump_url)
-    ::browser_set_external_url(no_dump_url)
+    browser_set_external_url(no_dump_url)
   }
 
   function onSsoAuthorizationComplete(params) {
-    ::close_browser_modal()
+    close_browser_modal()
 
     if (params.success) {
       let no_dump_login = getObjValue(this.scene, "loginbox_username", "")
@@ -520,7 +528,7 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
 
   function proceedAuthorizationResult(result, no_dump_login) {
     this.isLoginRequestInprogress = false
-    if (!checkObj(this.scene)) //check_login_pass is not instant
+    if (!checkObj(this.scene)) 
       return
 
     this.was_using_stoken = (this.stoken != "")
@@ -533,7 +541,7 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
 
     else if ( result == YU2_2STEP_AUTH) {
       bqSendNoAuth("auth:2step")
-      //error, received if user not logged, because he have 2step authorization activated
+      
       this.check2StepAuthCode = true
       showObjById("loginbox_code_remember_this_device", true, this.scene)
       showObjById("loginbox_remote_comp", false, this.scene)
@@ -560,7 +568,7 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
       bqSendNoAuth(result == YU2_WRONG_LOGIN ? "auth:wrong_login" : "auth:wrong_param")
       if (this.was_using_stoken)
         return;
-      ::error_message_box("yn1/connect_error", result, // auth error
+      ::error_message_box("yn1/connect_error", result, 
       [
         ["recovery", @() openUrl(getCurCircuitOverride("recoveryPasswordURL", loc("url/recovery")), false, false, "login_wnd")],
         ["exit", exitGame],
@@ -644,9 +652,8 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
     }
     else
       urlLocId = "url/signUp"
-
     bqSendNoAuthWeb($"sign_up{platform}")
-    openUrl(getCurCircuitOverride("signUpURL", loc(urlLocId)).subst({ distr = getDistr() }), false, false, "login_wnd")
+    openUrl(getCurCircuitOverride("signUpURL", loc(urlLocId)).subst({ distr = getDistr(), lang = getCurLangShortName() }), false, false, "login_wnd")
   }
 
   function onForgetPassword() {
@@ -655,7 +662,7 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
   }
 
   function onChangeLogin(obj) {
-    //Don't save value to local, so it doens't appear in logs.
+    
     let res = !validateEmail(obj.getValue()) && (this.stoken == "")
     obj.warning = res ? "yes" : "no"
     obj.warningText = res ? "yes" : "no"
@@ -702,7 +709,7 @@ gui_handlers.LoginWndHandler <- class (BaseGuiHandler) {
     statsd.send_counter("sq.game_start.request_login", 1, { login_type = "guest" })
     log("Guest Login: check_login_pass")
     bqSendNoAuth("guest:login")
-    ::g_login.addState(LOGIN_STATE.LOGIN_STARTED)
+    addLoginState(LOGIN_STATE.LOGIN_STARTED)
     let result = check_login_pass(guestLoginId, nick, "guest", $"guest{known ? "-known" : ""}", false, false)
     this.proceedAuthorizationResult(result, "")
   }

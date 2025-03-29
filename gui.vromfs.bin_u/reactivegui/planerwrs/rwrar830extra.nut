@@ -24,7 +24,7 @@ let styleText = {
   font = Fonts.hud
   fontFxColor = Color(0, 0, 0, 255)
   fontFxFactor = max(70, baseLineWidth * 90)
-  fontSize = getFontDefHt("hud") * 1.0
+  fontSize = 10
 }
 
 function createBackground() {
@@ -102,6 +102,11 @@ let directionGroups = [
     originalName = "S24",
   },
   {
+    text = "S30",
+    type = ThreatType.AI,
+    originalName = "S30",
+  },
+  {
     text = "F4",
     type = ThreatType.AI,
     originalName = "F4",
@@ -156,6 +161,12 @@ let directionGroups = [
     lethalRangeMax = 5000.0
   },
   {
+    text = "E2K",
+    type = ThreatType.AI,
+    originalName = "E2K",
+    lethalRangeMax = 40000.0
+  },
+  {
     text = "BCR",
     type = ThreatType.AI,
     originalName = "BCR",
@@ -191,6 +202,12 @@ let directionGroups = [
     lethalRangeMax = 40000.0
   },
   {
+    text = "RFL",
+    type = ThreatType.AI,
+    originalName = "RFL",
+    lethalRangeMax = 40000.0
+  },
+  {
     text = "A32",
     type = ThreatType.AI,
     originalName = "A32",
@@ -220,7 +237,7 @@ let directionGroups = [
     originalName = "J17",
     lethalRangeMax = 40000.0
   },
-  //
+  
 
 
 

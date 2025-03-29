@@ -4,7 +4,7 @@
 @const tooltipAnimationHeight: 3/4@tooltipAnimationWidth\1;
 @const tooltipAnimationWidth: (600@sf/@pf)\1;
 
-@const weaponsPresetDescriptionWidth: 1@narrowTooltipWidth+1@scrollBarSize+2@framePadding;
+@const weaponsPresetDescriptionWidth: 1@bulletTooltipCardWidthNarrow+1@scrollBarSize+2@framePadding;
 
 @const modBgColor                 :#ff171b20;
 @const modBorderColor             :#ff263138;
@@ -17,6 +17,8 @@
 @const bgrPresetColor             :#171b23;
 @const chosenPresetColor          :#28333c;
 @const selectedPresetBorderColor  :#677282;
+
+@const penetrationTableFirstColWidth: 50@sf/@pf;
 
 weaponry_item {
   mouse-pointer-centering:50, 75;
@@ -517,9 +519,9 @@ progressBonus {
 }
 
 progressBonus.summary {
-  width: pw - 40@sf/@pf;
+  width: pw - 1@modBlockTierNumHeight - 1@blockInterval + 3@sf/@pf;
   margin-top: 10@sf/@pf;
-  margin-left: 36@sf/@pf;
+  margin-left: 1@modBlockTierNumHeight;
   height: 16@sf/@pf;
   halign: none;
 }
@@ -537,4 +539,26 @@ progressBonus > progressCurrent > progressThumb {
   pos: pw - w/2, ph/2 - h/2;
   background-image:#ui/gameuiskin#bonus_progress_thumb;
   background-color: @white;
+}
+
+weaponTooltipBlock tooltipDesc {
+  width:pw;
+  max-width: pw;
+  color:@minorTextColor;
+}
+
+weaponTooltipBlock {
+  border-color:@frameDarkMenuBorderColor;
+  border:yes;
+  background-color:@weaponCardBackgroundColor;
+}
+
+horizontalLine {
+  background-color:@frameDarkMenuBorderColor;
+  height:1@sf/@pf;
+}
+
+verticalLine {
+  background-color:@frameDarkMenuBorderColor;
+  width:1@sf/@pf;
 }

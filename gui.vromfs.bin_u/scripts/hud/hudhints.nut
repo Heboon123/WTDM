@@ -4,6 +4,7 @@ from "%scripts/hud/hudConsts.nut" import HINT_INTERVAL
 from "%scripts/viewUtils/hints.nut" import g_hints, g_hint_tag
 from "%scripts/utils_sa.nut" import get_team_color, get_mplayer_color
 
+let DataBlock = require("DataBlock")
 let { g_shortcut_type } = require("%scripts/controls/shortcutType.nut")
 let { g_hud_action_bar_type } = require("%scripts/hud/hudActionBarType.nut")
 let { g_difficulty } = require("%scripts/difficulty.nut")
@@ -21,12 +22,15 @@ let { HUD_UNIT_TYPE } = require("%scripts/hud/hudUnitType.nut")
 let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { startsWith } = require("%sqstd/string.nut")
 let { get_mplayer_by_id } = require("mission")
-let { get_mission_difficulty, OBJECTIVE_TYPE_PRIMARY, OBJECTIVE_TYPE_SECONDARY } = require("guiMission")
+let { get_mission_difficulty, get_current_mission_desc,
+  OBJECTIVE_TYPE_PRIMARY, OBJECTIVE_TYPE_SECONDARY } = require("guiMission")
 let { loadLocalAccountSettings, saveLocalAccountSettings} = require("%scripts/clientState/localProfile.nut")
 let { register_command } = require("console")
 let { isEqual } = require("%sqstd/underscore.nut")
 let { g_hud_hint_types } = require("%scripts/hud/hudHintTypes.nut")
 let { objectiveStatus } = require("%scripts/misObjectives/objectiveStatus.nut")
+let { getLocalTeamForMpStats } = require("%scripts/statistics/mpStatisticsUtil.nut")
+let { getCurControlsPreset } = require("%scripts/controls/controlsState.nut")
 
 const DEFAULT_MISSION_HINT_PRIORITY = 100
 const CATASTROPHIC_HINT_PRIORITY = 0
@@ -61,7 +65,7 @@ g_hud_hints._getHintMarkupParams <- function _getHintMarkupParams(eventData, hin
     id = hintObjId || this.name
     style = this.getHintStyle()
     time = this.getTimerTotalTimeSec(eventData)
-    timeoffset = this.getTimerCurrentTimeSec(eventData, get_time_msec()) //creation time right now
+    timeoffset = this.getTimerCurrentTimeSec(eventData, get_time_msec()) 
     animation = this.shouldBlink ? "wink" : this.shouldFadeOut ? "show" : null
     showKeyBoardShortcutsForMouseAim = eventData?.showKeyBoardShortcutsForMouseAim ?? false
     isVerticalAlignText = this.isVerticalAlignText
@@ -84,7 +88,7 @@ let getRawShortcutsArray = function(shortcuts) {
 }
 
 function getUniqueShortcuts(shortcuts) {
-  let preset = ::g_controls_manager.getCurPreset()
+  let preset = getCurControlsPreset()
   let uniqHotkeys = [preset.getHotkey(shortcuts[0])]
   let uniqShortcuts = [shortcuts[0]]
 
@@ -142,17 +146,17 @@ g_hud_hints._buildText <- function _buildText(data) {
   let locParams = this.getLocParams(data).__update({ shortcut = shortcutTag })
   local result = loc(this.getLocId(data), locParams)
 
-  //If shortcut not specified in localization string it should
-  //be placed at the beginig
+  
+  
   if (shortcutTag != "" && result.indexof(shortcutTag) == null)
     result = $"{shortcutTag} {result}"
 
   return result
 }
 
-/**
- * Return true if only one shortcut should be picked from @shortcutArray
- */
+
+
+
 g_hud_hints.shouldPickFirstValid <- function shouldPickFirstValid(shortcutArray) {
   foreach (shortcutId in shortcutArray)
     if (startsWith(shortcutId, "@"))
@@ -162,7 +166,7 @@ g_hud_hints.shouldPickFirstValid <- function shouldPickFirstValid(shortcutArray)
 
 g_hud_hints.pickFirstValidShortcut <- function pickFirstValidShortcut(shortcutArray) {
   foreach (shortcutId in shortcutArray) {
-    local localShortcutId = shortcutId //to avoid changes in original array
+    local localShortcutId = shortcutId 
     if (startsWith(localShortcutId, "@"))
       localShortcutId = localShortcutId.slice(1)
     let shortcutType = g_shortcut_type.getShortcutTypeByShortcutId(localShortcutId)
@@ -219,7 +223,7 @@ g_hud_hints._getHintStyle <- function _getHintStyle() {
   return this.hintType.hintStyle
 }
 
-//all obsolette hinttype names must work as standard mission hint
+
 let isStandardMissionHint = @(hintTypeName)
   hintTypeName != MISSION_HINT_TYPE.TUTORIAL && hintTypeName != MISSION_HINT_TYPE.BOTTOM
 
@@ -281,7 +285,7 @@ let genMissionHint = @(hintType, checkHintTypeNameFunc) {
   getHintMarkupParams = function(eventData, hintObjId) {
     let res = g_hud_hints._getHintMarkupParams.call(this, eventData, hintObjId)
     res.hideWhenStopped <- true
-    res.timerOffsetX <- "-w" //to timer do not affect message position.
+    res.timerOffsetX <- "-w" 
     res.isOrderPopup <- getTblValue("isOverFade", eventData, false)
     res.isVerticalAlignText = this.isVerticalAlignText && this.getTimerTotalTimeSec(eventData) != 0
 
@@ -341,7 +345,7 @@ function getHintSeenData(uid) {
   local hintSeenData = cachedHintsSeenData?[hintIdString]
 
   if (hintSeenData == null) {
-    //get_hint_seen_count used for compability with 2.29.0.X
+    
     let hint = g_hud_hints.getByUid(uid)
     let showedCount = hint ? get_hint_seen_count(hint.maskId) : 0
     hintSeenData = {
@@ -424,15 +428,15 @@ function getHintByShowEvent(showEvent) {
 
 
 g_hud_hints.template <- {
-  name = "" //generated by typeName. Used as id in hud scene.
-  typeName = "" //filled by typeName
+  name = "" 
+  typeName = "" 
   locId = ""
   noKeyLocId = ""
-  image = null //used only when no shortcuts
+  image = null 
   hintType = g_hud_hint_types.COMMON
   uid = -1
   priority = 0
-  //for long hints with shortcuts
+  
   isWrapInRowAllowed = false
 
   getHintNestId = g_hud_hints._getHintNestId
@@ -446,13 +450,13 @@ g_hud_hints.template <- {
   getPriority = function(eventData) { return getTblValue("priority", eventData, this.priority) }
   isCurrent = @(_eventData, _isHideEvent) true
 
-  //Some hints contain shortcuts. If there is only one shortuc in hint (common case)
-  //just put shirtcut id in shortcuts field.
-  //If there is more then one shortuc, the should be representd as table.
-  //shortcut table format: {
-  //  locArgumentName = shortcutid
-  //}
-  //locArgument will be used as wildcard id for locization text
+  
+  
+  
+  
+  
+  
+  
   shortcuts = null
   getShortcuts          = g_hud_hints._getShortcuts
   buildMarkup           = g_hud_hints._buildMarkup
@@ -461,16 +465,16 @@ g_hud_hints.template <- {
   getLifeTime           = g_hud_hints._getLifeTime
   isEnabledByDifficulty = @() !this.isAllowedByDiff || (this.isAllowedByDiff?[get_mission_difficulty()] ?? true)
 
-  selfRemove = false //will be true if lifeTime > 0
+  selfRemove = false 
   lifeTime = 0.0
-  secondsOfForgetting = 0 //seconds after which seenCount reset to zero
+  secondsOfForgetting = 0 
   getTimerTotalTimeSec    = function(eventData) { return this.getLifeTime(eventData) }
   getTimerCurrentTimeSec  = function(_eventData, hintAddTime) {
     return time.millisecondsToSeconds(get_time_msec() - hintAddTime)
   }
 
   isInstantHide = @(_eventData) true
-  hideHint = function(hintObject, _isInstant) {  //return <need to instant hide when new hint appear>
+  hideHint = function(hintObject, _isInstant) {  
     hintObject.getScene().destroyElement(hintObject)
     return false
   }
@@ -480,9 +484,9 @@ g_hud_hints.template <- {
   showEvent = ""
   hideEvent = null
   toggleHint = null
-  updateCbs = null //{ <hudEventName> = function(hintData, eventData) { return <needUpdate (bool)>} } //hintData can be null
+  updateCbs = null 
 
-  countIntervals = null // for example [{count = 5, timeInterval = 60.0 }, { ... }, ...]
+  countIntervals = null 
   delayTime = 0.0
   isAllowedByDiff  = null
   totalCount = -1
@@ -516,7 +520,7 @@ g_hud_hints.template <- {
     return interval
   }
 
-  updateHintOptionsBlk = function(_blk) {} //special options for native hints
+  updateHintOptionsBlk = function(_blk) {} 
 }
 
 enums.addTypes(g_hud_hints, {
@@ -547,7 +551,7 @@ enums.addTypes(g_hud_hints, {
       let hudUnitType = getHudUnitType()
       return hudUnitType == HUD_UNIT_TYPE.HELICOPTER ? "hints/bailout_helicopter_in_progress"
         : hudUnitType == HUD_UNIT_TYPE.AIRCRAFT ? "hints/bailout_in_progress"
-        : "hints/leaving_the_tank_in_progress" //this localization is more general, then the "air" one
+        : "hints/leaving_the_tank_in_progress" 
     }
 
     showEvent = "hint:bailout:startBailout"
@@ -644,7 +648,7 @@ enums.addTypes(g_hud_hints, {
       }
       {
         count = 10
-        timeInterval = 100000.0 //once per mission
+        timeInterval = 100000.0 
       }
     ]
     maskId = 11
@@ -917,7 +921,7 @@ enums.addTypes(g_hud_hints, {
       }
       {
         count = 10
-        timeInterval = 100000.0 //once per mission
+        timeInterval = 100000.0 
       }
     ]
     lifeTime = 5.0
@@ -926,7 +930,7 @@ enums.addTypes(g_hud_hints, {
     uid = 10
 
     updateHintOptionsBlk = function(blk) {
-       //float params only.
+       
        blk.shotTooFarMaxAngle = 5.0
        blk.shotTooFarDistanceFactor = 21.5
     }
@@ -945,7 +949,7 @@ enums.addTypes(g_hud_hints, {
       }
       {
         count = 10
-        timeInterval = 100000.0 //once per mission
+        timeInterval = 100000.0 
       }
     ]
     isAllowedByDiff  = {
@@ -957,7 +961,7 @@ enums.addTypes(g_hud_hints, {
     uid = 10
 
     updateHintOptionsBlk = function(blk) {
-      //float params only
+      
       blk.forestallMaxTargetAngle = 2.0
       blk.forestallMaxAngle = 4.0
     }
@@ -1166,7 +1170,7 @@ enums.addTypes(g_hud_hints, {
       if (eventData?.participant)
         participantList = u.isArray(eventData.participant) ? eventData.participant : [eventData.participant]
 
-      let playerTeam = ::get_local_team_for_mpstats()
+      let playerTeam = getLocalTeamForMpStats()
       foreach (participant in participantList) {
         let  participantPlayer = "player" in participant
             ? participant.player
@@ -1176,7 +1180,7 @@ enums.addTypes(g_hud_hints, {
         if (!(participant?.image && participantPlayer))
           continue
 
-        // Expected participant.image values are listed in "eventsIcons" block of hud.blk
+        
         let icon = $"#ui/gameuiskin#{participant.image}"
         let color = $"@{get_mplayer_color(participantPlayer)}"
         let pStr = this.makeSmallImageStr(icon, color)
@@ -1692,7 +1696,7 @@ enums.addTypes(g_hud_hints, {
       return hudUnitType == HUD_UNIT_TYPE.SHIP || hudUnitType == HUD_UNIT_TYPE.SHIP_EX
         ? g_hud_action_bar_type.TOOLKIT.getVisualShortcut()
         : hudUnitType == HUD_UNIT_TYPE.HUMAN ? "ID_REPAIR_HUMAN"
-        //
+        
 
 
         : "ID_REPAIR_TANK"
@@ -2070,7 +2074,7 @@ enums.addTypes(g_hud_hints, {
   }
 
   ACCEPT_SORRY_OFFER = {
-    hintType = g_hud_hint_types.REPAIR // must be visible in cutscene (killcam)
+    hintType = g_hud_hint_types.REPAIR 
     locId = "hints/accept_sorry"
     getNoKeyLocId = @() isXInputDevice()
       ? "hints/accept_sorry_nokey/xinput"
@@ -2089,7 +2093,7 @@ enums.addTypes(g_hud_hints, {
   }
 
   AWAIT_SORRY = {
-    hintType = g_hud_hint_types.REPAIR // should be same as ACCEPT_SORRY_OFFER
+    hintType = g_hud_hint_types.REPAIR 
     locId     = "hints/await_sorry"
     showEvent = "hint:await_sorry:show"
     hideEvent = "hint:await_sorry:hide"
@@ -2252,7 +2256,7 @@ enums.addTypes(g_hud_hints, {
     hintType = g_hud_hint_types.MISSION_ACTION_HINTS
     showEvent = "hint:target_lock_sensor_disabled"
     locId = "hints/target_lock_sensor_disabled"
-    //noKeyLocId = "hints/target_lock_sensor_disabled_nokey"
+    
     getShortcuts = @(_data)
         getHudUnitType() == HUD_UNIT_TYPE.AIRCRAFT ? "ID_SENSOR_SWITCH"
         : getHudUnitType() == HUD_UNIT_TYPE.TANK ? "ID_SENSOR_SWITCH_TANK"
@@ -2640,7 +2644,13 @@ enums.addTypes(g_hud_hints, {
   AMMO_USED_EXIT_ZONE = {
     hintType = g_hud_hint_types.MISSION_ACTION_HINTS
     showEvent = "hint:ammo_used_exit_zone:show"
-    locId = "hints/ammo_used_exit_zone"
+    getLocId = function(_hintData) {
+      let misBlk = DataBlock()
+      get_current_mission_desc(misBlk)
+      return misBlk?.shouldReturnSpawnCostInExitZone
+        ? "\n".concat(loc("hints/ammo_used_exit_zone"), loc("hints/return_spawn_cost_exit_zone"))
+        : "hints/ammo_used_exit_zone"
+    }
     lifeTime = 15.0
     isHideOnDeath = true
     isHideOnWatchedHeroChanged = true
@@ -2759,6 +2769,20 @@ enums.addTypes(g_hud_hints, {
     buildText = @(data) data.isShrinkZone ? colorize("@red", data.text) : colorize("@white", data.text)
     shouldBlink = true
     isAllowedByDiff = { [g_difficulty.SIMULATOR.name] = false }
+  }
+
+  MANUAL_SENSOR_CUE_CONTROL = {
+    hintType  = g_hud_hint_types.REPAIR
+    locId     = "hints/manual_sensor_cue_control"
+    showEvent = "hint:manual_sensor_cue_control"
+    lifeTime  = 5.0
+  }
+
+  MANUAL_SENSOR_TILT_CONTROL = {
+    hintType  = g_hud_hint_types.REPAIR
+    locId     = "hints/manual_sensor_tilt_control"
+    showEvent = "hint:manual_sensor_tilt_control"
+    lifeTime  = 5.0
   }
 },
 function() {

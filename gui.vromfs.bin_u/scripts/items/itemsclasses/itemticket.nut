@@ -16,12 +16,13 @@ let { addToText } = require("%scripts/unlocks/unlocksConditions.nut")
 let { get_charserver_time_sec } = require("chard")
 let { isRaceEvent } = require("%scripts/events/eventInfo.nut")
 let { BaseItem } = require("%scripts/items/itemsClasses/itemsBase.nut")
+let { registerItemClass } = require("%scripts/items/itemsTypeClasses.nut")
 
 let Ticket = class (BaseItem) {
   static iType = itemType.TICKET
   static name = "Ticket"
   static defaultLocId = "ticket"
-  //static defaultIcon = "#ui/gameuiskin#items_booster_shape1"
+  
   static typeIcon = "#ui/gameuiskin#item_type_tickets.svg"
   static linkActionLocId = "mainmenu/signUp"
 
@@ -29,7 +30,7 @@ let Ticket = class (BaseItem) {
 
   canBuy = true
 
-  eventEconomicNamesArray = null // Event's economic name.
+  eventEconomicNamesArray = null 
   isActiveTicket = false
   haveAwards = false
   maxDefeatCount = 0
@@ -57,7 +58,7 @@ let Ticket = class (BaseItem) {
     else {
       let tournamentBlk = get_tournaments_blk()
       this.clanTournament = this.clanTournament || getBlkValueByPath(tournamentBlk, $"{this.eventEconomicNamesArray[0]}/clanTournament", false)
-      //handling closed sales
+      
       this.canBuy = this.canBuy && !getBlkValueByPath(tournamentBlk, $"{this.eventEconomicNamesArray[0]}/saleClosed", false)
 
       if (this.isInventoryItem && !this.isActiveTicket) {
@@ -255,14 +256,14 @@ let Ticket = class (BaseItem) {
       }
     }
 
-    // Check for total defeats count.
+    
     let checkTotalDefCount = this._checkTicketDefCount(data.defCount, this.maxDefeatCount, data.numUnfinishedSessions)
 
-    // Check for sequence defeats count.
+    
     let checkSequenceDefCount = this._checkTicketDefCount(data.sequenceDefeatCount, this.maxSequenceDefeatCount, data.numUnfinishedSessions)
 
-    // Player can't join ticket's tournament if number of
-    // unfinished sessions exceeds number of possible defeats.
+    
+    
     data.canJoinTournament <- checkTotalDefCount && checkSequenceDefCount
     return data
   }
@@ -383,4 +384,4 @@ let Ticket = class (BaseItem) {
   }
 }
 
-return {Ticket}
+registerItemClass(Ticket)

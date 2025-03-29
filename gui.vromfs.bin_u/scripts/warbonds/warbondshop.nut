@@ -21,6 +21,11 @@ let { canStartPreviewScene } = require("%scripts/customization/contentPreview.nu
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { guiStartBattleTasksWnd } = require("%scripts/unlocks/battleTasksHandler.nut")
 let { generatePaginator } = require("%scripts/viewUtils/paginator.nut")
+let { maxAllowedWarbondsBalance } = require("%scripts/warbonds/warbondsState.nut")
+let { getWarbondsList, getCurrentWarbond, getWarbondAwardByFullId
+} = require("%scripts/warbonds/warbondsManager.nut")
+let { fillWarbondAwardDesc } = require("%scripts/warbonds/warbondAwardView.nut")
+let getNavigationImagesText = require("%scripts/utils/getNavigationImagesText.nut")
 
 gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
   wndType = handlerType.MODAL
@@ -41,7 +46,7 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
   isMouseMode = true
 
   function initScreen() {
-    this.wbList = ::g_warbonds.getList(this.filterFunc)
+    this.wbList = getWarbondsList(this.filterFunc)
     if (!this.wbList.len())
       return this.goBack()
 
@@ -74,7 +79,7 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
       view.tabs.append({
         id = this.getTabId(i)
         object = wb.haveAnyOrdinaryRequirements() ? g_warbonds_view.getCurrentLevelItemMarkUp(wb) : null
-        navImagesText = ::get_navigation_images_text(i, this.wbList.len())
+        navImagesText = getNavigationImagesText(i, this.wbList.len())
         unseenIcon = bhvUnseen.makeConfigStr(SEEN.WARBONDS_SHOP, wb.getSeenId())
       })
 
@@ -111,7 +116,7 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
     this.initItemsProgress()
     this.fillPage()
     this.updateBalance()
-    this.updateTabsTexts() //to reccount tabs textarea colors
+    this.updateTabsTexts() 
   }
 
   function initItemsListSize() {
@@ -180,7 +185,7 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
   function updatePaginator() {
     let totalPages = this.curWb ? ceil(this.curWb.getAwardsList().len().tofloat() / this.itemsPerPage) : 1
     generatePaginator(this.scene.findObject("paginator_place"), this,
-      this.curPage, totalPages - 1, null, true /*show last page*/ )
+      this.curPage, totalPages - 1, null, true  )
   }
 
   function goToPage(obj) {
@@ -209,7 +214,7 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function fillItemDesc(award) {
     let obj = this.scene.findObject("item_info")
-    let hasItemDesc = award != null && award.fillItemDesc(obj, this)
+    let hasItemDesc = award != null && fillWarbondAwardDesc(obj, this, award)
     obj.show(hasItemDesc)
   }
 
@@ -248,7 +253,7 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
   function updateButtons() {
     showObjById("btn_battlePass", !isHandlerInScene(gui_handlers.BattlePassWnd), this.scene)
 
-    if (!this.updateButtonsBar()) //buttons below are hidden if item action bar is hidden
+    if (!this.updateButtonsBar()) 
       return
 
     let award = this.getCurAward()
@@ -275,7 +280,7 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
     local tooltip = ""
     if (this.curWb) {
       text = loc("warbonds/currentAmount", { warbonds = this.curWb.getBalanceText() })
-      tooltip = loc("warbonds/maxAmount", { warbonds = ::g_warbonds.getLimit() })
+      tooltip = loc("warbonds/maxAmount", { warbonds = maxAllowedWarbondsBalance.get() })
     }
     let textObj = this.scene.findObject("balance_text")
     textObj.setValue(text)
@@ -288,7 +293,7 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
     for (local i = 0; i < total; i++) {
       let childObj = listObj.getChild(i)
       let priceObj = childObj.findObject("price")
-      if (!checkObj(priceObj)) //price obj always exist in item. so it check that childObj valid
+      if (!checkObj(priceObj)) 
         continue
 
       priceObj.setValue(this.curPageAwards[i].getCostText())
@@ -356,7 +361,7 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
     let fullAwardId = buttonObj?.holderId
     if (!fullAwardId)
       return
-    let wbAward = ::g_warbonds.getWarbondAwardByFullId(fullAwardId)
+    let wbAward = getWarbondAwardByFullId(fullAwardId)
     if (wbAward)
       this.buyAward(wbAward)
   }
@@ -422,7 +427,7 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function onDestroy() {
     this.markCurrentPageSeen()
-    let activeWb = ::g_warbonds.getCurrentWarbond()
+    let activeWb = getCurrentWarbond()
     if (activeWb)
       activeWb.markSeenLastResearchShopLevel()
   }
@@ -501,7 +506,7 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
       award.doPreview()
   }
 
-  //dependence by blk
+  
   function onToShopButton(_obj) {}
   function onToMarketplaceButton(_obj) {}
   function onOpenCraftTree(_obj) {}

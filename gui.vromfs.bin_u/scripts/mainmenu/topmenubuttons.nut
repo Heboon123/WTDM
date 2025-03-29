@@ -33,8 +33,7 @@ let template = {
   elementType = TOP_MENU_ELEMENT_TYPE.BUTTON
   isButton = @() this.elementType == TOP_MENU_ELEMENT_TYPE.BUTTON
   isDelayed = true
-  checkbox = @() this.elementType == TOP_MENU_ELEMENT_TYPE.CHECKBOX //param name only because of checkbox.tpl
-  isLineSeparator = @() this.elementType == TOP_MENU_ELEMENT_TYPE.LINE_SEPARATOR
+  checkbox = @() this.elementType == TOP_MENU_ELEMENT_TYPE.CHECKBOX 
   isEmptyButton = @() this.elementType == TOP_MENU_ELEMENT_TYPE.EMPTY_BUTTON
   funcName = @() this.isButton() ? "onClick" : this.checkbox() ? "onChangeCheckboxValue" : null
 }
@@ -49,7 +48,7 @@ function fillButtonConfig(buttonCfg, name) {
 let addButtonConfig = @(newBtnConfig, name)
   buttonsListWatch.mutate(@(v) v[name] <- fillButtonConfig(newBtnConfig, name))
 
-let defaultButtonsConfig = { //Used in main menu and World War
+let defaultButtonsConfig = { 
   UNKNOWN = {}
   OPTIONS = {
     text = @() "#mainmenu/btnGameplay"
@@ -62,9 +61,6 @@ let defaultButtonsConfig = { //Used in main menu and World War
   }
   EMPTY = {
     elementType = TOP_MENU_ELEMENT_TYPE.EMPTY_BUTTON
-  }
-  LINE_SEPARATOR = {
-    elementType = TOP_MENU_ELEMENT_TYPE.LINE_SEPARATOR
   }
 }
 

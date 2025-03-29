@@ -2,7 +2,7 @@ from "%scripts/dagui_library.nut" import *
 
 let { isWeaponAux, getLastWeapon, getLastPrimaryWeapon } = require("%scripts/weaponry/weaponryInfo.nut")
 let { getModificationByName } = require("%scripts/weaponry/modificationInfo.nut")
-let { getWeaponInfoText } = require("%scripts/weaponry/weaponryDescription.nut")
+let { getWeaponInfoText, makeWeaponInfoData } = require("%scripts/weaponry/weaponryDescription.nut")
 let { blkFromPath, blkOptFromPath } = require("%sqstd/datablock.nut")
 let { getPresetWeapons, getWeaponBlkParams } = require("%scripts/weaponry/weaponryPresets.nut")
 let { getFullUnitBlk } = require("%scripts/unit/unitParams.nut")
@@ -59,7 +59,9 @@ function isUnitHaveSecondaryWeapons(unit) {
         return true
       else
         foundWeapon = true
-  return "" != getWeaponInfoText(unit, { isPrimary = false, weaponPreset = 0, needTextWhenNoWeapons = false })
+
+  let weaponInfoParams = { isPrimary = false, weaponPreset = 0, needTextWhenNoWeapons = false }
+  return "" != getWeaponInfoText(unit, makeWeaponInfoData(unit, weaponInfoParams))
 }
 
 function isShipWithoutPurshasedTorpedoes(unit) {
@@ -68,7 +70,7 @@ function isShipWithoutPurshasedTorpedoes(unit) {
 
   local torpedoes = null
   if (isUnitHaveSecondaryWeapons(unit))
-    torpedoes = unit.getWeapons().findvalue(@(weapon) weapon.name == "torpedoes")    //!!! FIX ME: Need determine weapons by weapon mask. WeaponMask now available only for air
+    torpedoes = unit.getWeapons().findvalue(@(weapon) weapon.name == "torpedoes")    
 
   if (!torpedoes)
     return false
@@ -124,7 +126,7 @@ function isAvailablePrimaryWeapon(unit, weaponName) {
           weapons.append(weap)
 
         foreach (weapon in weapons) {
-           if (!weapon?.blk || weapon?.dummy)
+          if (!weapon?.blk || weapon?.dummy)
             continue
           let weapBlk = blkFromPath(weapon.blk)
           if (availableWeapons != null && (weapBlk?.rocket.isFlare ?? false))

@@ -10,12 +10,12 @@ let regexp2 = require("regexp2")
 let mapPreferences = require("mapPreferences")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
-let { getMissionLocName } = require("%scripts/missions/missionsUtilsModule.nut")
 let { havePremium } = require("%scripts/user/premium.nut")
 let { get_meta_mission_info_by_name } = require("guiMission")
 let { getGameModesByEconomicName } = require("%scripts/matching/matchingGameModes.nut")
 let { getMaxEconomicRank, calcBattleRatingFromRank } = require("%appGlobals/ranks_common_shared.nut")
 let { getEventEconomicName } = require("%scripts/events/eventInfo.nut")
+let { getMissionLocName } = require("%scripts/missions/missionsText.nut")
 
 const MIN_AVAILABLE_VEHICLE_BR   = 1.0
 
@@ -98,9 +98,9 @@ function getInactiveMaps(curEvent, mapsList) {
   let banData = getProfileBanData(curEvent)
   foreach (name, list in banData) {
     res[name] <- []
-      foreach (map in list)
-        if (!u.search(mapsList, @(inst) inst.map == map))
-          res[name].append(map)
+    foreach (map in list)
+      if (!u.search(mapsList, @(inst) inst.map == map))
+        res[name].append(map)
   }
 
   return res
@@ -218,7 +218,7 @@ function getMapsListImpl(curEvent) {
   }
 
   if (assertMisNames.len() > 0) {
-    let invalidMissions = assertMisNames.reduce(@(a, b) $"{a}, {b}") // warning disable: -declared-never-used
+    let invalidMissions = assertMisNames.reduce(@(a, b) $"{a}, {b}") 
     debug_dump_stack()
     logerr("".concat("MapPreferencesParams: Some missions have no level to show map preferences.",
       "Ask designers to check missions from invalidMissions callstack variable in matching configs"))

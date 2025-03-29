@@ -11,6 +11,10 @@ let { MAX_DEADZONE, MAX_SHORTCUTS, CONTROL_TYPE } = require("%scripts/controls/c
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { getShortcutData } = require("%scripts/controls/shortcutsUtils.nut")
 let { stripTags } = require("%sqstd/string.nut")
+let { remapAxisName } = require("%scripts/controls/controlsVisual.nut")
+let { assignButtonWindow } = require("%scripts/controls/assignButtonWnd.nut")
+let { getCurControlsPreset } = require("%scripts/controls/controlsState.nut")
+let { commitControls } = require("%scripts/controls/controlsManager.nut")
 
 gui_handlers.AxisControls <- class (gui_handlers.Hotkeys) {
   wndType = handlerType.MODAL
@@ -192,13 +196,13 @@ gui_handlers.AxisControls <- class (gui_handlers.Hotkeys) {
       return
 
     let curDevice = joystick_get_default()
-    let curPreset = ::g_controls_manager.getCurPreset()
+    let curPreset = getCurControlsPreset()
     this.numAxisInList = curDevice ? curPreset.getNumAxes() : 0
 
     local data = "option { id:t='axisopt_'; text:t='#joystick/axis_not_assigned' }\n"
     for (local i = 0; i < this.numAxisInList; i++)
       data = "".concat(data, format("option { id:t='axisopt_%d'; text:t='%s' }\n",
-              i, stripTags(::remapAxisName(curPreset, i))))
+              i, stripTags(remapAxisName(curPreset, i))))
 
     this.guiScene.replaceContentFromText(listObj, data, data.len(), this)
     listObj.setValue(curDevice ? (this.bindAxisNum + 1) : 0)
@@ -214,8 +218,8 @@ gui_handlers.AxisControls <- class (gui_handlers.Hotkeys) {
     if (!checkObj(listObj))
       return
 
-    //"-1", "+1" cos value is what we get from dropright, 0 is not recognized axis there,
-    // but we have 0 axis
+    
+    
 
     if (listObj.getValue() - 1 == this.bindAxisNum)
       return
@@ -225,20 +229,6 @@ gui_handlers.AxisControls <- class (gui_handlers.Hotkeys) {
 
   function onChangeAutodetect(obj) {
     this.autodetectAxis = obj.getValue()
-    this.updateAutodetectButtonStyle()
-  }
-
-  function updateAutodetectButtonStyle() {
-    let obj = this.scene.findObject("btn_axis_autodetect")
-    if (checkObj(obj)) {
-      let text = "".conct(loc("mainmenu/btn", (this.autodetectAxis ? "StopAutodetect" : "AutodetectAxis")))
-      obj.tooltip = text
-      obj.text = text
-
-      let imgObj = obj.findObject("autodetect_img")
-      if (checkObj(imgObj))
-        imgObj["background-image"] = "".concat("#ui/gameuiskin#btn_autodetect_", (this.autodetectAxis ? "off" : "on"), ".svg")
-    }
   }
 
   function onAxisReset() {
@@ -286,14 +276,14 @@ gui_handlers.AxisControls <- class (gui_handlers.Hotkeys) {
       return
 
     local foundAxis = -1
-    local deviation = 12000 //foundedAxis deviation, cant be lower than a initial value
+    local deviation = 12000 
     let totalAxes = curDevice.getNumAxes()
 
     for (local i = 0; i < totalAxes; i++) {
       let rawValues = this.getAxisRawValues(curDevice, i)
       let rawPos = curDevice.getAxisPosRaw(i)
       if (!rawValues.inited && rawPos != 0) {
-        rawValues.def = rawPos //reinit
+        rawValues.def = rawPos 
         rawValues.inited = true
       }
       let dPos = rawPos - rawValues.def
@@ -302,10 +292,10 @@ gui_handlers.AxisControls <- class (gui_handlers.Hotkeys) {
         foundAxis = i
         deviation = abs(dPos)
 
-        if (fabs(rawPos - rawValues.last) < 1000) {  //check stucked axes
+        if (fabs(rawPos - rawValues.last) < 1000) {  
           rawValues.stuckTime += dt
           if (rawValues.stuckTime > 3.0)
-            rawValues.def = rawPos //change cur value to def becoase of stucked
+            rawValues.def = rawPos 
         }
         else {
           rawValues.last = rawPos
@@ -322,7 +312,7 @@ gui_handlers.AxisControls <- class (gui_handlers.Hotkeys) {
     if (this.bindAxisNum < 0)
       return
 
-    //!!FIX ME: Have to adjust the code below taking values from the table and only when they change
+    
     local val = curDevice.getAxisPosRaw(this.bindAxisNum) / 32000.0
 
     let isInv = this.scene.findObject("invertAxis").getValue()
@@ -448,7 +438,7 @@ gui_handlers.AxisControls <- class (gui_handlers.Hotkeys) {
   function doBindAxis() {
     this.curJoyParams.bindAxis(this.setupAxisMode, this.bindAxisNum)
     this.doApplyJoystick()
-    ::g_controls_manager.commitControls()
+    commitControls()
     this.guiScene.performDelayed(this, this.closeWnd)
   }
 
@@ -476,7 +466,7 @@ gui_handlers.AxisControls <- class (gui_handlers.Hotkeys) {
   }
 
   function callAssignButton() {
-    ::assignButtonWindow(this, this.onAssignButton)
+    assignButtonWindow(this, this.onAssignButton)
   }
 
   function onAssignButton(dev, btn) {

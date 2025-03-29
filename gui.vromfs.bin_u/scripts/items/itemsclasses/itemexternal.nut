@@ -11,7 +11,7 @@ let DataBlock  = require("DataBlock")
 let { ceil } = require("math")
 let { format, split_by_chars } = require("string")
 let inventoryClient = require("%scripts/inventory/inventoryClient.nut")
-let ItemGenerators = require("%scripts/items/itemsClasses/itemGenerators.nut")
+let { getItemGenerator, findItemGeneratorByReceptUid } = require("%scripts/items/itemGeneratorsManager.nut")
 let { hasFakeRecipesInList, getRequirementsMarkup, tryUseRecipes, tryUseRecipeSeveralTime
 } = require("%scripts/items/exchangeRecipes.nut")
 let guidParser = require("%scripts/guidParser.nut")
@@ -36,7 +36,12 @@ let { BaseItem } = require("%scripts/items/itemsClasses/itemsBase.nut")
 let { hasBuyAndOpenChestWndStyle } = require("%scripts/items/buyAndOpenChestWndStyles.nut")
 let { addPopup } = require("%scripts/popups/popups.nut")
 let { currentCampaignMission } = require("%scripts/missions/missionsStates.nut")
-let { getMissionName } = require("%scripts/missions/missionsUtilsModule.nut")
+let { getMissionName } = require("%scripts/missions/missionsText.nut")
+let { maxAllowedWarbondsBalance } = require("%scripts/warbonds/warbondsState.nut")
+let { findItemById, findItemByUid, getInventoryItemById, refreshExtInventory,
+  markInventoryUpdateDelayed, getInventoryItemByCraftedFrom
+} = require("%scripts/items/itemsManager.nut")
+let { getPrizesListView } = require("%scripts/items/prizesView.nut")
 
 let emptyBlk = DataBlock()
 
@@ -97,7 +102,7 @@ let ItemExternal = class (BaseItem) {
   itemDef = null
   metaBlk = null
 
-  amountByUids = null //{ <uid> = <amount> }, need for recipe materials
+  amountByUids = null 
   requirement = null
 
   aditionalConfirmationMsg = null
@@ -196,8 +201,8 @@ let ItemExternal = class (BaseItem) {
     this.amount += count
   }
 
-  onItemExpire     = @() ::ItemsManager.refreshExtInventory()
-  onTradeAllowed   = @() ::ItemsManager.markInventoryUpdateDelayed()
+  onItemExpire     = @() refreshExtInventory()
+  onTradeAllowed   = @() markInventoryUpdateDelayed()
 
   function getTimestampfromString(str) {
     if (str == "")
@@ -205,7 +210,7 @@ let ItemExternal = class (BaseItem) {
 
     local res = to_integer_safe(str, -1, false)
     if (res < 0)
-      res = time.getTimestampFromIso8601(str) //compatibility with old inventory version
+      res = time.getTimestampFromIso8601(str) 
     return res
   }
 
@@ -253,10 +258,13 @@ let ItemExternal = class (BaseItem) {
       desc.append("".concat(loc("ugm/tags"), loc("ui/colon"), loc("ui/comma").join(tags, true)))
     }
 
-    if (! this.itemDef?.tags?.hideDesc)
-      desc.append(this.itemDef?.description ?? "")
+    desc.append(this.getBaseDescription())
 
     return "\n\n".join(desc, true)
+  }
+
+  function getBaseDescription() {
+    return !this.itemDef?.tags.hideDesc ? (this.itemDef?.description ?? "") : ""
   }
 
   function getIcon(_addItemName = true) {
@@ -360,12 +368,12 @@ let ItemExternal = class (BaseItem) {
       headers.append({ header = loc(this.getLocIdsList().reachedMaxAmount) })
     else
       recipes = this.getMyRecipes()
-    return "".concat(::PrizesView.getPrizesListView(content, params),
+    return "".concat(getPrizesListView(content, params),
       getRequirementsMarkup(recipes, this, params),
-      ::PrizesView.getPrizesListView(resultContent,
-          { widthByParentParent = true,
-            header = colorize("grayOptionColor", loc("mainmenu/you_will_receive")) },
-          false)
+      getPrizesListView(resultContent,
+        { widthByParentParent = true,
+          header = colorize("grayOptionColor", loc("mainmenu/you_will_receive")) },
+        false)
     )
   }
 
@@ -529,14 +537,14 @@ let ItemExternal = class (BaseItem) {
       loc("msgBox/coupon_exchange"))
     let msgboxParams = {
       cancel_fn = @() null
-      baseHandler = get_cur_base_gui_handler() //FIX ME: handler used only for prizes tooltips
-      data_below_text = ::PrizesView.getPrizesListView([ this.metaBlk ],
+      baseHandler = get_cur_base_gui_handler() 
+      data_below_text = getPrizesListView([ this.metaBlk ],
         { showAsTrophyContent = true, receivedPrizes = false, widthByParentParent = true })
       data_below_buttons = hasFeature("Marketplace") && this.itemDef?.marketable
         ? format("textarea{overlayTextColor:t='warning'; text:t='%s'}", stripTags(loc("msgBox/coupon_will_be_spent")))
         : null
     }
-    let item = this //we need direct link, to not lose action on items list refresh.
+    let item = this 
     scene_msg_box("coupon_exchange", null, text, [
       [ "yes", @() item.consumeImpl(cb, params) ],
       [ "no" ]
@@ -549,7 +557,7 @@ let ItemExternal = class (BaseItem) {
     if (!uid)
       return
 
-    let itemAmountByUid = this.amountByUids[uid] //to not remove item while in progress
+    let itemAmountByUid = this.amountByUids[uid] 
     let consumeAmount = this.shouldAutoConsume && this.canMultipleConsume
       ? itemAmountByUid
       : 1
@@ -557,9 +565,9 @@ let ItemExternal = class (BaseItem) {
     blk.setInt("itemId", uid.tointeger())
     blk.setInt("quantity", consumeAmount)
     let taskCallback = function() {
-      let item = ::ItemsManager.findItemByUid(uid)
-      //items list refreshed, but ext inventory only requested.
-      //so update item amount to avoid repeated request before real update
+      let item = findItemByUid(uid)
+      
+      
       if (item && item.amountByUids[uid] == itemAmountByUid) {
         item.amountByUids[uid] -= consumeAmount
         item.amount -= consumeAmount
@@ -651,7 +659,7 @@ let ItemExternal = class (BaseItem) {
     let recipe = this.getWarbondRecipe()
     if (this.amount <= 0 || !recipe)
       return ""
-    let warbondItem = ::ItemsManager.findItemById(recipe.generatorId)
+    let warbondItem = findItemById(recipe.generatorId)
     let warbond = warbondItem?.getWarbond()
     return $"{warbondItem?.getWarbondsAmount() ?? ""}{loc(warbond?.fontIcon ?? "currency/warbond/green")}"
   }
@@ -670,7 +678,7 @@ let ItemExternal = class (BaseItem) {
       { rewardListLocId = this.getItemsListLocId()
         bundleContent = content
       })
-      return true
+    return true
   }
 
   getModifiedText = @() loc(this.getLocIdsList().modify)
@@ -687,10 +695,10 @@ let ItemExternal = class (BaseItem) {
   }
 
   getDisassembleResultContent = function(recipe) {
-    let gen = ItemGenerators.get(recipe.generatorId)
+    let gen = getItemGenerator(recipe.generatorId)
     let content = gen?.isPack ? gen.getContent() : []
     return gen?.isDelayedxchange?() && content.len() > 0
-      ? ::ItemsManager.findItemById(content[0].item)?.getContent?() ?? []
+      ? findItemById(content[0].item)?.getContent?() ?? []
       : content
   }
 
@@ -701,14 +709,14 @@ let ItemExternal = class (BaseItem) {
     if (this.amount <= 0 || !recipe)
       return false
 
-    let warbondItem = ::ItemsManager.findItemById(recipe.generatorId)
+    let warbondItem = findItemById(recipe.generatorId)
     let warbond = warbondItem && warbondItem.getWarbond()
     if (!warbond) {
       showInfoMsgBox(loc("mainmenu/warbondsShop/notAvailable"))
       return true
     }
 
-    let leftWbAmount = ::g_warbonds.getLimit() - warbond.getBalance()
+    let leftWbAmount = maxAllowedWarbondsBalance.get() - warbond.getBalance()
     if (leftWbAmount <= 0) {
       showInfoMsgBox(loc("items/cantExchangeToWarbondsMessage"))
       return true
@@ -755,7 +763,7 @@ let ItemExternal = class (BaseItem) {
     ], "yes", { cancel_fn = @() null })
   }
 
-  /*override */ function hasLink() {
+   function hasLink() {
     return !this.isDisguised && base.hasLink()
       && this.itemDef?.marketable && this.getNoTradeableTimeLeft() == 0
       && hasFeature("Marketplace")
@@ -778,8 +786,8 @@ let ItemExternal = class (BaseItem) {
   function getRelatedRecipes() {
     let res = []
     foreach (genItemdefId in inventoryClient.getChestGeneratorItemdefIds(this.id)) {
-      let gen = ItemGenerators.get(genItemdefId)
-      if (gen == null || ::ItemsManager.findItemById(gen.id)?.iType == itemType.WARBONDS)
+      let gen = getItemGenerator(genItemdefId)
+      if (gen == null || findItemById(gen.id)?.iType == itemType.WARBONDS)
         continue
       res.extend(gen.getRecipesWithComponent(this.id))
     }
@@ -788,10 +796,10 @@ let ItemExternal = class (BaseItem) {
 
   function getWarbondRecipe() {
     foreach (genItemdefId in inventoryClient.getChestGeneratorItemdefIds(this.id)) {
-      let item = ::ItemsManager.findItemById(genItemdefId)
+      let item = findItemById(genItemdefId)
       if (item?.iType != itemType.WARBONDS)
         continue
-      let gen = ItemGenerators.get(genItemdefId)
+      let gen = getItemGenerator(genItemdefId)
       if (!gen)
         continue
       let recipes = gen.getRecipesWithComponent(this.id)
@@ -803,7 +811,7 @@ let ItemExternal = class (BaseItem) {
 
   function getDisassembleRecipe() {
     foreach (genItemdefId in inventoryClient.getChestGeneratorItemdefIds(this.id)) {
-      let gen = ItemGenerators.get(genItemdefId)
+      let gen = getItemGenerator(genItemdefId)
       if (!gen || !gen?.tags?.isDisassemble)
         continue
       let recipes = gen.getRecipesWithComponent(this.id)
@@ -815,7 +823,7 @@ let ItemExternal = class (BaseItem) {
 
   function getModifiedRecipe() {
     foreach (genItemdefId in inventoryClient.getChestGeneratorItemdefIds(this.id)) {
-      let gen = ItemGenerators.get(genItemdefId)
+      let gen = getItemGenerator(genItemdefId)
       if (!gen?.tags.isModification)
         continue
       let recipes = gen.getRecipesWithComponent(this.id)
@@ -825,11 +833,11 @@ let ItemExternal = class (BaseItem) {
     return null
   }
 
-  getMyRecipes = @() ItemGenerators.get(this.id)?.getRecipes() ?? []
-  getGenerator = @() ItemGenerators.get(this.id)
+  getMyRecipes = @() getItemGenerator(this.id)?.getRecipes() ?? []
+  getGenerator = @() getItemGenerator(this.id)
 
   function getVisibleRecipes() {
-    let gen = ItemGenerators.get(this.id)
+    let gen = getItemGenerator(this.id)
     if (this.showAllowableRecipesOnly())
       return gen?.getUsableRecipes() ?? []
     return gen?.getRecipes() ?? []
@@ -931,7 +939,7 @@ let ItemExternal = class (BaseItem) {
     return true
   }
 
-  onItemCraft     = @() ::ItemsManager.refreshExtInventory()
+  onItemCraft     = @() refreshExtInventory()
   function getCraftingItem() {
     local recipes = []
     if (this.needShowAsDisassemble()) {
@@ -940,12 +948,12 @@ let ItemExternal = class (BaseItem) {
         recipes.append(recipe)
     }
     else {
-      let gen = ItemGenerators.get(this.id)
+      let gen = getItemGenerator(this.id)
       recipes = gen ? gen.getRecipes() : []
     }
 
     foreach (recipe in recipes) {
-      let item = ::ItemsManager.getInventoryItemById(recipe.generatorId)
+      let item = getInventoryItemById(recipe.generatorId)
       if (item)
         return item?.itemDef?.type == "delayedexchange" ? item : null
     }
@@ -991,7 +999,7 @@ let ItemExternal = class (BaseItem) {
   }
 
   isCraftResult = @() this.craftedFrom.indexof(";") != null
-  getParentGen = @() this.isCraftResult() ? ItemGenerators.findGenByReceptUid(this.craftedFrom) : null
+  getParentGen = @() this.isCraftResult() ? findItemGeneratorByReceptUid(this.craftedFrom) : null
 
   function getCraftResultItem() {
     local recipes = []
@@ -1001,12 +1009,12 @@ let ItemExternal = class (BaseItem) {
         recipes.append(recipe)
     }
     else {
-      let gen = ItemGenerators.get(this.id)
+      let gen = getItemGenerator(this.id)
       recipes = gen ? gen.getRecipes() : []
     }
 
     foreach (recipe in recipes) {
-      let item = ::ItemsManager.getInventoryItemByCraftedFrom(recipe.uid)
+      let item = getInventoryItemByCraftedFrom(recipe.uid)
       if (item)
         return item
     }
@@ -1047,7 +1055,7 @@ let ItemExternal = class (BaseItem) {
     if (!craftingItem || craftingItem?.itemDef?.type != "delayedexchange")
       return false
 
-    // prevent infinite recursion on incorrectly configured delayedexchange
+    
     if (craftingItem == this) {
       logerr("".concat($"Inventory: delayedexchange {this.id} instance has type ",
         getEnumValName("itemType", itemType, this.iType), " which does not implement cancelCrafting()"))
@@ -1153,8 +1161,8 @@ let ItemExternal = class (BaseItem) {
     if (this.substitutionItemData?.len() == 0)
       return null
     for (local i = 0; i < this.substitutionItemData.len(); i++)
-      if (::ItemsManager.getInventoryItemById(this.substitutionItemData[i][0].tointeger()))
-        return ::ItemsManager.findItemById(this.substitutionItemData[i][1].tointeger())
+      if (getInventoryItemById(this.substitutionItemData[i][0].tointeger()))
+        return findItemById(this.substitutionItemData[i][1].tointeger())
 
     return null
   }

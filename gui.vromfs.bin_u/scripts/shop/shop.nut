@@ -68,13 +68,16 @@ let { getShopVisibleCountries } = require("%scripts/shop/shopCountriesList.nut")
 let { get_units_count_at_rank } = require("%scripts/shop/shopCountryInfo.nut")
 let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 let { setNationBonusMarkState, getNationBonusMarkState } = require("%scripts/nationBonuses/nationBonuses.nut")
-let { isProfileReceived } = require("%scripts/login/loginStates.nut")
+let { isProfileReceived } = require("%appGlobals/login/loginState.nut")
+let { getBlockFromObjData, createHighlight } = require("%scripts/guiBox.nut")
+let { checkIsInQueue } = require("%scripts/queue/queueManager.nut")
+let getNavigationImagesText = require("%scripts/utils/getNavigationImagesText.nut")
 
 local lastUnitType = null
 
-const OPEN_RCLICK_UNIT_MENU_AFTER_SELECT_TIME = 500 // when select slot by right click button
-                                                    // then menu vehilce opened and close
-const LOCAL_RANK_COLLAPSED_STATE_ID = "savedCollapsedRankState" //For save state of ranks in shop table collapsed / not collapsed
+const OPEN_RCLICK_UNIT_MENU_AFTER_SELECT_TIME = 500 
+                                                    
+const LOCAL_RANK_COLLAPSED_STATE_ID = "savedCollapsedRankState" 
 const CONTAINER_COLLAPSE_BTN_COUNT = 1
 const BONUS_TOP_UNITS_PLATE_PADDING = "0.75@shop_height"
 
@@ -101,25 +104,25 @@ let armyDataByPageName = {
   }
 }
 
-/*
-shopData = [
-  { name = "country_japan"
-    pages = [
-      { name = "type_fighter"
-        airList - table readed from blk need to generate a tree. remove after tree generation
-                  [[{air, reqAir}, ...], ...]
-        tree = [
-          [1, "",    "la5", ...]  //rank, range1 aircraft, range2 aircraft, ...
-          [1, "la6", "",    ...]
-        ]
-        lines = [ { air, line }, ...]
-      }
-      ...
-    ]
-  }
-  ...
-]
-*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   wndType = handlerType.CUSTOM
@@ -131,8 +134,8 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   boughtVehiclesCount = null
   totalVehiclesCount = null
 
-  closeShop = null //function to hide close shop
-  forceUnitType = null //unitType to set on next pages fill
+  closeShop = null 
+  forceUnitType = null 
 
   curCountry = null
   curPage = ""
@@ -596,7 +599,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     this.guiScene.setUpdatesEnabled(true, true)
 
     let armyRankCollapsedData = this.getRanksCollapsedDataForArmy(this.curCountry, this.curPage)
-    this.guiScene.applyPendingChanges(true) //For recalculate visibility status of rankTables
+    this.guiScene.applyPendingChanges(true) 
     for (local i = 0; i < this.maxRank; i++) {
       let rankTable = this.getRankTable(tableObj, i)
       if (rankTable == null || !rankTable.isVisible())
@@ -616,7 +619,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       if (config.checkAir || ((curIdx < 0) && !unit?.isFakeUnit))
         curIdx = idx
       if (config.broken)
-        this.brokenList.append(unit) //fix me: we can update it together with update units instead of fill all
+        this.brokenList.append(unit) 
     }
 
     let cellData = this.getCellDataByThreeIdx(curIdx)
@@ -706,7 +709,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function checkBrokenUnitsAndUpdateThem() {
     for (local i = this.brokenList.len() - 1; i >= 0; i--) {
-      if (i >= this.brokenList.len()) //update unit item is not instant, so broken list can change at that time by other events
+      if (i >= this.brokenList.len()) 
         continue
 
       let unit = this.brokenList[i]
@@ -853,7 +856,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       }
     }
 
-    foreach (_row, rowArr in treeData.tree) //check groups even they dont have requirements
+    foreach (_row, rowArr in treeData.tree) 
       for (local col = 0; col < rowArr.len(); col++)
         if (isUnitGroup(rowArr[col]))
           this.fillAirReq(rowArr[col])
@@ -1236,7 +1239,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     let unitObj = this.getUnitCellObj(unit.name)
-    if ((unitObj?.isValid() ?? false) && unitObj.isVisible()) //need update only visible cell
+    if ((unitObj?.isValid() ?? false) && unitObj.isVisible()) 
       this.updateUnitItem(unit, unitObj)
 
     ::updateAirAfterSwitchMod(unit)
@@ -1410,11 +1413,11 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       ?? getAircraftByName(this.curAirName)?.unitType
       ?? unitTypes.INVALID
 
-    this.forceUnitType = null //forceUnitType applyied only once
+    this.forceUnitType = null 
 
     local data = ""
     local curIdx = 0
-    let countryData = u.search(this.shopData, (@(curCountry) function(country) { return country.name == curCountry })(this.curCountry)) //-ident-hides-ident
+    let countryData = u.search(this.shopData, (@(curCountry) function(country) { return country.name == curCountry })(this.curCountry)) 
     if (countryData) {
       let ediff = this.getCurrentEdiff()
       let view = { tabs = [] }
@@ -1428,7 +1431,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
           }
           seenIconCfg = bhvUnseen.makeConfigStr(seenList.id,
             getUnlockIdsByArmyId(this.curCountry, name, ediff))
-          navImagesText = ::get_navigation_images_text(idx, countryData.pages.len())
+          navImagesText = getNavigationImagesText(idx, countryData.pages.len())
           countryId = countryData.name
           armyId = name
         })
@@ -1439,7 +1442,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
       let tabCount = view.tabs.len()
       foreach (idx, tab in view.tabs)
-        tab.navImagesText = ::get_navigation_images_text(idx, tabCount)
+        tab.navImagesText = getNavigationImagesText(idx, tabCount)
 
       data = handyman.renderCached("%gui/frameHeaderTabs.tpl", view)
     }
@@ -1571,10 +1574,10 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
           onDragStart = "onHighlightedCellDragStart"
           isNoDelayOnClick = true
         }
-        highlightList.append(::guiTutor.getBlockFromObjData(objData, tableObj))
+        highlightList.append(getBlockFromObjData(objData, tableObj))
       }
 
-    ::guiTutor.createHighlight(shadingObj, highlightList, this, {
+    createHighlight(shadingObj, highlightList, this, {
       onClick = "onShadedCellClick"
       lightBlock = "tdiv"
       sizeIncAdd = 0
@@ -1699,7 +1702,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onUnitDblClick(obj) {
-    if (!showConsoleButtons.value) //to use for not console buttons need to divide events activate and dbl_click
+    if (!showConsoleButtons.value) 
       this.onUnitMainFunc(obj)
   }
 
@@ -1743,13 +1746,13 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     this.skipOpenGroup = true
-    //choose aircraft from group window
+    
     let tdObj = grObj.getParent()
     let tdPos = tdObj.getPosRC()
     let tdSize = tdObj.getSize()
     let leftPos = $"{tdPos[0] + tdSize[0] / 2} -50%w"
 
-    let cellHeight = tdSize[1] || 86 // To avoid division by zero
+    let cellHeight = tdSize[1] || 86 
     let screenHeight = screen_height()
     let safeareaHeight = this.guiScene.calcString("@rh", null)
     let safeareaBorderHeight = floor((screenHeight - safeareaHeight) / 2)
@@ -1788,7 +1791,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     animObj["height-base"] = tdSize[1].tostring()
     animObj["height-end"] = size[1].tostring()
 
-    //update anim fixed position
+    
     let heightDiff = size[1] - tdSize[1]
     if (heightDiff <= 0)
       return
@@ -2017,7 +2020,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!this.isSceneActive())
       return
 
-    if (needSelectCrew && !::checkIsInQueue())
+    if (needSelectCrew && !checkIsInQueue())
       takeUnitInSlotbar(unit, {
         unitObj = this.getAirObj(unit.name)
         cellClass = "shopClone"
@@ -2038,7 +2041,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function showUnitInShop(unitId) {
-    if (!this.isSceneActive() || ::checkIsInQueue() || this.shopResearchMode)
+    if (!this.isSceneActive() || checkIsInQueue() || this.shopResearchMode)
       return
 
     this.highlightUnitsClear()
@@ -2054,7 +2057,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     switchProfileCountry(getUnitCountry(unit))
     this.searchBoxWeak?.searchCancel()
     this.selectCellByUnitName(unitId)
-    // In mouse mode, mouse pointer don't move to slot, so we need a highlight.
+    
     if (!showConsoleButtons.value || is_mouse_last_time_used())
       this.doWhenActive(@() this.highlightUnitsInTree([ unitId ]))
   }
@@ -2134,7 +2137,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onUnitMainFunc(obj) {
-    if (showConsoleButtons.value) { // open vehicle menu on slot button click
+    if (showConsoleButtons.value) { 
       this.onAircraftClick(obj, true)
       return
     }
@@ -2159,7 +2162,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     let unitObj = unitContextMenuState.value?.unitObj
-    if (!unitObj?.isValid())
+    if (!unitObj?.isValid() || unitContextMenuState.value?.needClose)
       return
 
     let actionListObj = unitObj.findObject("actions_list")
@@ -2393,7 +2396,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onExpandBtnClick(obj) {
-    let containerIndex = obj.id.slice(10).tointeger() // slice expandbtn_
+    let containerIndex = obj.id.slice(10).tointeger() 
     this.toggleCellsContainer(containerIndex)
   }
 
@@ -2410,13 +2413,14 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     }
   }
 
-  function collapseAllCellsContainers(needCollapse) {
+  function collapseAllCellsContainers(needCollapse, params = null) {
+    let {needInstantAnim = false} = params
     let tableObj = this.getTableObj()
     local containerIndex = 0
     local rankTable = this.getRankTable(tableObj, containerIndex)
     while (rankTable != null) {
       if (rankTable.isVisible() && (needCollapse != (rankTable.isCollapsed == "yes"))) {
-        let collapsParams = {needCollapse, isInstant = false, containerIndex}
+        let collapsParams = {needCollapse, isInstant = needInstantAnim, containerIndex}
         this.collapseCellsContainer(collapsParams, rankTable)
         this.saveRankCollapsedToData(this.curCountry, this.curPage, $"{containerIndex}", needCollapse)
       }

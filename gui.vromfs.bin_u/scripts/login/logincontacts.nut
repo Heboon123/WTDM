@@ -10,7 +10,8 @@ let { APP_ID } = require("app")
 let { hardPersistWatched } = require("%sqstd/globalState.nut")
 let charClientEvent = require("%scripts/charClientEvent.nut")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
-let { isLoggedIn } = require("%scripts/login/loginStates.nut")
+let { isLoggedIn } = require("%appGlobals/login/loginState.nut")
+let { getCurCircuitOverride } = require("%appGlobals/curCircuitOverride.nut")
 
 const CONTACTS_GAME_ID = "wt"
 
@@ -27,7 +28,7 @@ registerHandler("cln_cs_login", function(result) {
     return
   }
 
-  // On success, it is in "result", on error it is in "result.result"
+  
   if ("result" in result)
     result = result.result
 
@@ -47,11 +48,20 @@ function loginContacts() {
   if (isLoggedIntoContacts.value || !isLoggedIn.get())
     return
 
-  logC("Login request")
+  local data = { game = CONTACTS_GAME_ID }
+
+  foreach (name in ["operatorName", "publisher"]) {
+    local val = getCurCircuitOverride(name)
+    if (val != null) {
+      data[name] <- val
+    }
+  }
+
+  logC("Login request", data)
   request("cln_cs_login",
     {
       headers = { token = getPlayerTokenGlobal(), appid = APP_ID },
-      data = { game = CONTACTS_GAME_ID }
+      data
     })
 }
 

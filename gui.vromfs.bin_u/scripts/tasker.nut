@@ -1,5 +1,6 @@
 from "%scripts/dagui_natives.nut" import char_request_blk_from_server, set_char_cb, char_request_json_from_server, char_send_simple_action
 from "%scripts/dagui_library.nut" import *
+from "%scripts/utils_sa.nut" import call_for_handler
 
 let { broadcastEvent, addListenersWithoutEnv, DEFAULT_HANDLER } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { charRequestJwtFromServer, get_char_extended_error } = require("chard")
@@ -75,7 +76,7 @@ function addTask(taskId, taskOptions = null, onSuccess = null, onError = null, t
 
   let showProgressBox = getTblValue("showProgressBox", taskOptions, false)
 
-  // Same as progress box by default.
+  
   let showErrorMessageBox = getTblValue("showErrorMessageBox", taskOptions, showProgressBox)
 
   addTaskData(taskId, taskCbType, onSuccess, onError, showProgressBox, showErrorMessageBox)
@@ -92,7 +93,7 @@ function addTask(taskId, taskOptions = null, onSuccess = null, onError = null, t
 
 function addBgTaskCb(taskId, actionFunc, handler = null) {
   let taskCallback = Callback( function(_result = YU2_OK) {
-    ::call_for_handler(handler, actionFunc)
+    call_for_handler(handler, actionFunc)
   }, handler)
   addTask(taskId, null, taskCallback, taskCallback)
 }
@@ -135,7 +136,7 @@ function executeTaskCb(taskId, taskResult, taskCbType = TASK_CB_TYPE.BASIC, data
   if (taskData == null)
     return
 
-  if (taskData.taskCbType != taskCbType) //for taskCbType REQUEST_DATA there is 2 char cb
+  if (taskData.taskCbType != taskCbType) 
     return
 
   taskDataByTaskId.$rawdelete(taskId)
@@ -186,15 +187,15 @@ function restoreCharCallback() {
   set_char_cb(taskerCharCb, taskerCharCb.charCallback)
 }
 
-//called from native code
-::onCharRequestJsonFromServerComplete <- onCharRequestJsonFromServerComplete //-ident-hides-ident
 
-//called from native code
-::onCharRequestBlkFromServerComplete <- onCharRequestBlkFromServerComplete //-ident-hides-ident
+::onCharRequestJsonFromServerComplete <- onCharRequestJsonFromServerComplete 
+
+
+::onCharRequestBlkFromServerComplete <- onCharRequestBlkFromServerComplete 
 
 eventbus_subscribe("onCharRequestJwtFromServerComplete", onCharRequestJwtFromServerComplete)
 
-// Why this function is in this module???
+
 ::getErrorText <- function getErrorText(result) {
   local text = loc($"charServer/updateError/{result.tostring()}")
   if (result == EASTE_ERROR_NICKNAME_HAS_NOT_ALLOWED_CHARS) {

@@ -5,10 +5,11 @@ let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { format } = require("string")
 let { addTooltipTypes } = require("%scripts/utils/genericTooltipTypes.nut")
 let { getModificationByName } = require("%scripts/weaponry/modificationInfo.nut")
-let { getFakeBulletsModByName, getModificationName } = require("%scripts/weaponry/bulletsInfo.nut")
+let { getFakeBulletsModByName, getModificationName, isModificationIsShell,
+} = require("%scripts/weaponry/bulletsInfo.nut")
 let { getSingleBulletParamToDesc } = require("%scripts/weaponry/bulletsVisual.nut")
 let { updateModType, getTierDescTbl, getSingleWeaponDescTbl, updateSpareType, updateWeaponTooltip,
-  validateWeaponryTooltipParams
+  validateWeaponryTooltipParams, setWidthForWeaponsPresetTooltip
 } = require("%scripts/weaponry/weaponryTooltipPkg.nut")
 
 const INFO_DELAY = 2.0
@@ -50,15 +51,19 @@ let tooltipTypes = {
         return false
       let { modName = "", bulletName = "", bulletParams = {}, bSet = {} } = params
 
+      obj["noPadding"] = "yes"
+      obj["transparent"] = "yes"
+
       let locName = " ".concat(format(loc("caliber/mm"), bSet.caliber),
         getModificationName(unit, modName), loc($"{bulletName}/name/short"))
-      let data = handyman.renderCached(("%gui/weaponry/weaponTooltip.tpl"),
+
+      let data = handyman.renderCached("%gui/weaponry/shellTooltip.tpl",
         getSingleBulletParamToDesc(unit, locName, bulletName, bSet, bulletParams))
       obj.getScene().replaceContentFromText(obj, data, data.len(), handler)
       return true
     }
   }
-  MODIFICATION = { //by unitName, modName
+  MODIFICATION = { 
     getTooltipId = function(unitName, modName = "", params = null, _p3 = null) {
       let p = validateWeaponryTooltipParams(params)
       p.modName <- modName
@@ -74,6 +79,12 @@ let tooltipTypes = {
       if (!mod)
         return false
 
+      if (isModificationIsShell(unit, mod)) {
+        obj["noPadding"] = "yes"
+        obj["transparent"] = "yes"
+        params.isBulletCard <- true
+        params.markupFileName <- "%gui/weaponry/shellTooltip.tpl"
+      }
       updateModType(unit, mod)
       updateWeaponTooltip(obj, unit, mod, handler, params)
       return true
@@ -96,6 +107,10 @@ let tooltipTypes = {
         type = weaponsItem.primaryWeapon,
         weaponUpgrades = mod == null ? unit.weaponUpgrades : mod?.weaponUpgrades
       }
+      obj["noPadding"] = "yes"
+      obj["transparent"] = "yes"
+      params.markupFileName <- "%gui/weaponry/mainWeaponTooltip.tpl"
+
       updateWeaponTooltip(obj, unit, weaponMod, handler, params)
       return true
     }
@@ -111,13 +126,19 @@ let tooltipTypes = {
       if (!unit)
         return false
 
-      let data = handyman.renderCached(("%gui/weaponry/weaponTooltip.tpl"), getSingleWeaponDescTbl(unit, params))
+      obj["noPadding"] = "yes"
+      obj["transparent"] = "yes"
+
+      let descTbl = getSingleWeaponDescTbl(unit, params)
+      setWidthForWeaponsPresetTooltip(obj, descTbl)
+
+      let data = handyman.renderCached(("%gui/weaponry/weaponsPresetTooltip.tpl"), descTbl)
       obj.getScene().replaceContentFromText(obj, data, data.len(), handler)
       return true
     }
   }
 
-  WEAPON = { //by unitName
+  WEAPON = { 
     getTooltipId = function(unitName, weaponName = "", params = null, _p3 = null) {
       let p = validateWeaponryTooltipParams(params)
       p.weaponName <- weaponName
@@ -140,17 +161,22 @@ let tooltipTypes = {
       if (!weapon)
         return false
 
+      obj["noPadding"] = "yes"
+      obj["transparent"] = "yes"
+
       updateWeaponTooltip(obj, unit, weapon, handler, {
         hasPlayerInfo
         curEdiff
         weaponsFilterFunc = params?.weaponBlkPath ? (@(path, _blk) path == params.weaponBlkPath) : null
+        needDescInArrayForm = true 
+        markupFileName = "%gui/weaponry/weaponsPresetTooltip.tpl"
       }, effect)
 
       return true
     }
   }
 
-  SPARE = { //by unit name
+  SPARE = { 
     isCustomTooltipFill = true
     fillTooltip = function(obj, handler, unitName, ...) {
       if (!checkObj(obj))
@@ -179,15 +205,21 @@ let tooltipTypes = {
       let unit = getAircraftByName(unitName)
       if (!unit)
         return false
-      let data = handyman.renderCached(("%gui/weaponry/weaponTooltip.tpl"),
-        getTierDescTbl(unit, params))
+
+      obj["noPadding"] = "yes"
+      obj["transparent"] = "yes"
+
+      let descTbl = getTierDescTbl(unit, params)
+      setWidthForWeaponsPresetTooltip(obj, descTbl)
+
+      let data = handyman.renderCached(("%gui/weaponry/weaponsPresetTooltip.tpl"), descTbl)
       obj.getScene().replaceContentFromText(obj, data, data.len(), handler)
 
       return true
     }
   }
 
-  MODIFICATION_DELAYED_TIER = { //by unitName, modName
+  MODIFICATION_DELAYED_TIER = { 
     getTooltipId = @(unitName, modName = "", params = null, _p3 = null)
       this._buildId(unitName, (params ?? {}).__merge({ modName }))
     isCustomTooltipFill = true
@@ -207,6 +239,14 @@ let tooltipTypes = {
         infoShownTiers.clear()
       }
       let canDisplayInfo = tier <= 1 || (infoShownTiers?[tier] ?? false)
+
+      if (isModificationIsShell(unit, mod)) {
+        obj["noPadding"] = "yes"
+        obj["transparent"] = "yes"
+        params.isBulletCard <- true
+        params.markupFileName <- "%gui/weaponry/shellTooltip.tpl"
+      }
+
       updateModType(unit, mod)
       updateWeaponTooltip(obj, unit, mod, handler, (params ?? {}).__merge({ canDisplayInfo }))
 

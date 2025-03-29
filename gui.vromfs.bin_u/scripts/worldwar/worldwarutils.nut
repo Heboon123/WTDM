@@ -57,6 +57,7 @@ let { hoveredAirfieldIndex } = require("%appGlobals/worldWar/wwAirfieldStatus.nu
 let { updateConfigurableValues, getLastPlayedOperationId, getLastPlayedOperationCountry, saveLastPlayed
 } = require("%scripts/worldWar/worldWarStates.nut")
 let { curOperationCountry, invalidateRearZones } = require("%scripts/worldWar/inOperation/wwOperationStates.nut")
+let { openWWOperationChatRoomById } = require("%scripts/chat/chat.nut")
 
 const WW_LAST_OPERATION_LOG_SAVE_ID = "worldWar/lastReadLog/operation"
 const WW_UNIT_WEAPON_PRESET_PATH = "worldWar/weaponPreset/"
@@ -275,7 +276,7 @@ let g_world_war = {
     if (!isSilence)
       openWarMap()
 
-    // To force an extra ui update when operation is fully loaded, and lastPlayedOperationId changed.
+    
     wwEvent("LoadOperation")
 
     if (onSuccess)
@@ -295,7 +296,7 @@ let g_world_war = {
 
     subscribeOperationNotifyOnce(operationId)
     if (operationId != wwGetOperationId())
-      this.updateOperationPreviewAndDo(operationId, null)   //need set operation preview if in WW battle for load operation config
+      this.updateOperationPreviewAndDo(operationId, null)   
   }
 
   function onEventResetSkipedNotifications(_p) {
@@ -468,7 +469,7 @@ let g_world_war = {
     return !!(access & WW_BATTLE_ACCESS.MANAGER)
   }
 
-  // return array of WwArmyGroup
+  
   function getArmyGroups(filterFunc = null) {
     this.updateArmyGroups()
 
@@ -476,7 +477,7 @@ let g_world_war = {
   }
 
 
-  // return array of WwArmyGroup
+  
   function getArmyGroupsBySide(side, filterFunc = null) {
     return this.getArmyGroups(
        function (group) {
@@ -489,7 +490,7 @@ let g_world_war = {
   }
 
 
-  // return WwArmyGroup or null
+  
   function getArmyGroupByArmy(army) {
     return u.search(this.getArmyGroups(),
        function (group) {
@@ -600,6 +601,7 @@ let g_world_war = {
   function onEventWWLoadOperation(_params = {}) {
     this.isArmyGroupsValid = false
     this.isBattlesValid = false
+    openWWOperationChatRoomById(wwGetOperationId())
   }
 
   function getOperationObjectives() {
@@ -686,7 +688,7 @@ let g_world_war = {
     if (!army)
       return
 
-    local moveType = "EMT_ATTACK" //default move type
+    local moveType = "EMT_ATTACK" 
     let targetAirfieldIdx = getTblValue("targetAirfieldIdx", params, -1)
     let target = getTblValue("target", params)
 
@@ -715,10 +717,10 @@ let g_world_war = {
   }
 
 
-  // TODO: make this function to work like moveSelectedArmyToCell
-  // to avoid duplication code for ground and air arimies.
+  
+  
   function moveSelectedArmiesToCell(cellIdx, armies = [], target = null, appendPath = false) {
-    //MOVE TYPE - EMT_ATTACK always
+    
     if (cellIdx < 0  || armies.len() == 0)
       return
 
@@ -780,7 +782,7 @@ let g_world_war = {
 
 
   function requestMoveSelectedArmies(toX, toY, target, append, cellIdx) {
-    cellIdx = cellIdx != -1 ? cellIdx : wwGetMapCellByCoords(toX, toY)// cut when cutting native
+    cellIdx = cellIdx != -1 ? cellIdx : wwGetMapCellByCoords(toX, toY)
     let groundArmies = []
     let selectedArmies = ww_get_selected_armies_names()
     for (local i = selectedArmies.len() - 1; i >= 0 ; i--) {
@@ -910,7 +912,7 @@ let g_world_war = {
     reqBlk.setStr("last", logMark)
     let taskId = ww_operation_request_log(reqBlk)
 
-    if (taskId < 0) // taskId == -1 means request result is ready
+    if (taskId < 0) 
       cb()
     else
       addTask(taskId, null, cb, errorCb)
@@ -987,6 +989,7 @@ let g_world_war = {
   function onEventWWOperationPreviewLoaded(_params = {}) {
     this.isArmyGroupsValid = false
     this.isBattlesValid = false
+
   }
 
   function popupCharErrorMsg(groupName = null, titleText = "", errorMsgId = null) {

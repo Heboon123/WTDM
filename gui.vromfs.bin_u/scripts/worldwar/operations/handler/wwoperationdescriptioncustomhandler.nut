@@ -9,6 +9,7 @@ let unitContextMenuState = require("%scripts/unit/unitContextMenuState.nut")
 let g_world_war_render = require("%scripts/worldWar/worldWarRender.nut")
 let g_world_war = require("%scripts/worldWar/worldWarUtils.nut")
 let { fillConfigurableValues } = require("%scripts/worldWar/worldWarStates.nut")
+let WwOperation = require("%scripts/worldWar/operations/model/wwOperation.nut")
 
 gui_handlers.WwOperationDescriptionCustomHandler <- class (gui_handlers.WwMapDescription) {
   sceneTplTeamStrenght = "%gui/worldWar/wwOperationDescriptionSideStrenght.tpl"
@@ -17,7 +18,7 @@ gui_handlers.WwOperationDescriptionCustomHandler <- class (gui_handlers.WwMapDes
   slotbarActions = [ "sec_weapons", "weapons", "repair", "info" ]
 
   function setDescItem(newDescItem) {
-    if (newDescItem && !(newDescItem instanceof ::WwOperation))
+    if (newDescItem && !(newDescItem instanceof WwOperation))
       return
 
     base.setDescItem(newDescItem)
@@ -37,8 +38,8 @@ gui_handlers.WwOperationDescriptionCustomHandler <- class (gui_handlers.WwMapDes
     this.fillOperationBackground()
     this.updateStatus()
     this.updateTeamsInfo()
-    // to get corrct preview Map size updateMap() calls with delay
-    // because Map size based on size of other objects
+    
+    
     this.guiScene.performDelayed(this, function() {
       if (this.isValid())
         this.updateMap()

@@ -9,14 +9,15 @@ let { handlersManager } = require("%sqDagui/framework/baseGuiHandlerManager.nut"
 let { isInFlight } = require("gameplayBinding")
 let { isXbox } = require("%sqstd/platform.nut")
 let { quitMission } = require("%scripts/hud/startHud.nut")
-let { isProfileReceived } = require("%scripts/login/loginStates.nut")
+let { isProfileReceived } = require("%appGlobals/login/loginState.nut")
+let { resetLogin } = require("%scripts/login/loginManager.nut")
 
 let needLogoutAfterSession = mkWatched(persist, "needLogoutAfterSession", false)
 
 
 local platformLogout = null
 if (isXbox) {
-  platformLogout = require("%scripts/xbox/loginState.nut").logout
+  platformLogout = require("%scripts/gdk/loginState.nut").logout
 }
 
 
@@ -29,7 +30,7 @@ function doLogout() {
   if (!canLogout())
     return exit_game()
 
-  if (is_multiplayer()) { //we cant logout from session instantly, so need to return "to debriefing"
+  if (is_multiplayer()) { 
     if (isInFlight()) {
       needLogoutAfterSession(true)
       quitMission()
@@ -40,12 +41,12 @@ function doLogout() {
   }
 
   if (::should_disable_menu() || isProfileReceived.get())
-    broadcastEvent("BeforeProfileInvalidation") // Here save any data into profile.
+    broadcastEvent("BeforeProfileInvalidation") 
 
   log("Start Logout")
   set_disable_autorelogin_once(true)
   needLogoutAfterSession(false)
-  ::g_login.reset()
+  resetLogin()
   eventbus_send("on_sign_out")
   sign_out()
   handlersManager.startSceneFullReload({ eventbusName = "gui_start_startscreen" })

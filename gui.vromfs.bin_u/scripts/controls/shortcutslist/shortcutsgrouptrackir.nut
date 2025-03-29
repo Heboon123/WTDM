@@ -4,6 +4,7 @@ let { isTrackerJoystick } = require("controls")
 let { isPlatformPS4, isPlatformPS5, isPlatformPC } = require("%scripts/clientState/platform.nut")
 let { CONTROL_TYPE } = require("%scripts/controls/controlsConsts.nut")
 let { USEROPT_HEADTRACK_ENABLE, USEROPT_HEADTRACK_SCALE_X, USEROPT_HEADTRACK_SCALE_Y } = require("%scripts/options/optionsExtNames.nut")
+let { commitControls } = require("%scripts/controls/controlsManager.nut")
 
 function isHeadTrackerAvailable() {
   return isPlatformPC
@@ -14,7 +15,7 @@ function isHeadTrackerAvailable() {
 
 
 return [
-//-------------------------------------------------------
+
   {
     id = "ID_COMMON_TRACKER_HEADER"
     type = CONTROL_TYPE.SECTION
@@ -51,7 +52,7 @@ return [
       let prev = joyParams.trackIrZoom
       joyParams.trackIrZoom = objValue
       if (prev != objValue)
-        ::g_controls_manager.commitControls()
+        commitControls()
     }
   }
   {
@@ -63,7 +64,7 @@ return [
       let prev = joyParams.trackIrForLateralMovement
       joyParams.trackIrForLateralMovement = objValue
       if (prev != objValue)
-        ::g_controls_manager.commitControls()
+        commitControls()
     }
   }
   {
@@ -74,7 +75,7 @@ return [
       let prev = joyParams.trackIrAsHeadInTPS
       joyParams.trackIrAsHeadInTPS = objValue
       if (joyParams.trackIrAsHeadInTPS != prev)
-        ::g_controls_manager.commitControls()
+        commitControls()
     }
   }
   {

@@ -1,4 +1,4 @@
-// warning disable: -file:forbidden-function
+
 from "%scripts/dagui_natives.nut" import shop_get_units_list_with_autoset_modules, get_player_army_for_hud, get_user_logs_count, get_local_player_country, get_user_log_blk_body, copy_to_clipboard, shop_get_countries_list_with_autoset_units
 from "%scripts/dagui_library.nut" import *
 
@@ -29,7 +29,7 @@ let { guiStartMPStatScreen } = require("%scripts/statistics/mpStatisticsUtil.nut
 let { havePremium } = require("%scripts/user/premium.nut")
 let { register_command } = require("console")
 let { debug_get_skyquake_path } = require("%scripts/debugTools/dbgUtils.nut")
-let { get_game_mode, get_game_type, get_mplayers_list } = require("mission")
+let { get_game_mode, get_game_type, get_mplayers_list, GET_MPLAYERS_LIST } = require("mission")
 let { get_mission_difficulty, stat_get_benchmark,
   get_mp_tbl_teams, get_current_mission_desc } = require("guiMission")
 let { get_charserver_time_sec } = require("chard")
@@ -45,12 +45,16 @@ let { getCrewUnit } = require("%scripts/crew/crew.nut")
 let { setGameChatLogText } = require("%scripts/chat/mpChat.nut")
 let { getMpChatLog, setMpChatLog } = require("%scripts/chat/mpChatState.nut")
 let { isWorldWarEnabled } = require("%scripts/globalWorldWarScripts.nut")
+let { checkNonApprovedResearches } = require("%scripts/researches/researchActions.nut")
+let { getSessionLobbyRoomId, getSessionLobbySettings, getSessionLobbyPlayersInfo
+} = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { getRoomEvent } = require("%scripts/matchingRooms/sessionLobbyInfo.nut")
 
-//==================================================================================================
+
 let get_fake_userlogs = memoize(@() getroottable()?["_fake_userlogs"] ?? {})
 let get_fake_mplayers_list = memoize(@() getroottable()?["_fake_mplayers_list"] ?? {})
-//let get_fake_sessionlobby_settings = memoize(@() getroottable()?["_fake_sessionlobby_settings"] ?? {})
-//let get_fake_battlelog = memoize(@() getroottable()?["_fake_battlelog"] ?? {})
+
+
 
 function debug_dump_debriefing_save(filename) {
   let debriefingResult = getDebriefingResult()
@@ -76,8 +80,8 @@ function debug_dump_debriefing_save(filename) {
     { id = "get_race_best_lap_time", value = debriefingResult?.exp.ptmBestLap ?? -1 }
     { id = "get_race_lap_times", value = debriefingResult?.exp.ptmLapTimesArray ?? [] }
     { id = "get_player_army_for_hud", value = debriefingResult?.friendlyTeam ?? get_player_army_for_hud() }
-    { id = "_fake_sessionlobby_settings", value = ::SessionLobby.getSettings() }
-    { id = "_fake_sessionlobby_last_event_name", value = ::SessionLobby.getRoomEvent()?.name ?? "" }
+    { id = "_fake_sessionlobby_settings", value = getSessionLobbySettings() }
+    { id = "_fake_sessionlobby_last_event_name", value = getRoomEvent()?.name ?? "" }
     "LAST_SESSION_DEBUG_INFO"
     "get_mission_mode"
     "get_mission_difficulty_int"
@@ -174,11 +178,9 @@ function debug_dump_debriefing_load(filename, onUnloadFunc = null) {
     }
   }, false)
 
-  //::SessionLobby.settings = get_fake_sessionlobby_settings()
-  //::SessionLobby.setPlayersInfo = getroottable()?._fake_playersInfo ?? {}
-  //::SessionLobby.getUnitTypesMask = @(_room = null) getroottable()?._fake_sessionlobby_unit_type_mask ?? 0
-  //::SessionLobby.getRoomEvent = @(_room = null) events.getEvent(getroottable()?._fake_sessionlobby_last_event_name ?? "")
-  //HudBattleLog.battleLog = get_fake_battlelog()
+  
+  
+  
   initListLabelsSquad()
 
   curMissionRulesInvalidate()
@@ -192,7 +194,7 @@ function debug_dump_debriefing_load(filename, onUnloadFunc = null) {
       onUnloadFunc?()
     }
   })
-  ::checkNonApprovedResearches(true)
+  checkNonApprovedResearches(true)
   broadcastEvent("SessionDestroyed")
   return $"Debriefing result loaded from {filename}"
 }
@@ -216,12 +218,12 @@ function debug_dump_debriefing_batch_load() {
   loadNext()
 }
 
-//==================================================================================================
+
 
 function debug_dump_mpstatistics_save(filename) {
   dbg_dump.save(filename, [
     { id = "_fake_mplayers_list", value = get_mplayers_list(GET_MPLAYERS_LIST, true) }
-    { id = "_fake_playersInfo", value = ::SessionLobby.getPlayersInfo() }
+    { id = "_fake_playersInfo", value = getSessionLobbyPlayersInfo() }
     { id = "_fake_get_current_mission_desc", value = function() { let b = DataBlock(); get_current_mission_desc(b); return b } }
     "LAST_SESSION_DEBUG_INFO"
     "is_in_flight"
@@ -257,12 +259,11 @@ function debug_dump_mpstatistics_load(filename) {
       return u.search(get_fake_mplayers_list(), @(p) p.isLocal) ?? dbg_dump.getOriginal("get_local_mplayer")()
     }
   }, false)
-//  ::SessionLobby.setPlayersInfo(getroottable()?._fake_playersInfo ?? {})
   guiStartMPStatScreen()
   return $"Loaded {filename}"
 }
 
-//==================================================================================================
+
 
 function debug_dump_respawn_save(filename) {
   let handler = handlersManager.findHandlerClassInScene(gui_handlers.RespawnHandler)
@@ -271,8 +272,13 @@ function debug_dump_respawn_save(filename) {
 
   let list = [
     { id = "_fake_mplayers_list", value = get_mplayers_list(GET_MPLAYERS_LIST, true) }
-    { id = "_fake_get_current_mission_desc", value = function() { let b = DataBlock();
-      get_current_mission_desc(b); return b } }
+    { id = "_fake_get_current_mission_desc",
+      value = function() {
+        let b = DataBlock();
+        get_current_mission_desc(b);
+        return b
+      }
+    }
     { id = "get_user_custom_state", args = [ userIdInt64.value, false ] }
     { id = "_fake_mpchat_log", value = getMpChatLog() }
     "LAST_SESSION_DEBUG_INFO"
@@ -283,7 +289,6 @@ function debug_dump_respawn_save(filename) {
     "get_respawns_left"
     "stay_on_respawn_screen"
     "fetch_change_aircraft_on_start"
-    "is_hud_visible"
     "is_menu_state"
     "get_cur_rank_info"
     "get_cur_warpoints"
@@ -310,9 +315,6 @@ function debug_dump_respawn_save(filename) {
     {id = "g_mis_loading_state.curState", value = g_mis_loading_state.getCurState()}
     "HudBattleLog.battleLog"
   ]
-
-  foreach (id in ::SessionLobby.getPesistState())
-    list.append($"SessionLobby.{id}")
 
   foreach (crew in getCrewsListByCountry(get_local_player_country())) {
     let unit = getCrewUnit(crew)
@@ -363,7 +365,7 @@ function debug_dump_respawn_load(filename) {
   return $"Loaded {filename}"
 }
 
-//==================================================================================================
+
 
 function debug_dump_userlogs_save(filename) {
   let userlogs = []
@@ -383,7 +385,7 @@ function debug_dump_userlogs_load(filename) {
     return $"File not found: {filename}"
   dbg_dump.loadFuncs({
     get_user_logs_count = function() { return get_fake_userlogs().len() }
-    is_user_log_for_current_room = function(idx) { return ::SessionLobby.getRoomId() && ::SessionLobby.getRoomId() == get_fake_userlogs()?[idx]?.roomId }
+    is_user_log_for_current_room = function(idx) { return getSessionLobbyRoomId() && getSessionLobbyRoomId() == get_fake_userlogs()?[idx]?.roomId }
     get_user_log_blk_body = @(idx, outBlk) outBlk.setFrom(get_fake_userlogs()?[idx] ?? DataBlock())
     get_user_log_time_sec = function(idx) { return get_fake_userlogs()?[idx]?.timeStamp ?? 0 }
     disable_user_log_entry = function(idx) { if (idx in get_fake_userlogs()) get_fake_userlogs()[idx].disabled = true }
@@ -391,7 +393,7 @@ function debug_dump_userlogs_load(filename) {
   return $"Loaded {filename}"
 }
 
-//==================================================================================================
+
 
 function debug_dump_inventory_save(filename) {
   dbg_dump.save(filename, [
@@ -414,7 +416,7 @@ function debug_dump_inventory_load(filename) {
   return $"Loaded {filename}"
 }
 
-//==================================================================================================
+
 
 register_command(dbg_dump.unload, "debug.dump.unload")
 register_command(dbg_dump.isLoaded, "debug.dump.is_loaded")

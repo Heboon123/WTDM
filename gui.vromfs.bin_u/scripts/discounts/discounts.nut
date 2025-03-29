@@ -26,6 +26,7 @@ let { get_charserver_time_sec } = require("chard")
 let { get_price_blk } = require("blkGetters")
 let { isUnitGift } = require("%scripts/unit/unitShopInfo.nut")
 let { isCountryAvailable } = require("%scripts/firstChoice/firstChoice.nut")
+let { getDiscountByPath } = require("%scripts/discounts/discountUtils.nut")
 
 let platformMapForDiscountFromGuiBlk = {
   pc = isPlatformPC
@@ -42,7 +43,7 @@ let g_discount = {
   getDiscountIconId = @(name) $"{name}_discount"
   canBeVisibleOnUnit = @(unit) unit && unit.isVisibleInShop() && !unit.isBought()
   discountsList
-  consoleEntitlementUnits = {} //It must not be cleared in common func
+  consoleEntitlementUnits = {} 
 
   function updateOnlineShopDiscounts() {
     this.consoleEntitlementUnits.clear()
@@ -72,7 +73,7 @@ let g_discount = {
   onEventEpicShopDataUpdated = @(_p) this.updateOnlineShopDiscounts()
   onEventEpicShopItemUpdated = @(_p) this.updateOnlineShopDiscounts()
 
-  function updateGiftUnitsDiscountFromGuiBlk(giftUnits) { // !!!FIX ME Remove this function when gift units discount will received from char
+  function updateGiftUnitsDiscountFromGuiBlk(giftUnits) { 
     if (updateGiftUnitsDiscountTask >= 0) {
       periodic_task_unregister(updateGiftUnitsDiscountTask)
       updateGiftUnitsDiscountTask = -1
@@ -139,7 +140,7 @@ let g_discount = {
 
 g_discount.clearDiscountsList()
 
-//return 0 if when discount not visible
+
 g_discount.getUnitDiscount <- function getUnitDiscount(unit) {
   if (!this.canBeVisibleOnUnit(unit))
     return 0
@@ -168,7 +169,7 @@ g_discount.onEventUnitBought <- function onEventUnitBought(p) {
     return
 
   this.updateDiscountData()
-  //push event after current event completely finished
+  
   get_gui_scene().performDelayed(this, this.pushDiscountsUpdateEvent)
 }
 
@@ -179,7 +180,7 @@ g_discount.updateDiscountData <- function updateDiscountData(isSilentUpdate = fa
 
   let chPath = ["exp_to_gold_rate"]
   chPath.append(shopCountriesList)
-  discountsList.changeExp = ::getDiscountByPath(chPath, pBlk) > 0
+  discountsList.changeExp = getDiscountByPath(chPath, pBlk) > 0
 
   let giftUnits = {}
 
@@ -194,14 +195,14 @@ g_discount.updateDiscountData <- function updateDiscountData(isSilentUpdate = fa
       }
 
       let path = ["aircrafts", air.name]
-      let discount = ::getDiscountByPath(path, pBlk)
+      let discount = getDiscountByPath(path, pBlk)
       if (discount > 0)
         discountsList.airList[air.name] <- discount
     }
 
   eachBlock(get_entitlements_price_blk(), @(b, n) this.checkEntitlement(n, b, giftUnits), this)
 
-  this.updateGiftUnitsDiscountFromGuiBlk(giftUnits)  // !!!FIX ME Remove this function when gift units discount will received from char
+  this.updateGiftUnitsDiscountFromGuiBlk(giftUnits)  
 
   if (canUseIngameShop() && needEntStoreDiscountIcon)
     discountsList[topMenuOnlineShopId.value] = haveDiscount()

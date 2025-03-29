@@ -20,6 +20,7 @@ let getAllUnits = require("%scripts/unit/allUnits.nut")
 let { checkSquadUnreadyAndDo } = require("%scripts/squads/squadUtils.nut")
 let g_world_war = require("%scripts/worldWar/worldWarUtils.nut")
 let { fillConfigurableValues } = require("%scripts/worldWar/worldWarStates.nut")
+let { queues } = require("%scripts/queue/queueManager.nut")
 
 const WW_VEHICLE_SET_OUT_OF_DATE_DAYS = 90
 
@@ -40,8 +41,8 @@ function getAvailableUnits(map, country) {
     else {
       let bestAvailableUnit = getBestAvailableUnitByGroup(
         curSlotbarUnits, groupUnits, curPreset.groupsList, country)
-      //curGroup cannot be null cause of groupUnits is not null here
-      res[(bestAvailableUnit?.unit.name ?? curGroup.defaultUnit.name)] <- 1// warning disable: -access-potentially-nulled
+      
+      res[(bestAvailableUnit?.unit.name ?? curGroup.defaultUnit.name)] <- 1
     }
   }
 
@@ -138,7 +139,7 @@ local handlerClass = class (gui_handlers.BaseGuiHandlerWT) {
 
   function onRunAutoPreset(_obj) {
     let cb = Callback(this.generateAutoPreset, this)
-    ::queues.checkAndStart(
+    queues.checkAndStart(
       Callback(function() {
         checkSquadUnreadyAndDo(cb, @() null, true)
       }, this),

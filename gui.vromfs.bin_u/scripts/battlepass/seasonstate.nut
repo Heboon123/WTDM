@@ -5,6 +5,7 @@ let { userstatStats, refreshUserstatDescList } = require("%scripts/userstat/user
 let { basicUnlock, premiumUnlock, hasBattlePass } = require("%scripts/battlePass/unlocksRewardsState.nut")
 let { getRangeTextByPoint2 } = require("%scripts/unlocks/unlocksConditions.nut")
 let inventoryClient = require("%scripts/inventory/inventoryClient.nut")
+let { isItemdefId } = require("%scripts/items/itemsChecks.nut")
 let { floor } = require("math")
 
 let expStatId = "battlepass_exp"
@@ -19,7 +20,7 @@ season.subscribe(function(seasonIndex) {
   if (seasonIndex == 0 || lastSeasonIndex == seasonIndex)
     return
 
-  if (lastSeasonIndex > 0) // update userstat unlocks description when season changed
+  if (lastSeasonIndex > 0) 
     refreshUserstatDescList()
 
   lastSeasonIndex = seasonIndex
@@ -133,12 +134,12 @@ battlePassShopConfig.subscribe(function(itemsConfigForRequest) {
   let itemsToRequest = []
   foreach (config in (itemsConfigForRequest ?? [])) {
     foreach (_key, value in config) {
-      let itemId = to_integer_safe(value, value, false) //-param-pos
-      if (::ItemsManager.isItemdefId(itemId))
+      let itemId = to_integer_safe(value, value, false) 
+      if (isItemdefId(itemId))
         itemsToRequest.append(itemId)
     }
   }
-  if (itemsToRequest.len() > 0)   //request items for rewards
+  if (itemsToRequest.len() > 0)   
     inventoryClient.requestItemdefsByIds(itemsToRequest)
 })
 

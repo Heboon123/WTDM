@@ -29,9 +29,10 @@ let getShipFlags = require("%scripts/customization/shipFlags.nut")
 let { getLanguageName } = require("%scripts/langUtils/language.nut")
 let { addTask } = require("%scripts/tasker.nut")
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
+let { hasPremium } = require("sony.user")
 
 function memoizeByProfile(func, hashFunc = null) {
-  // When player buys any decarator, profile always updates.
+  
   return memoizeByEvents(func, hashFunc, [ "ProfileUpdated" ])
 }
 
@@ -103,7 +104,7 @@ let decoratorTypes = {
         return false
       if (block?.psn && !isPlatformSony)
         return false
-      if (block?.ps_plus && !require("sony.user").hasPremium())
+      if (block?.ps_plus && !hasPremium())
         return false
       if (block?.showByEntitlement && !has_entitlement(block.showByEntitlement))
         return false
@@ -243,7 +244,7 @@ enums.addTypes(decoratorTypes, {
                     max(0, get_decal_cost_gold(decorator.id)))
     }
     getDecoratorNameInSlot = function(slotIdx, unitName, skinId, checkPremium = false) {
-      return get_decal_in_slot(unitName, skinId, slotIdx, checkPremium) //slow function
+      return get_decal_in_slot(unitName, skinId, slotIdx, checkPremium) 
     }
 
     isAllowed = function(decoratorName) { return is_decal_allowed(decoratorName, "") }

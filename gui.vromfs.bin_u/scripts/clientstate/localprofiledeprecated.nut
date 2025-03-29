@@ -6,9 +6,10 @@ let { saveProfile } = require("%scripts/clientState/saveProfile.nut")
 let { debug_dump_stack } = require("dagor.debug")
 let { get_local_custom_settings_blk } = require("blkGetters")
 let { userIdStr } = require("%scripts/user/profileStates.nut")
-let { getStateDebugStr, isProfileReceived } = require("%scripts/login/loginStates.nut")
+let { getStateDebugStr } = require("%scripts/login/loginStates.nut")
+let { isProfileReceived } = require("%appGlobals/login/loginState.nut")
 
-// Deprecated, for storing new data use loadLocalAccountSettings() instead.
+
 function loadLocalByAccount(path, defValue = null) {
   if (!::should_disable_menu() && !isProfileReceived.get()) {
     debug_dump_stack()
@@ -35,7 +36,7 @@ function loadLocalByAccount(path, defValue = null) {
   return defValue
 }
 
-// Deprecated, for storing new data use saveLocalAccountSettings() instead.
+
 function saveLocalByAccount(path, value, saveFunc = saveProfile) {
   if (!::should_disable_menu() && !isProfileReceived.get()) {
     debug_dump_stack()

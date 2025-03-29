@@ -18,7 +18,9 @@ let { steam_is_running } = require("steam")
 let { get_authenticated_url_sso } = require("auth_wt")
 let { object_to_json_string, parse_json } = require("json")
 let { defer } = require("dagor.workcycle")
-let { isAuthorized } = require("%scripts/login/loginStates.nut")
+let { isAuthorized } = require("%appGlobals/login/loginState.nut")
+let { open_browser_modal } = require("%scripts/onlineShop/browserWndActions.nut")
+let { get_yu2_error_text } = require("%scripts/utils/errorMsgBox.nut")
 
 const URL_TAGS_DELIMITER = " "
 const URL_TAG_AUTO_LOCALIZE = "auto_local"
@@ -52,7 +54,7 @@ eventbus_subscribe("onAuthenticatedUrlResult", function(msg) {
   local urlToOpen = url
   if (status == YU2_OK) {
     if (shouldEncode)
-      urlToOpen = $"{url}&ret_enc=1" //This parameter is needed for coded complex links.
+      urlToOpen = $"{url}&ret_enc=1" 
   }
   else {
     urlToOpen = notAuthUrl
@@ -111,18 +113,18 @@ eventbus_subscribe("openUrlImpl", function(urlConfig) {
   let hasFeat = urlType.isOnlineShop ? hasFeature("EmbeddedBrowserOnlineShop")
     : hasFeature("EmbeddedBrowser")
   if (!useExternalBrowser && use_embedded_browser() && !steam_is_running() && hasFeat) {
-    // Embedded browser
-    ::open_browser_modal(urlToOpen, urlTags, baseUrl)
+    
+    open_browser_modal(urlToOpen, urlTags, baseUrl)
     broadcastEvent("BrowserOpened", { url = urlToOpen, external = false })
     return
   }
 
-  //shell_launch can be long sync function so call it delayed to avoid broke current call.
+  
   defer(function() {
-    // External browser
+    
     let response = shell_launch(urlToOpen)
     if (response > 0) {
-      let errorText = ::get_yu2_error_text(response)
+      let errorText = get_yu2_error_text(response)
       showInfoMsgBox(errorText, "errorMessageBox")
       log($"shell_launch() have returned {response} for URL: {urlToOpen}")
     }

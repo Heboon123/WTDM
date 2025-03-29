@@ -3,9 +3,9 @@ from "%scripts/dagui_library.nut" import *
 from "%scripts/items/itemsConsts.nut" import itemType
 
 let DataBlock = require("DataBlock")
-let ItemGenerators = require("%scripts/items/itemsClasses/itemGenerators.nut")
+let { getItemGenerator } = require("%scripts/items/itemGeneratorsManager.nut")
 let { addTask } = require("%scripts/tasker.nut")
-let { getInventoryItemById, getInventoryList } = require("%scripts/items/itemsManager.nut")
+let { getInventoryList } = require("%scripts/items/itemsManager.nut")
 let { exchangeSeveralRecipes } = require("%scripts/items/exchangeRecipes.nut")
 let { get_cur_base_gui_handler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -13,16 +13,20 @@ let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 const GENERIC_ITEM_GENERATOR_ID = 299030
 const SINGLE_GENERATOR_ID_OFFSET = 20
 const CRAFT_PART_TO_NEW_ITEM_RATIO = 2
+const MAXIMUM_CRAFTS_AT_ONCE_TIME = 100
 
 let RECYCLED_ITEMS_IDS = [299000, 299001, 299002, 299003, 299004]
 
-let getSingleGeneratorForRecycledItem = @(itemId) ItemGenerators.get(itemId + SINGLE_GENERATOR_ID_OFFSET)
+
+
+let getRecyclingItemUniqKey = @(item) "::".concat(item.id, item.expiredTimeSec)
+let getSingleGeneratorForRecycledItem = @(itemId) getItemGenerator(itemId + SINGLE_GENERATOR_ID_OFFSET)
 
 let ItemsRecycler = class {
   craftParts = null
   craftPartsCount = 0
 
-  selectedItemsToRecycle = null // { [itemId] = amount }
+  selectedItemsToRecycle = null  
   selectedItemsToRecycleCount = 0
 
   recyclingItemsIds = null
@@ -32,24 +36,25 @@ let ItemsRecycler = class {
     this.selectedItemsToRecycle = {}
   }
 
-  function selectItemToRecycle(itemId, amount) {
-    if (amount == 0 && itemId in this.selectedItemsToRecycle) {
-      this.selectedItemsToRecycle.$rawdelete(itemId)
+  function selectItemToRecycle(item, amount) {
+    let key = getRecyclingItemUniqKey(item)
+    if (amount == 0 && key in this.selectedItemsToRecycle) {
+      this.selectedItemsToRecycle.$rawdelete(key)
       this.updateItemsToRecycleCount()
       return
     }
 
-    if (itemId not in this.selectedItemsToRecycle)
-      this.selectedItemsToRecycle[itemId] <- amount
+    if (key not in this.selectedItemsToRecycle)
+      this.selectedItemsToRecycle[key] <- { item, amount }
     else
-      this.selectedItemsToRecycle[itemId] = amount
+      this.selectedItemsToRecycle[key].amount = amount
 
     this.updateItemsToRecycleCount()
   }
 
   function updateItemsToRecycleCount() {
     this.selectedItemsToRecycleCount = this.selectedItemsToRecycle.values()
-      .reduce(@(total, cur) total + cur, 0)
+      .reduce(@(total, sel) total + sel.amount, 0)
   }
 
   function updateCraftParts() {
@@ -86,7 +91,7 @@ let ItemsRecycler = class {
 
   function performItemsRecycling(params) {
     if (params.len() == 0) {
-      this.recyclingItemsIds.clear() // Inventory updates after the server's cln_recycle_items response, so clear the list only after all queue operations complete.
+      this.recyclingItemsIds.clear() 
       return
     }
 
@@ -100,8 +105,8 @@ let ItemsRecycler = class {
   }
 
   function getSelectedItemsListMarkup() {
-    let itemsList = this.selectedItemsToRecycle.reduce(function(allItemsMarkup, amount, itemId) {
-      let itemDesc = getInventoryItemById(itemId).getNameMarkup(amount)
+    let itemsList = this.selectedItemsToRecycle.reduce(function(allItemsMarkup, sel) {
+      let itemDesc = sel.item.getNameMarkup(sel.amount)
       return "".concat(allItemsMarkup, "tdiv {margin-top:t='10@sf/@pf';", itemDesc, "}")
     }, "")
 
@@ -109,13 +114,12 @@ let ItemsRecycler = class {
   }
 
   function getRecycleItemsRequestsParams() {
-    let itemsByType = {} // For now it's possible to recycle items only with the same iType per single request
+    let itemsByType = {} 
 
-    foreach (itemId, amount in this.selectedItemsToRecycle) {
-      if (amount < 1)
+    foreach (sel in this.selectedItemsToRecycle) {
+      if (sel.amount < 1)
         continue
-      let item = getInventoryItemById(itemId)
-
+      let { item, amount } = sel
       local itemsBlk = itemsByType?[item.iType].items
 
       if (!itemsBlk) {
@@ -126,7 +130,7 @@ let ItemsRecycler = class {
 
       if (item.canPacked) {
         let itemBlk = itemsBlk.addNewBlock("item")
-        itemBlk.setStr("itemId", item.uids[0]) // for packed items there is only one uid
+        itemBlk.setStr("itemId", item.uids[0]) 
         itemBlk.setInt("count", amount)
       } else {
         let uidsToRecycle = item.uids.slice(-amount)
@@ -146,12 +150,12 @@ let ItemsRecycler = class {
     let partIdToQuantity = this.craftParts
       .reduce(@(parts, part) parts.__update({[part.id] = part.amount}), {})
 
-    // At first, we must use single generators as many as possible
+    
     let singleGenCfg = this.calculateCraftViaSingleGenerator(partIdToQuantity, remaining)
     exchangeConfigs.extend(singleGenCfg.res)
     remaining = singleGenCfg.remaining
 
-    // If all craft patrs types are left with only one, we use a generic generator
+    
     if (remaining > 0)
       exchangeConfigs.extend(this.calculateCraftViaGenericGenerator(partIdToQuantity, remaining))
 
@@ -209,7 +213,7 @@ let ItemsRecycler = class {
   }
 
   function findGenericGeneratorRecipe(partId, partIdToQuantity) {
-    let gen = ItemGenerators.get(GENERIC_ITEM_GENERATOR_ID)
+    let gen = getItemGenerator(GENERIC_ITEM_GENERATOR_ID)
     let suitableIds = partIdToQuantity
       .filter(@(quantity) quantity >= 1)
       .keys()
@@ -223,4 +227,10 @@ let ItemsRecycler = class {
   }
 }
 
-return { ItemsRecycler, CRAFT_PART_TO_NEW_ITEM_RATIO, RECYCLED_ITEMS_IDS }
+return {
+  ItemsRecycler,
+  CRAFT_PART_TO_NEW_ITEM_RATIO,
+  RECYCLED_ITEMS_IDS,
+  MAXIMUM_CRAFTS_AT_ONCE_TIME,
+  getRecyclingItemUniqKey
+}

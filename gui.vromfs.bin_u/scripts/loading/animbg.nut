@@ -10,7 +10,7 @@ let SecondsUpdater = require("%sqDagui/timer/secondsUpdater.nut")
 let { getCurLoadingBgData, removeLoadingBgFromLists } = require("%scripts/loading/loadingBgData.nut")
 let { isLoadingScreenBanned } = require("%scripts/options/preloaderOptions.nut")
 let { havePremium } = require("%scripts/user/premium.nut")
-let { isLoggedIn, isProfileReceived } = require("%scripts/login/loginStates.nut")
+let { isLoggedIn, isProfileReceived } = require("%appGlobals/login/loginState.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 
@@ -19,7 +19,7 @@ const MODIFY_NO_FILE = -2
 
 local lastBg = ""
 
-let getFullFileName = @(name) name.split(".").len() > 1 ? name : $"config/loadingbg/{name}.blk"
+let getFullFileName = @(name) name.split(".").len() > 1 ? name : $"loadingbg/{name}.blk"
 let getLastBgFileName = @() lastBg.len() ? getFullFileName(lastBg) : ""
 
 local isDebugMode = false
@@ -42,7 +42,7 @@ function loadBgBlk(name) {
   loadErrorText = "Error: cant load login bg blk {0}: {1}".subst(colorize("userlogColoredText", fullName), errText)
 
   if (isDebugMode)
-    return res //no need to change bg in debugMode
+    return res 
 
   res = null
   removeLoadingBgFromLists(name)
@@ -63,7 +63,7 @@ function load(blkFilePath = "", obj = null, curBgData = null) {
 
   if (blkFilePath != "")
     lastBg = blkFilePath
-  else if (isLoggedIn.get() || lastBg == "") { //no change bg during first load
+  else if (isLoggedIn.get() || lastBg == "") { 
       if (hasFeature("LoadingBackgroundFilter")
         && isProfileReceived.get() && havePremium.value) {
         let filteredCurBgList = curBgList.filter(@(_v, id) !isLoadingScreenBanned(id))
@@ -125,7 +125,7 @@ function enableDebugUpdate() {
     false)
 }
 
-//blkFilePath == null - swith debug mode off.
+
 function debugLoad(blkFilePath = "") {
   isDebugMode = blkFilePath != null
   if (!isDebugMode)

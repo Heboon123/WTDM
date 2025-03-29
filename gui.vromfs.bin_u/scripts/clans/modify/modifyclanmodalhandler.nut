@@ -11,6 +11,7 @@ let { isNamePassing } = require("%scripts/dirtyWordsFilter.nut")
 let { placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { setFocusToNextObj } = require("%sqDagui/daguiUtil.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
+let { checkClanTagForDirtyWords, stripClanTagDecorators } = require("%scripts/clans/clanTextInfo.nut")
 
 gui_handlers.ModifyClanModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   wndType = handlerType.MODAL
@@ -38,7 +39,7 @@ gui_handlers.ModifyClanModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     "newclan_announcement",
   ]
 
-  // Abstract method.
+  
   function createView() {
     return {}
   }
@@ -90,7 +91,7 @@ gui_handlers.ModifyClanModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       errorMsg = "charServer/updateError/16"
     }
     else if ((this.clanData == null || this.newClanTag != this.clanData.tag) &&
-      !isNamePassing(::g_clans.stripClanTagDecorators(this.newClanTag))) {
+      !isNamePassing(stripClanTagDecorators(this.newClanTag))) {
       errorMsg = "charServer/updateError/17"
     }
 
@@ -101,36 +102,36 @@ gui_handlers.ModifyClanModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     return true
   }
 
-  // Abstract method.
+  
   function onFieldChange(_obj) {
   }
 
-  // Abstract method.
+  
   function onClanTypeSelect(_obj) {
   }
 
-  // Abstract method.
+  
   function onSubmit() {
   }
 
-  // Abstract method.
+  
   function updateSubmitButtonText() {
   }
 
-  // Abstract method.
+  
   function onUpgradeMembers() {
   }
 
-  // Abstract method.
+  
   function onDisbandClan() {
   }
 
-  // Abstract method.
+  
   function getDecoratorsList() {
     return []
   }
 
-  // Override.
+  
   function onEventOnlineShopPurchaseSuccessful(_params) {
     this.updateSubmitButtonText()
   }
@@ -156,7 +157,7 @@ gui_handlers.ModifyClanModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     this.updateDecoration(this.scene.findObject("newclan_tag"))
   }
 
-  // Called from within scene as well.
+  
   function updateDecoration(obj) {
     let decorators = this.getDecoratorsList()
     let decorObj = this.scene.findObject("newclan_tag_decoration")
@@ -218,7 +219,7 @@ gui_handlers.ModifyClanModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     this.newClanRegion        = this.newClanRegion.len() > 0 ? clearBorderSymbols(this.newClanRegion, [" "]) : ""
     this.newClanAnnouncement  = this.newClanAnnouncement.len() > 0 ? clearBorderSymbols(this.newClanAnnouncement, [" "]) : ""
 
-    if (!::checkClanTagForDirtyWords(this.newClanTag, false))
+    if (!checkClanTagForDirtyWords(this.newClanTag, false))
       err = "".concat(err, loc("clan/error/bad_words_in_clanTag"))
 
     if (this.newClanTag.len() <= 0)

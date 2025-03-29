@@ -3,17 +3,19 @@ from "%scripts/dagui_library.nut" import *
 
 log($"onScriptLoadAfterLogin: wt")
 
-// Please don't move paths from the main list here anymore. Instead, just edit paths in the main list below.
+
 let { loadOnce } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 
 require("unit/initUnitTypes.nut")
 require("controls/shortcutsList/updateShortcutsModulesList.nut")
 require("slotInfoPanel/updateSlotInfoPanelButtons.nut")
+require("%scripts/warbonds/warbondAwardType.nut")
 require("mainmenu/instantActionHandler.nut")
 require("mainmenu/mainMenuHandler.nut")
 require("hud/updateHudConfig.nut")
 require("flightMenu/updateFlightMenuButtonTypes.nut")
 require("mainmenu/autoStartBattleHandler.nut")
+require("%scripts/items/itemsClasses/itemsClasses.nut")
 
 foreach (fn in [
   "%scripts/money.nut"
@@ -28,7 +30,6 @@ foreach (fn in [
   "%scripts/popups/popups.nut"
 
   "%scripts/wheelmenu/wheelmenu.nut"
-  "%scripts/guiLines.nut"
   "%scripts/guiTutorial.nut"
   "%scripts/wndLib/multiSelectMenu.nut"
   "%scripts/showImage.nut"
@@ -63,14 +64,11 @@ foreach (fn in [
   "%scripts/events/eventRoomsHandler.nut"
   "%scripts/events/eventRewardsWnd.nut"
   "%scripts/events/rewardProgressManager.nut"
-  "%scripts/events/eventDescription.nut"
   "%scripts/events/eventDescriptionWindow.nut"
   "%scripts/vehiclesWindow.nut"
-  "%scripts/events/eventJoinProcess.nut"
 
   "%scripts/gameModes/gameModeSelect.nut"
   "%scripts/changeCountry.nut"
-  "%scripts/instantAction.nut"
   "%scripts/promo/promoViewUtils.nut"
   "%scripts/unlocks/battleTasks.nut"
   "%scripts/mainmenu/topMenuSectionsConfigs.nut"
@@ -82,8 +80,6 @@ foreach (fn in [
   "%scripts/slotbar/selectCrew.nut"
   "%scripts/slotbar/slotbarPresetsList.nut"
 
-  "%scripts/onlineInfo/onlineInfo.nut"
-
   "%scripts/user/presenceType.nut"
   "%scripts/squads/squadManager.nut"
   "%scripts/squads/squadUtils.nut"
@@ -92,7 +88,6 @@ foreach (fn in [
 
   "%scripts/chat/chatRoomType.nut"
   "%scripts/chat/chat.nut"
-  "%scripts/chat/chatLatestThreads.nut"
   "%scripts/chat/chatCategories.nut"
   "%scripts/chat/menuChat.nut"
   "%scripts/chat/createRoomWnd.nut"
@@ -104,7 +99,6 @@ foreach (fn in [
   "%scripts/chat/mpChatMode.nut"
   "%scripts/chat/mpChat.nut"
 
-  "%scripts/invites/invites.nut"
   "%scripts/invites/inviteChatRoom.nut"
   "%scripts/invites/inviteSessionRoom.nut"
   "%scripts/invites/inviteTournamentBattle.nut"
@@ -112,9 +106,7 @@ foreach (fn in [
   "%scripts/invites/inviteFriend.nut"
   "%scripts/invites/invitesWnd.nut"
 
-  "%scripts/controls/controlsPresets.nut"
   "%scripts/controls/controls.nut"
-  "%scripts/controls/assignButtonWnd.nut"
   "%scripts/controls/controlsConsole.nut"
   "%scripts/controls/input/combination.nut"
   "%scripts/controls/input/axis.nut"
@@ -122,7 +114,6 @@ foreach (fn in [
   "%scripts/controls/input/image.nut"
   "%scripts/controls/input/keyboardAxis.nut"
   "%scripts/help/rwrThreatTypesWnd.nut"
-  "%scripts/help/helpWnd.nut"
   "%scripts/controls/controlsWizard.nut"
   "%scripts/controls/controlsType.nut"
   "%scripts/controls/AxisControls.nut"
@@ -134,7 +125,6 @@ foreach (fn in [
   "%scripts/loading/loadingBrief.nut"
   "%scripts/missions/missionType.nut"
   "%scripts/missions/missionsUtils.nut"
-  "%scripts/missions/urlMission.nut"
   "%scripts/missions/loadingUrlMissionModal.nut"
   "%scripts/missions/urlMissionsList.nut"
   "%scripts/missions/misListType.nut"
@@ -152,7 +142,6 @@ foreach (fn in [
   "%scripts/missionBuilder/missionBuilderTuner.nut"
   "%scripts/missionBuilder/changeAircraftForBuilder.nut"
 
-  "%scripts/events/eventRoomCreationContext.nut"
   "%scripts/events/createEventRoomWnd.nut"
 
   "%scripts/replays/replayScreen.nut"
@@ -163,15 +152,14 @@ foreach (fn in [
   "%scripts/customization/customizationWnd.nut"
 
   "%scripts/myStats.nut"
-  "%scripts/user/partnerUnlocks.nut"
   "%scripts/user/chooseTitle.nut"
 
   "%scripts/contacts/contacts.nut"
-  "%scripts/userPresence.nut"
 
   "%scripts/unlocks/unlocks.nut"
   "%scripts/unlocks/unlocksView.nut"
-  "%scripts/unlocks/showUnlock.nut"
+  "%scripts/debriefing/rankUpModal.nut"
+  "%scripts/unlocks/showUnlockHandler.nut"
   "%scripts/promo/battleTasksPromoHandler.nut"
   "%scripts/unlocks/battleTasksHandler.nut"
   "%scripts/unlocks/battleTasksSelectNewTask.nut"
@@ -186,18 +174,16 @@ foreach (fn in [
   "%scripts/shop/shopViewWnd.nut"
   "%scripts/convertExpHandler.nut"
 
-  "%scripts/weaponry/unitBulletsManager.nut"
-  "%scripts/dmViewer/dmViewer.nut"
   "%scripts/weaponry/weaponryTypes.nut"
   "%scripts/weaponry/weaponrySelectModal.nut"
+  "%scripts/weaponry/weaponryPresetsWnd.nut"
+
   "%scripts/weaponry/unitWeaponsHandler.nut"
   "%scripts/weaponry/weapons.nut"
   "%scripts/weaponry/weaponWarningHandler.nut"
-  "%scripts/finishedResearches.nut"
+  "%scripts/researches/finishedResearches.nut"
   "%scripts/modificationsTierResearched.nut"
 
-  "%scripts/matchingRooms/sessionLobby.nut"
-  "%scripts/matchingRooms/mRoomsList.nut"
   "%scripts/matchingRooms/sessionsListHandler.nut"
   "%scripts/mplayerParamType.nut"
   "%scripts/matchingRooms/mRoomPlayersListWidget.nut"
@@ -211,7 +197,6 @@ foreach (fn in [
   "%scripts/respawn/respawn.nut"
   "%scripts/respawn/teamUnitsLeftView.nut"
   "%scripts/misObjectives/objectiveStatus.nut"
-  "%scripts/misObjectives/misObjectivesView.nut"
   "%scripts/tacticalMap.nut"
 
   "%scripts/debriefing/debriefingModal.nut"
@@ -221,7 +206,6 @@ foreach (fn in [
   "%scripts/clans/clanType.nut"
   "%scripts/clans/clanLogType.nut"
   "%scripts/clans/clans.nut"
-  "%scripts/clans/clanSeasons.nut"
   "%scripts/clans/clanTagDecorator.nut"
   "%scripts/clans/modify/modifyClanModalHandler.nut"
   "%scripts/clans/clanChangeMembershipReqWnd.nut"
@@ -232,8 +216,8 @@ foreach (fn in [
   "%scripts/clans/clanAverageActivityModal.nut"
   "%scripts/clans/clanSquadsModal.nut"
   "%scripts/clans/clanSquadInfoWnd.nut"
+  "%scripts/clans/clanRequestsModal.nut"
 
-  "%scripts/penitentiary/banhammer.nut"
   "%scripts/penitentiary/tribunal.nut"
 
   "%scripts/gamercardDrawer.nut"
@@ -247,14 +231,12 @@ foreach (fn in [
   "%scripts/items/recentItemsHandler.nut"
   "%scripts/items/ticketBuyWindow.nut"
   "%scripts/items/itemsShop.nut"
-  "%scripts/items/trophyReward.nut"
   "%scripts/items/trophyGroupShopWnd.nut"
   "%scripts/items/trophyRewardWnd.nut"
   "%scripts/items/trophyRewardList.nut"
   "%scripts/items/orderAwardMode.nut"
   "%scripts/items/orderType.nut"
   "%scripts/items/orderUseResult.nut"
-  "%scripts/items/orders.nut"
   "%scripts/items/orderActivationWindow.nut"
 
   "%scripts/userLog/userlogData.nut"
@@ -264,7 +246,6 @@ foreach (fn in [
   "%scripts/crew/crewShortCache.nut"
   "%scripts/crew/skillParametersRequestType.nut"
   "%scripts/crew/skillParametersColumnType.nut"
-  "%scripts/crew/crewModalHandler.nut"
   "%scripts/crew/skillsPageStatus.nut"
   "%scripts/crew/crewPoints.nut"
   "%scripts/crew/crewBuyPointsHandler.nut"
@@ -275,9 +256,7 @@ foreach (fn in [
   "%scripts/crew/skillParametersType.nut"
 
   "%scripts/slotbar/slotbarPresets.nut"
-  "%scripts/slotbar/slotbarPresetsWnd.nut"
   "%scripts/vehicleRequireFeatureWindow.nut"
-  "%scripts/slotbar/slotbarPresetsTutorial.nut"
   "%scripts/unit/unitInfoType.nut"
   "%scripts/unit/unitInfoExporter.nut"
 
@@ -288,7 +267,6 @@ foreach (fn in [
   "%scripts/hud/hudActionBarType.nut"
   "%scripts/replays/spectator.nut"
   "%scripts/hud/hudTankDebuffs.nut"
-  "%scripts/hud/hudDisplayTimers.nut"
   "%scripts/hud/hudCrewState.nut"
   "%scripts/hud/hudEnemyDebuffsType.nut"
   "%scripts/hud/hudEnemyDamage.nut"
@@ -305,7 +283,6 @@ foreach (fn in [
   "%scripts/hud/hudHints.nut"
   "%scripts/hud/hudHintsManager.nut"
 
-  "%scripts/warbonds/warbondAwardType.nut"
   "%scripts/warbonds/warbondsManager.nut"
   "%scripts/warbonds/warbondShop.nut"
 
@@ -320,6 +297,8 @@ foreach (fn in [
 
   "%scripts/items/buyAndOpenChestWnd.nut"
   "%scripts/gamepadSceneSettings.nut"
+
+  "%scripts/user/profileOpener.nut"
 ]) {
   loadOnce(fn)
 }
@@ -346,11 +325,12 @@ require("%scripts/misCustomRules/ruleAdditionalUnits.nut")
 require("%scripts/items/roulette/bhvRoulette.nut")
 require("%scripts/items/discountItemSortMethod.nut")
 require("%scripts/items/trophyMultiAward.nut")
-require("%scripts/items/itemLimits.nut")
 require("%scripts/items/listPopupWnd/itemsListWndBase.nut")
 require("%scripts/items/listPopupWnd/universalSpareApplyWnd.nut")
 require("%scripts/items/listPopupWnd/modUpgradeApplyWnd.nut")
 require("%scripts/items/roulette/itemsRoulette.nut")
+require("%scripts/matchingRooms/joiningGameWaitBox.nut")
+require("%scripts/matching/serviceNotifications/mroomsNotifications.nut")
 
 require("%scripts/debugTools/dbgCheckContent.nut")
 require("%scripts/debugTools/dbgUnlocks.nut")
@@ -360,9 +340,12 @@ require("%scripts/debugTools/dbgVoiceChat.nut")
 require("%scripts/debugTools/dbgDumpTools.nut")
 require("%scripts/debugTools/dbgUtilsAfterLogin.nut")
 require("%scripts/debugTools/dbgMarketplace.nut")
+require("%scripts/dmViewer/modeXrayDebugExport.nut")
 
 require("%scripts/exportInfo/skinsLocExporter.nut")
+require("%scripts/onlineShop/buyPremiumHandler.nut")
+require("%scripts/unlocks/requestInventoryUnlocks.nut")
 
-let { isAuthorized } = require("%scripts/login/loginStates.nut")
-if (isAuthorized.get() || disable_network()) //load scripts from packs only after login
+let { isAuthorized } = require("%appGlobals/login/loginState.nut")
+if (isAuthorized.get() || disable_network()) 
   require("%scripts/worldWar/worldWar.nut")

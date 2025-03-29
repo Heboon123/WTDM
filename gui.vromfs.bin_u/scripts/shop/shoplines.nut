@@ -104,7 +104,9 @@ let ShopLines = class {
 
 
   function getAlarmIconTooltip(lineConfig) {
-    let { air = null, reqAir = null } = lineConfig
+    let { air = null, reqAir = null, hasEndResearchDateInGroup = false } = lineConfig
+    if (hasEndResearchDateInGroup)
+      return loc("mainmenu/vehicleInGroupAvailableLimitedTimeTooltip")
     let endReleaseDate = reqAir?.getEndRecentlyReleasedTime() ?? 0
     if (endReleaseDate > 0) {
       let hasReqAir = (air?.reqAir ?? "") != ""
@@ -161,7 +163,7 @@ let ShopLines = class {
 
 
   function createLine(lineType, r0, c0, r1, c1, status, lineConfig = {}) {
-    let { air = null, reqAir = null, arrowCount = 1, hasNextFutureReqLine = false } = lineConfig
+    let { air = null, reqAir = null, arrowCount = 1, hasNextFutureReqLine = false, hasEndResearchDateInGroup = false } = lineConfig
     let isFutureReqAir = air?.futureReqAir != null && air.futureReqAir == reqAir?.name
     let isMultipleArrow = arrowCount > 1
     let isLineParallelFutureReqLine = isMultipleArrow
@@ -182,7 +184,7 @@ let ShopLines = class {
     this.lastLineIndex++
     let idString = $"id:t='line_{this.lastLineIndex}';"
     local lines = ""
-    let arrowProps = $"shopStat:t='{status}'; isOutlineIcon:t={isFutureReqAir ? "yes" : "no"};"
+    let arrowProps = $"shopStat:t='{status}'; isOutlineIcon:t={isFutureReqAir || hasEndResearchDateInGroup ? "yes" : "no"};"
     let arrowFormat = "".concat("shopArrow { %s type:t='%s'; size:t='%s, %s';",
       "pos:t='%s, %s'; rotation:t='%s';", arrowProps, " } ")
     let lineFormat = "".concat("shopLine { size:t='%s, %s'; pos:t='%s, %s'; rotation:t='%s';",
@@ -206,26 +208,26 @@ let ShopLines = class {
         posX, posY, "0"))
 
     }
-    else if (lineType == "fakeUnitReq") { //special line for fake unit. Line is go to unit plate on side
+    else if (lineType == "fakeUnitReq") { 
       lines = "".concat(lines, "tdiv { ", idString,
         format(lineFormat,
-          $"{pad1} + {(r1 - r0 - 0.5)}@shop_height", //height
-          "1@modLineWidth", //width
-          "".concat(c0 + 0.5, "@shop_width", c0 > c1 ? "- 0.5@modLineWidth" : "+ 0.5@modLineWidth"), //posX
-          "".concat(r0 + 1, "@shop_height - ", pad1, c0 > c1 ? "+w" : ""), // posY
+          $"{pad1} + {(r1 - r0 - 0.5)}@shop_height", 
+          "1@modLineWidth", 
+          "".concat(c0 + 0.5, "@shop_width", c0 > c1 ? "- 0.5@modLineWidth" : "+ 0.5@modLineWidth"), 
+          "".concat(r0 + 1, "@shop_height - ", pad1, c0 > c1 ? "+w" : ""), 
           (c0 > c1) ? "-90" : "90"),
         format(arrowFormat, "",
-          "horizontal",  //type
-          "".concat(abs(c1 - c0) - 0.5, "@shop_width + ", interval1), //width
-          "1@modArrowWidth", //height
-          "".concat(c1 > c0 ? c0 + 0.5 : c0, "@shop_width", c1 > c0 ? "" : $" - {interval1}"), //posX
-          $"{r1 + 0.5}@shop_height - 0.5@modArrowWidth", // posY
+          "horizontal",  
+          "".concat(abs(c1 - c0) - 0.5, "@shop_width + ", interval1), 
+          "1@modArrowWidth", 
+          "".concat(c1 > c0 ? c0 + 0.5 : c0, "@shop_width", c1 > c0 ? "" : $" - {interval1}"), 
+          $"{r1 + 0.5}@shop_height - 0.5@modArrowWidth", 
           (c0 > c1) ? "180" : "0"),
         format(angleFormat,
-          "1@modAngleWidth", //width
-          "1@modAngleWidth", //height
-          $"{c0 + 0.5}@shop_width - 0.5@modAngleWidth", //posX
-          $"{r1 + 0.5}@shop_height - 0.5@modAngleWidth", // posY
+          "1@modAngleWidth", 
+          "1@modAngleWidth", 
+          $"{c0 + 0.5}@shop_width - 0.5@modAngleWidth", 
+          $"{r1 + 0.5}@shop_height - 0.5@modAngleWidth", 
           c0 > c1 ? "-90" : "0"),
         "}")
     }
@@ -235,22 +237,22 @@ let ShopLines = class {
       let arrowOffset = c0 > c1 ? -offset : offset
       lines = "".concat(lines, "tdiv { ", idString,
         format(lineFormat,
-          $"{pad1} + {lh}@shop_height", //height
-          "1@modLineWidth", //width
-          "".concat(c0 + 0.5 + arrowOffset, "@shop_width", c0 > c1 ? "-" : "+", " 0.5@modLineWidth"), //posX
-          "".concat(r0 + 1, "@shop_height - ", pad1, c0 > c1 ? "+ w " : ""), // posY
+          $"{pad1} + {lh}@shop_height", 
+          "1@modLineWidth", 
+          "".concat(c0 + 0.5 + arrowOffset, "@shop_width", c0 > c1 ? "-" : "+", " 0.5@modLineWidth"), 
+          "".concat(r0 + 1, "@shop_height - ", pad1, c0 > c1 ? "+ w " : ""), 
           (c0 > c1) ? "-90" : "90"),
         format(lineFormat,
           "".concat(abs(c1 - c0) - offset, "@shop_width"),
-          "1@modLineWidth", //height
+          "1@modLineWidth", 
           "".concat(min(c0, c1) + 0.5 + (c0 > c1 ? 0 : offset), "@shop_width"),
           $"{lh + r0 + 1}@shop_height - 0.75@modLineWidth",
           "0"),
         format(angleFormat,
-          "1@modAngleWidth", //width
-          "1@modAngleWidth", //height
-          $"{c0 + 0.5 + arrowOffset}@shop_width - 0.5@modAngleWidth", //posX
-          $"{lh + r0 + 1}@shop_height - 0.75@modLineWidth", // posY
+          "1@modAngleWidth", 
+          "1@modAngleWidth", 
+          $"{c0 + 0.5 + arrowOffset}@shop_width - 0.5@modAngleWidth", 
+          $"{lh + r0 + 1}@shop_height - 0.75@modLineWidth", 
           (c0 > c1 ? "-90" : "0")),
         format(arrowFormat, "",
           "vertical",
@@ -260,8 +262,8 @@ let ShopLines = class {
           $"{lh + r0 + 1}@shop_height - 0.25@modLineWidth",
           "0"),
         format(angleFormat,
-          "1@modAngleWidth", //width
-          "1@modAngleWidth", //height
+          "1@modAngleWidth", 
+          "1@modAngleWidth", 
           $"{c1 + 0.5}@shop_width - 0.5@modAngleWidth",
           $"{lh + r0 + 1}@shop_height - 0.75@modLineWidth",
           (c0 > c1 ? "90" : "180"))
@@ -273,7 +275,8 @@ let ShopLines = class {
 
 
   function modifyLine(lineObj, r0, c0, r1, c1, lineType, lineConfig, status, edge = "no") {
-    let { air = null, reqAir = null, arrowCount = 1, hasNextFutureReqLine = false } = lineConfig
+    let { air = null, reqAir = null, arrowCount = 1, hasNextFutureReqLine = false,
+      hasEndResearchDateInGroup = false } = lineConfig
     let isFutureReqAir = air?.futureReqAir != null && air.futureReqAir == reqAir?.name
     let isMultipleArrow = arrowCount > 1
     let isLineParallelFutureReqLine = isMultipleArrow
@@ -294,7 +297,7 @@ let ShopLines = class {
       height = $"{pad1} + {pad2} + {(r1 - r0 - 1)}@shop_height"
       posY = $"{(r0 + 1)}@shop_height - {pad1}"
       lineObj.pos = $"{posX}, {posY}"
-      lineObj["isOutlineIcon"] = isFutureReqAir ? "yes" : "no"
+      lineObj["isOutlineIcon"] = isFutureReqAir || hasEndResearchDateInGroup? "yes" : "no"
       lineObj.size = $"1@modArrowWidth, {height}"
 
     } else if (lineType == "horizontal") {
@@ -302,7 +305,7 @@ let ShopLines = class {
       width = $"{(c1 - c0 - 1)}@shop_width + {interval1} + {interval2}"
       posY = $"{(r0 + 0.5 + offset)}@shop_height - 0.5@modArrowWidth"
       lineObj.pos = $"{posX}, {posY}"
-      lineObj["isOutlineIcon"] = isFutureReqAir ? "yes" : "no"
+      lineObj["isOutlineIcon"] = isFutureReqAir || hasEndResearchDateInGroup? "yes" : "no"
       lineObj.width = width
 
     } else if (lineType == "alarmIcon_horizontal") {
@@ -364,13 +367,14 @@ let ShopLines = class {
     let { air = null, reqAir = null } = lc
 
     let lineType = getLineType(lc.line[0], lc.line[1], lc.line[2], lc.line[3], lc)
+    let hasEndResearchDateInGroup = air?.airsGroup.findvalue(@(u) u.endResearchDate != null && u.isVisibleInShop() && !u.isBought()) != null
     if (!this.tryModifyLine(containerIndex, lineType, lc, status, edge))
       this.addLine(handler, arrowsContainer, lineType, containerIndex, lc, status)
 
     let isFutureReqAir = air?.futureReqAir != null && air.futureReqAir == reqAir?.name
-    if (isFutureReqAir) {
+    if (isFutureReqAir || hasEndResearchDateInGroup) {
       let alarmIconType = $"alarmIcon_{lineType}"
-      if (!this.tryModifyLine(containerIndex, alarmIconType, lc, status, edge)) {
+      if (!this.tryModifyLine(containerIndex, alarmIconType, lc.__update({ hasEndResearchDateInGroup }), status, edge)) {
         this.addAlarmIcon(handler, alarmIconsContainer, alarmIconType, containerIndex, lc, edge)
       }
     }

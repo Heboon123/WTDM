@@ -1,13 +1,13 @@
 from "%scripts/dagui_library.nut" import *
 
-require("%scripts/mainmenu/topMenuButtonsConfigs.nut") //Independed Module. Need for init buttons configs
+require("%scripts/mainmenu/topMenuButtonsConfigs.nut") 
 let { is_low_width_screen} = require("%scripts/options/safeAreaMenu.nut")
 let { enumsAddTypes } = require("%sqStdLibs/helpers/enums.nut")
 let buttonsList = require("%scripts/mainmenu/topMenuButtons.nut").buttonsListWatch.value
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { topMenuSectionsTemplate, getTopMenuSectionByName } = require("%scripts/mainmenu/topMenuSections.nut")
 
-// Priority for separation on buttons.
+
 enum topMenuLeftSideMergeIndex {
   MENU
   PVP
@@ -24,10 +24,10 @@ let g_top_menu_left_side_sections = {
   getSectionByName = getTopMenuSectionByName
 }
 
-/*
-Columns are each array in buttons array.
-Params - can be whole section ('help', 'pve') or single button.
-*/
+
+
+
+
 enumsAddTypes(g_top_menu_left_side_sections, [
   {
     name = "menu"
@@ -57,7 +57,6 @@ enumsAddTypes(g_top_menu_left_side_sections, [
       [
         buttonsList.SKIRMISH
         buttonsList.WORLDWAR
-        buttonsList.LINE_SEPARATOR
         buttonsList.TOURNAMENTS
         buttonsList.USER_MISSION
         buttonsList.TUTORIAL
@@ -108,11 +107,10 @@ enumsAddTypes(g_top_menu_right_side_sections, [
     getWinkImage = function () { return "#ui/gameuiskin#hovermenu_shop_button_glow" }
     haveTmDiscount = true
     isWide = true
-    forceHoverWidth = "1@mainMenuButtonWideWidth + 0.02@sf"
+    forceHoverWidth = "1@mainMenuButtonWideWidth + 2@topMenuHoverMenuIndent"
     buttons = [
       [
         buttonsList.EAGLES
-        buttonsList.LINE_SEPARATOR
         buttonsList.PREMIUM
         buttonsList.WARPOINTS
         buttonsList.WISHLIST
@@ -123,7 +121,6 @@ enumsAddTypes(g_top_menu_right_side_sections, [
         buttonsList.ONLINE_SHOP
         buttonsList.DEBUG_PS4_SHOP_DATA
         buttonsList.MARKETPLACE
-        buttonsList.COLLECTIONS
       ]
     ]
   },
@@ -137,7 +134,6 @@ enumsAddTypes(g_top_menu_right_side_sections, [
         buttonsList.ENCYCLOPEDIA
         buttonsList.CHANGE_LOG
         buttonsList.CREDITS
-        buttonsList.LINE_SEPARATOR
         buttonsList.EULA
         buttonsList.WIKI
         buttonsList.FAQ

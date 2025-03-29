@@ -12,15 +12,15 @@ let { initSelectedCrews } = require("%scripts/slotbar/slotbarState.nut")
 let { isEqual } = require("%sqStdLibs/helpers/u.nut")
 let { getMyCrewUnitsState, getBrokenUnits } = require("%scripts/slotbar/crewsListInfo.nut")
 let { hardPersistWatched } = require("%sqstd/globalState.nut")
-let { isLoggedIn, isProfileReceived } = require("%scripts/login/loginStates.nut")
+let { isLoggedIn, isProfileReceived } = require("%appGlobals/login/loginState.nut")
 
 function getCrewInfo(isInBattle) {
   let crewInfo = get_crew_info()
   if (!isInBattle)
     return crewInfo
-  //In a battle after a profile update, the crew list may contain crews for multiple countries instead one.
-  //In this case, a bug may occur when the slotbar points to a country that does not match in the crewList.
-  //It is necessary to filter them by player's country, so that the interface does not break.
+  
+  
+  
   if (crewInfo.len() <= 1)
     return crewInfo
 
@@ -68,9 +68,9 @@ function refresh() {
     isCrewListOverrided.set(true)
     return
   }
-  //we don't know about slotbar refresh in flight,
-  //but we know than out of flight it refresh only with profile,
-  //so can optimize it updates, and remove some direct refresh calls from outside
+  
+  
+  
   crewsList = getCrewInfo(isInBattleState.value)
   isCrewListOverrided.set(false)
 }
@@ -105,7 +105,7 @@ function invalidateCrewsList(needForceInvalidate = false) {
       || isEqual(crewsList, getCrewInfo(isInBattleState.value))))
     return false
 
-  crewsList = [] //do not broke previously received crewsList if someone use link on it
+  crewsList = [] 
   broadcastEvent("CrewsListInvalidate")
   return true
 }
@@ -119,7 +119,7 @@ function getCrewsList() {
 let reinitAllSlotbars = @() reinitSlotbars()
 let suspendSlotbarUpdates = @() isSlotbarUpdateSuspended = true
 
-::g_crews_list <- { // fixme cir refs
+::g_crews_list <- { 
   flushSlotbarUpdate
   suspendSlotbarUpdates
   getCrewsList
@@ -162,9 +162,12 @@ addListenersWithoutEnv({
       invalidateCrewsList()
   }
 
-  //in session can be overrided slotbar. Also slots can be locked after the battle.}
+  
   SessionDestroyed = @(_p) invalidateCrewsList()
-  OverrideSlotbarChanged = @(_p) invalidateCrewsList(true)
+  function OverrideSlotbarChanged(_p) {
+    if (invalidateCrewsList(true))
+      reinitSlotbars()
+  }
   SignOut = @(_p) isSlotbarUpdateSuspended = false
   LoadingStateChange = @(_p) isSlotbarUpdateSuspended = false
 }, DEFAULT_HANDLER)

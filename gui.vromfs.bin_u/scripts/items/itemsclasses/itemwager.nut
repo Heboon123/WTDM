@@ -18,6 +18,8 @@ let { get_gui_balance } = require("%scripts/user/balance.nut")
 let { addTask } = require("%scripts/tasker.nut")
 let { BaseItem } = require("%scripts/items/itemsClasses/itemsBase.nut")
 let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
+let { registerItemClass } = require("%scripts/items/itemsTypeClasses.nut")
+let { findItemByUid } = require("%scripts/items/itemsManager.nut")
 
 let Wager = class (BaseItem) {
   static name = "Wager"
@@ -48,7 +50,7 @@ let Wager = class (BaseItem) {
     bitListInValue = true
   }
 
-  conditions = null // Conditions for battle.
+  conditions = null 
   numWins = -1
   winConditions = null
   numBattles = null
@@ -135,7 +137,7 @@ let Wager = class (BaseItem) {
     return null
   }
 
-  /** Return reward data type name with highest priority. */
+  
   function checkRewardType(blk) {
     if (blk?.winParams == null)
       return null
@@ -161,14 +163,14 @@ let Wager = class (BaseItem) {
     return ", ".join(text)
   }
 
-  /** Creates array with reward data objects sorted by param value. */
+  
   function createWinParamsData(blk) {
     let res = []
     if (blk == null)
       return res
     foreach (reward in blk % "reward") {
       let rewData = this.createRewardData(reward)
-      // No need to add empty rewards.
+      
       if (!rewData.isEmpty)
         res.append(rewData)
     }
@@ -180,7 +182,7 @@ let Wager = class (BaseItem) {
     return res
   }
 
-  /** Returns closest reward data to specified param value. */
+  
   function getRewardDataByParam(winCount, winParams) {
     if (winCount < 1 || winCount > this.maxWins)
       return null
@@ -194,7 +196,7 @@ let Wager = class (BaseItem) {
     return res
   }
 
-  /** Creates object with data binding reward parameters to win count (param). */
+  
   function createRewardData(blk) {
     if (blk == null || getTblValue("param", blk, 0) == 0)
       return {}
@@ -549,7 +551,7 @@ let Wager = class (BaseItem) {
   }
 
   function getWagerDescriptionForMessageBox(uid) {
-    let wager = ::ItemsManager.findItemByUid(uid, itemType.WAGER)
+    let wager = findItemByUid(uid, itemType.WAGER)
     return wager == null ? "" : wager.getShortDescription()
   }
 
@@ -576,7 +578,7 @@ let Wager = class (BaseItem) {
     return desc
   }
 
-  /*override*/ function getDescriptionTitle() {
+   function getDescriptionTitle() {
     return this.getName()
   }
 
@@ -584,7 +586,7 @@ let Wager = class (BaseItem) {
     return this.uids && isInArray(get_current_wager_uid(), this.uids)
   }
 
-  /*override*/ function getTableData() {
+   function getTableData() {
     if (this.winParamsData == null || this.winParamsData.len() == 0)
       return null
     let view = this.createTableDataView(this.winParamsData, this.numWins)
@@ -618,7 +620,7 @@ let Wager = class (BaseItem) {
         previousRewardData = activeRewardData
       }
       let isMeActive = rewData.winCount == winsNum && !activeRowPlaced && needActiveRow
-      // Skipping rows with equal reward data.
+      
       if (!isMeActive && this.compareRewardData(previousRewardData, rewData))
         continue
 
@@ -657,9 +659,9 @@ let Wager = class (BaseItem) {
     return true
   }
 
-  /**
-   * @param winsNum Useful when creating reward view for current wager progress.
-   */
+  
+
+
   function createRewardView(rowTypeName, rewData, winsNum = -1) {
     if (winsNum == -1)
       winsNum = rewData?.winCount ?? 0
@@ -677,14 +679,15 @@ let Wager = class (BaseItem) {
     return view
   }
 
-  /**
-   * Returns false if player does not
-   * have enough resources to make a stake.
-   */
+  
+
+
+
   function checkStake() {
     if (this.isGoldWager)
       return this.curWager <= get_cur_rank_info().gold
     return this.curWager <= get_cur_rank_info().wp
   }
 }
-return {Wager}
+
+registerItemClass(Wager)

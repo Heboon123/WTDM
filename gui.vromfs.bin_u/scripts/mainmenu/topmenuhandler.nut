@@ -30,7 +30,9 @@ let { getCurLangShortName } = require("%scripts/langUtils/language.nut")
 let { getCurCircuitOverride } = require("%appGlobals/curCircuitOverride.nut")
 let { stashBhvValueConfig } = require("%sqDagui/guiBhv/guiBhvValueConfig.nut")
 let { needShowGameModesNotLoadedMsg } = require("%scripts/matching/matchingGameModes.nut")
-let { isLoggedIn } = require("%scripts/login/loginStates.nut")
+let { isLoggedIn } = require("%appGlobals/login/loginState.nut")
+let { lastChatSceneShow } = require("%scripts/chat/chatConsts.nut")
+let dmViewer = require("%scripts/dmViewer/dmViewer.nut")
 
 class TopMenu (gui_handlers.BaseGuiHandlerWT) {
   wndType = handlerType.ROOT
@@ -41,7 +43,7 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
 
   topMenu = true
   topMenuInited = false
-  menuConfig = null /*topMenu_config*/
+  menuConfig = null 
 
   canQuitByGoBack = false
 
@@ -79,7 +81,7 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
       )
       this.registerSubHandler(this.leftSectionHandlerWeak)
 
-      if (::last_chat_scene_show)
+      if (lastChatSceneShow.get())
         this.switchChatWindow()
       if (::last_contacts_scene_show)
         this.onSwitchContacts()
@@ -110,7 +112,7 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
       obj.setUserData(this)
   }
 
-  function getBaseHandlersContainer() { //only for wndType = handlerType.ROOT
+  function getBaseHandlersContainer() { 
     return this.scene.findObject("topMenu_content")
   }
 
@@ -247,7 +249,7 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
     let closeResearch = this.getObj("research_closeButton")
     let showButton = shopMove.moveOut == "yes"
 
-    ::dmViewer.update()
+    dmViewer.update()
 
     if (showButton)
       this.guiScene.playSound("menu_appear")
@@ -265,7 +267,7 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
   function openShop(unitType = null) {
     this.setShopUnitType(unitType)
     if (!topMenuShopActive.value)
-      this.shopWndSwitch(unitType) //to load shp with correct unit type to avoid several shop updates
+      this.shopWndSwitch(unitType) 
   }
 
   function instantOpenShopWnd() {
@@ -330,7 +332,7 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
       this.shopWeak.onShopShow(shouldActivate)
 
     if (shouldActivate) {
-      //instanciate shop window
+      
       if (!this.shopWeak) {
         let wndObj = this.getObj("shop_wnd_frame")
         let shopHandler = handlersManager.loadHandler(gui_handlers.ShopMenuHandler,
@@ -409,18 +411,18 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
     }
 
     let links = [
-      //Top left
+      
       { obj = "topmenu_menu_panel"
         msgId = "hint_mainmenu"
       }
 
-      //airInfo
+      
       {
         obj = ["slot_info_listbox", "slot_collapse"]
         msgId = "hint_unitInfo"
       }
 
-      //Top center
+      
       { obj = ["to_battle_button", "to_battle_console_image"]
         msgId = "hint_battle_button"
       }
@@ -431,7 +433,7 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
         msgId = "hint_profile"
       }
 
-      //Top right
+      
       { obj = ["gc_free_exp", "gc_warpoints", "gc_eagles"]
         msgId = "hint_currencies"
       }
@@ -445,7 +447,7 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
         msgId = "hint_inventory"
       }
 
-      //Bottom left
+      
       { obj = "topmenu_btn_shop_wnd"
         msgId = "hint_research"
       }
@@ -456,7 +458,7 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
         msgId = "hint_autoweapon"
       }
 
-      //bottom right
+      
       { obj = topMenuShopActive.value ? null : "perform_action_recent_items_mainmenu_button_items"
         msgId = "hint_recent_items"
       }
@@ -504,7 +506,7 @@ class TopMenu (gui_handlers.BaseGuiHandlerWT) {
       }
     ]
 
-    //Bottom bars
+    
     let slotbar = this.getSlotbar()
     if (slotbar) {
       if (getUnlockedCountries().len() > 1)

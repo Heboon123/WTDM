@@ -29,7 +29,7 @@ def setup_data(props : Properties&; var storage : CanvasParams&)
   storage.fontId = props |> getFontId()
   storage.fontSize = props |> getInt("fontSize", 20)
 
-[export]
+[export, unused_argument(rdata, rstate)]
 def draw_radar_indication(var ctx : GuiContext&; rdata : ElemRenderData& const; rstate : RenderState& const; data : CanvasParams&)
   if get_app().isSensorViewMode || !get_radar_hud_visible()
     return
@@ -119,3 +119,17 @@ def targets_on_screen(var ctx : GuiContext&; data : CanvasParams&)
       let spdText = get_measure_units_text(MeasureUnitsTypes MEASURE_UNIT_RADIAL_SPEED, target.radSpeed, true, 1.)
       ctx |> goto_xy(rb.x + ctx |> hdpx(5.), rb.y)
       ctx |> draw_str_scaled(1.0, spdText, spdText |> length())
+
+    if target.hasAimPos
+      var screenPos = float2(0.)
+      if world_to_screen(target.aimPos, screenPos)
+        ctx |> render_ellipse_aa(screenPos, float2(targetOnScreenWidth * 0.25), ctx |> hdpx(4.), e3dColor, transparentColor)
+
+    let idText = loc(target.id)
+    if idText != ""
+      let idStrBox = get_str_bbox(idText, idText |> length(), fctx)
+      ctx |> goto_xy(target.pos.x - 0.5 * idStrBox.width.x, target.pos.y - 0.5 * targetOnScreenWidth + ctx |> hdpx(5.) - idStrBox.width.y)
+      ctx |> set_font(data.fontId, 0, 0)
+      ctx |> set_font_ht(data.fontSize);
+      ctx |> set_draw_str_attr(FontFxType FFT_GLOW, 0, 0, get_font_fx_color(data.color), get_font_fx_factor(data.color, ctx))
+      ctx |> draw_str_scaled(1.0, idText, idText |> length())

@@ -13,6 +13,7 @@ let { canBuyUnit, isUnitGift } = require("%scripts/unit/unitShopInfo.nut")
 let { checkForResearch } = require("%scripts/unit/unitChecks.nut")
 let { showUnitGoods } = require("%scripts/onlineShop/onlineShopModel.nut")
 let takeUnitInSlotbar = require("%scripts/unit/takeUnitInSlotbar.nut")
+let { open_weapons_for_unit } = require("%scripts/weaponry/weaponryActions.nut")
 
 let ACTION_FUNCTION_PARAMS = {
   availableFlushExp = 0
@@ -75,7 +76,7 @@ function slotMainAction(unit, params = MAIN_FUNC_PARAMS) {
   if (isUnitBroken(unit))
     return repairWithMsgBox(unit)
   if (isUnitInSlotbar(unit))
-    return ::open_weapons_for_unit(unit, { curEdiff = params.curEdiff })
+    return open_weapons_for_unit(unit, { curEdiff = params.curEdiff })
   if (unit.isUsable() && !isUnitInSlotbar(unit))
     return takeUnitInSlotbar(unit, params.onTakeParams)
   if (::canBuyUnitOnline(unit))
@@ -103,7 +104,7 @@ function slotMainAction(unit, params = MAIN_FUNC_PARAMS) {
     return buy(unit, "slot_action_squad")
   if (unit.isCrossPromo)
     return openCrossPromoWnd(unit.crossPromoBanner)
-  if (checkForResearch(unit)) // Also shows msgbox about requirements for Research or Purchase
+  if (checkForResearch(unit)) 
     return research(unit)
 }
 

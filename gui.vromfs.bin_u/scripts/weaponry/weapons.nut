@@ -15,11 +15,10 @@ let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { format } = require("string")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { move_mouse_on_child, move_mouse_on_obj, handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
-let DataBlock = require("DataBlock")
 let { getModsTreeSize, generateModsTree, generateModsBgElems, commonProgressMods,
   isModificationInTree, modsWndWidthRestrictions } = require("%scripts/weaponry/modsTree.nut")
 let tutorialModule = require("%scripts/user/newbieTutorialDisplay.nut")
-let weaponryPresetsWnd = require("%scripts/weaponry/weaponryPresetsWnd.nut")
+let guiStartWeaponryPresets = require("%scripts/weaponry/guiStartWeaponryPresets.nut")
 let prepareUnitsForPurchaseMods = require("%scripts/weaponry/prepareUnitsForPurchaseMods.nut")
 let { canBuyMod, canResearchMod, isModResearched, isModUpgradeable, isModClassPremium,
   isModClassExpendable, getModificationByName, findAnyNotResearchedMod,
@@ -78,39 +77,15 @@ let { showAirDiscount } = require("%scripts/discounts/discountUtils.nut")
 let { getCrewByAir } = require("%scripts/crew/crewInfo.nut")
 let { unitNameForWeapons } = require("%scripts/weaponry/unitForWeapons.nut")
 let { flushExcessExpToModule } = require("%scripts/unit/unitActions.nut")
+let { gui_modal_tutor } = require("%scripts/guiTutorial.nut")
+let { currentCampaignMission } = require("%scripts/missions/missionsStates.nut")
+let { enable_modifications } = require("%scripts/weaponry/weaponryActions.nut")
+let { RESEARCHED_MODE_FOR_CHECK } = require ("%scripts/researches/researchConsts.nut")
+let { checkNonApprovedResearches } = require("%scripts/researches/researchActions.nut")
+let { buildConditionsConfig } = require("%scripts/unlocks/unlocksViewModule.nut")
 
 local timerPID = dagui_propid_add_name_id("_size-timer")
 const HEADER_LEN_PER_CELL = 16
-
-::enable_modifications <- function enable_modifications(unitName, modNames, enable) {
-  modNames = modNames?.filter(@(n) n != "")
-  if ((modNames?.len() ?? 0) == 0)
-    return
-
-  let db = DataBlock()
-  db[unitName] <- DataBlock()
-  foreach (modName in modNames)
-    db[unitName][modName] <- enable
-  return shop_enable_modifications(db)
-}
-
-::enable_current_modifications <- function enable_current_modifications(unitName) {
-  let db = DataBlock()
-  db[unitName] <- DataBlock()
-
-  let air = getAircraftByName(unitName)
-  foreach (mod in air.modifications)
-    db[unitName][mod.name] <- shopIsModificationEnabled(unitName, mod.name)
-
-  return shop_enable_modifications(db)
-}
-
-::open_weapons_for_unit <- function open_weapons_for_unit(unit, params = {}) {
-  if (!("name" in unit))
-    return
-  unitNameForWeapons.set(unit.name)
-  handlersManager.loadHandler(gui_handlers.WeaponsModalHandler, params)
-}
 
 let getCustomTooltipId = @(unitName, mod, params) (mod?.tier ?? 1) > 1 && mod.type == weaponsItem.modification
   ? MODIFICATION_DELAYED_TIER.getTooltipId(unitName, mod.name, params)
@@ -118,17 +93,17 @@ let getCustomTooltipId = @(unitName, mod, params) (mod?.tier ?? 1) > 1 && mod.ty
 
 local heightInModCell = @(height) height * 1.0 / to_pixels("1@modCellHeight")
 
-// This function returns a modification for an unlockable unit skin in progress
-// with the lowest maximum progress value because it is the next to be unlocked.
-// If all unit skins have already been acquired, the function returns the skin
-// with the highest maximum progress value, as it was the last to be unlocked
+
+
+
+
 function getSkinMod(unit) {
-  local lastSkin = null // skin has opened unlock with the highest progress 'maxVal'
+  local lastSkin = null 
   local highestMaxVal = 0
-  local curSkin = null // skin has doable unlock with the lowest progress 'maxVal'
+  local curSkin = null 
   local curSkinProgress = null
   foreach (skinInfo in unit.getSkins()) {
-    if (skinInfo.name == "") // skip default skin
+    if (skinInfo.name == "") 
       continue
 
     let skinId = getSkinId(unit.name, skinInfo.name)
@@ -136,7 +111,7 @@ function getSkinMod(unit) {
     if (skinDecorator?.unlockBlk == null)
       continue
 
-    let unlockCfg = ::build_conditions_config(skinDecorator.unlockBlk)
+    let unlockCfg = buildConditionsConfig(skinDecorator.unlockBlk)
     let progress = unlockCfg.getProgressBarData()
     let canDoSkinUnlock = isUnlockVisible(skinDecorator.unlockBlk)
       && !skinDecorator.isUnlocked()
@@ -207,6 +182,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   needHideSlotbar = false
 
   shouldBeRestoredOnMainMenu = false
+  isHeaderHidden = false
 
   function initScreen() {
     this.setResearchManually = !this.researchMode
@@ -236,7 +212,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     this.initSlotbar()
 
     if (this.researchMode)
-      this.sendModResearchedStatistic(this.air, this.researchBlock?[::researchedModForCheck] ?? "")
+      this.sendModResearchedStatistic(this.air, this.researchBlock?[RESEARCHED_MODE_FOR_CHECK] ?? "")
 
     this.selectResearchModule()
     this.checkOnResearchCurMod()
@@ -313,8 +289,8 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function updateWndWidth() {
-    let weaponsAndBulletsLen = 1               //Always one bunle for primary weapons
-      +(isUnitHaveSecondaryWeapons(this.air) ? 1 : 0) //Since we have secondary weapons own window
+    let weaponsAndBulletsLen = 1               
+      +(isUnitHaveSecondaryWeapons(this.air) ? 1 : 0) 
       +this.bulletsByGroupIndex.len()
       + this.expendablesArray.len()
     let premiumModsLen = this.premiumModsList.len() + (this.air.spare && !this.researchMode ? 1 : 0)
@@ -357,7 +333,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   function selectResearchModule(customPosIdx = -1) {
     local modIdx = customPosIdx
     if (modIdx < 0) {
-      let finishedResearch = this.researchBlock?[::researchedModForCheck] ?? "CdMin_Fuse"
+      let finishedResearch = this.researchBlock?[RESEARCHED_MODE_FOR_CHECK] ?? "CdMin_Fuse"
       foreach (item in this.items)
         if (isModInResearch(this.air, item)) {
           modIdx = item.guiPosIdx
@@ -378,34 +354,56 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
     local titleText = " ".concat(loc("mainmenu/btnWeapons"), loc("ui/mdash"), getUnitName(this.air))
     if (this.researchMode) {
-      let modifName = this.researchBlock?[::researchedModForCheck] ?? "CdMin_Fuse"
+      let modifName = this.researchBlock?[RESEARCHED_MODE_FOR_CHECK] ?? "CdMin_Fuse"
       titleText = loc("modifications/finishResearch",
         { modName = getModificationName(this.air, modifName) })
     }
     titleObj.setValue(titleText)
   }
 
+  function hideFrameHeader(frameObj) {
+    frameObj.isHeaderHidden = "yes"
+
+    showObjById("close_alt_btn", !this.researchMode, this.scene)
+
+    let researchModeImgObj = this.scene.findObject("researchMode_image_block")
+    researchModeImgObj["pos"] = researchModeImgObj["posWithoutHeader"]
+
+    this.scene.findObject("overflow-div")["top"] = "-1@frameHeaderHeight"
+
+    let progressBlock = this.scene.findObject("progressMods")
+    if (progressBlock.isValid()) {
+      progressBlock["top"] = "-1@frameHeaderHeight"
+      progressBlock["margin-bottom"] = "1@frameHeaderHeight"
+    }
+  }
+
   function updateWindowHeightAndPos() {
     let frameObj = this.scene.findObject("mods_frame")
-    if (checkObj(frameObj)) {
-      let frameHeight = frameObj.getSize()[1]
-      let maxFrameHeight = toPixels(this.guiScene, "@maxWeaponsWindowHeight")
+    if (!frameObj.isValid())
+      return
 
-      if (frameHeight > maxFrameHeight) {
-        let frameHeaderHeight = toPixels(this.guiScene, "@frameHeaderHeight")
-        if (frameHeight - frameHeaderHeight < maxFrameHeight) {
-          frameObj.isHeaderHidden = "yes"
-          showObjById("close_alt_btn", !this.researchMode, this.scene)
-          let researchModeImgObj = this.scene.findObject("researchMode_image_block")
-          researchModeImgObj["pos"] = researchModeImgObj["posWithoutHeader"]
-          this.scene.findObject("overflow-div")["top"] = "-1@frameHeaderHeight"
-        }
-        else {
-          this.needHideSlotbar = true
-          frameObj["pos"] = frameObj["posWithoutSlotbar"]
-        }
-      } else
-        this.scene.findObject("overflow-div")["top"] = "0"
+    if (this.isHeaderHidden) {
+      this.hideFrameHeader(frameObj)
+      return
+    }
+
+    let frameHeight = frameObj.getSize()[1]
+    let maxFrameHeight = toPixels(this.guiScene, "@maxWeaponsWindowHeight")
+
+    if (frameHeight <= maxFrameHeight) {
+      this.scene.findObject("overflow-div")["top"] = "0"
+      return
+    }
+
+    let frameHeaderHeight = toPixels(this.guiScene, "@frameHeaderHeight")
+    if (frameHeight - frameHeaderHeight < maxFrameHeight) {
+      this.hideFrameHeader(frameObj)
+      this.isHeaderHidden = true
+    }
+    else {
+      this.needHideSlotbar = true
+      frameObj["pos"] = frameObj["posWithoutSlotbar"]
     }
   }
 
@@ -415,7 +413,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
     tutorialModule.saveShowedTutorial("researchMod")
 
-    let finMod = getTblValue(::researchedModForCheck, this.researchBlock, "")
+    let finMod = this.researchBlock?[RESEARCHED_MODE_FOR_CHECK] ?? ""
     let newMod = shop_get_researchable_module_name(this.airName)
 
     let finIdx = this.getItemIdxByName(finMod)
@@ -459,7 +457,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
         })
     }
 
-    ::gui_modal_tutor(steps, this)
+    gui_modal_tutor(steps, this)
   }
 
   function fillPage() {
@@ -484,7 +482,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       freeRPObj.setValue(get_flush_exp_text(this.availableFlushExp))
   }
 
-  function automaticallySpendAllExcessiveExp() { //!!!TEMP function, true func must be from code
+  function automaticallySpendAllExcessiveExp() { 
     this.showTaskProgressBox()
     this.availableFlushExp = shop_get_unit_excess_exp(this.airName)
     let curResModuleName = shop_get_researchable_module_name(this.airName)
@@ -612,6 +610,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       curEdiff = currentEdiff
       tooltipId = getCustomTooltipId(this.air.name, item, { curEdiff = currentEdiff })
       researchFinished = this?.researchBlock.prevMod == item.name
+      isModeEnabledFn = @() shopIsModificationEnabled(this.air.name, item.name)
     })
   }
 
@@ -691,16 +690,32 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
         curEdiff = currentEdiff
       })
       researchFinished = this?.researchBlock.prevMod == item.name && this.lastResearchMod == null
+      isModeEnabledFn = @() shopIsModificationEnabled(this.air.name, item.name)
     })
   }
 
   function updateBuyAllButton() {
-    let btnId = "btn_buyAll"
-    let cost = getAllModsCost(this.air, true)
-    let show = !cost.isZero() && isUnitUsable(this.air) && hasFeature("BuyAllModifications")
-    showObjById(btnId, show, this.scene)
-    if (show)
-      placePriceTextToButton(this.scene, btnId, loc("mainmenu/btnBuyAll"), cost)
+    let canBuyAll = isUnitUsable(this.air) && hasFeature("BuyAllModifications")
+    if (!canBuyAll) {
+      showObjById("btn_buyAll", false, this.scene)
+      showObjById("btn_buyAllResearched", false, this.scene)
+      return
+    }
+
+    let costResearched = getAllModsCost(this.air)
+    let isVisibleBuyAllResearched = !costResearched.isZero()
+    showObjById("btn_buyAllResearched", isVisibleBuyAllResearched, this.scene)
+    if (isVisibleBuyAllResearched) {
+      placePriceTextToButton(this.scene, "btn_buyAllResearched", loc("mainmenu/btnBuyAllResearched"), costResearched)
+      showObjById("btn_buyAll", false, this.scene)
+      return
+    }
+
+    let costAll = getAllModsCost(this.air, true)
+    let isVisibleBuyAll = !costAll.isZero()
+    showObjById("btn_buyAll", isVisibleBuyAll, this.scene)
+    if (isVisibleBuyAll)
+      placePriceTextToButton(this.scene, "btn_buyAll", loc("mainmenu/btnBuyAll"), costAll)
   }
 
   function updateAllItems() {
@@ -813,9 +828,9 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function collectBranchItems(branch, resItems) {
     foreach (_idx, item in branch)
-      if (type(item) == "table") //modification
+      if (type(item) == "table") 
         resItems.append(item)
-      else if (type(item) == "array") //branch
+      else if (type(item) == "array") 
         this.collectBranchItems(item, resItems)
     return resItems
   }
@@ -842,7 +857,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
           column.isSmallFont <- true
       }
 
-      //increase last column width to full window width
+      
       let widthDiff = fullWidth - headerWidth
       if (widthDiff > 0)
         columnsList[columnsList.len() - 1].width += widthDiff
@@ -874,14 +889,14 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     foreach (idx, a in arrowsList) {
       let id = $"arrow_{idx}"
 
-      if (a.from[0] != a.to[0]) //hor arrow
+      if (a.from[0] != a.to[0]) 
         data.append(format("".concat("modArrow { id:t='%s'; type:t='right'; ",
                          "pos:t='%.1f@modCellWidth-0.5@modArrowLen, %.1f@modCellHeight-0.5h'; ",
                          "width:t='@modArrowLen + %.1f@modCellWidth' ",
                        "}"),
                        id, a.from[0] + 1, a.from[1] - 0.5 + treeOffsetY, a.to[0] - a.from[0] - 1
                       ))
-      else if (a.from[1] != a.to[1]) //vert arrow
+      else if (a.from[1] != a.to[1]) 
         data.append(format("".concat("modArrow { id:t='%s'; type:t='down'; ",
                          "pos:t='%.1f@modCellWidth-0.5w, %.1f@modCellHeight-0.5@modArrowLen'; ",
                          "height:t='@modArrowLen + %.1f@modCellHeight' ",
@@ -896,14 +911,12 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   function fillModsTree() {
     let treeOffsetY = heightInModCell(to_pixels("1@frameHeaderHeight") + this.premiumModsHeight)
     let tree = generateModsTree(this.air)
-
     if (!tree)
       return
 
     let treeSize = getModsTreeSize(this.air)
     if (treeSize.guiPosX > this.wndWidth)
       logerr($"Modifications: {this.air.name} too much modifications in a row")
-
     this.mainModsObj.size = format("%.1f@modCellWidth, %.1f@modCellHeight",
       this.wndWidth, treeSize.tier + treeOffsetY)
     if (!(treeSize.tier > 0))
@@ -988,10 +1001,10 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
         let idx = mod.tier - 1
         tiersArray[idx] = tiersArray[idx] || { researched = 0, notResearched = 0 }
 
-         if (isModResearched(this.air, mod))
-           tiersArray[idx].researched++
-         else
-           tiersArray[idx].notResearched++
+        if (isModResearched(this.air, mod))
+          tiersArray[idx].researched++
+        else
+          tiersArray[idx].notResearched++
       }
     }
     return tiersArray
@@ -1050,7 +1063,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     local offsetX = 0
     let offsetY = heightInModCell(to_pixels("1@buttonHeight+1@modCellHeight+1@blockInterval"))
     let columnsList = []
-    //add primary weapons bundle
+    
     let primaryWeaponsList = []
     foreach (_i, modName in getPrimaryWeaponsList(this.air)) {
       let mod = (modName == "") ? null : getModificationByName(this.air, modName)
@@ -1071,10 +1084,10 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     columnsList.append(this.getWeaponsColumnData(loc("options/primary_weapons")))
     offsetX++
 
-    //add secondary weapons
+    
     if (isUnitHaveSecondaryWeapons(this.air)) {
       let secondaryWeapons = getSecondaryWeaponsList(this.air)
-      this.lastWeapon = validateLastWeapon(this.airName) //real weapon or ..._default
+      this.lastWeapon = validateLastWeapon(this.airName) 
       log($"initial set lastWeapon {this.lastWeapon}")
       if (needSecondaryWeaponsWnd(this.air)) {
         let selWeapon = secondaryWeapons.findvalue((@(w) w.name == this.lastWeapon).bindenv(this))
@@ -1093,7 +1106,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       offsetX++
     }
 
-    //add bullets bundle
+    
     foreach (groupIndex, bulletsList in this.bulletsByGroupIndex) {
       this.createBundle(getBulletsItemsList(this.air, bulletsList, groupIndex),
         weaponsItem.bullets, groupIndex, this.mainModsObj, offsetX, offsetY)
@@ -1107,7 +1120,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       offsetX++
     }
 
-    //add expendables
+    
     if (this.expendablesArray.len()) {
       columnsList.append(this.getWeaponsColumnData(loc("modification/category/expendables")))
       foreach (mod in this.expendablesArray) {
@@ -1133,9 +1146,9 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
         continue
 
       let iconObj = this.scene.findObject($"bullets{groupIndex}_warning")
-        if (iconObj?.isValid())
-          iconObj.display = (checkUnitBullets(this.air, true, bulletsList.values) != UNIT_WEAPONS_READY)
-            ? "show" : "hide"
+      if (iconObj?.isValid())
+        iconObj.display = (checkUnitBullets(this.air, true, bulletsList.values) != UNIT_WEAPONS_READY)
+          ? "show" : "hide"
     }
   }
 
@@ -1275,19 +1288,19 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   function unstickCurBundle() {
     if (!checkObj(this.curBundleTblObj))
       return
-    this.onDropDownToggle(this.curBundleTblObj.getParent().getParent()) //need a hoverSize here or bundleItem.
+    this.onDropDownToggle(this.curBundleTblObj.getParent().getParent()) 
     this.curBundleTblObj = null
   }
 
   function onBundleAnimFinish(obj) {
-    //this only for animated gamepad cursor. for pc mouse logic look onHoverSizeMove
+    
     if (!showConsoleButtons.value || !this.curBundleTblObj?.isValid() || obj.getFloatProp(timerPID, 0.0) < 1)
       return
     move_mouse_on_child(this.curBundleTblObj, 0)
   }
 
   function onBundleHover(obj) {
-    // see func onBundleAnimFinish
+    
     if (!showConsoleButtons.value || !this.curBundleTblObj?.isValid() || obj.getFloatProp(timerPID, 0.0) < 1)
       return
     this.unstickCurBundle()
@@ -1324,7 +1337,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if (this.checkResearchOperation(item))
       return
     if (item.type == weaponsItem.weapon && needSecondaryWeaponsWnd(this.air)) {
-      weaponryPresetsWnd.open({ unit = this.air, curEdiff = this.getCurrentEdiff() }) //open modal menu for air and helicopter only
+      guiStartWeaponryPresets({ unit = this.air, curEdiff = this.getCurrentEdiff() }) 
       return
     }
     if (!this.canPerformAction(item, amount))
@@ -1384,8 +1397,8 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
         this.switchMod(item)
         return
       }
-    } // else
-    //if (item.type==weaponsItem.spare)
+    } 
+    
 
     this.onBuy(item.guiPosIdx)
   }
@@ -1464,7 +1477,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       executeAfterDoneFunc()
   }
 
-  function onAltModAction(obj) { //only buy atm before no research.
+  function onAltModAction(obj) { 
     let idx = this.getItemIdxByObj(obj)
     if (idx < 0)
       return
@@ -1510,6 +1523,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
         if (!::g_squad_utils.canJoinFlightMsgBox())
           return
         this.shouldBeRestoredOnMainMenu = true
+        currentCampaignMission.set(misInfo?.name ?? "")
         startModTutorialMission(unit, name, tutorialMission, tutorialMissionWeapon)
       }.bindenv(this)
     }
@@ -1517,7 +1531,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     handlersManager.loadHandler(gui_handlers.GenericOptionsModal, params)
   }
 
-  function onAltModActionCommon(obj) { //only buy atm before no research.
+  function onAltModActionCommon(obj) { 
     let idx = this.getItemIdxByObj(obj)
     if (idx < 0)
       return
@@ -1527,7 +1541,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       nightBattlesOptionsWnd()
   }
 
-  function onBuy(idx, buyAmount = 0) { //buy for wp or gold
+  function onBuy(idx, buyAmount = 0) { 
     if (!this.isOwn)
       return
 
@@ -1559,6 +1573,8 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   function onBuyAllButton() {
     this.onBuyAll()
   }
+
+  onBuyAllResearchedButton = @() this.onBuyAll(false)
 
   function onBuyAll(forceOpen = true, silent = false) {
     let unit = this.air
@@ -1617,7 +1633,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       broadcastEvent("ModificationChanged")
     }
 
-    let taskId = ::enable_modifications(this.airName, [item.name], !equipped)
+    let taskId = enable_modifications(this.airName, [item.name], !equipped)
     addTask(taskId, { showProgressBox = true }, taskSuccessCallback)
   }
 
@@ -1693,11 +1709,13 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function afterModalDestroy() {
-    if (!::checkNonApprovedResearches(false) && prepareUnitsForPurchaseMods.haveUnits())
+    if (!checkNonApprovedResearches(false) && prepareUnitsForPurchaseMods.haveUnits())
       prepareUnitsForPurchaseMods.checkUnboughtMods()
   }
 
-  needRestoreResearchMode = @() this.researchMode && (!this.setResearchManually || this.availableFlushExp)
+  needRestoreResearchMode = @() this.researchMode
+    && (!this.setResearchManually || this.availableFlushExp > 0)
+    && findAnyNotResearchedMod(this.air) != null
 
   function onDestroy() {
     if (this.needRestoreResearchMode() || this.shouldBeRestoredOnMainMenu)
@@ -1870,7 +1888,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       padding = to_pixels("1@helpInterval")
     }
 
-    let rects = [] //added hint and items rects
+    let rects = [] 
 
     let itemStatusTypes = [
      {type = "progress", hintId = "hint_progressItem"}
@@ -1879,7 +1897,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
      {type = "buyed", hintId = "hint_buyedItem"}
     ]
 
-    local safeArea = null //rect for hints
+    local safeArea = null 
     let window = this.scene.findObject("main_modifications")
     if (window?.isValid()) {
       let tierLine1 = window.findObject("tierLine_1")

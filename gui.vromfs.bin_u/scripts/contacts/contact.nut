@@ -12,11 +12,11 @@ let { EPLX_PS4_FRIENDS, contactsByGroups, blockedMeUids, cacheContactByName, cla
 } = require("%scripts/contacts/contactsManager.nut")
 let { replace, utf8ToLower } = require("%sqstd/string.nut")
 let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
-let { show_profile_card } = require("%xboxLib/impl/user.nut")
+let { show_profile_card } = require("%gdkLib/impl/user.nut")
 let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { userName, userIdStr, userIdInt64 } = require("%scripts/user/profileStates.nut")
 let { contactPresence } = require("%scripts/contacts/contactPresence.nut")
-let { can_we_text_user, CommunicationState } = require("%scripts/xbox/permissions.nut")
+let { can_we_text_user, CommunicationState } = require("%scripts/gdk/permissions.nut")
 let { getGlobalModule } = require("%scripts/global_modules.nut")
 let events = getGlobalModule("events")
 
@@ -28,6 +28,8 @@ class Contact {
   title = ""
 
   presence = contactPresence.UNKNOWN
+  onlinePresence = contactPresence.UNKNOWN
+  squadPresence = null
   forceOffline = false
   isForceOfflineChecked = !is_platform_xbox
 
@@ -106,24 +108,29 @@ class Contact {
   }
 
   function refreshClanTagsTable() {
-    //clanTagsTable used in lists where not know userId, so not exist contact.
-    //but require to correct work with contacts too
+    
+    
     if (!this.name.len())
       return
     let { clanTag, name } = this
     clanUserTable.mutate(@(v) v[name] <- clanTag)
   }
 
-  function getPresenceText() {
-    local locParams = {}
-    if (this.presence == contactPresence.IN_QUEUE
-        || this.presence == contactPresence.IN_GAME) {
-      let event = events.getEvent(getTblValue("eventId", this.gameConfig))
-      locParams = {
-        gameMode = event ? events.getEventNameText(event) : ""
-        country = loc(getTblValue("country", this.gameConfig, ""))
-      }
+  function getBattlePresenceDesc() {
+    let hasDesc = this.onlinePresence?.typeName == contactPresence.IN_QUEUE.typeName
+      || this.onlinePresence?.typeName == contactPresence.IN_GAME.typeName 
+    if (!hasDesc)
+      return {}
+
+    let event = events.getEvent(this.gameConfig?.eventId)
+    return {
+      gameMode = event ? events.getEventNameText(event) : ""
+      country = loc(this.gameConfig?.country ?? "")
     }
+  }
+
+  function getPresenceText() {
+    let locParams = this.getBattlePresenceDesc()
     return this.presence.getText(locParams)
   }
 
@@ -192,11 +199,11 @@ class Contact {
   }
 
   function verifyPsnId() {
-    //To prevent crash, if psn player wasn't been in game
-    // for a long time, instead of int was returning
-    // his name
+    
+    
+    
 
-    //No need to do anything
+    
     if (this.psnId == "")
       return
 
@@ -325,12 +332,12 @@ class Contact {
     return comms_state == CommunicationState.Muted
   }
 
-  //For now it is for PSN only. For all will be later
+  
   function updateMuteStatus() {
     if (!isPlatformSony)
       return
 
-    let ircName = replace(this.name, "@", "%40") //!!!Temp hack, *_by_uid will not be working on sony testing build
+    let ircName = replace(this.name, "@", "%40") 
     gchat_voice_mute_peer_by_name(this.isInBlockGroup() || this.isBlockedMe(), ircName)
   }
 

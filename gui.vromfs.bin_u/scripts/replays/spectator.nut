@@ -1,4 +1,4 @@
-from "%scripts/dagui_natives.nut" import is_replay_markers_enabled, get_player_army_for_hud, is_game_paused, mpstat_get_sort_func, is_spectator_rotation_forced
+from "%scripts/dagui_natives.nut" import get_player_army_for_hud, is_game_paused, mpstat_get_sort_func, is_spectator_rotation_forced
 from "app" import is_dev_version
 from "%scripts/dagui_library.nut" import *
 from "hudMessages" import *
@@ -16,7 +16,7 @@ let { isSensorViewMode, setSensorViewFilter, getSensorViewFilter,
   SVF_HERO, SVF_SQUAD, SVF_ALLY, SVF_ENEMY, SVF_GROUND, SVF_AIR, SVF_WEAPON_OTHER, SVF_WEAPON_HERO, SVF_WEAPON_ATTACK_HERO,
   SVF_RKT_SPEED, SVF_RKT_LIFETIME, SVF_RKT_TRAVELED, SVF_RKT_OVERLOAD, SVF_RKT_AOA, SVF_DEAD,
   SVF_RKT_STATE, SVF_SENSOR_HERO, SVF_SENSOR_SQUAD, SVF_SENSOR_ALLY, SVF_SENSOR_ENEMY, SVF_SENSOR_TRACK, SVF_SENSOR_INTEREST
-  /*MEASURE_UNIT_SPEED, MEASURE_UNIT_DIST, getSensorMeasures, setSensorMeasures*/
+  
 } = require("camera_control")
 let { INVALID_SQUAD_ID } = require("matching.errors")
 let { getObjValidIndex, enableObjsByTable } = require("%sqDagui/daguiUtil.nut")
@@ -35,7 +35,7 @@ let { getUnitRole } = require("%scripts/unit/unitInfoRoles.nut")
 let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { useTouchscreen } = require("%scripts/clientState/touchScreen.nut")
 let { toggleShortcut } = require("%globalScripts/controls/shortcutActions.nut")
-let { getHudUnitType } = require("hudState")
+let { getHudUnitType, is_replay_markers_enabled } = require("hudState")
 let { guiStartMPStatScreen, getWeaponTypeIcoByWeapon
 } = require("%scripts/statistics/mpStatisticsUtil.nut")
 let { onSpectatorMode, switchSpectatorTargetById,
@@ -46,13 +46,14 @@ let { get_time_speeds_list, get_time_speed, is_replay_playing, get_replay_anchor
 let { getEnumValName } = require("%scripts/debugTools/dbgEnum.nut")
 let { HUD_UNIT_TYPE } = require("%scripts/hud/hudUnitType.nut")
 let { eventbus_send, eventbus_subscribe } = require("eventbus")
-let { get_game_type, get_mission_time, get_mplayers_list, get_local_mplayer, get_mp_local_team } = require("mission")
+let { get_game_type, get_mission_time, get_mplayers_list, GET_MPLAYERS_LIST,
+  get_local_mplayer, get_mp_local_team } = require("mission")
 let { round_by_value } = require("%sqstd/math.nut")
 let { getFromSettingsBlk } = require("%scripts/clientState/clientStates.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 let { ActionBar } = require("%scripts/hud/hudActionBar.nut")
 let { isInFlight } = require("gameplayBinding")
-let { isInSessionRoom } = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { isInSessionRoom, getMemberByName } = require("%scripts/matchingRooms/sessionLobbyState.nut")
 let { updateActionBar } = require("%scripts/hud/actionBarState.nut")
 let { gui_start_mainmenu } = require("%scripts/mainmenu/guiStartMainmenu.nut")
 let { gui_start_tactical_map } = require("%scripts/tacticalMap.nut")
@@ -62,12 +63,17 @@ let { loadGameChatToObj } = require("%scripts/chat/mpChat.nut")
 let { register_command } = require("console")
 let { replaySystemWindowOpen, replaySystemWindowClose } = require("%scripts/replays/replaySystemWindow.nut")
 let { getUnitClassIco } = require("%scripts/unit/unitInfoTexts.nut")
+let { getPlayerFullName } = require("%scripts/contacts/contactsInfo.nut")
+let { getRoomMemberPublicParam } = require("%scripts/matchingRooms/sessionLobbyMembersInfo.nut")
+let { isEqualSquadId } = require("%scripts/squads/squadState.nut")
+let { getShortcuts } = require("%scripts/controls/controlsCompatibility.nut")
+let { showSessionPlayerRClickMenu } = require("%scripts/user/playerContextMenu.nut")
 
 enum SPECTATOR_MODE {
-  RESPAWN     // Common multiplayer battle participant between respawns or after death.
-  SKIRMISH    // Anyone entered as a Referee into any Skirmish session.
-  SUPERVISOR  // Special online tournament master or observer, assigned by Operator.
-  REPLAY      // Player viewing any locally saved local-replay or server-replay file.
+  RESPAWN     
+  SKIRMISH    
+  SUPERVISOR  
+  REPLAY      
 }
 
 enum SPECTATOR_CHAT_TAB {
@@ -96,12 +102,12 @@ let playerStateToStringMap = {
 }
 
 let hudHeroMessages = {
-  [HUD_MSG_DAMAGE] = true, // Hero air unit damaged
-  [HUD_MSG_ENEMY_DAMAGE] = true, // Hero target air unit damaged
-  [HUD_MSG_ENEMY_CRITICAL_DAMAGE] = true, // Hero target air unit damaged
-  [HUD_MSG_ENEMY_FATAL_DAMAGE] = true, // Hero target air unit damaged
-  [HUD_MSG_DEATH_REASON] = true, // Hero unit destroyed, killer name
-  [HUD_MSG_EVENT] = true, // Hero tank unit damaged, and some system messages
+  [HUD_MSG_DAMAGE] = true, 
+  [HUD_MSG_ENEMY_DAMAGE] = true, 
+  [HUD_MSG_ENEMY_CRITICAL_DAMAGE] = true, 
+  [HUD_MSG_ENEMY_FATAL_DAMAGE] = true, 
+  [HUD_MSG_DEATH_REASON] = true, 
+  [HUD_MSG_EVENT] = true, 
 }
 
 let supportedMsgTypes = {
@@ -116,15 +122,15 @@ let supportedMsgTypes = {
   [HUD_MSG_ENEMY_FATAL_DAMAGE] = true,
   [HUD_MSG_DEATH_REASON] = true,
   [HUD_MSG_EVENT] = true,
-  [-200] = true // historyLogCustomMsgType
+  [-200] = true 
 }
 
 let sensorFiltersTable = {
   items = [
     {iconText = "#icon/mpstats/raceLastCheckpoint", tooltip = "#sensorsFilters/unitMarkers", selected = "yes"}
     {imgBg = "#ui/gameuiskin#btn_autodetect_on.svg", tooltip = "#sensorsFilters/sensorMapping"}
-    // uncomment when complete part in native code
-    //{imgBg = "#ui/gameuiskin#icon_range.svg", tooltip = "#sensorsFilters/measurement"}
+    
+    
     {imgBg = "#ui/gameuiskin#icon_rocket_in_progress.svg", tooltip = "#sensorsFilters/rktFlyMarkers"}
   ]
   pages = [
@@ -156,42 +162,42 @@ let sensorFiltersTable = {
         {optName = "#sensorsFilters/sensor_interest", switchBox = {fid = SVF_SENSOR_INTEREST, makeValue = @()getSensorViewFilter(SVF_SENSOR_INTEREST) ? "yes" : "no"  }}
       ]
     },
-    // uncomment when complete part in native code
-    /*
-    {
-      id = "sensorsMeasures"
-      label = "sensorsFilters/measurement"
-      options = [
-        {
-          optName = "#sensorsFilters/rangeDist",
-          comboBox = {
-            measureType = MEASURE_UNIT_DIST,
-            makeValue = @() getSensorMeasures(SENSOR_MEASURES.UNIT_DIST),
-            id = "distMeasures"
-            measures = [
-              {label = "#measureUnits/km_dist"},
-              {label = "#measureUnits/meters_dist"},
-              {label = "#measureUnits/mile_dist"},
-              {label = "#measureUnits/yard_dist"},
-              {label = "#measureUnits/feet_dist"}
-            ]
-          }
-        },
-        {
-          optName = "#options/measure_units_speed",
-          comboBox = {
-            makeValue = @() getSensorMeasures(SENSOR_MEASURES.UNIT_SPEED),
-            id = "speedMeasures"
-            measureType = MEASURE_UNIT_SPEED,
-            measures = [
-              {label = "#measureUnits/kmh"},
-              {label = "#measureUnits/metersPerSecond_climbSpeed"},
-              {label = "#measureUnits/kt"},
-            ]
-          }
-        }
-      ]
-    },*/
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     {
       id = "rocketMarkers"
       label = "sensorsFilters/rktFlyMarkers"
@@ -312,11 +318,11 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
     let replayProps = get_replay_props()
 
     if (isReplay) {
-      // Trying to restore some missing data when replay is started via command-line or browser link
+      
       ::back_from_replays = ::back_from_replays || gui_start_mainmenu
       ::current_replay = ::current_replay.len() ? ::current_replay : getFromSettingsBlk("viewReplay", "")
 
-      // Trying to restore some SessionLobby data
+      
       replayMetadata.restoreReplayScriptCommentsBlk(::current_replay)
     }
 
@@ -388,7 +394,7 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
       let obj = objReplayControls.getChild(i)
       if (obj?.is_shortcut && obj?.id) {
         local hotkeys = ::get_shortcut_text({
-          shortcuts = ::get_shortcuts([ obj.id ])
+          shortcuts = getShortcuts([ obj.id ])
           shortcutId = 0
           cantBeEmpty = false
           strip_tags = true
@@ -482,12 +488,12 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
     setSensorViewFilter( obj.filterId.tointeger(), obj.getValue())
   }
 
-  // uncomment when complete part in native code
-  /*
-  function onSensorMeasureSelect(obj) {
-    setSensorMeasures(obj.getValue(), obj?.measureType.tointeger())
-  }
-  */
+  
+  
+
+
+
+
 
   function reinitScreen() {
     this.updateHistoryLog(true)
@@ -586,7 +592,7 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
     if (isUpdateByCooldown) {
       this.updateCooldown = 0.5
 
-      // Forced switching target to catch the first target
+      
       if (this.spectatorModeInited && this.catchingFirstTarget) {
         if (this.getTargetPlayer())
           this.catchingFirstTarget = false
@@ -609,8 +615,8 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
   function getPlayerNick(player, needColored = false, needClanTag = true) {
     if (player == null)
       return  ""
-    local name = ::g_contacts.getPlayerFullName(
-      getPlayerName(player.name), // can add platform icon
+    local name = getPlayerFullName(
+      getPlayerName(player.name), 
       needClanTag && !player.isBot ? player.clanTag : "")
     if (this.mode == SPECTATOR_MODE.REPLAY && player?.realName != "")
       name = $"{name} ({player.realName})"
@@ -850,7 +856,7 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
   function onPlayerRClick(obj) {
     let player = this.statTblGetSelectedPlayer(obj)
     if (player)
-      ::session_player_rmenu(
+      showSessionPlayerRClickMenu(
         this,
         player,
         getLogForBanhammer()
@@ -899,7 +905,7 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
     if (::get_is_console_mode_enabled() && u.isEqual(curPlayer, player)) {
       let selIndex = getObjValidIndex(obj)
       let selectedPlayerBlock = obj.getChild(selIndex >= 0 ? selIndex : 0)
-      ::session_player_rmenu(
+      showSessionPlayerRClickMenu(
         this,
         player,
         getLogForBanhammer(),
@@ -1005,7 +1011,7 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
       player.aircraftName = unitId || ""
       player.canBeSwitchedTo = unitId ? player.canBeSwitchedTo : false
       player.isLocal = spectatorWatchedHero.id == player.id
-      player.isInHeroSquad = ::SessionLobby.isEqualSquadId(spectatorWatchedHero.squadId, player?.squadId)
+      player.isInHeroSquad = isEqualSquadId(spectatorWatchedHero.squadId, player?.squadId)
     }
     tbl.sort(this.funcSortPlayersSpectator)
     return tbl
@@ -1177,7 +1183,7 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
         continue
 
       let nameObj = obj.findObject("name")
-      if (!checkObj(nameObj)) //some validation
+      if (!checkObj(nameObj)) 
         continue
 
       let playerName = this.getPlayerNick(player)
@@ -1452,32 +1458,32 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
 
   function buildHistoryLogMessage(msg) {
     let timestamp = "".concat(time.secondsToString(msg.time, false), " ")
-    // All players messages
-    if (msg.type == HUD_MSG_MULTIPLAYER_DMG) { // Any player or ai unit damaged or destroyed
+    
+    if (msg.type == HUD_MSG_MULTIPLAYER_DMG) { 
       let text = HudBattleLog.msgMultiplayerDmgToText(msg)
       let icon = HudBattleLog.getActionTextIconic(msg)
       return "".concat(timestamp, colorize("userlogColoredText", $"{icon} {text}"))
     }
 
-    if (msg.type == HUD_MSG_STREAK_EX) { // Any player got streak
+    if (msg.type == HUD_MSG_STREAK_EX) { 
       let text = HudBattleLog.msgStreakToText(msg, true)
       return "".concat(timestamp, colorize("streakTextColor", loc("ui/colon").concat(loc("unlocks/streak"), text)))
     }
 
-    // Mission objectives
-    if (msg.type == HUD_MSG_OBJECTIVE) { // Hero team mission objective
+    
+    if (msg.type == HUD_MSG_OBJECTIVE) { 
       let text = HudBattleLog.msgEscapeCodesToCssColors(msg.text)
       return "".concat(timestamp, colorize("white", loc("ui/colon").concat(loc("sm_objective"), text)))
     }
 
-    // Team progress
-    if (msg.type == HUD_MSG_DIALOG) { // Hero team base capture events
+    
+    if (msg.type == HUD_MSG_DIALOG) { 
       let text = HudBattleLog.msgEscapeCodesToCssColors(msg.text)
       return "".concat(timestamp, colorize("commonTextColor", text))
     }
 
-    // Hero (spectated target) messages
-    if (msg.type in hudHeroMessages || msg.type == this.historyLogCustomMsgType) { // Custom messages sent by script
+    
+    if (msg.type in hudHeroMessages || msg.type == this.historyLogCustomMsgType) { 
       let text = HudBattleLog.msgEscapeCodesToCssColors(msg.text)
       return "".concat(timestamp, colorize("commonTextColor", text))
     }
@@ -1491,7 +1497,7 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
         if (checkObj(obj)) {
           local hotkeys = ""
           if ("shortcuts" in keys) {
-            let shortcuts = ::get_shortcuts(keys.shortcuts)
+            let shortcuts = getShortcuts(keys.shortcuts)
             let locNames = []
             foreach (idx, _data in shortcuts) {
               let shortcutsText = ::get_shortcut_text({
@@ -1577,25 +1583,25 @@ register_command(spectatorDebugMode, "debug.spectatorDebugMode")
 
 ::isPlayerDedicatedSpectator <- function isPlayerDedicatedSpectator(name = null) {
   if (name) {
-    let member = isInSessionRoom.get() ? ::SessionLobby.getMemberByName(name) : null
-    return member ? !!::SessionLobby.getMemberPublicParam(member, "spectator") : false
+    let member = isInSessionRoom.get() ? getMemberByName(name) : null
+    return member ? !!getRoomMemberPublicParam(member, "spectator") : false
   }
   return !!((get_local_mplayer() ?? {})?.spectator ?? 0)
 }
 ::cross_call_api.isPlayerDedicatedSpectator <- ::isPlayerDedicatedSpectator
 
-::get_spectator_air_hud_offset_x <- function get_spectator_air_hud_offset_x() { // called from client
+::get_spectator_air_hud_offset_x <- function get_spectator_air_hud_offset_x() { 
   return spectator_air_hud_offset_x
 }
 
-function on_player_requested_artillery(data) { // called from client
+function on_player_requested_artillery(data) { 
   let { userId } = data
   let handler = handlersManager.findHandlerClassInScene(gui_handlers.Spectator)
   if (handler)
     handler.onPlayerRequestedArtillery(userId)
 }
 
-function on_spectator_tactical_map_request() { // called from client
+function on_spectator_tactical_map_request() { 
   let handler = handlersManager.findHandlerClassInScene(gui_handlers.Spectator)
   if (handler)
     handler.onMapClick()

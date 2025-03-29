@@ -23,7 +23,7 @@ let { isShowGoldBalanceWarning } = require("%scripts/user/balanceFeatures.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { isInFlight } = require("gameplayBinding")
-let { isInSessionLobbyEventRoom, isMeSessionLobbyRoomOwner
+let { isInSessionLobbyEventRoom, isMeSessionLobbyRoomOwner, getMemberByName, getExternalSessionId
 } = require("%scripts/matchingRooms/sessionLobbyState.nut")
 let { isEnableFriendsJoin } = require("%scripts/events/eventInfo.nut")
 let { guiStartChangeRoleWnd } = require("%scripts/clans/clanChangeRoleModal.nut")
@@ -37,22 +37,35 @@ let { checkCanComplainAndProceed } = require("%scripts/user/complaints.nut")
 let { get_mp_session_id_str } = require("multiplayer")
 let { g_chat } = require("%scripts/chat/chat.nut")
 let { inviteToWwOperation } = require("%scripts/globalWorldwarUtils.nut")
+let { find_contact_by_name_and_do } = require("%scripts/contacts/contactsActions.nut")
+let { gui_modal_userCard } = require("%scripts/user/userCard/userCardView.nut")
+let { getClanMemberRank } = require("%scripts/clans/clanTextInfo.nut")
+let { dismissMember } = require("%scripts/clans/clanActions.nut")
+let { getMyClanRights, haveRankToChangeRoles } = require("%scripts/clans/clanInfo.nut")
+let { invitePlayerToSessionRoom, kickPlayerFromRoom } = require("%scripts/matchingRooms/sessionLobbyMembersInfo.nut")
+let { canInvitePlayerToSessionRoom } = require("%scripts/matchingRooms/sessionLobbyInfo.nut")
+let { queues } = require("%scripts/queue/queueManager.nut")
+let { openRightClickMenu } = require("%scripts/wndLib/rightClickMenu.nut")
+let { gui_modal_ban, gui_modal_complain } = require("%scripts/penitentiary/banhammer.nut")
+let showClanPageModal = require("%scripts/clans/showClanPageModal.nut")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { isLoggedIn } = require("%appGlobals/login/loginState.nut")
 
-//-----------------------------
-// params keys:
-//  - uid
-//  - playerName
-//  - clanTag
-//  - roomId
-//  - isMPChat
-//  - canInviteToChatRoom
-//  - isMPLobby
-//  - clanData
-//  - chatLog
-//  - squadMemberData
-//  - position
-//  - canComplain
-// ----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 let getPlayerCardInfoTable = function(uid, name) {
   let info = {}
@@ -70,6 +83,10 @@ let showNotAvailableActionPopup = @() addPopup(null, loc("xbox/actionNotAvailabl
 let showBlockedPlayerPopup = @(playerName) addPopup(null, loc("chat/player_blocked", { playerName = getPlayerName(playerName) }))
 let showNoInviteForDiffPlatformPopup = @() addPopup(null, loc("msg/squad/noPlayersForDiffConsoles"))
 let showXboxPlayerMuted = @(playerName) addPopup(null, loc("popup/playerMuted", { playerName = getPlayerName(playerName) }))
+
+function isLobbyRoom(roomId) {
+  return g_chat_room_type.MP_LOBBY.checkRoomId(roomId)
+}
 
 let notifyPlayerAboutRestriction = function(contact) {
   if (is_platform_xbox) {
@@ -120,10 +137,10 @@ let retrieveActions = function(contact, params, comms_state, callback) {
   local canComplain = !isMe && (params?.canComplain ?? false)
 
   let actions = []
-//---- <Session Join> ---------
+
   actions.append({
     text = crossplayModule.getTextWithCrossplayIcon(showCrossPlayIcon, loc("multiplayer/invite_to_session"))
-    show = canInviteToChatRoom && ::SessionLobby.canInvitePlayer(uid) && canInviteToSesson
+    show = canInviteToChatRoom && canInvitePlayerToSessionRoom(uid) && canInviteToSesson
     isVisualDisabled = !canInteractCrossConsole || !canInteractCrossPlatform || !canInvite
     action = function () {
       if (!canInteractCrossConsole)
@@ -133,13 +150,13 @@ let retrieveActions = function(contact, params, comms_state, callback) {
       if (!canInvite)
         return notifyPlayerAboutRestriction(contact)
 
-      if (isPS4Player && !u.isEmpty(::SessionLobby.getExternalId()))
+      if (isPS4Player && !u.isEmpty(getExternalSessionId()))
         contact.updatePSNIdAndDo(@() invite(
-          ::SessionLobby.getExternalId(),
+          getExternalSessionId(),
           contact.psnId
         ))
 
-      ::SessionLobby.invitePlayer(uid)
+      invitePlayerToSessionRoom(uid)
     }
   })
 
@@ -157,14 +174,14 @@ let retrieveActions = function(contact, params, comms_state, callback) {
           else if (!canInteractCrossPlatform)
             checkAndShowCrossplayWarning()
           else
-            ::queues.joinFriendsQueue(contact.inGameEx, eventId)
+            queues.joinFriendsQueue(contact.inGameEx, eventId)
         }
       })
     }
   }
-//---- </Session Join> ---------
 
-//---- <Common> ----------------
+
+
   actions.append(
     {
       text = loc("contacts/message")
@@ -174,7 +191,7 @@ let retrieveActions = function(contact, params, comms_state, callback) {
         if (isBlock)
           return showBlockedPlayerPopup(name)
 
-        if (isProfileMuted) //There was no xbox message, so don't try to call overlay msg
+        if (isProfileMuted) 
           return showXboxPlayerMuted(name)
 
         if (!canChat)
@@ -186,7 +203,7 @@ let retrieveActions = function(contact, params, comms_state, callback) {
     {
       text = loc("mainmenu/btnProfile")
       show = hasFeature("UserCards") && getPlayerCardInfoTable(uid, name).len() > 0
-      action = @() ::gui_modal_userCard(getPlayerCardInfoTable(uid, name))
+      action = @() gui_modal_userCard(getPlayerCardInfoTable(uid, name))
     }
     {
       text = loc("mainmenu/btnPsnProfile")
@@ -201,7 +218,7 @@ let retrieveActions = function(contact, params, comms_state, callback) {
     {
       text = loc("mainmenu/btnClanCard")
       show = hasFeature("Clans") && !u.isEmpty(clanTag) && clanTag != clan_get_my_clan_tag()
-      action = @() ::showClanPage("", "", clanTag)
+      action = @() showClanPageModal("", "", clanTag)
     }
     {
       text = loc("worldwar/inviteToOperation")
@@ -214,9 +231,9 @@ let retrieveActions = function(contact, params, comms_state, callback) {
       action = @() tryOpenFriendWishlist(contact.uid)
     }
   )
-//---- </Common> ------------------
 
-//---- <Squad> --------------------
+
+
   if (hasFeature("Squad")) {
     let meLeader = g_squad_manager.isSquadLeader()
     let inMySquad = g_squad_manager.isInMySquadById(uidInt64, false)
@@ -300,17 +317,17 @@ let retrieveActions = function(contact, params, comms_state, callback) {
       }
     )
   }
-//---- </Squad> -------------------
 
-//---- <Clan> ---------------------
+
+
   let clanData = params?.clanData
   if (hasFeature("Clans") && clanData) {
     let clanId = clanData?.id ?? "-1"
     let myClanId = clan_get_my_clan_id()
     let isMyClan = myClanId != "-1" && clanId == myClanId
 
-    let myClanRights = isMyClan ? ::g_clans.getMyClanRights() : []
-    let isMyRankHigher = ::g_clans.getClanMemberRank(clanData, name) < ::clan_get_role_rank(clan_get_my_role())
+    let myClanRights = isMyClan ? getMyClanRights() : []
+    let isMyRankHigher = getClanMemberRank(clanData, name) < ::clan_get_role_rank(clan_get_my_role())
     let isClanAdmin = clan_get_admin_editor_mode()
 
     actions.append(
@@ -323,7 +340,7 @@ let retrieveActions = function(contact, params, comms_state, callback) {
         text = loc("clan/btnChangeRole")
         show = (isMyClan
                 && isInArray("MEMBER_ROLE_CHANGE", myClanRights)
-                && ::g_clans.haveRankToChangeRoles(clanData)
+                && haveRankToChangeRoles(clanData)
                 && isMyRankHigher
                )
                || isClanAdmin
@@ -337,13 +354,13 @@ let retrieveActions = function(contact, params, comms_state, callback) {
                 && isMyRankHigher
                )
                || isClanAdmin
-        action = @() ::g_clans.dismissMember(contact, clanData)
+        action = @() dismissMember(contact, clanData)
       }
     )
   }
-//---- </Clan> ---------------------
 
-//---- <Contacts> ------------------
+
+
   if (hasFeature("Friends")) {
     let canBlock = !platformModule.isPlatformXboxOne || !isXBoxOnePlayer
 
@@ -391,18 +408,18 @@ let retrieveActions = function(contact, params, comms_state, callback) {
       }
     )
   }
-//---- </Contacts> ------------------
 
-//---- <MP Lobby> -------------------
+
+
   if (isMPLobby)
     actions.append({
       text = loc("mainmenu/btnKick")
       show = !isMe && isMeSessionLobbyRoomOwner.get() && !isInSessionLobbyEventRoom.get()
-      action = @() ::SessionLobby.kickPlayer(::SessionLobby.getMemberByName(name))
+      action = @() kickPlayerFromRoom(getMemberByName(name))
     })
-//---- </MP Lobby> ------------------
 
-//---- <In Battle> ------------------
+
+
   if (isInFlight())
     actions.append({
       text = loc(localDevoice.isMuted(name, localDevoice.DEVOICE_RADIO) ? "mpRadio/enable" : "mpRadio/disable")
@@ -413,9 +430,9 @@ let retrieveActions = function(contact, params, comms_state, callback) {
         addPopup(null, loc(popupLocId, { player = colorize("activeTextColor", getPlayerName(name)) }))
       }
     })
-//---- </In Battle> -----------------
 
-//---- <Chat> -----------------------
+
+
   if (hasMenuChat.value) {
     if (hasChatEnable && canInviteToChatRoom) {
       let inviteMenu = g_chat.generateInviteMenu(name)
@@ -435,7 +452,7 @@ let retrieveActions = function(contact, params, comms_state, callback) {
           else if (isBlock)
             showBlockedPlayerPopup(name)
           else
-            ::open_invite_menu(inviteMenu, params?.position)
+            broadcastEvent("ChatOpenInviteMenu", { menu = inviteMenu, position = params?.position })
         }
       })
     }
@@ -444,13 +461,13 @@ let retrieveActions = function(contact, params, comms_state, callback) {
       actions.append(
         {
           text = loc("chat/kick_from_room")
-          show = !g_chat.isRoomSquad(roomId) && !::SessionLobby.isLobbyRoom(roomId) && g_chat.isImRoomOwner(roomData)
-          action = @() ::menu_chat_handler ? ::menu_chat_handler.kickPlayeFromRoom(name) : null
+          show = !g_chat.isRoomSquad(roomId) && !isLobbyRoom(roomId) && g_chat.isImRoomOwner(roomData)
+          action = @() broadcastEvent("ChatKickPlayerFromRoom", { playerName = name })
         }
         {
           text = loc("contacts/copyNickToEditbox")
-          show = !isMe && showConsoleButtons.value && ::menu_chat_handler
-          action = @() ::menu_chat_handler ? ::menu_chat_handler.addNickToEdit(name) : null
+          show = !isMe && showConsoleButtons.value
+          action = @() broadcastEvent("ChatAddNickToEdit", { playerName = name })
         }
       )
 
@@ -470,9 +487,9 @@ let retrieveActions = function(contact, params, comms_state, callback) {
       }
     }
   }
-//---- </Chat> ----------------------
 
-//---- <Complain> ------------------
+
+
   if (canComplain)
     actions.append({
       text = loc("mainmenu/btnComplain")
@@ -499,12 +516,12 @@ let retrieveActions = function(contact, params, comms_state, callback) {
           }
         }
 
-        checkCanComplainAndProceed(uid, get_mp_session_id_str(), @() ::gui_modal_complain(config, chatLog))
+        checkCanComplainAndProceed(uid, get_mp_session_id_str(), @() gui_modal_complain(config, chatLog))
       }
     })
-//---- </Complain> ------------------
 
-//---- <Moderator> ------------------
+
+
   if (is_myself_anyof_moderators() && (roomId || isMPChat || isMPLobby))
     actions.append(
       {
@@ -515,10 +532,10 @@ let retrieveActions = function(contact, params, comms_state, callback) {
       {
         text = loc("contacts/moderator_ban")
         show = ::myself_can_devoice() || myself_can_ban()
-        action = @() ::gui_modal_ban(contact, chatLog)
+        action = @() gui_modal_ban(contact, chatLog)
       }
     )
-//---- </Moderator> -----------------
+
 
   let buttons = params?.extendButtons ?? []
   buttons.extend(actions)
@@ -528,7 +545,7 @@ let retrieveActions = function(contact, params, comms_state, callback) {
 function showMenuImpl(contact, handler, params) {
   contact.checkInteractionStatus(function(status) {
     retrieveActions(contact, params, status, function(menu) {
-      ::gui_right_click_menu(menu, handler, params?.position, params?.orientation, params?.onClose)
+      openRightClickMenu(menu, handler, params?.position, params?.orientation, params?.onClose)
     })
   })
 }
@@ -537,7 +554,7 @@ function showMenu(v_contact, handler, params = {}) {
   let contact = v_contact ?? verifyContact(params)
   if (!contact && params?.playerName) {
     let showMenu_ = callee()
-    ::find_contact_by_name_and_do(params.playerName, @(c) c && showMenu_(c, handler, params))
+    find_contact_by_name_and_do(params.playerName, @(c) c && showMenu_(c, handler, params))
     return
   }
 
@@ -577,6 +594,22 @@ function showChatPlayerRClickMenu(playerName, roomId = null, contact = null, pos
   })
 }
 
+function showSessionPlayerRClickMenu(handler, player, chatLog = null, position = null, orientation = null) {
+  if (!player || player.isBot || !("userId" in player) || !isLoggedIn.get())
+    return
+
+  showMenu(null, handler, {
+    playerName = player.name
+    uid = player.userId.tostring()
+    clanTag = player.clanTag
+    position = position
+    orientation = orientation
+    chatLog = chatLog
+    isMPLobby = true
+    canComplain = true
+  })
+}
+
 return {
   showMenu = showMenu
   showXboxPlayerMuted = showXboxPlayerMuted
@@ -584,4 +617,5 @@ return {
   showBlockedPlayerPopup = showBlockedPlayerPopup
   showSquadMemberMenu
   showChatPlayerRClickMenu
+  showSessionPlayerRClickMenu
 }

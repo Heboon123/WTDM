@@ -5,11 +5,11 @@ import "%scripts/warbonds/warbondsView.nut" as g_warbonds_view
 
 let bhvUnseen = require("%scripts/seen/bhvUnseen.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
-let { fillItemDescr } = require("%scripts/items/itemVisual.nut")
 let DataBlock = require("DataBlock")
 let purchaseConfirmation = require("%scripts/purchase/purchaseConfirmationHandler.nut")
 let { addTask } = require("%scripts/tasker.nut")
 let { MAX_COUNTRY_RANK } = require("%scripts/ranks.nut")
+let { FULL_ID_SEPARATOR } = require("%scripts/warbonds/warbondsState.nut")
 
 let WarbondAward = class {
   id = ""
@@ -21,7 +21,7 @@ let WarbondAward = class {
   specialTasks = 0
   reqMaxUnitRank = -1
 
-  //special params for award view
+  
   needAllBoughtIcon = true
   imgNestDoubleSize = ""
 
@@ -48,7 +48,7 @@ let WarbondAward = class {
   function getFullId() {
     if (!this.warbondWeak)
       return ""
-    return "".concat(this.warbondWeak.getFullId(), ::g_warbonds.FULL_ID_SEPARATOR, this.idx)
+    return "".concat(this.warbondWeak.getFullId(), FULL_ID_SEPARATOR, this.idx)
   }
 
   function getLayeredImage() {
@@ -208,17 +208,6 @@ let WarbondAward = class {
     ]
   }
 
-  function fillItemDesc(descObj, handler) {
-    let item = this.awardType.getDescItem(this.blk)
-    if (!item)
-      return false
-
-    descObj.scrollToView(true)
-    fillItemDescr(item, descObj, handler, true, true,
-                                 { descModifyFunc = this.addAmountTextToDesc.bindenv(this) })
-    return true
-  }
-
   function getDescText() {
     return this.addAmountTextToDesc(this.awardType.getDescText(this.blk))
   }
@@ -324,7 +313,7 @@ let WarbondAward = class {
 
   getSeenId = @() "".concat((this.isValid() ? ($"{this.warbondWeak.getSeenId()}_") : ""), this.id)
 
-  /******************* params override to use in item.tpl ***********************************/
+  
   function modActionName() { return this.canBuy() ? this.getBuyText(true) : null }
   function price() { return this.getCostText() }
   function contentIconData() { return this.awardType.getContentIconData(this.blk) }
@@ -333,7 +322,7 @@ let WarbondAward = class {
   function itemIndex() { return this.getFullId() }
   function headerText() { return this.awardType.getIconHeaderText(this.blk) }
   unseenIcon = @() !this.isItemLocked() && bhvUnseen.makeConfigStr(SEEN.WARBONDS_SHOP, this.getSeenId())
-  /************************** end of params override ****************************************/
+  
 }
 
 return { WarbondAward }

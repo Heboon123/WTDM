@@ -9,7 +9,7 @@ let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { getEventDisplayType } = require("%scripts/events/eventInfo.nut")
 let { guiStartModalEvents } = require("%scripts/events/eventsHandler.nut")
 let { reqUnlockByClient, isUnlockOpened } = require("%scripts/unlocks/unlocksModule.nut")
-let { isProfileReceived } = require("%scripts/login/loginStates.nut")
+let { isProfileReceived } = require("%appGlobals/login/loginState.nut")
 let { enable_scene_camera, disable_scene_camera } = require("hangar")
 let { resetTimeout } = require("dagor.workcycle")
 
@@ -94,7 +94,7 @@ function clickToReqUnlock(params) {
     return
 
   isUnlocked = isUnlocked ?? isUnlockOpened(unlockName)
-  clickCountByUnlock[unlockName].isUnlocked = true //Always set to true to avoid sending a second request to open unlock
+  clickCountByUnlock[unlockName].isUnlocked = true 
   if (isUnlocked)
     return
 

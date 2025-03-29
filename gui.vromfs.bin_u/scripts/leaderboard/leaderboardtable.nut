@@ -11,6 +11,7 @@ let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { getCustomNick } = require("%scripts/contacts/customNicknames.nut")
 let { getContactByName } = require("%scripts/contacts/contactsManager.nut")
+let { getPlayerFullName } = require("%scripts/contacts/contactsInfo.nut")
 
 gui_handlers.LeaderboardTable <- class (gui_handlers.BaseGuiHandlerWT) {
   wndType = handlerType.CUSTOM
@@ -120,7 +121,7 @@ gui_handlers.LeaderboardTable <- class (gui_handlers.BaseGuiHandlerWT) {
         id = "name"
         tdalign = "left"
         text = needAddClanTag
-          ? ::g_contacts.getPlayerFullName(playerName, clanTag)
+          ? getPlayerFullName(playerName, clanTag)
           : playerName
       }
     ]
@@ -202,7 +203,7 @@ gui_handlers.LeaderboardTable <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!checkObj(obj))
       return
 
-    let dataIdx = obj.getValue() - 1 // skiping header row
+    let dataIdx = obj.getValue() - 1 
     this.onRowSelectCb?(dataIdx)
   }
 

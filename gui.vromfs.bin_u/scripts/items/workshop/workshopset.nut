@@ -13,6 +13,8 @@ let { hasAllFeatures } = require("%scripts/user/features.nut")
 let { getTimestampFromStringUtc } = require("%scripts/time.nut")
 let { startsWith } = require("%sqstd/string.nut")
 let { get_charserver_time_sec } = require("chard")
+let { addDelayedAction } = require("%scripts/utils/delayedActions.nut")
+let { getInventoryList, getItemOrRecipeBundleById } = require("%scripts/items/itemsManager.nut")
 
 const KNOWN_ITEMS_SAVE_ID = "workshop/known"
 const KNOWN_REQ_ITEMS_SAVE_ID = "workshop/knownReqItems"
@@ -22,20 +24,20 @@ const CURRENT_SUBSET_SAVE_PATH = "workshop/curSubSetBySet/"
 const ACCENT_CRAFT_TREE_SAVE_PATH = "seen/workshopCraftTree/"
 
 local WorkshopSet = class {
-  id = "" //name of config blk. not unique
+  id = "" 
   uid = -1
-  reqFeature = null //""
+  reqFeature = null 
   isForcedDisplayByDate = null
   locId = ""
 
-  itemdefsSorted = null //[]
-  itemdefs = null //{ <itemdef> = sortId }
-  itemsReqRulesTbl = null  // { <itemId> = bool } (true = need to have, false = need to NOT have)
-  hiddenItemsBlocks = null // { <blockId> = true }
-  alwaysVisibleItemdefs = null // { <itemdef> = sortId }
-  knownItemdefs = null // { <itemdef> = true }
-  knownReqItemdefs = null // { <reqitemdef> = true }
-  itemsVisibleOnlyInCraftTree = null // { <itemId> = true }
+  itemdefsSorted = null 
+  itemdefs = null 
+  itemsReqRulesTbl = null  
+  hiddenItemsBlocks = null 
+  alwaysVisibleItemdefs = null 
+  knownItemdefs = null 
+  knownReqItemdefs = null 
+  itemsVisibleOnlyInCraftTree = null 
 
   isToStringForDebug = true
 
@@ -61,7 +63,7 @@ local WorkshopSet = class {
     this.itemdefs = {}
     this.itemsReqRulesTbl = {}
     this.alwaysVisibleItemdefs = {}
-      this.itemsVisibleOnlyInCraftTree = {}
+    this.itemsVisibleOnlyInCraftTree = {}
     this.subsetsList = {}
     local firstSubsetId = null
 
@@ -139,7 +141,7 @@ local WorkshopSet = class {
     foreach (reqItems in itemsBlk % "reqItems") {
       let itemsTbl = {}
       foreach (reqId in reqItems.split(",")) {
-        let needHave = !startsWith(reqId, "!") // true = need to have, false = need to NOT have.
+        let needHave = !startsWith(reqId, "!") 
         let itemId = reqId.slice(needHave ? 0 : 1).tointeger()
 
         itemsTbl[itemId] <- needHave
@@ -181,7 +183,7 @@ local WorkshopSet = class {
 
     this.hiddenItemsBlocks = {}
 
-    let reqItems = ::ItemsManager.getInventoryList(itemType.ALL,
+    let reqItems = getInventoryList(itemType.ALL,
       (@(item) item.id in this.itemsReqRulesTbl).bindenv(this))
 
     let reqItemsAmountTbl = {}
@@ -229,7 +231,7 @@ local WorkshopSet = class {
       return this.itemsListCache
 
     this.initHiddenItemsBlocks()
-    this.itemsListCache = ::ItemsManager.getInventoryList(itemType.ALL,
+    this.itemsListCache = getInventoryList(itemType.ALL,
       (@(item) this.isItemIdInSet(item.id) && !item.isHiddenItem() && !this.isItemIdHidden(item.id)).bindenv(this))
     this.updateKnownItems(this.itemsListCache)
     this.itemsListCache = this.itemsListCache.filter((@(item) !this.isVisibleOnlyInCraftTree(item.id)).bindenv(this))
@@ -237,7 +239,7 @@ local WorkshopSet = class {
     let visibleKnownItemdefs = this.knownItemdefs.filter((@(_value, itemId) !this.isVisibleOnlyInCraftTree(itemId)).bindenv(this))
     let requiredList = this.alwaysVisibleItemdefs.__merge(visibleKnownItemdefs)
 
-    //add all craft parts recipes result to visible items.
+    
     if (requiredList.len() != this.itemdefs.len())
       foreach (item in this.itemsListCache)
         if (item.iType == itemType.CRAFT_PART) {
@@ -256,7 +258,7 @@ local WorkshopSet = class {
       if (this.isItemIdHidden(itemdef))
         continue
 
-      let item = ::ItemsManager.getItemOrRecipeBundleById(itemdef)
+      let item = getItemOrRecipeBundleById(itemdef)
       if (!item
           || (item.iType == itemType.RECIPES_BUNDLE && !item.getMyRecipes().len()))
         continue
@@ -333,7 +335,7 @@ local WorkshopSet = class {
 
   function initKnownItemsOnce() {
     if (!this.knownItemdefs)
-      this.updateKnownItems(::ItemsManager.getInventoryList(itemType.ALL, this.isItemInSet.bindenv(this)))
+      this.updateKnownItems(getInventoryList(itemType.ALL, this.isItemInSet.bindenv(this)))
   }
 
   function updateKnownItems(curInventoryItems) {
@@ -402,7 +404,7 @@ local WorkshopSet = class {
   function getItemsListForCraftTree(craftTree) {
     let itemDefIds = craftTree.craftTreeItemsIdArray
     let itemsList = {}
-    let itemsArray = ::ItemsManager.getInventoryList(itemType.ALL, @(item) itemDefIds.indexof(item.id) != null)
+    let itemsArray = getInventoryList(itemType.ALL, @(item) itemDefIds.indexof(item.id) != null)
     foreach (item in itemsArray)
       itemsList[item.id] <- item
 
@@ -410,7 +412,7 @@ local WorkshopSet = class {
       if (itemsList?[itemdefid] != null)
         continue
 
-      let item = ::ItemsManager.getItemOrRecipeBundleById(itemdefid)
+      let item = getItemOrRecipeBundleById(itemdefid)
       if (!item)
         continue
 
@@ -552,7 +554,7 @@ local WorkshopSet = class {
 
     if (currentTime >= startTime && currentTime < endTime) {
       this.isForcedDisplayByDate = true
-      ::g_delayed_actions.add(Callback(function() {
+      addDelayedAction(Callback(function() {
           this.isForcedDisplayByDate = false
           broadcastEvent("WorkshopAvailableChanged")
         }, this), (endTime - currentTime) * 1000)
@@ -560,7 +562,7 @@ local WorkshopSet = class {
       return
     }
 
-    ::g_delayed_actions.add(Callback(function() {
+    addDelayedAction(Callback(function() {
         this.isForcedDisplayByDate = true
         broadcastEvent("WorkshopAvailableChanged")
       }, this), (startTime - currentTime) * 1000)

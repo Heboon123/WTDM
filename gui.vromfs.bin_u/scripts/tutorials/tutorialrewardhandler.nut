@@ -11,7 +11,7 @@ let { getDecoratorByResource } = require("%scripts/customization/decorCache.nut"
 let { getMissionRewardsMarkup } = require("%scripts/missions/missionsUtilsModule.nut")
 let { canStartPreviewScene, getDecoratorDataToUse, useDecorator } = require("%scripts/customization/contentPreview.nut")
 let { getMoneyFromDebriefingResult } = require("%scripts/debriefing/debriefingFull.nut")
-let { checkRankUpWindow } = require("%scripts/debriefing/rankUpModal.nut")
+let { checkRankUpWindow } = require("%scripts/debriefing/checkRankUpWindow.nut")
 let safeAreaMenu = require("%scripts/options/safeAreaMenu.nut")
 let { register_command } = require("console")
 let { set_game_mode, get_game_mode } = require("mission")
@@ -22,6 +22,7 @@ let { checkUnlockedCountries } = require("%scripts/firstChoice/firstChoice.nut")
 let { isAnyAwardReceivedByModeType } = require("%scripts/unlocks/unlocksModule.nut")
 let { getPlayerRankByCountry } = require("%scripts/user/userInfoStats.nut")
 let { invalidateCrewsList, reinitAllSlotbars } = require("%scripts/slotbar/crewsList.nut")
+let { getUserLogsList } = require("%scripts/userLog/userlogUtils.nut")
 
 register_command(
   function (misName) {
@@ -75,9 +76,9 @@ local TutorialRewardHandler = class (gui_handlers.BaseGuiHandlerWT) {
     }
 
     this.updateDecoratorButton()
-    if (this.decorator != null) { //Not show new unlock window
+    if (this.decorator != null) { 
       let decoratorId = this.decorator.id
-      ::getUserLogsList({
+      getUserLogsList({
         show = [EULT_NEW_UNLOCK]
         disableVisible = true
         checkFunc = @(userlog) decoratorId == (userlog?.body.unlockId ?? "")
@@ -155,7 +156,7 @@ function tryOpenTutorialRewardHandler() {
     return false
 
   let mainGameMode = get_game_mode()
-  set_game_mode(GM_TRAINING)  //req to check progress
+  set_game_mode(GM_TRAINING)  
   let progress = get_mission_progress(tutorialRewardData.value.fullMissionName)
   set_game_mode(mainGameMode)
 
@@ -206,7 +207,7 @@ function tryOpenTutorialRewardHandler() {
   }
 
   clearTutorialRewardData()
-  return newCountries && newCountries.len() > 0 //is new countries unlocked by tutorial?
+  return newCountries && newCountries.len() > 0 
 }
 
 return {

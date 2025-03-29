@@ -37,7 +37,7 @@ g_hud_reward_message.template <- {
   locId = ""
   locFn = @(_expClass, _messageModifier) this.locId
   viewClass = ""
-  priority = REWARD_PRIORITY.common //greater is better
+  priority = REWARD_PRIORITY.common 
 
   getViewClass = g_hud_reward_message._getViewClass
   getText = g_hud_reward_message._getText
@@ -235,6 +235,23 @@ enumsAddTypes(g_hud_reward_message, {
     code = EXP_EVENT_MISSILE_EVADE
     locId  = "exp_reasons/missile_evade"
     priority = REWARD_PRIORITY.hit
+  }
+
+  SHELL_INTERCEPTION = {
+    code = EXP_EVENT_SHELL_INTERCEPTION
+    locId  = "exp_reasons/shell_interception"
+    priority = REWARD_PRIORITY.hit
+  }
+
+  RETURN_SPAWN_COST = {
+    code = EXP_EVENT_RETURN_SPAWN_COST
+    locFn = function (_expClass, messageModifier) {
+      local locId = "exp_reasons/return_spawn_cost"
+      if (messageModifier != "")
+        locId = $"{locId}/{messageModifier}"
+      return locId
+    }
+    priority = REWARD_PRIORITY.kill
   }
 
 })

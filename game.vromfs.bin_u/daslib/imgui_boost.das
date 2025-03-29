@@ -27,12 +27,18 @@ def set(var filter : ImGuiTextFilter; filterText : string)
     filter |> Build()
 
 
-// note - this has to correspond to C++ das::DasImguiInputText structure
+
 struct ImGuiInputTextBuffer
     context : Context?
     callback : lambda<(var it : ImGuiInputTextBuffer; var itc : ImGuiInputTextCallbackData) : int>
     buffer : array<uint8>
     at : LineInfo?
+
+def fill_input_buffer(var buf : ImGuiInputTextBuffer; txt : string implicit)
+    let bytes = clamp(length(txt), 0, (buf.buffer |> length()) - 1)
+    unsafe
+        memcpy(addr(buf.buffer[0]), reinterpret<void?> txt, bytes)
+    buf.buffer[bytes] = uint8(0)
 
 def make_input_buffer(var buf : ImGuiInputTextBuffer; txt : string implicit; len : int)
     buf.buffer |> resize(len)
@@ -65,16 +71,16 @@ def clear(var buf : ImGuiInputTextBuffer)
     for t in buf.buffer
         t = uint8(0)
 
-def InputText(lab : string; buf : ImGuiInputTextBuffer; flags : ImGuiInputTextFlags = ImGuiInputTextFlags None)
+def InputText(lab : string; buf : ImGuiInputTextBuffer; flags : ImGuiInputTextFlags = ImGuiInputTextFlags.None)
     return _builtin_InputText(buf, lab, flags)
 
-def InputTextWithHint(lab, hint : string; buf : ImGuiInputTextBuffer; flags : ImGuiInputTextFlags = ImGuiInputTextFlags None)
+def InputTextWithHint(lab, hint : string; buf : ImGuiInputTextBuffer; flags : ImGuiInputTextFlags = ImGuiInputTextFlags.None)
     return _builtin_InputTextWithHint(buf, lab, hint, flags)
 
-def InputTextMultiline(lab : string; buf : ImGuiInputTextBuffer; siz : float2 = float2(0.0f, 0.0f); flags : ImGuiInputTextFlags = ImGuiInputTextFlags None)
+def InputTextMultiline(lab : string; buf : ImGuiInputTextBuffer; siz : float2 = float2(0.0f, 0.0f); flags : ImGuiInputTextFlags = ImGuiInputTextFlags.None)
     return _builtin_InputTextMultiline(buf, lab, siz, flags)
 
-// note - this needs to correspond to C++ structure
+
 struct ImGuiSizeConstraints
     context : Context?
     callback : lambda<(var data : ImGuiSizeCallbackData) : void>
@@ -88,7 +94,7 @@ def ImGuiSizeConstraints(var lmb : lambda<(var data : ImGuiSizeCallbackData) : v
 def SetNextWindowSizeConstraints(size_min, size_max : float2; var cn : ImGuiSizeConstraints)
     _builtin_SetNextWindowSizeConstraints(cn, size_min, size_max)
 
-// note - this needs to correspond to C++ structure
+
 struct ImGuiComboGetter
     context : Context?
     callback : lambda<(idx : int; var result : string&) : bool>
@@ -102,7 +108,7 @@ def ImGuiComboGetter(var lmb : lambda<(idx : int; var result : string&) : bool>)
 def Combo(lab : string; current_item : int? implicit; getter : ImGuiComboGetter; items_count : int; popup_max_height_in_items : int = -1)
     return _builtin_Combo(getter, lab, current_item, items_count, popup_max_height_in_items)
 
-// note - this needs to correspond to C++ structure
+
 struct ImGuiPlotGetter
     context : Context?
     callback : lambda<(idx : int) : float>
@@ -170,7 +176,7 @@ def PlotLines(
               overlay_text : string = "";
               scale_min : float = FLT_MAX; scale_max : float = FLT_MAX;
               graph_size : float2 = float2();
-              stride : int = typeinfo(sizeof type<float>))
+              stride : int = typeinfo sizeof(type<float>))
     var gsize = graph_size
     unsafe
         imgui::PlotLines(lab, addr(values[0]), length(values), values_offset, overlay_text, scale_min, scale_max, gsize, stride)
@@ -180,7 +186,7 @@ def PlotLines(
               overlay_text : string = "";
               scale_min : float = FLT_MAX; scale_max : float = FLT_MAX;
               graph_size : float2 = float2();
-              stride : int = typeinfo(sizeof type<float>))
+              stride : int = typeinfo sizeof(type<float>))
     let gsize = graph_size
     unsafe
         imgui::PlotLines(lab, addr(values[0]), length(values), values_offset, overlay_text, scale_min, scale_max, gsize, stride)
@@ -190,7 +196,7 @@ def PlotHistogram(
                   overlay_text : string = "";
                   scale_min : float = FLT_MAX; scale_max : float = FLT_MAX;
                   graph_size : float2 = float2();
-                  stride : int = typeinfo(sizeof type<float>))
+                  stride : int = typeinfo sizeof(type<float>))
     var gsize = graph_size
     unsafe
         imgui::PlotHistogram(lab, addr(values[0]), length(values), values_offset, overlay_text, scale_min, scale_max, gsize, stride)
@@ -200,7 +206,7 @@ def PlotHistogram(
                   overlay_text : string = "";
                   scale_min : float = FLT_MAX; scale_max : float = FLT_MAX;
                   graph_size : float2 = float2();
-                  stride : int = typeinfo(sizeof type<float>))
+                  stride : int = typeinfo sizeof(type<float>))
     let gsize = graph_size
     unsafe
         imgui::PlotHistogram(lab, addr(values[0]), length(values), values_offset, overlay_text, scale_min, scale_max, gsize, stride)
@@ -290,9 +296,9 @@ def ImGuiEx_EndColumn()
     EndGroup()
 
 def Combo(name : string; var ent : auto(EnumT)&; max_height_in_items : int = -1)
-    concept_assert(typeinfo(is_enum type<EnumT>), "expecting enum")
-    if typeinfo(is_enum type<EnumT>)
-        var ti = typeinfo(rtti_typeinfo type<EnumT>)
+    concept_assert(typeinfo is_enum(type<EnumT>), "expecting enum")
+    if typeinfo is_enum(type<EnumT>)
+        var ti = typeinfo rtti_typeinfo(type<EnumT>)
         var names : array<string>
         for ef in *ti.enumType
             names |> push(ef.name)
@@ -301,9 +307,9 @@ def Combo(name : string; var ent : auto(EnumT)&; max_height_in_items : int = -1)
     return false
 
 def ListBox(name : string; var ent : auto(EnumT)&; max_height_in_items : int = -1)
-    concept_assert(typeinfo(is_enum type<EnumT>), "expecting enum")
-    if typeinfo(is_enum type<EnumT>)
-        var ti = typeinfo(rtti_typeinfo type<EnumT>)
+    concept_assert(typeinfo is_enum(type<EnumT>), "expecting enum")
+    if typeinfo is_enum(type<EnumT>)
+        var ti = typeinfo rtti_typeinfo(type<EnumT>)
         var names : array<string>
         for ef in *ti.enumType
             names |> push(ef.name)
@@ -313,15 +319,15 @@ def ListBox(name : string; var ent : auto(EnumT)&; max_height_in_items : int = -
 
 [unused_argument(name)]
 def EmbeddedListBox(name : string; var ent : auto(EnumT)&; max_height_in_items : int = -1)
-    concept_assert(typeinfo(is_enum type<EnumT>), "expecting enum")
-    if typeinfo(is_enum type<EnumT>)
-        var ti = typeinfo(rtti_typeinfo type<EnumT>)
+    concept_assert(typeinfo is_enum(type<EnumT>), "expecting enum")
+    if typeinfo is_enum(type<EnumT>)
+        var ti = typeinfo rtti_typeinfo(type<EnumT>)
         var max_tw = 0.
         for ef in *ti.enumType
             max_tw = max(max_tw, CalcTextSize(ef.name).x)
         for ef in *ti.enumType
             let isSelected = ef.value == int64(int(ent))
-            if Selectable("{ef.name}##{name}", isSelected, ImGuiSelectableFlags None, float2(max_tw, 0.))
+            if Selectable("{ef.name}##{name}", isSelected, ImGuiSelectableFlags.None, float2(max_tw, 0.))
                 unsafe
                     ent = reinterpret<EnumT> (ef.value)
                 return true
@@ -334,7 +340,7 @@ def EmbeddedListBox(name : string; var ent : string&; var items : array<string>;
         max_tw = max(max_tw, CalcTextSize(ef).x)
     for ef in items
         let isSelected = ent == ef
-        if Selectable("{ent}##{name}", isSelected, ImGuiSelectableFlags None, float2(max_tw, 0.))
+        if Selectable("{ent}##{name}", isSelected, ImGuiSelectableFlags.None, float2(max_tw, 0.))
             ent = ef
             return true
     return false
@@ -378,22 +384,22 @@ def GetBR(rect : float4)
 
 def VerticalSeparator(name : string; var PANNEL_WIDTH : float&; inverted : float = 1.; min_width : float = 200.; max_width : float = 100500.0)
     let IO & = unsafe(imgui::GetIO())
-    PushStyleVar(ImGuiStyleVar ItemSpacing, float2(0.))
+    PushStyleVar(ImGuiStyleVar.ItemSpacing, float2(0.))
     static_let <|
         var resizing_vertical = false
         var resizing_name = ""
     let sz = GetItemRectSize()
     InvisibleButton("##vertical_separator_{name}", float2(10., sz.y))
     if IsItemHovered()
-        SetMouseCursor(ImGuiMouseCursor ResizeEW)
-        if IsMouseDown(ImGuiMouseButton Left)
+        SetMouseCursor(ImGuiMouseCursor.ResizeEW)
+        if IsMouseDown(ImGuiMouseButton.Left)
             resizing_vertical = true
             resizing_name = name
     if resizing_vertical && resizing_name == name
-        SetMouseCursor(ImGuiMouseCursor ResizeEW)
-        if IsMouseDragging(ImGuiMouseButton Left)
+        SetMouseCursor(ImGuiMouseCursor.ResizeEW)
+        if IsMouseDragging(ImGuiMouseButton.Left)
             PANNEL_WIDTH = clamp(PANNEL_WIDTH + IO.MouseDelta.x * inverted, min_width, max_width)
-        elif !IsMouseDown(ImGuiMouseButton Left)
+        elif !IsMouseDown(ImGuiMouseButton.Left)
             resizing_vertical = false
     SameLine()
     imgui::PopStyleVar(1)

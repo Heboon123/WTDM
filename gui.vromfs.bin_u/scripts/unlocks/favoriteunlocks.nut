@@ -10,7 +10,7 @@ let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
 let { addPopup } = require("%scripts/popups/popups.nut")
-let { isProfileReceived } = require("%scripts/login/loginStates.nut")
+let { isProfileReceived } = require("%appGlobals/login/loginState.nut")
 
 const FAVORITE_UNLOCKS_LIST_SAVE_ID = "favorite_unlocks"
 const CHECKBOX_BTN_ID = "checkbox_favorites"
@@ -45,9 +45,9 @@ function loadFavorites() {
     let unlock = getUnlockById(unlockId)
     if (isUnlockVisible(unlock, false)) {
       if (!isUnlockVisibleOnCurPlatform(unlock))
-        favoriteInvisibleUnlocks[unlockId] = true // unlock isn't avaliable on current platform
+        favoriteInvisibleUnlocks[unlockId] = true 
       else {
-        favoriteUnlocks.addBlock(unlockId) // valid unlock
+        favoriteUnlocks.addBlock(unlockId) 
         favoriteUnlocks[unlockId] = unlock
       }
     }

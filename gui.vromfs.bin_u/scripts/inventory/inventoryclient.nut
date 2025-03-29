@@ -23,7 +23,8 @@ let { get_network_block } = require("blkGetters")
 let { getCurrentSteamLanguage } = require("%scripts/langUtils/language.nut")
 let { mnSubscribe, mrSubscribe } = require("%scripts/matching/serviceNotifications/mrpc.nut")
 let { steam_is_running, steam_get_my_id, steam_get_app_id } = require("steam")
-let { isProfileReceived } = require("%scripts/login/loginStates.nut")
+let { isProfileReceived } = require("%appGlobals/login/loginState.nut")
+let { addDelayedAction } = require("%scripts/utils/delayedActions.nut")
 
 enum validationCheckBitMask {
   VARTYPE            = 0x01
@@ -31,7 +32,7 @@ enum validationCheckBitMask {
   INVALIDATE         = 0x04
   VALUE              = 0x08
 
-  // masks
+  
   REQUIRED           = 0x03
   VITAL              = 0x07
   REQUIRED_AND_VALUE = 0x0B
@@ -211,9 +212,9 @@ function _validate(data, name) {
   }
 
   if (itemsBroken.len() || keysMissing.len() || keysWrongType.len()) {
-    itemsBroken = ";".join(itemsBroken, true) // warning disable: -assigned-never-used
-    keysMissing = ";".join(keysMissing.keys(), true) // warning disable: -assigned-never-used
-    keysWrongType = ";".join(keysWrongType.topairs().map(@(i) $"{i[0]}={i[1]}")) // warning disable: -assigned-never-used
+    itemsBroken = ";".join(itemsBroken, true) 
+    keysMissing = ";".join(keysMissing.keys(), true) 
+    keysWrongType = ";".join(keysWrongType.topairs().map(@(i) $"{i[0]}={i[1]}")) 
     script_net_assert_once("inventory client bad response", $"InventoryClient: Response has errors: {name}")
   }
 
@@ -230,7 +231,7 @@ let class InventoryClient {
   lastRequestTime = -1
 
   lastItemdefsRequestTime = -1
-  itemdefidsRequested = {} // Failed ids stays here, to avoid repeated requests.
+  itemdefidsRequested = {} 
   pendingItemDefRequest = null
 
   firstProfileLoadComplete = false
@@ -313,7 +314,7 @@ let class InventoryClient {
     let itemdefid = item.itemdef
     let shouldUpdateItemdDefs = this.addItemDefIdToRequest(itemdefid)
     item.itemdefid <- itemdefid
-    item.itemdef = this.itemsForRequest?[itemdefid] ?? this.itemdefs[itemdefid] //fix me: why we use same field name for other purposes?
+    item.itemdef = this.itemsForRequest?[itemdefid] ?? this.itemdefs[itemdefid] 
     this.items[item.itemid] <- item
     return shouldUpdateItemdDefs
   }
@@ -327,7 +328,7 @@ let class InventoryClient {
 
     this.needRefreshItems = true
     log("schedule requestItems")
-    ::g_delayed_actions.add(this.requestItemsInternal.bindenv(this), 100)
+    addDelayedAction(this.requestItemsInternal.bindenv(this), 100)
   }
 
   isWaitForInventory = @() this.canRefreshData() && this.lastUpdateTime < 0
@@ -343,7 +344,7 @@ let class InventoryClient {
       this.lastUpdateTime = get_time_msec()
       local hasInventoryChanges = false
       if (wasWaitForInventory)
-        hasInventoryChanges = true //need event about we received inventory once, even if it empty.
+        hasInventoryChanges = true 
 
       let itemJson = this.getResultData(result, "item_json");
       if (!itemJson) {
@@ -675,10 +676,10 @@ let class InventoryClient {
   }
 
   function exchange(materials, outputItemDefId, quantity, cb = null, errocCb = null, requirement = null) {
-    // We can continue to use exchangeDirect if requirement is null. It would be
-    // better to use exchangeViaChard in all cases for the sake of consistency,
-    // but this will break compatibility with the char server. This distinction
-    // can be removed later.
+    
+    
+    
+    
 
     if (!u.isString(requirement) || requirement.len() == 0) {
       this.exchangeDirect(materials, outputItemDefId, quantity, cb, errocCb)

@@ -43,7 +43,8 @@ let { openGenericTooltip, closeGenericTooltip } = require("%scripts/utils/generi
 let { openHudAirWeaponSelector, isVisualHudAirWeaponSelectorOpened } = require("%scripts/hud/hudAirWeaponSelector.nut")
 let { getExtraActionItemsView } = require("%scripts/hud/hudActionBarExtraActions.nut")
 let updateExtWatched = require("%scripts/global/updateExtWatched.nut")
-let { isProfileReceived } = require("%scripts/login/loginStates.nut")
+let { isProfileReceived } = require("%appGlobals/login/loginState.nut")
+let { get_gui_option_in_mode } = require("%scripts/options/options.nut")
 
 local sectorAngle1PID = dagui_propid_add_name_id("sector-angle-1")
 
@@ -185,7 +186,7 @@ let class ActionBar {
     updateActionBar()
     this.scene.setValue(stashBhvValueConfig([{
       watch = actionBarItems
-      updateFunc = Callback(@(_obj, actionItems) this.updateActionBarItems(actionItems), this) //-ident-hides-ident
+      updateFunc = Callback(@(_obj, actionItems) this.updateActionBarItems(actionItems), this) 
     }]))
   }
 
@@ -221,7 +222,7 @@ let class ActionBar {
 
     let size = this.scene.findObject("action_bar").getSize()
     if (size[0] < 0)
-      return null // is not initialized yet
+      return null 
 
     let shHeight = this.hasXInputSh ? this.getXInputShHeight() : this.getTextShHeight()
     let pos = this.scene.getPosRC()
@@ -313,7 +314,7 @@ let class ActionBar {
     get_cur_gui_scene().performDelayed(this, @() eventbus_send("setActionBarState", this.getState()))
   }
 
-  //creates view for handyman by one actionBar item
+  
   function buildItemView(item, nestIndex = -1, needShortcuts = false) {
     let hudUnitType = getHudUnitType()
     let ship = hudUnitType == HUD_UNIT_TYPE.SHIP
@@ -373,7 +374,7 @@ let class ActionBar {
     let unit = this.getActionBarUnit()
     let modifName = getActionItemModificationName(item, unit)
     if (modifName) {
-      // if fake bullets are not generated yet, generate them
+      
       if (isFakeBullet(modifName) && !(modifName in unit.bulletsSets))
         getBulletsSetData(unit, fakeBullets_prefix, {})
       let data = getBulletsSetData(unit, modifName)
@@ -596,8 +597,8 @@ let class ActionBar {
   }
 
   function enableBarItemAfterCooldown(itemIdx, timeout) {
-    // !!!FIX ME If some lags happens, the setTimeout timer is slightly faster than the get_mission_time (used inside the getActionItemStatus fn).
-    // This hack fixes most of these cases.
+    
+    
     timeout += 0.5
 
     let cb = Callback(function() {
@@ -623,10 +624,10 @@ let class ActionBar {
       clearTimer(this.cooldownTimers.pop())
   }
 
-  /**
-   * Function checks increase count and shows it in view.
-   * It needed for display rearming process.
-   */
+  
+
+
+
   function handleIncrementCount(currentItem, prewItem, itemObj) {
     if ((prewItem.countEx == currentItem.countEx && prewItem.count < currentItem.count)
       || (prewItem.countEx < currentItem.countEx)
@@ -655,7 +656,7 @@ let class ActionBar {
     if (!this.isValid())
       return
 
-    let showActionBarOption = ::get_gui_option_in_mode(USEROPT_SHOW_ACTION_BAR, OPTIONS_MODE_GAMEPLAY, true)
+    let showActionBarOption = get_gui_option_in_mode(USEROPT_SHOW_ACTION_BAR, OPTIONS_MODE_GAMEPLAY, true)
     this.isVisible = showActionBarOption && !g_hud_live_stats.isVisible() && !isVisualHudAirWeaponSelectorOpened()
     this.scene.show(this.isVisible)
     eventbus_send("setIsActionBarVisible", this.isVisible)
@@ -791,13 +792,13 @@ let class ActionBar {
     }
   }
 
-  //Only for streak wheel menu
+  
   function activateStreak(streakId) {
     let action = this.killStreaksActionsOrdered?[streakId]
     if (action)
       return activateShortcutActionBarAction(action)
 
-    if (streakId >= 0) { //something goes wrong; -1 is valid situation = player does not choose smthng
+    if (streakId >= 0) { 
       debugTableData(this.killStreaksActionsOrdered)
       debug_dump_stack()
       assert(false, "Error: killStreak id out of range.")

@@ -20,19 +20,21 @@ let { getCrewUnit } = require("%scripts/crew/crew.nut")
 let { MAX_COUNTRY_RANK } = require("%scripts/ranks.nut")
 let { getGlobalModule } = require("%scripts/global_modules.nut")
 let events = getGlobalModule("events")
+let { createSessionLobbyEventRoom } = require("%scripts/matchingRooms/sessionLobbyManager.nut")
+let { get_option } = require("%scripts/options/optionsExt.nut")
 
 enum CREWS_READY_STATUS {
   HAS_ALLOWED              = 0x0001
   HAS_REQUIRED_AND_ALLOWED = 0x0002
 
-  //mask
+  
   READY                    = 0x0003
 }
 
 const CHOSEN_EVENT_MISSIONS_SAVE_ID = "events/chosenMissions/"
 const CHOSEN_EVENT_MISSIONS_SAVE_KEY = "mission"
 
-::EventRoomCreationContext <- class {
+let EventRoomCreationContext = class {
   mGameMode = null
   onUnitAvailabilityChanged = null
 
@@ -53,9 +55,9 @@ const CHOSEN_EVENT_MISSIONS_SAVE_KEY = "mission"
     this.initMissionsOnce()
   }
 
-  /*************************************************************************************************/
-  /*************************************PUBLIC FUNCTIONS *******************************************/
-  /*************************************************************************************************/
+  
+  
+  
 
   function getOptionsList() {
     let options = [
@@ -102,7 +104,7 @@ const CHOSEN_EVENT_MISSIONS_SAVE_KEY = "mission"
     if (!reasonData.checkStatus)
       return reasonData.actionFunc(reasonData)
 
-    ::SessionLobby.createEventRoom(this.mGameMode, this.getRoomCreateParams())
+    createSessionLobbyEventRoom(this.mGameMode, this.getRoomCreateParams())
   }
 
   function isUnitAllowed(unit) {
@@ -159,7 +161,7 @@ const CHOSEN_EVENT_MISSIONS_SAVE_KEY = "mission"
     return res
   }
 
-  //same format result as events.getCantJoinReasonData
+  
   function getCantCreateReasonData(params = null) {
     params = params ? clone params : {}
     params.isCreationCheck <- true
@@ -189,9 +191,9 @@ const CHOSEN_EVENT_MISSIONS_SAVE_KEY = "mission"
     return res
   }
 
-  /*************************************************************************************************/
-  /************************************PRIVATE FUNCTIONS *******************************************/
-  /*************************************************************************************************/
+  
+  
+  
 
   function initMissionsOnce() {
     this.chosenMissionsList = []
@@ -236,7 +238,7 @@ const CHOSEN_EVENT_MISSIONS_SAVE_KEY = "mission"
     if (!this.getOptionsConfig().brRanges)
       return null
     if (!this.curBrRange)
-      this.setCurBrRange(::get_option(USEROPT_RANK, this.getOptionsConfig()).value)
+      this.setCurBrRange(get_option(USEROPT_RANK, this.getOptionsConfig()).value)
     return this.curBrRange
   }
 
@@ -288,7 +290,7 @@ const CHOSEN_EVENT_MISSIONS_SAVE_KEY = "mission"
 
   function getRoomCreateParams() {
     let res = {
-      ranks = [1, MAX_COUNTRY_RANK] //matching do nt allow to create session before ranks is set
+      ranks = [1, MAX_COUNTRY_RANK] 
     }
 
     foreach (team in g_team.getTeams())
@@ -299,7 +301,7 @@ const CHOSEN_EVENT_MISSIONS_SAVE_KEY = "mission"
     if (this.getCurBrRange())
       res.mranks <- this.getCurBrRange()
 
-    let clusterOpt = ::get_option(USEROPT_CLUSTERS)
+    let clusterOpt = get_option(USEROPT_CLUSTERS)
     res.cluster <- getTblValue(clusterOpt.value, clusterOpt.values, "")
     if (res.cluster == "auto")
       res.cluster = getClustersList().filter(@(info) info.isDefault)[0].name
@@ -309,4 +311,8 @@ const CHOSEN_EVENT_MISSIONS_SAVE_KEY = "mission"
 
     return res
   }
+}
+
+return {
+  EventRoomCreationContext
 }

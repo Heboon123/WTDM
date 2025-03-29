@@ -15,6 +15,9 @@ let { getEventEconomicName, checkEventFeaturePacks, isEventForNewbies
 } = require("%scripts/events/eventInfo.nut")
 let { checkShowMultiplayerAasWarningMsg } = require("%scripts/user/antiAddictSystem.nut")
 let { isMeNewbieOnUnitType, getUnitTypeByNewbieEventId } = require("%scripts/myStats.nut")
+let { joinSessionRoom } = require("%scripts/matchingRooms/sessionLobbyManager.nut")
+let { queues } = require("%scripts/queue/queueManager.nut")
+let { checkBrokenAirsAndDo } = require("%scripts/instantAction.nut")
 
 const PROCESS_TIME_OUT = 60000
 
@@ -24,7 +27,7 @@ let hasAlredyActiveJoinProcess = @() activeEventJoinProcess.len() > 0
   && (get_time_msec() - activeEventJoinProcess[0].processStartTime) < PROCESS_TIME_OUT
 
 function setSquadReadyFlag(event) {
-  //Don't allow to change ready status, leader don't know about members balance
+  
   if (!events.haveEventAccessByCost(event))
     showInfoMsgBox(loc("events/notEnoughMoney"))
   else if (events.eventRequiresTicket(event) && events.getEventActiveTicket(event) == null)
@@ -45,8 +48,8 @@ function canJoinEventForNewbies(event) {
   return false
 }
 
-::EventJoinProcess <- class {
-  event = null // Event to join.
+let EventJoinProcess = class {
+  event = null 
   room = null
   onComplete = null
   cancelFunc = null
@@ -66,8 +69,8 @@ function canJoinEventForNewbies(event) {
     if (activeEventJoinProcess.len()) {
       let prevProcessStartTime = activeEventJoinProcess[0].processStartTime
       if (get_time_msec() - prevProcessStartTime < PROCESS_TIME_OUT) {
-        let eventName = v_event.name // warning disable: -declared-never-used
-        let prevProcessStepName = activeEventJoinProcess[0].processStepName // warning disable: -declared-never-used
+        let eventName = v_event.name 
+        let prevProcessStepName = activeEventJoinProcess[0].processStepName 
         return assert(false, "Error: trying to use 2 join event processes at once")
       }
       else
@@ -110,7 +113,7 @@ function canJoinEventForNewbies(event) {
 
     let handler = this
     tryOpenCaptchaHandler(
-      @() ::queues.checkAndStart(
+      @() queues.checkAndStart(
         Callback(handler.joinStep2_multiplayer_restriction, handler),
         Callback(handler.remove, handler),
         "isCanNewflight",
@@ -162,7 +165,7 @@ function canJoinEventForNewbies(event) {
   function joinStep4_internal() {
     this.processStepName = "joinStep4_internal"
     let mGameMode = events.getMGameMode(this.event, this.room)
-    if (::queues.isAnyQueuesActive(QUEUE_TYPE_BIT.EVENT) ||
+    if (queues.isAnyQueuesActive(QUEUE_TYPE_BIT.EVENT) ||
         !::g_squad_utils.canJoinFlightMsgBox({ isLeaderCanJoin = true, showOfflineSquadMembersPopup = true }))
       return this.remove()
     if (events.checkEventDisableSquads(this, this.event.name))
@@ -193,7 +196,7 @@ function canJoinEventForNewbies(event) {
   function joinStep6_repairInfo() {
     this.processStepName = "joinStep6_repairInfo"
     let repairInfo = events.getCountryRepairInfo(this.event, this.room, profileCountrySq.value)
-    ::checkBrokenAirsAndDo(repairInfo, this, this.joinStep7_membersForQueue, false, this.remove)
+    checkBrokenAirsAndDo(repairInfo, this, this.joinStep7_membersForQueue, false, this.remove)
   }
 
   function joinStep7_membersForQueue() {
@@ -206,26 +209,26 @@ function canJoinEventForNewbies(event) {
 
   function joinStep8_joinQueue(membersData = null) {
     this.processStepName = "joinStep8_joinQueue"
-    //join room
+    
     if (this.room)
-      ::SessionLobby.joinRoom(this.room.roomId)
+      joinSessionRoom(this.room.roomId)
     else {
       let joinEventParams = {
         mode    = this.event.name
-        //team    = team //!!can choose team correct only with multiEvents support
+        
         country = profileCountrySq.value
       }
       if (membersData)
         joinEventParams.members <- membersData
-      ::queues.joinQueue(joinEventParams)
+      queues.joinQueue(joinEventParams)
     }
 
     this.onDone()
   }
 
-  //
-  // Helpers
-  //
+  
+  
+  
 
   function checkEventTeamSize(ev) {
     let squadSize = g_squad_manager.getSquadSize()
@@ -242,9 +245,9 @@ function canJoinEventForNewbies(event) {
     return true
   }
 
-  //
-  // Delegates from current base gui handler.
-  //
+  
+  
+  
 
   function msgBox(id, text, buttons, def_btn, options = {}) {
     scene_msg_box(id, null, text, buttons, def_btn, options)
@@ -254,4 +257,5 @@ function canJoinEventForNewbies(event) {
 
 return {
   hasAlredyActiveJoinProcess
+  EventJoinProcess
 }

@@ -15,7 +15,7 @@ let { getUnitTooltipImage, getShipMaterialTexts, getUnitClassIco } = require("%s
 let { getUnitRole, getUnitBasicRole, getRoleText, getFullUnitRoleText, getUnitClassColor
 } = require("%scripts/unit/unitInfoRoles.nut")
 let { countMeasure } = require("%scripts/options/optionsMeasureUnits.nut")
-let { getWeaponInfoText } = require("%scripts/weaponry/weaponryDescription.nut")
+let { getWeaponInfoText, makeWeaponInfoData } = require("%scripts/weaponry/weaponryDescription.nut")
 let { getModificationByName } = require("%scripts/weaponry/modificationInfo.nut")
 let { isBullets, getModificationInfo, getModificationName } = require("%scripts/weaponry/bulletsInfo.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
@@ -155,7 +155,7 @@ const COMPARE_NO_COMPARE = "no"
     return blk
   }
 
-  addToExportDataBlock = function(_blk, _unit, _unitConfiguration) {} //for unique data to export.
+  addToExportDataBlock = function(_blk, _unit, _unitConfiguration) {} 
   addToBlkFromParams = function(blk, unit, item, unitConfiguration) {
     blk.value = DataBlock()
     blk.valueText = DataBlock()
@@ -223,13 +223,13 @@ enums.addTypesByGlobalName("g_unit_info_type", [
         blk.tag <- t
     }
   }
-/*  {
-    id = "description"
-    getValueText = function(value, unit)
-    {
-      return loc(format("encyclopedia/%s/desc", unit.name))
-    }
-  }*/
+
+
+
+
+
+
+
   {
     id = "battle_rating"
     headerLocId = "shop/battle_rating"
@@ -352,7 +352,7 @@ enums.addTypesByGlobalName("g_unit_info_type", [
           let mode = diff.getEgdName()
           let field = $"repairCost{mode}"
           local value = get_wpcost_blk()?[unit.name]?[field] ?? 0
-          value =  value * (get_warpoints_blk()?.avgRepairMul ?? 1.0) //avgRepairMul same as in tooltip
+          value =  value * (get_warpoints_blk()?.avgRepairMul ?? 1.0) 
           value *= costMultiplier
           blk.value[mode] = value
           blk.valueText[mode] = value ? Cost(value).getUncoloredText() : loc("shop/free")
@@ -410,7 +410,7 @@ enums.addTypesByGlobalName("g_unit_info_type", [
       let valueText = DataBlock()
       foreach (diff in g_difficulty.types)
         if (diff.egdCode != EGD_NONE)
-          valueText[diff.getEgdName()] = getWeaponInfoText(unit.name)
+          valueText[diff.getEgdName()] = getWeaponInfoText(unit.name, makeWeaponInfoData(unit.name, {}))
       return valueText
     }
   }

@@ -1,6 +1,7 @@
 from "%scripts/dagui_natives.nut" import set_char_cb, get_current_booster_count, char_send_blk, get_current_booster_uid
 from "%scripts/dagui_library.nut" import *
 from "%scripts/items/itemsConsts.nut" import itemType
+from "%scripts/invalid_user_id.nut" import INVALID_USER_ID
 
 let { get_mission_time } = require("mission")
 let { getGlobalModule } = require("%scripts/global_modules.nut")
@@ -21,6 +22,8 @@ let { isInFlight } = require("gameplayBinding")
 let { BaseItem } = require("%scripts/items/itemsClasses/itemsBase.nut")
 let { measureType } = require("%scripts/measureType.nut")
 let { floor } = require("math")
+let { registerItemClass } = require("%scripts/items/itemsTypeClasses.nut")
+let { getInventoryList } = require("%scripts/items/itemsManager.nut")
 
 function getArrayFromInt(intNum) {
   let arr = []
@@ -43,7 +46,7 @@ let Booster = class (BaseItem) {
   canBuy = true
   allowBigPicture = false
 
-  xpRate = 0 //percent
+  xpRate = 0 
   wpRate = 0
   sortOrder = 0
   personal = true
@@ -113,7 +116,7 @@ let Booster = class (BaseItem) {
 
     let effectsArray = []
     let items = this.getAllActiveSameBoosters()
-    let effect = effects[0] //!!we do not cmpare boosters with multieffects atm.
+    let effect = effects[0] 
 
     foreach (item in items) {
       let value = effect.getValue(item)
@@ -151,9 +154,9 @@ let Booster = class (BaseItem) {
       return false
 
     local res = false
-    let total = get_current_booster_count(::INVALID_USER_ID)
+    let total = get_current_booster_count(INVALID_USER_ID)
     for (local i = 0; i < total; i++)
-      if (isInArray(get_current_booster_uid(::INVALID_USER_ID, i), this.uids)) {
+      if (isInArray(get_current_booster_uid(INVALID_USER_ID, i), this.uids)) {
         res = true
         break
       }
@@ -195,12 +198,12 @@ let Booster = class (BaseItem) {
 
   function activate(cb, handler = null) {
     let checkParams = {
-      checkActive = true // Check if player already has active booster.
-      checkIsInFlight = true // Check if player is in flight and booster will take effect in next battle.
+      checkActive = true 
+      checkIsInFlight = true 
     }
     return this._activate(function (result) {
       if (!result.success) {
-        // Trying to activate with one less check.
+        
         result.checkParams[result.failedCheck] <- false
         if (result.failedCheck == "checkActive")
           this.showPenaltyBoosterMessageBox(handler, result.checkParams)
@@ -243,8 +246,8 @@ let Booster = class (BaseItem) {
     return result
   }
 
-  function _activate(cb, handler = null, checkParams = null) { //handler need only because of char operations are based on gui_handlers.BaseGuiHandlerWT.
-                                   //remove it after slotOpCb will be refactored
+  function _activate(cb, handler = null, checkParams = null) { 
+                                   
     if (this.isActive() || !this.isInventoryItem)
       return false
 
@@ -295,7 +298,7 @@ let Booster = class (BaseItem) {
 
   function getAllActiveSameBoosters() {
     let effects = this.getEffectTypes()
-    return ::ItemsManager.getInventoryList(itemType.BOOSTER,
+    return getInventoryList(itemType.BOOSTER,
              function (v_item) {
                if (!v_item.isActive(true) || v_item.personal != this.personal)
                  return false
@@ -479,7 +482,7 @@ let Booster = class (BaseItem) {
       return ""
 
     let textsList = []
-    // Shows progress as count down 6, 5, 4, ... instead of 0/6, 1/6, ...
+    
     let curValue = this.getLeftStopSessions()
     let params = { locEnding = this.isActive() ? "/inverted" : "/activeFor" }
     textsList.append(getFullUnlockCondsDesc(this.stopConditions, null, curValue, params))
@@ -619,4 +622,5 @@ let FakeBooster = class (Booster) {
   function isActive(...) { return true }
 }
 
-return { Booster, FakeBooster }
+registerItemClass(Booster)
+registerItemClass(FakeBooster)

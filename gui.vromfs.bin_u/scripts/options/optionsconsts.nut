@@ -15,11 +15,12 @@ enum AIR_SPAWN_POINT {
   ENEMY_DEFENSE_ZONE
   GLIDE_PATH
   CARRIER
+  ON_WATER
 }
 
 return {
   misCountries
-  SAVE_ONLINE_JOB_DIGIT = 123 //super secure digit for job tag :)
+  SAVE_ONLINE_JOB_DIGIT = 123 
   TANK_ALT_CROSSHAIR_ADD_NEW = -2
   AIR_SPAWN_POINT
 }

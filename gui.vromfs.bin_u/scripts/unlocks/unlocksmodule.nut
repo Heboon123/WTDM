@@ -19,9 +19,10 @@ let { getUnlockTypeById } = require("unlocks")
 let { isRegionalUnlock, isRegionalUnlockReadyToOpen, getRegionalUnlockTypeById,
   regionalUnlocks, isRegionalUnlockCompleted
 } = require("%scripts/unlocks/regionalUnlocks.nut")
-let { Status, get_status } = require("%xboxLib/impl/achievements.nut")
+let { Status, get_status } = require("%gdkLib/impl/achievements.nut")
 let { getLanguageName } = require("%scripts/langUtils/language.nut")
 let { isPsnTrophyUnlocked, getPsnTrophyIdByName } = require("sony.trophies")
+let { buildRewardText } = require("%scripts/missions/missionsText.nut")
 
 let multiStageLocIdConfig = {
   multi_kill_air =    { [2] = "double_kill_air",    [3] = "triple_kill_air",    def = "multi_kill_air" }
@@ -31,7 +32,7 @@ let multiStageLocIdConfig = {
 
 let hasMultiStageLocId = @(unlockId) unlockId in multiStageLocIdConfig
 
-// Has not default multistage id. Used to combine similar unlocks
+
 function hasSpecialMultiStageLocId(unlockId, repeatInARow) {
   return hasMultiStageLocId(unlockId) && (repeatInARow in multiStageLocIdConfig[unlockId])
 }
@@ -302,7 +303,7 @@ function getUnlockRewardCostByName(unlockName) {
 
 function getUnlockRewardText(unlockName) {
   let cost = getUnlockRewardCostByName(unlockName)
-  return cost.isZero() ? "" : ::buildRewardText("", cost, true, true)
+  return cost.isZero() ? "" : buildRewardText("", cost, true, true)
 }
 
 function checkUnlockString(string) {
@@ -345,7 +346,7 @@ let defaultUnlockData = {
   rp = 0
   frp = 0
   exp = 0
-  amount = 1 //for multiple awards such as streaks x3, x4...
+  amount = 1 
   aircraft = []
   stage = -1
   desc = ""
@@ -365,7 +366,7 @@ function getFakeUnlockData(config) {
   return res
 }
 
-let showNextAwardModeTypes = { // modeTypeName = localizationId
+let showNextAwardModeTypes = { 
   char_versus_battles_end_count_and_rank_test = "battle_participate_award"
   char_login_count                            = "day_login_award"
 }
@@ -411,7 +412,7 @@ function getNextAwardText(unlockId) {
       num = mode.getInt("num", 0)
       break
     }
-    if (mType == "char_unlocks") { //for unlocks unlocked by other unlock
+    if (mType == "char_unlocks") { 
       foreach (uId in mode % "unlock") {
         res = getNextAwardText(uId)
         if (res != "")

@@ -1,7 +1,7 @@
-//pseudo-module for native code
-//this is 'api-like' for native dagui functions. And, in the same time, it is stub
-//ATTENTION! This file cannot be increased. Need to remove functions from root of dagui VM, not add them.
-//shouldDecreaseSize, allowedSizeIncrease = 5
+
+
+
+
 let r = getroottable()
 
 return {
@@ -9,7 +9,7 @@ return {
   get_gui_scene = r?["get_gui_scene"] ?? @() null
   get_cur_gui_scene = r?["get_cur_gui_scene"] ?? @() null
   get_main_gui_scene = r?["get_main_gui_scene"] ?? @() null
-//  get_scene_objects_under_cursor = r?["get_scene_objects_under_cursor"] ?? @() null
+
   get_dagui_mouse_cursor_pos = r?["get_dagui_mouse_cursor_pos"] ?? @(...) ""
   get_dagui_mouse_cursor_pos_RC = r?["get_dagui_mouse_cursor_pos_RC"] ?? @(...) ""
   get_dagui_post_include_css_str = r?["get_dagui_post_include_css_str"] ?? @(...) ""
@@ -26,4 +26,5 @@ return {
   set_dirpad_event_processed = r?["set_dirpad_event_processed"] ?? @(...) null
   del_script_gui_behaviour_events = r?["del_script_gui_behaviour_events"] ?? @(...) ""
   get_button_name = r?["get_button_name"] ?? @(...) null
+  DaGuiObject = r?["DaGuiObject"] ?? class {isValid = @() false}
 }

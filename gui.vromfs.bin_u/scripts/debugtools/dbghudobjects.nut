@@ -8,7 +8,7 @@ let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { register_command } = require("console")
 let dbgHudObjectTypes = require("%scripts/debugTools/dbgHudObjectTypes.nut")
 
-// warning disable: -file:forbidden-function
+
 
 local eventsPerSec = 0
 local curTimerObj = null
@@ -40,8 +40,8 @@ function onUpdate(_obj, dt) {
 }
 
 function createTimerObjOnce() {
-   if (checkObj(curTimerObj))
-     return
+  if (checkObj(curTimerObj))
+    return
 
   let hudHandler = handlersManager.findHandlerClassInScene(gui_handlers.Hud)
   if (!hudHandler) {

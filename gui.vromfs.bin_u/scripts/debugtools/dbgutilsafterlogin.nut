@@ -1,20 +1,19 @@
-// warning disable: -file:forbidden-function
+
 from "%scripts/dagui_natives.nut" import rented_units_get_expired_time_sec, get_user_logs_count, get_user_log_blk_body, shop_is_unit_rented, rented_units_get_last_max_full_rent_time, char_send_blk
 from "%scripts/dagui_library.nut" import *
 from "%scripts/weaponry/weaponryConsts.nut" import INFO_DETAIL
 
 let { isUnitSpecial } = require("%appGlobals/ranks_common_shared.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
-let u = require("%sqStdLibs/helpers/u.nut")
+let { isDataBlock } = require("%sqStdLibs/helpers/u.nut")
 let userstat = require("userstat")
-//let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { format, split_by_chars } = require("string")
 let DataBlock  = require("DataBlock")
 let { blkFromPath } = require("%sqstd/datablock.nut")
 let dbgExportToFile = require("%globalScripts/debugTools/dbgExportToFile.nut")
 let shopSearchCore = require("%scripts/shop/shopSearchCore.nut")
-let { getWeaponInfoText, getWeaponNameText } = require("%scripts/weaponry/weaponryDescription.nut")
+let { getWeaponInfoText, getWeaponNameText, makeWeaponInfoData } = require("%scripts/weaponry/weaponryDescription.nut")
 let { isWeaponAux, getWeaponNameByBlkPath } = require("%scripts/weaponry/weaponryInfo.nut")
 let { userstatStats, userstatDescList, userstatUnlocks, refreshUserstatStats
 } = require("%scripts/userstat/userstat.nut")
@@ -26,7 +25,6 @@ let { getUnitMassPerSecValue } = require("%scripts/unit/unitWeaponryInfo.nut")
 let { register_command } = require("console")
 let { get_meta_mission_info_by_gm_and_name } = require("guiMission")
 let { hotasControlImagePath } = require("%scripts/controls/hotas.nut")
-let { startsWith, stripTags } = require("%sqstd/string.nut")
 let getAllUnits = require("%scripts/unit/allUnits.nut")
 let { getUnitName, getUnitCountry } = require("%scripts/unit/unitInfo.nut")
 let { getFullUnitBlk } = require("%scripts/unit/unitParams.nut")
@@ -39,6 +37,8 @@ let { gui_start_decals } = require("%scripts/customization/contentPreview.nut")
 let { guiStartImageWnd } = require("%scripts/showImage.nut")
 let { addBgTaskCb } = require("%scripts/tasker.nut")
 let { getLogNameByType } = require("%scripts/userLog/userlogUtils.nut")
+let { open_weapons_for_unit } = require("%scripts/weaponry/weaponryActions.nut")
+let { getItemsList } = require("%scripts/items/itemsManager.nut")
 
 function _charAddAllItemsHelper(params) {
   if (params.currentIndex >= params.items.len())
@@ -52,7 +52,7 @@ function _charAddAllItemsHelper(params) {
   if (taskId == -1)
     return
 
-  let __charAddAllItemsHelper = _charAddAllItemsHelper // for lambda capture
+  let __charAddAllItemsHelper = _charAddAllItemsHelper 
 
   addBgTaskCb(taskId, function () {
     ++params.currentIndex
@@ -67,15 +67,15 @@ function _charAddAllItemsHelper(params) {
 
 function charAddAllItems(count = 1) {
   let params = {
-    items = ::ItemsManager.getItemsList()
+    items = getItemsList()
     currentIndex = 0
     count
   }
   _charAddAllItemsHelper(params)
 }
 
-//must to be switched on before we get to debrifing.
-//but after it you can restart derifing with full recalc by usual reload()
+
+
 local _stat_get_exp = null
 local _stat_get_exp_cache = null
 
@@ -129,16 +129,22 @@ function debug_export_unit_weapons_descriptions() {
       foreach (weapon in unit.getWeapons())
         if (!isWeaponAux(weapon)) {
           blk[$"{weapon.name}_short"] <- getWeaponNameText(unit, false, weapon.name, ", ")
-          local rowsList = split_by_chars(getWeaponInfoText(unit,
-            { isPrimary = false, weaponPreset = weapon.name }), "\n")
+          let weaponInfoParams = { isPrimary = false, weaponPreset = weapon.name }
+          let weaponInfoData = makeWeaponInfoData(unit, weaponInfoParams)
+          local rowsList = split_by_chars(getWeaponInfoText(unit, weaponInfoData), "\n")
           foreach (row in rowsList)
             blk[weapon.name] <- row
-          rowsList = split_by_chars(getWeaponInfoText(unit,
-            { isPrimary = false, weaponPreset = weapon.name, detail = INFO_DETAIL.EXTENDED }), "\n")
+
+          let weaponInfoParamsExtended = { isPrimary = false, weaponPreset = weapon.name, detail = INFO_DETAIL.EXTENDED }
+          let weaponInfoDataExtended = makeWeaponInfoData(unit, weaponInfoParamsExtended)
+          rowsList = split_by_chars(getWeaponInfoText(unit, weaponInfoDataExtended), "\n")
           foreach (row in rowsList)
             blk[$"{weapon.name}_extended"] <- row
-          rowsList = split_by_chars(getWeaponInfoText(unit,
-            { weaponPreset = weapon.name, detail = INFO_DETAIL.FULL }), "\n")
+
+          let weaponInfoParamsFull = { weaponPreset = weapon.name, detail = INFO_DETAIL.FULL }
+          let weaponInfoDataFull = makeWeaponInfoData(unit, weaponInfoParamsFull)
+          rowsList = split_by_chars(getWeaponInfoText(unit, weaponInfoDataFull), "\n")
+
           foreach (row in rowsList)
             blk[$"{weapon.name}_full"] <- row
           blk[$"{weapon.name}_massPerSec"] <- getUnitMassPerSecValue(unit, true, weapon.name)
@@ -149,66 +155,19 @@ function debug_export_unit_weapons_descriptions() {
   })
 }
 
-function debug_export_unit_xray_parts_descriptions(partIdWhitelist = null) {
-  ::dmViewer.isDebugBatchExportProcess = true
-  ::dmViewer.toggle(DM_VIEWER_XRAY)
-  dbgExportToFile.export({
-    resultFilePath = "export/unitsXray.blk"
-    itemsPerFrame = 10
-    list = function() {
-      let res = []
-      let wpCost = get_wpcost_blk()
-      for (local i = 0; i < wpCost.blockCount(); i++) {
-        let unit = getAircraftByName(wpCost.getBlock(i).getBlockName())
-        if (unit?.isInShop)
-          res.append(unit)
-      }
-      return res
-    }()
-    itemProcessFunc = function(unit) {
-      let blk = DataBlock()
-
-      ::dmViewer.updateUnitInfo(unit.name)
-      let partNames = []
-      let damagePartsBlk = ::dmViewer.unitBlk?.DamageParts
-      if (damagePartsBlk)
-        for (local b = 0; b < damagePartsBlk.blockCount(); b++) {
-          let partsBlk = damagePartsBlk.getBlock(b)
-          for (local p = 0; p < partsBlk.blockCount(); p++)
-            u.appendOnce(partsBlk.getBlock(p).getBlockName(), partNames)
-        }
-      partNames.sort()
-
-      foreach (partName in partNames) {
-        if (partIdWhitelist != null && partIdWhitelist.findindex(@(v) startsWith(partName, v)) == null)
-          continue
-        let params = { name = partName }
-        let info = ::dmViewer.getPartTooltipInfo(::dmViewer.getPartNameId(params), params)
-        if (info.desc != "")
-          blk[partName] <- stripTags($"{info.title}\n{info.desc}")
-      }
-      return blk.paramCount() != 0 ? { key = unit.name, value = blk } : null
-    }
-    onFinish = function() {
-      ::dmViewer.isDebugBatchExportProcess = false
-      ::dmViewer.toggle(DM_VIEWER_NONE)
-    }
-  })
-}
-
 function dbg_loading_brief(gm = GM_SINGLE_MISSION, missionName = "east_china_s01", slidesAmount = 0) {
   let missionBlk = get_meta_mission_info_by_gm_and_name(gm, missionName)
-  if (!u.isDataBlock(missionBlk))
-    return dlog($"Not found mission {missionName}") //warning disable: -dlog-warn
+  if (!isDataBlock(missionBlk))
+    return dlog($"Not found mission {missionName}") 
 
   let filePath = missionBlk?.mis_file
   if (filePath == null)
-    return dlog("No mission blk filepath") //warning disable: -dlog-warn
+    return dlog("No mission blk filepath") 
   let fullBlk = blkFromPath(filePath)
 
   let briefing = fullBlk?.mission_settings.briefing
-  if (!u.isDataBlock(briefing) || !briefing.blockCount())
-    return dlog("Mission does not have briefing") //warning disable: -dlog-warn
+  if (!isDataBlock(briefing) || !briefing.blockCount())
+    return dlog("Mission does not have briefing") 
 
   let briefingClone = DataBlock()
   if (slidesAmount <= 0)
@@ -285,7 +244,7 @@ function debug_show_weapon(weaponName) {
     let weapons = getUnitWeapons(unitBlk)
     foreach (weap in weapons)
       if (weaponName == getWeaponNameByBlkPath(weap?.blk ?? "")) {
-        ::open_weapons_for_unit(unit)
+        open_weapons_for_unit(unit)
         return $"{unit.name} / {weap.blk}"
       }
   }
@@ -306,7 +265,7 @@ function debug_get_last_userlogs(num = 1) {
 }
 
 
-//
+
 
 
 
@@ -340,7 +299,6 @@ register_command(debug_reload_and_restart_debriefing, "debug.reload_and_restart_
 register_command(debug_debriefing_unlocks, "debug.debriefing_unlocks")
 register_command(show_hotas_window_image, "debug.show_hotas_window_image")
 register_command(debug_export_unit_weapons_descriptions, "debug.export_unit_weapons_descriptions")
-register_command(debug_export_unit_xray_parts_descriptions, "debug.export_unit_xray_parts_descriptions")
 register_command(@() dbg_loading_brief(), "debug.loading_brief")
 register_command(dbg_loading_brief, "debug.loading_brief_custom")
 register_command(debug_show_unit, "debug.show_unit")
@@ -351,4 +309,4 @@ register_command(@() consoleAndDebugTableData("userstatDescList: ", userstatDesc
 register_command(@() consoleAndDebugTableData("userstatUnlocks: ", userstatUnlocks.value), "debug.userstat.unlocks")
 register_command(@() consoleAndDebugTableData("userstatStats: ", userstatStats.value), "debug.userstat.stats")
 
-//register_command(debug_unit_rent, "debug.unit_rent") //disabled as it changes global functions (and this wont work on import)
+

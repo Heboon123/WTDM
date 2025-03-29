@@ -14,6 +14,11 @@ let { format } = require("string")
 let time = require("%scripts/time.nut")
 let { BaseItem } = require("%scripts/items/itemsClasses/itemsBase.nut")
 let { orderTypes } = require("%scripts/items/orderType.nut")
+let { getRoomEvent } = require("%scripts/matchingRooms/sessionLobbyInfo.nut")
+let { registerItemClass } = require("%scripts/items/itemsTypeClasses.nut")
+let { getOrderActivateInfoText, getTimesUsedOrderItem, isOrderItemActive, activateOrder,
+  orderCanBeActivated, checkCurrentMission
+} = require("%scripts/items/orders.nut")
 
 let Order = class (BaseItem) {
   static iType = itemType.ORDER
@@ -27,7 +32,7 @@ let Order = class (BaseItem) {
     parameterValueColor = "activeTextColor"
     parameterLabelColor = "commonTextColor"
 
-    // Not used here.
+    
     objectiveDescriptionColor = "unlockActiveColor"
 
   }
@@ -38,7 +43,7 @@ let Order = class (BaseItem) {
 
   orderType = null
 
-  // These are common order item parameters.
+  
   onlyIssuerTeam = null
   timeTotal = null
   cooldown = null
@@ -51,7 +56,7 @@ let Order = class (BaseItem) {
   disabledDifficulties = null
   awardMode = null
 
-  // This object hold parameters specific to type of order.
+  
   typeParams = null
 
   constructor(blk, invBlk = null, slotData = null) {
@@ -60,7 +65,7 @@ let Order = class (BaseItem) {
     this.initMissionOrderParams(blk?.missionOrderParams)
   }
 
-  /* override */ function getName(_colored = true) {
+   function getName(_colored = true) {
     local name = this.getStatusOrderName()
     if (name.len() == 0)
       name = loc($"item/{this.defaultLocId}")
@@ -82,11 +87,11 @@ let Order = class (BaseItem) {
     if (!this.isInventoryItem || !this.amount)
       return null
 
-    let currentEvent = ::SessionLobby.getRoomEvent()
+    let currentEvent = getRoomEvent()
     let diffCode = events.getEventDiffCode(currentEvent)
     let diff = g_difficulty.getDifficultyByDiffCode(diffCode)
     let checkDifficulty = !isInArray(diff, this.disabledDifficulties)
-    if (!this.isActive() && ::g_orders.orderCanBeActivated() && checkDifficulty)
+    if (!this.isActive() && orderCanBeActivated() && checkDifficulty)
       return {
         btnName = loc("item/activate")
       }
@@ -94,23 +99,23 @@ let Order = class (BaseItem) {
     return null
   }
 
-  getActivateInfo    = @() ::g_orders.getActivateInfoText()
+  getActivateInfo    = @() getOrderActivateInfoText()
 
   function doMainAction(cb, handler, params = null) {
     let baseResult = base.doMainAction(cb, handler, params)
     if (baseResult || !this.isInventoryItem)
       return true
-    if (this.isActive() || !::g_orders.orderCanBeActivated())
+    if (this.isActive() || !orderCanBeActivated())
       return false
-    ::g_orders.activateOrder(this, cb)
+    activateOrder(this, cb)
   }
 
   function getAmount() {
-    return this.amount - ::g_orders.getTimesUsedOrderItem(this)
+    return this.amount - getTimesUsedOrderItem(this)
   }
 
   function isActive(...) {
-    return ::g_orders.isOrderItemActive(this)
+    return isOrderItemActive(this)
   }
 
   function getIcon(_addItemName = true) {
@@ -118,7 +123,7 @@ let Order = class (BaseItem) {
   }
 
   function initMissionOrderParams(blk) {
-    // Common parameters.
+    
     this.onlyIssuerTeam = getTblValue("onlyIssuerTeam", blk, false)
     this.timeTotal = getTblValue("timeTotal", blk, 0)
     this.cooldown = getTblValue("cooldown", blk, 0)
@@ -138,7 +143,7 @@ let Order = class (BaseItem) {
     }
     this.awardMode = g_order_award_mode.getAwardModeByOrderParams(blk)
 
-    // Order type specific stuff.
+    
     this.initMissionOrderMode(blk?.mode)
   }
 
@@ -147,14 +152,14 @@ let Order = class (BaseItem) {
     this.typeParams = u.isDataBlock(blk) ? convertBlk(blk) : {}
   }
 
-  /**
-   * Returns true if this item can be activated
-   * in mission with specified name.
-   */
+  
+
+
+
   function checkMission(missionName) {
     let missionRestriction = getTblValue("missionRestriction", this.typeParams, null)
     if (missionRestriction == null)
-      return true // No restrictions at all.
+      return true 
     if (u.isTable(missionRestriction))
       return this.checkMissionRestriction(missionRestriction, missionName)
     if (!u.isArray(missionRestriction)) {
@@ -175,14 +180,14 @@ let Order = class (BaseItem) {
       let stringIndex = missionName.len() - missionPostfix.len()
       return missionName.indexof(missionPostfix, stringIndex) != stringIndex
     }
-    // More restrictions types to come...
+    
     return true
   }
 
-  /** Description for tooltip. */
+  
   function getDescription() {
     let textParts = []
-    if (!::g_orders.checkCurrentMission(this)) {
+    if (!checkCurrentMission(this)) {
       let warningText = orderUseResult.RESTRICTED_MISSION.createResultMessage(false)
       textParts.append($"{colorize("redMenuButtonColor", warningText)}\n")
     }
@@ -190,7 +195,7 @@ let Order = class (BaseItem) {
     return "\n".join(textParts)
   }
 
-  /** Description for shop. */
+  
   function getLongDescription() {
     let textParts = []
 
@@ -238,8 +243,8 @@ let Order = class (BaseItem) {
     textParts.append(colorize("grayOptionColor",
       loc($"items/order/awardOnCancel/{this.awardOnCancel.tostring()}")))
 
-    // e.g "Arcade Battles, Simulator Battles, Events"
-    // Part "Events" is hardcoded.
+    
+    
     let disabledItems = this.disabledDifficulties.map(@(diff) loc($"options/{diff.name}"))
     disabledItems.append(loc("mainmenu/events"))
     textParts.append(colorize("grayOptionColor",
@@ -249,9 +254,9 @@ let Order = class (BaseItem) {
     return "\n".join(textParts)
   }
 
-  //
-  // Helpers
-  //
+  
+  
+  
 
   function parseP3byDifficulty(point) {
     return {
@@ -266,4 +271,4 @@ let Order = class (BaseItem) {
   }
 }
 
-return {Order}
+registerItemClass(Order)

@@ -6,6 +6,7 @@ let { loadLocalByAccount, saveLocalByAccount } = require("%scripts/clientState/l
 let { isPlatformPS4, isPlatformPS5 } = require("%scripts/clientState/platform.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { getLinkLinesMarkup } = require("%scripts/linesGenerator.nut")
 
 const GAMEPAD_CURSOR_CONTROLS_SPLASH_DISPLAYED_SAVE_ID = "gamepad_cursor_controls_splash_displayed"
 
@@ -13,9 +14,9 @@ gui_handlers.GampadCursorControlsSplash <- class (gui_handlers.BaseGuiHandlerWT)
   wndType = handlerType.MODAL
   sceneBlkName = "%gui/controls/gamepadCursorControlsSplash.blk"
 
-  // All contactPointX/contactPointY coords below are X/Y coords on the source image canvas (840 x 452 px).
-  // Just open the image in any image viewer, point mouse anywhere on it, and it will display X/Y coords of
-  // the mouse pointer on the image canvas. Those coords can be used here as contactPointX/contactPointY.
+  
+  
+  
 
   controllerDualshock4View = {
     image = "#ui/images/controller/controller_dualshock4.ddsx"
@@ -87,9 +88,9 @@ gui_handlers.GampadCursorControlsSplash <- class (gui_handlers.BaseGuiHandlerWT)
   }
 
   static function shouldDisplay() {
-    // Possible values: int 2 (version 2 seen), bool true (version 1 seen), null (new account)
+    
     let value = loadLocalByAccount(GAMEPAD_CURSOR_CONTROLS_SPLASH_DISPLAYED_SAVE_ID)
-    return value == true // Show it only to old accounts.
+    return value == true 
   }
 
   static function markDisplayed() {
@@ -118,7 +119,7 @@ gui_handlers.GampadCursorControlsSplash <- class (gui_handlers.BaseGuiHandlerWT)
       lineInterval = "@helpLineInterval"
       links = this.bubblesList.map(@(id) { start = $"bubble_{id}", end = $"dot_{id}" })
     }
-    let linesMarkup = ::LinesGenerator.getLinkLinesMarkup(linesGeneratorConfig)
+    let linesMarkup = getLinkLinesMarkup(linesGeneratorConfig)
     this.guiScene.replaceContentFromText(this.getObj("lines_block"), linesMarkup, linesMarkup.len(), this)
   }
 

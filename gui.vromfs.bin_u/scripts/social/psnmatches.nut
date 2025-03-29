@@ -6,15 +6,17 @@ let psn = require("%sonyLib/webApi.nut")
 let { isPS4PlayerName } = require("%scripts/clientState/platform.nut")
 let { getActivityByGameMode } = require("%scripts/gameModes/psnActivities.nut")
 let { reqPlayerExternalIDsByUserId } = require("%scripts/user/externalIdsService.nut")
-let { isMyUserId } = require("%scripts/matching/serviceNotifications/mrooms.nut")
+let { isMyUserId } = require("%scripts/user/profileStates.nut")
 let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { getSessionLobbyMembers, getSessionLobbyMyState, getSessionLobbyPlayerInfoByUid
+} = require("%scripts/matchingRooms/sessionLobbyState.nut")
 
 let match = {
   id = null
   isOwner = false
   playerId = null
   teamId = null
-  props = { // Reflects PSN structure
+  props = { 
     activityId = null
     inGameRoster = {
       teams = [ { teamId = Team.A }, { teamId = Team.B } ]
@@ -30,9 +32,9 @@ function processMemberList(members) {
   foreach (m in members) {
     let isMe = isMyUserId(m.userId)
     if (isPS4PlayerName(m.name)) {
-      let pinfo = ::SessionLobby.getMemberPlayerInfo(m.userId)
-      if (pinfo?.team != null) { // skip those, whose side is not yet known - can't send'em to PSN
-        let player = { // reflects PSN structure
+      let pinfo = getSessionLobbyPlayerInfoByUid(m.userId)
+      if (pinfo?.team != null) { 
+        let player = { 
           playerId = m.memberId
           teamId = pinfo.team
           accountId = isMe ? ps4_get_account_id() : null
@@ -69,7 +71,7 @@ function onReceivedExternalIds(data) {
 }
 
 function updateMatchData() {
-  let updated = processMemberList(::SessionLobby.getMembers())
+  let updated = processMemberList(getSessionLobbyMembers())
   if (!updated.isOwner || match.id == null)
     return
 
@@ -120,7 +122,7 @@ function leaveMatch(reason = psn.matches.LeaveReason.FINISHED) {
 
   let player = {
     playerId = match.playerId,
-    reason = reason // TODO: set proper reason. How to determine?
+    reason = reason 
   }
   log($"[PSMT] leaving match {match.id}, reason {reason}")
   psn.send(psn.matches.leave(match.id, player))
@@ -131,7 +133,7 @@ function updateMatchStatus(_eventData) {
   if (match.id == null)
     return
 
-  if (::SessionLobby.getMyState() == PLAYER_IN_FLIGHT) {
+  if (getSessionLobbyMyState() == PLAYER_IN_FLIGHT) {
     log($"starting match {match.id}")
     psn.send(psn.matches.updateStatus(match.id, "PLAYING"))
   }
@@ -142,7 +144,7 @@ function onBattleEnded(p) {
     return
 
   let isVictoryOurs = (p.battleResult == STATS_RESULT_SUCCESS)
-  let winnerTeamId = isVictoryOurs ? match.teamId : (3 - match.teamId) // only two teams
+  let winnerTeamId = isVictoryOurs ? match.teamId : (3 - match.teamId) 
   let teamResults = []
   foreach (team in match.props.inGameRoster.teams) {
     teamResults.append({

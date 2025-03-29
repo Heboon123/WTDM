@@ -6,12 +6,15 @@ let { charRequestBlk } = require("%scripts/tasker.nut")
 let { isDataBlock, convertBlk } = require("%sqstd/datablock.nut")
 let { get_time_msec } = require("dagor.time")
 let { eventbus_subscribe } = require("eventbus")
+let { isArray } = require("%sqstd/underscore.nut")
 
 enum allShowcasesEventName {
   UPDATED = "AllShowcasesDataUpdated"
 }
 
 let MIN_TIME_BETWEEN_SAME_REQUESTS_MSEC = 300000
+let MIN_TIME_BETWEEN_FREQUENT_REQUESTS_MSEC = 5000
+
 local allShowcasesData = null
 local hasRequest = false
 local lastRequestTime = 0
@@ -21,6 +24,9 @@ function onProfileShowcaseResponce(responce) {
   if (!isDataBlock(responce))
     return
   allShowcasesData = convertBlk(responce)
+  if (allShowcasesData?.unit_collector.units && !isArray(allShowcasesData.unit_collector.units))
+    allShowcasesData.unit_collector.units = [allShowcasesData.unit_collector.units]
+
   broadcastEvent(allShowcasesEventName.UPDATED, allShowcasesData)
 }
 
@@ -39,8 +45,9 @@ function requestShowcases() {
   )
 }
 
-function generateShowcaseInfo(name) {
-  if ((get_time_msec() - lastRequestTime) > MIN_TIME_BETWEEN_SAME_REQUESTS_MSEC || allShowcasesData == null)
+function generateShowcaseInfo(name, frequentRequest = false) {
+  if ((get_time_msec() - lastRequestTime) > (frequentRequest ? MIN_TIME_BETWEEN_FREQUENT_REQUESTS_MSEC : MIN_TIME_BETWEEN_SAME_REQUESTS_MSEC)
+    || allShowcasesData == null)
     requestShowcases()
 
   if (allShowcasesData == null)

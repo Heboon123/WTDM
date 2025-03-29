@@ -23,13 +23,14 @@ let { is_benchmark_game_mode } = require("mission")
 let { startsWith, endsWith } = require("%sqstd/string.nut")
 let { reqUnlockByClient } = require("%scripts/unlocks/unlocksModule.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
-let { getMissionTimeText, getWeatherLocName } = require("%scripts/missions/missionsUtils.nut")
-let { getMissionName } = require("%scripts/missions/missionsUtilsModule.nut")
+let { getMissionName, getMissionTimeText, getWeatherLocName } = require("%scripts/missions/missionsText.nut")
 let { move_mouse_on_child_by_value, select_editbox, loadHandler,
   handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { gui_start_mainmenu } = require("%scripts/mainmenu/guiStartMainmenu.nut")
 let { canOpenHitsAnalysisWindow, openHitsAnalysisWindow } = require("%scripts/dmViewer/hitsAnalysis.nut")
 let { generatePaginator } = require("%scripts/viewUtils/paginator.nut")
+let { resetSessionLobbyPlayersInfo } = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { buildMpTable } = require("%scripts/statistics/mpStatisticsUtil.nut")
 
 const REPLAY_SESSION_ID_MIN_LENGTH = 16
 
@@ -63,7 +64,7 @@ function getReplayUrlBySessionId(sessionId) {
 
 function guiStartReplayBattle(sessionId, backFunc) {
   ::back_from_replays = function() {
-    ::SessionLobby.resetPlayersInfo()
+    resetSessionLobbyPlayersInfo()
     backFunc()
   }
   reqUnlockByClient("view_replay")
@@ -114,7 +115,7 @@ function autosaveReplay() {
       }
     }
     if (indexToDelete < 0) {
-      //sort by time
+      
       local oldestDate = -1
       for (local i = 0; i < replays.len(); i++) {
         if (replays[i].name.slice(0, 1) != autosaveReplayPrefix)
@@ -135,7 +136,7 @@ function autosaveReplay() {
   }
 
   let name = $"{autosaveReplayPrefix}{get_new_replay_filename()}"
-  on_save_replay(name) //ignore errors
+  on_save_replay(name) 
 }
 
 gui_handlers.ReplayScreen <- class (gui_handlers.BaseGuiHandlerWT) {
@@ -230,8 +231,8 @@ gui_handlers.ReplayScreen <- class (gui_handlers.BaseGuiHandlerWT) {
       listObj.getChild(i).setIntProp(this.listIdxPID, firstIdx + i)
     listObj.setValue(selItem % this.replaysPerPage)
 
-    //* - text addition is ok
-    //depends on get_new_replay_filename() format
+    
+    
     let defaultReplayNameMask =
       regexp2(@"2\d\d\d\.[0-3]\d\.[0-3]\d [0-2]\d\.[0-5]\d\.[0-5]\d*");
     for (local i = firstIdx; i < lastIdx; i++) {
@@ -280,12 +281,12 @@ gui_handlers.ReplayScreen <- class (gui_handlers.BaseGuiHandlerWT) {
   function updateDescription() {
     let index = this.getCurrentReplayIndex()
     let objDesc = this.scene.findObject("item_desc")
-    //local objPic = objDesc.findObject("item_picture")
-    //if (objPic != null)
-    //{
-    //  objPic["background-color"] = "#FFFFFFFF"
-    //  objPic["background-image"] = pic
-    //}
+    
+    
+    
+    
+    
+    
 
     if (index < 0 || index >= this.replays.len()) {
       objDesc.findObject("item_desc_text").setValue("")
@@ -298,9 +299,9 @@ gui_handlers.ReplayScreen <- class (gui_handlers.BaseGuiHandlerWT) {
       objDesc.findObject("item_desc_text").setValue(loc("msgbox/error_header"))
     }
     else {
-      let corrupted = getTblValue("corrupted", replayInfo, false) // Any error reading headers (including version mismatch).
-      let isVersionMismatch = getTblValue("isVersionMismatch", replayInfo, false) // Replay was recorded for in older game version.
-      let isHeaderUnreadable = corrupted && !isVersionMismatch // Failed to read header (file not found or incomplete).
+      let corrupted = getTblValue("corrupted", replayInfo, false) 
+      let isVersionMismatch = getTblValue("isVersionMismatch", replayInfo, false) 
+      let isHeaderUnreadable = corrupted && !isVersionMismatch 
 
       local headerText = ""
       local text = ""
@@ -334,18 +335,18 @@ gui_handlers.ReplayScreen <- class (gui_handlers.BaseGuiHandlerWT) {
         loc("options/weather"), loc("ui/colon"), getWeatherLocName(replayInfo.weather), "\n",
         loc("options/difficulty"), loc("ui/colon"), loc($"difficulty{replayInfo.difficulty}"), "\n")
 
-/*      local limits = ""
-      if (replayInfo.isLimitedFuel && replayInfo.isLimitedAmmo)
-        limits = loc("options/limitedFuelAndAmmo")
-      else if (replayInfo.isLimitedFuel)
-        limits = loc("options/limitedFuel")
-      else if (replayInfo.isLimitedAmmo)
-        limits = loc("options/limitedAmmo")
-      else
-        limits = loc("options/unlimited")
 
-      text = "".concat(text, loc("options/fuel_and_ammo"), loc("ui/colon"), limits, "\n") */
-      let autosave = startsWith(this.replays[index].name, autosaveReplayPrefix) //not replayInfo
+
+
+
+
+
+
+
+
+
+
+      let autosave = startsWith(this.replays[index].name, autosaveReplayPrefix) 
       if (autosave)
         text = "".concat(text, loc("msg/autosaveReplayDescription"), "\n")
       text = "".concat(text, this.createSessionResultsTable(replayInfo))
@@ -493,7 +494,7 @@ gui_handlers.ReplayScreen <- class (gui_handlers.BaseGuiHandlerWT) {
         data.rowHeader[name].reverse()
 
       data.playersRows[name] <- "".concat(buildTableRowNoPad("row_header", data.rowHeader[name], null, "class:t='smallIconsStyle'"),
-        ::build_mp_table(playersTables[name], data.markups[name], data.headerArray[name], playersTables[name].len()))
+        buildMpTable(playersTables[name], data.markups[name], data.headerArray[name], playersTables[name].len()))
     }
 
     return data
@@ -559,7 +560,7 @@ gui_handlers.ReplayScreen <- class (gui_handlers.BaseGuiHandlerWT) {
 
       log("gui_nav ::back_from_replays = guiStartReplays");
       ::back_from_replays = function() {
-        ::SessionLobby.resetPlayersInfo()
+        resetSessionLobbyPlayersInfo()
         guiStartMenuReplays()
       }
       reqUnlockByClient("view_replay")
@@ -636,7 +637,7 @@ gui_handlers.ReplayScreen <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 gui_handlers.RenameReplayHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   function initScreen() {

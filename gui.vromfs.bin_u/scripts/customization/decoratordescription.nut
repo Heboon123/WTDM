@@ -4,31 +4,33 @@ let { sqrt } = require("math")
 let { format } = require("string")
 let skinLocations = require("%scripts/customization/skinLocations.nut")
 let { getUnlockCondsDescByCfg, getUnlockMultDescByCfg, buildUnlockDesc,
-  getUnlockMainCondDescByCfg } = require("%scripts/unlocks/unlocksViewModule.nut")
+  getUnlockMainCondDescByCfg, buildConditionsConfig } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
 let { isDefaultSkin } = require("%scripts/customization/skinUtils.nut")
 let { decoratorTypes, getTypeByUnlockedItemType } = require("%scripts/customization/types.nut")
 let { addTooltipTypes } = require("%scripts/utils/genericTooltipTypes.nut")
 let { getDecorator } = require("%scripts/customization/decorCache.nut")
 let { getCurCircuitOverride } = require("%appGlobals/curCircuitOverride.nut")
+let { findItemById, getInventoryItemById } = require("%scripts/items/itemsManager.nut")
 
 function updateDecoratorDescription(obj, handler, decoratorType, decorator, params = {}) {
   local config = null
   let unlockBlk = getUnlockById(decorator?.unlockId)
   if (unlockBlk) {
-    config = ::build_conditions_config(unlockBlk)
+    config = buildConditionsConfig(unlockBlk)
     buildUnlockDesc(config)
   }
 
   let iObj = obj.findObject("image")
   let img = decoratorType.getImage(decorator)
 
-  let haveCouponsItem = decoratorType.name == "SKINS" ? ::ItemsManager.findItemById(decorator.getCouponItemdefId()) : null
-
+  let haveCouponsItem = decoratorType.name == "SKINS" ? findItemById(decorator.getCouponItemdefId()) : null
+  let { needAddIndentationUnderImage = true } = params
   if (haveCouponsItem != null) {
     iObj["background-image"] = img
     let textContainer = obj.findObject("text_container")
-    textContainer.top = "1@itemIconBlockHeight"
+    if (needAddIndentationUnderImage)
+      textContainer.top = "1@itemIconBlockHeight"
     textContainer["min-width"] = "0.5@sf"
   } else {
     let iDivObj = iObj.getParent()
@@ -41,7 +43,8 @@ function updateDecoratorDescription(obj, handler, decoratorType, decorator, para
       iDivObj.height = imageContainerHeight
       iDivObj.width  = imageContainerWidth
       let textContainer = obj.findObject("text_container")
-      textContainer.top = imageContainerHeight
+      if (needAddIndentationUnderImage)
+        textContainer.top = imageContainerHeight
       textContainer["min-width"] = imageContainerWidth
     } else {
       iDivObj.show(false)
@@ -117,7 +120,7 @@ function updateDecoratorDescription(obj, handler, decoratorType, decorator, para
   local canConsumeCoupon = false
   local canFindOnMarketplace = false
   if (!hasDecor && decorator.getCouponItemdefId() != null) {
-    let inventoryItem = ::ItemsManager.getInventoryItemById(decorator.getCouponItemdefId())
+    let inventoryItem = getInventoryItemById(decorator.getCouponItemdefId())
     if (inventoryItem?.canConsume() ?? false)
       canConsumeCoupon = true
     canFindOnMarketplace = !canConsumeCoupon
@@ -133,7 +136,7 @@ function updateDecoratorDescription(obj, handler, decoratorType, decorator, para
   if (hideUnlockInfo)
     return
 
-  //fill unlock info
+  
   let canShowUnlockDesc = !isTrophyContent && !isReceivedPrizes
   let mainCond = canShowUnlockDesc ? getUnlockMainCondDescByCfg(config) : ""
   let multDesc = canShowUnlockDesc ? getUnlockMultDescByCfg(config) : ""
@@ -187,10 +190,10 @@ function updateDecoratorDescription(obj, handler, decoratorType, decorator, para
 }
 
 addTooltipTypes({
-  DECORATION = { //tooltip by decoration id and decoration type
-                 //@decorType = UNLOCKABLE_DECAL or UNLOCKABLE_SKIN
-                 //can be without exist unlock
-                 //for skins decorId is like skin unlock id   -  <unitName>"/"<skinName>
+  DECORATION = { 
+                 
+                 
+                 
     getTooltipId = function(decorId, decorType, params = null, _p3 = null) {
       let p = params || {}
       p.decorType <- decorType

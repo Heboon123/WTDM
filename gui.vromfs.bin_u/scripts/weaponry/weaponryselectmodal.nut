@@ -1,8 +1,8 @@
 from "%scripts/dagui_library.nut" import *
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
-let weaponryPresetsWnd = require("%scripts/weaponry/weaponryPresetsWnd.nut")
+let guiStartWeaponryPresets = require("%scripts/weaponry/guiStartWeaponryPresets.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-let { move_mouse_on_child_by_value, move_mouse_on_obj, handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { move_mouse_on_child_by_value, move_mouse_on_obj } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { ceil, sqrt } = require("math")
 let { setPopupMenuPosAndAlign } = require("%sqDagui/daguiUtil.nut")
 let { updateModItem, createModItemLayout } = require("%scripts/weaponry/weaponryVisual.nut")
@@ -11,33 +11,7 @@ let { getLastWeapon, setLastWeapon, isWeaponVisible, isWeaponEnabled, isDefaultT
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { isInFlight } = require("gameplayBinding")
 let { getCurMissionRules } = require("%scripts/misCustomRules/missionCustomState.nut")
-
-/*
-  config = {
-    unit  //unit for weapons
-    onChangeValueCb = function(chosenWeaponryItem)   //callback on value select (only if value was changed)
-    weaponItemParams = null //list of special items render params (for updateModItem in weaponryVisual.nut)
-
-    align = "top"/"bottom"/"left"/"right"
-    alignObj = DaguiObj  //object to align menu
-
-    list = [
-      {
-        //must have parameter:
-        weaponryItem //weapon or modification from unit
-
-        //optional parameters:
-        selected = false
-        enabled = true
-        visualDisabled = false
-      }
-      ...
-    ]
-  }
-*/
-function guiStartWeaponrySelectModal(config) {
-  handlersManager.loadHandler(gui_handlers.WeaponrySelectModal, config)
-}
+let guiStartWeaponrySelectModal = require("%scripts/weaponry/guiStartWeaponrySelectModal.nut")
 
 local CHOOSE_WEAPON_PARAMS = {
   itemParams = null
@@ -75,7 +49,7 @@ function guiStartChooseUnitWeapon(unit, cb, params = CHOOSE_WEAPON_PARAMS) {
   }
 
   if (needSecondaryWeaponsWnd(unit))
-    weaponryPresetsWnd.open({ //open modal menu for air and helicopter only
+    guiStartWeaponryPresets({ 
         unit = unit
         chooseMenuList   = list
         initLastWeapon   = curWeaponName
@@ -127,7 +101,7 @@ gui_handlers.WeaponrySelectModal <- class (gui_handlers.BaseGuiHandlerWT) {
       if (!weaponryItem) {
         script_net_assert_once("cant load weaponry",
           $"Error: empty weaponryItem for WeaponrySelectModal. unit = {this.unit?.name}")
-        this.list = null //goback
+        this.list = null 
         return null
       }
 
@@ -221,5 +195,4 @@ gui_handlers.WeaponrySelectModal <- class (gui_handlers.BaseGuiHandlerWT) {
 
 return {
   guiStartChooseUnitWeapon
-  guiStartWeaponrySelectModal
 }

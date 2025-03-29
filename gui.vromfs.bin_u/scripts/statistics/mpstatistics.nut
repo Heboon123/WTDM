@@ -15,22 +15,23 @@ let { get_time_msec } = require("dagor.time")
 let { format } = require("string")
 let time = require("%scripts/time.nut")
 let { getLogForBanhammer } = require("%scripts/chat/mpChatModel.nut")
-let avatars = require("%scripts/user/avatars.nut")
 let { setMousePointerInitialPosOnChildByValue } = require("%scripts/controls/mousePointerInitialPos.nut")
 let { MISSION_OBJECTIVE } = require("%scripts/missions/missionsUtilsModule.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { updateListLabelsSquad, isShowSquad } = require("%scripts/statistics/squadIcon.nut")
 let { getMplayersList } = require("%scripts/statistics/mplayersList.nut")
 let { is_replay_playing } = require("replays")
-let { get_game_mode, get_game_type } = require("mission")
+let { get_game_mode, get_game_type, GET_MPLAYERS_LIST } = require("mission")
 let { get_mission_difficulty_int, get_mp_tbl_teams } = require("guiMission")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { OPTIONS_MODE_GAMEPLAY, USEROPT_ORDER_AUTO_ACTIVATE
 } = require("%scripts/options/optionsExtNames.nut")
 let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
 let { getUnitCountry } = require("%scripts/unit/unitInfo.nut")
-let { isInSessionRoom } = require("%scripts/matchingRooms/sessionLobbyState.nut")
-let { getSkillBonusTooltipText, get_time_to_kick_show_timer, get_time_to_kick_show_alert } = require("%scripts/statistics/mpStatisticsUtil.nut")
+let { isInSessionRoom, getSessionLobbyPublicParam } = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { getSkillBonusTooltipText, get_time_to_kick_show_timer, get_time_to_kick_show_alert, getCurMpTitle,
+  setMpTable, getLocalTeamForMpStats, buildMpTable, updateTeamCssLabel, countWidthForMpTable
+} = require("%scripts/statistics/mpStatisticsUtil.nut")
 let { getEventEconomicName } = require("%scripts/events/eventInfo.nut")
 let { setMissionEnviroment } = require("%scripts/missions/missionsUtils.nut")
 let { is_low_width_screen } = require("%scripts/baseGuiHandlerManagerWT.nut")
@@ -39,7 +40,11 @@ let { openOrdersInventory, updateActiveOrder, orderCanBeActivated,
   getActivateButtonLabel, activateSoonExpiredOrder
 } = require("%scripts/items/orders.nut")
 let { fill_gamer_card } = require("%scripts/gamercard.nut")
-let { isLoggedIn } = require("%scripts/login/loginStates.nut")
+let { isLoggedIn } = require("%appGlobals/login/loginState.nut")
+let { gui_modal_userCard } = require("%scripts/user/userCard/userCardView.nut")
+let { getRoomEvent } = require("%scripts/matchingRooms/sessionLobbyInfo.nut")
+let { get_option_in_mode } = require("%scripts/options/optionsExt.nut")
+let { showSessionPlayerRClickMenu } = require("%scripts/user/playerContextMenu.nut")
 
 const OVERRIDE_COUNTRY_ID = "override_country"
 
@@ -82,7 +87,7 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
   wasTimeLeft = -1000
   updateCooldown = 3
 
-  numMaxPlayers = 16  //its only visual max players. no need to scroll when table near empty.
+  numMaxPlayers = 16  
   isApplyPressed = false
 
   checkRaceDataOnStart = true
@@ -110,7 +115,7 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
     if (!checkObj(timeToKickObj))
       return
     let timeToKickValue = get_mp_kick_countdown()
-    // Already in battle or it's too early to show the message.
+    
     if (timeToKickValue <= 0 || get_time_to_kick_show_timer() < timeToKickValue)
       timeToKickObj.setValue("")
     else {
@@ -145,11 +150,11 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
     updateActiveOrder()
     let isOrderCanBeActivated = orderCanBeActivated()
     if (checkObj(obj)) {
-      obj.text = getActivateButtonLabel()
+      obj.setValue(getActivateButtonLabel())
       obj.inactiveColor = !isOrderCanBeActivated ? "yes" : "no"
     }
     if (isOrderCanBeActivated
-      && ::get_option_in_mode(USEROPT_ORDER_AUTO_ACTIVATE, OPTIONS_MODE_GAMEPLAY).value)
+      && get_option_in_mode(USEROPT_ORDER_AUTO_ACTIVATE, OPTIONS_MODE_GAMEPLAY).value)
         activateSoonExpiredOrder()
   }
 
@@ -177,10 +182,10 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
       textObj.setValue(text)
   }
 
-  /**
-   * Sets country flags visibility based
-   * on specified country names list.
-   */
+  
+
+
+
   function setTeamInfoCountries(teamObj, enabledCountryNames) {
     if (!checkObj(teamObj))
       return
@@ -200,10 +205,10 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
       countryFlagObj["background-image"] = getCountryIcon(countryIcon)
   }
 
-  /**
-   * Places all available country
-   * flags into container.
-   */
+  
+
+
+
   function initTeamInfoCountries(teamObj) {
     if (!checkObj(teamObj))
       return
@@ -245,7 +250,7 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
     this.needPlayersTbl = this.scene.findObject("table_kills_team1") != null
 
     this.includeMissionInfoBlocksToGamercard()
-    this.setSceneTitle(::getCurMpTitle())
+    this.setSceneTitle(getCurMpTitle())
     this.setSceneMissionEnviroment()
     this.setInfo()
   }
@@ -295,7 +300,7 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
     this.isTeamsRandom = !this.isTeamplay || this.gameMode == GM_DOMINATION
     if (isInSessionRoom.get() || is_replay_playing())
       this.isTeamsWithCountryFlags = this.isTeamplay &&
-        (get_mission_difficulty_int() > 0 || !::SessionLobby.getPublicParam("symmetricTeams", true))
+        (get_mission_difficulty_int() > 0 || !getSessionLobbyPublicParam("symmetricTeams", true))
 
     this.missionObjectives = g_mission_type.getCurrentObjectives()
   }
@@ -306,7 +311,7 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
     let showAirIcons  = tblConfig?.showAirIcons  ?? showUnits
     let invert = getTblValue("invert", tblConfig, false)
 
-    local tblData = [] // columns order
+    local tblData = [] 
 
     let markupData = {
       tr_size = this.statTrSize
@@ -346,7 +351,7 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
           col.width = col.widthInWideScreen
       }
 
-      ::count_width_for_mptable(objTbl, markupData.columns)
+      countWidthForMpTable(objTbl, markupData.columns)
 
       let teamNum = (team == 2) ? 2 : 1
       let tableObj = this.scene.findObject($"team_table_{teamNum}")
@@ -370,7 +375,7 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
       if (!this.isTeamplay)
         this.sortTable(tbl)
 
-      let data = ::build_mp_table(tbl, markupData, tblData, 1, {canHasBonusIcon = true})
+      let data = buildMpTable(tbl, markupData, tblData, 1, {canHasBonusIcon = true})
       this.guiScene.replaceContentFromText(objTbl, data, data.len(), this)
     }
   }
@@ -452,7 +457,7 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
       if (!customTbl && this.isTeamplay)
         this.sortTable(tbl)
 
-      ::set_mp_table(objTbl, tbl, {
+      setMpTable(objTbl, tbl, {
         showAirIcons
         handler = this
         continueRowNum = minRow
@@ -461,7 +466,7 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
         playersInfo = customTbl?.playersInfo
         roomEventName = this.getRoomEventEconomicName()
       })
-      ::update_team_css_label(objTbl, this.getLocalTeam())
+      updateTeamCssLabel(objTbl, this.getLocalTeam())
 
       if (friendlyTeam > 0 && team > 0)
         objTbl["team"] = (this.isTeamplay && friendlyTeam == team) ? "blue" : "red"
@@ -472,8 +477,8 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
   function getRoomEventEconomicName() {
     if ( this?.debriefingResult.roomEvent ) {
       return getEventEconomicName(this?.debriefingResult.roomEvent)
-    } else if (::SessionLobby.getRoomEvent()) {
-      return getEventEconomicName(::SessionLobby.getRoomEvent())
+    } else if (getRoomEvent()) {
+      return getEventEconomicName(getRoomEvent())
     }
     return null
   }
@@ -611,7 +616,7 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
 
         let showEnemyAirs = this.isShowEnemyAirs()
         let isLeftPlayerTeam = playerTeam == friendlyTeam
-        this.setKillsTbl(tblObj1, playerTeam, playerTeam, friendlyTeam, // warning disable: -param-pos
+        this.setKillsTbl(tblObj1, playerTeam, playerTeam, friendlyTeam, 
           isLeftPlayerTeam ? this.showAircrafts : showEnemyAirs, customTbl)
         if (!this.showLocalTeamOnly && playerTeam > 0)
           this.setKillsTbl(tblObj2, 3 - playerTeam, playerTeam, friendlyTeam,
@@ -638,7 +643,7 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
       this.numberOfWinningPlaces = get_race_winners_count()
     }
 
-    ::update_team_css_label(this.scene.findObject("num_teams"), playerTeam)
+    updateTeamCssLabel(this.scene.findObject("num_teams"), playerTeam)
   }
 
   function updateTables(dt) {
@@ -711,12 +716,12 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
     if (!player || player.isBot || !this.isOnline)
       return;
 
-    ::gui_modal_userCard({ uid = player.userId });
+    gui_modal_userCard({ uid = player.userId });
   }
 
   function onUserRClick(obj) {
     this.onStatsTblSelect(obj)
-    ::session_player_rmenu(this, this.getSelectedPlayer(), this.getChatLog())
+    showSessionPlayerRClickMenu(this, this.getSelectedPlayer(), this.getChatLog())
   }
 
   function onUserOptions(_obj) {
@@ -727,7 +732,7 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
     this.onStatsTblSelect(selectedTableObj)
     let selectedPlayer = this.getSelectedPlayer()
     let orientation = selectedTableObj.id == "table_kills_team1" ? RCLICK_MENU_ORIENT.RIGHT : RCLICK_MENU_ORIENT.LEFT
-    ::session_player_rmenu(this, selectedPlayer, this.getChatLog(), this.getSelectedRowPos(selectedTableObj, orientation), orientation)
+    showSessionPlayerRClickMenu(this, selectedPlayer, this.getChatLog(), this.getSelectedRowPos(selectedTableObj, orientation), orientation)
   }
 
   function getSelectedRowPos(selectedTableObj, orientation) {
@@ -782,7 +787,6 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
     fill_gamer_card({
                       name = playerInfo ? playerInfo.name : ""
                       clanTag = playerInfo ? playerInfo.clanTag : ""
-                      icon = (!playerInfo || playerInfo.isBot) ? "cardicon_bot" : avatars.getIconById(playerInfo.pilotId)
                       country = playerInfo ? playerInfo.country : ""
                     },
                     "player_", this.scene)
@@ -880,10 +884,10 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
     }
   }
 
-  /**
-   * Sets country flag visibility for both
-   * teams based on players' countries and units.
-   */
+  
+
+
+
   function updateCountryFlags() {
     let playerTeam = this.getLocalTeam()
     if (!this.needPlayersTbl || playerTeam <= 0)
@@ -924,18 +928,18 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
     }
   }
 
-  /**
-   * Returns country names list based of players' settings.
-   */
+  
+
+
   function getCountriesByTeam(team) {
     let countries = []
     let players = this.getMplayersList(team)
     foreach (player in players) {
       local country = getTblValue("country", player, null)
 
-      // If player/bot has random country we'll
-      // try to retrieve country from selected unit.
-      // Before spawn bots has wrong unit names.
+      
+      
+      
       if (country == "country_0" && (!player.isDead || player.deaths > 0)) {
         let unitName = getTblValue("aircraftName", player, null)
         let unit = getAircraftByName(unitName)
@@ -1023,7 +1027,7 @@ let MPStatistics = class (gui_handlers.BaseGuiHandlerWT) {
     return getLogForBanhammer()
   }
 
-  getLocalTeam = @() ::get_local_team_for_mpstats()
+  getLocalTeam = @() getLocalTeamForMpStats()
   getOverrideCountryIconByTeam = @(team)
     getCurMissionRules().getOverrideCountryIconByTeam(team)
   getMplayersList = @(t = GET_MPLAYERS_LIST) getMplayersList(t)

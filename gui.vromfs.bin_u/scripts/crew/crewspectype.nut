@@ -10,6 +10,8 @@ let enums = require("%sqStdLibs/helpers/enums.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 let { get_warpoints_blk, get_skills_blk, get_price_blk } = require("blkGetters")
 let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
+let { getDiscountByPath } = require("%scripts/discounts/discountUtils.nut")
+
 let { getSkillCrewLevel, getCrewMaxSkillValue, getCrewLevel, unitCrewTrainReq,
   crewSkillPages, loadCrewSkillsOnce
 } = require("%scripts/crew/crew.nut")
@@ -56,8 +58,8 @@ crewSpecTypes = {
     trainedIcon = ""
     expUpgradableFeature = null
 
-    // Returns button label about next type upgrade.
-    // E.g. "Upgrade qualification to Expert" for BASIC spec type.
+    
+    
     getButtonLabel = @() loc($"crew/qualifyIncrease{this.code}", "")
     getNextType = @() getCrewSpecTypeByCode(this.nextCode)
     isCrewTrained = @(crew, unit) getTrainedCrewSpecCode(crew, unit) >= this.code
@@ -65,7 +67,7 @@ crewSpecTypes = {
     hasNextType = @() this.getNextType() != crewSpecTypes.UNKNOWN
     getNameLocId = @() format("crew/qualification/%d", this.code)
 
-    // Returns true if this type can be upgraded from some other type.
+    
     hasPrevType = @() this.getPrevType() != crewSpecTypes.UNKNOWN
     isExpUpgradableByUnit = @(_unit) false
     getExpLeftByCrewAndUnit = @(_crew, _unit) -1
@@ -75,7 +77,7 @@ crewSpecTypes = {
     getReqCrewLevel = @(unit) this._getReqCrewLevelByCode(unit, this.code - 1)
     getUpgradeReqCrewLevel = @(unit) this._getReqCrewLevelByCode(unit, this.code)
 
-    // Returns cost of upgrade to next spec type.
+    
     function getUpgradeCostByCrewAndByUnit(crew, unit, upgradeToSpecCode = -1) {
       if (upgradeToSpecCode < 0)
         upgradeToSpecCode = this.code + 1
@@ -103,11 +105,11 @@ crewSpecTypes = {
 
     function getDiscountValueByUnitNames(unitNames) {
       let priceBlk = get_price_blk()
-      return ::getDiscountByPath(["aircrafts", unitNames, "specialization", this.specName], priceBlk)
+      return getDiscountByPath(["aircrafts", unitNames, "specialization", this.specName], priceBlk)
     }
 
-    // Returns spec type such that type.nextCode == this.code.
-    // Returns UNKNOWN spec type if no such type found.
+    
+    
     function getPrevType() {
       foreach (t in crewSpecTypes.types)
         if (t.nextCode == this.code)
@@ -249,7 +251,7 @@ crewSpecTypes = {
         progressBarValue = progressBarValue.tointeger()
       }
 
-      // Discount markers.
+      
       let expUpgradeText = []
       let totalExp = this.getTotalExpByUnit(unit)
       foreach (i, dataItem in this.getExpUpgradeDiscountData()) {
@@ -270,7 +272,7 @@ crewSpecTypes = {
         expUpgradeText.append(loc("crew/qualification/expUpgradeMarkerCaption", locParams))
       }
 
-      // Marker at 100% progress.
+      
       let romanNumeral = get_roman_numeral(view.markers.len() + 1)
       view.markers.append({
         markerRatio = 1
@@ -316,7 +318,7 @@ crewSpecTypes = {
         view.tinyTooltipText = loc("shop/crewQualifyBonuses", {
           qualification = colorize("userlogColoredText", this.getName())
           bonuses = this.getFullBonusesText(unit?.getCrewUnitType?() ?? CUT_INVALID,
-            curSpecType.code == -1 ? 0 : curSpecType.code) //show bonuses relatively basic spec for not trained unit
+            curSpecType.code == -1 ? 0 : curSpecType.code) 
         })
       }
       view.tooltipText = "\n\n".concat(view.tooltipText, loc("crew/qualification/tooltip"))

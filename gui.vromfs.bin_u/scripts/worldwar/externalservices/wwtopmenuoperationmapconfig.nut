@@ -1,6 +1,6 @@
 from "%scripts/dagui_library.nut" import *
 
-require("%scripts/worldWar/externalServices/worldWarTopMenuButtons.nut") //Independed Module. Need for init buttons configs
+require("%scripts/worldWar/externalServices/worldWarTopMenuButtons.nut") 
 
 let { is_low_width_screen } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let enums = require("%sqStdLibs/helpers/enums.nut")
@@ -31,10 +31,8 @@ enums.addTypes(wwTopMenuOperationMap, [
         buttonsList.WW_SCENARIO_DESCR
         buttonsList.WW_OPERATION_LIST
         buttonsList.WW_WIKI
-        buttonsList.LINE_SEPARATOR
         buttonsList.OPTIONS
         buttonsList.CONTROLS
-        buttonsList.LINE_SEPARATOR
         buttonsList.WW_HANGAR
       ]
     ]

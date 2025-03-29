@@ -5,8 +5,9 @@ let { isXInputDevice } = require("controls")
 let { eventbus_subscribe } = require("eventbus")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { toggleShortcut } = require("%globalScripts/controls/shortcutActions.nut")
+let { joystickGetCurSettings, getShortcuts } = require("%scripts/controls/controlsCompatibility.nut")
 
-//--------------------------------------------------------------------------------------------------
+
 
 gui_handlers.chooseVehicleMenuHandler <- class (gui_handlers.wheelMenuHandler) {
   wndControlsAllowMaskWhenActive = CtrlsInGui.CTRL_IN_UNLIM_CTRL_MENU
@@ -53,7 +54,7 @@ function makeMenuView(cfg) {
     local shortcutText = ""
     if (is_platform_pc)
       shortcutText = ::get_shortcut_text({
-        shortcuts = ::get_shortcuts([ shortcutId ])
+        shortcuts = getShortcuts([ shortcutId ])
         shortcutId = 0
         cantBeEmpty = false
         strip_tags = true
@@ -72,7 +73,7 @@ function makeMenuView(cfg) {
 
 
 function openMenu(cfg) {
-  let joyParams = ::joystick_get_cur_settings()
+  let joyParams = joystickGetCurSettings()
   let params = {
     menu = makeMenuView(cfg)
     mouseEnabled = joyParams.useMouseForVoiceMessage || joyParams.useJoystickMouseForVoiceMessage
@@ -87,21 +88,21 @@ function openMenu(cfg) {
     handlersManager.loadHandler(gui_handlers.chooseVehicleMenuHandler, params)
 }
 
-//--------------------------------------------------------------------------------------------------
 
-//choose vehicle menu config
-/*let cfg = [
-  {
-    name = "germ_at_gun_pak38_1"
-    isEnabled = true
-    shortcutId = "ID_VOICE_MESSAGE_1"
-  }
-  {
-    name = "germ_at_gun_pak38_2"
-    isEnabled = false
-    shortcutId = "ID_VOICE_MESSAGE_2"
-  }
-]*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 eventbus_subscribe("showChooseVehicleMenu", function(params) {
   if (params.isShow) {

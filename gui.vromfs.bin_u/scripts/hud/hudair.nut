@@ -11,12 +11,13 @@ let { is_replay_playing } = require("replays")
 let { get_game_type } = require("mission")
 let { ActionBar } = require("%scripts/hud/hudActionBar.nut")
 let { HudWithWeaponSelector } = require("%scripts/hud/hudWithWeaponSelector.nut")
+let { hudDisplayTimersInit, hudDisplayTimersReInit } = require("%scripts/hud/hudDisplayTimers.nut")
 
 gui_handlers.HudAir <- class (HudWithWeaponSelector) {
   sceneBlkName = "%gui/hud/hudAir.blk"
   function initScreen() {
     base.initScreen()
-    ::g_hud_display_timers.init(this.scene, ES_UNIT_TYPE_AIRCRAFT)
+    hudDisplayTimersInit(this.scene, ES_UNIT_TYPE_AIRCRAFT)
     this.actionBar = ActionBar(this.scene.findObject("hud_action_bar"))
 
     this.updateTacticalMapVisibility()
@@ -32,7 +33,7 @@ gui_handlers.HudAir <- class (HudWithWeaponSelector) {
 
   function reinitScreen(_params = null) {
     base.reinitScreen()
-    ::g_hud_display_timers.reinit()
+    hudDisplayTimersReInit()
     this.updateTacticalMapVisibility()
     this.updateDmgIndicatorSize()
     this.updateShowHintsNest()
@@ -41,10 +42,10 @@ gui_handlers.HudAir <- class (HudWithWeaponSelector) {
 
   function updateTacticalMapVisibility() {
     let ownerUnit = getAircraftByName(getOwnerUnitName())
-    let shouldShowMapForAircraft = (get_game_type() & GT_RACE) != 0 // Race mission
-      || (getPlayerCurUnit()?.tags ?? []).contains("type_strike_ucav") // Strike UCAV in Tanks mission
+    let shouldShowMapForAircraft = (get_game_type() & GT_RACE) != 0 
+      || (getPlayerCurUnit()?.tags ?? []).contains("type_strike_ucav") 
       || (hasFeature("uavMiniMap") && ((ownerUnit?.isTank() ?? false)
-                                   || (ownerUnit?.isShip() ?? false))) // Scout UCAV in Tanks/Ships mission
+                                   || (ownerUnit?.isShip() ?? false))) 
     let isVisible = shouldShowMapForAircraft && !is_replay_playing()
       && g_hud_vis_mode.getCurMode().isPartVisible(HUD_VIS_PART.MAP)
     showObjById("hud_air_tactical_map", isVisible, this.scene)

@@ -2,18 +2,17 @@ from "%scripts/dagui_natives.nut" import get_axis_name, joystick_get_default
 from "%scripts/dagui_library.nut" import *
 let u = require("%sqStdLibs/helpers/u.nut")
 
-let { loadOnce } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
-loadOnce("%scripts/controls/controlsPresets.nut")
 let DataBlock  = require("DataBlock")
 let { copyParamsToTable, eachBlock, eachParam, blkFromPath } = require("%sqstd/datablock.nut")
 let { startsWith } = require("%sqstd/string.nut")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
-let { isLoggedIn } = require("%scripts/login/loginStates.nut")
+let { getControlsPresetFilename, parseControlsPresetFileName
+} = require("%scripts/controls/controlsPresets.nut")
 
 const PRESET_ACTUAL_VERSION  = 5
 const PRESET_DEFAULT_VERSION = 4
 
-const BACKUP_OLD_CONTROLS_DEFAULT = 0 // false
+const BACKUP_OLD_CONTROLS_DEFAULT = 0 
 
 
 function getJoystickBlockV4(blk) {
@@ -106,8 +105,8 @@ function isSameMapping(lhs, rhs) {
   return true
 }
 
-
-::ControlsPreset <- class {
+local ControlsPreset = null
+ControlsPreset = class {
   basePresetPaths = null
   hotkeys         = null
   axes            = null
@@ -116,12 +115,12 @@ function isSameMapping(lhs, rhs) {
   controlsV4Blk   = null
   isLoaded        = false
 
-  getDefaultParams = getDefaultParams // for compatibility with older code
+  getDefaultParams = getDefaultParams 
 
 
-  /****************************************************************/
-  /**************************** PUBLIC ****************************/
-  /****************************************************************/
+  
+  
+  
 
   constructor(data = null, presetChain = []) {
     this.basePresetPaths = {}
@@ -134,7 +133,7 @@ function isSameMapping(lhs, rhs) {
       this.loadFromPreset(data, presetChain)
     else if (u.isDataBlock(data))
       this.loadFromBlk(data, presetChain)
-    else if ((type(data) == "instance") && (data instanceof ::ControlsPreset)) {
+    else if ((type(data) == "instance") && (data instanceof ControlsPreset)) {
       this.basePresetPaths = u.copy(data.basePresetPaths)
       this.hotkeys         = u.copy(data.hotkeys)
       this.axes            = u.copy(data.axes)
@@ -146,9 +145,9 @@ function isSameMapping(lhs, rhs) {
   }
 
 
-  /****************************************************************/
-  /*********************** PUBLIC FUNCTIONS ***********************/
-  /****************************************************************/
+  
+  
+  
 
   function resetHotkey(name) {
     this.hotkeys[name] <- []
@@ -165,7 +164,7 @@ function isSameMapping(lhs, rhs) {
   }
 
   function getAxis(name) {
-    if (!u.isString(name)) { // Workaround to fix SQ critical asserts
+    if (!u.isString(name)) { 
       let message = "Error: ControlsPreset.getAxis(name), name must be string"
       script_net_assert_once("ControlsPreset.getAxis() failed", message)
       return this.getDefaultAxis("")
@@ -242,93 +241,93 @@ function isSameMapping(lhs, rhs) {
   }
 
 
-  /*
-    Controls format sample for version 5:
-
-    controls{     // Controls block start
-      version:i=5   // Last controls version
-
-      basePresetPaths{    // Base preset paths
-        // default used for controls unspecified by other groups
-        default:t="config/hotkeys/hotkey.keyboard_ver1.blk"
-
-        // controls from hotkey.saitek_X52.blk used only for planes
-        plane:t="config/hotkeys/hotkey.saitek_X52.blk"
-      }
-
-      hotkeys{            // Hotkeys block
-        ID_FIRE_CANNONS{    // Shortcut for ID_FIRE_CANNONS
-          mouseButton:i=1
-        }
-
-        // Hotkey block names non-unique.
-        // Hotkey block with same name is alternative shortcut combination
-
-        ID_LOCK_TARGET{     // First shortcut for ID_LOCK_TARGET
-          mouseButton:i=2
-        }
-
-        ID_LOCK_TARGET{     // Second (alternative) shortcut for ID_LOCK_TARGET
-          keyboardKey:i=45    // This variant consist of two keys
-          joyButton:i=4       // keyboard key 45 and joystick button 4
-        }
-
-        ID_LOCK_TARGET{     // Third (alternative) shortcut for ID_LOCK_TARGET
-          keyboardKey:i=25    // This variant consist of three keys
-          keyboardKey:i=26    // two keyboard keys and ont mouse button
-          mouseButton:i=3
-        }
-
-        ...
-
-        // If block don't contain some shortcuts
-        // their values used from base presets
-      }
-
-      axes{             // Axes block
-        throttle{         // Throttle axes preferences
-          axisId:i=2        // It use second axis considering device mapping
-          // Other unspecified attributes use default values
-        }
-
-        zoom{             // Zoom axes preferences
-          mouseAxisId:i=2   // This axis use mouse scroll
-          relative:b=yes    // And it is relative
-          // Other unspecified attributes use default values
-        }
-
-        ...
-
-        // Axes not specified in block loaded from base presets
-      }
-
-      params{           // Params other when defined in base presets
-        useMouseAim:b=no
-        holdThrottleForWEP:b=yes
-        ...
-      }
-
-      deviceMapping{    // Device mapping
-        joystick{         // Each device defined in joystick block
-          devId:t="044F:B67B"
-          name:t="T.Flight Hotas"
-          buttonsOffset:i=0
-          axesOffset:i=0
-          buttonsCount:i=18
-          axesCount:i=8
-          connected:b=yes
-        }
-      }
-    }
-  */
+  
 
 
-  /******** Load and save funtions ********/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 
   function loadFromPreset(presetPath, presetChain = []) {
     presetPath = this.compatibility.getActualPresetName(presetPath)
 
-    // Check preset load recursion
+    
     if (presetChain.indexof(presetPath) != null) {
       assert(false, "".concat("Controls preset require itself. ",
         "Preset chain: ", toString(presetChain), " > ", presetPath))
@@ -401,7 +400,7 @@ function isSameMapping(lhs, rhs) {
     controlsBlk["version"] = PRESET_ACTUAL_VERSION
 
     this.saveBasePresetPathsToBlk(controlsBlk)
-    let controlsDiff = ::ControlsPreset(this)
+    let controlsDiff = ControlsPreset(this)
     controlsDiff.diffBasePresets()
 
     log("ControlsPreset: SaveControls")
@@ -412,7 +411,7 @@ function isSameMapping(lhs, rhs) {
     controlsDiff.saveJoyMappingToBlk (controlsBlk)
     blk["controls"] <- controlsBlk
 
-    // Save controls settings used before 1.63
+    
     if (this.controlsV4Blk != null)
       u.extend(blk, this.controlsV4Blk)
 
@@ -430,7 +429,7 @@ function isSameMapping(lhs, rhs) {
   }
 
 
-  /******** Partitial preset apply functions ********/
+  
 
   function applyControls(appliedPreset) {
     appliedPreset.updateDeviceMapping(this.deviceMapping)
@@ -491,11 +490,11 @@ function isSameMapping(lhs, rhs) {
 
 
   function applyBasePreset(presetPath, presetGroup, presetChain = []) {
-    // TODO: fix filter for different presetGroups
+    
     if (presetGroup != "default")
       return
 
-    let preset = ::ControlsPreset(presetPath, presetChain)
+    let preset = ControlsPreset(presetPath, presetChain)
     this.applyControls(preset)
 
     this.basePresetPaths[presetGroup] <- presetPath
@@ -504,22 +503,22 @@ function isSameMapping(lhs, rhs) {
 
   function diffBasePresets() {
     foreach (presetGroup, presetPath in this.basePresetPaths) {
-      // TODO: fix filter for different presetGroups
+      
       if (presetGroup != "default")
         return
 
-      let subPreset = ::ControlsPreset(presetPath)
+      let subPreset = ControlsPreset(presetPath)
       this.diffControls(subPreset)
     }
 
     if (this.basePresetPaths.len() == 0)
-      this.diffControls(::ControlsPreset())
+      this.diffControls(ControlsPreset())
 
     this.basePresetPaths = {}
   }
 
 
-  /******** Load controls from blk ********/
+  
 
   function loadBasePresetsFromBlk(blk, version, presetChain = []) {
     if (version >= PRESET_ACTUAL_VERSION) {
@@ -528,7 +527,7 @@ function isSameMapping(lhs, rhs) {
       let blkBasePresetPaths = blk["basePresetPaths"]
 
       if (presetChain.len() == 0 && blkBasePresetPaths.paramCount() == 0) {
-        blkBasePresetPaths["default"] <- ::g_controls_presets.getControlsPresetFilename("empty_ver1")
+        blkBasePresetPaths["default"] <- getControlsPresetFilename("empty_ver1")
         log("ControlsPreset: Compatibility preset added to base presets")
       }
 
@@ -555,7 +554,7 @@ function isSameMapping(lhs, rhs) {
     let blkHotkeys = blk["hotkeys"]
 
     if (version >= PRESET_ACTUAL_VERSION) {
-      // Load hotkeys saved after 1.63
+      
       let usedHotkeys = []
       for (local j = 0; j < blkHotkeys.blockCount(); j++) {
         let blkHotkey = blkHotkeys.getBlock(j)
@@ -584,7 +583,7 @@ function isSameMapping(lhs, rhs) {
       }
     }
     else {
-      // Load hotkeys saved before 1.63
+      
       foreach (blkEvent in blkHotkeys % "event") {
         if (!u.isString(blkEvent?["name"]))
           continue
@@ -634,7 +633,7 @@ function isSameMapping(lhs, rhs) {
       copyParamsToTable(blkAxis, this.getAxis(name))
     }, this)
 
-    // Load mouse axes saved before 1.63
+    
     if (version < PRESET_ACTUAL_VERSION) {
       let blkMouseAxes = blkAxes?["mouse"]
       let mouseAxes = u.copy(this.compatibility.mouseAxesDefaults)
@@ -689,7 +688,7 @@ function isSameMapping(lhs, rhs) {
   }
 
 
-  /******** Save controls to blk ********/
+  
 
   function saveBasePresetPathsToBlk(blk) {
     if (!("basePresetPaths" in blk))
@@ -780,17 +779,14 @@ function isSameMapping(lhs, rhs) {
   }
 
 
-  /******** Other functions ********/
+  
 
   function getBasePresetNames() {
-    if (!isLoggedIn.get())
-      return {} // Because g_controls_presets loads after login.
-
-    return this.basePresetPaths.map(@(path) ::g_controls_presets.parsePresetFileName(path).name)
+    return this.basePresetPaths.map(@(path) parseControlsPresetFileName(path).name)
   }
 
   getBasePresetInfo = @(groupName = "default")
-    ::g_controls_presets.parsePresetFileName(this.basePresetPaths?[groupName] ?? "")
+    parseControlsPresetFileName(this.basePresetPaths?[groupName] ?? "")
 
   function getNumButtons() {
     local count = 0
@@ -810,13 +806,13 @@ function isSameMapping(lhs, rhs) {
 
   function getButtonName(deviceId, buttonId) {
     if (deviceId != JOYSTICK_DEVICE_0_ID)
-      return loc(get_button_name(deviceId, buttonId)) // C++ function
+      return loc(get_button_name(deviceId, buttonId)) 
 
     let buttonLocalized = loc("composite/button")
 
     local name = null
     local connected = false
-    name = get_button_name(deviceId, buttonId) // C++ function
+    name = get_button_name(deviceId, buttonId) 
 
     foreach (idx, joy in this.deviceMapping) {
       if (buttonId < joy.buttonsOffset || buttonId >= joy.buttonsOffset + joy.buttonsCount)
@@ -843,7 +839,7 @@ function isSameMapping(lhs, rhs) {
 
     local name = null
     local connected = false
-    let defaultJoystick = joystick_get_default() // C++ function
+    let defaultJoystick = joystick_get_default() 
     if (defaultJoystick)
       name = defaultJoystick.getAxisName(axisId)
 
@@ -875,7 +871,7 @@ function isSameMapping(lhs, rhs) {
     debugTableData(newDevices)
 
     if (isSameMapping(oldDevices, newDevices))
-      return false // nothing to do
+      return false 
 
     let totalBindings = { axes = 0, buttons = 0 }
     let ranges = []
@@ -956,12 +952,12 @@ function isSameMapping(lhs, rhs) {
   }
 
 
-  /****************************************************************/
-  /*************************** PRIVATES ***************************/
-  /****************************************************************/
+  
+  
+  
 
 
-  /* Compatibility data for blk loading */
+  
 
   static compatibility = {
     function getActualPresetName(presetPath) {
@@ -993,3 +989,5 @@ function isSameMapping(lhs, rhs) {
     ]
   }
 }
+
+return ControlsPreset

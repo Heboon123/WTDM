@@ -14,7 +14,7 @@ let warningSystemState = {
 
   IsTwsActivated = Watched(false),
   IsTwsDamaged = Watched(false),
-  CollapsedIcon = Watched(false), //for designer switch from Icon (true) to collapsed Tws
+  CollapsedIcon = Watched(false), 
   LastTargetAge = Watched(1.0),
 
   IsMlwsLwsHudVisible = Watched(false),
@@ -71,7 +71,7 @@ interop.clearLwsTargets <- function() {
   }
 }
 
-interop.updateMlwsTarget <- function(index, x, y, _age0, age, enemy, _track, _launch, sector, _group_id = null, _range_rel = null, _priority = null, _elev = null) {
+interop.updateMlwsTarget <- function(index, x, y, _age0, age, enemy, _track, _launch, sector, _group_id, range_rel, _priority = null, _elev = null) {
   if (index >= warningSystemState.mlwsTargets.len())
     warningSystemState.mlwsTargets.resize(index + 1)
   warningSystemState.mlwsTargets[index] = {
@@ -79,7 +79,8 @@ interop.updateMlwsTarget <- function(index, x, y, _age0, age, enemy, _track, _la
     y = y,
     age = age,
     enemy = enemy,
-    sector = sector
+    sector = sector,
+    rangeRel = range_rel
   }
   warningSystemState.mlwsTargetsAgeMin.update(min(warningSystemState.mlwsTargetsAgeMin.value, age))
   warningSystemState.mlwsTargetsTriggers.trigger()
@@ -151,17 +152,17 @@ interop.clearRwrTargets <- function() {
 interop.updateRwrTarget <- function(index, x, y, age0, age, enemy, track, launch, sector, group_id = null, range_rel = null, priority = null, elev = 0.0) {
 
   local showDirection = true
-  local targetGroupId = null // indicated as abstract source
+  local targetGroupId = null 
   if (group_id != null && group_id >= 0 && group_id < rwrSetting.value.directionMap.len()) {
-    let directionGroupId = rwrSetting.value.directionMap[group_id] // identified ?
+    let directionGroupId = rwrSetting.value.directionMap[group_id] 
     if (directionGroupId == null) {
-      if (rwrSetting.value.direction.len() > 0)  // identification is available
-        targetGroupId = -1 // indicated as unknown
+      if (rwrSetting.value.direction.len() > 0)  
+        targetGroupId = -1 
     }
     else if (directionGroupId == -1)
       showDirection = false
     else
-      targetGroupId = directionGroupId // indicated as indentified
+      targetGroupId = directionGroupId 
   }
   else {
     if (rwrSetting.value.direction.len() > 0)
@@ -254,7 +255,7 @@ interop.postUpdateRwrTargets <- function () {
       unused[i] = i
   }
   else if (unused.len() + used.len() < rwrTargets.len())
-    // TO DO: use last RWR target index
+    
     for (local i = 0; i < rwrTargets.len(); ++i)
       if (unused.indexof(i) == null && used.indexof(i) == null)
         unused.append(i)

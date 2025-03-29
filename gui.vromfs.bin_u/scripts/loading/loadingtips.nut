@@ -11,10 +11,12 @@ let { doesLocTextExist } = require("dagor.localize")
 let { showedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 let { get_game_mode } = require("mission")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
-let { getUrlOrFileMissionMetaInfo } = require("%scripts/missions/missionsUtils.nut")
+let { getUrlOrFileMissionMetaInfo } = require("%scripts/missions/missionsUtilsModule.nut")
 let { isMeNewbieOnUnitType } = require("%scripts/myStats.nut")
 let { currentCampaignMission } = require("%scripts/missions/missionsStates.nut")
-let { isLoggedIn } = require("%scripts/login/loginStates.nut")
+let { isLoggedIn } = require("%appGlobals/login/loginState.nut")
+let { getRoomUnitTypesMask, getRoomRequiredUnitTypesMask } = require("%scripts/matchingRooms/sessionLobbyInfo.nut")
+let { getMissionAllowedUnittypesMask } = require("%scripts/missions/missionsUtils.nut")
 
 const GLOBAL_LOADING_TIP_BIT = 0x8000
 const MISSING_TIPS_IN_A_ROW_ALLOWED = 3
@@ -30,7 +32,7 @@ local curNewbieUnitTypeMask = 0
 local nextTipTime = -1
 local isTipsValid = false
 
-// for global tips typeName = null
+
 function getKeyFormat(typeName, isNewbie) {
   let path = typeName ? [ typeName.tolower() ] : []
   if (isNewbie)
@@ -39,7 +41,7 @@ function getKeyFormat(typeName, isNewbie) {
   return "/".join(path, true)
 }
 
-// for global tips unitType = null
+
 function loadTipsKeysByUnitType(unitType, isNeedOnlyNewbieTips) {
   let res = []
 
@@ -52,7 +54,7 @@ function loadTipsKeysByUnitType(unitType, isNeedOnlyNewbieTips) {
     })
 
   local notExistInARow = 0
-  for (local idx = 0; notExistInARow <= MISSING_TIPS_IN_A_ROW_ALLOWED; idx++) { // warning disable: -mismatch-loop-variable
+  for (local idx = 0; notExistInARow <= MISSING_TIPS_IN_A_ROW_ALLOWED; idx++) { 
     local isShow = false
     local key = ""
     local tip = ""
@@ -60,7 +62,7 @@ function loadTipsKeysByUnitType(unitType, isNeedOnlyNewbieTips) {
       isShow = cfg.isShow
       key = format(cfg.keyFormat, idx)
       let locId = $"{TIP_LOC_KEY_PREFIX}{key}"
-      tip = doesLocTextExist(locId) ? loc(locId, "") : "" // Using doesLocTextExist() to avoid warnings spam in log.
+      tip = doesLocTextExist(locId) ? loc(locId, "") : "" 
       if (tip != "")
         break
     }
@@ -71,7 +73,7 @@ function loadTipsKeysByUnitType(unitType, isNeedOnlyNewbieTips) {
     }
     notExistInARow = 0
 
-    if (isShow && (isLoggedIn.get() || tip.indexof("{{") == null)) // Not show tip with shortcuts while not profile recived
+    if (isShow && (isLoggedIn.get() || tip.indexof("{{") == null)) 
       res.append(key)
   }
   return res
@@ -121,15 +123,15 @@ function getDefaultUnitTypeMask() {
   local res = 0
   let gm = get_game_mode()
   if (gm == GM_DOMINATION || gm == GM_SKIRMISH)
-    res = ::SessionLobby.getRequiredUnitTypesMask() || ::SessionLobby.getUnitTypesMask()
+    res = getRoomRequiredUnitTypesMask() || getRoomUnitTypesMask()
   else if (gm == GM_TEST_FLIGHT) {
     if (showedUnit.value)
       res = showedUnit.value.unitType.bit
   }
   else if (isInArray(gm, [GM_SINGLE_MISSION, GM_CAMPAIGN, GM_DYNAMIC, GM_BUILDER, GM_DOMINATION]))
     res = unitTypes.AIRCRAFT.bit
-  else // keep this check last
-    res = ::get_mission_allowed_unittypes_mask(getUrlOrFileMissionMetaInfo(currentCampaignMission.get() ?? "", gm))
+  else 
+    res = getMissionAllowedUnittypesMask(getUrlOrFileMissionMetaInfo(currentCampaignMission.get() ?? "", gm))
 
   return (res & existTipsMask) || existTipsMask
 }
@@ -161,7 +163,7 @@ function generateNewTip(unitTypeMask = 0) {
     return
   }
 
-  // choose new tip
+  
   local newTipIdx = 0
   if (totalTips > 1) {
     let tipsToChoose = (curTipIdx >= 0) ? (totalTips - 1) : totalTips
@@ -171,7 +173,7 @@ function generateNewTip(unitTypeMask = 0) {
   }
   curTipIdx = newTipIdx
 
-  // get lang for chosen tip
+  
   local tipIdx = curTipIdx
   foreach (unitTypeBit, keys in bitToTipKeys) {
     if (!(unitTypeBit & unitTypeMask))
@@ -182,10 +184,10 @@ function generateNewTip(unitTypeMask = 0) {
       continue
     }
 
-    // found tip
+    
     curTip = loc($"{TIP_LOC_KEY_PREFIX}{keys[tipIdx]}")
 
-    // add unit type icon if needed
+    
     if (unitTypeBit != GLOBAL_LOADING_TIP_BIT && stdMath.number_of_set_bits(unitTypeMask) > 1) {
       let icon = unitTypes.getByBit(unitTypeBit).fontIcon
       curTip = $"{colorize("fadedTextColor", icon)} {curTip}"

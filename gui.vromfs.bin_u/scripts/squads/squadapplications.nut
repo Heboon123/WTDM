@@ -6,15 +6,16 @@ let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let { requestUsersInfo } = require("%scripts/user/usersInfoManager.nut")
 let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { addPopup } = require("%scripts/popups/popups.nut")
+let { getContact } = require("%scripts/contacts/contacts.nut")
 
 let applicationsList = persist("applicationsList", @() {})
 let popupTextColor = "@chatTextInviteColor"
 
 let SquadApplicationsList = freeze({
 
-/*************************************************************************************************/
-/*************************************PUBLIC FUNCTIONS *******************************************/
-/*************************************************************************************************/
+
+
+
 
   function addApplication(squadId, leaderId, isEventNeed = true) {
     if (squadId in applicationsList)
@@ -51,7 +52,7 @@ let SquadApplicationsList = freeze({
     foreach (squadId in applicationsArr) {
       if (!(squadId in applicationsList)) {
         leadersArr.append(squadId)
-        this.addApplication(squadId, squadId, false) // warning disable: -param-pos
+        this.addApplication(squadId, squadId, false) 
         isEventNeed = true
       }
     }
@@ -89,9 +90,9 @@ let SquadApplicationsList = freeze({
     return (leaderId in applicationsList)
   }
 
-/*************************************************************************************************/
-/************************************PRIVATE FUNCTIONS *******************************************/
-/*************************************************************************************************/
+
+
+
 
   function createApplication(squadId, leaderId) {
     return {
@@ -113,7 +114,7 @@ let SquadApplicationsList = freeze({
   }
 
   function getLeaderName(leaderId) {
-    let leaderContact = ::getContact(leaderId.tostring())
+    let leaderContact = getContact(leaderId.tostring())
     if (!leaderContact)
       return ""
 

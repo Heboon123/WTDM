@@ -3,7 +3,7 @@ let u = require("%sqStdLibs/helpers/u.nut")
 
 let DataBlock = require("DataBlock")
 
-::UrlMission <- class {
+let UrlMission = class {
   name = ""
   url = ""
   hasErrorByLoading = false
@@ -17,8 +17,8 @@ let DataBlock = require("DataBlock")
     "hasErrorByLoading"
   ]
 
-  //constructor(name, url) - create new UrlMission with name and url listed in params
-  //constructor(DataBlock) - load all params from DataBlock
+  
+  
   constructor(param1, param2 = null) {
     if (u.isDataBlock(param1))
       return this.loadFromBlk(param1)
@@ -55,3 +55,5 @@ let DataBlock = require("DataBlock")
     return this.name.len() > 0 && this.url.len() > 0
   }
 }
+
+return { UrlMission }

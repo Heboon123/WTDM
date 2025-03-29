@@ -5,10 +5,11 @@ require RadarHud
 require strings
 require FlightModelWrap
 require HeroManager
+require app
 require Unit
 require math
 require GamePhys
-require %rGui.utils.constants
+require %rGui.utils.constants_common
 require DagorSystem
 
 let gridColor = E3DCOLOR(0xFF0000FF)
@@ -30,7 +31,7 @@ def setup_radar_data(props : Properties&; var storage : CanvasParams&)
   storage.fontSize = props |> getInt("fontSize", 20)
   storage.lineWidth = props |> getFloat("lineWidth", 1.) * 2.
 
-[export]
+[export, unused_argument(rstate)]
 def draw_radar_hud(var ctx : GuiContext&; rdata : ElemRenderData& const; rstate : RenderState& const; data : CanvasParams&)
   if !get_radar_hud_mfd_radar_enabled()
     return
@@ -84,10 +85,6 @@ def draw_grid(var ctx : GuiContext&; pos : float2; size : float2; data : CanvasP
   let dist3StrBox = get_str_bbox(dist3Str, dist3Str |> length(), fctx)
   ctx |> goto_xy(pos.x + size.x * 0.01, pos.y + size.y * 0.75 + dist3StrBox.width.y)
   ctx |> draw_str_scaled(1.0, dist3Str, dist3Str |> length())
-
-def norm_ang(a : float) : float// [0..TWOPI]
-  let na = a < 0. ? a + 2. * PI : a
-  return na - 2. * PI * floor(na / (2. * PI))
 
 def draw_fly_info(var ctx : GuiContext&; pos : float2; size : float2; data : CanvasParams&)
   let hero = get_controlled_hero()
@@ -219,6 +216,11 @@ def draw_target_info(var ctx : GuiContext&; pos : float2; size : float2; data : 
   ctx |> set_font(data.fontId, 0, 0)
   ctx |> set_font_ht(data.fontSize)
 
+  if target.typeId != ""
+    let idText = loc(target.typeId)
+    ctx |> goto_xy(pos.x + size.x * 0.14, pos.y + size.y * 0.8)
+    ctx |> draw_str_scaled(1.0, idText, idText |> length())
+
   let unit = get_unit(int(target.id))
   if unit == null || unit.isDelayed
     return
@@ -234,9 +236,6 @@ def draw_target_info(var ctx : GuiContext&; pos : float2; size : float2; data : 
   ctx |> render_frame(pos.x + size.x * 0.3 - 5., pos.y - 8. - aBox.width.y, pos.x + size.x * 0.3 + aBox.width.x + 5., pos.y, data.lineWidth)
 
   ctx |> set_color(whiteColor)
-  let small = "SMALL"
-  ctx |> goto_xy(pos.x + size.x * 0.14, pos.y + size.y * 0.8)
-  ctx |> draw_str_scaled(1.0, small, small |> length())
 
   let spd = "{roundi(unit.speed * mpsToKnots)}KT"
   ctx |> goto_xy(pos.x + size.x * 0.25, pos.y + size.y * 0.8)

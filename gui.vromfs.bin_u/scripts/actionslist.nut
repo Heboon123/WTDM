@@ -8,37 +8,44 @@ let { getSelectedChild, setPopupMenuPosAndAlign } = require("%sqDagui/daguiUtil.
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { move_mouse_on_child, move_mouse_on_obj, handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
+let { removeAllGenericTooltip } = require("%scripts/utils/genericTooltip.nut")
+let { hideTooltip } = require("%scripts/utils/delayedTooltip.nut")
 
 const __al_item_obj_tpl = "%gui/actionsList/actionsListItem.tpl"
 
-/*
-  API
-    ActionsList.create(parent, params)
-      parent - an object, in which will be created ActionsList.
-        No need to make a special object for ActionsList.
-        ActionList will be aligned on border of parent in specified side
 
-      params = {
-        orientation = ALIGN.TOP
 
-        handler = null - handler, which implemets functions, specified in func
-          field of actions.
 
-        actions = [
-          {
-            // icon = ""
-            text = ""
-            action = function (){}
-            // show = function (){return true}
-            // selected = false
-          }
 
-          ...
 
-        ]
-      }
 
-*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function isActionListParamsValid(params) {
+  return (params?.infoBlock != null || ((params?.actions.len() ?? 0) > 0))
+}
+
 gui_handlers.ActionsList <- class (BaseGuiHandler) {
   wndType = handlerType.CUSTOM
   sceneBlkName = "%gui/actionsList/actionsListBlock.blk"
@@ -52,8 +59,15 @@ gui_handlers.ActionsList <- class (BaseGuiHandler) {
   static function open(v_parentObj, v_params) {
     if (!checkObj(v_parentObj)
       || v_parentObj.getFinalProp("refuseOpenHoverMenu") == "yes"
-      || gui_handlers.ActionsList.hasActionsListOnObject(v_parentObj))
+      || gui_handlers.ActionsList.hasActionsListOnObject(v_parentObj)
+      || !isActionListParamsValid(v_params))
       return
+
+    let actionList = handlersManager.findHandlerClassInScene(gui_handlers.ActionsList)
+    if (actionList && actionList.scene.isValid()) {
+      actionList.close()
+      actionList.scene.getScene()?.destroyElement(actionList.scene)
+    }
 
     let params = {
       scene = v_parentObj
@@ -73,44 +87,66 @@ gui_handlers.ActionsList <- class (BaseGuiHandler) {
     this.scene.closeOnUnhover = this.closeOnUnhover ? "yes" : "no"
     this.fillList()
     this.updatePosition()
+    if (this.params?.needCloseTooltips) {
+      removeAllGenericTooltip()
+      hideTooltip()
+    }
   }
 
   function fillList() {
-    if (!("actions" in this.params) || this.params.actions.len() <= 0)
-      return this.goBack()
+    if (this.params?.cssParams)
+      foreach (param, val in this.params.cssParams)
+        this.scene[param] = val
 
-    let nest = this.scene.findObject("list_nest")
-
-    local isIconed = false
-    foreach (_idx, action in this.params.actions) {
-      let show = action?.show ?? true
-      if (!("show" in action))
-        action.show <- show
-
-      action.text <- (action?.text ?? "").replace(" ", nbsp)
-
-      isIconed = isIconed || (show && action?.icon != null)
+    if (this.params?.infoBlock) {
+      let infoBlock = this.scene.findObject("info_block")
+      let infoData = this.params.infoBlock
+      this.guiScene.replaceContentFromText(infoBlock, infoData, infoData.len(), this)
     }
+
+    this.scene.hasActions = (this.params?.actions.len() ?? 0) == 0 ? "no" : "yes"
+    let nest = this.scene.findObject("list_nest")
+    local isIconed = false
+    local isVisibleActionFinded = false
+    if (this.params?.actions)
+      foreach (action in this.params.actions) {
+        if (action?.show == null)
+          action.show <- true
+        action.haveSeparator <- isVisibleActionFinded
+        isVisibleActionFinded = isVisibleActionFinded || action.show
+        action.text <- (action?.text ?? "").replace(" ", nbsp)
+        isIconed = isIconed || (action.show && action?.icon != null)
+      }
     this.scene.iconed = isIconed ? "yes" : "no"
 
     let data = handyman.renderCached(__al_item_obj_tpl, this.params)
     this.guiScene.replaceContentFromText(nest, data, data.len(), this)
 
-    // Temp Fix, DaGui cannot recalculate childrens width according to parent after replaceContent
-    local maxWidth = 0
-    for (local i = 0; i < nest.childrenCount(); i++)
-      maxWidth = max(maxWidth, nest.getChild(i).getSize()[0])
+    
+    local maxWidth = this.scene.getSize()[0]
+    for (local i = 0; i < nest.childrenCount(); i++) {
+      let child = nest.getChild(i)
+      if (child?.getFinalProp("isActionsListButton") == "no")
+        continue
+      maxWidth = max(maxWidth, child.getSize()[0])
+    }
     nest.width = maxWidth
+
+    if (this.params?.infoBlock && (this.params?.actions.len() ?? 0) > 0) {
+      let infoBlockSeparator = this.scene.findObject("info_block_separator")
+      infoBlockSeparator.show(true)
+      infoBlockSeparator.size = $"{maxWidth} - 2@sf/@pf, 1@sf/@pf"
+    }
 
     if (showConsoleButtons.value)
       this.guiScene.performDelayed(this, function () {
-        if (!checkObj(nest))
+        if (!nest.isValid())
           return
 
-        let selIdx = this.params.actions.findindex(@(action) (action?.selected ?? false) && (action?.show ?? false)) ?? -1
+        let selIdx = this.params?.actions.findindex(@(action) (action?.selected ?? false) && (action?.show ?? false)) ?? -1
         this.guiScene.applyPendingChanges(false)
         move_mouse_on_child(nest, max(selIdx, 0))
-        this.updatePosition() // after calling move_mouse_on_child the position can change, cause there is scrollToView() call
+        this.updatePosition() 
       })
   }
 
@@ -155,7 +191,7 @@ gui_handlers.ActionsList <- class (BaseGuiHandler) {
 
   function close() {
     this.goBack()
-    broadcastEvent("ClosedUnitItemMenu")
+    broadcastEvent("ClosedActionsList", {listParent = this.parentObj})
   }
 
   function onFocus(obj) {

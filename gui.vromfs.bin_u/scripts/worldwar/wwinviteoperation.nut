@@ -9,14 +9,18 @@ let { get_charserver_time_sec } = require("chard")
 let { registerInviteClass, findInviteClass } = require("%scripts/invites/invitesClasses.nut")
 let BaseInvite = require("%scripts/invites/inviteBase.nut")
 let { isInMenu } = require("%scripts/baseGuiHandlerManagerWT.nut")
-let { updateNewInvitesAmount } = require("%scripts/invites/invites.nut")
+let { updateNewInvitesAmount, findInviteByUid, showExpiredInvitePopup, removeInvite
+} = require("%scripts/invites/invites.nut")
+let { getContact } = require("%scripts/contacts/contacts.nut")
+let { queues } = require("%scripts/queue/queueManager.nut")
+
 let g_world_war = require("%scripts/worldWar/worldWarUtils.nut")
 
-function removeInvite(operationId) {
+function removeInviteToOperation(operationId) {
   let uid = findInviteClass("Operation")?.getUidByParams({ mail = { operationId = operationId } })
-  let invite = ::g_invites.findInviteByUid(uid)
+  let invite = findInviteByUid(uid)
   if (invite)
-    ::g_invites.remove(invite)
+    removeInvite(invite)
 }
 
 const WW_OPERATION_INVITE_EXPIRE_SEC = 3600
@@ -69,7 +73,7 @@ let Operation = class (BaseInvite) {
   }
 
   function updateInviterContact() {
-    this.senderContact = ::getContact(this.senderId)
+    this.senderContact = getContact(this.senderId)
     this.updateInviterName()
   }
 
@@ -102,14 +106,14 @@ let Operation = class (BaseInvite) {
 
   function implAccept() {
     if (this.isOutdated()) {
-      ::g_invites.showExpiredInvitePopup()
+      showExpiredInvitePopup()
       return
     }
 
     let onSuccess = Callback(function() {
         this.isAccepted = true
         this.remove()
-        removeInvite(this.operationId)
+        removeInviteToOperation(this.operationId)
         if (this.mailId)
           notifyMailRead(this.mailId)
     }, this)
@@ -124,7 +128,7 @@ let Operation = class (BaseInvite) {
       return
 
     let acceptCallback = Callback(this.implAccept, this)
-    let callback = function () { ::queues.checkAndStart(acceptCallback, null, "isCanNewflight") }
+    let callback = function () { queues.checkAndStart(acceptCallback, null, "isCanNewflight") }
     let canJoin = ::g_squad_utils.canJoinFlightMsgBox(
       { isLeaderCanJoin = true, msgId = "squad/leave_squad_for_invite" },
       callback
@@ -145,7 +149,7 @@ let Operation = class (BaseInvite) {
 
     this.isRejected = true
     this.remove()
-    removeInvite(this.operationId)
+    removeInviteToOperation(this.operationId)
   }
 }
 

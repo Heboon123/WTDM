@@ -18,6 +18,8 @@ let { KeyboardAxis } = require("%scripts/controls/input/keyboardAxis.nut")
 let { Axis } = require("%scripts/controls/input/axis.nut")
 let { DoubleAxis } = require("%scripts/controls/input/doubleAxis.nut")
 let { InputImage } = require("%scripts/controls/input/image.nut")
+let { joystickGetCurSettings, getShortcuts } = require("%scripts/controls/controlsCompatibility.nut")
+let { getCurrentHelpersMode } = require("%scripts/controls/controlsUtils.nut")
 
 function getNullInput(shortcutId, showShortcutsNameIfNotAssign) {
   let nullInput = NullInput()
@@ -82,7 +84,7 @@ function isAssignedToJoyAxis(shortcutId) {
 }
 
 function isAssignedToAxis(shortcutId, showKeyBoardShortcutsForMouseAim = false) {
-  let isMouseAimMode = ::getCurrentHelpersMode() == globalEnv.EM_MOUSE_AIM
+  let isMouseAimMode = getCurrentHelpersMode() == globalEnv.EM_MOUSE_AIM
   if ((!showKeyBoardShortcutsForMouseAim || !isMouseAimMode)
     && isAxisBoundToMouse(shortcutId))
     return true
@@ -123,7 +125,7 @@ g_shortcut_type._getDeviceAxisDescription <- function _getDeviceAxisDescription(
     inverse = false
   }
 
-  let joyParams = ::joystick_get_cur_settings()
+  let joyParams = joystickGetCurSettings()
   let axisIndex = getShortcutById(shortcutId)?.axisIndex ?? -1
   if (axisIndex < 0)
     return result
@@ -149,27 +151,27 @@ g_shortcut_type.template <- {
   isAssigned = function (_shortcutId, _preset = null) { return false }
 
 
-  /**
-   * Expands complex shortcuts and axes to most suitable
-   * list of common shortcuts or axis for display
-   */
+  
+
+
+
   expand = function (shortcutId, _showKeyBoardShortcutsForMouseAim) { return [shortcutId] }
 
 
-  /**
-   * @return array of Input instances
-   * Array contains atlast one element (NullInput)
-   */
+  
+
+
+
   getInputs = kwarg(function getInputs(shortcutId, _preset = null,
     _isMouseHigherPriority = true, showShortcutsNameIfNotAssign = false) {
     return [getNullInput(shortcutId, showShortcutsNameIfNotAssign)]
   })
 
 
-  /**
-   * @return first Input for @shortcutId or NullInput.
-   * Also tries to find input with most suitable device type.
-   */
+  
+
+
+
   getFirstInput = function (shortcutId, preset = null, showShortcutsNameIfNotAssign = false) {
     let inputs = this.getInputs({
       shortcutId
@@ -201,12 +203,12 @@ enumsAddTypes(g_shortcut_type, {
     }
 
     isAssigned = function (shortcutId, preset = null) {
-      return isShortcutMapped(::get_shortcuts([shortcutId], preset)[0])
+      return isShortcutMapped(getShortcuts([shortcutId], preset)[0])
     }
 
     getInputs = kwarg(function getInputs(shortcutId, preset = null,
       _isMouseHigherPriority = true, showShortcutsNameIfNotAssign = false) {
-      let rawShortcutData = ::get_shortcuts([shortcutId], preset)[0]
+      let rawShortcutData = getShortcuts([shortcutId], preset)[0]
 
       if (!rawShortcutData)
         return [getNullInput(shortcutId, showShortcutsNameIfNotAssign)]
@@ -238,7 +240,7 @@ enumsAddTypes(g_shortcut_type, {
 
     getUseAxisShortcuts = function (axisIdsArray, axisInput, preset = null) {
       let buttons = []
-      let activeAxes = ::get_shortcuts(axisIdsArray, preset)
+      let activeAxes = getShortcuts(axisIdsArray, preset)
 
       if (axisInput.deviceId == STD_MOUSE_DEVICE_ID && axisIdsArray.len() > 0) {
         let hotKey = this.commonShortcutActiveAxis?[axisIdsArray[0]]
@@ -294,19 +296,19 @@ enumsAddTypes(g_shortcut_type, {
       return this.getUseAxisShortcuts([shortcutId], Axis(axisDescription, AXIS_MODIFIERS.NONE, preset), preset)
     })
 
-    commonShortcutActiveAxis =    //when axis are activated by common shortcut
+    commonShortcutActiveAxis =    
     {
-      camx            = @() ::get_shortcuts(["ID_CAMERA_NEUTRAL"])
-      camy            = @() ::get_shortcuts(["ID_CAMERA_NEUTRAL"])
-      gm_camx         = @() ::get_shortcuts(["ID_CAMERA_NEUTRAL"])
-      gm_camy         = @() ::get_shortcuts(["ID_CAMERA_NEUTRAL"])
-      ship_camx       = @() ::get_shortcuts(["ID_CAMERA_NEUTRAL"])
-      ship_camy       = @() ::get_shortcuts(["ID_CAMERA_NEUTRAL"])
-      helicopter_camx = @() ::get_shortcuts(["ID_CAMERA_NEUTRAL"])
-      helicopter_camy = @() ::get_shortcuts(["ID_CAMERA_NEUTRAL"])
-      submarine_camx  = @() ::get_shortcuts(["ID_CAMERA_NEUTRAL"])
-      submarine_camy  = @() ::get_shortcuts(["ID_CAMERA_NEUTRAL"])
-      //
+      camx            = @() getShortcuts(["ID_CAMERA_NEUTRAL"])
+      camy            = @() getShortcuts(["ID_CAMERA_NEUTRAL"])
+      gm_camx         = @() getShortcuts(["ID_CAMERA_NEUTRAL"])
+      gm_camy         = @() getShortcuts(["ID_CAMERA_NEUTRAL"])
+      ship_camx       = @() getShortcuts(["ID_CAMERA_NEUTRAL"])
+      ship_camy       = @() getShortcuts(["ID_CAMERA_NEUTRAL"])
+      helicopter_camx = @() getShortcuts(["ID_CAMERA_NEUTRAL"])
+      helicopter_camy = @() getShortcuts(["ID_CAMERA_NEUTRAL"])
+      submarine_camx  = @() getShortcuts(["ID_CAMERA_NEUTRAL"])
+      submarine_camy  = @() getShortcuts(["ID_CAMERA_NEUTRAL"])
+      
 
 
 
@@ -353,7 +355,7 @@ enumsAddTypes(g_shortcut_type, {
       if (shortcutId.indexof("=min") != null)
         return $"{fullAxisId}_rangeMin"
 
-      //actualy imposible situation if isAssigned used befor expand
+      
       return ""
     }
 
@@ -411,7 +413,7 @@ enumsAddTypes(g_shortcut_type, {
         return [shortcutId]
       else if (isAxisAssignedToShortcuts(fullAxisId))
         return [this.transformHalfAxisToShortcuts(shortcutId)]
-      else // if mouseAxisAssigned
+      else 
         return [shortcutId]
     }
 

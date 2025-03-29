@@ -16,7 +16,9 @@ let { getCrewsListByCountry } = require("%scripts/slotbar/slotbarState.nut")
 let { getCrewUnit } = require("%scripts/crew/crew.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { unitNameForWeapons } = require("%scripts/weaponry/unitForWeapons.nut")
-let { isProfileReceived } = require("%scripts/login/loginStates.nut")
+let { isProfileReceived } = require("%appGlobals/login/loginState.nut")
+let { enable_current_modifications } = require("%scripts/weaponry/weaponryActions.nut")
+let UnitBulletsManager = require("%scripts/weaponry/unitBulletsManager.nut")
 
 let esUnitTypeMisNameMap = {
   [ES_UNIT_TYPE_SHIP] = "tutorial_destroyer_battle_arcade",
@@ -94,10 +96,10 @@ function startFleetTrainingMission() {
   set_gui_option(USEROPT_AIRCRAFT, unitName)
   set_gui_option(USEROPT_WEAPONS, "")
   set_gui_option(USEROPT_SKIN, "default")
-  ::UnitBulletsManager(unit).updateBulletCountOptions()
+  UnitBulletsManager(unit).updateBulletCountOptions()
 
   enable_bullets_modifications(unitName)
-  ::enable_current_modifications(unitName)
+  enable_current_modifications(unitName)
 
   currentCampaignMission.set(misName)
   let misBlk = get_meta_mission_info_by_name(misName)

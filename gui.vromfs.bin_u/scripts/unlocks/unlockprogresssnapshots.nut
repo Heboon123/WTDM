@@ -5,7 +5,7 @@ let { isDataBlock } = require("%sqstd/underscore.nut")
 let { convertBlk } = require("%sqstd/datablock.nut")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
-let { isProfileReceived } = require("%scripts/login/loginStates.nut")
+let { isProfileReceived } = require("%appGlobals/login/loginState.nut")
 
 const SAVE_ID = "unlock_progress_snapshots"
 
@@ -53,7 +53,7 @@ function onFavoriteUnlocksChanged(params) {
     return
 
   idToSnapshot.$rawdelete(changedId)
-  idToSnapshot = idToSnapshot.filter(@(_, k) isUnlockFav(k)) // validation
+  idToSnapshot = idToSnapshot.filter(@(_, k) isUnlockFav(k)) 
   saveLocalAccountSettings(SAVE_ID, idToSnapshot)
 }
 

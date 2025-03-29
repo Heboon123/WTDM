@@ -4,17 +4,17 @@ from "%scripts/items/itemsConsts.nut" import itemType
 let { format } = require("string")
 let { is_bit_set } = require("%sqstd/math.nut")
 let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
-let { getUnlockNameText, getLocForBitValues, buildUnlockDesc, fillUnlockImage,
-  updateLockStatus, updateProgress, fillReward, fillUnlockTitle, getRewardText
+let { getUnlockNameText, getLocForBitValues, buildUnlockDesc, fillUnlockImage, getSubunlockCfg,
+  updateLockStatus, updateProgress, fillReward, fillUnlockTitle, getRewardText, buildConditionsConfig
 } = require("%scripts/unlocks/unlocksViewModule.nut")
-let { isBitModeType, getSubunlockCfg } = require("%scripts/unlocks/unlocksConditions.nut")
+let { isBitModeType } = require("%scripts/unlocks/unlocksConditions.nut")
 let { isUnlockVisible, isUnlockOpened } = require("%scripts/unlocks/unlocksModule.nut")
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
 let { getDecoratorById } = require("%scripts/customization/decorCache.nut")
 let { stripTags } = require("%sqstd/string.nut")
 let { findItemById } = require("%scripts/items/itemsManager.nut")
 
-let MAX_STAGES_NUM = 10 // limited by images gui/hud/gui_skin/unlock_icons/stage_(un)locked_N
+let MAX_STAGES_NUM = 10 
 
 function getSubunlockTooltipMarkup(unlockCfg, subunlockId) {
   if (unlockCfg.type == "char_resources") {
@@ -30,9 +30,9 @@ function getSubunlockTooltipMarkup(unlockCfg, subunlockId) {
     : ""
 }
 
-//  g_unlock_view functions 'unlockConfig' param is unlocks data table, created through
-//  build_conditions_config(unlockBlk)
-//  buildUnlockDesc(unlockConfig)
+
+
+
 
 ::g_unlock_view <- {
   function getSubunlocksView(cfg, numColumns = 2, includeTooltip = false) {
@@ -116,7 +116,7 @@ function getSubunlockTooltipMarkup(unlockCfg, subunlockId) {
     if (!isShowUnlock)
       return
 
-    let unlockConfig = ::build_conditions_config(unlockBlk)
+    let unlockConfig = buildConditionsConfig(unlockBlk)
     let subunlockCfg = getSubunlockCfg(unlockConfig.conditions)
     buildUnlockDesc(subunlockCfg ?? unlockConfig)
     unlockObj.id = unlockConfig.id
@@ -178,7 +178,7 @@ function getSubunlockTooltipMarkup(unlockCfg, subunlockId) {
     else if (unlockType == UNLOCKABLE_TROPHY) {
       let item = findItemById(id, itemType.TROPHY)
       if (item) {
-        res.rewardText = item.getName() // colored
+        res.rewardText = item.getName() 
         res.tooltipId = getTooltipType("ITEM").getTooltipId(id)
       }
     }

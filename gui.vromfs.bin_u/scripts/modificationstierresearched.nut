@@ -14,6 +14,7 @@ let activityFeedPostFunc = require("%scripts/social/activityFeed/activityFeedPos
 let { getCountryFlagImg } = require("%scripts/options/countryFlagsPreset.nut")
 let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { getCurCircuitOverride } = require("%appGlobals/curCircuitOverride.nut")
+let { checkNonApprovedResearches } = require("%scripts/researches/researchActions.nut")
 
 function guiStartModTierResearched(config) {
   foreach (param, value in config) {
@@ -50,8 +51,8 @@ gui_handlers.ModificationsTierResearched <- class (gui_handlers.BaseGuiHandlerWT
     if (!this.expReward)
       this.expReward = Cost()
 
-    if (u.isArray(this.unitInResearch))  //fix crash, but need to fix combine function to correct show multiple researched units
-      this.unitInResearch = this.unitInResearch[0] //but this is a really reare case, maybe no need to care about
+    if (u.isArray(this.unitInResearch))  
+      this.unitInResearch = this.unitInResearch[0] 
 
     let isLastResearchedModule = shop_get_researchable_module_name(this.unit.name) == ""
     local locTextId = "modifications/full_tier_researched"
@@ -140,7 +141,7 @@ gui_handlers.ModificationsTierResearched <- class (gui_handlers.BaseGuiHandlerWT
 
   function afterModalDestroy() {
     broadcastEvent("UpdateResearchingUnit", { unitName = this.unitInResearch })
-    ::checkNonApprovedResearches(true)
+    checkNonApprovedResearches(true)
     activityFeedPostFunc(this.postConfig, this.postCustomConfig, bit_activity.PS4_ACTIVITY_FEED)
   }
 

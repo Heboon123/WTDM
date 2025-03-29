@@ -11,21 +11,19 @@ let { USEROPT_COUNTRY } = require("%scripts/options/optionsExtNames.nut")
 let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
 let { MAX_COUNTRY_RANK } = require("%scripts/ranks.nut")
 
-::g_qi_view_utils <- {
-  function getQueueInfo(queue, txt = null) {
-    if (!queue)
-      return ""
-    // Add new line of extended text about wait time if it is not default message text.
-    let addLine = txt ? $"\n{loc("yn1/waiting_time")}" : ""
-    local msg = txt ? txt : loc("yn1/wait_for_session")
-    let waitTime = queue ? queue.getActiveTime().tointeger() : 0
-    if (waitTime > 0)
-      msg = "".concat(msg, addLine, loc("ui/colon"), time.secondsToString(waitTime, false))
-    return msg
-  }
+function getQueueInfo(queue, txt = null) {
+  if (!queue)
+    return ""
+  
+  let addLine = txt ? $"\n{loc("yn1/waiting_time")}" : ""
+  local msg = txt ? txt : loc("yn1/wait_for_session")
+  let waitTime = queue ? queue.getActiveTime().tointeger() : 0
+  if (waitTime > 0)
+    msg = "".concat(msg, addLine, loc("ui/colon"), time.secondsToString(waitTime, false))
+  return msg
 }
 
-::g_qi_view_utils.createViewByCountries <- function createViewByCountries(nestObj, queue, event) {
+function createQueueViewByCountries(nestObj, queue, event) {
   let needRankInfo = events.needRankInfoInQueue(event)
   let headerColumns = []
   let view = {
@@ -44,13 +42,13 @@ let { MAX_COUNTRY_RANK } = require("%scripts/ranks.nut")
     ]
   }
 
-  //fillheader
+  
   foreach (_i, countryName in shopCountriesList)
     headerColumns.append({
       image = getCountryIcon(countryName, false, !events.isCountryAvailable(event, countryName))
     })
 
-  //fillrank rows
+  
   let myCountry = ::queues.getQueueCountry(queue)
   let myRank = ::queues.getMyRankInQueue(queue)
   let countriesSets = events.getAllCountriesSets(event)
@@ -82,10 +80,10 @@ let { MAX_COUNTRY_RANK } = require("%scripts/ranks.nut")
   }
 
   let markup = handyman.renderCached("%gui/queue/queueTableByCountries.tpl", view)
-  nestObj.getScene().replaceContentFromText(nestObj, markup, markup.len(), this)
+  nestObj.getScene().replaceContentFromText(nestObj, markup, markup.len(), {})
 }
 
-::g_qi_view_utils.updateViewByCountries <- function updateViewByCountries(nestObj, queue, curCluster) {
+function updateQueueViewByCountries(nestObj, queue, curCluster) {
   let queueStats = queue && queue.queueStats
   if (!queueStats)
     return
@@ -116,16 +114,22 @@ let { MAX_COUNTRY_RANK } = require("%scripts/ranks.nut")
   }
 }
 
-//update text and icon of queue each second until all queues finish.
-::g_qi_view_utils.updateShortQueueInfo <- function updateShortQueueInfo(timerObj, textObj, iconObj, txt = null) {
+
+function updateShortQueueInfo(timerObj, textObj, iconObj, txt = null) {
   if (!checkObj(timerObj))
     return
   SecondsUpdater(timerObj,  function(_obj, _p) {
-    let queue = ::queues.findQueue({}) //first active queue
+    let queue = ::queues.findQueue({}) 
     if (checkObj(textObj))
-      textObj.setValue(::g_qi_view_utils.getQueueInfo(queue, txt))
+      textObj.setValue(getQueueInfo(queue, txt))
     if (checkObj(iconObj))
       iconObj.show(!!queue)
     return !queue
   })
+}
+
+return {
+  createQueueViewByCountries
+  updateQueueViewByCountries
+  updateShortQueueInfo
 }

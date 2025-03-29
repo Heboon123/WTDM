@@ -5,9 +5,9 @@ let platformModule = require("%scripts/clientState/platform.nut")
 let crossplayModule = require("%scripts/social/crossplay.nut")
 let { hasChat } = require("%scripts/user/matchingFeature.nut")
 let { isGuestLogin } = require("%scripts/user/profileStates.nut")
-let { check_communications_privilege, check_crossnetwork_communications_permission, CommunicationState } = require("%scripts/xbox/permissions.nut")
+let { check_communications_privilege, check_crossnetwork_communications_permission, CommunicationState } = require("%scripts/gdk/permissions.nut")
 let { getContactByName } = require("%scripts/contacts/contactsManager.nut")
-let { isLoggedIn } = require("%scripts/login/loginStates.nut")
+let { isLoggedIn } = require("%appGlobals/login/loginState.nut")
 let { isPlayerInFriendsGroup } = require("%scripts/contacts/contactsChecks.nut")
 
 function getXboxChatEnableStatus() {
@@ -28,9 +28,9 @@ function isChatEnabled(needOverlayMessage = false) {
   return getXboxChatEnableStatus() != CommunicationState.Blocked
 }
 
-// Two funcitons below were made to workaround global variables usage check
-// These checks are introduced for good reasons, but this commit is not
-// intended to reduce global variables usage
+
+
+
 function is_player_in_friends_group(uid, searchByUid, playerNick) {
   return isPlayerInFriendsGroup(uid, searchByUid, playerNick)
 }
@@ -48,7 +48,7 @@ function isCrossNetworkMessageAllowed(playerName) {
   return crossnetStatus == CommunicationState.Allowed
 }
 
-function checkChatEnableWithPlayer(playerName, callback) { //when you have contact, you can use direct contact.canInteract
+function checkChatEnableWithPlayer(playerName, callback) { 
   let contact = getContactByName(playerName)
   if (contact) {
     contact.checkCanChat(callback)
@@ -85,7 +85,7 @@ function isChatEnableWithPlayer(playerName, comms_state) {
   return isChatEnabled()
 }
 
-function attemptShowOverlayMessage() { //tries to display Xbox overlay message
+function attemptShowOverlayMessage() { 
   check_communications_privilege(true, null)
 }
 

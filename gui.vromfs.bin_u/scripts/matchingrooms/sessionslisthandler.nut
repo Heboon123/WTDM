@@ -1,18 +1,15 @@
 from "%scripts/dagui_library.nut" import *
-import "%scripts/matchingRooms/sessionLobby.nut" as SessionLobby
 from "%scripts/utils_sa.nut" import is_multiplayer
 
 let { getGlobalModule } = require("%scripts/global_modules.nut")
 let g_squad_manager = getGlobalModule("g_squad_manager")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
-let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { move_mouse_on_child_by_value, handlersManager, loadHandler
 } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let fillSessionInfo = require("%scripts/matchingRooms/fillSessionInfo.nut")
 let { suggestAndAllowPsnPremiumFeatures } = require("%scripts/user/psnFeatures.nut")
 let { isGameModeCoop } = require("%scripts/matchingRooms/matchingGameModesUtils.nut")
-let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { setGuiOptionsMode } = require("guiOptions")
 let lobbyStates = require("%scripts/matchingRooms/lobbyStates.nut")
 let { havePremium } = require("%scripts/user/premium.nut")
@@ -21,12 +18,18 @@ let { checkAndShowMultiplayerPrivilegeWarning,
 let { isShowGoldBalanceWarning } = require("%scripts/user/balanceFeatures.nut")
 let { OPTIONS_MODE_SEARCH, USEROPT_SEARCH_GAMEMODE, USEROPT_SEARCH_DIFFICULTY
 } = require("%scripts/options/optionsExtNames.nut")
-let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
-let { sessionLobbyStatus } = require("%scripts/matchingRooms/sessionLobbyState.nut")
-let { create_options_container } = require("%scripts/options/optionsExt.nut")
+let { sessionLobbyStatus, getRoomMembersCnt, getRoomSize, getSessionLobbyGameMode
+} = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { create_options_container, get_option } = require("%scripts/options/optionsExt.nut")
 let { checkAndCreateGamemodeWnd } = require("%scripts/missions/startMissionsList.nut")
 let { matchSearchGm } = require("%scripts/missions/missionsStates.nut")
 let { generatePaginator, hidePaginator } = require("%scripts/viewUtils/paginator.nut")
+let { getRoomsInfoTbl } = require("%scripts/matchingRooms/sessionLobbyInfo.nut")
+let { joinSessionLobbyFoundRoom } = require("%scripts/matchingRooms/sessionLobbyManager.nut")
+let { buildMpTable, countWidthForMpTable } = require("%scripts/statistics/mpStatisticsUtil.nut")
+let { canPlayGamemodeBySquad } = require("%scripts/missions/missionsUtils.nut")
+let { updateVehicleInfoButton } = require("%scripts/vehiclesWindow.nut")
+let MRoomsList = require("%scripts/matchingRooms/mRoomsList.nut")
 
 gui_handlers.SessionsList <- class (gui_handlers.GenericOptions) {
   sceneBlkName = "%gui/sessionsList.blk"
@@ -35,7 +38,7 @@ gui_handlers.SessionsList <- class (gui_handlers.GenericOptions) {
   isCoop = true
 
   sessionsListObj = null
-  //currently visible rooms list
+  
   roomsListData = null
   roomsList = null
   curPageRoomsList = null
@@ -50,7 +53,7 @@ gui_handlers.SessionsList <- class (gui_handlers.GenericOptions) {
 
     this.roomsList = []
     this.curPageRoomsList = []
-    this.roomsListData = ::MRoomsList.getMRoomsListByRequestParams(null) //skirmish when no params
+    this.roomsListData = MRoomsList.getMRoomsListByRequestParams(null) 
 
     this.isCoop = isGameModeCoop(matchSearchGm.get())
     this.scene.findObject("sessions_update").setUserData(this)
@@ -126,7 +129,7 @@ gui_handlers.SessionsList <- class (gui_handlers.GenericOptions) {
     if (!obj)
       return
     let value = obj.getValue()
-    let option = ::get_option(USEROPT_SEARCH_GAMEMODE)
+    let option = get_option(USEROPT_SEARCH_GAMEMODE)
     if (!(value in option.values))
       return
 
@@ -138,7 +141,7 @@ gui_handlers.SessionsList <- class (gui_handlers.GenericOptions) {
       return
 
     let value = obj.getValue()
-    let option = ::get_option(USEROPT_SEARCH_DIFFICULTY)
+    let option = get_option(USEROPT_SEARCH_DIFFICULTY)
     if (!(value in option.values))
       return
 
@@ -184,11 +187,11 @@ gui_handlers.SessionsList <- class (gui_handlers.GenericOptions) {
   }
 
   function sortRoomsList() {
-    //need to add ability to sort rooms by categories chosen by user
-    //but temporary better to sort work at least as it was before from matching
+    
+    
     foreach (room in this.roomsList) {
-      let size = SessionLobby.getRoomSize(room)
-      room._players <- SessionLobby.getRoomMembersCnt(room)
+      let size = getRoomSize(room)
+      room._players <- getRoomMembersCnt(room)
       room._full <- room._players >= size
     }
     this.roomsList.sort(function(a, b) {
@@ -205,9 +208,9 @@ gui_handlers.SessionsList <- class (gui_handlers.GenericOptions) {
     if (this._columnsList)
       return this._columnsList
     if (this.isCoop)
-      this._columnsList = ["hasPassword", "mission", "name", "numPlayers", "gm" /*, "difficultyStr"*/ ]
+      this._columnsList = ["hasPassword", "mission", "name", "numPlayers", "gm"  ]
     else
-      this._columnsList = ["hasPassword", "mission", "name", "numPlayers" /*, "difficultyStr"*/ ]
+      this._columnsList = ["hasPassword", "mission", "name", "numPlayers"  ]
     return this._columnsList
   }
 
@@ -226,7 +229,7 @@ gui_handlers.SessionsList <- class (gui_handlers.GenericOptions) {
         name          = { width = "@nameWidth" }
         numPlayers    = { relWidth = 10 }
         gm            = { relWidth = 20 }
-        //difficultyStr = { width = "0.15pw" }
+        
       }
     }
 
@@ -240,7 +243,7 @@ gui_handlers.SessionsList <- class (gui_handlers.GenericOptions) {
       this._roomsMarkUpData.columns.$rawdelete(id)
 
     if (checkObj(this.sessionsListObj))
-      ::count_width_for_mptable(this.sessionsListObj, this._roomsMarkUpData.columns)
+      countWidthForMpTable(this.sessionsListObj, this._roomsMarkUpData.columns)
 
     return this._roomsMarkUpData
   }
@@ -258,7 +261,7 @@ gui_handlers.SessionsList <- class (gui_handlers.GenericOptions) {
       difficultyStr = "#multiplayer/difficultyShort"
       name = "#multiplayer/game_host"
     }]
-    let headerData = ::build_mp_table(header, this.getRoomsListMarkUpData(), this.getColumnsList())
+    let headerData = buildMpTable(header, this.getRoomsListMarkUpData(), this.getColumnsList())
     this.guiScene.replaceContentFromText(headerObj, headerData, headerData.len(), this)
   }
 
@@ -293,8 +296,8 @@ gui_handlers.SessionsList <- class (gui_handlers.GenericOptions) {
     if (selectedRow < 0 && this.curPageRoomsList.len())
       selectedRow = clamp(this.sessionsListObj.getValue(), 0, this.curPageRoomsList.len() - 1)
 
-    let roomsInfoTbl = SessionLobby.getRoomsInfoTbl(this.curPageRoomsList)
-    let data = ::build_mp_table(roomsInfoTbl, this.getRoomsListMarkUpData(), this.getColumnsList(), roomsInfoTbl.len())
+    let roomsInfoTbl = getRoomsInfoTbl(this.curPageRoomsList)
+    let data = buildMpTable(roomsInfoTbl, this.getRoomsListMarkUpData(), this.getColumnsList(), roomsInfoTbl.len())
     this.sessionsListObj.deleteChildren()
     this.guiScene.appendWithBlk(this.sessionsListObj, data, this)
 
@@ -329,7 +332,7 @@ gui_handlers.SessionsList <- class (gui_handlers.GenericOptions) {
   function updateCurRoomInfo() {
     let room = this.getCurRoom()
     fillSessionInfo(this.scene, room?.public)
-    ::update_vehicle_info_button(this.scene, room)
+    updateVehicleInfoButton(this.scene, room)
 
     let btnObj = this.scene.findObject("btn_select")
     if (checkObj(btnObj))
@@ -364,14 +367,14 @@ gui_handlers.SessionsList <- class (gui_handlers.GenericOptions) {
     if (g_squad_manager.getSquadRoomId() != room.roomId
       && !::g_squad_utils.canJoinFlightMsgBox(
           {
-            isLeaderCanJoin = ::can_play_gamemode_by_squad(SessionLobby.getGameMode(room)),
+            isLeaderCanJoin = canPlayGamemodeBySquad(getSessionLobbyGameMode(room)),
             showOfflineSquadMembersPopup = true
           }
         )
       )
       return
 
-    this.checkedNewFlight(@() SessionLobby.joinFoundRoom(room))
+    this.checkedNewFlight(@() joinSessionLobbyFoundRoom(room))
   }
 
   function onVehiclesInfo(_obj) {
@@ -379,23 +382,4 @@ gui_handlers.SessionsList <- class (gui_handlers.GenericOptions) {
       teamDataByTeamName = getTblValue("public", this.getCurRoom())
     })
   }
-}
-
-::fillCountriesList <- function fillCountriesList(obj, countries, handler = null) {
-  if (!checkObj(obj))
-    return
-
-  if (obj.childrenCount() != shopCountriesList.len()) {
-    let view = {
-      countries = shopCountriesList.map(@(countryName) { countryName = countryName
-          countryIcon = getCountryIcon(countryName)
-        })
-    }
-    let markup = handyman.renderCached("%gui/countriesList.tpl", view)
-    obj.getScene().replaceContentFromText(obj, markup, markup.len(), handler)
-  }
-
-  foreach (idx, country in shopCountriesList)
-    if (idx < obj.childrenCount())
-      obj.getChild(idx).show(isInArray(country, countries))
 }

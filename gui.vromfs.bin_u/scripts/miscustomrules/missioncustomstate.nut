@@ -1,6 +1,6 @@
 from "%scripts/dagui_library.nut" import *
 let { isString } = require("%sqStdLibs/helpers/u.nut")
-let { toUpper } = require("%sqstd/string.nut")
+let { capitalize } = require("%sqstd/string.nut")
 let { addListenersWithoutEnv, CONFIG_VALIDATION, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { get_current_mission_info_cached } = require("blkGetters")
 let { isInFlight } = require("gameplayBinding")
@@ -26,7 +26,7 @@ function getCurMissionRulesName(isDebug = false) {
   return mis?.customRules.guiName ?? mis?.customRules.name
 }
 
-let findRulesClassByName = @(rulesName) getMissionRulesClass(toUpper(rulesName, 1)) ?? getMissionRulesClass("Empty")
+let findRulesClassByName = @(rulesName) getMissionRulesClass(capitalize(rulesName)) ?? getMissionRulesClass("Empty")
 
 function getCurMissionRules(isDebug = false) {
   if (isCurRulesValid)
@@ -60,7 +60,7 @@ function onUserStateChanged(p) {
 
   getCurMissionRules().clearUnitsLimitData()
   broadcastEvent("MyCustomStateChanged")
-  //broadcastEvent("UserCustomStateChanged", { userId64 = userId64 }) //not used ATM but maybe needed in future
+  
 }
 
 eventbus_subscribe("on_custom_mission_state_changed", onMissionStateChanged)

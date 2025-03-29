@@ -55,6 +55,10 @@ let visibleRewards = [
     locId = "expEventScore/missileEvade"
   }
   {
+    id = "eventShellInterception"
+    locId = "expEventScore/shellInterception"
+  }
+  {
     id = "eventCaptureZone"
     locId = "expEventScore/captureZone"
   }
@@ -77,6 +81,10 @@ let visibleRewards = [
   {
     id = "eventScoutKill"
     locId = "expEventScore/scoutKillAny"
+  }
+  {
+    id = "eventReturnSpawnCost"
+    locId = "exp_reasons/return_spawn_cost"
   }
   {
     id = "eventTimedAward"
@@ -121,7 +129,7 @@ return function(logObj) {
       else if (reward.id == "eventBattletime")
         count = ""
 
-      return acc.append({  // -unwanted-modification
+      return acc.append({  
         battleRewardTooltipId = getTooltipType("USER_LOG_REWARD").getTooltipId(logObj.idx, reward.id)
         count
         wp = Cost(totalRewardWp)
@@ -178,7 +186,7 @@ return function(logObj) {
   let newNationUnitBonuses = (isArray(researchPointsUnits) ? researchPointsUnits : [researchPointsUnits])
     .filter(@(unit) unit?.newNationBonusExp)
     .map(@(unit) unit.__merge({
-      exp = null  // for hiding exp column in the plain text
+      exp = null  
       invUnitRank = getRomanNumeralRankByUnitName(unit?.invUnitName) ?? loc("ui/hyphen")
     }))
 

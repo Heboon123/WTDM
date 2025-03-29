@@ -8,6 +8,7 @@ let { getFullUnlockCondsDescInline } = require("%scripts/unlocks/unlocksViewModu
 let { get_cur_base_gui_handler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { addTooltipTypes } = require("%scripts/utils/genericTooltipTypes.nut")
 let {shouldDisguiseItem } = require("%scripts/items/workshop/workshop.nut")
+let { findItemById, findItemByUid } = require("%scripts/items/itemsManager.nut")
 
 function fillItemTable(item, holderObj) {
   let containerObj = holderObj.findObject("item_table_container")
@@ -267,7 +268,7 @@ function updateExpireAlarmIcon(item, itemObj) {
 }
 
 addTooltipTypes({
-  ITEM = { //by item name
+  ITEM = { 
     item = null
     tooltipObj = null
     isCustomTooltipFill = true
@@ -275,7 +276,7 @@ addTooltipTypes({
       if (!checkObj(obj))
         return false
 
-      this.item = ::ItemsManager.findItemById(itemName)
+      this.item = findItemById(itemName)
       if (!this.item)
         return false
 
@@ -308,7 +309,7 @@ addTooltipTypes({
     }
   }
 
-  INVENTORY = { //by inventory item uid
+  INVENTORY = { 
     isCustomTooltipFill = true
     item = null
     tooltipObj = null
@@ -317,7 +318,7 @@ addTooltipTypes({
         return false
 
       this.tooltipObj = obj
-      this.item = ::ItemsManager.findItemByUid(itemUid)
+      this.item = findItemByUid(itemUid)
       if (!this.item)
         return false
 
@@ -344,20 +345,20 @@ addTooltipTypes({
     }
   }
 
-  SUBTROPHY = { //by item Name
+  SUBTROPHY = { 
     isCustomTooltipFill = true
     fillTooltip = function(obj, handler, itemName, ...) {
       if (!checkObj(obj))
         return false
 
-      let item = ::ItemsManager.findItemById(itemName)
+      let item = findItemById(itemName)
       if (!item)
         return false
       let data = item.getLongDescriptionMarkup()
       if (data == "")
         return false
 
-      // Showing only trophy content, without title and icon.
+      
       obj.width = "@itemInfoWidth"
       obj.getScene().replaceContentFromText(obj, data, data.len(), handler)
       return true

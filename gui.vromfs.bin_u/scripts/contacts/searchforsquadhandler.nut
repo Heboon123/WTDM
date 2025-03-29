@@ -19,7 +19,8 @@ let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let ContactsHandler = require("%scripts/contacts/contactsHandler.nut")
 let { isMeNewbie } = require("%scripts/myStats.nut")
 let QUEUE_TYPE_BIT = require("%scripts/queue/queueTypeBit.nut")
-let { queues } = require("%scripts/queue/queueManager.nut")
+let { queues, checkIsInQueue } = require("%scripts/queue/queueManager.nut")
+let { updateClanContacts } = require("%scripts/clans/clanActions.nut")
 
 function guiStartSearchSquadPlayer(_ = null) {
   if (!g_squad_manager.canInviteMember()) {
@@ -132,7 +133,7 @@ gui_handlers.SearchForSquadHandler <- class (ContactsHandler) {
   }
 
   function onEventContactsGroupUpdate(p) {
-    if (p?.groupName == null) //update all groups
+    if (p?.groupName == null) 
       this.updateSearchContactsGroups()
     base.onEventContactsGroupUpdate(p)
   }
@@ -141,7 +142,7 @@ gui_handlers.SearchForSquadHandler <- class (ContactsHandler) {
     this.sg_groups = [EPLX_SEARCH, EPL_FRIENDLIST, EPL_RECENT_SQUAD]
     if (is_in_clan()) {
       this.sg_groups.append(EPLX_CLAN)
-      ::g_clans.updateClanContacts()
+      updateClanContacts()
     }
     if (isPlatformSony) {
       this.sg_groups.insert(2, EPLX_PS4_FRIENDS)
@@ -167,7 +168,7 @@ addPromoButtonConfig({
     if (!show || !checkObj(buttonObj))
       return
 
-    buttonObj.inactiveColor = ::checkIsInQueue() ? "yes" : "no"
+    buttonObj.inactiveColor = checkIsInQueue() ? "yes" : "no"
   }
   updateByEvents = ["QueueChangeState"]
 })

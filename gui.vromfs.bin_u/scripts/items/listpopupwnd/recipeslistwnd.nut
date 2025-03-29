@@ -11,6 +11,7 @@ let u = require("%sqStdLibs/helpers/u.nut")
 let stdMath = require("%sqstd/math.nut")
 let tutorAction = require("%scripts/tutorials/tutorialActions.nut")
 let { findChildIndex, setPopupMenuPosAndAlign } = require("%sqDagui/daguiUtil.nut")
+let { gui_modal_tutor } = require("%scripts/guiTutorial.nut")
 
 local MIN_ITEMS_IN_ROW = 7
 
@@ -23,7 +24,7 @@ gui_handlers.RecipesListWnd <- class (gui_handlers.BaseGuiHandlerWT) {
 
   headerText = ""
   buttonText = "#item/assemble"
-  onAcceptCb = null //if return true, recipes list will not close.
+  onAcceptCb = null 
   alignObj = null
   align = "bottom"
   needMarkRecipes = false
@@ -52,7 +53,7 @@ gui_handlers.RecipesListWnd <- class (gui_handlers.BaseGuiHandlerWT) {
       stdMath.calc_golden_ratio_columns(this.recipesList.len(), recipeWidthPx / (recipeHeightPx || 1)))
     let rows = ceil(this.recipesList.len().tofloat() / columns).tointeger()
 
-    local itemsInRow = 0 //some columns are thinner than max
+    local itemsInRow = 0 
     local columnWidth = 0
     let separatorsIdx = []
     foreach (i, recipe in this.recipesList) {
@@ -116,7 +117,7 @@ gui_handlers.RecipesListWnd <- class (gui_handlers.BaseGuiHandlerWT) {
       shortcut = GAMEPAD_ENTER_SHORTCUT
       cb = @() this.onRecipeApply()
     }]
-    ::gui_modal_tutor(steps, this, true)
+    gui_modal_tutor(steps, this, true)
   }
 
   function selectRecipe() {

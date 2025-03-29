@@ -356,6 +356,12 @@ let directionGroups = [
     lethalRangeMax = 40000.0
   },
   {
+    text = "FLH",
+    type = ThreatType.AI,
+    originalName = "S30",
+    lethalRangeMax = 40000.0
+  },
+  {
     text = "F4",
     type = ThreatType.AI,
     originalName = "F4",
@@ -398,6 +404,12 @@ let directionGroups = [
     lethalRangeMax = 5000.0
   },
   {
+    text = "E2K",
+    type = ThreatType.AI,
+    originalName = "E2K",
+    lethalRangeMax = 40000.0
+  },
+  {
     text = "TRF",
     originalName = "TRF",
     type = ThreatType.AI,
@@ -406,6 +418,12 @@ let directionGroups = [
   {
     text = "M20",
     originalName = "M2K",
+    type = ThreatType.AI,
+    lethalRangeMax = 40000.0
+  },
+  {
+    text = "RFL",
+    originalName = "RFL",
     type = ThreatType.AI,
     lethalRangeMax = 40000.0
   },
@@ -421,7 +439,7 @@ let directionGroups = [
     type = ThreatType.AI,
     lethalRangeMax = 40000.0
   },
-  //
+  
 
 
 

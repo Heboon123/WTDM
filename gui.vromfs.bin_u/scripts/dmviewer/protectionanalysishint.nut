@@ -9,6 +9,7 @@ let { round } = require("math")
 
 let { set_protection_analysis_editing } = require("hangarEventCommand")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
+let dmViewer = require("%scripts/dmViewer/dmViewer.nut")
 
 gui_handlers.ProtectionAnalysisHint <- class (gui_handlers.BaseGuiHandlerWT) {
   wndType = handlerType.CUSTOM
@@ -150,13 +151,11 @@ gui_handlers.ProtectionAnalysisHint <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onDMViewerHintTimer(obj, _dt) {
-    ::dmViewer.placeHint(obj)
+    dmViewer.placeHint(obj)
   }
 }
 
 return {
-  open = function (scene) {
-    if (checkObj(scene))
-      handlersManager.loadHandler(gui_handlers.ProtectionAnalysisHint, { scene = scene })
-  }
+  open = @(scene) !checkObj(scene) ? null
+    : handlersManager.loadHandler(gui_handlers.ProtectionAnalysisHint, { scene })
 }

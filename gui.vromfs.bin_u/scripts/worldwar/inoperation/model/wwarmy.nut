@@ -21,6 +21,9 @@ let { ArmyFlags } = require("worldwarConst")
 let { getIcon } = require("%scripts/worldWar/wwArmyIconOverride.nut")
 let { getArtilleryUnits, getArtilleryUnitParamsByBlk } = require("%scripts/worldWar/worldWarStates.nut")
 
+let fullWidthColunsCount = 4
+let partialWidthColunsCount = 3
+
 local WwArmy
 function getTransportedArmiesData(formation) {
   let armies = []
@@ -45,6 +48,8 @@ let WwArmyView = class {
   name = ""
   hasVersusText = false
   selectedSide = SIDE_NONE
+
+  isMultipleColumns = null
 
   static unitsInArmyRowsMax = 5
 
@@ -105,7 +110,10 @@ let WwArmyView = class {
     return view
   }
 
-  function unitsList() {
+  function getIsMultipleColumns() {
+    if (this.isMultipleColumns != null)
+      return this.isMultipleColumns
+
     let wwUnits = this.formation.getUnits().reduce(function (memo, unit) {
       if (unit.getMaxCount() > 0 || unit.getActiveCount() > 0)
         memo.append(unit)
@@ -114,9 +122,19 @@ let WwArmyView = class {
     let transportedArmiesData = getTransportedArmiesData(this.formation)
     let rowsCount = wwUnits.len() + transportedArmiesData.armies.len()
       + transportedArmiesData.totalUnitsNum
-    let isMultipleColumns = rowsCount > this.unitsInArmyRowsMax
-    let sections = [{ units = wwActionsWithUnitsList.getUnitsListViewParams({ wwUnits = wwUnits }) }]
-    foreach (army in transportedArmiesData.armies)
+    this.isMultipleColumns = rowsCount > this.unitsInArmyRowsMax
+    return this.isMultipleColumns
+  }
+
+  function unitsList() {
+    let wwUnits = this.formation.getUnits().reduce(function (memo, unit) {
+      if (unit.getMaxCount() > 0 || unit.getActiveCount() > 0)
+        memo.append(unit)
+      return memo
+    }, [])
+
+    let sections = [{ units = wwActionsWithUnitsList.getUnitsListViewParams({ wwUnits }) }]
+    foreach (army in getTransportedArmiesData(this.formation).armies)
       sections.append({
         units = wwActionsWithUnitsList.getUnitsListViewParams({ wwUnits = army.getUnits() }),
         title = "".concat(loc("worldwar/transportedArmy"),
@@ -124,23 +142,22 @@ let WwArmyView = class {
             text = army.getOverrideFontIcon() ?? g_ww_unit_type.getUnitTypeFontIcon(army.unitType) }),
           loc("ui/colon"))
       })
-    let view = this.getSectionsView(sections, isMultipleColumns)
+    let view = this.getSectionsView(sections, this.getIsMultipleColumns())
     return handyman.renderCached("%gui/worldWar/worldWarMapArmyInfoUnitsList.tpl", view)
   }
 
-  /** exclude infantry */
-  function unitsCount(excludeInfantry = true, onlyArtillery = false) {
+  
+  function unitsCount(excludeInfantry = true, onlySpecialUnits = false) {
     local res = 0
     foreach (unit in this.formation.getUnits(excludeInfantry))
-      res += (!onlyArtillery || unit.isArtillery()) ? unit.getActiveCount() : 0
-
+      res += (!onlySpecialUnits || (unit.isArtillery() || unit.isBuilding())) ? unit.getActiveCount() : 0
     return res
   }
 
-  function inactiveUnitsCount(excludeInfantry = true, onlyArtillery = false) {
+  function inactiveUnitsCount(excludeInfantry = true, onlySpecialUnits = false) {
     local res = 0
     foreach (unit in this.formation.getUnits(excludeInfantry))
-      res += (!onlyArtillery || unit.isArtillery()) ? unit.inactiveCount : 0
+      res += (!onlySpecialUnits || (unit.isArtillery() || unit.isBuilding())) ? unit.inactiveCount : 0
 
     return res
   }
@@ -157,16 +174,31 @@ let WwArmyView = class {
     return g_ww_unit_type.isArtillery(this.formation.getUnitType())
   }
 
+  function isBuilding() {
+    foreach (unit in this.formation.getUnits(true))
+      if (unit.isBuilding())
+        return true
+    return false
+  }
+
+  function getCustomTypeIcon() {
+    foreach (unit in this.formation.getUnits(true))
+      if (unit.isBuilding() || unit.isSAM()) {
+        return unit.getUnitTypeOrClassIcon()
+      }
+    return null
+  }
+
   function hasArtilleryAbility() {
     return this.formation.hasArtilleryAbility
   }
 
   function getUnitsCountText() {
-    return this.unitsCount(true, this.isArtillery())
+    return this.unitsCount(true, this.isArtillery() || this.isBuilding())
   }
 
   function getInactiveUnitsCountText() {
-    return this.inactiveUnitsCount(true, this.isArtillery())
+    return this.inactiveUnitsCount(true, this.isArtillery() || this.isBuilding())
   }
 
   function hasManageAccess() {
@@ -334,7 +366,7 @@ let WwArmyView = class {
     let inactiveUnitsCountText = this.getInactiveUnitsCountText()
     if (inactiveUnitsCountText)
       return loc("worldwar/active_units", {
-        active = this.unitsCount(true, this.isArtillery()),
+        active = this.unitsCount(true, this.isArtillery() || this.isBuilding()),
         inactive = inactiveUnitsCountText
       })
 
@@ -370,7 +402,7 @@ let WwArmyView = class {
     return loc($"worldwar/{this.formation.isSAM ? "sam" : "artillery"}/can_fire")
   }
 
-  function isAlert() { // warning disable: -named-like-return-bool
+  function isAlert() { 
     if (this.isDead() || this.getGroundSurroundingTime())
       return "yes"
 
@@ -381,8 +413,14 @@ let WwArmyView = class {
     return " ".concat(this.getActionStatusTime(), this.getActionStatusIcon())
   }
 
-  function getUnitsCountTextIcon() {
-    return this.isInfantry() ? "" : " ".concat(this.getUnitsCountText(), this.getUnitTypeText())
+  function getUnitsCount() {
+    return this.isInfantry() ? "" : this.getUnitsCountText()
+  }
+
+  function getArmyIcon() {
+    if (this.isBuilding() || this.formation.isSAM)
+      return this.getCustomTypeIcon()
+    return this.isInfantry() ? "" : this.getUnitTypeIcon()
   }
 
   function getMoralText() {
@@ -394,17 +432,19 @@ let WwArmyView = class {
       this.formation.isSAM ? loc("weapon/rocketIcon") : loc("weapon/torpedoIcon"))
   }
 
-  function getShortInfoText() {
-    local text = [this.getUnitsCountTextIcon()]
-    if (!this.isArtillery())
-      text.append(" ", this.getMoralText())
-    return u.isEmpty(text) ? "" : loc("ui/parentheses", { text = "".join(text) })
+  function getShortInfoUnitsCountText() {
+    return $"({this.getUnitsCount()}"
+  }
+
+  function getShortInfoUnitsMoraleText() {
+    return $"{(!this.isArtillery() ? this.getMoralText() : "")})"
   }
 
   function setRedrawArmyStatusData() {
     this.redrawData = {
       army_status_time = this.getActionStatusTimeText
-      army_count = this.getUnitsCountTextIcon
+      army_count = this.getUnitsCount
+      army_icon = this.getArmyIcon
       army_morale = this.getMoralText
       army_return_time = this.getAirFuelLastTime
       army_ammo = this.getAmmoText
@@ -458,7 +498,13 @@ let WwArmyView = class {
     return lines
   }
 
+  function getInfoBlocksCount() {
+    return (this.getIsMultipleColumns() || this.getAirFuelLastTime() != "") ? fullWidthColunsCount : partialWidthColunsCount
+  }
+
   needSmallSize = @() this.hasArtilleryAbility() && !this.isArtillery()
+
+  getTooltipWidth = @() $"{this.getInfoBlocksCount() * 0.25}@wwMapTooltipInfoWidth"
 }
 
 
@@ -516,7 +562,7 @@ let WwFormation = class {
     return this.units
   }
 
-  function updateUnits() {} //default func
+  function updateUnits() {} 
 
   function showArmyGroupText() {
     return false

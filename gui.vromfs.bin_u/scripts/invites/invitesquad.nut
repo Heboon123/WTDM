@@ -16,9 +16,12 @@ let { registerInviteClass } = require("%scripts/invites/invitesClasses.nut")
 let BaseInvite = require("%scripts/invites/inviteBase.nut")
 let { isInMenu } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { format } = require("string")
+let { getContact } = require("%scripts/contacts/contacts.nut")
+let { queues } = require("%scripts/queue/queueManager.nut")
+let { showExpiredInvitePopup, removeInviteToSquad } = require("%scripts/invites/invites.nut")
 
 let Squad = class (BaseInvite) {
-  //custom class params, not exist in base invite
+  
   squadId = 0
   leaderId = 0
   isAccepted = false
@@ -39,7 +42,7 @@ let Squad = class (BaseInvite) {
     this.updateInviterContact()
 
     if (this.inviterName.len() != 0) {
-      //Don't show invites from xbox players, as notification comes from system overlay
+      
       log($"InviteSquad: invitername != 0 {platformModule.isPlayerFromXboxOne(this.inviterName)}")
       if (platformModule.isPlayerFromXboxOne(this.inviterName))
         this.setDelayed(true)
@@ -72,7 +75,7 @@ let Squad = class (BaseInvite) {
   }
 
   function updateInviterContact() {
-    this.leaderContact = ::getContact(this.leaderId)
+    this.leaderContact = getContact(this.leaderId)
     this.updateInviterName()
   }
 
@@ -127,7 +130,7 @@ let Squad = class (BaseInvite) {
 
   function checkAutoAcceptInvite() {
     let invite = this
-    ::queues.leaveAllQueues(null, function() {
+    queues.leaveAllQueues(null, function() {
       if (!invite.isValid())
         return
 
@@ -196,7 +199,7 @@ let Squad = class (BaseInvite) {
       return
 
     let acceptCallback = Callback(this._implAccept, this)
-    let callback = function () { ::queues.checkAndStart(acceptCallback, null, "isCanNewflight") }
+    let callback = function () { queues.checkAndStart(acceptCallback, null, "isCanNewflight") }
     let canJoin = ::g_squad_utils.canJoinFlightMsgBox(
       { allowWhenAlone = false, msgId = "squad/leave_squad_for_invite" },
       callback
@@ -215,13 +218,13 @@ let Squad = class (BaseInvite) {
     this.isRejected = true
     g_squad_manager.rejectSquadInvite(this.squadId)
     this.remove()
-    ::g_invites.removeInviteToSquad(this.squadId)
+    removeInviteToSquad(this.squadId)
     this.onSuccessfulReject()
   }
 
   function _implAccept() {
     if (this.isOutdated()) {
-      ::g_invites.showExpiredInvitePopup()
+      showExpiredInvitePopup()
       return false
     }
     if (!g_squad_manager.canJoinSquad())

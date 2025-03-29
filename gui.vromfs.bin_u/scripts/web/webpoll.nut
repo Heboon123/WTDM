@@ -10,7 +10,7 @@ let DataBlock = require("DataBlock")
 let { web_rpc } = require("%scripts/webRPC.nut")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
-let { isProfileReceived } = require("%scripts/login/loginStates.nut")
+let { isProfileReceived } = require("%appGlobals/login/loginState.nut")
 
 const WEBPOLL_TOKENS_VALIDATION_TIMEOUT_MS = 3000000
 const REQUEST_AUTHORIZATION_TIMEOUT_MS = 3600000
@@ -21,7 +21,7 @@ let tokenInvalidationTimeById = {}
 local votedPolls = null
 let pollBaseUrlById = {}
 let pollIdByFullUrl = {}
-let authorizedPollsRequestTimeOut = {}  //0 when already authorized
+let authorizedPollsRequestTimeOut = {}  
 
 function setPollBaseUrl(pollId, pollUrl) {
   if (!(pollId in pollBaseUrlById))
@@ -92,7 +92,7 @@ function onSurveyVoteResult(params) {
 
 function invalidateTokensCache(pollId = null) {
 
-  if (pollId == null) { //invalidate all tokens
+  if (pollId == null) { 
     cachedTokenById.clear()
     tokenInvalidationTimeById.clear()
   }

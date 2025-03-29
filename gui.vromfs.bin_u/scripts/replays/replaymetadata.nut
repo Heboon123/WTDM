@@ -8,8 +8,11 @@ let { split_by_chars } = require("string")
 let datablockConverter = require("%scripts/utils/datablockConverter.nut")
 let { get_replay_info } = require("replays")
 let DataBlock = require("DataBlock")
-let { get_mplayers_list } = require("mission")
+let { get_mplayers_list, GET_MPLAYERS_LIST } = require("mission")
 let { g_mplayer_param_type } = require("%scripts/mplayerParamType.nut")
+let { isEqualSquadId } = require("%scripts/squads/squadState.nut")
+let { getSessionLobbyPlayersInfo } = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { setCustomPlayersInfo } = require("%scripts/matchingRooms/sessionLobbyManager.nut")
 
 let buildReplayMpTable = function(replayPath) {
   let res = []
@@ -41,7 +44,7 @@ let buildReplayMpTable = function(replayPath) {
       team = b?.team ?? Team.none
       state = PLAYER_HAS_LEAVED_GAME
       isLocal = userId == authorUserId
-      isInHeroSquad = ::SessionLobby.isEqualSquadId(b?.squadId, authorSquadId)
+      isInHeroSquad = isEqualSquadId(b?.squadId, authorSquadId)
       isBot = userId < 0
       squadId = b?.squadId ?? INVALID_SQUAD_ID
       autoSquad = b?.autoSquad ?? true
@@ -71,15 +74,15 @@ let buildReplayMpTable = function(replayPath) {
 
 let saveReplayScriptCommentsBlk = function(blk) {
   blk.uiScriptsData = DataBlock()
-  blk.uiScriptsData.playersInfo = datablockConverter.dataToBlk(::SessionLobby.getPlayersInfo())
+  blk.uiScriptsData.playersInfo = datablockConverter.dataToBlk(getSessionLobbyPlayersInfo())
 }
 
 let restoreReplayScriptCommentsBlk = function(replayPath) {
-  // Works for Local replays
+  
   let commentsBlk = get_replay_info(replayPath)?.comments
   let playersInfo = datablockConverter.blkToData(commentsBlk?.uiScriptsData?.playersInfo) || {}
 
-  // Works for Server replays
+  
   if (!playersInfo.len()) {
     let mplayersList = get_mplayers_list(GET_MPLAYERS_LIST, true)
     foreach (mplayer in mplayersList) {
@@ -96,10 +99,10 @@ let restoreReplayScriptCommentsBlk = function(replayPath) {
     }
   }
 
-  ::SessionLobby.setCustomPlayersInfo(playersInfo)
+  setCustomPlayersInfo(playersInfo)
 }
 
-// Creates global func, which is called from client.
+
 getroottable()["save_replay_script_comments_blk"] <- @(blk) saveReplayScriptCommentsBlk(blk)
 
 return {

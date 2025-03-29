@@ -9,11 +9,12 @@ let { enumsAddTypes } = require("%sqStdLibs/helpers/enums.nut")
 let { startsWith, cutPrefix } = require("%sqstd/string.nut")
 let { get_num_attempts_left } = require("guiMission")
 let { Button } = require("%scripts/controls/input/button.nut")
+let { getPreviewControlsPreset } = require("%scripts/controls/controlsState.nut")
 
 enum hintTagCheckOrder {
-  EXACT_WORD //single word tags
+  EXACT_WORD 
   REGULAR
-  ALL_OTHER //all other tags are work as shortcuts
+  ALL_OTHER 
 }
 
 local g_hints
@@ -64,7 +65,7 @@ enumsAddTypes(g_hint_tag, {
     checkTag = function(_tagName) { return true }
     getSeparator = @() loc("hints/shortcut_separator")
 
-    getViewSlices = function(tagName, params) { //tagName == shortcutId
+    getViewSlices = function(tagName, params) { 
       let slices = []
       let needConfig = params?.needConfig ?? false
       let expanded = g_shortcut_type.expandShortcuts([tagName], params?.showKeyBoardShortcutsForMouseAim ?? false)
@@ -75,9 +76,9 @@ enumsAddTypes(g_hint_tag, {
         let shortcutId = expandedShortcut
         slices.append({
           shortcut = needConfig
-            ? shortcutType.getFirstInput(shortcutId, ::g_controls_manager.getPreviewPreset()).getConfig()
+            ? shortcutType.getFirstInput(shortcutId, getPreviewControlsPreset()).getConfig()
             : function() {
-              let input = shortcutType.getFirstInput(shortcutId, ::g_controls_manager.getPreviewPreset(), showShortcutsNameIfNotAssign)
+              let input = shortcutType.getFirstInput(shortcutId, getPreviewControlsPreset(), showShortcutsNameIfNotAssign)
               return input.getMarkup()
             }
         })
@@ -117,14 +118,14 @@ enumsAddTypes(g_hint_tag, {
   }
 
   MISSION_ATTEMPTS_LEFT = {
-    typeName = "attempts_left" //{{attempts_left}} or {{attempts_left=locId}}
+    typeName = "attempts_left" 
     checkOrder = hintTagCheckOrder.REGULAR
     checkTag = function(tagName) { return startsWith(tagName, this.typeName) }
     getViewSlices = function(tagName, _params) {
       let attempts = get_num_attempts_left()
       local attemptsText = attempts < 0 ? loc("options/attemptsUnlimited") : attempts
 
-      if (tagName.len() > this.typeName.len() + 1) { //{{attempts_left=locId}}
+      if (tagName.len() > this.typeName.len() + 1) { 
         let locId = tagName.slice(this.typeName.len() + 1)
         attemptsText = loc(locId, { attemptsText, attempts })
       }
@@ -140,7 +141,7 @@ enumsAddTypes(g_hint_tag, {
     checkOrder = hintTagCheckOrder.REGULAR
     checkTag = function(tagName) { return startsWith(tagName, this.typeName) }
 
-    getViewSlices = function(tagName, params) { //tagName == shortcutId
+    getViewSlices = function(tagName, params) { 
       let paramsList = split_by_chars(tagName, this.delimiter)
       let shortcut = SHORTCUT?[paramsList?[1]]
       if (!u.isTable(shortcut))
@@ -182,13 +183,13 @@ g_hints = {
   linkTags = ["<Link=", "</Link>"]
 }
 
-/*
-  params:
-  * id          //null
-  * style       //""
-  * time        //0 - only to show time in text
-  * timeoffset  //0 - only to show time in text
-*/
+
+
+
+
+
+
+
 g_hints.buildHintMarkup <- function buildHintMarkup(text, params = {}) {
   return handyman.renderCached("%gui/hint.tpl", this.getHintSlices(text, params))
 }
@@ -207,7 +208,7 @@ g_hints.getHintSlices <- function getHintSlices(text, params = {}) {
     rows = []
   }
 
-  let colors = [] //array of opened color tags, contains color itself
+  let colors = [] 
 
   foreach (row in rows) {
     let slices = []
@@ -227,7 +228,7 @@ g_hints.getHintSlices <- function getHintSlices(text, params = {}) {
           let openingColorTagStartIndex = piece.indexof(this.colorTags[0], carriage)
           let closingColorTagStartIndex = piece.indexof(this.colorTags[1], carriage)
 
-          //move carriage
+          
           if (openingColorTagStartIndex != null && closingColorTagStartIndex != null)
             carriage = min(
               openingColorTagStartIndex + this.colorTags[0].len(),
@@ -240,7 +241,7 @@ g_hints.getHintSlices <- function getHintSlices(text, params = {}) {
           else
             break
 
-          //closing tag found, pop color from stack and continue
+          
           if (openingColorTagStartIndex == null ||
             (openingColorTagStartIndex ?? -1) > (closingColorTagStartIndex ?? -1)) {
             if (unclosedTags > 0)
@@ -258,7 +259,7 @@ g_hints.getHintSlices <- function getHintSlices(text, params = {}) {
               lastIdxOfSlicedPiece = carriage
             }
           }
-          //opening tag found, add color to stack, increment unclosedTags counter
+          
           else if (openingColorTagStartIndex != null && openingColorTagStartIndex < (closingColorTagStartIndex ?? -1)) {
             let colorEnd = piece.indexof(">", openingColorTagStartIndex)
             let colorStart = openingColorTagStartIndex + this.colorTags[0].len()
@@ -267,7 +268,7 @@ g_hints.getHintSlices <- function getHintSlices(text, params = {}) {
           }
         }
 
-        //close all unclosed tags
+        
         for (local i = 0; i < unclosedTags; ++i)
           piece += this.colorTags[1]
 
@@ -338,17 +339,17 @@ function findLinks(oldSlices) {
 }
 
 
-/**
- * Split row to atomic parts to work with
- * @return array of strings with type specifieres (text or tag)
- */
+
+
+
+
 g_hints.splitRowToPieces <- function splitRowToPieces(row, needProtectSplitLinks = false) {
   let slices = []
   while (row.len() > 0) {
     let tagStartIndex = row.indexof(this.hintTags[0])
 
-    //no tags on current row
-    //put entire row in one piece and exit
+    
+    
     if (tagStartIndex == null) {
       slices.append({
         type = HINT_PIECE_TYPE.TEXT,
@@ -358,8 +359,8 @@ g_hints.splitRowToPieces <- function splitRowToPieces(row, needProtectSplitLinks
     }
 
     let tagEndIndex = row.indexof(this.hintTags[1], tagStartIndex)
-    //there is unclosed tag
-    //flush current row content to one piece and exit
+    
+    
     if (tagEndIndex == null) {
       slices.append({
         type = HINT_PIECE_TYPE.TEXT,
@@ -368,13 +369,13 @@ g_hints.splitRowToPieces <- function splitRowToPieces(row, needProtectSplitLinks
       break
     }
 
-    //slice piece before tag
+    
     slices.append({
       type = HINT_PIECE_TYPE.TEXT,
       piece = row.slice(0, tagStartIndex)
     })
 
-    //slice piece that contains tag
+    
     slices.append({
       type = HINT_PIECE_TYPE.TAG
       piece = row.slice(tagStartIndex + this.hintTags[0].len(), tagEndIndex)

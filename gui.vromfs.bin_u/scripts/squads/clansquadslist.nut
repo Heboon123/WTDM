@@ -6,9 +6,10 @@ let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { format } = require("string")
 let { checkMatchingError, matchingApiFunc } = require("%scripts/matching/api.nut")
+let { getMyClanMembers } = require("%scripts/clans/clanInfo.nut")
 
-const CLAN_SQUADS_LIST_REFRESH_MIN_TIME = 3000 //ms
-const CLAN_SQUADS_LIST_REQUEST_TIME_OUT = 45000 //ms
+const CLAN_SQUADS_LIST_REFRESH_MIN_TIME = 3000 
+const CLAN_SQUADS_LIST_REQUEST_TIME_OUT = 45000 
 const CLAN_SQUADS_LIST_TIME_OUT = 180000
 const MAX_SQUADS_LIST_LEN = 100
 
@@ -20,9 +21,9 @@ local ClanSquadsList = class {
   lastRequestTimeMsec = -CLAN_SQUADS_LIST_REQUEST_TIME_OUT
   isInUpdate = false
 
-/*************************************************************************************************/
-/*************************************PUBLIC FUNCTIONS *******************************************/
-/*************************************************************************************************/
+
+
+
 
   function isNewest() {
     return (this.clanId == clan_get_my_clan_id()) && !this.isInUpdate
@@ -70,13 +71,13 @@ local ClanSquadsList = class {
     return true
   }
 
-/*************************************************************************************************/
-/************************************PRIVATE FUNCTIONS *******************************************/
-/*************************************************************************************************/
+
+
+
 
   function getClanUidsList() {
     let clanPlayersUid = []
-    foreach (member in ::g_clans.getMyClanMembers()) {
+    foreach (member in getMyClanMembers()) {
       let memberUid = member?.uid
       if (memberUid)
        clanPlayersUid.append(memberUid.tointeger())
@@ -97,7 +98,7 @@ local ClanSquadsList = class {
     broadcastEvent("ClanSquadsListChanged", { clanSquadsList = this.clanSquadsList })
   }
 
-  function updateClanSquadsList(squads) { //can be called each update
+  function updateClanSquadsList(squads) { 
     if (squads.len() > MAX_SQUADS_LIST_LEN) {
       let message = format("Error in updateClanSquadsList:\nToo long clan squads list - %d",
                                 squads.len())

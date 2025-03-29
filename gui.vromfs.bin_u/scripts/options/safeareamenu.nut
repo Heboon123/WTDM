@@ -8,13 +8,13 @@ let { useTouchscreen } = require("%scripts/clientState/touchScreen.nut")
 let { OPTIONS_MODE_GAMEPLAY, USEROPT_MENU_SCREEN_SAFE_AREA
 } = require("%scripts/options/optionsExtNames.nut")
 let { getSystemConfigOption, setSystemConfigOption } = require("%globalScripts/systemConfig.nut")
-let { isAuthorized } = require("%scripts/login/loginStates.nut")
+let { isAuthorized } = require("%appGlobals/login/loginState.nut")
+let g_font = require("%scripts/options/fonts.nut")
+let { get_gui_option_in_mode, set_gui_option_in_mode } = require("%scripts/options/options.nut")
 
-require("%scripts/options/fonts.nut") //!!!FIX ME: Need move g_font to module. This require is used to create the global table g_font
+local currentFont = g_font.LARGE
 
-local currentFont = ::g_font.LARGE
-
-function is_low_width_screen() { //change this function simultaneously with isWide constant in css
+function is_low_width_screen() { 
   return currentFont.isLowWidthScreen()
 }
 let getCurrentFont = @() currentFont
@@ -24,7 +24,7 @@ let defValue  = 1.0
 let values    = [ 1.0, 0.95, 0.9 ]
 let items     = ["100%", "95%", "90%"]
 
-let getFixedValue = @() //return -1 when not fixed
+let getFixedValue = @() 
   is_stereo_mode() ? 0.8
   : isPlatformSony ? sony.getDisplaySafeArea()
   : useTouchscreen ? 0.9
@@ -34,7 +34,7 @@ let getFixedValue = @() //return -1 when not fixed
 let compatibleGetValue = function() {
   let value = !isAuthorized.get() ?
     to_float_safe(getSystemConfigOption("video/safearea", defValue), defValue) :
-    ::get_gui_option_in_mode(USEROPT_MENU_SCREEN_SAFE_AREA, OPTIONS_MODE_GAMEPLAY, defValue)
+    get_gui_option_in_mode(USEROPT_MENU_SCREEN_SAFE_AREA, OPTIONS_MODE_GAMEPLAY, defValue)
 
   if (value < 0.5)
     return 1 - value
@@ -56,7 +56,7 @@ local setValue = function(value) {
 
   value = isInArray(value, values) ? value : defValue
   setSystemConfigOption("video/safearea", value == defValue ? null : value)
-  ::set_gui_option_in_mode(USEROPT_MENU_SCREEN_SAFE_AREA, value, OPTIONS_MODE_GAMEPLAY)
+  set_gui_option_in_mode(USEROPT_MENU_SCREEN_SAFE_AREA, value, OPTIONS_MODE_GAMEPLAY)
 }
 
 let getValueOptionIndex = @() values.indexof(getValue())

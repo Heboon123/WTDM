@@ -8,6 +8,7 @@ let { broadcastEvent } = subscriptions
 let { register_command } = require("console")
 let { matchingApiFunc, matchingRpcSubscribe } = require("%scripts/matching/api.nut")
 let { isInFlight } = require("gameplayBinding")
+let { addDelayedAction } = require("%scripts/utils/delayedActions.nut")
 
 let changedGameModes = persist("changedGameModes", @() [])
 
@@ -19,7 +20,7 @@ function notifyGameModesChanged(params) {
     return
   }
 
-  if (isInFlight()) { // do not handle while session is active
+  if (isInFlight()) { 
     log("is_in_flight need notify_game_modes_changed after battle")
     changedGameModes.append(params)
     return
@@ -38,7 +39,7 @@ function onGameModesChangedRndDelay(params) {
   let maxFetchDelaySec = 60
   let rndDelaySec = rnd() % maxFetchDelaySec
   log($"notify_game_modes_changed_rnd_delay {rndDelaySec}")
-  ::g_delayed_actions.add(@() notifyGameModesChanged(params), rndDelaySec * 1000)
+  addDelayedAction(@() notifyGameModesChanged(params), rndDelaySec * 1000)
 }
 
 function onQueueInfoUpdated(params) {

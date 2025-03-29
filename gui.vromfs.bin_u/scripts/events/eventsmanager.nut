@@ -4,7 +4,7 @@ from "%scripts/teamsConsts.nut" import Team
 from "%scripts/events/eventsConsts.nut" import EVENTS_SHORT_LB_VISIBLE_ROWS, UnitRelevance, EVENT_TYPE, GAME_EVENT_TYPE
 from "%scripts/items/itemsConsts.nut" import itemType
 from "%scripts/mainConsts.nut" import COLOR_TAG, SEEN, global_max_players_versus
-from "%scripts/clans/clanState.nut" import is_in_clan
+from "%scripts/clans/clanState.nut" import is_in_clan, myClanInfo
 
 let { getUnitName, getUnitTypeText, getUnitTypeByText } = require("%scripts/unit/unitInfo.nut")
 let { getEsUnitType } = require("%scripts/unit/unitParams.nut")
@@ -38,7 +38,7 @@ let { getFeaturePack } = require("%scripts/user/features.nut")
 let { getEntitlementConfig, getEntitlementName } = require("%scripts/onlineShop/entitlements.nut")
 let { getFeaturePurchaseData } = require("%scripts/onlineShop/onlineShopState.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
-let { isCompatibiliyMode } = require("%scripts/options/systemOptions.nut")
+let { isCompatibilityMode } = require("%scripts/options/systemOptions.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { getWpcostUnitClass, getMaxEconomicRank, calcBattleRatingFromRank } = require("%appGlobals/ranks_common_shared.nut")
 let { useTouchscreen } = require("%scripts/clientState/touchScreen.nut")
@@ -49,7 +49,7 @@ let { getTournamentInfoBlk } = require("%scripts/events/eventRewards.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { isShowGoldBalanceWarning } = require("%scripts/user/balanceFeatures.nut")
 let { get_meta_mission_info_by_name } = require("guiMission")
-let { toUpper } = require("%sqstd/string.nut")
+let { capitalize } = require("%sqstd/string.nut")
 let { getGameModesByEconomicName, getModeById } = require("%scripts/matching/matchingGameModes.nut")
 let { debug_dump_stack } = require("dagor.debug")
 let getAllUnits = require("%scripts/unit/allUnits.nut")
@@ -82,6 +82,13 @@ let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 let { getCrewUnit } = require("%scripts/crew/crew.nut")
 let { MAX_COUNTRY_RANK } = require("%scripts/ranks.nut")
 let { checkLbRowVisibility } = require("%scripts/leaderboard/leaderboardHelpers.nut")
+let { enqueueItem, requestLimits } = require("%scripts/items/itemLimits.nut")
+let { getSessionLobbyClusterName } = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { getRoomSpecialRules, getRoomTeamData, getRoomMGameMode, getMembersCountByTeams
+} = require("%scripts/matchingRooms/sessionLobbyInfo.nut")
+let { getMatchingServerTime } = require("%scripts/onlineInfo/onlineInfo.nut")
+let { getItemsList, getInventoryList } = require("%scripts/items/itemsManager.nut")
+let { getBrokenAirsInfo } = require("%scripts/instantAction.nut")
 
 const EVENTS_OUT_OF_DATE_DAYS = 15
 const EVENT_DEFAULT_TEAM_SIZE = 16
@@ -129,8 +136,8 @@ let EventTicketBuyOfferProcess = class {
     this._event = event
     this._tickets = events.getEventTickets(event, true)
     foreach (ticket in this._tickets)
-      ::g_item_limits.enqueueItem(ticket.id)
-    if (::g_item_limits.requestLimits(true))
+      enqueueItem(ticket.id)
+    if (requestLimits(true))
       add_event_listener("ItemLimitsUpdated", this.onEventItemLimitsUpdated, this)
     else
       this.handleTickets()
@@ -144,7 +151,7 @@ let EventTicketBuyOfferProcess = class {
   function handleTickets() {
     g_event_ticket_buy_offer.currentProcess = null
 
-    // Array of tickets with valid limit data.
+    
     let availableTickets = []
     foreach (ticket in this._tickets)
       if (ticket.getLimitsCheckData().result)
@@ -173,8 +180,8 @@ let EventTicketBuyOfferProcess = class {
 }
 
 g_event_ticket_buy_offer = {
-  // Holds process to prevent it
-  // from being garbage collected.
+  
+  
   currentProcess = null
 
   function offerTicket(event) {
@@ -190,7 +197,7 @@ let _leaderboards = {
     selfRow      = {}
   }
 
-/** This is used in eventsHandler.nut. */
+
   shortLbrequest = {
     economicName = null,
     lbField = "",
@@ -222,10 +229,10 @@ let _leaderboards = {
   canRequestEventLb    = true
   leaderboardsRequestStack = []
 
-  /**
-   * Function requests leaderboards asynchronously and puts result
-   * as argument to callback function
-   */
+  
+
+
+
   function requestLeaderboard(requestData, id, callback, context) {
     if (type(id) == "function") {
       context  = callback
@@ -237,7 +244,7 @@ let _leaderboards = {
 
     let cachedData = this.getCachedLbResult(requestData, "leaderboards")
 
-    //trigging callback if data is lready here
+    
     if (cachedData) {
       if (context)
         callback.call(context, cachedData)
@@ -250,10 +257,10 @@ let _leaderboards = {
     this.updateEventLb(requestData, id)
   }
 
-  /**
-   * Function requests self leaderboard row asynchronously and puts result
-   * as argument to callback function
-   */
+  
+
+
+
   function requestSelfRow(requestData, id, callback, context) {
     if (type(id) == "function") {
       context  = callback
@@ -265,7 +272,7 @@ let _leaderboards = {
 
     let cachedData = this.getCachedLbResult(requestData, "selfRow")
 
-    //trigging callback if data is lready here
+    
     if (cachedData) {
       if (context)
         callback.call(context, cachedData)
@@ -319,10 +326,10 @@ let _leaderboards = {
     this.updateEventLbInternal(requestData, id, this.requestEventLbSelfRow, this.handleLbSelfRowRequest)
   }
 
-  /**
-   * To request persoanl data for clan tournaments (TM_ELO_GROUP)
-   * need to override tournament_mode by TM_ELO_GROUP_DETAIL
-   */
+  
+
+
+
   function requestUpdateEventLb(requestData, onSuccessCb, onErrorCb) {
     if (requestData.lbTable == null) {
       requestEventLeaderboardData(requestData, onSuccessCb, onErrorCb)
@@ -331,10 +338,10 @@ let _leaderboards = {
     requestCustomEventLeaderboardData(requestData, onSuccessCb, onErrorCb)
   }
 
-  /**
-   * to request persoanl data for clan tournaments (TM_ELO_GROUP)
-   * need to override tournament_mode by TM_ELO_GROUP_DETAIL
-   */
+  
+
+
+
   function requestEventLbSelfRow(requestData, onSuccessCb, onErrorCb) {
     if (requestData.lbTable == null) {
       requestEventLeaderboardSelfRow(requestData, onSuccessCb, onErrorCb)
@@ -350,9 +357,9 @@ let _leaderboards = {
       onSuccessCb, onErrorCb)
   }
 
-  /**
-   * Function generates hash string from leaderboard request data
-   */
+  
+
+
   function hashLbRequest(request_data) {
     return "".concat(
       request_data.lbField,
@@ -409,10 +416,10 @@ let _leaderboards = {
         requestData.callBack(lbData)
   }
 
-  /**
-   * Checks cached response and if response exists and fresh returns it.
-   * Otherwise returns null.
-   */
+  
+
+
+
   function getCachedLbResult(request_data, storage_name) {
     if (!(request_data.economicName in this.__cache[storage_name]))
       return null
@@ -471,7 +478,7 @@ let _leaderboards = {
     foreach (name, _field in this.defaultRequest) {
       if ((name in req1) != (name in req2))
         return false
-      if (!(name in req1)) //no name in both req
+      if (!(name in req1)) 
         continue
       if (req1[name] != req2[name])
         return false
@@ -546,10 +553,10 @@ let _leaderboards = {
   }
 
   function postProcessClanLbRow(lbRow) {
-    //check clan name for tag.
-    //new leaderboards name param is in forma  "<tag> <name>"
-    //old only "<name>"
-    //but even with old leaderboards we need something to write in tag for short lb
+    
+    
+    
+    
     let name = getTblValue("name", lbRow)
     if (!u.isString(name) || !name.len())
       return
@@ -557,11 +564,11 @@ let _leaderboards = {
     local searchIdx = -1
     for (local skipSpaces = 0; skipSpaces >= 0; skipSpaces--) {
       searchIdx = name.indexof(" ", searchIdx + 1)
-      if (searchIdx == null) { //no tag at all
+      if (searchIdx == null) { 
         lbRow.tag <- name
         break
       }
-      //tag dont have spaces, but it decoaration can be double space
+      
       if (searchIdx == 0) {
         skipSpaces = 2
         continue
@@ -571,11 +578,11 @@ let _leaderboards = {
 
       lbRow.tag <- name.slice(0, searchIdx)
 
-      //code to cut tag from name, but need to new leaderboards mostly updated before this change
-      //or old leaderboards rows will look broken.
-      //char commit appear on test server 12.05.2015
-      //if (searchIdx + 1 < name.len())
-      //  lbRow.name <- name.slice(searchIdx + 1)
+      
+      
+      
+      
+      
     }
   }
 
@@ -684,10 +691,10 @@ let Events = class {
       loadHandler(gui_handlers.EventDescriptionWindow, { event = event })
   }
 
-  /**
-   * Returns "true" if event is not debug or client
-   * has specific feature: ShowDebugEvents
-   */
+  
+
+
+
   function checkEnableOnDebug(event) {
     return !this.isEventEnableOnDebug(event) || hasFeature("ShowDebugEvents")
   }
@@ -737,15 +744,15 @@ let Events = class {
 
   function getMatchingUnitType(unit) {
     let matchingUnitType = getEsUnitType(unit)
-    // override boats as ships because there are no boats on the matching
+    
     if (matchingUnitType == ES_UNIT_TYPE_BOAT)
       return ES_UNIT_TYPE_SHIP
     return matchingUnitType
   }
 
-  /**
-   * Supports event objects and session lobby info as parameter.
-   */
+  
+
+
   function countAvailableUnitTypes(teamDataByTeamName) {
     local resMask = 0
     foreach (team in this.getSidesList()) {
@@ -790,7 +797,7 @@ let Events = class {
     return this.countAvailableUnitTypes({ [teamName] = teamData })
   }
 
-  //result 0 - no required crafts
+  
   function countRequiredUnitTypesMaskByTeamData(teamData) {
     local res = 0
     let reqCrafts = this.getRequiredCrafts(teamData)
@@ -821,9 +828,9 @@ let Events = class {
     return res
   }
 
-  /**
-   * Returns list of events for game mode select menu
-   */
+  
+
+
   function getEventsForGcDrawer() {
     return this.getEventsList(EVENT_TYPE.ANY & (~EVENT_TYPE.NEWBIE_BATTLES),
       @(event) getEventDisplayType(event).showInGamercardDrawer && this.isEventActive(event))
@@ -842,8 +849,8 @@ let Events = class {
     if (!("view_data" in eventData))
       return
 
-    //override event params by predefined config by designers.
-    //!!FIX ME: teporary support of multi events before it will be done in more correct way, without strange data.
+    
+    
     let sourceInfo = {}
     foreach (key, value in eventData.view_data) {
       if (key == "teamA" || key == "teamB") {
@@ -971,7 +978,7 @@ let Events = class {
   }
 
   function getMGameMode(event, room) {
-    return (room && ::SessionLobby.getMGameMode(room)) || event
+    return (room && getRoomMGameMode(room)) || event
   }
 
   function getEventByEconomicName(economicName) {
@@ -991,9 +998,9 @@ let Events = class {
     return this.getEventByEconomicName(eventData?.economicName)
   }
 
-  /**
-   * returns true if events queue multiclustered
-   */
+  
+
+
   function isMultiCluster(event) {
     return event?.multiCluster ?? false
   }
@@ -1020,12 +1027,12 @@ let Events = class {
 
   function getTeamDataWithRoom(event, team, room) {
     if (room)
-      return ::SessionLobby.getTeamData(team, room)
+      return getRoomTeamData(team, room)
     return this.getTeamData(event, team)
   }
 
-  //check is team data allowed to play in this event.
-  //doesnt depend on any player parameters.
+  
+  
   function isTeamDataPlayable(teamData) {
     return (teamData?.maxTeamSize ?? 1) > 0
   }
@@ -1041,12 +1048,12 @@ let Events = class {
 
     let isFreeForAll = event?.ffa ?? false
     local isSymmetric = isFreeForAll || (event?.isSymmetric ?? false) || sides.len() <= 1
-    //no point to save duplicate array, just link on fullTeamsList
+    
     if (!isSymmetric) {
       let teamDataA = this.getTeamData(event, sides[0])
       let teamDataB = this.getTeamData(event, sides[1])
       if (teamDataA == null || teamDataB == null) {
-        let economicName = event?.economicName  // warning disable: -declared-never-used
+        let economicName = event?.economicName  
         script_net_assert_once("not found event teamdata", "missing teamdata in event")
       }
       else
@@ -1100,11 +1107,11 @@ let Events = class {
     return g_team.getTeamByCode(teamCode).name
   }
 
-  /**
-   * Returns name of suitable image for game mode selection menu.
-   * Name could be got from events config or generated by difiiculty level and
-   * available unit type
-   */
+  
+
+
+
+
   function getEventTileImageName(event, isWide = false) {
     if ("eventImage" in event) {
       let eventImageTemplate = event.eventImage
@@ -1128,8 +1135,8 @@ let Events = class {
   }
 
   function getEventPreviewVideoName(event, isWide) {
-    //We can't check is video exist. For now, there is no wide videos.
-    //So, this function return null in this case.
+    
+    
     if (isWide)
       return null
 
@@ -1189,7 +1196,7 @@ let Events = class {
     return !this.isEventEnabled(event) && this.getEventEndTime(event) < 0
   }
 
-  //return true if it possible to join this event.
+  
   function isEventAllowed(event) {
     return getEventDisplayType(event) != g_event_display_type.NONE
       && this.checkEventFeature(event, true)
@@ -1197,7 +1204,7 @@ let Events = class {
       && (!this.eventRequiresTicket(event) || this.getEventActiveTicket(event) != null)
   }
 
-  isEventAllowedByComaptibilityMode = @(event) event?.isAllowedForCompatibility != false || !isCompatibiliyMode()
+  isEventAllowedByComaptibilityMode = @(event) event?.isAllowedForCompatibility != false || !isCompatibilityMode()
 
   function getEventsVisibleInEventsWindowCount() {
     return this.__countEventsList(EVENT_TYPE.ANY, this.isEventVisibleInEventsWindow)
@@ -1219,7 +1226,7 @@ let Events = class {
       }.bindenv(this))
   }
 
-  function getEndedEventsList(typeMask = EVENT_TYPE.ANY_BASE_EVENTS) { //disable: -similar-function
+  function getEndedEventsList(typeMask = EVENT_TYPE.ANY_BASE_EVENTS) { 
     let result = this.getEventsList(typeMask, function (event) {
       return getEventDisplayType(event).showInEventsWindow && this.isEventEnded(event)
     }.bindenv(this))
@@ -1256,27 +1263,27 @@ let Events = class {
     return res
   }
 
-  /*
-    getAllCountriesSets result format:
-    [
-      {
-        countries = [["country_usa", "country_ussr"], ["country_germany"]]
-        gameModeIds = [164, 165] //gamemodes ids with such country list
-        allCountries = {
-          country_usa = 0
-          country_ussr = 0
-          country_germany = 1
-        }
-      }
-    ]
-  */
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
   function getAllCountriesSets(event) {
     if ("_allCountriesSets" in event)
       return event._allCountriesSets
 
     let res = []
     let mgmList = getGameModesByEconomicName(getEventEconomicName(event))
-    mgmList.sort(function(a, b) { return a.gameModeId - b.gameModeId }) //same order on all clients
+    mgmList.sort(function(a, b) { return a.gameModeId - b.gameModeId }) 
     foreach (mgm in mgmList) {
       if (this.isCustomGameMode(mgm))
         continue
@@ -1330,12 +1337,12 @@ let Events = class {
     return false
   }
 
-  /**
-   * Returns list of available countries for @event
-   * If all countries available returns empty array
-   * Don't use this method for checking country.
-   * There is isCountryAvailable() for this purpose
-   */
+  
+
+
+
+
+
   function getAvailableCountriesByEvent(event) {
     let result = []
     foreach (country in shopCountriesList)
@@ -1396,7 +1403,7 @@ let Events = class {
     return res
   }
 
-  //return -1 if not tier detected
+  
   function getTierNumByRule(rule) {
     if (!("mranks" in rule))
       return -1
@@ -1427,7 +1434,7 @@ let Events = class {
   }
 
   function isUnitAllowedForEventRoom(event, room, unit) {
-    let roomSpecialRules = room && ::SessionLobby.getRoomSpecialRules(room)
+    let roomSpecialRules = room && getRoomSpecialRules(room)
     if (roomSpecialRules && !this.isUnitMatchesRoomSpecialRules(unit, roomSpecialRules, this.getEDiffByEvent(event)))
       return false
 
@@ -1450,7 +1457,7 @@ let Events = class {
     if (!unit)
       return false
 
-    let roomSpecialRules = room && ::SessionLobby.getRoomSpecialRules(room)
+    let roomSpecialRules = room && getRoomSpecialRules(room)
     return !roomSpecialRules || this.isUnitMatchesRoomSpecialRules(unit, roomSpecialRules, this.getEDiffByEvent(event))
   }
 
@@ -1476,7 +1483,7 @@ let Events = class {
         if (unit && this.isAirRequiredAndAllowedByTeamData(teamData, unit.name, ediff))
           return true
       }
-      return false //is it correct that we check only first teamData with requirements?
+      return false 
     }
     return true
   }
@@ -1540,7 +1547,7 @@ let Events = class {
 
   function checkPlayersCrafts(event, room = null) {
     let mGameMode = events.getMGameMode(event, room)
-    let roomSpecialRules = room && ::SessionLobby.getRoomSpecialRules(room)
+    let roomSpecialRules = room && getRoomSpecialRules(room)
     let playersCurCountry = profileCountrySq.value
     let ediff = this.getEDiffByEvent(event)
     foreach (team in this.getSidesList(mGameMode)) {
@@ -1553,7 +1560,7 @@ let Events = class {
   }
 
   function checkPlayersCraftsRoomRules(event, room) {
-    let roomSpecialRules = ::SessionLobby.getRoomSpecialRules(room)
+    let roomSpecialRules = getRoomSpecialRules(room)
     if (!roomSpecialRules)
       return true
     let ediff = this.getEDiffByEvent(event)
@@ -1587,14 +1594,14 @@ let Events = class {
 
   function getCountryRepairInfo(event, room, country) {
     let mGameMode = events.getMGameMode(event, room)
-    let roomSpecialRules = room && ::SessionLobby.getRoomSpecialRules(room)
+    let roomSpecialRules = room && getRoomSpecialRules(room)
     let teams = this.getAvailableTeams(mGameMode)
     let ediff = this.getEDiffByEvent(event)
     let teamsData = []
     foreach (t in teams)
       teamsData.append(this.getTeamData(mGameMode, t))
 
-    return ::getBrokenAirsInfo([country], this.isEventMultiSlotEnabled(event),
+    return getBrokenAirsInfo([country], this.isEventMultiSlotEnabled(event),
       function(unit) {
         if (roomSpecialRules
             && !this.isUnitMatchesRule(unit, roomSpecialRules, true, ediff))
@@ -1677,7 +1684,7 @@ let Events = class {
         let mgmTeams = []
         foreach (idx, countries in countrySet.countries)
           if (isInArray(myCountry, countries))
-            mgmTeams.append(idx + 1) //idx to Team enum
+            mgmTeams.append(idx + 1) 
         if (!mgmTeams.len())
           continue
 
@@ -1740,7 +1747,7 @@ let Events = class {
   function getMembersFlyoutEventData(event, room, team) {
     let mGameMode = this.getMGameMode(event, room)
     let teamData = this.getTeamDataWithRoom(mGameMode, team, room)
-    let canChangeMemberCountry = !room //can choose members country by queue params
+    let canChangeMemberCountry = !room 
     return ::g_squad_utils.getMembersFlyoutData(teamData, event, canChangeMemberCountry)
   }
 
@@ -1750,7 +1757,7 @@ let Events = class {
     foreach (m in membersData.members) {
       local country = leaderCountry
       if (m.countries.len() && !isInArray(leaderCountry, m.countries))
-        country = m.countries[rnd() % m.countries.len()]  //choose random country atm
+        country = m.countries[rnd() % m.countries.len()]  
       let slot = (country in m.selSlots) ? m.selSlots[country] : 0
 
       membersQuery[m.uid] <- {
@@ -1807,26 +1814,26 @@ let Events = class {
     return ""
   }
 
-  /**
-   * Returns false if event does not support respawning at all.
-   * (Player returns to hangar after death.)
-   */
+  
+
+
+
   function isEventRespawnEnabled(event) {
     return event?.respawn ?? false
   }
 
-  /**
-   * Returns true if player can select from several during respawn.
-   * False means that player has only slot that was selected in hangar.
-   */
+  
+
+
+
   function isEventMultiSlotEnabled(event) {
     return event?.multiSlot ?? false
   }
 
-  /**
-   * Returns max possible respawn count.
-   * Ignored if isEventRespawnEnabled(event) == false.
-   */
+  
+
+
+
   function getEventMaxRespawns(event) {
     return event?.mission_decl.maxRespawns ?? 0
   }
@@ -1913,7 +1920,7 @@ let Events = class {
   }
 
   function countEventTime(eventTime) {
-    return (eventTime - ::get_matching_server_time())
+    return (eventTime - getMatchingServerTime())
   }
 
   function getEventStartTime(event) {
@@ -1969,7 +1976,7 @@ let Events = class {
     return get_gui_regional_blk()?.eventsTexts?[economicName]
   }
 
-  //!!! function only for compatibility with version without gui_regional
+  
   function getNameLocOldStyle(event, economicName) {
     return event?.loc_name ?? $"events/{economicName}/name"
   }
@@ -2038,18 +2045,18 @@ let Events = class {
     return _leaderboards.getMainLbRequest(event)
   }
 
-  /**
-   * Function requests leaderboards asynchronously and puts result
-   * as argument to callback function
-   */
+  
+
+
+
   function requestLeaderboard(requestData, id, callback = null, context = null) {
     _leaderboards.requestLeaderboard(requestData, id, callback, context)
   }
 
-  /**
-   * Function requests self leaderboard row asynchronously and puts result
-   * as argument to callback function
-   */
+  
+
+
+
   function requestSelfRow(requestData, id, callback = null, context = null) {
     _leaderboards.requestSelfRow(requestData, id, callback, context)
   }
@@ -2111,7 +2118,7 @@ let Events = class {
           unitType = loc($"{allowUnitId}/{masksArray[0].name}"),
           unitType2 = loc($"{allowUnitId}/{masksArray[1].name}")
         })
-        allowText = toUpper(allowText, 1)
+        allowText = capitalize(allowText)
       }
     }
     allowText = allowText == "" ? loc($"events/{allowId}") : allowText
@@ -2119,7 +2126,7 @@ let Events = class {
   }
 
   function generateRulesText(handler, rules, rulesObj, _highlightRules = false, checkAllRules = false) {
-    // Using special container 'tdiv' for proper 'rulesObj' reuse.
+    
     local craftsListObj = rulesObj.findObject("crafts_list")
     if (!checkObj(craftsListObj)) {
       craftsListObj = handler.guiScene.createElement(rulesObj, "tdiv", handler)
@@ -2239,7 +2246,7 @@ let Events = class {
 
     let ediff = this.getEDiffByEvent(event)
     if (room) {
-      let roomSpecialRules = room && ::SessionLobby.getRoomSpecialRules(room)
+      let roomSpecialRules = room && getRoomSpecialRules(room)
       if (roomSpecialRules && !this.isUnitMatchesRule(unit, roomSpecialRules, true, ediff))
         return false
     }
@@ -2267,7 +2274,7 @@ let Events = class {
     let membersCount = g_squad_manager.getOnlineMembersCount()
     let myTeam = availTeams[0]
     let otherTeam = u.search(teams, function(t) { return t != myTeam })
-    let countTbl = ::SessionLobby.getMembersCountByTeams(room)
+    let countTbl = getMembersCountByTeams(room)
     return (countTbl?[myTeam] ?? 0) + membersCount <= (countTbl?[otherTeam] ?? 0) + maxDisbalance
   }
 
@@ -2279,7 +2286,7 @@ let Events = class {
       return true
 
     let membersCount = g_squad_manager.getOnlineMembersCount()
-    let countTbl = ::SessionLobby.getMembersCountByTeams(room)
+    let countTbl = getMembersCountByTeams(room)
     return countTbl[availTeams[0]] + membersCount <= this.getMaxTeamSize(mGameMode)
   }
 
@@ -2290,7 +2297,7 @@ let Events = class {
       msgboxReasonText = null
       checkStatus = false
       actionFunc = null
-      event = event // Used to backtrack event in actionFunc.
+      event = event 
       room = room
       checkXboxOverlayMessage = false
     }.__update(params ?? {})
@@ -2345,7 +2352,7 @@ let Events = class {
       data.reasonText = loc("events/no_selected_country")
     else if (!this.checkPlayersCrafts(mGameMode, room))
       data.reasonText = loc("events/no_allowed_crafts")
-    else if (isEventForClan(event) && !::my_clan_info)
+    else if (isEventForClan(event) && !myClanInfo.get())
       data.reasonText = loc("events/clan_only")
     else if (!isCreationCheck && this.isEventEnded(event))
       data.reasonText = loc("events/event_disabled")
@@ -2378,7 +2385,7 @@ let Events = class {
         })
     }
     else if (!this.isAllowedByRoomBalance(mGameMode, room)) {
-      let teamsCnt = ::SessionLobby.getMembersCountByTeams(room)
+      let teamsCnt = getMembersCountByTeams(room)
       let myTeam = this.getAvailableTeams(mGameMode, room)[0]
       let otherTeam = u.search(this.getSidesList(mGameMode), @(t) t != myTeam)
       let membersCount = g_squad_manager.getOnlineMembersCount()
@@ -2441,9 +2448,9 @@ let Events = class {
     return loc("events/event_disabled")
   }
 
-  //
-  // Sort/compare functions.
-  //
+  
+  
+  
 
   function sortEventsByDiff(a, b) {
     let diffA = (type(a) == "string" ? __game_events[a] : a).diffWeight
@@ -2500,20 +2507,20 @@ let Events = class {
     return fc1 ? 1 : -1
   }
 
-  /** Returns tickets available for purchase. */
+  
   function getEventTickets(event, canBuyOnly = false) {
     let eventId = getEventEconomicName(event)
-    let tickets = ::ItemsManager.getItemsList(itemType.TICKET,
+    let tickets = getItemsList(itemType.TICKET,
       @(item) item.isForEvent(eventId) && (!canBuyOnly || item.isCanBuy()))
     return tickets
   }
 
-  /** Returns null if no such ticket found. */
+  
   function getEventActiveTicket(event) {
     let eventId = event.economicName
     if (!have_you_valid_tournament_ticket(eventId))
       return null
-    let tickets = ::ItemsManager.getInventoryList(itemType.TICKET,
+    let tickets = getInventoryList(itemType.TICKET,
       @(item) item.isForEvent(eventId) && item.isActive())
     return tickets.len() > 0 ? tickets[0] : null
   }
@@ -2532,10 +2539,10 @@ let Events = class {
       ], true)
   }
 
-  /**
-   * @param useShortText Setting to true will
-   * return only price with no text label.
-   */
+  
+
+
+
   function getEventBattleCostText(event, valueColor = "activeTextColor", useShortText = false, colored = true) {
     let cost = this.getEventBattleCost(event)
     if (cost <= zero_money)
@@ -2563,7 +2570,7 @@ let Events = class {
   }
 
   function eventRequiresTicket(event) {
-    // Event has at least one ticket available in shop.
+    
     return this.getEventTickets(event).len() != 0
   }
 
@@ -2582,15 +2589,15 @@ let Events = class {
       showInfoMsgBox(message, "no_tickets")
       return
     }
-    // Player has to purchase one of available tickets via special window.
+    
     loadHandler(gui_handlers.TicketBuyWindow, { event, tickets = purchasableTickets })
   }
 
-  /**
-   * Some clan tournaments dont allow to take a part for differnt clan.
-   * This function returns true if current clan (if exists) is the same as clan
-   * you first time took part in this tournamnet you was in.
-   */
+  
+
+
+
+
   function checkClan(event) {
     let clanTournament = getBlkValueByPath(get_tournaments_blk(),$"{event.name}/clanTournament", false)
     if (!clanTournament)
@@ -2609,7 +2616,7 @@ let Events = class {
 
     let teams = this.getAvailableTeams(event, room)
     let membersTeams = this.getMembersTeamsData(event, room, teams)
-    if (!membersTeams) //we are become squad member or gamemod data is missing
+    if (!membersTeams) 
       return cancelFunc && cancelFunc()
 
     let membersInfo = this.getMembersInfo(membersTeams.teamsData)
@@ -2674,9 +2681,9 @@ let Events = class {
   isEventVisibleInEventsWindow = @(event) event?.chapter != "competitive"
     && getEventDisplayType(event).showInEventsWindow
     && (this.checkEnableOnDebug(event) || this.getEventIsVisible(event))
-  /**
-   * @param teamDataByTeamName This can be event or session info.
-   */
+  
+
+
   function isEventAllUnitAllowed(teamDataByTeamName) {
     foreach (team in events.getSidesList()) {
       let teamName = this.getTeamName(team)
@@ -2728,7 +2735,7 @@ let Events = class {
 
     if (mroom)
       textsList.append(this.descFormat(loc("options/cluster"),
-        getClusterShortName(::SessionLobby.getClusterName(mroom))))
+        getClusterShortName(getSessionLobbyClusterName(mroom))))
 
     let isTesting = ("event_access" in event) ? isInArray("AccessTest", event.event_access) : false
     if (isTesting)
@@ -2850,12 +2857,12 @@ let Events = class {
     _leaderboards.resetLbCache()
   }
 
-  // game mode allows to join either from queue or from rooms list
+  
   function isLobbyGameMode(mGameMode) {
     return mGameMode?.withLobby ?? false
   }
 
-  // it is lobby game mode but with sessions that can be created by players
+  
   function isCustomGameMode(mGameMode) {
     return mGameMode?.forCustomLobby ?? false
   }

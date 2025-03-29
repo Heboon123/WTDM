@@ -1,6 +1,6 @@
 from "%scripts/dagui_natives.nut" import check_login_pass
 from "%scripts/dagui_library.nut" import *
-from "%scripts/login/loginConsts.nut" import LOGIN_STATE
+from "%appGlobals/login/loginConsts.nut" import LOGIN_STATE
 
 let { set_disable_autorelogin_once } = require("loginState.nut")
 let { BaseGuiHandler } = require("%sqDagui/framework/baseGuiHandler.nut")
@@ -16,13 +16,14 @@ let { get_charserver_time_sec } = require("chard")
 let { Timer } = require("%sqDagui/timer/timer.nut")
 let { isExternalApp2StepAllowed, isHasEmail2StepTypeSync, isHasWTAssistant2StepTypeSync, isHasGaijinPass2StepTypeSync } = require("auth_wt")
 let { getCurCircuitOverride } = require("%appGlobals/curCircuitOverride.nut")
+let { addLoginState } = require("%scripts/login/loginManager.nut")
 
 local authDataByTypes = {
-  mail = { text = "#mainmenu/2step/confirmMail", img = "{prefix}two_step_email" } // warning disable: -forgot-subst
-  ga = { text = "#mainmenu/2step/confirmGA", img = "{prefix}two_step_phone_ga" }  // warning disable: -forgot-subst
+  mail = { text = "#mainmenu/2step/confirmMail", img = "{prefix}two_step_email" } 
+  ga = { text = "#mainmenu/2step/confirmGA", img = "{prefix}two_step_phone_ga" }  
   gp = {
     getText = @() loc("mainmenu/2step/confirmPass", { passName = getCurCircuitOverride("passName", "Gaijin Pass") })
-    img = "{prefix}two_step_phone_gp" // warning disable: -forgot-subst
+    img = "{prefix}two_step_phone_gp" 
   }
   unknown = { text = "#mainmenu/2step/confirmUnknown", img = "" }
 }
@@ -74,7 +75,7 @@ gui_handlers.twoStepModal <- class (BaseGuiHandler) {
     set_disable_autorelogin_once(false)
     statsd.send_counter("sq.game_start.request_login", 1, { login_type = "regular" })
     log("Login: check_login_pass")
-    ::g_login.addState(LOGIN_STATE.LOGIN_STARTED)
+    addLoginState(LOGIN_STATE.LOGIN_STARTED)
     let result = check_login_pass(
       getObjValue(this.loginScene, "loginbox_username", ""),
       getObjValue(this.loginScene, "loginbox_password", ""), "",
@@ -95,7 +96,7 @@ gui_handlers.twoStepModal <- class (BaseGuiHandler) {
     Timer(txtObj, 1, errorTimerCb, this, true)
     errorTimerCb()
 
-    // Need this to make both timers tick synchronously
+    
     this.reinitCurTimeTimer()
   }
 

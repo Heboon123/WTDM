@@ -1,5 +1,8 @@
 @const actionsListPadding: 3@dp;
-@const actionsListLineSize: 11@dp;
+@const actionItemSidePadding: 8*@sf/@pf;
+@const menuSeparatorPadding: 15*@sf/@pf;
+@const menuSeparatorColor: #11111111;
+@const actionsListBgColor: #222C32;
 
 popup_actions_list {
   re-type:rotation;
@@ -7,36 +10,30 @@ popup_actions_list {
   css-hier-invalidate:yes;
   input-transparent: no;
   order-popup:yes;
-  background-color:@white;
-  background-image:#ui/gameuiskin#popup_menu_bg.svg;
-  background-svg-size:15@dp, 15@dp;
-  background-position:3@dp, 10@dp, 3@dp, 2@dp;
-  background-repeat:expand-svg;
   background-rotation:0;
-  padding:1@actionsListPadding, 1@actionsListLineSize + 1@actionsListPadding, 1@actionsListPadding, 1@actionsListPadding;
+  padding:1@actionsListPadding, 1@actionsListPadding, 1@actionsListPadding, 1@actionsListPadding;
   behaviour:massTransparency;
   transp-base:0;
   transp-end:255;
-  transp-time:300;
-}
-
-popup_actions_list[menu_align=bottom] {
-  background-rotation:180;
-  padding:1@actionsListPadding, 1@actionsListPadding, 1@actionsListPadding, 1@actionsListLineSize + 1@actionsListPadding;
-}
-
-popup_actions_list {
+  transp-time:1;
+  border:yes;
+  border-color:@extraInfoBlockBorderColor;
+  border-offset:1@sf/@pf;
   move_out: no;
 }
 
-popup_actions_list[closeOnUnhover=yes]{
+popup_actions_list[hasAnim=yes] {
+  transp-time:300;
+}
+
+popup_actions_list[closeOnUnhover=yes] {
   move_out: yes;
 }
 
 [popupMenuWithoutHover=yes] > popup_actions_list[closeOnUnhover=yes],
 popup_actions_list[closeOnUnhover=yes][_transp-direction=1],
 :hover > popup_actions_list[closeOnUnhover=yes],
-popup_actions_list:hover[closeOnUnhover=yes] {
+popup_actions_list:hover[hasActions=yes][closeOnUnhover=yes] {
   move_out: no;
 }
 
@@ -45,8 +42,12 @@ popup_actions_list[close=yes] {
 }
 
 popup_actions_list[move_out=yes] {
-  transp-time:-300;
+  transp-time:-1;
   selfRemoveOnFinish:-1;
+}
+
+popup_actions_list[move_out=yes][hasAnim=yes] {
+  transp-time:-300;
 }
 
 popup_actions_list > itemsList {
@@ -58,14 +59,16 @@ popup_actions_list > itemsList > actionListItem,
 popup_actions_list > itemsList > button {
   border: yes;
   border-color:@transparent;
-  padding: 5*@sf/@pf_outdated;
+  padding: 1@actionItemSidePadding, 0;
+  min-height: 1@buttonHeight;
   min-width: pw;
   css-hier-invalidate: yes;
+  flow:horizontal;
 }
 
 popup_actions_list[iconed=yes] > itemsList > actionListItem,
 popup_actions_list[iconed=yes] > itemsList > button {
-  padding: 5*@sf/@pf_outdated + @cIco, 5*@sf/@pf_outdated;
+  padding: 1@actionItemSidePadding + 1@cIco, 0;
 }
 
 popup_actions_list > itemsList > actionListItem > text,
@@ -79,6 +82,11 @@ popup_actions_list > itemsList > button > text {
   color: @menuButtonTextColor;
   font:@fontNormal;
   css-hier-invalidate: yes;
+}
+
+popup_actions_list[listStyle=center] > itemsList > actionListItem,
+popup_actions_list[listStyle=center] > itemsList > button {
+  flow-align:center;
 }
 
 popup_actions_list > itemsList > actionListItem > dragAndDropIcon > text {
@@ -105,8 +113,7 @@ popup_actions_list > itemsList > actionListItem > text[isWarning="yes"] {
 popup_actions_list > itemsList > actionListItem > warning_icon,
 popup_actions_list > itemsList > button > warning_icon {
   size:1@cIco, 1@cIco;
-  pos:-2@sf/@pf_outdated, ph/2-h/2;
-  position:relative;
+  position:absolute;
   background-color:@white;
   background-image:#ui/gameuiskin#new_icon.svg;
   background-svg-size:1@cIco, 1@cIco;
@@ -188,6 +195,11 @@ popup_actions_list > itemsList > actionListItem:disabled > text {
   color:@buttonFontColorDisabled;
 }
 
+popup_actions_list > itemsList > actionListItem > dragAndDropIcon {
+  pos:0, (ph-h)/2;
+  position: relative;
+}
+
 popup_actions_list > itemsList > actionListItem > icon,
 popup_actions_list > itemsList > actionListItem > dragAndDropIcon > icon,
 popup_actions_list > itemsList > button > icon {
@@ -196,12 +208,15 @@ popup_actions_list > itemsList > button > icon {
   size: @cIco, @cIco;
   input-transparent:yes;
   re-type: fgPict;
-  position: relative;
-  pos: -w - 3*@sf/@pf_outdated;
+  position: absolute;
+  pos: 0, (ph-h)/2;
 }
 
 popup_actions_list > itemsList > actionListItem > dragAndDropIcon > icon {
   pos:0, ph/2-h/2;
+  position: relative;
+  background-svg-size:0.75@cIco, 0.75@cIco;
+  size:0.75@cIco, 0.75@cIco;
 }
 
 popup_actions_list > itemsList > actionListItem:disabled > icon {
@@ -238,4 +253,14 @@ popup_actions_list > itemsList > button {
 [swap_ab=yes] popup_actions_list > itemsList > actionListItem,
 [swap_ab=yes] popup_actions_list > itemsList > button {
   shortcutActivate: "Space | J:B | J:RT";
+}
+
+menuItemSeparator {
+  position:relative;
+  size:pw - 2@menuSeparatorPadding, 1@sf/@pf;
+  pos:(pw-w)/2, 0;
+  background-color:@menuSeparatorColor;
+  inactive:yes;
+  interactive:no;
+  isActionsListButton:no;
 }

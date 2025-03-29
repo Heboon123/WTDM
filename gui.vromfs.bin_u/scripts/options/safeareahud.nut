@@ -8,14 +8,15 @@ let { is_stereo_mode } = require("vr")
 let { useTouchscreen } = require("%scripts/clientState/touchScreen.nut")
 let { OPTIONS_MODE_GAMEPLAY, USEROPT_HUD_SCREEN_SAFE_AREA
 } = require("%scripts/options/optionsExtNames.nut")
-let { isAuthorized } = require("%scripts/login/loginStates.nut")
+let { isAuthorized } = require("%appGlobals/login/loginState.nut")
+let { set_gui_option_in_mode } = require("%scripts/options/options.nut")
 
 let defValue  = 1.0
 let values    = [1.0, 0.95, 0.9, 0.85]
 let items     = ["100%", "95%", "90%", "85%"]
 if (is_platform_xbox) {
   const XBOX_SAFE_AREA = 0.89
-  // so remove all below of it to fit in.
+  
   for (local i = values.len() - 1; i >= 0; i--) {
     if (values[i] < XBOX_SAFE_AREA) {
       values.remove(i)
@@ -25,7 +26,7 @@ if (is_platform_xbox) {
 }
 
 
-let getFixedValue = @() //return -1 when not fixed
+let getFixedValue = @() 
   is_stereo_mode() ? 1.0
   : isPlatformSony ? sony.getDisplaySafeArea()
   : useTouchscreen ? 0.9
@@ -48,7 +49,7 @@ local setValue = function(value) {
 
   value = isInArray(value, values) ? value : defValue
   set_option_hud_screen_safe_area(value)
-  ::set_gui_option_in_mode(USEROPT_HUD_SCREEN_SAFE_AREA, value, OPTIONS_MODE_GAMEPLAY)
+  set_gui_option_in_mode(USEROPT_HUD_SCREEN_SAFE_AREA, value, OPTIONS_MODE_GAMEPLAY)
 }
 
 let getSafearea = @() screenInfo.getFinalSafearea(getValue(), screenInfo.getHudWidthLimit())

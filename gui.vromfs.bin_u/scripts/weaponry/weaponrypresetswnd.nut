@@ -7,15 +7,13 @@ let { Cost } = require("%scripts/money.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let DataBlock = require("DataBlock")
-let { defer } = require("dagor.workcycle")
-let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { secondary_weapon_camera_mode } = require("hangar")
 let { set_weapon_visual } = require("unitCustomization")
 let { sortPresetsList, setFavoritePresets, getWeaponryPresetView,
   getWeaponryByPresetInfo, getCustomWeaponryPresetView
 } = require("%scripts/weaponry/weaponryPresetsParams.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-let { move_mouse_on_obj, handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { move_mouse_on_obj } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { getLastWeapon, setLastWeapon } = require("%scripts/weaponry/weaponryInfo.nut")
 let { getItemAmount, getItemCost, getItemStatusTbl } = require("%scripts/weaponry/itemInfo.nut")
 let { getWeaponItemViewParams } = require("%scripts/weaponry/weaponryVisual.nut")
@@ -43,6 +41,7 @@ let { isInFlight } = require("gameplayBinding")
 let { addTask } = require("%scripts/tasker.nut")
 let { loadModel } = require("%scripts/hangarModelLoadManager.nut")
 let { round_by_value } = require("%sqstd/math.nut")
+let { openRightClickMenu } = require("%scripts/wndLib/rightClickMenu.nut")
 
 const MY_FILTERS = "weaponry_presets/filters"
 
@@ -128,7 +127,7 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
     this.filterObj = this.scene.findObject("filter_nest")
     this.myFilters = loadLocalAccountSettings($"{MY_FILTERS}/{this.unit.name}", DataBlock())
     this.fillFilterTypesList()
-    // No need to update items if no stored filters for current unit
+    
     if (this.myFilters != null)
       this.updateAllByFilters()
 
@@ -299,15 +298,24 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
       obj.setValue(-1)
   }
 
+  function getTierDeskMarkup() {
+    if (this.curTierIdx < 0 || this.curPresetIdx == null)
+      return ""
+    let item = this.presets[this.curPresetIdx]
+    let weaponry = item.tiersView?[this.curTierIdx].weaponry
+    if (!weaponry)
+      return ""
+
+    let tooltipParams = getTierTooltipParams(weaponry, item.name, this.curTierIdx).__update({
+      narrowPenetrationTable = true 
+    })
+    return handyman.renderCached(("%gui/weaponry/weaponsPresetTooltip.tpl"),
+      getTierDescTbl(this.unit, tooltipParams))
+  }
+
   function updateTierDesc() {
-    local data = ""
     let descObj = this.scene.findObject("tierDesc")
-    if (this.curTierIdx >= 0 && this.curPresetIdx != null) {
-      let item = this.presets[this.curPresetIdx]
-      let weaponry = item.tiersView?[this.curTierIdx].weaponry
-      data = weaponry ? handyman.renderCached(("%gui/weaponry/weaponTooltip.tpl"),
-        getTierDescTbl(this.unit, getTierTooltipParams(weaponry, item.name, this.curTierIdx))) : ""
-    }
+    let data = this.getTierDeskMarkup()
     this.guiScene.replaceContentFromText(descObj, data, data.len(), null)
   }
 
@@ -360,7 +368,7 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
   function onBuy(item) {
     if (!shop_is_weapon_available(this.unit.name, item.name, false, true))
       return
-    this.checkSaveBulletsAndDo(Callback(function() { //-param-hides-param
+    this.checkSaveBulletsAndDo(Callback(function() { 
       weaponsPurchase(this.unit, { modItem = item, open = false })
     }, this))
   }
@@ -412,6 +420,9 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
     updateWeaponTooltip(descObj, this.unit, this.presets[this.curPresetIdx].weaponPreset, this, {
       curEdiff = this.curEdiff
       detail = INFO_DETAIL.FULL
+      needDescInArrayForm = true
+      markupFileName = "%gui/weaponry/weaponsPresetTooltip.tpl"
+      showOnlyNamesAndSpecs = true
     })
   }
 
@@ -424,22 +435,22 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
     let canEditCurPreset = isCustomPreset(this.presets[this.curPresetIdx])
 
     return [
-      { // rename
+      { 
         text = loc("msgbox/btn_rename")
         show = canEditCurPreset
         action = @() this.onPresetRename()
       }
-      { // edit
+      { 
         text = loc("msgbox/btn_edit")
         show = canEditCurPreset
         action = @() this.onPresetEdit()
       }
-      { // copy
+      { 
         text = loc("gblk/saveError/copy")
         show = canCopyCurPreset
         action = @() this.onPresetCopy()
       }
-      { // delete
+      { 
         text = loc("msgbox/btn_delete")
         show = canEditCurPreset
         action = @() this.onPresetDelete()
@@ -448,7 +459,7 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onPresetMenuOpen() {
-    ::gui_right_click_menu(this.getPresetActions(), this)
+    openRightClickMenu(this.getPresetActions(), this)
   }
 
   function onPresetActionsMenuOpen() {
@@ -456,7 +467,7 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
     if (actions.len() == 1)
       actions[0].action.call(this)
     else
-      ::gui_right_click_menu(actions, this)
+      openRightClickMenu(actions, this)
   }
 
   isCustomPresetsAvailable = @() this.unit.hasWeaponSlots  && this.availableWeapons.len() > 0
@@ -523,11 +534,11 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
       presets = this.presetsMarkup
     })
     this.guiScene.replaceContentFromText(this.presetNest, data, data.len(), this)
-    // Select chosen or first preset
+    
     local firstIdx = this.presetIdxToChildIdx.findindex(@(_) true)
     this.selectPreset(this.chosenPresetIdx in this.presetIdxToChildIdx ? this.chosenPresetIdx : firstIdx, true)
 
-    // Enable/disable filter options depends on whether filtering result exist.
+    
     let popupObj = this.filterObj.findObject("filter_popup")
     if (!popupObj?.isValid())
       return
@@ -660,8 +671,8 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
     local isFavorite = false
     local isAvailable = false
     local pList = []
-    // All presets have been filtered by rank an placed into presetsByRanks
-    // to avoid excess job by each checkbox choice.
+    
+    
     foreach (inst in this.filterStates) {
       if (inst != "f_Favorite" && inst != "f_Available") {
         let p = this.presetsByRanks?[inst.split("f_")[1].tointeger()]
@@ -676,11 +687,11 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
 
     if (pList.len() == 0 || !isFavorite || !isAvailable) {
       this.presets = this.weaponryByPresetInfo.presets
-      // Get all presets if no rank choosen
+      
       pList = pList.len() == 0 ? (clone this.presets) : pList
     }
     if (isFavorite || isAvailable) {
-      // Ignore filtering if stored filter has no result for current unit presets.
+      
       let isExistFavorites = this.isFavoritesExist()
       let isExistAvailables = this.isAvailablesExist()
       let filterFunc = @(p)
@@ -763,7 +774,7 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
       this.editWeaponryPreset(curPreset)
   }
 
-  // DEVELOPERS OPTION ONLY
+  
   function updateBuyAllBtn() {
     let isShow = this.multiPurchaseList.len() > 0
     if (isShow)
@@ -927,17 +938,4 @@ gui_handlers.weaponryPresetsModal <- class (gui_handlers.weaponryPresetsWnd) {
 
   loadHangarModel = @() null
   updateChangeWndHeightButtons= @(_ = null) null
-}
-
-return {
-  open = function(params) {
-    broadcastEvent("BeforeOpenWeaponryPresetsWnd")
-    let handlerClass = isInFlight() ? gui_handlers.weaponryPresetsModal
-      : gui_handlers.weaponryPresetsWnd
-    if (get_cur_gui_scene().isInAct()) {
-      defer(@() handlersManager.loadHandler(handlerClass, params))
-      return
-    }
-    handlersManager.loadHandler(handlerClass, params)
-  }
 }

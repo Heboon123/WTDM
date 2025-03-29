@@ -2,25 +2,30 @@ from "%scripts/dagui_library.nut" import *
 let { get_time_msec } = require("dagor.time")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let DataBlock = require("DataBlock")
-let avatars = require("%scripts/user/avatars.nut")
 let { setTimeout, clearTimer } = require("dagor.workcycle")
 let { charRequestBlk } = require("%scripts/tasker.nut")
 let { isDataBlock, convertBlk } = require("%sqstd/datablock.nut")
+let { getAvatarIconById } = require("%scripts/user/avatars.nut")
 
-/**
-  client api:
-      requestInfo(users, successCb = null, errorCb = null)
-                  - users - array of userId's string
 
-  server api:
-      "cln_get_users_terse_info" - char action returns DataBlock: {
-                                                                      uid = {
-                                                                        nick="string",
-                                                                        pilotId="integer"
-                                                                      }
-                                                                      uid {...}
-                                                                    }
-**/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 enum userInfoEventName {
   UPDATED = "UserInfoManagerDataUpdated"
@@ -85,10 +90,13 @@ function _convertServerResponse(response) {
   foreach (uid, userInfo in response) {
     if (userInfo?.failed)
       continue
+    local pilotIcon = userInfo?.pilotIcon ?? ""
+    if (pilotIcon == "")
+      pilotIcon = getAvatarIconById(userInfo?.pilotId ?? "")
     let convertedData = {
       uid = uid
       name = userInfo?.nick ?? ""
-      pilotIcon = avatars.getIconById(userInfo?.pilotId ?? "")
+      pilotIcon
       title = userInfo?.title ?? ""
       clanTag =  userInfo?.clanTag ?? ""
       clanName =  userInfo?.clanName ?? ""

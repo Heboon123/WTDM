@@ -5,10 +5,13 @@ let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 
 let bhvUnseen = require("%scripts/seen/bhvUnseen.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { handlersManager, move_mouse_on_obj } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { getButtonConfigById } = require("%scripts/mainmenu/topMenuButtons.nut")
 let { getTopMenuSectionsOrder } = require("%scripts/mainmenu/topMenuSections.nut")
-let { isLoggedIn } = require("%scripts/login/loginStates.nut")
+let { isLoggedIn } = require("%appGlobals/login/loginState.nut")
+let { checkIsInQueue } = require("%scripts/queue/queueManager.nut")
+
+const SEPARATOR_POSTFIX = "_separator"
 
 gui_handlers.TopMenuButtonsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   wndType = handlerType.CUSTOM
@@ -91,6 +94,8 @@ gui_handlers.TopMenuButtonsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       let columns = []
 
       foreach (idx, column in sectionData.buttons) {
+        if ((column?.len() ?? 0) > 0)
+          column.top().isLastButton <- true
         columns.append({
           buttons = column
           addNewLine = idx != (columnsCount - 1)
@@ -102,6 +107,7 @@ gui_handlers.TopMenuButtonsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       u.appendOnce(tmId, this.GCDropdownsList)
 
       sectionsView.append({
+        separatorPostfix = SEPARATOR_POSTFIX
         tmId = tmId
         haveTmDiscount = sectionData.haveTmDiscount
         tmDiscountId = sectionData.getTopMenuDiscountId()
@@ -152,7 +158,7 @@ gui_handlers.TopMenuButtonsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function updateButtonsStatus() {
     let needHideVisDisabled = hasFeature("HideDisabledTopMenuActions")
-    let isInQueue = ::checkIsInQueue()
+    let isInQueue = checkIsInQueue()
     let skipNavigation = this.parentHandlerWeak?.scene
       .findObject("gamercard_div")["gamercardSkipNavigation"] == "yes"
 
@@ -164,6 +170,7 @@ gui_handlers.TopMenuButtonsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
       local isVisibleAnyButton = false
       foreach (column in section.buttons) {
+        local lastVisibleBtn = null
         foreach (button in column) {
           let btnObj = sectionObj.findObject(button.id)
           if (!checkObj(btnObj))
@@ -177,7 +184,8 @@ gui_handlers.TopMenuButtonsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
           btnObj.show(show)
           btnObj.enable(show)
           isVisibleAnyButton = isVisibleAnyButton || show
-
+          sectionObj.findObject($"{button.id}{SEPARATOR_POSTFIX}")?.show(show)
+          lastVisibleBtn = show ? button : lastVisibleBtn
           if (!show)
             continue
 
@@ -185,6 +193,9 @@ gui_handlers.TopMenuButtonsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
           btnObj.inactiveColor = isVisualDisable ? "yes" : "no"
           btnObj.tooltip = button.tooltip()
         }
+        if (lastVisibleBtn)
+          sectionObj.findObject($"{lastVisibleBtn.id}{SEPARATOR_POSTFIX}")?.show(false)
+
       }
 
       if (skipNavigation) {
@@ -246,8 +257,23 @@ gui_handlers.TopMenuButtonsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if (curVal < 0)
       return
 
-    let selObj = obj.getChild(curVal)
-    if (!checkObj(selObj))
+    local selObj = null
+    let containersCount = obj.childrenCount()
+    local addedIndex = 0
+    for (local i = 0; i < containersCount; i++) {
+      let btnsContainer = obj.getChild(i)
+      if ((btnsContainer?.isContainer ?? "no") == "no")
+        continue
+      let btnsCount = btnsContainer.childrenCount()
+      if (curVal > addedIndex + btnsCount) {
+        addedIndex += btnsCount
+        continue
+      }
+      selObj = btnsContainer.getChild(curVal - addedIndex)
+      break
+    }
+
+    if (!selObj?.isValid())
       return
     let eventName = selObj?._on_click ?? selObj?.on_click ?? selObj?.on_change_value
     if (!eventName || !(eventName in this))
@@ -280,6 +306,21 @@ gui_handlers.TopMenuButtonsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     let panelObj = this.scene.findObject("top_menu_panel_place")
     this.onGCDropdown(panelObj.getChild(mergeIdx))
     panelObj.setValue(mergeIdx)
+  }
+
+  function moveToFirstEnabled(topMenu) {
+    let columnsCount = topMenu.childrenCount()
+    for (local i = 0; i < columnsCount; i++) {
+      let menuColumn = topMenu.getChild(i)
+      let buttonsCount = menuColumn.childrenCount()
+      for (local n = 0; n < buttonsCount; n++) {
+        let btn = menuColumn.getChild(n)
+        if (!btn.isValid() || !btn.isEnabled() || btn.getFinalProp("inactive") == "yes")
+          continue
+        move_mouse_on_obj(btn)
+        return
+      }
+    }
   }
 
   function onEventQueueChangeState(_p) {

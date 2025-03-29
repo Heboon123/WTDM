@@ -62,7 +62,6 @@ let { get_game_settings_blk } = require("blkGetters")
 let { getEventEconomicName, isEventPlatformOnlyAllowed } = require("%scripts/events/eventInfo.nut")
 let { checkSquadUnreadyAndDo } = require("%scripts/squads/squadUtils.nut")
 let newIconWidget = require("%scripts/newIconWidget.nut")
-let { openClanRequestsWnd } = require("%scripts/clans/clanRequestsModal.nut")
 let { isCountryAvailable } = require("%scripts/firstChoice/firstChoice.nut")
 let { isStatsLoaded, getNextNewbieEvent, isMeNewbie, getPvpRespawns, getMissionsComplete,
   getTimePlayedOnUnitType
@@ -79,8 +78,20 @@ let { getCrewsList } = require("%scripts/slotbar/crewsList.nut")
 let { isWorldWarEnabled } = require("%scripts/globalWorldWarScripts.nut")
 let { unlockCrew } = require("%scripts/crew/crewActions.nut")
 let { matchSearchGm, currentCampaignMission } = require("%scripts/missions/missionsStates.nut")
-let { isLoggedIn } = require("%scripts/login/loginStates.nut")
+let { isLoggedIn } = require("%appGlobals/login/loginState.nut")
 let { joinOperationById } = require("%scripts/globalWorldwarUtils.nut")
+let { gui_modal_tutor } = require("%scripts/guiTutorial.nut")
+let { get_option } = require("%scripts/options/optionsExt.nut")
+let { checkBrokenAirsAndDo } = require("%scripts/instantAction.nut")
+let { EventJoinProcess } = require("%scripts/events/eventJoinProcess.nut")
+let { gui_modal_crew } = require("%scripts/crew/crewModalHandler.nut")
+let { getMyClanCandidates, isHaveRightsToReviewCandidates, openClanRequestsWnd
+  } = require("%scripts/clans/clanCandidates.nut")
+let { getChatObject } = require("%scripts/chat/chatUtils.nut")
+let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
+let dmViewer = require("%scripts/dmViewer/dmViewer.nut")
+
+let SlotbarPresetsTutorial = require("%scripts/slotbar/slotbarPresetsTutorial.nut")
 
 gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
   static keepLoaded = true
@@ -135,7 +146,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
   slotbarPresetsTutorial = null
 
   function initScreen() {
-    // Causes drawer to initialize once.
+    
     this.getGamercardDrawerHandler()
 
     this.mainOptionsMode = getGuiOptionsMode()
@@ -150,7 +161,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
     this.updateStartButton()
 
     this.inited = true
-    ::dmViewer.update()
+    dmViewer.update()
     initBackgroundModelHint(this)
     requestAllPatchnotes()
   }
@@ -241,7 +252,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
       return
     this._lastGameModeId = modeId
 
-    this.onCountrySelectAction() //bad function naming. Actually this function validates your units and selected country for new mode
+    this.onCountrySelectAction() 
     this.setCurrentGameModeName()
     this.reinitSlotbar()
   }
@@ -348,7 +359,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
       return
     this.setCurQueue(::queues.isQueueActive(_queue) ? _queue : null)
     this.updateStartButton()
-    ::dmViewer.update()
+    dmViewer.update()
   }
 
   function onEventCurrentGameModeIdChanged(_params) {
@@ -476,15 +487,15 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function setSquadReadyFlag() {
     if (getLeaderOperationState() == LEADER_OPERATION_STATES.OUT) {
-      //No need to check broken units when set unready
+      
       if (!g_squad_manager.isMeReady()) {
         let leaderEvent = events.getEvent(g_squad_manager.getLeaderGameModeId())
-        if (leaderEvent == null) { //not found game mode of leader, skip check broken units
+        if (leaderEvent == null) { 
           g_squad_manager.setReadyFlag()
           return
         }
         let repairInfo = events.getCountryRepairInfo(leaderEvent, null, profileCountrySq.value)
-        ::checkBrokenAirsAndDo(repairInfo, this, @() g_squad_manager.setReadyFlag(), false)
+        checkBrokenAirsAndDo(repairInfo, this, @() g_squad_manager.setReadyFlag(), false)
         return
       }
       g_squad_manager.setReadyFlag()
@@ -595,13 +606,13 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function startEventBattle(event) {
-    //!!FIX ME: this is a start random_battles or newbie battles events without check old domination modes
-    //can be used as base random battles start for new matching.
-    //valid only for newbie events yes
+    
+    
+    
     if (::queues.isAnyQueuesActive(this.queueMask) || !::g_squad_utils.canJoinFlightMsgBox({ isLeaderCanJoin = true }))
       return
 
-    ::EventJoinProcess(event)
+    EventJoinProcess(event)
   }
 
   function showNoSuitableVehiclesMsgBox() {
@@ -652,7 +663,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
   function showBadUnitMsgBox(msgText) {
     let buttonsArray = []
 
-    // "Change mode" button
+    
     let curUnitType = getEsUnitType(getCurSlotbarUnit())
     let gameMode = getGameModeByUnitType(curUnitType, -1, true)
     if (gameMode != null) {
@@ -666,7 +677,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
       ])
     }
 
-    // "Change vehicle" button
+    
     let currentGameMode = getCurrentGameMode()
     local properUnitType = null
     if (currentGameMode.type == RB_GM_TYPE.EVENT) {
@@ -688,10 +699,10 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
       ])
     }
 
-    // "Ok" button
+    
     buttonsArray.append(["ok", function () {}])
 
-    this.msgBox("bad_current_unit", msgText, buttonsArray, "ok" /*"#mainmenu/changeMode"*/ , { cancel_fn = function () {} })
+    this.msgBox("bad_current_unit", msgText, buttonsArray, "ok"  , { cancel_fn = function () {} })
   }
 
   function isCurrentGameModeMultiSlotEnabled() {
@@ -733,8 +744,8 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     if (gameMode.type == RB_GM_TYPE.EVENT)
-      return this.startEventBattle(getGameModeEvent(gameMode)) //better to do completely the same here as we do n events.
-                                               // but better to refactor this place after remove old gamemodes
+      return this.startEventBattle(getGameModeEvent(gameMode)) 
+                                               
   }
 
   function checkGameModeTutorial(gameMode) {
@@ -822,11 +833,11 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
 
     local chatDiv = null
     if (topMenuHandler.value != null)
-      chatDiv = ::getChatDiv(topMenuHandler.value.scene)
+      chatDiv = getChatObject(topMenuHandler.value.scene)
     if (!chatDiv && this.scene && this.scene.isValid())
-      chatDiv = ::getChatDiv(this.scene)
+      chatDiv = getChatObject(this.scene)
     if (chatDiv)
-      ::switchMenuChatObjIfVisible(chatDiv)
+      broadcastEvent("ChatSwitchObjectIfVisible", { obj = chatDiv })
   }
 
   function leaveCurQueue(options = {}) {
@@ -865,7 +876,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function testCurrentUnitForMode(country) {
     if (country == "country_0") {
-      let option = ::get_option(USEROPT_COUNTRY)
+      let option = get_option(USEROPT_COUNTRY)
       foreach (idx, optionCountryName in option.values)
         if (optionCountryName != "country_0" && option.items[idx].enabled) {
           let unit = this.getQueueAircraft(optionCountryName)
@@ -882,8 +893,8 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function testCrewsForMode(country) {
     let countryToCheckArr = []
-    if (country == "country_0") { //fill countryToCheckArr with countries, allowed by game mode
-      let option = ::get_option(USEROPT_COUNTRY)
+    if (country == "country_0") { 
+      let option = get_option(USEROPT_COUNTRY)
       foreach (idx, optionCountryName in option.values)
         if (optionCountryName != "country_0" && option.items[idx].enabled)
           countryToCheckArr.append(optionCountryName)
@@ -995,7 +1006,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     let slotbar = this.getSlotbar()
-    let curSlotExtraInfoObj = slotbar?.getCurrentCrewSlot().findObject("extra_info_block")
+    let curSlotExtraInfoObj = slotbar?.getCurrentCrewSlot().findObject("extra_info_content")
     if (!curSlotExtraInfoObj)
       return
 
@@ -1010,20 +1021,20 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
         actionType = tutorAction.OBJ_CLICK
         shortcut = GAMEPAD_ENTER_SHORTCUT
         nextActionShortcut = "help/OBJ_CLICK"
-        cb = @() slotbar.onOpenCrewPopup(curSlotExtraInfoObj)
+        cb = @() slotbar.onOpenCrewPopup(curSlotExtraInfoObj, false)
       },
       {
         actionType = tutorAction.WAIT_ONLY
         waitTime = 0.5
       },
       {
-        obj = [@() curSlotExtraInfoObj.findObject("open_crew_wnd_btn")]
+        obj = [@() curSlotExtraInfoObj.findObject("openCrewWnd")]
         text = loc("tutorials/upg_crew/select_crew")
         actionType = tutorAction.OBJ_CLICK
         shortcut = GAMEPAD_ENTER_SHORTCUT
         nextActionShortcut = "help/OBJ_CLICK"
         cb = function() {
-          ::gui_modal_crew({
+          gui_modal_crew({
             countryId = curCrew.idCountry,
             idInCountry = curCrew.idInCountry,
             curPageId = tutorialPageId,
@@ -1032,7 +1043,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
         }
       }
     ]
-    ::gui_modal_tutor(steps, this)
+    gui_modal_tutor(steps, this)
   }
 
   function toBattleTutor() {
@@ -1045,12 +1056,12 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
       shortcut = SHORTCUT.GAMEPAD_X
       cb = this.onStart
     }]
-    ::gui_modal_tutor(steps, this)
+    gui_modal_tutor(steps, this)
   }
 
   function startSlotbarPresetsTutorial() {
-    let tutorialCounter = ::SlotbarPresetsTutorial.getCounter()
-    if (tutorialCounter >= ::SlotbarPresetsTutorial.MAX_TUTORIALS)
+    let tutorialCounter = SlotbarPresetsTutorial.getCounter()
+    if (tutorialCounter >= SlotbarPresetsTutorial.MAX_TUTORIALS)
       return false
 
     let currentGameMode = getCurrentGameMode()
@@ -1058,13 +1069,13 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
       return false
 
     let missionCounter = stat_get_value_missions_completed(currentGameMode.diffCode, 1)
-    if (missionCounter >= ::SlotbarPresetsTutorial.MAX_PLAYS_FOR_GAME_MODE)
+    if (missionCounter >= SlotbarPresetsTutorial.MAX_PLAYS_FOR_GAME_MODE)
       return false
 
     if (!::slotbarPresets.canEditCountryPresets(this.getCurCountry()))
       return false
 
-    let tutorial = ::SlotbarPresetsTutorial()
+    let tutorial = SlotbarPresetsTutorial()
     tutorial.currentCountry = this.getCurCountry()
     tutorial.tutorialGameMode = currentGameMode
     tutorial.currentHandler = this
@@ -1094,7 +1105,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
         let lastLoginDay = loadLocalAccountSettings("viralAcquisition/lastLoginDay", today)
         local lastShowTime = loadLocalAccountSettings("viralAcquisition/lastShowTime", never)
 
-        // Game designers can force reset lastShowTime of all users by increasing this value in cfg:
+        
         if (gmBlk?.resetViralAcquisitionDaysCounter) {
           let newResetVer = gmBlk.resetViralAcquisitionDaysCounter
           let knownResetVer = loadLocalAccountSettings("viralAcquisition/resetDays", 0)
@@ -1121,7 +1132,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function setUsingDynamicLut(value) {
-    setIsUsingDynamicLut(value); //need to be set first
+    setIsUsingDynamicLut(value); 
     setTonemappingMode(getTonemappingMode());
   }
 
@@ -1145,7 +1156,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
 
     if (!tutorialModule.needShowTutorial("newUnitTypetoBattle", 1)
       || getMissionsComplete(["pvp_played", "skirmish_played"])
-           < ::SlotbarPresetsTutorial.MIN_PLAYS_GAME_FOR_NEW_UNIT_TYPE
+           < SlotbarPresetsTutorial.MIN_PLAYS_GAME_FOR_NEW_UNIT_TYPE
       || g_squad_manager.isNotAloneOnline()
       || !isCountrySlotbarHasUnits(profileCountrySq.value)
       || !isCountryAllCrewsUnlockedInHangar(profileCountrySq.value))
@@ -1197,7 +1208,7 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
       [
         ["yes", function() {
           sendBqEvent("CLIENT_GAMEPLAY_1", "new_unit_type_to_battle_tutorial_msgbox_btn", { result = "yes" })
-          let tutorial = ::SlotbarPresetsTutorial()
+          let tutorial = SlotbarPresetsTutorial()
           tutorial.currentCountry = currentCountry
           tutorial.tutorialGameMode = gameModeForTutorial
           tutorial.isNewUnitTypeToBattleTutorial = true
@@ -1280,9 +1291,9 @@ gui_handlers.InstantDomination <- class (gui_handlers.BaseGuiHandlerWT) {
     this.setCurrentGameModeName()
   }
 
-  function on_show_clan_requests() { //FIXME: FUNC in 'on_click' somehow calls
-    if (::g_clans.isHaveRightsToReviewCandidates())
-      openClanRequestsWnd(::g_clans.getMyClanCandidates(), clan_get_my_clan_id(), false);
+  function on_show_clan_requests() { 
+    if (isHaveRightsToReviewCandidates())
+      openClanRequestsWnd(getMyClanCandidates(), clan_get_my_clan_id(), false);
   }
 
   onEventToBattleLocShortChanged = @(_params) this.doWhenActiveOnce("updateStartButton")

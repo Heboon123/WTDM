@@ -7,6 +7,7 @@ let { localTeam } = require("%rGui/missionState.nut")
 let { isEqual } = require("%sqstd/underscore.nut")
 let colors = require("colors.nut")
 let { eventbus_subscribe } = require("eventbus")
+let { isLoggedIn } = require("%appGlobals/login/loginState.nut")
 
 local teamColors = Watched({
   teamBlueColor         = null
@@ -28,7 +29,7 @@ local teamColors = Watched({
   hudColorDarkBlue      = null
   hudColorDeathAlly     = null
   hudColorDeathEnemy    = null
-  //const colors
+  
   hudColorHero          = colors.hud.mainPlayerColor
   chatTextPrivateColor  = colors.hud.chatTextPrivateColor
   userlogColoredText    = colors.menu.userlogColoredText
@@ -44,7 +45,7 @@ local teamColors = Watched({
 function recalculateTeamColors(forcedColors = {}) {
   local newTeamColors = clone teamColors.value
   newTeamColors.forcedTeamColors = forcedColors
-  local standardColors = !cross_call.login.isLoggedIn() || !cross_call.isPlayerDedicatedSpectator()
+  local standardColors = !isLoggedIn.get() || !cross_call.isPlayerDedicatedSpectator()
   local allyTeam, allyTeamColor, enemyTeamColor
   local isForcedColor = forcedColors && forcedColors.len() > 0
   if (isForcedColor) {
@@ -71,11 +72,11 @@ function recalculateTeamColors(forcedColors = {}) {
     { theme = squadTheme, baseColor = Color(198, 255, 189), name = "chatTextSquadColor" }
   ]) {
     newTeamColors[cfg.name] = isForcedColor
-      ? (cfg.theme == enemyTheme ? enemyTeamColor : allyTeamColor) //warnind disable: -func-in-expression
+      ? (cfg.theme == enemyTheme ? enemyTeamColor : allyTeamColor) 
       : cc.correctHueTarget(cfg.baseColor, cfg.theme())
   }
-  newTeamColors.teamBlueLightColor  = cc.correctColorLightness(newTeamColors.teamBlueColor, 50)
-  newTeamColors.teamRedLightColor   = cc.correctColorLightness(newTeamColors.teamRedColor, 50)
+  newTeamColors.teamBlueLightColor  = cc.correctColorLightness(newTeamColors.teamBlueColor, 0.808)
+  newTeamColors.teamRedLightColor   = cc.correctColorLightness(newTeamColors.teamRedColor, 0.808)
 
   newTeamColors.hudColorRed         = newTeamColors.teamRedColor
   newTeamColors.hudColorBlue        = newTeamColors.teamBlueColor
@@ -94,6 +95,8 @@ recalculateTeamColors()
 localTeam.subscribe(function (_new_val) {
   recalculateTeamColors(teamColors.value.forcedTeamColors)
 })
+
+isLoggedIn.subscribe(@(_) recalculateTeamColors(teamColors.value.forcedTeamColors))
 
 eventbus_subscribe("recalculateTeamColors", @(v) recalculateTeamColors(v.forcedColors))
 

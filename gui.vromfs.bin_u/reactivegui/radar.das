@@ -10,110 +10,8 @@ require hud
 require FlightModelWrap
 require HeroManager
 require Unit
-
-let modeNames = [[string
-  "hud/standby";
-  "hud/search";
-  "hud/acquisition";
-  "hud/ACM";
-  "hud/HMD";
-  "hud/BST";
-  "hud/VSL";
-  "hud/track";
-
-  "hud/PD VS standby";
-  "hud/PD VS search";
-  "hud/PD VS acquisition";
-  "hud/PD VS ACM";
-  "hud/PD VS BST";
-  "hud/PD VS VSL";
-
-  "hud/PD HDN VS standby";
-  "hud/PD HDN VS search";
-  "hud/PD HDN VS acquisition";
-  "hud/PD HDN VS ACM";
-  "hud/PD HDN VS BST";
-  "hud/PD HDN VS VSL";
-
-  "hud/PD standby";
-  "hud/PD search";
-  "hud/PD acquisition";
-  "hud/PD ACM";
-  "hud/PD HMD";
-  "hud/PD BST";
-  "hud/PD VSL";
-  "hud/PD track";
-  "hud/PD RAM";
-
-  "hud/PD HDN standby";
-  "hud/PD HDN search";
-  "hud/PD HDN acquisition";
-  "hud/PD HDN ACM";
-  "hud/PD HDN HMD";
-  "hud/PD HDN BST";
-  "hud/PD HDN VSL";
-  "hud/PD HDN track";
-
-  "hud/GTM standby";
-  "hud/GTM search";
-  "hud/GTM acquisition";
-  "hud/GTM ACM";
-  "hud/GTM BST";
-  "hud/GTM VSL";
-  "hud/GTM track";
-
-
-  "hud/LD standby";
-  "hud/LD search";
-  "hud/LD acquisition";
-  "hud/LD ACM";
-  "hud/LD track";
-
-  "hud/MTI standby";
-  "hud/MTI search";
-  "hud/MTI acquisition";
-  "hud/MTI ACM";
-  "hud/MTI track";
-
-  "hud/TWS standby";
-  "hud/TWS search";
-  "hud/TWS acquisition";
-  "hud/TWS ACM";
-  "hud/TWS BST";
-  "hud/TWS VSL";
-  "hud/TWS track";
-
-  "hud/TWS HDN standby";
-  "hud/TWS HDN search";
-  "hud/TWS HDN acquisition";
-  "hud/TWS HDN ACM";
-  "hud/TWS HDN BST";
-  "hud/TWS HDN VSL";
-  "hud/TWS HDN track";
-
-  "hud/TWS GTM standby";
-  "hud/TWS GTM search";
-  "hud/TWS GTM acquisition";
-  "hud/TWS GTM ACM";
-  "hud/TWS GTM BST";
-  "hud/TWS GTM VSL";
-  "hud/TWS GTM track";
-
-  "hud/IRST standby";
-  "hud/IRST search";
-  "hud/IRST acquisition";
-  "hud/IRST ACM";
-  "hud/IRST HMD";
-  "hud/IRST track";
-
-  "hud/air_search";
-  "hud/ground_search";
-
-  "hud/auto acquisition";
-  "hud/auto ACM";
-  "hud/auto HMD";
-  "hud/track memory";
-]]
+require %rGui.utils.radar_common
+require %rGui.utils.constants_common
 
 let areaBackgroundColor = E3DCOLOR(Color4(float4(0., 0., 0., 0.5)))
 let transparentColor = E3DCOLOR(Color4(float4(0, 0, 0, 0)))
@@ -224,7 +122,7 @@ def setup_radar_data(props : Properties&; var storage : CanvasParams&)
   storage.cueLowHeiColor = props |> getColor("cueLowHeiColor", storage.color)
   storage.cueUndergroundColor = props |> getColor("cueUndergroundColor", storage.color)
 
-[export]
+[export, unused_argument(rstate)]
 def draw_radar_hud(var ctx : GuiContext&; rdata : ElemRenderData& const; rstate : RenderState& const; data : CanvasParams&)
   if data.enableByMfd ? !get_radar_hud_mfd_radar_enabled() : !get_radar_hud_visible()
     return
@@ -289,7 +187,7 @@ def b_scope_half(var ctx : GuiContext&; rdata : ElemRenderData& const; data : Ca
       let isSectorView = dist == 1. && halfVal > 0.
       b_scope_azimuth(ctx, data, origin, rdata.size, isSectorView, get_radar_hud_azimuth(), halfVal, dist, 1.2 * data.lineWidth)
       b_scope_elevation(ctx, data, gridPos, rdata.size, get_radar_hud_elevation_min(), get_radar_hud_elevation_max(), get_radar_hud_elevation(), get_radar_hud_azimuth_min(),
-       get_radar_hud_scan_elevation_min(), get_radar_hud_scan_elevation_max())
+       get_radar_hud_scan_elevation_min(), get_radar_hud_scan_elevation_max(), get_radar_hud_elevation_stabilize())
 
   if get_radar_hud_is_visible2() && !data.hideBeam
     if get_radar_hud_is_emitting2()
@@ -298,7 +196,7 @@ def b_scope_half(var ctx : GuiContext&; rdata : ElemRenderData& const; data : Ca
       let isSectorView = dist == 1. && halfVal > 0.
       b_scope_azimuth(ctx, data, origin, rdata.size, isSectorView, get_radar_hud_azimuth2(), halfVal, dist, 1.2 * data.lineWidth)
       b_scope_elevation(ctx, data, gridPos, rdata.size, get_radar_hud_elevation_min(), get_radar_hud_elevation_max(), get_radar_hud_elevation2(), get_radar_hud_azimuth_min(),
-       get_radar_hud_scan_elevation_min(), get_radar_hud_scan_elevation_max())
+       get_radar_hud_scan_elevation_min(), get_radar_hud_scan_elevation_max(), get_radar_hud_elevation_stabilize())
 
   if !data.hideLaunchZone
     b_scope_half_launch_range(ctx, data, gridPos, rdata.size)
@@ -382,9 +280,7 @@ def b_scope_half_top_markers(var ctx : GuiContext&; data : CanvasParams&; pos : 
   let rb = pos + size
   let center = (pos + rb) * 0.5
 
-  let nameId = get_radar_hud_mode_name_id()
-  let defaultStr = get_radar_hud_is_visible() ? (get_radar_hud_is_irst() ? "hud/irst" : "hud/radarEmitting") : ""
-  let modeName = loc(nameId >= 0 && nameId < modeNames |> length() ? modeNames[nameId] : defaultStr)
+  let modeName = Radar`getModeNameLoc()
   let strBox = get_str_bbox(modeName, modeName |> length(), fctx)
   ctx |> goto_xy(center.x - strBox.width.x, center.y - 5.)
   ctx |> set_font(data.fontId, 0, 0)
@@ -395,7 +291,7 @@ def b_scope_half_top_markers(var ctx : GuiContext&; data : CanvasParams&; pos : 
 
   let name2Id = get_radar_hud_mode_name2_id()
   let default2Str = get_radar_hud_is_visible2() ? ("hud/radarEmitting") : ""
-  let modeName2 = loc(name2Id >= 0 && name2Id < modeNames |> length() ? modeNames[name2Id] : default2Str)
+  let modeName2 = loc(name2Id >= 0 && name2Id < radarModeNames |> length() ? radarModeNames[name2Id] : default2Str)
   ctx |> goto_xy(center.x + 5., center.y - 5.)
   ctx |> draw_str_scaled(1.0, modeName2, modeName2 |> length())
 
@@ -408,7 +304,7 @@ def b_scope_half_top_markers(var ctx : GuiContext&; data : CanvasParams&; pos : 
 
 def b_scope_elevation(var ctx : GuiContext&; data : CanvasParams&; pos : float2; size : float2;
                       elev_min : float; elev_max : float; elev_rel : float; azimuth_min : float;
-                      elev_scan_min : float; elev_scan_max : float)
+                      elev_scan_min : float; elev_scan_max : float; elev_stab : bool)
   let rb = pos + size
   let center = (pos + rb) * 0.5
   let origin = float2(center.x, rb.y)
@@ -419,6 +315,7 @@ def b_scope_elevation(var ctx : GuiContext&; data : CanvasParams&; pos : float2;
   let elevation = elevationMin * (1.0 - elev_rel) + elevationMax * elev_rel
   let markLen = 0.06
   let markLenShort = 0.04
+  let markLenLong = 0.10
   let cosa = cos(azimuth_min)
   let sina = sin(azimuth_min)
   var color = float4(Color4(is_color_or_white(data.lineColor)))
@@ -442,6 +339,16 @@ def b_scope_elevation(var ctx : GuiContext&; data : CanvasParams&; pos : float2;
      origin.x + (elevationScanMin * sina - markLen * cosa) * sz.x, origin.y - (elevationScanMin * cosa + markLen * sina) * sz.y, ctx |> hdpx(4. * data.lineWidth))
     ctx |> draw_line(origin.x + elevationScanMax * sina * sz.x, origin.y - elevationScanMax * cosa * sz.y,
      origin.x + (elevationScanMax * sina - markLen * cosa) * sz.x, origin.y - (elevationScanMax * cosa + markLen * sina) * sz.y, ctx |> hdpx(4. * data.lineWidth))
+
+  if elev_stab
+    let hero = get_controlled_hero()
+    if hero != null && !hero.isDelayed
+      let fmw = hero |> as_fmw()
+      if fmw != null
+        let tangage = deg_to_rad(fmw.tangage)
+        let elevationHorizon = -tangage * elevMaxInv * elevMaxScreenRelSize + 0.5
+        ctx |> draw_line(origin.x + elevationHorizon * sina * sz.x, origin.y - elevationHorizon * cosa * sz.y,
+         origin.x + (elevationHorizon * sina - markLenLong * cosa) * sz.x, origin.y - (elevationHorizon * cosa + markLenLong * sina) * sz.y, ctx |> hdpx(4. * data.lineWidth))
 
 def foreach_targets(blk : block<(target : RadarTarget const const#; i : int) : void>)
   get_radar_hud_targets() <| $(targets : array<RadarTarget> const#)
@@ -731,12 +638,12 @@ def b_scope_square(var ctx : GuiContext&; rdata : ElemRenderData& const; data : 
     if get_radar_hud_is_emitting() && !data.hideBeam
       b_scope_square_azimuth(ctx, data, pos, sz, false, get_radar_hud_azimuth(), get_radar_hud_distance(), get_radar_hud_azimuth_half_width())
     b_scope_square_elevation(ctx, data, pos, sz, get_radar_hud_elevation(), get_radar_hud_elevation_min(), get_radar_hud_elevation_max(),
-     get_radar_hud_scan_elevation_min(), get_radar_hud_scan_elevation_max())
+      get_radar_hud_scan_elevation_min(), get_radar_hud_scan_elevation_max(), get_radar_hud_elevation_stabilize())
   if get_radar_hud_is_visible2()
     if get_radar_hud_is_emitting2() && !data.hideBeam
       b_scope_square_azimuth(ctx, data, pos, sz, false, get_radar_hud_azimuth2(), get_radar_hud_distance2(), get_radar_hud_azimuth_half_width2())
     b_scope_square_elevation(ctx, data, pos, sz, get_radar_hud_elevation2(), get_radar_hud_elevation_min(), get_radar_hud_elevation_max(),
-     get_radar_hud_scan_elevation_min(), get_radar_hud_scan_elevation_max())
+     get_radar_hud_scan_elevation_min(), get_radar_hud_scan_elevation_max(), get_radar_hud_elevation_stabilize())
 
   if get_radar_hud_aam_launch_zone_visible() && get_radar_hud_has_azimuth_scale() && !data.hideLaunchZone
     b_scope_square_launch_range(ctx, data, pos, sz)
@@ -769,9 +676,7 @@ def b_scope_square_labels(var ctx : GuiContext&; data : CanvasParams&; pos : flo
   ctx |> set_color(data.modeColor)
   ctx |> set_draw_str_attr(FontFxType FFT_GLOW, 0, 0, get_font_fx_color(data.modeColor), get_font_fx_factor(data.modeColor, ctx))
 
-  let nameId = get_radar_hud_mode_name_id()
-  let defaultStr = get_radar_hud_is_visible() ? (get_radar_hud_is_irst() ? "hud/irst" : "hud/radarEmitting") : ""
-  let modeName = loc(nameId >= 0 && nameId < modeNames |> length() ? modeNames[nameId] : defaultStr)
+  let modeName = Radar`getModeNameLoc()
   let strBoxMode = get_str_bbox(modeName, modeName |> length(), fctx)
   ctx |> goto_xy(pos.x + size.x * 0.5 - strBoxMode.width.x * 0.5, pos.y + strBoxMode.width.y)
   ctx |> draw_str_scaled(1.0, modeName, modeName |> length())
@@ -784,7 +689,7 @@ def b_scope_square_labels(var ctx : GuiContext&; data : CanvasParams&; pos : flo
   if get_radar_hud_is_visible2()
     let nameId2 = get_radar_hud_mode_name2_id()
     let defaultStr2 = get_radar_hud_is_visible2() ? (get_radar_hud_is_irst() ? "hud/irst" : "hud/radarEmitting") : ""
-    let modeName2 = loc(nameId2 >= 0 && nameId2 < modeNames |> length() ? modeNames[nameId2] : defaultStr2)
+    let modeName2 = loc(nameId2 >= 0 && nameId2 < radarModeNames |> length() ? radarModeNames[nameId2] : defaultStr2)
     let strBoxMode2 = get_str_bbox(modeName2, modeName2 |> length(), fctx)
     ctx |> goto_xy(pos.x + size.x * 0.57 + strBoxMode.width.x * 0.5, pos.y + strBoxMode2.width.y)
     ctx |> draw_str_scaled(1.0, modeName2, modeName2 |> length())
@@ -977,13 +882,14 @@ def b_scope_square_azimuth(var ctx : GuiContext&; data : CanvasParams&; pos : fl
       ctx |> render_line_dashed(p1, p2, ctx |> hdpx(10.), ctx |> hdpx(5.), ctx |> hdpx(1.6 * data.lineWidth), color)
 
 def b_scope_square_elevation(var ctx : GuiContext&; data : CanvasParams&; pos : float2; size : float2; elev_rel : float;
-                             elev_min : float; elev_max : float; elev_scan_min : float; elev_scan_max : float)
+                             elev_min : float; elev_max : float; elev_scan_min : float; elev_scan_max : float; elev_stab : bool)
   let elevationMin = -elev_min * elevMaxInv * elevMaxScreenRelSize + 0.5
   let elevationMax = -elev_max * elevMaxInv * elevMaxScreenRelSize + 0.5
   let elevation = elevationMin * (1. - elev_rel) + elevationMax * elev_rel
 
   let markLen = 0.05
   let markLenShort = 0.03
+  let markLenLong = 0.10
   var color = float4(Color4(is_color_or_white(data.lineColor)))
   color *= 0.42
   let e3dColor = E3DCOLOR(Color4(color))
@@ -1004,6 +910,16 @@ def b_scope_square_elevation(var ctx : GuiContext&; data : CanvasParams&; pos : 
     let scanCoord <- to_array_move([[float2[4] float2(pos.x, pos.y + elevationScanMin * size.y); float2(pos.x + markLen * size.x, pos.y + elevationScanMin * size.y);
      float2(pos.x + markLen * size.x, pos.y + elevationScanMax * size.y); float2(pos.x, pos.y + elevationScanMax * size.y)]])
     ctx |> render_line_aa(scanCoord, false, ctx |> hdpx(4.), float2(0, 0), e3dColor)
+
+  if elev_stab
+    let hero = get_controlled_hero()
+    if hero != null && !hero.isDelayed
+      let fmw = hero |> as_fmw()
+      if fmw != null
+        let tangage = deg_to_rad(fmw.tangage)
+        let elevationHorizon = tangage * elevMaxInv * elevMaxScreenRelSize + 0.5
+        let horizonCoord <- to_array_move([[float2[2] float2(pos.x, pos.y + elevationHorizon * size.y); float2(pos.x + markLenLong * size.x, pos.y + elevationHorizon * size.y)]])
+        ctx |> render_line_aa(horizonCoord, false, ctx |> hdpx(4.), float2(0, 0), e3dColor)
 
 def b_scope_square_launch_range(var ctx : GuiContext&; data : CanvasParams&; pos : float2; size : float2)
   var color = float4(Color4(is_color_or_white(data.lineColor)))
@@ -1049,10 +965,10 @@ def square_radar_targets(var ctx : GuiContext&; data : CanvasParams&; pos : floa
     let angleRight = min(angleRel + 0.5 * angularWidthRel, 1.)
 
     var distanceRel = 0.9
-    var radialWidthRel = 0.05
+    var radialWidthRel = 0.02
     if hasDistanceScale && target.distanceRel >= 0.
       distanceRel = target.distanceRel
-      radialWidthRel = max(0.05, target.distanceWidthRel)
+      radialWidthRel = max(radialWidthRel, target.distanceWidthRel)
 
     let p = float2(pos.x + angleRel * size.x, pos.y + (1. - distanceRel) * size.y)
 
@@ -1070,7 +986,6 @@ def square_radar_targets(var ctx : GuiContext&; data : CanvasParams&; pos : floa
       let distanceGateHalfWidthRel = 0.5 * max(get_radar_hud_distance_gate_width_rel(), distanceGateWidthRelMin) * distanceGateWidthMult
       let distanceInner = distanceRel - distanceGateHalfWidthRel
       let distanceOuter = distanceRel + distanceGateHalfWidthRel
-
       if target.isDetected
         let lcoord <- to_array_move([[float2[2] float2(pos.x + angleGateLeftRel * size.x, pos.y + (1. - distanceInner) * size.y);
          float2(pos.x + angleGateLeftRel * size.x, pos.y + (1. - distanceOuter) * size.y)]])
@@ -1108,9 +1023,10 @@ def square_radar_targets(var ctx : GuiContext&; data : CanvasParams&; pos : floa
       else
         let angleCenter = (angleRight + angleLeft) * 0.5
         if data.targetFormType == 0
-          let coord <- to_array_move([[float2[2] float2(pos.x + angleLeft * size.x, pos.y + (1. - distanceRel) * size.y);
-           float2(pos.x + angleRight * size.x, pos.y + (1. - distanceRel) * size.y)]])
-          ctx |> render_line_aa(coord, false, ctx |> hdpx(100. * radialWidthRel), float2(0, 0), e3dColor)
+          let tc = float2(0., 0.)
+          ctx |> render_rect(
+            pos.x + angleLeft  * size.x, pos.y + (1. - distanceRel - 0.5 * radialWidthRel) * size.y,
+            pos.x + angleRight * size.x, pos.y + (1. - distanceRel + 0.5 * radialWidthRel) * size.y, tc, tc, tc)
         elif data.targetFormType == 1
           let coord <- to_array_move([[float2[3]
            float2(pos.x + angleLeft * size.x, pos.y + (1. - distanceRel + 0.02) * size.y);
@@ -1165,16 +1081,11 @@ def b_scope_square_cue(var ctx : GuiContext&; data : CanvasParams&; pos : float2
    float2(cuePos.x + cueAzimuthHwr * size.x, cuePos.y + cueDistWidthRel * size.y * 0.5)]])
   ctx |> render_line_aa(rcoord, false, ctx |> hdpx(2. * data.lineWidth), float2(0, 0), color)
 
-  if data.cueHeights
-    let hero = get_controlled_hero()
-    if hero == null || hero.isDelayed
-      return
-    let scanElevationWidth = get_radar_hud_scan_elevation_max() - get_radar_hud_scan_elevation_min()
-    let ownAltitude = hero.pos.y
-    let distance = get_radar_hud_cue_distance() * get_radar_hud_distance_max() * 1000.
-    let hmin = (ownAltitude + distance * sin(get_radar_hud_scan_elevation_min() - 0.5f * scanElevationWidth)) * metrToThsFeet
-    let hmax = (ownAltitude + distance * sin(get_radar_hud_scan_elevation_max() + 0.5f * scanElevationWidth)) * metrToThsFeet
-
+  var hmin = 0.0
+  var hmax = 0.0
+  if data.cueHeights && Radar`getCueHeights(hmin, hmax)
+    hmin *= metrToThsFeet
+    hmax *= metrToThsFeet
     let hmaxText = fmt(":d", roundi(hmax))
     let hminText = fmt(":d", roundi(hmin))
     var fctx : StdGuiFontContext
@@ -1248,15 +1159,13 @@ def b_scope_labels(var ctx : GuiContext&; rdata : ElemRenderData& const; data : 
   let strBoxVel = get_str_bbox(textVel, textVel |> length(), fctx)
   rightOffset = max(strBoxVel.width.x, strBox90.width.x)
 
-  let nameId = get_radar_hud_mode_name_id()
-  let defaultStr = get_radar_hud_is_visible() ? (get_radar_hud_is_irst() ? "hud/irst" : "hud/radarEmitting") : ""
-  let modeName = loc(nameId >= 0 && nameId < modeNames |> length() ? modeNames[nameId] : defaultStr)
+  let modeName = Radar`getModeNameLoc()
   let strBoxMode = get_str_bbox(modeName, modeName |> length(), fctx)
   topOffset = strBoxMode.width.y + ctx |> hdpx(4.)
 
   let name2Id = get_radar_hud_mode_name2_id()
   let defaultStr2 = get_radar_hud_is_visible2() ? (get_radar_hud_is_irst() ? "hud/irst" : "hud/radarEmitting") : ""
-  let modeName2 = loc(name2Id >= 0 && name2Id < modeNames |> length() ? modeNames[name2Id] : defaultStr2)
+  let modeName2 = loc(name2Id >= 0 && name2Id < radarModeNames |> length() ? radarModeNames[name2Id] : defaultStr2)
   let strBoxMode2 = get_str_bbox(modeName2, modeName2 |> length(), fctx)
 
   let text0 = "0{deg}"
@@ -1387,15 +1296,13 @@ def c_scope_markers(var ctx : GuiContext&; data : CanvasParams&; pos : float2; s
       let strBoxVel = get_str_bbox(textVel, textVel |> length(), fctx)
       topOffset = max(topOffset, strBoxVel.width.y)
 
-    let nameId = get_radar_hud_mode_name_id()
-    let defaultStr = get_radar_hud_is_visible() ? (get_radar_hud_is_irst() ? "hud/irst" : "hud/radarEmitting") : ""
-    let modeName = loc(nameId >= 0 && nameId < modeNames |> length() ? modeNames[nameId] : defaultStr)
+    let modeName = Radar`getModeNameLoc()
     let strBoxMode = get_str_bbox(modeName, modeName |> length(), fctx)
     topOffset = max(strBoxMode.width.y, topOffset)
 
     let name2Id = get_radar_hud_mode_name2_id()
     let defaultStr2 = get_radar_hud_is_visible2() ? (get_radar_hud_is_irst() ? "hud/irst" : "hud/radarEmitting") : ""
-    let modeName2 = loc(name2Id >= 0 && name2Id < modeNames |> length() ? modeNames[name2Id] : defaultStr2)
+    let modeName2 = loc(name2Id >= 0 && name2Id < radarModeNames |> length() ? radarModeNames[name2Id] : defaultStr2)
     let strBoxMode2 = get_str_bbox(modeName2, modeName2 |> length(), fctx)
     topOffset += strBoxMode2.width.y
 
@@ -1424,6 +1331,20 @@ def c_scope_markers(var ctx : GuiContext&; data : CanvasParams&; pos : float2; s
   ctx |> draw_str_scaled(1., textElev0, textElev0 |> length())
 
   return float2(leftOffset + ctx |> hdpx(4.), topOffset)
+
+let scanZoneSizeRelReq = 0.8
+
+def calc_expanded_c_scope_scan_zone_az_rel(var az_min : float&; var az_max : float&)
+  var scanZoneAzimuthSizeMult = min((1.0 - scanZoneSizeRelReq) / (1.0 - az_max + az_min), 1.0)
+  //scanZoneAzimuthSizeMult = 1.0
+  az_min = -0.5 + (az_min + 0.5) * scanZoneAzimuthSizeMult
+  az_max =  0.5 - (0.5 - az_max) * scanZoneAzimuthSizeMult
+
+def calc_expanded_c_scope_scan_zone_el_rel(el_offset : float; var el_min : float&; var el_max : float&)
+  var scanZoneElevationSizeMult = min((1.0 - scanZoneSizeRelReq) / (1.0 - el_max + el_min), 1.0)
+  //scanZoneElevationSizeMult = 1.0
+  el_min = -0.5 + (el_min - el_offset + 0.5) * scanZoneElevationSizeMult + el_offset
+  el_max =  0.5 - (0.5 - el_max + el_offset) * scanZoneElevationSizeMult + el_offset
 
 def c_scope_background(var ctx : GuiContext&; data : CanvasParams&; pos : float2; size : float2)
   ctx |> set_color(areaBackgroundColor)
@@ -1454,46 +1375,87 @@ def c_scope_background(var ctx : GuiContext&; data : CanvasParams&; pos : float2
   if scanAzimuthMaxRel < scanAzimuthMinRel
     scanAzimuthMinRel = -0.5
     scanAzimuthMaxRel =  0.5
-  let offset = (0.5 + get_radar_hud_elevation_min() * elevationRangeInv)
+  let elevationOffset = (0.5 + get_radar_hud_elevation_min() * elevationRangeInv)
   var scanElevationMaxRel = (get_radar_hud_scan_elevation_max() + get_radar_hud_elevation_half_width()) * elevationRangeInv
   var scanElevationMinRel = (get_radar_hud_scan_elevation_min() - get_radar_hud_elevation_half_width()) * elevationRangeInv
   if scanElevationMaxRel < scanElevationMinRel
-    scanElevationMinRel = -0.5 + offset
-    scanElevationMaxRel =  0.5 + offset
+    scanElevationMinRel = -0.5 + elevationOffset
+    scanElevationMaxRel =  0.5 + elevationOffset
+
+  ctx |> draw_line(pos.x + (0.5 + scanAzimuthMinRel) * size.x, pos.y + size.y + size.y * 0.1,
+    pos.x + (0.5 + scanAzimuthMaxRel) * size.x, pos.y + size.y + size.y * 0.1, ctx |> hdpx(4.0))
+  ctx |> draw_line(pos.x + size.x + size.y * 0.1, pos.y + (0.5 - scanElevationMaxRel + elevationOffset) * size.y,
+    pos.x + size.x + size.y * 0.1, pos.y + (0.5 - scanElevationMinRel + elevationOffset) * size.y, ctx |> hdpx(4.0))
+
+  // Expand scan zone for better representation
+  calc_expanded_c_scope_scan_zone_az_rel(scanAzimuthMinRel, scanAzimuthMaxRel)
+  calc_expanded_c_scope_scan_zone_el_rel(elevationOffset, scanElevationMinRel, scanElevationMaxRel)
+
   if azimuthRange != 0.
     let azimuthStep = PI / 12. * azimuthRangeInv
     var azimuth = scanAzimuthMaxRel
     let end = scanAzimuthMinRel
     while azimuth > end
-      ctx |> draw_line(pos.x + (0.5 + azimuth) * size.x, pos.y + (0.5 - scanElevationMaxRel + offset) * size.y,
-       pos.x + (0.5 + azimuth) * size.x, pos.y + (0.5 - scanElevationMinRel + offset) * size.y, ctx |> hdpx(1.2))
+      ctx |> draw_line(pos.x + (0.5 + azimuth) * size.x, pos.y + (0.5 - scanElevationMaxRel + elevationOffset) * size.y,
+       pos.x + (0.5 + azimuth) * size.x, pos.y + (0.5 - scanElevationMinRel + elevationOffset) * size.y, ctx |> hdpx(1.2))
       azimuth -= azimuthStep
   if elevationRange != 0.
     let elevationStep = PI / 12. * elevationRangeInv
     var elevation = scanElevationMaxRel
     let end = scanElevationMinRel
     while elevation > end
-      ctx |> draw_line(pos.x + (0.5 + scanAzimuthMinRel) * size.x, pos.y + (0.5 - elevation + offset) * size.y,
-       pos.x + (0.5 + scanAzimuthMaxRel) * size.x, pos.y + (0.5 - elevation + offset) * size.y, ctx |> hdpx(1.2))
+      ctx |> draw_line(pos.x + (0.5 + scanAzimuthMinRel) * size.x, pos.y + (0.5 - elevation + elevationOffset) * size.y,
+       pos.x + (0.5 + scanAzimuthMaxRel) * size.x, pos.y + (0.5 - elevation + elevationOffset) * size.y, ctx |> hdpx(1.2))
       elevation -= elevationStep
 
   ctx |> set_color(e3dColor)
-  ctx |> render_frame(pos.x + (0.5 + scanAzimuthMinRel) * size.x, pos.y + (0.5 - scanElevationMaxRel + offset) * size.y,
-    pos.x + (0.5 + scanAzimuthMaxRel) * size.x, pos.y + (0.5 - scanElevationMinRel + offset) * size.y, ctx |> hdpx(3.2))
-
+  ctx |> render_frame(pos.x + (0.5 + scanAzimuthMinRel) * size.x, pos.y + (0.5 - scanElevationMaxRel + elevationOffset) * size.y,
+    pos.x + (0.5 + scanAzimuthMaxRel) * size.x, pos.y + (0.5 - scanElevationMinRel + elevationOffset) * size.y, ctx |> hdpx(3.2))
 
 def c_scope_azimuth(var ctx : GuiContext&; data : CanvasParams&; pos : float2; size : float2; azimuth : float; elevation : float;
                     half_azimuth : float; half_elevation : float)
   let azimuthRange = max(0., get_radar_hud_azimuth_max() - get_radar_hud_azimuth_min())
   let elevationRange = max(0., get_radar_hud_elevation_max() - get_radar_hud_elevation_min())
-  let halfAzimuthWidth = (azimuthRange > 0. ? half_azimuth / azimuthRange : 0.) * size.x
-  let halfElevationWidth = (elevationRange > 0. ? half_elevation / elevationRange : 0.) * size.y
+  let elevationRangeInv = elevationRange != 0. ? 1. / elevationRange : 1.
+  let elevationOffset = (0.5 + get_radar_hud_elevation_min() * elevationRangeInv)
+
+  // Expand scan zone for better representation
+  let azimuthRangeInv = azimuthRange != 0. ? 1. / azimuthRange : 1.
+  var scanAzimuthMaxRel = get_radar_hud_scan_azimuth_max() * azimuthRangeInv
+  var scanAzimuthMinRel = get_radar_hud_scan_azimuth_min() * azimuthRangeInv
+  if scanAzimuthMaxRel < scanAzimuthMinRel
+    scanAzimuthMinRel = -0.5
+    scanAzimuthMaxRel =  0.5
+
+  var scanElevationMaxRel = (get_radar_hud_scan_elevation_max() + get_radar_hud_elevation_half_width()) * elevationRangeInv
+  var scanElevationMinRel = (get_radar_hud_scan_elevation_min() - get_radar_hud_elevation_half_width()) * elevationRangeInv
+  if scanElevationMaxRel < scanElevationMinRel
+    scanElevationMinRel = -0.5 + elevationOffset
+    scanElevationMaxRel =  0.5 + elevationOffset
+
+  let scanAzimuthMinRel0 = scanAzimuthMinRel
+  let scanAzimuthRange0 = scanAzimuthMaxRel - scanAzimuthMinRel
+  let scanElevationMinRel0 = scanElevationMinRel
+  let scanElevationRange0 = -(scanElevationMaxRel - scanElevationMinRel)
+  calc_expanded_c_scope_scan_zone_az_rel(scanAzimuthMinRel, scanAzimuthMaxRel)
+  calc_expanded_c_scope_scan_zone_el_rel(elevationOffset, scanElevationMinRel, scanElevationMaxRel)
+
+  let azimuthConvMult = (scanAzimuthMaxRel - scanAzimuthMinRel) / scanAzimuthRange0
+  let azimuthConvAdd = (-0.5 - scanAzimuthMinRel0) * azimuthConvMult + scanAzimuthMinRel + 0.5
+  let elevationConvMult = -(scanElevationMaxRel - scanElevationMinRel) / scanElevationRange0
+  let elevationConvAdd = -(0.5 - scanElevationMinRel0 + elevationOffset) * elevationConvMult + (0.5 - scanElevationMinRel0 + elevationOffset)
+
+  let caretAzimuth = azimuth * azimuthConvMult + azimuthConvAdd
+  let caretElevation = 1.0 - ((1.0 - elevation) * elevationConvMult + elevationConvAdd)
+
+  let halfAzimuthWidth = (azimuthRange > 0. ? half_azimuth / azimuthRange * azimuthConvMult : 0.) * size.x
+  let halfElevationWidth = (elevationRange > 0. ? half_elevation / elevationRange * elevationConvMult : 0.) * size.y
 
   var color = float4(Color4(is_color_or_white(data.color)))
   color *= 0.6
   let e3dColor = E3DCOLOR(Color4(color))
   ctx |> set_color(e3dColor)
-  let startPos = pos + float2(azimuth * size.x, (1. - elevation) * size.y)
+  let startPos = pos + float2(caretAzimuth * size.x, (1. - caretElevation + elevationOffset) * size.y)
   let azimuthMark <- to_array_move([[float2[]
     startPos + float2(-halfAzimuthWidth, -halfElevationWidth);
     startPos + float2(halfAzimuthWidth, -halfElevationWidth);
@@ -1504,11 +1466,44 @@ def c_scope_azimuth(var ctx : GuiContext&; data : CanvasParams&; pos : float2; s
   ctx |> render_line_aa(azimuthMark, true, ctx |> hdpx(1.2), float2(0., 0.), data.color)
 
 def c_scope_targets(var ctx : GuiContext&; data : CanvasParams&; pos : float2; size : float2)
+
+  // Expand scan zone for better representation
+  let azimuthRange = max(0., get_radar_hud_azimuth_max() - get_radar_hud_azimuth_min())
+  let azimuthRangeInv = azimuthRange != 0. ? 1. / azimuthRange : 1.
+  var scanAzimuthMaxRel = get_radar_hud_scan_azimuth_max() * azimuthRangeInv
+  var scanAzimuthMinRel = get_radar_hud_scan_azimuth_min() * azimuthRangeInv
+  if scanAzimuthMaxRel < scanAzimuthMinRel
+    scanAzimuthMinRel = -0.5
+    scanAzimuthMaxRel =  0.5
+
+  let elevationRange = max(0., get_radar_hud_elevation_max() - get_radar_hud_elevation_min())
+  let elevationRangeInv = elevationRange != 0. ? 1. / elevationRange : 1.
+  let elevationOffset = (0.5 + get_radar_hud_elevation_min() * elevationRangeInv)
+  var scanElevationMaxRel = (get_radar_hud_scan_elevation_max() + get_radar_hud_elevation_half_width()) * elevationRangeInv
+  var scanElevationMinRel = (get_radar_hud_scan_elevation_min() - get_radar_hud_elevation_half_width()) * elevationRangeInv
+  if scanElevationMaxRel < scanElevationMinRel
+    scanElevationMinRel = -0.5 + elevationOffset
+    scanElevationMaxRel =  0.5 + elevationOffset
+
+  let scanAzimuthMinRel0 = scanAzimuthMinRel
+  let scanAzimuthRange0 = scanAzimuthMaxRel - scanAzimuthMinRel
+  let scanElevationMinRel0 = scanElevationMinRel
+  let scanElevationRange0 = -(scanElevationMaxRel - scanElevationMinRel)
+  calc_expanded_c_scope_scan_zone_az_rel(scanAzimuthMinRel, scanAzimuthMaxRel)
+  calc_expanded_c_scope_scan_zone_el_rel(elevationOffset, scanElevationMinRel, scanElevationMaxRel)
+
+  let azimuthConvMult = (scanAzimuthMaxRel - scanAzimuthMinRel) / scanAzimuthRange0
+  let azimuthConvAdd = (-0.5 - scanAzimuthMinRel0) * azimuthConvMult + scanAzimuthMinRel + 0.5
+  let elevationConvMult = -(scanElevationMaxRel - scanElevationMinRel) / scanElevationRange0
+  let elevationConvAdd = -(0.5 - scanElevationMinRel0 + elevationOffset) * elevationConvMult + (0.5 - scanElevationMinRel0 + elevationOffset)
+
   foreach_targets() <| $(var target; i)
     let azimuth = get_radar_hud_has_azimuth_scale() ? target.azimuthRel : 0.
-    let azimuthLeft = azimuth - target.azimuthWidthRel * 0.5
-    let elevationWidthRel = max(0.04, target.elevationWidthRel)
-    let elevationLowerRel = target.elevationRel - elevationWidthRel * 0.5
+    var azimuthLeft = azimuth - target.azimuthWidthRel * 0.5
+    var azimuthRight = azimuth + target.azimuthWidthRel * 0.5
+    var elevationLowerRel = target.elevationRel - target.elevationWidthRel * 0.5
+    var elevationUpperRel = target.elevationRel + target.elevationWidthRel * 0.5
+
     var inSelectedTargetRangeGate = false
     if get_radar_hud_has_distance_scale()
       if !get_radar_hud_cue_visible()
@@ -1531,21 +1526,28 @@ def c_scope_targets(var ctx : GuiContext&; data : CanvasParams&; pos : float2; s
     let e3dColor = E3DCOLOR(Color4(color))
     ctx |> set_color(e3dColor)
 
-    let tc = float2(0., 0.)
-    let lt = pos + float2(azimuthLeft * size.x, (1. - elevationLowerRel) * size.y)
-    let rb = lt + float2(target.azimuthWidthRel * size.x, -elevationWidthRel * size.y)
-    ctx |> render_rect(lt.x, lt.y, rb.x, rb.y, tc, tc, tc)
+    azimuthLeft = azimuthLeft * azimuthConvMult + azimuthConvAdd
+    azimuthRight = azimuthRight * azimuthConvMult + azimuthConvAdd
+    elevationLowerRel = 1.0 - ((1.0 - elevationLowerRel) * elevationConvMult + elevationConvAdd)
+    elevationUpperRel = 1.0 - ((1.0 - elevationUpperRel) * elevationConvMult + elevationConvAdd)
 
-    let azimuthRange = max(0., get_radar_hud_azimuth_max() - get_radar_hud_azimuth_min())
-    let azimuthRangeInv = azimuthRange != 0. ? 1. / azimuthRange : 1.
+    let tc = float2(0., 0.)
+    let lt = pos + float2(azimuthLeft * size.x, (1. - elevationLowerRel + elevationOffset) * size.y)
+    let rt = pos + float2(azimuthRight * size.x, (1. - elevationUpperRel + elevationOffset) * size.y)
+    ctx |> render_rect(lt.x, lt.y, rt.x, rt.y, tc, tc, tc)
+
     let azimuthGateWidthRel = angularGateWidthMultSquare * 2. * max(get_radar_hud_azimuth_half_width(), angularGateBeamWidthMin) * azimuthRangeInv
-    let azimuthGateLeft = (azimuth - 0.5 * azimuthGateWidthRel) * size.x
-    let azimuthGateRight = (azimuth + 0.5 * azimuthGateWidthRel) * size.x
-    let elevationRange = max(0., get_radar_hud_elevation_max() - get_radar_hud_elevation_min())
-    let elevationRangeInv = elevationRange != 0. ? 1. / elevationRange : 1.
+    var azimuthGateLeft = (azimuth - 0.5 * azimuthGateWidthRel) * size.x
+    var azimuthGateRight = (azimuth + 0.5 * azimuthGateWidthRel) * size.x
     let elevationGateWidthRel = angularGateWidthMultSquare * 2. * max(get_radar_hud_elevation_half_width(), angularGateBeamWidthMin) * elevationRangeInv
-    let elevationGateLower = (1. - target.elevationRel + 0.5 * elevationGateWidthRel) * size.y
-    let elevationGateUpper = (1. - target.elevationRel - 0.5 * elevationGateWidthRel) * size.y
+    var elevationGateLower = (1. - target.elevationRel + 0.5 * elevationGateWidthRel) * size.y
+    var elevationGateUpper = (1. - target.elevationRel - 0.5 * elevationGateWidthRel) * size.y
+
+    azimuthGateLeft = azimuthGateLeft * azimuthConvMult + azimuthConvAdd
+    azimuthGateRight = azimuthGateRight * azimuthConvMult + azimuthConvAdd
+    elevationGateLower = 1.0 - ((1.0 - elevationGateLower) * elevationConvMult + elevationConvAdd)
+    elevationGateUpper = 1.0 - ((1.0 - elevationGateUpper) * elevationConvMult + elevationConvAdd)
+
     if target.isDetected || target.isSelected
       let lcoord <- to_array_move([[float2[2] pos + float2(azimuthGateLeft, elevationGateLower);
         pos + float2(azimuthGateLeft, elevationGateUpper)]])
@@ -1566,10 +1568,29 @@ def c_scope_cue(var ctx : GuiContext&; data : CanvasParams&; pos : float2; size 
     return
   let azimuthRange = max(0., get_radar_hud_azimuth_max() - get_radar_hud_azimuth_min())
   let azimuthHalfWidth = get_radar_hud_cue_azimuth_half_width_rel()
-  let lt = pos + float2(get_radar_hud_cue_azimuth() * max(get_radar_hud_target_azimuth_width() / azimuthRange - get_radar_hud_cue_azimuth_half_width_rel(), 0.) * size.x, 0.)
+  let cueAzimuth = get_radar_hud_cue_azimuth() * max(get_radar_hud_target_azimuth_width() / azimuthRange - get_radar_hud_cue_azimuth_half_width_rel(), 0.0)
+  var cueAzimuthLeft = cueAzimuth - azimuthHalfWidth
+  var cueAzimuthRight = cueAzimuth + azimuthHalfWidth
+
+  let azimuthRangeInv = azimuthRange != 0. ? 1. / azimuthRange : 1.
+  var scanAzimuthMaxRel = get_radar_hud_scan_azimuth_max() * azimuthRangeInv
+  var scanAzimuthMinRel = get_radar_hud_scan_azimuth_min() * azimuthRangeInv
+  if scanAzimuthMaxRel < scanAzimuthMinRel
+    scanAzimuthMinRel = -0.5
+    scanAzimuthMaxRel =  0.5
+  let scanAzimuthMinRel0 = scanAzimuthMinRel
+  let scanAzimuthRange0 = scanAzimuthMaxRel - scanAzimuthMinRel
+  calc_expanded_c_scope_scan_zone_az_rel(scanAzimuthMinRel, scanAzimuthMaxRel)
+  let azimuthConvMult = (scanAzimuthMaxRel - scanAzimuthMinRel) / scanAzimuthRange0
+  let azimuthConvAdd = -scanAzimuthMinRel0 * azimuthConvMult + scanAzimuthMinRel
+  cueAzimuthLeft = cueAzimuthLeft * azimuthConvMult + azimuthConvAdd
+  cueAzimuthRight = cueAzimuthRight * azimuthConvMult + azimuthConvAdd
+
+  let lt = pos + float2(cueAzimuthLeft, 0.0) * size.x
+  let rt = pos + float2(cueAzimuthRight, 0.0) * size.x
   ctx |> set_color(data.color)
-  ctx |> draw_line(lt.x + (0.5 - azimuthHalfWidth) * size.x, lt.y, lt.x + (0.5 - azimuthHalfWidth) * size.x, lt.y + size.y, 2.)
-  ctx |> draw_line(lt.x + (0.5 + azimuthHalfWidth) * size.x, lt.y, lt.x + (0.5 + azimuthHalfWidth) * size.x, lt.y + size.y, 2.)
+  ctx |> draw_line(lt.x + 0.5 * size.x, lt.y, lt.x + 0.5 * size.x, lt.y + size.y, 2.)
+  ctx |> draw_line(rt.x + 0.5 * size.x, rt.y, rt.x + 0.5 * size.x, rt.y + size.y, 2.)
 
 def c_scope_inner_labels(var ctx : GuiContext&; data : CanvasParams&; pos : float2; size : float2)
   var fctx : StdGuiFontContext

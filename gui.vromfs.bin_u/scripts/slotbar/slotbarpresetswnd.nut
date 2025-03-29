@@ -18,7 +18,7 @@ let { enableObjsByTable } = require("%sqDagui/daguiUtil.nut")
 let { getCurrentGameMode, getGameModeById, getCurrentGameModeEdiff
 } = require("%scripts/gameModes/gameModeManagerState.nut")
 
-::gui_choose_slotbar_preset <- function gui_choose_slotbar_preset(owner = null) {
+function gui_choose_slotbar_preset(owner = null) {
   return handlersManager.loadHandler(gui_handlers.ChooseSlotbarPreset, { ownerWeak = owner })
 }
 
@@ -199,7 +199,8 @@ gui_handlers.ChooseSlotbarPreset <- class (gui_handlers.BaseGuiHandlerWT) {
 
     let objBtn = this.scene.findObject("btn_preset_load")
     if (checkObj(objBtn))
-      objBtn.text = loc(isNonCurrentPresetSelected ? "mainmenu/btnApply" : "mainmenu/btnClose")
+      objBtn.setValue(
+        loc(isNonCurrentPresetSelected ? "mainmenu/btnApply" : "mainmenu/btnClose"))
   }
 
   function onItemSelect(_obj) {
@@ -254,7 +255,7 @@ gui_handlers.ChooseSlotbarPreset <- class (gui_handlers.BaseGuiHandlerWT) {
 
     this.msgBox("question_delete_preset", msgText,
     [
-      ["delete", (@(chosenValue) function() { ::slotbarPresets.erase(chosenValue) })(this.chosenValue) ], //-ident-hides-ident
+      ["delete", (@(chosenValue) function() { ::slotbarPresets.erase(chosenValue) })(this.chosenValue) ], 
       ["cancel", function() {} ]
     ], "cancel", { data_below_text = comment })
   }
@@ -317,4 +318,8 @@ gui_handlers.ChooseSlotbarPreset <- class (gui_handlers.BaseGuiHandlerWT) {
     if (this.isSceneActiveNoModals())
       this.restoreFocusDelayed()
   }
+}
+
+return {
+  gui_choose_slotbar_preset
 }

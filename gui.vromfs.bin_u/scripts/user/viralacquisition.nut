@@ -7,6 +7,7 @@ let { format } = require("string")
 let { rnd } = require("dagor.random")
 let { GUI } = require("%scripts/utils/configs.nut")
 let { userIdStr, isGuestLogin } = require("%scripts/user/profileStates.nut")
+let { showUnlockWnd } = require("%scripts/unlocks/showUnlockWnd.nut")
 
 let awardRanks = [3, 4, 7]
 let awardVesselsRanks = [3, 4, 5]
@@ -15,7 +16,7 @@ let awards = [[70000, 0], [300000, 100], [0, 2500]]
 let getLinkString = @() format(loc("msgBox/viralAcquisition"), userIdStr.value)
 
 function getViralAcquisitionDesc(locId = "msgbox/linkCopied") {
-  locId = "/".concat(locId, "disabledThirdStageForVessels") // add separatedVessels postfix when vessels ranks are not equal to other ranks
+  locId = "/".concat(locId, "disabledThirdStageForVessels") 
   let desc = loc(locId, {
     firstAwardRank = get_roman_numeral(awardRanks[0]),
     secondAwardRank = get_roman_numeral(awardRanks[1]),
@@ -62,7 +63,7 @@ function showViralAcquisitionWnd() {
     showSendEmail = true
     showPostLink = true
   }
-  ::showUnlockWnd(config)
+  showUnlockWnd(config)
 }
 
 return {

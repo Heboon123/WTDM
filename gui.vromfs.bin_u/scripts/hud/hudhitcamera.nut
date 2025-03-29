@@ -3,7 +3,7 @@ from "%scripts/dagui_library.nut" import *
 from "hitCamera" import *
 let u = require("%sqStdLibs/helpers/u.nut")
 let { get_mission_time } = require("mission")
-let { g_hud_enemy_debuffs } = require("%scripts/hud/hudEnemyDebuffsType.nut")
+let { g_hud_enemy_debuffs, getStateByValue } = require("%scripts/hud/hudEnemyDebuffsType.nut")
 let { g_hud_event_manager } = require("%scripts/hud/hudEventManager.nut")
 let { g_difficulty } = require("%scripts/difficulty.nut")
 let { eventbus_subscribe, eventbus_send } = require("eventbus")
@@ -20,7 +20,7 @@ let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let stdMath = require("%sqstd/math.nut")
 
 const TIME_TITLE_SHOW_SEC = 3
-const TIME_TO_SUM_CREW_LOST_SEC = 1 //To sum up the number of crew losses from multiple bullets in a single salvo
+const TIME_TO_SUM_CREW_LOST_SEC = 1 
 const TIME_TO_SUM_RELATIVE_CREW_LOST = 0.15
 
 let animTimerPid = dagui_propid_add_name_id("_transp-timer")
@@ -76,6 +76,18 @@ local camInfo   = {}
 local unitsInfo = {}
 local minAliveCrewCount = 2
 local canShowCritAnimation = false
+local coverPartsHpData = []
+
+let coverPartHPBlockTemplate =
+@"div {
+  position:t='relative'
+  top:t='ph/2-h/2'
+  margin-left:t='{margin}'
+  hitCamStateBlock {
+    size:t='{coverPartBlockWidth},@shipCoverPartHeight'
+    state:t='{stateColor}'
+  }
+}"
 
 function getMinAliveCrewCount() {
   let diffCode = get_mission_difficulty_int()
@@ -83,34 +95,6 @@ function getMinAliveCrewCount() {
   let path = $"difficulty_settings/baseDifficulty/{settingsName}/changeCrewTime"
   let changeCrewTime = getBlkValueByPath(get_game_params_blk(), path)
   return changeCrewTime != null ? 1 : 2
-}
-
-let getDamageStatusByHealth = @(health)
-  health == 100 ? "none"
-    : health >= 70  ? "minor"
-    : health >= 30  ? "moderate"
-    : health > 0    ? "critical"
-    : health == 0   ? "fatal"
-    : "none"
-
-function setDamageStatusLegacy(statusObjId, health, text = null) {
-  if (!damageStatusObj?.isValid())
-    return
-
-  let obj = damageStatusObj.findObject(statusObjId)
-  if (!obj?.isValid())
-    return
-
-  obj.damage = getDamageStatusByHealth(health)
-
-  if (text == null)
-    return
-
-  let labelObj = obj.findObject("label")
-  if (!labelObj?.isValid())
-    return
-
-  labelObj.setValue(text)
 }
 
 function stopDamageStatusBlink(statusObjId) {
@@ -138,13 +122,40 @@ function setDamageStatus(statusObjId, health, isCritical = true) {
   setTimeout(10, @() stopDamageStatusBlink(statusObjId))
 }
 
+function updateCoverPartsHp() {
+  if (!(scene?.isValid() ?? false))
+    return
+  let coverPartsHpLen = coverPartsHpData.len()
+  if (coverPartsHpLen == 0)
+    return
+
+  let compartmentsBlocks = scene.findObject("ship_compartments_blocks")
+  if (!compartmentsBlocks?.isValid())
+    return
+
+  let coverPartBlockWidth = $"((@hitCameraWidth/3)-(({coverPartsHpLen-1})*@shipCoverPartInterval))/{coverPartsHpLen}"
+  local compartmentsBlkData = ""
+
+  foreach(idx, coverPartHp in coverPartsHpData) {
+    let stateColor = getStateByValue(coverPartHp, 0.995, 0.505, 0.005)
+    let margin = idx == 0 ? "" : "@shipCoverPartInterval"
+
+    let block = coverPartHPBlockTemplate.subst({ margin, coverPartBlockWidth, stateColor })
+    compartmentsBlkData = "".concat(compartmentsBlkData, block)
+  }
+  scene.getScene().replaceContentFromText(compartmentsBlocks, compartmentsBlkData, compartmentsBlkData.len(), null)
+}
+
 function updateDebuffItem(item, unitInfo, partName = null, dmgParams = null) {
-  let data = item.getInfo(camInfo, unitInfo, partName, dmgParams)
+  local data = null
+  if (item.id == "SHIP_COMPARTMENTS")
+    data =  item.getInfo(coverPartsHpData, unitInfo)
+  else
+    data = item.getInfo(camInfo, unitInfo, partName, dmgParams)
   let isShow = data != null
   if (item?.needShowChange) {
     unitInfo.crewRelativeCurr = stdMath.round(data?.value ?? unitInfo.crewRelativePrev)
   }
-
   if (!(infoObj?.isValid() ?? false))
     return
 
@@ -155,7 +166,14 @@ function updateDebuffItem(item, unitInfo, partName = null, dmgParams = null) {
   if (!isShow)
     return
 
-  obj.state = data.state
+  if (item.id == "SHIP_COMPARTMENTS" && data)
+    updateCoverPartsHp()
+
+  if (data?.state)
+    obj.state = data.state
+
+  if (!data?.label)
+    return
   let labelObj = obj.findObject("label")
   if (labelObj?.isValid() ?? false)
     labelObj.setValue(data.label)
@@ -183,9 +201,10 @@ function reset() {
   fireIndicators.clear()
   camInfo.clear()
   unitsInfo.clear()
+  coverPartsHpData = []
 }
 
-function getTargetInfo(unitId, unitVersion, unitType, isUnitKilled) {
+function getTargetInfo(unitId, unitVersion, unitType, isUnitKilled, unitName = null) {
   if (!(unitId in unitsInfo) || unitsInfo[unitId].unitVersion != unitVersion)
     unitsInfo[unitId] <- {
       unitId
@@ -202,6 +221,7 @@ function getTargetInfo(unitId, unitVersion, unitType, isUnitKilled) {
       crewRelativePrev = -1
       crewRelativeCurr = -1
       importantEvents = {}
+      unitName
     }
 
   let info = unitsInfo[unitId]
@@ -363,7 +383,7 @@ let healthColorConfig = [
   { remainingHp = 0.75,  color = "#F6B236" }
 ]
 
-//
+
 
 
 
@@ -424,6 +444,7 @@ function onHitCameraEvent(mode, result, info) {
   curUnitId      = info?.unitId ?? curUnitId
   curUnitVersion = info?.unitVersion ?? curUnitVersion
   curUnitType    = newUnitType
+
   if (isStarted) {
     camInfo      = info
     if ((scene?.isValid() ?? false)) {
@@ -454,7 +475,7 @@ function onHitCameraEvent(mode, result, info) {
 
   if (isVisible) {
     local unitInfo = getTargetInfo(curUnitId, curUnitVersion,
-      curUnitType, isKillingHitResult(hitResult))
+      curUnitType, isKillingHitResult(hitResult), info?.unitName)
     foreach (item in (debuffsListsByUnitType?[curUnitType] ?? [])) {
       updateDebuffItem(item, unitInfo)
 
@@ -625,7 +646,7 @@ function onHitCameraImportantEvents(data) {
 
 function onEnemyDamageState(event) {
   if (curUnitType in (damageStatusTemplates)) {
-    let { artilleryTotalCount = 5, torpedoTotalCount = 5, artilleryHealth = 100, auxiliaryHealth = 100, hasFire = false,
+    let { artilleryHealth = 100, auxiliaryHealth = 100, hasFire = false,
     hasCriticalFire = false, engineHealth = 100, torpedoTubesHealth = 100, ruddersHealth = 100, hasBreach = false } = event
     setDamageStatus("artillery_health", artilleryHealth)
     setDamageStatus("auxiliary_health", auxiliaryHealth)
@@ -634,17 +655,10 @@ function onEnemyDamageState(event) {
     setDamageStatus("torpedo_tubes_health", torpedoTubesHealth)
     setDamageStatus("rudders_health", ruddersHealth)
     setDamageStatus("breach_status", hasBreach ? 1 : -1)
-
-    let artilleryText = format("%d/%d", stdMath.round(artilleryHealth*artilleryTotalCount/100.), artilleryTotalCount)
-    let torpedoText =
-      torpedoTotalCount != 0 ? format("%d/%d", stdMath.round(torpedoTubesHealth*torpedoTotalCount/100.), torpedoTotalCount) : ""
-    setDamageStatusLegacy("artillery_health_legacy", artilleryHealth, artilleryText)
-    setDamageStatusLegacy("fire_status_legacy", hasFire ? 1 : -1)
-    setDamageStatusLegacy("engine_health_legacy", engineHealth, format("%d%%", engineHealth))
-    setDamageStatusLegacy("torpedo_tubes_health_legacy", torpedoTubesHealth, torpedoText)
-    setDamageStatusLegacy("rudders_health_legacy", ruddersHealth)
-    setDamageStatusLegacy("breach_status_legacy", hasBreach ? 1 : -1)
   }
+
+  if (event?.coverPartsRelHp)
+    coverPartsHpData = event?.coverPartsRelHp.val ?? []
 
   let unitInfo = getTargetInfo(curUnitId, curUnitVersion,
     curUnitType, isKillingHitResult(hitResult))
@@ -653,7 +667,7 @@ function onEnemyDamageState(event) {
       updateDebuffItem(item, unitInfo, null, event)
 
   updateCrewCount(unitInfo, event)
-  //
+  
 
 
 }
@@ -712,7 +726,7 @@ eventbus_subscribe("on_hitcamera_update_fires_event", function(event) {
   onHitCameraUpdateFiresEvent(fireArr)
 })
 
-::get_hit_camera_aabb <- getHitCameraAABB // called from client
+::get_hit_camera_aabb <- getHitCameraAABB 
 
 return {
   hitCameraInit

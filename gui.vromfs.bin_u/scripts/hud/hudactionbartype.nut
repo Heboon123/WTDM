@@ -25,12 +25,13 @@ let { EII_BULLET, EII_ARTILLERY_TARGET, EII_ANTI_AIR_TARGET, EII_EXTINGUISHER,
   EII_UGV, EII_MINE_DETONATION, EII_UNLIMITED_CONTROL, EII_DESIGNATE_TARGET,
   EII_ROCKET_AIR, EII_AGM_AIR, EII_AAM_AIR, EII_BOMB_AIR, EII_GUIDED_BOMB_AIR,
   EII_JUMP, EII_SPRINT, EII_TOGGLE_VIEW, EII_BURAV, EII_PERISCOPE, EII_EMERGENCY_SURFACING, EII_RADAR_TARGET_LOCK, EII_SELECT_SPECIAL_WEAPON,
-  EII_MISSION_SUPPORT_PLANE, EII_BUILDING
+  EII_MISSION_SUPPORT_PLANE, EII_BUILDING, EII_MANEUVERABILITY_MODE
 } = require("hudActionBarConst")
 let { getHudUnitType } = require("hudState")
 let { HUD_UNIT_TYPE } = require("%scripts/hud/hudUnitType.nut")
 let { USEROPT_WHEEL_CONTROL_SHIP } = require("%scripts/options/optionsExtNames.nut")
 let { get_current_mission_info_cached } = require("blkGetters")
+let { get_option } = require("%scripts/options/optionsExt.nut")
 
 let shipTriggerGroupIcon = {
   [TRIGGER_GROUP_PRIMARY]         = "!ui/gameuiskin#artillery_weapon_state_indicator.svg",
@@ -135,7 +136,7 @@ function getHudKillStreakShortcutId() {
     return "ID_SHIP_KILLSTREAK_WHEEL_MENU"
   if (hudUnitType == HUD_UNIT_TYPE.AIRCRAFT)
     return "ID_PLANE_KILLSTREAK_WHEEL_MENU"
-  //
+  
 
 
 
@@ -148,14 +149,14 @@ g_hud_action_bar_type.template <- {
   code = -1
   backgroundImage = ""
 
-  /**
-   * For all items, which should be grouped
-   * as stricks this field is true, even if
-   * this item is not a kill streak reward.
-   *
-   * In present design this field is true for
-   * artillery and special unit.
-   */
+  
+
+
+
+
+
+
+
   isForMFM = false
   isForWheelMenu = @() false
   isForSelectWeaponMenu = @() false
@@ -187,7 +188,7 @@ g_hud_action_bar_type.template <- {
       return $"ID_SUBMARINE_ACTION_BAR_ITEM_{shortcutIdx + 1}"
     if (hudUnitType == HUD_UNIT_TYPE.SHIP)
       return $"ID_SHIP_ACTION_BAR_ITEM_{shortcutIdx + 1}"
-    //
+    
 
 
 
@@ -543,9 +544,9 @@ enumsAddTypes(g_hud_action_bar_type, {
   ANTI_AIR_TARGET = {
     code = EII_ANTI_AIR_TARGET
     _name = "anti_air_target"
-    _icon = "" //"#ui/gameuiskin#anti_air_target" //there is no such icon now
-                                                  //commented for avoid crash
-    _title = "" //loc("encyclopedia/anti_air")
+    _icon = "" 
+                                                  
+    _title = "" 
   }
 
   SPECIAL_UNIT = {
@@ -560,7 +561,7 @@ enumsAddTypes(g_hud_action_bar_type, {
     }
 
     getIcon = function (_actionItem, killStreakTag = null, _unit = null, _hudUnitType = null) {
-      // killStreakTag is expected to be "bomber", "attacker" or "fighter".
+      
       if (u.isString(killStreakTag))
         return $"#ui/gameuiskin#{killStreakTag}_streak"
       return ""
@@ -649,7 +650,7 @@ enumsAddTypes(g_hud_action_bar_type, {
     code = EII_SHIP_CURRENT_TRIGGER_GROUP
     _name = "ship_current_trigger_group"
     getShortcut = @(_actionItem, _hudUnitType = null)
-      ::get_option(USEROPT_WHEEL_CONTROL_SHIP)?.value
+      get_option(USEROPT_WHEEL_CONTROL_SHIP)?.value
         && (isXInputDevice() || isPlatformSony || isPlatformXboxOne)
           ? "ID_SHIP_SELECTWEAPON_WHEEL_MENU"
           : "ID_SHIP_SWITCH_TRIGGER_GROUP"
@@ -972,7 +973,7 @@ enumsAddTypes(g_hud_action_bar_type, {
     _icon = "#ui/gameuiskin#supportPlane_sight_stabilization"
     _title = loc("hotkeys/ID_UNLOCK_TARGETING")
     getTooltipText = @(actionItem = null) this.getTitle(actionItem)
-    isForWheelMenu = @() false
+    isForWheelMenu = @() true
     getShortcut = @(_actionItem, hudUnitType = null)
       hudUnitType == HUD_UNIT_TYPE.HELICOPTER
         ? "ID_UNLOCK_TARGETING_AT_POINT_HELICOPTER"
@@ -1222,6 +1223,17 @@ enumsAddTypes(g_hud_action_bar_type, {
     _icon = "#ui/gameuiskin#tank_ammo"
     isForWheelMenu = @() true
     getShortcut = @(_actionItem, _hudUnitType = null) "ID_TOGGLE_CONSTRUCTION_MODE"
+  }
+
+  MANEUVERABILITY_MODE = {
+    code = EII_MANEUVERABILITY_MODE
+    _name = "maneverability"
+    _title = loc("hotkeys/ID_MANEUVERABILITY_MODE")
+    getIcon = @(actionItem, _killStreakTag = null, _unit = null, _hudUnitType = null) actionItem?.active
+      ? "#ui/gameuiskin#maneuverabilityactive"
+      : "#ui/gameuiskin#maneuverability"
+    getShortcut = @(_actionItem, _hudUnitType = null) "ID_MANEUVERABILITY_MODE"
+    getTooltipText = @(_actionItem = null) loc("hotkeys/ID_MANEUVERABILITY_MODE")
   }
 
 })

@@ -13,12 +13,14 @@ let { get_mission_restore_type, get_pilot_name, is_aircraft_delayed, is_aircraft
   OBJECTIVE_TYPE_PRIMARY, OBJECTIVE_TYPE_SECONDARY } = require("guiMission")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
-let { locCurrentMissionName, setMissionEnviroment } = require("%scripts/missions/missionsUtils.nut")
+let { setMissionEnviroment } = require("%scripts/missions/missionsUtils.nut")
+let { locCurrentMissionName } = require("%scripts/missions/missionsText.nut")
 let { isInFlight } = require("gameplayBinding")
 let { registerRespondent } = require("scriptRespondent")
 let { setAllowMoveCenter, isAllowedMoveCenter, setForcedHudType, getCurHudType,
   setPointSettingMode, isPointSettingMode, resetPointOfInterest, isPointOfInterestSet  } = require("guiTacticalMap")
 let { hasSightStabilization } = require("vehicleModel")
+let { gui_load_mission_objectives } = require("%scripts/misObjectives/misObjectivesView.nut")
 
 function gui_start_tactical_map(params = {}) {
   let { forceTacticalControl = false } = params
@@ -32,7 +34,7 @@ function gui_start_tactical_map_tc(_) {
 eventbus_subscribe("gui_start_tactical_map", gui_start_tactical_map)
 eventbus_subscribe("gui_start_tactical_map_tc", gui_start_tactical_map_tc)
 
-  gui_handlers.TacticalMap <- class (gui_handlers.BaseGuiHandlerWT) {
+gui_handlers.TacticalMap <- class (gui_handlers.BaseGuiHandlerWT) {
     sceneBlkName = "%gui/tacticalMap.blk"
     shouldBlurSceneBg = true
     shouldOpenCenteredToCameraInVr = true
@@ -58,8 +60,8 @@ eventbus_subscribe("gui_start_tactical_map_tc", gui_start_tactical_map_tc)
       this.scene.findObject("update_timer").setUserData(this)
 
       this.subHandlers.append(
-        ::gui_load_mission_objectives(this.scene.findObject("primary_tasks_list"),   false, 1 << OBJECTIVE_TYPE_PRIMARY),
-        ::gui_load_mission_objectives(this.scene.findObject("secondary_tasks_list"), false, 1 << OBJECTIVE_TYPE_SECONDARY)
+        gui_load_mission_objectives(this.scene.findObject("primary_tasks_list"),   false, 1 << OBJECTIVE_TYPE_PRIMARY),
+        gui_load_mission_objectives(this.scene.findObject("secondary_tasks_list"), false, 1 << OBJECTIVE_TYPE_SECONDARY)
       )
 
       this.initWnd()
@@ -82,7 +84,7 @@ eventbus_subscribe("gui_start_tactical_map_tc", gui_start_tactical_map_tc)
 
       this.initData()
 
-  //    scene.findObject("dmg_hud").tag = "" + units[focus]
+  
 
       local isRespawn = false
 
@@ -116,12 +118,21 @@ eventbus_subscribe("gui_start_tactical_map_tc", gui_start_tactical_map_tc)
       showObjById("btn_select", this.isActiveTactical, this.scene)
       showObjById("btn_back", true, this.scene)
       showObjById("screen_button_back", useTouchscreen, this.scene)
-      let isAircraft = this.isCurUnitAircraft()
-      showObjById("btn_set_hud_type", !isAircraft, this.scene)
-      showObjById("btn_set_point_of_interest", isAircraft && hasSightStabilization(), this.scene)
 
-      let buttonImg = this.scene.findObject("hud_type_img");
-      buttonImg["background-image"] = isAircraft ? "#ui/gameuiskin#objective_tank.svg" : "#ui/gameuiskin#objective_fighter.svg"
+      showObjById("hint_btn_move_map", !showConsoleButtons.get(), this.scene)
+      let isAircraft = this.isCurUnitAircraft()
+      let isShowPOiButton = isAircraft && hasSightStabilization()
+      let setPointOfInterestObj = showObjById("btn_set_point_of_interest", isShowPOiButton, this.scene)
+      if (isShowPOiButton)
+        showObjById("hint_btn_set_point_of_interest", !showConsoleButtons.get(), setPointOfInterestObj)
+
+      let isShowSetHudTypeBtn = !isAircraft
+      let setHudTypeObj = showObjById("btn_set_hud_type", isShowSetHudTypeBtn, this.scene)
+      if (isShowSetHudTypeBtn) {
+        let buttonImg = setHudTypeObj.findObject("hud_type_img")
+        buttonImg["background-image"] = isAircraft ? "#ui/gameuiskin#objective_tank.svg" : "#ui/gameuiskin#objective_fighter.svg"
+        showObjById("hint_btn_set_hud_type", !showConsoleButtons.get(), setHudTypeObj)
+      }
 
       setAllowMoveCenter(false)
       this.resetPointOfInterestMode()
@@ -130,12 +141,12 @@ eventbus_subscribe("gui_start_tactical_map_tc", gui_start_tactical_map_tc)
     function reinitScreen(params = {}) {
       this.setParams(params)
       this.initWnd()
-      /*
-      initData()
-      updatePlayer()
-      update(null, 0.03)
-      updateTitle()
-      */
+      
+
+
+
+
+
     }
 
     function updateTitle() {
@@ -158,10 +169,12 @@ eventbus_subscribe("gui_start_tactical_map_tc", gui_start_tactical_map_tc)
         })
       }
 
-      if (isPointOfInterestSet()) {
-        let tacticalMapObj = this.scene.findObject("tactical-map")
-        tacticalMapObj.cursor = isAllowedMoveCenter() ? "moveArrowCursor" : "normal"
-      }
+      let tacticalMapObj = this.scene.findObject("tactical-map")
+      tacticalMapObj.cursor =  isAllowedMoveCenter() ? "moveArrowCursor" : isPointSettingMode() ? "pointOfInterest" : "normal"
+
+      let buttonImg = this.scene.findObject("hud_poi_img");
+      buttonImg["background-image"] =  isPointOfInterestSet() ? "#ui/gameuiskin#map_interestpoint_delete.svg" : "#ui/gameuiskin#map_interestpoint.svg"
+
     }
 
     function updateTacticalControl(_obj, _dt) {
@@ -246,7 +259,7 @@ eventbus_subscribe("gui_start_tactical_map_tc", gui_start_tactical_map_tc)
         let pilotId = get_pilot_name(this.units[i], i)
         if (pilotId != "") {
           if (get_game_type() & GT_COOPERATIVE) {
-            pilotFullName = pilotId; //player nick
+            pilotFullName = pilotId; 
           }
           else {
             pilotFullName = loc(pilotId)
@@ -298,13 +311,13 @@ eventbus_subscribe("gui_start_tactical_map_tc", gui_start_tactical_map_tc)
           if (is_aircraft_delayed(this.units[i]))
             continue
 
-  //        if ((focus < 0) && is_aircraft_player(units[i]))
-  //          focus = i
+  
+  
 
           this.scene.findObject($"pilot_name{i}").selected = (this.focus == i) ? "yes" : "no"
         }
 
-    //    scene.findObject("dmg_hud").tag = "" + units[focus]
+    
         let obj = this.scene.findObject($"pilot_name{this.focus}")
         if (obj)
           obj.scrollToView()
@@ -464,13 +477,13 @@ eventbus_subscribe("gui_start_tactical_map_tc", gui_start_tactical_map_tc)
   }
 }
 
-  registerRespondent("is_tactical_map_active", function is_tactical_map_active() {
-    if (!("TacticalMap" in gui_handlers))
-      return false
-    let curHandler = handlersManager.getActiveBaseHandler()
-    return curHandler != null &&  (curHandler instanceof gui_handlers.TacticalMap ||
-      curHandler instanceof gui_handlers.ArtilleryMap || curHandler instanceof gui_handlers.RespawnHandler)
-  })
+registerRespondent("is_tactical_map_active", function is_tactical_map_active() {
+  if (!("TacticalMap" in gui_handlers))
+    return false
+  let curHandler = handlersManager.getActiveBaseHandler()
+  return curHandler != null &&  (curHandler instanceof gui_handlers.TacticalMap ||
+    curHandler instanceof gui_handlers.ArtilleryMap || curHandler instanceof gui_handlers.RespawnHandler)
+})
 
 return {
   gui_start_tactical_map

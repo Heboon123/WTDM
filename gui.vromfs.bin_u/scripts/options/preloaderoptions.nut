@@ -6,7 +6,7 @@ let { isDataBlock } = require("%sqstd/underscore.nut")
 let { convertBlk } = require("%sqstd/datablock.nut")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
-let { isProfileReceived } = require("%scripts/login/loginStates.nut")
+let { isProfileReceived } = require("%appGlobals/login/loginState.nut")
 
 const BANNED_SCREENS_SAVE_ID = "preloaderOptions/bannedScreens"
 
@@ -25,7 +25,7 @@ function initOnce() {
 
   bannedScreens = convertBlk(blk)
 
-  // validation
+  
   foreach (screenId, _w in getCurLoadingBgData().list)
     if (screenId not in bannedScreens)
       return

@@ -22,7 +22,7 @@ let { getCurPreset, getBestAvailableUnitByGroup,
   getWarningTextTbl } = require("%scripts/slotbar/slotbarPresetsByVehiclesGroups.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { getOperationById } = require("%scripts/worldWar/operations/model/wwActionsWhithGlobalStatus.nut")
-let { getMissionLocName } = require("%scripts/missions/missionsUtilsModule.nut")
+let { getMissionLocName } = require("%scripts/missions/missionsText.nut")
 let { getMyStateData } = require("%scripts/user/userUtils.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let DataBlock  = require("DataBlock")
@@ -47,7 +47,7 @@ const WW_BATTLES_SORT_TIME_STEP = 120
 const WW_MAX_PLAYERS_DISBALANCE_DEFAULT = 3
 const MAX_BATTLE_WAIT_TIME_MIN_DEFAULT = 30
 
-local WwBattleView //forward declaration
+local WwBattleView 
 
 let WwBattle = class {
   id = ""
@@ -493,7 +493,7 @@ let WwBattle = class {
 
   function isStillInOperation() {
     let battles = ::g_world_war.getBattles(
-        (@(id) function(checkedBattle) { //-ident-hides-ident
+        (@(id) function(checkedBattle) { 
           return checkedBattle.id == id
         })(this.id)
       )
@@ -676,8 +676,8 @@ let WwBattle = class {
       ? getCurPreset().countryPresets?[team?.country ?? ""].units
       : getCrewsListByCountry(team.country)
 
-     if (countryCrews == null)
-       return res
+    if (countryCrews == null)
+      return res
 
     let availableUnits = this.getTeamRemainUnits(team, isCrewByUnitsGroup)
     res.availableUnits = availableUnits
@@ -767,7 +767,7 @@ let WwBattle = class {
     if ("BUT_AIR_GROUND"  == opType || "BUT_ARTILLERY_AIR" == opType)
       return [ES_UNIT_TYPE_AIRCRAFT, ES_UNIT_TYPE_TANK]
 
-    //"BUT_INFANTRY" || "BUT_ARTILLERY_GROUND"
+    
     return []
   }
 
@@ -1061,7 +1061,7 @@ WwBattleView = class  {
   controlHelpText = @() !showConsoleButtons.value && this.hasControlTooltip()
     ? loc("key/LMB") : null
 
-  playerSide = null // need for show view for global battle
+  playerSide = null 
 
   constructor(v_battle = null, customPlayerSide = null) {
     this.battle = v_battle || WwBattle()
@@ -1095,8 +1095,8 @@ WwBattleView = class  {
     return loc("ui/comma").join([this.getBattleName(), this.battle.getLocName(this.playerSide)], true)
   }
 
-  function defineTeamBlock(sides) {
-    this.teamBlock = this.getTeamBlockByIconSize(sides, WW_ARMY_GROUP_ICON_SIZE.BASE)
+  function defineTeamBlock(sides, params) {
+    this.teamBlock = this.getTeamBlockByIconSize(sides, WW_ARMY_GROUP_ICON_SIZE.BASE, false, params)
   }
 
   getTeamsDataBySides = @(sides) this.getTeamBlockByIconSize(sides, WW_ARMY_GROUP_ICON_SIZE.BASE, true)

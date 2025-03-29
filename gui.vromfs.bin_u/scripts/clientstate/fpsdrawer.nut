@@ -1,11 +1,11 @@
-from "%scripts/dagui_natives.nut" import is_hud_visible
 from "%scripts/dagui_library.nut" import *
 from "app" import is_dev_version
+from "hudState" import is_hud_visible
 
-let { subscribe_handler } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { format } = require("string")
 let { subscribe, unsubscribe } = require("eventbus")
-let { isShowDebugInterface = @() false, is_app_loaded = @() false } = require("app") //compatibility with 25.04.2023
+let { isShowDebugInterface = @() false, is_app_loaded = @() false } = require("app") 
 let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
 
 
@@ -80,7 +80,7 @@ function getCurSceneObjects() {
 }
 
 
-//validate objects before calling this
+
 function updateTexts(objects, params) {
   let { fps, ping, pl, sessionId, latency, latencyA, latencyR } = params
   let fpsInt = (fps + 0.5).tointeger();
@@ -133,23 +133,19 @@ function updateStatus(params) {
   updateTexts(objects, params)
 }
 
-
-
-function init() {
-  subscribe_handler({
-    function onEventShowHud(_p) {
-      let objects = getCurSceneObjects()
-      if (objects)
-        checkVisibility(objects)
-    }
-  })
-}
-
-init()
-
 let initSubscription = @() isShowDebugInterface() ? unsubscribe("updateStatusString", updateStatus)
   : subscribe("updateStatusString", updateStatus)
+
+addListenersWithoutEnv({
+  function ShowHud(_) {
+    let objects = getCurSceneObjects()
+    if (objects)
+      checkVisibility(objects)
+  }
+
+  ProfileUpdated = @(_) initSubscription()
+})
+
 if (is_app_loaded())
   initSubscription()
 subscribe("onAcesInitComplete", @(_) initSubscription())
-subscribe("onUpdateProfile", @(_) initSubscription())

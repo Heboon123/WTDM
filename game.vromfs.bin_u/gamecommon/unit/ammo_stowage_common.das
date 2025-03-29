@@ -5,6 +5,7 @@ require dm
 require app
 require net
 require BitStream
+require BallisticsProps
 require Unit
 require UnitFx
 require Weapon
@@ -19,13 +20,13 @@ require %game.utils.utils_common
 require %game.unit.ammo_stowage_events
 
 
-// ==========================================================================
-// PART REMAP
-// ==========================================================================
+
+
+
 
 
 struct public PartRemap
-  partId : PartId
+  partId : PartId = PartId()
   stowageId : int
   clusterId : int
   slotId : int
@@ -35,8 +36,8 @@ def public get_remap(remap : IPoint4List&; partId : PartId) : PartRemap
   if idx < length(remap) && idx >= 0
     let r = remap[idx]
     if r.x >= 0
-      return [[PartRemap partId=partId, stowageId=r.y, clusterId=r.z, slotId=r.w]]
-  return [[PartRemap partId=PartId(), stowageId=-1, clusterId=-1, slotId=-1]]
+      return [[PartRemap() partId=partId, stowageId=r.y, clusterId=r.z, slotId=r.w]]
+  return [[PartRemap() partId=PartId(), stowageId=-1, clusterId=-1, slotId=-1]]
 
 def public add_remap(var remap : IPoint4List&; part : PartRemap) : bool
   assert(part.partId.valid)
@@ -52,9 +53,9 @@ def public add_remap(var remap : IPoint4List&; part : PartRemap) : bool
   return true
 
 
-// ==========================================================================
-// SIMPLE GETTERS
-// ==========================================================================
+
+
+
 
 
 [with_bundle(v)]
@@ -74,9 +75,9 @@ def get_ammo_slot_class_mask(slot_id : int;  v : tuple<ammo_slots__ammoMaskAndTy
   return uint(v.ammo_slots__ammoMaskAndType[slot_id] >> 8u);
 
 
-// ==========================================================================
-// WORKING WITH AMMO SLOTS
-// ==========================================================================
+
+
+
 
 
 [with_bundle(v)]
@@ -200,9 +201,9 @@ def ammo_stowage_try_swap_slots(slot_1_id : int; slot_2_id : int;
   return true
 
 
-// ==========================================================================
-// WORKING WITH AMMO CLUSTERS
-// ==========================================================================
+
+
+
 
 
 [with_bundle(v)]
@@ -245,9 +246,9 @@ def ammo_cluster_balance_slots(var unit : Unit?; cluster_id : int; update_dm : b
   return dm_changed
 
 
-// ==========================================================================
-// WEAPON/AMMO TYPES GATHER/ITERATION
-// ==========================================================================
+
+
+
 
 
 struct WeaponAndAmmoInfo
@@ -287,7 +288,7 @@ def private ammo_stowage_iter_weapons_arr_impl(weap : WeaponController const?;
     max_loaded_count = 0
   ]]
   for bullet_set_id in 0..bullet_set_cnt
-    // gather ammo info for all similar guns
+    
     var ammo_info := base_ammo_info
     ammo_info.count = 0
     ammo_info.max_count = 0
@@ -398,8 +399,8 @@ def ammo_stowage_iter_all_ammo_types(weap : WeaponController const?;
   for stowage_id in iter_range(v.ammo_stowages__weaponTriggersRange)
     ammo_stowage_iter_weapons_and_bullet_sets_impl(
       weap,
-      false,                   // separate weapons
-      per_ammo_types_enabled,  // separate bullet sets
+      false,                   
+      per_ammo_types_enabled,  
       per_ammo_types_enabled,
       stowage_id,
       next_ammo_type,
@@ -420,8 +421,8 @@ def ammo_stowage_iter_all_weapons_and_bullet_sets(weap : WeaponController const?
   for stowage_id in iter_range(v.ammo_stowages__weaponTriggersRange)
     ammo_stowage_iter_weapons_and_bullet_sets_impl(
       weap,
-      true, // separate weapons
-      true, // separate bullet sets
+      true, 
+      true, 
       per_ammo_types_enabled,
       stowage_id,
       next_ammo_type,
@@ -445,8 +446,8 @@ def ammo_stowage_iter_all_stowages_and_bullets(weap : WeaponController const?;
     info_arr |> clear()
     ammo_stowage_iter_weapons_and_bullet_sets_impl(
       weap,
-      false,                  // separate weapons
-      per_ammo_types_enabled, // separate bullet sets
+      false,                  
+      per_ammo_types_enabled, 
       per_ammo_types_enabled,
       stowage_id,
       next_ammo_type,
@@ -485,7 +486,7 @@ def ammo_stowage_iter_all_ammo_props(weap : WeaponController const?; ammo_type :
   let iter_all_bullet_sets = !get_flag(v.ammo_stowage__ammoState, AmmoState ENABLE_PER_AMMO_TYPES)
   let ammo_type_remap = v.ammo_stowage__ammoTypeRemap[ammo_type]
 
-  // calculate total bullet count in all weapons
+  
   var total_cnt = 0
   for weapon_i in ammo_type_remap.y..ammo_type_remap.z
     let weapon = weap.Weapons |> get_weapon(v.ammo_stowage__weaponsIds[weapon_i])
@@ -498,7 +499,7 @@ def ammo_stowage_iter_all_ammo_props(weap : WeaponController const?; ammo_type :
     elif base_gun != null
       total_cnt += base_gun.countBullets
 
-  // gather props and calculate fraction for each type as count/total_cnt
+  
   for weapon_i in ammo_type_remap.y..ammo_type_remap.z
     let weapon = weap.Weapons |> get_weapon(v.ammo_stowage__weaponsIds[weapon_i])
     let gun = as_gun(weapon)
@@ -527,7 +528,7 @@ def ammo_stowage_subtract_weapon_ammo(weap : WeaponController const?; ammo_type 
   let weapon_range = int2(ammo_type_remap.y, ammo_type_remap.z)
   var total_bs_count = weapon_range.y - weapon_range.x
   if iter_all_bullet_sets
-    // if we are iterating all bullet sets, recalc total count
+    
     total_bs_count = 0
     for weapon_i in weapon_range.x..weapon_range.y
       let gun_i = as_gun(weap.Weapons |> get_weapon(v.ammo_stowage__weaponsIds[weapon_i]))
@@ -542,11 +543,11 @@ def ammo_stowage_subtract_weapon_ammo(weap : WeaponController const?; ammo_type 
       if subtract_from_this_bs == 0
         break
 
-      // find gun & bullet set with max ammo count
-      var gun : Gun? = null
+      
+      var gun : WTGun? = null
       var bullet_set_idx = 0
       for weapon_i in weapon_range.x..weapon_range.y
-        let gun_i = as_gun(weap.Weapons |> get_weapon(v.ammo_stowage__weaponsIds[weapon_i]))
+        var gun_i = as_gun(weap.Weapons |> get_weapon(v.ammo_stowage__weaponsIds[weapon_i]))
         if gun_i == null
           return
         let bullet_set_range = iter_all_bullet_sets ? int2(0, length(gun_i.properties.bulletSets)) : int2(ammo_type_remap.w, ammo_type_remap.w + 1)
@@ -558,7 +559,7 @@ def ammo_stowage_subtract_weapon_ammo(weap : WeaponController const?; ammo_type 
             bullet_set_idx = bs_i
             gun = gun_i
       if gun == null
-        break // no more guns with ammo
+        break 
 
       assume bullet_set = gun.properties.bulletSets[bullet_set_idx]
       var cnt = bullet_set.bulletsCount
@@ -575,9 +576,9 @@ def ammo_stowage_subtract_weapon_ammo(weap : WeaponController const?; ammo_type 
       bullet_set.bulletsCount = cnt
 
 
-// ==========================================================================
-// NET SYNC SEND
-// ==========================================================================
+
+
+
 
 
 [with_bundle(v)]

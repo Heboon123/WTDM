@@ -26,6 +26,7 @@ let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerSta
 let fillSlotbarLegend = require("%scripts/slotbar/fillSlotbarLegend.nut")
 let slotbarBaseCfg = require("%scripts/slotbar/selectCrewSlotbarBaseCfg.nut")
 let { getCrewByAir } = require("%scripts/crew/crewInfo.nut")
+let { gui_modal_tutor } = require("%scripts/guiTutorial.nut")
 
 function getObjPosInSafeArea(obj) {
   let pos = obj.getPosRC()
@@ -138,7 +139,7 @@ gui_handlers.SelectCrew <- class (gui_handlers.BaseGuiHandlerWT) {
       let crewId = this.canSetCurUnit
         ? -1
         : (curCrew?.idInCountry ?? -1)
-      this.guiScene.performDelayed(this, @() this.slotbarWeak.selectCrew(crewId))
+      this.guiScene.performDelayed(this, @() this.slotbarWeak?.selectCrew(crewId))
     }
 
     this.onChangeUnit()
@@ -173,16 +174,16 @@ gui_handlers.SelectCrew <- class (gui_handlers.BaseGuiHandlerWT) {
     let interval = toPixels(this.guiScene, "@itemsIntervalBig")
     let bottomPanelHeight = toPixels(this.guiScene, "@bottomMenuPanelHeight")
 
-    //count position by visual card obj. real td is higher and wider than a card.
+    
     let visTdObj = tdClone.childrenCount() ? tdClone.getChild(0) : tdClone
     let tdPos = visTdObj.getPosRC()
     let tdSize = visTdObj.getSize()
 
-    //top and bottom of already positioned items
+    
     local top = tdPos[1]
     local bottom = tdPos[1] + tdSize[1]
 
-    //place slotbar
+    
     let sbObj = this.scene.findObject("slotbar_with_controls")
     let sbSize = sbObj.getSize()
     let isSlotbarOnTop = bottom + interval + sbSize[1] > sh - bh - bottomPanelHeight
@@ -196,7 +197,7 @@ gui_handlers.SelectCrew <- class (gui_handlers.BaseGuiHandlerWT) {
 
     sbObj.top = sbPosY
 
-    //place headerMessage
+    
     let headerPosY = top - interval - headerObj.getSize()[1]
     headerObj.top = headerPosY
   }
@@ -303,7 +304,7 @@ gui_handlers.SelectCrew <- class (gui_handlers.BaseGuiHandlerWT) {
       }
     ]
 
-    ::gui_modal_tutor(steps, this)
+    gui_modal_tutor(steps, this)
   }
 
   function onApply() {

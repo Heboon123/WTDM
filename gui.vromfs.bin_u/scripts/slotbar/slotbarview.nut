@@ -1,9 +1,10 @@
-from "%scripts/dagui_natives.nut" import clan_get_exp, get_spare_aircrafts_count, is_player_unit_alive, get_slot_delay, get_player_unit_name, shop_get_spawn_score, is_era_available, get_num_used_unit_spawns, rented_units_get_last_max_full_rent_time, utf8_strlen, is_respawn_screen
+from "%scripts/dagui_natives.nut" import clan_get_exp, get_spare_aircrafts_count, is_player_unit_alive, get_slot_delay, get_player_unit_name, shop_get_spawn_score, is_era_available, rented_units_get_last_max_full_rent_time, utf8_strlen, is_respawn_screen, is_mouse_last_time_used
 from "%scripts/dagui_library.nut" import *
 from "%scripts/weaponry/weaponryConsts.nut" import UNIT_WEAPONS_READY
 from "%scripts/misCustomRules/ruleConsts.nut" import RESPAWNS_UNLIMITED
 from "%scripts/utils_sa.nut" import colorTextByValues, get_tomoe_unit_icon
 from "%scripts/clans/clanState.nut" import is_in_clan
+from "guiRespawn" import getNumUsedUnitSpawns
 
 let { is_harmonized_unit_image_required } = require("%scripts/langUtils/harmonized.nut")
 let { getGlobalModule } = require("%scripts/global_modules.nut")
@@ -50,16 +51,16 @@ let { getCrewLevel, getCrewStatus, isCrewMaxLevel, isCrewNeedUnseenIcon } = requ
 let { getSpecTypeByCrewAndUnit } = require("%scripts/crew/crewSpecType.nut")
 let { getCrewSpText } = require("%scripts/crew/crewPointsText.nut")
 let { getStringWidthPx } = require("%scripts/viewUtils/daguiFonts.nut")
-let { isHandlerInScene } = require("%sqDagui/framework/baseGuiHandlerManager.nut")
-let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { get_game_mode } = require("mission")
 let { debug_dump_stack } = require("dagor.debug")
 let { getEventEconomicName } = require("%scripts/events/eventInfo.nut")
 let { get_units_count_at_rank } = require("%scripts/shop/shopCountryInfo.nut")
+let { getRoomEvent, isUnitAllowedForRoom } = require("%scripts/matchingRooms/sessionLobbyInfo.nut")
+let { get_unit_preset_img } = require("%scripts/options/optionsExt.nut")
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 
 const DEFAULT_STATUS = "none"
-
-let hasCrewModalWndInScene = @() isHandlerInScene(gui_handlers.CrewModalHandler)
 
 function getUnitSlotRentInfo(unit, params) {
   let info = {
@@ -428,6 +429,8 @@ function buildEmptySlot(id, _unit, params) {
       crewLevel         = crewLevelText
       crewSpecIcon      = crewSpecIcon
       isEmptySlot       = "yes"
+      crewId
+      forcedUnit        = forceCrewInfoUnit.name
     }
     crewLevelInfoData = handyman.renderCached("%gui/slotbar/slotExtraInfoBlock.tpl", crewLevelInfoView)
   }
@@ -436,7 +439,6 @@ function buildEmptySlot(id, _unit, params) {
       hasExtraInfoBlock = true
       hasCrewIdTextInfo = true
       hasActions
-      canOpenCrewWnd = hasActions && !hasCrewModalWndInScene()
       hasCrewHint
       crewNum = $"{crew.idInCountry + 1}"
       isEmptySlot = "yes"
@@ -461,6 +463,7 @@ function buildEmptySlot(id, _unit, params) {
     crewNumWithTitle = hasCrew ? $"{loc("mainmenu/crewTitle")}{crew.idInCountry + 1}" : "No crew"
     crewId = crewId.tostring()
     isShowDragAndDropIcon
+    dragAndDropIconHint = isShowDragAndDropIcon ? loc("slotbar/dragUnitHint") : null
   })
 
   return handyman.renderCached("%gui/slotbar/slotbarSlotEmpty.tpl", emptySlotView)
@@ -545,17 +548,17 @@ function buildGroupSlot(id, unit, params) {
       inactive = true
   }
 
-  // Unit selection priority: 1) rented, 2) researching, 3) mounted, 4) first unbougt,
-  // 5) first in group.
+  
+  
   nextAir = rentedUnit || mountedUnit || (isGroupInResearch && researchingUnit)
     || firstUnboughtUnit || nextAir
   forceUnitNameOnPlate = rentedUnit != null || mountedUnit  != null
     || (isGroupInResearch && researchingUnit != null) || firstUnboughtUnit != null
   let unitForBR = rentedUnit || researchingUnit || firstUnboughtUnit || unit
 
-  //
-  // Bottom button view
-  //
+  
+  
+  
 
   let bottomButtonView = {
     holderId            = id
@@ -566,9 +569,9 @@ function buildGroupSlot(id, unit, params) {
     hasMainButtonIcon   = true
   }
 
-  //
-  // Item buttons view
-  //
+  
+  
+  
 
   let rentInfo = getUnitSlotRentInfo(rentedUnit, params)
 
@@ -580,9 +583,9 @@ function buildGroupSlot(id, unit, params) {
     }
   }
 
-  //
-  // Air research progress view
-  //
+  
+  
+  
 
   local showProgress = false
   local unitExpProgressValue = 0
@@ -605,11 +608,11 @@ function buildGroupSlot(id, unit, params) {
     }]
   }
 
-  //
-  // Res view
-  //
+  
+  
+  
 
-  let shopAirImage = ::get_unit_preset_img(unit.name)
+  let shopAirImage = get_unit_preset_img(unit.name)
     ?? (is_harmonized_unit_image_required(nextAir)
         ? get_tomoe_unit_icon(unit.name, !unit.name.endswith("_group"))
         : "!{0}".subst(unit?.image ?? "#ui/unitskin#planes_group.ddsx"))
@@ -658,7 +661,7 @@ function buildCommonUnitSlot(id, unit, params) {
     missionRules = null, bottomLineText = null, isSlotbarItem = false, isInTable = true,
     showInService = false, hasExtraInfoBlock = false, hasExtraInfoBlockTop = false,
     toBattle = false, toBattleButtonAction = "onSlotBattle", hasCrewHint = false,
-    showAdditionExtraInfo = false, showCrewHintUnderSlot = false, showCrewUnseenIcon = false
+    showAdditionExtraInfo = false, showCrewUnseenIcon = false, showCrewInfoTranslucent = false
   } = params
   local { inactive = false, status = DEFAULT_STATUS, tooltipParams = null } = params
   let curEdiff = params?.getEdiffFunc() ?? getCurrentGameModeEdiff()
@@ -693,9 +696,9 @@ function buildCommonUnitSlot(id, unit, params) {
     status = getUnitItemStatusText(bitStatus, false)
   }
 
-  //
-  // Item buttons view
-  //
+  
+  
+  
 
   let rentInfo = getUnitSlotRentInfo(unit, params)
 
@@ -743,9 +746,7 @@ function buildCommonUnitSlot(id, unit, params) {
       hasUnit
       needCurPoints
       hasActions
-      canOpenCrewWnd = hasActions && !hasCrewModalWndInScene()
       hasCrewHint
-      showCrewHintUnderSlot
       showAdditionExtraInfo
       crewLevel = crewLevelText
       crewLevelFull = crewLevelTextFull
@@ -754,9 +755,6 @@ function buildCommonUnitSlot(id, unit, params) {
       hasCrewUnseenIcon = showCrewUnseenIcon && isCrewNeedUnseenIcon(crew, unitForCrewInfo) ? "yes" : "no"
       crewNum = $"{crew.idInCountry + 1}"
       crewNumWithTitle = $"{loc("mainmenu/crewTitle")}{crew.idInCountry + 1}"
-      crewSpecializationLabel = hasUnit ? $"{loc("crew/trained")}{loc("ui/colon")}" : ""
-      crewSpecializationIcon = hasUnit ? crewSpec.trainedIcon : ""
-      crewSpecialization = hasUnit ? crewSpec.getName() : ""
       crewPoints = (hasUnit && needCurPoints) ? getCrewSpText(crew?.skillPoints ?? 0) : ""
       crewId
       crewIdInCountry = crew?.idInCountry
@@ -796,7 +794,7 @@ function buildCommonUnitSlot(id, unit, params) {
   if (crew && isInFlight()) {
     let maxSpawns = get_max_spawns_unit_count(unit.name)
     if (crew.idInCountry >= 0 && maxSpawns > 1) {
-      let numSpawns = get_num_used_unit_spawns(crew.idInCountry)
+      let numSpawns = getNumUsedUnitSpawns(crew.idInCountry)
       leftHistoricalSpawns = maxSpawns - numSpawns
       additionalHistoricalRespawns = $"{leftHistoricalSpawns}/{maxSpawns}"
       if (leftHistoricalSpawns == 0) {
@@ -857,9 +855,9 @@ function buildCommonUnitSlot(id, unit, params) {
   }
 
   if (hasPriceText && hasSpareInfo && hasAdditionalRespawns && hasAdditionalHistoricalRespawns) {
-    let roomEvent = ::SessionLobby.getRoomEvent()
-    let economicName = roomEvent != null ? getEventEconomicName(roomEvent) : null  // warning disable: -declared-never-used
-    let unitName = unit.name // warning disable: -declared-never-used
+    let roomEvent = getRoomEvent()
+    let economicName = roomEvent != null ? getEventEconomicName(roomEvent) : null  
+    let unitName = unit.name 
     debug_dump_stack()
     logerr("[SLOTBAR] unit slot missiton block has 4 blocks")
   }
@@ -875,9 +873,9 @@ function buildCommonUnitSlot(id, unit, params) {
     itemButtonsView.itemButtons.specTypeTooltip <- specType.getName()
   }
 
-  //
-  // Air research progress view
-  //
+  
+  
+  
 
   let showProgress = isLocalState && !isOwn && canResearch && !isInFlight()
     && (!isLockedSquadronVehicle || unitExpGranted > 0)
@@ -905,9 +903,9 @@ function buildCommonUnitSlot(id, unit, params) {
     }
   }
 
-  //
-  // Res view
-  //
+  
+  
+  
 
   let progressText = showProgress ? getUnitSlotResearchProgressText(unit, priceText) : ""
   let checkNotification = ::g_discount.getEntitlementUnitDiscount(unit.name)
@@ -952,7 +950,7 @@ function buildCommonUnitSlot(id, unit, params) {
     extraInfoBlockTop   = handyman.renderCached("%gui/slotbar/slotExtraInfoBlockTop.tpl", extraInfoTopView)
     refuseOpenHoverMenu = !hasActions ? "yes" : "no"
     crewNumWithTitle    = hasCrewInfo ? $"{loc("mainmenu/crewTitle")}{crew.idInCountry + 1}" : ""
-    crewInfoTranslucent = toBattle ? "yes" : "no"
+    crewInfoTranslucent = showCrewInfoTranslucent ? "yes" : "no"
     hasContextCursor    = hasActions
   })
   let groupName = missionRules ? missionRules.getRandomUnitsGroupName(unit.name) : null
@@ -1004,7 +1002,7 @@ function fillUnitSlotTimers(holderObj, unit) {
   SecondsUpdater(holderObj, function(obj, params) {
     local isActive = false
 
-    // Unit rent time
+    
     let isRented = rentedUnit.isRented()
     if (isRented) {
       let objRentProgress = obj.findObject("rent_progress")
@@ -1017,7 +1015,7 @@ function fillUnitSlotTimers(holderObj, unit) {
         isActive = true
       }
     }
-    else { // at rent time over
+    else { 
       let rentInfo = getUnitSlotRentInfo(rentedUnit, params)
 
       let objRentIcon = obj.findObject("rent_icon")
@@ -1063,7 +1061,7 @@ function isUnitEnabledForSlotbar(unit, params) {
   else if (availableUnits != null)
     res = unit.name in availableUnits
   else if (isInSessionRoom.get() && !isInFlight())
-    res = ::SessionLobby.isUnitAllowed(unit)
+    res = isUnitAllowedForRoom(unit)
   else if (roomCreationContext != null)
     res = roomCreationContext.isUnitAllowed(unit)
 
@@ -1085,9 +1083,19 @@ function isUnitEnabledForSlotbar(unit, params) {
 }
 
 addTooltipTypes({
-  UNIT = { //by unit name
+  UNIT = { 
     isCustomTooltipFill = true
     fillTooltip = function(obj, handler, id, params) {
+      let actionsList = handlersManager.findHandlerClassInScene(gui_handlers.ActionsList)
+      if (actionsList && actionsList?.params.needCloseTooltips) {
+        let transparentDirection = to_integer_safe(actionsList?.scene["_transp-direction"], 0, false)
+        if (transparentDirection > -1) {
+          if (!showConsoleButtons.value || (is_mouse_last_time_used() && !params?.isOpenByHoldBtn))
+            return false
+          actionsList.close()
+        }
+      }
+
       if (!checkObj(obj))
         return false
       let unit = getAircraftByName(id)
@@ -1179,7 +1187,7 @@ addTooltipTypes({
     }
   }
 
-  RANDOM_UNIT = { //by unit name
+  RANDOM_UNIT = { 
     isCustomTooltipFill = true
     fillTooltip = function(obj, handler, _id, params) {
       if (!checkObj(obj))
@@ -1222,6 +1230,35 @@ addTooltipTypes({
   }
 })
 
+function getSlotCrewHint(crew, unit, params) {
+  let hasUnit = unit != null
+  let crewSpec = hasUnit
+    ? getSpecTypeByCrewAndUnit(crew, unit)
+    : null
+
+  let isMaxLevel = (crew && unit)
+    ? isCrewMaxLevel(crew, unit, crew.country, unit.getCrewUnitType())
+    : ""
+  let needCurPoints = (crew != null) && !isMaxLevel
+  let crewLevelText = (crew && unit)
+    ? getCrewLevel(crew, unit, unit.getCrewUnitType()).tointeger().tostring()
+    : ""
+
+  let data = {
+    hasUnit
+    crewNumWithTitle = $"{loc("mainmenu/crewTitle")}{crew.idInCountry + 1}"
+    crewLevel = crewLevelText
+    crewSpecializationLabel = hasUnit ? $"{loc("crew/trained")}{loc("ui/colon")}" : ""
+    crewSpecializationIcon = hasUnit ? crewSpec?.trainedIcon : ""
+    crewSpecialization = hasUnit ? crewSpec?.getName() : ""
+    needCurPoints
+    crewPoints = (hasUnit && needCurPoints) ? getCrewSpText(crew?.skillPoints ?? 0) : ""
+  }
+  data.__update(params)
+
+  return handyman.renderCached("%gui/slotbar/slotCrewInfo.tpl", data)
+}
+
 return {
   buildUnitSlot
   fillUnitSlotTimers
@@ -1235,4 +1272,5 @@ return {
   isUnitEnabledForSlotbar
   getSpareCountText
   calcUnitSlotMissionInfoTextsWidth
+  getSlotCrewHint
 }

@@ -1,9 +1,10 @@
-let { regexp, format, startswith, endswith, strip }=require("string")
-let math=require("math")
+from "iostream" import blob
+let { regexp, format } = require("string")
+let { clamp, log10, min } = require("math")
 let regexp2 = require_optional("regexp2")
 let utf8 = require_optional("utf8")
 
-//pairs list taken from http://www.ibm.com/support/knowledgecenter/ssw_ibm_i_72/nls/rbagslowtoupmaptable.htm
+
 const CASE_PAIR_LOWER = "abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿāăąćĉċčďđēĕėęěĝğġģĥħĩīĭįıĳĵķĺļľŀłńņňŋōŏőœŕŗřśŝşšţťŧũūŭůűųŵŷźżžƃƅƈƌƒƙơƣƥƨƭưƴƶƹƽǆǉǌǎǐǒǔǖǘǚǜǟǡǣǥǧǩǫǭǯǳǵǻǽǿȁȃȅȇȉȋȍȏȑȓȕȗɓɔɗɘəɛɠɣɨɩɯɲɵʃʈʊʋʒάέήίαβγδεζηθικλμνξοπρσςτυφχψωϊϋόύώϣϥϧϩϫϭϯабвгдежзийклмнопрстуфхцчшщъыьэюяёђѓєѕіїјљњћќўџѡѣѥѧѩѫѭѯѱѳѵѷѹѻѽѿҁґғҕҗҙқҝҟҡңҥҧҩҫҭүұҳҵҷҹһҽҿӂӄӈӌӑӓӕӗәӛӝӟӡӣӥӧөӫӯӱӳӵӹաբգդեզէըթժիլխծկհձղճմյնշոչպջռսվտրցւփքօֆაბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰჱჲჳჴჵḁḃḅḇḉḋḍḏḑḓḕḗḙḛḝḟḡḣḥḧḩḫḭḯḱḳḵḷḹḻḽḿṁṃṅṇṉṋṍṏṑṓṕṗṙṛṝṟṡṣṥṧṩṫṭṯṱṳṵṷṹṻṽṿẁẃẅẇẉẋẍẏẑẓẕạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹἀἁἂἃἄἅἆἇἐἑἒἓἔἕἠἡἢἣἤἥἦἧἰἱἲἳἴἵἶἷὀὁὂὃὄὅὑὓὕὗὠὡὢὣὤὥὦὧᾀᾁᾂᾃᾄᾅᾆᾇᾐᾑᾒᾓᾔᾕᾖᾗᾠᾡᾢᾣᾤᾥᾦᾧᾰᾱῐῑῠῡⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ"
 const CASE_PAIR_UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞŸĀĂĄĆĈĊČĎĐĒĔĖĘĚĜĞĠĢĤĦĨĪĬĮIĲĴĶĹĻĽĿŁŃŅŇŊŌŎŐŒŔŖŘŚŜŞŠŢŤŦŨŪŬŮŰŲŴŶŹŻŽƂƄƇƋƑƘƠƢƤƧƬƯƳƵƸƼǄǇǊǍǏǑǓǕǗǙǛǞǠǢǤǦǨǪǬǮǱǴǺǼǾȀȂȄȆȈȊȌȎȐȒȔȖƁƆƊƎƏƐƓƔƗƖƜƝƟƩƮƱƲƷΆΈΉΊΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΣΤΥΦΧΨΩΪΫΌΎΏϢϤϦϨϪϬϮАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯЁЂЃЄЅІЇЈЉЊЋЌЎЏѠѢѤѦѨѪѬѮѰѲѴѶѸѺѼѾҀҐҒҔҖҘҚҜҞҠҢҤҦҨҪҬҮҰҲҴҶҸҺҼҾӁӃӇӋӐӒӔӖӘӚӜӞӠӢӤӦӨӪӮӰӲӴӸԱԲԳԴԵԶԷԸԹԺԻԼԽԾԿՀՁՂՃՄՅՆՇՈՉՊՋՌՍՎՏՐՑՒՓՔՕՖႠႡႢႣႤႥႦႧႨႩႪႫႬႭႮႯႰႱႲႳႴႵႶႷႸႹႺႻႼႽႾႿჀჁჂჃჄჅḀḂḄḆḈḊḌḎḐḒḔḖḘḚḜḞḠḢḤḦḨḪḬḮḰḲḴḶḸḺḼḾṀṂṄṆṈṊṌṎṐṒṔṖṘṚṜṞṠṢṤṦṨṪṬṮṰṲṴṶṸṺṼṾẀẂẄẆẈẊẌẎẐẒẔẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼẾỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴỶỸἈἉἊἋἌἍἎἏἘἙἚἛἜἝἨἩἪἫἬἭἮἯἸἹἺἻἼἽἾἿὈὉὊὋὌὍὙὛὝὟὨὩὪὫὬὭὮὯᾈᾉᾊᾋᾌᾍᾎᾏᾘᾙᾚᾛᾜᾝᾞᾟᾨᾩᾪᾫᾬᾭᾮᾯᾸᾹῘῙῨῩⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ"
 local INVALID_INDEX = -1
@@ -15,42 +16,42 @@ local trimRegExp = null
 local stripTagsConfig = null
 local escapeConfig = null
 
-/**
- * Joins array elements into a string with the glue string between each element.
- * This function is a reverse operation to g_string.split()
- * @param {string[]} pieces - The array of strings to join.
- * @param {string}   glue - glue string.
- * @return {string} - String containing all the array elements in the same order,
- *                    with the glue string between each element.
- */
-// Reverse operation to split()
+
+
+
+
+
+
+
+
+
 function implode(pieces = [], glue = "") {
   return glue.join(pieces, true)
 }
 
-/**
- * Joins array elements into a string with the glue string between each element.
- * Like implode(), but doesn't skip empty strings, so it is lossless
- * and safe for packing string data into a string, when empty sub-strings are important.
- * This function is a reverse operation to g_string.split()
- * @param {string[]} pieces - The array of strings to join.
- * @param {string}   glue - glue string.
- * @return {string} - String containing all the array elements in the same order,
- *                    with the glue string between each element.
- */
+
+
+
+
+
+
+
+
+
+
 function join(pieces, glue="") {
   return glue.join(pieces)
 }
 
-/**
- * Splits a string into an array of sub-strings.
- * Like Squirrel split(), but doesn't skip empty strings, so it is lossless
- * and safe for extracting string data from a string, when empty sub-strings are important.
- * This function is a reverse operation to g_string.join()
- * @param {string} joined - The string to split.
- * @param {string} glue - glue string.
- * @return {string[]} - Array of sub-strings.
- */
+
+
+
+
+
+
+
+
+
 function split(joined, glue, isIgnoreEmpty = false) {
   return (!isIgnoreEmpty) ? joined.split(glue)
             : joined.split(glue).filter(@(v) v!="")
@@ -158,16 +159,18 @@ let defTostringParams = freeze({
   showArrIdx=false
 })
 
-function func2str(func, p={}){
+function func2str_compact(func) {
+  local { native, name } = func.getfuncinfos()
+  return native ? $"(nativefunc): {name}"
+    : name.slice(0,1) == "(" ? "@()" : $"{name}()"
+}
+
+function func2str(func, p={}) {
   local compact = p?.compact ?? false
   local showsrc = p?.showsrc ?? false
   local showparams = p?.showparams ?? compact
   local showdefparams = p?.showdefparams ?? compact
   local tostr_func = p?.tostr_func ?? @(v) $"{v}"
-
-  if (type(func)=="thread") {
-    return $"thread: {func.getstatus()}"
-  }
 
   local out = []
   local info = func.getfuncinfos()
@@ -209,8 +212,10 @@ function func2str(func, p={}){
   return "".join(out)
 }
 
-let simple_types = ["string", "float", "bool", "integer","null"]
-let function_types = ["function", "generator", "thread"]
+let simple_types = ["string", "float", "bool", "integer", "null", "userdata", "thread"]
+  .reduce(@(res, v) res.$rawset(v, true), {})
+let function_types = ["function", "generator"]
+  .reduce(@(res, v) res.$rawset(v, true), {})
 
 function tostring_any(input, tostringfunc=null, compact=true) {
   local typ = type(input)
@@ -225,8 +230,8 @@ function tostring_any(input, tostringfunc=null, compact=true) {
       }
     }
   }
-  else if (function_types.indexof(typ)!=null){
-    return func2str(input,{compact})
+  else if (typ in function_types){
+    return compact ? func2str_compact(input) : func2str(input, { compact })
   }
   else if (typ == "string"){
     if (input=="")
@@ -238,8 +243,10 @@ function tostring_any(input, tostringfunc=null, compact=true) {
   else if (typ == "null"){
     return "null"
   }
-  else if (typ == "float" && input == input.tointeger().tofloat() && !compact){
+  else if (typ == "float"){
     local r = input.tostring()
+    if (compact || input != input.tointeger().tofloat())
+      return r
     return r.contains(".") || r.contains("e") ? r : $"{r}.0"
   }
   else if (typ=="instance"){
@@ -251,6 +258,9 @@ function tostring_any(input, tostringfunc=null, compact=true) {
   else if (typ == "weakreference"){
     return "#WEAKREF#"
   }
+  if (typ=="thread") {
+    return $"thread: {input.getstatus()}"
+  }
   return input.tostring()
 }
 let FOO = {}
@@ -259,6 +269,15 @@ function tableLen(t){
 }
 
 let table_types = ["table","class","instance"]
+  .reduce(@(res, v) res.$rawset(v, true), {})
+let openSymByType = {
+  ["array"] = "[",
+  ["class"] = "class {",
+  ["instance"] = "instance {",
+}
+
+let openSym = @(value) openSymByType?[type(value)] ?? "{"
+let closeSym = @(value) type(value) == "array" ? "]" : "}"
 
 function tostring_r(inp, params=defTostringParams) {
   local newline = params?.newline ?? defTostringParams.newline
@@ -269,28 +288,7 @@ function tostring_r(inp, params=defTostringParams) {
   local indentOnNewline = params?.indentOnNewline ?? defTostringParams.indentOnNewline
   local splitlines = params?.splitlines ?? defTostringParams.splitlines
   local compact = params?.compact ?? defTostringParams.compact
-  local tostringfuncs = [
-    {
-      compare = @(_val,typ) simple_types.indexof(typ) != null
-      tostring = @(val) tostring_any(val, null, compact)
-    }
-    {
-      compare = @(val,typ) (typ=="table" && tableLen(val)==0 )
-      tostring = @(_val) "{}"
-    }
-    {
-      compare = @(val,typ) typ=="array" && val.len()==0
-      tostring = @(_val) "[]"
-    }
-    {
-      compare = @(_val,typ) function_types.indexof(typ)!=null
-      tostring = @(val) tostring_any(val, null, compact)
-    }
-    {
-      compare = @(val,typ) (typ=="instance" && val?.tostring && val?.tostring?() && val?.tostring?().indexof("(instance : 0x")!=0)
-      tostring = @(val) val.tostring()
-    }
-  ]
+
   function tostringLeaf(val) {
     local typ =type(val)
     if (tostringfunc!=null) {
@@ -300,47 +298,37 @@ function tostring_r(inp, params=defTostringParams) {
         if (tf.compare(val))
           return [true, tf.tostring(val)]
     }
-    foreach (cmp in tostringfuncs)
-      if (cmp.compare(val,typ))
-        return [true,cmp.tostring(val)]
+
+    if (typ in simple_types || typ in function_types)
+      return [true, tostring_any(val, null, compact)]
+    if (typ == "table" && tableLen(val) == 0)
+      return [true, "{}"]
+    if (typ == "array" && val.len() == 0)
+      return [true, "[]"]
+    if (typ == "instance") {
+      let str = val?.tostring?()
+      return [str != null && str.indexof("(instance : 0x") != 0, str]
+    }
     return [false, null]
   }
 
-  function openSym(value) {
-    local typ = type(value)
-    if (typ=="array")
-      return "["
-    if (typ=="class")
-      return "class {"
-    else if (typ=="instance")
-      return "instance {"
-    else
-      return "{"
-  }
-  function closeSym(value) {
-    local typ = type(value)
-    if (typ=="array")
-      return "]"
-    else
-      return "}"
-  }
   local arrSep = separator
   if (!splitlines) {
     newline = " "
     indentOnNewline = ""
   }
-  function sub_tostring_r(input, indent, curdeeplevel, arrayElem = false, sep = newline, arrInd=null) {
+  let stream = blob()
+  function write_to_string(input, indent, curdeeplevel, arrayElem = false, sep = newline, arrInd=null) {
     if (arrInd==null)
       arrInd=indent
-    local out = []
     local li = 0
     local maxind = -1
     try {
-      if (input?.len && type(input?.len)=="function") {
+      if (type(input?.len)=="function") {
         let info = input.len.getfuncinfos()
         if (!info.native && info.parameters.len()==1)
           maxind = input.len()-1
-        else if (info.native && info.typecheck.len()==1 && info.typecheck[0]==32) //this is instance
+        else if (info.native && info.typecheck.len()==1 && (info.typecheck[0]==32|| info.typecheck[0]==64)) 
           maxind = input.len()-1
       }
     }
@@ -348,82 +336,104 @@ function tostring_r(inp, params=defTostringParams) {
     foreach (key, value in input) {
       local typ = type(value)
       local isArray = typ=="array"
-      local tostringLeafv=tostringLeaf(value)
-      if (tostringLeafv[0]) {
+      let [isProcessed, resultStr] = tostringLeaf(value)
+      if (isProcessed) {
         if (!arrayElem) {
-          out.append(sep)
-          out.append(indent, tostring_any(key, null, compact), " = ")
+          stream.writestring(sep)
+          stream.writestring(indent)
+          stream.writestring(tostring_any(key, null, compact))
+          stream.writestring(" = ")
         }
-        out.append(tostringLeafv[1])
+        stream.writestring(resultStr)
         if (arrayElem && li != maxind)
-          out.append(sep)
+          stream.writestring(sep)
       }
-      else if (maxdeeplevel != null && curdeeplevel == maxdeeplevel && !tostringLeafv[0]) {
+      else if (maxdeeplevel != null && curdeeplevel == maxdeeplevel) {
         local brOp = openSym(value)
         local brCl = closeSym(value)
-        if (!arrayElem)
-          out.append(newline, indent, tostring_any(key, null, compact), " = ")
-        else if (arrayElem && showArrIdx) {
-          out.append(tostring_any(key, null, compact), " = ")
+        if (!arrayElem) {
+          stream.writestring(newline)
+          stream.writestring(indent)
+          stream.writestring(tostring_any(key, null, compact))
+          stream.writestring(" = ")
         }
-        out.append(brOp,"...",brCl)
+        else if (arrayElem && showArrIdx) {
+          stream.writestring(tostring_any(key, null, compact))
+          stream.writestring(" = ")
+        }
+        stream.writestring(brOp)
+        stream.writestring("...")
+        stream.writestring(brCl)
       }
       else if (isArray && !showArrIdx) {
-        if (!arrayElem)
-          out.append(newline, indent, tostring_any(key, null, compact), " = ")
-        out.append("[", sub_tostring_r(value, $"{indent}{indentOnNewline}", curdeeplevel+1, true, arrSep, indent), "]") //warning disable: -param-pos
+        if (!arrayElem) {
+          stream.writestring(newline)
+          stream.writestring(indent)
+          stream.writestring(tostring_any(key, null, compact))
+          stream.writestring(" = ")
+        }
+        stream.writestring("[")
+        write_to_string(value, $"{indent}{indentOnNewline}", curdeeplevel+1, true, arrSep, indent) 
+        stream.writestring("]")
         if (arrayElem && li!=maxind)
-          out.append(sep)
+          stream.writestring(sep)
       }
-      else if (table_types.indexof(typ) != null || (isArray && showArrIdx )) {
+      else if (typ in table_types || (isArray && showArrIdx )) {
         local brOp = openSym(value)
         local brCl = closeSym(value)
-        out.append(newline, indent)
+        stream.writestring(newline)
+        stream.writestring(indent)
         if (!arrayElem) {
-          out.append(tostring_any(key,null, compact)," = ")
+          stream.writestring(tostring_any(key,null, compact)," = ")
         }
-        out.append(brOp,sub_tostring_r(value, $"{indent}{indentOnNewline}", curdeeplevel+1), newline,indent,brCl)
+        stream.writestring(brOp)
+        write_to_string(value, $"{indent}{indentOnNewline}", curdeeplevel+1)
+        stream.writestring(newline)
+        stream.writestring(indent)
+        stream.writestring(brCl)
         if (arrayElem && li==maxind ){
-          out.append(newline, arrInd)
+          stream.writestring(newline)
+          stream.writestring(arrInd)
         }
-        else if (arrayElem && li < maxind && table_types.indexof(type(input[li+1]))!=0){
-          out.append(newline, indent)
+        else if (arrayElem && li < maxind && type(input[li+1]) != "table"){
+          stream.writestring(newline)
+          stream.writestring(indent)
         }
       }
       li += 1
     }
-    return "".join(out)
   }
-  return sub_tostring_r([inp], "", 0,true)
+  write_to_string([inp], "", 0,true)
+  return stream.as_string()
 }
 
 
-/**
- * Retrieves a substring from the string. The substring starts and ends at a specified indexes.
- * Like Python operator slice.
- * @param {string}  str - Input string.
- * @param {integer} start - Substring start index. If it is negative, the returned string will
- *                          start at the start'th character from the end of input string.
- * @param {integer} [end] - Substring end index.  If it is negative, the returned string will
- *                          end at the end'th character from the end of input string.
- * @return {string} - substring, or on error - part of substring or empty string.
- */
+
+
+
+
+
+
+
+
+
+
 function slice(str, start = 0, end = null) {
   str = str ?? ""
   return str.slice(start, end ?? str.len())
 }
 
-/**
- * Retrieves a substring from the string. The substring starts at a specified index
- * and has a specified length.
- * Like PHP function substr().
- * @param {string}  str - Input string.
- * @param {integer} start - Substring start index. If it is negative, the returned string will
- *                          start at the start'th character from the end of input string.
- * @param {integer} [length] - Substring length. If it is negative, the returned string will
- *                             end at the end'th character from the end of input string.
- * @return {string} - substring, or on error - part of substring or empty string.
- */
+
+
+
+
+
+
+
+
+
+
+
 function substring(str, start = 0, length = null) {
   local end = length
   if (length != null && length >= 0) {
@@ -431,46 +441,46 @@ function substring(str, start = 0, length = null) {
     local total = str.len()
     if (start < 0)
       start += total
-    start = math.clamp(start, 0, total)
+    start = clamp(start, 0, total)
     end = start + length
   }
   return slice(str, start, end)
 }
 
-/**
- * Determines whether the beginning of the string matches a specified substring.
- * Like C# function String.StartsWith().
- * @param {string}  str - Input string.
- * @param {string}  value - Matching substring.
- * @return {boolean}
- */
+
+
+
+
+
+
+
 function startsWith(str, value) {
   str = str ?? ""
   value = value ?? ""
-  return startswith(str, value)
+  return str.startswith(value)
 }
 
-/**
- * Determines whether the end of the string matches the specified substring.
- * Like C# function String.EndsWith().
- * @param {string}  str - Input string.
- * @param {string}  value - Matching substring.
- * @return {boolean}
- */
+
+
+
+
+
+
+
 function endsWith(str, value) {
   str = str ?? ""
   value = value ?? ""
-  return endswith(str, value)
+  return str.endswith(value)
 }
 
-/**
- * Reports the index of the first occurrence in the string of a specified substring.
- * Like C# function String.IndexOf().
- * @param {string}  str - Input string.
- * @param {string}  value - Searching substring.
- * @param {integer} [startIndex=0] - Search start index.
- * @return {integer} - index, or -1 if not found.
- */
+
+
+
+
+
+
+
+
 function indexOf(str, value, startIndex = 0) {
   str = str ?? ""
   value = value ?? ""
@@ -478,14 +488,14 @@ function indexOf(str, value, startIndex = 0) {
   return idx ?? INVALID_INDEX
 }
 
-/**
- * Reports the index of the last occurrence in the string of a specified substring.
- * Like C# function String.LastIndexOf().
- * @param {string}  str - Input string.
- * @param {string}  value - Searching substring.
- * @param {integer} [startIndex=0] - Search start index.
- * @return {integer} - index, or -1 if not found.
- */
+
+
+
+
+
+
+
+
 function lastIndexOf(str, value, startIndex = 0) {
   str = str ?? ""
   value = value ?? ""
@@ -501,14 +511,14 @@ function lastIndexOf(str, value, startIndex = 0) {
   return idx
 }
 
-/**
- * Reports the index of the first occurrence in the string of any substring in a specified array.
- * Like C# function String.IndexOfAny().
- * @param {string}   str - Input string.
- * @param {string[]} anyOf - Array of substrings to search for.
- * @param {integer}  [startIndex=0] - Search start index.
- * @return {integer} - index, or -1 if not found.
- */
+
+
+
+
+
+
+
+
 function indexOfAny(str, anyOf, startIndex = 0) {
   str = str ?? ""
   anyOf = anyOf ?? [ "" ]
@@ -521,14 +531,14 @@ function indexOfAny(str, anyOf, startIndex = 0) {
   return idx
 }
 
-/**
- * Reports the index of the last occurrence in the string of any substring in a specified array.
- * Like C# function String.LastIndexOfAny().
- * @param {string}   str - Input string.
- * @param {string[]} anyOf - Array of substrings to search for.
- * @param {integer}  [startIndex=0] - Search start index.
- * @return {integer} - index, or -1 if not found.
- */
+
+
+
+
+
+
+
+
 function lastIndexOfAny(str, anyOf, startIndex = 0) {
   str = str ?? ""
   anyOf = anyOf ?? [ "" ]
@@ -541,7 +551,7 @@ function lastIndexOfAny(str, anyOf, startIndex = 0) {
   return idx
 }
 
-//returns the number of entries of @substr in @str.
+
 function countSubstrings(str, substr) {
   local res = -1
   local findex = -1
@@ -551,65 +561,49 @@ function countSubstrings(str, substr) {
   return res
 }
 
-//Next two methods change case to upper / lower for set up number of symbols
-function toUpper(str, symbolsNum = 0) {
-  if (symbolsNum <= 0) {
-    symbolsNum = str.len()
-  }
-  if (symbolsNum >= str.len()) {
-    return str.toupper()
-  }
-  return "".concat(slice(str, 0, symbolsNum).toupper(),slice(str, symbolsNum))
-}
-
-function toLower(str, symbolsNum = 0) {
-  if (symbolsNum <= 0) {
-    symbolsNum = str.len()
-  }
-  if (symbolsNum >= str.len()) {
-    return str.tolower()
-  }
-  return "".concat(slice(str, 0, symbolsNum).tolower(), slice(str, symbolsNum))
+function capitalize(str) {
+  return "".concat(str.slice(0, 1).toupper(), str.slice(1))
 }
 
 function replace(str, from, to) {
   return (str ?? "").replace(from, to)
 }
 
-/**
- * Strips leading and trailing whitespace characters.
- * Like Java function trim().
- * @param {string} str - Input string.
- * @return {string} - String without whitespace chars.
- */
+
+
+
+
+
+
 function trim(str) {
   str = str ?? ""
-  return trimRegExp ? trimRegExp.replace("", str) : str
+  return trimRegExp ? trimRegExp.replace("", str) : str 
 }
 
-/*
-  getroottable()["rfsUnitTest"] <- function() {
-    local resArr = []
-    local testValArray = [0.0, 0.000024325, 0.0001, 0.5, 0.9999, 1.0, 5.126, 12.0, 120.057, 123.0, 6548.0, 72356.0, 1234567.0]
-    for (local presize = 1e+6; presize >= 1e-10; presize *= 0.1) {
-      local positive = ", ".join(testValArray.map(@(val) floatToStringRounded(val * presize, presize)))
-      local negative = ", ".join(testValArray.map(@(val) floatToStringRounded(-val * presize, presize)))
-      resArr.append($"presize {presize} -> {positive}, {negative}")
-    }
-    return "\n".join(resArr)
-  }
-//presize 1e+06 -> 1000000, 12000000, 123000000, 6547000000, 72356000000, 120000000, 4300000000, 1234567000000
-//presize 0.001 -> 0.001, 0.012, 0.123, 6.548, 72.356, 0.120, 4.300, 1234.567
-//presize 1e-10 -> 0.0000000001, 0.0000000012, 0.0000000123, 0.0000006548, 0.0000072356, 0.0000000120, 0.0000004300, 0.0001234567'
-*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function floatToStringRounded(value, presize) {
   if (presize >= 1) {
     local res = (value / presize + (value < 0 ? -0.5 : 0.5)).tointeger()
-    return res == 0 ? "0" : "".join([res].extend(array(math.log10(presize).tointeger(), "0")))
+    return res == 0 ? "0" : "".join([res].extend(array(log10(presize).tointeger(), "0")))
   }
-  return format("%.{0}f".subst(-math.log10(presize).tointeger()), value)
+  return format("%.{0}f".subst(-log10(presize).tointeger()), value)
 }
+
 function isStringInteger(str) {
   if (type(str) == "integer")
     return true
@@ -618,8 +612,8 @@ function isStringInteger(str) {
   if (intRegExp != null)
     return intRegExp.match(str)
 
-  if (startsWith(str,"-"))
-    str=str.slice(1)
+  if (str.startswith("-"))
+    str = str.slice(1)
   if (str == "")
     return false
   for (local i = 0; i < str.len(); i++)
@@ -636,7 +630,7 @@ function isStringFloat(str, separator=".") {
   if (floatRegExp != null && separator == ".")
     return floatRegExp.match(str)
 
-  if (startsWith(str,"-"))
+  if (str.startswith("-"))
     str = str.slice(1)
   local numList = split(str, separator)
   local numListLen = numList.len()
@@ -654,7 +648,7 @@ function isStringFloat(str, separator=".") {
       return false
     if (numListLen == 2 && eList.len() == 2 && eList[0] == "")
       eList[0] = "0"
-    if (startsWith(eList[1],"-") || startsWith(eList[1],"+"))
+    if (eList[1].startswith("-") || eList[1].startswith("+"))
       eList[1] = eList[1].slice(1)
     local expDigits = eList[1].len()
     if (expDigits < 1 || expDigits > 3)
@@ -674,7 +668,7 @@ function isStringFloat(str, separator=".") {
 
 function toIntegerSafe(str, defValue = 0, needAssert = true) {
   if (type(str) == "string")
-    str = strip(str)
+    str = str.strip()
   if (isStringInteger(str))
     return str.tointeger()
   if (needAssert)
@@ -682,32 +676,29 @@ function toIntegerSafe(str, defValue = 0, needAssert = true) {
   return defValue
 }
 
-
-
-
 local utf8ToUpper
 local utf8ToLower
+local utf8Capitalize
 
 if (utf8 != null) {
-  utf8ToUpper = function utf8ToUpperImpl(str, symbolsNum = 0) {
-    if(str.len() < 1)
-      return str
-    local utf8Str = utf8(str)
-    local strLength = utf8Str.charCount()
-    if (symbolsNum <= 0 || symbolsNum >= strLength) // warning disable: -range-check
-      return utf8Str.strtr(CASE_PAIR_LOWER, CASE_PAIR_UPPER)
-    return "".concat(utf8(utf8Str.slice(0, symbolsNum)).strtr(CASE_PAIR_LOWER, CASE_PAIR_UPPER),
-      utf8Str.slice(symbolsNum, strLength))
+  utf8ToUpper = function utf8ToUpperImpl(str) {
+    return utf8(str).strtr(CASE_PAIR_LOWER, CASE_PAIR_UPPER)
   }
 
   utf8ToLower = function utf8ToLowerImpl(str) {
     return utf8(str).strtr(CASE_PAIR_UPPER, CASE_PAIR_LOWER)
+  }
+
+  utf8Capitalize = function utf8CapitalizeImpl(str) {
+    local utf8Str = utf8(str)
+    return "".concat(utf8(utf8Str.slice(0, 1)).strtr(CASE_PAIR_LOWER, CASE_PAIR_UPPER), utf8Str.slice(1))
   }
 }
 else {
   function noUtf8Module(...) { assert("No 'utf8' module") }
   utf8ToUpper = noUtf8Module
   utf8ToLower = noUtf8Module
+  utf8Capitalize = noUtf8Module
 }
 
 function intToUtf8Char(c) {
@@ -740,10 +731,10 @@ function utf8CharToInt(str) {
     let { ofs = null, mask = null } = i > 0 ? nextOctet
       : firstOctet?[list.len() - 1]
     if (ofs == null)
-      return 0 //too many chars
+      return 0 
     let val = list[i]
     if ((val & ~mask) != ofs)
-      return 0 //bad code
+      return 0 
     res += (val & mask) << ((list.len() - 1 - i) * 6)
   }
 
@@ -752,11 +743,11 @@ function utf8CharToInt(str) {
 
 
 function hexStringToInt(hexString) {
-  // Does the string start with '0x'? If so, remove it
+  
   if (hexString.len() >= 2 && hexString.slice(0, 2) == "0x")
     hexString = hexString.slice(2)
 
-  // Get the integer value of the remaining string
+  
   local res = 0
   foreach (character in hexString) {
     local nibble = character - '0'
@@ -768,7 +759,7 @@ function hexStringToInt(hexString) {
   return res
 }
 
-//Return defValue when incorrect prefix
+
 function cutPrefix(id, prefix, defValue = null) {
   if (!id)
     return defValue
@@ -823,7 +814,7 @@ function escape(str) {
 }
 
 function pprint(...){
-  //most of this code should be part of tostring_r probably - at least part of braking long lines
+  
   function findlast(str, substr, startidx=0){
     local ret = null
     for(local i=startidx; i<str.len(); i++) {
@@ -884,18 +875,18 @@ function validateEmail(no_dump_email) {
     return false
 
   local dompart = str[str.len()-1]
-  if (dompart.len() > 253 || dompart.len() < 4) //RFC + domain should be at least x.xx
+  if (dompart.len() > 253 || dompart.len() < 4) 
     return false
 
   local quotes = locpart.indexof("\"")
   if (quotes && quotes != 0)
-    return false //quotes only at the begining
+    return false 
 
   if (quotes == null && locpart.indexof("@")!=null)
-    return false //no @ without quotes
+    return false 
 
-  if (dompart.indexof(".") == null || dompart.indexof(".") > dompart.len() - 3) // warning disable: -func-can-return-null -potentially-nulled-ops
-    return false  //too short first level domain or no periods
+  if (dompart.indexof(".") == null || dompart.indexof(".") > dompart.len() - 3) 
+    return false  
 
   return true
 }
@@ -921,11 +912,29 @@ function splitStringBySize(str, maxSize) {
   local start = 0
   let l = str.len()
   while (start < l) {
-    let pieceSize = math.min(l - start, maxSize)
+    let pieceSize = min(l - start, maxSize)
     result.append(str.slice(start, start + pieceSize))
     start += pieceSize
   }
   return result
+}
+
+function obj2stringarray(obj, curpath = null){
+  let res = []
+  curpath = curpath ?? []
+  let t = type(obj)
+  if (t=="array") {
+    foreach(i in obj)
+      res.extend(obj2stringarray(i, [].extend(curpath)))
+  }
+  else if (t=="table") {
+    foreach( k, v in obj)
+      res.extend(obj2stringarray(v, [].extend(curpath).append(k)))
+  }
+  else {
+    res.append($"{"/".join(curpath)}={tostring_any(obj, null, false)}") 
+  }
+  return res
 }
 
 return {
@@ -952,8 +961,8 @@ return {
   isStringLatin = @(str) regexp(@"[a-z,A-Z]*").match(str)
   intToUtf8Char
   utf8CharToInt
-  toUpper
-  toLower
+  capitalize
+  utf8Capitalize
   utf8ToUpper
   utf8ToLower
   hexStringToInt
@@ -971,4 +980,5 @@ return {
 
   toIntegerSafe
   splitStringBySize
+  obj2stringarray
 }

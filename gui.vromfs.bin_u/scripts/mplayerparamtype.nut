@@ -28,7 +28,8 @@ let expEventLocIds = {
   [EXP_EVENT_MISSION_ACTION]     = "expEventScore/missionAction",
   [EXP_EVENT_HELP_TO_ALLIES]     = "expEventScore/helpToAllies",
   [EXP_EVENT_SEVERE_DAMAGE]      = "expEventScore/severeDamage",
-  [EXP_EVENT_MISSILE_EVADE]      = "expEventScore/missileEvade"
+  [EXP_EVENT_MISSILE_EVADE]      = "expEventScore/missileEvade",
+  [EXP_EVENT_SHELL_INTERCEPTION] = "expEventScore/shellInterception"
 }
 
 let g_mplayer_param_type = {
@@ -51,7 +52,7 @@ g_mplayer_param_type.template <- {
   fontIcon = null
   tooltip = ""
   defVal = 0
-  isForceUpdate = false // Force updates even when value not changed.
+  isForceUpdate = false 
   missionObjective = MISSION_OBJECTIVE.ANY
   getVal = function(player) {
     return getTblValue(this.id, player, this.defVal)
@@ -305,6 +306,18 @@ enumsAddTypes(g_mplayer_param_type, {
     }
   }
 
+  SHELL_INTERCEPTIONS = {
+    id = "shellInterception"
+    fontIcon = "#icon/mpstats/shellInterception"
+    tooltip = "multiplayer/shellInterception"
+    getVal = function(player) {
+      return player?["shellInterceptions"] ?? 0
+    }
+    printFunc = function(_val, player) {
+      return this.getVal(player).tostring()
+    }
+  }
+
   DEATHS = {
     id = "deaths"
     fontIcon = "#icon/mpstats/deaths"
@@ -388,7 +401,7 @@ enumsAddTypes(g_mplayer_param_type, {
     tooltip = "HUD_RACE_FINISH"
     relWidth = 30
     defVal = -1
-    isForceUpdate = true // Because it shows race completion percentage.
+    isForceUpdate = true 
     printFunc = function(val, player) {
       if (val < 0) {
         let total = get_race_checkpoints_count()

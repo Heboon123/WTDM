@@ -18,7 +18,6 @@ let safeAreaHud = require("%scripts/options/safeAreaHud.nut")
 let gamepadIcons = require("%scripts/controls/gamepadIcons.nut")
 let focusFrame = require("%scripts/viewUtils/focusFrameWT.nut")
 let { setSceneActive, reloadDargUiScript } = require("reactiveGuiCommand")
-let { startLogout } = require("%scripts/login/logout.nut")
 let { isPlatformSony, isPlatformXboxOne, targetPlatform } = require("%scripts/clientState/platform.nut")
 let { needUseHangarDof } = require("%scripts/viewUtils/hangarDof.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
@@ -32,15 +31,14 @@ let { getContactsHandler } = require("%scripts/contacts/contactsHandlerState.nut
 let { isInFlight } = require("gameplayBinding")
 let { blurHangar } = require("%scripts/hangar/hangarModule.nut")
 let { getMpChatControlsAllowMask } = require("%scripts/chat/mpChatState.nut")
-let { isLoggedIn, isAuthorized } = require("%scripts/login/loginStates.nut")
-
-require("%scripts/options/fonts.nut") //!!!FIX ME: Need move g_font to module. This require is used to create the global table g_font
+let { isLoggedIn, isAuthorized } = require("%appGlobals/login/loginState.nut")
+let g_font = require("%scripts/options/fonts.nut")
 
 dagui_propid_add_name_id("has_ime")
 dagui_propid_add_name_id("platformId")
 
 local lastScreenHeightForFont = 0
-local lastInFlight = false  //to reload scenes on change inFlight
+local lastInFlight = false  
 local hasInitializedFont = false
 
 
@@ -208,7 +206,7 @@ handlersManager.__update({
   }
 
   function onClearScene(guiScene) {
-    if (this.isMainGuiSceneActive()) //is_in_flight function not available before first loading screen
+    if (this.isMainGuiSceneActive()) 
       lastInFlight = isInFlight()
 
     focusFrame.enable(::get_is_console_mode_enabled())
@@ -227,7 +225,7 @@ handlersManager.__update({
   }
 
   function beforeLoadHandler(hType) {
-    //clear main gui scene when load to battle or from battle
+    
     if ((hType == handlerType.BASE || hType == handlerType.ROOT)
         && isLoggedIn.get()
         && this.lastGuiScene
@@ -241,7 +239,7 @@ handlersManager.__update({
         || handler.getclass() == gui_handlers.MainMenu
         || handler.getclass() == gui_handlers.FlightMenu
        )
-      startLogout()
+      eventbus_send("request_logout")
     else if (isInFlight())
       eventbus_send("gui_start_flight_menu")
     else
@@ -263,12 +261,12 @@ handlersManager.__update({
   function updatePostLoadCss() {
     local haveChanges = false
 
-    let font = ::g_font.getCurrent()
+    let font = g_font.getCurrent()
     if (getCurrentFont() != font) {
       this.shouldResetFontsCache = true
       haveChanges = true
     }
-    if (!hasInitializedFont || getCurrentFont() != font) { //need update font for darg
+    if (!hasInitializedFont || getCurrentFont() != font) { 
       let hasValueChangedInDb = updateExtWatched({
         fontGenId = font.fontGenId
         fontSizePx = font.getFontSizePx(screen_width(), screen_height())
@@ -311,7 +309,7 @@ handlersManager.__update({
   function updateCssParams(guiScene) {
     let rootObj = guiScene.getRoot()
 
-    //Check for special hints, because IME is called with special action, and need to show text about it
+    
     let hasIME = isPlatformSony || isPlatformXboxOne || is_platform_android || is_steam_big_picture()
     rootObj["has_ime"] = hasIME ? "yes" : "no"
     rootObj["platformId"] = targetPlatform
@@ -360,7 +358,7 @@ handlersManager.__update({
 
     curControlsAllowMask.val = newMask
     setAllowedControlsMask(curControlsAllowMask.val)
-    //dlog(format("GP: controls changed to 0x%X", curControlsAllowMask.val))
+    
   }
 
   function restoreAllowControlMask() {
@@ -474,14 +472,14 @@ handlersManager.__update({
 
   function setGuiRootOptions(guiScene, forceUpdate = true) {
     let rootObj = guiScene.getRoot()
-    rootObj["show_console_buttons"] = showConsoleButtons.value ? "yes" : "no" //should to force box buttons in WoP?
+    rootObj["show_console_buttons"] = showConsoleButtons.value ? "yes" : "no" 
     if ("ps4_is_circle_selected_as_enter_button" in getroottable() && ps4_is_circle_selected_as_enter_button())
       rootObj["swap_ab"] = "yes";
 
     if (!forceUpdate)
       return
 
-    rootObj["css-hier-invalidate"] = "all"  //need to update scene after set this parameters
+    rootObj["css-hier-invalidate"] = "all"  
     guiScene.performDelayed(this, function() {
       if (check_obj(rootObj))
         rootObj["css-hier-invalidate"] = "no"
@@ -489,7 +487,7 @@ handlersManager.__update({
   }
 })
 
-function get_cur_base_gui_handler() { //!!FIX ME: better to not use it at all. really no need to create instance of base handler without scene.
+function get_cur_base_gui_handler() { 
   let handler = handlersManager.getActiveBaseHandler()
   if (handler)
     return handler
@@ -500,7 +498,7 @@ function gui_start_empty_screen(...) {
   handlersManager.emptyScreen()
   let guiScene = get_cur_gui_scene()
   if (guiScene)
-    guiScene.clearDelayed() //delayed actions doesn't work in empty screen.
+    guiScene.clearDelayed() 
 }
 
 function isInMenu() {
@@ -511,12 +509,12 @@ function gui_finish_loading() {
   handlersManager.validateHandlersAfterLoading()
 }
 
-function move_mouse_on_obj(obj) { //it used in a lot of places, so leave it global
+function move_mouse_on_obj(obj) { 
   if (obj?.isValid())
     obj.setMouseCursorOnObject()
 }
 
-function move_mouse_on_child(obj, idx = 0) { //it used in a lot of places, so leave it global
+function move_mouse_on_child(obj, idx = 0) { 
   if (is_mouse_last_time_used() || !obj?.isValid() || obj.childrenCount() <= idx || idx < 0)
     return
   let child = obj.getChild(idx)
@@ -530,7 +528,7 @@ function move_mouse_on_child(obj, idx = 0) { //it used in a lot of places, so le
   })
 }
 
-function move_mouse_on_child_by_value(obj) { //it used in a lot of places, so leave it global
+function move_mouse_on_child_by_value(obj) { 
   if (obj?.isValid())
     move_mouse_on_child(obj, obj.getValue())
 }

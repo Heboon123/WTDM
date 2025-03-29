@@ -1,4 +1,4 @@
-from "%scripts/dagui_natives.nut" import enable_bullets_modifications, get_option_torpedo_dive_depth_auto
+from "%scripts/dagui_natives.nut" import enable_bullets_modifications
 from "%scripts/dagui_library.nut" import *
 from "%scripts/options/optionsExtNames.nut" import *
 from "radarOptions" import get_radar_mode_names, set_option_radar_name, get_radar_scan_pattern_names, set_option_radar_scan_pattern_name, get_radar_range_values
@@ -9,7 +9,7 @@ let { getGlobalModule } = require("%scripts/global_modules.nut")
 let g_squad_manager = getGlobalModule("g_squad_manager")
 let { isUnitSpecial } = require("%appGlobals/ranks_common_shared.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
-let { getLastWeapon } = require("%scripts/weaponry/weaponryInfo.nut")
+let { getLastWeapon, getTorpedoAutoUpdateDepthByDiff } = require("%scripts/weaponry/weaponryInfo.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { move_mouse_on_obj, loadHandler, handlersManager
@@ -43,8 +43,12 @@ let { hasInWishlist, isWishlistFull } = require("%scripts/wishlist/wishlistManag
 let { addToWishlist } = require("%scripts/wishlist/addWishWnd.nut")
 let DataBlock = require("DataBlock")
 let { unitNameForWeapons } = require("%scripts/weaponry/unitForWeapons.nut")
+let { enable_current_modifications } = require("%scripts/weaponry/weaponryActions.nut")
+let { queues } = require("%scripts/queue/queueManager.nut")
+let { getMaxPlayersForGamemode } = require("%scripts/missions/missionsUtils.nut")
+let UnitBulletsManager = require("%scripts/weaponry/unitBulletsManager.nut")
 
-::missionBuilderVehicleConfigForBlk <- {} //!!FIX ME: Should to remove this
+::missionBuilderVehicleConfigForBlk <- {} 
 
 function mergeToBlk(sourceTable, blk) {
   foreach (idx, val in sourceTable)
@@ -99,8 +103,8 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
     this.guiScene.setUpdatesEnabled(true, true)
 
     if (this.needSlotbar) {
-      switchProfileCountry(this.unit.shopCountry) //select country for slotbar
-      showedUnit(this.unit) //select unit for slotbar
+      switchProfileCountry(this.unit.shopCountry) 
+      showedUnit(this.unit) 
       this.createSlotbar()
     }
     else {
@@ -320,14 +324,14 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
 
   function onMissionBuilder() {
     if (!::g_squad_utils.canJoinFlightMsgBox({
-        maxSquadSize = ::get_max_players_for_gamemode(GM_BUILDER)
+        maxSquadSize = getMaxPlayersForGamemode(GM_BUILDER)
       }))
       return
 
     if (!this.isBuilderAvailable()) {
       this.saveAircraftOptions()
 
-      if (this.needSlotbar) // There is a slotbar in this scene
+      if (this.needSlotbar) 
         this.msgBox("not_available",
           loc(getCurSlotbarUnit() == null ? "events/empty_crew" : "msg/builderOnlyForAircrafts"),
           [["ok"]], "ok")
@@ -368,11 +372,11 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
     if (isInSessionRoom.get())
       return this.goBack()
 
-    ::queues.checkAndStart(
+    queues.checkAndStart(
       Callback(function() {
         this.applyFunc = function() {
           if (get_gui_option(USEROPT_DIFFICULTY) == "custom") {
-            guiStartCdOptions(this.startTestFlight, this) // See "MissionDescriptor->loadFromBlk"
+            guiStartCdOptions(this.startTestFlight, this) 
             this.doWhenActiveOnce("updateSceneDifficulty")
           }
           else
@@ -425,6 +429,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
       let airSpawnValue = airSpawnOpt.values[airSpawnOpt.value]
       misBlk.is_airfield_spawn = airSpawnValue == AIR_SPAWN_POINT.AIRFIELD
       misBlk.is_ship_spawn = airSpawnValue == AIR_SPAWN_POINT.CARRIER
+      misBlk.is_water_spawn = airSpawnValue == AIR_SPAWN_POINT.ON_WATER
       misBlk.air_spawn_point = airSpawnValue
 
       if (isAir) {
@@ -470,11 +475,11 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
     if(this.weaponsSelectorWeak)
       this.weaponsSelectorWeak.bulletsManager.updateBulletCountOptions()
     else
-      ::UnitBulletsManager(this.unit).updateBulletCountOptions([])
+      UnitBulletsManager(this.unit).updateBulletCountOptions([])
 
 
     enable_bullets_modifications(unitName)
-    ::enable_current_modifications(unitName)
+    enable_current_modifications(unitName)
 
     ::missionBuilderVehicleConfigForBlk = {
         selectedSkin  = skinValue,
@@ -487,6 +492,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
 
   function onDifficultyChange(obj) {
     this.updateVerticalTargetingOption()
+    this.updateTorpedoDiveDepth()
     this.updateSceneDifficulty()
 
     let diffOptionCont = this.findOptionInContainers(USEROPT_DIFFICULTY)
@@ -566,7 +572,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
       set_option(option.type, obj.getValue())
       this.updateOption(option.type)
       enable_bullets_modifications(this.unit.name)
-      ::enable_current_modifications(this.unit.name)
+      enable_current_modifications(this.unit.name)
       broadcastEvent("UnitWeaponChanged", { unitName = this.unit.name })
       broadcastEvent("ModificationChanged")
     })
@@ -677,7 +683,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
     if (!option)
       return
 
-    this.showOptionRow(option, !get_option_torpedo_dive_depth_auto()
+    this.showOptionRow(option, !getTorpedoAutoUpdateDepthByDiff(this.getCurrentEdiff())
       && this.unit.isShipOrBoat()
       && (getCurrentPreset(this.unit)?.torpedo ?? false))
   }
@@ -687,7 +693,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
     if (!optList.len())
       return
     let diffName = this.getOptValue(USEROPT_DIFFICULTY, false)
-    if (diffName == null) //no such option in current options list
+    if (diffName == null) 
       return
 
     foreach (option in optList)

@@ -21,6 +21,9 @@ let { OPTIONS_MODE_GAMEPLAY, USEROPT_HUD_SHOW_NAMES_IN_KILLLOG,
 let { userName, userIdInt64 } = require("%scripts/user/profileStates.nut")
 let { isShipBattle } = require("%scripts/missions/missionType.nut")
 let { getOwnerUnitName } = require("hudActionBar")
+let { getLocForStreak } = require("%scripts/streaks.nut")
+let { get_gui_option_in_mode } = require("%scripts/options/options.nut")
+let { isEqualSquadId } = require("%scripts/squads/squadState.nut")
 
 let getOwnerUnit = @() getAircraftByName(getOwnerUnitName())
 
@@ -176,7 +179,7 @@ let HudBattleLog = {
     }
   }
 
-  utToEsUnitType = { //!!FIX ME: better to set different icons fot each unitType
+  utToEsUnitType = { 
     [UT_Airplane]      = ES_UNIT_TYPE_AIRCRAFT,
     [UT_Balloon]       = ES_UNIT_TYPE_AIRCRAFT,
     [UT_Artillery]     = ES_UNIT_TYPE_TANK,
@@ -188,37 +191,37 @@ let HudBattleLog = {
     [UT_Fortification] = ES_UNIT_TYPE_TANK,
     [UT_AirWing]       = ES_UNIT_TYPE_AIRCRAFT,
     [UT_AirSquadron]   = ES_UNIT_TYPE_AIRCRAFT,
-    //
+    
 
 
   }
 
   rePatternNumeric = regexp2("^\\d+$")
 
-  // http://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+  
   escapeCodeToCssColor = [
-    null                  //  0   ECT_BLACK
-    "hudColorDarkRed"     //  1   ECT_DARK_RED        HC_DARK_RED
-    null                  //  2   ECT_DARK_GREEN
-    null                  //  3   ECT_DARK_YELLOW
-    "hudColorDarkBlue"    //  4   ECT_DARK_BLUE       HC_DARK_BLUE
-    null                  //  5   ECT_DARK_MAGENTA
-    null                  //  6   ECT_DARK_CYAN
-    null                  //  7   ECT_GREY
-    null                  //  8   ECT_DARK_GREY
-    "hudColorRed"         //  9   ECT_RED             HC_RED
-    "hudColorSquad"       // 10   ECT_GREEN           HC_SQUAD
-    "hudColorHero"        // 11   ECT_YELLOW          HC_HERO
-    "hudColorBlue"        // 12   ECT_BLUE            HC_BLUE
-    null                  // 13   ECT_MAGENTA
-    null                  // 14   ECT_CYAN
-    null                  // 15   ECT_WHITE
-    "hudColorDeathAlly"   // 16   ECT_LIGHT_RED       HC_DEATH_ALLY
-    null                  // 17   ECT_LIGHT_GREEN
-    null                  // 18   ECT_LIGHT_YELLOW
-    "hudColorDeathEnemy"  // 19   ECT_LIGHT_BLUE      HC_DEATH_ENEMY
-    null                  // 20   ECT_LIGHT_MAGENTA
-    null                  // 21   ECT_LIGHT_CYAN
+    null                  
+    "hudColorDarkRed"     
+    null                  
+    null                  
+    "hudColorDarkBlue"    
+    null                  
+    null                  
+    null                  
+    null                  
+    "hudColorRed"         
+    "hudColorSquad"       
+    "hudColorHero"        
+    "hudColorBlue"        
+    null                  
+    null                  
+    null                  
+    "hudColorDeathAlly"   
+    null                  
+    null                  
+    "hudColorDeathEnemy"  
+    null                  
+    null                  
   ]
 
   function init() {
@@ -263,7 +266,7 @@ let HudBattleLog = {
     let timestamp = $"{time.secondsToString(now, false)} "
     local message = ""
     local filters = 0
-    if (msg.type == HUD_MSG_MULTIPLAYER_DMG) { // Any player unit damaged or destroyed
+    if (msg.type == HUD_MSG_MULTIPLAYER_DMG) { 
       let p1 = get_mplayer_by_id(msg?.playerId ?? userIdInt64.value)
       let p2 = get_mplayer_by_id(msg?.victimPlayerId ?? userIdInt64.value)
       let t1Friendly = is_team_friendly(msg?.team ?? Team.A)
@@ -297,7 +300,7 @@ let HudBattleLog = {
       if (filters == 0)
         filters = filters | BATTLE_LOG_FILTER.OTHER
 
-      if (msg.type == HUD_MSG_STREAK_EX) { // Any player got streak
+      if (msg.type == HUD_MSG_STREAK_EX) { 
         let text = this.msgStreakToText(msg)
         message = "".concat(timestamp,
           colorize("streakTextColor", "".concat(loc("unlocks/streak"), loc("ui/colon"), text)))
@@ -351,19 +354,19 @@ let HudBattleLog = {
     return colorize(get_mplayer_color(player), unitNameLoc)
   }
 
-  function getUnitNameEx(playerId, unitNameLoc = "", teamId = 0, player = null) {
+  function getUnitNameEx(playerId, unitNameLoc = "", teamId = 0, player = null, withPlayerName = true) {
     player = player ?? get_mplayer_by_id(playerId)
     if(player == null)
       return colorize(get_team_color(teamId), unitNameLoc)
 
     if (is_replay_playing()) {
       player.isLocal = spectatorWatchedHero.id == player.id
-      player.isInHeroSquad = ::SessionLobby.isEqualSquadId(spectatorWatchedHero.squadId, player?.squadId)
+      player.isInHeroSquad = isEqualSquadId(spectatorWatchedHero.squadId, player?.squadId)
     }
 
-    let showNamesInKilllog = ::get_gui_option_in_mode(USEROPT_HUD_SHOW_NAMES_IN_KILLLOG, OPTIONS_MODE_GAMEPLAY, true)
-    if(showNamesInKilllog) {
-      let showClan = ::get_gui_option_in_mode(USEROPT_HUD_SHOW_SQUADRON_NAMES_IN_KILLLOG, OPTIONS_MODE_GAMEPLAY, true)
+    let showNamesInKilllog = get_gui_option_in_mode(USEROPT_HUD_SHOW_NAMES_IN_KILLLOG, OPTIONS_MODE_GAMEPLAY, true)
+    if(showNamesInKilllog && withPlayerName) {
+      let showClan = get_gui_option_in_mode(USEROPT_HUD_SHOW_SQUADRON_NAMES_IN_KILLLOG, OPTIONS_MODE_GAMEPLAY, true)
       return ::build_mplayer_name(player, true, showClan, true, unitNameLoc)
     }
 
@@ -374,7 +377,7 @@ let HudBattleLog = {
     let uType = getTblValue(isVictim ? "victimUnitType" : "unitType", msg)
 
     local res = getTblValue(uType, this.utToEsUnitType, ES_UNIT_TYPE_INVALID)
-    if (res == ES_UNIT_TYPE_INVALID) { //we do not receive unitType for player killer unit, but can easy get it by unitName
+    if (res == ES_UNIT_TYPE_INVALID) { 
       let unit = getAircraftByName(msg[isVictim ? "victimUnitName" : "unitName"])
       if (unit)
         res = unit.esUnitType
@@ -390,7 +393,7 @@ let HudBattleLog = {
   function getActionTextIconic(msg) {
     let actionColor = (msg?.isKill ?? true) ? "userlogColoredText" : "silver"
     if((isShipBattle() || (getOwnerUnit()?.isShipOrBoat() ?? false))
-        && ::get_gui_option_in_mode(USEROPT_HUD_SHOW_DEATH_REASON_IN_SHIP_KILLLOG, OPTIONS_MODE_GAMEPLAY, true)) {
+        && get_gui_option_in_mode(USEROPT_HUD_SHOW_DEATH_REASON_IN_SHIP_KILLLOG, OPTIONS_MODE_GAMEPLAY, true)) {
       let deathReasonIcon = iconByDeathReason?[msg?.deathReason ?? DR_UNKNOWN] ?? iconByDeathReason[DR_UNKNOWN]
       return colorize(actionColor, deathReasonIcon)
     }
@@ -407,7 +410,7 @@ let HudBattleLog = {
     if (killerProjectileKey == "")
       return colorize(actionColor, icon)
 
-    if(!::get_gui_option_in_mode(USEROPT_HUD_SHOW_AMMO_TYPE_IN_KILLLOG, OPTIONS_MODE_GAMEPLAY, true))
+    if(!get_gui_option_in_mode(USEROPT_HUD_SHOW_AMMO_TYPE_IN_KILLLOG, OPTIONS_MODE_GAMEPLAY, true))
       return colorize(actionColor, icon)
 
     let killerProjectileName = doesLocTextExist(killerProjectileKey)
@@ -429,7 +432,7 @@ let HudBattleLog = {
     let what = iconic ? this.getActionTextIconic(msg) : this.getActionTextVerbal(msg)
     let who = this.getUnitNameEx(msg?.playerId ?? userIdInt64.value, msg?.unitNameLoc ?? userName.value, msg?.team ?? Team.A, player)
     let whom = this.getUnitNameEx(msg?.victimPlayerId ?? userIdInt64.value,
-      msg?.victimUnitNameLoc ?? userName.value, msg?.victimTeam ?? Team.B, victimPlayer)
+      msg?.victimUnitNameLoc ?? userName.value, msg?.victimTeam ?? Team.B, victimPlayer, msg?.withVictimPlayerName ?? true)
 
     let msgAction = msg?.action ?? "kill"
     let isCrash = msgAction == "crash" || msgAction == "exit" || msgAction == "air_defense"
@@ -442,7 +445,7 @@ let HudBattleLog = {
     let localPlayerId = is_replay_playing() ? spectatorWatchedHero.id : get_local_mplayer().id
     let isLocal = !forceThirdPerson && playerId == localPlayerId
     let streakNameType = isLocal ? SNT_MY_STREAK_HEADER : SNT_OTHER_STREAK_TEXT
-    let what = ::get_loc_for_streak(streakNameType, msg?.unlockId ?? "", msg?.stage ?? 0)
+    let what = getLocForStreak(streakNameType, msg?.unlockId ?? "", msg?.stage ?? 0)
     return isLocal ? what : format("%s %s", this.getUnitNameEx(playerId), what)
   }
 

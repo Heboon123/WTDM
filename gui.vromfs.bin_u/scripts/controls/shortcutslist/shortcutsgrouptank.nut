@@ -20,7 +20,7 @@ return [
     unitTypes = [ unitTypes.TANK ]
     needShowInHelp = true
   }
-//-------------------------------------------------------
+
   {
     id = "ID_TANK_OPERATIONS_HEADER"
     type = CONTROL_TYPE.SECTION
@@ -43,7 +43,7 @@ return [
     )
     showFunc = @() hasXInputDevice()
   }
-//-------------------------------------------------------
+
   {
     id = "ID_TANK_MOVE_HEADER"
     type = CONTROL_TYPE.SECTION
@@ -111,7 +111,7 @@ return [
     id = "ID_TOGGLE_GM_ENGINE"
     checkAssign = false
   }
-//-------------------------------------------------------
+
   {
     id = "ID_TANK_FIRE_HEADER"
     type = CONTROL_TYPE.SECTION
@@ -260,7 +260,7 @@ return [
     id = "ID_COMMANDER_AIM_MODE"
     checkAssign = false
   }
-//-------------------------------------------------------
+
   {
     id = "ID_TANK_VIEW_HEADER"
     type = CONTROL_TYPE.SECTION
@@ -285,7 +285,7 @@ return [
     id = "ID_CAMERA_COMMANDER"
     checkAssign = false
   }
-  //
+  
 
 
 
@@ -374,7 +374,7 @@ return [
     setValue = @(_joyParams, objValue) set_option_multiplier(OPTION_MOUSE_Z_TANK_MULT, objValue / 100.0)
     showFunc = @() hasFeature("EnableMouse")
   }
-//-------------------------------------------------------
+
   {
     id = "ID_TANK_SUSPENSION_HEADER"
     type = CONTROL_TYPE.SECTION
@@ -414,7 +414,30 @@ return [
     checkAssign = false
     needShowInHelp = true
   }
-//-------------------------------------------------------
+
+  {
+    id = "ID_TANK_SCOUT_UAV_HEADER"
+    type = CONTROL_TYPE.SECTION
+  }
+  {
+    id = "ID_START_SUPPORT_PLANE"
+    checkAssign = false
+    showFunc = @() hasFeature("TankSupportPlane")
+  }
+  {
+    id = "ID_TOGGLE_UAV_CAMERA"
+    checkAssign = false
+  }
+  {
+    id = "ID_SUPPORT_PLANE_ORBITING"
+    checkAssign = false
+    showFunc = @() hasFeature("TankSupportPlane")
+  }
+  {
+    id = "ID_DESIGNATE_TARGET"
+    checkAssign = false
+  }
+
   {
     id = "ID_TANK_OTHER_HEADER"
     type = CONTROL_TYPE.SECTION
@@ -488,16 +511,6 @@ return [
     id = "ID_SCOUT"
     checkAssign = false
     showFunc = @() hasFeature("ActiveScouting")
-  }
-  {
-    id = "ID_START_SUPPORT_PLANE"
-    checkAssign = false
-    showFunc = @() hasFeature("TankSupportPlane")
-  }
-  {
-    id = "ID_SUPPORT_PLANE_ORBITING"
-    checkAssign = false
-    showFunc = @() hasFeature("TankSupportPlane")
   }
   {
     id = "ID_START_UGV"

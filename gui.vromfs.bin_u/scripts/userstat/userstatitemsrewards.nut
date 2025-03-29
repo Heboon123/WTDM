@@ -19,7 +19,7 @@ function showRewardWnd(params) {
     let item = ::ItemsManager.findItemById(itemId)
     if (item == null)
       continue
-    if (item.shouldAutoConsume) //show recived rewards after auto consume
+    if (item.shouldAutoConsume) 
       waitingToShowRewardsArray.append({ itemId, rewardTitleLocId })
     else {
       rewardsToShow.append({ itemDefId = itemId
@@ -64,7 +64,7 @@ function canGetRewards(onAcceptFn, params) {
       continue
 
     waitingWarbondsToReciveAmount += warbondsAmount * count
-    if (!::g_warbonds.checkOverLimit(waitingWarbondsToReciveAmount, onAcceptFn, params))
+    if (!::g_warbonds.checkWarbondsOverLimit(waitingWarbondsToReciveAmount, onAcceptFn, params))
       return false
   }
 

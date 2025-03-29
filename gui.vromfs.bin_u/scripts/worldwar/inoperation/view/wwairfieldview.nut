@@ -10,7 +10,6 @@ let wwActionsWithUnitsList = require("%scripts/worldWar/inOperation/wwActionsWit
 let WwAirfieldView = class {
   redrawData = null
   airfield = null
-
   static unitsInArmyRowsMax = 5
 
   constructor(airfield) {
@@ -33,7 +32,7 @@ let WwAirfieldView = class {
 
   getZoneName = @() loc("ui/parentheses", { text = wwGetZoneName(ww_get_zone_idx_world(this.airfield.pos)) })
 
-  clanTag = @() this.airfield.clanFormation?.armyGroup.name ?? ""
+  clanTag = @() this.airfield.clanFormation?.getArmyGroup().name ?? this.airfield.allyFormation?.getArmyGroup().name ?? ""
 
   unitsCount = @() this.airfield.getUnitsNumber()
 
@@ -85,6 +84,8 @@ let WwAirfieldView = class {
   getRedrawArmyStatusData = @() this.redrawData
 
   needSmallSize = @() false
+
+  getTooltipWidth = @() "1@wwMapTooltipInfoWidth"
 }
 
 return WwAirfieldView

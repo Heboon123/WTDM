@@ -199,6 +199,12 @@ let directionGroups = [
     originalName = "S34"
   },
   {
+    text = "Y"
+    desc = "FLANKERH"
+
+    originalName = "S30"
+  },
+  {
     text = "F"
     desc = "F-4 AI"
 
@@ -259,6 +265,12 @@ let directionGroups = [
     originalName = "HRR"
   },
   {
+    text = "F",
+    desc = "EF2000"
+
+    originalName = "E2K",
+  },
+  {
     text = "W"
     desc = "BUCANER"
 
@@ -287,6 +299,12 @@ let directionGroups = [
     desc = "MIRAG 20"
 
     originalName = "M2K"
+  },
+  {
+    text = "RFL",
+    desc = "RAFALE",
+
+    originalName = "RFL"
   },
   {
     text = "F"
@@ -348,7 +366,7 @@ let directionGroups = [
 
     originalName = "GPD"
   },
-  //
+  
 
 
 

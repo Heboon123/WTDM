@@ -13,11 +13,15 @@ let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { userIdStr } = require("%scripts/user/profileStates.nut")
 let { getLangInfoByChatId, getEmptyLangInfo, getGameLocalizationInfo } = require("%scripts/langUtils/language.nut")
 let { g_chat_thread_tag } = require("%scripts/chat/chatThreadInfoTags.nut")
+let { getPlayerFullName } = require("%scripts/contacts/contactsInfo.nut")
+let { canChooseThreadsLang } = require("%scripts/chat/chatLatestThreads.nut")
+let { checkChatConnected } = require("%scripts/chat/chatHelper.nut")
+let { getContact } = require("%scripts/contacts/contacts.nut")
 
 const MAX_THREAD_LANG_VISIBLE = 3
 
 ::ChatThreadInfo <- class {
-  roomId = "" //threadRoomId
+  roomId = "" 
   lastUpdateTime = -1
 
   title = ""
@@ -35,7 +39,7 @@ const MAX_THREAD_LANG_VISIBLE = 3
 
   isValid = true
 
-  constructor(threadRoomId, dataBlk = null) { //dataBlk from chat response
+  constructor(threadRoomId, dataBlk = null) { 
     this.roomId = threadRoomId
     this.isValid = this.roomId.len() > 0
     assert(g_chat_room_type.THREAD.checkRoomId(this.roomId), $"Chat thread created with not thread id = {this.roomId}")
@@ -58,7 +62,7 @@ const MAX_THREAD_LANG_VISIBLE = 3
 
   function checkRefreshThread() {
     if (!this.isValid
-        || !g_chat.checkChatConnected()
+        || !checkChatConnected()
         || this.lastUpdateTime + g_chat.THREAD_INFO_REFRESH_DELAY_MSEC > get_time_msec()
        )
       return
@@ -77,7 +81,7 @@ const MAX_THREAD_LANG_VISIBLE = 3
 
     this.updateInfoTags(u.isString(dataBlk?.tags) ? split_by_chars(dataBlk.tags, ",") : [])
     if (this.ownerNick.len() && this.ownerUid.len())
-      ::getContact(this.ownerUid, this.ownerNick, this.ownerClanTag)
+      getContact(this.ownerUid, this.ownerNick, this.ownerClanTag)
 
     this.markUpdated()
   }
@@ -118,7 +122,7 @@ const MAX_THREAD_LANG_VISIBLE = 3
   }
 
   function sortLangList() {
-    //usually only one lang in thread, but moderators can set some threads to multilang
+    
     if (this.langs.len() < 2)
       return
 
@@ -129,7 +133,7 @@ const MAX_THREAD_LANG_VISIBLE = 3
       if (idx != null)
         this.langs.append(unsortedLangs.remove(idx))
     }
-    this.langs.extend(unsortedLangs) //unknown langs at the end
+    this.langs.extend(unsortedLangs) 
   }
 
   function isMyThread() {
@@ -144,7 +148,7 @@ const MAX_THREAD_LANG_VISIBLE = 3
     if (!this.ownerNick.len())
       return this.ownerUid
 
-    local res = ::g_contacts.getPlayerFullName(getPlayerName(this.ownerNick), this.ownerClanTag)
+    local res = getPlayerFullName(getPlayerName(this.ownerNick), this.ownerClanTag)
     if (isColored)
       res = colorize(g_chat.getSenderColor(this.ownerNick, false, false, defaultColor), res)
     return res
@@ -166,7 +170,7 @@ const MAX_THREAD_LANG_VISIBLE = 3
   }
 
   function showOwnerMenu(position = null) {
-    let contact = ::getContact(this.ownerUid, this.ownerNick, this.ownerClanTag)
+    let contact = getContact(this.ownerUid, this.ownerNick, this.ownerClanTag)
     playerContextMenu.showChatPlayerRClickMenu(this.ownerNick, this.roomId, contact, position)
   }
 
@@ -189,7 +193,7 @@ const MAX_THREAD_LANG_VISIBLE = 3
       }
     ]
 
-    let contact = ::getContact(this.ownerUid, this.ownerNick, this.ownerClanTag)
+    let contact = getContact(this.ownerUid, this.ownerNick, this.ownerClanTag)
     playerContextMenu.showMenu(contact, g_chat, {
       position = position
       roomId = this.roomId
@@ -220,12 +224,12 @@ const MAX_THREAD_LANG_VISIBLE = 3
     this.setObjValueById(obj,$"ownerName_{this.roomId}", this.getOwnerText())
     this.setObjValueById(obj, "thread_title", this.getTitle())
     this.setObjValueById(obj, "thread_members", this.getMembersAmountText())
-    if (g_chat.canChooseThreadsLang())
+    if (canChooseThreadsLang())
       this.fillLangIconsRow(obj)
   }
 
   function needShowLang() {
-    return g_chat.canChooseThreadsLang()
+    return canChooseThreadsLang()
   }
 
   function getLangsList() {
@@ -254,12 +258,12 @@ const MAX_THREAD_LANG_VISIBLE = 3
     }
   }
 
-  //It's like hidden, but must reveal when unhidden
+  
   isConcealed = function() {
     if (!isCrossNetworkMessageAllowed(this.ownerNick))
       return true
 
-    let contact = ::getContact(this.ownerUid, this.ownerNick, this.ownerClanTag)
+    let contact = getContact(this.ownerUid, this.ownerNick, this.ownerClanTag)
     if (contact)
       return contact.isBlockedMe() || contact.isInBlockGroup()
 

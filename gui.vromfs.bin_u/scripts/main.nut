@@ -1,3 +1,4 @@
+from "%sqDagui/daguiNativeApi.nut" import DaGuiObject
 from "%scripts/dagui_natives.nut" import disable_network, run_reactive_gui, make_invalid_user_id, get_cur_circuit_name
 from "%scripts/dagui_library.nut" import *
 from "ecs" import clear_vm_entity_systems, start_es_loading, end_es_loading
@@ -40,8 +41,6 @@ require("%scripts/clientState/errorHandling.nut")
 let { ref_time_ticks } = require("dagor.time")
 let { set_rnd_seed } = require("dagor.random")
 
-::INVALID_USER_ID <- make_invalid_user_id()
-
 ::custom_miss_flight <- false
 ::is_debug_mode_enabled <- false
 ::first_generation <- true
@@ -61,7 +60,7 @@ registerPersistentData("MainGlobals", getroottable(),
 
 set_rnd_seed(ref_time_ticks())
 
-//------- vvv files before login vvv ----------
+
 
 let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
 subscriptions.setDefaultPriority(require("g_listener_priority.nut").DEFAULT)
@@ -83,7 +82,6 @@ foreach (fn in [
   "%scripts/onlineShop/url.nut"
 
   "%scripts/viewUtils/layeredIcon.nut"
-  "%scripts/viewUtils/projectAwards.nut"
 
   "%scripts/util.nut"
   "%sqDagui/timer/timer.nut"
@@ -91,12 +89,10 @@ foreach (fn in [
   "%scripts/options/optionsExtNames.nut"
   "%scripts/options/fonts.nut"
   "%scripts/options/consoleMode.nut"
-  "%scripts/options/optionsBeforeLogin.nut"
   "%scripts/options/privacyOptionsManager.nut"
 
-  //probably used before login on ps4
+  
   "%scripts/controls/guiSceneCursorVisibility.nut"
-  "%scripts/controls/controlsConsts.nut"
   "%scripts/controls/rawShortcuts.nut"
   "%scripts/controls/controlsManager.nut"
 
@@ -109,13 +105,12 @@ foreach (fn in [
   "%scripts/clientState/contentPacks.nut"
   "%scripts/utils/errorMsgBox.nut"
   "%scripts/tasker.nut"
-  "%scripts/utils/delayedActions.nut"
 
   "%scripts/clientState/fpsDrawer.nut"
 
   "%scripts/clientState/applyRendererSettingsChange.nut"
 
-  //used in loading screen
+  
   "%scripts/controls/input/inputBase.nut"
   "%scripts/controls/input/nullInput.nut"
   "%scripts/controls/shortcutType.nut"
@@ -130,14 +125,13 @@ foreach (fn in [
 
   "%scripts/webRPC.nut"
 
-  "%scripts/wndLib/rightClickMenu.nut"
   "%scripts/actionsList.nut"
   "%scripts/eulaWnd.nut"
   "%scripts/controls/input/button.nut"
-  //used before xbox login
+  
   "%scripts/social/xboxSquadManager/xboxSquadManager.nut"
 
-  //used for SSO login
+  
   "%scripts/onlineShop/browserWnd.nut"
 ]) {
   loadOnce(fn)
@@ -145,12 +139,12 @@ foreach (fn in [
 
 u.registerClass(
   "DaGuiObject",
-  ::DaGuiObject,
+  DaGuiObject,
   @(obj1, obj2) obj1.isValid() && obj2.isValid() && obj1.isEqual(obj2),
   @(obj) !obj.isValid()
 )
 
-  // Independent Modules (before login)
+  
 require("%scripts/matching/matchingGameSettings.nut")
 require("%sqDagui/elemUpdater/bhvUpdater.nut").setAssertFunction(script_net_assert_once)
 require("%scripts/clientState/elems/dlDataStatElem.nut")
@@ -158,29 +152,29 @@ require("%scripts/clientState/elems/copyrightText.nut")
 require("%sqDagui/framework/progressMsg.nut").setTextLocIdDefault("charServer/purchase0")
 require("%scripts/options/bhvHarmonizedImage.nut")
 
-  //debug scripts
+  
 require("%scripts/debugTools/dbgAvatarsList.nut")
 require("%scripts/debugTools/dbgFonts.nut")
 require("%scripts/debugTools/dbgUtils.nut")
 require("%scripts/debugTools/dbgImage.nut")
 require("%scripts/debugTools/dbgCrewLock.nut")
 require("%scripts/debugTools/dbgDedicLogerrs.nut")
-require("%sqstd/regScriptProfiler.nut")("dagui", dlog) // warning disable: -forbidden-function
-require("%scripts/wndLib/qrWindow.nut") // for ability to show qr code window from openUrl
+require("%sqstd/regScriptProfiler.nut")("dagui", dlog) 
+require("%scripts/wndLib/qrWindow.nut") 
 
-  // end of Independent Modules
+  
 
 end_es_loading()
 
 let platform = require("%scripts/clientState/platform.nut")
 
-if (platform.isPlatformXboxOne) {
-  require("%scripts/xbox/onLoad.nut")
+if (platform.is_gdk) {
+  require("%scripts/gdk/onLoad.nut")
 }
 
-//------- ^^^ files before login ^^^ ----------
 
-//------- vvv files after login vvv ----------
+
+
 
 local isFullScriptsLoaded = false
 ::load_scripts_after_login_once <- function load_scripts_after_login_once() {
@@ -188,13 +182,13 @@ local isFullScriptsLoaded = false
     return
   isFullScriptsLoaded = true
   start_es_loading()
-  // Independent Modules with mainHandler. Need load this befor rest handlers
+  
   require("%scripts/baseGuiHandlerWT.nut")
-  // end of Independent Modules with mainHandler
+  
 
   require("%scripts/onScriptLoadAfterLogin.nut")
 
-  // Independent Modules (after login)
+  
   require("%scripts/social/playerInfoUpdater.nut")
   require("%scripts/squads/elems/voiceChatElem.nut")
   require("%scripts/matching/serviceNotifications/showInfo.nut")
@@ -208,7 +202,7 @@ local isFullScriptsLoaded = false
   require("%scripts/hangar/hangarEvent.nut")
   require("%scripts/dirtyWordsFilter.nut").continueInitAfterLogin()
 
-  if (platform.isPlatformXboxOne)
+  if (platform.is_gdk)
     require("%scripts/global/xboxCallbacks.nut")
 
   if (platform.isPlatformSony) {
@@ -223,13 +217,13 @@ local isFullScriptsLoaded = false
   }
 
   require("%scripts/contacts/steamContactManager.nut")
-  // end of Independent Modules
+  
 
   require("%scripts/utils/systemMsg.nut").registerColors(colorTagToColors)
   end_es_loading()
 }
 
-//app does not exist on script load, so we cant to use app->shouldDisableMenu
+
 {
   let { getFromSettingsBlk } = require("%scripts/clientState/clientStates.nut")
   let shouldDisableMenu = (disable_network() && getFromSettingsBlk("debug/disableMenu", false))
@@ -244,11 +238,11 @@ local isFullScriptsLoaded = false
 if (is_platform_pc && getSystemConfigOption("debug/netLogerr") == null)
     setSystemConfigOption("debug/netLogerr", true)
 
-let { isAuthorized } = require("%scripts/login/loginStates.nut")
-if (isAuthorized.get() || ::should_disable_menu()) { //scripts reload
+let { isAuthorized } = require("%appGlobals/login/loginState.nut")
+if (isAuthorized.get() || ::should_disable_menu()) { 
   ::load_scripts_after_login_once()
   if (!isInReloading())
     run_reactive_gui()
 }
 
-//------- ^^^ files after login ^^^ ----------
+

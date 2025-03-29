@@ -3,6 +3,7 @@ from "%scripts/items/itemsConsts.nut" import itemType
 
 let { getDecoratorByResource } = require("%scripts/customization/decorCache.nut")
 let ItemCouponBase = require("%scripts/items/itemsClasses/itemCouponBase.nut")
+let { registerItemClass } = require("%scripts/items/itemsTypeClasses.nut")
 
 let Skin = class (ItemCouponBase) {
   static iType = itemType.SKIN
@@ -12,7 +13,7 @@ let Skin = class (ItemCouponBase) {
 
   unitId = null
 
-  // Creates a real skin decorator, with unitId in name
+  
   function addResourcesByUnitId(v_unitId) {
     if (this.unitId)
       return
@@ -27,4 +28,5 @@ let Skin = class (ItemCouponBase) {
   canPreview = @() this.getDecorator() ? this.getDecorator().canPreview() : false
   doPreview  = @() this.getDecorator() && this.getDecorator().doPreview()
 }
-return {Skin}
+
+registerItemClass(Skin)

@@ -5,7 +5,7 @@ from "%scripts/dagui_library.nut" import *
 let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let { eventbus_subscribe } = require("eventbus")
 let DataBlock = require("DataBlock")
-let { getCurrentLanguage } = require("dagor.localize")
+let { getLocalLanguage } = require("language")
 let { subscribe_handler, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { split_by_chars } = require("string")
@@ -69,7 +69,7 @@ function getCurLangShortName() {
   return curLangShortName.value
 }
 
-let isChineseHarmonized = @() getLanguageName() == "HChinese" //we need to check language too early when get_language from profile not work
+let isChineseHarmonized = @() getLanguageName() == "HChinese" 
 
 function isChineseVersion() {
   let language = getLanguageName()
@@ -175,7 +175,7 @@ function saveLanguage(langName) {
   onChangeLanguage()
 }
 
-saveLanguage(getCurrentLanguage())
+saveLanguage(getLocalLanguage())
 
 function setGameLocalization(langId, reloadScene = false, suggestPkgDownload = false, isForced = false) {
   if (langId == currentLanguage && !isForced)
@@ -213,27 +213,27 @@ function getLangInfoByChatId(chatId) {
   return langsByChatId?[chatId]
 }
 
-/*
-  return localized text from @config (table or datablock) by id
-  if text value require to be localized need to start it with #
 
-  defaultValue returned when not fount id in config.
-  if defaultValue == null  - it will return id instead
 
-  example config:
-  {
-    text = "..."   //default text. returned when not found lang specific.
-    text_ru = "#locId"  //russian text, taken from localization  loc("locId")
-    text_en = "localized text"  //english text. already localized.
-  }
-*/
+
+
+
+
+
+
+
+
+
+
+
+
 function getLocTextFromConfig(config, id = "text", defaultValue = null) {
   local res = null
   let key = $"{id}_{curLangShortName.value}"
   if (key in config)
     res = config[key]
   else
-    res = config?[id] ?? res //-useless-null-coalescing
+    res = config?[id] ?? res 
 
   if (type(res) != "string")
     return defaultValue || id
@@ -253,7 +253,7 @@ function isAvailableForCurLang(block) {
 
 let getCurrentSteamLanguage = @() currentSteamLanguage
 
-// called from native playerProfile on language change, so at this point we can use get_language
+
 eventbus_subscribe("on_language_changed", function on_language_changed(...) {
   saveLanguage(get_language())
 })

@@ -46,19 +46,24 @@ let { loadLocalByAccount, saveLocalByAccount
 let { getMissionsComplete } = require("%scripts/myStats.nut")
 let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
 let { getPkgLocName } = require("%scripts/clientState/contentPacks.nut")
+let { getQueueClass } = require("%scripts/queue/queue/queueClasses.nut")
+let { queues } = require("%scripts/queue/queueManager.nut")
+let { EventJoinProcess } = require("%scripts/events/eventJoinProcess.nut")
+let { create_event_description } = require("%scripts/events/eventDescription.nut")
+let MRoomsList = require("%scripts/matchingRooms/mRoomsList.nut")
 
 const COLLAPSED_CHAPTERS_SAVE_ID = "events_collapsed_chapters"
 const ROOMS_LIST_OPEN_COUNT_SAVE_ID = "tutor/roomsListOpenCount"
 const SHOW_RLIST_ASK_DELAY_DEFAULT = 10
 const SHOW_RLIST_BEFORE_OPEN_DEFAULT = 10
 
-/**
- * Available obtions options:
- *  - event: open specified event in events window
- *  - chapter: open first event in specified chapter
- * Chapter has greater priority but it's bad prctice to use both options
- * simultaneously.
- */
+
+
+
+
+
+
+
 function guiStartModalEvents(options = {}) {
   if (!suggestAndAllowPsnPremiumFeatures())
     return
@@ -132,7 +137,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       return this.goBack()
 
     this.updateMouseMode()
-    this.eventDescription = ::create_event_description(this.scene)
+    this.eventDescription = create_event_description(this.scene)
     this.skipCheckQueue = true
     this.fillEventsList()
     this.skipCheckQueue = false
@@ -146,7 +151,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     move_mouse_on_child_by_value(this.eventsListObj)
   }
 
-  //----CONTROLLER----//
+  
   function onItemSelect() {
     this.onItemSelectAction()
   }
@@ -179,7 +184,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     let event = events.getEvent(this.curEventId)
     let showOverrideSlotbar = needShowOverrideSlotbar(event)
     if (showOverrideSlotbar)
-      updateOverrideSlotbar(events.getEventMission(this.curEventId))
+      updateOverrideSlotbar(events.getEventMission(this.curEventId), event)
     else
       resetSlotbarOverrided()
     this.createSlotbar({
@@ -239,7 +244,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       missionsComplete = getMissionsComplete()
     }
 
-    ::EventJoinProcess(event, null,
+    EventJoinProcess(event, null,
       @(_event) sendBqEvent("CLIENT_BATTLE_2", "to_battle_button", configForStatistic),
       function() {
         configForStatistic.canIntoToBattle <- false
@@ -270,7 +275,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     }
 
     let economicName = getEventEconomicName(events.getEvent(this.curEventId))
-    let roomsListData = ::MRoomsList.getMRoomsListByRequestParams({ eventEconomicName = economicName })
+    let roomsListData = MRoomsList.getMRoomsListByRequestParams({ eventEconomicName = economicName })
     if (!roomsListData.getList().len())
       return
 
@@ -300,12 +305,12 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function getCurEventQueue() {
-    let q = ::queues.findQueue({}, QUEUE_TYPE_BIT.EVENT)
-    return (q && ::queues.isQueueActive(q)) ? q : null
+    let q = queues.findQueue({}, QUEUE_TYPE_BIT.EVENT)
+    return (q && queues.isQueueActive(q)) ? q : null
   }
 
   function isInEventQueue() {
-    return this.queueToShow != null  //to all interface work consistent with view
+    return this.queueToShow != null  
   }
 
   function onLeaveEventActions() {
@@ -313,11 +318,11 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!q)
       return
 
-    ::queues.leaveQueue(q, { isCanceledByPlayer = true })
+    queues.leaveQueue(q, { isCanceledByPlayer = true })
   }
 
   function onEventQueueChangeState(p) {
-    if (!::queues.isEventQueue(p?.queue))
+    if (!queues.isEventQueue(p?.queue))
       return
 
     this.updateQueueInterface()
@@ -335,7 +340,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onOpenClusterSelect(obj) {
-    ::queues.checkAndStart(
+    queues.checkAndStart(
       Callback(@() openClustersMenuWnd(obj, "bottom"), this),
       null,
       "isCanChangeCluster")
@@ -376,7 +381,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     this.skipCheckQueue = true
-    this.selectEvent(::queues.getQueueMode(this.queueToShow))
+    this.selectEvent(queues.getQueueMode(this.queueToShow))
     this.skipCheckQueue = false
   }
 
@@ -448,7 +453,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onQueueOptions(obj) {
-    let optionsData = ::queue_classes.Event.getOptions(this.curEventId)
+    let optionsData = getQueueClass("Event").getOptions(this.curEventId)
     if (!optionsData)
       return
 
@@ -467,9 +472,9 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   function onCreateRoom() {}
   onShowOnlyAvailableRooms = @() null
 
-  //----END_CONTROLLER----//
+  
 
-  //----VIEW----//
+  
   function showEventDescription(eventId) {
     let event = events.getEvent(eventId)
     this.eventDescription.selectEvent(event)
@@ -489,7 +494,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
     let queueObj = showObjById("div_before_chapters_list", true, this.scene)
     queueObj.height = "ph"
-    let queueHandlerClass = this.queueToShow && ::queues.getQueuePreferredViewClass(this.queueToShow)
+    let queueHandlerClass = this.queueToShow && queues.getQueuePreferredViewClass(this.queueToShow)
     let queueHandler = loadHandler(queueHandlerClass, {
       scene = queueObj,
       leaveQueueCb = Callback(this.onLeaveEvent, this)
@@ -499,7 +504,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function updateQueueInterface() {
-    if (!this.queueToShow || !::queues.isQueueActive(this.queueToShow))
+    if (!this.queueToShow || !queues.isQueueActive(this.queueToShow))
       this.queueToShow = this.getCurEventQueue()
     this.checkQueueInfoBox()
     this.restoreQueueParams()
@@ -550,7 +555,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       startText = isReady ? "multiplayer/btnNotReady" : "mainmenu/btnReady"
     startText = loc(startText)
 
-    // Used for proper button width calculation.
+    
     local uncoloredStartText = startText
 
     let battlePriceText = events.getEventBattleCostText(event, "activeTextColor", true, true)
@@ -590,7 +595,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     }
 
     showObjById("btn_queue_options", isCurItemInFocus && isEvent
-      && ::queue_classes.Event.hasOptions(event.name), this.scene)
+      && getQueueClass("Event").hasOptions(event.name), this.scene)
   }
 
   function fillEventsList() {
@@ -636,8 +641,8 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     this.selectedIdx = this.listMap.findindex(@(rowId) rowId == cId) ?? 0
 
     if (this.selectedIdx <= 0) {
-      this.selectedIdx = 1 //0 index is header
-      this.curEventId = "" //curEvent not found
+      this.selectedIdx = 1 
+      this.curEventId = "" 
       this.curChapterId = ""
     }
     else if(this.autoJoin)
@@ -677,7 +682,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   function onCollapse(obj) {
     if (!obj?.id)
       return
-    this.collapseChapter(cutPrefix(obj.id, "btn_", obj.id)) // -param-pos
+    this.collapseChapter(cutPrefix(obj.id, "btn_", obj.id)) 
     this.updateButtons()
   }
 
@@ -727,7 +732,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       this.collapsedChapters = loadLocalByAccount(COLLAPSED_CHAPTERS_SAVE_ID, DataBlock())
     return this.collapsedChapters
   }
-  //----END_VIEW----//
+  
 }
 
 function openEventsWndFromPromo(owner, params = []) {

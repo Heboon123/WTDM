@@ -15,6 +15,8 @@ let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { userName } = require("%scripts/user/profileStates.nut")
 let { clanUserTable } = require("%scripts/contacts/contactsManager.nut")
 let { isPlayerNickInContacts } = require("%scripts/contacts/contactsChecks.nut")
+let { getPlayerFullName } = require("%scripts/contacts/contactsInfo.nut")
+let { get_gui_option_in_mode } = require("%scripts/options/options.nut")
 
 enum MESSAGE_TYPE {
   MY          = "my"
@@ -26,6 +28,9 @@ enum MESSAGE_TYPE {
 let persistent = {
   lastCreatedMessageIndex = 0
 }
+
+let punctuation_list = [" ", ".", ",", ":", ";", "\"", "'", "~", "!", "@", "#", "$", "%", "^", "&", "*",
+                       "(", ")", "+", "|", "-", "=", "\\", "/", "<", ">", "[", "]", "{", "}", "`", "?"]
 
 let privateColor = "@chatTextPrivateColor"
 let blockedColor = "@chatTextBlockedColor"
@@ -59,7 +64,7 @@ function colorMyNameInText(msg) {
     return msg
 
   local counter = 0
-  msg = $" {msg} " //add temp spaces before name coloring
+  msg = $" {msg} " 
 
   while (counter + userName.value.len() <= msg.len()) {
     let nameStartPos = msg.indexof(userName.value, counter)
@@ -69,8 +74,8 @@ function colorMyNameInText(msg) {
     let nameEndPos = nameStartPos + userName.value.len()
     counter = nameEndPos
 
-    if (isInArray(msg.slice(nameStartPos - 1, nameStartPos), ::punctuation_list) &&
-        isInArray(msg.slice(nameEndPos, nameEndPos + 1),     ::punctuation_list)) {
+    if (isInArray(msg.slice(nameStartPos - 1, nameStartPos), punctuation_list) &&
+        isInArray(msg.slice(nameEndPos, nameEndPos + 1),     punctuation_list)) {
       let msgStart = msg.slice(0, nameStartPos)
       let msgEnd = msg.slice(nameEndPos)
       let msgName = msg.slice(nameStartPos, nameEndPos)
@@ -79,7 +84,7 @@ function colorMyNameInText(msg) {
       counter = msgProcessedPart.len()
     }
   }
-  msg = msg.slice(1, msg.len() - 1) //remove temp spaces after name coloring
+  msg = msg.slice(1, msg.len() - 1) 
   return msg
 }
 
@@ -94,7 +99,7 @@ function newMessage(from, msg, privateMsg, myPrivate, overlaySystemColor, import
 
   local createMessage = function() {
     return {
-      fullName = ::g_contacts.getPlayerFullName(getPlayerName(from), clanTag)
+      fullName = getPlayerFullName(getPlayerName(from), clanTag)
       from = from
       uid = uid
       clanTag = clanTag
@@ -117,8 +122,8 @@ function newMessage(from, msg, privateMsg, myPrivate, overlaySystemColor, import
     }
   }
 
-  //from can be as string - Player nick, and as table - player contact.
-  //after getting type, and acting accordingly, name must be string and mean name of player
+  
+  
   if (type(from) != "instance")
     clanTag = clanUserTable.get()?[from] ?? clanTag
   else {
@@ -127,7 +132,7 @@ function newMessage(from, msg, privateMsg, myPrivate, overlaySystemColor, import
     from = from.name
   }
 
-  let needMarkDirectAsPersonal = ::get_gui_option_in_mode(USEROPT_MARK_DIRECT_MESSAGES_AS_PERSONAL,
+  let needMarkDirectAsPersonal = get_gui_option_in_mode(USEROPT_MARK_DIRECT_MESSAGES_AS_PERSONAL,
     OPTIONS_MODE_GAMEPLAY)
   if (needMarkDirectAsPersonal && userName.value != "" && from != userName.value
     && msg.indexof(userName.value) != null
@@ -283,6 +288,7 @@ function newRoom(id, customScene = null, ownerHandler = null) {
     }
 
     getRoomName = @(isColored = false) rType.getRoomName(id, isColored)
+    getLeaveMessage = @() loc(rType.leaveLocId)
   }
 
   return r

@@ -5,7 +5,7 @@ let {format} = require("string")
 let math = require("math")
 
 let hexNumbers = "0123456789abcdef"
-local toString //forward declaration
+local toString 
 
 function tableKeyToString(k) {
   if (type(k) != "string")
@@ -62,13 +62,15 @@ function debugTableData(info, parameters = DEBUG_TABLE_DATA_PARAMS) {
         else if (u.isPoint2(val)) { vType = ":p2"; val = format("%s, %s", floatToStr(val.x), floatToStr(val.y)) }
         else if (u.isPoint3(val)) { vType = ":p3"; val = format("%s, %s, %s", floatToStr(val.x), floatToStr(val.y), floatToStr(val.z)) }
         else if (u.isColor4(val)) { vType = ":c";  val = format("%d, %d, %d, %d", 255 * val.r, 255 * val.g, 255 * val.b, 255 * val.a) }
-        else if (u.isTMatrix(val)) { vType = ":m"
+        else if (u.isTMatrix(val)) {
+          vType = ":m"
           let arr = []
           for (local j = 0; j < 4; j++)
             arr.append("".concat("[", g_string.implode([ val[j].x, val[j].y, val[j].z ], ", "), "]"))
           val = "".concat("[", g_string.implode(arr, " "), "]")
         }
-        else val = toString(val)
+        else
+          val = toString(val)
         printFn("".concat(prefix,addStr2,name,vType,"= ", val))
       }
       for (local j = 0; j < info.blockCount(); j++)
@@ -120,7 +122,7 @@ function debugTableData(info, parameters = DEBUG_TABLE_DATA_PARAMS) {
         printFn("".concat(prefix, addStr, (type(info) == "array" ? "]" : "}")))
     }
     else if (type(info)=="instance")
-      printFn("".concat(prefix, addStr, toString(info, math.min(1, recursionLevel), addStr))) //not decrease recursion because it current instance
+      printFn("".concat(prefix, addStr, toString(info, math.min(1, recursionLevel), addStr))) 
     else {
       let iType = type(info)
       if (iType == "string")
@@ -152,6 +154,8 @@ toString = function (val, recursion = 1, addStr = "") {
       return format("Point2(%s, %s)", floatToStr(val.x), floatToStr(val.y))
     else if (u.isPoint3(val))
       return format("Point3(%s, %s, %s)", floatToStr(val.x), floatToStr(val.y), floatToStr(val.z))
+    else if (u.isPoint4(val))
+      return format("Point4(%s, %s, %s, %s)", floatToStr(val.x), floatToStr(val.y), floatToStr(val.z), floatToStr(val.w))
     else if (u.isColor4(val))
       return format("Color4(%d/255.0, %d/255.0, %d/255.0, %d/255.0)", 255 * val.r, 255 * val.g, 255 * val.b, 255 * val.a)
     else if (u.isTMatrix(val)) {
@@ -173,9 +177,9 @@ toString = function (val, recursion = 1, addStr = "") {
 
       if (recursion > 0)
         foreach (idx, v in val) {
-          //!!FIX ME: better to not use \n in toString()
-          //and make different view ways for debugTabledata and toString
-          //or it make harder to read debugtableData result in log, also arrays in one string generate too long strings
+          
+          
+          
           if (type(v) != "function") {
             let index = [ "float", "null" ].contains(type(idx)) ? toString(idx) : idx
             ret = "".concat(ret, "\n", addStr, "  ", index, " = ", toString(v, recursion - 1, $"{addStr}  "))

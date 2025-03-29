@@ -1,4 +1,6 @@
 from "%scripts/dagui_library.nut" import *
+from "%scripts/invalid_user_id.nut" import INVALID_USER_ID
+
 let contactsClient = require("contactsClient.nut")
 let { addListenersWithoutEnv, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { APP_ID } = require("app")
@@ -12,11 +14,12 @@ let { get_time_msec } = require("dagor.time")
 let { chooseRandom } = require("%sqstd/rand.nut")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { setInterval, clearTimer } = require("dagor.workcycle")
-let { addFriendInvite } = require("%scripts/invites/invites.nut")
+let { addFriendInvite, addFriendsInvites } = require("%scripts/invites/invites.nut")
 let { userIdStr } = require("%scripts/user/profileStates.nut")
 let { contactEvent, statusGroupsToRequest, GAME_GROUP_NAME } = require("%scripts/contacts/contactsConsts.nut")
 let { addPopup } = require("%scripts/popups/popups.nut")
-let { isPlayerInContacts } = require("%scripts/contacts/contactsChecks.nut")
+let { isPlayerInContacts, isMaxPlayersInContactList } = require("%scripts/contacts/contactsChecks.nut")
+let { find_contact_by_name_and_do, update_contacts_by_list } = require("%scripts/contacts/contactsActions.nut")
 
 let logC = log_with_prefix("[CONTACTS STATE] ")
 
@@ -60,8 +63,8 @@ function updatePresencesByList(presences) {
     if ((p?.nick ?? "") != "")
       player.name <- p.nick
     if (type(player.uid) != "string") {
-      let presence = toString(p) // warning disable: -declared-never-used
-      let playerData = toString(player) // warning disable: -declared-never-used
+      let presence = toString(p) 
+      let playerData = toString(player) 
       script_net_assert_once("on_presences_update_error", "on_presences_update cant update presence for player")
       continue
     }
@@ -79,8 +82,8 @@ function updatePresencesByList(presences) {
         if (s in p.presences.status) {
           let gameInfo = p.presences.status[s]
 
-          // This is a workaround for a bug when something
-          // is setting player presence with no event info.
+          
+          
           if (!("eventId" in gameInfo))
             continue
 
@@ -100,7 +103,7 @@ function updatePresencesByList(presences) {
     player.needReset <- !(p?.update ?? true)
     contactsDataList.append(player)
   }
-  ::update_contacts_by_list(contactsDataList, false)
+  update_contacts_by_list(contactsDataList, false)
 }
 
 function onUpdateContactsCb(result) {
@@ -132,7 +135,7 @@ function requestContactsListAndDo(cb) {
 }
 
 function execContactsCharAction(userId, charAction, successCb = null) {
-  if (userId == ::INVALID_USER_ID) {
+  if (userId == INVALID_USER_ID) {
     logC($"trying to do {charAction} with invalid contact")
     return
   }
@@ -142,7 +145,7 @@ function execContactsCharAction(userId, charAction, successCb = null) {
       successCb?()
     }
     function failure(err) {
-      if (err == "REQUEST_NOT_FOUND") { //Need update contacts list
+      if (err == "REQUEST_NOT_FOUND") { 
         requestContactsListAndDo(@(_) fetchContacts())
         return
       }
@@ -181,7 +184,7 @@ function searchContactsOnline(request, callback = null) {
             print($"uid is not an integer, uid: {uidStr}")
             continue
           }
-          ::getContact(uidStr, name) //register contact name
+          ::getContact(uidStr, name) 
           resContacts[uidStr] <- name
         }
 
@@ -192,7 +195,7 @@ function searchContactsOnline(request, callback = null) {
   )
 }
 
-//!!!FIX ME: A dirty hack to use the same matching notification for accepted and rejected friend request
+
 let sendFriendChangedEvent = @(friendId)
   matchingApiNotify("mpresence.notify_friend_added", { friendId })
 
@@ -205,7 +208,7 @@ function verifiedContactAndDoIfNeed(player, groupName, cb) {
       return
 
     let self = callee()
-    ::find_contact_by_name_and_do(player.name, @(contact) self(contact, groupName, cb))
+    find_contact_by_name_and_do(player.name, @(contact) self(contact, groupName, cb))
     return
   }
 
@@ -220,7 +223,7 @@ function verifiedContactAndDoIfNeed(player, groupName, cb) {
 
 function addContactImpl(contact, groupName) {
   if (isPlayerInContacts(contact.uid, groupName))
-    return //no need to do something
+    return 
 
   let action = wtGroupToRequestAddAction?[groupName]
   if (action == null)
@@ -233,16 +236,28 @@ function addContactImpl(contact, groupName) {
   execContactsCharAction(contact.uid, action, successCb)
 }
 
-function addContact(player, groupName) { //playerConfig: { uid, name }
-  if (!::can_add_player_to_contacts_list(groupName))
-    return //Too many contacts
+function canAddPlayerToContactsList(groupName) {
+  if (!isMaxPlayersInContactList(groupName))
+    return true
+
+  showInfoMsgBox(
+    format(loc("msg/cant_add/too_many_contacts"), EPL_MAX_PLAYERS_IN_LIST),
+    "cant_add_contact"
+  )
+
+  return false
+}
+
+function addContact(player, groupName) { 
+  if (!canAddPlayerToContactsList(groupName))
+    return 
 
   verifiedContactAndDoIfNeed(player, groupName, addContactImpl)
 }
 
 function removeContactImpl(contact, groupName) {
   if (!isPlayerInContacts(contact.uid, groupName))
-    return //no need to do something
+    return 
 
   let contactGroup = contact.contactServiceGroup
   if (predefinedContactsGroupToWtGroup?[contactGroup] != groupName)
@@ -267,7 +282,7 @@ function addInvitesToFriend(inviters) {
   if (inviters == null)
     return
 
-  ::g_invites.addFriendsInvites(inviters)
+  addFriendsInvites(inviters)
   fetchContacts()
 }
 
@@ -311,7 +326,7 @@ matchingRpcSubscribe("mpresence.on_added_to_contact_list", function(p) {
   fetchContacts()
 })
 
-//----------- Debug Block -----------------
+
 let fakeFriendsList = Watched([])
 fakeFriendsList.subscribe(function(f) {
   updatePresencesByList(f)

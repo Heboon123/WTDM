@@ -16,14 +16,14 @@ let { canAssignInSlot, setUnit } = require("%scripts/slotbar/slotbarPresetsByVeh
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { startsWith } = require("%sqstd/string.nut")
 let { hasDefaultUnitsInCountry } = require("%scripts/shop/shopUnitsInfo.nut")
-let { set_option } = require("%scripts/options/optionsExt.nut")
+let { set_option, get_option } = require("%scripts/options/optionsExt.nut")
 let getAllUnits = require("%scripts/unit/allUnits.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { USEROPT_BIT_CHOOSE_UNITS_TYPE, USEROPT_BIT_CHOOSE_UNITS_RANK,
   USEROPT_BIT_CHOOSE_UNITS_OTHER, USEROPT_BIT_CHOOSE_UNITS_SHOW_UNSUPPORTED_FOR_GAME_MODE,
   USEROPT_BIT_CHOOSE_UNITS_SHOW_UNSUPPORTED_FOR_CUSTOM_LIST
 } = require("%scripts/options/optionsExtNames.nut")
-let { isInSessionRoom } = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { isInSessionRoom, canChangeCrewUnits } = require("%scripts/matchingRooms/sessionLobbyState.nut")
 let { buildUnitSlot, fillUnitSlotTimers, getSlotObj, isUnitEnabledForSlotbar
 } = require("%scripts/slotbar/slotbarView.nut")
 let { getCrewsListByCountry, getBestTrainedCrewIdxForUnit
@@ -35,6 +35,7 @@ let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 let { getCrewUnit } = require("%scripts/crew/crew.nut")
 let { crewSpecTypes, getSpecTypeByCrewAndUnit } = require("%scripts/crew/crewSpecType.nut")
 let { getCrewsList } = require("%scripts/slotbar/crewsList.nut")
+let { getSessionLobbyMissionNameLoc } = require("%scripts/matchingRooms/sessionLobbyInfo.nut")
 
 function isUnitInCustomList(unit, params) {
   if (!unit)
@@ -65,7 +66,7 @@ let getOptionsMaskForUnit = {
 const MIN_NON_EMPTY_SLOTS_IN_COUNTRY = 1
 
 function getParamsFromSlotbarConfig(crew, slotbar) {
-  if (!::SessionLobby.canChangeCrewUnits())
+  if (!canChangeCrewUnits())
     return null
   if (!CrewTakeUnitProcess.safeInterrupt())
     return null
@@ -119,24 +120,24 @@ local class SelectUnitHandler (gui_handlers.BaseGuiHandlerWT) {
   idInCountry = -1
   crew = null
 
-  config = null //same as slotbarParams in BaseGuiHandlerWT
+  config = null 
   slotObj = null
   curClonObj = null
 
-  unitsArray = null // array of units
-  unitsList = null  // array of menu items
+  unitsArray = null 
+  unitsList = null  
   busyUnitsCount = 0
 
   wasReinited = false
 
   filterOptionsList = null
 
-  curOptionsMasks = null //[]
-  optionsMaskByUnits = null //{}
+  curOptionsMasks = null 
+  optionsMaskByUnits = null 
   isEmptyOptionsList = true
-  legendData = null //[]
+  legendData = null 
 
-  slotsPerPage = 9 //check css
+  slotsPerPage = 9 
   firstPageSlots = 20
   curVisibleSlots = 0
 
@@ -152,9 +153,9 @@ local class SelectUnitHandler (gui_handlers.BaseGuiHandlerWT) {
     this.optionsMaskByUnits = {}
     this.legendData = []
     if (this.slotbarWeak)
-      this.slotbarWeak = this.slotbarWeak.weakref() //we are miss weakref on assigning from params table
+      this.slotbarWeak = this.slotbarWeak.weakref() 
 
-    this.guiScene.applyPendingChanges(false) //to apply slotbar scroll before calculating positions
+    this.guiScene.applyPendingChanges(false) 
 
     let tdObj = this.slotObj.getParent()
     let tdPos = tdObj.getPosRC()
@@ -166,7 +167,7 @@ local class SelectUnitHandler (gui_handlers.BaseGuiHandlerWT) {
     tdClone["class"] = "slotbarClone"
     this.curClonObj = tdClone
 
-    // When menu opens on switching to country, slots are invisible due to animation
+    
     if ((tdClone?["color-factor"] ?? "255") != "255")
       setTranspRecursive(tdClone, 255)
 
@@ -327,9 +328,9 @@ local class SelectUnitHandler (gui_handlers.BaseGuiHandlerWT) {
     if (unit == SEL_UNIT_BUTTON.SHOP)
       return this.goToShop()
     if (unit == SEL_UNIT_BUTTON.EMPTY_CREW)
-      return this.trainSlotAircraft(null) //empty slot
+      return this.trainSlotAircraft(null) 
     if (unit == SEL_UNIT_BUTTON.SHOW_MORE) {
-      this.curVisibleSlots += this.slotsPerPage - 1 //need to all new slots be visible and current button also
+      this.curVisibleSlots += this.slotsPerPage - 1 
       this.updateUnitsList()
       return
     }
@@ -412,10 +413,10 @@ local class SelectUnitHandler (gui_handlers.BaseGuiHandlerWT) {
     this.isEmptyOptionsList = true
     let view = { rows = [] }
     foreach (idx, userOpt in this.filterOptionsList) {
-      let maskOption = ::get_option(userOpt)
+      let maskOption = get_option(userOpt)
       let singleOption = getTblValue("singleOption", maskOption, false)
       if (singleOption) {
-        // All bits but first are set to 1.
+        
         maskOption.value = maskOption.value | ~1
         set_option(userOpt, maskOption.value)
       }
@@ -473,7 +474,7 @@ local class SelectUnitHandler (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function getGameModeNameFromParams(params) {
-    //same order as in isUnitEnabledForSlotbar
+    
     local event = events.getEvent(params?.eventId)
     if (!event && params?.roomCreationContext)
       event = params.roomCreationContext.mGameMode
@@ -484,7 +485,7 @@ local class SelectUnitHandler (gui_handlers.BaseGuiHandlerWT) {
       return params.gameModeName
 
     if (isInSessionRoom.get())
-      return ::SessionLobby.getMissionNameLoc()
+      return getSessionLobbyMissionNameLoc()
 
     return getTblValue("text", getCurrentGameMode(), "")
   }
@@ -514,7 +515,7 @@ local class SelectUnitHandler (gui_handlers.BaseGuiHandlerWT) {
     if (!maskOptions)
       return
 
-    let oldOption = ::get_option((obj.uid).tointeger())
+    let oldOption = get_option((obj.uid).tointeger())
     let value = (oldOption.value.tointeger() & (~maskOptions)) | (obj.getValue() & maskOptions)
     set_option((obj.uid).tointeger(), value)
     this.curVisibleSlots = this.firstPageSlots
@@ -522,8 +523,8 @@ local class SelectUnitHandler (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function updateOptionShowUnsupportedForCustomList() {
-    let modeOption = ::get_option(USEROPT_BIT_CHOOSE_UNITS_SHOW_UNSUPPORTED_FOR_GAME_MODE)
-    let customOption = ::get_option(USEROPT_BIT_CHOOSE_UNITS_SHOW_UNSUPPORTED_FOR_CUSTOM_LIST)
+    let modeOption = get_option(USEROPT_BIT_CHOOSE_UNITS_SHOW_UNSUPPORTED_FOR_GAME_MODE)
+    let customOption = get_option(USEROPT_BIT_CHOOSE_UNITS_SHOW_UNSUPPORTED_FOR_CUSTOM_LIST)
 
     let customOptionObj = this.scene.findObject(customOption.id)
     if (!checkObj(customOptionObj))
@@ -584,7 +585,7 @@ local class SelectUnitHandler (gui_handlers.BaseGuiHandlerWT) {
     this.guiScene.setUpdatesEnabled(false, false)
     let optionMasks = []
     foreach (userOpt in this.filterOptionsList)
-      optionMasks.append(::get_option(userOpt).value)
+      optionMasks.append(get_option(userOpt).value)
 
     let tblObj = this.scene.findObject("airs_table")
     let total = tblObj.childrenCount()
@@ -628,7 +629,7 @@ local class SelectUnitHandler (gui_handlers.BaseGuiHandlerWT) {
       this.showUnitSlot(objSlot, slot, isVisible)
 
       if (isVisible
-        && (!isFirstPage || unit.name == crewUnitId)) //on not first page always select last visible unit
+        && (!isFirstPage || unit.name == crewUnitId)) 
         selected = i
     }
 

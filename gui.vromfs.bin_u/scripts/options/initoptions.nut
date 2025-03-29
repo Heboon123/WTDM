@@ -1,8 +1,8 @@
 from "%scripts/dagui_natives.nut" import get_global_stats_blk, disable_network, gather_and_build_aircrafts_list
 from "%scripts/dagui_library.nut" import *
 
-let { set_crosshair_icons, set_thermovision_colors, set_modifications_locId_by_caliber, set_bullets_locId_by_caliber
-} = require("%scripts/options/optionsStorage.nut")
+let { set_crosshair_icons, set_thermovision_colors, set_modifications_locId_by_caliber, set_bullets_locId_by_caliber,
+  set_available_ship_hit_notifications } = require("%scripts/options/optionsStorage.nut")
 let { init_postfx } = require("%scripts/postFxSettings.nut")
 let { LayersIcon } = require("%scripts/viewUtils/layeredIcon.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
@@ -23,10 +23,10 @@ let { clearMapsCache } = require("%scripts/missions/missionsUtils.nut")
 let { updateAircraftWarpoints, loadPlayerExpTable, initPrestigeByRank } = require("%scripts/ranks.nut")
 let { setUnlocksPunctuationWithoutSpace } = require("%scripts/langUtils/localization.nut")
 let { crosshair_colors } = require("%scripts/options/optionsExt.nut")
-let { isAuthorized } = require("%scripts/login/loginStates.nut")
+let { isAuthorized } = require("%appGlobals/login/loginState.nut")
 
 let allUnits = getAllUnits()
-//remap all units to new class on scripts reload
+
 foreach (name, unit in allUnits)
   allUnits[name] = Unit({}).setFromUnit(unit)
 if (showedUnit.value != null)
@@ -43,7 +43,7 @@ if (showedUnit.value != null)
     } while (stepStatus == PT_STEP_STATUS.SUSPEND)
 }
 
-function init_all_units() { //Not moved to allUnits.nut due to "require loops"
+function init_all_units() { 
   allUnits.clear()
   let all_units_array = gather_and_build_aircrafts_list()
   foreach (unitTbl in all_units_array) {
@@ -113,7 +113,7 @@ function countUsageAmountOnce() {
 
   function() {
     ::tribunal.init()
-    clearMapsCache() //to refreash maps on demand
+    clearMapsCache() 
     set_crosshair_icons([])
     crosshair_colors.clear()
     set_thermovision_colors([])
@@ -158,6 +158,16 @@ function countUsageAmountOnce() {
         new_thermovision_colors.append({ menu_rgb = colorBlk.menu_rgb })
       }
       set_thermovision_colors(new_thermovision_colors)
+    }
+    if (blk?.shipHitNotification) {
+      let { shipHitNotification } = blk
+      let availableHitNotifications = {}
+      for (local i = 0; i < shipHitNotification.blockCount(); i++) {
+        let hitNotificationBlk = shipHitNotification.getBlock(i)
+        if (hitNotificationBlk?.enabled)
+          availableHitNotifications[hitNotificationBlk.getBlockName()] <- true
+      }
+      set_available_ship_hit_notifications(availableHitNotifications)
     }
   }
 

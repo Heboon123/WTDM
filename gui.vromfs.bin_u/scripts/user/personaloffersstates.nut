@@ -17,6 +17,8 @@ let { saveLocalAccountSettings, loadLocalAccountSettings
 let { decoratorTypes, getTypeByResourceType } = require("%scripts/customization/types.nut")
 let { findItemById } = require("%scripts/items/itemsManager.nut")
 let { getEntitlementConfig } = require("%scripts/onlineShop/entitlements.nut")
+let { getTrophyRewardType } = require("%scripts/items/trophyReward.nut")
+let { g_discount } = require("%scripts/discounts/discounts.nut")
 
 let curPersonalOffer = mkWatched(persist, "curPersonalOffer", null)
 let checkedOffers = mkWatched(persist, "checkedOffers", {})
@@ -50,7 +52,7 @@ let isSeenOffer = @(offerName)
 function getReceivedOfferContent(offerContent) {
   let res = []
   foreach(offer in offerContent) {
-    let contentType = ::trophyReward.getType(offer)
+    let contentType = getTrophyRewardType(offer)
     if (contentType == "unit" || contentType == "rentedUnit") {
       let unitName = offer?.unit ?? offer.rentedUnit
       if (shop_is_aircraft_purchased(unitName))
@@ -67,6 +69,14 @@ function getReceivedOfferContent(offerContent) {
     }
   }
 
+  return res
+}
+
+function getContentUnitDiscount(offerContent) {
+  local res = 0
+  foreach(offer in offerContent)
+    if (getTrophyRewardType(offer) == "unit")
+      res = max(res, g_discount.getUnitDiscount(getAircraftByName(offer.unit)))
   return res
 }
 
@@ -111,7 +121,7 @@ function validatePersonalOffer(personalOffer, currentOfferData) {
     return false
   }
 
-  let { costGold = 0, duration_in_seconds = 0 } = offerBlk
+  let { costGold = 0, duration_in_seconds = 0, discountValue = 0 } = offerBlk
   if (costGold <= 0) {
     sendDataToBqOnce({ offerName, serverTime, reason = "wrong_cost_gold", desc = offer })
     return false
@@ -119,6 +129,11 @@ function validatePersonalOffer(personalOffer, currentOfferData) {
 
   if (duration_in_seconds <= 0) {
     sendDataToBqOnce({ offerName, serverTime, reason = "wrong_duration_in_seconds", desc = offer })
+    return false
+  }
+
+  if (discountValue > 0 && getContentUnitDiscount(offerBlk % "i") > discountValue) {
+    sendDataToBqOnce({ offerName, serverTime, reason = "greater_unit_discount", desc = offer })
     return false
   }
 
@@ -171,7 +186,7 @@ function getNotExistedAndExternalOfferItems(currentOfferData) {
   let notExistedItems = []
   let externalItems = []
   foreach(offer in offerContent) {
-    let contentType = ::trophyReward.getType(offer)
+    let contentType = getTrophyRewardType(offer)
 
     if(contentType == "unit") {
       let { unit } = offer

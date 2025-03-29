@@ -1,5 +1,4 @@
 from "%scripts/dagui_library.nut" import *
-import "%scripts/matchingRooms/sessionLobby.nut" as SessionLobby
 
 let { checkMatchingError } = require("%scripts/matching/api.nut")
 let { g_difficulty } = require("%scripts/difficulty.nut")
@@ -10,17 +9,20 @@ let { format } = require("string")
 let crossplayModule = require("%scripts/social/crossplay.nut")
 let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
 let u = require("%sqstd/underscore.nut")
-let { fetchRoomsList } = require("%scripts/matching/serviceNotifications/mrooms.nut")
+let { fetchRoomsList } = require("%scripts/matching/serviceNotifications/mroomsApi.nut")
 let { getGameModeIdsByEconomicName } = require("%scripts/matching/matchingGameModes.nut")
 let { isPlayerInContacts } = require("%scripts/contacts/contactsChecks.nut")
+let { getRoomMembersCnt, getRoomCreatorUid } = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { getMisListType } = require("%scripts/matchingRooms/sessionLobbyInfo.nut")
 
-const ROOM_LIST_REFRESH_MIN_TIME = 3000 //ms
-const ROOM_LIST_REQUEST_TIME_OUT = 45000 //ms
+const ROOM_LIST_REFRESH_MIN_TIME = 3000 
+const ROOM_LIST_REQUEST_TIME_OUT = 45000 
 const ROOM_LIST_TIME_OUT = 180000
 const MAX_SESSIONS_LIST_LEN = 1000
 const SKIRMISH_ROOMS_LIST_ID = "skirmish"
 
-::MRoomsList <- class {
+local MRoomsList = null
+MRoomsList = class {
   id = ""
   roomsList = null
   requestParams = null
@@ -33,18 +35,18 @@ const SKIRMISH_ROOMS_LIST_ID = "skirmish"
 
   static mRoomsListById = {}
 
-/*************************************************************************************************/
-/*************************************PUBLIC FUNCTIONS *******************************************/
-/*************************************************************************************************/
+
+
+
 
   static function getMRoomsListByRequestParams(requestParams) {
-    local roomsListId = SKIRMISH_ROOMS_LIST_ID //empty request params is a skirmish
+    local roomsListId = SKIRMISH_ROOMS_LIST_ID 
     if ("eventEconomicName" in requestParams)
       roomsListId = $"economicName:{requestParams.eventEconomicName}"
 
-    let listById = ::MRoomsList.mRoomsListById
+    let listById = MRoomsList.mRoomsListById
     if (!(roomsListId in listById))
-      listById[roomsListId] <- ::MRoomsList(roomsListId, requestParams)
+      listById[roomsListId] <- MRoomsList(roomsListId, requestParams)
     return listById[roomsListId]
   }
 
@@ -110,9 +112,9 @@ const SKIRMISH_ROOMS_LIST_ID = "skirmish"
     return true
   }
 
-/*************************************************************************************************/
-/************************************PRIVATE FUNCTIONS *******************************************/
-/*************************************************************************************************/
+
+
+
 
   function requestListCb(p, hideFullRooms) {
     this.isInUpdate = false
@@ -163,7 +165,7 @@ const SKIRMISH_ROOMS_LIST_ID = "skirmish"
     else {
       filter["public/platformRestriction"] <- {
         test = "eq"
-        value = null // only non-restricted rooms will be passed
+        value = null 
       }
     }
   }
@@ -171,10 +173,10 @@ const SKIRMISH_ROOMS_LIST_ID = "skirmish"
   function getFetchRoomsParams(ui_filter) {
     let filter = {}
     let res = {
-      group = "custom-lobby" // "xbox-lobby" for xbox
+      group = "custom-lobby" 
       filter = filter
 
-      // TODO: implement paging in client
+      
       cursor = 0
       count = 100
     }
@@ -219,7 +221,7 @@ const SKIRMISH_ROOMS_LIST_ID = "skirmish"
     return res
   }
 
-  function updateRoomsList(rooms, hideFullRooms) { //can be called each update
+  function updateRoomsList(rooms, hideFullRooms) { 
     if (rooms.len() > MAX_SESSIONS_LIST_LEN) {
       let message = format("Error in SessionLobby.updateRoomsList:\nToo long rooms list - %d", rooms.len())
       script_net_assert_once("too long rooms list", message)
@@ -234,15 +236,17 @@ const SKIRMISH_ROOMS_LIST_ID = "skirmish"
   }
 
   function isRoomVisible(room, hideFullRooms) {
-    let userUid = SessionLobby.getRoomCreatorUid(room)
+    let userUid = getRoomCreatorUid(room)
     if (userUid && isPlayerInContacts(userUid, EPL_BLOCKLIST))
       return false
 
     if (hideFullRooms) {
       let mission = room?.public.mission ?? {}
-      if (SessionLobby.getRoomMembersCnt(room) >= (mission?.maxPlayers ?? 0))
+      if (getRoomMembersCnt(room) >= (mission?.maxPlayers ?? 0))
         return false
     }
-    return SessionLobby.getMisListType(room.public).canJoin(GM_SKIRMISH)
+    return getMisListType(room.public).canJoin(GM_SKIRMISH)
   }
 }
+
+return MRoomsList

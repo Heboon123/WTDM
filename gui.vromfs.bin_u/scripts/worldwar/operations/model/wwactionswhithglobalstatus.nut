@@ -1,5 +1,6 @@
 from "%scripts/dagui_library.nut" import *
 from "%scripts/clans/clanState.nut" import is_in_clan
+let { hasRightsToQueueWWar } = require("%scripts/clans/clanInfo.nut")
 
 let { wwGetOperationId } = require("worldwar")
 let u = require("%sqStdLibs/helpers/u.nut")
@@ -43,7 +44,7 @@ function getMyClanOperation() {
 
 let getMapByName = @(mapName) ::g_ww_global_status_type.MAPS.getList()?[mapName]
 
-//always return queue. do not return null
+
 let getQueueByMapName = @(mapName) ::g_ww_global_status_type.QUEUE.getList()?[mapName] ?? ::WwQueue(mapName)
 
 let getOperationGroupByMapId = @(mapId)
@@ -66,11 +67,11 @@ function updateCurOperationStatusInGlobalStatus() {
 
 function isWwOperationInviteEnable() {
   let wwOperationId = wwGetOperationId()
-  return wwOperationId > -1 && ::g_clans.hasRightsToQueueWWar()
+  return wwOperationId > -1 && hasRightsToQueueWWar()
     && getOperationById(wwOperationId)?.isMyClanParticipate()
 }
 
-::g_ww_global_status_actions <- {   //!!!FIX ME: This global table used in main scripts. It is necessary to remove use of world war scripts from the main scripts and remove this table
+::g_ww_global_status_actions <- {   
   getOperationById
   getMapByName
 }

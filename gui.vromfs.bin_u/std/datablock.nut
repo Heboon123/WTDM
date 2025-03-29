@@ -1,9 +1,9 @@
 let DataBlock = require("DataBlock")
 let { isFunction, isDataBlock } = require("underscore.nut")
-// Recursive translator to DataBlock data.
-// sometimes more conviniet to store, search and use data in DataBlock.
-// It saves order of items in tables as an array,
-// and block can easily be found by header as in table.
+
+
+
+
 
 function fillBlock(id, block, data, arrayKey = "array") {
   if (type(data) == "array") {
@@ -24,7 +24,7 @@ function fillBlock(id, block, data, arrayKey = "array") {
   }
 }
 
-// callback(blockValue[, blockName[, index]])
+
 function eachBlock(db, callback, thisArg = null) {
   if (db == null)
     return
@@ -46,7 +46,7 @@ function eachBlock(db, callback, thisArg = null) {
   }
 }
 
-// callback(paramValue[, paramName[, index]])
+
 function eachParam(db, callback, thisArg = null) {
   if (db == null)
     return
@@ -97,7 +97,7 @@ function blk2SquirrelObj(blk){
     let blockName = block.getBlockName()
     if (blockName not in res)
       res[blockName] <- []
-   res[blockName].append(blk2SquirrelObj(block))
+    res[blockName].append(blk2SquirrelObj(block))
   }
   for (local i=0; i<blk.paramCount(); i++){
     let paramName = blk.getParamName(i)
@@ -109,12 +109,19 @@ function blk2SquirrelObj(blk){
   return res
 }
 
-function normalizeConvertedBlk(obj){
+local normalizeConvertedBlk
+normalizeConvertedBlk = function(obj){
   let t = type(obj)
   if (t == "array" && obj.len()==1) {
     return normalizeConvertedBlk(obj[0])
   }
-  else if (t == "table" || t=="array") {
+  else if (t == "table") {
+    let r = {}
+    foreach(k, v in obj)
+      r[k] <- normalizeConvertedBlk(v)
+    return r
+  }
+  else if (t=="array") {
     return obj.map(normalizeConvertedBlk)
   }
   return obj
@@ -126,7 +133,7 @@ function normalizeAndFlattenConvertedBlk(obj){
     let el = obj[0]
     if (type(el)=="table" && el.len()==1){
       foreach(v in el){
-        return (type(v)=="array") // -unconditional-terminated-loop
+        return (type(v)=="array") 
           ? v.map(normalizeAndFlattenConvertedBlk)
           : el.map(normalizeAndFlattenConvertedBlk)
       }
@@ -134,7 +141,13 @@ function normalizeAndFlattenConvertedBlk(obj){
     else
       return normalizeAndFlattenConvertedBlk(el)
   }
-  else if (t == "table" || t=="array") {
+  else if (t == "table") {
+    let r = {}
+    foreach(k, v in obj)
+      r[k] <- normalizeConvertedBlk(v)
+    return r
+  }
+  else if (t=="array") {
     return obj.map(normalizeAndFlattenConvertedBlk)
   }
   return obj
@@ -181,14 +194,14 @@ function getBlkValueByPath(blk, path, defVal=null) {
   return val
 }
 
- //blk in path shoud exist and be correct
+ 
 function blkFromPath(path){
   local blk = DataBlock()
   blk.load(path)
   return blk
 }
 
-//blk in path be correct or should not be existing
+
 function blkOptFromPath(path) {
   local blk = DataBlock()
   if (path != null && path != ""){
@@ -209,25 +222,25 @@ return {
   getBlkByPathArray
   getBlkValueByPath
 
-/*
-   blk is different from squirrelObject\Json. there is no arrays
-   But each block or parameter can be unique or can be used multiple times
-   this can be translated to squirrel object several ways:
-     0) each paramerter and block treated as unique
-     1) by treating EACH object\parameter as an array (that can be one element or multiple)
-       Example: name{v:i=2; v:i=3, c:t="a"} -> {name = [{v = [2,3], c=["a"]}]}
-     2a) by treating each block\param as array if it has more than one element and otherwise as unique type
-       Example: name{v:i=2; v:i=3, c:t="a"} -> {name = {v = [2,3], c="a"}}
-     2b) optionally we can treat block that has objects of one name as an array
-        some{val:i=1, val:i=2} -> some = [1,2] (instead of some = {val = [1,2]} as in 2a)
-     3) [Not implemented] with optional schema (separate from blk or built-in) where blk has extended types or path annotations
-*/
-  blk2SquirrelObjNoArrays //Convert Blk with 0) way - no arrays at all
-  blk2SquirrelObj //Convert Blk with 1) way - each value is an array
+
+
+
+
+
+
+
+
+
+
+
+
+
+  blk2SquirrelObjNoArrays 
+  blk2SquirrelObj 
   normalizeConvertedBlk
   normalizeAndFlattenConvertedBlk
-  convertBlk //Convert Blk 2a) way - each more-than-one-element-of-the-name object is an array, others are not
-  convertBlkFlat //Convert Blk 2b) way  - each more-than-one-element-of-the-name object is an array and if object has one element that is an array - use its value, others are not
+  convertBlk 
+  convertBlkFlat 
 
-  getParamsListByName//get all params from block by name
+  getParamsListByName
 }

@@ -38,10 +38,11 @@ let sectorAngle1PID = dagui_propid_add_name_id("sector-angle-1")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { get_ranks_blk } = require("blkGetters")
 let { get_charserver_time_sec } = require("chard")
-let { getUtcMidnight, secondsToString } = require("%scripts/time.nut")
+let { getUtcMidnight, secondsToString, buildDateStr, getTimestampFromStringUtc } = require("%scripts/time.nut")
 let timeBase = require("%appGlobals/timeLoc.nut")
 let { getUnlockNameText } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { get_units_count_at_rank } = require("%scripts/shop/shopCountryInfo.nut")
+let { get_unit_preset_img } = require("%scripts/options/optionsExt.nut")
 
 let setBool = @(obj, prop, val) obj[prop] = val ? "yes" : "no"
 let {expNewNationBonusDailyBattleCount = 1} = get_ranks_blk()
@@ -214,7 +215,7 @@ function updateCardStatus(obj, _id, statusTbl) {
     researchProgressOld       = -1,
     researchProgressNew       = -1,
     priceText                 = "",
-    primaryUnitId             = "", //used for group timers
+    primaryUnitId             = "", 
     mainButtonText            = "",
     mainButtonIcon            = "",
     maxRank                   = -1,
@@ -226,7 +227,9 @@ function updateCardStatus(obj, _id, statusTbl) {
     unitTypeName              = "",
     hasNationBonus            = false,
     nationBonusBattlesRemain  = 0
-    markerHolderId = ""
+    markerHolderId            = ""
+    endResearchDate           = ""
+    hasAlarmIcon              = false
   } = statusTbl
   let isLongPriceText = isUnitPriceTextLong(priceText)
 
@@ -240,6 +243,7 @@ function updateCardStatus(obj, _id, statusTbl) {
   setBool(obj, "refuseOpenHoverMenu", !hasActionsMenu || isGroup)
   setBool(obj, "isElite", isElite)
   setBool(obj, "isRecentlyReleased", isRecentlyReleased)
+  setBool(obj, "hasAlarmIcon", hasAlarmIcon)
   obj["cursor"] = hasActionsMenu && !isGroup ? "context-menu" : "normal"
 
   obj.findObject("unitImage")["foreground-image"] = unitImage
@@ -256,6 +260,10 @@ function updateCardStatus(obj, _id, statusTbl) {
   remainingMarkerObj.setValue(stashBhvValueConfig(
     { viewId = "SHOP_SLOT_REMAINING_TIME_UNIT", unitName = unitName }
   ))
+
+  if (hasAlarmIcon)
+    obj.findObject("alarm_icon").tooltip = loc("mainmenu/vehicleResearchTillDate",
+      { time = buildDateStr(getTimestampFromStringUtc(endResearchDate)) })
 
   let markerContainer = obj.findObject("marker_container")
   let unlockMarker = markerContainer.findObject("unlockMarker")
@@ -315,7 +323,7 @@ function updateCardStatus(obj, _id, statusTbl) {
   let mainBtnObj = obj.findObject("mainActionButton")
   setBool(mainBtnObj, "forceHide", !hasMainButton)
   if (hasMainButton) {
-    mainBtnObj.text = mainButtonText
+    mainBtnObj.setValue(mainButtonText)
     showInObj(mainBtnObj, "mainActionIcon", mainButtonIcon != "")["background-image"] = mainButtonIcon
   }
 
@@ -420,6 +428,8 @@ let getUnitStatusTbl = function(unit, params) {
     wpMul               = wp_shop_get_aircraft_wp_rate(unit.name)
     hasObjective        = !shopResearchMode && (bit_unit_status.locked & bitStatus) == 0
       && hasMarkerByUnitName(unit.name, getEdiffFunc())
+    endResearchDate     = unit.endResearchDate
+    hasAlarmIcon        = unit.endResearchDate != null && !isOwn
   }
 
   if (canBuyNotResearched(unit)) {
@@ -433,7 +443,7 @@ let getUnitStatusTbl = function(unit, params) {
     }
   }
 
-  if (forceNotInResearch || !isUnitInResearch(unit) || hasFeature("SpendGold")) //it not look like good idea to calc it here
+  if (forceNotInResearch || !isUnitInResearch(unit) || hasFeature("SpendGold")) 
     if (showConsoleButtons.value)
       res.mainButtonIcon <- "#ui/gameuiskin#slot_menu.svg"
     else
@@ -539,6 +549,7 @@ function getGroupStatusTbl(group, params) {
   local rentedUnit         = null
   local hasObjective       = false
   local markerHolderId     = ""
+  local hasAlarmIcon       = false
 
   foreach (unit in unitsList) {
     let isInResearch = !forceNotInResearch && isUnitInResearch(unit)
@@ -595,20 +606,20 @@ function getGroupStatusTbl(group, params) {
   let unitForBR = rentedUnit || researchingUnit || firstUnboughtUnit || group
 
   let researchStatusTbl = researchingUnit ? getUnitResearchStatusTbl(researchingUnit, params) : {}
-  let unitImage = ::get_unit_preset_img(group.name)
+  let unitImage = get_unit_preset_img(group.name)
     ?? (is_harmonized_unit_image_required(primaryUnit)
         ? get_tomoe_unit_icon(group.name, !group.name.endswith("_group"))
         : "!{0}".subst(group?.image ?? "#ui/unitskin#planes_group.ddsx"))
 
   return {
-    //fixed params
+    
     isGroup             = true
     hasActionsMenu      = true
     isPkgDev,
     isRecentlyReleased,
     mainButtonIcon      = showConsoleButtons.value ? "#ui/gameuiskin#slot_unfold.svg" : "",
 
-    //primary unit params
+    
     primaryUnitId       = primaryUnit.name,
     unitImage,
     nameText            = needUnitNameOnPlate ? getUnitName(primaryUnit) : loc($"shop/group/{group.name}")
@@ -617,7 +628,7 @@ function getGroupStatusTbl(group, params) {
     unitClass           = getUnitRole(primaryUnit)
     tooltipId           = getTooltipType("UNIT").getTooltipId(primaryUnit.name, tooltipParams)
 
-    //complex params
+    
     shopStatus          = getUnitItemStatusText(bitStatus, true),
     unitRankText        = getUnitRankText(unitForBR, showBR, getEdiffFunc())
     isInactive,
@@ -635,6 +646,7 @@ function getGroupStatusTbl(group, params) {
     markerHolderId,
     expMul,
     wpMul,
+    hasAlarmIcon
   }.__update(researchStatusTbl)
 }
 
@@ -674,10 +686,10 @@ function updateCellTimedStatus(cell, getTimedStatus) {
   let holderId = cell.holderId
   let cardObj = cell.findObject(holderId)
   SecondsUpdater(cardObj, function(_obj, _) {
-    if (holderId != cell.holderId) //remove timer if cell show other vehicle
+    if (holderId != cell.holderId) 
       return true
     timedStatus = getTimedStatus()
-    updateCellTimedStatusImpl(cell, timedStatus) //cell is valid while cardObj is valid
+    updateCellTimedStatusImpl(cell, timedStatus) 
     return !timedStatus?.needUpdateByTime
   })
 }

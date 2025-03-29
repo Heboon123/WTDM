@@ -17,7 +17,7 @@ let { isSmallScreen } = require("%scripts/clientState/touchScreen.nut")
 let { setScrnTgt } = require("%scripts/utils/screenUtils.nut")
 let { getSystemConfigOption, setSystemConfigOption } = require("%globalScripts/systemConfig.nut")
 let { eventbus_subscribe } = require("eventbus")
-let { isProfileReceived } = require("%scripts/login/loginStates.nut")
+let { isProfileReceived } = require("%appGlobals/login/loginState.nut")
 
 const FONTS_SAVE_PATH = "fonts_css"
 const FONTS_SAVE_PATH_CONFIG = "video/fonts"
@@ -30,23 +30,23 @@ enum FONT_SAVE_ID {
   LARGE = "big"
   HUGE = "huge"
 
-  //wop_1_69_3_x fonts
+  
   PX = "px"
   SCALE = "scale"
 
-  //wop_1_69_3_X
+  
   PX_COMPATIBILITY = "%gui/const/const_pxFonts.css"
   SCALE_COMPATIBILITY = "%gui/const/const_fonts.css"
 }
 
 enum FONT_SIZE_ORDER {
-  PX    //wop_1_69_3_X
+  PX    
   TINY
   SMALL
   COMPACT
   MEDIUM
   LARGE
-  SCALE  //wop_1_69_3_X
+  SCALE  
   HUGE
 }
 
@@ -69,23 +69,23 @@ function update_font_heights(font) {
   return font;
 }
 
-::g_font <- {
+let g_font = {
   types = []
   cache = { bySaveId = {} }
 }
 
-::g_font.template <- {
-  id = ""  //by type name
+g_font.template <- {
+  id = ""  
   fontGenId = ""
   saveId = ""
-  saveIdCompatibility = null //array of ids. need to easy switch between fonts by feature
+  saveIdCompatibility = null 
   isScaleable = true
   sizeMultiplier = 1.0
-  sizeOrder = 0 //FONT_SIZE_ORDER
+  sizeOrder = 0 
 
   isAvailable = @(_sWidth, _sHeight) true
   getFontSizePx = @(sWidth, sHeight) round(this.sizeMultiplier * getFontsSh(sWidth, sHeight)).tointeger()
-  getPixelToPixelFontSizeOutdatedPx = @(_sWidth, _sHeight) 800 //!!TODO: remove this together with old fonts
+  getPixelToPixelFontSizeOutdatedPx = @(_sWidth, _sHeight) 800 
   isLowWidthScreen = function() {
     let sWidth = screen_width()
     let sHeight = screen_height()
@@ -106,7 +106,7 @@ function update_font_heights(font) {
       pxFontTgtOutdated = this.getPixelToPixelFontSizeOutdatedPx(sWidth, sHeight)
     }
     if (config.scrnTgt <= 0) {
-      let configStr = toString(config) // warning disable: -declared-never-used
+      let configStr = toString(config) 
       script_net_assert_once("Bad screenTgt", "Bad screenTgt const at load fonts css")
     }
     foreach (prefixId in daguiFonts.getRealFontNamePrefixesMap())
@@ -114,7 +114,7 @@ function update_font_heights(font) {
     return handyman.renderCached("%gui/const/const_fonts_css.tpl", config)
   }
 
-  //text visible in options
+  
   getOptionText = @() "".concat(
     loc($"fontSize/{this.id.tolower()}"),
     loc("ui/parentheses/space", { text = "{0}%".subst(round(100 * this.sizeMultiplier).tointeger()) }))
@@ -122,7 +122,7 @@ function update_font_heights(font) {
   getFontExample = @() "small_text; font-pixht: {0}".subst(round(getFontInitialHt("small_text") * this.sizeMultiplier).tointeger())
 }
 
-enums.addTypesByGlobalName("g_font",
+enums.addTypes(g_font,
 {
   TINY = {
     saveId = FONT_SAVE_ID.TINY
@@ -176,14 +176,14 @@ enums.addTypesByGlobalName("g_font",
 null,
 "id")
 
-::g_font.types.sort(@(a, b) a.sizeOrder <=> b.sizeOrder)
+g_font.types.sort(@(a, b) a.sizeOrder <=> b.sizeOrder)
 
 function getAvailableFontBySaveId(saveId) {
-  let res = enums.getCachedType("saveId", saveId, ::g_font.cache.bySaveId, ::g_font, null)
+  let res = enums.getCachedType("saveId", saveId, g_font.cache.bySaveId, g_font, null)
   if (res && res.isAvailable(screen_width(), screen_height()))
     return res
 
-  foreach (font in ::g_font.types)
+  foreach (font in g_font.types)
     if (font.saveIdCompatibility
       && isInArray(saveId, font.saveIdCompatibility)
       && font.isAvailable(screen_width(), screen_height()))
@@ -192,13 +192,13 @@ function getAvailableFontBySaveId(saveId) {
   return null
 }
 
-::g_font.getAvailableFonts <- function getAvailableFonts() {
+g_font.getAvailableFonts <- function getAvailableFonts() {
   let sWidth = screen_width()
   let sHeight = screen_height()
   return this.types.filter(@(f) f.isAvailable(sWidth, sHeight))
 }
 
-::g_font.getSmallestFont <- function getSmallestFont(sWidth, sHeight) {
+g_font.getSmallestFont <- function getSmallestFont(sWidth, sHeight) {
   local res = null
   foreach (font in this.types)
     if (font.isAvailable(sWidth, sHeight) && (!res || font.sizeMultiplier < res.sizeMultiplier))
@@ -206,17 +206,17 @@ function getAvailableFontBySaveId(saveId) {
   return res
 }
 
-::g_font.getFixedFont <- function getFixedFont() { //return null if can change fonts
+g_font.getFixedFont <- function getFixedFont() { 
   let availableFonts = this.getAvailableFonts()
   return availableFonts.len() == 1 ? availableFonts[0] : null
 }
 
 function canChange() {
-  return ::g_font.getFixedFont() == null
+  return g_font.getFixedFont() == null
 }
 
 function getDefault() {
-  let { getFixedFont, SMALL, LARGE, MEDIUM, HUGE, COMPACT } = ::g_font //-ident-hides-ident
+  let { getFixedFont, SMALL, LARGE, MEDIUM, HUGE, COMPACT } = g_font 
   let fixedFont = getFixedFont()
   if (fixedFont)
     return fixedFont
@@ -240,7 +240,7 @@ function getDefault() {
   return LARGE
 }
 
-::g_font.getCurrent <- function getCurrent() {
+g_font.getCurrent <- function getCurrent() {
   if (!canChange())
     return update_font_heights(getDefault())
 
@@ -252,7 +252,7 @@ function getDefault() {
 
   local fontSaveId = loadLocalAccountSettings(FONTS_SAVE_PATH)
   local res = getAvailableFontBySaveId(fontSaveId)
-  if (!res) { //compatibility with 1.77.0.X
+  if (!res) { 
     fontSaveId = loadLocalByScreenSize(FONTS_SAVE_PATH)
     if (fontSaveId) {
       res = getAvailableFontBySaveId(fontSaveId)
@@ -269,8 +269,8 @@ function saveFontToConfig(font) {
     setSystemConfigOption(FONTS_SAVE_PATH_CONFIG, font.saveId)
 }
 
-//return isChanged
-::g_font.setCurrent <- function setCurrent(font) {
+
+g_font.setCurrent <- function setCurrent(font) {
   if (!canChange())
     return false
 
@@ -285,7 +285,7 @@ function saveFontToConfig(font) {
 }
 
 
-::g_font.validateSavedConfigFonts <- function validateSavedConfigFonts() {
+g_font.validateSavedConfigFonts <- function validateSavedConfigFonts() {
   if (canChange())
     saveFontToConfig(this.getCurrent())
 }
@@ -293,7 +293,9 @@ function saveFontToConfig(font) {
 function resetAppliedFontsScale(_) {
   log("[fonts] Resetting appliedFontsSh, sizes of font will be set again")
   appliedFontsSh = 0;
-  update_font_heights(::g_font.getCurrent());
+  update_font_heights(g_font.getCurrent());
 }
 
 eventbus_subscribe("reset_applied_fonts_scale", resetAppliedFontsScale)
+
+return g_font

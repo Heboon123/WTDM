@@ -28,14 +28,18 @@ let { canRestartClient } = require("%scripts/utils/restartClient.nut")
 let { isOptionReqRestartChanged, setOptionReqRestartValue
 } = require("%scripts/options/optionsUtils.nut")
 let { utf8ToLower } = require("%sqstd/string.nut")
-let { setShortcutsAndSaveControls } = require("%scripts/controls/controlsCompatibility.nut")
+let { setShortcutsAndSaveControls, getShortcuts } = require("%scripts/controls/controlsCompatibility.nut")
 let { OPTIONS_MODE_GAMEPLAY, USEROPT_PTT, USEROPT_SKIP_WEAPON_WARNING } = require("%scripts/options/optionsExtNames.nut")
 let { isInFlight } = require("gameplayBinding")
-let { create_options_container } = require("%scripts/options/optionsExt.nut")
+let { create_options_container, get_option } = require("%scripts/options/optionsExt.nut")
 let { guiStartPostfxSettings } = require("%scripts/postFxSettings.nut")
 let { addPopup } = require("%scripts/popups/popups.nut")
 let { chatStatesCanUseVoice } = require("%scripts/chat/chatStates.nut")
 let { setTimeout, clearTimer, defer } = require("dagor.workcycle")
+let { assignButtonWindow } = require("%scripts/controls/assignButtonWnd.nut")
+let { openShipHitIconsMenu } = require("%scripts/options/handlers/shipHitIconsMenu.nut")
+
+let getNavigationImagesText = require("%scripts/utils/getNavigationImagesText.nut")
 
 const DELAY_BEFORE_PRELOAD_HOVERED_OPT_IMAGES_SEC = 0.25
 const MAX_NUM_VISIBLE_FILTER_OPTIONS = 25
@@ -100,7 +104,7 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
         id = gr.name
         visualDisable = gr.name == "voicechat" && !isCrossNetworkChatEnabled()
         tabName =$"#options/{gr.name}"
-        navImagesText = ::get_navigation_images_text(idx, this.optGroups.len())
+        navImagesText = getNavigationImagesText(idx, this.optGroups.len())
       })
 
       if (getTblValue("selected", gr) == true)
@@ -305,13 +309,13 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
   }
 
   function getShortcutText(shortcut_id_name) {
-    let shortcut = ::get_shortcuts([shortcut_id_name])
+    let shortcut = getShortcuts([shortcut_id_name])
     let data = ::get_shortcut_text({ shortcuts = shortcut, shortcutId = 0 })
     return data == "" ? "---" : data
 }
 
   function bindShortcutButton(devs, btns, shortcut_id_name, shortcut_object_name) {
-    let shortcut = ::get_shortcuts([shortcut_id_name]);
+    let shortcut = getShortcuts([shortcut_id_name]);
 
     let event = shortcut[0];
 
@@ -327,7 +331,7 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
   }
 
   function onClearShortcutButton(shortcut_id_name, shortcut_object_name) {
-    let shortcut = ::get_shortcuts([shortcut_id_name]);
+    let shortcut = getShortcuts([shortcut_id_name]);
 
     shortcut[0] = [];
 
@@ -338,7 +342,7 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
   }
 
   function onAssignInternetRadioButton() {
-    ::assignButtonWindow(this, this.bindInternetRadioButton);
+    assignButtonWindow(this, this.bindInternetRadioButton);
   }
   function bindInternetRadioButton(devs, btns) {
     this.bindShortcutButton(devs, btns, "ID_INTERNET_RADIO", "internet_radio_shortcut");
@@ -347,7 +351,7 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
     this.onClearShortcutButton("ID_INTERNET_RADIO", "internet_radio_shortcut");
   }
   function onAssignInternetRadioPrevButton() {
-    ::assignButtonWindow(this, this.bindInternetRadioPrevButton);
+    assignButtonWindow(this, this.bindInternetRadioPrevButton);
   }
   function bindInternetRadioPrevButton(devs, btns) {
     this.bindShortcutButton(devs, btns, "ID_INTERNET_RADIO_PREV", "internet_radio_prev_shortcut");
@@ -356,7 +360,7 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
     this.onClearShortcutButton("ID_INTERNET_RADIO_PREV", "internet_radio_prev_shortcut");
   }
   function onAssignInternetRadioNextButton() {
-    ::assignButtonWindow(this, this.bindInternetRadioNextButton);
+    assignButtonWindow(this, this.bindInternetRadioNextButton);
   }
   function bindInternetRadioNextButton(devs, btns) {
     this.bindShortcutButton(devs, btns, "ID_INTERNET_RADIO_NEXT", "internet_radio_next_shortcut");
@@ -388,11 +392,11 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
     })
     this.guiScene.appendWithBlk(this.scene.findObject(this.currentContainerName), markup, this)
     if (needShowOptions)
-      showObjById("ptt_buttons_block", ::get_option(USEROPT_PTT).value, this.scene)
+      showObjById("ptt_buttons_block", get_option(USEROPT_PTT).value, this.scene)
   }
 
   function getPttShortcutText() {
-    let ptt_shortcut = ::get_shortcuts(["ID_PTT"]);
+    let ptt_shortcut = getShortcuts(["ID_PTT"]);
     let pttShortcutText = ::get_shortcut_text({ shortcuts = ptt_shortcut, shortcutId = 0, cantBeEmpty = false });
     return pttShortcutText == ""
       ? "---"
@@ -400,11 +404,11 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
   }
 
   function onAssignVoiceButton() {
-    ::assignButtonWindow(this, this.bindVoiceButton);
+    assignButtonWindow(this, this.bindVoiceButton);
   }
 
   function bindVoiceButton(devs, btns) {
-    let ptt_shortcut = ::get_shortcuts(["ID_PTT"]);
+    let ptt_shortcut = getShortcuts(["ID_PTT"]);
 
     let event = ptt_shortcut[0];
 
@@ -434,8 +438,8 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
 
     this.joinEchoChannel(!this.echoTest);
     if (echoButton) {
-      echoButton.text = (this.echoTest) ? (loc("options/leaveEcho")) : (loc("options/joinEcho"));
-      echoButton.tooltip = (this.echoTest) ? (loc("guiHints/leaveEcho")) : (loc("guiHints/joinEcho"));
+      echoButton.setValue(this.echoTest ? loc("options/leaveEcho") : loc("options/joinEcho"))
+      echoButton.tooltip = this.echoTest ? loc("guiHints/leaveEcho") : loc("guiHints/joinEcho")
     }
   }
 
@@ -512,7 +516,7 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
     container.show(true)
   }
 
-  onSystemOptionControlHover = @(obj) this.guiScene.performDelayed({}, // Ensures it's called after onOptionContainerHover
+  onSystemOptionControlHover = @(obj) this.guiScene.performDelayed({}, 
     @() onSystemOptionControlHover(obj))
 
   function fillOptionsList(group) {
@@ -571,6 +575,7 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
   onPreloaderSettings = @() preloaderOptionsModal()
   onTankSightSettings = openTankSightSettings
   onDialogAddRadio = @() openAddRadioWnd()
+  onShipHitIconsVisibilityClick = openShipHitIconsMenu
 
   function onPostFxSettings(_obj) {
     this.applyFunc = guiStartPostfxSettings
@@ -670,8 +675,8 @@ gui_handlers.Options <- class (gui_handlers.GenericOptionsModal) {
     resetTutorialSkip()
     broadcastEvent("ResetSkipedNotifications")
 
-    //To notify player about success, it is only for player,
-    // to be sure, that operation is done.
+    
+    
     addPopup("", loc("mainmenu/btnRevealNotifications/onSuccess"))
   }
 
