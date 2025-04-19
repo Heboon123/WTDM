@@ -224,14 +224,16 @@ function getMassInfo(sourceBlk) {
   return ""
 }
 
-function mkAnglesRangeText(rawX, rawY, isNegativeZeroForX = false) {
-  let x = round(rawX).tointeger()
-  let y = round(rawY).tointeger()
+function mkAnglesRangeText(rawX, rawY, isNegativeZeroForX = false, needToRound = true) {
+  let x = (needToRound || rawX == 0) ? round(rawX).tointeger() : rawX
+  let y = (needToRound || rawY == 0) ? round(rawY).tointeger() : rawY
+  let xStr = (needToRound || rawX == 0) ? format("%d", x) : format("%.1f", x)
+  let yStr = (needToRound || rawY == 0) ? format("%d", y) : format("%.1f", y)
   if (x + y == 0)
-    return $"±{y}{unitsDeg}"
+    return $"±{yStr}{unitsDeg}"
   let signX = isNegativeZeroForX && x == 0 ? "-" : (x >= 0 ? "+" : "")
   let signY = y >= 0 ? "+" : ""
-  return $"{signX}{x}{unitsDeg}/{signY}{y}{unitsDeg}"
+  return $"{signX}{xStr}{unitsDeg}/{signY}{yStr}{unitsDeg}"
 }
 
 
@@ -649,7 +651,7 @@ function getWeaponDriveTurretTexts(commonData, weaponPartName, weaponInfoBlk, ne
     let needSwap = isSwaped && g.canSwap
     let degX = needSwap ? abs(y) * getSign(x) : x
     let degY = needSwap ? abs(x) * getSign(y) : y
-    desc.append(" ".concat(loc(g.label), mkAnglesRangeText(degX, degY, true)))
+    desc.append(" ".concat(loc(g.label), mkAnglesRangeText(degX, degY, true, false)))
   }
 
   if (needSingleAxis || status.isPrimary || [S_SHIP, S_BOAT].contains(simUnitType)) {
@@ -692,12 +694,12 @@ function getWeaponDriveTurretTexts(commonData, weaponPartName, weaponInfoBlk, ne
       }
 
       if (speed != 0) {
-        let speedTxt = speed < 10 ? format("%.1f", speed) : format("%d", round(speed))
+        let speedTxt = format("%.1f", speed)
         let res = { value = "".concat(loc($"crewSkillParameter/{a.modifName}"), colon, speedTxt, unitsDegPerSec) }
         if (simUnitType == S_TANK) {
           let topVal = a.getTankTopVal(commonData) * speedMul
           if (topVal > speed)
-            res.topValue <- "".concat(topVal < 10 ? format("%.1f", topVal) : format("%d", round(topVal)), unitsDegPerSec)
+            res.topValue <- "".concat(format("%.1f", topVal), unitsDegPerSec)
         }
         desc.append(res)
       }
@@ -1284,7 +1286,7 @@ function mkCoalBunkerDesc(_partType, _params, commonData) {
 function getUnitSensorsList(commonData) {
   let { unitDataCache } = commonData
   if ("sensorBlkList" not in unitDataCache) {
-    let { unitBlk, unit, findAnyModEffectValueBlk, isModAvailableOrFree,
+    let { unitBlk, unitName, findAnyModEffectValueBlk, isModAvailableOrFree,
       isDebugBatchExportProcess
     } = commonData
     let sensorBlkList = []
@@ -1303,10 +1305,12 @@ function getUnitSensorsList(commonData) {
       if (unitBlk?.WeaponSlots)
         foreach (slotBlk in unitBlk.WeaponSlots % "WeaponSlot")
           foreach (slotPresetBlk in (slotBlk % "WeaponPreset"))
-            if (slotPresetBlk?.sensors && slotPresetBlk?.reqModification
-                && isModAvailableOrFree(unit.name, slotPresetBlk.reqModification))
-              for (local b = 0; b < slotPresetBlk.sensors.blockCount(); b++)
-                appendOnce(slotPresetBlk.sensors.getBlock(b), sensorBlkList, false, isEqual)
+            if (slotPresetBlk?.sensors != null) {
+              if (isDebugBatchExportProcess || slotPresetBlk?.reqModification == null
+                  || isModAvailableOrFree(unitName, slotPresetBlk.reqModification))
+                for (local b = 0; b < slotPresetBlk.sensors.blockCount(); b++)
+                  appendOnce(slotPresetBlk.sensors.getBlock(b), sensorBlkList, false, isEqual)
+            }
     }
     unitDataCache.sensorBlkList <- sensorBlkList
   }

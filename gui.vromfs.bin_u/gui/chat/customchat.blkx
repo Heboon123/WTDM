@@ -1,0 +1,78 @@
+{
+  "tdiv": {
+    "size": "pw, ph",
+    "flow": "vertical",
+    "chatBlock": {
+      "id": "custom_chat_text_block",
+      "size": "pw, fh",
+      "style": "overflow-y:auto;",
+      "overflow-y": "auto",
+      "auto-scroll": "yes",
+      "flow": "vertical"
+    },
+    "ChatInputPlace": {
+      "id": "chat_input_place",
+      "size": "pw, @buttonHeight",
+      "pos": "0, 0.5*@scrn_tgt/100.0",
+      "position": "relative",
+      "sendHintType": "custom",
+      "EditBox": {
+        "id": "menuchat_input",
+        "width": "fw",
+        "max-len": "250",
+        "selected": "yes",
+        "on_activate": "onChatEntered",
+        "on_cancel_edit": "onChatCancel",
+        "font": "@fontSmall",
+        "text": "",
+        "_customRoomId": "",
+        "enable": "no"
+      },
+      "Button_text": {
+        "id": "btn_send",
+        "pos": "0.5*@scrn_tgt/100.0, 50%ph-50%h",
+        "position": "relative",
+        "text": "#chat/send",
+        "on_click": "onChatSend",
+        "enable": "no",
+        "noMargin": "yes",
+        "showConsoleImage": "no"
+      },
+      "SendButtonHint": {
+        "id": "btn_send_hint",
+        "position": "absolute",
+        "display": "hide",
+        "padding": "15@sf/@pf",
+        "background-color": "@frameHeaderBackgroundColor",
+        "border-color": "@frameDarkMenuBorderColor",
+        "border": "yes",
+        "border-offset": "@dp",
+        "textareaNoTab": {
+          "width": "pw",
+          "text": "#chat/send_disabled_hint",
+          "smallFont": "yes"
+        }
+      }
+    },
+    "dummy": [
+      {
+        "id": "btn_prevMsg",
+        "on_click": "onPrevMsg",
+        "behaviour": "accesskey",
+        "accessKey": "Alt Up"
+      },
+      {
+        "id": "btn_nextMsg",
+        "on_click": "onNextMsg",
+        "behaviour": "accesskey",
+        "accessKey": "Alt Down"
+      }
+    ],
+    "tdiv": {
+      "id": "custom_chat_timer",
+      "behaviour": "Timer",
+      "timer_handler_func": "onUpdate",
+      "timer_interval_msec": "1000"
+    }
+  }
+}

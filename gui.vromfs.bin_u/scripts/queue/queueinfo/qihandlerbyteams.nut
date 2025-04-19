@@ -9,13 +9,15 @@ let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { format } = require("string")
 let { MAX_COUNTRY_RANK } = require("%scripts/ranks.nut")
 let { fillCountriesList } = require("%scripts/matchingRooms/fillCountriesList.nut")
+let { getQueueTeam, getQueueClusters } = require("%scripts/queue/queueInfo.nut")
+let { getCustomViewCountryData } = require("%scripts/events/eventInfo.nut")
 
 gui_handlers.QiHandlerByTeams <- class (gui_handlers.QiHandlerBase) {
   timerUpdateObjId = "queue_box"
   timerTextObjId = "waitText"
 
   function updateStats() {
-    local myTeamNum = ::queues.getQueueTeam(this.queue)
+    local myTeamNum = getQueueTeam(this.queue)
     if (myTeamNum == Team.Any) {
       let teams = events.getAvailableTeams(this.event)
       if (teams.len() == 1)
@@ -23,7 +25,7 @@ gui_handlers.QiHandlerByTeams <- class (gui_handlers.QiHandlerBase) {
     }
 
     if (this.event && this.queue.queueStats)
-      this.updateQueueStats(::queues.getQueueClusters(this.queue), this.queue.queueStats, myTeamNum)
+      this.updateQueueStats(getQueueClusters(this.queue), this.queue.queueStats, myTeamNum)
   }
 
   function updateQueueStats(clusters, queueStats, myTeamNum) {
@@ -76,13 +78,18 @@ gui_handlers.QiHandlerByTeams <- class (gui_handlers.QiHandlerBase) {
     }
   }
 
-  function fillQueueTeam(teamObj, teamData, tableMarkup, playersCountText,  teamColor = "any", teamName = "") {
+  function fillQueueTeam(teamObj, teamData, tableMarkup, playersCountText, teamColor = "any", teamName = "") {
     if (!checkObj(teamObj))
       return
 
     teamObj.bgTeamColor = teamColor
-    teamObj.show(!!(teamData && teamData.len()))
-    fillCountriesList(teamObj.findObject("countries"), events.getCountries(teamData))
+    let isShowTeamData = !!(teamData && teamData.len())
+    teamObj.show(isShowTeamData)
+    if (!isShowTeamData)
+      return
+
+    fillCountriesList(teamObj.findObject("countries"), events.getCountries(teamData),
+      getCustomViewCountryData(this.event))
     teamObj.findObject("team_name").setValue(teamName)
     teamObj.findObject("players_count").setValue(playersCountText)
 
