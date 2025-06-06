@@ -1,22 +1,49 @@
 module events shared
 require ecs
 require dm
+require %game.player_events
 require %game.dm.dm_events
 require %game.dm.fire_system_events
 require %game.unit.unit_events
 require %game.unit.ammo_stowage_events
 require %game.unit.repair_system_events
 require %game.unit.extinguish_system_events
+require %game.unit.aircraft_events
 require %game.unit.ship_events
+require %game.unit.unit_proximity_damage_events
 require Weapon
 require DaWeapons
 require PropsManager
+
+
 
 
 [cpp_event(broadcast)]
 struct ParallelUpdateFrameDelayed
   curTime : float
   dt : float
+
+[cpp_event(broadcast)]
+struct ActUpdateAlways
+  curTime : float
+  dt : float
+
+[cpp_event(broadcast)]
+struct ActUpdateInput
+  curTime : float
+  dt : float
+
+[cpp_event(broadcast)]
+struct ActUpdatePausable
+  curTime : float
+  dt : float
+
+[cpp_event(broadcast)]
+struct ActUpdatePaused
+  curTime : float
+  dt : float
+
+
 
 [cpp_event(unicast)]
 struct EventOnStartShooting
@@ -25,6 +52,7 @@ struct EventOnStartShooting
 [cpp_event(unicast)]
 struct EventOnMetaPartDamage
   damage : uint16
+  offender : EntityId
 
 [cpp_event(unicast)]
 struct EventRepairMetaPart
@@ -56,37 +84,6 @@ struct CmdPostPhysUpdate
   tick : int
   dt : float
   isForReal : bool
-
-[cpp_event(broadcast)]
-struct EventOnKeyDown
-  eventId : int
-  dt : float
-
-[cpp_event(broadcast)]
-struct EventOnKeyState
-  eventId : int
-  isDown : bool
-  dt : float
-  timeMSec : int
-
-[cpp_event(broadcast)]
-struct EventOnKeyUp
-  eventId : int
-  dt : float
-
-[cpp_event(broadcast)]
-struct EventOnShortcutEnable
-  shortcut : string
-  enable : bool
-
-[cpp_event(broadcast)]
-struct EventOnAllShortcutsEnable
-  enable : bool
-
-[cpp_event(broadcast)]
-struct EventOnAxisEnable
-  axis : string
-  enable : bool
 
 [cpp_event(broadcast)]
 struct EventOnPlayerConnected
@@ -201,30 +198,6 @@ struct EventSoundAreaInit
 struct EventOnPlayerStat
   userId : uint64
   statIdName : string
-
-[cpp_event(unicast)]
-struct CmdEngineStartSound
-{}
-
-[cpp_event(unicast)]
-struct CmdEngineStopSound
-{}
-
-[cpp_event(unicast)]
-struct CmdEnginePlayStartSound
-{}
-
-[cpp_event(unicast)]
-struct CmdEnginePlayStopSound
-{}
-
-[cpp_event(unicast)]
-struct CmdEngineStealSound
-{}
-
-[cpp_event(unicast)]
-struct CmdEngineUnstealSound
-{}
 
 [event(unicast, with_scheme, routing=ROUTING_SERVER_TO_CLIENT, filter=target_entity_conn)]
 struct EventPickUpLoot
@@ -477,8 +450,33 @@ struct EventZoneCaptured
   wasArmy : uint8
   army : uint8
 
+[cpp_event(broadcast, with_scheme)]
+struct EventBattleAreaStatusChanged
+  active : bool
+  areaId : int
+
 [cpp_event(unicast, with_scheme)]
-struct EventGroundModelCollision
-  offender : EntityId
-  impulse : float
-  pos : float3
+struct EventUnitToUnitCollision
+  toUnit : EntityId
+  lPos : float3
+  fullImpulse : float
+  damage : float
+  isFriction : bool
+
+[event(unicast, routing=ROUTING_SERVER_TO_CLIENT)]
+struct CmdShowHitMark
+  victim : EntityId
+  collNodeId : int
+  armorEfficiency : float
+  damageToArmorPercent : float
+  hitResult : int
+
+[cpp_event(unicast, with_scheme)]
+struct CmdTrySpawnSlave {}
+
+[cpp_event(broadcast)]
+struct EventEntityManagerBeforeClear {}
+
+[cpp_event(broadcast)]
+struct EventGameObjectsCreated
+  game_objects : EntityId

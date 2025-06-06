@@ -31,6 +31,9 @@ let { shopIsModificationPurchased } = require("chardResearch")
 let { get_ranks_blk, get_modifications_blk } = require("blkGetters")
 let { measureType } = require("%scripts/measureType.nut")
 let { getFullUnitBlk } = require("%scripts/unit/unitParams.nut")
+let { isGameModeWithSpendableWeapons } = require("%scripts/gameModes/gameModeManagerState.nut")
+let { doesLocTextExist } = require("dagor.localize")
+let { getSupportUnits } = require("%scripts/unit/supportUnits.nut")
 
 let BULLET_TYPE = {
   ROCKET_AIR          = "rocket_aircraft"
@@ -216,6 +219,24 @@ function getBulletsSetData(air, modifName, noModList = null) {
         wpList.append(weapon.blk)
         triggerList.append(weapon.trigger)
       }
+  let supportBlkIdx = {}
+  foreach (supportName in getSupportUnits(air.name)) {
+    let supportUnit = getAircraftByName(supportName)
+    if (supportUnit == null)
+      continue
+    let supportUnitBlk = getFullUnitBlk(supportName)
+    let primaryListSupport = getPrimaryWeaponsList(supportUnit)
+    foreach (primaryMod in primaryListSupport) {
+      let supportWeapons = getCommonWeapons(supportUnitBlk, primaryMod)
+      foreach (weapon in supportWeapons)
+        if (weapon?.blk && !weapon?.dummy && !wpList.contains(weapon.blk)) {
+          let wBlkIdx = wpList.len()
+          supportBlkIdx[wBlkIdx] <- supportName
+          wpList.append(weapon.blk)
+          triggerList.append(weapon.trigger)
+        }
+    }
+  }
 
   if (!noModList) { 
     let weapons = getUnitWeapons(airBlk)
@@ -229,7 +250,7 @@ function getBulletsSetData(air, modifName, noModList = null) {
   local bulSetForIconParam = null
   let fakeBulletsSets = []
   local index = -1
-  foreach (wBlkName in wpList) {
+  foreach (wBlkIdx, wBlkName in wpList) {
     index++
     let wBlk = blkFromPath(wBlkName)
     if (u.isEmpty(wBlk) || (!wBlk?[getModificationBulletsEffect(searchName)] && !noModList))
@@ -291,6 +312,7 @@ function getBulletsSetData(air, modifName, noModList = null) {
                   bulletAnimations = clone bulletAnimations
                   cumulativeDamage = paramsBlk?.cumulativeDamage.armorPower ?? 0
                   cumulativeByNormal = paramsBlk?.cumulativeByNormal ?? false
+                  supportUnitName = supportBlkIdx?[wBlkIdx]
                 }
         }
         else
@@ -522,6 +544,18 @@ function getBulletsInfoForPrimaryGuns(air) {
 
   local weapons = commonWeapons
   weapons.extend(presetWeapons)
+
+  foreach (supportName in getSupportUnits(air.name)) {
+    let supportUnit = getAircraftByName(supportName)
+    if (supportUnit == null)
+      continue
+    let supportUnitBlk = getFullUnitBlk(supportName)
+    let primaryWeaponSupport = getLastPrimaryWeapon(supportUnit)
+    let supCommonWeapons = getCommonWeapons(supportUnitBlk, primaryWeaponSupport)
+    foreach (weapon in supCommonWeapons)
+      if (weapon?.blk && !weapon?.dummy)
+        weapons.append(weapon)
+  }
 
   if (weapons.len() == 0)
     return res
@@ -852,6 +886,7 @@ function getBulletsList(airName, groupIdx, params = BULLETS_LIST_PARAMS) {
     weaponType = WEAPON_TYPE.GUNS
     caliber = 0
     duplicate = false 
+    supportUnitName = null
 
     
     items = []
@@ -878,6 +913,7 @@ function getBulletsList(airName, groupIdx, params = BULLETS_LIST_PARAMS) {
       descr.caliber = bData.caliber
       descr.weaponType = bData.weaponType
       descr.isBulletBelt = bData?.isBulletBelt ?? true
+      descr.supportUnitName = bData?.supportUnitName
     }
 
     appendOneBulletsItem(descr, modifName, air, "", params.needTexts) 
@@ -916,6 +952,7 @@ function getBulletsList(airName, groupIdx, params = BULLETS_LIST_PARAMS) {
         descr.caliber = bData.caliber
         descr.weaponType = bData.weaponType
         descr.isBulletBelt = bData?.isBulletBelt ?? true
+        descr.supportUnitName = bData?.supportUnitName
       }
     }
 
@@ -925,7 +962,7 @@ function getBulletsList(airName, groupIdx, params = BULLETS_LIST_PARAMS) {
 
     let enabled = !params.isOnlyBought ||
       shopIsModificationPurchased(airName, modifName) != 0
-    let amountText = params.needCheckUnitPurchase && ::is_game_mode_with_spendable_weapons()
+    let amountText = params.needCheckUnitPurchase && isGameModeWithSpendableWeapons()
       ? getAmmoAmountData(air, modifName, AMMO.MODIFICATION).text : ""
 
     appendOneBulletsItem(descr, modifName, air, amountText, params.needTexts, enabled)
@@ -1217,6 +1254,33 @@ function isModificationIsShell(unit, mod) {
     && bulletsSet?.weaponType != WEAPON_TYPE.COUNTERMEASURES 
 }
 
+function getProjectileNameLoc(locKey, needToUseBulletTypeName = false) {
+  if (locKey == "artillery")
+    return loc("multiplayer/artillery")
+  if (doesLocTextExist(locKey))
+    return loc(locKey)
+  if (doesLocTextExist($"weapons/{locKey}/short"))
+    return loc($"weapons/{locKey}/short")
+  if (needToUseBulletTypeName && doesLocTextExist($"{locKey}/name"))
+    return loc($"{locKey}/name")
+
+  if (needToUseBulletTypeName && locKey != "")
+    logerr($"Can't find localization for projectile {locKey}")
+  return ""
+}
+
+local projectileNameToIconsBlk = null
+function getProjectileIconLayers(projectileName) {
+  if (projectileNameToIconsBlk == null) {
+    projectileNameToIconsBlk = DataBlock()
+    projectileNameToIconsBlk.tryLoad("config/killer_projectile_icon.blk")
+  }
+
+  return projectileNameToIconsBlk.getStr(projectileName, "")
+    .split(";")
+    .map(@(layeredIconSrc) { layeredIconSrc })
+}
+
 return {
   BULLET_TYPE
   
@@ -1257,4 +1321,6 @@ return {
   isModificationIsShell
   getSquashArmorAnglesScale
   anglesToCalcDamageMultiplier
+  getProjectileNameLoc
+  getProjectileIconLayers
 }

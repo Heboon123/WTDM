@@ -35,6 +35,7 @@ let RadarTargetPos = [0, 0]
 let RadarTargetAngle = Watched(-1.0)
 let RadarTargetVel = Watched(-1.0)
 let RadarTargetBearing = Watched(0.0)
+let GunfireSolutionPointNum = Watched(-1)
 let GunfireSolution = [-1, -1]
 let AamAccelLock = Watched(false)
 let MfdRadarWithNavVis = Watched(false)
@@ -42,7 +43,9 @@ let MfdRadarNavPosSize = [0, 0, 0, 0]
 let AimLockPos = [0, 0]
 let AimLockValid = Watched(false)
 let AimLockDist = Watched(-1)
-let TvvMark = [0, 0]
+let TvvMark = [0, 0] 
+let TvvIlsMark = [0, 0]
+let IsTVVIlsMarkValid = Watched(false)
 let TvvHMDMark = [0, 0]
 let AtgmTargetDist = Watched(0.0)
 let MfdVdiVisible = Watched(false)
@@ -67,6 +70,9 @@ let HmdGunTargeting = Watched(false)
 let MfdRwrColor = Watched(Color(0, 255, 0, 240))
 let IsLightsOn = Watched(false)
 let HmdBrightnessMult = Watched(1.0)
+let MfdHsdVisible = Watched(false)
+let MfdHsdPosSize = Watched([0.0, 0.0, 0.0, 0.0])
+let TVVPitch = Watched(0.0)
 
 let planeState = {
   BlkFileName,
@@ -100,6 +106,7 @@ let planeState = {
   RadarTargetAngle,
   RadarTargetBearing,
   RadarTargetVel,
+  GunfireSolutionPointNum,
   GunfireSolution,
   AamAccelLock,
   MfdRadarWithNavVis,
@@ -108,6 +115,8 @@ let planeState = {
   AimLockDist,
   AimLockPos,
   TvvMark,
+  TvvIlsMark,
+  IsTVVIlsMarkValid,
   TvvHMDMark,
   AtgmTargetDist,
   MfdVdiVisible,
@@ -132,7 +141,10 @@ let planeState = {
   CustomPages,
   HmdGunTargeting,
   MfdRwrColor,
-  IsLightsOn
+  IsLightsOn,
+  MfdHsdVisible,
+  MfdHsdPosSize,
+  TVVPitch
 }
 
 interop.updatePlaneIlsPosSize <- function(x, y, w, h) {
@@ -163,6 +175,12 @@ interop.updateDigDevicesPosSize <- function(x, y, w, h) {
   DigDevicesPosSize[3] = h
 }
 
+interop.updatePlaneMfdHsdPosSize <- function(x, y, w, h) {
+  let curVal = MfdHsdPosSize.get()
+  if (curVal[0] != x || curVal[1] != y || curVal[2] != w || curVal[3] != h)
+    MfdHsdPosSize([x, y, w, h])
+}
+
 interop.updateAimLockPos <- function(x, y) {
   AimLockPos[0] = x
   AimLockPos[1] = y
@@ -191,6 +209,11 @@ interop.updateIlsAtgmTargetPos <- function(x, y) {
 interop.updateTvvTarget <- function(x, y) {
   TvvMark[0] = x
   TvvMark[1] = y
+}
+
+interop.updateTVVIls <- function(x, y) {
+  TvvIlsMark[0] = x
+  TvvIlsMark[1] = y
 }
 
 interop.updateTvvHmd <- function(x, y) {

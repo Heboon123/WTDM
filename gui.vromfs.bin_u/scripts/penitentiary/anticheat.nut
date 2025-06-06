@@ -1,9 +1,17 @@
 from "%scripts/dagui_natives.nut" import restart_game, is_eac_inited
 from "%scripts/dagui_library.nut" import *
-
 let { isPlatformSteamDeck } = require("%scripts/clientState/platform.nut")
+let { recentBR } = require("%scripts/battleRating.nut")
+
+function isEventMrankConditionComplete(event) {
+  if ((event?.antiCheatEnableMrank ?? -1) >= 0)
+    return recentBR.get() < event.antiCheatEnableMrank
+  return true
+}
 
 function shouldUseEac(event) {
+  if (!isEventMrankConditionComplete(event))
+    return true
   return event?.enableEAC ?? false
 }
 
@@ -22,7 +30,6 @@ function showMsgboxIfEacInactive(event) {
        ], null)
   return false
 }
-
 
 return {
   showMsgboxIfEacInactive = showMsgboxIfEacInactive

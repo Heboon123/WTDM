@@ -55,7 +55,6 @@ let damageStatusTemplates = {
 }
 
 let importantEventKeys = ["partEvent", "ammoEvent"]
-let criticalFireTypes = ["ship_barbettes", "ship_cruiser_barbettes", "ship_ammo_fire", "ship_ammo_fire_total", "ship_ammo_fire_aux"]
 
 let debuffsListsByUnitType = {}
 let trackedPartNamesByUnitType = {}
@@ -335,8 +334,7 @@ function showCrewCount() {
   let crewNestObj = scene.findObject("crew_nest")
   crewNestObj._blink = "yes"
 
-  let data = "".concat("hitCameraLostCrewText { text:t='",
-    colorize("warningTextColor", crewLostCount), "' }")
+  let data = "".concat("hitCameraLostCrewText { text:t='", crewLostCount, "' }")
   get_cur_gui_scene().prependWithBlk(
     crewNestObj.findObject("lost_crew_count"), data, this)
 
@@ -526,7 +524,7 @@ function removeAllFireIndicators() {
   fireIndicators.clear()
 }
 
-function onHitCameraUpdateFiresEvent(fireArr) {
+function onHitCameraUpdateFiresEvent(fireArr, hasCriticalFire) {
   if (scene == null || !scene.isValid())
     return
 
@@ -539,7 +537,6 @@ function onHitCameraUpdateFiresEvent(fireArr) {
   foreach (fire in fireIndicators)
     fire.waitRemove = true
 
-  local hasCriticalFire = false
   foreach (fireData in fireArr) {
     let fireName = $"{fireData.partId}"
     if (!fireIndicators?[fireName]) {
@@ -554,8 +551,6 @@ function onHitCameraUpdateFiresEvent(fireArr) {
       if (!u.isEqual(fireData, fire.data))
         fire.obj.pos = $"{fireData.screenPosX}, {fireData.screenPosY}"
     }
-    if (criticalFireTypes.contains(fireData.firePreset))
-      hasCriticalFire = true
   }
   setDamageStatus("fire_status", 1, hasCriticalFire)
 
@@ -694,8 +689,9 @@ function hitCameraInit(nest) {
 
   minAliveCrewCount = getMinAliveCrewCount()
 
-  g_hud_event_manager.subscribe("EnemyDamageState", onEnemyDamageState, this)
-  g_hud_event_manager.subscribe("HitCameraImportanEvents", onHitCameraImportantEvents, this)
+  g_hud_event_manager.subscribe("EnemyDamageState", onEnemyDamageState, scene)
+  g_hud_event_manager.subscribe("HitCameraImportanEvents", onHitCameraImportantEvents, scene)
+  g_hud_event_manager.subscribe("LocalPlayerDead", @(_eventData) reset(), scene)
 
   reset()
   hitCameraReinit()
@@ -722,11 +718,11 @@ eventbus_subscribe("on_hit_camera_event", function(event) {
 })
 
 eventbus_subscribe("on_hitcamera_update_fires_event", function(event) {
-  let {fireArr} = event
-  onHitCameraUpdateFiresEvent(fireArr)
+  let {fireArr, hasCriticalFire} = event
+  onHitCameraUpdateFiresEvent(fireArr, hasCriticalFire)
 })
 
-::get_hit_camera_aabb <- getHitCameraAABB 
+registerForNativeCall("get_hit_camera_aabb", getHitCameraAABB)
 
 return {
   hitCameraInit

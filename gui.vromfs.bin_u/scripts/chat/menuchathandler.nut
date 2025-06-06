@@ -5,11 +5,11 @@ from "%scripts/utils_sa.nut" import save_to_json, is_myself_anyof_moderators
 from "%scripts/shop/shopCountriesList.nut" import checkCountry
 
 let { get_game_params_blk } = require("blkGetters")
-let { g_chat, isRoomWWOperation } = require("%scripts/chat/chat.nut")
+let { g_chat } = require("%scripts/chat/chat.nut")
 let { getGlobalModule } = require("%scripts/global_modules.nut")
 let events = getGlobalModule("events")
 let g_squad_manager = getGlobalModule("g_squad_manager")
-let { g_chat_room_type } = require("%scripts/chat/chatRoomType.nut")
+let { isRoomWWOperation, g_chat_room_type } = require("%scripts/chat/chatRoomType.nut")
 let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
@@ -18,16 +18,17 @@ let { subscribe_handler, broadcastEvent, addListenersWithoutEnv } = require("%sq
 let { registerPersistentData } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let { format } = require("string")
 let { handlerType } = require("%sqDagui/framework/handlerType.nut")
-let { move_mouse_on_child_by_value, move_mouse_on_obj, select_editbox, handlersManager,
-  is_in_loading_screen } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { move_mouse_on_child_by_value, move_mouse_on_obj, select_editbox } = require("%sqDagui/daguiUtil.nut")
+let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { is_in_loading_screen } = require("%sqDagui/framework/baseGuiHandlerManager.nut")
 let DataBlock = require("DataBlock")
 let { get_time_msec } = require("dagor.time")
 let { deferOnce } = require("dagor.workcycle")
 let regexp2 = require("regexp2")
 let { parse_json } = require("json")
 let { clearBorderSymbols, startsWith, replace, stripTags } = require("%sqstd/string.nut")
-let penalties = require("%scripts/penitentiary/penalties.nut")
-let { newRoom, newMessage, initChatMessageListOn } = require("%scripts/chat/menuChatRoom.nut")
+let { getDevoiceMessage } = require("%scripts/penitentiary/penaltyMessages.nut")
+let { newRoom, newMessage, initChatMessageListOn, isBlockChatMessage } = require("%scripts/chat/menuChatRoom.nut")
 let { topMenuBorders } = require("%scripts/mainmenu/topMenuStates.nut")
 let { isChatEnabled, checkChatEnableWithPlayer, isCrossNetworkMessageAllowed, chatStatesCanUseVoice } = require("%scripts/chat/chatStates.nut")
 let { hasMenuGeneralChats, hasMenuChatPrivate, hasMenuChatSquad, hasMenuChatClan, hasMenuChatMPlobby
@@ -49,7 +50,8 @@ let { contactPresence } = require("%scripts/contacts/contactPresence.nut")
 let { addPopup } = require("%scripts/popups/popups.nut")
 let { getContactByName, clanUserTable } = require("%scripts/contacts/contactsManager.nut")
 let openEditBoxDialog = require("%scripts/wndLib/editBoxHandler.nut")
-let { getLastGamercardScene } = require("%scripts/gamercard.nut")
+let { getLastGamercardScene } = require("%scripts/gamercard/gamercardHelpers.nut")
+let { updateGamercards } = require("%scripts/gamercard/gamercard.nut")
 let { isProfileReceived, isAuthorized } = require("%appGlobals/login/loginState.nut")
 let { showChatPlayerRClickMenu } = require("%scripts/user/playerContextMenu.nut")
 let { isPlayerNickInContacts } = require("%scripts/contacts/contactsChecks.nut")
@@ -62,12 +64,15 @@ let { get_gui_option_in_mode } = require("%scripts/options/options.nut")
 let { getContact } = require("%scripts/contacts/contacts.nut")
 let { lastChatSceneShow, globalChatRooms, langsList } = require("%scripts/chat/chatConsts.nut")
 let { openRightClickMenu } = require("%scripts/wndLib/rightClickMenu.nut")
-let { getChatObject, isUserBlockedByPrivateSetting } = require("%scripts/chat/chatUtils.nut")
+let { getChatObject, isUserBlockedByPrivateSetting, validateChatMessage } = require("%scripts/chat/chatUtils.nut")
 let { isPlatformSony } = require("%scripts/clientState/platform.nut")
 let { wwIsOperationLoaded } = require("worldwar")
 let { acceptInviteByLink, addChatRoomInvite } = require("%scripts/invites/invites.nut")
 let { ceil } = require("%sqstd/math.nut")
 let { menuChatHandler } = require("%scripts/chat/chatHandler.nut")
+let { joinThread, getRoomById, addRoom, isRoomSquad, isRoomClan, openChatRoom } = require("%scripts/chat/chatRooms.nut")
+let { getThreadInfo } = require("%scripts/chat/chatStorage.nut")
+let { reputationType } = require("%scripts/user/usersReputation.nut")
 
 const CHAT_ROOMS_LIST_SAVE_ID = "chatRooms"
 const VOICE_CHAT_SHOW_COUNT_SAVE_ID = "voiceChatShowCount"
@@ -286,7 +291,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function checkChatAvailableInRoom(roomId, callback) {
-    let room = g_chat.getRoomById(roomId)
+    let room = getRoomById(roomId)
     if (room == null || room.hasCustomViewHandler) {
       callback?(false)
       return
@@ -339,7 +344,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
 
   function switchCurRoom(room, needUpdateWindow = true) {
     if (u.isString(room))
-      room = g_chat.getRoomById(room)
+      room = getRoomById(room)
     if (!room || room == this.curRoom)
       return
 
@@ -512,8 +517,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
     if (!checkObj(roomTab))
       return
     let roomVisible = room.type.isVisible()
-
-    roomTab.canClose = room.canBeClosed ? "yes" : "no"
+    roomTab.canClose = room.canBeClosed() ? "yes" : "no"
     room.concealed(function(is_concealed) {
       if (!roomTab?.isValid())
         return
@@ -788,13 +792,20 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
 
     let totalMblocks = room.mBlocks.len()
     let numChildrens = messagesContainer.childrenCount()
+    local hasBlockChatMsg = false
     for (local i = 0; i < numChildrens; i++) {
       let msgObj = messagesContainer.getChild(i)
       let textObj  = msgObj.findObject("chat_message_text")
-      if (i < totalMblocks) {
+      if (!hasBlockChatMsg && i < totalMblocks) {
+        let mBlock = room.mBlocks[i]
+        if (mBlock.isBlockChat) {
+          hasBlockChatMsg = true
+          msgObj.show(false)
+          continue
+        }
         msgObj.show(true)
-        msgObj.messageType = room.mBlocks[i].messageType
-        textObj.setValue(room.mBlocks[i].text)
+        msgObj.messageType = mBlock.messageType
+        textObj.setValue(mBlock.text)
       }
       else {
         msgObj.show(false)
@@ -874,7 +885,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
 
     let baseRoomsList = g_chat.getBaseRoomsList()
     foreach (idx, roomId in baseRoomsList)
-      if (!g_chat.getRoomById(roomId))
+      if (!getRoomById(roomId))
         this.addRoom(roomId, null, null, idx == 0)
 
     if (isChatEnabled()) {
@@ -1179,7 +1190,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
       if (!db?.list || !db?.channel)
         return true
 
-      let roomData = g_chat.getRoomById(db.channel)
+      let roomData = getRoomById(db.channel)
       if (roomData) {
         let uList = db.list % "item"
         roomData.users = []
@@ -1198,7 +1209,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
         roomData.users.sort(sortChatUsers)
         this.updateUsersList()
       }
-      if (g_chat.isRoomClan(db.channel))
+      if (isRoomClan(db.channel))
         broadcastEvent("ClanRoomMembersChanged");
 
       else if (isRoomWWOperation(db.channel) && wwIsOperationLoaded()) {
@@ -1211,15 +1222,15 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
       if (db.channel == "")
         foreach (roomData in g_chat.rooms) {
           this.removeUserFromRoom(roomData, db.nick)
-          if (g_chat.isRoomClan(roomData.id))
+          if (isRoomClan(roomData.id))
             broadcastEvent(
               "ClanRoomMembersChanged",
               { nick = db.nick, presence = contactPresence.OFFLINE }
             )
         }
       else {
-        this.removeUserFromRoom(g_chat.getRoomById(db.channel), db.nick)
-        if (g_chat.isRoomClan(db.channel))
+        this.removeUserFromRoom(getRoomById(db.channel), db.nick)
+        if (isRoomClan(db.channel))
           broadcastEvent(
             "ClanRoomMembersChanged",
             { nick = db.nick, presence = contactPresence.OFFLINE }
@@ -1229,7 +1240,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
     else if (dbType == "user_join") {
       if (!db?.channel || !db?.nick)
         return true
-      let roomData = g_chat.getRoomById(db.channel)
+      let roomData = getRoomById(db.channel)
       if (roomData) {
         local found = false
         foreach (user in roomData.users)
@@ -1240,12 +1251,12 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
         if (!found) {
           roomData.users.append(this.createRoomUserInfo(db.nick))
           roomData.users.sort(sortChatUsers)
-          if (g_chat.isRoomSquad(roomData.id))
+          if (isRoomSquad(roomData.id))
             this.onSquadListMember(db.nick, true)
 
           this.updateUsersList()
         }
-        if (g_chat.isRoomClan(db.channel))
+        if (isRoomClan(db.channel))
           broadcastEvent(
             "ClanRoomMembersChanged",
             { nick = db.nick, presence = contactPresence.ONLINE }
@@ -1277,10 +1288,10 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
       if (g_chat.isSystemChatRoom(roomId))
         return
 
-      if (g_chat.isRoomClan(roomId) && !hasFeature("Clans"))
+      if (isRoomClan(roomId) && !hasFeature("Clans"))
         return
 
-      local room = g_chat.getRoomById(roomId)
+      local room = getRoomById(roomId)
       if (!room)
         room = this.addRoom(roomId)
       else {
@@ -1297,16 +1308,16 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
       let roomId = taskId.slice(6) 
       if (g_chat.isSystemChatRoom(roomId))
         return
-      let room = g_chat.getRoomById(roomId)
+      let room = getRoomById(roomId)
       if (room) {
         room.joined = false
-        let isSquad = g_chat.isRoomSquad(room.id)
-        let isClan = g_chat.isRoomClan(room.id)
+        let isSquad = isRoomSquad(room.id)
+        let isClan = isRoomClan(room.id)
         if (isSquad || isClan)
           this.silenceUsersByList(room.users)
         room.users = []
         if (isSquad) {
-          room.canBeClosed = true
+          room.forceCanBeClosed = true
           this.updateRoomTabById(room.id)
         }
         this.addRoomMsg(room.id, "", format(room.getLeaveMessage(), room.getRoomName()))
@@ -1340,7 +1351,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
       return
     foreach (idx, user in roomData.users)
       if (user.name == nick) {
-        if (g_chat.isRoomSquad(roomData.id))
+        if (isRoomSquad(roomData.id))
           this.onSquadListMember(nick, false)
         else if ("isOwner" in user && user.isOwner == true)
           gchat_list_names(gchat_escape_target(roomData.id))
@@ -1357,7 +1368,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     local thisCapture = this
-    newMessage(from, msg, privateMsg, myPrivate, overlaySystemColor, important, !g_chat.isRoomSquad(roomId), function(mBlock) {
+    newMessage(from, msg, privateMsg, myPrivate, overlaySystemColor, important, !isRoomSquad(roomId), function(mBlock) {
       if (!mBlock)
         return
 
@@ -1415,7 +1426,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function newMessagesGC() {
-    ::update_gamercards()
+    updateGamercards()
   }
 
   function checkNewMessages() {
@@ -1427,11 +1438,11 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
 
     this.curRoom.newImportantMessagesCount = 0
 
-    ::update_gamercards()
+    updateGamercards()
   }
 
   function checkLastActionRoom() {
-    if (this.lastActionRoom == "" || !g_chat.getRoomById(this.lastActionRoom))
+    if (this.lastActionRoom == "" || !getRoomById(this.lastActionRoom))
       this.lastActionRoom = getTblValue("id", this.curRoom, "")
   }
 
@@ -1574,7 +1585,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
         }
       }
       else if (errorName == chatErrorName.CANNOT_JOIN_THE_CHANNEL && roomId.len() > 1) {
-        if (g_chat.isRoomSquad(roomId)) {
+        if (isRoomSquad(roomId)) {
           addPopup(null, loc("squad/join_chat_failed"), null, null, null, "squad_chat_failed")
           return
         }
@@ -1600,7 +1611,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
           return
         }
         if (roomType == g_chat_room_type.THREAD) {
-          let threadInfo = g_chat.getThreadInfo(roomId)
+          let threadInfo = getThreadInfo(roomId)
           if (threadInfo)
             threadInfo.invalidate()
         }
@@ -1626,7 +1637,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
 
       let errMsg = loc($"chat/error/{errorName}{roomType.getErrorPostfix(errorName)}", locParams)
       local roomToSend = roomId
-      if (!g_chat.getRoomById(roomToSend))
+      if (!getRoomById(roomToSend))
         roomToSend = this.lastActionRoom
       this.addRoomMsg(roomToSend, "", errMsg)
       if (roomId != roomToSend)
@@ -1644,9 +1655,9 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function joinRoom(id, password = "", onJoinFunc = null, customScene = null, ownerHandler = null, reconnect = false) {
-    let roomData = g_chat.getRoomById(id)
+    let roomData = getRoomById(id)
     if (roomData && id == g_chat_room_type.getMySquadRoomId())
-      roomData.canBeClosed = false
+      roomData.forceCanBeClosed = false
 
     if (roomData && roomData.joinParams != "")
       return ::gchat_raw_command($"join {gchat_escape_target(id)} {roomData.joinParams}")
@@ -1672,7 +1683,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
       foreach (room in g_chat.rooms)
         if (taskConfig.roomId == room.id) {
           if (!room.joined) {
-            let msgId = g_chat.isRoomSquad(taskConfig.roomId) ? "squad/joinChannel" : "chat/joinChannel"
+            let msgId = isRoomSquad(taskConfig.roomId) ? "squad/joinChannel" : "chat/joinChannel"
             this.addRoomMsg(room.id, "", format(loc(msgId), room.getRoomName()))
           }
           room.joined = true
@@ -1696,7 +1707,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
 
     if (r.type != g_chat_room_type.PRIVATE)
       this.guiScene.playSound("chat_join")
-    g_chat.addRoom(r)
+    addRoom(r)
 
     local thisCapture = this
     this.countUnhiddenRooms(function(unhiddenRoomsCount) {
@@ -1753,10 +1764,10 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
   function onEventClanInfoUpdate(_p) {
     local haveChanges = false
     foreach (room in g_chat.rooms)
-      if (g_chat.isRoomClan(room.id)
-          && (room.canBeClosed != (room.id != g_chat.getMyClanRoomId()))) {
+      if (isRoomClan(room.id)
+          && (room.canBeClosed() != (room.id != g_chat.getMyClanRoomId()))) {
         haveChanges = true
-        room.canBeClosed = !room.canBeClosed
+        room.forceCanBeClosed = !room.canBeClosed()
       }
     if (haveChanges)
       this.updateRoomsList()
@@ -1800,7 +1811,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
     if (!(roomIdx in g_chat.rooms))
       return
     let roomData = g_chat.rooms[roomIdx]
-    if (!roomData.canBeClosed)
+    if (!roomData.canBeClosed())
       return
 
     if (askAllRooms) {
@@ -1994,7 +2005,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
 
       ::gchat_raw_command($"part {gchat_escape_target(room.id)}")
       room.joined = false 
-      room.canBeClosed = true
+      room.forceCanBeClosed = true
       this.silenceUsersByList(room.users)
       room.users.clear()
       this.updateRoomTabById(room.id)
@@ -2098,7 +2109,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
     if (!roomId)
       roomId = this.curRoom.id
 
-    let devoice = penalties.getDevoiceMessage()
+    let devoice = getDevoiceMessage()
     if (devoice)
       this.addRoomMsg(roomId, "", devoice)
     return devoice != null
@@ -2108,7 +2119,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
     let sceneData = this.getSceneDataByActionObj(obj)
     if (!sceneData)
       return
-    let roomData = g_chat.getRoomById(sceneData.room)
+    let roomData = getRoomById(sceneData.room)
     if (roomData)
       roomData.lastTextInput = obj.getValue()
   }
@@ -2140,7 +2151,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
     if (roomId == "")
       return
 
-    let roomData = g_chat.getRoomById(roomId)
+    let roomData = getRoomById(roomId)
     let isChatAvailableInCurRoom = roomData?.isChatAvailableInCurRoom ?? true
     let leftTimeToActivateSendBtnSec = this.getTimeToActivateSendBtnSec()
     let needToShowSendTitle = leftTimeToActivateSendBtnSec == 0
@@ -2199,11 +2210,11 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
     if (this.checkAndPrintDevoiceMsg(roomId))
       return
 
-    msg = g_chat.validateChatMessage(msg)
+    msg = validateChatMessage(msg)
 
     let privateData = this.getPrivateData(msg, roomId)
     if (privateData)
-      this.onChatPrivate(privateData)
+      this.onChatPrivate(privateData, inputObj)
     else {
       if (this.checkValidAndSpamMessage(msg)) {
         inputObj.setValue("")
@@ -2247,7 +2258,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
     return null
   }
 
-  function onChatPrivate(data) {
+  function onChatPrivate(data, inputObj) {
     if (!this.checkValidAndSpamMessage(data.msg, true))
       return
     if (!this.curRoom)
@@ -2269,13 +2280,14 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
         )
       )
     else if (data.user != this.curRoom.id) {
-      let userRoom = g_chat.getRoomById(data.user)
+      let userRoom = getRoomById(data.user)
       if (!userRoom) {
         this.addRoom(data.user)
         this.updateRoomsList()
       }
       this.addRoomMsg(data.user, userName.value, data.msg, true, true)
     }
+    inputObj.setValue("")
   }
 
   function showLastSendMsg(showScene = null) {
@@ -2357,7 +2369,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
         showChatPlayerRClickMenu(name, sceneData.room, contact)
     }
     else if (g_chat.checkBlockedLink(link)) {
-      let roomData = g_chat.getRoomById(sceneData.room)
+      let roomData = getRoomById(sceneData.room)
       if (!roomData)
         return
 
@@ -2401,7 +2413,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     if (user != this.curRoom?.id) {
-      let userRoom = g_chat.getRoomById(user)
+      let userRoom = getRoomById(user)
       if (!userRoom)
         this.addRoom(user)
       this.switchCurRoom(user)
@@ -2592,7 +2604,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
 
       this.selectChatInputEditbox()
       let rName = (this.searchRoomList[value].slice(0, 1) != "#") ? $"# {this.searchRoomList[value]}" : this.searchRoomList[value]
-      let room = g_chat.getRoomById(rName)
+      let room = getRoomById(rName)
       if (room)
         this.switchCurRoom(room)
       else {
@@ -2624,13 +2636,13 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
     if (get_gui_option_in_mode(USEROPT_SHOW_SOCIAL_NOTIFICATIONS, OPTIONS_MODE_GAMEPLAY))
       addPopup(msgBlock.fullName && msgBlock.fullName.len() ? ($"{msgBlock.fullName}:") : null,
         msgBlock.msgs.top(),
-        @() g_chat.openChatRoom(roomId)
+        @() openChatRoom(roomId)
       )
   }
 
   function popupAcceptInvite(roomId) {
     if (g_chat_room_type.THREAD.checkRoomId(roomId)) {
-      g_chat.joinThread(roomId)
+      joinThread(roomId)
       this.changeRoomOnJoin = roomId
       return
     }
@@ -2665,16 +2677,20 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
     })
   }
 
+  function drawCustomRoom(room, roomIdx) {
+    if (checkObj(room.customScene)) {
+      let obj = room.customScene.findObject("custom_chat_text_block")
+      if (checkObj(obj))
+        this.drawRoomTo(room, obj, true)
+    }
+    else if (room.existOnlyInCustom)
+      this.closeRoom(roomIdx)
+  }
+
   function updateCustomChatTexts() {
     for (local idx = g_chat.rooms.len() - 1; idx >= 0; idx--) {
       let room = g_chat.rooms[idx]
-      if (checkObj(room.customScene)) {
-        let obj = room.customScene.findObject("custom_chat_text_block")
-        if (checkObj(obj))
-          this.drawRoomTo(room, obj)
-      }
-      else if (room.existOnlyInCustom)
-        this.closeRoom(idx)
+      this.drawCustomRoom(room, idx)
     }
   }
 
@@ -2685,7 +2701,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
   function findCustomRoomByObj(obj) {
     let id = obj?._customRoomId ?? ""
     if (id != "")
-      return g_chat.getRoomById(id)
+      return getRoomById(id)
 
     
     foreach (item in g_chat.rooms)
@@ -2733,7 +2749,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
 
     initChatMessageListOn(sceneObj.findObject("custom_chat_text_block"), this, roomId)
 
-    let room = g_chat.getRoomById(roomId)
+    let room = getRoomById(roomId)
     if (room) {
       room.customScene = sceneObj
       room.ownerHandler = ownerHandler
@@ -2750,7 +2766,7 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function afterReconnectCustomRoom(roomId) {
-    let roomData = g_chat.getRoomById(roomId)
+    let roomData = getRoomById(roomId)
     if (!roomData || !checkObj(roomData.customScene))
       return
 
@@ -2860,6 +2876,27 @@ let MenuChatHandler = class (gui_handlers.BaseGuiHandlerWT) {
   function onEventChatCheckIsActive(_params) {
     if (!this.isMenuChatActive())
       isChatEnabled(true)
+  }
+
+  function onEventUserReputationUpdated(data) {
+    foreach (uid, reputation in data) {
+      let roomsCount = g_chat.rooms.len()
+      for (local i = 0; i < roomsCount; i++) {
+        let room = g_chat.rooms[i]
+        if (room.mBlocksByUid?[uid] == null || room.mBlocksByUid[uid].len() == 0)
+          continue
+
+        let userMessages = room.mBlocksByUid[uid]
+        foreach (mblock in userMessages) {
+          mblock.userReputation = reputation.new
+          if (mblock.isBlockChat)
+            mblock.isBlockChat = isBlockChatMessage(mblock)
+          if (reputation.new == reputationType.BAD || reputation.old == reputationType.GOOD)
+            room.updateMessageText(mblock, true)
+        }
+        this.drawCustomRoom(room, i)
+      }
+    }
   }
 
   chatSendBtnActivateTime = null

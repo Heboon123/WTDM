@@ -18,7 +18,9 @@ let hudState = {
   missionProgressHeight = 0
   hasTarget = false
   canZoom = false
+  isUnitAlive = false
   isInKillerCamera = isInKillerCam()
+  playerUnitName = ""
 }.map(@(val, key) mkWatched(persist, key, val))
 
 let { isInKillerCamera, isVisibleDmgIndicator } = hudState
@@ -30,7 +32,6 @@ eventbus_subscribe("updateMissionProgressHeight", @(v) hudState.missionProgressH
 eventbus_subscribe("updateIsSpectatorMode", @(v) hudState.isSpectatorMode(v))
 eventbus_subscribe("hud_gui_state_changed",
   @(_) isInKillerCamera(isInKillerCam()))
-
 
 interopGet({
   stateTable = hudState

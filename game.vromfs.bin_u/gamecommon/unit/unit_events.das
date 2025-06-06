@@ -3,11 +3,13 @@ require ecs
 require dm
 require DagorDataBlock
 require WTDamageModel
+require Unit
 
 
 [cpp_event(unicast)]
 struct CmdInitComponent
   modelBlk : DataBlock? 
+  data : UnitCreationData? 
 
 [cpp_event(unicast)]
 struct EventUnitInitModification
@@ -18,6 +20,14 @@ struct EventUnitInitModification
 [cpp_event(unicast)]
 struct EventUnitDelayedStatusChanged
   isDelayed : bool
+
+[cpp_event(unicast)]
+struct EventUnitSpawned
+{}
+
+[cpp_event(unicast)]
+struct EventUnitBecameDead
+{}
 
 [cpp_event(unicast, with_scheme)]
 struct EventUnitRespawn
@@ -55,3 +65,4 @@ struct CmdApplyPartDamageEffect
 [event(unicast, routing=ROUTING_SERVER_TO_CLIENT, filter=target_entity_conn)]
 struct EventEngineOverheatDamage
   start : bool
+

@@ -94,7 +94,7 @@ function updateArmorPiercingText(obj) {
   let bullet   = options.BULLET.value
   let distance = options.DISTANCE.value
 
-  if (bullet?.bulletParams?.armorPiercing) {
+  if (bullet?.bulletParams.armorPiercing) {
     local pMin
     local pMax
 
@@ -405,7 +405,7 @@ options.addTypes({
 
           let searchName = getBulletsSearchName(unit, value)
           let useDefaultBullet = searchName != value
-          let bulletParameters = calculate_tank_bullet_parameters(unit.name,
+          let bulletParameters = calculate_tank_bullet_parameters(bulletsSet?.supportUnitName ?? unit.name,
             (useDefaultBullet && weaponBlkName) || getModificationBulletsEffect(searchName),
             useDefaultBullet, false)
 
@@ -416,7 +416,7 @@ options.addTypes({
 
           foreach (idx, bulletName in bulletNames) {
             local locName = bulletsList.items[i].text
-            local bulletParams = bulletParameters[idx]
+            local bulletParams = bulletParameters?[idx]
             local isDub = false
             if (isBulletBelt) {
               locName = " ".concat(format(loc("caliber/mm"), bulletsSet.caliber),
@@ -455,7 +455,7 @@ options.addTypes({
                 bulletParams })
             }
             else
-              addDiv = MODIFICATION.getMarkup(unit.name, value, { hasPlayerInfo = false })
+              addDiv = MODIFICATION.getMarkup(bulletsSet?.supportUnitName ?? unit.name, value, { hasPlayerInfo = false })
 
             bulletNamesSet.append(locName)
             let btName = bulletName || ""
@@ -775,12 +775,13 @@ options.init <- function(handler, scene) {
 options.setAnalysisParams <- function() {
   let bullet   = options.BULLET.value
   let distance = options.DISTANCE.value
+  let unit = options.UNIT.value
   
 
 
 
 
-  set_protection_checker_params(bullet?.weaponBlkName ?? "", bullet?.bulletName ?? "", distance, 0, 0)
+  set_protection_checker_params(bullet?.weaponBlkName ?? "", bullet?.bulletName ?? "", unit?.name ?? "", distance, 0, 0)
   
 }
 

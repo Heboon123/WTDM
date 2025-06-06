@@ -184,6 +184,24 @@ let timersList = [
     icon = "#ui/gameuiskin#icon_smoke_screen_in_progress.svg"
     needTimeText = true
   }
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ]
 
 function getViewData() {
@@ -764,6 +782,79 @@ function onZoneCapturingEvent(eventData) {
   })
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function hudDisplayTimersInit(nest, v_unitType) {
   scene = nest.findObject("display_timers")
   if (!(scene?.isValid() ?? false))
@@ -774,32 +865,38 @@ function hudDisplayTimersInit(nest, v_unitType) {
   let blk = handyman.renderCached("%gui/hud/hudDisplayTimers.tpl", getViewData())
   guiScene.replaceContentFromText(scene, blk, blk.len(), {})
 
-  g_hud_event_manager.subscribe("TankDebuffs:Rearm", onRearm)
-  g_hud_event_manager.subscribe("TankDebuffs:Replenish", onReplenish)
-  g_hud_event_manager.subscribe("TankDebuffs:Repair", onRepair)
-  g_hud_event_manager.subscribe("TankDebuffs:MoveCooldown", onMoveCooldown)
-  g_hud_event_manager.subscribe("TankDebuffs:Battery", onBattery)
-  g_hud_event_manager.subscribe("TankDebuffs:ExtinguishAssist", onExtinguishAssist)
-  g_hud_event_manager.subscribe("TankDebuffs:MineDetonation", onMineDetonation)
-  g_hud_event_manager.subscribe("TankDebuffs:Building", onBuilding)
-  g_hud_event_manager.subscribe("TankDebuffs:CancelSmokeScreen", onCancelSmokeScreen)
+  g_hud_event_manager.subscribe("TankDebuffs:Rearm", onRearm, scene)
+  g_hud_event_manager.subscribe("TankDebuffs:Replenish", onReplenish, scene)
+  g_hud_event_manager.subscribe("TankDebuffs:Repair", onRepair, scene)
+  g_hud_event_manager.subscribe("TankDebuffs:MoveCooldown", onMoveCooldown, scene)
+  g_hud_event_manager.subscribe("TankDebuffs:Battery", onBattery, scene)
+  g_hud_event_manager.subscribe("TankDebuffs:ExtinguishAssist", onExtinguishAssist, scene)
+  g_hud_event_manager.subscribe("TankDebuffs:MineDetonation", onMineDetonation, scene)
+  g_hud_event_manager.subscribe("TankDebuffs:Building", onBuilding, scene)
+  g_hud_event_manager.subscribe("TankDebuffs:CancelSmokeScreen", onCancelSmokeScreen, scene)
 
-  g_hud_event_manager.subscribe("ShipDebuffs:Rearm", onRearm)
-  g_hud_event_manager.subscribe("ShipDebuffs:Repair", onRepair)
-  g_hud_event_manager.subscribe("ShipDebuffs:Cooldown", onMoveCooldown)
-  g_hud_event_manager.subscribe("ShipDebuffs:RepairBreaches", onRepairBreaches)
-  g_hud_event_manager.subscribe("ShipDebuffs:Extinguish", onExtinguish)
-  g_hud_event_manager.subscribe("ShipDebuffs:CancelRepairBreaches", onCancelRepairBreaches)
-  g_hud_event_manager.subscribe("ShipDebuffs:CancelExtinguish", onCancelExtinguish)
+  g_hud_event_manager.subscribe("ShipDebuffs:Rearm", onRearm, scene)
+  g_hud_event_manager.subscribe("ShipDebuffs:Repair", onRepair, scene)
+  g_hud_event_manager.subscribe("ShipDebuffs:Cooldown", onMoveCooldown, scene)
+  g_hud_event_manager.subscribe("ShipDebuffs:RepairBreaches", onRepairBreaches, scene)
+  g_hud_event_manager.subscribe("ShipDebuffs:Extinguish", onExtinguish, scene)
+  g_hud_event_manager.subscribe("ShipDebuffs:CancelRepairBreaches", onCancelRepairBreaches, scene)
+  g_hud_event_manager.subscribe("ShipDebuffs:CancelExtinguish", onCancelExtinguish, scene)
 
-  g_hud_event_manager.subscribe("CrewState:CrewState", onCrewState)
-  g_hud_event_manager.subscribe("CrewState:DriverState", onDriverState)
-  g_hud_event_manager.subscribe("CrewState:GunnerState", onGunnerState)
+  g_hud_event_manager.subscribe("CrewState:CrewState", onCrewState, scene)
+  g_hud_event_manager.subscribe("CrewState:DriverState", onDriverState, scene)
+  g_hud_event_manager.subscribe("CrewState:GunnerState", onGunnerState, scene)
 
-  g_hud_event_manager.subscribe("LocalPlayerDead", onLocalPlayerDead)
-  g_hud_event_manager.subscribe("MissionResult", onMissionResult)
+  g_hud_event_manager.subscribe("LocalPlayerDead", onLocalPlayerDead, scene)
+  g_hud_event_manager.subscribe("MissionResult", onMissionResult, scene)
 
-  g_hud_event_manager.subscribe("zoneCapturingEvent", onZoneCapturingEvent)
+  g_hud_event_manager.subscribe("zoneCapturingEvent", onZoneCapturingEvent, scene)
+
+
+
+
+
+
 
   if (getTblValue("isDead", get_local_mplayer(), false))
     clearAllTimers()

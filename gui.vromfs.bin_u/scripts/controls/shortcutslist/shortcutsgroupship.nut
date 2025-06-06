@@ -5,11 +5,11 @@ let { get_option_multiplier, set_option_multiplier,
 } = require("gameOptions")
 let controlsOperations = require("%scripts/controls/controlsOperations.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
-let { isPlatformSony, isPlatformXboxOne } = require("%scripts/clientState/platform.nut")
+let { isPlatformSony, isPlatformXbox } = require("%scripts/clientState/platform.nut")
 let { ActionGroup, hasXInputDevice, isXInputDevice } = require("controls")
 let { checkOptionValue } = require("%scripts/controls/controlsUtils.nut")
 let { CONTROL_TYPE, AxisDirection } = require("%scripts/controls/controlsConsts.nut")
-let { USEROPT_SEPERATED_ENGINE_CONTROL_SHIP, USEROPT_WHEEL_CONTROL_SHIP,
+let { USEROPT_WHEEL_CONTROL_SHIP,
   USEROPT_SINGLE_SHOT_BY_TURRET, USEROPT_SHIP_COMBINE_PRI_SEC_TRIGGERS,
   USEROPT_INVERTY_SHIP
 } = require("%scripts/options/optionsExtNames.nut")
@@ -51,29 +51,10 @@ return [
     type = CONTROL_TYPE.SECTION
   }
   {
-    id = "ship_seperated_engine_control"
-    type = CONTROL_TYPE.SWITCH_BOX
-    optionType = USEROPT_SEPERATED_ENGINE_CONTROL_SHIP
-    onChangeValue = "doControlsGroupChangeDelayed"
-  }
-  {
     id = "ship_main_engine"
     type = CONTROL_TYPE.AXIS
-    showFunc = @() checkOptionValue(USEROPT_SEPERATED_ENGINE_CONTROL_SHIP, false)
     axisDirection = AxisDirection.Y
     needShowInHelp = true
-  }
-  {
-    id = "ship_port_engine"
-    type = CONTROL_TYPE.AXIS
-    showFunc = @() checkOptionValue(USEROPT_SEPERATED_ENGINE_CONTROL_SHIP, true)
-    checkAssign = false
-  }
-  {
-    id = "ship_star_engine"
-    type = CONTROL_TYPE.AXIS
-    showFunc = @() checkOptionValue(USEROPT_SEPERATED_ENGINE_CONTROL_SHIP, true)
-    checkAssign = false
   }
   {
     id = "ship_steering"
@@ -99,13 +80,13 @@ return [
     type = CONTROL_TYPE.SWITCH_BOX
     optionType = USEROPT_WHEEL_CONTROL_SHIP
     onChangeValue = "doControlsGroupChangeDelayed"
-    showFunc = @() (isXInputDevice() || isPlatformSony || isPlatformXboxOne)
+    showFunc = @() (isXInputDevice() || isPlatformSony || isPlatformXbox)
   }
   {
     id = "ID_SHIP_SELECTWEAPON_WHEEL_MENU"
     checkAssign = false
     showFunc = @() checkOptionValue(USEROPT_WHEEL_CONTROL_SHIP, true)
-      && (isXInputDevice() || isPlatformSony || isPlatformXboxOne)
+      && (isXInputDevice() || isPlatformSony || isPlatformXbox)
   }
   {
     id = "ID_SHIP_WEAPON_PRIMARY"
@@ -210,6 +191,10 @@ return [
     needShowInHelp = true
   }
   
+
+
+
+
 
 
 

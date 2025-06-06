@@ -6,8 +6,8 @@ let DataBlock = require("DataBlock")
 let { get_unittags_blk } = require("blkGetters")
 let { loc, doesLocTextExist } = require("dagor.localize")
 let { round_by_value } = require("%sqstd/math.nut")
-let { utf8Capitalize, utf8ToLower } = require("%sqstd/string.nut")
-let { blkOptFromPath, eachParam } = require("%sqstd/datablock.nut")
+let { utf8Capitalize, utf8ToLower, toIntegerSafe } = require("%sqstd/string.nut")
+let { blkOptFromPath } = require("%sqstd/datablock.nut")
 let { fileName } = require("%sqstd/path.nut")
 let { isEqual, isFloat, isPoint2, unique, appendOnce, tablesCombine } = require("%sqStdLibs/helpers/u.nut")
 
@@ -15,6 +15,8 @@ let { isEqual, isFloat, isPoint2, unique, appendOnce, tablesCombine } = require(
 
 
 
+
+let KGF_TO_NEWTON = 9.807
 
 
 
@@ -161,8 +163,7 @@ function getFirstFound(sourceBlkArray, getter, defValue = null) {
   return result ?? defValue
 }
 
-function extractIndexFromDmPartName(partName, commonData) {
-  let { toIntegerSafe } = commonData
+function extractIndexFromDmPartName(partName) {
   let strArr = partName.split("_")
   let l = strArr.len()
   return (l > 2 && strArr[l - 1] == "dm") ? toIntegerSafe(strArr[l - 2], -1, false) : -1
@@ -178,7 +179,7 @@ function getXrayViewerDataByDmPartName(partName, commonData) {
       if (blk?.xrayDmPart == partName)
         return blk
       if (blk?.xrayDmPartFmt != null) {
-        partIdx = partIdx ?? extractIndexFromDmPartName(partName, commonData)
+        partIdx = partIdx ?? extractIndexFromDmPartName(partName)
         if (partIdx != -1
             && partIdx >= (blk?.xrayDmPartRange.x ?? -1) && partIdx <= (blk?.xrayDmPartRange.y ?? -1)
             && format(blk.xrayDmPartFmt, partIdx) == partName)
@@ -286,9 +287,9 @@ function getEngineModelName(infoBlk) {
 }
 
 function mkEngineDesc(_partType, params, commonData) {
-  let { unitBlk, getUnitFmBlk, simUnitType, findAnyModEffectValueBlk, toIntegerSafe,
+  let { unitBlk, getUnitFmBlk, simUnitType, findAnyModEffectValueBlk,
     getProp_horsePowers, getProp_maxHorsePowersRPM, getProp_thrust, toStr_horsePowers, toStr_thrustKgf,
-    KGF_TO_NEWTON, isSecondaryModsValid
+    isSecondaryModsValid
   } = commonData
   let partName = params.name
   let desc = []
@@ -781,6 +782,9 @@ function mkWeaponPartLocId(partType, partName, weaponInfoBlk, commonData) {
   return partType
 }
 
+let getWeaponLocName = @(weaponName, commonData)
+  loc(commonData?.needUseShortWeaponNames ? $"weapons/{weaponName}/short" : $"weapons/{weaponName}")
+
 function getWeaponTotalBulletCount(unitWeaponsList, partType, weaponInfoBlk) {
   if (partType == "cannon_breech") {
     local result = 0
@@ -863,7 +867,7 @@ let haveFirstStageShells = @(unitBlk, trigger)
   getAmmoStowageBlockByParam(unitBlk, trigger, "firstStage") ?? false
 
 function getWeaponShotFreqAndReloadTimeDesc(weaponName, weaponInfoBlk, status, commonData) {
-  let { unitBlk, crewId, simUnitType, getUnitWeaponsList, toFloatSafe,
+  let { unitBlk, crewId, simUnitType, getUnitWeaponsList,
     getProp_tankReloadTime, getProp_tankReloadTimeTop,
     getProp_shipReloadTimeMainDef, getProp_shipReloadTimeAuxDef, getProp_shipReloadTimeAaDef
   } = commonData
@@ -992,9 +996,9 @@ function getWeaponShotFreqAndReloadTimeDesc(weaponName, weaponInfoBlk, status, c
   if (reloadTimeS) {
     reloadTimeS = round_by_value(reloadTimeS, 0.1)
     topValue = round_by_value(topValue, 0.1)
-    reloadTimeS = (reloadTimeS % 1) ? format("%.1f", reloadTimeS) : format("%d", reloadTimeS)
-    let res = { value = " ".concat(loc("shop/reloadTime"), reloadTimeS, unitsSec) }
-    if (topValue != 0 && topValue < toFloatSafe(reloadTimeS, 0))
+    let reloadTimeSTxt = (reloadTimeS % 1) ? format("%.1f", reloadTimeS) : format("%d", reloadTimeS)
+    let res = { value = " ".concat(loc("shop/reloadTime"), reloadTimeSTxt, unitsSec) }
+    if (topValue != 0 && topValue < reloadTimeS)
       res.topValue <- " ".concat(topValue, unitsSec)
     desc.append(res)
   }
@@ -1058,7 +1062,7 @@ function mkWeaponDesc(partType, params, commonData) {
 
     if (turretWeaponsNames.len() > 0)
       foreach(weaponName, weaponsCount in turretWeaponsNames)
-        desc.append("".concat(loc($"weapons/{weaponName}"),
+        desc.append("".concat(getWeaponLocName(weaponName, commonData),
           weaponsCount > 1 ? format(loc("weapons/counter"), weaponsCount) : ""))
   }
   local weaponInfoBlk = null
@@ -1087,7 +1091,7 @@ function mkWeaponDesc(partType, params, commonData) {
     let weaponBlkLink = weaponInfoBlk?.blk ?? ""
     let weaponName = getWeaponNameByBlkPath(weaponBlkLink)
     let weaponNameStr = weaponName != "" && turretWeaponsNames.len() == 0
-      ? loc($"weapons/{weaponName}")
+      ? getWeaponLocName(weaponName, commonData)
       : ""
     let unitWeaponsList = getUnitWeaponsList(commonData)
     let ammo = isSpecialBullet ? 1 : getWeaponTotalBulletCount(unitWeaponsList, partType, weaponInfoBlk)
@@ -2070,7 +2074,7 @@ function mkFireDirecirOrRangefinderDesc(_partType, params, commonData) {
     if (weaponNames.len() != 0) {
       desc.append(loc("xray/fire_control/weapons"))
       desc.extend(weaponNames
-        .map(@(n) loc($"weapons/{n}"))
+        .map(@(n) getWeaponLocName(n, commonData))
         .map(@(n) "".concat(bullet, n)))
 
       
@@ -2115,26 +2119,30 @@ function mkFireControlSystemDesc(partType, params, commonData) {
   let desc = []
   let partsList = []
   let unitWeaponsList = getUnitWeaponsList(commonData)
-  foreach (weapon in unitWeaponsList) {
-    if (weapon?.stabilizerDmPart == partName) {
-      appendOnce(loc("armor_class/gun_stabilizer"), partsList)
-      continue
+
+  foreach (cfg in [
+    { key = "stabilizerDmPart", locId = "armor_class/gun_stabilizer" }
+    { key = "guidedWeaponControlsDmPart", locId = "armor_class/guided_weapon_controls" }
+  ]) {
+    foreach (weapon in unitWeaponsList)
+      if (weapon?[cfg.key] == partName) {
+        partsList.append(loc(cfg.locId))
+        break
+      }
+  }
+
+  foreach (cfg in [
+    { key = "verDriveDm", locId = "armor_class/drive_turret_v" }
+    { key = "horDriveDm", locId = "armor_class/drive_turret_h" }
+    { key = "shootingDmPart", locId = "xray/firing" }
+  ]) {
+    foreach (weapon in unitWeaponsList) {
+      let turretBlk = weapon?.turret
+      if (turretBlk != null && (turretBlk % cfg.key).findindex(@(v) v == partName) != null) {
+        partsList.append(loc(cfg.locId))
+        break
+      }
     }
-    if (weapon?.guidedWeaponControlsDmPart == partName)
-      appendOnce(loc("armor_class/guided_weapon_controls"), partsList)
-
-    let turretBlk = weapon?.turret
-    if (turretBlk == null)
-      continue
-
-    eachParam(turretBlk, function(val,key) {
-      if (key == "verDriveDm" && val == partName)
-        appendOnce(loc("armor_class/drive_turret_v"), partsList)
-      if (key == "horDriveDm" && val == partName)
-        appendOnce(loc("armor_class/drive_turret_h"), partsList)
-      if (key == "shootingDmPart" && val == partName)
-        appendOnce(loc("xray/firing"), partsList)
-    })
   }
 
   let rangefinderDmPart = findAnyModEffectValueBlk(commonData, "rangefinderDmPart")
@@ -2145,7 +2153,8 @@ function mkFireControlSystemDesc(partType, params, commonData) {
   if (nightVisionBlk?.nightVisionDmPart == partName)
     partsList.append(loc("modification/night_vision_system"))
 
-  desc.append(loc($"armor_class/desc/{partType}", { partsList = "\n".join(partsList, true) }))
+  if (partsList.len())
+    desc.append(loc($"armor_class/desc/{partType}", { partsList = "\n".join(partsList) }))
   return { desc }
 }
 
@@ -2155,25 +2164,32 @@ function mkHydraulicsSystemDesc(partType, params, commonData) {
   let desc = []
   let partsList = []
   let unitWeaponsList = getUnitWeaponsList(commonData)
-  foreach (weapon in unitWeaponsList) {
-    if (weapon?.stabilizerDmPart == partName) {
-      appendOnce(loc("armor_class/gun_stabilizer"), partsList)
-      continue
-    }
 
-    let turretBlk = weapon?.turret
-    if (turretBlk == null)
-      continue
-
-    eachParam(turretBlk, function(val,key) {
-      if (key == "verDriveDm" && val == partName)
-        appendOnce(loc("armor_class/drive_turret_v"), partsList)
-      if (key == "horDriveDm" && val == partName)
-        appendOnce(loc("armor_class/drive_turret_h"), partsList)
-    })
+  foreach (cfg in [
+    { key = "stabilizerDmPart", locId = "armor_class/gun_stabilizer" }
+  ]) {
+    foreach (weapon in unitWeaponsList)
+      if (weapon?[cfg.key] == partName) {
+        partsList.append(loc(cfg.locId))
+        break
+      }
   }
 
-  desc.append(loc($"armor_class/desc/{partType}", { partsList = "\n".join(partsList, true) }))
+  foreach (cfg in [
+    { key = "verDriveDm", locId = "armor_class/drive_turret_v" }
+    { key = "horDriveDm", locId = "armor_class/drive_turret_h" }
+  ]) {
+    foreach (weapon in unitWeaponsList) {
+      let turretBlk = weapon?.turret
+      if (turretBlk != null && (turretBlk % cfg.key).findindex(@(v) v == partName) != null) {
+        partsList.append(loc(cfg.locId))
+        break
+      }
+    }
+  }
+
+  if (partsList.len())
+    desc.append(loc($"armor_class/desc/{partType}", { partsList = "\n".join(partsList) }))
   return { desc }
 }
 

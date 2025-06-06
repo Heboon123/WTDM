@@ -1,6 +1,7 @@
 from "%scripts/dagui_library.nut" import *
 
 let { addOptionMode, addUserOption} = require("guiOptions")
+let { getDevFeatures } = require("%scripts/features/devFeatures.nut")
 
 let export = {
   userOptionNameByIdx = {}
@@ -47,7 +48,6 @@ let optList = [
   "USEROPT_INVERTCAMERAY"
   "USEROPT_AUTOMATIC_TRANSMISSION_TANK"
   "USEROPT_WHEEL_CONTROL_SHIP"
-  "USEROPT_SEPERATED_ENGINE_CONTROL_SHIP"
   "USEROPT_BULLET_FALL_INDICATOR_SHIP"
   "USEROPT_BULLET_FALL_SOUND_SHIP"
   "USEROPT_SINGLE_SHOT_BY_TURRET"
@@ -224,6 +224,7 @@ let optList = [
   "USEROPT_AUTO_SHOW_CHAT"
   "USEROPT_CHAT_MESSAGES_FILTER"
   "USEROPT_CHAT_FILTER"
+  "USEROPT_CHAT_REPUTATION_FILTER"
   "USEROPT_DAMAGE_INDICATOR_SIZE"
   "USEROPT_TACTICAL_MAP_SIZE"
   "USEROPT_CROSSHAIR_DEFLECTION"
@@ -496,6 +497,16 @@ foreach(idx, useropt in optList) {
   let relIdx = addUserOption(useropt) ?? idx
   export[useropt] <- relIdx
   export.userOptionNameByIdx[relIdx] <- useropt
+}
+
+local lastIdx = optList.len()
+let devFeatures = getDevFeatures()
+
+foreach(key, devFeature in devFeatures) {
+  export[key] <- lastIdx
+  export.userOptionNameByIdx[lastIdx] <- key
+  devFeature.idx <- lastIdx
+  lastIdx++
 }
 
 export.testsOptList <- optList 

@@ -8,7 +8,8 @@ let { g_hud_event_manager } = require("%scripts/hud/hudEventManager.nut")
 let { format } = require("string")
 let { getRgbStrFromHsv } = require("colorCorrector")
 
-::hudEnemyDamage <- {
+local hudEnemyDamage = null
+hudEnemyDamage = {
   
   tankThresholdShowHp = 0.25
   hueHpMax = 60
@@ -110,14 +111,9 @@ let { getRgbStrFromHsv } = require("colorCorrector")
     this.guiScene = this.scene.getScene()
     this.listObj = this.scene.findObject("hud_enemy_damage")
 
-    eventbus_subscribe("EnemyPartsDamage", function(allDamageData) {
-        foreach (damageData in allDamageData) {
-          ::hudEnemyDamage.onEnemyPartDamage(damageData)
-        }
-      })
     g_hud_event_manager.subscribe("HitcamTargetKilled", function (hitcamData) {
-        this.onHitcamTargetKilled(hitcamData)
-      }, this)
+        hudEnemyDamage.onHitcamTargetKilled(hitcamData)
+      }, this.scene)
 
     this.rebuildWidgets()
     this.resetTargetData()
@@ -288,3 +284,11 @@ let { getRgbStrFromHsv } = require("colorCorrector")
     return true
   }
 }
+
+eventbus_subscribe("EnemyPartsDamage", function(allDamageData) {
+  foreach (damageData in allDamageData) {
+    hudEnemyDamage.onEnemyPartDamage(damageData)
+  }
+})
+
+return hudEnemyDamage
