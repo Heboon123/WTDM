@@ -69,6 +69,7 @@ local SkinsHandler = class (gui_handlers.BaseGuiHandlerWT) {
   wndType          = handlerType.CUSTOM
   sceneBlkName     = "%gui/profile/skinsPage.blk"
 
+  parent = null
   openParams = null
   treeHandlerWeak = null
   skinsListObj = null
@@ -143,8 +144,8 @@ local SkinsHandler = class (gui_handlers.BaseGuiHandlerWT) {
   function onFilterCancel(filterObj) {
     if (filterObj.getValue() != "")
       filterObj.setValue("")
-    else
-      this.guiScene.performDelayed(this, this.goBack)
+    else if (this.parent != null)
+      this.guiScene.performDelayed(this.parent, this.parent.goBack)
   }
 
   function prepareSkins() {
@@ -330,7 +331,6 @@ local SkinsHandler = class (gui_handlers.BaseGuiHandlerWT) {
     let skinView = {
       skinName = decorator.getName()
       image = config?.image ?? decoratorTypes.SKINS.getImage(decorator)
-      ratio = config?.imgRatio ?? decoratorTypes.SKINS.getRatio(decorator)
       unlocked = skin.isUnlocked
       skinDesc = this.getSkinDesc(decorator)
       unlockProgress = progressData?.value

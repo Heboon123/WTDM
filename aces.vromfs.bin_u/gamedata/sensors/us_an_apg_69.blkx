@@ -740,6 +740,9 @@
           },
           "setModeName": {
             "name": "PD ACM"
+          },
+          "setDesignationSourceType": {
+            "sourceType": "radar"
           }
         },
         "resetAcmLockMode": {
@@ -988,6 +991,9 @@
           },
           "setModeName": {
             "name": "GTM standby"
+          },
+          "setDesignationSourceType": {
+            "sourceType": "radarSs"
           }
         },
         "setGtmSearchMode": {
@@ -1000,6 +1006,9 @@
           },
           "setModeName": {
             "name": "GTM search"
+          },
+          "setDesignationSourceType": {
+            "sourceType": "radarSs"
           }
         },
         "setGtmTwsBvrLockModeCommon": {
@@ -1714,9 +1723,6 @@
               "fsm": "main",
               "name": "resetSearchMode"
             },
-            "setDesignationSourceType": {
-              "sourceType": "radarSs"
-            },
             "setFsmActive": [
               {
                 "fsm": "main",
@@ -1892,7 +1898,10 @@
       }
     },
     "tws": {
-      "stateInit": "search",
+      "stateInit": [
+        "search",
+        "search"
+      ],
       "transitions": {
         "scan": {
           "event": "update",

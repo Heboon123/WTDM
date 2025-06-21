@@ -16,7 +16,7 @@ let { handlerType } = require("%sqDagui/framework/handlerType.nut")
 let { toPixels, move_mouse_on_child, move_mouse_on_obj } = require("%sqDagui/daguiUtil.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { getModsTreeSize, generateModsTree, generateModsBgElems, commonProgressMods,
-  isModificationInTree, modsWndWidthRestrictions } = require("%scripts/weaponry/modsTree.nut")
+  isModificationInTree, modsWndWidthRestrictions, getNextTierModsCount } = require("%scripts/weaponry/modsTree.nut")
 let tutorialModule = require("%scripts/user/newbieTutorialDisplay.nut")
 let guiStartWeaponryPresets = require("%scripts/weaponry/guiStartWeaponryPresets.nut")
 let prepareUnitsForPurchaseMods = require("%scripts/weaponry/prepareUnitsForPurchaseMods.nut")
@@ -959,7 +959,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     let tiersArray = this.getResearchedModsArray(size.tier)
     for (local i = 1; i <= size.tier; i++) {
       if (tiersArray[i - 1] == null) {
-        assert(false, format("No modification data for unit '%s' in tier %s.", this.air.name, i.tostring()))
+        assert(false, $"Missing modifications for unit '{this.air.name}' in tier {i}, but there are higher tiers")
         break
       }
       let unlocked = isWeaponTierAvailable(this.air, i)
@@ -1254,7 +1254,7 @@ gui_handlers.WeaponsModalHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       local reqTierMods = 0
       local reqMods = ""
       if ("tier" in item)
-        reqTierMods = ::getNextTierModsCount(this.air, item.tier - 1)
+        reqTierMods = getNextTierModsCount(this.air, item.tier - 1)
       if ("reqModification" in item)
         reqMods = getReqModsText(this.air, item)
 

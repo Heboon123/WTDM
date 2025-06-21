@@ -10,6 +10,8 @@ gui_scene.setConfigProps({ clickRumbleEnabled = false })
 
 require("%rGui/hudChatCtrlsState.nut") 
 require("%rGui/ctrlsState.nut")
+require("%rGui/antiAirComplexMenu/antiAirComplexMenuState.nut")
+require("%rGui/planeSettings.nut")
 
 require("consoleCmd.nut")
 require("%sqstd/regScriptProfiler.nut")("darg", dlog) 

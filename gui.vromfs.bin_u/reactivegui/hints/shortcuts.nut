@@ -3,6 +3,8 @@ from "%rGui/globals/ui_library.nut" import *
 let fontsState = require("%rGui/style/fontsState.nut")
 let colors = require("%rGui/style/colors.nut")
 
+let antiAirMenuShortcutHeight = evenPx(30)
+
 let shortcutsParamsByPlace = @() {
   defaultP = { shortcutAxis = [shHud(6), shHud(6)]
     gamepadButtonSize = [shHud(4), shHud(4)]
@@ -28,6 +30,14 @@ let shortcutsParamsByPlace = @() {
     keyboardButtonTextFont = Fonts.very_tiny_text_hud
     combinationGap = 0
   }
+  antiAirMenu = { shortcutAxis = [antiAirMenuShortcutHeight, antiAirMenuShortcutHeight]
+    gamepadButtonSize = [antiAirMenuShortcutHeight, antiAirMenuShortcutHeight]
+    keyboardButtonSize = [SIZE_TO_CONTENT, antiAirMenuShortcutHeight]
+    keyboardButtonMinWidth = evenPx(36)
+    keyboardButtonPad = [0, hdpx(5)]
+    keyboardButtonTextFont = Fonts.tiny_text_hud
+    combinationGap = hdpx(5)
+  }
 }
 
 let hasImage = @(shortcutConfig) shortcutConfig?.buttonImage
@@ -43,6 +53,7 @@ function gamepadButton(shortcutConfig, override, isAxis = true) {
     rendObj = ROBJ_IMAGE
     image = Picture(image)
     color = colors.white
+    keepAspect = true
   }
 }
 
@@ -105,7 +116,7 @@ let shortcutByInputName = {
         })
     }
     return {
-      size = [SIZE_TO_CONTENT, SIZE_TO_CONTENT]
+      size = SIZE_TO_CONTENT
       flow = FLOW_HORIZONTAL
       valign = ALIGN_CENTER
       halign = ALIGN_CENTER
@@ -124,18 +135,18 @@ let shortcutByInputName = {
     let needArrows = shortcutConfig?.needArrows ?? false
     let sizeParam = shortcutsParamsByPlace()[override?.place ?? "defaultP"]
     return {
-      size = [SIZE_TO_CONTENT, SIZE_TO_CONTENT]
+      size = SIZE_TO_CONTENT
       flow = FLOW_HORIZONTAL
       valign = ALIGN_CENTER
       halign = ALIGN_CENTER
 
       children = [{
-        size = [SIZE_TO_CONTENT, flex()]
+        size = FLEX_V
         valign = needArrows ? ALIGN_CENTER : ALIGN_BOTTOM
         children = [getShortcut(shortcutConfig.elements?.leftKey, override)]
       },
       {
-        size = [SIZE_TO_CONTENT, SIZE_TO_CONTENT]
+        size = SIZE_TO_CONTENT
         flow = FLOW_VERTICAL
         valign = ALIGN_CENTER
         halign = ALIGN_CENTER
@@ -152,7 +163,7 @@ let shortcutByInputName = {
           getShortcut(shortcutConfig.elements?.downKey, override)]
       },
       {
-        size = [SIZE_TO_CONTENT, flex()]
+        size = FLEX_V
         valign = needArrows ? ALIGN_CENTER : ALIGN_BOTTOM
         children = [getShortcut(shortcutConfig.elements?.rightKey, override)]
       }]
@@ -172,4 +183,7 @@ getShortcut = function(shortcutConfig, override) {
   return shortcutByInputName?[shortcutConfig?.inputName ?? ""]?(shortcutConfig, override)
 }
 
-return getShortcut
+return {
+  getShortcut
+  antiAirMenuShortcutHeight
+}

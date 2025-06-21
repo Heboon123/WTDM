@@ -1,8 +1,8 @@
 from "%rGui/globals/ui_library.nut" import *
 
 let planeMfd = require("planeMfd.nut")
-let planeIls = require("planeIls.nut")
-let planeHmd = require("planeHmd.nut")
+let { planeIlsSwitcher } = require("planeIls.nut")
+let { planeHmdElem } = require("planeHmd.nut")
 let { bw, bh, rw, rh } = require("style/screenState.nut")
 let opticAtgmSight = require("opticAtgmSight.nut")
 let laserAtgmSight = require("laserAtgmSight.nut")
@@ -26,7 +26,7 @@ let { radarElement, twsElement } = require("airHudComponents.nut")
 let { IsMlwsLwsHudVisible, IsTwsDamaged } = require("twsState.nut")
 let { crosshairColorOpt } = require("options/options.nut")
 let { maxLabelWidth, maxLabelHeight } = require("radarComponent.nut")
-let actionBarTopPanel = require("hud/actionBarTopPanel.nut")
+let { actionBarTopPanel } = require("hud/actionBarTopPanel.nut")
 let { PNL_ID_ILS, PNL_ID_MFD } = require("%rGui/globals/panelIds.nut")
 let { radarHud, radarIndication } = require("%rGui/radar.nut")
 let sensorViewIndicators = require("%rGui/hud/sensorViewIndicator.nut")
@@ -185,7 +185,7 @@ function mkAgmAimIndicator(watchedColor, watchedAlertColor) {
 return {
   halign = ALIGN_LEFT
   valign = ALIGN_TOP
-  size = [sw(100), sh(100)]
+  size = const [sw(100), sh(100)]
   children = @() {
     watch = [OpticAtgmSightVisible, LaserAtgmSightVisible, isCollapsedRadarInReplay, IsRadarDamaged, IsTwsDamaged]
     size = flex()
@@ -205,7 +205,7 @@ return {
       LaserAtgmSightVisible.value ? laserAtgmSight(sw(100), sh(100)) : null
       aircraftSightHud
       !LaserAtgmSightVisible.value ? compassElem(HudColor, compassSize, [sw(50) - 0.5 * compassSize[0], sh(15)]) : null
-      planeHmd
+      planeHmdElem
       !isCollapsedRadarInReplay.value ? radarHud(sh(33), sh(33), radarPosWatched.value[0], radarPosWatched.value[1], HudColor) : null
       radarIndication(HudColor)
       sensorViewIndicators
@@ -214,7 +214,7 @@ return {
 
   function onAttach() {
     gui_scene.addPanel(PNL_ID_MFD, planeMfd)
-    gui_scene.addPanel(PNL_ID_ILS, planeIls)
+    gui_scene.addPanel(PNL_ID_ILS, planeIlsSwitcher)
   }
   function onDetach() {
     gui_scene.removePanel(PNL_ID_MFD)

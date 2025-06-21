@@ -8,7 +8,7 @@ let { safeAreaSizeHud } = require("style/screenState.nut")
 let fireControl = require("shipFireControl.nut")
 let { missionProgressHeight, isSpectatorMode } = require("%rGui/hudState.nut")
 let { radarComponent } = require("shipHudComponents.nut")
-let actionBarTopPanel = require("hud/actionBarTopPanel.nut")
+let { actionBarTopPanel } = require("hud/actionBarTopPanel.nut")
 let shipObstacleRf = require("shipObstacleRangefinder.nut")
 let aamAim = require("rocketAamAim.nut")
 let { hitNotifications } = require("shipHitNotification.nut")
@@ -20,7 +20,7 @@ let colorAlertWatched = Watched(redColor)
 
 let shipHud = @() {
   watch = [safeAreaSizeHud, missionProgressHeight, isSpectatorMode]
-  size = [SIZE_TO_CONTENT, flex()]
+  size = FLEX_V
   padding = [0, 0, missionProgressHeight.value, 0]
   margin = safeAreaSizeHud.value.borders
   flow = FLOW_VERTICAL
