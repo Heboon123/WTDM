@@ -46,49 +46,6 @@
   "type": "typeSPAA",
   "radarCanLockTargetFromTPV": false,
   "drowningCheckHeightMultiplier": 0.3,
-  "rangefinderMounted": true,
-  "isLaser": true,
-  "rangefinderDmPart": "fire_control_system_dm",
-  "distanceError": [
-    1.0,
-    1.0,
-    5.0,
-    10.0
-  ],
-  "distanceThresholdMin": [
-    1000.0,
-    3000.0,
-    5000.0,
-    9999.0
-  ],
-  "distanceThresholdMax": [
-    1000.0,
-    3000.0,
-    5000.0,
-    9999.0
-  ],
-  "distanceErrorRealistic": [
-    1.0,
-    1.0,
-    5.0,
-    10.0
-  ],
-  "distanceThresholdMinRealistic": [
-    1000.0,
-    3000.0,
-    5000.0,
-    9999.0
-  ],
-  "distanceThresholdMaxRealistic": [
-    1000.0,
-    3000.0,
-    5000.0,
-    9999.0
-  ],
-  "timeMeasurementRange": [
-    0.5,
-    0.5
-  ],
   "shouldBailoutWhenFCSDied": false,
   "ikGunner": [
     {
@@ -2072,79 +2029,6 @@
     "TrackSoundNameAi": "tracks_ai_wheels"
   },
   "class_tags": {},
-  "commonWeapons": {
-    "Weapon": {
-      "trigger": "gunner0",
-      "triggerGroup": "primary",
-      "blk": "gameData/Weapons/groundModels_weapons/160mm_sam_1c_launcher_user_cannon.blk",
-      "flash": "emtr_gun_flame_01",
-      "useEmitter": true,
-      "emitter": "bone_rocket_01",
-      "emitterGenRange": [
-        1,
-        4
-      ],
-      "emitterGenFmt": "bone_rocket_%02d",
-      "emittersHierarchy": true,
-      "ammoDpGenFmt": "ammo_turret_%02d_dm",
-      "recoilMultiplier": 0.0,
-      "stopForFire": true,
-      "maxSpeedForFire": 2.0,
-      "defaultYaw": 0.0,
-      "defaultPitch": 0.0,
-      "allowableDelta": 20.0,
-      "barrelDP": "gun_barrel_01_dm",
-      "brokenBarrelAllowShoot": false,
-      "speedYaw": 100.0,
-      "speedPitch": 40.0,
-      "fireConeAngle": [
-        1.0,
-        1.0
-      ],
-      "bullets": 8,
-      "salvoAmount": 100.0,
-      "ChainfireTime": 0.0,
-      "DelayAfterShoot": 2.0,
-      "targetAngularRateMax": 5.0,
-      "AttackMaxDistance": 10000.0,
-      "AttackMaxRadius": 10000.0,
-      "AttackMaxHeight": 4000.0,
-      "AttackMinHeight": 0.0,
-      "accuracyAir": 1.5,
-      "accuracyGnd": 0.0,
-      "errMeasureVel": 0.0,
-      "errMeasureVelFast": 0.0,
-      "errMeasureVelFwdShift": 0.0,
-      "errMeasureVelDir": 0.0,
-      "errTargettingOn100kmph": 0.0,
-      "errTargetting": 3.0,
-      "errExplTime": 0.0,
-      "turret": {
-        "head": "bone_turret",
-        "gun": "bone_gun",
-        "gunnerDm": "commander_dm",
-        "verDriveDm": [
-          "drive_turret_v_dm",
-          "fire_control_system_dm"
-        ],
-        "horDriveDm": [
-          "drive_turret_h_dm",
-          "fire_control_system_dm"
-        ],
-        "shootingDmPart": "fire_control_system_dm"
-      },
-      "limits": {
-        "yaw": [
-          -180.0,
-          180.0
-        ],
-        "pitch": [
-          -5.0,
-          85.0
-        ]
-      }
-    }
-  },
   "weapon_presets": {
     "preset": {
       "name": "jp_type_81_tansam_default",
@@ -3523,7 +3407,108 @@
     "airstrike": {},
     "improved_optics": {},
     "160mm_type_81_aam": {},
+    "modern_tank_laser_rangefinder": {
+      "effects": {
+        "rangefinderMounted": true,
+        "isLaser": true,
+        "rangefinderDmPart": "fire_control_system_dm",
+        "distanceError": [
+          1.0,
+          1.0,
+          5.0,
+          10.0
+        ],
+        "distanceThresholdMin": [
+          1000.0,
+          3000.0,
+          5000.0,
+          9999.0
+        ],
+        "distanceThresholdMax": [
+          1000.0,
+          3000.0,
+          5000.0,
+          9999.0
+        ],
+        "distanceErrorRealistic": [
+          1.0,
+          1.0,
+          5.0,
+          10.0
+        ],
+        "distanceThresholdMinRealistic": [
+          1000.0,
+          3000.0,
+          5000.0,
+          9999.0
+        ],
+        "distanceThresholdMaxRealistic": [
+          1000.0,
+          3000.0,
+          5000.0,
+          9999.0
+        ],
+        "timeMeasurementRange": [
+          0.5,
+          0.5
+        ],
+        "rcostAddParam": 0.98,
+        "sensors": {
+          "sensor": [
+            {
+              "blk": "gameData/sensors/us_lav_ad_track.blk",
+              "turretIndex": 0,
+              "dmPart": [
+                "optic_gun_dm",
+                "electronic_equipment_dm"
+              ]
+            },
+            {
+              "blk": "gameData/sensors/LaserDesignatorSensor.blk",
+              "dmPart": "electronic_equipment_dm"
+            }
+          ]
+        }
+      }
+    },
+    "night_vision_system": {
+      "tier": 2,
+      "image": "!#ui/gameuiskin#thermal_sight.avif",
+      "animation": "video/unitModifications/night_vision_system_thermal.ivf",
+      "effects": {
+        "nightVision": {
+          "nightVisionDmPart": "fire_control_system_dm",
+          "gunnerThermal": {
+            "resolution": [
+              500,
+              300
+            ],
+            "noiseFactor": 0.05
+          },
+          "driverIr": {
+            "resolution": [
+              800,
+              600
+            ],
+            "lightMult": 5.0,
+            "ghosting": 0.6,
+            "noiseFactor": 0.2
+          }
+        }
+      }
+    },
     "160mm_type_81_arh_aam": {}
+  },
+  "nightVision": {
+    "driverIr": {
+      "resolution": [
+        800,
+        600
+      ],
+      "lightMult": 5.0,
+      "ghosting": 0.7,
+      "noiseFactor": 0.2
+    }
   },
   "user_skin": {
     "name": "type_81_tansam",
@@ -3630,19 +3615,86 @@
     }
   ],
   "sensors": {
-    "sensor": [
-      {
-        "blk": "gameData/sensors/us_lav_ad_track.blk",
-        "turretIndex": 0,
-        "dmPart": [
-          "optic_gun_dm",
-          "electronic_equipment_dm"
-        ]
+    "sensor": {
+      "blk": "gameData/sensors/us_lav_ad_track.blk",
+      "turretIndex": 0,
+      "dmPart": [
+        "optic_gun_dm",
+        "electronic_equipment_dm"
+      ]
+    }
+  },
+  "commonWeapons": {
+    "Weapon": {
+      "trigger": "gunner0",
+      "triggerGroup": "primary",
+      "blk": "gameData/Weapons/groundModels_weapons/160mm_sam_1c_slave_launcher_user_cannon.blk",
+      "flash": "emtr_gun_flame_01",
+      "useEmitter": true,
+      "emitter": "bone_rocket_01",
+      "emitterGenRange": [
+        1,
+        4
+      ],
+      "emitterGenFmt": "bone_rocket_%02d",
+      "emittersHierarchy": true,
+      "ammoDpGenFmt": "ammo_turret_%02d_dm",
+      "recoilMultiplier": 0.0,
+      "stopForFire": true,
+      "maxSpeedForFire": 2.0,
+      "defaultYaw": 0.0,
+      "defaultPitch": 0.0,
+      "allowableDelta": 20.0,
+      "barrelDP": "gun_barrel_01_dm",
+      "brokenBarrelAllowShoot": false,
+      "speedYaw": 100.0,
+      "speedPitch": 40.0,
+      "fireConeAngle": [
+        1.0,
+        1.0
+      ],
+      "bullets": 8,
+      "salvoAmount": 100.0,
+      "ChainfireTime": 0.0,
+      "DelayAfterShoot": 2.0,
+      "targetAngularRateMax": 5.0,
+      "AttackMaxDistance": 10000.0,
+      "AttackMaxRadius": 10000.0,
+      "AttackMaxHeight": 4000.0,
+      "AttackMinHeight": 0.0,
+      "accuracyAir": 1.5,
+      "accuracyGnd": 0.0,
+      "errMeasureVel": 0.0,
+      "errMeasureVelFast": 0.0,
+      "errMeasureVelFwdShift": 0.0,
+      "errMeasureVelDir": 0.0,
+      "errTargettingOn100kmph": 0.0,
+      "errTargetting": 3.0,
+      "errExplTime": 0.0,
+      "turret": {
+        "head": "bone_turret",
+        "gun": "bone_gun",
+        "gunnerDm": "commander_dm",
+        "verDriveDm": [
+          "drive_turret_v_dm",
+          "fire_control_system_dm"
+        ],
+        "horDriveDm": [
+          "drive_turret_h_dm",
+          "fire_control_system_dm"
+        ],
+        "shootingDmPart": "fire_control_system_dm"
       },
-      {
-        "blk": "gameData/sensors/LaserDesignatorSensor.blk",
-        "dmPart": "electronic_equipment_dm"
+      "limits": {
+        "yaw": [
+          -180.0,
+          180.0
+        ],
+        "pitch": [
+          -5.0,
+          85.0
+        ]
       }
-    ]
+    }
   }
 }

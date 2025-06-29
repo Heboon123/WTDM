@@ -1,5 +1,5 @@
-from "%scripts/dagui_natives.nut" import get_player_army_for_hud, is_game_paused, mpstat_get_sort_func, is_spectator_rotation_forced
-from "app" import is_dev_version
+from "%scripts/dagui_natives.nut" import get_player_army_for_hud, mpstat_get_sort_func, is_spectator_rotation_forced
+from "app" import is_dev_version, isGamePaused
 from "%scripts/dagui_library.nut" import *
 from "hudMessages" import *
 from "%scripts/teamsConsts.nut" import Team
@@ -36,8 +36,10 @@ let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { useTouchscreen } = require("%scripts/clientState/touchScreen.nut")
 let { toggleShortcut } = require("%globalScripts/controls/shortcutActions.nut")
 let { getHudUnitType, is_replay_markers_enabled } = require("hudState")
-let { guiStartMPStatScreen, getWeaponTypeIcoByWeapon
+let { guiStartMPStatScreen
 } = require("%scripts/statistics/mpStatisticsUtil.nut")
+let { getWeaponTypeIcoByWeapon
+} = require("%scripts/statistics/mpStatisticsInfo.nut")
 let { onSpectatorMode, switchSpectatorTargetById,
   getSpectatorTargetId, getSpectatorTargetName
 } = require("guiSpectator")
@@ -741,8 +743,8 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
 
   function updateControls(targetSwitched = false) {
     if (this.canControlTimeline) {
-      if (is_game_paused() != this.replayPaused) {
-        this.replayPaused = is_game_paused()
+      if (isGamePaused() != this.replayPaused) {
+        this.replayPaused = isGamePaused()
         this.scene.findObject("ID_REPLAY_PAUSE").findObject("icon")["background-image"] = this.replayPaused ? "#ui/gameuiskin#replay_play.svg" : "#ui/gameuiskin#replay_pause.svg"
       }
       if (get_time_speed() != this.replayTimeSpeed) {
