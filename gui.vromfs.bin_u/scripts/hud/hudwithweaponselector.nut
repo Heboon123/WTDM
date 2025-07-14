@@ -13,11 +13,12 @@ gui_handlers.HudWithWeaponSelector <- class (gui_handlers.BaseUnitHud) {
   }
 
   function reinitScreen() {
-    this.airWeaponSelector?.close()
+    if (this.airWeaponSelector && !this.airWeaponSelector.isPinned)
+      this.airWeaponSelector.close()
   }
 
   function createAirWeaponSelector(unit) {
-    let weaponSelectorNest = this.scene.findObject("air_weapon_selector")
+    let weaponSelectorNest = this.scene.findObject("air_weapon_selector_nest")
     this.airWeaponSelector = HudAirWeaponSelector(unit, weaponSelectorNest)
   }
 

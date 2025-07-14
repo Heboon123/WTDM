@@ -20,14 +20,26 @@ let updateExtWatched = require("%scripts/global/updateExtWatched.nut")
 let { getAxisStuck, getMaxDeviatedAxisInfo, getAxisData } = require("%scripts/joystickInterface.nut")
 let { getShortcutById } = require("%scripts/controls/shortcutsList/shortcutsList.nut")
 let g_listener_priority = require("%scripts/g_listener_priority.nut")
+let { deferOnce } = require("dagor.workcycle")
 
-let counterMeasuresViews = [
-  { isFlareChaff = true, index = COUNTER_MEASURE_MODE_FLARE_CHAFF,
-    label = @() "".concat(loc("HUD/FLARES_SHORT"), "/", loc("HUD/CHAFFS_SHORT"))
+const UPDATE_WEAPONS_DELAY = 0.5
+
+local isSelectorClosed = true
+local isSelectorPinned = false
+
+let counterMeasuresViews = {
+  [COUNTER_MEASURE_MODE_FLARE_CHAFF] = { view = {isFlareChaff = true, index = COUNTER_MEASURE_MODE_FLARE_CHAFF,
+    label = @() "".concat(loc("HUD/FLARES_SHORT"), "/", loc("HUD/CHAFFS_SHORT"))},
+    getAmount = @(data) max(data.flares, data.chaffs),
+    getText = @(data) $"{data.flares}/{data.chaffs}"
   },
-  { icon = "#ui/gameuiskin#bullet_flare", label = @() loc("HUD/FLARES_SHORT"), index = COUNTER_MEASURE_MODE_FLARE},
-  { icon = "#ui/gameuiskin#bullet_chaff", label = @() loc("HUD/CHAFFS_SHORT"), index = COUNTER_MEASURE_MODE_CHAFF}
-]
+  [COUNTER_MEASURE_MODE_FLARE] = { view = {icon = "#ui/gameuiskin#bullet_flare", label = @() loc("HUD/FLARES_SHORT"),
+    index = COUNTER_MEASURE_MODE_FLARE}, getAmount = @(data) data.flares, getText = @(data) $"{data.flares}"
+  },
+  [COUNTER_MEASURE_MODE_CHAFF] = { view = {icon = "#ui/gameuiskin#bullet_chaff", label = @() loc("HUD/CHAFFS_SHORT"),
+    index = COUNTER_MEASURE_MODE_CHAFF}, getAmount = @(data) data.chaffs, getText = @(data) $"{data.chaffs}"
+  }
+}
 
 function getCurrentHandler() {
   let airHandler = handlersManager.findHandlerClassInScene(gui_handlers.HudAir)?.airWeaponSelector
@@ -69,6 +81,10 @@ let class HudAirWeaponSelector {
   currentBtnsFloor = null
   countermeasuresShortcutId = "ID_FLARES"
   isReinitDelayed = false
+  isPinned = false
+  cachedCounterMeasuresData = null
+  cachedWeaponsData = null
+  updateWeaponsDelay = UPDATE_WEAPONS_DELAY
 
   buttonsFloors = {
     weapons = {
@@ -151,7 +167,7 @@ let class HudAirWeaponSelector {
 
     let counterMeasures = []
     foreach (data in counterMeasuresViews)
-      counterMeasures.append(data)
+      counterMeasures.append(data.view)
 
     
     let shType = g_shortcut_type.getShortcutTypeByShortcutId(this.countermeasuresShortcutId)
@@ -212,25 +228,21 @@ let class HudAirWeaponSelector {
     let shType = g_shortcut_type.getShortcutTypeByShortcutId("ID_OPEN_VISUAL_WEAPON_SELECTOR")
     let shortCut = shType.getFirstInput("ID_OPEN_VISUAL_WEAPON_SELECTOR")
     this.nestObj.findObject("close_btn").setValue(shortCut.getTextShort())
-    let joystickUpdateTimer = this.nestObj.findObject("visual_selector_axis_timer")
-    joystickUpdateTimer.setUserData(isXInputDevice() ? this : null)
+    let updateTimer = this.nestObj.findObject("visual_selector_timer")
+    updateTimer.setUserData(this)
     this.isInOpenedState = true
-    let wndControlsAllowMaskWhenActive = isXInputDevice()
-      ? CtrlsInGui.CTRL_IN_MULTIFUNC_MENU
-       | CtrlsInGui.CTRL_ALLOW_WHEEL_MENU
-       | CtrlsInGui.CTRL_ALLOW_VEHICLE_MOUSE
-       | CtrlsInGui.CTRL_ALLOW_VEHICLE_KEYBOARD
-       | CtrlsInGui.CTRL_ALLOW_VEHICLE_JOY
-       | CtrlsInGui.CTRL_ALLOW_MP_STATISTICS
-      : CtrlsInGui.CTRL_ALLOW_WHEEL_MENU
-       | CtrlsInGui.CTRL_ALLOW_VEHICLE_KEYBOARD
-       | CtrlsInGui.CTRL_ALLOW_MP_STATISTICS
-
-    setAllowedControlsMask(wndControlsAllowMaskWhenActive)
-    broadcastEvent("ChangedShowActionBar")
+    isSelectorClosed = false
     this.updatePresetData()
-    this.updateCounterMeasures()
+
+    if (isSelectorPinned != this.isPinned)
+      this.pinToScreen(isSelectorPinned)
+    else
+      this.updateCounterMeasures()
+
     updateExtWatched({ isVisualWeaponSelectorVisible = true })
+    if (!this.isPinned)
+      this.setBlockControlMask()
+    broadcastEvent("ChangedShowActionBar")
   }
 
   function close() {
@@ -238,6 +250,7 @@ let class HudAirWeaponSelector {
       return
     this.hoveredWeaponBtn = null
     this.isInOpenedState = false
+    isSelectorClosed = true
     handlersManager.restoreAllowControlMask()
     broadcastEvent("ChangedShowActionBar")
     if (!this.isValid()) {
@@ -252,6 +265,7 @@ let class HudAirWeaponSelector {
   }
 
   function onDestroy() {
+    isSelectorClosed = true
     if (this.isOpened()) {
       updateExtWatched({ isVisualWeaponSelectorVisible = false })
       handlersManager.restoreAllowControlMask()
@@ -328,8 +342,9 @@ let class HudAirWeaponSelector {
     this.setLabel(" ")
   }
 
-  function updatePresetData() {
-    let data = get_all_weapons()
+  function updatePresetData(data = null) {
+    data = data ?? get_all_weapons()
+    this.cachedWeaponsData = data
     let blockLength = 4
     let weaponsCount = data.weapons.len()/blockLength
 
@@ -369,6 +384,8 @@ let class HudAirWeaponSelector {
     if (isXInputDevice())
       this.setFocusBorder(obj)
     this.updatePresetData()
+    if (this.isPinned)
+      return
     this.close()
   }
 
@@ -453,22 +470,24 @@ let class HudAirWeaponSelector {
     this.nestObj.findObject("weapon_tooltip").setValue(text)
   }
 
-  function updateCounterMeasures() {
+  function updateCounterMeasures(forceUpdateLabels = false) {
     let counterMeasuresData = get_countermeasures_data()
+    this.cachedCounterMeasuresData = counterMeasuresData
     let countermeasuresContainer = this.nestObj.findObject("countermeasures_container")
     foreach (id in this.counterMeasuresIds) {
       let counermeasureBtn = countermeasuresContainer.findObject($"countermeasure_{id}")
       if (counermeasureBtn == null)
         continue
-      if (id == COUNTER_MEASURE_MODE_CHAFF) {
-        counermeasureBtn.amount = counterMeasuresData.chaffs
-        counermeasureBtn.show(counterMeasuresData.chaffs > 0)
-      } else if (id == COUNTER_MEASURE_MODE_FLARE) {
-        counermeasureBtn.amount = counterMeasuresData.flares
-        counermeasureBtn.show(counterMeasuresData.flares > 0)
-      } else {
-        counermeasureBtn.show(max(counterMeasuresData.flares, counterMeasuresData.chaffs) > 0)
-        counermeasureBtn.amount = $"{counterMeasuresData.flares}/{counterMeasuresData.chaffs}"
+
+      let amount = counterMeasuresViews?[id].getAmount(counterMeasuresData) ?? 0
+      counermeasureBtn.show(amount > 0)
+      if (amount > 0) {
+        let amountText = counterMeasuresViews?[id].getText(counterMeasuresData)
+        counermeasureBtn.amount = amountText
+        if (forceUpdateLabels || this.isPinned) {
+          let labelObj = counermeasureBtn.findObject("label")
+          labelObj.setValue(this.isPinned ? amountText : labelObj.nameText)
+        }
       }
     }
 
@@ -528,7 +547,9 @@ let class HudAirWeaponSelector {
     }
   }
 
-  function onVisualSelectorAxisInputTimer(_obj = null, _dt = null) {
+  function onVisualSelectorAxisInputTimer() {
+    if (!isXInputDevice())
+      return
     let axisData = getAxisData(this.watchAxis, this.stuckAxis)
     let joystickData = getMaxDeviatedAxisInfo(axisData, 0.25)
     if (joystickData == null || joystickData.normLength == 0) {
@@ -672,6 +693,75 @@ let class HudAirWeaponSelector {
     this.lastFocusBorderObj["needFocusBorder"] = "yes"
   }
 
+  function pinToScreen(needPeen) {
+    if (this.isPinned == needPeen)
+      return
+    this.isPinned = needPeen
+    isSelectorPinned = needPeen
+    let pinBtn = this.nestObj.findObject("pin_btn")
+    pinBtn.tooltip = loc(this.isPinned ? "tooltip/unpinWeaponSelector" : "tooltip/pinWeaponSelector")
+    if (this.isPinned)
+      handlersManager.restoreAllowControlMask()
+    else
+      this.setBlockControlMask()
+    this.updateCounterMeasures(true)
+    this.nestObj.findObject("air_weapon_selector").isPinned = this.isPinned ? "yes" : "no"
+  }
+
+  function setBlockControlMask() {
+    let wndControlsAllowMaskWhenActive = isXInputDevice()
+      ? CtrlsInGui.CTRL_IN_MULTIFUNC_MENU
+       | CtrlsInGui.CTRL_ALLOW_WHEEL_MENU
+       | CtrlsInGui.CTRL_ALLOW_VEHICLE_MOUSE
+       | CtrlsInGui.CTRL_ALLOW_VEHICLE_KEYBOARD
+       | CtrlsInGui.CTRL_ALLOW_VEHICLE_JOY
+       | CtrlsInGui.CTRL_ALLOW_MP_STATISTICS
+      : CtrlsInGui.CTRL_ALLOW_WHEEL_MENU
+       | CtrlsInGui.CTRL_ALLOW_VEHICLE_KEYBOARD
+       | CtrlsInGui.CTRL_ALLOW_MP_STATISTICS
+    setAllowedControlsMask(wndControlsAllowMaskWhenActive)
+  }
+
+  function onPinBtn(_btn) {
+    this.pinToScreen(!this.isPinned)
+  }
+
+  function onVisualSelectorTimer(_obj, dt) {
+    this.onVisualSelectorAxisInputTimer()
+
+    this.updateWeaponsDelay -= dt
+    if (this.updateWeaponsDelay > 0)
+      return
+    this.updateWeaponsDelay = UPDATE_WEAPONS_DELAY
+    this.updateDataByTimer()
+  }
+
+  function isWeaponsDataChanged(old, current) {
+    let newCount = current.weapons.len()
+    if (old?.weapons.len() != newCount)
+      return true
+    foreach (idx, val in old.weapons)
+      if (current.weapons[idx] != val)
+        return true
+    return false
+  }
+
+  function isCounterMeasuresDataChanged(old, current) {
+    return old?.flares != current.flares
+      || old?.chaffs != current.chaffs
+      || old?.mode != current.mode
+  }
+
+  function updateDataByTimer() {
+    let data = get_all_weapons()
+    if (this.isWeaponsDataChanged(this.cachedWeaponsData, data))
+      this.updatePresetData(data)
+
+    let counterMeasures = get_countermeasures_data()
+    if (this.isCounterMeasuresDataChanged(this.cachedCounterMeasuresData, counterMeasures))
+      this.updateCounterMeasures()
+  }
+
   function onEventControlsChangedShortcuts(data) {
     let changedSchs = data?.changedShortcuts
     if (!this.chosenPreset || changedSchs == null)
@@ -715,6 +805,27 @@ function isVisualHudAirWeaponSelectorOpened() {
 eventbus_subscribe("on_multifunc_menu_request", function selector_on_multifunc_menu_request(evt) {
   if (evt.show)
     closeHudAirWeaponSelector()
+})
+
+function updateSelectorData() {
+  let airHandler = getCurrentHandler()
+  if (airHandler == null)
+    return
+
+  if (airHandler.isOpened())
+    airHandler.updatePresetData()
+}
+
+eventbus_subscribe("onLaunchShell", function (_evt) {
+  if (isSelectorClosed)
+    return
+  deferOnce(updateSelectorData)
+})
+
+eventbus_subscribe("onSwitchSecondaryWeaponCycle", function (_evt) {
+  if (isSelectorClosed)
+    return
+  deferOnce(updateSelectorData)
 })
 
 return {
