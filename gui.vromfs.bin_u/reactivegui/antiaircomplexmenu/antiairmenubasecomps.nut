@@ -4,6 +4,7 @@ let { toggleShortcut, setShortcutOn, setShortcutOff
 } = require("%globalScripts/controls/shortcutActions.nut")
 let { antiAirMenuShortcutHeight } = require("%rGui/hints/shortcuts.nut")
 let { MOUSE, JOYSTICK } = require("controls").DeviceType
+let { isFunction } = require("%sqStdLibs/helpers/u.nut")
 
 let frameHeaderPadding = hdpx(8)
 let frameHeaderHeight = evenPx(32)
@@ -11,6 +12,9 @@ let borderWidth = dp(1)
 let shortcutButtonPadding = hdpx(2)
 let shortcutButtonGap = hdpx(8)
 let shortcutButtonHeight = antiAirMenuShortcutHeight + 2*shortcutButtonPadding
+
+let frameBorderColor = 0xFF37454D
+let frameBackgroundColor = 0xFF182029
 
 let mkText = @(ovr) {
   rendObj = ROBJ_TEXT
@@ -35,8 +39,8 @@ let mkFrameHeader = @(headerParams) {
 
 let mkFrame = @(content, headerParams = null, ovr = {}) {
   rendObj = ROBJ_BOX
-  fillColor = 0xFF182029
-  borderColor = 0xFF37454D
+  fillColor = frameBackgroundColor
+  borderColor = frameBorderColor
   borderWidth
   padding = borderWidth
   flow = FLOW_VERTICAL
@@ -132,7 +136,7 @@ function makeTargetStatusEllementFactory(size, header_name, status_getter_compai
   }
 
   return {
-    function construct_header(font_size) {
+    function construct_header(font_size, onHoverFn) {
       let stateFlags = Watched(0)
 
       return function(){
@@ -157,7 +161,7 @@ function makeTargetStatusEllementFactory(size, header_name, status_getter_compai
             targetStatusGetterForSort.func = status_getter_compairable
             targetSortFunctionWatched.trigger()
           }
-
+          onHover = @(on, event) onHoverFn(on, event.targetRect)
           function onElemState(sf) {
             stateFlags(sf)
           }
@@ -166,7 +170,10 @@ function makeTargetStatusEllementFactory(size, header_name, status_getter_compai
         }
       }
     }
-    construct_ellement = @(target, font_size) @() mkTargetCell(size, font_size, status_to_text(status_getter_compairable(target), target)).__update(upd)
+    construct_ellement = @(target, font_size) function() {
+      let updVal = isFunction(upd) ? upd(target) : upd
+      return mkTargetCell(size, font_size, status_to_text(status_getter_compairable(target), target)).__update(updVal)
+    }
   }
 }
 
@@ -182,4 +189,6 @@ return {
   makeTargetStatusEllementFactory
   targetsSortFunction
   targetSortFunctionWatched
+  frameBorderColor
+  frameBackgroundColor
 }
