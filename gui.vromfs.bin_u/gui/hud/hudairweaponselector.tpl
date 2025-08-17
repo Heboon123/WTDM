@@ -2,7 +2,7 @@ airWeaponSelector {
   id:t='air_weapon_selector'
   position:t='absolute'
   flow:t='vertical'
-  isPinned:t='no'
+  isPinned:t='<<isPinned>>'
   left:t='-w/2'
   css-hier-invalidate:t='yes'
 
@@ -151,7 +151,7 @@ airWeaponSelector {
           id:t='label'
           position:t='absolute'
           text:t=''
-          pos:t='0.002@shHud, ph-h'
+          pos:t='pw - w - 0.003@shHud, ph-h'
         }
 
         <<#tierTooltipId>>

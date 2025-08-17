@@ -10,14 +10,18 @@ require HeroManager
 require FlightModelWrap
 require Unit
 require strings
+require app
+require WTCamera
+require DagorDebug3D
+require Sensors
 
 struct CanvasParams
   fontId : int = 0
 
 struct Props
-  bgColor : E3DCOLOR = E3DCOLOR(0x0132AA36)
-  lineGradientEdgeColor : E3DCOLOR = E3DCOLOR(0x0132AA36)
-  elementColor : E3DCOLOR = E3DCOLOR(0x8088FF88)
+  bgColor : E3DCOLOR = E3DCOLOR(0x01013a11)
+  lineGradientEdgeColor : E3DCOLOR = E3DCOLOR(0x000000)
+  elementColor : E3DCOLOR = E3DCOLOR(0x01448044)
   markingsColor : E3DCOLOR = E3DCOLOR(0xFF000000)
 
   elementsLineWidth : float = 3.0
@@ -36,7 +40,7 @@ def foreach_targets(blk : block<(target : RadarTarget const const#) : void>)
     for t in targets
       invoke(blk, t)
 
-class F106RadarMFD : Canvas
+class F106Radar : Canvas
   params : CanvasParams = CanvasParams()
   props : Props = Props()
 
@@ -47,9 +51,13 @@ class F106RadarMFD : Canvas
   lt : float2 = float2(0.0)
   rb : float2 = float2(0.0)
 
-  def F106RadarMFD(var guiCtx : GuiContext&; rdata : ElemRenderData& const; rstate : RenderState& const; inParams : CanvasParams&)
+  hero : Unit?
+  fmw : FlightModelWrap?
+
+  def F106Radar(var guiCtx : GuiContext&; rdata : ElemRenderData& const; rstate : RenderState& const; inParams : CanvasParams&; inProps : Props = Props())
     Canvas`Canvas(self, guiCtx, rdata, rstate)
     params = inParams
+    props = inProps
     setFont(params.fontId)
 
     leftOffset = 0.5 + props.radarBoxPos.x - props.radarBoxHalfSize.x
@@ -58,6 +66,9 @@ class F106RadarMFD : Canvas
     topOffset = 1.0 - botOffset - props.radarBoxHalfSize.y * 2.0
     lt = props.radarBoxPos - props.radarBoxHalfSize
     rb = props.radarBoxPos + props.radarBoxHalfSize
+
+    hero = get_watched_not_delayed_hero()
+    fmw = as_fmw(hero)
 
   def drawGround()
     let pos = toAbsPos(lt)
@@ -212,21 +223,22 @@ class F106RadarMFD : Canvas
     drawLine(props.radarBoxPos - float2(lineLength + centralOffset, 0), props.radarBoxPos - float2(centralOffset, 0))
     drawLine(props.radarBoxPos + float2(lineLength + centralOffset, 0), props.radarBoxPos + float2(centralOffset, 0))
 
+  def isCScope()
+    return fmw != null && fmw.sightMode == int(CockpitSightMode.HUD_SIGHT_MODE_AIR_CANNONS) || get_radar_hud_is_irst()
+
   def azimuthRelToX(azimuthRel : float)
-    let x = lerp(lt.x, rb.x, azimuthRel)
-    return x
+    return lerp(lt.x, rb.x, azimuthRel)
 
   def azimuthDegToX(azimuthDeg : float)
     let halfSizeAzimuthDeg = (get_radar_hud_azimuth_max() - get_radar_hud_azimuth_min()) * radToDeg * 0.5
     return cvt(azimuthDeg, -halfSizeAzimuthDeg, halfSizeAzimuthDeg, lt.x, rb.x)
 
   def distRelToY(distRel : float)
-    let y = lerp(rb.y, lt.y, distRel)
-    return y
+    return lerp(rb.y, lt.y, distRel)
 
   def toRadarPos(azimuthRel : float; distRel : float)
-    let x = lerp(lt.x, rb.x, azimuthRel)
-    let y = lerp(rb.y, lt.y, distRel)
+    let x = azimuthRelToX(azimuthRel)
+    let y = distRelToY(distRel)
     return float2(x, y)
 
   def drawCueAt(pos : float2)
@@ -236,6 +248,7 @@ class F106RadarMFD : Canvas
     drawEllipse(pos, rad)
 
   def drawCue()
+    return if isCScope()
     let azimuthRange = max(0., get_radar_hud_azimuth_max() - get_radar_hud_azimuth_min())
     let cueAzimuth = get_radar_hud_cue_azimuth() * max(get_radar_hud_target_azimuth_width() - get_radar_hud_cue_azimuth_half_width_rel() * azimuthRange, 0.)
     let halfDistGateWidthRel = 0.5 * get_radar_hud_cue_dist_width_rel()
@@ -259,7 +272,7 @@ class F106RadarMFD : Canvas
         let signalRel = target.signalRel < 0.01 ? 0. : cvt(target.signalRel, 0.05, 1., 0.3, 1.)
         let alphaColor = (1. - target.ageRel) * signalRel
 
-        let targetPos = toRadarPos(azimuthRel, distanceRel)
+        let targetPos = toRadarPos(azimuthRel, isCScope() ? target.elevationRel : distanceRel)
 
         let col4 = float4(Color4(props.elementColor)) * alphaColor
         let col = E3DCOLOR(Color4(col4))
@@ -278,47 +291,101 @@ class F106RadarMFD : Canvas
     if !hasDetectedTarget && get_radar_hud_cue_visible()
       drawCue()
 
+  def drawCCIP()
+    let app = get_app()
+    if app == null || hero == null
+      return
+    if fmw == null || fmw.sightMode != int(CockpitSightMode.HUD_SIGHT_MODE_AIR_CANNONS)
+      return
+    let fcm = app.flightControlMode
+    if fcm == null || !fcm.cannonGyroCalculator.isAimValid
+      return
+
+    using() <| $(var target : TargetOfInterest#)
+      if hero.sensors.getSelectedTargetOfInterest(hero.detector, target)
+        let impactPos = fcm.cannonGyroCalculator.aimPoint
+        let dirToImpactPos = impactPos - hero.pos
+        let localDir = quat_mul_vec(math::quat(inverse(hero.unitTm)), dirToImpactPos)
+
+        let azimuth = atan2(localDir.x, localDir.z) - PI_2
+        let elevation = atan2(localDir.y, localDir.xz.length())
+
+        let azimuthRel = cvt(azimuth, get_radar_hud_azimuth_min(), get_radar_hud_azimuth_max(), 0.0, 1.0)
+        let elevationRel = cvt(elevation, get_radar_hud_elevation_min(), get_radar_hud_elevation_max(), 0.0, 1.0)
+
+        let CCIPRadarPos = toRadarPos(azimuthRel, elevationRel)
+
+        let targetPos = target.from + target.dirNorm * target.distance
+
+        if target.hasRange
+          let err = cross(targetPos - impactPos, target.dirNorm)
+          let errorSq = length_sq(err)
+
+          let minErrorSq = 2.0
+          let maxErrorSq = 50.0
+          let minMarkSizeMult = 0.5
+          let maxMarkSizeMult = 1.0
+
+          let CCIPMarkerHalfSize = props.lockedTargetCrossSize * 0.5 * cvt(errorSq, minErrorSq, maxErrorSq, maxMarkSizeMult, minMarkSizeMult)
+          drawLine(CCIPRadarPos - float2(0.0, CCIPMarkerHalfSize), CCIPRadarPos + float2(0.0, CCIPMarkerHalfSize))
+          drawLine(CCIPRadarPos - float2(CCIPMarkerHalfSize, 0.0), CCIPRadarPos + float2(CCIPMarkerHalfSize, 0.0))
+        else
+          let CCIPMarkerHalfSize = props.lockedTargetCrossSize * 0.5
+          drawLine(CCIPRadarPos - float2(0.0, CCIPMarkerHalfSize), CCIPRadarPos + float2(0.0, CCIPMarkerHalfSize))
+          drawLine(CCIPRadarPos - float2(CCIPMarkerHalfSize * 2.0, 0.0), CCIPRadarPos + float2(CCIPMarkerHalfSize, 0.0))
+
   def drawInstantaneousAzimuth()
-    setColor(props.lineGradientEdgeColor)
-    setFillColor(props.elementColor)
     let top = azimuthRelToX(get_radar_hud_azimuth())
     let bottom = azimuthRelToX(get_radar_hud_azimuth())
     drawGradientLine(float2(top, -0.5), float2(bottom, 0.5), 2.0, 6.0)
 
   def drawHorizon()
-    let unit = get_watched_not_delayed_hero()
-    let fmw = as_fmw(unit)
     return if fmw == null
-
-    setColor(props.lineGradientEdgeColor)
-    setFillColor(props.elementColor)
-
     let rotation = -fmw.roll * degToRad
     setRotation(props.radarBoxPos, rotation)
     drawGradientLine(props.radarBoxPos - float2(1.0, 0.0), props.radarBoxPos + float2(1.0, 0.0), 2.0, 6.0)
     resetViewTm()
 
-  def draw()
-    setViewport(float2(-0.5), float2(0.5))
+  def drawBScopeStatus()
+    return if isCScope()
 
-    drawBackground()
+    setViewport(props.radarBoxPos - props.radarBoxHalfSize, props.radarBoxPos + props.radarBoxHalfSize)
+    setFillColor(props.elementColor)
+    setColor(props.lineGradientEdgeColor)
+    drawInstantaneousAzimuth()
+    drawHorizon()
+    restoreViewport()
+
+  def drawHUD()
+    setViewport(float2(-0.5), float2(0.5))
 
     drawGround()
 
     setLineWidth(props.elementsLineWidth)
 
     drawTargets()
-    drawInstantaneousAzimuth()
-    drawHorizon()
-
-    drawMarkings()
 
     restoreViewport()
+
+    drawBScopeStatus()
+    drawCCIP()
+
+  def drawMFD()
+    drawBackground()
+    drawHUD()
+    drawMarkings()
 
 
 [export]
 def draw_radar_hud(var ctx : GuiContext&; rdata : ElemRenderData& const; rstate : RenderState& const; data : CanvasParams&)
-  new F106RadarMFD(ctx, rdata, rstate, data).draw()
+  new F106Radar(ctx, rdata, rstate, data).drawMFD()
+
+[export]
+def draw_radar_hud_reflector(var ctx : GuiContext&; rdata : ElemRenderData& const; rstate : RenderState& const; data : CanvasParams&)
+  var props = Props()
+  props.radarBoxHalfSize = float2(0.5)
+  props.radarBoxPos = float2(0.0)
+  new F106Radar(ctx, rdata, rstate, data, props).drawHUD()
 
 [export, unused_argument(props), unused_argument(storage)]
 def setup_radar_data(props : Properties&; var storage : CanvasParams&)
