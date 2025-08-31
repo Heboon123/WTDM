@@ -30,6 +30,7 @@ let { getLanguageName } = require("%scripts/langUtils/language.nut")
 let { addTask } = require("%scripts/tasker.nut")
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
 let { hasPremium } = require("sony.user")
+let { debug_dump_stack } = require("dagor.debug")
 
 function memoizeByProfile(func, hashFunc = null) {
   
@@ -57,6 +58,7 @@ let decoratorTypes = {
     userlogPurchaseIcon = "#ui/gameuiskin#unlock_decal"
     prizeTypeIcon = "#ui/gameuiskin#item_type_unlock.svg"
     defaultStyle = ""
+    needCacheByCategories = true
 
     getAvailableSlots = function(_unit) { return 0 }
     getMaxSlots = function() { return 1 }
@@ -229,7 +231,7 @@ enums.addTypes(decoratorTypes, {
 
     getImage = function(decorator) {
       return decorator
-        ? ($"@!{decorator.tex}*")
+        ? ($"@!{decorator.getTex()}*")
         : ""
     }
 
@@ -382,6 +384,7 @@ enums.addTypes(decoratorTypes, {
     userlogPurchaseIcon = "#ui/gameuiskin#unlock_skin"
     prizeTypeIcon = "#ui/gameuiskin#item_type_skin.svg"
     defaultStyle = "reward_skin"
+    needCacheByCategories = false
 
     getImage = function(decorator) {
       if (!decorator)
@@ -471,8 +474,22 @@ enums.addTypes(decoratorTypes, {
       if (isDefaultSkin(decoratorName))
         return true
 
-      return player_have_skin(getPlaneBySkinId(decoratorName),
-                                getSkinNameBySkinId(decoratorName))
+      let unitName = getPlaneBySkinId(decoratorName)
+      if (unitName == "") {
+        debug_dump_stack()
+        logerr("isPlayerHaveDecorator for skin: missing unitName")
+        return false
+      }
+
+      let skinName = getSkinNameBySkinId(decoratorName)
+      if (skinName == "") {
+        if (guidParser.isGuid(unitName))
+          return player_have_skin(unitName, unitName)
+        debug_dump_stack()
+        logerr("isPlayerHaveDecorator for skin: missing skinName")
+        return false
+      }
+      return player_have_skin(unitName, skinName)
     })
 
     getBlk = function() { return get_skins_blk() }
