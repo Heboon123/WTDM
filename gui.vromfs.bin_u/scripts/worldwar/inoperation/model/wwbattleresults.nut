@@ -8,6 +8,7 @@ let { WwArmy, getArmyByName } = require("%scripts/worldWar/inOperation/model/wwA
 let { g_ww_unit_type } = require("%scripts/worldWar/model/wwUnitType.nut")
 let { isOperationFinished } = require("%appGlobals/worldWar/wwOperationState.nut")
 let g_world_war = require("%scripts/worldWar/worldWarUtils.nut")
+let { getMyClanTag } = require("%scripts/user/clanName.nut")
 
 let WwBattleResults = class {
   id = ""
@@ -112,7 +113,7 @@ let WwBattleResults = class {
       let teamArmyStates = {}
       if (armyNamesBlk) {
         for (local j = 0; j < armyNamesBlk.paramCount(); ++j) {
-          let armyName = armyNamesBlk.getParamValue(j) || ""
+          let armyName = armyNamesBlk.getParamValue(j) ?? ""
           if (armyName.len() == 0)
             continue
 
@@ -166,7 +167,7 @@ let WwBattleResults = class {
         continue
       for (local j = 0; j < teamsBlk.blockCount(); j++) {
         let teamBlk = teamsBlk.getBlock(j)
-        let team = getTblValue(teamBlk.getBlockName() || "", this.teams)
+        let team = getTblValue(teamBlk.getBlockName() ?? "", this.teams)
         if (!team)
           continue
 
@@ -255,11 +256,11 @@ let WwBattleResults = class {
       let wwUnitType = g_ww_unit_type.getUnitTypeByTextCode(unitTypeTextCode)
       let wwArmy = getArmyByName(armyName)
       let hasFoundArmy = wwArmy.getUnitType() != g_ww_unit_type.UNKNOWN.code
-
+      let isBelongsToMyClan = clanTag == clan_get_my_clan_tag()
       let armyView = {
         getTeamColor      = side == sideInBattle ? "blue" : "red"
-        isBelongsToMyClan = clanTag == clan_get_my_clan_tag()
-        getTextAfterIcon  = clanTag
+        isBelongsToMyClan
+        getTextAfterIcon  = isBelongsToMyClan ? getMyClanTag() : clanTag
         getUnitTypeText   = hasFoundArmy ? wwArmy.getView().getUnitTypeText() : wwUnitType.fontIcon
         getUnitTypeIcon = hasFoundArmy ? wwArmy.getView().getUnitTypeIcon() : wwUnitType.getUnitTypeIcon()
       }

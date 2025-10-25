@@ -270,14 +270,15 @@ Button_text underline {
 }
 
 modSlotButtonsNest {
-  width:pw;
-  pos:0, ph;
+  pos:0.5pw-0.5w, ph;
   position:absolute;
+  min-width:pw;
   flow:vertical;
   bgcolor:@weaponryButtonsNestColor;
   order-popup:yes;
   css-hier-invalidate:yes;
   not-input-transparent:yes;
+  padding-top:1@smallButtonMargin;
 }
 hoverSize modSlotButtonsNest {
   not-input-transparent:no;
@@ -1943,6 +1944,7 @@ Button_text[showOn=hoverOrPcSelect] {
   enable:no;
 }
 tr:hover Button_text[showOn=hoverOrPcSelect],
+ingameCurrencyShopItem:hover Button_text[showOn=hoverOrPcSelect],
 [show_console_buttons=no] tr[selected=yes] Button_text[showOn=hoverOrPcSelect] {
   display:show;
   enable:yes;
@@ -2062,6 +2064,16 @@ Button_text.additional {
   margin-top:2@smallButtonMargin;
 }
 
+Button_text[custom-width=half] {
+  min-width:(pw-2@smallButtonMargin)/2;
+  width:(pw-2@smallButtonMargin)/2;
+  margin-right:2@smallButtonMargin;
+}
+Button_text[custom-width=autoFull] {
+  min-width:(pw-2@smallButtonMargin)/2;
+  width:fw;
+}
+
 Button_text.additional > btnText {
   font:@fontSmall;
   left:0.5pw-0.5w;
@@ -2077,14 +2089,14 @@ Button_text.additional[hasIncreasedTopMargin] {
   margin-top:3@smallButtonMargin;
 }
 
-modSlotButtonsNest > Button_text,
+modSlotButtonsNest Button_text,
 modSlotButtonsNest > dummy {
   display:hide;
   enable:no;
 }
 
-:hover > modSlotButtonsNest > Button_text.additional[canShow=yes],
-modSlotButtonsNest:hover > Button_text.additional[canShow=yes],
+:hover > modSlotButtonsNest Button_text.additional[canShow=yes],
+modSlotButtonsNest:hover Button_text.additional[canShow=yes],
 :hover > modSlotButtonsNest > dummy[canShow=yes],
 modSlotButtonsNest:hover > dummy[canShow=yes] {
   display:show;
@@ -2865,4 +2877,9 @@ selectAmount > Button_text[btnInc=yes] {
 
 Button_text[scrolledText=yes] > textarea {
   paragraph-indent:0;
+}
+
+Button_text[damageControlActionButton=yes] {
+  width: pw;
+  min-width: pw;
 }

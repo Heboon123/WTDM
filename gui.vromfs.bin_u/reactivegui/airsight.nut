@@ -15,11 +15,11 @@ let {
   RocketSightOpacity, RocketSightShadowOpacity,
   CanonSightLineWidthFactor, RocketSightLineWidthFactor, BombSightLineWidthFactor,
   CanonSightShadowLineWidthFactor, RocketSightShadowLineWidthFactor, BombSightShadowLineWidthFactor,
-  BombSightShadowOpacity, TurretSightOpacity, TurretSightLineWidthFactor } = require("airState.nut")
+  BombSightShadowOpacity, TurretSightOpacity, TurretSightLineWidthFactor } = require("%rGui/airState.nut")
 let { TargetX, TargetY } = require("%rGui/hud/targetTrackerState.nut")
-let { mixColor, styleText, styleLineForeground, relativCircle, isDarkColor, fadeColor } = require("style/airHudStyle.nut")
-let { LaserPoint, HaveLaserPoint } = require("planeState/planeWeaponState.nut")
-let { crosshairColorOpt } = require("options/options.nut")
+let { mixColor, styleText, styleLineForeground, relativCircle, isDarkColor, fadeColor } = require("%rGui/style/airHudStyle.nut")
+let { LaserPoint, HaveLaserPoint } = require("%rGui/planeState/planeWeaponState.nut")
+let { crosshairColorOpt } = require("%rGui/options/options.nut")
 
 const NUM_TURRETS_MAX = 10
 
@@ -66,7 +66,7 @@ let ccipDashTurretSight = freeze([
 ])
 
 let triggerGun = {}
-let isGunBlinking = keepref(Computed(@() GunInDeadZone.value))
+let isGunBlinking = keepref(Computed(@() GunInDeadZone.get()))
 isGunBlinking.subscribe(@(v) v ? anim_start(triggerGun) : anim_request_stop(triggerGun))
 
 function gunDirection(colorWatch, isSightHud) {
@@ -75,18 +75,18 @@ function gunDirection(colorWatch, isSightHud) {
   function sight() {
     let mainCommands = []
     let overheatCommands = []
-    let selectedSightCommands = GunSightMode.value == 0 ? normalTurretSight : ccipTurretSight
+    let selectedSightCommands = GunSightMode.get() == 0 ? normalTurretSight : ccipTurretSight
 
     for (local i = 0; i < selectedSightCommands.len(); ++i) {
-      if (i >= GunOverheatState.value) {
+      if (i >= GunOverheatState.get()) {
         mainCommands.append(selectedSightCommands[i])
-        if (!isAllCannonsEmpty.value || !isAllMachineGunsEmpty.value)
-          mainCommands.append(GunSightMode.value == 0 ? dashTurretSight[i] : ccipDashTurretSight[i])
+        if (!isAllCannonsEmpty.get() || !isAllMachineGunsEmpty.get())
+          mainCommands.append(GunSightMode.get() == 0 ? dashTurretSight[i] : ccipDashTurretSight[i])
       }
       else {
         overheatCommands.append(selectedSightCommands[i])
-        if (!isAllCannonsEmpty.value || !isAllMachineGunsEmpty.value)
-          overheatCommands.append(GunSightMode.value == 0 ? dashTurretSight[i] : ccipDashTurretSight[i])
+        if (!isAllCannonsEmpty.get() || !isAllMachineGunsEmpty.get())
+          overheatCommands.append(GunSightMode.get() == 0 ? dashTurretSight[i] : ccipDashTurretSight[i])
       }
     }
 
@@ -99,14 +99,14 @@ function gunDirection(colorWatch, isSightHud) {
           watch = colorWatch
           rendObj = ROBJ_VECTOR_CANVAS
           size
-          color = colorWatch.value
+          color = colorWatch.get()
           commands = mainCommands
         },
         @() {
           watch = AlertColorHigh
           rendObj = ROBJ_VECTOR_CANVAS
           size
-          color = AlertColorHigh.value
+          color = AlertColorHigh.get()
           commands = overheatCommands
         }
       ]
@@ -122,9 +122,9 @@ function gunDirection(colorWatch, isSightHud) {
   return function() {
     let res = { watch = rootWatchList }
 
-    if (GunSightMode.value == 0 && isSightHud)
+    if (GunSightMode.get() == 0 && isSightHud)
       return res
-    if (!GunDirectionVisible.value)
+    if (!GunDirectionVisible.get())
       return res
 
     return res.__update({
@@ -132,7 +132,7 @@ function gunDirection(colorWatch, isSightHud) {
       valign = ALIGN_CENTER
       animations
       transform = {
-        translate = [GunDirectionX.value, GunDirectionY.value]
+        translate = [GunDirectionX.get(), GunDirectionY.get()]
       }
       children = sight
     })
@@ -164,25 +164,25 @@ let createTurretSights = @(turretIndex, colorWatch) @() styleLineForeground.__me
   watch = [colorWatch, TurretsDirectionX[turretIndex], TurretsDirectionY[turretIndex],
     TurretsReloading[turretIndex], TurretsVisible[turretIndex], TurretSightOpacity, TurretSightLineWidthFactor]
   rendObj = ROBJ_VECTOR_CANVAS
-  pos = [TurretsDirectionX[turretIndex].value, TurretsDirectionY[turretIndex].value]
-  color = colorWatch.value
+  pos = [TurretsDirectionX[turretIndex].get(), TurretsDirectionY[turretIndex].get()]
+  color = colorWatch.get()
   size = sh(20)
-  lineWidth = hdpx(LINE_WIDTH * TurretSightLineWidthFactor.value)
+  lineWidth = hdpx(LINE_WIDTH * TurretSightLineWidthFactor.get())
   fillColor = Color(0, 0, 0, 0)
-  opacity = TurretSightOpacity.value
-  commands = !TurretsVisible[turretIndex].value ? null
-    : TurretsReloading[turretIndex].value ? reloadTurret(CurrentTime.value)
+  opacity = TurretSightOpacity.get()
+  commands = !TurretsVisible[turretIndex].get() ? null
+    : TurretsReloading[turretIndex].get() ? reloadTurret(CurrentTime.get())
     : relativCircle(1, circleSize)
   children = @() styleLineForeground.__merge({
     watch = [AlertColorHigh, TurretsVisible[turretIndex], TurretsReloading[turretIndex], TurretsOverheat[turretIndex]]
     rendObj = ROBJ_VECTOR_CANVAS
     size = flex()
-    lineWidth = hdpx(LINE_WIDTH * TurretSightLineWidthFactor.value)
+    lineWidth = hdpx(LINE_WIDTH * TurretSightLineWidthFactor.get())
     fillColor = Color(0, 0, 0, 0)
-    color = AlertColorHigh.value
-    opacity = TurretSightOpacity.value
-    commands = (TurretsVisible[turretIndex].value && !TurretsReloading[turretIndex].value)
-      ? relativCircle(TurretsOverheat[turretIndex].value, circleSize)
+    color = AlertColorHigh.get()
+    opacity = TurretSightOpacity.get()
+    commands = (TurretsVisible[turretIndex].get() && !TurretsReloading[turretIndex].get())
+      ? relativCircle(TurretsOverheat[turretIndex].get(), circleSize)
       : null
   })
 })
@@ -234,7 +234,7 @@ function fixedGunsSight(sightId) {
 function overheatLines(color, line_width_factor) {
   let watch = [FixedGunOverheat, line_width_factor]
   return function() {
-    let lineWidth = hdpx(LINE_WIDTH * line_width_factor.value)
+    let lineWidth = hdpx(LINE_WIDTH * line_width_factor.get())
     return {
       watch
       rendObj = ROBJ_VECTOR_CANVAS
@@ -242,27 +242,27 @@ function overheatLines(color, line_width_factor) {
       size = sh(50)
       color
       fillColor = Color(0, 0, 0, 0)
-      commands = relativCircle(FixedGunOverheat.value, circleSize)
+      commands = relativCircle(FixedGunOverheat.get(), circleSize)
     }
   }
 }
 
 function fixedGunsDirection(colorWatch) {
   return function() {
-    if (!FixedGunDirectionVisible.value)
+    if (!FixedGunDirectionVisible.get())
       return { watch = FixedGunDirectionVisible }
 
-    let overheatFg = overheatLines(AlertColorHigh.value, CanonSightLineWidthFactor)
+    let overheatFg = overheatLines(AlertColorHigh.get(), CanonSightLineWidthFactor)
 
     function lines() {
-      let lineWidth = hdpx(LINE_WIDTH * CanonSightLineWidthFactor.value)
+      let lineWidth = hdpx(LINE_WIDTH * CanonSightLineWidthFactor.get())
       return {
         watch = [FixedGunSightMode, colorWatch, AlertColorHigh, CanonSightLineWidthFactor]
         rendObj = ROBJ_VECTOR_CANVAS
         lineWidth
         size = sh(0.625)
-        color = fadeColor(colorWatch.value, 255)
-        commands = fixedGunsSight(FixedGunSightMode.value)
+        color = fadeColor(colorWatch.get(), 255)
+        commands = fixedGunsSight(FixedGunSightMode.get())
         children = overheatFg
       }
     }
@@ -270,15 +270,15 @@ function fixedGunsDirection(colorWatch) {
     let overheatBg = overheatLines(Color(0, 0, 0, 120), CanonSightShadowLineWidthFactor)
 
     function shadowLines() {
-      let shadowLineWidth = hdpx(LINE_WIDTH * CanonSightShadowLineWidthFactor.value)
+      let shadowLineWidth = hdpx(LINE_WIDTH * CanonSightShadowLineWidthFactor.get())
       return styleLineForeground.__merge({
         watch = [FixedGunSightMode, colorWatch, CanonSightShadowLineWidthFactor]
         rendObj = ROBJ_VECTOR_CANVAS
         lineWidth = shadowLineWidth
         size = sh(0.625)
         fillColor = Color(0, 0, 0, 0)
-        color = isDarkColor(colorWatch.value) ? Color(255, 255, 255, 255) : Color(0, 0, 0, 255)
-        commands = fixedGunsSight(FixedGunSightMode.value)
+        color = isDarkColor(colorWatch.get()) ? Color(255, 255, 255, 255) : Color(0, 0, 0, 255)
+        commands = fixedGunsSight(FixedGunSightMode.get())
         children = overheatBg
       })
     }
@@ -287,7 +287,7 @@ function fixedGunsDirection(colorWatch) {
       watch = [FixedGunDirectionVisible, FixedGunDirectionX, FixedGunDirectionY]
       halign = ALIGN_CENTER
       valign = ALIGN_CENTER
-      pos = [FixedGunDirectionX.value, FixedGunDirectionY.value]
+      pos = [FixedGunDirectionX.get(), FixedGunDirectionY.get()]
       children = [shadowLines, lines]
     }
   }
@@ -297,21 +297,21 @@ function helicopterCCRP(colorWatch) {
   return function() {
     let res = { watch = [FixedGunDirectionX, FixedGunDirectionY, FixedGunDirectionVisible, FixedGunSightMode] }
 
-    if (!FixedGunDirectionVisible.value || FixedGunSightMode.value != 2)
+    if (!FixedGunDirectionVisible.get() || FixedGunSightMode.get() != 2)
       return res
 
     let lines = @() styleLineForeground.__merge({
       watch = [TargetX, TargetY, colorWatch]
       rendObj = ROBJ_VECTOR_CANVAS
       size = sh(0.625)
-      color = colorWatch.value
-      commands = [[VECTOR_LINE, 0, 0, TargetX.value, TargetY.value]]
+      color = colorWatch.get()
+      commands = [[VECTOR_LINE, 0, 0, TargetX.get(), TargetY.get()]]
     })
 
     return res.__update({
       halign = ALIGN_CENTER
       valign = ALIGN_CENTER
-      pos = [FixedGunDirectionX.value, FixedGunDirectionY.value]
+      pos = [FixedGunDirectionX.get(), FixedGunDirectionY.get()]
       children = lines
     })
   }
@@ -323,16 +323,16 @@ function agmTrackZoneComponent(colorWatch) {
       watch = [IsAgmEmpty, IsATGMOutOfTrackerSector, NoLosToATGM, AtgmTrackerRadius, colorWatch]
       rendObj = ROBJ_VECTOR_CANVAS
       size = [width, height]
-      opacity = AtgmTrackerRadius.value > 0.0 ? 100 : 0
-      color = colorWatch.value
+      opacity = AtgmTrackerRadius.get() > 0.0 ? 100 : 0
+      color = colorWatch.get()
       fillColor = Color(0, 0, 0, 0)
       lineWidth = hdpx(LINE_WIDTH)
-      commands = !IsAgmEmpty.value && IsATGMOutOfTrackerSector.value && !NoLosToATGM.value
+      commands = !IsAgmEmpty.get() && IsATGMOutOfTrackerSector.get() && !NoLosToATGM.get()
         ?
         [
           [ VECTOR_ELLIPSE, 50, 50,
-            AtgmTrackerRadius.value / width * 100,
-            AtgmTrackerRadius.value / height * 100
+            AtgmTrackerRadius.get() / width * 100,
+            AtgmTrackerRadius.get() / height * 100
           ]
         ]
         : null
@@ -350,13 +350,13 @@ function agmTrackZoneComponent(colorWatch) {
 
 function laserDesignatorComponent(colorWatch, posX, posY) {
   function laserDesignator(width, height) {
-    let color = Computed(@() IsAgmEmpty.value ? AlertColorHigh.value : colorWatch.value)
+    let color = Computed(@() IsAgmEmpty.get() ? AlertColorHigh.get() : colorWatch.get())
     return @() styleLineForeground.__merge({
       watch = [color]
       rendObj = ROBJ_VECTOR_CANVAS
       size = [width, height]
-      color = color.value
-      fillColor = color.value
+      color = color.get()
+      fillColor = color.get()
       commands = [
         [ VECTOR_ELLIPSE, 50, 50,
           5.0 / width * 100,
@@ -373,7 +373,7 @@ function laserDesignatorComponent(colorWatch, posX, posY) {
     halign = ALIGN_CENTER
     valign = ALIGN_CENTER
     watch = IsLaserDesignatorEnabled
-    opacity = IsLaserDesignatorEnabled.value ? 100 : 0
+    opacity = IsLaserDesignatorEnabled.get() ? 100 : 0
     size = SIZE_TO_CONTENT
     children = laserDesignator(width, height)
   }
@@ -387,10 +387,10 @@ function laserDesignatorStatusComponent(colorWatch, posX, posY) {
   let laserDesignatorStatus = @() styleText.__merge({
     rendObj = ROBJ_TEXT
     halign = ALIGN_CENTER
-    text = IsLaserDesignatorEnabled.value ? loc("HUD/TXT_LASER_DESIGNATOR") : loc("HUD/TXT_ENABLE_LASER_NOW")
-    color = colorWatch.value
+    text = IsLaserDesignatorEnabled.get() ? loc("HUD/TXT_LASER_DESIGNATOR") : loc("HUD/TXT_ENABLE_LASER_NOW")
+    color = colorWatch.get()
     watch = [IsLaserDesignatorEnabled, colorWatch]
-    animations = [{ prop = AnimProp.opacity, from = 0, to = 1, duration = 0.5, play = !IsLaserDesignatorEnabled.value, loop = true, easing = InOutSine, trigger = laserTrigger }]
+    animations = [{ prop = AnimProp.opacity, from = 0, to = 1, duration = 0.5, play = !IsLaserDesignatorEnabled.get(), loop = true, easing = InOutSine, trigger = laserTrigger }]
   })
 
   let resCompoment = @() {
@@ -398,9 +398,9 @@ function laserDesignatorStatusComponent(colorWatch, posX, posY) {
     halign = ALIGN_CENTER
     size = 0
     watch = [IsLaserDesignatorEnabled, AgmTimeToHit, AgmTimeToWarning, GuidedBombsTimeToHit, GuidedBombsTimeToWarning]
-    children = IsLaserDesignatorEnabled.value
-      || (AgmTimeToHit.value > 0 && AgmTimeToWarning.value <= 0)
-      || (GuidedBombsTimeToHit.value > 0 && GuidedBombsTimeToWarning.value <= 0)
+    children = IsLaserDesignatorEnabled.get()
+      || (AgmTimeToHit.get() > 0 && AgmTimeToWarning.get() <= 0)
+      || (GuidedBombsTimeToHit.get() > 0 && GuidedBombsTimeToWarning.get() <= 0)
       ? laserDesignatorStatus : null
   }
   return resCompoment
@@ -410,8 +410,8 @@ function agmTrackerStatusComponent(colorWatch, posX, posY) {
   let agmTrackerStatus = @() styleText.__merge({
     rendObj = ROBJ_TEXT
     halign = ALIGN_CENTER
-    text = NoLosToATGM.value ? loc("HUD/TXT_NO_LOS_ATGM") : loc("HUD/TXT_ATGM_OUT_OF_TRACKER_SECTOR")
-    color = colorWatch.value
+    text = NoLosToATGM.get() ? loc("HUD/TXT_NO_LOS_ATGM") : loc("HUD/TXT_ATGM_OUT_OF_TRACKER_SECTOR")
+    color = colorWatch.get()
     watch = [NoLosToATGM, colorWatch]
     animations = [{ prop = AnimProp.opacity, from = 0, to = 1, duration = 0.5, play = true, loop = true, easing = InOutCubic }]
   })
@@ -421,7 +421,7 @@ function agmTrackerStatusComponent(colorWatch, posX, posY) {
     halign = ALIGN_CENTER
     size = 0
     watch = [IsATGMOutOfTrackerSector, NoLosToATGM]
-    children = IsATGMOutOfTrackerSector.value || NoLosToATGM.value ? agmTrackerStatus : null
+    children = IsATGMOutOfTrackerSector.get() || NoLosToATGM.get() ? agmTrackerStatus : null
   }
   return resCompoment
 }
@@ -464,35 +464,35 @@ let aircraftRocketSight = @(width, height) function() {
 
   let res = { watch = [crosshairColorOpt, RocketAimX, RocketAimY, RocketAimVisible, RocketSightMode, RocketSightSizeFactor,
     RocketSightOpacity, RocketSightShadowOpacity, RocketSightLineWidthFactor, RocketSightShadowLineWidthFactor] }
-  if (!RocketAimVisible.value)
+  if (!RocketAimVisible.get())
     return res
 
-  let lineWidth = hdpx(LINE_WIDTH * RocketSightLineWidthFactor.value)
-  let shadowLineWidth = hdpx(LINE_WIDTH * RocketSightShadowLineWidthFactor.value)
+  let lineWidth = hdpx(LINE_WIDTH * RocketSightLineWidthFactor.get())
+  let shadowLineWidth = hdpx(LINE_WIDTH * RocketSightShadowLineWidthFactor.get())
 
   let lines = styleLineForeground.__merge({
     rendObj = ROBJ_VECTOR_CANVAS
-    color = fadeColor(crosshairColorOpt.value, 255)
+    color = fadeColor(crosshairColorOpt.get(), 255)
     fillColor = 0
     lineWidth
-    size =  [width * RocketSightSizeFactor.value, height * RocketSightSizeFactor.value]
-    opacity = RocketSightOpacity.value
-    commands = aircraftRocketSightMode(RocketSightMode.value)
+    size =  [width * RocketSightSizeFactor.get(), height * RocketSightSizeFactor.get()]
+    opacity = RocketSightOpacity.get()
+    commands = aircraftRocketSightMode(RocketSightMode.get())
   })
 
   let shadowLines = styleLineForeground.__merge({
     rendObj = ROBJ_VECTOR_CANVAS
-    color = isDarkColor(HudColor.value) ? Color(255, 255, 255, 255) : Color(0, 0, 0, 255)
+    color = isDarkColor(HudColor.get()) ? Color(255, 255, 255, 255) : Color(0, 0, 0, 255)
     lineWidth = shadowLineWidth
-    size = [width * RocketSightSizeFactor.value, height * RocketSightSizeFactor.value]
-    opacity = RocketSightShadowOpacity.value
-    commands = aircraftRocketSightMode(RocketSightMode.value)
+    size = [width * RocketSightSizeFactor.get(), height * RocketSightSizeFactor.get()]
+    opacity = RocketSightShadowOpacity.get()
+    commands = aircraftRocketSightMode(RocketSightMode.get())
   })
 
   return res.__update({
     halign = ALIGN_CENTER
     valign = ALIGN_CENTER
-    pos = [RocketAimX.value, RocketAimY.value]
+    pos = [RocketAimX.get(), RocketAimY.get()]
     children = [shadowLines, lines]
   })
 }
@@ -501,7 +501,7 @@ function laserPoint(colorWatch) {
   return {
     size = hdpx(5.0)
     rendObj = ROBJ_VECTOR_CANVAS
-    color = colorWatch.value
+    color = colorWatch.get()
     fillColor = Color(0, 0, 0, 0)
     commands = [
       [VECTOR_ELLIPSE, 0, 0, 100, 100]
@@ -519,7 +519,7 @@ function laserPointComponent(colorWatch) {
   return @() {
     watch = HaveLaserPoint
     size = flex()
-    children = HaveLaserPoint.value ? laserPoint(colorWatch) : null
+    children = HaveLaserPoint.get() ? laserPoint(colorWatch) : null
   }
 }
 
@@ -535,27 +535,27 @@ let bombSightComponent = @(width, height, crosshairColorWatch) function() {
     BombReleaseRelativToTarget, AlertColorHigh, HudColor, BombReleaseOpacity, BombSightShadowOpacity,
     BombSightLineWidthFactor, BombSightShadowLineWidthFactor, crosshairColorWatch] }
 
-  if (!BombReleaseVisible.value)
+  if (!BombReleaseVisible.get())
     return res
 
   let commands = []
   for (local i = 0; i < NUM_BOMB_RELEASE_POINT; i += 4) {
-    commands.append([VECTOR_LINE, BombReleasePoints.value?[i], BombReleasePoints.value?[i + 1], BombReleasePoints.value?[i + 2], BombReleasePoints.value?[i + 3]])
+    commands.append([VECTOR_LINE, BombReleasePoints.get()?[i], BombReleasePoints.get()?[i + 1], BombReleasePoints.get()?[i + 2], BombReleasePoints.get()?[i + 3]])
   }
 
-  let finalBombSightColor = mixColor(crosshairColorWatch.value, AlertColorHigh.value, BombReleaseRelativToTarget.value)
+  let finalBombSightColor = mixColor(crosshairColorWatch.get(), AlertColorHigh.get(), BombReleaseRelativToTarget.get())
 
-  let lineWidth = hdpx(LINE_WIDTH * BombSightLineWidthFactor.value)
-  let shadowLineWidth = hdpx(LINE_WIDTH * BombSightShadowLineWidthFactor.value)
+  let lineWidth = hdpx(LINE_WIDTH * BombSightLineWidthFactor.get())
+  let shadowLineWidth = hdpx(LINE_WIDTH * BombSightShadowLineWidthFactor.get())
 
   let lines = styleLineForeground.__merge({
     rendObj = ROBJ_VECTOR_CANVAS
     lineWidth
     fillColor = Color(0, 0, 0, 0)
     size = [width, height]
-    pos = [BombReleaseDirX.value, BombReleaseDirY.value]
+    pos = [BombReleaseDirX.get(), BombReleaseDirY.get()]
     color = fadeColor(finalBombSightColor, 255)
-    opacity = BombReleaseOpacity.value
+    opacity = BombReleaseOpacity.get()
     commands
   })
 
@@ -564,18 +564,18 @@ let bombSightComponent = @(width, height, crosshairColorWatch) function() {
     lineWidth = shadowLineWidth
     fillColor = Color(0, 0, 0, 0)
     size = [width, height]
-    pos = [BombReleaseDirX.value, BombReleaseDirY.value]
+    pos = [BombReleaseDirX.get(), BombReleaseDirY.get()]
     color = isDarkColor(finalBombSightColor) ? Color(255, 255, 255, 255) : Color(0, 0, 0, 255)
-    opacity = BombReleaseOpacity.value * BombSightShadowOpacity.value
+    opacity = BombReleaseOpacity.get() * BombSightShadowOpacity.get()
     fillOpacity = 0
     commands
   })
 
   let sightWarningText = @() styleText.__merge({
     rendObj = ROBJ_TEXT
-    watch = [BombReleaseBlockedTextPosX, BombReleaseBlockedTextPosX, BombReleaseBlockedState]
-    pos = [BombReleaseBlockedTextPosX.value, BombReleaseBlockedTextPosY.value]
-    text = getBombBlockedStateText(BombReleaseBlockedState.value)
+    watch = [BombReleaseBlockedTextPosX, BombReleaseBlockedTextPosY, BombReleaseBlockedState]
+    pos = [BombReleaseBlockedTextPosX.get(), BombReleaseBlockedTextPosY.get()]
+    text = getBombBlockedStateText(BombReleaseBlockedState.get())
   })
 
   return res.__update({

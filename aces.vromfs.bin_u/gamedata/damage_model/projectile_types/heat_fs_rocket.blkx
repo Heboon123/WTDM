@@ -1,103 +1,84 @@
-{
-  "normalizationPreset": "heat",
-  "ricochetPreset": "heat_fs",
-  "groundRicochetPreset": "heat_fs",
-  "secondaryShattersPreset": "ap",
-  "stabilityThreshold": 0.5,
-  "stabilityCaliberToArmorThreshold": 5.0,
-  "stabilityReductionAfterRicochet": 0.3,
-  "stabilityReductionAfterPenetration": 0.15,
-  "bulletType": "heat_fs_rocket",
-  "cumulativeSecondaryShattersPreset": "heat_fs",
-  "explodeOnRendinst": true,
-  "fresnel": [
-    0.23,
-    0.1,
-    2.0
-  ],
-  "shellAnimation": "video/shells_animations/rap.ivf",
-  "stabilityRicochetModifier": {
-    "mod1": [
-      0.0,
-      0.5
-    ],
-    "mod2": [
-      15.0,
-      0.7
-    ],
-    "mod3": [
-      30.0,
-      0.99
-    ]
-  },
-  "DamageParts": {
-    "body": {
-      "hp": 50.0,
-      "armorClass": "tank_structural_steel",
-      "armorThickness": 1.0
-    }
-  },
-  "DamageEffects": {
-    "part": {
-      "name": "body",
-      "onHit": [
-        {
-          "shellState": "inFlight",
-          "expl": 1.0
-        },
-        {
-          "shellState": "onUnit",
-          "damageType": "generic",
-          "expl": 0.05,
-          "fire": 0.45,
-          "break": 0.5,
-          "damage": 3.0,
-          "fHitCritical": true
-        },
-        {
-          "shellState": "onUnit",
-          "damageType": "generic",
-          "expl": 0.5,
-          "fire": 0.3,
-          "break": 0.2,
-          "damage": 30.0,
-          "fHitCritical": true
-        },
-        {
-          "shellState": "onUnit",
-          "damageType": "explosion",
-          "expl": 0.45,
-          "fire": 0.45,
-          "break": 0.1,
-          "damage": 50.0,
-          "fHitCritical": true
-        },
-        {
-          "shellState": "onUnit",
-          "damageType": "cumulative",
-          "expl": 0.4,
-          "fire": 0.4,
-          "break": 0.1,
-          "damage": 100.0,
-          "fHitCritical": true
-        }
-      ],
-      "onKill": [
-        {
-          "shellState": "inFlight",
-          "destruction": 1.0
-        },
-        {
-          "shellState": "onUnit",
-          "expl": 0.05,
-          "fire": 0.05,
-          "break": 0.9,
-          "fHitCritical": true
-        }
-      ]
-    }
-  },
-  "pressureDamage": {
-    "damageType": "pressure"
-  }
+normalizationPreset:t = "heat"
+ricochetPreset:t = "heat_fs"
+groundRicochetPreset:t = "heat_fs"
+secondaryShattersPreset:t = "ap"
+stabilityThreshold:r = 0.5
+stabilityCaliberToArmorThreshold:r = 5
+stabilityReductionAfterRicochet:r = 0.3
+stabilityReductionAfterPenetration:r = 0.15
+bulletType:t = "heat_fs_rocket"
+cumulativeSecondaryShattersPreset:t = "heat_fs"
+explodeOnRendinst:b = true
+fresnel:p3 = 0.23, 0.1, 2
+shellAnimation:t = "video/shells_animations/rap.ivf"
+stabilityRicochetModifier {
+	mod1:p2 = 0, 0.5
+	mod2:p2 = 15, 0.7
+	mod3:p2 = 30, 0.99
+}
+DamageParts {
+	body {
+		hp:r = 50
+		armorClass:t = "tank_structural_steel"
+		armorThickness:r = 1
+	}
+}
+DamageEffects {
+	part {
+		name:t = "body"
+		onHit {
+			shellState:t = "inFlight"
+			expl:r = 1
+		}
+		onKill {
+			shellState:t = "inFlight"
+			destruction:r = 1
+		}
+		onHit {
+			shellState:t = "onUnit"
+			damageType:t = "generic"
+			expl:r = 0.05
+			fire:r = 0.45
+			break:r = 0.5
+			damage:r = 3
+			fHitCritical:b = true
+		}
+		onHit {
+			shellState:t = "onUnit"
+			damageType:t = "generic"
+			expl:r = 0.5
+			fire:r = 0.3
+			break:r = 0.2
+			damage:r = 30
+			fHitCritical:b = true
+		}
+		onHit {
+			shellState:t = "onUnit"
+			damageType:t = "explosion"
+			expl:r = 0.45
+			fire:r = 0.45
+			break:r = 0.1
+			damage:r = 50
+			fHitCritical:b = true
+		}
+		onHit {
+			shellState:t = "onUnit"
+			damageType:t = "cumulative"
+			expl:r = 0.4
+			fire:r = 0.4
+			break:r = 0.1
+			damage:r = 100
+			fHitCritical:b = true
+		}
+		onKill {
+			shellState:t = "onUnit"
+			expl:r = 0.05
+			fire:r = 0.05
+			break:r = 0.9
+			fHitCritical:b = true
+		}
+	}
+}
+pressureDamage {
+	damageType:t = "pressure"
 }

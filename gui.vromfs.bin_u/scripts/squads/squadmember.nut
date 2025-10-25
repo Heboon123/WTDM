@@ -1,7 +1,7 @@
 from "%scripts/dagui_library.nut" import *
-let u = require("%sqStdLibs/helpers/u.nut")
 let { userIdStr } = require("%scripts/user/profileStates.nut")
 let { getContact } = require("%scripts/contacts/contacts.nut")
+let { isEqual, isArray, isEmpty } = require("%sqStdLibs/helpers/u.nut")
 
 let class SquadMember {
   uid = ""
@@ -32,6 +32,7 @@ let class SquadMember {
   craftsInfoByUnitsGroups = null
   isEacInited = false
   fakeName = false
+  hideClan = false
   queueProfileJwt = ""
   isGdkClient = false
 
@@ -41,11 +42,15 @@ let class SquadMember {
   isNewApplication = false
   isInvitedToSquadChat = false
 
+  needSendFullData = true
+  isFullDataReceived = false
+
   updatedProperties = ["name", "rank", "country", "clanTag", "pilotIcon", "platform", "selAirs",
                        "selSlots", "crewAirs", "brokenAirs", "missedPkg", "wwOperations",
                        "isReady", "isCrewsReady", "canPlayWorldWar", "isWorldWarAvailable", "cyberCafeId",
                        "unallowedEventsENames", "sessionRoomId", "crossplay", "bannedMissions", "dislikedMissions",
-                       "craftsInfoByUnitsGroups", "isEacInited", "fakeName", "queueProfileJwt", "presenceStatus", "isGdkClient"]
+                       "craftsInfoByUnitsGroups", "isEacInited", "fakeName", "hideClan", "queueProfileJwt",
+                       "presenceStatus", "isGdkClient"]
 
   constructor(v_uid, v_isInvite = false, v_isApplication = false) {
     this.uid = v_uid.tostring()
@@ -76,6 +81,7 @@ let class SquadMember {
   function update(data) {
     local newValue = null
     local isChanged = false
+    let updatedData = {}
     foreach (_idx, property in this.updatedProperties) {
       newValue = getTblValue(property, data, null)
       if (newValue == null)
@@ -83,16 +89,17 @@ let class SquadMember {
 
       if (isInArray(property, ["brokenAirs", "missedPkg", "unallowedEventsENames",     
              "bannedMissions", "dislikedMissions", "craftsInfoByUnitsGroups"])        
-          && !u.isArray(newValue))
+          && !isArray(newValue))
         newValue = []
 
-      if (newValue != this[property]) {
+      if (!isEqual(newValue, this[property])) {
         this[property] = newValue
+        updatedData[property] <- newValue
         isChanged = true
       }
     }
     this.isWaiting = false
-    return isChanged
+    return { isChanged, updatedData }
   }
 
   function isActualData() {
@@ -106,7 +113,7 @@ let class SquadMember {
   function getData() {
     let result = { uid = this.uid }
     foreach (_idx, property in this.updatedProperties)
-      if (!u.isEmpty(this[property]))
+      if (!isEmpty(this[property]))
         result[property] <- this[property]
 
     return result
@@ -125,7 +132,7 @@ let class SquadMember {
   }
 
   function isMe() {
-    return this.uid == userIdStr.value
+    return this.uid == userIdStr.get()
   }
 }
 

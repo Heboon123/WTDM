@@ -1,337 +1,465 @@
-{
-  "img": {
-    "position": "absolute",
-    "size": "3sw - 3sw*@isInVr, sh/3+1",
-    "pos": "-sw,sh-h-1@bh",
-    "background-image": "#ui/gameuiskin#optionlist_background_down"
-  },
-  "root": {
-    "flow": "vertical",
-    "background-color": "@shadeBackgroundColor",
-    "type": "big"
-  },
-  "tdiv": [
-    {
-      "position": "absolute",
-      "pos": "@titlePos,1@topBarHeight",
-      "flow": "vertical",
-      "smallFont": "yes",
-      "textareaNoTab": [
-        {
-          "id": "menu-title",
-          "overlayTextColor": "active",
-          "mediumFont": "yes",
-          "textShade": "yes",
-          "text": ""
-        },
-        {
-          "id": "conditions_text",
-          "overlayTextColor": "premiumNotEarned",
-          "textShade": "yes",
-          "text": ""
-        }
-      ]
-    },
-    {
-      "id": "update_timer",
-      "behaviour": "Timer",
-      "timer_handler_func": "update"
-    }
-  ],
-  "optionlist_container": {
-    "id": "flight_menu_bgd",
-    "type": "big",
-    "style": "padding:10@sf/@pf;",
-    "tdiv": [
-      {
-        "id": "objectives_panel",
-        "size": "50%pw, ph",
-        "max-width": "pw-ph",
-        "overflow": "hidden",
-        "display": "hide",
-        "optionlist_line_left": [
-          {
-            "size": "pw,5*@scrn_tgt/100.0",
-            "pos": "0,-0.3*@scrn_tgt/100.0",
-            "position": "relative",
-            "activeText": {
-              "text": "#map/primary_objectives",
-              "pare-text": "yes",
-              "left": "-1*@scrn_tgt/100.0",
-              "width": "pw",
-              "style": "text-align:right;"
-            }
-          },
-          {
-            "size": "pw,5*@scrn_tgt/100.0",
-            "activeText": {
-              "text": "#map/secondary_objectives",
-              "pare-text": "yes",
-              "left": "-1*@scrn_tgt/100.0",
-              "width": "pw",
-              "style": "text-align:right;"
-            }
-          }
-        ],
-        "_newline": [
-          {},
-          {},
-          {}
-        ],
-        "div": [
-          {
-            "width": "pw",
-            "height": "53%ph",
-            "overflow": "hidden",
-            "tdiv": {
-              "width": "pw",
-              "min-height": "ph",
-              "pos": "0,ph-h",
-              "position": "relative",
-              "padding-bottom": "0.8*@scrn_tgt/100.0",
-              "flow": "vertical",
-              "id": "primary_tasks_list"
-            }
-          },
-          {
-            "width": "pw",
-            "height": "fh",
-            "overflow": "hidden",
-            "tdiv": {
-              "id": "secondary_tasks_list",
-              "width": "pw",
-              "min-height": "ph",
-              "pos": "0,ph-h",
-              "position": "relative",
-              "padding-bottom": "0.8*@scrn_tgt/100.0",
-              "flow": "vertical"
-            }
-          }
-        ]
-      },
-      {
-        "id": "pilots_panel",
-        "size": "50%pw, ph",
-        "max-width": "pw-ph",
-        "overflow": "hidden",
-        "optionlist_line_left": {
-          "size": "pw,5*@scrn_tgt/100.0",
-          "activeText": {
-            "text": "#map/pilot_list",
-            "pare-text": "yes",
-            "tdalign": "right"
-          }
-        },
-        "_newline": {},
-        "tdiv": {
-          "size": "pw, 16@rows16height + 4",
-          "overflow-y": "auto",
-          "margin-top": "1*@scrn_tgt/100.0",
-          "scroll-align": "left",
-          "padding-left": "10+0.5*@scrn_tgt/100.0",
-          "table": {
-            "width": "pw",
-            "id": "pilots_list",
-            "baseRow": "yes",
-            "selType": "left",
-            "text-valign": "center",
-            "behavior": "PosNavigator",
-            "selfFocusBorder": "yes",
-            "total-input-transparent": "yes",
-            "navigatorShortcuts": "yes",
-            "css-hier-invalidate": "all",
-            "on_dbl_click": "onPilotsDblClick",
-            "on_click": "onPilotsSelect",
-            "on_activate": "onPilotsSelect"
-          }
-        }
-      },
-      {
-        "size": "ph, ph",
-        "min-width": "50%pw",
-        "div": {
-          "behaviour": "button",
-          "id": "POI_resetter",
-          "size": "sw,sh",
-          "position": "root",
-          "on_click": "onRespawnScreenClick"
-        },
-        "tacticalMap": {
-          "size": "ph,ph",
-          "id": "tactical-map",
-          "tdiv": {
-            "pos": "pw+1@blockInterval, ph-h",
-            "position": "absolute",
-            "flow": "vertical",
-            "background-color": "@editboxColor",
-            "tdiv": [
-              {
-                "id": "hint_attention_to_map",
-                "margin": "1@blockInterval",
-                "tooltip": "#voice_message_attention_to_point_2",
-                "display": "hide",
-                "div": [
-                  {
-                    "size": "1@buttonHeight, 1@buttonHeight",
-                    "input-transparent": "yes",
-                    "img": {
-                      "size": "1@cIco, 1@cIco",
-                      "pos": "0.5pw-0.5w, 0.5ph-0.5h",
-                      "position": "relative",
-                      "background-svg-size": "@cIco, @cIco",
-                      "background-image": "#ui/gameuiskin#new_icon.svg"
-                    }
-                  },
-                  {
-                    "size": "1@buttonHeight, 1@buttonHeight",
-                    "margin-left": "1@blockInterval",
-                    "input-transparent": "yes",
-                    "img": {
-                      "size": "0.73h, 1@cIco",
-                      "pos": "0.5pw-0.5w, 0.5ph-0.5h",
-                      "position": "relative",
-                      "background-svg-size": "0.73h, @cIco",
-                      "background-image": "#ui/gameuiskin#mouse_left.avif"
-                    }
-                  }
-                ]
-              },
-              {
-                "margin": "1@blockInterval",
-                "tooltip": "#options/rmbToMoveMap",
-                "Button_text": {
-                  "class": "image",
-                  "btnName": "RB",
-                  "noMargin": "yes",
-                  "tooltip": "#options/moveMap",
-                  "_on_click": "onMoveMapActivate",
-                  "ButtonImg": {},
-                  "img": {
-                    "background-image": "#ui/gameuiskin#dnd_icon.svg"
-                  }
-                },
-                "tdiv": {
-                  "id": "hint_btn_move_map",
-                  "size": "1@buttonHeight, 1@buttonHeight",
-                  "margin-left": "1@blockInterval",
-                  "display": "hide",
-                  "img": {
-                    "size": "0.73h, 1@cIco",
-                    "position": "relative",
-                    "pos": "0.5pw-0.5w, 0.5ph-0.5h",
-                    "background-svg-size": "0.73h, 1@cIco",
-                    "background-image": "#ui/gameuiskin#mouse_right.avif"
-                  }
-                }
-              },
-              {
-                "id": "btn_set_point_of_interest",
-                "margin": "1@blockInterval",
-                "display": "hide",
-                "Button_text": {
-                  "class": "image",
-                  "btnName": "LT",
-                  "noMargin": "yes",
-                  "on_click": "onSetPointOfInterest",
-                  "tooltip": "#options/setPointOfInterest",
-                  "ButtonImg": {},
-                  "img": {
-                    "id": "hud_poi_img",
-                    "background-image": "#ui/gameuiskin#map_interestpoint.svg"
-                  }
-                },
-                "tdiv": {
-                  "id": "hint_btn_set_point_of_interest",
-                  "size": "1@buttonHeight, 1@buttonHeight",
-                  "margin-left": "1@blockInterval",
-                  "display": "hide",
-                  "img": {
-                    "size": "0.73h, 1@cIco",
-                    "position": "relative",
-                    "pos": "0.5pw-0.5w, 0.5ph-0.5h",
-                    "tooltip": "#options/mmbToSetPoi",
-                    "background-image": "#ui/gameuiskin#mouse_center.avif"
-                  }
-                }
-              },
-              {
-                "id": "btn_set_hud_type",
-                "margin": "1@blockInterval",
-                "display": "hide",
-                "Button_text": {
-                  "class": "image",
-                  "accessKey": "N | J:LB",
-                  "noMargin": "yes",
-                  "tooltip": "#options/forceHudType",
-                  "on_click": "onForcedSetHudType",
-                  "ButtonImg": {
-                    "btnName": "LB"
-                  },
-                  "img": {
-                    "id": "hud_type_img",
-                    "background-image": "#ui/gameuiskin#objective_tank.svg"
-                  }
-                },
-                "loadingHint": {
-                  "id": "hint_btn_set_hud_type",
-                  "size": "1@buttonHeight, 1@buttonHeight",
-                  "margin-left": "1@blockInterval",
-                  "display": "hide",
-                  "keyboardButton": {
-                    "position": "relative",
-                    "pos": "0.5pw-0.5w, 0.5ph-0.5h",
-                    "keyboardButtonText": {
-                      "position": "relative",
-                      "pos": "0.5pw - 0.5w, 0.5ph - 0.5h",
-                      "text": "N"
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        }
-      }
-    ]
-  },
-  "navBarStatic": {
-    "navLeft": {
-      "activeText": {
-        "id": "pilot_aircraft",
-        "margin-left": "1@buttonMargin",
-        "text": ""
-      }
-    }
-  },
-  "navBar": {
-    "navRight": {
-      "Button_text": [
-        {
-          "id": "btn_select",
-          "text": "#mainmenu/btnSelect",
-          "btnName": "A",
-          "on_click": "onStart",
-          "skip-navigation": "yes",
-          "ButtonImg": {}
-        },
-        {
-          "id": "btn_back",
-          "text": "#mainmenu/btnBack",
-          "btnName": "B",
-          "_on_click": "goBack",
-          "display": "hide",
-          "skip-navigation": "yes",
-          "ButtonImg": {}
-        }
-      ]
-    }
-  },
-  "root_button": {
-    "id": "screen_button_back",
-    "display": "hide",
-    "position": "root",
-    "size": "sw,sh",
-    "behavior": "button",
-    "_on_click": "goBack"
-  }
+img {
+	position:t = "absolute"
+	size:t = "3sw - 3sw*@isInVr, sh/3+1"
+	pos:t = "-sw,sh-h-1@bh"
+	background-image:t = "#ui/gameuiskin#optionlist_background_down"
+}
+root {
+	flow:t = "vertical"
+	background-color:t = "@shadeBackgroundColor"
+	type:t = "big"
+}
+tdiv {
+	id:t = "hintBlock"
+	pos:t = "0.5pw - 0.5w, ph - h - @hudActionBarItemHeight"
+	position:t = "absolute"
+	tdiv {
+		id:t = "hud_hints_nest"
+		width:t = "2/3@rwHud"
+		flow:t = "vertical"
+		css-hier-invalidate:t = "yes"
+		behavior:t = "Timer"
+		tdiv {
+			id:t = "ship_obstacle_rf"
+			size:t = "pw, 0.04@shHud"
+		}
+		tdiv {
+			width:t = "pw"
+			position:t = "relative"
+			pos:t = "pw/2 - w/2, 0"
+			flow:t = "vertical"
+			tdiv {
+				id:t = "common_priority_hints_holder"
+				position:t = "relative"
+				tdiv {
+					id:t = "common_priority_hints"
+					width:t = "pw"
+					position:t = "relative"
+					pos:t = "0, ph-h"
+					flow:t = "vertical"
+				}
+			}
+			tdiv {
+				width:t = "pw"
+				tdiv {
+					id:t = "mission_hints"
+					width:t = "pw"
+					position:t = "relative"
+					pos:t = "0, ph-h"
+					flow:t = "vertical"
+				}
+			}
+			tdiv {
+				id:t = "mission_action_hints_holder"
+				position:t = "relative"
+				tdiv {
+					id:t = "mission_action_hints"
+					width:t = "pw"
+					position:t = "relative"
+					pos:t = "0, ph-h"
+					flow:t = "vertical"
+				}
+			}
+		}
+		hudMessages {
+			id:t = "hud_message_zone_capture_notification"
+			width:t = "pw"
+			message_style:t = "zone_capture_notification"
+			input-transparent:t = "yes"
+		}
+		tdiv {
+			position:t = "relative"
+			left:t = "pw/2 - w/2"
+			div {
+				id:t = "iconed_hints"
+			}
+			div {
+				id:t = "display_timers"
+			}
+		}
+		tdiv {
+			id:t = "actionbar_hints_nest"
+			width:t = "1@shHud"
+			left:t = "0.5pw-0.5w"
+			position:t = "relative"
+			tdiv {
+				width:t = "pw"
+				position:t = "relative"
+				pos:t = "0, ph-h"
+				flow:t = "vertical"
+				tdiv {
+					id:t = "actionbar_hints"
+					width:t = "pw"
+					flow:t = "vertical"
+				}
+			}
+		}
+		hudMessages {
+			id:t = "hud_message_player_damage_notification"
+			message_style:t = "player_damage_notification"
+			left:t = "0.2@shHud"
+			position:t = "relative"
+			flow:t = "vertical"
+			width:t = "pw - 0.2@shHud"
+		}
+		hudMessages {
+			id:t = "hud_message_tank_notification"
+			message_style:t = "player_damage_notification"
+			left:t = "0.2@shHud"
+			position:t = "relative"
+			flow:t = "vertical"
+			width:t = "pw - 0.2@shHud"
+		}
+		hudMessages {
+			id:t = "hud_message_ship_notification"
+			message_style:t = "player_damage_notification"
+			left:t = "0.2@shHud"
+			position:t = "relative"
+			flow:t = "vertical"
+			width:t = "pw - 0.2@shHud"
+		}
+		textAreaCentered {
+			id:t = "low-quality-model-warning"
+			width:t = "pw"
+			style:t = "color:@warningTextColor; font:@fontHudNormal;"
+			text:t = "#low_quality_model_in_hangar"
+			display:t = "hide"
+		}
+		tdiv {
+			id:t = "tutorial_hints"
+			width:t = "pw"
+			position:t = "root"
+			pos:t = "50%sw-50%w, 1@bhHud + 0.67@shHud"
+			flow:t = "vertical"
+		}
+		tdiv {
+			id:t = "minor_priority_hints"
+			width:t = "pw"
+			position:t = "root"
+			pos:t = "50%sw-50%w, @shHud - h"
+			flow:t = "vertical"
+		}
+	}
+}
+tdiv {
+	position:t = "absolute"
+	pos:t = "@titlePos,1@topBarHeight"
+	flow:t = "vertical"
+	smallFont:t = "yes"
+	textareaNoTab {
+		id:t = "menu-title"
+		overlayTextColor:t = "active"
+		mediumFont:t = "yes"
+		textShade:t = "yes"
+		text:t = ""
+	}
+	textareaNoTab {
+		id:t = "conditions_text"
+		overlayTextColor:t = "premiumNotEarned"
+		textShade:t = "yes"
+		text:t = ""
+	}
+}
+optionlist_container {
+	id:t = "flight_menu_bgd"
+	type:t = "big"
+	style:t = "padding:10@sf/@pf;"
+	tdiv {
+		id:t = "objectives_panel"
+		size:t = "50%pw, ph"
+		max-width:t = "pw-ph"
+		overflow:t = "hidden"
+		display:t = "hide"
+		optionlist_line_left {
+			size:t = "pw,5*@scrn_tgt/100.0"
+			pos:t = "0,-0.3*@scrn_tgt/100.0"
+			position:t = "relative"
+			activeText {
+				text:t = "#map/primary_objectives"
+				pare-text:t = "yes"
+				left:t = "-1*@scrn_tgt/100.0"
+				width:t = "pw"
+				style:t = "text-align:right;"
+			}
+		}
+		_newline {
+
+		}
+		div {
+			width:t = "pw"
+			height:t = "53%ph"
+			overflow:t = "hidden"
+			tdiv {
+				width:t = "pw"
+				min-height:t = "ph"
+				pos:t = "0,ph-h"
+				position:t = "relative"
+				padding-bottom:t = "0.8*@scrn_tgt/100.0"
+				flow:t = "vertical"
+				id:t = "primary_tasks_list"
+			}
+		}
+		_newline {
+
+		}
+		optionlist_line_left {
+			size:t = "pw,5*@scrn_tgt/100.0"
+			activeText {
+				text:t = "#map/secondary_objectives"
+				pare-text:t = "yes"
+				left:t = "-1*@scrn_tgt/100.0"
+				width:t = "pw"
+				style:t = "text-align:right;"
+			}
+		}
+		_newline {
+
+		}
+		div {
+			width:t = "pw"
+			height:t = "fh"
+			overflow:t = "hidden"
+			tdiv {
+				id:t = "secondary_tasks_list"
+				width:t = "pw"
+				min-height:t = "ph"
+				pos:t = "0,ph-h"
+				position:t = "relative"
+				padding-bottom:t = "0.8*@scrn_tgt/100.0"
+				flow:t = "vertical"
+			}
+		}
+	}
+	tdiv {
+		id:t = "pilots_panel"
+		size:t = "50%pw, ph"
+		max-width:t = "pw-ph"
+		overflow:t = "hidden"
+		optionlist_line_left {
+			size:t = "pw,5*@scrn_tgt/100.0"
+			activeText {
+				text:t = "#map/pilot_list"
+				pare-text:t = "yes"
+				tdalign:t = "right"
+			}
+		}
+		_newline {
+
+		}
+		tdiv {
+			size:t = "pw, 16@rows16height + 4"
+			overflow-y:t = "auto"
+			margin-top:t = "1*@scrn_tgt/100.0"
+			scroll-align:t = "left"
+			padding-left:t = "10+0.5*@scrn_tgt/100.0"
+			table {
+				width:t = "pw"
+				id:t = "pilots_list"
+				baseRow:t = "yes"
+				selType:t = "left"
+				text-valign:t = "center"
+				behavior:t = "PosNavigator"
+				selfFocusBorder:t = "yes"
+				total-input-transparent:t = "yes"
+				navigatorShortcuts:t = "yes"
+				css-hier-invalidate:t = "all"
+				on_dbl_click:t = "onPilotsDblClick"
+				on_click:t = "onPilotsSelect"
+				on_activate:t = "onPilotsSelect"
+			}
+		}
+	}
+	tdiv {
+		size:t = "ph, ph"
+		min-width:t = "50%pw"
+		div {
+			behaviour:t = "button"
+			id:t = "POI_resetter"
+			size:t = "sw,sh"
+			position:t = "root"
+			on_click:t = "onRespawnScreenClick"
+		}
+		tacticalMap {
+			size:t = "ph,ph"
+			id:t = "tactical-map"
+			tdiv {
+				pos:t = "pw+1@blockInterval, ph-h"
+				position:t = "absolute"
+				flow:t = "vertical"
+				background-color:t = "@editboxColor"
+				tdiv {
+					id:t = "hint_attention_to_map"
+					margin:t = "1@blockInterval"
+					tooltip:t = "#voice_message_attention_to_point_2"
+					display:t = "hide"
+					div {
+						size:t = "1@buttonHeight, 1@buttonHeight"
+						input-transparent:t = "yes"
+						img {
+							size:t = "1@cIco, 1@cIco"
+							pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
+							position:t = "relative"
+							background-svg-size:t = "@cIco, @cIco"
+							background-image:t = "#ui/gameuiskin#new_icon.svg"
+						}
+					}
+					div {
+						size:t = "1@buttonHeight, 1@buttonHeight"
+						margin-left:t = "1@blockInterval"
+						input-transparent:t = "yes"
+						img {
+							size:t = "0.73h, 1@cIco"
+							pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
+							position:t = "relative"
+							background-svg-size:t = "0.73h, @cIco"
+							background-image:t = "#ui/gameuiskin#mouse_left.avif"
+						}
+					}
+				}
+				tdiv {
+					margin:t = "1@blockInterval"
+					tooltip:t = "#options/rmbToMoveMap"
+					Button_text {
+						class:t = "image"
+						btnName:t = "RB"
+						noMargin:t = "yes"
+						tooltip:t = "#options/moveMap"
+						_on_click:t = "onMoveMapActivate"
+						ButtonImg {
+
+						}
+						img {
+							background-image:t = "#ui/gameuiskin#dnd_icon.svg"
+						}
+					}
+					tdiv {
+						id:t = "hint_btn_move_map"
+						size:t = "1@buttonHeight, 1@buttonHeight"
+						margin-left:t = "1@blockInterval"
+						display:t = "hide"
+						img {
+							size:t = "0.73h, 1@cIco"
+							position:t = "relative"
+							pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
+							background-svg-size:t = "0.73h, 1@cIco"
+							background-image:t = "#ui/gameuiskin#mouse_right.avif"
+						}
+					}
+				}
+				tdiv {
+					id:t = "btn_set_point_of_interest"
+					margin:t = "1@blockInterval"
+					display:t = "hide"
+					Button_text {
+						class:t = "image"
+						btnName:t = "LT"
+						noMargin:t = "yes"
+						on_click:t = "onSetPointOfInterest"
+						tooltip:t = "#options/setPointOfInterest"
+						ButtonImg {
+
+						}
+						img {
+							id:t = "hud_poi_img"
+							background-image:t = "#ui/gameuiskin#map_interestpoint.svg"
+						}
+					}
+					tdiv {
+						id:t = "hint_btn_set_point_of_interest"
+						size:t = "1@buttonHeight, 1@buttonHeight"
+						margin-left:t = "1@blockInterval"
+						display:t = "hide"
+						img {
+							size:t = "0.73h, 1@cIco"
+							position:t = "relative"
+							pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
+							tooltip:t = "#options/mmbToSetPoi"
+							background-image:t = "#ui/gameuiskin#mouse_center.avif"
+						}
+					}
+				}
+				tdiv {
+					id:t = "btn_set_hud_type"
+					margin:t = "1@blockInterval"
+					display:t = "hide"
+					Button_text {
+						class:t = "image"
+						accessKey:t = "N | J:LB"
+						noMargin:t = "yes"
+						tooltip:t = "#options/forceHudType"
+						on_click:t = "onForcedSetHudType"
+						ButtonImg {
+							btnName:t = "LB"
+						}
+						img {
+							id:t = "hud_type_img"
+							background-image:t = "#ui/gameuiskin#objective_tank.svg"
+						}
+					}
+					loadingHint {
+						id:t = "hint_btn_set_hud_type"
+						size:t = "1@buttonHeight, 1@buttonHeight"
+						margin-left:t = "1@blockInterval"
+						display:t = "hide"
+						keyboardButton {
+							position:t = "relative"
+							pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
+							keyboardButtonText {
+								position:t = "relative"
+								pos:t = "0.5pw - 0.5w, 0.5ph - 0.5h"
+								text:t = "N"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+navBarStatic {
+	navLeft {
+		activeText {
+			id:t = "pilot_aircraft"
+			margin-left:t = "1@buttonMargin"
+			text:t = ""
+		}
+	}
+}
+navBar {
+	navRight {
+		Button_text {
+			id:t = "btn_select"
+			text:t = "#mainmenu/btnSelect"
+			btnName:t = "A"
+			on_click:t = "onStart"
+			skip-navigation:t = "yes"
+			ButtonImg {
+
+			}
+		}
+		Button_text {
+			id:t = "btn_back"
+			text:t = "#mainmenu/btnBack"
+			btnName:t = "B"
+			_on_click:t = "goBack"
+			display:t = "hide"
+			skip-navigation:t = "yes"
+			ButtonImg {
+
+			}
+		}
+	}
+}
+root_button {
+	id:t = "screen_button_back"
+	display:t = "hide"
+	position:t = "root"
+	size:t = "sw,sh"
+	behavior:t = "button"
+	_on_click:t = "goBack"
+}
+tdiv {
+	id:t = "update_timer"
+	behaviour:t = "Timer"
+	timer_handler_func:t = "update"
 }

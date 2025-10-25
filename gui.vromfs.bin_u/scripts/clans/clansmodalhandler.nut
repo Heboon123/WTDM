@@ -1,4 +1,4 @@
-from "%scripts/dagui_natives.nut" import clan_get_current_season_info, clan_get_my_clan_tag, ps4_is_ugc_enabled, ps4_show_ugc_restriction, clan_get_requested_clan_id, clan_get_my_clan_name, clan_get_my_clan_id
+from "%scripts/dagui_natives.nut" import clan_get_current_season_info, ps4_is_ugc_enabled, ps4_show_ugc_restriction, clan_get_requested_clan_id, clan_get_my_clan_name, clan_get_my_clan_id
 from "%scripts/dagui_library.nut" import *
 from "%scripts/utils_sa.nut" import buildTableRow, buildTableRowNoPad
 from "%scripts/clans/clanState.nut" import is_in_clan, myClanInfo
@@ -36,6 +36,7 @@ let { ranked_column_prefix } = require("%scripts/clans/clanInfoTable.nut")
 let { openRightClickMenu } = require("%scripts/wndLib/rightClickMenu.nut")
 let { filterMessageText } = require("%scripts/chat/chatUtils.nut")
 let { checkUGCAllowed } = require("%scripts/clans/clanTextInfo.nut")
+let { getMyClanTag, getMyClanName } = require("%scripts/user/clanName.nut")
 
 let getNavigationImagesText = require("%scripts/utils/getNavigationImagesText.nut")
 
@@ -273,9 +274,9 @@ gui_handlers.ClansModalHandler <- class (gui_handlers.clanPageModal) {
 
     if (!myClanInfoV) {
       local requestSent = false
-      if (::clan_get_requested_clan_id() != "-1" && clan_get_my_clan_name() != "") {
+      if (clan_get_requested_clan_id() != "-1" && clan_get_my_clan_name() != "") {
         requestSent = true
-        this.curPageObj.findObject("req_clan_name").setValue(" ".concat(clan_get_my_clan_tag(), clan_get_my_clan_name()))
+        this.curPageObj.findObject("req_clan_name").setValue(" ".concat(getMyClanTag(), getMyClanName()))
       }
       this.curPageObj.findObject("reques_to_clan_sent").show(requestSent)
       this.curPageObj.findObject("how_to_get_membership").show(!requestSent)
@@ -635,7 +636,7 @@ gui_handlers.ClansModalHandler <- class (gui_handlers.clanPageModal) {
   function onFilterEditBoxChangeValue() {}
 
   function onSelectClan(obj) {
-    if (showConsoleButtons.value)
+    if (showConsoleButtons.get())
       return
     if (!checkObj(obj))
       return
@@ -645,7 +646,7 @@ gui_handlers.ClansModalHandler <- class (gui_handlers.clanPageModal) {
   }
 
   function onRowHoverClan(obj) {
-    if (!showConsoleButtons.value)
+    if (!showConsoleButtons.get())
       return
     if (!checkObj(obj))
       return
@@ -668,7 +669,7 @@ gui_handlers.ClansModalHandler <- class (gui_handlers.clanPageModal) {
     showObjectsByTable(this.curPageObj, {
       mid_nav_bar        = this.clanInfoByRow.len() > 0
       btn_clan_info      = this.curClanInfo != null
-      btn_clan_actions   = this.curClanInfo != null && showConsoleButtons.value
+      btn_clan_actions   = this.curClanInfo != null && showConsoleButtons.get()
       btn_membership_req = this.curClanInfo != null && !is_in_clan()
         && (clan_get_requested_clan_id() != this.curClanInfo.id)
     })

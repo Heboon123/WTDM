@@ -35,7 +35,8 @@ let { decoratorTypes, getTypeByUnlockedItemType, getTypeByResourceType } = requi
 let { buildUnitSlot } = require("%scripts/slotbar/slotbarView.nut")
 let { getCrewById } = require("%scripts/slotbar/crewsList.nut")
 let { BASE_ITEM_TYPE_ICON } = require("%scripts/items/itemsTypeClasses.nut")
-let { findItemById, getItemOrRecipeBundleById } = require("%scripts/items/itemsManager.nut")
+let { getItemOrRecipeBundleById } = require("%scripts/items/itemsManager.nut")
+let { findItemById } = require("%scripts/items/itemsManagerModule.nut")
 let { getCrewName } = require("%scripts/crew/crew.nut")
 let { getMarkingPresetsById, shouldDisguiseItem } = require("%scripts/items/workshop/workshop.nut")
 let { isDataBlock, convertBlk } = require("%sqstd/datablock.nut")
@@ -831,6 +832,7 @@ function getViewDataSpare(unitName, count, params) {
   return {
     icon = "#ui/gameuiskin#item_type_spare.svg"
     icon2 = getUnitCountryIcon(unit)
+    icon2Params = "isCountryIcon:t='yes'"
     shopItemType = getUnitRole(unit)
     title = title
     tooltipId = showTooltip ? SPARE.getTooltipId(unitName) : null
@@ -852,6 +854,7 @@ function getViewDataSpecialization(prize, params) {
   return {
     icon = (specLevel == 2) ? "#ui/gameuiskin#item_type_crew_aces.svg" : "#ui/gameuiskin#item_type_crew_experts.svg"
     icon2 = getUnitCountryIcon(unit)
+    icon2Params = "isCountryIcon:t='yes'"
     title = title
     tooltipId = showTooltip ? getTooltipType("UNIT").getTooltipId(unitName) : null
   }
@@ -892,6 +895,7 @@ function getViewDataMod(unitName, modName, params) {
     icon = icon
     classIco = getUnitClassIco(unit)
     icon2 = getUnitCountryIcon(unit)
+    icon2Params = "isCountryIcon:t='yes'"
     shopItemType = getUnitRole(unit)
     title = "".concat(colorize("activeTextColor", getUnitName(unitName, true)), loc("ui/colon"),
       colorize("userlogColoredText", getModificationName(unit, modName)))
@@ -1765,4 +1769,5 @@ return {
   getPrizesStacksView
   getPrizesListViewData
   getPrizesListMarkupByData
+  prizesStackLevel = prizesStack
 }

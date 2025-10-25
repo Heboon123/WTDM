@@ -1,444 +1,242 @@
-{
-  "import": "%wtlibs/templates/essentials.blk",
-  "ecs_fx": {
-    "_use": "replicating",
-    "_replicate": true,
-    "transform": [
-      [
-        1.0,
-        0.0,
-        0.0
-      ],
-      [
-        0.0,
-        1.0,
-        0.0
-      ],
-      [
-        0.0,
-        0.0,
-        1.0
-      ],
-      [
-        0.0,
-        0.0,
-        0.0
-      ]
-    ],
-    "ecs_fx__res": "",
-    "ecs_fx__velocity": [
-      0.0,
-      0.0,
-      0.0
-    ],
-    "ecs_fx__spawn_rate": 1.0,
-    "ecs_fx__color_mult": [
-      1.0,
-      1.0,
-      1.0,
-      1.0
-    ],
-    "ecs_fx__light_radius_mult": 1.0,
-    "ecs_fx__with_sound": true,
-    "ecs_fx__effect_ref": {
-      "_tags": "render"
-    }
-  },
-  "camera_fx": {
-    "_use": "replicating",
-    "_replicate": true,
-    "transform": [
-      [
-        1.0,
-        0.0,
-        0.0
-      ],
-      [
-        0.0,
-        1.0,
-        0.0
-      ],
-      [
-        0.0,
-        0.0,
-        1.0
-      ],
-      [
-        0.0,
-        0.0,
-        0.0
-      ]
-    ],
-    "camera_fx__radius": 10.0,
-    "camera_fx__is_cylindrical": false,
-    "camera_fx__height": 0.0,
-    "camera_fx__res": "misc_placeholder_cmps_fx",
-    "camera_fx__moveByWind": false,
-    "camera_fx": {
-      "_tags": "render"
-    }
-  },
-  "area_fx": {
-    "_use": "replicating",
-    "_replicate": true,
-    "transform": [
-      [
-        1.0,
-        0.0,
-        0.0
-      ],
-      [
-        0.0,
-        1.0,
-        0.0
-      ],
-      [
-        0.0,
-        0.0,
-        1.0
-      ],
-      [
-        0.0,
-        0.0,
-        0.0
-      ]
-    ],
-    "area_fx__radius": 20.0,
-    "area_fx__height": 5.0,
-    "area_fx__active_limit": 10,
-    "area_fx__spawn_timer_min": 1.0,
-    "area_fx__spawn_timer_max": 1.0,
-    "area_fx__res": "misc_placeholder_cmps_fx",
-    "area_fx__moveByWind": false,
-    "area_fx": {
-      "_tags": "render"
-    }
-  },
-  "dafx_rain": {
-    "_singleton": true,
-    "_group": {
-      "_track": true,
-      "far_rain__density": 10.0,
-      "far_rain__speed": 1.0,
-      "far_rain__width": 1.0,
-      "far_rain__length": 1.0,
-      "far_rain__alpha": 1.0,
-      "far_rain__maxDensity": 10.0,
-      "far_rain__cloudFade": 1.0,
-      "far_rain__isSnow": false,
-      "far_rain__effectTemplates:array": {
-        "template": [
-          "camera_rain_light_effect",
-          "camera_rain_drop_splashes_effect"
-        ]
-      }
-    },
-    "rain_tag:tag": {}
-  },
-  "camera_bound_rain_effect_template": {
-    "transform": [
-      [
-        1.0,
-        0.0,
-        0.0
-      ],
-      [
-        0.0,
-        1.0,
-        0.0
-      ],
-      [
-        0.0,
-        0.0,
-        1.0
-      ],
-      [
-        0.0,
-        20.0,
-        0.0
-      ]
-    ],
-    "_group": {
-      "_tags": "render",
-      "camera_effect__offset": [
-        0.0,
-        0.0,
-        0.0
-      ],
-      "camera_effect__distance": 0.0,
-      "effect__name": "",
-      "is_ground_effect": false
-    },
-    "effect": {
-      "_tags": "render"
-    },
-    "rain_effect_tag:tag": {}
-  },
-  "envi_emitter_base": {
-    "_use": "replicating",
-    "_group": {
-      "_replicate": true,
-      "_track": true,
-      "transform": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          0.0,
-          0.0,
-          0.0
-        ]
-      ],
-      "emitter__intensity": 0.0,
-      "emitter__material": "dust"
-    },
-    "emitter__id:EnviEmitterId": {
-      "_tags": "render"
-    },
-    "destroyable_with_rendinst:tag": {}
-  },
-  "envi_emitter_uniform": {
-    "_use": "envi_emitter_base",
-    "emitter_uniform:tag": {}
-  },
-  "envi_emitter_point": {
-    "_use": "envi_emitter_base",
-    "emitter_point:tag": {}
-  },
-  "envi_emitter_sphere": {
-    "_use": "envi_emitter_base",
-    "_group": {
-      "_replicate": true,
-      "_track": true,
-      "emitter__radius": 1.0
-    },
-    "emitter_sphere:tag": {}
-  },
-  "envi_emitter_plane": {
-    "_use": "envi_emitter_base",
-    "emitter_plane:tag": {}
-  },
-  "envi_emitter_cylinder": {
-    "_use": "envi_emitter_base",
-    "_group": {
-      "_replicate": true,
-      "_track": true,
-      "emitter__radius": 1.0
-    },
-    "emitter_cylinder:tag": {}
-  },
-  "light": {
-    "_use": "replicating",
-    "light__max_radius": 0.0,
-    "light__offset": [
-      0.0,
-      0.0,
-      0.0
-    ],
-    "light__color": [
-      200,
-      250,
-      255,
-      255
-    ],
-    "light__brightness": 1.0,
-    "transform": [
-      [
-        1.0,
-        0.0,
-        0.0
-      ],
-      [
-        0.0,
-        1.0,
-        0.0
-      ],
-      [
-        0.0,
-        0.0,
-        1.0
-      ],
-      [
-        0.0,
-        0.0,
-        0.0
-      ]
-    ],
-    "_track": true,
-    "_replicate": true
-  },
-  "omni_light": {
-    "_use": "light",
-    "light__nightly": true,
-    "_group": {
-      "_track": true,
-      "_replicate": true,
-      "light__contact_shadows": true,
-      "light__use_box": true,
-      "light__automatic_box": false,
-      "light__box": [
-        [
-          0.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          0.0
-        ]
-      ],
-      "light__direction": [
-        0.0,
-        -1.0,
-        0.0
-      ],
-      "light__texture_name": ""
-    },
-    "omni_light": {
-      "_tags": "render"
-    },
-    "destroyable_with_rendinst:tag": {}
-  },
-  "spot_light": {
-    "_use": [
-      "light",
-      "replicating"
-    ],
-    "light__nightly": true,
-    "_group": [
-      {
-        "_track": true,
-        "_replicate": true,
-        "light__texture_name": "",
-        "light__max_radius": 45.0,
-        "light__brightness": 100.0
-      },
-      {
-        "_tags": "render",
-        "_replicate": true,
-        "_track": true,
-        "spot_light__inner_attenuation": 0.9,
-        "spot_light__dynamic_light": false,
-        "spot_light__shadows": true,
-        "spot_light__dynamic_obj_shadows": false,
-        "spot_light__shadow_shrink": 0
-      }
-    ],
-    "spot_light": {
-      "_tags": "render"
-    },
-    "destroyable_with_rendinst:tag": {}
-  },
-  "music": {
-    "_singleton": true,
-    "_tags": "sound",
-    "music__forced": false,
-    "music__forcedEvtName": "",
-    "music__curBattleState": -1,
-    "music__battleRadiusAirSq": 2500.0,
-    "music__battleRadiusGroundSq": 2500.0,
-    "music__battleEnemiesThreshold": 3,
-    "music__timerBattle": 0.0,
-    "music__cooldownBattle": 5.0,
-    "music__cooldownCalm": 5.0,
-    "music__curUnitRank": 0,
-    "music__curUnitType": -1,
-    "music__curHangarCountry_id": -1,
-    "music__curForcedEvtName": "",
-    "music__lockedHangar": false,
-    "music__useHangarMusicForUnitType": false,
-    "music__operatorCountryId": -1,
-    "music__intencity": 0.0,
-    "music__intencityToMax": 60.0
-  },
-  "sound_point": {
-    "_use": "replicating",
-    "transform": [
-      [
-        1.0,
-        0.0,
-        0.0
-      ],
-      [
-        0.0,
-        1.0,
-        0.0
-      ],
-      [
-        0.0,
-        0.0,
-        1.0
-      ],
-      [
-        0.0,
-        0.0,
-        0.0
-      ]
-    ],
-    "sound_point__event_name": "",
-    "sound_point__near_dist": 50.0,
-    "sound_point__vol": 1.0,
-    "sound_point__event:SoundEvent": {
-      "_tags": "sound"
-    },
-    "destroyable_with_rendinst:tag": {}
-  },
-  "sound_point_constant": {
-    "_use": "sound_point",
-    "sound_point__timeline_pos": 0.0,
-    "sound_point__length": 0.0
-  },
-  "sound_point_one_shot": {
-    "_use": "sound_point",
-    "sound_point_one_shot_played": false
-  },
-  "sound_radio_localized": {
-    "_use": "sound_point_constant",
-    "sound_radio_localized__lang": 0
-  },
-  "sound_area": {
-    "_use": "replicating",
-    "sound_area__grid_step": 15.0,
-    "sound_area__grid_stride": 0,
-    "sound_area__use_height": false,
-    "sound_area__bounds_y": [
-      0.0,
-      0.0
-    ],
-    "sound_area__bounds": [
-      0.0,
-      0.0,
-      0.0,
-      0.0
-    ],
-    "sound_area__event_name": "",
-    "sound_area__area_names:list<t>": {},
-    "sound_area__bgrid:list<b>": {},
-    "sound_area__event:SoundEvent": {
-      "_tags": "sound"
-    }
-  }
+import:t = "%wtlibs/templates/essentials.blk"
+ecs_fx {
+	_use:t = "ecs_no_debug"
+	_use:t = "replicating"
+	_replicate:b = true
+	transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
+	ecs_fx__res:t = ""
+	ecs_fx__velocity:p3 = 0, 0, 0
+	ecs_fx__spawn_rate:r = 1
+	ecs_fx__color_mult:p4 = 1, 1, 1, 1
+	ecs_fx__light_radius_mult:r = 1
+	ecs_fx__with_sound:b = true
+	ecs_fx__effect_ref {
+		_tags:t = "render"
+	}
+}
+ground_effect {
+	_use:t = "replicating"
+	_group {
+		_track:b = true
+		ground_effect__fx_name:t = "ground_sparkles_10m"
+		ground_effect__biome_group_name:t = ""
+		ground_effect__grid_cell_size:r = 1
+		ground_effect__grid_world_origin:p2 = 0, 0
+		ground_effect__vis_radius:r = 10
+		ground_effect__biome_weight_for_active_thr:r = 0.25
+		ground_effect__fx_radius:r = -1
+		ground_effect__rot_x:p2 = 0, 0
+		ground_effect__rot_y:p2 = 0, 0
+		ground_effect__rot_z:p2 = 0, 0
+		ground_effect__offset_x:p2 = 0, 0
+		ground_effect__offset_y:p2 = 0, 0
+		ground_effect__offset_z:p2 = 0, 0
+		ground_effect__scale_x:p2 = 1, 0
+		ground_effect__scale_y:p2 = 1, 0
+		ground_effect__scale_z:p2 = 1, 0
+		ground_effect__biome_ids:array {
+
+		}
+	}
+	ground_effect__manager {
+		_tags:t = "render"
+	}
+}
+camera_fx {
+	_use:t = "replicating"
+	_replicate:b = true
+	transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
+	camera_fx__radius:r = 10
+	camera_fx__is_cylindrical:b = false
+	camera_fx__height:r = 0
+	camera_fx__res:t = "misc_placeholder_cmps_fx"
+	camera_fx__moveByWind:b = false
+	camera_fx {
+		_tags:t = "render"
+	}
+}
+area_fx {
+	_use:t = "replicating"
+	_replicate:b = true
+	_track:b = true
+	transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
+	area_fx__radius:r = 20
+	area_fx__height:r = 5
+	area_fx__active_limit:i = 10
+	area_fx__spawn_timer_min:r = 1
+	area_fx__spawn_timer_max:r = 1
+	area_fx__res:t = "misc_placeholder_cmps_fx"
+	area_fx__moveByWind:b = false
+	area_fx__velocity:p3 = 0, 0, 0
+	area_fx__spawn_rate:r = 1
+	area_fx__color_mult:p4 = 1, 1, 1, 1
+	area_fx__light_radius_mult:r = 1
+	area_fx {
+		_tags:t = "render"
+	}
+}
+area_fx_point {
+	_use:t = "area_fx"
+	area_fx__radius:r = -1
+	area_fx__height:r = -1
+	area_fx__active_limit:i = 1
+}
+dafx_rain {
+	_singleton:b = true
+	_group {
+		_track:b = true
+		far_rain__density:r = 10
+		far_rain__speed:r = 1
+		far_rain__width:r = 1
+		far_rain__length:r = 1
+		far_rain__alpha:r = 1
+		far_rain__maxDensity:r = 10
+		far_rain__cloudFade:r = 1
+		far_rain__isSnow:b = false
+		far_rain__effectTemplates:array {
+			template:t = "camera_rain_light_effect"
+			template:t = "camera_rain_drop_splashes_effect"
+		}
+	}
+	rain_tag:tag {
+
+	}
+}
+camera_bound_rain_effect_template {
+	transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 20.0, 0.0]]
+	_group {
+		_tags:t = "render"
+		camera_effect__offset:p3 = 0, 0, 0
+		camera_effect__distance:r = 0
+		effect__name:t = ""
+		is_ground_effect:b = false
+	}
+	effect {
+		_tags:t = "render"
+	}
+	rain_effect_tag:tag {
+
+	}
+}
+envi_emitter_base {
+	_use:t = "replicating"
+	_group {
+		_replicate:b = true
+		_track:b = true
+		transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
+		emitter__intensity:r = 0
+		emitter__material:t = "dust"
+	}
+	emitter__id:EnviEmitterId {
+		_tags:t = "render"
+	}
+	destroyable_with_rendinst:tag {
+
+	}
+}
+envi_emitter_uniform {
+	_use:t = "envi_emitter_base"
+	emitter_uniform:tag {
+
+	}
+}
+envi_emitter_point {
+	_use:t = "envi_emitter_base"
+	emitter_point:tag {
+
+	}
+}
+envi_emitter_sphere {
+	_use:t = "envi_emitter_base"
+	_group {
+		_replicate:b = true
+		_track:b = true
+		emitter__radius:r = 1
+	}
+	emitter_sphere:tag {
+
+	}
+}
+envi_emitter_plane {
+	_use:t = "envi_emitter_base"
+	emitter_plane:tag {
+
+	}
+}
+envi_emitter_cylinder {
+	_use:t = "envi_emitter_base"
+	_group {
+		_replicate:b = true
+		_track:b = true
+		emitter__radius:r = 1
+	}
+	emitter_cylinder:tag {
+
+	}
+}
+music {
+	_singleton:b = true
+	_tags:t = "sound"
+	music__forced:b = false
+	music__forcedEvtName:t = ""
+	music__curBattleState:i = -1
+	music__battleRadiusAirSq:r = 2500
+	music__battleRadiusGroundSq:r = 2500
+	music__battleEnemiesThreshold:i = 3
+	music__timerBattle:r = 0
+	music__cooldownBattle:r = 5
+	music__cooldownCalm:r = 5
+	music__curUnitRank:i = 0
+	music__curUnitType:i = -1
+	music__curHangarCountry_id:i = -1
+	music__curForcedEvtName:t = ""
+	music__lockedHangar:b = false
+	music__useHangarMusicForUnitType:b = false
+	music__operatorCountryId:i = -1
+	music__intencity:r = 0
+	music__intencityToMax:r = 60
+}
+sound_point {
+	_use:t = "replicating"
+	transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
+	sound_point__event_name:t = ""
+	sound_point__near_dist:r = 50
+	sound_point__vol:r = 1
+	sound_point__event:SoundEvent {
+		_tags:t = "sound"
+	}
+	destroyable_with_rendinst:tag {
+
+	}
+}
+sound_point_constant {
+	_use:t = "sound_point"
+	sound_point__timeline_pos:r = 0
+	sound_point__length:r = 0
+}
+sound_point_one_shot {
+	_use:t = "sound_point"
+	sound_point_one_shot_played:b = false
+}
+sound_radio_localized {
+	_use:t = "sound_point_constant"
+	sound_radio_localized__lang:i = 0
+}
+sound_area {
+	_use:t = "replicating"
+	sound_area__grid_step:r = 15
+	sound_area__grid_stride:i = 0
+	sound_area__use_height:b = false
+	sound_area__bounds_y:p2 = 0, 0
+	sound_area__bounds:p4 = 0, 0, 0, 0
+	sound_area__event_name:t = ""
+	sound_area__area_names:list<t> {
+
+	}
+	sound_area__bgrid:list<b> {
+
+	}
+	sound_area__event:SoundEvent {
+		_tags:t = "sound"
+	}
 }

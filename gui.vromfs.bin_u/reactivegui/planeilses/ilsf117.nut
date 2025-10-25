@@ -1,13 +1,13 @@
 from "%rGui/globals/ui_library.nut" import *
 
 let { Speed, Altitude, Roll, Tangage, Mach, CompassValue, Tas, ClimbSpeed } = require("%rGui/planeState/planeFlyState.nut")
-let { baseLineWidth, mpsToKnots, metrToFeet, degToRad, metrToNavMile, mpsToFpm } = require("ilsConstants.nut")
+let { baseLineWidth, mpsToKnots, metrToFeet, degToRad, metrToNavMile, mpsToFpm } = require("%rGui/planeIlses/ilsConstants.nut")
 let { IlsColor, IlsLineScale, IlsPosSize, TvvMark, BombingMode, AimLockPos,
  AimLockValid, TimeBeforeBombRelease, AimLockDist } = require("%rGui/planeState/planeToolsState.nut")
 let { format } = require("string")
 let { cvt } = require("dagor.math")
 let { cos, sin, abs } = require("%sqstd/math.nut")
-let { cancelBombing } = require("commonElements.nut")
+let { cancelBombing } = require("%rGui/planeIlses/commonElements.nut")
 
 let SpeedValue = Computed(@() (Speed.get() * mpsToKnots).tointeger())
 let speed = @(){
@@ -114,7 +114,7 @@ function generatePitchLine(num) {
         watch = IlsColor
         rendObj = ROBJ_VECTOR_CANVAS
         lineWidth = baseLineWidth * IlsLineScale.get() * 0.5
-        color = IlsColor.value
+        color = IlsColor.get()
         commands = [
           (num == 0 ? [VECTOR_LINE, 0, 0, 30, 0] : []),
           (num == 0 ? [VECTOR_LINE, 70, 0, 100, 0] : []),
@@ -290,7 +290,7 @@ function compassWrap(width, height, generateFunc) {
   }
 }
 
-let CompassInt = Computed(@() ((360.0 + CompassValue.value) % 360.0).tointeger())
+let CompassInt = Computed(@() ((360.0 + CompassValue.get()) % 360.0).tointeger())
 let compassVal = @(){
   watch = IlsColor
   size = const [pw(8), ph(5)]
@@ -312,7 +312,7 @@ let compassVal = @(){
       color = IlsColor.get()
       lineWidth = baseLineWidth
       fontSize = 45
-      text = CompassInt.value.tostring()
+      text = CompassInt.get().tostring()
     }
   ]
 }

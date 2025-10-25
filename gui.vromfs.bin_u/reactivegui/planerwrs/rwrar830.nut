@@ -3,7 +3,7 @@ from "%rGui/globals/ui_library.nut" import *
 let rwrSetting = require("%rGui/rwrSetting.nut")
 let { rwrTargetsTriggers, rwrTargets } = require("%rGui/twsState.nut")
 
-let { ThreatType, baseLineWidth, createCompass, createRwrGrid, createRwrGridMarks, createRwrTarget } = require("rwrAr830Components.nut")
+let { ThreatType, baseLineWidth, createCompass, createRwrGrid, createRwrGridMarks, createRwrTarget } = require("%rGui/planeRwrs/rwrAr830Components.nut")
 
 let backGroundColor = Color(0, 0, 0, 255)
 let color = Color(255, 255, 255, 255)

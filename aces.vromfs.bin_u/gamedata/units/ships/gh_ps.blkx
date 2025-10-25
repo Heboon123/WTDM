@@ -1,748 +1,410 @@
-{
-  "model": "gh",
-  "subclass": "warShip",
-  "dustFx": "water_units_dust",
-  "explosionFx": "ship_model_expl",
-  "explosionFxBA": "water_explosion_medium",
-  "battleAreaUnhideVarName": "tentacle_hide",
-  "battleAreaAnimName": "tentacle_action",
-  "timeToSink": 25.0,
-  "wakeBboxMin": [
-    -10.0,
-    -1.0,
-    -5.0
-  ],
-  "wakeBboxMax": [
-    8.0,
-    1.0,
-    5.0
-  ],
-  "type": "typeShip",
-  "expClass": "exp_ship",
-  "timeToFire": 40.0,
-  "timeToSmoke": 300.0,
-  "hasExpl": false,
-  "moveType": "ship",
-  "maxFwdSpeed": 80.0,
-  "maxRevSpeed": 5.0,
-  "maxAngSpeed": 15.0,
-  "maxAccel": 20.0,
-  "maxDecel": 5.0,
-  "maxAngAccel": 15.0,
-  "maxAngAccel0": 2.0,
-  "maxAngAccelV": 15.0,
-  "groundNormSmoothViscosity": 0.1,
-  "customUpdateDiv": 5,
-  "SoundMove": "models.Ship",
-  "tailStartOffset": 10.0,
-  "DamageParts": {
-    "formatVersion": 2,
-    "armorClass": "RHA_tank",
-    "hp": 8000.0,
-    "hull": {
-      "armorClass": "RHA_tank",
-      "hp": 10000.0,
-      "ship_hull_dm": {
-        "armorThickness": 4.0,
-        "restrainDamage": 0.0,
-        "armorThrough": 4.0,
-        "explosionDamageMult": 0.0
-      },
-      "ammo_body_dm": {
-        "armorThickness": 5.0,
-        "hp": 500.0,
-        "restrainDamage": 0.0,
-        "armorThrough": 4.0,
-        "explosionDamageMult": 0.33
-      },
-      "foremast_dm": {
-        "armorThickness": 50.0,
-        "restrainDamage": 0.0,
-        "armorThrough": 4.0
-      },
-      "mainmast_dm": {
-        "armorThickness": 50.0,
-        "restrainDamage": 0.0,
-        "armorThrough": 4.0
-      },
-      "mizzenmast_dm": {
-        "armorThickness": 50.0,
-        "restrainDamage": 0.0,
-        "armorThrough": 4.0
-      }
-    },
-    "sails": {
-      "armorClass": "wood",
-      "hp": 3500.0,
-      "foremast_coursesail_dm": {
-        "armorThickness": 2.0,
-        "restrainDamage": 0.05,
-        "armorThrough": 2.0,
-        "genericDamageMult": 0.0
-      },
-      "foremast_topsail_dm": {
-        "armorThickness": 2.0,
-        "restrainDamage": 0.05,
-        "armorThrough": 2.0,
-        "genericDamageMult": 0.0
-      },
-      "bowsprit_sail_dm": {
-        "armorThickness": 2.0,
-        "restrainDamage": 0.05,
-        "armorThrough": 2.0,
-        "genericDamageMult": 0.0
-      },
-      "mainmast_coursesail_dm": {
-        "armorThickness": 2.0,
-        "restrainDamage": 0.05,
-        "armorThrough": 2.0,
-        "genericDamageMult": 0.0
-      },
-      "mainmast_topsail_dm": {
-        "armorThickness": 2.0,
-        "restrainDamage": 0.05,
-        "armorThrough": 2.0,
-        "genericDamageMult": 0.0
-      },
-      "mizzenmast_sail_dm": {
-        "armorThickness": 2.0,
-        "restrainDamage": 0.05,
-        "armorThrough": 2.0,
-        "genericDamageMult": 0.0
-      }
-    }
-  },
-  "MetaParts": {
-    "body": {
-      "hp": 10000.0,
-      "part": "ship_hull_dm",
-      "effects": {
-        "killUnit": {
-          "nothing": 1.0
-        }
-      }
-    }
-  },
-  "DamageEffects": {
-    "relativePartHealthForVisibleDamage": 0.05,
-    "part": {
-      "name": "ammo_body_dm",
-      "onKill": {
-        "expl": 1.0,
-        "fHitCritical": true
-      }
-    }
-  },
-  "partsToRepair": {
-    "foremast_coursesail_dm": {
-      "time": 60.0,
-      "hp": 0.5
-    },
-    "foremast_topsail_dm": {
-      "time": 80.0,
-      "hp": 0.5
-    },
-    "bowsprit_sail_dm": {
-      "time": 60.0,
-      "hp": 0.5
-    },
-    "mainmast_coursesail_dm": {
-      "time": 60.0,
-      "hp": 0.5
-    },
-    "mainmast_topsail_dm": {
-      "time": 80.0,
-      "hp": 0.5
-    },
-    "mizzenmast_sail_dm": {
-      "time": 60.0,
-      "hp": 0.5
-    }
-  },
-  "damagePartsToAnim": {
-    "foremast_coursesail_dm": "foremast_coursesail_damage",
-    "foremast_topsail_dm": "foremast_topsail_damage",
-    "mainmast_coursesail_dm": "mainmast_coursesail_damage",
-    "mainmast_topsail_dm": "mainmast_topsail_damage",
-    "bowsprit_sail_dm": "bowsprit_sail_damage"
-  },
-  "breaches": {
-    "repairSpeed": 1.0,
-    "waterMassVel": -50.0,
-    "waterMassMult": 10.0,
-    "breachGrowVelThr": 8.0,
-    "breachGrowSpd": 1.0,
-    "breachLinePosY": 0.2,
-    "hpToBreachSize": [
-      5.0,
-      200.0,
-      0.01,
-      0.25
-    ],
-    "hpToRepair": [
-      5.0,
-      200.0,
-      10.0,
-      400.0
-    ],
-    "additionalWaterDeathThreshold": 250000.0
-  },
-  "class_tags": {
-    "pacific": true,
-    "mediterran": true,
-    "westernfront": true
-  },
-  "optics": {
-    "binoculars": "tube"
-  },
-  "ShipPhys": {
-    "mass": {
-      "Empty": 191379.0,
-      "momentOfInertia": [
-        47.2,
-        300.0,
-        150.0
-      ],
-      "CenterOfGravity": [
-        -2.0,
-        -1.0,
-        0.0
-      ]
-    },
-    "engines": {
-      "engine": [
-        {
-          "pos": [
-            -10.0,
-            -1.0,
-            -2.0
-          ],
-          "maxThrust": 100000.0,
-          "zeroThrustSpd": 1.0
-        },
-        {
-          "pos": [
-            -10.0,
-            -1.0,
-            2.0
-          ],
-          "maxThrust": 100000.0,
-          "zeroThrustSpd": 1.0
-        }
-      ]
-    },
-    "settings": {
-      "velMult": 3.0
-    },
-    "collisionProps": {
-      "cls_body_01": "convex_hull"
-    },
-    "hydrodynamics": {
-      "keelArea": 10.0,
-      "bodyArea": 50.0,
-      "keelArm": [
-        -20.0,
-        -1.0,
-        0.0
-      ],
-      "bodyArm": [
-        -0.5,
-        -1.0,
-        0.0
-      ],
-      "frontAng": 0.4,
-      "vertVelLinCoeff": 0.5,
-      "normVelCoeff": 0.8,
-      "perpVelCoeff": 0.05,
-      "rudder": {
-        "pos": [
-          -12.0,
-          -1.0,
-          0.0
-        ],
-        "area": 30.0,
-        "deflection": 45.0,
-        "outputParam": "rudder"
-      },
-      "ignoreNodes": {
-        "mizzenmast_sail_dm": true,
-        "mainmast_coursesail_dm": true,
-        "mainmast_topsail_dm": true,
-        "foremast_coursesail_dm": true,
-        "foremast_topsail_dm": true,
-        "bowsprit_sail_dm": true
-      }
-    },
-    "sails": {
-      "mast": [
-        {
-          "tm": [
-            [
-              1.0,
-              0.0,
-              0.0
-            ],
-            [
-              0.0,
-              1.0,
-              0.0
-            ],
-            [
-              0.0,
-              0.0,
-              1.0
-            ],
-            [
-              10.0,
-              4.0,
-              0.0
-            ]
-          ],
-          "sailYard": [
-            {
-              "tm": [
-                [
-                  0.0,
-                  -1.0,
-                  0.0
-                ],
-                [
-                  1.0,
-                  0.0,
-                  0.0
-                ],
-                [
-                  0.0,
-                  0.0,
-                  1.0
-                ],
-                [
-                  1.0,
-                  4.3,
-                  0.0
-                ]
-              ],
-              "limits": [
-                -40.0,
-                40.0
-              ],
-              "rotDir": [
-                0.0,
-                1.0,
-                0.0
-              ],
-              "outputParam": "foremast_coursesail_rotate",
-              "sail": {
-                "center": [
-                  0.0,
-                  0.0,
-                  0.0
-                ],
-                "area": 55.0,
-                "width": 12.0,
-                "outputParam": "foremast_coursesail_unfold",
-                "partName": "foremast_coursesail_dm",
-                "OswaldsEfficiencyNumber": 0.5,
-                "lineClCoeff": 0.1,
-                "minPos": {
-                  "Cl0": 0.0,
-                  "alphaCritHigh": 30.0,
-                  "alphaCritLow": -30.0,
-                  "ClCritHigh": 2.6,
-                  "ClCritLow": -2.6,
-                  "CdMin": 0.15
-                }
-              }
-            },
-            {
-              "tm": [
-                [
-                  0.0,
-                  -1.0,
-                  0.0
-                ],
-                [
-                  1.0,
-                  0.0,
-                  0.0
-                ],
-                [
-                  0.0,
-                  0.0,
-                  1.0
-                ],
-                [
-                  1.0,
-                  10.8,
-                  0.0
-                ]
-              ],
-              "limits": [
-                -45.0,
-                45.0
-              ],
-              "rotDir": [
-                0.0,
-                1.0,
-                0.0
-              ],
-              "outputParam": "foremast_topsail_rotate",
-              "sail": {
-                "center": [
-                  0.0,
-                  0.0,
-                  0.0
-                ],
-                "area": 60.0,
-                "width": 9.5,
-                "outputParam": "foremast_topsail_unfold",
-                "partName": "foremast_topsail_dm",
-                "OswaldsEfficiencyNumber": 0.5,
-                "lineClCoeff": 0.1,
-                "minPos": {
-                  "Cl0": 0.0,
-                  "alphaCritHigh": 30.0,
-                  "alphaCritLow": -30.0,
-                  "ClCritHigh": 2.6,
-                  "ClCritLow": -2.6,
-                  "CdMin": 0.15
-                }
-              }
-            }
-          ]
-        },
-        {
-          "tm": [
-            [
-              1.0,
-              0.0,
-              0.0
-            ],
-            [
-              0.0,
-              1.0,
-              0.0
-            ],
-            [
-              0.0,
-              0.0,
-              1.0
-            ],
-            [
-              0.0,
-              3.0,
-              0.0
-            ]
-          ],
-          "sailYard": [
-            {
-              "tm": [
-                [
-                  0.0,
-                  -1.0,
-                  0.0
-                ],
-                [
-                  1.0,
-                  0.0,
-                  0.0
-                ],
-                [
-                  0.0,
-                  0.0,
-                  1.0
-                ],
-                [
-                  1.0,
-                  6.3,
-                  0.0
-                ]
-              ],
-              "limits": [
-                -40.0,
-                40.0
-              ],
-              "rotDir": [
-                0.0,
-                1.0,
-                0.0
-              ],
-              "outputParam": "mainmast_coursesail_rotate",
-              "sail": {
-                "center": [
-                  0.0,
-                  0.0,
-                  0.0
-                ],
-                "area": 78.0,
-                "width": 13.5,
-                "outputParam": "mainmast_coursesail_unfold",
-                "partName": "mainmast_coursesail_dm",
-                "OswaldsEfficiencyNumber": 0.5,
-                "lineClCoeff": 0.1,
-                "minPos": {
-                  "Cl0": 0.0,
-                  "alphaCritHigh": 30.0,
-                  "alphaCritLow": -30.0,
-                  "ClCritHigh": 2.6,
-                  "ClCritLow": -2.6,
-                  "CdMin": 0.15
-                }
-              }
-            },
-            {
-              "tm": [
-                [
-                  0.0,
-                  -1.0,
-                  0.0
-                ],
-                [
-                  1.0,
-                  0.0,
-                  0.0
-                ],
-                [
-                  0.0,
-                  0.0,
-                  1.0
-                ],
-                [
-                  1.0,
-                  13.8,
-                  0.0
-                ]
-              ],
-              "limits": [
-                -45.0,
-                45.0
-              ],
-              "rotDir": [
-                0.0,
-                1.0,
-                0.0
-              ],
-              "outputParam": "mainmast_topsail_rotate",
-              "sail": {
-                "center": [
-                  0.0,
-                  0.0,
-                  0.0
-                ],
-                "area": 83.0,
-                "width": 10.5,
-                "outputParam": "mainmast_topsail_unfold",
-                "partName": "mainmast_topsail_dm",
-                "OswaldsEfficiencyNumber": 0.5,
-                "lineClCoeff": 0.1,
-                "minPos": {
-                  "Cl0": 0.0,
-                  "alphaCritHigh": 30.0,
-                  "alphaCritLow": -30.0,
-                  "ClCritHigh": 2.6,
-                  "ClCritLow": -2.6,
-                  "CdMin": 0.15
-                }
-              }
-            }
-          ]
-        },
-        {
-          "tm": [
-            [
-              1.0,
-              0.0,
-              0.0
-            ],
-            [
-              0.0,
-              1.0,
-              0.0
-            ],
-            [
-              0.0,
-              0.0,
-              1.0
-            ],
-            [
-              18.0,
-              4.0,
-              0.0
-            ]
-          ],
-          "sailYard": {
-            "tm": [
-              [
-                0.0,
-                -1.0,
-                0.0
-              ],
-              [
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0
-              ],
-              [
-                0.0,
-                0.0,
-                0.0
-              ]
-            ],
-            "limits": [
-              -75.0,
-              75.0
-            ],
-            "rotDir": [
-              0.0,
-              1.0,
-              0.0
-            ],
-            "outputParam": "bowsprit_rotate",
-            "sail": {
-              "center": [
-                0.0,
-                0.0,
-                0.0
-              ],
-              "area": 30.0,
-              "width": 8.0,
-              "outputParam": "bowsprit_sail_unfold",
-              "partName": "bowsprit_sail_dm",
-              "OswaldsEfficiencyNumber": 0.5,
-              "lineClCoeff": 0.1,
-              "minPos": {
-                "Cl0": 0.0,
-                "alphaCritHigh": 30.0,
-                "alphaCritLow": -30.0,
-                "ClCritHigh": 2.6,
-                "ClCritLow": -2.6,
-                "CdMin": 0.15
-              }
-            }
-          }
-        },
-        {
-          "tm": [
-            [
-              1.0,
-              0.0,
-              0.0
-            ],
-            [
-              0.0,
-              1.0,
-              0.0
-            ],
-            [
-              0.0,
-              0.0,
-              1.0
-            ],
-            [
-              -7.0,
-              9.0,
-              0.0
-            ]
-          ],
-          "sailYard": {
-            "tm": [
-              [
-                0.0,
-                -1.0,
-                0.0
-              ],
-              [
-                0.342,
-                0.0,
-                -0.9396
-              ],
-              [
-                -0.9396,
-                0.0,
-                0.342
-              ],
-              [
-                0.0,
-                3.0,
-                0.0
-              ]
-            ],
-            "limits": [
-              -65.0,
-              45.0
-            ],
-            "rotDir": [
-              0.0,
-              1.0,
-              0.0
-            ],
-            "outputParam": "mizzenmast_rotate",
-            "sail": {
-              "center": [
-                0.0,
-                0.0,
-                0.0
-              ],
-              "area": 80.0,
-              "width": 10.0,
-              "outputParam": "mizzenmast_sail_unfold",
-              "partName": "mizzenmast_sail_dm",
-              "OswaldsEfficiencyNumber": 0.5,
-              "lineClCoeff": 0.1,
-              "minPos": {
-                "Cl0": 0.0,
-                "alphaCritHigh": 30.0,
-                "alphaCritLow": -30.0,
-                "ClCritHigh": 2.6,
-                "ClCritLow": -2.6,
-                "CdMin": 0.15
-              }
-            }
-          }
-        }
-      ]
-    }
-  },
-  "commonWeapons": {},
-  "weapon_presets": {
-    "preset": {
-      "name": "gh_ps_default",
-      "blk": "gameData/units/ships/weaponPresets/gh_ps_default.blk"
-    }
-  },
-  "cockpit": {
-    "headPos": [
-      0.0,
-      20.0,
-      -40.0
-    ],
-    "headPosOnShooting": [
-      3.0,
-      4.5,
-      0.0
-    ]
-  },
-  "sound": {
-    "engine": "",
-    "TrackSoundPath": "sounds/engines",
-    "TrackSoundPathStudio": "aircraft/engines",
-    "TrackSoundName": "old_ship",
-    "TrackSoundNameCockpit": "old_ship",
-    "TrackSoundNameAi": "old_ship",
-    "ineffectiveSailsPath": "sounds/effects",
-    "ineffectiveSailsPathStudio": "aircraft/effects",
-    "ineffectiveSailsEvent": "old_ship_sails",
-    "dialog_events": {
-      "onDrive": "sh_com_01",
-      "onStop": "sh_com_02",
-      "onHit": "sh_com_04",
-      "onEnemyHit": "sh_com_03",
-      "onEnemyKill": "sh_com_05"
-    }
-  }
+model:t = "gh"
+subclass:t = "warShip"
+dustFx:t = "water_units_dust"
+explosionFx:t = "ship_model_expl"
+explosionFxBA:t = "water_explosion_medium"
+battleAreaUnhideVarName:t = "tentacle_hide"
+battleAreaAnimName:t = "tentacle_action"
+timeToSink:r = 25
+wakeBboxMin:p3 = -10, -1, -5
+wakeBboxMax:p3 = 8, 1, 5
+type:t = "typeShip"
+expClass:t = "exp_ship"
+timeToFire:r = 40
+timeToSmoke:r = 300
+hasExpl:b = false
+moveType:t = "ship"
+maxFwdSpeed:r = 80
+maxRevSpeed:r = 5
+maxAngSpeed:r = 15
+maxAccel:r = 20
+maxDecel:r = 5
+maxAngAccel:r = 15
+maxAngAccel0:r = 2
+maxAngAccelV:r = 15
+groundNormSmoothViscosity:r = 0.1
+customUpdateDiv:i = 5
+SoundMove:t = "models.Ship"
+tailStartOffset:r = 10
+DamageParts {
+	formatVersion:i = 2
+	armorClass:t = "RHA_tank"
+	hp:r = 8000
+	hull {
+		armorClass:t = "RHA_tank"
+		hp:r = 10000
+		ship_hull_dm {
+			armorThickness:r = 4
+			restrainDamage:r = 0
+			armorThrough:r = 4
+			explosionDamageMult:r = 0
+		}
+		ammo_body_dm {
+			armorThickness:r = 5
+			hp:r = 500
+			restrainDamage:r = 0
+			armorThrough:r = 4
+			explosionDamageMult:r = 0.33
+		}
+		foremast_dm {
+			armorThickness:r = 50
+			restrainDamage:r = 0
+			armorThrough:r = 4
+		}
+		mainmast_dm {
+			armorThickness:r = 50
+			restrainDamage:r = 0
+			armorThrough:r = 4
+		}
+		mizzenmast_dm {
+			armorThickness:r = 50
+			restrainDamage:r = 0
+			armorThrough:r = 4
+		}
+	}
+	sails {
+		armorClass:t = "wood"
+		hp:r = 3500
+		foremast_coursesail_dm {
+			armorThickness:r = 2
+			restrainDamage:r = 0.05
+			armorThrough:r = 2
+			genericDamageMult:r = 0
+		}
+		foremast_topsail_dm {
+			armorThickness:r = 2
+			restrainDamage:r = 0.05
+			armorThrough:r = 2
+			genericDamageMult:r = 0
+		}
+		bowsprit_sail_dm {
+			armorThickness:r = 2
+			restrainDamage:r = 0.05
+			armorThrough:r = 2
+			genericDamageMult:r = 0
+		}
+		mainmast_coursesail_dm {
+			armorThickness:r = 2
+			restrainDamage:r = 0.05
+			armorThrough:r = 2
+			genericDamageMult:r = 0
+		}
+		mainmast_topsail_dm {
+			armorThickness:r = 2
+			restrainDamage:r = 0.05
+			armorThrough:r = 2
+			genericDamageMult:r = 0
+		}
+		mizzenmast_sail_dm {
+			armorThickness:r = 2
+			restrainDamage:r = 0.05
+			armorThrough:r = 2
+			genericDamageMult:r = 0
+		}
+	}
+}
+MetaParts {
+	body {
+		hp:r = 10000
+		part:t = "ship_hull_dm"
+		effects {
+			killUnit {
+				nothing:r = 1
+			}
+		}
+	}
+}
+DamageEffects {
+	relativePartHealthForVisibleDamage:r = 0.05
+	part {
+		name:t = "ammo_body_dm"
+		onKill {
+			expl:r = 1
+			fHitCritical:b = true
+		}
+	}
+}
+partsToRepair {
+	foremast_coursesail_dm {
+		time:r = 60
+		hp:r = 0.5
+	}
+	foremast_topsail_dm {
+		time:r = 80
+		hp:r = 0.5
+	}
+	bowsprit_sail_dm {
+		time:r = 60
+		hp:r = 0.5
+	}
+	mainmast_coursesail_dm {
+		time:r = 60
+		hp:r = 0.5
+	}
+	mainmast_topsail_dm {
+		time:r = 80
+		hp:r = 0.5
+	}
+	mizzenmast_sail_dm {
+		time:r = 60
+		hp:r = 0.5
+	}
+}
+damagePartsToAnim {
+	foremast_coursesail_dm:t = "foremast_coursesail_damage"
+	foremast_topsail_dm:t = "foremast_topsail_damage"
+	mainmast_coursesail_dm:t = "mainmast_coursesail_damage"
+	mainmast_topsail_dm:t = "mainmast_topsail_damage"
+	bowsprit_sail_dm:t = "bowsprit_sail_damage"
+}
+breaches {
+	repairSpeed:r = 1
+	waterMassVel:r = -50
+	waterMassMult:r = 10
+	breachGrowVelThr:r = 8
+	breachGrowSpd:r = 1
+	breachLinePosY:r = 0.2
+	hpToBreachSize:p4 = 5, 200, 0.01, 0.25
+	hpToRepair:p4 = 5, 200, 10, 400
+	additionalWaterDeathThreshold:r = 250000
+}
+class_tags {
+	pacific:b = true
+	mediterran:b = true
+	westernfront:b = true
+}
+optics {
+	binoculars:t = "tube"
+}
+ShipPhys {
+	mass {
+		Empty:r = 191379
+		momentOfInertia:p3 = 47.2, 300, 150
+		CenterOfGravity:p3 = -2, -1, 0
+	}
+	engines {
+		engine {
+			pos:p3 = -10, -1, -2
+			maxThrust:r = 100000
+			zeroThrustSpd:r = 1
+		}
+		engine {
+			pos:p3 = -10, -1, 2
+			maxThrust:r = 100000
+			zeroThrustSpd:r = 1
+		}
+	}
+	settings {
+		velMult:r = 3
+	}
+	collisionProps {
+		cls_body_01:t = "convex_hull"
+	}
+	hydrodynamics {
+		keelArea:r = 10
+		bodyArea:r = 50
+		keelArm:p3 = -20, -1, 0
+		bodyArm:p3 = -0.5, -1, 0
+		frontAng:r = 0.4
+		vertVelLinCoeff:r = 0.5
+		normVelCoeff:r = 0.8
+		perpVelCoeff:r = 0.05
+		rudder {
+			pos:p3 = -12, -1, 0
+			area:r = 30
+			deflection:r = 45
+			outputParam:t = "rudder"
+		}
+		ignoreNodes {
+			mizzenmast_sail_dm:b = true
+			mainmast_coursesail_dm:b = true
+			mainmast_topsail_dm:b = true
+			foremast_coursesail_dm:b = true
+			foremast_topsail_dm:b = true
+			bowsprit_sail_dm:b = true
+		}
+	}
+	sails {
+		mast {
+			tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [10.0, 4.0, 0.0]]
+			sailYard {
+				tm:m = [[0.0, -1.0, 0.0] [1.0, 0.0, 0.0] [0.0, 0.0, 1.0] [1.0, 4.3, 0.0]]
+				limits:p2 = -40, 40
+				rotDir:p3 = 0, 1, 0
+				outputParam:t = "foremast_coursesail_rotate"
+				sail {
+					center:p3 = 0, 0, 0
+					area:r = 55
+					width:r = 12
+					outputParam:t = "foremast_coursesail_unfold"
+					partName:t = "foremast_coursesail_dm"
+					OswaldsEfficiencyNumber:r = 0.5
+					lineClCoeff:r = 0.1
+					minPos {
+						Cl0:r = 0
+						alphaCritHigh:r = 30
+						alphaCritLow:r = -30
+						ClCritHigh:r = 2.6
+						ClCritLow:r = -2.6
+						CdMin:r = 0.15
+					}
+				}
+			}
+			sailYard {
+				tm:m = [[0.0, -1.0, 0.0] [1.0, 0.0, 0.0] [0.0, 0.0, 1.0] [1.0, 10.8, 0.0]]
+				limits:p2 = -45, 45
+				rotDir:p3 = 0, 1, 0
+				outputParam:t = "foremast_topsail_rotate"
+				sail {
+					center:p3 = 0, 0, 0
+					area:r = 60
+					width:r = 9.5
+					outputParam:t = "foremast_topsail_unfold"
+					partName:t = "foremast_topsail_dm"
+					OswaldsEfficiencyNumber:r = 0.5
+					lineClCoeff:r = 0.1
+					minPos {
+						Cl0:r = 0
+						alphaCritHigh:r = 30
+						alphaCritLow:r = -30
+						ClCritHigh:r = 2.6
+						ClCritLow:r = -2.6
+						CdMin:r = 0.15
+					}
+				}
+			}
+		}
+		mast {
+			tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 3.0, 0.0]]
+			sailYard {
+				tm:m = [[0.0, -1.0, 0.0] [1.0, 0.0, 0.0] [0.0, 0.0, 1.0] [1.0, 6.3, 0.0]]
+				limits:p2 = -40, 40
+				rotDir:p3 = 0, 1, 0
+				outputParam:t = "mainmast_coursesail_rotate"
+				sail {
+					center:p3 = 0, 0, 0
+					area:r = 78
+					width:r = 13.5
+					outputParam:t = "mainmast_coursesail_unfold"
+					partName:t = "mainmast_coursesail_dm"
+					OswaldsEfficiencyNumber:r = 0.5
+					lineClCoeff:r = 0.1
+					minPos {
+						Cl0:r = 0
+						alphaCritHigh:r = 30
+						alphaCritLow:r = -30
+						ClCritHigh:r = 2.6
+						ClCritLow:r = -2.6
+						CdMin:r = 0.15
+					}
+				}
+			}
+			sailYard {
+				tm:m = [[0.0, -1.0, 0.0] [1.0, 0.0, 0.0] [0.0, 0.0, 1.0] [1.0, 13.8, 0.0]]
+				limits:p2 = -45, 45
+				rotDir:p3 = 0, 1, 0
+				outputParam:t = "mainmast_topsail_rotate"
+				sail {
+					center:p3 = 0, 0, 0
+					area:r = 83
+					width:r = 10.5
+					outputParam:t = "mainmast_topsail_unfold"
+					partName:t = "mainmast_topsail_dm"
+					OswaldsEfficiencyNumber:r = 0.5
+					lineClCoeff:r = 0.1
+					minPos {
+						Cl0:r = 0
+						alphaCritHigh:r = 30
+						alphaCritLow:r = -30
+						ClCritHigh:r = 2.6
+						ClCritLow:r = -2.6
+						CdMin:r = 0.15
+					}
+				}
+			}
+		}
+		mast {
+			tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [18.0, 4.0, 0.0]]
+			sailYard {
+				tm:m = [[0.0, -1.0, 0.0] [1.0, 0.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
+				limits:p2 = -75, 75
+				rotDir:p3 = 0, 1, 0
+				outputParam:t = "bowsprit_rotate"
+				sail {
+					center:p3 = 0, 0, 0
+					area:r = 30
+					width:r = 8
+					outputParam:t = "bowsprit_sail_unfold"
+					partName:t = "bowsprit_sail_dm"
+					OswaldsEfficiencyNumber:r = 0.5
+					lineClCoeff:r = 0.1
+					minPos {
+						Cl0:r = 0
+						alphaCritHigh:r = 30
+						alphaCritLow:r = -30
+						ClCritHigh:r = 2.6
+						ClCritLow:r = -2.6
+						CdMin:r = 0.15
+					}
+				}
+			}
+		}
+		mast {
+			tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-7.0, 9.0, 0.0]]
+			sailYard {
+				tm:m = [[0.0, -1.0, 0.0] [0.342, 0.0, -0.9396] [-0.9396, 0.0, 0.342] [0.0, 3.0, 0.0]]
+				limits:p2 = -65, 45
+				rotDir:p3 = 0, 1, 0
+				outputParam:t = "mizzenmast_rotate"
+				sail {
+					center:p3 = 0, 0, 0
+					area:r = 80
+					width:r = 10
+					outputParam:t = "mizzenmast_sail_unfold"
+					partName:t = "mizzenmast_sail_dm"
+					OswaldsEfficiencyNumber:r = 0.5
+					lineClCoeff:r = 0.1
+					minPos {
+						Cl0:r = 0
+						alphaCritHigh:r = 30
+						alphaCritLow:r = -30
+						ClCritHigh:r = 2.6
+						ClCritLow:r = -2.6
+						CdMin:r = 0.15
+					}
+				}
+			}
+		}
+	}
+}
+commonWeapons {
+
+}
+weapon_presets {
+	preset {
+		name:t = "gh_ps_default"
+		blk:t = "gameData/units/ships/weaponPresets/gh_ps_default.blk"
+	}
+}
+cockpit {
+	headPos:p3 = 0, 20, -40
+	headPosOnShooting:p3 = 3, 4.5, 0
+}
+sound {
+	engine:t = ""
+	TrackSoundPath:t = "sounds/engines"
+	TrackSoundPathStudio:t = "aircraft/engines"
+	TrackSoundName:t = "old_ship"
+	TrackSoundNameCockpit:t = "old_ship"
+	TrackSoundNameAi:t = "old_ship"
+	ineffectiveSailsPath:t = "sounds/effects"
+	ineffectiveSailsPathStudio:t = "aircraft/effects"
+	ineffectiveSailsEvent:t = "old_ship_sails"
+	dialog_events {
+		onDrive:t = "sh_com_01"
+		onStop:t = "sh_com_02"
+		onHit:t = "sh_com_04"
+		onEnemyHit:t = "sh_com_03"
+		onEnemyKill:t = "sh_com_05"
+	}
 }

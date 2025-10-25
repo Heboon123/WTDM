@@ -66,7 +66,7 @@ let isBattleTaskActive = @(task) task?.isActive ?? true
 
 let isBattleTasksAvailable = @() hasFeature("BattleTasks")
   && currentTasksArray.len() > 0
-  && isMultiplayerPrivilegeAvailable.value
+  && isMultiplayerPrivilegeAvailable.get()
 
 function getGenerationIdInt(task) {
   let taskGenId = task?._generation_id
@@ -459,9 +459,9 @@ function updateCompleteTaskWatched() {
       isHardIncomplete = true
   }
 
-  isEasyTaskComplete(isEasyComplete)
-  isMediumTaskComplete(isMediumComplete)
-  isHardTaskIncomplete(isHardIncomplete)
+  isEasyTaskComplete.set(isEasyComplete)
+  isMediumTaskComplete.set(isMediumComplete)
+  isHardTaskIncomplete.set(isHardIncomplete)
 }
 
 function updateTasksData() {
@@ -495,7 +495,7 @@ function getBattleTaskDiffGroups() {
 }
 
 function checkCurSpecialTask() {
-  if (!isHardTaskIncomplete.value)
+  if (!isHardTaskIncomplete.get())
     return
 
   let tasksDataBlock = get_proposed_personal_unlocks_blk()

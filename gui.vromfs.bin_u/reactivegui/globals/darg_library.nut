@@ -13,9 +13,9 @@ let { set_nested_observable_debug } = frp
 set_nested_observable_debug(DBGLEVEL > 0)
 
 
-let shHud = @(value) (darg_library.fsh(value)).tointeger()
+let shHud = @[pure](value) (darg_library.fsh(value)).tointeger()
 
-let colorArr = @(color) [(color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF]
+let colorArr = @[pure](color) [(color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF]
 
 return frp.__merge(
   sharedEnums,
@@ -24,7 +24,7 @@ return frp.__merge(
   require("%sqstd/functools.nut"),
   require("daRg"),
   { shHud, utf8, min, max, clamp,
-    log = log.log, dlog = log.dlog, log_for_user = log.dlog,
+    log = log.log, dlog = log.dlog, log_for_user = log.dlog, wlog = log.wlog,
     console_print = log.console_print, log_with_prefix = log.log_with_prefix,
     colorArr,
     WtBhv = require("wt.behaviors")

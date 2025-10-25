@@ -1,315 +1,312 @@
-{
-  "type": "radar",
-  "name": "SRD-1",
-  "showMissileLaunchZone": true,
-  "transivers": {
-    "ranging": {
-      "sideLobesAttenuation": -16.0,
-      "power": 2.0,
-      "band": 8,
-      "rcs": 5.0,
-      "range": 2000.0,
-      "rangeMax": 2000.0,
-      "multipathEffect": [
-        0.0,
-        1.0,
-        60.0,
-        0.0
-      ],
-      "antenna": {
-        "angleHalfSens": 20.0,
-        "sideLobesSensitivity": -22.0
-      }
-    }
-  },
-  "scanPatterns": {
-    "ranging": {
-      "azimuthLimits": [
-        -9.0,
-        9.0
-      ],
-      "elevationLimits": [
-        -9.0,
-        9.0
-      ],
-      "type": "no",
-      "indicate": true
-    }
-  },
-  "signals": {
-    "ranging": {
-      "groundClutter": true,
-      "anglesFinder": false,
-      "rangeFinder": true,
-      "distanceAccuracy": 40.0,
-      "track": true,
-      "distance": {
-        "presents": true,
-        "minValue": 150.0,
-        "maxValue": 2000.0,
-        "maxUnambiguousValue": 150000.0,
-        "width": 200.0
-      }
-    }
-  },
-  "scopeRanges": {
-    "range1": 2000.0
-  },
-  "fsms": {
-    "main": {
-      "stateInit": "init",
-      "actionsTemplates": {
-        "init": {
-          "setEnabled": {
-            "value": false
-          },
-          "setTransiver": {
-            "transiver": "ranging"
-          },
-          "setSignal": {
-            "signal": "ranging"
-          },
-          "setScanPattern": {
-            "scanPattern": "ranging"
-          },
-          "setCenterAzimuth": {
-            "source": "constant",
-            "value": 0.0
-          },
-          "setCenterElevation": {
-            "source": "constant",
-            "value": 0.0
-          },
-          "setTargetDesignationRange": {
-            "azimuthRange": [
-              -10.0,
-              10.0
-            ],
-            "distanceRange": [
-              150.0,
-              2000.0
-            ]
-          }
-        },
-        "setStandbyMode": {
-          "setModeName": {
-            "name": "standby"
-          },
-          "setEnabled": {
-            "value": false
-          },
-          "clearTargetsOfInterest": {}
-        },
-        "setLockMode": {
-          "setModeName": {
-            "name": "acquisition"
-          },
-          "setEnabled": {
-            "value": true
-          },
-          "clearTargetsOfInterest": {},
-          "resetScanPhase": {},
-          "setFsmActive": {
-            "fsm": "lock",
-            "active": true
-          },
-          "setDistGatePos": {
-            "source": "constRange",
-            "pos": 1000.0,
-            "width": 2000.0
-          }
-        },
-        "setTrackMode": {
-          "setModeName": {
-            "name": "track"
-          },
-          "setEnabled": {
-            "value": true
-          },
-          "clearTargetsOfInterest": {},
-          "addTargetOfInterest": {},
-          "setLastTargetOfInterestActive": {},
-          "updateActiveTargetOfInterest": {},
-          "setDistGatePos": {
-            "source": "activeTargetOfInterest",
-            "width": 0.0
-          },
-          "setFsmActive": {
-            "fsm": "track",
-            "active": true
-          }
-        }
-      },
-      "transitions": {
-        "init": {
-          "stateFrom": "init",
-          "event": "init",
-          "stateTo": "standby",
-          "actions": {
-            "init": {},
-            "setStandbyMode": {}
-          }
-        },
-        "lock": {
-          "stateFrom": "standby",
-          "command": [
-            "selectTarget",
-            "acmSwitch"
-          ],
-          "event": "enable",
-          "stateTo": "lock",
-          "actions": {
-            "setLockMode": {}
-          }
-        },
-        "track": [
-          {
-            "stateFrom": "lock",
-            "event": "targetDetected",
-            "stateTo": "track",
-            "actions": {
-              "setFsmActive": {
-                "fsm": "lock",
-                "active": false
-              },
-              "setTrackMode": {}
-            }
-          },
-          {
-            "stateFrom": [
-              "lock",
-              "track"
-            ],
-            "command": [
-              "selectTarget",
-              "acmSwitch"
-            ],
-            "event": "disable",
-            "stateTo": "standby",
-            "actions": {
-              "setFsmActive": [
-                {
-                  "fsm": "lock",
-                  "active": false
-                },
-                {
-                  "fsm": "track",
-                  "active": false
-                }
-              ],
-              "setStandbyMode": {}
-            }
-          }
-        ],
-        "finishedTrack": {
-          "stateFrom": "track",
-          "event": "targetsOfInterestCleanup",
-          "stateTo": "lock",
-          "actions": {
-            "setFsmActive": {
-              "fsm": "track",
-              "active": false
-            },
-            "setLockMode": {}
-          }
-        },
-        "switchScopeRange": {
-          "command": "rangeSwitch",
-          "actions": {
-            "setNextScopeRange": {}
-          }
-        }
-      }
-    },
-    "lock": {
-      "stateInit": "lock",
-      "transitions": {
-        "scan": {
-          "event": "update",
-          "actions": {
-            "scan": {}
-          }
-        },
-        "detect": {
-          "event": "targetInSight",
-          "actions": {
-            "detectTarget": {
-              "ignoreOwnWeapon": true,
-              "rangeMult": 1.0
-            }
-          }
-        }
-      }
-    },
-    "track": {
-      "stateInit": "track",
-      "transitions": {
-        "detect": {
-          "event": "update",
-          "actions": {
-            "detectTarget": {
-              "ignoreOwnWeapon": true,
-              "rangeMult": 1.0
-            }
-          }
-        },
-        "track": {
-          "event": "targetDetected",
-          "actions": {
-            "updateActiveTargetOfInterest": {
-              "dirFilter": {
-                "rateLim": [
-                  0.78,
-                  0.78
-                ],
-                "limTimeOut": 1.0,
-                "inertialTimeMax": 1.0
-              },
-              "distFilter": {
-                "accelLim": [
-                  150.0,
-                  150.0
-                ],
-                "limTimeOut": 1.0,
-                "inertialTimeMax": 1.0
-              }
-            },
-            "setCenterAzimuth": {
-              "source": "activeTargetOfInterest"
-            },
-            "setCenterElevation": {
-              "source": "activeTargetOfInterest"
-            },
-            "setDistGatePos": {
-              "source": "activeTargetOfInterest",
-              "width": 0.0
-            }
-          }
-        },
-        "extrapolate": {
-          "event": "targetNotDetected",
-          "actions": {
-            "extrapolateTargetsOfInterest": [
-              {},
-              {}
-            ],
-            "clearTargetsOfInterest": {
-              "timeOut": 0.5,
-              "dirRateLim": 1.0
-            },
-            "setCenterAzimuth": {
-              "source": "activeTargetOfInterest"
-            },
-            "setCenterElevation": {
-              "source": "activeTargetOfInterest"
-            },
-            "setDistGatePos": {
-              "source": "activeTargetOfInterest",
-              "width": 0.0
-            }
-          }
-        }
-      }
-    }
-  }
+type:t = "radar"
+name:t = "SRD-1"
+showMissileLaunchZone:b = true
+transivers {
+	ranging {
+		sideLobesAttenuation:r = -16
+		power:r = 2
+		band:i = 8
+		rcs:r = 5
+		range:r = 2000
+		rangeMax:r = 2000
+		multipathEffect:p4 = 0, 1, 60, 0
+		antenna {
+			angleHalfSens:r = 20
+			sideLobesSensitivity:r = -22
+		}
+	}
+}
+scanPatterns {
+	ranging {
+		azimuthLimits:p2 = -9, 9
+		elevationLimits:p2 = -9, 9
+		type:t = "no"
+		indicate:b = true
+	}
+}
+signals {
+	ranging {
+		groundClutter:b = true
+		anglesFinder:b = false
+		rangeFinder:b = true
+		distanceAccuracy:r = 40
+		track:b = true
+		distance {
+			presents:b = true
+			minValue:r = 150
+			maxValue:r = 2000
+			maxUnambiguousValue:r = 150000
+			width:r = 200
+		}
+	}
+}
+scopeRanges {
+	range1:r = 2000
+}
+fsms {
+	main {
+		stateInit:t = "init"
+		actionsTemplates {
+			init {
+				setEnabled {
+					value:b = false
+				}
+				setTransiver {
+					transiver:t = "ranging"
+				}
+				setSignal {
+					signal:t = "ranging"
+				}
+				setScanPattern {
+					scanPattern:t = "ranging"
+				}
+				setCenterAzimuth {
+					source:t = "constant"
+					value:r = 0
+				}
+				setCenterElevation {
+					source:t = "constant"
+					value:r = 0
+				}
+				setTargetDesignationRange {
+					azimuthRange:p2 = -10, 10
+					distanceRange:p2 = 150, 2000
+				}
+			}
+			setStandbyMode {
+				setModeName {
+					name:t = "standby"
+				}
+				setEnabled {
+					value:b = false
+				}
+				clearTargetsOfInterest {
+
+				}
+			}
+			setLockMode {
+				setModeName {
+					name:t = "acquisition"
+				}
+				setEnabled {
+					value:b = true
+				}
+				clearTargetsOfInterest {
+
+				}
+				resetScanPhase {
+
+				}
+				setFsmActive {
+					fsm:t = "lock"
+					active:b = true
+				}
+				setDistGatePos {
+					source:t = "constRange"
+					pos:r = 1000
+					width:r = 2000
+				}
+			}
+			setTrackMode {
+				setModeName {
+					name:t = "track"
+				}
+				setEnabled {
+					value:b = true
+				}
+				clearTargetsOfInterest {
+
+				}
+				addTargetOfInterest {
+
+				}
+				setLastTargetOfInterestActive {
+
+				}
+				updateActiveTargetOfInterest {
+
+				}
+				setDistGatePos {
+					source:t = "activeTargetOfInterest"
+					width:r = 0
+				}
+				setFsmActive {
+					fsm:t = "track"
+					active:b = true
+				}
+			}
+		}
+		transitions {
+			init {
+				stateFrom:t = "init"
+				event:t = "init"
+				stateTo:t = "standby"
+				actions {
+					init {
+
+					}
+					setStandbyMode {
+
+					}
+				}
+			}
+			lock {
+				stateFrom:t = "standby"
+				command:t = "selectTarget"
+				command:t = "acmSwitch"
+				event:t = "enable"
+				stateTo:t = "lock"
+				actions {
+					setLockMode {
+
+					}
+				}
+			}
+			track {
+				stateFrom:t = "lock"
+				event:t = "targetDetected"
+				stateTo:t = "track"
+				actions {
+					setFsmActive {
+						fsm:t = "lock"
+						active:b = false
+					}
+					setTrackMode {
+
+					}
+				}
+			}
+			finishedTrack {
+				stateFrom:t = "track"
+				event:t = "targetsOfInterestCleanup"
+				stateTo:t = "lock"
+				actions {
+					setFsmActive {
+						fsm:t = "track"
+						active:b = false
+					}
+					setLockMode {
+
+					}
+				}
+			}
+			track {
+				stateFrom:t = "lock"
+				stateFrom:t = "track"
+				command:t = "selectTarget"
+				command:t = "acmSwitch"
+				event:t = "disable"
+				stateTo:t = "standby"
+				actions {
+					setFsmActive {
+						fsm:t = "lock"
+						active:b = false
+					}
+					setFsmActive {
+						fsm:t = "track"
+						active:b = false
+					}
+					setStandbyMode {
+
+					}
+				}
+			}
+			switchScopeRange {
+				command:t = "rangeSwitch"
+				actions {
+					setNextScopeRange {
+
+					}
+				}
+			}
+		}
+	}
+	lock {
+		stateInit:t = "lock"
+		transitions {
+			scan {
+				event:t = "update"
+				actions {
+					scan {
+
+					}
+				}
+			}
+			detect {
+				event:t = "targetInSight"
+				actions {
+					detectTarget {
+						ignoreOwnWeapon:b = true
+						rangeMult:r = 1
+					}
+				}
+			}
+		}
+	}
+	track {
+		stateInit:t = "track"
+		transitions {
+			detect {
+				event:t = "update"
+				actions {
+					detectTarget {
+						ignoreOwnWeapon:b = true
+						rangeMult:r = 1
+					}
+				}
+			}
+			track {
+				event:t = "targetDetected"
+				actions {
+					updateActiveTargetOfInterest {
+						dirFilter {
+							rateLim:p2 = 0.78, 0.78
+							limTimeOut:r = 1
+							inertialTimeMax:r = 1
+						}
+						distFilter {
+							accelLim:p2 = 150, 150
+							limTimeOut:r = 1
+							inertialTimeMax:r = 1
+						}
+					}
+					setCenterAzimuth {
+						source:t = "activeTargetOfInterest"
+					}
+					setCenterElevation {
+						source:t = "activeTargetOfInterest"
+					}
+					setDistGatePos {
+						source:t = "activeTargetOfInterest"
+						width:r = 0
+					}
+				}
+			}
+			extrapolate {
+				event:t = "targetNotDetected"
+				actions {
+					extrapolateTargetsOfInterest {
+
+					}
+					clearTargetsOfInterest {
+						timeOut:r = 0.5
+						dirRateLim:r = 1
+					}
+					setCenterAzimuth {
+						source:t = "activeTargetOfInterest"
+					}
+					setCenterElevation {
+						source:t = "activeTargetOfInterest"
+					}
+					setDistGatePos {
+						source:t = "activeTargetOfInterest"
+						width:r = 0
+					}
+					extrapolateTargetsOfInterest {
+
+					}
+				}
+			}
+		}
+	}
 }

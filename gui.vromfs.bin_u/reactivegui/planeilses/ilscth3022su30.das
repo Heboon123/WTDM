@@ -15,6 +15,7 @@ require strings
 require Unit
 require Weapon
 require WTCamera
+require GuidanceLock
 
 require %rGui.utils.canvas_common
 require %rGui.utils.constants_common
@@ -759,8 +760,7 @@ class Component : Canvas
     else
       let xl = cuePos.x - cueAzimuthHwr * radarScopeSize.x
       let xr = cuePos.x + cueAzimuthHwr * radarScopeSize.x
-      drawLine(float2(xl, -0.5 * radarScopeSize.y), float2(xl, 0.5 * radarScopeSize.y))
-      drawLine(float2(xr, -0.5 * radarScopeSize.y), float2(xr, 0.5 * radarScopeSize.y))
+      drawBox(float2(xl, -0.5 * radarScopeSize.y), float2(xr, 0.5 * radarScopeSize.y))
 
 
   def drawBScopeTargets()
@@ -770,6 +770,7 @@ class Component : Canvas
         continue if !t.isEnemy
         continue if t.targetType == int(RadarTargetType.TYPE_OWN_WEAPON)
         continue if t.targetType == int(RadarTargetType.TYPE_OWN_WEAPON_TARGET)
+        continue if !t.isVisible
 
         if t.isDetected || t.isTracked
           nctr := t.typeId
@@ -804,6 +805,7 @@ class Component : Canvas
         continue if !t.isEnemy
         continue if t.targetType == int(RadarTargetType.TYPE_OWN_WEAPON)
         continue if t.targetType == int(RadarTargetType.TYPE_OWN_WEAPON_TARGET)
+        continue if !t.isVisible
 
         if t.isDetected || t.isTracked
           nctr := t.typeId
@@ -1369,7 +1371,7 @@ class Component : Canvas
       localVec.x = -localVec.x
     localVec = fast_normalize(localVec)
     let screenX = (atan2(localVec.x, localVec.z) - PI_2)
-    let screenY = asin(localVec.y)
+    let screenY = safe_asin(localVec.y)
     let result = float2(screenX / hudFovLimits.x, -screenY / hudFovLimits.y)
     return !isBehind ? result : result * 100.0
 

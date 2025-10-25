@@ -9,13 +9,16 @@ shopFilter {
   enable:t='no'
   <</isEnabled>>
 
-  img {
-    id:t='hdr_image'
-    size:t='@cIco, @cIco'
+  slotsCountryFlag {
+    id:t='flagImg'
+    size:t='@cIco, 0.66@cIco'
     top:t='0.5(ph-h)'
     position:t='relative'
     background-image:t='<<countryIcon>>'
-    background-svg-size:t='@cIco, @cIco'
+    background-color:t='@white'
+    background-svg-size:t='@cIco, 0.66@cIco'
+    background-repeat:t='aspect-ratio'
+    <<^isEnabled>>background-saturate:t='0'<</isEnabled>>
   }
 
   <<#bonusData>>
@@ -27,13 +30,13 @@ shopFilter {
   <</bonusData>>
 
   slotsCountryText {
-    class:t='full'
-    text:t='#<<country>>'
+    id:t='fullText'
+    text:t='#<<countryFull>>'
   }
   slotsCountryText {
-    display:t='hide'
-    class:t='short'
+    id:t='shortText'
     text:t='#<<country>>/short'
+    display:t='hide'
   }
 
   <<#hasNotificationIcon>>

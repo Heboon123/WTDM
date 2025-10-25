@@ -1,6 +1,6 @@
 from "%rGui/globals/ui_library.nut" import *
 
-let interopGen = require("interopGen.nut")
+let interopGen = require("%rGui/interopGen.nut")
 
 let aamAimState = {
   GimbalX = Watched(0.0)
@@ -12,6 +12,8 @@ let aamAimState = {
   TrackerY = Watched(0.0)
   TrackerSize = Watched(0.0)
   TrackerVisible = Watched(false)
+
+  TrackedTargetDistance = Watched(0.0)
 
   IlsTrackerX = Watched(0.0)
   IlsTrackerY = Watched(0.0)

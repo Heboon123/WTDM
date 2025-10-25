@@ -1,362 +1,356 @@
-{
-  "frame": {
-    "id": "menuchat",
-    "size": "0.7@sf, 0.66@scrn_tgt",
-    "pos": "0.5*(sw - 1@slotbarWidthFull), sh - 1@shopBottomOffset - 1@buttonHeight - 0.66@scrn_tgt",
-    "position": "absolute",
-    "min-height": "30*@scrn_tgt/100.0",
-    "max-height": "80%sh",
-    "min-width": "55*@scrn_tgt/100.0",
-    "max-width": "70%sw",
-    "class": "scaleable",
-    "flow": "vertical",
-    "not-input-transparent": "yes",
-    "window-panel": "yes",
-    "on_mouse_enter": "onChatWindowMouseOver",
-    "on_mouse_leave": "onChatWindowMouseOver",
-    "moveElem": {},
-    "div": {
-      "width": "pw",
-      "height": "0",
-      "input-transparent": "yes",
-      "min-height": "1@buttonHeight",
-      "position": "relative",
-      "padding": "-1@framePadding",
-      "total-input-transparent": "yes",
-      "frame_header": {
-        "scaleable": "yes",
-        "activateSelect": {
-          "id": "rooms_list",
-          "width": "pw - 3@buttonHeight",
-          "min-height": "1@buttonHeight",
-          "smallFont": "yes",
-          "flow": "h-flow",
-          "input-transparent": "yes",
-          "moveX": "linear",
-          "moveY": "closest",
-          "navigatorShortcuts": "cancel",
-          "activateBy": "Y",
-          "isTransparentBg": "yes",
-          "itemsWithCloseButtons": "yes",
-          "on_select": "onRoomChanged",
-          "on_r_click": "onRoomRClick",
-          "on_dbl_click": "onRemoveRoom",
-          "on_cancel_edit": "goBack"
-        },
-        "Button_close": {
-          "id": "close_chat",
-          "normalIcon": "yes",
-          "_on_click": "goBack"
-        },
-        "top_right_holder": {
-          "id": "header_buttons",
-          "smallIcon": "yes",
-          "Button_text": [
-            {
-              "id": "btn_showSearchList",
-              "class": "image",
-              "visualStyle": "noFrame",
-              "showConsoleImage": "no",
-              "tooltip": "#channel/search",
-              "on_click": "onShowSearchList",
-              "display": "hide",
-              "enable": "no",
-              "img": {
-                "background-image": "#ui/gameuiskin#btn_search.svg"
-              }
-            },
-            {
-              "id": "btn_showPlayersList",
-              "class": "image",
-              "visualStyle": "noFrame",
-              "showConsoleImage": "no",
-              "tooltip": "#channel/showPlayersList",
-              "on_click": "onShowPlayersList",
-              "display": "hide",
-              "enable": "no",
-              "img": {
-                "background-image": "#ui/gameuiskin#btn_room_list.svg"
-              }
-            },
-            {
-              "id": "btn_create_room",
-              "class": "image",
-              "visualStyle": "noFrame",
-              "showConsoleImage": "no",
-              "tooltip": "#chat/createRoom",
-              "_on_click": "onRoomCreator",
-              "img": {
-                "background-image": "#ui/gameuiskin#btn_create_room.svg"
-              }
-            }
-          ]
-        }
-      }
-    },
-    "tdiv": {
-      "size": "pw, fh",
-      "div": [
-        {
-          "id": "middleLine",
-          "size": "3@sIco + 0.26@sf, ph",
-          "min-width": "15*@scrn_tgt/100.0",
-          "max-width": "30%pw",
-          "min-height": "ph",
-          "max-height": "ph",
-          "padding-top": "1@blockInterval",
-          "padding-right": "1@framePadding",
-          "border-offset": "@dp",
-          "behaviour": "window-size",
-          "window-size-border-mask": "R",
-          "frame": {
-            "size": "pw, ph",
-            "flow": "vertical",
-            "smallFont": "yes",
-            "type": "dark",
-            "groupList": {
-              "id": "users_list",
-              "imgType": "none",
-              "on_dbl_click": "onUsersListActivate",
-              "on_cancel_edit": "goBack",
-              "on_hover": "onChatListHover",
-              "on_unhover": "onChatListHover"
-            },
-            "tdiv": {
-              "id": "buttons_list",
-              "width": "pw",
-              "pos": "0, ph-h",
-              "position": "absolute",
-              "flow": "vertical",
-              "textareaNoTab": {
-                "id": "battle_rating",
-                "max-width": "pw",
-                "padding-bottom": "1@blockInterval",
-                "padding-left": "1@blockInterval",
-                "overflow": "hidden",
-                "inactive": "yes",
-                "display": "hide"
-              },
-              "Button_text": {
-                "id": "btn_ready",
-                "width": "pw",
-                "style": "min-width:1; overflow:hidden; margin-right:0;",
-                "text": "#mainmenu/btnReady",
-                "display": "hide",
-                "_on_click": "squadReady",
-                "visualStyle": "secondary",
-                "buttonWink": {}
-              }
-            }
-          }
-        },
-        {
-          "id": "searchDiv",
-          "display": "hide",
-          "size": "3@sIco + 0.26@sf, ph",
-          "min-width": "15*@scrn_tgt/100.0",
-          "max-width": "30%pw",
-          "min-height": "ph",
-          "max-height": "ph",
-          "padding-top": "1@blockInterval",
-          "padding-left": "1@blockInterval",
-          "behaviour": "window-size",
-          "window-size-border-mask": "L",
-          "frame": {
-            "size": "pw, ph",
-            "flow": "vertical",
-            "smallFont": "yes",
-            "type": "dark",
-            "tdiv": {
-              "id": "search_channels_block",
-              "width": "pw",
-              "flow": "vertical",
-              "tdiv": {
-                "width": "pw",
-                "overflow": "hidden",
-                "activeText": {
-                  "smallFont": "yes",
-                  "width": "pw",
-                  "pare-text": "yes",
-                  "text": "#channel/search",
-                  "min-height": "24"
-                },
-                "Button_text": {
-                  "id": "btn_mainChannels",
-                  "pos": "pw-w, 50%ph-50%h",
-                  "position": "absolute",
-                  "tooltip": "#chat/backToMainChannels",
-                  "on_click": "onMainChannels",
-                  "class": "image",
-                  "imgSize": "small",
-                  "showConsoleImage": "no",
-                  "img": {
-                    "background-image": "#ui/gameuiskin#btn_undo.svg"
-                  }
-                }
-              },
-              "groupIns": {
-                "noPadding": "yes",
-                "EditBox": {
-                  "id": "search_edit",
-                  "text": "",
-                  "noMargin": "yes",
-                  "on_activate": "onSearchStart",
-                  "on_cancel_edit": "onCancelSearchEdit",
-                  "on_set_focus": "onChatEditboxFocus"
-                },
-                "Button_text": {
-                  "pos": "@blockInterval, 0.5ph-0.5h",
-                  "position": "relative",
-                  "tooltip": "#channel/search",
-                  "on_click": "onSearchStart",
-                  "class": "image",
-                  "noMargin": "yes",
-                  "showConsoleImage": "no",
-                  "img": {
-                    "background-image": "#ui/gameuiskin#btn_search.svg"
-                  }
-                }
-              }
-            },
-            "groupList": {
-              "id": "searchList",
-              "imgType": "none",
-              "on_dbl_click": "onSearchRoomJoin",
-              "on_cancel_edit": "onCancelSearchRooms",
-              "on_hover": "onChatListHover",
-              "on_unhover": "onChatListHover"
-            },
-            "Button_text": {
-              "id": "btn_join_room",
-              "pos": "50%pw-50%w, 0",
-              "position": "relative",
-              "style": "margin-right:0; min-width:1; width:pw; overflow:hidden; pare-text:yes;",
-              "text": "#chat/btnJoin",
-              "_on_click": "onSearchRoomJoin"
-            }
-          }
-        }
-      ],
-      "tdiv": {
-        "size": "fw, ph",
-        "flow": "vertical",
-        "min-width": "20*@scrn_tgt/100.0",
-        "padding-top": "1@blockInterval",
-        "div": {
-          "id": "menu_chat_header_block",
-          "width": "pw",
-          "display": "hide",
-          "enable": "no"
-        },
-        "chatBlock": [
-          {
-            "id": "menu_chat_custom_handler_block",
-            "size": "pw, fh",
-            "flow": "vertical",
-            "paddingSize": "small",
-            "display": "hide"
-          },
-          {
-            "id": "menu_chat_text_block",
-            "size": "pw, fh",
-            "total-input-transparent": "yes",
-            "tdiv": {
-              "id": "blocked_chat_msg",
-              "size": "pw, ph",
-              "position": "relative",
-              "textAreaCentered": {
-                "size": "w, h",
-                "pos": "pw/2-w/2, ph/2-h/2",
-                "position": "relative",
-                "text": "#chat/blocked_chat"
-              }
-            },
-            "chatScrollContainer": {
-              "position": "relative",
-              "width": "pw",
-              "max-height": "ph",
-              "pos": "0, ph-h",
-              "overflow-y": "auto",
-              "auto-scroll": "yes",
-              "scrollbarShortcuts": "yes",
-              "chatMessagesContainer": {
-                "id": "menu_chat_messages_container",
-                "max-width": "0.7@sf",
-                "width": "pw",
-                "position": "relative",
-                "pos": "0.5pw-0.5w, 0",
-                "flow": "vertical"
-              }
-            }
-          }
-        ],
-        "ChatInputPlace": {
-          "id": "chat_input_place",
-          "width": "pw",
-          "pos": "0, 0",
-          "position": "relative",
-          "sendHintType": "menu",
-          "EditBox": {
-            "id": "menuchat_input",
-            "width": "fw",
-            "height": "1@buttonHeight",
-            "pos": "0, 1@blockInterval",
-            "position": "relative",
-            "max-len": "250",
-            "selected": "yes",
-            "navigatorShortcuts": "yes",
-            "on_change_value": "onChatEdit",
-            "on_activate": "onChatEntered",
-            "on_cancel_edit": "onChatCancel",
-            "on_set_focus": "onChatEditboxFocus",
-            "on_wrap_right": "onChatInputWrapRight",
-            "font": "@fontSmall",
-            "text": "",
-            "noMargin": "yes"
-          },
-          "Button_text": {
-            "id": "btn_send",
-            "pos": "1@blockInterval, 1@blockInterval",
-            "position": "relative",
-            "text": "#chat/send",
-            "on_click": "onChatSend",
-            "noMargin": "yes",
-            "showConsoleImage": "no"
-          },
-          "SendButtonHint": {
-            "id": "btn_send_hint",
-            "position": "absolute",
-            "display": "hide",
-            "padding": "15@sf/@pf",
-            "background-color": "@frameHeaderBackgroundColor",
-            "border-color": "@frameDarkMenuBorderColor",
-            "border": "yes",
-            "border-offset": "@dp",
-            "textareaNoTab": {
-              "width": "pw",
-              "text": "#chat/send_disabled_hint",
-              "smallFont": "yes"
-            }
-          }
-        }
-      }
-    },
-    "timer": {
-      "id": "menu_chat_update",
-      "timer_handler_func": "onUpdate",
-      "timer_interval_msec": "1000"
-    },
-    "dummy": [
-      {
-        "on_click": "onPrevMsg",
-        "behaviour": "accesskey",
-        "accessKey": "Alt Up"
-      },
-      {
-        "on_click": "onNextMsg",
-        "behaviour": "accesskey",
-        "accessKey": "Alt Down"
-      }
-    ]
-  }
+frame {
+	id:t = "menuchat"
+	size:t = "0.7@sf, 0.66@scrn_tgt"
+	pos:t = "0.5*(sw - 1@slotbarWidthFull), sh - 1@shopBottomOffset - 1@buttonHeight - 0.66@scrn_tgt"
+	position:t = "absolute"
+	min-height:t = "30*@scrn_tgt/100.0"
+	max-height:t = "80%sh"
+	min-width:t = "55*@scrn_tgt/100.0"
+	max-width:t = "70%sw"
+	class:t = "scaleable"
+	flow:t = "vertical"
+	not-input-transparent:t = "yes"
+	window-panel:t = "yes"
+	on_mouse_enter:t = "onChatWindowMouseOver"
+	on_mouse_leave:t = "onChatWindowMouseOver"
+	moveElem {
+
+	}
+	div {
+		width:t = "pw"
+		height:t = "0"
+		input-transparent:t = "yes"
+		min-height:t = "1@buttonHeight"
+		position:t = "relative"
+		padding:t = "-1@framePadding"
+		total-input-transparent:t = "yes"
+		frame_header {
+			scaleable:t = "yes"
+			activateSelect {
+				id:t = "rooms_list"
+				width:t = "pw - 3@buttonHeight"
+				min-height:t = "1@buttonHeight"
+				smallFont:t = "yes"
+				flow:t = "h-flow"
+				input-transparent:t = "yes"
+				moveX:t = "linear"
+				moveY:t = "closest"
+				navigatorShortcuts:t = "cancel"
+				activateBy:t = "Y"
+				isTransparentBg:t = "yes"
+				itemsWithCloseButtons:t = "yes"
+				on_select:t = "onRoomChanged"
+				on_r_click:t = "onRoomRClick"
+				on_dbl_click:t = "onRemoveRoom"
+				on_cancel_edit:t = "goBack"
+			}
+			Button_close {
+				id:t = "close_chat"
+				normalIcon:t = "yes"
+				_on_click:t = "goBack"
+			}
+			top_right_holder {
+				id:t = "header_buttons"
+				smallIcon:t = "yes"
+				Button_text {
+					id:t = "btn_showSearchList"
+					class:t = "image"
+					visualStyle:t = "noFrame"
+					showConsoleImage:t = "no"
+					tooltip:t = "#channel/search"
+					on_click:t = "onShowSearchList"
+					display:t = "hide"
+					enable:t = "no"
+					img {
+						background-image:t = "#ui/gameuiskin#btn_search.svg"
+					}
+				}
+				Button_text {
+					id:t = "btn_showPlayersList"
+					class:t = "image"
+					visualStyle:t = "noFrame"
+					showConsoleImage:t = "no"
+					tooltip:t = "#channel/showPlayersList"
+					on_click:t = "onShowPlayersList"
+					display:t = "hide"
+					enable:t = "no"
+					img {
+						background-image:t = "#ui/gameuiskin#btn_room_list.svg"
+					}
+				}
+				Button_text {
+					id:t = "btn_create_room"
+					class:t = "image"
+					visualStyle:t = "noFrame"
+					showConsoleImage:t = "no"
+					tooltip:t = "#chat/createRoom"
+					_on_click:t = "onRoomCreator"
+					img {
+						background-image:t = "#ui/gameuiskin#btn_create_room.svg"
+					}
+				}
+			}
+		}
+	}
+	tdiv {
+		size:t = "pw, fh"
+		div {
+			id:t = "middleLine"
+			size:t = "3@sIco + 0.26@sf, ph"
+			min-width:t = "15*@scrn_tgt/100.0"
+			max-width:t = "30%pw"
+			min-height:t = "ph"
+			max-height:t = "ph"
+			padding-top:t = "1@blockInterval"
+			padding-right:t = "1@framePadding"
+			border-offset:t = "@dp"
+			behaviour:t = "window-size"
+			window-size-border-mask:t = "R"
+			frame {
+				size:t = "pw, ph"
+				flow:t = "vertical"
+				smallFont:t = "yes"
+				type:t = "dark"
+				groupList {
+					id:t = "users_list"
+					imgType:t = "none"
+					on_dbl_click:t = "onUsersListActivate"
+					on_cancel_edit:t = "goBack"
+					on_hover:t = "onChatListHover"
+					on_unhover:t = "onChatListHover"
+				}
+				tdiv {
+					id:t = "buttons_list"
+					width:t = "pw"
+					pos:t = "0, ph-h"
+					position:t = "absolute"
+					flow:t = "vertical"
+					textareaNoTab {
+						id:t = "battle_rating"
+						max-width:t = "pw"
+						padding-bottom:t = "1@blockInterval"
+						padding-left:t = "1@blockInterval"
+						overflow:t = "hidden"
+						inactive:t = "yes"
+						display:t = "hide"
+					}
+					Button_text {
+						id:t = "btn_ready"
+						width:t = "pw"
+						style:t = "min-width:1; overflow:hidden; margin-right:0;"
+						text:t = "#mainmenu/btnReady"
+						display:t = "hide"
+						_on_click:t = "squadReady"
+						visualStyle:t = "secondary"
+						buttonWink {
+
+						}
+					}
+				}
+			}
+		}
+		tdiv {
+			size:t = "fw, ph"
+			flow:t = "vertical"
+			min-width:t = "20*@scrn_tgt/100.0"
+			padding-top:t = "1@blockInterval"
+			div {
+				id:t = "menu_chat_header_block"
+				width:t = "pw"
+				display:t = "hide"
+				enable:t = "no"
+			}
+			chatBlock {
+				id:t = "menu_chat_custom_handler_block"
+				size:t = "pw, fh"
+				flow:t = "vertical"
+				paddingSize:t = "small"
+				display:t = "hide"
+			}
+			chatBlock {
+				id:t = "menu_chat_text_block"
+				size:t = "pw, fh"
+				total-input-transparent:t = "yes"
+				tdiv {
+					id:t = "blocked_chat_msg"
+					size:t = "pw, ph"
+					position:t = "relative"
+					textAreaCentered {
+						size:t = "w, h"
+						pos:t = "pw/2-w/2, ph/2-h/2"
+						position:t = "relative"
+						text:t = "#chat/blocked_chat"
+					}
+				}
+				chatScrollContainer {
+					position:t = "relative"
+					width:t = "pw"
+					max-height:t = "ph"
+					pos:t = "0, ph-h"
+					overflow-y:t = "auto"
+					auto-scroll:t = "yes"
+					scrollbarShortcuts:t = "yes"
+					chatMessagesContainer {
+						id:t = "menu_chat_messages_container"
+						max-width:t = "0.7@sf"
+						width:t = "pw"
+						position:t = "relative"
+						pos:t = "0.5pw-0.5w, 0"
+						flow:t = "vertical"
+					}
+				}
+			}
+			ChatInputPlace {
+				id:t = "chat_input_place"
+				width:t = "pw"
+				pos:t = "0, 0"
+				position:t = "relative"
+				sendHintType:t = "menu"
+				EditBox {
+					id:t = "menuchat_input"
+					width:t = "fw"
+					height:t = "1@buttonHeight"
+					pos:t = "0, 1@blockInterval"
+					position:t = "relative"
+					max-len:t = "250"
+					selected:t = "yes"
+					navigatorShortcuts:t = "yes"
+					on_change_value:t = "onChatEdit"
+					on_activate:t = "onChatEntered"
+					on_cancel_edit:t = "onChatCancel"
+					on_set_focus:t = "onChatEditboxFocus"
+					on_wrap_right:t = "onChatInputWrapRight"
+					font:t = "@fontSmall"
+					text:t = ""
+					noMargin:t = "yes"
+				}
+				Button_text {
+					id:t = "btn_send"
+					pos:t = "1@blockInterval, 1@blockInterval"
+					position:t = "relative"
+					text:t = "#chat/send"
+					on_click:t = "onChatSend"
+					noMargin:t = "yes"
+					showConsoleImage:t = "no"
+				}
+				SendButtonHint {
+					id:t = "btn_send_hint"
+					position:t = "absolute"
+					display:t = "hide"
+					padding:t = "15@sf/@pf"
+					background-color:t = "@frameHeaderBackgroundColor"
+					border-color:t = "@frameDarkMenuBorderColor"
+					border:t = "yes"
+					border-offset:t = "@dp"
+					textareaNoTab {
+						width:t = "pw"
+						text:t = "#chat/send_disabled_hint"
+						smallFont:t = "yes"
+					}
+				}
+			}
+		}
+		div {
+			id:t = "searchDiv"
+			display:t = "hide"
+			size:t = "3@sIco + 0.26@sf, ph"
+			min-width:t = "15*@scrn_tgt/100.0"
+			max-width:t = "30%pw"
+			min-height:t = "ph"
+			max-height:t = "ph"
+			padding-top:t = "1@blockInterval"
+			padding-left:t = "1@blockInterval"
+			behaviour:t = "window-size"
+			window-size-border-mask:t = "L"
+			frame {
+				size:t = "pw, ph"
+				flow:t = "vertical"
+				smallFont:t = "yes"
+				type:t = "dark"
+				tdiv {
+					id:t = "search_channels_block"
+					width:t = "pw"
+					flow:t = "vertical"
+					tdiv {
+						width:t = "pw"
+						overflow:t = "hidden"
+						activeText {
+							smallFont:t = "yes"
+							width:t = "pw"
+							pare-text:t = "yes"
+							text:t = "#channel/search"
+							min-height:t = "24"
+						}
+						Button_text {
+							id:t = "btn_mainChannels"
+							pos:t = "pw-w, 50%ph-50%h"
+							position:t = "absolute"
+							tooltip:t = "#chat/backToMainChannels"
+							on_click:t = "onMainChannels"
+							class:t = "image"
+							imgSize:t = "small"
+							showConsoleImage:t = "no"
+							img {
+								background-image:t = "#ui/gameuiskin#btn_undo.svg"
+							}
+						}
+					}
+					groupIns {
+						noPadding:t = "yes"
+						EditBox {
+							id:t = "search_edit"
+							text:t = ""
+							noMargin:t = "yes"
+							on_activate:t = "onSearchStart"
+							on_cancel_edit:t = "onCancelSearchEdit"
+							on_set_focus:t = "onChatEditboxFocus"
+						}
+						Button_text {
+							pos:t = "@blockInterval, 0.5ph-0.5h"
+							position:t = "relative"
+							tooltip:t = "#channel/search"
+							on_click:t = "onSearchStart"
+							class:t = "image"
+							noMargin:t = "yes"
+							showConsoleImage:t = "no"
+							img {
+								background-image:t = "#ui/gameuiskin#btn_search.svg"
+							}
+						}
+					}
+				}
+				groupList {
+					id:t = "searchList"
+					imgType:t = "none"
+					on_dbl_click:t = "onSearchRoomJoin"
+					on_cancel_edit:t = "onCancelSearchRooms"
+					on_hover:t = "onChatListHover"
+					on_unhover:t = "onChatListHover"
+				}
+				Button_text {
+					id:t = "btn_join_room"
+					pos:t = "50%pw-50%w, 0"
+					position:t = "relative"
+					style:t = "margin-right:0; min-width:1; width:pw; overflow:hidden; pare-text:yes;"
+					text:t = "#chat/btnJoin"
+					_on_click:t = "onSearchRoomJoin"
+				}
+			}
+		}
+	}
+	timer {
+		id:t = "menu_chat_update"
+		timer_handler_func:t = "onUpdate"
+		timer_interval_msec:t = "1000"
+	}
+	dummy {
+		on_click:t = "onPrevMsg"
+		behaviour:t = "accesskey"
+		accessKey:t = "Alt Up"
+	}
+	dummy {
+		on_click:t = "onNextMsg"
+		behaviour:t = "accesskey"
+		accessKey:t = "Alt Down"
+	}
 }

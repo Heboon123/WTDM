@@ -1,10 +1,107 @@
-"@delete:dx12" {}
-dx12{
-  debug {
-    loadPixCapturer:b=no
+"@override:video" {
+  resolution:t="3840x2160"
+}
+
+"@override:graphics" {
+  fxQuality:t="high"
+  fxDensityMul:r=1.0 // deprecated
+  tireTracksQuality:i=3
+  foamQuality:t="high"
+  rendinstDistMul:r=1.8
+  grassRadiusMul:r=1.35
+  shadowQuality:t="high"
+  multislicedImpostors:b=yes
+  clipmapScaleFor4K:i = 6
+  clipmapExtraScale:i = 1
+}
+
+"@override:texStreaming" {
+  forceMemQuotaKB:i=5120000  // 5000M
+}
+
+"@delete:console_presets" {}
+console_presets {
+  xboxSeriesX {
+    performance {
+      video {
+        antialiasing_mode:t="tsr"
+        antialiasing_upscaling:t="125"
+      }
+      graphics {
+        bvhMode:t="off"
+        giQuality:t="low"
+        forceDisableDof:b=yes
+        grassRadiusMul:r=0
+        anisotropy:i=4
+        disableHangarPlanarReflections:b=yes
+        waterQuality:t="medium"
+        fxQuality:t="medium"
+        fxDensityMul:r=0.5 // deprecated
+      }
+      render {
+        ssrInHangar:b=no
+        ssrQuality:i=0
+        ssaoQuality:i=1
+        haze:b=no
+      }
+    }
+
+    quality {
+      video {
+        antialiasing_mode:t="tsr"
+        antialiasing_upscaling:t="100"
+      }
+      graphics {
+        bvhMode:t="off"
+        giQuality:t="medium"
+        forceDisableDof:b=no
+        grassRadiusMul:r=1.35
+        anisotropy:i=16
+        disableHangarPlanarReflections:b=no
+        waterQuality:t="high"
+        fxQuality:t="high"
+        fxDensityMul:r=0.95 // deprecated
+      }
+      render {
+        ssrInHangar:b=yes
+        ssrQuality:i=0
+        ssaoQuality:i=2
+        haze:b=yes
+      }
+    }
+
+    raytraced {
+      video {
+        antialiasing_mode:t="tsr"
+        antialiasing_upscaling:t="170"
+      }
+      graphics {
+        bvhMode:t="custom"
+        enableBVH:b=yes
+        bvhRiGenRange:i=2000
+        RTAOQuality:t="low"
+        RTRQuality:t="low"
+        RTSMQuality:t="low"
+        RTRRes:t="half"
+        enableRTSM:t="sun"
+        RTRWater:b=yes
+        RTRWaterRes:t="half"
+        RTRTranslucent:t="off"
+        giQuality:t="medium"
+        forceDisableDof:b=no
+        grassRadiusMul:r=1.35
+        anisotropy:i=16
+        disableHangarPlanarReflections:b=no
+        waterQuality:t="high"
+        fxQuality:t="medium"
+        fxDensityMul:r=0.95 // deprecated
+      }
+      render {
+        ssrInHangar:b=yes
+        ssrQuality:i=0
+        ssaoQuality:i=2
+        haze:b=yes
+      }
+    }
   }
-  onlyPreallocatedHeaps:b=no
-  preallocHeap { sizeMB:i=1024; }
-  preallocHeap { sizeMB:i=32;   cpuCached:b=yes; }
-  preallocHeap { sizeMB:i=4;    gpuExec:b=yes; }
 }

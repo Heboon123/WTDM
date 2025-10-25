@@ -1,0 +1,291 @@
+type:t = "radar"
+name:t = "AN-SPS-39"
+transivers {
+	search {
+		pulsePower:r = 50000
+		pulseWidth:r = 10
+		prf:r = 300
+		band:i = 0
+		rcs:r = 27.45
+		range:r = 120000
+		rangeMax:r = 150000
+		antenna {
+			azimuth {
+				angleHalfSens:r = 7.5
+				sideLobesSensitivity:r = -40
+			}
+			elevation {
+				angleHalfSens:r = 25
+				sideLobesSensitivity:r = -40
+			}
+		}
+	}
+}
+scanPatterns {
+	search {
+		type:t = "cylinder"
+		azimuthLimits:p2 = -180, 180
+		elevationLimits:p2 = -15, 75
+		yawStabLimit:r = 180
+		pitchStabLimit:r = 50
+		rollStabLimit:r = 20
+		period:r = 4
+		barHeight:r = 15
+		barsCount:i = 1
+		rowMajor:b = true
+	}
+}
+signals {
+	search {
+		aircraftAsTarget:b = true
+		groundVehiclesAsTarget:b = false
+		groundClutter:b = false
+		friendFoeId:b = true
+		distance {
+			presents:b = true
+			minValue:r = 1000
+			maxValue:r = 150000
+		}
+	}
+}
+scanPatternSets {
+	search {
+		scanPattern1:t = "search"
+	}
+}
+scopeRangeSets {
+	search {
+		range1:r = 10000
+		range2:r = 20000
+		range3:r = 50000
+	}
+}
+fsms {
+	main {
+		stateInit:t = "init"
+		actionsTemplates {
+			init {
+				setEnabled {
+					value:b = false
+				}
+				setCenterAzimuth {
+					source:t = "constant"
+					value:r = 0
+				}
+				setCenterElevation {
+					source:t = "constant"
+					value:r = 0
+				}
+				setScanPatternSet {
+					scanPatternSet:t = "search"
+				}
+				setScopeRangeSet {
+					scopeRangeSet:t = "search"
+				}
+				setTransiver {
+					transiver:t = "search"
+				}
+				setSignal {
+					signal:t = "search"
+				}
+				setCenterElevation {
+					source:t = "constant"
+					value:r = 7.5
+				}
+				setTargetDesignationRange {
+					azimuthRange:p2 = -180, 180
+					distanceRange:p2 = 0, 150000
+				}
+			}
+			setStandbyMode {
+				setModeName {
+					name:t = "standby"
+				}
+				setEnabled {
+					value:b = false
+				}
+			}
+			resetStandbyMode {
+
+			}
+			setSearchMode {
+				setModeName {
+					name:t = "search"
+				}
+				setEnabled {
+					value:b = true
+				}
+				setFsmActive {
+					fsm:t = "search"
+					active:b = true
+				}
+				setCueEnabled {
+					value:b = true
+				}
+			}
+			resetSearchMode {
+				clearTargets {
+
+				}
+				setFsmActive {
+					fsm:t = "search"
+					active:b = false
+				}
+				setCueEnabled {
+					value:b = false
+				}
+			}
+		}
+		transitions {
+			init {
+				stateFrom:t = "init"
+				event:t = "init"
+				stateTo:t = "standby"
+				actions {
+					init {
+
+					}
+					setStandbyMode {
+
+					}
+				}
+			}
+			switchOn {
+				stateFrom:t = "standby"
+				command:t = "switch"
+				event:t = "enable"
+				stateTo:t = "search"
+				actions {
+					setSearchMode {
+
+					}
+				}
+			}
+			switchOff {
+				stateFrom:t = "search"
+				command:t = "switch"
+				event:t = "disable"
+				stateTo:t = "standby"
+				actions {
+					resetSearchMode {
+
+					}
+					setStandbyMode {
+
+					}
+				}
+			}
+			switchScanPattern {
+				stateFrom:t = "standby"
+				stateFrom:t = "search"
+				command:t = "scanPatternSwitch"
+				actions {
+					setNextScanPattern {
+
+					}
+				}
+			}
+			switchScopeRange {
+				command:t = "rangeSwitch"
+				actions {
+					setNextScopeRange {
+
+					}
+				}
+			}
+		}
+	}
+	search {
+		stateInit:t = "search"
+		transitions {
+			scan {
+				event:t = "update"
+				actions {
+					scan {
+
+					}
+				}
+			}
+			detect {
+				event:t = "targetInSight"
+				actions {
+					setDistGatePos {
+						source:t = "continuousScale"
+						width:r = 0
+					}
+					setRelSpeedGatePos {
+						source:t = "continuousScale"
+						width:r = 0
+					}
+					detectTarget {
+
+					}
+				}
+			}
+			addTarget {
+				event:t = "targetDetected"
+				actions {
+					addTarget {
+
+					}
+					updateActiveDetectedTarget {
+
+					}
+				}
+			}
+			switchSelectedTarget {
+				command:t = "switchTarget"
+				actions {
+					setNextDetectedTargetActive {
+
+					}
+				}
+			}
+			setCueAzimuth {
+				command:t = "cueAxisX"
+				actions {
+					setCueAzimuth {
+
+					}
+				}
+			}
+			setCueDist {
+				command:t = "cueAxisY"
+				actions {
+					setCueDist {
+
+					}
+				}
+			}
+			setCueElevation {
+				command:t = "cueAxisZ"
+				actions {
+					setCueElevation {
+
+					}
+				}
+			}
+			setSelectedTarget {
+				command:t = "switchToTarget"
+				actions {
+					setDetectedTargetActive {
+
+					}
+				}
+			}
+			designateTarget {
+				command:t = "selectTarget"
+				actions {
+					designateActiveDetectedTarget {
+						type:t = "target"
+						sensorIndex:i = 1
+					}
+					designateTargetUnderCue {
+						type:t = "cue"
+						sensorIndex:i = 1
+					}
+				}
+			}
+		}
+	}
+}

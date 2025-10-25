@@ -1,13 +1,13 @@
 from "%rGui/globals/ui_library.nut" import *
 let cross_call = require("%rGui/globals/cross_call.nut")
 let { cursorVisible } = require("%rGui/ctrlsState.nut")
-let { showOrder, scoresTable, statusText, statusTextBottom } = require("orderState.nut")
-let colors = require("style/colors.nut")
-let teamColors = require("style/teamColors.nut")
+let { showOrder, scoresTable, statusText, statusTextBottom } = require("%rGui/orderState.nut")
+let colors = require("%rGui/style/colors.nut")
+let teamColors = require("%rGui/style/teamColors.nut")
 let fontsState = require("%rGui/style/fontsState.nut")
-let { isOrderStatusVisible } = require("hud/hudPartVisibleState.nut")
+let { isOrderStatusVisible } = require("%rGui/hud/hudPartVisibleState.nut")
 
-let isOrderVisible = Computed(@() isOrderStatusVisible.value && showOrder.value)
+let isOrderVisible = Computed(@() isOrderStatusVisible.get() && showOrder.get())
 let isCollapsed = Watched(false)
 
 let pilotIcon = Picture("!ui/gameuiskin#player_in_queue")
@@ -36,7 +36,7 @@ let collapseIconComp = @() {
   color = Color(192, 192, 192)
   image = collapseIcon
   transform = {
-    rotate = isCollapsed.value ? 90 : 270
+    rotate = isCollapsed.get() ? 90 : 270
   }
 }
 
@@ -49,7 +49,7 @@ let collapseButton = watchElemState(@(sf) {
     : Color(3, 7, 12, 204)
   halign = ALIGN_CENTER
   valign = ALIGN_CENTER
-  onClick = @() isCollapsed.update(!isCollapsed.value)
+  onClick = @() isCollapsed.set(!isCollapsed.get())
   children = collapseIconComp
 })
 
@@ -90,7 +90,7 @@ let mkPlayerComp = @(item) {
       size = SIZE_TO_CONTENT
       font = fontsState.get("small")
       color = colors.menu.commonTextColor
-      colorTable = teamColors.value
+      colorTable = teamColors.get()
     }.__update(shadow)
   ]
 }
@@ -110,7 +110,7 @@ function scoresTableComp() {
     playerComps = []
     scoreComps = []
   }
-  foreach (item in scoresTable.value) {
+  foreach (item in scoresTable.get()) {
     res.playerComps.append(mkPlayerComp(item))
     res.scoreComps.append(mkScoreComp(item))
   }
@@ -141,10 +141,10 @@ let orderDesc = @() {
   behavior = Behaviors.TextArea
   size = FLEX_H
   margin = const [0, 0, 0, hdpx(10)]
-  text = statusText.value
+  text = statusText.get()
   font = fontsState.get("small")
   color = colors.menu.commonTextColor
-  colorTable = teamColors.value
+  colorTable = teamColors.get()
 }.__update(shadow, lineSpacing)
 
 let orderStatus = @() {
@@ -152,10 +152,10 @@ let orderStatus = @() {
   rendObj = ROBJ_TEXTAREA
   behavior = Behaviors.TextArea
   size = FLEX_H
-  text = statusTextBottom.value
+  text = statusTextBottom.get()
   font = fontsState.get("small")
   color = colors.menu.commonTextColor
-  colorTable = teamColors.value
+  colorTable = teamColors.get()
 }.__update(shadow, lineSpacing)
 
 let order = {
@@ -174,10 +174,10 @@ let undateOrderState = @() cross_call.active_order_request_update()
 
 return function() {
   local children = null
-  if (isOrderVisible.value)
-    children = (cursorVisible.value && isCollapsed.value) ? [collapseButton, collapsedOrder]
-      : cursorVisible.value ? [collapseButton, order]
-      : isCollapsed.value ? null
+  if (isOrderVisible.get())
+    children = (cursorVisible.get() && isCollapsed.get()) ? [collapseButton, collapsedOrder]
+      : cursorVisible.get() ? [collapseButton, order]
+      : isCollapsed.get() ? null
       : order
 
   return {

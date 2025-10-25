@@ -108,8 +108,8 @@ let interactiveValidTypes = ["num", "lat", "integer", "float"]
 function textInput(text_state, options = {}, frameCtor = defaultFrame) {
   let group = ElemGroup()
   let {
-    setValue = @(v) text_state(v), inputType = null,
-    placeholder = null, showPlaceHolderOnFocus = false, password = null, maxChars = null,
+    setValue = @(v) text_state.set(v), inputType = null,
+    placeholder = null, showPlaceHolderOnFocus = false, password = null, maxChars = 250,
     title = null, font = null, fontSize = null, hotkeys = null,
     size = [flex(), fontH(100)], textmargin = const [sh(1), sh(0.5)], valignText = ALIGN_BOTTOM,
     margin = const [sh(1), 0], padding = 0, borderRadius = hdpx(3), valign = ALIGN_CENTER,
@@ -135,19 +135,19 @@ function textInput(text_state, options = {}, frameCtor = defaultFrame) {
   let stateFlags = Watched(0)
 
   function onBlurExt() {
-    if (!isValidResult(text_state.value))
+    if (!isValidResult(text_state.get()))
       anim_start(text_state)
     onBlur?()
   }
 
   function onReturnExt() {
-    if (!isValidResult(text_state.value))
+    if (!isValidResult(text_state.get()))
       anim_start(text_state)
     onReturn?()
   }
 
   function onEscapeExt() {
-    if (!isValidResult(text_state.value))
+    if (!isValidResult(text_state.get()))
       anim_start(text_state)
     onEscape()
   }
@@ -172,7 +172,7 @@ function textInput(text_state, options = {}, frameCtor = defaultFrame) {
       margin = const [0, sh(0.5)]
     }
     placeholderObj = placeholder instanceof Watched
-      ? @() phBase.__update({ watch = placeholder, text = placeholder.value })
+      ? @() phBase.__update({ watch = placeholder, text = placeholder.get() })
       : phBase
   }
 
@@ -191,7 +191,7 @@ function textInput(text_state, options = {}, frameCtor = defaultFrame) {
 
     animations = [failAnim(text_state)]
 
-    text = text_state.value
+    text = text_state.get()
     title
     inputType = inputType
     password = password
@@ -213,15 +213,15 @@ function textInput(text_state, options = {}, frameCtor = defaultFrame) {
     xmbNode
     imeOpenJoyBtn
 
-    children = (text_state.value?.len() ?? 0) == 0
-        && (showPlaceHolderOnFocus || !(stateFlags.value & S_KB_FOCUS))
+    children = (text_state.get()?.len() ?? 0) == 0
+        && (showPlaceHolderOnFocus || !(stateFlags.get() & S_KB_FOCUS))
       ? placeholderObj
       : null
   }
 
   return @() {
     watch = [stateFlags]
-    onElemState = @(sf) stateFlags(sf)
+    onElemState = @(sf) stateFlags.set(sf)
     margin
     padding
 
@@ -235,7 +235,7 @@ function textInput(text_state, options = {}, frameCtor = defaultFrame) {
     animations = [failAnim(text_state)]
     valign
 
-    children = frameCtor(inputObj, group, stateFlags.value)
+    children = frameCtor(inputObj, group, stateFlags.get())
   }
 }
 

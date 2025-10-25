@@ -30,7 +30,7 @@ let { CHAT_MODE_ALL, chat_set_mode, toggle_ingame_chat } = require("chat")
 let u = require("%sqStdLibs/helpers/u.nut")
 let time = require("%scripts/time.nut")
 let spectatorWatchedHero = require("%scripts/replays/spectatorWatchedHero.nut")
-let replayMetadata = require("%scripts/replays/replayMetadata.nut")
+let { restoreReplayScriptCommentsBlk } = require("%scripts/replays/replayMetadata.nut")
 let { getUnitRole } = require("%scripts/unit/unitInfoRoles.nut")
 let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { useTouchscreen } = require("%scripts/clientState/touchScreen.nut")
@@ -72,6 +72,9 @@ let { getShortcutText } = require("%scripts/controls/controlsVisual.nut")
 let { currentReplay } = require("%scripts/replays/replayScreen.nut")
 let { registerRespondent } = require("scriptRespondent")
 let { getIsConsoleModeEnabled } = require("%scripts/options/consoleMode.nut")
+let { initListLabelsSquad } = require("%scripts/statistics/squadIcon.nut")
+let { resetSessionLobbyPlayersInfo } = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { getBackFromReplaysFn, setBackFromReplaysFn } = require("%scripts/replays/backFromReplaysFn.nut")
 
 enum SPECTATOR_MODE {
   RESPAWN     
@@ -313,18 +316,23 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
     registerPersistentData("Spectator", this, [ "debugMode" ])
 
     this.gameType = get_game_type()
-    let mplayerTable = get_local_mplayer() || {}
+    let mplayerTable = get_local_mplayer() ?? {}
     let isReplay = is_replay_playing()
     let replayProps = get_replay_props()
 
     if (isReplay) {
+      initListLabelsSquad()
       
-      ::back_from_replays = ::back_from_replays || gui_start_mainmenu
+      let backFn = getBackFromReplaysFn() ?? function() {
+        resetSessionLobbyPlayersInfo()
+        gui_start_mainmenu()
+      }
+      setBackFromReplaysFn(backFn)
       currentReplay.path = currentReplay.path.len() ? currentReplay.path : getFromSettingsBlk("viewReplay", "")
       let pathForMetadata = currentReplay.path.replace("/0000.wrpl", "/0001.wrpl")
 
       
-      replayMetadata.restoreReplayScriptCommentsBlk(pathForMetadata)
+      restoreReplayScriptCommentsBlk(pathForMetadata)
     }
 
     this.gotRefereeRights = (mplayerTable?.spectator ?? 0) == 1
@@ -469,6 +477,11 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
           this.scene.findObject(option.comboBox.id)?.setValue(option.comboBox.makeValue())
       }
     }
+  }
+
+  function onDestroy() {
+    this.funcSortPlayersSpectator = null
+    this.teams = [ { players = [] }, { players = [] } ]
   }
 
   function onSensorFilterPageSelect(obj) {
@@ -616,12 +629,13 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
   function getPlayerNick(player, needColored = false, needClanTag = true) {
     if (player == null)
       return  ""
-    local name = getPlayerFullName(
-      getPlayerName(player.name), 
-      needClanTag && !player.isBot ? player.clanTag : "")
-    if (this.mode == SPECTATOR_MODE.REPLAY && player?.realName != "")
-      name = $"{name} ({player.realName})"
-    return needColored ? colorize(this.getPlayerColor(player), name) : name
+    let { name, realName = "", isBot, clanTag } = player
+    local fullName = getPlayerFullName(
+      getPlayerName(name), 
+      needClanTag && !isBot ? clanTag : "")
+    if (this.mode == SPECTATOR_MODE.REPLAY && realName != "" && name != realName)
+      fullName = $"{fullName} ({realName})"
+    return needColored ? colorize(this.getPlayerColor(player), fullName) : fullName
   }
 
   function getPlayerColor(player) {
@@ -1009,7 +1023,7 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
         player.isBot = player.userId == "0" || player?.invitedName != null
       local unitId = (!player.isDead && player.state == PLAYER_IN_FLIGHT) ? player.aircraftName : null
       unitId = (unitId != "dummy_plane" && unitId != "") ? unitId : null
-      player.aircraftName = unitId || ""
+      player.aircraftName = unitId ?? ""
       player.canBeSwitchedTo = unitId ? player.canBeSwitchedTo : false
       player.isLocal = spectatorWatchedHero.id == player.id
       player.isInHeroSquad = isEqualSquadId(spectatorWatchedHero.squadId, player?.squadId)
@@ -1203,7 +1217,7 @@ let class Spectator (gui_handlers.BaseGuiHandlerWT) {
       obj.squad = player.isInHeroSquad ? "yes" : "no"
       obj.dead = player.canBeSwitchedTo ? "no" : "yes"
       obj.isBot = player.isBot ? "yes" : "no"
-      obj.findObject("unit").setValue(getUnitName(unitId || "dummy_plane"))
+      obj.findObject("unit").setValue(getUnitName(unitId ?? "dummy_plane"))
       obj.tooltip = "".concat(playerName, unitId ? loc("ui/parentheses/space", { text = getUnitName(unitId, false) }) : "",
         stateDesc != "" ? $"\n{stateDesc}" : "", malfunctionDesc != "" ? $"\n{malfunctionDesc}" : "")
 

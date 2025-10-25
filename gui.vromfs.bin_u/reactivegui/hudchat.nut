@@ -1,21 +1,24 @@
 from "%rGui/globals/ui_library.nut" import *
 let cross_call = require("%rGui/globals/cross_call.nut")
 let string = require("string")
-let colors = require("style/colors.nut")
-let teamColors = require("style/teamColors.nut")
-let textInput =  require("components/textInput.nut")
-let penalty = require("penitentiary/penalty.nut")
+let colors = require("%rGui/style/colors.nut")
+let teamColors = require("%rGui/style/teamColors.nut")
+let textInput =  require("%rGui/components/textInput.nut")
+let penalty = require("%rGui/penitentiary/penalty.nut")
 let { secondsToTimeSimpleString } = require("%sqstd/time.nut")
-let state = require("hudChatState.nut")
-let hudState = require("hudState.nut")
-let hudLog = require("components/hudLog.nut")
-let fontsState = require("style/fontsState.nut")
-let hints = require("hints/hints.nut")
+let state = require("%rGui/hudChatState.nut")
+let hudState = require("%rGui/hudState.nut")
+let hudLog = require("%rGui/components/hudLog.nut")
+let fontsState = require("%rGui/style/fontsState.nut")
+let hints = require("%rGui/hints/hints.nut")
 let JB = require("%rGui/control/gui_buttons.nut")
+let { ReputationType } = require("%globalScripts/chatState.nut")
+let { isChatReputationFilterEnabled } = require("%rGui/options/options.nut")
+
 let { chat_on_text_update, toggle_ingame_chat, chat_on_send,
   CHAT_MODE_ALL, CHAT_MODE_TEAM, CHAT_MODE_SQUAD, CHAT_MODE_PRIVATE
 } = require("chat")
-let scrollableData = require("components/scrollableData.nut")
+let scrollableData = require("%rGui/components/scrollableData.nut")
 
 let chatModeConfig = {
   [CHAT_MODE_ALL] = {
@@ -38,8 +41,8 @@ let chatModeConfig = {
 
 function makeInputField(form_state, send_function) {
   function send () {
-    send_function(form_state.value)
-    form_state.update("")
+    send_function(form_state.get())
+    form_state.set("")
   }
   return function (text_input_ctor) {
     return text_input_ctor(form_state, send)
@@ -67,7 +70,7 @@ let chatLog = state.hudLog
 function modeColor(mode) {
   let colorId = chatModeConfig?[mode].colorId
   return colorId == null ? colors.white
-    : colors.hud?[colorId] ?? teamColors.value[colorId]
+    : colors.hud?[colorId] ?? teamColors.get()[colorId]
 }
 
 function getModeNameText(mode) {
@@ -121,7 +124,7 @@ function chatInputCtor(field, send) {
     ]
     colors = {
       backGroundColor = colors.hud.hudLogBgColor
-      textColor = modeColor(state.modeId.value)
+      textColor = modeColor(state.modeId.get())
     }
 
     onReturn
@@ -166,8 +169,8 @@ let chatHint = @() {
     @() {
       rendObj = ROBJ_TEXT
       watch = state.modeId
-      text = getModeNameText(state.modeId.value)
-      color = modeColor(state.modeId.value)
+      text = getModeNameText(state.modeId.get())
+      color = modeColor(state.modeId.get())
       font = fontsState.get("normal")
     }.__update(shadow)
   ]
@@ -189,11 +192,11 @@ let getMessageColor = function(message) {
     return colors.menu.chatTextBlockedColor
   if (message.isAutomatic) {
     if (cross_call.squad_manger.isInMySquadById(message.uid))
-      return teamColors.value.squadColor
-    else if (message.team != hudState.playerArmyForHud.value)
-      return teamColors.value.teamRedColor
+      return teamColors.get().squadColor
+    else if (message.team != hudState.playerArmyForHud.get())
+      return teamColors.get().teamRedColor
     else
-      return teamColors.value.teamBlueColor
+      return teamColors.get().teamBlueColor
   }
   return modeColor(message.mode) ?? colors.white
 }
@@ -204,11 +207,11 @@ let getSenderColor = function (message) {
     return colors.hud.mainPlayerColor
   else if (cross_call.isPlayerDedicatedSpectator(message.sender))
     return colors.hud.spectatorColor
-  else if (message.team != hudState.playerArmyForHud.value || !cross_call.is_mode_with_teams())
-    return teamColors.value.teamRedColor
+  else if (message.team != hudState.playerArmyForHud.get() || !cross_call.is_mode_with_teams())
+    return teamColors.get().teamRedColor
   else if (cross_call.squad_manger.isInMySquadById(message.uid))
-    return teamColors.value.squadColor
-  return teamColors.value.teamBlueColor
+    return teamColors.get().squadColor
+  return teamColors.get().teamBlueColor
 }
 
 
@@ -223,19 +226,25 @@ let messageComponent = @(message) function() {
     )
   }
   else {
+    local resText = ""
+    if (message.isAutomatic)
+      resText = message.text
+    else if (message.userReputation == ReputationType.REP_BAD && isChatReputationFilterEnabled.get())
+      resText = loc("chat/blokedByChatRules")
+    else
+      resText = cross_call.filter_chat_message(message.text, message.isMyself) ?? message.text
+
     text = string.format("%s <Color=%d>[%s] %s:</Color> <Color=%d>%s</Color>",
       secondsToTimeSimpleString(message.time),
       getSenderColor(message),
       getModeNameText(message.mode),
       message.fullName,
       getMessageColor(message),
-      message.isAutomatic
-        ? message.text
-        : cross_call.filter_chat_message(message.text, message.isMyself) ?? message.text
+      resText
     )
   }
   return {
-    watch = [teamColors, hudState.playerArmyForHud]
+    watch = [teamColors, hudState.playerArmyForHud, isChatReputationFilterEnabled]
     size = FLEX_H
     rendObj = ROBJ_TEXTAREA
     behavior = Behaviors.TextArea
@@ -245,7 +254,7 @@ let messageComponent = @(message) function() {
     font = fontsState.get("small")
     color = colors.hud.chatTextAllColor
     key = message
-    colorTable = teamColors.value
+    colorTable = teamColors.get()
   }
 }
 
@@ -271,12 +280,12 @@ let bottomPanel = @() {
   ]
 
   onAttach = function() {
-    state.inputChatVisible(true)
+    state.inputChatVisible.set(true)
     state.canWriteToChat.subscribe(onInputToggle)
     onInputToggle(true)
    }
    onDetach = function() {
-     state.inputChatVisible(false)
+     state.inputChatVisible.set(false)
      state.canWriteToChat.unsubscribe(onInputToggle)
      capture_kb_focus(null)
    }
@@ -285,7 +294,7 @@ let bottomPanel = @() {
 
 return function () {
   let children = [ logBox ]
-  if (state.canWriteToChat.value)
+  if (state.canWriteToChat.get())
     children.append(bottomPanel)
 
   return {

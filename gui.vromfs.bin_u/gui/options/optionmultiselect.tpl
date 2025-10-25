@@ -33,10 +33,17 @@ MultiSelect {
       display:t='hide'
     <</isVisible>>
     <<#image>>
-      multiOptionImg { background-image:t='<<image>>' }
+      flagImageHolder {
+        multiOptionImg {
+          background-image:t='<<image>>'
+          background-repeat:t='aspect-ratio'
+        }
+      }
     <</image>>
     <<#text>>
+    multiOptionTextHolder {
       multiOptionText { text:t='<<text>>' }
+    }
     <</text>>
     <<#tooltip>>
       tooltip:t = '<<tooltip>>'

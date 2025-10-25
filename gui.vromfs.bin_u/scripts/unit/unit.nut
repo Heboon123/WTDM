@@ -20,6 +20,7 @@ let shopSearchCore = require("%scripts/shop/shopSearchCore.nut")
 let { targetPlatform, canSpendRealMoney } = require("%scripts/clientState/platform.nut")
 let { getLastWeapon, isWeaponEnabled,
   isWeaponVisible } = require("%scripts/weaponry/weaponryInfo.nut")
+let { getUnitLastBullets } = require("%scripts/weaponry/bulletsInfo.nut")
 let { unitClassType, getUnitClassTypeByExpClass } = require("%scripts/unit/unitClassType.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { getDefaultPresetId } = require("%scripts/weaponry/weaponryPresets.nut")
@@ -33,7 +34,7 @@ let { get_skins_for_unit } = require("unitCustomization")
 let { getDecorator } = require("%scripts/customization/decorCache.nut")
 let { get_charserver_time_sec } = require("chard")
 let { isModificationEnabled } = require("%scripts/weaponry/modificationInfo.nut")
-let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
+let { hasCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
 let { get_wpcost_blk, get_warpoints_blk, get_unittags_blk,
   get_modifications_blk, get_ranks_blk } = require("blkGetters")
 let { decoratorTypes } = require("%scripts/customization/types.nut")
@@ -199,7 +200,7 @@ local Unit = class {
       this[p] = uWpCost?[p] ?? 0
 
     this.bulletsIconParams         = uWpCost?.bulletsIconParams
-    this.cost                      = uWpCost?.value || 0
+    this.cost                      = uWpCost?.value ?? 0
     this.freeRepairs               = uWpCost?.freeRepairs ?? warpoints?.freeRepairs ?? 0
     this.expMul                    = uWpCost?.expMul ?? 1.0
     this.shopCountry               = uWpCost?.country ?? ""
@@ -238,7 +239,7 @@ local Unit = class {
       this.spare = {
         name = "spare"
         type = weaponsItem.spare
-        cost = uWpCost?.spare.value || 0
+        cost = uWpCost?.spare.value ?? 0
         image = getWeaponImage(this.esUnitType, spareBlk, uWpCost?.spare)
         animation = spareBlk && (spareBlk % "animationByUnit")
           .findvalue((@(anim) anim.unitType == this.esUnitType).bindenv(this))?.src
@@ -256,7 +257,6 @@ local Unit = class {
     if (this.customImage && !isInArray(this.customImage.slice(0, 1), ["#", "!"]))
       this.customImage = get_unit_icon_by_unit(this, this.customImage)
     shopSearchCore.cacheUnitSearchTokens(this)
-
     return errorsTextArray
   }
 
@@ -334,7 +334,7 @@ local Unit = class {
   isInResearch          = @() isUnitInResearch(this)
   getRentTimeleft       = @() rented_units_get_expired_time_sec(this.name)
   getRepairCost         = @() Cost(wp_get_repair_cost(this.name))
-  getCrewTotalCount     = @() this.getUnitWpCostBlk()?.crewTotalCount || 1
+  getCrewTotalCount     = @() max(this.getUnitWpCostBlk()?.crewTotalCount ?? 1, 1)
   getCrewUnitType       = @() this.unitType.crewUnitType
   getExp                = @() getUnitExp(this)
 
@@ -383,7 +383,7 @@ local Unit = class {
     if (this._operatorCountry)
       return this._operatorCountry
     local res = get_unittags_blk()?[this.name].operatorCountry ?? ""
-    this._operatorCountry = res != "" && getCountryIcon(res) != "" ? res : this.shopCountry
+    this._operatorCountry = res != "" && hasCountryIcon(res) ? res : this.shopCountry
     return this._operatorCountry
   }
 
@@ -448,7 +448,7 @@ local Unit = class {
       return false
     if (isUnitGift(this) && !canSpendRealMoney() && !hasUnitEvent(this.name))
       return false
-    if (shopPromoteUnits.value?[this.name] != null && !promoteUnits.value?[this.name].isActive)
+    if (shopPromoteUnits.get()?[this.name] != null && !promoteUnits.get()?[this.name].isActive)
       return false
     return true
   }
@@ -489,7 +489,7 @@ local Unit = class {
     return this.previewSkinId
   }
 
-  getSpawnScore = @(weaponName = null) shop_get_spawn_score(this.name, weaponName || getLastWeapon(this.name), [])
+  getSpawnScore = @(weaponName = null) shop_get_spawn_score(this.name, weaponName || getLastWeapon(this.name), getUnitLastBullets(this), false, false)
 
   function getMinimumSpawnScore() {
     local res = -1

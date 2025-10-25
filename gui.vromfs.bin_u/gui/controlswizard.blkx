@@ -1,353 +1,351 @@
-{
-  "root": {
-    "type": "big",
-    "blur": {},
-    "blur_foreground": {},
-    "frame": {
-      "id": "wnd_frame",
-      "width": "0.99sw $min 1.7sh",
-      "height": "@rh $min 0.588sw",
-      "pos": "0.5pw-0.5w, 0.5ph-0.5h",
-      "position": "relative",
-      "class": "wnd",
-      "flow": "vertical",
-      "frame_header": {
-        "flow": "horizontal",
-        "position": "relative",
-        "activeText": {
-          "id": "wizard-title",
-          "caption": "yes",
-          "text": "#hotkeys/msg/choose_preset_or_wizard",
-          "textHide": "yes",
-          "smallFont": "yes"
-        },
-        "tdiv": {
-          "id": "options-wnd",
-          "pos": "0, 0.5ph-0.5h",
-          "position": "relative",
-          "display": "hide",
-          "margin-left": "1@blockInterval",
-          "smallFont": "yes",
-          "controlsBox": {
-            "id": "optionlist"
-          }
-        },
-        "Button_text": [
-          {
-            "id": "btn_controlsWizard",
-            "display": "hide",
-            "text": "#mainmenu/btnControlsWizard",
-            "_on_click": "onContinue",
-            "hideConsoleImage": "no",
-            "btnName": "X",
-            "margin-left": "1@blockInterval",
-            "position": "relative",
-            "smallFont": "yes",
-            "ButtonImg": {}
-          },
-          {
-            "id": "btn_selectPreset",
-            "display": "hide",
-            "text": "#controls/presetSelect",
-            "_on_click": "onPresetDone",
-            "hideConsoleImage": "no",
-            "btnName": "X",
-            "margin-left": "1@blockInterval",
-            "position": "relative",
-            "smallFont": "yes",
-            "ButtonImg": {}
-          }
-        ],
-        "Button_close": {
-          "id": "btn_back"
-        }
-      },
-      "tdiv": [
-        {
-          "id": "preview-wnd",
-          "size": "pw, ph",
-          "position": "relative"
-        },
-        {
-          "id": "shortcut-wnd",
-          "display": "hide",
-          "width": "pw",
-          "min-height": "0.3@scrn_tgt",
-          "pos": "50%pw-50%w, 30%ph-30%h",
-          "position": "absolute",
-          "flow": "vertical",
-          "tdalign": "center",
-          "tdiv": {
-            "id": "input-listener",
-            "size": "sw, sh",
-            "position": "root",
-            "behaviour": "ControlsInput",
-            "shortcutCancel": "Esc",
-            "shortcutActivate": "J:Start",
-            "on_activate": "switchAllListenModes",
-            "on_end_edit": "onButtonEntered",
-            "on_cancel_edit": "onCancelButtonInput",
-            "on_change_value": "onButtonAdded",
-            "check_analog": "0",
-            "device0": "",
-            "button0": "",
-            "device1": "",
-            "button1": "",
-            "device2": "",
-            "button2": "",
-            "behavior": "Timer",
-            "timer_handler_func": "onAxisInputTimer"
-          },
-          "activeText": [
-            {
-              "id": "shortcut_text",
-              "max-width": "pw",
-              "pos": "50%pw-50%w, 0",
-              "position": "relative",
-              "mediumFont": "yes"
-            },
-            {
-              "id": "shortcut_current_button",
-              "pos": "50%pw-50%w, 2*@scrn_tgt/100.0",
-              "position": "relative",
-              "mediumFont": "yes",
-              "text": "?"
-            },
-            {
-              "id": "hold_axis",
-              "pos": "50%pw-50%w, 0.01@scrn_tgt",
-              "position": "relative",
-              "text": ""
-            },
-            {
-              "id": "bind-axis-name",
-              "pos": "50%pw-50%w, 0.5*@scrn_tgt/100.0",
-              "position": "relative",
-              "mediumFont": "yes",
-              "text": "?"
-            }
-          ],
-          "textarea": {
-            "id": "curAssign_text",
-            "pos": "50%pw-50%w, 0",
-            "position": "relative",
-            "removeParagraphIndent": "yes",
-            "max-width": "pw"
-          },
-          "img": {
-            "id": "shortcut_image",
-            "height": "95",
-            "width": "160",
-            "pos": "50%pw-50%w, 0.02@scrn_tgt",
-            "position": "relative"
-          },
-          "frame": [
-            {
-              "id": "test-axis",
-              "size": "0.25@scrn_tgt, 0.03@scrn_tgt",
-              "pos": "50%pw-50%w, 0.01@scrn_tgt",
-              "position": "relative",
-              "axisPoint1": {
-                "id": "test-real-box",
-                "pos": "50%pw-50%w, 50%ph-50%h",
-                "position": "absolute"
-              }
-            },
-            {
-              "id": "test-axis-vert",
-              "size": "0.03@scrn_tgt, 0.2@scrn_tgt",
-              "pos": "50%pw-50%w, 0.01@scrn_tgt",
-              "position": "relative",
-              "axisPoint1": {
-                "id": "test-real-box-vert",
-                "pos": "50%pw-50%w, 50%ph-50%h",
-                "position": "absolute"
-              }
-            }
-          ]
-        },
-        {
-          "id": "msgBox-wnd",
-          "display": "hide",
-          "width": "pw",
-          "pos": "50%pw-50%w, 40%ph-40%h",
-          "position": "absolute",
-          "flow": "vertical",
-          "textarea": {
-            "id": "msgBox_text",
-            "pos": "50%pw-50%w, 0",
-            "position": "relative",
-            "removeParagraphIndent": "yes",
-            "text-align": "center",
-            "max-width": "pw",
-            "overflow-y": "auto",
-            "mediumFont": "yes"
-          },
-          "msgBoxButtonsHolder": {
-            "id": "msgBox_buttons",
-            "max-width": "pw",
-            "pos": "50%pw-50%w, ph + 0.4(57%p.p.h - 50%ph - h)",
-            "position": "absolute",
-            "flow": "h-flow"
-          }
-        },
-        {
-          "id": "msg-wnd",
-          "display": "hide",
-          "width": "pw",
-          "pos": "50%pw-50%w, 40%ph-40%h",
-          "position": "absolute",
-          "flow": "vertical",
-          "textarea": {
-            "id": "msg_text",
-            "removeParagraphIndent": "yes",
-            "max-width": "pw",
-            "text-align": "center",
-            "pos": "50%pw-50%w, 0",
-            "position": "relative",
-            "mediumFont": "yes"
-          },
-          "frame": [
-            {
-              "id": "msg-axis",
-              "size": "0.25@scrn_tgt, 0.03@scrn_tgt",
-              "pos": "50%pw-50%w, 0.01@scrn_tgt",
-              "position": "relative",
-              "locked": "yes",
-              "axisPoint1": [
-                {
-                  "id": "msg-real-box1",
-                  "pos": "50%pw-50%w, 50%ph-50%h",
-                  "position": "absolute"
-                },
-                {
-                  "id": "msg-real-box2",
-                  "pos": "50%pw-50%w, 50%ph-50%h",
-                  "position": "absolute"
-                }
-              ]
-            },
-            {
-              "id": "msg-axis-vert",
-              "size": "0.03@scrn_tgt, 0.2@scrn_tgt",
-              "pos": "50%pw-50%w, 0.01@scrn_tgt",
-              "position": "relative",
-              "locked": "yes",
-              "axisPoint1": [
-                {
-                  "id": "msg-real-box-vert1",
-                  "pos": "50%pw-50%w, 50%ph-50%h",
-                  "position": "absolute"
-                },
-                {
-                  "id": "msg-real-box-vert2",
-                  "pos": "50%pw-50%w, 50%ph-50%h",
-                  "position": "absolute"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "listbox-wnd",
-          "display": "hide",
-          "size": "pw, 0.5@sf",
-          "pos": "50%pw-50%w, 40%ph-40%h",
-          "position": "absolute",
-          "flow": "vertical",
-          "textarea": [
-            {
-              "id": "listbox_text",
-              "pos": "50%pw-50%w, 0",
-              "position": "relative",
-              "mediumFont": "yes",
-              "removeParagraphIndent": "yes",
-              "max-width": "pw"
-            },
-            {
-              "id": "listbox-hint",
-              "removeParagraphIndent": "yes",
-              "width": "pw-2@framePadding",
-              "pos": "50%pw-50%w, ph-h",
-              "position": "absolute",
-              "text-align": "center"
-            }
-          ],
-          "HorizontalListBox": {
-            "id": "listbox",
-            "pos": "50%pw-50%w, 0.1@scrn_tgt",
-            "position": "relative",
-            "on_dbl_click": "onListboxDblClick",
-            "on_select": "onListboxSelect",
-            "class": "options",
-            "style": "height:0.07@scrn_tgt"
-          },
-          "Button_text": {
-            "id": "btn_select",
-            "pos": "50%pw-50%w, 0.05@scrn_tgt",
-            "position": "relative",
-            "text": "#mainmenu/btnSelect",
-            "_on_click": "onListboxDblClick",
-            "btnName": "A",
-            "ButtonImg": {}
-          }
-        }
-      ],
-      "navBar": {
-        "display": "hide",
-        "navLeft": {
-          "Button_text": [
-            {
-              "id": "btn_prevItem",
-              "display": "hide",
-              "text": "#mainmenu/btnPrev",
-              "_on_click": "onPrevItem",
-              "hideConsoleImage": "no",
-              "btnName": "LB",
-              "ButtonImg": {}
-            },
-            {
-              "id": "btn_switchAllModes",
-              "display": "hide",
-              "text": "#mainmenu/shortcuts",
-              "_on_click": "switchAllListenModes",
-              "hideText": "yes",
-              "btnName": "start",
-              "ButtonImg": {},
-              "textarea": {
-                "id": "btn_switchAllModes_text",
-                "class": "buttonText"
-              }
-            },
-            {
-              "id": "btn-reset-axis-input",
-              "pos": "50%pw-50%w, ph-h",
-              "position": "relative",
-              "display": "hide",
-              "text": "#mainmenu/btnReset",
-              "on_click": "onResetAxisInput",
-              "btnName": "start",
-              "ButtonImg": {}
-            }
-          ]
-        },
-        "navRight": {
-          "Button_text": {
-            "id": "keep_assign_btn",
-            "text": "#hotkeys/tip/KeepCurrentAssign",
-            "display": "hide",
-            "accessKey": "Esc | J:X",
-            "on_click": "onCancelButtonInput",
-            "hideConsoleImage": "no",
-            "btnName": "X",
-            "ButtonImg": {}
-          }
-        }
-      }
-    },
-    "timer": {
-      "id": "update-timer",
-      "timer_handler_func": "onUpdate"
-    }
-  }
+root {
+	type:t = "big"
+	blur {
+
+	}
+	blur_foreground {
+
+	}
+	frame {
+		id:t = "wnd_frame"
+		width:t = "0.99sw $min 1.7sh"
+		height:t = "@rh $min 0.588sw"
+		pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
+		position:t = "relative"
+		class:t = "wnd"
+		flow:t = "vertical"
+		frame_header {
+			flow:t = "horizontal"
+			position:t = "relative"
+			activeText {
+				id:t = "wizard-title"
+				caption:t = "yes"
+				text:t = "#hotkeys/msg/choose_preset_or_wizard"
+				textHide:t = "yes"
+				smallFont:t = "yes"
+			}
+			tdiv {
+				id:t = "options-wnd"
+				pos:t = "0, 0.5ph-0.5h"
+				position:t = "relative"
+				display:t = "hide"
+				margin-left:t = "1@blockInterval"
+				smallFont:t = "yes"
+				controlsBox {
+					id:t = "optionlist"
+				}
+			}
+			Button_text {
+				id:t = "btn_controlsWizard"
+				display:t = "hide"
+				text:t = "#mainmenu/btnControlsWizard"
+				_on_click:t = "onContinue"
+				hideConsoleImage:t = "no"
+				btnName:t = "X"
+				margin-left:t = "1@blockInterval"
+				position:t = "relative"
+				smallFont:t = "yes"
+				ButtonImg {
+
+				}
+			}
+			Button_text {
+				id:t = "btn_selectPreset"
+				display:t = "hide"
+				text:t = "#controls/presetSelect"
+				_on_click:t = "onPresetDone"
+				hideConsoleImage:t = "no"
+				btnName:t = "X"
+				margin-left:t = "1@blockInterval"
+				position:t = "relative"
+				smallFont:t = "yes"
+				ButtonImg {
+
+				}
+			}
+			Button_close {
+				id:t = "btn_back"
+			}
+		}
+		tdiv {
+			id:t = "preview-wnd"
+			size:t = "pw, ph"
+			position:t = "relative"
+		}
+		tdiv {
+			id:t = "shortcut-wnd"
+			display:t = "hide"
+			width:t = "pw"
+			min-height:t = "0.3@scrn_tgt"
+			pos:t = "50%pw-50%w, 30%ph-30%h"
+			position:t = "absolute"
+			flow:t = "vertical"
+			tdalign:t = "center"
+			tdiv {
+				id:t = "input-listener"
+				size:t = "sw, sh"
+				position:t = "root"
+				behaviour:t = "ControlsInput"
+				shortcutCancel:t = "Esc"
+				shortcutActivate:t = "J:Start"
+				on_activate:t = "switchAllListenModes"
+				on_end_edit:t = "onButtonEntered"
+				on_cancel_edit:t = "onCancelButtonInput"
+				on_change_value:t = "onButtonAdded"
+				check_analog:t = "0"
+				device0:t = ""
+				button0:t = ""
+				device1:t = ""
+				button1:t = ""
+				device2:t = ""
+				button2:t = ""
+				behavior:t = "Timer"
+				timer_handler_func:t = "onAxisInputTimer"
+			}
+			activeText {
+				id:t = "shortcut_text"
+				max-width:t = "pw"
+				pos:t = "50%pw-50%w, 0"
+				position:t = "relative"
+				mediumFont:t = "yes"
+			}
+			textarea {
+				id:t = "curAssign_text"
+				pos:t = "50%pw-50%w, 0"
+				position:t = "relative"
+				removeParagraphIndent:t = "yes"
+				max-width:t = "pw"
+			}
+			img {
+				id:t = "shortcut_image"
+				height:t = "95"
+				width:t = "160"
+				pos:t = "50%pw-50%w, 0.02@scrn_tgt"
+				position:t = "relative"
+			}
+			activeText {
+				id:t = "shortcut_current_button"
+				pos:t = "50%pw-50%w, 2*@scrn_tgt/100.0"
+				position:t = "relative"
+				mediumFont:t = "yes"
+				text:t = "?"
+			}
+			activeText {
+				id:t = "hold_axis"
+				pos:t = "50%pw-50%w, 0.01@scrn_tgt"
+				position:t = "relative"
+				text:t = ""
+			}
+			activeText {
+				id:t = "bind-axis-name"
+				pos:t = "50%pw-50%w, 0.5*@scrn_tgt/100.0"
+				position:t = "relative"
+				mediumFont:t = "yes"
+				text:t = "?"
+			}
+			frame {
+				id:t = "test-axis"
+				size:t = "0.25@scrn_tgt, 0.03@scrn_tgt"
+				pos:t = "50%pw-50%w, 0.01@scrn_tgt"
+				position:t = "relative"
+				axisPoint1 {
+					id:t = "test-real-box"
+					pos:t = "50%pw-50%w, 50%ph-50%h"
+					position:t = "absolute"
+				}
+			}
+			frame {
+				id:t = "test-axis-vert"
+				size:t = "0.03@scrn_tgt, 0.2@scrn_tgt"
+				pos:t = "50%pw-50%w, 0.01@scrn_tgt"
+				position:t = "relative"
+				axisPoint1 {
+					id:t = "test-real-box-vert"
+					pos:t = "50%pw-50%w, 50%ph-50%h"
+					position:t = "absolute"
+				}
+			}
+		}
+		tdiv {
+			id:t = "msgBox-wnd"
+			display:t = "hide"
+			width:t = "pw"
+			pos:t = "50%pw-50%w, 40%ph-40%h"
+			position:t = "absolute"
+			flow:t = "vertical"
+			textarea {
+				id:t = "msgBox_text"
+				pos:t = "50%pw-50%w, 0"
+				position:t = "relative"
+				removeParagraphIndent:t = "yes"
+				text-align:t = "center"
+				max-width:t = "pw"
+				overflow-y:t = "auto"
+				mediumFont:t = "yes"
+			}
+			msgBoxButtonsHolder {
+				id:t = "msgBox_buttons"
+				max-width:t = "pw"
+				pos:t = "50%pw-50%w, ph + 0.4(57%p.p.h - 50%ph - h)"
+				position:t = "absolute"
+				flow:t = "h-flow"
+			}
+		}
+		tdiv {
+			id:t = "msg-wnd"
+			display:t = "hide"
+			width:t = "pw"
+			pos:t = "50%pw-50%w, 40%ph-40%h"
+			position:t = "absolute"
+			flow:t = "vertical"
+			textarea {
+				id:t = "msg_text"
+				removeParagraphIndent:t = "yes"
+				max-width:t = "pw"
+				text-align:t = "center"
+				pos:t = "50%pw-50%w, 0"
+				position:t = "relative"
+				mediumFont:t = "yes"
+			}
+			frame {
+				id:t = "msg-axis"
+				size:t = "0.25@scrn_tgt, 0.03@scrn_tgt"
+				pos:t = "50%pw-50%w, 0.01@scrn_tgt"
+				position:t = "relative"
+				locked:t = "yes"
+				axisPoint1 {
+					id:t = "msg-real-box1"
+					pos:t = "50%pw-50%w, 50%ph-50%h"
+					position:t = "absolute"
+				}
+				axisPoint1 {
+					id:t = "msg-real-box2"
+					pos:t = "50%pw-50%w, 50%ph-50%h"
+					position:t = "absolute"
+				}
+			}
+			frame {
+				id:t = "msg-axis-vert"
+				size:t = "0.03@scrn_tgt, 0.2@scrn_tgt"
+				pos:t = "50%pw-50%w, 0.01@scrn_tgt"
+				position:t = "relative"
+				locked:t = "yes"
+				axisPoint1 {
+					id:t = "msg-real-box-vert1"
+					pos:t = "50%pw-50%w, 50%ph-50%h"
+					position:t = "absolute"
+				}
+				axisPoint1 {
+					id:t = "msg-real-box-vert2"
+					pos:t = "50%pw-50%w, 50%ph-50%h"
+					position:t = "absolute"
+				}
+			}
+		}
+		tdiv {
+			id:t = "listbox-wnd"
+			display:t = "hide"
+			size:t = "pw, 0.5@sf"
+			pos:t = "50%pw-50%w, 40%ph-40%h"
+			position:t = "absolute"
+			flow:t = "vertical"
+			textarea {
+				id:t = "listbox_text"
+				pos:t = "50%pw-50%w, 0"
+				position:t = "relative"
+				mediumFont:t = "yes"
+				removeParagraphIndent:t = "yes"
+				max-width:t = "pw"
+			}
+			HorizontalListBox {
+				id:t = "listbox"
+				pos:t = "50%pw-50%w, 0.1@scrn_tgt"
+				position:t = "relative"
+				on_dbl_click:t = "onListboxDblClick"
+				on_select:t = "onListboxSelect"
+				class:t = "options"
+				style:t = "height:0.07@scrn_tgt"
+			}
+			Button_text {
+				id:t = "btn_select"
+				pos:t = "50%pw-50%w, 0.05@scrn_tgt"
+				position:t = "relative"
+				text:t = "#mainmenu/btnSelect"
+				_on_click:t = "onListboxDblClick"
+				btnName:t = "A"
+				ButtonImg {
+
+				}
+			}
+			textarea {
+				id:t = "listbox-hint"
+				removeParagraphIndent:t = "yes"
+				width:t = "pw-2@framePadding"
+				pos:t = "50%pw-50%w, ph-h"
+				position:t = "absolute"
+				text-align:t = "center"
+			}
+		}
+		navBar {
+			display:t = "hide"
+			navLeft {
+				Button_text {
+					id:t = "btn_prevItem"
+					display:t = "hide"
+					text:t = "#mainmenu/btnPrev"
+					_on_click:t = "onPrevItem"
+					hideConsoleImage:t = "no"
+					btnName:t = "LB"
+					ButtonImg {
+
+					}
+				}
+				Button_text {
+					id:t = "btn_switchAllModes"
+					display:t = "hide"
+					text:t = "#mainmenu/shortcuts"
+					_on_click:t = "switchAllListenModes"
+					hideText:t = "yes"
+					btnName:t = "start"
+					ButtonImg {
+
+					}
+					textarea {
+						id:t = "btn_switchAllModes_text"
+						class:t = "buttonText"
+					}
+				}
+				Button_text {
+					id:t = "btn-reset-axis-input"
+					pos:t = "50%pw-50%w, ph-h"
+					position:t = "relative"
+					display:t = "hide"
+					text:t = "#mainmenu/btnReset"
+					on_click:t = "onResetAxisInput"
+					btnName:t = "start"
+					ButtonImg {
+
+					}
+				}
+			}
+			navRight {
+				Button_text {
+					id:t = "keep_assign_btn"
+					text:t = "#hotkeys/tip/KeepCurrentAssign"
+					display:t = "hide"
+					accessKey:t = "Esc | J:X"
+					on_click:t = "onCancelButtonInput"
+					hideConsoleImage:t = "no"
+					btnName:t = "X"
+					ButtonImg {
+
+					}
+				}
+			}
+		}
+	}
+	timer {
+		id:t = "update-timer"
+		timer_handler_func:t = "onUpdate"
+	}
 }

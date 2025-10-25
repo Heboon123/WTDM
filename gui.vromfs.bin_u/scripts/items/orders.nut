@@ -25,7 +25,7 @@ let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { isInSessionRoom, getSessionInfo } = require("%scripts/matchingRooms/sessionLobbyState.nut")
 let { userIdStr } = require("%scripts/user/profileStates.nut")
-let { findItemById, getInventoryList } = require("%scripts/items/itemsManager.nut")
+let { findItemById, getInventoryList } = require("%scripts/items/itemsManagerModule.nut")
 let { orderTypes } = require("%scripts/items/orderType.nut")
 let { objectiveStatus, getObjectiveStatusByCode
 } = require("%scripts/misObjectives/objectiveStatus.nut")
@@ -418,7 +418,7 @@ function updateActiveLocalOrders() {
       continue
     }
 
-    if (id != itemId || starterUid != userIdStr.value) {
+    if (id != itemId || starterUid != userIdStr.get()) {
       activeLocalOrderIds.remove(i)
       timesUsedByOrderItemId[id] <- getTblValue(id, timesUsedByOrderItemId, 0) + 1
     }
@@ -572,7 +572,7 @@ function getLocalPlayerData() {
 function addLocalPlayerScoreData(scores) {
   let checkFunc = is_replay_playing()
     ? @(p) p.id == spectatorWatchedHero.id
-    : @(p) p.userId == userIdStr.value
+    : @(p) p.userId == userIdStr.get()
 
   local foundThisPlayer = false
   foreach (scoreData in scores)
@@ -608,7 +608,7 @@ function prepareStatusScores(statusScores, orderObject) {
       continue
 
     let playerData = getPlayerDataByScoreData(score)
-    if (getTblValue("userId", playerData) == userIdStr.value)
+    if (getTblValue("userId", playerData) == userIdStr.get())
       localPlayerIndex = idx
   }
 
@@ -781,6 +781,12 @@ function updateActiveOrder(dispatchEvents = true, isForced = false) {
 
 let onOrderTimerUpdate = @(_obj, _dt) updateActiveOrder()
 
+function onChangeOrderVisibility(_obj, _dt) {
+  isOrdersHidden = !isOrdersHidden
+  updateHideOrderBlock()
+  updateOrderVisibility()
+}
+
 
 
 
@@ -795,7 +801,7 @@ function updateOrderStatusObject(statusObj, fullUpdate) {
   if (fullUpdate) {
     let statusContent = getStatusContent(orderObject, (statusObj?.isHalignRight ?? "no") == "yes")
     let guiScene = statusObj.getScene()
-    guiScene.replaceContentFromText(statusObj, statusContent, statusContent.len(), null)
+    guiScene.replaceContentFromText(statusObj, statusContent, statusContent.len(), { onChangeOrderVisibility })
 
     
     let orderTimerObj = statusObj.findObject("order_timer")
@@ -943,12 +949,6 @@ function onEventActiveOrderChanged(params) {
     type = HUD_MSG_OBJECTIVE
     text
   })
-}
-
-function onChangeOrderVisibility(_obj, _dt) {
-  isOrdersHidden = !isOrdersHidden
-  updateHideOrderBlock()
-  updateOrderVisibility()
 }
 
 eventToHandlerMap.__update({

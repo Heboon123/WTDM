@@ -1,3049 +1,2162 @@
-{
-  "selected_tag": "",
-  "bin_dump_file": "",
-  "mission_settings": {
-    "player": {
-      "army": 1,
-      "wing": "player_wing"
-    },
-    "player_teamB": {
-      "army": 2
-    },
-    "mission": {
-      "level": "levels/berlin.bin",
-      "type": "singleMission",
-      "environment": "Day",
-      "weather": "clear",
-      "restoreType": "attempts",
-      "optionalTakeOff": false,
-      "windDirectionDeg": [
-        238.0,
-        242.0
-      ],
-      "stars": {
-        "year": 1945,
-        "month": 4,
-        "day": 20
-      }
-    },
-    "atmosphere": {
-      "pressure": 756.0,
-      "temperature": 14.0
-    },
-    "briefing": {
-      "place_loc": "",
-      "date_loc": "",
-      "objective_loc": "",
-      "music": "action_01",
-      "part": {
-        "event": "",
-        "minTime": 0,
-        "slide": {
-          "map": true,
-          "minTime": 4,
-          "picture": "",
-          "showAirMap": false,
-          "arrow": {
-            "width": 1,
-            "side": "ally",
-            "point": [
-              "vip_person",
-              "waypoint",
-              "end_waypoint",
-              "patrol_point",
-              "patrol_point"
-            ]
-          },
-          "icon": [
-            {
-              "icontype": "fighter",
-              "side": "player",
-              "target": "briefing_point",
-              "lookAt": "waypoint"
-            },
-            {
-              "icontype": "fighter",
-              "side": "ally",
-              "target": "vip_person",
-              "lookAt": "waypoint"
-            }
-          ]
-        }
-      }
-    }
-  },
-  "imports": {
-    "import_record": {
-      "file": "gameData/missions/bridges/berlin_bridges.blk",
-      "importAreas": true,
-      "importUnits": true,
-      "importTriggers": true,
-      "importMissionObjectives": true,
-      "importWayPoints": true,
-      "showAreas": true,
-      "showUnits": true,
-      "showTriggers": true,
-      "showMissionObjectives": true,
-      "showWayPoints": true,
-      "excludes": {}
-    }
-  },
-  "triggers": {
-    "isCategory": true,
-    "is_enabled": true,
-    "start_mission": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {},
-      "actions": {
-        "missionSetWeatherParams": {
-          "waterWindStrengtMin": 6.0,
-          "waterWindStrengtMax": 7.0
-        },
-        "unitSetProperties": [
-          {
-            "object": "vip_person",
-            "effShootingRate": 0.4,
-            "plane": {
-              "targetDeviation": {
-                "trigger": "machine gun",
-                "defaultVal": 2.2,
-                "limits": [
-                  0.4,
-                  2.2
-                ]
-              }
-            }
-          },
-          {
-            "object": "berlin_aaa_squad",
-            "effShootingRate": 0.1
-          },
-          {
-            "object": [
-              "bf109_01",
-              "bf109_02"
-            ],
-            "effShootingRate": 0.8,
-            "plane": {
-              "targetDeviation": {
-                "trigger": "machine gun",
-                "defaultVal": 0.4,
-                "limits": [
-                  0.4,
-                  1.4
-                ]
-              }
-            }
-          },
-          {
-            "object": "ju_88_02",
-            "effShootingRate": 0.2,
-            "plane": {
-              "targetDeviation": {
-                "trigger": "gunner",
-                "defaultVal": 0.6,
-                "limits": [
-                  0.6,
-                  1.8
-                ]
-              }
-            }
-          }
-        ],
-        "triggerEnable": [
-          {
-            "target": [
-              "check_real",
-              "check_simul"
-            ]
-          },
-          {
-            "target": [
-              "fail_mission_waypoint",
-              "to_waypoint",
-              "update_indicators"
-            ]
-          }
-        ],
-        "unitMoveTo": {
-          "target": "waypoint",
-          "follow_target": true,
-          "teleportHeightType": "absolute",
-          "useUnitHeightForTele": true,
-          "shouldKeepFormation": false,
-          "teleportHeightValue": 1000.0,
-          "object_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target_var_name": "",
-          "target_var_comp_op": "equal",
-          "target_var_value": 0,
-          "target_marking": 0,
-          "waypointReachedDist": 10.0,
-          "recalculatePathDist": -1.0,
-          "fastClimb": false,
-          "destTimeMode": false,
-          "horizontalDirectionForTeleport": true,
-          "object": "vip_person",
-          "follow_offset": [
-            -150.0,
-            20.0,
-            20.0
-          ]
-        },
-        "wait": {
-          "time": 3.0
-        },
-        "unitPutToSleep": {
-          "target": [
-            "ju_88_02",
-            "bf109_01",
-            "bf109_02"
-          ]
-        },
-        "triggerDisable": {
-          "target": [
-            "check_real",
-            "check_simul"
-          ]
-        },
-        "moAddMissionObjective": {
-          "target": "dlc_newbie_fight_to_waypoint"
-        },
-        "unitSetIndication": {
-          "set": true,
-          "target": "vip_person"
-        }
-      },
-      "else_actions": {}
-    },
-    "check_real": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "gameWhenDifficulty": {
-          "difficulty": "realistic",
-          "is": "equal"
-        }
-      },
-      "actions": {
-        "unitDamage": [
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "ju_88_02",
-            "randomTargetsCount": 10,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "bf109_01",
-            "randomTargetsCount": 6,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "bf109_02",
-            "randomTargetsCount": 6,
-            "doExplosion": true
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "check_simul": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "gameWhenDifficulty": {
-          "difficulty": "simulator",
-          "is": "equal"
-        }
-      },
-      "actions": {
-        "unitDamage": [
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "ju_88_02",
-            "randomTargetsCount": 20
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "bf109_01",
-            "randomTargetsCount": 8
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "bf109_02",
-            "randomTargetsCount": 8
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "to_waypoint": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitDistanceBetween": {
-          "value": 2500.0,
-          "math": "2D",
-          "object_type": "isAlive",
-          "target_type": "isAlive",
-          "check_objects": "any",
-          "check_targets": "any",
-          "object_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "target_marking": 0,
-          "object": "vip_person",
-          "target": "waypoint"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": "fail_mission_waypoint"
-        },
-        "missionMarkAsWaypoint": {
-          "visible": false,
-          "primary": true,
-          "oriented": false,
-          "ignoreDifficulty": false,
-          "scale": 1.0,
-          "target": "waypoint"
-        },
-        "moSetObjectiveStatus": {
-          "target": "dlc_newbie_fight_to_waypoint",
-          "status": 2,
-          "object_marking": 0,
-          "object_var_comp_op": "equal",
-          "object_var_name": ""
-        },
-        "wait": [
-          {
-            "time": 3.0
-          },
-          {
-            "time": 3.0
-          },
-          {
-            "time": 10.0
-          },
-          {
-            "time": 5.0
-          },
-          {
-            "time": 1.0
-          }
-        ],
-        "unitWakeUp": [
-          {
-            "target": "ju_88_02"
-          },
-          {
-            "target": "bf109_01"
-          }
-        ],
-        "unitMoveTo": {
-          "target": "bombers_point",
-          "follow_target": false,
-          "teleportHeightType": "absolute",
-          "useUnitHeightForTele": true,
-          "shouldKeepFormation": true,
-          "teleportHeightValue": 1000.0,
-          "object_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target_var_name": "",
-          "target_var_comp_op": "equal",
-          "target_var_value": 0,
-          "target_marking": 0,
-          "waypointReachedDist": 10.0,
-          "recalculatePathDist": -1.0,
-          "fastClimb": false,
-          "destTimeMode": false,
-          "horizontalDirectionForTeleport": true,
-          "object": "ju_88_02",
-          "speed": 250.0
-        },
-        "moAddMissionObjective": [
-          {
-            "target": "dlc_newbie_fight_vip"
-          },
-          {
-            "target": "dlc_newbie_fight_newbie_alive"
-          }
-        ],
-        "unitAttackTarget": [
-          {
-            "playerAttracted": false,
-            "object": "vip_person",
-            "target": "ju_88_02",
-            "fireRandom": true
-          },
-          {
-            "playerAttracted": true,
-            "object": "bf109_01",
-            "target": [
-              "vip_person",
-              "player_wing"
-            ],
-            "fireRandom": true,
-            "playerAttractedCount": 2,
-            "playerAttractedEffRate": 0.7
-          }
-        ],
-        "triggerEnable": [
-          {
-            "target": [
-              "fail_mission_ju88_02",
-              "ju88_02_killed",
-              "ju88_02_damaged",
-              "bf_109_01_killed"
-            ]
-          },
-          {
-            "target": "newbie_alive_fail"
-          }
-        ],
-        "playHint": [
-          {
-            "hintType": "custom",
-            "name": "hints/dlc_newbie_fight_hint",
-            "action": "show",
-            "shouldFadeOut": true,
-            "isOverFade": false,
-            "time": -1.0,
-            "priority": 0,
-            "target_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0
-          },
-          {
-            "hintType": "custom",
-            "name": "hints/dlc_newbie_fight_hint",
-            "action": "hide",
-            "shouldFadeOut": true,
-            "isOverFade": false,
-            "time": -1.0,
-            "priority": 0,
-            "target_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0
-          }
-        ],
-        "unitSetIndication": {
-          "set": true,
-          "target": "bf109_01"
-        }
-      },
-      "else_actions": {}
-    },
-    "update_indicators": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": true
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {},
-      "actions": {
-        "missionSetTargetsIndicator": {
-          "target_type": "isActive",
-          "target_marking": 1,
-          "delta": 0,
-          "icon": "air",
-          "icon army": 1,
-          "set": true,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target": "vip_person"
-        }
-      },
-      "else_actions": {}
-    },
-    "fail_mission_waypoint": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenStatus": {
-          "object_type": "isKilled",
-          "object_marking": 0,
-          "check_objects": "all",
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target_type": "isAlive",
-          "check_period": 1.0,
-          "object": "vip_person"
-        }
-      },
-      "actions": {
-        "moSetObjectiveStatus": {
-          "target": "dlc_newbie_fight_to_waypoint",
-          "status": 3,
-          "object_marking": 0,
-          "object_var_comp_op": "equal",
-          "object_var_name": ""
-        },
-        "wait": {
-          "time": 3.0
-        },
-        "missionFailed": {}
-      },
-      "else_actions": {}
-    },
-    "fail_mission_ju88_02": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenStatus": {
-          "object_type": "isKilled",
-          "object_marking": 0,
-          "check_objects": "all",
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target_type": "isAlive",
-          "check_period": 1.0,
-          "object": "vip_person"
-        }
-      },
-      "actions": {
-        "moSetObjectiveStatus": {
-          "target": "dlc_newbie_fight_vip",
-          "status": 3,
-          "object_marking": 0,
-          "object_var_comp_op": "equal",
-          "object_var_name": ""
-        },
-        "wait": {
-          "time": 3.0
-        },
-        "missionFailed": {}
-      },
-      "else_actions": {}
-    },
-    "ju88_02_killed": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ANY",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isAlive",
-          "object_marking": 0,
-          "func": "less",
-          "value": 1,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object": "ju_88_02"
-        },
-        "unitDistanceBetween": {
-          "value": 3500.0,
-          "math": "2D",
-          "object_type": "isAlive",
-          "target_type": "isAlive",
-          "check_objects": "any",
-          "check_targets": "any",
-          "object_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "target_marking": 0,
-          "object": "ju_88_02",
-          "target": "end_waypoint"
-        }
-      },
-      "actions": {
-        "moSetObjectiveStatus": {
-          "target": "dlc_newbie_fight_vip",
-          "status": 2,
-          "object_marking": 0,
-          "object_var_comp_op": "equal",
-          "object_var_name": ""
-        },
-        "wait": [
-          {
-            "time": 3.0
-          },
-          {
-            "time": 40.0
-          },
-          {
-            "time": 10.0
-          }
-        ],
-        "moAddMissionObjective": {
-          "target": "dlc_newbie_fight_return"
-        },
-        "unitMoveTo": [
-          {
-            "target": "patrol_point",
-            "follow_target": true,
-            "teleportHeightType": "absolute",
-            "useUnitHeightForTele": true,
-            "shouldKeepFormation": false,
-            "teleportHeightValue": 1000.0,
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target_var_name": "",
-            "target_var_comp_op": "equal",
-            "target_var_value": 0,
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "fastClimb": false,
-            "destTimeMode": false,
-            "horizontalDirectionForTeleport": true,
-            "object": "vip_person",
-            "follow_offset": [
-              -150.0,
-              20.0,
-              20.0
-            ]
-          },
-          {
-            "target": "end_waypoint",
-            "follow_target": false,
-            "teleportHeightType": "absolute",
-            "useUnitHeightForTele": true,
-            "shouldKeepFormation": false,
-            "teleportHeightValue": 1000.0,
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target_var_name": "",
-            "target_var_comp_op": "equal",
-            "target_var_value": 0,
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "fastClimb": false,
-            "destTimeMode": false,
-            "horizontalDirectionForTeleport": true,
-            "object": [
-              "bf109_01",
-              "bf109_02"
-            ]
-          }
-        ],
-        "triggerEnable": {
-          "target": [
-            "bf109_escaped",
-            "complete_mission"
-          ]
-        },
-        "unitSetIndication": {
-          "set": false,
-          "target": [
-            "bf109_01",
-            "bf109_02"
-          ]
-        }
-      },
-      "else_actions": {}
-    },
-    "complete_mission": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitDistanceBetween": {
-          "value": 1500.0,
-          "math": "2D",
-          "object_type": "isAlive",
-          "target_type": "isAlive",
-          "check_objects": "any",
-          "check_targets": "any",
-          "object_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "target_marking": 0,
-          "object": "vip_person",
-          "target": "patrol_point"
-        }
-      },
-      "actions": {
-        "triggerEnable": {
-          "target": "newbie_alive_succes"
-        },
-        "wait": [
-          {
-            "time": 3.0
-          },
-          {
-            "time": 3.0
-          },
-          {
-            "time": 3.0
-          }
-        ],
-        "moSetObjectiveStatus": {
-          "target": "dlc_newbie_fight_return",
-          "status": 2,
-          "object_marking": 0,
-          "object_var_comp_op": "equal",
-          "object_var_name": ""
-        },
-        "missionCompleted": {
-          "timer": false
-        },
-        "missionDebriefing": {}
-      },
-      "else_actions": {}
-    },
-    "vip_killed": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": true
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenStatus": {
-          "object_type": "isKilled",
-          "object_marking": 0,
-          "check_objects": "any",
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target_type": "isAlive",
-          "check_period": 1.0,
-          "object": "vip_person"
-        }
-      },
-      "actions": {
-        "unitMark": {
-          "target_marking": 0,
-          "target": "vip_person",
-          "useForTriggerFiltered": true
-        }
-      },
-      "else_actions": {}
-    },
-    "newbie_alive_fail": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenStatus": {
-          "object_type": "isKilled",
-          "object_marking": 0,
-          "check_objects": "any",
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target_type": "isAlive",
-          "check_period": 1.0,
-          "object": "vip_person"
-        }
-      },
-      "actions": {
-        "moSetObjectiveStatus": {
-          "target": "dlc_newbie_fight_newbie_alive",
-          "status": 3,
-          "object_marking": 0,
-          "object_var_comp_op": "equal",
-          "object_var_name": ""
-        }
-      },
-      "else_actions": {}
-    },
-    "newbie_alive_succes": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 0.1
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isAlive",
-          "object_marking": 0,
-          "func": "notLess",
-          "value": 4,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object": "vip_person"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": "newbie_alive_fail"
-        },
-        "moSetObjectiveStatus": {
-          "target": "dlc_newbie_fight_newbie_alive",
-          "status": 2,
-          "object_marking": 0,
-          "object_var_comp_op": "equal",
-          "object_var_name": ""
-        }
-      },
-      "else_actions": {}
-    },
-    "ju88_02_damaged": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ANY",
-        "enableAfterComplete": true
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenStatus": [
-          {
-            "object_type": "damaged",
-            "object_marking": 0,
-            "check_objects": "any",
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target_type": "isAlive",
-            "check_period": 1.0,
-            "object": "ju_88_02"
-          },
-          {
-            "object_type": "isKilled",
-            "object_marking": 0,
-            "check_objects": "any",
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target_type": "isAlive",
-            "check_period": 1.0,
-            "object": "ju_88_02"
-          }
-        ]
-      },
-      "actions": {
-        "unitDropAmmo": {
-          "object": "ju_88_02"
-        }
-      },
-      "else_actions": {}
-    },
-    "bf109_escaped": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isAlive",
-          "object_marking": 0,
-          "func": "less",
-          "value": 3,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object": "bf109_01"
-        }
-      },
-      "actions": {
-        "unitMoveTo": {
-          "target": "bombers_point",
-          "follow_target": false,
-          "teleportHeightType": "absolute",
-          "useUnitHeightForTele": true,
-          "shouldKeepFormation": false,
-          "teleportHeightValue": 1000.0,
-          "object_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target_var_name": "",
-          "target_var_comp_op": "equal",
-          "target_var_value": 0,
-          "target_marking": 0,
-          "waypointReachedDist": 10.0,
-          "recalculatePathDist": -1.0,
-          "fastClimb": false,
-          "destTimeMode": false,
-          "horizontalDirectionForTeleport": true,
-          "object": "bf109_01"
-        },
-        "wait": {
-          "time": 20.0
-        },
-        "unitSetIndication": {
-          "set": false,
-          "target": "bf109_01"
-        }
-      },
-      "else_actions": {}
-    },
-    "bf_109_01_killed": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isAlive",
-          "object_marking": 0,
-          "func": "less",
-          "value": 3,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object": "bf109_01"
-        }
-      },
-      "actions": {
-        "unitWakeUp": {
-          "target": "bf109_02"
-        },
-        "unitAttackTarget": {
-          "playerAttracted": true,
-          "object": "bf109_02",
-          "target": [
-            "player_wing",
-            "vip_person"
-          ],
-          "playerAttractedCount": 2,
-          "playerAttractedEffRate": 0.7
-        },
-        "unitSetIndication": {
-          "set": true,
-          "target": "bf109_02"
-        }
-      },
-      "else_actions": {}
-    }
-  },
-  "mission_objectives": {
-    "isCategory": true,
-    "is_enabled": true,
-    "dlc_newbie_fight_vip": {
-      "is_enabled": false,
-      "comments": "",
-      "type": "abstractMissionObjective",
-      "props": {
-        "isPrimary": true,
-        "timeLimit": 1800,
-        "scoreConst": 100,
-        "scoreTime": 400
-      },
-      "onSuccess": {},
-      "onFailed": {}
-    },
-    "dlc_newbie_fight_to_waypoint": {
-      "is_enabled": false,
-      "comments": "",
-      "type": "abstractMissionObjective",
-      "props": {
-        "isPrimary": true,
-        "timeLimit": 1800,
-        "scoreConst": 100,
-        "scoreTime": 400
-      },
-      "onSuccess": {},
-      "onFailed": {}
-    },
-    "dlc_newbie_fight_return": {
-      "is_enabled": false,
-      "comments": "",
-      "type": "abstractMissionObjective",
-      "props": {
-        "isPrimary": true,
-        "timeLimit": 1800,
-        "scoreConst": 100,
-        "scoreTime": 400
-      },
-      "onSuccess": {},
-      "onFailed": {}
-    },
-    "dlc_newbie_fight_newbie_alive": {
-      "is_enabled": false,
-      "comments": "",
-      "type": "abstractMissionObjective",
-      "props": {
-        "isPrimary": false,
-        "timeLimit": 1800,
-        "scoreConst": 100,
-        "scoreTime": 400
-      },
-      "onSuccess": {},
-      "onFailed": {}
-    }
-  },
-  "variables": {
-    "enemies_count": 0,
-    "close_fight_success": 0
-  },
-  "dialogs": {},
-  "airfields": {},
-  "effects": {},
-  "units": {
-    "armada": [
-      {
-        "name": "player_wing",
-        "tm": [
-          [
-            -0.573576,
-            0.0,
-            -0.819152
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.819152,
-            0.0,
-            -0.573576
-          ],
-          [
-            21392.9,
-            3453.4,
-            10670.3
-          ]
-        ],
-        "unit_class": "yak-3",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "Yak3_default",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 4,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "numInWing": 2,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "vip_person",
-        "tm": [
-          [
-            -0.573576,
-            0.0,
-            -0.819152
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.819152,
-            0.0,
-            -0.573576
-          ],
-          [
-            21184.9,
-            3453.4,
-            10297.0
-          ]
-        ],
-        "unit_class": "yak-3",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "Yak3_default",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 4,
-          "free_distance": 120.0,
-          "floating_distance": 100.0,
-          "minimum_distance_to_earth": 70.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "numInWing": 2,
-          "targetableByAi": false,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "ju_88_02",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            5106.45,
-            3454.9,
-            18918.3
-          ]
-        ],
-        "unit_class": "he-111h-6",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "he-111h-6_8xSC250",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 30,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "numInWing": 9,
-          "targetableByAi": true,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.5,
-            "col_distances": 3.5,
-            "super_formation": "Diamond",
-            "super_row_distances": 2.5,
-            "super_col_distances": 2.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "bf109_01",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            1774.25,
-            4190.5,
-            16193.0
-          ]
-        ],
-        "unit_class": "bf-109k-4",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "Bf_109K4_default",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 12,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "targetableByAi": false,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "bf109_02",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            8569.8,
-            5454.9,
-            8391.5
-          ]
-        ],
-        "unit_class": "bf-109k-4",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "Bf_109K4_default",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 12,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "targetableByAi": false,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      }
-    ],
-    "air_defence": [
-      {
-        "name": "air_defence_01",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            21180.6,
-            43.1876,
-            -15606.2
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "air_defence_02",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            21486.2,
-            43.1926,
-            -15190.6
-          ]
-        ],
-        "unit_class": "germ_37mm_flak43",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "air_defence_03",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            21468.7,
-            45.0166,
-            -14688.0
-          ]
-        ],
-        "unit_class": "germ_37mm_flak43",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "air_defence_04",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            21297.8,
-            56.1573,
-            -14415.0
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "air_defence_05",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            20786.3,
-            43.0479,
-            -16348.2
-          ]
-        ],
-        "unit_class": "germ_37mm_flak43",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "air_defence_06",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            20284.4,
-            44.0723,
-            -16641.4
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "air_defence_07",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            19377.6,
-            63.3792,
-            -16723.0
-          ]
-        ],
-        "unit_class": "germ_37mm_flak43",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "air_defence_08",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            18912.3,
-            65.1001,
-            -16431.4
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "air_defence_17",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            21472.9,
-            53.3956,
-            -16088.5
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "air_defence_18",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            21778.6,
-            65.1279,
-            -15672.9
-          ]
-        ],
-        "unit_class": "germ_37mm_flak43",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "air_defence_19",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            21761.1,
-            43.8754,
-            -15170.3
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "air_defence_20",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            21590.2,
-            44.2826,
-            -14897.3
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "air_defence_21",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            21078.7,
-            43.5135,
-            -16830.5
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "air_defence_22",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            20972.6,
-            47.1494,
-            -17909.9
-          ]
-        ],
-        "unit_class": "germ_37mm_flak43",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "air_defence_23",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            19670.0,
-            42.8878,
-            -17205.2
-          ]
-        ],
-        "unit_class": "germ_37mm_flak43",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "air_defence_16",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            19204.7,
-            52.483,
-            -16913.6
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "berlin_aaa_01",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            3833.25,
-            42.25,
-            8465.6
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "berlin_aaa_02",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            2886.8,
-            42.25,
-            7186.3
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "berlin_aaa_03",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            3852.3,
-            42.25,
-            6404.6
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "berlin_aaa_04",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            5839.55,
-            42.25,
-            5500.6
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "berlin_aaa_05",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            6438.15,
-            42.25,
-            5295.6
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "berlin_aaa_06",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            4960.4,
-            42.25,
-            5163.5
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "berlin_aaa_07",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            5933.95,
-            42.25,
-            4358.6
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      }
-    ],
-    "squad": [
-      {
-        "name": "berlin_aaa_squad",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            3987.05,
-            49.45,
-            5775.55
-          ]
-        ],
-        "props": {
-          "squad_members": [
-            "berlin_aaa_01",
-            "berlin_aaa_02",
-            "berlin_aaa_03",
-            "berlin_aaa_04",
-            "berlin_aaa_05",
-            "berlin_aaa_06",
-            "berlin_aaa_07"
-          ]
-        }
-      },
-      {
-        "name": "players_squad",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            9489.05,
-            63.85,
-            16012.1
-          ]
-        ],
-        "props": {
-          "squad_members": "player_wing",
-          "object_type": "isPlayer"
-        }
-      }
-    ]
-  },
-  "areas": {
-    "waypoint": {
-      "type": "Point",
-      "tm": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          10445.2,
-          3000.0,
-          13314.2
-        ]
-      ],
-      "props": {}
-    },
-    "end_waypoint": {
-      "type": "Point",
-      "tm": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          18444.8,
-          3000.0,
-          -12974.3
-        ]
-      ],
-      "props": {}
-    },
-    "bombers_point": {
-      "type": "Point",
-      "tm": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          22885.0,
-          3000.0,
-          -23437.0
-        ]
-      ],
-      "props": {}
-    },
-    "patrol_point": {
-      "type": "Point",
-      "tm": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          23660.4,
-          3000.0,
-          575.0
-        ]
-      ],
-      "props": {}
-    },
-    "briefing_point": {
-      "type": "Point",
-      "tm": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          26069.9,
-          3000.0,
-          15859.5
-        ]
-      ],
-      "props": {}
-    }
-  },
-  "objLayers": {
-    "layer": [
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      }
-    ]
-  },
-  "wayPoints": {}
+selected_tag:t = ""
+bin_dump_file:t = ""
+mission_settings {
+	player {
+		army:i = 1
+		wing:t = "player_wing"
+	}
+	player_teamB {
+		army:i = 2
+	}
+	mission {
+		level:t = "levels/berlin.bin"
+		type:t = "singleMission"
+		environment:t = "Day"
+		weather:t = "clear"
+		restoreType:t = "attempts"
+		optionalTakeOff:b = false
+		windDirectionDeg:p2 = 238, 242
+		stars {
+			year:i = 1945
+			month:i = 4
+			day:i = 20
+		}
+	}
+	atmosphere {
+		pressure:r = 756
+		temperature:r = 14
+	}
+	briefing {
+		place_loc:t = ""
+		date_loc:t = ""
+		objective_loc:t = ""
+		music:t = "action_01"
+		part {
+			event:t = ""
+			minTime:i = 0
+			slide {
+				map:b = true
+				minTime:i = 4
+				picture:t = ""
+				showAirMap:b = false
+				arrow {
+					width:i = 1
+					side:t = "ally"
+					point:t = "vip_person"
+					point:t = "waypoint"
+					point:t = "end_waypoint"
+					point:t = "patrol_point"
+					point:t = "patrol_point"
+				}
+				icon {
+					icontype:t = "fighter"
+					side:t = "player"
+					target:t = "briefing_point"
+					lookAt:t = "waypoint"
+				}
+				icon {
+					icontype:t = "fighter"
+					side:t = "ally"
+					target:t = "vip_person"
+					lookAt:t = "waypoint"
+				}
+			}
+		}
+	}
+}
+imports {
+	import_record {
+		file:t = "gameData/missions/bridges/berlin_bridges.blk"
+		importAreas:b = true
+		importUnits:b = true
+		importTriggers:b = true
+		importMissionObjectives:b = true
+		importWayPoints:b = true
+		showAreas:b = true
+		showUnits:b = true
+		showTriggers:b = true
+		showMissionObjectives:b = true
+		showWayPoints:b = true
+		excludes {
+
+		}
+	}
+}
+triggers {
+	isCategory:b = true
+	is_enabled:b = true
+	start_mission {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			missionSetWeatherParams {
+				waterWindStrengtMin:r = 6
+				waterWindStrengtMax:r = 7
+			}
+			unitSetProperties {
+				object:t = "vip_person"
+				effShootingRate:r = 0.4
+				plane {
+					targetDeviation {
+						trigger:t = "machine gun"
+						defaultVal:r = 2.2
+						limits:p2 = 0.4, 2.2
+					}
+				}
+			}
+			unitSetProperties {
+				object:t = "berlin_aaa_squad"
+				effShootingRate:r = 0.1
+			}
+			unitSetProperties {
+				object:t = "bf109_01"
+				object:t = "bf109_02"
+				effShootingRate:r = 0.8
+				plane {
+					targetDeviation {
+						trigger:t = "machine gun"
+						defaultVal:r = 0.4
+						limits:p2 = 0.4, 1.4
+					}
+				}
+			}
+			unitSetProperties {
+				object:t = "ju_88_02"
+				effShootingRate:r = 0.2
+				plane {
+					targetDeviation {
+						trigger:t = "gunner"
+						defaultVal:r = 0.6
+						limits:p2 = 0.6, 1.8
+					}
+				}
+			}
+			triggerEnable {
+				target:t = "check_real"
+				target:t = "check_simul"
+			}
+			unitMoveTo {
+				target:t = "waypoint"
+				follow_target:b = true
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = true
+				shouldKeepFormation:b = false
+				teleportHeightValue:r = 1000
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_var_name:t = ""
+				target_var_comp_op:t = "equal"
+				target_var_value:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				fastClimb:b = false
+				destTimeMode:b = false
+				horizontalDirectionForTeleport:b = true
+				object:t = "vip_person"
+				follow_offset:p3 = -150, 20, 20
+			}
+			wait {
+				time:r = 3
+			}
+			unitPutToSleep {
+				target:t = "ju_88_02"
+				target:t = "bf109_01"
+				target:t = "bf109_02"
+			}
+			triggerDisable {
+				target:t = "check_real"
+				target:t = "check_simul"
+			}
+			moAddMissionObjective {
+				target:t = "dlc_newbie_fight_to_waypoint"
+			}
+			unitSetIndication {
+				set:b = true
+				target:t = "vip_person"
+			}
+			triggerEnable {
+				target:t = "fail_mission_waypoint"
+				target:t = "to_waypoint"
+				target:t = "update_indicators"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	check_real {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			gameWhenDifficulty {
+				difficulty:t = "realistic"
+				is:t = "equal"
+			}
+		}
+		actions {
+			unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "ju_88_02"
+				randomTargetsCount:i = 10
+				doExplosion:b = true
+			}
+			unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "bf109_01"
+				randomTargetsCount:i = 6
+				doExplosion:b = true
+			}
+			unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "bf109_02"
+				randomTargetsCount:i = 6
+				doExplosion:b = true
+			}
+		}
+		else_actions {
+
+		}
+	}
+	check_simul {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			gameWhenDifficulty {
+				difficulty:t = "simulator"
+				is:t = "equal"
+			}
+		}
+		actions {
+			unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "ju_88_02"
+				randomTargetsCount:i = 20
+			}
+			unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "bf109_01"
+				randomTargetsCount:i = 8
+			}
+			unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "bf109_02"
+				randomTargetsCount:i = 8
+			}
+		}
+		else_actions {
+
+		}
+	}
+	to_waypoint {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitDistanceBetween {
+				value:r = 2500
+				math:t = "2D"
+				object_type:t = "isAlive"
+				target_type:t = "isAlive"
+				check_objects:t = "any"
+				check_targets:t = "any"
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				target_marking:i = 0
+				object:t = "vip_person"
+				target:t = "waypoint"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "fail_mission_waypoint"
+			}
+			missionMarkAsWaypoint {
+				visible:b = false
+				primary:b = true
+				oriented:b = false
+				ignoreDifficulty:b = false
+				scale:r = 1
+				target:t = "waypoint"
+			}
+			moSetObjectiveStatus {
+				target:t = "dlc_newbie_fight_to_waypoint"
+				status:i = 2
+				object_marking:i = 0
+				object_var_comp_op:t = "equal"
+				object_var_name:t = ""
+			}
+			wait {
+				time:r = 3
+			}
+			unitWakeUp {
+				target:t = "ju_88_02"
+			}
+			unitMoveTo {
+				target:t = "bombers_point"
+				follow_target:b = false
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = true
+				shouldKeepFormation:b = true
+				teleportHeightValue:r = 1000
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_var_name:t = ""
+				target_var_comp_op:t = "equal"
+				target_var_value:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				fastClimb:b = false
+				destTimeMode:b = false
+				horizontalDirectionForTeleport:b = true
+				object:t = "ju_88_02"
+				speed:r = 250
+			}
+			moAddMissionObjective {
+				target:t = "dlc_newbie_fight_vip"
+			}
+			wait {
+				time:r = 3
+			}
+			unitAttackTarget {
+				playerAttracted:b = false
+				object:t = "vip_person"
+				target:t = "ju_88_02"
+				fireRandom:b = true
+			}
+			triggerEnable {
+				target:t = "fail_mission_ju88_02"
+				target:t = "ju88_02_killed"
+				target:t = "ju88_02_damaged"
+				target:t = "bf_109_01_killed"
+			}
+			unitWakeUp {
+				target:t = "bf109_01"
+			}
+			unitAttackTarget {
+				playerAttracted:b = true
+				object:t = "bf109_01"
+				target:t = "vip_person"
+				target:t = "player_wing"
+				fireRandom:b = true
+				playerAttractedCount:i = 2
+				playerAttractedEffRate:r = 0.7
+			}
+			wait {
+				time:r = 10
+			}
+			playHint {
+				hintType:t = "custom"
+				name:t = "hints/dlc_newbie_fight_hint"
+				action:t = "show"
+				shouldFadeOut:b = true
+				isOverFade:b = false
+				time:r = -1
+				priority:i = 0
+				target_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+			}
+			wait {
+				time:r = 5
+			}
+			playHint {
+				hintType:t = "custom"
+				name:t = "hints/dlc_newbie_fight_hint"
+				action:t = "hide"
+				shouldFadeOut:b = true
+				isOverFade:b = false
+				time:r = -1
+				priority:i = 0
+				target_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+			}
+			wait {
+				time:r = 1
+			}
+			unitSetIndication {
+				set:b = true
+				target:t = "bf109_01"
+			}
+			moAddMissionObjective {
+				target:t = "dlc_newbie_fight_newbie_alive"
+			}
+			triggerEnable {
+				target:t = "newbie_alive_fail"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	update_indicators {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = true
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			missionSetTargetsIndicator {
+				target_type:t = "isActive"
+				target_marking:i = 1
+				delta:i = 0
+				icon:t = "air"
+				"icon army":i = 1
+				set:b = true
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target:t = "vip_person"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	fail_mission_waypoint {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenStatus {
+				object_type:t = "isKilled"
+				object_marking:i = 0
+				check_objects:t = "all"
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_type:t = "isAlive"
+				check_period:r = 1
+				object:t = "vip_person"
+			}
+		}
+		actions {
+			moSetObjectiveStatus {
+				target:t = "dlc_newbie_fight_to_waypoint"
+				status:i = 3
+				object_marking:i = 0
+				object_var_comp_op:t = "equal"
+				object_var_name:t = ""
+			}
+			wait {
+				time:r = 3
+			}
+			missionFailed {
+
+			}
+		}
+		else_actions {
+
+		}
+	}
+	fail_mission_ju88_02 {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenStatus {
+				object_type:t = "isKilled"
+				object_marking:i = 0
+				check_objects:t = "all"
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_type:t = "isAlive"
+				check_period:r = 1
+				object:t = "vip_person"
+			}
+		}
+		actions {
+			moSetObjectiveStatus {
+				target:t = "dlc_newbie_fight_vip"
+				status:i = 3
+				object_marking:i = 0
+				object_var_comp_op:t = "equal"
+				object_var_name:t = ""
+			}
+			wait {
+				time:r = 3
+			}
+			missionFailed {
+
+			}
+		}
+		else_actions {
+
+		}
+	}
+	ju88_02_killed {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ANY"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isAlive"
+				object_marking:i = 0
+				func:t = "less"
+				value:i = 1
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object:t = "ju_88_02"
+			}
+			unitDistanceBetween {
+				value:r = 3500
+				math:t = "2D"
+				object_type:t = "isAlive"
+				target_type:t = "isAlive"
+				check_objects:t = "any"
+				check_targets:t = "any"
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				target_marking:i = 0
+				object:t = "ju_88_02"
+				target:t = "end_waypoint"
+			}
+		}
+		actions {
+			moSetObjectiveStatus {
+				target:t = "dlc_newbie_fight_vip"
+				status:i = 2
+				object_marking:i = 0
+				object_var_comp_op:t = "equal"
+				object_var_name:t = ""
+			}
+			wait {
+				time:r = 3
+			}
+			moAddMissionObjective {
+				target:t = "dlc_newbie_fight_return"
+			}
+			unitMoveTo {
+				target:t = "patrol_point"
+				follow_target:b = true
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = true
+				shouldKeepFormation:b = false
+				teleportHeightValue:r = 1000
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_var_name:t = ""
+				target_var_comp_op:t = "equal"
+				target_var_value:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				fastClimb:b = false
+				destTimeMode:b = false
+				horizontalDirectionForTeleport:b = true
+				object:t = "vip_person"
+				follow_offset:p3 = -150, 20, 20
+			}
+			triggerEnable {
+				target:t = "bf109_escaped"
+				target:t = "complete_mission"
+			}
+			wait {
+				time:r = 40
+			}
+			unitMoveTo {
+				target:t = "end_waypoint"
+				follow_target:b = false
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = true
+				shouldKeepFormation:b = false
+				teleportHeightValue:r = 1000
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_var_name:t = ""
+				target_var_comp_op:t = "equal"
+				target_var_value:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				fastClimb:b = false
+				destTimeMode:b = false
+				horizontalDirectionForTeleport:b = true
+				object:t = "bf109_01"
+				object:t = "bf109_02"
+			}
+			wait {
+				time:r = 10
+			}
+			unitSetIndication {
+				set:b = false
+				target:t = "bf109_01"
+				target:t = "bf109_02"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	complete_mission {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitDistanceBetween {
+				value:r = 1500
+				math:t = "2D"
+				object_type:t = "isAlive"
+				target_type:t = "isAlive"
+				check_objects:t = "any"
+				check_targets:t = "any"
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				target_marking:i = 0
+				object:t = "vip_person"
+				target:t = "patrol_point"
+			}
+		}
+		actions {
+			triggerEnable {
+				target:t = "newbie_alive_succes"
+			}
+			wait {
+				time:r = 3
+			}
+			moSetObjectiveStatus {
+				target:t = "dlc_newbie_fight_return"
+				status:i = 2
+				object_marking:i = 0
+				object_var_comp_op:t = "equal"
+				object_var_name:t = ""
+			}
+			wait {
+				time:r = 3
+			}
+			missionCompleted {
+				timer:b = false
+			}
+			wait {
+				time:r = 3
+			}
+			missionDebriefing {
+
+			}
+		}
+		else_actions {
+
+		}
+	}
+	vip_killed {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = true
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenStatus {
+				object_type:t = "isKilled"
+				object_marking:i = 0
+				check_objects:t = "any"
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_type:t = "isAlive"
+				check_period:r = 1
+				object:t = "vip_person"
+			}
+		}
+		actions {
+			unitMark {
+				target_marking:i = 0
+				target:t = "vip_person"
+				useForTriggerFiltered:b = true
+			}
+		}
+		else_actions {
+
+		}
+	}
+	newbie_alive_fail {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenStatus {
+				object_type:t = "isKilled"
+				object_marking:i = 0
+				check_objects:t = "any"
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_type:t = "isAlive"
+				check_period:r = 1
+				object:t = "vip_person"
+			}
+		}
+		actions {
+			moSetObjectiveStatus {
+				target:t = "dlc_newbie_fight_newbie_alive"
+				status:i = 3
+				object_marking:i = 0
+				object_var_comp_op:t = "equal"
+				object_var_name:t = ""
+			}
+		}
+		else_actions {
+
+		}
+	}
+	newbie_alive_succes {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 0.1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isAlive"
+				object_marking:i = 0
+				func:t = "notLess"
+				value:i = 4
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object:t = "vip_person"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "newbie_alive_fail"
+			}
+			moSetObjectiveStatus {
+				target:t = "dlc_newbie_fight_newbie_alive"
+				status:i = 2
+				object_marking:i = 0
+				object_var_comp_op:t = "equal"
+				object_var_name:t = ""
+			}
+		}
+		else_actions {
+
+		}
+	}
+	ju88_02_damaged {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ANY"
+			enableAfterComplete:b = true
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenStatus {
+				object_type:t = "damaged"
+				object_marking:i = 0
+				check_objects:t = "any"
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_type:t = "isAlive"
+				check_period:r = 1
+				object:t = "ju_88_02"
+			}
+			unitWhenStatus {
+				object_type:t = "isKilled"
+				object_marking:i = 0
+				check_objects:t = "any"
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_type:t = "isAlive"
+				check_period:r = 1
+				object:t = "ju_88_02"
+			}
+		}
+		actions {
+			unitDropAmmo {
+				object:t = "ju_88_02"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	bf109_escaped {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isAlive"
+				object_marking:i = 0
+				func:t = "less"
+				value:i = 3
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object:t = "bf109_01"
+			}
+		}
+		actions {
+			unitMoveTo {
+				target:t = "bombers_point"
+				follow_target:b = false
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = true
+				shouldKeepFormation:b = false
+				teleportHeightValue:r = 1000
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_var_name:t = ""
+				target_var_comp_op:t = "equal"
+				target_var_value:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				fastClimb:b = false
+				destTimeMode:b = false
+				horizontalDirectionForTeleport:b = true
+				object:t = "bf109_01"
+			}
+			wait {
+				time:r = 20
+			}
+			unitSetIndication {
+				set:b = false
+				target:t = "bf109_01"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	bf_109_01_killed {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isAlive"
+				object_marking:i = 0
+				func:t = "less"
+				value:i = 3
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object:t = "bf109_01"
+			}
+		}
+		actions {
+			unitWakeUp {
+				target:t = "bf109_02"
+			}
+			unitAttackTarget {
+				playerAttracted:b = true
+				object:t = "bf109_02"
+				target:t = "player_wing"
+				target:t = "vip_person"
+				playerAttractedCount:i = 2
+				playerAttractedEffRate:r = 0.7
+			}
+			unitSetIndication {
+				set:b = true
+				target:t = "bf109_02"
+			}
+		}
+		else_actions {
+
+		}
+	}
+}
+mission_objectives {
+	isCategory:b = true
+	is_enabled:b = true
+	dlc_newbie_fight_vip {
+		is_enabled:b = false
+		comments:t = ""
+		type:t = "abstractMissionObjective"
+		props {
+			isPrimary:b = true
+			timeLimit:i = 1800
+			scoreConst:i = 100
+			scoreTime:i = 400
+		}
+		onSuccess {
+
+		}
+		onFailed {
+
+		}
+	}
+	dlc_newbie_fight_to_waypoint {
+		is_enabled:b = false
+		comments:t = ""
+		type:t = "abstractMissionObjective"
+		props {
+			isPrimary:b = true
+			timeLimit:i = 1800
+			scoreConst:i = 100
+			scoreTime:i = 400
+		}
+		onSuccess {
+
+		}
+		onFailed {
+
+		}
+	}
+	dlc_newbie_fight_return {
+		is_enabled:b = false
+		comments:t = ""
+		type:t = "abstractMissionObjective"
+		props {
+			isPrimary:b = true
+			timeLimit:i = 1800
+			scoreConst:i = 100
+			scoreTime:i = 400
+		}
+		onSuccess {
+
+		}
+		onFailed {
+
+		}
+	}
+	dlc_newbie_fight_newbie_alive {
+		is_enabled:b = false
+		comments:t = ""
+		type:t = "abstractMissionObjective"
+		props {
+			isPrimary:b = false
+			timeLimit:i = 1800
+			scoreConst:i = 100
+			scoreTime:i = 400
+		}
+		onSuccess {
+
+		}
+		onFailed {
+
+		}
+	}
+}
+variables {
+	enemies_count:i = 0
+	close_fight_success:i = 0
+}
+dialogs {
+
+}
+airfields {
+
+}
+effects {
+
+}
+units {
+	armada {
+		name:t = "player_wing"
+		tm:m = [[-0.573576, 0.0, -0.819152] [0.0, 1.0, 0.0] [0.819152, 0.0, -0.573576] [21392.9, 3453.4, 10670.3]]
+		unit_class:t = "yak-3"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = "Yak3_default"
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 4
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			numInWing:i = 2
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "vip_person"
+		tm:m = [[-0.573576, 0.0, -0.819152] [0.0, 1.0, 0.0] [0.819152, 0.0, -0.573576] [21184.9, 3453.4, 10297.0]]
+		unit_class:t = "yak-3"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = "Yak3_default"
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 4
+			free_distance:r = 120
+			floating_distance:r = 100
+			minimum_distance_to_earth:r = 70
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			numInWing:i = 2
+			targetableByAi:b = false
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "ju_88_02"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [5106.45, 3454.9, 18918.3]]
+		unit_class:t = "he-111h-6"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = "he-111h-6_8xSC250"
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 30
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			numInWing:i = 9
+			targetableByAi:b = true
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3.5
+				col_distances:r = 3.5
+				super_formation:t = "Diamond"
+				super_row_distances:r = 2.5
+				super_col_distances:r = 2.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "bf109_01"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1774.25, 4190.5, 16193.0]]
+		unit_class:t = "bf-109k-4"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = "Bf_109K4_default"
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 12
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			targetableByAi:b = false
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "air_defence_01"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [21180.6, 43.1876, -15606.2]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "air_defence_02"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [21486.2, 43.1926, -15190.6]]
+		unit_class:t = "germ_37mm_flak43"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "air_defence_03"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [21468.7, 45.0166, -14688.0]]
+		unit_class:t = "germ_37mm_flak43"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "air_defence_04"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [21297.8, 56.1573, -14415.0]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "air_defence_05"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [20786.3, 43.0479, -16348.2]]
+		unit_class:t = "germ_37mm_flak43"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "air_defence_06"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [20284.4, 44.0723, -16641.4]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "air_defence_07"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [19377.6, 63.3792, -16723.0]]
+		unit_class:t = "germ_37mm_flak43"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "air_defence_08"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [18912.3, 65.1001, -16431.4]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "air_defence_17"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [21472.9, 53.3956, -16088.5]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "air_defence_18"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [21778.6, 65.1279, -15672.9]]
+		unit_class:t = "germ_37mm_flak43"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "air_defence_19"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [21761.1, 43.8754, -15170.3]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "air_defence_20"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [21590.2, 44.2826, -14897.3]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "air_defence_21"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [21078.7, 43.5135, -16830.5]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "air_defence_22"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [20972.6, 47.1494, -17909.9]]
+		unit_class:t = "germ_37mm_flak43"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "air_defence_23"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [19670.0, 42.8878, -17205.2]]
+		unit_class:t = "germ_37mm_flak43"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "air_defence_16"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [19204.7, 52.483, -16913.6]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "berlin_aaa_01"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [3833.25, 42.25, 8465.6]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "berlin_aaa_02"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [2886.8, 42.25, 7186.3]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "berlin_aaa_03"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [3852.3, 42.25, 6404.6]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "berlin_aaa_04"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [5839.55, 42.25, 5500.6]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "berlin_aaa_05"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [6438.15, 42.25, 5295.6]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "berlin_aaa_06"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [4960.4, 42.25, 5163.5]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "berlin_aaa_07"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [5933.95, 42.25, 4358.6]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "berlin_aaa_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [3987.05, 49.45, 5775.55]]
+		props {
+			squad_members:t = "berlin_aaa_01"
+			squad_members:t = "berlin_aaa_02"
+			squad_members:t = "berlin_aaa_03"
+			squad_members:t = "berlin_aaa_04"
+			squad_members:t = "berlin_aaa_05"
+			squad_members:t = "berlin_aaa_06"
+			squad_members:t = "berlin_aaa_07"
+		}
+	}
+	armada {
+		name:t = "bf109_02"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [8569.8, 5454.9, 8391.5]]
+		unit_class:t = "bf-109k-4"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = "Bf_109K4_default"
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 12
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			targetableByAi:b = false
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "players_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [9489.05, 63.85, 16012.1]]
+		props {
+			squad_members:t = "player_wing"
+			object_type:t = "isPlayer"
+		}
+	}
+}
+areas {
+	waypoint {
+		type:t = "Point"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [10445.2, 3000.0, 13314.2]]
+		props {
+
+		}
+	}
+	end_waypoint {
+		type:t = "Point"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [18444.8, 3000.0, -12974.3]]
+		props {
+
+		}
+	}
+	bombers_point {
+		type:t = "Point"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [22885.0, 3000.0, -23437.0]]
+		props {
+
+		}
+	}
+	patrol_point {
+		type:t = "Point"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [23660.4, 3000.0, 575.0]]
+		props {
+
+		}
+	}
+	briefing_point {
+		type:t = "Point"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [26069.9, 3000.0, 15859.5]]
+		props {
+
+		}
+	}
+}
+objLayers {
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+}
+wayPoints {
+
 }

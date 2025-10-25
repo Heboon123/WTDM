@@ -1,12 +1,12 @@
 from "%rGui/globals/ui_library.nut" import *
 
 let colors = require("%rGui/style/colors.nut")
-let voiceChatState = require("voiceChatState.nut")
+let voiceChatState = require("%rGui/chat/voiceChatState.nut")
 let fontsState = require("%rGui/style/fontsState.nut")
 
 let voiceChatElements = function() {
   let children = []
-  foreach (idx, member in voiceChatState.voiceChatMembers.value) {
+  foreach (idx, member in voiceChatState.voiceChatMembers.get()) {
     let voiceChatMember = member
     let prevVisIdx = voiceChatMember.visibleIdx
     let curVisIdx = idx
@@ -39,7 +39,7 @@ let voiceChatElements = function() {
         }
       ]
       key = $"voice_chat_{voiceChatMember.id}"
-      opacity = voiceChatMember.needShow.value ? 1.0 : 0.0
+      opacity = voiceChatMember.needShow.get() ? 1.0 : 0.0
       transform = {}
       transitions = [{ prop = AnimProp.opacity, duration = voiceChatMember.animTime, easing = OutCubic }]
       animations = [

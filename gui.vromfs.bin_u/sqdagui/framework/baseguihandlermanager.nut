@@ -146,7 +146,7 @@ let handlersManager = {
     }
     catch (errorMessage) {
       let handlerName = this.getHandlerClassDebugName(handler)
-      let message = format("Error on init handler %s:\n%s", handlerName, errorMessage)
+      let message = $"Error on init handler /*handlerName = {handlerName}, errorMessage = {errorMessage}*/"
       script_net_assert_once(handlerName, message)
       let hType = this.getHandlerType(handler.getclass())
       if (hType == handlerType.MODAL) {
@@ -278,7 +278,7 @@ let handlersManager = {
     handler = this.createHandler(handlerClass, guiScene, params)
     this.handlers[handlerType.MODAL].append(handler.weakref())
 
-    let scene = guiScene.loadModal("", handler.sceneBlkName || "%gui/emptyScene.blk", "rootScene", handler)
+    let scene = guiScene.loadModal("", handler.sceneBlkName ?? "%gui/emptyScene.blk", "rootScene", handler)
     scene.id = $"modal_wnd_{++this.sceneObjIdx} {handler.sceneBlkName}" 
     handler.scene = scene
 
@@ -676,7 +676,7 @@ let handlersManager = {
     this.restoreDataByTriggerHandler[triggerHandlerClass] <- null
 
     let openData = restoreData?.openData
-    let handler = this.loadHandler(restoreData.handlerClass, openData || {})
+    let handler = this.loadHandler(restoreData.handlerClass, openData ?? {})
 
     let stateData = restoreData?.stateData
     if (stateData != null)

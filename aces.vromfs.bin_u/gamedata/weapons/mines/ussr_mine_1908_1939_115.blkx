@@ -1,40 +1,206 @@
-{
-  "bombGun": true,
-  "preset_cost": 10,
-  "reloadTime": 90.0,
-  "shotFreq": 0.2,
-  "sound": "weapon.bombgun",
-  "createGunEffects": true,
-  "mesh": "mine_1908_115",
-  "bomb": {
-    "mass": 592.0,
-    "explosiveType": "tnt",
-    "explosiveMass": 115.0,
-    "bombType": "he_bomb",
-    "sound": "weapon.bomb_std",
-    "explosionFx": "water_under_explosion_big",
-    "drownFx": "bomb_reflection",
-    "dynamicKv": true,
-    "isMine": true,
-    "lifeTime": 900.0,
-    "armTime": 4.0,
-    "explDist": 2.0,
-    "damage": {
-      "explosive": {
-        "radius": 0.0,
-        "offset": 0.0
-      },
-      "shatter": {
-        "useRealShatters": true,
-        "countPortion": 0.0
-      }
-    },
-    "DamageParts": {
-      "body": {
-        "hp": 5.0,
-        "armorClass": "ship_structural_steel",
-        "armorThickness": 1.0
-      }
-    }
-  }
+bombGun:b = true
+preset_cost:i = 10
+reloadTime:r = 90
+shotFreq:r = 0.2
+sound:t = "weapon.bombgun"
+createGunEffects:b = true
+mesh:t = "mine_1908_115"
+bomb {
+	mass:r = 592
+	explosiveType:t = "tnt"
+	explosiveMass:r = 115
+	bombType:t = "he_bomb"
+	sound:t = "weapon.bomb_std"
+	dynamicKv:b = true
+	isMine:b = true
+	lifeTime:r = 900
+	armTime:r = 4
+	explDist:r = 3
+	fxGroundDust:t = "dust_ground_explosions_wave_dirt_med"
+	fxGrassDust:t = "dust_ground_explosions_wave_dirt_med"
+	fxSandDust:t = "dust_ground_explosions_wave_sand_med"
+	fxSnowDust:t = "dust_ground_explosions_wave_snow_med"
+	fxConcreteDust:t = "dust_ground_explosions_wave_concrete_med"
+	fxWaterShockWave:t = "dust_waterwave_big"
+	selfDestructionFx:t = "explosion_air_selfexplosion_big"
+	explosionEffect:t = "hit_106_132mm_metal_ap"
+	groundCollisionEffect:t = "hit_106_132mm_dirt_ap"
+	ricochetEffect:t = "hit_106_132mm_metal_ap"
+	waterCollisionEffect:t = "hit_106_132mm_water_ap"
+	waterRicochetEffect:t = "hit_106_132mm_water_ap"
+	groundRicochetEffect:t = "hit_106_132mm_dirt_ap"
+	fallToUnitFx:t = "hit_81_105mm_metal_ap"
+	fallToWaterFx:t = "bomb_reflection_big"
+	drownFx:t = "bomb_reflection"
+	explosionFx:t = "water_under_explosion_big"
+	waterExplosionEffect:t = "water_explosion_big"
+	underwaterExplosionEffect:t = "underwater_explosion"
+	explosionPatchRadius:r = 4
+	rendinstDamageRadius:r = 9
+	shatterPatchRadius:r = 0
+	explosionPatchRadius:r = 12
+	explosionPatchHeightScale:r = 0.15
+	damage {
+		explosive {
+			radius:r = 0
+			offset:r = 0
+		}
+		shatter {
+			useRealShatters:b = true
+			countPortion:r = 0
+		}
+	}
+	DamageParts {
+		body {
+			hp:r = 5
+			armorClass:t = "ship_structural_steel"
+			armorThickness:r = 1
+		}
+	}
+	collisions {
+		default {
+			fx:t = "hit_106_132mm_dirt_ap"
+			ricochetFx:t = "hit_106_132mm_dirt_ap"
+		}
+		horLandMesh {
+			fx:t = "hit_106_132mm_dirt_ap"
+			ricochetFx:t = "hit_106_132mm_dirt_ap"
+		}
+		soil {
+			fx:t = "hit_106_132mm_dirt_ap"
+			ricochetFx:t = "hit_106_132mm_dirt_ap"
+		}
+		dirt {
+			fx:t = "hit_106_132mm_dirt_ap"
+			ricochetFx:t = "hit_106_132mm_dirt_ap"
+		}
+		road {
+			fx:t = "hit_106_132mm_dirt_ap"
+			ricochetFx:t = "hit_106_132mm_dirt_ap"
+		}
+		bricks_red {
+			fx:t = "hit_106_132mm_stone_ap"
+			ricochetFx:t = "hit_106_132mm_stone_ap"
+		}
+		roadSoil {
+			fx:t = "hit_106_132mm_dirt_ap"
+			ricochetFx:t = "hit_106_132mm_dirt_ap"
+		}
+		steppe {
+			fx:t = "hit_106_132mm_sand_ap"
+			ricochetFx:t = "hit_106_132mm_sand_ap"
+		}
+		sand {
+			fx:t = "hit_106_132mm_sand_ap"
+			ricochetFx:t = "hit_106_132mm_sand_ap"
+		}
+		duneSand {
+			fx:t = "hit_106_132mm_sand_ap"
+			ricochetFx:t = "hit_106_132mm_sand_ap"
+		}
+		roadSand {
+			fx:t = "hit_106_132mm_sand_ap"
+			ricochetFx:t = "hit_106_132mm_sand_ap"
+		}
+		quickSand {
+			fx:t = "hit_106_132mm_sand_ap"
+			ricochetFx:t = "hit_106_132mm_sand_ap"
+		}
+		snow {
+			fx:t = "hit_106_132mm_snow_ap"
+			ricochetFx:t = "hit_106_132mm_snow_ap"
+		}
+		ice {
+			fx:t = "hit_106_132mm_snow_ap"
+			ricochetFx:t = "hit_106_132mm_snow_ap"
+		}
+		roadSnow {
+			fx:t = "hit_106_132mm_snow_ap"
+			ricochetFx:t = "hit_106_132mm_snow_ap"
+		}
+		snowLower {
+			fx:t = "hit_106_132mm_snow_ap"
+			ricochetFx:t = "hit_106_132mm_snow_ap"
+		}
+		glass {
+			fx:t = "armoured_glass"
+			ricochetFx:t = "armoured_glass"
+		}
+		wood {
+			fx:t = "hit_106_132mm_wood_ap"
+			ricochetFx:t = "hit_106_132mm_wood_ap"
+		}
+		steel {
+			fx:t = "hit_106_132mm_metal_ap"
+			ricochetFx:t = "hit_106_132mm_metal_ap"
+		}
+		metal {
+			fx:t = "hit_106_132mm_metal_ap"
+			ricochetFx:t = "hit_106_132mm_metal_ap"
+		}
+		tank_structural_steel {
+			fx:t = "hit_106_132mm_metal_ap"
+			ricochetFx:t = "hit_106_132mm_metal_ap"
+		}
+		aluminum_armor {
+			fx:t = "hit_106_132mm_metal_ap"
+			ricochetFx:t = "hit_106_132mm_metal_ap"
+		}
+		tank_rubber_screens {
+			fx:t = "hit_106_132mm_stone_ap"
+			ricochetFx:t = "hit_106_132mm_stone_ap"
+		}
+		buildings {
+			fx:t = "hit_106_132mm_stone_ap"
+			ricochetFx:t = "hit_106_132mm_stone_ap"
+		}
+		verLandMesh {
+			fx:t = "hit_106_132mm_stone_ap"
+			ricochetFx:t = "hit_106_132mm_stone_ap"
+		}
+		concrete {
+			fx:t = "hit_106_132mm_stone_ap"
+			ricochetFx:t = "hit_106_132mm_stone_ap"
+		}
+		rocks {
+			fx:t = "hit_106_132mm_stone_ap"
+			ricochetFx:t = "hit_106_132mm_stone_ap"
+		}
+		rocksSlippery {
+			fx:t = "hit_106_132mm_stone_ap"
+			ricochetFx:t = "hit_106_132mm_stone_ap"
+		}
+		fabric {
+			fx:t = "hit_59_80mm_fabric"
+			ricochetFx:t = "hit_59_80mm_fabric"
+		}
+		stone_snow {
+			fx:t = "hit_106_132mm_snow_ap"
+			ricochetFx:t = "hit_106_132mm_snow_ap"
+		}
+		armorPierceLowCal {
+			fx:t = "hit_106_132mm_metal_ap"
+			ricochetFx:t = "hit_106_132mm_metal_ap"
+		}
+		armorPierceMedCal {
+			fx:t = "hit_106_132mm_metal_ap"
+			ricochetFx:t = "hit_106_132mm_metal_ap"
+		}
+		armorPierceHiCal {
+			fx:t = "hit_106_132mm_metal_ap"
+			ricochetFx:t = "hit_106_132mm_metal_ap"
+		}
+		armorNPLowCal {
+			fx:t = "hit_106_132mm_metal_ap"
+			ricochetFx:t = "hit_106_132mm_metal_ap"
+		}
+		armorNPMedCal {
+			fx:t = "hit_106_132mm_metal_ap"
+			ricochetFx:t = "hit_106_132mm_metal_ap"
+		}
+		armorNPHiCal {
+			fx:t = "hit_106_132mm_metal_ap"
+			ricochetFx:t = "hit_106_132mm_metal_ap"
+		}
+	}
 }

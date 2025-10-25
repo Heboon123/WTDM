@@ -25,7 +25,7 @@ let guiStartWeaponryPresets = require("%scripts/weaponry/guiStartWeaponryPresets
 let { checkUnitWeapons, checkUnitSecondaryWeapons,
   needSecondaryWeaponsWnd } = require("%scripts/weaponry/weaponryInfo.nut")
 let { canBuyNotResearched, canResearchUnit, isUnitInResearch,
-  isUnitDescriptionValid, isUnitUsable, isUnitFeatureLocked, isUnitResearched
+  isUnitDescriptionValid, isUnitUsable, isUnitFeatureLocked, isUnitResearched, isTestFlightAvailable
 } = require("%scripts/unit/unitStatus.nut")
 let { isUnitInSlotbar } = require("%scripts/unit/unitInSlotbarStatus.nut")
 let { isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitWeaponryInfo.nut")
@@ -43,8 +43,13 @@ let { needShowUnseenNightBattlesForUnit } = require("%scripts/events/nightBattle
 let { needShowUnseenModTutorialForUnit } = require("%scripts/missions/modificationTutorial.nut")
 let { showUnitGoods } = require("%scripts/onlineShop/onlineShopModel.nut")
 let takeUnitInSlotbar = require("%scripts/unit/takeUnitInSlotbar.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
-let { gui_start_decals } = require("%scripts/customization/contentPreview.nut")
+let { findItemById } = require("%scripts/items/itemsManagerModule.nut")
+let { gui_start_decals,
+
+
+
+
+} = require("%scripts/customization/contentPreview.nut")
 let { guiStartTestflight } = require("%scripts/missionBuilder/testFlightState.nut")
 let { hasInWishlist, isWishlistFull } = require("%scripts/wishlist/wishlistManager.nut")
 let { addToWishlist } = require("%scripts/wishlist/addWishWnd.nut")
@@ -104,7 +109,7 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
       actionFunc = function () {
         checkQueueAndStart(function () {
           broadcastEvent("BeforeStartShowroom")
-          showedUnit(unit)
+          showedUnit.set(unit)
           handlersManager.animatedSwitchScene(gui_start_decals)
         }, null, "isCanModifyCrew")
       }
@@ -318,7 +323,7 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
 
       actionText = unit.unitType.getTestFlightText()
       icon       = unit.unitType.testFlightIcon
-      showAction = inMenu && ::isTestFlightAvailable(unit, shouldSkipUnitCheck)
+      showAction = inMenu && isTestFlightAvailable(unit, shouldSkipUnitCheck)
       actionFunc = function () {
         checkQueueAndStart(@() guiStartTestflight({ unit, shouldSkipUnitCheck }),
           null, "isCanNewflight")
@@ -398,6 +403,21 @@ let getActions = kwarg(function getActions(unitObj, unit, actionsNames, crew = n
       }
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     actions.append({
       actionName   = action
       action       = actionFunc
@@ -423,12 +443,12 @@ let showMenu = function showMenu(params) {
   if (params?.needClose) {
     let handler = handlersManager.findHandlerClassInScene(gui_handlers.ActionsList)
     handler?.close()
-    if ((!showConsoleButtons.value || is_mouse_last_time_used()) && params?.unitObj)
-      if (showConsoleButtons.value)
+    if ((!showConsoleButtons.get() || is_mouse_last_time_used()) && params?.unitObj)
+      if (showConsoleButtons.get())
         delayedTooltipOnHover(params?.unitObj)
       else
         params.handler.guiScene.updateTooltip(params?.unitObj)
-    unitContextMenuState(null)
+    unitContextMenuState.set(null)
     return
   }
 
@@ -439,7 +459,7 @@ let showMenu = function showMenu(params) {
     handler = null
     needCloseTooltips = params?.needCloseTooltips ?? false
     closeOnUnhover = params?.closeOnUnhover ?? true
-    onDeactivateCb = @() unitContextMenuState(null)
+    onDeactivateCb = @() unitContextMenuState.set(null)
     actions = actions
     cssParams = {["min-width"] = "1@mainMenuButtonWidth"}
   }
@@ -452,7 +472,7 @@ function onCloseActionsList(data) {
   if (unitContextMenuState.get()?.unitObj == null ||
     unitContextMenuState.get().unitObj != data.listParent)
     return
-  unitContextMenuState(null)
+  unitContextMenuState.set(null)
 }
 
 addListenersWithoutEnv({

@@ -1,22 +1,22 @@
-"@delete:dx12" {}
-dx12{
-  debug {
-    loadPixCapturer:b=no
-  }
-  onlyPreallocatedHeaps:b=no
-  preallocHeap { sizeMB:i=1024; }
-  preallocHeap { sizeMB:i=32;   cpuCached:b=yes; }
-  preallocHeap { sizeMB:i=4;    gpuExec:b=yes; }
+"@override:texStreaming" {
+  forceMemQuotaKB:i=2355200  // 2300M
 }
 
-"@override:cfdWind"
-{
-  "@override:particleInfluenceThresholdMin":r=15.0
-  "@override:particleInfluenceThresholdMax":r=15.0
+"@override:video" {
+  resolution:t="1920x1080"
+  antialiasing_mode:t="high_fxaa"
+  antialiasing_upscaling:t="native"
 }
 
-"@override:graphics"
-{
-  forcePanoramaInHangar:b=yes
+"@override:graphics" {
+  fxQuality:t="medium"
+  fxDensityMul:r=0.95 // deprecated
+  tireTracksQuality:i=2
+  foamQuality:t="medium"
+  rendinstDistMul:r=1.0
+  grassRadiusMul:r=1
+  shadowQuality:t="medium"
+  multislicedImpostors:b=no
+  cloudsQuality:i=-1
 }
-hangarBlk:t="config/hangar_xboxone.blk"
+

@@ -1,7 +1,8 @@
-from "%scripts/dagui_natives.nut" import save_online_single_job, save_profile, get_time_till_decals_disabled, is_decals_disabled, hangar_get_attachable_tm, set_option_delayed_download_content, hangar_prem_vehicle_view_close, reload_user_skins
+from "%scripts/dagui_natives.nut" import save_online_single_job, get_time_till_decals_disabled, is_decals_disabled, hangar_get_attachable_tm, set_option_delayed_download_content, hangar_prem_vehicle_view_close, reload_user_skins
 from "%scripts/dagui_library.nut" import *
 from "%scripts/customization/customizationConsts.nut" import PREVIEW_MODE, TANK_CAMO_SCALE_SLIDER_FACTOR, TANK_CAMO_ROTATION_SLIDER_FACTOR
 from "%scripts/options/optionsCtors.nut" import create_option_combobox, create_option_slider, create_option_switchbox
+from "chard" import save_profile
 
 let { getObjIdByPrefix } = require("%scripts/utils_sa.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -16,7 +17,8 @@ let time = require("%scripts/time.nut")
 let { acos, PI } = require("math")
 let penalty = require("penalty")
 let { hangar_is_model_loaded, hangar_get_loaded_unit_name, hangar_force_reload_model, hangar_focus_model,
-  hangar_set_dm_viewer_mode, DM_VIEWER_NONE, DM_VIEWER_EXTERIOR, force_retrace_decorators
+  hangar_set_dm_viewer_mode, DM_VIEWER_NONE, DM_VIEWER_EXTERIOR, force_retrace_decorators, hangar_weapon_loaded,
+  set_presentation_animation_behaviour_flag, BEHAVIOUR_COND_IS_PREVIEW
 } = require("hangar")
 let { get_last_skin, mirror_current_decal, get_mirror_current_decal,
   apply_skin, apply_skin_preview, notify_decal_menu_visibility,
@@ -34,10 +36,16 @@ let { showResource, canStartPreviewScene,
 let { openUrl } = require("%scripts/onlineShop/url.nut")
 let { placePriceTextToButton, warningIfGold } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let guiStartWeaponryPresets = require("%scripts/weaponry/guiStartWeaponryPresets.nut")
-let { canBuyNotResearched, isUnitDescriptionValid } = require("%scripts/unit/unitStatus.nut")
+let { canBuyNotResearched, isUnitDescriptionValid, isTestFlightAvailable } = require("%scripts/unit/unitStatus.nut")
 let { isUnitHaveSecondaryWeapons } = require("%scripts/unit/unitWeaponryInfo.nut")
 let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 let decorMenuHandler = require("%scripts/customization/decorMenuHandler.nut")
+
+
+
+
+
+
 let { getDecorLockStatusText, getDecorButtonView } = require("%scripts/customization/decorView.nut")
 let { isPlatformPC } = require("%scripts/clientState/platform.nut")
 let { canUseIngameShop, getShopItemsTable } = require("%scripts/onlineShop/entitlementsShopData.nut")
@@ -49,9 +57,10 @@ let { havePremium } = require("%scripts/user/premium.nut")
 let { needSuggestSkin, saveSeenSuggestedSkin } = require("%scripts/customization/suggestedSkins.nut")
 let { getAxisTextOrAxisName } = require("%scripts/controls/controlsVisual.nut")
 let { getDecorator } = require("%scripts/customization/decorCache.nut")
-let { getSkinId, getPlaneBySkinId, getSkinNameBySkinId } = require("%scripts/customization/skinUtils.nut")
+let { getSkinId, getPlaneBySkinId, getSkinNameBySkinId, approversUnitToPreviewLiveResource
+} = require("%scripts/customization/skinUtils.nut")
 let { clearLivePreviewParams, isAutoSkinOn, setAutoSkin, setLastSkin,
-  previewedLiveSkinIds, approversUnitToPreviewLiveResource, getSkinsOption, getCurUserSkin
+  previewedLiveSkinIds , getSkinsOption, getCurUserSkin
 } = require("%scripts/customization/skins.nut")
 let { reqUnlockByClient, canDoUnlock } = require("%scripts/unlocks/unlocksModule.nut")
 let { set_option, get_option } = require("%scripts/options/optionsExt.nut")
@@ -60,14 +69,14 @@ let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { saveLocalAccountSettings, loadLocalAccountSettings } = require("%scripts/clientState/localProfile.nut")
 let { USEROPT_USER_SKIN, USEROPT_TANK_CAMO_SCALE, USEROPT_TANK_CAMO_ROTATION,
   USEROPT_TANK_SKIN_CONDITION } = require("%scripts/options/optionsExtNames.nut")
-let { getUnitName, getUnitCost, isLoadedModelHighQuality } = require("%scripts/unit/unitInfo.nut")
+let { getUnitName, getUnitCost } = require("%scripts/unit/unitInfo.nut")
 let { canBuyUnit, isUnitGift } = require("%scripts/unit/unitShopInfo.nut")
 let { get_user_skins_profile_blk } = require("blkGetters")
 let { decoratorTypes, getTypeByResourceType } = require("%scripts/customization/types.nut")
 let { updateHintPosition } = require("%scripts/help/helpInfoHandlerModal.nut")
 let { checkBalanceMsgBox } = require("%scripts/user/balanceFeatures.nut")
 let { tryShowPeriodicPopupDecalsOnOtherPlayers }  = require("%scripts/customization/suggestionShowDecalsOnOtherPlayers.nut")
-let { findItemById, getInventoryItemById } = require("%scripts/items/itemsManager.nut")
+let { findItemById, getInventoryItemById } = require("%scripts/items/itemsManagerModule.nut")
 let { saveBannedSkins, isSkinBanned, addSkinToBanned, removeSkinFromBanned } = require("%scripts/customization/bannedSkins.nut")
 let { enableObjsByTable } = require("%sqDagui/daguiUtil.nut")
 let { guiStartTestflight } = require("%scripts/missionBuilder/testFlightState.nut")
@@ -86,7 +95,6 @@ let { isProfileReceived } = require("%appGlobals/login/loginState.nut")
 let { hangar_play_presentation_anim, hangar_stop_presentation_anim, is_presentation_animation_playing } = require("hangarEventCommand")
 let { addDelayedAction } = require("%scripts/utils/delayedActions.nut")
 let { updateGamercards } = require("%scripts/gamercard/gamercard.nut")
-let { checkPackageAndAskDownload } = require("%scripts/clientState/contentPacks.nut")
 let { canJoinFlightMsgBox } = require("%scripts/squads/squadUtils.nut")
 let { canBuyUnitOnMarketplace } = require("%scripts/unit/canBuyUnitOnMarketplace.nut")
 let { canBuyUnitOnline } = require("%scripts/unit/availabilityBuyOnline.nut")
@@ -159,7 +167,6 @@ eventbus_subscribe("delayed_download_enabled_msg", @(_) delayedDownloadEnabledMs
 gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   sceneBlkName = "%gui/customization/customization.blk"
   unit = null
-  owner = null
 
   access_WikiOnline = false
   access_Decals = false
@@ -205,6 +212,7 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   needForceShowUnitInfoPanel = false
 
   decorMenu = null
+  modsSetup = null
   defaultFlag = ""
 
   skinToBan = null
@@ -212,8 +220,7 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   isSlotInfoOpenedPrevValue = null
 
   function initScreen() {
-    this.owner = this
-    this.unit = showedUnit.value
+    this.unit = showedUnit.get()
     if (!this.unit)
       return this.goBack()
     unitNameForWeapons.set(this.unit.name)
@@ -239,6 +246,13 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
     this.decorMenu = decorMenuHandler(this.scene.findObject("decor_menu_container")).weakref()
 
+    
+
+
+
+
+
+
     this.initPreviewMode()
     this.initMainParams()
     this.showDecoratorsList()
@@ -246,6 +260,7 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     this.updateDecalActionsTexts()
 
     loadModel(this.unit.name)
+    set_presentation_animation_behaviour_flag(BEHAVIOUR_COND_IS_PREVIEW, true)
 
     if (!this.isUnitOwn && !this.previewMode) {
       let skinId = this.unit.getPreviewSkinId()
@@ -309,6 +324,7 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
     this.createSkinSliders()
     this.updateMainGuiElements()
+    this.updateModifications()
   }
 
   function updateMainGuiElements() {
@@ -436,9 +452,6 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       this.switchUnit(modelName)
     else
       this.updateMainGuiElements()
-    if (hangar_get_loaded_unit_name() == this.unit.name
-        && !isLoadedModelHighQuality())
-      checkPackageAndAskDownload("pkg_main", null, null, this, "air_in_hangar", this.goBack)
   }
 
   function onEventDecalJobComplete(_params) {
@@ -578,7 +591,7 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if (hasFeature("SpendGold"))
       options.insert(0, USEROPT_TANK_SKIN_CONDITION)
 
-    let view = { isTooltipByHold = showConsoleButtons.value, rows = [] }
+    let view = { isTooltipByHold = showConsoleButtons.get(), rows = [] }
     foreach (optType in options) {
       let option = get_option(optType)
       view.rows.append({
@@ -608,7 +621,7 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     let needDisableEditing = skinDecorator?.blk.needDisableEditing
     let canAlterSkin = !(needDisableEditing ?? isMarketSkin)
 
-    let have_premium = havePremium.value
+    let have_premium = havePremium.get()
     let hasSkinCondition = curUserSkin?.condition != null
 
     let canScale = curUserSkin?.scale == null && canAlterSkin
@@ -666,7 +679,7 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if (oldValue == newValue)
       return
 
-    if (!havePremium.value) {
+    if (!havePremium.get()) {
       obj.setValue(oldValue)
       this.guiScene.performDelayed(this, @()
         this.isValid() && this.askBuyPremium(Callback(this.updateSkinSliders, this)))
@@ -721,7 +734,7 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!this.access_Attachables)
       return
 
-    let view = { isTooltipByHold = showConsoleButtons.value, buttons = [] }
+    let view = { isTooltipByHold = showConsoleButtons.get(), buttons = [] }
     for (local i = 0; i < decoratorTypes.ATTACHABLES.getMaxSlots(); i++) {
       let button = this.getViewButtonTable(i, decoratorTypes.ATTACHABLES)
       button.id = $"slot_attach_{i}"
@@ -746,8 +759,12 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     attachListObj.setValue(this.curAttachSlot)
   }
 
+  function updateModifications() {
+    this.modsSetup?.updateUnitMods(this.unit)
+  }
+
   function updateDecalSlots() {
-    let view = { isTooltipByHold = showConsoleButtons.value, buttons = [] }
+    let view = { isTooltipByHold = showConsoleButtons.get(), buttons = [] }
     for (local i = 0; i < decoratorTypes.DECALS.getMaxSlots(); i++) {
       let button = this.getViewButtonTable(i, decoratorTypes.DECALS)
       button.id = $"slot_{i}"
@@ -770,7 +787,7 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!this.access_Flags)
       return
 
-    let view = { isTooltipByHold = showConsoleButtons.value, buttons = [] }
+    let view = { isTooltipByHold = showConsoleButtons.get(), buttons = [] }
     for (local i = 0; i < decoratorTypes.FLAGS.getMaxSlots(); i++) {
       let button = this.getViewButtonTable(i, decoratorTypes.FLAGS)
       button.id = $"slot_flag_{i}"
@@ -895,7 +912,7 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       : ""
     this.scene.findObject("skin_hint_text").setValue(skinHint)
 
-    let can_testflight = ::isTestFlightAvailable(this.unit) && !this.decoratorPreview
+    let can_testflight = isTestFlightAvailable(this.unit) && !this.decoratorPreview
     let can_createUserSkin = can_save_current_skin_template()
 
     bObj = this.scene.findObject("btn_load_userskin_sample")
@@ -917,7 +934,7 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     let usableSkinsCount = (this.skinList?.access ?? []).filter(@(a) a.isOwn).len()
 
     showObjectsByTable(this.scene, {
-          btn_go_to_collection = showConsoleButtons.value && !isInEditMode && this.decorMenu?.isOpened
+          btn_go_to_collection = showConsoleButtons.get() && !isInEditMode && this.decorMenu?.isOpened
             && isCollectionItem(this.decorMenu?.getSelectedDecor())
 
           btn_apply = this.currentState & decoratorEditState.EDITING
@@ -930,8 +947,8 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
           btn_sec_weapons    = !isInEditMode && !this.decorMenu?.isOpened &&
             needSecondaryWeaponsWnd(this.unit) && isUnitHaveSecondaryWeapons(this.unit)
 
-          btn_decal_edit   = showConsoleButtons.value && !isInEditMode && !this.decorMenu?.isOpened && !focusedSlot.isEmpty && focusedSlot.unlocked
-          btn_decal_delete = showConsoleButtons.value && !isInEditMode && !this.decorMenu?.isOpened && !focusedSlot.isEmpty && focusedSlot.unlocked
+          btn_decal_edit   = showConsoleButtons.get() && !isInEditMode && !this.decorMenu?.isOpened && !focusedSlot.isEmpty && focusedSlot.unlocked
+          btn_decal_delete = showConsoleButtons.get() && !isInEditMode && !this.decorMenu?.isOpened && !focusedSlot.isEmpty && focusedSlot.unlocked
 
           btn_marketplace_consume_coupon_skin = !this.previewMode && canConsumeSkinCoupon
           btn_marketplace_find_skin = !this.previewMode && canFindSkinOnMarketplace
@@ -1006,7 +1023,7 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       return
     }
 
-    if ((this.currentState & decoratorEditState.SELECT) && showConsoleButtons.value) {
+    if ((this.currentState & decoratorEditState.SELECT) && showConsoleButtons.get()) {
       if (this.decorMenu?.isCurCategoryListObjHovered()) {
         bObj.setValue(loc("mainmenu/btnCollapse"))
         bObj["skip-navigation"] = "no"
@@ -1125,7 +1142,7 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
           : null
       }
       let view = {
-        isTooltipByHold = showConsoleButtons.value,
+        isTooltipByHold = showConsoleButtons.get(),
         buttons = [ getDecorButtonView(this.decoratorPreview, this.unit, params) ]
       }
       let slotsObj = obj.findObject("decorator_preview_div")
@@ -1135,7 +1152,7 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onUpdate(_obj, _dt) {
-    this.showLoadingRot(!hangar_is_model_loaded())
+    this.showLoadingRot(!hangar_is_model_loaded() && !hangar_weapon_loaded())
   }
 
   function getCurrentDecoratorSlot(decoratorType) {
@@ -1705,7 +1722,7 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function checkPremium() {
-    if (!havePremium.value)
+    if (!havePremium.get())
       return
 
     updateGamercards()
@@ -1937,19 +1954,18 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     
-    let afterCloseFunc = (@(owner, unit) function() { 
+    let afterCloseFunc = Callback(function() {
       let newUnitName = getShowedUnitName()
       if (newUnitName == "")
-        return setShowUnit(unit)
+        return setShowUnit(this.unit)
 
-      if (unit.name != newUnitName) {
+      if (this.unit.name != newUnitName) {
         unitNameForWeapons.set(newUnitName)
-        owner.unit = getAircraftByName(newUnitName)
-        owner.previewSkinId = null
-        if (owner && ("initMainParams" in owner) && owner.initMainParams)
-          owner.initMainParams.call(owner)
+        this.unit = getAircraftByName(newUnitName)
+        this.previewSkinId = null
+        this.initMainParams()
       }
-    })(this.owner, this.unit)
+    }, this)
 
     this.saveDecorators(false)
     this.checkedNewFlight(function() {
@@ -2270,7 +2286,7 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       if (this.initialUserSkinId != "")
         get_user_skins_profile_blk()[this.unit.name] = ""
       let isForApprove = this.previewParams?.isForApprove ?? false
-      approversUnitToPreviewLiveResource(isForApprove ? showedUnit.value : null)
+      approversUnitToPreviewLiveResource.set(isForApprove ? showedUnit.get() : null)
       addDelayedAction(Callback(function() {
         this.applySkin(this.previewParams.skinName, true)
       }, this), 100)
@@ -2299,7 +2315,11 @@ gui_handlers.DecalMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function onEventUnitBought(params) {
     this.initMainParams()
-    let unitName = params?.unitName
+
+    let { unitName = null, needSelectCrew = true } = params
+    if (!needSelectCrew)
+      return
+
     let boughtUnit = unitName ? getAircraftByName(unitName) : null
     if (!boughtUnit)
       return

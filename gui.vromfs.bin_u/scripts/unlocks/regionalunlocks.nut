@@ -14,7 +14,7 @@ let { get_charserver_time_sec } = require("chard")
 let { getTimestampFromStringUtc } = require("%scripts/time.nut")
 let { resetTimeout } = require("dagor.workcycle")
 
-let allRegionalUnlocks = Computed(@() activeUnlocks.value
+let allRegionalUnlocks = Computed(@() activeUnlocks.get()
   .filter(@(u) u?.meta.langLimits != null))
 
 let unlockNameToEndTimestamp = Computed(@() allRegionalUnlocks.get()
@@ -56,20 +56,20 @@ function updateClosestExpirationTime(...) {
 
 unlockNameToEndTimestamp.subscribe(updateClosestExpirationTime)
 
-let regionalPromos = Computed(@() allRegionalUnlocks.value
+let regionalPromos = Computed(@() allRegionalUnlocks.get()
   .filter(@(u) (u.name not in unlockNameToEndTimestamp.get())
     || ((closestExpirationTime.get() != -1)
       && (closestExpirationTime.get() <= unlockNameToEndTimestamp.get()[u.name])))
-  .filter(@(u) u.meta.langLimits.split(";").contains(curLangShortName.value))
-  .filter(@(u) (userstatStats.value.stats?[u.table].stats[$"val_{u.name}_activation"] ?? 0) == 0)
+  .filter(@(u) u.meta.langLimits.split(";").contains(curLangShortName.get()))
+  .filter(@(u) (userstatStats.get().stats?[u.table].stats[$"val_{u.name}_activation"] ?? 0) == 0)
   .map(@(u, id) u.meta.popup.__merge({ id })).values().sort(@(a, b) a.id <=> b.id))
 
-let acceptedUnlocks = Computed(@() allRegionalUnlocks.value
-  .filter(@(u) (userstatStats.value.stats?[u.table].stats[$"val_{u.name}_activation"] ?? 0) == 1))
+let acceptedUnlocks = Computed(@() allRegionalUnlocks.get()
+  .filter(@(u) (userstatStats.get().stats?[u.table].stats[$"val_{u.name}_activation"] ?? 0) == 1))
 
-let unclaimedUnlocks = Computed(@() acceptedUnlocks.value.filter(@(u) u.hasReward))
+let unclaimedUnlocks = Computed(@() acceptedUnlocks.get().filter(@(u) u.hasReward))
 
-let acceptedUnlocksBlk = Computed(@() acceptedUnlocks.value
+let acceptedUnlocksBlk = Computed(@() acceptedUnlocks.get()
   .map(function(unlock) {
     let mode = DataBlock()
     mode.loadFromText(unlock.meta.hostUnlockMode, unlock.meta.hostUnlockMode.len())
@@ -87,9 +87,9 @@ let acceptedUnlocksBlk = Computed(@() acceptedUnlocks.value
     return dataToBlk(unlockTable)
   }))
 
-let isRegionalUnlock = @(unlockId) unlockId in acceptedUnlocks.value
-let isRegionalUnlockCompleted = @(unlockId) acceptedUnlocks.value?[unlockId].isCompleted ?? false
-let isRegionalUnlockReadyToOpen = @(unlockId) unlockId in unclaimedUnlocks.value
+let isRegionalUnlock = @(unlockId) unlockId in acceptedUnlocks.get()
+let isRegionalUnlockCompleted = @(unlockId) acceptedUnlocks.get()?[unlockId].isCompleted ?? false
+let isRegionalUnlockReadyToOpen = @(unlockId) unlockId in unclaimedUnlocks.get()
 
 function getRegionalUnlockProgress(unlockId) {
   let res = {
@@ -98,10 +98,10 @@ function getRegionalUnlockProgress(unlockId) {
     curStage = -1
   }
 
-  if (unlockId not in activeUnlocks.value)
+  if (unlockId not in activeUnlocks.get())
     return res
 
-  let { stages, isCompleted, current, stage } =  activeUnlocks.value[unlockId]
+  let { stages, isCompleted, current, stage } =  activeUnlocks.get()[unlockId]
   res.maxVal =  stages.top().progress.tointeger()
   res.curVal = isCompleted ? res.maxVal : current
   res.curStage = stage - 1
@@ -109,10 +109,10 @@ function getRegionalUnlockProgress(unlockId) {
 }
 
 let getRegionalUnlockTypeById = @(unlockId)
-  get_unlock_type(acceptedUnlocksBlk.value?[unlockId].type)
+  get_unlock_type(acceptedUnlocksBlk.get()?[unlockId].type)
 
 function claimRegionalUnlockRewards() {
-  let unlocks = unclaimedUnlocks.value.filter(@(u) !(u?.manualOpen ?? false))
+  let unlocks = unclaimedUnlocks.get().filter(@(u) !(u?.manualOpen ?? false))
   if (unlocks.len() == 0)
     return
 
@@ -129,7 +129,7 @@ function claimRegionalUnlockRewards() {
 function acceptRegionalUnlock(unlockName, callback) {
   let userstatRequestData = {
     add_token = true
-    headers = { appid = APP_ID, userId = userIdInt64.value }
+    headers = { appid = APP_ID, userId = userIdInt64.get() }
     action = "ClnChangeStats"
     data = {
       [$"val_{unlockName}_activation"] = { ["$set"] = 1 },

@@ -164,9 +164,9 @@ let mapBackground = @() {
 
 let shiftPressedMonitor = {
   behavior = Behaviors.Button
-  onElemState = @(sf) isShiftPressed((sf & S_ACTIVE) != 0)
+  onElemState = @(sf) isShiftPressed.set((sf & S_ACTIVE) != 0)
   hotkeys = [["^L.Shift | R.Shift"]]
-  onDetach = @() isShiftPressed(false)
+  onDetach = @() isShiftPressed.set(false)
 }
 
 let mkMapContainer = function() {

@@ -20,13 +20,12 @@ let { GUI } = require("%scripts/utils/configs.nut")
 let { register_command } = require("console")
 let { initItemsRoulette, skipItemsRouletteAnimation } = require("%scripts/items/roulette/itemsRoulette.nut")
 let { sendBqEvent } = require("%scripts/bqQueue/bqQueue.nut")
-let { isChineseHarmonized } = require("%scripts/langUtils/language.nut")
 let { openTrophyRewardsList } = require("%scripts/items/trophyRewardList.nut")
 let openQrWindow = require("%scripts/wndLib/qrWindow.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { buildUnitSlot, fillUnitSlotTimers } = require("%scripts/slotbar/slotbarView.nut")
 let { rnd_int } = require("dagor.random")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
+let { findItemById } = require("%scripts/items/itemsManagerModule.nut")
 let { MAX_REWARDS_SHOW_IN_TROPHY, getTrophyRewardType, processTrophyRewardsUserlogData, isRewardItem,
   getRestRewardsNumLayer
 } = require("%scripts/items/trophyReward.nut")
@@ -66,9 +65,9 @@ let class EveryDayLoginAward (gui_handlers.BaseGuiHandlerWT) {
     this.initExpTexts()
 
     move_mouse_on_obj(this.getObj("btn_nav_open"))
-    let sendShortcuts = showConsoleButtons.value ? "{{INPUT_BUTTON GAMEPAD_R1}}" : ""
+    let sendShortcuts = showConsoleButtons.get() ? "{{INPUT_BUTTON GAMEPAD_R1}}" : ""
     let tipHint = loc("dailyAward/playWTM", {sendShortcuts})
-    let textObjName = showConsoleButtons.value ? "wtm_text_console" : "wtm_text"
+    let textObjName = showConsoleButtons.get() ? "wtm_text_console" : "wtm_text"
 
     showObjById(textObjName, true, this.scene).setValue(tipHint)
   }
@@ -101,10 +100,6 @@ let class EveryDayLoginAward (gui_handlers.BaseGuiHandlerWT) {
     let data = guiBlk?.every_day_login_award
     if (!data)
       return
-    local imageSectionName = "image"
-    let imageSectionNameAlt = "tencent_image"
-    if (isChineseHarmonized() && u.isDataBlock(data[imageSectionNameAlt]))
-      imageSectionName = imageSectionNameAlt
 
     this.savePeriodAwardData(data)
 
@@ -122,7 +117,7 @@ let class EveryDayLoginAward (gui_handlers.BaseGuiHandlerWT) {
                                }
                              })
 
-    this.updateBackgroundImage(data?[imageSectionName])
+    this.updateBackgroundImage(data?.image)
 
     this.updateObjectByData(data, {
                                 name = "progressBar",
@@ -681,8 +676,8 @@ let class EveryDayLoginAward (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function updateExpTexts() {
-    this.updateTodayLoginExp(this.scene.findObject("today_login_exp"), todayLoginExp.value)
-    this.updateLoginStreakExp(this.scene.findObject("login_streak_exp"), loginStreak.value)
+    this.updateTodayLoginExp(this.scene.findObject("today_login_exp"), todayLoginExp.get())
+    this.updateLoginStreakExp(this.scene.findObject("login_streak_exp"), loginStreak.get())
   }
 
   function updateTodayLoginExp(obj, value) {

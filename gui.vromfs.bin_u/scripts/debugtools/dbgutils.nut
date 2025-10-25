@@ -9,7 +9,7 @@ let { getLocalLanguage } = require("language")
 let { reload } = require("%sqStdLibs/scriptReloader/scriptReloader.nut")
 let DataBlock  = require("DataBlock")
 let dirtyWordsFilter = require("%scripts/dirtyWordsFilter.nut")
-let { getVideoModes } = require("%scripts/options/systemOptions.nut")
+let { getVideoResolution } = require("%scripts/options/systemOptions.nut")
 let { openUrl } = require("%scripts/onlineShop/url.nut")
 let applyRendererSettingsChange = require("%scripts/clientState/applyRendererSettingsChange.nut")
 let debugWnd = require("%scripts/debugTools/debugWnd.nut")
@@ -20,6 +20,7 @@ let { multiplyDaguiColorStr } = require("%sqDagui/daguiUtil.nut")
 let { getSystemConfigOption, setSystemConfigOption } = require("%globalScripts/systemConfig.nut")
 let openEditBoxDialog = require("%scripts/wndLib/editBoxHandler.nut")
 let { isDebugModeEnabled } = require("%scripts/debugTools/dbgChecks.nut")
+let getAllUnits = require("%scripts/unit/allUnits.nut")
 
 function reload_dagui() {
   get_cur_gui_scene()?.resetGamepadMouseTarget()
@@ -49,8 +50,8 @@ function debug_change_language(isNext = true) {
 
 function debug_change_resolution(shouldIncrease = true) {
   let curResolution = getSystemConfigOption("video/resolution")
-  let list = getVideoModes(curResolution, false)
-  let curIdx = list.indexof(curResolution) || 0
+  let list = getVideoResolution(curResolution, false)
+  let curIdx = list.indexof(curResolution) ?? 0
   let newIdx = clamp(curIdx + (shouldIncrease ? 1 : -1), 0, list.len() - 1)
   let newResolution = list[newIdx]
   let done = @() dlog($"Set resolution: {newResolution}",
@@ -75,7 +76,7 @@ function to_pixels_float(value) {
 
 function debug_check_dirty_words(path = null) {
   let blk = DataBlock()
-  blk.load(path || "debugDirtyWords.blk")
+  blk.load(path ?? "debugDirtyWords.blk")
   dirtyWordsFilter.setDebugLogFunc(log)
   local failed = 0
   for (local i = 0; i < blk.paramCount(); i++) {
@@ -161,6 +162,10 @@ register_command(debug_tips_list, "debug.tips_list")
 register_command(animBg.debugLoad, "debug.load_anim_bg")
 register_command(debug_focus, "debug.focus")
 register_command(debug_open_url, "debug.open_url")
+register_command(function() {
+  getAllUnits().each(@(unit) unit.modificators = null)
+}, "debug.remove_unit_modificators")
+
 
 return {
   debug_get_skyquake_path

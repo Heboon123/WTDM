@@ -202,7 +202,7 @@ gui_handlers.wheelMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       let btnIdx = btnSet.indexof(suffix)
       let index = btnIdx != null ? (startIdx + btnIdx) : this.invalidIndex
       let item = this.menu?[index]
-      let isShow = (item?.name ?? "") != ""
+      let isShow = (item?.name ?? "") != "" && (item?.wheelmenuShow ?? true)
       let enabled = isShow && (item?.wheelmenuEnabled ?? true)
       let bObj = showObjById($"wheelmenuItem{suffix}", isShow, this.scene)
 
@@ -233,8 +233,12 @@ gui_handlers.wheelMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       return
     }
 
-    let { shortcutText = "", name = "", additionalText = "", chatMode = "" } = item
-    contentObj.findObject("shortcutText").setValue(shortcutText)
+    let { shortcutText = "", shortcutColor = "", wheelmenuEnabled = false,
+      name = "", additionalText = "", chatMode = "" } = item
+
+    contentObj.findObject("shortcutText").setValue(wheelmenuEnabled
+      ? colorize(shortcutColor, shortcutText)
+      : shortcutText)
     showObjById("shortcutTextSeparator", shortcutText!= "", contentObj)
     let nameObj = contentObj.findObject("name")
     nameObj.chatMode = chatMode
@@ -269,7 +273,7 @@ gui_handlers.wheelMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function updateSelectShortcutImage() {
     let obj = this.scene.findObject("wheelmenu_select_shortcut")
-    local isShow = showConsoleButtons.value && this.axisEnabled
+    local isShow = showConsoleButtons.get() && this.axisEnabled
     if (isShow) {
       let shortcuts = this.watchAxis?[0]
       let axesId = getComplexAxesId(shortcuts)
@@ -361,7 +365,9 @@ gui_handlers.wheelMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function isItemAvailable(index) {
-    return (this.menu?[index].name ?? "") != "" && (this.menu?[index].wheelmenuEnabled ?? true)
+    return (this.menu?[index].name ?? "") != ""
+      && (this.menu?[index].wheelmenuEnabled ?? true)
+      && (this.menu?[index].wheelmenuShow ?? true)
   }
 
   function sendAvailableAnswerDelayed(index) {
@@ -384,7 +390,7 @@ gui_handlers.wheelMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     this.isActive = show
     this.switchControlsAllowMask(this.isActive ? this.wndControlsAllowMaskWhenActive : CtrlsInGui.CTRL_ALLOW_FULL)
     setSceneActive(!this.isActive)
-    isWheelMenuActive(this.isActive)
+    isWheelMenuActive.set(this.isActive)
   }
 
   function close() {
@@ -409,7 +415,7 @@ gui_handlers.wheelMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   onEventHudTypeSwitched = @(_) this.quit()
 }
 
-isInBattleState.subscribe(@(_) isWheelMenuActive(false))
+isInBattleState.subscribe(@(_) isWheelMenuActive.set(false))
 
 return {
   guiStartWheelmenu

@@ -5,13 +5,13 @@ let { brokenEnginesCount, enginesInCooldown, enginesCount,
   transmissionCount, brokenTransmissionCount, transmissionsInCooldown, torpedosCount, brokenTorpedosCount, artilleryType,
   artilleryCount, brokenArtilleryCount, steeringGearsCount, brokenSteeringGearsCount, fire, aiGunnersState, buoyancy,
   steering, sightAngle, fwdAngle, hasAiGunners, fov, blockMoveControl, heroCoverPartsRelHp, isCoverDestroyed, burningParts
-} = require("shipState.nut")
+} = require("%rGui/shipState.nut")
 let { speedValue, speedUnits, machineSpeed } = require("%rGui/hud/shipStateView.nut")
 let { bestMinCrewMembersCount, minCrewMembersCount, totalCrewMembersCount,
-  aliveCrewMembersCount, driverAlive } = require("crewState.nut")
-let { needShowDmgIndicator } = require("hudState.nut")
-let dmModule = require("dmModule.nut")
-let { damageModule, shipSteeringGauge, hudLogBgColor } = require("style/colors.nut").hud
+  aliveCrewMembersCount, driverAlive } = require("%rGui/crewState.nut")
+let { needShowDmgIndicator } = require("%rGui/hudState.nut")
+let dmModule = require("%rGui/dmModule.nut")
+let { damageModule, shipSteeringGauge, hudLogBgColor } = require("%rGui/style/colors.nut").hud
 let { lerp, sin, round } = require("%sqstd/math.nut")
 
 const STATE_ICON_MARGIN = 1
@@ -243,7 +243,7 @@ let maxCrewLeftPercent = Computed(@() totalCrewMembersCount.get() > 0
 )
 let countCrewLeftPercent = Computed(@()
   clamp(lerp(minCrewMembersCount.get() - 1, totalCrewMembersCount.get(),
-      0, maxCrewLeftPercent.get(), aliveCrewMembersCount.get()),
+      0, maxCrewLeftPercent.get(), aliveCrewMembersCount.get().tofloat()).tointeger(),
     0, 100)
 )
 

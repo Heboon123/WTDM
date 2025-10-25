@@ -32,7 +32,10 @@ let { USEROPT_PS4_CROSSPLAY, USEROPT_PTT, USEROPT_VOICE_CHAT, USEROPT_SHOW_ACTIO
   USEROPT_BIT_COUNTRIES_TEAM_B, USEROPT_MISSION_COUNTRIES_TYPE, USEROPT_BIT_UNIT_TYPES,
   USEROPT_USE_KILLSTREAKS, USEROPT_IS_BOTS_ALLOWED, USEROPT_USE_TANK_BOTS,
   USEROPT_USE_SHIP_BOTS, USEROPT_LOAD_FUEL_AMOUNT, USEROPT_RADAR_SCAN_PATTERN_SELECT,
-  USEROPT_RADAR_SCAN_RANGE_SELECT, USEROPT_CONSOLE_GFX_PRESET
+  USEROPT_RADAR_SCAN_RANGE_SELECT, USEROPT_CONSOLE_GFX_PRESET, USEROPT_DISPLAY_MY_REAL_CLAN
+
+
+
 } = require("%scripts/options/optionsExtNames.nut")
 let { havePremium } = require("%scripts/user/premium.nut")
 let { gui_start_controls } = require("%scripts/controls/startControls.nut")
@@ -43,6 +46,7 @@ let { getMissionAllowedUnittypesMask, isSkirmishWithKillStreaks } = require("%sc
 let { isAnyQueuesActive } = require("%scripts/queue/queueState.nut")
 let { getNumberOfUnitsByYears } = require("%scripts/unit/unitInfo.nut")
 let { getMissionTeamCountries } = require("%scripts/dynCampaign/campaignHelpers.nut")
+let { getVSyncMode, setVSyncMode } = require("%scripts/options/consoleSettings.nut")
 
 function get_country_by_team(team_index) {
   local countries = null
@@ -432,6 +436,15 @@ gui_handlers.GenericOptions <- class (gui_handlers.BaseGuiHandlerWT) {
     checkQueueAndStart(@() broadcastEvent("UpdateGamercards"), @() obj.setValue(optValue), "isCanNewflight")
   }
 
+  function onChangeDisplayRealClan(obj) {
+    if (!havePremium.get())
+      return obj.setValue(false)
+    let optValue = get_option(USEROPT_DISPLAY_MY_REAL_CLAN).value
+    if (optValue == obj.getValue())
+      return
+    checkQueueAndStart(@() broadcastEvent("UpdateGamercards"), @() obj.setValue(optValue), "isCanNewflight")
+  }
+
   function setCrossNetworkChatValue(obj, value, needSendNotification = false) {
     if (checkObj(obj))
       obj.setValue(value)
@@ -504,7 +517,15 @@ gui_handlers.GenericOptions <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onConsolePresetChange(_obj) {
-    set_option_console_preset(this.getSceneOptValue(USEROPT_CONSOLE_GFX_PRESET))
+    let curValue = this.getSceneOptValue(USEROPT_CONSOLE_GFX_PRESET)
+    this.guiScene.performDelayed(this, function() {
+      set_option_console_preset(curValue)
+      setVSyncMode(getVSyncMode(true)) 
+
+
+
+
+    })
   }
 
   function onControls(_obj) {
@@ -795,7 +816,7 @@ gui_handlers.GenericOptionsModal <- class (gui_handlers.GenericOptions) {
   function onTblSelect(_obj) {
     this.checkCurrentNavigationSection()
 
-    if (showConsoleButtons.value)
+    if (showConsoleButtons.get())
       return
 
     let option = this.getSelectedOption()

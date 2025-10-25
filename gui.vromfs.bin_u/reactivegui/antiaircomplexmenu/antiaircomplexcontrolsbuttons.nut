@@ -1,8 +1,7 @@
 from "%rGui/globals/ui_library.nut" import *
 let { Irst, Radar2ModeNameId, modeNames } = require("%rGui/radarState.nut")
 let { antiAirMenuShortcutHeight, getShortcut } = require("%rGui/hints/shortcuts.nut")
-let { mkShortcutButton, mkShortcutButtonContinued
-  mkShortcutText, mkShortcutHint
+let { mkShortcutButton, mkShortcutButtonContinued, mkShortcutText, mkShortcutHint
 } = require("%rGui/antiAirComplexMenu/antiAirMenuBaseComps.nut")
 let { mkImageCompByDargKey } = require("%rGui/components/gamepadImgByKey.nut")
 let { showConsoleButtons } = require("%rGui/ctrlsState.nut")
@@ -121,7 +120,7 @@ let mkNightVisionBtn = @(contentScaleV) mkShortcutButton("ID_TANK_NIGHT_VISION",
     mkShortcutText(loc("hotkeys/ID_TANK_NIGHT_VISION"), contentScaleV),
     mkBtnHint("ID_TANK_NIGHT_VISION", "", contentScaleV)
   ], { size = [SIZE_TO_CONTENT, antiAirMenuShortcutHeight * contentScaleV],
-       padding = 0, scale = contentScaleV })
+  scale = contentScaleV, borderColor = 0xFF555555})
 
 return {
   radarColor

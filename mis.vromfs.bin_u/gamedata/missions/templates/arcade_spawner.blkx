@@ -1,1880 +1,1834 @@
-{
-  "selected_tag": "",
-  "bin_dump_file": "",
-  "mission_settings": {
-    "player": {
-      "army": 1,
-      "wing": ""
-    },
-    "player_teamB": {
-      "army": 2
-    },
-    "mission": {
-      "level": "levels/water.bin",
-      "type": "singleMission",
-      "environment": "Day",
-      "weather": "hazy",
-      "restoreType": "attempts",
-      "optionalTakeOff": false
-    },
-    "spectator_points": {}
-  },
-  "imports": {},
-  "triggers": {
-    "isCategory": true,
-    "is_enabled": true,
-    "arcade_spawn_init": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {},
-      "actions": {
-        "missionGetBalanceLevel": {
-          "input_var": "arcade_spawn_matcher"
-        },
-        "triggerEnable": [
-          {
-            "target": [
-              "arcade_spawn_near",
-              "arcade_spawn_middle",
-              "arcade_spawn_far",
-              "arcade_spawn_huge",
-              "arcade_airfield_spawn"
-            ]
-          },
-          {
-            "target": "arcade_airfield_aaa_enable"
-          }
-        ],
-        "comment": {
-          "value": ""
-        }
-      },
-      "else_actions": {}
-    },
-    "arcade_spawn_near": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {
-        "varCompareInt": {
-          "var_value": "arcade_spawn_matcher",
-          "value": 3,
-          "comparasion_func": "notMore",
-          "var_value_other": "near_limit"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": [
-            "arcade_spawn_middle",
-            "arcade_spawn_far",
-            "arcade_spawn_huge"
-          ]
-        },
-        "comment": [
-          {
-            "value": "rang 0-3"
-          },
-          {
-            "value": ""
-          },
-          {
-            "value": ""
-          }
-        ],
-        "varSetString": [
-          {
-            "value": "t1_fighters_spawn_near",
-            "var": "t1_fighters_spawn_name"
-          },
-          {
-            "value": "t2_fighters_spawn_near",
-            "var": "t2_fighters_spawn_name"
-          },
-          {
-            "value": "t1_assaults_spawn_near",
-            "var": "t1_assaults_spawn_name"
-          },
-          {
-            "value": "t2_assaults_spawn_near",
-            "var": "t2_assaults_spawn_name"
-          }
-        ],
-        "missionMarkAsRespawnPoint": [
-          {
-            "loc_name": "missions/assaults_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t1_assaults_spawn_near",
-            "team": "A",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_assault": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          },
-          {
-            "loc_name": "missions/assaults_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t2_assaults_spawn_near",
-            "team": "B",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_assault": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          },
-          {
-            "loc_name": "missions/fighters_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t1_fighters_spawn_near",
-            "team": "A",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_bomber": false,
-              "type_attack_helicopter": false,
-              "type_utility_helicopter": false,
-              "tank": false,
-              "artillery": false,
-              "aaa": false,
-              "ship": false,
-              "boat": false
-            }
-          },
-          {
-            "loc_name": "missions/fighters_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t2_fighters_spawn_near",
-            "team": "B",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_bomber": false,
-              "type_attack_helicopter": false,
-              "type_utility_helicopter": false,
-              "tank": false,
-              "artillery": false,
-              "aaa": false,
-              "ship": false,
-              "boat": false
-            }
-          }
-        ],
-        "triggerEnable": [
-          {
-            "target": "common_bombers_spawn"
-          },
-          {
-            "target": "far_bombers_spawn"
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "arcade_spawn_middle": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {
-        "varCompareInt": [
-          {
-            "var_value": "arcade_spawn_matcher",
-            "value": 7,
-            "comparasion_func": "notMore",
-            "var_value_other": "mid_limit"
-          },
-          {
-            "var_value": "arcade_spawn_matcher",
-            "value": 3,
-            "comparasion_func": "more",
-            "var_value_other": "near_limit"
-          }
-        ]
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": [
-            "arcade_spawn_near",
-            "arcade_spawn_far",
-            "arcade_spawn_huge"
-          ]
-        },
-        "comment": [
-          {
-            "value": "rang 4-6"
-          },
-          {
-            "value": ""
-          },
-          {
-            "value": ""
-          }
-        ],
-        "varSetString": [
-          {
-            "value": "t1_fighters_spawn_middle",
-            "var": "t1_fighters_spawn_name"
-          },
-          {
-            "value": "t2_fighters_spawn_middle",
-            "var": "t2_fighters_spawn_name"
-          },
-          {
-            "value": "t1_assaults_spawn_middle",
-            "var": "t1_assaults_spawn_name"
-          },
-          {
-            "value": "t2_assaults_spawn_middle",
-            "var": "t2_assaults_spawn_name"
-          }
-        ],
-        "missionMarkAsRespawnPoint": [
-          {
-            "loc_name": "missions/assaults_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t1_assaults_spawn_middle",
-            "team": "A",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_assault": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          },
-          {
-            "loc_name": "missions/assaults_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t2_assaults_spawn_middle",
-            "team": "B",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_assault": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          },
-          {
-            "loc_name": "missions/fighters_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t1_fighters_spawn_middle",
-            "team": "A",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_bomber": false,
-              "type_attack_helicopter": false,
-              "type_utility_helicopter": false,
-              "tank": false,
-              "artillery": false,
-              "aaa": false,
-              "ship": false,
-              "boat": false
-            }
-          },
-          {
-            "loc_name": "missions/fighters_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t2_fighters_spawn_middle",
-            "team": "B",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_bomber": false,
-              "type_attack_helicopter": false,
-              "type_utility_helicopter": false,
-              "tank": false,
-              "artillery": false,
-              "aaa": false,
-              "ship": false,
-              "boat": false
-            }
-          }
-        ],
-        "triggerEnable": [
-          {
-            "target": "common_bombers_spawn"
-          },
-          {
-            "target": "far_bombers_spawn"
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "arcade_spawn_far": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {
-        "varCompareInt": [
-          {
-            "var_value": "arcade_spawn_matcher",
-            "value": 15,
-            "comparasion_func": "notMore",
-            "var_value_other": "far_limit"
-          },
-          {
-            "var_value": "arcade_spawn_matcher",
-            "value": 6,
-            "comparasion_func": "more",
-            "var_value_other": "mid_limit"
-          }
-        ]
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": [
-            "arcade_spawn_near",
-            "arcade_spawn_middle",
-            "arcade_spawn_huge"
-          ]
-        },
-        "comment": [
-          {
-            "value": "rang 7-14"
-          },
-          {
-            "value": ""
-          },
-          {
-            "value": ""
-          }
-        ],
-        "varSetString": [
-          {
-            "value": "t1_fighters_spawn_far",
-            "var": "t1_fighters_spawn_name"
-          },
-          {
-            "value": "t2_fighters_spawn_far",
-            "var": "t2_fighters_spawn_name"
-          },
-          {
-            "value": "t1_assaults_spawn_far",
-            "var": "t1_assaults_spawn_name"
-          },
-          {
-            "value": "t2_assaults_spawn_far",
-            "var": "t2_assaults_spawn_name"
-          }
-        ],
-        "missionMarkAsRespawnPoint": [
-          {
-            "loc_name": "missions/assaults_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t1_assaults_spawn_far",
-            "team": "A",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_assault": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          },
-          {
-            "loc_name": "missions/assaults_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t2_assaults_spawn_far",
-            "team": "B",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_assault": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          },
-          {
-            "loc_name": "missions/fighters_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t1_fighters_spawn_far",
-            "team": "A",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_bomber": false,
-              "type_attack_helicopter": false,
-              "type_utility_helicopter": false,
-              "tank": false,
-              "artillery": false,
-              "aaa": false,
-              "ship": false,
-              "boat": false
-            }
-          },
-          {
-            "loc_name": "missions/fighters_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t2_fighters_spawn_far",
-            "team": "B",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_bomber": false,
-              "type_attack_helicopter": false,
-              "type_utility_helicopter": false,
-              "tank": false,
-              "artillery": false,
-              "aaa": false,
-              "ship": false,
-              "boat": false
-            }
-          }
-        ],
-        "triggerEnable": [
-          {
-            "target": "common_bombers_spawn"
-          },
-          {
-            "target": "far_bombers_spawn"
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "arcade_spawn_huge": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {
-        "varCompareInt": {
-          "var_value": "arcade_spawn_matcher",
-          "value": 15,
-          "comparasion_func": "more",
-          "var_value_other": "far_limit"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": [
-            "arcade_spawn_near",
-            "arcade_spawn_middle",
-            "arcade_spawn_far"
-          ]
-        },
-        "comment": [
-          {
-            "value": "rang 15+"
-          },
-          {
-            "value": ""
-          },
-          {
-            "value": ""
-          }
-        ],
-        "varSetString": [
-          {
-            "value": "t1_fighters_spawn_huge",
-            "var": "t1_fighters_spawn_name"
-          },
-          {
-            "value": "t2_fighters_spawn_huge",
-            "var": "t2_fighters_spawn_name"
-          },
-          {
-            "value": "t1_assaults_spawn_huge",
-            "var": "t1_assaults_spawn_name"
-          },
-          {
-            "value": "t2_assaults_spawn_huge",
-            "var": "t2_assaults_spawn_name"
-          }
-        ],
-        "missionMarkAsRespawnPoint": [
-          {
-            "loc_name": "missions/assaults_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t1_assaults_spawn_huge",
-            "team": "A",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_assault": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          },
-          {
-            "loc_name": "missions/assaults_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t2_assaults_spawn_huge",
-            "team": "B",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_assault": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          },
-          {
-            "loc_name": "missions/fighters_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t1_fighters_spawn_huge",
-            "team": "A",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_bomber": false,
-              "type_attack_helicopter": false,
-              "type_utility_helicopter": false,
-              "tank": false,
-              "artillery": false,
-              "aaa": false,
-              "ship": false,
-              "boat": false
-            }
-          },
-          {
-            "loc_name": "missions/fighters_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t2_fighters_spawn_huge",
-            "team": "B",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_bomber": false,
-              "type_attack_helicopter": false,
-              "type_utility_helicopter": false,
-              "tank": false,
-              "artillery": false,
-              "aaa": false,
-              "ship": false,
-              "boat": false
-            }
-          }
-        ],
-        "triggerEnable": [
-          {
-            "target": "common_bombers_spawn"
-          },
-          {
-            "target": "far_bombers_spawn"
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "common_bombers_spawn": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {},
-      "actions": {
-        "comment": [
-          {
-            "value": "spavny dlya bomberov"
-          },
-          {
-            "value": ""
-          }
-        ],
-        "varSetString": [
-          {
-            "value": "t1_bombers_spawn",
-            "var": "t1_bombers_spawn_name"
-          },
-          {
-            "value": "t2_bombers_spawn",
-            "var": "t2_bombers_spawn_name"
-          }
-        ],
-        "missionMarkAsRespawnPoint": [
-          {
-            "loc_name": "missions/bombers_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t1_bombers_spawn",
-            "team": "A",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_bomber": true,
-              "type_longrange_bomber": false,
-              "tank": false
-            }
-          },
-          {
-            "loc_name": "missions/bombers_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t2_bombers_spawn",
-            "team": "B",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_bomber": true,
-              "type_longrange_bomber": false,
-              "tank": false
-            }
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "far_bombers_spawn": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {
-        "objectExists": [
-          {
-            "target": "t1_bombers_spawn_far",
-            "type": "area"
-          },
-          {
-            "target": "t2_bombers_spawn_far",
-            "type": "area"
-          }
-        ]
-      },
-      "actions": {
-        "comment": [
-          {
-            "value": "dal'nie spavny dlya bomberov"
-          },
-          {
-            "value": ""
-          }
-        ],
-        "varSetString": [
-          {
-            "value": "t1_bombers_spawn_far",
-            "var": "t1_bombers_spawn_name"
-          },
-          {
-            "value": "t2_bombers_spawn_far",
-            "var": "t2_bombers_spawn_name"
-          }
-        ],
-        "missionMarkAsRespawnPoint": [
-          {
-            "loc_name": "missions/bombers_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t1_bombers_spawn_far",
-            "team": "A",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_light_bomber": false,
-              "type_frontline_bomber": false,
-              "type_longrange_bomber": true,
-              "tank": false
-            }
-          },
-          {
-            "loc_name": "missions/bombers_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t2_bombers_spawn_far",
-            "team": "B",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_light_bomber": false,
-              "type_frontline_bomber": false,
-              "type_longrange_bomber": true,
-              "tank": false
-            }
-          }
-        ]
-      },
-      "else_actions": {
-        "comment": [
-          {
-            "value": "obychnye spavny dlya bomberov"
-          },
-          {
-            "value": ""
-          }
-        ],
-        "varSetString": [
-          {
-            "value": "t1_bombers_spawn",
-            "var": "t1_bombers_spawn_name"
-          },
-          {
-            "value": "t2_bombers_spawn",
-            "var": "t2_bombers_spawn_name"
-          }
-        ],
-        "missionMarkAsRespawnPoint": [
-          {
-            "loc_name": "missions/bombers_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t1_bombers_spawn",
-            "team": "A",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_bomber": true,
-              "tank": false
-            }
-          },
-          {
-            "loc_name": "missions/bombers_spawn",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "t2_bombers_spawn",
-            "team": "B",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_bomber": true,
-              "tank": false
-            }
-          }
-        ]
-      }
-    },
-    "arcade_airfield_spawn": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "varCompareBool": {
-          "var_value": "arcade_airfield_spawn_enable",
-          "value": true,
-          "comparasion_func": "equal"
-        },
-        "objectExists": [
-          {
-            "target": "@arcade_t1_airfield_name",
-            "type": "objectGroup"
-          },
-          {
-            "target": "@arcade_t2_airfield_name",
-            "type": "objectGroup"
-          }
-        ]
-      },
-      "actions": {
-        "missionMarkAsRespawnPoint": [
-          {
-            "loc_name": "",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "@arcade_t1_airfield_name",
-            "team": "A",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": true,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "object": "@arcade_t1_airfield_name",
-            "separate_fuel_time": true,
-            "modular_airfield": true,
-            "tags": {
-              "tank": false,
-              "artillery": false,
-              "aaa": false,
-              "ship": false,
-              "boat": false
-            }
-          },
-          {
-            "loc_name": "",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "@arcade_t2_airfield_name",
-            "team": "B",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": true,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "object": "@arcade_t2_airfield_name",
-            "separate_fuel_time": true,
-            "modular_airfield": true,
-            "tags": {
-              "tank": false,
-              "artillery": false,
-              "aaa": false,
-              "ship": false,
-              "boat": false
-            }
-          }
-        ],
-        "comment": {
-          "value": ""
-        },
-        "airfieldSetProperties": [
-          {
-            "object": "@arcade_t1_airfield_name",
-            "enemySurrenderOnLanding": true
-          },
-          {
-            "object": "@arcade_t2_airfield_name",
-            "enemySurrenderOnLanding": true
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "arcade_airfield_aaa_enable": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "objectExists": [
-          {
-            "target": "@t1_airfield_aaa_name",
-            "type": "squad"
-          },
-          {
-            "target": "@t2_airfield_aaa_name",
-            "type": "squad"
-          }
-        ]
-      },
-      "actions": {
-        "triggerEnable": {
-          "target": "arcade_aaa_spawn_on_airfield"
-        },
-        "comment": {
-          "value": ""
-        },
-        "__unitAttackTarget": [
-          {
-            "playerAttracted": false,
-            "object": "@t1_airfield_aaa_name",
-            "target": "t2_players_squad"
-          },
-          {
-            "playerAttracted": false,
-            "object": "@t2_airfield_aaa_name",
-            "target": "t1_players_squad"
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "t1_heli_spawn_check": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {
-        "objectExists": [
-          {
-            "target": "@t1_helicopter_spawn_01",
-            "type": "squad"
-          },
-          {
-            "target": "@t1_helicopter_spawn_02",
-            "type": "squad"
-          }
-        ]
-      },
-      "actions": {
-        "missionMarkAsRespawnPoint": [
-          {
-            "loc_name": "missions/spawn_random",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": [
-              "@t1_helicopter_spawn_01",
-              "@t1_helicopter_spawn_02"
-            ],
-            "team": "A",
-            "isStrictSpawn": true,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": true,
-            "onlyOnePlayerPerSpawnPoint": true,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_attack_helicopter": true,
-              "type_utility_helicopter": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          },
-          {
-            "loc_name": "missions/air_spawn1",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "@t1_helicopter_spawn_01",
-            "team": "A",
-            "isStrictSpawn": true,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": true,
-            "onlyOnePlayerPerSpawnPoint": true,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_attack_helicopter": true,
-              "type_utility_helicopter": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          },
-          {
-            "loc_name": "missions/air_spawn2",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "@t1_helicopter_spawn_02",
-            "team": "A",
-            "isStrictSpawn": true,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": true,
-            "onlyOnePlayerPerSpawnPoint": true,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_attack_helicopter": true,
-              "type_utility_helicopter": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          }
-        ],
-        "triggerEnable": {
-          "target": "t1_heli_spawn_icon_check"
-        }
-      },
-      "else_actions": {}
-    },
-    "t2_heli_spawn_check": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {
-        "objectExists": [
-          {
-            "target": "@t2_helicopter_spawn_01",
-            "type": "squad"
-          },
-          {
-            "target": "@t2_helicopter_spawn_02",
-            "type": "squad"
-          }
-        ]
-      },
-      "actions": {
-        "missionMarkAsRespawnPoint": [
-          {
-            "loc_name": "missions/spawn_random",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": [
-              "@t2_helicopter_spawn_01",
-              "@t2_helicopter_spawn_02"
-            ],
-            "team": "B",
-            "isStrictSpawn": true,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": true,
-            "onlyOnePlayerPerSpawnPoint": true,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_attack_helicopter": true,
-              "type_utility_helicopter": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          },
-          {
-            "loc_name": "missions/air_spawn1",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "@t2_helicopter_spawn_01",
-            "team": "B",
-            "isStrictSpawn": true,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": true,
-            "onlyOnePlayerPerSpawnPoint": true,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_attack_helicopter": true,
-              "type_utility_helicopter": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          },
-          {
-            "loc_name": "missions/air_spawn2",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "@t2_helicopter_spawn_02",
-            "team": "B",
-            "isStrictSpawn": true,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": false,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": true,
-            "onlyOnePlayerPerSpawnPoint": true,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_attack_helicopter": true,
-              "type_utility_helicopter": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          }
-        ],
-        "triggerEnable": {
-          "target": "t2_heli_spawn_icon_check"
-        }
-      },
-      "else_actions": {}
-    },
-    "t1_heli_pad_check": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {
-        "objectExists": [
-          {
-            "target": "@t1_helicopter_pad_01",
-            "type": "objectGroup"
-          },
-          {
-            "target": "@t1_helicopter_pad_02",
-            "type": "objectGroup"
-          }
-        ]
-      },
-      "actions": {
-        "missionMarkAsRespawnPoint": [
-          {
-            "loc_name": "missions/helipad_spawn_random",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": [
-              "@t1_helicopter_pad_01",
-              "@t1_helicopter_pad_02"
-            ],
-            "team": "A",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": true,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_attack_helicopter": true,
-              "type_utility_helicopter": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          },
-          {
-            "loc_name": "missions/helipad_spawn1",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "@t1_helicopter_pad_01",
-            "team": "A",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": true,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_attack_helicopter": true,
-              "type_utility_helicopter": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          },
-          {
-            "loc_name": "missions/helipad_spawn2",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "@t1_helicopter_pad_02",
-            "team": "A",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": true,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_attack_helicopter": true,
-              "type_utility_helicopter": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          }
-        ],
-        "comment": {
-          "value": ""
-        },
-        "airfieldSetProperties": [
-          {
-            "object": "@t1_helicopter_pad_01",
-            "enemySurrenderOnLanding": true
-          },
-          {
-            "object": "@t1_helicopter_pad_02",
-            "enemySurrenderOnLanding": true
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "t2_heli_pad_check": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {
-        "objectExists": [
-          {
-            "target": "@t2_helicopter_pad_01",
-            "type": "objectGroup"
-          },
-          {
-            "target": "@t2_helicopter_pad_02",
-            "type": "objectGroup"
-          }
-        ]
-      },
-      "actions": {
-        "missionMarkAsRespawnPoint": [
-          {
-            "loc_name": "missions/helipad_spawn_random",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": [
-              "@t2_helicopter_pad_01",
-              "@t2_helicopter_pad_02"
-            ],
-            "team": "B",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": true,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_attack_helicopter": true,
-              "type_utility_helicopter": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          },
-          {
-            "loc_name": "missions/helipad_spawn1",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "@t2_helicopter_pad_01",
-            "team": "B",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": true,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_attack_helicopter": true,
-              "type_utility_helicopter": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          },
-          {
-            "loc_name": "missions/helipad_spawn2",
-            "spawnEffect": false,
-            "radius": -1.0,
-            "target": "@t2_helicopter_pad_02",
-            "team": "B",
-            "isStrictSpawn": false,
-            "resetStrictSpawnIndex": false,
-            "isAirfield": true,
-            "isUnit": false,
-            "forceCreate": false,
-            "useExisting": false,
-            "ignoreTeamsOnReuse": false,
-            "isIndividual": false,
-            "onlyOnePlayerPerSpawnPoint": false,
-            "removeAreas": false,
-            "replaceAreas": false,
-            "canSpawnOnNeutral": false,
-            "showOnMap": true,
-            "tags": {
-              "type_attack_helicopter": true,
-              "type_utility_helicopter": true,
-              "tank": false,
-              "artillery": false,
-              "aaa": false
-            }
-          }
-        ],
-        "comment": {
-          "value": ""
-        },
-        "airfieldSetProperties": [
-          {
-            "object": "@t2_helicopter_pad_01",
-            "enemySurrenderOnLanding": true
-          },
-          {
-            "object": "@t2_helicopter_pad_02",
-            "enemySurrenderOnLanding": true
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "t1_heli_spawn_icon_check": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {
-        "objectExists": [
-          {
-            "target": "@t1_helicopter_spawn_icon_01",
-            "type": "area"
-          },
-          {
-            "target": "@t1_helicopter_spawn_icon_02",
-            "type": "area"
-          }
-        ]
-      },
-      "actions": {
-        "missionShowMapIcon": [
-          {
-            "show": true,
-            "iconName": "ui/gameuiskin#objective_helicopter.svg",
-            "areaName": "@t1_helicopter_spawn_icon_01",
-            "colorCode": "Team A"
-          },
-          {
-            "show": true,
-            "iconName": "ui/gameuiskin#objective_helicopter.svg",
-            "areaName": "@t1_helicopter_spawn_icon_02",
-            "colorCode": "Team A"
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "t2_heli_spawn_icon_check": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {
-        "objectExists": [
-          {
-            "target": "@t2_helicopter_spawn_icon_01",
-            "type": "area"
-          },
-          {
-            "target": "@t2_helicopter_spawn_icon_02",
-            "type": "area"
-          }
-        ]
-      },
-      "actions": {
-        "missionShowMapIcon": [
-          {
-            "show": true,
-            "iconName": "ui/gameuiskin#objective_helicopter.svg",
-            "areaName": "@t2_helicopter_spawn_icon_01",
-            "colorCode": "Team B"
-          },
-          {
-            "show": true,
-            "iconName": "ui/gameuiskin#objective_helicopter.svg",
-            "areaName": "@t2_helicopter_spawn_icon_02",
-            "colorCode": "Team B"
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "arcade_aaa_spawn_on_airfield": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "objectExists": [
-          {
-            "target": "@arcade_t1_airfield_name",
-            "type": "objectGroup"
-          },
-          {
-            "target": "@arcade_t2_airfield_name",
-            "type": "objectGroup"
-          },
-          {
-            "target": "@t1_airfield_aaa_name",
-            "type": "squad"
-          },
-          {
-            "target": "@t2_airfield_aaa_name",
-            "type": "squad"
-          }
-        ]
-      },
-      "actions": {
-        "unitSpawnOnObjectGroup": [
-          {
-            "type": "air_def",
-            "object": "@t1_airfield_aaa_name",
-            "target": "@arcade_t1_airfield_name"
-          },
-          {
-            "type": "air_def",
-            "object": "@t2_airfield_aaa_name",
-            "target": "@arcade_t2_airfield_name"
-          }
-        ]
-      },
-      "else_actions": {}
-    }
-  },
-  "mission_objectives": {
-    "isCategory": true,
-    "is_enabled": true
-  },
-  "variables": {
-    "arcade_spawn_matcher": 0,
-    "arcade_airfield_spawn_enable": false,
-    "arcade_t1_airfield_name": "t1_airfield",
-    "arcade_t2_airfield_name": "t2_airfield",
-    "t1_helicopter_spawn_01": "t1_helicopter_spawn_01",
-    "t1_helicopter_spawn_02": "t1_helicopter_spawn_02",
-    "t2_helicopter_spawn_01": "t2_helicopter_spawn_01",
-    "t2_helicopter_spawn_02": "t2_helicopter_spawn_02",
-    "t1_helicopter_pad_01": "t1_helicopter_pad_01",
-    "t1_helicopter_pad_02": "t1_helicopter_pad_02",
-    "t2_helicopter_pad_01": "t2_helicopter_pad_01",
-    "t2_helicopter_pad_02": "t2_helicopter_pad_02",
-    "t1_helicopter_spawn_icon_01": "helicopter_t1_spawn_icon_01",
-    "t1_helicopter_spawn_icon_02": "helicopter_t1_spawn_icon_02",
-    "t2_helicopter_spawn_icon_01": "helicopter_t2_spawn_icon_01",
-    "t2_helicopter_spawn_icon_02": "helicopter_t2_spawn_icon_02",
-    "t1_airfield_aaa_name": "t1_def_aaa_squad",
-    "t2_airfield_aaa_name": "t2_def_aaa_squad",
-    "t1_fighters_spawn_name": "",
-    "t2_fighters_spawn_name": "",
-    "t1_bombers_spawn_name": "",
-    "t2_bombers_spawn_name": "",
-    "t1_assaults_spawn_name": "",
-    "t2_assaults_spawn_name": "",
-    "near_limit": 3,
-    "mid_limit": 6,
-    "far_limit": 14
-  },
-  "dialogs": {},
-  "airfields": {},
-  "effects": {},
-  "units": {},
-  "areas": {},
-  "objLayers": {
-    "layer": [
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      }
-    ]
-  },
-  "wayPoints": {}
+selected_tag:t = ""
+bin_dump_file:t = ""
+mission_settings {
+	player {
+		army:i = 1
+		wing:t = ""
+	}
+	player_teamB {
+		army:i = 2
+	}
+	mission {
+		level:t = "levels/water.bin"
+		type:t = "singleMission"
+		environment:t = "Day"
+		weather:t = "hazy"
+		restoreType:t = "attempts"
+		optionalTakeOff:b = false
+	}
+	spectator_points {
+
+	}
+}
+imports {
+
+}
+triggers {
+	isCategory:b = true
+	is_enabled:b = true
+	arcade_spawn_init {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			missionGetBalanceLevel {
+				input_var:t = "arcade_spawn_matcher"
+			}
+			triggerEnable {
+				target:t = "arcade_spawn_near"
+				target:t = "arcade_spawn_middle"
+				target:t = "arcade_spawn_far"
+				target:t = "arcade_spawn_huge"
+				target:t = "arcade_airfield_spawn"
+			}
+			comment {
+				value:t = ""
+			}
+			triggerEnable {
+				target:t = "arcade_airfield_aaa_enable"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	arcade_spawn_near {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+			varCompareInt {
+				var_value:t = "arcade_spawn_matcher"
+				value:i = 3
+				comparasion_func:t = "notMore"
+				var_value_other:t = "near_limit"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "arcade_spawn_middle"
+				target:t = "arcade_spawn_far"
+				target:t = "arcade_spawn_huge"
+			}
+			comment {
+				value:t = "rang 0-3"
+			}
+			varSetString {
+				value:t = "t1_fighters_spawn_near"
+				var:t = "t1_fighters_spawn_name"
+			}
+			varSetString {
+				value:t = "t2_fighters_spawn_near"
+				var:t = "t2_fighters_spawn_name"
+			}
+			varSetString {
+				value:t = "t1_assaults_spawn_near"
+				var:t = "t1_assaults_spawn_name"
+			}
+			varSetString {
+				value:t = "t2_assaults_spawn_near"
+				var:t = "t2_assaults_spawn_name"
+			}
+			comment {
+				value:t = ""
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/assaults_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t1_assaults_spawn_near"
+				team:t = "A"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_assault:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/assaults_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t2_assaults_spawn_near"
+				team:t = "B"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_assault:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/fighters_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t1_fighters_spawn_near"
+				team:t = "A"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_bomber:b = false
+					type_attack_helicopter:b = false
+					type_utility_helicopter:b = false
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+					ship:b = false
+					boat:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/fighters_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t2_fighters_spawn_near"
+				team:t = "B"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_bomber:b = false
+					type_attack_helicopter:b = false
+					type_utility_helicopter:b = false
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+					ship:b = false
+					boat:b = false
+				}
+			}
+			comment {
+				value:t = ""
+			}
+			triggerEnable {
+				target:t = "common_bombers_spawn"
+			}
+			triggerEnable {
+				target:t = "far_bombers_spawn"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	arcade_spawn_middle {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+			varCompareInt {
+				var_value:t = "arcade_spawn_matcher"
+				value:i = 7
+				comparasion_func:t = "notMore"
+				var_value_other:t = "mid_limit"
+			}
+			varCompareInt {
+				var_value:t = "arcade_spawn_matcher"
+				value:i = 3
+				comparasion_func:t = "more"
+				var_value_other:t = "near_limit"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "arcade_spawn_near"
+				target:t = "arcade_spawn_far"
+				target:t = "arcade_spawn_huge"
+			}
+			comment {
+				value:t = "rang 4-6"
+			}
+			varSetString {
+				value:t = "t1_fighters_spawn_middle"
+				var:t = "t1_fighters_spawn_name"
+			}
+			varSetString {
+				value:t = "t2_fighters_spawn_middle"
+				var:t = "t2_fighters_spawn_name"
+			}
+			varSetString {
+				value:t = "t1_assaults_spawn_middle"
+				var:t = "t1_assaults_spawn_name"
+			}
+			varSetString {
+				value:t = "t2_assaults_spawn_middle"
+				var:t = "t2_assaults_spawn_name"
+			}
+			comment {
+				value:t = ""
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/assaults_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t1_assaults_spawn_middle"
+				team:t = "A"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_assault:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/assaults_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t2_assaults_spawn_middle"
+				team:t = "B"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_assault:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/fighters_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t1_fighters_spawn_middle"
+				team:t = "A"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_bomber:b = false
+					type_attack_helicopter:b = false
+					type_utility_helicopter:b = false
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+					ship:b = false
+					boat:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/fighters_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t2_fighters_spawn_middle"
+				team:t = "B"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_bomber:b = false
+					type_attack_helicopter:b = false
+					type_utility_helicopter:b = false
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+					ship:b = false
+					boat:b = false
+				}
+			}
+			comment {
+				value:t = ""
+			}
+			triggerEnable {
+				target:t = "common_bombers_spawn"
+			}
+			triggerEnable {
+				target:t = "far_bombers_spawn"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	arcade_spawn_far {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+			varCompareInt {
+				var_value:t = "arcade_spawn_matcher"
+				value:i = 15
+				comparasion_func:t = "notMore"
+				var_value_other:t = "far_limit"
+			}
+			varCompareInt {
+				var_value:t = "arcade_spawn_matcher"
+				value:i = 6
+				comparasion_func:t = "more"
+				var_value_other:t = "mid_limit"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "arcade_spawn_near"
+				target:t = "arcade_spawn_middle"
+				target:t = "arcade_spawn_huge"
+			}
+			comment {
+				value:t = "rang 7-14"
+			}
+			varSetString {
+				value:t = "t1_fighters_spawn_far"
+				var:t = "t1_fighters_spawn_name"
+			}
+			varSetString {
+				value:t = "t2_fighters_spawn_far"
+				var:t = "t2_fighters_spawn_name"
+			}
+			varSetString {
+				value:t = "t1_assaults_spawn_far"
+				var:t = "t1_assaults_spawn_name"
+			}
+			varSetString {
+				value:t = "t2_assaults_spawn_far"
+				var:t = "t2_assaults_spawn_name"
+			}
+			comment {
+				value:t = ""
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/assaults_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t1_assaults_spawn_far"
+				team:t = "A"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_assault:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/assaults_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t2_assaults_spawn_far"
+				team:t = "B"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_assault:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/fighters_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t1_fighters_spawn_far"
+				team:t = "A"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_bomber:b = false
+					type_attack_helicopter:b = false
+					type_utility_helicopter:b = false
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+					ship:b = false
+					boat:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/fighters_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t2_fighters_spawn_far"
+				team:t = "B"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_bomber:b = false
+					type_attack_helicopter:b = false
+					type_utility_helicopter:b = false
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+					ship:b = false
+					boat:b = false
+				}
+			}
+			comment {
+				value:t = ""
+			}
+			triggerEnable {
+				target:t = "common_bombers_spawn"
+			}
+			triggerEnable {
+				target:t = "far_bombers_spawn"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	arcade_spawn_huge {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+			varCompareInt {
+				var_value:t = "arcade_spawn_matcher"
+				value:i = 15
+				comparasion_func:t = "more"
+				var_value_other:t = "far_limit"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "arcade_spawn_near"
+				target:t = "arcade_spawn_middle"
+				target:t = "arcade_spawn_far"
+			}
+			comment {
+				value:t = "rang 15+"
+			}
+			varSetString {
+				value:t = "t1_fighters_spawn_huge"
+				var:t = "t1_fighters_spawn_name"
+			}
+			varSetString {
+				value:t = "t2_fighters_spawn_huge"
+				var:t = "t2_fighters_spawn_name"
+			}
+			varSetString {
+				value:t = "t1_assaults_spawn_huge"
+				var:t = "t1_assaults_spawn_name"
+			}
+			varSetString {
+				value:t = "t2_assaults_spawn_huge"
+				var:t = "t2_assaults_spawn_name"
+			}
+			comment {
+				value:t = ""
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/assaults_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t1_assaults_spawn_huge"
+				team:t = "A"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_assault:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/assaults_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t2_assaults_spawn_huge"
+				team:t = "B"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_assault:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/fighters_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t1_fighters_spawn_huge"
+				team:t = "A"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_bomber:b = false
+					type_attack_helicopter:b = false
+					type_utility_helicopter:b = false
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+					ship:b = false
+					boat:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/fighters_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t2_fighters_spawn_huge"
+				team:t = "B"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_bomber:b = false
+					type_attack_helicopter:b = false
+					type_utility_helicopter:b = false
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+					ship:b = false
+					boat:b = false
+				}
+			}
+			comment {
+				value:t = ""
+			}
+			triggerEnable {
+				target:t = "common_bombers_spawn"
+			}
+			triggerEnable {
+				target:t = "far_bombers_spawn"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	common_bombers_spawn {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			comment {
+				value:t = "spavny dlya bomberov"
+			}
+			varSetString {
+				value:t = "t1_bombers_spawn"
+				var:t = "t1_bombers_spawn_name"
+			}
+			varSetString {
+				value:t = "t2_bombers_spawn"
+				var:t = "t2_bombers_spawn_name"
+			}
+			comment {
+				value:t = ""
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/bombers_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t1_bombers_spawn"
+				team:t = "A"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_bomber:b = true
+					type_longrange_bomber:b = false
+					tank:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/bombers_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t2_bombers_spawn"
+				team:t = "B"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_bomber:b = true
+					type_longrange_bomber:b = false
+					tank:b = false
+				}
+			}
+		}
+		else_actions {
+
+		}
+	}
+	far_bombers_spawn {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+			objectExists {
+				target:t = "t1_bombers_spawn_far"
+				type:t = "area"
+			}
+			objectExists {
+				target:t = "t2_bombers_spawn_far"
+				type:t = "area"
+			}
+		}
+		actions {
+			comment {
+				value:t = "dal'nie spavny dlya bomberov"
+			}
+			varSetString {
+				value:t = "t1_bombers_spawn_far"
+				var:t = "t1_bombers_spawn_name"
+			}
+			varSetString {
+				value:t = "t2_bombers_spawn_far"
+				var:t = "t2_bombers_spawn_name"
+			}
+			comment {
+				value:t = ""
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/bombers_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t1_bombers_spawn_far"
+				team:t = "A"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_light_bomber:b = false
+					type_frontline_bomber:b = false
+					type_longrange_bomber:b = true
+					tank:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/bombers_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t2_bombers_spawn_far"
+				team:t = "B"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_light_bomber:b = false
+					type_frontline_bomber:b = false
+					type_longrange_bomber:b = true
+					tank:b = false
+				}
+			}
+		}
+		else_actions {
+			comment {
+				value:t = "obychnye spavny dlya bomberov"
+			}
+			varSetString {
+				value:t = "t1_bombers_spawn"
+				var:t = "t1_bombers_spawn_name"
+			}
+			varSetString {
+				value:t = "t2_bombers_spawn"
+				var:t = "t2_bombers_spawn_name"
+			}
+			comment {
+				value:t = ""
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/bombers_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t1_bombers_spawn"
+				team:t = "A"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_bomber:b = true
+					tank:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/bombers_spawn"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "t2_bombers_spawn"
+				team:t = "B"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_bomber:b = true
+					tank:b = false
+				}
+			}
+		}
+	}
+	arcade_airfield_spawn {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			varCompareBool {
+				var_value:t = "arcade_airfield_spawn_enable"
+				value:b = true
+				comparasion_func:t = "equal"
+			}
+			objectExists {
+				target:t = "@arcade_t1_airfield_name"
+				type:t = "objectGroup"
+			}
+			objectExists {
+				target:t = "@arcade_t2_airfield_name"
+				type:t = "objectGroup"
+			}
+		}
+		actions {
+			missionMarkAsRespawnPoint {
+				loc_name:t = ""
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "@arcade_t1_airfield_name"
+				team:t = "A"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = true
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				object:t = "@arcade_t1_airfield_name"
+				separate_fuel_time:b = true
+				modular_airfield:b = true
+				tags {
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+					ship:b = false
+					boat:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = ""
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "@arcade_t2_airfield_name"
+				team:t = "B"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = true
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				object:t = "@arcade_t2_airfield_name"
+				separate_fuel_time:b = true
+				modular_airfield:b = true
+				tags {
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+					ship:b = false
+					boat:b = false
+				}
+			}
+			comment {
+				value:t = ""
+			}
+			airfieldSetProperties {
+				object:t = "@arcade_t1_airfield_name"
+				enemySurrenderOnLanding:b = true
+			}
+			airfieldSetProperties {
+				object:t = "@arcade_t2_airfield_name"
+				enemySurrenderOnLanding:b = true
+			}
+		}
+		else_actions {
+
+		}
+	}
+	arcade_airfield_aaa_enable {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			objectExists {
+				target:t = "@t1_airfield_aaa_name"
+				type:t = "squad"
+			}
+			objectExists {
+				target:t = "@t2_airfield_aaa_name"
+				type:t = "squad"
+			}
+		}
+		actions {
+			triggerEnable {
+				target:t = "arcade_aaa_spawn_on_airfield"
+			}
+			comment {
+				value:t = ""
+			}
+			__unitAttackTarget {
+				playerAttracted:b = false
+				object:t = "@t1_airfield_aaa_name"
+				target:t = "t2_players_squad"
+			}
+			__unitAttackTarget {
+				playerAttracted:b = false
+				object:t = "@t2_airfield_aaa_name"
+				target:t = "t1_players_squad"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	t1_heli_spawn_check {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+			objectExists {
+				target:t = "@t1_helicopter_spawn_01"
+				type:t = "squad"
+			}
+			objectExists {
+				target:t = "@t1_helicopter_spawn_02"
+				type:t = "squad"
+			}
+		}
+		actions {
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/spawn_random"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "@t1_helicopter_spawn_01"
+				target:t = "@t1_helicopter_spawn_02"
+				team:t = "A"
+				isStrictSpawn:b = true
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = true
+				onlyOnePlayerPerSpawnPoint:b = true
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_attack_helicopter:b = true
+					type_utility_helicopter:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/air_spawn1"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "@t1_helicopter_spawn_01"
+				team:t = "A"
+				isStrictSpawn:b = true
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = true
+				onlyOnePlayerPerSpawnPoint:b = true
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_attack_helicopter:b = true
+					type_utility_helicopter:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/air_spawn2"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "@t1_helicopter_spawn_02"
+				team:t = "A"
+				isStrictSpawn:b = true
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = true
+				onlyOnePlayerPerSpawnPoint:b = true
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_attack_helicopter:b = true
+					type_utility_helicopter:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			triggerEnable {
+				target:t = "t1_heli_spawn_icon_check"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	t2_heli_spawn_check {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+			objectExists {
+				target:t = "@t2_helicopter_spawn_01"
+				type:t = "squad"
+			}
+			objectExists {
+				target:t = "@t2_helicopter_spawn_02"
+				type:t = "squad"
+			}
+		}
+		actions {
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/spawn_random"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "@t2_helicopter_spawn_01"
+				target:t = "@t2_helicopter_spawn_02"
+				team:t = "B"
+				isStrictSpawn:b = true
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = true
+				onlyOnePlayerPerSpawnPoint:b = true
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_attack_helicopter:b = true
+					type_utility_helicopter:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/air_spawn1"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "@t2_helicopter_spawn_01"
+				team:t = "B"
+				isStrictSpawn:b = true
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = true
+				onlyOnePlayerPerSpawnPoint:b = true
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_attack_helicopter:b = true
+					type_utility_helicopter:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/air_spawn2"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "@t2_helicopter_spawn_02"
+				team:t = "B"
+				isStrictSpawn:b = true
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = false
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = true
+				onlyOnePlayerPerSpawnPoint:b = true
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_attack_helicopter:b = true
+					type_utility_helicopter:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			triggerEnable {
+				target:t = "t2_heli_spawn_icon_check"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	t1_heli_pad_check {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+			objectExists {
+				target:t = "@t1_helicopter_pad_01"
+				type:t = "objectGroup"
+			}
+			objectExists {
+				target:t = "@t1_helicopter_pad_02"
+				type:t = "objectGroup"
+			}
+		}
+		actions {
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/helipad_spawn_random"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "@t1_helicopter_pad_01"
+				target:t = "@t1_helicopter_pad_02"
+				team:t = "A"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = true
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_attack_helicopter:b = true
+					type_utility_helicopter:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/helipad_spawn1"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "@t1_helicopter_pad_01"
+				team:t = "A"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = true
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_attack_helicopter:b = true
+					type_utility_helicopter:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/helipad_spawn2"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "@t1_helicopter_pad_02"
+				team:t = "A"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = true
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_attack_helicopter:b = true
+					type_utility_helicopter:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			comment {
+				value:t = ""
+			}
+			airfieldSetProperties {
+				object:t = "@t1_helicopter_pad_01"
+				enemySurrenderOnLanding:b = true
+			}
+			airfieldSetProperties {
+				object:t = "@t1_helicopter_pad_02"
+				enemySurrenderOnLanding:b = true
+			}
+		}
+		else_actions {
+
+		}
+	}
+	t2_heli_pad_check {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+			objectExists {
+				target:t = "@t2_helicopter_pad_01"
+				type:t = "objectGroup"
+			}
+			objectExists {
+				target:t = "@t2_helicopter_pad_02"
+				type:t = "objectGroup"
+			}
+		}
+		actions {
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/helipad_spawn_random"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "@t2_helicopter_pad_01"
+				target:t = "@t2_helicopter_pad_02"
+				team:t = "B"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = true
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_attack_helicopter:b = true
+					type_utility_helicopter:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/helipad_spawn1"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "@t2_helicopter_pad_01"
+				team:t = "B"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = true
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_attack_helicopter:b = true
+					type_utility_helicopter:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			missionMarkAsRespawnPoint {
+				loc_name:t = "missions/helipad_spawn2"
+				spawnEffect:b = false
+				radius:r = -1
+				target:t = "@t2_helicopter_pad_02"
+				team:t = "B"
+				isStrictSpawn:b = false
+				resetStrictSpawnIndex:b = false
+				isAirfield:b = true
+				isUnit:b = false
+				forceCreate:b = false
+				useExisting:b = false
+				ignoreTeamsOnReuse:b = false
+				isIndividual:b = false
+				onlyOnePlayerPerSpawnPoint:b = false
+				removeAreas:b = false
+				replaceAreas:b = false
+				canSpawnOnNeutral:b = false
+				showOnMap:b = true
+				tags {
+					type_attack_helicopter:b = true
+					type_utility_helicopter:b = true
+					tank:b = false
+					artillery:b = false
+					aaa:b = false
+				}
+			}
+			comment {
+				value:t = ""
+			}
+			airfieldSetProperties {
+				object:t = "@t2_helicopter_pad_01"
+				enemySurrenderOnLanding:b = true
+			}
+			airfieldSetProperties {
+				object:t = "@t2_helicopter_pad_02"
+				enemySurrenderOnLanding:b = true
+			}
+		}
+		else_actions {
+
+		}
+	}
+	t1_heli_spawn_icon_check {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+			objectExists {
+				target:t = "@t1_helicopter_spawn_icon_01"
+				type:t = "area"
+			}
+			objectExists {
+				target:t = "@t1_helicopter_spawn_icon_02"
+				type:t = "area"
+			}
+		}
+		actions {
+			missionShowMapIcon {
+				show:b = true
+				iconName:t = "ui/gameuiskin#objective_helicopter.svg"
+				areaName:t = "@t1_helicopter_spawn_icon_01"
+				colorCode:t = "Team A"
+			}
+			missionShowMapIcon {
+				show:b = true
+				iconName:t = "ui/gameuiskin#objective_helicopter.svg"
+				areaName:t = "@t1_helicopter_spawn_icon_02"
+				colorCode:t = "Team A"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	t2_heli_spawn_icon_check {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+			objectExists {
+				target:t = "@t2_helicopter_spawn_icon_01"
+				type:t = "area"
+			}
+			objectExists {
+				target:t = "@t2_helicopter_spawn_icon_02"
+				type:t = "area"
+			}
+		}
+		actions {
+			missionShowMapIcon {
+				show:b = true
+				iconName:t = "ui/gameuiskin#objective_helicopter.svg"
+				areaName:t = "@t2_helicopter_spawn_icon_01"
+				colorCode:t = "Team B"
+			}
+			missionShowMapIcon {
+				show:b = true
+				iconName:t = "ui/gameuiskin#objective_helicopter.svg"
+				areaName:t = "@t2_helicopter_spawn_icon_02"
+				colorCode:t = "Team B"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	arcade_aaa_spawn_on_airfield {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			objectExists {
+				target:t = "@arcade_t1_airfield_name"
+				type:t = "objectGroup"
+			}
+			objectExists {
+				target:t = "@arcade_t2_airfield_name"
+				type:t = "objectGroup"
+			}
+			objectExists {
+				target:t = "@t1_airfield_aaa_name"
+				type:t = "squad"
+			}
+			objectExists {
+				target:t = "@t2_airfield_aaa_name"
+				type:t = "squad"
+			}
+		}
+		actions {
+			unitSpawnOnObjectGroup {
+				type:t = "air_def"
+				object:t = "@t1_airfield_aaa_name"
+				target:t = "@arcade_t1_airfield_name"
+			}
+			unitSpawnOnObjectGroup {
+				type:t = "air_def"
+				object:t = "@t2_airfield_aaa_name"
+				target:t = "@arcade_t2_airfield_name"
+			}
+		}
+		else_actions {
+
+		}
+	}
+}
+mission_objectives {
+	isCategory:b = true
+	is_enabled:b = true
+}
+variables {
+	arcade_spawn_matcher:i = 0
+	arcade_airfield_spawn_enable:b = false
+	arcade_t1_airfield_name:t = "t1_airfield"
+	arcade_t2_airfield_name:t = "t2_airfield"
+	t1_helicopter_spawn_01:t = "t1_helicopter_spawn_01"
+	t1_helicopter_spawn_02:t = "t1_helicopter_spawn_02"
+	t2_helicopter_spawn_01:t = "t2_helicopter_spawn_01"
+	t2_helicopter_spawn_02:t = "t2_helicopter_spawn_02"
+	t1_helicopter_pad_01:t = "t1_helicopter_pad_01"
+	t1_helicopter_pad_02:t = "t1_helicopter_pad_02"
+	t2_helicopter_pad_01:t = "t2_helicopter_pad_01"
+	t2_helicopter_pad_02:t = "t2_helicopter_pad_02"
+	t1_helicopter_spawn_icon_01:t = "helicopter_t1_spawn_icon_01"
+	t1_helicopter_spawn_icon_02:t = "helicopter_t1_spawn_icon_02"
+	t2_helicopter_spawn_icon_01:t = "helicopter_t2_spawn_icon_01"
+	t2_helicopter_spawn_icon_02:t = "helicopter_t2_spawn_icon_02"
+	t1_airfield_aaa_name:t = "t1_def_aaa_squad"
+	t2_airfield_aaa_name:t = "t2_def_aaa_squad"
+	t1_fighters_spawn_name:t = ""
+	t2_fighters_spawn_name:t = ""
+	t1_bombers_spawn_name:t = ""
+	t2_bombers_spawn_name:t = ""
+	t1_assaults_spawn_name:t = ""
+	t2_assaults_spawn_name:t = ""
+	near_limit:i = 3
+	mid_limit:i = 6
+	far_limit:i = 14
+}
+dialogs {
+
+}
+airfields {
+
+}
+effects {
+
+}
+units {
+
+}
+areas {
+
+}
+objLayers {
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+}
+wayPoints {
+
 }

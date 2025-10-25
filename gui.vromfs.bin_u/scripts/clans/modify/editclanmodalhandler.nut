@@ -14,6 +14,7 @@ let { prepareEditRequest } = require("%scripts/clans/clanRequests.nut")
 let { upgradeClanMembers, editClan, disbandClan } = require("%scripts/clans/clanActions.nut")
 let { get_clan_info_table } = require("%scripts/clans/clanInfoTable.nut")
 let { myClanInfo } = require("%scripts/clans/clanState.nut")
+let { clanTagDecoratorFuncs } = require("%scripts/clans/clanTagDecorator.nut")
 
 gui_handlers.EditClanModalhandler <- class (gui_handlers.ModifyClanModalHandler) {
   owner = null
@@ -177,7 +178,7 @@ gui_handlers.EditClanModalhandler <- class (gui_handlers.ModifyClanModalHandler)
     this.adminMode = clan_get_admin_editor_mode()
     this.myRights = []
     if (this.isMyClan || this.adminMode)
-      this.myRights = ::clan_get_role_rights(this.adminMode ? ECMR_CLANADMIN : clan_get_my_role())
+      this.myRights = clan_get_role_rights(this.adminMode ? ECMR_CLANADMIN : clan_get_my_role())
 
     this.updateButtons()
   }
@@ -257,7 +258,7 @@ gui_handlers.EditClanModalhandler <- class (gui_handlers.ModifyClanModalHandler)
   }
 
   function getDecoratorsList() {
-    return ::g_clan_tag_decorator.getDecorators({
+    return clanTagDecoratorFuncs.getDecorators({
       clanType = this.newClanType
       rewardsList = this.clanData.getAllRegaliaTags()
     })

@@ -1,4 +1,5 @@
 from "%scripts/dagui_library.nut" import *
+let { isPC } = require("%sqstd/platform.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 
@@ -37,16 +38,38 @@ function isEnabledByUnit(config, c, unitId) {
   return true
 }
 
+function isShowedByUnit(config, c, unitId) {
+  if (c == null)
+    return false
+  if (c?.needShow)
+    return c.needShow(unitId)
+  if (c?.section) {
+    let sect = config[c.section]
+    if (sect?.needShow)
+      return sect.needShow(unitId)
+    foreach (cc in sect.items)
+      if (isShowedByUnit(config, cc, unitId))
+        return true
+    return false
+  }
+  return true
+}
 
 function handleWheelMenuApply(idx) {
   if (idx < 0)
     getMfmHandler()?.gotoPrevMenuOrQuit()
   else if (this.menu?[idx].sectionId)
     getMfmHandler()?.gotoSection(this.menu[idx].sectionId)
-  else if (this.menu?[idx].shortcutId)
+  else if (this.menu?[idx].shortcutId){
     getMfmHandler()?.toggleShortcut(this.menu[idx].shortcutId)
-  else if (this.menu?[idx].action != null)
+    if (this.menu?[idx].closeOnAction)
+      getMfmHandler()?.quit()
+  }
+  else if (this.menu?[idx].action != null){
     this.menu?[idx].action()
+    if (this.menu?[idx].closeOnAction)
+        getMfmHandler()?.quit()
+  }
 }
 
 
@@ -67,6 +90,7 @@ function makeMfmSection(cfg, id, unitId, hudUnitType) {
     local action = null
     local label = ""
     local isEnabled = false
+    local needShow = isShowedByUnit(cfg, c, unitId)
 
     if (isShortcut) {
       shortcutId = c.shortcut.findvalue(@(i) allowedShortcutIds.indexof(i) != null)
@@ -97,14 +121,17 @@ function makeMfmSection(cfg, id, unitId, hudUnitType) {
     let isEmpty = label == ""
 
     local shortcutText = ""
-    if (!isEmpty && is_platform_pc)
+    local shortcutColor = ""
+    if (!isEmpty && isPC) {
       shortcutText = getShortcutText({
         shortcuts = getShortcuts([ $"ID_VOICE_MESSAGE_{idx+1}" ])
         shortcutId = 0
         cantBeEmpty = false
         strip_tags = true
-        colored = isEnabled
+        colored = false
       })
+      shortcutColor = "hotkeyColor"
+    }
 
     let menuItem = isEmpty ? null : {
       sectionId
@@ -118,7 +145,10 @@ function makeMfmSection(cfg, id, unitId, hudUnitType) {
       color
       name = colorize(color, label)
       shortcutText
+      shortcutColor
       wheelmenuEnabled = isEnabled
+      wheelmenuShow = needShow
+      closeOnAction = item?.closeOnAction
     }
 
     menu.append(menuItem)

@@ -12,7 +12,7 @@ let subscriptions = require("%sqStdLibs/helpers/subscriptions.nut")
 let { broadcastEvent } = subscriptions
 let { isInMenu } = require("%scripts/clientState/clientStates.nut")
 let { handlersManager, loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
-let { hangar_is_model_loaded, hangar_get_loaded_unit_name } = require("hangar")
+let { hangar_is_model_loaded, hangar_is_no_unit_mode } = require("hangar")
 let guidParser = require("%scripts/guidParser.nut")
 let globalCallbacks = require("%sqDagui/globalCallbacks/globalCallbacks.nut")
 let { showedUnit, getPlayerCurUnit } = require("%scripts/slotbar/playerCurUnit.nut")
@@ -22,7 +22,7 @@ let { hasAvailableCollections } = require("%scripts/collections/collectionsHandl
 let { getDecorator, getDecoratorByResource } = require("%scripts/customization/decorCache.nut")
 let { getPlaneBySkinId, getSkinNameBySkinId } = require("%scripts/customization/skinUtils.nut")
 let { web_rpc } = require("%scripts/webRPC.nut")
-let { getUnitName, isLoadedModelHighQuality } = require("%scripts/unit/unitInfo.nut")
+let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 let { decoratorTypes, getTypeByResourceType } = require("%scripts/customization/types.nut")
 let { isInHangar } = require("gameplayBinding")
 let { addPopup } = require("%scripts/popups/popups.nut")
@@ -30,9 +30,8 @@ let { add_msg_box } = require("%sqDagui/framework/msgBox.nut")
 let { isLoggedIn } = require("%appGlobals/login/loginState.nut")
 let { getBestUnitForPreview } = require("%scripts/customization/contentPreviewState.nut")
 let { hasSessionInLobby } = require("%scripts/matchingRooms/sessionLobbyState.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
+let { findItemById } = require("%scripts/items/itemsManagerModule.nut")
 let { isAnyQueuesActive } = require("%scripts/queue/queueState.nut")
-let { checkPackageAndAskDownload } = require("%scripts/clientState/contentPacks.nut")
 let { get_last_skin } = require("unitCustomization")
 
 let downloadTimeoutSec = 15
@@ -42,24 +41,37 @@ local onSkinReadyToShowCallback = null
 
 local waitingItemDefId = null
 
-function gui_start_decals(params = null) {
+function prepareStartDecals(params = null) {
   if (params?.unit)
-    showedUnit(params.unit)
+    showedUnit.set(params.unit)
   else if (params?.unitId)
-    showedUnit(getAircraftByName(params?.unitId))
+    showedUnit.set(getAircraftByName(params?.unitId))
 
-  if (!showedUnit.value
-      ||
-        (hangar_get_loaded_unit_name() == showedUnit.value.name
-        && !isLoadedModelHighQuality()
-        && !checkPackageAndAskDownload("pkg_main"))
-    )
+  if (!showedUnit.get())
+    return false
+  return true
+}
+
+function gui_start_decals(params = null) {
+  if (!prepareStartDecals(params))
     return
 
-  params = params || {}
+  params = params ?? {}
   params.backSceneParams <- { eventbusName = "gui_start_mainmenu" }
   loadHandler(gui_handlers.DecalMenuHandler, params)
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 eventbus_subscribe("gui_start_decals", gui_start_decals)
 
@@ -68,7 +80,7 @@ function getCantStartPreviewSceneReason(shouldAllowFromCustomizationScene = fals
     return "not_logged_in"
   if (!isInHangar())
     return "not_in_hangar"
-  if (!hangar_is_model_loaded())
+  if (!hangar_is_no_unit_mode() && !hangar_is_model_loaded())
     return "hangar_not_ready"
   if (!isInMenu.get() || isAnyQueuesActive()
       || (g_squad_manager.isSquadMember() && g_squad_manager.isMeReady())
@@ -77,13 +89,23 @@ function getCantStartPreviewSceneReason(shouldAllowFromCustomizationScene = fals
   let customizationScene = handlersManager.findHandlerClassInScene(gui_handlers.DecalMenuHandler)
   if (customizationScene && (!shouldAllowFromCustomizationScene || !customizationScene.canRestartSceneNow()))
     return "temporarily_forbidden"
+  let isInResearchMode = !!handlersManager.findHandlerClassInScene(gui_handlers.ShopCheckResearch)?.shopResearchMode
+  if (isInResearchMode)
+    return "in_research_mode"
   return  ""
 }
 
-function canStartPreviewScene(shouldShowFordiddenPopup, shouldAllowFromCustomizationScene = false) {
-  let reason = getCantStartPreviewSceneReason(shouldAllowFromCustomizationScene)
-  if (shouldShowFordiddenPopup && reason == "temporarily_forbidden")
+function showForbidReasonMessage(reason) {
+  if (reason == "temporarily_forbidden")
     addPopup("", loc("mainmenu/itemPreviewForbidden"))
+  else if (reason == "in_research_mode")
+    scene_msg_box("item_preview_forbidden", null, loc("mainmenu/itemPreviewForbidden"), [["ok"]], "ok")
+}
+
+function canStartPreviewScene(shouldShowFordiddenMessage, shouldAllowFromCustomizationScene = false) {
+  let reason = getCantStartPreviewSceneReason(shouldAllowFromCustomizationScene)
+  if (shouldShowFordiddenMessage)
+    showForbidReasonMessage(reason)
   return reason == ""
 }
 
@@ -109,7 +131,7 @@ function showUnitSkin(unitId, skinId = null, isForApprove = false) {
   let isUnitPreview = skinId == unitPreviewSkin
 
   broadcastEvent("BeforeStartShowroom")
-  showedUnit(unit)
+  showedUnit.set(unit)
   let startFunc = function() {
     gui_start_decals({
       previewMode = isUnitPreview ? PREVIEW_MODE.UNIT : PREVIEW_MODE.SKIN
@@ -152,7 +174,7 @@ function showUnitDecorator(unitId, resource, resourceType) {
 
   let hangarUnit = getPlayerCurUnit()
   broadcastEvent("BeforeStartShowroom")
-  showedUnit(unit)
+  showedUnit.set(unit)
   let params = {
     previewMode = PREVIEW_MODE.DECORATOR
     initialUnitId = hangarUnit?.name
@@ -444,4 +466,8 @@ return {
   useDecorator
   showDecoratorAccessRestriction
   gui_start_decals
+
+
+
+
 }

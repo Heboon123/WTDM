@@ -2,7 +2,7 @@ from "%scripts/dagui_library.nut" import *
 
 let { getTimestampFromStringUtc, buildDateStr } = require("%scripts/time.nut")
 let {  addListenersWithoutEnv, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
-let { season, seasonLevel, getLevelByExp } = require("%scripts/battlePass/seasonState.nut")
+let { season, seasonLevel, getLevelFromStagesByExp, basicUnlockStages } = require("%scripts/battlePass/seasonState.nut")
 let { activeUnlocks, getUnlockRewardMarkUp } = require("%scripts/unlocks/userstatUnlocksState.nut")
 let { refreshUserstatUnlocks } = require("%scripts/userstat/userstat.nut")
 let { getUnlockConditions, getHeaderCondition, isTimeRangeCondition } = require("%scripts/unlocks/unlocksConditions.nut")
@@ -17,12 +17,12 @@ let { isLoggedIn } = require("%appGlobals/login/loginState.nut")
 let { getBattleTaskDesc } = require("%scripts/unlocks/battleTasksView.nut")
 
 let battlePassChallenges = Watched([])
-let curSeasonChallenges = Computed(@() battlePassChallenges.value
-  .filter(@(unlock) unlock.battlePassSeason == season.value))
+let curSeasonChallenges = Computed(@() battlePassChallenges.get()
+  .filter(@(unlock) unlock.battlePassSeason == season.get()))
 
 curSeasonChallenges.subscribe(function(value) {
   foreach (challenge in value) {
-    let userstatUnlock = activeUnlocks.value?[challenge.id]
+    let userstatUnlock = activeUnlocks.get()?[challenge.id]
     if (!(userstatUnlock?.isCompleted ?? false) && isUnlockOpened(challenge.id)) {
       refreshUserstatUnlocks()
       return
@@ -30,26 +30,26 @@ curSeasonChallenges.subscribe(function(value) {
   }
 })
 
-function getLevelFromConditions(conditions) {
+function getLevelFromConditions(conditions, stages) {
   let battlepassLevel = conditions.findvalue(@(cond) cond?.type == "battlepassLevel")
   if (battlepassLevel)
     return battlepassLevel.level
 
   let battlepassProgress = conditions.findvalue(@(cond) cond?.type == "battlepassProgress")
   if (battlepassProgress)
-    return getLevelByExp(battlepassProgress.progress)
+    return getLevelFromStagesByExp(stages, battlepassProgress.progress)
 
   return null
 }
 
 let curSeasonChallengesByStage = Computed(function() {
   let res = {}
-  foreach (challenge in curSeasonChallenges.value) {
+  foreach (challenge in curSeasonChallenges.get()) {
     let mode = challenge?.mode
     if (mode == null)
       continue
 
-    let level = getLevelFromConditions(getUnlockConditions(mode))
+    let level = getLevelFromConditions(getUnlockConditions(mode), basicUnlockStages.get())
     if (level == null)
       continue
 
@@ -58,12 +58,12 @@ let curSeasonChallengesByStage = Computed(function() {
   return res
 })
 
-let mainChallengeOfSeasonId = Computed(@() $"battlepass_season_{season.value}_challenge_all")
-let mainChallengeOfSeason = Computed(@() curSeasonChallenges.value
-  .findvalue(@(challenge) challenge.id == mainChallengeOfSeasonId.value))
+let mainChallengeOfSeasonId = Computed(@() $"battlepass_season_{season.get()}_challenge_all")
+let mainChallengeOfSeason = Computed(@() curSeasonChallenges.get()
+  .findvalue(@(challenge) challenge.id == mainChallengeOfSeasonId.get()))
 
 function invalidateUnlocksCache() {
-  battlePassChallenges([])
+  battlePassChallenges.set([])
   broadcastEvent("BattlePassCacheInvalidate")
 }
 
@@ -73,7 +73,7 @@ addListenersWithoutEnv({
 
 function updateChallenges() {
   if (isLoggedIn.get())
-    battlePassChallenges(getAllUnlocksWithBlkOrder()
+    battlePassChallenges.set(getAllUnlocksWithBlkOrder()
       .filter(@(unlock) (unlock?.battlePassSeason != null) && isUnlockVisible(unlock)))
 }
 
@@ -97,9 +97,9 @@ function getConditionInTitleConfig(unlockBlk) {
     return res
 
   let condition = getUnlockConditions(mode)
-  let level = getLevelFromConditions(condition)
+  let level = getLevelFromConditions(condition, basicUnlockStages.get())
   if (level != null) {
-    if (level > seasonLevel.value)
+    if (level > seasonLevel.get())
       return {
         addTitle = loc("ui/parentheses/space", {
           text = loc("condition/unlockByLevel", { level = level })
@@ -125,7 +125,7 @@ function getConditionInTitleConfig(unlockBlk) {
 
 function getChallengeView(config, paramsCfg = {}) {
   let id = config.id
-  let userstatUnlock = activeUnlocks.value?[id]
+  let userstatUnlock = activeUnlocks.get()?[id]
   let unlockConfig = buildConditionsConfig(config)
   buildUnlockDesc(unlockConfig)
 
@@ -162,8 +162,8 @@ function getChallengeView(config, paramsCfg = {}) {
   }
 }
 
-let hasChallengesReward = Computed(@() battlePassChallenges.value
-  .findindex(@(unlock) activeUnlocks.value?[unlock.id].hasReward ?? false) != null)
+let hasChallengesReward = Computed(@() battlePassChallenges.get()
+  .findindex(@(unlock) activeUnlocks.get()?[unlock.id].hasReward ?? false) != null)
 
 addTooltipTypes({
   BATTLE_PASS_CHALLENGE = {

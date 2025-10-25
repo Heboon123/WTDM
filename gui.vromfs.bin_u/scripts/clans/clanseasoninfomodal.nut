@@ -1,4 +1,3 @@
-from "%scripts/dagui_natives.nut" import clan_get_my_clan_tag
 from "%scripts/dagui_library.nut" import *
 from "%scripts/clans/clanConsts.nut" import CLAN_SEASON_MEDAL_TYPE
 
@@ -20,6 +19,8 @@ let { stripClanTagDecorators } = require("%scripts/clans/clanTextInfo.nut")
 let { isClanSeasonsEnabled, getClanCurrentSeasonName, getClanSeasonRegaliaPrizes,
   getClanSeasonUniquePrizesCounts, getClanSeasonRewardsList
 } = require("%scripts/clans/clanSeasons.nut")
+let { clanTagDecoratorFuncs } = require("%scripts/clans/clanTagDecorator.nut")
+let { getMyClanTag } = require("%scripts/user/clanName.nut")
 
 gui_handlers.clanSeasonInfoModal <- class (gui_handlers.BaseGuiHandlerWT) {
   wndType      = handlerType.MODAL
@@ -99,10 +100,10 @@ gui_handlers.clanSeasonInfoModal <- class (gui_handlers.BaseGuiHandlerWT) {
         let collection = []
 
         if (prizeType == "clanTag") {
-          let myClanTagUndecorated = stripClanTagDecorators(clan_get_my_clan_tag())
+          let myClanTagUndecorated = stripClanTagDecorators(getMyClanTag())
           let tagTxt = u.isEmpty(myClanTagUndecorated) ? loc("clan/clan_tag/short") : myClanTagUndecorated
           let tooltipBase = $"{loc("clan/clan_tag_decoration")}{loc("ui/colon")}"
-          let tagDecorators = ::g_clan_tag_decorator.getDecoratorsForClanDuelRewards(prize.list)
+          let tagDecorators = clanTagDecoratorFuncs.getDecoratorsForClanDuelRewards(prize.list)
           foreach (decorator in tagDecorators)
             collection.append({
               start = decorator.start

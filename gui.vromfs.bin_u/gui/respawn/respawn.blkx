@@ -1,875 +1,853 @@
-{
-  "dummy": [
-    {
-      "id": "dummy_spectator_prev",
-      "on_click": "onSpectatorPrev",
-      "behaviour": "accesskey",
-      "accessKey": "J:LB | Left | PageUp"
-    },
-    {
-      "id": "dummy_spectator_next",
-      "on_click": "onSpectatorNext",
-      "behaviour": "accesskey",
-      "accessKey": "J:RB | Right | PageDown"
-    },
-    {
-      "id": "btn_gamemenu",
-      "on_click": "onGamemenu",
-      "behaviour": "accesskey",
-      "accessKey": "Esc | J:Start"
-    },
-    {
-      "id": "btn_show_hud",
-      "on_click": "setHudVisibility",
-      "behaviour": "accesskey",
-      "accessKey": "J:R.Thumb"
-    }
-  ],
-  "tdiv": [
-    {
-      "id": "respawn_screen",
-      "position": "root",
-      "size": "sw,sh",
-      "optionlist_container": {
-        "id": "flight_menu_bgd",
-        "type": "respawn",
-        "flow": "vertical",
-        "tdiv": [
-          {
-            "id": "no_respawn_bases_place",
-            "size": "19,19",
-            "display": "hide"
-          },
-          {
-            "id": "additionalUnitsNest",
-            "size": "1@slotbarWidthFull, 1.5@slotbarHeight",
-            "pos": "50%pw-50%w, 0",
-            "position": "relative",
-            "display": "hide",
-            "HorizontalListBox": {
-              "id": "additionalUnits",
-              "type": "transparent",
-              "pos": "50%pw-50%w, 0",
-              "position": "relative",
-              "height": "ph",
-              "noPadding": "yes",
-              "flow": "horizontal",
-              "overflow-x": "auto",
-              "clearOnFocusLost": "no",
-              "navigator": "posNavigator",
-              "navigatorShortcuts": "yes",
-              "on_select": "onSelectAdditionalUnit",
-              "css-hier-invalidate": "yes"
-            }
-          },
-          {
-            "id": "respawnOptListContainer",
-            "height": "fh",
-            "width": "@respawnOptListContainerWidth",
-            "max-width": "(3@modCellWidth +1@scrollBarSize) + (0.12@scrn_tgt * 1@isWide) + (8*@sf/@pf_outdated +h)",
-            "pos": "50%pw-50%w, 1*@scrn_tgt/100.0",
-            "position": "relative",
-            "tdiv": [
-              {
-                "id": "panel-left",
-                "size": "3@modCellWidth, ph",
-                "position": "relative",
-                "flow": "vertical",
-                "tdiv": [
-                  {
-                    "id": "unit_options",
-                    "width": "pw",
-                    "padding-bottom": "0.03@scrn_tgt",
-                    "tdiv": [
-                      {
-                        "id": "CA_div",
-                        "size": "pw + 2@scrollBarSize, ph",
-                        "pos": "50%pw-50%w, 0",
-                        "position": "relative",
-                        "flow": "vertical",
-                        "display": "hide",
-                        "overflow-y": "auto",
-                        "div": {
-                          "id": "unit_weapons_selector",
-                          "left": "@scrollBarSize",
-                          "position": "relative",
-                          "width": "3@modCellWidth"
-                        },
-                        "PosOptionsNavigator": {
-                          "id": "respawn_options_table",
-                          "width": "p.p.w",
-                          "left": "@scrollBarSize",
-                          "position": "relative",
-                          "class": "optionsTable",
-                          "navigatorShortcuts": "yes",
-                          "disableFixedCoord": "yes"
-                        }
-                      },
-                      {
-                        "id": "air_info_div",
-                        "width": "p.p.w",
-                        "left": "@scrollBarSize",
-                        "position": "relative",
-                        "flow": "vertical",
-                        "display": "hide",
-                        "slotbarTable": {
-                          "id": "air_item_place",
-                          "holdTooltipChildren": "yes"
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "id": "separate_block",
-                    "width": "pw"
-                  },
-                  {
-                    "id": "objectives",
-                    "width": "pw",
-                    "flow": "vertical",
-                    "text": {
-                      "id": "mis_obj_text_header",
-                      "text": "#mission_objectives"
-                    },
-                    "gameModeChangeButton": {
-                      "id": "mis_obj_button_header",
-                      "direction": "up",
-                      "on_click": "onSwitchChatSize",
-                      "display": "hide",
-                      "enable": "no",
-                      "dropMenuArrow": [
-                        {},
-                        {}
-                      ],
-                      "dropMenuSeparator": [
-                        {},
-                        {}
-                      ],
-                      "activeText": {
-                        "margin": "5@dp, 0",
-                        "text": "#mission_objectives"
-                      }
-                    },
-                    "tdiv": {
-                      "size": "pw, fh",
-                      "overflow": "auto",
-                      "flow": "vertical",
-                      "class": "misObjectives",
-                      "scrollbarShortcuts": "yes",
-                      "div": {
-                        "width": "pw -1@scrollBarSize",
-                        "overflow": "hidden",
-                        "tdiv": [
-                          {
-                            "id": "primary_tasks_list",
-                            "width": "pw",
-                            "padding-bottom": "0.8*@scrn_tgt/100.0",
-                            "flow": "vertical"
-                          },
-                          {
-                            "id": "secondary_tasks_list",
-                            "width": "pw",
-                            "padding-bottom": "0.8*@scrn_tgt/100.0",
-                            "flow": "vertical"
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  {
-                    "id": "mpChatInRespawn",
-                    "width": "pw",
-                    "height": "fh",
-                    "min-height": "1@minChatHeight"
-                  }
-                ]
-              },
-              {
-                "id": "right-panel",
-                "size": "fw, ph",
-                "pos": "8*@sf/@pf_outdated, 0",
-                "position": "relative",
-                "flow": "vertical",
-                "tdiv": {
-                  "id": "tactical-map-box",
-                  "size": "pw,fh",
-                  "padding": "2",
-                  "div": {
-                    "behaviour": "button",
-                    "id": "POI_resetter",
-                    "size": "sw,sh",
-                    "position": "root",
-                    "on_click": "onRespawnScreenClick"
-                  },
-                  "tacticalMap": {
-                    "id": "tactical-map",
-                    "size": "pw, ph",
-                    "max-height": "pw",
-                    "max-width": "ph",
-                    "pos": "pw-w, 0",
-                    "position": "relative",
-                    "on_click": "onTacticalmapClick",
-                    "display": "hide",
-                    "enable": "no",
-                    "div": [
-                      {
-                        "id": "cursor-initial-place"
-                      },
-                      {
-                        "id": "tmap_btn",
-                        "size": "pw, ph",
-                        "input-transparent": "yes",
-                        "tdiv": {
-                          "width": "pw",
-                          "pos": "0, ph-h",
-                          "position": "relative",
-                          "flow": "vertical",
-                          "tdiv": {
-                            "pos": "0.5*(pw-w), 0",
-                            "position": "relative",
-                            "img": {
-                              "id": "tmap_icon",
-                              "size": "@buttonHeight,@buttonHeight",
-                              "pos": "0,50%ph-50%h",
-                              "position": "relative",
-                              "background-repeat": "aspect-ratio"
-                            },
-                            "textareaNoTab": {
-                              "id": "tmap_hint",
-                              "pos": "0,50%ph-50%h",
-                              "position": "relative",
-                              "input-transparent": "yes",
-                              "shadeStyle": "textOnIcon",
-                              "text": ""
-                            }
-                          },
-                          "textareaNoTab": {
-                            "id": "tmap_respawn_base_timer",
-                            "pos": "50%pw-50%w, 0",
-                            "position": "relative",
-                            "input-transparent": "yes",
-                            "shadeStyle": "textOnIcon",
-                            "overlayTextColor": "warning",
-                            "behavior": "Timer",
-                            "text": ""
-                          },
-                          "activeText": {
-                            "id": "time_to_kick_alert_text",
-                            "pos": "0.5*(pw-w), 0",
-                            "position": "relative",
-                            "text": "#respawn/timeToKickAlert",
-                            "_blink": "no",
-                            "titleFont": "yes",
-                            "style": "color:@warningTextColor;",
-                            "behaviour": "basicFontSize",
-                            "font-ht": "28",
-                            "font-ht-base": "28",
-                            "font-ht-end": "36",
-                            "size-time": "200",
-                            "size-func": "sin",
-                            "_size-timer": "1"
-                          },
-                          "textarea": {
-                            "id": "autostart_countdown_text",
-                            "pos": "0.5*(pw-w), 0",
-                            "position": "relative",
-                            "margin-right": "8*@sf/@pf_outdated"
-                          }
-                        }
-                      }
-                    ],
-                    "tdiv": {
-                      "id": "team_units_left_respawns",
-                      "size": "pw, ph",
-                      "position": "absolute"
-                    }
-                  },
-                  "chatPopupNest": {
-                    "id": "chatPopupNest",
-                    "position": "absolute"
-                  },
-                  "tdiv": {
-                    "pos": "pw+1@blockInterval, ph-h",
-                    "position": "absolute",
-                    "flow": "vertical",
-                    "background-color": "@editboxColor",
-                    "tdiv": [
-                      {
-                        "id": "hint_attention_to_map",
-                        "margin": "1@blockInterval",
-                        "tooltip": "#voice_message_attention_to_point_2",
-                        "display": "hide",
-                        "div": [
-                          {
-                            "size": "1@buttonHeight, 1@buttonHeight",
-                            "input-transparent": "yes",
-                            "img": {
-                              "size": "1@cIco, 1@cIco",
-                              "pos": "0.5pw-0.5w, 0.5ph-0.5h",
-                              "position": "relative",
-                              "background-svg-size": "@cIco, @cIco",
-                              "background-image": "#ui/gameuiskin#new_icon.svg"
-                            }
-                          },
-                          {
-                            "size": "1@buttonHeight, 1@buttonHeight",
-                            "margin-left": "1@blockInterval",
-                            "input-transparent": "yes",
-                            "img": {
-                              "size": "0.73h, 1@cIco",
-                              "pos": "0.5pw-0.5w, 0.5ph-0.5h",
-                              "position": "relative",
-                              "background-svg-size": "0.73h, @cIco",
-                              "background-image": "#ui/gameuiskin#mouse_left.avif"
-                            }
-                          }
-                        ]
-                      },
-                      {
-                        "margin": "1@blockInterval",
-                        "tooltip": "#options/rmbToMoveMap",
-                        "Button_text": {
-                          "class": "image",
-                          "btnName": "RB",
-                          "noMargin": "yes",
-                          "tooltip": "#options/moveMap",
-                          "_on_click": "onMoveMapActivate",
-                          "ButtonImg": {},
-                          "img": {
-                            "background-image": "#ui/gameuiskin#dnd_icon.svg"
-                          }
-                        },
-                        "tdiv": {
-                          "id": "hint_btn_move_map",
-                          "size": "1@buttonHeight, 1@buttonHeight",
-                          "margin-left": "1@blockInterval",
-                          "display": "hide",
-                          "img": {
-                            "size": "0.73h, 1@cIco",
-                            "position": "relative",
-                            "pos": "0.5pw-0.5w, 0.5ph-0.5h",
-                            "background-svg-size": "0.73h, 1@cIco",
-                            "background-image": "#ui/gameuiskin#mouse_right.avif"
-                          }
-                        }
-                      },
-                      {
-                        "id": "btn_set_point_of_interest",
-                        "margin": "1@blockInterval",
-                        "display": "hide",
-                        "Button_text": {
-                          "class": "image",
-                          "btnName": "LT",
-                          "noMargin": "yes",
-                          "on_click": "onSetPointOfInterest",
-                          "tooltip": "#options/setPointOfInterest",
-                          "ButtonImg": {},
-                          "img": {
-                            "id": "hud_poi_img",
-                            "background-image": "#ui/gameuiskin#map_interestpoint.svg"
-                          }
-                        },
-                        "tdiv": {
-                          "id": "hint_btn_set_point_of_interest",
-                          "size": "1@buttonHeight, 1@buttonHeight",
-                          "margin-left": "1@blockInterval",
-                          "display": "hide",
-                          "img": {
-                            "size": "0.73h, 1@cIco",
-                            "position": "relative",
-                            "pos": "0.5pw-0.5w, 0.5ph-0.5h",
-                            "tooltip": "#options/mmbToSetPoi",
-                            "background-image": "#ui/gameuiskin#mouse_center.avif"
-                          }
-                        }
-                      },
-                      {
-                        "id": "btn_set_hud_type",
-                        "margin": "1@blockInterval",
-                        "display": "hide",
-                        "Button_text": {
-                          "class": "image",
-                          "accessKey": "N | J:LB",
-                          "noMargin": "yes",
-                          "tooltip": "#options/forceHudType",
-                          "on_click": "onForcedSetHudType",
-                          "ButtonImg": {
-                            "btnName": "LB"
-                          },
-                          "img": {
-                            "id": "hud_type_img",
-                            "background-image": "#ui/gameuiskin#objective_tank.svg"
-                          }
-                        },
-                        "loadingHint": {
-                          "id": "hint_btn_set_hud_type",
-                          "size": "1@buttonHeight, 1@buttonHeight",
-                          "margin-left": "1@blockInterval",
-                          "display": "hide",
-                          "keyboardButton": {
-                            "position": "relative",
-                            "pos": "0.5pw-0.5w, 0.5ph-0.5h",
-                            "keyboardButtonText": {
-                              "position": "relative",
-                              "pos": "0.5pw - 0.5w, 0.5ph - 0.5h",
-                              "text": "N"
-                            }
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
-            ]
-          }
-        ],
-        "slotbarDiv": {
-          "id": "nav-slotbar",
-          "pos": "50%pw-50%w, 0",
-          "position": "relative",
-          "tdiv": {
-            "id": "slotbar_load_wait",
-            "height": "1@slotbarHeight",
-            "display": "hide",
-            "animated_wait_icon": {
-              "pos": "0,50%ph-50%h",
-              "position": "relative",
-              "background-rotation": "0"
-            },
-            "textarea": {
-              "text": "#mainmenu/waitSlotbarData",
-              "pos": "0,50%ph-50%h",
-              "position": "relative"
-            }
-          }
-        }
-      },
-      "tdiv": [
-        {
-          "id": "respawn_order_status",
-          "width": "0.8@itemInfoWidth",
-          "position": "root",
-          "pos": "sw - w - 1@bw, 1@bh + 1@multiplayerScoreHeightWithOffset",
-          "flow": "vertical"
-        },
-        {
-          "position": "absolute",
-          "pos": "@bw+1@blockInterval*@isInVr, @bh+1@blockInterval*@isInVr",
-          "flow": "vertical",
-          "smallFont": "yes",
-          "textareaNoTab": [
-            {
-              "id": "respawn_title",
-              "overlayTextColor": "active",
-              "textShade": "yes",
-              "text": ""
-            },
-            {
-              "id": "respawn_time_end",
-              "overlayTextColor": "premiumNotEarned",
-              "textShade": "yes",
-              "text": ""
-            },
-            {
-              "id": "respawn_score_limit",
-              "overlayTextColor": "premiumNotEarned",
-              "textShade": "yes",
-              "text": ""
-            },
-            {
-              "id": "respawn_time_to_kick",
-              "overlayTextColor": "premiumNotEarned",
-              "textShade": "yes",
-              "text": ""
-            }
-          ],
-          "tdiv": {
-            "textareaNoTab": {
-              "id": "mission_environment",
-              "overlayTextColor": "premiumNotEarned",
-              "textShade": "yes",
-              "text": ""
-            },
-            "tdiv": {
-              "id": "bad_weather_warning",
-              "display": "hide",
-              "margin-left": "1/2@sIco",
-              "tooltip": "",
-              "textareaNoTab": [
-                {
-                  "overlayTextColor": "active",
-                  "text": "("
-                },
-                {
-                  "overlayTextColor": "active",
-                  "text": "#bad_weather_conditions/short"
-                },
-                {
-                  "overlayTextColor": "active",
-                  "text": ")"
-                }
-              ],
-              "img": {
-                "position": "relative",
-                "pos": "0, 0.5ph-0.5h",
-                "size": "1@sIco, 1@sIco",
-                "margin": "1/2@sIco, 0",
-                "background-image": "#ui/gameuiskin#weather_cloud_lightning.svg",
-                "background-svg-size": "1@sIco, 1@sIco",
-                "bgcolor": "#FFFFFF"
-              }
-            }
-          }
-        },
-        {
-          "id": "mission_texts_block_right",
-          "pos": "sw - w - 1@bw, @bh",
-          "position": "absolute",
-          "flow": "vertical",
-          "total-input-transparent": "yes"
-        },
-        {
-          "id": "spectator_controls",
-          "width": "@rw",
-          "pos": "pw/2-w/2, sh -1@bh -1@bottomMenuPanelHeight -h -@sIco",
-          "position": "absolute",
-          "flow": "vertical",
-          "textareaNoTab": {
-            "id": "spectator_name",
-            "pos": "pw/2-w/2, 0",
-            "position": "relative",
-            "textShade": "yes"
-          },
-          "tdiv": {
-            "pos": "pw/2-w/2, @sIco",
-            "position": "relative",
-            "flow": "horizontal",
-            "Button_text": [
-              {
-                "id": "btn_spectator_prev",
-                "text": "#mainmenu/btnSpectatorPrev",
-                "btnName": "LB",
-                "_on_click": "onSpectatorPrev",
-                "behaviour": "accesskey",
-                "style": "accessKey: 'J:LB | Left | PageUp';",
-                "ButtonImg": {}
-              },
-              {
-                "id": "btn_spectator_next",
-                "text": "#mainmenu/btnSpectatorNext",
-                "btnName": "RB",
-                "_on_click": "onSpectatorNext",
-                "behaviour": "accesskey",
-                "style": "accessKey: 'J:RB | Right | PageDown';",
-                "ButtonImg": {}
-              }
-            ]
-          },
-          "Button_text": {
-            "id": "btn_spectator_hide_hud",
-            "pos": "pw-w, ph-h",
-            "position": "absolute",
-            "text": "#hotkeys/ID_HIDE_HUD",
-            "_on_click": "onHideHUD",
-            "btnName": "R3",
-            "ButtonImg": {}
-          }
-        },
-        {
-          "id": "mpChatInSpectator",
-          "size": "0.33@rw, 0.25@scrn_tgt",
-          "pos": "@bw, sh -1@bh -1@bottomMenuPanelHeight -h",
-          "position": "root"
-        },
-        {
-          "pos": "50%pw-50%w, 1@bh + 0.03@scrn_tgt",
-          "position": "absolute",
-          "flow": "vertical",
-          "multiplayerScore": {
-            "pos": "50%pw-50%w, 0",
-            "position": "relative"
-          },
-          "activeText": {
-            "id": "txt_no_respawn_bases",
-            "position": "root",
-            "pos": "50%sw-50%w, @bh",
-            "textShade": "yes",
-            "input-transparent": "yes"
-          }
-        },
-        {
-          "id": "contacts_scene"
-        }
-      ],
-      "activeText": {
-        "id": "spectator_mode_title",
-        "pos": "pw/2-w/2, @bh + 0.09@scrn_tgt",
-        "position": "absolute",
-        "input-transparent": "yes",
-        "display": "hide",
-        "caption": "yes",
-        "text": "#multiplayer/spectator",
-        "textShade": "yes"
-      },
-      "gamercard_div": {
-        "isRespawnBottomGamercard": "yes",
-        "gamercard": {
-          "id": "gamercard_bottom",
-          "systemMsg": {
-            "pos": "1@systemMsgIndent, 0",
-            "position": "root",
-            "flow": "vertical",
-            "dlDataStat": {
-              "behavior": "bhvUpdater",
-              "pos": "50%pw-50%w,0",
-              "position": "relative",
-              "value": "{\"viewId\": \"DL_DATA_STATE_TEXT\"}",
-              "css-hier-invalidate": "yes",
-              "animText": {
-                "text": "",
-                "font": "@fontTiny",
-                "color-factor": "0",
-                "fade": "out"
-              }
-            }
-          },
-          "BottomMenuPanel": {
-            "shadowSafeArea": {},
-            "tdiv": [
-              {
-                "size": "pw, 0.02@sf",
-                "pos": "0, ph",
-                "position": "absolute",
-                "background-repeat": "expand",
-                "background-image": "#ui/gameuiskin#optionlist_background_top",
-                "background-color": "#90909090",
-                "background-position": "0, 0.25h, 0, 0"
-              },
-              {
-                "width": "1@bottomGcWidth",
-                "height": "ph",
-                "pos": "pw/2 - w/2, ph/2 - h/2",
-                "position": "absolute",
-                "tdiv": {
-                  "id": "gamercard_bottom_left",
-                  "height": "1@gamercardHeight",
-                  "class": "header",
-                  "width": "fw",
-                  "bottomNavPlace": {
-                    "id": "gamercard_bottom_navbar_place",
-                    "size": "pw - ph, ph",
-                    "pos": "0, 0.5(ph-h)",
-                    "position": "absolute"
-                  },
-                  "tdiv": {
-                    "id": "slotbar-presetsPlace",
-                    "size": "pw, ph",
-                    "position": "absolute",
-                    "display": "hide"
-                  }
-                },
-                "voiceChatWidgetNest": {
-                  "isClanOnly": "no",
-                  "blockSeparator": [
-                    {
-                      "display": "hide"
-                    },
-                    {
-                      "display": "hide"
-                    }
-                  ],
-                  "emptyVoiceChat": {
-                    "tooltip": "#clan/voice_chat/widget",
-                    "usertalk": {
-                      "id": "voice_chat_no_activity",
-                      "type": "noTalk",
-                      "fade": "in",
-                      "height-end": "1",
-                      "_size-timer": "0",
-                      "img": {
-                        "color-factor": "255",
-                        "inacive": "yes",
-                        "position": "relative"
-                      },
-                      "activeText": {
-                        "text": "...",
-                        "color-factor": "255",
-                        "position": "relative"
-                      }
-                    }
-                  },
-                  "voiceChatWidgetContainer": {
-                    "isSmall": "no",
-                    "voiceChatWidget": {
-                      "value": "{\"viewId\": \"VOICE_CHAT\"}"
-                    }
-                  }
-                },
-                "gcButtonsSquadHolder": {
-                  "id": "gamercard_squad_widget",
-                  "position": "relative",
-                  "top": "0.5(ph-h)",
-                  "margin-right": "2@buttonTextPadding",
-                  "class": "header",
-                  "css-hier-invalidate": "yes"
-                },
-                "gcButtonsHolder": {
-                  "id": "gamercard_bottom_right",
-                  "position": "relative",
-                  "top": "0.5(ph-h)",
-                  "class": "header",
-                  "Button_text": [
-                    {
-                      "id": "gc_invites_btn",
-                      "class": "image",
-                      "tooltip": "#mainmenu/invites",
-                      "_on_click": "onGC_invites",
-                      "img": [
-                        {
-                          "id": "icon",
-                          "background-image": "#ui/gameuiskin#invites.svg"
-                        },
-                        {
-                          "id": "iconNew",
-                          "background-image": "#ui/gameuiskin#invites_new.svg",
-                          "style": "background-color:@textureGlowColor",
-                          "display": "hide"
-                        },
-                        {
-                          "id": "iconGlow",
-                          "background-image": "#ui/gameuiskin#mail_new_glow",
-                          "style": "background-color:@textureGlowColor; size:110%ph, 110%ph",
-                          "_transp-timer": "0",
-                          "display": "hide"
-                        }
-                      ]
-                    },
-                    {
-                      "id": "gc_contacts",
-                      "class": "image",
-                      "tooltip": "#mainmenu/contacts",
-                      "_on_click": "onGC_contacts",
-                      "img": {
-                        "background-image": "#ui/gameuiskin#friends.svg"
-                      },
-                      "text": {
-                        "id": "gc_friends_online",
-                        "position": "absolute",
-                        "pos": "pw - w, ph - h - 2",
-                        "style": "font:@fontTiny; color:@userlogColoredText",
-                        "shadeStyle": "outline33pct",
-                        "text": ""
-                      }
-                    },
-                    {
-                      "id": "gc_chat_btn",
-                      "class": "image",
-                      "tooltip": "#mainmenu/chat",
-                      "_on_click": "onGC_chat",
-                      "img": [
-                        {
-                          "id": "icon",
-                          "background-image": "#ui/gameuiskin#chat.svg"
-                        },
-                        {
-                          "id": "iconNew",
-                          "background-image": "#ui/gameuiskin#chat_new.svg",
-                          "style": "background-color:@textureGlowColor",
-                          "display": "hide"
-                        },
-                        {
-                          "id": "iconGlow",
-                          "background-image": "#ui/gameuiskin#mail_new_glow",
-                          "style": "background-color:@textureGlowColor; size:110%ph, 110%ph",
-                          "_transp-timer": "0",
-                          "display": "hide"
-                        }
-                      ],
-                      "text": {
-                        "id": "gc_new_chat_messages",
-                        "position": "absolute",
-                        "pos": "pw - w, ph - h",
-                        "style": "font:@fontTiny; color:@userlogColoredText",
-                        "text": ""
-                      }
-                    },
-                    {
-                      "id": "gc_userlog_btn",
-                      "class": "image",
-                      "tooltip": "#userlog/no_new_messages",
-                      "_on_click": "onUserLog",
-                      "img": [
-                        {
-                          "id": "icon",
-                          "background-image": "#ui/gameuiskin#mail.svg"
-                        },
-                        {
-                          "id": "iconNew",
-                          "background-image": "#ui/gameuiskin#mail_new.svg",
-                          "style": "background-color:@textureGlowColor",
-                          "display": "hide"
-                        },
-                        {
-                          "id": "iconGlow",
-                          "background-image": "#ui/gameuiskin#mail_new_glow",
-                          "style": "background-color:@textureGlowColor; size:110%ph, 110%ph",
-                          "_transp-timer": "0",
-                          "display": "hide"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          "tdiv": {
-            "position": "root",
-            "pos": "sw - w, 0",
-            "versionText": {}
-          }
-        }
-      }
-    },
-    {
-      "behaviour": "darg"
-    }
-  ],
-  "root_button": {
-    "id": "screen_button_back",
-    "display": "hide",
-    "position": "root",
-    "size": "sw,sh",
-    "behavior": "button",
-    "_on_click": "goBack"
-  },
-  "timer": {
-    "id": "stat_update",
-    "timer_handler_func": "onUpdate",
-    "timer_interval_msec": "250"
-  },
-  "DummyButton": {
-    "id": "btn_hide_show_hud",
-    "on_click": "showHud",
-    "btnName": "BNotEsc"
-  },
-  "systemMsg": {
-    "pos": "1@systemMsgIndent, 0",
-    "position": "root",
-    "flow": "vertical",
-    "dlDataStat": {
-      "behavior": "bhvUpdater",
-      "pos": "50%pw-50%w,0",
-      "position": "relative",
-      "value": "{\"viewId\": \"DL_DATA_STATE_TEXT\"}",
-      "css-hier-invalidate": "yes",
-      "animText": {
-        "text": "",
-        "font": "@fontTiny",
-        "color-factor": "0",
-        "fade": "out"
-      }
-    }
-  }
+dummy {
+	id:t = "dummy_spectator_prev"
+	on_click:t = "onSpectatorPrev"
+	behaviour:t = "accesskey"
+	accessKey:t = "J:LB | Left | PageUp"
+}
+dummy {
+	id:t = "dummy_spectator_next"
+	on_click:t = "onSpectatorNext"
+	behaviour:t = "accesskey"
+	accessKey:t = "J:RB | Right | PageDown"
+}
+tdiv {
+	id:t = "respawn_screen"
+	position:t = "root"
+	size:t = "sw,sh"
+	optionlist_container {
+		id:t = "flight_menu_bgd"
+		type:t = "respawn"
+		flow:t = "vertical"
+		tdiv {
+			id:t = "no_respawn_bases_place"
+			size:t = "19,19"
+			display:t = "hide"
+		}
+		slotbarDiv {
+			id:t = "nav-slotbar"
+			pos:t = "50%pw-50%w, 0"
+			position:t = "relative"
+			tdiv {
+				id:t = "slotbar_load_wait"
+				height:t = "1@slotbarHeight"
+				display:t = "hide"
+				animated_wait_icon {
+					pos:t = "0,50%ph-50%h"
+					position:t = "relative"
+					background-rotation:t = "0"
+				}
+				textarea {
+					text:t = "#mainmenu/waitSlotbarData"
+					pos:t = "0,50%ph-50%h"
+					position:t = "relative"
+				}
+			}
+		}
+		tdiv {
+			id:t = "additionalUnitsNest"
+			size:t = "1@slotbarWidthFull, 1.5@slotbarHeight"
+			pos:t = "50%pw-50%w, 0"
+			position:t = "relative"
+			display:t = "hide"
+			HorizontalListBox {
+				id:t = "additionalUnits"
+				type:t = "transparent"
+				pos:t = "50%pw-50%w, 0"
+				position:t = "relative"
+				height:t = "ph"
+				noPadding:t = "yes"
+				flow:t = "horizontal"
+				overflow-x:t = "auto"
+				clearOnFocusLost:t = "no"
+				navigator:t = "posNavigator"
+				navigatorShortcuts:t = "yes"
+				on_select:t = "onSelectAdditionalUnit"
+				css-hier-invalidate:t = "yes"
+			}
+		}
+		tdiv {
+			id:t = "respawnOptListContainer"
+			height:t = "fh"
+			width:t = "@respawnOptListContainerWidth"
+			max-width:t = "(3@modCellWidth +1@scrollBarSize) + (0.12@scrn_tgt * 1@isWide) + (8*@sf/@pf_outdated +h)"
+			pos:t = "50%pw-50%w, 1*@scrn_tgt/100.0"
+			position:t = "relative"
+			tdiv {
+				id:t = "panel-left"
+				size:t = "3@modCellWidth, ph"
+				position:t = "relative"
+				flow:t = "vertical"
+				tdiv {
+					id:t = "unit_options"
+					width:t = "pw"
+					padding-bottom:t = "0.03@scrn_tgt"
+					tdiv {
+						id:t = "CA_div"
+						size:t = "pw + 2@scrollBarSize, ph"
+						pos:t = "50%pw-50%w, 0"
+						position:t = "relative"
+						flow:t = "vertical"
+						display:t = "hide"
+						overflow-y:t = "auto"
+						div {
+							id:t = "unit_weapons_selector"
+							left:t = "@scrollBarSize"
+							position:t = "relative"
+							width:t = "3@modCellWidth"
+						}
+						PosOptionsNavigator {
+							id:t = "respawn_options_table"
+							width:t = "p.p.w"
+							left:t = "@scrollBarSize"
+							position:t = "relative"
+							class:t = "optionsTable"
+							navigatorShortcuts:t = "yes"
+							disableFixedCoord:t = "yes"
+						}
+					}
+					tdiv {
+						id:t = "air_info_div"
+						width:t = "p.p.w"
+						left:t = "@scrollBarSize"
+						position:t = "relative"
+						flow:t = "vertical"
+						display:t = "hide"
+						slotbarTable {
+							id:t = "air_item_place"
+							holdTooltipChildren:t = "yes"
+						}
+					}
+				}
+				tdiv {
+					id:t = "separate_block"
+					width:t = "pw"
+				}
+				tdiv {
+					id:t = "objectives"
+					width:t = "pw"
+					flow:t = "vertical"
+					text {
+						id:t = "mis_obj_text_header"
+						text:t = "#mission_objectives"
+					}
+					gameModeChangeButton {
+						id:t = "mis_obj_button_header"
+						direction:t = "up"
+						on_click:t = "onSwitchChatSize"
+						display:t = "hide"
+						enable:t = "no"
+						dropMenuArrow {
+
+						}
+						dropMenuSeparator {
+
+						}
+						activeText {
+							margin:t = "5@dp, 0"
+							text:t = "#mission_objectives"
+						}
+						dropMenuSeparator {
+
+						}
+						dropMenuArrow {
+
+						}
+					}
+					tdiv {
+						size:t = "pw, fh"
+						overflow:t = "auto"
+						flow:t = "vertical"
+						class:t = "misObjectives"
+						scrollbarShortcuts:t = "yes"
+						div {
+							width:t = "pw -1@scrollBarSize"
+							overflow:t = "hidden"
+							tdiv {
+								id:t = "primary_tasks_list"
+								width:t = "pw"
+								padding-bottom:t = "0.8*@scrn_tgt/100.0"
+								flow:t = "vertical"
+							}
+							tdiv {
+								id:t = "secondary_tasks_list"
+								width:t = "pw"
+								padding-bottom:t = "0.8*@scrn_tgt/100.0"
+								flow:t = "vertical"
+							}
+						}
+					}
+				}
+				tdiv {
+					id:t = "mpChatInRespawn"
+					width:t = "pw"
+					height:t = "fh"
+					min-height:t = "1@minChatHeight"
+				}
+			}
+			tdiv {
+				id:t = "right-panel"
+				size:t = "fw, ph"
+				pos:t = "8*@sf/@pf_outdated, 0"
+				position:t = "relative"
+				flow:t = "vertical"
+				tdiv {
+					id:t = "tactical-map-box"
+					size:t = "pw,fh"
+					padding:t = "2"
+					div {
+						behaviour:t = "button"
+						id:t = "POI_resetter"
+						size:t = "sw,sh"
+						position:t = "root"
+						on_click:t = "onRespawnScreenClick"
+					}
+					tacticalMap {
+						id:t = "tactical-map"
+						size:t = "pw, ph"
+						max-height:t = "pw"
+						max-width:t = "ph"
+						pos:t = "pw-w, 0"
+						position:t = "relative"
+						on_click:t = "onTacticalmapClick"
+						display:t = "hide"
+						enable:t = "no"
+						div {
+							id:t = "tmap_btn"
+							size:t = "pw, ph"
+							input-transparent:t = "yes"
+							tdiv {
+								id:t = "cursor-initial-place"
+								position:t = "relative"
+								pos:t = "0, 0.4*ph"
+							}
+							div {
+								width:t = "pw"
+								pos:t = "0, ph-h"
+								position:t = "relative"
+								flow:t = "vertical"
+								tdiv {
+									pos:t = "0.5*(pw-w), 0"
+									position:t = "relative"
+									img {
+										id:t = "tmap_icon"
+										size:t = "@buttonHeight,@buttonHeight"
+										pos:t = "0,50%ph-50%h"
+										position:t = "relative"
+										background-repeat:t = "aspect-ratio"
+									}
+									textareaNoTab {
+										id:t = "tmap_hint"
+										pos:t = "0,50%ph-50%h"
+										position:t = "relative"
+										input-transparent:t = "yes"
+										shadeStyle:t = "textOnIcon"
+										text:t = ""
+									}
+								}
+								textareaNoTab {
+									id:t = "tmap_respawn_base_timer"
+									pos:t = "50%pw-50%w, 0"
+									position:t = "relative"
+									input-transparent:t = "yes"
+									shadeStyle:t = "textOnIcon"
+									overlayTextColor:t = "warning"
+									behavior:t = "Timer"
+									text:t = ""
+								}
+								activeText {
+									id:t = "time_to_kick_alert_text"
+									pos:t = "0.5*(pw-w), 0"
+									position:t = "relative"
+									text:t = "#respawn/timeToKickAlert"
+									_blink:t = "no"
+									titleFont:t = "yes"
+									style:t = "color:@warningTextColor;"
+									behaviour:t = "basicFontSize"
+									font-ht:t = "28"
+									font-ht-base:t = "28"
+									font-ht-end:t = "36"
+									size-time:t = "200"
+									size-func:t = "sin"
+									_size-timer:t = "1"
+								}
+								textarea {
+									id:t = "autostart_countdown_text"
+									pos:t = "0.5*(pw-w), 0"
+									position:t = "relative"
+									margin-right:t = "8*@sf/@pf_outdated"
+								}
+							}
+						}
+						tdiv {
+							id:t = "team_units_left_respawns"
+							size:t = "pw, ph"
+							position:t = "absolute"
+						}
+					}
+					chatPopupNest {
+						id:t = "chatPopupNest"
+						position:t = "absolute"
+					}
+					tdiv {
+						pos:t = "pw+1@blockInterval, ph-h"
+						position:t = "absolute"
+						flow:t = "vertical"
+						background-color:t = "@editboxColor"
+						tdiv {
+							id:t = "hint_attention_to_map"
+							margin:t = "1@blockInterval"
+							tooltip:t = "#voice_message_attention_to_point_2"
+							display:t = "hide"
+							div {
+								size:t = "1@buttonHeight, 1@buttonHeight"
+								input-transparent:t = "yes"
+								img {
+									size:t = "1@cIco, 1@cIco"
+									pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
+									position:t = "relative"
+									background-svg-size:t = "@cIco, @cIco"
+									background-image:t = "#ui/gameuiskin#new_icon.svg"
+								}
+							}
+							div {
+								size:t = "1@buttonHeight, 1@buttonHeight"
+								margin-left:t = "1@blockInterval"
+								input-transparent:t = "yes"
+								img {
+									size:t = "0.73h, 1@cIco"
+									pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
+									position:t = "relative"
+									background-svg-size:t = "0.73h, @cIco"
+									background-image:t = "#ui/gameuiskin#mouse_left.avif"
+								}
+							}
+						}
+						tdiv {
+							margin:t = "1@blockInterval"
+							tooltip:t = "#options/rmbToMoveMap"
+							Button_text {
+								class:t = "image"
+								btnName:t = "RB"
+								noMargin:t = "yes"
+								tooltip:t = "#options/moveMap"
+								_on_click:t = "onMoveMapActivate"
+								ButtonImg {
+
+								}
+								img {
+									background-image:t = "#ui/gameuiskin#dnd_icon.svg"
+								}
+							}
+							tdiv {
+								id:t = "hint_btn_move_map"
+								size:t = "1@buttonHeight, 1@buttonHeight"
+								margin-left:t = "1@blockInterval"
+								display:t = "hide"
+								img {
+									size:t = "0.73h, 1@cIco"
+									position:t = "relative"
+									pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
+									background-svg-size:t = "0.73h, 1@cIco"
+									background-image:t = "#ui/gameuiskin#mouse_right.avif"
+								}
+							}
+						}
+						tdiv {
+							id:t = "btn_set_point_of_interest"
+							margin:t = "1@blockInterval"
+							display:t = "hide"
+							Button_text {
+								class:t = "image"
+								btnName:t = "LT"
+								noMargin:t = "yes"
+								on_click:t = "onSetPointOfInterest"
+								tooltip:t = "#options/setPointOfInterest"
+								ButtonImg {
+
+								}
+								img {
+									id:t = "hud_poi_img"
+									background-image:t = "#ui/gameuiskin#map_interestpoint.svg"
+								}
+							}
+							tdiv {
+								id:t = "hint_btn_set_point_of_interest"
+								size:t = "1@buttonHeight, 1@buttonHeight"
+								margin-left:t = "1@blockInterval"
+								display:t = "hide"
+								img {
+									size:t = "0.73h, 1@cIco"
+									position:t = "relative"
+									pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
+									tooltip:t = "#options/mmbToSetPoi"
+									background-image:t = "#ui/gameuiskin#mouse_center.avif"
+								}
+							}
+						}
+						tdiv {
+							id:t = "btn_set_hud_type"
+							margin:t = "1@blockInterval"
+							display:t = "hide"
+							Button_text {
+								class:t = "image"
+								accessKey:t = "N | J:LB"
+								noMargin:t = "yes"
+								tooltip:t = "#options/forceHudType"
+								on_click:t = "onForcedSetHudType"
+								ButtonImg {
+									btnName:t = "LB"
+								}
+								img {
+									id:t = "hud_type_img"
+									background-image:t = "#ui/gameuiskin#objective_tank.svg"
+								}
+							}
+							loadingHint {
+								id:t = "hint_btn_set_hud_type"
+								size:t = "1@buttonHeight, 1@buttonHeight"
+								margin-left:t = "1@blockInterval"
+								display:t = "hide"
+								keyboardButton {
+									position:t = "relative"
+									pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
+									keyboardButtonText {
+										position:t = "relative"
+										pos:t = "0.5pw - 0.5w, 0.5ph - 0.5h"
+										text:t = "N"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	tdiv {
+		id:t = "respawn_order_status"
+		width:t = "0.8@itemInfoWidth"
+		position:t = "root"
+		pos:t = "sw - w - 1@bw, 1@bh + 1@multiplayerScoreHeightWithOffset"
+		flow:t = "vertical"
+	}
+	tdiv {
+		position:t = "absolute"
+		pos:t = "@bw+1@blockInterval*@isInVr, @bh+1@blockInterval*@isInVr"
+		flow:t = "vertical"
+		smallFont:t = "yes"
+		textareaNoTab {
+			id:t = "respawn_title"
+			overlayTextColor:t = "active"
+			textShade:t = "yes"
+			text:t = ""
+		}
+		tdiv {
+			textareaNoTab {
+				id:t = "mission_environment"
+				overlayTextColor:t = "premiumNotEarned"
+				textShade:t = "yes"
+				text:t = ""
+			}
+			tdiv {
+				id:t = "bad_weather_warning"
+				display:t = "hide"
+				margin-left:t = "1/2@sIco"
+				tooltip:t = ""
+				textareaNoTab {
+					overlayTextColor:t = "active"
+					text:t = "("
+				}
+				textareaNoTab {
+					overlayTextColor:t = "active"
+					text:t = "#bad_weather_conditions/short"
+				}
+				img {
+					position:t = "relative"
+					pos:t = "0, 0.5ph-0.5h"
+					size:t = "1@sIco, 1@sIco"
+					margin:t = "1/2@sIco, 0"
+					background-image:t = "#ui/gameuiskin#weather_cloud_lightning.svg"
+					background-svg-size:t = "1@sIco, 1@sIco"
+					bgcolor:t = "#FFFFFF"
+				}
+				textareaNoTab {
+					overlayTextColor:t = "active"
+					text:t = ")"
+				}
+			}
+		}
+		textareaNoTab {
+			id:t = "respawn_time_end"
+			overlayTextColor:t = "premiumNotEarned"
+			textShade:t = "yes"
+			text:t = ""
+		}
+		textareaNoTab {
+			id:t = "respawn_score_limit"
+			overlayTextColor:t = "premiumNotEarned"
+			textShade:t = "yes"
+			text:t = ""
+		}
+		textareaNoTab {
+			id:t = "respawn_time_to_kick"
+			overlayTextColor:t = "premiumNotEarned"
+			textShade:t = "yes"
+			text:t = ""
+		}
+	}
+	tdiv {
+		id:t = "mission_texts_block_right"
+		pos:t = "sw - w - 1@bw, @bh"
+		position:t = "absolute"
+		flow:t = "vertical"
+		total-input-transparent:t = "yes"
+	}
+	activeText {
+		id:t = "spectator_mode_title"
+		pos:t = "pw/2-w/2, @bh + 0.09@scrn_tgt"
+		position:t = "absolute"
+		input-transparent:t = "yes"
+		display:t = "hide"
+		caption:t = "yes"
+		text:t = "#multiplayer/spectator"
+		textShade:t = "yes"
+	}
+	tdiv {
+		id:t = "spectator_controls"
+		width:t = "@rw"
+		pos:t = "pw/2-w/2, sh -1@bh -1@bottomMenuPanelHeight -h -@sIco"
+		position:t = "absolute"
+		flow:t = "vertical"
+		textareaNoTab {
+			id:t = "spectator_name"
+			pos:t = "pw/2-w/2, 0"
+			position:t = "relative"
+			textShade:t = "yes"
+		}
+		tdiv {
+			pos:t = "pw/2-w/2, @sIco"
+			position:t = "relative"
+			flow:t = "horizontal"
+			Button_text {
+				id:t = "btn_spectator_prev"
+				text:t = "#mainmenu/btnSpectatorPrev"
+				btnName:t = "LB"
+				_on_click:t = "onSpectatorPrev"
+				behaviour:t = "accesskey"
+				style:t = "accessKey: 'J:LB | Left | PageUp';"
+				ButtonImg {
+
+				}
+			}
+			Button_text {
+				id:t = "btn_spectator_next"
+				text:t = "#mainmenu/btnSpectatorNext"
+				btnName:t = "RB"
+				_on_click:t = "onSpectatorNext"
+				behaviour:t = "accesskey"
+				style:t = "accessKey: 'J:RB | Right | PageDown';"
+				ButtonImg {
+
+				}
+			}
+		}
+		Button_text {
+			id:t = "btn_spectator_hide_hud"
+			pos:t = "pw-w, ph-h"
+			position:t = "absolute"
+			text:t = "#hotkeys/ID_HIDE_HUD"
+			_on_click:t = "onHideHUD"
+			btnName:t = "R3"
+			ButtonImg {
+
+			}
+		}
+	}
+	tdiv {
+		id:t = "mpChatInSpectator"
+		size:t = "0.33@rw, 0.25@scrn_tgt"
+		pos:t = "@bw, sh -1@bh -1@bottomMenuPanelHeight -h"
+		position:t = "root"
+	}
+	tdiv {
+		pos:t = "50%pw-50%w, 1@bh + 0.03@scrn_tgt"
+		position:t = "absolute"
+		flow:t = "vertical"
+		multiplayerScore {
+			pos:t = "50%pw-50%w, 0"
+			position:t = "relative"
+		}
+		activeText {
+			id:t = "txt_no_respawn_bases"
+			position:t = "root"
+			pos:t = "50%sw-50%w, @bh"
+			textShade:t = "yes"
+			input-transparent:t = "yes"
+		}
+	}
+	tdiv {
+		id:t = "contacts_scene"
+	}
+	gamercard_div {
+		isRespawnBottomGamercard:t = "yes"
+		gamercard {
+			id:t = "gamercard_bottom"
+			systemMsg {
+				pos:t = "1@systemMsgIndent, 0"
+				position:t = "root"
+				flow:t = "vertical"
+				dlDataStat {
+					behavior:t = "bhvUpdater"
+					pos:t = "50%pw-50%w,0"
+					position:t = "relative"
+					value:t = '{"viewId": "DL_DATA_STATE_TEXT"}'
+					css-hier-invalidate:t = "yes"
+					animText {
+						text:t = ""
+						font:t = "@fontTiny"
+						color-factor:t = "0"
+						fade:t = "out"
+					}
+				}
+			}
+			BottomMenuPanel {
+				shadowSafeArea {
+
+				}
+				tdiv {
+					size:t = "pw, 0.02@sf"
+					pos:t = "0, ph"
+					position:t = "absolute"
+					background-repeat:t = "expand"
+					background-image:t = "#ui/gameuiskin#optionlist_background_top"
+					background-color:t = "#90909090"
+					background-position:t = "0, 0.25h, 0, 0"
+				}
+				tdiv {
+					width:t = "1@bottomGcWidth"
+					height:t = "ph"
+					pos:t = "pw/2 - w/2, ph/2 - h/2"
+					position:t = "absolute"
+					tdiv {
+						id:t = "gamercard_bottom_left"
+						height:t = "1@gamercardHeight"
+						class:t = "header"
+						width:t = "fw"
+						bottomNavPlace {
+							id:t = "gamercard_bottom_navbar_place"
+							size:t = "pw - ph, ph"
+							pos:t = "0, 0.5(ph-h)"
+							position:t = "absolute"
+						}
+						tdiv {
+							id:t = "slotbar-presetsPlace"
+							size:t = "pw, ph"
+							position:t = "absolute"
+							display:t = "hide"
+						}
+					}
+					voiceChatWidgetNest {
+						isClanOnly:t = "no"
+						blockSeparator {
+							display:t = "hide"
+						}
+						emptyVoiceChat {
+							tooltip:t = "#clan/voice_chat/widget"
+							usertalk {
+								id:t = "voice_chat_no_activity"
+								type:t = "noTalk"
+								fade:t = "in"
+								height-end:t = "1"
+								_size-timer:t = "0"
+								img {
+									color-factor:t = "255"
+									inacive:t = "yes"
+									position:t = "relative"
+								}
+								activeText {
+									text:t = "..."
+									color-factor:t = "255"
+									position:t = "relative"
+								}
+							}
+						}
+						voiceChatWidgetContainer {
+							isSmall:t = "no"
+							voiceChatWidget {
+								value:t = '{"viewId": "VOICE_CHAT"}'
+							}
+						}
+						blockSeparator {
+							display:t = "hide"
+						}
+					}
+					gcButtonsSquadHolder {
+						id:t = "gamercard_squad_widget"
+						position:t = "relative"
+						top:t = "0.5(ph-h)"
+						margin-right:t = "2@buttonTextPadding"
+						class:t = "header"
+						css-hier-invalidate:t = "yes"
+					}
+					gcButtonsHolder {
+						id:t = "gamercard_bottom_right"
+						position:t = "relative"
+						top:t = "0.5(ph-h)"
+						class:t = "header"
+						Button_text {
+							id:t = "gc_invites_btn"
+							class:t = "image"
+							tooltip:t = "#mainmenu/invites"
+							_on_click:t = "onGC_invites"
+							img {
+								id:t = "icon"
+								background-image:t = "#ui/gameuiskin#invites.svg"
+							}
+							img {
+								id:t = "iconNew"
+								background-image:t = "#ui/gameuiskin#invites_new.svg"
+								style:t = "background-color:@textureGlowColor"
+								display:t = "hide"
+							}
+							img {
+								id:t = "iconGlow"
+								background-image:t = "#ui/gameuiskin#mail_new_glow"
+								style:t = "background-color:@textureGlowColor; size:110%ph, 110%ph"
+								_transp-timer:t = "0"
+								display:t = "hide"
+							}
+						}
+						Button_text {
+							id:t = "gc_contacts"
+							class:t = "image"
+							tooltip:t = "#mainmenu/contacts"
+							_on_click:t = "onGC_contacts"
+							img {
+								background-image:t = "#ui/gameuiskin#friends.svg"
+							}
+							text {
+								id:t = "gc_friends_online"
+								position:t = "absolute"
+								pos:t = "pw - w, ph - h - 2"
+								style:t = "font:@fontTiny; color:@userlogColoredText"
+								shadeStyle:t = "outline33pct"
+								text:t = ""
+							}
+						}
+						Button_text {
+							id:t = "gc_chat_btn"
+							class:t = "image"
+							tooltip:t = "#mainmenu/chat"
+							_on_click:t = "onGC_chat"
+							img {
+								id:t = "icon"
+								background-image:t = "#ui/gameuiskin#chat.svg"
+							}
+							img {
+								id:t = "iconNew"
+								background-image:t = "#ui/gameuiskin#chat_new.svg"
+								style:t = "background-color:@textureGlowColor"
+								display:t = "hide"
+							}
+							img {
+								id:t = "iconGlow"
+								background-image:t = "#ui/gameuiskin#mail_new_glow"
+								style:t = "background-color:@textureGlowColor; size:110%ph, 110%ph"
+								_transp-timer:t = "0"
+								display:t = "hide"
+							}
+							text {
+								id:t = "gc_new_chat_messages"
+								position:t = "absolute"
+								pos:t = "pw - w, ph - h"
+								style:t = "font:@fontTiny; color:@userlogColoredText"
+								text:t = ""
+							}
+						}
+						Button_text {
+							id:t = "gc_userlog_btn"
+							class:t = "image"
+							tooltip:t = "#userlog/no_new_messages"
+							_on_click:t = "onUserLog"
+							img {
+								id:t = "icon"
+								background-image:t = "#ui/gameuiskin#mail.svg"
+							}
+							img {
+								id:t = "iconNew"
+								background-image:t = "#ui/gameuiskin#mail_new.svg"
+								style:t = "background-color:@textureGlowColor"
+								display:t = "hide"
+							}
+							img {
+								id:t = "iconGlow"
+								background-image:t = "#ui/gameuiskin#mail_new_glow"
+								style:t = "background-color:@textureGlowColor; size:110%ph, 110%ph"
+								_transp-timer:t = "0"
+								display:t = "hide"
+							}
+						}
+					}
+				}
+			}
+			tdiv {
+				position:t = "root"
+				pos:t = "sw - w, 0"
+				versionText {
+
+				}
+			}
+		}
+	}
+}
+root_button {
+	id:t = "screen_button_back"
+	display:t = "hide"
+	position:t = "root"
+	size:t = "sw,sh"
+	behavior:t = "button"
+	_on_click:t = "goBack"
+}
+timer {
+	id:t = "stat_update"
+	timer_handler_func:t = "onUpdate"
+	timer_interval_msec:t = "250"
+}
+dummy {
+	id:t = "btn_gamemenu"
+	on_click:t = "onGamemenu"
+	behaviour:t = "accesskey"
+	accessKey:t = "Esc | J:Start"
+}
+DummyButton {
+	id:t = "btn_hide_show_hud"
+	on_click:t = "showHud"
+	btnName:t = "BNotEsc"
+}
+dummy {
+	id:t = "btn_show_hud"
+	on_click:t = "setHudVisibility"
+	behaviour:t = "accesskey"
+	accessKey:t = "J:R.Thumb"
+}
+systemMsg {
+	pos:t = "1@systemMsgIndent, 0"
+	position:t = "root"
+	flow:t = "vertical"
+	dlDataStat {
+		behavior:t = "bhvUpdater"
+		pos:t = "50%pw-50%w,0"
+		position:t = "relative"
+		value:t = '{"viewId": "DL_DATA_STATE_TEXT"}'
+		css-hier-invalidate:t = "yes"
+		animText {
+			text:t = ""
+			font:t = "@fontTiny"
+			color-factor:t = "0"
+			fade:t = "out"
+		}
+	}
+}
+tdiv {
+	behaviour:t = "darg"
 }

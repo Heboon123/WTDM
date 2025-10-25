@@ -127,7 +127,7 @@ function checkSquadMembersMrankDiff(handler, okFunc) {
     return okFunc()
 
   let message = loc("multiplayer/squad/members_br_diff_warning", {
-    squadBR = format("%.1f", recentBR.value)
+    squadBR = format("%.1f", recentBR.get())
     players = "\n".join(brData.reduce(@(acc, v, k) acc.append(
       "".concat(colorize("userlogColoredText", getPlayerName(k)), loc("ui/colon"), format("%.1f", v))), []))
   })
@@ -266,6 +266,7 @@ function getSquadMembersFlyoutData(teamData, event) {
             dislikedMissions = memberData?.dislikedMissions ?? []
             bannedMissions = memberData?.bannedMissions ?? []
             fakeName = memberData?.fakeName ?? false
+            hideClan = memberData?.hideClan ?? false
             queueProfileJwt = memberData?.queueProfileJwt ?? ""
           }
 

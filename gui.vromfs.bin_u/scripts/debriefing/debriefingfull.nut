@@ -1,4 +1,4 @@
-from "%scripts/dagui_natives.nut" import is_user_log_for_current_room, get_player_army_for_hud, get_user_logs_count, get_local_player_country, get_user_log_blk_body, get_race_winners_count
+from "%scripts/dagui_natives.nut" import  get_player_army_for_hud, get_local_player_country, get_race_winners_count
 from "%scripts/dagui_library.nut" import *
 from "%scripts/debriefing/debriefingConsts.nut" import debrState
 from "%scripts/teams.nut" import g_team
@@ -9,7 +9,6 @@ let { get_pve_trophy_name } = require("%appGlobals/ranks_common_shared.nut")
 let { Cost, Money, money_type } = require("%scripts/money.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { fabs } = require("math")
-let DataBlock = require("DataBlock")
 let { get_mp_session_id_str, is_mplayer_peer } = require("multiplayer")
 let { getLogForBanhammer } = require("%scripts/chat/mpChatModel.nut")
 let { getGameChatLogText } = require("%scripts/chat/mpChat.nut")
@@ -22,9 +21,11 @@ let { is_replay_playing } = require("replays")
 let { eventbus_subscribe } = require("eventbus")
 let { getSkillBonusTooltipText } = require("%scripts/statistics/mpStatisticsInfo.nut")
 let { getMplayersList } = require("%scripts/statistics/mplayersList.nut")
-let { is_benchmark_game_mode, get_game_mode, get_game_type, get_mp_local_team } = require("mission")
-let { get_mission_difficulty_int, stat_get_benchmark,
-  get_race_best_lap_time, get_race_lap_times,
+let { is_benchmark_game_mode, get_game_mode, get_game_type, get_mp_local_team,
+  get_current_mission_name
+} = require("mission")
+let { MISSION_STATUS_SUCCESS, get_mission_difficulty_int, stat_get_benchmark,
+  get_race_best_lap_time, get_race_lap_times, get_player_score_for_exp_events,
   get_mission_restore_type, get_mp_tbl_teams, get_mission_status } = require("guiMission")
 let { dynamicApplyStatus } = require("dynamicMission")
 let { capitalize } = require("%sqstd/string.nut")
@@ -34,14 +35,15 @@ let { isInSessionRoom, getSessionLobbyIsSpectator, getSessionLobbyPublicParam, g
 } = require("%scripts/matchingRooms/sessionLobbyState.nut")
 let { getEventEconomicName } = require("%scripts/events/eventInfo.nut")
 let { getCurMissionRules } = require("%scripts/misCustomRules/missionCustomState.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
-let { isMissionExtr } = require("%scripts/missions/missionsUtils.nut")
+let { findItemById } = require("%scripts/items/itemsManagerModule.nut")
+let { isMissionExtrByName } = require("%scripts/missions/missionsUtils.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { getModItemName } = require("%scripts/weaponry/weaponryDescription.nut")
 let { getModificationByName } = require("%scripts/weaponry/modificationInfo.nut")
-let { getUserLogsList } = require("%scripts/userLog/userlogUtils.nut")
+let { getUserLogsList, isUserlogVisible } = require("%scripts/userLog/userlogUtils.nut")
 let { getRoomEvent, getRoomUnitTypesMask } = require("%scripts/matchingRooms/sessionLobbyInfo.nut")
 let destroySessionScripted = require("%scripts/matchingRooms/destroySessionScripted.nut")
+let { isWorldWarEnabled } = require("%scripts/globalWorldWarScripts.nut")
 
 const TOOLTIP_MINIMIZE_SCREEN_WIDTH_PERCENT = 0.95
 
@@ -49,13 +51,18 @@ local debriefingResult = null
 local dynamicResult = -1
 let rewardsBonusTypes = ["noBonus", "premAcc", "premMod", "booster"]
 
+function getDebriefingUserLogsList(filter) {
+  let { roomUserlogs = [] } = debriefingResult
+  return roomUserlogs.filter(@(value, idx) isUserlogVisible(value, filter, idx))
+}
+
 function countWholeRewardInTable(table, currency, specParam = null) {
   if (!table || table.len() == 0)
     return 0
 
   local reward = 0
   let upCur = capitalize(currency)
-  let searchArray = specParam || ["noBonus", "premMod", "premAcc", "booster"]
+  let searchArray = specParam ?? ["noBonus", "premMod", "premAcc", "booster"]
   foreach (cur in searchArray)
     reward += getTblValue(cur + upCur, table, 0)
   return reward
@@ -155,6 +162,16 @@ debriefingRows = [
     getIcon = @() loc("icon/mpstats/groundKills", "")
     isVisibleWhenEmpty = @() !!(g_mission_type.getCurrentObjectives() & MISSION_OBJECTIVE.KILLS_GROUND)
   }
+  
+
+
+
+
+
+
+
+
+
   { id = "AwardDamage"
     showByTypes = function(gt) { return (!(gt & GT_RACE) && !(gt & GT_FOOTBALL)) }
     showByModes = function(gm) { return gm != GM_SKIRMISH }
@@ -170,6 +187,10 @@ debriefingRows = [
     isVisibleWhenEmpty = @() !!(g_mission_type.getCurrentObjectives() & MISSION_OBJECTIVE.KILLS_NAVAL)
   }
   "GroundKillsF"
+  
+
+
+
   "NavalKillsF"
   { id = "Assist"
     showByModes = isGameModeVersus
@@ -201,9 +222,6 @@ debriefingRows = [
   { id = "ScoutKillUnknown"
     isShowOnlyInTooltips = true
   }
-  { id = "Overkill"
-    showByModes = isGameModeVersus
-  }
   { id = "Captures"
     rowType = "num"
     showByModes = isGameModeVersus
@@ -221,10 +239,6 @@ debriefingRows = [
     showByModes = isGameModeVersus
     text = "multiplayer/shellInterception"
     icon = "icon/mpstats/shellInterception"
-  }
-  { id = "Sights"
-    showByModes = isGameModeVersus
-    showByTypes = function(gt) { return (!(gt & GT_RACE) && !(gt & GT_FOOTBALL)) }
   }
   { id = "Damage",
     rowType = "tnt"
@@ -689,12 +703,11 @@ debriefingRows = [
     rowProps = { totalColor = "yes", totalRowStyle = "last" }
     tooltipComment = function() { return loc("debriefing/ecSpawnScore") }
     getValueFunc = function() {
-                              let logs = getUserLogsList({
+                              let logs = getDebriefingUserLogsList({
                                 show = [
                                   EULT_SESSION_RESULT
                                   EULT_EARLY_SESSION_LEAVE
                                 ]
-                                currentRoomOnly = true
                               })
 
                               local result = 0
@@ -714,12 +727,11 @@ debriefingRows = [
     rowProps = { totalColor = "yes", totalRowStyle = "last" }
     tooltipComment = function() { return loc("debriefing/wwSpawnScore") }
     getValueFunc = function() {
-                              let logs = getUserLogsList({
+                              let logs = getDebriefingUserLogsList({
                                 show = [
                                   EULT_SESSION_RESULT
                                   EULT_EARLY_SESSION_LEAVE
                                 ]
-                                currentRoomOnly = true
                               })
 
                               local result = 0
@@ -847,14 +859,13 @@ function calculateDebriefingTabularData(addVirtPremAcc = false) {
 }
 
 function recountDebriefingResult() {
-  let gm = get_game_mode()
-  let gt = get_game_type()
-  let isCurMisionExtr = isMissionExtr()
+  let { gm = -1, gameType = -1, missionName = "" } = debriefingResult
+  let isCurMisionExtr = isMissionExtrByName(missionName)
 
   foreach (row in debriefingRows) {
     row.show = ((isCurMisionExtr && (row?.canShowForMissionExtr ?? false)) || !isCurMisionExtr)
-      && row.isVisible(gm, gt, isDebriefingResultFull)
-    row.showInTooltips = row.show || row.isVisible(gm, gt, isDebriefingResultFull, true)
+      && row.isVisible(gm, gameType, isDebriefingResultFull)
+    row.showInTooltips = row.show || row.isVisible(gm, gameType, isDebriefingResultFull, true)
     if (!row.show && !row.showInTooltips)
       continue
 
@@ -1276,18 +1287,37 @@ function gatherReturnSpawnCost() {
 
 function gatherDebriefingResult() {
   let gm = get_game_mode()
+  let gameType = get_game_type()
   if (gm == GM_DYNAMIC)
     dynamicResult = dynamicApplyStatus()
 
-  debriefingResult = {}
+  debriefingResult = {
+    roomUserlogs = getUserLogsList({
+      currentRoomOnly = true
+      needStackItems = false
+      disableVisible = true
+    })
+    roomEvent = null
+    isWorldWarEnabled = isWorldWarEnabled()
+    missionName = get_current_mission_name()
+    gm
+    gameType
+  }
+
   debriefingResult.isSucceed <- (get_mission_status() == MISSION_STATUS_SUCCESS)
   debriefingResult.restoreType <- get_mission_restore_type()
-  debriefingResult.gm <- gm
-  debriefingResult.gameType <- get_game_type()
-  debriefingResult.isTeamplay <- is_mode_with_teams(debriefingResult.gameType)
+  debriefingResult.isTeamplay <- is_mode_with_teams(gameType)
 
   debriefingResult.isInRoom <- isInSessionRoom.get()
-  debriefingResult.roomEvent <- isInSessionRoom.get() ? getRoomEvent() : null
+  let roomEvent = isInSessionRoom.get() ? getRoomEvent() : null
+  if (roomEvent != null)
+    debriefingResult.roomEvent = {
+      name = roomEvent?.name
+      economicName = roomEvent?.economicName
+      difficulty = roomEvent?.difficulty
+      chapter = roomEvent?.chapter
+      gameModeId = roomEvent?.gameModeId
+    }
   debriefingResult.isSpectator <- isInSessionRoom.get() && getSessionLobbyIsSpectator()
 
   debriefingResult.isMp <- is_multiplayer()
@@ -1307,6 +1337,8 @@ function gatherDebriefingResult() {
 
   debriefingResult.numberOfWinningPlaces <- get_race_winners_count()
   debriefingResult.mplayers_list <- getMplayersList()
+  foreach (player in debriefingResult.mplayers_list)
+    player.scoreForExpEvents <- get_player_score_for_exp_events(player.userId.tointeger())
 
   
   let exp = ::stat_get_exp() ?? {}
@@ -1351,14 +1383,6 @@ function gatherDebriefingResult() {
   debriefingResult.needRewardColumn <- false
   debriefingResult.mulsList <- []
 
-  debriefingResult.roomUserlogs <- []
-  for (local i = get_user_logs_count() - 1; i >= 0; i--)
-    if (is_user_log_for_current_room(i)) {
-      let blk = DataBlock()
-      get_user_log_blk_body(i, blk)
-      debriefingResult.roomUserlogs.append(blk)
-    }
-
   if (!("aircrafts" in debriefingResult.exp))
     debriefingResult.exp.aircrafts <- []
 
@@ -1376,7 +1400,7 @@ function gatherDebriefingResult() {
   foreach (_airName, airData in debriefingResult.exp.aircrafts)
     airData["tntDamage"] <- getTblValue("numDamage", airData, 0)
 
-  if (get_game_type() & GT_RACE) {
+  if (gameType & GT_RACE) {
     debriefingResult.exp.ptmBestLap <- get_race_best_lap_time()
     debriefingResult.exp.ptmLapTimesArray <- get_race_lap_times()
   }
@@ -1478,7 +1502,7 @@ function debriefingAddVirtualPremAccToStatTbl(data, isRoot) {
 
 
 function debriefingAddVirtualPremAcc() {
-  if (!havePremium.value)
+  if (!havePremium.get())
     return
 
   debriefingAddVirtualPremAccToStatTbl(debriefingResult.exp, true)
@@ -1519,4 +1543,6 @@ return {
   getTableNameById
   updateDebriefingResultGiftItemsInfo
   rewardsBonusTypes
+  getDebriefingUserLogsList
+  recountDebriefingResult
 }

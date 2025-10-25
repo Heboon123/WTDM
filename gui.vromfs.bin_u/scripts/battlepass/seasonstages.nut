@@ -8,32 +8,32 @@ let { curSeasonChallengesByStage } = require("%scripts/battlePass/challenges.nut
 let { getStageByIndex } = require("%scripts/unlocks/userstatUnlocksState.nut")
 let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 let globalCallbacks = require("%sqDagui/globalCallbacks/globalCallbacks.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
+let { findItemById } = require("%scripts/items/itemsManagerModule.nut")
 let { getCurrentWarbond } = require("%scripts/warbonds/warbondsManager.nut")
 
 const COUNT_OF_VISIBLE_INCOMPLETED_LOOP_STAGES = 10
 
-let overrideStagesIcon = Computed(@() basicUnlock.value?.meta.overrideStageIcon ?? {})
-let doubleWidthStagesIcon = Computed(@() basicUnlock.value?.meta.doubleWidthStageIcon ?? [])
+let overrideStagesIcon = Computed(@() basicUnlock.get()?.meta.overrideStageIcon ?? {})
+let doubleWidthStagesIcon = Computed(@() basicUnlock.get()?.meta.doubleWidthStageIcon ?? [])
 
-let getStageStatus = @(stageIdx) (stageIdx + 1) < seasonLevel.value ? "past"
-  : (stageIdx + 1) == seasonLevel.value ? "current"
+let getStageStatus = @(stageIdx) (stageIdx + 1) < seasonLevel.get() ? "past"
+  : (stageIdx + 1) == seasonLevel.get() ? "current"
   : "future"
 
-function getPrizeStatus(unlock, stageIdx) {
+function getPrizeStatus(unlock, stageIdx) { 
   let stage = stageIdx + 1
   let lastRewardedStage = unlock.lastRewardedStage
   if (stage <= lastRewardedStage)
     return "received"
 
-  if (unlock.name == premiumUnlockId.value && !hasBattlePass.value)
+  if (unlock.name == premiumUnlockId.get() && !hasBattlePass.get())
     return "notAvailable"
 
   return unlock.stage >= stage ? "available"
    : "notAvailable"
 }
 
-function addStageConfigWithRewardToList(stagesArray, unlock, stageIdx, stageChallenge = null) {
+function addStageConfigWithRewardToList(stagesArray, unlock, stageIdx, stageChallenge = null) { 
   if (unlock == null)
     return
   let curStage = getStageByIndex(unlock, stageIdx)
@@ -44,25 +44,25 @@ function addStageConfigWithRewardToList(stagesArray, unlock, stageIdx, stageChal
     stagesArray.append(curStage.__merge({
       unlockId = unlockId
       stage = stage
-      isFree = unlockId == basicUnlockId.value
+      isFree = unlockId == basicUnlockId.get()
       stageStatus = getStageStatus(stageIdx)
-      prizeStatus = isChallengeStage && stage <= seasonLevel.value ? "received"
+      prizeStatus = isChallengeStage && stage <= seasonLevel.get() ? "received"
         : getPrizeStatus(unlock, stageIdx)
-      warbondsShopLevel = warbondsShopLevelByStages.value?[stage.tostring()]
+      warbondsShopLevel = warbondsShopLevelByStages.get()?[stage.tostring()]
       stageChallenge = stageChallenge
     }))
   }
 }
 
 let seasonStages = Computed(function() {
-  let stagesCount = max(basicUnlock.value?.stages.len() ?? 0,
-    premiumUnlock.value?.stages.len() ?? 0,
-    seasonLevel.value + COUNT_OF_VISIBLE_INCOMPLETED_LOOP_STAGES)
+  let stagesCount = max(basicUnlock.get()?.stages.len() ?? 0,
+    premiumUnlock.get()?.stages.len() ?? 0,
+    seasonLevel.get() + COUNT_OF_VISIBLE_INCOMPLETED_LOOP_STAGES)
   let res = []
   for (local i = 0; i < stagesCount; i++) {
-    let stageChallenge = curSeasonChallengesByStage.value?[i + 1]
-    addStageConfigWithRewardToList(res, basicUnlock.value, i, stageChallenge)
-    addStageConfigWithRewardToList(res, premiumUnlock.value, i)
+    let stageChallenge = curSeasonChallengesByStage.get()?[i + 1]
+    addStageConfigWithRewardToList(res, basicUnlock.get(), i, stageChallenge)
+    addStageConfigWithRewardToList(res, premiumUnlock.get(), i)
   }
   return res
 })
@@ -84,7 +84,7 @@ function getChallengeTooltipId(stage, stageChallenge) {
   if (stageChallenge == null)
     return null
 
-  let challenge = curSeasonChallengesByStage.value?[stage]
+  let challenge = curSeasonChallengesByStage.get()?[stage]
   if (challenge == null)
     return null
 
@@ -93,7 +93,7 @@ function getChallengeTooltipId(stage, stageChallenge) {
 
 function getStageViewData(stageData, idxOnPage) {
   let { unlockId, stageStatus, prizeStatus, stage, isFree, rewards = null, warbondsShopLevel, stageChallenge } = stageData
-  let overrideStageIcon = overrideStagesIcon.value?[stage.tostring()]
+  let overrideStageIcon = overrideStagesIcon.get()?[stage.tostring()]
   let itemId = rewards?.keys()[0]
   let item = itemId != null ? findItemById(itemId.tointeger()) : null
   let currentWarbond = getCurrentWarbond()
@@ -103,7 +103,7 @@ function getStageViewData(stageData, idxOnPage) {
     rewardId = itemId
     stageStatus = stageStatus
     prizeStatus = prizeStatus
-    doubleWidthStageIcon = doubleWidthStagesIcon.value.findvalue(@(v) v == stage) != null
+    doubleWidthStageIcon = doubleWidthStagesIcon.get().findvalue(@(v) v == stage) != null
     stage = stage
     previewButton = getPreviewBtnView(item)
     isFree = isFree

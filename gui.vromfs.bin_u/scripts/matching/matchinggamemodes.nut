@@ -13,7 +13,7 @@ let { fetchGameModesDigest, fetchGameModesInfo
 let { getEventEconomicName } = require("%scripts/events/eventInfo.nut")
 let { startswith }=require("string")
 let { clearTimer, resetTimeout } = require("dagor.workcycle")
-
+let { parse_json } = require("json")
 
 
 
@@ -30,6 +30,7 @@ local queueGameModesForRequest = []
 local fetching = false
 local fetchingInfo = false
 local fetch_counter = 0
+local needForceUpdateOnReconnect = false
 let needShowGameModesNotLoadedMsg = Watched(false)
 
 let hideModesNotLoadedHelpMessage = @() needShowGameModesNotLoadedMsg.set(false)
@@ -48,7 +49,8 @@ function notifyGmChanged() {
   events.updateEventsData(gameEventsOldFormat)
 }
 
-function onGameModesUpdated(modes_list) {
+function onGameModesUpdated(modes_list_str) {
+  let modes_list = parse_json(modes_list_str)
   foreach (modeInfo in modes_list) {
     let gameModeId = modeInfo.gameModeId
     log($"matching game mode fetched '{modeInfo.name}' [{gameModeId}]")
@@ -82,16 +84,15 @@ function loadGameModesFromList(gm_list) {
     addGmListToQueue(gm_list.slice(MAX_GAME_MODES_FOR_REQUEST_INFO))
     gm_list = gm_list.slice(0, MAX_GAME_MODES_FOR_REQUEST_INFO)
   }
-  fetchGameModesInfo({ byId = gm_list, timeout = 60 },
+  fetchGameModesInfo({ byId = gm_list, asString = true, timeout = 60 },
     function (result) {
       fetchingInfo = false
       if (!checkMatchingError(result, false)) {
         queueGameModesForRequest.clear()
         return
       }
-
-      if ("modes" in result)
-        onGameModesUpdated(result.modes)
+      if ("modes_str" in result)
+        onGameModesUpdated(result.modes_str)
       if (queueGameModesForRequest.len() == 0) {
         notifyGmChanged()
         clearTimer(showModesNotLoadedHelpMessage)
@@ -125,6 +126,10 @@ function fetchGameModes() {
           startLogout()
       }
       else {
+        if (!is_online_available()) {
+          needForceUpdateOnReconnect = true
+          return
+        }
         log($"fetch gamemodes error, retry - {fetch_counter}")
         self()
       }
@@ -134,8 +139,10 @@ function fetchGameModes() {
 }
 
 function forceUpdateGameModes() {
-  if (!is_online_available())
+  if (!is_online_available()) {
+    needForceUpdateOnReconnect = true
     return
+  }
 
   fetching = false
   fetch_counter = 0
@@ -242,6 +249,12 @@ function getModeById(gameModeId) {
 }
 
 addListenersWithoutEnv({
+  function MatchingConnect(_) {
+    if (!needForceUpdateOnReconnect)
+      return
+    needForceUpdateOnReconnect = false
+    forceUpdateGameModes()
+  }
   function SignOut(_) {
     gameModes.clear()
     queueGameModesForRequest.clear()

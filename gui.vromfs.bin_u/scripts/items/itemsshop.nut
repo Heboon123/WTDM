@@ -32,7 +32,7 @@ let { fillDescTextAboutDiv, updateExpireAlarmIcon,
 let { needUseHangarDof } = require("%scripts/viewUtils/hangarDof.nut")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
-let { findItemById, getItemsSortComparator } = require("%scripts/items/itemsManager.nut")
+let { findItemById, getItemsSortComparator } = require("%scripts/items/itemsManagerModule.nut")
 let { gui_start_items_list } = require("%scripts/items/startItemsShop.nut")
 let { defer } = require("dagor.workcycle")
 let { generatePaginator } = require("%scripts/viewUtils/paginator.nut")
@@ -152,7 +152,7 @@ gui_handlers.ItemsList <- class (gui_handlers.BaseGuiHandlerWT) {
     this.fillTabs()
 
     this.scene.findObject("update_timer").setUserData(this)
-    if (showConsoleButtons.value)
+    if (showConsoleButtons.get())
       this.scene.findObject("mouse_timer").setUserData(this)
 
     this.hoverHoldAction = mkHoverHoldAction(this.scene.findObject("hover_hold_timer"))
@@ -330,12 +330,10 @@ gui_handlers.ItemsList <- class (gui_handlers.BaseGuiHandlerWT) {
     let seenListId = getSeenIdByTabIdx(this.curTab)
     local curValue = -1
     let childsTotal = typesObj.childrenCount()
-
-    if (childsTotal < this.navItems.len()) {
-      let navItemsTotal = this.navItems.len() 
+    let navItemsTotal = this.navItems.len()
+    if (childsTotal < navItemsTotal)
       script_net_assert_once("Bad count on update unseen tabs",
         "ItemsShop: Not all sheets exist on update sheets list unseen icon")
-    }
 
     foreach (idx, item in this.navItems) {
       if (idx >= childsTotal)
@@ -676,7 +674,7 @@ gui_handlers.ItemsList <- class (gui_handlers.BaseGuiHandlerWT) {
     let item = this.getCurItem()
     this.markItemSeen(item)
     this.infoHandler?.updateHandlerData(item, true, true)
-    showObjById("jumpToDescPanel", showConsoleButtons.value && item != null, this.scene)
+    showObjById("jumpToDescPanel", showConsoleButtons.get() && item != null, this.scene)
     this.updateButtons()
   }
 
@@ -777,6 +775,8 @@ gui_handlers.ItemsList <- class (gui_handlers.BaseGuiHandlerWT) {
         linkObj.findObject("img")["background-image"] = item.linkActionIcon
       }
     }
+
+    showObjById("btn_probability_info", (item?.needProbabilityInfoBtn() ?? false), this.scene)
   }
 
   function onRecycle() {
@@ -885,6 +885,10 @@ gui_handlers.ItemsList <- class (gui_handlers.BaseGuiHandlerWT) {
       item.openLink()
   }
 
+  function onProbabilityInfoBtn(_obj) {
+    this.getCurItem()?.openProbabilityInfo()
+  }
+
   function onItemPreview(_obj) {
     if (!this.isValid())
       return
@@ -953,7 +957,7 @@ gui_handlers.ItemsList <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onJumpToDescPanelAccessKey(_obj) {
-    if (!showConsoleButtons.value)
+    if (!showConsoleButtons.get())
       return
     let containerObj = this.scene.findObject("item_info")
     if (checkObj(containerObj) && containerObj.isHovered())
@@ -1196,7 +1200,7 @@ gui_handlers.ItemsList <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onItemHover(obj) {
-    if (!showConsoleButtons.value)
+    if (!showConsoleButtons.get())
       return
     let wasMouseMode = this.isMouseMode
     this.updateMouseMode()
@@ -1232,7 +1236,7 @@ gui_handlers.ItemsList <- class (gui_handlers.BaseGuiHandlerWT) {
     this.currentSelectedId = this.currentHoveredItemId
   }
 
-  updateMouseMode = @() this.isMouseMode = !showConsoleButtons.value || is_mouse_last_time_used()
+  updateMouseMode = @() this.isMouseMode = !showConsoleButtons.get() || is_mouse_last_time_used()
   function updateShowItemButton() {
     let listObj = this.getItemsListObj()
     if (listObj?.isValid())

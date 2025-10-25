@@ -1,409 +1,411 @@
-{
-  "type": "radar",
-  "name": "LAV-AD",
-  "transivers": {
-    "track": {
-      "power": 60.0,
-      "band": -1,
-      "rcs": 3000.0,
-      "range": 10000.0,
-      "rangeMax": 10000.0,
-      "visibilityType": "infraRed",
-      "range0": 0.0,
-      "range1": 100000.0,
-      "range2": 0.0,
-      "range3": 0.0,
-      "range4": 0.0,
-      "range5": 0.0,
-      "range6": 0.0,
-      "range7": 0.0,
-      "antenna": {
-        "angleHalfSens": 0.4,
-        "sideLobesSensitivity": -120.0
-      }
-    }
-  },
-  "scanPatterns": {
-    "losLock": {
-      "type": "pyramide",
-      "azimuthLimits": [
-        -60.0,
-        60.0
-      ],
-      "elevationLimits": [
-        -10.0,
-        85.0
-      ],
-      "pitchStabLimit": 85.0,
-      "rollStabLimit": 10.0,
-      "period": 0.25,
-      "width": 0.25,
-      "barHeight": 0.5,
-      "barsCount": 1,
-      "rowMajor": false,
-      "indicate": true
-    },
-    "track": {
-      "type": "no",
-      "pitchStabLimit": 85.0,
-      "rollStabLimit": 10.0,
-      "azimuthLimits": [
-        -60.0,
-        60.0
-      ],
-      "elevationLimits": [
-        -20.0,
-        85.0
-      ]
-    }
-  },
-  "signals": {
-    "track": {
-      "showBScope": false,
-      "groundClutter": false,
-      "angularAccuracy": 0.002,
-      "distanceAccuracy": 2.0,
-      "absDopplerSpeed": true,
-      "distance": {
-        "presents": true,
-        "minValue": 20.0,
-        "maxValue": 10000.0
-      }
-    }
-  },
-  "fsms": {
-    "main": {
-      "stateInit": "init",
-      "actionsTemplates": {
-        "init": {
-          "setEnabled": {
-            "value": false
-          },
-          "setTransiver": {
-            "transiver": "track"
-          },
-          "setSignal": {
-            "signal": "track"
-          },
-          "setTargetDesignationRange": {
-            "azimuthRange": [
-              -0.5,
-              0.5
-            ],
-            "distanceRange": [
-              0.0,
-              10000.0
-            ]
-          }
-        },
-        "setStandbyMode": {
-          "setModeName": {
-            "name": "standby"
-          },
-          "setEnabled": {
-            "value": false
-          },
-          "setScanPattern": {
-            "scanPattern": "losLock"
-          },
-          "setCenterAzimuth": {
-            "source": "constant",
-            "value": 0.0
-          },
-          "clearTargetsOfInterest": {},
-          "setFsmActive": [
-            {
-              "fsm": "lock",
-              "active": false
-            },
-            {
-              "fsm": "track",
-              "active": false
-            }
-          ]
-        },
-        "setLosVisualPreLockMode": {
-          "setEnabled": {
-            "value": true
-          },
-          "setScanPattern": {
-            "scanPattern": "losLock"
-          },
-          "resetScanPhase": {},
-          "clearTargetsOfInterest": {},
-          "setCenterAzimuth": {
-            "source": "targetDesignation"
-          },
-          "setCenterElevation": {
-            "source": "targetDesignation"
-          },
-          "setFsmActive": {
-            "fsm": "lock",
-            "active": true
-          }
-        },
-        "setLosLockMode": {
-          "setModeName": {
-            "name": "acquisition"
-          },
-          "setEnabled": {
-            "value": true
-          },
-          "setWeaponDetectionAllowance": {
-            "source": "targetDesignation"
-          },
-          "setDesignatedTarget": {
-            "set": false
-          },
-          "setDistGatePos": {
-            "source": "constRange",
-            "pos": 5000.0,
-            "width": 10000.0
-          }
-        },
-        "setVisualLockMode": {
-          "setModeName": {
-            "name": "acquisition"
-          },
-          "setEnabled": {
-            "value": true
-          },
-          "setWeaponDetectionAllowance": {
-            "source": "const",
-            "value": true
-          },
-          "setDesignatedTarget": {
-            "set": true
-          },
-          "setDistGatePos": {
-            "source": "targetDesignation",
-            "width": 100.0
-          }
-        },
-        "setTrackMode": {
-          "setModeName": {
-            "name": "track"
-          },
-          "setEnabled": {
-            "value": true
-          },
-          "setWeaponDetectionAllowance": {
-            "source": "const",
-            "value": true
-          },
-          "setDesignatedTarget": {
-            "set": false
-          },
-          "setScanPattern": {
-            "scanPattern": "track"
-          },
-          "clearTargetsOfInterest": {},
-          "addTargetOfInterest": {},
-          "setLastTargetOfInterestActive": {},
-          "updateActiveTargetOfInterest": {},
-          "setCenterAzimuth": {
-            "source": "activeTargetOfInterest"
-          },
-          "setCenterElevation": {
-            "source": "activeTargetOfInterest"
-          },
-          "setDistGatePos": {
-            "source": "activeTargetOfInterest",
-            "width": 0.0
-          },
-          "setFsmActive": {
-            "fsm": "track",
-            "active": true
-          }
-        }
-      },
-      "transitions": {
-        "init": {
-          "stateFrom": "init",
-          "event": "init",
-          "stateTo": "standby",
-          "actions": {
-            "init": {},
-            "setStandbyMode": {}
-          }
-        },
-        "checkLockTypeLos": {
-          "stateFrom": "standby",
-          "command": "designateTarget",
-          "stateTo": "checkLockTypeLos",
-          "actions": {
-            "checkDesignationTypeEquals": {
-              "type": "los"
-            }
-          }
-        },
-        "losLock": {
-          "stateFrom": "checkLockTypeLos",
-          "event": "designationTypeEquals",
-          "stateTo": "losLock",
-          "actions": {
-            "setLosVisualPreLockMode": {},
-            "setLosLockMode": {}
-          }
-        },
-        "checkLockTypeVisual": {
-          "stateFrom": "checkLockTypeLos",
-          "event": "designationTypeNotEquals",
-          "stateTo": "checkLockTypeVisual",
-          "actions": {
-            "checkDesignationTypeEquals": {
-              "type": "visual"
-            }
-          }
-        },
-        "visualLock": {
-          "stateFrom": "checkLockTypeVisual",
-          "event": "designationTypeEquals",
-          "stateTo": "visualLock",
-          "actions": {
-            "setLosVisualPreLockMode": {},
-            "setVisualLockMode": {}
-          }
-        },
-        "finishLockTypeCheck": {
-          "stateFrom": "checkLockTypeVisual",
-          "event": "designationTypeNotEquals",
-          "stateTo": "standby"
-        },
-        "track": {
-          "stateFrom": [
-            "losLock",
-            "visualLock"
-          ],
-          "event": "targetDetected",
-          "stateTo": "track",
-          "actions": {
-            "setTrackMode": {},
-            "setFsmActive": {
-              "fsm": "lock",
-              "active": false
-            }
-          }
-        },
-        "failedLock": {
-          "stateFrom": [
-            "losLock",
-            "visualLock"
-          ],
-          "event": "scanFinished",
-          "stateTo": "standby",
-          "actions": {
-            "setStandbyMode": {},
-            "setFsmActive": {
-              "fsm": "lock",
-              "active": false
-            }
-          }
-        },
-        "finishedTrack": {
-          "stateFrom": "track",
-          "event": "targetsOfInterestCleanup",
-          "command": [
-            "selectTarget",
-            "designateTarget"
-          ],
-          "stateTo": "standby",
-          "actions": {
-            "setStandbyMode": {},
-            "setFsmActive": {
-              "fsm": "track",
-              "active": false
-            }
-          }
-        }
-      }
-    },
-    "lock": {
-      "stateInit": "lock",
-      "transitions": {
-        "scan": {
-          "event": "update",
-          "actions": {
-            "scan": {}
-          }
-        },
-        "detect": {
-          "event": "targetInSight",
-          "actions": {
-            "detectTarget": {
-              "ignoreOwnWeapon": true,
-              "rangeMult": 1.0
-            }
-          }
-        }
-      }
-    },
-    "track": {
-      "stateInit": "track",
-      "transitions": {
-        "detect": {
-          "event": "update",
-          "actions": {
-            "detectTarget": {
-              "ignoreOwnWeapon": true,
-              "rangeMult": 1.0
-            }
-          }
-        },
-        "track": {
-          "event": "targetDetected",
-          "actions": {
-            "updateActiveTargetOfInterest": {
-              "dirFilter": {
-                "rateLim": [
-                  0.78,
-                  0.78
-                ],
-                "limTimeOut": 1.0,
-                "inertialTimeMax": 1.0
-              },
-              "distFilter": {
-                "accelLim": [
-                  150.0,
-                  150.0
-                ],
-                "limTimeOut": 1.0,
-                "inertialTimeMax": 1.0
-              }
-            },
-            "setCenterAzimuth": {
-              "source": "activeTargetOfInterest"
-            },
-            "setCenterElevation": {
-              "source": "activeTargetOfInterest"
-            },
-            "setDistGatePos": {
-              "source": "activeTargetOfInterest",
-              "width": 0.0
-            }
-          }
-        },
-        "extrapolate": {
-          "event": "targetNotDetected",
-          "actions": {
-            "extrapolateTargetsOfInterest": {},
-            "clearTargetsOfInterest": {
-              "timeOut": 2.0,
-              "dirRateLim": 0.78
-            },
-            "setCenterAzimuth": {
-              "source": "activeTargetOfInterest"
-            },
-            "setCenterElevation": {
-              "source": "activeTargetOfInterest"
-            },
-            "setDistGatePos": {
-              "source": "activeTargetOfInterest",
-              "width": 0.0
-            }
-          }
-        }
-      }
-    }
-  }
+type:t = "radar"
+name:t = "LAV-AD"
+transivers {
+	track {
+		power:r = 60
+		band:i = -1
+		rcs:r = 3000
+		range:r = 10000
+		rangeMax:r = 10000
+		visibilityType:t = "infraRed"
+		range0:r = 0
+		range1:r = 100000
+		range2:r = 0
+		range3:r = 0
+		range4:r = 0
+		range5:r = 0
+		range6:r = 0
+		range7:r = 0
+		antenna {
+			angleHalfSens:r = 0.4
+			sideLobesSensitivity:r = -120
+		}
+	}
+}
+scanPatterns {
+	losLock {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -60, 60
+		elevationLimits:p2 = -10, 85
+		pitchStabLimit:r = 85
+		rollStabLimit:r = 10
+		period:r = 0.25
+		width:r = 0.25
+		barHeight:r = 0.5
+		barsCount:i = 1
+		rowMajor:b = false
+		indicate:b = true
+	}
+	track {
+		type:t = "no"
+		pitchStabLimit:r = 85
+		rollStabLimit:r = 10
+		azimuthLimits:p2 = -60, 60
+		elevationLimits:p2 = -20, 85
+	}
+}
+signals {
+	track {
+		showBScope:b = false
+		groundClutter:b = false
+		angularAccuracy:r = 0.002
+		distanceAccuracy:r = 2
+		absDopplerSpeed:b = true
+		distance {
+			presents:b = true
+			minValue:r = 20
+			maxValue:r = 10000
+		}
+	}
+}
+fsms {
+	main {
+		stateInit:t = "init"
+		actionsTemplates {
+			init {
+				setEnabled {
+					value:b = false
+				}
+				setTransiver {
+					transiver:t = "track"
+				}
+				setSignal {
+					signal:t = "track"
+				}
+				setTargetDesignationRange {
+					azimuthRange:p2 = -0.5, 0.5
+					distanceRange:p2 = 0, 10000
+				}
+			}
+			setStandbyMode {
+				setModeName {
+					name:t = "standby"
+				}
+				setEnabled {
+					value:b = false
+				}
+				setScanPattern {
+					scanPattern:t = "losLock"
+				}
+				setCenterAzimuth {
+					source:t = "constant"
+					value:r = 0
+				}
+				clearTargetsOfInterest {
+
+				}
+				setFsmActive {
+					fsm:t = "lock"
+					active:b = false
+				}
+				setFsmActive {
+					fsm:t = "track"
+					active:b = false
+				}
+			}
+			setLosVisualPreLockMode {
+				setEnabled {
+					value:b = true
+				}
+				setScanPattern {
+					scanPattern:t = "losLock"
+				}
+				resetScanPhase {
+
+				}
+				clearTargetsOfInterest {
+
+				}
+				setCenterAzimuth {
+					source:t = "targetDesignation"
+				}
+				setCenterElevation {
+					source:t = "targetDesignation"
+				}
+				setFsmActive {
+					fsm:t = "lock"
+					active:b = true
+				}
+			}
+			setLosLockMode {
+				setModeName {
+					name:t = "acquisition"
+				}
+				setEnabled {
+					value:b = true
+				}
+				setWeaponDetectionAllowance {
+					source:t = "targetDesignation"
+				}
+				setDesignatedTarget {
+					set:b = false
+				}
+				setDistGatePos {
+					source:t = "constRange"
+					pos:r = 5000
+					width:r = 10000
+				}
+			}
+			setVisualLockMode {
+				setModeName {
+					name:t = "acquisition"
+				}
+				setEnabled {
+					value:b = true
+				}
+				setWeaponDetectionAllowance {
+					source:t = "const"
+					value:b = true
+				}
+				setDesignatedTarget {
+					set:b = true
+				}
+				setDistGatePos {
+					source:t = "targetDesignation"
+					width:r = 100
+				}
+			}
+			setTrackMode {
+				setModeName {
+					name:t = "track"
+				}
+				setEnabled {
+					value:b = true
+				}
+				setWeaponDetectionAllowance {
+					source:t = "const"
+					value:b = true
+				}
+				setDesignatedTarget {
+					set:b = false
+				}
+				setScanPattern {
+					scanPattern:t = "track"
+				}
+				clearTargetsOfInterest {
+
+				}
+				addTargetOfInterest {
+
+				}
+				setLastTargetOfInterestActive {
+
+				}
+				updateActiveTargetOfInterest {
+
+				}
+				setCenterAzimuth {
+					source:t = "activeTargetOfInterest"
+				}
+				setCenterElevation {
+					source:t = "activeTargetOfInterest"
+				}
+				setDistGatePos {
+					source:t = "activeTargetOfInterest"
+					width:r = 0
+				}
+				setFsmActive {
+					fsm:t = "track"
+					active:b = true
+				}
+			}
+		}
+		transitions {
+			init {
+				stateFrom:t = "init"
+				event:t = "init"
+				stateTo:t = "standby"
+				actions {
+					init {
+
+					}
+					setStandbyMode {
+
+					}
+				}
+			}
+			checkLockTypeLos {
+				stateFrom:t = "standby"
+				command:t = "designateTarget"
+				stateTo:t = "checkLockTypeLos"
+				actions {
+					checkDesignationTypeEquals {
+						type:t = "los"
+					}
+				}
+			}
+			losLock {
+				stateFrom:t = "checkLockTypeLos"
+				event:t = "designationTypeEquals"
+				stateTo:t = "losLock"
+				actions {
+					setLosVisualPreLockMode {
+
+					}
+					setLosLockMode {
+
+					}
+				}
+			}
+			checkLockTypeVisual {
+				stateFrom:t = "checkLockTypeLos"
+				event:t = "designationTypeNotEquals"
+				stateTo:t = "checkLockTypeVisual"
+				actions {
+					checkDesignationTypeEquals {
+						type:t = "visual"
+					}
+				}
+			}
+			visualLock {
+				stateFrom:t = "checkLockTypeVisual"
+				event:t = "designationTypeEquals"
+				stateTo:t = "visualLock"
+				actions {
+					setLosVisualPreLockMode {
+
+					}
+					setVisualLockMode {
+
+					}
+				}
+			}
+			finishLockTypeCheck {
+				stateFrom:t = "checkLockTypeVisual"
+				event:t = "designationTypeNotEquals"
+				stateTo:t = "standby"
+			}
+			track {
+				stateFrom:t = "losLock"
+				stateFrom:t = "visualLock"
+				event:t = "targetDetected"
+				stateTo:t = "track"
+				actions {
+					setTrackMode {
+
+					}
+					setFsmActive {
+						fsm:t = "lock"
+						active:b = false
+					}
+				}
+			}
+			failedLock {
+				stateFrom:t = "losLock"
+				stateFrom:t = "visualLock"
+				event:t = "scanFinished"
+				stateTo:t = "standby"
+				actions {
+					setStandbyMode {
+
+					}
+					setFsmActive {
+						fsm:t = "lock"
+						active:b = false
+					}
+				}
+			}
+			finishedTrack {
+				stateFrom:t = "track"
+				event:t = "targetsOfInterestCleanup"
+				command:t = "selectTarget"
+				command:t = "designateTarget"
+				stateTo:t = "standby"
+				actions {
+					setStandbyMode {
+
+					}
+					setFsmActive {
+						fsm:t = "track"
+						active:b = false
+					}
+				}
+			}
+		}
+	}
+	lock {
+		stateInit:t = "lock"
+		transitions {
+			scan {
+				event:t = "update"
+				actions {
+					scan {
+
+					}
+				}
+			}
+			detect {
+				event:t = "targetInSight"
+				actions {
+					detectTarget {
+						ignoreOwnWeapon:b = true
+						rangeMult:r = 1
+					}
+				}
+			}
+		}
+	}
+	track {
+		stateInit:t = "track"
+		transitions {
+			detect {
+				event:t = "update"
+				actions {
+					detectTarget {
+						ignoreOwnWeapon:b = true
+						rangeMult:r = 1
+					}
+				}
+			}
+			track {
+				event:t = "targetDetected"
+				actions {
+					updateActiveTargetOfInterest {
+						dirFilter {
+							rateLim:p2 = 0.78, 0.78
+							limTimeOut:r = 1
+							inertialTimeMax:r = 1
+						}
+						distFilter {
+							accelLim:p2 = 150, 150
+							limTimeOut:r = 1
+							inertialTimeMax:r = 1
+						}
+					}
+					setCenterAzimuth {
+						source:t = "activeTargetOfInterest"
+					}
+					setCenterElevation {
+						source:t = "activeTargetOfInterest"
+					}
+					setDistGatePos {
+						source:t = "activeTargetOfInterest"
+						width:r = 0
+					}
+				}
+			}
+			extrapolate {
+				event:t = "targetNotDetected"
+				actions {
+					extrapolateTargetsOfInterest {
+
+					}
+					clearTargetsOfInterest {
+						timeOut:r = 2
+						dirRateLim:r = 0.78
+					}
+					setCenterAzimuth {
+						source:t = "activeTargetOfInterest"
+					}
+					setCenterElevation {
+						source:t = "activeTargetOfInterest"
+					}
+					setDistGatePos {
+						source:t = "activeTargetOfInterest"
+						width:r = 0
+					}
+				}
+			}
+		}
+	}
 }

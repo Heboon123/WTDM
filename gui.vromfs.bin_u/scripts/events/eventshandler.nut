@@ -76,7 +76,7 @@ function guiStartModalEvents(options = {}) {
   if (!suggestAndAllowPsnPremiumFeatures())
     return
 
-  if (!isMultiplayerPrivilegeAvailable.value) {
+  if (!isMultiplayerPrivilegeAvailable.get()) {
     checkAndShowMultiplayerPrivilegeWarning()
     return
   }
@@ -117,7 +117,12 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   curEventId     = ""
   curChapterId = ""
   autoJoin = false
-  slotbarActions = ["aircraft", "crew", "sec_weapons", "weapons", "showroom", "repair"]
+  slotbarActions = ["aircraft", "crew", "sec_weapons", "weapons", "showroom",
+
+
+
+
+  "repair"]
 
   queueToShow    = null
   skipCheckQueue = false
@@ -229,6 +234,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   function goToBattleFromDebriefing() {
     this.joinEvent(true)
   }
+
   function joinEvent(isFromDebriefing = false) {
     let event = events.getEvent(this.curEventId)
     if (!event)
@@ -236,7 +242,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
     if (!suggestAndAllowPsnPremiumFeatures())
       return
-    if (!isMultiplayerPrivilegeAvailable.value) {
+    if (!isMultiplayerPrivilegeAvailable.get()) {
       checkAndShowMultiplayerPrivilegeWarning()
       return
     }
@@ -303,7 +309,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     let isSquadLeader = g_squad_manager.isSquadLeader()
     let movePlayersCount = isSquadLeader ? g_squad_manager.getMembers() : 1
 
-    let curCountry = profileCountrySq.value
+    let curCountry = profileCountrySq.get()
     let playerTeam = event.teamA.countries.contains(curCountry) ? "teamA" : "teamB"
     let enemyTeam = playerTeam == "teamA" ? "teamB" : "teamA"
     let queueStats = this.queueToShow.queueStats
@@ -336,7 +342,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       this.onLeaveEvent()
 
     let event = events.getEvent(this.curEventId)
-    let curCountry = profileCountrySq.value
+    let curCountry = profileCountrySq.get()
     let newTeam = event.teamA.countries.contains(curCountry) ? event.teamB : event.teamA
     let newCountry = newTeam.countries[0]
     switchProfileCountry(newCountry)
@@ -486,7 +492,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onItemDblClick() {
-    if (showConsoleButtons.value)
+    if (showConsoleButtons.get())
       return
 
     if (this.curEventId == "") {
@@ -498,7 +504,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onItemHover(obj) {
-    if (!showConsoleButtons.value)
+    if (!showConsoleButtons.get())
       return
     let isHover = obj.isHovered()
     let idx = obj.getIntProp(this.listIdxPID, -1)
@@ -515,7 +521,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function updateMouseMode() {
-    this.isMouseMode = !showConsoleButtons.value || is_mouse_last_time_used()
+    this.isMouseMode = !showConsoleButtons.get() || is_mouse_last_time_used()
   }
 
   function onEventSquadStatusChanged(_params) {
@@ -716,7 +722,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
           id = eventName
           itemText = this.getEventNameForListBox(event)
           unseenIcon = bhvUnseen.makeConfigStr(SEEN.EVENTS, eventName)
-          isNeedOnHover = showConsoleButtons.value
+          isNeedOnHover = showConsoleButtons.get()
         })
       }
 
@@ -726,7 +732,7 @@ gui_handlers.EventsHandler <- class (gui_handlers.BaseGuiHandlerWT) {
           id = chapter.name
           itemText = chapter.getLocName()
           isCollapsable = true
-          isNeedOnHover = showConsoleButtons.value
+          isNeedOnHover = showConsoleButtons.get()
         })
 
       view.items.extend(eventItems)
@@ -853,7 +859,7 @@ let promoButtonId = "events_mainmenu_button"
 addPromoButtonConfig({
   promoButtonId = promoButtonId
   getText = getEventsPromoText
-  collapsedIcon = loc("icon/events")
+  collapsedIconLocKey = "icon/events"
   getCustomSeenId = @() bhvUnseen.makeConfigStr(SEEN.EVENTS, SEEN.S_EVENTS_WINDOW)
   updateFunctionInHandler = function() {
     let id = promoButtonId
@@ -864,7 +870,7 @@ addPromoButtonConfig({
     else {
       show = hasFeature("Events")
         && events.getEventsVisibleInEventsWindowCount()
-        && isMultiplayerPrivilegeAvailable.value
+        && isMultiplayerPrivilegeAvailable.get()
         && getPromoVisibilityById(id)
       buttonObj = showObjById(id, show, this.scene)
     }

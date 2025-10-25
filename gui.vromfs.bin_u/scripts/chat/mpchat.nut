@@ -1,8 +1,10 @@
-from "%scripts/dagui_natives.nut" import get_player_army_for_hud, get_is_in_flight_menu, is_menu_state, is_cursor_visible_in_gui
+from "%scripts/dagui_natives.nut" import get_player_army_for_hud, is_menu_state, is_cursor_visible_in_gui
 from "%scripts/dagui_library.nut" import *
 from "%scripts/utils_sa.nut" import is_mode_with_teams
 from "hudState" import is_hud_visible
+from "gameplayBinding" import getIsInFlightMenu, isInFlight
 
+let { isPC } = require("%sqstd/platform.nut")
 let { g_chat } = require("%scripts/chat/chat.nut")
 let { HudBattleLog } = require("%scripts/hud/hudBattleLog.nut")
 let { getGlobalModule } = require("%scripts/global_modules.nut")
@@ -27,20 +29,20 @@ let { is_replay_playing } = require("replays")
 let { eventbus_send, eventbus_subscribe } = require("eventbus")
 let { chat_on_text_update, toggle_ingame_chat, chat_on_send, CHAT_MODE_ALL
 } = require("chat")
-let { get_mplayers_list, GET_MPLAYERS_LIST, get_mplayer_by_userid } = require("mission")
+let { get_mplayer_by_userid } = require("mission")
 let { USEROPT_AUTO_SHOW_CHAT } = require("%scripts/options/optionsExtNames.nut")
 let { getPlayerName } = require("%scripts/user/remapNick.nut")
-let { isInFlight } = require("gameplayBinding")
 let { registerRespondent } = require("scriptRespondent")
 let { defer } = require("dagor.workcycle")
 let { g_mp_chat_mode } =require("%scripts/chat/mpChatMode.nut")
-let { clanUserTable } = require("%scripts/contacts/contactsManager.nut")
 let { isPlayerNickInContacts } = require("%scripts/contacts/contactsChecks.nut")
 let { getPlayerFullName } = require("%scripts/contacts/contactsInfo.nut")
 let { isEqualSquadId } = require("%scripts/squads/squadState.nut")
 let { get_option } = require("%scripts/options/optionsExt.nut")
-let { filterMessageText } = require("%scripts/chat/chatUtils.nut")
+let { filterMessageText, getPlayerTag, addTextToEditbox } = require("%scripts/chat/chatUtils.nut")
 let { isPlayerDedicatedSpectator } = require("%scripts/matchingRooms/sessionLobbyMembersInfo.nut")
+let { hasChatReputationFilter, getReputationBlockMessage } = require("%scripts/user/usersReputation.nut")
+let { ReputationType } = require("%globalScripts/chatState.nut")
 
 enum mpChatView {
   CHAT
@@ -120,11 +122,12 @@ function getMessageColor(message) {
   return g_mp_chat_mode.getModeById(message.mode).textColor
 }
 
+
 function formatMessageText(message, text) {
   let timeString = time.secondsToString(message.time, false)
   let userColor = getSenderColor(message)
   let msgColor = getMessageColor(message)
-  let clanTag = ::get_player_tag(message.sender)
+  let clanTag = getPlayerTag(message.sender)
   let fullName = getPlayerFullName(
     getPlayerName(message.sender),
     clanTag
@@ -144,7 +147,7 @@ function formatMessageText(message, text) {
   )
 }
 
-function getTextFromMessage(message) {
+function getTextFromMessage(message, isReputationFilterEnabled) {
   if (message.sender == "") {
     let timeString = time.secondsToString(message.time, false)
     return $"{timeString} <color=@chatActiveInfoColor>{loc(message.text)}</color>"
@@ -155,6 +158,10 @@ function getTextFromMessage(message) {
 
   if (!message.isMyself && isPlayerNickInContacts(message.sender, EPL_BLOCKLIST))
     return formatMessageText(message, g_chat.makeBlockedMsg(message.text))
+
+  if (!message.isMyself && isReputationFilterEnabled
+      && message.userReputation == ReputationType.REP_BAD)
+    return getReputationBlockMessage()
 
   return formatMessageText(message, filterMessageText(message.text, message.isMyself))
 }
@@ -224,7 +231,7 @@ let isVisibleChatInput = @(sceneData)
     && hasEnableChatMode()
 
 function selectChatEditbox(obj) {
-  if (!isInFlight() || get_is_in_flight_menu())
+  if (!isInFlight() || getIsInFlightMenu())
     select_editbox(obj)
   else
     obj.select()
@@ -345,7 +352,7 @@ function addNickToEdit(sceneData, user) {
   if (!inputObj)
     return
 
-  ::add_text_to_editbox(inputObj,$"{user} ")
+  addTextToEditbox(inputObj,$"{user} ")
   selectChatEditbox(inputObj)
 }
 
@@ -424,8 +431,9 @@ function afterLogFormat() {
 function makeChatTextFromLog() {
   let logObj = getMpChatLog()
   let formattedLogs = []
+  let isReputationFilterEnabled = hasChatReputationFilter()
   foreach (logMsg in logObj) {
-    let text = getTextFromMessage(logMsg)
+    let text = getTextFromMessage(logMsg, isReputationFilterEnabled)
     if (text != "")
       formattedLogs.append(text)
   }
@@ -514,7 +522,7 @@ let chatHandler = {
     enableChatInput(true)
   }
 
-  function onChatLinkClick(obj, _itype, link)  { onChatLink(obj, link, is_platform_pc) }
+  function onChatLinkClick(obj, _itype, link)  { onChatLink(obj, link, isPC) }
   function onChatLinkRClick(obj, _itype, link) { onChatLink(obj, link, false) }
 }
 
@@ -598,35 +606,6 @@ function enable_game_chat_input(data) {
 
 eventbus_subscribe("enable_game_chat_input", @(p) enable_game_chat_input(p))
 
-::add_text_to_editbox <- function add_text_to_editbox(obj, text) {
-  let value = obj.getValue()
-  let pos = obj.getIntProp(dagui_propid_get_name_id(":behaviour_edit_position_pos"), -1)
-  if (pos > 0 && pos < value.len()) 
-    obj.setValue("".concat(value.slice(0, pos), text, value.slice(pos)))
-  else
-    obj.setValue($"{value}{text}")
-}
-
-::add_tags_for_mp_players <- function add_tags_for_mp_players() {
-  let tbl = get_mplayers_list(GET_MPLAYERS_LIST, true)
-  if (!tbl)
-    return
-
-  let res = {}
-  foreach (block in tbl)
-    if (!block.isBot)
-      res[block.name] <- block?.clanTag ?? ""
-
-  if (res.len() > 0)
-    clanUserTable.mutate(@(v) v.__update(res))
-}
-
-::get_player_tag <- function get_player_tag(playerNick) {
-  if (!(playerNick in clanUserTable.get()))
-    ::add_tags_for_mp_players()
-  return clanUserTable.get()?[playerNick] ?? ""
-}
-
 addListenersWithoutEnv({
   function ChangedCursorVisibility(_) {
     isMouseCursorVisible = is_cursor_visible_in_gui()
@@ -677,5 +656,4 @@ return {
   detachGameChatSceneData
   hideGameChatSceneInput = hideChatInput
   getGameChatLogText = @() mpChatHandlerState.log_text
-  setGameChatLogText = @(text) mpChatHandlerState.log_text = text
 }

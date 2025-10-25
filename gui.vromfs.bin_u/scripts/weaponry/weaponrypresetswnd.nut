@@ -44,6 +44,9 @@ let { round_by_value } = require("%sqstd/math.nut")
 let { openRightClickMenu } = require("%scripts/wndLib/rightClickMenu.nut")
 let { getChildInContainers } = require("%sqDagui/guiBhv/bhvInContainersNavigator.nut")
 let { clearTimer, setTimeout } = require("dagor.workcycle")
+let { checkSecondaryWeaponModsRecount } = require("%scripts/unit/unitChecks.nut")
+let { initBackgroundModelHint, updateBackgroundModelHint
+} = require("%scripts/hangar/backgroundModelHint.nut")
 
 const MY_FILTERS = "weaponry_presets/filters"
 const DELAY_BEFORE_GET_PRESET_DESCRIPTION = 0.5
@@ -151,6 +154,7 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
       && this.unit.isUsable()
       && !this.isCustomPresetsEditAvailable(), this.scene)
     this.scene.findObject("timer_update")?.setUserData(this)
+    initBackgroundModelHint(this)
     this.updateChangeWndHeightButtons()
   }
 
@@ -195,7 +199,7 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
         tiersView = preset.tiersView.map(@(t) {
           tierId        = t.tierId
           img           = t?.img ?? ""
-          tierTooltipId = !showConsoleButtons.value ? t?.tierTooltipId : null
+          tierTooltipId = !showConsoleButtons.get() ? t?.tierTooltipId : null
           isActive      = t?.isActive || "img" in t
         })
       })
@@ -203,9 +207,25 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
         presetId  = idx
         chosen = idx == this.chosenPresetIdx ? "yes" : "no"
         weaponryItem = wpParams
-
       })
     }
+
+    local hasDifferentCost = false
+    local prevCostText = ""
+    foreach (resData in res) {
+      let currentCostText = resData?.weaponryItem.spawnScoreCost
+      if (currentCostText == null)
+        continue
+      if (prevCostText != "" && prevCostText != currentCostText) {
+        hasDifferentCost = true
+        break
+      }
+      prevCostText = currentCostText
+    }
+    if (!hasDifferentCost)
+      foreach (resData in res)
+        if (resData?.weaponryItem)
+          resData.weaponryItem.nameTextWithPrice = resData.weaponryItem.nameText
 
     return res
   }
@@ -314,7 +334,7 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onPresetUnhover(obj) {
-    if (showConsoleButtons.value)
+    if (showConsoleButtons.get())
       obj.setValue(-1)
   }
 
@@ -379,7 +399,7 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
       }
 
       setLastWeapon(this.unit.name, item.name)
-      ::check_secondary_weapon_mods_recount(this.unit)
+      checkSecondaryWeaponModsRecount(this.unit)
       this.checkSaveBulletsAndDo()
     }
     this.guiScene.performDelayed(this, @()this.goBack())
@@ -896,7 +916,7 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
     if (this.chosenPresetIdx == presetIdx) {
       this.curPresetIdx = null
       setLastWeapon(this.unit.name, this.presets[0].weaponPreset.name)
-      ::check_secondary_weapon_mods_recount(this.unit)
+      checkSecondaryWeaponModsRecount(this.unit)
       this.checkSaveBulletsAndDo()
     }
     this.updateAllByFilters()
@@ -971,6 +991,8 @@ gui_handlers.weaponryPresetsWnd <- class (gui_handlers.BaseGuiHandlerWT) {
     showObjById("increaseWndHeightBtn", predifineWndHeightsInTiers.findindex(@(v) v > heightInTiers) != null, this.scene)
     showObjById("decreaseWndHeightBtn", predifineWndHeightsInTiers.findindex(@(v) v < heightInTiers) != null, this.scene)
   }
+
+  onBackgroundModelHintTimer = @(obj, _dt) updateBackgroundModelHint(obj)
 }
 
 gui_handlers.weaponryPresetsModal <- class (gui_handlers.weaponryPresetsWnd) {

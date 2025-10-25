@@ -1,1590 +1,1031 @@
-{
-  "selected_tag": "",
-  "bin_dump_file": "",
-  "mission_settings": {
-    "player": {
-      "army": 1,
-      "wing": "armada_01"
-    },
-    "player_teamB": {
-      "army": 2
-    },
-    "mission": {
-      "level": "levels/stalingrad.bin",
-      "type": "testFlight",
-      "environment": "Day",
-      "weather": "good",
-      "windDirection": [
-        1.0,
-        0.0,
-        0.0
-      ],
-      "locName": "missions/testFlight",
-      "restoreType": "manual",
-      "optionalTakeOff": false
-    },
-    "spectator_points": {},
-    "briefing": {
-      "place_loc": "",
-      "date_loc": "",
-      "objective_loc": "",
-      "music": "action_01",
-      "part": {
-        "event": "",
-        "minTime": 0,
-        "slide": {
-          "map": true,
-          "minTime": 4,
-          "picture": "",
-          "showAirMap": false,
-          "icon": {
-            "icontype": "fighter",
-            "side": "player",
-            "target": "armada_01"
-          }
-        }
-      }
-    }
-  },
-  "imports": {
-    "import_record": [
-      {
-        "file": "gameData/missions/bridges/stalingrad_bridges.blk",
-        "importAreas": true,
-        "importUnits": true,
-        "importTriggers": true,
-        "importMissionObjectives": true,
-        "importWayPoints": true,
-        "importDialogs": true,
-        "showAreas": true,
-        "showUnits": true,
-        "showTriggers": true,
-        "showMissionObjectives": true,
-        "showWayPoints": true,
-        "showDialogs": true,
-        "excludes": {}
-      },
-      {
-        "file": "gameData/missions/training/testFlight/testFlight_stalingrad_ai_template.blk",
-        "importAreas": true,
-        "importUnits": true,
-        "importTriggers": true,
-        "importMissionObjectives": true,
-        "importWayPoints": true,
-        "importDialogs": true,
-        "showAreas": true,
-        "showUnits": true,
-        "showTriggers": true,
-        "showMissionObjectives": true,
-        "showWayPoints": true,
-        "showDialogs": true,
-        "excludes": {}
-      }
-    ]
-  },
-  "triggers": {
-    "isCategory": true,
-    "is_enabled": true,
-    "init": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {},
-      "actions": {
-        "spawnOnAirfield": {
-          "runwayName": "st_airfileld_unic_prefab",
-          "objects": "armada_01"
-        },
-        "unitSetIndication": {
-          "set": true,
-          "target": "structures_01",
-          "target_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0
-        },
-        "unitSetProperties": [
-          {
-            "object": "decor_units_sq",
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "attack_type": "dont_aim"
-          },
-          {
-            "object": [
-              "decor_unit_01",
-              "decor_unit_02",
-              "decor_unit_03",
-              "decor_unit_04",
-              "decor_unit_05"
-            ],
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "targetableByAi": false,
-            "isImmortal": true,
-            "move_type": "stand",
-            "speed": 0.0,
-            "lockSpeed": true,
-            "cannotMove": true,
-            "enginesEnabled": false,
-            "takeoffPermission": false,
-            "stayOnGround": true
-          }
-        ],
-        "comment": {
-          "value": "restoring enemy units upon death"
-        },
-        "unitRespawnAfterTime": {
-          "time_to_respawn": 120.0,
-          "object_name": "enemies_squad",
-          "just_restore": true,
-          "cycle_respawn": true
-        }
-      },
-      "else_actions": {}
-    },
-    "end": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": true
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "playersWhenStatus": {
-          "players": "isKilled",
-          "check_players": "any"
-        }
-      },
-      "actions": {
-        "wait": {
-          "time": 3.0
-        },
-        "spawnOnAirfield": {
-          "runwayName": "st_airfileld_unic_prefab",
-          "objects": "armada_01"
-        }
-      },
-      "else_actions": {}
-    },
-    "destroy_bridges_for_ship": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {},
-      "actions": {
-        "unitDamage": {
-          "power": 1.0,
-          "useEffect": false,
-          "countEffects": 1,
-          "delay": [
-            1.0,
-            1.0
-          ],
-          "offset": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "radiusOffset": [
-            10.0,
-            15.0
-          ],
-          "target": [
-            "bridge_09",
-            "bridge_02",
-            "bridge_08"
-          ],
-          "partName": "body",
-          "doExplosion": true
-        }
-      },
-      "else_actions": {}
-    }
-  },
-  "mission_objectives": {
-    "isCategory": true,
-    "is_enabled": true
-  },
-  "variables": {},
-  "dialogs": {},
-  "airfields": {},
-  "effects": {},
-  "units": {
-    "armada": [
-      {
-        "name": "armada_01",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -3326.7,
-            753.9,
-            1473.95
-          ]
-        ],
-        "unit_class": "yak-9b",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "Yak9b_4xfab100",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "count": 1,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 1.5,
-            "col_distances": 1.5,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "ai_plane_fighters",
-        "tm": [
-          [
-            0.934475,
-            0.0,
-            0.356028
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            -0.356028,
-            0.0,
-            0.934475
-          ],
-          [
-            -4454.53,
-            400.0,
-            1291.86
-          ]
-        ],
-        "unit_class": "la-5_type39",
-        "objLayer": 1,
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 2,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "stealthRadius": 6000.0,
-          "targetableByAi": false,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "ai_plane_atackers",
-        "tm": [
-          [
-            0.0274239,
-            0.0,
-            0.999624
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            -0.999624,
-            0.0,
-            0.0274239
-          ],
-          [
-            -488.374,
-            300.0,
-            -3253.17
-          ]
-        ],
-        "unit_class": "il_2_1941",
-        "objLayer": 1,
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "il_2_1941_rbs132_fab100",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 3,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "stealthRadius": 6000.0,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "decor_unit_01",
-        "tm": [
-          [
-            -0.573576,
-            0.0,
-            0.819152
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            -0.819152,
-            0.0,
-            -0.573576
-          ],
-          [
-            -3032.48,
-            161.7,
-            1204.03
-          ]
-        ],
-        "unit_class": "pe-8_m82",
-        "objLayer": 1,
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 1,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "decor_unit_02",
-        "tm": [
-          [
-            -0.573576,
-            0.0,
-            0.819152
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            -0.819152,
-            0.0,
-            -0.573576
-          ],
-          [
-            -2972.65,
-            161.7,
-            1245.5
-          ]
-        ],
-        "unit_class": "pe-8_m82",
-        "objLayer": 1,
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 1,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "decor_unit_03",
-        "tm": [
-          [
-            0.608761,
-            0.0,
-            -0.793353
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.793353,
-            0.0,
-            0.608761
-          ],
-          [
-            -3502.45,
-            162.35,
-            1050.65
-          ]
-        ],
-        "unit_class": "il_2m_1943",
-        "objLayer": 1,
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 1,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "decor_unit_04",
-        "tm": [
-          [
-            0.0871556,
-            0.0,
-            -0.996195
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.996195,
-            0.0,
-            0.0871556
-          ],
-          [
-            -3468.9,
-            162.35,
-            1047.75
-          ]
-        ],
-        "unit_class": "il_2m_1943",
-        "objLayer": 1,
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 1,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "decor_unit_05",
-        "tm": [
-          [
-            0.953717,
-            0.0,
-            -0.300706
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.300706,
-            0.0,
-            0.953717
-          ],
-          [
-            -3510.55,
-            162.35,
-            1016.1
-          ]
-        ],
-        "unit_class": "il_2m_1943",
-        "objLayer": 1,
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 1,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      }
-    ],
-    "tankModels": [
-      {
-        "name": "structures_01",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -2987.05,
-            59.5774,
-            4748.95
-          ]
-        ],
-        "unit_class": "germ_pzkpfw_IV_ausf_F2",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "dont_aim",
-          "targetableByAi": false
-        },
-        "way": {}
-      },
-      {
-        "name": "structures_02",
-        "tm": [
-          [
-            0.554172,
-            0.0,
-            -0.832402
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.832402,
-            0.0,
-            0.554172
-          ],
-          [
-            -2918.18,
-            49.1232,
-            4888.02
-          ]
-        ],
-        "unit_class": "germ_truck_sdkfz_6_2_tent",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "dont_aim",
-          "targetableByAi": false
-        },
-        "way": {}
-      },
-      {
-        "name": "decor_unit_06",
-        "tm": [
-          [
-            0.5373,
-            0.0,
-            -0.843391
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.843391,
-            0.0,
-            0.5373
-          ],
-          [
-            -3607.7,
-            162.35,
-            981.35
-          ]
-        ],
-        "unit_class": "ussr_truck_gaz_aaa",
-        "objLayer": 1,
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "decor_unit_07",
-        "tm": [
-          [
-            0.5373,
-            0.0,
-            -0.843391
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.843391,
-            0.0,
-            0.5373
-          ],
-          [
-            -3638.4,
-            161.9,
-            953.75
-          ]
-        ],
-        "unit_class": "ussr_truck_gaz_aaa",
-        "objLayer": 1,
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "decor_unit_08",
-        "tm": [
-          [
-            0.5373,
-            0.0,
-            -0.843391
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.843391,
-            0.0,
-            0.5373
-          ],
-          [
-            -3196.27,
-            161.7,
-            1036.1
-          ]
-        ],
-        "unit_class": "ussr_truck_gaz_aaa",
-        "objLayer": 1,
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "decor_unit_09",
-        "tm": [
-          [
-            -0.819152,
-            0.0,
-            -0.573576
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.573576,
-            0.0,
-            -0.819152
-          ],
-          [
-            -3201.55,
-            161.7,
-            991.05
-          ]
-        ],
-        "unit_class": "ussr_truck_gaz_aaa",
-        "objLayer": 1,
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "decor_unit_10",
-        "tm": [
-          [
-            -0.819152,
-            0.0,
-            -0.573576
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.573576,
-            0.0,
-            -0.819152
-          ],
-          [
-            -2863.3,
-            161.4,
-            1526.15
-          ]
-        ],
-        "unit_class": "ussr_truck_gaz_aaa",
-        "objLayer": 1,
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "decor_unit_11",
-        "tm": [
-          [
-            0.573576,
-            0.0,
-            -0.819152
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.819152,
-            0.0,
-            0.573576
-          ],
-          [
-            -2903.25,
-            161.4,
-            1529.61
-          ]
-        ],
-        "unit_class": "ussr_truck_gaz_aaa",
-        "objLayer": 1,
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "decor_unit_12",
-        "tm": [
-          [
-            -0.799451,
-            0.0,
-            -0.600731
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.600731,
-            0.0,
-            -0.799451
-          ],
-          [
-            -3038.3,
-            161.9,
-            1452.6
-          ]
-        ],
-        "unit_class": "ussr_gaz_4m",
-        "objLayer": 1,
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {
-          "decor_unit_12_wp_01": {
-            "type": "normal",
-            "tm": [
-              [
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0
-              ],
-              [
-                -3710.75,
-                157.3,
-                936.5
-              ]
-            ],
-            "props": {
-              "speed": 10.0,
-              "moveType": "MOVETO_STRAIGHT"
-            }
-          },
-          "decor_unit_12_wp_02": {
-            "type": "normal",
-            "tm": [
-              [
-                1.0,
-                0.0,
-                0.0
-              ],
-              [
-                0.0,
-                1.0,
-                0.0
-              ],
-              [
-                0.0,
-                0.0,
-                1.0
-              ],
-              [
-                -3691.85,
-                157.3,
-                898.1
-              ]
-            ],
-            "props": {
-              "speed": 10.0,
-              "moveType": "MOVETO_STRAIGHT"
-            }
-          }
-        }
-      },
-      {
-        "name": "decor_unit_13",
-        "tm": [
-          [
-            -0.544354,
-            0.0,
-            0.838856
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            -0.838856,
-            0.0,
-            -0.544354
-          ],
-          [
-            -3158.9,
-            161.7,
-            1101.35
-          ]
-        ],
-        "unit_class": "ussr_gaz_4m",
-        "objLayer": 1,
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "decor_unit_14",
-        "tm": [
-          [
-            0.550069,
-            0.0,
-            -0.835119
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.835119,
-            0.0,
-            0.550069
-          ],
-          [
-            -2834.71,
-            161.4,
-            1567.03
-          ]
-        ],
-        "unit_class": "ussr_gaz_4m",
-        "objLayer": 1,
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      }
-    ],
-    "squad": [
-      {
-        "name": "decor_units_sq",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -3432.71,
-            157.3,
-            1223.41
-          ]
-        ],
-        "props": {
-          "squad_members": [
-            "decor_unit_12",
-            "decor_unit_07",
-            "decor_unit_05",
-            "decor_unit_01",
-            "decor_unit_02",
-            "decor_unit_03",
-            "decor_unit_04",
-            "decor_unit_06",
-            "decor_unit_08",
-            "decor_unit_09",
-            "decor_unit_10",
-            "decor_unit_11",
-            "decor_unit_13",
-            "decor_unit_14"
-          ],
-          "object_marking": 0
-        }
-      },
-      {
-        "name": "enemies_squad",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -2952.61,
-            54.3503,
-            4818.49
-          ]
-        ],
-        "props": {
-          "squad_members": [
-            "structures_01",
-            "structures_02"
-          ]
-        }
-      }
-    ]
-  },
-  "areas": {
-    "randevu_point": {
-      "type": "Point",
-      "tm": [
-        [
-          0.972166,
-          0.0,
-          -0.234295
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.234295,
-          0.0,
-          0.972166
-        ],
-        [
-          -218.818,
-          300.0,
-          1740.63
-        ]
-      ],
-      "objLayer": 0,
-      "props": {}
-    },
-    "frontline_point": {
-      "type": "Point",
-      "tm": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          -32120.4,
-          300.0,
-          25444.1
-        ]
-      ],
-      "objLayer": 0,
-      "props": {}
-    }
-  },
-  "objLayers": {
-    "layer": [
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      }
-    ]
-  },
-  "wayPoints": {}
+selected_tag:t = ""
+bin_dump_file:t = ""
+mission_settings {
+	player {
+		army:i = 1
+		wing:t = "armada_01"
+	}
+	player_teamB {
+		army:i = 2
+	}
+	mission {
+		level:t = "levels/stalingrad.bin"
+		type:t = "testFlight"
+		environment:t = "Day"
+		weather:t = "good"
+		windDirection:p3 = 1, 0, 0
+		locName:t = "missions/testFlight"
+		restoreType:t = "manual"
+		optionalTakeOff:b = false
+	}
+	spectator_points {
+
+	}
+	briefing {
+		place_loc:t = ""
+		date_loc:t = ""
+		objective_loc:t = ""
+		music:t = "action_01"
+		part {
+			event:t = ""
+			minTime:i = 0
+			slide {
+				map:b = true
+				minTime:i = 4
+				picture:t = ""
+				showAirMap:b = false
+				icon {
+					icontype:t = "fighter"
+					side:t = "player"
+					target:t = "armada_01"
+				}
+			}
+		}
+	}
+}
+imports {
+	import_record {
+		file:t = "gameData/missions/bridges/stalingrad_bridges.blk"
+		importAreas:b = true
+		importUnits:b = true
+		importTriggers:b = true
+		importMissionObjectives:b = true
+		importWayPoints:b = true
+		importDialogs:b = true
+		showAreas:b = true
+		showUnits:b = true
+		showTriggers:b = true
+		showMissionObjectives:b = true
+		showWayPoints:b = true
+		showDialogs:b = true
+		excludes {
+
+		}
+	}
+	import_record {
+		file:t = "gameData/missions/training/testFlight/testFlight_stalingrad_ai_template.blk"
+		importAreas:b = true
+		importUnits:b = true
+		importTriggers:b = true
+		importMissionObjectives:b = true
+		importWayPoints:b = true
+		importDialogs:b = true
+		showAreas:b = true
+		showUnits:b = true
+		showTriggers:b = true
+		showMissionObjectives:b = true
+		showWayPoints:b = true
+		showDialogs:b = true
+		excludes {
+
+		}
+	}
+}
+triggers {
+	isCategory:b = true
+	is_enabled:b = true
+	init {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			spawnOnAirfield {
+				runwayName:t = "st_airfileld_unic_prefab"
+				objects:t = "armada_01"
+			}
+			unitSetIndication {
+				set:b = true
+				target:t = "structures_01"
+				target_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+			}
+			unitSetProperties {
+				object:t = "decor_units_sq"
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				attack_type:t = "dont_aim"
+			}
+			unitSetProperties {
+				object:t = "decor_unit_01"
+				object:t = "decor_unit_02"
+				object:t = "decor_unit_03"
+				object:t = "decor_unit_04"
+				object:t = "decor_unit_05"
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				targetableByAi:b = false
+				isImmortal:b = true
+				move_type:t = "stand"
+				speed:r = 0
+				lockSpeed:b = true
+				cannotMove:b = true
+				enginesEnabled:b = false
+				takeoffPermission:b = false
+				stayOnGround:b = true
+			}
+			comment {
+				value:t = "restoring enemy units upon death"
+			}
+			unitRespawnAfterTime {
+				time_to_respawn:r = 120
+				object_name:t = "enemies_squad"
+				just_restore:b = true
+				cycle_respawn:b = true
+			}
+		}
+		else_actions {
+
+		}
+	}
+	end {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = true
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			playersWhenStatus {
+				players:t = "isKilled"
+				check_players:t = "any"
+			}
+		}
+		actions {
+			wait {
+				time:r = 3
+			}
+			spawnOnAirfield {
+				runwayName:t = "st_airfileld_unic_prefab"
+				objects:t = "armada_01"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	destroy_bridges_for_ship {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			unitDamage {
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "bridge_09"
+				target:t = "bridge_02"
+				target:t = "bridge_08"
+				partName:t = "body"
+				doExplosion:b = true
+			}
+		}
+		else_actions {
+
+		}
+	}
+}
+mission_objectives {
+	isCategory:b = true
+	is_enabled:b = true
+}
+variables {
+
+}
+dialogs {
+
+}
+airfields {
+
+}
+effects {
+
+}
+units {
+	armada {
+		name:t = "armada_01"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-3326.7, 753.9, 1473.95]]
+		unit_class:t = "yak-9b"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = "Yak9b_4xfab100"
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			count:i = 1
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 1.5
+				col_distances:r = 1.5
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	tankModels {
+		name:t = "structures_01"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-2987.05, 59.5774, 4748.95]]
+		unit_class:t = "germ_pzkpfw_IV_ausf_F2"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "dont_aim"
+			targetableByAi:b = false
+		}
+		way {
+
+		}
+	}
+	tankModels {
+		name:t = "structures_02"
+		tm:m = [[0.554172, 0.0, -0.832402] [0.0, 1.0, 0.0] [0.832402, 0.0, 0.554172] [-2918.18, 49.1232, 4888.02]]
+		unit_class:t = "germ_truck_sdkfz_6_2_tent"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "dont_aim"
+			targetableByAi:b = false
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "ai_plane_fighters"
+		tm:m = [[0.934475, 0.0, 0.356028] [0.0, 1.0, 0.0] [-0.356028, 0.0, 0.934475] [-4454.53, 400.0, 1291.86]]
+		unit_class:t = "la-5_type39"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 2
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			stealthRadius:r = 6000
+			targetableByAi:b = false
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "ai_plane_atackers"
+		tm:m = [[0.0274239, 0.0, 0.999624] [0.0, 1.0, 0.0] [-0.999624, 0.0, 0.0274239] [-488.374, 300.0, -3253.17]]
+		unit_class:t = "il_2_1941"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = "il_2_1941_rbs132_fab100"
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 3
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			stealthRadius:r = 6000
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "decor_unit_01"
+		tm:m = [[-0.573576, 0.0, 0.819152] [0.0, 1.0, 0.0] [-0.819152, 0.0, -0.573576] [-3032.48, 161.7, 1204.03]]
+		unit_class:t = "pe-8_m82"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "decor_unit_02"
+		tm:m = [[-0.573576, 0.0, 0.819152] [0.0, 1.0, 0.0] [-0.819152, 0.0, -0.573576] [-2972.65, 161.7, 1245.5]]
+		unit_class:t = "pe-8_m82"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "decor_unit_03"
+		tm:m = [[0.608761, 0.0, -0.793353] [0.0, 1.0, 0.0] [0.793353, 0.0, 0.608761] [-3502.45, 162.35, 1050.65]]
+		unit_class:t = "il_2m_1943"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "decor_unit_04"
+		tm:m = [[0.0871556, 0.0, -0.996195] [0.0, 1.0, 0.0] [0.996195, 0.0, 0.0871556] [-3468.9, 162.35, 1047.75]]
+		unit_class:t = "il_2m_1943"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "decor_unit_05"
+		tm:m = [[0.953717, 0.0, -0.300706] [0.0, 1.0, 0.0] [0.300706, 0.0, 0.953717] [-3510.55, 162.35, 1016.1]]
+		unit_class:t = "il_2m_1943"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	tankModels {
+		name:t = "decor_unit_06"
+		tm:m = [[0.5373, 0.0, -0.843391] [0.0, 1.0, 0.0] [0.843391, 0.0, 0.5373] [-3607.7, 162.35, 981.35]]
+		unit_class:t = "ussr_truck_gaz_aaa"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	tankModels {
+		name:t = "decor_unit_07"
+		tm:m = [[0.5373, 0.0, -0.843391] [0.0, 1.0, 0.0] [0.843391, 0.0, 0.5373] [-3638.4, 161.9, 953.75]]
+		unit_class:t = "ussr_truck_gaz_aaa"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	tankModels {
+		name:t = "decor_unit_08"
+		tm:m = [[0.5373, 0.0, -0.843391] [0.0, 1.0, 0.0] [0.843391, 0.0, 0.5373] [-3196.27, 161.7, 1036.1]]
+		unit_class:t = "ussr_truck_gaz_aaa"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	tankModels {
+		name:t = "decor_unit_09"
+		tm:m = [[-0.819152, 0.0, -0.573576] [0.0, 1.0, 0.0] [0.573576, 0.0, -0.819152] [-3201.55, 161.7, 991.05]]
+		unit_class:t = "ussr_truck_gaz_aaa"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	tankModels {
+		name:t = "decor_unit_10"
+		tm:m = [[-0.819152, 0.0, -0.573576] [0.0, 1.0, 0.0] [0.573576, 0.0, -0.819152] [-2863.3, 161.4, 1526.15]]
+		unit_class:t = "ussr_truck_gaz_aaa"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	tankModels {
+		name:t = "decor_unit_11"
+		tm:m = [[0.573576, 0.0, -0.819152] [0.0, 1.0, 0.0] [0.819152, 0.0, 0.573576] [-2903.25, 161.4, 1529.61]]
+		unit_class:t = "ussr_truck_gaz_aaa"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	tankModels {
+		name:t = "decor_unit_12"
+		tm:m = [[-0.799451, 0.0, -0.600731] [0.0, 1.0, 0.0] [0.600731, 0.0, -0.799451] [-3038.3, 161.9, 1452.6]]
+		unit_class:t = "ussr_gaz_4m"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+			decor_unit_12_wp_01 {
+				type:t = "normal"
+				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-3710.75, 157.3, 936.5]]
+				props {
+					speed:r = 10
+					moveType:t = "MOVETO_STRAIGHT"
+				}
+			}
+			decor_unit_12_wp_02 {
+				type:t = "normal"
+				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-3691.85, 157.3, 898.1]]
+				props {
+					speed:r = 10
+					moveType:t = "MOVETO_STRAIGHT"
+				}
+			}
+		}
+	}
+	tankModels {
+		name:t = "decor_unit_13"
+		tm:m = [[-0.544354, 0.0, 0.838856] [0.0, 1.0, 0.0] [-0.838856, 0.0, -0.544354] [-3158.9, 161.7, 1101.35]]
+		unit_class:t = "ussr_gaz_4m"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	tankModels {
+		name:t = "decor_unit_14"
+		tm:m = [[0.550069, 0.0, -0.835119] [0.0, 1.0, 0.0] [0.835119, 0.0, 0.550069] [-2834.71, 161.4, 1567.03]]
+		unit_class:t = "ussr_gaz_4m"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "decor_units_sq"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-3432.71, 157.3, 1223.41]]
+		props {
+			squad_members:t = "decor_unit_12"
+			squad_members:t = "decor_unit_07"
+			squad_members:t = "decor_unit_05"
+			squad_members:t = "decor_unit_01"
+			squad_members:t = "decor_unit_02"
+			squad_members:t = "decor_unit_03"
+			squad_members:t = "decor_unit_04"
+			squad_members:t = "decor_unit_06"
+			squad_members:t = "decor_unit_08"
+			squad_members:t = "decor_unit_09"
+			squad_members:t = "decor_unit_10"
+			squad_members:t = "decor_unit_11"
+			squad_members:t = "decor_unit_13"
+			squad_members:t = "decor_unit_14"
+			object_marking:i = 0
+		}
+	}
+	squad {
+		name:t = "enemies_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-2952.61, 54.3503, 4818.49]]
+		props {
+			squad_members:t = "structures_01"
+			squad_members:t = "structures_02"
+		}
+	}
+}
+areas {
+	randevu_point {
+		type:t = "Point"
+		tm:m = [[0.972166, 0.0, -0.234295] [0.0, 1.0, 0.0] [0.234295, 0.0, 0.972166] [-218.818, 300.0, 1740.63]]
+		objLayer:i = 0
+		props {
+
+		}
+	}
+	frontline_point {
+		type:t = "Point"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-32120.4, 300.0, 25444.1]]
+		objLayer:i = 0
+		props {
+
+		}
+	}
+}
+objLayers {
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+}
+wayPoints {
+
 }

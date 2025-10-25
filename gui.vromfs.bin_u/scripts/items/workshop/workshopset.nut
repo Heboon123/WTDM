@@ -14,7 +14,8 @@ let { getTimestampFromStringUtc } = require("%scripts/time.nut")
 let { startsWith } = require("%sqstd/string.nut")
 let { get_charserver_time_sec } = require("chard")
 let { addDelayedAction } = require("%scripts/utils/delayedActions.nut")
-let { getInventoryList, getItemOrRecipeBundleById } = require("%scripts/items/itemsManager.nut")
+let { getItemOrRecipeBundleById } = require("%scripts/items/itemsManager.nut")
+let { getInventoryList } = require("%scripts/items/itemsManagerModule.nut")
 
 const KNOWN_ITEMS_SAVE_ID = "workshop/known"
 const KNOWN_REQ_ITEMS_SAVE_ID = "workshop/knownReqItems"
@@ -53,7 +54,7 @@ local WorkshopSet = class {
   needToShowInWorkshop = true
 
   constructor(blk) {
-    this.id = blk.getBlockName() || ""
+    this.id = blk.getBlockName() ?? ""
     this.reqFeature = blk?.reqFeature
     this.locId = blk?.locId || this.id
     this.hasSubsets = blk?.hasSubsets ?? false

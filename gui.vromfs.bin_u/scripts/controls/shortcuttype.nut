@@ -5,7 +5,7 @@ let { split_by_chars } = require("string")
 let { addTypes, enumsAddTypes } = require("%sqStdLibs/helpers/enums.nut")
 let { ControlHelpersMode } = require("globalEnv")
 let { isAxisBoundToMouse, getComplexAxesId, isComponentsAssignedToSingleInputItem,
-  isShortcutMapped } = require("%scripts/controls/shortcutsUtils.nut")
+  isShortcutMapped, isAxisMappedOnMouse, getMouseAxis } = require("%scripts/controls/shortcutsUtils.nut")
 let { KWARG_NON_STRICT } = require("%sqstd/functools.nut")
 let { endsWith } = require("%sqstd/string.nut")
 let { isXInputDevice } = require("controls")
@@ -18,7 +18,7 @@ let { Axis } = require("%scripts/controls/input/axis.nut")
 let { DoubleAxis } = require("%scripts/controls/input/doubleAxis.nut")
 let { InputImage } = require("%scripts/controls/input/image.nut")
 let { joystickGetCurSettings, getShortcuts } = require("%scripts/controls/controlsCompatibility.nut")
-let { getCurrentHelpersMode } = require("%scripts/controls/controlsUtils.nut")
+let { getCurrentHelpersMode } = require("%scripts/controls/aircraftHelpers.nut")
 let { getShortcutById } = require("%scripts/controls/shortcutsList/shortcutsList.nut")
 let { isPC } = require("%sqstd/platform.nut")
 
@@ -137,9 +137,9 @@ g_shortcut_type._getDeviceAxisDescription <- function _getDeviceAxisDescription(
   result.inverse = axis.inverse
 
   if ((result.axisId == -1 || isMouseHigherPriority) &&
-    ::is_axis_mapped_on_mouse(shortcutId, null, joyParams)) {
+    isAxisMappedOnMouse(shortcutId, null, joyParams)) {
     result.deviceId = STD_MOUSE_DEVICE_ID
-    result.mouseAxis = ::get_mouse_axis(shortcutId, null, joyParams)
+    result.mouseAxis = getMouseAxis(shortcutId, null, joyParams)
   }
 
   let isMappedToMouseOnly = result.axisId == -1 && result.mouseAxis != MOUSE_AXIS.NOT_AXIS

@@ -13,39 +13,6 @@ require daslib/strings_boost
 
 typedef AnnotationDeclarationPtr = smart_ptr<AnnotationDeclaration>
 
-def clone(var args : dasvector`das_string; var nargs : array<string>) {
-    let tot = length(nargs)
-    args |> resize(tot)
-    for (i in range(tot)) {
-        args[i] := nargs[i]
-    }
-    delete nargs
-}
-
-def clone(var args : dasvector`smart_ptr`TypeDecl; var nargs : array<TypeDeclPtr>) {
-    args |> clear
-    for (narg in nargs) {
-        args |> emplace(narg)
-    }
-    delete nargs
-}
-
-def clone(var args : dasvector`smart_ptr`Variable; var nargs : array<VariablePtr>) {
-    args |> clear
-    for (narg in nargs) {
-        args |> emplace(narg)
-    }
-    delete nargs
-}
-
-def clone(var args : dasvector`smart_ptr`Expression; var nargs : array<ExpressionPtr>) {
-    args |> clear
-    for (narg in nargs) {
-        args |> emplace(narg)
-    }
-    delete nargs
-}
-
 def isVectorType(typ : Type) {
     return (
         typ == Type.tInt2   || typ == Type.tInt3   || typ == Type.tInt4   ||
@@ -828,7 +795,7 @@ def private walk_and_convert_enumeration(data : uint8 const?; info : TypeDeclPtr
         value := name)
 }
 
-def private walk_and_convert(data : uint8 const?; info : TypeDeclPtr; at : LineInfo) : ExpressionPtr {
+def walk_and_convert(data : uint8 const?; info : TypeDeclPtr; at : LineInfo) : ExpressionPtr {
     
     if (info.dim |> length != 0) {
         return <- walk_and_convert_dim(data, info, at)
@@ -1117,14 +1084,18 @@ def public isExprCallFunc(expr : ExpressionPtr) {
 
 def public get_workhorse_types {
     return fixed_array(
-        Type.tBool,             Type.tInt8,             Type.tUInt8,            Type.tInt16,
-        Type.tUInt16,           Type.tInt64,            Type.tUInt64,           Type.tEnumeration,
-        Type.tEnumeration8,     Type.tEnumeration16,    Type.tEnumeration64,    Type.tInt,              Type.tInt2,
-        Type.tInt3,             Type.tInt4,             Type.tUInt,             Type.tBitfield,
-        Type.tUInt2,            Type.tUInt3,            Type.tUInt4,            Type.tFloat,
-        Type.tFloat2,           Type.tFloat3,           Type.tFloat4,           Type.tRange,
-        Type.tURange,           Type.tRange64,          Type.tURange64,         Type.tString,
-        Type.tDouble,           Type.tPointer
+        Type.tBool,
+        Type.tString,           Type.tPointer,
+        Type.tFloat,            Type.tDouble,
+        Type.tEnumeration,      Type.tEnumeration8,     Type.tEnumeration16,    Type.tEnumeration64,
+        Type.tBitfield,         Type.tBitfield8,        Type.tBitfield16,       Type.tBitfield64,
+        Type.tInt,              Type.tInt8,             Type.tInt16,            Type.tInt64,
+        Type.tUInt,             Type.tUInt8,            Type.tUInt16,           Type.tUInt64,
+        Type.tInt2,             Type.tInt3,             Type.tInt4,
+        Type.tUInt2,            Type.tUInt3,            Type.tUInt4,
+        Type.tFloat2,           Type.tFloat3,           Type.tFloat4,
+        Type.tRange,            Type.tRange64,
+        Type.tURange,           Type.tURange64,
     )
 }
 

@@ -108,6 +108,7 @@ let xrayDescCtorsMap = {
   autoloader = mkSimpleDescByPartType
   driver_controls = mkSimpleDescByPartType
   gun_trunnion = mkSimpleDescByPartType
+  fuel_tank_exterior = mkSimpleDescByPartType
 }
 
 let getModEffectMul = @(commonData, modId, effectId)
@@ -126,6 +127,21 @@ function findAnyModEffectValueBlk(commonData, effectId) {
   return null
 }
 
+function findModEffectValuesString(commonData, effectId) {
+  let { unitBlk, unitName, isDebugBatchExportProcess } = commonData
+  let res = []
+  for (local b = 0; b < (unitBlk?.modifications.blockCount() ?? 0); b++) {
+    let modBlk = unitBlk.modifications.getBlock(b)
+    let modEffectsBlk = modBlk?.effects
+    if (!modEffectsBlk)
+      continue
+    let effects = (modEffectsBlk % effectId)
+    if (effects.len() && (isDebugBatchExportProcess || shopIsModificationEnabled(unitName, modBlk.getBlockName())))
+      res.extend(effects)
+  }
+  return res
+}
+
 function getUnitFmBlk(commonData) {
   let { unitDataCache, unitName, unitBlk } = commonData
   if ("fmBlk" not in unitDataCache)
@@ -140,15 +156,16 @@ function getUnitWeaponsList(commonData) {
     let weaponBlkList = []
     if (unitBlk != null) {
       let primaryList = [ getLastPrimaryWeapon(unit) ]
+      let unitName = unit.name
       foreach (modName in getPrimaryWeaponsList(unit))
         appendOnce(modName, primaryList)
 
       foreach (modName in primaryList)
-        foreach (weapon in getCommonWeapons(unitBlk, modName))
+        foreach (weapon in getCommonWeapons(unitBlk, modName, unitName))
           if (weapon?.blk && !weapon?.dummy)
             appendOnce(weapon, weaponBlkList, false, compareWeaponFunc)
 
-      let weapons = getUnitWeapons(unitBlk)
+      let weapons = getUnitWeapons(unitName, unitBlk)
       foreach (weap in weapons)
         if (weap?.blk && !weap?.dummy)
           appendOnce(copy(weap),weaponBlkList, false, compareWeaponFunc)
@@ -272,6 +289,7 @@ let xrayCommonGetters = {
   getWeaponNameByBlkPath
   getWeaponDescTextByWeaponInfoBlk
   findAnyModEffectValueBlk
+  findModEffectValuesString
   isModAvailableOrFree
   getUnitFmBlk
   getUnitWeaponsList

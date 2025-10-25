@@ -15,14 +15,15 @@ let { isInMenu } = require("%scripts/clientState/clientStates.nut")
 let { add_msg_box } = require("%sqDagui/framework/msgBox.nut")
 let { quitMission } = require("%scripts/hud/startHud.nut")
 let { isLoggedIn } = require("%appGlobals/login/loginState.nut")
-let { findContactByXboxId } = require("%scripts/contacts/contactsManager.nut")
+let { findContactByXboxId } = require("%scripts/contacts/contactsListState.nut")
 let { findInviteByUid } = require("%scripts/invites/invites.nut")
 let { check_multiplayer_sessions_privilege } = require("%scripts/gdk/permissions.nut")
+let { getContact } = require("%scripts/contacts/contacts.nut")
 
 local needCheckSquadInvites = false 
 let postponedInvitation = mkWatched(persist, "postponedInvitation", "0")
 
-let getCurSquadId = @() g_squad_manager.isInSquad() ? g_squad_manager.getLeaderUid().tostring() : userIdStr.value
+let getCurSquadId = @() g_squad_manager.isInSquad() ? g_squad_manager.getLeaderUid().tostring() : userIdStr.get()
 
 function sendInvitation(xuid) {
   if (xuid == "") {
@@ -128,7 +129,7 @@ function acceptExistingIngameInvite(uid) {
 }
 
 function requestPlayerAndDo(uid, name, cb) {
-  let newContact = ::getContact(uid, name)
+  let newContact = getContact(uid, name)
 
   if (newContact.needCheckXboxId())
     newContact.updateXboxIdAndDo(Callback(@() cb(newContact.xboxId), this))
@@ -145,7 +146,7 @@ function requestXboxPlayerAndDo(xuid, cb) {
 
   requestUnknownXboxIds([xuid], {}, Callback(function(res) {
     foreach (uid, data in res) {
-      ::getContact(uid, data.nick).update({ xboxId = data.id })
+      getContact(uid, data.nick).update({ xboxId = data.id })
       cb(uid)
     }
   }, this))
@@ -156,7 +157,7 @@ function onSystemInviteAccept(xuid) {
   logX($"onSquadInviteAccept: sender {xuid}")
 
   if (!isLoggedIn.get() || !isInMenu.get()) {
-    postponedInvitation(xuid)
+    postponedInvitation.set(xuid)
     logX($"postpone invite accept, while not in menu")
     if (isInFlight()) {
       add_msg_box($"xbox_accept_squad_in_game_{xuid}", loc("xbox/acceptSquadInGame"), [
@@ -191,7 +192,7 @@ return {
   sendSystemInvite = @(uid, name) requestPlayerAndDo(uid, name, sendInvitation)
   needProceedSquadInvitesAccept = @() needCheckSquadInvites
   isPlayerFromXboxSquadList = @(...) true
-  checkAfterFlight = @() postponedInvitation.value == "0"
+  checkAfterFlight = @() postponedInvitation.get() == "0"
     ? null
-    : requestXboxPlayerAndDo(postponedInvitation.value, acceptExistingIngameInvite)
+    : requestXboxPlayerAndDo(postponedInvitation.get(), acceptExistingIngameInvite)
 }

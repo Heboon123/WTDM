@@ -38,9 +38,10 @@ let { addPopup } = require("%scripts/popups/popups.nut")
 let { currentCampaignMission, isCustomMissionFlight } = require("%scripts/missions/missionsStates.nut")
 let { getMissionName } = require("%scripts/missions/missionsText.nut")
 let { maxAllowedWarbondsBalance } = require("%scripts/warbonds/warbondsState.nut")
-let { findItemById, findItemByUid, getInventoryItemById, refreshExtInventory,
-  markInventoryUpdateDelayed, getInventoryItemByCraftedFrom
+let { refreshExtInventory, markInventoryUpdateDelayed
 } = require("%scripts/items/itemsManager.nut")
+let { findItemById, findItemByUid, getInventoryItemById, getInventoryItemByCraftedFrom
+} = require("%scripts/items/itemsManagerModule.nut")
 let { getPrizesListView } = require("%scripts/items/prizesView.nut")
 let { checkPackageAndAskDownload } = require("%scripts/clientState/contentPacks.nut")
 
@@ -123,7 +124,6 @@ let ItemExternal = class (BaseItem) {
     this.blkType = itemDefDesc?.tags.type ?? ""
     this.maxAmount = itemDefDesc?.tags.maxCount.tointeger() ?? -1
     this.requirement = itemDefDesc?.tags.showWithFeature
-    this.lottieAnimation = itemDefDesc?.tags.lottieAnimation
     this.allowToBuyAmount = itemDefDesc?.tags.allowToBuyAmount.tointeger() ?? -1
     this.forceShowRewardReceiving = itemDefDesc?.tags.forceShowRewardReceiving ?? false
     this.updateSubstitutionItemDataOnce()
@@ -138,7 +138,7 @@ let ItemExternal = class (BaseItem) {
     this.rarity = itemRarity.get(this.itemDef?.item_quality, this.itemDef?.name_color)
     this.shouldAutoConsume = !!itemDefDesc?.tags.autoConsume || this.canOpenForGold()
 
-    this.link = inventoryClient.getMarketplaceItemUrl(this.id, itemDesc?.itemid) || ""
+    this.link = inventoryClient.getMarketplaceItemUrl(this.id, itemDesc?.itemid) ?? ""
 
     if (itemDesc) {
       this.isInventoryItem = true
@@ -175,7 +175,7 @@ let ItemExternal = class (BaseItem) {
   function getTradebleTimestamp(itemDesc) {
     if (!hasFeature("Marketplace"))
       return 0
-    let res = to_integer_safe(itemDesc?.tradable_after_timestamp || 0)
+    let res = to_integer_safe(itemDesc?.tradable_after_timestamp ?? 0)
     return res > get_charserver_time_sec() ? res : 0
   }
 
@@ -270,15 +270,14 @@ let ItemExternal = class (BaseItem) {
 
   function getIcon(_addItemName = true) {
     return this.isDisguised ? LayersIcon.getIconData("disguised_item")
-      : LayersIcon.getCustomSizeIconData(this.getLottieImage() ?? this.itemDef.icon_url, "pw, ph")
+      : LayersIcon.getCustomSizeIconData(this.itemDef.icon_url, "pw, ph")
   }
 
   function getBigIcon() {
     if (this.isDisguised)
       return LayersIcon.getIconData("disguised_item")
 
-    let image = this.getLottieImage("1@itemIconBlockWidth")
-      ?? (!u.isEmpty(this.itemDef.icon_url_large) ? this.itemDef.icon_url_large : this.itemDef.icon_url)
+    let image = !u.isEmpty(this.itemDef.icon_url_large) ? this.itemDef.icon_url_large : this.itemDef.icon_url
     return LayersIcon.getCustomSizeIconData(image, "pw, ph")
   }
 
@@ -329,7 +328,7 @@ let ItemExternal = class (BaseItem) {
   getDescHeaderLocId = @() !this.shouldAutoConsume ? this.descHeaderLocId : ""
 
   function getLongDescriptionMarkup(params = null) {
-    params = params || {}
+    params = params ?? {}
     params.receivedPrizes <- false
 
     if (this.isDisguised)

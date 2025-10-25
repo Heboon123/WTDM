@@ -129,7 +129,7 @@ let mkTankSight = @(isPreviewMode = false)
           let w = gunReadyState.get()
           w.pos = [max(0, min(w.pos[0]+dx, sw(100) - hdpx(80))), max(0, min(w.pos[1]+dy, sh(100) - hdpx(50)))]
           set_tank_sight_setting({param = TSI_GUN_READY_POS, value = Point2(w.pos[0], w.pos[1])})
-          gunReadyState.update(w)
+          gunReadyState.set(w)
           return w
         }
         onAttach = function() {
@@ -154,7 +154,7 @@ let mkTankSight = @(isPreviewMode = false)
           let w = bulletTypeState.get()
           w.pos = [max(0, min(w.pos[0]+dx, sw(100) - hdpx(80))), max(0, min(w.pos[1]+dy, sh(100) - hdpx(50)))]
           set_tank_sight_setting({param = TSI_BULLET_TYPE_POS, value = Point2(w.pos[0], w.pos[1])})
-          bulletTypeState.update(w)
+          bulletTypeState.set(w)
           return w
         }
         onAttach = function() {
@@ -173,7 +173,7 @@ let mkTankSight = @(isPreviewMode = false)
           let w = vertDistState.get()
           w.pos = [max(0, min(w.pos[0]+dx, sw(100) - hdpx(80))), w.pos[1]]
           set_tank_sight_setting({param = TSI_VERT_DIST_OFFSET, value = w.pos[0] - sw(50)})
-          vertDistState.update(w)
+          vertDistState.set(w)
           return w
         }
         onAttach = function() {

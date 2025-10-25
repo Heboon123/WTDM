@@ -9,7 +9,7 @@ let { FlaresCount, ChaffsCount } = require("%rGui/airState.nut")
 
 let { rwrTargetsTriggers, rwrTargets, rwrTargetsOrder } = require("%rGui/twsState.nut")
 
-let { color, iconColorSearch, iconColorTrack, iconColorLaunch, baseLineWidth, styleText, settings, createCompass, rwrTargetsComponent} = require("rwrL150Components.nut")
+let { color, iconColorSearch, iconColorTrack, iconColorLaunch, baseLineWidth, styleText, settings, createCompass, rwrTargetsComponent} = require("%rGui/planeRwrs/rwrL150Components.nut")
 
 let ecmSector = degToRad(120.0)
 let ecmHalfSectorSin = sin(ecmSector * 0.5)

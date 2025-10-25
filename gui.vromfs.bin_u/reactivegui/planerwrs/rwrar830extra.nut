@@ -10,7 +10,7 @@ let { rwrTargetsTriggers, rwrTargets, CurrentTime } = require("%rGui/twsState.nu
 let { mpsToKnots, metrToFeet } = require("%rGui/planeIlses/ilsConstants.nut")
 let { Speed, Mach, Altitude, Aoa, Overload, Tangage, Roll, FuelInternal } = require("%rGui/planeState/planeFlyState.nut")
 
-let { ThreatType, baseLineWidth, createCompass, createRwrGrid, createRwrGridMarks, createRwrTarget } = require("rwrAr830Components.nut")
+let { ThreatType, baseLineWidth, createCompass, createRwrGrid, createRwrGridMarks, createRwrTarget } = require("%rGui/planeRwrs/rwrAr830Components.nut")
 
 let backGroundColor = Color(255, 255, 128, 255)
 let color = Color(0, 0, 0, 255)

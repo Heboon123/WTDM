@@ -3,7 +3,7 @@ from "%rGui/globals/ui_library.nut" import *
 let string = require("string")
 let { IlsColor, IlsLineScale } = require("%rGui/planeState/planeToolsState.nut")
 let { CompassValue } = require("%rGui/planeState/planeFlyState.nut")
-let { baseLineWidth } = require("ilsConstants.nut")
+let { baseLineWidth } = require("%rGui/planeIlses/ilsConstants.nut")
 
 let generateCompassMark = function(num, _elemWidth, _font) {
   return {
@@ -13,7 +13,7 @@ let generateCompassMark = function(num, _elemWidth, _font) {
       @() {
         watch = IlsColor
         rendObj = ROBJ_TEXT
-        color = IlsColor.value
+        color = IlsColor.get()
         hplace = ALIGN_CENTER
         fontSize = 60
         font = Fonts.usa_ils
@@ -21,10 +21,10 @@ let generateCompassMark = function(num, _elemWidth, _font) {
       }
       @() {
         watch = IlsColor
-        size = [baseLineWidth * IlsLineScale.value, baseLineWidth * IlsLineScale.value]
+        size = [baseLineWidth * IlsLineScale.get(), baseLineWidth * IlsLineScale.get()]
         rendObj = ROBJ_SOLID
-        color = IlsColor.value
-        lineWidth = baseLineWidth * IlsLineScale.value
+        color = IlsColor.get()
+        lineWidth = baseLineWidth * IlsLineScale.get()
         hplace = ALIGN_CENTER
       }
     ]
@@ -39,7 +39,7 @@ let generateCompassMarkSUM = function(num, _elemWidth, _font) {
       @() {
         watch = IlsColor
         rendObj = ROBJ_TEXT
-        color = IlsColor.value
+        color = IlsColor.get()
         hplace = ALIGN_CENTER
         fontSize = 60
         font = Fonts.hud
@@ -47,9 +47,9 @@ let generateCompassMarkSUM = function(num, _elemWidth, _font) {
       }
       @() {
         watch = IlsColor
-        size = [baseLineWidth * 2 * IlsLineScale.value, baseLineWidth * 2 * IlsLineScale.value]
+        size = [baseLineWidth * 2 * IlsLineScale.get(), baseLineWidth * 2 * IlsLineScale.get()]
         rendObj = ROBJ_SOLID
-        color = IlsColor.value
+        color = IlsColor.get()
         hplace = ALIGN_CENTER
       }
     ]
@@ -64,7 +64,7 @@ let generateCompassMarkASP = function(num, _elemWidth, font) {
       @() {
         watch = IlsColor
         rendObj = ROBJ_TEXT
-        color = IlsColor.value
+        color = IlsColor.get()
         hplace = ALIGN_CENTER
         fontSize = 40
         font = font
@@ -72,10 +72,10 @@ let generateCompassMarkASP = function(num, _elemWidth, font) {
       }
       @() {
         watch = IlsColor
-        size = [baseLineWidth * 0.8 * IlsLineScale.value, baseLineWidth * 6]
+        size = [baseLineWidth * 0.8 * IlsLineScale.get(), baseLineWidth * 6]
         rendObj = ROBJ_SOLID
-        color = IlsColor.value
-        lineWidth = baseLineWidth * IlsLineScale.value
+        color = IlsColor.get()
+        lineWidth = baseLineWidth * IlsLineScale.get()
         hplace = ALIGN_CENTER
       }
     ]
@@ -90,7 +90,7 @@ let generateCompassMarkEP = function(num, _elemWidth, _font) {
       @() {
         watch = IlsColor
         rendObj = ROBJ_TEXT
-        color = IlsColor.value
+        color = IlsColor.get()
         hplace = ALIGN_CENTER
         fontSize = 40
         font = Fonts.hud
@@ -98,10 +98,10 @@ let generateCompassMarkEP = function(num, _elemWidth, _font) {
       }
       @() {
         watch = IlsColor
-        size = [baseLineWidth * IlsLineScale.value, baseLineWidth * (num % 10 == 0 ? 2 : 3)]
+        size = [baseLineWidth * IlsLineScale.get(), baseLineWidth * (num % 10 == 0 ? 2 : 3)]
         rendObj = ROBJ_SOLID
-        color = IlsColor.value
-        lineWidth = baseLineWidth * IlsLineScale.value
+        color = IlsColor.get()
+        lineWidth = baseLineWidth * IlsLineScale.get()
         hplace = ALIGN_CENTER
       }
     ]
@@ -116,7 +116,7 @@ let generateCompassMarkEP08 = function(num, _elemWidth, _font) {
       (num % 10 == 0 ? @() {
         watch = IlsColor
         rendObj = ROBJ_TEXT
-        color = IlsColor.value
+        color = IlsColor.get()
         hplace = ALIGN_CENTER
         fontSize = 50
         font = Fonts.hud
@@ -124,10 +124,10 @@ let generateCompassMarkEP08 = function(num, _elemWidth, _font) {
       } : null),
       (num % 10 != 0 ? @() {
         watch = IlsColor
-        size = [baseLineWidth * IlsLineScale.value, baseLineWidth * 5]
+        size = [baseLineWidth * IlsLineScale.get(), baseLineWidth * 5]
         rendObj = ROBJ_SOLID
-        color = IlsColor.value
-        lineWidth = baseLineWidth * IlsLineScale.value
+        color = IlsColor.get()
+        lineWidth = baseLineWidth * IlsLineScale.get()
         hplace = ALIGN_CENTER
       } : null)
     ]
@@ -142,7 +142,7 @@ let generateCompassMarkShim = function(num, elemWidth, _font) {
       @() {
         watch = IlsColor
         rendObj = ROBJ_TEXT
-        color = IlsColor.value
+        color = IlsColor.get()
         hplace = ALIGN_CENTER
         fontSize = 40
         font = Fonts.hud
@@ -150,10 +150,10 @@ let generateCompassMarkShim = function(num, elemWidth, _font) {
       },
       @() {
         watch = IlsColor
-        size = [baseLineWidth * IlsLineScale.value, baseLineWidth * 5]
+        size = [baseLineWidth * IlsLineScale.get(), baseLineWidth * 5]
         rendObj = ROBJ_SOLID
-        color = IlsColor.value
-        lineWidth = baseLineWidth * IlsLineScale.value
+        color = IlsColor.get()
+        lineWidth = baseLineWidth * IlsLineScale.get()
         hplace = ALIGN_CENTER
       }
     ]
@@ -175,10 +175,10 @@ let generateCompassTCSFMark = function(num, _elemWidth, _font) {
       },
       {
         pos = [pw(-50), ph(num % 10 == 0 ? 90 : 92)]
-        size = [baseLineWidth * IlsLineScale.value, baseLineWidth * (num % 10 == 0 ? 5 : 3)]
+        size = [baseLineWidth * IlsLineScale.get(), baseLineWidth * (num % 10 == 0 ? 5 : 3)]
         rendObj = ROBJ_SOLID
         color = Color(255, 70, 10)
-        lineWidth = baseLineWidth * IlsLineScale.value
+        lineWidth = baseLineWidth * IlsLineScale.get()
         hplace = ALIGN_CENTER
       }
     ]
@@ -197,7 +197,7 @@ let generateCompassMarkJ8 = function(num, _elemWidth, _font) {
       @() {
         watch = IlsColor
         rendObj = ROBJ_TEXT
-        color = IlsColor.value
+        color = IlsColor.get()
         hplace = ALIGN_CENTER
         fontSize = 40
         font = Fonts.hud
@@ -206,10 +206,10 @@ let generateCompassMarkJ8 = function(num, _elemWidth, _font) {
       @() {
         watch = IlsColor
         pos = [0, (num % 10 == 0 ? ph(20) : ph(26))]
-        size = [baseLineWidth * 0.8 * IlsLineScale.value, baseLineWidth * (num % 10 == 0 ? 6 : 4)]
+        size = [baseLineWidth * 0.8 * IlsLineScale.get(), baseLineWidth * (num % 10 == 0 ? 6 : 4)]
         rendObj = ROBJ_SOLID
-        color = IlsColor.value
-        lineWidth = baseLineWidth * IlsLineScale.value
+        color = IlsColor.get()
+        lineWidth = baseLineWidth * IlsLineScale.get()
         hplace = ALIGN_CENTER
       }
     ]
@@ -226,7 +226,7 @@ function compass(width, generateFunc, step, is_circle = false, elemWidth = -1, f
     children.append(generateFunc(num, elemWidth, font))
   }
   let elemScale = elemWidth <= 0 ? 1.0 : (elemWidth / 20.0)
-  let getOffset = @() (360 + CompassValue.value) * 0.2 * elemScale * width / 5.0
+  let getOffset = @() (360 + CompassValue.get()) * 0.2 * elemScale * width / 5.0
   return is_circle ?
   {
     size = const [pw(100), ph(100)]
@@ -234,7 +234,7 @@ function compass(width, generateFunc, step, is_circle = false, elemWidth = -1, f
     behavior = Behaviors.RtPropUpdate
     update = @() {
       transform = {
-        rotate = -CompassValue.value
+        rotate = -CompassValue.get()
         pivot = [0.0, 0]
       }
     }
@@ -261,7 +261,7 @@ let generateCompassMarkF14 = function(num, _elemWidth, _font) {
       @() {
         watch = IlsColor
         rendObj = ROBJ_TEXT
-        color = IlsColor.value
+        color = IlsColor.get()
         hplace = ALIGN_CENTER
         fontSize = 60
         font = Fonts.hud
@@ -269,10 +269,10 @@ let generateCompassMarkF14 = function(num, _elemWidth, _font) {
       }
       @() {
         watch = IlsColor
-        size = [baseLineWidth * IlsLineScale.value, baseLineWidth * (num % 10 == 0 ? 4 : 1)]
+        size = [baseLineWidth * IlsLineScale.get(), baseLineWidth * (num % 10 == 0 ? 4 : 1)]
         rendObj = ROBJ_SOLID
-        color = IlsColor.value
-        lineWidth = baseLineWidth * IlsLineScale.value
+        color = IlsColor.get()
+        lineWidth = baseLineWidth * IlsLineScale.get()
         hplace = ALIGN_CENTER
       }
     ]
@@ -287,25 +287,25 @@ let generateCompassMarkVE130 = function(num, _elemWidth, _font) {
       @() {
         watch = IlsColor
         rendObj = ROBJ_TEXT
-        color = IlsColor.value
+        color = IlsColor.get()
         hplace = ALIGN_CENTER
         fontSize = 45
         font = Fonts.hud
         text = num % 10 == 0 ? (num / 10).tostring() : ""
       },
       (num % 10 == 0 ? null : @() {
-        size = [baseLineWidth * IlsLineScale.value, baseLineWidth * 3]
+        size = [baseLineWidth * IlsLineScale.get(), baseLineWidth * 3]
         rendObj = ROBJ_SOLID
         color = Color(0, 0, 0, 0)
-        lineWidth = baseLineWidth * IlsLineScale.value
+        lineWidth = baseLineWidth * IlsLineScale.get()
         hplace = ALIGN_CENTER
       }),
       @() {
         watch = IlsColor
-        size = [baseLineWidth * IlsLineScale.value, baseLineWidth * (num % 10 == 0 ? 4 : 1)]
+        size = [baseLineWidth * IlsLineScale.get(), baseLineWidth * (num % 10 == 0 ? 4 : 1)]
         rendObj = ROBJ_SOLID
-        color = IlsColor.value
-        lineWidth = baseLineWidth * IlsLineScale.value
+        color = IlsColor.get()
+        lineWidth = baseLineWidth * IlsLineScale.get()
         hplace = ALIGN_CENTER
       }
     ]
@@ -320,25 +320,25 @@ let generateCompassMarkSU145 = function(num, _elemWidth, font) {
       @() {
         watch = IlsColor
         rendObj = ROBJ_TEXT
-        color = IlsColor.value
+        color = IlsColor.get()
         hplace = ALIGN_CENTER
         fontSize = 45
         font = font
         text = num % 10 == 0 ? string.format("%02d", num / 10) : ""
       },
       (num % 10 == 0 ? null : @() {
-        size = [baseLineWidth * IlsLineScale.value, baseLineWidth * 3]
+        size = [baseLineWidth * IlsLineScale.get(), baseLineWidth * 3]
         rendObj = ROBJ_SOLID
         color = Color(0, 0, 0, 0)
-        lineWidth = baseLineWidth * IlsLineScale.value
+        lineWidth = baseLineWidth * IlsLineScale.get()
         hplace = ALIGN_CENTER
       }),
       @() {
         watch = IlsColor
-        size = [baseLineWidth * IlsLineScale.value, baseLineWidth * (num % 10 == 0 ? 6 : 3)]
+        size = [baseLineWidth * IlsLineScale.get(), baseLineWidth * (num % 10 == 0 ? 6 : 3)]
         rendObj = ROBJ_SOLID
-        color = IlsColor.value
-        lineWidth = baseLineWidth * IlsLineScale.value
+        color = IlsColor.get()
+        lineWidth = baseLineWidth * IlsLineScale.get()
         hplace = ALIGN_CENTER
       }
     ]
@@ -361,16 +361,16 @@ let generateCompassMarkElbit = function(num, _elemWidth, _font) {
     children = [
       @() {
         watch = IlsColor
-        size = [baseLineWidth * IlsLineScale.value, baseLineWidth * (num % 10 == 0 ? 5 : 2.5)]
+        size = [baseLineWidth * IlsLineScale.get(), baseLineWidth * (num % 10 == 0 ? 5 : 2.5)]
         rendObj = ROBJ_SOLID
-        color = IlsColor.value
-        lineWidth = baseLineWidth * IlsLineScale.value
+        color = IlsColor.get()
+        lineWidth = baseLineWidth * IlsLineScale.get()
         hplace = ALIGN_CENTER
       },
       @() {
         watch = IlsColor
         rendObj = ROBJ_TEXT
-        color = IlsColor.value
+        color = IlsColor.get()
         hplace = ALIGN_CENTER
         fontSize = 40
         padding = const [5, 0]

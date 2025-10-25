@@ -1,17 +1,16 @@
 from "%rGui/globals/ui_library.nut" import *
 
-let { hasSpecialWeapon = @() true, hasManySensorScanPattern = @() true,
-  hasTargetTrack = @() true, hasWeaponLock = @() true } = require("vehicleModel")
+let { hasSpecialWeapon, hasManySensorScanPattern, hasTargetTrack, hasWeaponLock } = require("vehicleModel")
 let string = require("string")
 let { targets, TargetsTrigger, HasAzimuthScale, AzimuthMin,
   AzimuthRange, HasDistanceScale, DistanceMax, DistanceMin,
-  CueReferenceTurretAzimuth, TargetRadarAzimuthWidth,
-  TargetRadarDist
+  CueVisible, CueReferenceTurretAzimuth, CueAzimuth, CueAzimuthHalfWidthRel, CueDistWidthRel, CueDist
+  TargetRadarAzimuthWidth, TargetRadarDist
 } = require("%rGui/radarState.nut")
 let { deferOnce, setTimeout, clearTimer } = require("dagor.workcycle")
-let { PI, floor, lerp, fabs } = require("%sqstd/math.nut")
-let { norm_s_ang = null } = require("dagor.math")
-let { radarSwitchToTarget } = require("antiAirComplexMenuControls")
+let { PI, floor, lerp } = require("%sqstd/math.nut")
+let { norm_s_ang } = require("dagor.math")
+let { radarSwitchToTarget, isRadarTargetFullyInAzimuthLockSpan } = require("radarGuiControls")
 let { RadarTargetType, RadarTargetIconType } = require("guiRadar")
 let { RADAR_TAGET_ICON_NONE, RADAR_TAGET_ICON_JET, RADAR_TAGET_ICON_HELICOPTER, RADAR_TAGET_ICON_ROCKET } = RadarTargetIconType
 let { RADAR_TAGET_TYPE_OWN_WEAPON, RADAR_TAGET_TYPE_OWN_WEAPON_TARGET } = RadarTargetType
@@ -27,7 +26,7 @@ let { actionBarSize, isActionBarVisible, isActionBarCollapsed, actionBarActionsC
 } = require("%rGui/hud/actionBarState.nut")
 let { actionBarTopPanelMarginBottom, actionBarTopPanelHeight
 } = require("%rGui/hud/actionBarTopPanel.nut")
-let { aaMenuCfg } = require("antiAirComplexMenuState.nut")
+let { aaMenuCfg } = require("%rGui/antiAirComplexMenu/antiAirComplexMenuState.nut")
 let { mkImageCompByDargKey } = require("%rGui/components/gamepadImgByKey.nut")
 let { showConsoleButtons } = require("%rGui/ctrlsState.nut")
 let { toggleShortcut } = require("%globalScripts/controls/shortcutActions.nut")
@@ -37,9 +36,9 @@ let { mkZoomMinBtn, mkZoomMaxBtn, radarColor, mkSensorTypeSwitchBtn, mkSensorSwi
   mkFireBtn, mkSpecialFireBtn, mkWeaponLockBtn, mkNightVisionBtn, zoomControlByMouseWheel
 } = require("%rGui/antiAirComplexMenu/antiAirComplexControlsButtons.nut")
 let { mkFilterTargetsBtn, planeTargetPicture, helicopterTargetPicture, rocketTargetPicture
-} = require("antiAirComplexMenuTargetsList.nut")
+} = require("%rGui/antiAirComplexMenu/antiAirComplexMenuTargetsList.nut")
 let { getDasScriptByPath } = require("%rGui/utils/cacheDasScriptForView.nut")
-
+let { radarCanvas } = require("%rGui/radar.nut")
 local tooltipTimer = null
 
 let headerToopltipLocs = {
@@ -166,29 +165,25 @@ function mkCameraRender() {
   }
 }
 
-let circularRadar = @() {
+let circularRadar = @() radarCanvas(null, {
   watch = [radarHeight, contentScale]
   size = [radarHeight.get() * contentScale.get(), radarHeight.get() * contentScale.get()]
-  rendObj = ROBJ_DAS_CANVAS
-  script = getDasScriptByPath("%rGui/radar.das")
-  drawFunc = "draw_radar_hud"
-  setupFunc = "setup_radar_data"
   font = Fonts.hud
   fontSize = hdpx(16 * contentScale.get())
   color = radarColor
   annotateTargets = true
-  handleClicks = true
   isAAComplexMenuLayout = true
   vignetteColor = 0xFF304054
   planeTargetPicture
   helicopterTargetPicture
   rocketTargetPicture
+  screenHeight = sh(100)
   children = {
     margin = shortcutsBtnPadding
     vplace = ALIGN_BOTTOM
     children = mkSensorTypeSwitchBtn()
   }
-}
+}, true)()
 
 let mkRadarControl = @() {
   padding = shortcutsBtnPadding
@@ -247,13 +242,10 @@ let isVisibleTarget = @(target) target != null
   && target.targetType != RADAR_TAGET_TYPE_OWN_WEAPON_TARGET
   && target.targetType != RADAR_TAGET_TYPE_OWN_WEAPON
 
-function isTargetInLockZone(target, az_min, az_range, turret_az, az_width, max_dist) {
-  if (norm_s_ang == null)
-    return true
-  let turretAzimuth = az_min + az_range * turret_az
-  let targetAz = az_min + az_range * target.azimuthRel
-  let targetDelta = norm_s_ang(targetAz - turretAzimuth)
-  let azimuthCheck = fabs(targetDelta) <= az_width
+function isTargetInLockZone(target, az_min, az_range, max_dist) {
+  let targetAz = norm_s_ang(az_min + az_range * target.azimuthRel - PI * 0.5)
+  let targetAzWidth = az_range * target.azimuthWidthRel
+  let azimuthCheck = isRadarTargetFullyInAzimuthLockSpan(targetAz, targetAzWidth)
 
   let distanceCheck = target.distanceRel <= max_dist
   return azimuthCheck && distanceCheck
@@ -266,7 +258,7 @@ let hasSelectedTarget = Computed(function() {
 
 function findNewTarget(inc) {
   let isTargetAccessible = @(target) isVisibleTarget(target) && (!hasSelectedTarget.get()
-    || isTargetInLockZone(target, AzimuthMin.get(), AzimuthRange.get(), CueReferenceTurretAzimuth.get(), TargetRadarAzimuthWidth.get(), TargetRadarDist.get()))
+    || isTargetInLockZone(target, AzimuthMin.get(), AzimuthRange.get(), TargetRadarDist.get()))
   let visibleTargets = targets.filter(isTargetAccessible).sort(targetsSortFunction)
   let targetsCount = visibleTargets.len()
   if (targetsCount == 0)
@@ -410,15 +402,62 @@ let targetStatusFactories = [
     @(target) target.isEnemy,
     @(is_enemy, _) is_enemy ? loc("hud/AAComplexMenu/IFF/enemy") : loc("hud/AAComplexMenu/IFF/ally"))}
 ]
-function createTargetListElement(is_header, target, scale, isSelected = false, ovr = {}) {
+
+let targetLock = @() toggleShortcut("ID_SENSOR_TARGET_LOCK_TANK")
+
+function isTargetInCueZone(target, azimuthMin, azimuthRange, cueReferenceTurretAzimuth, targetRadarAzimuthWidth, cueAzimuthHalfWidthRel, cueAzimuthRel,
+  cueDistWidthRel, cueDist, targetRadarDist) {
+  let turretAzimuth = azimuthMin + azimuthRange * cueReferenceTurretAzimuth
+
+  let targetAz = azimuthMin + azimuthRange * target.azimuthRel
+  let targetDelta = norm_s_ang(targetAz - turretAzimuth)
+
+  let cueAzimuth = cueAzimuthRel * max(targetRadarAzimuthWidth - cueAzimuthHalfWidthRel * azimuthRange, 0.0)
+  let cueAzimuthMin = cueAzimuth - cueAzimuthHalfWidthRel * azimuthRange
+  let cueAzimuthMax = cueAzimuth + cueAzimuthHalfWidthRel * azimuthRange
+
+  let isInCueAzimuth = cueAzimuthMin <= targetDelta && targetDelta <= cueAzimuthMax
+
+  let distRel = 0.5 * cueDistWidthRel + cueDist * targetRadarDist * (1.0 - cueDistWidthRel)
+  let halfDistGateWidthRel = 0.5 * cueDistWidthRel
+  let radiusMin = distRel - halfDistGateWidthRel
+  let radiusMax = distRel + halfDistGateWidthRel
+
+  let isInCueDist = radiusMin <= target.distanceRel && target.distanceRel <= radiusMax
+
+  return isInCueAzimuth && isInCueDist
+}
+
+function createTargetListElement(is_header, target, scale, isSelected = false) {
   let fontSize = is_header ? hdpx(14 * scale) : hdpx(16 * scale)
 
   let isThisTargetInLockZone = Computed(@() target != null && isTargetInLockZone(target,
-    AzimuthMin.get(), AzimuthRange.get(), CueReferenceTurretAzimuth.get(),
-    TargetRadarAzimuthWidth.get(), TargetRadarDist.get()))
+    AzimuthMin.get(), AzimuthRange.get(), TargetRadarDist.get()))
 
   return @() {
-    watch = aaMenuCfg
+    watch = [aaMenuCfg, isThisTargetInLockZone, hasSelectedTarget]
+
+    behavior = !is_header ? Behaviors.Button : null
+    function onClick(){
+     if (isThisTargetInLockZone.get() || !hasSelectedTarget.get())
+      selectTarget(target)
+    }
+    function onDoubleClick() {
+      if (hasSelectedTarget.get()) {
+        targetLock()
+        deferOnce(@() selectTarget(target))
+      }
+      else {
+        selectTarget(target)
+
+        let isSelectedByCue = !CueVisible.get() ? target.isDetected : isTargetInCueZone(target, AzimuthMin.get(),
+          AzimuthRange.get(), CueReferenceTurretAzimuth.get(), TargetRadarAzimuthWidth.get(), CueAzimuthHalfWidthRel.get(),
+          CueAzimuth.get(), CueDistWidthRel.get(), CueDist.get(), TargetRadarDist.get())
+        if (isSelectedByCue)
+          targetLock()
+      }
+    }
+
     size = [flex(), targetRowHeight]
 
     children = [
@@ -451,22 +490,11 @@ function createTargetListElement(is_header, target, scale, isSelected = false, o
         })
       }
     ]
-  }.__update(ovr)
+  }
 }
 
-let targetLock = @() toggleShortcut("ID_SENSOR_TARGET_LOCK_TANK")
-
 function createTargetDist(index, target, scale, isShowConsoleButtons) {
-  let ovr = {
-    behavior = Behaviors.Button
-    onClick = @() selectTarget(target)
-    function onDoubleClick() {
-      selectTarget(target)
-      deferOnce(targetLock)
-    }
-  }
-
-  let targetElement = createTargetListElement(false, target, scale, target.isDetected, ovr)
+  let targetElement = createTargetListElement(false, target, scale, target.isDetected)
 
   if (target.isDetected && isShowConsoleButtons)
     scrollTargetsListToTarget(index)

@@ -1,173 +1,109 @@
-{
-  "rendinst_extra_base": {
-    "_tracked": "ri_extra__riSyncDesc",
-    "_replicated": "ri_extra__riSyncDesc",
-    "ri_extra__destroyed": false,
-    "ri_extra__destructable": false,
-    "ri_extra__isBeingReplaced": false,
-    "ri_extra__restorablePending": false,
-    "_group": {
-      "_tags": "server",
-      "ri_extra__readyToSync": false,
-      "riExtraAuthority:tag": {},
-      "riOffender:eid": {}
-    },
-    "ri_extra": {},
-    "ri_extra__riSyncDesc": {},
-    "ri_extra__sendSpawnEvent:tag": {},
-    "replicate_custom:tag": {}
-  },
-  "rendinst_base": {
-    "_use": "rendinst_extra_base",
-    "transform": [
-      [
-        1.0,
-        0.0,
-        0.0
-      ],
-      [
-        0.0,
-        1.0,
-        0.0
-      ],
-      [
-        0.0,
-        0.0,
-        1.0
-      ],
-      [
-        0.0,
-        0.0,
-        0.0
-      ]
-    ],
-    "_tracked": "transform",
-    "ri_extra__toGround": false,
-    "ri_extra__enableDM": true
-  },
-  "ri_extra_handle": {
-    "ri_extra__handle:u64": {
-      "value": -1
-    }
-  },
-  "rendinst": {
-    "_use": "rendinst_base",
-    "_tracked": "ri_extra__name",
-    "_replicated": "ri_extra__name",
-    "ri_extra__bboxMin": [
-      0.0,
-      0.0,
-      0.0
-    ],
-    "ri_extra__bboxMax": [
-      0.0,
-      0.0,
-      0.0
-    ],
-    "ri_extra__name:t": {
-      "value": "sandbags_wall_medium_rounded_a",
-      "_info": {
-        "desc": "Render model name for this extra render instance (RI)"
-      }
-    }
-  },
-  "rendinst_replicated": {
-    "_use": [
-      "rendinst",
-      "replicating"
-    ]
-  },
-  "rendinst_owned": {
-    "_use": "rendinst",
-    "ri_extra__armyId": -1,
-    "ri_extra__allyDontDamage": false,
-    "ri_extra__enemyDontDamage": false,
-    "ri_extra__ownerDontDamage": false,
-    "ri_extra__owner:eid": {}
-  },
-  "set_rotation": {
-    "ang_speed_yaw": 0.0,
-    "ang_speed_pitch": 0.0,
-    "ang_speed_roll": 0.0,
-    "local_space": true,
-    "_tracked": [
-      "ang_speed_yaw",
-      "ang_speed_pitch",
-      "ang_speed_roll",
-      "local_space"
-    ],
-    "set_rotation:tag": {}
-  },
-  "net_rendinst": {
-    "_use": [
-      "rendinst",
-      "replicating"
-    ],
-    "rendinstDestrHasNextRes": true,
-    "ri_extra__destructable": true,
-    "isRendinstDestr:tag": {
-      "_tags": "render"
-    }
-  },
-  "enable_ri_motion_on_dist_from_cam": {
-    "ri_motion__enabled": true,
-    "_tracked": "ri_motion__enabled",
-    "ri_motion__enableDistSqFromCam": 500000.0
-  },
-  "animated_scene_rendinst": {
-    "_use": [
-      "replicating",
-      "set_rotation",
-      "enable_ri_motion_on_dist_from_cam",
-      "rendinst_extra_base"
-    ],
-    "transform": [
-      [
-        1.0,
-        0.0,
-        0.0
-      ],
-      [
-        0.0,
-        1.0,
-        0.0
-      ],
-      [
-        0.0,
-        0.0,
-        1.0
-      ],
-      [
-        0.0,
-        0.0,
-        0.0
-      ]
-    ],
-    "initialTransform": [
-      [
-        1.0,
-        0.0,
-        0.0
-      ],
-      [
-        0.0,
-        1.0,
-        0.0
-      ],
-      [
-        0.0,
-        0.0,
-        1.0
-      ],
-      [
-        0.0,
-        0.0,
-        0.0
-      ]
-    ],
-    "_tracked": "transform",
-    "ri_extra__handle:u64": {
-      "value": -1
-    }
-  }
+rendinst_extra_base {
+	_tracked:t = "ri_extra__riSyncDesc"
+	_replicated:t = "ri_extra__riSyncDesc"
+	ri_extra__destroyed:b = false
+	ri_extra__destructable:b = false
+	ri_extra__isBeingReplaced:b = false
+	ri_extra__restorablePending:b = false
+	_group {
+		_tags:t = "server"
+		ri_extra__readyToSync:b = false
+		riExtraAuthority:tag {
+
+		}
+		riOffender:eid {
+
+		}
+	}
+	ri_extra {
+
+	}
+	ri_extra__riSyncDesc {
+
+	}
+	ri_extra__sendSpawnEvent:tag {
+
+	}
+	replicate_custom:tag {
+
+	}
+}
+rendinst_base {
+	_use:t = "rendinst_extra_base"
+	transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
+	_tracked:t = "transform"
+	ri_extra__toGround:b = false
+	ri_extra__enableDM:b = true
+}
+ri_extra_handle {
+	ri_extra__handle:u64 {
+		value:i64 = -1
+	}
+}
+rendinst {
+	_use:t = "rendinst_base"
+	_tracked:t = "ri_extra__name"
+	_replicated:t = "ri_extra__name"
+	ri_extra__bboxMin:p3 = 0, 0, 0
+	ri_extra__bboxMax:p3 = 0, 0, 0
+	ri_extra__name:t {
+		value:t = "sandbags_wall_medium_rounded_a"
+		_info {
+			desc:t = "Render model name for this extra render instance (RI)"
+		}
+	}
+}
+rendinst_replicated {
+	_use:t = "rendinst"
+	_use:t = "replicating"
+}
+rendinst_owned {
+	_use:t = "rendinst"
+	ri_extra__armyId:i = -1
+	ri_extra__allyDontDamage:b = false
+	ri_extra__enemyDontDamage:b = false
+	ri_extra__ownerDontDamage:b = false
+	ri_extra__owner:eid {
+
+	}
+}
+set_rotation {
+	ang_speed_yaw:r = 0
+	ang_speed_pitch:r = 0
+	ang_speed_roll:r = 0
+	local_space:b = true
+	_tracked:t = "ang_speed_yaw"
+	_tracked:t = "ang_speed_pitch"
+	_tracked:t = "ang_speed_roll"
+	_tracked:t = "local_space"
+	set_rotation:tag {
+
+	}
+}
+net_rendinst {
+	_use:t = "ecs_no_debug"
+	_use:t = "rendinst"
+	_use:t = "replicating"
+	rendinstDestrHasNextRes:b = true
+	ri_extra__destructable:b = true
+	isRendinstDestr:tag {
+		_tags:t = "render"
+	}
+}
+enable_ri_motion_on_dist_from_cam {
+	ri_motion__enabled:b = true
+	_tracked:t = "ri_motion__enabled"
+	ri_motion__enableDistSqFromCam:r = 500000
+}
+animated_scene_rendinst {
+	_use:t = "replicating"
+	transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
+	initialTransform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
+	_tracked:t = "transform"
+	_use:t = "set_rotation"
+	_use:t = "enable_ri_motion_on_dist_from_cam"
+	_use:t = "rendinst_extra_base"
+	ri_extra__handle:u64 {
+		value:i64 = -1
+	}
 }

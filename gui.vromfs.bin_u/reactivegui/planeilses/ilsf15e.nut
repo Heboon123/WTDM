@@ -7,8 +7,8 @@ let { Speed, Aoa, Tangage, Roll, BarAltitude, ClimbSpeed, CompassValue, Mach, Ov
 let { IlsColor, IlsLineScale, TargetPos, RadarTargetPos, RadarTargetPosValid, RadarTargetDist,
  RadarTargetAngle, RadarTargetVel, TargetPosValid, IlsPosSize, RadarTargetDistRate, BombCCIPMode,
  TvvMark, CannonMode, DistToTarget, BombingMode, AimLockPos, AimLockValid, TimeBeforeBombRelease,
- RadarTargetHeight, AirCannonMode } = require("%rGui/planeState/planeToolsState.nut")
-let { baseLineWidth, mpsToKnots, metrToFeet, degToRad, metrToNavMile, radToDeg } = require("ilsConstants.nut")
+ RadarTargetHeight, AirCannonMode, RocketMode } = require("%rGui/planeState/planeToolsState.nut")
+let { baseLineWidth, mpsToKnots, metrToFeet, degToRad, metrToNavMile, radToDeg } = require("%rGui/planeIlses/ilsConstants.nut")
 let { format } = require("string")
 let { cos, sin, PI, abs } = require("%sqstd/math.nut")
 let { cvt } = require("dagor.math")
@@ -22,8 +22,8 @@ let { FwdPoint, AdlPoint, CurWeaponName, CurWeaponGidanceType, ShellCnt,
 let { AamTimeToHit } = require("%rGui/airState.nut")
 let { IlsTrackerVisible, GuidanceLockState, IlsTrackerX, IlsTrackerY } = require("%rGui/rocketAamAimState.nut")
 
-let isAamAvailable = Computed(@() GuidanceLockState.value >= GuidanceLockResult.RESULT_STANDBY)
-let isAamReady = Computed(@() GuidanceLockState.value > GuidanceLockResult.RESULT_STANDBY)
+let isAamAvailable = Computed(@() GuidanceLockState.get() >= GuidanceLockResult.RESULT_STANDBY)
+let isAamReady = Computed(@() GuidanceLockState.get() > GuidanceLockResult.RESULT_STANDBY)
 
 
 
@@ -302,7 +302,7 @@ function generatePitchLine(num) {
         watch = IlsColor
         rendObj = ROBJ_VECTOR_CANVAS
         lineWidth = baseLineWidth * IlsLineScale.get() * 0.5
-        color = IlsColor.value
+        color = IlsColor.get()
         commands = [
           (num == 0 ? [VECTOR_LINE, -10, 0, 40, 0] : []),
           (num == 0 ? [VECTOR_LINE, 60, 0, 110, 0] : []),
@@ -569,7 +569,7 @@ let radarTargetParams = @(){
 }
 
 let angleToAcmReticlePos = 50.0 / (10.0 * degToRad)
-let IsRadarAcmMode = Computed(@() RadarModeNameId.value >= 0 && (modeNames[RadarModeNameId.value] == "hud/PD ACM"))
+let IsRadarAcmMode = Computed(@() RadarModeNameId.get() >= 0 && (modeNames[RadarModeNameId.get()] == "hud/PD ACM"))
 let radarAcmReticle = @(){
   watch = IsRadarAcmMode
   size = flex()
@@ -741,7 +741,7 @@ let gunReticleCommands = [
   [VECTOR_LINE, 0, 0, 0, 0]
 ]
 
-let ShowGunReticle = Computed(@() CannonMode.get() ? TargetPosValid.get() : RadarTargetDist.get() >= 0.0 && TargetPosValid.get() && (!isAamReady.get() || AirCannonMode.get()))
+let ShowGunReticle = Computed(@() CannonMode.get() || RocketMode.get() ? TargetPosValid.get() : RadarTargetDist.get() >= 0.0 && TargetPosValid.get() && (!isAamReady.get() || AirCannonMode.get()))
 let HasGunTarget = Computed(@() RadarTargetDist.get() >= 0.0 || (CannonMode.get() && TargetPosValid.get()))
 let GunTargetDistSector = Computed(@() cvt((CannonMode.get() ? DistToTarget.get() : RadarTargetDist.get()), 0.0, 3657.6, -90.0, 269.0).tointeger())
 let gunReticle = @() {
@@ -881,7 +881,7 @@ let aamReticle = @(){
 let seekerReticle = @() {
   watch = [IlsTrackerVisible, GuidanceLockState]
   size = flex()
-  children = IlsTrackerVisible.get() && GuidanceLockState.value == GuidanceLockResult.RESULT_TRACKING ?
+  children = IlsTrackerVisible.get() && GuidanceLockState.get() == GuidanceLockResult.RESULT_TRACKING ?
     @() {
       watch = IlsColor
       size = const [pw(7), ph(7)]
@@ -970,7 +970,7 @@ let launchZone = @(){
                 [VECTOR_LINE, 0, 50, 60, 50]
               ]
             },
-            IsLaunchZoneVisible.value ? {
+            IsLaunchZoneVisible.get() ? {
               size = flex()
               children = [
                 @(){

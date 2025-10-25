@@ -35,7 +35,7 @@ gui_handlers.clanBlacklistModal <- class (gui_handlers.BaseGuiHandlerWT) {
   rowsPerPage = 10
 
   function initScreen() {
-    this.myRights = ::clan_get_role_rights(::clan_get_admin_editor_mode() ? ECMR_CLANADMIN : clan_get_my_role())
+    this.myRights = clan_get_role_rights(clan_get_admin_editor_mode() ? ECMR_CLANADMIN : clan_get_my_role())
 
     this.blacklistData = this.clanData.blacklist
     this.updateBlacklistTable()
@@ -127,7 +127,7 @@ gui_handlers.clanBlacklistModal <- class (gui_handlers.BaseGuiHandlerWT) {
     }
 
     showObjById("btn_removeBlacklist", this.curCandidate != null && isInArray("MEMBER_BLACKLIST", this.myRights), this.scene)
-    showObjById("btn_user_options", this.curCandidate != null && showConsoleButtons.value, this.scene)
+    showObjById("btn_user_options", this.curCandidate != null && showConsoleButtons.get(), this.scene)
   }
 
   function onUserCard() {

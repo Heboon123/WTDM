@@ -1,7 +1,10 @@
 from "%sqstd/ecs.nut" import *
 from "%darg/ui_imports.nut" import *
 
-let { selectedEntity, selectedEntities, selectedEntitiesSetKeyVal, selectedEntitiesDeleteKey, selectedCompName} = require("state.nut")
+let entity_editor = require_optional("entity_editor")
+let { selectedEntity, selectedEntities, selectedEntitiesSetKeyVal, selectedEntitiesDeleteKey,
+      selectedCompName,
+      markedScenes} = require("state.nut")
 
 
 
@@ -20,15 +23,15 @@ let {
 } = require_optional("das.daeditor")
 
 
-selectedEntities.subscribe(function(val) {
+selectedEntities.subscribe_with_nasty_disregard_of_frp_update(function(val) {
   if (val.len() == 1)
-    selectedEntity(val.keys()[0])
+    selectedEntity.set(val.keys()[0])
   else
-    selectedEntity(INVALID_ENTITY_ID)
+    selectedEntity.set(INVALID_ENTITY_ID)
 })
 
-selectedEntity.subscribe(function(_eid) {
-  selectedCompName(null)
+selectedEntity.subscribe_with_nasty_disregard_of_frp_update(function(_eid) {
+  selectedCompName.set(null)
 })
 
 register_es("update_selected_entities", {
@@ -55,28 +58,68 @@ function getSceneLoadTypeText(v) {
   return loadType
 }
 
-function getSceneId(loadType, index) {
-  return (index << 2) | loadType
+const loadTypeConst = 4
+let sceneGenerated = {
+  id = -1
+  asText = "[GENERATED]"
+  
+  loadType = loadTypeConst
+  index = -2
+  entityCount = -2
+  path = "\0"
 }
 
-function getSceneIdOf(scene) {
-  return getSceneId(scene.loadType, scene.index)
+let sceneSaved = {
+  id = -2
+  asText = "[ALL FILES]"
+  
+  loadType = loadTypeConst
+  index = -1
+  entityCount = -1
+  path = "\0\0"
 }
 
-function getSceneIdLoadType(sceneId) {
-  return (sceneId & (1 | 2))
+function getNumMarkedScenes() {
+  local nSel = 0
+  foreach (_sceneId, marked in markedScenes.get()) {
+    if (marked)
+      ++nSel
+  }
+  return nSel
 }
 
-function getSceneIdIndex(sceneId) {
-  return (sceneId >> 2)
+function matchSceneEntity(eid, saved, generated) {
+  local isSaved = entity_editor?.get_instance().isSceneEntity(eid)
+  return (saved && isSaved) || (generated && !isSaved)
+}
+
+function matchEntityByScene(eid, saved, generated) {
+  local id = entity_editor?.get_instance().getEntityRecordSceneId(eid)
+  if (markedScenes.get()?[id])
+    return true
+  return matchSceneEntity(eid, saved, generated)
+}
+
+function getScenePrettyName(loadType, index) {
+  if (loadType == 3) {
+    return entity_editor?.get_instance().getScenePrettyName(index) ?? ""
+  }
+
+  return ""
 }
 
 return {
   getEntityExtraName
 
   getSceneLoadTypeText
-  getSceneId
-  getSceneIdOf
-  getSceneIdLoadType
-  getSceneIdIndex
+
+  loadTypeConst
+  sceneGenerated
+  sceneSaved
+
+  getNumMarkedScenes
+  matchSceneEntity
+  matchEntityByScene
+
+  getScenePrettyName
 }

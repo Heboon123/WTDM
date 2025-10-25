@@ -74,6 +74,7 @@ def public safe_function_name(name : string) : string
         ("=" , "_eq_"),
         ("*" , "_st_"),
         ("." , "_dot_"),
+        ("?" , "_q_"),
         ("&" , ""),
         ("(" , ""),
         (")" , ""),
@@ -377,7 +378,7 @@ def describe_type(td:TypeDeclPtr)
                             write(writer,delim)
                         write(writer,describe_type(at))
             write(writer,">")
-        elif baseType==Type.tBitfield
+        elif baseType==Type.tBitfield || baseType==Type.tBitfield8 || baseType==Type.tBitfield16 || baseType==Type.tBitfield64
             write(writer,das_to_string(baseType))
             write(writer,"<")
             var first = true
@@ -663,12 +664,21 @@ def document_topic(doc_file:file;topic,content:string implicit; cb : block<(text
 def document_bitfield(mod:Module?;doc_file:file; name:string; value:TypeDeclPtr)
     var tab : array<array<string>>
     emplace(tab,array<string>( "field", "bit"))
-    for an,bit in value.argNames,range(32)
+    for an,bit in value.argNames,urange(32)
         var line : array<string>
         push(line,string(an))
-        push(line,string(bit))
-        
+        push(line,"{uint64(1ul << uint64(bit))}")
         emplace(tab,line)
+
+    let shortType = value.describe_type_short()
+    for_each_global(mod) <| $(glob)
+        if glob.flags.bitfield_constant && glob._type.describe_type_short() == shortType
+            var line : array<string>
+            var parts <- split(string(glob.name),"`")
+            push(line,parts.length() > 2 ? parts[2] : parts[0])
+            push(line,"{(glob.init as ExprConstBitfield).value}")
+            emplace(tab,line)
+
     document_topic("Fields", doc_file,topic("typedef",mod,name), describe(value), tab)
 
 def document_variant(mod:Module?;doc_file:file; name:string; value:TypeDeclPtr)
@@ -685,7 +695,7 @@ def document_typedef(doc_file:file;mod:Module?;name:string implicit;value)
     fwrite(doc_file,make_label(alias_label_name(value)))
     fwrite(doc_file,make_domain("das:attribute"))
     fwrite(doc_file,name)
-    if value.baseType==Type.tBitfield
+    if value.baseType==Type.tBitfield || value.baseType==Type.tBitfield8 || value.baseType==Type.tBitfield16 || value.baseType==Type.tBitfield64
         fwrite(doc_file," is a bitfield\n\n")
         document_bitfield(mod,doc_file,name,value)
     elif value.baseType==Type.tVariant
@@ -726,6 +736,8 @@ def private is_global_constant(value:VariablePtr)
     if value.flags.private_variable
         return false
     if !value._type.flags.constant
+        return false
+    if value.flags.bitfield_constant
         return false
     
     
@@ -898,31 +910,34 @@ def document_classes(doc_file:file;mods:array<Module?>)
             fwrite(doc_file,"\n\n")
             fwrite(doc_file, make_requirements_list(value))
 
-            var excludeFields : table<string>
-            var parent = value.parent
-            while parent != null
-                for fld in parent.fields
-                    excludeFields |> insert("{fld.name}")
-                parent = parent.parent
             var fields : array<array<string>>
             fields |> emplace(array<string>( "field", "type"))
             var hasValues = false
             for fld in value.fields
-                if !is_class_method(value,fld) && !(fld.flags.generated) && !fld.flags.privateField && !(fld.flags.parentType) && (fld.name!="__rtti") && !(excludeFields |> key_exists("{fld.name}"))
+                if !is_class_method(value,fld) && !(fld.flags.generated) && fld.flags.implemented && !fld.flags.privateField && !(fld.flags.parentType) && (fld.name!="__rtti")
                     if fld.init != null
                         hasValues = true
                         fields[0] |> push("value")
                         break
+
+            let staticFieldPrefix = "{value.name}`"
+            for_each_global(mod) <| $(gVar)
+                if string(gVar.name).starts_with(staticFieldPrefix)
+                    var line : array<string>
+                    push(line, "{value.name}.{string(gVar.name).slice(length(staticFieldPrefix))}")
+                    push(line, describe_type(gVar._type))
+                    if hasValues
+                        push(line, gVar.init != null ? describe(gVar.init) : "")
+                    emplace(fields, line)
+
             for fld in value.fields
-                if !is_class_method(value,fld) && !(fld.flags.generated) && !fld.flags.privateField && !(fld.flags.parentType) && (fld.name!="__rtti") && !(excludeFields |> key_exists("{fld.name}"))
+                if !is_class_method(value,fld) && !(fld.flags.generated) && fld.flags.implemented && !fld.flags.privateField && !(fld.flags.parentType) && (fld.name!="__rtti")
                     var line : array<string>
                     push(line,string(fld.name))
                     push(line,describe_type(fld._type))
                     if hasValues
                         push(line,fld.init != null ? describe(fld.init) : "")
                     emplace(fields,line)
-            
-            
 
             document_topic("Fields", doc_file,topic("class",mod,string(value.name)), "class {value.name}", fields)
 
@@ -954,23 +969,17 @@ def document_structure(doc_file:file;mod:Module?;var value:StructurePtr)
     if value.parent!=null
         fwrite(doc_file," : {value.parent.name}")
     fwrite(doc_file,"\n\n")
-    var excludeFields : table<string>
-    var parent = value.parent
-    while parent != null
-        for fld in parent.fields
-            excludeFields |> insert("{fld.name}")
-        parent = parent.parent
     var tab : array<array<string>>
     emplace(tab,array<string>( "field", "type"))
     var hasValues = false
     for fld in value.fields
-        if !is_class_method(value,fld) && !(fld.flags.generated) && !fld.flags.privateField && !(fld.flags.parentType) && (fld.name!="__rtti") && !(excludeFields |> key_exists("{fld.name}"))
+        if !is_class_method(value,fld) && !(fld.flags.generated) && fld.flags.implemented && !fld.flags.privateField && !(fld.flags.parentType) && (fld.name!="__rtti")
             if fld.init != null
                 hasValues = true
                 tab[0] |> push("value")
                 break
     for fld in value.fields
-        if !is_class_method(value,fld) && !(fld.flags.generated) && !fld.flags.privateField && !(fld.flags.parentType) && (fld.name!="__rtti") && !(excludeFields |> key_exists("{fld.name}"))
+        if !is_class_method(value,fld) && !(fld.flags.generated) && fld.flags.implemented && !fld.flags.privateField && !(fld.flags.parentType) && (fld.name!="__rtti")
             var line : array<string>
             push(line,string(fld.name))
             push(line,describe_type(fld._type))
@@ -1296,6 +1305,9 @@ def function_name ( func:FunctionPtr|Function? )
                 safeName = ".{safeName |> slice(2)}"
             if safeName |> ends_with("`clone")
                 safeName = "{safeName |> slice(0,-6)} ="
+            if safeName |> ends_with("=") && length(safeName) > 3 && safeName.character_at(length(safeName)-3) == '`'
+                let op = character_at(safeName, length(safeName)-2)
+                safeName = "{safeName |> slice(0,-3)} {op.to_char()}="
             return (length(func.arguments) == 0
                 ? safeName
                 : "{func.arguments[0]._type |> describe_type_short()}{safeName}"

@@ -46,7 +46,7 @@ local class PreloaderOptionsModal (gui_handlers.BaseGuiHandlerWT) {
         itemText = getLoadingBgName(screenId)
         tooltip = isUnlocked ? getLoadingBgTooltip(screenId) : null
         tooltipObjId = !isUnlocked ? getTooltipType("UNLOCK_SHORT").getTooltipId(getUnlockIdByLoadingBg(screenId)) : null
-        isNeedOnHover = showConsoleButtons.value
+        isNeedOnHover = showConsoleButtons.get()
       })
     }
 
@@ -65,7 +65,7 @@ local class PreloaderOptionsModal (gui_handlers.BaseGuiHandlerWT) {
     let numItems = itemsListObj.childrenCount()
     for (local i = 0; i < numItems; i++) {
       let itemObj = itemsListObj.getChild(i)
-      itemObj.banned = havePremium.value && isLoadingScreenBanned(itemObj.id) ? "yes" : "no"
+      itemObj.banned = havePremium.get() && isLoadingScreenBanned(itemObj.id) ? "yes" : "no"
     }
   }
 
@@ -78,7 +78,7 @@ local class PreloaderOptionsModal (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function updateButtons() {
-    let isMouseMode = !showConsoleButtons.value || is_mouse_last_time_used()
+    let isMouseMode = !showConsoleButtons.get() || is_mouse_last_time_used()
     let isUnlocked = isBgUnlocked(this.selectedId)
     let isBtnVisible = (isMouseMode && this.scene.findObject(this.selectedId).isVisible()) || this.hoveredId == this.selectedId
     let isBanBtnVisible = isUnlocked && isBtnVisible
@@ -88,7 +88,7 @@ local class PreloaderOptionsModal (gui_handlers.BaseGuiHandlerWT) {
 
     let banBtnObj = showObjById("btn_ban", isBanBtnVisible, this.scene)
     if (isBanBtnVisible)
-      banBtnObj.setValue(havePremium.value && isLoadingScreenBanned(this.selectedId)
+      banBtnObj.setValue(havePremium.get() && isLoadingScreenBanned(this.selectedId)
         ? loc("maps/preferences/removeBan")
         : loc("maps/preferences/ban"))
 
@@ -108,7 +108,7 @@ local class PreloaderOptionsModal (gui_handlers.BaseGuiHandlerWT) {
     if (!this.isValid())
       return
 
-    if (!havePremium.value)
+    if (!havePremium.get())
       return this.msgBox("need_money", loc("mainmenu/onlyWithPremium"), [
         ["purchase", (@() this.onOnlineShopPremium()).bindenv(this)],
         ["cancel"]], "purchase")
@@ -130,12 +130,12 @@ local class PreloaderOptionsModal (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onItemDblClick() {
-    if (!showConsoleButtons.value)
+    if (!showConsoleButtons.get())
       this.toggleBan()
   }
 
   function onItemHover(obj) {
-    if (!showConsoleButtons.value)
+    if (!showConsoleButtons.get())
       return
 
     if (!obj.isHovered() && obj.id != this.hoveredId)

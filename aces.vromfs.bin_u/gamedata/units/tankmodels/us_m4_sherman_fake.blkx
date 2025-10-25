@@ -1,0 +1,964 @@
+model:t = "m4_sherman_fake"
+hasExpl:b = false
+hasDmg2:b = false
+hasQualityModels:b = true
+collisionSphere0:p4 = 0, -1.5, 0, 5
+collisionSphere1:p4 = 5, 2, 0, 1
+exhaustFx:t = "tank_exhaust_med"
+damagedExhaustFx:t = "tank_broken_exhaust"
+thermalExhaustFx:t = "tank_exhaust_nightvision"
+dustFx:t = ""
+support_unit_class:t = "structures/ussr_122mm_m30"
+support_unit_tag:t = "artillery"
+useSimpleDeathConditionsAndEffects:b = false
+subclass:t = "heavyVehicle"
+onRadarAs:t = "tracked"
+moveType:t = "vehicle"
+maxFwdSpeed:r = 60
+maxRevSpeed:r = 10
+maxAngSpeed:r = 30
+maxAccel:r = 4
+maxDecel:r = 8
+maxAngAccel0:r = 20
+maxAngAccelV:r = 0
+maxAngAccel:r = 40
+groundNormSmoothViscosity:r = 0.1
+minDistBetween:r = 10
+expClass:t = "exp_tank"
+mass:r = 300
+bulletHitFx:t = "ground_model_hit"
+partDamageFx:t = "part_damage"
+explosionFx:t = "tank_explosion"
+fireFx:t = "ground_model_fire"
+destroysRendInstances:b = true
+destroysTrees:b = true
+type:t = "typeMediumTank"
+DamageParts {
+	formatVersion:i = 2
+	armorClass:t = "RHA_tank"
+	hp:r = 10000
+	hull {
+		armorClass:t = "CHA_tank"
+		body_front_dm {
+			armorThickness:r = 2
+		}
+		body_top_dm {
+			armorThickness:r = 4
+		}
+	}
+	crew {
+		armorClass:t = "steel_tankman"
+		hp:r = 40
+		genericDamageMult:r = 3
+		pressureDamageMult:r = 1
+		napalmDamageMult:r = 0
+		ignoreSolidDimension:b = true
+		driver_dm {
+
+		}
+		loader_dm {
+
+		}
+		loader_01_dm {
+
+		}
+		loader_02_dm {
+
+		}
+		loader_03_dm {
+
+		}
+		gunner_dm {
+
+		}
+		gunner_01_dm {
+
+		}
+		gunner_02_dm {
+
+		}
+		gunner_03_dm {
+
+		}
+		commander_dm {
+
+		}
+		machine_gunner_dm {
+
+		}
+		machine_gunner_01_dm {
+
+		}
+		machine_gunner_02_dm {
+
+		}
+		machine_gunner_03_dm {
+
+		}
+		machine_gunner_04_dm {
+
+		}
+		machine_gunner_05_dm {
+
+		}
+		machine_gunner_06_dm {
+
+		}
+		machine_gunner_07_dm {
+
+		}
+		machine_gunner_08_dm {
+
+		}
+		machine_gunner_09_dm {
+
+		}
+		machine_gunner_10_dm {
+
+		}
+		machine_gunner_11_dm {
+
+		}
+		machine_gunner_12_dm {
+
+		}
+	}
+	equipment_turret {
+		armorClass:t = "tank_structural_steel"
+		hp:r = 250
+		armorThickness:r = 2
+		armorThrough:r = 10
+		fuel_tank_dm {
+
+		}
+		ammo_turret_01_dm {
+
+		}
+		ammo_body_05_dm {
+
+		}
+		ammo_body_01_dm {
+
+		}
+		ammo_body_02_dm {
+
+		}
+		drive_turret_v_dm {
+			hp:r = 40
+			armorThrough:r = 15
+		}
+		drive_turret_h_dm {
+			hp:r = 40
+			armorThrough:r = 15
+		}
+		cannon_breech_dm {
+			armorThickness:r = 5
+			armorThrough:r = 60
+			hp:r = 120
+		}
+	}
+	equipment_body {
+		armorClass:t = "tank_structural_steel"
+		hp:r = 250
+		armorThickness:r = 2
+		armorThrough:r = 10
+		engine_dm {
+
+		}
+		transmission_dm {
+
+		}
+	}
+}
+sound {
+	TrackSoundPathStudio:t = "ground/effects"
+	TrackSoundNameAi:t = "metal_rattle"
+}
+tank_crew {
+	changeTimeMult:r = 1
+	gunner {
+		dmPart:t = "gunner_dm"
+		role:t = "tank_gunner"
+		substitute:t = "machine_gunner"
+		substitute:t = "commander"
+		substitute:t = "loader"
+	}
+	driver {
+		dmPart:t = "driver_dm"
+		role:t = "driver"
+		substitute:t = "machine_gunner"
+		substitute:t = "commander"
+		substitute:t = "loader"
+	}
+	loader {
+		dmPart:t = "loader_dm"
+		role:t = "loader"
+		substitute:t = "machine_gunner"
+		substitute:t = "commander"
+	}
+	commander {
+		dmPart:t = "commander_dm"
+		role:t = "commander"
+	}
+	machine_gunner {
+		dmPart:t = "machine_gunner_dm"
+		role:t = "radio_gunner"
+	}
+}
+DamageEffects {
+
+}
+MetaParts {
+	body_armor {
+		hp:r = 50
+		part:t = "body_front_dm"
+		part:t = "turret_top_dm"
+		effects {
+			killUnit {
+				nothing:r = 1
+			}
+		}
+	}
+	crew {
+		killAllPartsForDeath:b = true
+		killNumPartsForDeath:i = 4
+		part:t = "driver_dm"
+		part:t = "gunner_dm"
+		part:t = "loader_dm"
+		part:t = "commander_dm"
+		part:t = "machine_gunner_dm"
+		effects {
+			killUnit {
+				nothing:r = 1
+			}
+		}
+	}
+}
+class_tags {
+
+}
+commonWeapons {
+	Weapon {
+		trigger:t = "gunner0"
+		blk:t = "gameData/Weapons/groundModels_weapons/100mm_M4_fake_user_cannon.blk"
+		emitter:t = "bone_gun_barrel"
+		flash:t = "emtr_gun_flame"
+		recoilOffset:r = 0
+		defaultYaw:r = 0
+		defaultPitch:r = 0
+		speedYaw:r = 25
+		speedPitch:r = 25
+		fireConeAngle:r = 1
+		bullets:i = 200
+		salvoAmount:r = 100
+		ChainfireTime:r = 0
+		DelayAfterShoot:r = 5
+		AttackMaxDistance:r = 1000
+		AttackMaxRadius:r = 1000
+		AttackMaxHeight:r = 1000
+		accuracyAir:r = 0
+		accuracyGnd:r = 1.5
+		errMeasureVel:r = 0
+		errMeasureVelFast:r = 0
+		errMeasureVelFwdShift:r = 0
+		errMeasureVelDir:r = 0
+		errTargettingOn100kmph:r = 0
+		errTargetting:r = 3
+		errExplTime:r = 0
+		turret {
+			head:t = "bone_turret"
+			gun:t = "bone_gun"
+			barrel:t = "bone_gun_barrel"
+		}
+		limits {
+			yaw:p2 = -180, 180
+			pitch:p2 = -10, 25
+		}
+	}
+}
+weapon_presets {
+	preset {
+		name:t = "us_m4_sherman_default"
+		blk:t = "gameData/units/tankModels/weaponPresets/us_m4_sherman_fake_default.blk"
+	}
+}
+VehiclePhys {
+	Mass {
+		Empty:r = 1500
+		Fuel:r = 50
+		TakeOff:r = 1550
+		momentOfInertia:p3 = 1, 1, 3
+		CenterOfGravity:p3 = 0, 0.3, 0
+		CenterOfGravityClampY:p2 = 0, 0.7
+		AdvancedMass:b = false
+		trackMass:r = 5
+	}
+	tracks {
+		animationMultiplier:r = 0.68
+		height:r = 0.045
+		width:r = 0.1
+	}
+	collisionProps {
+		cls_turret_01:t = "convex_hull"
+		cls_body_01:t = "convex_hull"
+	}
+	engine {
+		horsePowers:r = 50
+		maxRPM:r = 250
+		minRPM:r = 40
+	}
+	mechanics {
+		maxBrakeForce:r = 2000
+		driveGearRadius:r = 0.3
+		mainGearRatio:r = 1
+		sideGearRatio:r = 1
+		tracked:b = false
+		gearRatios {
+			ratio:r = -2.64
+			ratio:r = 0
+			ratio:r = 7.55
+			ratio:r = 3.1
+			ratio:r = 1.795
+			ratio:r = 1.111
+			ratio:r = 0.733
+		}
+	}
+	suspension {
+		suspensionOffsets:p3 = -0.2, -0.1, 0.05
+		defaultGearRadius:r = 0.3
+		topGearRadius:r = 0.13
+		frontBackGearRadius:r = 0.3
+		defaultDampeningForce:p2 = 500, 500
+		dampeningRelaxationRatio:r = 0.4
+		dampeningCompressionRatio:r = 0.15
+		hasSuspensionOnDriveGear:b = true
+		steeringDeflection {
+			wheel_l_01:r = 25
+			wheel_r_01:r = 25
+			steeringTau:r = 1
+		}
+		wheelsWidth {
+			wheel_l_drive:r = 0.3
+			wheel_r_drive:r = 0.3
+		}
+	}
+}
+unitFx {
+	event {
+		lifetime:r = 120
+		name:t = "engine_fire"
+		fx {
+			name:t = "tank_engine_fire"
+			emitter:t = "emtr_fire_engine"
+		}
+		fx {
+			name:t = "tank_engine_fire"
+			emitter:t = "emtr_fire_engine_01"
+		}
+		fx {
+			name:t = "tank_engine_fire"
+			emitter:t = "emtr_fire_engine_02"
+		}
+	}
+	event {
+		name:t = "ammo_fire"
+		lifetime:r = 9
+		fx {
+			name:t = "tank_ammo_fire"
+			emitter:t = "emtr_fire_ammo"
+			useVelocity:b = false
+		}
+		fx {
+			name:t = "tank_ammo_fire"
+			emitter:t = "emtr_fire_ammo_01"
+			useVelocity:b = false
+		}
+		fx {
+			name:t = "tank_ammo_fire"
+			emitter:t = "emtr_fire_ammo_02"
+			useVelocity:b = false
+		}
+		fx {
+			name:t = "tank_ammo_fire"
+			emitter:t = "emtr_fire_ammo_03"
+			useVelocity:b = false
+		}
+		fx {
+			name:t = "tank_ammo_fire"
+			emitter:t = "emtr_fire_ammo_04"
+			useVelocity:b = false
+		}
+		fx {
+			name:t = "tank_ammo_fire"
+			emitter:t = "emtr_fire_ammo_05"
+			useVelocity:b = false
+		}
+		fx {
+			name:t = "tank_ammo_fire"
+			emitter:t = "emtr_fire_ammo_06"
+			useVelocity:b = false
+		}
+		fx {
+			name:t = "tank_ammo_fire"
+			emitter:t = "emtr_fire_ammo_07"
+			useVelocity:b = false
+		}
+		fx {
+			name:t = "tank_ammo_fire"
+			emitter:t = "emtr_fire_ammo_08"
+			useVelocity:b = false
+		}
+		fx {
+			name:t = "tank_ammo_fire"
+			emitter:t = "emtr_fire_ammo_09"
+			useVelocity:b = false
+		}
+		fx {
+			name:t = "tank_ammo_fire"
+			emitter:t = "emtr_fire_ammo_10"
+			useVelocity:b = false
+		}
+		fx {
+			name:t = "fire_tank_ammo_gun_fire"
+			emitter:t = "emtr_gun_flame"
+			setOrientation:b = true
+		}
+	}
+	event {
+		name:t = "light_smoke"
+		lifetime:r = 60
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_fire_ammo"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_fire_ammo_01"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_fire_ammo_02"
+		}
+	}
+	event {
+		name:t = "total_smoke"
+		lifetime:r = 60
+		fx {
+			name:t = "tank_smoke_big"
+			emitter:t = "emtr_smoke_dmg"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_smoke_small_dmg_01"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_smoke_small_dmg_02"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_smoke_small_dmg_03"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_smoke_small_dmg_04"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_smoke_small_dmg_05"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_smoke_small_dmg_06"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_smoke_small_dmg_07"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_smoke_small_dmg_08"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_smoke_small_dmg_09"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_smoke_small_dmg_10"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_smoke_small_dmg_11"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_smoke_small_dmg_12"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_smoke_small_dmg_13"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_smoke_small_dmg_14"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_smoke_small_dmg_15"
+		}
+		fx {
+			name:t = "tank_smoke_small"
+			emitter:t = "emtr_smoke_small_dmg_16"
+		}
+	}
+	event {
+		name:t = "total_fire"
+		lifetime:r = 40
+		fx {
+			name:t = "tank_fire_big"
+			emitter:t = "emtr_fire_dmg"
+		}
+		fx {
+			name:t = "tank_fire_small"
+			emitter:t = "emtr_fire_small_dmg_01"
+		}
+		fx {
+			name:t = "tank_fire_small"
+			emitter:t = "emtr_fire_small_dmg_02"
+		}
+		fx {
+			name:t = "tank_fire_small"
+			emitter:t = "emtr_fire_small_dmg_03"
+		}
+		fx {
+			name:t = "tank_fire_small"
+			emitter:t = "emtr_fire_small_dmg_04"
+		}
+		fx {
+			name:t = "tank_fire_small"
+			emitter:t = "emtr_fire_small_dmg_05"
+		}
+		fx {
+			name:t = "tank_fire_small"
+			emitter:t = "emtr_fire_small_dmg_06"
+		}
+		fx {
+			name:t = "tank_fire_small"
+			emitter:t = "emtr_fire_small_dmg_07"
+		}
+		fx {
+			name:t = "tank_fire_small"
+			emitter:t = "emtr_fire_small_dmg_08"
+		}
+		fx {
+			name:t = "tank_fire_small"
+			emitter:t = "emtr_fire_small_dmg_09"
+		}
+		fx {
+			name:t = "tank_fire_small"
+			emitter:t = "emtr_fire_small_dmg_10"
+		}
+		fx {
+			name:t = "tank_fire_small"
+			emitter:t = "emtr_fire_small_dmg_11"
+		}
+		fx {
+			name:t = "tank_fire_small"
+			emitter:t = "emtr_fire_small_dmg_12"
+		}
+		fx {
+			name:t = "tank_fire_small"
+			emitter:t = "emtr_fire_small_dmg_13"
+		}
+		fx {
+			name:t = "tank_fire_small"
+			emitter:t = "emtr_fire_small_dmg_14"
+		}
+		fx {
+			name:t = "tank_fire_small"
+			emitter:t = "emtr_fire_small_dmg_15"
+		}
+		fx {
+			name:t = "tank_fire_small"
+			emitter:t = "emtr_fire_small_dmg_16"
+		}
+	}
+	event {
+		name:t = "attached_fire"
+		lifetime:r = 15
+		fx {
+			name:t = "fire_tank_napalm_smal"
+			emitter:t = "emtr_fire_dmg"
+		}
+		fx {
+			name:t = "fire_tank_napalm_smal"
+			emitter:t = "emtr_fire_small_dmg_01"
+		}
+		fx {
+			name:t = "fire_tank_napalm_smal"
+			emitter:t = "emtr_fire_small_dmg_02"
+		}
+		fx {
+			name:t = "fire_tank_napalm_smal"
+			emitter:t = "emtr_fire_small_dmg_03"
+		}
+		fx {
+			name:t = "fire_tank_napalm_smal"
+			emitter:t = "emtr_fire_small_dmg_04"
+		}
+		fx {
+			name:t = "fire_tank_napalm_smal"
+			emitter:t = "emtr_fire_small_dmg_05"
+		}
+		fx {
+			name:t = "fire_tank_napalm_smal"
+			emitter:t = "emtr_fire_small_dmg_06"
+		}
+		fx {
+			name:t = "fire_tank_napalm_smal"
+			emitter:t = "emtr_fire_small_dmg_07"
+		}
+		fx {
+			name:t = "fire_tank_napalm_smal"
+			emitter:t = "emtr_fire_small_dmg_08"
+		}
+		fx {
+			name:t = "fire_tank_napalm_smal"
+			emitter:t = "emtr_fire_small_dmg_09"
+		}
+		fx {
+			name:t = "fire_tank_napalm_smal"
+			emitter:t = "emtr_fire_small_dmg_10"
+		}
+		fx {
+			name:t = "fire_tank_napalm_smal"
+			emitter:t = "emtr_fire_small_dmg_11"
+		}
+		fx {
+			name:t = "fire_tank_napalm_smal"
+			emitter:t = "emtr_fire_small_dmg_12"
+		}
+		fx {
+			name:t = "fire_tank_napalm_smal"
+			emitter:t = "emtr_fire_small_dmg_13"
+		}
+		fx {
+			name:t = "fire_tank_napalm_smal"
+			emitter:t = "emtr_fire_small_dmg_14"
+		}
+		fx {
+			name:t = "fire_tank_napalm_smal"
+			emitter:t = "emtr_fire_small_dmg_15"
+		}
+		fx {
+			name:t = "fire_tank_napalm_smal"
+			emitter:t = "emtr_fire_small_dmg_16"
+		}
+	}
+	event {
+		name:t = "fuel_exterior"
+		lifetime:r = 50
+		fx {
+			name:t = "tank_ex_fuel_explosion"
+			centerDmgPart:b = true
+		}
+	}
+	event {
+		name:t = "fuel_internal"
+		lifetime:r = 50
+		fx {
+			name:t = "tank_ex_fuel_explosion"
+			centerDmgPart:b = true
+		}
+	}
+	event {
+		name:t = "hydraulic_internal"
+		lifetime:r = 200
+		fx {
+			name:t = "tank_engine_fire"
+			centerDmgPart:b = true
+		}
+	}
+	event {
+		name:t = "powersystem_internal"
+		lifetime:r = 100
+		fx {
+			name:t = "tank_engine_fire"
+			centerDmgPart:b = true
+		}
+	}
+	event {
+		name:t = "powersystem_exterior"
+		lifetime:r = 50
+		fx {
+			name:t = "tank_engine_fire"
+			centerDmgPart:b = true
+		}
+	}
+	procedural {
+		name:t = "default"
+		fx {
+			name:t = "tank_engine_fire"
+		}
+	}
+	event {
+		name:t = "big_bang"
+		lifetime:r = 20
+		fx {
+			name:t = "tank_explosion"
+			emitter:t = "emtr_explosion_center"
+		}
+		fx {
+			extraFx:t = "fuelLeakFx"
+			emitter:t = "emtr_explosion_center"
+		}
+		wreckages {
+			count:i = 8
+			speed:r = 25
+			angle:r = 45
+			fxName:t = "fire_trails_explosion_smal"
+		}
+		wreckages {
+			count:i = 5
+			speed:r = 30
+			angle:r = 25
+			fxName:t = "fire_trails_explosion_tiny"
+		}
+		wreckages {
+			count:i = 5
+			speed:r = 20
+			angle:r = 55
+			fxName:t = "fire_trails_explosion_tiny"
+		}
+	}
+	event {
+		name:t = "big_bang"
+		lifetime:r = 20
+		fx {
+			name:t = "tank_explosion"
+			emitter:t = "emtr_explosion_center"
+		}
+		fx {
+			extraFx:t = "fuelLeakFx"
+			emitter:t = "emtr_explosion_center"
+		}
+		wreckages {
+			count:i = 10
+			speed:r = 25
+			angle:r = 45
+			fxName:t = "fire_trails_explosion_smal"
+		}
+		wreckages {
+			count:i = 5
+			speed:r = 30
+			angle:r = 25
+			fxName:t = "fire_trails_explosion_tiny"
+		}
+		wreckages {
+			count:i = 5
+			speed:r = 20
+			angle:r = 55
+			fxName:t = "fire_trails_explosion_tiny"
+		}
+	}
+	event {
+		name:t = "big_bang"
+		lifetime:r = 20
+		fx {
+			name:t = "tank_explosion_small"
+			emitter:t = "emtr_explosion_center"
+		}
+		wreckages {
+			count:i = 10
+			speed:r = 20
+			angle:r = 40
+			fxName:t = "fire_trails_explosion_smal"
+		}
+		wreckages {
+			count:i = 5
+			speed:r = 30
+			angle:r = 25
+			fxName:t = "fire_trails_explosion_tiny"
+		}
+		wreckages {
+			count:i = 5
+			speed:r = 20
+			angle:r = 55
+			fxName:t = "fire_trails_explosion_tiny"
+		}
+	}
+	event {
+		name:t = "big_bang"
+		lifetime:r = 20
+		fx {
+			name:t = "tank_explosion_ammo"
+			emitter:t = "emtr_explosion_center"
+		}
+		fx {
+			extraFx:t = "fuelLeakFx"
+			emitter:t = "emtr_explosion_center"
+		}
+		wreckages {
+			count:i = 25
+			speed:r = 25
+			angle:r = 40
+			fxName:t = "fire_trails_explosion_smal"
+		}
+		wreckages {
+			count:i = 5
+			speed:r = 35
+			angle:r = 20
+			fxName:t = "fire_trails_explosion_tiny"
+		}
+		wreckages {
+			count:i = 5
+			speed:r = 20
+			angle:r = 55
+			fxName:t = "fire_trails_explosion_tiny"
+		}
+	}
+	event {
+		name:t = "big_bang"
+		lifetime:r = 20
+		fx {
+			name:t = "tank_explosion_ammo_small"
+			emitter:t = "emtr_explosion_center"
+		}
+		fx {
+			extraFx:t = "fuelLeakFx"
+			emitter:t = "emtr_explosion_center"
+		}
+		wreckages {
+			count:i = 14
+			speed:r = 25
+			angle:r = 45
+			fxName:t = "fire_trails_explosion_smal"
+		}
+		wreckages {
+			count:i = 5
+			speed:r = 30
+			angle:r = 20
+			fxName:t = "fire_trails_explosion_tiny"
+		}
+		wreckages {
+			count:i = 5
+			speed:r = 20
+			angle:r = 55
+			fxName:t = "fire_trails_explosion_tiny"
+		}
+	}
+	event {
+		name:t = "full_expl"
+		lifetime:r = 20
+		fx {
+			name:t = "tank_explosion_ammo"
+			emitter:t = "emtr_explosion_center"
+		}
+		fx {
+			extraFx:t = "fuelLeakFx"
+			emitter:t = "emtr_explosion_center"
+		}
+		wreckages {
+			count:i = 25
+			speed:r = 25
+			angle:r = 40
+			fxName:t = "fire_trails_explosion_smal"
+		}
+		wreckages {
+			count:i = 5
+			speed:r = 35
+			angle:r = 20
+			fxName:t = "fire_trails_explosion_tiny"
+		}
+		wreckages {
+			count:i = 5
+			speed:r = 20
+			angle:r = 55
+			fxName:t = "fire_trails_explosion_tiny"
+		}
+	}
+	event {
+		name:t = "fire_after_hit_big"
+		lifetime:r = 8
+		fx {
+			name:t = "fire_after_hit_big"
+			setOrientation:b = true
+		}
+	}
+	event {
+		name:t = "fire_after_hit_big"
+		lifetime:r = 8
+		fx {
+			name:t = "smoke_after_hit_big"
+			setOrientation:b = true
+		}
+	}
+	event {
+		name:t = "fire_after_hit_med"
+		lifetime:r = 8
+		fx {
+			name:t = "fire_after_hit_med"
+			setOrientation:b = true
+		}
+	}
+	event {
+		name:t = "fire_after_hit_med"
+		lifetime:r = 8
+		fx {
+			name:t = "smoke_after_hit_med"
+			setOrientation:b = true
+		}
+	}
+	event {
+		name:t = "fire_after_hit_small"
+		lifetime:r = 5
+		fx {
+			name:t = "fire_after_hit_small"
+			setOrientation:b = true
+		}
+	}
+	event {
+		name:t = "fire_after_hit_small"
+		lifetime:r = 5
+		fx {
+			name:t = "smoke_after_hit_small"
+			setOrientation:b = true
+		}
+	}
+	event {
+		name:t = "fire_after_hit_tiny"
+		lifetime:r = 5
+		fx {
+			name:t = "fire_after_hit_tiny"
+			setOrientation:b = true
+		}
+	}
+	event {
+		name:t = "fire_after_hit_tiny"
+		lifetime:r = 5
+		fx {
+			name:t = "smoke_after_hit_tiny"
+			setOrientation:b = true
+		}
+	}
+	event {
+		name:t = "engine_overheat"
+		lifetime:r = 5
+		fx {
+			name:t = "tank_radiator_steam"
+			centerDmgPart:b = false
+		}
+	}
+}
+cockpit {
+	headPos:p3 = 0, 4, -8
+	headPosOnShooting:p3 = 0, 3.5, 0
+	zoomOutFov:r = 60
+	zoomInFov:r = 45
+}
+modifications {
+	100mm_usa_fake_tphv {
+
+	}
+}

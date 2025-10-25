@@ -1,6 +1,6 @@
 from "%rGui/globals/ui_library.nut" import *
 
-let { activeProtectionSystemModulesCount, activeProtectionSystemModules } = require("tankState.nut")
+let { activeProtectionSystemModulesCount, activeProtectionSystemModules } = require("%rGui/hud/tankState.nut")
 let colors = require("%rGui/style/colors.nut")
 let { PI, cos, sin, fabs } = require("%sqstd/math.nut")
 
@@ -9,12 +9,12 @@ let greenColor = Color(10, 202, 10, 250)
 function createModule(module) {
   let { horAnglesX, horAnglesY, shotCountRemain, shotCount, timeToReady } = module
   return function() {
-    let color = shotCountRemain.value == 0 && shotCount.value > 0 ? colors.hud.damageModule.alert
-      : timeToReady.value > 0 ? colors.menu.commonTextColor
+    let color = shotCountRemain.get() == 0 && shotCount.get() > 0 ? colors.hud.damageModule.alert
+      : timeToReady.get() > 0 ? colors.menu.commonTextColor
       : greenColor
-    let denormDiff = (horAnglesY.value - horAnglesX.value - 180.0) % 360.0 + 180.0
+    let denormDiff = (horAnglesY.get() - horAnglesX.get() - 180.0) % 360.0 + 180.0
     let sectorSize = denormDiff < 0.0 ? 360.0 + denormDiff : denormDiff
-    let angel = (horAnglesX.value - 90.0 + sectorSize * 0.5) * PI / 180.0
+    let angel = (horAnglesX.get() - 90.0 + sectorSize * 0.5) * PI / 180.0
     return {
       rendObj = ROBJ_VECTOR_CANVAS
       watch = [horAnglesX, horAnglesX, shotCountRemain, shotCount]
@@ -23,12 +23,12 @@ function createModule(module) {
       color
       lineWidth = hdpx(2) * LINE_WIDTH
       commands = [
-        fabs(horAnglesY.value - horAnglesX.value - 360) % 360 > 0.1
-          ? [ VECTOR_SECTOR, 50, 50, 50, 50, horAnglesX.value - 90, horAnglesY.value - 90]
+        fabs(horAnglesY.get() - horAnglesX.get() - 360) % 360 > 0.1
+          ? [ VECTOR_SECTOR, 50, 50, 50, 50, horAnglesX.get() - 90, horAnglesY.get() - 90]
           : [ VECTOR_ELLIPSE, 50, 50, 50, 50 ]
       ]
       padding = [shHud(1), shHud(1)]
-      children = shotCount.value > 0
+      children = shotCount.get() > 0
         ? {
           rendObj = ROBJ_TEXT
           pos = [pw(47 + 50 * cos(angel)), ph(45 + 50 * sin(angel))]
@@ -36,7 +36,7 @@ function createModule(module) {
           color = colors.menu.activeTextColor
           fontFxFactor = 5
           fontFx = FFT_SHADOW
-          text = shotCountRemain.value
+          text = shotCountRemain.get()
         }
         : null
     }
@@ -46,7 +46,7 @@ function createModule(module) {
 let activeProtection = @() {
   size = const [pw(70), ph(70)]
   watch = [activeProtectionSystemModulesCount]
-  children = activeProtectionSystemModulesCount.value == 0 ? null
+  children = activeProtectionSystemModulesCount.get() == 0 ? null
     : activeProtectionSystemModules.map(@(module) createModule(module))
 }
 

@@ -1606,10 +1606,10 @@ CountriesCrews[hasHeader=yes] slotsHeader {
   display: show;
 }
 slotsHeader > img {
-  size:@cIco, @cIco;
-  pos: 0.5(pw-w), 1@sf/@pf_outdated;
+  size:@cIco, 0.66@cIco;
+  pos: 0.5(pw-w), 1@blockInterval;
   position: relative;
-  background-svg-size:@cIco, @cIco;
+  background-svg-size:@cIco, 0.66@cIco;
 }
 
 shopCollapsedButton {
@@ -1942,4 +1942,23 @@ unitItemContainer.swapCrewsDnD[dragging=yes] > shopItem > extraInfoBlock {
 
 [show_console_buttons=yes] middleline[isShowDragAndDropIcon=yes] > dragAndDropIcon {
   display:hide;
+}
+
+tooltipLink {
+  input-transparent:yes;
+}
+
+[show_console_buttons=yes] tooltipLink {
+  total-input-transparent: yes;
+  behavior: PosNavigator;
+  navigatorShortcuts: yes;
+  on_pushed: "::gcb.delayedTooltipListPush";
+  on_hold_start: "::gcb.delayedTooltipListHoldStart";
+  on_hold_stop: "::gcb.delayedTooltipListHoldStop";
+}
+
+tooltipLink > unitCell
+{
+  size:@slot_width, @slot_height + 2@slot_vert_pad;
+  padding:@slot_interval, @slot_vert_pad;
 }

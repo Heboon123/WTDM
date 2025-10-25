@@ -3,7 +3,7 @@ from "%globalScripts/loc_helpers.nut" import loc_checked
 
 let { Speed, BarAltitude, Tangage, Roll, ClimbSpeed, Altitude, Tas,
  CompassValue } = require("%rGui/planeState/planeFlyState.nut")
-let { mpsToKmh, baseLineWidth, radToDeg } = require("ilsConstants.nut")
+let { mpsToKmh, baseLineWidth, radToDeg } = require("%rGui/planeIlses/ilsConstants.nut")
 let { round, floor, abs } = require("%sqstd/math.nut")
 let { cvt } = require("dagor.math")
 let { format } = require("string")
@@ -11,7 +11,7 @@ let { IlsColor, IlsLineScale, TargetPos, BombCCIPMode, RocketMode, CannonMode,
  TargetPosValid, DistToTarget, IlsPosSize, BombingMode, TimeBeforeBombRelease,
  AimLockValid, AimLockPos, RadarTargetDist, AirCannonMode, RadarTargetPosValid,
  RadarTargetPos } = require("%rGui/planeState/planeToolsState.nut")
-let { targetsComponent, ASPAzimuthMark } = require("commonElements.nut")
+let { targetsComponent, ASPAzimuthMark } = require("%rGui/planeIlses/commonElements.nut")
 let { IsRadarVisible, RadarModeNameId, modeNames, ScanElevationMax, ScanElevationMin, Elevation,
   HasAzimuthScale, IsCScopeVisible, HasDistanceScale, targets, Irst, DistanceMax, CueVisible,
   CueAzimuth, TargetRadarAzimuthWidth, AzimuthRange, CueAzimuthHalfWidthRel, CueDist,
@@ -905,7 +905,7 @@ let shellName = @() {
   size = SIZE_TO_CONTENT
   rendObj = ROBJ_TEXT
   pos = [pw(80), ph(85)]
-  color = IlsColor.value
+  color = IlsColor.get()
   fontSize = 35
   font = Fonts.ils31
   text = !CannonMode.get() && !AirCannonMode.get() ? (CurWeaponName.get() != "" ? loc_checked(CurWeaponName.get()) : "") : ""

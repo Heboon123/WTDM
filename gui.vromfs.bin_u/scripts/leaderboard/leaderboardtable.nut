@@ -10,7 +10,7 @@ let { cutPrefix } = require("%sqstd/string.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { getPlayerName } = require("%scripts/user/remapNick.nut")
 let { getCustomNick } = require("%scripts/contacts/customNicknames.nut")
-let { getContactByName } = require("%scripts/contacts/contactsManager.nut")
+let { getContactByName } = require("%scripts/contacts/contactsListState.nut")
 let { getPlayerFullName } = require("%scripts/contacts/contactsInfo.nut")
 
 gui_handlers.LeaderboardTable <- class (gui_handlers.BaseGuiHandlerWT) {
@@ -198,7 +198,7 @@ gui_handlers.LeaderboardTable <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onRowSelect(obj) {
-    if (showConsoleButtons.value)
+    if (showConsoleButtons.get())
       return
     if (!checkObj(obj))
       return
@@ -208,7 +208,7 @@ gui_handlers.LeaderboardTable <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onRowHover(obj) {
-    if (!showConsoleButtons.value)
+    if (!showConsoleButtons.get())
       return
     if (!checkObj(obj))
       return

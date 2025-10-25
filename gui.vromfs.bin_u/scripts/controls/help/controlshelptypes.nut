@@ -380,6 +380,27 @@ enums.addTypes(result, {
       }
     ]
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   IMAGE_WARFARE2077 = {
     subTabName = "#event/war2077"
 

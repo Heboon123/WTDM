@@ -1,6 +1,6 @@
 from "%rGui/globals/ui_library.nut" import *
 
-let textInput = require("textInputBase.nut")
+let textInput = require("%rGui/components/textInputBase.nut")
 let colors = require("%rGui/style/colors.nut")
 let focusBorder = require("%rGui/components/focusBorder.nut")
 

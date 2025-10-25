@@ -12,6 +12,7 @@ let { dynamicClear } = require("dynamicMission")
 let { mission_desc_clear } = require("guiMission")
 let { getStateDebugStr } = require("%scripts/login/loginStates.nut")
 let { set_mission_settings } = require("%scripts/missions/missionsStates.nut")
+let { setBackFromReplaysFn } = require("%scripts/replays/backFromReplaysFn.nut")
 
 local dbgStartCheck = 0
 
@@ -24,7 +25,7 @@ function gui_start_mainmenu(params = {}) {
     script_net_assert_once("mainmenu recursion", msg)
   }
 
-  ::back_from_replays = null
+  setBackFromReplaysFn(null)
 
   dynamicClear()
   mission_desc_clear()
@@ -32,10 +33,10 @@ function gui_start_mainmenu(params = {}) {
 
   let handler = handlersManager.loadHandler(gui_handlers.MainMenu)
   handlersManager.setLastBaseHandlerStartParams({ eventbusName = "gui_start_mainmenu" })
-  showObjById("gamercard_center", !topMenuShopActive.value)
+  showObjById("gamercard_center", !topMenuShopActive.get())
 
   if (allowMainmenuActions)
-    onMainMenuReturnActions.value?.onMainMenuReturn(handler, false)
+    onMainMenuReturnActions.get()?.onMainMenuReturn(handler, false)
 
   dbgStartCheck--
   return handler
@@ -52,7 +53,7 @@ function gui_start_mainmenu_reload(params = {}) {
   }
 
   handlersManager.clearScene()
-  topMenuShopActive(showShop)
+  topMenuShopActive.set(showShop)
   gui_start_mainmenu()
 }
 

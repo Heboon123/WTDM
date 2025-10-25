@@ -1,0 +1,308 @@
+model:t = "sam_rapier"
+hasExpl:b = false
+hasDmg2:b = false
+hasQualityModels:b = true
+collisionSphere0:p4 = 0, -1.5, 0, 5
+collisionSphere1:p4 = 5, 2, 0, 1
+exhaustFx:t = "tank_exhaust_med"
+damagedExhaustFx:t = "tank_broken_exhaust"
+thermalExhaustFx:t = "tank_exhaust_nightvision"
+dustFx:t = ""
+support_unit_class:t = "structures/ussr_152mm_d1"
+support_unit_tag:t = "artillery"
+useSimpleDeathConditionsAndEffects:b = false
+timeToFire:r = 5
+subclass:t = "heavyVehicle"
+onRadarAs:t = "unknown"
+moveType:t = "vehicle"
+maxFwdSpeed:r = 0
+maxRevSpeed:r = 0
+maxAngSpeed:r = 20
+maxAccel:r = 10
+maxDecel:r = 10
+maxAngAccel0:r = 10
+maxAngAccelV:r = 10
+maxAngAccel:r = 10
+groundNormSmoothViscosity:r = 0.1
+minDistBetween:r = 10
+maxAnglesForFire:p2 = -70, 70
+expClass:t = "exp_tank"
+mass:r = 5000
+bulletHitFx:t = "ground_model_hit"
+partDamageFx:t = "part_damage"
+explosionFx:t = "tank_explosion"
+fireFx:t = "ground_model_fire"
+destroysRendInstances:b = true
+destroysTrees:b = true
+killIfFlipped:b = true
+cruiseVelocity:r = 8
+type:t = "typeLightTank"
+DamageParts {
+	formatVersion:i = 2
+	armorClass:t = "RHA_tank"
+	hp:r = 50
+	hull_shields {
+		hp:r = 50
+		armorClass:t = "RHA_tank"
+		explosionArmorQuality:r = 0.5
+		shatterArmorQuality:r = 0.5
+		restrainDamage:r = 0.05
+		armorThickness:r = 15
+		napalmDamageMult:r = 100
+		body_bottom_dm {
+
+		}
+		body_top_dm {
+
+		}
+		gun_barrel_dm {
+
+		}
+	}
+}
+DamageEffects {
+	part {
+		name:t = "body_bottom_dm"
+		onKill {
+			full_expl:r = 1
+		}
+	}
+	part {
+		name:t = "body_top_dm"
+		onKill {
+			full_expl:r = 1
+		}
+	}
+	part {
+		name:t = "gun_barrel_dm"
+		onKill {
+			full_expl:r = 1
+		}
+	}
+}
+tank_crew {
+
+}
+explosion {
+	expl {
+		node:t = "body"
+		partNo:i = 0
+		timeToExplode:r = 0.5
+		preEffectName:t = ""
+		postEffectName:t = "smoke_ground_black_fx"
+		explosionEffectName:t = "explosion_midair_medium"
+		timeForPostEffect:r = 60
+		preScale:r = 1
+		postScale:r = 1
+	}
+}
+MetaParts {
+	body {
+		hp:r = 10
+		part:t = "body_bottom_dm"
+		part:t = "body_top_dm"
+		part:t = "gun_barrel_dm"
+		effect {
+			conditionDamageType:t = "generic"
+			expl:r = 1
+			conditionDamage:r = 10
+			kill:b = true
+			killEffect:t = "scorched"
+		}
+		effect {
+			conditionDamageType:t = "explosion"
+			expl:r = 1
+			conditionDamage:r = 10
+			kill:b = true
+			killEffect:t = "scorched"
+		}
+		effect {
+			conditionDamageType:t = "shatter"
+			expl:r = 1
+			conditionDamage:r = 10
+			kill:b = true
+			killEffect:t = "scorched"
+		}
+		effect {
+			conditionDamageType:t = "cumulative"
+			expl:r = 1
+			conditionDamage:r = 10
+			kill:b = true
+			killEffect:t = "scorched"
+		}
+		effect {
+			conditionDamageType:t = "napalm"
+			expl:r = 1
+			conditionDamage:r = 10
+			kill:b = true
+			killEffect:t = "scorched"
+		}
+	}
+}
+sound {
+	path:t = "sounds/engines/apc"
+	pathStudio:t = "aircraft/engines/apc"
+	engine:t = ""
+	turret_turn:t = "turret_turn_manual"
+}
+class_tags {
+
+}
+commonWeapons {
+	Weapon {
+		trigger:t = "gunner0"
+		triggerGroup:t = "primary"
+		blk:t = "gameData/Weapons/groundModels_weapons/130mm_rapier_launcher_user_cannon.blk"
+		flash:t = "emtr_gun_flame_01"
+		useEmitter:b = true
+		emitter:t = "bone_rocket_01"
+		emitterGenRange:ip2 = 1, 4
+		emitterGenFmt:t = "bone_rocket_%02d"
+		ammoDpGenFmt:t = "ammo_turret_%02d_dm"
+		recoilMultiplier:r = 0
+		stopForFire:b = true
+		maxSpeedForFire:r = 5
+		staticElevation:r = 3
+		barrelDP:t = "gun_barrel_dm"
+		createGunEffects:b = true
+		defaultYaw:r = 0
+		defaultPitch:r = 0
+		allowableDelta:r = 20
+		speedYaw:r = 70
+		speedPitch:r = 60
+		isBulletBelt:b = false
+		fireConeAngle:r = 5
+		bullets:i = 8
+		salvoAmount:r = 100
+		ChainfireTime:r = 0
+		DelayAfterShoot:r = 2
+		fireConeAngle:r = 1
+		targetAngularRateMax:r = 5
+		AttackMaxDistance:r = 8000
+		AttackMaxRadius:r = 8000
+		AttackMaxHeight:r = 5000
+		AttackMinHeight:r = 15
+		accuracyAir:r = 2
+		accuracyGnd:r = 0
+		errMeasureVel:r = 0
+		errMeasureVelFast:r = 0
+		errMeasureVelFwdShift:r = 0
+		errMeasureVelDir:r = 0
+		errTargettingOn100kmph:r = 0
+		errTargetting:r = 3
+		errExplTime:r = 0
+		preciseAim:b = true
+		turret {
+			head:t = "bone_turret"
+			gun:t = "bone_gun"
+		}
+		limits {
+			yaw:p2 = -180, 180
+			pitch:p2 = 0, 75
+		}
+	}
+}
+weapon_presets {
+	preset {
+		name:t = "uk_ai_sam_rapier_default"
+		blk:t = "gameData/units/tankModels/weaponPresets/uk_ai_sam_rapier_default.blk"
+	}
+}
+VehiclePhys {
+	Mass {
+		Empty:r = 5000
+		Fuel:r = 0
+		TakeOff:r = 5000
+		momentOfInertia:p3 = 6, 1, 6
+		CenterOfGravity:p3 = -0.8, 0.2, 0
+		AdvancedMass:b = false
+		CenterOfGravityClampY:p2 = 0, 0.7
+		cls_body:r = 1
+	}
+	tracks {
+		animationMultiplier:r = 0.5
+		height:r = 0
+		width:r = 0.1
+		trackPhysMat:t = "wheel"
+		fricFrontal:p2 = 10, 10
+	}
+	collisionProps {
+		cls_body:t = "convex_hull"
+	}
+	engine {
+		horsePowers:r = 1
+		maxRPM:r = 2200
+		minRPM:r = 700
+	}
+	mechanics {
+		maxBrakeForce:r = 3200
+		driveGearRadius:r = 0.3165
+		mainGearRatio:r = 1.084
+		sideGearRatio:r = 4.3
+		tracked:b = false
+		gearRatios {
+			ratio:r = -15
+			ratio:r = 0
+			ratio:r = 15
+		}
+	}
+	suspension {
+		suspensionOffsets:p3 = -0.05, -0.05, 0.05
+		defaultGearRadius:r = 0.372
+		defaultDampeningForce:p2 = 17000, 17000
+		hasSuspensionOnDriveGear:b = true
+		dampeningRelaxationRatio:r = 0.4
+		dampeningCompressionRatio:r = 0.15
+		brokenWheelSteeringDeflection:r = -15
+		wheel_l_01:r = 0.372
+		wheel_r_01:r = 0.372
+		wheel_l_02:r = 0.372
+		wheel_r_02:r = 0.372
+		driven {
+			wheel_l_01:b = true
+			wheel_r_01:b = true
+			wheel_l_02:b = true
+			wheel_r_02:b = true
+		}
+	}
+}
+cockpit {
+	zoomOutFov:r = 31.0701
+	zoomInFov:r = 7.37089
+	sightFov:r = 13.809
+	sightName:t = "rapier_sight"
+	openedCockpit:b = true
+	headPos:p3 = 0.2, 3.3, -6
+	headPosOnShooting:p3 = -2, 1.8, 0.2
+	detectionHeight:r = 2.8
+}
+modifications {
+	manual_extinguisher {
+
+	}
+	tank_tool_kit {
+
+	}
+	130mm_rapier_aam {
+
+	}
+	130mm_rapier_mk_2_aam {
+
+	}
+	130mm_rapier_mk_2_aam_ammo_pack {
+
+	}
+}
+sensors {
+	sensor {
+		blk:t = "gameData/sensors/uk_rapier_sr.blk"
+		turretIndex:i = 0
+		designationFromBody:b = true
+		designationTurretIndex:i = 0
+	}
+	sensor {
+		blk:t = "gameData/sensors/uk_rapier_fr.blk"
+		turretIndex:i = 0
+		powerButtonIdx:i = -1
+	}
+}

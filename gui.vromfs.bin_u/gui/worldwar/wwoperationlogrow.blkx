@@ -1,525 +1,503 @@
-{
-  "id": "",
-  "width": "pw",
-  "flow": "vertical",
-  "display": "hide",
-  "tdiv": [
-    {
-      "id": "date",
-      "position": "relative",
-      "width": "pw",
-      "height": "1@logBlockHeaderHeight",
-      "background-color": "@objectiveHeaderBackground",
-      "margin-bottom": "0.01@scrn_tgt",
-      "textareaNoTab": {
-        "id": "date_text",
-        "width": "pw",
-        "padding-left": "0.01@scrn_tgt",
-        "valign": "center"
-      }
-    },
-    {
-      "width": "pw",
-      "cardImg": {
-        "id": "log_icon",
-        "pos": "1@framePadding, 1@framePadding",
-        "position": "relative",
-        "type": "veryTiny",
-        "logCategoryName": "",
-        "background-image": "#ui/gameuiskin#icon_type_log_army"
-      },
-      "textareaNoTab": [
-        {
-          "id": "log_time",
-          "position": "relative",
-          "width": "@wwLogTimeColumnWidth",
-          "padding-right": "0.4@framePadding",
-          "text-align": "right",
-          "tooltip": ""
-        },
-        {
-          "id": "log_zone",
-          "position": "relative",
-          "width": "@wwLogZoneColumnWidth",
-          "text-align": "center",
-          "isYourZone": "yes",
-          "on_hover": "onHoverZoneName",
-          "on_unhover": "onHoverLostZoneName"
-        }
-      ],
-      "tdiv": {
-        "id": "log_body",
-        "width": "fw",
-        "margin-bottom": "1@framePadding",
-        "flow": "h-flow",
-        "padding-left": "0.002@scrn_tgt",
-        "textareaNoTab": [
-          {
-            "id": "army",
-            "width": "1@wwArmySmallIconWidth",
-            "margin-right": "1@framePadding",
-            "text": " ",
-            "tdiv": {
-              "id": "army_container",
-              "top": "50%ph-50%h",
-              "position": "absolute",
-              "armyBlock": {
-                "id": "",
-                "behavior": "button",
-                "display": "hide",
-                "armyId": "",
-                "selected": "no",
-                "isForceHovered": "no",
-                "on_click": "onClickArmy",
-                "focusBtnName": "A",
-                "showConsoleImage": "no",
-                "on_hover": "onHoverArmyItem",
-                "on_unhover": "onHoverLostArmyItem",
-                "armyIcon": {
-                  "id": "army_icon",
-                  "team": "blue",
-                  "isBelongsToMyClan": "no",
-                  "battleDescriptionIconSize": "small",
-                  "entrenchIcon": {
-                    "id": "army_entrench_icon",
-                    "size": "1@mIco, 1@mIco",
-                    "pos": "50%pw-50%w, 50%ph-50%h",
-                    "position": "absolute",
-                    "background-image": "ui/gameuiskin#ww_army_entrenched.svg",
-                    "background-color": "@armyEntrencheColor",
-                    "display": "hide"
-                  },
-                  "background": {
-                    "pos": "50%pw-50%w, 50%ph-50%h",
-                    "position": "absolute",
-                    "background-image": "#ui/gameuiskin#ww_army",
-                    "foreground-image": "#ui/gameuiskin#ww_select_army"
-                  },
-                  "armyUnitType": {
-                    "id": "army_unit_icon"
-                  }
-                }
-              }
-            }
-          },
-          {
-            "id": "log_text",
-            "position": "relative",
-            "tooltip": ""
-          }
-        ],
-        "tdiv": [
-          {
-            "id": "battle",
-            "textareaNoTab": [
-              {
-                "id": "army_side_1",
-                "width": "1@wwArmySmallIconWidth",
-                "behavior": "button",
-                "armyId": "",
-                "focusBtnName": "A",
-                "showConsoleImage": "no",
-                "on_click": "onClickArmy",
-                "text": " ",
-                "tdiv": {
-                  "id": "army_side_1_container",
-                  "top": "50%ph-50%h",
-                  "position": "absolute",
-                  "armyBlock": {
-                    "id": "",
-                    "behavior": "button",
-                    "display": "hide",
-                    "armyId": "",
-                    "selected": "no",
-                    "isForceHovered": "no",
-                    "on_click": "onClickArmy",
-                    "focusBtnName": "A",
-                    "showConsoleImage": "no",
-                    "on_hover": "onHoverArmyItem",
-                    "on_unhover": "onHoverLostArmyItem",
-                    "armyIcon": {
-                      "id": "army_icon",
-                      "team": "blue",
-                      "isBelongsToMyClan": "no",
-                      "battleDescriptionIconSize": "small",
-                      "entrenchIcon": {
-                        "id": "army_entrench_icon",
-                        "size": "1@mIco, 1@mIco",
-                        "pos": "50%pw-50%w, 50%ph-50%h",
-                        "position": "absolute",
-                        "background-image": "ui/gameuiskin#ww_army_entrenched.svg",
-                        "background-color": "@armyEntrencheColor",
-                        "display": "hide"
-                      },
-                      "background": {
-                        "pos": "50%pw-50%w, 50%ph-50%h",
-                        "position": "absolute",
-                        "background-image": "#ui/gameuiskin#ww_army",
-                        "foreground-image": "#ui/gameuiskin#ww_select_army"
-                      },
-                      "armyUnitType": {
-                        "id": "army_unit_icon"
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                "width": "@wwArmySmallIconWidth",
-                "text": " ",
-                "wwBattleIcon": {
-                  "id": "battle_icon",
-                  "status": "",
-                  "battleId": "",
-                  "behavior": "button",
-                  "on_click": "onClickBattle",
-                  "on_hover": "onHoverBattle",
-                  "on_unhover": "onHoverLostBattle",
-                  "title": "$tooltipObj",
-                  "tooltipObj": {
-                    "id": "battle_icon_tooltip",
-                    "on_tooltip_open": "onGenericTooltipOpen",
-                    "on_tooltip_close": "onTooltipObjClose",
-                    "display": "hide"
-                  }
-                }
-              },
-              {
-                "id": "army_side_2",
-                "width": "1@wwArmySmallIconWidth",
-                "behavior": "button",
-                "armyId": "",
-                "focusBtnName": "A",
-                "showConsoleImage": "no",
-                "on_click": "onClickArmy",
-                "text": " ",
-                "tdiv": {
-                  "id": "army_side_2_container",
-                  "top": "50%ph-50%h",
-                  "position": "absolute",
-                  "armyBlock": {
-                    "id": "",
-                    "behavior": "button",
-                    "display": "hide",
-                    "armyId": "",
-                    "selected": "no",
-                    "isForceHovered": "no",
-                    "on_click": "onClickArmy",
-                    "focusBtnName": "A",
-                    "showConsoleImage": "no",
-                    "on_hover": "onHoverArmyItem",
-                    "on_unhover": "onHoverLostArmyItem",
-                    "armyIcon": {
-                      "id": "army_icon",
-                      "team": "blue",
-                      "isBelongsToMyClan": "no",
-                      "battleDescriptionIconSize": "small",
-                      "entrenchIcon": {
-                        "id": "army_entrench_icon",
-                        "size": "1@mIco, 1@mIco",
-                        "pos": "50%pw-50%w, 50%ph-50%h",
-                        "position": "absolute",
-                        "background-image": "ui/gameuiskin#ww_army_entrenched.svg",
-                        "background-color": "@armyEntrencheColor",
-                        "display": "hide"
-                      },
-                      "background": {
-                        "pos": "50%pw-50%w, 50%ph-50%h",
-                        "position": "absolute",
-                        "background-image": "#ui/gameuiskin#ww_army",
-                        "foreground-image": "#ui/gameuiskin#ww_select_army"
-                      },
-                      "armyUnitType": {
-                        "id": "army_unit_icon"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          },
-          {
-            "id": "damaged_army_0",
-            "margin-left": "1@framePadding",
-            "textareaNoTab": [
-              {
-                "id": "army_casualties",
-                "text": ""
-              },
-              {
-                "width": "1@wwArmySmallIconWidth",
-                "text": " ",
-                "tdiv": {
-                  "id": "army_container",
-                  "top": "50%ph-50%h",
-                  "position": "relative",
-                  "armyBlock": {
-                    "id": "",
-                    "behavior": "button",
-                    "display": "hide",
-                    "armyId": "",
-                    "selected": "no",
-                    "isForceHovered": "no",
-                    "on_click": "onClickArmy",
-                    "focusBtnName": "A",
-                    "showConsoleImage": "no",
-                    "on_hover": "onHoverArmyItem",
-                    "on_unhover": "onHoverLostArmyItem",
-                    "armyIcon": {
-                      "id": "army_icon",
-                      "team": "blue",
-                      "isBelongsToMyClan": "no",
-                      "battleDescriptionIconSize": "small",
-                      "entrenchIcon": {
-                        "id": "army_entrench_icon",
-                        "size": "1@mIco, 1@mIco",
-                        "pos": "50%pw-50%w, 50%ph-50%h",
-                        "position": "absolute",
-                        "background-image": "ui/gameuiskin#ww_army_entrenched.svg",
-                        "background-color": "@armyEntrencheColor",
-                        "display": "hide"
-                      },
-                      "background": {
-                        "pos": "50%pw-50%w, 50%ph-50%h",
-                        "position": "absolute",
-                        "background-image": "#ui/gameuiskin#ww_army",
-                        "foreground-image": "#ui/gameuiskin#ww_select_army"
-                      },
-                      "armyUnitType": {
-                        "id": "army_unit_icon"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          },
-          {
-            "id": "damaged_army_1",
-            "margin-left": "1@framePadding",
-            "textareaNoTab": [
-              {
-                "id": "army_casualties",
-                "text": ""
-              },
-              {
-                "width": "1@wwArmySmallIconWidth",
-                "text": " ",
-                "tdiv": {
-                  "id": "army_container",
-                  "top": "50%ph-50%h",
-                  "position": "relative",
-                  "armyBlock": {
-                    "id": "",
-                    "behavior": "button",
-                    "display": "hide",
-                    "armyId": "",
-                    "selected": "no",
-                    "isForceHovered": "no",
-                    "on_click": "onClickArmy",
-                    "focusBtnName": "A",
-                    "showConsoleImage": "no",
-                    "on_hover": "onHoverArmyItem",
-                    "on_unhover": "onHoverLostArmyItem",
-                    "armyIcon": {
-                      "id": "army_icon",
-                      "team": "blue",
-                      "isBelongsToMyClan": "no",
-                      "battleDescriptionIconSize": "small",
-                      "entrenchIcon": {
-                        "id": "army_entrench_icon",
-                        "size": "1@mIco, 1@mIco",
-                        "pos": "50%pw-50%w, 50%ph-50%h",
-                        "position": "absolute",
-                        "background-image": "ui/gameuiskin#ww_army_entrenched.svg",
-                        "background-color": "@armyEntrencheColor",
-                        "display": "hide"
-                      },
-                      "background": {
-                        "pos": "50%pw-50%w, 50%ph-50%h",
-                        "position": "absolute",
-                        "background-image": "#ui/gameuiskin#ww_army",
-                        "foreground-image": "#ui/gameuiskin#ww_select_army"
-                      },
-                      "armyUnitType": {
-                        "id": "army_unit_icon"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          },
-          {
-            "id": "damaged_army_2",
-            "margin-left": "1@framePadding",
-            "textareaNoTab": [
-              {
-                "id": "army_casualties",
-                "text": ""
-              },
-              {
-                "width": "1@wwArmySmallIconWidth",
-                "text": " ",
-                "tdiv": {
-                  "id": "army_container",
-                  "top": "50%ph-50%h",
-                  "position": "relative",
-                  "armyBlock": {
-                    "id": "",
-                    "behavior": "button",
-                    "display": "hide",
-                    "armyId": "",
-                    "selected": "no",
-                    "isForceHovered": "no",
-                    "on_click": "onClickArmy",
-                    "focusBtnName": "A",
-                    "showConsoleImage": "no",
-                    "on_hover": "onHoverArmyItem",
-                    "on_unhover": "onHoverLostArmyItem",
-                    "armyIcon": {
-                      "id": "army_icon",
-                      "team": "blue",
-                      "isBelongsToMyClan": "no",
-                      "battleDescriptionIconSize": "small",
-                      "entrenchIcon": {
-                        "id": "army_entrench_icon",
-                        "size": "1@mIco, 1@mIco",
-                        "pos": "50%pw-50%w, 50%ph-50%h",
-                        "position": "absolute",
-                        "background-image": "ui/gameuiskin#ww_army_entrenched.svg",
-                        "background-color": "@armyEntrencheColor",
-                        "display": "hide"
-                      },
-                      "background": {
-                        "pos": "50%pw-50%w, 50%ph-50%h",
-                        "position": "absolute",
-                        "background-image": "#ui/gameuiskin#ww_army",
-                        "foreground-image": "#ui/gameuiskin#ww_select_army"
-                      },
-                      "armyUnitType": {
-                        "id": "army_unit_icon"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          },
-          {
-            "id": "damaged_army_3",
-            "margin-left": "1@framePadding",
-            "textareaNoTab": [
-              {
-                "id": "army_casualties",
-                "text": ""
-              },
-              {
-                "width": "1@wwArmySmallIconWidth",
-                "text": " ",
-                "tdiv": {
-                  "id": "army_container",
-                  "top": "50%ph-50%h",
-                  "position": "relative",
-                  "armyBlock": {
-                    "id": "",
-                    "behavior": "button",
-                    "display": "hide",
-                    "armyId": "",
-                    "selected": "no",
-                    "isForceHovered": "no",
-                    "on_click": "onClickArmy",
-                    "focusBtnName": "A",
-                    "showConsoleImage": "no",
-                    "on_hover": "onHoverArmyItem",
-                    "on_unhover": "onHoverLostArmyItem",
-                    "armyIcon": {
-                      "id": "army_icon",
-                      "team": "blue",
-                      "isBelongsToMyClan": "no",
-                      "battleDescriptionIconSize": "small",
-                      "entrenchIcon": {
-                        "id": "army_entrench_icon",
-                        "size": "1@mIco, 1@mIco",
-                        "pos": "50%pw-50%w, 50%ph-50%h",
-                        "position": "absolute",
-                        "background-image": "ui/gameuiskin#ww_army_entrenched.svg",
-                        "background-color": "@armyEntrencheColor",
-                        "display": "hide"
-                      },
-                      "background": {
-                        "pos": "50%pw-50%w, 50%ph-50%h",
-                        "position": "absolute",
-                        "background-image": "#ui/gameuiskin#ww_army",
-                        "foreground-image": "#ui/gameuiskin#ww_select_army"
-                      },
-                      "armyUnitType": {
-                        "id": "army_unit_icon"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          },
-          {
-            "id": "damaged_army_4",
-            "margin-left": "1@framePadding",
-            "textareaNoTab": [
-              {
-                "id": "army_casualties",
-                "text": ""
-              },
-              {
-                "width": "1@wwArmySmallIconWidth",
-                "text": " ",
-                "tdiv": {
-                  "id": "army_container",
-                  "top": "50%ph-50%h",
-                  "position": "relative",
-                  "armyBlock": {
-                    "id": "",
-                    "behavior": "button",
-                    "display": "hide",
-                    "armyId": "",
-                    "selected": "no",
-                    "isForceHovered": "no",
-                    "on_click": "onClickArmy",
-                    "focusBtnName": "A",
-                    "showConsoleImage": "no",
-                    "on_hover": "onHoverArmyItem",
-                    "on_unhover": "onHoverLostArmyItem",
-                    "armyIcon": {
-                      "id": "army_icon",
-                      "team": "blue",
-                      "isBelongsToMyClan": "no",
-                      "battleDescriptionIconSize": "small",
-                      "entrenchIcon": {
-                        "id": "army_entrench_icon",
-                        "size": "1@mIco, 1@mIco",
-                        "pos": "50%pw-50%w, 50%ph-50%h",
-                        "position": "absolute",
-                        "background-image": "ui/gameuiskin#ww_army_entrenched.svg",
-                        "background-color": "@armyEntrencheColor",
-                        "display": "hide"
-                      },
-                      "background": {
-                        "pos": "50%pw-50%w, 50%ph-50%h",
-                        "position": "absolute",
-                        "background-image": "#ui/gameuiskin#ww_army",
-                        "foreground-image": "#ui/gameuiskin#ww_select_army"
-                      },
-                      "armyUnitType": {
-                        "id": "army_unit_icon"
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      }
-    }
-  ]
+id:t = ""
+width:t = "pw"
+flow:t = "vertical"
+display:t = "hide"
+tdiv {
+	id:t = "date"
+	position:t = "relative"
+	width:t = "pw"
+	height:t = "1@logBlockHeaderHeight"
+	background-color:t = "@objectiveHeaderBackground"
+	margin-bottom:t = "0.01@scrn_tgt"
+	textareaNoTab {
+		id:t = "date_text"
+		width:t = "pw"
+		padding-left:t = "0.01@scrn_tgt"
+		valign:t = "center"
+	}
+}
+tdiv {
+	width:t = "pw"
+	cardImg {
+		id:t = "log_icon"
+		pos:t = "1@framePadding, 1@framePadding"
+		position:t = "relative"
+		type:t = "veryTiny"
+		logCategoryName:t = ""
+		background-image:t = "#ui/gameuiskin#icon_type_log_army"
+	}
+	textareaNoTab {
+		id:t = "log_time"
+		position:t = "relative"
+		width:t = "@wwLogTimeColumnWidth"
+		padding-right:t = "0.4@framePadding"
+		text-align:t = "right"
+		tooltip:t = ""
+	}
+	textareaNoTab {
+		id:t = "log_zone"
+		position:t = "relative"
+		width:t = "@wwLogZoneColumnWidth"
+		text-align:t = "center"
+		isYourZone:t = "yes"
+		on_hover:t = "onHoverZoneName"
+		on_unhover:t = "onHoverLostZoneName"
+	}
+	tdiv {
+		id:t = "log_body"
+		width:t = "fw"
+		margin-bottom:t = "1@framePadding"
+		flow:t = "h-flow"
+		padding-left:t = "0.002@scrn_tgt"
+		textareaNoTab {
+			id:t = "army"
+			width:t = "1@wwArmySmallIconWidth"
+			margin-right:t = "1@framePadding"
+			text:t = " "
+			tdiv {
+				id:t = "army_container"
+				top:t = "50%ph-50%h"
+				position:t = "absolute"
+				armyBlock {
+					id:t = ""
+					behavior:t = "button"
+					display:t = "hide"
+					armyId:t = ""
+					selected:t = "no"
+					isForceHovered:t = "no"
+					on_click:t = "onClickArmy"
+					focusBtnName:t = "A"
+					showConsoleImage:t = "no"
+					on_hover:t = "onHoverArmyItem"
+					on_unhover:t = "onHoverLostArmyItem"
+					armyIcon {
+						id:t = "army_icon"
+						team:t = "blue"
+						isBelongsToMyClan:t = "no"
+						battleDescriptionIconSize:t = "small"
+						entrenchIcon {
+							id:t = "army_entrench_icon"
+							size:t = "1@mIco, 1@mIco"
+							pos:t = "50%pw-50%w, 50%ph-50%h"
+							position:t = "absolute"
+							background-image:t = "ui/gameuiskin#ww_army_entrenched.svg"
+							background-color:t = "@armyEntrencheColor"
+							display:t = "hide"
+						}
+						background {
+							pos:t = "50%pw-50%w, 50%ph-50%h"
+							position:t = "absolute"
+							background-image:t = "#ui/gameuiskin#ww_army"
+							foreground-image:t = "#ui/gameuiskin#ww_select_army"
+						}
+						armyUnitType {
+							id:t = "army_unit_icon"
+						}
+					}
+				}
+			}
+		}
+		textareaNoTab {
+			id:t = "log_text"
+			position:t = "relative"
+			tooltip:t = ""
+		}
+		tdiv {
+			id:t = "battle"
+			textareaNoTab {
+				id:t = "army_side_1"
+				width:t = "1@wwArmySmallIconWidth"
+				behavior:t = "button"
+				armyId:t = ""
+				focusBtnName:t = "A"
+				showConsoleImage:t = "no"
+				on_click:t = "onClickArmy"
+				text:t = " "
+				tdiv {
+					id:t = "army_side_1_container"
+					top:t = "50%ph-50%h"
+					position:t = "absolute"
+					armyBlock {
+						id:t = ""
+						behavior:t = "button"
+						display:t = "hide"
+						armyId:t = ""
+						selected:t = "no"
+						isForceHovered:t = "no"
+						on_click:t = "onClickArmy"
+						focusBtnName:t = "A"
+						showConsoleImage:t = "no"
+						on_hover:t = "onHoverArmyItem"
+						on_unhover:t = "onHoverLostArmyItem"
+						armyIcon {
+							id:t = "army_icon"
+							team:t = "blue"
+							isBelongsToMyClan:t = "no"
+							battleDescriptionIconSize:t = "small"
+							entrenchIcon {
+								id:t = "army_entrench_icon"
+								size:t = "1@mIco, 1@mIco"
+								pos:t = "50%pw-50%w, 50%ph-50%h"
+								position:t = "absolute"
+								background-image:t = "ui/gameuiskin#ww_army_entrenched.svg"
+								background-color:t = "@armyEntrencheColor"
+								display:t = "hide"
+							}
+							background {
+								pos:t = "50%pw-50%w, 50%ph-50%h"
+								position:t = "absolute"
+								background-image:t = "#ui/gameuiskin#ww_army"
+								foreground-image:t = "#ui/gameuiskin#ww_select_army"
+							}
+							armyUnitType {
+								id:t = "army_unit_icon"
+							}
+						}
+					}
+				}
+			}
+			textareaNoTab {
+				width:t = "@wwArmySmallIconWidth"
+				text:t = " "
+				wwBattleIcon {
+					id:t = "battle_icon"
+					status:t = ""
+					battleId:t = ""
+					behavior:t = "button"
+					on_click:t = "onClickBattle"
+					on_hover:t = "onHoverBattle"
+					on_unhover:t = "onHoverLostBattle"
+					title:t = "$tooltipObj"
+					tooltipObj {
+						id:t = "battle_icon_tooltip"
+						on_tooltip_open:t = "onGenericTooltipOpen"
+						on_tooltip_close:t = "onTooltipObjClose"
+						display:t = "hide"
+					}
+				}
+			}
+			textareaNoTab {
+				id:t = "army_side_2"
+				width:t = "1@wwArmySmallIconWidth"
+				behavior:t = "button"
+				armyId:t = ""
+				focusBtnName:t = "A"
+				showConsoleImage:t = "no"
+				on_click:t = "onClickArmy"
+				text:t = " "
+				tdiv {
+					id:t = "army_side_2_container"
+					top:t = "50%ph-50%h"
+					position:t = "absolute"
+					armyBlock {
+						id:t = ""
+						behavior:t = "button"
+						display:t = "hide"
+						armyId:t = ""
+						selected:t = "no"
+						isForceHovered:t = "no"
+						on_click:t = "onClickArmy"
+						focusBtnName:t = "A"
+						showConsoleImage:t = "no"
+						on_hover:t = "onHoverArmyItem"
+						on_unhover:t = "onHoverLostArmyItem"
+						armyIcon {
+							id:t = "army_icon"
+							team:t = "blue"
+							isBelongsToMyClan:t = "no"
+							battleDescriptionIconSize:t = "small"
+							entrenchIcon {
+								id:t = "army_entrench_icon"
+								size:t = "1@mIco, 1@mIco"
+								pos:t = "50%pw-50%w, 50%ph-50%h"
+								position:t = "absolute"
+								background-image:t = "ui/gameuiskin#ww_army_entrenched.svg"
+								background-color:t = "@armyEntrencheColor"
+								display:t = "hide"
+							}
+							background {
+								pos:t = "50%pw-50%w, 50%ph-50%h"
+								position:t = "absolute"
+								background-image:t = "#ui/gameuiskin#ww_army"
+								foreground-image:t = "#ui/gameuiskin#ww_select_army"
+							}
+							armyUnitType {
+								id:t = "army_unit_icon"
+							}
+						}
+					}
+				}
+			}
+		}
+		tdiv {
+			id:t = "damaged_army_0"
+			margin-left:t = "1@framePadding"
+			textareaNoTab {
+				id:t = "army_casualties"
+				text:t = ""
+			}
+			textareaNoTab {
+				width:t = "1@wwArmySmallIconWidth"
+				text:t = " "
+				tdiv {
+					id:t = "army_container"
+					top:t = "50%ph-50%h"
+					position:t = "relative"
+					armyBlock {
+						id:t = ""
+						behavior:t = "button"
+						display:t = "hide"
+						armyId:t = ""
+						selected:t = "no"
+						isForceHovered:t = "no"
+						on_click:t = "onClickArmy"
+						focusBtnName:t = "A"
+						showConsoleImage:t = "no"
+						on_hover:t = "onHoverArmyItem"
+						on_unhover:t = "onHoverLostArmyItem"
+						armyIcon {
+							id:t = "army_icon"
+							team:t = "blue"
+							isBelongsToMyClan:t = "no"
+							battleDescriptionIconSize:t = "small"
+							entrenchIcon {
+								id:t = "army_entrench_icon"
+								size:t = "1@mIco, 1@mIco"
+								pos:t = "50%pw-50%w, 50%ph-50%h"
+								position:t = "absolute"
+								background-image:t = "ui/gameuiskin#ww_army_entrenched.svg"
+								background-color:t = "@armyEntrencheColor"
+								display:t = "hide"
+							}
+							background {
+								pos:t = "50%pw-50%w, 50%ph-50%h"
+								position:t = "absolute"
+								background-image:t = "#ui/gameuiskin#ww_army"
+								foreground-image:t = "#ui/gameuiskin#ww_select_army"
+							}
+							armyUnitType {
+								id:t = "army_unit_icon"
+							}
+						}
+					}
+				}
+			}
+		}
+		tdiv {
+			id:t = "damaged_army_1"
+			margin-left:t = "1@framePadding"
+			textareaNoTab {
+				id:t = "army_casualties"
+				text:t = ""
+			}
+			textareaNoTab {
+				width:t = "1@wwArmySmallIconWidth"
+				text:t = " "
+				tdiv {
+					id:t = "army_container"
+					top:t = "50%ph-50%h"
+					position:t = "relative"
+					armyBlock {
+						id:t = ""
+						behavior:t = "button"
+						display:t = "hide"
+						armyId:t = ""
+						selected:t = "no"
+						isForceHovered:t = "no"
+						on_click:t = "onClickArmy"
+						focusBtnName:t = "A"
+						showConsoleImage:t = "no"
+						on_hover:t = "onHoverArmyItem"
+						on_unhover:t = "onHoverLostArmyItem"
+						armyIcon {
+							id:t = "army_icon"
+							team:t = "blue"
+							isBelongsToMyClan:t = "no"
+							battleDescriptionIconSize:t = "small"
+							entrenchIcon {
+								id:t = "army_entrench_icon"
+								size:t = "1@mIco, 1@mIco"
+								pos:t = "50%pw-50%w, 50%ph-50%h"
+								position:t = "absolute"
+								background-image:t = "ui/gameuiskin#ww_army_entrenched.svg"
+								background-color:t = "@armyEntrencheColor"
+								display:t = "hide"
+							}
+							background {
+								pos:t = "50%pw-50%w, 50%ph-50%h"
+								position:t = "absolute"
+								background-image:t = "#ui/gameuiskin#ww_army"
+								foreground-image:t = "#ui/gameuiskin#ww_select_army"
+							}
+							armyUnitType {
+								id:t = "army_unit_icon"
+							}
+						}
+					}
+				}
+			}
+		}
+		tdiv {
+			id:t = "damaged_army_2"
+			margin-left:t = "1@framePadding"
+			textareaNoTab {
+				id:t = "army_casualties"
+				text:t = ""
+			}
+			textareaNoTab {
+				width:t = "1@wwArmySmallIconWidth"
+				text:t = " "
+				tdiv {
+					id:t = "army_container"
+					top:t = "50%ph-50%h"
+					position:t = "relative"
+					armyBlock {
+						id:t = ""
+						behavior:t = "button"
+						display:t = "hide"
+						armyId:t = ""
+						selected:t = "no"
+						isForceHovered:t = "no"
+						on_click:t = "onClickArmy"
+						focusBtnName:t = "A"
+						showConsoleImage:t = "no"
+						on_hover:t = "onHoverArmyItem"
+						on_unhover:t = "onHoverLostArmyItem"
+						armyIcon {
+							id:t = "army_icon"
+							team:t = "blue"
+							isBelongsToMyClan:t = "no"
+							battleDescriptionIconSize:t = "small"
+							entrenchIcon {
+								id:t = "army_entrench_icon"
+								size:t = "1@mIco, 1@mIco"
+								pos:t = "50%pw-50%w, 50%ph-50%h"
+								position:t = "absolute"
+								background-image:t = "ui/gameuiskin#ww_army_entrenched.svg"
+								background-color:t = "@armyEntrencheColor"
+								display:t = "hide"
+							}
+							background {
+								pos:t = "50%pw-50%w, 50%ph-50%h"
+								position:t = "absolute"
+								background-image:t = "#ui/gameuiskin#ww_army"
+								foreground-image:t = "#ui/gameuiskin#ww_select_army"
+							}
+							armyUnitType {
+								id:t = "army_unit_icon"
+							}
+						}
+					}
+				}
+			}
+		}
+		tdiv {
+			id:t = "damaged_army_3"
+			margin-left:t = "1@framePadding"
+			textareaNoTab {
+				id:t = "army_casualties"
+				text:t = ""
+			}
+			textareaNoTab {
+				width:t = "1@wwArmySmallIconWidth"
+				text:t = " "
+				tdiv {
+					id:t = "army_container"
+					top:t = "50%ph-50%h"
+					position:t = "relative"
+					armyBlock {
+						id:t = ""
+						behavior:t = "button"
+						display:t = "hide"
+						armyId:t = ""
+						selected:t = "no"
+						isForceHovered:t = "no"
+						on_click:t = "onClickArmy"
+						focusBtnName:t = "A"
+						showConsoleImage:t = "no"
+						on_hover:t = "onHoverArmyItem"
+						on_unhover:t = "onHoverLostArmyItem"
+						armyIcon {
+							id:t = "army_icon"
+							team:t = "blue"
+							isBelongsToMyClan:t = "no"
+							battleDescriptionIconSize:t = "small"
+							entrenchIcon {
+								id:t = "army_entrench_icon"
+								size:t = "1@mIco, 1@mIco"
+								pos:t = "50%pw-50%w, 50%ph-50%h"
+								position:t = "absolute"
+								background-image:t = "ui/gameuiskin#ww_army_entrenched.svg"
+								background-color:t = "@armyEntrencheColor"
+								display:t = "hide"
+							}
+							background {
+								pos:t = "50%pw-50%w, 50%ph-50%h"
+								position:t = "absolute"
+								background-image:t = "#ui/gameuiskin#ww_army"
+								foreground-image:t = "#ui/gameuiskin#ww_select_army"
+							}
+							armyUnitType {
+								id:t = "army_unit_icon"
+							}
+						}
+					}
+				}
+			}
+		}
+		tdiv {
+			id:t = "damaged_army_4"
+			margin-left:t = "1@framePadding"
+			textareaNoTab {
+				id:t = "army_casualties"
+				text:t = ""
+			}
+			textareaNoTab {
+				width:t = "1@wwArmySmallIconWidth"
+				text:t = " "
+				tdiv {
+					id:t = "army_container"
+					top:t = "50%ph-50%h"
+					position:t = "relative"
+					armyBlock {
+						id:t = ""
+						behavior:t = "button"
+						display:t = "hide"
+						armyId:t = ""
+						selected:t = "no"
+						isForceHovered:t = "no"
+						on_click:t = "onClickArmy"
+						focusBtnName:t = "A"
+						showConsoleImage:t = "no"
+						on_hover:t = "onHoverArmyItem"
+						on_unhover:t = "onHoverLostArmyItem"
+						armyIcon {
+							id:t = "army_icon"
+							team:t = "blue"
+							isBelongsToMyClan:t = "no"
+							battleDescriptionIconSize:t = "small"
+							entrenchIcon {
+								id:t = "army_entrench_icon"
+								size:t = "1@mIco, 1@mIco"
+								pos:t = "50%pw-50%w, 50%ph-50%h"
+								position:t = "absolute"
+								background-image:t = "ui/gameuiskin#ww_army_entrenched.svg"
+								background-color:t = "@armyEntrencheColor"
+								display:t = "hide"
+							}
+							background {
+								pos:t = "50%pw-50%w, 50%ph-50%h"
+								position:t = "absolute"
+								background-image:t = "#ui/gameuiskin#ww_army"
+								foreground-image:t = "#ui/gameuiskin#ww_select_army"
+							}
+							armyUnitType {
+								id:t = "army_unit_icon"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }

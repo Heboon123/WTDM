@@ -1,6 +1,7 @@
 from "%scripts/dagui_library.nut" import *
 from "%scripts/events/eventsConsts.nut" import UnitRelevance
 
+let { isPC } = require("%sqstd/platform.nut")
 let { EDifficulties } = require("%appGlobals/ranks_common_shared.nut")
 let { g_difficulty } = require("%scripts/difficulty.nut")
 let { getGlobalModule } = require("%scripts/global_modules.nut")
@@ -137,7 +138,7 @@ let featuredModes = [
     modeId = "world_war_featured_game_mode"
     text = @() loc("mainmenu/btnWorldwar")
     textDescription = @() ::g_world_war.getPlayedOperationText()
-    isWide = @() isMeNewbie() || !is_platform_pc
+    isWide = @() isMeNewbie() || !isPC
     image = function() {
       let operation = ::g_world_war.getLastPlayedOperation()
       if (operation != null)
@@ -149,7 +150,7 @@ let featuredModes = [
     isVisible = @() isWorldWarEnabled()
     isCrossPlayRequired = needShowCrossPlayInfo
     inactiveColor = @() !canPlayWorldwar()
-    crossPlayRestricted = @() isMultiplayerPrivilegeAvailable.value && !isCrossPlayEnabled()
+    crossPlayRestricted = @() isMultiplayerPrivilegeAvailable.get() && !isCrossPlayEnabled()
     hasNewIconWidget = true
     updateByTimeFunc = function(scene, objId) {
       let descObj = scene.findObject($"{objId}_text_description")
@@ -169,9 +170,9 @@ let featuredModes = [
     hasNewIconWidget = true
     isCrossPlayRequired = needShowCrossPlayInfo
     inactiveColor = @() isMeNewbie() || (needShowCrossPlayInfo() && !isCrossPlayEnabled())
-      || !isMultiplayerPrivilegeAvailable.value || hasMultiplayerRestritionByBalance()
+      || !isMultiplayerPrivilegeAvailable.get() || hasMultiplayerRestritionByBalance()
     crossPlayRestricted = @() needShowCrossPlayInfo()
-      && isMultiplayerPrivilegeAvailable.value
+      && isMultiplayerPrivilegeAvailable.get()
       && !isCrossPlayEnabled()
   }
   {
@@ -193,7 +194,7 @@ let featuredModes = [
     videoPreview = null
     isVisible = @() hasFeature("Events") && events.getEventsVisibleInEventsWindowCount() > 0
     hasNewIconWidget = false
-    inactiveColor = @() !isMultiplayerPrivilegeAvailable.value
+    inactiveColor = @() !isMultiplayerPrivilegeAvailable.get()
   }
   {
     
@@ -210,7 +211,7 @@ let featuredModes = [
     isVisible = @() true
     hasNewIconWidget = false
     newIconWidgetId = ""
-    inactiveColor = @() !isMultiplayerPrivilegeAvailable.value
+    inactiveColor = @() !isMultiplayerPrivilegeAvailable.get()
       || hasMultiplayerRestritionByBalance()
   }
   
@@ -249,7 +250,7 @@ let customGameModesBattles = [
       return openEventId
     }
     inactiveColor = function() {
-      if (!isMultiplayerPrivilegeAvailable.value)
+      if (!isMultiplayerPrivilegeAvailable.get())
         return true
       let chapter = events.getChapter("simulation_battles")
       return !chapter || chapter.isEmpty()

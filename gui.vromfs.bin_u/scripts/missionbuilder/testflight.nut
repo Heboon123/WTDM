@@ -27,7 +27,7 @@ let { isPreviewingLiveSkin, setCurSkinToHangar
 let { stripTags } = require("%sqstd/string.nut")
 let { set_option, get_option, create_options_container } = require("%scripts/options/optionsExt.nut")
 let { sendStartTestFlightToBq } = require("%scripts/missionBuilder/testFlightBQInfo.nut")
-let { getUnitName } = require("%scripts/unit/unitInfo.nut")
+let { getUnitName, getBattleTypeByUnit } = require("%scripts/unit/unitInfo.nut")
 let { get_game_settings_blk, get_unittags_blk } = require("blkGetters")
 let { isInSessionRoom } = require("%scripts/matchingRooms/sessionLobbyState.nut")
 let { getLanguageName } = require("%scripts/langUtils/language.nut")
@@ -38,7 +38,6 @@ let { guiStartBuilder, guiStartFlight, guiStartCdOptions
 } = require("%scripts/missions/startMissionsList.nut")
 let { currentCampaignMission } = require("%scripts/missions/missionsStates.nut")
 let { getCurrentGameModeEdiff } = require("%scripts/gameModes/gameModeManagerState.nut")
-let { getBattleTypeByUnit } = require("%scripts/airInfo.nut")
 let { hasInWishlist, isWishlistFull } = require("%scripts/wishlist/wishlistManager.nut")
 let { addToWishlist } = require("%scripts/wishlist/addWishWnd.nut")
 let DataBlock = require("DataBlock")
@@ -48,6 +47,7 @@ let { checkQueueAndStart } = require("%scripts/queue/queueManager.nut")
 let { getMaxPlayersForGamemode } = require("%scripts/missions/missionsUtils.nut")
 let { checkDiffPkg } = require("%scripts/clientState/contentPacks.nut")
 let { canJoinFlightMsgBox } = require("%scripts/squads/squadUtils.nut")
+let { isTestFlightAvailable } = require("%scripts/unit/unitStatus.nut")
 
 ::missionBuilderVehicleConfigForBlk <- {} 
 
@@ -75,7 +75,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
   slobarActions = ["autorefill", "aircraft", "crew", "weapons", "repair"]
 
   function initScreen() {
-    this.unit = this.unit ?? showedUnit.value
+    this.unit = this.unit ?? showedUnit.get()
     if (!this.unit)
       return this.goBack()
 
@@ -105,7 +105,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
 
     if (this.needSlotbar) {
       switchProfileCountry(this.unit.shopCountry) 
-      showedUnit(this.unit) 
+      showedUnit.set(this.unit) 
       this.createSlotbar()
     }
     else {
@@ -118,6 +118,14 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
     }
 
     move_mouse_on_obj(this.scene.findObject("btn_select"))
+  }
+
+  function onChangeTorpedoDiveDepth(obj) {
+    let option = this.get_option_by_id(obj?.id)
+    if (!option)
+      return
+
+    set_option(option.type, obj.getValue(), option)
   }
 
   function onChangeRadarModeSelectedUnit(obj) {
@@ -167,9 +175,9 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
       this.showOptionRow(bulGroup.getOption(), bulGroup.active)
   }
 
-  function updateWeaponsSelector() {
+  function updateWeaponsSelector(isForceUpdate = false) {
     if (this.weaponsSelectorWeak) {
-      this.weaponsSelectorWeak.setUnit(this.unit)
+      this.weaponsSelectorWeak.setUnit(this.unit, isForceUpdate)
       return
     }
 
@@ -182,6 +190,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
       unit = this.unit
       isForcedAvailable = isUntSpecial && !isUnitUsable
       forceShowDefaultTorpedoes = !isUntSpecial && !isUnitUsable
+      getCurrentEdiff = Callback(@() this.getCurrentEdiff(), this)
     })
 
     this.weaponsSelectorWeak = handler.weakref()
@@ -245,7 +254,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
         [USEROPT_COUNTERMEASURES_SERIES, "spinner"],
       )
 
-    if (this.unit?.isShipOrBoat()) {
+    if (this.unit?.isShipOrBoat() || isAir) {
       this.options.append(
         [USEROPT_DEPTHCHARGE_ACTIVATION_TIME, "spinner"],
         [USEROPT_ROCKET_FUSE_DIST, "spinner"],
@@ -276,9 +285,8 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
 
   function updateAircraft() {
     this.updateButtons()
-    this.updateWeaponsSelector()
 
-    let showOptions = this.isTestFlightAvailable()
+    let showOptions = this.isTestFlightAvailableImpl()
 
     let optListObj = this.scene.findObject("optionslist")
     let textObj = this.scene.findObject("no_options_textarea")
@@ -305,14 +313,16 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
 
     this.optionsContainers = [container.descr]
     this.updateLinkedOptions()
+    this.setDifficultyOption()
+    this.updateWeaponsSelector()
   }
 
   function isBuilderAvailable() {
     return isUnitAvailableForGM(this.unit, GM_BUILDER)
   }
 
-  function isTestFlightAvailable() {
-    return ::isTestFlightAvailable(this.unit, this.shouldSkipUnitCheck)
+  function isTestFlightAvailableImpl() {
+    return isTestFlightAvailable(this.unit, this.shouldSkipUnitCheck)
   }
 
   function updateButtons() {
@@ -320,7 +330,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
       return
 
     this.scene.findObject("btn_builder").inactiveColor = this.isBuilderAvailable() ? "no" : "yes"
-    this.scene.findObject("btn_select").inactiveColor = this.isTestFlightAvailable() ? "no" : "yes"
+    this.scene.findObject("btn_select").inactiveColor = this.isTestFlightAvailableImpl() ? "no" : "yes"
   }
 
   function onMissionBuilder() {
@@ -359,7 +369,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
     if (g_squad_manager.isNotAloneOnline())
       return this.onMissionBuilder()
 
-    if (!this.isTestFlightAvailable())
+    if (!this.isTestFlightAvailableImpl())
       return this.msgBox("not_available", this.getCantFlyText(this.unit), [["ok", function() {} ]], "ok", { cancel_fn = function() {} })
 
     if (isInArray(this.getSceneOptValue(USEROPT_DIFFICULTY), ["hardcore", "custom"]))
@@ -443,9 +453,9 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
 
     mergeToBlk(::missionBuilderVehicleConfigForBlk, misBlk)
 
+    select_training_mission(misBlk)
     actionBarInfo.cacheActionDescs(getActionBarUnitName())
 
-    select_training_mission(misBlk)
     this.guiScene.performDelayed(this, guiStartFlight)
 
     sendStartTestFlightToBq(this.unit.name)
@@ -465,9 +475,14 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
 
     let skin = get_option(USEROPT_SKIN)
     let skinValue = skin.values[skin.value]
-    let fuelValue = this.getSceneOptValue(USEROPT_LOAD_FUEL_AMOUNT)
-    let limitedFuel = get_option(USEROPT_LIMITED_FUEL)
-    let limitedAmmo = get_option(USEROPT_LIMITED_AMMO)
+    let isAirOrHelicopter = this.unit.isAir() || this.unit.isHelicopter()
+
+    let fuelValue = !isAirOrHelicopter ? 0
+      : this.getSceneOptValue(USEROPT_LOAD_FUEL_AMOUNT)
+    let isLimitedFuel = !isAirOrHelicopter ? false
+      : get_option(USEROPT_LIMITED_FUEL).value
+    let isLimitedAmmo = !isAirOrHelicopter ? false
+      : get_option(USEROPT_LIMITED_AMMO).value
 
     let unitName = this.unit.name
     unitNameForWeapons.set(unitName)
@@ -481,23 +496,40 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
     ::missionBuilderVehicleConfigForBlk = {
         selectedSkin  = skinValue,
         difficulty    = difValue,
-        isLimitedFuel = limitedFuel.value,
-        isLimitedAmmo = limitedAmmo.value,
+        isLimitedFuel,
+        isLimitedAmmo,
         fuelAmount    = (fuelValue.tofloat() / 1000000.0),
     }
   }
 
+  function updateFuelAmount() {
+    this.updateOption(USEROPT_LOAD_FUEL_AMOUNT)
+
+    this.updateOption(USEROPT_FUEL_AMOUNT_CUSTOM)
+    let fuelSliderObj = this.scene.findObject("adjustable_fuel_quantity")
+    this.updateOptionValueTextByObj(fuelSliderObj)
+  }
+
+  function setDifficultyOption(diffOptValue = null) {
+    let diffOptionCont = this.findOptionInContainers(USEROPT_DIFFICULTY)
+    let diffOptValueToSet = diffOptValue ?? diffOptionCont.value
+
+    set_option(USEROPT_DIFFICULTY, diffOptValueToSet, diffOptionCont)
+    this.optionsConfig.diffCode <- diffOptionCont.diffCode[diffOptValueToSet]
+  }
+
   function onDifficultyChange(obj) {
     this.updateVerticalTargetingOption()
-    this.updateTorpedoDiveDepth()
     this.updateSceneDifficulty()
 
-    let diffOptionCont = this.findOptionInContainers(USEROPT_DIFFICULTY)
-    set_option(USEROPT_DIFFICULTY, obj.getValue(), diffOptionCont)
-    this.optionsConfig.diffCode <- diffOptionCont.diffCode[obj.getValue()]
-    this.updateOption(USEROPT_LOAD_FUEL_AMOUNT)
-    this.updateOption(USEROPT_FUEL_AMOUNT_CUSTOM)
+    this.setDifficultyOption(obj.getValue())
+
+    this.updateOption(USEROPT_TORPEDO_DIVE_DEPTH)
+    this.updateTorpedoDiveDepth()
+
+    this.updateFuelAmount()
     this.updateOption(USEROPT_BOMB_ACTIVATION_TIME)
+    this.updateWeaponsSelector(true)
   }
 
   function updateSceneDifficulty() {
@@ -681,8 +713,12 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
       return
 
     this.showOptionRow(option, !getTorpedoAutoUpdateDepthByDiff(this.getCurrentEdiff())
-      && this.unit.isShipOrBoat()
       && (getCurrentPreset(this.unit)?.torpedo ?? false))
+
+    let depthOptIdx = this.optionsConfig.diffCode == g_difficulty.ARCADE.diffCode
+      ? (option.values.findindex(@(v) v == option.defaultValue) ?? 0)
+      : option.value
+    set_option(option.type, depthOptIdx, option)
   }
 
   function updateVerticalTargetingOption() {
@@ -699,6 +735,7 @@ gui_handlers.TestFlight <- class (gui_handlers.GenericOptionsModal) {
 
   function onEventUnitWeaponChanged(_p) {
     this.updateWeaponOptions()
+    this.updateFuelAmount()
   }
 
   function onEventModificationChanged(_p) {

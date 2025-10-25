@@ -10,8 +10,9 @@ let { isPrizeMultiAward } = require("%scripts/items/trophyMultiAward.nut")
 let { convertBlk } = require("%sqstd/datablock.nut")
 let { isUnlockVisible } = require("%scripts/unlocks/unlocksModule.nut")
 let { hasKnowPrize } = require("%scripts/items/prizesUtils.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
+let { findItemById } = require("%scripts/items/itemsManagerModule.nut")
 let { hiddenUserlogs } = require("%scripts/userLog/userlogConsts.nut")
+let inventoryClient = require("%scripts/inventory/inventoryClient.nut")
 
 let haveHiddenItem = @(itemDefId) findItemById(itemDefId)?.isHiddenItem()
 
@@ -224,9 +225,9 @@ function isUserlogVisible(blk, filter, idx) {
     return false
   if (getTblValue("currentRoomOnly", filter, false) && !is_user_log_for_current_room(idx))
     return false
-  if (haveHiddenItem(blk?.body.itemDefId))
+  if (haveHiddenItem(blk?.body.itemDefId ?? blk?.itemDefId))
     return false
-  if (blk.type == EULT_OPEN_TROPHY && !hasKnowPrize(blk.body))
+  if (blk.type == EULT_OPEN_TROPHY && !hasKnowPrize(blk?.body ?? blk))
     return false
   return true
 }
@@ -395,6 +396,18 @@ function check_new_user_logs() {
   return newUserlogsArray
 }
 
+function collectUserlogItemdefs() {
+  let res = []
+  for (local i = 0; i < get_user_logs_count(); ++i) {
+    let blk = DataBlock()
+    get_user_log_blk_body(i, blk)
+    let itemDefId = blk?.body.itemDefId
+    if (itemDefId)
+      res.append(itemDefId)
+  }
+  inventoryClient.requestItemdefsByIds(res)
+}
+
 return {
   disableSeenUserlogs
   saveOnlineJob
@@ -409,4 +422,5 @@ return {
   getUserLogsList
   isUserlogVisible
   check_new_user_logs
+  collectUserlogItemdefs
 }

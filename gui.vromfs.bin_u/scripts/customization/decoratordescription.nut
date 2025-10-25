@@ -11,7 +11,7 @@ let { decoratorTypes, getTypeByUnlockedItemType } = require("%scripts/customizat
 let { addTooltipTypes } = require("%scripts/utils/genericTooltipTypes.nut")
 let { getDecorator } = require("%scripts/customization/decorCache.nut")
 let { getCurCircuitOverride } = require("%appGlobals/curCircuitOverride.nut")
-let { findItemById, getInventoryItemById } = require("%scripts/items/itemsManager.nut")
+let { findItemById, getInventoryItemById } = require("%scripts/items/itemsManagerModule.nut")
 
 function updateDecoratorDescription(obj, handler, decoratorType, decorator, params = {}) {
   local config = null
@@ -199,7 +199,7 @@ addTooltipTypes({
                  
                  
     getTooltipId = function(decorId, decorType, params = null, _p3 = null) {
-      let p = params || {}
+      let p = params ?? {}
       p.decorType <- decorType
       return this._buildId(decorId, p)
     }

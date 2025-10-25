@@ -19,7 +19,8 @@ let { joinSessionRoom } = require("%scripts/matchingRooms/sessionLobbyActions.nu
 let { checkQueueAndStart, joinQueue } = require("%scripts/queue/queueManager.nut")
 let { checkBrokenAirsAndDo } = require("%scripts/instantAction.nut")
 let { isAnyQueuesActive } = require("%scripts/queue/queueState.nut")
-let { checkPackageAndAskDownload } = require("%scripts/clientState/contentPacks.nut")
+let { checkPackageAndAskDownload, checkPackageAndAskDownloadByTimes
+} = require("%scripts/clientState/contentPacks.nut")
 let { isEventAllowedForAllSquadMembers, canJoinFlightMsgBox } = require("%scripts/squads/squadUtils.nut")
 let { isLoadedModelHighQuality } = require("%scripts/unit/unitInfo.nut")
 
@@ -73,9 +74,8 @@ let EventJoinProcess = class {
     if (activeEventJoinProcess.len()) {
       let prevProcessStartTime = activeEventJoinProcess[0].processStartTime
       if (get_time_msec() - prevProcessStartTime < PROCESS_TIME_OUT) {
-        let eventName = v_event.name 
-        let prevProcessStepName = activeEventJoinProcess[0].processStepName 
-        return assert(false, "Error: trying to use 2 join event processes at once")
+        let prevProcessStepName = activeEventJoinProcess[0].processStepName
+        return assert(false, $"Error: trying to use 2 join event processes at once /*eventName = {v_event.name}, prevProcessStepName = {prevProcessStepName}*/")
       }
       else
         activeEventJoinProcess[0].remove()
@@ -159,7 +159,7 @@ let EventJoinProcess = class {
       return this.remove()
 
     if (!isLoadedModelHighQuality()) {
-      checkPackageAndAskDownload("pkg_main", null, this.joinStep4_internal, this, "event", this.remove)
+      checkPackageAndAskDownloadByTimes("pkg_main", this.joinStep4_internal, this, this.remove)
       return
     }
 
@@ -199,7 +199,7 @@ let EventJoinProcess = class {
 
   function joinStep6_repairInfo() {
     this.processStepName = "joinStep6_repairInfo"
-    let repairInfo = events.getCountryRepairInfo(this.event, this.room, profileCountrySq.value)
+    let repairInfo = events.getCountryRepairInfo(this.event, this.room, profileCountrySq.get())
     checkBrokenAirsAndDo(repairInfo, this, this.joinStep7_membersForQueue, false, this.remove)
   }
 
@@ -220,7 +220,7 @@ let EventJoinProcess = class {
       let joinEventParams = {
         mode    = this.event.name
         
-        country = profileCountrySq.value
+        country = profileCountrySq.get()
       }
       if (membersData)
         joinEventParams.members <- membersData

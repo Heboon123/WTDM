@@ -15,7 +15,7 @@ let { get_charserver_time_sec } = require("chard")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
 let { decoratorTypes, getTypeByResourceType } = require("%scripts/customization/types.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
+let { findItemById } = require("%scripts/items/itemsManagerModule.nut")
 let { getEntitlementConfig } = require("%scripts/onlineShop/entitlements.nut")
 let { getTrophyRewardType } = require("%scripts/items/trophyReward.nut")
 let { getUnitDiscount } = require("%scripts/discounts/discountsState.nut")
@@ -27,7 +27,7 @@ let isInProgressOfferValidation = Watched(false)
 
 function clearOfferCache() {
   clearTimer(clearOfferCache)
-  curPersonalOffer(null)
+  curPersonalOffer.set(null)
 }
 
 let hasSendToBq = @(offerName)
@@ -81,7 +81,7 @@ function getContentUnitDiscount(offerContent) {
 }
 
 function checkCompletedSuccessfully(currentOfferData) {
-  curPersonalOffer(currentOfferData)
+  curPersonalOffer.set(currentOfferData)
   saveLocalAccountSettings($"personalOffer/{currentOfferData.offerName}/finishTime", currentOfferData.timeExpired)
   setTimeout(currentOfferData.timeExpired - get_charserver_time_sec(), clearOfferCache)
 }
@@ -171,7 +171,7 @@ function checkExternalItemsComplete(notExistedItems, currentOfferData) {
     })
   else
     checkCompletedSuccessfully(currentOfferData)
-  isInProgressOfferValidation(false)
+  isInProgressOfferValidation.set(false)
 }
 
 function onGetExternalItems(notExistedItems, externalItems, currentOfferData) {
@@ -241,10 +241,10 @@ function getNotExistedAndExternalOfferItems(currentOfferData) {
 }
 
 function cachePersonalOfferIfNeed() {
-  if (isInProgressOfferValidation.value)
+  if (isInProgressOfferValidation.get())
     return
 
-  if (curPersonalOffer.value != null)
+  if (curPersonalOffer.get() != null)
     return
 
   let count = personalOffers.count()
@@ -254,7 +254,7 @@ function cachePersonalOfferIfNeed() {
   for (local i = 0; i < count; ++i) {
     let personalOffer = personalOffers.get(i)
     let offerName = personalOffer.key
-    if (offerName in checkedOffers.value)
+    if (offerName in checkedOffers.get())
       continue
     let currentOfferData = {}
     let isValidOffer = validatePersonalOffer(personalOffer, currentOfferData)
@@ -281,7 +281,7 @@ function cachePersonalOfferIfNeed() {
     }
 
     inventoryClient.requestItemdefsByIds(externalItems, @() onGetExternalItems(notExistedItems, externalItems, currentOfferData))
-    isInProgressOfferValidation(true)
+    isInProgressOfferValidation.set(true)
     return
   }
 }

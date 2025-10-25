@@ -536,7 +536,7 @@ function getType(block) {
   return getPromoButtonConfig(block.getBlockName())?.buttonType ?? PROMO_BUTTON_TYPE.ARROW
 }
 
-let defaultCollapsedIcon = loc("icon/news")
+let defaultCollapsedIcon = "icon/news"
 
 function getPromoCollapsedIcon(view, promoButtonId) {
   let icon = getPromoButtonConfig(promoButtonId)?.collapsedIcon
@@ -595,9 +595,9 @@ function generatePromoBlockView(block) {
   if (isMulti) {
     let value = to_integer_safe(multiblockData?[id]?.value ?? 0)
     let switchVal = to_integer_safe(block?.switch_time_sec
-      || DEFAULT_TIME_SWITCH_SEC)
+      ?? DEFAULT_TIME_SWITCH_SEC)
     let mSwitchVal = to_integer_safe(block?.manual_switch_time_multiplayer
-      || DEFAULT_MANUAL_SWITCH_TIME_MULTIPLAYER)
+      ?? DEFAULT_MANUAL_SWITCH_TIME_MULTIPLAYER)
     let lifeTimeVal = multiblockData?[id].life_time ?? switchVal
     multiblockData[id] <- {
       value = value,

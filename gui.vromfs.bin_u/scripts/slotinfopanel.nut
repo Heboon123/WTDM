@@ -22,7 +22,7 @@ let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { getShowedUnit, getShowedUnitName } = require("%scripts/slotbar/playerCurUnit.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { getUnitName, getUnitCountry } = require("%scripts/unit/unitInfo.nut")
-let { check_unit_mods_update } = require("%scripts/unit/unitChecks.nut")
+let { checkUnitModsUpdate, checkSecondaryWeaponModsRecount } = require("%scripts/unit/unitChecks.nut")
 let { getCrewSpText } = require("%scripts/crew/crewPointsText.nut")
 let { needShowUnseenNightBattlesForUnit } = require("%scripts/events/nightBattlesStates.nut")
 let { needShowUnseenModTutorialForUnit } = require("%scripts/missions/modificationTutorial.nut")
@@ -72,6 +72,7 @@ let class SlotInfoPanel (gui_handlers.BaseGuiHandlerWT) {
   infoPanelObj = null
   listboxObj = null
   isPerformedUpdateInfo = false
+  needHideSlotbar = false
 
   tabsInfo = [
       {
@@ -110,12 +111,13 @@ let class SlotInfoPanel (gui_handlers.BaseGuiHandlerWT) {
     
     let buttonsPlace = this.scene.findObject("buttons_place")
     if (checkObj(buttonsPlace)) {
-      let data = "".join(slotInfoPanelButtons.value.map(@(view) handyman.renderCached("%gui/commonParts/button.tpl", view)))
+      let data = "".join(slotInfoPanelButtons.get().map(@(view) handyman.renderCached("%gui/commonParts/button.tpl", view)))
       this.guiScene.replaceContentFromText(buttonsPlace, data, data.len(), this)
     }
 
     let showTabsCount = this.showTabs ? this.tabsInfo.len() : 1
 
+    let unit = this.getCurShowUnit()
     this.listboxObj = this.scene.findObject("slot_info_listbox")
     if (checkObj(this.listboxObj)) {
       let view = { items = [] }
@@ -130,7 +132,6 @@ let class SlotInfoPanel (gui_handlers.BaseGuiHandlerWT) {
       let data = handyman.renderCached("%gui/SlotInfoTabItem.tpl", view)
       this.guiScene.replaceContentFromText(this.listboxObj, data, data.len(), this)
 
-      let unit = this.getCurShowUnit()
       this.updateUnitIcon(unit)
 
       let savedIndex = isProfileReceived.get() ?
@@ -145,7 +146,14 @@ let class SlotInfoPanel (gui_handlers.BaseGuiHandlerWT) {
     if (checkObj(unitInfoObj)) {
       let handler = handlersManager.getActiveBaseHandler()
       let hasSlotbar = handler?.getSlotbar()
-      unitInfoObj["max-height"] = unitInfoObj[hasSlotbar ? "maxHeightWithSlotbar" : "maxHeightWithoutSlotbar"]
+      local hasModsPanel = false
+      
+
+
+
+      unitInfoObj["max-height"] = unitInfoObj[hasSlotbar || hasModsPanel
+        ? "maxHeightWithSlotbar"
+        : "maxHeightWithoutSlotbar"]
     }
 
     
@@ -175,7 +183,9 @@ let class SlotInfoPanel (gui_handlers.BaseGuiHandlerWT) {
     if (!unit)
       return
 
-    open_weapons_for_unit(unit)
+    open_weapons_for_unit(unit, {
+      needHideSlotbar = this.needHideSlotbar
+    })
   }
 
   function onProtectionAnalysis() {
@@ -272,8 +282,8 @@ let class SlotInfoPanel (gui_handlers.BaseGuiHandlerWT) {
     if (!unit)
       return
 
-    let isAirInfoValid = check_unit_mods_update(unit)
-                           && ::check_secondary_weapon_mods_recount(unit)
+    let isAirInfoValid = checkUnitModsUpdate(unit)
+                           && checkSecondaryWeaponModsRecount(unit)
     if (!isAirInfoValid)
       this.doWhenActiveOnce("updateAirInfo")
   }
@@ -334,6 +344,14 @@ let class SlotInfoPanel (gui_handlers.BaseGuiHandlerWT) {
     this.doWhenActiveOnce("updateAirInfo")
   }
 
+  function onEventCountryAppearanceChanged(_params) {
+    this.doWhenActiveOnce("updateAirInfo")
+  }
+
+  function onEventModificationChanged(_p) {
+    this.doWhenActiveOnce("updateAirInfo")
+  }
+
   function onEventCrewSkillsChanged(_params) {
     this.doWhenActiveOnce("updateCrewInfo")
   }
@@ -347,7 +365,7 @@ let class SlotInfoPanel (gui_handlers.BaseGuiHandlerWT) {
     if (!checkObj(contentObj) || (! contentObj.isVisible() && ! force))
       return
 
-    let crewCountryId = find_in_array(shopCountriesList, profileCountrySq.value, -1)
+    let crewCountryId = find_in_array(shopCountriesList, profileCountrySq.get(), -1)
     let crewIdInCountry = getSelectedCrews(crewCountryId)
     let crewData = getCrew(crewCountryId, crewIdInCountry)
     if (crewData == null)
@@ -512,7 +530,7 @@ let class SlotInfoPanel (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onCrewButtonClicked(_obj) {
-    let crewCountryId = find_in_array(shopCountriesList, profileCountrySq.value, -1)
+    let crewCountryId = find_in_array(shopCountriesList, profileCountrySq.get(), -1)
     let crewIdInCountry = getSelectedCrews(crewCountryId)
     if (crewCountryId != -1 && crewIdInCountry != -1)
       gui_modal_crew({ countryId = crewCountryId, idInCountry = crewIdInCountry })
@@ -550,6 +568,10 @@ function createSlotInfoPanel(parentScene, showTabs, configSaveId) {
   return handlersManager.loadHandler(SlotInfoPanel, {
     scene
     showTabs
+
+
+
+
     configSavePath = $"{SLOT_INFO_CFG_SAVE_PATH}/{configSaveId}"
   })
 }

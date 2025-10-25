@@ -31,13 +31,15 @@ let unitCrewTrainReq = {}
 let minCrewLevel = {
   [CUT_AIRCRAFT] = 1.5,
   [CUT_TANK] = 1,
-  [CUT_SHIP] = 1
+  [CUT_SHIP] = 1,
+  [CUT_HUMAN] = 1
 }
 
 let maxCrewLevel = {
   [CUT_AIRCRAFT] = 75,
   [CUT_TANK] = 150,
-  [CUT_SHIP] = 100
+  [CUT_SHIP] = 100,
+  [CUT_HUMAN] = 150
 }
 
 function isCountryHasAnyEsUnitType(country, esUnitTypeMask) {
@@ -74,8 +76,6 @@ function getCrewButtonRow(obj, scene, tblObj = null) {
       }
     }
   }
-  if (curRow < 0 || curRow >= tblObj.childrenCount())
-    curRow = 0
   return curRow
 }
 
@@ -155,7 +155,7 @@ function purchaseNewCrewSlot(country, onTaskSuccess, onTaskFail = null) {
   return addTask(taskId, { showProgressBox = true }, onTaskSuccess, onTaskFail)
 }
 
-function getSkillMaxCrewLevel(_skillItem) { 
+function getSkillMaxCrewLevel() {
   return crewLevelBySkill
 }
 
@@ -169,8 +169,13 @@ function getMaxCrewLevel(crewUnitType) {
 
 function getSkillCrewLevel(skillItem, newValue, prevValue = 0) {
   let maxValue = getCrewMaxSkillValue(skillItem)
-  local level = (newValue.tofloat() - prevValue) / maxValue  * getSkillMaxCrewLevel(skillItem)
+  local level = (newValue.tofloat() - prevValue) / maxValue  * getSkillMaxCrewLevel()
   return stdMath.round_by_value(level, 0.01)
+}
+
+function calcCrewLevelsBySkill(blk) {
+  crewLevelBySkill = blk?.skill_to_level_ratio ?? crewLevelBySkill
+  totalSkillsSteps = blk?.max_skill_level_steps ?? totalSkillsSteps
 }
 
 
@@ -184,8 +189,7 @@ function loadCrewSkills() {
   unitCrewTrainReq.clear()
 
   let blk = get_skills_blk()
-  crewLevelBySkill = blk?.skill_to_level_ratio ?? crewLevelBySkill
-  totalSkillsSteps = blk?.max_skill_level_steps ?? totalSkillsSteps
+  calcCrewLevelsBySkill(blk)
 
   eachBlock(blk?.crew_skills, function(pageBlk, pName) {
     let unitTypeTag = pageBlk?.type ?? ""
@@ -306,12 +310,12 @@ function isCrewMaxLevel(crew, unit, country, crewUnitType = -1) {
 }
 
 function getCrewTotalSteps(skillItem) {
-  return min(totalSkillsSteps, getCrewMaxSkillValue(skillItem) || 1)
+  return min(totalSkillsSteps, max(getCrewMaxSkillValue(skillItem), 1))
 }
 
 function getSkillStepSize(skillItem) {
   let maxSkill = getCrewMaxSkillValue(skillItem)
-  return ceil(maxSkill.tofloat() / getCrewTotalSteps(skillItem)).tointeger() || 1
+  return max(ceil(maxSkill.tofloat() / getCrewTotalSteps(skillItem)).tointeger(), 1)
 }
 
 function crewSkillValueToStep(skillItem, value) {
@@ -483,7 +487,7 @@ function updateCrewSkillsAvailable(forceUpdate = false) {
   availableCrewSkills.clear()
   unseenIconsNeeds.clear()
   foreach (cList in getCrewsList())
-    foreach (_idx, crew in cList?.crews || []) {
+    foreach (_idx, crew in (cList?.crews ?? [])) {
       let data = {}
       let unseenIconsData = {}
       foreach (unitType in unitTypes.types) {

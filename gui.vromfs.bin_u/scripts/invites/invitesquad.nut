@@ -1,5 +1,6 @@
 from "%scripts/dagui_library.nut" import *
 
+let { is_gdk } = require("%sqstd/platform.nut")
 let { g_chat_room_type } = require("%scripts/chat/chatRoomType.nut")
 let { getGlobalModule } = require("%scripts/global_modules.nut")
 let g_squad_manager = getGlobalModule("g_squad_manager")
@@ -168,7 +169,7 @@ let Squad = class (BaseInvite) {
   }
 
   function getRestrictionText() {
-    if (!isMultiplayerPrivilegeAvailable.value)
+    if (!isMultiplayerPrivilegeAvailable.get())
       return loc("xbox/noMultiplayer")
     if (!this.isAvailableByCrossPlay())
       return loc("xbox/crossPlayRequired")
@@ -183,7 +184,7 @@ let Squad = class (BaseInvite) {
     return !g_squad_manager.canManageSquad()
     || !this.isAvailableByCrossPlay()
     || !this.isAvailableByChatRestriction()
-    || !isMultiplayerPrivilegeAvailable.value
+    || !isMultiplayerPrivilegeAvailable.get()
   }
 
   function getIcon() {
@@ -198,7 +199,7 @@ let Squad = class (BaseInvite) {
   }
 
   function accept() {
-    if (!isMultiplayerPrivilegeAvailable.value) {
+    if (!isMultiplayerPrivilegeAvailable.get()) {
       checkAndShowMultiplayerPrivilegeWarning()
       return
     }

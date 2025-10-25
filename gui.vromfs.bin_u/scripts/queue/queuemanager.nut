@@ -130,6 +130,7 @@ function getOnLeaveQueueErrorCallback(queue) {
 }
 
 function getOnLeaveQueueSuccessCallback(_queue) {
+  set_presence_to_player("menu")
   return @(_response) showProgressBox(false)
 }
 
@@ -270,7 +271,7 @@ function joinQueue(params) {
 function joinFriendsQueue(inGameEx, eventId) {
   joinQueue({
     mode = eventId
-    country = profileCountrySq.value
+    country = profileCountrySq.get()
     slots = getSelSlotsData().slots
     clusters = clustersModule.getCurrentClusters()
     queueSelfActivated = true

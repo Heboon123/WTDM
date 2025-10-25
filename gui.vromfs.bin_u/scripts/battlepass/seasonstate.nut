@@ -26,15 +26,12 @@ season.subscribe(function(seasonIndex) {
   lastSeasonIndex = seasonIndex
 })
 
-let totalProgressExp = Computed(@() basicUnlock.value?.current ?? 0)
+let totalProgressExp = Computed(@() basicUnlock.get()?.current ?? 0)
 
-function getLevelByExp(exp) {
-  let stages = basicUnlock.value?.stages ?? []
-  if (stages.len() == 0)
-    return 0
+let basicUnlockStages = Computed(@() basicUnlock.get()?.stages ?? [])
 
-  return stages.findindex(@(s) exp < s.progress) ?? 0
-}
+let getLevelFromStagesByExp = @(stages, exp) stages.findindex(@(s) exp < s.progress) ?? 0
+let getLevelByExp = @(exp) getLevelFromStagesByExp(basicUnlockStages.get(), exp)
 
 let levelExp = Computed(function() {
   let res = {
@@ -42,8 +39,8 @@ let levelExp = Computed(function() {
     curLevelExp = 0
     expForLevel = 1
   }
-  let curProgress = totalProgressExp.value
-  let stages = basicUnlock.value?.stages ?? []
+  let curProgress = totalProgressExp.get()
+  let stages = basicUnlock.get()?.stages ?? []
   if (stages.len() == 0)
     return res
   let stageIdx = stages.findindex(@(s) curProgress < s.progress)
@@ -56,11 +53,11 @@ let levelExp = Computed(function() {
     }
   }
 
-  if (!(basicUnlock.value?.periodic ?? false))
+  if (!(basicUnlock.get()?.periodic ?? false))
     return res
 
   let lastStageIdx = stages.len() - 1
-  let loopStageIdx = (basicUnlock.value?.startStageLoop ?? 1) - 1
+  let loopStageIdx = (basicUnlock.get()?.startStageLoop ?? 1) - 1
   let loopStage = stages?[loopStageIdx] ?? stages[lastStageIdx]
   let prevLoopStage = stages?[loopStageIdx - 1]
   let expForLevel = prevLoopStage == null ? loopStage.progress
@@ -74,28 +71,28 @@ let levelExp = Computed(function() {
   }
 })
 
-let seasonLevel = Computed(@() levelExp.value.level)
+let seasonLevel = Computed(@() levelExp.get().level)
 
-let maxSeasonLvl = Computed(@() max(basicUnlock.value?.meta.mainPrizeStage ?? 1,
-  premiumUnlock.value?.meta.mainPrizeStage ?? 1))
+let maxSeasonLvl = Computed(@() max(basicUnlock.get()?.meta.mainPrizeStage ?? 1,
+  premiumUnlock.get()?.meta.mainPrizeStage ?? 1))
 
-let loginUnlock = Computed(@() activeUnlocks.value?[LOGIN_UNLOCK_ID])
-let loginStreak = Computed(@() loginUnlock.value?.stage ?? 0)
+let loginUnlock = Computed(@() activeUnlocks.get()?[LOGIN_UNLOCK_ID])
+let loginStreak = Computed(@() loginUnlock.get()?.stage ?? 0)
 
 let getExpRewardStage = @(stageState) stageState?.updStats
   .findvalue(@(stat) stat?.name == expStatId).value.tointeger() ?? 0
 
 let todayLoginExp = Computed(@() getExpRewardStage(
-  getStageByIndex(loginUnlock.value, (loginUnlock.value?.stage ?? 0) - 1)))
+  getStageByIndex(loginUnlock.get(), (loginUnlock.get()?.stage ?? 0) - 1)))
 let tomorowLoginExp = Computed(@() getExpRewardStage(
-  getStageByIndex(loginUnlock.value, (loginUnlock.value?.stage ?? 0))))
+  getStageByIndex(loginUnlock.get(), (loginUnlock.get()?.stage ?? 0))))
 
 function getExpRangeTextOfLoginStreak() {
-  let stages = loginUnlock.value?.stages
+  let stages = loginUnlock.get()?.stages
   if (stages == null)
     return ""
 
-  let curExp = todayLoginExp.value
+  let curExp = todayLoginExp.get()
   local x = null
   local y = null
   foreach (idx, stage in stages) {
@@ -123,12 +120,12 @@ function getExpRangeTextOfLoginStreak() {
     loc("ui/colon"), text)
 }
 
-let warbondsShopLevelByStages = Computed(@() basicUnlock.value?.meta.wbShopLevel ?? {})
+let warbondsShopLevelByStages = Computed(@() basicUnlock.get()?.meta.wbShopLevel ?? {})
 
-let seasonMainPrizesData = Computed(@() [].extend(premiumUnlock.value?.meta.promo ?? [],
-  basicUnlock.value?.meta.promo ?? []))
+let seasonMainPrizesData = Computed(@() [].extend(premiumUnlock.get()?.meta.promo ?? [],
+  basicUnlock.get()?.meta.promo ?? []))
 
-let battlePassShopConfig = Computed(@() basicUnlock.value?.meta.purchaseWndItems)
+let battlePassShopConfig = Computed(@() basicUnlock.get()?.meta.purchaseWndItems)
 
 battlePassShopConfig.subscribe(function(itemsConfigForRequest) {
   let itemsToRequest = []
@@ -143,8 +140,8 @@ battlePassShopConfig.subscribe(function(itemsConfigForRequest) {
     inventoryClient.requestItemdefsByIds(itemsToRequest)
 })
 
-let hasBattlePassReward = Computed(@() basicUnlock.value?.hasReward
-  || (hasBattlePass.value && premiumUnlock.value?.hasReward))
+let hasBattlePassReward = Computed(@() basicUnlock.get()?.hasReward
+  || (hasBattlePass.get() && premiumUnlock.get()?.hasReward))
 
 return {
   seasonLevel
@@ -162,4 +159,6 @@ return {
   getLevelByExp
   hasBattlePassReward
   seasonEndsTime
+  basicUnlockStages
+  getLevelFromStagesByExp
 }

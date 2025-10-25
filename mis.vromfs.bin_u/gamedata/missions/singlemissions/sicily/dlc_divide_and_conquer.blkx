@@ -1,3975 +1,3013 @@
-{
-  "selected_tag": "",
-  "bin_dump_file": "",
-  "mission_settings": {
-    "player": {
-      "army": 1,
-      "wing": "player_wing"
-    },
-    "player_teamB": {
-      "army": 2
-    },
-    "mission": {
-      "level": "levels/sicily.bin",
-      "type": "singleMission",
-      "environment": "Day",
-      "weather": "hazy",
-      "restoreType": "attempts",
-      "optionalTakeOff": false,
-      "stars": {
-        "year": 1943,
-        "month": 7,
-        "day": 10
-      }
-    },
-    "atmosphere": {
-      "pressure": 760.0,
-      "temperature": 0.0
-    },
-    "briefing": {
-      "place_loc": "",
-      "date_loc": "",
-      "objective_loc": "",
-      "music": "action_01",
-      "part": {
-        "event": "",
-        "minTime": 0,
-        "slide": {
-          "map": true,
-          "minTime": 4,
-          "picture": "",
-          "showAirMap": false,
-          "arrow": {
-            "width": 1,
-            "side": "player",
-            "point": [
-              "player_wing",
-              "bf_019_01"
-            ]
-          },
-          "icon": [
-            {
-              "icontype": "fighter",
-              "side": "player",
-              "target": "player_wing",
-              "lookAt": "bf_019_01"
-            },
-            {
-              "icontype": "airfield",
-              "side": "enemy",
-              "target": "bf_019_01"
-            }
-          ]
-        }
-      }
-    }
-  },
-  "imports": {
-    "import_record": {
-      "file": "gameData/missions/bridges/sicily_bridges.blk",
-      "importAreas": true,
-      "importUnits": true,
-      "importTriggers": true,
-      "importMissionObjectives": true,
-      "importWayPoints": true,
-      "showAreas": true,
-      "showUnits": true,
-      "showTriggers": true,
-      "showMissionObjectives": true,
-      "showWayPoints": true,
-      "excludes": {}
-    }
-  },
-  "triggers": {
-    "isCategory": true,
-    "is_enabled": true,
-    "start_mission": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {},
-      "actions": {
-        "unitSetProperties": [
-          {
-            "object": [
-              "bf_019_01",
-              "ju_52"
-            ],
-            "plane": {
-              "ai_skill": "ACE",
-              "targetDeviation": [
-                {
-                  "trigger": "machine gun",
-                  "defaultVal": 0.4,
-                  "limits": [
-                    0.4,
-                    1.2
-                  ]
-                },
-                {
-                  "trigger": "gunner",
-                  "defaultVal": 0.2,
-                  "limits": [
-                    0.2,
-                    0.6
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "object": [
-              "fiat_01",
-              "fiat_02",
-              "fiat_03",
-              "fiat_04",
-              "fiat_05"
-            ],
-            "effShootingRate": 0.8,
-            "plane": {
-              "ai_skill": "ROOKIE",
-              "targetDeviation": {
-                "trigger": "machine gun",
-                "defaultVal": 0.6,
-                "limits": [
-                  0.6,
-                  1.8
-                ]
-              }
-            }
-          },
-          {
-            "object": "germ_aaa_squad",
-            "effShootingRate": 0.05
-          },
-          {
-            "object": "allies",
-            "plane": {
-              "targetDeviation": {
-                "trigger": "machine gun",
-                "defaultVal": 1.2,
-                "limits": [
-                  0.2,
-                  1.2
-                ]
-              }
-            }
-          }
-        ],
-        "unitPutToSleep": {
-          "target": [
-            "bf_019_01",
-            "fiat_02",
-            "ju_52",
-            "fiat_03",
-            "fiat_04",
-            "fiat_05",
-            "allies"
-          ]
-        },
-        "unitMoveTo": {
-          "target": "airfield_point",
-          "follow_target": false,
-          "teleportHeightType": "absolute",
-          "useUnitHeightForTele": true,
-          "shouldKeepFormation": false,
-          "teleportHeightValue": 1000.0,
-          "horizontalDirectionForTeleport": true,
-          "object_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target_var_name": "",
-          "target_var_comp_op": "equal",
-          "target_var_value": 0,
-          "target_marking": 0,
-          "waypointReachedDist": 10.0,
-          "recalculatePathDist": -1.0,
-          "fastClimb": false,
-          "destTimeMode": false,
-          "object": [
-            "fiat_01",
-            "fiat_for_airfield"
-          ]
-        },
-        "wait": {
-          "time": 3.0
-        },
-        "missionMarkAsWaypoint": {
-          "visible": true,
-          "primary": true,
-          "oriented": false,
-          "ignoreDifficulty": false,
-          "scale": 1.0,
-          "target": "airfield_waypoint"
-        },
-        "moAddMissionObjective": {
-          "target": "dlc_divide_and_conquer_waypoint"
-        },
-        "triggerDisable": {
-          "target": [
-            "check1_ppl",
-            "check2_ppl",
-            "check3_ppl"
-          ]
-        }
-      },
-      "else_actions": {}
-    },
-    "waypoint_reach": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "playersDistanceBetween": {
-          "value": 2500.0,
-          "math": "2D",
-          "players": "isAlive",
-          "target_type": "isAlive",
-          "check_players": "any",
-          "check_targets": "any",
-          "target": "airfield_waypoint"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": "fiat_01_near_player"
-        },
-        "missionMarkAsWaypoint": {
-          "visible": false,
-          "primary": true,
-          "oriented": false,
-          "ignoreDifficulty": false,
-          "scale": 1.0,
-          "target": "airfield_waypoint"
-        },
-        "unitAttackTarget": [
-          {
-            "playerAttracted": true,
-            "object": "enemies_squad",
-            "target": "players_squad",
-            "fireRandom": true,
-            "playerAttractedCount": 2,
-            "playerAttractedEffRate": 0.8,
-            "fightInArea": "battle_area",
-            "fightAreaRadius": 2000.0,
-            "fightAreaOuterRadius": 3000.0
-          },
-          {
-            "playerAttracted": true,
-            "object": "enemies_squad",
-            "target": "players_squad",
-            "fireRandom": true,
-            "playerAttractedCount": 2,
-            "playerAttractedEffRate": 1.0,
-            "fightInArea": "battle_area",
-            "fightAreaRadius": 2000.0,
-            "fightAreaOuterRadius": 3000.0
-          }
-        ],
-        "moSetObjectiveStatus": {
-          "target": "dlc_divide_and_conquer_waypoint",
-          "status": 2,
-          "object_marking": 0,
-          "object_var_comp_op": "equal",
-          "object_var_name": ""
-        },
-        "wait": [
-          {
-            "time": 3.0
-          },
-          {
-            "time": 8.0
-          }
-        ],
-        "moAddMissionObjective": [
-          {
-            "target": "dlc_divide_and_conquer_main"
-          },
-          {
-            "target": "dlc_divide_and_conquer_bf109"
-          }
-        ],
-        "unitSetIndication": {
-          "set": true,
-          "target": "enemies_squad",
-          "target_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0
-        },
-        "unitWakeUp": {
-          "target": "bf_019_01"
-        },
-        "spawnOnAirfield": {
-          "runwayName": "airfield",
-          "objects": "bf_019_01",
-          "takeoffInterval": 20.0
-        },
-        "triggerEnable": {
-          "target": [
-            "bf109_taked_off",
-            "bf109_not_taked_off",
-            "update_time_indicator",
-            "ju52_start_up"
-          ]
-        }
-      },
-      "else_actions": {}
-    },
-    "fiat_01_near_player": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "playersDistanceBetween": {
-          "value": 2500.0,
-          "math": "2D",
-          "players": "isAlive",
-          "target_type": "isAlive",
-          "check_players": "any",
-          "check_targets": "any",
-          "target": "fiat_01"
-        }
-      },
-      "actions": {
-        "unitAttackTarget": {
-          "playerAttracted": true,
-          "object": "fiat_01",
-          "target": "players_squad",
-          "fireRandom": true,
-          "playerAttractedCount": 1,
-          "playerAttractedEffRate": 0.8,
-          "fightInArea": "battle_area",
-          "fightAreaRadius": 2000.0,
-          "fightAreaOuterRadius": 3000.0
-        }
-      },
-      "else_actions": {}
-    },
-    "bf109_taked_off": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenReachHeight": {
-          "object_type": "isAlive",
-          "object_marking": 0,
-          "check_objects": "any",
-          "value": 150.0,
-          "comparasion_func": "more",
-          "absolute_value": false,
-          "object": "bf_019_01"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": "bf109_not_taked_off"
-        },
-        "moSetObjectiveStatus": {
-          "target": "dlc_divide_and_conquer_bf109",
-          "status": 3,
-          "object_marking": 0,
-          "object_var_comp_op": "equal",
-          "object_var_name": ""
-        }
-      },
-      "else_actions": {}
-    },
-    "bf109_not_taked_off": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isAlive",
-          "object_marking": 0,
-          "func": "less",
-          "value": 1,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object": "bf_019_01"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": "bf109_taked_off"
-        },
-        "moSetObjectiveStatus": {
-          "target": "dlc_divide_and_conquer_bf109",
-          "status": 2,
-          "object_marking": 0,
-          "object_var_comp_op": "equal",
-          "object_var_name": ""
-        }
-      },
-      "else_actions": {}
-    },
-    "update_time_indicator": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": true
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {},
-      "actions": {
-        "varModify": {
-          "operator": "add",
-          "value": -1.0,
-          "var": "timer"
-        },
-        "missionSetTargetsIndicator": {
-          "target_type": "isActive",
-          "target_marking": 0,
-          "delta": 0,
-          "icon": "air",
-          "icon army": 2,
-          "set": true,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target": [
-            "enemies_squad",
-            "fiat_02"
-          ]
-        }
-      },
-      "else_actions": {}
-    },
-    "ju52_start_up": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ANY",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "varCompareInt": {
-          "var_value": "timer",
-          "value": 300,
-          "comparasion_func": "less"
-        },
-        "unitWhenCountMatches": {
-          "object_type": "isActive",
-          "object_marking": 0,
-          "func": "less",
-          "value": 3,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object": "enemies_squad"
-        }
-      },
-      "actions": {
-        "unitWakeUp": {
-          "target": [
-            "fiat_02",
-            "ju_52"
-          ]
-        },
-        "triggerEnable": [
-          {
-            "target": "ju52_randomizer"
-          },
-          {
-            "target": [
-              "ju52_landed",
-              "je52_not_landed",
-              "ju52_near_player"
-            ]
-          },
-          {
-            "target": [
-              "update_ju25_indicator",
-              "ju52_near_landing_point"
-            ]
-          }
-        ],
-        "wait": {
-          "time": 4.0
-        },
-        "moAddMissionObjective": {
-          "target": "dlc_divide_and_conquer_ju52"
-        },
-        "addAirfield": {
-          "runwayStart": "airfiled_2_start",
-          "runwayEnd": "airfiled_2_end",
-          "runwayWidth": 100.0,
-          "army": 2,
-          "spawnPoint": "airfiled_2_spawn_01",
-          "visibleOnHud": false
-        },
-        "unitMoveTo": [
-          {
-            "target": "landing_point",
-            "follow_target": false,
-            "teleportHeightType": "absolute",
-            "useUnitHeightForTele": true,
-            "shouldKeepFormation": false,
-            "teleportHeightValue": 1000.0,
-            "horizontalDirectionForTeleport": true,
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target_var_name": "",
-            "target_var_comp_op": "equal",
-            "target_var_value": 0,
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "fastClimb": false,
-            "destTimeMode": false,
-            "object": "ju_52"
-          },
-          {
-            "target": "ju_52",
-            "follow_target": true,
-            "teleportHeightType": "absolute",
-            "useUnitHeightForTele": true,
-            "shouldKeepFormation": false,
-            "teleportHeightValue": 1000.0,
-            "horizontalDirectionForTeleport": true,
-            "object_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target_var_name": "",
-            "target_var_comp_op": "equal",
-            "target_var_value": 0,
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "fastClimb": false,
-            "destTimeMode": false,
-            "object": "fiat_02",
-            "follow_offset": [
-              -150.0,
-              150.0,
-              20.0
-            ]
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "update_ju25_indicator": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": true
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {},
-      "actions": {
-        "missionSetTargetsIndicator": {
-          "target_type": "isAlive",
-          "target_marking": 0,
-          "delta": 0,
-          "icon": "bomber",
-          "icon army": 2,
-          "set": true,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target": "ju_52"
-        }
-      },
-      "else_actions": {}
-    },
-    "ju52_near_player": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ANY",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "playersDistanceBetween": {
-          "value": 3500.0,
-          "math": "2D",
-          "players": "isAlive",
-          "target_type": "isAlive",
-          "check_players": "any",
-          "check_targets": "any",
-          "target": "ju_52"
-        },
-        "unitWhenStatus": [
-          {
-            "object_type": "isKilled",
-            "object_marking": 0,
-            "check_objects": "any",
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target_type": "isAlive",
-            "check_period": 1.0,
-            "object": "ju_52"
-          },
-          {
-            "object_type": "damaged",
-            "object_marking": 0,
-            "check_objects": "any",
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "target_type": "isAlive",
-            "check_period": 1.0,
-            "object": "ju_52"
-          }
-        ]
-      },
-      "actions": {
-        "unitAttackTarget": [
-          {
-            "playerAttracted": true,
-            "object": [
-              "fiat_02",
-              "enemies_squad"
-            ],
-            "target": "players_squad",
-            "fireRandom": true,
-            "playerAttractedCount": 2,
-            "playerAttractedEffRate": 1.0,
-            "fightInArea": "battle_area",
-            "fightAreaRadius": 2000.0,
-            "fightAreaOuterRadius": 3000.0
-          },
-          {
-            "playerAttracted": false,
-            "object": "allies",
-            "target": [
-              "fiat_02",
-              "enemies_squad"
-            ],
-            "fireRandom": true
-          }
-        ],
-        "unitSetIndication": {
-          "set": true,
-          "target": [
-            "ju_52",
-            "fiat_02"
-          ],
-          "target_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0
-        }
-      },
-      "else_actions": {}
-    },
-    "ju52_near_landing_point": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitDistanceBetween": {
-          "value": 1500.0,
-          "math": "2D",
-          "object_type": "isAlive",
-          "target_type": "isAlive",
-          "check_objects": "any",
-          "check_targets": "any",
-          "object_marking": 0,
-          "target_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object": "ju_52",
-          "target": "landing_point"
-        }
-      },
-      "actions": {
-        "unitLandOnAirfield": {
-          "onWater": false,
-          "runwayName": "airfiled_2_start",
-          "rearmOnAirfield ": false,
-          "disappearAfterLanding": false,
-          "objects": "ju_52"
-        }
-      },
-      "else_actions": {}
-    },
-    "ju52_landed": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenOnLZ": {
-          "object_type": "isAlive",
-          "object_marking": 0,
-          "check_objects": "any",
-          "afterRepaired": false,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "object": "ju_52",
-          "target": "airfiled_2_start"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": [
-            "je52_not_landed",
-            "update_ju25_indicator"
-          ]
-        },
-        "moSetObjectiveStatus": {
-          "target": "dlc_divide_and_conquer_ju52",
-          "status": 3,
-          "object_marking": 0,
-          "object_var_comp_op": "equal",
-          "object_var_name": ""
-        },
-        "missionSetTargetsIndicator": {
-          "target_type": "isAlive",
-          "target_marking": 0,
-          "delta": 0,
-          "icon": "bomber",
-          "icon army": 2,
-          "set": false,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target": "ju_52"
-        },
-        "unitSetIndication": {
-          "set": false,
-          "target": "ju_52",
-          "target_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0
-        },
-        "wait": {
-          "time": 3.0
-        },
-        "triggerEnable": {
-          "target": "stop_ju52_on_land"
-        }
-      },
-      "else_actions": {}
-    },
-    "je52_not_landed": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenStatus": {
-          "object_type": "isKilled",
-          "object_marking": 0,
-          "check_objects": "any",
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target_type": "isAlive",
-          "check_period": 1.0,
-          "object": "ju_52"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": [
-            "ju52_landed",
-            "update_ju25_indicator",
-            "ju52_near_landing_point"
-          ]
-        },
-        "moSetObjectiveStatus": {
-          "target": "dlc_divide_and_conquer_ju52",
-          "status": 2,
-          "object_marking": 0,
-          "object_var_comp_op": "equal",
-          "object_var_name": ""
-        }
-      },
-      "else_actions": {}
-    },
-    "fiat_01_destroyed": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isAlive",
-          "object_marking": 0,
-          "func": "less",
-          "value": 4,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object": "fiat_01"
-        }
-      },
-      "actions": {
-        "unitWakeUp": {
-          "target": "fiat_03"
-        },
-        "unitAttackTarget": [
-          {
-            "playerAttracted": true,
-            "object": "enemies_squad",
-            "target": "players_squad",
-            "fireRandom": true,
-            "playerAttractedCount": 2,
-            "playerAttractedEffRate": 0.8,
-            "fightInArea": "battle_area",
-            "fightAreaRadius": 2000.0,
-            "fightAreaOuterRadius": 3000.0
-          },
-          {
-            "playerAttracted": false,
-            "object": "allies",
-            "target": "enemies_squad",
-            "fireRandom": true,
-            "fightInArea": "battle_area",
-            "fightAreaRadius": 2000.0,
-            "fightAreaOuterRadius": 3000.0
-          }
-        ],
-        "triggerEnable": {
-          "target": "fiat_03_destroyed"
-        },
-        "unitSetIndication": {
-          "set": true,
-          "target": "enemies_squad",
-          "target_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0
-        }
-      },
-      "else_actions": {}
-    },
-    "alllies_start_up": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ANY",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isAlive",
-          "object_marking": 0,
-          "func": "less",
-          "value": 3,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object": "player_wing"
-        },
-        "varCompareInt": {
-          "var_value": "timer",
-          "value": 840,
-          "comparasion_func": "less"
-        }
-      },
-      "actions": {
-        "unitWakeUp": {
-          "target": "allies"
-        },
-        "unitAttackTarget": [
-          {
-            "playerAttracted": false,
-            "object": "allies",
-            "target": "enemies_squad",
-            "fireRandom": true,
-            "fightInArea": "battle_area",
-            "fightAreaRadius": 2000.0,
-            "fightAreaOuterRadius": 5000.0
-          },
-          {
-            "playerAttracted": true,
-            "object": "enemies_squad",
-            "target": "players_squad",
-            "fireRandom": true,
-            "playerAttractedCount": 2,
-            "playerAttractedEffRate": 1.0,
-            "fightInArea": "battle_area",
-            "fightAreaRadius": 2000.0,
-            "fightAreaOuterRadius": 5000.0
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "fiat_03_destroyed": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isAlive",
-          "object_marking": 0,
-          "func": "less",
-          "value": 4,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object": "fiat_03"
-        }
-      },
-      "actions": {
-        "unitWakeUp": {
-          "target": "fiat_04"
-        },
-        "unitAttackTarget": [
-          {
-            "playerAttracted": true,
-            "object": "enemies_squad",
-            "target": "players_squad",
-            "fireRandom": true,
-            "playerAttractedCount": 3,
-            "playerAttractedEffRate": 0.8,
-            "fightInArea": "battle_area",
-            "fightAreaRadius": 2000.0,
-            "fightAreaOuterRadius": 3000.0
-          },
-          {
-            "playerAttracted": false,
-            "object": "allies",
-            "target": "enemies_squad",
-            "fireRandom": true,
-            "fightInArea": "battle_area",
-            "fightAreaRadius": 2000.0,
-            "fightAreaOuterRadius": 3000.0
-          }
-        ],
-        "triggerEnable": {
-          "target": "fiat_04_destroyed"
-        },
-        "unitSetIndication": {
-          "set": true,
-          "target": "enemies_squad",
-          "target_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0
-        }
-      },
-      "else_actions": {}
-    },
-    "fiat_04_destroyed": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isAlive",
-          "object_marking": 0,
-          "func": "less",
-          "value": 4,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object": "fiat_04"
-        }
-      },
-      "actions": {
-        "unitWakeUp": {
-          "target": "fiat_05"
-        },
-        "unitAttackTarget": [
-          {
-            "playerAttracted": true,
-            "object": "enemies_squad",
-            "target": "players_squad",
-            "fireRandom": true,
-            "playerAttractedCount": 4,
-            "playerAttractedEffRate": 0.8,
-            "fightInArea": "battle_area",
-            "fightAreaRadius": 2000.0,
-            "fightAreaOuterRadius": 3000.0
-          },
-          {
-            "playerAttracted": false,
-            "object": "allies",
-            "target": "enemies_squad",
-            "fireRandom": true,
-            "fightInArea": "battle_area",
-            "fightAreaRadius": 2000.0,
-            "fightAreaOuterRadius": 3000.0
-          }
-        ],
-        "unitSetIndication": {
-          "set": true,
-          "target": "enemies_squad",
-          "target_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0
-        }
-      },
-      "else_actions": {}
-    },
-    "mission_completed": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ANY",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isActive",
-          "object_marking": 0,
-          "func": "less",
-          "value": 1,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object": [
-            "enemies_squad",
-            "fiat_02"
-          ]
-        }
-      },
-      "actions": {
-        "moSetObjectiveStatus": {
-          "target": "dlc_divide_and_conquer_main",
-          "status": 2,
-          "object_marking": 0,
-          "object_var_comp_op": "equal",
-          "object_var_name": ""
-        },
-        "wait": [
-          {
-            "time": 3.0
-          },
-          {
-            "time": 3.0
-          }
-        ],
-        "missionCompleted": {
-          "timer": false
-        },
-        "missionDebriefing": {}
-      },
-      "else_actions": {}
-    },
-    "check_simul": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "gameWhenDifficulty": {
-          "difficulty": "simulator",
-          "is": "equal"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": "check_real"
-        },
-        "unitWakeUp": {
-          "target": [
-            "fiat_02",
-            "fiat_03",
-            "fiat_04",
-            "fiat_05"
-          ]
-        },
-        "wait": {
-          "time": 1.0
-        },
-        "unitPutToSleep": [
-          {
-            "target": "fiat_01",
-            "numToSleep": 4
-          },
-          {
-            "target": "fiat_02",
-            "numToSleep": 4
-          },
-          {
-            "target": "fiat_03",
-            "numToSleep": 4
-          },
-          {
-            "target": "fiat_04",
-            "numToSleep": 4
-          },
-          {
-            "target": "fiat_05",
-            "numToSleep": 4
-          }
-        ],
-        "__unitDamage": [
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_01",
-            "randomTargetsCount": 4,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_02",
-            "randomTargetsCount": 4,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_03",
-            "randomTargetsCount": 4,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_04",
-            "randomTargetsCount": 4,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_05",
-            "randomTargetsCount": 4,
-            "doExplosion": true
-          }
-        ],
-        "__unitPutToSleep": {
-          "target": [
-            "fiat_02",
-            "fiat_03",
-            "fiat_04",
-            "fiat_05"
-          ]
-        }
-      },
-      "else_actions": {}
-    },
-    "check_real": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "gameWhenDifficulty": {
-          "difficulty": "realistic",
-          "is": "equal"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": "check_simul"
-        },
-        "unitWakeUp": {
-          "target": [
-            "fiat_02",
-            "fiat_03",
-            "fiat_04",
-            "fiat_05"
-          ]
-        },
-        "wait": {
-          "time": 1.0
-        },
-        "unitPutToSleep": [
-          {
-            "target": "fiat_01",
-            "numToSleep": 2
-          },
-          {
-            "target": "fiat_02",
-            "numToSleep": 2
-          },
-          {
-            "target": "fiat_03",
-            "numToSleep": 2
-          },
-          {
-            "target": "fiat_04",
-            "numToSleep": 2
-          },
-          {
-            "target": "fiat_05",
-            "numToSleep": 2
-          }
-        ],
-        "__unitDamage": [
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_01",
-            "randomTargetsCount": 2,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_02",
-            "randomTargetsCount": 2,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_03",
-            "randomTargetsCount": 2,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_04",
-            "randomTargetsCount": 2,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_05",
-            "randomTargetsCount": 2,
-            "doExplosion": true
-          }
-        ],
-        "__unitPutToSleep": {
-          "target": [
-            "fiat_02",
-            "fiat_03",
-            "fiat_04",
-            "fiat_05"
-          ]
-        }
-      },
-      "else_actions": {}
-    },
-    "ju52_randomizer": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {},
-      "actions": {
-        "varSetRandomInt": {
-          "var": "randomizer",
-          "from": 1,
-          "to_not_including": 5
-        },
-        "triggerEnable": {
-          "target": [
-            "ju52_point_01",
-            "ju52_point_02",
-            "ju52_point_03",
-            "ju52_point_04",
-            "ju52_point_05"
-          ]
-        }
-      },
-      "else_actions": {}
-    },
-    "ju52_point_01": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "varCompareInt": {
-          "var_value": "randomizer",
-          "value": 1,
-          "comparasion_func": "equal"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": [
-            "ju52_point_02",
-            "ju52_point_03",
-            "ju52_point_04",
-            "ju52_point_05"
-          ]
-        },
-        "unitMoveTo": {
-          "target": "ju_52_point_01",
-          "follow_target": false,
-          "teleportHeightType": "absolute",
-          "useUnitHeightForTele": true,
-          "shouldKeepFormation": false,
-          "teleportHeightValue": 1000.0,
-          "horizontalDirectionForTeleport": true,
-          "object_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target_var_name": "",
-          "target_var_comp_op": "equal",
-          "target_var_value": 0,
-          "target_marking": 0,
-          "waypointReachedDist": 10.0,
-          "recalculatePathDist": -1.0,
-          "fastClimb": false,
-          "destTimeMode": false,
-          "object": [
-            "ju_52",
-            "fiat_02"
-          ],
-          "move_type": "teleport"
-        }
-      },
-      "else_actions": {}
-    },
-    "ju52_point_02": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "varCompareInt": {
-          "var_value": "randomizer",
-          "value": 2,
-          "comparasion_func": "equal"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": [
-            "ju52_point_01",
-            "ju52_point_03",
-            "ju52_point_04",
-            "ju52_point_05"
-          ]
-        },
-        "unitMoveTo": {
-          "target": "ju_52_point_02",
-          "follow_target": false,
-          "teleportHeightType": "absolute",
-          "useUnitHeightForTele": true,
-          "shouldKeepFormation": false,
-          "teleportHeightValue": 1000.0,
-          "horizontalDirectionForTeleport": true,
-          "object_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target_var_name": "",
-          "target_var_comp_op": "equal",
-          "target_var_value": 0,
-          "target_marking": 0,
-          "waypointReachedDist": 10.0,
-          "recalculatePathDist": -1.0,
-          "fastClimb": false,
-          "destTimeMode": false,
-          "object": [
-            "ju_52",
-            "fiat_02"
-          ],
-          "move_type": "teleport"
-        }
-      },
-      "else_actions": {}
-    },
-    "ju52_point_03": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "varCompareInt": {
-          "var_value": "randomizer",
-          "value": 3,
-          "comparasion_func": "equal"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": [
-            "ju52_point_01",
-            "ju52_point_02",
-            "ju52_point_04",
-            "ju52_point_05"
-          ]
-        },
-        "unitMoveTo": {
-          "target": "ju_52_point_03",
-          "follow_target": false,
-          "teleportHeightType": "absolute",
-          "useUnitHeightForTele": true,
-          "shouldKeepFormation": false,
-          "teleportHeightValue": 1000.0,
-          "horizontalDirectionForTeleport": true,
-          "object_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target_var_name": "",
-          "target_var_comp_op": "equal",
-          "target_var_value": 0,
-          "target_marking": 0,
-          "waypointReachedDist": 10.0,
-          "recalculatePathDist": -1.0,
-          "fastClimb": false,
-          "destTimeMode": false,
-          "object": [
-            "ju_52",
-            "fiat_02"
-          ],
-          "move_type": "teleport"
-        }
-      },
-      "else_actions": {}
-    },
-    "ju52_point_04": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "varCompareInt": {
-          "var_value": "randomizer",
-          "value": 4,
-          "comparasion_func": "equal"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": [
-            "ju52_point_01",
-            "ju52_point_02",
-            "ju52_point_03",
-            "ju52_point_05"
-          ]
-        },
-        "unitMoveTo": {
-          "target": "ju_52_point_04",
-          "follow_target": false,
-          "teleportHeightType": "absolute",
-          "useUnitHeightForTele": true,
-          "shouldKeepFormation": false,
-          "teleportHeightValue": 1000.0,
-          "horizontalDirectionForTeleport": true,
-          "object_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target_var_name": "",
-          "target_var_comp_op": "equal",
-          "target_var_value": 0,
-          "target_marking": 0,
-          "waypointReachedDist": 10.0,
-          "recalculatePathDist": -1.0,
-          "fastClimb": false,
-          "destTimeMode": false,
-          "object": [
-            "ju_52",
-            "fiat_02"
-          ],
-          "move_type": "teleport"
-        }
-      },
-      "else_actions": {}
-    },
-    "ju52_point_05": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "varCompareInt": {
-          "var_value": "randomizer",
-          "value": 5,
-          "comparasion_func": "equal"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": [
-            "ju52_point_01",
-            "ju52_point_02",
-            "ju52_point_03",
-            "ju52_point_04"
-          ]
-        },
-        "unitMoveTo": {
-          "target": "ju_52_point_05",
-          "follow_target": false,
-          "teleportHeightType": "absolute",
-          "useUnitHeightForTele": true,
-          "shouldKeepFormation": false,
-          "teleportHeightValue": 1000.0,
-          "horizontalDirectionForTeleport": true,
-          "object_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object_var_value": 0,
-          "target_var_name": "",
-          "target_var_comp_op": "equal",
-          "target_var_value": 0,
-          "target_marking": 0,
-          "waypointReachedDist": 10.0,
-          "recalculatePathDist": -1.0,
-          "fastClimb": false,
-          "destTimeMode": false,
-          "object": [
-            "ju_52",
-            "fiat_02"
-          ],
-          "move_type": "teleport"
-        }
-      },
-      "else_actions": {}
-    },
-    "stop_ju52_on_land": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": true
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {},
-      "actions": {
-        "unitSetControls": [
-          {
-            "controls": "power",
-            "value": 0.0,
-            "force": true,
-            "objects": "ju_52"
-          },
-          {
-            "controls": "airbrake",
-            "value": 100.0,
-            "force": true,
-            "objects": "ju_52"
-          }
-        ],
-        "unitSetProperties": {
-          "object": "ju_52",
-          "speed": 0.0,
-          "lockSpeed": true,
-          "cannotMove": true,
-          "aiEnabled": false,
-          "enginesEnabled": false,
-          "takeoffPermission": false
-        }
-      },
-      "else_actions": {}
-    },
-    "check1_ppl": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isOnline",
-          "object_marking": 0,
-          "func": "less",
-          "value": 2,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object": "player_wing"
-        }
-      },
-      "actions": {
-        "unitWakeUp": {
-          "target": [
-            "fiat_02",
-            "fiat_03",
-            "fiat_04",
-            "fiat_05"
-          ]
-        },
-        "unitPutToSleep": [
-          {
-            "target": "fiat_01",
-            "numToSleep": 6
-          },
-          {
-            "target": "fiat_02",
-            "numToSleep": 6
-          },
-          {
-            "target": "fiat_03",
-            "numToSleep": 6
-          },
-          {
-            "target": "fiat_04",
-            "numToSleep": 6
-          },
-          {
-            "target": "fiat_05",
-            "numToSleep": 6
-          }
-        ],
-        "__unitDamage": [
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_01",
-            "randomTargetsCount": 6,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_02",
-            "randomTargetsCount": 6,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_03",
-            "randomTargetsCount": 6,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_04",
-            "randomTargetsCount": 6,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_05",
-            "randomTargetsCount": 6,
-            "doExplosion": true
-          }
-        ],
-        "__unitPutToSleep": {
-          "target": [
-            "fiat_02",
-            "fiat_03",
-            "fiat_04",
-            "fiat_05"
-          ]
-        },
-        "__triggerEnable": {
-          "target": "hide_dead"
-        }
-      },
-      "else_actions": {}
-    },
-    "check2_ppl": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isOnline",
-          "object_marking": 0,
-          "func": "equal",
-          "value": 2,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object": "player_wing"
-        }
-      },
-      "actions": {
-        "unitWakeUp": {
-          "target": [
-            "fiat_02",
-            "fiat_03",
-            "fiat_04",
-            "fiat_05"
-          ]
-        },
-        "unitPutToSleep": [
-          {
-            "target": "fiat_01",
-            "numToSleep": 4
-          },
-          {
-            "target": "fiat_02",
-            "numToSleep": 4
-          },
-          {
-            "target": "fiat_03",
-            "numToSleep": 4
-          },
-          {
-            "target": "fiat_04",
-            "numToSleep": 4
-          },
-          {
-            "target": "fiat_05",
-            "numToSleep": 4
-          }
-        ],
-        "__unitDamage": [
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_01",
-            "randomTargetsCount": 4,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_02",
-            "randomTargetsCount": 4,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_03",
-            "randomTargetsCount": 4,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_04",
-            "randomTargetsCount": 4,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_05",
-            "randomTargetsCount": 4,
-            "doExplosion": true
-          }
-        ],
-        "__unitPutToSleep": {
-          "target": [
-            "fiat_02",
-            "fiat_03",
-            "fiat_04",
-            "fiat_05"
-          ]
-        },
-        "__triggerEnable": {
-          "target": "hide_dead"
-        }
-      },
-      "else_actions": {}
-    },
-    "check3_ppl": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isOnline",
-          "object_marking": 0,
-          "func": "equal",
-          "value": 3,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "object": "player_wing"
-        }
-      },
-      "actions": {
-        "unitWakeUp": {
-          "target": [
-            "fiat_02",
-            "fiat_03",
-            "fiat_04",
-            "fiat_05"
-          ]
-        },
-        "unitPutToSleep": [
-          {
-            "target": "fiat_01",
-            "numToSleep": 2
-          },
-          {
-            "target": "fiat_02",
-            "numToSleep": 2
-          },
-          {
-            "target": "fiat_03",
-            "numToSleep": 2
-          },
-          {
-            "target": "fiat_04",
-            "numToSleep": 2
-          },
-          {
-            "target": "fiat_05",
-            "numToSleep": 2
-          }
-        ],
-        "__unitDamage": [
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_01",
-            "randomTargetsCount": 2,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_02",
-            "randomTargetsCount": 2,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_03",
-            "randomTargetsCount": 2,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_04",
-            "randomTargetsCount": 2,
-            "doExplosion": true
-          },
-          {
-            "part": 1,
-            "power": 1.0,
-            "useEffect": false,
-            "countEffects": 1,
-            "delay": [
-              1.0,
-              1.0
-            ],
-            "offset": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "radiusOffset": [
-              10.0,
-              15.0
-            ],
-            "target": "fiat_05",
-            "randomTargetsCount": 2,
-            "doExplosion": true
-          }
-        ],
-        "__unitPutToSleep": {
-          "target": [
-            "fiat_02",
-            "fiat_03",
-            "fiat_04",
-            "fiat_05"
-          ]
-        },
-        "__triggerEnable": {
-          "target": "hide_dead"
-        }
-      },
-      "else_actions": {}
-    },
-    "hide_dead": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isKilled",
-          "object_marking": 0,
-          "object_var_name": "",
-          "object_var_comp_op": "equal",
-          "func": "more",
-          "value": 0,
-          "object": "enemies_squad"
-        }
-      },
-      "actions": {
-        "unitPutToSleep": {
-          "target": "enemies_squad",
-          "useForTriggerFiltered": true
-        }
-      },
-      "else_actions": {}
-    }
-  },
-  "mission_objectives": {
-    "isCategory": true,
-    "is_enabled": true,
-    "dlc_divide_and_conquer_waypoint": {
-      "is_enabled": false,
-      "comments": "",
-      "type": "abstractMissionObjective",
-      "props": {
-        "isPrimary": true,
-        "timeLimit": 3600,
-        "scoreConst": 100,
-        "scoreTime": 400
-      },
-      "onSuccess": {},
-      "onFailed": {}
-    },
-    "dlc_divide_and_conquer_main": {
-      "is_enabled": false,
-      "comments": "",
-      "type": "abstractMissionObjective",
-      "props": {
-        "isPrimary": true,
-        "timeLimit": 3600,
-        "scoreConst": 100,
-        "scoreTime": 400
-      },
-      "onSuccess": {},
-      "onFailed": {}
-    },
-    "dlc_divide_and_conquer_bf109": {
-      "is_enabled": false,
-      "comments": "",
-      "type": "abstractMissionObjective",
-      "props": {
-        "isPrimary": false,
-        "timeLimit": 3600,
-        "scoreConst": 100,
-        "scoreTime": 400
-      },
-      "onSuccess": {},
-      "onFailed": {}
-    },
-    "dlc_divide_and_conquer_ju52": {
-      "is_enabled": false,
-      "comments": "",
-      "type": "abstractMissionObjective",
-      "props": {
-        "isPrimary": false,
-        "timeLimit": 3600,
-        "scoreConst": 100,
-        "scoreTime": 400
-      },
-      "onSuccess": {},
-      "onFailed": {}
-    }
-  },
-  "variables": {
-    "timer": 900,
-    "randomizer": 1
-  },
-  "dialogs": {},
-  "airfields": {},
-  "effects": {},
-  "units": {
-    "armada": [
-      {
-        "name": "player_wing",
-        "tm": [
-          [
-            -0.991445,
-            0.0,
-            -0.130526
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.130526,
-            0.0,
-            -0.991445
-          ],
-          [
-            918.45,
-            2418.9,
-            15067.0
-          ]
-        ],
-        "unit_class": "p-51b",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "P_51B_default",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 4,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "fiat_01",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -11879.3,
-            1451.0,
-            15296.8
-          ]
-        ],
-        "unit_class": "mc-202_italy",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "MC202_default",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 12,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "numInWing": 2,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "fiat_02",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -15250.5,
-            1329.0,
-            15695.5
-          ]
-        ],
-        "unit_class": "mc-202_italy",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "MC202_default",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 8,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "numInWing": 2,
-          "isDelayed": true,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 2.0,
-            "super_col_distances": 2.0,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "ju_52",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -15272.2,
-            1268.95,
-            15695.5
-          ]
-        ],
-        "unit_class": "ju-52",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "Ju52_default",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "numInWing": 4,
-          "isDelayed": true,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "bf_019_01",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -11175.5,
-            453.0,
-            15664.6
-          ]
-        ],
-        "unit_class": "bf-109g-2",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "Bf-109G-2_default",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 4,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "numInWing": 2,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "fiat_03",
-        "tm": [
-          [
-            0.67559,
-            0.0,
-            -0.737277
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.737277,
-            0.0,
-            0.67559
-          ],
-          [
-            -13773.4,
-            2451.0,
-            18784.1
-          ]
-        ],
-        "unit_class": "mc-202_italy",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "MC202_default",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 12,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "numInWing": 2,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "allies",
-        "tm": [
-          [
-            -0.991445,
-            0.0,
-            -0.130526
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.130526,
-            0.0,
-            -0.991445
-          ],
-          [
-            -5331.2,
-            2418.9,
-            15556.8
-          ]
-        ],
-        "unit_class": "spitfire_ix",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "SpitfireIX_default",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 1,
-          "count": 6,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "numInWing": 2,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "fiat_04",
-        "tm": [
-          [
-            0.461749,
-            0.0,
-            0.887011
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            -0.887011,
-            0.0,
-            0.461749
-          ],
-          [
-            -13482.0,
-            2451.0,
-            11768.5
-          ]
-        ],
-        "unit_class": "mc-202_italy",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "MC202_default",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 8,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "numInWing": 2,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 2.0,
-            "super_col_distances": 2.0,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "fiat_05",
-        "tm": [
-          [
-            -0.766044,
-            0.0,
-            0.642788
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            -0.642788,
-            0.0,
-            -0.766044
-          ],
-          [
-            -6915.35,
-            2451.0,
-            11189.5
-          ]
-        ],
-        "unit_class": "mc-202_italy",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "MC202_default",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 8,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "numInWing": 2,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "fiat_for_airfield",
-        "tm": [
-          [
-            0.67559,
-            0.0,
-            -0.737277
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.737277,
-            0.0,
-            0.67559
-          ],
-          [
-            -13773.4,
-            3051.5,
-            18784.1
-          ]
-        ],
-        "unit_class": "mc-202_italy",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "MC202_default",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 4,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      }
-    ],
-    "air_defence": [
-      {
-        "name": "germ_aaa_01",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -11299.9,
-            46.45,
-            15959.8
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "germ_aaa_02",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -11299.9,
-            46.45,
-            15227.3
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "germ_aaa_03",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -10104.6,
-            46.45,
-            15227.3
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "germ_aaa_04",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -10104.7,
-            46.45,
-            16014.7
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "germ_aaa_05",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -10749.5,
-            46.45,
-            15227.3
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      },
-      {
-        "name": "germ_aaa_06",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -10749.5,
-            46.45,
-            16034.9
-          ]
-        ],
-        "unit_class": "germ_88mm_flak36",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "crewSkillK": 0.0,
-        "applyAllMods": false,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "formation_type": "rows",
-          "formation_div": 3,
-          "formation_step": [
-            2.5,
-            2.0
-          ],
-          "formation_noise": [
-            0.1,
-            0.1
-          ],
-          "uniqueName": "",
-          "attack_type": "fire_at_will"
-        },
-        "way": {}
-      }
-    ],
-    "squad": [
-      {
-        "name": "germ_aaa_squad",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -11523.4,
-            29.85,
-            15617.7
-          ]
-        ],
-        "props": {
-          "squad_members": [
-            "germ_aaa_01",
-            "germ_aaa_02",
-            "germ_aaa_03",
-            "germ_aaa_04",
-            "germ_aaa_05",
-            "germ_aaa_06"
-          ]
-        }
-      },
-      {
-        "name": "enemies_squad",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -11365.5,
-            49.75,
-            11851.8
-          ]
-        ],
-        "props": {
-          "squad_members": [
-            "fiat_01",
-            "fiat_03",
-            "fiat_04",
-            "fiat_05",
-            "fiat_for_airfield",
-            "bf_019_01"
-          ]
-        }
-      },
-      {
-        "name": "players_squad",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -10100.0,
-            40.05,
-            11573.7
-          ]
-        ],
-        "props": {
-          "squad_members": [
-            "player_wing",
-            "allies"
-          ]
-        }
-      }
-    ],
-    "objectGroups": {
-      "name": "airfield",
-      "tm": [
-        [
-          -0.999491,
-          0.0,
-          -0.0319127
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0319127,
-          0.0,
-          -0.999491
-        ],
-        [
-          -10038.6,
-          50.15,
-          15545.4
-        ]
-      ],
-      "unit_class": "dynaf_universal_1line_d_big",
-      "objLayer": 2,
-      "props": {
-        "army": 2,
-        "active": true
-      }
-    }
-  },
-  "areas": {
-    "airfield_point": {
-      "type": "Point",
-      "tm": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          -11683.0,
-          1450.0,
-          15713.7
-        ]
-      ],
-      "props": {}
-    },
-    "airfield_waypoint": {
-      "type": "Point",
-      "tm": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          -7819.35,
-          1450.0,
-          15682.5
-        ]
-      ],
-      "props": {}
-    },
-    "battle_area": {
-      "type": "Sphere",
-      "tm": [
-        [
-          5837.4,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          5837.4,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          5837.4
-        ],
-        [
-          -10981.4,
-          53.0,
-          15792.4
-        ]
-      ],
-      "props": {}
-    },
-    "ju_52_point_01": {
-      "type": "Point",
-      "tm": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          -16639.4,
-          800.0,
-          21260.8
-        ]
-      ],
-      "props": {}
-    },
-    "ju_52_point_02": {
-      "type": "Point",
-      "tm": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          -17728.4,
-          800.0,
-          15596.3
-        ]
-      ],
-      "props": {}
-    },
-    "ju_52_point_03": {
-      "type": "Point",
-      "tm": [
-        [
-          0.887011,
-          0.0,
-          0.461749
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          -0.461749,
-          0.0,
-          0.887011
-        ],
-        [
-          -15955.4,
-          800.0,
-          10703.8
-        ]
-      ],
-      "props": {}
-    },
-    "ju_52_point_04": {
-      "type": "Point",
-      "tm": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          -11771.9,
-          800.0,
-          23118.2
-        ]
-      ],
-      "props": {}
-    },
-    "ju_52_point_05": {
-      "type": "Point",
-      "tm": [
-        [
-          0.887011,
-          0.0,
-          0.461749
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          -0.461749,
-          0.0,
-          0.887011
-        ],
-        [
-          -12626.3,
-          800.0,
-          9127.05
-        ]
-      ],
-      "props": {}
-    },
-    "landing_point": {
-      "type": "Point",
-      "tm": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          -12766.2,
-          200.0,
-          15686.0
-        ]
-      ],
-      "props": {}
-    },
-    "airfiled_2_start": {
-      "type": "Sphere",
-      "tm": [
-        [
-          102.4,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          102.4,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          102.4
-        ],
-        [
-          -10941.7,
-          57.35,
-          15618.0
-        ]
-      ],
-      "objLayer": 0,
-      "props": {}
-    },
-    "airfiled_2_end": {
-      "type": "Sphere",
-      "tm": [
-        [
-          102.4,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          102.4,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          102.4
-        ],
-        [
-          -9425.45,
-          57.35,
-          15648.3
-        ]
-      ],
-      "objLayer": 0,
-      "props": {}
-    },
-    "airfiled_2_spawn_01": {
-      "type": "Sphere",
-      "tm": [
-        [
-          102.4,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          102.4,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          102.4
-        ],
-        [
-          -10896.7,
-          57.35,
-          15618.0
-        ]
-      ],
-      "objLayer": 0,
-      "props": {}
-    }
-  },
-  "objLayers": {
-    "layer": [
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      }
-    ]
-  },
-  "wayPoints": {}
+selected_tag:t = ""
+bin_dump_file:t = ""
+mission_settings {
+	player {
+		army:i = 1
+		wing:t = "player_wing"
+	}
+	player_teamB {
+		army:i = 2
+	}
+	mission {
+		level:t = "levels/sicily.bin"
+		type:t = "singleMission"
+		environment:t = "Day"
+		weather:t = "hazy"
+		restoreType:t = "attempts"
+		optionalTakeOff:b = false
+		stars {
+			year:i = 1943
+			month:i = 7
+			day:i = 10
+		}
+	}
+	atmosphere {
+		pressure:r = 760
+		temperature:r = 0
+	}
+	briefing {
+		place_loc:t = ""
+		date_loc:t = ""
+		objective_loc:t = ""
+		music:t = "action_01"
+		part {
+			event:t = ""
+			minTime:i = 0
+			slide {
+				map:b = true
+				minTime:i = 4
+				picture:t = ""
+				showAirMap:b = false
+				arrow {
+					width:i = 1
+					side:t = "player"
+					point:t = "player_wing"
+					point:t = "bf_019_01"
+				}
+				icon {
+					icontype:t = "fighter"
+					side:t = "player"
+					target:t = "player_wing"
+					lookAt:t = "bf_019_01"
+				}
+				icon {
+					icontype:t = "airfield"
+					side:t = "enemy"
+					target:t = "bf_019_01"
+				}
+			}
+		}
+	}
+}
+imports {
+	import_record {
+		file:t = "gameData/missions/bridges/sicily_bridges.blk"
+		importAreas:b = true
+		importUnits:b = true
+		importTriggers:b = true
+		importMissionObjectives:b = true
+		importWayPoints:b = true
+		showAreas:b = true
+		showUnits:b = true
+		showTriggers:b = true
+		showMissionObjectives:b = true
+		showWayPoints:b = true
+		excludes {
+
+		}
+	}
+}
+triggers {
+	isCategory:b = true
+	is_enabled:b = true
+	start_mission {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			unitSetProperties {
+				object:t = "bf_019_01"
+				object:t = "ju_52"
+				plane {
+					ai_skill:t = "ACE"
+					targetDeviation {
+						trigger:t = "machine gun"
+						defaultVal:r = 0.4
+						limits:p2 = 0.4, 1.2
+					}
+					targetDeviation {
+						trigger:t = "gunner"
+						defaultVal:r = 0.2
+						limits:p2 = 0.2, 0.6
+					}
+				}
+			}
+			unitSetProperties {
+				object:t = "fiat_01"
+				object:t = "fiat_02"
+				object:t = "fiat_03"
+				object:t = "fiat_04"
+				object:t = "fiat_05"
+				effShootingRate:r = 0.8
+				plane {
+					ai_skill:t = "ROOKIE"
+					targetDeviation {
+						trigger:t = "machine gun"
+						defaultVal:r = 0.6
+						limits:p2 = 0.6, 1.8
+					}
+				}
+			}
+			unitSetProperties {
+				object:t = "germ_aaa_squad"
+				effShootingRate:r = 0.05
+			}
+			unitSetProperties {
+				object:t = "allies"
+				plane {
+					targetDeviation {
+						trigger:t = "machine gun"
+						defaultVal:r = 1.2
+						limits:p2 = 0.2, 1.2
+					}
+				}
+			}
+			unitPutToSleep {
+				target:t = "bf_019_01"
+				target:t = "fiat_02"
+				target:t = "ju_52"
+				target:t = "fiat_03"
+				target:t = "fiat_04"
+				target:t = "fiat_05"
+				target:t = "allies"
+			}
+			unitMoveTo {
+				target:t = "airfield_point"
+				follow_target:b = false
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = true
+				shouldKeepFormation:b = false
+				teleportHeightValue:r = 1000
+				horizontalDirectionForTeleport:b = true
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_var_name:t = ""
+				target_var_comp_op:t = "equal"
+				target_var_value:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				fastClimb:b = false
+				destTimeMode:b = false
+				object:t = "fiat_01"
+				object:t = "fiat_for_airfield"
+			}
+			wait {
+				time:r = 3
+			}
+			missionMarkAsWaypoint {
+				visible:b = true
+				primary:b = true
+				oriented:b = false
+				ignoreDifficulty:b = false
+				scale:r = 1
+				target:t = "airfield_waypoint"
+			}
+			moAddMissionObjective {
+				target:t = "dlc_divide_and_conquer_waypoint"
+			}
+			triggerDisable {
+				target:t = "check1_ppl"
+				target:t = "check2_ppl"
+				target:t = "check3_ppl"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	waypoint_reach {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			playersDistanceBetween {
+				value:r = 2500
+				math:t = "2D"
+				players:t = "isAlive"
+				target_type:t = "isAlive"
+				check_players:t = "any"
+				check_targets:t = "any"
+				target:t = "airfield_waypoint"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "fiat_01_near_player"
+			}
+			missionMarkAsWaypoint {
+				visible:b = false
+				primary:b = true
+				oriented:b = false
+				ignoreDifficulty:b = false
+				scale:r = 1
+				target:t = "airfield_waypoint"
+			}
+			unitAttackTarget {
+				playerAttracted:b = true
+				object:t = "enemies_squad"
+				target:t = "players_squad"
+				fireRandom:b = true
+				playerAttractedCount:i = 2
+				playerAttractedEffRate:r = 0.8
+				fightInArea:t = "battle_area"
+				fightAreaRadius:r = 2000
+				fightAreaOuterRadius:r = 3000
+			}
+			moSetObjectiveStatus {
+				target:t = "dlc_divide_and_conquer_waypoint"
+				status:i = 2
+				object_marking:i = 0
+				object_var_comp_op:t = "equal"
+				object_var_name:t = ""
+			}
+			wait {
+				time:r = 3
+			}
+			moAddMissionObjective {
+				target:t = "dlc_divide_and_conquer_main"
+			}
+			unitSetIndication {
+				set:b = true
+				target:t = "enemies_squad"
+				target_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+			}
+			wait {
+				time:r = 8
+			}
+			unitWakeUp {
+				target:t = "bf_019_01"
+			}
+			spawnOnAirfield {
+				runwayName:t = "airfield"
+				objects:t = "bf_019_01"
+				takeoffInterval:r = 20
+			}
+			moAddMissionObjective {
+				target:t = "dlc_divide_and_conquer_bf109"
+			}
+			triggerEnable {
+				target:t = "bf109_taked_off"
+				target:t = "bf109_not_taked_off"
+				target:t = "update_time_indicator"
+				target:t = "ju52_start_up"
+			}
+			unitAttackTarget {
+				playerAttracted:b = true
+				object:t = "enemies_squad"
+				target:t = "players_squad"
+				fireRandom:b = true
+				playerAttractedCount:i = 2
+				playerAttractedEffRate:r = 1
+				fightInArea:t = "battle_area"
+				fightAreaRadius:r = 2000
+				fightAreaOuterRadius:r = 3000
+			}
+		}
+		else_actions {
+
+		}
+	}
+	fiat_01_near_player {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			playersDistanceBetween {
+				value:r = 2500
+				math:t = "2D"
+				players:t = "isAlive"
+				target_type:t = "isAlive"
+				check_players:t = "any"
+				check_targets:t = "any"
+				target:t = "fiat_01"
+			}
+		}
+		actions {
+			unitAttackTarget {
+				playerAttracted:b = true
+				object:t = "fiat_01"
+				target:t = "players_squad"
+				fireRandom:b = true
+				playerAttractedCount:i = 1
+				playerAttractedEffRate:r = 0.8
+				fightInArea:t = "battle_area"
+				fightAreaRadius:r = 2000
+				fightAreaOuterRadius:r = 3000
+			}
+		}
+		else_actions {
+
+		}
+	}
+	bf109_taked_off {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenReachHeight {
+				object_type:t = "isAlive"
+				object_marking:i = 0
+				check_objects:t = "any"
+				value:r = 150
+				comparasion_func:t = "more"
+				absolute_value:b = false
+				object:t = "bf_019_01"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "bf109_not_taked_off"
+			}
+			moSetObjectiveStatus {
+				target:t = "dlc_divide_and_conquer_bf109"
+				status:i = 3
+				object_marking:i = 0
+				object_var_comp_op:t = "equal"
+				object_var_name:t = ""
+			}
+		}
+		else_actions {
+
+		}
+	}
+	bf109_not_taked_off {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isAlive"
+				object_marking:i = 0
+				func:t = "less"
+				value:i = 1
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object:t = "bf_019_01"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "bf109_taked_off"
+			}
+			moSetObjectiveStatus {
+				target:t = "dlc_divide_and_conquer_bf109"
+				status:i = 2
+				object_marking:i = 0
+				object_var_comp_op:t = "equal"
+				object_var_name:t = ""
+			}
+		}
+		else_actions {
+
+		}
+	}
+	update_time_indicator {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = true
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			varModify {
+				operator:t = "add"
+				value:r = -1
+				var:t = "timer"
+			}
+			missionSetTargetsIndicator {
+				target_type:t = "isActive"
+				target_marking:i = 0
+				delta:i = 0
+				icon:t = "air"
+				"icon army":i = 2
+				set:b = true
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target:t = "enemies_squad"
+				target:t = "fiat_02"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	ju52_start_up {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ANY"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			varCompareInt {
+				var_value:t = "timer"
+				value:i = 300
+				comparasion_func:t = "less"
+			}
+			unitWhenCountMatches {
+				object_type:t = "isActive"
+				object_marking:i = 0
+				func:t = "less"
+				value:i = 3
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object:t = "enemies_squad"
+			}
+		}
+		actions {
+			unitWakeUp {
+				target:t = "fiat_02"
+				target:t = "ju_52"
+			}
+			triggerEnable {
+				target:t = "ju52_randomizer"
+			}
+			wait {
+				time:r = 4
+			}
+			moAddMissionObjective {
+				target:t = "dlc_divide_and_conquer_ju52"
+			}
+			addAirfield {
+				runwayStart:t = "airfiled_2_start"
+				runwayEnd:t = "airfiled_2_end"
+				runwayWidth:r = 100
+				army:i = 2
+				spawnPoint:t = "airfiled_2_spawn_01"
+				visibleOnHud:b = false
+			}
+			triggerEnable {
+				target:t = "ju52_landed"
+				target:t = "je52_not_landed"
+				target:t = "ju52_near_player"
+			}
+			unitMoveTo {
+				target:t = "landing_point"
+				follow_target:b = false
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = true
+				shouldKeepFormation:b = false
+				teleportHeightValue:r = 1000
+				horizontalDirectionForTeleport:b = true
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_var_name:t = ""
+				target_var_comp_op:t = "equal"
+				target_var_value:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				fastClimb:b = false
+				destTimeMode:b = false
+				object:t = "ju_52"
+			}
+			unitMoveTo {
+				target:t = "ju_52"
+				follow_target:b = true
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = true
+				shouldKeepFormation:b = false
+				teleportHeightValue:r = 1000
+				horizontalDirectionForTeleport:b = true
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_var_name:t = ""
+				target_var_comp_op:t = "equal"
+				target_var_value:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				fastClimb:b = false
+				destTimeMode:b = false
+				object:t = "fiat_02"
+				follow_offset:p3 = -150, 150, 20
+			}
+			triggerEnable {
+				target:t = "update_ju25_indicator"
+				target:t = "ju52_near_landing_point"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	update_ju25_indicator {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = true
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			missionSetTargetsIndicator {
+				target_type:t = "isAlive"
+				target_marking:i = 0
+				delta:i = 0
+				icon:t = "bomber"
+				"icon army":i = 2
+				set:b = true
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target:t = "ju_52"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	ju52_near_player {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ANY"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			playersDistanceBetween {
+				value:r = 3500
+				math:t = "2D"
+				players:t = "isAlive"
+				target_type:t = "isAlive"
+				check_players:t = "any"
+				check_targets:t = "any"
+				target:t = "ju_52"
+			}
+			unitWhenStatus {
+				object_type:t = "isKilled"
+				object_marking:i = 0
+				check_objects:t = "any"
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_type:t = "isAlive"
+				check_period:r = 1
+				object:t = "ju_52"
+			}
+			unitWhenStatus {
+				object_type:t = "damaged"
+				object_marking:i = 0
+				check_objects:t = "any"
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_type:t = "isAlive"
+				check_period:r = 1
+				object:t = "ju_52"
+			}
+		}
+		actions {
+			unitAttackTarget {
+				playerAttracted:b = true
+				object:t = "fiat_02"
+				object:t = "enemies_squad"
+				target:t = "players_squad"
+				fireRandom:b = true
+				playerAttractedCount:i = 2
+				playerAttractedEffRate:r = 1
+				fightInArea:t = "battle_area"
+				fightAreaRadius:r = 2000
+				fightAreaOuterRadius:r = 3000
+			}
+			unitAttackTarget {
+				playerAttracted:b = false
+				object:t = "allies"
+				target:t = "fiat_02"
+				target:t = "enemies_squad"
+				fireRandom:b = true
+			}
+			unitSetIndication {
+				set:b = true
+				target:t = "ju_52"
+				target:t = "fiat_02"
+				target_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+			}
+		}
+		else_actions {
+
+		}
+	}
+	ju52_near_landing_point {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitDistanceBetween {
+				value:r = 1500
+				math:t = "2D"
+				object_type:t = "isAlive"
+				target_type:t = "isAlive"
+				check_objects:t = "any"
+				check_targets:t = "any"
+				object_marking:i = 0
+				target_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object:t = "ju_52"
+				target:t = "landing_point"
+			}
+		}
+		actions {
+			unitLandOnAirfield {
+				onWater:b = false
+				runwayName:t = "airfiled_2_start"
+				"rearmOnAirfield ":b = false
+				disappearAfterLanding:b = false
+				objects:t = "ju_52"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	ju52_landed {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenOnLZ {
+				object_type:t = "isAlive"
+				object_marking:i = 0
+				check_objects:t = "any"
+				afterRepaired:b = false
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				object:t = "ju_52"
+				target:t = "airfiled_2_start"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "je52_not_landed"
+				target:t = "update_ju25_indicator"
+			}
+			moSetObjectiveStatus {
+				target:t = "dlc_divide_and_conquer_ju52"
+				status:i = 3
+				object_marking:i = 0
+				object_var_comp_op:t = "equal"
+				object_var_name:t = ""
+			}
+			missionSetTargetsIndicator {
+				target_type:t = "isAlive"
+				target_marking:i = 0
+				delta:i = 0
+				icon:t = "bomber"
+				"icon army":i = 2
+				set:b = false
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target:t = "ju_52"
+			}
+			unitSetIndication {
+				set:b = false
+				target:t = "ju_52"
+				target_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+			}
+			wait {
+				time:r = 3
+			}
+			triggerEnable {
+				target:t = "stop_ju52_on_land"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	je52_not_landed {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenStatus {
+				object_type:t = "isKilled"
+				object_marking:i = 0
+				check_objects:t = "any"
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_type:t = "isAlive"
+				check_period:r = 1
+				object:t = "ju_52"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "ju52_landed"
+				target:t = "update_ju25_indicator"
+				target:t = "ju52_near_landing_point"
+			}
+			moSetObjectiveStatus {
+				target:t = "dlc_divide_and_conquer_ju52"
+				status:i = 2
+				object_marking:i = 0
+				object_var_comp_op:t = "equal"
+				object_var_name:t = ""
+			}
+		}
+		else_actions {
+
+		}
+	}
+	fiat_01_destroyed {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isAlive"
+				object_marking:i = 0
+				func:t = "less"
+				value:i = 4
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object:t = "fiat_01"
+			}
+		}
+		actions {
+			unitWakeUp {
+				target:t = "fiat_03"
+			}
+			unitAttackTarget {
+				playerAttracted:b = true
+				object:t = "enemies_squad"
+				target:t = "players_squad"
+				fireRandom:b = true
+				playerAttractedCount:i = 2
+				playerAttractedEffRate:r = 0.8
+				fightInArea:t = "battle_area"
+				fightAreaRadius:r = 2000
+				fightAreaOuterRadius:r = 3000
+			}
+			unitAttackTarget {
+				playerAttracted:b = false
+				object:t = "allies"
+				target:t = "enemies_squad"
+				fireRandom:b = true
+				fightInArea:t = "battle_area"
+				fightAreaRadius:r = 2000
+				fightAreaOuterRadius:r = 3000
+			}
+			triggerEnable {
+				target:t = "fiat_03_destroyed"
+			}
+			unitSetIndication {
+				set:b = true
+				target:t = "enemies_squad"
+				target_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+			}
+		}
+		else_actions {
+
+		}
+	}
+	alllies_start_up {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ANY"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isAlive"
+				object_marking:i = 0
+				func:t = "less"
+				value:i = 3
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object:t = "player_wing"
+			}
+			varCompareInt {
+				var_value:t = "timer"
+				value:i = 840
+				comparasion_func:t = "less"
+			}
+		}
+		actions {
+			unitWakeUp {
+				target:t = "allies"
+			}
+			unitAttackTarget {
+				playerAttracted:b = false
+				object:t = "allies"
+				target:t = "enemies_squad"
+				fireRandom:b = true
+				fightInArea:t = "battle_area"
+				fightAreaRadius:r = 2000
+				fightAreaOuterRadius:r = 5000
+			}
+			unitAttackTarget {
+				playerAttracted:b = true
+				object:t = "enemies_squad"
+				target:t = "players_squad"
+				fireRandom:b = true
+				playerAttractedCount:i = 2
+				playerAttractedEffRate:r = 1
+				fightInArea:t = "battle_area"
+				fightAreaRadius:r = 2000
+				fightAreaOuterRadius:r = 5000
+			}
+		}
+		else_actions {
+
+		}
+	}
+	fiat_03_destroyed {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isAlive"
+				object_marking:i = 0
+				func:t = "less"
+				value:i = 4
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object:t = "fiat_03"
+			}
+		}
+		actions {
+			unitWakeUp {
+				target:t = "fiat_04"
+			}
+			unitAttackTarget {
+				playerAttracted:b = true
+				object:t = "enemies_squad"
+				target:t = "players_squad"
+				fireRandom:b = true
+				playerAttractedCount:i = 3
+				playerAttractedEffRate:r = 0.8
+				fightInArea:t = "battle_area"
+				fightAreaRadius:r = 2000
+				fightAreaOuterRadius:r = 3000
+			}
+			unitAttackTarget {
+				playerAttracted:b = false
+				object:t = "allies"
+				target:t = "enemies_squad"
+				fireRandom:b = true
+				fightInArea:t = "battle_area"
+				fightAreaRadius:r = 2000
+				fightAreaOuterRadius:r = 3000
+			}
+			triggerEnable {
+				target:t = "fiat_04_destroyed"
+			}
+			unitSetIndication {
+				set:b = true
+				target:t = "enemies_squad"
+				target_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+			}
+		}
+		else_actions {
+
+		}
+	}
+	fiat_04_destroyed {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isAlive"
+				object_marking:i = 0
+				func:t = "less"
+				value:i = 4
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object:t = "fiat_04"
+			}
+		}
+		actions {
+			unitWakeUp {
+				target:t = "fiat_05"
+			}
+			unitAttackTarget {
+				playerAttracted:b = true
+				object:t = "enemies_squad"
+				target:t = "players_squad"
+				fireRandom:b = true
+				playerAttractedCount:i = 4
+				playerAttractedEffRate:r = 0.8
+				fightInArea:t = "battle_area"
+				fightAreaRadius:r = 2000
+				fightAreaOuterRadius:r = 3000
+			}
+			unitAttackTarget {
+				playerAttracted:b = false
+				object:t = "allies"
+				target:t = "enemies_squad"
+				fireRandom:b = true
+				fightInArea:t = "battle_area"
+				fightAreaRadius:r = 2000
+				fightAreaOuterRadius:r = 3000
+			}
+			unitSetIndication {
+				set:b = true
+				target:t = "enemies_squad"
+				target_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+			}
+		}
+		else_actions {
+
+		}
+	}
+	mission_completed {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ANY"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isActive"
+				object_marking:i = 0
+				func:t = "less"
+				value:i = 1
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object:t = "enemies_squad"
+				object:t = "fiat_02"
+			}
+		}
+		actions {
+			moSetObjectiveStatus {
+				target:t = "dlc_divide_and_conquer_main"
+				status:i = 2
+				object_marking:i = 0
+				object_var_comp_op:t = "equal"
+				object_var_name:t = ""
+			}
+			wait {
+				time:r = 3
+			}
+			missionCompleted {
+				timer:b = false
+			}
+			wait {
+				time:r = 3
+			}
+			missionDebriefing {
+
+			}
+		}
+		else_actions {
+
+		}
+	}
+	check_simul {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			gameWhenDifficulty {
+				difficulty:t = "simulator"
+				is:t = "equal"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "check_real"
+			}
+			unitWakeUp {
+				target:t = "fiat_02"
+				target:t = "fiat_03"
+				target:t = "fiat_04"
+				target:t = "fiat_05"
+			}
+			wait {
+				time:r = 1
+			}
+			unitPutToSleep {
+				target:t = "fiat_01"
+				numToSleep:i = 4
+			}
+			unitPutToSleep {
+				target:t = "fiat_02"
+				numToSleep:i = 4
+			}
+			unitPutToSleep {
+				target:t = "fiat_03"
+				numToSleep:i = 4
+			}
+			unitPutToSleep {
+				target:t = "fiat_04"
+				numToSleep:i = 4
+			}
+			unitPutToSleep {
+				target:t = "fiat_05"
+				numToSleep:i = 4
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_01"
+				randomTargetsCount:i = 4
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_02"
+				randomTargetsCount:i = 4
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_03"
+				randomTargetsCount:i = 4
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_04"
+				randomTargetsCount:i = 4
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_05"
+				randomTargetsCount:i = 4
+				doExplosion:b = true
+			}
+			__unitPutToSleep {
+				target:t = "fiat_02"
+				target:t = "fiat_03"
+				target:t = "fiat_04"
+				target:t = "fiat_05"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	check_real {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			gameWhenDifficulty {
+				difficulty:t = "realistic"
+				is:t = "equal"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "check_simul"
+			}
+			unitWakeUp {
+				target:t = "fiat_02"
+				target:t = "fiat_03"
+				target:t = "fiat_04"
+				target:t = "fiat_05"
+			}
+			wait {
+				time:r = 1
+			}
+			unitPutToSleep {
+				target:t = "fiat_01"
+				numToSleep:i = 2
+			}
+			unitPutToSleep {
+				target:t = "fiat_02"
+				numToSleep:i = 2
+			}
+			unitPutToSleep {
+				target:t = "fiat_03"
+				numToSleep:i = 2
+			}
+			unitPutToSleep {
+				target:t = "fiat_04"
+				numToSleep:i = 2
+			}
+			unitPutToSleep {
+				target:t = "fiat_05"
+				numToSleep:i = 2
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_01"
+				randomTargetsCount:i = 2
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_02"
+				randomTargetsCount:i = 2
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_03"
+				randomTargetsCount:i = 2
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_04"
+				randomTargetsCount:i = 2
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_05"
+				randomTargetsCount:i = 2
+				doExplosion:b = true
+			}
+			__unitPutToSleep {
+				target:t = "fiat_02"
+				target:t = "fiat_03"
+				target:t = "fiat_04"
+				target:t = "fiat_05"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	ju52_randomizer {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			varSetRandomInt {
+				var:t = "randomizer"
+				from:i = 1
+				to_not_including:i = 5
+			}
+			triggerEnable {
+				target:t = "ju52_point_01"
+				target:t = "ju52_point_02"
+				target:t = "ju52_point_03"
+				target:t = "ju52_point_04"
+				target:t = "ju52_point_05"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	ju52_point_01 {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			varCompareInt {
+				var_value:t = "randomizer"
+				value:i = 1
+				comparasion_func:t = "equal"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "ju52_point_02"
+				target:t = "ju52_point_03"
+				target:t = "ju52_point_04"
+				target:t = "ju52_point_05"
+			}
+			unitMoveTo {
+				target:t = "ju_52_point_01"
+				follow_target:b = false
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = true
+				shouldKeepFormation:b = false
+				teleportHeightValue:r = 1000
+				horizontalDirectionForTeleport:b = true
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_var_name:t = ""
+				target_var_comp_op:t = "equal"
+				target_var_value:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				fastClimb:b = false
+				destTimeMode:b = false
+				object:t = "ju_52"
+				object:t = "fiat_02"
+				move_type:t = "teleport"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	ju52_point_02 {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			varCompareInt {
+				var_value:t = "randomizer"
+				value:i = 2
+				comparasion_func:t = "equal"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "ju52_point_01"
+				target:t = "ju52_point_03"
+				target:t = "ju52_point_04"
+				target:t = "ju52_point_05"
+			}
+			unitMoveTo {
+				target:t = "ju_52_point_02"
+				follow_target:b = false
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = true
+				shouldKeepFormation:b = false
+				teleportHeightValue:r = 1000
+				horizontalDirectionForTeleport:b = true
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_var_name:t = ""
+				target_var_comp_op:t = "equal"
+				target_var_value:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				fastClimb:b = false
+				destTimeMode:b = false
+				object:t = "ju_52"
+				object:t = "fiat_02"
+				move_type:t = "teleport"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	ju52_point_03 {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			varCompareInt {
+				var_value:t = "randomizer"
+				value:i = 3
+				comparasion_func:t = "equal"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "ju52_point_01"
+				target:t = "ju52_point_02"
+				target:t = "ju52_point_04"
+				target:t = "ju52_point_05"
+			}
+			unitMoveTo {
+				target:t = "ju_52_point_03"
+				follow_target:b = false
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = true
+				shouldKeepFormation:b = false
+				teleportHeightValue:r = 1000
+				horizontalDirectionForTeleport:b = true
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_var_name:t = ""
+				target_var_comp_op:t = "equal"
+				target_var_value:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				fastClimb:b = false
+				destTimeMode:b = false
+				object:t = "ju_52"
+				object:t = "fiat_02"
+				move_type:t = "teleport"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	ju52_point_04 {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			varCompareInt {
+				var_value:t = "randomizer"
+				value:i = 4
+				comparasion_func:t = "equal"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "ju52_point_01"
+				target:t = "ju52_point_02"
+				target:t = "ju52_point_03"
+				target:t = "ju52_point_05"
+			}
+			unitMoveTo {
+				target:t = "ju_52_point_04"
+				follow_target:b = false
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = true
+				shouldKeepFormation:b = false
+				teleportHeightValue:r = 1000
+				horizontalDirectionForTeleport:b = true
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_var_name:t = ""
+				target_var_comp_op:t = "equal"
+				target_var_value:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				fastClimb:b = false
+				destTimeMode:b = false
+				object:t = "ju_52"
+				object:t = "fiat_02"
+				move_type:t = "teleport"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	ju52_point_05 {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			varCompareInt {
+				var_value:t = "randomizer"
+				value:i = 5
+				comparasion_func:t = "equal"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "ju52_point_01"
+				target:t = "ju52_point_02"
+				target:t = "ju52_point_03"
+				target:t = "ju52_point_04"
+			}
+			unitMoveTo {
+				target:t = "ju_52_point_05"
+				follow_target:b = false
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = true
+				shouldKeepFormation:b = false
+				teleportHeightValue:r = 1000
+				horizontalDirectionForTeleport:b = true
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object_var_value:i = 0
+				target_var_name:t = ""
+				target_var_comp_op:t = "equal"
+				target_var_value:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				fastClimb:b = false
+				destTimeMode:b = false
+				object:t = "ju_52"
+				object:t = "fiat_02"
+				move_type:t = "teleport"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	stop_ju52_on_land {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = true
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			unitSetControls {
+				controls:t = "power"
+				value:r = 0
+				force:b = true
+				objects:t = "ju_52"
+			}
+			unitSetControls {
+				controls:t = "airbrake"
+				value:r = 100
+				force:b = true
+				objects:t = "ju_52"
+			}
+			unitSetProperties {
+				object:t = "ju_52"
+				speed:r = 0
+				lockSpeed:b = true
+				cannotMove:b = true
+				aiEnabled:b = false
+				enginesEnabled:b = false
+				takeoffPermission:b = false
+			}
+		}
+		else_actions {
+
+		}
+	}
+	check1_ppl {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isOnline"
+				object_marking:i = 0
+				func:t = "less"
+				value:i = 2
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object:t = "player_wing"
+			}
+		}
+		actions {
+			unitWakeUp {
+				target:t = "fiat_02"
+				target:t = "fiat_03"
+				target:t = "fiat_04"
+				target:t = "fiat_05"
+			}
+			unitPutToSleep {
+				target:t = "fiat_01"
+				numToSleep:i = 6
+			}
+			unitPutToSleep {
+				target:t = "fiat_02"
+				numToSleep:i = 6
+			}
+			unitPutToSleep {
+				target:t = "fiat_03"
+				numToSleep:i = 6
+			}
+			unitPutToSleep {
+				target:t = "fiat_04"
+				numToSleep:i = 6
+			}
+			unitPutToSleep {
+				target:t = "fiat_05"
+				numToSleep:i = 6
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_01"
+				randomTargetsCount:i = 6
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_02"
+				randomTargetsCount:i = 6
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_03"
+				randomTargetsCount:i = 6
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_04"
+				randomTargetsCount:i = 6
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_05"
+				randomTargetsCount:i = 6
+				doExplosion:b = true
+			}
+			__unitPutToSleep {
+				target:t = "fiat_02"
+				target:t = "fiat_03"
+				target:t = "fiat_04"
+				target:t = "fiat_05"
+			}
+			__triggerEnable {
+				target:t = "hide_dead"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	check2_ppl {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isOnline"
+				object_marking:i = 0
+				func:t = "equal"
+				value:i = 2
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object:t = "player_wing"
+			}
+		}
+		actions {
+			unitWakeUp {
+				target:t = "fiat_02"
+				target:t = "fiat_03"
+				target:t = "fiat_04"
+				target:t = "fiat_05"
+			}
+			unitPutToSleep {
+				target:t = "fiat_01"
+				numToSleep:i = 4
+			}
+			unitPutToSleep {
+				target:t = "fiat_02"
+				numToSleep:i = 4
+			}
+			unitPutToSleep {
+				target:t = "fiat_03"
+				numToSleep:i = 4
+			}
+			unitPutToSleep {
+				target:t = "fiat_04"
+				numToSleep:i = 4
+			}
+			unitPutToSleep {
+				target:t = "fiat_05"
+				numToSleep:i = 4
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_01"
+				randomTargetsCount:i = 4
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_02"
+				randomTargetsCount:i = 4
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_03"
+				randomTargetsCount:i = 4
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_04"
+				randomTargetsCount:i = 4
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_05"
+				randomTargetsCount:i = 4
+				doExplosion:b = true
+			}
+			__unitPutToSleep {
+				target:t = "fiat_02"
+				target:t = "fiat_03"
+				target:t = "fiat_04"
+				target:t = "fiat_05"
+			}
+			__triggerEnable {
+				target:t = "hide_dead"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	check3_ppl {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isOnline"
+				object_marking:i = 0
+				func:t = "equal"
+				value:i = 3
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				object:t = "player_wing"
+			}
+		}
+		actions {
+			unitWakeUp {
+				target:t = "fiat_02"
+				target:t = "fiat_03"
+				target:t = "fiat_04"
+				target:t = "fiat_05"
+			}
+			unitPutToSleep {
+				target:t = "fiat_01"
+				numToSleep:i = 2
+			}
+			unitPutToSleep {
+				target:t = "fiat_02"
+				numToSleep:i = 2
+			}
+			unitPutToSleep {
+				target:t = "fiat_03"
+				numToSleep:i = 2
+			}
+			unitPutToSleep {
+				target:t = "fiat_04"
+				numToSleep:i = 2
+			}
+			unitPutToSleep {
+				target:t = "fiat_05"
+				numToSleep:i = 2
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_01"
+				randomTargetsCount:i = 2
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_02"
+				randomTargetsCount:i = 2
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_03"
+				randomTargetsCount:i = 2
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_04"
+				randomTargetsCount:i = 2
+				doExplosion:b = true
+			}
+			__unitDamage {
+				part:i = 1
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "fiat_05"
+				randomTargetsCount:i = 2
+				doExplosion:b = true
+			}
+			__unitPutToSleep {
+				target:t = "fiat_02"
+				target:t = "fiat_03"
+				target:t = "fiat_04"
+				target:t = "fiat_05"
+			}
+			__triggerEnable {
+				target:t = "hide_dead"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	hide_dead {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isKilled"
+				object_marking:i = 0
+				object_var_name:t = ""
+				object_var_comp_op:t = "equal"
+				func:t = "more"
+				value:i = 0
+				object:t = "enemies_squad"
+			}
+		}
+		actions {
+			unitPutToSleep {
+				target:t = "enemies_squad"
+				useForTriggerFiltered:b = true
+			}
+		}
+		else_actions {
+
+		}
+	}
+}
+mission_objectives {
+	isCategory:b = true
+	is_enabled:b = true
+	dlc_divide_and_conquer_waypoint {
+		is_enabled:b = false
+		comments:t = ""
+		type:t = "abstractMissionObjective"
+		props {
+			isPrimary:b = true
+			timeLimit:i = 3600
+			scoreConst:i = 100
+			scoreTime:i = 400
+		}
+		onSuccess {
+
+		}
+		onFailed {
+
+		}
+	}
+	dlc_divide_and_conquer_main {
+		is_enabled:b = false
+		comments:t = ""
+		type:t = "abstractMissionObjective"
+		props {
+			isPrimary:b = true
+			timeLimit:i = 3600
+			scoreConst:i = 100
+			scoreTime:i = 400
+		}
+		onSuccess {
+
+		}
+		onFailed {
+
+		}
+	}
+	dlc_divide_and_conquer_bf109 {
+		is_enabled:b = false
+		comments:t = ""
+		type:t = "abstractMissionObjective"
+		props {
+			isPrimary:b = false
+			timeLimit:i = 3600
+			scoreConst:i = 100
+			scoreTime:i = 400
+		}
+		onSuccess {
+
+		}
+		onFailed {
+
+		}
+	}
+	dlc_divide_and_conquer_ju52 {
+		is_enabled:b = false
+		comments:t = ""
+		type:t = "abstractMissionObjective"
+		props {
+			isPrimary:b = false
+			timeLimit:i = 3600
+			scoreConst:i = 100
+			scoreTime:i = 400
+		}
+		onSuccess {
+
+		}
+		onFailed {
+
+		}
+	}
+}
+variables {
+	timer:i = 900
+	randomizer:i = 1
+}
+dialogs {
+
+}
+airfields {
+
+}
+effects {
+
+}
+units {
+	armada {
+		name:t = "player_wing"
+		tm:m = [[-0.991445, 0.0, -0.130526] [0.0, 1.0, 0.0] [0.130526, 0.0, -0.991445] [918.45, 2418.9, 15067.0]]
+		unit_class:t = "p-51b"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = "P_51B_default"
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 4
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "fiat_01"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-11879.3, 1451.0, 15296.8]]
+		unit_class:t = "mc-202_italy"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = "MC202_default"
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 12
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			numInWing:i = 2
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "fiat_02"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-15250.5, 1329.0, 15695.5]]
+		unit_class:t = "mc-202_italy"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = "MC202_default"
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 8
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			numInWing:i = 2
+			isDelayed:b = true
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 2
+				super_col_distances:r = 2
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "ju_52"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-15272.2, 1268.95, 15695.5]]
+		unit_class:t = "ju-52"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = "Ju52_default"
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			numInWing:i = 4
+			isDelayed:b = true
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "germ_aaa_01"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-11299.9, 46.45, 15959.8]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "germ_aaa_02"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-11299.9, 46.45, 15227.3]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "germ_aaa_03"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-10104.6, 46.45, 15227.3]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "germ_aaa_04"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-10104.7, 46.45, 16014.7]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "germ_aaa_05"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-10749.5, 46.45, 15227.3]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	air_defence {
+		name:t = "germ_aaa_06"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-10749.5, 46.45, 16034.9]]
+		unit_class:t = "germ_88mm_flak36"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			uniqueName:t = ""
+			attack_type:t = "fire_at_will"
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "germ_aaa_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-11523.4, 29.85, 15617.7]]
+		props {
+			squad_members:t = "germ_aaa_01"
+			squad_members:t = "germ_aaa_02"
+			squad_members:t = "germ_aaa_03"
+			squad_members:t = "germ_aaa_04"
+			squad_members:t = "germ_aaa_05"
+			squad_members:t = "germ_aaa_06"
+		}
+	}
+	armada {
+		name:t = "bf_019_01"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-11175.5, 453.0, 15664.6]]
+		unit_class:t = "bf-109g-2"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = "Bf-109G-2_default"
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 4
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			numInWing:i = 2
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "fiat_03"
+		tm:m = [[0.67559, 0.0, -0.737277] [0.0, 1.0, 0.0] [0.737277, 0.0, 0.67559] [-13773.4, 2451.0, 18784.1]]
+		unit_class:t = "mc-202_italy"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = "MC202_default"
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 12
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			numInWing:i = 2
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "allies"
+		tm:m = [[-0.991445, 0.0, -0.130526] [0.0, 1.0, 0.0] [0.130526, 0.0, -0.991445] [-5331.2, 2418.9, 15556.8]]
+		unit_class:t = "spitfire_ix"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = "SpitfireIX_default"
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 6
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			numInWing:i = 2
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "enemies_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-11365.5, 49.75, 11851.8]]
+		props {
+			squad_members:t = "fiat_01"
+			squad_members:t = "fiat_03"
+			squad_members:t = "fiat_04"
+			squad_members:t = "fiat_05"
+			squad_members:t = "fiat_for_airfield"
+			squad_members:t = "bf_019_01"
+		}
+	}
+	squad {
+		name:t = "players_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-10100.0, 40.05, 11573.7]]
+		props {
+			squad_members:t = "player_wing"
+			squad_members:t = "allies"
+		}
+	}
+	armada {
+		name:t = "fiat_04"
+		tm:m = [[0.461749, 0.0, 0.887011] [0.0, 1.0, 0.0] [-0.887011, 0.0, 0.461749] [-13482.0, 2451.0, 11768.5]]
+		unit_class:t = "mc-202_italy"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = "MC202_default"
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 8
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			numInWing:i = 2
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 2
+				super_col_distances:r = 2
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "fiat_05"
+		tm:m = [[-0.766044, 0.0, 0.642788] [0.0, 1.0, 0.0] [-0.642788, 0.0, -0.766044] [-6915.35, 2451.0, 11189.5]]
+		unit_class:t = "mc-202_italy"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = "MC202_default"
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 8
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			numInWing:i = 2
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "fiat_for_airfield"
+		tm:m = [[0.67559, 0.0, -0.737277] [0.0, 1.0, 0.0] [0.737277, 0.0, 0.67559] [-13773.4, 3051.5, 18784.1]]
+		unit_class:t = "mc-202_italy"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = "MC202_default"
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 2
+			count:i = 4
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	objectGroups {
+		name:t = "airfield"
+		tm:m = [[-0.999491, 0.0, -0.0319127] [0.0, 1.0, 0.0] [0.0319127, 0.0, -0.999491] [-10038.6, 50.15, 15545.4]]
+		unit_class:t = "dynaf_universal_1line_d_big"
+		objLayer:i = 2
+		props {
+			army:i = 2
+			active:b = true
+		}
+	}
+}
+areas {
+	airfield_point {
+		type:t = "Point"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-11683.0, 1450.0, 15713.7]]
+		props {
+
+		}
+	}
+	airfield_waypoint {
+		type:t = "Point"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-7819.35, 1450.0, 15682.5]]
+		props {
+
+		}
+	}
+	battle_area {
+		type:t = "Sphere"
+		tm:m = [[5837.4, 0.0, 0.0] [0.0, 5837.4, 0.0] [0.0, 0.0, 5837.4] [-10981.4, 53.0, 15792.4]]
+		props {
+
+		}
+	}
+	ju_52_point_01 {
+		type:t = "Point"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-16639.4, 800.0, 21260.8]]
+		props {
+
+		}
+	}
+	ju_52_point_02 {
+		type:t = "Point"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-17728.4, 800.0, 15596.3]]
+		props {
+
+		}
+	}
+	ju_52_point_03 {
+		type:t = "Point"
+		tm:m = [[0.887011, 0.0, 0.461749] [0.0, 1.0, 0.0] [-0.461749, 0.0, 0.887011] [-15955.4, 800.0, 10703.8]]
+		props {
+
+		}
+	}
+	ju_52_point_04 {
+		type:t = "Point"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-11771.9, 800.0, 23118.2]]
+		props {
+
+		}
+	}
+	ju_52_point_05 {
+		type:t = "Point"
+		tm:m = [[0.887011, 0.0, 0.461749] [0.0, 1.0, 0.0] [-0.461749, 0.0, 0.887011] [-12626.3, 800.0, 9127.05]]
+		props {
+
+		}
+	}
+	landing_point {
+		type:t = "Point"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-12766.2, 200.0, 15686.0]]
+		props {
+
+		}
+	}
+	airfiled_2_start {
+		type:t = "Sphere"
+		tm:m = [[102.4, 0.0, 0.0] [0.0, 102.4, 0.0] [0.0, 0.0, 102.4] [-10941.7, 57.35, 15618.0]]
+		objLayer:i = 0
+		props {
+
+		}
+	}
+	airfiled_2_end {
+		type:t = "Sphere"
+		tm:m = [[102.4, 0.0, 0.0] [0.0, 102.4, 0.0] [0.0, 0.0, 102.4] [-9425.45, 57.35, 15648.3]]
+		objLayer:i = 0
+		props {
+
+		}
+	}
+	airfiled_2_spawn_01 {
+		type:t = "Sphere"
+		tm:m = [[102.4, 0.0, 0.0] [0.0, 102.4, 0.0] [0.0, 0.0, 102.4] [-10896.7, 57.35, 15618.0]]
+		objLayer:i = 0
+		props {
+
+		}
+	}
+}
+objLayers {
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+}
+wayPoints {
+
 }

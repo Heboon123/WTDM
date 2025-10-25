@@ -28,7 +28,7 @@ let { buyUnlock } = require("%scripts/unlocks/unlocksAction.nut")
 let purchaseConfirmation = require("%scripts/purchase/purchaseConfirmationHandler.nut")
 let { warningIfGold } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { checkBalanceMsgBox } = require("%scripts/user/balanceFeatures.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
+let { findItemById } = require("%scripts/items/itemsManagerModule.nut")
 let { itemsShopListVersion, inventoryListVersion } = require("%scripts/items/itemsManagerState.nut")
 let { getPrizeText, getPrizeTypeName } = require("%scripts/items/prizesView.nut")
 
@@ -48,31 +48,31 @@ let findExchangeItem = @(battlePassUnlockExchangeId) findItemById(
   to_integer_safe(battlePassUnlockExchangeId ?? -1, battlePassUnlockExchangeId ?? -1, false))
 
 
-let canUpdateConfig = Computed(@() isProfileReceived.value && !isInBattleState.value)
+let canUpdateConfig = Computed(@() isProfileReceived.get() && !isInBattleState.get())
 
 let seasonShopConfig = Computed(function(prev) {
-  if (prev != FRP_INITIAL && !canUpdateConfig.value)
+  if (prev != FRP_INITIAL && !canUpdateConfig.get())
     return prev
-  else if (prev == FRP_INITIAL && !canUpdateConfig.value)
+  else if (prev == FRP_INITIAL && !canUpdateConfig.get())
     return {}
 
-  let checkItemsShopListVersion = itemsShopListVersion.value 
-  let checkInventoryListVersion = inventoryListVersion.value 
+  let checkItemsShopListVersion = itemsShopListVersion.get() 
+  let checkInventoryListVersion = inventoryListVersion.get() 
   return {
-    purchaseWndItems = battlePassShopConfig.value ?? []
-    seasonId = season.value
+    purchaseWndItems = battlePassShopConfig.get() ?? []
+    seasonId = season.get()
   }
 })
 
-let seenBattlePassShopRows = Computed(@() (seasonShopConfig.value?.purchaseWndItems ?? [])
+let seenBattlePassShopRows = Computed(@() (seasonShopConfig.get()?.purchaseWndItems ?? [])
   .map(function(config) {
     let { battlePassUnlock = "", additionalTrophy = [], battlePassUnlockExchangeId = null } = config
-    if (battlePassUnlockExchangeId != null && (hasBattlePass.value || !canExchangeItem(findExchangeItem(battlePassUnlockExchangeId))))
+    if (battlePassUnlockExchangeId != null && (hasBattlePass.get() || !canExchangeItem(findExchangeItem(battlePassUnlockExchangeId))))
       return ""
 
     let additionalTrophyItems = getSortedAdditionalTrophyItems(additionalTrophy)
     if (battlePassUnlock != "" || battlePassUnlockExchangeId != null)
-      return hasBattlePass.value ? ""
+      return hasBattlePass.get() ? ""
         : $"{battlePassUnlockExchangeId ?? battlePassUnlock}_{additionalTrophyItems?[0].id ?? ""}"
 
     return $"{getAdditionalTrophyItemForBuy(additionalTrophyItems)?.id ?? ""}"
@@ -80,7 +80,7 @@ let seenBattlePassShopRows = Computed(@() (seasonShopConfig.value?.purchaseWndIt
   .filter(@(name) name != "")
 )
 
-let markRowsSeen = @() seenBattlePassShop.markSeen(seenBattlePassShopRows.value)
+let markRowsSeen = @() seenBattlePassShop.markSeen(seenBattlePassShopRows.get())
 
 function onSeenBpShopChanged() {
   seenBattlePassShop.setDaysToUnseen(SEEN_OUT_OF_DATE_DAYS)
@@ -93,7 +93,7 @@ addListenersWithoutEnv({
   ProfileUpdated   = @(_p) onSeenBpShopChanged()
 }, g_listener_priority.CONFIG_VALIDATION)
 
-seenBattlePassShop.setListGetter(@() seenBattlePassShopRows.value)
+seenBattlePassShop.setListGetter(@() seenBattlePassShopRows.get())
 
 local BattlePassShopWnd = class (gui_handlers.BaseGuiHandlerWT) {
   wndType = handlerType.MODAL
@@ -104,7 +104,7 @@ local BattlePassShopWnd = class (gui_handlers.BaseGuiHandlerWT) {
   hasBuyImprovedBattlePass = false
 
   function initScreen() {
-    if ((seasonShopConfig.value?.purchaseWndItems ?? []).len() == 0)
+    if ((seasonShopConfig.get()?.purchaseWndItems ?? []).len() == 0)
       return this.goBack()
 
     this.updateWindow()
@@ -130,7 +130,7 @@ local BattlePassShopWnd = class (gui_handlers.BaseGuiHandlerWT) {
     foreach (idx, config in shopConfig.purchaseWndItems) {
       let { battlePassUnlock = "", additionalTrophy = [], battlePassUnlockExchangeId = null } = config
       let passExchangeItem = findExchangeItem(battlePassUnlockExchangeId)
-      if (battlePassUnlockExchangeId != null && (hasBattlePass.value || !canExchangeItem(passExchangeItem)))
+      if (battlePassUnlockExchangeId != null && (hasBattlePass.get() || !canExchangeItem(passExchangeItem)))
         continue
 
       let passUnlock = getUnlockById(battlePassUnlock)
@@ -181,7 +181,7 @@ local BattlePassShopWnd = class (gui_handlers.BaseGuiHandlerWT) {
     let contentObj = this.scene.findObject("wnd_content")
     let data = handyman.renderCached(("%gui/onlineShop/onlineShopWithVisualRow.tpl"), {
       chImages = "#ui/onlineShop/battle_pass_header.ddsx"
-      descText = loc("battlePass/buy/desc", { count = maxSeasonLvl.value })
+      descText = loc("battlePass/buy/desc", { count = maxSeasonLvl.get() })
       rows = rowsView
     })
     this.guiScene.replaceContentFromText(contentObj, data, data.len(), this)
@@ -196,7 +196,7 @@ local BattlePassShopWnd = class (gui_handlers.BaseGuiHandlerWT) {
     || (goodsConfig.battlePassUnlock?.id != null && isUnlockOpened(goodsConfig.battlePassUnlock.id))
 
   isGoodsBought = @(goodsConfig) goodsConfig.hasBattlePassUnlock
-    && (hasBattlePass.value || this.hasOpenedPassUnlock(goodsConfig))
+    && (hasBattlePass.get() || this.hasOpenedPassUnlock(goodsConfig))
 
   function buyGood(goodsConfig) {
     let { additionalTrophyItem, battlePassUnlock, rowIdx } = goodsConfig
@@ -328,7 +328,7 @@ local BattlePassShopWnd = class (gui_handlers.BaseGuiHandlerWT) {
 gui_handlers.BattlePassShopWnd <- BattlePassShopWnd
 
 function openBattlePassShopWnd() {
-  if (isUserstatMissingData.value) {
+  if (isUserstatMissingData.get()) {
     showInfoMsgBox(loc("userstat/missingDataMsg"), "userstat_missing_data_msgbox")
     return
   }

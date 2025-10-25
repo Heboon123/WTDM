@@ -241,7 +241,7 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
     this.markAwardSeen(award)
     this.fillItemDesc(award)
     this.fillCommonDesc(award)
-    showObjById("jumpToDescPanel", showConsoleButtons.value && award != null, this.scene)
+    showObjById("jumpToDescPanel", showConsoleButtons.get() && award != null, this.scene)
     this.updateButtons()
   }
 
@@ -265,8 +265,11 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
     )
 
     showObjById("btn_preview", (award?.canPreview() ?? false) && isInMenu.get(), this.scene)
-
     let mainActionBtn = showObjById("btn_main_action", award != null, this.scene)
+
+    let trophy = award?.blk.type == "trophy" ? award.awardType.getDescItem(award.blk) : null
+    showObjById("btn_probability_info", (trophy?.needProbabilityInfoBtn() ?? false), this.scene)
+
     if (!award)
       return
 
@@ -470,7 +473,7 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onJumpToDescPanelAccessKey(_obj) {
-    if (!showConsoleButtons.value)
+    if (!showConsoleButtons.get())
       return
     let containerObj = this.scene.findObject("item_info_nest")
     if (checkObj(containerObj) && containerObj.isHovered())
@@ -480,7 +483,7 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onItemHover(obj) {
-    if (!showConsoleButtons.value)
+    if (!showConsoleButtons.get())
       return
     let wasMouseMode = this.isMouseMode
     this.updateMouseMode()
@@ -508,6 +511,12 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
       award.doPreview()
   }
 
+  function onProbabilityInfoBtn(_obj) {
+    let award = this.getCurAward()
+    let trophy = award?.blk.type == "trophy" ? award.awardType.getDescItem(award.blk) : null
+    trophy?.openProbabilityInfo()
+  }
+
   
   function onToShopButton(_obj) {}
   function onToMarketplaceButton(_obj) {}
@@ -516,7 +525,7 @@ gui_handlers.WarbondsShop <- class (gui_handlers.BaseGuiHandlerWT) {
   function onAltAction(_obj) {}
   function onChangeSortOrder(_obj) {}
   onChangeSortParam = @(_obj) null
-  updateMouseMode = @() this.isMouseMode = !showConsoleButtons.value || is_mouse_last_time_used()
+  updateMouseMode = @() this.isMouseMode = !showConsoleButtons.get() || is_mouse_last_time_used()
   function updateShowItemButton() {
     let listObj = this.getItemsListObj()
     if (listObj?.isValid())

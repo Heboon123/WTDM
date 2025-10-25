@@ -16,19 +16,19 @@ function subscribeOperationNotify(operationId, successCallback = null, errorCall
 }
 
 function unsubscribeCurOperation() {
-  if (curSubscribeOperationId.value == -1)
+  if (curSubscribeOperationId.get() == -1)
     return
 
-  unsubscribeOperationNotify(curSubscribeOperationId.value)
-  curSubscribeOperationId(-1)
+  unsubscribeOperationNotify(curSubscribeOperationId.get())
+  curSubscribeOperationId.set(-1)
 }
 
 function subscribeOperationNotifyOnce(operationId, successCallback = null, errorCallback = null, requestOptions = null) {
-  if (operationId == curSubscribeOperationId.value)
+  if (operationId == curSubscribeOperationId.get())
     return
 
   unsubscribeCurOperation()
-  curSubscribeOperationId(operationId)
+  curSubscribeOperationId.set(operationId)
   subscribeOperationNotify(operationId, successCallback, errorCallback, requestOptions)
 }
 

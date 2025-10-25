@@ -218,10 +218,11 @@ function getMapsListImpl(curEvent) {
   }
 
   if (assertMisNames.len() > 0) {
-    let invalidMissions = assertMisNames.reduce(@(a, b) $"{a}, {b}") 
+    let invalidMissions = assertMisNames.reduce(@(a, b) $"{a}, {b}")
     debug_dump_stack()
     logerr("".concat("MapPreferencesParams: Some missions have no level to show map preferences.",
-      "Ask designers to check missions from invalidMissions callstack variable in matching configs"))
+      "Ask designers to check missions from invalidMissions callstack variable in matching configs",
+      $" /*invalidMissions = {invalidMissions}*/"))
   }
 
   if (!isLevelBanMode)
@@ -261,21 +262,21 @@ function getCounters(curEvent) {
   let banData = getProfileBanData(curEvent)
   return {
     banned = {
-      maxCounter = havePremium.value
+      maxCounter = havePremium.get()
         ? curEvent?.maxBannedMissions ?? 0
         : 0,
       maxCounterWithPremium = curEvent?.maxBannedMissions ?? 0
       curCounter = banData.banned.len()
     },
     disliked = {
-      maxCounter = havePremium.value
+      maxCounter = havePremium.get()
         ? curEvent?.maxPremDislikedMissions ?? 0
         : curEvent?.maxDislikedMissions ?? 0,
       maxCounterWithPremium = curEvent?.maxPremDislikedMissions ?? 0
       curCounter = banData.disliked.len()
     },
     liked = {
-      maxCounter = havePremium.value
+      maxCounter = havePremium.get()
         ? curEvent?.maxPremLikedMissions ?? 0
         : curEvent?.maxLikedMissions ?? 0,
       maxCounterWithPremium = curEvent?.maxPremLikedMissions ?? 0

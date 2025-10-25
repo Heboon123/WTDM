@@ -189,7 +189,7 @@ HorizontalListBox > shopFilter {
 }
 
 .countries > shopFilter {
-  width:1.5h;
+  width:1.16h;
   height: 0.1@sf;
   flow:vertical;
   padding:0,0;
@@ -491,11 +491,17 @@ shopFilterImg {
   input-transparent:yes;
 }
 
+shopFilterImg[isCountryIcon=yes]{
+  size:@cIco, 0.66@cIco;
+  background-svg-size:@cIco, 0.66@cIco;
+}
+
 shopFilter > shopFilterImg[isLeftAligned=yes] {
   pos:0, 50%ph-50%h;
 }
 
-:hover > shopFilterImg {
+:hover > shopFilterImg,
+:hover > flagImageHolder > img {
   background-color:@listboxHoverTextColor;
 }
 
@@ -509,6 +515,10 @@ shopFilter > shopFilterImg[isLeftAligned=yes] {
   width:pw;
   height:ph - @shopFilterTextCountryHeight;
   background-svg-size:pw, ph - @shopFilterTextCountryHeight;
+  background-color:@imageNotSelCountryColor;
+}
+
+.countries > shopFilter > flagImageHolder > img {
   background-color:@imageNotSelCountryColor;
 }
 
@@ -538,7 +548,8 @@ shopFilter > shopFilterImg[isLeftAligned=yes] {
   background-svg-size:164@sf/@pf, 86@sf/@pf;
 }
 
-shopFilter[selected=yes] > shopFilterImg {
+shopFilter[selected=yes] > shopFilterImg,
+shopFilter[selected=yes] > flagImageHolder > img {
   background-color:@white;
 }
 
@@ -698,15 +709,6 @@ slotsCountryText {
   font:@fontNormal;
   color:@minorTextColor;
 }
-activateSelect[isShort=no] > shopFilter.slotsHeader {
-  tooltip:'';
-}
-activateSelect[isShort=yes] slotsCountryText.short {
-  display: show;
-}
-activateSelect[isShort=yes] slotsCountryText.full {
-  display: hide;
-}
 
 shopFilter[selected=yes] > slotsCountryText,
 shopFilter[chosen=yes] > slotsCountryText {
@@ -714,6 +716,25 @@ shopFilter[chosen=yes] > slotsCountryText {
 }
 shopFilter:disabled > slotsCountryText {
   color:@itemLockedColor;
+}
+
+countryItem {
+  padding-left: 1@blockInterval;
+  css-hier-invalidate: yes;
+  height: @buttonHeight;
+}
+
+countryItem:hover {
+  background-color: @listboxHoverOptionColor;
+}
+
+countryItem[selected=yes] {
+  background-color: @listboxSelOptionColor;
+}
+
+countryItem:hover > textareaNoTab,
+countryItem[selected=yes] > textareaNoTab {
+  color: @activeTextColor;
 }
 
 shopFilter.slotsHeader:disabled > img {

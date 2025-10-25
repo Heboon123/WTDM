@@ -21,7 +21,7 @@ let shopTree = require("%scripts/shop/shopTree.nut")
 let shopSearchBox = require("%scripts/shop/shopSearchBox.nut")
 let slotActions = require("%scripts/slotbar/slotActions.nut")
 let { buy, research, canSpendGoldOnUnitWithPopup, buyUnit } = require("%scripts/unit/unitActions.nut")
-let { topMenuHandler, topMenuShopActive } = require("%scripts/mainmenu/topMenuStates.nut")
+let { topMenuHandler, topMenuShopActive, unitToShowInShop } = require("%scripts/mainmenu/topMenuStates.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
 let { placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { getStatusTbl, getTimedStatusTbl, updateCellStatus, updateCellTimedStatus, initCell, getUnitRankText, expNewNationBonusDailyBattleCount
@@ -52,7 +52,7 @@ let { getEsUnitType } = require("%scripts/unit/unitParams.nut")
 let { canResearchUnit, isUnitGroup, isGroupPart, isUnitBroken, isUnitResearched
 } = require("%scripts/unit/unitStatus.nut")
 let { isUnitGift, isUnitBought } = require("%scripts/unit/unitShopInfo.nut")
-let { checkForResearch } = require("%scripts/unit/unitChecks.nut")
+let { checkForResearch, updateUnitAfterSwitchMod } = require("%scripts/unit/unitChecks.nut")
 let { get_ranks_blk } = require("blkGetters")
 let { addTask } = require("%scripts/tasker.nut")
 let { showUnitGoods } = require("%scripts/onlineShop/onlineShopModel.nut")
@@ -76,6 +76,8 @@ let { haveAnyUnitDiscount, getUnitDiscount } = require("%scripts/discounts/disco
 let { generateDiscountInfo } = require("%scripts/discounts/discountUtils.nut")
 let { unitNews, openUnitNews, openUnitEventNews } = require("%scripts/changelog/changeLogState.nut")
 
+const tabsWidthStyles = ["normal", "short"]
+
 local lastUnitType = null
 
 const OPEN_RCLICK_UNIT_MENU_AFTER_SELECT_TIME = 500 
@@ -83,6 +85,21 @@ const OPEN_RCLICK_UNIT_MENU_AFTER_SELECT_TIME = 500
 const LOCAL_RANK_COLLAPSED_STATE_ID = "savedCollapsedRankState" 
 const CONTAINER_COLLAPSE_BTN_COUNT = 1
 const BONUS_TOP_UNITS_PLATE_PADDING = "0.75@shop_height"
+
+let unitIconByTag = {}
+
+function initUnitIconByTag() {
+  foreach (unitType in unitTypes.types)
+    unitIconByTag[unitType.armyId] <- unitType.testFlightIcon
+}
+
+function getUnitIconByTag(armiId) {
+  if (!unitIconByTag.len())
+    initUnitIconByTag()
+  return unitIconByTag?[armiId] ?? ""
+}
+
+let getTabImageParams = @(tabId) $"id:t='{tabId}_icon'; display:t='hide'; background-image:t=''"
 
 let armyDataByPageName = {
   aviation = {
@@ -105,6 +122,7 @@ let armyDataByPageName = {
     id = ES_UNIT_TYPE_BOAT
     locString = "mainmenu/boats"
   }
+
 
 
 
@@ -163,7 +181,12 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   shopData = null
   slotbarActions = [
     "research", "researchCrossPromo", "find_in_market", "use_coupon", "buy", "go_to_event", "take", "add_to_wishlist", "go_to_wishlist", "sec_weapons", "weapons",
-    "showroom", "testflight", "crew", "goto_unlock", "info", "repair"
+    "showroom",
+
+
+
+
+    "testflight", "crew", "goto_unlock", "info", "repair"
   ]
   shopResearchMode = false
   setResearchManually = true
@@ -196,7 +219,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       this.cachedRankCollapsedState.setFrom(savedColalapsedData)
 
     if (!this.curAirName.len()) {
-      this.curCountry = profileCountrySq.value
+      this.curCountry = profileCountrySq.get()
       let unit = getAircraftByName(hangar_get_current_unit_name())
       if (unit && unit.shopCountry == this.curCountry)
         this.curAirName = unit.name
@@ -217,6 +240,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
     this.fillPagesListBox()
     this.initSearchBox()
+    this.updateTabsVisualStyle()
     this.skipOpenGroup = false
   }
 
@@ -256,7 +280,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function isSceneActive() {
     return base.isSceneActive()
-           && (this.wndType != handlerType.CUSTOM || topMenuShopActive.value)
+           && (this.wndType != handlerType.CUSTOM || topMenuShopActive.get())
   }
 
   function canResearchHelicoptersOfCurCountry() {
@@ -475,7 +499,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     let unitName = obj.holderId
     guiStartProfile({
       initialSheet = "UnlockAchievement"
-      curAchievementGroupName = getUnlockIdByUnitName(unitName, this.getCurrentEdiff())
+      initialUnlockId = getUnlockIdByUnitName(unitName, this.getCurrentEdiff())
     })
   }
 
@@ -1263,7 +1287,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if ((unitObj?.isValid() ?? false) && unitObj.isVisible()) 
       this.updateUnitItem(unit, unitObj)
 
-    ::updateAirAfterSwitchMod(unit)
+    updateUnitAfterSwitchMod(unit)
 
     if (!isUnitGroup(unit) && isGroupPart(unit))
       this.updateGroupItem(unit.group)
@@ -1416,6 +1440,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   function fillPagesListBoxNoOpenGroup() {
     this.skipOpenGroup = true
     this.fillPagesListBox()
+    this.updateTabsVisualStyle()
     this.skipOpenGroup = false
   }
 
@@ -1447,6 +1472,8 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
         view.tabs.append({
           id = name
           tabName = $"#mainmenu/{name}"
+          tabImage = ""
+          tabImageParam = getTabImageParams(name)
           discount = {
             discountId = this.getDiscountIconTabId(countryData.name, name)
           }
@@ -1472,6 +1499,45 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     this.updateDiscountIconsOnTabs()
 
     pagesObj.setValue(curIdx)
+  }
+
+  function updateTabsAppearance(pagesObj, widthStyle) {
+    let tabsCount = pagesObj.childrenCount()
+    let isNormalWidth = widthStyle == "normal"
+    for (local i = 0; i < tabsCount; i++) {
+      let tabObj = pagesObj.getChild(i)
+      let tabId = tabObj.id
+      let tabTextObj = tabObj.findObject($"{tabId}_text")
+      let tabIconObj = tabObj.findObject($"{tabId}_icon")
+      if (!tabTextObj?.isValid() || !tabIconObj?.isValid())
+        continue
+      tabTextObj.setValue(isNormalWidth ? loc($"mainmenu/{tabId}") : "")
+      tabIconObj.show(!isNormalWidth)
+      tabIconObj["background-image"] = isNormalWidth ? "" : getUnitIconByTag(tabId)
+      tabObj.tooltip = isNormalWidth ? "" : loc($"mainmenu/{tabId}")
+    }
+  }
+
+  function isTabsAndSearchBoxNotOverlap() {
+    let shopHeaderTextObj = this.scene.findObject("shop_header")
+    let pagesHeaderLeft = shopHeaderTextObj.getPosRC()[0]
+    let pagesHeaderWidth = shopHeaderTextObj.getSize()[0]
+    let searchBoxLeft = this.scene.findObject("shop_search_box").getPosRC()[0]
+
+    let additionalGap = to_pixels("1@blockInterval")
+    let gap = searchBoxLeft - (pagesHeaderLeft + pagesHeaderWidth) - additionalGap
+    return gap >= 0
+  }
+
+  function updateTabsVisualStyle() {
+    let pagesObj = this.scene.findObject("shop_pages_list")
+    if (!pagesObj?.isValid())
+      return
+    foreach(widthStyle in tabsWidthStyles) {
+      this.updateTabsAppearance(pagesObj, widthStyle)
+      if (this.isTabsAndSearchBoxNotOverlap())
+        return
+    }
   }
 
   function getDiscountIconTabId(country, unitType) {
@@ -1723,7 +1789,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onUnitDblClick(obj) {
-    if (!showConsoleButtons.value) 
+    if (!showConsoleButtons.get()) 
       this.onUnitMainFunc(obj)
   }
 
@@ -1773,7 +1839,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     let tdSize = tdObj.getSize()
     let leftPos = $"{tdPos[0] + tdSize[0] / 2} -50%w"
 
-    let cellHeight = tdSize[1] || 86 
+    let cellHeight = tdSize[1] ?? 86 
     let screenHeight = screen_height()
     let safeareaHeight = this.guiScene.calcString("@rh", null)
     let safeareaBorderHeight = floor((screenHeight - safeareaHeight) / 2)
@@ -2079,8 +2145,9 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     this.searchBoxWeak?.searchCancel()
     this.selectCellByUnitName(unitId)
     
-    if (!showConsoleButtons.value || is_mouse_last_time_used())
+    if (!showConsoleButtons.get() || is_mouse_last_time_used())
       this.doWhenActive(@() this.highlightUnitsInTree([ unitId ]))
+    unitToShowInShop.set(null)
   }
 
   function selectCellByUnitName(unitName) {
@@ -2158,7 +2225,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onUnitMainFunc(obj) {
-    if (showConsoleButtons.value) { 
+    if (showConsoleButtons.get()) { 
       this.onAircraftClick(obj, true)
       return
     }
@@ -2179,11 +2246,11 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onUnitMainFuncBtnUnHover(_obj) {
-    if (!showConsoleButtons.value)
+    if (!showConsoleButtons.get())
       return
 
-    let unitObj = unitContextMenuState.value?.unitObj
-    if (!unitObj?.isValid() || unitContextMenuState.value?.needClose)
+    let unitObj = unitContextMenuState.get()?.unitObj
+    if (!unitObj?.isValid() || unitContextMenuState.get()?.needClose)
       return
 
     let actionListObj = unitObj.findObject("actions_list")
@@ -2210,7 +2277,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function onEventCountryChanged(_p) {
-    let country = profileCountrySq.value
+    let country = profileCountrySq.get()
     if (country == this.curCountry)
       return
 
@@ -2383,7 +2450,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function updateSlotbarDifficulty() {
 
-    let slotbar = topMenuHandler.value?.getSlotbar()
+    let slotbar = topMenuHandler.get()?.getSlotbar()
     if (slotbar)
       slotbar.updateDifficulty()
   }

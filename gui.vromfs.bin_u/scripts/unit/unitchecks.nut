@@ -1,5 +1,5 @@
 from "%scripts/dagui_library.nut" import *
-from "%scripts/dagui_natives.nut" import clan_get_exp, remove_calculate_modification_effect_jobs, calculate_ship_parameters_async, calculate_tank_parameters_async, calculate_min_and_max_parameters
+from "%scripts/dagui_natives.nut" import clan_get_exp, remove_calculate_modification_effect_jobs, calculate_ship_parameters_async, calculate_tank_parameters_async, calculate_min_and_max_parameters, calculate_mod_or_weapon_effect
 from "%scripts/clans/clanState.nut" import is_in_clan
 
 let { get_time_msec } = require("dagor.time")
@@ -8,13 +8,19 @@ let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { isUnitSpecial } = require("%appGlobals/ranks_common_shared.nut")
-let { canResearchUnit, canBuyNotResearched, isUnitsEraUnlocked, isUnitUsable
-} = require("%scripts/unit/unitStatus.nut")
+let { canResearchUnit, canBuyNotResearched, isUnitsEraUnlocked, isUnitUsable,
+  isUnitGroup } = require("%scripts/unit/unitStatus.nut")
 let { isUnitGift } = require("%scripts/unit/unitShopInfo.nut")
 let { getCantBuyUnitReason } = require("%scripts/unit/unitInfoTexts.nut")
 let { getUnitExp } = require("%scripts/unit/unitInfo.nut")
 let { buyUnit, CheckFeatureLockAction, checkFeatureLock, showCantBuyOrResearchUnitMsgbox } = require("%scripts/unit/unitActions.nut")
 let { showNotAvailableMsgBox } = require("%scripts/gameModes/gameModeMesasge.nut")
+let { getEsUnitType } = require("%scripts/unit/unitParams.nut")
+let { getLastWeapon } = require("%scripts/weaponry/weaponryInfo.nut")
+let { getModificationByName } = require("%scripts/weaponry/modificationInfo.nut")
+let { hangar_get_current_unit_name, force_retrace_decorators,
+  hangar_force_reload_model } = require("hangar")
+
 
 const MODIFICATORS_REQUEST_TIMEOUT_MSEC = 20000
 
@@ -76,9 +82,9 @@ function checkForResearch(unit) {
 }
 
 
-function check_unit_mods_update(air, callBack = null, forceUpdate = false, needMinMaxEffectsForAllUnitTypes = false) {
+function checkUnitModsUpdate(air, callBack = null, forceUpdate = false, needMinMaxEffectsForAllUnitTypes = false) {
   if (!air.isInited) {
-    script_net_assert_once("not inited unit request", "try to call check_unit_mods_update for not inited unit")
+    script_net_assert_once("not inited unit request", "try to call checkUnitModsUpdate for not inited unit")
     return false
   }
 
@@ -165,7 +171,85 @@ function check_unit_mods_update(air, callBack = null, forceUpdate = false, needM
   return false
 }
 
+
+function checkSecondaryWeaponModsRecount(unit, callback = null) {
+  let uType = getEsUnitType(unit)
+  if (uType == ES_UNIT_TYPE_AIRCRAFT || uType == ES_UNIT_TYPE_HELICOPTER) {
+    let weaponName = getLastWeapon(unit.name)
+    local secondaryMods = unit.secondaryWeaponMods
+    if (secondaryMods && secondaryMods.weaponName == weaponName) {
+      if (secondaryMods.effect)
+        return true
+      if (callback)
+        secondaryMods.callback = callback
+      return false
+    }
+
+    unit.secondaryWeaponMods = {
+      weaponName = weaponName
+      effect = null
+      callback = callback
+    }
+
+    calculate_mod_or_weapon_effect(unit.name, weaponName, false, this, function(effect, ...) {
+      secondaryMods = unit.secondaryWeaponMods
+      if (!secondaryMods || weaponName != secondaryMods.weaponName)
+        return
+
+      secondaryMods.effect <- effect ?? {}
+      broadcastEvent("SecondWeaponModsUpdated", { unit = unit })
+      if (secondaryMods.callback != null) {
+        secondaryMods.callback()
+        secondaryMods.callback = null
+      }
+    })
+    return false
+  }
+
+  if (uType == ES_UNIT_TYPE_BOAT || uType == ES_UNIT_TYPE_SHIP) {
+    let torpedoMod = "torpedoes_movement_mode"
+    let mod = getModificationByName(unit, torpedoMod)
+    if (!mod || mod?.effects)
+      return true
+    calculate_mod_or_weapon_effect(unit.name, torpedoMod, true, this, function(effect, ...) {
+      mod.effects <- effect
+      if (callback)
+        callback()
+      broadcastEvent("SecondWeaponModsUpdated", { unit = unit })
+    })
+    return false
+  }
+  return true
+}
+
+
+
+function updateUnitAfterSwitchMod(unit, modName = null) {
+  if (!unit)
+    return
+
+  if (unit.name == hangar_get_current_unit_name() && modName) {
+    let modsList = modName == ""
+      ? unit.modifications
+      : [ getModificationByName(unit, modName) ]
+    foreach (mod in modsList) {
+      if (!(mod?.requiresModelReload ?? false))
+        continue
+
+      hangar_force_reload_model()
+      force_retrace_decorators()
+      break
+    }
+  }
+
+  if (!isUnitGroup(unit))
+    checkUnitModsUpdate(unit, null, true)
+
+}
+
 return {
   checkForResearch
-  check_unit_mods_update
+  checkUnitModsUpdate
+  checkSecondaryWeaponModsRecount
+  updateUnitAfterSwitchMod
 }

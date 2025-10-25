@@ -4,11 +4,11 @@ let { IlsColor, TargetPosValid, TargetPos, IlsLineScale, BombingMode, RocketMode
        AAMRocketMode, CannonMode, BombCCIPMode,RadarTargetPos, RadarTargetPosValid, RadarTargetDist, RadarTargetDistRate,
        IlsPosSize, RadarTargetHeight, RadarTargetAngle, RadarTargetBearing } = require("%rGui/planeState/planeToolsState.nut")
 let { Speed, BarAltitude, Roll, Aoa, Gear, ClimbSpeed, Overload, Tangage } = require("%rGui/planeState/planeFlyState.nut");
-let { mpsToKnots, mpsToFpm, baseLineWidth, metrToFeet, meterToYard, metrToNavMile } = require("ilsConstants.nut")
+let { mpsToKnots, mpsToFpm, baseLineWidth, metrToFeet, meterToYard, metrToNavMile } = require("%rGui/planeIlses/ilsConstants.nut")
 let { CurWeaponName, BulletImpactPoints, BulletImpactLineEnable, HasPrimaryGun } = require("%rGui/planeState/planeWeaponState.nut")
 let { cvt } = require("dagor.math")
-let { compassWrap, generateCompassMarkSUM } = require("ilsCompasses.nut")
-let { yawIndicator, SUMAltitude } = require("commonElements.nut")
+let { compassWrap, generateCompassMarkSUM } = require("%rGui/planeIlses/ilsCompasses.nut")
+let { yawIndicator, SUMAltitude } = require("%rGui/planeIlses/commonElements.nut")
 let { AamLaunchZoneDistMinVal, AamLaunchZoneDistMaxVal } = require("%rGui/radarState.nut")
 let { IlsTrackerVisible, IlsTrackerX, IlsTrackerY, GuidanceLockState } = require("%rGui/rocketAamAimState.nut")
 let { GuidanceLockResult } = require("guidanceConstants")

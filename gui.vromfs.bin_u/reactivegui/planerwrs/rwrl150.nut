@@ -2,7 +2,7 @@ from "%rGui/globals/ui_library.nut" import *
 
 let { format } = require("string")
 
-let { color, baseLineWidth, styleText, settings, createCompass, rwrTargetsComponent} = require("rwrL150Components.nut")
+let { color, baseLineWidth, styleText, settings, createCompass, rwrTargetsComponent} = require("%rGui/planeRwrs/rwrL150Components.nut")
 
 function createRwrGrid(gridStyle) {
   return {
@@ -82,7 +82,7 @@ function scope(scale, style) {
         size = const [pw(90), ph(90)],
         children = [
           {
-            size = const [pw(100), ph(100)],
+            size = const [ph(100), ph(100)],
             children = [
               rwrTargetsComponent(style.object, 100.0),
               createRwrGrid(style.grid),

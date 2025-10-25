@@ -15,6 +15,8 @@ let { buildUnitSlot, fillUnitSlotTimers } = require("%scripts/slotbar/slotbarVie
 let { showAirExpWpBonus } = require("%scripts/bonusModule.nut")
 let { showUnitDiscount } = require("%scripts/discounts/discountUtils.nut")
 let { updateGamercards } = require("%scripts/gamercard/gamercard.nut")
+let { updateUnitAfterSwitchMod } = require("%scripts/unit/unitChecks.nut")
+
 
 const OPEN_RCLICK_UNIT_MENU_AFTER_SELECT_TIME = 500 
                                                     
@@ -28,7 +30,12 @@ local handlerClass = class (gui_handlers.BaseGuiHandlerWT) {
   needSkipFocus        = false
   sceneTplName         = "%gui/unit/vehiclesModal.tpl"
   wndTitleLocId        = "itemTypes/vehicles"
-  slotbarActions       = [ "research", "buy", "go_to_event", "take", "add_to_wishlist", "go_to_wishlist", "sec_weapons", "weapons", "showroom", "testflight", "info", "repair" ]
+  slotbarActions       = [ "research", "buy", "go_to_event", "take", "add_to_wishlist", "go_to_wishlist", "sec_weapons", "weapons", "showroom",
+
+
+
+
+  "testflight", "info", "repair" ]
 
   actionsListOpenTime  = 0
   maxSlotCountY = 6
@@ -91,6 +98,7 @@ local handlerClass = class (gui_handlers.BaseGuiHandlerWT) {
             objId = country
             idx = shopCountriesList.findindex(@(id) id == country) ?? -1
             image = getCountryIcon(country)
+            imageAspectRatio = 0.66
             text = loc(country)
             value = this.filtersData?["country"][country].value ?? false,
           }
@@ -148,6 +156,7 @@ local handlerClass = class (gui_handlers.BaseGuiHandlerWT) {
           id = inst.objId
           idx = inst.idx
           image = inst?.image
+          imageAspectRatio = inst?.imageAspectRatio
           text = inst.text
           value = inst.value
         })
@@ -212,7 +221,7 @@ local handlerClass = class (gui_handlers.BaseGuiHandlerWT) {
         continue
 
       this.updateAdditionalProp(unit, placeObj)
-      ::updateAirAfterSwitchMod(unit)
+      updateUnitAfterSwitchMod(unit)
     }
 
     this.restoreLastUnitSelection(listObj)
@@ -267,7 +276,7 @@ local handlerClass = class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     this.updateUnitItem(unit, this.scene.findObject($"cont_{unit.name}"))
-    ::updateAirAfterSwitchMod(unit)
+    updateUnitAfterSwitchMod(unit)
   }
 
   function updateUnitItem(unit, placeObj) {

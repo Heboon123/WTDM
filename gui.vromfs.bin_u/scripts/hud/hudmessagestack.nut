@@ -51,7 +51,9 @@ let g_hud_message_stack = {
     if (containerObj?.isValid())
       containerObj.setValue(stashBhvValueConfig([{
         watch = getHasCompassObservable()
-        updateFunc = @(obj, value) obj["margin-top"] = value ? "@notificationsWithCompassTopOffset" : "0"
+        updateFunc = function(obj, value) {
+          obj["margin-top"] = value ? "@notificationsWithCompassTopOffset" : "0"
+        }
       }]))
   }
 }

@@ -7,13 +7,14 @@ let { get_time_msec } = require("dagor.time")
 let psn = require("%sonyLib/webApi.nut")
 let { isPlatformSony } = require("%scripts/clientState/platform.nut")
 let { requestUnknownPSNIds } = require("%scripts/contacts/externalContactsService.nut")
-let { psnApprovedUids, psnBlockedUids, findContactByPSNId } = require("%scripts/contacts/contactsManager.nut")
+let { psnApprovedUids, psnBlockedUids, findContactByPSNId } = require("%scripts/contacts/contactsListState.nut")
 let { fetchContacts, updatePresencesByList } = require("%scripts/contacts/contactsState.nut")
 let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { isEqual } = u
 let { isInMenu } = require("%scripts/clientState/clientStates.nut")
 let { isLoggedIn } = require("%appGlobals/login/loginState.nut")
 let { updateContact } = require("%scripts/contacts/contactsActions.nut")
+let { getContact } = require("%scripts/contacts/contacts.nut")
 
 let isContactsUpdated = mkWatched(persist, "isContactsUpdated", false)
 
@@ -72,7 +73,7 @@ function psnUpdateContactsList(usersTable) {
 
   local hasChanged = false
   foreach (groupName, groupData in pendingContactsChanges) {
-    let lastUids = uidsListByGroupName[groupName].value
+    let lastUids = uidsListByGroupName[groupName].get()
     let curUids = {}
 
     foreach (userInfo in groupData.users) {
@@ -85,7 +86,7 @@ function psnUpdateContactsList(usersTable) {
     }
     let hasGroupChanged = !isEqual(curUids, lastUids)
     if (hasGroupChanged)
-      uidsListByGroupName[groupName](curUids)
+      uidsListByGroupName[groupName].set(curUids)
     hasChanged = hasChanged || hasGroupChanged
     if (groupName == EPL_FRIENDLIST && hasGroupChanged)
       gatherPresences(groupData.users)
@@ -127,8 +128,8 @@ function proceedPlayersList() {
 }
 
 function onReceviedUsersList(groupName, responseInfoName, response, err) {
-  let size = (response?.size || 0) + (response?.start || 0)
-  let total = response?.totalResults || size
+  let size = (response?.size ?? 0) + (response?.start ?? 0)
+  let total = response?.totalResults ?? size
 
   if (!(groupName in pendingContactsChanges))
     pendingContactsChanges[groupName] <- {
@@ -137,7 +138,7 @@ function onReceviedUsersList(groupName, responseInfoName, response, err) {
     }
 
   if (!err) {
-    foreach (_idx, playerData in (response?[responseInfoName] || []))
+    foreach (_idx, playerData in (response?[responseInfoName] ?? []))
         pendingContactsChanges[groupName].users.append(convertPsnContact(playerData))
   }
   else {
@@ -181,19 +182,19 @@ function updateContacts(needIgnoreInitedFlag = false) {
     return
 
   if (!isInMenu.get()) {
-    if (needIgnoreInitedFlag && isContactsUpdated.value)
-      isContactsUpdated(false)
+    if (needIgnoreInitedFlag && isContactsUpdated.get())
+      isContactsUpdated.set(false)
     return
   }
 
-  if (!needIgnoreInitedFlag && isContactsUpdated.value) {
+  if (!needIgnoreInitedFlag && isContactsUpdated.get()) {
     if (get_time_msec() - LAST_UPDATE_FRIENDS > UPDATE_TIMER_LIMIT)
       LAST_UPDATE_FRIENDS = get_time_msec()
     else
       return
   }
 
-  isContactsUpdated(true)
+  isContactsUpdated.set(true)
   fetchContactsList()
 }
 
@@ -201,7 +202,7 @@ function onPresenceUpdate(data) {
   let accountId = data?.accountId
   if (accountId) {
     let userId = console2uid?[accountId.tostring()]
-    let contact = ::getContact(userId)
+    let contact = getContact(userId)
     if (contact == null)
       return
 
@@ -225,9 +226,9 @@ function initHandlers() {
 
 function disposeHandlers() {
   pendingContactsChanges.clear()
-  isContactsUpdated(false)
-  psnApprovedUids({})
-  psnBlockedUids({})
+  isContactsUpdated.set(false)
+  psnApprovedUids.set({})
+  psnBlockedUids.set({})
 
   psn.unsubscribe.friendslist(onPushNotification)
   psn.unsubscribe.blocklist(onPushNotification)

@@ -1,4 +1,4 @@
-from "%scripts/dagui_natives.nut" import is_online_available, get_entitlement_cost_gold, entitlement_expires_in, purchase_entitlement, update_entitlements, set_char_cb, yuplay2_get_payment_methods, yuplay2_buy_entitlement, has_entitlement
+from "%scripts/dagui_natives.nut" import is_online_available, get_entitlement_cost_gold, entitlement_expires_in, purchase_entitlement, set_char_cb, has_entitlement
 from "%scripts/dagui_library.nut" import *
 from "app" import isAppActive
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -16,41 +16,50 @@ let { getEntitlementDescription, getPricePerEntitlement, getEntitlementTimeText,
   getEntitlementPrice } = require("%scripts/onlineShop/entitlements.nut")
 let { getShopPriceBlk } = require("%scripts/onlineShop/onlineShopState.nut")
 let { move_mouse_on_child, move_mouse_on_child_by_value } = require("%sqDagui/daguiUtil.nut")
-let { showGuestEmailRegistration, needShowGuestEmailRegistration
-} = require("%scripts/user/suggestionEmailRegistration.nut")
 let purchaseConfirmation = require("%scripts/purchase/purchaseConfirmationHandler.nut")
 let { addTask } = require("%scripts/tasker.nut")
 let { bundlesShopInfo } = require("%scripts/onlineShop/entitlementsInfo.nut")
 bundlesShopInfo.subscribe(@(_val) broadcastEvent("BundlesUpdated")) 
 let { warningIfGold } = require("%scripts/viewUtils/objectTextUpdate.nut")
-let { openPaymentWnd } = require("%scripts/paymentHandler.nut")
-let { doBrowserPurchase } = require("%scripts/onlineShop/onlineShopModel.nut")
 let { checkBalanceMsgBox } = require("%scripts/user/balanceFeatures.nut")
-let { steam_is_running, steam_is_overlay_active } = require("steam")
-let { getCurCircuitOverride } = require("%appGlobals/curCircuitOverride.nut")
+let { steam_is_overlay_active } = require("steam")
 let { is_builtin_browser_active } = require("%scripts/onlineShop/browserWndHelpers.nut")
-let { get_yu2_error_text } = require("%scripts/utils/errorMsgBox.nut")
 let { updateEntitlementsLimited } = require("%scripts/onlineShop/entitlementsUpdate.nut")
 let { getRemainingPremiumTime } = require("%scripts/user/premium.nut")
 let { updateGamercards } = require("%scripts/gamercard/gamercard.nut")
 let { getEntitlementDiscount } = require("%scripts/discounts/discountsState.nut")
-
-let payMethodsCfg = [
-  
-  
-  { id = YU2_PAY_PAYPAL,      name = "paypal" }
-  { id = YU2_PAY_WEBMONEY,    name = "webmoney" }
-  { id = YU2_PAY_AMAZON,      name = "amazon" }
-  { id = YU2_PAY_GJN,         getName = @() getCurCircuitOverride("coinsName", "gjncoins") }
-]
+let { onOnlinePurchase } = require("%scripts/onlineShop/onlinePurchase.nut")
+let { isStringInteger } = require("%sqstd/string.nut")
 
 const MIN_DISPLAYED_PERCENT_SAVING = 5
+
+function buildDigitsImagesView(numStr, imgSrcTemplate) {
+  let res = []
+  local needSpace = false
+
+  for (local i = 0; i < numStr.len(); i++) {
+    let ch = numStr.slice(i, i + 1)
+    if (!isStringInteger(ch)) {
+      if (ch == " " || ch == ",")
+        needSpace = true
+      continue
+    }
+
+    res.append({
+      src = format(imgSrcTemplate, ch)
+      ratio =  ch == "1" ? 41.0/150 : 76.0/150
+      needSpace
+    })
+    needSpace = false
+  }
+
+  return res
+}
 
 gui_handlers.OnlineShopHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   wndType = handlerType.MODAL
   sceneBlkName = "%gui/chapterModal.blk"
   sceneNavBlkName = "%gui/navOnlineShop.blk"
-  useRowVisual = false
 
   owner = null
   afterCloseFunc = null
@@ -64,6 +73,9 @@ gui_handlers.OnlineShopHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   groupCost = null
   task = ""
   needFullUpdate = false
+
+  
+  isIngameCurrency = false
 
   function initScreen() {
     if (!this.scene)
@@ -148,10 +160,8 @@ gui_handlers.OnlineShopHandler <- class (gui_handlers.BaseGuiHandlerWT) {
       if (!isGold && this.goods[name]?.group && !this.groupCost?[this.goods[name].group])
         this.groupCost[this.goods[name].group] <- getPricePerEntitlement(this.goods[name])
 
-      if (this.useRowVisual) {
-        rowsView.append(this.getRowView(this.goods[name], isGold, (idx % 2 == 0) ? "yes" : "no"))
-        if (this.goods[name]?.chapterImage)
-          this.chImages[this.goods[name].chapter] <- this.goods[name].chapterImage
+      if (this.isIngameCurrency) {
+        rowsView.append(this.getIngameCurrencyItemView(this.goods[name], idx))
       }
       else {
         if (this.goods[name]?.chapter) {
@@ -182,28 +192,21 @@ gui_handlers.OnlineShopHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     }
 
     
-    if (this.useRowVisual) {
+    if (this.isIngameCurrency) {
       this.guiScene.setUpdatesEnabled(false, false)
 
       this.scene.findObject("wnd_update").setUserData(this)
-      this.scene.findObject("wnd_title").setValue(loc($"charServer/chapter/{this.chapter}"))
 
-      let rootObj = this.scene.findObject("wnd_frame")
-      rootObj["class"] = "wnd"
-      rootObj.width = "@onlineShopWidth + 2@blockInterval"
-      rootObj.padByLine = "yes"
-      let contentObj = this.scene.findObject("wnd_content")
-      contentObj.flow = "vertical"
-
-      data = handyman.renderCached(("%gui/onlineShop/onlineShopWithVisualRow.tpl"), {
-        chImages = (this.chapter in this.chImages) ? $"#ui/onlineShop/{this.chImages[this.chapter]}.ddsx" : null
-        rows = rowsView
+      let itemsListObj = this.scene.findObject("items_list")
+      let currency = this.chapter == "eagles" ? "eagles" : "lions"
+      let itemHeaderImg = $"!ui/images/ingame_currency_shop/{currency}/item_header_bg.avif"
+      data = handyman.renderCached(("%gui/onlineShop/ingameCurrencyShopItem.tpl"), {
+        items = rowsView
+        itemHeaderImg
       })
-      this.guiScene.replaceContentFromText(contentObj, data, data.len(), this)
-      let tblObj = this.scene.findObject("items_list")
-
+      this.guiScene.replaceContentFromText(itemsListObj, data, data.len(), this)
       this.guiScene.setUpdatesEnabled(true, true)
-      this.guiScene.performDelayed(this, @() move_mouse_on_child(tblObj, 0))
+      this.guiScene.performDelayed(this, @() move_mouse_on_child(itemsListObj, 0))
     }
     else { 
       this.scene.findObject("chapter_update").setUserData(this)
@@ -231,7 +234,7 @@ gui_handlers.OnlineShopHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   }
 
   function afterModalDestroy() {
-    topMenuHandler.value?.updateExpAndBalance.call(topMenuHandler.value)
+    topMenuHandler.get()?.updateExpAndBalance.call(topMenuHandler.get())
     this.popCloseFunc()
   }
 
@@ -330,7 +333,7 @@ gui_handlers.OnlineShopHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if (product == null || isBoughtEntitlement(product))
       return
     if (product?.onlinePurchase ?? false)
-      return this.onOnlinePurchase(this.task)
+      return onOnlinePurchase(product)
 
     let costGold = "goldCost" in product ? get_entitlement_cost_gold(product.name) : 0
     let price = Cost(0, costGold)
@@ -347,101 +350,12 @@ gui_handlers.OnlineShopHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     purchaseConfirmation("purchase_ask", msgText, onCallbackYes, onCallbackNo)
   }
 
-  function onOnlinePurchase(itemId) {
-    if (needShowGuestEmailRegistration()) {
-      showGuestEmailRegistration()
-      return
-    }
-
-    let payMethods = yuplay2_get_payment_methods()
-    if (!payMethods || steam_is_running() || !hasFeature("PaymentMethods"))
-      return doBrowserPurchase(itemId)
-
-    let items = []
-    local selItem = null
-    foreach (method in payMethodsCfg)
-      if ((payMethods & method.id)) {
-        let payMethodId = method.id
-        let metodName = method?.getName() ?? method.name
-        let name = $"yuNetwork/payMethod/{metodName}"
-        items.append({
-          name = name
-          icon = $"!#ui/gameuiskin/payment_{metodName}.svg"
-          callback = Callback(@() this.onYuplayPurchase(itemId, payMethodId, name), this)
-        })
-        selItem = selItem || name
-      }
-
-    let name = "yuNetwork/payMethod/other"
-    items.append({
-      name = name
-      icon = ""
-      callback = Callback(@() doBrowserPurchase(itemId), this)
-    })
-    selItem = selItem || name
-
-    openPaymentWnd({ items = items, owner = this, selItem = selItem, cancel_fn = function() {} })
-  }
-
-  function onYuplayPurchase(itemId, payMethod, nameLocId) {
-    let msgText = loc("onlineShop/needMoneyQuestion/onlinePaymentSystem", {
-      purchase = colorize("activeTextColor", getEntitlementName(this.goods[itemId])),
-      paymentSystem = colorize("userlogColoredText", loc(nameLocId))
-    })
-    this.msgBox("yuplay_purchase_ask", msgText,
-      [ ["yes", @() this.doYuplayPurchase(itemId, payMethod) ],
-        ["no", function() {}]
-      ], "yes", { cancel_fn = function() {} })
-  }
-
-  function doYuplayPurchase(itemId, payMethod) {
-    let guid = bundlesShopInfo.value?[itemId].guid ?? ""
-    if (guid == "")
-      logerr($"Error: not found guid for {itemId}")
-
-    let response = (guid == "") ? -1 : yuplay2_buy_entitlement(guid, payMethod)
-    if (response != YU2_OK) {
-      let errorText = get_yu2_error_text(response)
-      this.msgBox("errorMessageBox", errorText, [["ok", function() {}]], "ok")
-      log($"yuplay2_buy_entitlement have returned {response} with task = {itemId}, guid = {guid}, payMethod = {payMethod}")
-      return
-    }
-
-    update_entitlements()
-
-    this.msgBox("purchase_done",
-      format(loc("userlog/buy_entitlement"), getEntitlementName(this.goods[itemId])),
-      [["ok", @() null]], "ok", { cancel_fn = @() null })
-  }
-
   function onApply(_obj) {
     this.onStart()
   }
 
-  function onRowBuy(obj) {
-    if (!obj)
-      return
-
-    let pObj = obj.getParent()
-    if (!pObj || !(pObj?.id in this.goods))
-      return
-    let id = pObj.id
-
-    let listObj = this.scene.findObject("items_list")
-    if (!listObj)
-      return
-    for (local idx = 0; idx < listObj.childrenCount(); idx++)
-      if (listObj.getChild(idx).id == id) {
-        listObj.setValue(idx)
-        this.onItemSelect()
-
-        this.onStart()
-        break
-      }
-  }
-
   function updateItemIcon(name) {
-    if (this.useRowVisual)
+    if (this.isIngameCurrency)
       return
 
     let obj = this.scene.findObject("items_list").findObject(name)
@@ -471,18 +385,19 @@ gui_handlers.OnlineShopHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   function onFav() {}
   function onChapterSelect() {}
 
-  function getRowView(item, isGold, even) {
+  function getIngameCurrencyItemView(item, idx) {
     local amount = getEntitlementAmount(item)
     let additionalAmount = getFirstPurchaseAdditionalAmount(item)
-    local amountText = ""
     local savingText = ""
     let discount = getEntitlementDiscount(item.name)
-    let productInfo = bundlesShopInfo.value?[item.name]
+    let productInfo = bundlesShopInfo.get()?[item.name]
 
     if (additionalAmount > 0)
       savingText = loc("ui/parentheses", { text = loc("charServer/entitlement/firstBuy") })
     else if (productInfo?.discount_mul)
-      savingText = format(loc("charServer/entitlement/discount"), (1.0 - productInfo.discount_mul) * 100)
+      savingText = loc("charServer/entitlement/discount/short", {
+        savings = (1.0 - productInfo.discount_mul) * 100
+      })
     else if (item?.group && item.group in this.groupCost) {
       let itemPrice = getEntitlementPriceFloat(item)
       let defItemPrice = this.groupCost[item.group]
@@ -491,48 +406,55 @@ gui_handlers.OnlineShopHandler <- class (gui_handlers.BaseGuiHandlerWT) {
         local saving = (1 - ((itemPrice * (1 - discount * 0.01)) / (calcAmount * defItemPrice))) * 100
         saving = saving.tointeger()
         if (saving >= MIN_DISPLAYED_PERCENT_SAVING)
-          savingText = format(loc("charServer/entitlement/discount"), saving)
+          savingText = loc("charServer/entitlement/discount/short", { savings = saving })
       }
     }
 
-    let isTimeAmount = item?.httl || item?.ttl
-    if (isTimeAmount)
-      amount *= 24
+    amount = amount.tointeger()
 
-    if (isTimeAmount)
-      amountText = time.hoursToString(amount, false, false, true)
-    else {
-      amount = amount.tointeger()
-
-      let originAmount = isGold ? Cost(0, amount) : Cost(amount, 0)
-      local addString = ""
-      if (additionalAmount > 0) {
-        let addAmount = isGold ? Cost(0, additionalAmount) : Cost(additionalAmount, 0)
-        addString = loc("ui/parentheses/space", { text = $"+{addAmount}" })
-      }
-
-      amountText = $"{originAmount}{addString}"
+    let isGold = this.chapter == "eagles"
+    let originAmount = isGold ? Cost(0, amount) : Cost(amount, 0)
+    local addString = ""
+    if (additionalAmount > 0) {
+      let addAmount = isGold ? Cost(0, additionalAmount) : Cost(additionalAmount, 0)
+      addString = loc("ui/parentheses/space", { text = $"+{addAmount}" })
     }
+
+    let amountFormattedStr = originAmount.toStringWithParams({
+      isColored = false
+      needCheckBalance = false
+      needIcon = false
+    })
+
+    let currency = isGold ? "eagles" : "lions"
+    let amountText = "".concat(amountFormattedStr, " ", loc($"currency/{currency}/plural",
+      { num = amount }), addString)
+    let imgSrcTemplate = this.chapter == "eagles"
+      ? "!ui/images/premium/digit_%s.avif"
+      : "!ui/images/ingame_currency_shop/lions/silver_digit_%s.avif"
 
     return {
+      id = item.name
+      itemIcon = $"!ui/images/ingame_currency_shop/{currency}/item_icon_{idx}.avif"
       externalLink = isGold
-      rowName = item.name
-      rowEven = even
       amount = amountText
       savingText = savingText
       cost = this.getItemPriceText(item.name)
-      discount = discount > 0 ? $"-{discount}%" : null
+      digits = buildDigitsImagesView(amountFormattedStr, imgSrcTemplate)
     }
   }
 }
 
-gui_handlers.OnlineShopRowHandler <- class (gui_handlers.OnlineShopHandler) {
+gui_handlers.IngameCurrencyShopHandler <- class (gui_handlers.OnlineShopHandler) {
   wndType = handlerType.MODAL
-  sceneBlkName = "%gui/emptyFrame.blk"
+  sceneBlkName = "%gui/onlineShop/ingameCurrencyShop.blk"
   sceneNavBlkName = null
-  useRowVisual = true
+  isIngameCurrency = true
 
   function updateProductInfo(product, productId) {
+    let currency = this.chapter == "eagles" ? "eagles" : "lions"
+    this.scene.findObject("header_banner")["background-image"]
+      = $"!ui/images/ingame_currency_shop/{currency}/header_banner.avif"
     local descText = getEntitlementDescription(product, productId)
     let renewText = getEntitlementTimeText(product)
     if (renewText != "") {
@@ -546,11 +468,7 @@ gui_handlers.OnlineShopRowHandler <- class (gui_handlers.OnlineShopHandler) {
             $"{loc("subscription/activeTime")}{loc("ui/colon")}{time.getExpireText(expire)}"))
     }
 
-    this.scene.findObject("item_desc_text").setValue(descText)
-    let imgHeight = this.scene.findObject("item_image")?.getSize()[1] ?? 0
-    let itemsListHeight = this.scene.findObject("items_list")?.getSize()[1] ?? 0
-    this.scene.findObject("item_desc_text_nest")["max-height"] = $"1@maxWindowHeight - 1@frameHeaderHeight - {imgHeight} - {itemsListHeight}"
-
+    this.scene.findObject("currency_caption").setValue(descText)
   }
 
   function reinitScreen(params = {}) {
@@ -559,5 +477,18 @@ gui_handlers.OnlineShopRowHandler <- class (gui_handlers.OnlineShopHandler) {
       this.updateProductInfo(product, productId) 
       break 
     }
+  }
+
+  function onCurrencyBuy(obj) {
+    let { owner } = obj
+    let listObj = this.scene.findObject("items_list")
+    for (local idx = 0; idx < listObj.childrenCount(); idx++)
+      if (listObj.getChild(idx).id == owner) {
+        listObj.setValue(idx)
+        this.onItemSelect()
+
+        this.onStart()
+        break
+      }
   }
 }

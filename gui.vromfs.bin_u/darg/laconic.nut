@@ -1,7 +1,7 @@
 from "daRg" import *
 import "daRg.behaviors" as Behaviors
 from "%sqstd/underscore.nut" import partition, flatten
-from "%darg/ui_imports.nut" import logerr, log
+from "%darg/ui_imports.nut" import logerr
 
 
 
@@ -168,7 +168,7 @@ let Top = Style({vplace = ALIGN_TOP})
 let Bottom = Style({vplace = ALIGN_BOTTOM})
 let VCenter = Style({vplace = ALIGN_CENTER})
 
-return {
+return freeze({
   Style
   comp
   vflow
@@ -183,5 +183,4 @@ return {
   BorderColr, BorderWidth, BorderRadius, FillColr,
   Bhv, ClipChildren, Button, OnClick,
   
-
-}
+})

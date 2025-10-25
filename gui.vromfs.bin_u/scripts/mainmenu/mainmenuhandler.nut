@@ -1,6 +1,6 @@
 from "%scripts/dagui_natives.nut" import stop_gui_sound, set_presence_to_player, shop_get_unlock_crew_cost, shop_get_unlock_crew_cost_gold
 from "%scripts/dagui_library.nut" import *
-let { isInMenu } = require("%scripts/clientState/clientStates.nut")
+let { isPC, is_android } = require("%sqstd/platform.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { format } = require("string")
 let { debug_dump_stack } = require("dagor.debug")
@@ -25,8 +25,6 @@ let { userName, userIdStr } = require("%scripts/user/profileStates.nut")
 let { reinitAllSlotbars } = require("%scripts/slotbar/slotbarState.nut")
 let { getCrewUnlockTimeByUnit } = require("%scripts/slotbar/slotbarStateData.nut")
 let { invalidateCrewsList } = require("%scripts/slotbar/crewsList.nut")
-let { checkPackageAndAskDownloadOnce,
-  checkPackageAndAskDownload } = require("%scripts/clientState/contentPacks.nut")
 let { isAuthorized } = require("%appGlobals/login/loginState.nut")
 let { getMyClanCandidates, isHaveRightsToReviewCandidates } = require("%scripts/clans/clanCandidates.nut")
 let { leaveSessionRoom } = require("%scripts/matchingRooms/sessionLobbyManager.nut")
@@ -59,7 +57,7 @@ gui_handlers.MainMenu <- class (gui_handlers.InstantDomination) {
     }
 
     if (isInSessionRoom.get()) {
-      log(" ".concat("after main menu, uid", userIdStr.value, userName.value, "is in room"))
+      log(" ".concat("after main menu, uid", userIdStr.get(), userName.get(), "is in room"))
       debug_dump_stack()
       leaveSessionRoom()
     }
@@ -83,7 +81,7 @@ gui_handlers.MainMenu <- class (gui_handlers.InstantDomination) {
   }
 
   function showOnlineInfo() {
-    if (topMenuHandler.value == null)
+    if (topMenuHandler.get() == null)
       return
 
     let text = loc("mainmenu/online_info", {
@@ -91,7 +89,7 @@ gui_handlers.MainMenu <- class (gui_handlers.InstantDomination) {
       battles = totalRooms.get()
     })
 
-    this.setSceneTitle(text, topMenuHandler.value.scene, "online_info")
+    this.setSceneTitle(text, topMenuHandler.get().scene, "online_info")
   }
 
   function onEventClanInfoUpdate(_params) {
@@ -111,7 +109,7 @@ gui_handlers.MainMenu <- class (gui_handlers.InstantDomination) {
   }
 
   function onExit() {
-    if (!is_platform_pc && !is_platform_android)
+    if (!isPC && !is_android)
       return
 
     this.msgBox("mainmenu_question_quit_game", loc("mainmenu/questionQuitGame"),
@@ -124,8 +122,6 @@ gui_handlers.MainMenu <- class (gui_handlers.InstantDomination) {
   function onLoadModels() {
     if (isPlatformSony || isPlatformXbox)
       showInfoMsgBox(contentStateModule.getClientDownloadProgressText())
-    else
-      checkPackageAndAskDownload("pkg_main", loc("msgbox/ask_package_download"))
   }
 
   function initPromoBlock() {
@@ -153,8 +149,6 @@ gui_handlers.MainMenu <- class (gui_handlers.InstantDomination) {
   function updateLowQualityModelWarning() {
     let lowQuality = !isLoadedModelHighQuality()
     showObjById("low-quality-model-warning", lowQuality, this.scene)
-    if (lowQuality && this.isSceneActive() && isInMenu.get())
-      checkPackageAndAskDownloadOnce("pkg_main", "air_in_hangar")
   }
 
   forceUpdateSelUnitInfo = @() this.updateSelUnitInfo(true)

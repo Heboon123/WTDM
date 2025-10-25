@@ -231,7 +231,7 @@ options.addTypes({
   }
   COUNTRY = {
     sortId = sortIdCount++
-    controlStyle = "iconType:t='small';"
+    controlStyle = "iconType:t='country_small';"
     getLabel = @() options.UNITTYPE.isVisible() ? null : loc("mainmenu/threat")
     needDisabledOnSearch = @() this.isVisible()
 
@@ -458,7 +458,7 @@ options.addTypes({
               addDiv = MODIFICATION.getMarkup(bulletsSet?.supportUnitName ?? unit.name, value, { hasPlayerInfo = false })
 
             bulletNamesSet.append(locName)
-            let btName = bulletName || ""
+            let btName = bulletName ?? ""
             this.values.append({
               bulletName = btName
               weaponBlkName = weaponBlkName
@@ -483,8 +483,9 @@ options.addTypes({
       if(hasFeature("ProtectionAnalysisShowBombs"))
         specialBulletTypes.append("bomb")
 
-      let unitBlk = unit ? getFullUnitBlk(unit.name) : null
-      let weapons = getUnitWeapons(unitBlk)
+      let unitName = unit?.name ?? ""
+      let unitBlk = unit ? getFullUnitBlk(unitName) : null
+      let weapons = getUnitWeapons(unitName, unitBlk)
       let knownWeapBlkArray = []
 
       foreach (weap in weapons) {
@@ -493,7 +494,7 @@ options.addTypes({
           continue
         knownWeapBlkArray.append(weap.blk)
 
-        let { weaponBlk, weaponBlkPath } = getWeaponBlkParams(weap.blk, {})
+        let { weaponBlk, weaponBlkPath } = getWeaponBlkParams(unitName, weap.blk)
         local curBlk
         local curType
 
@@ -617,7 +618,8 @@ options.addTypes({
     }
 
     updateParams = function(_handler, _scene) {
-      this.minValue = 0
+      let minValue = options.BULLET.value?.bulletParams.armorPiercingDist[0].tointeger() ?? 0
+      this.minValue = minValue > 10 ? minValue : 0
       this.maxValue = options.UNIT.value?.isShipOrBoat() ? 15000 : 2000
       this.step     = options.targetDistance != null ? 1 : 100
       let preferredDistance = this.value >= 0 ? this.value
@@ -631,6 +633,7 @@ options.addTypes({
         return
       let parentObj = obj.getParent().getParent()
       if (isBulletAvailable()) {
+        obj.min = this.minValue
         obj.max = this.maxValue
         obj.optionAlign = this.step
         obj.setValue(this.value)

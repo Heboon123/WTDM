@@ -7,7 +7,7 @@ let { addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { targetPlatform } = require("%scripts/clientState/platform.nut")
 let { mkVersionFromString, versionToInt } = require("%sqstd/version.nut")
-let { isInBattleState } = require("%scripts/clientState/clientStates.nut")
+let { isInBattleState, getFromSettingsBlk } = require("%scripts/clientState/clientStates.nut")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
 let { eventbus_send, eventbus_subscribe } = require("eventbus")
@@ -50,8 +50,8 @@ function loadSavedVersionInfoNum() {
   if (!isProfileReceived.get())
     return
 
-  lastSeenVersionInfoNum(loadLocalAccountSettings(SAVE_SEEN_ID, 0))
-  lastLoadedVersionInfoNum(loadLocalAccountSettings(SAVE_LOADED_ID, 0))
+  lastSeenVersionInfoNum.set(loadLocalAccountSettings(SAVE_SEEN_ID, 0))
+  lastLoadedVersionInfoNum.set(loadLocalAccountSettings(SAVE_LOADED_ID, 0))
 }
 
 let platformMap = {
@@ -137,15 +137,15 @@ function processPatchnotesList(response) {
   if (result == null) {
     logError("changelog_versions_parse_errors",
       { reason = "Incorrect json in version response", stage = "get_versions" })
-    versions([])
+    versions.set([])
     unitNews.set([])
-    patchnotesReceived(false)
+    patchnotesReceived.set(false)
     return
   }
   logError("changelog_success_versions", { reason = "Versions received successfully" })
-  versions(filterVersions(result.map(mkVersion)))
+  versions.set(filterVersions(result.map(mkVersion)))
   unitNews.set(result.filter(@(v) v.kind == "news"))
-  patchnotesReceived(true)
+  patchnotesReceived.set(true)
 }
 
 function requestAllPatchnotes() {
@@ -159,14 +159,14 @@ function requestAllPatchnotes() {
     respEventId = PatchnoteIds
   }
 
-  patchnotesReceived(false)
+  patchnotesReceived.set(false)
   httpRequest(request)
   requestMadeTime.value = currTimeMsec
 }
 
 function clearCache() {
   requestMadeTime.value = null
-  patchnotesCache({})
+  patchnotesCache.set({})
 }
 
 function findBestVersionToshow(versionsList, lastSeenVersionNum) {
@@ -186,32 +186,32 @@ function findBestVersionToshow(versionsList, lastSeenVersionNum) {
       break
   return res
 }
-let haveNewVersions = Computed(@() versions.value?[0].iVersion
-  ? lastLoadedVersionInfoNum.value < versions.value[0].iVersion : false)
+let haveNewVersions = Computed(@() versions.get()?[0].iVersion
+  ? lastLoadedVersionInfoNum.get() < versions.get()[0].iVersion : false)
 let unseenPatchnote = Computed(function() {
-  if (lastSeenVersionInfoNum.value == -1)
+  if (lastSeenVersionInfoNum.get() == -1)
     return null
-  return findBestVersionToshow(versions.value, lastSeenVersionInfoNum.value)
+  return findBestVersionToshow(versions.get(), lastSeenVersionInfoNum.get())
 })
 
 let curPatchnote = Computed(@()
-  chosenPatchnote.value ?? unseenPatchnote.value ?? versions.value?[0])
+  chosenPatchnote.get() ?? unseenPatchnote.get() ?? versions.get()?[0])
 let curPatchnoteIdx = Computed(
-  @() versions.value.findindex(@(inst) inst.id == curPatchnote.value.id) ?? 0)
-let haveUnseenVersions = Computed(@() unseenPatchnote.value != null)
+  @() versions.get().findindex(@(inst) inst.id == curPatchnote.get().id) ?? 0)
+let haveUnseenVersions = Computed(@() unseenPatchnote.get() != null)
 let needShowChangelog = @() !isEvent.get() && !isNews.get() && !isInBattleState.get() && hasFeature("Changelog")
-  && haveNewVersions.value && isNewbieInited() && !isMeNewbie()
+  && haveNewVersions.get() && isNewbieInited() && !isMeNewbie() && !getFromSettingsBlk("debug/skipPopups")
 
 function afterGetRequestedPatchnote(result) {
   chosenPatchnoteContent.set({ title = result?.title ?? "", text = result?.content ?? [], eventId = result?.titleshort })
   chosenPatchnoteLoaded.set(true)
 
-  let v = curPatchnote.value
-  if (v == null || v.iVersion <= lastSeenVersionInfoNum.value)
+  let v = curPatchnote.get()
+  if (v == null || v.iVersion <= lastSeenVersionInfoNum.get())
     return
 
   saveLocalAccountSettings(SAVE_SEEN_ID, v.iVersion)
-  lastSeenVersionInfoNum(v.iVersion)
+  lastSeenVersionInfoNum.set(v.iVersion)
 }
 
 function cachePatchnote(response) {
@@ -242,15 +242,15 @@ function requestPatchnote(v) {
   if (!v)
     return
 
-  if (v.id in patchnotesCache.value) {
-    return afterGetRequestedPatchnote(patchnotesCache.value[v.id])
+  if (v.id in patchnotesCache.get()) {
+    return afterGetRequestedPatchnote(patchnotesCache.get()[v.id])
   }
   let request = {
     method = "GET"
     url = getUrl($"/{v.id}")
   }
   request.respEventId <- PatchnoteReceived
-  chosenPatchnoteLoaded(false)
+  chosenPatchnoteLoaded.set(false)
   httpRequest(request)
 }
 
@@ -258,14 +258,14 @@ function choosePatchnote(v) {
   if (!v)
     return
   requestPatchnote(v)
-  chosenPatchnote(v)
+  chosenPatchnote.set(v)
 }
 
 function changePatchNote(delta = 1) {
-  if (versions.value.len() == 0)
+  if (versions.get().len() == 0)
     return
-  let nextIdx = clamp(curPatchnoteIdx.value - delta, 0, versions.value.len() - 1)
-  let patchnote = versions.value[nextIdx]
+  let nextIdx = clamp(curPatchnoteIdx.get() - delta, 0, versions.get().len() - 1)
+  let patchnote = versions.get()[nextIdx]
   choosePatchnote(patchnote)
 }
 
@@ -273,10 +273,10 @@ function openChangelog() {
   isNews.set(false)
   isEvent.set(false)
   local curr = curPatchnote.get()
-  if (haveNewVersions.value) {
-    curr = versions.value[0]
+  if (haveNewVersions.get()) {
+    curr = versions.get()[0]
     saveLocalAccountSettings(SAVE_LOADED_ID, curr.iVersion)
-    lastLoadedVersionInfoNum(curr.iVersion)
+    lastLoadedVersionInfoNum.set(curr.iVersion)
   }
   choosePatchnote(curr)
   emptySceneWithDarg({ widgetId = DargWidgets.CHANGE_LOG })
@@ -322,9 +322,9 @@ chosenPatchnoteLoaded.subscribe(function (value) {
 })
 patchnotesReceived.subscribe(function(value) {
   eventbus_send("updatePatchnotesReceived", { value })
-  if (!value || !haveUnseenVersions.value)
+  if (!value || !haveUnseenVersions.get())
     return
-  requestPatchnote(curPatchnote.value)
+  requestPatchnote(curPatchnote.get())
 })
 
 addListenersWithoutEnv({
@@ -339,11 +339,11 @@ addListenersWithoutEnv({
 loadSavedVersionInfoNum()
 
 eventbus_subscribe("getChangeLogsStates", @(_) eventbus_send("updateChangeLogsStates", {
-  versions = versions.value
-  chosenPatchnoteContent = chosenPatchnoteContent.value
-  curPatchnote = curPatchnote.value
-  chosenPatchnoteLoaded = chosenPatchnoteLoaded.value
-  patchnotesReceived = patchnotesReceived.value
+  versions = versions.get()
+  chosenPatchnoteContent = chosenPatchnoteContent.get()
+  curPatchnote = curPatchnote.get()
+  chosenPatchnoteLoaded = chosenPatchnoteLoaded.get()
+  patchnotesReceived = patchnotesReceived.get()
   isNews = isNews.get()
   isEvent = isEvent.get()
 }))

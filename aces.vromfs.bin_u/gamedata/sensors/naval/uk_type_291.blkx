@@ -1,179 +1,181 @@
-{
-  "type": "radar",
-  "name": "Type-291",
-  "transivers": {
-    "search": {
-      "pulsePower": 60000.0,
-      "pulseWidth": 0.0001,
-      "prf": 800.0,
-      "band": 0,
-      "rcs": 5.0,
-      "range": 20000.0,
-      "rangeMax": 40000.0,
-      "antenna": {
-        "azimuth": {
-          "angleHalfSens": 40.0,
-          "sideLobesSensitivity": -20.0
-        },
-        "elevation": {
-          "angleHalfSens": 45.0,
-          "sideLobesSensitivity": -20.0
-        }
-      }
-    }
-  },
-  "scanPatterns": {
-    "search": {
-      "type": "cylinder",
-      "azimuthLimits": [
-        -180.0,
-        180.0
-      ],
-      "elevationLimits": [
-        0.0,
-        0.0
-      ],
-      "yawStabLimit": 180.0,
-      "pitchStabLimit": 0.0,
-      "rollStabLimit": 0.0,
-      "period": 10.0,
-      "barHeight": 15.0,
-      "barsCount": 1,
-      "rowMajor": true
-    }
-  },
-  "signals": {
-    "search": {
-      "aircraftAsTarget": true,
-      "groundVehiclesAsTarget": false,
-      "groundClutter": false,
-      "friendFoeId": false,
-      "distance": {
-        "presents": true,
-        "minValue": 200.0,
-        "maxValue": 30000.0
-      }
-    }
-  },
-  "scopeRanges": {
-    "range1": 20000.0,
-    "range2": 40000.0
-  },
-  "fsms": {
-    "main": {
-      "stateInit": "init",
-      "actionsTemplates": {
-        "init": {
-          "setEnabled": {
-            "value": false
-          },
-          "setTransiver": {
-            "transiver": "search"
-          },
-          "setTargetDesignationRange": {
-            "azimuthRange": [
-              -180.0,
-              180.0
-            ],
-            "distanceRange": [
-              0.0,
-              40000.0
-            ]
-          }
-        },
-        "setStandbyMode": {
-          "setModeName": {
-            "name": "standby"
-          },
-          "setEnabled": {
-            "value": false
-          },
-          "setSignal": {
-            "signal": "search"
-          },
-          "setScanPattern": {
-            "scanPattern": "search"
-          }
-        },
-        "setSearchMode": {
-          "setModeName": {
-            "name": "search"
-          },
-          "setEnabled": {
-            "value": true
-          },
-          "setFsmActive": {
-            "fsm": "search",
-            "active": true
-          }
-        }
-      },
-      "transitions": {
-        "init": {
-          "stateFrom": "init",
-          "event": "init",
-          "stateTo": "standby",
-          "actions": {
-            "init": {},
-            "setStandbyMode": {}
-          }
-        },
-        "switchOn": {
-          "stateFrom": "standby",
-          "command": "switch",
-          "event": "enable",
-          "stateTo": "search",
-          "actions": {
-            "setSearchMode": {}
-          }
-        },
-        "switchOff": {
-          "stateFrom": "search",
-          "command": "switch",
-          "event": "disable",
-          "stateTo": "standby",
-          "actions": {
-            "setStandbyMode": {}
-          }
-        },
-        "switchScopeRange": {
-          "command": "rangeSwitch",
-          "actions": {
-            "setNextScopeRange": {}
-          }
-        }
-      }
-    },
-    "search": {
-      "stateInit": "search",
-      "transitions": {
-        "scan": {
-          "event": "update",
-          "actions": {
-            "scan": {}
-          }
-        },
-        "detect": {
-          "event": "targetInSight",
-          "actions": {
-            "setDistGatePos": {
-              "source": "continuousScale",
-              "width": 0.0
-            },
-            "setRelSpeedGatePos": {
-              "source": "continuousScale",
-              "width": 0.0
-            },
-            "detectTarget": {}
-          }
-        },
-        "addTarget": {
-          "event": "targetDetected",
-          "actions": {
-            "addTarget": {}
-          }
-        }
-      }
-    }
-  }
+type:t = "radar"
+name:t = "Type-291"
+transivers {
+	search {
+		pulsePower:r = 60000
+		pulseWidth:r = 0.0001
+		prf:r = 800
+		band:i = 0
+		rcs:r = 5
+		range:r = 20000
+		rangeMax:r = 40000
+		antenna {
+			azimuth {
+				angleHalfSens:r = 40
+				sideLobesSensitivity:r = -20
+			}
+			elevation {
+				angleHalfSens:r = 45
+				sideLobesSensitivity:r = -20
+			}
+		}
+	}
+}
+scanPatterns {
+	search {
+		type:t = "cylinder"
+		azimuthLimits:p2 = -180, 180
+		elevationLimits:p2 = 0, 0
+		yawStabLimit:r = 180
+		pitchStabLimit:r = 0
+		rollStabLimit:r = 0
+		period:r = 10
+		barHeight:r = 15
+		barsCount:i = 1
+		rowMajor:b = true
+	}
+}
+signals {
+	search {
+		aircraftAsTarget:b = true
+		groundVehiclesAsTarget:b = false
+		groundClutter:b = false
+		friendFoeId:b = false
+		distance {
+			presents:b = true
+			minValue:r = 200
+			maxValue:r = 30000
+		}
+	}
+}
+scopeRanges {
+	range1:r = 20000
+	range2:r = 40000
+}
+fsms {
+	main {
+		stateInit:t = "init"
+		actionsTemplates {
+			init {
+				setEnabled {
+					value:b = false
+				}
+				setTransiver {
+					transiver:t = "search"
+				}
+				setTargetDesignationRange {
+					azimuthRange:p2 = -180, 180
+					distanceRange:p2 = 0, 40000
+				}
+			}
+			setStandbyMode {
+				setModeName {
+					name:t = "standby"
+				}
+				setEnabled {
+					value:b = false
+				}
+				setSignal {
+					signal:t = "search"
+				}
+				setScanPattern {
+					scanPattern:t = "search"
+				}
+			}
+			setSearchMode {
+				setModeName {
+					name:t = "search"
+				}
+				setEnabled {
+					value:b = true
+				}
+				setFsmActive {
+					fsm:t = "search"
+					active:b = true
+				}
+			}
+		}
+		transitions {
+			init {
+				stateFrom:t = "init"
+				event:t = "init"
+				stateTo:t = "standby"
+				actions {
+					init {
+
+					}
+					setStandbyMode {
+
+					}
+				}
+			}
+			switchOn {
+				stateFrom:t = "standby"
+				command:t = "switch"
+				event:t = "enable"
+				stateTo:t = "search"
+				actions {
+					setSearchMode {
+
+					}
+				}
+			}
+			switchOff {
+				stateFrom:t = "search"
+				command:t = "switch"
+				event:t = "disable"
+				stateTo:t = "standby"
+				actions {
+					setStandbyMode {
+
+					}
+				}
+			}
+			switchScopeRange {
+				command:t = "rangeSwitch"
+				actions {
+					setNextScopeRange {
+
+					}
+				}
+			}
+		}
+	}
+	search {
+		stateInit:t = "search"
+		transitions {
+			scan {
+				event:t = "update"
+				actions {
+					scan {
+
+					}
+				}
+			}
+			detect {
+				event:t = "targetInSight"
+				actions {
+					setDistGatePos {
+						source:t = "continuousScale"
+						width:r = 0
+					}
+					setRelSpeedGatePos {
+						source:t = "continuousScale"
+						width:r = 0
+					}
+					detectTarget {
+
+					}
+				}
+			}
+			addTarget {
+				event:t = "targetDetected"
+				actions {
+					addTarget {
+
+					}
+				}
+			}
+		}
+	}
 }

@@ -60,7 +60,6 @@ foreach (fn in [
   "%scripts/events/eventsHandler.nut"
   "%scripts/events/eventRoomsHandler.nut"
   "%scripts/events/eventRewardsWnd.nut"
-  "%scripts/events/rewardProgressManager.nut"
   "%scripts/events/eventDescriptionWindow.nut"
   "%scripts/vehiclesWindow.nut"
 
@@ -139,12 +138,15 @@ foreach (fn in [
 
   "%scripts/events/createEventRoomWnd.nut"
 
-  "%scripts/replays/replayScreen.nut"
   "%scripts/replays/replayPlayer.nut"
 
   "%scripts/customization/types.nut"
   "%scripts/customization/decorator.nut"
   "%scripts/customization/customizationWnd.nut"
+  
+
+
+
 
   "%scripts/myStats.nut"
   "%scripts/user/chooseTitle.nut"
@@ -245,7 +247,6 @@ foreach (fn in [
 
   "%scripts/slotbar/slotbarPresets.nut"
   "%scripts/vehicleRequireFeatureWindow.nut"
-  "%scripts/unit/unitInfoType.nut"
   "%scripts/unit/unitInfoExporter.nut"
 
   "%scripts/hud/hudEventManager.nut"
@@ -289,6 +290,9 @@ foreach (fn in [
 ]) {
   loadOnce(fn)
 }
+
+
+
 
 
 
@@ -344,8 +348,12 @@ require("%scripts/debugTools/dbgMarketplace.nut")
 require("%scripts/dmViewer/modeXrayDebugExport.nut")
 
 require("%scripts/exportInfo/skinsLocExporter.nut")
+require("%scripts/exportInfo/eventRewardsInfoExporter.nut")
+require("%scripts/exportInfo/historyPagesLocExporter.nut")
 require("%scripts/onlineShop/buyPremiumHandler.nut")
 require("%scripts/unlocks/requestInventoryUnlocks.nut")
+require("%scripts/countries/chooseCountryView.nut")
+require("%scripts/hud/antiAirComplexMenuState.nut")
 
 let { isAuthorized } = require("%appGlobals/login/loginState.nut")
 let { disableNetwork } = require("%globalScripts/clientState/initialState.nut")

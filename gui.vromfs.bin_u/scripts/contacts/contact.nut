@@ -1,5 +1,7 @@
 from "%scripts/dagui_natives.nut" import gchat_voice_mute_peer_by_name
 from "%scripts/dagui_library.nut" import *
+from "%scripts/contacts/contactsConsts.nut" import EPLX_PS4_FRIENDS
+let { is_gdk } = require("%sqstd/platform.nut")
 let { isPlayerFromXboxOne, isPlayerFromPS4, isPlatformSony
 } = require("%scripts/clientState/platform.nut")
 let { reqPlayerExternalIDsByUserId } = require("%scripts/user/externalIdsService.nut")
@@ -8,8 +10,8 @@ let { getXboxChatEnableStatus, isChatEnabled, isCrossNetworkMessageAllowed
 let { isEmpty, isInteger } = require("%sqStdLibs/helpers/u.nut")
 let { isMultiplayerPrivilegeAvailable } = require("%scripts/user/xboxFeatures.nut")
 let psnSocial = require("sony.social")
-let { EPLX_PS4_FRIENDS, contactsByGroups, blockedMeUids, cacheContactByName, clanUserTable
-} = require("%scripts/contacts/contactsManager.nut")
+let { contactsByGroups, blockedMeUids, cacheContactByName, clanUserTable
+} = require("%scripts/contacts/contactsListState.nut")
 let { replace, utf8ToLower } = require("%sqstd/string.nut")
 let { add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { show_profile_card } = require("%gdkLib/impl/user.nut")
@@ -247,9 +249,9 @@ class Contact {
     : v_uid == this.uid
 
   function isMe() {
-    return this.uidInt64 == userIdInt64.value
-      || this.uid == userIdStr.value
-      || this.name == userName.value
+    return this.uidInt64 == userIdInt64.get()
+      || this.uid == userIdStr.get()
+      || this.name == userName.get()
   }
 
   function checkInteractionStatus(callback) {
@@ -281,7 +283,7 @@ class Contact {
   }
 
   function checkCanChat(callback) {
-    if (((isMultiplayerPrivilegeAvailable.value && !isCrossNetworkMessageAllowed(this.name)) || this.isBlockedMe())) {
+    if (((isMultiplayerPrivilegeAvailable.get() && !isCrossNetworkMessageAllowed(this.name)) || this.isBlockedMe())) {
       callback?(false)
       return
     }
@@ -300,7 +302,7 @@ class Contact {
   }
 
   function canChat(comms_state) {
-    if (((isMultiplayerPrivilegeAvailable.value && !isCrossNetworkMessageAllowed(this.name)) || this.isBlockedMe()))
+    if (((isMultiplayerPrivilegeAvailable.get() && !isCrossNetworkMessageAllowed(this.name)) || this.isBlockedMe()))
       return false
 
     if (!isCrossNetworkMessageAllowed(this.name)) {
@@ -311,7 +313,7 @@ class Contact {
   }
 
   function checkCanInvite(callback) {
-    if ((!isMultiplayerPrivilegeAvailable.value || !isCrossNetworkMessageAllowed(this.name))) {
+    if ((!isMultiplayerPrivilegeAvailable.get() || !isCrossNetworkMessageAllowed(this.name))) {
       callback?(false)
       return
     }
@@ -323,7 +325,7 @@ class Contact {
   }
 
   function canInvite(comms_state) {
-    if ((!isMultiplayerPrivilegeAvailable.value || !isCrossNetworkMessageAllowed(this.name)))
+    if ((!isMultiplayerPrivilegeAvailable.get() || !isCrossNetworkMessageAllowed(this.name)))
       return false
 
     return comms_state == CommunicationState.Allowed || comms_state == CommunicationState.Muted
@@ -348,7 +350,7 @@ class Contact {
     gchat_voice_mute_peer_by_name(this.isInBlockGroup() || this.isBlockedMe(), ircName)
   }
 
-  isBlockedMe = @() this.uid in blockedMeUids.value
+  isBlockedMe = @() this.uid in blockedMeUids.get()
   isInGroup = @(groupName) this.uid in (contactsByGroups?[groupName] ?? {})
   isInFriendGroup = @() this.isInGroup(EPL_FRIENDLIST)
   isInPSNFriends = @() this.isInGroup(EPLX_PS4_FRIENDS)

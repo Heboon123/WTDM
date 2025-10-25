@@ -36,7 +36,7 @@ let typesForMissionModes = {
   },
   playerUnitRank = {
     inSessionAnd   = "crewsUnitRank",
-    inSessionTrue  = "usedInSessionUnit",
+    inSessionTrue  = "usedInSessionRank",
     inSessionFalse = "lastInSessionUnit"
   },
   playerUnitMRank = {
@@ -73,6 +73,7 @@ let locGroupByType = {
   playerCountry        = "playerUnit"
   usedInSessionType    = "usedPlayerUnit"
   usedInSessionUnit    = "usedPlayerUnit"
+  usedInSessionRank    = "usedPlayerUnit"
   usedInSessionClass   = "usedPlayerUnit"
   usedInSessionTag     = "usedPlayerUnit"
   lastInSessionType    = "lastPlayerUnit"
@@ -314,8 +315,8 @@ function loadMainProgressCondition(blk) {
       foreach (unlockId in (blk % "unlock")) {
         let unlock = getUnlockById(unlockId)
         if (unlock == null) {
-          let debugUnlockData = blk?.unlock ?? toString(blk) 
-          assert(false, "ERROR: Unlock does not exist")
+          let debugUnlockData = blk?.unlock ?? toString(blk)
+          assert(false, $"ERROR: Unlock does not exist /*debugUnlockData = {debugUnlockData}*/")
           continue
         }
 
@@ -779,7 +780,7 @@ function getProgressBarData(modeType, curVal, maxVal) {
   }
 
   res.show = res.show && maxVal > 1 && curVal < maxVal
-  res.value = clamp(1000 * curVal / (maxVal || 1), 0, 1000)
+  res.value = clamp(1000 * curVal / max(maxVal, 1), 0, 1000)
   res.maxVal <- maxVal
   return res
 }

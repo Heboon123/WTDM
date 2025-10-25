@@ -1,32 +1,38 @@
-{
-  "model": "bombtarget_vent_structure_01_a",
-  "expClass": "exp_structure",
-  "subclass": "fortification",
-  "hasExpl": true,
-  "hasDmg": false,
-  "hasDmg2": true,
-  "hasDmg2Collision": true,
-  "explosionFx": "ad_buildings_destructions_med",
-  "fireFx": "fire_ground_med_building",
-  "timeToFire": 120.0,
-  "timeToSmoke": 120.0,
-  "DamageEffects": {
-    "part": {
-      "name": "body_dm",
-      "onKill": {
-        "expl": 1.0,
-        "fire": 1.0
-      },
-      "onHit": {
-        "fire": 0.1
-      }
-    }
-  },
-  "DamageParts": {
-    "armor10": {
-      "body_dm": {
-        "hp": 600.0
-      }
-    }
-  }
+model:t = "bombtarget_vent_structure_01_a"
+locName:t = "structures/fan_cooling_tower"
+expClass:t = "exp_bombtarget_building"
+subclass:t = "fortification"
+hasExpl:b = true
+hasDmg:b = false
+hasDmg2:b = true
+hasDmg2Collision:b = true
+explosionFx:t = "ad_buildings_destructions_med"
+fireFx:t = "fire_ground_med_building"
+timeToFire:r = 120
+timeToSmoke:r = 120
+DamageParts {
+	formatVersion:i = 2
+	body {
+		armorClass:t = "RHA_tank"
+		body_dm {
+			hp:r = 1000
+			armorThickness:r = 15
+			genericDamageMult:r = 0
+			secondaryShatterDamageMult:r = 0
+			shatterDamageMult:r = 0
+			napalmDamageMult:r = 1
+		}
+	}
+}
+DamageEffects {
+	part {
+		name:t = "body_dm"
+		onKill {
+			expl:r = 1
+			fire:r = 1
+		}
+		onHit {
+			fire:r = 0.1
+		}
+	}
 }

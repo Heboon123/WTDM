@@ -2,6 +2,7 @@ from "%scripts/dagui_natives.nut" import is_steam_big_picture
 from "%scripts/dagui_library.nut" import *
 from "%scripts/utils_sa.nut" import is_mode_with_teams
 
+let { is_android } = require("%sqstd/platform.nut")
 let { getGlobalModule } = require("%scripts/global_modules.nut")
 let g_squad_manager = getGlobalModule("g_squad_manager")
 let { enumsAddTypes, getCachedType } = require("%sqStdLibs/helpers/enums.nut")
@@ -43,7 +44,7 @@ enumsAddTypes(g_mp_chat_mode, {
     sortOrder = mpChatModeSort.ALL
     textColor = "@chatTextAllColor"
 
-    isEnabled = @() hasBattleChatModeAll.value
+    isEnabled = @() hasBattleChatModeAll.get()
   }
 
   TEAM = {
@@ -52,7 +53,7 @@ enumsAddTypes(g_mp_chat_mode, {
     sortOrder = mpChatModeSort.TEAM
     textColor = "@chatTextTeamColor"
 
-    isEnabled = @() hasBattleChatModeTeam.value && !isPlayerDedicatedSpectator()
+    isEnabled = @() hasBattleChatModeTeam.get() && !isPlayerDedicatedSpectator()
       && is_mode_with_teams()
   }
 
@@ -62,7 +63,7 @@ enumsAddTypes(g_mp_chat_mode, {
     sortOrder = mpChatModeSort.SQUAD
     textColor = "@chatTextSquadColor"
 
-    isEnabled = @() hasBattleChatModeSquad.value && g_squad_manager.isInSquad(true)
+    isEnabled = @() hasBattleChatModeSquad.get() && g_squad_manager.isInSquad(true)
       && !isPlayerDedicatedSpectator()
   }
 
@@ -116,7 +117,7 @@ g_mp_chat_mode.getTextAvailableMode <- function getTextAvailableMode() {
 }
 
 g_mp_chat_mode.getChatHint <- function getChatHint() {
-  let hasIME = isPlatformSony || isPlatformXbox || is_platform_android || is_steam_big_picture()
+  let hasIME = isPlatformSony || isPlatformXbox || is_android || is_steam_big_picture()
   let chatHelpText = hasIME ? "" : loc("chat/help/send", { sendShortcuts = "{{INPUT_BUTTON KEY_ENTER}}" })
   local availableModeText = this.getTextAvailableMode()
   availableModeText = availableModeText != ""

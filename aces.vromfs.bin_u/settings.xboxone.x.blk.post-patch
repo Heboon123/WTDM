@@ -1,22 +1,68 @@
-"@delete:dx12" {}
-dx12{
-  debug {
-    loadPixCapturer:b=no
+"@override:video" {
+  resolution:t="3840x2160"
+  antialiasing_mode:t="tsr"
+  antialiasing_upscaling:t="100"
+}
+
+"@override:graphics" {
+  fxQuality:t="medium"
+  fxDensityMul:r=1.0 // deprecated
+  tireTracksQuality:i=3
+  foamQuality:t="high"
+  rendinstDistMul:r=1.8
+  grassRadiusMul:r=1.35
+  shadowQuality:t="high"
+  multislicedImpostors:b=yes
+  clipmapScaleFor4K:i = 6
+  clipmapExtraScale:i = 1
+  cloudsQuality:i=1
+}
+
+"@override:texStreaming" {
+  forceMemQuotaKB:i=5120000  // 5000M
+}
+
+"@delete:console_presets" {}
+console_presets {
+  xboxOneX {
+    performance {
+      video {
+        antialiasing_mode:t="tsr"
+        antialiasing_upscaling:t="150"
+      }
+      graphics {
+        forceDisableDof:b=yes
+        grassRadiusMul:r=0
+        anisotropy:i=4
+        disableHangarPlanarReflections:b=yes
+        waterQuality:t="medium"
+        fxQuality:t="low"
+        fxDensityMul:r=0.5 // deprecated
+      }
+      render {
+        ssrInHangar:b=no
+        ssaoQuality:i=1
+        haze:b=no
+      }
+    }
+    quality {
+      video {
+        antialiasing_mode:t="tsr"
+        antialiasing_upscaling:t="100"
+      }
+      graphics {
+        forceDisableDof:b=no
+        grassRadiusMul:r=1.35
+        anisotropy:i=4
+        disableHangarPlanarReflections:b=no
+        waterQuality:t="high"
+        fxDensityMul:r=1
+      }
+      render {
+        ssrInHangar:b=yes
+        ssaoQuality:i=2
+        haze:b=yes
+      }
+    }
   }
-  onlyPreallocatedHeaps:b=no
-  preallocHeap { sizeMB:i=1024; }
-  preallocHeap { sizeMB:i=32;   cpuCached:b=yes; }
-  preallocHeap { sizeMB:i=4;    gpuExec:b=yes; }
 }
-
-"@override:cfdWind"
-{
-  "@override:particleInfluenceThresholdMin":r=15.0
-  "@override:particleInfluenceThresholdMax":r=15.0
-}
-
-"@override:graphics"
-{
-  forcePanoramaInHangar:b=yes
-}
-hangarBlk:t="config/hangar_xboxone.blk"

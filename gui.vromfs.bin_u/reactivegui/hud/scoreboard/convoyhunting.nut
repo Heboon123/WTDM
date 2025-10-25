@@ -45,7 +45,7 @@ let timeIcon = {
 let timeText = @() textParams.__merge({
   watch = roundTimeLeft
   size = FLEX_H
-  text = secondsToTimeSimpleString(roundTimeLeft.value)
+  text = secondsToTimeSimpleString(roundTimeLeft.get())
 })
 
 let mkBlock = @(children) {

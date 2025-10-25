@@ -158,7 +158,7 @@ def pos_tm(pos : float3) : float3x4
   return res
 
 [generic]
-def is_inside_tm(pos : float3; tm : float3x4) : bool
+def is_inside_tm(pos : float3; tm : float3x4 | #) : bool
   let p = pos - tm[3]
   return (abs(dot(p, tm[0])) < dot(tm[0], tm[0]) * 0.5 &&
           abs(dot(p, tm[1])) < dot(tm[1], tm[1]) * 0.5 &&
@@ -166,7 +166,7 @@ def is_inside_tm(pos : float3; tm : float3x4) : bool
 
 
 [generic]
-def tm_volume(tm : float3x4) : float
+def tm_volume(tm : float3x4 | #) : float
   return sqrt(length_sq(tm[0]) * length_sq(tm[1]) * length_sq(tm[2]))
 
 
@@ -203,14 +203,3 @@ def max(a, b, c)
 [generic]
 def min(a, b, c)
   return min(min(a, b), c)
-
-[generic]
-def perpendicular(var norm : float3)
-  norm = normalize(norm)
-  let threshold = 0.5
-  if (abs(norm.z) < threshold)
-    return cross(norm, float3(-norm.y, norm.x, norm.z))
-  elif (abs(norm.y) < threshold)
-    return cross(norm, float3(-norm.z, norm.y, norm.x))
-  else
-    return cross(norm, float3(norm.x, -norm.z, norm.y))

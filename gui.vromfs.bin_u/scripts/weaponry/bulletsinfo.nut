@@ -7,7 +7,7 @@ let u = require("%sqStdLibs/helpers/u.nut")
 let { format } = require("string")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { eventbus_subscribe } = require("eventbus")
-let { blkFromPath, eachParam, copyParamsToTable } = require("%sqstd/datablock.nut")
+let { blkFromPath, eachParam, copyParamsToTable, blkOptFromPath } = require("%sqstd/datablock.nut")
 let { ceil, change_bit, interpolateArray } = require("%sqstd/math.nut")
 let { WEAPON_TYPE, getLastWeapon, isCaliberCannon, getCommonWeapons,
   getLastPrimaryWeapon, getPrimaryWeaponsList, getWeaponNameByBlkPath,
@@ -230,7 +230,8 @@ function getBulletsSetData(air, modifName, noModList = null) {
   if ((modifName in air.bulletsSets) && !noModList)
     return air.bulletsSets[modifName] 
   local res = null
-  let airBlk = getFullUnitBlk(air.name)
+  let unitName = air.name
+  let airBlk = getFullUnitBlk(unitName)
   if (!airBlk?.modifications)
     return res
 
@@ -247,20 +248,20 @@ function getBulletsSetData(air, modifName, noModList = null) {
   let triggerList = []
   let primaryList = getPrimaryWeaponsList(air)
   foreach (primaryMod in primaryList)
-    foreach (weapon in getCommonWeapons(airBlk, primaryMod))
+    foreach (weapon in getCommonWeapons(airBlk, primaryMod, unitName))
       if (weapon?.blk && !weapon?.dummy && !isInArray(weapon.blk, wpList)) {
         wpList.append(weapon.blk)
         triggerList.append(weapon.trigger)
       }
   let supportBlkIdx = {}
-  foreach (supportName in getSupportUnits(air.name)) {
+  foreach (supportName in getSupportUnits(unitName)) {
     let supportUnit = getAircraftByName(supportName)
     if (supportUnit == null)
       continue
     let supportUnitBlk = getFullUnitBlk(supportName)
     let primaryListSupport = getPrimaryWeaponsList(supportUnit)
     foreach (primaryMod in primaryListSupport) {
-      let supportWeapons = getCommonWeapons(supportUnitBlk, primaryMod)
+      let supportWeapons = getCommonWeapons(supportUnitBlk, primaryMod, supportName)
       foreach (weapon in supportWeapons)
         if (weapon?.blk && !weapon?.dummy && !wpList.contains(weapon.blk)) {
           let wBlkIdx = wpList.len()
@@ -272,7 +273,7 @@ function getBulletsSetData(air, modifName, noModList = null) {
   }
 
   if (!noModList) { 
-    let weapons = getUnitWeapons(airBlk)
+    let weapons = getUnitWeapons(unitName, airBlk)
     foreach (weapon in weapons)
       if (weapon?.blk && !weapon?.dummy && !isInArray(weapon.blk, wpList)) {
         wpList.append(weapon.blk)
@@ -501,7 +502,7 @@ function getBulletsGroupCount(air, full = false) {
 
     let bulletSetsQuantity = air.unitType.bulletSetsQuantity
     if (air.bulGroups < bulletSetsQuantity) {
-      let add = getBulletsSetData(air, fakeBullets_prefix, modList) || 0
+      let add = getBulletsSetData(air, fakeBullets_prefix, modList) ?? 0
       air.bulGroups = min(air.bulGroups + add, bulletSetsQuantity)
     }
   }
@@ -520,7 +521,7 @@ function findIdenticalWeapon(weapon, weaponList, modsList) {
   if (u.isEmpty(weaponBlk))
     return null
 
-  let cartridgeSize = weaponBlk?.bulletsCartridge || 1
+  let cartridgeSize = max(weaponBlk?.bulletsCartridge ?? 1, 1)
   let groupIdx = getWeaponModIdx(weaponBlk, modsList)
 
   foreach (blkName, info in weaponList) {
@@ -539,26 +540,27 @@ function getBulletsInfoForPrimaryGuns(air) {
     return []
 
   let primaryWeapon = getLastPrimaryWeapon(air)
-  let presetWeapon = getLastWeapon(air.name)
+  let unitName = air.name
+  let presetWeapon = getLastWeapon(unitName)
 
-  let cachedWeapons = unitsPrimaryBulletsInfo?[air.name]?[primaryWeapon][presetWeapon]
+  let cachedWeapons = unitsPrimaryBulletsInfo?[unitName]?[primaryWeapon][presetWeapon]
   if (cachedWeapons != null)
     return cachedWeapons
 
   let res = []
-  if (unitsPrimaryBulletsInfo?[air.name] == null)
-    unitsPrimaryBulletsInfo[air.name] <- {}
-  if (unitsPrimaryBulletsInfo?[air.name][primaryWeapon] == null)
-    unitsPrimaryBulletsInfo[air.name][primaryWeapon] <- {}
-  unitsPrimaryBulletsInfo[air.name][primaryWeapon][presetWeapon] <- res
+  if (unitsPrimaryBulletsInfo?[unitName] == null)
+    unitsPrimaryBulletsInfo[unitName] <- {}
+  if (unitsPrimaryBulletsInfo?[unitName][primaryWeapon] == null)
+    unitsPrimaryBulletsInfo[unitName][primaryWeapon] <- {}
+  unitsPrimaryBulletsInfo[unitName][primaryWeapon][presetWeapon] <- res
 
-  let airBlk = getFullUnitBlk(air.name)
+  let airBlk = getFullUnitBlk(unitName)
   if (!airBlk)
     return res
 
-  let commonWeapons = getCommonWeapons(airBlk, primaryWeapon)
+  let commonWeapons = getCommonWeapons(airBlk, primaryWeapon, unitName)
   let secondaryWeapon = air.getWeapons().findvalue(@(w) w.name == presetWeapon)
-  let presetWeapons = getPresetWeapons(airBlk, secondaryWeapon)
+  let presetWeapons = getPresetWeapons(airBlk, secondaryWeapon, unitName)
 
   local weapons = commonWeapons
   weapons.extend(presetWeapons)
@@ -569,7 +571,7 @@ function getBulletsInfoForPrimaryGuns(air) {
       continue
     let supportUnitBlk = getFullUnitBlk(supportName)
     let primaryWeaponSupport = getLastPrimaryWeapon(supportUnit)
-    let supCommonWeapons = getCommonWeapons(supportUnitBlk, primaryWeaponSupport)
+    let supCommonWeapons = getCommonWeapons(supportUnitBlk, primaryWeaponSupport, supportName)
     foreach (weapon in supCommonWeapons)
       if (weapon?.blk && !weapon?.dummy)
         weapons.append(weapon)
@@ -598,7 +600,7 @@ function getBulletsInfoForPrimaryGuns(air) {
           continue
 
         wpList[weapon.blk].isBulletBelt = wBlk?.isBulletBelt ?? true
-        wpList[weapon.blk].cartridge = (weapon?.bulletsCartridge ?? wBlk?.bulletsCartridge ?? 1) || 1
+        wpList[weapon.blk].cartridge = max((weapon?.bulletsCartridge ?? wBlk?.bulletsCartridge ?? 1), 1)
         wpList[weapon.blk].total = ceil(wpList[weapon.blk].total * 1.0 /
           wpList[weapon.blk].cartridge).tointeger()
 
@@ -744,6 +746,43 @@ function locEnding(locId, ending, defValue = null) {
   return res
 }
 
+function getModWeaponsList(unit, modifName) {
+  let weaponList = []
+  let weaponsBlk = unit.getUnitWpCostBlk()?.weapons
+  if (!weaponsBlk)
+    return weaponList
+  let weaponsCount = weaponsBlk.blockCount()
+  for (local i = 0; i < weaponsCount; i++) {
+    let weapon = weaponsBlk.getBlock(i)
+    if (weapon?.reqModification == modifName) {
+      local weapName = weapon.getBlockName()
+      let isContainer = weapName.indexof("containers_") == 0
+      let weaponTypeSeparator = weapName.indexof("_")
+      if (weaponTypeSeparator)
+        weapName = weapName.slice(weaponTypeSeparator + 1, weapName.len())
+
+      if (isContainer) {
+        let container = blkOptFromPath($"gameData/Weapons/containers/{weapName}")
+        let containerWeapons = container % "blk"
+        foreach (weaponBlkPatch in containerWeapons) {
+          weapName = getWeaponNameByBlkPath(weaponBlkPatch)
+          if (!weaponList.contains(weapName))
+            weaponList.append(weapName)
+        }
+        continue
+      }
+      if (!weaponList.contains(weapName))
+        weaponList.append(weapName)
+    }
+  }
+  return weaponList
+}
+
+function getLocalizedModWeapons(unit, modifName) {
+  let list = getModWeaponsList(unit, modifName)
+  return ", ".join(list.map(@(weapName) loc($"weapons/{weapName}/short")))
+}
+
 
 function getModificationInfo(air, modifName, p = {}) {
   let { isShortDesc = false, isLimitedName = false, obj = null, itemDescrRewriteFunc = null, needAddName = true } = p
@@ -780,7 +819,14 @@ function getModificationInfo(air, modifName, p = {}) {
     local locId = modifName
     let ending = isShortDesc ? (isLimitedName ? "/short" : "") : "/desc"
 
-    res.desc = loc($"modification/{locId}{ending}", "")
+    let locKey = $"modification/{locId}{ending}"
+    if (doesLocTextExist(locKey)) {
+      let locParams = {}
+      if (!isLimitedName)
+        locParams.unlockWeapons <- getLocalizedModWeapons(air, modifName)
+      res.desc = loc(locKey, "", locParams)
+    }
+
     if (res.desc == "" && isShortDesc && isLimitedName)
       res.desc = loc($"modification/{locId}", "")
 
@@ -1090,18 +1136,20 @@ function updatePrimaryBullets(unit, primaryWeapon, weaponToFakeBulletMask) {
   local primary = 0
   let primaryList = getPrimaryWeaponsList(unit)
   if (primaryList.len() > 0) {
-    let airBlk = getFullUnitBlk(unit.name)
+    let unitName = unit.name
+    let airBlk = getFullUnitBlk(unitName)
     if (airBlk)
       primary = getActiveBulletsIntByWeaponsBlk(unit,
-        getCommonWeapons(airBlk, primaryWeapon), weaponToFakeBulletMask)
+        getCommonWeapons(airBlk, primaryWeapon, unitName), weaponToFakeBulletMask)
   }
   unit.primaryBullets[primaryWeapon] <- primary
 }
 
 function updateSecondaryBullets(unit, secondaryWeapon, weaponToFakeBulletMask) {
   let weapon = unit.getWeapons().findvalue(@(w) w.name == secondaryWeapon)
+  let unitName = unit.name
   unit.secondaryBullets[secondaryWeapon] <- getActiveBulletsIntByWeaponsBlk(unit,
-    getPresetWeapons(getFullUnitBlk(unit.name), weapon), weaponToFakeBulletMask)
+    getPresetWeapons(getFullUnitBlk(unitName), weapon, unitName), weaponToFakeBulletMask)
 }
 
 function getActiveBulletsGroupInt(unit, params = null) {
@@ -1203,13 +1251,26 @@ function getFakeBulletsModByName(unit, modName) {
   return null
 }
 
+function getWeaponBlkNameByGroupIdx(unit, groupIndex) {
+  let bulletsList = getBulletsList(unit.name, groupIndex, {
+    needCheckUnitPurchase = false, needOnlyAvailable = false
+  })
+  let firstBulletName = bulletsList.values?[0] ?? ""
+  let bulletsSet = getBulletsSetData(unit, firstBulletName)
+  return getWeaponNameByBlkPath(bulletsSet?.weaponBlkName ?? "")
+}
+
 function getUnitLastBullets(unit) {
   let bulletsItemsList = []
   let numBulletsGroups = getLastFakeBulletsIndex(unit);
   for (local groupIndex = 0; groupIndex < numBulletsGroups; groupIndex++) {
     if (!isBulletGroupActive(unit, groupIndex))
       continue
-    bulletsItemsList.append(getSavedBullets(unit.name, groupIndex))
+
+    bulletsItemsList.append({
+      name = getSavedBullets(unit.name, groupIndex),
+      weapon = getWeaponBlkNameByGroupIdx(unit, groupIndex)
+    })
   }
   return bulletsItemsList
 }
@@ -1286,20 +1347,26 @@ function isModificationIsShell(unit, mod) {
   return bulletsSet != null && isShell(bulletsSet)
 }
 
-function getProjectileNameLoc(locKey, needToUseBulletTypeName = false, unit = null) {
-  if (locKey == "artillery")
+const ROCKET_STRIKING_PART_SUFFIX = "^strikpart"
+let stripProjectileStrikPartSuffix = @(name) name.endswith(ROCKET_STRIKING_PART_SUFFIX)
+  ? name.replace(ROCKET_STRIKING_PART_SUFFIX, "")
+  : name
+
+function getProjectileNameLoc(projectileName, needToUseBulletTypeName = false, unit = null) {
+  projectileName = stripProjectileStrikPartSuffix(projectileName)
+  if (projectileName == "artillery")
     return loc("multiplayer/artillery")
-  if (doesLocTextExist(locKey))
-    return loc(locKey)
-  if (doesLocTextExist($"weapons/{locKey}/short"))
-    return loc($"weapons/{locKey}/short")
+  if (doesLocTextExist(projectileName))
+    return loc(projectileName)
+  if (doesLocTextExist($"weapons/{projectileName}/short"))
+    return loc($"weapons/{projectileName}/short")
 
   if (needToUseBulletTypeName) {
-    if (doesLocTextExist($"{locKey}/name"))
-      return loc($"{locKey}/name")
+    if (doesLocTextExist($"{projectileName}/name"))
+      return loc($"{projectileName}/name")
     if (unit) {
-      let caliber = (unit?.modifications.findvalue(@(m) m.name == locKey).caliber ?? 0) * 1000
-      let bulletLocId = getBulletBeltShortLocId(locKey)
+      let caliber = (unit?.modifications.findvalue(@(m) m.name == projectileName).caliber ?? 0) * 1000
+      let bulletLocId = getBulletBeltShortLocId(projectileName)
       if (caliber && doesLocTextExist(bulletLocId)) {
         let caliberString = caliber % 1 != 0
           ? format(loc("caliber/mm_decimals"), floatToText(caliber))
@@ -1307,8 +1374,8 @@ function getProjectileNameLoc(locKey, needToUseBulletTypeName = false, unit = nu
         return $"{caliberString} {loc(bulletLocId)}"
       }
     }
-    if (locKey != "")
-      logerr($"Can't find localization for projectile {locKey}")
+    if (projectileName != "")
+      logerr($"Can't find localization for projectile {projectileName}")
   }
   return ""
 }
@@ -1320,7 +1387,7 @@ function getProjectileIconLayers(projectileName) {
     projectileNameToIconsBlk.tryLoad("config/killer_projectile_icon.blk")
   }
 
-  return projectileNameToIconsBlk.getStr(projectileName, "")
+  return projectileNameToIconsBlk.getStr(stripProjectileStrikPartSuffix(projectileName), "")
     .split_by_chars(";", true)
     .map(@(layeredIconSrc) { layeredIconSrc })
 }
@@ -1349,6 +1416,7 @@ return {
   isBullets
   isWeaponTierAvailable
   getFakeBulletsModByName
+  getWeaponBlkNameByGroupIdx
   getUnitLastBullets
   getModificationInfo
   getModificationName
@@ -1367,4 +1435,5 @@ return {
   anglesToCalcDamageMultiplier
   getProjectileNameLoc
   getProjectileIconLayers
+  stripProjectileStrikPartSuffix
 }

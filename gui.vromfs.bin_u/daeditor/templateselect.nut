@@ -1,20 +1,21 @@
+import "daEditorEmbedded" as daEditor
 from "%darg/ui_imports.nut" import *
 
-let {showTemplateSelect, editorIsActive, showDebugButtons, selectedTemplatesGroup, addEntityCreatedCallback} = require("state.nut")
-let {colors} = require("components/style.nut")
+let entity_editor = require_optional("entity_editor")
+let { showTemplateSelect, editorIsActive, showDebugButtons, selectedTemplatesGroup, addEntityCreatedCallback } = require("state.nut")
+let { colors } = require("components/style.nut")
 let txt = require("%daeditor/components/text.nut").dtext
 
 let textButton = require("components/textButton.nut")
 let closeButton = require("components/closeButton.nut")
 let nameFilter = require("components/nameFilter.nut")
 let combobox = require("%daeditor/components/combobox.nut")
-let {makeVertScroll} = require("%daeditor/components/scrollbar.nut")
-let {mkTemplateTooltip} = require("components/templateHelp.nut")
+let { makeVertScroll } = require("%daeditor/components/scrollbar.nut")
+let { mkTemplateTooltip } = require("components/templateHelp.nut")
+let { fileName } = require("%sqstd/path.nut")
 
-let {getSceneLoadTypeText} = require("%daeditor/daeditor_es.nut")
-let {defaultScenesSortMode} = require("components/mkSortSceneModeButton.nut")
-let entity_editor = require("entity_editor")
-let daEditor = require("daEditorEmbedded")
+let { getSceneLoadTypeText, getScenePrettyName } = require("%daeditor/daeditor_es.nut")
+let { defaultScenesSortMode } = require("components/mkSortSceneModeButton.nut")
 let {DE4_MODE_SELECT} = daEditor
 
 const noSceneSelected = "UNKNOWN:0"
@@ -42,10 +43,10 @@ function scrollBySelection() {
 }
 
 function doSelectTemplate(tpl_name) {
-  selectedItem(tpl_name)
+  selectedItem.set(tpl_name)
   if (selectedItem.get()) {
     let finalTemplateName = selectedItem.get() + templatePostfixText.get()
-    entity_editor.get_instance().selectEcsTemplate(finalTemplateName)
+    entity_editor?.get_instance().selectEcsTemplate(finalTemplateName)
   }
 }
 
@@ -53,7 +54,7 @@ let filter = nameFilter(filterText, {
   placeholder = "Filter by name"
 
   function onChange(text) {
-    filterText(text)
+    filterText.set(text)
 
     if (selectedItem.get() && text.len()>0 && selectedItem.get().tolower().contains(text.tolower()))
       scrollBySelection()
@@ -72,7 +73,7 @@ let filter = nameFilter(filterText, {
   }
 
   function onClear() {
-    filterText.update("")
+    filterText.set("")
     set_kb_focus(null)
   }
 })
@@ -81,7 +82,7 @@ let templPostfix = nameFilter(templatePostfixText, {
   placeholder = "Template postfix"
 
   function onChange(text) {
-    templatePostfixText(text)
+    templatePostfixText.set(text)
   }
 
   function onEscape() {
@@ -93,7 +94,7 @@ let templPostfix = nameFilter(templatePostfixText, {
   }
 
   function onClear() {
-    templatePostfixText.update("")
+    templatePostfixText.set("")
     set_kb_focus(null)
   }
 })
@@ -115,15 +116,15 @@ function listRow(tpl_name, idx) {
 
     return {
       rendObj = ROBJ_SOLID
-      size = [flex(), SIZE_TO_CONTENT]
+      size = FLEX_H
       color = color
       behavior = Behaviors.Button
       tpl_name = tpl_name
 
       watch = stateFlags
-      onHover = @(on) templateTooltip(on ? mkTemplateTooltip(tpl_name) : null)
+      onHover = @(on) templateTooltip.set(on ? mkTemplateTooltip(tpl_name) : null)
       onClick = @() doSelectTemplate(tpl_name)
-      onElemState = @(sf) stateFlags.update(sf & S_TOP_HOVER)
+      onElemState = @(sf) stateFlags.set(sf & S_TOP_HOVER)
 
       children = {
         rendObj = ROBJ_TEXT
@@ -135,7 +136,8 @@ function listRow(tpl_name, idx) {
   }
 }
 
-let selectedGroupTemplates = Computed(@() editorIsActive.get() ? entity_editor.get_instance()?.getEcsTemplates(selectedTemplatesGroup.get()) ?? [] : [])
+let selectedGroupTemplates = Computed(@() editorIsActive.get()
+  ? entity_editor?.get_instance().getEcsTemplates(selectedTemplatesGroup.get()) ?? [] : [])
 
 let filteredTemplates = Computed(function() {
   let result = []
@@ -158,7 +160,7 @@ filterText.subscribe(@(_) showWholeList = false)
 function listMore() {
   return {
     rendObj = ROBJ_SOLID
-    size = [flex(), SIZE_TO_CONTENT]
+    size = FLEX_H
     color = colors.GridBg[0]
     behavior = Behaviors.Button
 
@@ -185,7 +187,7 @@ function doValidateTemplates(idx) {
     let tplName = selectedGroupTemplates.get()[idx]
     if (tplName > validateAfterName) {
       vlog($"Validating template {tplName}...")
-      selectedItem(tplName)
+      selectedItem.set(tplName)
       scrollBySelection()
       gui_scene.resetTimeout(0.01, function() {
         doSelectTemplate(tplName)
@@ -195,7 +197,7 @@ function doValidateTemplates(idx) {
     }
     vlog($"Skipping template {tplName}...")
     if (++skipped > 50) {
-      selectedItem(tplName)
+      selectedItem.set(tplName)
       scrollBySelection()
       gui_scene.resetTimeout(0.01, @() doRepeatValidateTemplates(idx+1))
       return
@@ -208,18 +210,19 @@ doRepeatValidateTemplates = doValidateTemplates
 
 function sceneToText(scene) {
   if (scene.importDepth != 0) {
+    local prettyName = getScenePrettyName(scene.loadType, scene.id)
+    local strippedPath = fileName(scene.path)
     local loadType = getSceneLoadTypeText(scene)
-    return $"{loadType}:{scene.index}"
+    return $"{loadType}:{scene.id}:{prettyName.len() == 0 ? strippedPath : $"{prettyName} ({strippedPath})"}"
   }
   return "MAIN"
 }
 
-allScenes.subscribe(function(v) {
-  v.sort(defaultScenesSortMode.func)
-  allSceneTexts(v.map(@(scene, _idx) sceneToText(scene)))
-  allSceneTexts.value.append(noSceneSelected)
-  local scene = entity_editor.get_instance()?.getTargetScene()
-  if (scene != null && ("loadType" in scene) && ("index" in scene)) {
+allScenes.subscribe_with_nasty_disregard_of_frp_update(function(v) {
+  allSceneTexts.set(v.map(@(scene, _idx) sceneToText(scene)))
+  allSceneTexts.get().append(noSceneSelected)
+  local scene = entity_editor?.get_instance().getTargetScene()
+  if (scene != null && ("loadType" in scene) && ("id" in scene)) {
     selectedScene.set(sceneToText(scene))
   } else {
     selectedScene.set(noSceneSelected)
@@ -228,26 +231,31 @@ allScenes.subscribe(function(v) {
 
 selectedScene.subscribe(function(v) {
   local loadType = 0
-  local index = 0
+  local id = -1
   if (v != noSceneSelected) {
-    local selectedSceneIndex = allSceneTexts.value.indexof(v)
+    local selectedSceneIndex = allSceneTexts.get().indexof(v)
     if (selectedSceneIndex != null) {
-      local scene = allScenes.value[selectedSceneIndex]
+      local scene = allScenes.get()[selectedSceneIndex]
       loadType = scene.loadType
-      index = scene.index
+      id = scene.id
     }
   }
-  entity_editor.get_instance()?.setTargetScene(loadType, index)
+  entity_editor?.get_instance().setTargetScene(loadType, id)
 })
 
 
 function dialogRoot() {
-  let templatesGroups = entity_editor.get_instance().getEcsTemplatesGroups()
+  let templatesGroups = entity_editor?.get_instance().getEcsTemplatesGroups()
   let maxTemplatesInList = 1000
 
-  allScenes(entity_editor.get_instance().getSceneImports() ?? [])
-  let selectedSceneIndex = selectedScene.value != noSceneSelected ? allSceneTexts.value.indexof(selectedScene.value) : null
-  let sceneInfo = selectedSceneIndex != null ? allScenes.value[selectedSceneIndex] : null
+  local scenes = entity_editor?.get_instance().getSceneImports().map(function (item, ind) {
+      item.index <- ind
+      return item
+      }) ?? [] 
+  scenes.sort(defaultScenesSortMode.func)
+  allScenes.set(scenes)
+  let selectedSceneIndex = selectedScene.get() != noSceneSelected ? allSceneTexts.get().indexof(selectedScene.get()) : null
+  let sceneInfo = selectedSceneIndex != null ? scenes[selectedSceneIndex] : null
   let sceneTitleStyle = { fontSize = hdpx(17), color=Color(150,150,150,120) }
   let sceneInfoStyle = { fontSize = hdpx(17), color=Color(180,180,180,120) }
   let sceneTooltip = function() {
@@ -261,7 +269,7 @@ function dialogRoot() {
       flow = FLOW_VERTICAL
       children = [
         txt("Select target scene to create entity in", sceneTitleStyle)
-        txt(selectedScene.value, sceneInfoStyle)
+        txt(selectedScene.get(), sceneInfoStyle)
         sceneInfo != null ? txt($"{sceneInfo.path}", sceneInfoStyle) : null
       ]
 
@@ -288,7 +296,7 @@ function dialogRoot() {
 
     return {
       watch = [filteredTemplates, selectedItem, filterText]
-      size = [flex(), SIZE_TO_CONTENT]
+      size = FLEX_H
       flow = FLOW_VERTICAL
       children = rows
       behavior = Behaviors.Button
@@ -307,15 +315,15 @@ function dialogRoot() {
 
 
   function doClose() {
-    showTemplateSelect(false)
-    filterText("")
+    showTemplateSelect.set(false)
+    filterText.set("")
     daEditor.setEditMode(DE4_MODE_SELECT)
   }
 
   function doCancel() {
     if (selectedItem.get() != null) {
-      selectedItem(null)
-      entity_editor.get_instance().selectEcsTemplate("")
+      selectedItem.set(null)
+      entity_editor?.get_instance().selectEcsTemplate("")
     }
     else
       doClose()
@@ -344,13 +352,13 @@ function dialogRoot() {
         children = [
           {
             flow = FLOW_HORIZONTAL
-            size = [flex(), SIZE_TO_CONTENT]
+            size = FLEX_H
             children = [
               txt($"CREATE ENTITY ({filteredTemplatesCount.get()}/{selectedGroupTemplatesCount.get()})", {
                 fontSize = hdpx(15)
                 hplace = ALIGN_CENTER
                 vplace = ALIGN_CENTER
-                size = [flex(), SIZE_TO_CONTENT]
+                size = FLEX_H
               })
               closeButton(doClose)
             ]
@@ -373,7 +381,7 @@ function dialogRoot() {
           templPostfix
           {
             flow = FLOW_HORIZONTAL
-            size = [flex(), SIZE_TO_CONTENT]
+            size = FLEX_H
             halign = ALIGN_CENTER
             valign = ALIGN_CENTER
             hotkeys = [["^Esc", doCancel]]

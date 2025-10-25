@@ -10,9 +10,9 @@ function initWeaponParams() {
   let blk = DataBlock()
   blk.load("config/gameplay.blk")
   if (blk?.sensorsConstants)
-    saclosMissileBeaconIRSourceBand(blk.sensorsConstants?.saclosMissileBeaconInfraRedBrightnessSourceBand ?? 4)
+    saclosMissileBeaconIRSourceBand.set(blk.sensorsConstants?.saclosMissileBeaconInfraRedBrightnessSourceBand ?? 4)
 
-  reloadCooldownTimeByCaliber({})
+  reloadCooldownTimeByCaliber.set({})
   let cooldown_time = blk?.reloadCooldownTimeByCaliber
   if (!cooldown_time)
     return

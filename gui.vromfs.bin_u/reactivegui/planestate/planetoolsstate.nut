@@ -17,6 +17,7 @@ let DistToTarget = Watched(0.0)
 let RocketMode = Watched(false)
 let AAMRocketMode = Watched(false)
 let CannonMode = Watched(false)
+let AirTargetMode = Watched(false)
 let AirCannonMode = Watched(false)
 let BombCCIPMode = Watched(false)
 let BlkFileName = Watched("")
@@ -27,6 +28,7 @@ let IlsAtgmTargetPos = [0, 0]
 let IlsAtgmLocked = Watched(false)
 let RwrScale = Watched(1.0)
 let RwrBackHide = Watched(false)
+let MfdRwrFontScale = Watched(1.0)
 let RadarTargetDistRate = Watched(0.0)
 let RadarTargetDist = Watched(0.0)
 let RadarTargetHeight = Watched(0.0)
@@ -67,6 +69,7 @@ let ScreenFwdDirPosValid = Watched(false)
 let HmdTargetPos = [0, 0]
 let HmdTargetPosValid = Watched(false)
 let CustomPages = Watched({})
+let CustomPagesBlk = Watched({})
 let HmdGunTargeting = Watched(false)
 let MfdRwrColor = Watched(Color(0, 255, 0, 240))
 let IsLightsOn = Watched(false)
@@ -99,6 +102,7 @@ let planeState = {
   IlsAtgmLocked,
   RwrScale,
   RwrBackHide,
+  MfdRwrFontScale,
   RadarTargetDist,
   RadarTargetPosValid,
   RadarTargetPos,
@@ -124,6 +128,7 @@ let planeState = {
   MfdVdiPosSize,
   VdiColor,
   IsOnGround,
+  AirTargetMode,
   AirCannonMode,
   DigitalDevicesVisible,
   DigDevicesPosSize,
@@ -141,6 +146,7 @@ let planeState = {
   HmdTargetPos,
   HmdTargetPosValid,
   CustomPages,
+  CustomPagesBlk,
   HmdGunTargeting,
   MfdRwrColor,
   IsLightsOn,
@@ -180,7 +186,7 @@ interop.updateDigDevicesPosSize <- function(x, y, w, h) {
 interop.updatePlaneMfdHsdPosSize <- function(x, y, w, h) {
   let curVal = MfdHsdPosSize.get()
   if (curVal[0] != x || curVal[1] != y || curVal[2] != w || curVal[3] != h)
-    MfdHsdPosSize([x, y, w, h])
+    MfdHsdPosSize.set([x, y, w, h])
 }
 
 interop.updateAimLockPos <- function(x, y) {

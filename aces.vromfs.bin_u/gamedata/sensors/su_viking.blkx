@@ -1,0 +1,1745 @@
+type:t = "radar"
+name:t = "viking"
+weaponTargetsMax:i = 6
+launchedMissilesPredictedPositionsMax:i = 6
+transivers {
+	radarTrack {
+		power:r = 600
+		band:i = 6
+		rcs:r = 2
+		range:r = 70000
+		rangeMax:r = 120000
+		antenna {
+			azimuth {
+				angleHalfSens:r = 2.2
+				sideLobesSensitivity:r = -45
+			}
+			elevation {
+				angleHalfSens:r = 1
+				sideLobesSensitivity:r = -45
+			}
+		}
+	}
+	irstTrack {
+		power:r = 200
+		band:i = -1
+		rcs:r = 8000
+		range:r = 21000
+		rangeMax:r = 23000
+		visibilityType:t = "infraRed"
+		range0:r = 0
+		range1:r = 100000
+		range2:r = 0
+		range3:r = 0
+		range4:r = 0
+		range5:r = 0
+		range6:r = 0
+		range7:r = 0
+		antenna {
+			angleHalfSens:r = 0.4
+			sideLobesSensitivity:r = -120
+		}
+	}
+}
+scanPatterns {
+	radarLockNarrow {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -60, 60
+		elevationLimits:p2 = -5, 60
+		pitchStabLimit:r = 80
+		rollStabLimit:r = 30
+		period:r = 0.5
+		width:r = 5
+		barHeight:r = 1.75
+		barsCount:i = 4
+		rowMajor:b = false
+		indicate:b = true
+		preciseMinor:b = true
+	}
+	radarLockWide {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -60, 60
+		elevationLimits:p2 = -5, 60
+		pitchStabLimit:r = 80
+		rollStabLimit:r = 30
+		period:r = 1.5
+		width:r = 30
+		barHeight:r = 1.75
+		barsCount:i = 4
+		rowMajor:b = false
+		centerElevation:r = 30
+		indicate:b = true
+		preciseMinor:b = true
+	}
+	radarLosLock {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -60, 60
+		elevationLimits:p2 = -5, 60
+		pitchStabLimit:r = 80
+		rollStabLimit:r = 30
+		period:r = 0.5
+		width:r = 5
+		barHeight:r = 1.75
+		barsCount:i = 4
+		rowMajor:b = false
+		indicate:b = true
+		preciseMinor:b = true
+	}
+	radarTrack {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -60, 60
+		elevationLimits:p2 = -5, 60
+		pitchStabLimit:r = 60
+		rollStabLimit:r = 30
+		period:r = 1
+		width:r = 45
+		barHeight:r = 1.5
+		barsCount:i = 40
+		rowMajor:b = true
+		centerElevation:r = 30
+		preciseMinor:b = true
+		tws:b = true
+	}
+	radarFastTws {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -60, 60
+		elevationLimits:p2 = -5, 60
+		pitchStabLimit:r = 60
+		rollStabLimit:r = 30
+		period:r = 0.05
+		period:r = 0.05
+		width:r = 45
+		barHeight:r = 1.5
+		barsCount:i = 40
+		rowMajor:b = true
+		centerElevation:r = 30
+		preciseMinor:b = true
+		tws:b = true
+	}
+	irstLock {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -90, 90
+		elevationLimits:p2 = -10, 82
+		pitchStabLimit:r = 80
+		rollStabLimit:r = 30
+		period:r = 0.1
+		width:r = 0.4
+		barHeight:r = 0.4
+		barsCount:i = 2
+		rowMajor:b = false
+		preciseMinor:b = true
+		indicate:b = true
+	}
+	irstLosLock {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -90, 90
+		elevationLimits:p2 = -10, 82
+		pitchStabLimit:r = 80
+		rollStabLimit:r = 30
+		period:r = 0.25
+		width:r = 0.4
+		barHeight:r = 0.4
+		barsCount:i = 2
+		rowMajor:b = false
+		preciseMinor:b = true
+		indicate:b = true
+	}
+	irstTrack {
+		type:t = "no"
+		azimuthLimits:p2 = -90, 90
+		elevationLimits:p2 = -10, 82
+		pitchStabLimit:r = 80
+		rollStabLimit:r = 30
+	}
+}
+signals {
+	radarTrack {
+		groundClutter:b = false
+		angularAccuracy:r = 0.014
+		distanceAccuracy:r = 3
+		targetId:b = true
+		targetRadiusMin:r = 0.7375
+		absDopplerSpeed:b = true
+		track:b = true
+		distance {
+			presents:b = true
+			minValue:r = 100
+			maxValue:r = 80000
+			width:r = 70
+		}
+		dopplerSpeed {
+			presents:b = true
+			minValue:r = 10
+			maxValue:r = 3000
+			signalWidthMin:r = 5
+			width:r = 0
+		}
+	}
+	irstTrack {
+		groundClutter:b = false
+		rangeFinder:b = false
+		angularAccuracy:r = 0.003438
+		distanceAccuracy:r = 2
+		targetRadiusMin:r = 0.2
+		distance {
+			presents:b = true
+			minValue:r = 30
+			maxValue:r = 20000
+		}
+		dopplerSpeed {
+			presents:b = false
+		}
+	}
+}
+transmitters {
+	rc {
+		power:r = 100
+		band:i = 9
+		antenna {
+			angleHalfSens:r = 10
+			sideLobesSensitivity:r = -20
+		}
+	}
+}
+fsms {
+	main {
+		stateInit:t = "init"
+		actionsTemplates {
+			init {
+				setEnabled {
+					value:b = false
+				}
+				setTargetDesignationRange {
+
+				}
+			}
+			setStandbyModeCommon {
+				setEnabled {
+					value:b = false
+				}
+				setCenterAzimuth {
+					source:t = "constant"
+					value:r = 0
+				}
+				clearTargetsOfInterest {
+
+				}
+				setFsmActive {
+					fsm:t = "lock"
+					active:b = false
+				}
+				resetTrackMode {
+
+				}
+			}
+			setRadarStandbyMode {
+				setStandbyModeCommon {
+
+				}
+				setModeName {
+					name:t = "standby"
+				}
+				setScanPattern {
+					scanPattern:t = "radarLockWide"
+				}
+				setCenterElevation {
+					source:t = "constant"
+					value:r = 0
+				}
+			}
+			setIrstStandbyMode {
+				setStandbyModeCommon {
+
+				}
+				setModeName {
+					name:t = "IRST standby"
+				}
+				setScanPattern {
+					scanPattern:t = "irstLosLock"
+				}
+				setCenterElevation {
+					source:t = "constant"
+					value:r = 0
+				}
+			}
+			setLockModeCommon {
+				setWeaponDetectionAllowance {
+					source:t = "const"
+					value:b = true
+				}
+				setDesignatedTarget {
+					set:b = true
+				}
+				setEnabled {
+					value:b = true
+				}
+				resetScanPhase {
+
+				}
+				setCenterAzimuth {
+					source:t = "targetDesignation"
+				}
+				clearTargetsOfInterest {
+
+				}
+				setFsmActive {
+					fsm:t = "lock"
+					active:b = true
+				}
+			}
+			setRadarLockModeCommon {
+				setLockModeCommon {
+
+				}
+				setModeName {
+					name:t = "acquisition"
+				}
+				setCenterElevation {
+					source:t = "targetDesignation"
+				}
+				setDistGatePos {
+					source:t = "targetDesignation"
+					width:r = 1000
+				}
+			}
+			setIrstLockModeCommon {
+				setLockModeCommon {
+
+				}
+				setModeName {
+					name:t = "acquisition"
+				}
+				setCenterElevation {
+					source:t = "constant"
+					value:r = 0
+				}
+				setDistGatePos {
+					source:t = "targetDesignation"
+					width:r = 100
+				}
+			}
+			setRadarLockModeCue {
+				setRadarLockModeCommon {
+
+				}
+				setScanPattern {
+					scanPattern:t = "radarLockWide"
+				}
+				setCenterElevation {
+					source:t = "constant"
+					value:r = 0
+				}
+			}
+			setIrstLockModeCue {
+				setRadarLockModeCommon {
+
+				}
+				setScanPattern {
+					scanPattern:t = "irstLock"
+				}
+			}
+			setRadarLockModeTarget {
+				setRadarLockModeCommon {
+
+				}
+				setScanPattern {
+					scanPattern:t = "radarLockNarrow"
+				}
+				setCenterElevation {
+					source:t = "targetDesignation"
+				}
+			}
+			setIrstLockModeTarget {
+				setRadarLockModeCommon {
+
+				}
+				setScanPattern {
+					scanPattern:t = "irstLock"
+				}
+			}
+			setLosVisualLockModeCommon {
+				setEnabled {
+					value:b = true
+				}
+				resetScanPhase {
+
+				}
+				clearTargetsOfInterest {
+
+				}
+				setCenterAzimuth {
+					source:t = "targetDesignation"
+				}
+				setCenterElevation {
+					source:t = "targetDesignation"
+				}
+				setFsmActive {
+					fsm:t = "lock"
+					active:b = true
+				}
+			}
+			setRadarLosVisualLockModeCommon {
+				setScanPattern {
+					scanPattern:t = "radarLosLock"
+				}
+				setLosVisualLockModeCommon {
+
+				}
+			}
+			setIrstLosVisualLockModeCommon {
+				setScanPattern {
+					scanPattern:t = "irstLosLock"
+				}
+				setLosVisualLockModeCommon {
+
+				}
+			}
+			setLosLockModeCommon {
+				setEnabled {
+					value:b = true
+				}
+				setWeaponDetectionAllowance {
+					source:t = "targetDesignation"
+				}
+				setDesignatedTarget {
+					set:b = false
+				}
+			}
+			setRadarLosLockMode {
+				setRadarLosVisualLockModeCommon {
+
+				}
+				setLosLockModeCommon {
+
+				}
+				setModeName {
+					name:t = "acquisition"
+				}
+				setDistGatePos {
+					source:t = "constRange"
+					pos:r = 40000
+					width:r = 80000
+				}
+				setRelSpeedGatePos {
+					source:t = "constRange"
+					pos:r = 0
+					width:r = 6000
+				}
+			}
+			setIrstLosLockMode {
+				setIrstLosVisualLockModeCommon {
+
+				}
+				setLosLockModeCommon {
+
+				}
+				setModeName {
+					name:t = "IRST acquisition"
+				}
+				setDistGatePos {
+					source:t = "constRange"
+					pos:r = 10000
+					width:r = 20000
+				}
+			}
+			setVisualLockModeCommon {
+				setModeName {
+					name:t = "acquisition"
+				}
+				setEnabled {
+					value:b = true
+				}
+				setWeaponDetectionAllowance {
+					source:t = "const"
+					value:b = true
+				}
+				setDesignatedTarget {
+					set:b = true
+				}
+			}
+			setRadarVisualLockMode {
+				setRadarLosVisualLockModeCommon {
+
+				}
+				setVisualLockModeCommon {
+
+				}
+				setDistGatePos {
+					source:t = "targetDesignation"
+					width:r = 1000
+				}
+				setRelSpeedGatePos {
+					source:t = "constRange"
+					pos:r = 0
+					width:r = 6000
+				}
+			}
+			setIrstVisualLockMode {
+				setIrstLosVisualLockModeCommon {
+
+				}
+				setVisualLockModeCommon {
+
+				}
+				setDistGatePos {
+					source:t = "targetDesignation"
+					width:r = 100
+				}
+			}
+			setTrackModeCommon {
+				setEnabled {
+					value:b = true
+				}
+				setWeaponDetectionAllowance {
+					source:t = "const"
+					value:b = true
+				}
+				setDesignatedTarget {
+					set:b = false
+				}
+				clearTargetsOfInterest {
+
+				}
+				addTargetOfInterest {
+
+				}
+				setLastTargetOfInterestActive {
+
+				}
+				updateActiveTargetOfInterest {
+
+				}
+				setCenterAzimuth {
+					source:t = "activeTargetOfInterest"
+				}
+				setCenterElevation {
+					source:t = "activeTargetOfInterest"
+				}
+				setDistGatePos {
+					source:t = "activeTargetOfInterest"
+					width:r = 0
+				}
+				updateActiveDetectedTarget {
+
+				}
+				setCenterElevation {
+					source:t = "constant"
+					value:r = 0
+				}
+			}
+			setRadarTrackMode {
+				setTrackModeCommon {
+
+				}
+				setModeName {
+					name:t = "track"
+				}
+				setScanPattern {
+					scanPattern:t = "radarTrack"
+				}
+				setFsmActive {
+					fsm:t = "radarTrack"
+					active:b = true
+				}
+			}
+			setIrstTrackMode {
+				setTrackModeCommon {
+
+				}
+				setModeName {
+					name:t = "IRST track"
+				}
+				setScanPattern {
+					scanPattern:t = "irstTrack"
+				}
+				setFsmActive {
+					fsm:t = "track"
+					active:b = true
+				}
+			}
+			resetTrackMode {
+				setFsmActive {
+					fsm:t = "track"
+					active:b = false
+				}
+				setFsmActive {
+					fsm:t = "radarTrack"
+					active:b = false
+				}
+			}
+			setRadar {
+				setTransiver {
+					transiver:t = "radarTrack"
+				}
+				setSignal {
+					signal:t = "radarTrack"
+				}
+			}
+			setIrst {
+				setTransiver {
+					transiver:t = "irstTrack"
+				}
+				setSignal {
+					signal:t = "irstTrack"
+				}
+			}
+		}
+		transitions {
+			init {
+				stateFrom:t = "init"
+				event:t = "init"
+				stateTo:t = "radarStandby"
+				actions {
+					init {
+
+					}
+					setRadarStandbyMode {
+
+					}
+					setRadar {
+
+					}
+				}
+			}
+			checkRadarLockTypeCue {
+				stateFrom:t = "radarStandby"
+				command:t = "designateTarget"
+				stateTo:t = "checkRadarLockTypeCue"
+				actions {
+					checkDesignationTypeEquals {
+						type:t = "cue"
+					}
+				}
+			}
+			radarLockCue {
+				stateFrom:t = "checkRadarLockTypeCue"
+				event:t = "designationTypeEquals"
+				stateTo:t = "radarLockCue"
+				actions {
+					setRadarLockModeCue {
+
+					}
+				}
+			}
+			checkRadarLockTypeTarget {
+				stateFrom:t = "checkRadarLockTypeCue"
+				event:t = "designationTypeNotEquals"
+				stateTo:t = "checkRadarLockTypeTarget"
+				actions {
+					checkDesignationTypeEquals {
+						type:t = "target"
+					}
+				}
+			}
+			lockRadarTarget {
+				stateFrom:t = "checkRadarLockTypeTarget"
+				event:t = "designationTypeEquals"
+				stateTo:t = "radarLockTarget"
+				actions {
+					setRadarLockModeTarget {
+
+					}
+				}
+			}
+			checkRadarLockTypeLos {
+				stateFrom:t = "checkRadarLockTypeTarget"
+				event:t = "designationTypeNotEquals"
+				stateTo:t = "checkRadarLockTypeLos"
+				actions {
+					checkDesignationTypeEquals {
+						type:t = "los"
+					}
+				}
+			}
+			lockRadarLos {
+				stateFrom:t = "checkRadarLockTypeLos"
+				event:t = "designationTypeEquals"
+				stateTo:t = "radarLosLock"
+				actions {
+					setRadarLosLockMode {
+
+					}
+				}
+			}
+			checkRadarLockTypeLos {
+				stateFrom:t = "checkRadarLockTypeLos"
+				event:t = "designationTypeNotEquals"
+				stateTo:t = "checkRadarLockTypeVisual"
+				actions {
+					checkDesignationTypeEquals {
+						type:t = "visual"
+					}
+				}
+			}
+			lockRadarVisual {
+				stateFrom:t = "checkRadarLockTypeVisual"
+				event:t = "designationTypeEquals"
+				stateTo:t = "radarVisualLock"
+				actions {
+					setRadarVisualLockMode {
+
+					}
+				}
+			}
+			finishRadarLockTypeCheck {
+				stateFrom:t = "checkRadarLockTypeVisual"
+				event:t = "designationTypeNotEquals"
+				stateTo:t = "radarStandby"
+			}
+			radarTrack {
+				stateFrom:t = "radarLockCue"
+				stateFrom:t = "radarLockTarget"
+				stateFrom:t = "radarLosLock"
+				stateFrom:t = "radarVisualLock"
+				event:t = "targetDetected"
+				stateTo:t = "radarTrack"
+				actions {
+					setRadarTrackMode {
+
+					}
+					setFsmActive {
+						fsm:t = "lock"
+						active:b = false
+					}
+				}
+			}
+			radarFailedLock {
+				stateFrom:t = "radarLockCue"
+				stateFrom:t = "radarLockTarget"
+				stateFrom:t = "radarLosLock"
+				stateFrom:t = "radarVisualLock"
+				event:t = "scanFinished"
+				stateTo:t = "radarStandby"
+				actions {
+					setRadarStandbyMode {
+
+					}
+					setFsmActive {
+						fsm:t = "lock"
+						active:b = false
+					}
+				}
+			}
+			radarFinishedTrack {
+				stateFrom:t = "radarTrack"
+				event:t = "targetsOfInterestCleanup"
+				stateTo:t = "radarStandby"
+				command:t = "selectTarget"
+				command:t = "undesignateTarget"
+				actions {
+					setRadarStandbyMode {
+
+					}
+					resetTrackMode {
+
+					}
+				}
+			}
+			checkIrstLockTypeCue {
+				stateFrom:t = "irstStandby"
+				command:t = "designateTarget"
+				stateTo:t = "checkIrstLockTypeCue"
+				actions {
+					checkDesignationTypeEquals {
+						type:t = "cue"
+					}
+				}
+			}
+			irstLockCue {
+				stateFrom:t = "checkIrstLockTypeCue"
+				event:t = "designationTypeEquals"
+				stateTo:t = "irstLockCue"
+				actions {
+					setIrstLockModeCue {
+
+					}
+				}
+			}
+			checkIrstLockTypeTarget {
+				stateFrom:t = "checkIrstLockTypeCue"
+				event:t = "designationTypeNotEquals"
+				stateTo:t = "checkIrstLockTypeTarget"
+				actions {
+					checkDesignationTypeEquals {
+						type:t = "target"
+					}
+				}
+			}
+			lockIrstTarget {
+				stateFrom:t = "checkIrstLockTypeTarget"
+				event:t = "designationTypeEquals"
+				stateTo:t = "irstLockTarget"
+				actions {
+					setIrstLockModeTarget {
+
+					}
+				}
+			}
+			checkIrstLockTypeLos {
+				stateFrom:t = "checkIrstLockTypeTarget"
+				event:t = "designationTypeNotEquals"
+				stateTo:t = "checkIrstLockTypeLos"
+				actions {
+					checkDesignationTypeEquals {
+						type:t = "los"
+					}
+				}
+			}
+			lockIrstLos {
+				stateFrom:t = "checkIrstLockTypeLos"
+				event:t = "designationTypeEquals"
+				stateTo:t = "irstLosLock"
+				actions {
+					setIrstLosLockMode {
+
+					}
+				}
+			}
+			checkIrstLockTypeVisual {
+				stateFrom:t = "checkIrstLockTypeLos"
+				event:t = "designationTypeNotEquals"
+				stateTo:t = "checkIrstLockTypeVisual"
+				actions {
+					checkDesignationTypeEquals {
+						type:t = "visual"
+					}
+				}
+			}
+			lockIrstVisual {
+				stateFrom:t = "checkIrstLockTypeVisual"
+				event:t = "designationTypeEquals"
+				stateTo:t = "irstVisualLock"
+				actions {
+					setIrstVisualLockMode {
+
+					}
+				}
+			}
+			finishIrstLockTypeCheck {
+				stateFrom:t = "checkIrstLockTypeVisual"
+				event:t = "designationTypeNotEquals"
+				stateTo:t = "irstStandby"
+			}
+			irstTrack {
+				stateFrom:t = "irstLockCue"
+				stateFrom:t = "irstLockTarget"
+				stateFrom:t = "irstLosLock"
+				stateFrom:t = "irstVisualLock"
+				event:t = "targetDetected"
+				stateTo:t = "irstTrack"
+				actions {
+					setIrstTrackMode {
+
+					}
+					setFsmActive {
+						fsm:t = "lock"
+						active:b = false
+					}
+				}
+			}
+			irstFailedLock {
+				stateFrom:t = "irstLockCue"
+				stateFrom:t = "irstLockTarget"
+				stateFrom:t = "irstLosLock"
+				stateFrom:t = "irstVisualLock"
+				event:t = "scanFinished"
+				stateTo:t = "irstStandby"
+				actions {
+					setIrstStandbyMode {
+
+					}
+					setFsmActive {
+						fsm:t = "lock"
+						active:b = false
+					}
+				}
+			}
+			irstFinishedTrack {
+				stateFrom:t = "irstTrack"
+				event:t = "targetsOfInterestCleanup"
+				command:t = "selectTarget"
+				command:t = "designateTarget"
+				stateTo:t = "irstStandby"
+				actions {
+					setIrstStandbyMode {
+
+					}
+					resetTrackMode {
+
+					}
+				}
+			}
+			radarToIrstStandby {
+				stateFrom:t = "radarStandby"
+				command:t = "typeSwitch"
+				stateTo:t = "irstStandby"
+				actions {
+					setIrstStandbyMode {
+
+					}
+					setIrst {
+
+					}
+				}
+			}
+			irstToRadarStandby {
+				stateFrom:t = "irstStandby"
+				command:t = "typeSwitch"
+				stateTo:t = "radarStandby"
+				actions {
+					setRadarStandbyMode {
+
+					}
+					setRadar {
+
+					}
+				}
+			}
+			radarToIrstTrack {
+				stateFrom:t = "radarTrack"
+				command:t = "typeSwitch"
+				stateTo:t = "irstTrack"
+				actions {
+					setScanPattern {
+						scanPattern:t = "irstTrack"
+					}
+					setModeName {
+						name:t = "IRST track"
+					}
+					setIrst {
+
+					}
+					setFsmActive {
+						fsm:t = "radarTrack"
+						active:b = false
+					}
+					setFsmActive {
+						fsm:t = "track"
+						active:b = true
+					}
+				}
+			}
+			irstToRadarTrack {
+				stateFrom:t = "irstTrack"
+				command:t = "typeSwitch"
+				stateTo:t = "radarTrack"
+				actions {
+					setScanPattern {
+						scanPattern:t = "radarTrack"
+					}
+					setModeName {
+						name:t = "track"
+					}
+					setRadar {
+
+					}
+					setFsmActive {
+						fsm:t = "track"
+						active:b = false
+					}
+					setFsmActive {
+						fsm:t = "radarTrack"
+						active:b = true
+					}
+				}
+			}
+			radarStandbyToSearchTrack {
+				stateFrom:t = "radarStandby"
+				command:t = "selectTarget"
+				stateTo:t = "radarSearchTrack"
+				actions {
+					setRadarTrackMode {
+
+					}
+				}
+			}
+			checkRadarLockTypeCueSearch {
+				stateFrom:t = "radarSearchTrack"
+				command:t = "designateTarget"
+				stateTo:t = "checkRadarLockTypeCue"
+				actions {
+					resetTrackMode {
+
+					}
+					setRadarStandbyMode {
+
+					}
+					checkDesignationTypeEquals {
+						type:t = "cue"
+					}
+				}
+			}
+			radarFinishedSearchTrack {
+				stateFrom:t = "radarSearchTrack"
+				command:t = "selectTarget"
+				command:t = "undesignateTarget"
+				stateTo:t = "radarStandby"
+				actions {
+					resetTrackMode {
+
+					}
+					setRadarStandbyMode {
+
+					}
+				}
+			}
+			checkRadarUnLockTypeLos {
+				stateFrom:t = "radarTrack"
+				command:t = "designateTarget"
+				stateTo:t = "checkRadarUnLockTypeLos"
+				actions {
+					checkDesignationTypeEquals {
+						type:t = "los"
+					}
+				}
+			}
+			radarUnLockLos {
+				stateFrom:t = "checkRadarUnLockTypeLos"
+				event:t = "designationTypeEquals"
+				stateTo:t = "radarStandby"
+				actions {
+					resetTrackMode {
+
+					}
+					setRadarStandbyMode {
+
+					}
+				}
+			}
+			checkRadarUnLockTypeVisual {
+				stateFrom:t = "checkRadarUnLockTypeLos"
+				event:t = "designationTypeNotEquals"
+				stateTo:t = "checkRadarUnLockTypeVisual"
+				actions {
+					checkDesignationTypeEquals {
+						type:t = "visual"
+					}
+				}
+			}
+			radarUnLockVisual {
+				stateFrom:t = "checkRadarUnLockTypeVisual"
+				event:t = "designationTypeEquals"
+				stateTo:t = "radarStandby"
+				actions {
+					resetTrackMode {
+
+					}
+					setRadarStandbyMode {
+
+					}
+				}
+			}
+			finishRadarUnLockTypeCheck {
+				stateFrom:t = "checkRadarUnLockTypeVisual"
+				event:t = "designationTypeNotEquals"
+				stateTo:t = "radarTrack"
+			}
+			activateWeaponTracking {
+				event:t = "updateWeaponTracking"
+				actions {
+					setWeaponRcTransmissionTimeOut {
+						timeOut:r = 2
+					}
+				}
+			}
+			deactivateWeaponTracking {
+				event:t = "update"
+				actions {
+					checkWeaponRcTransmissionTimeOut {
+						transmitter:t = "rc"
+					}
+				}
+			}
+		}
+	}
+	lock {
+		stateInit:t = "lock"
+		transitions {
+			scan {
+				event:t = "update"
+				actions {
+					scan {
+
+					}
+				}
+			}
+			detect {
+				event:t = "targetInSight"
+				actions {
+					detectTarget {
+						ignoreOwnWeapon:b = true
+						rangeMult:r = 1
+					}
+				}
+			}
+		}
+	}
+	track {
+		stateInit:t = "track"
+		transitions {
+			detect {
+				event:t = "update"
+				actions {
+					detectTarget {
+						ignoreOwnWeapon:b = true
+						rangeMult:r = 1
+					}
+				}
+			}
+			track {
+				event:t = "targetDetected"
+				actions {
+					updateActiveTargetOfInterest {
+						dirFilter {
+							rateLim:p2 = 0.78, 0.78
+							limTimeOut:r = 1
+							inertialTimeMax:r = 1
+						}
+						distFilter {
+							accelLim:p2 = 150, 150
+							limTimeOut:r = 1
+							inertialTimeMax:r = 1
+						}
+					}
+					setCenterAzimuth {
+						source:t = "activeTargetOfInterest"
+					}
+					setCenterElevation {
+						source:t = "activeTargetOfInterest"
+					}
+					setDistGatePos {
+						source:t = "activeTargetOfInterest"
+						width:r = 0
+					}
+				}
+			}
+			extrapolate {
+				event:t = "targetNotDetected"
+				actions {
+					extrapolateTargetsOfInterest {
+
+					}
+					clearTargetsOfInterest {
+						timeOut:r = 2
+						dirRateLim:r = 0.78
+					}
+					setCenterAzimuth {
+						source:t = "activeTargetOfInterest"
+					}
+					setCenterElevation {
+						source:t = "activeTargetOfInterest"
+					}
+					setDistGatePos {
+						source:t = "activeTargetOfInterest"
+						width:r = 0
+					}
+				}
+			}
+		}
+	}
+	radarTrack {
+		stateInit:t = "track"
+		transitions {
+			scan {
+				event:t = "update"
+				stateFrom:t = "track"
+				stateTo:t = "search"
+				actions {
+					scan {
+						ignoreOwnWeapon:b = true
+					}
+					extrapolateTargetsOfInterest {
+
+					}
+					clearTargetsOfInterest {
+						timeOut:r = 2
+					}
+					setCueToActiveTargetOfInterest {
+
+					}
+					update {
+
+					}
+				}
+			}
+			scanTrack {
+				stateFrom:t = "search"
+				event:t = "update"
+				stateTo:t = "track"
+				actions {
+					scan {
+						scanPattern:t = "radarFastTws"
+						ignoreOwnWeapon:b = true
+					}
+					extrapolateTargetsOfInterest {
+
+					}
+					clearTargetsOfInterest {
+						timeOut:r = 2
+					}
+					setCueToActiveTargetOfInterest {
+
+					}
+					setCenterAzimuth {
+						source:t = "activeTargetOfInterest"
+					}
+					setDistGatePos {
+						source:t = "activeTargetOfInterest"
+						width:r = 0
+					}
+				}
+			}
+			detect {
+				event:t = "targetInSight"
+				actions {
+					setDistGatePos {
+						source:t = "continuousScale"
+						width:r = 0
+					}
+					setRelSpeedGatePos {
+						source:t = "continuousScale"
+						width:r = 0
+					}
+					detectTarget {
+						ignoreOwnWeapon:b = true
+					}
+				}
+			}
+			addTarget {
+				stateFrom:t = "search"
+				event:t = "targetDetected"
+				actions {
+					updateTargetOfInterest {
+						limit:i = 10
+						posGateTimeInitial:p2 = 2, 4
+						posGateRangeInitial:r = 0
+						posGateMaxTime:r = 2
+						posGateRange:p2 = 50, 2000
+						dopplerSpeedGateMaxTime:r = 1
+						dopplerSpeedGateRange:p2 = 60, 300
+					}
+					updateActiveDetectedTarget {
+
+					}
+					setCueToActiveTargetOfInterest {
+
+					}
+				}
+			}
+			addTargetTrack {
+				stateFrom:t = "track"
+				event:t = "targetDetected"
+				actions {
+					updateTargetOfInterest {
+						limit:i = 10
+						onlyExisting:b = true
+						posGateTimeInitial:p2 = 2, 4
+						posGateRangeInitial:r = 100
+						posGateMaxTime:r = 2
+						posGateRange:p2 = 0, 1000
+						dopplerSpeedGateMaxTime:r = 1
+						dopplerSpeedGateRange:p2 = 0, 200
+					}
+					updateActiveDetectedTarget {
+
+					}
+					setCueToActiveTargetOfInterest {
+
+					}
+					setCenterAzimuth {
+						source:t = "activeTargetOfInterest"
+					}
+					setDistGatePos {
+						source:t = "activeTargetOfInterest"
+						width:r = 0
+					}
+				}
+			}
+			switchSelectedTarget {
+				command:t = "switchTarget"
+				actions {
+					setNextDetectedTargetActive {
+
+					}
+				}
+			}
+			setCueAzimuth {
+				command:t = "cueAxisX"
+				actions {
+					setCueAzimuth {
+
+					}
+				}
+			}
+			setCueDist {
+				command:t = "cueAxisY"
+				actions {
+					setCueDist {
+
+					}
+				}
+			}
+			setCueElevation {
+				command:t = "cueAxisZ"
+				actions {
+					setCueElevation {
+
+					}
+				}
+			}
+			setSelectedTarget {
+				command:t = "switchToTarget"
+				actions {
+					setDetectedTargetActive {
+
+					}
+				}
+			}
+		}
+	}
+}
+targetTypeId {
+	name:t = "hud/mig_15"
+	targetType:t = "mig-15"
+	targetType:t = "mig-15_ns23"
+	targetType:t = "mig-15bis_ns23"
+	targetType:t = "mig-15bis_nr23_german"
+	targetType:t = "mig-15bis_nr23_hungary"
+	targetType:t = "mig-15bis_nr23_china"
+	targetType:t = "mig-15bis_ish"
+}
+targetTypeId {
+	name:t = "hud/yak_38"
+	targetType:t = "yak-38"
+	targetType:t = "yak-38m"
+}
+targetTypeId {
+	name:t = "hud/yak_141"
+	targetType:t = "yak_141"
+}
+targetTypeId {
+	name:t = "hud/su_17"
+	targetType:t = "su_17m2"
+	targetType:t = "su_17m4"
+	targetType:t = "su_22m3"
+	targetType:t = "su_22m3_hungary"
+	targetType:t = "su_22um3k"
+	targetType:t = "su_22m4"
+	targetType:t = "su_22m4_de_wtd61"
+}
+targetTypeId {
+	name:t = "hud/su_24"
+	targetType:t = "su_24m"
+}
+targetTypeId {
+	name:t = "hud/su_25"
+	targetType:t = "su_25"
+	targetType:t = "su_25k"
+	targetType:t = "su_25t"
+	targetType:t = "su_25tm"
+	targetType:t = "su_25_558arz"
+	targetType:t = "su_25sm3"
+}
+targetTypeId {
+	name:t = "hud/su_27"
+	targetType:t = "su_27"
+	targetType:t = "su_27sm"
+	targetType:t = "su_33"
+	targetType:t = "su_34"
+	targetType:t = "su_30sm"
+	targetType:t = "j_11"
+	targetType:t = "j_11a"
+	targetType:t = "j_11b"
+}
+targetTypeId {
+	name:t = "hud/mig_21"
+	targetType:t = "mig-21_bis_lazur"
+	targetType:t = "mig-21_bison"
+	targetType:t = "mig-21_f13"
+	targetType:t = "mig-21_smt"
+	targetType:t = "mig-21_bis"
+	targetType:t = "mig-21_bis_sau"
+	targetType:t = "mig-21_bis_sau_hungary"
+	targetType:t = "mig-21_mf"
+	targetType:t = "mig-21_mf_hungary"
+	targetType:t = "mig-21_sps_k"
+	targetType:t = "mig-21_pfm"
+	targetType:t = "mig-21_s"
+	targetType:t = "mig_21_bis_finland"
+	targetType:t = "j_7_mk2"
+	targetType:t = "j_7d"
+	targetType:t = "j_7e"
+}
+targetTypeId {
+	name:t = "hud/mig_23"
+	targetType:t = "mig_23m"
+	targetType:t = "mig_23bn"
+	targetType:t = "mig_23mf_germany"
+	targetType:t = "mig_23mf_hungary"
+	targetType:t = "mig_23ml"
+	targetType:t = "mig_23mld"
+	targetType:t = "mig_23mla"
+	targetType:t = "mig_27m"
+	targetType:t = "mig_27k"
+}
+targetTypeId {
+	name:t = "hud/mig_29"
+	targetType:t = "mig_29_9_13"
+	targetType:t = "mig_29_9_12g"
+	targetType:t = "mig_29_9_12_germany"
+	targetType:t = "mig_29_9_12b_hungary"
+	targetType:t = "mig_29smt_9_19"
+	targetType:t = "mig_29smt_9_19_missile_test"
+	targetType:t = "mig_29_9_12_sniper"
+}
+targetTypeId {
+	name:t = "hud/f_4"
+	targetType:t = "f-4c"
+	targetType:t = "f-4e"
+	targetType:t = "f-4j"
+	targetType:t = "f-4s"
+	targetType:t = "f-4ej"
+	targetType:t = "f-4ej_adtw"
+	targetType:t = "f-4ej_kai"
+	targetType:t = "f-4m_fgr2"
+	targetType:t = "f-4jk"
+	targetType:t = "f-4k"
+	targetType:t = "f-4f"
+	targetType:t = "f-4f_late"
+	targetType:t = "f-4f_kws_lv"
+	targetType:t = "f-4e_iaf"
+	targetType:t = "f-4e_kurnass_2000"
+}
+targetTypeId {
+	name:t = "hud/f_5"
+	targetType:t = "f-5a"
+	targetType:t = "f-5a_china"
+	targetType:t = "f-5ag_norway"
+	targetType:t = "f-5e_aidc"
+	targetType:t = "f-5e_fcu_thailand"
+	targetType:t = "f-5a_thailand"
+	targetType:t = "f-5t_thailand"
+	targetType:t = "f-5c"
+	targetType:t = "f-5e"
+	targetType:t = "f-5e_switzerland"
+	targetType:t = "nf_5a_netherlands"
+	targetType:t = "f-5th_thailand"
+}
+targetTypeId {
+	name:t = "hud/a_7"
+	targetType:t = "a_7d"
+	targetType:t = "a_7e"
+	targetType:t = "a_7e_thailand"
+	targetType:t = "a_7k"
+}
+targetTypeId {
+	name:t = "hud/f_8"
+	targetType:t = "f-8e"
+	targetType:t = "f-8e_fn"
+	targetType:t = "f8u-2"
+}
+targetTypeId {
+	name:t = "hud/a_10"
+	targetType:t = "a_10a_early"
+	targetType:t = "a_10a_late"
+	targetType:t = "a_10c"
+}
+targetTypeId {
+	name:t = "hud/f_104"
+	targetType:t = "f-104a"
+	targetType:t = "f-104c"
+	targetType:t = "f-104g"
+	targetType:t = "f-104a_china"
+	targetType:t = "f-104g_china"
+	targetType:t = "f-104g_italy"
+	targetType:t = "f-104j"
+	targetType:t = "f-104s"
+	targetType:t = "f-104s_cb"
+	targetType:t = "f-104s_asa"
+	targetType:t = "f-104g_belgium"
+}
+targetTypeId {
+	name:t = "hud/f_105"
+	targetType:t = "f-105d"
+}
+targetTypeId {
+	name:t = "hud/f_111"
+	targetType:t = "f_111a"
+	targetType:t = "f_111f"
+	targetType:t = "f_111c_raaf"
+}
+targetTypeId {
+	name:t = "hud/f_14"
+	targetType:t = "f_14a_early"
+	targetType:t = "f_14a_iriaf"
+	targetType:t = "f_14b"
+}
+targetTypeId {
+	name:t = "hud/f_15"
+	targetType:t = "f_15a"
+	targetType:t = "f_15a_iaf"
+	targetType:t = "f_15j"
+	targetType:t = "f_15j_kai"
+	targetType:t = "f_15c_msip2"
+	targetType:t = "f_15c_baz_msip"
+	targetType:t = "f_15e"
+	targetType:t = "f_15i_raam"
+}
+targetTypeId {
+	name:t = "hud/f_16"
+	targetType:t = "f_16a_block_10"
+	targetType:t = "f_16a_block_15_adf"
+	targetType:t = "f_16a_block_15_adf_italy"
+	targetType:t = "f_16a_block_15_ocu_thailand"
+	targetType:t = "f_16a_block_10_iaf"
+	targetType:t = "f_16a_block_10_netz_mod"
+	targetType:t = "f_16a_block_15_belgium"
+	targetType:t = "f_16am_block_15_mlu_belgium"
+	targetType:t = "f_16c_block_40_barak_2"
+	targetType:t = "f_16d_block_40_barak_2"
+	targetType:t = "f_16d_block_40_barak_2_missile_test"
+	targetType:t = "f_16a_block_20_mlu"
+	targetType:t = "f_16aj"
+	targetType:t = "f_16c_block_50"
+	targetType:t = "f_16c_block_50_missile_test"
+	targetType:t = "f_2a"
+	targetType:t = "f_2a_adtw"
+	targetType:t = "f_16i_sufa"
+	targetType:t = "f_16a_block_15_ocu_belgium"
+}
+targetTypeId {
+	name:t = "hud/f_18"
+	targetType:t = "fa_18a"
+	targetType:t = "fa_18c_early"
+	targetType:t = "fa_18c_late"
+	targetType:t = "fa_18c_finland"
+	targetType:t = "fa_18c_switzerland"
+	targetType:t = "fa_18c_late_switzerland"
+	targetType:t = "fa_18c_mlu_2_finland"
+	targetType:t = "fa_18a_raaf"
+	targetType:t = "fa_18a_hug_2_raaf"
+	targetType:t = "cf_188a_canada"
+}
+targetTypeId {
+	name:t = "hud/f_20"
+	targetType:t = "f_20a"
+}
+targetTypeId {
+	name:t = "hud/harrier"
+	targetType:t = "harrier_gr1"
+	targetType:t = "harrier_gr3"
+	targetType:t = "harrier_frs1_early"
+	targetType:t = "harrier_frs1"
+	targetType:t = "harrier_gr7"
+	targetType:t = "harrier_t10"
+	targetType:t = "sea_harrier_fa2"
+	targetType:t = "av_8a"
+	targetType:t = "av_8b_na"
+	targetType:t = "av_8b_plus"
+	targetType:t = "av_8b_plus_italy"
+	targetType:t = "av_8c"
+	targetType:t = "av_8s_thailand"
+	targetType:t = "av_8s_late_thailand"
+}
+targetTypeId {
+	name:t = "hud/jaguar"
+	targetType:t = "jaguar_is"
+	targetType:t = "jaguar_gr1a"
+	targetType:t = "jaguar_gr1"
+	targetType:t = "jaguar_e"
+	targetType:t = "jaguar_a"
+	targetType:t = "jaguar_a_killstreak"
+	targetType:t = "jaguar_a_germany_killstreak"
+	targetType:t = "jaguar_a_italy_killstreak"
+	targetType:t = "jaguar_a_japan_killstreak"
+	targetType:t = "jaguar_a_sweden_killstreak"
+	targetType:t = "jaguar_a_uk_killstreak"
+	targetType:t = "jaguar_a_usa_killstreak"
+	targetType:t = "jaguar_a_iaf_killstreak"
+}
+targetTypeId {
+	name:t = "hud/tornado"
+	targetType:t = "tornado_gr1"
+	targetType:t = "tornado_gr4"
+	targetType:t = "tornado_f3"
+	targetType:t = "tornado_f3_late"
+	targetType:t = "tornado_ids_de_mfg"
+	targetType:t = "tornado_ids_de_assta1"
+	targetType:t = "tornado_ids_de_wtd61"
+	targetType:t = "tornado_ids_it"
+	targetType:t = "tornado_ids_it_mod95"
+	targetType:t = "tornado_ids_it_ret8"
+	targetType:t = "tornado_adv"
+}
+targetTypeId {
+	name:t = "hud/buccanier"
+	targetType:t = "buccaneer_s1"
+	targetType:t = "buccaneer_s2"
+	targetType:t = "buccaneer_s2b"
+}
+targetTypeId {
+	name:t = "hud/typhoon"
+	targetType:t = "ef_2000_fgr4"
+	targetType:t = "ef_2000a"
+	targetType:t = "ef_2000_block_10"
+}
+targetTypeId {
+	name:t = "hud/q_5"
+	targetType:t = "q_5_early"
+	targetType:t = "q_5a"
+	targetType:t = "q_5l"
+	targetType:t = "a_5c"
+}
+targetTypeId {
+	name:t = "hud/jh_7"
+	targetType:t = "jh_7a"
+}
+targetTypeId {
+	name:t = "hud/j_8"
+	targetType:t = "j_8b"
+	targetType:t = "j_8f"
+	targetType:t = "j_8f_missile_test"
+}
+targetTypeId {
+	name:t = "hud/j_10"
+	targetType:t = "j_10a"
+}
+targetTypeId {
+	name:t = "hud/jf_17"
+	targetType:t = "jf_17"
+}
+targetTypeId {
+	name:t = "hud/amx"
+	targetType:t = "amx_a_1a_brazil"
+	targetType:t = "amx"
+}
+targetTypeId {
+	name:t = "hud/mirage_f1"
+	targetType:t = "mirage_f1c_200"
+	targetType:t = "mirage_f1c"
+	targetType:t = "mirage_f1ct"
+}
+targetTypeId {
+	name:t = "hud/mirage_3"
+	targetType:t = "mirage_3c"
+	targetType:t = "mirage_3cj"
+	targetType:t = "mirage_3e"
+	targetType:t = "mirage_milan"
+	targetType:t = "mirage_5ba"
+	targetType:t = "kfir_canard"
+	targetType:t = "kfir_c2"
+	targetType:t = "kfir_c7"
+	targetType:t = "kfir_c10_colombia"
+	targetType:t = "mirage_3s_c70_switzerland"
+}
+targetTypeId {
+	name:t = "hud/mirage_2000"
+	targetType:t = "mirage_2000_5f"
+	targetType:t = "mirage_2000_5f_missile_test"
+	targetType:t = "mirage_2000_5ei"
+	targetType:t = "mirage_2000c_s4"
+	targetType:t = "mirage_2000c_s5"
+	targetType:t = "mirage_2000d_r1"
+	targetType:t = "mirage_2000d_rmv"
+}
+targetTypeId {
+	name:t = "hud/mirage_4000"
+	targetType:t = "mirage_4000"
+}
+targetTypeId {
+	name:t = "hud/rafale"
+	targetType:t = "rafale_c_f3"
+}
+targetTypeId {
+	name:t = "hud/draken"
+	targetType:t = "saab_j35xs"
+	targetType:t = "saab_j35d"
+	targetType:t = "saab_j35a"
+	targetType:t = "saab_f35_wdns"
+}
+targetTypeId {
+	name:t = "hud/viggen"
+	targetType:t = "saab_aj37"
+	targetType:t = "saab_ja37"
+	targetType:t = "saab_ja37d"
+	targetType:t = "saab_ja37di"
+	targetType:t = "saab_ja37di_f21"
+	targetType:t = "saab_ajs37"
+}
+targetTypeId {
+	name:t = "hud/gripen"
+	targetType:t = "saab_jas39a"
+	targetType:t = "saab_jas39c_south_africa"
+	targetType:t = "saab_jas39c_south_africa_missile_test"
+	targetType:t = "saab_jas39c_hungary"
+	targetType:t = "saab_jas39c_thailand"
+	targetType:t = "saab_jas39c"
+}
+targetTypeId {
+	name:t = "hud/single prop"
+	targetPropulsion {
+		type:t = "propellers"
+		num:i = 1
+	}
+}
+targetTypeId {
+	name:t = "hud/multi prop"
+	targetPropulsion {
+		type:t = "propellers"
+		num:i = 2
+	}
+	targetPropulsion {
+		type:t = "propellers"
+		num:i = 3
+	}
+	targetPropulsion {
+		type:t = "propellers"
+		num:i = 4
+	}
+}
+targetTypeId {
+	name:t = "hud/single jet"
+	targetPropulsion {
+		type:t = "jet"
+		num:i = 1
+	}
+}
+targetTypeId {
+	name:t = "hud/multi jet"
+	targetPropulsion {
+		type:t = "jet"
+		num:i = 2
+	}
+	targetPropulsion {
+		type:t = "jet"
+		num:i = 3
+	}
+	targetPropulsion {
+		type:t = "jet"
+		num:i = 4
+	}
+}
+targetTypeId {
+	name:t = "hud/helicopter"
+	targetPropulsion {
+		type:t = "rotors"
+	}
+}
+targetTypeId {
+	name:t = "hud/rocket"
+	targetPropulsion {
+		type:t = "rocket"
+	}
+}
+targetTypeId {
+	name:t = "hud/small"
+	sizeRange:p2 = 0, 5
+}
+targetTypeId {
+	name:t = "hud/medium"
+	sizeRange:p2 = 5, 25
+}
+targetTypeId {
+	name:t = "hud/large"
+	sizeRange:p2 = 25, 500
+}

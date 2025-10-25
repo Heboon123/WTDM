@@ -68,7 +68,7 @@ function speedValue(params = {}) {
   return @() {
     watch = speed
     rendObj = ROBJ_TEXT
-    text = speed.value.tostring()
+    text = speed.get().tostring()
     font
     fontSize
     margin
@@ -78,7 +78,7 @@ function speedValue(params = {}) {
 function speedUnits(params = {}) {
   let { fontSize = null, box = null, font = defFont } = params
   return function() {
-    let text = isInitializedMeasureUnits.value ? loc(measureUnitsNames.value.speed) : ""
+    let text = isInitializedMeasureUnits.get() ? loc(measureUnitsNames.get().speed) : ""
     return {
       watch = [isInitializedMeasureUnits, measureUnitsNames]
       rendObj = ROBJ_TEXT
@@ -90,19 +90,19 @@ function speedUnits(params = {}) {
   }
 }
 
-let averageSpeed = Computed(@() clamp((portSideMachine.value + sideboardSideMachine.value) / 2, 0, machineSpeedLoc.len()))
+let averageSpeed = Computed(@() clamp((portSideMachine.get() + sideboardSideMachine.get()) / 2, 0, machineSpeedLoc.len()))
 
 let machineSpeed = @(params = {}) function() {
   let { fontSize = null, box = null, font = defFont, fontColor = Color(200, 200, 200) } = params
-  let speedLoc = machineSpeedLoc[averageSpeed.value]
-  let directionLoc = machineDirectionLoc[averageSpeed.value]
+  let speedLoc = machineSpeedLoc[averageSpeed.get()]
+  let directionLoc = machineDirectionLoc[averageSpeed.get()]
   let text = "  ".join([speedLoc, directionLoc], true)
   return {
     watch = [averageSpeed, stopping]
     rendObj = ROBJ_TEXT
     font
     fontSize = box ? fitTextToBox({ fontSize, text, box, font }) : null
-    color = stopping.value ? Color(255, 100, 100) : fontColor
+    color = stopping.get() ? Color(255, 100, 100) : fontColor
     text
   }
 }

@@ -44,6 +44,7 @@
       shopFilterImg {
         id:t='<<id>>_icon'
         background-image:t='<<image>>'
+        <<@imageParams>>
       }
     <</image>>
 
@@ -69,6 +70,7 @@
     <<^autoScrollText>>
       shopFilterText {
         text:t='<<text>>'
+        id:t='<<id>>_text'
         hideEmptyText:t='yes'
       }
     <</autoScrollText>>

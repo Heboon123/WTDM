@@ -16,7 +16,7 @@ let { KWARG_NON_STRICT } = require("%sqstd/functools.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { getRecipesComponents } = require("%scripts/items/exchangeRecipes.nut")
 let { gui_modal_tutor } = require("%scripts/guiTutorial.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
+let { findItemById } = require("%scripts/items/itemsManagerModule.nut")
 
 dagui_propid_add_name_id("itemId")
 
@@ -340,7 +340,7 @@ let getItemBlockView = kwarg(
             isShowItemIconInsteadItemType = true
             visibleResources = allowableResources.__merge(forcedAllowableResources)
             forcedVisibleResources = forcedAllowableResources
-            isTooltipByHold = showConsoleButtons.value
+            isTooltipByHold = showConsoleButtons.get()
             useMarkingPresetIconForResources
           })
     }
@@ -795,7 +795,7 @@ local handlerClass = class (gui_handlers.BaseGuiHandlerWT) {
         availableBranchByColumns = maxAvailableBranchByColumns
       }
       let columnWidth =
-        (maxBodyWidth - branchesCount * itemInterval - columnWithResourcesCount * resourceWidth) / (treeColumnsCount || 1)
+        (maxBodyWidth - branchesCount * itemInterval - columnWithResourcesCount * resourceWidth) / max(treeColumnsCount, 1)
       let res = []
       local columnBranchsCount = 0
       local columnsWidth = 0
@@ -966,7 +966,7 @@ local handlerClass = class (gui_handlers.BaseGuiHandlerWT) {
       conectionsInRow
       textBlocks
       buttons
-      isTooltipByHold = showConsoleButtons.value
+      isTooltipByHold = showConsoleButtons.get()
     }
   }
 

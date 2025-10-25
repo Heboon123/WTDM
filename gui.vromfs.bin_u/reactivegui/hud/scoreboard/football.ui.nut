@@ -6,12 +6,12 @@ let { secondsToTimeSimpleString } = require("%sqstd/time.nut")
 
 let scoreParamsByTeam = {
   localTeam = {
-    score = Computed(@() localTeam.value == 2 ? scoreTeamB.value : scoreTeamA.value)
+    score = Computed(@() localTeam.get() == 2 ? scoreTeamB.get() : scoreTeamA.get())
     fillColor = "teamBlueColor"
     borderColor = "teamBlueLightColor"
   }
   enemyTeam = {
-    score = Computed(@() localTeam.value == 2 ? scoreTeamA.value : scoreTeamB.value)
+    score = Computed(@() localTeam.get() == 2 ? scoreTeamA.get() : scoreTeamB.get())
     fillColor = "teamRedColor"
     borderColor = "teamRedLightColor"
   }
@@ -25,8 +25,8 @@ function getScoreObj(teamName) {
     size = const [sh(5), sh(6)]
     valign = ALIGN_CENTER
     halign = ALIGN_CENTER
-    fillColor = teamColors.value[scoreParams.fillColor]
-    borderColor = teamColors.value[scoreParams.borderColor]
+    fillColor = teamColors.get()[scoreParams.fillColor]
+    borderColor = teamColors.get()[scoreParams.borderColor]
     borderWidth = hdpx(1)
 
     children = @() {
@@ -36,7 +36,7 @@ function getScoreObj(teamName) {
       fontFxColor = Color(0, 0, 0, 255)
       fontFxFactor = 50
       fontFx = FFT_GLOW
-      text = scoreParams.score.value
+      text = scoreParams.score.get()
     }
   }
 }
@@ -56,7 +56,7 @@ return {
         rendObj = ROBJ_TEXT
         font = Fonts.medium_text_hud
         color = Color(249, 219, 120)
-        text = secondsToTimeSimpleString(roundTimeLeft.value)
+        text = secondsToTimeSimpleString(roundTimeLeft.get())
       }
     }
     getScoreObj("enemyTeam")

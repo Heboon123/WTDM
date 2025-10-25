@@ -1,441 +1,477 @@
-{
-  "selected_tag": "",
-  "bin_dump_file": "",
-  "mission_settings": {
-    "atmosphere": {
-      "pressure": 760.0,
-      "temperature": 0.0
-    },
-    "player": {
-      "army": 1,
-      "wing": [
-        "t1_player01",
-        "t1_player02",
-        "t1_player03",
-        "t1_player04",
-        "t1_player05",
-        "t1_player06",
-        "t1_player07",
-        "t1_player08",
-        "t1_player09",
-        "t1_player10",
-        "t1_player11",
-        "t1_player12",
-        "t1_player13",
-        "t1_player14",
-        "t1_player15",
-        "t1_player16"
-      ]
-    },
-    "player_teamB": {
-      "army": 2,
-      "wing": [
-        "t2_player01",
-        "t2_player02",
-        "t2_player03",
-        "t2_player04",
-        "t2_player05",
-        "t2_player06",
-        "t2_player07",
-        "t2_player08",
-        "t2_player09",
-        "t2_player10",
-        "t2_player11",
-        "t2_player12",
-        "t2_player13",
-        "t2_player14",
-        "t2_player15",
-        "t2_player16",
-        "t2_player17"
-      ]
-    },
-    "mission": {
-      "level": "levels/guadalcanal.bin",
-      "type": "domination",
-      "restoreType": "attempts",
-      "optionalTakeOff": false,
-      "environment": "Day",
-      "weather": "hazy",
-      "openDiffLevels": true,
-      "scoreLimit": 5000,
-      "difficulty": ""
-    },
-    "spectator_points": {}
-  },
-  "imports": {},
-  "triggers": {
-    "isCategory": true,
-    "is_enabled": true,
-    "t1_100_points_damaged": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": true
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isKilled",
-          "object_marking": 0,
-          "func": "more",
-          "value": 0,
-          "object": "t1_100_points_squad",
-          "var": "t1_100_points_death_counter"
-        }
-      },
-      "actions": {
-        "gameMPChangeScore": {
-          "value": -100,
-          "valueSystem": "amount",
-          "team": "A"
-        },
-        "varModify": {
-          "operator": "add",
-          "value": 1.0,
-          "var": "t1_100_points_death_counter"
-        },
-        "unitMark": {
-          "target_marking": 31,
-          "target": "t1_100_points_squad",
-          "useForTriggerFiltered": true
-        }
-      },
-      "else_actions": {}
-    },
-    "t2_100_points_damaged": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": true
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isKilled",
-          "object_marking": 0,
-          "func": "more",
-          "value": 0,
-          "object": "t2_100_points_squad",
-          "var": "t2_100_points_death_counter"
-        }
-      },
-      "actions": {
-        "gameMPChangeScore": {
-          "value": -100,
-          "valueSystem": "amount",
-          "team": "B"
-        },
-        "varModify": {
-          "operator": "add",
-          "value": 1.0,
-          "var": "t2_100_points_death_counter"
-        },
-        "unitMark": {
-          "target_marking": 31,
-          "target": "t2_100_points_squad",
-          "useForTriggerFiltered": true
-        }
-      },
-      "else_actions": {}
-    },
-    "t1_all_land_destroyed": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 30.0
-        }
-      },
-      "conditions": {},
-      "actions": {
-        "triggerEnable": {
-          "target": "t1_all_land_destroyed_mp_change"
-        }
-      },
-      "else_actions": {}
-    },
-    "t2_all_land_destroyed": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 30.0
-        }
-      },
-      "conditions": {},
-      "actions": {
-        "triggerEnable": {
-          "target": "t2_all_land_destroyed_mp_change"
-        }
-      },
-      "else_actions": {}
-    },
-    "t1_all_land_destroyed_mp_change": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isActive",
-          "object_marking": 0,
-          "func": "less",
-          "value": 1,
-          "object": "t1_quest_units_squad"
-        }
-      },
-      "actions": {
-        "triggerEnable": {
-          "target": "t1_loose"
-        }
-      },
-      "else_actions": {}
-    },
-    "t2_all_land_destroyed_mp_change": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isActive",
-          "object_marking": 0,
-          "func": "less",
-          "value": 1,
-          "object": "t2_quest_units_squad"
-        }
-      },
-      "actions": {
-        "triggerEnable": {
-          "target": "t2_loose"
-        }
-      },
-      "else_actions": {}
-    },
-    "t1_40_points_damaged": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": true
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isKilled",
-          "object_marking": 0,
-          "func": "more",
-          "value": 0,
-          "object": "t1_40_points_squad",
-          "var": "t1_40_points_death_counter"
-        }
-      },
-      "actions": {
-        "gameMPChangeScore": {
-          "value": -50,
-          "valueSystem": "amount",
-          "team": "A"
-        },
-        "varModify": {
-          "operator": "add",
-          "value": 1.0,
-          "var": "t1_40_points_death_counter"
-        },
-        "unitMark": {
-          "target_marking": 31,
-          "target": "t1_40_points_squad",
-          "useForTriggerFiltered": true
-        }
-      },
-      "else_actions": {}
-    },
-    "t1_20_points_damaged": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": true
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isKilled",
-          "object_marking": 0,
-          "func": "more",
-          "value": 0,
-          "object": "t1_20_points_squad",
-          "var": "t1_20_points_death_counter"
-        }
-      },
-      "actions": {
-        "gameMPChangeScore": {
-          "value": -30,
-          "valueSystem": "amount",
-          "team": "A"
-        },
-        "varModify": {
-          "operator": "add",
-          "value": 1.0,
-          "var": "t1_20_points_death_counter"
-        },
-        "unitMark": {
-          "target_marking": 31,
-          "target": "t2_40_points_squad",
-          "useForTriggerFiltered": true
-        }
-      },
-      "else_actions": {}
-    },
-    "t2_40_points_damaged": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": true
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isKilled",
-          "object_marking": 0,
-          "func": "more",
-          "value": 0,
-          "object": "t2_40_points_squad",
-          "var": "t2_40_points_death_counter"
-        }
-      },
-      "actions": {
-        "gameMPChangeScore": {
-          "value": -50,
-          "valueSystem": "amount",
-          "team": "B"
-        },
-        "varModify": {
-          "operator": "add",
-          "value": 1.0,
-          "var": "t2_40_points_death_counter"
-        },
-        "unitMark": {
-          "target_marking": 31,
-          "target": "t1_20_points_squad",
-          "useForTriggerFiltered": true
-        }
-      },
-      "else_actions": {}
-    },
-    "t2_20_points_damaged": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": true
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isKilled",
-          "object_marking": 0,
-          "func": "more",
-          "value": 0,
-          "object": "t2_20_points_squad",
-          "var": "t2_20_points_death_counter"
-        }
-      },
-      "actions": {
-        "gameMPChangeScore": {
-          "value": -30,
-          "valueSystem": "amount",
-          "team": "B"
-        },
-        "varModify": {
-          "operator": "add",
-          "value": 1.0,
-          "var": "t2_20_points_death_counter"
-        },
-        "unitMark": {
-          "target_marking": 31,
-          "target": "t2_20_points_squad",
-          "useForTriggerFiltered": true
-        }
-      },
-      "else_actions": {}
-    }
-  },
-  "mission_objectives": {
-    "isCategory": true,
-    "is_enabled": true
-  },
-  "variables": {
-    "t1_100_points_death_counter": 0,
-    "t2_100_points_death_counter": 0,
-    "t1_40_points_death_counter": 0,
-    "t2_40_points_death_counter": 0,
-    "t1_20_points_death_counter": 0,
-    "t2_20_points_death_counter": 0
-  },
-  "dialogs": {},
-  "airfields": {},
-  "effects": {},
-  "units": {},
-  "areas": {},
-  "objLayers": {},
-  "wayPoints": {}
+selected_tag:t = ""
+bin_dump_file:t = ""
+mission_settings {
+	atmosphere {
+		pressure:r = 760
+		temperature:r = 0
+	}
+	player {
+		army:i = 1
+		wing:t = "t1_player01"
+		wing:t = "t1_player02"
+		wing:t = "t1_player03"
+		wing:t = "t1_player04"
+		wing:t = "t1_player05"
+		wing:t = "t1_player06"
+		wing:t = "t1_player07"
+		wing:t = "t1_player08"
+		wing:t = "t1_player09"
+		wing:t = "t1_player10"
+		wing:t = "t1_player11"
+		wing:t = "t1_player12"
+		wing:t = "t1_player13"
+		wing:t = "t1_player14"
+		wing:t = "t1_player15"
+		wing:t = "t1_player16"
+	}
+	player_teamB {
+		army:i = 2
+		wing:t = "t2_player01"
+		wing:t = "t2_player02"
+		wing:t = "t2_player03"
+		wing:t = "t2_player04"
+		wing:t = "t2_player05"
+		wing:t = "t2_player06"
+		wing:t = "t2_player07"
+		wing:t = "t2_player08"
+		wing:t = "t2_player09"
+		wing:t = "t2_player10"
+		wing:t = "t2_player11"
+		wing:t = "t2_player12"
+		wing:t = "t2_player13"
+		wing:t = "t2_player14"
+		wing:t = "t2_player15"
+		wing:t = "t2_player16"
+		wing:t = "t2_player17"
+	}
+	mission {
+		level:t = "levels/guadalcanal.bin"
+		type:t = "domination"
+		restoreType:t = "attempts"
+		optionalTakeOff:b = false
+		environment:t = "Day"
+		weather:t = "hazy"
+		openDiffLevels:b = true
+		scoreLimit:i = 5000
+		difficulty:t = ""
+	}
+	spectator_points {
+
+	}
+}
+imports {
+
+}
+triggers {
+	isCategory:b = true
+	is_enabled:b = true
+	t1_100_points_damaged {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = true
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isKilled"
+				object_marking:i = 0
+				func:t = "more"
+				value:i = 0
+				object:t = "t1_100_points_squad"
+				var:t = "t1_100_points_death_counter"
+			}
+		}
+		actions {
+			gameMPChangeScore {
+				value:i = -100
+				valueSystem:t = "amount"
+				team:t = "A"
+			}
+			varModify {
+				operator:t = "add"
+				value:r = 1
+				var:t = "t1_100_points_death_counter"
+			}
+			unitMark {
+				target_marking:i = 31
+				target:t = "t1_100_points_squad"
+				useForTriggerFiltered:b = true
+			}
+		}
+		else_actions {
+
+		}
+	}
+	t2_100_points_damaged {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = true
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isKilled"
+				object_marking:i = 0
+				func:t = "more"
+				value:i = 0
+				object:t = "t2_100_points_squad"
+				var:t = "t2_100_points_death_counter"
+			}
+		}
+		actions {
+			gameMPChangeScore {
+				value:i = -100
+				valueSystem:t = "amount"
+				team:t = "B"
+			}
+			varModify {
+				operator:t = "add"
+				value:r = 1
+				var:t = "t2_100_points_death_counter"
+			}
+			unitMark {
+				target_marking:i = 31
+				target:t = "t2_100_points_squad"
+				useForTriggerFiltered:b = true
+			}
+		}
+		else_actions {
+
+		}
+	}
+	t1_all_land_destroyed {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 30
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			triggerEnable {
+				target:t = "t1_all_land_destroyed_mp_change"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	t2_all_land_destroyed {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 30
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			triggerEnable {
+				target:t = "t2_all_land_destroyed_mp_change"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	t1_all_land_destroyed_mp_change {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isActive"
+				object_marking:i = 0
+				func:t = "less"
+				value:i = 1
+				object:t = "t1_quest_units_squad"
+			}
+		}
+		actions {
+			triggerEnable {
+				target:t = "t1_loose"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	t2_all_land_destroyed_mp_change {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isActive"
+				object_marking:i = 0
+				func:t = "less"
+				value:i = 1
+				object:t = "t2_quest_units_squad"
+			}
+		}
+		actions {
+			triggerEnable {
+				target:t = "t2_loose"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	t1_40_points_damaged {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = true
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isKilled"
+				object_marking:i = 0
+				func:t = "more"
+				value:i = 0
+				object:t = "t1_40_points_squad"
+				var:t = "t1_40_points_death_counter"
+			}
+		}
+		actions {
+			gameMPChangeScore {
+				value:i = -50
+				valueSystem:t = "amount"
+				team:t = "A"
+			}
+			varModify {
+				operator:t = "add"
+				value:r = 1
+				var:t = "t1_40_points_death_counter"
+			}
+			unitMark {
+				target_marking:i = 31
+				target:t = "t1_40_points_squad"
+				useForTriggerFiltered:b = true
+			}
+		}
+		else_actions {
+
+		}
+	}
+	t1_20_points_damaged {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = true
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isKilled"
+				object_marking:i = 0
+				func:t = "more"
+				value:i = 0
+				object:t = "t1_20_points_squad"
+				var:t = "t1_20_points_death_counter"
+			}
+		}
+		actions {
+			gameMPChangeScore {
+				value:i = -30
+				valueSystem:t = "amount"
+				team:t = "A"
+			}
+			varModify {
+				operator:t = "add"
+				value:r = 1
+				var:t = "t1_20_points_death_counter"
+			}
+			unitMark {
+				target_marking:i = 31
+				target:t = "t2_40_points_squad"
+				useForTriggerFiltered:b = true
+			}
+		}
+		else_actions {
+
+		}
+	}
+	t2_40_points_damaged {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = true
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isKilled"
+				object_marking:i = 0
+				func:t = "more"
+				value:i = 0
+				object:t = "t2_40_points_squad"
+				var:t = "t2_40_points_death_counter"
+			}
+		}
+		actions {
+			gameMPChangeScore {
+				value:i = -50
+				valueSystem:t = "amount"
+				team:t = "B"
+			}
+			varModify {
+				operator:t = "add"
+				value:r = 1
+				var:t = "t2_40_points_death_counter"
+			}
+			unitMark {
+				target_marking:i = 31
+				target:t = "t1_20_points_squad"
+				useForTriggerFiltered:b = true
+			}
+		}
+		else_actions {
+
+		}
+	}
+	t2_20_points_damaged {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = true
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isKilled"
+				object_marking:i = 0
+				func:t = "more"
+				value:i = 0
+				object:t = "t2_20_points_squad"
+				var:t = "t2_20_points_death_counter"
+			}
+		}
+		actions {
+			gameMPChangeScore {
+				value:i = -30
+				valueSystem:t = "amount"
+				team:t = "B"
+			}
+			varModify {
+				operator:t = "add"
+				value:r = 1
+				var:t = "t2_20_points_death_counter"
+			}
+			unitMark {
+				target_marking:i = 31
+				target:t = "t2_20_points_squad"
+				useForTriggerFiltered:b = true
+			}
+		}
+		else_actions {
+
+		}
+	}
+}
+mission_objectives {
+	isCategory:b = true
+	is_enabled:b = true
+}
+variables {
+	t1_100_points_death_counter:i = 0
+	t2_100_points_death_counter:i = 0
+	t1_40_points_death_counter:i = 0
+	t2_40_points_death_counter:i = 0
+	t1_20_points_death_counter:i = 0
+	t2_20_points_death_counter:i = 0
+}
+dialogs {
+
+}
+airfields {
+
+}
+effects {
+
+}
+units {
+
+}
+areas {
+
+}
+objLayers {
+
+}
+wayPoints {
+
 }

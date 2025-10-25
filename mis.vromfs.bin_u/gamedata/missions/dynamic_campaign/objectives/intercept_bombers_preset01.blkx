@@ -1,2679 +1,2029 @@
-{
-  "selected_tag": "",
-  "bin_dump_file": "",
-  "mission_settings": {
-    "atmosphere": {
-      "pressure": 760.0,
-      "temperature": 0.0
-    },
-    "player": {
-      "army": 1,
-      "wing": "#player.fighter"
-    },
-    "player_teamB": {
-      "army": 2
-    },
-    "mission": {
-      "name": "dynamic_intercept_bombers",
-      "level": "levels/guadalcanal.bin",
-      "type": "campaign",
-      "restoreType": "tactical control",
-      "optionalTakeOff": false,
-      "environment": "Day",
-      "weather": "hazy",
-      "missionDebriefing": "",
-      "missionBriefing": "",
-      "campaign": "pacific",
-      "tags": {},
-      "missionType": {
-        "_Dom": false,
-        "_Conq": false,
-        "_CnvA": false,
-        "_CnvB": false,
-        "_ArtDA": false,
-        "_ArtDB": false,
-        "_Bttl": false,
-        "_DBttlA": false,
-        "_DBttlB": false,
-        "_Bto": false,
-        "_Flc": false,
-        "_v1_race_straight": false,
-        "_v1_race_inverted": false,
-        "_v2_race_straight": false,
-        "_v2_race_inverted": false,
-        "_Conq1": false,
-        "_Conq2": false,
-        "_Conq3": false,
-        "_Conq4": false,
-        "_Conq5": false,
-        "_Conq6": false
-      }
-    },
-    "cover_points": {},
-    "aiParams": {
-      "aiEffectivenessViscosity": 90.0,
-      "effectivenessDistances": [
-        2500.0,
-        7000.0
-      ]
-    },
-    "spectator_points": {},
-    "briefing": {
-      "place_loc": "",
-      "date_loc": "",
-      "objective_loc": "",
-      "music": "action_01",
-      "viewAreaScale": 2.0,
-      "part": {
-        "event": "",
-        "minTime": 0,
-        "slide": [
-          {
-            "map": false,
-            "minTime": 4,
-            "picture": "dynamic_missions/berlin_02_01",
-            "showAirMap": false
-          },
-          {
-            "map": true,
-            "minTime": 4,
-            "picture": "",
-            "showAirMap": false,
-            "arrow": {
-              "width": 1,
-              "side": "enemy",
-              "point": [
-                "#enemy02.bomber",
-                "#bomb_targets"
-              ]
-            },
-            "icon": [
-              {
-                "icontype": "fighter",
-                "side": "player",
-                "target": "#player.fighter",
-                "lookAt": "#enemy02.bomber"
-              },
-              {
-                "icontype": "carrier",
-                "side": "ally",
-                "target": "#bomb_targets"
-              },
-              {
-                "icontype": "bomber",
-                "side": "enemy",
-                "target": "#enemy02.bomber",
-                "lookAt": "target_waypoint_bombers"
-              }
-            ]
-          }
-        ]
-      }
-    }
-  },
-  "imports": {},
-  "triggers": {
-    "isCategory": true,
-    "is_enabled": true,
-    "miss_init": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {},
-      "actions": {
-        "unitDamage": {
-          "power": 1.0,
-          "useEffect": false,
-          "countEffects": 1,
-          "delay": [
-            1.0,
-            1.0
-          ],
-          "offset": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "radiusOffset": [
-            10.0,
-            15.0
-          ],
-          "target": "dummy_fake",
-          "partName": "body_dm"
-        },
-        "unitSetStealth": {
-          "set": true,
-          "radius": 5000.0,
-          "target": "#bomb_targets"
-        },
-        "unitWakeUp": {
-          "target": [
-            "enemy_all",
-            "ally_all"
-          ]
-        },
-        "unitSetProperties": [
-          {
-            "object_marking": 0,
-            "object": [
-              "enemy_all",
-              "#player.fighter"
-            ],
-            "calmDetection": true,
-            "plane": {
-              "targetDeviation": {
-                "trigger": "machine gun",
-                "defaultVal": 2.0,
-                "limits": [
-                  0.0,
-                  2.0
-                ]
-              }
-            }
-          },
-          {
-            "object_marking": 0,
-            "object": "ally_all",
-            "plane": {
-              "targetDeviation": {
-                "trigger": "machine gun",
-                "defaultVal": 2.0,
-                "limits": [
-                  1.0,
-                  4.5
-                ]
-              }
-            }
-          },
-          {
-            "object_marking": 0,
-            "object": "#enemy_bomber_group",
-            "plane": {
-              "targetDeviation": [
-                {
-                  "trigger": "gunner",
-                  "defaultVal": 0.3,
-                  "limits": [
-                    0.0,
-                    1.5
-                  ]
-                },
-                {
-                  "trigger": "bombs",
-                  "defaultVal": 0.0,
-                  "limits": [
-                    0.0,
-                    0.0
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "object_marking": 0,
-            "object": "#bomb_targets",
-            "targetableByAi": false
-          }
-        ],
-        "unitPutToSleep": {
-          "target": [
-            "ally_all",
-            "#enemy_cut.any",
-            "enemy_all"
-          ]
-        },
-        "triggerEnable": {
-          "target": "miss_start"
-        }
-      },
-      "else_actions": {}
-    },
-    "miss_start": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "timeExpires": {
-          "time": 0.0
-        }
-      },
-      "conditions": {},
-      "actions": {
-        "missionForceMusic": {
-          "evName": "tension_cs"
-        },
-        "unitWakeUp": {
-          "target": "enemy_all"
-        },
-        "showSmartCutscene": [
-          {
-            "sceneType": "flyby",
-            "startSubTypeOnTheMarch": "",
-            "startSubTypeGroundUnits": "",
-            "startSubTypeArea": "",
-            "startSubTypeUnitAttackUnit": "",
-            "startSubTypeUnitMoveToUnit": "",
-            "startSubTypeTwoUnits": "",
-            "duration": 6.0,
-            "changeCameras": true,
-            "teleportAllAttackers": false,
-            "allowTeleportAttackers": true,
-            "inverseCameraDirection": false,
-            "delayPlayer": true,
-            "fadeIn": true,
-            "fadeOut": true,
-            "allowDeadUnits": false,
-            "startSubTypeTakeoff": "",
-            "startSubTypeFlyBy": "direct",
-            "wait": false,
-            "object": "#enemy_bomber_group",
-            "flybyUnitPos": "front",
-            "flybyVertOffset": 5.0,
-            "timeBeforeFlyBy": 5.0
-          },
-          {
-            "sceneType": "on_the_march",
-            "startSubTypeOnTheMarch": "back",
-            "startSubTypeGroundUnits": "",
-            "startSubTypeArea": "",
-            "startSubTypeUnitAttackUnit": "",
-            "startSubTypeUnitMoveToUnit": "",
-            "startSubTypeTwoUnits": "",
-            "duration": 6.0,
-            "changeCameras": true,
-            "teleportAllAttackers": false,
-            "allowTeleportAttackers": true,
-            "inverseCameraDirection": false,
-            "delayPlayer": true,
-            "fadeIn": true,
-            "fadeOut": true,
-            "allowDeadUnits": false,
-            "startSubTypeTakeoff": "",
-            "startSubTypeFlyBy": "",
-            "wait": false,
-            "object": "#enemy_bomber_group"
-          },
-          {
-            "sceneType": "on_the_march",
-            "startSubTypeOnTheMarch": "back",
-            "startSubTypeGroundUnits": "",
-            "startSubTypeArea": "",
-            "startSubTypeUnitAttackUnit": "",
-            "startSubTypeUnitMoveToUnit": "",
-            "startSubTypeTwoUnits": "",
-            "duration": 6.0,
-            "changeCameras": true,
-            "teleportAllAttackers": false,
-            "allowTeleportAttackers": true,
-            "inverseCameraDirection": false,
-            "delayPlayer": true,
-            "fadeIn": false,
-            "fadeOut": false,
-            "allowDeadUnits": false,
-            "startSubTypeTakeoff": "",
-            "startSubTypeFlyBy": "",
-            "wait": false,
-            "object": "#player_cut.any"
-          }
-        ],
-        "wait": [
-          {
-            "time": 2.0
-          },
-          {
-            "time": 4.0
-          },
-          {
-            "time": 6.0
-          },
-          {
-            "time": 4.0
-          },
-          {
-            "time": 1.0
-          }
-        ],
-        "playHint": [
-          {
-            "hintType": "custom",
-            "name": "hints/cutsc_skip",
-            "action": "show",
-            "shouldFadeOut": false,
-            "isOverFade": false,
-            "time": -1.0,
-            "priority": 0,
-            "target_marking": 0,
-            "item": "ID_SKIP_CUTSCENE",
-            "shouldBlink": false
-          },
-          {
-            "hintType": "custom",
-            "name": "hints/cutsc_skip",
-            "action": "hide",
-            "shouldFadeOut": false,
-            "isOverFade": false,
-            "time": -1.0,
-            "priority": 0,
-            "target_marking": 0,
-            "item": "ID_SKIP_CUTSCENE",
-            "shouldBlink": false
-          }
-        ],
-        "triggerEnable": [
-          {
-            "target": "start_cut_skip"
-          },
-          {
-            "target": "battle_start"
-          }
-        ],
-        "unitMoveTo": {
-          "target": "target_waypoint_fighters",
-          "follow_target": false,
-          "teleportHeightType": "absolute",
-          "useUnitHeightForTele": true,
-          "shouldKeepFormation": false,
-          "teleportHeightValue": 1000.0,
-          "object_marking": 0,
-          "target_marking": 0,
-          "waypointReachedDist": 10.0,
-          "recalculatePathDist": -1.0,
-          "horizontalDirectionForTeleport": true,
-          "object": "#player_cut.any",
-          "velocity": 250.0
-        },
-        "triggerDisable": {
-          "target": "start_cut_skip"
-        }
-      },
-      "else_actions": {}
-    },
-    "start_cut_skip": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "timeExpires": {
-          "time": 0.0
-        }
-      },
-      "conditions": {
-        "playerShortcutPressed": {
-          "control": "ID_SKIP_CUTSCENE"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": "miss_start"
-        },
-        "missionStopSpeech": {},
-        "playHint": {
-          "hintType": "custom",
-          "name": "hints/cutsc_skip",
-          "action": "hide",
-          "shouldFadeOut": false,
-          "isOverFade": false,
-          "time": -1.0,
-          "priority": 0,
-          "target_marking": 0
-        },
-        "triggerEnable": {
-          "target": "battle_start"
-        },
-        "wait": {
-          "time": 0.95
-        },
-        "missionStopCutscene": {}
-      },
-      "else_actions": {}
-    },
-    "battle_start": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "timeExpires": {
-          "time": 0.0
-        }
-      },
-      "conditions": {},
-      "actions": {
-        "missionSetFade": [
-          {
-            "mode": "fadeOut",
-            "color": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "time": 1.0
-          },
-          {
-            "mode": "fadeIn",
-            "color": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "time": 1.0
-          }
-        ],
-        "wait": [
-          {
-            "time": 1.0
-          },
-          {
-            "time": 2.0
-          },
-          {
-            "time": 1.0
-          },
-          {
-            "time": 2.0
-          }
-        ],
-        "unitPutToSleep": {
-          "target": "#player_cut.any"
-        },
-        "unitWakeUp": {
-          "target": [
-            "ally_all",
-            "enemy_all"
-          ]
-        },
-        "unitMoveTo": [
-          {
-            "target": "target_waypoint_fighters",
-            "follow_target": false,
-            "teleportHeightType": "absolute",
-            "useUnitHeightForTele": false,
-            "shouldKeepFormation": true,
-            "teleportHeightValue": 1000.0,
-            "object_marking": 0,
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "horizontalDirectionForTeleport": true,
-            "object": "#enemy_fighter_group",
-            "speed": 250.0
-          },
-          {
-            "target": "target_waypoint_bombers",
-            "follow_target": false,
-            "teleportHeightType": "absolute",
-            "useUnitHeightForTele": false,
-            "shouldKeepFormation": true,
-            "teleportHeightValue": 1000.0,
-            "object_marking": 0,
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "horizontalDirectionForTeleport": true,
-            "object": "#enemy_bomber_group",
-            "speed": 250.0
-          },
-          {
-            "target": "#player.fighter",
-            "follow_target": true,
-            "teleportHeightType": "absolute",
-            "useUnitHeightForTele": false,
-            "shouldKeepFormation": true,
-            "teleportHeightValue": 1000.0,
-            "object_marking": 0,
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "horizontalDirectionForTeleport": true,
-            "object": "#ally_fighters_group",
-            "speed": 250.0,
-            "follow_offset": [
-              -500.0,
-              100.0,
-              200.0
-            ]
-          }
-        ],
-        "triggerDisable": [
-          {
-            "target": "enemy_bomber_count_calc"
-          },
-          {
-            "target": "kill_count_toLow"
-          },
-          {
-            "target": [
-              "2_player_Online",
-              "3_player_Online",
-              "4_player_Online",
-              "kill_count_arcade"
-            ]
-          }
-        ],
-        "varModify": [
-          {
-            "operator": "add",
-            "value": 0.0,
-            "var": "need_to_kill",
-            "use_variable": true,
-            "var_value": "enemy_bomber_count"
-          },
-          {
-            "operator": "divAB",
-            "value": 4.0,
-            "var": "need_to_kill"
-          },
-          {
-            "operator": "add",
-            "value": 1.0,
-            "var": "bombers_indicator",
-            "use_variable": true,
-            "var_value": "need_to_kill"
-          }
-        ],
-        "moAddMissionObjective": {
-          "target": "mo_dynamic_intercept_bombers"
-        },
-        "unitSetIndication": {
-          "set": true,
-          "target_marking": 0,
-          "target": "#enemy_bomber_group",
-          "target_type": "isFormationLeader"
-        },
-        "triggerEnable": [
-          {
-            "target": "kill_count_toLow"
-          },
-          {
-            "target": [
-              "2_player_Online",
-              "3_player_Online",
-              "4_player_Online",
-              "kill_count_arcade"
-            ]
-          },
-          {
-            "target": [
-              "near_enemy",
-              "intercept_done",
-              "enemy_near_target"
-            ]
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "near_enemy": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitDistanceBetween": {
-          "value": 3000.0,
-          "math": "2D",
-          "object_type": "isAlive",
-          "target_type": "isAlive",
-          "check_objects": "any",
-          "check_targets": "any",
-          "object_marking": 0,
-          "target_marking": 0,
-          "object": [
-            "#player.fighter",
-            "#ally_fighters_group"
-          ],
-          "target": "enemy_all"
-        }
-      },
-      "actions": {
-        "unitAttackTarget": {
-          "playerAttracted": true,
-          "object": "#enemy_fighter_group",
-          "target": [
-            "#player.fighter",
-            "#ally_fighters_group"
-          ],
-          "fireRandom": true,
-          "playerAttractedCount": 2,
-          "playerAttractedEffRate": 1.0
-        },
-        "triggerEnable": {
-          "target": "bombers_indicator"
-        },
-        "unitSetIndication": {
-          "set": true,
-          "target_marking": 0,
-          "target": "#enemy_bomber_group"
-        }
-      },
-      "else_actions": {}
-    },
-    "bombers_indicator": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": true
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {},
-      "actions": {
-        "missionSetTargetsIndicator": {
-          "target_type": "isAlive",
-          "target_marking": 0,
-          "delta": 0,
-          "icon": "bomber",
-          "icon army": 2,
-          "set": true,
-          "target": "#enemy_bomber_group",
-          "var": "bombers_indicator"
-        }
-      },
-      "else_actions": {}
-    },
-    "enemy_near_target": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitDistanceBetween": {
-          "value": 5000.0,
-          "math": "2D",
-          "object_type": "isAlive",
-          "target_type": "isAlive",
-          "check_objects": "any",
-          "check_targets": "any",
-          "object_marking": 0,
-          "target_marking": 0,
-          "object": "#enemy_bomber_group",
-          "target": "target_waypoint_bombers"
-        }
-      },
-      "actions": {
-        "unitMoveTo": {
-          "target": "evac",
-          "follow_target": false,
-          "teleportHeightType": "absolute",
-          "useUnitHeightForTele": true,
-          "shouldKeepFormation": false,
-          "teleportHeightValue": 1000.0,
-          "object_marking": 0,
-          "target_marking": 0,
-          "waypointReachedDist": 10.0,
-          "recalculatePathDist": -1.0,
-          "horizontalDirectionForTeleport": true,
-          "object": "#enemy_bomber_group"
-        },
-        "unitAttackTarget": {
-          "playerAttracted": false,
-          "object": "#enemy_bomber_group",
-          "target": "#bomb_targets",
-          "fireRandom": true
-        },
-        "wait": [
-          {
-            "time": 20.0
-          },
-          {
-            "time": 3.0
-          }
-        ],
-        "triggerDisable": {
-          "target": "intercept_done"
-        },
-        "moSetObjectiveStatus": {
-          "target": "mo_dynamic_intercept_bombers",
-          "status": 3
-        },
-        "triggerEnable": {
-          "target": "dynamic_fail"
-        },
-        "missionFailed": {}
-      },
-      "else_actions": {}
-    },
-    "dynamic_fail": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "varCompareBool": {
-          "var_value": "training_mode",
-          "value": false,
-          "comparasion_func": "equal"
-        }
-      },
-      "actions": {
-        "missionFailed": {}
-      },
-      "else_actions": {}
-    },
-    "intercept_done": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ANY",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "varCompareInt": {
-          "var_value": "bombers_indicator",
-          "value": 1,
-          "comparasion_func": "less"
-        },
-        "unitWhenCountMatches": {
-          "object_type": "isAlive",
-          "object_marking": 0,
-          "func": "less",
-          "value": 1,
-          "object": "#enemy_bomber_group"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": "enemy_near_target"
-        },
-        "unitMoveTo": {
-          "target": "evac",
-          "follow_target": false,
-          "teleportHeightType": "absolute",
-          "useUnitHeightForTele": true,
-          "shouldKeepFormation": false,
-          "teleportHeightValue": 1000.0,
-          "object_marking": 0,
-          "target_marking": 0,
-          "waypointReachedDist": 10.0,
-          "recalculatePathDist": -1.0,
-          "horizontalDirectionForTeleport": true,
-          "object": "#enemy_bomber_group"
-        },
-        "missionForceMusic": {
-          "evName": "suspense_cs"
-        },
-        "moSetObjectiveStatus": {
-          "target": "mo_dynamic_intercept_bombers",
-          "status": 2
-        },
-        "unitSetIndication": {
-          "set": false,
-          "target_marking": 0,
-          "target": "enemy_all"
-        },
-        "wait": [
-          {
-            "time": 2.0
-          },
-          {
-            "time": 1.0
-          }
-        ],
-        "missionSetFade": [
-          {
-            "mode": "fadeOut",
-            "color": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "time": 1.0
-          },
-          {
-            "mode": "fadeIn",
-            "color": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "time": 1.0
-          }
-        ],
-        "triggerEnable": {
-          "target": "end_cut"
-        }
-      },
-      "else_actions": {}
-    },
-    "end_cut": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "timeExpires": {
-          "time": 0.0
-        }
-      },
-      "conditions": {},
-      "actions": {
-        "unitPutToSleep": {
-          "target": [
-            "enemy_all",
-            "ally_all"
-          ]
-        },
-        "unitWakeUp": {
-          "target": [
-            "#player_cut.any",
-            "#enemy_cut.any"
-          ]
-        },
-        "unitSetProperties": {
-          "object_marking": 0,
-          "object": "#enemy_cut.any",
-          "effShootingRate": 0.0
-        },
-        "unitAttackTarget": {
-          "playerAttracted": false,
-          "object": "#player_cut.any",
-          "target": "#enemy_cut.any",
-          "fireRandom": true
-        },
-        "showSmartCutscene": [
-          {
-            "sceneType": "unit_attack_unit",
-            "startSubTypeOnTheMarch": "",
-            "startSubTypeGroundUnits": "",
-            "startSubTypeArea": "",
-            "startSubTypeUnitAttackUnit": "1to2",
-            "startSubTypeUnitMoveToUnit": "",
-            "startSubTypeTwoUnits": "",
-            "duration": 12.0,
-            "changeCameras": true,
-            "teleportAllAttackers": false,
-            "allowTeleportAttackers": true,
-            "inverseCameraDirection": false,
-            "delayPlayer": true,
-            "fadeIn": false,
-            "fadeOut": false,
-            "allowDeadUnits": false,
-            "startSubTypeTakeoff": "",
-            "startSubTypeFlyBy": "",
-            "wait": false,
-            "object": "#player_cut.any",
-            "target": "#enemy_cut.any"
-          },
-          {
-            "sceneType": "ground_units",
-            "startSubTypeOnTheMarch": "",
-            "startSubTypeGroundUnits": "c2",
-            "startSubTypeArea": "",
-            "startSubTypeUnitAttackUnit": "",
-            "startSubTypeUnitMoveToUnit": "",
-            "startSubTypeTwoUnits": "",
-            "duration": 6.0,
-            "changeCameras": true,
-            "teleportAllAttackers": false,
-            "allowTeleportAttackers": true,
-            "inverseCameraDirection": false,
-            "delayPlayer": true,
-            "fadeIn": false,
-            "fadeOut": false,
-            "allowDeadUnits": false,
-            "startSubTypeTakeoff": "",
-            "startSubTypeFlyBy": "",
-            "wait": false,
-            "object": "#bomb_targets"
-          },
-          {
-            "sceneType": "unit_attack_unit",
-            "startSubTypeOnTheMarch": "",
-            "startSubTypeGroundUnits": "",
-            "startSubTypeArea": "",
-            "startSubTypeUnitAttackUnit": "1to2",
-            "startSubTypeUnitMoveToUnit": "",
-            "startSubTypeTwoUnits": "",
-            "duration": 12.0,
-            "changeCameras": true,
-            "teleportAllAttackers": false,
-            "allowTeleportAttackers": true,
-            "inverseCameraDirection": false,
-            "delayPlayer": true,
-            "fadeIn": false,
-            "fadeOut": false,
-            "allowDeadUnits": false,
-            "startSubTypeTakeoff": "",
-            "startSubTypeFlyBy": "",
-            "wait": false,
-            "object": "#player_cut.any",
-            "target": "#enemy_cut.any"
-          }
-        ],
-        "wait": [
-          {
-            "time": 2.0
-          },
-          {
-            "time": 10.0
-          },
-          {
-            "time": 6.0
-          },
-          {
-            "time": 8.0
-          },
-          {
-            "time": 1.0
-          }
-        ],
-        "playHint": [
-          {
-            "hintType": "custom",
-            "name": "hints/cutsc_skip",
-            "action": "show",
-            "shouldFadeOut": false,
-            "isOverFade": false,
-            "time": -1.0,
-            "priority": 0,
-            "target_marking": 0,
-            "item": "ID_SKIP_CUTSCENE",
-            "shouldBlink": false
-          },
-          {
-            "hintType": "custom",
-            "name": "hints/cutsc_skip",
-            "action": "hide",
-            "shouldFadeOut": false,
-            "isOverFade": false,
-            "time": -1.0,
-            "priority": 0,
-            "target_marking": 0,
-            "item": "ID_SKIP_CUTSCENE",
-            "shouldBlink": false
-          }
-        ],
-        "triggerEnable": [
-          {
-            "target": "end_cut_skip"
-          },
-          {
-            "target": "miss_complete"
-          }
-        ],
-        "unitMoveTo": [
-          {
-            "target": "evac_forCut",
-            "follow_target": false,
-            "teleportHeightType": "target",
-            "useUnitHeightForTele": false,
-            "shouldKeepFormation": true,
-            "teleportHeightValue": 0.0,
-            "object_marking": 0,
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "horizontalDirectionForTeleport": true,
-            "object": "#player_cut.any",
-            "move_type": "teleport",
-            "lookat": "evac",
-            "velocity": 250.0
-          },
-          {
-            "target": "target_waypoint_fighters",
-            "follow_target": false,
-            "teleportHeightType": "target",
-            "useUnitHeightForTele": false,
-            "shouldKeepFormation": true,
-            "teleportHeightValue": 0.0,
-            "object_marking": 0,
-            "target_marking": 0,
-            "waypointReachedDist": 10.0,
-            "recalculatePathDist": -1.0,
-            "horizontalDirectionForTeleport": true,
-            "object": "#player_cut.any",
-            "lookat": "evac",
-            "velocity": 250.0
-          }
-        ],
-        "triggerDisable": {
-          "target": "end_cut_skip"
-        }
-      },
-      "else_actions": {}
-    },
-    "end_cut_skip": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "timeExpires": {
-          "time": 0.0
-        }
-      },
-      "conditions": {
-        "playerShortcutPressed": {
-          "control": "ID_SKIP_CUTSCENE"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": "end_cut"
-        },
-        "missionStopSpeech": {},
-        "playHint": {
-          "hintType": "custom",
-          "name": "hints/cutsc_skip",
-          "action": "hide",
-          "shouldFadeOut": false,
-          "isOverFade": false,
-          "time": -1.0,
-          "priority": 0,
-          "target_marking": 0
-        },
-        "triggerEnable": {
-          "target": "miss_complete"
-        }
-      },
-      "else_actions": {}
-    },
-    "miss_complete": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "timeExpires": {
-          "time": 0.0
-        }
-      },
-      "conditions": {},
-      "actions": {
-        "missionSetFade": [
-          {
-            "mode": "fadeOut",
-            "color": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "time": 1.0
-          },
-          {
-            "mode": "fadeIn",
-            "color": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "time": 1.0
-          }
-        ],
-        "triggerEnable": {
-          "target": "completed"
-        },
-        "wait": {
-          "time": 1.0
-        },
-        "unitWakeUp": {
-          "target": [
-            "enemy_all",
-            "ally_all"
-          ]
-        },
-        "unitPutToSleep": {
-          "target": [
-            "#player_cut.any",
-            "#enemy_cut.any"
-          ]
-        },
-        "missionStopCutscene": {}
-      },
-      "else_actions": {}
-    },
-    "completed": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "timeExpires": {
-          "time": 2.0
-        }
-      },
-      "conditions": {},
-      "actions": {
-        "triggerEnable": {
-          "target": [
-            "completed_online",
-            "completed_offline"
-          ]
-        }
-      },
-      "else_actions": {}
-    },
-    "enemy_bomber_count_calc": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": true
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 0.1
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isAlive",
-          "object_marking": 0,
-          "func": "more",
-          "value": 1,
-          "object": "#enemy_bomber_group",
-          "var": "enemy_bomber_count"
-        }
-      },
-      "actions": {
-        "varModify": {
-          "operator": "add",
-          "value": 1.0,
-          "var": "enemy_bomber_count"
-        }
-      },
-      "else_actions": {}
-    },
-    "kill_count_toLow": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "timeExpires": {
-          "time": 0.0
-        }
-      },
-      "conditions": {
-        "varCompareInt": {
-          "var_value": "need_to_kill",
-          "value": 8,
-          "comparasion_func": "less"
-        }
-      },
-      "actions": {
-        "varSetInt": {
-          "value": 8,
-          "var": "need_to_kill"
-        }
-      },
-      "else_actions": {}
-    },
-    "2_player_Online": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "timeExpires": {
-          "time": 0.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isOnline",
-          "object_marking": 0,
-          "func": "equal",
-          "value": 2,
-          "object": "#player.fighter"
-        }
-      },
-      "actions": {
-        "varModify": [
-          {
-            "operator": "mul",
-            "value": 3.0,
-            "var": "need_to_kill"
-          },
-          {
-            "operator": "divAB",
-            "value": 2.0,
-            "var": "need_to_kill"
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "3_player_Online": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "timeExpires": {
-          "time": 0.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isOnline",
-          "object_marking": 0,
-          "func": "equal",
-          "value": 3,
-          "object": "#player.fighter"
-        }
-      },
-      "actions": {
-        "varModify": {
-          "operator": "mul",
-          "value": 2.0,
-          "var": "need_to_kill"
-        }
-      },
-      "else_actions": {}
-    },
-    "4_player_Online": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "timeExpires": {
-          "time": 0.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isOnline",
-          "object_marking": 0,
-          "func": "equal",
-          "value": 4,
-          "object": "#player.fighter"
-        }
-      },
-      "actions": {
-        "varModify": {
-          "operator": "mul",
-          "value": 3.0,
-          "var": "need_to_kill"
-        }
-      },
-      "else_actions": {}
-    },
-    "kill_count_arcade": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "timeExpires": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "gameWhenDifficulty": {
-          "difficulty": "arcade",
-          "is": "equal"
-        }
-      },
-      "actions": {
-        "varModify": {
-          "operator": "mul",
-          "value": 2.0,
-          "var": "need_to_kill"
-        }
-      },
-      "else_actions": {}
-    },
-    "completed_online": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "timeExpires": {
-          "time": 0.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isOnline",
-          "object_marking": 0,
-          "func": "more",
-          "value": 1,
-          "object": "#player.fighter"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": "completed_offline"
-        },
-        "wait": {
-          "time": 5.0
-        },
-        "missionCompleted": {
-          "timer": false
-        }
-      },
-      "else_actions": {}
-    },
-    "completed_offline": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "timeExpires": {
-          "time": 0.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isOnline",
-          "object_marking": 0,
-          "func": "notMore",
-          "value": 1,
-          "object": "#player.fighter"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": "completed_online"
-        },
-        "wait": {
-          "time": 5.0
-        },
-        "missionCompleted": {
-          "timer": true
-        }
-      },
-      "else_actions": {}
-    },
-    "kill_count_calc": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": true
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 1.0
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": [
-          {
-            "object_type": "isKilledByPlayer",
-            "object_marking": 0,
-            "func": "more",
-            "value": 1,
-            "object": "#enemy_bomber_group",
-            "var": "kill_count"
-          },
-          {
-            "object_type": "isAlive",
-            "object_marking": 0,
-            "func": "notLess",
-            "value": 1,
-            "object": "#enemy_bomber_group",
-            "var": "bombers_indicator"
-          }
-        ]
-      },
-      "actions": {
-        "varModify": [
-          {
-            "operator": "add",
-            "value": 1.0,
-            "var": "kill_count"
-          },
-          {
-            "operator": "subAB",
-            "value": 1.0,
-            "var": "bombers_indicator"
-          }
-        ]
-      },
-      "else_actions": {}
-    },
-    "kill_count_max": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": true
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 0.1
-        }
-      },
-      "conditions": {
-        "unitWhenCountMatches": {
-          "object_type": "isAlive",
-          "object_marking": 0,
-          "func": "less",
-          "value": 1,
-          "object": "#enemy_bomber_group",
-          "var": "bombers_indicator"
-        }
-      },
-      "actions": {
-        "triggerDisable": {
-          "target": "kill_count_calc"
-        },
-        "varModify": {
-          "operator": "subAB",
-          "value": 1.0,
-          "var": "bombers_indicator"
-        }
-      },
-      "else_actions": {}
-    }
-  },
-  "mission_objectives": {
-    "isCategory": true,
-    "is_enabled": true,
-    "mo_dynamic_intercept_bombers": {
-      "is_enabled": false,
-      "comments": "",
-      "type": "abstractMissionObjective",
-      "props": {
-        "isPrimary": true,
-        "timeLimit": 1800,
-        "scoreConst": 100,
-        "scoreTime": 400
-      },
-      "onSuccess": {},
-      "onFailed": {}
-    }
-  },
-  "variables": {
-    "is_free_flight_preset02": false,
-    "need_to_kill": 1,
-    "enemy_bomber_count": 0,
-    "bombers_indicator": 0,
-    "kill_count": 0,
-    "training_mode": false
-  },
-  "dialogs": {},
-  "airfields": {},
-  "effects": {},
-  "units": {
-    "armada": [
-      {
-        "name": "#player.fighter",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            444.95,
-            -56.25,
-            173.55
-          ]
-        ],
-        "unit_class": "a-20g",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "props": {
-          "army": 1,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "count": 4,
-          "numInWing": 4,
-          "plane": {
-            "wing_formation": "Finger",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Finger",
-            "super_row_distances": 1.0,
-            "super_col_distances": 1.0,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "#ally01.fighter",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            443.6,
-            -56.4,
-            240.4
-          ]
-        ],
-        "unit_class": "a-20g",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "props": {
-          "army": 1,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "count": 4,
-          "numInWing": 4,
-          "isDelayed": true,
-          "plane": {
-            "wing_formation": "Finger",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Finger",
-            "super_row_distances": 1.0,
-            "super_col_distances": 1.0,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "#enemy01.fighter",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            443.6,
-            -56.4,
-            266.25
-          ]
-        ],
-        "unit_class": "a-20g",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "props": {
-          "army": 2,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "count": 4,
-          "numInWing": 10,
-          "isDelayed": true,
-          "plane": {
-            "wing_formation": "Finger",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Finger",
-            "super_row_distances": 4.5,
-            "super_col_distances": 4.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "#ally02.fighter",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            396.95,
-            -56.4,
-            240.4
-          ]
-        ],
-        "unit_class": "a-20g",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "props": {
-          "army": 1,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "count": 4,
-          "numInWing": 4,
-          "isDelayed": true,
-          "plane": {
-            "wing_formation": "Finger",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Finger",
-            "super_row_distances": 1.0,
-            "super_col_distances": 1.0,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "#enemy02.bomber",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            439.7,
-            -56.4,
-            302.05
-          ]
-        ],
-        "unit_class": "a-20g",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "props": {
-          "army": 2,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "count": 4,
-          "numInWing": 10,
-          "isDelayed": true,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 4.5,
-            "super_col_distances": 4.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "#player_cut.any",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -530.05,
-            65.7,
-            -148.15
-          ]
-        ],
-        "unit_class": "a-20g",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "props": {
-          "army": 1,
-          "count": 1,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "numInWing": 4,
-          "isDelayed": true,
-          "plane": {
-            "wing_formation": "Finger",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Finger",
-            "super_row_distances": 1.0,
-            "super_col_distances": 1.0,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      },
-      {
-        "name": "#enemy_cut.any",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            -354.2,
-            400.0,
-            3387.2
-          ]
-        ],
-        "unit_class": "a-20g",
-        "closed_waypoints": false,
-        "isShipSpline": false,
-        "shipTurnRadius": 100.0,
-        "weapons": "",
-        "bullets0": "",
-        "bullets1": "",
-        "bullets2": "",
-        "bullets3": "",
-        "bulletsCount0": 0,
-        "bulletsCount1": 0,
-        "bulletsCount2": 0,
-        "bulletsCount3": 0,
-        "props": {
-          "army": 2,
-          "count": 1,
-          "free_distance": 70.0,
-          "floating_distance": 50.0,
-          "minimum_distance_to_earth": 20.0,
-          "altLimit": 6000.0,
-          "attack_type": "fire_at_will",
-          "skill": 4,
-          "plane": {
-            "wing_formation": "Diamond",
-            "row_distances": 3.0,
-            "col_distances": 3.0,
-            "super_formation": "Diamond",
-            "super_row_distances": 1.5,
-            "super_col_distances": 1.5,
-            "ai_skill": "NORMAL",
-            "task": "FLY_WAYPOINT"
-          }
-        },
-        "way": {}
-      }
-    ],
-    "squad": [
-      {
-        "name": "#ally_fighters_group",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            306.9,
-            -83.6,
-            360.05
-          ]
-        ],
-        "props": {
-          "squad_members": "dummy_fake"
-        }
-      },
-      {
-        "name": "#enemy_fighter_group",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            300.75,
-            -83.6,
-            389.0
-          ]
-        ],
-        "props": {
-          "squad_members": "dummy_fake"
-        }
-      },
-      {
-        "name": "enemy_all",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            277.2,
-            -84.4,
-            364.7
-          ]
-        ],
-        "props": {
-          "squad_members": [
-            "#enemy_fighter_group",
-            "#enemy_bomber_group"
-          ]
-        }
-      },
-      {
-        "name": "ally_all",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            268.5,
-            -84.55,
-            347.85
-          ]
-        ],
-        "props": {
-          "squad_members": "#ally_fighters_group"
-        }
-      },
-      {
-        "name": "#bomb_targets",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            193.75,
-            -85.15,
-            360.05
-          ]
-        ],
-        "props": {
-          "squad_members": ""
-        }
-      },
-      {
-        "name": "#bomb_target_cover",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            165.65,
-            -85.15,
-            378.7
-          ]
-        ],
-        "props": {
-          "squad_members": "dummy_fake"
-        }
-      },
-      {
-        "name": "#ally_background",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            195.35,
-            -85.15,
-            394.8
-          ]
-        ],
-        "props": {
-          "squad_members": "dummy_fake"
-        }
-      },
-      {
-        "name": "#enemy_background",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            172.5,
-            -85.15,
-            402.35
-          ]
-        ],
-        "props": {
-          "squad_members": "dummy_fake"
-        }
-      },
-      {
-        "name": "#enemy_bomber_group",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            300.0,
-            -83.6,
-            395.2
-          ]
-        ],
-        "props": {
-          "squad_members": "dummy_fake"
-        }
-      },
-      {
-        "name": "#unit_background",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            166.4,
-            -86.0,
-            350.3
-          ]
-        ],
-        "props": {
-          "squad_members": "dummy_fake"
-        }
-      },
-      {
-        "name": "ally_group_alive",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            133.85,
-            -86.6,
-            253.75
-          ]
-        ],
-        "props": {
-          "squad_members": "ally_all"
-        }
-      },
-      {
-        "name": "#bomb_targets_art",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            285.4,
-            43.35,
-            585.6
-          ]
-        ],
-        "props": {
-          "squad_members": ""
-        }
-      },
-      {
-        "name": "#bomb_targets_ships",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            325.1,
-            42.9,
-            582.2
-          ]
-        ],
-        "props": {
-          "squad_members": ""
-        }
-      },
-      {
-        "name": "#bomb_targets_carrier",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            348.95,
-            42.65,
-            572.95
-          ]
-        ],
-        "props": {
-          "squad_members": ""
-        }
-      },
-      {
-        "name": "#bomb_targets_light",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            338.65,
-            42.85,
-            552.3
-          ]
-        ],
-        "props": {
-          "squad_members": ""
-        }
-      },
-      {
-        "name": "#bomb_targets_tanks",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            306.95,
-            41.25,
-            556.8
-          ]
-        ],
-        "props": {
-          "squad_members": ""
-        }
-      },
-      {
-        "name": "#bomb_target_buildings",
-        "tm": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ],
-          [
-            378.55,
-            42.3,
-            567.5
-          ]
-        ],
-        "props": {
-          "squad_members": ""
-        }
-      }
-    ],
-    "structures": {
-      "name": "dummy_fake",
-      "tm": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          90000.0,
-          -1000.0,
-          90000.0
-        ]
-      ],
-      "unit_class": "dummy_immortal",
-      "closed_waypoints": false,
-      "isShipSpline": false,
-      "shipTurnRadius": 100.0,
-      "weapons": "",
-      "bullets0": "",
-      "bullets1": "",
-      "bullets2": "",
-      "bullets3": "",
-      "bulletsCount0": 0,
-      "bulletsCount1": 0,
-      "bulletsCount2": 0,
-      "bulletsCount3": 0,
-      "props": {
-        "army": 2,
-        "count": 1,
-        "formation_type": "rows",
-        "formation_div": 3,
-        "formation_step": [
-          2.5,
-          2.0
-        ],
-        "formation_noise": [
-          0.1,
-          0.1
-        ],
-        "attack_type": "fire_at_will",
-        "uniqueName": "",
-        "stealthRadius": 0.0,
-        "setStealth": true
-      },
-      "way": {}
-    }
-  },
-  "areas": {
-    "target_waypoint_bombers": {
-      "type": "Point",
-      "tm": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          133.0,
-          -85.15,
-          412.3
-        ]
-      ],
-      "props": {
-        "forceReplication": true
-      }
-    },
-    "evac": {
-      "type": "Point",
-      "tm": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          138.75,
-          -85.05,
-          430.85
-        ]
-      ],
-      "props": {
-        "forceReplication": true
-      }
-    },
-    "target_waypoint_fighters": {
-      "type": "Point",
-      "tm": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          111.7,
-          -85.15,
-          403.0
-        ]
-      ],
-      "props": {
-        "forceReplication": true
-      }
-    },
-    "evac_forCut": {
-      "type": "Point",
-      "tm": [
-        [
-          1.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          1.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          1.0
-        ],
-        [
-          -45.3,
-          22.1,
-          -322.45
-        ]
-      ],
-      "props": {
-        "forceReplication": true
-      }
-    }
-  },
-  "objLayers": {
-    "layer": [
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      }
-    ]
-  },
-  "wayPoints": {}
+selected_tag:t = ""
+bin_dump_file:t = ""
+mission_settings {
+	atmosphere {
+		pressure:r = 760
+		temperature:r = 0
+	}
+	player {
+		army:i = 1
+		wing:t = "#player.fighter"
+	}
+	player_teamB {
+		army:i = 2
+	}
+	mission {
+		name:t = "dynamic_intercept_bombers"
+		level:t = "levels/guadalcanal.bin"
+		type:t = "campaign"
+		restoreType:t = "tactical control"
+		optionalTakeOff:b = false
+		environment:t = "Day"
+		weather:t = "hazy"
+		missionDebriefing:t = ""
+		missionBriefing:t = ""
+		campaign:t = "pacific"
+		tags {
+
+		}
+		missionType {
+			_Dom:b = false
+			_Conq:b = false
+			_CnvA:b = false
+			_CnvB:b = false
+			_ArtDA:b = false
+			_ArtDB:b = false
+			_Bttl:b = false
+			_DBttlA:b = false
+			_DBttlB:b = false
+			_Bto:b = false
+			_Flc:b = false
+			_v1_race_straight:b = false
+			_v1_race_inverted:b = false
+			_v2_race_straight:b = false
+			_v2_race_inverted:b = false
+			_Conq1:b = false
+			_Conq2:b = false
+			_Conq3:b = false
+			_Conq4:b = false
+			_Conq5:b = false
+			_Conq6:b = false
+		}
+	}
+	cover_points {
+
+	}
+	aiParams {
+		aiEffectivenessViscosity:r = 90
+		effectivenessDistances:p2 = 2500, 7000
+	}
+	spectator_points {
+
+	}
+	briefing {
+		place_loc:t = ""
+		date_loc:t = ""
+		objective_loc:t = ""
+		music:t = "action_01"
+		viewAreaScale:r = 2
+		part {
+			event:t = ""
+			minTime:i = 0
+			slide {
+				map:b = false
+				minTime:i = 4
+				picture:t = "dynamic_missions/berlin_02_01"
+				showAirMap:b = false
+			}
+			slide {
+				map:b = true
+				minTime:i = 4
+				picture:t = ""
+				showAirMap:b = false
+				arrow {
+					width:i = 1
+					side:t = "enemy"
+					point:t = "#enemy02.bomber"
+					point:t = "#bomb_targets"
+				}
+				icon {
+					icontype:t = "fighter"
+					side:t = "player"
+					target:t = "#player.fighter"
+					lookAt:t = "#enemy02.bomber"
+				}
+				icon {
+					icontype:t = "carrier"
+					side:t = "ally"
+					target:t = "#bomb_targets"
+				}
+				icon {
+					icontype:t = "bomber"
+					side:t = "enemy"
+					target:t = "#enemy02.bomber"
+					lookAt:t = "target_waypoint_bombers"
+				}
+			}
+		}
+	}
+}
+imports {
+
+}
+triggers {
+	isCategory:b = true
+	is_enabled:b = true
+	miss_init {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			unitDamage {
+				power:r = 1
+				useEffect:b = false
+				countEffects:i = 1
+				delay:p2 = 1, 1
+				offset:p3 = 0, 0, 0
+				radiusOffset:p2 = 10, 15
+				target:t = "dummy_fake"
+				partName:t = "body_dm"
+			}
+			unitSetStealth {
+				set:b = true
+				radius:r = 5000
+				target:t = "#bomb_targets"
+			}
+			unitWakeUp {
+				target:t = "enemy_all"
+				target:t = "ally_all"
+			}
+			unitSetProperties {
+				object_marking:i = 0
+				object:t = "enemy_all"
+				object:t = "#player.fighter"
+				calmDetection:b = true
+				plane {
+					targetDeviation {
+						trigger:t = "machine gun"
+						defaultVal:r = 2
+						limits:p2 = 0, 2
+					}
+				}
+			}
+			unitSetProperties {
+				object_marking:i = 0
+				object:t = "ally_all"
+				plane {
+					targetDeviation {
+						trigger:t = "machine gun"
+						defaultVal:r = 2
+						limits:p2 = 1, 4.5
+					}
+				}
+			}
+			unitSetProperties {
+				object_marking:i = 0
+				object:t = "#enemy_bomber_group"
+				plane {
+					targetDeviation {
+						trigger:t = "gunner"
+						defaultVal:r = 0.3
+						limits:p2 = 0, 1.5
+					}
+					targetDeviation {
+						trigger:t = "bombs"
+						defaultVal:r = 0
+						limits:p2 = 0, 0
+					}
+				}
+			}
+			unitSetProperties {
+				object_marking:i = 0
+				object:t = "#bomb_targets"
+				targetableByAi:b = false
+			}
+			unitPutToSleep {
+				target:t = "ally_all"
+				target:t = "#enemy_cut.any"
+				target:t = "enemy_all"
+			}
+			triggerEnable {
+				target:t = "miss_start"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	miss_start {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			timeExpires {
+				time:r = 0
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			missionForceMusic {
+				evName:t = "tension_cs"
+			}
+			unitWakeUp {
+				target:t = "enemy_all"
+			}
+			showSmartCutscene {
+				sceneType:t = "flyby"
+				startSubTypeOnTheMarch:t = ""
+				startSubTypeGroundUnits:t = ""
+				startSubTypeArea:t = ""
+				startSubTypeUnitAttackUnit:t = ""
+				startSubTypeUnitMoveToUnit:t = ""
+				startSubTypeTwoUnits:t = ""
+				duration:r = 6
+				changeCameras:b = true
+				teleportAllAttackers:b = false
+				allowTeleportAttackers:b = true
+				inverseCameraDirection:b = false
+				delayPlayer:b = true
+				fadeIn:b = true
+				fadeOut:b = true
+				allowDeadUnits:b = false
+				startSubTypeTakeoff:t = ""
+				startSubTypeFlyBy:t = "direct"
+				wait:b = false
+				object:t = "#enemy_bomber_group"
+				flybyUnitPos:t = "front"
+				flybyVertOffset:r = 5
+				timeBeforeFlyBy:r = 5
+			}
+			wait {
+				time:r = 2
+			}
+			playHint {
+				hintType:t = "custom"
+				name:t = "hints/cutsc_skip"
+				action:t = "show"
+				shouldFadeOut:b = false
+				isOverFade:b = false
+				time:r = -1
+				priority:i = 0
+				target_marking:i = 0
+				item:t = "ID_SKIP_CUTSCENE"
+				shouldBlink:b = false
+			}
+			triggerEnable {
+				target:t = "start_cut_skip"
+			}
+			wait {
+				time:r = 4
+			}
+			showSmartCutscene {
+				sceneType:t = "on_the_march"
+				startSubTypeOnTheMarch:t = "back"
+				startSubTypeGroundUnits:t = ""
+				startSubTypeArea:t = ""
+				startSubTypeUnitAttackUnit:t = ""
+				startSubTypeUnitMoveToUnit:t = ""
+				startSubTypeTwoUnits:t = ""
+				duration:r = 6
+				changeCameras:b = true
+				teleportAllAttackers:b = false
+				allowTeleportAttackers:b = true
+				inverseCameraDirection:b = false
+				delayPlayer:b = true
+				fadeIn:b = true
+				fadeOut:b = true
+				allowDeadUnits:b = false
+				startSubTypeTakeoff:t = ""
+				startSubTypeFlyBy:t = ""
+				wait:b = false
+				object:t = "#enemy_bomber_group"
+			}
+			wait {
+				time:r = 6
+			}
+			showSmartCutscene {
+				sceneType:t = "on_the_march"
+				startSubTypeOnTheMarch:t = "back"
+				startSubTypeGroundUnits:t = ""
+				startSubTypeArea:t = ""
+				startSubTypeUnitAttackUnit:t = ""
+				startSubTypeUnitMoveToUnit:t = ""
+				startSubTypeTwoUnits:t = ""
+				duration:r = 6
+				changeCameras:b = true
+				teleportAllAttackers:b = false
+				allowTeleportAttackers:b = true
+				inverseCameraDirection:b = false
+				delayPlayer:b = true
+				fadeIn:b = false
+				fadeOut:b = false
+				allowDeadUnits:b = false
+				startSubTypeTakeoff:t = ""
+				startSubTypeFlyBy:t = ""
+				wait:b = false
+				object:t = "#player_cut.any"
+			}
+			unitMoveTo {
+				target:t = "target_waypoint_fighters"
+				follow_target:b = false
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = true
+				shouldKeepFormation:b = false
+				teleportHeightValue:r = 1000
+				object_marking:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				horizontalDirectionForTeleport:b = true
+				object:t = "#player_cut.any"
+				velocity:r = 250
+			}
+			wait {
+				time:r = 4
+			}
+			playHint {
+				hintType:t = "custom"
+				name:t = "hints/cutsc_skip"
+				action:t = "hide"
+				shouldFadeOut:b = false
+				isOverFade:b = false
+				time:r = -1
+				priority:i = 0
+				target_marking:i = 0
+				item:t = "ID_SKIP_CUTSCENE"
+				shouldBlink:b = false
+			}
+			triggerDisable {
+				target:t = "start_cut_skip"
+			}
+			wait {
+				time:r = 1
+			}
+			triggerEnable {
+				target:t = "battle_start"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	start_cut_skip {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			timeExpires {
+				time:r = 0
+			}
+		}
+		conditions {
+			playerShortcutPressed {
+				control:t = "ID_SKIP_CUTSCENE"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "miss_start"
+			}
+			missionStopSpeech {
+
+			}
+			playHint {
+				hintType:t = "custom"
+				name:t = "hints/cutsc_skip"
+				action:t = "hide"
+				shouldFadeOut:b = false
+				isOverFade:b = false
+				time:r = -1
+				priority:i = 0
+				target_marking:i = 0
+			}
+			triggerEnable {
+				target:t = "battle_start"
+			}
+			wait {
+				time:r = 0.95
+			}
+			missionStopCutscene {
+
+			}
+		}
+		else_actions {
+
+		}
+	}
+	battle_start {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			timeExpires {
+				time:r = 0
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			missionSetFade {
+				mode:t = "fadeOut"
+				color:p3 = 0, 0, 0
+				time:r = 1
+			}
+			wait {
+				time:r = 1
+			}
+			unitPutToSleep {
+				target:t = "#player_cut.any"
+			}
+			unitWakeUp {
+				target:t = "ally_all"
+				target:t = "enemy_all"
+			}
+			unitMoveTo {
+				target:t = "target_waypoint_fighters"
+				follow_target:b = false
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = false
+				shouldKeepFormation:b = true
+				teleportHeightValue:r = 1000
+				object_marking:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				horizontalDirectionForTeleport:b = true
+				object:t = "#enemy_fighter_group"
+				speed:r = 250
+			}
+			unitMoveTo {
+				target:t = "target_waypoint_bombers"
+				follow_target:b = false
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = false
+				shouldKeepFormation:b = true
+				teleportHeightValue:r = 1000
+				object_marking:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				horizontalDirectionForTeleport:b = true
+				object:t = "#enemy_bomber_group"
+				speed:r = 250
+			}
+			unitMoveTo {
+				target:t = "#player.fighter"
+				follow_target:b = true
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = false
+				shouldKeepFormation:b = true
+				teleportHeightValue:r = 1000
+				object_marking:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				horizontalDirectionForTeleport:b = true
+				object:t = "#ally_fighters_group"
+				speed:r = 250
+				follow_offset:p3 = -500, 100, 200
+			}
+			missionSetFade {
+				mode:t = "fadeIn"
+				color:p3 = 0, 0, 0
+				time:r = 1
+			}
+			wait {
+				time:r = 2
+			}
+			triggerDisable {
+				target:t = "enemy_bomber_count_calc"
+			}
+			varModify {
+				operator:t = "add"
+				value:r = 0
+				var:t = "need_to_kill"
+				use_variable:b = true
+				var_value:t = "enemy_bomber_count"
+			}
+			varModify {
+				operator:t = "divAB"
+				value:r = 4
+				var:t = "need_to_kill"
+			}
+			moAddMissionObjective {
+				target:t = "mo_dynamic_intercept_bombers"
+			}
+			unitSetIndication {
+				set:b = true
+				target_marking:i = 0
+				target:t = "#enemy_bomber_group"
+				target_type:t = "isFormationLeader"
+			}
+			triggerEnable {
+				target:t = "kill_count_toLow"
+			}
+			wait {
+				time:r = 1
+			}
+			triggerDisable {
+				target:t = "kill_count_toLow"
+			}
+			triggerEnable {
+				target:t = "2_player_Online"
+				target:t = "3_player_Online"
+				target:t = "4_player_Online"
+				target:t = "kill_count_arcade"
+			}
+			wait {
+				time:r = 2
+			}
+			triggerDisable {
+				target:t = "2_player_Online"
+				target:t = "3_player_Online"
+				target:t = "4_player_Online"
+				target:t = "kill_count_arcade"
+			}
+			varModify {
+				operator:t = "add"
+				value:r = 1
+				var:t = "bombers_indicator"
+				use_variable:b = true
+				var_value:t = "need_to_kill"
+			}
+			triggerEnable {
+				target:t = "near_enemy"
+				target:t = "intercept_done"
+				target:t = "enemy_near_target"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	near_enemy {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitDistanceBetween {
+				value:r = 3000
+				math:t = "2D"
+				object_type:t = "isAlive"
+				target_type:t = "isAlive"
+				check_objects:t = "any"
+				check_targets:t = "any"
+				object_marking:i = 0
+				target_marking:i = 0
+				object:t = "#player.fighter"
+				object:t = "#ally_fighters_group"
+				target:t = "enemy_all"
+			}
+		}
+		actions {
+			unitAttackTarget {
+				playerAttracted:b = true
+				object:t = "#enemy_fighter_group"
+				target:t = "#player.fighter"
+				target:t = "#ally_fighters_group"
+				fireRandom:b = true
+				playerAttractedCount:i = 2
+				playerAttractedEffRate:r = 1
+			}
+			triggerEnable {
+				target:t = "bombers_indicator"
+			}
+			unitSetIndication {
+				set:b = true
+				target_marking:i = 0
+				target:t = "#enemy_bomber_group"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	bombers_indicator {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = true
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			missionSetTargetsIndicator {
+				target_type:t = "isAlive"
+				target_marking:i = 0
+				delta:i = 0
+				icon:t = "bomber"
+				"icon army":i = 2
+				set:b = true
+				target:t = "#enemy_bomber_group"
+				var:t = "bombers_indicator"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	enemy_near_target {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitDistanceBetween {
+				value:r = 5000
+				math:t = "2D"
+				object_type:t = "isAlive"
+				target_type:t = "isAlive"
+				check_objects:t = "any"
+				check_targets:t = "any"
+				object_marking:i = 0
+				target_marking:i = 0
+				object:t = "#enemy_bomber_group"
+				target:t = "target_waypoint_bombers"
+			}
+		}
+		actions {
+			unitMoveTo {
+				target:t = "evac"
+				follow_target:b = false
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = true
+				shouldKeepFormation:b = false
+				teleportHeightValue:r = 1000
+				object_marking:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				horizontalDirectionForTeleport:b = true
+				object:t = "#enemy_bomber_group"
+			}
+			unitAttackTarget {
+				playerAttracted:b = false
+				object:t = "#enemy_bomber_group"
+				target:t = "#bomb_targets"
+				fireRandom:b = true
+			}
+			wait {
+				time:r = 20
+			}
+			triggerDisable {
+				target:t = "intercept_done"
+			}
+			moSetObjectiveStatus {
+				target:t = "mo_dynamic_intercept_bombers"
+				status:i = 3
+			}
+			triggerEnable {
+				target:t = "dynamic_fail"
+			}
+			wait {
+				time:r = 3
+			}
+			missionFailed {
+
+			}
+		}
+		else_actions {
+
+		}
+	}
+	dynamic_fail {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			varCompareBool {
+				var_value:t = "training_mode"
+				value:b = false
+				comparasion_func:t = "equal"
+			}
+		}
+		actions {
+			missionFailed {
+
+			}
+		}
+		else_actions {
+
+		}
+	}
+	intercept_done {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ANY"
+			enableAfterComplete:b = false
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			varCompareInt {
+				var_value:t = "bombers_indicator"
+				value:i = 1
+				comparasion_func:t = "less"
+			}
+			unitWhenCountMatches {
+				object_type:t = "isAlive"
+				object_marking:i = 0
+				func:t = "less"
+				value:i = 1
+				object:t = "#enemy_bomber_group"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "enemy_near_target"
+			}
+			unitMoveTo {
+				target:t = "evac"
+				follow_target:b = false
+				teleportHeightType:t = "absolute"
+				useUnitHeightForTele:b = true
+				shouldKeepFormation:b = false
+				teleportHeightValue:r = 1000
+				object_marking:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				horizontalDirectionForTeleport:b = true
+				object:t = "#enemy_bomber_group"
+			}
+			missionForceMusic {
+				evName:t = "suspense_cs"
+			}
+			moSetObjectiveStatus {
+				target:t = "mo_dynamic_intercept_bombers"
+				status:i = 2
+			}
+			unitSetIndication {
+				set:b = false
+				target_marking:i = 0
+				target:t = "enemy_all"
+			}
+			wait {
+				time:r = 2
+			}
+			missionSetFade {
+				mode:t = "fadeOut"
+				color:p3 = 0, 0, 0
+				time:r = 1
+			}
+			wait {
+				time:r = 1
+			}
+			missionSetFade {
+				mode:t = "fadeIn"
+				color:p3 = 0, 0, 0
+				time:r = 1
+			}
+			triggerEnable {
+				target:t = "end_cut"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	end_cut {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			timeExpires {
+				time:r = 0
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			unitPutToSleep {
+				target:t = "enemy_all"
+				target:t = "ally_all"
+			}
+			unitWakeUp {
+				target:t = "#player_cut.any"
+				target:t = "#enemy_cut.any"
+			}
+			unitSetProperties {
+				object_marking:i = 0
+				object:t = "#enemy_cut.any"
+				effShootingRate:r = 0
+			}
+			unitAttackTarget {
+				playerAttracted:b = false
+				object:t = "#player_cut.any"
+				target:t = "#enemy_cut.any"
+				fireRandom:b = true
+			}
+			showSmartCutscene {
+				sceneType:t = "unit_attack_unit"
+				startSubTypeOnTheMarch:t = ""
+				startSubTypeGroundUnits:t = ""
+				startSubTypeArea:t = ""
+				startSubTypeUnitAttackUnit:t = "1to2"
+				startSubTypeUnitMoveToUnit:t = ""
+				startSubTypeTwoUnits:t = ""
+				duration:r = 12
+				changeCameras:b = true
+				teleportAllAttackers:b = false
+				allowTeleportAttackers:b = true
+				inverseCameraDirection:b = false
+				delayPlayer:b = true
+				fadeIn:b = false
+				fadeOut:b = false
+				allowDeadUnits:b = false
+				startSubTypeTakeoff:t = ""
+				startSubTypeFlyBy:t = ""
+				wait:b = false
+				object:t = "#player_cut.any"
+				target:t = "#enemy_cut.any"
+			}
+			wait {
+				time:r = 2
+			}
+			playHint {
+				hintType:t = "custom"
+				name:t = "hints/cutsc_skip"
+				action:t = "show"
+				shouldFadeOut:b = false
+				isOverFade:b = false
+				time:r = -1
+				priority:i = 0
+				target_marking:i = 0
+				item:t = "ID_SKIP_CUTSCENE"
+				shouldBlink:b = false
+			}
+			triggerEnable {
+				target:t = "end_cut_skip"
+			}
+			wait {
+				time:r = 10
+			}
+			showSmartCutscene {
+				sceneType:t = "ground_units"
+				startSubTypeOnTheMarch:t = ""
+				startSubTypeGroundUnits:t = "c2"
+				startSubTypeArea:t = ""
+				startSubTypeUnitAttackUnit:t = ""
+				startSubTypeUnitMoveToUnit:t = ""
+				startSubTypeTwoUnits:t = ""
+				duration:r = 6
+				changeCameras:b = true
+				teleportAllAttackers:b = false
+				allowTeleportAttackers:b = true
+				inverseCameraDirection:b = false
+				delayPlayer:b = true
+				fadeIn:b = false
+				fadeOut:b = false
+				allowDeadUnits:b = false
+				startSubTypeTakeoff:t = ""
+				startSubTypeFlyBy:t = ""
+				wait:b = false
+				object:t = "#bomb_targets"
+			}
+			wait {
+				time:r = 6
+			}
+			unitMoveTo {
+				target:t = "evac_forCut"
+				follow_target:b = false
+				teleportHeightType:t = "target"
+				useUnitHeightForTele:b = false
+				shouldKeepFormation:b = true
+				teleportHeightValue:r = 0
+				object_marking:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				horizontalDirectionForTeleport:b = true
+				object:t = "#player_cut.any"
+				move_type:t = "teleport"
+				lookat:t = "evac"
+				velocity:r = 250
+			}
+			showSmartCutscene {
+				sceneType:t = "unit_attack_unit"
+				startSubTypeOnTheMarch:t = ""
+				startSubTypeGroundUnits:t = ""
+				startSubTypeArea:t = ""
+				startSubTypeUnitAttackUnit:t = "1to2"
+				startSubTypeUnitMoveToUnit:t = ""
+				startSubTypeTwoUnits:t = ""
+				duration:r = 12
+				changeCameras:b = true
+				teleportAllAttackers:b = false
+				allowTeleportAttackers:b = true
+				inverseCameraDirection:b = false
+				delayPlayer:b = true
+				fadeIn:b = false
+				fadeOut:b = false
+				allowDeadUnits:b = false
+				startSubTypeTakeoff:t = ""
+				startSubTypeFlyBy:t = ""
+				wait:b = false
+				object:t = "#player_cut.any"
+				target:t = "#enemy_cut.any"
+			}
+			unitMoveTo {
+				target:t = "target_waypoint_fighters"
+				follow_target:b = false
+				teleportHeightType:t = "target"
+				useUnitHeightForTele:b = false
+				shouldKeepFormation:b = true
+				teleportHeightValue:r = 0
+				object_marking:i = 0
+				target_marking:i = 0
+				waypointReachedDist:r = 10
+				recalculatePathDist:r = -1
+				horizontalDirectionForTeleport:b = true
+				object:t = "#player_cut.any"
+				lookat:t = "evac"
+				velocity:r = 250
+			}
+			wait {
+				time:r = 8
+			}
+			playHint {
+				hintType:t = "custom"
+				name:t = "hints/cutsc_skip"
+				action:t = "hide"
+				shouldFadeOut:b = false
+				isOverFade:b = false
+				time:r = -1
+				priority:i = 0
+				target_marking:i = 0
+				item:t = "ID_SKIP_CUTSCENE"
+				shouldBlink:b = false
+			}
+			triggerDisable {
+				target:t = "end_cut_skip"
+			}
+			wait {
+				time:r = 1
+			}
+			triggerEnable {
+				target:t = "miss_complete"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	end_cut_skip {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			timeExpires {
+				time:r = 0
+			}
+		}
+		conditions {
+			playerShortcutPressed {
+				control:t = "ID_SKIP_CUTSCENE"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "end_cut"
+			}
+			missionStopSpeech {
+
+			}
+			playHint {
+				hintType:t = "custom"
+				name:t = "hints/cutsc_skip"
+				action:t = "hide"
+				shouldFadeOut:b = false
+				isOverFade:b = false
+				time:r = -1
+				priority:i = 0
+				target_marking:i = 0
+			}
+			triggerEnable {
+				target:t = "miss_complete"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	miss_complete {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			timeExpires {
+				time:r = 0
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			missionSetFade {
+				mode:t = "fadeOut"
+				color:p3 = 0, 0, 0
+				time:r = 1
+			}
+			triggerEnable {
+				target:t = "completed"
+			}
+			wait {
+				time:r = 1
+			}
+			unitWakeUp {
+				target:t = "enemy_all"
+				target:t = "ally_all"
+			}
+			unitPutToSleep {
+				target:t = "#player_cut.any"
+				target:t = "#enemy_cut.any"
+			}
+			missionStopCutscene {
+
+			}
+			missionSetFade {
+				mode:t = "fadeIn"
+				color:p3 = 0, 0, 0
+				time:r = 1
+			}
+		}
+		else_actions {
+
+		}
+	}
+	completed {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			timeExpires {
+				time:r = 2
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			triggerEnable {
+				target:t = "completed_online"
+				target:t = "completed_offline"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	enemy_bomber_count_calc {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = true
+		}
+		events {
+			periodicEvent {
+				time:r = 0.1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isAlive"
+				object_marking:i = 0
+				func:t = "more"
+				value:i = 1
+				object:t = "#enemy_bomber_group"
+				var:t = "enemy_bomber_count"
+			}
+		}
+		actions {
+			varModify {
+				operator:t = "add"
+				value:r = 1
+				var:t = "enemy_bomber_count"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	kill_count_toLow {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			timeExpires {
+				time:r = 0
+			}
+		}
+		conditions {
+			varCompareInt {
+				var_value:t = "need_to_kill"
+				value:i = 8
+				comparasion_func:t = "less"
+			}
+		}
+		actions {
+			varSetInt {
+				value:i = 8
+				var:t = "need_to_kill"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	2_player_Online {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			timeExpires {
+				time:r = 0
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isOnline"
+				object_marking:i = 0
+				func:t = "equal"
+				value:i = 2
+				object:t = "#player.fighter"
+			}
+		}
+		actions {
+			varModify {
+				operator:t = "mul"
+				value:r = 3
+				var:t = "need_to_kill"
+			}
+			varModify {
+				operator:t = "divAB"
+				value:r = 2
+				var:t = "need_to_kill"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	3_player_Online {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			timeExpires {
+				time:r = 0
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isOnline"
+				object_marking:i = 0
+				func:t = "equal"
+				value:i = 3
+				object:t = "#player.fighter"
+			}
+		}
+		actions {
+			varModify {
+				operator:t = "mul"
+				value:r = 2
+				var:t = "need_to_kill"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	4_player_Online {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			timeExpires {
+				time:r = 0
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isOnline"
+				object_marking:i = 0
+				func:t = "equal"
+				value:i = 4
+				object:t = "#player.fighter"
+			}
+		}
+		actions {
+			varModify {
+				operator:t = "mul"
+				value:r = 3
+				var:t = "need_to_kill"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	kill_count_arcade {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			timeExpires {
+				time:r = 1
+			}
+		}
+		conditions {
+			gameWhenDifficulty {
+				difficulty:t = "arcade"
+				is:t = "equal"
+			}
+		}
+		actions {
+			varModify {
+				operator:t = "mul"
+				value:r = 2
+				var:t = "need_to_kill"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	completed_online {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			timeExpires {
+				time:r = 0
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isOnline"
+				object_marking:i = 0
+				func:t = "more"
+				value:i = 1
+				object:t = "#player.fighter"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "completed_offline"
+			}
+			wait {
+				time:r = 5
+			}
+			missionCompleted {
+				timer:b = false
+			}
+		}
+		else_actions {
+
+		}
+	}
+	completed_offline {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			timeExpires {
+				time:r = 0
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isOnline"
+				object_marking:i = 0
+				func:t = "notMore"
+				value:i = 1
+				object:t = "#player.fighter"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "completed_online"
+			}
+			wait {
+				time:r = 5
+			}
+			missionCompleted {
+				timer:b = true
+			}
+		}
+		else_actions {
+
+		}
+	}
+	kill_count_calc {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = true
+		}
+		events {
+			periodicEvent {
+				time:r = 1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isKilledByPlayer"
+				object_marking:i = 0
+				func:t = "more"
+				value:i = 1
+				object:t = "#enemy_bomber_group"
+				var:t = "kill_count"
+			}
+			unitWhenCountMatches {
+				object_type:t = "isAlive"
+				object_marking:i = 0
+				func:t = "notLess"
+				value:i = 1
+				object:t = "#enemy_bomber_group"
+				var:t = "bombers_indicator"
+			}
+		}
+		actions {
+			varModify {
+				operator:t = "add"
+				value:r = 1
+				var:t = "kill_count"
+			}
+			varModify {
+				operator:t = "subAB"
+				value:r = 1
+				var:t = "bombers_indicator"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	kill_count_max {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = true
+		}
+		events {
+			periodicEvent {
+				time:r = 0.1
+			}
+		}
+		conditions {
+			unitWhenCountMatches {
+				object_type:t = "isAlive"
+				object_marking:i = 0
+				func:t = "less"
+				value:i = 1
+				object:t = "#enemy_bomber_group"
+				var:t = "bombers_indicator"
+			}
+		}
+		actions {
+			triggerDisable {
+				target:t = "kill_count_calc"
+			}
+			varModify {
+				operator:t = "subAB"
+				value:r = 1
+				var:t = "bombers_indicator"
+			}
+		}
+		else_actions {
+
+		}
+	}
+}
+mission_objectives {
+	isCategory:b = true
+	is_enabled:b = true
+	mo_dynamic_intercept_bombers {
+		is_enabled:b = false
+		comments:t = ""
+		type:t = "abstractMissionObjective"
+		props {
+			isPrimary:b = true
+			timeLimit:i = 1800
+			scoreConst:i = 100
+			scoreTime:i = 400
+		}
+		onSuccess {
+
+		}
+		onFailed {
+
+		}
+	}
+}
+variables {
+	is_free_flight_preset02:b = false
+	need_to_kill:i = 1
+	enemy_bomber_count:i = 0
+	bombers_indicator:i = 0
+	kill_count:i = 0
+	training_mode:b = false
+}
+dialogs {
+
+}
+airfields {
+
+}
+effects {
+
+}
+units {
+	armada {
+		name:t = "#player.fighter"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [444.95, -56.25, 173.55]]
+		unit_class:t = "a-20g"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		props {
+			army:i = 1
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			count:i = 4
+			numInWing:i = 4
+			plane {
+				wing_formation:t = "Finger"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Finger"
+				super_row_distances:r = 1
+				super_col_distances:r = 1
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "#ally01.fighter"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [443.6, -56.4, 240.4]]
+		unit_class:t = "a-20g"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		props {
+			army:i = 1
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			count:i = 4
+			numInWing:i = 4
+			isDelayed:b = true
+			plane {
+				wing_formation:t = "Finger"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Finger"
+				super_row_distances:r = 1
+				super_col_distances:r = 1
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "#enemy01.fighter"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [443.6, -56.4, 266.25]]
+		unit_class:t = "a-20g"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		props {
+			army:i = 2
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			count:i = 4
+			numInWing:i = 10
+			isDelayed:b = true
+			plane {
+				wing_formation:t = "Finger"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Finger"
+				super_row_distances:r = 4.5
+				super_col_distances:r = 4.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "#ally_fighters_group"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [306.9, -83.6, 360.05]]
+		props {
+			squad_members:t = "dummy_fake"
+		}
+	}
+	squad {
+		name:t = "#enemy_fighter_group"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [300.75, -83.6, 389.0]]
+		props {
+			squad_members:t = "dummy_fake"
+		}
+	}
+	squad {
+		name:t = "enemy_all"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [277.2, -84.4, 364.7]]
+		props {
+			squad_members:t = "#enemy_fighter_group"
+			squad_members:t = "#enemy_bomber_group"
+		}
+	}
+	squad {
+		name:t = "ally_all"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [268.5, -84.55, 347.85]]
+		props {
+			squad_members:t = "#ally_fighters_group"
+		}
+	}
+	squad {
+		name:t = "#bomb_targets"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [193.75, -85.15, 360.05]]
+		props {
+			squad_members:t = ""
+		}
+	}
+	squad {
+		name:t = "#bomb_target_cover"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [165.65, -85.15, 378.7]]
+		props {
+			squad_members:t = "dummy_fake"
+		}
+	}
+	squad {
+		name:t = "#ally_background"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [195.35, -85.15, 394.8]]
+		props {
+			squad_members:t = "dummy_fake"
+		}
+	}
+	squad {
+		name:t = "#enemy_background"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [172.5, -85.15, 402.35]]
+		props {
+			squad_members:t = "dummy_fake"
+		}
+	}
+	structures {
+		name:t = "dummy_fake"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [90000.0, -1000.0, 90000.0]]
+		unit_class:t = "dummy_immortal"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		props {
+			army:i = 2
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			attack_type:t = "fire_at_will"
+			uniqueName:t = ""
+			stealthRadius:r = 0
+			setStealth:b = true
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "#ally02.fighter"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [396.95, -56.4, 240.4]]
+		unit_class:t = "a-20g"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		props {
+			army:i = 1
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			count:i = 4
+			numInWing:i = 4
+			isDelayed:b = true
+			plane {
+				wing_formation:t = "Finger"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Finger"
+				super_row_distances:r = 1
+				super_col_distances:r = 1
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	armada {
+		name:t = "#enemy02.bomber"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [439.7, -56.4, 302.05]]
+		unit_class:t = "a-20g"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		props {
+			army:i = 2
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			count:i = 4
+			numInWing:i = 10
+			isDelayed:b = true
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 4.5
+				super_col_distances:r = 4.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "#enemy_bomber_group"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [300.0, -83.6, 395.2]]
+		props {
+			squad_members:t = "dummy_fake"
+		}
+	}
+	squad {
+		name:t = "#unit_background"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [166.4, -86.0, 350.3]]
+		props {
+			squad_members:t = "dummy_fake"
+		}
+	}
+	squad {
+		name:t = "ally_group_alive"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [133.85, -86.6, 253.75]]
+		props {
+			squad_members:t = "ally_all"
+		}
+	}
+	armada {
+		name:t = "#player_cut.any"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-530.05, 65.7, -148.15]]
+		unit_class:t = "a-20g"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		props {
+			army:i = 1
+			count:i = 1
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			numInWing:i = 4
+			isDelayed:b = true
+			plane {
+				wing_formation:t = "Finger"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Finger"
+				super_row_distances:r = 1
+				super_col_distances:r = 1
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "#bomb_targets_art"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [285.4, 43.35, 585.6]]
+		props {
+			squad_members:t = ""
+		}
+	}
+	squad {
+		name:t = "#bomb_targets_ships"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [325.1, 42.9, 582.2]]
+		props {
+			squad_members:t = ""
+		}
+	}
+	squad {
+		name:t = "#bomb_targets_carrier"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [348.95, 42.65, 572.95]]
+		props {
+			squad_members:t = ""
+		}
+	}
+	squad {
+		name:t = "#bomb_targets_light"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [338.65, 42.85, 552.3]]
+		props {
+			squad_members:t = ""
+		}
+	}
+	squad {
+		name:t = "#bomb_targets_tanks"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [306.95, 41.25, 556.8]]
+		props {
+			squad_members:t = ""
+		}
+	}
+	squad {
+		name:t = "#bomb_target_buildings"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [378.55, 42.3, 567.5]]
+		props {
+			squad_members:t = ""
+		}
+	}
+	armada {
+		name:t = "#enemy_cut.any"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-354.2, 400.0, 3387.2]]
+		unit_class:t = "a-20g"
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		props {
+			army:i = 2
+			count:i = 1
+			free_distance:r = 70
+			floating_distance:r = 50
+			minimum_distance_to_earth:r = 20
+			altLimit:r = 6000
+			attack_type:t = "fire_at_will"
+			skill:i = 4
+			plane {
+				wing_formation:t = "Diamond"
+				row_distances:r = 3
+				col_distances:r = 3
+				super_formation:t = "Diamond"
+				super_row_distances:r = 1.5
+				super_col_distances:r = 1.5
+				ai_skill:t = "NORMAL"
+				task:t = "FLY_WAYPOINT"
+			}
+		}
+		way {
+
+		}
+	}
+}
+areas {
+	target_waypoint_bombers {
+		type:t = "Point"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [133.0, -85.15, 412.3]]
+		props {
+			forceReplication:b = true
+		}
+	}
+	evac {
+		type:t = "Point"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [138.75, -85.05, 430.85]]
+		props {
+			forceReplication:b = true
+		}
+	}
+	target_waypoint_fighters {
+		type:t = "Point"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [111.7, -85.15, 403.0]]
+		props {
+			forceReplication:b = true
+		}
+	}
+	evac_forCut {
+		type:t = "Point"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-45.3, 22.1, -322.45]]
+		props {
+			forceReplication:b = true
+		}
+	}
+}
+objLayers {
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+}
+wayPoints {
+
 }

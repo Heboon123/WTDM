@@ -1,5 +1,6 @@
 from "%scripts/dagui_library.nut" import *
 from "%scripts/weaponry/weaponryConsts.nut" import fakeBullets_prefix
+import "%sqstd/ecs.nut" as ecs
 
 let { g_shortcut_type } = require("%scripts/controls/shortcutType.nut")
 let { g_hud_live_stats } = require("%scripts/hud/hudLiveStats.nut")
@@ -16,7 +17,7 @@ let { isFakeBullet, getBulletsSetData } = require("%scripts/weaponry/bulletsInfo
 let { getBulletsIconView } = require("%scripts/weaponry/bulletsVisual.nut")
 let { MODIFICATION } = require("%scripts/weaponry/weaponryTooltips.nut")
 let { shouldActionBarFontBeTiny , getActionItemAmountText, getActionItemModificationName,
-  getActionItemStatus } = require("%scripts/hud/hudActionBarInfo.nut")
+  getActionItemStatus, curHeroTemplates } = require("%scripts/hud/hudActionBarInfo.nut")
 let { toggleShortcut } = require("%globalScripts/controls/shortcutActions.nut")
 let { getWheelBarItems, activateActionBarAction, getActionBarUnitName } = require("hudActionBar")
 let { EII_BULLET, EII_ARTILLERY_TARGET, EII_EXTINGUISHER, EII_ROCKET, EII_FORCED_GUN, EII_SLAVE_UNIT_STATUS,
@@ -37,12 +38,33 @@ let { loadLocalByAccount, saveLocalByAccount
 let { closeCurVoicemenu } = require("%scripts/wheelmenu/voiceMessages.nut")
 let { guiStartWheelmenu, closeCurWheelmenu } = require("%scripts/wheelmenu/wheelmenu.nut")
 let { openGenericTooltip, closeGenericTooltip } = require("%scripts/utils/genericTooltip.nut")
-let { openHudAirWeaponSelector, isVisualHudAirWeaponSelectorOpened } = require("%scripts/hud/hudAirWeaponSelector.nut")
+let { isVisualHudAirWeaponSelectorOpened } = require("%scripts/hud/hudAirWeaponSelector.nut")
 let { getExtraActionItemsView } = require("%scripts/hud/hudActionBarExtraActions.nut")
 let updateExtWatched = require("%scripts/global/updateExtWatched.nut")
 let { isProfileReceived } = require("%appGlobals/login/loginState.nut")
 let { get_gui_option_in_mode } = require("%scripts/options/options.nut")
 let { isPlayerDedicatedSpectator } = require("%scripts/matchingRooms/sessionLobbyMembersInfo.nut")
+let { bhvHintForceUpdateValuePID } = require("%scripts/viewUtils/bhvHint.nut")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 local sectorAngle1PID = dagui_propid_add_name_id("sector-angle-1")
 
@@ -96,11 +118,6 @@ function getCollapseShText() {
   return shType.getFirstInput(COLLAPSE_ACTION_BAR_SH_ID)
 }
 
-function hasCollapseShortcut() {
-  let shType = g_shortcut_type.getShortcutTypeByShortcutId(COLLAPSE_ACTION_BAR_SH_ID)
-  return shType.isAssigned(COLLAPSE_ACTION_BAR_SH_ID)
-}
-
 function getVisibilityStateProfilePath() {
   let hudType = hudTypeByHudUnitType?[getHudUnitType()]
   if (hudType == null)
@@ -119,6 +136,10 @@ let class ActionBar {
   killStreaksActionsOrdered = null
   weaponActions           = null
 
+  actionBarSecondItemsTpl = null
+  actionBarItemBlk = null
+  actionBarItemDivName = null
+
   artillery_target_mode = false
 
   curActionBarUnitName = null
@@ -135,15 +156,20 @@ let class ActionBar {
   currentActionWithMenu = null
   extraActionsCount = 0
 
+  shouldForceUpdateItems = false
+
   getActionBarVisibility = @() isCollapseBtnHidden ? ActionBarVsisbility.HIDDEN
     : this.isCollapsed ? ActionBarVsisbility.COLLAPSED
     : ActionBarVsisbility.EXPANDED
 
-  constructor(nestObj) {
+  constructor(nestObj, itemBlk = null, itemDivName = null, secondItemsTpl = null) {
     if (!checkObj(nestObj))
       return
     this.scene     = nestObj
     this.guiScene  = nestObj.getScene()
+    this.actionBarSecondItemsTpl = secondItemsTpl ?? "%gui/hud/actionBarSecondItems.tpl"
+    this.actionBarItemBlk = itemBlk ?? "%gui/hud/actionBarItem.blk"
+    this.actionBarItemDivName = itemDivName ?? "actionBarItemDiv"
     this.guiScene.replaceContent(this.scene.findObject("actions_nest"), "%gui/hud/actionBar.blk", this)
     this.scene.findObject("action_bar").setUserData(this)
     this.actionItems = []
@@ -181,6 +207,23 @@ let class ActionBar {
     add_event_listener("ChangedShowActionBar", function (_eventData) {
       this.updateVisibility()
     }, this)
+    add_event_listener("ControlsChangedShortcuts", function (_eventData) {
+      this.shouldForceUpdateItems = true
+    }, this)
+    add_event_listener("ControlsPresetChanged", function (_eventData) {
+      this.shouldForceUpdateItems = true
+    }, this)
+
+
+
+
+
+
+
+
+
+
+
 
     this.updateParams()
     updateActionBar()
@@ -190,7 +233,7 @@ let class ActionBar {
     }]))
   }
 
-  isCollapsable = @() this.canControl && ((this.actionItems.len() + this.extraActionsCount) > 0) && hasCollapseShortcut()
+  isCollapsable = @() this.canControl && ((this.actionItems.len() + this.extraActionsCount) > 0)
 
   function collapse() {
     if (!this.isValid())
@@ -267,7 +310,7 @@ let class ActionBar {
   }
 
   function fillActionBarItem(itemObj, itemView) {
-    let { id, selected, active, activeBool, actionId, enableBool, layeredIcon = null, icon = "",
+    let { id, selected, active, activeBool, actionId, enableBool, visualEnable, layeredIcon = null, icon = "",
       cooldownParams, blockedCooldownParams progressCooldownParams, amount, automatic, onClick = null
       showShortcut, isXinput, mainShortcutId, activatedShortcutId = "", actionType = null
       hasSecondActionsBtn, isCloseSecondActionsBtn, shortcutText, useShortcutTinyFont,
@@ -278,8 +321,9 @@ let class ActionBar {
     contentObj.selected = selected
     contentObj.active = active
     contentObj.actionId = actionId
+    contentObj.shortcutId = mainShortcutId
     contentObj.overrideClick = onClick != null ? onClick : ""
-    contentObj.enable(enableBool)
+    contentObj.visualEnable = visualEnable
 
     let isShowBulletsIcon = layeredIcon != null
     let bulletsSetIconObj = showObjById("bulletsSetIcon", isShowBulletsIcon, contentObj)
@@ -304,6 +348,8 @@ let class ActionBar {
     let isShowMainAction = hasMainAction && (actionType != EII_EXTINGUISHER || enableBool)
     let mainActionButtonObj = showObjById("mainActionButton", isShowMainAction, contentObj)
     if (hasMainAction) {
+      if (this.shouldForceUpdateItems)
+        mainActionButtonObj.setIntProp(bhvHintForceUpdateValuePID, 1)
       mainActionButtonObj.setValue("".concat("{{", mainShortcutId, "}}"))
       mainActionButtonObj.top = hasActivateAction && activeBool ? "h + 0.005@shHud"
         : "- h - 0.005@shHud"
@@ -311,8 +357,11 @@ let class ActionBar {
 
     let activatedActionButtonObj = showObjById("activatedActionButton", activeBool && hasActivateAction, contentObj)
     activatedActionButtonObj.hasShortcut = hasActivateAction ? "yes" : "no"
-    if (hasActivateAction)
+    if (hasActivateAction) {
+      if (this.shouldForceUpdateItems)
+        activatedActionButtonObj.setIntProp(bhvHintForceUpdateValuePID, 1)
       activatedActionButtonObj.setValue("".concat("{{", activatedShortcutId, "}}"))
+    }
 
     let isShowTextShortcut = showShortcut && !isXinput
     let shortcutTextNestObj = showObjById("shortcutTextNest", isShowTextShortcut, contentObj)
@@ -321,7 +370,8 @@ let class ActionBar {
       shortcutTextObj.hudFont = useShortcutTinyFont  ? "tiny" : "small"
       shortcutTextObj.setValue(shortcutText)
       let actionCollapseBtnObj = showObjById("actionCollapseBtn", hasSecondActionsBtn, shortcutTextNestObj)
-      actionCollapseBtnObj.rotation = isCloseSecondActionsBtn ? "180" : "0"
+      if (actionCollapseBtnObj)
+        actionCollapseBtnObj.rotation = isCloseSecondActionsBtn ? "180" : "0"
     }
 
     let tooltipLayerObj = itemObj.findObject("tooltipLayer")
@@ -365,8 +415,8 @@ let class ActionBar {
     let listItemsCount = actionBarObj.childrenCount()
     let needListItemsCount = fullItemsList.len()
     if (needListItemsCount > listItemsCount)
-      this.guiScene.createMultiElementsByObject(actionBarObj, "%gui/hud/actionBarItem.blk",
-        "actionBarItemDiv", needListItemsCount - listItemsCount, this)
+      this.guiScene.createMultiElementsByObject(actionBarObj, this.actionBarItemBlk,
+        this.actionBarItemDivName, needListItemsCount - listItemsCount, this)
 
     for (local i = 0; i < actionBarObj.childrenCount(); i++) {
       let itemObj = actionBarObj.getChild(i)
@@ -436,9 +486,9 @@ let class ActionBar {
       selected            = item.selected ? "yes" : "no"
       active              = active ? "yes" : "no"
       activeBool          = active
-      enable              = isReady ? "yes" : "no"
+      visualEnable        = isReady ? "yes" : "no"
       enableBool          = isReady
-      wheelmenuEnabled    = isReady || actionBarType.canSwitchAutomaticMode()
+      wheelmenuEnabled    = true
       shortcutText        = shortcutText
       useShortcutTinyFont = shouldActionBarFontBeTiny(shortcutText)
       mainShortcutId      = shortcutId
@@ -503,7 +553,7 @@ let class ActionBar {
       selected = item.selected ? "yes" : "no"
       active = item.selected ? "yes" : "no"
       available = available
-      enable = item.count > 0 ? "yes" : "no"
+      visualEnable = item.count > 0 ? "yes" : "no"
       enableBool = item.count > 0
       amount = item.count
       cooldown = cooldownParams.degree
@@ -513,7 +563,7 @@ let class ActionBar {
       progressCooldown          = progressCooldownParams.degree
       progressCooldownIncFactor = progressCooldownParams.incFactor
       inProgressTime = 0.0
-      nopadding = "yes"
+      nopadding = true
       countEx = -1
       onClick = "onSecondActionClick"
       broken = false
@@ -585,7 +635,7 @@ let class ActionBar {
 
     foreach (id, item in this.actionItems) {
       let prevItem = prevActionItems[id]
-      if (item == prevItem)
+      if (!this.shouldForceUpdateItems && item == prevItem)
         continue
 
       if (newActionWithMenu == prevItem)
@@ -607,7 +657,7 @@ let class ActionBar {
       if (cooldownTimeout > 0)
         this.enableBarItemAfterCooldown(id, cooldownTimeout)
 
-      if (needFullUpdate(item, prevItem, hudUnitType)) {
+      if (this.shouldForceUpdateItems || needFullUpdate(item, prevItem, hudUnitType)) {
         let itemView = this.buildItemView(item, id, true)
         this.fillActionBarItem(nestActionObj, itemView)
         continue
@@ -633,7 +683,7 @@ let class ActionBar {
 
       itemObj.selected = item.selected ? "yes" : "no"
       itemObj.active = item.active ? "yes" : "no"
-      itemObj.enable(isReady)
+      itemObj.visualEnable = isReady ? "yes" : "no"
       if (item?.isWaitSelectSecondAction != prevItem?.isWaitSelectSecondAction ) {
         let collapseBtn = itemObj.findObject("actionCollapseBtn")
         if (collapseBtn != null)
@@ -674,8 +724,21 @@ let class ActionBar {
         itemObj.findObject("unitIndex").setValue($"{item.innerIdx + 1}")
         itemObj.findObject("lockedIcon").show(item.available && !item.active)
       }
+      if (itemObj.isHovered() || nestActionObj.isHovered())
+        this.guiScene.updateTooltip(nestActionObj.findObject("tooltipLayer"))
     }
 
+    if (this.shouldForceUpdateItems) {
+      let extraItems = getExtraActionItemsView(unit)
+      foreach (itemView in extraItems) {
+        let { id } = itemView
+        let nestActionObj = this.scene.findObject(id)
+        if (nestActionObj?.isValid())
+          this.fillActionBarItem(nestActionObj, itemView)
+      }
+    }
+
+    this.shouldForceUpdateItems = false
     this.openSecondActionsMenu(newActionWithMenu)
   }
 
@@ -699,7 +762,7 @@ let class ActionBar {
       if (!nestActionObj?.isValid() || !getActionItemStatus(item).isReady)
         return
       let itemObj = nestActionObj.findObject("itemContent")
-      itemObj.enable(true)
+      itemObj.visualEnable = "yes"
     }, this)
 
     let timer = setTimeout(timeout, @() cb())
@@ -834,7 +897,7 @@ let class ActionBar {
     secondItemsParams.posx <- obj.getPos()[0]
     secondItemsParams.posy <- this.hasXInputSh ? this.getXInputShHeight() : this.getTextShHeight()
 
-    let blk = handyman.renderCached(("%gui/hud/actionBarSecondItems.tpl"), secondItemsParams)
+    let blk = handyman.renderCached(this.actionBarSecondItemsTpl, secondItemsParams)
     this.guiScene.replaceContentFromText(this.scene.findObject("secondActions"), blk, blk.len(), this)
 
     clearTimer(this.closeSecondActionsTimer)
@@ -1043,8 +1106,11 @@ let class ActionBar {
     openGenericTooltip(obj, this)
   }
 
-  function onVisualSelectorClick(_obj) {
-    openHudAirWeaponSelector(true)
+  function onActivateByShortcutId(obj) {
+    let { shortcutId = "" } = obj
+    if (shortcutId == "")
+      return
+    toggleShortcut(shortcutId)
   }
 
 }

@@ -1,6 +1,8 @@
 from "%scripts/dagui_natives.nut" import is_mouse_last_time_used
 from "%scripts/dagui_library.nut" import *
 from "%scripts/utils_sa.nut" import save_to_json
+from "%scripts/contacts/contactsConsts.nut" import EPLX_SEARCH, contactsGroupWithoutMaxCount,
+  getMaxContactsByGroup
 
 let { getGlobalModule } = require("%scripts/global_modules.nut")
 let g_squad_manager = getGlobalModule("g_squad_manager")
@@ -24,8 +26,7 @@ let { isShowGoldBalanceWarning } = require("%scripts/user/balanceFeatures.nut")
 let { hasMenuChatPrivate } = require("%scripts/user/matchingFeature.nut")
 let { is_chat_message_empty } = require("chat")
 let { isGuestLogin } = require("%scripts/user/profileStates.nut")
-let { EPLX_SEARCH, contactsWndSizes, contactsGroups, contactsByGroups,
-  contactsGroupWithoutMaxCount, getMaxContactsByGroup } = require("%scripts/contacts/contactsManager.nut")
+let { contactsWndSizes, contactsGroups, contactsByGroups } = require("%scripts/contacts/contactsListState.nut")
 let { searchContactsResults, searchContacts, addContact, removeContact
 } = require("%scripts/contacts/contactsState.nut")
 let { script_net_assert_once } = require("%sqStdLibs/helpers/net_errors.nut")
@@ -46,6 +47,8 @@ let { inviteToWwOperation } = require("%scripts/globalWorldwarUtils.nut")
 let { getPlayerFullName } = require("%scripts/contacts/contactsInfo.nut")
 let { gui_modal_userCard } = require("%scripts/user/userCard/userCardView.nut")
 let { canSquad } = require("%scripts/squads/squadUtils.nut")
+let { cutPlayerNamePrefix, cutPlayerNamePostfix } = require("%scripts/user/nickTools.nut")
+let { getContact } = require("%scripts/contacts/contacts.nut")
 
 let contactsPrevScenes = [] 
 
@@ -147,7 +150,7 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
 
     local mask = CtrlsInGui.CTRL_ALLOW_FULL
     if (this.curHoverObjId != null)
-      if (showConsoleButtons.value)
+      if (showConsoleButtons.get())
         mask = CtrlsInGui.CTRL_ALLOW_VEHICLE_FULL & ~CtrlsInGui.CTRL_ALLOW_VEHICLE_XINPUT
       else if (this.curHoverObjId == "search_edit_box")
         mask = CtrlsInGui.CTRL_ALLOW_VEHICLE_FULL & ~CtrlsInGui.CTRL_ALLOW_VEHICLE_KEYBOARD
@@ -225,25 +228,25 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
   function loadSizes() {
     if (this.isContactsWindowActive()) {
       let obj = this.scene.findObject("contacts_wnd")
-      contactsWndSizes({ pos = obj.getPosRC(), size = obj.getSize() })
-      saveLocalByScreenSize("contacts_sizes", save_to_json(contactsWndSizes.value))
+      contactsWndSizes.set({ pos = obj.getPosRC(), size = obj.getSize() })
+      saveLocalByScreenSize("contacts_sizes", save_to_json(contactsWndSizes.get()))
     }
   }
 
   function setSavedSizes() {
-    if (contactsWndSizes.value == null) {
+    if (contactsWndSizes.get() == null) {
       let data = loadLocalByScreenSize("contacts_sizes")
       if (data) {
         let sizeData = parse_json(data)
         if (("pos" in sizeData) && ("size" in sizeData))
-          contactsWndSizes({
+          contactsWndSizes.set({
             pos = [sizeData.pos[0].tointeger(), sizeData.pos[1].tointeger()]
             size = [sizeData.size[0].tointeger(), sizeData.size[1].tointeger()]
           })
       }
     }
 
-    let sizeData = contactsWndSizes.value
+    let sizeData = contactsWndSizes.get()
     if (this.isContactsWindowActive() && sizeData != null) {
       let obj = this.scene.findObject("contacts_wnd")
       if (!obj)
@@ -256,8 +259,8 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
         else if (sizeData.pos[i] + sizeData.size[i] > topMenuBorders[i][1] * rootSize[i])
           contactsWndSizes.mutate(@(v) v.pos[i] = (topMenuBorders[i][1] * rootSize[i] - sizeData.size[i]).tointeger())
 
-      obj.pos = $"{contactsWndSizes.value.pos[0]}, {contactsWndSizes.value.pos[1]}"
-      obj.size = $"{contactsWndSizes.value.size[0]}, {contactsWndSizes.value.size[1]}"
+      obj.pos = $"{contactsWndSizes.get().pos[0]}, {contactsWndSizes.get().pos[1]}"
+      obj.size = $"{contactsWndSizes.get().size[0]}, {contactsWndSizes.get().size[1]}"
     }
   }
 
@@ -287,7 +290,7 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
     }
   }
 
-  needShowContactHoverButtons = @() !showConsoleButtons.value
+  needShowContactHoverButtons = @() !showConsoleButtons.get()
 
   function createPlayersObjInList(gObj, count) {
     this.guiScene.createMultiElementsByObject(gObj, "%gui/contacts/playerList.blk", "contactItem", count, this)
@@ -324,7 +327,7 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
       groupName = gName
     }
     if (gName == EPL_FRIENDLIST && isInMenu.get()) {
-      if (hasFeature("Invites") && !isGuestLogin.value)
+      if (hasFeature("Invites") && !isGuestLogin.get())
         view.playerButton.append(this.createPlayerButtonView("btnInviteFriend", "#ui/gameuiskin#btn_invite_friend", "onInviteFriend"))
     }
     return handyman.renderCached(("%gui/contacts/playerListBottomInfo.tpl"), view)
@@ -466,7 +469,7 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
                                      || platformModule.isPlayerFromPS4(contactName)
                                      || isPlayerFromXboxOne
 
-    let canChat = hasMenuChatPrivate.value && (contact ? contact.canChat(comms_state) : true)
+    let canChat = hasMenuChatPrivate.get() && (contact ? contact.canChat(comms_state) : true)
     let canInvite = contact ? contact.canInvite(comms_state) : true
 
     showObjById("btn_friendCreateCustomNick", hasFeature("CustomNicks") && !isMe, contact_buttons_holder)
@@ -568,7 +571,7 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     local txt = clearBorderSymbols(editboxObj.getValue())
-    txt = platformModule.cutPlayerNamePrefix(platformModule.cutPlayerNamePostfix(txt))
+    txt = cutPlayerNamePrefix(cutPlayerNamePostfix(txt))
     if (txt == "")
       return
 
@@ -603,7 +606,7 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
     if (!editBoxObj?.isValid())
       return
 
-    let needShowSearchAdvice = !showConsoleButtons.value && editBoxObj.isFocused()
+    let needShowSearchAdvice = !showConsoleButtons.get() && editBoxObj.isFocused()
     showObjById("searchAdvice", needShowSearchAdvice, this.scene)
   }
 
@@ -678,7 +681,7 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
     foreach (_gIdx, gName in groups_array) {
       this.contactsArrByGroups[gName] <- this.getSortContactsArr(gName, currentGroupSortedList)
       local activateEvent = "onPlayerMsg"
-      if (showConsoleButtons.value || !isChatEnabled())
+      if (showConsoleButtons.get() || !isChatEnabled())
         activateEvent = "onPlayerMenu"
       data = "".concat(data, format(this.groupFormat, $"#contacts/{gName}",
         gName == EPLX_SEARCH ? this.searchGroupActiveTextInclude : "",
@@ -985,8 +988,8 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
     if (!this.checkScene())
       return
 
-    showObjById("contacts_buttons_console", showConsoleButtons.value, this.scene)
-    if (!showConsoleButtons.value)
+    showObjById("contacts_buttons_console", showConsoleButtons.get(), this.scene)
+    if (!showConsoleButtons.get())
       return
 
     let showSelectButton = this.curHoverObjId != null
@@ -1009,7 +1012,7 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
     if (!contactUID)
       return
 
-    let contact = ::getContact(contactUID)
+    let contact = getContact(contactUID)
     this.curPlayer = contact
 
     if (!this.checkScene())
@@ -1066,7 +1069,7 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
   function onSquadInvite(obj) {
     this.updateCurPlayer(obj)
 
-    if (!isMultiplayerPrivilegeAvailable.value) {
+    if (!isMultiplayerPrivilegeAvailable.get()) {
       checkAndShowMultiplayerPrivilegeWarning()
       return
     }
@@ -1100,7 +1103,7 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
 
     let value = obj.getValue()
     if (!value || value == "") {
-      if (showConsoleButtons.value)
+      if (showConsoleButtons.get())
         this.onPlayerCancel(obj)
       else
         this.goBack()
@@ -1149,11 +1152,11 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
   function onSearchCb() {
     this.searchInProgress = false
 
-    let searchRes = searchContactsResults.value
+    let searchRes = searchContactsResults.get()
     this.fillDefaultSearchList()
     local brokenData = false
     foreach (uid, nick in searchRes) {
-      let contact = ::getContact(uid, nick)
+      let contact = getContact(uid, nick)
       if (contact) {
         if (!contact.isMe() && !contact.isInFriendGroup() && platformModule.isPs4XboxOneInteractionAvailable(contact.name)) {
           contactsByGroups[EPLX_SEARCH][uid] <- contact
@@ -1164,13 +1167,11 @@ let ContactsHandler = class (gui_handlers.BaseGuiHandlerWT) {
         brokenData = true
     }
 
-    if (brokenData) {
-      let searchResStr = toString(searchRes) 
-      script_net_assert_once("broken_searchCb_data", "broken result on searchContacts cb")
-    }
+    if (brokenData)
+      script_net_assert_once("broken_searchCb_data", $"broken result on searchContacts cb /*searchResStr = {toString(searchRes)}*/")
 
     this.updateSearchList()
-    if (showConsoleButtons.value && this.curGroup == EPLX_SEARCH && !is_mouse_last_time_used() && this.checkScene())
+    if (showConsoleButtons.get() && this.curGroup == EPLX_SEARCH && !is_mouse_last_time_used() && this.checkScene())
       move_mouse_on_child_by_value(this.scene.findObject($"group_{EPLX_SEARCH}"))
   }
 

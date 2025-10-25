@@ -9,7 +9,7 @@ let elemModelType = require("%sqDagui/elemUpdater/elemModelType.nut")
 let elemViewType = require("%sqDagui/elemUpdater/elemViewType.nut")
 let { isModUpgradeable, hasActiveOverdrive } = require("%scripts/weaponry/modificationInfo.nut")
 let { stripTags } = require("%sqstd/string.nut")
-let { getInventoryList } = require("%scripts/items/itemsManager.nut")
+let { getInventoryList } = require("%scripts/items/itemsManagerModule.nut")
 
 elemModelType.addTypes({
   MOD_UPGRADE = {
@@ -36,10 +36,10 @@ elemViewType.addTypes({
     model = elemModelType.MOD_UPGRADE
     getBhvParamsString = @(params) this.bhvParamsToString(
       params.__merge({
-        subscriptions = [params?.unit || "", params?.mod || ""]
+        subscriptions = [params?.unit ?? "", params?.mod ?? ""]
       }))
     createMarkup = @(params, objId = null) format("modUpgradeImg { id:t='%s'; value:t='%s' } ",
-      objId || "", stripTags(this.getBhvParamsString(params)))
+      objId ?? "", stripTags(this.getBhvParamsString(params)))
 
     updateView = function(obj, params) {
       let unitName = params?.unit

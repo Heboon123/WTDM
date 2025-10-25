@@ -2,10 +2,12 @@ from "%scripts/dagui_library.nut" import *
 let { get_gui_option_in_mode } = require("%scripts/options/options.nut")
 let { OPTIONS_MODE_GAMEPLAY, USEROPT_CHAT_FILTER, USEROPT_ONLY_FRIENDLIST_CONTACT } = require("%scripts/options/optionsExtNames.nut")
 let { isPlayerNickInContacts, isPlayerInFriendsGroup } = require("%scripts/contacts/contactsChecks.nut")
-let { clearBorderSymbolsMultiline } = require("%sqstd/string.nut")
+let { clearBorderSymbolsMultiline, replace } = require("%sqstd/string.nut")
 let { register_command } = require("console")
 let { get_option } = require("%scripts/options/optionsExt.nut")
 let dirtyWordsFilter = require("%scripts/dirtyWordsFilter.nut")
+let { clanUserTable } = require("%scripts/contacts/contactsListState.nut")
+let { get_mplayers_list, GET_MPLAYERS_LIST } = require("mission")
 
 function getChatObject(scene) {
   if (!checkObj(scene))
@@ -71,6 +73,39 @@ function filterMessageText(text, isMyMessage) {
   return text
 }
 
+function addTagsForMpPlayers() {
+  let tbl = get_mplayers_list(GET_MPLAYERS_LIST, true)
+  if (!tbl)
+    return
+
+  let res = {}
+  foreach (block in tbl)
+    if (!block.isBot)
+      res[block.name] <- block?.clanTag ?? ""
+
+  if (res.len() > 0)
+    clanUserTable.mutate(@(v) v.__update(res))
+}
+
+function getPlayerTag(playerNick) {
+  if (!(playerNick in clanUserTable.get()))
+    addTagsForMpPlayers()
+  return clanUserTable.get()?[playerNick] ?? ""
+}
+
+function filterNameFromHtmlCodes(name) {
+  return replace(replace(name, "%20", " "),  "%40", "@")
+}
+
+function addTextToEditbox(obj, text) {
+  let value = obj.getValue()
+  let pos = obj.getIntProp(dagui_propid_get_name_id(":behaviour_edit_position_pos"), -1)
+  if (pos > 0 && pos < value.len()) 
+    obj.setValue("".concat(value.slice(0, pos), text, value.slice(pos)))
+  else
+    obj.setValue($"{value}{text}")
+}
+
 ::cross_call_api.filter_chat_message <- filterMessageText
 
 return {
@@ -81,4 +116,8 @@ return {
   prepareThreadTitleToSend
   restoreReceivedThreadTitle
   filterMessageText
+  getPlayerTag
+  filterNameFromHtmlCodes
+  addTextToEditbox
+  addTagsForMpPlayers
 }

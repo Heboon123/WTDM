@@ -1,11 +1,12 @@
-from "%scripts/dagui_natives.nut" import save_profile
 from "%scripts/dagui_library.nut" import *
 from "%scripts/options/optionsCtors.nut" import create_option_slider, create_option_switchbox, create_option_list
 
+let { save_profile } = require("chard")
 let DataBlock = require("DataBlock")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { move_mouse_on_child } = require("%sqDagui/daguiUtil.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { eventbus_subscribe } = require("eventbus")
 
 let { format } = require("string")
 let { round } = require("math")
@@ -399,6 +400,7 @@ function init_postfx() {
   }
 }
 
+eventbus_subscribe("on_renderer_init_environment", @(_) setTonemappingMode(getTonemappingMode()))
 
 return {
   init_postfx

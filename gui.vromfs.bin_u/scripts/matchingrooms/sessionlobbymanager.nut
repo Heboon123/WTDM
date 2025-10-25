@@ -7,7 +7,6 @@ from "%scripts/controls/controlsConsts.nut" import optionControlType
 let { addListenersWithoutEnv, DEFAULT_HANDLER, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { search, isEqual, isArray, isDataBlock, isEmpty } = require("%sqStdLibs/helpers/u.nut")
 let { convertBlk } = require("%sqstd/datablock.nut")
-let { INVALID_SQUAD_ID } = require("matching.errors")
 let { set_game_mode, get_game_mode, get_game_type } = require("mission")
 let { deferOnce } = require("dagor.workcycle")
 let { eventbus_send, eventbus_subscribe } = require("eventbus")
@@ -65,10 +64,11 @@ let { isRemoteMissionVar, is_user_mission } = require("%scripts/missions/mission
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
 let { getMaxEconomicRank } = require("%appGlobals/ranks_common_shared.nut")
 let { setUserPresence } = require("%scripts/userPresence.nut")
-let { USEROPT_SESSION_PASSWORD } = require("%scripts/options/optionsExtNames.nut")
-let { registerOption } = require("%scripts/options/optionsExt.nut")
+let { USEROPT_SESSION_PASSWORD, USEROPT_DISPLAY_MY_REAL_CLAN, USEROPT_DISPLAY_MY_REAL_NICK,
+  OPTIONS_MODE_GAMEPLAY } = require("%scripts/options/optionsExtNames.nut")
+let { registerOption, get_option_in_mode } = require("%scripts/options/optionsExt.nut")
 let { showErrorMessageBox } = require("%scripts/utils/errorMsgBox.nut")
-
+let { needActualizeQueueData, actualizeQueueData, queueProfileJwt } = require("%scripts/queue/queueBattleData.nut")
 let destroySessionScripted = require("%scripts/matchingRooms/destroySessionScripted.nut")
 
 
@@ -149,11 +149,15 @@ let allowed_mission_settings = {
     disableAirfields = false
     spawnAiTankOnTankMaps = true
     allowEmptyTeams = false
+    hasTeamDesignation = false
 
     isHelicoptersAllowed = false
     isAirplanesAllowed = false
     isTanksAllowed = false
     isShipsAllowed = false
+    
+
+
 
     takeoffMode = 0
     currentMissionIdx = -1
@@ -228,13 +232,21 @@ function updateMemberHostParams(member = null) {
   SessionLobbyState.memberHostId = member ? member.memberId : -1
 }
 
+function getSquadId() {
+  let squadId = g_squad_manager.getLeaderUid()
+  if (getSessionLobbyGameMode() != GM_SKIRMISH)
+    return null
+  return g_squad_manager.isInSquad() && squadId != ""
+    ? squadId.tointeger()
+    : userIdInt64.get()
+}
+
 function syncAllInfo() {
   let myInfo = getProfileInfo()
   let myStats = getStats()
-  let squadId = g_squad_manager.getSquadData().id
   syncMyInfo({
     team = SessionLobbyState.team
-    squad = getSessionLobbyGameMode() == GM_SKIRMISH && squadId != "" ? squadId.tointeger() : INVALID_SQUAD_ID
+    squad = getSquadId()
     country = SessionLobbyState.countryData?.country
     selAirs = SessionLobbyState.countryData?.selAirs
     slots = SessionLobbyState.countryData?.slots
@@ -263,24 +275,16 @@ function setMyTeamInRoom(newTeam, silent = false) {
   return true
 }
 
-function setSessionLobbyReady(ready, silent = false, forceRequest = false) { 
-  if (!forceRequest && SessionLobbyState.isReady == ready)
-    return false
-  if (ready && !canSetReadyInLobby(silent)) {
-    if (SessionLobbyState.isReady)
-      ready = false
-    else
-      return false
-  }
+function setSessionLobbyReadyImpl(ready, silent) {
+  let params = { state = ready, roomId = SessionLobbyState.roomId }
+  if (ready)
+    params.__update({
+      profileJwt = queueProfileJwt.get(),
+      fakeName = !get_option_in_mode(USEROPT_DISPLAY_MY_REAL_NICK, OPTIONS_MODE_GAMEPLAY).value,
+      hideClan = !get_option_in_mode(USEROPT_DISPLAY_MY_REAL_CLAN, OPTIONS_MODE_GAMEPLAY).value
+    })
 
-  if (!isInSessionRoom.get()) {
-    SessionLobbyState.isReady = false
-    return ready
-  }
-
-  SessionLobbyState.isReadyInSetStateRoom = ready
-  roomSetReadyState(
-    { state = ready, roomId = SessionLobbyState.roomId },
+  roomSetReadyState(params,
     function(p) {
       SessionLobbyState.isReadyInSetStateRoom = null
       if (!isInSessionRoom.get()) {
@@ -305,6 +309,30 @@ function setSessionLobbyReady(ready, silent = false, forceRequest = false) {
         syncMyInfo({ state = updateMyState() })
       broadcastEvent("LobbyReadyChanged")
     })
+}
+
+function setSessionLobbyReady(ready, silent = false, forceRequest = false) { 
+  if (!forceRequest && SessionLobbyState.isReady == ready)
+    return false
+  if (ready && !canSetReadyInLobby(silent)) {
+    if (SessionLobbyState.isReady)
+      ready = false
+    else
+      return false
+  }
+
+  if (!isInSessionRoom.get()) {
+    SessionLobbyState.isReady = false
+    return ready
+  }
+
+  SessionLobbyState.isReadyInSetStateRoom = ready
+  if (ready && needActualizeQueueData.get()) {
+    actualizeQueueData(@(_) setSessionLobbyReadyImpl(ready, silent))
+    return true
+  }
+
+  setSessionLobbyReadyImpl(ready, silent)
   return true
 }
 
@@ -323,7 +351,7 @@ function checkMyTeamInRoom() {
 
   if (setTeamTo != Team.none && setMyTeamInRoom(setTeamTo, true)) {
     data.team <- SessionLobbyState.team
-    let myCountry = profileCountrySq.value
+    let myCountry = profileCountrySq.get()
     let availableCountries = getRoomTeamData(SessionLobbyState.team)?.countries ?? []
     if (availableCountries.len() > 0 && !isInArray(myCountry, availableCountries))
       switchProfileCountry(availableCountries[0])
@@ -387,7 +415,7 @@ function validateTeamAndReady() {
 function userInUidsList(list_name) {
   let ids = getSessionInfo()?[list_name]
   if (isArray(ids))
-    return isInArray(userIdInt64.value, ids)
+    return isInArray(userIdInt64.get(), ids)
   return false
 }
 
@@ -722,7 +750,7 @@ function prepareSettings(missionSettings) {
   }
 
   _settings.mission.keepOwnUnits <- mission?.editSlotbar.keepOwnUnits ?? true
-  _settings.creator <- userName.value
+  _settings.creator <- userName.get()
   _settings.mission.originalMissionName <- getTblValue("name", _settings.mission, "")
   if ("postfix" in _settings.mission && _settings.mission.postfix) {
     let ending = "_tm"
@@ -1032,6 +1060,8 @@ function startSession() {
   }
   log("start session")
 
+  syncMyInfo({ squad = getSquadId() })
+
   roomStartSession({ roomId = SessionLobbyState.roomId, cluster = getSessionLobbyPublicParam("cluster", "EU") },
     function(p) {
       if (!isInSessionRoom.get())
@@ -1161,6 +1191,8 @@ eventbus_subscribe("notify_session_start", function notify_session_start(...) {
   let sessionId = get_mp_session_id_str()
   if (sessionId != "")
     set_last_session_debug_info($"sid:{sessionId}")
+
+  syncMyInfo({ squad = getSquadId() })
 
   log("notify_session_start")
   sendBqEvent("CLIENT_BATTLE_2", "joining_session", {

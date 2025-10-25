@@ -11,6 +11,7 @@ excludesdata =
     key = "a",
     arr =
     [
+      "^arsen"
       "ass[aeiou]"
     ]
   },
@@ -35,7 +36,6 @@ excludesdata =
     arr =
     [
       "hoary",
-      "homochka",
     ]
   },
   {
@@ -77,7 +77,7 @@ excludesdata =
     key = "t",
     arr =
     [
-      "titan"
+      "tit[aæ]n"
     ]
   },
 ]
@@ -699,6 +699,11 @@ badphrases =
 forbiddennames = [
   "hither"
   "eichmann"
+]
+
+allowednames = [
+  "homochka"
+  "iктzdхуеzzета"
 ]
 
 badcombination =

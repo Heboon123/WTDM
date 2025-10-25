@@ -1,564 +1,566 @@
-{
-  "type": "radar",
-  "name": "Orion",
-  "transivers": {
-    "surfaceSearch": {
-      "sideLobesAttenuation": -22.0,
-      "power": 500.0,
-      "band": 8,
-      "rcs": 40.0,
-      "range": 7500.0,
-      "rangeMax": 15000.0,
-      "multipathEffect": [
-        0.0,
-        1.0,
-        60.0,
-        0.0
-      ],
-      "antenna": {
-        "azimuth": {
-          "angleHalfSens": 1.5,
-          "sideLobesSensitivity": -35.0
-        },
-        "elevation": {
-          "angleHalfSens": 5.0,
-          "sideLobesSensitivity": -35.0
-        }
-      }
-    },
-    "surfaceMicroSearch": {
-      "sideLobesAttenuation": -22.0,
-      "power": 500.0,
-      "band": 10,
-      "rcs": 40.0,
-      "range": 7500.0,
-      "rangeMax": 15000.0,
-      "multipathEffect": [
-        0.0,
-        1.0,
-        60.0,
-        0.0
-      ],
-      "antenna": {
-        "azimuth": {
-          "angleHalfSens": 0.35,
-          "sideLobesSensitivity": -40.0
-        },
-        "elevation": {
-          "angleHalfSens": 1.0,
-          "sideLobesSensitivity": -40.0
-        }
-      }
-    },
-    "airSearch": {
-      "sideLobesAttenuation": -22.0,
-      "power": 500.0,
-      "band": 8,
-      "rcs": 10.0,
-      "range": 25000.0,
-      "rangeMax": 50000.0,
-      "multipathEffect": [
-        0.0,
-        1.0,
-        60.0,
-        0.0
-      ],
-      "antenna": {
-        "azimuth": {
-          "angleHalfSens": 1.5,
-          "sideLobesSensitivity": -35.0
-        },
-        "elevation": {
-          "angleHalfSens": 5.0,
-          "sideLobesSensitivity": -35.0
-        }
-      }
-    }
-  },
-  "scanPatterns": {
-    "search": {
-      "type": "pyramide",
-      "azimuthLimits": [
-        -40.0,
-        40.0
-      ],
-      "elevationLimits": [
-        -30.0,
-        30.0
-      ],
-      "pitchStabLimit": 30.0,
-      "rollStabLimit": 45.0,
-      "period": 1.0,
-      "width": 40.0,
-      "barHeight": 5.0,
-      "barsCount": 1,
-      "rowMajor": true,
-      "centerElevation": 5.0
-    },
-    "microSearch": {
-      "type": "pyramide",
-      "azimuthLimits": [
-        -40.0,
-        40.0
-      ],
-      "elevationLimits": [
-        -30.0,
-        30.0
-      ],
-      "pitchStabLimit": 30.0,
-      "rollStabLimit": 45.0,
-      "period": 1.0,
-      "width": 40.0,
-      "barHeight": 1.0,
-      "barsCount": 1,
-      "rowMajor": true,
-      "centerElevation": 1.0
-    }
-  },
-  "signals": {
-    "surfaceMicroSearch": {
-      "groundClutter": false,
-      "aircraftAsTarget": false,
-      "groundVehiclesAsTarget": true,
-      "distance": {
-        "presents": true,
-        "minValue": 300.0,
-        "maxValue": 10000.0
-      }
-    },
-    "surfaceMtiSearch": {
-      "groundClutter": false,
-      "aircraftAsTarget": false,
-      "groundVehiclesAsTarget": true,
-      "distance": {
-        "presents": true,
-        "minValue": 300.0,
-        "maxValue": 200000.0
-      },
-      "dopplerSpeed": {
-        "presents": true,
-        "minValue": 2.5,
-        "maxValue": 1000.0,
-        "signalWidthMin": 2.5,
-        "width": 0.0
-      }
-    },
-    "airSearch": {
-      "groundClutter": true,
-      "aircraftAsTarget": true,
-      "groundVehiclesAsTarget": false,
-      "distance": {
-        "presents": true,
-        "minValue": 300.0,
-        "maxValue": 200000.0
-      }
-    }
-  },
-  "scanPatternSets": {
-    "search": {
-      "scanPattern1": "search"
-    },
-    "microSearch": {
-      "scanPattern1": "microSearch"
-    }
-  },
-  "scopeRangeSets": {
-    "search": {
-      "range1": 25000.0,
-      "range2": 75000.0,
-      "range3": 150000.0
-    },
-    "microSearch": {
-      "range1": 10000.0
-    }
-  },
-  "fsms": {
-    "main": {
-      "stateInit": "init",
-      "actionsTemplates": {
-        "init": {
-          "setEnabled": {
-            "value": false
-          },
-          "setCenterAzimuth": {
-            "source": "constant",
-            "value": 0.0
-          },
-          "setCenterElevation": {
-            "source": "constant",
-            "value": 0.0
-          },
-          "setTransiver": {
-            "transiver": "surfaceSearch"
-          },
-          "setSignal": {
-            "signal": "surfaceMtiSearch"
-          },
-          "setFsmActive": {
-            "fsm": "mode",
-            "active": true
-          }
-        },
-        "setStandbyMode": {
-          "setEnabled": {
-            "value": false
-          },
-          "setFsmActive": {
-            "fsm": "mode",
-            "active": false
-          }
-        },
-        "resetStandbyMode": {},
-        "setSearchMode": {
-          "setEnabled": {
-            "value": true
-          },
-          "setFsmActive": [
-            {
-              "fsm": "search",
-              "active": true
-            },
-            {
-              "fsm": "mode",
-              "active": true
-            }
-          ],
-          "setCueEnabled": {
-            "value": true
-          }
-        },
-        "resetSearchMode": {
-          "clearTargets": {},
-          "setFsmActive": {
-            "fsm": "search",
-            "active": false
-          },
-          "setCueEnabled": {
-            "value": false
-          }
-        }
-      },
-      "transitions": {
-        "init": {
-          "stateFrom": "init",
-          "event": "init",
-          "stateTo": "standby",
-          "actions": {
-            "init": {},
-            "setStandbyMode": {}
-          }
-        },
-        "switchOn": {
-          "stateFrom": "standby",
-          "command": "switch",
-          "event": "enable",
-          "stateTo": "search",
-          "actions": {
-            "setSearchMode": {}
-          }
-        },
-        "switchOff": {
-          "stateFrom": "search",
-          "command": "switch",
-          "event": "disable",
-          "stateTo": "standby",
-          "actions": {
-            "resetSearchMode": {},
-            "setStandbyMode": {}
-          }
-        },
-        "switchScanPattern": {
-          "stateFrom": [
-            "standby",
-            "search"
-          ],
-          "command": "scanPatternSwitch",
-          "actions": {
-            "setNextScanPattern": {}
-          }
-        },
-        "switchScopeRange": {
-          "command": "rangeSwitch",
-          "actions": {
-            "setNextScopeRange": {}
-          }
-        }
-      }
-    },
-    "search": {
-      "stateInit": "search",
-      "transitions": {
-        "scan": {
-          "event": "update",
-          "actions": {
-            "scan": {},
-            "setCenterAzimuth": [
-              {
-                "source": "constant",
-                "value": 0.0
-              },
-              {
-                "source": "designationCue"
-              }
-            ],
-            "setCenterElevation": [
-              {
-                "source": "constant",
-                "value": 0.0
-              },
-              {
-                "source": "designationCue"
-              }
-            ]
-          }
-        },
-        "detect": {
-          "event": "targetInSight",
-          "actions": {
-            "setDistGatePos": {
-              "source": "continuousScale",
-              "width": 0.0
-            },
-            "setRelSpeedGatePos": {
-              "source": "continuousScale",
-              "width": 0.0
-            },
-            "detectTarget": {}
-          }
-        },
-        "addTarget": {
-          "event": "targetDetected",
-          "actions": {
-            "addTarget": {},
-            "updateActiveDetectedTarget": {}
-          }
-        },
-        "switchSelectedTarget": {
-          "command": "switchTarget",
-          "actions": {
-            "setNextDetectedTargetActive": {}
-          }
-        },
-        "setCueAzimuth": {
-          "command": "cueAxisX",
-          "actions": {
-            "setCueAzimuth": {}
-          }
-        },
-        "setCueDist": {
-          "command": "cueAxisY",
-          "actions": {
-            "setCueDist": {}
-          }
-        },
-        "setCueElevation": {
-          "command": "cueAxisZ",
-          "actions": {
-            "setCueElevation": {}
-          }
-        },
-        "setSelectedTarget": {
-          "command": "switchToTarget",
-          "actions": {
-            "setDetectedTargetActive": {}
-          }
-        },
-        "designateTarget": {
-          "command": "selectTarget",
-          "actions": {
-            "designateActiveDetectedTarget": [
-              {
-                "type": "target",
-                "sensorIndex": 1
-              },
-              {
-                "type": "target",
-                "self": true,
-                "sensorIndex": 0
-              }
-            ]
-          }
-        },
-        "centerZone": {
-          "command": "directionAxesReset",
-          "actions": {
-            "setCueToBoresight": {},
-            "setCenterAzimuth": {
-              "source": "designationCue"
-            },
-            "setCenterElevation": {
-              "source": "designationCue"
-            },
-            "updateActiveDetectedTarget": {}
-          }
-        }
-      }
-    },
-    "mode": {
-      "stateInit": "init",
-      "actionsTemplates": {
-        "setSurfaceMtiSearchMode": {
-          "setModeName": {
-            "name": "MTI search"
-          },
-          "setTransiver": {
-            "transiver": "surfaceSearch"
-          },
-          "setSignal": {
-            "signal": "surfaceMtiSearch"
-          },
-          "setScanPatternSet": {
-            "scanPatternSet": "search"
-          },
-          "setScopeRangeSet": {
-            "scopeRangeSet": "search"
-          },
-          "setTargetDesignationRange": {
-            "azimuthRange": [
-              -40.0,
-              40.0
-            ],
-            "azmithWidth": 3.0,
-            "elevationRange": [
-              -30.0,
-              30.0
-            ],
-            "distanceRange": [
-              500.0,
-              75000.0
-            ]
-          }
-        },
-        "setSurfaceMicroSearchMode": {
-          "setModeName": {
-            "name": "ground_search"
-          },
-          "setTransiver": {
-            "transiver": "surfaceMicroSearch"
-          },
-          "setSignal": {
-            "signal": "surfaceMicroSearch"
-          },
-          "setScanPatternSet": {
-            "scanPatternSet": "microSearch"
-          },
-          "setScopeRangeSet": {
-            "scopeRangeSet": "microSearch"
-          },
-          "setTargetDesignationRange": {
-            "azimuthRange": [
-              -40.0,
-              40.0
-            ],
-            "azmithWidth": 1.0,
-            "elevationRange": [
-              -30.0,
-              30.0
-            ],
-            "distanceRange": [
-              500.0,
-              10000.0
-            ]
-          }
-        },
-        "setAirSearchMode": {
-          "setModeName": {
-            "name": "search"
-          },
-          "setTransiver": {
-            "transiver": "airSearch"
-          },
-          "setSignal": {
-            "signal": "airSearch"
-          },
-          "setScanPatternSet": {
-            "scanPatternSet": "search"
-          },
-          "setScopeRangeSet": {
-            "scopeRangeSet": "search"
-          },
-          "setTargetDesignationRange": {
-            "azimuthRange": [
-              -40.0,
-              40.0
-            ],
-            "azmithWidth": 3.0,
-            "elevationRange": [
-              -30.0,
-              30.0
-            ],
-            "distanceRange": [
-              500.0,
-              75000.0
-            ]
-          }
-        }
-      },
-      "transitions": {
-        "init": {
-          "stateFrom": "init",
-          "event": "fsmActivate",
-          "stateTo": "surfaceMtiSearch",
-          "actions": {
-            "setSurfaceMtiSearchMode": {},
-            "clearTargets": {}
-          }
-        },
-        "showSurfaceMtiSearch": {
-          "stateFrom": "surfaceMtiSearch",
-          "event": "fsmActivate",
-          "stateTo": "surfaceMtiSearch",
-          "actions": {
-            "setSurfaceMtiSearchMode": {},
-            "clearTargets": {}
-          }
-        },
-        "showSurfaceMicroSearch": {
-          "stateFrom": "surfaceMicroSearch",
-          "event": "fsmActivate",
-          "stateTo": "surfaceMicroSearch",
-          "actions": {
-            "setSurfaceMicroSearchMode": {},
-            "clearTargets": {}
-          }
-        },
-        "showAirSearch": {
-          "stateFrom": "airSearch",
-          "event": "fsmActivate",
-          "stateTo": "airSearch",
-          "actions": {
-            "setAirSearchMode": {},
-            "clearTargets": {}
-          }
-        },
-        "surfaceMtiSearchToSurfaceMicroSearch": {
-          "stateFrom": "surfaceMtiSearch",
-          "command": "modeSwitch",
-          "stateTo": "surfaceMicroSearch",
-          "actions": {
-            "setSurfaceMicroSearchMode": {},
-            "clearTargets": {}
-          }
-        },
-        "surfaceMtiSearchToAirSearch": {
-          "stateFrom": "surfaceMicroSearch",
-          "command": "modeSwitch",
-          "stateTo": "airSearch",
-          "actions": {
-            "setAirSearchMode": {},
-            "clearTargets": {}
-          }
-        },
-        "airSearchtoSurfaceMtiSearch": {
-          "stateFrom": "airSearch",
-          "command": "modeSwitch",
-          "stateTo": "surfaceMtiSearch",
-          "actions": {
-            "setSurfaceMtiSearchMode": {},
-            "clearTargets": {}
-          }
-        }
-      }
-    }
-  }
+type:t = "radar"
+name:t = "Orion"
+transivers {
+	surfaceSearch {
+		sideLobesAttenuation:r = -22
+		power:r = 500
+		band:i = 8
+		rcs:r = 40
+		range:r = 7500
+		rangeMax:r = 15000
+		multipathEffect:p4 = 0, 1, 60, 0
+		antenna {
+			azimuth {
+				angleHalfSens:r = 1.5
+				sideLobesSensitivity:r = -35
+			}
+			elevation {
+				angleHalfSens:r = 5
+				sideLobesSensitivity:r = -35
+			}
+		}
+	}
+	surfaceMicroSearch {
+		sideLobesAttenuation:r = -22
+		power:r = 500
+		band:i = 10
+		rcs:r = 40
+		range:r = 7500
+		rangeMax:r = 15000
+		multipathEffect:p4 = 0, 1, 60, 0
+		antenna {
+			azimuth {
+				angleHalfSens:r = 0.35
+				sideLobesSensitivity:r = -40
+			}
+			elevation {
+				angleHalfSens:r = 1
+				sideLobesSensitivity:r = -40
+			}
+		}
+	}
+	airSearch {
+		sideLobesAttenuation:r = -22
+		power:r = 500
+		band:i = 8
+		rcs:r = 10
+		range:r = 25000
+		rangeMax:r = 50000
+		multipathEffect:p4 = 0, 1, 60, 0
+		antenna {
+			azimuth {
+				angleHalfSens:r = 1.5
+				sideLobesSensitivity:r = -35
+			}
+			elevation {
+				angleHalfSens:r = 5
+				sideLobesSensitivity:r = -35
+			}
+		}
+	}
+}
+scanPatterns {
+	search {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -40, 40
+		elevationLimits:p2 = -30, 30
+		pitchStabLimit:r = 30
+		rollStabLimit:r = 45
+		period:r = 1
+		width:r = 40
+		barHeight:r = 5
+		barsCount:i = 1
+		rowMajor:b = true
+		centerElevation:r = 5
+	}
+	microSearch {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -40, 40
+		elevationLimits:p2 = -30, 30
+		pitchStabLimit:r = 30
+		rollStabLimit:r = 45
+		period:r = 1
+		width:r = 40
+		barHeight:r = 1
+		barsCount:i = 1
+		rowMajor:b = true
+		centerElevation:r = 1
+	}
+}
+signals {
+	surfaceMicroSearch {
+		groundClutter:b = false
+		aircraftAsTarget:b = false
+		groundVehiclesAsTarget:b = true
+		distance {
+			presents:b = true
+			minValue:r = 300
+			maxValue:r = 10000
+		}
+	}
+	surfaceMtiSearch {
+		groundClutter:b = false
+		aircraftAsTarget:b = false
+		groundVehiclesAsTarget:b = true
+		distance {
+			presents:b = true
+			minValue:r = 300
+			maxValue:r = 200000
+		}
+		dopplerSpeed {
+			presents:b = true
+			minValue:r = 2.5
+			maxValue:r = 1000
+			signalWidthMin:r = 2.5
+			width:r = 0
+		}
+	}
+	airSearch {
+		groundClutter:b = true
+		aircraftAsTarget:b = true
+		groundVehiclesAsTarget:b = false
+		distance {
+			presents:b = true
+			minValue:r = 300
+			maxValue:r = 200000
+		}
+	}
+}
+scanPatternSets {
+	search {
+		scanPattern1:t = "search"
+	}
+	microSearch {
+		scanPattern1:t = "microSearch"
+	}
+}
+scopeRangeSets {
+	search {
+		range1:r = 25000
+		range2:r = 75000
+		range3:r = 150000
+	}
+	microSearch {
+		range1:r = 10000
+	}
+}
+fsms {
+	main {
+		stateInit:t = "init"
+		actionsTemplates {
+			init {
+				setEnabled {
+					value:b = false
+				}
+				setCenterAzimuth {
+					source:t = "constant"
+					value:r = 0
+				}
+				setCenterElevation {
+					source:t = "constant"
+					value:r = 0
+				}
+				setTransiver {
+					transiver:t = "surfaceSearch"
+				}
+				setSignal {
+					signal:t = "surfaceMtiSearch"
+				}
+				setFsmActive {
+					fsm:t = "mode"
+					active:b = true
+				}
+			}
+			setStandbyMode {
+				setEnabled {
+					value:b = false
+				}
+				setFsmActive {
+					fsm:t = "mode"
+					active:b = false
+				}
+			}
+			resetStandbyMode {
+
+			}
+			setSearchMode {
+				setEnabled {
+					value:b = true
+				}
+				setFsmActive {
+					fsm:t = "search"
+					active:b = true
+				}
+				setCueEnabled {
+					value:b = true
+				}
+				setFsmActive {
+					fsm:t = "mode"
+					active:b = true
+				}
+			}
+			resetSearchMode {
+				clearTargets {
+
+				}
+				setFsmActive {
+					fsm:t = "search"
+					active:b = false
+				}
+				setCueEnabled {
+					value:b = false
+				}
+			}
+		}
+		transitions {
+			init {
+				stateFrom:t = "init"
+				event:t = "init"
+				stateTo:t = "standby"
+				actions {
+					init {
+
+					}
+					setStandbyMode {
+
+					}
+				}
+			}
+			switchOn {
+				stateFrom:t = "standby"
+				command:t = "switch"
+				event:t = "enable"
+				stateTo:t = "search"
+				actions {
+					setSearchMode {
+
+					}
+				}
+			}
+			switchOff {
+				stateFrom:t = "search"
+				command:t = "switch"
+				event:t = "disable"
+				stateTo:t = "standby"
+				actions {
+					resetSearchMode {
+
+					}
+					setStandbyMode {
+
+					}
+				}
+			}
+			switchScanPattern {
+				stateFrom:t = "standby"
+				stateFrom:t = "search"
+				command:t = "scanPatternSwitch"
+				actions {
+					setNextScanPattern {
+
+					}
+				}
+			}
+			switchScopeRange {
+				command:t = "rangeSwitch"
+				actions {
+					setNextScopeRange {
+
+					}
+				}
+			}
+		}
+	}
+	search {
+		stateInit:t = "search"
+		transitions {
+			scan {
+				event:t = "update"
+				actions {
+					scan {
+
+					}
+					setCenterAzimuth {
+						source:t = "constant"
+						value:r = 0
+					}
+					setCenterAzimuth {
+						source:t = "designationCue"
+					}
+					setCenterElevation {
+						source:t = "constant"
+						value:r = 0
+					}
+					setCenterElevation {
+						source:t = "designationCue"
+					}
+				}
+			}
+			detect {
+				event:t = "targetInSight"
+				actions {
+					setDistGatePos {
+						source:t = "continuousScale"
+						width:r = 0
+					}
+					setRelSpeedGatePos {
+						source:t = "continuousScale"
+						width:r = 0
+					}
+					detectTarget {
+
+					}
+				}
+			}
+			addTarget {
+				event:t = "targetDetected"
+				actions {
+					addTarget {
+
+					}
+					updateActiveDetectedTarget {
+
+					}
+				}
+			}
+			switchSelectedTarget {
+				command:t = "switchTarget"
+				actions {
+					setNextDetectedTargetActive {
+
+					}
+				}
+			}
+			setCueAzimuth {
+				command:t = "cueAxisX"
+				actions {
+					setCueAzimuth {
+
+					}
+				}
+			}
+			setCueDist {
+				command:t = "cueAxisY"
+				actions {
+					setCueDist {
+
+					}
+				}
+			}
+			setCueElevation {
+				command:t = "cueAxisZ"
+				actions {
+					setCueElevation {
+
+					}
+				}
+			}
+			setSelectedTarget {
+				command:t = "switchToTarget"
+				actions {
+					setDetectedTargetActive {
+
+					}
+				}
+			}
+			designateTarget {
+				command:t = "selectTarget"
+				actions {
+					designateActiveDetectedTarget {
+						type:t = "target"
+						sensorIndex:i = 1
+					}
+					designateActiveDetectedTarget {
+						type:t = "target"
+						self:b = true
+						sensorIndex:i = 0
+					}
+				}
+			}
+			centerZone {
+				command:t = "directionAxesReset"
+				actions {
+					setCueToBoresight {
+
+					}
+					setCenterAzimuth {
+						source:t = "designationCue"
+					}
+					setCenterElevation {
+						source:t = "designationCue"
+					}
+					updateActiveDetectedTarget {
+
+					}
+				}
+			}
+		}
+	}
+	mode {
+		stateInit:t = "init"
+		actionsTemplates {
+			setSurfaceMtiSearchMode {
+				setModeName {
+					name:t = "MTI search"
+				}
+				setTransiver {
+					transiver:t = "surfaceSearch"
+				}
+				setSignal {
+					signal:t = "surfaceMtiSearch"
+				}
+				setScanPatternSet {
+					scanPatternSet:t = "search"
+				}
+				setScopeRangeSet {
+					scopeRangeSet:t = "search"
+				}
+				setTargetDesignationRange {
+					azimuthRange:p2 = -40, 40
+					azmithWidth:r = 3
+					elevationRange:p2 = -30, 30
+					distanceRange:p2 = 500, 75000
+				}
+			}
+			setSurfaceMicroSearchMode {
+				setModeName {
+					name:t = "ground_search"
+				}
+				setTransiver {
+					transiver:t = "surfaceMicroSearch"
+				}
+				setSignal {
+					signal:t = "surfaceMicroSearch"
+				}
+				setScanPatternSet {
+					scanPatternSet:t = "microSearch"
+				}
+				setScopeRangeSet {
+					scopeRangeSet:t = "microSearch"
+				}
+				setTargetDesignationRange {
+					azimuthRange:p2 = -40, 40
+					azmithWidth:r = 1
+					elevationRange:p2 = -30, 30
+					distanceRange:p2 = 500, 10000
+				}
+			}
+			setAirSearchMode {
+				setModeName {
+					name:t = "search"
+				}
+				setTransiver {
+					transiver:t = "airSearch"
+				}
+				setSignal {
+					signal:t = "airSearch"
+				}
+				setScanPatternSet {
+					scanPatternSet:t = "search"
+				}
+				setScopeRangeSet {
+					scopeRangeSet:t = "search"
+				}
+				setTargetDesignationRange {
+					azimuthRange:p2 = -40, 40
+					azmithWidth:r = 3
+					elevationRange:p2 = -30, 30
+					distanceRange:p2 = 500, 75000
+				}
+			}
+		}
+		transitions {
+			init {
+				stateFrom:t = "init"
+				event:t = "fsmActivate"
+				stateTo:t = "surfaceMtiSearch"
+				actions {
+					setSurfaceMtiSearchMode {
+
+					}
+					clearTargets {
+
+					}
+				}
+			}
+			showSurfaceMtiSearch {
+				stateFrom:t = "surfaceMtiSearch"
+				event:t = "fsmActivate"
+				stateTo:t = "surfaceMtiSearch"
+				actions {
+					setSurfaceMtiSearchMode {
+
+					}
+					clearTargets {
+
+					}
+				}
+			}
+			showSurfaceMicroSearch {
+				stateFrom:t = "surfaceMicroSearch"
+				event:t = "fsmActivate"
+				stateTo:t = "surfaceMicroSearch"
+				actions {
+					setSurfaceMicroSearchMode {
+
+					}
+					clearTargets {
+
+					}
+				}
+			}
+			showAirSearch {
+				stateFrom:t = "airSearch"
+				event:t = "fsmActivate"
+				stateTo:t = "airSearch"
+				actions {
+					setAirSearchMode {
+
+					}
+					clearTargets {
+
+					}
+				}
+			}
+			surfaceMtiSearchToSurfaceMicroSearch {
+				stateFrom:t = "surfaceMtiSearch"
+				command:t = "modeSwitch"
+				stateTo:t = "surfaceMicroSearch"
+				actions {
+					setSurfaceMicroSearchMode {
+
+					}
+					clearTargets {
+
+					}
+				}
+			}
+			surfaceMtiSearchToAirSearch {
+				stateFrom:t = "surfaceMicroSearch"
+				command:t = "modeSwitch"
+				stateTo:t = "airSearch"
+				actions {
+					setAirSearchMode {
+
+					}
+					clearTargets {
+
+					}
+				}
+			}
+			airSearchtoSurfaceMtiSearch {
+				stateFrom:t = "airSearch"
+				command:t = "modeSwitch"
+				stateTo:t = "surfaceMtiSearch"
+				actions {
+					setSurfaceMtiSearchMode {
+
+					}
+					clearTargets {
+
+					}
+				}
+			}
+		}
+	}
 }

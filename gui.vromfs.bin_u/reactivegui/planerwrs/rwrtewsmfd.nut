@@ -9,8 +9,8 @@ let { rwrTargetsTriggers, rwrTargets, RwrNewTargetHoldTimeInv, CurrentTime } = r
 let { CompassValue } = require("%rGui/planeState/planeFlyState.nut")
 let { FlaresCount, ChaffsCount } = require("%rGui/airState.nut")
 
-let {ThreatType, settings} = require("rwrAnAlr56ThreatsLibrary.nut")
-let { color, backgroundColor, baseLineWidth, styleText, calcRwrTargetRadius } = require("rwrAnAlr56Components.nut")
+let {ThreatType, settings} = require("%rGui/planeRwrs/rwrAnAlr56ThreatsLibrary.nut")
+let { color, backgroundColor, baseLineWidth, styleText, calcRwrTargetRadius } = require("%rGui/planeRwrs/rwrAnAlr56Components.nut")
 
 function createOuterGrid(gridStyle) {
   return {
@@ -310,7 +310,7 @@ function scope(scale, style) {
         }),
       styleText.__merge({
         rendObj = ROBJ_TEXT
-        pos = [pw(30), ph(-78)]
+        pos = [pw(30), ph(-75)]
         size = flex()
         halign = ALIGN_RIGHT
         valign = ALIGN_CENTER
@@ -321,7 +321,7 @@ function scope(scale, style) {
         styleText.__merge({
           watch = FlaresCount
           rendObj = ROBJ_TEXT
-          pos = [pw(45), ph(-78)]
+          pos = [pw(45), ph(-75)]
           size = flex()
           halign = ALIGN_RIGHT
           valign = ALIGN_CENTER

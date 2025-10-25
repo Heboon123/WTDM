@@ -32,13 +32,13 @@ let airSymbolWrap = {
   behavior = Behaviors.RtPropUpdate
   update = @() {
     transform = {
-      rotate = Roll.value
+      rotate = Roll.get()
       pivot = [0, 0]
     }
   }
 }
 
-let AltValue = Computed(@() (Altitude.value / 10.0).tointeger() * 10)
+let AltValue = Computed(@() (Altitude.get() / 10.0).tointeger() * 10)
 let altitude = @() {
   watch = AltValue
   size = SIZE_TO_CONTENT
@@ -47,10 +47,10 @@ let altitude = @() {
   color = blackColor
   fontSize = 65 * fontScale
   font = Fonts.ils31
-  text = string.format("%dр", AltValue.value)
+  text = string.format("%dр", AltValue.get())
 }
 
-let TangageAbsInt = Computed(@() fabs(Tangage.value).tointeger())
+let TangageAbsInt = Computed(@() fabs(Tangage.get()).tointeger())
 function pitch(height) {
   return {
     size = flex()
@@ -75,7 +75,7 @@ function pitch(height) {
             halign = ALIGN_RIGHT
             color = blackColor
             padding = const [0, 5]
-            text = TangageAbsInt.value.tostring()
+            text = TangageAbsInt.get().tostring()
           }
         ]
       }
@@ -83,13 +83,13 @@ function pitch(height) {
     behavior = Behaviors.RtPropUpdate
     update = @() {
       transform = {
-        translate = [0, height * (0.5 - Tangage.value * 0.01)]
+        translate = [0, height * (0.5 - Tangage.get() * 0.01)]
       }
     }
   }
 }
 
-let TurretPitchPos = Computed(@() ((1.0 - TurretPitch.value) * 100.0).tointeger())
+let TurretPitchPos = Computed(@() ((1.0 - TurretPitch.get()) * 100.0).tointeger())
 let laserPitch = @(){
   rendObj = ROBJ_VECTOR_CANVAS
   size = const [flex(), ph(50)]
@@ -114,7 +114,7 @@ let laserPitch = @(){
       watch = TurretPitchPos
       rendObj = ROBJ_VECTOR_CANVAS
       size = const [pw(3), ph(4)]
-      pos = [pw(5), ph(TurretPitchPos.value)]
+      pos = [pw(5), ph(TurretPitchPos.get())]
       color = blackColor
       lineWidth = curLineWidth
       commands = [
@@ -126,7 +126,7 @@ let laserPitch = @(){
   ]
 }
 
-let TurretYawPos = Computed(@() ((1.0 - TurretYaw.value) * 100.0).tointeger())
+let TurretYawPos = Computed(@() ((1.0 - TurretYaw.get()) * 100.0).tointeger())
 let laserYaw = @(){
   rendObj = ROBJ_VECTOR_CANVAS
   size = const [pw(50), flex()]
@@ -149,7 +149,7 @@ let laserYaw = @(){
       watch = TurretYawPos
       rendObj = ROBJ_VECTOR_CANVAS
       size = const [pw(4), ph(3)]
-      pos = [pw(TurretYawPos.value), ph(5)]
+      pos = [pw(TurretYawPos.get()), ph(5)]
       color = blackColor
       lineWidth = curLineWidth
       commands = [
@@ -161,11 +161,11 @@ let laserYaw = @(){
   ]
 }
 
-let DistToTraget = Computed(@() (AimLockDist.value / 100).tointeger())
+let DistToTraget = Computed(@() (AimLockDist.get() / 100).tointeger())
 let distToTraget = @(){
   watch = AimLockValid
   size = flex()
-  children = AimLockValid.value ? [
+  children = AimLockValid.get() ? [
     @(){
       watch = DistToTraget
       size = SIZE_TO_CONTENT
@@ -174,7 +174,7 @@ let distToTraget = @(){
       color = blackColor
       font = Fonts.ils31
       fontSize = 65 * fontScale
-      text = string.format("%.1f", DistToTraget.value / 10.0)
+      text = string.format("%.1f", DistToTraget.get() / 10.0)
     }
   ] : null
 }
@@ -182,7 +182,7 @@ let distToTraget = @(){
 let TAMark = @(){
   watch = AimLockValid
   size = flex()
-  children = AimLockValid.value ? [
+  children = AimLockValid.get() ? [
     @(){
       watch = DistToTraget
       size = SIZE_TO_CONTENT
@@ -196,10 +196,10 @@ let TAMark = @(){
   ] : null
 }
 
-let TargetRadiusVal = Computed(@() AimLockValid.value ? TargetRadius.value.tointeger() : 10)
+let TargetRadiusVal = Computed(@() AimLockValid.get() ? TargetRadius.get().tointeger() : 10)
 let targetMark = @(){
   watch = TargetRadiusVal
-  size = [TargetRadiusVal.value, TargetRadiusVal.value]
+  size = [TargetRadiusVal.get(), TargetRadiusVal.get()]
   pos = [pw(50), ph(50)]
   rendObj = ROBJ_VECTOR_CANVAS
   color = blackColor
@@ -214,7 +214,7 @@ let targetMark = @(){
   ]
 }
 
-let AltMarkPos = Computed(@()(100.0 - Altitude.value).tointeger())
+let AltMarkPos = Computed(@()(100.0 - Altitude.get()).tointeger())
 let lowAltitude = @(){
   size = const [flex(), ph(60)]
   pos = [0, ph(20)]
@@ -239,7 +239,7 @@ let lowAltitude = @(){
     @(){
       watch = AltMarkPos
       size = const [pw(2), ph(5)]
-      pos = [pw(95), ph(AltMarkPos.value)]
+      pos = [pw(95), ph(AltMarkPos.get())]
       rendObj = ROBJ_VECTOR_CANVAS
       color = blackColor
       lineWidth = curLineWidth
@@ -261,19 +261,19 @@ let lowAltitude = @(){
   ]
 }
 
-let AltitudeMode = Computed(@() Altitude.value > 100.0)
+let AltitudeMode = Computed(@() Altitude.get() > 100.0)
 let altitudeMark = @(){
   watch = AltitudeMode
   size = flex()
   children = [
-    AltitudeMode.value ? altitude : lowAltitude
+    AltitudeMode.get() ? altitude : lowAltitude
   ]
 }
 
 let atgmLaunchPermitted = @() {
   watch = [IsInsideLaunchZoneYawPitch, IsInsideLaunchZoneDist]
   size = flex()
-  children = IsInsideLaunchZoneYawPitch.value && IsInsideLaunchZoneDist.value ?
+  children = IsInsideLaunchZoneYawPitch.get() && IsInsideLaunchZoneDist.get() ?
     @() {
       size = flex()
       rendObj = ROBJ_TEXT

@@ -13,11 +13,11 @@ let { placePriceTextToButton, warningIfGold } = require("%scripts/viewUtils/obje
 let { getUnlockTitle, buildConditionsConfig } = require("%scripts/unlocks/unlocksViewModule.nut")
 let { getUnlockConditions } = require("%scripts/unlocks/unlocksConditions.nut")
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
-let { getUnlockCost } = require("%scripts/unlocks/unlocksModule.nut")
+let { getUnlockCost, isUnlockOpened } = require("%scripts/unlocks/unlocksModule.nut")
 let { buyUnlock } = require("%scripts/unlocks/unlocksAction.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let purchaseConfirmation = require("%scripts/purchase/purchaseConfirmationHandler.nut")
-let { findItemById, getInventoryItemById } = require("%scripts/items/itemsManager.nut")
+let { findItemById, getInventoryItemById } = require("%scripts/items/itemsManagerModule.nut")
 let { generatePaginator, paginator_set_unseen } = require("%scripts/viewUtils/paginator.nut")
 let { getProfileAvatarFrames, getProfileAvatars } = require("%scripts/user/profileAppearance.nut")
 let { getUserInfo } = require("%scripts/user/usersInfoManager.nut")
@@ -55,6 +55,7 @@ let menuItems = [
     listId = "avatars_list"
     listDataFn = getProfileAvatars
     initIndexFn = getStoredAvatarIndex
+    unlockType = UNLOCKABLE_PILOT
   },
   {
     id = "frame"
@@ -62,6 +63,7 @@ let menuItems = [
     listId = "frames_list"
     listDataFn = getProfileAvatarFrames
     initIndexFn = getStoredFrameIndex
+    unlockType = UNLOCKABLE_FRAME
   }
 ]
 
@@ -82,7 +84,7 @@ gui_handlers.ChooseImage <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function initScreen() {
     this.init()
-    showObjById("btn_select", showConsoleButtons.value, this.scene)
+    showObjById("btn_select", showConsoleButtons.get(), this.scene)
   }
 
   function init() {
@@ -163,7 +165,9 @@ gui_handlers.ChooseImage <- class (gui_handlers.BaseGuiHandlerWT) {
         let frame = {
           id = i
           frameImage = item.image
-          tooltip = item.tooltip
+          enabled = item?.enabled
+          tooltipId = item?.tooltipId
+          haveCustomTooltip = false
         }
         avatarFrames.append(frame)
       }
@@ -371,7 +375,7 @@ gui_handlers.ChooseImage <- class (gui_handlers.BaseGuiHandlerWT) {
 
     if (option?.enabled) {
       btn.setValue(loc("mainmenu/btnSelect"))
-      btn.show(showConsoleButtons.value)
+      btn.show(showConsoleButtons.get())
       return
     }
 
@@ -442,6 +446,33 @@ gui_handlers.ChooseImage <- class (gui_handlers.BaseGuiHandlerWT) {
     if (index < 0 || index > menuItems.len() - 1)
       return
     this.switchImagesList(index)
+  }
+
+  function onEventProfileUpdated(_eventData) {
+    this.updateUnlocks()
+  }
+
+  function updateUnlocks() {
+    local needUpdate = false
+    foreach (menuItem in menuItems) {
+      let listId = menuItem.id
+      let unlockType = menuItem.unlockType
+      let listData = this.currentListValues[listId].listData
+      let start = this.getCurrentPage(listId) * this.itemsPerPage
+      let end = min((this.getCurrentPage(listId) + 1) * this.itemsPerPage, listData.len()) - 1
+
+      foreach (idx, listItem in listData) {
+        if (listItem.enabled || !isUnlockOpened(listItem.unlockId , unlockType))
+          continue
+        listItem.enabled = true
+        if (this.currentListId == listId && idx >= start && idx <= end)
+          needUpdate = true
+      }
+    }
+    if (!needUpdate)
+      return
+    this.fillPage()
+    this.updateButtons()
   }
 
   getContentObj = @(imageType = null) this.currentListValues[imageType ?? this.currentListId].contentObj

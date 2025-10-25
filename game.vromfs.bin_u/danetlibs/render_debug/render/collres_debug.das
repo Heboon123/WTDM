@@ -5,7 +5,6 @@ require DagorConsole
 require AnimV20
 require CollRes
 require GeomNodeTree
-require DngCamera
 require RendInst
 require Dacoll
 require PhysMat
@@ -23,6 +22,13 @@ enum CollresDrawAllMode
   BBOX
   MODES_COUNT
 
+
+def get_cur_cam_entity()
+  var camEid = INVALID_ENTITY_ID
+  find_query() <| $ [es] (eid : EntityId; camera__active : bool)
+    camEid = eid
+    return camera__active
+  return camEid
 
 [ecs_template]
 struct collres_draw_all_debug
@@ -95,7 +101,7 @@ def draw_node_collision_geometry(collres : CollisionResource;
             if normalVecLenSq > FLT_EPSILON
               let midPoint = (v0 + v1 + v2) / 3.0
               let normal = normalVec / sqrt(normalVecLenSq)
-              let tangent = perpendicular(normal)
+              let tangent = get_normal(normal)
               let bitangent = cross(normal, tangent)
               let arrowRad = 0.005
               let normalDrawLen = 0.2
@@ -136,7 +142,7 @@ def for_each_collres_near_camera(func_cb; cam_dist : float = 16.0)
       let color = E3DCOLOR(0xFF00FF00)
       func_cb |> invoke(collres, transform, animchar, color)
 
-    rendinst_foreachInBox(BBox3(BSphere3(camPos, camDist)), int(GatherRiTypeFlags.RiGenAndExtra)) <| $(desc : RendInstDesc; tm : float3x4; is_tm : bool)
+    rendinst_foreachInSphere(BSphere3(camPos, camDist), int(GatherRiTypeFlags.RiGenAndExtra)) <| $(desc : RendInstDesc; tm : float3x4; is_tm : bool)
       if length_sq(tm[3] - camPos) >= square(camDist)
         return
       let collres = getRiGenCollisionResource(desc)

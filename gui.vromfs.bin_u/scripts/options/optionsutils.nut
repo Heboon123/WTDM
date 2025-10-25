@@ -70,12 +70,16 @@ let createDefaultOption = function() {
   }
 }
 
-let fillBoolOption = function(descr, id, optionIdx) {
+let fillBoolOption = function(descr, id, optionIdx, customHintId = null) {
   descr.id = id
   descr.controlType = optionControlType.CHECKBOX
   descr.controlName <- "switchbox"
   descr.value = get_option_bool(optionIdx)
   descr.boolOptionIdx <- optionIdx
+  if (customHintId) {
+    descr.title = loc($"options/{customHintId}")
+    descr.hint = loc($"guiHints/{customHintId}")
+  }
 }
 
 let setHSVOption_ThermovisionColor = function(_desrc, value) {
@@ -196,7 +200,7 @@ let fillDynMapOption = function(descr) {
     if (get_game_mode() == GM_BUILDER) {
       let db = blkFromPath(layout.mis_file)
       let tags = db.mission_settings.mission.tags % "tag"
-      let airTags = showedUnit.value?.tags ?? []
+      let airTags = showedUnit.get()?.tags ?? []
       local skip = false
       foreach (tag in tags) {
         local found = false
@@ -231,14 +235,14 @@ let fillDynMapOption = function(descr) {
 }
 
 function setOptionReqRestartValue(option) {
-  if (option.type in changedOptionReqRestart.value)
+  if (option.type in changedOptionReqRestart.get())
     return
 
-  changedOptionReqRestart.value[option.type] <- option.value
+  changedOptionReqRestart.get()[option.type] <- option.value
 }
 
 function isOptionReqRestartChanged(option, newValue) {
-  let baseValue = changedOptionReqRestart.value?[option.type]
+  let baseValue = changedOptionReqRestart.get()?[option.type]
   return baseValue != null && baseValue != newValue
 }
 

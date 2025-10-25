@@ -16,7 +16,7 @@ let { isUnitBought } = require("%scripts/unit/unitShopInfo.nut")
 let enums = require("%sqStdLibs/helpers/enums.nut")
 let { decoratorTypes } = require("%scripts/customization/types.nut")
 let { buildUnitSlot } = require("%scripts/slotbar/slotbarView.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
+let { findItemById } = require("%scripts/items/itemsManagerModule.nut")
 let { getFullWPIcon } = require("%scripts/items/prizesView.nut")
 
 function requestBuyByName(warbond, blk) {
@@ -312,7 +312,7 @@ enums.addTypes(warBondAwardType, {
     getMaxBoughtCount = @(warbond, _blk) getPurchaseLimitWb(warbond)
     isReqSpecialTasks = true
     canBuyReasonLocId = @(warbond, blk)
-      isHardTaskIncomplete.value
+      isHardTaskIncomplete.get()
         ? "item/specialTasksPersonalUnlocks/purchaseRestriction"
         : (getPurchaseLimitWb(warbond) <= this.getBoughtCount(warbond, blk))
            ? "item/specialTasksPersonalUnlocks/limitRestriction"

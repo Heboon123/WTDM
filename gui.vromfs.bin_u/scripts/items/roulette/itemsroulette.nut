@@ -10,7 +10,7 @@ let { GUI } = require("%scripts/utils/configs.nut")
 let { getItemGenerator } = require("%scripts/items/itemGeneratorsManager.nut")
 let rouletteAnim = require("%scripts/items/roulette/rouletteAnim.nut")
 let { updateTransparencyRecursive } = require("%sqDagui/guiBhv/guiBhvUtils.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
+let { findItemById } = require("%scripts/items/itemsManagerModule.nut")
 let { getContentFixedAmount, getPrizeImageByConfig } = require("%scripts/items/prizesView.nut")
 let { getTrophyRewardType, isRewardItem } = require("%scripts/items/trophyReward.nut")
 
@@ -508,7 +508,8 @@ function initItemsRoulette(trophyName, rewardsArray, imageObj, handler, afterDon
   anim.startAnim(rouletteObj, insertRewardIdx)
 
   placeObj.getScene().applyPendingChanges(false)
-  let delay = rouletteAnim.getTimeLeft(rouletteObj) || 0.1
+  let timeLeft = rouletteAnim.getTimeLeft(rouletteObj)
+  let delay = timeLeft == 0 ? 0.1 : timeLeft
   mainAnimationTimerWeekref = Timer(placeObj, delay, afterDoneCb, handler).weakref()
   return true
 }

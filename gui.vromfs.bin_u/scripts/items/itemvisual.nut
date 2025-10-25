@@ -4,7 +4,7 @@ let SecondsUpdater = require("%sqDagui/timer/secondsUpdater.nut")
 let { get_cur_base_gui_handler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { addTooltipTypes } = require("%scripts/utils/genericTooltipTypes.nut")
 let {shouldDisguiseItem } = require("%scripts/items/workshop/workshop.nut")
-let { findItemById, findItemByUid } = require("%scripts/items/itemsManager.nut")
+let { findItemById, findItemByUid } = require("%scripts/items/itemsManagerModule.nut")
 
 function fillItemTable(item, holderObj) {
   let containerObj = holderObj.findObject("item_table_container")
@@ -89,7 +89,7 @@ function fillItemDescr(item, holderObj, handler = null, shopDesc = false, prefer
     helpObj.show(shopDesc && helpText != "")
   }
 
-  let isDescTextBeforeDescDiv = !item || item?.isDescTextBeforeDescDiv || false
+  let isDescTextBeforeDescDiv = !item || item?.isDescTextBeforeDescDiv
 
   if (params?.showDesc ?? true) {
     obj = holderObj.findObject(isDescTextBeforeDescDiv ? "item_desc" : "item_desc_under_div")

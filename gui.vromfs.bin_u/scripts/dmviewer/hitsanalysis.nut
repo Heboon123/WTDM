@@ -16,15 +16,16 @@ let { isInMenu } = require("%scripts/clientState/clientStates.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { image_for_air, getUnitName, getUnitCountry, getUnitCountryIcon } = require("%scripts/unit/unitInfo.nut")
-let { getFullUnitBlk } = require("%scripts/unit/unitParams.nut")
 let { secondsToTimeSimpleString } = require("%scripts/time.nut")
 let { setShowUnit, getShowedUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 let { getBulletSetNameByBulletName, getBulletsSetData, getBulletsSearchName,
   getModificationBulletsEffect } = require("%scripts/weaponry/bulletsInfo.nut")
-let { getUnitWeapons } = require("%scripts/weaponry/weaponryPresets.nut")
+let { getWeaponParamsByWeaponBlkPath } = require("%scripts/weaponry/weaponryPresets.nut")
 let { getWeaponNameByBlkPath } = require("%scripts/weaponry/weaponryInfo.nut")
 let { hasSessionInLobby } = require("%scripts/matchingRooms/sessionLobbyState.nut")
+let { initBackgroundModelHint, updateBackgroundModelHint
+} = require("%scripts/hangar/backgroundModelHint.nut")
 
 let bulletInfoCache = {}
 
@@ -54,7 +55,17 @@ function getBulletInfo(unit, hit) {
   }
 
   if (weaponBlk?.drawRocketInBullet == true) {
-    let rocketName = weaponBlk.bullet.bulletName
+    let bullets = weaponBlk % "bullet"
+    for (local i = 0; i < weaponBlk.blockCount(); i++)
+      bullets.extend(weaponBlk.getBlock(i) % "bullet")
+
+    let rocketName = bullets.findvalue(@(bullet) bullet.bulletType == hit.ammoType)?.bulletName
+    if (!rocketName) {
+      bulletInfoCache[key] <- {
+        bulletDesc = ""
+      }
+      return bulletInfoCache[key]
+    }
     local bulletDesc = doesLocTextExist(rocketName) ? loc(rocketName) : loc($"weapons/{rocketName}/short", "")
     if (hit.isSecond) {
       let rocketPartName = weaponBlk.bullet.rocket?.bulletName
@@ -138,6 +149,7 @@ gui_handlers.HitsAnalysis <- class (gui_handlers.BaseGuiHandlerWT) {
   function initScreen() {
     this.setSceneTitle(loc("hitsAnalisys"))
     this.fillHitOwnerList()
+    initBackgroundModelHint(this)
   }
 
   function fillHitOwnerList() {
@@ -218,8 +230,9 @@ gui_handlers.HitsAnalysis <- class (gui_handlers.BaseGuiHandlerWT) {
 
     this.scene.findObject("unitTooltip")["tooltipId"] = getTooltipType("UNIT").getTooltipId(unit.name, { showLocalState = false })
     this.scene.findObject("bulletName").setValue(bulletDesc)
-    this.scene.findObject("shotDistance").setValue(this.selectedHit.distance)
-    this.scene.findObject("shotDistanceText").setValue(this.prepareDistanceText(this.selectedHit.distance))
+    let distance = this.selectedHit?.shotDistance ?? this.selectedHit.distance
+    this.scene.findObject("shotDistance").setValue(distance)
+    this.scene.findObject("shotDistanceText").setValue(this.prepareDistanceText(distance))
     this.updateBulletTooltip(unit)
 
     if (getShowedUnit()?.name == this.selectedHit.object) {
@@ -247,34 +260,14 @@ gui_handlers.HitsAnalysis <- class (gui_handlers.BaseGuiHandlerWT) {
       return
 
     if (isRocketOrBomb) {
-      let unitBlk = getFullUnitBlk(unit.name)
-      let weapons = getUnitWeapons(unitBlk)
-
-      local presetName = ""
-      local tType = ""
-      let hit = this.selectedHit
-
-      for (local i = 0; i < weapons.len(); i++) {
-        let weapon = weapons[i]
-        if (weapon?.blk == hit.weapon) {
-          tType = weapon.trigger
-          presetName = weapon.presetId
-          break
-        }
-        let wblk = DataBlock()
-        wblk.tryLoad(weapon.blk)
-        if (wblk?.blk == hit.weapon) {
-          tType = weapon.trigger
-          presetName = weapon.presetId
-          break
-        }
-      }
-
+      let unitName = unit.name
+      let blkPath = this.selectedHit.weapon
+      let weapon = getWeaponParamsByWeaponBlkPath(unitName, blkPath)
+      let presetName = weapon?.presetId ?? ""
+      let tType = weapon?.trigger ?? ""
       if (tType !="" && presetName != "")
-        this.scene.findObject("bulletTooltip")["tooltipId"] = getTooltipType("SINGLE_WEAPON").getTooltipId(unit.name, {
-          blkPath = this.selectedHit.weapon
-          tType
-          presetName
+        this.scene.findObject("bulletTooltip")["tooltipId"] = getTooltipType("SINGLE_WEAPON").getTooltipId(unitName, {
+          blkPath, tType, presetName
         })
       return
     }
@@ -348,6 +341,8 @@ gui_handlers.HitsAnalysis <- class (gui_handlers.BaseGuiHandlerWT) {
     restoreState()
     base.onDestroy()
   }
+
+  onBackgroundModelHintTimer = @(obj, _dt) updateBackgroundModelHint(obj)
 }
 
 function canOpenHitsAnalysisWindow() {

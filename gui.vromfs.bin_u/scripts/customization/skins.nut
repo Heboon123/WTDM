@@ -1,7 +1,8 @@
-from "%scripts/dagui_natives.nut" import save_online_single_job, save_profile
+from "%scripts/dagui_natives.nut" import save_online_single_job
 from "app" import is_dev_version
 from "%scripts/dagui_library.nut" import *
 
+let { save_profile } = require("chard")
 let { zero_money } = require("%scripts/money.nut")
 let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let { blkFromPath } = require("%sqstd/datablock.nut")
@@ -20,7 +21,8 @@ let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
 let { get_current_mission_info_cached, get_user_skins_blk } = require("blkGetters")
 let { decoratorTypes } = require("%scripts/customization/types.nut")
-let { getSkinId, DEFAULT_SKIN_NAME, getSkinNameBySkinId } = require("%scripts/customization/skinUtils.nut")
+let { getSkinId, DEFAULT_SKIN_NAME, getSkinNameBySkinId, approversUnitToPreviewLiveResource
+} = require("%scripts/customization/skinUtils.nut")
 let { isInFlight } = require("gameplayBinding")
 let { isSkinBanned } = require("%scripts/customization/bannedSkins.nut")
 let { USEROPT_USER_SKIN } = require("%scripts/options/optionsExtNames.nut")
@@ -28,10 +30,9 @@ let { TANK_CAMO_ROTATION_SLIDER_FACTOR } = require("%scripts/customization/custo
 let { floor, round, abs } = require("%sqstd/math.nut")
 let { unitNameForWeapons  } = require("%scripts/weaponry/unitForWeapons.nut")
 let { getSessionLobbyRoomId } = require("%scripts/matchingRooms/sessionLobbyState.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
+let { findItemById } = require("%scripts/items/itemsManagerModule.nut")
 
 let previewedLiveSkinIds = []
-let approversUnitToPreviewLiveResource = Watched(null)
 
 function getMissionLevelPath(unit) {
   if (isInFlight())
@@ -371,7 +372,7 @@ function applyPreviewSkin(unitName) {
 
 function clearLivePreviewParams() {
   previewedLiveSkinIds.clear()
-  approversUnitToPreviewLiveResource(null)
+  approversUnitToPreviewLiveResource.set(null)
 }
 
 addListenersWithoutEnv({
@@ -396,7 +397,6 @@ return {
   clearLivePreviewParams
   isPreviewingLiveSkin
   previewedLiveSkinIds
-  approversUnitToPreviewLiveResource
   getCurUnitUserSkins
   getCurUserSkin
   getUserSkinCondition

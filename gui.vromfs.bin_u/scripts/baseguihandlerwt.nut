@@ -1,4 +1,4 @@
-from "%scripts/dagui_natives.nut" import save_online_single_job, set_auto_refill, save_profile, is_online_available, periodic_task_register, get_auto_refill, update_entitlements, is_mouse_last_time_used, gchat_is_enabled, periodic_task_unregister
+from "%scripts/dagui_natives.nut" import save_online_single_job, set_auto_refill, is_online_available, periodic_task_register, get_auto_refill, update_entitlements, is_mouse_last_time_used, gchat_is_enabled, periodic_task_unregister
 from "%scripts/dagui_library.nut" import *
 from "%scripts/weaponry/weaponryConsts.nut" import SAVE_WEAPON_JOB_DIGIT
 from "app" import is_dev_version
@@ -17,7 +17,7 @@ let { move_mouse_on_obj } = require("%sqDagui/daguiUtil.nut")
 let { isInMenu } = require("%scripts/clientState/clientStates.nut")
 let { is_in_loading_screen } = require("%sqDagui/framework/baseGuiHandlerManager.nut")
 let { format } = require("string")
-let { get_char_extended_error } = require("chard")
+let { get_char_extended_error, save_profile } = require("chard")
 let { EASTE_ERROR_NICKNAME_HAS_NOT_ALLOWED_CHARS } = require("chardConst")
 let SecondsUpdater = require("%sqDagui/timer/secondsUpdater.nut")
 let callback = require("%sqStdLibs/helpers/callback.nut")
@@ -38,16 +38,21 @@ let { addTask, charCallback, restoreCharCallback } = require("%scripts/tasker.nu
 let { checkSquadUnreadyAndDo, initSquadWidgetHandler } = require("%scripts/squads/squadUtils.nut")
 let { getCrewById } = require("%scripts/slotbar/crewsList.nut")
 let { openGenericTooltip, closeGenericTooltip } = require("%scripts/utils/genericTooltip.nut")
-let { steamContactsGroup } = require("%scripts/contacts/contactsManager.nut")
+let { steamContactsGroup } = require("%scripts/contacts/contactsListState.nut")
 let { defer } = require("dagor.workcycle")
 let { fillGamercard } = require("%scripts/gamercard/fillGamercard.nut")
 let { getQueuesInfoText } = require("%scripts/queue/queueState.nut")
 let { checkQueueAndStart } = require("%scripts/queue/queueManager.nut")
 let { topMenuRightSideSections } = require("%scripts/mainmenu/topMenuSections.nut")
+let { getContact } = require("%scripts/contacts/contacts.nut")
 
 local stickedDropDown = null
 let defaultSlotbarActions = [
   "autorefill", "aircraft", "sec_weapons", "weapons", "showroom",
+
+
+
+
   "testflight", "crew", "goto_unlock", "info", "repair"
 ]
 let timerPID = dagui_propid_add_name_id("_size-timer")
@@ -367,7 +372,7 @@ let BaseGuiHandlerWT = class (BaseGuiHandler) {
   }
 
   function switchChatWindow() {
-    if (gchat_is_enabled() && hasMenuChat.value)
+    if (gchat_is_enabled() && hasMenuChat.get())
       broadcastEvent("ChatSwitchObject", { scene = this.scene })
   }
 
@@ -431,6 +436,10 @@ let BaseGuiHandlerWT = class (BaseGuiHandler) {
     broadcastEvent("AutorefillChanged", { id = obj.id, value })
   }
 
+  function onShowCountriesCustomizationWnd(_obj) {
+    loadHandler(gui_handlers.ChooseCountryView)
+  }
+
   
   function createSlotbar(params = {}, nest = "nav-help") {
     if (this.slotbarWeak) {
@@ -485,11 +494,11 @@ let BaseGuiHandlerWT = class (BaseGuiHandler) {
       || (!ignoreSelect && (parentObj?.chosen ?? parentObj?.selected) != "yes"))
       return
 
-    if (unitContextMenuState.value?.unitObj.isValid()
-      && unitContextMenuState.value.unitObj.isEqual(unitObj))
-      return unitContextMenuState({unitObj, handler = this, needClose = true})
+    if (unitContextMenuState.get()?.unitObj.isValid()
+      && unitContextMenuState.get().unitObj.isEqual(unitObj))
+      return unitContextMenuState.set({unitObj, handler = this, needClose = true})
 
-    unitContextMenuState({
+    unitContextMenuState.set({
       unitObj
       needCloseTooltips = true
       actionsNames = this.getSlotbarActions()
@@ -582,7 +591,7 @@ let BaseGuiHandlerWT = class (BaseGuiHandler) {
     let { uid = "", steamId = "" } = obj
     local contact = null
     if (uid != "")
-      contact = ::getContact(uid)
+      contact = getContact(uid)
     else if (steamId != "")
       contact = steamContactsGroup.get()?[steamId.tointeger()]
     let canShow = this.canShowContactTooltip(contact)
@@ -736,7 +745,7 @@ let BaseGuiHandlerWT = class (BaseGuiHandler) {
 
   function onDropdownHover(obj) {
     
-    if (!showConsoleButtons.value || !checkObj(stickedDropDown) || obj.getFloatProp(timerPID, 0.0) < 1)
+    if (!showConsoleButtons.get() || !checkObj(stickedDropDown) || obj.getFloatProp(timerPID, 0.0) < 1)
       return
     let btn = this.getCurGCDropdownBtn()
     if (btn && (getDropDownRootObj(btn)?.getIntProp(forceTimePID, 0) ?? 0) > get_time_msec() + 100)

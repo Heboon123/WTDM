@@ -1,0 +1,5455 @@
+selected_tag:t = ""
+bin_dump_file:t = ""
+mission_settings {
+	player {
+		army:i = 1
+	}
+	player_teamB {
+		army:i = 2
+	}
+	mission {
+		level:t = "levels/guadalcanal.bin"
+		type:t = "domination"
+		environment:t = "Day"
+		weather:t = "clear"
+		restoreType:t = "attempts"
+		optionalTakeOff:b = false
+	}
+	atmosphere {
+		pressure:r = 760
+		temperature:r = 0
+	}
+	spectator_points {
+
+	}
+}
+imports {
+	import_record {
+		file:t = "gameData/missions/templates/player_unit_template.blk"
+		importAreas:b = true
+		importUnits:b = true
+		importTriggers:b = true
+		importMissionObjectives:b = true
+		importWayPoints:b = true
+		importDialogs:b = true
+		showAreas:b = true
+		showUnits:b = true
+		showTriggers:b = true
+		showMissionObjectives:b = true
+		showWayPoints:b = true
+		showDialogs:b = true
+		excludes {
+
+		}
+	}
+	import_record {
+		file:t = "gameData/missions/templates/ww_no_attackers_template.blk"
+		importAreas:b = true
+		importUnits:b = true
+		importTriggers:b = true
+		importMissionObjectives:b = true
+		importWayPoints:b = true
+		importDialogs:b = true
+		showAreas:b = true
+		showUnits:b = true
+		showTriggers:b = true
+		showMissionObjectives:b = true
+		showWayPoints:b = true
+		showDialogs:b = true
+		excludes {
+
+		}
+	}
+	import_record {
+		file:t = "gameData/missions/templates/air_templates/war_common_strbomb_template.blk"
+		importAreas:b = true
+		importUnits:b = true
+		importTriggers:b = true
+		importMissionObjectives:b = true
+		importWayPoints:b = true
+		importDialogs:b = true
+		showAreas:b = true
+		showUnits:b = true
+		showTriggers:b = true
+		showMissionObjectives:b = true
+		showWayPoints:b = true
+		showDialogs:b = true
+		excludes {
+
+		}
+	}
+}
+triggers {
+	isCategory:b = true
+	is_enabled:b = true
+	war_oil_refinery_strbomb_template {
+		isCategory:b = true
+		is_enabled:b = true
+		t1_target {
+			isCategory:b = true
+			is_enabled:b = true
+			t1_target_init_sleep_units {
+				is_enabled:b = true
+				comments:t = ""
+				props {
+					actionsType:t = "PERFORM_ONE_BY_ONE"
+					conditionsType:t = "ALL"
+					enableAfterComplete:b = false
+				}
+				events {
+					initMission {
+
+					}
+				}
+				conditions {
+
+				}
+				actions {
+					unitPutToSleep {
+						target:t = "@t1_target_unit_squad_name"
+						target:t = "@t1_target_objectgroup_squad_name"
+						target:t = "@t1_cover_spaa_basis_01_squad_name"
+						target:t = "t1_cover_spaa_squad"
+						target:t = "t1_cover_sam_squad"
+					}
+					unitSetStealth {
+						set:b = true
+						radius:r = 0
+						target:t = "@t1_target_unit_squad_name"
+					}
+					triggerEnable {
+						target:t = "t1_target_init_wakeup_og"
+					}
+				}
+				else_actions {
+
+				}
+			}
+			t1_target_init_wakeup_og {
+				is_enabled:b = false
+				comments:t = ""
+				props {
+					actionsType:t = "PERFORM_ONE_BY_ONE"
+					conditionsType:t = "ALL"
+					enableAfterComplete:b = false
+				}
+				events {
+					initMission {
+
+					}
+				}
+				conditions {
+
+				}
+				actions {
+					unitWakeUp {
+						target:t = "@t1_target_objectgroup_squad_name"
+						numToWakeUp:i = 1
+						order:t = "random"
+					}
+					triggerEnable {
+						target:t = "t1_target_init_create_target"
+					}
+				}
+				else_actions {
+
+				}
+			}
+			t1_target_init_create_target {
+				is_enabled:b = false
+				comments:t = ""
+				props {
+					actionsType:t = "PERFORM_ONE_BY_ONE"
+					conditionsType:t = "ALL"
+					enableAfterComplete:b = false
+				}
+				events {
+					initMission {
+
+					}
+				}
+				conditions {
+
+				}
+				actions {
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_administrative_building_01_a"
+						object:t = "bombtarget_administrative_building_01_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_administrative_building_02_a"
+						object:t = "bombtarget_administrative_building_02_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_administrative_building_03_a"
+						object:t = "bombtarget_administrative_building_03_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_administrative_building_04_a"
+						object:t = "bombtarget_administrative_building_04_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_administrative_building_05_a"
+						object:t = "bombtarget_administrative_building_05_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_administrative_building_06_a"
+						object:t = "bombtarget_administrative_building_06_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_administrative_building_07_a"
+						object:t = "bombtarget_administrative_building_07_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_factory_01_a"
+						object:t = "bombtarget_factory_01_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_oil_storage_03_a"
+						object:t = "bombtarget_oil_storage_03_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_oil_storage_04_a"
+						object:t = "bombtarget_oil_storage_04_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_oil_storage_05_a"
+						object:t = "bombtarget_oil_storage_05_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_oil_storage_06_a"
+						object:t = "bombtarget_oil_storage_06_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_factory_structure_01_a"
+						object:t = "bombtarget_factory_structure_01_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_factory_structure_02_a"
+						object:t = "bombtarget_factory_structure_02_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_factory_structure_03_a"
+						object:t = "bombtarget_factory_structure_03_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_factory_structure_04_a"
+						object:t = "bombtarget_factory_structure_04_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_factory_structure_05_a"
+						object:t = "bombtarget_factory_structure_05_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_factory_structure_06_a"
+						object:t = "bombtarget_factory_structure_06_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_factory_structure_07_a"
+						object:t = "bombtarget_factory_structure_07_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "bombtarget_vent_structure_01_a"
+						object:t = "bombtarget_vent_structure_01_a_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_target_objectgroup_squad_name"
+						objects_group_object_type:t = "isActive"
+					}
+					unitDamage {
+						power:r = 1
+						useEffect:b = false
+						countEffects:i = 1
+						delay:p2 = 1, 1
+						offset:p3 = 0, 0, 0
+						radiusOffset:p2 = 10, 15
+						target:t = "@t1_target_unit_squad_name"
+						randomTargetsCountVar:t = "t1_target_count_excess"
+						doExplosion:b = true
+						target_type:t = "isAlive"
+					}
+					getOwnArea {
+						name:t = "@t1_target_objectgroup_squad_name"
+						template:t = "t1_target_cover_area_"
+						out_var:t = "t1_target_cover_area_name"
+						objects_group_object_type:t = "isActive"
+					}
+					missionShowMapIcon {
+						show:b = true
+						team:t = "A"
+						iconName:t = "ui/gameuiskin#army_building_oil_refinery.svg"
+						areaName:t = "@t1_target_cover_area_name"
+						colorCode:t = "Team A"
+						scale:r = 1.2
+					}
+					triggerEnable {
+						target:t = "t1_target_init_spawn_spaa"
+					}
+				}
+				else_actions {
+
+				}
+			}
+			t1_target_init_spawn_spaa {
+				is_enabled:b = false
+				comments:t = ""
+				props {
+					actionsType:t = "PERFORM_ONE_BY_ONE"
+					conditionsType:t = "ALL"
+					enableAfterComplete:b = false
+				}
+				events {
+					initMission {
+
+					}
+				}
+				conditions {
+					objectGroupWhenInArea {
+						object_type:t = "isDelayed"
+						check_objects:t = "any"
+						object:t = "@t1_cover_spaa_basis_01_squad_name"
+						target:t = "@t1_target_cover_area_name"
+					}
+				}
+				actions {
+					unitWakeUp {
+						target:t = "@t1_cover_spaa_basis_01_squad_name"
+						useForTriggerFiltered:b = true
+						varNameNumToWakeUp:t = "t1_cover_spaa_count"
+						order:t = "randomShuffled"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "unit"
+						object:t = "t1_cover_spaa_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_cover_spaa_basis_01_squad_name"
+						objects_group_object_type:t = "isActive"
+						useForTriggerFiltered:b = true
+						filterWhom:t = "target"
+					}
+					unitSetProperties {
+						object:t = "t1_cover_spaa_squad"
+						targetAir:b = true
+						targetGnd:b = false
+						maxDeviationAngle:r = 5
+						useSearchRadar:b = false
+						targetChangeInterval:r = 5
+						targetChangeProb:r = 0.5
+						ChainfireTime:r = 2
+						DelayAfterShoot:r = 0.2
+					}
+					triggerEnable {
+						target:t = "t1_target_init_spawn_sam"
+					}
+				}
+				else_actions {
+
+				}
+			}
+			t1_target_init_spawn_sam {
+				is_enabled:b = false
+				comments:t = ""
+				props {
+					actionsType:t = "PERFORM_ONE_BY_ONE"
+					conditionsType:t = "ALL"
+					enableAfterComplete:b = false
+				}
+				events {
+					initMission {
+
+					}
+				}
+				conditions {
+					objectGroupWhenInArea {
+						object_type:t = "isDelayed"
+						check_objects:t = "any"
+						object:t = "@t1_cover_spaa_basis_01_squad_name"
+						target:t = "@t1_target_cover_area_name"
+					}
+				}
+				actions {
+					unitWakeUp {
+						target:t = "@t1_cover_spaa_basis_01_squad_name"
+						useForTriggerFiltered:b = true
+						varNameNumToWakeUp:t = "t1_cover_sam_count"
+						order:t = "randomShuffled"
+					}
+					unitSpawnOnObjectGroup {
+						type:t = "unit"
+						object:t = "t1_cover_sam_squad"
+						object_type:t = "isDelayed"
+						target:t = "@t1_cover_spaa_basis_01_squad_name"
+						objects_group_object_type:t = "isActive"
+						useForTriggerFiltered:b = true
+						filterWhom:t = "target"
+					}
+					unitSetProperties {
+						object:t = "t1_cover_sam_squad"
+						targetAir:b = true
+						targetGnd:b = false
+						useSearchRadar:b = false
+						targetChangeInterval:r = 5
+						targetChangeProb:r = 0.5
+					}
+					triggerEnable {
+						target:t = "t1_target_status_update_count"
+						target:t = "t1_casualties_calc"
+						target:t = "t1_objective_failed"
+					}
+				}
+				else_actions {
+
+				}
+			}
+			t1_objective_failed {
+				is_enabled:b = false
+				comments:t = ""
+				props {
+					actionsType:t = "PERFORM_ONE_BY_ONE"
+					conditionsType:t = "ALL"
+					enableAfterComplete:b = false
+				}
+				events {
+					timeExpires {
+						time:r = 1
+					}
+				}
+				conditions {
+					unitWhenCountMatches {
+						object_type:t = "isAlive"
+						object_marking:i = 0
+						object_var_name:t = ""
+						object_var_comp_op:t = "equal"
+						func:t = "equal"
+						value:i = 0
+						object:t = "@t1_target_unit_squad_name"
+					}
+				}
+				actions {
+					moSetObjectiveStatus {
+						target:t = "mission_objective_oil_refinery_strbomb_defence"
+						status:i = 3
+						object_marking:i = 0
+						object_var_comp_op:t = "equal"
+						object_var_name:t = ""
+						team:t = "A"
+					}
+					moSetObjectiveStatus {
+						target:t = "mission_objective_oil_refinery_strbomb_attack"
+						status:i = 2
+						object_marking:i = 0
+						object_var_comp_op:t = "equal"
+						object_var_name:t = ""
+						team:t = "B"
+					}
+					gameMPChangeScore {
+						value:i = -100
+						valueSystem:t = "percentage"
+						team:t = "A"
+					}
+				}
+				else_actions {
+
+				}
+			}
+		}
+		t1_air_defence {
+			isCategory:b = true
+			is_enabled:b = true
+			t1_air_defence_radar_enable {
+				is_enabled:b = true
+				comments:t = ""
+				props {
+					actionsType:t = "PERFORM_ONE_BY_ONE"
+					conditionsType:t = "ALL"
+					enableAfterComplete:b = true
+				}
+				events {
+					periodicEvent {
+						time:r = 1
+					}
+				}
+				conditions {
+					unitWhenEnemyNear {
+						object_type:t = "isAlive"
+						object_marking:i = 0
+						object_var_name:t = ""
+						object_var_comp_op:t = "equal"
+						object_var_value:i = 0
+						enemy_type:t = "isAlive"
+						distance:r = 13000
+						check_objects:t = "any"
+						object:t = "t1_cover_spaa_squad"
+						object:t = "t1_cover_sam_squad"
+						math:t = "2D"
+					}
+				}
+				actions {
+					unitSetProperties {
+						object:t = "t1_cover_spaa_squad"
+						object:t = "t1_cover_sam_squad"
+						useForTriggerFiltered:b = true
+						useSearchRadar:b = true
+					}
+				}
+				else_actions {
+
+				}
+			}
+			t1_air_defence_radar_disable {
+				is_enabled:b = true
+				comments:t = ""
+				props {
+					actionsType:t = "PERFORM_ONE_BY_ONE"
+					conditionsType:t = "ALL"
+					enableAfterComplete:b = true
+				}
+				events {
+					periodicEvent {
+						time:r = 1
+					}
+				}
+				conditions {
+					unitWhenEnemyNear {
+						object_type:t = "isAlive"
+						object_marking:i = 0
+						object_var_name:t = ""
+						object_var_comp_op:t = "equal"
+						object_var_value:i = 0
+						enemy_type:t = "isAlive"
+						distance:r = 13000
+						check_objects:t = "any"
+						object:t = "t1_cover_spaa_squad"
+						object:t = "t1_cover_sam_squad"
+						math:t = "notNear2D"
+					}
+				}
+				actions {
+					unitSetProperties {
+						object:t = "t1_cover_spaa_squad"
+						object:t = "t1_cover_sam_squad"
+						useForTriggerFiltered:b = true
+						useSearchRadar:b = false
+					}
+				}
+				else_actions {
+
+				}
+			}
+		}
+	}
+}
+mission_objectives {
+	isCategory:b = true
+	is_enabled:b = true
+	mission_objective_oil_refinery_strbomb_defence {
+		is_enabled:b = true
+		comments:t = ""
+		type:t = "abstractMissionObjective"
+		props {
+			isPrimary:b = true
+			timeLimit:i = 3600
+			team:t = "A"
+		}
+		onSuccess {
+
+		}
+		onFailed {
+
+		}
+	}
+	mission_objective_oil_refinery_strbomb_attack {
+		is_enabled:b = true
+		comments:t = ""
+		type:t = "abstractMissionObjective"
+		props {
+			isPrimary:b = true
+			timeLimit:i = 3600
+			team:t = "B"
+		}
+		onSuccess {
+
+		}
+		onFailed {
+
+		}
+	}
+}
+variables {
+
+}
+dialogs {
+
+}
+airfields {
+
+}
+effects {
+
+}
+units {
+	structures {
+		name:t = "bombtarget_administrative_building_01_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, -431.083]]
+		unit_class:t = "bombtarget_administrative_building_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_02_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, -340.75]]
+		unit_class:t = "bombtarget_administrative_building_02_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_03_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, -276.0]]
+		unit_class:t = "bombtarget_administrative_building_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_03_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1788.7, 5.8675, -276.0]]
+		unit_class:t = "bombtarget_administrative_building_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_03_a_03"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1820.35, 5.8675, -276.0]]
+		unit_class:t = "bombtarget_administrative_building_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_03_a_04"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1852.0, 5.8675, -276.0]]
+		unit_class:t = "bombtarget_administrative_building_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "bombtarget_administrative_building_01_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1703.95, 5.8675, -431.083]]
+		props {
+			squad_members:t = "bombtarget_administrative_building_01_a_01"
+		}
+	}
+	squad {
+		name:t = "bombtarget_administrative_building_02_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1692.5, 5.8675, -340.75]]
+		props {
+			squad_members:t = "bombtarget_administrative_building_02_a_01"
+		}
+	}
+	squad {
+		name:t = "bombtarget_administrative_building_03_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1687.6, 5.8675, -276.0]]
+		props {
+			squad_members:t = "bombtarget_administrative_building_03_a_01"
+			squad_members:t = "bombtarget_administrative_building_03_a_02"
+			squad_members:t = "bombtarget_administrative_building_03_a_03"
+			squad_members:t = "bombtarget_administrative_building_03_a_04"
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_04_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, -199.5]]
+		unit_class:t = "bombtarget_administrative_building_04_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_04_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1795.45, 5.8675, -199.5]]
+		unit_class:t = "bombtarget_administrative_building_04_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_04_a_03"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1833.85, 5.8675, -199.5]]
+		unit_class:t = "bombtarget_administrative_building_04_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_04_a_04"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1872.25, 5.8675, -199.5]]
+		unit_class:t = "bombtarget_administrative_building_04_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "bombtarget_administrative_building_04_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1696.75, 5.8675, -199.5]]
+		props {
+			squad_members:t = "bombtarget_administrative_building_04_a_01"
+			squad_members:t = "bombtarget_administrative_building_04_a_02"
+			squad_members:t = "bombtarget_administrative_building_04_a_03"
+			squad_members:t = "bombtarget_administrative_building_04_a_04"
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_05_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, -137.7]]
+		unit_class:t = "bombtarget_administrative_building_05_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_05_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1792.9, 5.8675, -137.7]]
+		unit_class:t = "bombtarget_administrative_building_05_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_05_a_03"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1828.75, 5.8675, -137.7]]
+		unit_class:t = "bombtarget_administrative_building_05_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_05_a_04"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1864.6, 5.8675, -137.7]]
+		unit_class:t = "bombtarget_administrative_building_05_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_05_a_05"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1900.45, 5.8675, -137.7]]
+		unit_class:t = "bombtarget_administrative_building_05_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "bombtarget_administrative_building_05_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1696.6, 5.8675, -137.7]]
+		props {
+			squad_members:t = "bombtarget_administrative_building_05_a_05"
+			squad_members:t = "bombtarget_administrative_building_05_a_01"
+			squad_members:t = "bombtarget_administrative_building_05_a_02"
+			squad_members:t = "bombtarget_administrative_building_05_a_03"
+			squad_members:t = "bombtarget_administrative_building_05_a_04"
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_06_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, -70.95]]
+		unit_class:t = "bombtarget_administrative_building_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_06_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1791.55, 5.8675, -70.95]]
+		unit_class:t = "bombtarget_administrative_building_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_06_a_03"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1826.05, 5.8675, -70.95]]
+		unit_class:t = "bombtarget_administrative_building_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_06_a_04"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1860.55, 5.8675, -70.95]]
+		unit_class:t = "bombtarget_administrative_building_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_06_a_05"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1895.05, 5.8675, -70.95]]
+		unit_class:t = "bombtarget_administrative_building_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_06_a_06"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1929.55, 5.8675, -70.95]]
+		unit_class:t = "bombtarget_administrative_building_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_06_a_07"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1964.05, 5.8675, -70.95]]
+		unit_class:t = "bombtarget_administrative_building_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_06_a_08"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1998.55, 5.8675, -70.95]]
+		unit_class:t = "bombtarget_administrative_building_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_06_a_09"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2033.05, 5.8675, -70.95]]
+		unit_class:t = "bombtarget_administrative_building_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_06_a_10"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2067.55, 5.8675, -70.95]]
+		unit_class:t = "bombtarget_administrative_building_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "bombtarget_administrative_building_06_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1699.35, 5.8675, -70.95]]
+		props {
+			squad_members:t = "bombtarget_administrative_building_06_a_10"
+			squad_members:t = "bombtarget_administrative_building_06_a_01"
+			squad_members:t = "bombtarget_administrative_building_06_a_02"
+			squad_members:t = "bombtarget_administrative_building_06_a_03"
+			squad_members:t = "bombtarget_administrative_building_06_a_04"
+			squad_members:t = "bombtarget_administrative_building_06_a_05"
+			squad_members:t = "bombtarget_administrative_building_06_a_06"
+			squad_members:t = "bombtarget_administrative_building_06_a_07"
+			squad_members:t = "bombtarget_administrative_building_06_a_08"
+			squad_members:t = "bombtarget_administrative_building_06_a_09"
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_07_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, -1.3]]
+		unit_class:t = "bombtarget_administrative_building_07_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_07_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1795.75, 5.8675, -1.3]]
+		unit_class:t = "bombtarget_administrative_building_07_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_administrative_building_07_a_03"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1834.45, 5.8675, -1.3]]
+		unit_class:t = "bombtarget_administrative_building_07_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "bombtarget_administrative_building_07_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1699.8, 5.8675, -1.3]]
+		props {
+			squad_members:t = "bombtarget_administrative_building_07_a_01"
+			squad_members:t = "bombtarget_administrative_building_07_a_02"
+			squad_members:t = "bombtarget_administrative_building_07_a_03"
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_01_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, 46.15]]
+		unit_class:t = "bombtarget_factory_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_01_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1800.75, 5.8675, 46.15]]
+		unit_class:t = "bombtarget_factory_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "bombtarget_factory_01_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1698.0, 5.8675, 46.15]]
+		props {
+			squad_members:t = "bombtarget_factory_01_a_02"
+			squad_members:t = "bombtarget_factory_01_a_01"
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_03_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, 103.0]]
+		unit_class:t = "bombtarget_oil_storage_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_03_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1798.2, 5.8675, 103.0]]
+		unit_class:t = "bombtarget_oil_storage_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_03_a_03"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1839.35, 5.8675, 103.0]]
+		unit_class:t = "bombtarget_oil_storage_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_03_a_04"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1880.5, 5.8675, 103.0]]
+		unit_class:t = "bombtarget_oil_storage_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_03_a_05"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1921.65, 5.8675, 103.0]]
+		unit_class:t = "bombtarget_oil_storage_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_03_a_06"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1962.8, 5.8675, 103.0]]
+		unit_class:t = "bombtarget_oil_storage_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_03_a_07"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2003.95, 5.8675, 103.0]]
+		unit_class:t = "bombtarget_oil_storage_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_03_a_08"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2045.1, 5.8675, 103.0]]
+		unit_class:t = "bombtarget_oil_storage_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_03_a_09"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2086.25, 5.8675, 103.0]]
+		unit_class:t = "bombtarget_oil_storage_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_03_a_10"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2127.4, 5.8675, 103.0]]
+		unit_class:t = "bombtarget_oil_storage_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_03_a_11"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2168.55, 5.8675, 103.0]]
+		unit_class:t = "bombtarget_oil_storage_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "bombtarget_oil_storage_03_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1704.8, 5.8675, 103.0]]
+		props {
+			squad_members:t = "bombtarget_oil_storage_03_a_01"
+			squad_members:t = "bombtarget_oil_storage_03_a_02"
+			squad_members:t = "bombtarget_oil_storage_03_a_03"
+			squad_members:t = "bombtarget_oil_storage_03_a_04"
+			squad_members:t = "bombtarget_oil_storage_03_a_05"
+			squad_members:t = "bombtarget_oil_storage_03_a_06"
+			squad_members:t = "bombtarget_oil_storage_03_a_07"
+			squad_members:t = "bombtarget_oil_storage_03_a_08"
+			squad_members:t = "bombtarget_oil_storage_03_a_09"
+			squad_members:t = "bombtarget_oil_storage_03_a_10"
+			squad_members:t = "bombtarget_oil_storage_03_a_11"
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_04_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, 168.95]]
+		unit_class:t = "bombtarget_oil_storage_04_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_04_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1796.35, 5.8675, 168.95]]
+		unit_class:t = "bombtarget_oil_storage_04_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_04_a_03"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1835.65, 5.8675, 168.95]]
+		unit_class:t = "bombtarget_oil_storage_04_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_04_a_04"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1874.95, 5.8675, 168.95]]
+		unit_class:t = "bombtarget_oil_storage_04_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_04_a_05"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1914.25, 5.8675, 168.95]]
+		unit_class:t = "bombtarget_oil_storage_04_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_04_a_06"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1953.55, 5.8675, 168.95]]
+		unit_class:t = "bombtarget_oil_storage_04_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_04_a_07"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1992.85, 5.8675, 168.95]]
+		unit_class:t = "bombtarget_oil_storage_04_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_04_a_08"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2032.15, 5.8675, 168.95]]
+		unit_class:t = "bombtarget_oil_storage_04_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "bombtarget_oil_storage_04_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1705.4, 5.8675, 168.95]]
+		props {
+			squad_members:t = "bombtarget_oil_storage_04_a_01"
+			squad_members:t = "bombtarget_oil_storage_04_a_02"
+			squad_members:t = "bombtarget_oil_storage_04_a_03"
+			squad_members:t = "bombtarget_oil_storage_04_a_04"
+			squad_members:t = "bombtarget_oil_storage_04_a_05"
+			squad_members:t = "bombtarget_oil_storage_04_a_06"
+			squad_members:t = "bombtarget_oil_storage_04_a_07"
+			squad_members:t = "bombtarget_oil_storage_04_a_08"
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_05_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, 230.85]]
+		unit_class:t = "bombtarget_oil_storage_05_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_05_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1796.65, 5.8675, 230.85]]
+		unit_class:t = "bombtarget_oil_storage_05_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_05_a_03"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1836.25, 5.8675, 230.85]]
+		unit_class:t = "bombtarget_oil_storage_05_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_05_a_04"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1875.85, 5.8675, 230.85]]
+		unit_class:t = "bombtarget_oil_storage_05_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_05_a_05"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1915.45, 5.8675, 230.85]]
+		unit_class:t = "bombtarget_oil_storage_05_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_05_a_06"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1955.05, 5.8675, 230.85]]
+		unit_class:t = "bombtarget_oil_storage_05_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "bombtarget_oil_storage_05_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1705.7, 5.8675, 230.85]]
+		props {
+			squad_members:t = "bombtarget_oil_storage_05_a_01"
+			squad_members:t = "bombtarget_oil_storage_05_a_02"
+			squad_members:t = "bombtarget_oil_storage_05_a_03"
+			squad_members:t = "bombtarget_oil_storage_05_a_04"
+			squad_members:t = "bombtarget_oil_storage_05_a_05"
+			squad_members:t = "bombtarget_oil_storage_05_a_06"
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1788.35, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_03"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1819.65, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_04"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1850.95, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_05"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1882.25, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_06"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1913.55, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_07"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1944.85, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_08"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1976.15, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_09"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2007.45, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_10"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2038.75, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_11"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2070.05, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_12"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2101.35, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_13"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2132.65, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_14"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2163.95, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_15"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2195.25, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_16"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2226.55, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_17"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2257.85, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_oil_storage_06_a_18"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2289.15, 5.8675, 286.35]]
+		unit_class:t = "bombtarget_oil_storage_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "bombtarget_oil_storage_06_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1705.25, 5.8675, 286.35]]
+		props {
+			squad_members:t = "bombtarget_oil_storage_06_a_01"
+			squad_members:t = "bombtarget_oil_storage_06_a_02"
+			squad_members:t = "bombtarget_oil_storage_06_a_03"
+			squad_members:t = "bombtarget_oil_storage_06_a_04"
+			squad_members:t = "bombtarget_oil_storage_06_a_05"
+			squad_members:t = "bombtarget_oil_storage_06_a_06"
+			squad_members:t = "bombtarget_oil_storage_06_a_07"
+			squad_members:t = "bombtarget_oil_storage_06_a_08"
+			squad_members:t = "bombtarget_oil_storage_06_a_09"
+			squad_members:t = "bombtarget_oil_storage_06_a_10"
+			squad_members:t = "bombtarget_oil_storage_06_a_11"
+			squad_members:t = "bombtarget_oil_storage_06_a_12"
+			squad_members:t = "bombtarget_oil_storage_06_a_13"
+			squad_members:t = "bombtarget_oil_storage_06_a_14"
+			squad_members:t = "bombtarget_oil_storage_06_a_15"
+			squad_members:t = "bombtarget_oil_storage_06_a_16"
+			squad_members:t = "bombtarget_oil_storage_06_a_17"
+			squad_members:t = "bombtarget_oil_storage_06_a_18"
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_01_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, 330.6]]
+		unit_class:t = "bombtarget_factory_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_01_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1790.3, 5.8675, 330.6]]
+		unit_class:t = "bombtarget_factory_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_01_a_03"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1823.55, 5.8675, 330.6]]
+		unit_class:t = "bombtarget_factory_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_01_a_04"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1856.8, 5.8675, 330.6]]
+		unit_class:t = "bombtarget_factory_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_01_a_05"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1890.05, 5.8675, 330.6]]
+		unit_class:t = "bombtarget_factory_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_01_a_06"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1923.3, 5.8675, 330.6]]
+		unit_class:t = "bombtarget_factory_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_01_a_07"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1956.55, 5.8675, 330.6]]
+		unit_class:t = "bombtarget_factory_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_01_a_08"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1989.8, 5.8675, 330.6]]
+		unit_class:t = "bombtarget_factory_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "bombtarget_factory_structure_01_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1708.85, 5.8675, 330.6]]
+		props {
+			squad_members:t = "bombtarget_factory_structure_01_a_01"
+			squad_members:t = "bombtarget_factory_structure_01_a_02"
+			squad_members:t = "bombtarget_factory_structure_01_a_03"
+			squad_members:t = "bombtarget_factory_structure_01_a_04"
+			squad_members:t = "bombtarget_factory_structure_01_a_05"
+			squad_members:t = "bombtarget_factory_structure_01_a_06"
+			squad_members:t = "bombtarget_factory_structure_01_a_07"
+			squad_members:t = "bombtarget_factory_structure_01_a_08"
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_02_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, 372.4]]
+		unit_class:t = "bombtarget_factory_structure_02_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_02_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1781.4, 5.8675, 372.4]]
+		unit_class:t = "bombtarget_factory_structure_02_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_02_a_03"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1805.75, 5.8675, 372.4]]
+		unit_class:t = "bombtarget_factory_structure_02_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_02_a_04"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1830.1, 5.8675, 372.4]]
+		unit_class:t = "bombtarget_factory_structure_02_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_02_a_05"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1854.45, 5.8675, 372.4]]
+		unit_class:t = "bombtarget_factory_structure_02_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_02_a_06"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1878.8, 5.8675, 372.4]]
+		unit_class:t = "bombtarget_factory_structure_02_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_02_a_07"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1903.15, 5.8675, 372.4]]
+		unit_class:t = "bombtarget_factory_structure_02_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "bombtarget_factory_structure_02_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1706.95, 5.8675, 372.4]]
+		props {
+			squad_members:t = "bombtarget_factory_structure_02_a_07"
+			squad_members:t = "bombtarget_factory_structure_02_a_01"
+			squad_members:t = "bombtarget_factory_structure_02_a_02"
+			squad_members:t = "bombtarget_factory_structure_02_a_03"
+			squad_members:t = "bombtarget_factory_structure_02_a_04"
+			squad_members:t = "bombtarget_factory_structure_02_a_05"
+			squad_members:t = "bombtarget_factory_structure_02_a_06"
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_03_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, 434.3]]
+		unit_class:t = "bombtarget_factory_structure_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_03_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1785.6, 5.8675, 434.3]]
+		unit_class:t = "bombtarget_factory_structure_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_03_a_03"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1814.15, 5.8675, 434.3]]
+		unit_class:t = "bombtarget_factory_structure_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_03_a_04"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1842.7, 5.8675, 434.3]]
+		unit_class:t = "bombtarget_factory_structure_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_03_a_05"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1871.25, 5.8675, 434.3]]
+		unit_class:t = "bombtarget_factory_structure_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_03_a_06"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1899.8, 5.8675, 434.3]]
+		unit_class:t = "bombtarget_factory_structure_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_03_a_07"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1928.35, 5.8675, 434.3]]
+		unit_class:t = "bombtarget_factory_structure_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_03_a_08"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1956.9, 5.8675, 434.3]]
+		unit_class:t = "bombtarget_factory_structure_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_03_a_09"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1985.45, 5.8675, 434.3]]
+		unit_class:t = "bombtarget_factory_structure_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_03_a_10"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2014.0, 5.8675, 434.3]]
+		unit_class:t = "bombtarget_factory_structure_03_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "bombtarget_factory_structure_03_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1707.25, 5.8675, 434.3]]
+		props {
+			squad_members:t = "bombtarget_factory_structure_03_a_01"
+			squad_members:t = "bombtarget_factory_structure_03_a_02"
+			squad_members:t = "bombtarget_factory_structure_03_a_03"
+			squad_members:t = "bombtarget_factory_structure_03_a_04"
+			squad_members:t = "bombtarget_factory_structure_03_a_05"
+			squad_members:t = "bombtarget_factory_structure_03_a_06"
+			squad_members:t = "bombtarget_factory_structure_03_a_07"
+			squad_members:t = "bombtarget_factory_structure_03_a_08"
+			squad_members:t = "bombtarget_factory_structure_03_a_09"
+			squad_members:t = "bombtarget_factory_structure_03_a_10"
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_04_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, 486.25]]
+		unit_class:t = "bombtarget_factory_structure_04_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_04_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1788.5, 5.8675, 486.25]]
+		unit_class:t = "bombtarget_factory_structure_04_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_04_a_03"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1819.95, 5.8675, 486.25]]
+		unit_class:t = "bombtarget_factory_structure_04_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_04_a_04"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1851.4, 5.8675, 486.25]]
+		unit_class:t = "bombtarget_factory_structure_04_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_04_a_05"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1882.85, 5.8675, 486.25]]
+		unit_class:t = "bombtarget_factory_structure_04_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "bombtarget_factory_structure_04_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1714.55, 5.8675, 486.25]]
+		props {
+			squad_members:t = "bombtarget_factory_structure_04_a_01"
+			squad_members:t = "bombtarget_factory_structure_04_a_02"
+			squad_members:t = "bombtarget_factory_structure_04_a_03"
+			squad_members:t = "bombtarget_factory_structure_04_a_04"
+			squad_members:t = "bombtarget_factory_structure_04_a_05"
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_05_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, 540.95]]
+		unit_class:t = "bombtarget_factory_structure_05_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_05_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1794.45, 5.8675, 540.95]]
+		unit_class:t = "bombtarget_factory_structure_05_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "bombtarget_factory_structure_05_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1711.9, 5.8675, 540.95]]
+		props {
+			squad_members:t = "bombtarget_factory_structure_05_a_02"
+			squad_members:t = "bombtarget_factory_structure_05_a_01"
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_06_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, 592.5]]
+		unit_class:t = "bombtarget_factory_structure_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_06_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1794.45, 5.8675, 592.5]]
+		unit_class:t = "bombtarget_factory_structure_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_06_a_03"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1831.85, 5.8675, 592.5]]
+		unit_class:t = "bombtarget_factory_structure_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_06_a_04"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1869.25, 5.8675, 592.5]]
+		unit_class:t = "bombtarget_factory_structure_06_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_07_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, 656.35]]
+		unit_class:t = "bombtarget_factory_structure_07_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_07_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1788.5, 5.8675, 656.35]]
+		unit_class:t = "bombtarget_factory_structure_07_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_07_a_03"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1819.95, 5.8675, 656.35]]
+		unit_class:t = "bombtarget_factory_structure_07_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_factory_structure_07_a_04"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1851.4, 5.8675, 656.35]]
+		unit_class:t = "bombtarget_factory_structure_07_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "bombtarget_factory_structure_07_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1717.6, 5.8675, 656.35]]
+		props {
+			squad_members:t = "bombtarget_factory_structure_07_a_04"
+			squad_members:t = "bombtarget_factory_structure_07_a_01"
+			squad_members:t = "bombtarget_factory_structure_07_a_02"
+			squad_members:t = "bombtarget_factory_structure_07_a_03"
+		}
+	}
+	squad {
+		name:t = "bombtarget_factory_structure_06_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1715.8, 5.8675, 592.5]]
+		props {
+			squad_members:t = "bombtarget_factory_structure_06_a_01"
+			squad_members:t = "bombtarget_factory_structure_06_a_02"
+			squad_members:t = "bombtarget_factory_structure_06_a_03"
+			squad_members:t = "bombtarget_factory_structure_06_a_04"
+		}
+	}
+	squad {
+		name:t = "t1_target_unit_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1569.05, 5.8675, 236.6]]
+		props {
+			squad_members:t = "bombtarget_administrative_building_01_a_squad"
+			squad_members:t = "bombtarget_administrative_building_02_a_squad"
+			squad_members:t = "bombtarget_administrative_building_03_a_squad"
+			squad_members:t = "bombtarget_administrative_building_04_a_squad"
+			squad_members:t = "bombtarget_administrative_building_05_a_squad"
+			squad_members:t = "bombtarget_administrative_building_06_a_squad"
+			squad_members:t = "bombtarget_administrative_building_07_a_squad"
+			squad_members:t = "bombtarget_factory_01_a_squad"
+			squad_members:t = "bombtarget_oil_storage_03_a_squad"
+			squad_members:t = "bombtarget_oil_storage_04_a_squad"
+			squad_members:t = "bombtarget_oil_storage_05_a_squad"
+			squad_members:t = "bombtarget_oil_storage_06_a_squad"
+			squad_members:t = "bombtarget_factory_structure_01_a_squad"
+			squad_members:t = "bombtarget_factory_structure_02_a_squad"
+			squad_members:t = "bombtarget_factory_structure_03_a_squad"
+			squad_members:t = "bombtarget_factory_structure_04_a_squad"
+			squad_members:t = "bombtarget_factory_structure_05_a_squad"
+			squad_members:t = "bombtarget_factory_structure_06_a_squad"
+			squad_members:t = "bombtarget_factory_structure_07_a_squad"
+			squad_members:t = "bombtarget_vent_structure_01_a_squad"
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_01"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1757.05, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_02"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1781.14, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_03"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1805.22, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_04"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1829.3, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_05"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1853.39, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_06"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1877.47, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_07"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1901.56, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_08"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1925.64, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_09"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1949.73, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_10"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1973.81, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_11"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [1997.9, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_12"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2021.98, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_13"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2046.07, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_14"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2070.15, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_15"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2094.24, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_16"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2118.32, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_17"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2142.41, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_18"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2166.49, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_19"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2190.58, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_20"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2214.66, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_21"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2238.75, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_22"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2262.83, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_23"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2286.92, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_24"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2311.0, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_25"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2335.09, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_26"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2359.17, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_27"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2383.26, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	structures {
+		name:t = "bombtarget_vent_structure_01_a_28"
+		tm:m = [[-3.97364e-8, 0.0, -1.0] [0.0, 1.0, 0.0] [1.0, 0.0, -3.97364e-8] [2407.34, 5.8675, 718.305]]
+		unit_class:t = "bombtarget_vent_structure_01_a"
+		objLayer:i = 1
+		closed_waypoints:b = false
+		isShipSpline:b = false
+		shipTurnRadius:r = 100
+		weapons:t = ""
+		bullets0:t = ""
+		bullets1:t = ""
+		bullets2:t = ""
+		bullets3:t = ""
+		bulletsCount0:i = 0
+		bulletsCount1:i = 0
+		bulletsCount2:i = 0
+		bulletsCount3:i = 0
+		crewSkillK:r = 0
+		applyAllMods:b = false
+		props {
+			army:i = 1
+			count:i = 1
+			formation_type:t = "rows"
+			formation_div:i = 3
+			formation_step:p2 = 2.5, 2
+			formation_noise:p2 = 0.1, 0.1
+			isDelayed:b = true
+		}
+		way {
+
+		}
+	}
+	squad {
+		name:t = "bombtarget_vent_structure_01_a_squad"
+		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1721.32, 5.8675, 718.305]]
+		props {
+			squad_members:t = "bombtarget_vent_structure_01_a_01"
+			squad_members:t = "bombtarget_vent_structure_01_a_02"
+			squad_members:t = "bombtarget_vent_structure_01_a_03"
+			squad_members:t = "bombtarget_vent_structure_01_a_04"
+			squad_members:t = "bombtarget_vent_structure_01_a_05"
+			squad_members:t = "bombtarget_vent_structure_01_a_06"
+			squad_members:t = "bombtarget_vent_structure_01_a_07"
+			squad_members:t = "bombtarget_vent_structure_01_a_08"
+			squad_members:t = "bombtarget_vent_structure_01_a_09"
+			squad_members:t = "bombtarget_vent_structure_01_a_10"
+			squad_members:t = "bombtarget_vent_structure_01_a_11"
+			squad_members:t = "bombtarget_vent_structure_01_a_12"
+			squad_members:t = "bombtarget_vent_structure_01_a_13"
+			squad_members:t = "bombtarget_vent_structure_01_a_14"
+			squad_members:t = "bombtarget_vent_structure_01_a_15"
+			squad_members:t = "bombtarget_vent_structure_01_a_16"
+			squad_members:t = "bombtarget_vent_structure_01_a_17"
+			squad_members:t = "bombtarget_vent_structure_01_a_18"
+			squad_members:t = "bombtarget_vent_structure_01_a_19"
+			squad_members:t = "bombtarget_vent_structure_01_a_20"
+			squad_members:t = "bombtarget_vent_structure_01_a_21"
+			squad_members:t = "bombtarget_vent_structure_01_a_22"
+			squad_members:t = "bombtarget_vent_structure_01_a_23"
+			squad_members:t = "bombtarget_vent_structure_01_a_24"
+			squad_members:t = "bombtarget_vent_structure_01_a_25"
+			squad_members:t = "bombtarget_vent_structure_01_a_26"
+			squad_members:t = "bombtarget_vent_structure_01_a_27"
+			squad_members:t = "bombtarget_vent_structure_01_a_28"
+		}
+	}
+}
+areas {
+
+}
+objLayers {
+
+}
+wayPoints {
+
+}

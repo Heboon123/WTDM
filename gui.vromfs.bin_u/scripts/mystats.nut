@@ -31,6 +31,8 @@ let { MAX_COUNTRY_RANK } = require("%scripts/ranks.nut")
 let { getGlobalModule } = require("%scripts/global_modules.nut")
 let events = getGlobalModule("events")
 let { isLoggedIn, isProfileReceived } = require("%appGlobals/login/loginState.nut")
+let { register_command } = require("console")
+
 
 
 
@@ -63,6 +65,7 @@ local isInUpdate = false
 local resetStats = false
 local maxUnitsUserRank = null
 local newbie = null
+local forcedIsNotNewbie = false
 
 function getTitles(showHidden = false) {
   let titles = getTblValue("titles", myStats, [])
@@ -105,7 +108,7 @@ function requestMyStats() {
 
   isInUpdate = true
   lastUpdate = time
-  addBgTaskCb(req_player_public_statinfo(userIdStr.value),
+  addBgTaskCb(req_player_public_statinfo(userIdStr.get()),
     function () {
       isInUpdate = false
       resetStats = false
@@ -120,6 +123,9 @@ function requestMyStats() {
 
 
 function getIsNewbie() {
+  if (forcedIsNotNewbie)
+    return false
+
   foreach (_esUnitType, isNewbie in newbieByUnitType)
     if (!isNewbie)
       return false
@@ -406,6 +412,8 @@ function markStatsReset() {
 let isNewbieInited = @() newbie != null
 
 function isMeNewbie() {
+  if (forcedIsNotNewbie)
+    return false
   checkRecountNewbie()
   if (newbie == null)
     loadLocalNewbieData()
@@ -413,6 +421,8 @@ function isMeNewbie() {
 }
 
 function isMeNewbieOnUnitType(esUnitType) {
+  if (forcedIsNotNewbie)
+    return false
   checkRecountNewbie()
   if (newbie == null)
     loadLocalNewbieData()
@@ -440,9 +450,12 @@ function getUnitTypeByNewbieEventId(eventId) {
 }
 
 function getNextNewbieEvent(country = null, unitType = null, checkSlotbar = true) { 
+  if (forcedIsNotNewbie)
+    return null
+
   checkRecountNewbie()
   if (!country)
-    country = profileCountrySq.value
+    country = profileCountrySq.get()
 
   if (unitType == null) {
     unitType = getFirstChosenUnitType(ES_UNIT_TYPE_AIRCRAFT)
@@ -474,7 +487,7 @@ function onEventInitConfigs(_) {
         continue
 
       unitTypeByNewbieEventId[ev.event] <- unitType.esUnitType
-      let kills = ev?.kills || 1
+      let kills = ev?.kills ?? 1
       data.battles.append({
         event       = ev?.event
         kills       = kills
@@ -538,6 +551,12 @@ addListenersWithoutEnv({
   ScriptsReloaded = onEventInitConfigs
   CrewTakeUnit = onEventCrewTakeUnit
 }, g_listener_priority.LOGIN_PROCESS)
+
+
+register_command(function() {
+  forcedIsNotNewbie = !forcedIsNotNewbie
+  broadcastEvent("MyStatsUpdated")
+}, "debug.switch_forced_is_not_newbie")
 
 return {
   getTitles

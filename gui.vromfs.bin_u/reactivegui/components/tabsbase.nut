@@ -5,7 +5,7 @@ function defTab(tab_item, is_current, handler) {
   let stateFlags = Watched(0)
 
   return function () {
-    let isHover = (stateFlags.value & S_HOVER)
+    let isHover = (stateFlags.get() & S_HOVER)
     local fillColor, textColor
     if (is_current) {
       textColor = isHover ? Color(255, 255, 255) : Color(0, 255, 0)
@@ -28,7 +28,7 @@ function defTab(tab_item, is_current, handler) {
       color = fillColor
 
       behavior = Behaviors.Button
-      onElemState = @(sf) stateFlags.update(sf)
+      onElemState = @(sf) stateFlags.set(sf)
 
       onFocus = handler
 

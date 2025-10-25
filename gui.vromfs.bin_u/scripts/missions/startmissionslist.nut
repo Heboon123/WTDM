@@ -30,7 +30,8 @@ let { updateRoomAttributes, guiStartMpLobby, continueCoopWithSquad
 let { createSessionLobbyRoom, startCoopBySquad
 } = require("%scripts/matchingRooms/sessionLobbyActions.nut")
 let { getOptionsMode } = require("%scripts/options/options.nut")
-let { checkGamemodePkg, checkPackageAndAskDownload } = require("%scripts/clientState/contentPacks.nut")
+let { checkGamemodePkg, checkPackageAndAskDownloadByTimes
+} = require("%scripts/clientState/contentPacks.nut")
 let { canJoinFlightMsgBox } = require("%scripts/squads/squadUtils.nut")
 
 const DYNAMIC_REQ_COUNTRY_RANK = 1
@@ -64,7 +65,7 @@ function fastStartSkirmishMission(mission) {
 
 function startRemoteMission(params) {
   let url = params.url
-  let name = params.name || "remote_mission"
+  let name = params.name ?? "remote_mission"
 
   if (!isInMenu.get() || handlersManager.isAnyModalHandlerActive())
     return
@@ -211,10 +212,10 @@ function guiStartBriefing() {
   let startParams = handlersManager.getLastBaseHandlerStartParams()
   if (startParams != null && !isInArray(startParams?.handlerName ?? "",
       ["MPLobby", "SessionsList", "DebriefingModal"]))
-    backFromBriefingParams(startParams)
+    backFromBriefingParams.set(startParams)
 
   let params = {
-    backSceneParams = backFromBriefingParams.value
+    backSceneParams = backFromBriefingParams.get()
     isRestart = false
   }
   params.applyFunc <- function() {
@@ -234,14 +235,14 @@ eventbus_subscribe("gui_start_briefing", @(_) guiStartBriefing())
 function guiStartCampaignNoPack() {
   guiStartMislist(true, GM_CAMPAIGN)
 
-  if (needCheckForVictory.value) {
-    needCheckForVictory(false)
+  if (needCheckForVictory.get()) {
+    needCheckForVictory.set(false)
     play_movie("video/victory", false, true, true)
   }
 }
 
 function guiStartCampaign() {
-  return checkPackageAndAskDownload("hc_pacific", null, guiStartCampaignNoPack, null, "campaign")
+  return checkPackageAndAskDownloadByTimes("hc_pacific", guiStartCampaignNoPack)
 }
 
 function guiStartMenuCampaign() {
@@ -342,17 +343,15 @@ function buildCheckTable(session, gm = 0) {
 }
 
 function checkAndCreateGamemodeWnd(handler, gm) {
-  if (!checkGamemodePkg(gm))
-    return
-
-  handler.checkedNewFlight( function() {
+  let cb = Callback(@() this.checkedNewFlight(function() {
     let tbl = buildCheckTable(null, gm)
     tbl.silent <- false
     if (isRanksAllowed(handler, tbl)) {
       matchSearchGm.set(gm)
       startCreateWndByGamemode(handler, null)
     }
-  })
+  }), handler)
+  checkGamemodePkg(gm, cb)
 }
 
 

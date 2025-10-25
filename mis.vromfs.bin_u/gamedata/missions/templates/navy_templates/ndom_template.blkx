@@ -1,298 +1,324 @@
-{
-  "selected_tag": "",
-  "bin_dump_file": "",
-  "mission_settings": {
-    "player": {
-      "army": 1
-    },
-    "player_teamB": {
-      "army": 2
-    },
-    "mission": {
-      "level": "levels/avg_stalingrad_factory.bin",
-      "type": "domination",
-      "environment": "Day",
-      "weather": "hazy",
-      "scoreLimit": 17000,
-      "timeLimit": 20,
-      "deathPenaltyMul": 1.0,
-      "country_axis": "germany",
-      "country_allies": "ussr",
-      "restoreType": "attempts",
-      "optionalTakeOff": false,
-      "editSlotbar": {
-        "keepOwnUnits": false,
-        "country_usa": {
-          "us_m4a3_105_sherman": {
-            "crewSkillsPercent": 100,
-            "crewSpecialization": 2,
-            "allWeapons": true,
-            "allModifications": true
-          },
-          "us_m4a1_76w_sherman": {
-            "crewSkillsPercent": 100,
-            "crewSpecialization": 2,
-            "allWeapons": true,
-            "allModifications": true
-          },
-          "us_m24_chaffee": {
-            "crewSkillsPercent": 100,
-            "crewSpecialization": 2,
-            "allWeapons": true,
-            "allModifications": true
-          },
-          "us_m4a1_1942_sherman": {
-            "crewSkillsPercent": 100,
-            "crewSpecialization": 2,
-            "allWeapons": true,
-            "allModifications": true
-          }
-        },
-        "country_germany": {
-          "germ_pzkpfw_IV_ausf_G": {
-            "crewSkillsPercent": 100,
-            "crewSpecialization": 2,
-            "allWeapons": true,
-            "allModifications": true
-          },
-          "germ_pzkpfw_IV_ausf_F2": [
-            {
-              "crewSkillsPercent": 100,
-              "crewSpecialization": 2,
-              "allWeapons": true,
-              "allModifications": true
-            },
-            {
-              "crewSkillsPercent": 100,
-              "crewSpecialization": 2,
-              "allWeapons": true,
-              "allModifications": true
-            },
-            {
-              "crewSkillsPercent": 100,
-              "crewSpecialization": 2,
-              "allWeapons": true,
-              "allModifications": true
-            }
-          ],
-          "germ_jgdpz_38t": {
-            "crewSkillsPercent": 100,
-            "crewSpecialization": 2,
-            "allWeapons": true,
-            "allModifications": true
-          }
-        },
-        "country_ussr": {
-          "ussr_t_34_1942": {
-            "crewSkillsPercent": 100,
-            "crewSpecialization": 2,
-            "allWeapons": true,
-            "allModifications": true
-          },
-          "ussr_t_34_1941_57": {
-            "crewSkillsPercent": 100,
-            "crewSpecialization": 2,
-            "allWeapons": true,
-            "allModifications": true
-          },
-          "ussr_su_85_1943": {
-            "crewSkillsPercent": 100,
-            "crewSpecialization": 2,
-            "allWeapons": true,
-            "allModifications": true
-          },
-          "ussr_su_122": {
-            "crewSkillsPercent": 100,
-            "crewSpecialization": 2,
-            "allWeapons": true,
-            "allModifications": true
-          },
-          "ussr_kv_1_zis_5": {
-            "crewSkillsPercent": 100,
-            "crewSpecialization": 2,
-            "allWeapons": true,
-            "allModifications": true
-          }
-        }
-      }
-    },
-    "spectator_points": {}
-  },
-  "imports": {
-    "import_record": {
-      "file": "gameData/missions/templates/navy_templates/ship_spawn_template.blk",
-      "importAreas": true,
-      "importUnits": true,
-      "importTriggers": true,
-      "importMissionObjectives": true,
-      "importWayPoints": true,
-      "showAreas": true,
-      "showUnits": true,
-      "showTriggers": true,
-      "showMissionObjectives": true,
-      "showWayPoints": true,
-      "excludes": {}
-    }
-  },
-  "triggers": {
-    "isCategory": true,
-    "is_enabled": true,
-    "ndom_init": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {},
-      "actions": {
-        "comment": [
-          {
-            "value": ""
-          },
-          {
-            "value": ""
-          }
-        ],
-        "varSetString": [
-          {
-            "value": "ndom_capture_area_01",
-            "var": "zone_01_name"
-          },
-          {
-            "value": "ndom_capture_area_02",
-            "var": "zone_02_name"
-          },
-          {
-            "value": "ndom_capture_area_03",
-            "var": "zone_03_name"
-          },
-          {
-            "value": "ndom_",
-            "var": "modename"
-          }
-        ],
-        "triggerEnable": {
-          "target": "ndom_start"
-        }
-      },
-      "else_actions": {}
-    },
-    "ndom_start": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {},
-      "actions": {
-        "missionMarkAsCaptureZone": [
-          {
-            "army": 0,
-            "name_for_respawn_base": "",
-            "timeMultiplier": 1.5,
-            "disableZone": false,
-            "target": "@zone_01_name",
-            "canCaptureOnGround": true,
-            "playAirfieldSound": false,
-            "canCaptureInAir": false,
-            "canCaptureByGM": true,
-            "useHUDMarkers": true,
-            "markUnitPreset": "ship_buoys",
-            "zoneDefenders": {}
-          },
-          {
-            "army": 0,
-            "name_for_respawn_base": "",
-            "timeMultiplier": 1.5,
-            "disableZone": false,
-            "target": "@zone_02_name",
-            "canCaptureOnGround": true,
-            "playAirfieldSound": false,
-            "canCaptureInAir": false,
-            "canCaptureByGM": true,
-            "useHUDMarkers": true,
-            "markUnitPreset": "ship_buoys",
-            "zoneDefenders": {}
-          },
-          {
-            "army": 0,
-            "name_for_respawn_base": "",
-            "timeMultiplier": 1.5,
-            "disableZone": false,
-            "target": "@zone_03_name",
-            "canCaptureOnGround": true,
-            "playAirfieldSound": false,
-            "canCaptureInAir": false,
-            "canCaptureByGM": true,
-            "useHUDMarkers": true,
-            "markUnitPreset": "ship_buoys",
-            "zoneDefenders": {}
-          }
-        ],
-        "wait": {
-          "time": 15.0
-        },
-        "moAddMissionObjective": {
-          "target": "avg_Dom_objective",
-          "object_var_comp_op": "equal",
-          "object_var_name": ""
-        }
-      },
-      "else_actions": {}
-    }
-  },
-  "mission_objectives": {
-    "isCategory": true,
-    "is_enabled": true,
-    "avg_Dom_objective": {
-      "is_enabled": false,
-      "comments": "",
-      "type": "abstractMissionObjective",
-      "props": {
-        "isPrimary": true,
-        "timeLimit": 3600,
-        "team": "Both"
-      },
-      "onSuccess": {},
-      "onFailed": {}
-    }
-  },
-  "variables": {
-    "modename": "ndom_",
-    "zone_01_name": "",
-    "zone_02_name": "",
-    "zone_03_name": ""
-  },
-  "dialogs": {},
-  "airfields": {},
-  "effects": {},
-  "units": {},
-  "areas": {},
-  "objLayers": {
-    "layer": [
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      }
-    ]
-  },
-  "wayPoints": {}
+selected_tag:t = ""
+bin_dump_file:t = ""
+mission_settings {
+	player {
+		army:i = 1
+	}
+	player_teamB {
+		army:i = 2
+	}
+	mission {
+		level:t = "levels/avg_stalingrad_factory.bin"
+		type:t = "domination"
+		environment:t = "Day"
+		weather:t = "hazy"
+		scoreLimit:i = 17000
+		timeLimit:i = 20
+		deathPenaltyMul:r = 1
+		country_axis:t = "germany"
+		country_allies:t = "ussr"
+		restoreType:t = "attempts"
+		optionalTakeOff:b = false
+		editSlotbar {
+			keepOwnUnits:b = false
+			country_usa {
+				us_m4a3_105_sherman {
+					crewSkillsPercent:i = 100
+					crewSpecialization:i = 2
+					allWeapons:b = true
+					allModifications:b = true
+				}
+				us_m4a1_76w_sherman {
+					crewSkillsPercent:i = 100
+					crewSpecialization:i = 2
+					allWeapons:b = true
+					allModifications:b = true
+				}
+				us_m24_chaffee {
+					crewSkillsPercent:i = 100
+					crewSpecialization:i = 2
+					allWeapons:b = true
+					allModifications:b = true
+				}
+				us_m4a1_1942_sherman {
+					crewSkillsPercent:i = 100
+					crewSpecialization:i = 2
+					allWeapons:b = true
+					allModifications:b = true
+				}
+			}
+			country_germany {
+				germ_pzkpfw_IV_ausf_G {
+					crewSkillsPercent:i = 100
+					crewSpecialization:i = 2
+					allWeapons:b = true
+					allModifications:b = true
+				}
+				germ_pzkpfw_IV_ausf_F2 {
+					crewSkillsPercent:i = 100
+					crewSpecialization:i = 2
+					allWeapons:b = true
+					allModifications:b = true
+				}
+				germ_pzkpfw_IV_ausf_F2 {
+					crewSkillsPercent:i = 100
+					crewSpecialization:i = 2
+					allWeapons:b = true
+					allModifications:b = true
+				}
+				germ_pzkpfw_IV_ausf_F2 {
+					crewSkillsPercent:i = 100
+					crewSpecialization:i = 2
+					allWeapons:b = true
+					allModifications:b = true
+				}
+				germ_jgdpz_38t {
+					crewSkillsPercent:i = 100
+					crewSpecialization:i = 2
+					allWeapons:b = true
+					allModifications:b = true
+				}
+			}
+			country_ussr {
+				ussr_t_34_1942 {
+					crewSkillsPercent:i = 100
+					crewSpecialization:i = 2
+					allWeapons:b = true
+					allModifications:b = true
+				}
+				ussr_t_34_1941_57 {
+					crewSkillsPercent:i = 100
+					crewSpecialization:i = 2
+					allWeapons:b = true
+					allModifications:b = true
+				}
+				ussr_su_85_1943 {
+					crewSkillsPercent:i = 100
+					crewSpecialization:i = 2
+					allWeapons:b = true
+					allModifications:b = true
+				}
+				ussr_su_122 {
+					crewSkillsPercent:i = 100
+					crewSpecialization:i = 2
+					allWeapons:b = true
+					allModifications:b = true
+				}
+				ussr_kv_1_zis_5 {
+					crewSkillsPercent:i = 100
+					crewSpecialization:i = 2
+					allWeapons:b = true
+					allModifications:b = true
+				}
+			}
+		}
+	}
+	spectator_points {
+
+	}
+}
+imports {
+	import_record {
+		file:t = "gameData/missions/templates/navy_templates/ship_spawn_template.blk"
+		importAreas:b = true
+		importUnits:b = true
+		importTriggers:b = true
+		importMissionObjectives:b = true
+		importWayPoints:b = true
+		showAreas:b = true
+		showUnits:b = true
+		showTriggers:b = true
+		showMissionObjectives:b = true
+		showWayPoints:b = true
+		excludes {
+
+		}
+	}
+}
+triggers {
+	isCategory:b = true
+	is_enabled:b = true
+	ndom_init {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			comment {
+				value:t = ""
+			}
+			varSetString {
+				value:t = "ndom_capture_area_01"
+				var:t = "zone_01_name"
+			}
+			varSetString {
+				value:t = "ndom_capture_area_02"
+				var:t = "zone_02_name"
+			}
+			varSetString {
+				value:t = "ndom_capture_area_03"
+				var:t = "zone_03_name"
+			}
+			comment {
+				value:t = ""
+			}
+			varSetString {
+				value:t = "ndom_"
+				var:t = "modename"
+			}
+			triggerEnable {
+				target:t = "ndom_start"
+			}
+		}
+		else_actions {
+
+		}
+	}
+	ndom_start {
+		is_enabled:b = false
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			missionMarkAsCaptureZone {
+				army:i = 0
+				name_for_respawn_base:t = ""
+				timeMultiplier:r = 1.5
+				disableZone:b = false
+				target:t = "@zone_01_name"
+				canCaptureOnGround:b = true
+				playAirfieldSound:b = false
+				canCaptureInAir:b = false
+				canCaptureByGM:b = true
+				useHUDMarkers:b = true
+				markUnitPreset:t = "ship_buoys"
+				zoneDefenders {
+
+				}
+			}
+			missionMarkAsCaptureZone {
+				army:i = 0
+				name_for_respawn_base:t = ""
+				timeMultiplier:r = 1.5
+				disableZone:b = false
+				target:t = "@zone_02_name"
+				canCaptureOnGround:b = true
+				playAirfieldSound:b = false
+				canCaptureInAir:b = false
+				canCaptureByGM:b = true
+				useHUDMarkers:b = true
+				markUnitPreset:t = "ship_buoys"
+				zoneDefenders {
+
+				}
+			}
+			missionMarkAsCaptureZone {
+				army:i = 0
+				name_for_respawn_base:t = ""
+				timeMultiplier:r = 1.5
+				disableZone:b = false
+				target:t = "@zone_03_name"
+				canCaptureOnGround:b = true
+				playAirfieldSound:b = false
+				canCaptureInAir:b = false
+				canCaptureByGM:b = true
+				useHUDMarkers:b = true
+				markUnitPreset:t = "ship_buoys"
+				zoneDefenders {
+
+				}
+			}
+			wait {
+				time:r = 15
+			}
+			moAddMissionObjective {
+				target:t = "avg_Dom_objective"
+				object_var_comp_op:t = "equal"
+				object_var_name:t = ""
+			}
+		}
+		else_actions {
+
+		}
+	}
+}
+mission_objectives {
+	isCategory:b = true
+	is_enabled:b = true
+	avg_Dom_objective {
+		is_enabled:b = false
+		comments:t = ""
+		type:t = "abstractMissionObjective"
+		props {
+			isPrimary:b = true
+			timeLimit:i = 3600
+			team:t = "Both"
+		}
+		onSuccess {
+
+		}
+		onFailed {
+
+		}
+	}
+}
+variables {
+	modename:t = "ndom_"
+	zone_01_name:t = ""
+	zone_02_name:t = ""
+	zone_03_name:t = ""
+}
+dialogs {
+
+}
+airfields {
+
+}
+effects {
+
+}
+units {
+
+}
+areas {
+
+}
+objLayers {
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+}
+wayPoints {
+
 }

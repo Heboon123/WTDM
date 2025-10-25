@@ -1,0 +1,113 @@
+lightning_animchar {
+	_use:t = "animchar"
+	animchar__res:t = "lightning_short_aa_char"
+	animchar_render__enabled:b = false
+	transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 30.0, 0.0]]
+	lightning_animchar:tag {
+
+	}
+	animchar {
+
+	}
+	_group {
+		_tags:t = "render"
+		animchar_render__dist_sq:r = 1000000000000
+	}
+	_group {
+		_tags:t = "render"
+		animchar__visible:b = true
+		animchar__useOcclusionCheck:b = true
+		animchar_node_wtm {
+
+		}
+		animchar_visbits {
+
+		}
+		animchar_render {
+
+		}
+	}
+}
+lightning_animchar_manager {
+	_singleton:b = true
+	_use:t = "replicating"
+	lightning__animchars_eids_base:list<eid> {
+
+	}
+	lightning_tag:tag {
+
+	}
+	lightning__animchars:list<t> {
+		animchar__res:t = "lightning_short_aa_char"
+		animchar__res:t = "lightning_short_ab_char"
+		animchar__res:t = "lightning_short_ba_char"
+		animchar__res:t = "lightning_short_bb_char"
+		animchar__res:t = "lightning_short_ca_char"
+		animchar__res:t = "lightning_short_cb_char"
+	}
+}
+lightning_volumetric {
+	_singleton:b = true
+	_use:t = "replicating"
+	lightning__is_volumetric:b = true
+	lightning_tag:tag {
+
+	}
+	lightning:LightningFX {
+		_tags:t = "render"
+	}
+	_group {
+		_track:b = true
+		lightning__base_strike_time_interval:p2 = 0.8, 1
+		lightning__base_sleep_time_interval:p2 = 5, 12
+		lightning__base_distance_interval:p2 = 5000, 10000
+		lightning__base_azimuth_interval:p2 = 0, 1
+		lightning__base_offset:r = 400
+		lightning__series_strike_time_interval:p2 = 0.8, 1
+		lightning__series_sleep_time_interval:p2 = 0.12, 0.2
+		lightning__series_distance_deviation:r = 1000
+		lightning__series_azimuth_deviation:r = 0.1
+		lightning__series_radius_interval:p2 = 0.5, 0.8
+		lightning__series_strength_interval:p2 = 0.8, 1
+		lightning__series_size_interval:p2 = 2, 4
+		lightning__series_fadeout_time:r = 0.08
+		lightning__series_probability:r = 0.5
+		lightning__series_create_bolt:b = true
+		lightning__bolt_probability:r = 0.7
+		lightning__bolt_step_size:i = 5
+		lightning__bolt_strike_time:r = 0.2
+		lightning__emissive_multiplier:r = 50
+		lightning__emissive_fadein_time:r = 0.5
+		lightning__emissive_fadeout_time:r = 0.2
+		lightning__vert_noise_scale:r = 1000
+		lightning__vert_noise_strength:r = 0.005
+		lightning__vert_noise_time:r = 10
+		lightning__vert_noise_speed:r = 0.2
+		lightning__point_light_fadeout_time:r = 0.3
+		lightning__point_light_offset:r = 0
+		lightning__point_light_color:p3 = 0.5, 0.5, 0.8
+		lightning__point_light_radius:r = 9000
+		lightning__point_light_extinction_threshold:r = 0.1
+		lightning__point_light_strength_interval:p2 = 10, 200
+		lightning__point_light_flickering_probability:r = 0.8
+		lightning__point_light_flickering_speed:r = 10
+		lightning__point_light_natural_fade:b = false
+		lightning__scene_illumination_multiplier:r = 0.3
+		lightning__scene_illumination_enable_for_flash:b = true
+		lightning__scene_illumination_near_sun_threshold:r = 30
+	}
+	lightning__animchars_eids:list<eid> {
+
+	}
+	transform {
+
+	}
+}
+lightning_panorama {
+	_singleton:b = true
+	_use:t = "lightning_volumetric"
+	lightning__is_volumetric:b = false
+	lightning__point_light_radius:r = 4000
+	lightning__point_light_strength_interval:p2 = 1, 3
+	lightning__point_light_color:p3 = 0.6, 0.6, 0.8
+}

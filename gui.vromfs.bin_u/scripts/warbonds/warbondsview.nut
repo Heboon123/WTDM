@@ -22,7 +22,7 @@ let showOrdinaryProgress = @(wbClass) wbClass && wbClass.haveAnyOrdinaryRequirem
 
 let showSpecialProgress = @(wbClass) wbClass && wbClass.haveAnySpecialRequirements()
 
-let getBattlePassStageByShopLevel = @(level) warbondsShopLevelByStages.value.findindex(
+let getBattlePassStageByShopLevel = @(level) warbondsShopLevelByStages.get().findindex(
     @(l) level == l) ?? -1
 
 function getSpecialMedalView(wbClass, reqAwardMedals = 0, needShowZero = false, hasName = false) {
@@ -45,14 +45,14 @@ function getSpecialMedalInProgressView(wbClass) {
 }
 
 function getSpecialMedalCanBuyMarkUp(wbClass) {
-  if (leftSpecialTasksBoughtCount.value < 0)
+  if (leftSpecialTasksBoughtCount.get() < 0)
     return ""
 
   let view = {
     medal = [{
       posX = 0
       image = wbClass?.getMedalIcon()
-      countText = leftSpecialTasksBoughtCount.value.tostring()
+      countText = leftSpecialTasksBoughtCount.get().tostring()
       title = loc("warbonds/canBuySpecialTasks")
     }]
     tooltip = loc("warbonds/canBuySpecialTasks/tooltip")

@@ -6,8 +6,9 @@ let { setAllowedControlsMask } = require("controlsMask")
 let { getWeaponryByPresetInfo } = require("%scripts/weaponry/weaponryPresetsParams.nut")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
-let { get_all_weapons, can_set_weapon, set_secondary_weapon, get_countermeasures_data, COUNTER_MEASURE_MODE_FLARE_CHAFF, get_current_weapon_preset,
- COUNTER_MEASURE_MODE_FLARE, COUNTER_MEASURE_MODE_CHAFF, has_secondary_weapons, set_countermeasures_mode, set_secondary_weapons_selector = @(_) null
+let { get_all_weapons, set_secondary_weapon, get_countermeasures_data, COUNTER_MEASURE_MODE_FLARE_CHAFF, get_current_weapon_preset,
+ COUNTER_MEASURE_MODE_FLARE, COUNTER_MEASURE_MODE_CHAFF, has_secondary_weapons, set_countermeasures_mode, set_secondary_weapons_selector,
+ get_periodic_countermeasure_enabled, AAM_TRIGGER, AGM_TRIGGER, MINES_TRIGGER, BOMBS_TRIGGER, ROCKETS_TRIGGER, TORPEDOES_TRIGGER
 } = require("weaponSelector")
 let { eventbus_subscribe } = require("eventbus")
 let { handlersManager} = require("%scripts/baseGuiHandlerManagerWT.nut")
@@ -15,24 +16,41 @@ let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { broadcastEvent, subscribe_handler } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { openGenericTooltip, closeGenericTooltip } = require("%scripts/utils/genericTooltip.nut")
 let { getMfmHandler } = require("%scripts/wheelmenu/multifuncMenuTools.nut")
-let { abs } = require("math")
-let { isXInputDevice } = require("controls")
+let { isXInputDevice, emulateShortcut } = require("controls")
 let { getPlayerCurUnit } = require("%scripts/slotbar/playerCurUnit.nut")
 let updateExtWatched = require("%scripts/global/updateExtWatched.nut")
-let { getAxisStuck, getMaxDeviatedAxisInfo, getAxisData } = require("%scripts/joystickInterface.nut")
 let { getShortcutById } = require("%scripts/controls/shortcutsList/shortcutsList.nut")
 let g_listener_priority = require("%scripts/g_listener_priority.nut")
 let { deferOnce } = require("dagor.workcycle")
 let { saveLocalAccountSettings, loadLocalAccountSettings } = require("%scripts/clientState/localProfile.nut")
+let { isShortcutMapped } = require("%scripts/controls/shortcutsUtils.nut")
+let { getShortcuts } = require("%scripts/controls/controlsCompatibility.nut")
+let { bhvHintForceUpdateValuePID } = require("%scripts/viewUtils/bhvHint.nut")
+let { get_mission_difficulty_int } = require("guiMission")
 
 const UPDATE_WEAPONS_DELAY = 0.5
 const SELECTOR_PIN_STATE_SAVE_ID = "airWeaponSelectorState"
+
+
+const FIND_DIRECTION_MIDDLE = 0;
+const FIND_DIRECTION_LEFT = 1;
+const FIND_DIRECTION_RIGHT = 2;
 
 enum SelectorState {
   NONE = 0x0
   PINNED = 0x1
   OPENED = 0x2
   OPENED_AND_PINNED = 0x3
+}
+
+let triggerTypeConvert = {
+  aam = AAM_TRIGGER
+  agm = AGM_TRIGGER
+  atgm = AGM_TRIGGER
+  mines = MINES_TRIGGER
+  bombs = BOMBS_TRIGGER
+  rockets = ROCKETS_TRIGGER
+  torpedoes = TORPEDOES_TRIGGER
 }
 
 local cachedSelectorState = SelectorState.NONE
@@ -86,40 +104,20 @@ let class HudAirWeaponSelector {
   isInOpenedState = false
   counterMeasuresIds = [COUNTER_MEASURE_MODE_FLARE_CHAFF, COUNTER_MEASURE_MODE_FLARE, COUNTER_MEASURE_MODE_CHAFF]
   slotIdToTiersId = {}
-  stuckAxis = null
-  watchAxis = [["decal_move_x", "decal_move_y"], ["camx", "camy"]]
-  lastFocusBorderObj = null
-  currentJoystickDirection = null
-  currentBtnsFloor = null
   countermeasuresShortcutId = "ID_FLARES"
+  switchWeaponShortcutId = "ID_SWITCH_SHOOTING_CYCLE_SECONDARY"
   isReinitDelayed = false
   isPinned = false
   cachedCounterMeasuresData = null
   cachedWeaponsData = null
   updateWeaponsDelay = UPDATE_WEAPONS_DELAY
-
-  buttonsFloors = {
-    weapons = {
-      onFloorSelect = "onWeaponsFloorSelect"
-      onJoystick = "selectNextWeaponBtn"
-      currentIndex = -1
-      onJoystickClick = "onJoystickSelectWeaponBtn"
-      nextFloor = "counter_measures"
-      prevFloor = "counter_measures"
-    }
-    counter_measures = {
-      onFloorSelect = "onCounterMeasuresFloorSelect"
-      onJoystick = "selectNextCounerMeasureBtn"
-      currentIndex = -1
-      onJoystickClick = "onJoystickSelectCounterMeasureBtn"
-      nextFloor = "weapons"
-      prevFloor = "weapons"
-    }
-  }
+  isPeriodicFlaresEnabled = false
+  weaponSlotToTiersId = null
+  nextWeaponsTiers = null
+  gunsInPresetCount = 0
+  cachedPresets = null
 
   constructor(unit, nestObj) {
-    this.stuckAxis = getAxisStuck(this.watchAxis)
-    this.currentBtnsFloor = this.buttonsFloors.weapons
     this.nestObj = nestObj
     this.guiScene = nestObj.getScene()
     this.nestObj.show(false)
@@ -137,39 +135,67 @@ let class HudAirWeaponSelector {
 
   function selectUnit(unit) {
     this.unit = unit
-    if (unit == null || !unit.hasWeaponSlots || !has_secondary_weapons()) {
+    if (unit == null || !has_secondary_weapons()) {
       this.close()
       return
     }
     this.countermeasuresShortcutId = this.unit.isHelicopter()
       ? "ID_FLARES_HELICOPTER"
       : "ID_FLARES"
-
+    this.switchWeaponShortcutId = this.unit.isHelicopter()
+      ? "ID_SWITCH_SHOOTING_CYCLE_SECONDARY_HELICOPTER"
+      : "ID_SWITCH_SHOOTING_CYCLE_SECONDARY"
+    this.cachedPresets = getWeaponryByPresetInfo(this.unit, null, false).presets
     let presetName = get_current_weapon_preset()?.presetName ?? ""
     this.selectPresetByName(presetName)
   }
 
   function selectPresetByName(presetName) {
-    let presets = getWeaponryByPresetInfo(this.unit).presets
-    if (presets.len() == 0) {
+    if ((this.cachedPresets?.len() ?? 0) == 0) {
       this.chosenPreset = null
       this.close()
       return
     }
-    let chosenPresetIdx = presets.findindex(@(w) w.name == presetName) ?? 0
-    presets[chosenPresetIdx].tiersView.reverse()
-    this.selectPreset(presets[chosenPresetIdx])
+    let chosenPresetIdx = this.cachedPresets.findindex(@(w) w.name == presetName) ?? 0
+    let preset = clone this.cachedPresets[chosenPresetIdx]
+    preset.tiersView.reverse()
+    this.selectPreset(preset)
   }
 
   function selectPreset(preset) {
     this.isReinitDelayed = false
     this.chosenPreset = preset
     this.slotIdToTiersId = {}
-    this.lastFocusBorderObj = null
-    foreach (t in this.chosenPreset.tiersView) {
+    this.weaponSlotToTiersId = {}
+
+    local weaponsCount = 0
+    foreach (idx, t in this.chosenPreset.tiersView) {
       let tier = t?.weaponry.tiers[t.tierId]
-      if (tier != null && tier?.slot != null)
-        this.slotIdToTiersId[tier.slot.tostring()] <- t.tierId
+      if (t?.weaponry != null)
+        weaponsCount++
+      if (this.unit.hasWeaponSlots) {
+        if (tier != null && tier?.slot != null)
+          this.slotIdToTiersId[tier.slot] <- t.tierId
+        continue
+      }
+      this.slotIdToTiersId[idx] <- t.tierId
+    }
+
+    if (!this.unit.hasWeaponSlots && weaponsCount > 0) {
+      this.gunsInPresetCount = 0
+      foreach (idx, t in this.chosenPreset.tiersView) {
+        if (t?.weaponry == null)
+          continue
+        if (t.weaponry?.isGun)
+          this.gunsInPresetCount++
+
+        this.weaponSlotToTiersId[idx] <- {
+          tierId = this.slotIdToTiersId[idx],
+          ammo = t.weaponry?.tiers[t.tierId].amountPerTier ?? t.weaponry?.amountPerTier ?? 1,
+          countedAmmo = 0
+          trigger = triggerTypeConvert?[t.weaponry?.tType] ?? -1
+        }
+      }
     }
 
     let presetsMarkup = this.getPresetsMarkup(this.chosenPreset)
@@ -186,7 +212,7 @@ let class HudAirWeaponSelector {
     let tiersView = preset.tiersView.map(@(t) {
       tierId        = t.tierId
       img           = t?.img ?? ""
-      tierTooltipId = !showConsoleButtons.value ? t?.tierTooltipId : null
+      tierTooltipId = !showConsoleButtons.get() ? t?.tierTooltipId : null
       isActive      = airWeaponSelector.isTierActive(t)
       isGun         = (t?.weaponry.isGun ?? false) ? "yes" : "no"
     })
@@ -202,7 +228,7 @@ let class HudAirWeaponSelector {
     let isXinput = scInput.hasImage() && scInput.getDeviceId() != STD_KEYBOARD_DEVICE_ID
 
     return {tiersView, counterMeasures, shortcut = shortcutText, isXinput, haveShortcut = shortcutText != "",
-      gamepadShortcat = isXinput ? "".concat("{{", shortcutText, "}}") : null, isPinned = this.isPinned ? "yes" : "no"}
+      gamepadShortcut = isXinput ? "".concat("{{", shortcutText, "}}") : null, isPinned = this.isSelectorPinned() ? "yes" : "no"}
   }
 
   function isTierActive(tier) {
@@ -229,18 +255,16 @@ let class HudAirWeaponSelector {
 
   function updateUnitAndPreset() {
     let hudUnit = getPlayerCurUnit()
-    if (hudUnit == null || !hudUnit.hasWeaponSlots) {
-      this.close()
-      return
-    }
-
     if (hudUnit?.name != this.unit?.name) {
       this.selectUnit(hudUnit)
       return
     }
 
     let presetName = get_current_weapon_preset()?.presetName ?? ""
-    if (this.isReinitDelayed || this.chosenPreset?.name != presetName)
+    let isAlreadySelected = this.chosenPreset?.name == presetName
+      || (this.chosenPreset != null && presetName == "" && this.chosenPreset.name == this.cachedPresets?[0].name)
+
+    if (this.isReinitDelayed || !isAlreadySelected)
       this.selectPresetByName(presetName)
   }
 
@@ -249,13 +273,12 @@ let class HudAirWeaponSelector {
       || getMfmHandler()?.isActive)
       return
     this.updateUnitAndPreset()
-    if (this.unit == null || !this.unit.hasWeaponSlots || this.chosenPreset == null)
+    if (this.unit == null || this.chosenPreset == null
+      || (!this.unit.hasWeaponSlots && ((this.weaponSlotToTiersId.len() - this.gunsInPresetCount) <= 0)))
       return
 
+    this.updatePinView()
     this.nestObj.show(true)
-    let shType = g_shortcut_type.getShortcutTypeByShortcutId("ID_OPEN_VISUAL_WEAPON_SELECTOR")
-    let shortCut = shType.getFirstInput("ID_OPEN_VISUAL_WEAPON_SELECTOR")
-    this.nestObj.findObject("close_btn").setValue(shortCut.getTextShort())
     let updateTimer = this.nestObj.findObject("visual_selector_timer")
     updateTimer.setUserData(this)
     this.isInOpenedState = true
@@ -263,9 +286,12 @@ let class HudAirWeaponSelector {
     set_secondary_weapons_selector(true)
 
     updateExtWatched({ isVisualWeaponSelectorVisible = true })
-    if (!this.isPinned)
+    if (!this.isSelectorPinned())
       this.setBlockControlMask()
+    this.updatePeriodicFlaresBtn()
+    this.updatePresetData()
     broadcastEvent("ChangedShowActionBar")
+    this.updateButtons()
   }
 
   function close() {
@@ -283,9 +309,15 @@ let class HudAirWeaponSelector {
     updateExtWatched({ isVisualWeaponSelectorVisible = false })
   }
 
-  function onCancel(_obj) {
+  function onCancel(_obj = null) {
     this.close()
     this.checkAndSaveCachedState()
+  }
+
+  function onDummyCloseBtn(_obj) {
+    if (isXInputDevice() && this.isShortcutMapped("ID_OPEN_VISUAL_WEAPON_SELECTOR"))
+      return
+    this.onCancel()
   }
 
   function onDestroy() {
@@ -327,31 +359,35 @@ let class HudAirWeaponSelector {
   function selectBtnsById(selectedIds) {
     let tiers = this.chosenPreset.tiersView
     let tiersCount = tiers.len()
-
+    local bulletName = ""
     for (local i = 0; i < tiersCount; i++) {
       let tier = this.chosenPreset.tiersView[i]
       let weaponCell = this.nestObj.findObject($"tier_{tier.tierId}")
       let isSelectedTier = selectedIds.contains(tier.tierId)
       if (weaponCell != null) {
+        if (isSelectedTier && !this.unit.hasWeaponSlots) {
+          if (bulletName == "")
+            bulletName = tier?.weaponry.bulletName ?? tier?.weaponry.name ?? ""
+          else  {
+            let cellBulletName = tier?.weaponry.bulletName ?? tier?.weaponry.name ?? ""
+            if (cellBulletName && cellBulletName != bulletName) {
+              logerr($"HudAirWeaponSelector: weapon selection mistakes {this?.unit.name} {this?.chosenPreset.name}")
+            }
+          }
+        }
         weaponCell.isBordered = isSelectedTier ? "yes" : "no"
         weaponCell.isSelected = isSelectedTier ? "yes" : "no"
       }
-      if (this.buttonsFloors.weapons.currentIndex < 0 && isSelectedTier) {
-        this.buttonsFloors.weapons.currentIndex = i
-        if (isXInputDevice())
-          this.setFocusBorder(weaponCell)
-      }
     }
 
-    let statsLen = this.lastTiersStats.len()
     local count = 0
     local maxCount = 0
     local weaponName = null
-    for (local i = 0; i < statsLen; i++) {
-      let tierId = this.lastTiersStats[i].tierId
+    foreach (stat in this.lastTiersStats) {
+      let tierId = stat.tierId
       if (selectedIds.contains(tierId)) {
-        count += this.lastTiersStats[i].count
-        maxCount += this.lastTiersStats[i].maxCount
+        count += stat.count
+        maxCount += stat.maxCount
         if (weaponName == null) {
           let tier = this.getTierById(tierId)
           weaponName = tier?.weaponry.name
@@ -366,38 +402,175 @@ let class HudAirWeaponSelector {
     this.setLabel(" ")
   }
 
-  function updatePresetData(data = null) {
-    data = data ?? get_all_weapons()
-    this.cachedWeaponsData = data
-    let blockLength = 4
-    let weaponsCount = data.weapons.len()/blockLength
+  function getNextDirection(curDirection, hasMiddleWeapon) {
+    if (curDirection == FIND_DIRECTION_RIGHT)
+      return hasMiddleWeapon ? FIND_DIRECTION_MIDDLE : FIND_DIRECTION_LEFT
+    return curDirection + 1
+  }
 
-    this.lastTiersStats = []
-    for (local i = 0; i < weaponsCount; i++) {
-      this.lastTiersStats.append({
-        tierId = this.slotIdToTiersId?[$"{data.weapons[i * blockLength]}"] ?? -1
-        count = data.weapons[i * blockLength + 1]
-        maxCount = data.weapons[i * blockLength + 2]
-        weaponIdx = data.weapons[i * blockLength + 3]
-      })
+  function isSuitableWeaponSlot(idx, trigger) {
+    return this.weaponSlotToTiersId?[idx] != null
+      && this.weaponSlotToTiersId[idx].trigger == trigger
+      && this.weaponSlotToTiersId[idx].countedAmmo < this.weaponSlotToTiersId[idx].ammo
+  }
+
+  function getNextSideData(directionData, trigger) {
+    let isLeft = directionData.direction == FIND_DIRECTION_LEFT
+    local cycleNum = 0
+    local stepCount = 0
+
+    let sideData = isLeft ? directionData.left : directionData.right
+    let startIndex = sideData.index
+    let maxSlotNum = this.chosenPreset.tiersView.len()
+
+    while (stepCount < directionData.sideCount) {
+      if (cycleNum > 0 && startIndex == sideData.index)
+        return null
+      stepCount++
+      sideData.index = sideData.index + 1
+      let index = sideData.first + (isLeft ? -sideData.index : sideData.index)
+      if (index < 0 || index >= maxSlotNum) {
+        sideData.index = -1
+        cycleNum = cycleNum + 1
+        continue
+      }
+      if (this.isSuitableWeaponSlot(index, trigger))
+        return this.weaponSlotToTiersId[index]
+    }
+    return null
+  }
+
+  function getTierDataByDirection(directionData, trigger) {
+    return directionData.direction == FIND_DIRECTION_MIDDLE
+      ? this.isSuitableWeaponSlot(directionData.middleCell, trigger) ? this.weaponSlotToTiersId[directionData.middleCell] : null
+      : this.getNextSideData(directionData, trigger)
+  }
+
+  function getTierData(directionData, trigger) {
+    let stepCount = directionData.hasMiddleWeapon ? 3 : 2
+    for (local i = 0; i < stepCount; i++) {
+      directionData.direction = this.getNextDirection(directionData.direction, directionData.hasMiddleWeapon)
+      let wdata = this.getTierDataByDirection(directionData, trigger)
+      if (wdata != null)
+        return wdata
+    }
+    return null
+  }
+
+  function updateTierStatsNoSlots(data) {
+    let {weapons = [], blocksCount = 0, selected = []} = data
+    let slotsCount = this.weaponSlotToTiersId.len() - this.gunsInPresetCount
+    if (blocksCount <= 0 || weapons.len() == 0 || slotsCount == 0)
+      return
+    let blockSize = weapons.len() / blocksCount
+    this.lastTiersStats = {}
+
+    let middleCell = (this.chosenPreset.tiersView.len() / 2).tointeger()
+    let directionData = {
+      left = {index = -1, first = middleCell - 1}
+      right = {index = -1, first = middleCell + 1}
+      direction = FIND_DIRECTION_RIGHT
+      middleCell
+      sideCount = middleCell + 1
+      hasMiddleWeapon = this.chosenPreset.tiersView[middleCell]?.weaponry != null
     }
 
-    let slotIdToTiersId = this.slotIdToTiersId
-    this.selectedTiers = data.selected.map(@(t) slotIdToTiersId?[$"{t}"] ?? -1)
+    foreach (w in this.weaponSlotToTiersId)
+      w.countedAmmo = 0
 
-    for (local i = 0; i < weaponsCount; i++) {
-      let stat = this.lastTiersStats[i]
+    let weaponsIdxToTierId = {}
+
+    local prevTrigger = -1
+    for (local i = 0; i < blocksCount; i++) {
+      let weaponIdx = weapons[i * blockSize + 3]
+      if (weaponIdx < 0)
+        continue
+
+      let trigger = weapons[i * blockSize + 4]
+      if (prevTrigger != trigger) {
+        directionData.left.index = -1
+        directionData.right.index = -1
+        directionData.direction = FIND_DIRECTION_RIGHT
+        prevTrigger = trigger
+      }
+
+      let oldTierData = this.getTierData(directionData, trigger)
+      if (!oldTierData) {
+        logerr($"Selector: updateTierStatsNoSlots tierData not found {this?.unit.name} {this?.chosenPreset.name}")
+        continue
+      }
+      let maxAmmo = weapons[i * blockSize + 2]
+      oldTierData.countedAmmo += maxAmmo
+      let tierId = oldTierData.tierId
+      weaponsIdxToTierId[weaponIdx] <- tierId
+      if (this.lastTiersStats?[tierId] == null) {
+        this.lastTiersStats[tierId] <- {
+          tierId
+          count = 0
+          maxCount = 0
+          weaponIdx
+        }
+      }
+      let tierStats = this.lastTiersStats[tierId]
+      tierStats.count = tierStats.count + weapons[i * blockSize + 1]
+      tierStats.maxCount = tierStats.maxCount + maxAmmo
+    }
+    this.selectedTiers =
+      selected.map(@(t) weaponsIdxToTierId?[t] ?? -1)
+  }
+
+  function updateTierStats(data) {
+    this.lastTiersStats = {}
+    let {weapons = [], blocksCount = 0, selected = [], nextWeapon = -1, isNextWeaponSeparate = true} = data
+    if (blocksCount <= 0 || weapons.len() == 0)
+      return
+
+    let blockSize = weapons.len() / blocksCount
+    for (local i = 0; i < blocksCount; i++) {
+      let tierId = this.slotIdToTiersId?[weapons[i * blockSize]] ?? -1
+      if (tierId == -1)
+        continue
+      if (this.lastTiersStats?[tierId] == null) {
+        this.lastTiersStats[tierId] <- {
+          tierId = this.slotIdToTiersId?[weapons[i * blockSize]] ?? -1
+          count = weapons[i * blockSize + 1]
+          maxCount = weapons[i * blockSize + 2]
+          weaponIdx = weapons[i * blockSize + 3]
+        }
+        continue
+      }
+      let stats = this.lastTiersStats[tierId]
+      stats.count = stats.count + weapons[i * blockSize + 1]
+      stats.maxCount = stats.maxCount + weapons[i * blockSize + 2]
+    }
+    let slotIdToTiersId = this.slotIdToTiersId
+    this.selectedTiers = selected.map(@(t) slotIdToTiersId?[t] ?? -1)
+
+    if (!(isNextWeaponSeparate || get_mission_difficulty_int() == DIFFICULTY_ARCADE))
+      this.nextWeaponsTiers = this.selectedTiers
+    else
+      this.nextWeaponsTiers = [this.slotIdToTiersId?[nextWeapon] ?? -1]
+  }
+
+  function updatePresetData(data = null) {
+    data = data ?? get_all_weapons()
+    this.nextWeaponsTiers = []
+    this.cachedWeaponsData = data
+    if (this.unit.hasWeaponSlots)
+      this.updateTierStats(data)
+    else
+      this.updateTierStatsNoSlots(data)
+
+    foreach (stat in this.lastTiersStats) {
       let weaponCell = this.nestObj.findObject($"tier_{stat.tierId}")
       if (weaponCell == null)
         continue
-      if (weaponCell.weaponIdx != "-1" && !can_set_weapon(stat.weaponIdx))
-        continue
       weaponCell.weaponIdx = $"{stat.weaponIdx}"
+      weaponCell.isNextWeapon = this.nextWeaponsTiers.indexof(stat.tierId) != null  ? "yes" : "no"
       weaponCell.hasBullets = stat.count > 0 ? "yes" : "no"
       if ((weaponCell?.isGun ?? "no") == "no")
         weaponCell.findObject("label").setValue(stat.count > 0 ? $"{stat.count}" : "")
     }
-
     this.selectBtnsById(this.selectedTiers)
   }
 
@@ -406,11 +579,9 @@ let class HudAirWeaponSelector {
       return
     let weaponIdx = to_integer_safe(obj.weaponIdx)
     set_secondary_weapon(weaponIdx)
-    this.buttonsFloors.weapons.currentIndex = this.getTierIndex(to_integer_safe(obj.tierId))
-    if (isXInputDevice())
-      this.setFocusBorder(obj)
+
     this.updatePresetData()
-    if (this.isPinned)
+    if (this.isSelectorPinned())
       return
     this.close()
   }
@@ -441,15 +612,14 @@ let class HudAirWeaponSelector {
       obj.isBordered = isTierSelected ? "yes" : "no"
     }
 
-    let statsLen = this.lastTiersStats.len()
     local count = 0
     local maxCount = 0
-    for (local i = 0; i < statsLen; i++) {
-      if (buttonsIndexes.contains(this.lastTiersStats[i].tierId)) {
-        count += this.lastTiersStats[i].count
-        maxCount += this.lastTiersStats[i].maxCount
+    foreach (stat in this.lastTiersStats)
+      if (buttonsIndexes.contains(stat.tierId)) {
+        count += stat.count
+        maxCount += stat.maxCount
       }
-    }
+
     let weaponLocName = $"weapons/{weaponName}"
     this.setLabel($"{loc(weaponLocName)} x{count}/{maxCount}")
   }
@@ -475,23 +645,6 @@ let class HudAirWeaponSelector {
     return null
   }
 
-  function getTierIndex(tierId) {
-    let tiersCount = this.chosenPreset.tiersView.len()
-    for (local i = 0; i < tiersCount; i++)
-      if (this.chosenPreset.tiersView[i]?.tierId == tierId)
-        return i
-    return 0
-  }
-
-  function getCounterMeasureModeIndex(mode) {
-    let modesCount = this.counterMeasuresIds.len()
-    for (local i = 0; i < modesCount; i++) {
-      if (this.counterMeasuresIds == mode)
-        return i
-    }
-    return 0
-  }
-
   function setLabel(text) {
     this.nestObj.findObject("weapon_tooltip").setValue(text)
   }
@@ -510,14 +663,15 @@ let class HudAirWeaponSelector {
       if (amount > 0) {
         let amountText = counterMeasuresViews?[id].getText(counterMeasuresData)
         counermeasureBtn.amount = amountText
-        if (forceUpdateLabels || this.isPinned) {
+        if (forceUpdateLabels || this.isSelectorPinned()) {
           let labelObj = counermeasureBtn.findObject("label")
-          labelObj.setValue(this.isPinned ? amountText : labelObj.nameText)
+          labelObj.setValue(this.isSelectorPinned() ? amountText : labelObj.nameText)
         }
       }
     }
 
     this.selectCounterMeasureBtn($"countermeasure_{counterMeasuresData.mode}")
+    this.updatePeriodicFlaresBtn()
   }
 
   function onCounterMeasureHover(obj) {
@@ -567,174 +721,50 @@ let class HudAirWeaponSelector {
       counermeasureBtn.isSelected = counermeasureBtn.id == btn_id ? "yes" : "no"
       counermeasureBtn.isBordered = counermeasureBtn.id == btn_id ? "yes" : "no"
       counermeasureBtn.findObject("shortcutContainer")?.show(counermeasureBtn.id == btn_id)
-      if (counermeasureBtn.id == btn_id) {
-        this.buttonsFloors.counter_measures.currentIndex = i
-        if (isXInputDevice() && this.currentBtnsFloor == this.buttonsFloors.counter_measures)
-          this.setFocusBorder(counermeasureBtn)
-      }
     }
-  }
-
-  function onVisualSelectorAxisInputTimer() {
-    if (!isXInputDevice())
-      return
-    let axisData = getAxisData(this.watchAxis, this.stuckAxis)
-    let joystickData = getMaxDeviatedAxisInfo(axisData, 0.25)
-    if (joystickData == null || joystickData.normLength == 0) {
-      this.currentJoystickDirection = null
-      return
-    }
-
-    let direction = abs(joystickData.x * 1000) > abs(joystickData.y * 1000)
-      ? joystickData.x > 0 ? "right" : "left"
-      : joystickData.y > 0 ? "up" : "down"
-
-    if (this.currentJoystickDirection == direction)
-      return
-    this.currentJoystickDirection = direction
-    if (direction == "up" || direction == "down") {
-      this.switchJoystickButtonsFloor(direction)
-      return
-    }
-
-    this[this.currentBtnsFloor.onJoystick](direction)
-  }
-
-  function switchJoystickButtonsFloor(direction) {
-    this.currentBtnsFloor = direction == "up"
-      ? this.buttonsFloors[this.currentBtnsFloor.nextFloor]
-      : this.buttonsFloors[this.currentBtnsFloor.prevFloor]
-
-    this[this.currentBtnsFloor.onFloorSelect]()
-  }
-
-  function onCounterMeasuresFloorSelect() {
-    let floor = this.buttonsFloors.counter_measures
-    let countermeasuresContainer = this.nestObj.findObject("countermeasures_container")
-    let mode = this.counterMeasuresIds?[floor.currentIndex]
-    if (mode == null)
-      return
-    let btn = countermeasuresContainer.findObject($"countermeasure_{mode}")
-    if (btn != null && btn.isVisible()) {
-      this.setFocusBorder(btn)
-      this.onCounterMeasureHover(btn)
-    }
-  }
-
-  function onWeaponsFloorSelect() {
-    let floor = this.buttonsFloors.weapons
-    let tier = this.chosenPreset.tiersView?[floor.currentIndex]
-    if (tier == null)
-      return
-    let btn = this.nestObj.findObject($"tier_{tier.tierId}")
-    if (btn != null)
-      this.setFocusBorder(btn)
   }
 
   function onJoystickApplySelection() {
-    this[this.currentBtnsFloor.onJoystickClick]()
-  }
-
-  function onJoystickSelectWeaponBtn() {
-    let floor = this.buttonsFloors.weapons
-    let tier = this.chosenPreset.tiersView?[floor.currentIndex]
-    if (tier == null)
+    if (this.hoveredWeaponBtn != null) {
+      this.onSecondaryWeaponClick(this.hoveredWeaponBtn)
       return
-    let selectedBtn = this.nestObj.findObject($"tier_{tier.tierId}")
-    this.onSecondaryWeaponClick(selectedBtn)
-  }
-
-  function onJoystickSelectCounterMeasureBtn() {
-    let floor = this.buttonsFloors.counter_measures
-    let countermeasuresContainer = this.nestObj.findObject("countermeasures_container")
-    let mode = this.counterMeasuresIds?[floor.currentIndex]
-    if (mode == null)
-      return
-    let btn = countermeasuresContainer.findObject($"countermeasure_{mode}")
-    this.onCounterMeasureClick(btn)
-  }
-
-  function selectNextWeaponBtn(side) {
-    local btn = null
-    let floor = this.buttonsFloors.weapons
-    let tier = this.chosenPreset.tiersView?[floor.currentIndex]
-    local newTierIndex = floor.currentIndex
-    let tiersCount = this.chosenPreset.tiersView.len()
-
-    while (true) {
-      newTierIndex = newTierIndex + (side == "left" ? -1 : 1)
-      if (newTierIndex < 0)
-        newTierIndex = tiersCount-1
-      if (newTierIndex >= tiersCount)
-        newTierIndex = 0
-      if (newTierIndex == floor.currentIndex)
-        return
-      let nextTier = this.chosenPreset.tiersView[newTierIndex]
-      if (!this.isTierActive(nextTier) || tier?.weaponry.name == nextTier?.weaponry.name)
-        continue
-
-      btn = this.nestObj.findObject($"tier_{nextTier.tierId}")
-      if (btn.hasBullets != "yes") {
-        btn = null
-        continue
-      }
-
-      floor.currentIndex = newTierIndex
-      this.setFocusBorder(btn)
-      this.hoverWeaponsByName(nextTier?.weaponry.name)
+    }
+    if (this.hoveredCounterMeasureBtn != null) {
+      this.onCounterMeasureClick(this.hoveredCounterMeasureBtn)
       return
     }
   }
 
-  function selectNextCounerMeasureBtn(side) {
-    local btn = null
-    let floor = this.buttonsFloors.counter_measures
-    local nextIndex = floor.currentIndex
-    let modesCount = this.counterMeasuresIds.len()
-    let countermeasuresContainer = this.nestObj.findObject("countermeasures_container")
-
-    while (true) {
-      nextIndex = nextIndex + (side == "left" ? -1 : 1)
-      if (nextIndex < 0)
-        nextIndex = modesCount-1
-      if (nextIndex >= modesCount)
-        nextIndex = 0
-      if (nextIndex == floor.currentIndex)
-        return
-      let nextMode = this.counterMeasuresIds[nextIndex]
-      btn = countermeasuresContainer.findObject($"countermeasure_{nextMode}")
-      if (btn != null && btn.isVisible()) {
-        floor.currentIndex = nextIndex
-        this.setFocusBorder(btn)
-        this.onCounterMeasureHover(btn)
-        return
-      }
-    }
+  function pinToScreen(needPin) {
+    if (this.isPinned == needPin)
+      return
+    this.isPinned = needPin
+    this.updatePinView()
   }
 
-  function setFocusBorder(obj) {
-    if (this.lastFocusBorderObj != null)
-      this.lastFocusBorderObj["needFocusBorder"] = "no"
-    this.lastFocusBorderObj = obj
-    if (this.lastFocusBorderObj == null)
+  function updatePinView() {
+    let selectorObj = this.nestObj.findObject("air_weapon_selector")
+    if (!selectorObj)
       return
-    this.lastFocusBorderObj["needFocusBorder"] = "yes"
-  }
-
-  function pinToScreen(needPeen) {
-    if (this.isPinned == needPeen)
+    let needPin = this.isSelectorPinned()
+    let isPinned = selectorObj.isPinned == "yes"
+    if (needPin == isPinned)
       return
-    this.isPinned = needPeen
-    let pinBtn = this.nestObj.findObject("pin_btn")
-    pinBtn.tooltip = loc(this.isPinned ? "tooltip/unpinWeaponSelector" : "tooltip/pinWeaponSelector")
-    this.nestObj.findObject("air_weapon_selector").isPinned = this.isPinned ? "yes" : "no"
-    if (!this.isOpened)
+    let pinBtn = selectorObj.findObject("pin_btn")
+    pinBtn.tooltip = loc(needPin ? "tooltip/unpinWeaponSelector" : "tooltip/pinWeaponSelector")
+    selectorObj.isPinned = needPin ? "yes" : "no"
+    if (!this.isOpened())
       return
 
-    if (this.isPinned)
+    if (needPin)
       handlersManager.restoreAllowControlMask()
     else
       this.setBlockControlMask()
+    this.updateCounterMeasures(true)
+  }
+
+  function isSelectorPinned() {
+    return this.isPinned || isXInputDevice()
   }
 
   function setBlockControlMask() {
@@ -756,9 +786,30 @@ let class HudAirWeaponSelector {
     this.checkAndSaveCachedState()
   }
 
-  function onVisualSelectorTimer(_obj, dt) {
-    this.onVisualSelectorAxisInputTimer()
+  function onPeriodicFlaresBtn(btn) {
+    emulateShortcut(this.unit.isHelicopter() ? "ID_TOGGLE_PERIODIC_FLARES_HELICOPTER" : "ID_TOGGLE_PERIODIC_FLARES")
+    this.updatePeriodicFlaresBtn(btn)
+  }
 
+  function updatePeriodicFlaresBtn(btn = null) {
+    let { flares, chaffs } = this.cachedCounterMeasuresData
+    let hasCountermeasures = (flares + chaffs) > 0
+
+    btn = btn ?? this.nestObj.findObject("periodic_flares_btn")
+    btn.show(hasCountermeasures)
+
+    if (!hasCountermeasures)
+      return
+    let isEnabled = get_periodic_countermeasure_enabled()
+    if (this.isPeriodicFlaresEnabled == isEnabled)
+      return
+    this.isPeriodicFlaresEnabled = isEnabled
+    btn.isSelected = this.isPeriodicFlaresEnabled
+      ? "yes"
+      : "no"
+  }
+
+  function onVisualSelectorTimer(_obj, dt) {
     this.updateWeaponsDelay -= dt
     if (this.updateWeaponsDelay > 0)
       return
@@ -770,8 +821,13 @@ let class HudAirWeaponSelector {
     let newCount = current.weapons.len()
     if (old?.weapons.len() != newCount)
       return true
+    if (old?.nextWeapon != current?.nextWeapon)
+      return true
     foreach (idx, val in old.weapons)
       if (current.weapons[idx] != val)
+        return true
+    foreach (idx, val in old.selected)
+      if (current.selected[idx] != val)
         return true
     return false
   }
@@ -790,6 +846,53 @@ let class HudAirWeaponSelector {
     let counterMeasures = get_countermeasures_data()
     if (this.isCounterMeasuresDataChanged(this.cachedCounterMeasuresData, counterMeasures))
       this.updateCounterMeasures()
+
+    this.updatePeriodicFlaresBtn()
+  }
+
+  function updateButtons() {
+    let isMapped = this.isShortcutMapped("ID_OPEN_VISUAL_WEAPON_SELECTOR")
+    let isMappedForGamepad = isMapped && this.isShortcutMappedForGamepad("ID_OPEN_VISUAL_WEAPON_SELECTOR")
+    let isXInput = isXInputDevice()
+    let isSwitchWeaponGamepadShortcutMapped = isXInput && this.isShortcutMappedForGamepad(this.switchWeaponShortcutId)
+
+    showObjectsByTable(this.nestObj, {
+      close_btn_gamepad = isXInput && isMappedForGamepad
+      close_btn_gamepad_icon = isXInput && isMappedForGamepad
+      close_btn_gamepad_b = isXInput && !isMapped
+      close_btn = !isXInput || (isMapped && !isMappedForGamepad)
+      gamepad_switch_weapon_btn = isSwitchWeaponGamepadShortcutMapped
+    })
+
+    if (isXInput && isMappedForGamepad) {
+      let closeBtn = this.nestObj.findObject("close_btn_gamepad")
+      closeBtn.setIntProp(bhvHintForceUpdateValuePID, 1)
+      closeBtn.setValue("{{ID_OPEN_VISUAL_WEAPON_SELECTOR}}")
+    }
+
+    if (isSwitchWeaponGamepadShortcutMapped) {
+      let switchWeaponBtn = this.nestObj.findObject("gamepad_switch_weapon_btn")
+      switchWeaponBtn.setIntProp(bhvHintForceUpdateValuePID, 1)
+      switchWeaponBtn.setValue(this.switchWeaponShortcutId.concat("{{", "}}"))
+    }
+
+    if (!isXInput || (isMapped && !isMappedForGamepad)) {
+      let shType = g_shortcut_type.getShortcutTypeByShortcutId("ID_OPEN_VISUAL_WEAPON_SELECTOR")
+      let shortCut = shType.getFirstInput("ID_OPEN_VISUAL_WEAPON_SELECTOR")
+      this.nestObj.findObject("close_btn").setValue(shortCut.getTextShort())
+    }
+  }
+
+  function isShortcutMappedForGamepad(shortcutId) {
+    let shType = g_shortcut_type.getShortcutTypeByShortcutId(shortcutId)
+    let scInput = shType.getFirstInput(shortcutId)
+    let isMappedForGamepad = scInput.hasImage() && scInput.getDeviceId() != STD_KEYBOARD_DEVICE_ID
+    return isMappedForGamepad
+  }
+
+  function isShortcutMapped(shortcutId) {
+    let shortcut = getShortcuts([shortcutId])
+    return isShortcutMapped(shortcut[0])
   }
 
   function checkAndSaveCachedState() {
@@ -822,13 +925,19 @@ let class HudAirWeaponSelector {
   }
 
   function reinitScreen() {
-    if (!this.isPinned) {
+    if (!this?.nestObj.isValid())
+      return
+
+    if (!this.isSelectorPinned()) {
       this.close()
       return
     }
 
     if (this.isOpened()) {
+      this.updatePeriodicFlaresBtn()
       this.updateUnitAndPreset()
+      this.updateButtons()
+      this.updatePinView()
       return
     }
 
@@ -838,13 +947,11 @@ let class HudAirWeaponSelector {
 
 }
 
-function openHudAirWeaponSelector(byUserAction = false) {
+function openHudAirWeaponSelector() {
   let selectorHandler = getCurrentHandler()
   if (selectorHandler == null || selectorHandler.isOpened())
     return
   selectorHandler.open()
-  if (byUserAction)
-    selectorHandler.checkAndSaveCachedState()
 }
 
 function closeHudAirWeaponSelector() {
@@ -913,6 +1020,5 @@ eventbus_subscribe("onLaunchCountermeasure", function (_evt) {
 
 return {
   HudAirWeaponSelector
-  openHudAirWeaponSelector
   isVisualHudAirWeaponSelectorOpened
 }

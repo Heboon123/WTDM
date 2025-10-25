@@ -1,4 +1,3 @@
-from "%scripts/dagui_natives.nut" import check_login_pass
 from "%scripts/dagui_library.nut" import *
 from "%appGlobals/login/loginConsts.nut" import LOGIN_STATE
 
@@ -14,17 +13,18 @@ let statsd = require("statsd")
 let exitGamePlatform = require("%scripts/utils/exitGamePlatform.nut")
 let { get_charserver_time_sec } = require("chard")
 let { Timer } = require("%sqDagui/timer/timer.nut")
-let { isExternalApp2StepAllowed, isHasEmail2StepTypeSync, isHasWTAssistant2StepTypeSync, isHasGaijinPass2StepTypeSync } = require("auth_wt")
+let { isExternalApp2StepAllowed, isHasEmail2StepTypeSync, isHasWTAssistant2StepTypeSync,
+  isHasGaijinPass2StepTypeSync, checkLoginPass } = require("auth_wt")
 let { getCurCircuitOverride } = require("%appGlobals/curCircuitOverride.nut")
 let { addLoginState } = require("%scripts/login/loginManager.nut")
 let { showErrorMessageBox } = require("%scripts/utils/errorMsgBox.nut")
 
 local authDataByTypes = {
-  mail = { text = "#mainmenu/2step/confirmMail", img = "{prefix}two_step_email" } 
-  ga = { text = "#mainmenu/2step/confirmGA", img = "{prefix}two_step_phone_ga" }  
+  mail = { text = "#mainmenu/2step/confirmMail", img = "#ui/images/two_step_email" }
+  ga = { text = "#mainmenu/2step/confirmGA", img = "#ui/images/two_step_phone_ga" }
   gp = {
     getText = @() loc("mainmenu/2step/confirmPass", { passName = getCurCircuitOverride("passName", "Gaijin Pass") })
-    img = "{prefix}two_step_phone_gp" 
+    img = "#ui/images/two_step_phone_gp"
   }
   unknown = { text = "#mainmenu/2step/confirmUnknown", img = "" }
 }
@@ -43,11 +43,10 @@ gui_handlers.twoStepModal <- class (BaseGuiHandler) {
       : isExt2StepAllowed && isHasGaijinPass2StepTypeSync() ? authDataByTypes.gp
       : authDataByTypes.unknown
 
-    let prefix = getCurCircuitOverride("passImgPrefix", "#ui/images/")
     return {
       verStatusText = data?.getText() ?? data.text
-      authTypeImg = data.img.subst({ prefix })
-      backgroundImg = $"{prefix}two_step_form_bg"
+      authTypeImg = data.img
+      backgroundImg = "#ui/images/two_step_form_bg"
       isShowRestoreLink = isExt2StepAllowed
       isRememberDevice = getObjValue(this.loginScene, "loginbox_code_remember_this_device", false)
       timerWidth = daguiFonts.getStringWidthPx("99:99:99", "fontNormal", this.guiScene)
@@ -75,9 +74,9 @@ gui_handlers.twoStepModal <- class (BaseGuiHandler) {
   function onSubmit(_obj) {
     set_disable_autorelogin_once(false)
     statsd.send_counter("sq.game_start.request_login", 1, { login_type = "regular" })
-    log("Login: check_login_pass")
+    log("Login: checkLoginPass")
     addLoginState(LOGIN_STATE.LOGIN_STARTED)
-    let result = check_login_pass(
+    let result = checkLoginPass(
       getObjValue(this.loginScene, "loginbox_username", ""),
       getObjValue(this.loginScene, "loginbox_password", ""), "",
       getObjValue(this.scene, "loginbox_code", ""),

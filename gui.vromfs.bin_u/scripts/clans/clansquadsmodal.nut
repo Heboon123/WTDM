@@ -17,7 +17,7 @@ let { userIdInt64 } = require("%scripts/user/profileStates.nut")
 let { loadHandler } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { contactPresence } = require("%scripts/contacts/contactPresence.nut")
 let { getCustomNick } = require("%scripts/contacts/customNicknames.nut")
-let { getContactByName } = require("%scripts/contacts/contactsManager.nut")
+let { getContactByName } = require("%scripts/contacts/contactsListState.nut")
 let { showChatPlayerRClickMenu } = require("%scripts/user/playerContextMenu.nut")
 let { getContact } = require("%scripts/contacts/contacts.nut")
 let { getByPresenceParams } = require("%scripts/user/presenceType.nut")
@@ -228,7 +228,7 @@ gui_handlers.MyClanSquadsListModal <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!g_squad_manager.isInSquad())
       return false
 
-    return isInArray(userIdInt64.value, squad?.members ?? [])
+    return isInArray(userIdInt64.get(), squad?.members ?? [])
       || squad?.leader.tostring() == g_squad_manager.getLeaderUid()
   }
 

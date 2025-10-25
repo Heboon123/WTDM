@@ -18,10 +18,12 @@ let { getCountryIcon } = require("%scripts/options/countryFlagsPreset.nut")
 let { BaseItem } = require("%scripts/items/itemsClasses/itemsBase.nut")
 let { roundToDigits } = require("%sqstd/math.nut")
 let { registerItemClass } = require("%scripts/items/itemsTypeClasses.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
+let { findItemById } = require("%scripts/items/itemsManagerModule.nut")
 let { getPrizeTypeIcon, getPrizeTypeName, getTrophyOpenCountTillPrize, getPrizesListText,
   getPrizesStacksView
 } = require("%scripts/items/prizesView.nut")
+let { getPlayerCountryCode } = require("%scripts/user/countryUtils.nut")
+let { openUrl } = require("%scripts/onlineShop/url.nut")
 
 function fillContentRaw(contentRaw, blksArray) {
   foreach (datablock in blksArray) {
@@ -83,6 +85,7 @@ let Trophy = class (BaseItem) {
   showTillValue = false
   showNameAsSingleAward = false
   isCrossPromo = false
+  hasBtnLinkToChances = false
 
   beginDate = null
   endDate = null
@@ -99,10 +102,14 @@ let Trophy = class (BaseItem) {
     this.groupTrophyStyle = blk?.groupTrophyStyle ?? this.iconStyle
     this.openingCaptionLocId = blk?.captionLocId
     this.showDropChance = blk?.showDropChance ?? false
-    this.showChances = blk?.showChances || false
     this.showTillValue = blk?.showTillValue ?? false
     this.showNameAsSingleAward = blk?.showNameAsSingleAward ?? false
     this.isCrossPromo = blk?.isCrossPromo
+    let needShowChancesInCountries = blk?.showChancesInCountries.split(",")
+    this.showChances = blk?.showChances || (needShowChancesInCountries?.indexof(getPlayerCountryCode()) != null)
+
+    let showChanceLinkInCountries = this.showChances ? blk?.showChancesLinkInCountries.split(",") : null
+    this.hasBtnLinkToChances = showChanceLinkInCountries?.contains(getPlayerCountryCode()) ?? false
 
     if (blk?.beginDate && blk?.endDate) {
       let { startTime, endTime } = calculateCorrectTimePeriodYears(
@@ -132,6 +139,15 @@ let Trophy = class (BaseItem) {
 
     let curTime = get_charserver_time_sec()
     return this.beginDate <= curTime && curTime < this.endDate
+  }
+
+  function needProbabilityInfoBtn() {
+    return this.hasBtnLinkToChances
+  }
+
+  function openProbabilityInfo() {
+    let probabilityInfoLink = $"https://warthunder.com/ko/community/boxes/{this.id}"
+    openUrl(probabilityInfoLink, this.forceExternalBrowser, false, this.linkBigQueryKey)
   }
 
   function getRemainingLifetime() {
@@ -446,7 +462,7 @@ let Trophy = class (BaseItem) {
   }
 
   function getLongDescriptionMarkup(params = null) {
-    params = params || {}
+    params = params ?? {}
     params.showAsTrophyContent <- true
     params.receivedPrizes <- false
     params.dropChanceType <- this.getDropChanceType()
@@ -531,7 +547,7 @@ let Trophy = class (BaseItem) {
   }
 
   function getOpeningCaption() {
-    return loc(this.openingCaptionLocId || "mainmenu/trophyReward/title")
+    return loc(this.openingCaptionLocId ?? "mainmenu/trophyReward/title")
   }
 
   function getHiddenTopPrizeParams() { return null }

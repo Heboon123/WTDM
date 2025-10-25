@@ -9,7 +9,8 @@ let fontsState = require("%rGui/style/fontsState.nut")
 let { bh } = require("%rGui/style/screenState.nut")
 let { isTank } = require("%rGui/hudUnitType.nut")
 let { isVisibleTankGunsAmmoIndicator } = require("%rGui/options/options.nut")
-let { isUnitAlive } = require("%rGui/hudState.nut")
+let { isUnitAlive, isPlayingReplay } = require("%rGui/hudState.nut")
+let { isRadarGamepadNavEnabled } = require("%rGui/radarButtons.nut")
 
 let panelMarginBottom = shHud(0.6)
 let panelHeight = hdpx(60)
@@ -29,14 +30,15 @@ let collapseIconComp = @() {
   }
 }
 
-let shortcutText = @() {
-  watch = actionBarCollapseShText
-  rendObj = ROBJ_TEXT
-  font = fontsState.get("tiny")
-  color = Color(190, 165, 75)
-  padding = const [0, hdpx(4), 0, 0]
-  text = actionBarCollapseShText.get()
-}
+let shortcutText = @() actionBarCollapseShText.get().len() == 0 ? { watch = actionBarCollapseShText }
+  : {
+    watch = actionBarCollapseShText
+    rendObj = ROBJ_TEXT
+    font = fontsState.get("tiny")
+    color = Color(190, 165, 75)
+    padding = const [0, hdpx(4), 0, 0]
+    text = actionBarCollapseShText.get()
+  }
 
 let collapseBtnTimer = @() {
   watch = collapseBtnPressedTime
@@ -69,7 +71,7 @@ let hintTextContainer = {
 }
 
 let collapseButton = watchElemState(@(sf) {
-  watch = [isCollapseHintVisible, isCollapseTimerVisible]
+  watch = [isCollapseHintVisible, isCollapseTimerVisible, isRadarGamepadNavEnabled]
   behavior = Behaviors.Button
   rendObj = ROBJ_9RECT
   image = Picture($"ui/gameuiskin#block_bg_rounded_gray")
@@ -81,6 +83,7 @@ let collapseButton = watchElemState(@(sf) {
     : (sf & S_HOVER) ? Color(230, 230, 230, 192)
     : Color(192, 192, 192, 192)
   onClick = @() eventbus_send("collapseActionBar")
+  skipDirPadNav = isRadarGamepadNavEnabled.get()
   valign = ALIGN_CENTER
   children = [
     isCollapseTimerVisible.get() ? collapseBtnTimer : null
@@ -105,10 +108,12 @@ let isCollapsButtonVisible = Computed(@() isActionBarVisible.get() && isActionBa
   && (!isCollapseBtnHidden.get() || !isActionBarCollapsed.get()))
 
 function actionBarTopPanel() {
-  let canShowTankGunsAmmo = isTank() && isVisibleTankGunsAmmoIndicator.get() && !isActionBarCollapsed.get() && isUnitAlive.get()
+  let canShowTankGunsAmmo = isTank() && isVisibleTankGunsAmmoIndicator.get()
+    && !isActionBarCollapsed.get() && isUnitAlive.get() && !isPlayingReplay.get()
 
   return {
-    watch = [panelY, panelWidth, isCollapsButtonVisible, isActionBarCollapsed, isVisibleTankGunsAmmoIndicator]
+    watch = [panelY, panelWidth, isCollapsButtonVisible,
+      isActionBarCollapsed, isVisibleTankGunsAmmoIndicator, isUnitAlive, isPlayingReplay]
     flow = FLOW_HORIZONTAL
     hplace = ALIGN_CENTER
     size = [panelWidth.get(), panelHeight]

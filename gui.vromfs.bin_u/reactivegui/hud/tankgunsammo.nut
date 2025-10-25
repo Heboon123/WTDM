@@ -6,7 +6,7 @@ let { safeAreaSizeHud } = require("%rGui/style/screenState.nut")
 let { CoaxialBullets, CoaxialCartridges, CoaxialCartridgeSize,
   CoaxialGunStartLoadAtTime, CoaxialGunNextShotAtTime,
   MachineGunBullets, MachineGunCartridges, MachineGunCartridgeSize,
-  MachineGunStartLoadAtTime, MachineGunNextShotAtTime } = require("tankState.nut")
+  MachineGunStartLoadAtTime, MachineGunNextShotAtTime } = require("%rGui/hud/tankState.nut")
 
 let boxWidth = shHud(12.5)
 let boxHeight = shHud(2)
@@ -101,7 +101,7 @@ function mkTankGun(triggerGroupIcon, cartridges, bullets, cartridgeSizeValue, re
             watch = cartridges
             padding = const [hdpx(2), 0, 0, 0]
             color = activeColor
-            text = cartridges.value
+            text = cartridges.get()
             fontSize = fontHeight
           },
           @() {
@@ -109,7 +109,7 @@ function mkTankGun(triggerGroupIcon, cartridges, bullets, cartridgeSizeValue, re
             watch = [bullets, reloadStartTime, reloadEndTime]
             gap = 0.2 * bulletWidth
             flow = FLOW_HORIZONTAL
-            children = mkProgressBar(bullets.value, cartridgeSizeValue, reloadStartTime.value, reloadEndTime.value)
+            children = mkProgressBar(bullets.get(), cartridgeSizeValue, reloadStartTime.get(), reloadEndTime.get())
           }
         ]
       }
@@ -125,9 +125,9 @@ function tankGunsAmmo() {
     gap = shHud(0.5)
     children = [
       mkTankGun(coaxialGunIcon,
-        CoaxialCartridges, CoaxialBullets, CoaxialCartridgeSize.value, CoaxialGunStartLoadAtTime, CoaxialGunNextShotAtTime),
+        CoaxialCartridges, CoaxialBullets, CoaxialCartridgeSize.get(), CoaxialGunStartLoadAtTime, CoaxialGunNextShotAtTime),
       mkTankGun(machineGunIcon,
-        MachineGunCartridges, MachineGunBullets, MachineGunCartridgeSize.value, MachineGunStartLoadAtTime, MachineGunNextShotAtTime)
+        MachineGunCartridges, MachineGunBullets, MachineGunCartridgeSize.get(), MachineGunStartLoadAtTime, MachineGunNextShotAtTime)
     ]
   }
 }

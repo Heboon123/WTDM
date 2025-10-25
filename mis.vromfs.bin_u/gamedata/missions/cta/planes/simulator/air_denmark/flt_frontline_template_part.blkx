@@ -1,304 +1,308 @@
-{
-  "selected_tag": "",
-  "bin_dump_file": "",
-  "mission_settings": {
-    "player": {
-      "army": 1,
-      "wing": "flt_armada"
-    },
-    "player_teamB": {
-      "army": 2
-    },
-    "mission": {
-      "level": "levels/air_denmark.bin",
-      "type": "singleMission",
-      "environment": "Day",
-      "weather": "hazy",
-      "restoreType": "attempts",
-      "optionalTakeOff": false
-    },
-    "atmosphere": {
-      "pressure": 760.0,
-      "temperature": -10.0
-    },
-    "spectator_points": {}
-  },
-  "imports": {
-    "import_record": [
-      {
-        "file": "gameData/missions/templates/enduring_confrontation/flt_frontline_template.blk",
-        "importAreas": true,
-        "importUnits": true,
-        "importTriggers": true,
-        "importMissionObjectives": true,
-        "importWayPoints": true,
-        "showAreas": true,
-        "showUnits": true,
-        "showTriggers": true,
-        "showMissionObjectives": true,
-        "showWayPoints": true,
-        "excludes": {}
-      },
-      {
-        "file": "gameData/missions/cta/planes/simulator/air_denmark/frontline/flt_frontline_part.blk",
-        "importAreas": true,
-        "importUnits": true,
-        "importTriggers": true,
-        "importMissionObjectives": true,
-        "importWayPoints": true,
-        "showAreas": true,
-        "showUnits": true,
-        "showTriggers": true,
-        "showMissionObjectives": true,
-        "showWayPoints": true,
-        "excludes": {}
-      },
-      {
-        "file": "gameData/missions/cta/planes/simulator/air_denmark/frontline/flt_sea_spawns_part.blk",
-        "importAreas": true,
-        "importUnits": true,
-        "importTriggers": true,
-        "importMissionObjectives": true,
-        "importWayPoints": true,
-        "showAreas": true,
-        "showUnits": true,
-        "showTriggers": true,
-        "showMissionObjectives": true,
-        "showWayPoints": true,
-        "excludes": {}
-      },
-      {
-        "file": "gameData/missions/templates/enduring_confrontation/ad_air_dom_template.blk",
-        "importAreas": true,
-        "importUnits": true,
-        "importTriggers": true,
-        "importMissionObjectives": true,
-        "importWayPoints": true,
-        "showAreas": true,
-        "showUnits": true,
-        "showTriggers": true,
-        "showMissionObjectives": true,
-        "showWayPoints": true,
-        "excludes": {}
-      }
-    ]
-  },
-  "triggers": {
-    "isCategory": true,
-    "is_enabled": true,
-    "flt_parts_init": {
-      "is_enabled": true,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "initMission": {}
-      },
-      "conditions": {},
-      "actions": {
-        "varSetInt": [
-          {
-            "value": 10,
-            "var": "flt_big_aaa_weight"
-          },
-          {
-            "value": 10,
-            "var": "flt_small_aaa_weight"
-          },
-          {
-            "value": 20,
-            "var": "flt_art_weight"
-          },
-          {
-            "value": 50,
-            "var": "flt_tank_weight"
-          },
-          {
-            "value": 8,
-            "var": [
-              "flt_zones_in_row",
-              "flt_zones_in_col_real"
-            ]
-          },
-          {
-            "value": 8,
-            "var": [
-              "flt_zones_in_col",
-              "flt_zones_in_row_real"
-            ]
-          },
-          {
-            "value": 0,
-            "var": "flt_total_zones"
-          },
-          {
-            "value": 1,
-            "var": [
-              "flt_area_45_state",
-              "flt_area_61_state",
-              "flt_area_62_state"
-            ]
-          },
-          {
-            "value": 2,
-            "var": [
-              "flt_area_03_state",
-              "flt_area_04_state",
-              "flt_area_12_state",
-              "flt_area_20_state"
-            ]
-          },
-          {
-            "value": 0,
-            "var": [
-              "flt_area_07_state",
-              "flt_area_08_state",
-              "flt_area_15_state",
-              "flt_area_16_state",
-              "flt_area_23_state",
-              "flt_area_24_state",
-              "flt_area_29_state",
-              "flt_area_30_state",
-              "flt_area_31_state",
-              "flt_area_32_state",
-              "flt_area_33_state",
-              "flt_area_34_state",
-              "flt_area_35_state",
-              "flt_area_37_state",
-              "flt_area_38_state",
-              "flt_area_39_state",
-              "flt_area_44_state",
-              "flt_area_52_state",
-              "flt_area_53_state",
-              "flt_area_54_state",
-              "flt_area_60_state"
-            ]
-          }
-        ],
-        "comment": [
-          {
-            "value": "nastrojki frontlajna"
-          },
-          {
-            "value": "obshchee kolichestvo zon"
-          },
-          {
-            "value": "vyschityvaem kolichestvo zon pokazyvayushchih glubinu fronta"
-          },
-          {
-            "value": "team A zones"
-          },
-          {
-            "value": "team b zones"
-          },
-          {
-            "value": "sea zones"
-          },
-          {
-            "value": "pomechaem zony komand (v cikle po algoritmu)"
-          },
-          {
-            "value": "risuem liniyu fronta"
-          }
-        ],
-        "varModify": [
-          {
-            "operator": "add",
-            "value": 0.0,
-            "var": "flt_total_zones",
-            "use_variable": true,
-            "var_value": "flt_zones_in_row"
-          },
-          {
-            "operator": "mul",
-            "value": 3.0,
-            "var": "flt_total_zones",
-            "use_variable": true,
-            "var_value": "flt_zones_in_col"
-          }
-        ],
-        "varSetString": {
-          "value": "sea",
-          "var": [
-            "flt_area_07_type",
-            "flt_area_08_type",
-            "flt_area_15_type",
-            "flt_area_16_type",
-            "flt_area_23_type",
-            "flt_area_24_type",
-            "flt_area_29_type",
-            "flt_area_30_type",
-            "flt_area_31_type",
-            "flt_area_32_type",
-            "flt_area_33_type",
-            "flt_area_34_type",
-            "flt_area_35_type",
-            "flt_area_37_type",
-            "flt_area_38_type",
-            "flt_area_39_type",
-            "flt_area_44_type",
-            "flt_area_52_type",
-            "flt_area_53_type",
-            "flt_area_54_type",
-            "flt_area_60_type"
-          ]
-        },
-        "varSetBool": {
-          "value": true,
-          "var": "flt_mirrior_start"
-        },
-        "triggerEnable": [
-          {
-            "target": "flt_army_state_start"
-          },
-          {
-            "target": "flt_draw_frontline"
-          }
-        ],
-        "missionBattleArea": {
-          "air": true,
-          "ground": false,
-          "mapArea": false,
-          "airMapArea": true,
-          "killArea": false,
-          "detectionArea": false,
-          "killOutOfBattleArea": true,
-          "area": "flt_battle_area",
-          "newGridHorizontalCellCount": 7,
-          "gridCellCountVar": "flt_zones_in_row"
-        }
-      },
-      "else_actions": {}
-    }
-  },
-  "mission_objectives": {
-    "isCategory": true,
-    "is_enabled": true
-  },
-  "variables": {},
-  "dialogs": {},
-  "airfields": {},
-  "effects": {},
-  "units": {},
-  "areas": {},
-  "objLayers": {
-    "layer": [
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      },
-      {
-        "enabled": true
-      }
-    ]
-  },
-  "wayPoints": {}
+selected_tag:t = ""
+bin_dump_file:t = ""
+mission_settings {
+	player {
+		army:i = 1
+		wing:t = "flt_armada"
+	}
+	player_teamB {
+		army:i = 2
+	}
+	mission {
+		level:t = "levels/air_denmark.bin"
+		type:t = "singleMission"
+		environment:t = "Day"
+		weather:t = "hazy"
+		restoreType:t = "attempts"
+		optionalTakeOff:b = false
+	}
+	atmosphere {
+		pressure:r = 760
+		temperature:r = -10
+	}
+	spectator_points {
+
+	}
+}
+imports {
+	import_record {
+		file:t = "gameData/missions/templates/enduring_confrontation/flt_frontline_template.blk"
+		importAreas:b = true
+		importUnits:b = true
+		importTriggers:b = true
+		importMissionObjectives:b = true
+		importWayPoints:b = true
+		showAreas:b = true
+		showUnits:b = true
+		showTriggers:b = true
+		showMissionObjectives:b = true
+		showWayPoints:b = true
+		excludes {
+
+		}
+	}
+	import_record {
+		file:t = "gameData/missions/cta/planes/simulator/air_denmark/frontline/flt_frontline_part.blk"
+		importAreas:b = true
+		importUnits:b = true
+		importTriggers:b = true
+		importMissionObjectives:b = true
+		importWayPoints:b = true
+		showAreas:b = true
+		showUnits:b = true
+		showTriggers:b = true
+		showMissionObjectives:b = true
+		showWayPoints:b = true
+		excludes {
+
+		}
+	}
+	import_record {
+		file:t = "gameData/missions/cta/planes/simulator/air_denmark/frontline/flt_sea_spawns_part.blk"
+		importAreas:b = true
+		importUnits:b = true
+		importTriggers:b = true
+		importMissionObjectives:b = true
+		importWayPoints:b = true
+		showAreas:b = true
+		showUnits:b = true
+		showTriggers:b = true
+		showMissionObjectives:b = true
+		showWayPoints:b = true
+		excludes {
+
+		}
+	}
+	import_record {
+		file:t = "gameData/missions/templates/enduring_confrontation/ad_air_dom_template.blk"
+		importAreas:b = true
+		importUnits:b = true
+		importTriggers:b = true
+		importMissionObjectives:b = true
+		importWayPoints:b = true
+		showAreas:b = true
+		showUnits:b = true
+		showTriggers:b = true
+		showMissionObjectives:b = true
+		showWayPoints:b = true
+		excludes {
+
+		}
+	}
+}
+triggers {
+	isCategory:b = true
+	is_enabled:b = true
+	flt_parts_init {
+		is_enabled:b = true
+		comments:t = ""
+		props {
+			actionsType:t = "PERFORM_ONE_BY_ONE"
+			conditionsType:t = "ALL"
+			enableAfterComplete:b = false
+		}
+		events {
+			initMission {
+
+			}
+		}
+		conditions {
+
+		}
+		actions {
+			varSetInt {
+				value:i = 10
+				var:t = "flt_big_aaa_weight"
+			}
+			varSetInt {
+				value:i = 10
+				var:t = "flt_small_aaa_weight"
+			}
+			varSetInt {
+				value:i = 20
+				var:t = "flt_art_weight"
+			}
+			varSetInt {
+				value:i = 50
+				var:t = "flt_tank_weight"
+			}
+			comment {
+				value:t = "nastrojki frontlajna"
+			}
+			comment {
+				value:t = "obshchee kolichestvo zon"
+			}
+			varSetInt {
+				value:i = 8
+				var:t = "flt_zones_in_row"
+				var:t = "flt_zones_in_col_real"
+			}
+			varSetInt {
+				value:i = 8
+				var:t = "flt_zones_in_col"
+				var:t = "flt_zones_in_row_real"
+			}
+			comment {
+				value:t = "vyschityvaem kolichestvo zon pokazyvayushchih glubinu fronta"
+			}
+			varSetInt {
+				value:i = 0
+				var:t = "flt_total_zones"
+			}
+			varModify {
+				operator:t = "add"
+				value:r = 0
+				var:t = "flt_total_zones"
+				use_variable:b = true
+				var_value:t = "flt_zones_in_row"
+			}
+			varModify {
+				operator:t = "mul"
+				value:r = 3
+				var:t = "flt_total_zones"
+				use_variable:b = true
+				var_value:t = "flt_zones_in_col"
+			}
+			comment {
+				value:t = "team A zones"
+			}
+			varSetInt {
+				value:i = 1
+				var:t = "flt_area_45_state"
+				var:t = "flt_area_61_state"
+				var:t = "flt_area_62_state"
+			}
+			comment {
+				value:t = "team b zones"
+			}
+			varSetInt {
+				value:i = 2
+				var:t = "flt_area_03_state"
+				var:t = "flt_area_04_state"
+				var:t = "flt_area_12_state"
+				var:t = "flt_area_20_state"
+			}
+			comment {
+				value:t = "sea zones"
+			}
+			varSetInt {
+				value:i = 0
+				var:t = "flt_area_07_state"
+				var:t = "flt_area_08_state"
+				var:t = "flt_area_15_state"
+				var:t = "flt_area_16_state"
+				var:t = "flt_area_23_state"
+				var:t = "flt_area_24_state"
+				var:t = "flt_area_29_state"
+				var:t = "flt_area_30_state"
+				var:t = "flt_area_31_state"
+				var:t = "flt_area_32_state"
+				var:t = "flt_area_33_state"
+				var:t = "flt_area_34_state"
+				var:t = "flt_area_35_state"
+				var:t = "flt_area_37_state"
+				var:t = "flt_area_38_state"
+				var:t = "flt_area_39_state"
+				var:t = "flt_area_44_state"
+				var:t = "flt_area_52_state"
+				var:t = "flt_area_53_state"
+				var:t = "flt_area_54_state"
+				var:t = "flt_area_60_state"
+			}
+			varSetString {
+				value:t = "sea"
+				var:t = "flt_area_07_type"
+				var:t = "flt_area_08_type"
+				var:t = "flt_area_15_type"
+				var:t = "flt_area_16_type"
+				var:t = "flt_area_23_type"
+				var:t = "flt_area_24_type"
+				var:t = "flt_area_29_type"
+				var:t = "flt_area_30_type"
+				var:t = "flt_area_31_type"
+				var:t = "flt_area_32_type"
+				var:t = "flt_area_33_type"
+				var:t = "flt_area_34_type"
+				var:t = "flt_area_35_type"
+				var:t = "flt_area_37_type"
+				var:t = "flt_area_38_type"
+				var:t = "flt_area_39_type"
+				var:t = "flt_area_44_type"
+				var:t = "flt_area_52_type"
+				var:t = "flt_area_53_type"
+				var:t = "flt_area_54_type"
+				var:t = "flt_area_60_type"
+			}
+			comment {
+				value:t = "pomechaem zony komand (v cikle po algoritmu)"
+			}
+			varSetBool {
+				value:b = true
+				var:t = "flt_mirrior_start"
+			}
+			triggerEnable {
+				target:t = "flt_army_state_start"
+			}
+			comment {
+				value:t = "risuem liniyu fronta"
+			}
+			triggerEnable {
+				target:t = "flt_draw_frontline"
+			}
+			missionBattleArea {
+				air:b = true
+				ground:b = false
+				mapArea:b = false
+				airMapArea:b = true
+				killArea:b = false
+				detectionArea:b = false
+				killOutOfBattleArea:b = true
+				area:t = "flt_battle_area"
+				newGridHorizontalCellCount:i = 7
+				gridCellCountVar:t = "flt_zones_in_row"
+			}
+		}
+		else_actions {
+
+		}
+	}
+}
+mission_objectives {
+	isCategory:b = true
+	is_enabled:b = true
+}
+variables {
+
+}
+dialogs {
+
+}
+airfields {
+
+}
+effects {
+
+}
+units {
+
+}
+areas {
+
+}
+objLayers {
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+	layer {
+		enabled:b = true
+	}
+}
+wayPoints {
+
 }

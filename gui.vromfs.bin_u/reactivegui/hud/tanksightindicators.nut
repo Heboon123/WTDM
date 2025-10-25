@@ -1,19 +1,19 @@
 from "%rGui/globals/ui_library.nut" import *
 
-let { IsCommanderViewAimModeActive } = require("tankState.nut")
+let { IsCommanderViewAimModeActive } = require("%rGui/hud/tankState.nut")
 let { IsSightLocked } = require("%rGui/hud/targetTrackerState.nut")
 
 let drawMark = @(state_var, text, pos, line_style, colorWatched) function() {
 
   let res = { watch = state_var }
 
-  if (!state_var.value)
+  if (!state_var.get())
     return res
 
   let textMark = @() line_style.__merge({
     rendObj = ROBJ_TEXT
     watch = colorWatched
-    color = colorWatched.value
+    color = colorWatched.get()
     text = text
   })
 

@@ -118,7 +118,7 @@ gui_handlers.InvitesWnd <- class (gui_handlers.BaseGuiHandlerWT) {
       return findInviteByUid(uid)
 
     let listObj = this.scene.findObject("invites_list")
-    let value = listObj.getValue() || 0
+    let value = listObj.getValue() ?? 0
     if (0 <= value && value < listObj.childrenCount())
       return findInviteByUid(listObj.getChild(value)?.inviteUid)
     return null
@@ -132,7 +132,7 @@ gui_handlers.InvitesWnd <- class (gui_handlers.BaseGuiHandlerWT) {
     this.guiScene.performDelayed(this, function() {
       if (invite.haveRestrictions()) {
         if (invite.needCheckSystemRestriction) {
-          if (!isMultiplayerPrivilegeAvailable.value) {
+          if (!isMultiplayerPrivilegeAvailable.get()) {
             checkAndShowMultiplayerPrivilegeWarning()
             return
           }

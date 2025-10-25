@@ -50,8 +50,8 @@ let frame = {
   ]
 }
 
-let ClimbSpeedDir = Computed(@() ClimbSpeed.value >= 0.0 ? 1 : -1)
-let ClimbSpeedVal = Computed(@() (ClimbSpeed.value * 10.0).tointeger())
+let ClimbSpeedDir = Computed(@() ClimbSpeed.get() >= 0.0 ? 1 : -1)
+let ClimbSpeedVal = Computed(@() (ClimbSpeed.get() * 10.0).tointeger())
 let climbSpeed = @(){
   size = const [pw(7), ph(4)]
   pos = [pw(80), ph(48)]
@@ -69,13 +69,13 @@ let climbSpeed = @(){
     @(){
       watch = ClimbSpeedDir
       size = flex()
-      pos = [0, ClimbSpeedDir.value > 0 ? 0 : ph(100)]
+      pos = [0, ClimbSpeedDir.get() > 0 ? 0 : ph(100)]
       rendObj = ROBJ_VECTOR_CANVAS
       color = baseColor
       fillColor = Color(0, 0, 0)
       lineWidth = baseLineWidth * 0.5
       commands = [
-        [VECTOR_POLY, 5, ClimbSpeedDir.value * -20, 95, ClimbSpeedDir.value * -20, 50, ClimbSpeedDir.value * -100, 5, ClimbSpeedDir.value * -20]
+        [VECTOR_POLY, 5, ClimbSpeedDir.get() * -20, 95, ClimbSpeedDir.get() * -20, 50, ClimbSpeedDir.get() * -100, 5, ClimbSpeedDir.get() * -20]
       ]
     }
     @(){
@@ -86,7 +86,7 @@ let climbSpeed = @(){
       color = baseColor
       fontSize = baseFontSize
       font = Fonts.ils31
-      text = string.format("%.1f", ClimbSpeed.value)
+      text = string.format("%.1f", ClimbSpeed.get())
     }
   ]
 }
@@ -111,7 +111,7 @@ let airSymbolWrap = {
   behavior = Behaviors.RtPropUpdate
   update = @() {
     transform = {
-      rotate = Roll.value
+      rotate = Roll.get()
       pivot = [0, 0]
     }
   }
@@ -129,10 +129,10 @@ let horizontMarks = {
   ]
 }
 
-let TargetRadiusVal = Computed(@() AimLockValid.value ? TargetRadius.value.tointeger() : 10)
+let TargetRadiusVal = Computed(@() AimLockValid.get() ? TargetRadius.get().tointeger() : 10)
 let targetMark = @(){
   watch = TargetRadiusVal
-  size = [TargetRadiusVal.value, TargetRadiusVal.value]
+  size = [TargetRadiusVal.get(), TargetRadiusVal.get()]
   pos = [pw(50), ph(50)]
   rendObj = ROBJ_VECTOR_CANVAS
   color = Color(255, 255, 255)
@@ -155,7 +155,7 @@ let targetMark = @(){
 let atgmLaunchPermitted = @() {
   watch = [IsInsideLaunchZoneYawPitch, IsInsideLaunchZoneDist]
   size = flex()
-  children = IsInsideLaunchZoneYawPitch.value && IsInsideLaunchZoneDist.value ?
+  children = IsInsideLaunchZoneYawPitch.get() && IsInsideLaunchZoneDist.get() ?
     @() {
       size = flex()
       rendObj = ROBJ_TEXT
@@ -168,7 +168,7 @@ let atgmLaunchPermitted = @() {
   : null
 }
 
-let DistToTarget = Computed(@() (AimLockDist.value / 10).tointeger())
+let DistToTarget = Computed(@() (AimLockDist.get() / 10).tointeger())
 let distToTarget = @(){
   watch = AimLockValid
   size = const [pw(16), ph(8)]
@@ -178,7 +178,7 @@ let distToTarget = @(){
   halign = ALIGN_RIGHT
   valign = ALIGN_BOTTOM
   padding = const [0, 5]
-  children = AimLockValid.value ? [
+  children = AimLockValid.get() ? [
     @(){
       watch = DistToTarget
       size = SIZE_TO_CONTENT
@@ -186,12 +186,12 @@ let distToTarget = @(){
       color = baseColor
       font = Fonts.ils31
       fontSize = 35
-      text = string.format("%.2f", DistToTarget.value / 100.0)
+      text = string.format("%.2f", DistToTarget.get() / 100.0)
     }
   ] : null
 }
 
-let SpeedValue = Computed(@() round(Speed.value * mpsToKmh).tointeger())
+let SpeedValue = Computed(@() round(Speed.get() * mpsToKmh).tointeger())
 let speed = @() {
   size = SIZE_TO_CONTENT
   pos = [pw(35), ph(12)]
@@ -205,7 +205,7 @@ let speed = @() {
       color = baseColor
       font = Fonts.ils31
       fontSize = 30
-      text = SpeedValue.value.tointeger()
+      text = SpeedValue.get().tointeger()
     }
     {
       size = SIZE_TO_CONTENT
@@ -218,7 +218,7 @@ let speed = @() {
   ]
 }
 
-let AltValue = Computed(@() Altitude.value.tointeger())
+let AltValue = Computed(@() Altitude.get().tointeger())
 let altitude = @() {
   watch = AltValue
   size = SIZE_TO_CONTENT
@@ -227,7 +227,7 @@ let altitude = @() {
   color = baseColor
   font = Fonts.ils31
   fontSize = 30
-  text = AltValue.value.tointeger()
+  text = AltValue.get().tointeger()
 }
 
 let labels = {
@@ -577,9 +577,9 @@ function getTurretPitchOffset(pitch) {
   return cvt(pitch, -40, -60, 28, 42)
 }
 
-let TurretPitchVal = Computed(@() (-90.0 + TurretPitch.value * 180.0).tointeger())
-let TurretPitchMarkPos = Computed(@() 44 + min(0, getTurretPitchOffset(TurretPitchVal.value)))
-let TurretPitchMarkSize = Computed(@() fabs(getTurretPitchOffset(TurretPitchVal.value)))
+let TurretPitchVal = Computed(@() (-90.0 + TurretPitch.get() * 180.0).tointeger())
+let TurretPitchMarkPos = Computed(@() 44 + min(0, getTurretPitchOffset(TurretPitchVal.get())))
+let TurretPitchMarkSize = Computed(@() fabs(getTurretPitchOffset(TurretPitchVal.get())))
 let turretPitch = {
   size = flex()
   children = [
@@ -600,7 +600,7 @@ let turretPitch = {
       font = Fonts.ils31
       fontSize = 18
       padding = const [1, 3]
-      text = TurretPitchVal.value.tostring()
+      text = TurretPitchVal.get().tostring()
     }
     {
       rendObj = ROBJ_VECTOR_CANVAS
@@ -617,8 +617,8 @@ let turretPitch = {
       watch = [TurretPitchMarkPos, TurretPitchMarkSize]
       rendObj = ROBJ_SOLID
       color = baseColor
-      pos = [pw(96.2), ph(TurretPitchMarkPos.value)]
-      size = [baseLineWidth, ph(TurretPitchMarkSize.value)]
+      pos = [pw(96.2), ph(TurretPitchMarkPos.get())]
+      size = [baseLineWidth, ph(TurretPitchMarkSize.get())]
     }
   ]
 }
@@ -641,7 +641,7 @@ function pitch(height, generateFunc) {
     behavior = Behaviors.RtPropUpdate
     update = @() {
       transform = {
-        translate = [0, -height * ((90.0 - Tangage.value) * 0.008 - 0.01)]
+        translate = [0, -height * ((90.0 - Tangage.get()) * 0.008 - 0.01)]
       }
     }
   }
@@ -683,7 +683,7 @@ function pitchWrap(height) {
   }
 }
 
-let TangageValue = Computed(@() Tangage.value.tointeger())
+let TangageValue = Computed(@() Tangage.get().tointeger())
 let pitchLabels = {
   size = flex()
   children = [
@@ -720,14 +720,14 @@ let pitchLabels = {
           color = baseColor
           fontSize = baseFontSize
           font = Fonts.ils31
-          text = TangageValue.value.tostring()
+          text = TangageValue.get().tostring()
         }
       ]
     }
   ]
 }
 
-let optCompassVal = Computed(@() degToRad((CompassValue.value - 180.0 + TurretYaw.value * 180.0).tointeger()))
+let optCompassVal = Computed(@() degToRad((CompassValue.get() - 180.0 + TurretYaw.get() * 180.0).tointeger()))
 let opticCompass = @(){
   watch = optCompassVal
   size = ph(20)
@@ -738,14 +738,14 @@ let opticCompass = @(){
   lineWidth = 1
   commands = [
     [VECTOR_ELLIPSE, 50, 50, 50, 50],
-    [VECTOR_LINE, 50, 50, 50 + 50 * cos(optCompassVal.value - PI * 0.25), 50 + 50 * sin(optCompassVal.value - PI * 0.25)],
-    [VECTOR_LINE, 50, 50, 50 + 50 * cos(optCompassVal.value + PI * 0.25), 50 + 50 * sin(optCompassVal.value + PI * 0.25)]
+    [VECTOR_LINE, 50, 50, 50 + 50 * cos(optCompassVal.get() - PI * 0.25), 50 + 50 * sin(optCompassVal.get() - PI * 0.25)],
+    [VECTOR_LINE, 50, 50, 50 + 50 * cos(optCompassVal.get() + PI * 0.25), 50 + 50 * sin(optCompassVal.get() + PI * 0.25)]
   ]
 }
 
-let AtgmMode = Computed(@() SelectedTrigger.value == weaponTriggerName.AGM_TRIGGER)
-let isAAMMode = Computed(@() GuidanceLockState.value > GuidanceLockResult.RESULT_STANDBY)
-let GunMode = Computed(@() !RocketMode.value && !BombCCIPMode.value && !AtgmMode.value && !isAAMMode.value)
+let AtgmMode = Computed(@() SelectedTrigger.get() == weaponTriggerName.AGM_TRIGGER)
+let isAAMMode = Computed(@() GuidanceLockState.get() > GuidanceLockResult.RESULT_STANDBY)
+let GunMode = Computed(@() !RocketMode.get() && !BombCCIPMode.get() && !AtgmMode.get() && !isAAMMode.get())
 let shellName = @(){
   watch = [CurWeaponName, GunMode]
   size = SIZE_TO_CONTENT
@@ -754,7 +754,7 @@ let shellName = @(){
   color = baseColor
   fontSize = baseFontSize
   font = Fonts.ils31
-  text = GunMode.value ? "НПУ" : loc_checked(string.format("%s/ils_28", CurWeaponName.value))
+  text = GunMode.get() ? "НПУ" : (CurWeaponName.get() && CurWeaponName.get() != "" ? loc_checked(string.format("%s/ils_28", CurWeaponName.get())) : "")
 }
 
 let shellCnt = @() {
@@ -765,7 +765,7 @@ let shellCnt = @() {
   color = baseColor
   fontSize = baseFontSize
   font = Fonts.ils31
-  text = ShellCnt.value
+  text = ShellCnt.get()
 }
 
 
@@ -796,7 +796,7 @@ function getBurstLength(is_atgm, is_rocket, rocket_salvo, is_aam, is_bomb, bomb_
   return name
 }
 
-let burstLenStr = Computed(@() getBurstLength(AtgmMode.value, RocketMode.value, RocketsSalvo.value, isAAMMode.value, BombCCIPMode.value, BombsSalvo.value) )
+let burstLenStr = Computed(@() getBurstLength(AtgmMode.get(), RocketMode.get(), RocketsSalvo.get(), isAAMMode.get(), BombCCIPMode.get(), BombsSalvo.get()) )
 let burstLength = @(){
   watch = burstLenStr
   size = SIZE_TO_CONTENT
@@ -805,7 +805,7 @@ let burstLength = @(){
   color = baseColor
   fontSize = baseFontSize
   font = Fonts.ils31
-  text = burstLenStr.value
+  text = burstLenStr.get()
 }
 
 let selectedStation = @(){
@@ -816,7 +816,7 @@ let selectedStation = @(){
   color = baseColor
   fontSize = baseFontSize
   font = Fonts.ils31
-  text = AtgmMode.value ? loc_checked(string.format("%s/ils_28_st", CurWeaponName.value)) : isAAMMode.value ? "ППС" : RocketMode.value || BombCCIPMode.value ? "ВНЕТШ" : ""
+  text = AtgmMode.get() ? loc_checked(string.format("%s/ils_28_st", CurWeaponName.get())) : isAAMMode.get() ? "ППС" : RocketMode.get() || BombCCIPMode.get() ? "ВНЕТШ" : ""
 }
 
 let gunnerControl = {
@@ -870,9 +870,9 @@ function turretYawGrid() {
   }
 }
 
-let TurretYawVal = Computed(@() (-90.0 + TurretYaw.value * 180.0).tointeger())
-let TurretYawMarkPos = Computed(@() 50 + cvt(TurretYawVal.value, -135, 0, -38, 0))
-let TurretYawMarkSize = Computed(@() fabs(cvt(TurretYawVal.value, -135, 135, -37, 37)))
+let TurretYawVal = Computed(@() (-90.0 + TurretYaw.get() * 180.0).tointeger())
+let TurretYawMarkPos = Computed(@() 50 + cvt(TurretYawVal.get(), -135, 0, -38, 0))
+let TurretYawMarkSize = Computed(@() fabs(cvt(TurretYawVal.get(), -135, 135, -37, 37)))
 let turretYaw = {
   size = flex()
   children = [
@@ -893,7 +893,7 @@ let turretYaw = {
       font = Fonts.ils31
       fontSize = 18
       padding = const [1, 3]
-      text = TurretYawVal.value.tostring()
+      text = TurretYawVal.get().tostring()
     }
     {
       rendObj = ROBJ_VECTOR_CANVAS
@@ -910,8 +910,8 @@ let turretYaw = {
       watch = [TurretYawMarkPos, TurretYawMarkSize]
       rendObj = ROBJ_SOLID
       color = baseColor
-      pos = [pw(TurretYawMarkPos.value), ph(7)]
-      size = [pw(TurretYawMarkSize.value), baseLineWidth]
+      pos = [pw(TurretYawMarkPos.get()), ph(7)]
+      size = [pw(TurretYawMarkSize.get()), baseLineWidth]
     }
   ]
 }
@@ -919,7 +919,7 @@ let turretYaw = {
 let TAMark = @(){
   watch = AimLockValid
   size = flex()
-  children = AimLockValid.value ? [
+  children = AimLockValid.get() ? [
     {
       size = SIZE_TO_CONTENT
       pos = [pw(90), ph(17)]
@@ -935,7 +935,7 @@ let TAMark = @(){
 let operatedMark = @(){
   watch = HasOperatedShell
   size = flex()
-  children = HasOperatedShell.value ? [
+  children = HasOperatedShell.get() ? [
     {
       size = SIZE_TO_CONTENT
       pos = [pw(89), ph(35)]
@@ -948,8 +948,8 @@ let operatedMark = @(){
   ] : null
 }
 
-let OverloadVal = Computed(@() (Overload.value * 10.0).tointeger())
-let OverloadCircleAngle = Computed(@() min((Overload.value - 1.0) * 180.0, 359.0).tointeger() - 90)
+let OverloadVal = Computed(@() (Overload.get() * 10.0).tointeger())
+let OverloadCircleAngle = Computed(@() min((Overload.get() - 1.0) * 180.0, 359.0).tointeger() - 90)
 let overload = {
   size = ph(9)
   pos = [pw(4.5), ph(15)]
@@ -975,7 +975,7 @@ let overload = {
       color = whiteColor
       font = Fonts.ils31
       fontSize = baseFontSize
-      text = string.format("%.1f", OverloadVal.value / 10.0)
+      text = string.format("%.1f", OverloadVal.get() / 10.0)
     }
     @(){
       watch = OverloadCircleAngle
@@ -985,7 +985,7 @@ let overload = {
       lineWidth = 5
       fillColor = Color(0, 0, 0, 0)
       commands = [
-        [VECTOR_SECTOR, 50, 50, 40, 40, -90, OverloadCircleAngle.value]
+        [VECTOR_SECTOR, 50, 50, 40, 40, -90, OverloadCircleAngle.get()]
       ]
     }
     {
@@ -1023,7 +1023,7 @@ let zoom = {
     @(){
       watch = MfdCameraZoom
       rendObj = ROBJ_SOLID
-      size = [pw(MfdCameraZoom.value * 100.0), 4]
+      size = [pw(MfdCameraZoom.get() * 100.0), 4]
       color = baseColor
     }
   ]

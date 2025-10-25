@@ -201,7 +201,7 @@ function createRwrTarget(index, settingsIn, objectStyle) {
 
   let launchMarkSize = [0.075 * iconSizeMult, 0.15 * iconSizeMult]
   let trackMarkSize = launchMarkSize[1]
-  let attackOpacityRwr = Computed(@() (target.launch && ((CurrentTime.value * 4.0).tointeger() % 2) == 0 ? 0.0 : 1.0))
+  let attackOpacityRwr = Computed(@() (target.launch && ((CurrentTime.get() * 4.0).tointeger() % 2) == 0 ? 0.0 : 1.0))
   let attack = target.track || target.launch ? @() {
     watch = [ageOpacity, attackOpacityRwr]
     opacity = ageOpacity.get() * attackOpacityRwr.get()

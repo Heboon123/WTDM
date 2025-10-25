@@ -1,20 +1,20 @@
 from "%rGui/globals/ui_library.nut" import *
 
-let compass = require("compass.nut")
+let compass = require("%rGui/compass.nut")
 let { format } = require("string")
 let { PI, fabs, sqrt, lerpClamped } = require("%sqstd/math.nut")
 let { get_mission_time } = require("mission")
-let { CompassValue } = require("compassState.nut")
-let { greenColor, greenColorGrid } = require("style/airHudStyle.nut")
+let { CompassValue } = require("%rGui/compassState.nut")
+let { greenColor, greenColorGrid } = require("%rGui/style/airHudStyle.nut")
 let { fov, gunStatesFirstNumber, gunStatesSecondNumber, gunStatesFirstRow,
   gunStatesSecondRow, artilleryType, showReloadedSignalFirstRow, showReloadedSignalSecondRow
-} = require("shipState.nut")
-let { IsRadarVisible } = require("radarState.nut")
+} = require("%rGui/shipState.nut")
+let { IsRadarVisible } = require("%rGui/radarState.nut")
 let fcsState = require("%rGui/fcsState.nut")
 let { actionBarPos, isActionBarCollapsed } = require("%rGui/hud/actionBarState.nut")
 let { eventbus_send } = require("eventbus")
-let { drawArrow } = require("fcsComponent.nut")
-let { FIRST_ROW_SIGNAL_TRIGGER, SECOND_ROW_SIGNAL_TRIGGER, gunState } = require("shipStateConsts.nut")
+let { drawArrow } = require("%rGui/fcsComponent.nut")
+let { FIRST_ROW_SIGNAL_TRIGGER, SECOND_ROW_SIGNAL_TRIGGER, gunState } = require("%rGui/shipStateConsts.nut")
 
 let redColor = Color(255, 109, 108, 255)
 let greyColor = Color(15, 25, 25, 255)
@@ -66,7 +66,7 @@ showReloadedSignalSecondRow.subscribe(@(val) val ? anim_start(SECOND_ROW_SIGNAL_
 
 let progressBar = @() {
   watch = [fcsState.OpticsWidth, fcsState.StaticFov]
-  pos = [sw(52) + fcsState.OpticsWidth.value, fcsState.StaticFov.value > 6. ? sh(56.5) : sh(55)]
+  pos = [sw(52) + fcsState.OpticsWidth.get(), fcsState.StaticFov.get() > 6. ? sh(56.5) : sh(55)]
   children = {
     halign = ALIGN_RIGHT
     children = {
@@ -75,14 +75,14 @@ let progressBar = @() {
           watch = fcsState.CalcProgress
           size = flex()
           opacity = 0.25
-          fValue = fcsState.CalcProgress.value
+          fValue = fcsState.CalcProgress.get()
           rendObj = ROBJ_PROGRESS_LINEAR
           fgColor = rangefinderProgressBarColor1
           bgColor = rangefinderProgressBarColor2
         }
         @() {
           watch = fcsState.IsTargetDataAvailable
-          isHidden = !fcsState.IsTargetDataAvailable.value
+          isHidden = !fcsState.IsTargetDataAvailable.get()
           size = const [SIZE_TO_CONTENT, sh(2)]
           padding = const [0, hdpx(5)]
           color = Color(0, 0, 0, 255)
@@ -93,7 +93,7 @@ let progressBar = @() {
         }
         @() {
           watch = fcsState.IsTargetDataAvailable
-          isHidden = fcsState.IsTargetDataAvailable.value
+          isHidden = fcsState.IsTargetDataAvailable.get()
           size = const [SIZE_TO_CONTENT, sh(2)]
           padding = const [0, hdpx(5)]
           color = Color(0, 0, 0, 255)
@@ -194,7 +194,7 @@ function drawForestallIndicator(
           pos = [forestallX - circleSize * 0.35, forestallY - circleSize * 0.35]
           color = greenColorGrid
           fillColor =  Color(0, 0, 0, 0)
-          commands = [[VECTOR_SECTOR, 50, 50, 50, 50, -90, -90 + fcsState.CalcProgress.value * 360]]})
+          commands = [[VECTOR_SECTOR, 50, 50, 50, 50, -90, -90 + fcsState.CalcProgress.get() * 360]]})
   }
   if (showHorizontal) {
     indicatorElements.append(drawArrow(forestallX, sh(50), 0, -1, isYawMatch ? greenColorGrid : redColor))
@@ -224,17 +224,17 @@ let forestallIndicator = @() {
     fcsState.IsForestallMarkerVisible
   ]
   children = drawForestallIndicator(
-    fcsState.ForestallPosX.value,
-    fcsState.ForestallPosY.value,
-    fcsState.TargetPosX.value,
-    fcsState.TargetPosY.value,
-    fcsState.ForestallPitchDelta.value * PI / fov.value,
-    (CompassValue.value - fcsState.ForestallAzimuth.value) * PI / fov.value,
-    fcsState.IsBinocular.value && fcsState.IsHorizontalAxisVisible.value,
-    fcsState.IsBinocular.value && fcsState.IsVerticalAxisVisible.value,
-    fcsState.IsForestallMarkerVisible.value,
-    !fcsState.IsBinocular.value,
-    fcsState.IsBinocular.value)
+    fcsState.ForestallPosX.get(),
+    fcsState.ForestallPosY.get(),
+    fcsState.TargetPosX.get(),
+    fcsState.TargetPosY.get(),
+    fcsState.ForestallPitchDelta.get() * PI / fov.get(),
+    (CompassValue.get() - fcsState.ForestallAzimuth.get()) * PI / fov.get(),
+    fcsState.IsBinocular.get() && fcsState.IsHorizontalAxisVisible.get(),
+    fcsState.IsBinocular.get() && fcsState.IsVerticalAxisVisible.get(),
+    fcsState.IsForestallMarkerVisible.get(),
+    !fcsState.IsBinocular.get(),
+    fcsState.IsBinocular.get())
 }
 
 function mkFilledCircle(size, color) {
@@ -442,16 +442,16 @@ function mkWeaponsStatus(size, gunStatesNumber, gunStatesArray, icon, reloadedSi
 function weaponsStatus(){
   let gap = hdpx(11)
 
-  let artType = artilleryType.value
+  let artType = artilleryType.get()
   let firstRowIcon = artType == TRIGGER_GROUP_PRIMARY     ? "!ui/gameuiskin#artillery_weapon_state_indicator.svg"
                    : artType == TRIGGER_GROUP_SECONDARY   ? "!ui/gameuiskin#artillery_secondary_weapon_state_indicator.svg"
                    : artType == TRIGGER_GROUP_MACHINE_GUN ? "!ui/gameuiskin#machine_gun_weapon_state_indicator.svg"
                    : "!ui/gameuiskin#artillery_weapon_state_indicator.svg"
 
-  let hasSecondRow = gunStatesSecondNumber.value > 0
-  local childrens = [mkWeaponsStatus(firstGunsRowHeight, gunStatesFirstNumber.value, gunStatesFirstRow, firstRowIcon, FIRST_ROW_SIGNAL_TRIGGER)]
+  let hasSecondRow = gunStatesSecondNumber.get() > 0
+  local childrens = [mkWeaponsStatus(firstGunsRowHeight, gunStatesFirstNumber.get(), gunStatesFirstRow, firstRowIcon, FIRST_ROW_SIGNAL_TRIGGER)]
   if (hasSecondRow) {
-    childrens.append(mkWeaponsStatus(secondGunsRowHeight, gunStatesSecondNumber.value, gunStatesSecondRow, "!ui/gameuiskin#artillery_secondary_weapon_state_indicator.svg", SECOND_ROW_SIGNAL_TRIGGER))
+    childrens.append(mkWeaponsStatus(secondGunsRowHeight, gunStatesSecondNumber.get(), gunStatesSecondRow, "!ui/gameuiskin#artillery_secondary_weapon_state_indicator.svg", SECOND_ROW_SIGNAL_TRIGGER))
   }
 
   let height = hasSecondRow ? firstGunsRowHeight + secondGunsRowHeight + gap : firstGunsRowHeight
@@ -469,9 +469,9 @@ function weaponsStatus(){
     function onRecalcLayout(_initial, elem) {
       let x = elem.getScreenPosX()
       let y = elem.getScreenPosY()
-      if (shipFireControlCachedPos.value[0] == x && shipFireControlCachedPos.value[1] == y)
+      if (shipFireControlCachedPos.get()[0] == x && shipFireControlCachedPos.get()[1] == y)
         return
-      shipFireControlCachedPos([x, y])
+      shipFireControlCachedPos.set([x, y])
     }
   }
 }
@@ -480,10 +480,10 @@ function weaponsStatus(){
 let root = @() {
   watch = [fcsState.IsForestallVisible, fcsState.IsBinocular, IsRadarVisible, fcsState.IsTargetSelected, fcsState.IsAutoAim]
   children = [
-    !IsRadarVisible.value ? compassComponent : null
-    fcsState.IsForestallVisible.value ? forestallIndicator
-        : (fcsState.IsBinocular.value ? crosshairZeroMark : null)
-    fcsState.IsBinocular.value && fcsState.IsTargetSelected.value && !fcsState.IsAutoAim.value ? progressBar : null
+    !IsRadarVisible.get() ? compassComponent : null
+    fcsState.IsForestallVisible.get() ? forestallIndicator
+        : (fcsState.IsBinocular.get() ? crosshairZeroMark : null)
+    fcsState.IsBinocular.get() && fcsState.IsTargetSelected.get() && !fcsState.IsAutoAim.get() ? progressBar : null
   ]
 }
 
@@ -492,7 +492,7 @@ return @() {
   halign = ALIGN_LEFT
   valign = ALIGN_TOP
   size = const [sw(100), SIZE_TO_CONTENT]
-  children = fcsState.IsVisible.value ? [root, weaponsStatus]
-    : fcsState.IsBinocular.value ? [crosshairZeroMark, weaponsStatus]
+  children = fcsState.IsVisible.get() ? [root, weaponsStatus]
+    : fcsState.IsBinocular.get() ? [crosshairZeroMark, weaponsStatus]
     : weaponsStatus
 }

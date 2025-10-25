@@ -24,10 +24,10 @@ let lastRequestTime = mkWatched(persist, "lastRequestTime", -1)
 let isDeveloperMode = mkWatched(persist, "isDeveloperMode", false)
 
 function reset() {
-  curData(null)
-  validListsMask(0)
-  lastUpdatetTime(-1)
-  lastRequestTime(-1)
+  curData.set(null)
+  validListsMask.set(0)
+  lastUpdatetTime.set(-1)
+  lastRequestTime.set(-1)
 }
 
 function pushStatusChangedEvent(changedListsMask) {
@@ -42,27 +42,27 @@ function canRefreshData(refreshDelay = null) {
   let refreshMinTime = secondsToMilliseconds(refreshMinTimeSec)
   refreshDelay = refreshDelay ?? refreshMinTime
   let requestTimeoutMsec = refreshMinTime * MULTIPLY_REQUEST_TIMEOUT_BY_REFRESH
-  if (lastRequestTime.value > lastUpdatetTime.value
-      && lastRequestTime.value + requestTimeoutMsec > get_time_msec())
+  if (lastRequestTime.get() > lastUpdatetTime.get()
+      && lastRequestTime.get() + requestTimeoutMsec > get_time_msec())
     return false
-  if (lastUpdatetTime.value > 0 && lastUpdatetTime.value + refreshDelay > get_time_msec())
+  if (lastUpdatetTime.get() > 0 && lastUpdatetTime.get() + refreshDelay > get_time_msec())
     return false
   return true
 }
 
 function updateCurData(newData) {
-  let data = curData.value ?? {}
+  let data = curData.get() ?? {}
   foreach (name, value in newData)
     data[name] <- value
 
-  curData(data)
+  curData.set(data)
 }
 
 function onGlobalStatusReceived(newData) {
-  lastUpdatetTime(get_time_msec())
+  lastUpdatetTime.set(get_time_msec())
   local changedListsMask = 0
   foreach (gsType in ::g_ww_global_status_type.types)
-    if (!u.isEqual(gsType.getData(curData.value), gsType.getData(newData)))
+    if (!u.isEqual(gsType.getData(curData.get()), gsType.getData(newData)))
       changedListsMask = changedListsMask | gsType.typeMask
 
   if (!changedListsMask)
@@ -73,18 +73,18 @@ function onGlobalStatusReceived(newData) {
       changedListsMask = changedListsMask | gsType.typeMask
 
   updateCurData(newData)
-  validListsMask(validListsMask.value & ~changedListsMask)
+  validListsMask.set(validListsMask.get() & ~changedListsMask)
   pushStatusChangedEvent(changedListsMask)
 }
 
 
 function actionWithGlobalStatusRequest(actionName, requestBlk = null, taskOptions = null, onSuccessCb = null) {
-  if (isDeveloperMode.value) { 
+  if (isDeveloperMode.get()) { 
     actionName = "cln_ww_global_status"
     requestBlk = null
   }
 
-  lastRequestTime(get_time_msec())
+  lastRequestTime.set(get_time_msec())
   let cb = Callback(function(data) {
     onGlobalStatusReceived(data)
     if (onSuccessCb)
@@ -117,7 +117,7 @@ function refreshGlobalStatusData(refreshDelay = null) {
   if (!canRefreshData(refreshDelay))
     return
 
-  if (isDeveloperMode.value) 
+  if (isDeveloperMode.get()) 
     return actionWithGlobalStatusRequest("cln_ww_global_status")
 
   let requestBlk = DataBlock()
@@ -134,8 +134,8 @@ function refreshGlobalStatusData(refreshDelay = null) {
 return {
   refreshGlobalStatusData
   actionWithGlobalStatusRequest
-  getValidGlobalStatusListMask = @() validListsMask.value
-  setValidGlobalStatusListMask = @(mask) validListsMask(mask)
-  getGlobalStatusData = @() curData.value
-  setDeveloperMode = @(p) isDeveloperMode(p)
+  getValidGlobalStatusListMask = @() validListsMask.get()
+  setValidGlobalStatusListMask = @(mask) validListsMask.set(mask)
+  getGlobalStatusData = @() curData.get()
+  setDeveloperMode = @(p) isDeveloperMode.set(p)
 }

@@ -1,246 +1,254 @@
-{
-  "root": {
-    "on_click": "goBack",
-    "blur": {},
-    "blur_foreground": {},
-    "frame": {
-      "id": "wnd_frame",
-      "pos": "50%pw-50%w, 1@minYposWindow + 50%(ph-h-1@minYposWindow-1@slotbarHeight-1@slotbarOffset-1@slotbarTop)",
-      "size": "4@framePadding + 0.02*@scrn_tgt + 0.32@sf + 4@slot_width, 420*@sf/@pf_outdated",
-      "position": "relative",
-      "class": "wnd",
-      "css-hier-invalidate": "yes",
-      "input-transparent": "no",
-      "frame_header": {
-        "activeText": {
-          "id": "wnd_title",
-          "caption": "yes",
-          "text": "#shop/slotbarPresets/title"
-        },
-        "Button_close": {
-          "id": "btn_back"
-        }
-      },
-      "tdiv": {
-        "id": "wnd_content",
-        "size": "fw, ph - 1@frameFooterHeight",
-        "chapterListPlace": {
-          "id": "chapter_place",
-          "height": "ph",
-          "flow": "vertical",
-          "tdiv": [
-            {
-              "id": "div_before_chapters_list",
-              "width": "pw",
-              "display": "hide"
-            },
-            {
-              "id": "chapters_list_place",
-              "size": "pw, fh",
-              "flow": "vertical",
-              "popupFilter": {
-                "margin-left": "1@buttonMargin"
-              },
-              "tdiv": {
-                "id": "listbox_filter_holder",
-                "width": "pw",
-                "pos": "1@blockInterval, 0",
-                "position": "relative"
-              },
-              "listbox": {
-                "id": "items_list",
-                "size": "pw, fh",
-                "flow": "vertical",
-                "move-only-hover": "yes",
-                "navigatorShortcuts": "yes",
-                "on_select": "onItemSelect",
-                "_on_dbl_click": "onItemDblClick"
-              },
-              "textAreaCentered": {
-                "id": "items_list_msg",
-                "width": "80%pw",
-                "pos": "50%pw-50%w, 40%ph-40%h",
-                "position": "absolute",
-                "hideEmptyText": "yes",
-                "text": ""
-              },
-              "animated_wait_icon": {
-                "id": "items_list_wait_icon",
-                "pos": "50%pw-50%w, 40%ph-40%h",
-                "position": "absolute",
-                "background-rotation": "0",
-                "display": "hide"
-              }
-            }
-          ]
-        },
-        "chapterSeparator": {
-          "margin": "1@blockInterval, 0"
-        },
-        "tdiv": {
-          "id": "item_desc",
-          "flow": "vertical",
-          "size": "fw, ph",
-          "overflow-y": "auto",
-          "total-input-transparent": "yes",
-          "text": {
-            "left": "(pw-w)/2",
-            "id": "item_name",
-            "position": "relative",
-            "style": "font:@fontMedium;color:@titleTextColor;",
-            "textHide": "yes",
-            "text": ""
-          },
-          "tdiv": [
-            {
-              "id": "mission_desc",
-              "size": "pw,ph",
-              "position": "absolute",
-              "flow": "vertical"
-            },
-            {
-              "id": "chapter_include_block",
-              "size": "pw, fh",
-              "flow": "vertical",
-              "display": "hide",
-              "img": {
-                "id": "item_desc_header_img",
-                "width": "pw",
-                "height": "w*128/1024",
-                "background-repeat": "expand",
-                "background-image": ""
-              },
-              "tdiv": [
-                {
-                  "id": "div_before_text",
-                  "width": "pw",
-                  "flow": "h-flow",
-                  "flow-align": "center"
-                },
-                {
-                  "height": "fh",
-                  "width": "pw",
-                  "overflow-y": "auto",
-                  "flow": "vertical",
-                  "scrollbarShortcuts": "yes",
-                  "total-input-transparent": "yes",
-                  "textarea": {
-                    "id": "item_desc_text",
-                    "width": "pw",
-                    "chapterTextAreaStyle": "yes",
-                    "hideEmptyText": "yes",
-                    "text": "",
-                    "font-bold": "@fontMedium"
-                  },
-                  "tdiv": {
-                    "id": "session_results",
-                    "width": "pw",
-                    "padding-top": "0.01@scrn_tgt",
-                    "flow": "vertical",
-                    "display": "hide",
-                    "textarea": {
-                      "chapterTextAreaStyle": "yes",
-                      "font-bold": "@fontMedium",
-                      "text": "#mainmenu/sessionResults"
-                    },
-                    "tdiv": {
-                      "id": "results_table_place",
-                      "width": "pw",
-                      "flow": "vertical"
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "id": "after_desc_block",
-              "width": "pw"
-            },
-            {
-              "id": "item_misc",
-              "flow": "vertical"
-            }
-          ]
-        }
-      },
-      "navBar": {
-        "navLeft": {
-          "Button_text": [
-            {
-              "id": "btn_preset_create",
-              "text": "#msgbox/btn_add",
-              "on_click": "onBtnPresetAdd",
-              "btnName": "L3",
-              "ButtonImg": {}
-            },
-            {
-              "id": "btn_preset_copy",
-              "text": "#msgbox/btn_copy",
-              "on_click": "onBtnPresetCopy",
-              "btnName": "LT",
-              "ButtonImg": {}
-            },
-            {
-              "id": "btn_preset_rename",
-              "text": "#msgbox/btn_rename",
-              "on_click": "onBtnPresetRename",
-              "btnName": "Y",
-              "ButtonImg": {}
-            },
-            {
-              "id": "btn_preset_move_up",
-              "text": "",
-              "on_click": "onBtnPresetMoveUp",
-              "tooltip": "#msgbox/btn_move_up",
-              "class": "image",
-              "btnName": "LB",
-              "img": {
-                "background-image": "#ui/gameuiskin#spinnerListBox_arrow_up.svg"
-              },
-              "ButtonImg": {}
-            },
-            {
-              "id": "btn_preset_move_dn",
-              "text": "",
-              "on_click": "onBtnPresetMoveDown",
-              "tooltip": "#msgbox/btn_move_down",
-              "class": "image",
-              "btnName": "RB",
-              "img": {
-                "background-image": "#ui/gameuiskin#spinnerListBox_arrow_up.svg",
-                "rotation": "180"
-              },
-              "ButtonImg": {}
-            },
-            {
-              "id": "btn_preset_delete",
-              "text": "#msgbox/btn_delete",
-              "btnName": "R3",
-              "on_click": "onBtnPresetDelete",
-              "ButtonImg": {}
-            }
-          ]
-        },
-        "navRight": {
-          "Button_text": [
-            {
-              "id": "btn_preset_load",
-              "text": "#mainmenu/btnApply",
-              "btnName": "X",
-              "on_click": "onBtnPresetLoad",
-              "ButtonImg": {}
-            },
-            {
-              "id": "btn_preset_select",
-              "text": "#mainmenu/btnSelect",
-              "btnName": "A",
-              "on_click": "onBtnPresetSelect",
-              "display": "hide",
-              "ButtonImg": {}
-            }
-          ]
-        }
-      }
-    }
-  }
+root {
+	on_click:t = "goBack"
+	blur {
+
+	}
+	blur_foreground {
+
+	}
+	frame {
+		id:t = "wnd_frame"
+		pos:t = "50%pw-50%w, 1@minYposWindow + 50%(ph-h-1@minYposWindow-1@slotbarHeight-1@slotbarOffset-1@slotbarTop)"
+		size:t = "4@framePadding + 0.02*@scrn_tgt + 0.32@sf + 4@slot_width, 420*@sf/@pf_outdated"
+		position:t = "relative"
+		class:t = "wnd"
+		css-hier-invalidate:t = "yes"
+		input-transparent:t = "no"
+		frame_header {
+			activeText {
+				id:t = "wnd_title"
+				caption:t = "yes"
+				text:t = "#shop/slotbarPresets/title"
+			}
+			Button_close {
+				id:t = "btn_back"
+			}
+		}
+		tdiv {
+			id:t = "wnd_content"
+			size:t = "fw, ph - 1@frameFooterHeight"
+			chapterListPlace {
+				id:t = "chapter_place"
+				height:t = "ph"
+				flow:t = "vertical"
+				tdiv {
+					id:t = "div_before_chapters_list"
+					width:t = "pw"
+					display:t = "hide"
+				}
+				tdiv {
+					id:t = "chapters_list_place"
+					size:t = "pw, fh"
+					flow:t = "vertical"
+					popupFilter {
+						margin-left:t = "1@buttonMargin"
+					}
+					tdiv {
+						id:t = "listbox_filter_holder"
+						width:t = "pw"
+						pos:t = "1@blockInterval, 0"
+						position:t = "relative"
+					}
+					listbox {
+						id:t = "items_list"
+						size:t = "pw, fh"
+						flow:t = "vertical"
+						move-only-hover:t = "yes"
+						navigatorShortcuts:t = "yes"
+						on_select:t = "onItemSelect"
+						_on_dbl_click:t = "onItemDblClick"
+					}
+					textAreaCentered {
+						id:t = "items_list_msg"
+						width:t = "80%pw"
+						pos:t = "50%pw-50%w, 40%ph-40%h"
+						position:t = "absolute"
+						hideEmptyText:t = "yes"
+						text:t = ""
+					}
+					animated_wait_icon {
+						id:t = "items_list_wait_icon"
+						pos:t = "50%pw-50%w, 40%ph-40%h"
+						position:t = "absolute"
+						background-rotation:t = "0"
+						display:t = "hide"
+					}
+				}
+			}
+			chapterSeparator {
+				margin:t = "1@blockInterval, 0"
+			}
+			tdiv {
+				id:t = "item_desc"
+				flow:t = "vertical"
+				size:t = "fw, ph"
+				overflow-y:t = "auto"
+				total-input-transparent:t = "yes"
+				text {
+					left:t = "(pw-w)/2"
+					id:t = "item_name"
+					position:t = "relative"
+					style:t = "font:@fontMedium;color:@titleTextColor;"
+					textHide:t = "yes"
+					text:t = ""
+				}
+				tdiv {
+					id:t = "mission_desc"
+					size:t = "pw,ph"
+					position:t = "absolute"
+					flow:t = "vertical"
+				}
+				tdiv {
+					id:t = "chapter_include_block"
+					size:t = "pw, fh"
+					flow:t = "vertical"
+					display:t = "hide"
+					img {
+						id:t = "item_desc_header_img"
+						width:t = "pw"
+						height:t = "w*128/1024"
+						background-repeat:t = "expand"
+						background-image:t = ""
+					}
+					tdiv {
+						id:t = "div_before_text"
+						width:t = "pw"
+						flow:t = "h-flow"
+						flow-align:t = "center"
+					}
+					tdiv {
+						height:t = "fh"
+						width:t = "pw"
+						overflow-y:t = "auto"
+						flow:t = "vertical"
+						scrollbarShortcuts:t = "yes"
+						total-input-transparent:t = "yes"
+						textarea {
+							id:t = "item_desc_text"
+							width:t = "pw"
+							chapterTextAreaStyle:t = "yes"
+							hideEmptyText:t = "yes"
+							text:t = ""
+							font-bold:t = "@fontMedium"
+						}
+						tdiv {
+							id:t = "session_results"
+							width:t = "pw"
+							padding-top:t = "0.01@scrn_tgt"
+							flow:t = "vertical"
+							display:t = "hide"
+							textarea {
+								chapterTextAreaStyle:t = "yes"
+								font-bold:t = "@fontMedium"
+								text:t = "#mainmenu/sessionResults"
+							}
+							tdiv {
+								id:t = "results_table_place"
+								width:t = "pw"
+								flow:t = "vertical"
+							}
+						}
+					}
+				}
+				tdiv {
+					id:t = "after_desc_block"
+					width:t = "pw"
+				}
+				tdiv {
+					id:t = "item_misc"
+					flow:t = "vertical"
+				}
+			}
+		}
+		navBar {
+			navLeft {
+				Button_text {
+					id:t = "btn_preset_create"
+					text:t = "#msgbox/btn_add"
+					on_click:t = "onBtnPresetAdd"
+					btnName:t = "L3"
+					ButtonImg {
+
+					}
+				}
+				Button_text {
+					id:t = "btn_preset_copy"
+					text:t = "#msgbox/btn_copy"
+					on_click:t = "onBtnPresetCopy"
+					btnName:t = "LT"
+					ButtonImg {
+
+					}
+				}
+				Button_text {
+					id:t = "btn_preset_rename"
+					text:t = "#msgbox/btn_rename"
+					on_click:t = "onBtnPresetRename"
+					btnName:t = "Y"
+					ButtonImg {
+
+					}
+				}
+				Button_text {
+					id:t = "btn_preset_move_up"
+					text:t = ""
+					on_click:t = "onBtnPresetMoveUp"
+					tooltip:t = "#msgbox/btn_move_up"
+					class:t = "image"
+					btnName:t = "LB"
+					img {
+						background-image:t = "#ui/gameuiskin#spinnerListBox_arrow_up.svg"
+					}
+					ButtonImg {
+
+					}
+				}
+				Button_text {
+					id:t = "btn_preset_move_dn"
+					text:t = ""
+					on_click:t = "onBtnPresetMoveDown"
+					tooltip:t = "#msgbox/btn_move_down"
+					class:t = "image"
+					btnName:t = "RB"
+					img {
+						background-image:t = "#ui/gameuiskin#spinnerListBox_arrow_up.svg"
+						rotation:t = "180"
+					}
+					ButtonImg {
+
+					}
+				}
+				Button_text {
+					id:t = "btn_preset_delete"
+					text:t = "#msgbox/btn_delete"
+					btnName:t = "R3"
+					on_click:t = "onBtnPresetDelete"
+					ButtonImg {
+
+					}
+				}
+			}
+			navRight {
+				Button_text {
+					id:t = "btn_preset_load"
+					text:t = "#mainmenu/btnApply"
+					btnName:t = "X"
+					on_click:t = "onBtnPresetLoad"
+					ButtonImg {
+
+					}
+				}
+				Button_text {
+					id:t = "btn_preset_select"
+					text:t = "#mainmenu/btnSelect"
+					btnName:t = "A"
+					on_click:t = "onBtnPresetSelect"
+					display:t = "hide"
+					ButtonImg {
+
+					}
+				}
+			}
+		}
+	}
 }

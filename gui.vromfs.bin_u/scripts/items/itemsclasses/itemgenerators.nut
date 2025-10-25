@@ -14,7 +14,7 @@ let ItemLifetimeModifier = require("%scripts/items/itemLifetimeModifier.nut")
 let { get_game_settings_blk } = require("blkGetters")
 let { userIdInt64 } = require("%scripts/user/profileStates.nut")
 let { getItemGenerator, registerItemGeneratorClass } = require("%scripts/items/itemGeneratorsManager.nut")
-let { findItemById } = require("%scripts/items/itemsManager.nut")
+let { findItemById } = require("%scripts/items/itemsManagerModule.nut")
 let { getExtInventoryUpdateTime } = require("%scripts/items/itemsManagerState.nut")
 
 let ItemGenerator = class {
@@ -111,7 +111,7 @@ let ItemGenerator = class {
       }
       if (hasAdditionalRecipes) {
         local minIdx = this._exchangeRecipes[0].idx
-        set_rnd_seed(userIdInt64.value + this.id)
+        set_rnd_seed(userIdInt64.get() + this.id)
         this._exchangeRecipes = shuffle(this._exchangeRecipes)
         foreach (recipe in this._exchangeRecipes)
           recipe.idx = minIdx++

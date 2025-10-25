@@ -1,0 +1,785 @@
+type:t = "radar"
+name:t = "AN/APG-78"
+transivers {
+	GTM {
+		sideLobesAttenuation:r = -20
+		power:r = 100
+		band:i = 10
+		rcs:r = 40
+		range:r = 16000
+		rangeMax:r = 16000
+		multipathEffect:p4 = 0, 1, 60, 0
+		antenna {
+			azimuth {
+				angleHalfSens:r = 0.5
+				sideLobesSensitivity:r = -50
+			}
+			elevation {
+				angleHalfSens:r = 20
+				sideLobesSensitivity:r = -50
+			}
+		}
+	}
+	ATM {
+		sideLobesAttenuation:r = -20
+		power:r = 100
+		band:i = 10
+		rcs:r = 3
+		range:r = 12600
+		rangeMax:r = 16000
+		multipathEffect:p4 = 0, 1, 60, 0
+		antenna {
+			azimuth {
+				angleHalfSens:r = 0.5
+				sideLobesSensitivity:r = -50
+			}
+			elevation {
+				angleHalfSens:r = 20
+				sideLobesSensitivity:r = -50
+			}
+		}
+	}
+	MTI {
+		sideLobesAttenuation:r = -20
+		power:r = 200
+		band:i = 10
+		rcs:r = 40
+		range:r = 16000
+		rangeMax:r = 16000
+		timeGainControl:b = true
+		multipathEffect:p4 = 0, 1, 60, 0
+		antenna {
+			azimuth {
+				angleHalfSens:r = 0.5
+				sideLobesSensitivity:r = -50
+			}
+			elevation {
+				angleHalfSens:r = 20
+				sideLobesSensitivity:r = -50
+			}
+		}
+	}
+}
+scanPatterns {
+	searchWideATM {
+		type:t = "cylinder"
+		azimuthLimits:p2 = -180, 180
+		elevationLimits:p2 = -25, 25
+		yawStabLimit:r = 180
+		pitchStabLimit:r = 25
+		rollStabLimit:r = 20
+		period:r = 6
+		barHeight:r = 20
+		barsCount:i = 1
+		rowMajor:b = true
+		preciseMinor:b = true
+	}
+	searchMediumATM {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -180, 180
+		elevationLimits:p2 = -25, 25
+		azimuthLimits:p2 = -180, 180
+		yawStabLimit:r = 180
+		pitchStabLimit:r = 25
+		rollStabLimit:r = 20
+		period:r = 3
+		width:r = 90
+		barHeight:r = 20
+		barsCount:i = 1
+		rowMajor:b = true
+		preciseMinor:b = true
+	}
+	searchNarrowATM {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -180, 180
+		elevationLimits:p2 = -25, 25
+		yawStabLimit:r = 180
+		pitchStabLimit:r = 25
+		rollStabLimit:r = 20
+		period:r = 1.5
+		width:r = 45
+		barHeight:r = 20
+		barsCount:i = 1
+		rowMajor:b = true
+		preciseMinor:b = true
+	}
+	searchZoomATM {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -180, 180
+		elevationLimits:p2 = -25, 25
+		yawStabLimit:r = 180
+		pitchStabLimit:r = 25
+		rollStabLimit:r = 20
+		period:r = 0.75
+		width:r = 22.5
+		barHeight:r = 20
+		barsCount:i = 1
+		rowMajor:b = true
+		preciseMinor:b = true
+	}
+	searchWideGTM {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -45, 45
+		elevationLimits:p2 = -25, 25
+		pitchStabLimit:r = 25
+		rollStabLimit:r = 20
+		period:r = 1.5
+		width:r = 45
+		barHeight:r = 20
+		barsCount:i = 1
+		rowMajor:b = true
+		preciseMinor:b = true
+	}
+	searchMediumGTM {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -45, 45
+		elevationLimits:p2 = -25, 25
+		pitchStabLimit:r = 25
+		rollStabLimit:r = 20
+		period:r = 0.75
+		width:r = 22.5
+		barHeight:r = 20
+		barsCount:i = 1
+		rowMajor:b = true
+		preciseMinor:b = true
+	}
+	searchNarrowGTM {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -45, 45
+		elevationLimits:p2 = -25, 25
+		pitchStabLimit:r = 25
+		rollStabLimit:r = 20
+		period:r = 0.5
+		width:r = 15
+		barHeight:r = 20
+		barsCount:i = 1
+		rowMajor:b = true
+		preciseMinor:b = true
+	}
+	searchZoomGTM {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -45, 45
+		elevationLimits:p2 = -25, 25
+		pitchStabLimit:r = 25
+		rollStabLimit:r = 20
+		period:r = 0.25
+		width:r = 7.5
+		barHeight:r = 20
+		barsCount:i = 1
+		rowMajor:b = true
+		preciseMinor:b = true
+	}
+	searchWideMTI {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -45, 45
+		elevationLimits:p2 = -25, 25
+		pitchStabLimit:r = 25
+		rollStabLimit:r = 20
+		period:r = 1.5
+		width:r = 45
+		barHeight:r = 20
+		barsCount:i = 1
+		rowMajor:b = true
+		preciseMinor:b = true
+	}
+	searchMediumMTI {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -45, 45
+		elevationLimits:p2 = -25, 25
+		pitchStabLimit:r = 25
+		rollStabLimit:r = 20
+		period:r = 0.75
+		width:r = 22.5
+		barHeight:r = 20
+		barsCount:i = 1
+		rowMajor:b = true
+		preciseMinor:b = true
+	}
+	searchNarrowMTI {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -45, 45
+		elevationLimits:p2 = -25, 25
+		pitchStabLimit:r = 25
+		rollStabLimit:r = 20
+		period:r = 0.5
+		width:r = 15
+		barHeight:r = 20
+		barsCount:i = 1
+		rowMajor:b = true
+		preciseMinor:b = true
+	}
+	searchZoomMTI {
+		type:t = "pyramide"
+		azimuthLimits:p2 = -45, 45
+		elevationLimits:p2 = -25, 25
+		pitchStabLimit:r = 25
+		rollStabLimit:r = 20
+		period:r = 0.25
+		width:r = 7.5
+		barHeight:r = 20
+		barsCount:i = 1
+		rowMajor:b = true
+		preciseMinor:b = true
+	}
+}
+signals {
+	GTM {
+		groundClutter:b = false
+		groundMultipath:b = false
+		aircraftAsTarget:b = false
+		groundVehiclesAsTarget:b = true
+		angularAccuracy:r = 0
+		distanceAccuracy:r = 1
+		distance {
+			presents:b = true
+			minValue:r = 500
+			maxValue:r = 16000
+			width:r = 15
+		}
+	}
+	ATM {
+		groundClutter:b = false
+		groundMultipath:b = false
+		aircraftAsTarget:b = true
+		groundVehiclesAsTarget:b = false
+		angularAccuracy:r = 0
+		distanceAccuracy:r = 1
+		distance {
+			presents:b = true
+			minValue:r = 500
+			maxValue:r = 16000
+			width:r = 15
+		}
+	}
+	MTI {
+		groundClutter:b = false
+		aircraftAsTarget:b = true
+		groundVehiclesAsTarget:b = true
+		angularAccuracy:r = 0
+		distanceAccuracy:r = 1
+		absDopplerSpeed:b = true
+		mainBeamDopplerSpeed:b = true
+		distance {
+			presents:b = true
+			minValue:r = 500
+			maxValue:r = 16000
+			width:r = 15
+		}
+		dopplerSpeed {
+			presents:b = true
+			minValue:r = 10
+			maxValue:r = 1000
+			signalWidthMin:r = 5
+			width:r = 0
+		}
+	}
+}
+scanPatternSets {
+	GTM {
+		scanPattern1:t = "searchWideGTM"
+		scanPattern2:t = "searchMediumGTM"
+		scanPattern3:t = "searchNarrowGTM"
+		scanPattern4:t = "searchZoomGTM"
+	}
+	MTI {
+		scanPattern1:t = "searchWideMTI"
+		scanPattern2:t = "searchMediumMTI"
+		scanPattern3:t = "searchNarrowMTI"
+		scanPattern4:t = "searchZoomMTI"
+	}
+	ATM {
+		scanPattern1:t = "searchWideATM"
+		scanPattern2:t = "searchMediumATM"
+		scanPattern3:t = "searchNarrowATM"
+		scanPattern4:t = "searchZoomATM"
+	}
+}
+scopeRangeSets {
+	search {
+		range1:r = 16000
+		range2:r = 8000
+		range3:r = 4000
+	}
+}
+fsms {
+	main {
+		stateInit:t = "init"
+		actionsTemplates {
+			init {
+				setEnabled {
+					value:b = false
+				}
+				setCenterAzimuth {
+					source:t = "constant"
+					value:r = 0
+				}
+				setCenterElevation {
+					source:t = "constant"
+					value:r = 0
+				}
+				setScopeRangeSet {
+					scopeRangeSet:t = "search"
+				}
+				setTransiver {
+					transiver:t = "GTM"
+				}
+				setSignal {
+					signal:t = "GTM"
+				}
+				setCenterElevation {
+					source:t = "constant"
+					value:r = -6.25
+				}
+				setFsmActive {
+					fsm:t = "mode"
+					active:b = true
+				}
+			}
+			setStandbyMode {
+				setModeName {
+					name:t = "standby"
+				}
+				setEnabled {
+					value:b = false
+				}
+				setFsmActive {
+					fsm:t = "mode"
+					active:b = false
+				}
+			}
+			resetStandbyMode {
+
+			}
+			setSearchMode {
+				setEnabled {
+					value:b = true
+				}
+				setFsmActive {
+					fsm:t = "search"
+					active:b = true
+				}
+				setCueEnabled {
+					value:b = true
+					updateActiveTargetUnderCue:b = true
+				}
+				setFsmActive {
+					fsm:t = "mode"
+					active:b = true
+				}
+			}
+			resetSearchMode {
+				clearTargets {
+
+				}
+				setFsmActive {
+					fsm:t = "search"
+					active:b = false
+				}
+				setCueEnabled {
+					value:b = false
+				}
+			}
+		}
+		transitions {
+			init {
+				stateFrom:t = "init"
+				event:t = "init"
+				stateTo:t = "standby"
+				actions {
+					init {
+
+					}
+					setStandbyMode {
+
+					}
+				}
+			}
+			switchOn {
+				stateFrom:t = "standby"
+				command:t = "switch"
+				event:t = "enable"
+				stateTo:t = "search"
+				actions {
+					setSearchMode {
+
+					}
+				}
+			}
+			switchOff {
+				stateFrom:t = "search"
+				command:t = "switch"
+				event:t = "disable"
+				stateTo:t = "standby"
+				actions {
+					resetSearchMode {
+
+					}
+					setStandbyMode {
+
+					}
+				}
+			}
+			switchScanPattern {
+				stateFrom:t = "standby"
+				stateFrom:t = "search"
+				command:t = "scanPatternSwitch"
+				actions {
+					setNextScanPattern {
+
+					}
+				}
+			}
+			switchScopeRange {
+				command:t = "rangeSwitch"
+				actions {
+					setNextScopeRange {
+
+					}
+				}
+			}
+		}
+	}
+	search {
+		stateInit:t = "search"
+		transitions {
+			scan {
+				event:t = "update"
+				actions {
+					doCustomActionTemplate {
+						fsm:t = "search"
+						name:t = "scan"
+					}
+				}
+			}
+			detect {
+				event:t = "targetInSight"
+				actions {
+					setDistGatePos {
+						source:t = "continuousScale"
+						width:r = 0
+					}
+					setRelSpeedGatePos {
+						source:t = "continuousScale"
+						width:r = 0
+					}
+					detectTarget {
+
+					}
+				}
+			}
+			addTarget {
+				event:t = "targetDetected"
+				actions {
+					addTarget {
+
+					}
+					updateActiveDetectedTarget {
+
+					}
+				}
+			}
+			switchSelectedTarget {
+				command:t = "switchTarget"
+				actions {
+					setNextDetectedTargetActive {
+
+					}
+				}
+			}
+			setCueAzimuth {
+				command:t = "cueAxisX"
+				actions {
+					setCueAzimuth {
+
+					}
+				}
+			}
+			setCueDist {
+				command:t = "cueAxisY"
+				actions {
+					setCueDist {
+
+					}
+				}
+			}
+			setCueElevation {
+				command:t = "cueAxisZ"
+				actions {
+					setCueElevation {
+
+					}
+				}
+			}
+			setSelectedTarget {
+				command:t = "switchToTarget"
+				actions {
+					setDetectedTargetActive {
+
+					}
+				}
+			}
+			designateTarget {
+				command:t = "selectTarget"
+				actions {
+					designateActiveDetectedTarget {
+						type:t = "target"
+						sensorIndex:i = 1
+					}
+					designateActiveDetectedTarget {
+						type:t = "target"
+						self:b = true
+						sensorIndex:i = 0
+					}
+				}
+			}
+			centerZone {
+				command:t = "directionAxesReset"
+				actions {
+					setCueToBoresight {
+
+					}
+					setCenterAzimuth {
+						source:t = "designationCue"
+					}
+					setCenterElevation {
+						source:t = "designationCue"
+					}
+					updateActiveDetectedTarget {
+
+					}
+				}
+			}
+		}
+		actionsTemplates {
+			scanGTM {
+				scan {
+
+				}
+				setCenterAzimuth {
+					source:t = "constant"
+					value:r = 0
+				}
+				setCenterAzimuth {
+					source:t = "designationCue"
+				}
+				setCenterElevation {
+					source:t = "constant"
+					value:r = 0
+				}
+				setCenterElevation {
+					source:t = "designationCue"
+				}
+			}
+			scanMTI {
+				scan {
+
+				}
+				setCenterAzimuth {
+					source:t = "constant"
+					value:r = 0
+				}
+				setCenterAzimuth {
+					source:t = "designationCue"
+				}
+				setCenterElevation {
+					source:t = "constant"
+					value:r = 0
+				}
+				setCenterElevation {
+					source:t = "designationCue"
+				}
+			}
+			scanATM {
+				setCenterAzimuth {
+					source:t = "body"
+				}
+				scan {
+
+				}
+				setCenterElevation {
+					source:t = "constant"
+					value:r = 0
+				}
+				setCenterElevation {
+					source:t = "designationCue"
+				}
+			}
+		}
+	}
+	mode {
+		stateInit:t = "init"
+		actionsTemplates {
+			setGTMMode {
+				setModeName {
+					name:t = "ground_search"
+				}
+				setTransiver {
+					transiver:t = "GTM"
+				}
+				setSignal {
+					signal:t = "GTM"
+				}
+				setScanPatternSet {
+					scanPatternSet:t = "GTM"
+				}
+				setCenterElevation {
+					source:t = "constant"
+					value:r = -6.25
+				}
+				setTargetDesignationRange {
+					azimuthRange:p2 = -45, 45
+					azimuthRelWidthMin:r = 0.03
+					elevationRange:p2 = -20, 20
+					distanceRange:p2 = 500, 16000
+					fromBody:b = false
+				}
+				setCustomActionTemplate {
+					fsm:t = "search"
+					name:t = "scan"
+					actionTemplateName:t = "scanGTM"
+				}
+				clearTargets {
+
+				}
+			}
+			setATMMode {
+				setModeName {
+					name:t = "air_search"
+				}
+				setTransiver {
+					transiver:t = "ATM"
+				}
+				setSignal {
+					signal:t = "ATM"
+				}
+				setScanPatternSet {
+					scanPatternSet:t = "ATM"
+				}
+				setCenterElevation {
+					source:t = "constant"
+					value:r = 0
+				}
+				setTargetDesignationRange {
+					azimuthRange:p2 = -180, 180
+					azimuthRelWidthMin:r = 0.03
+					elevationRange:p2 = -20, 20
+					distanceRange:p2 = 500, 16000
+					fromBody:b = true
+				}
+				setCustomActionTemplate {
+					fsm:t = "search"
+					name:t = "scan"
+					actionTemplateName:t = "scanATM"
+				}
+				clearTargets {
+
+				}
+			}
+			setMTIMode {
+				setModeName {
+					name:t = "MTI search"
+				}
+				setTransiver {
+					transiver:t = "MTI"
+				}
+				setSignal {
+					signal:t = "MTI"
+				}
+				setScanPatternSet {
+					scanPatternSet:t = "MTI"
+				}
+				setCenterElevation {
+					source:t = "constant"
+					value:r = -6.25
+				}
+				setTargetDesignationRange {
+					azimuthRange:p2 = -45, 45
+					azimuthRelWidthMin:r = 0.03
+					elevationRange:p2 = -20, 20
+					distanceRange:p2 = 500, 16000
+					fromBody:b = false
+				}
+				setCustomActionTemplate {
+					fsm:t = "search"
+					name:t = "scan"
+					actionTemplateName:t = "scanGTM"
+				}
+				clearTargets {
+
+				}
+			}
+		}
+		transitions {
+			init {
+				stateFrom:t = "init"
+				event:t = "fsmActivate"
+				stateTo:t = "mti"
+				actions {
+					setGTMMode {
+
+					}
+				}
+			}
+			showGTM {
+				stateFrom:t = "gtm"
+				event:t = "fsmActivate"
+				stateTo:t = "gtm"
+				actions {
+					setGTMMode {
+
+					}
+				}
+			}
+			showATM {
+				stateFrom:t = "atm"
+				event:t = "fsmActivate"
+				stateTo:t = "atm"
+				actions {
+					setATMMode {
+
+					}
+				}
+			}
+			showMTI {
+				stateFrom:t = "mti"
+				event:t = "fsmActivate"
+				stateTo:t = "mti"
+				actions {
+					setMTIMode {
+
+					}
+				}
+			}
+			switchToATM {
+				stateFrom:t = "mti"
+				command:t = "modeSwitch"
+				stateTo:t = "atm"
+				actions {
+					setATMMode {
+
+					}
+				}
+			}
+			switchToGTM {
+				stateFrom:t = "atm"
+				command:t = "modeSwitch"
+				stateTo:t = "gtm"
+				actions {
+					setGTMMode {
+
+					}
+				}
+			}
+			switchToMTI {
+				stateFrom:t = "gtm"
+				command:t = "modeSwitch"
+				stateTo:t = "mti"
+				actions {
+					setMTIMode {
+
+					}
+				}
+			}
+		}
+	}
+}

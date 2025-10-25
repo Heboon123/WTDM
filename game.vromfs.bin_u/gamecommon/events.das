@@ -220,6 +220,10 @@ struct CmdActionInRespawn {}
 struct EventTryBuildObject {}
 
 [cpp_event(unicast, with_scheme)]
+struct EventToggleArtilleryView
+  enable : bool
+
+[cpp_event(unicast, with_scheme)]
 struct EventToggleBuildingPreview
   enable : bool
 
@@ -423,7 +427,7 @@ struct HumanRequestSetWishAmmoItemType
 
 [event(unicast)]
 struct EventOnGrenadeThrow
-  gun_props_id : int
+  gun_props_id : uint
 
 [event(unicast, routing=ROUTING_CLIENT_CONTROLLED_ENTITY_TO_SERVER)]
 struct HumanRequestUnloadAmmo
@@ -480,3 +484,6 @@ struct EventEntityManagerBeforeClear {}
 [cpp_event(broadcast)]
 struct EventGameObjectsCreated
   game_objects : EntityId
+
+[cpp_event(broadcast, with_scheme)]
+struct EventEcsMissionLoaded {}

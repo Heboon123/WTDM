@@ -1,10 +1,11 @@
 from "app" import is_dev_version
-from "%scripts/dagui_natives.nut" import stop_gui_sound, show_highlights, save_profile, get_premium_reward_wp, is_online_available, start_gui_sound, set_presence_to_player, get_session_warpoints, set_char_cb, is_highlights_inited, get_premium_reward_xp, purchase_entitlement_and_get_award
+from "%scripts/dagui_natives.nut" import stop_gui_sound, show_highlights, get_premium_reward_wp, is_online_available, start_gui_sound, set_presence_to_player, get_session_warpoints, set_char_cb, is_highlights_inited, get_premium_reward_xp, purchase_entitlement_and_get_award, get_mission_progress
 from "%scripts/dagui_library.nut" import *
 from "%scripts/teamsConsts.nut" import Team
 from "%scripts/debriefing/debriefingConsts.nut" import debrState
 from "%scripts/items/itemsConsts.nut" import itemsTab, itemType
 from "%scripts/social/psConsts.nut" import bit_activity, ps4_activity_feed
+from "chard" import save_profile
 
 let { USERLOG_POPUP } = require("%scripts/userLog/userlogConsts.nut")
 let { getSessionLobbyMissionName } = require("%scripts/missions/missionsUtilsModule.nut")
@@ -56,7 +57,7 @@ let { minValuesToShowRewardPremium, MAX_COUNTRY_RANK
 } = require("%scripts/ranks.nut")
 let { getDebriefingResult, getDynamicResult, debriefingRows, isDebriefingResultFull,
   gatherDebriefingResult, getCountedResultId, debriefingAddVirtualPremAcc, getTableNameById,
-  updateDebriefingResultGiftItemsInfo, setDebriefingResult, rewardsBonusTypes
+  updateDebriefingResultGiftItemsInfo, setDebriefingResult, rewardsBonusTypes, getDebriefingUserLogsList
 } = require("%scripts/debriefing/debriefingFull.nut")
 let { isMissionExtrByName, selectNextAvailCampaignMission,
   addMissionListFull } = require("%scripts/missions/missionsUtils.nut")
@@ -78,7 +79,7 @@ let { is_replay_turned_on, is_replay_saved, is_replay_present,
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let { is_benchmark_game_mode, get_game_mode, get_cur_game_mode_name, GET_MPLAYERS_LIST
 } = require("mission")
-let { select_mission_full, stat_get_benchmark } = require("guiMission")
+let { MISSION_STATUS_RUNNING, select_mission_full, stat_get_benchmark } = require("guiMission")
 let { openBattlePassWnd } = require("%scripts/battlePass/battlePassWnd.nut")
 let { dynamicGetLayout, dynamicGetList } = require("dynamicMission")
 let { getUnlockById } = require("%scripts/unlocks/unlocksCache.nut")
@@ -123,8 +124,9 @@ let { get_last_called_gui_testflight } = require("%scripts/missionBuilder/testFl
 let { eventsTableConfig } = require("%scripts/leaderboard/leaderboardCategoryType.nut")
 let { isNewbieInited, getMissionsComplete, isMeNewbie, markStatsReset
 } = require("%scripts/myStats.nut")
-let { findItemByUid, getInventoryItemById, findItemById } = require("%scripts/items/itemsManager.nut")
-let { getUnlockIconConfig, buildConditionsConfig } = require("%scripts/unlocks/unlocksViewModule.nut")
+let { findItemByUid, getInventoryItemById, findItemById } = require("%scripts/items/itemsManagerModule.nut")
+let { getUnlockIconConfig, buildConditionsConfig, fillUnlockBlock, buildUnlockTooltipByConfig
+} = require("%scripts/unlocks/unlocksViewModule.nut")
 let { gui_start_mainmenu, gui_start_mainmenu_reload
 } = require("%scripts/mainmenu/guiStartMainmenu.nut")
 let { gui_start_decals } = require("%scripts/customization/contentPreview.nut")
@@ -138,7 +140,7 @@ let { invalidateCrewsList } = require("%scripts/slotbar/crewsList.nut")
 let { canOpenHitsAnalysisWindow, openHitsAnalysisWindow } = require("%scripts/dmViewer/hitsAnalysis.nut")
 let { getLbDiff, getLeaderboardItemView, getLeaderboardItemWidgets
 } = require("%scripts/leaderboard/leaderboardHelpers.nut")
-let { isWorldWarEnabled, saveLastPlayed } = require("%scripts/globalWorldWarScripts.nut")
+let { saveLastPlayed } = require("%scripts/globalWorldWarScripts.nut")
 let { isLoggedIn, isProfileReceived } = require("%appGlobals/login/loginState.nut")
 let { updateOperationPreviewAndDo, openOperationsOrQueues, isLastFlightWasWwBattle,
   openWWMainWnd } = require("%scripts/globalWorldwarUtils.nut")
@@ -152,8 +154,7 @@ let { isUsedPlayersOwnUnit } = require("%scripts/matchingRooms/sessionLobbyMembe
 let { getCurMpTitle, getLocalTeamForMpStats } = require("%scripts/statistics/mpStatisticsUtil.nut")
 let { showUnlockWnd } = require("%scripts/unlocks/showUnlockWnd.nut")
 let { getWPIcon, getPrizeImageByConfig } = require("%scripts/items/prizesView.nut")
-let { fill_unlock_block, build_log_unlock_data,
-  build_unlock_tooltip_by_config } = require("%scripts/unlocks/unlocks.nut")
+let { build_log_unlock_data } = require("%scripts/unlocks/unlocks.nut")
 let { showSessionPlayerRClickMenu } = require("%scripts/user/playerContextMenu.nut")
 let { isAnyQueuesActive } = require("%scripts/queue/queueState.nut")
 let { updateGamercards } = require("%scripts/gamercard/gamercard.nut")
@@ -163,6 +164,8 @@ let { guiStartMpLobby, goForwardSessionLobbyAfterDebriefing, checkLeaveRoomInDeb
 let { updateMyCountryData } = require("%scripts/squads/squadUtils.nut")
 let destroySessionScripted = require("%scripts/matchingRooms/destroySessionScripted.nut")
 let { disableNetwork } = require("%globalScripts/clientState/initialState.nut")
+let { MIS_PROGRESS } = require("%scripts/missions/missionProgress.nut")
+let { getBackFromReplaysFn, setBackFromReplaysFn } = require("%scripts/replays/backFromReplaysFn.nut")
 
 const DEBR_LEADERBOARD_LIST_COLUMNS = 2
 const DEBR_AWARDS_LIST_COLUMNS = 3
@@ -299,7 +302,8 @@ function guiStartDebriefingFull(params = {}) {
 }
 
 function gui_start_debriefing(_) {
-  if (needLogoutAfterSession.value) {
+  if (needLogoutAfterSession.get()) {
+    setDebriefingResult(null)
     destroySessionScripted("on needLogoutAfterSession from gui_start_debriefing")
     
     deferOnce(startLogout)
@@ -307,19 +311,22 @@ function gui_start_debriefing(_) {
   }
 
   let gm = get_game_mode()
-  if (::back_from_replays != null) {
-     log("gui_nav gui_start_debriefing back_from_replays");
-     let temp_func = ::back_from_replays
-     log("gui_nav back_from_replays = null");
-     ::back_from_replays = null
+  let backFromReplaysFn = getBackFromReplaysFn()
+  if (backFromReplaysFn != null) {
+     setDebriefingResult(null)
+     log("gui_nav gui_start_debriefing backFromReplaysFn");
+     let temp_func = backFromReplaysFn
+     log("gui_nav backFromReplaysFn = null");
+     setBackFromReplaysFn(null)
      temp_func()
      updateGamercards()
      return
   }
   else
-    log("gui_nav gui_start_debriefing back_from_replays is null");
+    log("gui_nav gui_start_debriefing backFromReplaysFn is null");
 
   if (is_benchmark_game_mode()) {
+    setDebriefingResult(null)
     let title = locCurrentMissionName()
     let benchmark_data = stat_get_benchmark()
     gui_start_mainmenu()
@@ -327,10 +334,12 @@ function gui_start_debriefing(_) {
     return
   }
   if (gm == GM_CREDITS || gm == GM_TRAINING) {
+     setDebriefingResult(null)
      gui_start_mainmenu()
      return
   }
   if (gm == GM_TEST_FLIGHT) {
+    setDebriefingResult(null)
     sendFinishTestFlightToBq()
     if (get_last_called_gui_testflight() != null)
       handlersManager.callStartFunc(get_last_called_gui_testflight())
@@ -340,6 +349,7 @@ function gui_start_debriefing(_) {
     return
   }
   if (isCustomMissionFlight.get()) {
+    setDebriefingResult(null)
     isCustomMissionFlight.set(false)
     gui_start_mainmenu()
     return
@@ -360,8 +370,6 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
           show = [EULT_NEW_STREAK]
           unlocks = [UNLOCKABLE_STREAK]
           filters = { popupInDebriefing = [false, null] }
-          currentRoomOnly = true
-          disableVisible = true
         }
       align = ALIGN.TOP
       listObjId = "awards_list_streaks"
@@ -372,9 +380,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
         show = [EULT_NEW_UNLOCK]
         unlocks = [UNLOCKABLE_CHALLENGE, UNLOCKABLE_ACHIEVEMENT]
         filters = { popupInDebriefing = [false, null] }
-        currentRoomOnly = true
-        disableVisible = true
-        checkFunc = function(userlog) { return getUnlockById(userlog.body.unlockId)?.battlePassSeason != null }
+        checkFunc = function(userlog) { return getUnlockById(userlog.unlockId)?.battlePassSeason != null }
       }
       align = ALIGN.CENTER
       listObjId = "awards_list_challenges"
@@ -384,12 +390,10 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       filter = {
         show = [EULT_NEW_UNLOCK]
         unlocks = [UNLOCKABLE_AIRCRAFT, UNLOCKABLE_SKIN, UNLOCKABLE_DECAL, UNLOCKABLE_ATTACHABLE,
-                   UNLOCKABLE_WEAPON, UNLOCKABLE_DIFFICULTY, UNLOCKABLE_ENCYCLOPEDIA, UNLOCKABLE_PILOT,
+                   UNLOCKABLE_WEAPON, UNLOCKABLE_DIFFICULTY, UNLOCKABLE_ENCYCLOPEDIA, UNLOCKABLE_PILOT, UNLOCKABLE_FRAME,
                    UNLOCKABLE_MEDAL, UNLOCKABLE_CHALLENGE, UNLOCKABLE_ACHIEVEMENT, UNLOCKABLE_TITLE, UNLOCKABLE_AWARD]
         filters = { popupInDebriefing = [false, null] }
-        currentRoomOnly = true
-        disableVisible = true
-        checkFunc = function(userlog) { return getUnlockById(userlog.body.unlockId)?.battlePassSeason == null }
+        checkFunc = function(userlog) { return getUnlockById(userlog.unlockId)?.battlePassSeason == null }
       }
       align = ALIGN.TOP
       listObjId = "awards_list_unlocks"
@@ -681,7 +685,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
 
   function getAwardsList(filter) {
     let res = []
-    local logsList = getUserLogsList(filter)
+    local logsList = getDebriefingUserLogsList(filter)
     logsList = combineSimilarAwards(logsList)
     for (local i = logsList.len() - 1; i >= 0; i--)
       res.append(build_log_unlock_data(logsList[i]))
@@ -690,9 +694,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     if (!is_dev_version() || this.debugUnlocks <= res.len())
       return res
 
-    let dbgFilter = clone filter
-    dbgFilter.currentRoomOnly = false
-    logsList = getUserLogsList(dbgFilter)
+    logsList = getUserLogsList(filter)
     if (!logsList.len()) {
       dlog("Not found any unlocks in userlogs for debug") 
       return res
@@ -768,7 +770,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
 
     let premTeaser = this.getPremTeaserInfo()
 
-    this.totalCurValues = this.totalCurValues || {}
+    this.totalCurValues = this.totalCurValues ?? {}
     this.totalTarValues = {}
 
     foreach (currency in [ "exp", "wp" ]) {
@@ -1011,12 +1013,9 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       return
 
     let trophyItemId = this.giftItems[0].item
-    let filteredLogs = getUserLogsList({
+    let filteredLogs = getDebriefingUserLogsList({
       show = [EULT_OPEN_TROPHY]
-      currentRoomOnly = true
-      disableVisible = true
-      needStackItems = false
-      checkFunc = function(userlog) { return trophyItemId == userlog.body.id }
+      checkFunc = function(userlog) { return trophyItemId == userlog.id }
     })
 
     if (filteredLogs.len() == 0)
@@ -1093,11 +1092,9 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       return
 
     local layersData = ""
-    let filteredLogs = getUserLogsList({
+    let filteredLogs = getDebriefingUserLogsList({
       show = [EULT_OPEN_TROPHY]
-      currentRoomOnly = true
-      needStackItems = false
-      checkFunc = function(userlog) { return trophyItem.id == userlog.body.id }
+      checkFunc = function(userlog) { return trophyItem.id == userlog.id }
     })
 
     foreach (logObj in filteredLogs) {
@@ -1322,7 +1319,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
 
       let objTarget = objPlace.findObject("bonus_ico")
       if (checkObj(objTarget)) {
-        objTarget["background-image"] = havePremium.value ?
+        objTarget["background-image"] = havePremium.get() ?
           "#ui/gameuiskin#medal_premium.svg" : "#ui/gameuiskin#medal_bonus.svg"
         objTarget.tooltip = "\n\n".join(textArray, true)
       }
@@ -1617,7 +1614,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     let unitData = this.debriefingResult.exp.aircrafts?[unitId]
     return unitData?.expTotal && unitData?.sessionTime &&
       ((unitData?.investModuleName ?? "") != "" ||
-      isUsedPlayersOwnUnit(this.playersInfo?[userIdInt64.value], unitId))
+      isUsedPlayersOwnUnit(this.playersInfo?[userIdInt64.get()], unitId))
   }
 
   function hasAnyFinishedResearch() {
@@ -1710,7 +1707,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       modTooltipId =  mod
         ? MODIFICATION.getTooltipId(unit.name, mod.name, { diffExp = diffExp, curEdiff = this.getCurrentEdiff() })
         : ""
-      isTooltipByHold = showConsoleButtons.value
+      isTooltipByHold = showConsoleButtons.get()
     }
 
     let markup = handyman.renderCached("%gui/debriefing/modificationProgress.tpl", view)
@@ -1770,11 +1767,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     if (!checkObj(lbWindgetsNestObj))
       return
 
-    let logs = getUserLogsList({
-        show = [EULT_SESSION_RESULT]
-        currentRoomOnly = true
-      })
-
+    let logs = getDebriefingUserLogsList({ show = [EULT_SESSION_RESULT] })
     if (logs.len() == 0)
       return
 
@@ -2006,7 +1999,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
   }
 
   function canSuggestBuyPremium() {
-    return !havePremium.value && hasFeature("SpendGold") && hasFeature("EnablePremiumPurchase")
+    return !havePremium.get() && hasFeature("SpendGold") && hasFeature("EnablePremiumPurchase")
   }
 
   getBqEventPremBtnParams = @() {
@@ -2049,16 +2042,16 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
   function checkPremRewardAmount() {
     if (!this.getEntitlementWithAward())
       return false
-    if (get_premium_reward_wp() >= minValuesToShowRewardPremium.value.wp)
+    if (get_premium_reward_wp() >= minValuesToShowRewardPremium.get().wp)
       return true
     let exp = get_premium_reward_xp()
-    return exp >= minValuesToShowRewardPremium.value.exp
+    return exp >= minValuesToShowRewardPremium.get().exp
   }
 
   function onBuyPremiumAward() {
     sendBqEvent("CLIENT_GAMEPLAY_1", "debriefing_premium_button_activation", this.getBqEventPremBtnParams())
 
-    if (havePremium.value)
+    if (havePremium.get())
       return
     let entName = this.getEntitlementWithAward()
     if (!entName) {
@@ -2094,7 +2087,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
   }
 
   function addPremium() {
-    if (!havePremium.value)
+    if (!havePremium.get())
       return
 
     debriefingAddVirtualPremAcc()
@@ -2251,7 +2244,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       return
 
     let config = obj.getUserData()
-    build_unlock_tooltip_by_config(obj, config, this)
+    buildUnlockTooltipByConfig(obj, config, this)
   }
 
   function buildPlayersTable() {
@@ -2461,7 +2454,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       foreach (award in list) {
         let obj = this.guiScene.createElementByObject(listObj, "%gui/unlocks/unlockBlock.blk", "tdiv", this)
         obj.width = itemWidth.tostring()
-        fill_unlock_block(obj, award)
+        fillUnlockBlock(obj, award)
       }
   }
 
@@ -2549,7 +2542,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       config = this.battleTasksConfigs?[taskId]
     }
 
-    showObjById("btn_requirements_list", showConsoleButtons.value && (config?.names ?? []).len() != 0, this.scene)
+    showObjById("btn_requirements_list", showConsoleButtons.get() && (config?.names ?? []).len() != 0, this.scene)
   }
 
   function onTaskReroll(obj) {
@@ -2622,13 +2615,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     if (!this.is_show_ww_casualties())
       return null
 
-    let logs = getUserLogsList({
-      show = [
-        EULT_SESSION_RESULT
-      ]
-      currentRoomOnly = true
-    })
-
+    let logs = getDebriefingUserLogsList({ show = [ EULT_SESSION_RESULT ] })
     if (!logs.len())
       return null
 
@@ -2636,7 +2623,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
   }
 
   function loadWwCasualtiesHistory() {
-    if (!isWorldWarEnabled())
+    if (!this.debriefingResult?.isWorldWarEnabled)
       return
 
     let wwBattleResults = this.getWwBattleResults()
@@ -2731,7 +2718,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     return !this.isCurMissionExtr && (this.giftItems != null)
   }
   function is_show_ww_casualties() {
-    return this.needPlayersTbl && isWorldWarEnabled() && getCurMissionRules().isWorldWar
+    return this.needPlayersTbl && this.debriefingResult?.isWorldWarEnabled && getCurMissionRules().isWorldWar
   }
   function is_show_research_list() {
     foreach (unitId, _unitData in this.debriefingResult.exp.aircrafts)
@@ -2781,7 +2768,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       btn_view_replay = this.skipAnim && isReplayReady
       btn_save_replay = this.skipAnim && isReplayReady && !is_replay_saved()
       btn_parse_replay = this.skipAnim && isReplayReady && canOpenHitsAnalysisWindow()
-      btn_user_options = this.skipAnim && (this.curTab == "players_stats") && player && !player.isBot && showConsoleButtons.value
+      btn_user_options = this.skipAnim && (this.curTab == "players_stats") && player && !player.isBot && showConsoleButtons.get()
       btn_view_highlights = this.skipAnim && is_highlights_inited()
     }
 
@@ -2822,6 +2809,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     autosaveReplay()
     on_view_replay("")
     this.isInProgress = true
+    setBackFromReplaysFn(@() goForwardSessionLobbyAfterDebriefing() || goDebriefingNextFunc?())
   }
 
   function onSaveReplay(_obj) {
@@ -2894,7 +2882,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
         log($"VIDEO: campaign = {currentCampId} mission = {currentCampMission}")
         if ((currentCampMission == "jpn_guadalcanal_m4")
             || (currentCampMission == "us_guadalcanal_m4"))
-          needCheckForVictory(true)
+          needCheckForVictory.set(true)
         selectNextAvailCampaignMission(currentCampId, currentCampMission)
       }
       goDebriefingNextFunc = guiStartMenuCampaign
@@ -3068,7 +3056,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
   }
 
   function needShowWorldWarOperationBtn() {
-    return isWorldWarEnabled() && isLastFlightWasWwBattle.get()
+    return this.debriefingResult?.isWorldWarEnabled && isLastFlightWasWwBattle.get()
   }
 
   function switchWwOperationToCurrent() {
@@ -3084,7 +3072,7 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
       if (!operationId)
         return
 
-      saveLastPlayed(operationId.tointeger(), profileCountrySq.value)
+      saveLastPlayed(operationId.tointeger(), profileCountrySq.get())
     }
 
     goDebriefingNextFunc = function() {
@@ -3150,12 +3138,10 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     let country = this.getDebriefingCountry()
 
     
-    let wnd_unlock_gained = getUserLogsList({
+    let wnd_unlock_gained = getDebriefingUserLogsList({
       show = [EULT_NEW_UNLOCK]
       unlocks = [UNLOCKABLE_AIRCRAFT, UNLOCKABLE_AWARD]
       filters = { popupInDebriefing = [true] }
-      currentRoomOnly = true
-      disableVisible = true
     })
     foreach (logObj in wnd_unlock_gained)
       showUnlockWnd(build_log_unlock_data(logObj))
@@ -3179,11 +3165,9 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     }
 
     
-    let country_unlock_gained = getUserLogsList({
+    let country_unlock_gained = getDebriefingUserLogsList({
       show = [EULT_NEW_UNLOCK]
       unlocks = [UNLOCKABLE_COUNTRY]
-      currentRoomOnly = true
-      disableVisible = true
     })
     foreach (logObj in country_unlock_gained) {
       showUnlockWnd(build_log_unlock_data(logObj))
@@ -3192,10 +3176,8 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
     }
 
     
-    let tornament_special_rewards = getUserLogsList({
+    let tornament_special_rewards = getDebriefingUserLogsList({
       show = [EULT_CHARD_AWARD]
-      currentRoomOnly = true
-      disableVisible = true
       filters = { rewardType = ["TournamentReward"] }
     })
 
@@ -3241,8 +3223,11 @@ gui_handlers.DebriefingModal <- class (gui_handlers.MPStatistics) {
 
       if (!hasAnyReward) {
         if (this.gm == GM_SINGLE_MISSION || this.gm == GM_CAMPAIGN || this.gm == GM_TRAINING) {
-          if (this.debriefingResult.isSucceed)
-            infoText = loc("debriefing/award_already_received")
+          if (this.debriefingResult.isSucceed) {
+            let isCompletedBefore = get_mission_progress(locCurrentMissionName()) < MIS_PROGRESS.UNLOCKED
+            infoText = isCompletedBefore ? loc("debriefing/award_already_received")
+              : loc("debriefing/no_award")
+          }
         }
         else if (this.isMp && !isDebriefingResultFull() && this.gm == GM_DOMINATION) {
           infoText = loc("debriefing/most_award_after_battle")

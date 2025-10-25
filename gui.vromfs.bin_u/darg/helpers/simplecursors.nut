@@ -31,11 +31,11 @@ let getTooltip = @() tooltipComp.value
 
 let tooltipCmp = @(){
   key = "tooltip"
-  pos = [0, hdpx(38)]
+  pos = const [0, hdpx(38)]
   watch = tooltipGen
   behavior = Behaviors.BoundToArea
-  safeAreaMargin = [sh(1), sh(1)]
-  transform = {}
+  safeAreaMargin = sh(1)
+  transform = const {}
   children = type(getTooltip()) == "string"
   ? tooltipBox({
       rendObj = ROBJ_TEXTAREA
@@ -48,14 +48,14 @@ let tooltipCmp = @(){
 }
 
 
-let cursorC = Color(255,255,255,255)
+const cursorColor = Color(255,255,255,255)
 
-let cursor = {
+let cursor = const {
   rendObj = ROBJ_VECTOR_CANVAS
   size = [sh(3), sh(3)]
   commands = [
     [VECTOR_WIDTH, hdpx(1)],
-    [VECTOR_FILL_COLOR, cursorC],
+    [VECTOR_FILL_COLOR, cursorColor],
     [VECTOR_COLOR, Color(20, 40, 70, 250)],
     [VECTOR_POLY, 0,0, 100,50, 56,56, 50,100],
   ]
@@ -67,20 +67,20 @@ let cursor = {
 
 function mkCursor(...){
   return Cursor({
-    size = [sh(2), sh(2)]
-    hotspot = [0, 0]
+    size = const [sh(2), sh(2)]
+    hotspot = const [0, 0]
     children = vargv
-    transform = {
+    transform = const {
       pivot = [0, 0]
     }
   })
 }
 
-return {
+return freeze({
   getTooltip,
   setTooltip,
   tooltipCmp,
   cursor,
   mkCursor,
   normal = mkCursor(cursor, tooltipCmp),
-}
+})
