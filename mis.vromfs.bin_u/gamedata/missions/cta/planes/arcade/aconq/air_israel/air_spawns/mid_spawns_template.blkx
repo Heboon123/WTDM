@@ -1,253 +1,355 @@
-selected_tag:t = ""
-bin_dump_file:t = ""
-mission_settings {
-	player {
-		army:i = 1
-	}
-	player_teamB {
-		army:i = 2
-	}
-	mission {
-		type:t = "domination"
-		level:t = "levels/stalingrad.bin"
-		environment:t = "Day"
-		weather:t = "hazy"
-	}
-}
-imports {
-
-}
-triggers {
-	isCategory:b = true
-	is_enabled:b = true
-	mid_air_spawns_init {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			initMission {
-
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			varSetString {
-				value:t = "mid_t1_air_spawn"
-				var:t = "air_spawn_t1_name"
-			}
-			varSetString {
-				value:t = "mid_t2_air_spawn"
-				var:t = "air_spawn_t2_name"
-			}
-			varSetString {
-				value:t = "mid_t1_bombers_spawn"
-				var:t = "bomber_spawn_t1_name"
-			}
-			varSetString {
-				value:t = "mid_t2_bombers_spawn"
-				var:t = "bomber_spawn_t2_name"
-			}
-			missionMarkAsRespawnPoint {
-				loc_name:t = "missions/air_spawn"
-				spawnEffect:b = false
-				isStrictSpawn:b = false
-				resetStrictSpawnIndex:b = false
-				isAirfield:b = false
-				isUnit:b = false
-				forceCreate:b = false
-				useExisting:b = false
-				ignoreTeamsOnReuse:b = false
-				isIndividual:b = false
-				onlyOnePlayerPerSpawnPoint:b = false
-				removeAreas:b = false
-				replaceAreas:b = false
-				canSpawnOnNeutral:b = false
-				showOnMap:b = true
-				radius:r = -1
-				target:t = "@air_spawn_t1_name"
-				team:t = "A"
-				tags {
-					air:b = true
-					type_bomber:b = false
-				}
-			}
-			missionMarkAsRespawnPoint {
-				loc_name:t = "missions/air_spawn"
-				spawnEffect:b = false
-				isStrictSpawn:b = false
-				resetStrictSpawnIndex:b = false
-				isAirfield:b = false
-				isUnit:b = false
-				forceCreate:b = false
-				useExisting:b = false
-				ignoreTeamsOnReuse:b = false
-				isIndividual:b = false
-				onlyOnePlayerPerSpawnPoint:b = false
-				removeAreas:b = false
-				replaceAreas:b = false
-				canSpawnOnNeutral:b = false
-				showOnMap:b = true
-				radius:r = -1
-				target:t = "@air_spawn_t2_name"
-				team:t = "B"
-				tags {
-					air:b = true
-					type_bomber:b = false
-				}
-			}
-			comment {
-				value:t = ""
-			}
-			missionMarkAsRespawnPoint {
-				loc_name:t = "missions/air_spawn"
-				spawnEffect:b = false
-				isStrictSpawn:b = false
-				resetStrictSpawnIndex:b = false
-				isAirfield:b = false
-				isUnit:b = false
-				forceCreate:b = false
-				useExisting:b = false
-				ignoreTeamsOnReuse:b = false
-				isIndividual:b = false
-				onlyOnePlayerPerSpawnPoint:b = false
-				removeAreas:b = false
-				replaceAreas:b = false
-				canSpawnOnNeutral:b = false
-				showOnMap:b = true
-				radius:r = -1
-				target:t = "@bomber_spawn_t1_name"
-				team:t = "A"
-				tags {
-					air:b = true
-					type_bomber:b = true
-					type_fighter:b = false
-					type_assault:b = false
-				}
-			}
-			missionMarkAsRespawnPoint {
-				loc_name:t = "missions/air_spawn"
-				spawnEffect:b = false
-				isStrictSpawn:b = false
-				resetStrictSpawnIndex:b = false
-				isAirfield:b = false
-				isUnit:b = false
-				forceCreate:b = false
-				useExisting:b = false
-				ignoreTeamsOnReuse:b = false
-				isIndividual:b = false
-				onlyOnePlayerPerSpawnPoint:b = false
-				removeAreas:b = false
-				replaceAreas:b = false
-				canSpawnOnNeutral:b = false
-				showOnMap:b = true
-				radius:r = -1
-				target:t = "@bomber_spawn_t2_name"
-				team:t = "B"
-				tags {
-					air:b = true
-					type_bomber:b = true
-					type_fighter:b = false
-					type_assault:b = false
-				}
-			}
-		}
-		else_actions {
-
-		}
-	}
-}
-mission_objectives {
-	isCategory:b = true
-	is_enabled:b = true
-}
-variables {
-
-}
-dialogs {
-
-}
-airfields {
-
-}
-effects {
-
-}
-units {
-
-}
-areas {
-	mid_area_spawn {
-		type:t = "Sphere"
-		tm:m = [[16000.0, 0.0, 0.0] [0.0, 16000.0, 0.0] [0.0, 0.0, 16000.0] [-3296.19, 1500.0, -5700.62]]
-		objLayer:i = 4
-		props {
-
-		}
-	}
-	mid_t2_air_spawn {
-		type:t = "Box"
-		tm:m = [[-4.41766e-6, 0.0, -100.0] [0.0, 100.0, 0.0] [1000.0, 0.0, -4.41766e-5] [-3293.73, 841.2, 2312.54]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-	mid_t1_air_spawn {
-		type:t = "Box"
-		tm:m = [[-4.32462e-6, 0.0, 100.0] [0.0, 100.0, 0.0] [-1000.0, 0.0, -4.32462e-5] [-3293.73, 778.65, -13693.2]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-	mid_area_bombers_spawn {
-		type:t = "Sphere"
-		tm:m = [[18000.0, 0.0, 0.0] [0.0, 18000.0, 0.0] [0.0, 0.0, 18000.0] [-3296.19, 3500.0, -5700.62]]
-		objLayer:i = 4
-		props {
-
-		}
-	}
-	mid_t1_bombers_spawn {
-		type:t = "Box"
-		tm:m = [[-4.32462e-6, 0.0, 100.0] [0.0, 100.0, 0.0] [-1000.0, 0.0, -4.32462e-5] [-3293.73, 1865.3, -14697.5]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-	mid_t2_bombers_spawn {
-		type:t = "Box"
-		tm:m = [[-4.41766e-6, 0.0, -100.0] [0.0, 100.0, 0.0] [1000.0, 0.0, -4.41766e-5] [-3293.73, 1870.35, 3300.29]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-}
-objLayers {
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-}
-wayPoints {
-
+{
+  "selected_tag": "",
+  "bin_dump_file": "",
+  "mission_settings": {
+    "player": {
+      "army": 1
+    },
+    "player_teamB": {
+      "army": 2
+    },
+    "mission": {
+      "type": "domination",
+      "level": "levels/stalingrad.bin",
+      "environment": "Day",
+      "weather": "hazy"
+    }
+  },
+  "imports": {},
+  "triggers": {
+    "isCategory": true,
+    "is_enabled": true,
+    "mid_air_spawns_init": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "initMission": {}
+      },
+      "conditions": {},
+      "actions": {
+        "varSetString": [
+          {
+            "value": "mid_t1_air_spawn",
+            "var": "air_spawn_t1_name"
+          },
+          {
+            "value": "mid_t2_air_spawn",
+            "var": "air_spawn_t2_name"
+          },
+          {
+            "value": "mid_t1_bombers_spawn",
+            "var": "bomber_spawn_t1_name"
+          },
+          {
+            "value": "mid_t2_bombers_spawn",
+            "var": "bomber_spawn_t2_name"
+          }
+        ],
+        "missionMarkAsRespawnPoint": [
+          {
+            "loc_name": "missions/air_spawn",
+            "spawnEffect": false,
+            "isStrictSpawn": false,
+            "resetStrictSpawnIndex": false,
+            "isAirfield": false,
+            "isUnit": false,
+            "forceCreate": false,
+            "useExisting": false,
+            "ignoreTeamsOnReuse": false,
+            "isIndividual": false,
+            "onlyOnePlayerPerSpawnPoint": false,
+            "removeAreas": false,
+            "replaceAreas": false,
+            "canSpawnOnNeutral": false,
+            "showOnMap": true,
+            "radius": -1.0,
+            "target": "@air_spawn_t1_name",
+            "team": "A",
+            "tags": {
+              "air": true,
+              "type_bomber": false
+            }
+          },
+          {
+            "loc_name": "missions/air_spawn",
+            "spawnEffect": false,
+            "isStrictSpawn": false,
+            "resetStrictSpawnIndex": false,
+            "isAirfield": false,
+            "isUnit": false,
+            "forceCreate": false,
+            "useExisting": false,
+            "ignoreTeamsOnReuse": false,
+            "isIndividual": false,
+            "onlyOnePlayerPerSpawnPoint": false,
+            "removeAreas": false,
+            "replaceAreas": false,
+            "canSpawnOnNeutral": false,
+            "showOnMap": true,
+            "radius": -1.0,
+            "target": "@air_spawn_t2_name",
+            "team": "B",
+            "tags": {
+              "air": true,
+              "type_bomber": false
+            }
+          },
+          {
+            "loc_name": "missions/air_spawn",
+            "spawnEffect": false,
+            "isStrictSpawn": false,
+            "resetStrictSpawnIndex": false,
+            "isAirfield": false,
+            "isUnit": false,
+            "forceCreate": false,
+            "useExisting": false,
+            "ignoreTeamsOnReuse": false,
+            "isIndividual": false,
+            "onlyOnePlayerPerSpawnPoint": false,
+            "removeAreas": false,
+            "replaceAreas": false,
+            "canSpawnOnNeutral": false,
+            "showOnMap": true,
+            "radius": -1.0,
+            "target": "@bomber_spawn_t1_name",
+            "team": "A",
+            "tags": {
+              "air": true,
+              "type_bomber": true,
+              "type_fighter": false,
+              "type_assault": false
+            }
+          },
+          {
+            "loc_name": "missions/air_spawn",
+            "spawnEffect": false,
+            "isStrictSpawn": false,
+            "resetStrictSpawnIndex": false,
+            "isAirfield": false,
+            "isUnit": false,
+            "forceCreate": false,
+            "useExisting": false,
+            "ignoreTeamsOnReuse": false,
+            "isIndividual": false,
+            "onlyOnePlayerPerSpawnPoint": false,
+            "removeAreas": false,
+            "replaceAreas": false,
+            "canSpawnOnNeutral": false,
+            "showOnMap": true,
+            "radius": -1.0,
+            "target": "@bomber_spawn_t2_name",
+            "team": "B",
+            "tags": {
+              "air": true,
+              "type_bomber": true,
+              "type_fighter": false,
+              "type_assault": false
+            }
+          }
+        ],
+        "comment": {
+          "value": ""
+        }
+      },
+      "else_actions": {}
+    }
+  },
+  "mission_objectives": {
+    "isCategory": true,
+    "is_enabled": true
+  },
+  "variables": {},
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {},
+  "areas": {
+    "mid_area_spawn": {
+      "type": "Sphere",
+      "tm": [
+        [
+          16000.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          16000.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          16000.0
+        ],
+        [
+          -3296.19,
+          1500.0,
+          -5700.62
+        ]
+      ],
+      "objLayer": 4,
+      "props": {}
+    },
+    "mid_t2_air_spawn": {
+      "type": "Box",
+      "tm": [
+        [
+          -0.00000441766,
+          0.0,
+          -100.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          1000.0,
+          0.0,
+          -0.0000441766
+        ],
+        [
+          -3293.73,
+          841.2,
+          2312.54
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    },
+    "mid_t1_air_spawn": {
+      "type": "Box",
+      "tm": [
+        [
+          -0.00000432462,
+          0.0,
+          100.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          -1000.0,
+          0.0,
+          -0.0000432462
+        ],
+        [
+          -3293.73,
+          778.65,
+          -13693.2
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    },
+    "mid_area_bombers_spawn": {
+      "type": "Sphere",
+      "tm": [
+        [
+          18000.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          18000.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          18000.0
+        ],
+        [
+          -3296.19,
+          3500.0,
+          -5700.62
+        ]
+      ],
+      "objLayer": 4,
+      "props": {}
+    },
+    "mid_t1_bombers_spawn": {
+      "type": "Box",
+      "tm": [
+        [
+          -0.00000432462,
+          0.0,
+          100.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          -1000.0,
+          0.0,
+          -0.0000432462
+        ],
+        [
+          -3293.73,
+          1865.3,
+          -14697.5
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    },
+    "mid_t2_bombers_spawn": {
+      "type": "Box",
+      "tm": [
+        [
+          -0.00000441766,
+          0.0,
+          -100.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          1000.0,
+          0.0,
+          -0.0000441766
+        ],
+        [
+          -3293.73,
+          1870.35,
+          3300.29
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    }
+  },
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      }
+    ]
+  },
+  "wayPoints": {}
 }

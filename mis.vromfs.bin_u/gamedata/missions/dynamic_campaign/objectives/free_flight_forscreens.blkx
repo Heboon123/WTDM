@@ -1,256 +1,339 @@
-selected_tag:t = ""
-bin_dump_file:t = ""
-mission_settings {
-	atmosphere {
-		pressure:r = 760
-		temperature:r = 0
-	}
-	player {
-		army:i = 1
-		wing:t = "#player.any"
-	}
-	player_teamB {
-		army:i = 2
-	}
-	mission {
-		name:t = "screen_mission"
-		level:t = "levels/guadalcanal.bin"
-		type:t = "campaign"
-		restoreType:t = "tactical control"
-		optionalTakeOff:b = false
-		campaign:t = "pacific"
-		environment:t = "Day"
-		weather:t = "hazy"
-		missionDebriefing:t = ""
-		missionBriefing:t = ""
-		tags {
-
-		}
-		missionType {
-			_Dom:b = false
-			_Conq:b = false
-			_CnvA:b = false
-			_CnvB:b = false
-			_ArtDA:b = false
-			_ArtDB:b = false
-			_Bttl:b = false
-			_DBttlA:b = false
-			_DBttlB:b = false
-			_Bto:b = false
-			_Flc:b = false
-			_v1_race_straight:b = false
-			_v1_race_inverted:b = false
-			_v2_race_straight:b = false
-			_v2_race_inverted:b = false
-			_Conq1:b = false
-			_Conq2:b = false
-			_Conq3:b = false
-			_Conq4:b = false
-			_Conq5:b = false
-			_Conq6:b = false
-		}
-	}
-	cover_points {
-
-	}
-	spectator_points {
-
-	}
-	aiParams {
-		aiEffectivenessViscosity:r = 90
-		effectivenessDistances:p2 = 2500, 7000
-	}
-	briefing {
-		place_loc:t = ""
-		date_loc:t = ""
-		objective_loc:t = ""
-		music:t = "action_01"
-		viewAreaScale:r = 2
-		part {
-			event:t = ""
-			minTime:i = 0
-			slide {
-				map:b = false
-				minTime:i = 4
-				picture:t = "dynamic_missions/berlin_02_01"
-				showAirMap:b = false
-			}
-			slide {
-				map:b = true
-				minTime:i = 4
-				picture:t = ""
-				showAirMap:b = false
-				icon {
-					icontype:t = "fighter"
-					side:t = "player"
-					target:t = "#player.any"
-				}
-			}
-		}
-	}
-}
-imports {
-
-}
-triggers {
-	isCategory:b = true
-	is_enabled:b = true
-	miss_init {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			initMission {
-
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			unitDamage {
-				power:r = 1
-				useEffect:b = false
-				countEffects:i = 1
-				delay:p2 = 1, 1
-				offset:p3 = 0, 0, 0
-				radiusOffset:p2 = 10, 15
-				target:t = "dummy_fake"
-				partName:t = "body_dm"
-			}
-		}
-		else_actions {
-
-		}
-	}
-}
-mission_objectives {
-	isCategory:b = true
-	is_enabled:b = true
-}
-variables {
-	carrier_take_off:b = false
-	airfield_take_off:b = false
-	is_free_flight_preset02:b = false
-}
-dialogs {
-
-}
-airfields {
-
-}
-effects {
-
-}
-units {
-	armada {
-		name:t = "#player.any"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-41759.3, 20.0, -6777.05]]
-		unit_class:t = "a-20g"
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		props {
-			army:i = 1
-			count:i = 4
-			free_distance:r = 70
-			floating_distance:r = 50
-			minimum_distance_to_earth:r = 20
-			altLimit:r = 6000
-			attack_type:t = "fire_at_will"
-			skill:i = 4
-			plane {
-				wing_formation:t = "Diamond"
-				row_distances:r = 3
-				col_distances:r = 3
-				super_formation:t = "Diamond"
-				super_row_distances:r = 1.5
-				super_col_distances:r = 1.5
-				ai_skill:t = "NORMAL"
-				task:t = "FLY_WAYPOINT"
-			}
-		}
-		way {
-
-		}
-	}
-	squad {
-		name:t = "#carrier_take_off"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [26.75, 22.2, 15.7]]
-		props {
-			squad_members:t = ""
-		}
-	}
-	squad {
-		name:t = "#unit_background"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [166.4, -86.0, 350.3]]
-		props {
-			squad_members:t = "dummy_fake"
-		}
-	}
-	structures {
-		name:t = "dummy_fake"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [90572.8, 0.0, 90842.0]]
-		unit_class:t = "dummy_nosmoke"
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			uniqueName:t = ""
-			attack_type:t = "fire_at_will"
-			stealthRadius:r = 0
-			setStealth:b = true
-		}
-		way {
-
-		}
-	}
-}
-areas {
-
-}
-objLayers {
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-}
-wayPoints {
-
+{
+  "selected_tag": "",
+  "bin_dump_file": "",
+  "mission_settings": {
+    "atmosphere": {
+      "pressure": 760.0,
+      "temperature": 0.0
+    },
+    "player": {
+      "army": 1,
+      "wing": "#player.any"
+    },
+    "player_teamB": {
+      "army": 2
+    },
+    "mission": {
+      "name": "screen_mission",
+      "level": "levels/guadalcanal.bin",
+      "type": "campaign",
+      "restoreType": "tactical control",
+      "optionalTakeOff": false,
+      "campaign": "pacific",
+      "environment": "Day",
+      "weather": "hazy",
+      "missionDebriefing": "",
+      "missionBriefing": "",
+      "tags": {},
+      "missionType": {
+        "_Dom": false,
+        "_Conq": false,
+        "_CnvA": false,
+        "_CnvB": false,
+        "_ArtDA": false,
+        "_ArtDB": false,
+        "_Bttl": false,
+        "_DBttlA": false,
+        "_DBttlB": false,
+        "_Bto": false,
+        "_Flc": false,
+        "_v1_race_straight": false,
+        "_v1_race_inverted": false,
+        "_v2_race_straight": false,
+        "_v2_race_inverted": false,
+        "_Conq1": false,
+        "_Conq2": false,
+        "_Conq3": false,
+        "_Conq4": false,
+        "_Conq5": false,
+        "_Conq6": false
+      }
+    },
+    "cover_points": {},
+    "spectator_points": {},
+    "aiParams": {
+      "aiEffectivenessViscosity": 90.0,
+      "effectivenessDistances": [
+        2500.0,
+        7000.0
+      ]
+    },
+    "briefing": {
+      "place_loc": "",
+      "date_loc": "",
+      "objective_loc": "",
+      "music": "action_01",
+      "viewAreaScale": 2.0,
+      "part": {
+        "event": "",
+        "minTime": 0,
+        "slide": [
+          {
+            "map": false,
+            "minTime": 4,
+            "picture": "dynamic_missions/berlin_02_01",
+            "showAirMap": false
+          },
+          {
+            "map": true,
+            "minTime": 4,
+            "picture": "",
+            "showAirMap": false,
+            "icon": {
+              "icontype": "fighter",
+              "side": "player",
+              "target": "#player.any"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "imports": {},
+  "triggers": {
+    "isCategory": true,
+    "is_enabled": true,
+    "miss_init": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "initMission": {}
+      },
+      "conditions": {},
+      "actions": {
+        "unitDamage": {
+          "power": 1.0,
+          "useEffect": false,
+          "countEffects": 1,
+          "delay": [
+            1.0,
+            1.0
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "radiusOffset": [
+            10.0,
+            15.0
+          ],
+          "target": "dummy_fake",
+          "partName": "body_dm"
+        }
+      },
+      "else_actions": {}
+    }
+  },
+  "mission_objectives": {
+    "isCategory": true,
+    "is_enabled": true
+  },
+  "variables": {
+    "carrier_take_off": false,
+    "airfield_take_off": false,
+    "is_free_flight_preset02": false
+  },
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {
+    "armada": {
+      "name": "#player.any",
+      "tm": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -41759.3,
+          20.0,
+          -6777.05
+        ]
+      ],
+      "unit_class": "a-20g",
+      "closed_waypoints": false,
+      "isShipSpline": false,
+      "shipTurnRadius": 100.0,
+      "weapons": "",
+      "bullets0": "",
+      "bullets1": "",
+      "bullets2": "",
+      "bullets3": "",
+      "bulletsCount0": 0,
+      "bulletsCount1": 0,
+      "bulletsCount2": 0,
+      "bulletsCount3": 0,
+      "props": {
+        "army": 1,
+        "count": 4,
+        "free_distance": 70.0,
+        "floating_distance": 50.0,
+        "minimum_distance_to_earth": 20.0,
+        "altLimit": 6000.0,
+        "attack_type": "fire_at_will",
+        "skill": 4,
+        "plane": {
+          "wing_formation": "Diamond",
+          "row_distances": 3.0,
+          "col_distances": 3.0,
+          "super_formation": "Diamond",
+          "super_row_distances": 1.5,
+          "super_col_distances": 1.5,
+          "ai_skill": "NORMAL",
+          "task": "FLY_WAYPOINT"
+        }
+      },
+      "way": {}
+    },
+    "squad": [
+      {
+        "name": "#carrier_take_off",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            26.75,
+            22.2,
+            15.7
+          ]
+        ],
+        "props": {
+          "squad_members": ""
+        }
+      },
+      {
+        "name": "#unit_background",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            166.4,
+            -86.0,
+            350.3
+          ]
+        ],
+        "props": {
+          "squad_members": "dummy_fake"
+        }
+      }
+    ],
+    "structures": {
+      "name": "dummy_fake",
+      "tm": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          90572.8,
+          0.0,
+          90842.0
+        ]
+      ],
+      "unit_class": "dummy_nosmoke",
+      "closed_waypoints": false,
+      "isShipSpline": false,
+      "shipTurnRadius": 100.0,
+      "weapons": "",
+      "bullets0": "",
+      "bullets1": "",
+      "bullets2": "",
+      "bullets3": "",
+      "bulletsCount0": 0,
+      "bulletsCount1": 0,
+      "bulletsCount2": 0,
+      "bulletsCount3": 0,
+      "props": {
+        "army": 2,
+        "count": 1,
+        "formation_type": "rows",
+        "formation_div": 3,
+        "formation_step": [
+          2.5,
+          2.0
+        ],
+        "formation_noise": [
+          0.1,
+          0.1
+        ],
+        "uniqueName": "",
+        "attack_type": "fire_at_will",
+        "stealthRadius": 0.0,
+        "setStealth": true
+      },
+      "way": {}
+    }
+  },
+  "areas": {},
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      }
+    ]
+  },
+  "wayPoints": {}
 }

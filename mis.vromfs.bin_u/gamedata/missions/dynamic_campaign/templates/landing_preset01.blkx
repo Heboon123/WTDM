@@ -1,322 +1,347 @@
-selected_tag:t = ""
-bin_dump_file:t = ""
-mission_settings {
-	atmosphere {
-		pressure:r = 760
-		temperature:r = 0
-	}
-	player {
-		army:i = 1
-		wing:t = ""
-	}
-	player_teamB {
-		army:i = 2
-	}
-	mission {
-		name:t = "landing"
-		level:t = "levels/guadalcanal.bin"
-		type:t = "campaign"
-		restoreType:t = "attempts"
-		optionalTakeOff:b = false
-		campaign:t = "pacific"
-		environment:t = "Day"
-		weather:t = "hazy"
-		missionDebriefing:t = ""
-		missionBriefing:t = ""
-		tags {
-
-		}
-	}
-	cover_points {
-
-	}
-	aiParams {
-		aiEffectivenessViscosity:r = 90
-		effectivenessDistances:p2 = 2500, 7000
-	}
-	briefing {
-		place_loc:t = ""
-		date_loc:t = ""
-		objective_loc:t = ""
-		music:t = "action_01"
-		part {
-			event:t = ""
-			minTime:i = 0
-			slide {
-				map:b = true
-				minTime:i = 4
-				picture:t = ""
-				icon {
-					icontype:t = "fighter"
-					side:t = "player"
-					target:t = "#player.any"
-				}
-			}
-		}
-	}
-}
-imports {
-
-}
-triggers {
-	isCategory:b = true
-	is_enabled:b = true
-	landing_start {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			timeExpires {
-				time:r = 0
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			triggerEnable {
-				target:t = "landing_skip"
-			}
-			wait {
-				time:r = 1
-			}
-			triggerEnable {
-				target:t = "landing_real_start"
-			}
-			wait {
-				time:r = 2
-			}
-			airfieldSetIndication {
-				set:b = true
-				target:t = ""
-			}
-		}
-	}
-	landing_quick_start {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			timeExpires {
-				time:r = 0
-			}
-		}
-		conditions {
-			varCompareBool {
-				var_value:t = "landing_real"
-				value:b = false
-				comparasion_func:t = "equal"
-			}
-		}
-		actions {
-			unitMoveTo {
-				target:t = "landing_spawn_point"
-				follow_target:b = false
-				teleportHeightType:t = "target"
-				useUnitHeightForTele:b = false
-				shouldKeepFormation:b = true
-				teleportHeightValue:r = 0
-				object:t = "#player_sq"
-				move_type:t = "teleport"
-				lookat:t = "landing_lookAt_point"
-				velocity:r = 250
-			}
-			wait {
-				time:r = 2
-			}
-			moAddMissionObjective {
-				target:t = "mo_dynamic_landing"
-			}
-			triggerEnable {
-				target:t = "landing_end"
-			}
-			wait {
-				time:r = 5
-			}
-			missionCompleted {
-				timer:b = true
-			}
-		}
-	}
-	landing_real_start {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			timeExpires {
-				time:r = 0
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			wait {
-				time:r = 2
-			}
-			moAddMissionObjective {
-				target:t = "mo_dynamic_landing"
-			}
-			triggerEnable {
-				target:t = "landing_end"
-			}
-			wait {
-				time:r = 2
-			}
-			triggerActivate {
-				target:t = "completed_offline"
-				activate_type:t = "ignoreConditions"
-				check_trigger_status:b = false
-				after_activation:t = "disable"
-			}
-		}
-	}
-	landing_end {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			playersWhenOnLZ {
-				object_type:t = "isAlive"
-				object_marking:i = 0
-				check_objects:t = "any"
-				afterRepaired:b = false
-				object:t = "#player_sq"
-				target:t = ""
-			}
-		}
-		actions {
-			moSetObjectiveStatus {
-				target:t = "mo_dynamic_landing"
-				status:i = 2
-			}
-			wait {
-				time:r = 2
-			}
-			missionDebriefing {
-
-			}
-		}
-	}
-	landing_skip {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			timeExpires {
-				time:r = 0
-			}
-		}
-		conditions {
-			varCompareBool {
-				var_value:t = "landing_skip"
-				value:b = true
-				comparasion_func:t = "equal"
-			}
-		}
-		actions {
-			triggerDisable {
-				target:t = "landing_start"
-			}
-			triggerEnable {
-				target:t = "completed_online"
-				target:t = "completed_offline"
-			}
-		}
-	}
-}
-mission_objectives {
-	isCategory:b = true
-	is_enabled:b = true
-	mo_dynamic_landing {
-		is_enabled:b = false
-		comments:t = ""
-		type:t = "abstractMissionObjective"
-		props {
-			isPrimary:b = false
-			timeLimit:i = 1800
-			scoreConst:i = 100
-			scoreTime:i = 400
-		}
-		onSuccess {
-
-		}
-		onFailed {
-
-		}
-	}
-	mo_dynamic_ship_landing {
-		is_enabled:b = false
-		comments:t = ""
-		type:t = "abstractMissionObjective"
-		props {
-			isPrimary:b = false
-			timeLimit:i = 1800
-			scoreConst:i = 100
-			scoreTime:i = 400
-		}
-		onSuccess {
-
-		}
-		onFailed {
-
-		}
-	}
-}
-variables {
-	landing_real:b = false
-	landing_skip:b = false
-}
-dialogs {
-
-}
-airfields {
-
-}
-effects {
-
-}
-units {
-
-}
-areas {
-	landing_spawn_point {
-		type:t = "Point"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-48.3, 0.0, -79.05]]
-		props {
-
-		}
-	}
-	landing_lookAt_point {
-		type:t = "Point"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [93.3, 0.0, 28.25]]
-		props {
-
-		}
-	}
+{
+  "selected_tag": "",
+  "bin_dump_file": "",
+  "mission_settings": {
+    "atmosphere": {
+      "pressure": 760.0,
+      "temperature": 0.0
+    },
+    "player": {
+      "army": 1,
+      "wing": ""
+    },
+    "player_teamB": {
+      "army": 2
+    },
+    "mission": {
+      "name": "landing",
+      "level": "levels/guadalcanal.bin",
+      "type": "campaign",
+      "restoreType": "attempts",
+      "optionalTakeOff": false,
+      "campaign": "pacific",
+      "environment": "Day",
+      "weather": "hazy",
+      "missionDebriefing": "",
+      "missionBriefing": "",
+      "tags": {}
+    },
+    "cover_points": {},
+    "aiParams": {
+      "aiEffectivenessViscosity": 90.0,
+      "effectivenessDistances": [
+        2500.0,
+        7000.0
+      ]
+    },
+    "briefing": {
+      "place_loc": "",
+      "date_loc": "",
+      "objective_loc": "",
+      "music": "action_01",
+      "part": {
+        "event": "",
+        "minTime": 0,
+        "slide": {
+          "map": true,
+          "minTime": 4,
+          "picture": "",
+          "icon": {
+            "icontype": "fighter",
+            "side": "player",
+            "target": "#player.any"
+          }
+        }
+      }
+    }
+  },
+  "imports": {},
+  "triggers": {
+    "isCategory": true,
+    "is_enabled": true,
+    "landing_start": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "timeExpires": {
+          "time": 0.0
+        }
+      },
+      "conditions": {},
+      "actions": {
+        "triggerEnable": [
+          {
+            "target": "landing_skip"
+          },
+          {
+            "target": "landing_real_start"
+          }
+        ],
+        "wait": [
+          {
+            "time": 1.0
+          },
+          {
+            "time": 2.0
+          }
+        ],
+        "airfieldSetIndication": {
+          "set": true,
+          "target": ""
+        }
+      }
+    },
+    "landing_quick_start": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "timeExpires": {
+          "time": 0.0
+        }
+      },
+      "conditions": {
+        "varCompareBool": {
+          "var_value": "landing_real",
+          "value": false,
+          "comparasion_func": "equal"
+        }
+      },
+      "actions": {
+        "unitMoveTo": {
+          "target": "landing_spawn_point",
+          "follow_target": false,
+          "teleportHeightType": "target",
+          "useUnitHeightForTele": false,
+          "shouldKeepFormation": true,
+          "teleportHeightValue": 0.0,
+          "object": "#player_sq",
+          "move_type": "teleport",
+          "lookat": "landing_lookAt_point",
+          "velocity": 250.0
+        },
+        "wait": [
+          {
+            "time": 2.0
+          },
+          {
+            "time": 5.0
+          }
+        ],
+        "moAddMissionObjective": {
+          "target": "mo_dynamic_landing"
+        },
+        "triggerEnable": {
+          "target": "landing_end"
+        },
+        "missionCompleted": {
+          "timer": true
+        }
+      }
+    },
+    "landing_real_start": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "timeExpires": {
+          "time": 0.0
+        }
+      },
+      "conditions": {},
+      "actions": {
+        "wait": [
+          {
+            "time": 2.0
+          },
+          {
+            "time": 2.0
+          }
+        ],
+        "moAddMissionObjective": {
+          "target": "mo_dynamic_landing"
+        },
+        "triggerEnable": {
+          "target": "landing_end"
+        },
+        "triggerActivate": {
+          "target": "completed_offline",
+          "activate_type": "ignoreConditions",
+          "check_trigger_status": false,
+          "after_activation": "disable"
+        }
+      }
+    },
+    "landing_end": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "playersWhenOnLZ": {
+          "object_type": "isAlive",
+          "object_marking": 0,
+          "check_objects": "any",
+          "afterRepaired": false,
+          "object": "#player_sq",
+          "target": ""
+        }
+      },
+      "actions": {
+        "moSetObjectiveStatus": {
+          "target": "mo_dynamic_landing",
+          "status": 2
+        },
+        "wait": {
+          "time": 2.0
+        },
+        "missionDebriefing": {}
+      }
+    },
+    "landing_skip": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "timeExpires": {
+          "time": 0.0
+        }
+      },
+      "conditions": {
+        "varCompareBool": {
+          "var_value": "landing_skip",
+          "value": true,
+          "comparasion_func": "equal"
+        }
+      },
+      "actions": {
+        "triggerDisable": {
+          "target": "landing_start"
+        },
+        "triggerEnable": {
+          "target": [
+            "completed_online",
+            "completed_offline"
+          ]
+        }
+      }
+    }
+  },
+  "mission_objectives": {
+    "isCategory": true,
+    "is_enabled": true,
+    "mo_dynamic_landing": {
+      "is_enabled": false,
+      "comments": "",
+      "type": "abstractMissionObjective",
+      "props": {
+        "isPrimary": false,
+        "timeLimit": 1800,
+        "scoreConst": 100,
+        "scoreTime": 400
+      },
+      "onSuccess": {},
+      "onFailed": {}
+    },
+    "mo_dynamic_ship_landing": {
+      "is_enabled": false,
+      "comments": "",
+      "type": "abstractMissionObjective",
+      "props": {
+        "isPrimary": false,
+        "timeLimit": 1800,
+        "scoreConst": 100,
+        "scoreTime": 400
+      },
+      "onSuccess": {},
+      "onFailed": {}
+    }
+  },
+  "variables": {
+    "landing_real": false,
+    "landing_skip": false
+  },
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {},
+  "areas": {
+    "landing_spawn_point": {
+      "type": "Point",
+      "tm": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -48.3,
+          0.0,
+          -79.05
+        ]
+      ],
+      "props": {}
+    },
+    "landing_lookAt_point": {
+      "type": "Point",
+      "tm": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          93.3,
+          0.0,
+          28.25
+        ]
+      ],
+      "props": {}
+    }
+  }
 }

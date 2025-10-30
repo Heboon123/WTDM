@@ -1,45 +1,50 @@
-model:t = "unit_airfield_flight_radar_snow"
-subclass:t = "fortification"
-dynCollisionGeom:b = true
-hasDmg:b = true
-damageableByGun:b = true
-expClass:t = "exp_zero"
-renderInWaterReflection:b = true
-toGround:b = true
-forceFastPhysForAI:b = true
-useDestrPhysObj:b = true
-substRI:b = true
-damageCollisionMultiplier:r = 0.01
-explosionImpulse:r = 100
-hasExpl:b = false
-timeToFire:r = 4
-InitAnimParamsRandomly {
-	part {
-		name:t = "play_flight_radar_anim_snow"
-		range:p2 = 0, 10
-	}
-}
-DamageParts {
-	formatVersion:i = 2
-	airfield_flight_radar_snow {
-		armorClass:t = "RHA_tank"
-		body_dm {
-			armorThickness:r = 10
-			armorThrough:r = 100
-			hp:r = 40
-		}
-	}
-}
-DamageEffects {
-	part {
-		name:t = "body_dm"
-		onKill {
-			expl:r = 1
-		}
-	}
-}
-explosion {
-	expl {
-		explosionEffectName:t = "ad_explosion_big"
-	}
+{
+  "model": "unit_airfield_flight_radar_snow",
+  "subclass": "fortification",
+  "dynCollisionGeom": true,
+  "hasDmg": true,
+  "damageableByGun": true,
+  "expClass": "exp_zero",
+  "renderInWaterReflection": true,
+  "toGround": true,
+  "forceFastPhysForAI": true,
+  "useDestrPhysObj": true,
+  "substRI": true,
+  "damageCollisionMultiplier": 0.01,
+  "explosionImpulse": 100.0,
+  "hasExpl": false,
+  "timeToFire": 4.0,
+  "InitAnimParamsRandomly": {
+    "part": {
+      "name": "play_flight_radar_anim_snow",
+      "range": [
+        0.0,
+        10.0
+      ]
+    }
+  },
+  "DamageParts": {
+    "formatVersion": 2,
+    "airfield_flight_radar_snow": {
+      "armorClass": "RHA_tank",
+      "body_dm": {
+        "armorThickness": 10.0,
+        "armorThrough": 100.0,
+        "hp": 40.0
+      }
+    }
+  },
+  "DamageEffects": {
+    "part": {
+      "name": "body_dm",
+      "onKill": {
+        "expl": 1.0
+      }
+    }
+  },
+  "explosion": {
+    "expl": {
+      "explosionEffectName": "ad_explosion_big"
+    }
+  }
 }

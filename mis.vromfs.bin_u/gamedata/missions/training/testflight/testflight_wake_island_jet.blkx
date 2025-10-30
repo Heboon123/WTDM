@@ -1,854 +1,1631 @@
-selected_tag:t = ""
-bin_dump_file:t = ""
-mission_settings {
-	player {
-		army:i = 1
-		wing:t = "armada_01"
-	}
-	player_teamB {
-		army:i = 2
-	}
-	mission {
-		level:t = "levels/wake_island.bin"
-		type:t = "testFlight"
-		environment:t = "Day"
-		weather:t = "good"
-		windDirection:p3 = 1, 0, 0
-		locName:t = "missions/testFlight"
-		restoreType:t = "manual"
-		optionalTakeOff:b = false
-	}
-	spectator_points {
-
-	}
-	briefing {
-		place_loc:t = ""
-		date_loc:t = ""
-		objective_loc:t = ""
-		music:t = "action_01"
-		part {
-			event:t = ""
-			minTime:i = 0
-			slide {
-				map:b = true
-				minTime:i = 4
-				picture:t = ""
-				showAirMap:b = false
-				icon {
-					icontype:t = "fighter"
-					side:t = "player"
-					target:t = "airfield00"
-					lookAt:t = "airfield01"
-				}
-				icon {
-					icontype:t = "airfield"
-					side:t = "ally"
-					target:t = "airfield01"
-				}
-			}
-		}
-	}
-}
-imports {
-
-}
-triggers {
-	isCategory:b = true
-	is_enabled:b = true
-	init {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			initMission {
-
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			addAirfield {
-				runwayStart:t = "airfield00"
-				runwayEnd:t = "airfield01"
-				runwayWidth:r = 50
-				army:i = 1
-				spawnPoint:t = "spawnpoint"
-			}
-			spawnOnAirfield {
-				runwayName:t = "airfield00"
-				objects:t = "armada_01"
-			}
-			unitSetIndication {
-				set:b = true
-				target:t = "structures_01"
-				target:t = "armada_02"
-				target:t = "armada_03"
-				target:t = "structures_02"
-				target:t = "structures_03"
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-			}
-			unitSetProperties {
-				object:t = "structures_03"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				useSearchRadar:b = true
-			}
-			comment {
-				value:t = "restoring enemy units upon death"
-			}
-			unitRespawnAfterTime {
-				time_to_respawn:r = 120
-				object_name:t = "enemies_squad"
-				just_restore:b = true
-				cycle_respawn:b = true
-			}
-		}
-		else_actions {
-
-		}
-	}
-	end {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = true
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			playersWhenStatus {
-				players:t = "isKilled"
-				check_players:t = "any"
-			}
-		}
-		actions {
-			wait {
-				time:r = 3
-			}
-			spawnOnAirfield {
-				runwayName:t = "airfield00"
-				objects:t = "armada_01"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	periodic {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			unitMoveTo {
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				target:t = "ai_resp_point"
-				target_marking:i = 0
-				waypointReachedDist:r = 10
-				recalculatePathDist:r = -1
-				follow_target:b = false
-				teleportHeightType:t = "absolute"
-				useUnitHeightForTele:b = false
-				shouldKeepFormation:b = false
-				teleportHeightValue:r = 1000
-				horizontalDirectionForTeleport:b = true
-				fastClimb:b = false
-				destTimeMode:b = false
-				target_var_name:t = ""
-				target_var_comp_op:t = "equal"
-				target_var_value:i = 0
-				shouldKeepAirFormation:b = true
-				object:t = "armada_02"
-				move_type:t = "teleport"
-			}
-			unitMoveTo {
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				target:t = "ai_resp_point01"
-				target_marking:i = 0
-				waypointReachedDist:r = 10
-				recalculatePathDist:r = -1
-				follow_target:b = false
-				teleportHeightType:t = "absolute"
-				useUnitHeightForTele:b = false
-				shouldKeepFormation:b = false
-				teleportHeightValue:r = 5000
-				horizontalDirectionForTeleport:b = true
-				fastClimb:b = false
-				destTimeMode:b = false
-				target_var_name:t = ""
-				target_var_comp_op:t = "equal"
-				target_var_value:i = 0
-				shouldKeepAirFormation:b = true
-				object:t = "armada_03"
-				move_type:t = "teleport"
-			}
-			unitSetProperties {
-				object:t = "armada_02"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				speed:r = 600
-				lockSpeed:b = true
-				fuel:r = 100
-			}
-		}
-		else_actions {
-
-		}
-	}
-}
-mission_objectives {
-	isCategory:b = true
-	is_enabled:b = true
-}
-variables {
-
-}
-dialogs {
-
-}
-airfields {
-
-}
-effects {
-
-}
-units {
-	armada {
-		name:t = "armada_01"
-		tm:m = [[-0.998527, 0.0, 0.0542584] [0.0, 1.0, 0.0] [-0.0542584, 0.0, -0.998527] [2060.51, 9.74976, -2124.6]]
-		unit_class:t = "mig-17"
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			free_distance:r = 70
-			floating_distance:r = 50
-			minimum_distance_to_earth:r = 20
-			altLimit:r = 6000
-			attack_type:t = "fire_at_will"
-			skill:i = 4
-			count:i = 1
-			speed:r = 0
-			plane {
-				wing_formation:t = "Diamond"
-				row_distances:r = 1.5
-				col_distances:r = 1.5
-				super_formation:t = "Diamond"
-				super_row_distances:r = 1.5
-				super_col_distances:r = 1.5
-				ai_skill:t = "NORMAL"
-				task:t = "FLY_WAYPOINT"
-			}
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "structures_01"
-		tm:m = [[-0.019222, 0.0, -0.999815] [0.0, 1.0, 0.0] [0.999815, 0.0, -0.019222] [-626.417, 24.7063, 1292.69]]
-		unit_class:t = "ussr_truck_gaz_aaa"
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			uniqueName:t = ""
-			attack_type:t = "dont_aim"
-			targetableByAi:b = false
-		}
-		way {
-
-		}
-	}
-	ships {
-		name:t = "ships_01"
-		tm:m = [[-0.565507, 0.0, 0.824743] [0.0, 1.0, 0.0] [-0.824743, 0.0, -0.565507] [1137.94, 2.00006, -1022.11]]
-		unit_class:t = "us_elco_80ft_pt109_boat"
-		objLayer:i = 1
-		closed_waypoints:b = true
-		isShipSpline:b = true
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 3
-			formation_type:t = "cols"
-			formation_div:i = 3
-			formation_step:p2 = 8.5, 7
-			formation_noise:p2 = 4.1, 5.1
-			uniqueName:t = ""
-			attack_type:t = "hold_fire"
-		}
-		way {
-			ships_01_wp_01 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [629.402, 2.0, -3.56671]]
-				props {
-					speed:r = 50
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			ships_01_wp_02 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-248.931, 2.0, -61.1508]]
-				props {
-					speed:r = 50
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			ships_01_wp_03 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-107.929, 2.0, -806.657]]
-				props {
-					speed:r = 50
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			ships_01_wp_04 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [784.292, 2.0, -997.732]]
-				props {
-					speed:r = 50
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-		}
-	}
-	ships {
-		name:t = "ships_02"
-		tm:m = [[0.779929, 0.0, -0.625868] [0.0, 1.0, 0.0] [0.625868, 0.0, 0.779929] [-4764.68, 2.0, 107.937]]
-		unit_class:t = "us_aircraftcarrier_forrestal"
-		objLayer:i = 1
-		closed_waypoints:b = true
-		isShipSpline:b = false
-		shipTurnRadius:r = 10
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			uniqueName:t = ""
-			attack_type:t = "hold_fire"
-		}
-		way {
-			ships_02_wp_01 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-3889.38, 2.0, -620.25]]
-				props {
-					speed:r = 40
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			ships_02_wp_02 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [6649.01, 1.99805, -9349.24]]
-				props {
-					speed:r = 40
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			ships_02_wp_03 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [16153.2, 2.00293, 1638.62]]
-				props {
-					speed:r = 40
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			ships_02_wp_07 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [2942.43, 2.00391, 13804.8]]
-				props {
-					speed:r = 40
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			ships_02_wp_05 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-5734.71, 2.00098, 8690.26]]
-				props {
-					speed:r = 40
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-		}
-	}
-	tankModels {
-		name:t = "structures_02"
-		tm:m = [[-0.668043, 0.0, -0.744122] [0.0, 1.0, 0.0] [0.744122, 0.0, -0.668043] [-569.569, 21.0799, 1315.84]]
-		unit_class:t = "ussr_t_55a"
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			uniqueName:t = ""
-			attack_type:t = "dont_aim"
-			targetableByAi:b = false
-		}
-		way {
-
-		}
-	}
-	armada {
-		name:t = "armada_02"
-		tm:m = [[-0.970798, 0.0, -0.239901] [0.0, 1.0, 0.0] [0.239901, 0.0, -0.970798] [213.656, 1000.0, 4508.88]]
-		unit_class:t = "mig-15bis_ns23"
-		objLayer:i = 1
-		closed_waypoints:b = true
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		dontOverrideHeight:b = true
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			free_distance:r = 70
-			floating_distance:r = 50
-			minimum_distance_to_earth:r = 20
-			altLimit:r = 6000
-			attack_type:t = "dont_aim"
-			skill:i = 4
-			targetableByAi:b = false
-			speed:r = 700
-			plane {
-				wing_formation:t = "Diamond"
-				row_distances:r = 3
-				col_distances:r = 3
-				super_formation:t = "Diamond"
-				super_row_distances:r = 1.5
-				super_col_distances:r = 1.5
-				ai_skill:t = "NORMAL"
-				task:t = "FLY_WAYPOINT"
-			}
-		}
-		way {
-			armada_02_wp_01 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-4716.0, 1000.0, 4041.5]]
-				props {
-					speed:r = 700
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			armada_02_wp_02 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-7860.24, 1000.0, -5813.52]]
-				props {
-					speed:r = 700
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			armada_02_wp_03 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [2737.95, 1000.0, -4649.9]]
-				props {
-					speed:r = 700
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			armada_02_wp_04 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [7798.52, 1000.0, 4239.42]]
-				props {
-					speed:r = 700
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			armada_02_wp_05 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [3618.26, 1000.0, 8587.02]]
-				props {
-					speed:r = 700
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-		}
-	}
-	armada {
-		name:t = "armada_03"
-		tm:m = [[-0.970798, 0.0, -0.239901] [0.0, 1.0, 0.0] [0.239901, 0.0, -0.970798] [213.656, 5024.67, 4508.88]]
-		unit_class:t = "mig-15bis_ns23"
-		objLayer:i = 1
-		closed_waypoints:b = true
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		dontOverrideHeight:b = true
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			free_distance:r = 70
-			floating_distance:r = 50
-			minimum_distance_to_earth:r = 20
-			altLimit:r = 6000
-			attack_type:t = "dont_aim"
-			skill:i = 4
-			targetableByAi:b = false
-			speed:r = 700
-			plane {
-				wing_formation:t = "Diamond"
-				row_distances:r = 3
-				col_distances:r = 3
-				super_formation:t = "Diamond"
-				super_row_distances:r = 1.5
-				super_col_distances:r = 1.5
-				ai_skill:t = "NORMAL"
-				task:t = "FLY_WAYPOINT"
-			}
-		}
-		way {
-			armada_03_wp_01 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-4716.0, 5024.67, 4041.5]]
-				props {
-					speed:r = 700
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			armada_03_wp_02 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-7860.24, 5024.67, -5813.52]]
-				props {
-					speed:r = 700
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			armada_03_wp_03 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [2737.95, 5024.67, -4649.9]]
-				props {
-					speed:r = 700
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			armada_03_wp_04 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [7798.52, 5024.67, 4239.42]]
-				props {
-					speed:r = 700
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			armada_03_wp_05 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [3618.26, 5024.67, 8587.02]]
-				props {
-					speed:r = 700
-					moveType:t = "MOVETO_STRAIGHT"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-		}
-	}
-	tankModels {
-		name:t = "structures_03"
-		tm:m = [[-0.019222, 0.0, -0.999815] [0.0, 1.0, 0.0] [0.999815, 0.0, -0.019222] [-1492.7, 20.3243, 2073.65]]
-		unit_class:t = "ussr_zprk_2s6"
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			uniqueName:t = ""
-			attack_type:t = "hold_fire"
-			targetableByAi:b = false
-		}
-		way {
-
-		}
-	}
-	squad {
-		name:t = "enemies_squad"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-422.951, 1517.43, 3096.02]]
-		props {
-			squad_members:t = "structures_03"
-			squad_members:t = "structures_02"
-			squad_members:t = "structures_01"
-			squad_members:t = "armada_02"
-			squad_members:t = "armada_03"
-		}
-	}
-}
-areas {
-	airfield00 {
-		type:t = "Sphere"
-		tm:m = [[-99.5142, 0.0, 9.84513] [0.0, 100.0, 0.0] [-9.84513, 0.0, -99.5142] [2065.71, 7.94373, -2113.23]]
-		props {
-
-		}
-	}
-	airfield01 {
-		type:t = "Sphere"
-		tm:m = [[-98.3386, 0.0, 18.1522] [0.0, 100.0, 0.0] [-18.1522, 0.0, -98.3386] [59.9099, 3.08118, -1832.94]]
-		props {
-
-		}
-	}
-	spawnpoint {
-		type:t = "Sphere"
-		tm:m = [[-59.7573, 0.0, 5.39146] [0.0, 60.0, 0.0] [-5.39146, 0.0, -59.7573] [1996.28, 7.90379, -2104.7]]
-		props {
-
-		}
-	}
-	ai_resp_point {
-		type:t = "Point"
-		tm:m = [[-0.999718, 0.0, -0.0237424] [0.0, 1.0, 0.0] [0.0237424, 0.0, -0.999718] [219.837, 1000.0, 4446.97]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-	wp01 {
-		type:t = "Point"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-1761.02, 1000.0, 2967.6]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-	wp02 {
-		type:t = "Point"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-4158.78, 1000.0, 1044.7]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-	wp03 {
-		type:t = "Point"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1550.62, 1000.0, -4507.35]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-	wp04 {
-		type:t = "Point"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [7021.33, 1000.0, -1371.59]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-	ai_resp_point01 {
-		type:t = "Point"
-		tm:m = [[-0.999718, 0.0, -0.0237424] [0.0, 1.0, 0.0] [0.0237424, 0.0, -0.999718] [219.85, 5000.0, 4446.95]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-}
-objLayers {
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-}
-wayPoints {
-
+{
+  "selected_tag": "",
+  "bin_dump_file": "",
+  "mission_settings": {
+    "player": {
+      "army": 1,
+      "wing": "armada_01"
+    },
+    "player_teamB": {
+      "army": 2
+    },
+    "mission": {
+      "level": "levels/wake_island.bin",
+      "type": "testFlight",
+      "environment": "Day",
+      "weather": "good",
+      "windDirection": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "locName": "missions/testFlight",
+      "restoreType": "manual",
+      "optionalTakeOff": false
+    },
+    "spectator_points": {},
+    "briefing": {
+      "place_loc": "",
+      "date_loc": "",
+      "objective_loc": "",
+      "music": "action_01",
+      "part": {
+        "event": "",
+        "minTime": 0,
+        "slide": {
+          "map": true,
+          "minTime": 4,
+          "picture": "",
+          "showAirMap": false,
+          "icon": [
+            {
+              "icontype": "fighter",
+              "side": "player",
+              "target": "airfield00",
+              "lookAt": "airfield01"
+            },
+            {
+              "icontype": "airfield",
+              "side": "ally",
+              "target": "airfield01"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "imports": {},
+  "triggers": {
+    "isCategory": true,
+    "is_enabled": true,
+    "init": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "initMission": {}
+      },
+      "conditions": {},
+      "actions": {
+        "addAirfield": {
+          "runwayStart": "airfield00",
+          "runwayEnd": "airfield01",
+          "runwayWidth": 50.0,
+          "army": 1,
+          "spawnPoint": "spawnpoint"
+        },
+        "spawnOnAirfield": {
+          "runwayName": "airfield00",
+          "objects": "armada_01"
+        },
+        "unitSetIndication": {
+          "set": true,
+          "target": [
+            "structures_01",
+            "armada_02",
+            "armada_03",
+            "structures_02",
+            "structures_03"
+          ],
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0
+        },
+        "unitSetProperties": {
+          "object": "structures_03",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "useSearchRadar": true
+        },
+        "comment": {
+          "value": "restoring enemy units upon death"
+        },
+        "unitRespawnAfterTime": {
+          "time_to_respawn": 120.0,
+          "object_name": "enemies_squad",
+          "just_restore": true,
+          "cycle_respawn": true
+        }
+      },
+      "else_actions": {}
+    },
+    "end": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": true
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "playersWhenStatus": {
+          "players": "isKilled",
+          "check_players": "any"
+        }
+      },
+      "actions": {
+        "wait": {
+          "time": 3.0
+        },
+        "spawnOnAirfield": {
+          "runwayName": "airfield00",
+          "objects": "armada_01"
+        }
+      },
+      "else_actions": {}
+    },
+    "periodic": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {},
+      "actions": {
+        "unitMoveTo": [
+          {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "target": "ai_resp_point",
+            "target_marking": 0,
+            "waypointReachedDist": 10.0,
+            "recalculatePathDist": -1.0,
+            "follow_target": false,
+            "teleportHeightType": "absolute",
+            "useUnitHeightForTele": false,
+            "shouldKeepFormation": false,
+            "teleportHeightValue": 1000.0,
+            "horizontalDirectionForTeleport": true,
+            "fastClimb": false,
+            "destTimeMode": false,
+            "target_var_name": "",
+            "target_var_comp_op": "equal",
+            "target_var_value": 0,
+            "shouldKeepAirFormation": true,
+            "object": "armada_02",
+            "move_type": "teleport"
+          },
+          {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "target": "ai_resp_point01",
+            "target_marking": 0,
+            "waypointReachedDist": 10.0,
+            "recalculatePathDist": -1.0,
+            "follow_target": false,
+            "teleportHeightType": "absolute",
+            "useUnitHeightForTele": false,
+            "shouldKeepFormation": false,
+            "teleportHeightValue": 5000.0,
+            "horizontalDirectionForTeleport": true,
+            "fastClimb": false,
+            "destTimeMode": false,
+            "target_var_name": "",
+            "target_var_comp_op": "equal",
+            "target_var_value": 0,
+            "shouldKeepAirFormation": true,
+            "object": "armada_03",
+            "move_type": "teleport"
+          }
+        ],
+        "unitSetProperties": {
+          "object": "armada_02",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "speed": 600.0,
+          "lockSpeed": true,
+          "fuel": 100.0
+        }
+      },
+      "else_actions": {}
+    }
+  },
+  "mission_objectives": {
+    "isCategory": true,
+    "is_enabled": true
+  },
+  "variables": {},
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {
+    "armada": [
+      {
+        "name": "armada_01",
+        "tm": [
+          [
+            -0.998527,
+            0.0,
+            0.0542584
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.0542584,
+            0.0,
+            -0.998527
+          ],
+          [
+            2060.51,
+            9.74976,
+            -2124.6
+          ]
+        ],
+        "unit_class": "mig-17",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "free_distance": 70.0,
+          "floating_distance": 50.0,
+          "minimum_distance_to_earth": 20.0,
+          "altLimit": 6000.0,
+          "attack_type": "fire_at_will",
+          "skill": 4,
+          "count": 1,
+          "speed": 0.0,
+          "plane": {
+            "wing_formation": "Diamond",
+            "row_distances": 1.5,
+            "col_distances": 1.5,
+            "super_formation": "Diamond",
+            "super_row_distances": 1.5,
+            "super_col_distances": 1.5,
+            "ai_skill": "NORMAL",
+            "task": "FLY_WAYPOINT"
+          }
+        },
+        "way": {}
+      },
+      {
+        "name": "armada_02",
+        "tm": [
+          [
+            -0.970798,
+            0.0,
+            -0.239901
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.239901,
+            0.0,
+            -0.970798
+          ],
+          [
+            213.656,
+            1000.0,
+            4508.88
+          ]
+        ],
+        "unit_class": "mig-15bis_ns23",
+        "objLayer": 1,
+        "closed_waypoints": true,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "dontOverrideHeight": true,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "free_distance": 70.0,
+          "floating_distance": 50.0,
+          "minimum_distance_to_earth": 20.0,
+          "altLimit": 6000.0,
+          "attack_type": "dont_aim",
+          "skill": 4,
+          "targetableByAi": false,
+          "speed": 700.0,
+          "plane": {
+            "wing_formation": "Diamond",
+            "row_distances": 3.0,
+            "col_distances": 3.0,
+            "super_formation": "Diamond",
+            "super_row_distances": 1.5,
+            "super_col_distances": 1.5,
+            "ai_skill": "NORMAL",
+            "task": "FLY_WAYPOINT"
+          }
+        },
+        "way": {
+          "armada_02_wp_01": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -4716.0,
+                1000.0,
+                4041.5
+              ]
+            ],
+            "props": {
+              "speed": 700.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          },
+          "armada_02_wp_02": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -7860.24,
+                1000.0,
+                -5813.52
+              ]
+            ],
+            "props": {
+              "speed": 700.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          },
+          "armada_02_wp_03": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                2737.95,
+                1000.0,
+                -4649.9
+              ]
+            ],
+            "props": {
+              "speed": 700.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          },
+          "armada_02_wp_04": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                7798.52,
+                1000.0,
+                4239.42
+              ]
+            ],
+            "props": {
+              "speed": 700.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          },
+          "armada_02_wp_05": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                3618.26,
+                1000.0,
+                8587.02
+              ]
+            ],
+            "props": {
+              "speed": 700.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          }
+        }
+      },
+      {
+        "name": "armada_03",
+        "tm": [
+          [
+            -0.970798,
+            0.0,
+            -0.239901
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.239901,
+            0.0,
+            -0.970798
+          ],
+          [
+            213.656,
+            5024.67,
+            4508.88
+          ]
+        ],
+        "unit_class": "mig-15bis_ns23",
+        "objLayer": 1,
+        "closed_waypoints": true,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "dontOverrideHeight": true,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "free_distance": 70.0,
+          "floating_distance": 50.0,
+          "minimum_distance_to_earth": 20.0,
+          "altLimit": 6000.0,
+          "attack_type": "dont_aim",
+          "skill": 4,
+          "targetableByAi": false,
+          "speed": 700.0,
+          "plane": {
+            "wing_formation": "Diamond",
+            "row_distances": 3.0,
+            "col_distances": 3.0,
+            "super_formation": "Diamond",
+            "super_row_distances": 1.5,
+            "super_col_distances": 1.5,
+            "ai_skill": "NORMAL",
+            "task": "FLY_WAYPOINT"
+          }
+        },
+        "way": {
+          "armada_03_wp_01": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -4716.0,
+                5024.67,
+                4041.5
+              ]
+            ],
+            "props": {
+              "speed": 700.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          },
+          "armada_03_wp_02": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -7860.24,
+                5024.67,
+                -5813.52
+              ]
+            ],
+            "props": {
+              "speed": 700.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          },
+          "armada_03_wp_03": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                2737.95,
+                5024.67,
+                -4649.9
+              ]
+            ],
+            "props": {
+              "speed": 700.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          },
+          "armada_03_wp_04": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                7798.52,
+                5024.67,
+                4239.42
+              ]
+            ],
+            "props": {
+              "speed": 700.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          },
+          "armada_03_wp_05": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                3618.26,
+                5024.67,
+                8587.02
+              ]
+            ],
+            "props": {
+              "speed": 700.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          }
+        }
+      }
+    ],
+    "tankModels": [
+      {
+        "name": "structures_01",
+        "tm": [
+          [
+            -0.019222,
+            0.0,
+            -0.999815
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.999815,
+            0.0,
+            -0.019222
+          ],
+          [
+            -626.417,
+            24.7063,
+            1292.69
+          ]
+        ],
+        "unit_class": "ussr_truck_gaz_aaa",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "uniqueName": "",
+          "attack_type": "dont_aim",
+          "targetableByAi": false
+        },
+        "way": {}
+      },
+      {
+        "name": "structures_02",
+        "tm": [
+          [
+            -0.668043,
+            0.0,
+            -0.744122
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.744122,
+            0.0,
+            -0.668043
+          ],
+          [
+            -569.569,
+            21.0799,
+            1315.84
+          ]
+        ],
+        "unit_class": "ussr_t_55a",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "uniqueName": "",
+          "attack_type": "dont_aim",
+          "targetableByAi": false
+        },
+        "way": {}
+      },
+      {
+        "name": "structures_03",
+        "tm": [
+          [
+            -0.019222,
+            0.0,
+            -0.999815
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.999815,
+            0.0,
+            -0.019222
+          ],
+          [
+            -1492.7,
+            20.3243,
+            2073.65
+          ]
+        ],
+        "unit_class": "ussr_zprk_2s6",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "uniqueName": "",
+          "attack_type": "hold_fire",
+          "targetableByAi": false
+        },
+        "way": {}
+      }
+    ],
+    "ships": [
+      {
+        "name": "ships_01",
+        "tm": [
+          [
+            -0.565507,
+            0.0,
+            0.824743
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.824743,
+            0.0,
+            -0.565507
+          ],
+          [
+            1137.94,
+            2.00006,
+            -1022.11
+          ]
+        ],
+        "unit_class": "us_elco_80ft_pt109_boat",
+        "objLayer": 1,
+        "closed_waypoints": true,
+        "isShipSpline": true,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 3,
+          "formation_type": "cols",
+          "formation_div": 3,
+          "formation_step": [
+            8.5,
+            7.0
+          ],
+          "formation_noise": [
+            4.1,
+            5.1
+          ],
+          "uniqueName": "",
+          "attack_type": "hold_fire"
+        },
+        "way": {
+          "ships_01_wp_01": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                629.402,
+                2.0,
+                -3.56671
+              ]
+            ],
+            "props": {
+              "speed": 50.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          },
+          "ships_01_wp_02": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -248.931,
+                2.0,
+                -61.1508
+              ]
+            ],
+            "props": {
+              "speed": 50.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          },
+          "ships_01_wp_03": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -107.929,
+                2.0,
+                -806.657
+              ]
+            ],
+            "props": {
+              "speed": 50.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          },
+          "ships_01_wp_04": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                784.292,
+                2.0,
+                -997.732
+              ]
+            ],
+            "props": {
+              "speed": 50.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          }
+        }
+      },
+      {
+        "name": "ships_02",
+        "tm": [
+          [
+            0.779929,
+            0.0,
+            -0.625868
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.625868,
+            0.0,
+            0.779929
+          ],
+          [
+            -4764.68,
+            2.0,
+            107.937
+          ]
+        ],
+        "unit_class": "us_aircraftcarrier_forrestal",
+        "objLayer": 1,
+        "closed_waypoints": true,
+        "isShipSpline": false,
+        "shipTurnRadius": 10.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "uniqueName": "",
+          "attack_type": "hold_fire"
+        },
+        "way": {
+          "ships_02_wp_01": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -3889.38,
+                2.0,
+                -620.25
+              ]
+            ],
+            "props": {
+              "speed": 40.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          },
+          "ships_02_wp_02": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                6649.01,
+                1.99805,
+                -9349.24
+              ]
+            ],
+            "props": {
+              "speed": 40.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          },
+          "ships_02_wp_03": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                16153.2,
+                2.00293,
+                1638.62
+              ]
+            ],
+            "props": {
+              "speed": 40.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          },
+          "ships_02_wp_07": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                2942.43,
+                2.00391,
+                13804.8
+              ]
+            ],
+            "props": {
+              "speed": 40.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          },
+          "ships_02_wp_05": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -5734.71,
+                2.00098,
+                8690.26
+              ]
+            ],
+            "props": {
+              "speed": 40.0,
+              "moveType": "MOVETO_STRAIGHT",
+              "tas": false,
+              "shouldKeepFormation": false,
+              "canUsePathFinder": false
+            }
+          }
+        }
+      }
+    ],
+    "squad": {
+      "name": "enemies_squad",
+      "tm": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -422.951,
+          1517.43,
+          3096.02
+        ]
+      ],
+      "props": {
+        "squad_members": [
+          "structures_03",
+          "structures_02",
+          "structures_01",
+          "armada_02",
+          "armada_03"
+        ]
+      }
+    }
+  },
+  "areas": {
+    "airfield00": {
+      "type": "Sphere",
+      "tm": [
+        [
+          -99.5142,
+          0.0,
+          9.84513
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          -9.84513,
+          0.0,
+          -99.5142
+        ],
+        [
+          2065.71,
+          7.94373,
+          -2113.23
+        ]
+      ],
+      "props": {}
+    },
+    "airfield01": {
+      "type": "Sphere",
+      "tm": [
+        [
+          -98.3386,
+          0.0,
+          18.1522
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          -18.1522,
+          0.0,
+          -98.3386
+        ],
+        [
+          59.9099,
+          3.08118,
+          -1832.94
+        ]
+      ],
+      "props": {}
+    },
+    "spawnpoint": {
+      "type": "Sphere",
+      "tm": [
+        [
+          -59.7573,
+          0.0,
+          5.39146
+        ],
+        [
+          0.0,
+          60.0,
+          0.0
+        ],
+        [
+          -5.39146,
+          0.0,
+          -59.7573
+        ],
+        [
+          1996.28,
+          7.90379,
+          -2104.7
+        ]
+      ],
+      "props": {}
+    },
+    "ai_resp_point": {
+      "type": "Point",
+      "tm": [
+        [
+          -0.999718,
+          0.0,
+          -0.0237424
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0237424,
+          0.0,
+          -0.999718
+        ],
+        [
+          219.837,
+          1000.0,
+          4446.97
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    },
+    "wp01": {
+      "type": "Point",
+      "tm": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -1761.02,
+          1000.0,
+          2967.6
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    },
+    "wp02": {
+      "type": "Point",
+      "tm": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -4158.78,
+          1000.0,
+          1044.7
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    },
+    "wp03": {
+      "type": "Point",
+      "tm": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          1550.62,
+          1000.0,
+          -4507.35
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    },
+    "wp04": {
+      "type": "Point",
+      "tm": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          7021.33,
+          1000.0,
+          -1371.59
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    },
+    "ai_resp_point01": {
+      "type": "Point",
+      "tm": [
+        [
+          -0.999718,
+          0.0,
+          -0.0237424
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0237424,
+          0.0,
+          -0.999718
+        ],
+        [
+          219.85,
+          5000.0,
+          4446.95
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    }
+  },
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      }
+    ]
+  },
+  "wayPoints": {}
 }

@@ -1,91 +1,124 @@
-bombGun:b = true
-preset_cost:i = 50
-shotFreq:r = 10
-sound:t = "weapon.bombgun"
-mesh:t = "toon_fab_100sv"
-tags {
-	antiTankBomb:b = true
-}
-bomb {
-	mass:r = 103.5
-	explosiveType:t = "tnt"
-	explosiveMass:r = 25.02
-	bombType:t = "he_bomb"
-	caliber:r = 0.273
-	length:r = 1.033
-	distFromCmToStab:r = 0.4
-	dragCx:r = 0.04
-	sound:t = "weapon.bomb_mid"
-	hitPowerMult:r = 1
-	nearHitPower:p2 = 1, 50
-	midHitPower:p2 = 0.9, 400
-	farHitPower:p2 = 0.1, 1000
-	endHitPower:p2 = 0.01, 1500
-	relativeVelHitShift:p2 = 300, 1000
-	nearArmorPower:p2 = 10, 50
-	midArmorPower:p2 = 7, 400
-	farArmorPower:p2 = 0.2, 700
-	relativeVelArmorShift:p2 = 200, 1000
-	shellCollision:b = true
-	pressureDamage {
-		damageType:t = "pressure"
-	}
-	DamageParts {
-		body {
-			hp:r = 25
-			armorClass:t = "tank_structural_steel"
-			armorThickness:r = 5
-			explosionArmorQuality:r = 1
-			shatterArmorQuality:r = 1
-		}
-	}
-	DamageEffects {
-		part {
-			name:t = "body"
-			onHit {
-				shellState:t = "inFlight"
-				expl:r = 1
-			}
-			onKill {
-				shellState:t = "inFlight"
-				destruction:r = 1
-			}
-			onHit {
-				shellState:t = "onUnit"
-				damageType:t = "generic"
-				expl:r = 0.2
-				break:r = 0.8
-				damage:r = 3
-				fHitCritical:b = true
-			}
-			onHit {
-				shellState:t = "onUnit"
-				damageType:t = "generic"
-				expl:r = 0.5
-				break:r = 0.5
-				damage:r = 30
-				fHitCritical:b = true
-			}
-			onHit {
-				shellState:t = "onUnit"
-				damageType:t = "explosion"
-				expl:r = 0.8
-				break:r = 0.2
-				damage:r = 50
-				fHitCritical:b = true
-			}
-			onHit {
-				shellState:t = "onUnit"
-				damageType:t = "cumulative"
-				expl:r = 1
-				damage:r = 100
-				fHitCritical:b = true
-			}
-			onKill {
-				shellState:t = "onUnit"
-				expl:r = 1
-				fHitCritical:b = true
-			}
-		}
-	}
+{
+  "bombGun": true,
+  "preset_cost": 50,
+  "shotFreq": 10.0,
+  "sound": "weapon.bombgun",
+  "mesh": "toon_fab_100sv",
+  "tags": {
+    "antiTankBomb": true
+  },
+  "bomb": {
+    "mass": 103.5,
+    "explosiveType": "tnt",
+    "explosiveMass": 25.02,
+    "bombType": "he_bomb",
+    "caliber": 0.273,
+    "length": 1.033,
+    "distFromCmToStab": 0.4,
+    "dragCx": 0.04,
+    "sound": "weapon.bomb_mid",
+    "hitPowerMult": 1.0,
+    "nearHitPower": [
+      1.0,
+      50.0
+    ],
+    "midHitPower": [
+      0.9,
+      400.0
+    ],
+    "farHitPower": [
+      0.1,
+      1000.0
+    ],
+    "endHitPower": [
+      0.01,
+      1500.0
+    ],
+    "relativeVelHitShift": [
+      300.0,
+      1000.0
+    ],
+    "nearArmorPower": [
+      10.0,
+      50.0
+    ],
+    "midArmorPower": [
+      7.0,
+      400.0
+    ],
+    "farArmorPower": [
+      0.2,
+      700.0
+    ],
+    "relativeVelArmorShift": [
+      200.0,
+      1000.0
+    ],
+    "shellCollision": true,
+    "pressureDamage": {
+      "damageType": "pressure"
+    },
+    "DamageParts": {
+      "body": {
+        "hp": 25.0,
+        "armorClass": "tank_structural_steel",
+        "armorThickness": 5.0,
+        "explosionArmorQuality": 1.0,
+        "shatterArmorQuality": 1.0
+      }
+    },
+    "DamageEffects": {
+      "part": {
+        "name": "body",
+        "onHit": [
+          {
+            "shellState": "inFlight",
+            "expl": 1.0
+          },
+          {
+            "shellState": "onUnit",
+            "damageType": "generic",
+            "expl": 0.2,
+            "break": 0.8,
+            "damage": 3.0,
+            "fHitCritical": true
+          },
+          {
+            "shellState": "onUnit",
+            "damageType": "generic",
+            "expl": 0.5,
+            "break": 0.5,
+            "damage": 30.0,
+            "fHitCritical": true
+          },
+          {
+            "shellState": "onUnit",
+            "damageType": "explosion",
+            "expl": 0.8,
+            "break": 0.2,
+            "damage": 50.0,
+            "fHitCritical": true
+          },
+          {
+            "shellState": "onUnit",
+            "damageType": "cumulative",
+            "expl": 1.0,
+            "damage": 100.0,
+            "fHitCritical": true
+          }
+        ],
+        "onKill": [
+          {
+            "shellState": "inFlight",
+            "destruction": 1.0
+          },
+          {
+            "shellState": "onUnit",
+            "expl": 1.0,
+            "fHitCritical": true
+          }
+        ]
+      }
+    }
+  }
 }

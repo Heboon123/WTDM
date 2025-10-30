@@ -1,173 +1,182 @@
-import:t = "%wtlibs/templates/essentials.blk"
-projectile {
-	_use:t = "ecs_no_debug"
-	active:b = false
-	proj__traceHandle:i = -1
-}
-projectile_physics {
-	proj__physObj {
-
-	}
-}
-projectile_client_entity {
-	proj__ownerPlayerId:i = -1
-	proj__clientEntityId:u32 {
-
-	}
-}
-bullet {
-	_use:t = "projectile"
-	bullet_client_lod:u8 {
-
-	}
-	bullet_component {
-
-	}
-	bullet__penetratedEids:list<eid> {
-
-	}
-}
-shell_delayed {
-	shell_delayed:tag {
-		_tags:t = "net,netClient"
-	}
-}
-arh_shell {
-	_use:t = "replicating"
-	arh_shell:tag {
-
-	}
-}
-acoustic_decoy {
-	_use:t = "replicating"
-	acoustic_decoy:tag {
-
-	}
-}
-shell {
-	_use:t = "projectile"
-	_use:t = "replicating"
-	shell_ref {
-
-	}
-}
-rocket {
-	_use:t = "shell"
-	rocket_component {
-
-	}
-}
-bomb {
-	_use:t = "shell"
-	bomb_component {
-
-	}
-}
-torpedo {
-	_use:t = "shell"
-	torpedo_component {
-
-	}
-}
-payload {
-	_use:t = "shell"
-	payload_component {
-
-	}
-}
-jettisoned {
-	_use:t = "shell"
-	jettisoned_component {
-
-	}
-}
-smoke {
-	_use:t = "replicating"
-	smoke__activate_time:r = 0
-	smoke__time:r = 0
-	smoke__fx_time:r = 0
-	smoke__smokeFxName:t = ""
-	_group {
-		_replicate:b = true
-		smoke__pos:p3 = 0, 0, 0
-		smoke__radius:r = 0
-		smoke__target_signature_type_flags:i = 0
-		smoke__transparent_for_thermal:b = false
-		smoke__fx_id:i = -1
-	}
-	smoke__grid_object {
-
-	}
-	smoke__smoke_fx {
-		_tags:t = "render"
-	}
-}
-damage_area {
-	_use:t = "root"
-	_use:t = "replicating"
-	damage_area__fallVel:p3 = 0, 0, 0
-	damage_area__fallNorm:p3 = 0, 0, 0
-	damage_area__velocityMult:r = 0
-	damage_area__maxRise:r = 0
-	damage_area__endTime:r = 0
-	damage_area__pos1:p3 = 0, 0, 0
-	damage_area__pos2:p3 = 0, 0, 0
-	damage_area__vel:p3 = 0, 0, 0
-	damage_area__maxFlightTime:r = 0
-	damage_area__maxFlightDist:r = 0
-	damage_area__radius:r = 0
-	damage_area__damage:r = 0
-	damage_area__damageTypeId:i = -1
-	damage_area__seed:i = 0
-	damage_area__fxType:t = ""
-	damage_area__burnFxType:t = ""
-	damage_area__burnFxSize:r = 0
-	damage_area__flightTime:r = 0
-	damage_area__scorchMarginSize:r = 0
-	damage_area__scorchStrength:r = 0
-	damage_area__scorchDuration:r = 0
-	damage_area__pos2_prev:p3 = 0, 0, 0
-	damage_area__emitterCount:i = 5
-	damage_area__emitterDispersion:r = 0.1
-	_group {
-		_track:b = true
-		damage_area__move:b = true
-	}
-	_group {
-		_tags:t = "server"
-		damage_area__nextUpdateTime:r = 0
-		damage_area__offender {
-
-		}
-	}
-	_group {
-		_tags:t = "gameClient"
-		damage_area__firstTick:b = true
-		damage_area__emitterVel:list<p3> {
-
-		}
-		damage_area__emitterPos:list<p3> {
-
-		}
-		damage_area__emitterPosPrev:list<p3> {
-
-		}
-		damage_area__emitterFxIds:list<i> {
-
-		}
-		damage_area__burnFxIds:list<i> {
-
-		}
-		damage_area__burnFxCounts:list<i> {
-
-		}
-	}
-	_group {
-		_tags:t = "gameClient"
-		damage_area__debugCommonId:i = 1
-		damage_area__debugTraceId:i = 2
-		damage_area__debugEmitterColor:c = 127, 127, 255, 255
-		damage_area__debugTraceColor:c = 0, 0, 255, 255
-		damage_area__debugCombustColor:c = 0, 255, 255, 255
-	}
+{
+  "import": "%wtlibs/templates/essentials.blk",
+  "projectile": {
+    "_use": "ecs_no_debug",
+    "active": false,
+    "proj__traceHandle": -1
+  },
+  "projectile_physics": {
+    "proj__physObj": {}
+  },
+  "projectile_client_entity": {
+    "proj__ownerPlayerId": -1,
+    "proj__clientEntityId:u32": {}
+  },
+  "bullet": {
+    "_use": "projectile",
+    "bullet_client_lod:u8": {},
+    "bullet_component": {},
+    "bullet__penetratedEids:list<eid>": {}
+  },
+  "shell_delayed": {
+    "shell_delayed:tag": {
+      "_tags": "net,netClient"
+    }
+  },
+  "arh_shell": {
+    "_use": "replicating",
+    "arh_shell:tag": {}
+  },
+  "acoustic_decoy": {
+    "_use": "replicating",
+    "acoustic_decoy:tag": {}
+  },
+  "shell": {
+    "_use": [
+      "projectile",
+      "replicating"
+    ],
+    "shell_ref": {}
+  },
+  "rocket": {
+    "_use": "shell",
+    "rocket_component": {}
+  },
+  "bomb": {
+    "_use": "shell",
+    "bomb_component": {}
+  },
+  "torpedo": {
+    "_use": "shell",
+    "torpedo_component": {}
+  },
+  "payload": {
+    "_use": "shell",
+    "payload_component": {}
+  },
+  "jettisoned": {
+    "_use": "shell",
+    "jettisoned_component": {}
+  },
+  "smoke": {
+    "_use": "replicating",
+    "smoke__activate_time": 0.0,
+    "smoke__time": 0.0,
+    "smoke__fx_time": 0.0,
+    "smoke__smokeFxName": "",
+    "_group": {
+      "_replicate": true,
+      "smoke__pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "smoke__radius": 0.0,
+      "smoke__target_signature_type_flags": 0,
+      "smoke__transparent_for_thermal": false,
+      "smoke__fx_id": -1
+    },
+    "smoke__grid_object": {},
+    "smoke__smoke_fx": {
+      "_tags": "render"
+    }
+  },
+  "damage_area": {
+    "_use": [
+      "root",
+      "replicating"
+    ],
+    "damage_area__fallVel": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "damage_area__fallNorm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "damage_area__velocityMult": 0.0,
+    "damage_area__maxRise": 0.0,
+    "damage_area__endTime": 0.0,
+    "damage_area__pos1": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "damage_area__pos2": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "damage_area__vel": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "damage_area__maxFlightTime": 0.0,
+    "damage_area__maxFlightDist": 0.0,
+    "damage_area__radius": 0.0,
+    "damage_area__damage": 0.0,
+    "damage_area__damageTypeId": -1,
+    "damage_area__seed": 0,
+    "damage_area__fxType": "",
+    "damage_area__burnFxType": "",
+    "damage_area__burnFxSize": 0.0,
+    "damage_area__flightTime": 0.0,
+    "damage_area__scorchMarginSize": 0.0,
+    "damage_area__scorchStrength": 0.0,
+    "damage_area__scorchDuration": 0.0,
+    "damage_area__pos2_prev": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "damage_area__emitterCount": 5,
+    "damage_area__emitterDispersion": 0.1,
+    "_group": [
+      {
+        "_track": true,
+        "damage_area__move": true
+      },
+      {
+        "_tags": "server",
+        "damage_area__nextUpdateTime": 0.0,
+        "damage_area__offender": {}
+      },
+      {
+        "_tags": "gameClient",
+        "damage_area__firstTick": true,
+        "damage_area__emitterVel:list<p3>": {},
+        "damage_area__emitterPos:list<p3>": {},
+        "damage_area__emitterPosPrev:list<p3>": {},
+        "damage_area__emitterFxIds:list<i>": {},
+        "damage_area__burnFxIds:list<i>": {},
+        "damage_area__burnFxCounts:list<i>": {}
+      },
+      {
+        "_tags": "gameClient",
+        "damage_area__debugCommonId": 1,
+        "damage_area__debugTraceId": 2,
+        "damage_area__debugEmitterColor": [
+          127,
+          127,
+          255,
+          255
+        ],
+        "damage_area__debugTraceColor": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "damage_area__debugCombustColor": [
+          0,
+          255,
+          255,
+          255
+        ]
+      }
+    ]
+  }
 }

@@ -1,125 +1,127 @@
-group:t = ""
-DummyButton {
-	id:t = "slotb-aircraft-choose-root"
-	size:t = "sw, sh"
-	position:t = "root"
-	btnName:t = "B"
-	on_click:t = "goBack"
-	blur {
-
-	}
-	blur_foreground {
-		isRoot:t = "yes"
-	}
-}
-tdiv {
-	id:t = "tablePlace"
-	position:t = "root"
-	slotsScrollDiv {
-		id:t = "slots_scroll_div"
-		pos:t = "0.5@slot_width - w/2, -h-1*@scrn_tgt/100.0"
-		position:t = "relative"
-		flow:t = "vertical"
-		overflow-y:t = "auto"
-		border:t = "yes"
-		border-color:t = "@frameDarkMenuBorderColor"
-		background-color:t = "@frameDarkBackgroundColor"
-		tdiv {
-			id:t = "arrows_nest"
-			position:t = "absolute"
-			pos:t = "0.5*pw - 0.5*w, 2@lines_pad"
-			size:t = "@shop_width, ph"
-		}
-		slotbarTable {
-			id:t = "airs_table"
-			left:t = "(pw-w)/2"
-			position:t = "relative"
-			flow:t = "vertical"
-			behavior:t = "posNavigator"
-			navigatorShortcuts:t = "yes"
-			on_click:t = "onDoneSlotChoose"
-			on_select:t = "onSlotSelect"
-			on_dbl_click:t = "onDoneSlotChoose"
-			on_pushed:t = "::gcb.delayedTooltipListPush"
-			on_hold_start:t = "::gcb.delayedTooltipListHoldStart"
-			on_hold_stop:t = "::gcb.delayedTooltipListHoldStop"
-		}
-	}
-	frame {
-		id:t = "choose_popup_menu"
-		position:t = "relative"
-		activeText {
-			id:t = "choose_options_header"
-			width:t = "pw"
-			text:t = "#filter_option/choose_units_filter_title"
-			position:t = "relative"
-			pos:t = "50%pw-50%w, 0"
-			margin:t = "5*@sf/@pf_outdated"
-		}
-		Button_close {
-			position:t = "absolute"
-			on_click:t = "goBack"
-		}
-		div {
-			id:t = "choose_options_nest"
-			flow:t = "vertical"
-			margin-bottom:t = "0.5@slotBtnIco"
-		}
-		textareaNoTab {
-			id:t = "filtered_units_text"
-			position:t = "relative"
-			pos:t = "pw-w, 0"
-			margin:t = "0, 0.5@slotBtnIco"
-			smallFont:t = "yes"
-			display:t = "hide"
-		}
-		textareaNoTab {
-			id:t = "units_group_text"
-			position:t = "relative"
-			pos:t = "pw-w, 0"
-			margin:t = "0, 0.5@slotBtnIco"
-			smallFont:t = "yes"
-			display:t = "hide"
-		}
-		tdiv {
-			id:t = "legend_nest"
-			margin:t = "0, 0.5@slotBtnIco"
-			display:t = "hide"
-		}
-		Button_text {
-			id:t = "btn_emptyCrew"
-			position:t = "relative"
-			pos:t = "pw-w, 0"
-			text:t = "#shop/emptyCrew"
-			_on_click:t = "onEmptyCrew"
-			btnName:t = "Y"
-			enable:t = "no"
-			display:t = "hide"
-			isShowDragAndDropHint:t = "yes"
-			tooltip:t = "#slotbar/dragUnitHint"
-			ButtonImg {
-
-			}
-			dragAndDropIcon {
-				position:t = "relative"
-				pos:t = "pw - 0.5@blockInterval, 0.5ph-0.5h"
-				css-hier-invalidate:t = "yes"
-				flow:t = "horizontal"
-				text {
-					text:t = " ("
-				}
-				icon {
-					position:t = "relative"
-					top:t = "50%ph-50%h"
-					size:t = "1@sIco, 1@sIco"
-					background-image:t = "#ui/gameuiskin#dnd_icon.svg"
-					background-svg-size:t = "@sIco, @sIco"
-					background-color:t = "@buttonFontColor"
-				}
-				text {
-					text:t = ")"
-				}
-			}
-		}
-	}
+{
+  "group": "",
+  "DummyButton": {
+    "id": "slotb-aircraft-choose-root",
+    "size": "sw, sh",
+    "position": "root",
+    "btnName": "B",
+    "on_click": "goBack",
+    "blur": {},
+    "blur_foreground": {
+      "isRoot": "yes"
+    }
+  },
+  "tdiv": {
+    "id": "tablePlace",
+    "position": "root",
+    "slotsScrollDiv": {
+      "id": "slots_scroll_div",
+      "pos": "0.5@slot_width - w/2, -h-1*@scrn_tgt/100.0",
+      "position": "relative",
+      "flow": "vertical",
+      "overflow-y": "auto",
+      "border": "yes",
+      "border-color": "@frameDarkMenuBorderColor",
+      "background-color": "@frameDarkBackgroundColor",
+      "tdiv": {
+        "id": "arrows_nest",
+        "position": "absolute",
+        "pos": "0.5*pw - 0.5*w, 2@lines_pad",
+        "size": "@shop_width, ph"
+      },
+      "slotbarTable": {
+        "id": "airs_table",
+        "left": "(pw-w)/2",
+        "position": "relative",
+        "flow": "vertical",
+        "behavior": "posNavigator",
+        "navigatorShortcuts": "yes",
+        "on_click": "onDoneSlotChoose",
+        "on_select": "onSlotSelect",
+        "on_dbl_click": "onDoneSlotChoose",
+        "on_pushed": "::gcb.delayedTooltipListPush",
+        "on_hold_start": "::gcb.delayedTooltipListHoldStart",
+        "on_hold_stop": "::gcb.delayedTooltipListHoldStop"
+      }
+    },
+    "frame": {
+      "id": "choose_popup_menu",
+      "position": "relative",
+      "activeText": {
+        "id": "choose_options_header",
+        "width": "pw",
+        "text": "#filter_option/choose_units_filter_title",
+        "position": "relative",
+        "pos": "50%pw-50%w, 0",
+        "margin": "5*@sf/@pf_outdated"
+      },
+      "Button_close": {
+        "position": "absolute",
+        "on_click": "goBack"
+      },
+      "div": {
+        "id": "choose_options_nest",
+        "flow": "vertical",
+        "margin-bottom": "0.5@slotBtnIco"
+      },
+      "textareaNoTab": [
+        {
+          "id": "filtered_units_text",
+          "position": "relative",
+          "pos": "pw-w, 0",
+          "margin": "0, 0.5@slotBtnIco",
+          "smallFont": "yes",
+          "display": "hide"
+        },
+        {
+          "id": "units_group_text",
+          "position": "relative",
+          "pos": "pw-w, 0",
+          "margin": "0, 0.5@slotBtnIco",
+          "smallFont": "yes",
+          "display": "hide"
+        }
+      ],
+      "tdiv": {
+        "id": "legend_nest",
+        "margin": "0, 0.5@slotBtnIco",
+        "display": "hide"
+      },
+      "Button_text": {
+        "id": "btn_emptyCrew",
+        "position": "relative",
+        "pos": "pw-w, 0",
+        "text": "#shop/emptyCrew",
+        "_on_click": "onEmptyCrew",
+        "btnName": "Y",
+        "enable": "no",
+        "display": "hide",
+        "isShowDragAndDropHint": "yes",
+        "tooltip": "#slotbar/dragUnitHint",
+        "ButtonImg": {},
+        "dragAndDropIcon": {
+          "position": "relative",
+          "pos": "pw - 0.5@blockInterval, 0.5ph-0.5h",
+          "css-hier-invalidate": "yes",
+          "flow": "horizontal",
+          "text": [
+            {
+              "text": " ("
+            },
+            {
+              "text": ")"
+            }
+          ],
+          "icon": {
+            "position": "relative",
+            "top": "50%ph-50%h",
+            "size": "1@sIco, 1@sIco",
+            "background-image": "#ui/gameuiskin#dnd_icon.svg",
+            "background-svg-size": "@sIco, @sIco",
+            "background-color": "@buttonFontColor"
+          }
+        }
+      }
+    }
+  }
 }

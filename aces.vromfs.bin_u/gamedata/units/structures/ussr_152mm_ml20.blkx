@@ -1,110 +1,130 @@
-model:t = "105mm_m2a1_a"
-hasExpl:b = true
-hasDmg2:b = true
-collisionSphere0:p4 = 0, -1.5, 0, 5
-collisionSphere1:p4 = 5, 2, 0, 1
-timeToFire:r = 5
-maxFwdSpeed:r = 0
-maxRevSpeed:r = 0
-maxAngSpeed:r = 0
-maxAccel:r = 0
-maxDecel:r = 0
-maxAngAccel0:r = 0
-maxAngAccelV:r = 0
-maxAngAccel:r = 0
-groundNormSmoothViscosity:r = 0.1
-fireFx:t = "fire_ground_black_fx"
-subclass:t = "fortification"
-onRadarAs:t = "aam"
-bulletHitFx:t = "ground_model_hit"
-partDamageFx:t = "part_damage"
-explosionFx:t = "ground_model_expl"
-fireFx:t = "ground_model_fire"
-toGround:b = true
-expClass:t = "exp_fortification"
-attach {
-	inc_gunner00:t = "usa_young_gunner_stand"
-	inc_gunner01:t = "usa_young_gunner_stand2"
-}
-DamageParts {
-	steel {
-		body_dm {
-			hp:r = 240
-			napalmDamageMult:r = 1
-		}
-	}
-	armor50_tanks {
-		armor1_dm {
-			hp:r = 99999
-		}
-	}
-}
-DamageEffects {
-	part {
-		name:t = "body_dm"
-		onHit {
-			smoke:r = 0.01
-		}
-		onKill {
-			expl:r = 1
-		}
-	}
-}
-explosion {
-	expl {
-		node:t = "body"
-		partNo:i = 0
-		timeToExplode:r = 0.5
-		postEffectName:t = "smoke_ground_black_fx"
-		explosionEffectName:t = "explosion_midair_medium"
-		timeForPostEffect:r = 60
-		preScale:r = 1
-		postScale:r = 1
-	}
-}
-class_tags {
-	easternfront:b = true
-	westernfront:b = true
-	country_ussr:b = true
-	anti_tank:b = true
-	year1940:b = true
-	year1941:b = true
-	year1942:b = true
-	year1943:b = true
-	year1944:b = true
-	year1945:b = true
-	max_ratio:r = 0.25
-}
-weapon {
-	trigger:t = "gunner0"
-	blk:t = "gameData/Weapons/groundModels_weapons/common_cannon155mm.blk"
-	emitter:t = "gun1"
-	flash:t = "flame1"
-	defaultYaw:r = 0
-	defaultPitch:r = 10
-	speedYaw:r = 6
-	speedPitch:r = 6
-	fireConeAngle:r = 1
-	salvoAmount:r = 100
-	ChainfireTime:r = 0
-	DelayAfterShoot:r = 0
-	AttackMaxDistance:r = 3000
-	AttackMaxRadius:r = 3000
-	AttackMaxHeight:r = 3000
-	accuracyAir:r = 0
-	accuracyGnd:r = 0.4
-	errMeasureVel:r = 0
-	errMeasureVelFast:r = 20
-	errMeasureVelFwdShift:r = 0.7
-	errMeasureVelDir:r = 3
-	errTargettingOn100kmph:r = 0
-	errTargetting:r = 60
-	turret {
-		head:t = "turret1"
-		gun:t = "gun1"
-	}
-	limits {
-		yaw:p2 = -180, 180
-		pitch:p2 = -2, 65
-	}
+{
+  "model": "105mm_m2a1_a",
+  "hasExpl": true,
+  "hasDmg2": true,
+  "collisionSphere0": [
+    0.0,
+    -1.5,
+    0.0,
+    5.0
+  ],
+  "collisionSphere1": [
+    5.0,
+    2.0,
+    0.0,
+    1.0
+  ],
+  "timeToFire": 5.0,
+  "maxFwdSpeed": 0.0,
+  "maxRevSpeed": 0.0,
+  "maxAngSpeed": 0.0,
+  "maxAccel": 0.0,
+  "maxDecel": 0.0,
+  "maxAngAccel0": 0.0,
+  "maxAngAccelV": 0.0,
+  "maxAngAccel": 0.0,
+  "groundNormSmoothViscosity": 0.1,
+  "fireFx": [
+    "fire_ground_black_fx",
+    "ground_model_fire"
+  ],
+  "subclass": "fortification",
+  "onRadarAs": "aam",
+  "bulletHitFx": "ground_model_hit",
+  "partDamageFx": "part_damage",
+  "explosionFx": "ground_model_expl",
+  "toGround": true,
+  "expClass": "exp_fortification",
+  "attach": {
+    "inc_gunner00": "usa_young_gunner_stand",
+    "inc_gunner01": "usa_young_gunner_stand2"
+  },
+  "DamageParts": {
+    "steel": {
+      "body_dm": {
+        "hp": 240.0,
+        "napalmDamageMult": 1.0
+      }
+    },
+    "armor50_tanks": {
+      "armor1_dm": {
+        "hp": 99999.0
+      }
+    }
+  },
+  "DamageEffects": {
+    "part": {
+      "name": "body_dm",
+      "onHit": {
+        "smoke": 0.01
+      },
+      "onKill": {
+        "expl": 1.0
+      }
+    }
+  },
+  "explosion": {
+    "expl": {
+      "node": "body",
+      "partNo": 0,
+      "timeToExplode": 0.5,
+      "postEffectName": "smoke_ground_black_fx",
+      "explosionEffectName": "explosion_midair_medium",
+      "timeForPostEffect": 60.0,
+      "preScale": 1.0,
+      "postScale": 1.0
+    }
+  },
+  "class_tags": {
+    "easternfront": true,
+    "westernfront": true,
+    "country_ussr": true,
+    "anti_tank": true,
+    "year1940": true,
+    "year1941": true,
+    "year1942": true,
+    "year1943": true,
+    "year1944": true,
+    "year1945": true,
+    "max_ratio": 0.25
+  },
+  "weapon": {
+    "trigger": "gunner0",
+    "blk": "gameData/Weapons/groundModels_weapons/common_cannon155mm.blk",
+    "emitter": "gun1",
+    "flash": "flame1",
+    "defaultYaw": 0.0,
+    "defaultPitch": 10.0,
+    "speedYaw": 6.0,
+    "speedPitch": 6.0,
+    "fireConeAngle": 1.0,
+    "salvoAmount": 100.0,
+    "ChainfireTime": 0.0,
+    "DelayAfterShoot": 0.0,
+    "AttackMaxDistance": 3000.0,
+    "AttackMaxRadius": 3000.0,
+    "AttackMaxHeight": 3000.0,
+    "accuracyAir": 0.0,
+    "accuracyGnd": 0.4,
+    "errMeasureVel": 0.0,
+    "errMeasureVelFast": 20.0,
+    "errMeasureVelFwdShift": 0.7,
+    "errMeasureVelDir": 3.0,
+    "errTargettingOn100kmph": 0.0,
+    "errTargetting": 60.0,
+    "turret": {
+      "head": "turret1",
+      "gun": "gun1"
+    },
+    "limits": {
+      "yaw": [
+        -180.0,
+        180.0
+      ],
+      "pitch": [
+        -2.0,
+        65.0
+      ]
+    }
+  }
 }

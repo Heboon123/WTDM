@@ -1,116 +1,174 @@
-local_light {
-	_use:t = "ecs_no_debug"
-	transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
-	_tracked:t = "transform"
-	_replicated:t = "transform"
-	shreddableInDarkZone:b = true
-	_group {
-		_track:b = true
-		_replicate:b = true
-		light__max_radius:r = 0
-		light__offset:p3 = 0, 0, 0
-		light__color:c = 200, 250, 255, 255
-		light__brightness:r = 1
-		light__dynamic_light:b = false
-		light__affect_volumes:b = true
-		light__force_affect_volfog:b = false
-		light__render_gpu_objects:b = false
-		light__force_max_light_radius:b = false
-		light__radius_scale:r = 1
-		light__enable_lens_flares:b = false
-	}
-}
-light {
-	_use:t = "local_light"
-	_use:t = "replicating"
-}
-local_omni_light {
-	_use:t = "local_light"
-	light__nightly:b = true
-	_group {
-		_track:b = true
-		_replicate:b = true
-		light__contact_shadows:b = true
-		light__use_box:b = true
-		light__automatic_box:b = false
-		light__box:m = [[0.0, 0.0, 0.0] [0.0, 0.0, 0.0] [0.0, 0.0, 0.0] [0.0, 0.0, 0.0]]
-		light__direction:p3 = 0, -1, 0
-		light__texture_name:t = ""
-	}
-	omni_light {
-		_tags:t = "render"
-	}
-	_group {
-		_tags:t = "render"
-		_track:b = true
-		_replicate:b = true
-		omni_light__shadows:b = false
-		omni_light__dynamic_obj_shadows:b = false
-		omni_light__shadow_shrink:i = 0
-		omni_light__shadow_quality:i = 2
-	}
-}
-omni_light {
-	_use:t = "ecs_no_debug"
-	_use:t = "local_omni_light"
-	_use:t = "replicating"
-	destroyable_with_rendinst:tag {
-
-	}
-	light:tag {
-
-	}
-}
-undestroyable_omni_light {
-	_use:t = "local_omni_light"
-	_use:t = "replicating"
-	light:tag {
-
-	}
-}
-base_spot_light {
-	_use:t = "light"
-	light__nightly:b = true
-	_group {
-		_track:b = true
-		_replicate:b = true
-		light__texture_name:t = ""
-		light__max_radius:r = 45
-		light__brightness:r = 100
-	}
-	spot_light {
-		_tags:t = "render"
-	}
-	_group {
-		_tags:t = "render"
-		_track:b = true
-		_replicate:b = true
-		spot_light__inner_attenuation:r = 0.9
-		spot_light__dynamic_light:b = false
-		spot_light__shadows:b = true
-		spot_light__dynamic_obj_shadows:b = false
-		spot_light__contact_shadows:b = false
-		spot_light__shadow_shrink:i = 0
-		spot_light__shadow_quality:i = 0
-		spot_light__cone_angle:r = -1
-		spot_light__shadow_cone_angle:r = -1
-		spot_light__shadow_frustum_offset:r = 0
-		spot_light__shadow_near_far_planes:p2 = 0, 0
-		spot_light__illuminating_plane:r = 0
-	}
-}
-spot_light {
-	_use:t = "base_spot_light"
-	destroyable_with_rendinst:tag {
-
-	}
-	light:tag {
-
-	}
-}
-undestroyable_spot_light {
-	_use:t = "base_spot_light"
-	light:tag {
-
-	}
+{
+  "local_light": {
+    "_use": "ecs_no_debug",
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "_tracked": "transform",
+    "_replicated": "transform",
+    "shreddableInDarkZone": true,
+    "_group": {
+      "_track": true,
+      "_replicate": true,
+      "light__max_radius": 0.0,
+      "light__offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "light__color": [
+        200,
+        250,
+        255,
+        255
+      ],
+      "light__brightness": 1.0,
+      "light__dynamic_light": false,
+      "light__affect_volumes": true,
+      "light__force_affect_volfog": false,
+      "light__render_gpu_objects": false,
+      "light__force_max_light_radius": false,
+      "light__radius_scale": 1.0,
+      "light__enable_lens_flares": false
+    }
+  },
+  "light": {
+    "_use": [
+      "local_light",
+      "replicating"
+    ]
+  },
+  "local_omni_light": {
+    "_use": "local_light",
+    "light__nightly": true,
+    "_group": [
+      {
+        "_track": true,
+        "_replicate": true,
+        "light__contact_shadows": true,
+        "light__use_box": true,
+        "light__automatic_box": false,
+        "light__box": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "light__direction": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "light__texture_name": ""
+      },
+      {
+        "_tags": "render",
+        "_track": true,
+        "_replicate": true,
+        "omni_light__shadows": false,
+        "omni_light__dynamic_obj_shadows": false,
+        "omni_light__shadow_shrink": 0,
+        "omni_light__shadow_quality": 2
+      }
+    ],
+    "omni_light": {
+      "_tags": "render"
+    }
+  },
+  "omni_light": {
+    "_use": [
+      "ecs_no_debug",
+      "local_omni_light",
+      "replicating"
+    ],
+    "destroyable_with_rendinst:tag": {},
+    "light:tag": {}
+  },
+  "undestroyable_omni_light": {
+    "_use": [
+      "local_omni_light",
+      "replicating"
+    ],
+    "light:tag": {}
+  },
+  "base_spot_light": {
+    "_use": "light",
+    "light__nightly": true,
+    "_group": [
+      {
+        "_track": true,
+        "_replicate": true,
+        "light__texture_name": "",
+        "light__max_radius": 45.0,
+        "light__brightness": 100.0
+      },
+      {
+        "_tags": "render",
+        "_track": true,
+        "_replicate": true,
+        "spot_light__inner_attenuation": 0.9,
+        "spot_light__dynamic_light": false,
+        "spot_light__shadows": true,
+        "spot_light__dynamic_obj_shadows": false,
+        "spot_light__contact_shadows": false,
+        "spot_light__shadow_shrink": 0,
+        "spot_light__shadow_quality": 0,
+        "spot_light__cone_angle": -1.0,
+        "spot_light__shadow_cone_angle": -1.0,
+        "spot_light__shadow_frustum_offset": 0.0,
+        "spot_light__shadow_near_far_planes": [
+          0.0,
+          0.0
+        ],
+        "spot_light__illuminating_plane": 0.0
+      }
+    ],
+    "spot_light": {
+      "_tags": "render"
+    }
+  },
+  "spot_light": {
+    "_use": "base_spot_light",
+    "destroyable_with_rendinst:tag": {},
+    "light:tag": {}
+  },
+  "undestroyable_spot_light": {
+    "_use": "base_spot_light",
+    "light:tag": {}
+  }
 }

@@ -1,288 +1,513 @@
-selected_tag:t = ""
-bin_dump_file:t = ""
-mission_settings {
-	player {
-		army:i = 1
-		wing:t = "armada_01"
-	}
-	player_teamB {
-		army:i = 2
-	}
-	mission {
-		level:t = "levels/arcade_norway_fjords.bin"
-		type:t = "testFlight"
-		environment:t = "Evening"
-		weather:t = "hazy"
-		windDirection:p3 = 1, 0, 0
-		gt_cooperative:b = false
-		restoreType:t = "attempts"
-		optionalTakeOff:b = false
-	}
-}
-imports {
-
-}
-triggers {
-	isCategory:b = true
-	is_enabled:b = true
-	Trigger_01 {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			initMission {
-
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			unitSetProperties {
-				object:t = "armada_02"
-				effShootingRate:r = 0
-			}
-			unitAttackTarget {
-				playerAttracted:b = false
-				object:t = "armada_02"
-				target:t = "armada_01"
-			}
-			comment {
-				value:t = "restoring enemy units upon death"
-			}
-			unitRespawnAfterTime {
-				time_to_respawn:r = 120
-				object_name:t = "enemies_squad"
-				just_restore:b = true
-				cycle_respawn:b = true
-			}
-		}
-		else_actions {
-
-		}
-	}
-}
-mission_objectives {
-	isCategory:b = true
-	is_enabled:b = true
-}
-variables {
-
-}
-dialogs {
-
-}
-airfields {
-
-}
-effects {
-
-}
-units {
-	armada {
-		name:t = "armada_01"
-		tm:m = [[-0.999048, -0.04362, 1.50996e-7] [-0.04362, 0.999048, 0.0] [-1.50852e-7, -6.58614e-9, -1.0] [2500.0, 3055.4, 0.0]]
-		unit_class:t = "spitfire_mk5c"
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			free_distance:r = 70
-			floating_distance:r = 50
-			minimum_distance_to_earth:r = 20
-			altLimit:r = 6000
-			attack_type:t = "fire_at_will"
-			skill:i = 4
-			speed:r = 400
-			plane {
-				wing_formation:t = "Diamond"
-				row_distances:r = 3
-				col_distances:r = 3
-				super_formation:t = "Diamond"
-				super_row_distances:r = 1.5
-				super_col_distances:r = 1.5
-				ai_skill:t = "NORMAL"
-				task:t = "FLY_WAYPOINT"
-			}
-		}
-		way {
-
-		}
-	}
-	armada {
-		name:t = "armada_02"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.8, 1401.1, 30.9]]
-		unit_class:t = "fiat_cr42"
-		closed_waypoints:b = true
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 8
-			free_distance:r = 70
-			floating_distance:r = 50
-			minimum_distance_to_earth:r = 20
-			altLimit:r = 6000
-			attack_type:t = "fire_at_will"
-			skill:i = 4
-			accuracy:r = 0.1
-			plane {
-				wing_formation:t = "Diamond"
-				row_distances:r = 3
-				col_distances:r = 3
-				super_formation:t = "Diamond"
-				super_row_distances:r = 1.5
-				super_col_distances:r = 1.5
-				ai_skill:t = "ROOKIE"
-				task:t = "FLY_WAYPOINT"
-			}
-		}
-		way {
-			armada_02_wp_01 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-1933.95, 1734.15, 1865.8]]
-				props {
-					speed:r = 300
-					moveType:t = "MOVETO_STRAIGHT"
-				}
-			}
-			armada_02_wp_02 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-1987.2, 1734.15, 703.4]]
-				props {
-					speed:r = 300
-					moveType:t = "MOVETO_STRAIGHT"
-				}
-			}
-			armada_02_wp_03 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-2299.35, 1734.15, -4001.85]]
-				props {
-					speed:r = 300
-					moveType:t = "MOVETO_STRAIGHT"
-				}
-			}
-			armada_02_wp_04 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-2559.1, 1734.15, -12243.0]]
-				props {
-					speed:r = 300
-					moveType:t = "MOVETO_STRAIGHT"
-				}
-			}
-			armada_02_wp_05 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [933.1, 1734.15, -9678.75]]
-				props {
-					speed:r = 300
-					moveType:t = "MOVETO_STRAIGHT"
-				}
-			}
-			armada_02_wp_06 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [927.6, 1734.15, -3118.5]]
-				props {
-					speed:r = 300
-					moveType:t = "MOVETO_STRAIGHT"
-				}
-			}
-			armada_02_wp_07 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [1899.7, 2212.65, 11352.7]]
-				props {
-					speed:r = 300
-					moveType:t = "MOVETO_STRAIGHT"
-				}
-			}
-		}
-	}
-	ships {
-		name:t = "ships_01"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
-		unit_class:t = "uss_cv_lexington"
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			uniqueName:t = ""
-			attack_type:t = "hold_fire"
-			isDelayed:b = true
-		}
-		way {
-
-		}
-	}
-	squad {
-		name:t = "enemies_squad"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.4, 700.55, 15.45]]
-		props {
-			squad_members:t = "armada_02"
-			squad_members:t = "ships_01"
-		}
-	}
-}
-areas {
-
-}
-objLayers {
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-}
-wayPoints {
-
+{
+  "selected_tag": "",
+  "bin_dump_file": "",
+  "mission_settings": {
+    "player": {
+      "army": 1,
+      "wing": "armada_01"
+    },
+    "player_teamB": {
+      "army": 2
+    },
+    "mission": {
+      "level": "levels/arcade_norway_fjords.bin",
+      "type": "testFlight",
+      "environment": "Evening",
+      "weather": "hazy",
+      "windDirection": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "gt_cooperative": false,
+      "restoreType": "attempts",
+      "optionalTakeOff": false
+    }
+  },
+  "imports": {},
+  "triggers": {
+    "isCategory": true,
+    "is_enabled": true,
+    "Trigger_01": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "initMission": {}
+      },
+      "conditions": {},
+      "actions": {
+        "unitSetProperties": {
+          "object": "armada_02",
+          "effShootingRate": 0.0
+        },
+        "unitAttackTarget": {
+          "playerAttracted": false,
+          "object": "armada_02",
+          "target": "armada_01"
+        },
+        "comment": {
+          "value": "restoring enemy units upon death"
+        },
+        "unitRespawnAfterTime": {
+          "time_to_respawn": 120.0,
+          "object_name": "enemies_squad",
+          "just_restore": true,
+          "cycle_respawn": true
+        }
+      },
+      "else_actions": {}
+    }
+  },
+  "mission_objectives": {
+    "isCategory": true,
+    "is_enabled": true
+  },
+  "variables": {},
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {
+    "armada": [
+      {
+        "name": "armada_01",
+        "tm": [
+          [
+            -0.999048,
+            -0.04362,
+            1.50996e-7
+          ],
+          [
+            -0.04362,
+            0.999048,
+            0.0
+          ],
+          [
+            -1.50852e-7,
+            -6.58614e-9,
+            -1.0
+          ],
+          [
+            2500.0,
+            3055.4,
+            0.0
+          ]
+        ],
+        "unit_class": "spitfire_mk5c",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "free_distance": 70.0,
+          "floating_distance": 50.0,
+          "minimum_distance_to_earth": 20.0,
+          "altLimit": 6000.0,
+          "attack_type": "fire_at_will",
+          "skill": 4,
+          "speed": 400.0,
+          "plane": {
+            "wing_formation": "Diamond",
+            "row_distances": 3.0,
+            "col_distances": 3.0,
+            "super_formation": "Diamond",
+            "super_row_distances": 1.5,
+            "super_col_distances": 1.5,
+            "ai_skill": "NORMAL",
+            "task": "FLY_WAYPOINT"
+          }
+        },
+        "way": {}
+      },
+      {
+        "name": "armada_02",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.8,
+            1401.1,
+            30.9
+          ]
+        ],
+        "unit_class": "fiat_cr42",
+        "closed_waypoints": true,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 8,
+          "free_distance": 70.0,
+          "floating_distance": 50.0,
+          "minimum_distance_to_earth": 20.0,
+          "altLimit": 6000.0,
+          "attack_type": "fire_at_will",
+          "skill": 4,
+          "accuracy": 0.1,
+          "plane": {
+            "wing_formation": "Diamond",
+            "row_distances": 3.0,
+            "col_distances": 3.0,
+            "super_formation": "Diamond",
+            "super_row_distances": 1.5,
+            "super_col_distances": 1.5,
+            "ai_skill": "ROOKIE",
+            "task": "FLY_WAYPOINT"
+          }
+        },
+        "way": {
+          "armada_02_wp_01": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -1933.95,
+                1734.15,
+                1865.8
+              ]
+            ],
+            "props": {
+              "speed": 300.0,
+              "moveType": "MOVETO_STRAIGHT"
+            }
+          },
+          "armada_02_wp_02": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -1987.2,
+                1734.15,
+                703.4
+              ]
+            ],
+            "props": {
+              "speed": 300.0,
+              "moveType": "MOVETO_STRAIGHT"
+            }
+          },
+          "armada_02_wp_03": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -2299.35,
+                1734.15,
+                -4001.85
+              ]
+            ],
+            "props": {
+              "speed": 300.0,
+              "moveType": "MOVETO_STRAIGHT"
+            }
+          },
+          "armada_02_wp_04": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -2559.1,
+                1734.15,
+                -12243.0
+              ]
+            ],
+            "props": {
+              "speed": 300.0,
+              "moveType": "MOVETO_STRAIGHT"
+            }
+          },
+          "armada_02_wp_05": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                933.1,
+                1734.15,
+                -9678.75
+              ]
+            ],
+            "props": {
+              "speed": 300.0,
+              "moveType": "MOVETO_STRAIGHT"
+            }
+          },
+          "armada_02_wp_06": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                927.6,
+                1734.15,
+                -3118.5
+              ]
+            ],
+            "props": {
+              "speed": 300.0,
+              "moveType": "MOVETO_STRAIGHT"
+            }
+          },
+          "armada_02_wp_07": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                1899.7,
+                2212.65,
+                11352.7
+              ]
+            ],
+            "props": {
+              "speed": 300.0,
+              "moveType": "MOVETO_STRAIGHT"
+            }
+          }
+        }
+      }
+    ],
+    "ships": {
+      "name": "ships_01",
+      "tm": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "unit_class": "uss_cv_lexington",
+      "closed_waypoints": false,
+      "isShipSpline": false,
+      "shipTurnRadius": 100.0,
+      "weapons": "",
+      "bullets0": "",
+      "bullets1": "",
+      "bullets2": "",
+      "bullets3": "",
+      "bulletsCount0": 0,
+      "bulletsCount1": 0,
+      "bulletsCount2": 0,
+      "bulletsCount3": 0,
+      "crewSkillK": 0.0,
+      "applyAllMods": false,
+      "props": {
+        "army": 2,
+        "count": 1,
+        "formation_type": "rows",
+        "formation_div": 3,
+        "formation_step": [
+          2.5,
+          2.0
+        ],
+        "formation_noise": [
+          0.1,
+          0.1
+        ],
+        "uniqueName": "",
+        "attack_type": "hold_fire",
+        "isDelayed": true
+      },
+      "way": {}
+    },
+    "squad": {
+      "name": "enemies_squad",
+      "tm": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          0.4,
+          700.55,
+          15.45
+        ]
+      ],
+      "props": {
+        "squad_members": [
+          "armada_02",
+          "ships_01"
+        ]
+      }
+    }
+  },
+  "areas": {},
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      }
+    ]
+  },
+  "wayPoints": {}
 }

@@ -1,230 +1,301 @@
-cannon:b = true
-weaponType:i = -1
-bUseHookAsRel:b = true
-emitColor:p3 = 1, 1, 0
-emitI:r = 10
-emitR:r = 3
-emitTime:r = 0.03
-aimMinDist:r = 0.1
-aimMaxDist:r = 10000
-maxDeltaAngle:r = 0.129
-shotFreq:r = 0.06
-traceFreq:i = 4
-bEnablePause:b = false
-bullets:i = -1
-bulletsCluster:i = 1
-fxType:t = "muzzle_ground_150mm"
-fxGroundDust:t = "dust_ground_wave_dirt_big"
-fxGrassDust:t = "dust_ground_wave_grass_big"
-fxSandDust:t = "dust_ground_wave_sand_big"
-fxSnowDust:t = "dust_ground_wave_snow_big"
-fxConcreteDust:t = "dust_ground_wave_asphalt_big"
-fxWaterShockWave:t = "dust_waterwave_big"
-shouldCollideWithRendinsts:b = true
-sound_path:t = "tanks/weapon_tanks/cannons"
-sound_pathStudio:t = "ground/weapon/cannons"
-sound:t = "122mm_d25t"
-sound_inside:t = "122mm_d25t_interior"
-sfxReloadBullet:t = "grd_cannon_reload_heavy"
-fxMultipleSpawn:b = true
-isBulletBelt:b = false
-bullet {
-	normalizationPreset:t = "heat"
-	ricochetPreset:t = "he"
-	groundRicochetPreset:t = "he_ground"
-	secondaryShattersPreset:t = "ap"
-	stabilityThreshold:r = 0.5
-	stabilityCaliberToArmorThreshold:r = 5
-	stabilityReductionAfterRicochet:r = 0.3
-	stabilityReductionAfterPenetration:r = 0.15
-	bulletType:t = "he_frag_tank"
-	slopeEffectPreset:t = "ap"
-	fresnel:p3 = 0.23, 0.1, 2
-	explodeOnRendinst:b = true
-	useEffectiveArmorThicknessForShatter:b = true
-	shellAnimation:t = "video/shells_animations/he.ivf"
-	bulletName:t = "152mm_3c1"
-	mass:r = 40.2
-	caliber:r = 0.152
-	sound_path:t = "tanks/weapon_tanks/atgm"
-	sound_pathStudio:t = "ground/weapon/atgm"
-	sound:t = "atgm_LPC"
-	sound_inside:t = "atgm_LPC_interior"
-	recoilMultiplier:r = 0.05
-	stabilityRicochetModifier {
-		mod1:p2 = 0, 0.5
-		mod2:p2 = 15, 0.7
-		mod3:p2 = 30, 0.99
-	}
-	pressureDamage {
-		damageType:t = "pressure"
-	}
-	DamageParts {
-		body {
-			hp:r = 5
-			armorClass:t = "tank_structural_steel"
-			armorThickness:r = 1
-		}
-	}
-	DamageEffects {
-		part {
-			name:t = "body"
-			onHit {
-				break_fuse:r = 1
-			}
-			onKill {
-				destruction:r = 1
-			}
-		}
-	}
-	rocket {
-		bulletName:t = "152mm_3c1"
-		statType:t = ""
-		caliber:r = 0.152
-		length:r = 1.15
-		WdK:p3 = 0.1, 0.1, 0.1
-		CxK:r = 1.5
-		distFromCmToStab:r = 0.005
-		mass:r = 40.2
-		massEnd:r = 40.2
-		timeFire:r = 0
-		force:r = 3000
-		thrustDeviation:r = 0.01
-		useStartSpeed:b = true
-		startSpeed:r = 655
-		maxSpeed:r = 655
-		endSpeed:r = 655
-		maxDistance:r = 20000
-		minDistance:r = 30
-		maxDeltaAngle:r = 0.03
-		explosiveType:t = "smoke_composition"
-		explosiveMass:r = 0.0005
-		normalizationPreset:t = "heat"
-		ricochetPreset:t = "he"
-		groundRicochetPreset:t = "he_ground"
-		secondaryShattersPreset:t = "ap"
-		stabilityThreshold:r = 0.5
-		stabilityCaliberToArmorThreshold:r = 5
-		stabilityReductionAfterRicochet:r = 0.3
-		stabilityReductionAfterPenetration:r = 0.15
-		bulletType:t = "he_frag_tank"
-		slopeEffectPreset:t = "ap"
-		fresnel:p3 = 0.23, 0.1, 2
-		explodeOnRendinst:b = true
-		useEffectiveArmorThicknessForShatter:b = true
-		shellAnimation:t = "video/shells_animations/he.ivf"
-		dragCx:r = 0.027
-		explosionOffset:r = 0.05
-		hitPowerMult:r = 1
-		nearHitPower:p2 = 1, 50
-		midHitPower:p2 = 0.9, 400
-		farHitPower:p2 = 0.1, 1000
-		endHitPower:p2 = 0.01, 1500
-		relativeVelHitShift:p2 = 300, 1000
-		nearArmorPower:p2 = 1, 50
-		midArmorPower:p2 = 1, 400
-		farArmorPower:p2 = 0.2, 700
-		relativeVelArmorShift:p2 = 200, 1000
-		distanceFuse:b = false
-		explodeTreshold:r = 5
-		price:r = 3000
-		selfDestructionFx:t = "explosion_air_selfexplosion_big"
-		explosionEffect:t = ""
-		groundCollisionEffect:t = ""
-		ricochetEffect:t = ""
-		waterCollisionEffect:t = "hit_133_160mm_water_he"
-		explosionPatchRadius:r = 4
-		smokeEffect:t = ""
-		fireEffect:t = ""
-		stabilityRicochetModifier {
-			mod1:p2 = 0, 0.5
-			mod2:p2 = 15, 0.7
-			mod3:p2 = 30, 0.99
-		}
-		pressureDamage {
-			damageType:t = "pressure"
-		}
-		star {
-			parachuteDelay:r = 0.5
-			startDelay:r = 0.5
-			workingTime:r = 43
-			fallingSpeed:r = 6
-			fallingVisc:r = 0.1
-			rotationVisc:r = 6.5
-			openingTime:r = 0.5
-			isVisibleRange:b = true
-			radius:r = 2000
-			intensity:r = 2000
-			activatingTime:r = 2
-			color:p3 = 250, 180, 30
-			brightAmplitude:r = 0.05
-			brightPeriod:r = 0.4
-			distortionAmplitude:r = 0.025
-			distortionPeriod:r = 0.2
-			fx:t = "fires_star_shell"
-		}
-		DamageParts {
-			body {
-				hp:r = 50
-				armorClass:t = "tank_structural_steel"
-				armorThickness:r = 1
-			}
-		}
-		DamageEffects {
-			part {
-				name:t = "body"
-				onHit {
-					shellState:t = "inFlight"
-					expl:r = 1
-				}
-				onKill {
-					shellState:t = "inFlight"
-					destruction:r = 1
-				}
-				onHit {
-					shellState:t = "onUnit"
-					damageType:t = "generic"
-					expl:r = 0.05
-					fire:r = 0.45
-					break:r = 0.5
-					damage:r = 3
-					fHitCritical:b = true
-				}
-				onHit {
-					shellState:t = "onUnit"
-					damageType:t = "generic"
-					expl:r = 0.5
-					fire:r = 0.3
-					break:r = 0.2
-					damage:r = 30
-					fHitCritical:b = true
-				}
-				onHit {
-					shellState:t = "onUnit"
-					damageType:t = "explosion"
-					expl:r = 0.45
-					fire:r = 0.45
-					break:r = 0.1
-					damage:r = 50
-					fHitCritical:b = true
-				}
-				onHit {
-					shellState:t = "onUnit"
-					damageType:t = "cumulative"
-					expl:r = 0.4
-					fire:r = 0.4
-					break:r = 0.1
-					damage:r = 100
-					fHitCritical:b = true
-				}
-				onKill {
-					shellState:t = "onUnit"
-					expl:r = 0.05
-					fire:r = 0.05
-					break:r = 0.9
-					fHitCritical:b = true
-				}
-			}
-		}
-	}
+{
+  "cannon": true,
+  "weaponType": -1,
+  "bUseHookAsRel": true,
+  "emitColor": [
+    1.0,
+    1.0,
+    0.0
+  ],
+  "emitI": 10.0,
+  "emitR": 3.0,
+  "emitTime": 0.03,
+  "aimMinDist": 0.1,
+  "aimMaxDist": 10000.0,
+  "maxDeltaAngle": 0.129,
+  "shotFreq": 0.06,
+  "traceFreq": 4,
+  "bEnablePause": false,
+  "bullets": -1,
+  "bulletsCluster": 1,
+  "fxType": "muzzle_ground_150mm",
+  "fxGroundDust": "dust_ground_wave_dirt_big",
+  "fxGrassDust": "dust_ground_wave_grass_big",
+  "fxSandDust": "dust_ground_wave_sand_big",
+  "fxSnowDust": "dust_ground_wave_snow_big",
+  "fxConcreteDust": "dust_ground_wave_asphalt_big",
+  "fxWaterShockWave": "dust_waterwave_big",
+  "shouldCollideWithRendinsts": true,
+  "sound_path": "tanks/weapon_tanks/cannons",
+  "sound_pathStudio": "ground/weapon/cannons",
+  "sound": "122mm_d25t",
+  "sound_inside": "122mm_d25t_interior",
+  "sfxReloadBullet": "grd_cannon_reload_heavy",
+  "fxMultipleSpawn": true,
+  "isBulletBelt": false,
+  "bullet": {
+    "normalizationPreset": "heat",
+    "ricochetPreset": "he",
+    "groundRicochetPreset": "he_ground",
+    "secondaryShattersPreset": "ap",
+    "stabilityThreshold": 0.5,
+    "stabilityCaliberToArmorThreshold": 5.0,
+    "stabilityReductionAfterRicochet": 0.3,
+    "stabilityReductionAfterPenetration": 0.15,
+    "bulletType": "he_frag_tank",
+    "slopeEffectPreset": "ap",
+    "fresnel": [
+      0.23,
+      0.1,
+      2.0
+    ],
+    "explodeOnRendinst": true,
+    "useEffectiveArmorThicknessForShatter": true,
+    "shellAnimation": "video/shells_animations/he.ivf",
+    "bulletName": "152mm_3c1",
+    "mass": 40.2,
+    "caliber": 0.152,
+    "sound_path": "tanks/weapon_tanks/atgm",
+    "sound_pathStudio": "ground/weapon/atgm",
+    "sound": "atgm_LPC",
+    "sound_inside": "atgm_LPC_interior",
+    "recoilMultiplier": 0.05,
+    "stabilityRicochetModifier": {
+      "mod1": [
+        0.0,
+        0.5
+      ],
+      "mod2": [
+        15.0,
+        0.7
+      ],
+      "mod3": [
+        30.0,
+        0.99
+      ]
+    },
+    "pressureDamage": {
+      "damageType": "pressure"
+    },
+    "DamageParts": {
+      "body": {
+        "hp": 5.0,
+        "armorClass": "tank_structural_steel",
+        "armorThickness": 1.0
+      }
+    },
+    "DamageEffects": {
+      "part": {
+        "name": "body",
+        "onHit": {
+          "break_fuse": 1.0
+        },
+        "onKill": {
+          "destruction": 1.0
+        }
+      }
+    },
+    "rocket": {
+      "bulletName": "152mm_3c1",
+      "statType": "",
+      "caliber": 0.152,
+      "length": 1.15,
+      "WdK": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "CxK": 1.5,
+      "distFromCmToStab": 0.005,
+      "mass": 40.2,
+      "massEnd": 40.2,
+      "timeFire": 0.0,
+      "force": 3000.0,
+      "thrustDeviation": 0.01,
+      "useStartSpeed": true,
+      "startSpeed": 655.0,
+      "maxSpeed": 655.0,
+      "endSpeed": 655.0,
+      "maxDistance": 20000.0,
+      "minDistance": 30.0,
+      "maxDeltaAngle": 0.03,
+      "explosiveType": "smoke_composition",
+      "explosiveMass": 0.0005,
+      "normalizationPreset": "heat",
+      "ricochetPreset": "he",
+      "groundRicochetPreset": "he_ground",
+      "secondaryShattersPreset": "ap",
+      "stabilityThreshold": 0.5,
+      "stabilityCaliberToArmorThreshold": 5.0,
+      "stabilityReductionAfterRicochet": 0.3,
+      "stabilityReductionAfterPenetration": 0.15,
+      "bulletType": "he_frag_tank",
+      "slopeEffectPreset": "ap",
+      "fresnel": [
+        0.23,
+        0.1,
+        2.0
+      ],
+      "explodeOnRendinst": true,
+      "useEffectiveArmorThicknessForShatter": true,
+      "shellAnimation": "video/shells_animations/he.ivf",
+      "dragCx": 0.027,
+      "explosionOffset": 0.05,
+      "hitPowerMult": 1.0,
+      "nearHitPower": [
+        1.0,
+        50.0
+      ],
+      "midHitPower": [
+        0.9,
+        400.0
+      ],
+      "farHitPower": [
+        0.1,
+        1000.0
+      ],
+      "endHitPower": [
+        0.01,
+        1500.0
+      ],
+      "relativeVelHitShift": [
+        300.0,
+        1000.0
+      ],
+      "nearArmorPower": [
+        1.0,
+        50.0
+      ],
+      "midArmorPower": [
+        1.0,
+        400.0
+      ],
+      "farArmorPower": [
+        0.2,
+        700.0
+      ],
+      "relativeVelArmorShift": [
+        200.0,
+        1000.0
+      ],
+      "distanceFuse": false,
+      "explodeTreshold": 5.0,
+      "price": 3000.0,
+      "selfDestructionFx": "explosion_air_selfexplosion_big",
+      "explosionEffect": "",
+      "groundCollisionEffect": "",
+      "ricochetEffect": "",
+      "waterCollisionEffect": "hit_133_160mm_water_he",
+      "explosionPatchRadius": 4.0,
+      "smokeEffect": "",
+      "fireEffect": "",
+      "stabilityRicochetModifier": {
+        "mod1": [
+          0.0,
+          0.5
+        ],
+        "mod2": [
+          15.0,
+          0.7
+        ],
+        "mod3": [
+          30.0,
+          0.99
+        ]
+      },
+      "pressureDamage": {
+        "damageType": "pressure"
+      },
+      "star": {
+        "parachuteDelay": 0.5,
+        "startDelay": 0.5,
+        "workingTime": 43.0,
+        "fallingSpeed": 6.0,
+        "fallingVisc": 0.1,
+        "rotationVisc": 6.5,
+        "openingTime": 0.5,
+        "isVisibleRange": true,
+        "radius": 2000.0,
+        "intensity": 2000.0,
+        "activatingTime": 2.0,
+        "color": [
+          250.0,
+          180.0,
+          30.0
+        ],
+        "brightAmplitude": 0.05,
+        "brightPeriod": 0.4,
+        "distortionAmplitude": 0.025,
+        "distortionPeriod": 0.2,
+        "fx": "fires_star_shell"
+      },
+      "DamageParts": {
+        "body": {
+          "hp": 50.0,
+          "armorClass": "tank_structural_steel",
+          "armorThickness": 1.0
+        }
+      },
+      "DamageEffects": {
+        "part": {
+          "name": "body",
+          "onHit": [
+            {
+              "shellState": "inFlight",
+              "expl": 1.0
+            },
+            {
+              "shellState": "onUnit",
+              "damageType": "generic",
+              "expl": 0.05,
+              "fire": 0.45,
+              "break": 0.5,
+              "damage": 3.0,
+              "fHitCritical": true
+            },
+            {
+              "shellState": "onUnit",
+              "damageType": "generic",
+              "expl": 0.5,
+              "fire": 0.3,
+              "break": 0.2,
+              "damage": 30.0,
+              "fHitCritical": true
+            },
+            {
+              "shellState": "onUnit",
+              "damageType": "explosion",
+              "expl": 0.45,
+              "fire": 0.45,
+              "break": 0.1,
+              "damage": 50.0,
+              "fHitCritical": true
+            },
+            {
+              "shellState": "onUnit",
+              "damageType": "cumulative",
+              "expl": 0.4,
+              "fire": 0.4,
+              "break": 0.1,
+              "damage": 100.0,
+              "fHitCritical": true
+            }
+          ],
+          "onKill": [
+            {
+              "shellState": "inFlight",
+              "destruction": 1.0
+            },
+            {
+              "shellState": "onUnit",
+              "expl": 0.05,
+              "fire": 0.05,
+              "break": 0.9,
+              "fHitCritical": true
+            }
+          ]
+        }
+      }
+    }
+  }
 }

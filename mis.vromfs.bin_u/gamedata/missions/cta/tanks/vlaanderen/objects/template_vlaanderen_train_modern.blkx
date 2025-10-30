@@ -1,327 +1,455 @@
-selected_tag:t = ""
-bin_dump_file:t = ""
-mission_settings {
-	mission {
-		type:t = "singleMission"
-		level:t = "levels/avg_vlaanderen.bin"
-		environment:t = "Day"
-		weather:t = "hazy"
-	}
-	player {
-		army:i = 1
-	}
-	player_teamB {
-		army:i = 2
-	}
-}
-imports {
-
-}
-triggers {
-	isCategory:b = true
-	is_enabled:b = true
-	train_init {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			initMission {
-
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			unitSetProperties {
-				object:t = "train01"
-				targetableByAi:b = false
-				stealthRadius:r = 0
-				calmDetection:b = true
-				attack_type:t = "dont_aim"
-			}
-			unitSetStealth {
-				set:b = true
-				radius:r = 0
-				target:t = "train01"
-			}
-			__unitsSetColumn {
-				numKilledUnitsToStop:i = 4
-				stopKilledUnits:b = false
-				distanceBetweenUnits:r = 0.5
-				stopAfterCollision:b = true
-				stopAfterCollision:b = false
-				object:t = "train01"
-				killLeaderToStop:b = true
-			}
-			__triggerEnable {
-				target:t = "train_shot_cycle"
-				target:t = "train_disable_targeting"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	train_shot_cycle {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = true
-		}
-		events {
-			periodicEvent {
-				time:r = 15
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			unitAttackTarget {
-				playerAttracted:b = false
-				object:t = "train01"
-				target:t = "train_target"
-				forceTarget:b = true
-			}
-			playHint {
-				hintType:t = "standard"
-				name:t = "SHOT"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = 1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-			}
-		}
-		else_actions {
-
-		}
-	}
-	train_disable_targeting {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = true
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			unitWhenStatus {
-				object_type:t = "isShooting"
-				check_objects:t = "any"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				target_type:t = "isAlive"
-				check_period:r = 1
-				object:t = "train01"
-			}
-		}
-		actions {
-			unitSetProperties {
-				object:t = "train01"
-				useForTriggerFiltered:b = true
-				attack_type:t = "dont_aim"
-			}
-		}
-		else_actions {
-
-		}
-	}
-}
-mission_objectives {
-	isCategory:b = true
-	is_enabled:b = true
-}
-variables {
-
-}
-dialogs {
-
-}
-airfields {
-
-}
-effects {
-
-}
-units {
-	tankModels {
-		name:t = "locomotive01"
-		tm:m = [[0.963241, 0.0011552, -0.268636] [0.000983713, 0.999968, 0.00782711] [0.268637, -0.00780366, 0.96321] [1052.2, -1.12266, 1001.53]]
-		unit_class:t = "us_railway_boxcar_wagon"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 0
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-		}
-		way {
-
-		}
-	}
-	squad {
-		name:t = "train01"
-		tm:m = [[0.953717, 0.0, 0.300706] [0.0, 1.0, 0.0] [-0.300706, 0.0, 0.953717] [1062.75, 8.85, 1026.55]]
-		props {
-			squad_members:t = "locomotive01"
-			squad_members:t = "carriage_01"
-			squad_members:t = "carriage_02"
-			squad_members:t = "carriage_03"
-		}
-	}
-	tankModels {
-		name:t = "carriage_01"
-		tm:m = [[0.963515, 0.0154673, -0.267206] [-0.0149048, 0.99988, 0.00413345] [0.267238, 0.0, 0.96363] [1039.37, -1.41706, 1005.08]]
-		unit_class:t = "us_railway_boxcar_wagon"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 0
-			count:i = 1
-			formation_type:t = "cols"
-			formation_div:i = 1
-			formation_step:p2 = 2.5, 1
-			formation_noise:p2 = 0.1, 0.1
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "carriage_02"
-		tm:m = [[0.966254, 0.0, -0.257593] [0.0, 1.0, 0.0] [0.257593, 0.0, 0.966254] [1013.72, -1.34104, 1012.18]]
-		unit_class:t = "us_railway_boxcar_wagon"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 0
-			count:i = 1
-			formation_type:t = "cols"
-			formation_div:i = 1
-			formation_step:p2 = 2.5, 1
-			formation_noise:p2 = 0.1, 0.1
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "carriage_03"
-		tm:m = [[0.963628, 0.00129226, -0.267238] [-0.00124527, 0.999999, 0.000345343] [0.267238, 0.0, 0.963629] [1026.52, -1.384, 1008.63]]
-		unit_class:t = "us_railway_boxcar_wagon"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 0
-			count:i = 1
-			formation_type:t = "cols"
-			formation_div:i = 1
-			formation_step:p2 = 2.5, 1
-			formation_noise:p2 = 0.1, 0.1
-		}
-		way {
-
-		}
-	}
-}
-areas {
-	train_target {
-		type:t = "Sphere"
-		tm:m = [[10.0, 0.0, 0.0] [0.0, 10.0, 0.0] [0.0, 0.0, 10.0] [1061.3, 16.5, 981.95]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-}
-objLayers {
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-}
-wayPoints {
-
+{
+  "selected_tag": "",
+  "bin_dump_file": "",
+  "mission_settings": {
+    "mission": {
+      "type": "singleMission",
+      "level": "levels/avg_vlaanderen.bin",
+      "environment": "Day",
+      "weather": "hazy"
+    },
+    "player": {
+      "army": 1
+    },
+    "player_teamB": {
+      "army": 2
+    }
+  },
+  "imports": {},
+  "triggers": {
+    "isCategory": true,
+    "is_enabled": true,
+    "train_init": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "initMission": {}
+      },
+      "conditions": {},
+      "actions": {
+        "unitSetProperties": {
+          "object": "train01",
+          "targetableByAi": false,
+          "stealthRadius": 0.0,
+          "calmDetection": true,
+          "attack_type": "dont_aim"
+        },
+        "unitSetStealth": {
+          "set": true,
+          "radius": 0.0,
+          "target": "train01"
+        },
+        "__unitsSetColumn": {
+          "numKilledUnitsToStop": 4,
+          "stopKilledUnits": false,
+          "distanceBetweenUnits": 0.5,
+          "stopAfterCollision": [
+            true,
+            false
+          ],
+          "object": "train01",
+          "killLeaderToStop": true
+        },
+        "__triggerEnable": {
+          "target": [
+            "train_shot_cycle",
+            "train_disable_targeting"
+          ]
+        }
+      },
+      "else_actions": {}
+    },
+    "train_shot_cycle": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": true
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 15.0
+        }
+      },
+      "conditions": {},
+      "actions": {
+        "unitAttackTarget": {
+          "playerAttracted": false,
+          "object": "train01",
+          "target": "train_target",
+          "forceTarget": true
+        },
+        "playHint": {
+          "hintType": "standard",
+          "name": "SHOT",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": 1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0
+        }
+      },
+      "else_actions": {}
+    },
+    "train_disable_targeting": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": true
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "unitWhenStatus": {
+          "object_type": "isShooting",
+          "check_objects": "any",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_type": "isAlive",
+          "check_period": 1.0,
+          "object": "train01"
+        }
+      },
+      "actions": {
+        "unitSetProperties": {
+          "object": "train01",
+          "useForTriggerFiltered": true,
+          "attack_type": "dont_aim"
+        }
+      },
+      "else_actions": {}
+    }
+  },
+  "mission_objectives": {
+    "isCategory": true,
+    "is_enabled": true
+  },
+  "variables": {},
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {
+    "tankModels": [
+      {
+        "name": "locomotive01",
+        "tm": [
+          [
+            0.963241,
+            0.0011552,
+            -0.268636
+          ],
+          [
+            0.000983713,
+            0.999968,
+            0.00782711
+          ],
+          [
+            0.268637,
+            -0.00780366,
+            0.96321
+          ],
+          [
+            1052.2,
+            -1.12266,
+            1001.53
+          ]
+        ],
+        "unit_class": "us_railway_boxcar_wagon",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 0,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ]
+        },
+        "way": {}
+      },
+      {
+        "name": "carriage_01",
+        "tm": [
+          [
+            0.963515,
+            0.0154673,
+            -0.267206
+          ],
+          [
+            -0.0149048,
+            0.99988,
+            0.00413345
+          ],
+          [
+            0.267238,
+            0.0,
+            0.96363
+          ],
+          [
+            1039.37,
+            -1.41706,
+            1005.08
+          ]
+        ],
+        "unit_class": "us_railway_boxcar_wagon",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 0,
+          "count": 1,
+          "formation_type": "cols",
+          "formation_div": 1,
+          "formation_step": [
+            2.5,
+            1.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ]
+        },
+        "way": {}
+      },
+      {
+        "name": "carriage_02",
+        "tm": [
+          [
+            0.966254,
+            0.0,
+            -0.257593
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.257593,
+            0.0,
+            0.966254
+          ],
+          [
+            1013.72,
+            -1.34104,
+            1012.18
+          ]
+        ],
+        "unit_class": "us_railway_boxcar_wagon",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 0,
+          "count": 1,
+          "formation_type": "cols",
+          "formation_div": 1,
+          "formation_step": [
+            2.5,
+            1.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ]
+        },
+        "way": {}
+      },
+      {
+        "name": "carriage_03",
+        "tm": [
+          [
+            0.963628,
+            0.00129226,
+            -0.267238
+          ],
+          [
+            -0.00124527,
+            0.999999,
+            0.000345343
+          ],
+          [
+            0.267238,
+            0.0,
+            0.963629
+          ],
+          [
+            1026.52,
+            -1.384,
+            1008.63
+          ]
+        ],
+        "unit_class": "us_railway_boxcar_wagon",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 0,
+          "count": 1,
+          "formation_type": "cols",
+          "formation_div": 1,
+          "formation_step": [
+            2.5,
+            1.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ]
+        },
+        "way": {}
+      }
+    ],
+    "squad": {
+      "name": "train01",
+      "tm": [
+        [
+          0.953717,
+          0.0,
+          0.300706
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -0.300706,
+          0.0,
+          0.953717
+        ],
+        [
+          1062.75,
+          8.85,
+          1026.55
+        ]
+      ],
+      "props": {
+        "squad_members": [
+          "locomotive01",
+          "carriage_01",
+          "carriage_02",
+          "carriage_03"
+        ]
+      }
+    }
+  },
+  "areas": {
+    "train_target": {
+      "type": "Sphere",
+      "tm": [
+        [
+          10.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          10.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          10.0
+        ],
+        [
+          1061.3,
+          16.5,
+          981.95
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    }
+  },
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      }
+    ]
+  },
+  "wayPoints": {}
 }

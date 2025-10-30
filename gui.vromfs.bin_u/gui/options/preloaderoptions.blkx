@@ -1,153 +1,155 @@
-tdiv {
-	id:t = "bg_picture_container"
-	size:t = "sw, sh"
-	position:t = "root"
-	background-color:t = "@black"
-	tdiv {
-		pos:t = "50%sw-50%w,50%sh-50%h"
-		position:t = "absolute"
-		size:t = "2.333sh, sh"
-		overflow:t = "hidden"
-		tdiv {
-			id:t = "animated_bg_picture"
-			pos:t = "pw/2-w/2, ph/2-h/2"
-			position:t = "absolute"
-			size:t = "2.5sh, sh"
-			behaviour:t = "multiLayerImage"
-			blend-time:t = "500"
-		}
-		tdiv {
-			size:t = "0.333sh, sh"
-			pos:t = "-w/2, 0"
-			position:t = "absolute"
-			background-image:t = "!ui/gameuiskin#debriefing_bg_grad@@ss"
-			background-color:t = "@black"
-		}
-		tdiv {
-			size:t = "0.333sh, sh"
-			pos:t = "pw -w/2, 0"
-			position:t = "absolute"
-			background-image:t = "!ui/gameuiskin#debriefing_bg_grad@@ss"
-			background-color:t = "@black"
-		}
-	}
-}
-tdiv {
-	width:t = "0.67@rw $min 2@rh"
-	pos:t = "50%pw-50%w,sh-1@bh-h-20@dp"
-	position:t = "absolute"
-	background-color:t = "@shadeBackgroundColor4"
-	background-repeat:t = "expand"
-	padding:t = "0.005sw,0.01sh,0.005sw,0.01sh"
-	textAreaCentered {
-		text:t = "#preloaderSettings/hint"
-		style:t = "color:@helpF1Color;"
-		pos:t = "50%pw-50%w,0"
-		position:t = "relative"
-		width:t = "pw"
-	}
-}
-tdiv {
-	pos:t = "@bw+30@dp,@bh+30@dp"
-	size:t = "sw,sh"
-	frame {
-		behaviour:t = "moveObj"
-		class:t = "wndNav"
-		height:t = "1@maxWindowHeight"
-		total-input-transparent:t = "yes"
-		frame_header {
-			activeText {
-				text:t = "#preloaderSettings/title"
-				caption:t = "yes"
-			}
-			Button_close {
-
-			}
-		}
-		div {
-			size:t = "pw,fh"
-			tdiv {
-				size:t = "pw,ph"
-				mislist:t = "yes"
-				chapterListPlace {
-					id:t = "chapter_place"
-					height:t = "ph"
-					flow:t = "vertical"
-					tdiv {
-						id:t = "div_before_chapters_list"
-						width:t = "pw"
-						display:t = "hide"
-					}
-					tdiv {
-						id:t = "chapters_list_place"
-						size:t = "pw, fh"
-						flow:t = "vertical"
-						popupFilter {
-							margin-left:t = "1@buttonMargin"
-						}
-						tdiv {
-							id:t = "listbox_filter_holder"
-							width:t = "pw"
-							pos:t = "1@blockInterval, 0"
-							position:t = "relative"
-						}
-						listbox {
-							id:t = "items_list"
-							size:t = "pw, fh"
-							flow:t = "vertical"
-							move-only-hover:t = "yes"
-							navigatorShortcuts:t = "yes"
-							on_select:t = "onItemSelect"
-							_on_dbl_click:t = "onItemDblClick"
-						}
-						textAreaCentered {
-							id:t = "items_list_msg"
-							width:t = "80%pw"
-							pos:t = "50%pw-50%w, 40%ph-40%h"
-							position:t = "absolute"
-							hideEmptyText:t = "yes"
-							text:t = ""
-						}
-						animated_wait_icon {
-							id:t = "items_list_wait_icon"
-							pos:t = "50%pw-50%w, 40%ph-40%h"
-							position:t = "absolute"
-							background-rotation:t = "0"
-							display:t = "hide"
-						}
-					}
-				}
-			}
-		}
-		navBar {
-			navRight {
-				Button_text {
-					id:t = "btn_select"
-					text:t = "#mainmenu/btnSelect"
-					btnName:t = "A"
-					ButtonImg {
-
-					}
-				}
-				Button_text {
-					id:t = "btn_ban"
-					text:t = "#maps/preferences/ban"
-					btnName:t = "X"
-					_on_click:t = "toggleBan"
-					ButtonImg {
-
-					}
-				}
-				Button_text {
-					id:t = "btn_fav"
-					text:t = "#preloaderSettings/trackProgress"
-					btnName:t = "X"
-					on_click:t = "onToggleFav"
-					ButtonImg {
-
-					}
-				}
-			}
-		}
-	}
+{
+  "tdiv": [
+    {
+      "id": "bg_picture_container",
+      "size": "sw, sh",
+      "position": "root",
+      "background-color": "@black",
+      "tdiv": {
+        "pos": "50%sw-50%w,50%sh-50%h",
+        "position": "absolute",
+        "size": "2.333sh, sh",
+        "overflow": "hidden",
+        "tdiv": [
+          {
+            "id": "animated_bg_picture",
+            "pos": "pw/2-w/2, ph/2-h/2",
+            "position": "absolute",
+            "size": "2.5sh, sh",
+            "behaviour": "multiLayerImage",
+            "blend-time": "500"
+          },
+          {
+            "size": "0.333sh, sh",
+            "pos": "-w/2, 0",
+            "position": "absolute",
+            "background-image": "!ui/gameuiskin#debriefing_bg_grad@@ss",
+            "background-color": "@black"
+          },
+          {
+            "size": "0.333sh, sh",
+            "pos": "pw -w/2, 0",
+            "position": "absolute",
+            "background-image": "!ui/gameuiskin#debriefing_bg_grad@@ss",
+            "background-color": "@black"
+          }
+        ]
+      }
+    },
+    {
+      "width": "0.67@rw $min 2@rh",
+      "pos": "50%pw-50%w,sh-1@bh-h-20@dp",
+      "position": "absolute",
+      "background-color": "@shadeBackgroundColor4",
+      "background-repeat": "expand",
+      "padding": "0.005sw,0.01sh,0.005sw,0.01sh",
+      "textAreaCentered": {
+        "text": "#preloaderSettings/hint",
+        "style": "color:@helpF1Color;",
+        "pos": "50%pw-50%w,0",
+        "position": "relative",
+        "width": "pw"
+      }
+    },
+    {
+      "pos": "@bw+30@dp,@bh+30@dp",
+      "size": "sw,sh",
+      "frame": {
+        "behaviour": "moveObj",
+        "class": "wndNav",
+        "height": "1@maxWindowHeight",
+        "total-input-transparent": "yes",
+        "frame_header": {
+          "activeText": {
+            "text": "#preloaderSettings/title",
+            "caption": "yes"
+          },
+          "Button_close": {}
+        },
+        "div": {
+          "size": "pw,fh",
+          "tdiv": {
+            "size": "pw,ph",
+            "mislist": "yes",
+            "chapterListPlace": {
+              "id": "chapter_place",
+              "height": "ph",
+              "flow": "vertical",
+              "tdiv": [
+                {
+                  "id": "div_before_chapters_list",
+                  "width": "pw",
+                  "display": "hide"
+                },
+                {
+                  "id": "chapters_list_place",
+                  "size": "pw, fh",
+                  "flow": "vertical",
+                  "popupFilter": {
+                    "margin-left": "1@buttonMargin"
+                  },
+                  "tdiv": {
+                    "id": "listbox_filter_holder",
+                    "width": "pw",
+                    "pos": "1@blockInterval, 0",
+                    "position": "relative"
+                  },
+                  "listbox": {
+                    "id": "items_list",
+                    "size": "pw, fh",
+                    "flow": "vertical",
+                    "move-only-hover": "yes",
+                    "navigatorShortcuts": "yes",
+                    "on_select": "onItemSelect",
+                    "_on_dbl_click": "onItemDblClick"
+                  },
+                  "textAreaCentered": {
+                    "id": "items_list_msg",
+                    "width": "80%pw",
+                    "pos": "50%pw-50%w, 40%ph-40%h",
+                    "position": "absolute",
+                    "hideEmptyText": "yes",
+                    "text": ""
+                  },
+                  "animated_wait_icon": {
+                    "id": "items_list_wait_icon",
+                    "pos": "50%pw-50%w, 40%ph-40%h",
+                    "position": "absolute",
+                    "background-rotation": "0",
+                    "display": "hide"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "navBar": {
+          "navRight": {
+            "Button_text": [
+              {
+                "id": "btn_select",
+                "text": "#mainmenu/btnSelect",
+                "btnName": "A",
+                "ButtonImg": {}
+              },
+              {
+                "id": "btn_ban",
+                "text": "#maps/preferences/ban",
+                "btnName": "X",
+                "_on_click": "toggleBan",
+                "ButtonImg": {}
+              },
+              {
+                "id": "btn_fav",
+                "text": "#preloaderSettings/trackProgress",
+                "btnName": "X",
+                "on_click": "onToggleFav",
+                "ButtonImg": {}
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
 }

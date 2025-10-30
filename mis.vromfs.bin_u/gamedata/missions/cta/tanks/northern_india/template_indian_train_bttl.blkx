@@ -1,704 +1,1403 @@
-selected_tag:t = ""
-bin_dump_file:t = ""
-mission_settings {
-	mission {
-		type:t = "singleMission"
-		level:t = "levels/avg_northern_india.bin"
-		environment:t = "Day"
-		weather:t = "hazy"
-	}
-	player {
-		army:i = 1
-	}
-	player_teamB {
-		army:i = 2
-	}
-}
-imports {
-
-}
-triggers {
-	isCategory:b = true
-	is_enabled:b = true
-	add_train {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			initMission {
-
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			unitPutToSleep {
-				target:t = "train01"
-				target:t = "train02"
-			}
-			varSetString {
-				value:t = "train"
-				var:t = "train_name"
-			}
-			varSetString {
-				value:t = "locomotive"
-				var:t = "locomotive_name"
-			}
-			varSetRandomInt {
-				var:t = "train_num"
-				from:i = 1
-				to_not_including:i = 3
-			}
-			varAddString {
-				value:t = "@train_num"
-				digits:i = 2
-				var:t = "train_name"
-				var:t = "locomotive_name"
-			}
-			unitWakeUp {
-				target:t = "@train_name"
-			}
-			unitSetProperties {
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				object:t = "train01"
-				object:t = "train02"
-				army:i = 0
-				targetableByAi:b = false
-				stealthRadius:r = 0
-				movementTraceRI:b = true
-			}
-			unitSetRoute {
-				route:t = "@railway_name"
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				teleportToStart:b = true
-				object:t = "@locomotive_name"
-				pos:t = "@start_point_name"
-			}
-			wait {
-				time:r = 2
-			}
-			unitsSetColumn {
-				numKilledUnitsToStop:i = 4
-				stopKilledUnits:b = false
-				distanceBetweenUnits:r = 0.3
-				stopAfterCollision:b = true
-				stopAfterCollision:b = false
-				object:t = "@train_name"
-				killLeaderToStop:b = true
-			}
-			triggerActivate {
-				target:t = "train_stop"
-				activate_type:t = "checkConidtions"
-				check_trigger_status:b = false
-				after_activation:t = "disable"
-			}
-			unitPlayEffect {
-				effect_type:t = "specify"
-				effect:t = "ship_exhaust_blur"
-				offset:p3 = -1, 4.2, 0
-				show:b = false
-				attach:b = true
-				scale:r = 1.5
-				loopSpawn:b = true
-				delay:p2 = 1, 1
-				target:t = "@locomotive_name"
-				radiusOffset:p2 = 0, 0
-			}
-			unitPlayEffect {
-				effect_type:t = "specify"
-				effect:t = "ship_exhaust_blur"
-				offset:p3 = -1, 4.2, 0
-				show:b = true
-				attach:b = true
-				scale:r = 1.5
-				loopSpawn:b = true
-				delay:p2 = 1, 1
-				target:t = "@locomotive_name"
-				radiusOffset:p2 = 0, 0
-			}
-		}
-		else_actions {
-
-		}
-	}
-	train_stop {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			unitDistanceBetween {
-				value:r = 100
-				math:t = "2D"
-				object_type:t = "isActive"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				target_type:t = "isActive"
-				target_marking:i = 0
-				check_objects:t = "any"
-				check_targets:t = "any"
-				object:t = "@train_name"
-				target:t = "@end_point_name"
-				object_var_value:i = 0
-			}
-		}
-		actions {
-			__varSetString {
-				value:t = "railway01"
-				var:t = "railway_name"
-			}
-			__varSetString {
-				value:t = "start_point01"
-				var:t = "start_point_name"
-			}
-			__varSetString {
-				value:t = "end_point01"
-				var:t = "end_point_name"
-			}
-			__unitRespawn {
-				delay:r = 0
-				offset:p3 = 0, 0, 0
-				object:t = "@train_name"
-				target:t = "@start_point_name"
-				randomObjectsCount:i = 8
-				resetFormation:b = true
-			}
-			__triggerActivate {
-				target:t = "add_train"
-				activate_type:t = "checkConidtions"
-				check_trigger_status:b = false
-				after_activation:t = "disable"
-			}
-			unitPutToSleep {
-				target:t = "train01"
-				target:t = "train02"
-			}
-		}
-		else_actions {
-
-		}
-	}
-}
-mission_objectives {
-	isCategory:b = true
-	is_enabled:b = true
-}
-variables {
-	train_num:i = 0
-	train_name:t = ""
-	locomotive_name:t = ""
-	railway_name:t = "railway"
-	start_point_name:t = "start_point"
-	end_point_name:t = "end_point"
-}
-dialogs {
-
-}
-airfields {
-
-}
-effects {
-
-}
-units {
-	tankModels {
-		name:t = "locomotive01"
-		tm:m = [[0.852591, 0.0, -0.522579] [0.0, 1.0, 0.0] [0.522579, 0.0, 0.852591] [-3284.76, 945.265, -1604.64]]
-		unit_class:t = "railway_wam_4_locomotive"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 0
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			uniqueName:t = ""
-			attack_type:t = "fire_at_will"
-			stealthRadius:r = 0
-			setStealth:b = true
-			targetableByAi:b = false
-		}
-		way {
-
-		}
-	}
-	squad {
-		name:t = "train01"
-		tm:m = [[-0.694726, 0.0, -0.719274] [0.0, 1.0, 0.0] [0.719274, 0.0, -0.694726] [-3278.47, 954.157, -1602.51]]
-		props {
-			squad_members:t = "locomotive01"
-			squad_members:t = "carriage_01"
-			squad_members:t = "carriage_02"
-			squad_members:t = "carriage_03"
-			squad_members:t = "carriage_04"
-			squad_members:t = "carriage_05"
-			squad_members:t = "carriage_06"
-			squad_members:t = "carriage_07"
-			object_marking:i = 0
-		}
-	}
-	tankModels {
-		name:t = "carriage_01"
-		tm:m = [[0.852591, 0.0, -0.522578] [0.0, 1.0, 0.0] [0.522578, 0.0, 0.852591] [-3301.2, 944.165, -1594.32]]
-		unit_class:t = "railway_hopper_bobr"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 0
-			count:i = 1
-			formation_type:t = "cols"
-			formation_div:i = 1
-			formation_step:p2 = 2.5, 1
-			formation_noise:p2 = 0.1, 0.1
-			uniqueName:t = ""
-			attack_type:t = "fire_at_will"
-			stealthRadius:r = 0
-			setStealth:b = true
-			targetableByAi:b = false
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "carriage_02"
-		tm:m = [[0.852591, 0.0, -0.522578] [0.0, 1.0, 0.0] [0.522578, 0.0, 0.852591] [-3319.77, 944.165, -1582.4]]
-		unit_class:t = "railway_hopper_bobr"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 0
-			count:i = 1
-			formation_type:t = "cols"
-			formation_div:i = 1
-			formation_step:p2 = 2.5, 1
-			formation_noise:p2 = 0.1, 0.1
-			uniqueName:t = ""
-			attack_type:t = "fire_at_will"
-			stealthRadius:r = 0
-			setStealth:b = true
-			targetableByAi:b = false
-		}
-		way {
-
-		}
-	}
-	squad {
-		name:t = "train02"
-		tm:m = [[-0.694726, 0.0, -0.719274] [0.0, 1.0, 0.0] [0.719274, 0.0, -0.694726] [-3288.39, 950.904, -1615.48]]
-		props {
-			squad_members:t = "locomotive02"
-			squad_members:t = "passenger_carriage"
-			object_marking:i = 0
-		}
-	}
-	tankModels {
-		name:t = "locomotive02"
-		tm:m = [[0.852591, 0.0, -0.522579] [0.0, 1.0, 0.0] [0.522579, 0.0, 0.852591] [-3288.27, 945.265, -1608.47]]
-		unit_class:t = "railway_wam_4_locomotive"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 0
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			uniqueName:t = ""
-			attack_type:t = "fire_at_will"
-			stealthRadius:r = 0
-			setStealth:b = true
-			targetableByAi:b = false
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "passenger_carriage"
-		tm:m = [[0.852591, 0.0, -0.522578] [0.0, 1.0, 0.0] [0.522578, 0.0, 0.852591] [-3304.86, 944.165, -1598.23]]
-		unit_class:t = "railway_hopper_bobr"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 0
-			count:i = 10
-			formation_type:t = "cols"
-			formation_div:i = 1
-			formation_step:p2 = 2.5, 1
-			formation_noise:p2 = 0.1, 0.1
-			uniqueName:t = ""
-			attack_type:t = "fire_at_will"
-			stealthRadius:r = 0
-			setStealth:b = true
-			targetableByAi:b = false
-		}
-		way {
-
-		}
-	}
-}
-areas {
-	end_point {
-		type:t = "Point"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-1206.23, 976.879, -1253.73]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-	start_point {
-		type:t = "Point"
-		tm:m = [[0.83173, 0.0, -0.555181] [0.0, 1.0, 0.0] [0.555181, 0.0, 0.83173] [-3191.62, 947.032, -1662.01]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-	start_point01 {
-		type:t = "Point"
-		tm:m = [[0.847326, 0.0, -0.531075] [0.0, 1.0, 0.0] [0.531075, 0.0, 0.847326] [-3195.02, 947.139, -1665.2]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-	end_point01 {
-		type:t = "Point"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-1218.0, 977.0, -1481.38]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-}
-objLayers {
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-}
-wayPoints {
-	railway {
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		way {
-			railway_wp_01 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-3193.75, 947.639, -1665.84]]
-				props {
-					speed:r = 60
-					moveType:t = "GATHER_TO"
-					tas:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			railway_wp_02 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-2888.42, 949.223, -1830.6]]
-				props {
-					speed:r = 75
-					moveType:t = "USE_SPLINES"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			railway_wp_03 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-2692.98, 957.824, -2143.77]]
-				props {
-					speed:r = 90
-					moveType:t = "USE_SPLINES"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			railway_wp_04 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-2710.31, 957.874, -2400.35]]
-				props {
-					speed:r = 90
-					moveType:t = "USE_SPLINES"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			railway_wp_05 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-2258.39, 975.084, -3105.27]]
-				props {
-					speed:r = 90
-					moveType:t = "USE_SPLINES"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			way_points_wp_06 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-1267.72, 965.274, -2939.83]]
-				props {
-					speed:r = 90
-					moveType:t = "USE_SPLINES"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			way_points_wp_07 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-1068.47, 975.274, -2364.56]]
-				props {
-					speed:r = 70
-					moveType:t = "USE_SPLINES"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			way_points_wp_08 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-1180.37, 971.598, -1908.47]]
-				props {
-					speed:r = 15
-					moveType:t = "USE_SPLINES"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			way_points_wp_09 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-1216.09, 975.583, -1429.06]]
-				props {
-					speed:r = 5
-					moveType:t = "USE_SPLINES"
-					tas:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			way_points_wp_10 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-1205.36, 979.583, -1267.98]]
-				props {
-					speed:r = 0.1
-					moveType:t = "HALT"
-					tas:b = false
-					canUsePathFinder:b = false
-				}
-			}
-		}
-	}
-	railway01 {
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		way {
-			way_points_01_wp_01 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-3192.54, 950.028, -1667.14]]
-				props {
-					speed:r = 100
-					moveType:t = "GATHER_TO"
-					tas:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			way_points_01_wp_02 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-3171.42, 950.277, -1679.15]]
-				props {
-					speed:r = 100
-					moveType:t = "USE_SPLINES"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			way_points_01_wp_03 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-2854.52, 949.223, -1857.36]]
-				props {
-					speed:r = 100
-					moveType:t = "USE_SPLINES"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			way_points_01_wp_04 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-2675.77, 959.771, -2574.67]]
-				props {
-					speed:r = 90
-					moveType:t = "USE_SPLINES"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			way_points_01_wp_05 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-1630.85, 968.447, -3172.53]]
-				props {
-					speed:r = 25
-					moveType:t = "USE_SPLINES"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			way_points_01_wp_06 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-1058.86, 972.252, -2473.75]]
-				props {
-					speed:r = 90
-					moveType:t = "USE_SPLINES"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			way_points_01_wp_07 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-1178.84, 971.072, -1909.72]]
-				props {
-					speed:r = 15
-					moveType:t = "USE_SPLINES"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			way_points_01_wp_08 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-1203.04, 971.89, -1761.85]]
-				props {
-					speed:r = 50
-					moveType:t = "USE_SPLINES"
-					tas:b = false
-					shouldKeepFormation:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			way_points_01_wp_09 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-1210.49, 973.829, -1669.78]]
-				props {
-					speed:r = 5
-					moveType:t = "USE_SPLINES"
-					tas:b = false
-					canUsePathFinder:b = false
-				}
-			}
-			way_points_01_wp_10 {
-				type:t = "normal"
-				tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-1217.54, 975.829, -1487.61]]
-				props {
-					speed:r = 0.1
-					moveType:t = "HALT"
-					tas:b = false
-					canUsePathFinder:b = false
-				}
-			}
-		}
-	}
+{
+  "selected_tag": "",
+  "bin_dump_file": "",
+  "mission_settings": {
+    "mission": {
+      "type": "singleMission",
+      "level": "levels/avg_northern_india.bin",
+      "environment": "Day",
+      "weather": "hazy"
+    },
+    "player": {
+      "army": 1
+    },
+    "player_teamB": {
+      "army": 2
+    }
+  },
+  "imports": {},
+  "triggers": {
+    "isCategory": true,
+    "is_enabled": true,
+    "add_train": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "initMission": {}
+      },
+      "conditions": {},
+      "actions": {
+        "unitPutToSleep": {
+          "target": [
+            "train01",
+            "train02"
+          ]
+        },
+        "varSetString": [
+          {
+            "value": "train",
+            "var": "train_name"
+          },
+          {
+            "value": "locomotive",
+            "var": "locomotive_name"
+          }
+        ],
+        "varSetRandomInt": {
+          "var": "train_num",
+          "from": 1,
+          "to_not_including": 3
+        },
+        "varAddString": {
+          "value": "@train_num",
+          "digits": 2,
+          "var": [
+            "train_name",
+            "locomotive_name"
+          ]
+        },
+        "unitWakeUp": {
+          "target": "@train_name"
+        },
+        "unitSetProperties": {
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "object": [
+            "train01",
+            "train02"
+          ],
+          "army": 0,
+          "targetableByAi": false,
+          "stealthRadius": 0.0,
+          "movementTraceRI": true
+        },
+        "unitSetRoute": {
+          "route": "@railway_name",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "teleportToStart": true,
+          "object": "@locomotive_name",
+          "pos": "@start_point_name"
+        },
+        "wait": {
+          "time": 2.0
+        },
+        "unitsSetColumn": {
+          "numKilledUnitsToStop": 4,
+          "stopKilledUnits": false,
+          "distanceBetweenUnits": 0.3,
+          "stopAfterCollision": [
+            true,
+            false
+          ],
+          "object": "@train_name",
+          "killLeaderToStop": true
+        },
+        "triggerActivate": {
+          "target": "train_stop",
+          "activate_type": "checkConidtions",
+          "check_trigger_status": false,
+          "after_activation": "disable"
+        },
+        "unitPlayEffect": [
+          {
+            "effect_type": "specify",
+            "effect": "ship_exhaust_blur",
+            "offset": [
+              -1.0,
+              4.2,
+              0.0
+            ],
+            "show": false,
+            "attach": true,
+            "scale": 1.5,
+            "loopSpawn": true,
+            "delay": [
+              1.0,
+              1.0
+            ],
+            "target": "@locomotive_name",
+            "radiusOffset": [
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "effect_type": "specify",
+            "effect": "ship_exhaust_blur",
+            "offset": [
+              -1.0,
+              4.2,
+              0.0
+            ],
+            "show": true,
+            "attach": true,
+            "scale": 1.5,
+            "loopSpawn": true,
+            "delay": [
+              1.0,
+              1.0
+            ],
+            "target": "@locomotive_name",
+            "radiusOffset": [
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      "else_actions": {}
+    },
+    "train_stop": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "unitDistanceBetween": {
+          "value": 100.0,
+          "math": "2D",
+          "object_type": "isActive",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "target_type": "isActive",
+          "target_marking": 0,
+          "check_objects": "any",
+          "check_targets": "any",
+          "object": "@train_name",
+          "target": "@end_point_name",
+          "object_var_value": 0
+        }
+      },
+      "actions": {
+        "__varSetString": [
+          {
+            "value": "railway01",
+            "var": "railway_name"
+          },
+          {
+            "value": "start_point01",
+            "var": "start_point_name"
+          },
+          {
+            "value": "end_point01",
+            "var": "end_point_name"
+          }
+        ],
+        "__unitRespawn": {
+          "delay": 0.0,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "object": "@train_name",
+          "target": "@start_point_name",
+          "randomObjectsCount": 8,
+          "resetFormation": true
+        },
+        "__triggerActivate": {
+          "target": "add_train",
+          "activate_type": "checkConidtions",
+          "check_trigger_status": false,
+          "after_activation": "disable"
+        },
+        "unitPutToSleep": {
+          "target": [
+            "train01",
+            "train02"
+          ]
+        }
+      },
+      "else_actions": {}
+    }
+  },
+  "mission_objectives": {
+    "isCategory": true,
+    "is_enabled": true
+  },
+  "variables": {
+    "train_num": 0,
+    "train_name": "",
+    "locomotive_name": "",
+    "railway_name": "railway",
+    "start_point_name": "start_point",
+    "end_point_name": "end_point"
+  },
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {
+    "tankModels": [
+      {
+        "name": "locomotive01",
+        "tm": [
+          [
+            0.852591,
+            0.0,
+            -0.522579
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.522579,
+            0.0,
+            0.852591
+          ],
+          [
+            -3284.76,
+            945.265,
+            -1604.64
+          ]
+        ],
+        "unit_class": "railway_wam_4_locomotive",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 0,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "uniqueName": "",
+          "attack_type": "fire_at_will",
+          "stealthRadius": 0.0,
+          "setStealth": true,
+          "targetableByAi": false
+        },
+        "way": {}
+      },
+      {
+        "name": "carriage_01",
+        "tm": [
+          [
+            0.852591,
+            0.0,
+            -0.522578
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.522578,
+            0.0,
+            0.852591
+          ],
+          [
+            -3301.2,
+            944.165,
+            -1594.32
+          ]
+        ],
+        "unit_class": "railway_hopper_bobr",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 0,
+          "count": 1,
+          "formation_type": "cols",
+          "formation_div": 1,
+          "formation_step": [
+            2.5,
+            1.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "uniqueName": "",
+          "attack_type": "fire_at_will",
+          "stealthRadius": 0.0,
+          "setStealth": true,
+          "targetableByAi": false
+        },
+        "way": {}
+      },
+      {
+        "name": "carriage_02",
+        "tm": [
+          [
+            0.852591,
+            0.0,
+            -0.522578
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.522578,
+            0.0,
+            0.852591
+          ],
+          [
+            -3319.77,
+            944.165,
+            -1582.4
+          ]
+        ],
+        "unit_class": "railway_hopper_bobr",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 0,
+          "count": 1,
+          "formation_type": "cols",
+          "formation_div": 1,
+          "formation_step": [
+            2.5,
+            1.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "uniqueName": "",
+          "attack_type": "fire_at_will",
+          "stealthRadius": 0.0,
+          "setStealth": true,
+          "targetableByAi": false
+        },
+        "way": {}
+      },
+      {
+        "name": "locomotive02",
+        "tm": [
+          [
+            0.852591,
+            0.0,
+            -0.522579
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.522579,
+            0.0,
+            0.852591
+          ],
+          [
+            -3288.27,
+            945.265,
+            -1608.47
+          ]
+        ],
+        "unit_class": "railway_wam_4_locomotive",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 0,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "uniqueName": "",
+          "attack_type": "fire_at_will",
+          "stealthRadius": 0.0,
+          "setStealth": true,
+          "targetableByAi": false
+        },
+        "way": {}
+      },
+      {
+        "name": "passenger_carriage",
+        "tm": [
+          [
+            0.852591,
+            0.0,
+            -0.522578
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.522578,
+            0.0,
+            0.852591
+          ],
+          [
+            -3304.86,
+            944.165,
+            -1598.23
+          ]
+        ],
+        "unit_class": "railway_hopper_bobr",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 0,
+          "count": 10,
+          "formation_type": "cols",
+          "formation_div": 1,
+          "formation_step": [
+            2.5,
+            1.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "uniqueName": "",
+          "attack_type": "fire_at_will",
+          "stealthRadius": 0.0,
+          "setStealth": true,
+          "targetableByAi": false
+        },
+        "way": {}
+      }
+    ],
+    "squad": [
+      {
+        "name": "train01",
+        "tm": [
+          [
+            -0.694726,
+            0.0,
+            -0.719274
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.719274,
+            0.0,
+            -0.694726
+          ],
+          [
+            -3278.47,
+            954.157,
+            -1602.51
+          ]
+        ],
+        "props": {
+          "squad_members": [
+            "locomotive01",
+            "carriage_01",
+            "carriage_02",
+            "carriage_03",
+            "carriage_04",
+            "carriage_05",
+            "carriage_06",
+            "carriage_07"
+          ],
+          "object_marking": 0
+        }
+      },
+      {
+        "name": "train02",
+        "tm": [
+          [
+            -0.694726,
+            0.0,
+            -0.719274
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.719274,
+            0.0,
+            -0.694726
+          ],
+          [
+            -3288.39,
+            950.904,
+            -1615.48
+          ]
+        ],
+        "props": {
+          "squad_members": [
+            "locomotive02",
+            "passenger_carriage"
+          ],
+          "object_marking": 0
+        }
+      }
+    ]
+  },
+  "areas": {
+    "end_point": {
+      "type": "Point",
+      "tm": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -1206.23,
+          976.879,
+          -1253.73
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    },
+    "start_point": {
+      "type": "Point",
+      "tm": [
+        [
+          0.83173,
+          0.0,
+          -0.555181
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.555181,
+          0.0,
+          0.83173
+        ],
+        [
+          -3191.62,
+          947.032,
+          -1662.01
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    },
+    "start_point01": {
+      "type": "Point",
+      "tm": [
+        [
+          0.847326,
+          0.0,
+          -0.531075
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.531075,
+          0.0,
+          0.847326
+        ],
+        [
+          -3195.02,
+          947.139,
+          -1665.2
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    },
+    "end_point01": {
+      "type": "Point",
+      "tm": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -1218.0,
+          977.0,
+          -1481.38
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    }
+  },
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      }
+    ]
+  },
+  "wayPoints": {
+    "railway": {
+      "closed_waypoints": false,
+      "isShipSpline": false,
+      "shipTurnRadius": 100.0,
+      "way": {
+        "railway_wp_01": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -3193.75,
+              947.639,
+              -1665.84
+            ]
+          ],
+          "props": {
+            "speed": 60.0,
+            "moveType": "GATHER_TO",
+            "tas": false,
+            "canUsePathFinder": false
+          }
+        },
+        "railway_wp_02": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -2888.42,
+              949.223,
+              -1830.6
+            ]
+          ],
+          "props": {
+            "speed": 75.0,
+            "moveType": "USE_SPLINES",
+            "tas": false,
+            "shouldKeepFormation": false,
+            "canUsePathFinder": false
+          }
+        },
+        "railway_wp_03": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -2692.98,
+              957.824,
+              -2143.77
+            ]
+          ],
+          "props": {
+            "speed": 90.0,
+            "moveType": "USE_SPLINES",
+            "tas": false,
+            "shouldKeepFormation": false,
+            "canUsePathFinder": false
+          }
+        },
+        "railway_wp_04": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -2710.31,
+              957.874,
+              -2400.35
+            ]
+          ],
+          "props": {
+            "speed": 90.0,
+            "moveType": "USE_SPLINES",
+            "tas": false,
+            "shouldKeepFormation": false,
+            "canUsePathFinder": false
+          }
+        },
+        "railway_wp_05": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -2258.39,
+              975.084,
+              -3105.27
+            ]
+          ],
+          "props": {
+            "speed": 90.0,
+            "moveType": "USE_SPLINES",
+            "tas": false,
+            "shouldKeepFormation": false,
+            "canUsePathFinder": false
+          }
+        },
+        "way_points_wp_06": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -1267.72,
+              965.274,
+              -2939.83
+            ]
+          ],
+          "props": {
+            "speed": 90.0,
+            "moveType": "USE_SPLINES",
+            "tas": false,
+            "shouldKeepFormation": false,
+            "canUsePathFinder": false
+          }
+        },
+        "way_points_wp_07": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -1068.47,
+              975.274,
+              -2364.56
+            ]
+          ],
+          "props": {
+            "speed": 70.0,
+            "moveType": "USE_SPLINES",
+            "tas": false,
+            "shouldKeepFormation": false,
+            "canUsePathFinder": false
+          }
+        },
+        "way_points_wp_08": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -1180.37,
+              971.598,
+              -1908.47
+            ]
+          ],
+          "props": {
+            "speed": 15.0,
+            "moveType": "USE_SPLINES",
+            "tas": false,
+            "shouldKeepFormation": false,
+            "canUsePathFinder": false
+          }
+        },
+        "way_points_wp_09": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -1216.09,
+              975.583,
+              -1429.06
+            ]
+          ],
+          "props": {
+            "speed": 5.0,
+            "moveType": "USE_SPLINES",
+            "tas": false,
+            "canUsePathFinder": false
+          }
+        },
+        "way_points_wp_10": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -1205.36,
+              979.583,
+              -1267.98
+            ]
+          ],
+          "props": {
+            "speed": 0.1,
+            "moveType": "HALT",
+            "tas": false,
+            "canUsePathFinder": false
+          }
+        }
+      }
+    },
+    "railway01": {
+      "closed_waypoints": false,
+      "isShipSpline": false,
+      "shipTurnRadius": 100.0,
+      "way": {
+        "way_points_01_wp_01": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -3192.54,
+              950.028,
+              -1667.14
+            ]
+          ],
+          "props": {
+            "speed": 100.0,
+            "moveType": "GATHER_TO",
+            "tas": false,
+            "canUsePathFinder": false
+          }
+        },
+        "way_points_01_wp_02": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -3171.42,
+              950.277,
+              -1679.15
+            ]
+          ],
+          "props": {
+            "speed": 100.0,
+            "moveType": "USE_SPLINES",
+            "tas": false,
+            "shouldKeepFormation": false,
+            "canUsePathFinder": false
+          }
+        },
+        "way_points_01_wp_03": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -2854.52,
+              949.223,
+              -1857.36
+            ]
+          ],
+          "props": {
+            "speed": 100.0,
+            "moveType": "USE_SPLINES",
+            "tas": false,
+            "shouldKeepFormation": false,
+            "canUsePathFinder": false
+          }
+        },
+        "way_points_01_wp_04": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -2675.77,
+              959.771,
+              -2574.67
+            ]
+          ],
+          "props": {
+            "speed": 90.0,
+            "moveType": "USE_SPLINES",
+            "tas": false,
+            "shouldKeepFormation": false,
+            "canUsePathFinder": false
+          }
+        },
+        "way_points_01_wp_05": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -1630.85,
+              968.447,
+              -3172.53
+            ]
+          ],
+          "props": {
+            "speed": 25.0,
+            "moveType": "USE_SPLINES",
+            "tas": false,
+            "shouldKeepFormation": false,
+            "canUsePathFinder": false
+          }
+        },
+        "way_points_01_wp_06": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -1058.86,
+              972.252,
+              -2473.75
+            ]
+          ],
+          "props": {
+            "speed": 90.0,
+            "moveType": "USE_SPLINES",
+            "tas": false,
+            "shouldKeepFormation": false,
+            "canUsePathFinder": false
+          }
+        },
+        "way_points_01_wp_07": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -1178.84,
+              971.072,
+              -1909.72
+            ]
+          ],
+          "props": {
+            "speed": 15.0,
+            "moveType": "USE_SPLINES",
+            "tas": false,
+            "shouldKeepFormation": false,
+            "canUsePathFinder": false
+          }
+        },
+        "way_points_01_wp_08": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -1203.04,
+              971.89,
+              -1761.85
+            ]
+          ],
+          "props": {
+            "speed": 50.0,
+            "moveType": "USE_SPLINES",
+            "tas": false,
+            "shouldKeepFormation": false,
+            "canUsePathFinder": false
+          }
+        },
+        "way_points_01_wp_09": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -1210.49,
+              973.829,
+              -1669.78
+            ]
+          ],
+          "props": {
+            "speed": 5.0,
+            "moveType": "USE_SPLINES",
+            "tas": false,
+            "canUsePathFinder": false
+          }
+        },
+        "way_points_01_wp_10": {
+          "type": "normal",
+          "tm": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              -1217.54,
+              975.829,
+              -1487.61
+            ]
+          ],
+          "props": {
+            "speed": 0.1,
+            "moveType": "HALT",
+            "tas": false,
+            "canUsePathFinder": false
+          }
+        }
+      }
+    }
+  }
 }

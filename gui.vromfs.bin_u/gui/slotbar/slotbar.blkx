@@ -1,143 +1,141 @@
-SlotbarBackground {
-	id:t = "slotbar_background"
-	size:t = "pw, ph"
-	display:t = "hide"
-	pos:t = "50%pw-50%w, 0"
-	position:t = "absolute"
-	hasPresetsPanel:t = "no"
-	css-hier-invalidate:t = "yes"
-	tdiv {
-		size:t = "pw, ph"
-		overflow:t = "hidden"
-		blur {
-
-		}
-		blur_foreground {
-
-		}
-	}
-	blockSeparator {
-
-	}
-	slotbarTop {
-		id:t = "slotbar_buttons_place"
-		size:t = "pw, 1@slotbarTop"
-		pos:t = "0,-h"
-		position:t = "absolute"
-		display:t = "hide"
-		behavior:t = "Timer"
-		css-hier-invalidate:t = "yes"
-		tdiv {
-			height:t = "ph"
-			css-hier-invalidate:t = "yes"
-			tdiv {
-				position:t = "absolute"
-				id:t = "header_countries_nest"
-				height:t = "1@slotbarTop"
-				css-hier-invalidate:t = "yes"
-				top:t = "ph - h"
-				DummyButton {
-					id:t = "prev_country_btn"
-					padding:t = "1@blockInterval, 0"
-					btnName:t = "LB"
-					on_click:t = "prevCountry"
-					ButtonImg {
-						class:t = "independent"
-						fullSizeIcons:t = "yes"
-					}
-				}
-				activateSelect {
-					id:t = "header_countries"
-					height:t = "ph"
-					class:t = "slotsHeader"
-					normalFont:t = "yes"
-					css-hier-invalidate:t = "yes"
-					total-input-transparent:t = "yes"
-					navigatorShortcuts:t = "yes"
-					on_select:t = "onHeaderCountry"
-					on_dbl_click:t = "onCountriesListDblClick"
-				}
-				DummyButton {
-					id:t = "next_country_btn"
-					padding:t = "1@blockInterval, 0"
-					btnName:t = "RB"
-					on_click:t = "nextCountry"
-					ButtonImg {
-						class:t = "independent"
-						fullSizeIcons:t = "yes"
-					}
-				}
-			}
-		}
-		tdiv {
-			id:t = "autorefill-settings"
-			left:t = "pw-w-2@blockInterval"
-			top:t = "ph-h"
-			position:t = "absolute"
-			display:t = "hide"
-			height:t = "1@slotbarTop"
-			Button_text {
-				class:t = "image"
-				visualStyle:t = "noFrame"
-				showConsoleImage:t = "no"
-				valign:t = "center"
-				size:t = "1@slotbarTop, 1@slotbarTop"
-				noMargin:t = "yes"
-				_on_click:t = "onShowCountriesCustomizationWnd"
-				img {
-					background-image:t = "#ui/gameuiskin#slot_modifications.svg"
-					background-svg-size:t = "ph, ph"
-					size:t = "ph, ph"
-				}
-			}
-			CheckBox {
-				id:t = "slots-autorepair"
-				margin-left:t = "0.5h"
-				valign:t = "center"
-				class:t = "with_image"
-				tooltip:t = "#shop/auto_repair"
-				on_change_value:t = "onSlotsChangeAutoRefill"
-				infoImg {
-					size:t = "@cIco, @cIco"
-					background-svg-size:t = "@cIco, @cIco"
-					background-image:t = "#ui/gameuiskin#slot_repair.svg"
-				}
-				CheckBoxImg {
-
-				}
-			}
-			CheckBox {
-				id:t = "slots-autoweapon"
-				margin-left:t = "0.5h"
-				valign:t = "center"
-				class:t = "with_image"
-				tooltip:t = "#shop/auto_buy_weapons"
-				on_change_value:t = "onSlotsChangeAutoRefill"
-				infoImg {
-					size:t = "@cIco, @cIco"
-					background-svg-size:t = "@cIco, @cIco"
-					background-image:t = "#ui/gameuiskin#btn_weapons.svg"
-				}
-				CheckBoxImg {
-
-				}
-			}
-		}
-	}
-}
-CountriesCrews {
-	id:t = "countries_crews"
-	needHugeFooter:t = "no"
-}
-animShow {
-	id:t = "slotbar_shade"
-	size:t = "pw, 1@slotbarHeight + 1@slotbarOffset + 1@slotbarTop -1@bh"
-	pos:t = "50%pw-50%w, -1@slotbarTop"
-	position:t = "absolute"
-	background-color:t = "@shadeBackgroundColor"
-	animation:t = "hide"
-	color-factor:t = "0"
-}
-timer {
-	id:t = "slotbar_timer"
+{
+  "SlotbarBackground": {
+    "id": "slotbar_background",
+    "size": "pw, ph",
+    "display": "hide",
+    "pos": "50%pw-50%w, 0",
+    "position": "absolute",
+    "hasPresetsPanel": "no",
+    "css-hier-invalidate": "yes",
+    "tdiv": {
+      "size": "pw, ph",
+      "overflow": "hidden",
+      "blur": {},
+      "blur_foreground": {}
+    },
+    "blockSeparator": {},
+    "slotbarTop": {
+      "id": "slotbar_buttons_place",
+      "size": "pw, 1@slotbarTop",
+      "pos": "0,-h",
+      "position": "absolute",
+      "display": "hide",
+      "behavior": "Timer",
+      "css-hier-invalidate": "yes",
+      "tdiv": [
+        {
+          "height": "ph",
+          "css-hier-invalidate": "yes",
+          "tdiv": {
+            "position": "absolute",
+            "id": "header_countries_nest",
+            "height": "1@slotbarTop",
+            "css-hier-invalidate": "yes",
+            "top": "ph - h",
+            "DummyButton": [
+              {
+                "id": "prev_country_btn",
+                "padding": "1@blockInterval, 0",
+                "btnName": "LB",
+                "on_click": "prevCountry",
+                "ButtonImg": {
+                  "class": "independent",
+                  "fullSizeIcons": "yes"
+                }
+              },
+              {
+                "id": "next_country_btn",
+                "padding": "1@blockInterval, 0",
+                "btnName": "RB",
+                "on_click": "nextCountry",
+                "ButtonImg": {
+                  "class": "independent",
+                  "fullSizeIcons": "yes"
+                }
+              }
+            ],
+            "activateSelect": {
+              "id": "header_countries",
+              "height": "ph",
+              "class": "slotsHeader",
+              "normalFont": "yes",
+              "css-hier-invalidate": "yes",
+              "total-input-transparent": "yes",
+              "navigatorShortcuts": "yes",
+              "on_select": "onHeaderCountry",
+              "on_dbl_click": "onCountriesListDblClick"
+            }
+          }
+        },
+        {
+          "id": "autorefill-settings",
+          "left": "pw-w-2@blockInterval",
+          "top": "ph-h",
+          "position": "absolute",
+          "display": "hide",
+          "height": "1@slotbarTop",
+          "Button_text": {
+            "class": "image",
+            "visualStyle": "noFrame",
+            "showConsoleImage": "no",
+            "valign": "center",
+            "size": "1@slotbarTop, 1@slotbarTop",
+            "noMargin": "yes",
+            "_on_click": "onShowCountriesCustomizationWnd",
+            "img": {
+              "background-image": "#ui/gameuiskin#slot_modifications.svg",
+              "background-svg-size": "ph, ph",
+              "size": "ph, ph"
+            }
+          },
+          "CheckBox": [
+            {
+              "id": "slots-autorepair",
+              "margin-left": "0.5h",
+              "valign": "center",
+              "class": "with_image",
+              "tooltip": "#shop/auto_repair",
+              "on_change_value": "onSlotsChangeAutoRefill",
+              "infoImg": {
+                "size": "@cIco, @cIco",
+                "background-svg-size": "@cIco, @cIco",
+                "background-image": "#ui/gameuiskin#slot_repair.svg"
+              },
+              "CheckBoxImg": {}
+            },
+            {
+              "id": "slots-autoweapon",
+              "margin-left": "0.5h",
+              "valign": "center",
+              "class": "with_image",
+              "tooltip": "#shop/auto_buy_weapons",
+              "on_change_value": "onSlotsChangeAutoRefill",
+              "infoImg": {
+                "size": "@cIco, @cIco",
+                "background-svg-size": "@cIco, @cIco",
+                "background-image": "#ui/gameuiskin#btn_weapons.svg"
+              },
+              "CheckBoxImg": {}
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "CountriesCrews": {
+    "id": "countries_crews",
+    "needHugeFooter": "no"
+  },
+  "animShow": {
+    "id": "slotbar_shade",
+    "size": "pw, 1@slotbarHeight + 1@slotbarOffset + 1@slotbarTop -1@bh",
+    "pos": "50%pw-50%w, -1@slotbarTop",
+    "position": "absolute",
+    "background-color": "@shadeBackgroundColor",
+    "animation": "hide",
+    "color-factor": "0"
+  },
+  "timer": {
+    "id": "slotbar_timer"
+  }
 }

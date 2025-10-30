@@ -1,311 +1,308 @@
-type:t = "radar"
-name:t = "RP-5 TT"
-transivers {
-	track {
-		sideLobesAttenuation:r = -16
-		power:r = 30
-		band:i = 8
-		rcs:r = 3
-		range:r = 4500
-		rangeMax:r = 6000
-		multipathEffect:p4 = 0, 1, 60, 0
-		antenna {
-			angleHalfSens:r = 6
-			sideLobesSensitivity:r = -24
-		}
-	}
-}
-scanPatterns {
-	lock {
-		type:t = "cone"
-		azimuthLimits:p2 = -7, 7
-		elevationLimits:p2 = -7, 7
-		period:r = 0.5
-		width:r = 3
-		indicate:b = true
-	}
-	track {
-		type:t = "no"
-		azimuthLimits:p2 = -7, 7
-		elevationLimits:p2 = -7, 7
-	}
-}
-signals {
-	track {
-		groundClutter:b = true
-		aircraftAsTarget:b = true
-		angularAccuracy:r = 0.08
-		distanceAccuracy:r = 22
-		track:b = true
-		distance {
-			presents:b = true
-			minValue:r = 150
-			maxValue:r = 4500
-		}
-	}
-}
-fsms {
-	main {
-		stateInit:t = "init"
-		actionsTemplates {
-			init {
-				setEnabled {
-					value:b = false
-				}
-				setTransiver {
-					transiver:t = "track"
-				}
-				setSignal {
-					signal:t = "track"
-				}
-			}
-			setStandbyMode {
-				setModeName {
-					name:t = "standby"
-				}
-				setEnabled {
-					value:b = false
-				}
-				setScanPattern {
-					scanPattern:t = "lock"
-				}
-				setCenterAzimuth {
-					source:t = "constant"
-					value:r = 0
-				}
-				clearTargetsOfInterest {
-
-				}
-			}
-			setLockMode {
-				setModeName {
-					name:t = "ACM"
-				}
-				setEnabled {
-					value:b = true
-				}
-				setScanPattern {
-					scanPattern:t = "lock"
-				}
-				resetScanPhase {
-
-				}
-				setCenterAzimuth {
-					source:t = "constant"
-					value:r = 0
-				}
-				clearTargetsOfInterest {
-
-				}
-				setFsmActive {
-					fsm:t = "lock"
-					active:b = true
-				}
-				setCenterElevation {
-					source:t = "constant"
-					value:r = 0
-				}
-				setDistGatePos {
-					source:t = "constRange"
-					pos:r = 2000
-					width:r = 4000
-				}
-			}
-			setTrackMode {
-				setModeName {
-					name:t = "track"
-				}
-				setEnabled {
-					value:b = true
-				}
-				setWeaponDetectionAllowance {
-					source:t = "const"
-					value:b = true
-				}
-				setDesignatedTarget {
-					set:b = false
-				}
-				setScanPattern {
-					scanPattern:t = "track"
-				}
-				clearTargetsOfInterest {
-
-				}
-				addTargetOfInterest {
-
-				}
-				setLastTargetOfInterestActive {
-
-				}
-				updateActiveTargetOfInterest {
-
-				}
-				setCenterAzimuth {
-					source:t = "activeTargetOfInterest"
-				}
-				setCenterElevation {
-					source:t = "activeTargetOfInterest"
-				}
-				setDistGatePos {
-					source:t = "activeTargetOfInterest"
-					width:r = 0
-				}
-				setFsmActive {
-					fsm:t = "track"
-					active:b = true
-				}
-			}
-		}
-		transitions {
-			switchOn {
-				stateFrom:t = "init"
-				event:t = "init"
-				stateTo:t = "standby"
-				actions {
-					init {
-
-					}
-					setStandbyMode {
-
-					}
-				}
-			}
-			lock {
-				stateFrom:t = "standby"
-				command:t = "selectTarget"
-				command:t = "acmSwitch"
-				stateTo:t = "lock"
-				actions {
-					setLockMode {
-
-					}
-				}
-			}
-			track {
-				stateFrom:t = "lock"
-				event:t = "targetDetected"
-				stateTo:t = "track"
-				actions {
-					setFsmActive {
-						fsm:t = "lock"
-						active:b = false
-					}
-					setTrackMode {
-
-					}
-				}
-			}
-			finishedTrack {
-				stateFrom:t = "track"
-				event:t = "targetsOfInterestCleanup"
-				stateTo:t = "lock"
-				actions {
-					setFsmActive {
-						fsm:t = "track"
-						active:b = false
-					}
-					setLockMode {
-
-					}
-				}
-			}
-			track {
-				stateFrom:t = "lock"
-				stateFrom:t = "track"
-				command:t = "selectTarget"
-				command:t = "acmSwitch"
-				event:t = "disable"
-				stateTo:t = "standby"
-				actions {
-					setFsmActive {
-						fsm:t = "lock"
-						active:b = false
-					}
-					setFsmActive {
-						fsm:t = "track"
-						active:b = false
-					}
-					setStandbyMode {
-
-					}
-				}
-			}
-		}
-	}
-	lock {
-		stateInit:t = "lock"
-		transitions {
-			scan {
-				event:t = "update"
-				actions {
-					scan {
-
-					}
-				}
-			}
-			detect {
-				event:t = "targetInSight"
-				actions {
-					detectTarget {
-						ignoreOwnWeapon:b = true
-						rangeMult:r = 1
-					}
-				}
-			}
-		}
-	}
-	track {
-		stateInit:t = "track"
-		transitions {
-			detect {
-				event:t = "update"
-				actions {
-					detectTarget {
-						ignoreOwnWeapon:b = true
-						rangeMult:r = 1
-					}
-				}
-			}
-			track {
-				event:t = "targetDetected"
-				actions {
-					updateActiveTargetOfInterest {
-
-					}
-					setCenterAzimuth {
-						source:t = "activeTargetOfInterest"
-					}
-					setCenterElevation {
-						source:t = "activeTargetOfInterest"
-					}
-					setDistGatePos {
-						source:t = "activeTargetOfInterest"
-						width:r = 0
-					}
-				}
-			}
-			extrapolate {
-				event:t = "targetNotDetected"
-				actions {
-					extrapolateTargetsOfInterest {
-
-					}
-					clearTargetsOfInterest {
-						timeOut:r = 1
-						dirRateLim:r = 1
-					}
-					setCenterAzimuth {
-						source:t = "activeTargetOfInterest"
-					}
-					setCenterElevation {
-						source:t = "activeTargetOfInterest"
-					}
-					setDistGatePos {
-						source:t = "activeTargetOfInterest"
-						width:r = 0
-					}
-				}
-			}
-		}
-	}
+{
+  "type": "radar",
+  "name": "RP-5 TT",
+  "transivers": {
+    "track": {
+      "sideLobesAttenuation": -16.0,
+      "power": 30.0,
+      "band": 8,
+      "rcs": 3.0,
+      "range": 4500.0,
+      "rangeMax": 6000.0,
+      "multipathEffect": [
+        0.0,
+        1.0,
+        60.0,
+        0.0
+      ],
+      "antenna": {
+        "angleHalfSens": 6.0,
+        "sideLobesSensitivity": -24.0
+      }
+    }
+  },
+  "scanPatterns": {
+    "lock": {
+      "type": "cone",
+      "azimuthLimits": [
+        -7.0,
+        7.0
+      ],
+      "elevationLimits": [
+        -7.0,
+        7.0
+      ],
+      "period": 0.5,
+      "width": 3.0,
+      "indicate": true
+    },
+    "track": {
+      "type": "no",
+      "azimuthLimits": [
+        -7.0,
+        7.0
+      ],
+      "elevationLimits": [
+        -7.0,
+        7.0
+      ]
+    }
+  },
+  "signals": {
+    "track": {
+      "groundClutter": true,
+      "aircraftAsTarget": true,
+      "angularAccuracy": 0.08,
+      "distanceAccuracy": 22.0,
+      "track": true,
+      "distance": {
+        "presents": true,
+        "minValue": 150.0,
+        "maxValue": 4500.0
+      }
+    }
+  },
+  "fsms": {
+    "main": {
+      "stateInit": "init",
+      "actionsTemplates": {
+        "init": {
+          "setEnabled": {
+            "value": false
+          },
+          "setTransiver": {
+            "transiver": "track"
+          },
+          "setSignal": {
+            "signal": "track"
+          }
+        },
+        "setStandbyMode": {
+          "setModeName": {
+            "name": "standby"
+          },
+          "setEnabled": {
+            "value": false
+          },
+          "setScanPattern": {
+            "scanPattern": "lock"
+          },
+          "setCenterAzimuth": {
+            "source": "constant",
+            "value": 0.0
+          },
+          "clearTargetsOfInterest": {}
+        },
+        "setLockMode": {
+          "setModeName": {
+            "name": "ACM"
+          },
+          "setEnabled": {
+            "value": true
+          },
+          "setScanPattern": {
+            "scanPattern": "lock"
+          },
+          "resetScanPhase": {},
+          "setCenterAzimuth": {
+            "source": "constant",
+            "value": 0.0
+          },
+          "clearTargetsOfInterest": {},
+          "setFsmActive": {
+            "fsm": "lock",
+            "active": true
+          },
+          "setCenterElevation": {
+            "source": "constant",
+            "value": 0.0
+          },
+          "setDistGatePos": {
+            "source": "constRange",
+            "pos": 2000.0,
+            "width": 4000.0
+          }
+        },
+        "setTrackMode": {
+          "setModeName": {
+            "name": "track"
+          },
+          "setEnabled": {
+            "value": true
+          },
+          "setWeaponDetectionAllowance": {
+            "source": "const",
+            "value": true
+          },
+          "setDesignatedTarget": {
+            "set": false
+          },
+          "setScanPattern": {
+            "scanPattern": "track"
+          },
+          "clearTargetsOfInterest": {},
+          "addTargetOfInterest": {},
+          "setLastTargetOfInterestActive": {},
+          "updateActiveTargetOfInterest": {},
+          "setCenterAzimuth": {
+            "source": "activeTargetOfInterest"
+          },
+          "setCenterElevation": {
+            "source": "activeTargetOfInterest"
+          },
+          "setDistGatePos": {
+            "source": "activeTargetOfInterest",
+            "width": 0.0
+          },
+          "setFsmActive": {
+            "fsm": "track",
+            "active": true
+          }
+        }
+      },
+      "transitions": {
+        "switchOn": {
+          "stateFrom": "init",
+          "event": "init",
+          "stateTo": "standby",
+          "actions": {
+            "init": {},
+            "setStandbyMode": {}
+          }
+        },
+        "lock": {
+          "stateFrom": "standby",
+          "command": [
+            "selectTarget",
+            "acmSwitch"
+          ],
+          "stateTo": "lock",
+          "actions": {
+            "setLockMode": {}
+          }
+        },
+        "track": [
+          {
+            "stateFrom": "lock",
+            "event": "targetDetected",
+            "stateTo": "track",
+            "actions": {
+              "setFsmActive": {
+                "fsm": "lock",
+                "active": false
+              },
+              "setTrackMode": {}
+            }
+          },
+          {
+            "stateFrom": [
+              "lock",
+              "track"
+            ],
+            "command": [
+              "selectTarget",
+              "acmSwitch"
+            ],
+            "event": "disable",
+            "stateTo": "standby",
+            "actions": {
+              "setFsmActive": [
+                {
+                  "fsm": "lock",
+                  "active": false
+                },
+                {
+                  "fsm": "track",
+                  "active": false
+                }
+              ],
+              "setStandbyMode": {}
+            }
+          }
+        ],
+        "finishedTrack": {
+          "stateFrom": "track",
+          "event": "targetsOfInterestCleanup",
+          "stateTo": "lock",
+          "actions": {
+            "setFsmActive": {
+              "fsm": "track",
+              "active": false
+            },
+            "setLockMode": {}
+          }
+        }
+      }
+    },
+    "lock": {
+      "stateInit": "lock",
+      "transitions": {
+        "scan": {
+          "event": "update",
+          "actions": {
+            "scan": {}
+          }
+        },
+        "detect": {
+          "event": "targetInSight",
+          "actions": {
+            "detectTarget": {
+              "ignoreOwnWeapon": true,
+              "rangeMult": 1.0
+            }
+          }
+        }
+      }
+    },
+    "track": {
+      "stateInit": "track",
+      "transitions": {
+        "detect": {
+          "event": "update",
+          "actions": {
+            "detectTarget": {
+              "ignoreOwnWeapon": true,
+              "rangeMult": 1.0
+            }
+          }
+        },
+        "track": {
+          "event": "targetDetected",
+          "actions": {
+            "updateActiveTargetOfInterest": {},
+            "setCenterAzimuth": {
+              "source": "activeTargetOfInterest"
+            },
+            "setCenterElevation": {
+              "source": "activeTargetOfInterest"
+            },
+            "setDistGatePos": {
+              "source": "activeTargetOfInterest",
+              "width": 0.0
+            }
+          }
+        },
+        "extrapolate": {
+          "event": "targetNotDetected",
+          "actions": {
+            "extrapolateTargetsOfInterest": {},
+            "clearTargetsOfInterest": {
+              "timeOut": 1.0,
+              "dirRateLim": 1.0
+            },
+            "setCenterAzimuth": {
+              "source": "activeTargetOfInterest"
+            },
+            "setCenterElevation": {
+              "source": "activeTargetOfInterest"
+            },
+            "setDistGatePos": {
+              "source": "activeTargetOfInterest",
+              "width": 0.0
+            }
+          }
+        }
+      }
+    }
+  }
 }

@@ -1,136 +1,134 @@
-root {
-	blur {
-
-	}
-	blur_foreground {
-
-	}
-	frame {
-		width:t = "0.75@scrn_tgt"
-		pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
-		position:t = "absolute"
-		class:t = "wndNav"
-		style:t = "padding:0, 1@frameTopPadding, 0, 0"
-		frame_header {
-			activeText {
-				caption:t = "yes"
-				text:t = "#captcha/title"
-			}
-			textarea {
-				id:t = "captcha_countdown_msg"
-				position:t = "absolute"
-				pos:t = "pw-w-1@buttonCloseHeight-1@blockInterval, 0.5ph-0.5h"
-			}
-			Button_close {
-				on_click:t = "onClose"
-				userInputType:t = "mouse"
-			}
-			dummy {
-				on_click:t = "onClose"
-				accessKey:t = "Esc"
-				userInputType:t = "keyboard"
-			}
-			dummy {
-				on_click:t = "onClose"
-				btnName:t = "B"
-				userInputType:t = "gamepad"
-			}
-		}
-		tdiv {
-			size:t = "pw, 1@battleButtonHeight"
-			textareaNoTab {
-				id:t = "captcha_task"
-				pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
-				position:t = "absolute"
-				padding-bottom:t = "1@blockInterval"
-				text:t = "#captcha/task"
-			}
-		}
-		captcha {
-			size:t = "pw, 3/4*pw"
-			id:t = "captcha"
-			img {
-				id:t = "captcha_image"
-				size:t = "pw, ph"
-				background-color:t = "@white"
-			}
-			img {
-				size:t = "pw, ph"
-				position:t = "absolute"
-				background-color:t = "#51515151"
-			}
-			img {
-				id:t = "hole"
-				position:t = "absolute"
-				size:t = "0.15pw, 0.15pw"
-				background-color:t = "#0f1726"
-			}
-			draggablePart {
-				id:t = "part"
-				position:t = "absolute"
-				size:t = "0.15pw, 0.15pw"
-				on_move_start:t = "onMoveStart"
-				on_move_end:t = "onMoveEnd"
-				img {
-					id:t = "part_image"
-					size:t = "pw, ph"
-					background-color:t = "#ff2222"
-					background-position:t = "0, 50, 0, 50"
-					background-repeat:t = "part"
-				}
-				borderOuter {
-					size:t = "pw - 2@sf/@pf, ph - 2@sf/@pf"
-					pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
-					position:t = "absolute"
-					border:t = "yes"
-					border-color:t = "#090b0e"
-				}
-				borderInner {
-					size:t = "pw - 4@sf/@pf, ph - 4@sf/@pf"
-					pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
-					position:t = "absolute"
-					border:t = "yes"
-				}
-				highlightInner {
-					size:t = "pw - 2@sf/@pf, 2@sf/@pf"
-					pos:t = "0.5pw-0.5w, @sf/@pf"
-					position:t = "absolute"
-				}
-				mouseCapture {
-					size:t = "pw, ph"
-				}
-			}
-		}
-		Button_text {
-			id:t = "btn_check"
-			size:t = "pw, 1@battleButtonHeight"
-			position:t = "relative"
-			visualStyle:t = "bigImg"
-			iconPos:t = "middleBottom"
-			btnName:t = "X"
-			userInputType:t = "mouse"
-			on_click:t = "onCheck"
-			enable:t = "no"
-			text {
-				size:t = "pw, 1@battleButtonHeight"
-				text:t = "#captcha/btnCheck"
-			}
-			focus_border {
-
-			}
-			ButtonImg {
-
-			}
-		}
-		dummy {
-			on_click:t = "onCheck"
-			btnName:t = "X"
-			userInputType:t = "gamepad"
-		}
-	}
-	timer {
-		id:t = "captcha_timer"
-		timer_handler_func:t = "onCaptchaTimer"
-		timer_interval_msec:t = "1000"
-	}
+{
+  "root": {
+    "blur": {},
+    "blur_foreground": {},
+    "frame": {
+      "width": "0.75@scrn_tgt",
+      "pos": "0.5pw-0.5w, 0.5ph-0.5h",
+      "position": "absolute",
+      "class": "wndNav",
+      "style": "padding:0, 1@frameTopPadding, 0, 0",
+      "frame_header": {
+        "activeText": {
+          "caption": "yes",
+          "text": "#captcha/title"
+        },
+        "textarea": {
+          "id": "captcha_countdown_msg",
+          "position": "absolute",
+          "pos": "pw-w-1@buttonCloseHeight-1@blockInterval, 0.5ph-0.5h"
+        },
+        "Button_close": {
+          "on_click": "onClose",
+          "userInputType": "mouse"
+        },
+        "dummy": [
+          {
+            "on_click": "onClose",
+            "accessKey": "Esc",
+            "userInputType": "keyboard"
+          },
+          {
+            "on_click": "onClose",
+            "btnName": "B",
+            "userInputType": "gamepad"
+          }
+        ]
+      },
+      "tdiv": {
+        "size": "pw, 1@battleButtonHeight",
+        "textareaNoTab": {
+          "id": "captcha_task",
+          "pos": "0.5pw-0.5w, 0.5ph-0.5h",
+          "position": "absolute",
+          "padding-bottom": "1@blockInterval",
+          "text": "#captcha/task"
+        }
+      },
+      "captcha": {
+        "size": "pw, 3/4*pw",
+        "id": "captcha",
+        "img": [
+          {
+            "id": "captcha_image",
+            "size": "pw, ph",
+            "background-color": "@white"
+          },
+          {
+            "size": "pw, ph",
+            "position": "absolute",
+            "background-color": "#51515151"
+          },
+          {
+            "id": "hole",
+            "position": "absolute",
+            "size": "0.15pw, 0.15pw",
+            "background-color": "#0f1726"
+          }
+        ],
+        "draggablePart": {
+          "id": "part",
+          "position": "absolute",
+          "size": "0.15pw, 0.15pw",
+          "on_move_start": "onMoveStart",
+          "on_move_end": "onMoveEnd",
+          "img": {
+            "id": "part_image",
+            "size": "pw, ph",
+            "background-color": "#ff2222",
+            "background-position": "0, 50, 0, 50",
+            "background-repeat": "part"
+          },
+          "borderOuter": {
+            "size": "pw - 2@sf/@pf, ph - 2@sf/@pf",
+            "pos": "0.5pw-0.5w, 0.5ph-0.5h",
+            "position": "absolute",
+            "border": "yes",
+            "border-color": "#090b0e"
+          },
+          "borderInner": {
+            "size": "pw - 4@sf/@pf, ph - 4@sf/@pf",
+            "pos": "0.5pw-0.5w, 0.5ph-0.5h",
+            "position": "absolute",
+            "border": "yes"
+          },
+          "highlightInner": {
+            "size": "pw - 2@sf/@pf, 2@sf/@pf",
+            "pos": "0.5pw-0.5w, @sf/@pf",
+            "position": "absolute"
+          },
+          "mouseCapture": {
+            "size": "pw, ph"
+          }
+        }
+      },
+      "Button_text": {
+        "id": "btn_check",
+        "size": "pw, 1@battleButtonHeight",
+        "position": "relative",
+        "visualStyle": "bigImg",
+        "iconPos": "middleBottom",
+        "btnName": "X",
+        "userInputType": "mouse",
+        "on_click": "onCheck",
+        "enable": "no",
+        "text": {
+          "size": "pw, 1@battleButtonHeight",
+          "text": "#captcha/btnCheck"
+        },
+        "focus_border": {},
+        "ButtonImg": {}
+      },
+      "dummy": {
+        "on_click": "onCheck",
+        "btnName": "X",
+        "userInputType": "gamepad"
+      }
+    },
+    "timer": {
+      "id": "captcha_timer",
+      "timer_handler_func": "onCaptchaTimer",
+      "timer_interval_msec": "1000"
+    }
+  }
 }

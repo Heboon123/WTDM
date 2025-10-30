@@ -1,127 +1,117 @@
-selector {
-	name:t = "cutsceneFighterVsFighter"
-	selectStrategy:t = "ordered"
-	reaction {
-		event:t = "groundAhead"
-		parallel {
-			turnToEvasiveDir {
-
-			}
-			stayAtSpeed {
-				speedMode:t = "boostOn"
-			}
-		}
-	}
-	reaction {
-		event:t = "collisionAhead"
-		parallel {
-			turnToEvasiveDir {
-
-			}
-			stayAtSpeed {
-				speedMode:t = "boostOn"
-			}
-		}
-	}
-	reaction {
-		event:t = "outsideBattleField"
-		flyToPos {
-			speed:r = 550
-			dist:r = -1
-			minAlt:r = 100
-			destType:t = "battleField"
-		}
-	}
-	fighterAttackFighter {
-
-	}
-}
-selector {
-	name:t = "cutsceneFighterVsBomber"
-	selectStrategy:t = "ordered"
-	reaction {
-		event:t = "groundAhead"
-		parallel {
-			turnToEvasiveDir {
-
-			}
-			stayAtSpeed {
-				speedMode:t = "boostOn"
-			}
-		}
-	}
-	reaction {
-		event:t = "collisionAhead"
-		parallel {
-			turnToEvasiveDir {
-
-			}
-			stayAtSpeed {
-				speedMode:t = "boostOn"
-			}
-		}
-	}
-	reaction {
-		event:t = "outsideBattleField"
-		flyToPos {
-			speed:r = 550
-			dist:r = -1
-			minAlt:r = 100
-			destType:t = "battleField"
-		}
-	}
-	selector {
-		selectStrategy:t = "ordered"
-		selectOnSuccess:b = true
-		sequencer {
-			isFighterSpecialAttackBomber {
-
-			}
-			fighterAttackBomber {
-
-			}
-		}
-		fighterAttackFighter {
-
-		}
-	}
-}
-selector {
-	name:t = "cutsceneDiveBombTarget"
-	selectStrategy:t = "ordered"
-	reaction {
-		event:t = "groundAhead"
-		parallel {
-			turnToEvasiveDir {
-
-			}
-			stayAtSpeed {
-				speedMode:t = "boostOn"
-			}
-		}
-	}
-	reaction {
-		event:t = "collisionAhead"
-		parallel {
-			turnToEvasiveDir {
-
-			}
-			stayAtSpeed {
-				speedMode:t = "boostOn"
-			}
-		}
-	}
-	reaction {
-		event:t = "outsideBattleField"
-		flyToPos {
-			speed:r = 550
-			dist:r = -1
-			minAlt:r = 100
-			destType:t = "battleField"
-		}
-	}
-	diveBombTarget {
-		overrideDropHeight:r = 100
-		overrideDiveSpeed:r = 70
-	}
+{
+  "selector": [
+    {
+      "name": "cutsceneFighterVsFighter",
+      "selectStrategy": "ordered",
+      "reaction": [
+        {
+          "event": "groundAhead",
+          "parallel": {
+            "turnToEvasiveDir": {},
+            "stayAtSpeed": {
+              "speedMode": "boostOn"
+            }
+          }
+        },
+        {
+          "event": "collisionAhead",
+          "parallel": {
+            "turnToEvasiveDir": {},
+            "stayAtSpeed": {
+              "speedMode": "boostOn"
+            }
+          }
+        },
+        {
+          "event": "outsideBattleField",
+          "flyToPos": {
+            "speed": 550.0,
+            "dist": -1.0,
+            "minAlt": 100.0,
+            "destType": "battleField"
+          }
+        }
+      ],
+      "fighterAttackFighter": {}
+    },
+    {
+      "name": "cutsceneFighterVsBomber",
+      "selectStrategy": "ordered",
+      "reaction": [
+        {
+          "event": "groundAhead",
+          "parallel": {
+            "turnToEvasiveDir": {},
+            "stayAtSpeed": {
+              "speedMode": "boostOn"
+            }
+          }
+        },
+        {
+          "event": "collisionAhead",
+          "parallel": {
+            "turnToEvasiveDir": {},
+            "stayAtSpeed": {
+              "speedMode": "boostOn"
+            }
+          }
+        },
+        {
+          "event": "outsideBattleField",
+          "flyToPos": {
+            "speed": 550.0,
+            "dist": -1.0,
+            "minAlt": 100.0,
+            "destType": "battleField"
+          }
+        }
+      ],
+      "selector": {
+        "selectStrategy": "ordered",
+        "selectOnSuccess": true,
+        "sequencer": {
+          "isFighterSpecialAttackBomber": {},
+          "fighterAttackBomber": {}
+        },
+        "fighterAttackFighter": {}
+      }
+    },
+    {
+      "name": "cutsceneDiveBombTarget",
+      "selectStrategy": "ordered",
+      "reaction": [
+        {
+          "event": "groundAhead",
+          "parallel": {
+            "turnToEvasiveDir": {},
+            "stayAtSpeed": {
+              "speedMode": "boostOn"
+            }
+          }
+        },
+        {
+          "event": "collisionAhead",
+          "parallel": {
+            "turnToEvasiveDir": {},
+            "stayAtSpeed": {
+              "speedMode": "boostOn"
+            }
+          }
+        },
+        {
+          "event": "outsideBattleField",
+          "flyToPos": {
+            "speed": 550.0,
+            "dist": -1.0,
+            "minAlt": 100.0,
+            "destType": "battleField"
+          }
+        }
+      ],
+      "diveBombTarget": {
+        "overrideDropHeight": 100.0,
+        "overrideDiveSpeed": 70.0
+      }
+    }
+  ]
 }

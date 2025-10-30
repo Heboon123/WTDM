@@ -1,1891 +1,2735 @@
-PhysMats {
-	__DefaultParams {
-		iak:r = 0.5
-		damage_k:r = 1
-		dustFxAlpha:r = 1
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_ground"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_ground"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_ground"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_dirt"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_dirt"
-		helicopterRotorGroundDustFx:t = "rotor_ground_dust"
-		sparksGroundFrictionFx:t = "sparks_ground_friction_dirt"
-	}
-	default {
-		bf_class:t = "default"
-		color:c = 0, 162, 255, 100
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		damage_k:r = 0.3
-		deformable_width:r = 0.05
-		tankTracksTexId:i = 0
-		arcadeBoostMult:r = 1
-		resistanceK:r = 0.000025
-		explMat:t = "default"
-		iak:r = 0.5
-		trackEffectsPreset:t = "dirt"
-		trackDirtSpawnRateMult:r = 1
-		shakePeriod:p2 = 0.35, 0.7
-		shakePower:p2 = 1, 1
-		shakeMult:p2 = 0.5, 0.2
-		dustFxAlpha:r = 1
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_ground"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_ground"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_ground"
-		enviCoverAccumulationFactors {
-			dust:r = 0.006
-		}
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	bushes {
-		bf_class:t = "bushes"
-		softCollision {
-			physViscosity:r = 1.75
-		}
-		damageModel {
-			armorThickness:r = 0.01
-		}
-	}
-	horLandMesh {
-		bf_class:t = "horLandMesh"
-		color:c = 0, 162, 255, 100
-		isWater:b = false
-		shakeMultiplier:r = 6
-		frictionMultiplier:r = 4
-		explosionPatchShader:t = "explosion_patch_color"
-		explosionPatchTexture:t = "explosion_patch_ground_n"
-		explosionPatchColorTex:t = "explosion_patch_ground_c"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		explosionPatchHeightScale:r = 0.01
-		tankDestructionMat:t = "tankDestruction"
-		iak:r = 0.5
-		damage_k:r = 0.3
-		deformable_width:r = 0.15
-		tankTracksTexId:i = 0
-		arcadeBoostMult:r = 0.5
-		resistanceK:r = 0.0006
-		explMat:t = "horLandMesh"
-		shakePeriod:p2 = 0.35, 0.7
-		shakePower:p2 = 1, 1
-		shakeMult:p2 = 0.5, 0.3
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.3
-		}
-		arcadeProps {
-			boost:r = 0.5
-		}
-	}
-	verLandMesh {
-		color:c = 0, 162, 255, 100
-		isWater:b = false
-		shakeMultiplier:r = 6
-		frictionMultiplier:r = 1
-		explosionPatchShader:t = "explosion_patch_ground"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		damage_k:r = 0.3
-		explMat:t = "default"
-	}
-	water3d {
-		color:c = 0, 162, 255, 100
-		isWater:b = true
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		aircraftWheelsDustFx:t = ""
-		aircraftWheelsFrictionFx:t = ""
-		aircraftPropellerGroundDustFx:t = ""
-		helicopterRotorGroundDustFx:t = ""
-		sparksGroundFrictionFx:t = ""
-		aircraftFuselageFrictionFxId:t = ""
-		aircraftWingsFrictionFxId:t = ""
-	}
-	water {
-		color:c = 255, 0, 0, 200
-		isWater:b = true
-		shakeFactor:r = 0
-		frictionMultiplier:r = 2
-		aircraftWheelsDustFx:t = ""
-		aircraftWheelsFrictionFx:t = ""
-		aircraftPropellerGroundDustFx:t = ""
-		helicopterRotorGroundDustFx:t = ""
-		sparksGroundFrictionFx:t = ""
-		aircraftFuselageFrictionFxId:t = ""
-		aircraftWingsFrictionFxId:t = ""
-	}
-	concrete {
-		bf_class:t = "concrete"
-		color:c = 0, 255, 255, 200
-		isWater:b = false
-		shakeMultiplier:r = 3
-		frictionMultiplier:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		damage_k:r = 0.3
-		tankTracksTexId:i = -1
-		explMat:t = "concrete"
-		iak:r = 1
-		trackEffectsPreset:t = "ground"
-		trackDirtSpawnRateMult:r = 1
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_concrete"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_concrete"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_concrete"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_concrete"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_concrete"
-		sparksGroundFrictionFx:t = "sparks_ground_friction_concrete"
-		enviCoverAccumulationFactors {
-			dust:r = 0.0003
-		}
-	}
-	concrete_snow {
-		bf_class:t = "concrete"
-		color:c = 0, 255, 255, 200
-		isWater:b = false
-		shakeMultiplier:r = 3
-		frictionMultiplier:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		damage_k:r = 0.3
-		tankTracksTexId:i = -1
-		explMat:t = "concrete"
-		iak:r = 1
-		trackEffectsPreset:t = "ground"
-		trackDirtSpawnRateMult:r = 1
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_concrete_snow"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_concrete_snow"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_concrete"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_concrete"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_concrete"
-		sparksGroundFrictionFx:t = "sparks_ground_friction_concrete"
-		enviCoverAccumulationFactors {
-			snow:r = 0.04
-		}
-	}
-	bricks_red {
-		bf_class:t = "bricks_red"
-		color:c = 93, 92, 92, 0
-		isWater:b = false
-		isUnit:b = false
-		shakeMultiplier:r = 3
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 3
-		iak:r = 1
-		damage_k:r = 0.3
-		explMat:t = "bricks_red"
-		breachMat:t = "stone"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	buildings {
-		color:c = 0, 255, 255, 200
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		damage_k:r = 0.3
-		tankTracksTexId:i = 3
-		explMat:t = "stone"
-	}
-	fabric {
-		bf_class:t = "fabric"
-		color:c = 93, 92, 92, 0
-		isWater:b = false
-		isUnit:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 3
-		iak:r = 0.5
-		damage_k:r = 0
-		explMat:t = "fabric"
-		breachMat:t = "fabric"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	glass {
-		bf_class:t = "glass"
-		color:c = 83, 82, 73, 0
-		isWater:b = false
-		isUnit:b = false
-		lightTransparent:b = true
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 3
-		iak:r = 0.5
-		damage_k:r = 0
-		explMat:t = "glass"
-		proximityExplMat:t = "proximityShrapnelGlass"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	glass_small {
-		bf_class:t = "glass"
-		color:c = 83, 82, 73, 0
-		isWater:b = false
-		isUnit:b = false
-		lightTransparent:b = true
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 3
-		iak:r = 0.5
-		damage_k:r = 0
-		explMat:t = "glass_small"
-		breachMat:t = "glass"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	metal {
-		bf_class:t = "metal"
-		color:c = 139, 103, 74, 0
-		isWater:b = false
-		isUnit:b = false
-		shakeMultiplier:r = 3
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 3
-		iak:r = 1
-		damage_k:r = 0.3
-		explMat:t = "steel"
-		breachMat:t = "metal"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	stone_snow {
-		bf_class:t = "stone_snow"
-		color:c = 93, 92, 92, 0
-		isWater:b = false
-		isUnit:b = false
-		shakeMultiplier:r = 3
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		tankTracksTexId:i = 3
-		iak:r = 0.5
-		damage_k:r = 0.3
-		explMat:t = "stone"
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_concrete_snow"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_concrete_snow"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_concrete"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_concrete"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_concrete"
-		trackEffectsPreset:t = "ground"
-		trackDirtSpawnRateMult:r = 1
-		breachMat:t = "stone"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-		enviCoverAccumulationFactors {
-			snow:r = 0.02
-		}
-	}
-	ships {
-		color:c = 0, 162, 255, 100
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		explosionPatchShader:t = "explosion_patch_color"
-		explosionPatchTexture:t = "explosion_patch_ship_n"
-		explosionPatchColorTex:t = "explosion_patch_ship_c"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		explosionPatchHeightScale:r = 0.008
-		dustFxAlpha:r = 0.1
-		explMat:t = "ships"
-		aircraftWheelsDustFx:t = ""
-		aircraftWheelsFrictionFx:t = ""
-		aircraftPropellerGroundDustFx:t = ""
-		helicopterRotorGroundDustFx:t = ""
-		sparksGroundFrictionFx:t = ""
-		aircraftFuselageFrictionFxId:t = ""
-		aircraftWingsFrictionFxId:t = ""
-	}
-	airfield {
-		color:c = 0, 162, 255, 100
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		tankTracksTexId:i = 3
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		explMat:t = "default"
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_concrete"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_concrete"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_concrete"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_concrete"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_concrete"
-		helicopterRotorGroundDustFx:t = "rotor_ground_dust"
-		sparksGroundFrictionFx:t = "sparks_ground_friction_concrete"
-	}
-	wood {
-		bf_class:t = "wood"
-		color:c = 49, 71, 86, 0
-		isWater:b = false
-		isUnit:b = false
-		shakeMultiplier:r = 3
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 1
-		iak:r = 0.8
-		damage_k:r = 0.3
-		explMat:t = "wood"
-		breachMat:t = "wood"
-		proximityExplMat:t = "proximityShrapnelWood"
-		aircraftProximityExplMat:t = "aircraftProximityShrapnelWood"
-		aircraftExplMat:t = "aircraftWood"
-		aircraftShrapnelMat:t = "shrapnelAircraftWood"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	window_wood {
-		bf_class:t = "wood"
-		color:c = 49, 71, 86, 0
-		isWater:b = false
-		isUnit:b = false
-		lightTransparent:b = true
-		shakeMultiplier:r = 3
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 1
-		iak:r = 0.8
-		damage_k:r = 0.3
-		explMat:t = "glass"
-		proximityExplMat:t = "proximityShrapnelGlass"
-		breachMat:t = "wood"
-		aircraftProximityExplMat:t = "aircraftProximityShrapnelWood"
-		aircraftExplMat:t = "aircraftWood"
-		aircraftShrapnelMat:t = "shrapnelAircraftWood"
-		physDestructible {
-			climbingThrough:b = true
-			impulseSpeed:r = 3.5
-		}
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	wood_aim_transparent {
-		bf_class:t = "wood_aim_transparent"
-		color:c = 49, 71, 86, 0
-		isWater:b = false
-		isUnit:b = false
-		shakeMultiplier:r = 3
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 1
-		iak:r = 0.8
-		damage_k:r = 0.3
-		explMat:t = "wood"
-		breachMat:t = "wood"
-		proximityExplMat:t = "proximityShrapnelWood"
-		aircraftProximityExplMat:t = "aircraftProximityShrapnelWood"
-		aircraftExplMat:t = "aircraftWood"
-		aircraftShrapnelMat:t = "shrapnelAircraftWood"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	steel {
-		bf_class:t = "steel"
-		color:c = 255, 0, 0, 200
-		isUnit:b = true
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		explMat:t = "steel"
-		breachMat:t = "steel"
-		proximityExplMat:t = "proximityShrapnelSteelArmor"
-		aircraftProximityExplMat:t = "aircraftProximityShrapnel"
-		aircraftExplMat:t = "aircraftSteel"
-		aircraftShrapnelMat:t = "shrapnelAircraftSteel"
-	}
-	aluminum_armor {
-		color:c = 255, 0, 0, 200
-		isUnit:b = true
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		explMat:t = "steel"
-		breachMat:t = "steel"
-		proximityExplMat:t = "proximityShrapnelAluminumArmor"
-		aircraftProximityExplMat:t = "aircraftProximityShrapnel"
-		aircraftExplMat:t = "aircraftSteel"
-		aircraftShrapnelMat:t = "shrapnelAircraftSteel"
-	}
-	tank_structural_steel {
-		color:c = 255, 0, 0, 200
-		isUnit:b = true
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		explMat:t = "aircraftSteel"
-		breachMat:t = "aircraftSteel"
-		proximityExplMat:t = "proximityShrapnelSheetMetal"
-		aircraftProximityExplMat:t = "aircraftProximityShrapnel"
-		aircraftExplMat:t = "aircraftSteel"
-		aircraftShrapnelMat:t = "shrapnelAircraftSteel"
-	}
-	tank_rubber_screens {
-		color:c = 255, 0, 0, 200
-		isUnit:b = true
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		explMat:t = "rubber"
-		breachMat:t = "rubber"
-		proximityExplMat:t = "proximityShrapnelRubber"
-	}
-	armorPierceLowCal {
-		color:c = 255, 0, 0, 200
-		isWater:b = false
-		isUnit:b = true
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		explosionPatchShader:t = "explosion_patch_color"
-		explosionPatchTexture:t = "explosion_patch_ps_n"
-		explosionPatchColorTex:t = "explosion_patch_ps_c"
-		explosionPatchmaterialParamsMap:t = "explosion_patch_ps_m"
-		explosionPatchTexcoord:p4 = 0, 0.61, 0.39, 1
-		sizeInCalibers:r = 2
-	}
-	armorPierceMedCal {
-		color:c = 255, 0, 0, 200
-		isWater:b = false
-		isUnit:b = true
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		explosionPatchShader:t = "explosion_patch_color"
-		explosionPatchTexture:t = "explosion_patch_ps_n"
-		explosionPatchColorTex:t = "explosion_patch_ps_c"
-		explosionPatchmaterialParamsMap:t = "explosion_patch_ps_m"
-		explosionPatchTexcoord:p4 = 0.39, 0.61, 0.61, 0.825
-		sizeInCalibers:r = 3
-	}
-	armorPierceHiCal {
-		color:c = 255, 0, 0, 200
-		isWater:b = false
-		isUnit:b = true
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		explosionPatchShader:t = "explosion_patch_color"
-		explosionPatchTexture:t = "explosion_patch_ps_n"
-		explosionPatchColorTex:t = "explosion_patch_ps_c"
-		explosionPatchmaterialParamsMap:t = "explosion_patch_ps_m"
-		explosionPatchTexcoord:p4 = 0, 0, 0.61, 0.61
-		sizeInCalibers:r = 2.5
-	}
-	armorNPLowCal {
-		color:c = 255, 0, 0, 200
-		isWater:b = false
-		isUnit:b = true
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		explosionPatchShader:t = "explosion_patch_color"
-		explosionPatchTexture:t = "explosion_patch_ps_n"
-		explosionPatchColorTex:t = "explosion_patch_ps_c"
-		explosionPatchmaterialParamsMap:t = "explosion_patch_ps_m"
-		explosionPatchTexcoord:p4 = 0.61, 0.43, 0.735, 0.555
-		sizeInCalibers:r = 1.5
-	}
-	armorNPMedCal {
-		color:c = 255, 0, 0, 200
-		isWater:b = false
-		isUnit:b = true
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		explosionPatchShader:t = "explosion_patch_color"
-		explosionPatchTexture:t = "explosion_patch_ps_n"
-		explosionPatchColorTex:t = "explosion_patch_ps_c"
-		explosionPatchmaterialParamsMap:t = "explosion_patch_ps_m"
-		explosionPatchTexcoord:p4 = 0.735, 0.43, 1, 0.69
-		sizeInCalibers:r = 1.5
-	}
-	armorNPHiCal {
-		color:c = 255, 0, 0, 200
-		isWater:b = false
-		isUnit:b = true
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		explosionPatchShader:t = "explosion_patch_color"
-		explosionPatchTexture:t = "explosion_patch_ps_n"
-		explosionPatchColorTex:t = "explosion_patch_ps_c"
-		explosionPatchmaterialParamsMap:t = "explosion_patch_ps_m"
-		explosionPatchTexcoord:p4 = 0.61, 0, 1, 0.43
-		sizeInCalibers:r = 1.5
-	}
-	ship_metal {
-		color:c = 255, 0, 0, 200
-		isWater:b = false
-		isUnit:b = true
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		explMat:t = "shipMetal"
-		breachMat:t = "shipMetal"
-		proximityExplMat:t = "proximityShrapnelSheetMetal"
-		aircraftProximityExplMat:t = "aircraftProximityShrapnel"
-		aircraftExplMat:t = "aircraftSteel"
-		aircraftShrapnelMat:t = "shrapnelAircraftSteel"
-	}
-	ship_armor {
-		color:c = 255, 0, 0, 200
-		isWater:b = false
-		isUnit:b = true
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		explMat:t = "shipArmor"
-		breachMat:t = "shipArmor"
-		proximityExplMat:t = "proximityShrapnelSteelArmor"
-		aircraftProximityExplMat:t = "aircraftProximityShrapnel"
-		aircraftExplMat:t = "aircraftSteel"
-		aircraftShrapnelMat:t = "shrapnelAircraftSteel"
-	}
-	ship_wood {
-		color:c = 49, 71, 86, 0
-		isUnit:b = true
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		explMat:t = "shipWood"
-		breachMat:t = "shipWood"
-		proximityExplMat:t = "proximityShrapnelWood"
-		aircraftProximityExplMat:t = "aircraftProximityShrapnelWood"
-		aircraftExplMat:t = "aircraftWood"
-		aircraftShrapnelMat:t = "shrapnelAircraftWood"
-	}
-	soil {
-		bf_class:t = "soil"
-		deformable_width:r = 0.2
-		resistanceK:r = 0.000025
-		explMat:t = "soil"
-		iak:r = 0.5
-		trackEffectsPreset:t = "soil"
-		trackDirtSpawnRateMult:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		arcadeBoostMult:r = 0.95
-		shakePeriod:p2 = 0.2, 0.4
-		shakePower:p2 = 1, 1
-		shakeMult:p2 = 0.5, 0.2
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_ground"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_ground"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_ground"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_dirt"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_dirt"
-		tankTracksTexId:i = 0
-		shakeProps {
-			period:p2 = 0.2, 0.4
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 0.95
-		}
-		enviCoverAccumulationFactors {
-			mud:r = 0.005
-		}
-	}
-	tankTrack {
-		bf_class:t = "tankTrack"
-		trackEffectsPreset:t = "ground"
-		trackDirtSpawnRateMult:r = 1
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_ground"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_ground"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_ground"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_sand"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_sand"
-	}
-	wheel {
-		bf_class:t = "wheel"
-	}
-	road {
-		bf_class:t = "road"
-		explMat:t = "default"
-		iak:r = 0.5
-		trackEffectsPreset:t = "ground"
-		trackDirtSpawnRateMult:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		tankTracksTexId:i = 3
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_ground"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_ground"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_ground"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_sand"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_sand"
-	}
-	steppe {
-		bf_class:t = "steppe"
-		deformable_width:r = 0.1
-		resistanceK:r = 0.000025
-		explMat:t = "sandCrater"
-		iak:r = 0.5
-		trackEffectsPreset:t = "dirt"
-		trackDirtSpawnRateMult:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		arcadeBoostMult:r = 0.95
-		shakePeriod:p2 = 0.8, 1.4
-		shakePower:p2 = 1, 1
-		shakeMult:p2 = 0.7, 0.4
-		tankTracksTexId:i = 0
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_ground"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_ground"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_ground"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_dirt"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_dirt"
-		shakeProps {
-			period:p2 = 0.8, 1.4
-			power:p2 = 1, 1
-			mult:p2 = 0.7, 0.4
-		}
-		arcadeProps {
-			boost:r = 0.95
-		}
-		enviCoverAccumulationFactors {
-			dust:r = 0.002
-		}
-	}
-	dirt {
-		bf_class:t = "dirt"
-		deformable_width:r = 0.2
-		resistanceK:r = 0.001
-		explMat:t = "default"
-		iak:r = 0.5
-		trackEffectsPreset:t = "default"
-		trackDirtSpawnRateMult:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		arcadeBoostMult:r = 0
-		shakePeriod:p2 = 0.6, 1.2
-		shakePower:p2 = 1, 1
-		shakeMult:p2 = 1.2, 0.6
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_concrete_snow"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_concrete_snow"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_concrete"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_dirt"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_dirt"
-		tankTracksTexId:i = 0
-		sparksGroundFrictionFx:t = "sparks_ground_friction_dirt"
-		shakeProps {
-			period:p2 = 0.6, 1.2
-			power:p2 = 1, 1
-			mult:p2 = 1.2, 0.6
-		}
-		arcadeProps {
-			boost:r = 0
-		}
-		enviCoverAccumulationFactors {
-			mud:r = 0.008
-		}
-	}
-	visibilityRay {
-		bf_class:t = "visibilityRay"
-	}
-	roadSoil {
-		bf_class:t = "roadSoil"
-		deformable_width:r = 0.05
-		explMat:t = "default"
-		iak:r = 0.5
-		trackEffectsPreset:t = "soil"
-		trackDirtSpawnRateMult:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		arcadeBoostMult:r = 0.8
-		tankTracksTexId:i = 0
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_ground"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_ground"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_ground"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_dirt"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_dirt"
-		arcadeProps {
-			boost:r = 0.8
-		}
-		enviCoverAccumulationFactors {
-			mud:r = 0.004
-		}
-	}
-	sand {
-		bf_class:t = "sand"
-		color:c = 93, 92, 92, 0
-		deformable_width:r = 0.2
-		explMat:t = "sandCrater"
-		iak:r = 0.5
-		trackEffectsPreset:t = "sand"
-		trackDirtSpawnRateMult:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		arcadeBoostMult:r = 0.8
-		resistanceK:r = 0.000025
-		shakePeriod:p2 = 0.3, 0.7
-		shakePower:p2 = 1, 1
-		shakeMult:p2 = 0.7, 0.4
-		tankTracksTexId:i = 1
-		apexGroundCollisionFx:t = "px_ground_sand_fx"
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_ground"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_ground"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_ground"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_sand"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_sand"
-		helicopterRotorGroundDustFx:t = "rotor_sand_dust"
-		sparksGroundFrictionFx:t = "sparks_ground_friction_sand"
-		shakeProps {
-			period:p2 = 0.3, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.7, 0.4
-		}
-		arcadeProps {
-			boost:r = 0.8
-		}
-		enviCoverAccumulationFactors {
-			dust:r = 0.01
-		}
-	}
-	duneSand {
-		bf_class:t = "duneSand"
-		deformable_width:r = 0.2
-		explMat:t = "sandCrater"
-		iak:r = 0.5
-		trackEffectsPreset:t = "sand"
-		trackDirtSpawnRateMult:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		arcadeBoostMult:r = 0.8
-		resistanceK:r = 0.000025
-		shakePeriod:p2 = 0.3, 0.7
-		shakePower:p2 = 1, 1
-		shakeMult:p2 = 0.7, 0.4
-		tankTracksTexId:i = 1
-		apexGroundCollisionFx:t = "px_ground_sand_fx"
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_ground"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_ground"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_ground"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_sand"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_sand"
-		helicopterRotorGroundDustFx:t = "rotor_sand_dust"
-		shakeProps {
-			period:p2 = 0.3, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.7, 0.4
-		}
-		arcadeProps {
-			boost:r = 0.8
-		}
-		enviCoverAccumulationFactors {
-			dust:r = 0.01
-		}
-	}
-	roadSand {
-		bf_class:t = "roadSand"
-		deformable_width:r = 0.1
-		explMat:t = "sandCrater"
-		iak:r = 0.5
-		trackEffectsPreset:t = "sand"
-		trackDirtSpawnRateMult:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		arcadeBoostMult:r = 0.8
-		shakePeriod:p2 = 0.3, 0.7
-		shakePower:p2 = 1, 1
-		shakeMult:p2 = 0.7, 0.4
-		tankTracksTexId:i = 1
-		apexGroundCollisionFx:t = "px_ground_sand_fx"
-		helicopterRotorGroundDustFx:t = "rotor_sand_dust"
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_ground"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_ground"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_ground"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_sand"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_sand"
-		shakeProps {
-			period:p2 = 0.3, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.7, 0.4
-		}
-		arcadeProps {
-			boost:r = 0.8
-		}
-		enviCoverAccumulationFactors {
-			dust:r = 0.01
-		}
-	}
-	quickSand {
-		bf_class:t = "sand"
-		deformable_width:r = 0.07
-		trackEffectsPreset:t = "sand"
-		explMat:t = "sandCrater"
-		iak:r = 0.5
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_ground_n"
-		explosionPatchColorTex:t = "explosion_patch_ground_c"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		arcadeBoostMult:r = 0.2
-		tankTracksTexId:i = 1
-		apexGroundCollisionFx:t = "px_ground_sand_fx"
-		helicopterRotorGroundDustFx:t = "rotor_sand_dust"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_sand"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_sand"
-		shakeProps {
-			period:p2 = 0.1, 0.2
-			power:p2 = 2, 3
-			mult:p2 = 1, 0.5
-		}
-		arcadeProps {
-			boost:r = 0.2
-		}
-		enviCoverAccumulationFactors {
-			dust:r = 0.01
-		}
-	}
-	snow {
-		bf_class:t = "snow"
-		deformable_width:r = 0.3
-		explMat:t = "snowCrater"
-		iak:r = 0.5
-		resistanceK:r = 0.000025
-		trackEffectsPreset:t = "snow"
-		trackDirtSpawnRateMult:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		arcadeBoostMult:r = 0.8
-		shakePeriod:p2 = 0.5, 1.2
-		shakePower:p2 = 1, 1
-		shakeMult:p2 = 0.4, 0.2
-		tankTracksTexId:i = 2
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_snow"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_snow"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_snow"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_snow"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_snow"
-		apexGroundCollisionFx:t = "px_ground_snow_fx"
-		helicopterRotorGroundDustFx:t = "rotor_snow_dust"
-		sparksGroundFrictionFx:t = "sparks_ground_friction_snow"
-		shakeProps {
-			period:p2 = 0.5, 1.2
-			power:p2 = 1, 1
-			mult:p2 = 0.4, 0.2
-		}
-		arcadeProps {
-			boost:r = 0.8
-		}
-		enviCoverAccumulationFactors {
-			snow:r = 0.02
-		}
-	}
-	ice {
-		bf_class:t = "ice"
-		explMat:t = "default"
-		iak:r = 0.5
-		trackEffectsPreset:t = "snow"
-		trackDirtSpawnRateMult:r = 0
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		helicopterRotorGroundDustFx:t = "rotor_snow_dust"
-		sparksGroundFrictionFx:t = "sparks_ground_friction_snow"
-		tankTracksTexId:i = 2
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_concrete"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_concrete"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_concrete"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_concrete"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_concrete"
-		enviCoverAccumulationFactors {
-			snow:r = 0.025
-		}
-	}
-	football_ramp {
-		bf_class:t = "football_ramp"
-		trackDirtSpawnRateMult:r = 0
-		explMat:t = "default"
-		iak:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		tankTracksTexId:i = 3
-	}
-	walkRay {
-		bf_class:t = "walkRay"
-	}
-	climbAiRay {
-		bf_class:t = "climbAiRay"
-	}
-	bulletRay {
-		bf_class:t = "bulletRay"
-	}
-	grenadeRay {
-		bf_class:t = "grenadeRay"
-	}
-	gunRay {
-		bf_class:t = "gunRay"
-	}
-	aimRay {
-		bf_class:t = "aimRay"
-	}
-	losRay {
-		bf_class:t = "losRay"
-	}
-	walker {
-		bf_class:t = "walker"
-		softCollision {
-			collisionForce:r = 0.8
-		}
-	}
-	walkerBot {
-		bf_class:t = "walkerBot"
-		softCollision {
-			collisionForce:r = 0.8
-		}
-	}
-	wood_solid {
-		bf_class:t = "wood"
-		color:c = 49, 71, 86, 0
-		isWater:b = false
-		isUnit:b = false
-		shakeMultiplier:r = 3
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 1
-		iak:r = 0.8
-		damage_k:r = 0.3
-		explMat:t = "wood_solid"
-		breachMat:t = "wood_solid"
-		proximityExplMat:t = "proximityShrapnelWood"
-		aircraftProximityExplMat:t = "aircraftProximityShrapnelWood"
-		aircraftExplMat:t = "aircraftWood"
-		aircraftShrapnelMat:t = "shrapnelAircraftWood"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	softWoodDoor {
-		bf_class:t = "wood"
-		color:c = 49, 71, 86, 0
-		isWater:b = false
-		isUnit:b = false
-		shakeMultiplier:r = 3
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 1
-		iak:r = 0.8
-		damage_k:r = 0.3
-		explMat:t = "wood"
-		breachMat:t = "wood"
-		proximityExplMat:t = "proximityShrapnelWood"
-		aircraftProximityExplMat:t = "aircraftProximityShrapnelWood"
-		aircraftExplMat:t = "aircraftWood"
-		aircraftShrapnelMat:t = "shrapnelAircraftWood"
-		softCollision {
-			collisionForce:r = 0.3
-		}
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	softSteelDoor {
-		bf_class:t = "metal"
-		color:c = 139, 103, 74, 0
-		isWater:b = false
-		isUnit:b = false
-		shakeMultiplier:r = 3
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 3
-		iak:r = 1
-		damage_k:r = 0.3
-		explMat:t = "steel_thin"
-		breachMat:t = "steel_thin"
-		softCollision {
-			collisionForce:r = 0.3
-		}
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	rubber {
-		bf_class:t = "rubber"
-		color:c = 255, 0, 0, 200
-		isUnit:b = false
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 1
-		iak:r = 0.8
-		damage_k:r = 0.3
-		explMat:t = "rubber_ri"
-		breachMat:t = "rubber_ri"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	plastic {
-		bf_class:t = "plastic"
-		color:c = 255, 0, 0, 200
-		isUnit:b = false
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 1
-		iak:r = 0.8
-		damage_k:r = 0.3
-		explMat:t = "plastic"
-		breachMat:t = "plastic"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	ceramic {
-		bf_class:t = "ceramic"
-		color:c = 0, 255, 255, 200
-		isUnit:b = false
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 1
-		iak:r = 1
-		damage_k:r = 0.3
-		explMat:t = "ceramic"
-		breachMat:t = "ceramic"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	stone {
-		bf_class:t = "stone"
-		color:c = 0, 255, 255, 200
-		isUnit:b = false
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 1
-		iak:r = 1
-		damage_k:r = 0.3
-		explMat:t = "stone_grey"
-		breachMat:t = "stone_grey"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	stone_biege {
-		bf_class:t = "stone"
-		color:c = 0, 255, 255, 200
-		isUnit:b = false
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 1
-		iak:r = 1
-		damage_k:r = 0.3
-		explMat:t = "stone_biege"
-		breachMat:t = "stone_biege"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	stone_white {
-		bf_class:t = "stone"
-		color:c = 0, 255, 255, 200
-		isUnit:b = false
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 1
-		iak:r = 1
-		damage_k:r = 0.3
-		explMat:t = "stone_white"
-		breachMat:t = "stone_white"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	soil_brown {
-		bf_class:t = "soil"
-		isUnit:b = false
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.000025
-		iak:r = 0.5
-		damage_k:r = 0.3
-		explMat:t = "soil_brown"
-		breachMat:t = "soil_brown"
-		shakeProps {
-			period:p2 = 0.2, 0.4
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 0.95
-		}
-	}
-	soil_sand {
-		bf_class:t = "soil"
-		isUnit:b = false
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.000025
-		iak:r = 0.5
-		damage_k:r = 0.3
-		explMat:t = "soil_sand"
-		breachMat:t = "soil_sand"
-		shakeProps {
-			period:p2 = 0.2, 0.4
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 0.95
-		}
-	}
-	sandbag_grey {
-		bf_class:t = "fabric"
-		color:c = 93, 92, 92, 0
-		isWater:b = false
-		isUnit:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 3
-		iak:r = 0.5
-		damage_k:r = 0
-		explMat:t = "sandbag_grey"
-		breachMat:t = "sandbag_grey"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	sandbag_biege {
-		bf_class:t = "fabric"
-		color:c = 93, 92, 92, 0
-		isWater:b = false
-		isUnit:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 3
-		iak:r = 0.5
-		damage_k:r = 0
-		explMat:t = "sandbag_biege"
-		breachMat:t = "sandbag_biege"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	paper {
-		bf_class:t = "paper"
-		color:c = 93, 92, 92, 0
-		isWater:b = false
-		isUnit:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 1
-		iak:r = 0.8
-		damage_k:r = 0.3
-		explMat:t = "paper"
-		breachMat:t = "paper"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	droneColl {
-		bf_class:t = "droneColl"
-		softCollision {
-			collisionForce:r = 0.8
-		}
-	}
-	barbwire {
-		bf_class:t = "barbwire"
-		completelyTransparent:b = true
-		lightTransparent:b = true
-		softCollision {
-			physViscosity:r = 2.5
-		}
-	}
-	steel_thin {
-		bf_class:t = "metal"
-		color:c = 255, 0, 0, 200
-		isUnit:b = false
-		isWater:b = false
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 3
-		iak:r = 1
-		damage_k:r = 0.3
-		explMat:t = "steel_thin"
-		breachMat:t = "steel_thin"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	glass_car {
-		bf_class:t = "glass"
-		color:c = 83, 82, 73, 0
-		isWater:b = false
-		isUnit:b = false
-		lightTransparent:b = true
-		shakeMultiplier:r = 1
-		frictionMultiplier:r = 1
-		resistanceK:r = 0.00035
-		fk:r = 0.65
-		trackDirtSpawnRateMult:r = 0
-		tankTracksTexId:i = 3
-		iak:r = 0.5
-		damage_k:r = 0
-		explMat:t = "glass_car"
-		proximityExplMat:t = "proximityShrapnelGlass"
-		shakeProps {
-			period:p2 = 0.35, 0.7
-			power:p2 = 1, 1
-			mult:p2 = 0.5, 0.2
-		}
-		arcadeProps {
-			boost:r = 1
-		}
-	}
-	snowLower {
-		bf_class:t = "snow"
-		deformable_width:r = 0.2
-		trackEffectsPreset:t = "snow"
-		explMat:t = "snowCrater"
-		iak:r = 0.5
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		arcadeBoostMult:r = 0.8
-		shakePeriod:p2 = 0.5, 1.2
-		shakePower:p2 = 1, 1
-		shakeMult:p2 = 0.4, 0.2
-		tankTracksTexId:i = 2
-		apexGroundCollisionFx:t = "px_ground_snow_fx"
-		helicopterRotorGroundDustFx:t = "rotor_snow_dust"
-		shakeProps {
-			period:p2 = 0.5, 1.2
-			power:p2 = 1, 1
-			mult:p2 = 0.4, 0.2
-		}
-		arcadeProps {
-			boost:r = 0.8
-		}
-		enviCoverAccumulationFactors {
-			snow:r = 0.02
-		}
-	}
-	roadSnow {
-		bf_class:t = "roadSnow"
-		deformable_width:r = 0.05
-		explMat:t = "default"
-		iak:r = 0.5
-		trackEffectsPreset:t = "snow"
-		trackDirtSpawnRateMult:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		arcadeBoostMult:r = 0.8
-		shakePeriod:p2 = 0.5, 1.2
-		shakePower:p2 = 1, 1
-		shakeMult:p2 = 0.4, 0.2
-		tankTracksTexId:i = 2
-		apexGroundCollisionFx:t = "px_ground_snow_fx"
-		helicopterRotorGroundDustFx:t = "rotor_snow_dust"
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_concrete_snow"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_concrete_snow"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_concrete"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_snow"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_snow"
-		shakeProps {
-			period:p2 = 0.5, 1.2
-			power:p2 = 1, 1
-			mult:p2 = 0.4, 0.2
-		}
-		arcadeProps {
-			boost:r = 0.8
-		}
-		enviCoverAccumulationFactors {
-			snow:r = 0.02
-		}
-	}
-	rocks {
-		bf_class:t = "rocks"
-		explMat:t = "default"
-		trackEffectsPreset:t = "ground"
-		trackDirtSpawnRateMult:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_concrete"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_concrete"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_concrete"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_concrete"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_concrete"
-		tankTracksTexId:i = 3
-	}
-	rocksSlippery {
-		bf_class:t = "rocksSlippery"
-		explMat:t = "default"
-		trackEffectsPreset:t = "ground"
-		trackDirtSpawnRateMult:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		tankTracksTexId:i = 3
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_concrete"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_concrete"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_concrete"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_concrete"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_concrete"
-	}
-	rocksSlipperyHigh {
-		bf_class:t = "rocksSlipperyHigh"
-		explMat:t = "default"
-		trackEffectsPreset:t = "ground"
-		trackDirtSpawnRateMult:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		tankTracksTexId:i = 3
-		aircraftWheelsDustFx:t = "aircraft_wheels_ground_concrete"
-		aircraftWheelsFrictionFx:t = "aircraft_wheels_friction_concrete"
-		aircraftPropellerGroundDustFx:t = "aircraft_propellers_concrete"
-		aircraftFuselageFrictionFxId:t = "aircraft_collision_fuselage_concrete"
-		aircraftWingsFrictionFxId:t = "aircraft_collision_wing_concrete"
-	}
-	transparentBeton {
-		bf_class:t = "transparentBeton"
-		color:c = 0, 255, 255, 200
-		isWater:b = false
-		shakeMultiplier:r = 3
-		frictionMultiplier:r = 1
-		tankTracksTexId:i = 3
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		damage_k:r = 0.3
-		explMat:t = "default"
-	}
-	visibilityCamera {
-		bf_class:t = "visibilityCamera"
-	}
-	transparentCamera {
-		bf_class:t = "transparentCamera"
-		color:c = 0, 255, 255, 150
-		isWater:b = false
-		shakeMultiplier:r = 3
-		frictionMultiplier:r = 1
-		explosionPatchShader:t = "explosion_patch"
-		explosionPatchTexture:t = "explosion_patch_rocks_n"
-		explosionPatchTexcoord:p4 = 0, 0, 1, 1
-		damage_k:r = 0.3
-		explMat:t = "default"
-	}
-}
-InteractPropsList {
-	walkRay {
-		walkerBot {
-			en:b = false
-		}
-		glass {
-			en:b = false
-		}
-		walker {
-			en:b = false
-		}
-		bushes {
-			en:b = false
-		}
-		droneColl {
-			en:b = false
-		}
-		barbwire {
-			en:b = false
-		}
-	}
-	climbAiRay {
-		walker {
-			en:b = false
-		}
-		walkerBot {
-			en:b = false
-		}
-		bushes {
-			en:b = false
-		}
-		barbwire {
-			en:b = false
-		}
-	}
-	gunRay {
-		walker {
-			en:b = false
-		}
-		walkerBot {
-			en:b = false
-		}
-		bushes {
-			en:b = false
-		}
-		barbwire {
-			en:b = false
-		}
-	}
-	aimRay {
-		glass {
-			en:b = false
-		}
-		bushes {
-			en:b = false
-		}
-		wood_aim_transparent {
-			en:b = false
-		}
-		barbwire {
-			en:b = false
-		}
-	}
-	losRay {
-		glass {
-			en:b = false
-		}
-		barbwire {
-			en:b = false
-		}
-		wood_aim_transparent {
-			en:b = false
-		}
-	}
-	visibilityCamera {
-		transparentCamera {
-			en:b = false
-		}
-	}
-	visibilityRay {
-		transparentBeton {
-			en:b = false
-		}
-		transparentCamera {
-			en:b = false
-		}
-	}
-	tankTrack {
-		default {
-			fk:r = 1
-			rollingFrictionK:r = 0.055
-		}
-		steel {
-			fk:r = 1
-			rollingFrictionK:r = 0.1
-		}
-		horLandMesh {
-			fk:r = 1
-			rollingFrictionK:r = 0.1
-		}
-		soil {
-			fk:r = 1
-			rollingFrictionK:r = 0.055
-		}
-		steppe {
-			fk:r = 1
-			rollingFrictionK:r = 0.055
-		}
-		dirt {
-			fk:r = 0.85
-			rollingFrictionK:r = 0.08
-		}
-		road {
-			fk:r = 0.9
-			rollingFrictionK:r = 0.05
-		}
-		roadSoil {
-			fk:r = 1
-			rollingFrictionK:r = 0.055
-		}
-		bricks_red {
-			fk:r = 0.8
-			rollingFrictionK:r = 0.05
-		}
-		concrete {
-			fk:r = 0.95
-			rollingFrictionK:r = 0.05
-		}
-		sand {
-			fk:r = 0.9
-			rollingFrictionK:r = 0.06
-		}
-		duneSand {
-			fk:r = 0.8
-			rollingFrictionK:r = 0.06
-		}
-		roadSand {
-			fk:r = 0.9
-			rollingFrictionK:r = 0.06
-		}
-		snow {
-			fk:r = 0.9
-			rollingFrictionK:r = 0.06
-		}
-		ice {
-			fk:r = 0.1
-			rollingFrictionK:r = 0.045
-		}
-		football_ramp {
-			fk:r = 0.3
-			rollingFrictionK:r = 0.2
-		}
-		roadSnow {
-			fk:r = 0.9
-			rollingFrictionK:r = 0.06
-		}
-		rocks {
-			fk:r = 0.75
-			rollingFrictionK:r = 0.05
-		}
-		rocksSlippery {
-			fk:r = 0.7
-			rollingFrictionK:r = 0.07
-		}
-		rocksSlipperyHigh {
-			fk:r = 0.2
-			rollingFrictionK:r = 0.04
-		}
-		fabric {
-			fk:r = 0.8
-			rollingFrictionK:r = 0.09
-		}
-		glass {
-			fk:r = 0.6
-			rollingFrictionK:r = 0.02
-		}
-		stone_snow {
-			fk:r = 0.75
-			rollingFrictionK:r = 0.05
-		}
-		metal {
-			fk:r = 0.6
-			rollingFrictionK:r = 0.02
-		}
-		wood {
-			fk:r = 0.8
-			rollingFrictionK:r = 0.0166
-		}
-		stone {
-			fk:r = 0.75
-			rollingFrictionK:r = 0.05
-		}
-		ceramic {
-			fk:r = 0.6
-			rollingFrictionK:r = 0.05
-		}
-		rubber {
-			fk:r = 0.8
-			rollingFrictionK:r = 0.09
-		}
-		bushes {
-			en:b = false
-		}
-	}
-	wheel {
-		default {
-			fk:r = 1
-			rollingFrictionK:r = 0.045
-		}
-		horLandMesh {
-			fk:r = 1
-			rollingFrictionK:r = 0.2
-		}
-		soil {
-			fk:r = 1
-			rollingFrictionK:r = 0.045
-		}
-		steppe {
-			fk:r = 1
-			rollingFrictionK:r = 0.045
-		}
-		dirt {
-			fk:r = 0.8
-			rollingFrictionK:r = 0.2
-		}
-		road {
-			fk:r = 1
-			rollingFrictionK:r = 0.0166
-		}
-		roadSoil {
-			fk:r = 1
-			rollingFrictionK:r = 0.0172
-		}
-		concrete {
-			fk:r = 0.95
-			rollingFrictionK:r = 0.0166
-		}
-		bricks_red {
-			fk:r = 0.8
-			rollingFrictionK:r = 0.0166
-		}
-		sand {
-			fk:r = 0.95
-			rollingFrictionK:r = 0.0475
-		}
-		duneSand {
-			fk:r = 0.95
-			rollingFrictionK:r = 0.0475
-		}
-		roadSand {
-			fk:r = 1
-			rollingFrictionK:r = 0.0177
-		}
-		snow {
-			fk:r = 0.9
-			rollingFrictionK:r = 0.0475
-		}
-		ice {
-			fk:r = 0.15
-			rollingFrictionK:r = 0.02
-		}
-		football_ramp {
-			fk:r = 0.35
-			rollingFrictionK:r = 0.25
-		}
-		roadSnow {
-			fk:r = 0.95
-			rollingFrictionK:r = 0.0177
-		}
-		rocks {
-			fk:r = 0.7
-			rollingFrictionK:r = 0.07
-		}
-		rocksSlippery {
-			fk:r = 0.65
-			rollingFrictionK:r = 0.09
-		}
-		rocksSlipperyHigh {
-			fk:r = 0.25
-			rollingFrictionK:r = 0.04
-		}
-		fabric {
-			fk:r = 0.8
-			rollingFrictionK:r = 0.15
-		}
-		glass {
-			fk:r = 0.6
-			rollingFrictionK:r = 0.02
-		}
-		stone_snow {
-			fk:r = 0.7
-			rollingFrictionK:r = 0.07
-		}
-		metal {
-			fk:r = 0.6
-			rollingFrictionK:r = 0.02
-		}
-		steel {
-			fk:r = 0.6
-			rollingFrictionK:r = 0.02
-		}
-		wood {
-			fk:r = 0.8
-			rollingFrictionK:r = 0.01
-		}
-		stone {
-			fk:r = 0.75
-			rollingFrictionK:r = 0.07
-		}
-		ceramic {
-			fk:r = 0.6
-			rollingFrictionK:r = 0.07
-		}
-		rubber {
-			fk:r = 0.8
-			rollingFrictionK:r = 0.15
-		}
-		bushes {
-			en:b = false
-		}
-	}
+{
+  "PhysMats": {
+    "__DefaultParams": {
+      "iak": 0.5,
+      "damage_k": 1.0,
+      "dustFxAlpha": 1.0,
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_ground",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_ground",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_ground",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_dirt",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_dirt",
+      "helicopterRotorGroundDustFx": "rotor_ground_dust",
+      "sparksGroundFrictionFx": "sparks_ground_friction_dirt"
+    },
+    "default": {
+      "bf_class": "default",
+      "color": [
+        0,
+        162,
+        255,
+        100
+      ],
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "damage_k": 0.3,
+      "deformable_width": 0.05,
+      "tankTracksTexId": 0,
+      "arcadeBoostMult": 1.0,
+      "resistanceK": 0.000025,
+      "explMat": "default",
+      "iak": 0.5,
+      "trackEffectsPreset": "dirt",
+      "trackDirtSpawnRateMult": 1.0,
+      "shakePeriod": [
+        0.35,
+        0.7
+      ],
+      "shakePower": [
+        1.0,
+        1.0
+      ],
+      "shakeMult": [
+        0.5,
+        0.2
+      ],
+      "dustFxAlpha": 1.0,
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_ground",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_ground",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_ground",
+      "enviCoverAccumulationFactors": {
+        "dust": 0.006
+      },
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "bushes": {
+      "bf_class": "bushes",
+      "softCollision": {
+        "physViscosity": 1.75
+      },
+      "damageModel": {
+        "armorThickness": 0.01
+      }
+    },
+    "horLandMesh": {
+      "bf_class": "horLandMesh",
+      "color": [
+        0,
+        162,
+        255,
+        100
+      ],
+      "isWater": false,
+      "shakeMultiplier": 6.0,
+      "frictionMultiplier": 4.0,
+      "explosionPatchShader": "explosion_patch_color",
+      "explosionPatchTexture": "explosion_patch_ground_n",
+      "explosionPatchColorTex": "explosion_patch_ground_c",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "explosionPatchHeightScale": 0.01,
+      "tankDestructionMat": "tankDestruction",
+      "iak": 0.5,
+      "damage_k": 0.3,
+      "deformable_width": 0.15,
+      "tankTracksTexId": 0,
+      "arcadeBoostMult": 0.5,
+      "resistanceK": 0.0006,
+      "explMat": "horLandMesh",
+      "shakePeriod": [
+        0.35,
+        0.7
+      ],
+      "shakePower": [
+        1.0,
+        1.0
+      ],
+      "shakeMult": [
+        0.5,
+        0.3
+      ],
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.3
+        ]
+      },
+      "arcadeProps": {
+        "boost": 0.5
+      }
+    },
+    "verLandMesh": {
+      "color": [
+        0,
+        162,
+        255,
+        100
+      ],
+      "isWater": false,
+      "shakeMultiplier": 6.0,
+      "frictionMultiplier": 1.0,
+      "explosionPatchShader": "explosion_patch_ground",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "damage_k": 0.3,
+      "explMat": "default"
+    },
+    "water3d": {
+      "color": [
+        0,
+        162,
+        255,
+        100
+      ],
+      "isWater": true,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "aircraftWheelsDustFx": "",
+      "aircraftWheelsFrictionFx": "",
+      "aircraftPropellerGroundDustFx": "",
+      "helicopterRotorGroundDustFx": "",
+      "sparksGroundFrictionFx": "",
+      "aircraftFuselageFrictionFxId": "",
+      "aircraftWingsFrictionFxId": ""
+    },
+    "water": {
+      "color": [
+        255,
+        0,
+        0,
+        200
+      ],
+      "isWater": true,
+      "shakeFactor": 0.0,
+      "frictionMultiplier": 2.0,
+      "aircraftWheelsDustFx": "",
+      "aircraftWheelsFrictionFx": "",
+      "aircraftPropellerGroundDustFx": "",
+      "helicopterRotorGroundDustFx": "",
+      "sparksGroundFrictionFx": "",
+      "aircraftFuselageFrictionFxId": "",
+      "aircraftWingsFrictionFxId": ""
+    },
+    "concrete": {
+      "bf_class": "concrete",
+      "color": [
+        0,
+        255,
+        255,
+        200
+      ],
+      "isWater": false,
+      "shakeMultiplier": 3.0,
+      "frictionMultiplier": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "damage_k": 0.3,
+      "tankTracksTexId": -1,
+      "explMat": "concrete",
+      "iak": 1.0,
+      "trackEffectsPreset": "ground",
+      "trackDirtSpawnRateMult": 1.0,
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_concrete",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_concrete",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_concrete",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_concrete",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_concrete",
+      "sparksGroundFrictionFx": "sparks_ground_friction_concrete",
+      "enviCoverAccumulationFactors": {
+        "dust": 0.0003
+      }
+    },
+    "concrete_snow": {
+      "bf_class": "concrete",
+      "color": [
+        0,
+        255,
+        255,
+        200
+      ],
+      "isWater": false,
+      "shakeMultiplier": 3.0,
+      "frictionMultiplier": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "damage_k": 0.3,
+      "tankTracksTexId": -1,
+      "explMat": "concrete",
+      "iak": 1.0,
+      "trackEffectsPreset": "ground",
+      "trackDirtSpawnRateMult": 1.0,
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_concrete_snow",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_concrete_snow",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_concrete",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_concrete",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_concrete",
+      "sparksGroundFrictionFx": "sparks_ground_friction_concrete",
+      "enviCoverAccumulationFactors": {
+        "snow": 0.04
+      }
+    },
+    "bricks_red": {
+      "bf_class": "bricks_red",
+      "color": [
+        93,
+        92,
+        92,
+        0
+      ],
+      "isWater": false,
+      "isUnit": false,
+      "shakeMultiplier": 3.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 3,
+      "iak": 1.0,
+      "damage_k": 0.3,
+      "explMat": "bricks_red",
+      "breachMat": "stone",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "buildings": {
+      "color": [
+        0,
+        255,
+        255,
+        200
+      ],
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "damage_k": 0.3,
+      "tankTracksTexId": 3,
+      "explMat": "stone"
+    },
+    "fabric": {
+      "bf_class": "fabric",
+      "color": [
+        93,
+        92,
+        92,
+        0
+      ],
+      "isWater": false,
+      "isUnit": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 3,
+      "iak": 0.5,
+      "damage_k": 0.0,
+      "explMat": "fabric",
+      "breachMat": "fabric",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "glass": {
+      "bf_class": "glass",
+      "color": [
+        83,
+        82,
+        73,
+        0
+      ],
+      "isWater": false,
+      "isUnit": false,
+      "lightTransparent": true,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 3,
+      "iak": 0.5,
+      "damage_k": 0.0,
+      "explMat": "glass",
+      "proximityExplMat": "proximityShrapnelGlass",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "glass_small": {
+      "bf_class": "glass",
+      "color": [
+        83,
+        82,
+        73,
+        0
+      ],
+      "isWater": false,
+      "isUnit": false,
+      "lightTransparent": true,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 3,
+      "iak": 0.5,
+      "damage_k": 0.0,
+      "explMat": "glass_small",
+      "breachMat": "glass",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "metal": {
+      "bf_class": "metal",
+      "color": [
+        139,
+        103,
+        74,
+        0
+      ],
+      "isWater": false,
+      "isUnit": false,
+      "shakeMultiplier": 3.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 3,
+      "iak": 1.0,
+      "damage_k": 0.3,
+      "explMat": "steel",
+      "breachMat": "metal",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "stone_snow": {
+      "bf_class": "stone_snow",
+      "color": [
+        93,
+        92,
+        92,
+        0
+      ],
+      "isWater": false,
+      "isUnit": false,
+      "shakeMultiplier": 3.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "tankTracksTexId": 3,
+      "iak": 0.5,
+      "damage_k": 0.3,
+      "explMat": "stone",
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_concrete_snow",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_concrete_snow",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_concrete",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_concrete",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_concrete",
+      "trackEffectsPreset": "ground",
+      "trackDirtSpawnRateMult": 1.0,
+      "breachMat": "stone",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      },
+      "enviCoverAccumulationFactors": {
+        "snow": 0.02
+      }
+    },
+    "ships": {
+      "color": [
+        0,
+        162,
+        255,
+        100
+      ],
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "explosionPatchShader": "explosion_patch_color",
+      "explosionPatchTexture": "explosion_patch_ship_n",
+      "explosionPatchColorTex": "explosion_patch_ship_c",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "explosionPatchHeightScale": 0.008,
+      "dustFxAlpha": 0.1,
+      "explMat": "ships",
+      "aircraftWheelsDustFx": "",
+      "aircraftWheelsFrictionFx": "",
+      "aircraftPropellerGroundDustFx": "",
+      "helicopterRotorGroundDustFx": "",
+      "sparksGroundFrictionFx": "",
+      "aircraftFuselageFrictionFxId": "",
+      "aircraftWingsFrictionFxId": ""
+    },
+    "airfield": {
+      "color": [
+        0,
+        162,
+        255,
+        100
+      ],
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "tankTracksTexId": 3,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "explMat": "default",
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_concrete",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_concrete",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_concrete",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_concrete",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_concrete",
+      "helicopterRotorGroundDustFx": "rotor_ground_dust",
+      "sparksGroundFrictionFx": "sparks_ground_friction_concrete"
+    },
+    "wood": {
+      "bf_class": "wood",
+      "color": [
+        49,
+        71,
+        86,
+        0
+      ],
+      "isWater": false,
+      "isUnit": false,
+      "shakeMultiplier": 3.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 1,
+      "iak": 0.8,
+      "damage_k": 0.3,
+      "explMat": "wood",
+      "breachMat": "wood",
+      "proximityExplMat": "proximityShrapnelWood",
+      "aircraftProximityExplMat": "aircraftProximityShrapnelWood",
+      "aircraftExplMat": "aircraftWood",
+      "aircraftShrapnelMat": "shrapnelAircraftWood",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "window_wood": {
+      "bf_class": "wood",
+      "color": [
+        49,
+        71,
+        86,
+        0
+      ],
+      "isWater": false,
+      "isUnit": false,
+      "lightTransparent": true,
+      "shakeMultiplier": 3.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 1,
+      "iak": 0.8,
+      "damage_k": 0.3,
+      "explMat": "glass",
+      "proximityExplMat": "proximityShrapnelGlass",
+      "breachMat": "wood",
+      "aircraftProximityExplMat": "aircraftProximityShrapnelWood",
+      "aircraftExplMat": "aircraftWood",
+      "aircraftShrapnelMat": "shrapnelAircraftWood",
+      "physDestructible": {
+        "climbingThrough": true,
+        "impulseSpeed": 3.5
+      },
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "wood_aim_transparent": {
+      "bf_class": "wood_aim_transparent",
+      "color": [
+        49,
+        71,
+        86,
+        0
+      ],
+      "isWater": false,
+      "isUnit": false,
+      "shakeMultiplier": 3.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 1,
+      "iak": 0.8,
+      "damage_k": 0.3,
+      "explMat": "wood",
+      "breachMat": "wood",
+      "proximityExplMat": "proximityShrapnelWood",
+      "aircraftProximityExplMat": "aircraftProximityShrapnelWood",
+      "aircraftExplMat": "aircraftWood",
+      "aircraftShrapnelMat": "shrapnelAircraftWood",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "steel": {
+      "bf_class": "steel",
+      "color": [
+        255,
+        0,
+        0,
+        200
+      ],
+      "isUnit": true,
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "explMat": "steel",
+      "breachMat": "steel",
+      "proximityExplMat": "proximityShrapnelSteelArmor",
+      "aircraftProximityExplMat": "aircraftProximityShrapnel",
+      "aircraftExplMat": "aircraftSteel",
+      "aircraftShrapnelMat": "shrapnelAircraftSteel"
+    },
+    "aluminum_armor": {
+      "color": [
+        255,
+        0,
+        0,
+        200
+      ],
+      "isUnit": true,
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "explMat": "steel",
+      "breachMat": "steel",
+      "proximityExplMat": "proximityShrapnelAluminumArmor",
+      "aircraftProximityExplMat": "aircraftProximityShrapnel",
+      "aircraftExplMat": "aircraftSteel",
+      "aircraftShrapnelMat": "shrapnelAircraftSteel"
+    },
+    "tank_structural_steel": {
+      "color": [
+        255,
+        0,
+        0,
+        200
+      ],
+      "isUnit": true,
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "explMat": "aircraftSteel",
+      "breachMat": "aircraftSteel",
+      "proximityExplMat": "proximityShrapnelSheetMetal",
+      "aircraftProximityExplMat": "aircraftProximityShrapnel",
+      "aircraftExplMat": "aircraftSteel",
+      "aircraftShrapnelMat": "shrapnelAircraftSteel"
+    },
+    "tank_rubber_screens": {
+      "color": [
+        255,
+        0,
+        0,
+        200
+      ],
+      "isUnit": true,
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "explMat": "rubber",
+      "breachMat": "rubber",
+      "proximityExplMat": "proximityShrapnelRubber"
+    },
+    "armorPierceLowCal": {
+      "color": [
+        255,
+        0,
+        0,
+        200
+      ],
+      "isWater": false,
+      "isUnit": true,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "explosionPatchShader": "explosion_patch_color",
+      "explosionPatchTexture": "explosion_patch_ps_n",
+      "explosionPatchColorTex": "explosion_patch_ps_c",
+      "explosionPatchmaterialParamsMap": "explosion_patch_ps_m",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.61,
+        0.39,
+        1.0
+      ],
+      "sizeInCalibers": 2.0
+    },
+    "armorPierceMedCal": {
+      "color": [
+        255,
+        0,
+        0,
+        200
+      ],
+      "isWater": false,
+      "isUnit": true,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "explosionPatchShader": "explosion_patch_color",
+      "explosionPatchTexture": "explosion_patch_ps_n",
+      "explosionPatchColorTex": "explosion_patch_ps_c",
+      "explosionPatchmaterialParamsMap": "explosion_patch_ps_m",
+      "explosionPatchTexcoord": [
+        0.39,
+        0.61,
+        0.61,
+        0.825
+      ],
+      "sizeInCalibers": 3.0
+    },
+    "armorPierceHiCal": {
+      "color": [
+        255,
+        0,
+        0,
+        200
+      ],
+      "isWater": false,
+      "isUnit": true,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "explosionPatchShader": "explosion_patch_color",
+      "explosionPatchTexture": "explosion_patch_ps_n",
+      "explosionPatchColorTex": "explosion_patch_ps_c",
+      "explosionPatchmaterialParamsMap": "explosion_patch_ps_m",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        0.61,
+        0.61
+      ],
+      "sizeInCalibers": 2.5
+    },
+    "armorNPLowCal": {
+      "color": [
+        255,
+        0,
+        0,
+        200
+      ],
+      "isWater": false,
+      "isUnit": true,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "explosionPatchShader": "explosion_patch_color",
+      "explosionPatchTexture": "explosion_patch_ps_n",
+      "explosionPatchColorTex": "explosion_patch_ps_c",
+      "explosionPatchmaterialParamsMap": "explosion_patch_ps_m",
+      "explosionPatchTexcoord": [
+        0.61,
+        0.43,
+        0.735,
+        0.555
+      ],
+      "sizeInCalibers": 1.5
+    },
+    "armorNPMedCal": {
+      "color": [
+        255,
+        0,
+        0,
+        200
+      ],
+      "isWater": false,
+      "isUnit": true,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "explosionPatchShader": "explosion_patch_color",
+      "explosionPatchTexture": "explosion_patch_ps_n",
+      "explosionPatchColorTex": "explosion_patch_ps_c",
+      "explosionPatchmaterialParamsMap": "explosion_patch_ps_m",
+      "explosionPatchTexcoord": [
+        0.735,
+        0.43,
+        1.0,
+        0.69
+      ],
+      "sizeInCalibers": 1.5
+    },
+    "armorNPHiCal": {
+      "color": [
+        255,
+        0,
+        0,
+        200
+      ],
+      "isWater": false,
+      "isUnit": true,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "explosionPatchShader": "explosion_patch_color",
+      "explosionPatchTexture": "explosion_patch_ps_n",
+      "explosionPatchColorTex": "explosion_patch_ps_c",
+      "explosionPatchmaterialParamsMap": "explosion_patch_ps_m",
+      "explosionPatchTexcoord": [
+        0.61,
+        0.0,
+        1.0,
+        0.43
+      ],
+      "sizeInCalibers": 1.5
+    },
+    "ship_metal": {
+      "color": [
+        255,
+        0,
+        0,
+        200
+      ],
+      "isWater": false,
+      "isUnit": true,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "explMat": "shipMetal",
+      "breachMat": "shipMetal",
+      "proximityExplMat": "proximityShrapnelSheetMetal",
+      "aircraftProximityExplMat": "aircraftProximityShrapnel",
+      "aircraftExplMat": "aircraftSteel",
+      "aircraftShrapnelMat": "shrapnelAircraftSteel"
+    },
+    "ship_armor": {
+      "color": [
+        255,
+        0,
+        0,
+        200
+      ],
+      "isWater": false,
+      "isUnit": true,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "explMat": "shipArmor",
+      "breachMat": "shipArmor",
+      "proximityExplMat": "proximityShrapnelSteelArmor",
+      "aircraftProximityExplMat": "aircraftProximityShrapnel",
+      "aircraftExplMat": "aircraftSteel",
+      "aircraftShrapnelMat": "shrapnelAircraftSteel"
+    },
+    "ship_wood": {
+      "color": [
+        49,
+        71,
+        86,
+        0
+      ],
+      "isUnit": true,
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "explMat": "shipWood",
+      "breachMat": "shipWood",
+      "proximityExplMat": "proximityShrapnelWood",
+      "aircraftProximityExplMat": "aircraftProximityShrapnelWood",
+      "aircraftExplMat": "aircraftWood",
+      "aircraftShrapnelMat": "shrapnelAircraftWood"
+    },
+    "soil": {
+      "bf_class": "soil",
+      "deformable_width": 0.2,
+      "resistanceK": 0.000025,
+      "explMat": "soil",
+      "iak": 0.5,
+      "trackEffectsPreset": "soil",
+      "trackDirtSpawnRateMult": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "arcadeBoostMult": 0.95,
+      "shakePeriod": [
+        0.2,
+        0.4
+      ],
+      "shakePower": [
+        1.0,
+        1.0
+      ],
+      "shakeMult": [
+        0.5,
+        0.2
+      ],
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_ground",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_ground",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_ground",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_dirt",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_dirt",
+      "tankTracksTexId": 0,
+      "shakeProps": {
+        "period": [
+          0.2,
+          0.4
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 0.95
+      },
+      "enviCoverAccumulationFactors": {
+        "mud": 0.005
+      }
+    },
+    "tankTrack": {
+      "bf_class": "tankTrack",
+      "trackEffectsPreset": "ground",
+      "trackDirtSpawnRateMult": 1.0,
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_ground",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_ground",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_ground",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_sand",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_sand"
+    },
+    "wheel": {
+      "bf_class": "wheel"
+    },
+    "road": {
+      "bf_class": "road",
+      "explMat": "default",
+      "iak": 0.5,
+      "trackEffectsPreset": "ground",
+      "trackDirtSpawnRateMult": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "tankTracksTexId": 3,
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_ground",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_ground",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_ground",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_sand",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_sand"
+    },
+    "steppe": {
+      "bf_class": "steppe",
+      "deformable_width": 0.1,
+      "resistanceK": 0.000025,
+      "explMat": "sandCrater",
+      "iak": 0.5,
+      "trackEffectsPreset": "dirt",
+      "trackDirtSpawnRateMult": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "arcadeBoostMult": 0.95,
+      "shakePeriod": [
+        0.8,
+        1.4
+      ],
+      "shakePower": [
+        1.0,
+        1.0
+      ],
+      "shakeMult": [
+        0.7,
+        0.4
+      ],
+      "tankTracksTexId": 0,
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_ground",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_ground",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_ground",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_dirt",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_dirt",
+      "shakeProps": {
+        "period": [
+          0.8,
+          1.4
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.7,
+          0.4
+        ]
+      },
+      "arcadeProps": {
+        "boost": 0.95
+      },
+      "enviCoverAccumulationFactors": {
+        "dust": 0.002
+      }
+    },
+    "dirt": {
+      "bf_class": "dirt",
+      "deformable_width": 0.2,
+      "resistanceK": 0.001,
+      "explMat": "default",
+      "iak": 0.5,
+      "trackEffectsPreset": "default",
+      "trackDirtSpawnRateMult": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "arcadeBoostMult": 0.0,
+      "shakePeriod": [
+        0.6,
+        1.2
+      ],
+      "shakePower": [
+        1.0,
+        1.0
+      ],
+      "shakeMult": [
+        1.2,
+        0.6
+      ],
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_concrete_snow",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_concrete_snow",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_concrete",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_dirt",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_dirt",
+      "tankTracksTexId": 0,
+      "sparksGroundFrictionFx": "sparks_ground_friction_dirt",
+      "shakeProps": {
+        "period": [
+          0.6,
+          1.2
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          1.2,
+          0.6
+        ]
+      },
+      "arcadeProps": {
+        "boost": 0.0
+      },
+      "enviCoverAccumulationFactors": {
+        "mud": 0.008
+      }
+    },
+    "visibilityRay": {
+      "bf_class": "visibilityRay"
+    },
+    "roadSoil": {
+      "bf_class": "roadSoil",
+      "deformable_width": 0.05,
+      "explMat": "default",
+      "iak": 0.5,
+      "trackEffectsPreset": "soil",
+      "trackDirtSpawnRateMult": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "arcadeBoostMult": 0.8,
+      "tankTracksTexId": 0,
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_ground",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_ground",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_ground",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_dirt",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_dirt",
+      "arcadeProps": {
+        "boost": 0.8
+      },
+      "enviCoverAccumulationFactors": {
+        "mud": 0.004
+      }
+    },
+    "sand": {
+      "bf_class": "sand",
+      "color": [
+        93,
+        92,
+        92,
+        0
+      ],
+      "deformable_width": 0.2,
+      "explMat": "sandCrater",
+      "iak": 0.5,
+      "trackEffectsPreset": "sand",
+      "trackDirtSpawnRateMult": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "arcadeBoostMult": 0.8,
+      "resistanceK": 0.000025,
+      "shakePeriod": [
+        0.3,
+        0.7
+      ],
+      "shakePower": [
+        1.0,
+        1.0
+      ],
+      "shakeMult": [
+        0.7,
+        0.4
+      ],
+      "tankTracksTexId": 1,
+      "apexGroundCollisionFx": "px_ground_sand_fx",
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_ground",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_ground",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_ground",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_sand",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_sand",
+      "helicopterRotorGroundDustFx": "rotor_sand_dust",
+      "sparksGroundFrictionFx": "sparks_ground_friction_sand",
+      "shakeProps": {
+        "period": [
+          0.3,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.7,
+          0.4
+        ]
+      },
+      "arcadeProps": {
+        "boost": 0.8
+      },
+      "enviCoverAccumulationFactors": {
+        "dust": 0.01
+      }
+    },
+    "duneSand": {
+      "bf_class": "duneSand",
+      "deformable_width": 0.2,
+      "explMat": "sandCrater",
+      "iak": 0.5,
+      "trackEffectsPreset": "sand",
+      "trackDirtSpawnRateMult": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "arcadeBoostMult": 0.8,
+      "resistanceK": 0.000025,
+      "shakePeriod": [
+        0.3,
+        0.7
+      ],
+      "shakePower": [
+        1.0,
+        1.0
+      ],
+      "shakeMult": [
+        0.7,
+        0.4
+      ],
+      "tankTracksTexId": 1,
+      "apexGroundCollisionFx": "px_ground_sand_fx",
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_ground",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_ground",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_ground",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_sand",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_sand",
+      "helicopterRotorGroundDustFx": "rotor_sand_dust",
+      "shakeProps": {
+        "period": [
+          0.3,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.7,
+          0.4
+        ]
+      },
+      "arcadeProps": {
+        "boost": 0.8
+      },
+      "enviCoverAccumulationFactors": {
+        "dust": 0.01
+      }
+    },
+    "roadSand": {
+      "bf_class": "roadSand",
+      "deformable_width": 0.1,
+      "explMat": "sandCrater",
+      "iak": 0.5,
+      "trackEffectsPreset": "sand",
+      "trackDirtSpawnRateMult": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "arcadeBoostMult": 0.8,
+      "shakePeriod": [
+        0.3,
+        0.7
+      ],
+      "shakePower": [
+        1.0,
+        1.0
+      ],
+      "shakeMult": [
+        0.7,
+        0.4
+      ],
+      "tankTracksTexId": 1,
+      "apexGroundCollisionFx": "px_ground_sand_fx",
+      "helicopterRotorGroundDustFx": "rotor_sand_dust",
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_ground",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_ground",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_ground",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_sand",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_sand",
+      "shakeProps": {
+        "period": [
+          0.3,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.7,
+          0.4
+        ]
+      },
+      "arcadeProps": {
+        "boost": 0.8
+      },
+      "enviCoverAccumulationFactors": {
+        "dust": 0.01
+      }
+    },
+    "quickSand": {
+      "bf_class": "sand",
+      "deformable_width": 0.07,
+      "trackEffectsPreset": "sand",
+      "explMat": "sandCrater",
+      "iak": 0.5,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_ground_n",
+      "explosionPatchColorTex": "explosion_patch_ground_c",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "arcadeBoostMult": 0.2,
+      "tankTracksTexId": 1,
+      "apexGroundCollisionFx": "px_ground_sand_fx",
+      "helicopterRotorGroundDustFx": "rotor_sand_dust",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_sand",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_sand",
+      "shakeProps": {
+        "period": [
+          0.1,
+          0.2
+        ],
+        "power": [
+          2.0,
+          3.0
+        ],
+        "mult": [
+          1.0,
+          0.5
+        ]
+      },
+      "arcadeProps": {
+        "boost": 0.2
+      },
+      "enviCoverAccumulationFactors": {
+        "dust": 0.01
+      }
+    },
+    "snow": {
+      "bf_class": "snow",
+      "deformable_width": 0.3,
+      "explMat": "snowCrater",
+      "iak": 0.5,
+      "resistanceK": 0.000025,
+      "trackEffectsPreset": "snow",
+      "trackDirtSpawnRateMult": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "arcadeBoostMult": 0.8,
+      "shakePeriod": [
+        0.5,
+        1.2
+      ],
+      "shakePower": [
+        1.0,
+        1.0
+      ],
+      "shakeMult": [
+        0.4,
+        0.2
+      ],
+      "tankTracksTexId": 2,
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_snow",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_snow",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_snow",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_snow",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_snow",
+      "apexGroundCollisionFx": "px_ground_snow_fx",
+      "helicopterRotorGroundDustFx": "rotor_snow_dust",
+      "sparksGroundFrictionFx": "sparks_ground_friction_snow",
+      "shakeProps": {
+        "period": [
+          0.5,
+          1.2
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.4,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 0.8
+      },
+      "enviCoverAccumulationFactors": {
+        "snow": 0.02
+      }
+    },
+    "ice": {
+      "bf_class": "ice",
+      "explMat": "default",
+      "iak": 0.5,
+      "trackEffectsPreset": "snow",
+      "trackDirtSpawnRateMult": 0.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "helicopterRotorGroundDustFx": "rotor_snow_dust",
+      "sparksGroundFrictionFx": "sparks_ground_friction_snow",
+      "tankTracksTexId": 2,
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_concrete",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_concrete",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_concrete",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_concrete",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_concrete",
+      "enviCoverAccumulationFactors": {
+        "snow": 0.025
+      }
+    },
+    "football_ramp": {
+      "bf_class": "football_ramp",
+      "trackDirtSpawnRateMult": 0.0,
+      "explMat": "default",
+      "iak": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "tankTracksTexId": 3
+    },
+    "walkRay": {
+      "bf_class": "walkRay"
+    },
+    "climbAiRay": {
+      "bf_class": "climbAiRay"
+    },
+    "bulletRay": {
+      "bf_class": "bulletRay"
+    },
+    "grenadeRay": {
+      "bf_class": "grenadeRay"
+    },
+    "gunRay": {
+      "bf_class": "gunRay"
+    },
+    "aimRay": {
+      "bf_class": "aimRay"
+    },
+    "losRay": {
+      "bf_class": "losRay"
+    },
+    "walker": {
+      "bf_class": "walker",
+      "softCollision": {
+        "collisionForce": 0.8
+      }
+    },
+    "walkerBot": {
+      "bf_class": "walkerBot",
+      "softCollision": {
+        "collisionForce": 0.8
+      }
+    },
+    "wood_solid": {
+      "bf_class": "wood",
+      "color": [
+        49,
+        71,
+        86,
+        0
+      ],
+      "isWater": false,
+      "isUnit": false,
+      "shakeMultiplier": 3.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 1,
+      "iak": 0.8,
+      "damage_k": 0.3,
+      "explMat": "wood_solid",
+      "breachMat": "wood_solid",
+      "proximityExplMat": "proximityShrapnelWood",
+      "aircraftProximityExplMat": "aircraftProximityShrapnelWood",
+      "aircraftExplMat": "aircraftWood",
+      "aircraftShrapnelMat": "shrapnelAircraftWood",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "softWoodDoor": {
+      "bf_class": "wood",
+      "color": [
+        49,
+        71,
+        86,
+        0
+      ],
+      "isWater": false,
+      "isUnit": false,
+      "shakeMultiplier": 3.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 1,
+      "iak": 0.8,
+      "damage_k": 0.3,
+      "explMat": "wood",
+      "breachMat": "wood",
+      "proximityExplMat": "proximityShrapnelWood",
+      "aircraftProximityExplMat": "aircraftProximityShrapnelWood",
+      "aircraftExplMat": "aircraftWood",
+      "aircraftShrapnelMat": "shrapnelAircraftWood",
+      "softCollision": {
+        "collisionForce": 0.3
+      },
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "softSteelDoor": {
+      "bf_class": "metal",
+      "color": [
+        139,
+        103,
+        74,
+        0
+      ],
+      "isWater": false,
+      "isUnit": false,
+      "shakeMultiplier": 3.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 3,
+      "iak": 1.0,
+      "damage_k": 0.3,
+      "explMat": "steel_thin",
+      "breachMat": "steel_thin",
+      "softCollision": {
+        "collisionForce": 0.3
+      },
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "rubber": {
+      "bf_class": "rubber",
+      "color": [
+        255,
+        0,
+        0,
+        200
+      ],
+      "isUnit": false,
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 1,
+      "iak": 0.8,
+      "damage_k": 0.3,
+      "explMat": "rubber_ri",
+      "breachMat": "rubber_ri",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "plastic": {
+      "bf_class": "plastic",
+      "color": [
+        255,
+        0,
+        0,
+        200
+      ],
+      "isUnit": false,
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 1,
+      "iak": 0.8,
+      "damage_k": 0.3,
+      "explMat": "plastic",
+      "breachMat": "plastic",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "ceramic": {
+      "bf_class": "ceramic",
+      "color": [
+        0,
+        255,
+        255,
+        200
+      ],
+      "isUnit": false,
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 1,
+      "iak": 1.0,
+      "damage_k": 0.3,
+      "explMat": "ceramic",
+      "breachMat": "ceramic",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "stone": {
+      "bf_class": "stone",
+      "color": [
+        0,
+        255,
+        255,
+        200
+      ],
+      "isUnit": false,
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 1,
+      "iak": 1.0,
+      "damage_k": 0.3,
+      "explMat": "stone_grey",
+      "breachMat": "stone_grey",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "stone_biege": {
+      "bf_class": "stone",
+      "color": [
+        0,
+        255,
+        255,
+        200
+      ],
+      "isUnit": false,
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 1,
+      "iak": 1.0,
+      "damage_k": 0.3,
+      "explMat": "stone_biege",
+      "breachMat": "stone_biege",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "stone_white": {
+      "bf_class": "stone",
+      "color": [
+        0,
+        255,
+        255,
+        200
+      ],
+      "isUnit": false,
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 1,
+      "iak": 1.0,
+      "damage_k": 0.3,
+      "explMat": "stone_white",
+      "breachMat": "stone_white",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "soil_brown": {
+      "bf_class": "soil",
+      "isUnit": false,
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.000025,
+      "iak": 0.5,
+      "damage_k": 0.3,
+      "explMat": "soil_brown",
+      "breachMat": "soil_brown",
+      "shakeProps": {
+        "period": [
+          0.2,
+          0.4
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 0.95
+      }
+    },
+    "soil_sand": {
+      "bf_class": "soil",
+      "isUnit": false,
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.000025,
+      "iak": 0.5,
+      "damage_k": 0.3,
+      "explMat": "soil_sand",
+      "breachMat": "soil_sand",
+      "shakeProps": {
+        "period": [
+          0.2,
+          0.4
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 0.95
+      }
+    },
+    "sandbag_grey": {
+      "bf_class": "fabric",
+      "color": [
+        93,
+        92,
+        92,
+        0
+      ],
+      "isWater": false,
+      "isUnit": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 3,
+      "iak": 0.5,
+      "damage_k": 0.0,
+      "explMat": "sandbag_grey",
+      "breachMat": "sandbag_grey",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "sandbag_biege": {
+      "bf_class": "fabric",
+      "color": [
+        93,
+        92,
+        92,
+        0
+      ],
+      "isWater": false,
+      "isUnit": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 3,
+      "iak": 0.5,
+      "damage_k": 0.0,
+      "explMat": "sandbag_biege",
+      "breachMat": "sandbag_biege",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "paper": {
+      "bf_class": "paper",
+      "color": [
+        93,
+        92,
+        92,
+        0
+      ],
+      "isWater": false,
+      "isUnit": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 1,
+      "iak": 0.8,
+      "damage_k": 0.3,
+      "explMat": "paper",
+      "breachMat": "paper",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "droneColl": {
+      "bf_class": "droneColl",
+      "softCollision": {
+        "collisionForce": 0.8
+      }
+    },
+    "barbwire": {
+      "bf_class": "barbwire",
+      "completelyTransparent": true,
+      "lightTransparent": true,
+      "softCollision": {
+        "physViscosity": 2.5
+      }
+    },
+    "steel_thin": {
+      "bf_class": "metal",
+      "color": [
+        255,
+        0,
+        0,
+        200
+      ],
+      "isUnit": false,
+      "isWater": false,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 3,
+      "iak": 1.0,
+      "damage_k": 0.3,
+      "explMat": "steel_thin",
+      "breachMat": "steel_thin",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "glass_car": {
+      "bf_class": "glass",
+      "color": [
+        83,
+        82,
+        73,
+        0
+      ],
+      "isWater": false,
+      "isUnit": false,
+      "lightTransparent": true,
+      "shakeMultiplier": 1.0,
+      "frictionMultiplier": 1.0,
+      "resistanceK": 0.00035,
+      "fk": 0.65,
+      "trackDirtSpawnRateMult": 0.0,
+      "tankTracksTexId": 3,
+      "iak": 0.5,
+      "damage_k": 0.0,
+      "explMat": "glass_car",
+      "proximityExplMat": "proximityShrapnelGlass",
+      "shakeProps": {
+        "period": [
+          0.35,
+          0.7
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.5,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 1.0
+      }
+    },
+    "snowLower": {
+      "bf_class": "snow",
+      "deformable_width": 0.2,
+      "trackEffectsPreset": "snow",
+      "explMat": "snowCrater",
+      "iak": 0.5,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "arcadeBoostMult": 0.8,
+      "shakePeriod": [
+        0.5,
+        1.2
+      ],
+      "shakePower": [
+        1.0,
+        1.0
+      ],
+      "shakeMult": [
+        0.4,
+        0.2
+      ],
+      "tankTracksTexId": 2,
+      "apexGroundCollisionFx": "px_ground_snow_fx",
+      "helicopterRotorGroundDustFx": "rotor_snow_dust",
+      "shakeProps": {
+        "period": [
+          0.5,
+          1.2
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.4,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 0.8
+      },
+      "enviCoverAccumulationFactors": {
+        "snow": 0.02
+      }
+    },
+    "roadSnow": {
+      "bf_class": "roadSnow",
+      "deformable_width": 0.05,
+      "explMat": "default",
+      "iak": 0.5,
+      "trackEffectsPreset": "snow",
+      "trackDirtSpawnRateMult": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "arcadeBoostMult": 0.8,
+      "shakePeriod": [
+        0.5,
+        1.2
+      ],
+      "shakePower": [
+        1.0,
+        1.0
+      ],
+      "shakeMult": [
+        0.4,
+        0.2
+      ],
+      "tankTracksTexId": 2,
+      "apexGroundCollisionFx": "px_ground_snow_fx",
+      "helicopterRotorGroundDustFx": "rotor_snow_dust",
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_concrete_snow",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_concrete_snow",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_concrete",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_snow",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_snow",
+      "shakeProps": {
+        "period": [
+          0.5,
+          1.2
+        ],
+        "power": [
+          1.0,
+          1.0
+        ],
+        "mult": [
+          0.4,
+          0.2
+        ]
+      },
+      "arcadeProps": {
+        "boost": 0.8
+      },
+      "enviCoverAccumulationFactors": {
+        "snow": 0.02
+      }
+    },
+    "rocks": {
+      "bf_class": "rocks",
+      "explMat": "default",
+      "trackEffectsPreset": "ground",
+      "trackDirtSpawnRateMult": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_concrete",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_concrete",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_concrete",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_concrete",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_concrete",
+      "tankTracksTexId": 3
+    },
+    "rocksSlippery": {
+      "bf_class": "rocksSlippery",
+      "explMat": "default",
+      "trackEffectsPreset": "ground",
+      "trackDirtSpawnRateMult": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "tankTracksTexId": 3,
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_concrete",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_concrete",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_concrete",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_concrete",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_concrete"
+    },
+    "rocksSlipperyHigh": {
+      "bf_class": "rocksSlipperyHigh",
+      "explMat": "default",
+      "trackEffectsPreset": "ground",
+      "trackDirtSpawnRateMult": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "tankTracksTexId": 3,
+      "aircraftWheelsDustFx": "aircraft_wheels_ground_concrete",
+      "aircraftWheelsFrictionFx": "aircraft_wheels_friction_concrete",
+      "aircraftPropellerGroundDustFx": "aircraft_propellers_concrete",
+      "aircraftFuselageFrictionFxId": "aircraft_collision_fuselage_concrete",
+      "aircraftWingsFrictionFxId": "aircraft_collision_wing_concrete"
+    },
+    "transparentBeton": {
+      "bf_class": "transparentBeton",
+      "color": [
+        0,
+        255,
+        255,
+        200
+      ],
+      "isWater": false,
+      "shakeMultiplier": 3.0,
+      "frictionMultiplier": 1.0,
+      "tankTracksTexId": 3,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "damage_k": 0.3,
+      "explMat": "default"
+    },
+    "visibilityCamera": {
+      "bf_class": "visibilityCamera"
+    },
+    "transparentCamera": {
+      "bf_class": "transparentCamera",
+      "color": [
+        0,
+        255,
+        255,
+        150
+      ],
+      "isWater": false,
+      "shakeMultiplier": 3.0,
+      "frictionMultiplier": 1.0,
+      "explosionPatchShader": "explosion_patch",
+      "explosionPatchTexture": "explosion_patch_rocks_n",
+      "explosionPatchTexcoord": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "damage_k": 0.3,
+      "explMat": "default"
+    }
+  },
+  "InteractPropsList": {
+    "walkRay": {
+      "walkerBot": {
+        "en": false
+      },
+      "glass": {
+        "en": false
+      },
+      "walker": {
+        "en": false
+      },
+      "bushes": {
+        "en": false
+      },
+      "droneColl": {
+        "en": false
+      },
+      "barbwire": {
+        "en": false
+      }
+    },
+    "climbAiRay": {
+      "walker": {
+        "en": false
+      },
+      "walkerBot": {
+        "en": false
+      },
+      "bushes": {
+        "en": false
+      },
+      "barbwire": {
+        "en": false
+      }
+    },
+    "gunRay": {
+      "walker": {
+        "en": false
+      },
+      "walkerBot": {
+        "en": false
+      },
+      "bushes": {
+        "en": false
+      },
+      "barbwire": {
+        "en": false
+      }
+    },
+    "aimRay": {
+      "glass": {
+        "en": false
+      },
+      "bushes": {
+        "en": false
+      },
+      "wood_aim_transparent": {
+        "en": false
+      },
+      "barbwire": {
+        "en": false
+      }
+    },
+    "losRay": {
+      "glass": {
+        "en": false
+      },
+      "barbwire": {
+        "en": false
+      },
+      "wood_aim_transparent": {
+        "en": false
+      }
+    },
+    "visibilityCamera": {
+      "transparentCamera": {
+        "en": false
+      }
+    },
+    "visibilityRay": {
+      "transparentBeton": {
+        "en": false
+      },
+      "transparentCamera": {
+        "en": false
+      }
+    },
+    "tankTrack": {
+      "default": {
+        "fk": 1.0,
+        "rollingFrictionK": 0.055
+      },
+      "steel": {
+        "fk": 1.0,
+        "rollingFrictionK": 0.1
+      },
+      "horLandMesh": {
+        "fk": 1.0,
+        "rollingFrictionK": 0.1
+      },
+      "soil": {
+        "fk": 1.0,
+        "rollingFrictionK": 0.055
+      },
+      "steppe": {
+        "fk": 1.0,
+        "rollingFrictionK": 0.055
+      },
+      "dirt": {
+        "fk": 0.85,
+        "rollingFrictionK": 0.08
+      },
+      "road": {
+        "fk": 0.9,
+        "rollingFrictionK": 0.05
+      },
+      "roadSoil": {
+        "fk": 1.0,
+        "rollingFrictionK": 0.055
+      },
+      "bricks_red": {
+        "fk": 0.8,
+        "rollingFrictionK": 0.05
+      },
+      "concrete": {
+        "fk": 0.95,
+        "rollingFrictionK": 0.05
+      },
+      "sand": {
+        "fk": 0.9,
+        "rollingFrictionK": 0.06
+      },
+      "duneSand": {
+        "fk": 0.8,
+        "rollingFrictionK": 0.06
+      },
+      "roadSand": {
+        "fk": 0.9,
+        "rollingFrictionK": 0.06
+      },
+      "snow": {
+        "fk": 0.9,
+        "rollingFrictionK": 0.06
+      },
+      "ice": {
+        "fk": 0.1,
+        "rollingFrictionK": 0.045
+      },
+      "football_ramp": {
+        "fk": 0.3,
+        "rollingFrictionK": 0.2
+      },
+      "roadSnow": {
+        "fk": 0.9,
+        "rollingFrictionK": 0.06
+      },
+      "rocks": {
+        "fk": 0.75,
+        "rollingFrictionK": 0.05
+      },
+      "rocksSlippery": {
+        "fk": 0.7,
+        "rollingFrictionK": 0.07
+      },
+      "rocksSlipperyHigh": {
+        "fk": 0.2,
+        "rollingFrictionK": 0.04
+      },
+      "fabric": {
+        "fk": 0.8,
+        "rollingFrictionK": 0.09
+      },
+      "glass": {
+        "fk": 0.6,
+        "rollingFrictionK": 0.02
+      },
+      "stone_snow": {
+        "fk": 0.75,
+        "rollingFrictionK": 0.05
+      },
+      "metal": {
+        "fk": 0.6,
+        "rollingFrictionK": 0.02
+      },
+      "wood": {
+        "fk": 0.8,
+        "rollingFrictionK": 0.0166
+      },
+      "stone": {
+        "fk": 0.75,
+        "rollingFrictionK": 0.05
+      },
+      "ceramic": {
+        "fk": 0.6,
+        "rollingFrictionK": 0.05
+      },
+      "rubber": {
+        "fk": 0.8,
+        "rollingFrictionK": 0.09
+      },
+      "bushes": {
+        "en": false
+      }
+    },
+    "wheel": {
+      "default": {
+        "fk": 1.0,
+        "rollingFrictionK": 0.045
+      },
+      "horLandMesh": {
+        "fk": 1.0,
+        "rollingFrictionK": 0.2
+      },
+      "soil": {
+        "fk": 1.0,
+        "rollingFrictionK": 0.045
+      },
+      "steppe": {
+        "fk": 1.0,
+        "rollingFrictionK": 0.045
+      },
+      "dirt": {
+        "fk": 0.8,
+        "rollingFrictionK": 0.2
+      },
+      "road": {
+        "fk": 1.0,
+        "rollingFrictionK": 0.0166
+      },
+      "roadSoil": {
+        "fk": 1.0,
+        "rollingFrictionK": 0.0172
+      },
+      "concrete": {
+        "fk": 0.95,
+        "rollingFrictionK": 0.0166
+      },
+      "bricks_red": {
+        "fk": 0.8,
+        "rollingFrictionK": 0.0166
+      },
+      "sand": {
+        "fk": 0.95,
+        "rollingFrictionK": 0.0475
+      },
+      "duneSand": {
+        "fk": 0.95,
+        "rollingFrictionK": 0.0475
+      },
+      "roadSand": {
+        "fk": 1.0,
+        "rollingFrictionK": 0.0177
+      },
+      "snow": {
+        "fk": 0.9,
+        "rollingFrictionK": 0.0475
+      },
+      "ice": {
+        "fk": 0.15,
+        "rollingFrictionK": 0.02
+      },
+      "football_ramp": {
+        "fk": 0.35,
+        "rollingFrictionK": 0.25
+      },
+      "roadSnow": {
+        "fk": 0.95,
+        "rollingFrictionK": 0.0177
+      },
+      "rocks": {
+        "fk": 0.7,
+        "rollingFrictionK": 0.07
+      },
+      "rocksSlippery": {
+        "fk": 0.65,
+        "rollingFrictionK": 0.09
+      },
+      "rocksSlipperyHigh": {
+        "fk": 0.25,
+        "rollingFrictionK": 0.04
+      },
+      "fabric": {
+        "fk": 0.8,
+        "rollingFrictionK": 0.15
+      },
+      "glass": {
+        "fk": 0.6,
+        "rollingFrictionK": 0.02
+      },
+      "stone_snow": {
+        "fk": 0.7,
+        "rollingFrictionK": 0.07
+      },
+      "metal": {
+        "fk": 0.6,
+        "rollingFrictionK": 0.02
+      },
+      "steel": {
+        "fk": 0.6,
+        "rollingFrictionK": 0.02
+      },
+      "wood": {
+        "fk": 0.8,
+        "rollingFrictionK": 0.01
+      },
+      "stone": {
+        "fk": 0.75,
+        "rollingFrictionK": 0.07
+      },
+      "ceramic": {
+        "fk": 0.6,
+        "rollingFrictionK": 0.07
+      },
+      "rubber": {
+        "fk": 0.8,
+        "rollingFrictionK": 0.15
+      },
+      "bushes": {
+        "en": false
+      }
+    }
+  }
 }

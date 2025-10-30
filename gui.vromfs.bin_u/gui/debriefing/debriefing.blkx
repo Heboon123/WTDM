@@ -1,1408 +1,1418 @@
-root {
-	bgrStyle:t = "fullScreenWnd"
-	blur {
-
-	}
-	blur_foreground {
-
-	}
-	tdiv {
-		id:t = "content_frame"
-		width:t = "1.4@sf"
-		max-width:t = "1@rw"
-		height:t = "@rh"
-		pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
-		position:t = "relative"
-		flow:t = "vertical"
-		tdiv {
-			pos:t = "0.5pw-0.5w, 0"
-			position:t = "relative"
-			width:t = "pw"
-			flow:t = "vertical"
-			debriefingTitle {
-				id:t = "result_title"
-				pos:t = "0.5pw-0.5w, 0"
-				position:t = "relative"
-				padding-bottom:t = "-0.003@sf"
-				text:t = ""
-			}
-			textareaNoTab {
-				id:t = "dbf_title"
-				pos:t = "0.5pw-0.5w, 0"
-				position:t = "relative"
-				overlayTextColor:t = "active"
-				text:t = ""
-			}
-			tdiv {
-				pos:t = "0.5pw-0.5w, 0"
-				position:t = "relative"
-				textareaNoTab {
-					id:t = "result_reward_title"
-					shadeStyle:t = "HudTinyLight"
-					overlayTextColor:t = "active"
-					text:t = ""
-				}
-				tdiv {
-					id:t = "result_reward_rp"
-					textareaNoTab {
-						id:t = "text"
-						shadeStyle:t = "HudTinyLight"
-						overlayTextColor:t = "active"
-						text:t = ""
-					}
-					img {
-						size:t = "1@sIco, 1@sIco"
-						top:t = "0.5ph-0.5h"
-						position:t = "relative"
-						background-image:t = "#ui/gameuiskin#item_type_RP.svg"
-						background-svg-size:t = "1@sIco, 1@sIco"
-					}
-				}
-				textareaNoTab {
-					id:t = "result_reward_comma"
-					shadeStyle:t = "HudTinyLight"
-					overlayTextColor:t = "active"
-					text:t = "#ui/comma"
-				}
-				tdiv {
-					id:t = "result_reward_wp"
-					textareaNoTab {
-						id:t = "text"
-						shadeStyle:t = "HudTinyLight"
-						overlayTextColor:t = "active"
-						text:t = ""
-					}
-					img {
-						size:t = "1@sIco, 1@sIco"
-						top:t = "0.5ph-0.5h"
-						position:t = "relative"
-						background-image:t = "#ui/gameuiskin#item_type_warpoints.svg"
-						background-svg-size:t = "1@sIco, 1@sIco"
-					}
-				}
-				textareaNoTab {
-					id:t = "result_reward_wp"
-					shadeStyle:t = "HudTinyLight"
-					overlayTextColor:t = "active"
-					text:t = ""
-				}
-			}
-		}
-		frame {
-			id:t = "wnd_frame"
-			size:t = "pw, fh"
-			position:t = "relative"
-			class:t = "wndNav"
-			fullScreenSize:t = "yes"
-			style:t = "padding-top:1@debrWndPad"
-			rowSeparator {
-				top:t = "1@frameHeaderHeight-@listboxPad-1@listboxItemsInterval-1@dp"
-			}
-			frame_header {
-				HorizontalListBox {
-					id:t = "tabs_list"
-					height:t = "ph"
-					class:t = "header"
-					withImages:t = "yes"
-					normalFont:t = "yes"
-					display:t = "hide"
-					navigatorShortcuts:t = "yes"
-					on_select:t = "onChangeTab"
-				}
-			}
-			div {
-				id:t = "tabs_content"
-				pos:t = "0, 1@frameHeaderHeight +1@debrWndPad"
-				position:t = "relative"
-				size:t = "pw, fh"
-				debriefingTab {
-					id:t = "players_stats_tab"
-					debrBlock {
-						id:t = "players_stats_scroll_block"
-						size:t = "pw, ph"
-						position:t = "absolute"
-						padding:t = "0.5@debrPad"
-						overflow-y:t = "auto"
-						scrollbarShortcuts:t = "yes"
-						tdiv {
-							size:t = "pw, ph"
-							tdiv {
-								height:t = "ph"
-								pos:t = "pw/2-w/2, 0"
-								position:t = "relative"
-								tdiv {
-									id:t = "team1-root"
-									size:t = "50%p.p.w, ph"
-									flow:t = "vertical"
-									tdiv {
-										id:t = "team1_info"
-										left:t = "pw-w-@tablePad"
-										position:t = "relative"
-										teamIco:t = "allies"
-										css-hier-invalidate:t = "yes"
-										activeText {
-											id:t = "team_text"
-											padding-right:t = "0.01@scrn_tgt"
-											top:t = "50%ph-50%h"
-											position:t = "relative"
-										}
-										teamImg {
-											id:t = "team_img"
-											size:t = "0.04@scrn_tgt, 0.04@scrn_tgt"
-											background-svg-size:t = "0.04@scrn_tgt, 0.04@scrn_tgt"
-											pos:t = "0, 50%ph-50%h"
-											position:t = "relative"
-										}
-										tdiv {
-											id:t = "countries_block"
-											pos:t = "0, ph/2-h/2"
-											position:t = "relative"
-										}
-										img {
-											id:t = "override_country"
-											pos:t = "0, ph/2-h/2"
-											position:t = "relative"
-											size:t = "@cIco, 0.66@cIco"
-											background-image:t = ""
-											background-svg-size:t = "@cIco, 0.66@cIco"
-											margin:t = "0.005@sf, 0"
-										}
-									}
-									tdiv {
-										width:t = "pw"
-										min-height:t = "0.037@scrn_tgt"
-										margin-left:t = "1@scrollBarSize"
-										margin-bottom:t = "0.0025@scrn_tgt"
-										table {
-											id:t = "team_table_1"
-											width:t = "pw"
-											pos:t = "0, 50%ph-50%h"
-											position:t = "absolute"
-											class:t = "headerTable"
-											baseRow:t = "rows16"
-											display:t = "hide"
-										}
-									}
-									tdiv {
-										size:t = "pw, fh"
-										overflow-y:t = "auto"
-										scroll-align:t = "left"
-										scroll-padding:t = "no"
-										padding-right:t = "-1@scrollBarSize"
-										table {
-											id:t = "table_kills_team1"
-											width:t = "fw - 1@scrollBarSize - @tablePad"
-											pos:t = "1@scrollBarSize, 1"
-											position:t = "relative"
-											css-hier-invalidate:t = "yes"
-											behavior:t = "PosNavigator"
-											deep:t = "2"
-											canSelectNone:t = "yes"
-											class:t = "mpTable"
-											mousePointerCenterPosition:t = "left"
-											navigatorShortcuts:t = "yes"
-											selfFocusBorder:t = "yes"
-											on_select:t = "onStatsTblSelect"
-											on_dbl_click:t = "onUserCard"
-											on_r_click:t = "onUserRClick"
-											on_hover:t = "onStatTblFocus"
-											on_unhover:t = "onStatTblFocus"
-											baseRow:t = "rows16"
-										}
-									}
-								}
-								tdiv {
-									id:t = "team2-root"
-									size:t = "50%p.p.w, ph"
-									flow:t = "vertical"
-									tdiv {
-										id:t = "team2_info"
-										left:t = "@tablePad"
-										position:t = "relative"
-										teamIco:t = "axis"
-										css-hier-invalidate:t = "yes"
-										teamImg {
-											id:t = "team_img"
-											size:t = "0.04@scrn_tgt, 0.04@scrn_tgt"
-											background-svg-size:t = "0.04@scrn_tgt, 0.04@scrn_tgt"
-											pos:t = "0, 50%ph-50%h"
-											position:t = "relative"
-										}
-										img {
-											id:t = "override_country"
-											pos:t = "0, ph/2-h/2"
-											position:t = "relative"
-											size:t = "@cIco, 0.66@cIco"
-											background-image:t = ""
-											background-svg-size:t = "@cIco, 0.66@cIco"
-											margin:t = "0.005@sf, 0"
-										}
-										tdiv {
-											id:t = "countries_block"
-											pos:t = "0, ph/2-h/2"
-											position:t = "relative"
-										}
-										activeText {
-											id:t = "team_text"
-											padding-left:t = "0.01@scrn_tgt"
-											top:t = "50%ph-50%h"
-											position:t = "relative"
-										}
-									}
-									tdiv {
-										width:t = "pw"
-										min-height:t = "0.037@scrn_tgt"
-										margin-right:t = "1@scrollBarSize"
-										margin-bottom:t = "0.0025@scrn_tgt"
-										table {
-											id:t = "team_table_2"
-											width:t = "pw"
-											pos:t = "@tablePad, 50%ph-50%h"
-											position:t = "absolute"
-											class:t = "headerTable"
-											baseRow:t = "rows16"
-											display:t = "hide"
-										}
-									}
-									tdiv {
-										size:t = "pw, fh"
-										overflow-y:t = "auto"
-										table {
-											id:t = "table_kills_team2"
-											width:t = "fw - 1@scrollBarSize"
-											pos:t = "@tablePad, 1"
-											position:t = "relative"
-											css-hier-invalidate:t = "yes"
-											behavior:t = "PosNavigator"
-											deep:t = "2"
-											canSelectNone:t = "yes"
-											class:t = "mpTable"
-											mousePointerCenterPosition:t = "right"
-											navigatorShortcuts:t = "yes"
-											selfFocusBorder:t = "yes"
-											on_select:t = "onStatsTblSelect"
-											on_dbl_click:t = "onUserCard"
-											on_r_click:t = "onUserRClick"
-											on_hover:t = "onStatTblFocus"
-											on_unhover:t = "onStatTblFocus"
-											baseRow:t = "rows16"
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-				debriefingTab {
-					id:t = "my_stats_tab"
-					flow:t = "vertical"
-					overflow-y:t = "auto"
-					tdiv {
-						size:t = "pw, fh"
-						flow:t = "horizontal"
-						tdiv {
-							size:t = "fw, ph"
-							flow:t = "vertical"
-							debrBlock {
-								id:t = "top_bar_nest"
-								width:t = "pw"
-								pos:t = "0, 1@debrMyPlaceBlockOffset"
-								position:t = "relative"
-								padding:t = "1@debrPad, 0.5@debrPad"
-								background-color:t = "@separatorBlockColor"
-								tdiv {
-									id:t = "my_place_move_box"
-									pos:t = "0, 0.5ph-0.5h"
-									position:t = "relative"
-									css-hier-invalidate:t = "yes"
-									total-input-transparent:t = "yes"
-									display:t = "hide"
-									activeText {
-										id:t = "my_place_label"
-										mediumFont:t = "yes"
-										animateFontSize:t = "yes"
-										text:t = "#debriefing/placeInMyTeam"
-									}
-									activeText {
-										id:t = "my_place_in_mptable"
-										mediumFont:t = "yes"
-										animateFontSize:t = "yes"
-										overlayTextColor:t = "userlog"
-										text:t = "0"
-									}
-								}
-								tdiv {
-									id:t = "my_stats_top_bar"
-									top:t = "0.5ph-0.5h"
-									position:t = "relative"
-									tdiv {
-										id:t = "wnd_total"
-										top:t = "0.5ph-0.5h"
-										position:t = "relative"
-									}
-									tdiv {
-										id:t = "buy_premium"
-										pos:t = "1@debrPad, 0.5ph-0.5h"
-										position:t = "relative"
-										display:t = "hide"
-										Button_text {
-											id:t = "btn_buy_premium_award"
-											class:t = "buyPremAward"
-											style:t = "margin-right:0;"
-											on_click:t = "onBuyPremiumAward"
-											visualStyle:t = "purchase"
-											tooltip:t = ""
-											btnName:t = "Y"
-											buttonWink {
-												_transp-timer:t = "0"
-											}
-											buttonGlance {
-
-											}
-											ButtonImg {
-
-											}
-											textarea {
-												id:t = "label"
-												pos:t = "0, 0.5ph-0.5h"
-												position:t = "relative"
-												min-width:t = "pw"
-												input-transparent:t = "yes"
-												text-align:t = "center"
-												overlayTextColor:t = "premiumNotEarned"
-												text:t = ""
-											}
-										}
-										textareaNoTab {
-											max-width:t = "150@sf/@pf"
-											pos:t = "0.3@sIco, 0.5ph-0.5h"
-											position:t = "relative"
-											overlayTextColor:t = "userlog"
-											smallFont:t = "yes"
-											text:t = "#mainmenu/notEarnedPremiumReward"
-										}
-									}
-									tdiv {
-										id:t = "active_wager_container"
-										pos:t = "1@debrPad, 0.5ph-0.5h"
-										position:t = "relative"
-										title:t = "$tooltipObj"
-										display:t = "hide"
-										smallFont:t = "yes"
-										interactive:t = "yes"
-										css-hier-invalidate:t = "yes"
-										tdiv {
-											size:t = "70%@debrWagerHeight, 1@debrWagerHeight"
-											itemIconBlock {
-												id:t = "active_wager_icon"
-												pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
-												position:t = "absolute"
-												debriefingSize:t = "yes"
-												overflow:t = "hidden"
-											}
-											img {
-												id:t = "active_wager_result_icon"
-												size:t = "0.5ph, 0.5ph"
-												pos:t = "pw-0.7w, ph-h"
-												position:t = "absolute"
-												background-image:t = ""
-												background-svg-size:t = "0.5ph, 0.5ph"
-												background-repeat:t = "aspect-ratio"
-											}
-										}
-										textareaNoTab {
-											id:t = "active_wager_text"
-											pos:t = "10@sf/@pf, 0.5ph-0.5h"
-											position:t = "relative"
-											overlayTextColor:t = "userlog"
-											smallFont:t = "yes"
-											text:t = ""
-										}
-										focus_border {
-
-										}
-										tooltipObj {
-											id:t = "active_wager_tooltip"
-											on_tooltip_open:t = "onWagerTooltipOpen"
-											on_tooltip_close:t = "onTooltipObjClose"
-											display:t = "hide"
-											enable:t = "no"
-										}
-									}
-									debriefingBonusIconNest {
-										id:t = "bonus_ico_place"
-										size:t = "1@debrBonusWidth, 1@debrBonusHeight"
-										pos:t = "1@debrPad, 0.5ph-0.5h"
-										position:t = "relative"
-										display:t = "hide"
-										interactive:t = "yes"
-										css-hier-invalidate:t = "yes"
-										img {
-											id:t = "bonus_ico"
-											position:t = "absolute"
-											pos:t = "pw/2-w/2, ph/2-h/2"
-											size:t = "@debrBonusIcoSize, @debrBonusIcoSize"
-											background-svg-size:t = "@debrBonusIcoSize, @debrBonusIcoSize"
-										}
-										tdiv {
-											id:t = "start_bonus_place"
-											size:t = "2.5@debrBonusIcoSize, 2.5@debrBonusIcoSize"
-											pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
-											position:t = "absolute"
-										}
-										focus_border {
-											class:t = "expanded"
-										}
-									}
-								}
-							}
-							tdiv {
-								size:t = "pw, fh"
-								tdiv {
-									id:t = "left_block"
-									min-width:t = "1@navBarBattleButtonMinWidth"
-									size:t = "2@debriefingUnlockIconSize+1@debrPad, ph"
-									margin-right:t = "@debrBigGap"
-									flow:t = "vertical"
-									debrBlock {
-										id:t = "inventory_gift_block"
-										width:t = "pw"
-										padding:t = "0, 1@debrPad"
-										display:t = "hide"
-										tdiv {
-											width:t = "pw"
-											flow:t = "vertical"
-											div {
-												width:t = "pw"
-												flow:t = "h-flow"
-												flow-align:t = "center"
-												tdiv {
-													id:t = "inventory_gift_icon"
-													width:t = "pw"
-													flow:t = "h-flow"
-													flow-align:t = "center"
-													smallItems:t = "no"
-												}
-												Button_text {
-													id:t = "btn_show_all"
-													pos:t = "0.5pw-0.5w"
-													margin-bottom:t = "0"
-													on_click:t = "onViewRewards"
-													text:t = "#mainmenu/showMore"
-													display:t = "hide"
-													enable:t = "no"
-													btnName:t = "R3"
-													ButtonImg {
-
-													}
-												}
-											}
-											Button_text {
-												id:t = "btn_inventory_gift_action"
-												pos:t = "0.5pw-0.5w, 0"
-												position:t = "relative"
-												max-width:t = "1@buttonWidth"
-												margin-top:t = "1@buttonMargin"
-												class:t = "battle"
-												navButtonFont:t = "yes"
-												btnName:t = "LT"
-												css-hier-invalidate:t = "yes"
-												_on_click:t = "onInventoryGiftAction"
-												display:t = "hide"
-												enable:t = "no"
-												pattern {
-
-												}
-												buttonWink {
-													_transp-timer:t = "0"
-												}
-												buttonGlance {
-
-												}
-												ButtonImg {
-
-												}
-												btnText {
-													id:t = "btn_inventory_gift_action_text"
-												}
-											}
-										}
-										debrSeparator {
-											class:t = "bottom"
-										}
-									}
-									debrBlock {
-										id:t = "my_stats_awards_block"
-										size:t = "pw, fh"
-										class:t = "button"
-										behaviour:t = "button"
-										on_click:t = "onViewAwards"
-										total-input-transparent:t = "yes"
-										skip-navigation:t = "yes"
-										margin-top:t = "1@blockInterval"
-										tdiv {
-											size:t = "pw, ph"
-											pos:t = "0.5pw-0.5w, 0"
-											position:t = "relative"
-											flow:t = "vertical"
-											tdiv {
-												id:t = "awards_list_challenges"
-												pos:t = "0.5pw - 0.5w, 0"
-												position:t = "relative"
-												size:t = "pw, 1@debriefingUnlockIconSize"
-												overflow:t = "visible"
-												display:t = "hide"
-												behavior:t = "PosNavigator"
-												navigatorShortcuts:t = "active"
-												on_activate:t = "onViewAwards"
-											}
-											div {
-												id:t = "btn_challenge_div"
-												width:t = "pw"
-												pos:t = "pw/2 - w/2, 0"
-												display:t = "hide"
-												flow:t = "vertical"
-												margin:t = "0, 1@blockInterval"
-												Button_text {
-													id:t = "btn_challenge"
-													pos:t = "pw/2 - w/2, 0"
-													position:t = "relative"
-													max-width:t = "1@buttonWidth"
-													navButtonFont:t = "yes"
-													class:t = "battle"
-													css-hier-invalidate:t = "yes"
-													_on_click:t = "onGotoChallenge"
-													pattern {
-														type:t = "bright_texture"
-													}
-													buttonWink {
-														_transp-timer:t = "0"
-													}
-													buttonGlance {
-
-													}
-													ButtonImg {
-
-													}
-													btnText {
-														id:t = "btn_next_text"
-														text:t = "#mainmenu/btnUnlockChallenge"
-													}
-												}
-												rowSeparator {
-													margin-top:t = "1@blockInterval"
-												}
-											}
-											tdiv {
-												size:t = "pw, fh"
-												position:t = "relative"
-												flow:t = "horizontal"
-												tdiv {
-													id:t = "awards_list_unlocks"
-													size:t = "1@debriefingUnlockIconSize, ph"
-													margin-left:t = "pw/4 - 0.5w"
-													position:t = "relative"
-													overflow:t = "visible"
-													flow:t = "vertical"
-													display:t = "hide"
-													behavior:t = "PosNavigator"
-													navigatorShortcuts:t = "active"
-													on_activate:t = "onViewAwards"
-												}
-												tdiv {
-													id:t = "awards_list_streaks"
-													size:t = "1@debriefingUnlockIconSize, ph"
-													margin-left:t = "pw/2 - w"
-													position:t = "relative"
-													overflow:t = "visible"
-													flow:t = "vertical"
-													display:t = "hide"
-													behavior:t = "PosNavigator"
-													navigatorShortcuts:t = "active"
-													on_activate:t = "onViewAwards"
-												}
-											}
-										}
-									}
-								}
-								tdiv {
-									size:t = "fw, ph"
-									flow:t = "vertical"
-									debrBlock {
-										id:t = "pve_trophy_block"
-										size:t = "pw, 0.75@itemHeight"
-										padding:t = "0, 1@debrPad"
-										display:t = "hide"
-										tdiv {
-											id:t = "pve_trophy_progress"
-											pos:t = "0, 0.5ph-0.5h"
-											position:t = "relative"
-											width:t = "75%pw"
-										}
-										tdiv {
-											id:t = "pve_trophy_chest"
-											size:t = "0.75@itemHeight, 0.75@itemHeight"
-											pos:t = "pw-w, 0.5ph-0.5h"
-											position:t = "absolute"
-										}
-										tdiv {
-											size:t = "0.75@itemHeight, 0.75@itemHeight"
-											pos:t = "pw-w-0.25w, 0.5ph-0.5h"
-											position:t = "absolute"
-											tdiv {
-												id:t = "pve_trophy_content"
-												size:t = "1@itemHeight, 1@itemHeight"
-												pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
-												position:t = "absolute"
-											}
-										}
-										activeText {
-											id:t = "pve_award_already_received"
-											pos:t = "pw-w-1@debrPad, 50%ph"
-											position:t = "absolute"
-											text:t = "#debriefing/awardHasAlreadyBeenReceived"
-											display:t = "hide"
-										}
-										debrSeparator {
-											class:t = "bottom"
-										}
-									}
-									debrBlock {
-										id:t = "no_awards_block"
-										size:t = "pw, 0.12@scrn_tgt"
-										padding:t = "0, 1@debrPad"
-										display:t = "hide"
-										tdiv {
-											width:t = "pw"
-											pos:t = "0, 0.5ph-0.5h"
-											position:t = "relative"
-											flow:t = "vertical"
-											textareaNoTab {
-												id:t = "no_awards_caption"
-												width:t = "pw"
-												position:t = "relative"
-												overlayTextColor:t = "userlog"
-												text:t = ""
-											}
-											Button_text {
-												id:t = "btn_no_awards_info"
-												position:t = "relative"
-												on_click:t = "onNoAwardsInfoBtn"
-												noMargin:t = "yes"
-												text:t = ""
-												display:t = "hide"
-												enable:t = "no"
-												btnName:t = "L3"
-												externalLink:t = "yes"
-												activeText {
-													text:t = "#msgbox/btn_more"
-													css-hier-invalidate:t = "yes"
-													underline {
-
-													}
-												}
-												ButtonImg {
-
-												}
-											}
-										}
-										debrSeparator {
-											class:t = "bottom"
-										}
-									}
-									tdiv {
-										size:t = "pw, fh"
-										padding-top:t = "1@dp"
-										debrBlock {
-											id:t = "my_stats_scroll_block"
-											size:t = "fw, ph"
-											flow:t = "vertical"
-											overflow-y:t = "auto"
-											scrollbarShortcuts:t = "yes"
-											css-hier-invalidate:t = "yes"
-											tdiv {
-												width:t = "pw"
-												min-height:t = "ph"
-												margin:t = "0, 1@debrPad"
-												flow:t = "vertical"
-												table {
-													id:t = "stat_table"
-													width:t = "pw"
-													baseRow:t = "rows16"
-													flow:t = "vertical"
-													total-input-transparent:t = "yes"
-													behavior:t = "PosNavigator"
-													navigatorShortcuts:t = "noSelect"
-													selfFocusBorder:t = "yes"
-												}
-												tdiv {
-													id:t = "leaderbord_stats"
-													width:t = "pw"
-													pos:t = "0, 1@debrPad"
-													position:t = "relative"
-													flow:t = "h-flow"
-													display:t = "hide"
-												}
-												textareaNoTab {
-													id:t = "stat_info_text"
-													width:t = "pw"
-													pos:t = "0, 3@debrPad"
-													position:t = "relative"
-													overlayTextColor:t = ""
-													text-align:t = "right"
-													text:t = ""
-													display:t = "hide"
-												}
-											}
-										}
-									}
-									tdiv {
-										id:t = "full_width_resources"
-										size:t = "pw, ph"
-										flow:t = "h-flow"
-										flow-align:t = "center"
-									}
-								}
-							}
-						}
-						debrBlock {
-							id:t = "right_block"
-							size:t = "2@slot_width+1@scrollBarSize, ph"
-							pos:t = "0, 1@debrMyPlaceBlockOffset"
-							position:t = "relative"
-							margin-left:t = "@debrBigGap"
-							flow:t = "vertical"
-							display:t = "hide"
-							debrBlock {
-								id:t = "battle_tasks_block"
-								width:t = "pw"
-								max-height:t = "0.5ph"
-								margin-bottom:t = "1@debrPad"
-								flow:t = "vertical"
-								tdiv {
-									size:t = "pw, 1@buttonHeight"
-									background-color:t = "@separatorBlockColor"
-									activeText {
-										width:t = "pw"
-										pos:t = "1@debrPad, 0.5ph-0.5h"
-										position:t = "relative"
-										text:t = "#userlog/page/battletasks"
-									}
-								}
-								listbox {
-									id:t = "current_battle_tasks"
-									width:t = "pw"
-									padding-left:t = "1@debrPad"
-									overflow-y:t = "auto"
-									flow:t = "vertical"
-									scrollbarShortcuts:t = "left"
-									background-color:t = "@frameDarkTransparentBgColor"
-								}
-							}
-							tdiv {
-								id:t = "researches_scroll_block"
-								size:t = "pw, fh"
-								overflow-y:t = "auto"
-								scrollbarShortcuts:t = "left"
-								tdiv {
-									width:t = "pw"
-									min-height:t = "ph"
-									flow:t = "vertical"
-									tdiv {
-										size:t = "pw, 1@buttonHeight"
-										background-color:t = "@separatorBlockColor"
-										activeText {
-											width:t = "pw"
-											pos:t = "1@debrPad, 0.5ph-0.5h"
-											position:t = "relative"
-											text:t = "#debriefing/researched_unit"
-										}
-									}
-									tdiv {
-										width:t = "pw"
-										margin-bottom:t = "1@debrPad"
-										background-color:t = "@frameDarkTransparentBgColor"
-										textAreaCentered {
-											id:t = "no_air_text"
-											width:t = "pw"
-											pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
-											position:t = "absolute"
-											smallFont:t = "yes"
-											text:t = ""
-										}
-										textAreaCentered {
-											id:t = "air_item_text"
-											width:t = "pw"
-											pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
-											position:t = "absolute"
-											smallFont:t = "yes"
-											text:t = ""
-										}
-										rankUpList {
-											id:t = "air_item_place"
-											max-width:t = "pw-2@debrPad"
-											min-height:t = "@slot_height+2@slot_vert_pad"
-											position:t = "relative"
-											pos:t = "0.5pw-0.5w, 0"
-											flow:t = "h-flow"
-											holdTooltipChildren:t = "yes"
-										}
-									}
-									tdiv {
-										size:t = "pw, 1@buttonHeight"
-										background-color:t = "@separatorBlockColor"
-										activeText {
-											width:t = "pw"
-											pos:t = "1@debrPad, 0.5ph-0.5h"
-											position:t = "relative"
-											text:t = "#debriefing/research_list"
-										}
-									}
-									tdiv {
-										id:t = "research_list"
-										width:t = "pw"
-										flow:t = "vertical"
-										background-color:t = "@frameDarkTransparentBgColor"
-										textAreaCentered {
-											id:t = "research_list_text"
-											width:t = "pw"
-											pos:t = "0.5pw-0.5w, 0.5(@slot_height + 2@slot_vert_pad)-0.5h"
-											position:t = "absolute"
-											smallFont:t = "yes"
-											text:t = ""
-										}
-										tdiv {
-											id:t = "modifications_objects_place"
-											width:t = "pw"
-											min-height:t = "1@slot_height + 2@slot_vert_pad"
-											margin-left:t = "1@debrPad"
-											flow:t = "vertical"
-											interactiveChildren:t = "yes"
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-				debriefingTab {
-					id:t = "battle_log_tab"
-					tdiv {
-						size:t = "pw, ph"
-						flow:t = "vertical"
-						debrBlock {
-							width:t = "pw"
-							padding:t = "1@debrPad"
-							RadioButtonList {
-								id:t = "battle_log_filter"
-								navigatorShortcuts:t = "yes"
-								on_select:t = "onChangeBattlelogFilter"
-							}
-							debrSeparator {
-								class:t = "bottom"
-							}
-						}
-						debrBlock {
-							id:t = "battle_log_div"
-							size:t = "pw, fh"
-							overflow-y:t = "auto"
-							scrollbarShortcuts:t = "yes"
-							tdiv {
-								width:t = "pw"
-								min-height:t = "ph"
-								margin:t = "1@debrPad"
-								chatLog {
-									width:t = "pw"
-									id:t = "battle_log"
-									style:t = "color:@white"
-									text:t = ""
-									on_link_click:t = "onChatLinkClick"
-									on_link_rclick:t = "onChatLinkRClick"
-								}
-							}
-						}
-					}
-				}
-				debriefingTab {
-					id:t = "chat_history_tab"
-					flow:t = "vertical"
-					debrBlock {
-						id:t = "chat_history_scroll_block"
-						size:t = "pw, ph"
-						overflow-y:t = "auto"
-						scrollbarShortcuts:t = "yes"
-						tdiv {
-							id:t = "chat_history_div"
-							width:t = "pw"
-							min-height:t = "ph"
-							margin:t = "1@debrPad"
-							chatLog {
-								width:t = "pw"
-								id:t = "chat_log"
-								style:t = "color:@white"
-								text:t = ""
-								on_link_click:t = "onChatLinkClick"
-								on_link_rclick:t = "onChatLinkRClick"
-							}
-						}
-					}
-				}
-				debriefingTab {
-					id:t = "awards_list_tab"
-					debrBlock {
-						id:t = "awards_list_scroll_block"
-						size:t = "pw, ph"
-						overflow-y:t = "auto"
-						scrollbarShortcuts:t = "yes"
-						tdiv {
-							width:t = "pw"
-							margin:t = "0.3@debrPad"
-							tdiv {
-								width:t = "pw"
-								id:t = "awards_list_tab_div"
-								flow:t = "h-flow"
-							}
-						}
-					}
-				}
-				debriefingTab {
-					id:t = "battle_tasks_list_tab"
-					debrBlock {
-						size:t = "pw, ph"
-						tdiv {
-							id:t = "battle_tasks_list_div"
-							size:t = "pw, fh"
-							position:t = "relative"
-							flow:t = "vertical"
-							listbox {
-								id:t = "battle_tasks_list_scroll_block"
-								size:t = "pw, fh"
-								overflow-y:t = "auto"
-								flow:t = "vertical"
-								scrollBox-dontResendShortcut:t = "yes"
-								on_select:t = "onSelectTask"
-								navigatorShortcuts:t = "yes"
-								selImgType:t = "gamepadFocused"
-							}
-							textAreaCentered {
-								id:t = "battle_tasks_list_msg"
-								width:t = "80%pw"
-								pos:t = "50%pw-50%w, 40%ph-40%h"
-								position:t = "absolute"
-								hideEmptyText:t = "yes"
-								text:t = "#mainmenu/battleTasks/noBattleTasks"
-							}
-						}
-					}
-				}
-				debriefingTab {
-					id:t = "ww_casualties_tab"
-					tdiv {
-						id:t = "ww_casualties_div"
-						size:t = "pw, ph"
-						overflow-y:t = "auto"
-						debrBlock {
-							size:t = "pw, ph"
-						}
-					}
-				}
-			}
-			debrBlock {
-				id:t = "wnd_navbar_block"
-				size:t = "pw, 1@navBarBattleButtonHeight +4@debrWndPad"
-				padding:t = "2@debrWndPad"
-				debrWndSeparator {
-					top:t = "-0.5h"
-				}
-				tdiv {
-					id:t = "gc_navbar_sizer"
-					size:t = "pw, ph"
-					navLeft {
-						Button_text {
-							id:t = "btn_view_replay"
-							text:t = "#mainmenu/btnViewReplay"
-							btnName:t = "start"
-							_on_click:t = "onViewReplay"
-							display:t = "hide"
-							ButtonImg {
-
-							}
-						}
-						Button_text {
-							id:t = "btn_save_replay"
-							text:t = "#mainmenu/btnSaveReplay"
-							_on_click:t = "onSaveReplay"
-							display:t = "hide"
-							ButtonImg {
-
-							}
-						}
-						Button_text {
-							id:t = "btn_parse_replay"
-							text:t = "#hitsAnalisys"
-							on_click:t = "onParseReplay"
-							display:t = "hide"
-							ButtonImg {
-
-							}
-						}
-						Button_text {
-							id:t = "btn_requirements_list"
-							text:t = "#unlocks/requirements"
-							_on_click:t = "onViewBattleTaskRequirements"
-							display:t = "hide"
-							enable:t = "no"
-							ButtonImg {
-
-							}
-						}
-						Button_text {
-							id:t = "btn_user_options"
-							text:t = "#mainmenu/btnUserAction"
-							btnName:t = "RB"
-							on_click:t = "onUserOptions"
-							ButtonImg {
-
-							}
-						}
-					}
-					navMiddle {
-						id:t = "nav_middle"
-						Button_text {
-							id:t = "btn_next"
-							class:t = "battle"
-							navButtonFont:t = "yes"
-							text:t = "#mainmenu/btnOk"
-							css-hier-invalidate:t = "yes"
-							_on_click:t = "onNext"
-							btnName:t = "X"
-							display:t = "hide"
-							pattern {
-								type:t = "bright_texture"
-							}
-							buttonWink {
-								_transp-timer:t = "0"
-							}
-							buttonGlance {
-
-							}
-							ButtonImg {
-
-							}
-							btnText {
-								id:t = "btn_next_text"
-								text:t = "#mainmenu/btnOk"
-							}
-						}
-						Button_text {
-							id:t = "btn_skip"
-							text:t = "#msgbox/btn_skip"
-							_on_click:t = "goBack"
-							btnName:t = "B"
-							ButtonImg {
-
-							}
-						}
-					}
-					navRight {
-						Button_text {
-							id:t = "btn_view_highlights"
-							class:t = "image"
-							text:t = "#mainmenu/btnViewHighlights"
-							_on_click:t = "onViewHighlights"
-							display:t = "hide"
-							enable:t = "no"
-							isColoredImg:t = "yes"
-							img {
-								background-image:t = "#ui/gameuiskin#nv_icon"
-							}
-							ButtonImg {
-
-							}
-						}
-						Button_text {
-							id:t = "btn_back"
-							text:t = "#mainmenu/btnQuit"
-							_on_click:t = "goBack"
-							btnName:t = "B"
-							display:t = "hide"
-							visualStyle:t = "secondary"
-							buttonWink {
-
-							}
-							ButtonImg {
-
-							}
-						}
-					}
-				}
-				dummy {
-					_on_click:t = "onNext"
-					behavior:t = "accesskey"
-					accessKey:t = "Enter"
-				}
-				dummy {
-					_on_click:t = "goBack"
-					btnName:t = "B"
-					behavior:t = "accesskey"
-				}
-			}
-		}
-	}
-	tdiv {
-		id:t = "start_award_place_streaks"
-		size:t = "5@debriefingUnlockIconSize, 5@debriefingUnlockIconSize"
-		pos:t = "sw, sh"
-		position:t = "root"
-	}
-	tdiv {
-		id:t = "start_award_place_unlocks"
-		size:t = "10@debriefingUnlockIconSize, 10@debriefingUnlockIconSize"
-		pos:t = "-w, -h"
-		position:t = "root"
-	}
-	tdiv {
-		id:t = "my_place_move_box_start"
-		size:t = "0.2@sf, 0.2@sf"
-		pos:t = "50%sw-50%w, sh"
-		position:t = "root"
-		activeText {
-			caption:t = "yes"
-			font-ht:t = "ph"
-			text:t = "..."
-		}
-	}
-	tdiv {
-		id:t = "skip_button"
-		size:t = "pw, ph"
-		position:t = "absolute"
-		class:t = "button"
-		behaviour:t = "button"
-		on_click:t = "onSkip"
-	}
-	gamercard_div {
-		type:t = "top"
-		gamercard {
-			id:t = "gamercard_bottom"
-			systemMsg {
-				pos:t = "1@systemMsgIndent, 0"
-				position:t = "root"
-				flow:t = "vertical"
-				dlDataStat {
-					behavior:t = "bhvUpdater"
-					pos:t = "50%pw-50%w,0"
-					position:t = "relative"
-					value:t = '{"viewId": "DL_DATA_STATE_TEXT"}'
-					css-hier-invalidate:t = "yes"
-					animText {
-						text:t = ""
-						font:t = "@fontTiny"
-						color-factor:t = "0"
-						fade:t = "out"
-					}
-				}
-			}
-			BottomMenuPanel {
-				shadowSafeArea {
-
-				}
-				tdiv {
-					size:t = "pw, 0.02@sf"
-					pos:t = "0, ph"
-					position:t = "absolute"
-					background-repeat:t = "expand"
-					background-image:t = "#ui/gameuiskin#optionlist_background_top"
-					background-color:t = "#90909090"
-					background-position:t = "0, 0.25h, 0, 0"
-				}
-				tdiv {
-					width:t = "1@bottomGcWidth"
-					height:t = "ph"
-					pos:t = "pw/2 - w/2, ph/2 - h/2"
-					position:t = "absolute"
-					tdiv {
-						id:t = "gamercard_bottom_left"
-						height:t = "1@gamercardHeight"
-						class:t = "header"
-						width:t = "fw"
-						bottomNavPlace {
-							id:t = "gamercard_bottom_navbar_place"
-							size:t = "pw - ph, ph"
-							pos:t = "0, 0.5(ph-h)"
-							position:t = "absolute"
-						}
-						tdiv {
-							id:t = "slotbar-presetsPlace"
-							size:t = "pw, ph"
-							position:t = "absolute"
-							display:t = "hide"
-						}
-					}
-					voiceChatWidgetNest {
-						isClanOnly:t = "no"
-						blockSeparator {
-							display:t = "hide"
-						}
-						emptyVoiceChat {
-							tooltip:t = "#clan/voice_chat/widget"
-							usertalk {
-								id:t = "voice_chat_no_activity"
-								type:t = "noTalk"
-								fade:t = "in"
-								height-end:t = "1"
-								_size-timer:t = "0"
-								img {
-									color-factor:t = "255"
-									inacive:t = "yes"
-									position:t = "relative"
-								}
-								activeText {
-									text:t = "..."
-									color-factor:t = "255"
-									position:t = "relative"
-								}
-							}
-						}
-						voiceChatWidgetContainer {
-							isSmall:t = "no"
-							voiceChatWidget {
-								value:t = '{"viewId": "VOICE_CHAT"}'
-							}
-						}
-						blockSeparator {
-							display:t = "hide"
-						}
-					}
-					gcButtonsSquadHolder {
-						id:t = "gamercard_squad_widget"
-						position:t = "relative"
-						top:t = "0.5(ph-h)"
-						margin-right:t = "2@buttonTextPadding"
-						class:t = "header"
-						css-hier-invalidate:t = "yes"
-					}
-					gcButtonsHolder {
-						id:t = "gamercard_bottom_right"
-						position:t = "relative"
-						top:t = "0.5(ph-h)"
-						class:t = "header"
-						Button_text {
-							id:t = "gc_invites_btn"
-							class:t = "image"
-							tooltip:t = "#mainmenu/invites"
-							_on_click:t = "onGC_invites"
-							img {
-								id:t = "icon"
-								background-image:t = "#ui/gameuiskin#invites.svg"
-							}
-							img {
-								id:t = "iconNew"
-								background-image:t = "#ui/gameuiskin#invites_new.svg"
-								style:t = "background-color:@textureGlowColor"
-								display:t = "hide"
-							}
-							img {
-								id:t = "iconGlow"
-								background-image:t = "#ui/gameuiskin#mail_new_glow"
-								style:t = "background-color:@textureGlowColor; size:110%ph, 110%ph"
-								_transp-timer:t = "0"
-								display:t = "hide"
-							}
-						}
-						Button_text {
-							id:t = "gc_contacts"
-							class:t = "image"
-							tooltip:t = "#mainmenu/contacts"
-							_on_click:t = "onGC_contacts"
-							img {
-								background-image:t = "#ui/gameuiskin#friends.svg"
-							}
-							text {
-								id:t = "gc_friends_online"
-								position:t = "absolute"
-								pos:t = "pw - w, ph - h - 2"
-								style:t = "font:@fontTiny; color:@userlogColoredText"
-								shadeStyle:t = "outline33pct"
-								text:t = ""
-							}
-						}
-						Button_text {
-							id:t = "gc_chat_btn"
-							class:t = "image"
-							tooltip:t = "#mainmenu/chat"
-							_on_click:t = "onGC_chat"
-							img {
-								id:t = "icon"
-								background-image:t = "#ui/gameuiskin#chat.svg"
-							}
-							img {
-								id:t = "iconNew"
-								background-image:t = "#ui/gameuiskin#chat_new.svg"
-								style:t = "background-color:@textureGlowColor"
-								display:t = "hide"
-							}
-							img {
-								id:t = "iconGlow"
-								background-image:t = "#ui/gameuiskin#mail_new_glow"
-								style:t = "background-color:@textureGlowColor; size:110%ph, 110%ph"
-								_transp-timer:t = "0"
-								display:t = "hide"
-							}
-							text {
-								id:t = "gc_new_chat_messages"
-								position:t = "absolute"
-								pos:t = "pw - w, ph - h"
-								style:t = "font:@fontTiny; color:@userlogColoredText"
-								text:t = ""
-							}
-						}
-						Button_text {
-							id:t = "gc_userlog_btn"
-							class:t = "image"
-							tooltip:t = "#userlog/no_new_messages"
-							_on_click:t = "onUserLog"
-							img {
-								id:t = "icon"
-								background-image:t = "#ui/gameuiskin#mail.svg"
-							}
-							img {
-								id:t = "iconNew"
-								background-image:t = "#ui/gameuiskin#mail_new.svg"
-								style:t = "background-color:@textureGlowColor"
-								display:t = "hide"
-							}
-							img {
-								id:t = "iconGlow"
-								background-image:t = "#ui/gameuiskin#mail_new_glow"
-								style:t = "background-color:@textureGlowColor; size:110%ph, 110%ph"
-								_transp-timer:t = "0"
-								display:t = "hide"
-							}
-						}
-					}
-				}
-			}
-			tdiv {
-				position:t = "root"
-				pos:t = "sw - w, 0"
-				versionText {
-
-				}
-			}
-		}
-	}
-	text {
-		id:t = "txt_session_id"
-		pos:t = "0.08@sf, sh-0.015@sf"
-		position:t = "root"
-		input-transparent:t = "yes"
-		overlayTextColor:t = "faded"
-		tinyFont:t = "yes"
-		text:t = ""
-	}
-}
-div {
-	id:t = "debriefing_timer"
-	behavior:t = "Timer"
-	timer_handler_func:t = "onUpdate"
+{
+  "root": {
+    "bgrStyle": "fullScreenWnd",
+    "blur": {},
+    "blur_foreground": {},
+    "tdiv": [
+      {
+        "id": "content_frame",
+        "width": "1.4@sf",
+        "max-width": "1@rw",
+        "height": "@rh",
+        "pos": "0.5pw-0.5w, 0.5ph-0.5h",
+        "position": "relative",
+        "flow": "vertical",
+        "tdiv": {
+          "pos": "0.5pw-0.5w, 0",
+          "position": "relative",
+          "width": "pw",
+          "flow": "vertical",
+          "debriefingTitle": {
+            "id": "result_title",
+            "pos": "0.5pw-0.5w, 0",
+            "position": "relative",
+            "padding-bottom": "-0.003@sf",
+            "text": ""
+          },
+          "textareaNoTab": {
+            "id": "dbf_title",
+            "pos": "0.5pw-0.5w, 0",
+            "position": "relative",
+            "overlayTextColor": "active",
+            "text": ""
+          },
+          "tdiv": {
+            "pos": "0.5pw-0.5w, 0",
+            "position": "relative",
+            "textareaNoTab": [
+              {
+                "id": "result_reward_title",
+                "shadeStyle": "HudTinyLight",
+                "overlayTextColor": "active",
+                "text": ""
+              },
+              {
+                "id": "result_reward_comma",
+                "shadeStyle": "HudTinyLight",
+                "overlayTextColor": "active",
+                "text": "#ui/comma"
+              },
+              {
+                "id": "result_reward_wp",
+                "shadeStyle": "HudTinyLight",
+                "overlayTextColor": "active",
+                "text": ""
+              }
+            ],
+            "tdiv": [
+              {
+                "id": "result_reward_rp",
+                "textareaNoTab": {
+                  "id": "text",
+                  "shadeStyle": "HudTinyLight",
+                  "overlayTextColor": "active",
+                  "text": ""
+                },
+                "img": {
+                  "size": "1@sIco, 1@sIco",
+                  "top": "0.5ph-0.5h",
+                  "position": "relative",
+                  "background-image": "#ui/gameuiskin#item_type_RP.svg",
+                  "background-svg-size": "1@sIco, 1@sIco"
+                }
+              },
+              {
+                "id": "result_reward_wp",
+                "textareaNoTab": {
+                  "id": "text",
+                  "shadeStyle": "HudTinyLight",
+                  "overlayTextColor": "active",
+                  "text": ""
+                },
+                "img": {
+                  "size": "1@sIco, 1@sIco",
+                  "top": "0.5ph-0.5h",
+                  "position": "relative",
+                  "background-image": "#ui/gameuiskin#item_type_warpoints.svg",
+                  "background-svg-size": "1@sIco, 1@sIco"
+                }
+              }
+            ]
+          }
+        },
+        "frame": {
+          "id": "wnd_frame",
+          "size": "pw, fh",
+          "position": "relative",
+          "class": "wndNav",
+          "fullScreenSize": "yes",
+          "style": "padding-top:1@debrWndPad",
+          "rowSeparator": {
+            "top": "1@frameHeaderHeight-@listboxPad-1@listboxItemsInterval-1@dp"
+          },
+          "frame_header": {
+            "HorizontalListBox": {
+              "id": "tabs_list",
+              "height": "ph",
+              "class": "header",
+              "withImages": "yes",
+              "normalFont": "yes",
+              "display": "hide",
+              "navigatorShortcuts": "yes",
+              "on_select": "onChangeTab"
+            }
+          },
+          "div": {
+            "id": "tabs_content",
+            "pos": "0, 1@frameHeaderHeight +1@debrWndPad",
+            "position": "relative",
+            "size": "pw, fh",
+            "debriefingTab": [
+              {
+                "id": "players_stats_tab",
+                "debrBlock": {
+                  "id": "players_stats_scroll_block",
+                  "size": "pw, ph",
+                  "position": "absolute",
+                  "padding": "0.5@debrPad",
+                  "overflow-y": "auto",
+                  "scrollbarShortcuts": "yes",
+                  "tdiv": {
+                    "size": "pw, ph",
+                    "tdiv": {
+                      "height": "ph",
+                      "pos": "pw/2-w/2, 0",
+                      "position": "relative",
+                      "tdiv": [
+                        {
+                          "id": "team1-root",
+                          "size": "50%p.p.w, ph",
+                          "flow": "vertical",
+                          "tdiv": [
+                            {
+                              "id": "team1_info",
+                              "left": "pw-w-@tablePad",
+                              "position": "relative",
+                              "teamIco": "allies",
+                              "css-hier-invalidate": "yes",
+                              "activeText": {
+                                "id": "team_text",
+                                "padding-right": "0.01@scrn_tgt",
+                                "top": "50%ph-50%h",
+                                "position": "relative"
+                              },
+                              "teamImg": {
+                                "id": "team_img",
+                                "size": "0.04@scrn_tgt, 0.04@scrn_tgt",
+                                "background-svg-size": "0.04@scrn_tgt, 0.04@scrn_tgt",
+                                "pos": "0, 50%ph-50%h",
+                                "position": "relative"
+                              },
+                              "tdiv": {
+                                "id": "countries_block",
+                                "pos": "0, ph/2-h/2",
+                                "position": "relative"
+                              },
+                              "img": {
+                                "id": "override_country",
+                                "pos": "0, ph/2-h/2",
+                                "position": "relative",
+                                "size": "@cIco, 0.66@cIco",
+                                "background-image": "",
+                                "background-svg-size": "@cIco, 0.66@cIco",
+                                "margin": "0.005@sf, 0"
+                              }
+                            },
+                            {
+                              "width": "pw",
+                              "min-height": "0.037@scrn_tgt",
+                              "margin-left": "1@scrollBarSize",
+                              "margin-bottom": "0.0025@scrn_tgt",
+                              "table": {
+                                "id": "team_table_1",
+                                "width": "pw",
+                                "pos": "0, 50%ph-50%h",
+                                "position": "absolute",
+                                "class": "headerTable",
+                                "baseRow": "rows16",
+                                "display": "hide"
+                              }
+                            },
+                            {
+                              "size": "pw, fh",
+                              "overflow-y": "auto",
+                              "scroll-align": "left",
+                              "scroll-padding": "no",
+                              "padding-right": "-1@scrollBarSize",
+                              "table": {
+                                "id": "table_kills_team1",
+                                "width": "fw - 1@scrollBarSize - @tablePad",
+                                "pos": "1@scrollBarSize, 1",
+                                "position": "relative",
+                                "css-hier-invalidate": "yes",
+                                "behavior": "PosNavigator",
+                                "deep": "2",
+                                "canSelectNone": "yes",
+                                "class": "mpTable",
+                                "mousePointerCenterPosition": "left",
+                                "navigatorShortcuts": "yes",
+                                "selfFocusBorder": "yes",
+                                "on_select": "onStatsTblSelect",
+                                "on_dbl_click": "onUserCard",
+                                "on_r_click": "onUserRClick",
+                                "on_hover": "onStatTblFocus",
+                                "on_unhover": "onStatTblFocus",
+                                "baseRow": "rows16"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "team2-root",
+                          "size": "50%p.p.w, ph",
+                          "flow": "vertical",
+                          "tdiv": [
+                            {
+                              "id": "team2_info",
+                              "left": "@tablePad",
+                              "position": "relative",
+                              "teamIco": "axis",
+                              "css-hier-invalidate": "yes",
+                              "teamImg": {
+                                "id": "team_img",
+                                "size": "0.04@scrn_tgt, 0.04@scrn_tgt",
+                                "background-svg-size": "0.04@scrn_tgt, 0.04@scrn_tgt",
+                                "pos": "0, 50%ph-50%h",
+                                "position": "relative"
+                              },
+                              "img": {
+                                "id": "override_country",
+                                "pos": "0, ph/2-h/2",
+                                "position": "relative",
+                                "size": "@cIco, 0.66@cIco",
+                                "background-image": "",
+                                "background-svg-size": "@cIco, 0.66@cIco",
+                                "margin": "0.005@sf, 0"
+                              },
+                              "tdiv": {
+                                "id": "countries_block",
+                                "pos": "0, ph/2-h/2",
+                                "position": "relative"
+                              },
+                              "activeText": {
+                                "id": "team_text",
+                                "padding-left": "0.01@scrn_tgt",
+                                "top": "50%ph-50%h",
+                                "position": "relative"
+                              }
+                            },
+                            {
+                              "width": "pw",
+                              "min-height": "0.037@scrn_tgt",
+                              "margin-right": "1@scrollBarSize",
+                              "margin-bottom": "0.0025@scrn_tgt",
+                              "table": {
+                                "id": "team_table_2",
+                                "width": "pw",
+                                "pos": "@tablePad, 50%ph-50%h",
+                                "position": "absolute",
+                                "class": "headerTable",
+                                "baseRow": "rows16",
+                                "display": "hide"
+                              }
+                            },
+                            {
+                              "size": "pw, fh",
+                              "overflow-y": "auto",
+                              "table": {
+                                "id": "table_kills_team2",
+                                "width": "fw - 1@scrollBarSize",
+                                "pos": "@tablePad, 1",
+                                "position": "relative",
+                                "css-hier-invalidate": "yes",
+                                "behavior": "PosNavigator",
+                                "deep": "2",
+                                "canSelectNone": "yes",
+                                "class": "mpTable",
+                                "mousePointerCenterPosition": "right",
+                                "navigatorShortcuts": "yes",
+                                "selfFocusBorder": "yes",
+                                "on_select": "onStatsTblSelect",
+                                "on_dbl_click": "onUserCard",
+                                "on_r_click": "onUserRClick",
+                                "on_hover": "onStatTblFocus",
+                                "on_unhover": "onStatTblFocus",
+                                "baseRow": "rows16"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "id": "my_stats_tab",
+                "flow": "vertical",
+                "overflow-y": "auto",
+                "tdiv": {
+                  "size": "pw, fh",
+                  "flow": "horizontal",
+                  "tdiv": {
+                    "size": "fw, ph",
+                    "flow": "vertical",
+                    "debrBlock": {
+                      "id": "top_bar_nest",
+                      "width": "pw",
+                      "pos": "0, 1@debrMyPlaceBlockOffset",
+                      "position": "relative",
+                      "padding": "1@debrPad, 0.5@debrPad",
+                      "background-color": "@separatorBlockColor",
+                      "tdiv": [
+                        {
+                          "id": "my_place_move_box",
+                          "pos": "0, 0.5ph-0.5h",
+                          "position": "relative",
+                          "css-hier-invalidate": "yes",
+                          "total-input-transparent": "yes",
+                          "display": "hide",
+                          "activeText": [
+                            {
+                              "id": "my_place_label",
+                              "mediumFont": "yes",
+                              "animateFontSize": "yes",
+                              "text": "#debriefing/placeInMyTeam"
+                            },
+                            {
+                              "id": "my_place_in_mptable",
+                              "mediumFont": "yes",
+                              "animateFontSize": "yes",
+                              "overlayTextColor": "userlog",
+                              "text": "0"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "my_stats_top_bar",
+                          "top": "0.5ph-0.5h",
+                          "position": "relative",
+                          "tdiv": [
+                            {
+                              "id": "wnd_total",
+                              "top": "0.5ph-0.5h",
+                              "position": "relative"
+                            },
+                            {
+                              "id": "buy_premium",
+                              "pos": "1@debrPad, 0.5ph-0.5h",
+                              "position": "relative",
+                              "display": "hide",
+                              "Button_text": {
+                                "id": "btn_buy_premium_award",
+                                "class": "buyPremAward",
+                                "style": "margin-right:0;",
+                                "on_click": "onBuyPremiumAward",
+                                "visualStyle": "purchase",
+                                "tooltip": "",
+                                "btnName": "Y",
+                                "buttonWink": {
+                                  "_transp-timer": "0"
+                                },
+                                "buttonGlance": {},
+                                "ButtonImg": {},
+                                "textarea": {
+                                  "id": "label",
+                                  "pos": "0, 0.5ph-0.5h",
+                                  "position": "relative",
+                                  "min-width": "pw",
+                                  "input-transparent": "yes",
+                                  "text-align": "center",
+                                  "overlayTextColor": "premiumNotEarned",
+                                  "text": ""
+                                }
+                              },
+                              "textareaNoTab": {
+                                "max-width": "150@sf/@pf",
+                                "pos": "0.3@sIco, 0.5ph-0.5h",
+                                "position": "relative",
+                                "overlayTextColor": "userlog",
+                                "smallFont": "yes",
+                                "text": "#mainmenu/notEarnedPremiumReward"
+                              }
+                            },
+                            {
+                              "id": "active_wager_container",
+                              "pos": "1@debrPad, 0.5ph-0.5h",
+                              "position": "relative",
+                              "title": "$tooltipObj",
+                              "display": "hide",
+                              "smallFont": "yes",
+                              "interactive": "yes",
+                              "css-hier-invalidate": "yes",
+                              "tdiv": {
+                                "size": "70%@debrWagerHeight, 1@debrWagerHeight",
+                                "itemIconBlock": {
+                                  "id": "active_wager_icon",
+                                  "pos": "0.5pw-0.5w, 0.5ph-0.5h",
+                                  "position": "absolute",
+                                  "debriefingSize": "yes",
+                                  "overflow": "hidden"
+                                },
+                                "img": {
+                                  "id": "active_wager_result_icon",
+                                  "size": "0.5ph, 0.5ph",
+                                  "pos": "pw-0.7w, ph-h",
+                                  "position": "absolute",
+                                  "background-image": "",
+                                  "background-svg-size": "0.5ph, 0.5ph",
+                                  "background-repeat": "aspect-ratio"
+                                }
+                              },
+                              "textareaNoTab": {
+                                "id": "active_wager_text",
+                                "pos": "10@sf/@pf, 0.5ph-0.5h",
+                                "position": "relative",
+                                "overlayTextColor": "userlog",
+                                "smallFont": "yes",
+                                "text": ""
+                              },
+                              "focus_border": {},
+                              "tooltipObj": {
+                                "id": "active_wager_tooltip",
+                                "on_tooltip_open": "onWagerTooltipOpen",
+                                "on_tooltip_close": "onTooltipObjClose",
+                                "display": "hide",
+                                "enable": "no"
+                              }
+                            }
+                          ],
+                          "debriefingBonusIconNest": {
+                            "id": "bonus_ico_place",
+                            "size": "1@debrBonusWidth, 1@debrBonusHeight",
+                            "pos": "1@debrPad, 0.5ph-0.5h",
+                            "position": "relative",
+                            "display": "hide",
+                            "interactive": "yes",
+                            "css-hier-invalidate": "yes",
+                            "img": {
+                              "id": "bonus_ico",
+                              "position": "absolute",
+                              "pos": "pw/2-w/2, ph/2-h/2",
+                              "size": "@debrBonusIcoSize, @debrBonusIcoSize",
+                              "background-svg-size": "@debrBonusIcoSize, @debrBonusIcoSize"
+                            },
+                            "tdiv": {
+                              "id": "start_bonus_place",
+                              "size": "2.5@debrBonusIcoSize, 2.5@debrBonusIcoSize",
+                              "pos": "0.5pw-0.5w, 0.5ph-0.5h",
+                              "position": "absolute"
+                            },
+                            "focus_border": {
+                              "class": "expanded"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "tdiv": {
+                      "size": "pw, fh",
+                      "tdiv": [
+                        {
+                          "id": "left_block",
+                          "min-width": "1@navBarBattleButtonMinWidth",
+                          "size": "2@debriefingUnlockIconSize+1@debrPad, ph",
+                          "margin-right": "@debrBigGap",
+                          "flow": "vertical",
+                          "debrBlock": [
+                            {
+                              "id": "inventory_gift_block",
+                              "width": "pw",
+                              "padding": "0, 1@debrPad",
+                              "display": "hide",
+                              "tdiv": {
+                                "width": "pw",
+                                "flow": "vertical",
+                                "div": {
+                                  "width": "pw",
+                                  "flow": "h-flow",
+                                  "flow-align": "center",
+                                  "tdiv": {
+                                    "id": "inventory_gift_icon",
+                                    "width": "pw",
+                                    "flow": "h-flow",
+                                    "flow-align": "center",
+                                    "smallItems": "no"
+                                  },
+                                  "Button_text": {
+                                    "id": "btn_show_all",
+                                    "pos": "0.5pw-0.5w",
+                                    "margin-bottom": "0",
+                                    "on_click": "onViewRewards",
+                                    "text": "#mainmenu/showMore",
+                                    "display": "hide",
+                                    "enable": "no",
+                                    "btnName": "R3",
+                                    "ButtonImg": {}
+                                  }
+                                },
+                                "Button_text": {
+                                  "id": "btn_inventory_gift_action",
+                                  "pos": "0.5pw-0.5w, 0",
+                                  "position": "relative",
+                                  "max-width": "1@buttonWidth",
+                                  "margin-top": "1@buttonMargin",
+                                  "class": "battle",
+                                  "navButtonFont": "yes",
+                                  "btnName": "LT",
+                                  "css-hier-invalidate": "yes",
+                                  "_on_click": "onInventoryGiftAction",
+                                  "display": "hide",
+                                  "enable": "no",
+                                  "pattern": {},
+                                  "buttonWink": {
+                                    "_transp-timer": "0"
+                                  },
+                                  "buttonGlance": {},
+                                  "ButtonImg": {},
+                                  "btnText": {
+                                    "id": "btn_inventory_gift_action_text"
+                                  }
+                                }
+                              },
+                              "debrSeparator": {
+                                "class": "bottom"
+                              }
+                            },
+                            {
+                              "id": "my_stats_awards_block",
+                              "size": "pw, fh",
+                              "class": "button",
+                              "behaviour": "button",
+                              "on_click": "onViewAwards",
+                              "total-input-transparent": "yes",
+                              "skip-navigation": "yes",
+                              "margin-top": "1@blockInterval",
+                              "tdiv": {
+                                "size": "pw, ph",
+                                "pos": "0.5pw-0.5w, 0",
+                                "position": "relative",
+                                "flow": "vertical",
+                                "tdiv": [
+                                  {
+                                    "id": "awards_list_challenges",
+                                    "pos": "0.5pw - 0.5w, 0",
+                                    "position": "relative",
+                                    "size": "pw, 1@debriefingUnlockIconSize",
+                                    "overflow": "visible",
+                                    "display": "hide",
+                                    "behavior": "PosNavigator",
+                                    "navigatorShortcuts": "active",
+                                    "on_activate": "onViewAwards"
+                                  },
+                                  {
+                                    "size": "pw, fh",
+                                    "position": "relative",
+                                    "flow": "horizontal",
+                                    "tdiv": [
+                                      {
+                                        "id": "awards_list_unlocks",
+                                        "size": "1@debriefingUnlockIconSize, ph",
+                                        "margin-left": "pw/4 - 0.5w",
+                                        "position": "relative",
+                                        "overflow": "visible",
+                                        "flow": "vertical",
+                                        "display": "hide",
+                                        "behavior": "PosNavigator",
+                                        "navigatorShortcuts": "active",
+                                        "on_activate": "onViewAwards"
+                                      },
+                                      {
+                                        "id": "awards_list_streaks",
+                                        "size": "1@debriefingUnlockIconSize, ph",
+                                        "margin-left": "pw/2 - w",
+                                        "position": "relative",
+                                        "overflow": "visible",
+                                        "flow": "vertical",
+                                        "display": "hide",
+                                        "behavior": "PosNavigator",
+                                        "navigatorShortcuts": "active",
+                                        "on_activate": "onViewAwards"
+                                      }
+                                    ]
+                                  }
+                                ],
+                                "div": {
+                                  "id": "btn_challenge_div",
+                                  "width": "pw",
+                                  "pos": "pw/2 - w/2, 0",
+                                  "display": "hide",
+                                  "flow": "vertical",
+                                  "margin": "0, 1@blockInterval",
+                                  "Button_text": {
+                                    "id": "btn_challenge",
+                                    "pos": "pw/2 - w/2, 0",
+                                    "position": "relative",
+                                    "max-width": "1@buttonWidth",
+                                    "navButtonFont": "yes",
+                                    "class": "battle",
+                                    "css-hier-invalidate": "yes",
+                                    "_on_click": "onGotoChallenge",
+                                    "pattern": {
+                                      "type": "bright_texture"
+                                    },
+                                    "buttonWink": {
+                                      "_transp-timer": "0"
+                                    },
+                                    "buttonGlance": {},
+                                    "ButtonImg": {},
+                                    "btnText": {
+                                      "id": "btn_next_text",
+                                      "text": "#mainmenu/btnUnlockChallenge"
+                                    }
+                                  },
+                                  "rowSeparator": {
+                                    "margin-top": "1@blockInterval"
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "size": "fw, ph",
+                          "flow": "vertical",
+                          "debrBlock": [
+                            {
+                              "id": "pve_trophy_block",
+                              "size": "pw, 0.75@itemHeight",
+                              "padding": "0, 1@debrPad",
+                              "display": "hide",
+                              "tdiv": [
+                                {
+                                  "id": "pve_trophy_progress",
+                                  "pos": "0, 0.5ph-0.5h",
+                                  "position": "relative",
+                                  "width": "75%pw"
+                                },
+                                {
+                                  "id": "pve_trophy_chest",
+                                  "size": "0.75@itemHeight, 0.75@itemHeight",
+                                  "pos": "pw-w, 0.5ph-0.5h",
+                                  "position": "absolute"
+                                },
+                                {
+                                  "size": "0.75@itemHeight, 0.75@itemHeight",
+                                  "pos": "pw-w-0.25w, 0.5ph-0.5h",
+                                  "position": "absolute",
+                                  "tdiv": {
+                                    "id": "pve_trophy_content",
+                                    "size": "1@itemHeight, 1@itemHeight",
+                                    "pos": "0.5pw-0.5w, 0.5ph-0.5h",
+                                    "position": "absolute"
+                                  }
+                                }
+                              ],
+                              "activeText": {
+                                "id": "pve_award_already_received",
+                                "pos": "pw-w-1@debrPad, 50%ph",
+                                "position": "absolute",
+                                "text": "#debriefing/awardHasAlreadyBeenReceived",
+                                "display": "hide"
+                              },
+                              "debrSeparator": {
+                                "class": "bottom"
+                              }
+                            },
+                            {
+                              "id": "no_awards_block",
+                              "size": "pw, 0.12@scrn_tgt",
+                              "padding": "0, 1@debrPad",
+                              "display": "hide",
+                              "tdiv": {
+                                "width": "pw",
+                                "pos": "0, 0.5ph-0.5h",
+                                "position": "relative",
+                                "flow": "vertical",
+                                "textareaNoTab": {
+                                  "id": "no_awards_caption",
+                                  "width": "pw",
+                                  "position": "relative",
+                                  "overlayTextColor": "userlog",
+                                  "text": ""
+                                },
+                                "Button_text": {
+                                  "id": "btn_no_awards_info",
+                                  "position": "relative",
+                                  "on_click": "onNoAwardsInfoBtn",
+                                  "noMargin": "yes",
+                                  "text": "",
+                                  "display": "hide",
+                                  "enable": "no",
+                                  "btnName": "L3",
+                                  "externalLink": "yes",
+                                  "activeText": {
+                                    "text": "#msgbox/btn_more",
+                                    "css-hier-invalidate": "yes",
+                                    "underline": {}
+                                  },
+                                  "ButtonImg": {}
+                                }
+                              },
+                              "debrSeparator": {
+                                "class": "bottom"
+                              }
+                            }
+                          ],
+                          "tdiv": [
+                            {
+                              "size": "pw, fh",
+                              "padding-top": "1@dp",
+                              "debrBlock": {
+                                "id": "my_stats_scroll_block",
+                                "size": "fw, ph",
+                                "flow": "vertical",
+                                "overflow-y": "auto",
+                                "scrollbarShortcuts": "yes",
+                                "css-hier-invalidate": "yes",
+                                "tdiv": {
+                                  "width": "pw",
+                                  "min-height": "ph",
+                                  "margin": "0, 1@debrPad",
+                                  "flow": "vertical",
+                                  "table": {
+                                    "id": "stat_table",
+                                    "width": "pw",
+                                    "baseRow": "rows16",
+                                    "flow": "vertical",
+                                    "total-input-transparent": "yes",
+                                    "behavior": "PosNavigator",
+                                    "navigatorShortcuts": "noSelect",
+                                    "selfFocusBorder": "yes"
+                                  },
+                                  "tdiv": {
+                                    "id": "leaderbord_stats",
+                                    "width": "pw",
+                                    "pos": "0, 1@debrPad",
+                                    "position": "relative",
+                                    "flow": "h-flow",
+                                    "display": "hide"
+                                  },
+                                  "textareaNoTab": {
+                                    "id": "stat_info_text",
+                                    "width": "pw",
+                                    "pos": "0, 3@debrPad",
+                                    "position": "relative",
+                                    "overlayTextColor": "",
+                                    "text-align": "right",
+                                    "text": "",
+                                    "display": "hide"
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "id": "full_width_resources",
+                              "size": "pw, ph",
+                              "flow": "h-flow",
+                              "flow-align": "center"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "debrBlock": {
+                    "id": "right_block",
+                    "size": "2@slot_width+1@scrollBarSize, ph",
+                    "pos": "0, 1@debrMyPlaceBlockOffset",
+                    "position": "relative",
+                    "margin-left": "@debrBigGap",
+                    "flow": "vertical",
+                    "display": "hide",
+                    "debrBlock": {
+                      "id": "battle_tasks_block",
+                      "width": "pw",
+                      "max-height": "0.5ph",
+                      "margin-bottom": "1@debrPad",
+                      "flow": "vertical",
+                      "tdiv": {
+                        "size": "pw, 1@buttonHeight",
+                        "background-color": "@separatorBlockColor",
+                        "activeText": {
+                          "width": "pw",
+                          "pos": "1@debrPad, 0.5ph-0.5h",
+                          "position": "relative",
+                          "text": "#userlog/page/battletasks"
+                        }
+                      },
+                      "listbox": {
+                        "id": "current_battle_tasks",
+                        "width": "pw",
+                        "padding-left": "1@debrPad",
+                        "overflow-y": "auto",
+                        "flow": "vertical",
+                        "scrollbarShortcuts": "left",
+                        "background-color": "@frameDarkTransparentBgColor"
+                      }
+                    },
+                    "tdiv": {
+                      "id": "researches_scroll_block",
+                      "size": "pw, fh",
+                      "overflow-y": "auto",
+                      "scrollbarShortcuts": "left",
+                      "tdiv": {
+                        "width": "pw",
+                        "min-height": "ph",
+                        "flow": "vertical",
+                        "tdiv": [
+                          {
+                            "size": "pw, 1@buttonHeight",
+                            "background-color": "@separatorBlockColor",
+                            "activeText": {
+                              "width": "pw",
+                              "pos": "1@debrPad, 0.5ph-0.5h",
+                              "position": "relative",
+                              "text": "#debriefing/researched_unit"
+                            }
+                          },
+                          {
+                            "width": "pw",
+                            "margin-bottom": "1@debrPad",
+                            "background-color": "@frameDarkTransparentBgColor",
+                            "textAreaCentered": [
+                              {
+                                "id": "no_air_text",
+                                "width": "pw",
+                                "pos": "0.5pw-0.5w, 0.5ph-0.5h",
+                                "position": "absolute",
+                                "smallFont": "yes",
+                                "text": ""
+                              },
+                              {
+                                "id": "air_item_text",
+                                "width": "pw",
+                                "pos": "0.5pw-0.5w, 0.5ph-0.5h",
+                                "position": "absolute",
+                                "smallFont": "yes",
+                                "text": ""
+                              }
+                            ],
+                            "rankUpList": {
+                              "id": "air_item_place",
+                              "max-width": "pw-2@debrPad",
+                              "min-height": "@slot_height+2@slot_vert_pad",
+                              "position": "relative",
+                              "pos": "0.5pw-0.5w, 0",
+                              "flow": "h-flow",
+                              "holdTooltipChildren": "yes"
+                            }
+                          },
+                          {
+                            "size": "pw, 1@buttonHeight",
+                            "background-color": "@separatorBlockColor",
+                            "activeText": {
+                              "width": "pw",
+                              "pos": "1@debrPad, 0.5ph-0.5h",
+                              "position": "relative",
+                              "text": "#debriefing/research_list"
+                            }
+                          },
+                          {
+                            "id": "research_list",
+                            "width": "pw",
+                            "flow": "vertical",
+                            "background-color": "@frameDarkTransparentBgColor",
+                            "textAreaCentered": {
+                              "id": "research_list_text",
+                              "width": "pw",
+                              "pos": "0.5pw-0.5w, 0.5(@slot_height + 2@slot_vert_pad)-0.5h",
+                              "position": "absolute",
+                              "smallFont": "yes",
+                              "text": ""
+                            },
+                            "tdiv": {
+                              "id": "modifications_objects_place",
+                              "width": "pw",
+                              "min-height": "1@slot_height + 2@slot_vert_pad",
+                              "margin-left": "1@debrPad",
+                              "flow": "vertical",
+                              "interactiveChildren": "yes"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "id": "battle_log_tab",
+                "tdiv": {
+                  "size": "pw, ph",
+                  "flow": "vertical",
+                  "debrBlock": [
+                    {
+                      "width": "pw",
+                      "padding": "1@debrPad",
+                      "RadioButtonList": {
+                        "id": "battle_log_filter",
+                        "navigatorShortcuts": "yes",
+                        "on_select": "onChangeBattlelogFilter"
+                      },
+                      "debrSeparator": {
+                        "class": "bottom"
+                      }
+                    },
+                    {
+                      "id": "battle_log_div",
+                      "size": "pw, fh",
+                      "overflow-y": "auto",
+                      "scrollbarShortcuts": "yes",
+                      "tdiv": {
+                        "width": "pw",
+                        "min-height": "ph",
+                        "margin": "1@debrPad",
+                        "chatLog": {
+                          "width": "pw",
+                          "id": "battle_log",
+                          "style": "color:@white",
+                          "text": "",
+                          "on_link_click": "onChatLinkClick",
+                          "on_link_rclick": "onChatLinkRClick"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "chat_history_tab",
+                "flow": "vertical",
+                "debrBlock": {
+                  "id": "chat_history_scroll_block",
+                  "size": "pw, ph",
+                  "overflow-y": "auto",
+                  "scrollbarShortcuts": "yes",
+                  "tdiv": {
+                    "id": "chat_history_div",
+                    "width": "pw",
+                    "min-height": "ph",
+                    "margin": "1@debrPad",
+                    "chatLog": {
+                      "width": "pw",
+                      "id": "chat_log",
+                      "style": "color:@white",
+                      "text": "",
+                      "on_link_click": "onChatLinkClick",
+                      "on_link_rclick": "onChatLinkRClick"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "awards_list_tab",
+                "debrBlock": {
+                  "id": "awards_list_scroll_block",
+                  "size": "pw, ph",
+                  "overflow-y": "auto",
+                  "scrollbarShortcuts": "yes",
+                  "tdiv": {
+                    "width": "pw",
+                    "margin": "0.3@debrPad",
+                    "tdiv": {
+                      "width": "pw",
+                      "id": "awards_list_tab_div",
+                      "flow": "h-flow"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "battle_tasks_list_tab",
+                "debrBlock": {
+                  "size": "pw, ph",
+                  "tdiv": {
+                    "id": "battle_tasks_list_div",
+                    "size": "pw, fh",
+                    "position": "relative",
+                    "flow": "vertical",
+                    "listbox": {
+                      "id": "battle_tasks_list_scroll_block",
+                      "size": "pw, fh",
+                      "overflow-y": "auto",
+                      "flow": "vertical",
+                      "scrollBox-dontResendShortcut": "yes",
+                      "on_select": "onSelectTask",
+                      "navigatorShortcuts": "yes",
+                      "selImgType": "gamepadFocused"
+                    },
+                    "textAreaCentered": {
+                      "id": "battle_tasks_list_msg",
+                      "width": "80%pw",
+                      "pos": "50%pw-50%w, 40%ph-40%h",
+                      "position": "absolute",
+                      "hideEmptyText": "yes",
+                      "text": "#mainmenu/battleTasks/noBattleTasks"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "ww_casualties_tab",
+                "tdiv": {
+                  "id": "ww_casualties_div",
+                  "size": "pw, ph",
+                  "overflow-y": "auto",
+                  "debrBlock": {
+                    "size": "pw, ph"
+                  }
+                }
+              }
+            ]
+          },
+          "debrBlock": {
+            "id": "wnd_navbar_block",
+            "size": "pw, 1@navBarBattleButtonHeight +4@debrWndPad",
+            "padding": "2@debrWndPad",
+            "debrWndSeparator": {
+              "top": "-0.5h"
+            },
+            "tdiv": {
+              "id": "gc_navbar_sizer",
+              "size": "pw, ph",
+              "navLeft": {
+                "Button_text": [
+                  {
+                    "id": "btn_view_replay",
+                    "text": "#mainmenu/btnViewReplay",
+                    "btnName": "start",
+                    "_on_click": "onViewReplay",
+                    "display": "hide",
+                    "ButtonImg": {}
+                  },
+                  {
+                    "id": "btn_save_replay",
+                    "text": "#mainmenu/btnSaveReplay",
+                    "_on_click": "onSaveReplay",
+                    "display": "hide",
+                    "ButtonImg": {}
+                  },
+                  {
+                    "id": "btn_parse_replay",
+                    "text": "#hitsAnalisys",
+                    "on_click": "onParseReplay",
+                    "display": "hide",
+                    "ButtonImg": {}
+                  },
+                  {
+                    "id": "btn_requirements_list",
+                    "text": "#unlocks/requirements",
+                    "_on_click": "onViewBattleTaskRequirements",
+                    "display": "hide",
+                    "enable": "no",
+                    "ButtonImg": {}
+                  },
+                  {
+                    "id": "btn_user_options",
+                    "text": "#mainmenu/btnUserAction",
+                    "btnName": "RB",
+                    "on_click": "onUserOptions",
+                    "ButtonImg": {}
+                  }
+                ]
+              },
+              "navMiddle": {
+                "id": "nav_middle",
+                "Button_text": [
+                  {
+                    "id": "btn_next",
+                    "class": "battle",
+                    "navButtonFont": "yes",
+                    "text": "#mainmenu/btnOk",
+                    "css-hier-invalidate": "yes",
+                    "_on_click": "onNext",
+                    "btnName": "X",
+                    "display": "hide",
+                    "pattern": {
+                      "type": "bright_texture"
+                    },
+                    "buttonWink": {
+                      "_transp-timer": "0"
+                    },
+                    "buttonGlance": {},
+                    "ButtonImg": {},
+                    "btnText": {
+                      "id": "btn_next_text",
+                      "text": "#mainmenu/btnOk"
+                    }
+                  },
+                  {
+                    "id": "btn_skip",
+                    "text": "#msgbox/btn_skip",
+                    "_on_click": "goBack",
+                    "btnName": "B",
+                    "ButtonImg": {}
+                  }
+                ]
+              },
+              "navRight": {
+                "Button_text": [
+                  {
+                    "id": "btn_view_highlights",
+                    "class": "image",
+                    "text": "#mainmenu/btnViewHighlights",
+                    "_on_click": "onViewHighlights",
+                    "display": "hide",
+                    "enable": "no",
+                    "isColoredImg": "yes",
+                    "img": {
+                      "background-image": "#ui/gameuiskin#nv_icon"
+                    },
+                    "ButtonImg": {}
+                  },
+                  {
+                    "id": "btn_back",
+                    "text": "#mainmenu/btnQuit",
+                    "_on_click": "goBack",
+                    "btnName": "B",
+                    "display": "hide",
+                    "visualStyle": "secondary",
+                    "buttonWink": {},
+                    "ButtonImg": {}
+                  }
+                ]
+              }
+            },
+            "dummy": [
+              {
+                "_on_click": "onNext",
+                "behavior": "accesskey",
+                "accessKey": "Enter"
+              },
+              {
+                "_on_click": "goBack",
+                "btnName": "B",
+                "behavior": "accesskey"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "start_award_place_streaks",
+        "size": "5@debriefingUnlockIconSize, 5@debriefingUnlockIconSize",
+        "pos": "sw, sh",
+        "position": "root"
+      },
+      {
+        "id": "start_award_place_unlocks",
+        "size": "10@debriefingUnlockIconSize, 10@debriefingUnlockIconSize",
+        "pos": "-w, -h",
+        "position": "root"
+      },
+      {
+        "id": "my_place_move_box_start",
+        "size": "0.2@sf, 0.2@sf",
+        "pos": "50%sw-50%w, sh",
+        "position": "root",
+        "activeText": {
+          "caption": "yes",
+          "font-ht": "ph",
+          "text": "..."
+        }
+      },
+      {
+        "id": "skip_button",
+        "size": "pw, ph",
+        "position": "absolute",
+        "class": "button",
+        "behaviour": "button",
+        "on_click": "onSkip"
+      }
+    ],
+    "gamercard_div": {
+      "type": "top",
+      "gamercard": {
+        "id": "gamercard_bottom",
+        "systemMsg": {
+          "pos": "1@systemMsgIndent, 0",
+          "position": "root",
+          "flow": "vertical",
+          "dlDataStat": {
+            "behavior": "bhvUpdater",
+            "pos": "50%pw-50%w,0",
+            "position": "relative",
+            "value": "{\"viewId\": \"DL_DATA_STATE_TEXT\"}",
+            "css-hier-invalidate": "yes",
+            "animText": {
+              "text": "",
+              "font": "@fontTiny",
+              "color-factor": "0",
+              "fade": "out"
+            }
+          }
+        },
+        "BottomMenuPanel": {
+          "shadowSafeArea": {},
+          "tdiv": [
+            {
+              "size": "pw, 0.02@sf",
+              "pos": "0, ph",
+              "position": "absolute",
+              "background-repeat": "expand",
+              "background-image": "#ui/gameuiskin#optionlist_background_top",
+              "background-color": "#90909090",
+              "background-position": "0, 0.25h, 0, 0"
+            },
+            {
+              "width": "1@bottomGcWidth",
+              "height": "ph",
+              "pos": "pw/2 - w/2, ph/2 - h/2",
+              "position": "absolute",
+              "tdiv": {
+                "id": "gamercard_bottom_left",
+                "height": "1@gamercardHeight",
+                "class": "header",
+                "width": "fw",
+                "bottomNavPlace": {
+                  "id": "gamercard_bottom_navbar_place",
+                  "size": "pw - ph, ph",
+                  "pos": "0, 0.5(ph-h)",
+                  "position": "absolute"
+                },
+                "tdiv": {
+                  "id": "slotbar-presetsPlace",
+                  "size": "pw, ph",
+                  "position": "absolute",
+                  "display": "hide"
+                }
+              },
+              "voiceChatWidgetNest": {
+                "isClanOnly": "no",
+                "blockSeparator": [
+                  {
+                    "display": "hide"
+                  },
+                  {
+                    "display": "hide"
+                  }
+                ],
+                "emptyVoiceChat": {
+                  "tooltip": "#clan/voice_chat/widget",
+                  "usertalk": {
+                    "id": "voice_chat_no_activity",
+                    "type": "noTalk",
+                    "fade": "in",
+                    "height-end": "1",
+                    "_size-timer": "0",
+                    "img": {
+                      "color-factor": "255",
+                      "inacive": "yes",
+                      "position": "relative"
+                    },
+                    "activeText": {
+                      "text": "...",
+                      "color-factor": "255",
+                      "position": "relative"
+                    }
+                  }
+                },
+                "voiceChatWidgetContainer": {
+                  "isSmall": "no",
+                  "voiceChatWidget": {
+                    "value": "{\"viewId\": \"VOICE_CHAT\"}"
+                  }
+                }
+              },
+              "gcButtonsSquadHolder": {
+                "id": "gamercard_squad_widget",
+                "position": "relative",
+                "top": "0.5(ph-h)",
+                "margin-right": "2@buttonTextPadding",
+                "class": "header",
+                "css-hier-invalidate": "yes"
+              },
+              "gcButtonsHolder": {
+                "id": "gamercard_bottom_right",
+                "position": "relative",
+                "top": "0.5(ph-h)",
+                "class": "header",
+                "Button_text": [
+                  {
+                    "id": "gc_invites_btn",
+                    "class": "image",
+                    "tooltip": "#mainmenu/invites",
+                    "_on_click": "onGC_invites",
+                    "img": [
+                      {
+                        "id": "icon",
+                        "background-image": "#ui/gameuiskin#invites.svg"
+                      },
+                      {
+                        "id": "iconNew",
+                        "background-image": "#ui/gameuiskin#invites_new.svg",
+                        "style": "background-color:@textureGlowColor",
+                        "display": "hide"
+                      },
+                      {
+                        "id": "iconGlow",
+                        "background-image": "#ui/gameuiskin#mail_new_glow",
+                        "style": "background-color:@textureGlowColor; size:110%ph, 110%ph",
+                        "_transp-timer": "0",
+                        "display": "hide"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "gc_contacts",
+                    "class": "image",
+                    "tooltip": "#mainmenu/contacts",
+                    "_on_click": "onGC_contacts",
+                    "img": {
+                      "background-image": "#ui/gameuiskin#friends.svg"
+                    },
+                    "text": {
+                      "id": "gc_friends_online",
+                      "position": "absolute",
+                      "pos": "pw - w, ph - h - 2",
+                      "style": "font:@fontTiny; color:@userlogColoredText",
+                      "shadeStyle": "outline33pct",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "id": "gc_chat_btn",
+                    "class": "image",
+                    "tooltip": "#mainmenu/chat",
+                    "_on_click": "onGC_chat",
+                    "img": [
+                      {
+                        "id": "icon",
+                        "background-image": "#ui/gameuiskin#chat.svg"
+                      },
+                      {
+                        "id": "iconNew",
+                        "background-image": "#ui/gameuiskin#chat_new.svg",
+                        "style": "background-color:@textureGlowColor",
+                        "display": "hide"
+                      },
+                      {
+                        "id": "iconGlow",
+                        "background-image": "#ui/gameuiskin#mail_new_glow",
+                        "style": "background-color:@textureGlowColor; size:110%ph, 110%ph",
+                        "_transp-timer": "0",
+                        "display": "hide"
+                      }
+                    ],
+                    "text": {
+                      "id": "gc_new_chat_messages",
+                      "position": "absolute",
+                      "pos": "pw - w, ph - h",
+                      "style": "font:@fontTiny; color:@userlogColoredText",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "id": "gc_userlog_btn",
+                    "class": "image",
+                    "tooltip": "#userlog/no_new_messages",
+                    "_on_click": "onUserLog",
+                    "img": [
+                      {
+                        "id": "icon",
+                        "background-image": "#ui/gameuiskin#mail.svg"
+                      },
+                      {
+                        "id": "iconNew",
+                        "background-image": "#ui/gameuiskin#mail_new.svg",
+                        "style": "background-color:@textureGlowColor",
+                        "display": "hide"
+                      },
+                      {
+                        "id": "iconGlow",
+                        "background-image": "#ui/gameuiskin#mail_new_glow",
+                        "style": "background-color:@textureGlowColor; size:110%ph, 110%ph",
+                        "_transp-timer": "0",
+                        "display": "hide"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "tdiv": {
+          "position": "root",
+          "pos": "sw - w, 0",
+          "versionText": {}
+        }
+      }
+    },
+    "text": {
+      "id": "txt_session_id",
+      "pos": "0.08@sf, sh-0.015@sf",
+      "position": "root",
+      "input-transparent": "yes",
+      "overlayTextColor": "faded",
+      "tinyFont": "yes",
+      "text": ""
+    }
+  },
+  "div": {
+    "id": "debriefing_timer",
+    "behavior": "Timer",
+    "timer_handler_func": "onUpdate"
+  }
 }

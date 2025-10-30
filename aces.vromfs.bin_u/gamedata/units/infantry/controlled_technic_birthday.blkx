@@ -1,129 +1,235 @@
-model:t = "controlled_technic"
-subclass:t = "human"
-animChar:t = "controlled_technic_char"
-sprintStaminaDrain:r = 0
-restStaminaRestore:r = 5
-jumpStaminaDrain:r = 10
-sprintSpeed:r = 5
-runSpeed:r = 2
-moveType:t = "human"
-maxFwdSpeed:r = 10
-maxRevSpeed:r = 5
-maxAngSpeed:r = 30
-maxAccel:r = 4
-maxDecel:r = 8
-maxAngAccel0:r = 20
-maxAngAccelV:r = 0
-maxAngAccel:r = 40
-groundNormSmoothViscosity:r = 0.1
-minDistBetween:r = 10
-weapons {
-	primary {
-		blk:t = "gameData/weapons/gun_PPSH.blk"
-		numSpareMagazines:i = 4
-		reloadTime:r = 4
-		name:t = "PPSH"
-		shootNode:t = "rifle_Body"
-		selWeaponVar:i = 1
-		increaseDevWithEachShot:r = 1.5
-		standingPosition:p3 = 0, 1.6, -0.15
-		standingAimingPosition:p3 = 0, 1.6, -0.05
-		crouchPosition:p3 = 0, 1.2, -0.15
-		crouchAimingPosition:p3 = 0, 1.2, -0.05
-		crawlPosition:p3 = 0.7, 0.4, -0.15
-		crawlAimingPosition:p3 = 0.7, 0.45, -0.05
-		walkMoveMagnitude:r = 0.004
-		predictTime:r = 0.1
-		targetSpdVisc:r = 0.4
-		gunSpdVisc:r = 0.25
-		gunSpdDeltaMult:r = 1
-		maxGunSpd:r = 4.5
-		moveToSpd:r = 1.5
-		vertOffsetRestoreVisc:r = 0.4
-		vertOffsetMoveDownVisc:r = 0.5
-	}
-	secondary {
-		blk:t = "gameData/weapons/gun_Mosina_1891_30.blk"
-		numSpareMagazines:i = 4
-		reloadTime:r = 4
-		name:t = "PZSR"
-		shootNode:t = "automatic_rifle_Body"
-		selWeaponVar:i = 2
-		increaseDevWithEachShot:r = 5
-		standingPosition:p3 = 0, 1.6, -0.15
-		standingAimingPosition:p3 = 0, 1.6, -0.05
-		crouchPosition:p3 = 0, 1.2, -0.15
-		crouchAimingPosition:p3 = 0, 1.2, -0.05
-		crawlPosition:p3 = 0.7, 0.4, -0.15
-		crawlAimingPosition:p3 = 0.7, 0.45, -0.05
-		walkMoveMagnitude:r = 0.006
-		predictTime:r = 0.1
-		targetSpdVisc:r = 0.8
-		gunSpdVisc:r = 0.75
-		gunSpdDeltaMult:r = 1
-		maxGunSpd:r = 2
-		moveToSpd:r = 1
-		vertOffsetRestoreVisc:r = 0.4
-		vertOffsetMoveDownVisc:r = 0.5
-	}
-	tertiary {
-		blk:t = "gameData/weapons/gun_pistol_tt.blk"
-		numSpareMagazines:i = 6
-		reloadTime:r = 2
-		isAutomatic:b = false
-		name:t = "TT"
-		shootNode:t = "gun_body"
-		selWeaponVar:i = 0
-		increaseDevWithEachShot:r = 10
-		standingPosition:p3 = 0, 1.6, -0.15
-		standingAimingPosition:p3 = 0, 1.6, -0.05
-		crouchPosition:p3 = 0, 1.2, -0.15
-		crouchAimingPosition:p3 = 0, 1.2, -0.05
-		crawlPosition:p3 = 0.7, 0.4, -0.15
-		crawlAimingPosition:p3 = 0.7, 0.45, -0.05
-		targetSpdVisc:r = 0.2
-		gunSpdVisc:r = 0.15
-		maxGunSpd:r = 4.5
-		moveToSpd:r = 2
-	}
-	grenade {
-		blk:t = "gameData/weapons/grenade_sd10.blk"
-		numSpareMagazines:i = 5
-		reloadTime:r = 2
-		isAutomatic:b = false
-		name:t = "GRENADE"
-		shootNode:t = "rifle_Body"
-		standingPosition:p3 = 0.1, 1.6, -0.15
-		standingAimingPosition:p3 = 0.1, 1.6, -0.05
-		crouchPosition:p3 = 0, 1.2, -0.15
-		crouchAimingPosition:p3 = 0, 1.2, -0.05
-		crawlPosition:p3 = 0.7, 0.4, -0.15
-		crawlAimingPosition:p3 = 0.7, 0.45, -0.05
-	}
-}
-DamageParts {
-	steel {
-		armorClass:t = "tank_structural_steel"
-		body_dm {
-			armorThickness:r = 1000
-			hp:r = 1000000
-		}
-	}
-}
-DamageEffects {
-	part {
-		name:t = "body_dm"
-		onHit {
-			smoke:r = 0
-			fire:r = 0
-		}
-		onKill {
-			expl:r = 0
-		}
-	}
-}
-cockpit {
-	headPos:p3 = 0, 2.5, -3
-	headPosOnShooting:p3 = 0, 1.6, -0.3
-	detectionHeight:r = 2
+{
+  "model": "controlled_technic",
+  "subclass": "human",
+  "animChar": "controlled_technic_char",
+  "sprintStaminaDrain": 0.0,
+  "restStaminaRestore": 5.0,
+  "jumpStaminaDrain": 10.0,
+  "sprintSpeed": 5.0,
+  "runSpeed": 2.0,
+  "moveType": "human",
+  "maxFwdSpeed": 10.0,
+  "maxRevSpeed": 5.0,
+  "maxAngSpeed": 30.0,
+  "maxAccel": 4.0,
+  "maxDecel": 8.0,
+  "maxAngAccel0": 20.0,
+  "maxAngAccelV": 0.0,
+  "maxAngAccel": 40.0,
+  "groundNormSmoothViscosity": 0.1,
+  "minDistBetween": 10.0,
+  "weapons": {
+    "primary": {
+      "blk": "gameData/weapons/gun_PPSH.blk",
+      "numSpareMagazines": 4,
+      "reloadTime": 4.0,
+      "name": "PPSH",
+      "shootNode": "rifle_Body",
+      "selWeaponVar": 1,
+      "increaseDevWithEachShot": 1.5,
+      "standingPosition": [
+        0.0,
+        1.6,
+        -0.15
+      ],
+      "standingAimingPosition": [
+        0.0,
+        1.6,
+        -0.05
+      ],
+      "crouchPosition": [
+        0.0,
+        1.2,
+        -0.15
+      ],
+      "crouchAimingPosition": [
+        0.0,
+        1.2,
+        -0.05
+      ],
+      "crawlPosition": [
+        0.7,
+        0.4,
+        -0.15
+      ],
+      "crawlAimingPosition": [
+        0.7,
+        0.45,
+        -0.05
+      ],
+      "walkMoveMagnitude": 0.004,
+      "predictTime": 0.1,
+      "targetSpdVisc": 0.4,
+      "gunSpdVisc": 0.25,
+      "gunSpdDeltaMult": 1.0,
+      "maxGunSpd": 4.5,
+      "moveToSpd": 1.5,
+      "vertOffsetRestoreVisc": 0.4,
+      "vertOffsetMoveDownVisc": 0.5
+    },
+    "secondary": {
+      "blk": "gameData/weapons/gun_Mosina_1891_30.blk",
+      "numSpareMagazines": 4,
+      "reloadTime": 4.0,
+      "name": "PZSR",
+      "shootNode": "automatic_rifle_Body",
+      "selWeaponVar": 2,
+      "increaseDevWithEachShot": 5.0,
+      "standingPosition": [
+        0.0,
+        1.6,
+        -0.15
+      ],
+      "standingAimingPosition": [
+        0.0,
+        1.6,
+        -0.05
+      ],
+      "crouchPosition": [
+        0.0,
+        1.2,
+        -0.15
+      ],
+      "crouchAimingPosition": [
+        0.0,
+        1.2,
+        -0.05
+      ],
+      "crawlPosition": [
+        0.7,
+        0.4,
+        -0.15
+      ],
+      "crawlAimingPosition": [
+        0.7,
+        0.45,
+        -0.05
+      ],
+      "walkMoveMagnitude": 0.006,
+      "predictTime": 0.1,
+      "targetSpdVisc": 0.8,
+      "gunSpdVisc": 0.75,
+      "gunSpdDeltaMult": 1.0,
+      "maxGunSpd": 2.0,
+      "moveToSpd": 1.0,
+      "vertOffsetRestoreVisc": 0.4,
+      "vertOffsetMoveDownVisc": 0.5
+    },
+    "tertiary": {
+      "blk": "gameData/weapons/gun_pistol_tt.blk",
+      "numSpareMagazines": 6,
+      "reloadTime": 2.0,
+      "isAutomatic": false,
+      "name": "TT",
+      "shootNode": "gun_body",
+      "selWeaponVar": 0,
+      "increaseDevWithEachShot": 10.0,
+      "standingPosition": [
+        0.0,
+        1.6,
+        -0.15
+      ],
+      "standingAimingPosition": [
+        0.0,
+        1.6,
+        -0.05
+      ],
+      "crouchPosition": [
+        0.0,
+        1.2,
+        -0.15
+      ],
+      "crouchAimingPosition": [
+        0.0,
+        1.2,
+        -0.05
+      ],
+      "crawlPosition": [
+        0.7,
+        0.4,
+        -0.15
+      ],
+      "crawlAimingPosition": [
+        0.7,
+        0.45,
+        -0.05
+      ],
+      "targetSpdVisc": 0.2,
+      "gunSpdVisc": 0.15,
+      "maxGunSpd": 4.5,
+      "moveToSpd": 2.0
+    },
+    "grenade": {
+      "blk": "gameData/weapons/grenade_sd10.blk",
+      "numSpareMagazines": 5,
+      "reloadTime": 2.0,
+      "isAutomatic": false,
+      "name": "GRENADE",
+      "shootNode": "rifle_Body",
+      "standingPosition": [
+        0.1,
+        1.6,
+        -0.15
+      ],
+      "standingAimingPosition": [
+        0.1,
+        1.6,
+        -0.05
+      ],
+      "crouchPosition": [
+        0.0,
+        1.2,
+        -0.15
+      ],
+      "crouchAimingPosition": [
+        0.0,
+        1.2,
+        -0.05
+      ],
+      "crawlPosition": [
+        0.7,
+        0.4,
+        -0.15
+      ],
+      "crawlAimingPosition": [
+        0.7,
+        0.45,
+        -0.05
+      ]
+    }
+  },
+  "DamageParts": {
+    "steel": {
+      "armorClass": "tank_structural_steel",
+      "body_dm": {
+        "armorThickness": 1000.0,
+        "hp": 1000000.0
+      }
+    }
+  },
+  "DamageEffects": {
+    "part": {
+      "name": "body_dm",
+      "onHit": {
+        "smoke": 0.0,
+        "fire": 0.0
+      },
+      "onKill": {
+        "expl": 0.0
+      }
+    }
+  },
+  "cockpit": {
+    "headPos": [
+      0.0,
+      2.5,
+      -3.0
+    ],
+    "headPosOnShooting": [
+      0.0,
+      1.6,
+      -0.3
+    ],
+    "detectionHeight": 2.0
+  }
 }

@@ -1,603 +1,575 @@
-root {
-	bgrStyle:t = "fullScreenWnd"
-	blur {
-
-	}
-	blur_foreground {
-
-	}
-	frame {
-		id:t = "wnd_items_shop"
-		width:t = "@rw"
-		max-height:t = "sh-@bottomMenuPanelHeight"
-		pos:t = "0.5pw-0.5w, 0.5ph-0.5h-0.5@bottomMenuPanelHeight"
-		position:t = "absolute"
-		class:t = "wndNav"
-		fullScreenSize:t = "yes"
-		frame_header {
-			Breadcrumb {
-				Button_text {
-					_on_click:t = "goBack"
-					visualStyle:t = "noBgr"
-					img {
-
-					}
-					btnText {
-						id:t = "back_scene_name"
-					}
-					text {
-						text:t = " | "
-					}
-					textareaNoTab {
-						id:t = "bc_shop_header"
-						text:t = "#mainmenu/btnOnlineShop"
-					}
-				}
-			}
-			Button_close {
-				id:t = "btn_back"
-			}
-		}
-		tdiv {
-			size:t = "pw, 1@frameHeaderHeight"
-			flow:t = "horizontal"
-			HorizontalListBox {
-				id:t = "tabs_list"
-				height:t = "1@frameHeaderHeight"
-				class:t = "header"
-				normalFont:t = "yes"
-				activeAccesskeys:t = "RS"
-				on_select:t = "onTabChange"
-			}
-			tdiv {
-				position:t = "absolute"
-				pos:t = "pw-w, 0"
-				Button_text {
-					id:t = "gc_warpoints"
-					visualStyle:t = "noFrame"
-					tooltip:t = "#mainmenu/warpoints"
-					showBonusPersonal:t = ""
-					showBonusCommon:t = ""
-					_on_click:t = "onOnlineShopLions"
-					img {
-						isFirstLeft:t = "yes"
-						size:t = "@cIco, @cIco"
-						background-image:t = "#ui/gameuiskin#shop_warpoints.svg"
-						background-svg-size:t = "@cIco, @cIco"
-					}
-					btnText {
-						id:t = "gc_balance"
-						min-width:t = "0.05@sf"
-						pos:t = "@blockInterval, 50%ph-50%h"
-						position:t = "relative"
-						text-align:t = "left"
-					}
-					BonusCorner {
-						bonusType:t = "personal"
-					}
-					BonusCorner {
-						bonusType:t = "common"
-					}
-					gcBtnLine {
-
-					}
-				}
-				Button_text {
-					id:t = "gc_eagles"
-					visualStyle:t = "noFrame"
-					tooltip:t = "#mainmenu/gold"
-					_on_click:t = "onOnlineShopEagles"
-					img {
-						isFirstLeft:t = "yes"
-						size:t = "@cIco, @cIco"
-						background-image:t = "#ui/gameuiskin#shop_warpoints_premium.svg"
-						background-svg-size:t = "@cIco, @cIco"
-					}
-					btnText {
-						id:t = "gc_gold"
-						min-width:t = "0.05@sf"
-						pos:t = "@blockInterval, 50%ph-50%h"
-						position:t = "relative"
-						text-align:t = "left"
-					}
-					gcBtnLine {
-
-					}
-				}
-				textareaNoTab {
-					id:t = "balance_text"
-					pos:t = "0, 0.5ph-0.5h"
-					position:t = "relative"
-					hideEmptyText:t = "yes"
-					text:t = ""
-					tooltip:t = ""
-				}
-				tdiv {
-					id:t = "sorting_block"
-					width:t = "1@subsetComboBoxWidth"
-					position:t = "relative"
-					top:t = "0.5ph-0.5h"
-					margin-left:t = "1@listboxPad"
-					display:t = "hide"
-					tdiv {
-						id:t = "sorting_block_bg"
-						width:t = "pw"
-						background-color:t = "@rowHoverBackgroundColor"
-						padding:t = "1@dp"
-					}
-				}
-			}
-		}
-		div {
-			width:t = "pw"
-			activeText {
-				id:t = "wnd_title"
-				position:t = "relative"
-				left:t = "0.5pw-0.5w"
-				text:t = ""
-				caption:t = "yes"
-				hideEmptyText:t = "yes"
-			}
-		}
-		rowSeparator {
-			top:t = "-1@dp"
-		}
-		div {
-			id:t = "main_block"
-			width:t = "pw"
-			tdiv {
-				height:t = "ph"
-				position:t = "relative"
-				flow:t = "vertical"
-				div {
-					id:t = "control_navigation"
-					height:t = "ph"
-				}
-			}
-			tdiv {
-				id:t = "empty_items_list"
-				height:t = "ph"
-				flow:t = "vertical"
-				position:t = "relative"
-				padding-left:t = "1@itemPadding"
-				display:t = "hide"
-				enable:t = "no"
-				textareaNoTab {
-					id:t = "empty_items_list_text"
-					width:t = "pw"
-					padding:t = "1@itemPadding"
-				}
-				animated_wait_icon {
-					id:t = "loadingWait"
-					display:t = "hide"
-					pos:t = "50%pw-50%w,50%ph-50%h"
-					position:t = "absolute"
-					background-rotation:t = "0"
-				}
-				Button_text {
-					id:t = "items_shop_to_shop_button"
-					pos:t = "1@itemPadding, 0"
-					position:t = "relative"
-					text:t = "#items/shop/emptyTab/toShopButton"
-					on_click:t = "onToShopButton"
-					btnName:t = "Y"
-					visualStyle:t = "secondary"
-					display:t = "hide"
-					buttonWink {
-
-					}
-					ButtonImg {
-
-					}
-				}
-				Button_text {
-					id:t = "items_shop_to_marketplace_button"
-					pos:t = "1@itemPadding, 0"
-					position:t = "relative"
-					text:t = "#mainmenu/marketplace"
-					on_click:t = "onToMarketplaceButton"
-					btnName:t = "Y"
-					visualStyle:t = "secondary"
-					display:t = "hide"
-					buttonWink {
-
-					}
-					ButtonImg {
-
-					}
-				}
-			}
-			tdiv {
-				id:t = "items_list"
-				height:t = "ph"
-				flow:t = "h-flow"
-				position:t = "relative"
-				total-input-transparent:t = "yes"
-				itemShopList:t = "yes"
-				behavior:t = "posNavigator"
-				navigatorShortcuts:t = "noSelect"
-				moveX:t = "closest"
-				moveY:t = "linear"
-				isSkipMoving:t = "no"
-				clearOnFocusLost:t = "no"
-				canSelectNone:t = "yes"
-				on_select:t = "updateItemInfo"
-				_on_hover:t = "onItemsListFocusChange"
-				_on_unhover:t = "onItemsListFocusChange"
-			}
-			tdiv {
-				id:t = "item_info_nest"
-				height:t = "ph"
-				position:t = "relative"
-				overflow-y:t = "auto"
-				scrollbarShortcuts:t = "yes"
-				total-input-transparent:t = "yes"
-				chapterSeparator {
-
-				}
-				div {
-					id:t = "item_info"
-					width:t = "pw"
-					padding:t = "1@itemSpacing"
-					flow:t = "vertical"
-				}
-				div {
-					id:t = "common_info"
-					width:t = "pw"
-					padding:t = "1@itemSpacing"
-					flow:t = "vertical"
-					display:t = "hide"
-					textAreaCentered {
-						id:t = "info_name"
-						width:t = "pw"
-						overlayTextColor:t = "active"
-					}
-					itemIconBlock {
-						id:t = "info_icon"
-						pos:t = "50%pw-50%w, 0"
-						position:t = "relative"
-						doubleSize:t = "no"
-					}
-					textareaNoTab {
-						id:t = "info_desc"
-						width:t = "pw"
-						pos:t = "50%pw-50%w, 0"
-						position:t = "relative"
-						font-bold:t = "@fontMedium"
-					}
-				}
-				DummyButton {
-					id:t = "jumpToDescPanel"
-					pos:t = "1@framePadding +1@itemPadding, 1@framePadding +1@itemPadding"
-					position:t = "absolute"
-					size:t = "@mIco, @mIco"
-					btnName:t = "R3"
-					on_click:t = "onJumpToDescPanelAccessKey"
-					ButtonImg {
-
-					}
-				}
-			}
-		}
-		frameBlock {
-			id:t = "warbond_shop_progress_block"
-			size:t = "pw, 0.08@scrn_tgt"
-			margin-top:t = "1@blockInterval"
-			display:t = "hide"
-			css-hier-invalidate:t = "yes"
-			tdiv {
-				id:t = "shop_level_progress_place"
-				top:t = "0.5ph-0.5h"
-				position:t = "relative"
-				width:t = "0.5pw"
-				progressBoxPlace {
-					id:t = "progress_box_place"
-					pos:t = "0, 50%ph-50%h"
-					position:t = "relative"
-					width:t = "pw"
-					height:t = "1@warbondShopLevelProgressHeight"
-				}
-				tdiv {
-					id:t = "old_shop_progress_place"
-					pos:t = "0, 50%ph-50%h"
-					position:t = "relative"
-					width:t = "pw"
-					tdiv {
-						id:t = "level_icon"
-						pos:t = "-0.5@warbondShopLevelItemHeight, 50%ph-50%h"
-						position:t = "relative"
-					}
-					textareaNoTab {
-						text:t = "#warbonds/shop/inactive/level"
-						pos:t = "0, 50%ph-50%h"
-						position:t = "relative"
-					}
-				}
-			}
-			tdiv {
-				id:t = "special_tasks_progress_block"
-				position:t = "absolute"
-				tdiv {
-					id:t = "medal_icon"
-				}
-			}
-		}
-		navBar {
-			navLeft {
-				Button_text {
-					id:t = "btn_open_craft_tree"
-					text:t = "#mainmenu/btnAircraftInfo"
-					on_click:t = "onOpenCraftTree"
-					display:t = "hide"
-					enable:t = "no"
-					ButtonImg {
-
-					}
-				}
-				Button_text {
-					id:t = "btn_battlePass"
-					text:t = "#battlePass"
-					btnName:t = "Y"
-					on_click:t = "onShowBattlePass"
-					display:t = "hide"
-					enable:t = "no"
-					ButtonImg {
-
-					}
-				}
-			}
-			paginatorPlace {
-				id:t = "paginator_place"
-				top:t = "0.5ph + 0.5@navBarTopPadding - 0.5h"
-				smallPaginatorWidth:t = "yes"
-				position:t = "absolute"
-			}
-			navRight {
-				id:t = "item_actions_bar"
-				textarea {
-					id:t = "warning_text"
-					top:t = "0.5ph - 0.5h"
-					position:t = "relative"
-					margin:t = "@blockInterval, 0"
-					text:t = ""
-				}
-				textarea {
-					id:t = "activate_info_text"
-					top:t = "0.5ph - 0.5h"
-					position:t = "relative"
-					margin:t = "@blockInterval, 0"
-					text:t = ""
-				}
-				Button_text {
-					id:t = "btn_preview"
-					text:t = "#mainmenu/btnPreview"
-					btnName:t = "L3"
-					_on_click:t = "onItemPreview"
-					display:t = "hide"
-					enable:t = "no"
-					showButtonImageOnConsole:t = "no"
-					class:t = "image"
-					img {
-						background-image:t = "#ui/gameuiskin#btn_preview.svg"
-					}
-					ButtonImg {
-
-					}
-				}
-				Button_text {
-					id:t = "btn_specialTasks"
-					text:t = "#mainmenu/btnBattleTasksHard"
-					btnName:t = "X"
-					on_click:t = "onShowSpecialTasks"
-					display:t = "hide"
-					enable:t = "no"
-					ButtonImg {
-
-					}
-				}
-				Button_text {
-					id:t = "btn_link_action"
-					text:t = "#mainmenu/btnBrowser"
-					btnName:t = "Y"
-					on_click:t = "onLinkAction"
-					hideText:t = "yes"
-					css-hier-invalidate:t = "yes"
-					showButtonImageOnConsole:t = "no"
-					display:t = "hide"
-					enable:t = "no"
-					visualStyle:t = "secondary"
-					class:t = ""
-					isColoredImg:t = "yes"
-					buttonWink {
-
-					}
-					buttonGlance {
-
-					}
-					img {
-						id:t = "img"
-						background-image:t = ""
-					}
-					ButtonImg {
-
-					}
-					textarea {
-						id:t = "btn_link_action_text"
-						class:t = "buttonText"
-					}
-				}
-				Button_text {
-					id:t = "btn_probability_info"
-					text:t = "#mainmenu/probability_info"
-					btnName:t = "Y"
-					on_click:t = "onProbabilityInfoBtn"
-					hideText:t = "yes"
-					css-hier-invalidate:t = "yes"
-					showButtonImageOnConsole:t = "no"
-					display:t = "hide"
-					enable:t = "no"
-					visualStyle:t = "secondary"
-					class:t = ""
-					isColoredImg:t = "yes"
-					buttonWink {
-
-					}
-					buttonGlance {
-
-					}
-					img {
-						id:t = "img"
-						background-image:t = ""
-					}
-					ButtonImg {
-
-					}
-					textarea {
-						id:t = "btn_probability_info_text"
-						class:t = "buttonText"
-						text:t = "#mainmenu/probability_info"
-					}
-				}
-				Button_text {
-					id:t = "btn_alt_action"
-					text:t = ""
-					visualStyle:t = "secondary"
-					btnName:t = "X"
-					on_click:t = "onAltAction"
-					hideText:t = "yes"
-					display:t = "hide"
-					enable:t = "no"
-					buttonWink {
-
-					}
-					buttonGlance {
-
-					}
-					ButtonImg {
-
-					}
-					textarea {
-						id:t = "btn_alt_action_text"
-						class:t = "buttonText"
-					}
-				}
-				Button_text {
-					id:t = "btn_main_action"
-					text:t = ""
-					btnName:t = "A"
-					on_click:t = "onMainAction"
-					hideText:t = "yes"
-					css-hier-invalidate:t = "yes"
-					showButtonImageOnConsole:t = "no"
-					display:t = "hide"
-					enable:t = "no"
-					visualStyle:t = "secondary"
-					buttonWink {
-
-					}
-					buttonGlance {
-
-					}
-					ButtonImg {
-
-					}
-					textarea {
-						id:t = "btn_main_action_text"
-						class:t = "buttonText"
-						redLine {
-							id:t = "redLine"
-							width:t = "1.1pw"
-							height:t = "2@sf/@pf"
-							pos:t = "pw/2-w/2, ph/2-h/2"
-							position:t = "absolute"
-							background-color:t = "@red"
-							display:t = "hide"
-						}
-					}
-					div {
-						display:t = "hide"
-						id:t = "stake_select"
-					}
-				}
-			}
-		}
-		tdiv {
-			id:t = "recycling_controls_place"
-		}
-	}
-	chatPopupNest {
-		id:t = "chatPopupNest"
-		position:t = "absolute"
-		pos:t = "1@bw + 0.5@rw-w-0.55@titleLogoPlateWidth, @topBarHeight"
-	}
-	gamercard_div {
-		gamercard {
-			BottomMenuPanel {
-				rowSeparator {
-
-				}
-				tdiv {
-					height:t = "ph"
-					position:t = "absolute"
-					pos:t = "pw-w, 0.5ph-0.5h"
-					voiceChatWidgetNest {
-						isClanOnly:t = "no"
-						blockSeparator {
-							display:t = "hide"
-						}
-						emptyVoiceChat {
-							tooltip:t = "#clan/voice_chat/widget"
-							usertalk {
-								id:t = "voice_chat_no_activity"
-								type:t = "noTalk"
-								fade:t = "in"
-								height-end:t = "1"
-								_size-timer:t = "0"
-								img {
-									color-factor:t = "255"
-									inacive:t = "yes"
-									position:t = "relative"
-								}
-								activeText {
-									text:t = "..."
-									color-factor:t = "255"
-									position:t = "relative"
-								}
-							}
-						}
-						voiceChatWidgetContainer {
-							isSmall:t = "no"
-							voiceChatWidget {
-								value:t = '{"viewId": "VOICE_CHAT"}'
-							}
-						}
-						blockSeparator {
-							display:t = "hide"
-						}
-					}
-				}
-			}
-		}
-	}
-	tdiv {
-		id:t = "black_screen"
-		background-color:t = "@black"
-		size:t = "1@swOrRwInVr, 1@shOrRhInVr"
-		pos:t = "1@bwInVr, 1@bhInVr"
-		position:t = "absolute"
-		display:t = "hide"
-	}
-}
-timer {
-	id:t = "update_timer"
-	timer_handler_func:t = "onTimer"
-	timer_interval_msec:t = "1000"
-}
-timer {
-	id:t = "mouse_timer"
-	timer_handler_func:t = "onHoverTimerUpdate"
-	timer_interval_msec:t = "10"
-}
-timer {
-	id:t = "hover_hold_timer"
+{
+  "root": {
+    "bgrStyle": "fullScreenWnd",
+    "blur": {},
+    "blur_foreground": {},
+    "frame": {
+      "id": "wnd_items_shop",
+      "width": "@rw",
+      "max-height": "sh-@bottomMenuPanelHeight",
+      "pos": "0.5pw-0.5w, 0.5ph-0.5h-0.5@bottomMenuPanelHeight",
+      "position": "absolute",
+      "class": "wndNav",
+      "fullScreenSize": "yes",
+      "frame_header": {
+        "Breadcrumb": {
+          "Button_text": {
+            "_on_click": "goBack",
+            "visualStyle": "noBgr",
+            "img": {},
+            "btnText": {
+              "id": "back_scene_name"
+            },
+            "text": {
+              "text": " | "
+            },
+            "textareaNoTab": {
+              "id": "bc_shop_header",
+              "text": "#mainmenu/btnOnlineShop"
+            }
+          }
+        },
+        "Button_close": {
+          "id": "btn_back"
+        }
+      },
+      "tdiv": [
+        {
+          "size": "pw, 1@frameHeaderHeight",
+          "flow": "horizontal",
+          "HorizontalListBox": {
+            "id": "tabs_list",
+            "height": "1@frameHeaderHeight",
+            "class": "header",
+            "normalFont": "yes",
+            "activeAccesskeys": "RS",
+            "on_select": "onTabChange"
+          },
+          "tdiv": {
+            "position": "absolute",
+            "pos": "pw-w, 0",
+            "Button_text": [
+              {
+                "id": "gc_warpoints",
+                "visualStyle": "noFrame",
+                "tooltip": "#mainmenu/warpoints",
+                "showBonusPersonal": "",
+                "showBonusCommon": "",
+                "_on_click": "onOnlineShopLions",
+                "img": {
+                  "isFirstLeft": "yes",
+                  "size": "@cIco, @cIco",
+                  "background-image": "#ui/gameuiskin#shop_warpoints.svg",
+                  "background-svg-size": "@cIco, @cIco"
+                },
+                "btnText": {
+                  "id": "gc_balance",
+                  "min-width": "0.05@sf",
+                  "pos": "@blockInterval, 50%ph-50%h",
+                  "position": "relative",
+                  "text-align": "left"
+                },
+                "BonusCorner": [
+                  {
+                    "bonusType": "personal"
+                  },
+                  {
+                    "bonusType": "common"
+                  }
+                ],
+                "gcBtnLine": {}
+              },
+              {
+                "id": "gc_eagles",
+                "visualStyle": "noFrame",
+                "tooltip": "#mainmenu/gold",
+                "_on_click": "onOnlineShopEagles",
+                "img": {
+                  "isFirstLeft": "yes",
+                  "size": "@cIco, @cIco",
+                  "background-image": "#ui/gameuiskin#shop_warpoints_premium.svg",
+                  "background-svg-size": "@cIco, @cIco"
+                },
+                "btnText": {
+                  "id": "gc_gold",
+                  "min-width": "0.05@sf",
+                  "pos": "@blockInterval, 50%ph-50%h",
+                  "position": "relative",
+                  "text-align": "left"
+                },
+                "gcBtnLine": {}
+              }
+            ],
+            "textareaNoTab": {
+              "id": "balance_text",
+              "pos": "0, 0.5ph-0.5h",
+              "position": "relative",
+              "hideEmptyText": "yes",
+              "text": "",
+              "tooltip": ""
+            },
+            "tdiv": {
+              "id": "sorting_block",
+              "width": "1@subsetComboBoxWidth",
+              "position": "relative",
+              "top": "0.5ph-0.5h",
+              "margin-left": "1@listboxPad",
+              "display": "hide",
+              "tdiv": {
+                "id": "sorting_block_bg",
+                "width": "pw",
+                "background-color": "@rowHoverBackgroundColor",
+                "padding": "1@dp"
+              }
+            }
+          }
+        },
+        {
+          "id": "recycling_controls_place"
+        }
+      ],
+      "div": [
+        {
+          "width": "pw",
+          "activeText": {
+            "id": "wnd_title",
+            "position": "relative",
+            "left": "0.5pw-0.5w",
+            "text": "",
+            "caption": "yes",
+            "hideEmptyText": "yes"
+          }
+        },
+        {
+          "id": "main_block",
+          "width": "pw",
+          "tdiv": [
+            {
+              "height": "ph",
+              "position": "relative",
+              "flow": "vertical",
+              "div": {
+                "id": "control_navigation",
+                "height": "ph"
+              }
+            },
+            {
+              "id": "empty_items_list",
+              "height": "ph",
+              "flow": "vertical",
+              "position": "relative",
+              "padding-left": "1@itemPadding",
+              "display": "hide",
+              "enable": "no",
+              "textareaNoTab": {
+                "id": "empty_items_list_text",
+                "width": "pw",
+                "padding": "1@itemPadding"
+              },
+              "animated_wait_icon": {
+                "id": "loadingWait",
+                "display": "hide",
+                "pos": "50%pw-50%w,50%ph-50%h",
+                "position": "absolute",
+                "background-rotation": "0"
+              },
+              "Button_text": [
+                {
+                  "id": "items_shop_to_shop_button",
+                  "pos": "1@itemPadding, 0",
+                  "position": "relative",
+                  "text": "#items/shop/emptyTab/toShopButton",
+                  "on_click": "onToShopButton",
+                  "btnName": "Y",
+                  "visualStyle": "secondary",
+                  "display": "hide",
+                  "buttonWink": {},
+                  "ButtonImg": {}
+                },
+                {
+                  "id": "items_shop_to_marketplace_button",
+                  "pos": "1@itemPadding, 0",
+                  "position": "relative",
+                  "text": "#mainmenu/marketplace",
+                  "on_click": "onToMarketplaceButton",
+                  "btnName": "Y",
+                  "visualStyle": "secondary",
+                  "display": "hide",
+                  "buttonWink": {},
+                  "ButtonImg": {}
+                }
+              ]
+            },
+            {
+              "id": "items_list",
+              "height": "ph",
+              "flow": "h-flow",
+              "position": "relative",
+              "total-input-transparent": "yes",
+              "itemShopList": "yes",
+              "behavior": "posNavigator",
+              "navigatorShortcuts": "noSelect",
+              "moveX": "closest",
+              "moveY": "linear",
+              "isSkipMoving": "no",
+              "clearOnFocusLost": "no",
+              "canSelectNone": "yes",
+              "on_select": "updateItemInfo",
+              "_on_hover": "onItemsListFocusChange",
+              "_on_unhover": "onItemsListFocusChange"
+            },
+            {
+              "id": "item_info_nest",
+              "height": "ph",
+              "position": "relative",
+              "overflow-y": "auto",
+              "scrollbarShortcuts": "yes",
+              "total-input-transparent": "yes",
+              "chapterSeparator": {},
+              "div": [
+                {
+                  "id": "item_info",
+                  "width": "pw",
+                  "padding": "1@itemSpacing",
+                  "flow": "vertical"
+                },
+                {
+                  "id": "common_info",
+                  "width": "pw",
+                  "padding": "1@itemSpacing",
+                  "flow": "vertical",
+                  "display": "hide",
+                  "textAreaCentered": {
+                    "id": "info_name",
+                    "width": "pw",
+                    "overlayTextColor": "active"
+                  },
+                  "itemIconBlock": {
+                    "id": "info_icon",
+                    "pos": "50%pw-50%w, 0",
+                    "position": "relative",
+                    "doubleSize": "no"
+                  },
+                  "textareaNoTab": {
+                    "id": "info_desc",
+                    "width": "pw",
+                    "pos": "50%pw-50%w, 0",
+                    "position": "relative",
+                    "font-bold": "@fontMedium"
+                  }
+                }
+              ],
+              "DummyButton": {
+                "id": "jumpToDescPanel",
+                "pos": "1@framePadding +1@itemPadding, 1@framePadding +1@itemPadding",
+                "position": "absolute",
+                "size": "@mIco, @mIco",
+                "btnName": "R3",
+                "on_click": "onJumpToDescPanelAccessKey",
+                "ButtonImg": {}
+              }
+            }
+          ]
+        }
+      ],
+      "rowSeparator": {
+        "top": "-1@dp"
+      },
+      "frameBlock": {
+        "id": "warbond_shop_progress_block",
+        "size": "pw, 0.08@scrn_tgt",
+        "margin-top": "1@blockInterval",
+        "display": "hide",
+        "css-hier-invalidate": "yes",
+        "tdiv": [
+          {
+            "id": "shop_level_progress_place",
+            "top": "0.5ph-0.5h",
+            "position": "relative",
+            "width": "0.5pw",
+            "progressBoxPlace": {
+              "id": "progress_box_place",
+              "pos": "0, 50%ph-50%h",
+              "position": "relative",
+              "width": "pw",
+              "height": "1@warbondShopLevelProgressHeight"
+            },
+            "tdiv": {
+              "id": "old_shop_progress_place",
+              "pos": "0, 50%ph-50%h",
+              "position": "relative",
+              "width": "pw",
+              "tdiv": {
+                "id": "level_icon",
+                "pos": "-0.5@warbondShopLevelItemHeight, 50%ph-50%h",
+                "position": "relative"
+              },
+              "textareaNoTab": {
+                "text": "#warbonds/shop/inactive/level",
+                "pos": "0, 50%ph-50%h",
+                "position": "relative"
+              }
+            }
+          },
+          {
+            "id": "special_tasks_progress_block",
+            "position": "absolute",
+            "tdiv": {
+              "id": "medal_icon"
+            }
+          }
+        ]
+      },
+      "navBar": {
+        "navLeft": {
+          "Button_text": [
+            {
+              "id": "btn_open_craft_tree",
+              "text": "#mainmenu/btnAircraftInfo",
+              "on_click": "onOpenCraftTree",
+              "display": "hide",
+              "enable": "no",
+              "ButtonImg": {}
+            },
+            {
+              "id": "btn_battlePass",
+              "text": "#battlePass",
+              "btnName": "Y",
+              "on_click": "onShowBattlePass",
+              "display": "hide",
+              "enable": "no",
+              "ButtonImg": {}
+            }
+          ]
+        },
+        "paginatorPlace": {
+          "id": "paginator_place",
+          "top": "0.5ph + 0.5@navBarTopPadding - 0.5h",
+          "smallPaginatorWidth": "yes",
+          "position": "absolute"
+        },
+        "navRight": {
+          "id": "item_actions_bar",
+          "textarea": [
+            {
+              "id": "warning_text",
+              "top": "0.5ph - 0.5h",
+              "position": "relative",
+              "margin": "@blockInterval, 0",
+              "text": ""
+            },
+            {
+              "id": "activate_info_text",
+              "top": "0.5ph - 0.5h",
+              "position": "relative",
+              "margin": "@blockInterval, 0",
+              "text": ""
+            }
+          ],
+          "Button_text": [
+            {
+              "id": "btn_preview",
+              "text": "#mainmenu/btnPreview",
+              "btnName": "L3",
+              "_on_click": "onItemPreview",
+              "display": "hide",
+              "enable": "no",
+              "showButtonImageOnConsole": "no",
+              "class": "image",
+              "img": {
+                "background-image": "#ui/gameuiskin#btn_preview.svg"
+              },
+              "ButtonImg": {}
+            },
+            {
+              "id": "btn_specialTasks",
+              "text": "#mainmenu/btnBattleTasksHard",
+              "btnName": "X",
+              "on_click": "onShowSpecialTasks",
+              "display": "hide",
+              "enable": "no",
+              "ButtonImg": {}
+            },
+            {
+              "id": "btn_link_action",
+              "text": "#mainmenu/btnBrowser",
+              "btnName": "Y",
+              "on_click": "onLinkAction",
+              "hideText": "yes",
+              "css-hier-invalidate": "yes",
+              "showButtonImageOnConsole": "no",
+              "display": "hide",
+              "enable": "no",
+              "visualStyle": "secondary",
+              "class": "",
+              "isColoredImg": "yes",
+              "buttonWink": {},
+              "buttonGlance": {},
+              "img": {
+                "id": "img",
+                "background-image": ""
+              },
+              "ButtonImg": {},
+              "textarea": {
+                "id": "btn_link_action_text",
+                "class": "buttonText"
+              }
+            },
+            {
+              "id": "btn_probability_info",
+              "text": "#mainmenu/probability_info",
+              "btnName": "Y",
+              "on_click": "onProbabilityInfoBtn",
+              "hideText": "yes",
+              "css-hier-invalidate": "yes",
+              "showButtonImageOnConsole": "no",
+              "display": "hide",
+              "enable": "no",
+              "visualStyle": "secondary",
+              "class": "",
+              "isColoredImg": "yes",
+              "buttonWink": {},
+              "buttonGlance": {},
+              "img": {
+                "id": "img",
+                "background-image": ""
+              },
+              "ButtonImg": {},
+              "textarea": {
+                "id": "btn_probability_info_text",
+                "class": "buttonText",
+                "text": "#mainmenu/probability_info"
+              }
+            },
+            {
+              "id": "btn_alt_action",
+              "text": "",
+              "visualStyle": "secondary",
+              "btnName": "X",
+              "on_click": "onAltAction",
+              "hideText": "yes",
+              "display": "hide",
+              "enable": "no",
+              "buttonWink": {},
+              "buttonGlance": {},
+              "ButtonImg": {},
+              "textarea": {
+                "id": "btn_alt_action_text",
+                "class": "buttonText"
+              }
+            },
+            {
+              "id": "btn_main_action",
+              "text": "",
+              "btnName": "A",
+              "on_click": "onMainAction",
+              "hideText": "yes",
+              "css-hier-invalidate": "yes",
+              "showButtonImageOnConsole": "no",
+              "display": "hide",
+              "enable": "no",
+              "visualStyle": "secondary",
+              "buttonWink": {},
+              "buttonGlance": {},
+              "ButtonImg": {},
+              "textarea": {
+                "id": "btn_main_action_text",
+                "class": "buttonText",
+                "redLine": {
+                  "id": "redLine",
+                  "width": "1.1pw",
+                  "height": "2@sf/@pf",
+                  "pos": "pw/2-w/2, ph/2-h/2",
+                  "position": "absolute",
+                  "background-color": "@red",
+                  "display": "hide"
+                }
+              },
+              "div": {
+                "display": "hide",
+                "id": "stake_select"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "chatPopupNest": {
+      "id": "chatPopupNest",
+      "position": "absolute",
+      "pos": "1@bw + 0.5@rw-w-0.55@titleLogoPlateWidth, @topBarHeight"
+    },
+    "gamercard_div": {
+      "gamercard": {
+        "BottomMenuPanel": {
+          "rowSeparator": {},
+          "tdiv": {
+            "height": "ph",
+            "position": "absolute",
+            "pos": "pw-w, 0.5ph-0.5h",
+            "voiceChatWidgetNest": {
+              "isClanOnly": "no",
+              "blockSeparator": [
+                {
+                  "display": "hide"
+                },
+                {
+                  "display": "hide"
+                }
+              ],
+              "emptyVoiceChat": {
+                "tooltip": "#clan/voice_chat/widget",
+                "usertalk": {
+                  "id": "voice_chat_no_activity",
+                  "type": "noTalk",
+                  "fade": "in",
+                  "height-end": "1",
+                  "_size-timer": "0",
+                  "img": {
+                    "color-factor": "255",
+                    "inacive": "yes",
+                    "position": "relative"
+                  },
+                  "activeText": {
+                    "text": "...",
+                    "color-factor": "255",
+                    "position": "relative"
+                  }
+                }
+              },
+              "voiceChatWidgetContainer": {
+                "isSmall": "no",
+                "voiceChatWidget": {
+                  "value": "{\"viewId\": \"VOICE_CHAT\"}"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tdiv": {
+      "id": "black_screen",
+      "background-color": "@black",
+      "size": "1@swOrRwInVr, 1@shOrRhInVr",
+      "pos": "1@bwInVr, 1@bhInVr",
+      "position": "absolute",
+      "display": "hide"
+    }
+  },
+  "timer": [
+    {
+      "id": "update_timer",
+      "timer_handler_func": "onTimer",
+      "timer_interval_msec": "1000"
+    },
+    {
+      "id": "mouse_timer",
+      "timer_handler_func": "onHoverTimerUpdate",
+      "timer_interval_msec": "10"
+    },
+    {
+      "id": "hover_hold_timer"
+    }
+  ]
 }

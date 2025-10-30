@@ -1,75 +1,81 @@
-EditBox {
-	id:t = "search_edit_box"
-	width:t = "fw"
-	noMargin:t = "yes"
-	edit-hint:t = "#contacts/search_placeholder"
-	max-len:t = "60"
-	text:t = ""
-	on_activate:t = "onSearchEditBoxActivate"
-	on_cancel_edit:t = "onSearchEditBoxCancelEdit"
-	on_change_value:t = "onSearchEditBoxChangeValue"
-	on_set_focus:t = "onSearchEditBoxFocusChanged"
-	on_mouse_enter:t = "onSearchEditBoxMouseChanged"
-	on_mouse_leave:t = "onSearchEditBoxMouseChanged"
-}
-tdiv {
-	id:t = "search_box_result"
-	min-width:t = "pw"
-	position:t = "absolute"
-	pos:t = "0, ph + @blockInterval"
-	border:t = "yes"
-	border-color:t = "@frameBlueBorderColor"
-	background-color:t = "@frameBlueBackgroundColor"
-	padding:t = "@blockInterval"
-	order-popup:t = "yes"
-	display:t = "hide"
-	textareaNoTab {
-		id:t = "search_hint_text"
-		tinyFont:t = "yes"
-		text:t = "#shop/search/hint"
-	}
-}
-tdiv {
-	id:t = "search_buttons"
-	pos:t = "0, ph/2-h/2"
-	position:t = "relative"
-	display:t = "hide"
-	Button_text {
-		id:t = "search_btn_close"
-		pos:t = "0, ph/2-h/2"
-		position:t = "relative"
-		class:t = "image"
-		showConsoleImage:t = "no"
-		noMargin:t = "yes"
-		tooltip:t = "#options/clearIt"
-		hotkeyLoc:t = "key/Esc"
-		on_click:t = "onSearchCancelClick"
-		img {
-			background-image:t = "#ui/gameuiskin#btn_close.svg"
-		}
-	}
-	Button_text {
-		id:t = "search_btn_start"
-		pos:t = "0, ph/2-h/2"
-		position:t = "relative"
-		class:t = "image"
-		showConsoleImage:t = "no"
-		noMargin:t = "yes"
-		tooltip:t = "#shop/search/everywhere"
-		hotkeyLoc:t = "key/Enter"
-		on_click:t = "onSearchButtonClick"
-		img {
-			background-image:t = "#ui/gameuiskin#btn_search.svg"
-		}
-	}
-}
-dummy {
-	on_click:t = "onAccesskeyActivateSearch"
-	behaviour:t = "accesskey"
-	accessKey:t = "Ctrl F"
-}
-timer {
-	id:t = "search_update_timer"
-	timer_handler_func:t = "onTimer"
-	timer_interval_msec:t = "100"
+{
+  "EditBox": {
+    "id": "search_edit_box",
+    "width": "fw",
+    "noMargin": "yes",
+    "edit-hint": "#contacts/search_placeholder",
+    "max-len": "60",
+    "text": "",
+    "on_activate": "onSearchEditBoxActivate",
+    "on_cancel_edit": "onSearchEditBoxCancelEdit",
+    "on_change_value": "onSearchEditBoxChangeValue",
+    "on_set_focus": "onSearchEditBoxFocusChanged",
+    "on_mouse_enter": "onSearchEditBoxMouseChanged",
+    "on_mouse_leave": "onSearchEditBoxMouseChanged"
+  },
+  "tdiv": [
+    {
+      "id": "search_box_result",
+      "min-width": "pw",
+      "position": "absolute",
+      "pos": "0, ph + @blockInterval",
+      "border": "yes",
+      "border-color": "@frameBlueBorderColor",
+      "background-color": "@frameBlueBackgroundColor",
+      "padding": "@blockInterval",
+      "order-popup": "yes",
+      "display": "hide",
+      "textareaNoTab": {
+        "id": "search_hint_text",
+        "tinyFont": "yes",
+        "text": "#shop/search/hint"
+      }
+    },
+    {
+      "id": "search_buttons",
+      "pos": "0, ph/2-h/2",
+      "position": "relative",
+      "display": "hide",
+      "Button_text": [
+        {
+          "id": "search_btn_close",
+          "pos": "0, ph/2-h/2",
+          "position": "relative",
+          "class": "image",
+          "showConsoleImage": "no",
+          "noMargin": "yes",
+          "tooltip": "#options/clearIt",
+          "hotkeyLoc": "key/Esc",
+          "on_click": "onSearchCancelClick",
+          "img": {
+            "background-image": "#ui/gameuiskin#btn_close.svg"
+          }
+        },
+        {
+          "id": "search_btn_start",
+          "pos": "0, ph/2-h/2",
+          "position": "relative",
+          "class": "image",
+          "showConsoleImage": "no",
+          "noMargin": "yes",
+          "tooltip": "#shop/search/everywhere",
+          "hotkeyLoc": "key/Enter",
+          "on_click": "onSearchButtonClick",
+          "img": {
+            "background-image": "#ui/gameuiskin#btn_search.svg"
+          }
+        }
+      ]
+    }
+  ],
+  "dummy": {
+    "on_click": "onAccesskeyActivateSearch",
+    "behaviour": "accesskey",
+    "accessKey": "Ctrl F"
+  },
+  "timer": {
+    "id": "search_update_timer",
+    "timer_handler_func": "onTimer",
+    "timer_interval_msec": "100"
+  }
 }

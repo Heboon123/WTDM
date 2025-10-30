@@ -1,106 +1,120 @@
-model:t = "gaz67_a"
-hasExpl:b = true
-hasDmg2:b = true
-collisionSphere0:p4 = 0, -1.5, 0, 5
-collisionSphere1:p4 = 5, 2, 0, 1
-timeToFire:r = 5
-fireFx:t = "fire_ground_black_fx"
-subclass:t = "lightVehicle"
-expClass:t = "exp_vehicle"
-moveType:t = "vehicle"
-maxFwdSpeed:r = 60
-maxRevSpeed:r = 30
-maxAngSpeed:r = 50
-maxAccel:r = 40
-maxDecel:r = 40
-maxAngAccel0:r = 4
-maxAngAccelV:r = 3
-maxAngAccel:r = 170
-groundNormSmoothViscosity:r = 0.1
-minDistBetween:r = 10
-mass:r = 60000
-bulletHitFx:t = "ground_model_hit"
-partDamageFx:t = "part_damage"
-explosionFx:t = "ground_model_expl"
-fireFx:t = "ground_model_fire"
-destroysRendInstances:b = false
-destroysTrees:b = false
-attach {
-	inc_driver:t = "sov_young_driver"
-	inc_sit00:t = "sov_middle_sit"
-	inc_sit01:t = "sov_young_sit"
-}
-DamageParts {
-	formatVersion:i = 2
-	armorClass:t = "RHA_tank"
-	hp:r = 1000
-	cover {
-		armorClass:t = "RHA_tank"
-		hp:r = 480
-		armorThickness:r = 2
-		engine_dm {
-			armorThickness:r = 1
-			hp:r = 30
-			explosionDamageMult:r = 3
-		}
-		body_dm {
-			armorThickness:r = 2
-			hp:r = 60
-			explosionDamageMult:r = 3
-			napalmDamageMult:r = 1
-		}
-	}
-}
-DamageEffects {
-	part {
-		name:t = "body_dm"
-		onHit {
-
-		}
-		onKill {
-			fire:r = 2
-			smoke:r = 5
-			expl:r = 5
-		}
-	}
-	part {
-		name:t = "engine_dm"
-		onHit {
-			smoke:r = 0.1
-		}
-		onKill {
-			body_dm:r = 1
-		}
-	}
-}
-explosion {
-	expl {
-		node:t = "body"
-		partNo:i = 0
-		timeToExplode:r = 0.5
-		preEffectName:t = ""
-		postEffectName:t = "smoke_ground_black_fx"
-		explosionEffectName:t = "explosion_midair_medium"
-		timeForPostEffect:r = 60
-		preScale:r = 1
-		postScale:r = 1
-	}
-}
-class_tags {
-	pacific:b = true
-	mediterran:b = true
-	westernfront:b = true
-	country_ussr:b = true
-	light_vehicles:b = true
-	year1940:b = true
-	year1941:b = true
-	year1942:b = true
-	year1943:b = true
-	year1944:b = true
-	year1945:b = true
-}
-sound {
-	path:t = "sounds/engines"
-	pathStudio:t = "aircraft/engines"
-	engine:t = "truck"
+{
+  "model": "gaz67_a",
+  "hasExpl": true,
+  "hasDmg2": true,
+  "collisionSphere0": [
+    0.0,
+    -1.5,
+    0.0,
+    5.0
+  ],
+  "collisionSphere1": [
+    5.0,
+    2.0,
+    0.0,
+    1.0
+  ],
+  "timeToFire": 5.0,
+  "fireFx": [
+    "fire_ground_black_fx",
+    "ground_model_fire"
+  ],
+  "subclass": "lightVehicle",
+  "expClass": "exp_vehicle",
+  "moveType": "vehicle",
+  "maxFwdSpeed": 60.0,
+  "maxRevSpeed": 30.0,
+  "maxAngSpeed": 50.0,
+  "maxAccel": 40.0,
+  "maxDecel": 40.0,
+  "maxAngAccel0": 4.0,
+  "maxAngAccelV": 3.0,
+  "maxAngAccel": 170.0,
+  "groundNormSmoothViscosity": 0.1,
+  "minDistBetween": 10.0,
+  "mass": 60000.0,
+  "bulletHitFx": "ground_model_hit",
+  "partDamageFx": "part_damage",
+  "explosionFx": "ground_model_expl",
+  "destroysRendInstances": false,
+  "destroysTrees": false,
+  "attach": {
+    "inc_driver": "sov_young_driver",
+    "inc_sit00": "sov_middle_sit",
+    "inc_sit01": "sov_young_sit"
+  },
+  "DamageParts": {
+    "formatVersion": 2,
+    "armorClass": "RHA_tank",
+    "hp": 1000.0,
+    "cover": {
+      "armorClass": "RHA_tank",
+      "hp": 480.0,
+      "armorThickness": 2.0,
+      "engine_dm": {
+        "armorThickness": 1.0,
+        "hp": 30.0,
+        "explosionDamageMult": 3.0
+      },
+      "body_dm": {
+        "armorThickness": 2.0,
+        "hp": 60.0,
+        "explosionDamageMult": 3.0,
+        "napalmDamageMult": 1.0
+      }
+    }
+  },
+  "DamageEffects": {
+    "part": [
+      {
+        "name": "body_dm",
+        "onHit": {},
+        "onKill": {
+          "fire": 2.0,
+          "smoke": 5.0,
+          "expl": 5.0
+        }
+      },
+      {
+        "name": "engine_dm",
+        "onHit": {
+          "smoke": 0.1
+        },
+        "onKill": {
+          "body_dm": 1.0
+        }
+      }
+    ]
+  },
+  "explosion": {
+    "expl": {
+      "node": "body",
+      "partNo": 0,
+      "timeToExplode": 0.5,
+      "preEffectName": "",
+      "postEffectName": "smoke_ground_black_fx",
+      "explosionEffectName": "explosion_midair_medium",
+      "timeForPostEffect": 60.0,
+      "preScale": 1.0,
+      "postScale": 1.0
+    }
+  },
+  "class_tags": {
+    "pacific": true,
+    "mediterran": true,
+    "westernfront": true,
+    "country_ussr": true,
+    "light_vehicles": true,
+    "year1940": true,
+    "year1941": true,
+    "year1942": true,
+    "year1943": true,
+    "year1944": true,
+    "year1945": true
+  },
+  "sound": {
+    "path": "sounds/engines",
+    "pathStudio": "aircraft/engines",
+    "engine": "truck"
+  }
 }

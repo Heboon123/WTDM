@@ -1,174 +1,204 @@
-type:t = "rwr"
-name:t = "APP-27"
-power:r = 250
-txAngle:p2 = 5, 15
-txSidelobes:r = -30
-rxAngle:p2 = 180, 90
-range:r = 70000
-signalSfxName:t = "alarm_radar"
-band4:b = true
-band5:b = true
-band6:b = true
-band7:b = true
-band8:b = true
-band9:b = true
-detectTracking:b = true
-targetTracking:b = false
-mandatoryRecognition:b = false
-receivers {
-	receiver {
-		azimuth:r = -30
-		elevation:r = 0
-		azimuthWidth:r = 80
-		elevationWidth:r = 80
-		angleFinder:b = false
-	}
-	receiver {
-		azimuth:r = -90
-		elevation:r = 0
-		azimuthWidth:r = 80
-		elevationWidth:r = 80
-		angleFinder:b = false
-	}
-	receiver {
-		azimuth:r = -150
-		elevation:r = 0
-		azimuthWidth:r = 80
-		elevationWidth:r = 80
-		angleFinder:b = false
-	}
-	receiver {
-		azimuth:r = 30
-		elevation:r = 0
-		azimuthWidth:r = 80
-		elevationWidth:r = 80
-		angleFinder:b = false
-	}
-	receiver {
-		azimuth:r = 90
-		elevation:r = 0
-		azimuthWidth:r = 80
-		elevationWidth:r = 80
-		angleFinder:b = false
-	}
-	receiver {
-		azimuth:r = 150
-		elevation:r = 0
-		azimuthWidth:r = 80
-		elevationWidth:r = 80
-		angleFinder:b = false
-	}
-}
-groups {
-	group {
-		name:t = "Pulse"
-		band:i = 4
-		band:i = 5
-		band:i = 6
-		band:i = 7
-		band:i = 8
-		band:i = 9
-	}
-	group {
-		name:t = "Pulse + CW"
-		search:b = false
-		track:b = false
-		launch:b = true
-		type:t = "AN/APQ-51"
-		type:t = "AN/APQ-72"
-		type:t = "AN/APQ-120"
-		type:t = "AN/APG-59"
-		type:t = "AN/ASG-14"
-		type:t = "NASARR"
-		type:t = "US R21G M1"
-		type:t = "Type 208A"
-		type:t = "Sapphire-23"
-	}
-	group {
-		name:t = "MPRF"
-		block:b = true
-		search:b = true
-		track:b = true
-		launch:b = true
-		type:t = "AN/APG-66"
-		type:t = "AN/APG-68"
-		type:t = "AN/APG-63"
-		type:t = "AN/APG-65"
-		type:t = "AN/APG-67"
-		type:t = "AN/APG-76 / AN/ASX-1"
-		type:t = "Thales RDY"
-		type:t = "N019"
-		type:t = "N001"
-		type:t = "N010"
-		type:t = "V004"
-		type:t = "N011M"
-		type:t = "J/APG-1"
-		type:t = "J/APG-2"
-		type:t = "Type 1473"
-		type:t = "ELTA EL/M-2001B"
-		type:t = "ELTA EL/M-2052"
-		type:t = "PS-37"
-		type:t = "PS-05"
-		type:t = "Ferranti Blue Vixen"
-		type:t = "CAPTOR-M"
-		type:t = "Thales RBE2 AESA"
-	}
-	group {
-		name:t = "MPRF + CW/HPRF"
-		search:b = false
-		track:b = false
-		launch:b = true
-		type:t = "N001"
-		type:t = "N019"
-		type:t = "N010"
-		type:t = "V004"
-		type:t = "N011M"
-		type:t = "J/APG-1"
-		type:t = "J/APG-2"
-		type:t = "AN/APG-66"
-		type:t = "ELTA EL/M-2001B"
-		type:t = "PS-37"
-		type:t = "AN/APG-68"
-		type:t = "AN/APG-63"
-		type:t = "AN/APG-65"
-		type:t = "AN/APG-67"
-		type:t = "PS-05"
-		type:t = "Ferranti Blue Vixen"
-	}
-	group {
-		name:t = "HPRF"
-		search:b = true
-		track:b = true
-		launch:b = false
-		type:t = "AN/APG-59"
-		type:t = "AN/AWG-9"
-		type:t = "Thomson-CSF RDI"
-		type:t = "AI.24 Foxhunter"
-		type:t = "weapon"
-	}
-	group {
-		name:t = "HPRF + CW/HPRF"
-		search:b = false
-		track:b = false
-		launch:b = true
-		type:t = "AN/APG-59"
-		type:t = "AN/AWG-9"
-		type:t = "Thomson-CSF RDI"
-		type:t = "AI.24 Foxhunter"
-		type:t = "weapon"
-	}
-}
-targetsPresenceGroups {
-	targetsPresenceGroup {
-		text:t = "hud/rwr_threat_pulse"
-		group:t = "Pulse"
-		group:t = "Pulse + CW"
-	}
-	targetsPresenceGroup {
-		text:t = "hud/rwr_threat_cw_pd"
-		group:t = "Pulse + CW"
-		group:t = "MPRF + CW/HPRF"
-		group:t = "HPRF"
-		group:t = "HPRF + CW/HPRF"
-	}
+{
+  "type": "rwr",
+  "name": "APP-27",
+  "power": 250.0,
+  "txAngle": [
+    5.0,
+    15.0
+  ],
+  "txSidelobes": -30.0,
+  "rxAngle": [
+    180.0,
+    90.0
+  ],
+  "range": 70000.0,
+  "signalSfxName": "alarm_radar",
+  "band4": true,
+  "band5": true,
+  "band6": true,
+  "band7": true,
+  "band8": true,
+  "band9": true,
+  "detectTracking": true,
+  "targetTracking": false,
+  "mandatoryRecognition": false,
+  "receivers": {
+    "receiver": [
+      {
+        "azimuth": -30.0,
+        "elevation": 0.0,
+        "azimuthWidth": 80.0,
+        "elevationWidth": 80.0,
+        "angleFinder": false
+      },
+      {
+        "azimuth": -90.0,
+        "elevation": 0.0,
+        "azimuthWidth": 80.0,
+        "elevationWidth": 80.0,
+        "angleFinder": false
+      },
+      {
+        "azimuth": -150.0,
+        "elevation": 0.0,
+        "azimuthWidth": 80.0,
+        "elevationWidth": 80.0,
+        "angleFinder": false
+      },
+      {
+        "azimuth": 30.0,
+        "elevation": 0.0,
+        "azimuthWidth": 80.0,
+        "elevationWidth": 80.0,
+        "angleFinder": false
+      },
+      {
+        "azimuth": 90.0,
+        "elevation": 0.0,
+        "azimuthWidth": 80.0,
+        "elevationWidth": 80.0,
+        "angleFinder": false
+      },
+      {
+        "azimuth": 150.0,
+        "elevation": 0.0,
+        "azimuthWidth": 80.0,
+        "elevationWidth": 80.0,
+        "angleFinder": false
+      }
+    ]
+  },
+  "groups": {
+    "group": [
+      {
+        "name": "Pulse",
+        "band": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      {
+        "name": "Pulse + CW",
+        "search": false,
+        "track": false,
+        "launch": true,
+        "type": [
+          "AN/APQ-51",
+          "AN/APQ-72",
+          "AN/APQ-120",
+          "AN/APG-59",
+          "AN/ASG-14",
+          "NASARR",
+          "US R21G M1",
+          "Type 208A",
+          "Sapphire-23"
+        ]
+      },
+      {
+        "name": "MPRF",
+        "block": true,
+        "search": true,
+        "track": true,
+        "launch": true,
+        "type": [
+          "AN/APG-66",
+          "AN/APG-68",
+          "AN/APG-63",
+          "AN/APG-65",
+          "AN/APG-67",
+          "AN/APG-76 / AN/ASX-1",
+          "Thales RDY",
+          "N019",
+          "N001",
+          "N010",
+          "V004",
+          "N011M",
+          "J/APG-1",
+          "J/APG-2",
+          "Type 1473",
+          "ELTA EL/M-2001B",
+          "ELTA EL/M-2052",
+          "PS-37",
+          "PS-05",
+          "Ferranti Blue Vixen",
+          "CAPTOR-M",
+          "Thales RBE2 AESA"
+        ]
+      },
+      {
+        "name": "MPRF + CW/HPRF",
+        "search": false,
+        "track": false,
+        "launch": true,
+        "type": [
+          "N001",
+          "N019",
+          "N010",
+          "V004",
+          "N011M",
+          "J/APG-1",
+          "J/APG-2",
+          "AN/APG-66",
+          "ELTA EL/M-2001B",
+          "PS-37",
+          "AN/APG-68",
+          "AN/APG-63",
+          "AN/APG-65",
+          "AN/APG-67",
+          "PS-05",
+          "Ferranti Blue Vixen"
+        ]
+      },
+      {
+        "name": "HPRF",
+        "search": true,
+        "track": true,
+        "launch": false,
+        "type": [
+          "AN/APG-59",
+          "AN/AWG-9",
+          "Thomson-CSF RDI",
+          "AI.24 Foxhunter",
+          "weapon"
+        ]
+      },
+      {
+        "name": "HPRF + CW/HPRF",
+        "search": false,
+        "track": false,
+        "launch": true,
+        "type": [
+          "AN/APG-59",
+          "AN/AWG-9",
+          "Thomson-CSF RDI",
+          "AI.24 Foxhunter",
+          "weapon"
+        ]
+      }
+    ]
+  },
+  "targetsPresenceGroups": {
+    "targetsPresenceGroup": [
+      {
+        "text": "hud/rwr_threat_pulse",
+        "group": [
+          "Pulse",
+          "Pulse + CW"
+        ]
+      },
+      {
+        "text": "hud/rwr_threat_cw_pd",
+        "group": [
+          "Pulse + CW",
+          "MPRF + CW/HPRF",
+          "HPRF",
+          "HPRF + CW/HPRF"
+        ]
+      }
+    ]
+  }
 }

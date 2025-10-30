@@ -1,2160 +1,2481 @@
-cannon:b = true
-weaponType:i = 0
-maxDeltaAngle:r = 0.09
-maxDeltaAngleVertical:r = 0.09
-aimMinDist:r = 0.05
-aimMaxDist:r = 2000
-attackMaxDist:r = 2000
-shotFreq:r = 3.35
-traceFreq:i = 3
-bullets:i = 150
-reloadTime:r = 10
-bulletsCartridge:i = 150
-recoilOffset:r = 0.12
-recoilTimes:p2 = 0.04, 0.1
-fxType:t = "muzzle_ground_30mm"
-fxMultipleSpawn:b = true
-shouldCollideWithRendinsts:b = true
-sound_path:t = "ships/weapon_ships/cannons"
-sound_pathStudio:t = "naval/weapon/cannons"
-sound:t = "25mm_mark_38"
-soundLoop:b = false
-sfxReloadBullet:t = "naval_gun_reload"
-isBulletBelt:b = false
-notUseDefaultBulletInGui:b = true
-attackShipsPriority {
-	type_boat:b = true
-	type_heavy_boat:b = true
-	type_barge:b = true
-	type_frigate:b = true
-}
-overheat {
-	overheat:p2 = 13, 0
-	overheat:p2 = 15, 0.1
-	overheat:p2 = 17, 0.5
-}
-visualOverheat {
-	shotsToMax:i = 120
-	cooldownTime:r = 8
-	cooldownDelay:r = 1.8
-	fxType:t = "smoke_overheat_med"
-	decalOffset:p3 = 0, 0, 0
-	decalSize:p3 = 1.8, 2.2, 2.2
-}
-bullet {
-	mass:r = 0.185
-	explosiveType:t = "hexal"
-	explosiveMass:r = 0.032
-	caliber:r = 0.025
-	speed:r = 1100
-	Cx:r = 0.375
-	maxDistance:r = 8500
-	normalizationPreset:t = "heat"
-	ricochetPreset:t = "he"
-	groundRicochetPreset:t = "he_small_caliber_ground"
-	secondaryShattersPreset:t = "ap"
-	stabilityThreshold:r = 0.5
-	stabilityCaliberToArmorThreshold:r = 5
-	stabilityReductionAfterRicochet:r = 0.3
-	stabilityReductionAfterPenetration:r = 0.15
-	bulletType:t = "he_i_t"
-	slopeEffectPreset:t = "ap"
-	fresnel:p3 = 0.23, 0.1, 2
-	explodeOnRendinst:b = true
-	shellAnimation:t = "video/shells_animations/he_i_t_shell.ivf"
-	selfDestructionInAir:b = true
-	splashFallBySquare:b = true
-	explodeTreshold:r = 0.1
-	fuseDelay:r = 0.001
-	fuseOnWater:b = true
-	fuseOnWaterProbability:r = 1
-	selfDestructionFx:t = "hit_5_7mm_metal_he"
-	explosionEffect:t = "hit_28_38mm_metal_he"
-	groundCollisionEffect:t = "hit_28_38mm_dirt_he"
-	ricochetEffect:t = "hit_28_38mm_metal_ap"
-	waterCollisionEffect:t = "hit_28_38mm_water"
-	waterRicochetEffect:t = "hit_28_38mm_water"
-	groundRicochetEffect:t = "hit_28_38mm_dirt_ap"
-	explosionPatchRadius:r = 1
-	rendinstDamageRadius:r = 0
-	stabilityRicochetModifier {
-		mod1:p2 = 0, 0.5
-		mod2:p2 = 15, 0.7
-		mod3:p2 = 30, 0.99
-	}
-	pressureDamage {
-		damageType:t = "pressure"
-	}
-	damage {
-		kinetic {
-			damageType:t = "generic"
-			demarrePenetrationK:r = 0.1
-			demarreSpeedPow:r = 1.43
-			demarreMassPow:r = 0.71
-			demarreCaliberPow:r = 1.07
-		}
-		shatter {
-			useRealShatters:b = true
-			countPortion:r = 0.5
-			realShattersSplicing:r = 0.75
-			segment {
-				radiusScale:r = 1
-				penetrationScale:r = 1
-				damageScale:r = 1
-				angles:p2 = 0, 60
-				countPortion:r = 1
-				onHitChanceMultFire:r = 80
-			}
-			segment {
-				radiusScale:r = 1
-				penetrationScale:r = 1
-				damageScale:r = 1
-				angles:p2 = 60, 180
-				countPortion:r = 0
-			}
-		}
-	}
-	hitpower {
-		HitPower0m:p2 = 1, 500
-		HitPower2500m:p2 = 0.5, 2500
-		HitPower4000m:p2 = 0.1, 3000
-	}
-	visual {
-		range_percent_of_ammo:p2 = 100, 0
-		traceFreq:i = 1
-		tracer:t = "30mmOrangeShip"
-		trail:t = "noTrail"
-	}
-	collisions {
-		default {
-			fx:t = "hit_28_38mm_dirt_he"
-			ricochetFx:t = "hit_28_38mm_dirt_ap"
-		}
-		horLandMesh {
-			fx:t = "hit_28_38mm_dirt_he"
-			ricochetFx:t = "hit_28_38mm_dirt_ap"
-		}
-		soil {
-			fx:t = "hit_28_38mm_dirt_he"
-			ricochetFx:t = "hit_28_38mm_dirt_ap"
-		}
-		dirt {
-			fx:t = "hit_28_38mm_dirt_he"
-			ricochetFx:t = "hit_28_38mm_dirt_ap"
-		}
-		road {
-			fx:t = "hit_28_38mm_dirt_he"
-			ricochetFx:t = "hit_28_38mm_dirt_ap"
-		}
-		roadSoil {
-			fx:t = "hit_28_38mm_dirt_he"
-			ricochetFx:t = "hit_28_38mm_dirt_ap"
-		}
-		bricks_red {
-			fx:t = "hit_28_38mm_red_brick_he"
-			ricochetFx:t = "hit_28_38mm_red_brick_ap"
-		}
-		steppe {
-			fx:t = "hit_28_38mm_sand_he"
-			ricochetFx:t = "hit_28_38mm_sand_ap"
-		}
-		sand {
-			fx:t = "hit_28_38mm_sand_he"
-			ricochetFx:t = "hit_28_38mm_sand_ap"
-		}
-		duneSand {
-			fx:t = "hit_28_38mm_sand_he"
-			ricochetFx:t = "hit_28_38mm_sand_ap"
-		}
-		roadSand {
-			fx:t = "hit_28_38mm_sand_he"
-			ricochetFx:t = "hit_28_38mm_sand_ap"
-		}
-		quickSand {
-			fx:t = "hit_28_38mm_sand_he"
-			ricochetFx:t = "hit_28_38mm_sand_ap"
-		}
-		snow {
-			fx:t = "hit_28_38mm_snow_he"
-			ricochetFx:t = "hit_28_38mm_snow_ap"
-		}
-		ice {
-			fx:t = "hit_28_38mm_snow_he"
-			ricochetFx:t = "hit_28_38mm_snow_ap"
-		}
-		roadSnow {
-			fx:t = "hit_28_38mm_snow_he"
-			ricochetFx:t = "hit_28_38mm_snow_ap"
-		}
-		snowLower {
-			fx:t = "hit_28_38mm_snow_he"
-			ricochetFx:t = "hit_28_38mm_snow_ap"
-		}
-		glass {
-			fx:t = "armoured_glass"
-			ricochetFx:t = "armoured_glass"
-		}
-		wood {
-			fx:t = "hit_28_38mm_wood_he"
-			ricochetFx:t = "hit_28_38mm_wood_ap"
-		}
-		steel {
-			fx:t = "hit_28_38mm_metal_he"
-			ricochetFx:t = "hit_28_38mm_metal_ap"
-		}
-		metal {
-			fx:t = "hit_28_38mm_metal_he"
-			ricochetFx:t = "hit_28_38mm_metal_ap"
-		}
-		tank_structural_steel {
-			fx:t = "hit_28_38mm_metal_he"
-			ricochetFx:t = "hit_28_38mm_metal_ap"
-		}
-		aluminum_armor {
-			fx:t = "hit_28_38mm_metal_he"
-			ricochetFx:t = "hit_28_38mm_metal_ap"
-		}
-		tank_rubber_screens {
-			fx:t = "hit_28_38mm_metal_he"
-			ricochetFx:t = "hit_28_38mm_metal_ap"
-		}
-		buildings {
-			fx:t = "hit_28_38mm_stone_he"
-			ricochetFx:t = "hit_28_38mm_stone_ap"
-		}
-		verLandMesh {
-			fx:t = "hit_28_38mm_stone_he"
-			ricochetFx:t = "hit_28_38mm_stone_ap"
-		}
-		concrete {
-			fx:t = "hit_28_38mm_stone_he"
-			ricochetFx:t = "hit_28_38mm_stone_ap"
-		}
-		rocks {
-			fx:t = "hit_28_38mm_stone_he"
-			ricochetFx:t = "hit_28_38mm_stone_ap"
-		}
-		rocksSlippery {
-			fx:t = "hit_28_38mm_stone_he"
-			ricochetFx:t = "hit_28_38mm_stone_ap"
-		}
-		fabric {
-			fx:t = "hit_19_27mm_fabric"
-			ricochetFx:t = "hit_19_27mm_fabric"
-		}
-		stone_snow {
-			fx:t = "hit_28_38mm_snow_he"
-			ricochetFx:t = "hit_28_38mm_snow_ap"
-		}
-		armorPierceLowCal {
-			fx:t = "hit_28_38mm_metal_he"
-			ricochetFx:t = "hit_28_38mm_metal_ap"
-		}
-		armorPierceMedCal {
-			fx:t = "hit_28_38mm_metal_he"
-			ricochetFx:t = "hit_28_38mm_metal_ap"
-		}
-		armorPierceHiCal {
-			fx:t = "hit_28_38mm_metal_he"
-			ricochetFx:t = "hit_28_38mm_metal_ap"
-		}
-		armorNPLowCal {
-			fx:t = "hit_28_38mm_metal_he"
-			ricochetFx:t = "hit_28_38mm_metal_ap"
-		}
-		armorNPMedCal {
-			fx:t = "hit_28_38mm_metal_he"
-			ricochetFx:t = "hit_28_38mm_metal_ap"
-		}
-		armorNPHiCal {
-			fx:t = "hit_28_38mm_metal_he"
-			ricochetFx:t = "hit_28_38mm_metal_ap"
-		}
-		wood_solid {
-			fx:t = "hit_28_38mm_wood_he"
-			ricochetFx:t = "hit_28_38mm_wood_ap"
-		}
-		softWoodDoor {
-			fx:t = "hit_28_38mm_wood_he"
-			ricochetFx:t = "hit_28_38mm_wood_ap"
-		}
-		wood_aim_transparent {
-			fx:t = "hit_28_38mm_wood_he"
-			ricochetFx:t = "hit_5_7mm_wood_ap"
-		}
-		window_wood {
-			fx:t = "hit_28_38mm_wood_he"
-			ricochetFx:t = "hit_5_7mm_wood_ap"
-		}
-		softSteelDoor {
-			fx:t = "hit_28_38mm_metal_he"
-			ricochetFx:t = "hit_28_38mm_metal_ap"
-		}
-		paper {
-			fx:t = "hit_28_38mm_stone_ap"
-			ricochetFx:t = "hit_28_38mm_stone_ap"
-		}
-		plastic {
-			fx:t = "hit_28_38mm_stone_ap"
-			ricochetFx:t = "hit_28_38mm_stone_ap"
-		}
-		rubber {
-			fx:t = "hit_28_38mm_stone_ap"
-			ricochetFx:t = "hit_28_38mm_stone_ap"
-		}
-		ceramic {
-			fx:t = "hit_28_38mm_stone_he"
-			ricochetFx:t = "hit_28_38mm_stone_ap"
-		}
-		stone {
-			fx:t = "hit_28_38mm_stone_he"
-			ricochetFx:t = "hit_28_38mm_stone_ap"
-		}
-		glass_car {
-			fx:t = "armoured_glass"
-			ricochetFx:t = "armoured_glass"
-		}
-		steel_thin {
-			fx:t = "hit_28_38mm_wood_he"
-			ricochetFx:t = "hit_28_38mm_wood_ap"
-		}
-		soil_brown {
-			fx:t = "hit_28_38mm_stone_ap"
-			ricochetFx:t = "hit_28_38mm_stone_ap"
-		}
-		soil_sand {
-			fx:t = "hit_28_38mm_stone_ap"
-			ricochetFx:t = "hit_28_38mm_stone_ap"
-		}
-		sandbag_grey {
-			fx:t = "hit_28_38mm_stone_ap"
-			ricochetFx:t = "hit_28_38mm_stone_ap"
-		}
-		sandbag_biege {
-			fx:t = "hit_28_38mm_stone_ap"
-			ricochetFx:t = "hit_28_38mm_stone_ap"
-		}
-		stone_biege {
-			fx:t = "hit_28_38mm_stone_he"
-			ricochetFx:t = "hit_28_38mm_stone_ap"
-		}
-		stone_white {
-			fx:t = "hit_28_38mm_stone_he"
-			ricochetFx:t = "hit_28_38mm_stone_ap"
-		}
-	}
-}
-bullet {
-	mass:r = 0.134
-	caliber:r = 0.025
-	ballisticCaliber:r = 0.0135
-	damageCaliber:r = 0.0135
-	damageMass:r = 0.134
-	Cx:r = 0.2
-	speed:r = 1345
-	maxDistance:r = 8500
-	normalizationPreset:t = "apcr"
-	ricochetPreset:t = "apds"
-	groundRicochetPreset:t = "apds_ground"
-	secondaryShattersPreset:t = "apds"
-	stabilityThreshold:r = 0.05
-	stabilityCaliberToArmorThreshold:r = 5
-	stabilityReductionAfterRicochet:r = 0.5
-	stabilityReductionAfterPenetration:r = 0
-	stucking:r = 0.7
-	stuckingAngle:r = 45
-	bulletType:t = "apds_autocannon"
-	slopeEffectPreset:t = "apds"
-	fresnel:p3 = 0.23, 0.1, 2
-	shellAnimation:t = "video/shells_animations/apds_belt.ivf"
-	onHitChanceMultFire:r = 3.5
-	dynamicKv:b = true
-	relativeVelArmorShift:p2 = 200, 1000
-	armorFragmentsDamage:b = true
-	armorFragmentsDamageRadius:r = 1.2
-	armorFragmentsDamageAngle:r = 20
-	armorFragmentsAmount:i = 15
-	armorFragmentsArmorPower:r = 3
-	armorFragmentsHit:r = 8
-	selfDestructionFx:t = "hit_5_7mm_metal_he"
-	explosionEffect:t = "hit_19_27mm_metal_ap"
-	groundCollisionEffect:t = "hit_19_27mm_dirt_ap"
-	ricochetEffect:t = "hit_19_27mm_metal_ap"
-	waterCollisionEffect:t = "hit_19_27mm_water"
-	waterRicochetEffect:t = "hit_19_27mm_water"
-	groundRicochetEffect:t = "hit_19_27mm_dirt_ap"
-	explosionPatchRadius:r = 0.3
-	rendinstDamageRadius:r = 0
-	stabilityRicochetModifier {
-		mod1:p2 = 0, 0.2
-		mod2:p2 = 20, 0.45
-	}
-	tracePattern {
-		caliber:r = 10
-		circleCount:i = 2
-		pointCount:i = 4
-	}
-	damage {
-		kinetic {
-			damageType:t = "generic"
-			demarrePenetrationK:r = 0.65
-			demarreSpeedPow:r = 1.43
-			demarreMassPow:r = 0.71
-			demarreCaliberPow:r = 1.07
-		}
-		breakingScaleByArmor {
-			mod0:p2 = 5, 1
-			mod1:p2 = 10, 0.8
-			mod2:p2 = 40, 0.5
-		}
-		breakingScaleByAir {
-			mod0:p2 = 0.05, 1
-			mod1:p2 = 0.2, 0.7
-			mod2:p2 = 0.5, 0.5
-		}
-	}
-	hitpower {
-		HitPower0m:p2 = 1, 500
-		HitPower3000m:p2 = 1, 3000
-		HitPower4000m:p2 = 0.1, 4000
-	}
-	visual {
-		range_percent_of_ammo:p2 = 100, 0
-		traceFreq:i = 1
-		tracer:t = "20mmGreenShip"
-		trail:t = "noTrail"
-	}
-	collisions {
-		default {
-			fx:t = "hit_19_27mm_dirt_ap"
-			ricochetFx:t = "hit_19_27mm_dirt_ap"
-		}
-		horLandMesh {
-			fx:t = "hit_19_27mm_dirt_ap"
-			ricochetFx:t = "hit_19_27mm_dirt_ap"
-		}
-		soil {
-			fx:t = "hit_19_27mm_dirt_ap"
-			ricochetFx:t = "hit_19_27mm_dirt_ap"
-		}
-		dirt {
-			fx:t = "hit_19_27mm_dirt_ap"
-			ricochetFx:t = "hit_19_27mm_dirt_ap"
-		}
-		road {
-			fx:t = "hit_19_27mm_dirt_ap"
-			ricochetFx:t = "hit_19_27mm_dirt_ap"
-		}
-		bricks_red {
-			fx:t = "hit_19_27mm_red_brick_ap"
-			ricochetFx:t = "hit_19_27mm_red_brick_ap"
-		}
-		roadSoil {
-			fx:t = "hit_19_27mm_dirt_ap"
-			ricochetFx:t = "hit_19_27mm_dirt_ap"
-		}
-		steppe {
-			fx:t = "hit_19_27mm_sand_ap"
-			ricochetFx:t = "hit_19_27mm_sand_ap"
-		}
-		sand {
-			fx:t = "hit_19_27mm_sand_ap"
-			ricochetFx:t = "hit_19_27mm_sand_ap"
-		}
-		duneSand {
-			fx:t = "hit_19_27mm_sand_ap"
-			ricochetFx:t = "hit_19_27mm_sand_ap"
-		}
-		roadSand {
-			fx:t = "hit_19_27mm_sand_ap"
-			ricochetFx:t = "hit_19_27mm_sand_ap"
-		}
-		quickSand {
-			fx:t = "hit_19_27mm_sand_ap"
-			ricochetFx:t = "hit_19_27mm_sand_ap"
-		}
-		snow {
-			fx:t = "hit_19_27mm_snow_ap"
-			ricochetFx:t = "hit_19_27mm_snow_ap"
-		}
-		ice {
-			fx:t = "hit_19_27mm_snow_ap"
-			ricochetFx:t = "hit_19_27mm_snow_ap"
-		}
-		roadSnow {
-			fx:t = "hit_19_27mm_snow_ap"
-			ricochetFx:t = "hit_19_27mm_snow_ap"
-		}
-		snowLower {
-			fx:t = "hit_19_27mm_snow_ap"
-			ricochetFx:t = "hit_19_27mm_snow_ap"
-		}
-		glass {
-			fx:t = "armoured_glass"
-			ricochetFx:t = "armoured_glass"
-		}
-		wood {
-			fx:t = "hit_19_27mm_wood_ap"
-			ricochetFx:t = "hit_19_27mm_wood_ap"
-		}
-		steel {
-			fx:t = "hit_19_27mm_metal_ap"
-			ricochetFx:t = "hit_19_27mm_metal_ap"
-		}
-		metal {
-			fx:t = "hit_19_27mm_metal_ap"
-			ricochetFx:t = "hit_19_27mm_metal_ap"
-		}
-		tank_structural_steel {
-			fx:t = "hit_19_27mm_metal_ap"
-			ricochetFx:t = "hit_19_27mm_metal_ap"
-		}
-		aluminum_armor {
-			fx:t = "hit_19_27mm_metal_ap"
-			ricochetFx:t = "hit_19_27mm_metal_ap"
-		}
-		tank_rubber_screens {
-			fx:t = "hit_19_27mm_metal_ap"
-			ricochetFx:t = "hit_19_27mm_metal_ap"
-		}
-		buildings {
-			fx:t = "hit_19_27mm_stone_ap"
-			ricochetFx:t = "hit_19_27mm_stone_ap"
-		}
-		verLandMesh {
-			fx:t = "hit_19_27mm_stone_ap"
-			ricochetFx:t = "hit_19_27mm_stone_ap"
-		}
-		concrete {
-			fx:t = "hit_19_27mm_stone_ap"
-			ricochetFx:t = "hit_19_27mm_stone_ap"
-		}
-		rocks {
-			fx:t = "hit_19_27mm_stone_ap"
-			ricochetFx:t = "hit_19_27mm_stone_ap"
-		}
-		rocksSlippery {
-			fx:t = "hit_19_27mm_stone_ap"
-			ricochetFx:t = "hit_19_27mm_stone_ap"
-		}
-		fabric {
-			fx:t = "hit_19_27mm_fabric"
-			ricochetFx:t = "hit_19_27mm_fabric"
-		}
-		stone_snow {
-			fx:t = "hit_19_27mm_snow_ap"
-			ricochetFx:t = "hit_19_27mm_snow_ap"
-		}
-		armorPierceLowCal {
-			fx:t = "hit_19_27mm_metal_ap"
-			ricochetFx:t = "hit_19_27mm_metal_ap"
-		}
-		armorPierceMedCal {
-			fx:t = "hit_19_27mm_metal_ap"
-			ricochetFx:t = "hit_19_27mm_metal_ap"
-		}
-		armorPierceHiCal {
-			fx:t = "hit_19_27mm_metal_ap"
-			ricochetFx:t = "hit_19_27mm_metal_ap"
-		}
-		armorNPLowCal {
-			fx:t = "hit_19_27mm_metal_ap"
-			ricochetFx:t = "hit_19_27mm_metal_ap"
-		}
-		armorNPMedCal {
-			fx:t = "hit_19_27mm_metal_ap"
-			ricochetFx:t = "hit_19_27mm_metal_ap"
-		}
-		armorNPHiCal {
-			fx:t = "hit_19_27mm_metal_ap"
-			ricochetFx:t = "hit_19_27mm_metal_ap"
-		}
-		wood_solid {
-			fx:t = "hit_19_27mm_wood_ap"
-			ricochetFx:t = "hit_19_27mm_wood_ap"
-		}
-		softWoodDoor {
-			fx:t = "hit_19_27mm_wood_ap"
-			ricochetFx:t = "hit_19_27mm_wood_ap"
-		}
-		wood_aim_transparent {
-			fx:t = "hit_19_27mm_wood_ap"
-			ricochetFx:t = "hit_5_7mm_wood_ap"
-		}
-		window_wood {
-			fx:t = "hit_19_27mm_wood_ap"
-			ricochetFx:t = "hit_5_7mm_wood_ap"
-		}
-		softSteelDoor {
-			fx:t = "hit_19_27mm_metal_ap"
-			ricochetFx:t = "hit_19_27mm_metal_ap"
-		}
-		paper {
-			fx:t = "hit_19_27mm_fabric"
-			ricochetFx:t = "hit_19_27mm_fabric"
-		}
-		plastic {
-			fx:t = "hit_19_27mm_fabric"
-			ricochetFx:t = "hit_19_27mm_fabric"
-		}
-		rubber {
-			fx:t = "hit_19_27mm_fabric"
-			ricochetFx:t = "hit_19_27mm_fabric"
-		}
-		ceramic {
-			fx:t = "hit_19_27mm_stone_ap"
-			ricochetFx:t = "hit_19_27mm_stone_ap"
-		}
-		stone {
-			fx:t = "hit_19_27mm_stone_ap"
-			ricochetFx:t = "hit_19_27mm_stone_ap"
-		}
-		glass_car {
-			fx:t = "armoured_glass"
-			ricochetFx:t = "armoured_glass"
-		}
-		steel_thin {
-			fx:t = "hit_19_27mm_wood_ap"
-			ricochetFx:t = "hit_19_27mm_wood_ap"
-		}
-		soil_brown {
-			fx:t = "hit_19_27mm_fabric"
-			ricochetFx:t = "hit_19_27mm_fabric"
-		}
-		soil_sand {
-			fx:t = "hit_19_27mm_fabric"
-			ricochetFx:t = "hit_19_27mm_fabric"
-		}
-		sandbag_grey {
-			fx:t = "hit_19_27mm_fabric"
-			ricochetFx:t = "hit_19_27mm_fabric"
-		}
-		sandbag_biege {
-			fx:t = "hit_19_27mm_fabric"
-			ricochetFx:t = "hit_19_27mm_fabric"
-		}
-		stone_biege {
-			fx:t = "hit_19_27mm_stone_ap"
-			ricochetFx:t = "hit_19_27mm_stone_ap"
-		}
-		stone_white {
-			fx:t = "hit_19_27mm_stone_ap"
-			ricochetFx:t = "hit_19_27mm_stone_ap"
-		}
-	}
-}
-25mm_mk38_universal {
-	bullet {
-		mass:r = 0.185
-		explosiveType:t = "hexal"
-		explosiveMass:r = 0.032
-		caliber:r = 0.025
-		speed:r = 1100
-		Cx:r = 0.375
-		maxDistance:r = 8500
-		normalizationPreset:t = "heat"
-		ricochetPreset:t = "he"
-		groundRicochetPreset:t = "he_small_caliber_ground"
-		secondaryShattersPreset:t = "ap"
-		stabilityThreshold:r = 0.5
-		stabilityCaliberToArmorThreshold:r = 5
-		stabilityReductionAfterRicochet:r = 0.3
-		stabilityReductionAfterPenetration:r = 0.15
-		bulletType:t = "he_i_t"
-		slopeEffectPreset:t = "ap"
-		fresnel:p3 = 0.23, 0.1, 2
-		explodeOnRendinst:b = true
-		shellAnimation:t = "video/shells_animations/he_i_t_shell.ivf"
-		selfDestructionInAir:b = true
-		splashFallBySquare:b = true
-		explodeTreshold:r = 0.1
-		fuseDelay:r = 0.001
-		fuseOnWater:b = true
-		fuseOnWaterProbability:r = 1
-		selfDestructionFx:t = "hit_5_7mm_metal_he"
-		explosionEffect:t = "hit_28_38mm_metal_he"
-		groundCollisionEffect:t = "hit_28_38mm_dirt_he"
-		ricochetEffect:t = "hit_28_38mm_metal_ap"
-		waterCollisionEffect:t = "hit_28_38mm_water"
-		waterRicochetEffect:t = "hit_28_38mm_water"
-		groundRicochetEffect:t = "hit_28_38mm_dirt_ap"
-		explosionPatchRadius:r = 1
-		rendinstDamageRadius:r = 0
-		stabilityRicochetModifier {
-			mod1:p2 = 0, 0.5
-			mod2:p2 = 15, 0.7
-			mod3:p2 = 30, 0.99
-		}
-		pressureDamage {
-			damageType:t = "pressure"
-		}
-		damage {
-			kinetic {
-				damageType:t = "generic"
-				demarrePenetrationK:r = 0.1
-				demarreSpeedPow:r = 1.43
-				demarreMassPow:r = 0.71
-				demarreCaliberPow:r = 1.07
-			}
-			shatter {
-				useRealShatters:b = true
-				countPortion:r = 0.5
-				realShattersSplicing:r = 0.75
-				segment {
-					radiusScale:r = 1
-					penetrationScale:r = 1
-					damageScale:r = 1
-					angles:p2 = 0, 60
-					countPortion:r = 1
-					onHitChanceMultFire:r = 80
-				}
-				segment {
-					radiusScale:r = 1
-					penetrationScale:r = 1
-					damageScale:r = 1
-					angles:p2 = 60, 180
-					countPortion:r = 0
-				}
-			}
-		}
-		hitpower {
-			HitPower0m:p2 = 1, 500
-			HitPower2500m:p2 = 0.5, 2500
-			HitPower4000m:p2 = 0.1, 3000
-		}
-		visual {
-			range_percent_of_ammo:p2 = 100, 0
-			traceFreq:i = 1
-			tracer:t = "30mmOrangeShip"
-			trail:t = "noTrail"
-		}
-		collisions {
-			default {
-				fx:t = "hit_28_38mm_dirt_he"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			horLandMesh {
-				fx:t = "hit_28_38mm_dirt_he"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			soil {
-				fx:t = "hit_28_38mm_dirt_he"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			dirt {
-				fx:t = "hit_28_38mm_dirt_he"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			road {
-				fx:t = "hit_28_38mm_dirt_he"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			roadSoil {
-				fx:t = "hit_28_38mm_dirt_he"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			bricks_red {
-				fx:t = "hit_28_38mm_red_brick_he"
-				ricochetFx:t = "hit_28_38mm_red_brick_ap"
-			}
-			steppe {
-				fx:t = "hit_28_38mm_sand_he"
-				ricochetFx:t = "hit_28_38mm_sand_ap"
-			}
-			sand {
-				fx:t = "hit_28_38mm_sand_he"
-				ricochetFx:t = "hit_28_38mm_sand_ap"
-			}
-			duneSand {
-				fx:t = "hit_28_38mm_sand_he"
-				ricochetFx:t = "hit_28_38mm_sand_ap"
-			}
-			roadSand {
-				fx:t = "hit_28_38mm_sand_he"
-				ricochetFx:t = "hit_28_38mm_sand_ap"
-			}
-			quickSand {
-				fx:t = "hit_28_38mm_sand_he"
-				ricochetFx:t = "hit_28_38mm_sand_ap"
-			}
-			snow {
-				fx:t = "hit_28_38mm_snow_he"
-				ricochetFx:t = "hit_28_38mm_snow_ap"
-			}
-			ice {
-				fx:t = "hit_28_38mm_snow_he"
-				ricochetFx:t = "hit_28_38mm_snow_ap"
-			}
-			roadSnow {
-				fx:t = "hit_28_38mm_snow_he"
-				ricochetFx:t = "hit_28_38mm_snow_ap"
-			}
-			snowLower {
-				fx:t = "hit_28_38mm_snow_he"
-				ricochetFx:t = "hit_28_38mm_snow_ap"
-			}
-			glass {
-				fx:t = "armoured_glass"
-				ricochetFx:t = "armoured_glass"
-			}
-			wood {
-				fx:t = "hit_28_38mm_wood_he"
-				ricochetFx:t = "hit_28_38mm_wood_ap"
-			}
-			steel {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			metal {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			tank_structural_steel {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			aluminum_armor {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			tank_rubber_screens {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			buildings {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			verLandMesh {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			concrete {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			rocks {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			rocksSlippery {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			fabric {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			stone_snow {
-				fx:t = "hit_28_38mm_snow_he"
-				ricochetFx:t = "hit_28_38mm_snow_ap"
-			}
-			armorPierceLowCal {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			armorPierceMedCal {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			armorPierceHiCal {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			armorNPLowCal {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			armorNPMedCal {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			armorNPHiCal {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			wood_solid {
-				fx:t = "hit_28_38mm_wood_he"
-				ricochetFx:t = "hit_28_38mm_wood_ap"
-			}
-			softWoodDoor {
-				fx:t = "hit_28_38mm_wood_he"
-				ricochetFx:t = "hit_28_38mm_wood_ap"
-			}
-			wood_aim_transparent {
-				fx:t = "hit_28_38mm_wood_he"
-				ricochetFx:t = "hit_5_7mm_wood_ap"
-			}
-			window_wood {
-				fx:t = "hit_28_38mm_wood_he"
-				ricochetFx:t = "hit_5_7mm_wood_ap"
-			}
-			softSteelDoor {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			paper {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			plastic {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			rubber {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			ceramic {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			stone {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			glass_car {
-				fx:t = "armoured_glass"
-				ricochetFx:t = "armoured_glass"
-			}
-			steel_thin {
-				fx:t = "hit_28_38mm_wood_he"
-				ricochetFx:t = "hit_28_38mm_wood_ap"
-			}
-			soil_brown {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			soil_sand {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			sandbag_grey {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			sandbag_biege {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			stone_biege {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			stone_white {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-		}
-	}
-	bullet {
-		mass:r = 0.134
-		caliber:r = 0.025
-		ballisticCaliber:r = 0.0135
-		damageCaliber:r = 0.0135
-		damageMass:r = 0.134
-		Cx:r = 0.2
-		speed:r = 1345
-		maxDistance:r = 8500
-		normalizationPreset:t = "apcr"
-		ricochetPreset:t = "apds"
-		groundRicochetPreset:t = "apds_ground"
-		secondaryShattersPreset:t = "apds"
-		stabilityThreshold:r = 0.05
-		stabilityCaliberToArmorThreshold:r = 5
-		stabilityReductionAfterRicochet:r = 0.5
-		stabilityReductionAfterPenetration:r = 0
-		stucking:r = 0.7
-		stuckingAngle:r = 45
-		bulletType:t = "apds_autocannon"
-		slopeEffectPreset:t = "apds"
-		fresnel:p3 = 0.23, 0.1, 2
-		shellAnimation:t = "video/shells_animations/apds_belt.ivf"
-		onHitChanceMultFire:r = 3.5
-		dynamicKv:b = true
-		relativeVelArmorShift:p2 = 200, 1000
-		armorFragmentsDamage:b = true
-		armorFragmentsDamageRadius:r = 1.2
-		armorFragmentsDamageAngle:r = 20
-		armorFragmentsAmount:i = 15
-		armorFragmentsArmorPower:r = 3
-		armorFragmentsHit:r = 8
-		selfDestructionFx:t = "hit_5_7mm_metal_he"
-		explosionEffect:t = "hit_19_27mm_metal_ap"
-		groundCollisionEffect:t = "hit_19_27mm_dirt_ap"
-		ricochetEffect:t = "hit_19_27mm_metal_ap"
-		waterCollisionEffect:t = "hit_19_27mm_water"
-		waterRicochetEffect:t = "hit_19_27mm_water"
-		groundRicochetEffect:t = "hit_19_27mm_dirt_ap"
-		explosionPatchRadius:r = 0.3
-		rendinstDamageRadius:r = 0
-		stabilityRicochetModifier {
-			mod1:p2 = 0, 0.2
-			mod2:p2 = 20, 0.45
-		}
-		tracePattern {
-			caliber:r = 10
-			circleCount:i = 2
-			pointCount:i = 4
-		}
-		damage {
-			kinetic {
-				damageType:t = "generic"
-				demarrePenetrationK:r = 0.65
-				demarreSpeedPow:r = 1.43
-				demarreMassPow:r = 0.71
-				demarreCaliberPow:r = 1.07
-			}
-			breakingScaleByArmor {
-				mod0:p2 = 5, 1
-				mod1:p2 = 10, 0.8
-				mod2:p2 = 40, 0.5
-			}
-			breakingScaleByAir {
-				mod0:p2 = 0.05, 1
-				mod1:p2 = 0.2, 0.7
-				mod2:p2 = 0.5, 0.5
-			}
-		}
-		hitpower {
-			HitPower0m:p2 = 1, 500
-			HitPower3000m:p2 = 1, 3000
-			HitPower4000m:p2 = 0.1, 4000
-		}
-		visual {
-			range_percent_of_ammo:p2 = 100, 0
-			traceFreq:i = 1
-			tracer:t = "20mmGreenShip"
-			trail:t = "noTrail"
-		}
-		collisions {
-			default {
-				fx:t = "hit_19_27mm_dirt_ap"
-				ricochetFx:t = "hit_19_27mm_dirt_ap"
-			}
-			horLandMesh {
-				fx:t = "hit_19_27mm_dirt_ap"
-				ricochetFx:t = "hit_19_27mm_dirt_ap"
-			}
-			soil {
-				fx:t = "hit_19_27mm_dirt_ap"
-				ricochetFx:t = "hit_19_27mm_dirt_ap"
-			}
-			dirt {
-				fx:t = "hit_19_27mm_dirt_ap"
-				ricochetFx:t = "hit_19_27mm_dirt_ap"
-			}
-			road {
-				fx:t = "hit_19_27mm_dirt_ap"
-				ricochetFx:t = "hit_19_27mm_dirt_ap"
-			}
-			bricks_red {
-				fx:t = "hit_19_27mm_red_brick_ap"
-				ricochetFx:t = "hit_19_27mm_red_brick_ap"
-			}
-			roadSoil {
-				fx:t = "hit_19_27mm_dirt_ap"
-				ricochetFx:t = "hit_19_27mm_dirt_ap"
-			}
-			steppe {
-				fx:t = "hit_19_27mm_sand_ap"
-				ricochetFx:t = "hit_19_27mm_sand_ap"
-			}
-			sand {
-				fx:t = "hit_19_27mm_sand_ap"
-				ricochetFx:t = "hit_19_27mm_sand_ap"
-			}
-			duneSand {
-				fx:t = "hit_19_27mm_sand_ap"
-				ricochetFx:t = "hit_19_27mm_sand_ap"
-			}
-			roadSand {
-				fx:t = "hit_19_27mm_sand_ap"
-				ricochetFx:t = "hit_19_27mm_sand_ap"
-			}
-			quickSand {
-				fx:t = "hit_19_27mm_sand_ap"
-				ricochetFx:t = "hit_19_27mm_sand_ap"
-			}
-			snow {
-				fx:t = "hit_19_27mm_snow_ap"
-				ricochetFx:t = "hit_19_27mm_snow_ap"
-			}
-			ice {
-				fx:t = "hit_19_27mm_snow_ap"
-				ricochetFx:t = "hit_19_27mm_snow_ap"
-			}
-			roadSnow {
-				fx:t = "hit_19_27mm_snow_ap"
-				ricochetFx:t = "hit_19_27mm_snow_ap"
-			}
-			snowLower {
-				fx:t = "hit_19_27mm_snow_ap"
-				ricochetFx:t = "hit_19_27mm_snow_ap"
-			}
-			glass {
-				fx:t = "armoured_glass"
-				ricochetFx:t = "armoured_glass"
-			}
-			wood {
-				fx:t = "hit_19_27mm_wood_ap"
-				ricochetFx:t = "hit_19_27mm_wood_ap"
-			}
-			steel {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			metal {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			tank_structural_steel {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			aluminum_armor {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			tank_rubber_screens {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			buildings {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-			verLandMesh {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-			concrete {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-			rocks {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-			rocksSlippery {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-			fabric {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			stone_snow {
-				fx:t = "hit_19_27mm_snow_ap"
-				ricochetFx:t = "hit_19_27mm_snow_ap"
-			}
-			armorPierceLowCal {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			armorPierceMedCal {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			armorPierceHiCal {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			armorNPLowCal {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			armorNPMedCal {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			armorNPHiCal {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			wood_solid {
-				fx:t = "hit_19_27mm_wood_ap"
-				ricochetFx:t = "hit_19_27mm_wood_ap"
-			}
-			softWoodDoor {
-				fx:t = "hit_19_27mm_wood_ap"
-				ricochetFx:t = "hit_19_27mm_wood_ap"
-			}
-			wood_aim_transparent {
-				fx:t = "hit_19_27mm_wood_ap"
-				ricochetFx:t = "hit_5_7mm_wood_ap"
-			}
-			window_wood {
-				fx:t = "hit_19_27mm_wood_ap"
-				ricochetFx:t = "hit_5_7mm_wood_ap"
-			}
-			softSteelDoor {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			paper {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			plastic {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			rubber {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			ceramic {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-			stone {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-			glass_car {
-				fx:t = "armoured_glass"
-				ricochetFx:t = "armoured_glass"
-			}
-			steel_thin {
-				fx:t = "hit_19_27mm_wood_ap"
-				ricochetFx:t = "hit_19_27mm_wood_ap"
-			}
-			soil_brown {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			soil_sand {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			sandbag_grey {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			sandbag_biege {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			stone_biege {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-			stone_white {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-		}
-	}
-}
-25mm_mk38_naval_he {
-	bullet {
-		mass:r = 0.185
-		explosiveType:t = "hexal"
-		explosiveMass:r = 0.032
-		caliber:r = 0.025
-		speed:r = 1100
-		Cx:r = 0.375
-		maxDistance:r = 8500
-		normalizationPreset:t = "heat"
-		ricochetPreset:t = "he"
-		groundRicochetPreset:t = "he_small_caliber_ground"
-		secondaryShattersPreset:t = "ap"
-		stabilityThreshold:r = 0.5
-		stabilityCaliberToArmorThreshold:r = 5
-		stabilityReductionAfterRicochet:r = 0.3
-		stabilityReductionAfterPenetration:r = 0.15
-		bulletType:t = "he_i_t"
-		slopeEffectPreset:t = "ap"
-		fresnel:p3 = 0.23, 0.1, 2
-		explodeOnRendinst:b = true
-		shellAnimation:t = "video/shells_animations/he_i_t_shell.ivf"
-		selfDestructionInAir:b = true
-		splashFallBySquare:b = true
-		explodeTreshold:r = 0.1
-		fuseDelay:r = 0.001
-		fuseOnWater:b = true
-		fuseOnWaterProbability:r = 1
-		selfDestructionFx:t = "hit_5_7mm_metal_he"
-		explosionEffect:t = "hit_28_38mm_metal_he"
-		groundCollisionEffect:t = "hit_28_38mm_dirt_he"
-		ricochetEffect:t = "hit_28_38mm_metal_ap"
-		waterCollisionEffect:t = "hit_28_38mm_water"
-		waterRicochetEffect:t = "hit_28_38mm_water"
-		groundRicochetEffect:t = "hit_28_38mm_dirt_ap"
-		explosionPatchRadius:r = 1
-		rendinstDamageRadius:r = 0
-		stabilityRicochetModifier {
-			mod1:p2 = 0, 0.5
-			mod2:p2 = 15, 0.7
-			mod3:p2 = 30, 0.99
-		}
-		pressureDamage {
-			damageType:t = "pressure"
-		}
-		damage {
-			kinetic {
-				damageType:t = "generic"
-				demarrePenetrationK:r = 0.1
-				demarreSpeedPow:r = 1.43
-				demarreMassPow:r = 0.71
-				demarreCaliberPow:r = 1.07
-			}
-			shatter {
-				useRealShatters:b = true
-				countPortion:r = 0.5
-				realShattersSplicing:r = 0.75
-				segment {
-					radiusScale:r = 1
-					penetrationScale:r = 1
-					damageScale:r = 1
-					angles:p2 = 0, 60
-					countPortion:r = 1
-					onHitChanceMultFire:r = 80
-				}
-				segment {
-					radiusScale:r = 1
-					penetrationScale:r = 1
-					damageScale:r = 1
-					angles:p2 = 60, 180
-					countPortion:r = 0
-				}
-			}
-		}
-		hitpower {
-			HitPower0m:p2 = 1, 500
-			HitPower2500m:p2 = 0.5, 2500
-			HitPower4000m:p2 = 0.1, 3000
-		}
-		visual {
-			range_percent_of_ammo:p2 = 100, 0
-			traceFreq:i = 1
-			tracer:t = "30mmOrangeShip"
-			trail:t = "noTrail"
-		}
-		collisions {
-			default {
-				fx:t = "hit_28_38mm_dirt_he"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			horLandMesh {
-				fx:t = "hit_28_38mm_dirt_he"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			soil {
-				fx:t = "hit_28_38mm_dirt_he"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			dirt {
-				fx:t = "hit_28_38mm_dirt_he"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			road {
-				fx:t = "hit_28_38mm_dirt_he"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			roadSoil {
-				fx:t = "hit_28_38mm_dirt_he"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			bricks_red {
-				fx:t = "hit_28_38mm_red_brick_he"
-				ricochetFx:t = "hit_28_38mm_red_brick_ap"
-			}
-			steppe {
-				fx:t = "hit_28_38mm_sand_he"
-				ricochetFx:t = "hit_28_38mm_sand_ap"
-			}
-			sand {
-				fx:t = "hit_28_38mm_sand_he"
-				ricochetFx:t = "hit_28_38mm_sand_ap"
-			}
-			duneSand {
-				fx:t = "hit_28_38mm_sand_he"
-				ricochetFx:t = "hit_28_38mm_sand_ap"
-			}
-			roadSand {
-				fx:t = "hit_28_38mm_sand_he"
-				ricochetFx:t = "hit_28_38mm_sand_ap"
-			}
-			quickSand {
-				fx:t = "hit_28_38mm_sand_he"
-				ricochetFx:t = "hit_28_38mm_sand_ap"
-			}
-			snow {
-				fx:t = "hit_28_38mm_snow_he"
-				ricochetFx:t = "hit_28_38mm_snow_ap"
-			}
-			ice {
-				fx:t = "hit_28_38mm_snow_he"
-				ricochetFx:t = "hit_28_38mm_snow_ap"
-			}
-			roadSnow {
-				fx:t = "hit_28_38mm_snow_he"
-				ricochetFx:t = "hit_28_38mm_snow_ap"
-			}
-			snowLower {
-				fx:t = "hit_28_38mm_snow_he"
-				ricochetFx:t = "hit_28_38mm_snow_ap"
-			}
-			glass {
-				fx:t = "armoured_glass"
-				ricochetFx:t = "armoured_glass"
-			}
-			wood {
-				fx:t = "hit_28_38mm_wood_he"
-				ricochetFx:t = "hit_28_38mm_wood_ap"
-			}
-			steel {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			metal {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			tank_structural_steel {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			aluminum_armor {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			tank_rubber_screens {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			buildings {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			verLandMesh {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			concrete {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			rocks {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			rocksSlippery {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			fabric {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			stone_snow {
-				fx:t = "hit_28_38mm_snow_he"
-				ricochetFx:t = "hit_28_38mm_snow_ap"
-			}
-			armorPierceLowCal {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			armorPierceMedCal {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			armorPierceHiCal {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			armorNPLowCal {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			armorNPMedCal {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			armorNPHiCal {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			wood_solid {
-				fx:t = "hit_28_38mm_wood_he"
-				ricochetFx:t = "hit_28_38mm_wood_ap"
-			}
-			softWoodDoor {
-				fx:t = "hit_28_38mm_wood_he"
-				ricochetFx:t = "hit_28_38mm_wood_ap"
-			}
-			wood_aim_transparent {
-				fx:t = "hit_28_38mm_wood_he"
-				ricochetFx:t = "hit_5_7mm_wood_ap"
-			}
-			window_wood {
-				fx:t = "hit_28_38mm_wood_he"
-				ricochetFx:t = "hit_5_7mm_wood_ap"
-			}
-			softSteelDoor {
-				fx:t = "hit_28_38mm_metal_he"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			paper {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			plastic {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			rubber {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			ceramic {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			stone {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			glass_car {
-				fx:t = "armoured_glass"
-				ricochetFx:t = "armoured_glass"
-			}
-			steel_thin {
-				fx:t = "hit_28_38mm_wood_he"
-				ricochetFx:t = "hit_28_38mm_wood_ap"
-			}
-			soil_brown {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			soil_sand {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			sandbag_grey {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			sandbag_biege {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			stone_biege {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			stone_white {
-				fx:t = "hit_28_38mm_stone_he"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-		}
-	}
-}
-25mm_mk38_naval_apds {
-	bullet {
-		mass:r = 0.134
-		caliber:r = 0.025
-		ballisticCaliber:r = 0.0135
-		damageCaliber:r = 0.0135
-		damageMass:r = 0.134
-		Cx:r = 0.2
-		speed:r = 1345
-		maxDistance:r = 8500
-		normalizationPreset:t = "apcr"
-		ricochetPreset:t = "apds"
-		groundRicochetPreset:t = "apds_ground"
-		secondaryShattersPreset:t = "apds"
-		stabilityThreshold:r = 0.05
-		stabilityCaliberToArmorThreshold:r = 5
-		stabilityReductionAfterRicochet:r = 0.5
-		stabilityReductionAfterPenetration:r = 0
-		stucking:r = 0.7
-		stuckingAngle:r = 45
-		bulletType:t = "apds_autocannon"
-		slopeEffectPreset:t = "apds"
-		fresnel:p3 = 0.23, 0.1, 2
-		shellAnimation:t = "video/shells_animations/apds_belt.ivf"
-		onHitChanceMultFire:r = 3.5
-		dynamicKv:b = true
-		relativeVelArmorShift:p2 = 200, 1000
-		armorFragmentsDamage:b = true
-		armorFragmentsDamageRadius:r = 1.2
-		armorFragmentsDamageAngle:r = 20
-		armorFragmentsAmount:i = 15
-		armorFragmentsArmorPower:r = 3
-		armorFragmentsHit:r = 8
-		selfDestructionFx:t = "hit_5_7mm_metal_he"
-		explosionEffect:t = "hit_19_27mm_metal_ap"
-		groundCollisionEffect:t = "hit_19_27mm_dirt_ap"
-		ricochetEffect:t = "hit_19_27mm_metal_ap"
-		waterCollisionEffect:t = "hit_19_27mm_water"
-		waterRicochetEffect:t = "hit_19_27mm_water"
-		groundRicochetEffect:t = "hit_19_27mm_dirt_ap"
-		explosionPatchRadius:r = 0.3
-		rendinstDamageRadius:r = 0
-		stabilityRicochetModifier {
-			mod1:p2 = 0, 0.2
-			mod2:p2 = 20, 0.45
-		}
-		tracePattern {
-			caliber:r = 10
-			circleCount:i = 2
-			pointCount:i = 4
-		}
-		damage {
-			kinetic {
-				damageType:t = "generic"
-				demarrePenetrationK:r = 0.65
-				demarreSpeedPow:r = 1.43
-				demarreMassPow:r = 0.71
-				demarreCaliberPow:r = 1.07
-			}
-			breakingScaleByArmor {
-				mod0:p2 = 5, 1
-				mod1:p2 = 10, 0.8
-				mod2:p2 = 40, 0.5
-			}
-			breakingScaleByAir {
-				mod0:p2 = 0.05, 1
-				mod1:p2 = 0.2, 0.7
-				mod2:p2 = 0.5, 0.5
-			}
-		}
-		hitpower {
-			HitPower0m:p2 = 1, 500
-			HitPower3000m:p2 = 1, 3000
-			HitPower4000m:p2 = 0.1, 4000
-		}
-		visual {
-			range_percent_of_ammo:p2 = 100, 0
-			traceFreq:i = 1
-			tracer:t = "20mmGreenShip"
-			trail:t = "noTrail"
-		}
-		collisions {
-			default {
-				fx:t = "hit_19_27mm_dirt_ap"
-				ricochetFx:t = "hit_19_27mm_dirt_ap"
-			}
-			horLandMesh {
-				fx:t = "hit_19_27mm_dirt_ap"
-				ricochetFx:t = "hit_19_27mm_dirt_ap"
-			}
-			soil {
-				fx:t = "hit_19_27mm_dirt_ap"
-				ricochetFx:t = "hit_19_27mm_dirt_ap"
-			}
-			dirt {
-				fx:t = "hit_19_27mm_dirt_ap"
-				ricochetFx:t = "hit_19_27mm_dirt_ap"
-			}
-			road {
-				fx:t = "hit_19_27mm_dirt_ap"
-				ricochetFx:t = "hit_19_27mm_dirt_ap"
-			}
-			bricks_red {
-				fx:t = "hit_19_27mm_red_brick_ap"
-				ricochetFx:t = "hit_19_27mm_red_brick_ap"
-			}
-			roadSoil {
-				fx:t = "hit_19_27mm_dirt_ap"
-				ricochetFx:t = "hit_19_27mm_dirt_ap"
-			}
-			steppe {
-				fx:t = "hit_19_27mm_sand_ap"
-				ricochetFx:t = "hit_19_27mm_sand_ap"
-			}
-			sand {
-				fx:t = "hit_19_27mm_sand_ap"
-				ricochetFx:t = "hit_19_27mm_sand_ap"
-			}
-			duneSand {
-				fx:t = "hit_19_27mm_sand_ap"
-				ricochetFx:t = "hit_19_27mm_sand_ap"
-			}
-			roadSand {
-				fx:t = "hit_19_27mm_sand_ap"
-				ricochetFx:t = "hit_19_27mm_sand_ap"
-			}
-			quickSand {
-				fx:t = "hit_19_27mm_sand_ap"
-				ricochetFx:t = "hit_19_27mm_sand_ap"
-			}
-			snow {
-				fx:t = "hit_19_27mm_snow_ap"
-				ricochetFx:t = "hit_19_27mm_snow_ap"
-			}
-			ice {
-				fx:t = "hit_19_27mm_snow_ap"
-				ricochetFx:t = "hit_19_27mm_snow_ap"
-			}
-			roadSnow {
-				fx:t = "hit_19_27mm_snow_ap"
-				ricochetFx:t = "hit_19_27mm_snow_ap"
-			}
-			snowLower {
-				fx:t = "hit_19_27mm_snow_ap"
-				ricochetFx:t = "hit_19_27mm_snow_ap"
-			}
-			glass {
-				fx:t = "armoured_glass"
-				ricochetFx:t = "armoured_glass"
-			}
-			wood {
-				fx:t = "hit_19_27mm_wood_ap"
-				ricochetFx:t = "hit_19_27mm_wood_ap"
-			}
-			steel {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			metal {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			tank_structural_steel {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			aluminum_armor {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			tank_rubber_screens {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			buildings {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-			verLandMesh {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-			concrete {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-			rocks {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-			rocksSlippery {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-			fabric {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			stone_snow {
-				fx:t = "hit_19_27mm_snow_ap"
-				ricochetFx:t = "hit_19_27mm_snow_ap"
-			}
-			armorPierceLowCal {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			armorPierceMedCal {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			armorPierceHiCal {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			armorNPLowCal {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			armorNPMedCal {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			armorNPHiCal {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			wood_solid {
-				fx:t = "hit_19_27mm_wood_ap"
-				ricochetFx:t = "hit_19_27mm_wood_ap"
-			}
-			softWoodDoor {
-				fx:t = "hit_19_27mm_wood_ap"
-				ricochetFx:t = "hit_19_27mm_wood_ap"
-			}
-			wood_aim_transparent {
-				fx:t = "hit_19_27mm_wood_ap"
-				ricochetFx:t = "hit_5_7mm_wood_ap"
-			}
-			window_wood {
-				fx:t = "hit_19_27mm_wood_ap"
-				ricochetFx:t = "hit_5_7mm_wood_ap"
-			}
-			softSteelDoor {
-				fx:t = "hit_19_27mm_metal_ap"
-				ricochetFx:t = "hit_19_27mm_metal_ap"
-			}
-			paper {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			plastic {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			rubber {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			ceramic {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-			stone {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-			glass_car {
-				fx:t = "armoured_glass"
-				ricochetFx:t = "armoured_glass"
-			}
-			steel_thin {
-				fx:t = "hit_19_27mm_wood_ap"
-				ricochetFx:t = "hit_19_27mm_wood_ap"
-			}
-			soil_brown {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			soil_sand {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			sandbag_grey {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			sandbag_biege {
-				fx:t = "hit_19_27mm_fabric"
-				ricochetFx:t = "hit_19_27mm_fabric"
-			}
-			stone_biege {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-			stone_white {
-				fx:t = "hit_19_27mm_stone_ap"
-				ricochetFx:t = "hit_19_27mm_stone_ap"
-			}
-		}
-	}
-}
-25mm_mk38_naval_apdsfs {
-	bullet {
-		bulletCount:i = 25
-		mass:r = 0.098
-		caliber:r = 0.025
-		damageCaliber:r = 0.009
-		ballisticCaliber:r = 0.009
-		speed:r = 1385
-		Cx:r = 0.3
-		maxDistance:r = 10000
-		normalizationPreset:t = "default"
-		ricochetPreset:t = "apds_fs_long"
-		groundRicochetPreset:t = "apds_fs_ground"
-		secondaryShattersPreset:t = "apds_fs_25_76mm"
-		bulletType:t = "apds_fs_long_tank"
-		slopeEffectPreset:t = "apds_fs_long"
-		fresnel:p3 = 0.23, 0.1, 2
-		shellAnimation:t = "video/shells_animations/apfsds_modern_belt.ivf"
-		onHitChanceMultExplFuel:r = 0.1
-		relativeVelHitShift:p2 = 300, 1000
-		relativeVelArmorShift:p2 = 200, 1000
-		selfDestructionFx:t = "hit_5_7mm_metal_he"
-		explosionEffect:t = "hit_28_38mm_metal_ap"
-		groundCollisionEffect:t = "hit_28_38mm_dirt_ap"
-		ricochetEffect:t = "hit_28_38mm_metal_ap"
-		waterCollisionEffect:t = "hit_28_38mm_water"
-		waterRicochetEffect:t = "hit_28_38mm_water"
-		groundRicochetEffect:t = "hit_28_38mm_dirt_ap"
-		explosionPatchRadius:r = 0.4
-		rendinstDamageRadius:r = 0
-		stability {
-			precessionDamping:r = 0.3
-			ricochetAnglePrecessionFactor:r = 1
-			ricochetAngleOmegaFactor:r = 0.25
-			slopeToOmega:p4 = 1, 10, 0, 1
-			angleLossStabilizationAfterRicochet:r = 1.25
-			penetrationReduction {
-				pnt:p2 = 0, 1
-				pnt:p2 = 2, 0.95
-				pnt:p2 = 10, 0.5
-				pnt:p2 = 21, 0.3
-			}
-		}
-		DamageParts {
-			body {
-				hp:r = 100
-				armorClass:t = "tank_structural_steel"
-				armorThickness:r = 15
-			}
-		}
-		DamageEffects {
-			part {
-				name:t = "body"
-				onKill {
-					destabilization:r = 1
-					impulse:r = 0.005
-				}
-			}
-		}
-		tracePattern {
-			caliber:r = 10
-			circleCount:i = 2
-			pointCount:i = 6
-		}
-		hitpower {
-			HitPower0m:p2 = 1, 1000
-			HitPower10000m:p2 = 0.8, 10000
-		}
-		armorpower {
-			ArmorPower0m:p2 = 101, 10
-			ArmorPower100m:p2 = 100, 100
-			ArmorPower500m:p2 = 95, 500
-			ArmorPower1000m:p2 = 88, 1000
-			ArmorPower1500m:p2 = 81, 1500
-			ArmorPower2000m:p2 = 74, 2000
-			ArmorPower3000m:p2 = 60, 3000
-			ArmorPower10000m:p2 = 5, 10000
-			ArmorPower20000m:p2 = 0, 20000
-		}
-		visual {
-			range_percent_of_ammo:p2 = 100, 0
-			traceFreq:i = 1
-			tracer:t = "30mmGreenShip"
-			trail:t = "noTrail"
-		}
-		collisions {
-			default {
-				fx:t = "hit_28_38mm_dirt_ap"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			horLandMesh {
-				fx:t = "hit_28_38mm_dirt_ap"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			soil {
-				fx:t = "hit_28_38mm_dirt_ap"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			dirt {
-				fx:t = "hit_28_38mm_dirt_ap"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			road {
-				fx:t = "hit_28_38mm_dirt_ap"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			bricks_red {
-				fx:t = "hit_28_38mm_red_brick_ap"
-				ricochetFx:t = "hit_28_38mm_red_brick_ap"
-			}
-			roadSoil {
-				fx:t = "hit_28_38mm_dirt_ap"
-				ricochetFx:t = "hit_28_38mm_dirt_ap"
-			}
-			steppe {
-				fx:t = "hit_28_38mm_sand_ap"
-				ricochetFx:t = "hit_28_38mm_sand_ap"
-			}
-			sand {
-				fx:t = "hit_28_38mm_sand_ap"
-				ricochetFx:t = "hit_28_38mm_sand_ap"
-			}
-			duneSand {
-				fx:t = "hit_28_38mm_sand_ap"
-				ricochetFx:t = "hit_28_38mm_sand_ap"
-			}
-			roadSand {
-				fx:t = "hit_28_38mm_sand_ap"
-				ricochetFx:t = "hit_28_38mm_sand_ap"
-			}
-			quickSand {
-				fx:t = "hit_28_38mm_sand_ap"
-				ricochetFx:t = "hit_28_38mm_sand_ap"
-			}
-			snow {
-				fx:t = "hit_28_38mm_snow_ap"
-				ricochetFx:t = "hit_28_38mm_snow_ap"
-			}
-			ice {
-				fx:t = "hit_28_38mm_snow_ap"
-				ricochetFx:t = "hit_28_38mm_snow_ap"
-			}
-			roadSnow {
-				fx:t = "hit_28_38mm_snow_ap"
-				ricochetFx:t = "hit_28_38mm_snow_ap"
-			}
-			snowLower {
-				fx:t = "hit_28_38mm_snow_ap"
-				ricochetFx:t = "hit_28_38mm_snow_ap"
-			}
-			glass {
-				fx:t = "armoured_glass"
-				ricochetFx:t = "armoured_glass"
-			}
-			wood {
-				fx:t = "hit_28_38mm_wood_ap"
-				ricochetFx:t = "hit_28_38mm_wood_ap"
-			}
-			steel {
-				fx:t = "hit_28_38mm_metal_ap"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			metal {
-				fx:t = "hit_28_38mm_metal_ap"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			tank_structural_steel {
-				fx:t = "hit_28_38mm_metal_ap"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			aluminum_armor {
-				fx:t = "hit_28_38mm_metal_ap"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			tank_rubber_screens {
-				fx:t = "hit_28_38mm_metal_ap"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			buildings {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			verLandMesh {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			concrete {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			rocks {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			rocksSlippery {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			fabric {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			stone_snow {
-				fx:t = "hit_28_38mm_snow_ap"
-				ricochetFx:t = "hit_28_38mm_snow_ap"
-			}
-			armorPierceLowCal {
-				fx:t = "hit_28_38mm_metal_ap"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			armorPierceMedCal {
-				fx:t = "hit_28_38mm_metal_ap"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			armorPierceHiCal {
-				fx:t = "hit_28_38mm_metal_ap"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			armorNPLowCal {
-				fx:t = "hit_28_38mm_metal_ap"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			armorNPMedCal {
-				fx:t = "hit_28_38mm_metal_ap"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			armorNPHiCal {
-				fx:t = "hit_28_38mm_metal_ap"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			wood_solid {
-				fx:t = "hit_28_38mm_wood_ap"
-				ricochetFx:t = "hit_28_38mm_wood_ap"
-			}
-			softWoodDoor {
-				fx:t = "hit_28_38mm_wood_ap"
-				ricochetFx:t = "hit_28_38mm_wood_ap"
-			}
-			wood_aim_transparent {
-				fx:t = "hit_28_38mm_wood_ap"
-				ricochetFx:t = "hit_5_7mm_wood_ap"
-			}
-			window_wood {
-				fx:t = "hit_28_38mm_wood_ap"
-				ricochetFx:t = "hit_5_7mm_wood_ap"
-			}
-			softSteelDoor {
-				fx:t = "hit_28_38mm_metal_ap"
-				ricochetFx:t = "hit_28_38mm_metal_ap"
-			}
-			paper {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			plastic {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			rubber {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			ceramic {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			stone {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			glass_car {
-				fx:t = "armoured_glass"
-				ricochetFx:t = "armoured_glass"
-			}
-			steel_thin {
-				fx:t = "hit_28_38mm_wood_ap"
-				ricochetFx:t = "hit_28_38mm_wood_ap"
-			}
-			soil_brown {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			soil_sand {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			sandbag_grey {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			sandbag_biege {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			stone_biege {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-			stone_white {
-				fx:t = "hit_28_38mm_stone_ap"
-				ricochetFx:t = "hit_28_38mm_stone_ap"
-			}
-		}
-	}
+{
+  "cannon": true,
+  "weaponType": 0,
+  "maxDeltaAngle": 0.09,
+  "maxDeltaAngleVertical": 0.09,
+  "aimMinDist": 0.05,
+  "aimMaxDist": 2000.0,
+  "attackMaxDist": 2000.0,
+  "shotFreq": 3.35,
+  "traceFreq": 3,
+  "bullets": 150,
+  "reloadTime": 10.0,
+  "bulletsCartridge": 150,
+  "recoilOffset": 0.12,
+  "recoilTimes": [
+    0.04,
+    0.1
+  ],
+  "fxType": "muzzle_ground_30mm",
+  "fxMultipleSpawn": true,
+  "shouldCollideWithRendinsts": true,
+  "sound_path": "ships/weapon_ships/cannons",
+  "sound_pathStudio": "naval/weapon/cannons",
+  "sound": "25mm_mark_38",
+  "soundLoop": false,
+  "sfxReloadBullet": "naval_gun_reload",
+  "isBulletBelt": false,
+  "notUseDefaultBulletInGui": true,
+  "attackShipsPriority": {
+    "type_boat": true,
+    "type_heavy_boat": true,
+    "type_barge": true,
+    "type_frigate": true
+  },
+  "overheat": {
+    "overheat": [
+      [
+        13.0,
+        0.0
+      ],
+      [
+        15.0,
+        0.1
+      ],
+      [
+        17.0,
+        0.5
+      ]
+    ]
+  },
+  "visualOverheat": {
+    "shotsToMax": 120,
+    "cooldownTime": 8.0,
+    "cooldownDelay": 1.8,
+    "fxType": "smoke_overheat_med",
+    "decalOffset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "decalSize": [
+      1.8,
+      2.2,
+      2.2
+    ]
+  },
+  "bullet": [
+    {
+      "mass": 0.185,
+      "explosiveType": "hexal",
+      "explosiveMass": 0.032,
+      "caliber": 0.025,
+      "speed": 1100.0,
+      "Cx": 0.375,
+      "maxDistance": 8500.0,
+      "normalizationPreset": "heat",
+      "ricochetPreset": "he",
+      "groundRicochetPreset": "he_small_caliber_ground",
+      "secondaryShattersPreset": "ap",
+      "stabilityThreshold": 0.5,
+      "stabilityCaliberToArmorThreshold": 5.0,
+      "stabilityReductionAfterRicochet": 0.3,
+      "stabilityReductionAfterPenetration": 0.15,
+      "bulletType": "he_i_t",
+      "slopeEffectPreset": "ap",
+      "fresnel": [
+        0.23,
+        0.1,
+        2.0
+      ],
+      "explodeOnRendinst": true,
+      "shellAnimation": "video/shells_animations/he_i_t_shell.ivf",
+      "selfDestructionInAir": true,
+      "splashFallBySquare": true,
+      "explodeTreshold": 0.1,
+      "fuseDelay": 0.001,
+      "fuseOnWater": true,
+      "fuseOnWaterProbability": 1.0,
+      "selfDestructionFx": "hit_5_7mm_metal_he",
+      "explosionEffect": "hit_28_38mm_metal_he",
+      "groundCollisionEffect": "hit_28_38mm_dirt_he",
+      "ricochetEffect": "hit_28_38mm_metal_ap",
+      "waterCollisionEffect": "hit_28_38mm_water",
+      "waterRicochetEffect": "hit_28_38mm_water",
+      "groundRicochetEffect": "hit_28_38mm_dirt_ap",
+      "explosionPatchRadius": 1.0,
+      "rendinstDamageRadius": 0.0,
+      "stabilityRicochetModifier": {
+        "mod1": [
+          0.0,
+          0.5
+        ],
+        "mod2": [
+          15.0,
+          0.7
+        ],
+        "mod3": [
+          30.0,
+          0.99
+        ]
+      },
+      "pressureDamage": {
+        "damageType": "pressure"
+      },
+      "damage": {
+        "kinetic": {
+          "damageType": "generic",
+          "demarrePenetrationK": 0.1,
+          "demarreSpeedPow": 1.43,
+          "demarreMassPow": 0.71,
+          "demarreCaliberPow": 1.07
+        },
+        "shatter": {
+          "useRealShatters": true,
+          "countPortion": 0.5,
+          "realShattersSplicing": 0.75,
+          "segment": [
+            {
+              "radiusScale": 1.0,
+              "penetrationScale": 1.0,
+              "damageScale": 1.0,
+              "angles": [
+                0.0,
+                60.0
+              ],
+              "countPortion": 1.0,
+              "onHitChanceMultFire": 80.0
+            },
+            {
+              "radiusScale": 1.0,
+              "penetrationScale": 1.0,
+              "damageScale": 1.0,
+              "angles": [
+                60.0,
+                180.0
+              ],
+              "countPortion": 0.0
+            }
+          ]
+        }
+      },
+      "hitpower": {
+        "HitPower0m": [
+          1.0,
+          500.0
+        ],
+        "HitPower2500m": [
+          0.5,
+          2500.0
+        ],
+        "HitPower4000m": [
+          0.1,
+          3000.0
+        ]
+      },
+      "visual": {
+        "range_percent_of_ammo": [
+          100.0,
+          0.0
+        ],
+        "traceFreq": 1,
+        "tracer": "30mmOrangeShip",
+        "trail": "noTrail"
+      },
+      "collisions": {
+        "default": {
+          "fx": "hit_28_38mm_dirt_he",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "horLandMesh": {
+          "fx": "hit_28_38mm_dirt_he",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "soil": {
+          "fx": "hit_28_38mm_dirt_he",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "dirt": {
+          "fx": "hit_28_38mm_dirt_he",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "road": {
+          "fx": "hit_28_38mm_dirt_he",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "roadSoil": {
+          "fx": "hit_28_38mm_dirt_he",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "bricks_red": {
+          "fx": "hit_28_38mm_red_brick_he",
+          "ricochetFx": "hit_28_38mm_red_brick_ap"
+        },
+        "steppe": {
+          "fx": "hit_28_38mm_sand_he",
+          "ricochetFx": "hit_28_38mm_sand_ap"
+        },
+        "sand": {
+          "fx": "hit_28_38mm_sand_he",
+          "ricochetFx": "hit_28_38mm_sand_ap"
+        },
+        "duneSand": {
+          "fx": "hit_28_38mm_sand_he",
+          "ricochetFx": "hit_28_38mm_sand_ap"
+        },
+        "roadSand": {
+          "fx": "hit_28_38mm_sand_he",
+          "ricochetFx": "hit_28_38mm_sand_ap"
+        },
+        "quickSand": {
+          "fx": "hit_28_38mm_sand_he",
+          "ricochetFx": "hit_28_38mm_sand_ap"
+        },
+        "snow": {
+          "fx": "hit_28_38mm_snow_he",
+          "ricochetFx": "hit_28_38mm_snow_ap"
+        },
+        "ice": {
+          "fx": "hit_28_38mm_snow_he",
+          "ricochetFx": "hit_28_38mm_snow_ap"
+        },
+        "roadSnow": {
+          "fx": "hit_28_38mm_snow_he",
+          "ricochetFx": "hit_28_38mm_snow_ap"
+        },
+        "snowLower": {
+          "fx": "hit_28_38mm_snow_he",
+          "ricochetFx": "hit_28_38mm_snow_ap"
+        },
+        "glass": {
+          "fx": "armoured_glass",
+          "ricochetFx": "armoured_glass"
+        },
+        "wood": {
+          "fx": "hit_28_38mm_wood_he",
+          "ricochetFx": "hit_28_38mm_wood_ap"
+        },
+        "steel": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "metal": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "tank_structural_steel": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "aluminum_armor": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "tank_rubber_screens": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "buildings": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "verLandMesh": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "concrete": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "rocks": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "rocksSlippery": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "fabric": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "stone_snow": {
+          "fx": "hit_28_38mm_snow_he",
+          "ricochetFx": "hit_28_38mm_snow_ap"
+        },
+        "armorPierceLowCal": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "armorPierceMedCal": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "armorPierceHiCal": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "armorNPLowCal": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "armorNPMedCal": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "armorNPHiCal": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "wood_solid": {
+          "fx": "hit_28_38mm_wood_he",
+          "ricochetFx": "hit_28_38mm_wood_ap"
+        },
+        "softWoodDoor": {
+          "fx": "hit_28_38mm_wood_he",
+          "ricochetFx": "hit_28_38mm_wood_ap"
+        },
+        "wood_aim_transparent": {
+          "fx": "hit_28_38mm_wood_he",
+          "ricochetFx": "hit_5_7mm_wood_ap"
+        },
+        "window_wood": {
+          "fx": "hit_28_38mm_wood_he",
+          "ricochetFx": "hit_5_7mm_wood_ap"
+        },
+        "softSteelDoor": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "paper": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "plastic": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "rubber": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "ceramic": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "stone": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "glass_car": {
+          "fx": "armoured_glass",
+          "ricochetFx": "armoured_glass"
+        },
+        "steel_thin": {
+          "fx": "hit_28_38mm_wood_he",
+          "ricochetFx": "hit_28_38mm_wood_ap"
+        },
+        "soil_brown": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "soil_sand": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "sandbag_grey": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "sandbag_biege": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "stone_biege": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "stone_white": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        }
+      }
+    },
+    {
+      "mass": 0.134,
+      "caliber": 0.025,
+      "ballisticCaliber": 0.0135,
+      "damageCaliber": 0.0135,
+      "damageMass": 0.134,
+      "Cx": 0.2,
+      "speed": 1345.0,
+      "maxDistance": 8500.0,
+      "normalizationPreset": "apcr",
+      "ricochetPreset": "apds",
+      "groundRicochetPreset": "apds_ground",
+      "secondaryShattersPreset": "apds",
+      "stabilityThreshold": 0.05,
+      "stabilityCaliberToArmorThreshold": 5.0,
+      "stabilityReductionAfterRicochet": 0.5,
+      "stabilityReductionAfterPenetration": 0.0,
+      "stucking": 0.7,
+      "stuckingAngle": 45.0,
+      "bulletType": "apds_autocannon",
+      "slopeEffectPreset": "apds",
+      "fresnel": [
+        0.23,
+        0.1,
+        2.0
+      ],
+      "shellAnimation": "video/shells_animations/apds_belt.ivf",
+      "onHitChanceMultFire": 3.5,
+      "dynamicKv": true,
+      "relativeVelArmorShift": [
+        200.0,
+        1000.0
+      ],
+      "armorFragmentsDamage": true,
+      "armorFragmentsDamageRadius": 1.2,
+      "armorFragmentsDamageAngle": 20.0,
+      "armorFragmentsAmount": 15,
+      "armorFragmentsArmorPower": 3.0,
+      "armorFragmentsHit": 8.0,
+      "selfDestructionFx": "hit_5_7mm_metal_he",
+      "explosionEffect": "hit_19_27mm_metal_ap",
+      "groundCollisionEffect": "hit_19_27mm_dirt_ap",
+      "ricochetEffect": "hit_19_27mm_metal_ap",
+      "waterCollisionEffect": "hit_19_27mm_water",
+      "waterRicochetEffect": "hit_19_27mm_water",
+      "groundRicochetEffect": "hit_19_27mm_dirt_ap",
+      "explosionPatchRadius": 0.3,
+      "rendinstDamageRadius": 0.0,
+      "stabilityRicochetModifier": {
+        "mod1": [
+          0.0,
+          0.2
+        ],
+        "mod2": [
+          20.0,
+          0.45
+        ]
+      },
+      "tracePattern": {
+        "caliber": 10.0,
+        "circleCount": 2,
+        "pointCount": 4
+      },
+      "damage": {
+        "kinetic": {
+          "damageType": "generic",
+          "demarrePenetrationK": 0.65,
+          "demarreSpeedPow": 1.43,
+          "demarreMassPow": 0.71,
+          "demarreCaliberPow": 1.07
+        },
+        "breakingScaleByArmor": {
+          "mod0": [
+            5.0,
+            1.0
+          ],
+          "mod1": [
+            10.0,
+            0.8
+          ],
+          "mod2": [
+            40.0,
+            0.5
+          ]
+        },
+        "breakingScaleByAir": {
+          "mod0": [
+            0.05,
+            1.0
+          ],
+          "mod1": [
+            0.2,
+            0.7
+          ],
+          "mod2": [
+            0.5,
+            0.5
+          ]
+        }
+      },
+      "hitpower": {
+        "HitPower0m": [
+          1.0,
+          500.0
+        ],
+        "HitPower3000m": [
+          1.0,
+          3000.0
+        ],
+        "HitPower4000m": [
+          0.1,
+          4000.0
+        ]
+      },
+      "visual": {
+        "range_percent_of_ammo": [
+          100.0,
+          0.0
+        ],
+        "traceFreq": 1,
+        "tracer": "20mmGreenShip",
+        "trail": "noTrail"
+      },
+      "collisions": {
+        "default": {
+          "fx": "hit_19_27mm_dirt_ap",
+          "ricochetFx": "hit_19_27mm_dirt_ap"
+        },
+        "horLandMesh": {
+          "fx": "hit_19_27mm_dirt_ap",
+          "ricochetFx": "hit_19_27mm_dirt_ap"
+        },
+        "soil": {
+          "fx": "hit_19_27mm_dirt_ap",
+          "ricochetFx": "hit_19_27mm_dirt_ap"
+        },
+        "dirt": {
+          "fx": "hit_19_27mm_dirt_ap",
+          "ricochetFx": "hit_19_27mm_dirt_ap"
+        },
+        "road": {
+          "fx": "hit_19_27mm_dirt_ap",
+          "ricochetFx": "hit_19_27mm_dirt_ap"
+        },
+        "bricks_red": {
+          "fx": "hit_19_27mm_red_brick_ap",
+          "ricochetFx": "hit_19_27mm_red_brick_ap"
+        },
+        "roadSoil": {
+          "fx": "hit_19_27mm_dirt_ap",
+          "ricochetFx": "hit_19_27mm_dirt_ap"
+        },
+        "steppe": {
+          "fx": "hit_19_27mm_sand_ap",
+          "ricochetFx": "hit_19_27mm_sand_ap"
+        },
+        "sand": {
+          "fx": "hit_19_27mm_sand_ap",
+          "ricochetFx": "hit_19_27mm_sand_ap"
+        },
+        "duneSand": {
+          "fx": "hit_19_27mm_sand_ap",
+          "ricochetFx": "hit_19_27mm_sand_ap"
+        },
+        "roadSand": {
+          "fx": "hit_19_27mm_sand_ap",
+          "ricochetFx": "hit_19_27mm_sand_ap"
+        },
+        "quickSand": {
+          "fx": "hit_19_27mm_sand_ap",
+          "ricochetFx": "hit_19_27mm_sand_ap"
+        },
+        "snow": {
+          "fx": "hit_19_27mm_snow_ap",
+          "ricochetFx": "hit_19_27mm_snow_ap"
+        },
+        "ice": {
+          "fx": "hit_19_27mm_snow_ap",
+          "ricochetFx": "hit_19_27mm_snow_ap"
+        },
+        "roadSnow": {
+          "fx": "hit_19_27mm_snow_ap",
+          "ricochetFx": "hit_19_27mm_snow_ap"
+        },
+        "snowLower": {
+          "fx": "hit_19_27mm_snow_ap",
+          "ricochetFx": "hit_19_27mm_snow_ap"
+        },
+        "glass": {
+          "fx": "armoured_glass",
+          "ricochetFx": "armoured_glass"
+        },
+        "wood": {
+          "fx": "hit_19_27mm_wood_ap",
+          "ricochetFx": "hit_19_27mm_wood_ap"
+        },
+        "steel": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "metal": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "tank_structural_steel": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "aluminum_armor": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "tank_rubber_screens": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "buildings": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        },
+        "verLandMesh": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        },
+        "concrete": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        },
+        "rocks": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        },
+        "rocksSlippery": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        },
+        "fabric": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "stone_snow": {
+          "fx": "hit_19_27mm_snow_ap",
+          "ricochetFx": "hit_19_27mm_snow_ap"
+        },
+        "armorPierceLowCal": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "armorPierceMedCal": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "armorPierceHiCal": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "armorNPLowCal": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "armorNPMedCal": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "armorNPHiCal": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "wood_solid": {
+          "fx": "hit_19_27mm_wood_ap",
+          "ricochetFx": "hit_19_27mm_wood_ap"
+        },
+        "softWoodDoor": {
+          "fx": "hit_19_27mm_wood_ap",
+          "ricochetFx": "hit_19_27mm_wood_ap"
+        },
+        "wood_aim_transparent": {
+          "fx": "hit_19_27mm_wood_ap",
+          "ricochetFx": "hit_5_7mm_wood_ap"
+        },
+        "window_wood": {
+          "fx": "hit_19_27mm_wood_ap",
+          "ricochetFx": "hit_5_7mm_wood_ap"
+        },
+        "softSteelDoor": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "paper": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "plastic": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "rubber": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "ceramic": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        },
+        "stone": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        },
+        "glass_car": {
+          "fx": "armoured_glass",
+          "ricochetFx": "armoured_glass"
+        },
+        "steel_thin": {
+          "fx": "hit_19_27mm_wood_ap",
+          "ricochetFx": "hit_19_27mm_wood_ap"
+        },
+        "soil_brown": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "soil_sand": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "sandbag_grey": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "sandbag_biege": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "stone_biege": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        },
+        "stone_white": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        }
+      }
+    }
+  ],
+  "25mm_mk38_universal": {
+    "bullet": [
+      {
+        "mass": 0.185,
+        "explosiveType": "hexal",
+        "explosiveMass": 0.032,
+        "caliber": 0.025,
+        "speed": 1100.0,
+        "Cx": 0.375,
+        "maxDistance": 8500.0,
+        "normalizationPreset": "heat",
+        "ricochetPreset": "he",
+        "groundRicochetPreset": "he_small_caliber_ground",
+        "secondaryShattersPreset": "ap",
+        "stabilityThreshold": 0.5,
+        "stabilityCaliberToArmorThreshold": 5.0,
+        "stabilityReductionAfterRicochet": 0.3,
+        "stabilityReductionAfterPenetration": 0.15,
+        "bulletType": "he_i_t",
+        "slopeEffectPreset": "ap",
+        "fresnel": [
+          0.23,
+          0.1,
+          2.0
+        ],
+        "explodeOnRendinst": true,
+        "shellAnimation": "video/shells_animations/he_i_t_shell.ivf",
+        "selfDestructionInAir": true,
+        "splashFallBySquare": true,
+        "explodeTreshold": 0.1,
+        "fuseDelay": 0.001,
+        "fuseOnWater": true,
+        "fuseOnWaterProbability": 1.0,
+        "selfDestructionFx": "hit_5_7mm_metal_he",
+        "explosionEffect": "hit_28_38mm_metal_he",
+        "groundCollisionEffect": "hit_28_38mm_dirt_he",
+        "ricochetEffect": "hit_28_38mm_metal_ap",
+        "waterCollisionEffect": "hit_28_38mm_water",
+        "waterRicochetEffect": "hit_28_38mm_water",
+        "groundRicochetEffect": "hit_28_38mm_dirt_ap",
+        "explosionPatchRadius": 1.0,
+        "rendinstDamageRadius": 0.0,
+        "stabilityRicochetModifier": {
+          "mod1": [
+            0.0,
+            0.5
+          ],
+          "mod2": [
+            15.0,
+            0.7
+          ],
+          "mod3": [
+            30.0,
+            0.99
+          ]
+        },
+        "pressureDamage": {
+          "damageType": "pressure"
+        },
+        "damage": {
+          "kinetic": {
+            "damageType": "generic",
+            "demarrePenetrationK": 0.1,
+            "demarreSpeedPow": 1.43,
+            "demarreMassPow": 0.71,
+            "demarreCaliberPow": 1.07
+          },
+          "shatter": {
+            "useRealShatters": true,
+            "countPortion": 0.5,
+            "realShattersSplicing": 0.75,
+            "segment": [
+              {
+                "radiusScale": 1.0,
+                "penetrationScale": 1.0,
+                "damageScale": 1.0,
+                "angles": [
+                  0.0,
+                  60.0
+                ],
+                "countPortion": 1.0,
+                "onHitChanceMultFire": 80.0
+              },
+              {
+                "radiusScale": 1.0,
+                "penetrationScale": 1.0,
+                "damageScale": 1.0,
+                "angles": [
+                  60.0,
+                  180.0
+                ],
+                "countPortion": 0.0
+              }
+            ]
+          }
+        },
+        "hitpower": {
+          "HitPower0m": [
+            1.0,
+            500.0
+          ],
+          "HitPower2500m": [
+            0.5,
+            2500.0
+          ],
+          "HitPower4000m": [
+            0.1,
+            3000.0
+          ]
+        },
+        "visual": {
+          "range_percent_of_ammo": [
+            100.0,
+            0.0
+          ],
+          "traceFreq": 1,
+          "tracer": "30mmOrangeShip",
+          "trail": "noTrail"
+        },
+        "collisions": {
+          "default": {
+            "fx": "hit_28_38mm_dirt_he",
+            "ricochetFx": "hit_28_38mm_dirt_ap"
+          },
+          "horLandMesh": {
+            "fx": "hit_28_38mm_dirt_he",
+            "ricochetFx": "hit_28_38mm_dirt_ap"
+          },
+          "soil": {
+            "fx": "hit_28_38mm_dirt_he",
+            "ricochetFx": "hit_28_38mm_dirt_ap"
+          },
+          "dirt": {
+            "fx": "hit_28_38mm_dirt_he",
+            "ricochetFx": "hit_28_38mm_dirt_ap"
+          },
+          "road": {
+            "fx": "hit_28_38mm_dirt_he",
+            "ricochetFx": "hit_28_38mm_dirt_ap"
+          },
+          "roadSoil": {
+            "fx": "hit_28_38mm_dirt_he",
+            "ricochetFx": "hit_28_38mm_dirt_ap"
+          },
+          "bricks_red": {
+            "fx": "hit_28_38mm_red_brick_he",
+            "ricochetFx": "hit_28_38mm_red_brick_ap"
+          },
+          "steppe": {
+            "fx": "hit_28_38mm_sand_he",
+            "ricochetFx": "hit_28_38mm_sand_ap"
+          },
+          "sand": {
+            "fx": "hit_28_38mm_sand_he",
+            "ricochetFx": "hit_28_38mm_sand_ap"
+          },
+          "duneSand": {
+            "fx": "hit_28_38mm_sand_he",
+            "ricochetFx": "hit_28_38mm_sand_ap"
+          },
+          "roadSand": {
+            "fx": "hit_28_38mm_sand_he",
+            "ricochetFx": "hit_28_38mm_sand_ap"
+          },
+          "quickSand": {
+            "fx": "hit_28_38mm_sand_he",
+            "ricochetFx": "hit_28_38mm_sand_ap"
+          },
+          "snow": {
+            "fx": "hit_28_38mm_snow_he",
+            "ricochetFx": "hit_28_38mm_snow_ap"
+          },
+          "ice": {
+            "fx": "hit_28_38mm_snow_he",
+            "ricochetFx": "hit_28_38mm_snow_ap"
+          },
+          "roadSnow": {
+            "fx": "hit_28_38mm_snow_he",
+            "ricochetFx": "hit_28_38mm_snow_ap"
+          },
+          "snowLower": {
+            "fx": "hit_28_38mm_snow_he",
+            "ricochetFx": "hit_28_38mm_snow_ap"
+          },
+          "glass": {
+            "fx": "armoured_glass",
+            "ricochetFx": "armoured_glass"
+          },
+          "wood": {
+            "fx": "hit_28_38mm_wood_he",
+            "ricochetFx": "hit_28_38mm_wood_ap"
+          },
+          "steel": {
+            "fx": "hit_28_38mm_metal_he",
+            "ricochetFx": "hit_28_38mm_metal_ap"
+          },
+          "metal": {
+            "fx": "hit_28_38mm_metal_he",
+            "ricochetFx": "hit_28_38mm_metal_ap"
+          },
+          "tank_structural_steel": {
+            "fx": "hit_28_38mm_metal_he",
+            "ricochetFx": "hit_28_38mm_metal_ap"
+          },
+          "aluminum_armor": {
+            "fx": "hit_28_38mm_metal_he",
+            "ricochetFx": "hit_28_38mm_metal_ap"
+          },
+          "tank_rubber_screens": {
+            "fx": "hit_28_38mm_metal_he",
+            "ricochetFx": "hit_28_38mm_metal_ap"
+          },
+          "buildings": {
+            "fx": "hit_28_38mm_stone_he",
+            "ricochetFx": "hit_28_38mm_stone_ap"
+          },
+          "verLandMesh": {
+            "fx": "hit_28_38mm_stone_he",
+            "ricochetFx": "hit_28_38mm_stone_ap"
+          },
+          "concrete": {
+            "fx": "hit_28_38mm_stone_he",
+            "ricochetFx": "hit_28_38mm_stone_ap"
+          },
+          "rocks": {
+            "fx": "hit_28_38mm_stone_he",
+            "ricochetFx": "hit_28_38mm_stone_ap"
+          },
+          "rocksSlippery": {
+            "fx": "hit_28_38mm_stone_he",
+            "ricochetFx": "hit_28_38mm_stone_ap"
+          },
+          "fabric": {
+            "fx": "hit_19_27mm_fabric",
+            "ricochetFx": "hit_19_27mm_fabric"
+          },
+          "stone_snow": {
+            "fx": "hit_28_38mm_snow_he",
+            "ricochetFx": "hit_28_38mm_snow_ap"
+          },
+          "armorPierceLowCal": {
+            "fx": "hit_28_38mm_metal_he",
+            "ricochetFx": "hit_28_38mm_metal_ap"
+          },
+          "armorPierceMedCal": {
+            "fx": "hit_28_38mm_metal_he",
+            "ricochetFx": "hit_28_38mm_metal_ap"
+          },
+          "armorPierceHiCal": {
+            "fx": "hit_28_38mm_metal_he",
+            "ricochetFx": "hit_28_38mm_metal_ap"
+          },
+          "armorNPLowCal": {
+            "fx": "hit_28_38mm_metal_he",
+            "ricochetFx": "hit_28_38mm_metal_ap"
+          },
+          "armorNPMedCal": {
+            "fx": "hit_28_38mm_metal_he",
+            "ricochetFx": "hit_28_38mm_metal_ap"
+          },
+          "armorNPHiCal": {
+            "fx": "hit_28_38mm_metal_he",
+            "ricochetFx": "hit_28_38mm_metal_ap"
+          },
+          "wood_solid": {
+            "fx": "hit_28_38mm_wood_he",
+            "ricochetFx": "hit_28_38mm_wood_ap"
+          },
+          "softWoodDoor": {
+            "fx": "hit_28_38mm_wood_he",
+            "ricochetFx": "hit_28_38mm_wood_ap"
+          },
+          "wood_aim_transparent": {
+            "fx": "hit_28_38mm_wood_he",
+            "ricochetFx": "hit_5_7mm_wood_ap"
+          },
+          "window_wood": {
+            "fx": "hit_28_38mm_wood_he",
+            "ricochetFx": "hit_5_7mm_wood_ap"
+          },
+          "softSteelDoor": {
+            "fx": "hit_28_38mm_metal_he",
+            "ricochetFx": "hit_28_38mm_metal_ap"
+          },
+          "paper": {
+            "fx": "hit_28_38mm_stone_ap",
+            "ricochetFx": "hit_28_38mm_stone_ap"
+          },
+          "plastic": {
+            "fx": "hit_28_38mm_stone_ap",
+            "ricochetFx": "hit_28_38mm_stone_ap"
+          },
+          "rubber": {
+            "fx": "hit_28_38mm_stone_ap",
+            "ricochetFx": "hit_28_38mm_stone_ap"
+          },
+          "ceramic": {
+            "fx": "hit_28_38mm_stone_he",
+            "ricochetFx": "hit_28_38mm_stone_ap"
+          },
+          "stone": {
+            "fx": "hit_28_38mm_stone_he",
+            "ricochetFx": "hit_28_38mm_stone_ap"
+          },
+          "glass_car": {
+            "fx": "armoured_glass",
+            "ricochetFx": "armoured_glass"
+          },
+          "steel_thin": {
+            "fx": "hit_28_38mm_wood_he",
+            "ricochetFx": "hit_28_38mm_wood_ap"
+          },
+          "soil_brown": {
+            "fx": "hit_28_38mm_stone_ap",
+            "ricochetFx": "hit_28_38mm_stone_ap"
+          },
+          "soil_sand": {
+            "fx": "hit_28_38mm_stone_ap",
+            "ricochetFx": "hit_28_38mm_stone_ap"
+          },
+          "sandbag_grey": {
+            "fx": "hit_28_38mm_stone_ap",
+            "ricochetFx": "hit_28_38mm_stone_ap"
+          },
+          "sandbag_biege": {
+            "fx": "hit_28_38mm_stone_ap",
+            "ricochetFx": "hit_28_38mm_stone_ap"
+          },
+          "stone_biege": {
+            "fx": "hit_28_38mm_stone_he",
+            "ricochetFx": "hit_28_38mm_stone_ap"
+          },
+          "stone_white": {
+            "fx": "hit_28_38mm_stone_he",
+            "ricochetFx": "hit_28_38mm_stone_ap"
+          }
+        }
+      },
+      {
+        "mass": 0.134,
+        "caliber": 0.025,
+        "ballisticCaliber": 0.0135,
+        "damageCaliber": 0.0135,
+        "damageMass": 0.134,
+        "Cx": 0.2,
+        "speed": 1345.0,
+        "maxDistance": 8500.0,
+        "normalizationPreset": "apcr",
+        "ricochetPreset": "apds",
+        "groundRicochetPreset": "apds_ground",
+        "secondaryShattersPreset": "apds",
+        "stabilityThreshold": 0.05,
+        "stabilityCaliberToArmorThreshold": 5.0,
+        "stabilityReductionAfterRicochet": 0.5,
+        "stabilityReductionAfterPenetration": 0.0,
+        "stucking": 0.7,
+        "stuckingAngle": 45.0,
+        "bulletType": "apds_autocannon",
+        "slopeEffectPreset": "apds",
+        "fresnel": [
+          0.23,
+          0.1,
+          2.0
+        ],
+        "shellAnimation": "video/shells_animations/apds_belt.ivf",
+        "onHitChanceMultFire": 3.5,
+        "dynamicKv": true,
+        "relativeVelArmorShift": [
+          200.0,
+          1000.0
+        ],
+        "armorFragmentsDamage": true,
+        "armorFragmentsDamageRadius": 1.2,
+        "armorFragmentsDamageAngle": 20.0,
+        "armorFragmentsAmount": 15,
+        "armorFragmentsArmorPower": 3.0,
+        "armorFragmentsHit": 8.0,
+        "selfDestructionFx": "hit_5_7mm_metal_he",
+        "explosionEffect": "hit_19_27mm_metal_ap",
+        "groundCollisionEffect": "hit_19_27mm_dirt_ap",
+        "ricochetEffect": "hit_19_27mm_metal_ap",
+        "waterCollisionEffect": "hit_19_27mm_water",
+        "waterRicochetEffect": "hit_19_27mm_water",
+        "groundRicochetEffect": "hit_19_27mm_dirt_ap",
+        "explosionPatchRadius": 0.3,
+        "rendinstDamageRadius": 0.0,
+        "stabilityRicochetModifier": {
+          "mod1": [
+            0.0,
+            0.2
+          ],
+          "mod2": [
+            20.0,
+            0.45
+          ]
+        },
+        "tracePattern": {
+          "caliber": 10.0,
+          "circleCount": 2,
+          "pointCount": 4
+        },
+        "damage": {
+          "kinetic": {
+            "damageType": "generic",
+            "demarrePenetrationK": 0.65,
+            "demarreSpeedPow": 1.43,
+            "demarreMassPow": 0.71,
+            "demarreCaliberPow": 1.07
+          },
+          "breakingScaleByArmor": {
+            "mod0": [
+              5.0,
+              1.0
+            ],
+            "mod1": [
+              10.0,
+              0.8
+            ],
+            "mod2": [
+              40.0,
+              0.5
+            ]
+          },
+          "breakingScaleByAir": {
+            "mod0": [
+              0.05,
+              1.0
+            ],
+            "mod1": [
+              0.2,
+              0.7
+            ],
+            "mod2": [
+              0.5,
+              0.5
+            ]
+          }
+        },
+        "hitpower": {
+          "HitPower0m": [
+            1.0,
+            500.0
+          ],
+          "HitPower3000m": [
+            1.0,
+            3000.0
+          ],
+          "HitPower4000m": [
+            0.1,
+            4000.0
+          ]
+        },
+        "visual": {
+          "range_percent_of_ammo": [
+            100.0,
+            0.0
+          ],
+          "traceFreq": 1,
+          "tracer": "20mmGreenShip",
+          "trail": "noTrail"
+        },
+        "collisions": {
+          "default": {
+            "fx": "hit_19_27mm_dirt_ap",
+            "ricochetFx": "hit_19_27mm_dirt_ap"
+          },
+          "horLandMesh": {
+            "fx": "hit_19_27mm_dirt_ap",
+            "ricochetFx": "hit_19_27mm_dirt_ap"
+          },
+          "soil": {
+            "fx": "hit_19_27mm_dirt_ap",
+            "ricochetFx": "hit_19_27mm_dirt_ap"
+          },
+          "dirt": {
+            "fx": "hit_19_27mm_dirt_ap",
+            "ricochetFx": "hit_19_27mm_dirt_ap"
+          },
+          "road": {
+            "fx": "hit_19_27mm_dirt_ap",
+            "ricochetFx": "hit_19_27mm_dirt_ap"
+          },
+          "bricks_red": {
+            "fx": "hit_19_27mm_red_brick_ap",
+            "ricochetFx": "hit_19_27mm_red_brick_ap"
+          },
+          "roadSoil": {
+            "fx": "hit_19_27mm_dirt_ap",
+            "ricochetFx": "hit_19_27mm_dirt_ap"
+          },
+          "steppe": {
+            "fx": "hit_19_27mm_sand_ap",
+            "ricochetFx": "hit_19_27mm_sand_ap"
+          },
+          "sand": {
+            "fx": "hit_19_27mm_sand_ap",
+            "ricochetFx": "hit_19_27mm_sand_ap"
+          },
+          "duneSand": {
+            "fx": "hit_19_27mm_sand_ap",
+            "ricochetFx": "hit_19_27mm_sand_ap"
+          },
+          "roadSand": {
+            "fx": "hit_19_27mm_sand_ap",
+            "ricochetFx": "hit_19_27mm_sand_ap"
+          },
+          "quickSand": {
+            "fx": "hit_19_27mm_sand_ap",
+            "ricochetFx": "hit_19_27mm_sand_ap"
+          },
+          "snow": {
+            "fx": "hit_19_27mm_snow_ap",
+            "ricochetFx": "hit_19_27mm_snow_ap"
+          },
+          "ice": {
+            "fx": "hit_19_27mm_snow_ap",
+            "ricochetFx": "hit_19_27mm_snow_ap"
+          },
+          "roadSnow": {
+            "fx": "hit_19_27mm_snow_ap",
+            "ricochetFx": "hit_19_27mm_snow_ap"
+          },
+          "snowLower": {
+            "fx": "hit_19_27mm_snow_ap",
+            "ricochetFx": "hit_19_27mm_snow_ap"
+          },
+          "glass": {
+            "fx": "armoured_glass",
+            "ricochetFx": "armoured_glass"
+          },
+          "wood": {
+            "fx": "hit_19_27mm_wood_ap",
+            "ricochetFx": "hit_19_27mm_wood_ap"
+          },
+          "steel": {
+            "fx": "hit_19_27mm_metal_ap",
+            "ricochetFx": "hit_19_27mm_metal_ap"
+          },
+          "metal": {
+            "fx": "hit_19_27mm_metal_ap",
+            "ricochetFx": "hit_19_27mm_metal_ap"
+          },
+          "tank_structural_steel": {
+            "fx": "hit_19_27mm_metal_ap",
+            "ricochetFx": "hit_19_27mm_metal_ap"
+          },
+          "aluminum_armor": {
+            "fx": "hit_19_27mm_metal_ap",
+            "ricochetFx": "hit_19_27mm_metal_ap"
+          },
+          "tank_rubber_screens": {
+            "fx": "hit_19_27mm_metal_ap",
+            "ricochetFx": "hit_19_27mm_metal_ap"
+          },
+          "buildings": {
+            "fx": "hit_19_27mm_stone_ap",
+            "ricochetFx": "hit_19_27mm_stone_ap"
+          },
+          "verLandMesh": {
+            "fx": "hit_19_27mm_stone_ap",
+            "ricochetFx": "hit_19_27mm_stone_ap"
+          },
+          "concrete": {
+            "fx": "hit_19_27mm_stone_ap",
+            "ricochetFx": "hit_19_27mm_stone_ap"
+          },
+          "rocks": {
+            "fx": "hit_19_27mm_stone_ap",
+            "ricochetFx": "hit_19_27mm_stone_ap"
+          },
+          "rocksSlippery": {
+            "fx": "hit_19_27mm_stone_ap",
+            "ricochetFx": "hit_19_27mm_stone_ap"
+          },
+          "fabric": {
+            "fx": "hit_19_27mm_fabric",
+            "ricochetFx": "hit_19_27mm_fabric"
+          },
+          "stone_snow": {
+            "fx": "hit_19_27mm_snow_ap",
+            "ricochetFx": "hit_19_27mm_snow_ap"
+          },
+          "armorPierceLowCal": {
+            "fx": "hit_19_27mm_metal_ap",
+            "ricochetFx": "hit_19_27mm_metal_ap"
+          },
+          "armorPierceMedCal": {
+            "fx": "hit_19_27mm_metal_ap",
+            "ricochetFx": "hit_19_27mm_metal_ap"
+          },
+          "armorPierceHiCal": {
+            "fx": "hit_19_27mm_metal_ap",
+            "ricochetFx": "hit_19_27mm_metal_ap"
+          },
+          "armorNPLowCal": {
+            "fx": "hit_19_27mm_metal_ap",
+            "ricochetFx": "hit_19_27mm_metal_ap"
+          },
+          "armorNPMedCal": {
+            "fx": "hit_19_27mm_metal_ap",
+            "ricochetFx": "hit_19_27mm_metal_ap"
+          },
+          "armorNPHiCal": {
+            "fx": "hit_19_27mm_metal_ap",
+            "ricochetFx": "hit_19_27mm_metal_ap"
+          },
+          "wood_solid": {
+            "fx": "hit_19_27mm_wood_ap",
+            "ricochetFx": "hit_19_27mm_wood_ap"
+          },
+          "softWoodDoor": {
+            "fx": "hit_19_27mm_wood_ap",
+            "ricochetFx": "hit_19_27mm_wood_ap"
+          },
+          "wood_aim_transparent": {
+            "fx": "hit_19_27mm_wood_ap",
+            "ricochetFx": "hit_5_7mm_wood_ap"
+          },
+          "window_wood": {
+            "fx": "hit_19_27mm_wood_ap",
+            "ricochetFx": "hit_5_7mm_wood_ap"
+          },
+          "softSteelDoor": {
+            "fx": "hit_19_27mm_metal_ap",
+            "ricochetFx": "hit_19_27mm_metal_ap"
+          },
+          "paper": {
+            "fx": "hit_19_27mm_fabric",
+            "ricochetFx": "hit_19_27mm_fabric"
+          },
+          "plastic": {
+            "fx": "hit_19_27mm_fabric",
+            "ricochetFx": "hit_19_27mm_fabric"
+          },
+          "rubber": {
+            "fx": "hit_19_27mm_fabric",
+            "ricochetFx": "hit_19_27mm_fabric"
+          },
+          "ceramic": {
+            "fx": "hit_19_27mm_stone_ap",
+            "ricochetFx": "hit_19_27mm_stone_ap"
+          },
+          "stone": {
+            "fx": "hit_19_27mm_stone_ap",
+            "ricochetFx": "hit_19_27mm_stone_ap"
+          },
+          "glass_car": {
+            "fx": "armoured_glass",
+            "ricochetFx": "armoured_glass"
+          },
+          "steel_thin": {
+            "fx": "hit_19_27mm_wood_ap",
+            "ricochetFx": "hit_19_27mm_wood_ap"
+          },
+          "soil_brown": {
+            "fx": "hit_19_27mm_fabric",
+            "ricochetFx": "hit_19_27mm_fabric"
+          },
+          "soil_sand": {
+            "fx": "hit_19_27mm_fabric",
+            "ricochetFx": "hit_19_27mm_fabric"
+          },
+          "sandbag_grey": {
+            "fx": "hit_19_27mm_fabric",
+            "ricochetFx": "hit_19_27mm_fabric"
+          },
+          "sandbag_biege": {
+            "fx": "hit_19_27mm_fabric",
+            "ricochetFx": "hit_19_27mm_fabric"
+          },
+          "stone_biege": {
+            "fx": "hit_19_27mm_stone_ap",
+            "ricochetFx": "hit_19_27mm_stone_ap"
+          },
+          "stone_white": {
+            "fx": "hit_19_27mm_stone_ap",
+            "ricochetFx": "hit_19_27mm_stone_ap"
+          }
+        }
+      }
+    ]
+  },
+  "25mm_mk38_naval_he": {
+    "bullet": {
+      "mass": 0.185,
+      "explosiveType": "hexal",
+      "explosiveMass": 0.032,
+      "caliber": 0.025,
+      "speed": 1100.0,
+      "Cx": 0.375,
+      "maxDistance": 8500.0,
+      "normalizationPreset": "heat",
+      "ricochetPreset": "he",
+      "groundRicochetPreset": "he_small_caliber_ground",
+      "secondaryShattersPreset": "ap",
+      "stabilityThreshold": 0.5,
+      "stabilityCaliberToArmorThreshold": 5.0,
+      "stabilityReductionAfterRicochet": 0.3,
+      "stabilityReductionAfterPenetration": 0.15,
+      "bulletType": "he_i_t",
+      "slopeEffectPreset": "ap",
+      "fresnel": [
+        0.23,
+        0.1,
+        2.0
+      ],
+      "explodeOnRendinst": true,
+      "shellAnimation": "video/shells_animations/he_i_t_shell.ivf",
+      "selfDestructionInAir": true,
+      "splashFallBySquare": true,
+      "explodeTreshold": 0.1,
+      "fuseDelay": 0.001,
+      "fuseOnWater": true,
+      "fuseOnWaterProbability": 1.0,
+      "selfDestructionFx": "hit_5_7mm_metal_he",
+      "explosionEffect": "hit_28_38mm_metal_he",
+      "groundCollisionEffect": "hit_28_38mm_dirt_he",
+      "ricochetEffect": "hit_28_38mm_metal_ap",
+      "waterCollisionEffect": "hit_28_38mm_water",
+      "waterRicochetEffect": "hit_28_38mm_water",
+      "groundRicochetEffect": "hit_28_38mm_dirt_ap",
+      "explosionPatchRadius": 1.0,
+      "rendinstDamageRadius": 0.0,
+      "stabilityRicochetModifier": {
+        "mod1": [
+          0.0,
+          0.5
+        ],
+        "mod2": [
+          15.0,
+          0.7
+        ],
+        "mod3": [
+          30.0,
+          0.99
+        ]
+      },
+      "pressureDamage": {
+        "damageType": "pressure"
+      },
+      "damage": {
+        "kinetic": {
+          "damageType": "generic",
+          "demarrePenetrationK": 0.1,
+          "demarreSpeedPow": 1.43,
+          "demarreMassPow": 0.71,
+          "demarreCaliberPow": 1.07
+        },
+        "shatter": {
+          "useRealShatters": true,
+          "countPortion": 0.5,
+          "realShattersSplicing": 0.75,
+          "segment": [
+            {
+              "radiusScale": 1.0,
+              "penetrationScale": 1.0,
+              "damageScale": 1.0,
+              "angles": [
+                0.0,
+                60.0
+              ],
+              "countPortion": 1.0,
+              "onHitChanceMultFire": 80.0
+            },
+            {
+              "radiusScale": 1.0,
+              "penetrationScale": 1.0,
+              "damageScale": 1.0,
+              "angles": [
+                60.0,
+                180.0
+              ],
+              "countPortion": 0.0
+            }
+          ]
+        }
+      },
+      "hitpower": {
+        "HitPower0m": [
+          1.0,
+          500.0
+        ],
+        "HitPower2500m": [
+          0.5,
+          2500.0
+        ],
+        "HitPower4000m": [
+          0.1,
+          3000.0
+        ]
+      },
+      "visual": {
+        "range_percent_of_ammo": [
+          100.0,
+          0.0
+        ],
+        "traceFreq": 1,
+        "tracer": "30mmOrangeShip",
+        "trail": "noTrail"
+      },
+      "collisions": {
+        "default": {
+          "fx": "hit_28_38mm_dirt_he",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "horLandMesh": {
+          "fx": "hit_28_38mm_dirt_he",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "soil": {
+          "fx": "hit_28_38mm_dirt_he",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "dirt": {
+          "fx": "hit_28_38mm_dirt_he",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "road": {
+          "fx": "hit_28_38mm_dirt_he",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "roadSoil": {
+          "fx": "hit_28_38mm_dirt_he",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "bricks_red": {
+          "fx": "hit_28_38mm_red_brick_he",
+          "ricochetFx": "hit_28_38mm_red_brick_ap"
+        },
+        "steppe": {
+          "fx": "hit_28_38mm_sand_he",
+          "ricochetFx": "hit_28_38mm_sand_ap"
+        },
+        "sand": {
+          "fx": "hit_28_38mm_sand_he",
+          "ricochetFx": "hit_28_38mm_sand_ap"
+        },
+        "duneSand": {
+          "fx": "hit_28_38mm_sand_he",
+          "ricochetFx": "hit_28_38mm_sand_ap"
+        },
+        "roadSand": {
+          "fx": "hit_28_38mm_sand_he",
+          "ricochetFx": "hit_28_38mm_sand_ap"
+        },
+        "quickSand": {
+          "fx": "hit_28_38mm_sand_he",
+          "ricochetFx": "hit_28_38mm_sand_ap"
+        },
+        "snow": {
+          "fx": "hit_28_38mm_snow_he",
+          "ricochetFx": "hit_28_38mm_snow_ap"
+        },
+        "ice": {
+          "fx": "hit_28_38mm_snow_he",
+          "ricochetFx": "hit_28_38mm_snow_ap"
+        },
+        "roadSnow": {
+          "fx": "hit_28_38mm_snow_he",
+          "ricochetFx": "hit_28_38mm_snow_ap"
+        },
+        "snowLower": {
+          "fx": "hit_28_38mm_snow_he",
+          "ricochetFx": "hit_28_38mm_snow_ap"
+        },
+        "glass": {
+          "fx": "armoured_glass",
+          "ricochetFx": "armoured_glass"
+        },
+        "wood": {
+          "fx": "hit_28_38mm_wood_he",
+          "ricochetFx": "hit_28_38mm_wood_ap"
+        },
+        "steel": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "metal": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "tank_structural_steel": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "aluminum_armor": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "tank_rubber_screens": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "buildings": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "verLandMesh": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "concrete": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "rocks": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "rocksSlippery": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "fabric": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "stone_snow": {
+          "fx": "hit_28_38mm_snow_he",
+          "ricochetFx": "hit_28_38mm_snow_ap"
+        },
+        "armorPierceLowCal": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "armorPierceMedCal": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "armorPierceHiCal": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "armorNPLowCal": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "armorNPMedCal": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "armorNPHiCal": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "wood_solid": {
+          "fx": "hit_28_38mm_wood_he",
+          "ricochetFx": "hit_28_38mm_wood_ap"
+        },
+        "softWoodDoor": {
+          "fx": "hit_28_38mm_wood_he",
+          "ricochetFx": "hit_28_38mm_wood_ap"
+        },
+        "wood_aim_transparent": {
+          "fx": "hit_28_38mm_wood_he",
+          "ricochetFx": "hit_5_7mm_wood_ap"
+        },
+        "window_wood": {
+          "fx": "hit_28_38mm_wood_he",
+          "ricochetFx": "hit_5_7mm_wood_ap"
+        },
+        "softSteelDoor": {
+          "fx": "hit_28_38mm_metal_he",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "paper": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "plastic": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "rubber": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "ceramic": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "stone": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "glass_car": {
+          "fx": "armoured_glass",
+          "ricochetFx": "armoured_glass"
+        },
+        "steel_thin": {
+          "fx": "hit_28_38mm_wood_he",
+          "ricochetFx": "hit_28_38mm_wood_ap"
+        },
+        "soil_brown": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "soil_sand": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "sandbag_grey": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "sandbag_biege": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "stone_biege": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "stone_white": {
+          "fx": "hit_28_38mm_stone_he",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        }
+      }
+    }
+  },
+  "25mm_mk38_naval_apds": {
+    "bullet": {
+      "mass": 0.134,
+      "caliber": 0.025,
+      "ballisticCaliber": 0.0135,
+      "damageCaliber": 0.0135,
+      "damageMass": 0.134,
+      "Cx": 0.2,
+      "speed": 1345.0,
+      "maxDistance": 8500.0,
+      "normalizationPreset": "apcr",
+      "ricochetPreset": "apds",
+      "groundRicochetPreset": "apds_ground",
+      "secondaryShattersPreset": "apds",
+      "stabilityThreshold": 0.05,
+      "stabilityCaliberToArmorThreshold": 5.0,
+      "stabilityReductionAfterRicochet": 0.5,
+      "stabilityReductionAfterPenetration": 0.0,
+      "stucking": 0.7,
+      "stuckingAngle": 45.0,
+      "bulletType": "apds_autocannon",
+      "slopeEffectPreset": "apds",
+      "fresnel": [
+        0.23,
+        0.1,
+        2.0
+      ],
+      "shellAnimation": "video/shells_animations/apds_belt.ivf",
+      "onHitChanceMultFire": 3.5,
+      "dynamicKv": true,
+      "relativeVelArmorShift": [
+        200.0,
+        1000.0
+      ],
+      "armorFragmentsDamage": true,
+      "armorFragmentsDamageRadius": 1.2,
+      "armorFragmentsDamageAngle": 20.0,
+      "armorFragmentsAmount": 15,
+      "armorFragmentsArmorPower": 3.0,
+      "armorFragmentsHit": 8.0,
+      "selfDestructionFx": "hit_5_7mm_metal_he",
+      "explosionEffect": "hit_19_27mm_metal_ap",
+      "groundCollisionEffect": "hit_19_27mm_dirt_ap",
+      "ricochetEffect": "hit_19_27mm_metal_ap",
+      "waterCollisionEffect": "hit_19_27mm_water",
+      "waterRicochetEffect": "hit_19_27mm_water",
+      "groundRicochetEffect": "hit_19_27mm_dirt_ap",
+      "explosionPatchRadius": 0.3,
+      "rendinstDamageRadius": 0.0,
+      "stabilityRicochetModifier": {
+        "mod1": [
+          0.0,
+          0.2
+        ],
+        "mod2": [
+          20.0,
+          0.45
+        ]
+      },
+      "tracePattern": {
+        "caliber": 10.0,
+        "circleCount": 2,
+        "pointCount": 4
+      },
+      "damage": {
+        "kinetic": {
+          "damageType": "generic",
+          "demarrePenetrationK": 0.65,
+          "demarreSpeedPow": 1.43,
+          "demarreMassPow": 0.71,
+          "demarreCaliberPow": 1.07
+        },
+        "breakingScaleByArmor": {
+          "mod0": [
+            5.0,
+            1.0
+          ],
+          "mod1": [
+            10.0,
+            0.8
+          ],
+          "mod2": [
+            40.0,
+            0.5
+          ]
+        },
+        "breakingScaleByAir": {
+          "mod0": [
+            0.05,
+            1.0
+          ],
+          "mod1": [
+            0.2,
+            0.7
+          ],
+          "mod2": [
+            0.5,
+            0.5
+          ]
+        }
+      },
+      "hitpower": {
+        "HitPower0m": [
+          1.0,
+          500.0
+        ],
+        "HitPower3000m": [
+          1.0,
+          3000.0
+        ],
+        "HitPower4000m": [
+          0.1,
+          4000.0
+        ]
+      },
+      "visual": {
+        "range_percent_of_ammo": [
+          100.0,
+          0.0
+        ],
+        "traceFreq": 1,
+        "tracer": "20mmGreenShip",
+        "trail": "noTrail"
+      },
+      "collisions": {
+        "default": {
+          "fx": "hit_19_27mm_dirt_ap",
+          "ricochetFx": "hit_19_27mm_dirt_ap"
+        },
+        "horLandMesh": {
+          "fx": "hit_19_27mm_dirt_ap",
+          "ricochetFx": "hit_19_27mm_dirt_ap"
+        },
+        "soil": {
+          "fx": "hit_19_27mm_dirt_ap",
+          "ricochetFx": "hit_19_27mm_dirt_ap"
+        },
+        "dirt": {
+          "fx": "hit_19_27mm_dirt_ap",
+          "ricochetFx": "hit_19_27mm_dirt_ap"
+        },
+        "road": {
+          "fx": "hit_19_27mm_dirt_ap",
+          "ricochetFx": "hit_19_27mm_dirt_ap"
+        },
+        "bricks_red": {
+          "fx": "hit_19_27mm_red_brick_ap",
+          "ricochetFx": "hit_19_27mm_red_brick_ap"
+        },
+        "roadSoil": {
+          "fx": "hit_19_27mm_dirt_ap",
+          "ricochetFx": "hit_19_27mm_dirt_ap"
+        },
+        "steppe": {
+          "fx": "hit_19_27mm_sand_ap",
+          "ricochetFx": "hit_19_27mm_sand_ap"
+        },
+        "sand": {
+          "fx": "hit_19_27mm_sand_ap",
+          "ricochetFx": "hit_19_27mm_sand_ap"
+        },
+        "duneSand": {
+          "fx": "hit_19_27mm_sand_ap",
+          "ricochetFx": "hit_19_27mm_sand_ap"
+        },
+        "roadSand": {
+          "fx": "hit_19_27mm_sand_ap",
+          "ricochetFx": "hit_19_27mm_sand_ap"
+        },
+        "quickSand": {
+          "fx": "hit_19_27mm_sand_ap",
+          "ricochetFx": "hit_19_27mm_sand_ap"
+        },
+        "snow": {
+          "fx": "hit_19_27mm_snow_ap",
+          "ricochetFx": "hit_19_27mm_snow_ap"
+        },
+        "ice": {
+          "fx": "hit_19_27mm_snow_ap",
+          "ricochetFx": "hit_19_27mm_snow_ap"
+        },
+        "roadSnow": {
+          "fx": "hit_19_27mm_snow_ap",
+          "ricochetFx": "hit_19_27mm_snow_ap"
+        },
+        "snowLower": {
+          "fx": "hit_19_27mm_snow_ap",
+          "ricochetFx": "hit_19_27mm_snow_ap"
+        },
+        "glass": {
+          "fx": "armoured_glass",
+          "ricochetFx": "armoured_glass"
+        },
+        "wood": {
+          "fx": "hit_19_27mm_wood_ap",
+          "ricochetFx": "hit_19_27mm_wood_ap"
+        },
+        "steel": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "metal": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "tank_structural_steel": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "aluminum_armor": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "tank_rubber_screens": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "buildings": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        },
+        "verLandMesh": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        },
+        "concrete": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        },
+        "rocks": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        },
+        "rocksSlippery": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        },
+        "fabric": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "stone_snow": {
+          "fx": "hit_19_27mm_snow_ap",
+          "ricochetFx": "hit_19_27mm_snow_ap"
+        },
+        "armorPierceLowCal": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "armorPierceMedCal": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "armorPierceHiCal": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "armorNPLowCal": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "armorNPMedCal": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "armorNPHiCal": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "wood_solid": {
+          "fx": "hit_19_27mm_wood_ap",
+          "ricochetFx": "hit_19_27mm_wood_ap"
+        },
+        "softWoodDoor": {
+          "fx": "hit_19_27mm_wood_ap",
+          "ricochetFx": "hit_19_27mm_wood_ap"
+        },
+        "wood_aim_transparent": {
+          "fx": "hit_19_27mm_wood_ap",
+          "ricochetFx": "hit_5_7mm_wood_ap"
+        },
+        "window_wood": {
+          "fx": "hit_19_27mm_wood_ap",
+          "ricochetFx": "hit_5_7mm_wood_ap"
+        },
+        "softSteelDoor": {
+          "fx": "hit_19_27mm_metal_ap",
+          "ricochetFx": "hit_19_27mm_metal_ap"
+        },
+        "paper": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "plastic": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "rubber": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "ceramic": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        },
+        "stone": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        },
+        "glass_car": {
+          "fx": "armoured_glass",
+          "ricochetFx": "armoured_glass"
+        },
+        "steel_thin": {
+          "fx": "hit_19_27mm_wood_ap",
+          "ricochetFx": "hit_19_27mm_wood_ap"
+        },
+        "soil_brown": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "soil_sand": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "sandbag_grey": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "sandbag_biege": {
+          "fx": "hit_19_27mm_fabric",
+          "ricochetFx": "hit_19_27mm_fabric"
+        },
+        "stone_biege": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        },
+        "stone_white": {
+          "fx": "hit_19_27mm_stone_ap",
+          "ricochetFx": "hit_19_27mm_stone_ap"
+        }
+      }
+    }
+  },
+  "25mm_mk38_naval_apdsfs": {
+    "bullet": {
+      "bulletCount": 25,
+      "mass": 0.098,
+      "caliber": 0.025,
+      "damageCaliber": 0.009,
+      "ballisticCaliber": 0.009,
+      "speed": 1385.0,
+      "Cx": 0.3,
+      "maxDistance": 10000.0,
+      "normalizationPreset": "default",
+      "ricochetPreset": "apds_fs_long",
+      "groundRicochetPreset": "apds_fs_ground",
+      "secondaryShattersPreset": "apds_fs_25_76mm",
+      "bulletType": "apds_fs_long_tank",
+      "slopeEffectPreset": "apds_fs_long",
+      "fresnel": [
+        0.23,
+        0.1,
+        2.0
+      ],
+      "shellAnimation": "video/shells_animations/apfsds_modern_belt.ivf",
+      "onHitChanceMultExplFuel": 0.1,
+      "relativeVelHitShift": [
+        300.0,
+        1000.0
+      ],
+      "relativeVelArmorShift": [
+        200.0,
+        1000.0
+      ],
+      "selfDestructionFx": "hit_5_7mm_metal_he",
+      "explosionEffect": "hit_28_38mm_metal_ap",
+      "groundCollisionEffect": "hit_28_38mm_dirt_ap",
+      "ricochetEffect": "hit_28_38mm_metal_ap",
+      "waterCollisionEffect": "hit_28_38mm_water",
+      "waterRicochetEffect": "hit_28_38mm_water",
+      "groundRicochetEffect": "hit_28_38mm_dirt_ap",
+      "explosionPatchRadius": 0.4,
+      "rendinstDamageRadius": 0.0,
+      "stability": {
+        "precessionDamping": 0.3,
+        "ricochetAnglePrecessionFactor": 1.0,
+        "ricochetAngleOmegaFactor": 0.25,
+        "slopeToOmega": [
+          1.0,
+          10.0,
+          0.0,
+          1.0
+        ],
+        "angleLossStabilizationAfterRicochet": 1.25,
+        "penetrationReduction": {
+          "pnt": [
+            [
+              0.0,
+              1.0
+            ],
+            [
+              2.0,
+              0.95
+            ],
+            [
+              10.0,
+              0.5
+            ],
+            [
+              21.0,
+              0.3
+            ]
+          ]
+        }
+      },
+      "DamageParts": {
+        "body": {
+          "hp": 100.0,
+          "armorClass": "tank_structural_steel",
+          "armorThickness": 15.0
+        }
+      },
+      "DamageEffects": {
+        "part": {
+          "name": "body",
+          "onKill": {
+            "destabilization": 1.0,
+            "impulse": 0.005
+          }
+        }
+      },
+      "tracePattern": {
+        "caliber": 10.0,
+        "circleCount": 2,
+        "pointCount": 6
+      },
+      "hitpower": {
+        "HitPower0m": [
+          1.0,
+          1000.0
+        ],
+        "HitPower10000m": [
+          0.8,
+          10000.0
+        ]
+      },
+      "armorpower": {
+        "ArmorPower0m": [
+          101.0,
+          10.0
+        ],
+        "ArmorPower100m": [
+          100.0,
+          100.0
+        ],
+        "ArmorPower500m": [
+          95.0,
+          500.0
+        ],
+        "ArmorPower1000m": [
+          88.0,
+          1000.0
+        ],
+        "ArmorPower1500m": [
+          81.0,
+          1500.0
+        ],
+        "ArmorPower2000m": [
+          74.0,
+          2000.0
+        ],
+        "ArmorPower3000m": [
+          60.0,
+          3000.0
+        ],
+        "ArmorPower10000m": [
+          5.0,
+          10000.0
+        ],
+        "ArmorPower20000m": [
+          0.0,
+          20000.0
+        ]
+      },
+      "visual": {
+        "range_percent_of_ammo": [
+          100.0,
+          0.0
+        ],
+        "traceFreq": 1,
+        "tracer": "30mmGreenShip",
+        "trail": "noTrail"
+      },
+      "collisions": {
+        "default": {
+          "fx": "hit_28_38mm_dirt_ap",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "horLandMesh": {
+          "fx": "hit_28_38mm_dirt_ap",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "soil": {
+          "fx": "hit_28_38mm_dirt_ap",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "dirt": {
+          "fx": "hit_28_38mm_dirt_ap",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "road": {
+          "fx": "hit_28_38mm_dirt_ap",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "bricks_red": {
+          "fx": "hit_28_38mm_red_brick_ap",
+          "ricochetFx": "hit_28_38mm_red_brick_ap"
+        },
+        "roadSoil": {
+          "fx": "hit_28_38mm_dirt_ap",
+          "ricochetFx": "hit_28_38mm_dirt_ap"
+        },
+        "steppe": {
+          "fx": "hit_28_38mm_sand_ap",
+          "ricochetFx": "hit_28_38mm_sand_ap"
+        },
+        "sand": {
+          "fx": "hit_28_38mm_sand_ap",
+          "ricochetFx": "hit_28_38mm_sand_ap"
+        },
+        "duneSand": {
+          "fx": "hit_28_38mm_sand_ap",
+          "ricochetFx": "hit_28_38mm_sand_ap"
+        },
+        "roadSand": {
+          "fx": "hit_28_38mm_sand_ap",
+          "ricochetFx": "hit_28_38mm_sand_ap"
+        },
+        "quickSand": {
+          "fx": "hit_28_38mm_sand_ap",
+          "ricochetFx": "hit_28_38mm_sand_ap"
+        },
+        "snow": {
+          "fx": "hit_28_38mm_snow_ap",
+          "ricochetFx": "hit_28_38mm_snow_ap"
+        },
+        "ice": {
+          "fx": "hit_28_38mm_snow_ap",
+          "ricochetFx": "hit_28_38mm_snow_ap"
+        },
+        "roadSnow": {
+          "fx": "hit_28_38mm_snow_ap",
+          "ricochetFx": "hit_28_38mm_snow_ap"
+        },
+        "snowLower": {
+          "fx": "hit_28_38mm_snow_ap",
+          "ricochetFx": "hit_28_38mm_snow_ap"
+        },
+        "glass": {
+          "fx": "armoured_glass",
+          "ricochetFx": "armoured_glass"
+        },
+        "wood": {
+          "fx": "hit_28_38mm_wood_ap",
+          "ricochetFx": "hit_28_38mm_wood_ap"
+        },
+        "steel": {
+          "fx": "hit_28_38mm_metal_ap",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "metal": {
+          "fx": "hit_28_38mm_metal_ap",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "tank_structural_steel": {
+          "fx": "hit_28_38mm_metal_ap",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "aluminum_armor": {
+          "fx": "hit_28_38mm_metal_ap",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "tank_rubber_screens": {
+          "fx": "hit_28_38mm_metal_ap",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "buildings": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "verLandMesh": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "concrete": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "rocks": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "rocksSlippery": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "fabric": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "stone_snow": {
+          "fx": "hit_28_38mm_snow_ap",
+          "ricochetFx": "hit_28_38mm_snow_ap"
+        },
+        "armorPierceLowCal": {
+          "fx": "hit_28_38mm_metal_ap",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "armorPierceMedCal": {
+          "fx": "hit_28_38mm_metal_ap",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "armorPierceHiCal": {
+          "fx": "hit_28_38mm_metal_ap",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "armorNPLowCal": {
+          "fx": "hit_28_38mm_metal_ap",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "armorNPMedCal": {
+          "fx": "hit_28_38mm_metal_ap",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "armorNPHiCal": {
+          "fx": "hit_28_38mm_metal_ap",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "wood_solid": {
+          "fx": "hit_28_38mm_wood_ap",
+          "ricochetFx": "hit_28_38mm_wood_ap"
+        },
+        "softWoodDoor": {
+          "fx": "hit_28_38mm_wood_ap",
+          "ricochetFx": "hit_28_38mm_wood_ap"
+        },
+        "wood_aim_transparent": {
+          "fx": "hit_28_38mm_wood_ap",
+          "ricochetFx": "hit_5_7mm_wood_ap"
+        },
+        "window_wood": {
+          "fx": "hit_28_38mm_wood_ap",
+          "ricochetFx": "hit_5_7mm_wood_ap"
+        },
+        "softSteelDoor": {
+          "fx": "hit_28_38mm_metal_ap",
+          "ricochetFx": "hit_28_38mm_metal_ap"
+        },
+        "paper": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "plastic": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "rubber": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "ceramic": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "stone": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "glass_car": {
+          "fx": "armoured_glass",
+          "ricochetFx": "armoured_glass"
+        },
+        "steel_thin": {
+          "fx": "hit_28_38mm_wood_ap",
+          "ricochetFx": "hit_28_38mm_wood_ap"
+        },
+        "soil_brown": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "soil_sand": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "sandbag_grey": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "sandbag_biege": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "stone_biege": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        },
+        "stone_white": {
+          "fx": "hit_28_38mm_stone_ap",
+          "ricochetFx": "hit_28_38mm_stone_ap"
+        }
+      }
+    }
+  }
 }

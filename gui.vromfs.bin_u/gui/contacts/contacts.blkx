@@ -1,151 +1,147 @@
-tdiv {
-	id:t = "contacts_backShade"
-	size:t = "sw, sh"
-	position:t = "root"
-	class:t = "button"
-	behaviour:t = "button"
-	on_click:t = "goBack"
-	display:t = "hide"
-	blur {
-
-	}
-	blur_foreground {
-		isRoot:t = "yes"
-	}
-}
-frame {
-	id:t = "contacts_wnd"
-	size:t = "0.30@sf, 0.66@scrn_tgt"
-	pos:t = "0.5*(sw - 1@slotbarWidthFull) + 0.7@sf + 1*@sf/@pf_outdated, sh - 1@shopBottomOffset - 1@buttonHeight - 0.66@scrn_tgt"
-	position:t = "absolute"
-	min-height:t = "30*@scrn_tgt/100.0"
-	max-height:t = "80%sh"
-	min-width:t = "0.05@sf + 6 * (1@sIco + 10*@sf/@pf_outdated)"
-	max-width:t = "60%sw"
-	class:t = "scaleable"
-	padding-top:t = "1@frameTopPadding"
-	moveElem {
-
-	}
-	frame_header {
-		smallIcon:t = "yes"
-		input-transparent:t = "yes"
-		Button_close {
-			id:t = "close_contacts"
-		}
-		activeText {
-			id:t = "title"
-			text:t = "#mainmenu/contacts"
-			input-transparent:t = "yes"
-		}
-	}
-	tdiv {
-		flow:t = "horizontal"
-		width:t = "pw"
-		padding-bottom:t = "1@dp"
-		EditBox {
-			id:t = "search_edit_box"
-			width:t = "fw"
-			noMargin:t = "yes"
-			edit-hint:t = "#contacts/search_placeholder"
-			text:t = ""
-			on_activate:t = "onSearchEditBoxActivate"
-			on_cancel_edit:t = "onSearchEditBoxCancelEdit"
-			on_change_value:t = "onSearchEditBoxChangeValue"
-			_on_set_focus:t = "onSearchEditBoxFocus"
-			on_hover:t = "onContactsFocus"
-			on_unhover:t = "onContactsFocus"
-			on_wrap_down:t = "selectCurContactGroup"
-		}
-		Button_text {
-			pos:t = "@blockInterval, 0.5ph-0.5h"
-			position:t = "relative"
-			class:t = "image"
-			showConsoleImage:t = "no"
-			noMargin:t = "yes"
-			tooltip:t = "#contacts/search"
-			on_click:t = "onSearchButtonClick"
-			behaviour:t = "wrapBroadcast"
-			navigatorShortcuts:t = "SpaceA"
-			on_wrap_down:t = "selectCurContactGroup"
-			img {
-				background-image:t = "#ui/gameuiskin#btn_search.svg"
-			}
-		}
-		popup_menu {
-			id:t = "searchAdvice"
-			pos:t = "(pw-w)/2, ph-2@dp"
-			position:t = "absolute"
-			menu_align:t = "bottom"
-			order-popup:t = "yes"
-			display:t = "hide"
-			searchAdvice:t = "yes"
-			input-transparent:t = "yes"
-			total-input-transparent:t = "yes"
-			textareaNoTab {
-				text:t = "#contacts/search_advice"
-			}
-			popup_menu_arrow {
-
-			}
-		}
-	}
-	div {
-		size:t = "pw, fh"
-		background-color:t = "@frameDarkBackgroundColor"
-		padding:t = "@blockInterval"
-		flow:t = "vertical"
-		groupBox {
-			id:t = "contacts_groups"
-			size:t = "pw, fh"
-			on_select:t = "onGroupSelect"
-			on_dbl_click:t = "onGroupActivate"
-			on_cancel_edit:t = "onGroupCancel"
-			on_hover:t = "onContactsFocus"
-			on_unhover:t = "onContactsFocus"
-		}
-		tdiv {
-			id:t = "contacts_buttons_console"
-			width:t = "pw"
-			height:t = "1@buttonHeight"
-			flow:t = "vertical"
-			display:t = "hide"
-			Button_text {
-				id:t = "btn_contactsSelect"
-				pos:t = "pw-w, 0"
-				position:t = "relative"
-				margin-top:t = "1@blockInterval"
-				text:t = "#mainmenu/btnSelect"
-				btnName:t = "A"
-				_on_click:t = "onBtnSelect"
-				display:t = "hide"
-				enable:t = "no"
-				inactive:t = "yes"
-				skip-navigation:t = "yes"
-				ButtonImg {
-
-				}
-			}
-		}
-		tdiv {
-			width:t = "pw"
-			Button_text {
-				id:t = "btn_squadInvite_bottom"
-				width:t = "pw"
-				noMargin:t = "yes"
-				margin-top:t = "1@blockInterval"
-				skip-navigation:t = "yes"
-				text:t = "#squad/invite_player"
-				tooltip:t = "#contacts/invite"
-				on_click:t = "onSquadInvite"
-				inactiveColor:t = "no"
-				display:t = "hide"
-				enable:t = "no"
-			}
-		}
-	}
-	timer {
-		id:t = "contacts_update"
-		timer_handler_func:t = "onUpdate"
-	}
+{
+  "tdiv": {
+    "id": "contacts_backShade",
+    "size": "sw, sh",
+    "position": "root",
+    "class": "button",
+    "behaviour": "button",
+    "on_click": "goBack",
+    "display": "hide",
+    "blur": {},
+    "blur_foreground": {
+      "isRoot": "yes"
+    }
+  },
+  "frame": {
+    "id": "contacts_wnd",
+    "size": "0.30@sf, 0.66@scrn_tgt",
+    "pos": "0.5*(sw - 1@slotbarWidthFull) + 0.7@sf + 1*@sf/@pf_outdated, sh - 1@shopBottomOffset - 1@buttonHeight - 0.66@scrn_tgt",
+    "position": "absolute",
+    "min-height": "30*@scrn_tgt/100.0",
+    "max-height": "80%sh",
+    "min-width": "0.05@sf + 6 * (1@sIco + 10*@sf/@pf_outdated)",
+    "max-width": "60%sw",
+    "class": "scaleable",
+    "padding-top": "1@frameTopPadding",
+    "moveElem": {},
+    "frame_header": {
+      "smallIcon": "yes",
+      "input-transparent": "yes",
+      "Button_close": {
+        "id": "close_contacts"
+      },
+      "activeText": {
+        "id": "title",
+        "text": "#mainmenu/contacts",
+        "input-transparent": "yes"
+      }
+    },
+    "tdiv": {
+      "flow": "horizontal",
+      "width": "pw",
+      "padding-bottom": "1@dp",
+      "EditBox": {
+        "id": "search_edit_box",
+        "width": "fw",
+        "noMargin": "yes",
+        "edit-hint": "#contacts/search_placeholder",
+        "text": "",
+        "on_activate": "onSearchEditBoxActivate",
+        "on_cancel_edit": "onSearchEditBoxCancelEdit",
+        "on_change_value": "onSearchEditBoxChangeValue",
+        "_on_set_focus": "onSearchEditBoxFocus",
+        "on_hover": "onContactsFocus",
+        "on_unhover": "onContactsFocus",
+        "on_wrap_down": "selectCurContactGroup"
+      },
+      "Button_text": {
+        "pos": "@blockInterval, 0.5ph-0.5h",
+        "position": "relative",
+        "class": "image",
+        "showConsoleImage": "no",
+        "noMargin": "yes",
+        "tooltip": "#contacts/search",
+        "on_click": "onSearchButtonClick",
+        "behaviour": "wrapBroadcast",
+        "navigatorShortcuts": "SpaceA",
+        "on_wrap_down": "selectCurContactGroup",
+        "img": {
+          "background-image": "#ui/gameuiskin#btn_search.svg"
+        }
+      },
+      "popup_menu": {
+        "id": "searchAdvice",
+        "pos": "(pw-w)/2, ph-2@dp",
+        "position": "absolute",
+        "menu_align": "bottom",
+        "order-popup": "yes",
+        "display": "hide",
+        "searchAdvice": "yes",
+        "input-transparent": "yes",
+        "total-input-transparent": "yes",
+        "textareaNoTab": {
+          "text": "#contacts/search_advice"
+        },
+        "popup_menu_arrow": {}
+      }
+    },
+    "div": {
+      "size": "pw, fh",
+      "background-color": "@frameDarkBackgroundColor",
+      "padding": "@blockInterval",
+      "flow": "vertical",
+      "groupBox": {
+        "id": "contacts_groups",
+        "size": "pw, fh",
+        "on_select": "onGroupSelect",
+        "on_dbl_click": "onGroupActivate",
+        "on_cancel_edit": "onGroupCancel",
+        "on_hover": "onContactsFocus",
+        "on_unhover": "onContactsFocus"
+      },
+      "tdiv": [
+        {
+          "id": "contacts_buttons_console",
+          "width": "pw",
+          "height": "1@buttonHeight",
+          "flow": "vertical",
+          "display": "hide",
+          "Button_text": {
+            "id": "btn_contactsSelect",
+            "pos": "pw-w, 0",
+            "position": "relative",
+            "margin-top": "1@blockInterval",
+            "text": "#mainmenu/btnSelect",
+            "btnName": "A",
+            "_on_click": "onBtnSelect",
+            "display": "hide",
+            "enable": "no",
+            "inactive": "yes",
+            "skip-navigation": "yes",
+            "ButtonImg": {}
+          }
+        },
+        {
+          "width": "pw",
+          "Button_text": {
+            "id": "btn_squadInvite_bottom",
+            "width": "pw",
+            "noMargin": "yes",
+            "margin-top": "1@blockInterval",
+            "skip-navigation": "yes",
+            "text": "#squad/invite_player",
+            "tooltip": "#contacts/invite",
+            "on_click": "onSquadInvite",
+            "inactiveColor": "no",
+            "display": "hide",
+            "enable": "no"
+          }
+        }
+      ]
+    },
+    "timer": {
+      "id": "contacts_update",
+      "timer_handler_func": "onUpdate"
+    }
+  }
 }

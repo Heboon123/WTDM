@@ -1,334 +1,322 @@
-tdiv {
-	id:t = "page_content"
-	size:t = "pw, ph"
-	flow:t = "vertical"
-	margin-top:t = "2@blockInterval"
-	tdiv {
-		flow:t = "horizontal"
-		size:t = "pw, 8@blockInterval"
-		position:t = "relative"
-		bgcolor:t = "@evenTrColor"
-		margin-bottom:t = "2@blockInterval"
-		textareaNoTab {
-			id:t = "total_received"
-			margin-left:t = "1@blockInterval"
-			valign:t = "center"
-			overlayTextColor:t = "active"
-			text:t = "Total received"
-		}
-		tdiv {
-			height:t = "ph"
-			position:t = "absolute"
-			left:t = "pw-w-1@blockInterval"
-			CheckBox {
-				id:t = "checkbox_only_uncompleted"
-				text:t = "#collection/only_uncompleted"
-				tooltip:t = "#collection/only_uncompleted/hint"
-				on_change_value:t = "onOnlyUncompletedCheck"
-				valign:t = "center"
-				margin-right:t = "3@blockInterval"
-				btnName:t = "Y"
-				ButtonImg {
-
-				}
-				CheckBoxImg {
-
-				}
-			}
-			EditBox {
-				id:t = "filter_edit_box"
-				width:t = "243@sf/@pf"
-				on_change_value:t = "applyCollectionFilter"
-				on_cancel_edit:t = "onFilterCancel"
-				text:t = ""
-				edit-hint:t = "#contacts/search_placeholder"
-				valign:t = "center"
-			}
-		}
-	}
-	textareaNoTab {
-		id:t = "empty_text"
-		overlayTextColor:t = "active"
-		normalFont:t = "yes"
-		position:t = "absolute"
-		pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
-		text:t = "#profile/collections/filterStrong"
-		display:t = "hide"
-	}
-	tdiv {
-		id:t = "content"
-		position:t = "relative"
-		size:t = "pw, fh"
-		flow:t = "horizontal"
-		profileContentLeft {
-			page:t = "collections"
-			listbox {
-				id:t = "collections"
-				size:t = "pw, ph"
-				position:t = "relative"
-				flow-align:t = "left"
-				isBigSizeList:t = "yes"
-				beyondScrollbar:t = "yes"
-				navigator:t = "posNavigator"
-				moveX:t = "linear"
-				moveY:t = "closest"
-				navigatorShortcuts:t = "yes"
-				move-only-hover:t = "yes"
-				on_select:t = "onCollectionSelect"
-			}
-		}
-		profileContentSeparator {
-
-		}
-		profileContentRight {
-			flow:t = "vertical"
-			tdiv {
-				id:t = "decorator_info"
-				total-input-transparent:t = "yes"
-				size:t = "pw, fh"
-				flow:t = "horizontal"
-				profileContentBigIcon {
-					position:t = "relative"
-					size:t = "1@itemIconBlockHeight, 1@itemIconBlockHeight"
-					img {
-						id:t = "image"
-					}
-				}
-				tdiv {
-					position:t = "relative"
-					id:t = "text_container"
-					flow:t = "vertical"
-					width:t = "fw"
-					margin-left:t = "2@blockInterval"
-					profilePageTitle {
-						id:t = "header"
-						max-width:t = "pw"
-						hideEmptyText:t = "yes"
-						overlayTextColor:t = "unlockHeader"
-						padding-bottom:t = "10@sf/@pf"
-					}
-					tdiv {
-						id:t = "conditions"
-						flow:t = "vertical"
-						challengeDescriptionProgress {
-							id:t = "progress"
-							isProfileUnlockProgress:t = "yes"
-							margin-bottom:t = "8@sf/@pf"
-							value:t = ""
-							display:t = "hide"
-						}
-						profilePageText {
-							id:t = "mainCond"
-							max-width:t = "6@decalIconHeight"
-							overflow:t = "hidden"
-							smallFont:t = "yes"
-							margin-top:t = "@blockInterval"
-							hideEmptyText:t = "yes"
-							margin-bottom:t = "8@sf/@pf"
-							color:t = "@profilePageTextColor"
-						}
-						profilePageText {
-							id:t = "multDesc"
-							max-width:t = "6@decalIconHeight"
-							overflow:t = "hidden"
-							smallFont:t = "yes"
-							color:t = "@profilePageTextColor"
-						}
-						profilePageText {
-							id:t = "conds"
-							max-width:t = "6@decalIconHeight"
-							overflow:t = "hidden"
-							smallFont:t = "yes"
-							hideEmptyText:t = "yes"
-							color:t = "@profilePageTextColor"
-						}
-						profilePageText {
-							id:t = "obtain_info"
-							hideEmptyText:t = "yes"
-							max-width:t = "6@decalIconHeight"
-							smallFont:t = "yes"
-							color:t = "@profilePageTextColor"
-						}
-					}
-					profilePageText {
-						id:t = "description"
-						margin-top:t = "@blockInterval"
-						hideEmptyText:t = "yes"
-						max-width:t = "6@decalIconHeight"
-						smallFont:t = "yes"
-						color:t = "@profilePageTextColor"
-					}
-					profilePageText {
-						id:t = "price"
-						display:t = "hide"
-						max-width:t = "6@decalIconHeight"
-						hideEmptyText:t = "yes"
-						margin-top:t = "@blockInterval"
-						color:t = "@profilePageTextColor"
-					}
-					tdiv {
-						id:t = "additional_description"
-						behavior:t = "posNavigator"
-						margin-top:t = "8@dp"
-						flow:t = "h-flow"
-						width:t = "pw"
-						display:t = "hide"
-						hideEmptyText:t = "yes"
-						canSelectNone:t = "yes"
-					}
-					tdiv {
-						position:t = "relative"
-						left:t = "-1@buttonMargin"
-						margin-top:t = "8@sf/@pf"
-						Button_text {
-							id:t = "btn_preview"
-							display:t = "hide"
-							text:t = "#mainmenu/btnPreview"
-							btnName:t = "L3"
-							_on_click:t = "onDecoratorPreview"
-							showButtonImageOnConsole:t = "no"
-							class:t = "image"
-							visualStyle:t = "secondary"
-							img {
-								background-image:t = "#ui/gameuiskin#btn_preview.svg"
-							}
-							buttonWink {
-
-							}
-							ButtonImg {
-
-							}
-						}
-						Button_text {
-							id:t = "btn_marketplace_find_coupon"
-							text:t = "#msgbox/btn_find_on_marketplace"
-							btnName:t = "X"
-							on_click:t = "onBtnMarketplaceFindCoupon"
-							display:t = "hide"
-							showButtonImageOnConsole:t = "no"
-							visualStyle:t = "secondary"
-							class:t = "image"
-							buttonWink {
-
-							}
-							img {
-								background-image:t = "#ui/gameuiskin#gc.svg"
-							}
-							ButtonImg {
-
-							}
-						}
-						Button_text {
-							id:t = "btn_store"
-							text:t = "#items/shop/emptyTab/toShopButton"
-							btnName:t = "X"
-							on_click:t = "onItemsShop"
-							display:t = "hide"
-							showButtonImageOnConsole:t = "no"
-							visualStyle:t = "secondary"
-							class:t = "image"
-							buttonWink {
-
-							}
-							img {
-								background-image:t = "#ui/gameuiskin#store_icon.svg"
-							}
-							ButtonImg {
-
-							}
-						}
-						Button_text {
-							id:t = "btn_marketplace_consume_coupon"
-							text:t = "#item/consume/coupon"
-							btnName:t = "X"
-							on_click:t = "onBtnMarketplaceConsumeCoupon"
-							display:t = "hide"
-							showButtonImageOnConsole:t = "no"
-							visualStyle:t = "secondary"
-							class:t = "image"
-							buttonWink {
-
-							}
-							img {
-								background-image:t = "#ui/gameuiskin#gc.svg"
-							}
-							ButtonImg {
-
-							}
-						}
-						Button_text {
-							id:t = "btn_buy_decorator"
-							text:t = "#mainmenu/btnOrder"
-							btnName:t = "X"
-							_on_click:t = "onBuyDecorator"
-							hideText:t = "yes"
-							display:t = "hide"
-							showButtonImageOnConsole:t = "no"
-							visualStyle:t = "purchase"
-							buttonWink {
-
-							}
-							buttonGlance {
-
-							}
-							ButtonImg {
-
-							}
-							textarea {
-								id:t = "btn_buy_decorator_text"
-								class:t = "buttonText"
-							}
-						}
-					}
-				}
-			}
-			tdiv {
-				position:t = "relative"
-				size:t = "pw, 2@sf/@pf"
-				background-color:t = "@separatorColor"
-				margin:t = "0, 19@sf/@pf, 0, 19@sf/@pf"
-			}
-			tdiv {
-				id:t = "collections_navigator"
-				size:t = "pw, 1@collectionMainPrizeWidth"
-				flow:t = "horizontal"
-				behavior:t = "inContainersNavigator"
-				deep:t = "3"
-				navigatorShortcuts:t = "yes"
-				moveX:t = "closest"
-				moveY:t = "linear"
-				on_select:t = "onSelectDecorator"
-				on_hover:t = "onSelectDecorator"
-				on_unhover:t = "onSelectDecorator"
-				clearOnFocusLost:t = "yes"
-				total-input-transparent:t = "yes"
-				interactive:t = "no"
-				tdiv {
-					flow:t = "vertical"
-					size:t = "pw + 15@sf/@pf, ph"
-					overflow-y:t = "auto"
-					interactive:t = "no"
-					collectionsList {
-						position:t = "relative"
-						interactive:t = "no"
-						id:t = "collections_list"
-						width:t = "pw + 1@collectionItemMargin - 15@sf/@pf, ph"
-						left:t = "-1@collectionItemMargin"
-						flow:t = "h-flow"
-						isContainer:t = "yes"
-						padding-bottom:t = "-1@collectionItemMargin"
-						padding-right:t = "p.p.h - 10@sf/@pf"
-					}
-				}
-				tdiv {
-					id:t = "main_prize"
-					position:t = "absolute"
-					left:t = "pw-w"
-					size:t = "1@collectionMainPrizeWidth, 1@collectionMainPrizeWidth"
-					interactive:t = "no"
-					isContainer:t = "yes"
-				}
-			}
-		}
-	}
+{
+  "tdiv": {
+    "id": "page_content",
+    "size": "pw, ph",
+    "flow": "vertical",
+    "margin-top": "2@blockInterval",
+    "tdiv": [
+      {
+        "flow": "horizontal",
+        "size": "pw, 8@blockInterval",
+        "position": "relative",
+        "bgcolor": "@evenTrColor",
+        "margin-bottom": "2@blockInterval",
+        "textareaNoTab": {
+          "id": "total_received",
+          "margin-left": "1@blockInterval",
+          "valign": "center",
+          "overlayTextColor": "active",
+          "text": "Total received"
+        },
+        "tdiv": {
+          "height": "ph",
+          "position": "absolute",
+          "left": "pw-w-1@blockInterval",
+          "CheckBox": {
+            "id": "checkbox_only_uncompleted",
+            "text": "#collection/only_uncompleted",
+            "tooltip": "#collection/only_uncompleted/hint",
+            "on_change_value": "onOnlyUncompletedCheck",
+            "valign": "center",
+            "margin-right": "3@blockInterval",
+            "btnName": "Y",
+            "ButtonImg": {},
+            "CheckBoxImg": {}
+          },
+          "EditBox": {
+            "id": "filter_edit_box",
+            "width": "243@sf/@pf",
+            "on_change_value": "applyCollectionFilter",
+            "on_cancel_edit": "onFilterCancel",
+            "text": "",
+            "edit-hint": "#contacts/search_placeholder",
+            "valign": "center"
+          }
+        }
+      },
+      {
+        "id": "content",
+        "position": "relative",
+        "size": "pw, fh",
+        "flow": "horizontal",
+        "profileContentLeft": {
+          "page": "collections",
+          "listbox": {
+            "id": "collections",
+            "size": "pw, ph",
+            "position": "relative",
+            "flow-align": "left",
+            "isBigSizeList": "yes",
+            "beyondScrollbar": "yes",
+            "navigator": "posNavigator",
+            "moveX": "linear",
+            "moveY": "closest",
+            "navigatorShortcuts": "yes",
+            "move-only-hover": "yes",
+            "on_select": "onCollectionSelect"
+          }
+        },
+        "profileContentSeparator": {},
+        "profileContentRight": {
+          "flow": "vertical",
+          "tdiv": [
+            {
+              "id": "decorator_info",
+              "total-input-transparent": "yes",
+              "size": "pw, fh",
+              "flow": "horizontal",
+              "profileContentBigIcon": {
+                "position": "relative",
+                "size": "1@itemIconBlockHeight, 1@itemIconBlockHeight",
+                "img": {
+                  "id": "image"
+                }
+              },
+              "tdiv": {
+                "position": "relative",
+                "id": "text_container",
+                "flow": "vertical",
+                "width": "fw",
+                "margin-left": "2@blockInterval",
+                "profilePageTitle": {
+                  "id": "header",
+                  "max-width": "pw",
+                  "hideEmptyText": "yes",
+                  "overlayTextColor": "unlockHeader",
+                  "padding-bottom": "10@sf/@pf"
+                },
+                "tdiv": [
+                  {
+                    "id": "conditions",
+                    "flow": "vertical",
+                    "challengeDescriptionProgress": {
+                      "id": "progress",
+                      "isProfileUnlockProgress": "yes",
+                      "margin-bottom": "8@sf/@pf",
+                      "value": "",
+                      "display": "hide"
+                    },
+                    "profilePageText": [
+                      {
+                        "id": "mainCond",
+                        "max-width": "6@decalIconHeight",
+                        "overflow": "hidden",
+                        "smallFont": "yes",
+                        "margin-top": "@blockInterval",
+                        "hideEmptyText": "yes",
+                        "margin-bottom": "8@sf/@pf",
+                        "color": "@profilePageTextColor"
+                      },
+                      {
+                        "id": "multDesc",
+                        "max-width": "6@decalIconHeight",
+                        "overflow": "hidden",
+                        "smallFont": "yes",
+                        "color": "@profilePageTextColor"
+                      },
+                      {
+                        "id": "conds",
+                        "max-width": "6@decalIconHeight",
+                        "overflow": "hidden",
+                        "smallFont": "yes",
+                        "hideEmptyText": "yes",
+                        "color": "@profilePageTextColor"
+                      },
+                      {
+                        "id": "obtain_info",
+                        "hideEmptyText": "yes",
+                        "max-width": "6@decalIconHeight",
+                        "smallFont": "yes",
+                        "color": "@profilePageTextColor"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "additional_description",
+                    "behavior": "posNavigator",
+                    "margin-top": "8@dp",
+                    "flow": "h-flow",
+                    "width": "pw",
+                    "display": "hide",
+                    "hideEmptyText": "yes",
+                    "canSelectNone": "yes"
+                  },
+                  {
+                    "position": "relative",
+                    "left": "-1@buttonMargin",
+                    "margin-top": "8@sf/@pf",
+                    "Button_text": [
+                      {
+                        "id": "btn_preview",
+                        "display": "hide",
+                        "text": "#mainmenu/btnPreview",
+                        "btnName": "L3",
+                        "_on_click": "onDecoratorPreview",
+                        "showButtonImageOnConsole": "no",
+                        "class": "image",
+                        "visualStyle": "secondary",
+                        "img": {
+                          "background-image": "#ui/gameuiskin#btn_preview.svg"
+                        },
+                        "buttonWink": {},
+                        "ButtonImg": {}
+                      },
+                      {
+                        "id": "btn_marketplace_find_coupon",
+                        "text": "#msgbox/btn_find_on_marketplace",
+                        "btnName": "X",
+                        "on_click": "onBtnMarketplaceFindCoupon",
+                        "display": "hide",
+                        "showButtonImageOnConsole": "no",
+                        "visualStyle": "secondary",
+                        "class": "image",
+                        "buttonWink": {},
+                        "img": {
+                          "background-image": "#ui/gameuiskin#gc.svg"
+                        },
+                        "ButtonImg": {}
+                      },
+                      {
+                        "id": "btn_store",
+                        "text": "#items/shop/emptyTab/toShopButton",
+                        "btnName": "X",
+                        "on_click": "onItemsShop",
+                        "display": "hide",
+                        "showButtonImageOnConsole": "no",
+                        "visualStyle": "secondary",
+                        "class": "image",
+                        "buttonWink": {},
+                        "img": {
+                          "background-image": "#ui/gameuiskin#store_icon.svg"
+                        },
+                        "ButtonImg": {}
+                      },
+                      {
+                        "id": "btn_marketplace_consume_coupon",
+                        "text": "#item/consume/coupon",
+                        "btnName": "X",
+                        "on_click": "onBtnMarketplaceConsumeCoupon",
+                        "display": "hide",
+                        "showButtonImageOnConsole": "no",
+                        "visualStyle": "secondary",
+                        "class": "image",
+                        "buttonWink": {},
+                        "img": {
+                          "background-image": "#ui/gameuiskin#gc.svg"
+                        },
+                        "ButtonImg": {}
+                      },
+                      {
+                        "id": "btn_buy_decorator",
+                        "text": "#mainmenu/btnOrder",
+                        "btnName": "X",
+                        "_on_click": "onBuyDecorator",
+                        "hideText": "yes",
+                        "display": "hide",
+                        "showButtonImageOnConsole": "no",
+                        "visualStyle": "purchase",
+                        "buttonWink": {},
+                        "buttonGlance": {},
+                        "ButtonImg": {},
+                        "textarea": {
+                          "id": "btn_buy_decorator_text",
+                          "class": "buttonText"
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "profilePageText": [
+                  {
+                    "id": "description",
+                    "margin-top": "@blockInterval",
+                    "hideEmptyText": "yes",
+                    "max-width": "6@decalIconHeight",
+                    "smallFont": "yes",
+                    "color": "@profilePageTextColor"
+                  },
+                  {
+                    "id": "price",
+                    "display": "hide",
+                    "max-width": "6@decalIconHeight",
+                    "hideEmptyText": "yes",
+                    "margin-top": "@blockInterval",
+                    "color": "@profilePageTextColor"
+                  }
+                ]
+              }
+            },
+            {
+              "position": "relative",
+              "size": "pw, 2@sf/@pf",
+              "background-color": "@separatorColor",
+              "margin": "0, 19@sf/@pf, 0, 19@sf/@pf"
+            },
+            {
+              "id": "collections_navigator",
+              "size": "pw, 1@collectionMainPrizeWidth",
+              "flow": "horizontal",
+              "behavior": "inContainersNavigator",
+              "deep": "3",
+              "navigatorShortcuts": "yes",
+              "moveX": "closest",
+              "moveY": "linear",
+              "on_select": "onSelectDecorator",
+              "on_hover": "onSelectDecorator",
+              "on_unhover": "onSelectDecorator",
+              "clearOnFocusLost": "yes",
+              "total-input-transparent": "yes",
+              "interactive": "no",
+              "tdiv": [
+                {
+                  "flow": "vertical",
+                  "size": "pw + 15@sf/@pf, ph",
+                  "overflow-y": "auto",
+                  "interactive": "no",
+                  "collectionsList": {
+                    "position": "relative",
+                    "interactive": "no",
+                    "id": "collections_list",
+                    "width": "pw + 1@collectionItemMargin - 15@sf/@pf, ph",
+                    "left": "-1@collectionItemMargin",
+                    "flow": "h-flow",
+                    "isContainer": "yes",
+                    "padding-bottom": "-1@collectionItemMargin",
+                    "padding-right": "p.p.h - 10@sf/@pf"
+                  }
+                },
+                {
+                  "id": "main_prize",
+                  "position": "absolute",
+                  "left": "pw-w",
+                  "size": "1@collectionMainPrizeWidth, 1@collectionMainPrizeWidth",
+                  "interactive": "no",
+                  "isContainer": "yes"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "textareaNoTab": {
+      "id": "empty_text",
+      "overlayTextColor": "active",
+      "normalFont": "yes",
+      "position": "absolute",
+      "pos": "0.5pw-0.5w, 0.5ph-0.5h",
+      "text": "#profile/collections/filterStrong",
+      "display": "hide"
+    }
+  }
 }

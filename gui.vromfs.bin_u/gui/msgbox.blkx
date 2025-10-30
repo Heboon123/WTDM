@@ -1,132 +1,134 @@
-id:t = "msg_box_root"
-position:t = "absolute"
-size:t = "sw, sh"
-blur {
-
-}
-blur_foreground {
-	isRoot:t = "yes"
-}
-menutitle {
-	id:t = "msgbox-title"
-}
-div {
-	width:t = "pw"
-	top:t = "0.5(ph-h)"
-	position:t = "absolute"
-	flow:t = "vertical"
-	min-height:t = "0.5@scrn_tgt"
-	max-height:t = "0.9@scrn_tgt"
-	optionlist_container {
-		width:t = "pw"
-		type:t = "msg_box"
-		text {
-			id:t = "msg_debug_string"
-			pos:t = "0.5(pw-w), ph +0.01@scrn_tgt"
-			position:t = "absolute"
-			input-transparent:t = "yes"
-			overlayTextColor:t = "faded"
-			smallFont:t = "yes"
-			display:t = "hide"
-			text:t = ""
-		}
-	}
-	div {
-		id:t = "msgTextRoot"
-		width:t = "pw"
-		pos:t = "0, ph/2-h/2"
-		position:t = "relative"
-		flow:t = "vertical"
-		overflow-y:t = "auto"
-		textarea {
-			id:t = "msgText"
-			width:t = "1.1@sf"
-			left:t = "0.5(pw-w)"
-			position:t = "relative"
-			text-align:t = "center"
-			overflow-y:t = "auto"
-			mediumFont:t = "yes"
-			font-bold:t = "@fontSmall"
-			padding-left:t = "0.5*@scrn_tgt/100.0"
-			border-color:t = "@commonTextColor"
-		}
-		div {
-			id:t = "msg_div_after_text"
-			max-height:t = "0.4@scrn_tgt"
-			pos:t = "0.5(pw-w), 0.01@scrn_tgt"
-			position:t = "relative"
-			overflow-y:t = "auto"
-			display:t = "hide"
-		}
-		animated_wait_icon {
-			id:t = "msgWaitAnimation"
-			display:t = "hide"
-			pos:t = "0.5(pw-w), 3*@scrn_tgt/100.0"
-			position:t = "relative"
-			background-rotation:t = "0"
-		}
-		msgBoxButtonsHolder {
-			id:t = "buttons_holder"
-			pos:t = "0.5(pw-w), 0.03@scrn_tgt"
-			position:t = "relative"
-			behavior:t = "PosNavigator"
-			navigatorShortcuts:t = "noSelect"
-			total-input-transparent:t = "yes"
-		}
-		div {
-			id:t = "msg_bottom_div"
-			pos:t = "0.5(pw-w), 0.01@scrn_tgt"
-			position:t = "relative"
-			display:t = "hide"
-		}
-	}
-}
-navBar {
-	style:t = "id:msg-nav-bar"
-}
-timer {
-	id:t = "msg_box_timer"
-	timer_handler_func:t = "onUpdate"
-}
-focusFrameAnimBlock {
-	focusFrameAnimObj {
-
-	}
-}
-widgets {
-	voiceChatWidgetNest {
-		isClanOnly:t = "no"
-		blockSeparator {
-			display:t = "hide"
-		}
-		emptyVoiceChat {
-			tooltip:t = "#clan/voice_chat/widget"
-			usertalk {
-				id:t = "voice_chat_no_activity"
-				type:t = "noTalk"
-				fade:t = "in"
-				height-end:t = "1"
-				_size-timer:t = "0"
-				img {
-					color-factor:t = "255"
-					inacive:t = "yes"
-					position:t = "relative"
-				}
-				activeText {
-					text:t = "..."
-					color-factor:t = "255"
-					position:t = "relative"
-				}
-			}
-		}
-		voiceChatWidgetContainer {
-			isSmall:t = "no"
-			voiceChatWidget {
-				value:t = '{"viewId": "VOICE_CHAT"}'
-			}
-		}
-		blockSeparator {
-			display:t = "hide"
-		}
-	}
+{
+  "id": "msg_box_root",
+  "position": "absolute",
+  "size": "sw, sh",
+  "blur": {},
+  "blur_foreground": {
+    "isRoot": "yes"
+  },
+  "menutitle": {
+    "id": "msgbox-title"
+  },
+  "div": {
+    "width": "pw",
+    "top": "0.5(ph-h)",
+    "position": "absolute",
+    "flow": "vertical",
+    "min-height": "0.5@scrn_tgt",
+    "max-height": "0.9@scrn_tgt",
+    "optionlist_container": {
+      "width": "pw",
+      "type": "msg_box",
+      "text": {
+        "id": "msg_debug_string",
+        "pos": "0.5(pw-w), ph +0.01@scrn_tgt",
+        "position": "absolute",
+        "input-transparent": "yes",
+        "overlayTextColor": "faded",
+        "smallFont": "yes",
+        "display": "hide",
+        "text": ""
+      }
+    },
+    "div": {
+      "id": "msgTextRoot",
+      "width": "pw",
+      "pos": "0, ph/2-h/2",
+      "position": "relative",
+      "flow": "vertical",
+      "overflow-y": "auto",
+      "textarea": {
+        "id": "msgText",
+        "width": "1.1@sf",
+        "left": "0.5(pw-w)",
+        "position": "relative",
+        "text-align": "center",
+        "overflow-y": "auto",
+        "mediumFont": "yes",
+        "font-bold": "@fontSmall",
+        "padding-left": "0.5*@scrn_tgt/100.0",
+        "border-color": "@commonTextColor"
+      },
+      "div": [
+        {
+          "id": "msg_div_after_text",
+          "max-height": "0.4@scrn_tgt",
+          "pos": "0.5(pw-w), 0.01@scrn_tgt",
+          "position": "relative",
+          "overflow-y": "auto",
+          "display": "hide"
+        },
+        {
+          "id": "msg_bottom_div",
+          "pos": "0.5(pw-w), 0.01@scrn_tgt",
+          "position": "relative",
+          "display": "hide"
+        }
+      ],
+      "animated_wait_icon": {
+        "id": "msgWaitAnimation",
+        "display": "hide",
+        "pos": "0.5(pw-w), 3*@scrn_tgt/100.0",
+        "position": "relative",
+        "background-rotation": "0"
+      },
+      "msgBoxButtonsHolder": {
+        "id": "buttons_holder",
+        "pos": "0.5(pw-w), 0.03@scrn_tgt",
+        "position": "relative",
+        "behavior": "PosNavigator",
+        "navigatorShortcuts": "noSelect",
+        "total-input-transparent": "yes"
+      }
+    }
+  },
+  "navBar": {
+    "style": "id:msg-nav-bar"
+  },
+  "timer": {
+    "id": "msg_box_timer",
+    "timer_handler_func": "onUpdate"
+  },
+  "focusFrameAnimBlock": {
+    "focusFrameAnimObj": {}
+  },
+  "widgets": {
+    "voiceChatWidgetNest": {
+      "isClanOnly": "no",
+      "blockSeparator": [
+        {
+          "display": "hide"
+        },
+        {
+          "display": "hide"
+        }
+      ],
+      "emptyVoiceChat": {
+        "tooltip": "#clan/voice_chat/widget",
+        "usertalk": {
+          "id": "voice_chat_no_activity",
+          "type": "noTalk",
+          "fade": "in",
+          "height-end": "1",
+          "_size-timer": "0",
+          "img": {
+            "color-factor": "255",
+            "inacive": "yes",
+            "position": "relative"
+          },
+          "activeText": {
+            "text": "...",
+            "color-factor": "255",
+            "position": "relative"
+          }
+        }
+      },
+      "voiceChatWidgetContainer": {
+        "isSmall": "no",
+        "voiceChatWidget": {
+          "value": "{\"viewId\": \"VOICE_CHAT\"}"
+        }
+      }
+    }
+  }
 }

@@ -1,335 +1,479 @@
-selected_tag:t = ""
-bin_dump_file:t = ""
-mission_settings {
-	proximity:t = "airplane"
-	player {
-		army:i = 1
-		wing:t = "cutscene_plane"
-	}
-	player_teamB {
-		army:i = 2
-	}
-	mission {
-		level:t = "levels/water.bin"
-		type:t = "benchmark"
-		environment:t = "12"
-		weather:t = "clear"
-		restoreType:t = "attempts"
-		optionalTakeOff:b = false
-		forceSkiesInitialRandomSeed:b = true
-		skiesInitialRandomSeed:i = 1
-		stars {
-			latitude:r = 21
-			longitude:r = 202
-			year:i = 1941
-			month:i = 5
-			day:i = 15
-			localTime:r = 11
-		}
-		customWeather {
-			windDir:p2 = 0.6, 0.8
-			wind_scale:r = 6
-			max_wind_strength:r = 6
-			wind_strength:r = 6
-			waterWindStrength:r = 6
-			sky {
-				mie_height:r = 0.9
-			}
-			strata_clouds {
-				amount:r = 0.5
-				altitude:r = 11
-			}
-		}
-	}
-	spectator_points {
-
-	}
-}
-imports {
-
-}
-triggers {
-	isCategory:b = true
-	is_enabled:b = true
-	init {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			initMission {
-
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			missionSetFade {
-				mode:t = "fadeOut"
-				color:p3 = 0, 0, 0
-				time:r = 0
-			}
-			missionForceMusic {
-				evName:t = "2_us_midway"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	mission_start {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			missionSetFade {
-				mode:t = "fadeOut"
-				color:p3 = 0, 0, 0
-				time:r = 0
-			}
-			playerControls {
-				setStatus:t = "disable"
-				control:t = "ALL"
-			}
-			unitSetProperties {
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				object:t = "cutscene_plane"
-				aiEnabled:b = false
-			}
-			wait {
-				time:r = 0.15
-			}
-			playerControls {
-				setStatus:t = "enable"
-				control:t = "ID_GAME_PAUSE"
-				control:t = "ID_CONTINUE"
-				control:t = "ID_SCREENSHOT"
-				control:t = "ID_SCREENSHOT_WO_HUD"
-				control:t = "ID_FLIGHTMENU"
-				control:t = "ID_FLIGHTMENU_SETUP"
-			}
-			missionSetTimeSpeed {
-				speed:r = 0.25
-				realtimeTriggers:b = true
-			}
-			showSmartCutscene {
-				sceneType:t = "on_the_march"
-				startSubTypeOnTheMarch:t = "back"
-				startSubTypeGroundUnits:t = ""
-				startSubTypeArea:t = ""
-				startSubTypeUnitAttackUnit:t = ""
-				startSubTypeUnitMoveToUnit:t = ""
-				startSubTypeTwoUnits:t = ""
-				startSubTypeTakeoff:t = ""
-				startSubTypeFlyBy:t = ""
-				duration:r = 8
-				wait:b = true
-				changeCameras:b = false
-				teleportAllAttackers:b = false
-				allowTeleportAttackers:b = true
-				inverseCameraDirection:b = false
-				delayPlayer:b = false
-				fadeIn:b = true
-				fadeOut:b = true
-				allowDeadUnits:b = false
-				object:t = "cutscene_plane"
-			}
-			playerOptions {
-				currentView:t = "cockpit"
-			}
-			wait {
-				time:r = 5
-			}
-			missionSetFade {
-				mode:t = "fadeOut"
-				color:p3 = 0, 0, 0
-				time:r = 0.5
-			}
-			wait {
-				time:r = 0.5
-			}
-			showSmartCutscene {
-				sceneType:t = "on_the_march"
-				startSubTypeOnTheMarch:t = "front"
-				startSubTypeGroundUnits:t = ""
-				startSubTypeArea:t = ""
-				startSubTypeUnitAttackUnit:t = ""
-				startSubTypeUnitMoveToUnit:t = ""
-				startSubTypeTwoUnits:t = ""
-				startSubTypeTakeoff:t = ""
-				startSubTypeFlyBy:t = ""
-				duration:r = 3
-				wait:b = true
-				changeCameras:b = false
-				teleportAllAttackers:b = false
-				allowTeleportAttackers:b = true
-				inverseCameraDirection:b = false
-				delayPlayer:b = false
-				fadeIn:b = true
-				fadeOut:b = true
-				allowDeadUnits:b = false
-				object:t = "cutscene_plane"
-			}
-			showSmartCutscene {
-				sceneType:t = "on_the_march"
-				startSubTypeOnTheMarch:t = "right2left"
-				startSubTypeGroundUnits:t = ""
-				startSubTypeArea:t = ""
-				startSubTypeUnitAttackUnit:t = ""
-				startSubTypeUnitMoveToUnit:t = ""
-				startSubTypeTwoUnits:t = ""
-				startSubTypeTakeoff:t = ""
-				startSubTypeFlyBy:t = ""
-				duration:r = 12
-				wait:b = false
-				changeCameras:b = false
-				teleportAllAttackers:b = false
-				allowTeleportAttackers:b = true
-				inverseCameraDirection:b = false
-				delayPlayer:b = false
-				fadeIn:b = true
-				fadeOut:b = false
-				allowDeadUnits:b = false
-				object:t = "cutscene_plane"
-			}
-			wait {
-				time:r = 10.5
-			}
-			missionDebriefing {
-
-			}
-		}
-		else_actions {
-
-		}
-	}
-}
-mission_objectives {
-	isCategory:b = true
-	is_enabled:b = true
-}
-variables {
-
-}
-dialogs {
-
-}
-airfields {
-
-}
-effects {
-
-}
-units {
-	armada {
-		name:t = "cutscene_plane"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-2445.5, 1000.0, -4982.55]]
-		unit_class:t = "sbd-3"
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		props {
-			army:i = 1
-			count:i = 1
-			uniqueName:t = ""
-			free_distance:r = 70
-			floating_distance:r = 50
-			minimum_distance_to_earth:r = 20
-			altLimit:r = 6000
-			attack_type:t = "fire_at_will"
-			skill:i = 4
-			plane {
-				wing_formation:t = "Diamond"
-				row_distances:r = 3
-				col_distances:r = 3
-				super_formation:t = "Diamond"
-				super_row_distances:r = 1.5
-				super_col_distances:r = 1.5
-				ai_skill:t = "NORMAL"
-				task:t = "FLY_WAYPOINT"
-			}
-		}
-		way {
-
-		}
-	}
-}
-areas {
-	point_00 {
-		type:t = "Point"
-		tm:m = [[-0.793353, 0.0, 0.608761] [0.0, 1.0, 0.0] [-0.608761, 0.0, -0.793353] [590.5, 100.0, -13449.6]]
-		props {
-			forceReplication:b = true
-		}
-	}
-	point_01 {
-		type:t = "Point"
-		tm:m = [[-0.953717, 0.0, -0.300706] [0.0, 1.0, 0.0] [0.300706, 0.0, -0.953717] [-6715.35, 668.2, -3033.95]]
-		props {
-			forceReplication:b = true
-		}
-	}
-	point_02 {
-		type:t = "Point"
-		tm:m = [[0.906308, 0.0, -0.422618] [0.0, 1.0, 0.0] [0.422618, 0.0, 0.906308] [-10146.4, 309.15, -8145.85]]
-		props {
-			forceReplication:b = true
-		}
-	}
-	point_03 {
-		type:t = "Point"
-		tm:m = [[0.130527, 0.0, -0.991445] [0.0, 1.0, 0.0] [0.991445, 0.0, 0.130527] [-12850.0, 330.0, -1500.0]]
-		props {
-			forceReplication:b = true
-		}
-	}
-	point_04 {
-		type:t = "Point"
-		tm:m = [[0.0436198, 0.0, -0.999048] [0.0, 1.0, 0.0] [0.999048, 0.0, 0.0436198] [-13300.0, 30.0, -13750.0]]
-		props {
-			forceReplication:b = true
-		}
-	}
-	point_05 {
-		type:t = "Point"
-		tm:m = [[-0.906308, 0.0, -0.422618] [0.0, 1.0, 0.0] [0.422618, 0.0, -0.906308] [-8414.65, 168.0, 1243.85]]
-		props {
-			forceReplication:b = true
-		}
-	}
-}
-objLayers {
-
-}
-wayPoints {
-
+{
+  "selected_tag": "",
+  "bin_dump_file": "",
+  "mission_settings": {
+    "proximity": "airplane",
+    "player": {
+      "army": 1,
+      "wing": "cutscene_plane"
+    },
+    "player_teamB": {
+      "army": 2
+    },
+    "mission": {
+      "level": "levels/water.bin",
+      "type": "benchmark",
+      "environment": "12",
+      "weather": "clear",
+      "restoreType": "attempts",
+      "optionalTakeOff": false,
+      "forceSkiesInitialRandomSeed": true,
+      "skiesInitialRandomSeed": 1,
+      "stars": {
+        "latitude": 21.0,
+        "longitude": 202.0,
+        "year": 1941,
+        "month": 5,
+        "day": 15,
+        "localTime": 11.0
+      },
+      "customWeather": {
+        "windDir": [
+          0.6,
+          0.8
+        ],
+        "wind_scale": 6.0,
+        "max_wind_strength": 6.0,
+        "wind_strength": 6.0,
+        "waterWindStrength": 6.0,
+        "sky": {
+          "mie_height": 0.9
+        },
+        "strata_clouds": {
+          "amount": 0.5,
+          "altitude": 11.0
+        }
+      }
+    },
+    "spectator_points": {}
+  },
+  "imports": {},
+  "triggers": {
+    "isCategory": true,
+    "is_enabled": true,
+    "init": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "initMission": {}
+      },
+      "conditions": {},
+      "actions": {
+        "missionSetFade": {
+          "mode": "fadeOut",
+          "color": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "time": 0.0
+        },
+        "missionForceMusic": {
+          "evName": "2_us_midway"
+        }
+      },
+      "else_actions": {}
+    },
+    "mission_start": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {},
+      "actions": {
+        "missionSetFade": [
+          {
+            "mode": "fadeOut",
+            "color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "time": 0.0
+          },
+          {
+            "mode": "fadeOut",
+            "color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "time": 0.5
+          }
+        ],
+        "playerControls": [
+          {
+            "setStatus": "disable",
+            "control": "ALL"
+          },
+          {
+            "setStatus": "enable",
+            "control": [
+              "ID_GAME_PAUSE",
+              "ID_CONTINUE",
+              "ID_SCREENSHOT",
+              "ID_SCREENSHOT_WO_HUD",
+              "ID_FLIGHTMENU",
+              "ID_FLIGHTMENU_SETUP"
+            ]
+          }
+        ],
+        "unitSetProperties": {
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "object": "cutscene_plane",
+          "aiEnabled": false
+        },
+        "wait": [
+          {
+            "time": 0.15
+          },
+          {
+            "time": 5.0
+          },
+          {
+            "time": 0.5
+          },
+          {
+            "time": 10.5
+          }
+        ],
+        "missionSetTimeSpeed": {
+          "speed": 0.25,
+          "realtimeTriggers": true
+        },
+        "showSmartCutscene": [
+          {
+            "sceneType": "on_the_march",
+            "startSubTypeOnTheMarch": "back",
+            "startSubTypeGroundUnits": "",
+            "startSubTypeArea": "",
+            "startSubTypeUnitAttackUnit": "",
+            "startSubTypeUnitMoveToUnit": "",
+            "startSubTypeTwoUnits": "",
+            "startSubTypeTakeoff": "",
+            "startSubTypeFlyBy": "",
+            "duration": 8.0,
+            "wait": true,
+            "changeCameras": false,
+            "teleportAllAttackers": false,
+            "allowTeleportAttackers": true,
+            "inverseCameraDirection": false,
+            "delayPlayer": false,
+            "fadeIn": true,
+            "fadeOut": true,
+            "allowDeadUnits": false,
+            "object": "cutscene_plane"
+          },
+          {
+            "sceneType": "on_the_march",
+            "startSubTypeOnTheMarch": "front",
+            "startSubTypeGroundUnits": "",
+            "startSubTypeArea": "",
+            "startSubTypeUnitAttackUnit": "",
+            "startSubTypeUnitMoveToUnit": "",
+            "startSubTypeTwoUnits": "",
+            "startSubTypeTakeoff": "",
+            "startSubTypeFlyBy": "",
+            "duration": 3.0,
+            "wait": true,
+            "changeCameras": false,
+            "teleportAllAttackers": false,
+            "allowTeleportAttackers": true,
+            "inverseCameraDirection": false,
+            "delayPlayer": false,
+            "fadeIn": true,
+            "fadeOut": true,
+            "allowDeadUnits": false,
+            "object": "cutscene_plane"
+          },
+          {
+            "sceneType": "on_the_march",
+            "startSubTypeOnTheMarch": "right2left",
+            "startSubTypeGroundUnits": "",
+            "startSubTypeArea": "",
+            "startSubTypeUnitAttackUnit": "",
+            "startSubTypeUnitMoveToUnit": "",
+            "startSubTypeTwoUnits": "",
+            "startSubTypeTakeoff": "",
+            "startSubTypeFlyBy": "",
+            "duration": 12.0,
+            "wait": false,
+            "changeCameras": false,
+            "teleportAllAttackers": false,
+            "allowTeleportAttackers": true,
+            "inverseCameraDirection": false,
+            "delayPlayer": false,
+            "fadeIn": true,
+            "fadeOut": false,
+            "allowDeadUnits": false,
+            "object": "cutscene_plane"
+          }
+        ],
+        "playerOptions": {
+          "currentView": "cockpit"
+        },
+        "missionDebriefing": {}
+      },
+      "else_actions": {}
+    }
+  },
+  "mission_objectives": {
+    "isCategory": true,
+    "is_enabled": true
+  },
+  "variables": {},
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {
+    "armada": {
+      "name": "cutscene_plane",
+      "tm": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -2445.5,
+          1000.0,
+          -4982.55
+        ]
+      ],
+      "unit_class": "sbd-3",
+      "closed_waypoints": false,
+      "isShipSpline": false,
+      "shipTurnRadius": 100.0,
+      "weapons": "",
+      "bullets0": "",
+      "bullets1": "",
+      "bullets2": "",
+      "bullets3": "",
+      "bulletsCount0": 0,
+      "bulletsCount1": 0,
+      "bulletsCount2": 0,
+      "bulletsCount3": 0,
+      "crewSkillK": 0.0,
+      "props": {
+        "army": 1,
+        "count": 1,
+        "uniqueName": "",
+        "free_distance": 70.0,
+        "floating_distance": 50.0,
+        "minimum_distance_to_earth": 20.0,
+        "altLimit": 6000.0,
+        "attack_type": "fire_at_will",
+        "skill": 4,
+        "plane": {
+          "wing_formation": "Diamond",
+          "row_distances": 3.0,
+          "col_distances": 3.0,
+          "super_formation": "Diamond",
+          "super_row_distances": 1.5,
+          "super_col_distances": 1.5,
+          "ai_skill": "NORMAL",
+          "task": "FLY_WAYPOINT"
+        }
+      },
+      "way": {}
+    }
+  },
+  "areas": {
+    "point_00": {
+      "type": "Point",
+      "tm": [
+        [
+          -0.793353,
+          0.0,
+          0.608761
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -0.608761,
+          0.0,
+          -0.793353
+        ],
+        [
+          590.5,
+          100.0,
+          -13449.6
+        ]
+      ],
+      "props": {
+        "forceReplication": true
+      }
+    },
+    "point_01": {
+      "type": "Point",
+      "tm": [
+        [
+          -0.953717,
+          0.0,
+          -0.300706
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.300706,
+          0.0,
+          -0.953717
+        ],
+        [
+          -6715.35,
+          668.2,
+          -3033.95
+        ]
+      ],
+      "props": {
+        "forceReplication": true
+      }
+    },
+    "point_02": {
+      "type": "Point",
+      "tm": [
+        [
+          0.906308,
+          0.0,
+          -0.422618
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.422618,
+          0.0,
+          0.906308
+        ],
+        [
+          -10146.4,
+          309.15,
+          -8145.85
+        ]
+      ],
+      "props": {
+        "forceReplication": true
+      }
+    },
+    "point_03": {
+      "type": "Point",
+      "tm": [
+        [
+          0.130527,
+          0.0,
+          -0.991445
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.991445,
+          0.0,
+          0.130527
+        ],
+        [
+          -12850.0,
+          330.0,
+          -1500.0
+        ]
+      ],
+      "props": {
+        "forceReplication": true
+      }
+    },
+    "point_04": {
+      "type": "Point",
+      "tm": [
+        [
+          0.0436198,
+          0.0,
+          -0.999048
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.999048,
+          0.0,
+          0.0436198
+        ],
+        [
+          -13300.0,
+          30.0,
+          -13750.0
+        ]
+      ],
+      "props": {
+        "forceReplication": true
+      }
+    },
+    "point_05": {
+      "type": "Point",
+      "tm": [
+        [
+          -0.906308,
+          0.0,
+          -0.422618
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.422618,
+          0.0,
+          -0.906308
+        ],
+        [
+          -8414.65,
+          168.0,
+          1243.85
+        ]
+      ],
+      "props": {
+        "forceReplication": true
+      }
+    }
+  },
+  "objLayers": {},
+  "wayPoints": {}
 }

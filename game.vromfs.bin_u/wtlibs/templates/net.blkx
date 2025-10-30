@@ -1,57 +1,57 @@
-msg_sink {
-	_use:t = "replicating"
-	_singleton:b = true
-	msg_sink {
-
-	}
-}
-player {
-	player_id:i = -1
-	connId:i = -1
-	syncVromsStep:i = 0
-	syncVromsStartAtTime:i = 0
-	receiveLogerr:b = false
-	_tracked:t = "connId"
-	_tracked:t = "syncVromsStep"
-	m_player {
-
-	}
-}
-sync_player {
-	_use:t = "replicating"
-	_use:t = "replicate_early"
-	base_player_id:i = -1
-	team:i = -1
-	connid:i = -1
-	_replicated:t = "possessed"
-	_tracked:t = "possessed"
-	_group {
-		_tags:t = "gameClient"
-		player__sensorsAutonomusMode:b = false
-	}
-	possessed:eid {
-
-	}
-	im_debug_net_game_server__inst {
-		_tags:t = "dev"
-	}
-}
-bot_player {
-	playerIsBot:tag {
-
-	}
-}
-server_load_stat {
-	_use:t = "replicating"
-	_replicated:t = "server_load_stat__load"
-	_replicated:t = "server_load_stat__asan"
-	_tracked:t = "server_load_stat__load"
-	server_load_stat__timer:r = 1
-	server_load_stat__load:r = 0
-	server_load_stat__asan:b = false
-	_group {
-		_tags:t = "server"
-		server_load_stat__sumLoadPerTimer:r = 0
-		server_load_stat__framesCount:i = 0
-	}
+{
+  "msg_sink": {
+    "_use": "replicating",
+    "_singleton": true,
+    "msg_sink": {}
+  },
+  "player": {
+    "player_id": -1,
+    "connId": -1,
+    "syncVromsStep": 0,
+    "syncVromsStartAtTime": 0,
+    "receiveLogerr": false,
+    "_tracked": [
+      "connId",
+      "syncVromsStep"
+    ],
+    "m_player": {}
+  },
+  "sync_player": {
+    "_use": [
+      "replicating",
+      "replicate_early"
+    ],
+    "base_player_id": -1,
+    "team": -1,
+    "connid": -1,
+    "_replicated": "possessed",
+    "_tracked": "possessed",
+    "_group": {
+      "_tags": "gameClient",
+      "player__sensorsAutonomusMode": false
+    },
+    "possessed:eid": {},
+    "im_debug_net_game_server__inst": {
+      "_tags": "dev"
+    }
+  },
+  "bot_player": {
+    "playerIsBot:tag": {}
+  },
+  "server_load_stat": {
+    "_use": "replicating",
+    "_replicated": [
+      "server_load_stat__load",
+      "server_load_stat__asan"
+    ],
+    "_tracked": "server_load_stat__load",
+    "server_load_stat__timer": 1.0,
+    "server_load_stat__load": 0.0,
+    "server_load_stat__asan": false,
+    "_group": {
+      "_tags": "server",
+      "server_load_stat__sumLoadPerTimer": 0.0,
+      "server_load_stat__framesCount": 0
+    }
+  }
 }

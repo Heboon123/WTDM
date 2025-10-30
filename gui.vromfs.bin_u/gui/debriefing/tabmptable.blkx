@@ -1,178 +1,186 @@
-debriefingTab {
-	id:t = "players_stats_tab"
-	debrBlock {
-		id:t = "players_stats_scroll_block"
-		size:t = "pw, ph"
-		position:t = "absolute"
-		padding:t = "0.5@debrPad"
-		overflow-y:t = "auto"
-		scrollbarShortcuts:t = "yes"
-		tdiv {
-			size:t = "pw, ph"
-			tdiv {
-				height:t = "ph"
-				pos:t = "pw/2-w/2, 0"
-				position:t = "relative"
-				tdiv {
-					id:t = "team1-root"
-					size:t = "50%p.p.w, ph"
-					flow:t = "vertical"
-					tdiv {
-						id:t = "team1_info"
-						left:t = "pw-w-@tablePad"
-						position:t = "relative"
-						teamIco:t = "allies"
-						css-hier-invalidate:t = "yes"
-						activeText {
-							id:t = "team_text"
-							padding-right:t = "0.01@scrn_tgt"
-							top:t = "50%ph-50%h"
-							position:t = "relative"
-						}
-						teamImg {
-							id:t = "team_img"
-							size:t = "0.04@scrn_tgt, 0.04@scrn_tgt"
-							background-svg-size:t = "0.04@scrn_tgt, 0.04@scrn_tgt"
-							pos:t = "0, 50%ph-50%h"
-							position:t = "relative"
-						}
-						tdiv {
-							id:t = "countries_block"
-							pos:t = "0, ph/2-h/2"
-							position:t = "relative"
-						}
-						img {
-							id:t = "override_country"
-							pos:t = "0, ph/2-h/2"
-							position:t = "relative"
-							size:t = "@cIco, 0.66@cIco"
-							background-image:t = ""
-							background-svg-size:t = "@cIco, 0.66@cIco"
-							margin:t = "0.005@sf, 0"
-						}
-					}
-					tdiv {
-						width:t = "pw"
-						min-height:t = "0.037@scrn_tgt"
-						margin-left:t = "1@scrollBarSize"
-						margin-bottom:t = "0.0025@scrn_tgt"
-						table {
-							id:t = "team_table_1"
-							width:t = "pw"
-							pos:t = "0, 50%ph-50%h"
-							position:t = "absolute"
-							class:t = "headerTable"
-							baseRow:t = "rows16"
-							display:t = "hide"
-						}
-					}
-					tdiv {
-						size:t = "pw, fh"
-						overflow-y:t = "auto"
-						scroll-align:t = "left"
-						scroll-padding:t = "no"
-						padding-right:t = "-1@scrollBarSize"
-						table {
-							id:t = "table_kills_team1"
-							width:t = "fw - 1@scrollBarSize - @tablePad"
-							pos:t = "1@scrollBarSize, 1"
-							position:t = "relative"
-							css-hier-invalidate:t = "yes"
-							behavior:t = "PosNavigator"
-							deep:t = "2"
-							canSelectNone:t = "yes"
-							class:t = "mpTable"
-							mousePointerCenterPosition:t = "left"
-							navigatorShortcuts:t = "yes"
-							selfFocusBorder:t = "yes"
-							on_select:t = "onStatsTblSelect"
-							on_dbl_click:t = "onUserCard"
-							on_r_click:t = "onUserRClick"
-							on_hover:t = "onStatTblFocus"
-							on_unhover:t = "onStatTblFocus"
-							baseRow:t = "rows16"
-						}
-					}
-				}
-				tdiv {
-					id:t = "team2-root"
-					size:t = "50%p.p.w, ph"
-					flow:t = "vertical"
-					tdiv {
-						id:t = "team2_info"
-						left:t = "@tablePad"
-						position:t = "relative"
-						teamIco:t = "axis"
-						css-hier-invalidate:t = "yes"
-						teamImg {
-							id:t = "team_img"
-							size:t = "0.04@scrn_tgt, 0.04@scrn_tgt"
-							background-svg-size:t = "0.04@scrn_tgt, 0.04@scrn_tgt"
-							pos:t = "0, 50%ph-50%h"
-							position:t = "relative"
-						}
-						img {
-							id:t = "override_country"
-							pos:t = "0, ph/2-h/2"
-							position:t = "relative"
-							size:t = "@cIco, 0.66@cIco"
-							background-image:t = ""
-							background-svg-size:t = "@cIco, 0.66@cIco"
-							margin:t = "0.005@sf, 0"
-						}
-						tdiv {
-							id:t = "countries_block"
-							pos:t = "0, ph/2-h/2"
-							position:t = "relative"
-						}
-						activeText {
-							id:t = "team_text"
-							padding-left:t = "0.01@scrn_tgt"
-							top:t = "50%ph-50%h"
-							position:t = "relative"
-						}
-					}
-					tdiv {
-						width:t = "pw"
-						min-height:t = "0.037@scrn_tgt"
-						margin-right:t = "1@scrollBarSize"
-						margin-bottom:t = "0.0025@scrn_tgt"
-						table {
-							id:t = "team_table_2"
-							width:t = "pw"
-							pos:t = "@tablePad, 50%ph-50%h"
-							position:t = "absolute"
-							class:t = "headerTable"
-							baseRow:t = "rows16"
-							display:t = "hide"
-						}
-					}
-					tdiv {
-						size:t = "pw, fh"
-						overflow-y:t = "auto"
-						table {
-							id:t = "table_kills_team2"
-							width:t = "fw - 1@scrollBarSize"
-							pos:t = "@tablePad, 1"
-							position:t = "relative"
-							css-hier-invalidate:t = "yes"
-							behavior:t = "PosNavigator"
-							deep:t = "2"
-							canSelectNone:t = "yes"
-							class:t = "mpTable"
-							mousePointerCenterPosition:t = "right"
-							navigatorShortcuts:t = "yes"
-							selfFocusBorder:t = "yes"
-							on_select:t = "onStatsTblSelect"
-							on_dbl_click:t = "onUserCard"
-							on_r_click:t = "onUserRClick"
-							on_hover:t = "onStatTblFocus"
-							on_unhover:t = "onStatTblFocus"
-							baseRow:t = "rows16"
-						}
-					}
-				}
-			}
-		}
-	}
+{
+  "debriefingTab": {
+    "id": "players_stats_tab",
+    "debrBlock": {
+      "id": "players_stats_scroll_block",
+      "size": "pw, ph",
+      "position": "absolute",
+      "padding": "0.5@debrPad",
+      "overflow-y": "auto",
+      "scrollbarShortcuts": "yes",
+      "tdiv": {
+        "size": "pw, ph",
+        "tdiv": {
+          "height": "ph",
+          "pos": "pw/2-w/2, 0",
+          "position": "relative",
+          "tdiv": [
+            {
+              "id": "team1-root",
+              "size": "50%p.p.w, ph",
+              "flow": "vertical",
+              "tdiv": [
+                {
+                  "id": "team1_info",
+                  "left": "pw-w-@tablePad",
+                  "position": "relative",
+                  "teamIco": "allies",
+                  "css-hier-invalidate": "yes",
+                  "activeText": {
+                    "id": "team_text",
+                    "padding-right": "0.01@scrn_tgt",
+                    "top": "50%ph-50%h",
+                    "position": "relative"
+                  },
+                  "teamImg": {
+                    "id": "team_img",
+                    "size": "0.04@scrn_tgt, 0.04@scrn_tgt",
+                    "background-svg-size": "0.04@scrn_tgt, 0.04@scrn_tgt",
+                    "pos": "0, 50%ph-50%h",
+                    "position": "relative"
+                  },
+                  "tdiv": {
+                    "id": "countries_block",
+                    "pos": "0, ph/2-h/2",
+                    "position": "relative"
+                  },
+                  "img": {
+                    "id": "override_country",
+                    "pos": "0, ph/2-h/2",
+                    "position": "relative",
+                    "size": "@cIco, 0.66@cIco",
+                    "background-image": "",
+                    "background-svg-size": "@cIco, 0.66@cIco",
+                    "margin": "0.005@sf, 0"
+                  }
+                },
+                {
+                  "width": "pw",
+                  "min-height": "0.037@scrn_tgt",
+                  "margin-left": "1@scrollBarSize",
+                  "margin-bottom": "0.0025@scrn_tgt",
+                  "table": {
+                    "id": "team_table_1",
+                    "width": "pw",
+                    "pos": "0, 50%ph-50%h",
+                    "position": "absolute",
+                    "class": "headerTable",
+                    "baseRow": "rows16",
+                    "display": "hide"
+                  }
+                },
+                {
+                  "size": "pw, fh",
+                  "overflow-y": "auto",
+                  "scroll-align": "left",
+                  "scroll-padding": "no",
+                  "padding-right": "-1@scrollBarSize",
+                  "table": {
+                    "id": "table_kills_team1",
+                    "width": "fw - 1@scrollBarSize - @tablePad",
+                    "pos": "1@scrollBarSize, 1",
+                    "position": "relative",
+                    "css-hier-invalidate": "yes",
+                    "behavior": "PosNavigator",
+                    "deep": "2",
+                    "canSelectNone": "yes",
+                    "class": "mpTable",
+                    "mousePointerCenterPosition": "left",
+                    "navigatorShortcuts": "yes",
+                    "selfFocusBorder": "yes",
+                    "on_select": "onStatsTblSelect",
+                    "on_dbl_click": "onUserCard",
+                    "on_r_click": "onUserRClick",
+                    "on_hover": "onStatTblFocus",
+                    "on_unhover": "onStatTblFocus",
+                    "baseRow": "rows16"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "team2-root",
+              "size": "50%p.p.w, ph",
+              "flow": "vertical",
+              "tdiv": [
+                {
+                  "id": "team2_info",
+                  "left": "@tablePad",
+                  "position": "relative",
+                  "teamIco": "axis",
+                  "css-hier-invalidate": "yes",
+                  "teamImg": {
+                    "id": "team_img",
+                    "size": "0.04@scrn_tgt, 0.04@scrn_tgt",
+                    "background-svg-size": "0.04@scrn_tgt, 0.04@scrn_tgt",
+                    "pos": "0, 50%ph-50%h",
+                    "position": "relative"
+                  },
+                  "img": {
+                    "id": "override_country",
+                    "pos": "0, ph/2-h/2",
+                    "position": "relative",
+                    "size": "@cIco, 0.66@cIco",
+                    "background-image": "",
+                    "background-svg-size": "@cIco, 0.66@cIco",
+                    "margin": "0.005@sf, 0"
+                  },
+                  "tdiv": {
+                    "id": "countries_block",
+                    "pos": "0, ph/2-h/2",
+                    "position": "relative"
+                  },
+                  "activeText": {
+                    "id": "team_text",
+                    "padding-left": "0.01@scrn_tgt",
+                    "top": "50%ph-50%h",
+                    "position": "relative"
+                  }
+                },
+                {
+                  "width": "pw",
+                  "min-height": "0.037@scrn_tgt",
+                  "margin-right": "1@scrollBarSize",
+                  "margin-bottom": "0.0025@scrn_tgt",
+                  "table": {
+                    "id": "team_table_2",
+                    "width": "pw",
+                    "pos": "@tablePad, 50%ph-50%h",
+                    "position": "absolute",
+                    "class": "headerTable",
+                    "baseRow": "rows16",
+                    "display": "hide"
+                  }
+                },
+                {
+                  "size": "pw, fh",
+                  "overflow-y": "auto",
+                  "table": {
+                    "id": "table_kills_team2",
+                    "width": "fw - 1@scrollBarSize",
+                    "pos": "@tablePad, 1",
+                    "position": "relative",
+                    "css-hier-invalidate": "yes",
+                    "behavior": "PosNavigator",
+                    "deep": "2",
+                    "canSelectNone": "yes",
+                    "class": "mpTable",
+                    "mousePointerCenterPosition": "right",
+                    "navigatorShortcuts": "yes",
+                    "selfFocusBorder": "yes",
+                    "on_select": "onStatsTblSelect",
+                    "on_dbl_click": "onUserCard",
+                    "on_r_click": "onUserRClick",
+                    "on_hover": "onStatTblFocus",
+                    "on_unhover": "onStatTblFocus",
+                    "baseRow": "rows16"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
 }

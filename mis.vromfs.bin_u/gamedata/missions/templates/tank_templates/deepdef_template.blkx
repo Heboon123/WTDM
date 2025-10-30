@@ -1,3429 +1,4399 @@
-selected_tag:t = ""
-bin_dump_file:t = ""
-mission_settings {
-	player {
-		army:i = 1
-	}
-	player_teamB {
-		army:i = 2
-	}
-	mission {
-		type:t = "domination"
-		level:t = "levels/avg_volokolamsk.bin"
-		environment:t = "Day"
-		weather:t = "hazy"
-	}
-}
-imports {
-	import_record {
-		file:t = "gameData/missions/templates/score_penalty_by_time.blk"
-		importAreas:b = true
-		importUnits:b = true
-		importTriggers:b = true
-		importMissionObjectives:b = true
-		importWayPoints:b = true
-		showAreas:b = true
-		showUnits:b = true
-		showTriggers:b = true
-		showMissionObjectives:b = true
-		showWayPoints:b = true
-		excludes {
-
-		}
-	}
-	import_record {
-		file:t = "gameData/missions/templates/ww_no_attackers_template.blk"
-		importAreas:b = true
-		importUnits:b = true
-		importTriggers:b = true
-		importMissionObjectives:b = true
-		importWayPoints:b = true
-		showAreas:b = true
-		showUnits:b = true
-		showTriggers:b = true
-		showMissionObjectives:b = true
-		showWayPoints:b = true
-		excludes {
-
-		}
-	}
-}
-triggers {
-	isCategory:b = true
-	is_enabled:b = true
-	deepdefa_check {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			initMission {
-
-			}
-		}
-		conditions {
-			missionNamePostfix {
-				postfix:t = "_deepdefa"
-			}
-		}
-		actions {
-			triggerEnable {
-				target:t = "deepdefa_init"
-			}
-		}
-		else_actions {
-			triggerEnable {
-				target:t = "deepdefb_check"
-			}
-		}
-	}
-	deepdefb_check {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			initMission {
-
-			}
-		}
-		conditions {
-			missionNamePostfix {
-				postfix:t = "_deepdefb"
-			}
-		}
-		actions {
-			triggerEnable {
-				target:t = "deepdefb_init"
-			}
-		}
-		else_actions {
-			comment {
-				value:t = "something wrong"
-			}
-		}
-	}
-	deepdefa {
-		isCategory:b = true
-		is_enabled:b = true
-		deepdefa_init {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ANY"
-				enableAfterComplete:b = false
-			}
-			events {
-				initMission {
-
-				}
-			}
-			conditions {
-
-			}
-			actions {
-				varSetString {
-					value:t = "spawn_t1b01"
-					var:t = "t1_spawn_01"
-				}
-				varSetString {
-					value:t = "spawn_t1b02"
-					var:t = "t1_spawn_02"
-				}
-				__varSetString {
-					value:t = "spawn_t1a01_t2b03"
-					var:t = "t1_spawn_03"
-				}
-				varSetString {
-					value:t = "spawn_t2b01"
-					var:t = "t2_spawn_01"
-				}
-				varSetString {
-					value:t = "spawn_t2b02"
-					var:t = "t2_spawn_02"
-				}
-				__varSetString {
-					value:t = "spawn_t2a01_t1b03"
-					var:t = "t2_spawn_03"
-				}
-				varSetString {
-					value:t = "capture_point_b01"
-					var:t = "capture_point_01"
-				}
-				varSetString {
-					value:t = "capture_point_b02"
-					var:t = "capture_point_02"
-				}
-				__varSetString {
-					value:t = "capture_point_a01_b03"
-					var:t = "capture_point_03"
-				}
-				comment {
-					value:t = ""
-				}
-				varSetString {
-					value:t = ""
-					var:t = "t1_spawn_cur"
-					input_var:t = "t1_spawn_01"
-				}
-				varSetString {
-					value:t = ""
-					var:t = "t2_spawn_cur"
-					input_var:t = "t2_spawn_01"
-				}
-				varSetString {
-					value:t = ""
-					var:t = "capture_pt_cur"
-					input_var:t = "capture_point_01"
-				}
-				varSetString {
-					value:t = "t2_safezone_01"
-					var:t = "t2_safezone_cur"
-				}
-				varSetString {
-					value:t = "t1_at_gun_1st_sq"
-					var:t = "at_gun_1st_sq_name"
-				}
-				varSetString {
-					value:t = "t1_at_gun_2nd_sq"
-					var:t = "at_gun_2nd_sq_name"
-				}
-				varSetString {
-					value:t = "t1_at_gun_all_sq"
-					var:t = "at_gun_all_sq_name"
-				}
-				varSetString {
-					value:t = "t1_at_gun_"
-					var:t = "at_gun_name_prefix"
-				}
-				__varSetString {
-					value:t = "clear_respawn_"
-					var:t = "spawn_area_name"
-				}
-				__varSetString {
-					value:t = "t1_rearm_"
-					var:t = "t1_rearm_name"
-				}
-				__varSetString {
-					value:t = "t1_rearm_01"
-					var:t = "t1_rearm_cur"
-				}
-				__varSetString {
-					value:t = "t2_rearm_"
-					var:t = "t2_rearm_name"
-				}
-				__varSetString {
-					value:t = "t2_rearm_01"
-					var:t = "t2_rearm_cur"
-				}
-				varSetInt {
-					value:i = 15
-					var:t = "teamA_antiTankGun_count"
-					fromDescriptor:t = "teamA_antiTankGun_count"
-				}
-				varSetInt {
-					value:i = 35
-					var:t = "atGunFrontLinePercent"
-					fromDescriptor:t = "atGunFrontLinePercent"
-				}
-				varSetInt {
-					value:i = 0
-					var:t = "at_gun_1st_line_count"
-					input_var:t = "teamA_antiTankGun_count"
-				}
-				varModify {
-					operator:t = "mul"
-					value:r = 1
-					var:t = "at_gun_1st_line_count"
-					use_variable:b = true
-					var_value:t = "atGunFrontLinePercent"
-				}
-				varModify {
-					operator:t = "divAB"
-					value:r = 100
-					var:t = "at_gun_1st_line_count"
-				}
-				varSetInt {
-					value:i = 0
-					var:t = "at_gun_2nd_line_count"
-					input_var:t = "teamA_antiTankGun_count"
-				}
-				varModify {
-					operator:t = "subAB"
-					value:r = 1
-					var:t = "at_gun_2nd_line_count"
-					use_variable:b = true
-					var_value:t = "at_gun_1st_line_count"
-				}
-				varSetBool {
-					value:b = true
-					var:t = "score_by_time_for_team_b"
-				}
-				triggerEnable {
-					target:t = "deepdefa_start"
-					target:t = "deepdefa_spawn_at_gun"
-				}
-			}
-			else_actions {
-
-			}
-		}
-		deepdefa_start {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				initMission {
-
-				}
-			}
-			conditions {
-
-			}
-			actions {
-				missionMarkAsRespawnPoint {
-					loc_name:t = "missions/spawn_01"
-					spawnEffect:b = false
-					isAirfield:b = false
-					isUnit:b = false
-					radius:r = -1
-					isStrictSpawn:b = false
-					useExisting:b = false
-					removeAreas:b = false
-					canSpawnOnNeutral:b = false
-					showOnMap:b = true
-					isIndividual:b = true
-					resetStrictSpawnIndex:b = false
-					onlyOnePlayerPerSpawnPoint:b = false
-					replaceAreas:b = false
-					forceCreate:b = false
-					ignoreTeamsOnReuse:b = false
-					target:t = "@t1_spawn_cur"
-					areaNameForSortingByProximity:t = "@capture_pt_cur"
-					team:t = "A"
-					tags {
-						tank:b = true
-					}
-				}
-				missionMarkAsRespawnPoint {
-					loc_name:t = "missions/spawn_01"
-					spawnEffect:b = false
-					isAirfield:b = false
-					isUnit:b = false
-					radius:r = -1
-					isStrictSpawn:b = false
-					useExisting:b = false
-					removeAreas:b = false
-					canSpawnOnNeutral:b = false
-					showOnMap:b = true
-					isIndividual:b = true
-					resetStrictSpawnIndex:b = false
-					onlyOnePlayerPerSpawnPoint:b = false
-					replaceAreas:b = false
-					forceCreate:b = false
-					ignoreTeamsOnReuse:b = false
-					target:t = "@t2_spawn_cur"
-					areaNameForSortingByProximity:t = "@capture_pt_cur"
-					team:t = "B"
-					tags {
-						tank:b = true
-					}
-				}
-				missionMarkAsCaptureZone {
-					army:i = 1
-					name_for_respawn_base:t = ""
-					timeMultiplier:r = 2
-					disableZone:b = false
-					target:t = "@capture_pt_cur"
-					iconIndex:i = 0
-					canCaptureOnGround:b = true
-					playAirfieldSound:b = false
-					canCaptureInAir:b = false
-					canCaptureByGM:b = true
-					useHUDMarkers:b = true
-					captureNoPenalty:b = true
-					markUnitPreset:t = "tank_decal"
-					markUnits:t = "cz_circle"
-					zoneDefenders {
-
-					}
-					capture_tags {
-						vtol_jet:b = true
-						type_attack_helicopter:b = true
-						type_utility_helicopter:b = true
-						tank:b = true
-					}
-				}
-				missionMarkAsRearmZone {
-					army:i = 1
-					area_name:t = "@t1_spawn_cur"
-					enabled:b = true
-					hideMarkers:b = true
-				}
-				missionMarkAsRearmZone {
-					army:i = 2
-					area_name:t = "@t2_spawn_cur"
-					enabled:b = true
-					hideMarkers:b = true
-				}
-				missionBattleArea {
-					air:b = false
-					ground:b = false
-					mapArea:b = false
-					airMapArea:b = false
-					killArea:b = false
-					detectionArea:b = true
-					killOutOfBattleArea:b = false
-					area:t = "@t2_safezone_cur"
-					team:t = "B"
-				}
-				missionBattleArea {
-					air:b = false
-					ground:b = true
-					mapArea:b = true
-					airMapArea:b = false
-					killArea:b = false
-					detectionArea:b = false
-					killOutOfBattleArea:b = true
-					area:t = "battle_area_b01"
-				}
-				comment {
-					value:t = ""
-				}
-				moAddMissionObjective {
-					target:t = "@ATTACK_OBJECTIVE"
-					object_var_comp_op:t = "equal"
-					object_var_name:t = ""
-					object_marking:i = 0
-				}
-				moAddMissionObjective {
-					target:t = "@DEFEND_OBJECTIVE"
-					object_var_comp_op:t = "equal"
-					object_var_name:t = ""
-					object_marking:i = 0
-				}
-				comment {
-					value:t = ""
-				}
-				unitPutToSleep {
-					target:t = "defense_objects_b_01"
-					target:t = "defense_objects_b_02"
-				}
-				comment {
-					value:t = ""
-				}
-				triggerEnable {
-					target:t = "deepdefa_check_capture"
-					target:t = "deepdefa_t1_win"
-				}
-			}
-			else_actions {
-
-			}
-		}
-		deepdefa_spawn_at_gun {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				initMission {
-
-				}
-			}
-			conditions {
-
-			}
-			actions {
-				unitPutToSleep {
-					target:t = "@at_gun_all_sq_name"
-				}
-				unitWakeUp {
-					target:t = "@at_gun_1st_sq_name"
-					varNameNumToWakeUp:t = "at_gun_1st_line_count"
-					order:t = "random"
-				}
-				unitWakeUp {
-					target:t = "@at_gun_2nd_sq_name"
-					varNameNumToWakeUp:t = "at_gun_2nd_line_count"
-					order:t = "random"
-				}
-				unitSetProperties {
-					object_marking:i = 0
-					object_var_name:t = ""
-					object_var_comp_op:t = "equal"
-					object_var_value:i = 0
-					object:t = "@at_gun_all_sq_name"
-					accuracy:r = 0.5
-					checkVisibilityTarget:b = true
-					visibilityTreeTransparencyThreshold:r = 0.01
-				}
-				triggerEnable {
-					target:t = "deepdefa_at_gun_check"
-				}
-			}
-			else_actions {
-
-			}
-		}
-		deepdefa_at_gun_check {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				periodicEvent {
-					time:r = 0
-				}
-			}
-			conditions {
-				varCompareInt {
-					var_value:t = "int_temp"
-					value:i = 15
-					comparasion_func:t = "less"
-				}
-			}
-			actions {
-				varModify {
-					operator:t = "add"
-					value:r = 1
-					var:t = "int_temp"
-				}
-				varSetString {
-					value:t = ""
-					var:t = "str_temp"
-					input_var:t = "at_gun_name_prefix"
-				}
-				varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "str_temp"
-					input_var:t = "int_temp"
-				}
-				varSetString {
-					value:t = "t2b_pit_"
-					var:t = "str_temp2"
-				}
-				varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "str_temp2"
-					input_var:t = "int_temp"
-				}
-				triggerEnable {
-					target:t = "deepdefa_at_gun_setup"
-				}
-			}
-			else_actions {
-				varSetInt {
-					value:i = 0
-					var:t = "int_temp"
-				}
-				triggerEnable {
-					target:t = "deepdefa_wake_at_gun"
-				}
-			}
-		}
-		deepdefa_at_gun_setup {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				periodicEvent {
-					time:r = 0
-				}
-			}
-			conditions {
-				unitWhenStatus {
-					object_type:t = "isActive"
-					check_objects:t = "any"
-					object_marking:i = 0
-					object_var_name:t = ""
-					object_var_comp_op:t = "equal"
-					object_var_value:i = 0
-					target_type:t = "isAlive"
-					check_period:r = 1
-					object:t = "@str_temp"
-				}
-			}
-			actions {
-				unitSetVar {
-					object_var_name:t = "pit_name"
-					object:t = "@str_temp"
-					object_var_string:t = "@str_temp2"
-				}
-				unitMark {
-					target_marking:i = 0
-					target:t = "@str_temp"
-				}
-				unitPutToSleep {
-					target:t = "@str_temp"
-				}
-				triggerEnable {
-					target:t = "deepdefa_terraform_check_exclude_whole"
-				}
-			}
-			else_actions {
-				triggerEnable {
-					target:t = "deepdefa_at_gun_check"
-				}
-			}
-		}
-		deepdefa_terraform_check_exclude_whole {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				periodicEvent {
-					time:r = 0
-				}
-			}
-			conditions {
-				objectExists {
-					target:t = "@TERRAFORM_EXCLUDE_ZONE"
-					type:t = "area"
-				}
-			}
-			actions {
-				triggerEnable {
-					target:t = "deepdefa_terraform_check_exclude_cur"
-				}
-			}
-			else_actions {
-				triggerEnable {
-					target:t = "deepdefa_terraform_do"
-				}
-			}
-		}
-		deepdefa_terraform_check_exclude_cur {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				periodicEvent {
-					time:r = 0
-				}
-			}
-			conditions {
-				areaWhenInArea {
-					math:t = "2D"
-					target:t = "@str_temp2"
-					object:t = "@TERRAFORM_EXCLUDE_ZONE"
-				}
-			}
-			actions {
-				triggerEnable {
-					target:t = "deepdefa_at_gun_check"
-				}
-			}
-			else_actions {
-				triggerEnable {
-					target:t = "deepdefa_terraform_do"
-				}
-			}
-		}
-		deepdefa_terraform_do {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				periodicEvent {
-					time:r = 0
-				}
-			}
-			conditions {
-
-			}
-			actions {
-				duplicateAreaAtPos {
-					area:t = "sample_for_trench_parapet"
-					target:t = "@str_temp2"
-					var_out:t = "trench_parapet_name"
-					spawnOffsetSpace:t = "object"
-				}
-				missionDestroyArea {
-					target_type:t = "permanent_rendinst"
-					area:t = "@trench_parapet_name"
-				}
-				missionTerraform {
-					delta:r = 0.5
-					deltaNoisePercent:i = 0
-					smoothingAreaWidth:r = 0
-					object:t = "@trench_parapet_name"
-				}
-				missionTerraform {
-					delta:r = -0.2
-					deltaNoisePercent:i = 0
-					smoothingAreaWidth:r = 0
-					object:t = "@str_temp2"
-				}
-				triggerEnable {
-					target:t = "deepdefa_at_gun_check"
-				}
-			}
-			else_actions {
-
-			}
-		}
-		deepdefa_wake_at_gun {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = true
-			}
-			events {
-				periodicEvent {
-					time:r = 0
-				}
-			}
-			conditions {
-				varCompareInt {
-					var_value:t = "int_temp"
-					value:i = 15
-					comparasion_func:t = "less"
-				}
-			}
-			actions {
-				varModify {
-					operator:t = "add"
-					value:r = 1
-					var:t = "int_temp"
-				}
-				varSetString {
-					value:t = ""
-					var:t = "str_temp"
-					input_var:t = "at_gun_name_prefix"
-				}
-				varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "str_temp"
-					input_var:t = "int_temp"
-				}
-				unitGetVar {
-					object_marking:i = 0
-					object:t = "@str_temp"
-					object_var_name:t = "pit_name"
-					out_var_string:t = "str_temp2"
-				}
-				unitRespawn {
-					delay:r = 1
-					offset:p3 = 0, 0, 0
-					object:t = "@str_temp"
-					object_type:t = "isMarked"
-					object_marking:i = 0
-					target:t = "@str_temp2"
-				}
-			}
-			else_actions {
-				triggerDisable {
-					target:t = "deepdefa_wake_at_gun"
-				}
-			}
-		}
-		deepdefa_check_capture {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				periodicEvent {
-					time:r = 1
-				}
-			}
-			conditions {
-				missionIsZoneCaptured {
-					target:t = "@capture_pt_cur"
-					army:i = 2
-				}
-			}
-			actions {
-				varModify {
-					operator:t = "add"
-					value:r = 1
-					var:t = "captured_pts"
-				}
-				triggerEnable {
-					target:t = "deepdefa_check_next_pt"
-					target:t = "deepdefa_t2_ticket_decrease"
-				}
-			}
-			else_actions {
-
-			}
-		}
-		deepdefa_check_next_pt {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				periodicEvent {
-					time:r = 0.01
-				}
-			}
-			conditions {
-				varCompareInt {
-					var_value:t = "captured_pts"
-					value:i = 0
-					comparasion_func:t = "less"
-					var_value_other:t = "CAPTURE_POINTS_TOTAL"
-				}
-			}
-			actions {
-				varSetInt {
-					value:i = 0
-					var:t = "int_temp2"
-					input_var:t = "captured_pts"
-				}
-				varSetInt {
-					value:i = 0
-					var:t = "int_temp"
-					input_var:t = "captured_pts"
-				}
-				varModify {
-					operator:t = "add"
-					value:r = 1
-					var:t = "int_temp"
-				}
-				varSetString {
-					value:t = ""
-					var:t = "t2_rearm_cur"
-					input_var:t = "capture_pt_cur"
-				}
-				comment {
-					value:t = ""
-				}
-				missionMarkAsCaptureZone {
-					army:i = 1
-					name_for_respawn_base:t = ""
-					timeMultiplier:r = 2
-					disableZone:b = true
-					target:t = "@capture_pt_cur"
-					canCaptureOnGround:b = true
-					playAirfieldSound:b = false
-					canCaptureInAir:b = false
-					canCaptureByGM:b = true
-					useHUDMarkers:b = true
-					captureNoPenalty:b = true
-					markUnitPreset:t = "tank_decal"
-					markUnits:t = "cz_circle"
-					zoneDefenders {
-
-					}
-					capture_tags {
-						vtol_jet:b = true
-						type_attack_helicopter:b = true
-						type_utility_helicopter:b = true
-						tank:b = true
-					}
-				}
-				varSetString {
-					value:t = "capture_point_"
-					var:t = "str_temp"
-				}
-				varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "str_temp"
-					input_var:t = "int_temp"
-				}
-				varGetStringValue {
-					from_var_name:t = "@str_temp"
-					var:t = "capture_pt_cur"
-				}
-				missionMarkAsCaptureZone {
-					army:i = 1
-					name_for_respawn_base:t = ""
-					timeMultiplier:r = 2
-					disableZone:b = false
-					target:t = "@capture_pt_cur"
-					iconIndexVar:t = "int_temp2"
-					canCaptureOnGround:b = true
-					playAirfieldSound:b = false
-					canCaptureInAir:b = false
-					canCaptureByGM:b = true
-					useHUDMarkers:b = true
-					captureNoPenalty:b = true
-					markUnitPreset:t = "tank_decal"
-					markUnits:t = "cz_circle"
-					zoneDefenders {
-
-					}
-					capture_tags {
-						vtol_jet:b = true
-						type_attack_helicopter:b = true
-						type_utility_helicopter:b = true
-						tank:b = true
-					}
-				}
-				comment {
-					value:t = ""
-				}
-				missionMarkAsRearmZone {
-					army:i = 1
-					area_name:t = "@t1_spawn_cur"
-					enabled:b = false
-					hideMarkers:b = true
-				}
-				varSetString {
-					value:t = "t1_spawn_"
-					var:t = "str_temp"
-				}
-				varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "str_temp"
-					input_var:t = "int_temp"
-				}
-				varGetStringValue {
-					from_var_name:t = "@str_temp"
-					var:t = "t1_spawn_cur"
-				}
-				missionMarkAsRespawnPoint {
-					loc_name:t = "missions/spawn_01"
-					spawnEffect:b = false
-					isAirfield:b = false
-					isUnit:b = false
-					radius:r = -1
-					isStrictSpawn:b = false
-					useExisting:b = true
-					removeAreas:b = false
-					canSpawnOnNeutral:b = false
-					showOnMap:b = true
-					isIndividual:b = true
-					resetStrictSpawnIndex:b = false
-					onlyOnePlayerPerSpawnPoint:b = false
-					replaceAreas:b = true
-					forceCreate:b = false
-					ignoreTeamsOnReuse:b = false
-					target:t = "@t1_spawn_cur"
-					areaNameForSortingByProximity:t = "@capture_pt_cur"
-					team:t = "A"
-					tags {
-						tank:b = true
-					}
-				}
-				missionMarkAsRearmZone {
-					army:i = 1
-					area_name:t = "@t1_spawn_cur"
-					enabled:b = true
-					hideMarkers:b = true
-				}
-				comment {
-					value:t = ""
-				}
-				missionMarkAsRearmZone {
-					army:i = 2
-					area_name:t = "@t2_spawn_cur"
-					enabled:b = false
-					hideMarkers:b = true
-				}
-				varSetString {
-					value:t = "t2_spawn_"
-					var:t = "str_temp"
-				}
-				varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "str_temp"
-					input_var:t = "int_temp"
-				}
-				varGetStringValue {
-					from_var_name:t = "@str_temp"
-					var:t = "t2_spawn_cur"
-				}
-				missionMarkAsRespawnPoint {
-					loc_name:t = "missions/spawn_01"
-					spawnEffect:b = false
-					isAirfield:b = false
-					isUnit:b = false
-					radius:r = -1
-					isStrictSpawn:b = false
-					useExisting:b = true
-					removeAreas:b = false
-					canSpawnOnNeutral:b = false
-					showOnMap:b = true
-					isIndividual:b = true
-					resetStrictSpawnIndex:b = false
-					onlyOnePlayerPerSpawnPoint:b = false
-					replaceAreas:b = true
-					forceCreate:b = false
-					ignoreTeamsOnReuse:b = false
-					target:t = "@t2_spawn_cur"
-					areaNameForSortingByProximity:t = "@capture_pt_cur"
-					team:t = "B"
-					tags {
-						tank:b = true
-					}
-				}
-				missionMarkAsRearmZone {
-					army:i = 2
-					area_name:t = "@t2_rearm_cur"
-					enabled:b = true
-					hideMarkers:b = false
-				}
-				comment {
-					value:t = ""
-				}
-				missionBattleArea {
-					air:b = false
-					ground:b = false
-					mapArea:b = false
-					airMapArea:b = false
-					killArea:b = false
-					detectionArea:b = true
-					killOutOfBattleArea:b = false
-					area:t = "@t2_safezone_cur"
-					team:t = "B"
-				}
-				varSetString {
-					value:t = "t2_safezone_"
-					var:t = "t2_safezone_cur"
-				}
-				varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "t2_safezone_cur"
-					input_var:t = "int_temp"
-				}
-				missionBattleArea {
-					air:b = false
-					ground:b = false
-					mapArea:b = false
-					airMapArea:b = false
-					killArea:b = false
-					detectionArea:b = true
-					killOutOfBattleArea:b = false
-					area:t = "@t2_safezone_cur"
-					team:t = "B"
-				}
-				comment {
-					value:t = ""
-				}
-				triggerEnable {
-					target:t = "deepdefa_check_capture"
-				}
-				comment {
-					value:t = ""
-				}
-				__missionMarkAsRearmZone {
-					army:i = 1
-					area_name:t = "@t1_rearm_cur"
-					enabled:b = false
-					hideMarkers:b = false
-				}
-				__varSetString {
-					value:t = ""
-					var:t = "t1_rearm_cur"
-					input_var:t = "t1_rearm_name"
-				}
-				__varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "t1_rearm_cur"
-					input_var:t = "int_temp"
-				}
-				__missionMarkAsRearmZone {
-					army:i = 1
-					area_name:t = "@t1_rearm_cur"
-					enabled:b = true
-					hideMarkers:b = false
-				}
-				comment {
-					value:t = ""
-				}
-				__missionMarkAsRearmZone {
-					army:i = 2
-					area_name:t = "@t2_rearm_cur"
-					enabled:b = false
-					hideMarkers:b = false
-				}
-				__varSetString {
-					value:t = ""
-					var:t = "t2_rearm_cur"
-					input_var:t = "t2_rearm_name"
-				}
-				__varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "t2_rearm_cur"
-					input_var:t = "int_temp"
-				}
-				__missionMarkAsRearmZone {
-					army:i = 2
-					area_name:t = "@t2_rearm_cur"
-					enabled:b = true
-					hideMarkers:b = false
-				}
-				comment {
-					value:t = ""
-				}
-				__varSetString {
-					value:t = ""
-					var:t = "str_temp"
-					input_var:t = "battle_area_name"
-				}
-				__varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "str_temp"
-					input_var:t = "int_temp"
-				}
-				__missionBattleArea {
-					air:b = false
-					ground:b = true
-					mapArea:b = true
-					airMapArea:b = false
-					killArea:b = false
-					detectionArea:b = false
-					killOutOfBattleArea:b = true
-					area:t = "@str_temp"
-				}
-			}
-			else_actions {
-
-			}
-		}
-		deepdefa_t2_ticket_decrease {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				periodicEvent {
-					time:r = 0.01
-				}
-			}
-			conditions {
-
-			}
-			actions {
-				gameMPChangeScore {
-					value:i = -50
-					valueSystem:t = "percentage"
-					team:t = "A"
-				}
-			}
-			else_actions {
-
-			}
-		}
-		deepdefa_t1_win {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = true
-			}
-			events {
-				periodicEvent {
-					time:r = 1
-				}
-			}
-			conditions {
-				varCompareInt {
-					var_value:t = "captured_pts"
-					value:i = 0
-					comparasion_func:t = "notLess"
-					var_value_other:t = "CAPTURE_POINTS_TOTAL"
-				}
-			}
-			actions {
-				gameMPChangeScore {
-					value:i = -10
-					valueSystem:t = "percentage"
-					team:t = "A"
-				}
-			}
-			else_actions {
-
-			}
-		}
-	}
-	deepdefb {
-		isCategory:b = true
-		is_enabled:b = true
-		deepdefb_init {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ANY"
-				enableAfterComplete:b = false
-			}
-			events {
-				initMission {
-
-				}
-			}
-			conditions {
-
-			}
-			actions {
-				varSetString {
-					value:t = "spawn_t1a01"
-					var:t = "t1_spawn_01"
-				}
-				varSetString {
-					value:t = "spawn_t1a02"
-					var:t = "t1_spawn_02"
-				}
-				__varSetString {
-					value:t = "spawn_t1a03_t2b01"
-					var:t = "t1_spawn_03"
-				}
-				varSetString {
-					value:t = "spawn_t2a01"
-					var:t = "t2_spawn_01"
-				}
-				varSetString {
-					value:t = "spawn_t2a02"
-					var:t = "t2_spawn_02"
-				}
-				__varSetString {
-					value:t = "spawn_t2a03_t1b01"
-					var:t = "t2_spawn_03"
-				}
-				varSetString {
-					value:t = "capture_point_a01"
-					var:t = "capture_point_01"
-				}
-				varSetString {
-					value:t = "capture_point_a02"
-					var:t = "capture_point_02"
-				}
-				__varSetString {
-					value:t = "capture_point_a03_b01"
-					var:t = "capture_point_03"
-				}
-				comment {
-					value:t = ""
-				}
-				varSetString {
-					value:t = ""
-					var:t = "t1_spawn_cur"
-					input_var:t = "t1_spawn_01"
-				}
-				varSetString {
-					value:t = ""
-					var:t = "t2_spawn_cur"
-					input_var:t = "t2_spawn_01"
-				}
-				varSetString {
-					value:t = ""
-					var:t = "capture_pt_cur"
-					input_var:t = "capture_point_01"
-				}
-				varSetString {
-					value:t = "t1_safezone_01"
-					var:t = "t1_safezone_cur"
-				}
-				varSetString {
-					value:t = "t2_at_gun_1st_sq"
-					var:t = "at_gun_1st_sq_name"
-				}
-				varSetString {
-					value:t = "t2_at_gun_2nd_sq"
-					var:t = "at_gun_2nd_sq_name"
-				}
-				varSetString {
-					value:t = "t2_at_gun_all_sq"
-					var:t = "at_gun_all_sq_name"
-				}
-				varSetString {
-					value:t = "t2_at_gun_"
-					var:t = "at_gun_name_prefix"
-				}
-				__varSetString {
-					value:t = "clear_respawn_"
-					var:t = "spawn_area_name"
-				}
-				__varSetString {
-					value:t = "t1_rearm_"
-					var:t = "t1_rearm_name"
-				}
-				__varSetString {
-					value:t = "t1_rearm_01"
-					var:t = "t1_rearm_cur"
-				}
-				__varSetString {
-					value:t = "t2_rearm_"
-					var:t = "t2_rearm_name"
-				}
-				__varSetString {
-					value:t = "t2_rearm_01"
-					var:t = "t2_rearm_cur"
-				}
-				varSetInt {
-					value:i = 15
-					var:t = "teamB_antiTankGun_count"
-					fromDescriptor:t = "teamB_antiTankGun_count"
-				}
-				varSetInt {
-					value:i = 35
-					var:t = "atGunFrontLinePercent"
-					fromDescriptor:t = "atGunFrontLinePercent"
-				}
-				varSetInt {
-					value:i = 0
-					var:t = "at_gun_1st_line_count"
-					input_var:t = "teamB_antiTankGun_count"
-				}
-				varModify {
-					operator:t = "mul"
-					value:r = 1
-					var:t = "at_gun_1st_line_count"
-					use_variable:b = true
-					var_value:t = "atGunFrontLinePercent"
-				}
-				varModify {
-					operator:t = "divAB"
-					value:r = 100
-					var:t = "at_gun_1st_line_count"
-				}
-				varSetInt {
-					value:i = 0
-					var:t = "at_gun_2nd_line_count"
-					input_var:t = "teamB_antiTankGun_count"
-				}
-				varModify {
-					operator:t = "subAB"
-					value:r = 1
-					var:t = "at_gun_2nd_line_count"
-					use_variable:b = true
-					var_value:t = "at_gun_1st_line_count"
-				}
-				varSetBool {
-					value:b = true
-					var:t = "score_by_time_for_team_a"
-				}
-				triggerEnable {
-					target:t = "deepdefb_start"
-					target:t = "deepdefb_spawn_at_gun"
-				}
-			}
-			else_actions {
-
-			}
-		}
-		deepdefb_start {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				initMission {
-
-				}
-			}
-			conditions {
-
-			}
-			actions {
-				missionMarkAsRespawnPoint {
-					loc_name:t = "missions/spawn_01"
-					spawnEffect:b = false
-					isAirfield:b = false
-					isUnit:b = false
-					radius:r = -1
-					isStrictSpawn:b = false
-					useExisting:b = false
-					removeAreas:b = false
-					canSpawnOnNeutral:b = false
-					showOnMap:b = true
-					isIndividual:b = true
-					resetStrictSpawnIndex:b = false
-					onlyOnePlayerPerSpawnPoint:b = false
-					replaceAreas:b = false
-					forceCreate:b = false
-					ignoreTeamsOnReuse:b = false
-					target:t = "@t1_spawn_cur"
-					areaNameForSortingByProximity:t = "@capture_pt_cur"
-					team:t = "A"
-					tags {
-						tank:b = true
-					}
-				}
-				missionMarkAsRespawnPoint {
-					loc_name:t = "missions/spawn_01"
-					spawnEffect:b = false
-					isAirfield:b = false
-					isUnit:b = false
-					radius:r = -1
-					isStrictSpawn:b = false
-					useExisting:b = false
-					removeAreas:b = false
-					canSpawnOnNeutral:b = false
-					showOnMap:b = true
-					isIndividual:b = true
-					resetStrictSpawnIndex:b = false
-					onlyOnePlayerPerSpawnPoint:b = false
-					replaceAreas:b = false
-					forceCreate:b = false
-					ignoreTeamsOnReuse:b = false
-					target:t = "@t2_spawn_cur"
-					areaNameForSortingByProximity:t = "@capture_pt_cur"
-					team:t = "B"
-					tags {
-						tank:b = true
-					}
-				}
-				missionMarkAsCaptureZone {
-					army:i = 2
-					name_for_respawn_base:t = ""
-					timeMultiplier:r = 2
-					disableZone:b = false
-					target:t = "@capture_pt_cur"
-					iconIndex:i = 0
-					canCaptureOnGround:b = true
-					playAirfieldSound:b = false
-					canCaptureInAir:b = false
-					canCaptureByGM:b = true
-					useHUDMarkers:b = true
-					captureNoPenalty:b = true
-					markUnitPreset:t = "tank_decal"
-					markUnits:t = "cz_circle"
-					zoneDefenders {
-
-					}
-					capture_tags {
-						vtol_jet:b = true
-						type_attack_helicopter:b = true
-						type_utility_helicopter:b = true
-						tank:b = true
-					}
-				}
-				missionMarkAsRearmZone {
-					army:i = 1
-					area_name:t = "@t1_spawn_cur"
-					enabled:b = true
-					hideMarkers:b = true
-				}
-				missionMarkAsRearmZone {
-					army:i = 2
-					area_name:t = "@t2_spawn_cur"
-					enabled:b = true
-					hideMarkers:b = true
-				}
-				missionBattleArea {
-					air:b = false
-					ground:b = false
-					mapArea:b = false
-					airMapArea:b = false
-					killArea:b = false
-					detectionArea:b = true
-					killOutOfBattleArea:b = false
-					area:t = "@t1_safezone_cur"
-					team:t = "A"
-				}
-				missionBattleArea {
-					air:b = false
-					ground:b = true
-					mapArea:b = true
-					airMapArea:b = false
-					killArea:b = false
-					detectionArea:b = false
-					killOutOfBattleArea:b = true
-					area:t = "battle_area_a01"
-				}
-				comment {
-					value:t = ""
-				}
-				moAddMissionObjective {
-					target:t = "@ATTACK_OBJECTIVE"
-					object_var_comp_op:t = "equal"
-					object_var_name:t = ""
-					object_marking:i = 0
-				}
-				moAddMissionObjective {
-					target:t = "@DEFEND_OBJECTIVE"
-					object_var_comp_op:t = "equal"
-					object_var_name:t = ""
-					object_marking:i = 0
-				}
-				comment {
-					value:t = ""
-				}
-				unitPutToSleep {
-					target:t = "defense_objects_a_01"
-					target:t = "defense_objects_a_02"
-				}
-				comment {
-					value:t = ""
-				}
-				triggerEnable {
-					target:t = "deepdefb_check_capture"
-					target:t = "deepdefb_t1_win"
-				}
-			}
-			else_actions {
-
-			}
-		}
-		deepdefb_spawn_at_gun {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				initMission {
-
-				}
-			}
-			conditions {
-
-			}
-			actions {
-				unitPutToSleep {
-					target:t = "@at_gun_all_sq_name"
-				}
-				unitWakeUp {
-					target:t = "@at_gun_1st_sq_name"
-					varNameNumToWakeUp:t = "at_gun_1st_line_count"
-					order:t = "random"
-				}
-				unitWakeUp {
-					target:t = "@at_gun_2nd_sq_name"
-					varNameNumToWakeUp:t = "at_gun_2nd_line_count"
-					order:t = "random"
-				}
-				unitSetProperties {
-					object_marking:i = 0
-					object_var_name:t = ""
-					object_var_comp_op:t = "equal"
-					object_var_value:i = 0
-					object:t = "@at_gun_all_sq_name"
-					accuracy:r = 0.5
-					checkVisibilityTarget:b = true
-					visibilityTreeTransparencyThreshold:r = 0.01
-				}
-				triggerEnable {
-					target:t = "deepdefb_at_gun_check"
-				}
-			}
-			else_actions {
-
-			}
-		}
-		deepdefb_at_gun_check {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				periodicEvent {
-					time:r = 0
-				}
-			}
-			conditions {
-				varCompareInt {
-					var_value:t = "int_temp"
-					value:i = 15
-					comparasion_func:t = "less"
-				}
-			}
-			actions {
-				varModify {
-					operator:t = "add"
-					value:r = 1
-					var:t = "int_temp"
-				}
-				varSetString {
-					value:t = ""
-					var:t = "str_temp"
-					input_var:t = "at_gun_name_prefix"
-				}
-				varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "str_temp"
-					input_var:t = "int_temp"
-				}
-				varSetString {
-					value:t = "t2a_pit_"
-					var:t = "str_temp2"
-				}
-				varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "str_temp2"
-					input_var:t = "int_temp"
-				}
-				triggerEnable {
-					target:t = "deepdefb_at_gun_setup"
-				}
-			}
-			else_actions {
-				varSetInt {
-					value:i = 0
-					var:t = "int_temp"
-				}
-				triggerEnable {
-					target:t = "deepdefb_wake_at_gun"
-				}
-			}
-		}
-		deepdefb_at_gun_setup {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				periodicEvent {
-					time:r = 0
-				}
-			}
-			conditions {
-				unitWhenStatus {
-					object_type:t = "isActive"
-					check_objects:t = "any"
-					object_marking:i = 0
-					object_var_name:t = ""
-					object_var_comp_op:t = "equal"
-					object_var_value:i = 0
-					target_type:t = "isAlive"
-					check_period:r = 1
-					object:t = "@str_temp"
-				}
-			}
-			actions {
-				unitPutToSleep {
-					target:t = "@str_temp"
-				}
-				unitSetVar {
-					object_var_name:t = "pit_name"
-					object:t = "@str_temp"
-					object_var_string:t = "@str_temp2"
-				}
-				unitMark {
-					target_marking:i = 0
-					target:t = "@str_temp"
-				}
-				triggerEnable {
-					target:t = "deepdefb_terraform_check_exclude_whole"
-				}
-			}
-			else_actions {
-				triggerEnable {
-					target:t = "deepdefb_at_gun_check"
-				}
-			}
-		}
-		deepdefb_terraform_check_exclude_whole {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				periodicEvent {
-					time:r = 0
-				}
-			}
-			conditions {
-				objectExists {
-					target:t = "@TERRAFORM_EXCLUDE_ZONE"
-					type:t = "area"
-				}
-			}
-			actions {
-				triggerEnable {
-					target:t = "deepdefb_terraform_check_exclude_cur"
-				}
-			}
-			else_actions {
-				triggerEnable {
-					target:t = "deepdefb_terraform_do"
-				}
-			}
-		}
-		deepdefb_terraform_check_exclude_cur {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				periodicEvent {
-					time:r = 0
-				}
-			}
-			conditions {
-				areaWhenInArea {
-					math:t = "2D"
-					target:t = "@str_temp2"
-					object:t = "@TERRAFORM_EXCLUDE_ZONE"
-				}
-			}
-			actions {
-				triggerEnable {
-					target:t = "deepdefb_at_gun_check"
-				}
-			}
-			else_actions {
-				triggerEnable {
-					target:t = "deepdefb_terraform_do"
-				}
-			}
-		}
-		deepdefb_terraform_do {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				periodicEvent {
-					time:r = 0
-				}
-			}
-			conditions {
-
-			}
-			actions {
-				duplicateAreaAtPos {
-					area:t = "sample_for_trench_parapet"
-					target:t = "@str_temp2"
-					var_out:t = "trench_parapet_name"
-					spawnOffsetSpace:t = "object"
-				}
-				missionDestroyArea {
-					target_type:t = "permanent_rendinst"
-					area:t = "@trench_parapet_name"
-				}
-				missionTerraform {
-					delta:r = 0.5
-					deltaNoisePercent:i = 0
-					smoothingAreaWidth:r = 0
-					object:t = "@trench_parapet_name"
-				}
-				missionTerraform {
-					delta:r = -0.2
-					deltaNoisePercent:i = 0
-					smoothingAreaWidth:r = 0
-					object:t = "@str_temp2"
-				}
-				triggerEnable {
-					target:t = "deepdefb_at_gun_check"
-				}
-			}
-			else_actions {
-
-			}
-		}
-		deepdefb_wake_at_gun {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = true
-			}
-			events {
-				periodicEvent {
-					time:r = 0
-				}
-			}
-			conditions {
-				varCompareInt {
-					var_value:t = "int_temp"
-					value:i = 15
-					comparasion_func:t = "less"
-				}
-			}
-			actions {
-				varModify {
-					operator:t = "add"
-					value:r = 1
-					var:t = "int_temp"
-				}
-				varSetString {
-					value:t = ""
-					var:t = "str_temp"
-					input_var:t = "at_gun_name_prefix"
-				}
-				varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "str_temp"
-					input_var:t = "int_temp"
-				}
-				unitGetVar {
-					object_marking:i = 0
-					object:t = "@str_temp"
-					object_var_name:t = "pit_name"
-					out_var_string:t = "str_temp2"
-				}
-				unitRespawn {
-					delay:r = 1
-					offset:p3 = 0, 0, 0
-					object:t = "@str_temp"
-					object_type:t = "isMarked"
-					object_marking:i = 0
-					target:t = "@str_temp2"
-				}
-			}
-			else_actions {
-				triggerDisable {
-					target:t = "deepdefb_wake_at_gun"
-				}
-			}
-		}
-		deepdefb_check_capture {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				periodicEvent {
-					time:r = 1
-				}
-			}
-			conditions {
-				missionIsZoneCaptured {
-					target:t = "@capture_pt_cur"
-					army:i = 1
-				}
-			}
-			actions {
-				varModify {
-					operator:t = "add"
-					value:r = 1
-					var:t = "captured_pts"
-				}
-				triggerEnable {
-					target:t = "deepdefb_check_next_pt"
-					target:t = "deepdefb_t2_ticket_decrease"
-				}
-			}
-			else_actions {
-
-			}
-		}
-		deepdefb_check_next_pt {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				periodicEvent {
-					time:r = 0.01
-				}
-			}
-			conditions {
-				varCompareInt {
-					var_value:t = "captured_pts"
-					value:i = 0
-					comparasion_func:t = "less"
-					var_value_other:t = "CAPTURE_POINTS_TOTAL"
-				}
-			}
-			actions {
-				varSetInt {
-					value:i = 0
-					var:t = "int_temp2"
-					input_var:t = "captured_pts"
-				}
-				varSetInt {
-					value:i = 0
-					var:t = "int_temp"
-					input_var:t = "captured_pts"
-				}
-				varModify {
-					operator:t = "add"
-					value:r = 1
-					var:t = "int_temp"
-				}
-				varSetString {
-					value:t = ""
-					var:t = "t1_rearm_cur"
-					input_var:t = "capture_pt_cur"
-				}
-				comment {
-					value:t = ""
-				}
-				missionMarkAsCaptureZone {
-					army:i = 2
-					name_for_respawn_base:t = ""
-					timeMultiplier:r = 2
-					disableZone:b = true
-					target:t = "@capture_pt_cur"
-					canCaptureOnGround:b = true
-					playAirfieldSound:b = false
-					canCaptureInAir:b = false
-					canCaptureByGM:b = true
-					useHUDMarkers:b = true
-					captureNoPenalty:b = true
-					markUnitPreset:t = "tank_decal"
-					markUnits:t = "cz_circle"
-					zoneDefenders {
-
-					}
-					capture_tags {
-						vtol_jet:b = true
-						type_attack_helicopter:b = true
-						type_utility_helicopter:b = true
-						tank:b = true
-					}
-				}
-				varSetString {
-					value:t = "capture_point_"
-					var:t = "str_temp"
-				}
-				varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "str_temp"
-					input_var:t = "int_temp"
-				}
-				varGetStringValue {
-					from_var_name:t = "@str_temp"
-					var:t = "capture_pt_cur"
-				}
-				missionMarkAsCaptureZone {
-					army:i = 2
-					name_for_respawn_base:t = ""
-					timeMultiplier:r = 2
-					disableZone:b = false
-					target:t = "@capture_pt_cur"
-					iconIndexVar:t = "int_temp2"
-					canCaptureOnGround:b = true
-					playAirfieldSound:b = false
-					canCaptureInAir:b = false
-					canCaptureByGM:b = true
-					useHUDMarkers:b = true
-					captureNoPenalty:b = true
-					markUnitPreset:t = "tank_decal"
-					markUnits:t = "cz_circle"
-					zoneDefenders {
-
-					}
-					capture_tags {
-						vtol_jet:b = true
-						type_attack_helicopter:b = true
-						type_utility_helicopter:b = true
-						tank:b = true
-					}
-				}
-				comment {
-					value:t = ""
-				}
-				missionMarkAsRearmZone {
-					army:i = 1
-					area_name:t = "@t1_spawn_cur"
-					enabled:b = false
-					hideMarkers:b = true
-				}
-				varSetString {
-					value:t = "t1_spawn_"
-					var:t = "str_temp"
-				}
-				varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "str_temp"
-					input_var:t = "int_temp"
-				}
-				varGetStringValue {
-					from_var_name:t = "@str_temp"
-					var:t = "t1_spawn_cur"
-				}
-				missionMarkAsRespawnPoint {
-					loc_name:t = "missions/spawn_01"
-					spawnEffect:b = false
-					isAirfield:b = false
-					isUnit:b = false
-					radius:r = -1
-					isStrictSpawn:b = false
-					useExisting:b = true
-					removeAreas:b = false
-					canSpawnOnNeutral:b = false
-					showOnMap:b = true
-					isIndividual:b = true
-					resetStrictSpawnIndex:b = false
-					onlyOnePlayerPerSpawnPoint:b = false
-					replaceAreas:b = true
-					forceCreate:b = false
-					ignoreTeamsOnReuse:b = false
-					target:t = "@t1_spawn_cur"
-					areaNameForSortingByProximity:t = "@capture_pt_cur"
-					team:t = "A"
-					tags {
-						tank:b = true
-					}
-				}
-				missionMarkAsRearmZone {
-					army:i = 1
-					area_name:t = "@t1_rearm_cur"
-					enabled:b = true
-					hideMarkers:b = false
-				}
-				comment {
-					value:t = ""
-				}
-				missionMarkAsRearmZone {
-					army:i = 2
-					area_name:t = "@t2_spawn_cur"
-					enabled:b = false
-					hideMarkers:b = true
-				}
-				varSetString {
-					value:t = "t2_spawn_"
-					var:t = "str_temp"
-				}
-				varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "str_temp"
-					input_var:t = "int_temp"
-				}
-				varGetStringValue {
-					from_var_name:t = "@str_temp"
-					var:t = "t2_spawn_cur"
-				}
-				missionMarkAsRespawnPoint {
-					loc_name:t = "missions/spawn_01"
-					spawnEffect:b = false
-					isAirfield:b = false
-					isUnit:b = false
-					radius:r = -1
-					isStrictSpawn:b = false
-					useExisting:b = true
-					removeAreas:b = false
-					canSpawnOnNeutral:b = false
-					showOnMap:b = true
-					isIndividual:b = true
-					resetStrictSpawnIndex:b = false
-					onlyOnePlayerPerSpawnPoint:b = false
-					replaceAreas:b = true
-					forceCreate:b = false
-					ignoreTeamsOnReuse:b = false
-					target:t = "@t2_spawn_cur"
-					areaNameForSortingByProximity:t = "@capture_pt_cur"
-					team:t = "B"
-					tags {
-						tank:b = true
-					}
-				}
-				missionMarkAsRearmZone {
-					army:i = 2
-					area_name:t = "@t2_spawn_cur"
-					enabled:b = true
-					hideMarkers:b = true
-				}
-				comment {
-					value:t = ""
-				}
-				missionBattleArea {
-					air:b = false
-					ground:b = false
-					mapArea:b = false
-					airMapArea:b = false
-					killArea:b = false
-					detectionArea:b = true
-					killOutOfBattleArea:b = false
-					area:t = "@t1_safezone_cur"
-					team:t = "A"
-				}
-				varSetString {
-					value:t = "t1_safezone_"
-					var:t = "t1_safezone_cur"
-				}
-				varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "t1_safezone_cur"
-					input_var:t = "int_temp"
-				}
-				missionBattleArea {
-					air:b = false
-					ground:b = false
-					mapArea:b = false
-					airMapArea:b = false
-					killArea:b = false
-					detectionArea:b = true
-					killOutOfBattleArea:b = false
-					area:t = "@t1_safezone_cur"
-					team:t = "A"
-				}
-				comment {
-					value:t = ""
-				}
-				triggerEnable {
-					target:t = "deepdefb_check_capture"
-				}
-				comment {
-					value:t = ""
-				}
-				__missionMarkAsRearmZone {
-					army:i = 1
-					area_name:t = "@t1_rearm_cur"
-					enabled:b = false
-					hideMarkers:b = false
-				}
-				__varSetString {
-					value:t = ""
-					var:t = "t1_rearm_cur"
-					input_var:t = "t1_rearm_name"
-				}
-				__varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "t1_rearm_cur"
-					input_var:t = "int_temp"
-				}
-				__missionMarkAsRearmZone {
-					army:i = 1
-					area_name:t = "@t1_rearm_cur"
-					enabled:b = true
-					hideMarkers:b = false
-				}
-				comment {
-					value:t = ""
-				}
-				__missionMarkAsRearmZone {
-					army:i = 2
-					area_name:t = "@t2_rearm_cur"
-					enabled:b = false
-					hideMarkers:b = false
-				}
-				__varSetString {
-					value:t = ""
-					var:t = "t2_rearm_cur"
-					input_var:t = "t2_rearm_name"
-				}
-				__varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "t2_rearm_cur"
-					input_var:t = "int_temp"
-				}
-				__missionMarkAsRearmZone {
-					army:i = 2
-					area_name:t = "@t2_rearm_cur"
-					enabled:b = true
-					hideMarkers:b = false
-				}
-				comment {
-					value:t = ""
-				}
-				__varSetString {
-					value:t = ""
-					var:t = "str_temp"
-					input_var:t = "battle_area_name"
-				}
-				__varAddString {
-					value:t = ""
-					digits:i = 2
-					var:t = "str_temp"
-					input_var:t = "int_temp"
-				}
-				__missionBattleArea {
-					air:b = false
-					ground:b = true
-					mapArea:b = true
-					airMapArea:b = false
-					killArea:b = false
-					detectionArea:b = false
-					killOutOfBattleArea:b = true
-					area:t = "@str_temp"
-				}
-			}
-			else_actions {
-
-			}
-		}
-		deepdefb_t2_ticket_decrease {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = false
-			}
-			events {
-				periodicEvent {
-					time:r = 0.01
-				}
-			}
-			conditions {
-
-			}
-			actions {
-				gameMPChangeScore {
-					value:i = -50
-					valueSystem:t = "percentage"
-					team:t = "B"
-				}
-			}
-			else_actions {
-
-			}
-		}
-		deepdefb_t1_win {
-			is_enabled:b = false
-			comments:t = ""
-			props {
-				actionsType:t = "PERFORM_ONE_BY_ONE"
-				conditionsType:t = "ALL"
-				enableAfterComplete:b = true
-			}
-			events {
-				periodicEvent {
-					time:r = 1
-				}
-			}
-			conditions {
-				varCompareInt {
-					var_value:t = "captured_pts"
-					value:i = 0
-					comparasion_func:t = "notLess"
-					var_value_other:t = "CAPTURE_POINTS_TOTAL"
-				}
-			}
-			actions {
-				gameMPChangeScore {
-					value:i = -10
-					valueSystem:t = "percentage"
-					team:t = "B"
-				}
-			}
-			else_actions {
-
-			}
-		}
-	}
-}
-mission_objectives {
-	isCategory:b = true
-	is_enabled:b = true
-}
-variables {
-	t1_spawn_name:t = ""
-	t2_spawn_name:t = ""
-	t1_spawn_cur:t = ""
-	t2_spawn_cur:t = ""
-	cap_pt_name:t = ""
-	capture_pt_cur:t = ""
-	cap_pts_total:i = 0
-	captured_pts:i = 0
-	int_temp:i = 0
-	spawn_area:t = ""
-	spawn_area_name:t = ""
-	t1_rearm_cur:t = ""
-	t2_rearm_cur:t = ""
-	t1_rearm_name:t = ""
-	t2_rearm_name:t = ""
-	battle_area_name:t = ""
-	str_temp:t = ""
-	t1_ticket_penalty:i = 1
-	t2_ticket_penalty:i = 33
-	t1_spawn_01:t = ""
-	t1_spawn_02:t = ""
-	t1_spawn_03:t = ""
-	t2_spawn_01:t = ""
-	t2_spawn_02:t = ""
-	t2_spawn_03:t = ""
-	capture_point_01:t = ""
-	capture_point_02:t = ""
-	capture_point_03:t = ""
-	CAPTURE_POINTS_TOTAL:i = 2
-	CAPTURE_POINT_NAME:t = "capture_point"
-	SPAWN_NAME:t = "spawn_"
-	str_temp1:t = "@t1_spawn_02"
-	teamA_antiTankGun_count:i = 0
-	teamB_antiTankGun_count:i = 0
-	str_temp2:t = ""
-	int_temp2:i = 0
-	t1_safezone_cur:t = ""
-	t2_safezone_cur:t = ""
-	ATTACK_OBJECTIVE:t = "avg_Bto_objective_01"
-	DEFEND_OBJECTIVE:t = "avg_Bto_objective_02"
-	at_gun_1st_line_count:i = 0
-	at_gun_2nd_line_count:i = 0
-	atGunFrontLinePercent:i = 0
-	at_gun_1st_sq_name:t = ""
-	at_gun_2nd_sq_name:t = ""
-	at_gun_all_sq_name:t = ""
-	at_gun_name_prefix:t = ""
-	trench_parapet_name:t = ""
-	TERRAFORM_EXCLUDE_ZONE:t = "terraform_exclude_zone"
-}
-dialogs {
-
-}
-airfields {
-
-}
-effects {
-
-}
-units {
-	tankModels {
-		name:t = "t1_at_gun_01"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t1_at_gun_02"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-5.90904, 0.0, 0.0]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t1_at_gun_03"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-11.8181, 0.0, 0.0]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t1_at_gun_04"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-17.7271, 0.0, 0.0]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t1_at_gun_05"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-23.6362, 0.0, 0.0]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t1_at_gun_06"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-29.5452, 0.0, 0.0]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t1_at_gun_07"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-35.4543, 0.0, 0.0]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t1_at_gun_08"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-41.3633, 0.0, 0.0]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t1_at_gun_09"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-47.2724, 0.0, 0.0]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t1_at_gun_10"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-53.1814, 0.0, 0.0]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t1_at_gun_11"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-59.0904, 0.0, 0.0]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t1_at_gun_12"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-64.9995, 0.0, 0.0]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t1_at_gun_13"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-70.9085, 0.0, 0.0]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t1_at_gun_14"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-76.8176, 0.0, 0.0]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t1_at_gun_15"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-82.7266, 0.0, 0.0]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	squad {
-		name:t = "t1_at_gun_1st_sq"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-11.8181, 0.0, -21.2639]]
-		props {
-			squad_members:t = "t1_at_gun_01"
-			squad_members:t = "t1_at_gun_02"
-			squad_members:t = "t1_at_gun_03"
-			squad_members:t = "t1_at_gun_04"
-			squad_members:t = "t1_at_gun_05"
-		}
-	}
-	squad {
-		name:t = "t1_at_gun_2nd_sq"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-56.1359, 0.0, -21.5861]]
-		props {
-			squad_members:t = "t1_at_gun_06"
-			squad_members:t = "t1_at_gun_07"
-			squad_members:t = "t1_at_gun_08"
-			squad_members:t = "t1_at_gun_09"
-			squad_members:t = "t1_at_gun_10"
-			squad_members:t = "t1_at_gun_11"
-			squad_members:t = "t1_at_gun_12"
-			squad_members:t = "t1_at_gun_13"
-			squad_members:t = "t1_at_gun_14"
-			squad_members:t = "t1_at_gun_15"
-		}
-	}
-	objectGroups {
-		name:t = "cz_circle"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-158.844, 0.0, 22.5327]]
-		unit_class:t = "capture_zone_circle"
-		objLayer:i = 2
-		props {
-			army:i = 2
-			active:b = true
-		}
-	}
-	tankModels {
-		name:t = "t2_at_gun_01"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 35.8422]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t2_at_gun_02"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-6.26104, 0.0, 35.8422]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t2_at_gun_03"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-12.5221, 0.0, 35.8422]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t2_at_gun_04"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-18.7831, 0.0, 35.8422]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t2_at_gun_05"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-25.0442, 0.0, 35.8422]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t2_at_gun_06"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-31.3052, 0.0, 35.8422]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t2_at_gun_07"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-37.5662, 0.0, 35.8422]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t2_at_gun_08"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-43.8273, 0.0, 35.8422]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t2_at_gun_09"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-50.0883, 0.0, 35.8422]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t2_at_gun_10"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-56.3494, 0.0, 35.8422]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t2_at_gun_11"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-62.6104, 0.0, 35.8422]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t2_at_gun_12"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-68.8714, 0.0, 35.8422]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t2_at_gun_13"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-75.1325, 0.0, 35.8422]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t2_at_gun_14"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-81.3935, 0.0, 35.8422]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "t2_at_gun_15"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-87.6546, 0.0, 35.8422]]
-		unit_class:t = "germ_at_gun_pak40"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			unitReplacementType:t = "antiTankGun"
-		}
-		way {
-
-		}
-	}
-	squad {
-		name:t = "t2_at_gun_1st_sq"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-12.5221, 0.0, 55.0605]]
-		props {
-			squad_members:t = "t2_at_gun_01"
-			squad_members:t = "t2_at_gun_02"
-			squad_members:t = "t2_at_gun_03"
-			squad_members:t = "t2_at_gun_04"
-			squad_members:t = "t2_at_gun_05"
-		}
-	}
-	squad {
-		name:t = "t2_at_gun_2nd_sq"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-59.4799, 0.0, 55.3396]]
-		props {
-			squad_members:t = "t2_at_gun_06"
-			squad_members:t = "t2_at_gun_07"
-			squad_members:t = "t2_at_gun_08"
-			squad_members:t = "t2_at_gun_09"
-			squad_members:t = "t2_at_gun_10"
-			squad_members:t = "t2_at_gun_11"
-			squad_members:t = "t2_at_gun_12"
-			squad_members:t = "t2_at_gun_13"
-			squad_members:t = "t2_at_gun_14"
-			squad_members:t = "t2_at_gun_15"
-		}
-	}
-	squad {
-		name:t = "t1_at_gun_all_sq"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-33.977, 0.0, -40.2912]]
-		props {
-			squad_members:t = "t1_at_gun_1st_sq"
-			squad_members:t = "t1_at_gun_2nd_sq"
-		}
-	}
-	squad {
-		name:t = "t2_at_gun_all_sq"
-		tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [-36.001, 0.0, 72.8669]]
-		props {
-			squad_members:t = "t2_at_gun_1st_sq"
-			squad_members:t = "t2_at_gun_2nd_sq"
-		}
-	}
-}
-areas {
-	sample_for_trench_parapet {
-		type:t = "Cylinder"
-		tm:m = [[5.6, 0.0, 0.0] [0.0, 2.0, 0.0] [0.0, 0.0, 5.6] [0.0, 0.0, 0.0]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-}
-objLayers {
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-}
-wayPoints {
-
+{
+  "selected_tag": "",
+  "bin_dump_file": "",
+  "mission_settings": {
+    "player": {
+      "army": 1
+    },
+    "player_teamB": {
+      "army": 2
+    },
+    "mission": {
+      "type": "domination",
+      "level": "levels/avg_volokolamsk.bin",
+      "environment": "Day",
+      "weather": "hazy"
+    }
+  },
+  "imports": {
+    "import_record": [
+      {
+        "file": "gameData/missions/templates/score_penalty_by_time.blk",
+        "importAreas": true,
+        "importUnits": true,
+        "importTriggers": true,
+        "importMissionObjectives": true,
+        "importWayPoints": true,
+        "showAreas": true,
+        "showUnits": true,
+        "showTriggers": true,
+        "showMissionObjectives": true,
+        "showWayPoints": true,
+        "excludes": {}
+      },
+      {
+        "file": "gameData/missions/templates/ww_no_attackers_template.blk",
+        "importAreas": true,
+        "importUnits": true,
+        "importTriggers": true,
+        "importMissionObjectives": true,
+        "importWayPoints": true,
+        "showAreas": true,
+        "showUnits": true,
+        "showTriggers": true,
+        "showMissionObjectives": true,
+        "showWayPoints": true,
+        "excludes": {}
+      }
+    ]
+  },
+  "triggers": {
+    "isCategory": true,
+    "is_enabled": true,
+    "deepdefa_check": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "initMission": {}
+      },
+      "conditions": {
+        "missionNamePostfix": {
+          "postfix": "_deepdefa"
+        }
+      },
+      "actions": {
+        "triggerEnable": {
+          "target": "deepdefa_init"
+        }
+      },
+      "else_actions": {
+        "triggerEnable": {
+          "target": "deepdefb_check"
+        }
+      }
+    },
+    "deepdefb_check": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "initMission": {}
+      },
+      "conditions": {
+        "missionNamePostfix": {
+          "postfix": "_deepdefb"
+        }
+      },
+      "actions": {
+        "triggerEnable": {
+          "target": "deepdefb_init"
+        }
+      },
+      "else_actions": {
+        "comment": {
+          "value": "something wrong"
+        }
+      }
+    },
+    "deepdefa": {
+      "isCategory": true,
+      "is_enabled": true,
+      "deepdefa_init": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ANY",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "initMission": {}
+        },
+        "conditions": {},
+        "actions": {
+          "varSetString": [
+            {
+              "value": "spawn_t1b01",
+              "var": "t1_spawn_01"
+            },
+            {
+              "value": "spawn_t1b02",
+              "var": "t1_spawn_02"
+            },
+            {
+              "value": "spawn_t2b01",
+              "var": "t2_spawn_01"
+            },
+            {
+              "value": "spawn_t2b02",
+              "var": "t2_spawn_02"
+            },
+            {
+              "value": "capture_point_b01",
+              "var": "capture_point_01"
+            },
+            {
+              "value": "capture_point_b02",
+              "var": "capture_point_02"
+            },
+            {
+              "value": "",
+              "var": "t1_spawn_cur",
+              "input_var": "t1_spawn_01"
+            },
+            {
+              "value": "",
+              "var": "t2_spawn_cur",
+              "input_var": "t2_spawn_01"
+            },
+            {
+              "value": "",
+              "var": "capture_pt_cur",
+              "input_var": "capture_point_01"
+            },
+            {
+              "value": "t2_safezone_01",
+              "var": "t2_safezone_cur"
+            },
+            {
+              "value": "t1_at_gun_1st_sq",
+              "var": "at_gun_1st_sq_name"
+            },
+            {
+              "value": "t1_at_gun_2nd_sq",
+              "var": "at_gun_2nd_sq_name"
+            },
+            {
+              "value": "t1_at_gun_all_sq",
+              "var": "at_gun_all_sq_name"
+            },
+            {
+              "value": "t1_at_gun_",
+              "var": "at_gun_name_prefix"
+            }
+          ],
+          "__varSetString": [
+            {
+              "value": "spawn_t1a01_t2b03",
+              "var": "t1_spawn_03"
+            },
+            {
+              "value": "spawn_t2a01_t1b03",
+              "var": "t2_spawn_03"
+            },
+            {
+              "value": "capture_point_a01_b03",
+              "var": "capture_point_03"
+            },
+            {
+              "value": "clear_respawn_",
+              "var": "spawn_area_name"
+            },
+            {
+              "value": "t1_rearm_",
+              "var": "t1_rearm_name"
+            },
+            {
+              "value": "t1_rearm_01",
+              "var": "t1_rearm_cur"
+            },
+            {
+              "value": "t2_rearm_",
+              "var": "t2_rearm_name"
+            },
+            {
+              "value": "t2_rearm_01",
+              "var": "t2_rearm_cur"
+            }
+          ],
+          "comment": {
+            "value": ""
+          },
+          "varSetInt": [
+            {
+              "value": 15,
+              "var": "teamA_antiTankGun_count",
+              "fromDescriptor": "teamA_antiTankGun_count"
+            },
+            {
+              "value": 35,
+              "var": "atGunFrontLinePercent",
+              "fromDescriptor": "atGunFrontLinePercent"
+            },
+            {
+              "value": 0,
+              "var": "at_gun_1st_line_count",
+              "input_var": "teamA_antiTankGun_count"
+            },
+            {
+              "value": 0,
+              "var": "at_gun_2nd_line_count",
+              "input_var": "teamA_antiTankGun_count"
+            }
+          ],
+          "varModify": [
+            {
+              "operator": "mul",
+              "value": 1.0,
+              "var": "at_gun_1st_line_count",
+              "use_variable": true,
+              "var_value": "atGunFrontLinePercent"
+            },
+            {
+              "operator": "divAB",
+              "value": 100.0,
+              "var": "at_gun_1st_line_count"
+            },
+            {
+              "operator": "subAB",
+              "value": 1.0,
+              "var": "at_gun_2nd_line_count",
+              "use_variable": true,
+              "var_value": "at_gun_1st_line_count"
+            }
+          ],
+          "varSetBool": {
+            "value": true,
+            "var": "score_by_time_for_team_b"
+          },
+          "triggerEnable": {
+            "target": [
+              "deepdefa_start",
+              "deepdefa_spawn_at_gun"
+            ]
+          }
+        },
+        "else_actions": {}
+      },
+      "deepdefa_start": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "initMission": {}
+        },
+        "conditions": {},
+        "actions": {
+          "missionMarkAsRespawnPoint": [
+            {
+              "loc_name": "missions/spawn_01",
+              "spawnEffect": false,
+              "isAirfield": false,
+              "isUnit": false,
+              "radius": -1.0,
+              "isStrictSpawn": false,
+              "useExisting": false,
+              "removeAreas": false,
+              "canSpawnOnNeutral": false,
+              "showOnMap": true,
+              "isIndividual": true,
+              "resetStrictSpawnIndex": false,
+              "onlyOnePlayerPerSpawnPoint": false,
+              "replaceAreas": false,
+              "forceCreate": false,
+              "ignoreTeamsOnReuse": false,
+              "target": "@t1_spawn_cur",
+              "areaNameForSortingByProximity": "@capture_pt_cur",
+              "team": "A",
+              "tags": {
+                "tank": true
+              }
+            },
+            {
+              "loc_name": "missions/spawn_01",
+              "spawnEffect": false,
+              "isAirfield": false,
+              "isUnit": false,
+              "radius": -1.0,
+              "isStrictSpawn": false,
+              "useExisting": false,
+              "removeAreas": false,
+              "canSpawnOnNeutral": false,
+              "showOnMap": true,
+              "isIndividual": true,
+              "resetStrictSpawnIndex": false,
+              "onlyOnePlayerPerSpawnPoint": false,
+              "replaceAreas": false,
+              "forceCreate": false,
+              "ignoreTeamsOnReuse": false,
+              "target": "@t2_spawn_cur",
+              "areaNameForSortingByProximity": "@capture_pt_cur",
+              "team": "B",
+              "tags": {
+                "tank": true
+              }
+            }
+          ],
+          "missionMarkAsCaptureZone": {
+            "army": 1,
+            "name_for_respawn_base": "",
+            "timeMultiplier": 2.0,
+            "disableZone": false,
+            "target": "@capture_pt_cur",
+            "iconIndex": 0,
+            "canCaptureOnGround": true,
+            "playAirfieldSound": false,
+            "canCaptureInAir": false,
+            "canCaptureByGM": true,
+            "useHUDMarkers": true,
+            "captureNoPenalty": true,
+            "markUnitPreset": "tank_decal",
+            "markUnits": "cz_circle",
+            "zoneDefenders": {},
+            "capture_tags": {
+              "vtol_jet": true,
+              "type_attack_helicopter": true,
+              "type_utility_helicopter": true,
+              "tank": true
+            }
+          },
+          "missionMarkAsRearmZone": [
+            {
+              "army": 1,
+              "area_name": "@t1_spawn_cur",
+              "enabled": true,
+              "hideMarkers": true
+            },
+            {
+              "army": 2,
+              "area_name": "@t2_spawn_cur",
+              "enabled": true,
+              "hideMarkers": true
+            }
+          ],
+          "missionBattleArea": [
+            {
+              "air": false,
+              "ground": false,
+              "mapArea": false,
+              "airMapArea": false,
+              "killArea": false,
+              "detectionArea": true,
+              "killOutOfBattleArea": false,
+              "area": "@t2_safezone_cur",
+              "team": "B"
+            },
+            {
+              "air": false,
+              "ground": true,
+              "mapArea": true,
+              "airMapArea": false,
+              "killArea": false,
+              "detectionArea": false,
+              "killOutOfBattleArea": true,
+              "area": "battle_area_b01"
+            }
+          ],
+          "comment": [
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            }
+          ],
+          "moAddMissionObjective": [
+            {
+              "target": "@ATTACK_OBJECTIVE",
+              "object_var_comp_op": "equal",
+              "object_var_name": "",
+              "object_marking": 0
+            },
+            {
+              "target": "@DEFEND_OBJECTIVE",
+              "object_var_comp_op": "equal",
+              "object_var_name": "",
+              "object_marking": 0
+            }
+          ],
+          "unitPutToSleep": {
+            "target": [
+              "defense_objects_b_01",
+              "defense_objects_b_02"
+            ]
+          },
+          "triggerEnable": {
+            "target": [
+              "deepdefa_check_capture",
+              "deepdefa_t1_win"
+            ]
+          }
+        },
+        "else_actions": {}
+      },
+      "deepdefa_spawn_at_gun": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "initMission": {}
+        },
+        "conditions": {},
+        "actions": {
+          "unitPutToSleep": {
+            "target": "@at_gun_all_sq_name"
+          },
+          "unitWakeUp": [
+            {
+              "target": "@at_gun_1st_sq_name",
+              "varNameNumToWakeUp": "at_gun_1st_line_count",
+              "order": "random"
+            },
+            {
+              "target": "@at_gun_2nd_sq_name",
+              "varNameNumToWakeUp": "at_gun_2nd_line_count",
+              "order": "random"
+            }
+          ],
+          "unitSetProperties": {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "object": "@at_gun_all_sq_name",
+            "accuracy": 0.5,
+            "checkVisibilityTarget": true,
+            "visibilityTreeTransparencyThreshold": 0.01
+          },
+          "triggerEnable": {
+            "target": "deepdefa_at_gun_check"
+          }
+        },
+        "else_actions": {}
+      },
+      "deepdefa_at_gun_check": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 0.0
+          }
+        },
+        "conditions": {
+          "varCompareInt": {
+            "var_value": "int_temp",
+            "value": 15,
+            "comparasion_func": "less"
+          }
+        },
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "int_temp"
+          },
+          "varSetString": [
+            {
+              "value": "",
+              "var": "str_temp",
+              "input_var": "at_gun_name_prefix"
+            },
+            {
+              "value": "t2b_pit_",
+              "var": "str_temp2"
+            }
+          ],
+          "varAddString": [
+            {
+              "value": "",
+              "digits": 2,
+              "var": "str_temp",
+              "input_var": "int_temp"
+            },
+            {
+              "value": "",
+              "digits": 2,
+              "var": "str_temp2",
+              "input_var": "int_temp"
+            }
+          ],
+          "triggerEnable": {
+            "target": "deepdefa_at_gun_setup"
+          }
+        },
+        "else_actions": {
+          "varSetInt": {
+            "value": 0,
+            "var": "int_temp"
+          },
+          "triggerEnable": {
+            "target": "deepdefa_wake_at_gun"
+          }
+        }
+      },
+      "deepdefa_at_gun_setup": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 0.0
+          }
+        },
+        "conditions": {
+          "unitWhenStatus": {
+            "object_type": "isActive",
+            "check_objects": "any",
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "target_type": "isAlive",
+            "check_period": 1.0,
+            "object": "@str_temp"
+          }
+        },
+        "actions": {
+          "unitSetVar": {
+            "object_var_name": "pit_name",
+            "object": "@str_temp",
+            "object_var_string": "@str_temp2"
+          },
+          "unitMark": {
+            "target_marking": 0,
+            "target": "@str_temp"
+          },
+          "unitPutToSleep": {
+            "target": "@str_temp"
+          },
+          "triggerEnable": {
+            "target": "deepdefa_terraform_check_exclude_whole"
+          }
+        },
+        "else_actions": {
+          "triggerEnable": {
+            "target": "deepdefa_at_gun_check"
+          }
+        }
+      },
+      "deepdefa_terraform_check_exclude_whole": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 0.0
+          }
+        },
+        "conditions": {
+          "objectExists": {
+            "target": "@TERRAFORM_EXCLUDE_ZONE",
+            "type": "area"
+          }
+        },
+        "actions": {
+          "triggerEnable": {
+            "target": "deepdefa_terraform_check_exclude_cur"
+          }
+        },
+        "else_actions": {
+          "triggerEnable": {
+            "target": "deepdefa_terraform_do"
+          }
+        }
+      },
+      "deepdefa_terraform_check_exclude_cur": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 0.0
+          }
+        },
+        "conditions": {
+          "areaWhenInArea": {
+            "math": "2D",
+            "target": "@str_temp2",
+            "object": "@TERRAFORM_EXCLUDE_ZONE"
+          }
+        },
+        "actions": {
+          "triggerEnable": {
+            "target": "deepdefa_at_gun_check"
+          }
+        },
+        "else_actions": {
+          "triggerEnable": {
+            "target": "deepdefa_terraform_do"
+          }
+        }
+      },
+      "deepdefa_terraform_do": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 0.0
+          }
+        },
+        "conditions": {},
+        "actions": {
+          "duplicateAreaAtPos": {
+            "area": "sample_for_trench_parapet",
+            "target": "@str_temp2",
+            "var_out": "trench_parapet_name",
+            "spawnOffsetSpace": "object"
+          },
+          "missionDestroyArea": {
+            "target_type": "permanent_rendinst",
+            "area": "@trench_parapet_name"
+          },
+          "missionTerraform": [
+            {
+              "delta": 0.5,
+              "deltaNoisePercent": 0,
+              "smoothingAreaWidth": 0.0,
+              "object": "@trench_parapet_name"
+            },
+            {
+              "delta": -0.2,
+              "deltaNoisePercent": 0,
+              "smoothingAreaWidth": 0.0,
+              "object": "@str_temp2"
+            }
+          ],
+          "triggerEnable": {
+            "target": "deepdefa_at_gun_check"
+          }
+        },
+        "else_actions": {}
+      },
+      "deepdefa_wake_at_gun": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": true
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 0.0
+          }
+        },
+        "conditions": {
+          "varCompareInt": {
+            "var_value": "int_temp",
+            "value": 15,
+            "comparasion_func": "less"
+          }
+        },
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "int_temp"
+          },
+          "varSetString": {
+            "value": "",
+            "var": "str_temp",
+            "input_var": "at_gun_name_prefix"
+          },
+          "varAddString": {
+            "value": "",
+            "digits": 2,
+            "var": "str_temp",
+            "input_var": "int_temp"
+          },
+          "unitGetVar": {
+            "object_marking": 0,
+            "object": "@str_temp",
+            "object_var_name": "pit_name",
+            "out_var_string": "str_temp2"
+          },
+          "unitRespawn": {
+            "delay": 1.0,
+            "offset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "object": "@str_temp",
+            "object_type": "isMarked",
+            "object_marking": 0,
+            "target": "@str_temp2"
+          }
+        },
+        "else_actions": {
+          "triggerDisable": {
+            "target": "deepdefa_wake_at_gun"
+          }
+        }
+      },
+      "deepdefa_check_capture": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 1.0
+          }
+        },
+        "conditions": {
+          "missionIsZoneCaptured": {
+            "target": "@capture_pt_cur",
+            "army": 2
+          }
+        },
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "captured_pts"
+          },
+          "triggerEnable": {
+            "target": [
+              "deepdefa_check_next_pt",
+              "deepdefa_t2_ticket_decrease"
+            ]
+          }
+        },
+        "else_actions": {}
+      },
+      "deepdefa_check_next_pt": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 0.01
+          }
+        },
+        "conditions": {
+          "varCompareInt": {
+            "var_value": "captured_pts",
+            "value": 0,
+            "comparasion_func": "less",
+            "var_value_other": "CAPTURE_POINTS_TOTAL"
+          }
+        },
+        "actions": {
+          "varSetInt": [
+            {
+              "value": 0,
+              "var": "int_temp2",
+              "input_var": "captured_pts"
+            },
+            {
+              "value": 0,
+              "var": "int_temp",
+              "input_var": "captured_pts"
+            }
+          ],
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "int_temp"
+          },
+          "varSetString": [
+            {
+              "value": "",
+              "var": "t2_rearm_cur",
+              "input_var": "capture_pt_cur"
+            },
+            {
+              "value": "capture_point_",
+              "var": "str_temp"
+            },
+            {
+              "value": "t1_spawn_",
+              "var": "str_temp"
+            },
+            {
+              "value": "t2_spawn_",
+              "var": "str_temp"
+            },
+            {
+              "value": "t2_safezone_",
+              "var": "t2_safezone_cur"
+            }
+          ],
+          "comment": [
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            }
+          ],
+          "missionMarkAsCaptureZone": [
+            {
+              "army": 1,
+              "name_for_respawn_base": "",
+              "timeMultiplier": 2.0,
+              "disableZone": true,
+              "target": "@capture_pt_cur",
+              "canCaptureOnGround": true,
+              "playAirfieldSound": false,
+              "canCaptureInAir": false,
+              "canCaptureByGM": true,
+              "useHUDMarkers": true,
+              "captureNoPenalty": true,
+              "markUnitPreset": "tank_decal",
+              "markUnits": "cz_circle",
+              "zoneDefenders": {},
+              "capture_tags": {
+                "vtol_jet": true,
+                "type_attack_helicopter": true,
+                "type_utility_helicopter": true,
+                "tank": true
+              }
+            },
+            {
+              "army": 1,
+              "name_for_respawn_base": "",
+              "timeMultiplier": 2.0,
+              "disableZone": false,
+              "target": "@capture_pt_cur",
+              "iconIndexVar": "int_temp2",
+              "canCaptureOnGround": true,
+              "playAirfieldSound": false,
+              "canCaptureInAir": false,
+              "canCaptureByGM": true,
+              "useHUDMarkers": true,
+              "captureNoPenalty": true,
+              "markUnitPreset": "tank_decal",
+              "markUnits": "cz_circle",
+              "zoneDefenders": {},
+              "capture_tags": {
+                "vtol_jet": true,
+                "type_attack_helicopter": true,
+                "type_utility_helicopter": true,
+                "tank": true
+              }
+            }
+          ],
+          "varAddString": [
+            {
+              "value": "",
+              "digits": 2,
+              "var": "str_temp",
+              "input_var": "int_temp"
+            },
+            {
+              "value": "",
+              "digits": 2,
+              "var": "str_temp",
+              "input_var": "int_temp"
+            },
+            {
+              "value": "",
+              "digits": 2,
+              "var": "str_temp",
+              "input_var": "int_temp"
+            },
+            {
+              "value": "",
+              "digits": 2,
+              "var": "t2_safezone_cur",
+              "input_var": "int_temp"
+            }
+          ],
+          "varGetStringValue": [
+            {
+              "from_var_name": "@str_temp",
+              "var": "capture_pt_cur"
+            },
+            {
+              "from_var_name": "@str_temp",
+              "var": "t1_spawn_cur"
+            },
+            {
+              "from_var_name": "@str_temp",
+              "var": "t2_spawn_cur"
+            }
+          ],
+          "missionMarkAsRearmZone": [
+            {
+              "army": 1,
+              "area_name": "@t1_spawn_cur",
+              "enabled": false,
+              "hideMarkers": true
+            },
+            {
+              "army": 1,
+              "area_name": "@t1_spawn_cur",
+              "enabled": true,
+              "hideMarkers": true
+            },
+            {
+              "army": 2,
+              "area_name": "@t2_spawn_cur",
+              "enabled": false,
+              "hideMarkers": true
+            },
+            {
+              "army": 2,
+              "area_name": "@t2_rearm_cur",
+              "enabled": true,
+              "hideMarkers": false
+            }
+          ],
+          "missionMarkAsRespawnPoint": [
+            {
+              "loc_name": "missions/spawn_01",
+              "spawnEffect": false,
+              "isAirfield": false,
+              "isUnit": false,
+              "radius": -1.0,
+              "isStrictSpawn": false,
+              "useExisting": true,
+              "removeAreas": false,
+              "canSpawnOnNeutral": false,
+              "showOnMap": true,
+              "isIndividual": true,
+              "resetStrictSpawnIndex": false,
+              "onlyOnePlayerPerSpawnPoint": false,
+              "replaceAreas": true,
+              "forceCreate": false,
+              "ignoreTeamsOnReuse": false,
+              "target": "@t1_spawn_cur",
+              "areaNameForSortingByProximity": "@capture_pt_cur",
+              "team": "A",
+              "tags": {
+                "tank": true
+              }
+            },
+            {
+              "loc_name": "missions/spawn_01",
+              "spawnEffect": false,
+              "isAirfield": false,
+              "isUnit": false,
+              "radius": -1.0,
+              "isStrictSpawn": false,
+              "useExisting": true,
+              "removeAreas": false,
+              "canSpawnOnNeutral": false,
+              "showOnMap": true,
+              "isIndividual": true,
+              "resetStrictSpawnIndex": false,
+              "onlyOnePlayerPerSpawnPoint": false,
+              "replaceAreas": true,
+              "forceCreate": false,
+              "ignoreTeamsOnReuse": false,
+              "target": "@t2_spawn_cur",
+              "areaNameForSortingByProximity": "@capture_pt_cur",
+              "team": "B",
+              "tags": {
+                "tank": true
+              }
+            }
+          ],
+          "missionBattleArea": [
+            {
+              "air": false,
+              "ground": false,
+              "mapArea": false,
+              "airMapArea": false,
+              "killArea": false,
+              "detectionArea": true,
+              "killOutOfBattleArea": false,
+              "area": "@t2_safezone_cur",
+              "team": "B"
+            },
+            {
+              "air": false,
+              "ground": false,
+              "mapArea": false,
+              "airMapArea": false,
+              "killArea": false,
+              "detectionArea": true,
+              "killOutOfBattleArea": false,
+              "area": "@t2_safezone_cur",
+              "team": "B"
+            }
+          ],
+          "triggerEnable": {
+            "target": "deepdefa_check_capture"
+          },
+          "__missionMarkAsRearmZone": [
+            {
+              "army": 1,
+              "area_name": "@t1_rearm_cur",
+              "enabled": false,
+              "hideMarkers": false
+            },
+            {
+              "army": 1,
+              "area_name": "@t1_rearm_cur",
+              "enabled": true,
+              "hideMarkers": false
+            },
+            {
+              "army": 2,
+              "area_name": "@t2_rearm_cur",
+              "enabled": false,
+              "hideMarkers": false
+            },
+            {
+              "army": 2,
+              "area_name": "@t2_rearm_cur",
+              "enabled": true,
+              "hideMarkers": false
+            }
+          ],
+          "__varSetString": [
+            {
+              "value": "",
+              "var": "t1_rearm_cur",
+              "input_var": "t1_rearm_name"
+            },
+            {
+              "value": "",
+              "var": "t2_rearm_cur",
+              "input_var": "t2_rearm_name"
+            },
+            {
+              "value": "",
+              "var": "str_temp",
+              "input_var": "battle_area_name"
+            }
+          ],
+          "__varAddString": [
+            {
+              "value": "",
+              "digits": 2,
+              "var": "t1_rearm_cur",
+              "input_var": "int_temp"
+            },
+            {
+              "value": "",
+              "digits": 2,
+              "var": "t2_rearm_cur",
+              "input_var": "int_temp"
+            },
+            {
+              "value": "",
+              "digits": 2,
+              "var": "str_temp",
+              "input_var": "int_temp"
+            }
+          ],
+          "__missionBattleArea": {
+            "air": false,
+            "ground": true,
+            "mapArea": true,
+            "airMapArea": false,
+            "killArea": false,
+            "detectionArea": false,
+            "killOutOfBattleArea": true,
+            "area": "@str_temp"
+          }
+        },
+        "else_actions": {}
+      },
+      "deepdefa_t2_ticket_decrease": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 0.01
+          }
+        },
+        "conditions": {},
+        "actions": {
+          "gameMPChangeScore": {
+            "value": -50,
+            "valueSystem": "percentage",
+            "team": "A"
+          }
+        },
+        "else_actions": {}
+      },
+      "deepdefa_t1_win": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": true
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 1.0
+          }
+        },
+        "conditions": {
+          "varCompareInt": {
+            "var_value": "captured_pts",
+            "value": 0,
+            "comparasion_func": "notLess",
+            "var_value_other": "CAPTURE_POINTS_TOTAL"
+          }
+        },
+        "actions": {
+          "gameMPChangeScore": {
+            "value": -10,
+            "valueSystem": "percentage",
+            "team": "A"
+          }
+        },
+        "else_actions": {}
+      }
+    },
+    "deepdefb": {
+      "isCategory": true,
+      "is_enabled": true,
+      "deepdefb_init": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ANY",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "initMission": {}
+        },
+        "conditions": {},
+        "actions": {
+          "varSetString": [
+            {
+              "value": "spawn_t1a01",
+              "var": "t1_spawn_01"
+            },
+            {
+              "value": "spawn_t1a02",
+              "var": "t1_spawn_02"
+            },
+            {
+              "value": "spawn_t2a01",
+              "var": "t2_spawn_01"
+            },
+            {
+              "value": "spawn_t2a02",
+              "var": "t2_spawn_02"
+            },
+            {
+              "value": "capture_point_a01",
+              "var": "capture_point_01"
+            },
+            {
+              "value": "capture_point_a02",
+              "var": "capture_point_02"
+            },
+            {
+              "value": "",
+              "var": "t1_spawn_cur",
+              "input_var": "t1_spawn_01"
+            },
+            {
+              "value": "",
+              "var": "t2_spawn_cur",
+              "input_var": "t2_spawn_01"
+            },
+            {
+              "value": "",
+              "var": "capture_pt_cur",
+              "input_var": "capture_point_01"
+            },
+            {
+              "value": "t1_safezone_01",
+              "var": "t1_safezone_cur"
+            },
+            {
+              "value": "t2_at_gun_1st_sq",
+              "var": "at_gun_1st_sq_name"
+            },
+            {
+              "value": "t2_at_gun_2nd_sq",
+              "var": "at_gun_2nd_sq_name"
+            },
+            {
+              "value": "t2_at_gun_all_sq",
+              "var": "at_gun_all_sq_name"
+            },
+            {
+              "value": "t2_at_gun_",
+              "var": "at_gun_name_prefix"
+            }
+          ],
+          "__varSetString": [
+            {
+              "value": "spawn_t1a03_t2b01",
+              "var": "t1_spawn_03"
+            },
+            {
+              "value": "spawn_t2a03_t1b01",
+              "var": "t2_spawn_03"
+            },
+            {
+              "value": "capture_point_a03_b01",
+              "var": "capture_point_03"
+            },
+            {
+              "value": "clear_respawn_",
+              "var": "spawn_area_name"
+            },
+            {
+              "value": "t1_rearm_",
+              "var": "t1_rearm_name"
+            },
+            {
+              "value": "t1_rearm_01",
+              "var": "t1_rearm_cur"
+            },
+            {
+              "value": "t2_rearm_",
+              "var": "t2_rearm_name"
+            },
+            {
+              "value": "t2_rearm_01",
+              "var": "t2_rearm_cur"
+            }
+          ],
+          "comment": {
+            "value": ""
+          },
+          "varSetInt": [
+            {
+              "value": 15,
+              "var": "teamB_antiTankGun_count",
+              "fromDescriptor": "teamB_antiTankGun_count"
+            },
+            {
+              "value": 35,
+              "var": "atGunFrontLinePercent",
+              "fromDescriptor": "atGunFrontLinePercent"
+            },
+            {
+              "value": 0,
+              "var": "at_gun_1st_line_count",
+              "input_var": "teamB_antiTankGun_count"
+            },
+            {
+              "value": 0,
+              "var": "at_gun_2nd_line_count",
+              "input_var": "teamB_antiTankGun_count"
+            }
+          ],
+          "varModify": [
+            {
+              "operator": "mul",
+              "value": 1.0,
+              "var": "at_gun_1st_line_count",
+              "use_variable": true,
+              "var_value": "atGunFrontLinePercent"
+            },
+            {
+              "operator": "divAB",
+              "value": 100.0,
+              "var": "at_gun_1st_line_count"
+            },
+            {
+              "operator": "subAB",
+              "value": 1.0,
+              "var": "at_gun_2nd_line_count",
+              "use_variable": true,
+              "var_value": "at_gun_1st_line_count"
+            }
+          ],
+          "varSetBool": {
+            "value": true,
+            "var": "score_by_time_for_team_a"
+          },
+          "triggerEnable": {
+            "target": [
+              "deepdefb_start",
+              "deepdefb_spawn_at_gun"
+            ]
+          }
+        },
+        "else_actions": {}
+      },
+      "deepdefb_start": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "initMission": {}
+        },
+        "conditions": {},
+        "actions": {
+          "missionMarkAsRespawnPoint": [
+            {
+              "loc_name": "missions/spawn_01",
+              "spawnEffect": false,
+              "isAirfield": false,
+              "isUnit": false,
+              "radius": -1.0,
+              "isStrictSpawn": false,
+              "useExisting": false,
+              "removeAreas": false,
+              "canSpawnOnNeutral": false,
+              "showOnMap": true,
+              "isIndividual": true,
+              "resetStrictSpawnIndex": false,
+              "onlyOnePlayerPerSpawnPoint": false,
+              "replaceAreas": false,
+              "forceCreate": false,
+              "ignoreTeamsOnReuse": false,
+              "target": "@t1_spawn_cur",
+              "areaNameForSortingByProximity": "@capture_pt_cur",
+              "team": "A",
+              "tags": {
+                "tank": true
+              }
+            },
+            {
+              "loc_name": "missions/spawn_01",
+              "spawnEffect": false,
+              "isAirfield": false,
+              "isUnit": false,
+              "radius": -1.0,
+              "isStrictSpawn": false,
+              "useExisting": false,
+              "removeAreas": false,
+              "canSpawnOnNeutral": false,
+              "showOnMap": true,
+              "isIndividual": true,
+              "resetStrictSpawnIndex": false,
+              "onlyOnePlayerPerSpawnPoint": false,
+              "replaceAreas": false,
+              "forceCreate": false,
+              "ignoreTeamsOnReuse": false,
+              "target": "@t2_spawn_cur",
+              "areaNameForSortingByProximity": "@capture_pt_cur",
+              "team": "B",
+              "tags": {
+                "tank": true
+              }
+            }
+          ],
+          "missionMarkAsCaptureZone": {
+            "army": 2,
+            "name_for_respawn_base": "",
+            "timeMultiplier": 2.0,
+            "disableZone": false,
+            "target": "@capture_pt_cur",
+            "iconIndex": 0,
+            "canCaptureOnGround": true,
+            "playAirfieldSound": false,
+            "canCaptureInAir": false,
+            "canCaptureByGM": true,
+            "useHUDMarkers": true,
+            "captureNoPenalty": true,
+            "markUnitPreset": "tank_decal",
+            "markUnits": "cz_circle",
+            "zoneDefenders": {},
+            "capture_tags": {
+              "vtol_jet": true,
+              "type_attack_helicopter": true,
+              "type_utility_helicopter": true,
+              "tank": true
+            }
+          },
+          "missionMarkAsRearmZone": [
+            {
+              "army": 1,
+              "area_name": "@t1_spawn_cur",
+              "enabled": true,
+              "hideMarkers": true
+            },
+            {
+              "army": 2,
+              "area_name": "@t2_spawn_cur",
+              "enabled": true,
+              "hideMarkers": true
+            }
+          ],
+          "missionBattleArea": [
+            {
+              "air": false,
+              "ground": false,
+              "mapArea": false,
+              "airMapArea": false,
+              "killArea": false,
+              "detectionArea": true,
+              "killOutOfBattleArea": false,
+              "area": "@t1_safezone_cur",
+              "team": "A"
+            },
+            {
+              "air": false,
+              "ground": true,
+              "mapArea": true,
+              "airMapArea": false,
+              "killArea": false,
+              "detectionArea": false,
+              "killOutOfBattleArea": true,
+              "area": "battle_area_a01"
+            }
+          ],
+          "comment": [
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            }
+          ],
+          "moAddMissionObjective": [
+            {
+              "target": "@ATTACK_OBJECTIVE",
+              "object_var_comp_op": "equal",
+              "object_var_name": "",
+              "object_marking": 0
+            },
+            {
+              "target": "@DEFEND_OBJECTIVE",
+              "object_var_comp_op": "equal",
+              "object_var_name": "",
+              "object_marking": 0
+            }
+          ],
+          "unitPutToSleep": {
+            "target": [
+              "defense_objects_a_01",
+              "defense_objects_a_02"
+            ]
+          },
+          "triggerEnable": {
+            "target": [
+              "deepdefb_check_capture",
+              "deepdefb_t1_win"
+            ]
+          }
+        },
+        "else_actions": {}
+      },
+      "deepdefb_spawn_at_gun": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "initMission": {}
+        },
+        "conditions": {},
+        "actions": {
+          "unitPutToSleep": {
+            "target": "@at_gun_all_sq_name"
+          },
+          "unitWakeUp": [
+            {
+              "target": "@at_gun_1st_sq_name",
+              "varNameNumToWakeUp": "at_gun_1st_line_count",
+              "order": "random"
+            },
+            {
+              "target": "@at_gun_2nd_sq_name",
+              "varNameNumToWakeUp": "at_gun_2nd_line_count",
+              "order": "random"
+            }
+          ],
+          "unitSetProperties": {
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "object": "@at_gun_all_sq_name",
+            "accuracy": 0.5,
+            "checkVisibilityTarget": true,
+            "visibilityTreeTransparencyThreshold": 0.01
+          },
+          "triggerEnable": {
+            "target": "deepdefb_at_gun_check"
+          }
+        },
+        "else_actions": {}
+      },
+      "deepdefb_at_gun_check": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 0.0
+          }
+        },
+        "conditions": {
+          "varCompareInt": {
+            "var_value": "int_temp",
+            "value": 15,
+            "comparasion_func": "less"
+          }
+        },
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "int_temp"
+          },
+          "varSetString": [
+            {
+              "value": "",
+              "var": "str_temp",
+              "input_var": "at_gun_name_prefix"
+            },
+            {
+              "value": "t2a_pit_",
+              "var": "str_temp2"
+            }
+          ],
+          "varAddString": [
+            {
+              "value": "",
+              "digits": 2,
+              "var": "str_temp",
+              "input_var": "int_temp"
+            },
+            {
+              "value": "",
+              "digits": 2,
+              "var": "str_temp2",
+              "input_var": "int_temp"
+            }
+          ],
+          "triggerEnable": {
+            "target": "deepdefb_at_gun_setup"
+          }
+        },
+        "else_actions": {
+          "varSetInt": {
+            "value": 0,
+            "var": "int_temp"
+          },
+          "triggerEnable": {
+            "target": "deepdefb_wake_at_gun"
+          }
+        }
+      },
+      "deepdefb_at_gun_setup": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 0.0
+          }
+        },
+        "conditions": {
+          "unitWhenStatus": {
+            "object_type": "isActive",
+            "check_objects": "any",
+            "object_marking": 0,
+            "object_var_name": "",
+            "object_var_comp_op": "equal",
+            "object_var_value": 0,
+            "target_type": "isAlive",
+            "check_period": 1.0,
+            "object": "@str_temp"
+          }
+        },
+        "actions": {
+          "unitPutToSleep": {
+            "target": "@str_temp"
+          },
+          "unitSetVar": {
+            "object_var_name": "pit_name",
+            "object": "@str_temp",
+            "object_var_string": "@str_temp2"
+          },
+          "unitMark": {
+            "target_marking": 0,
+            "target": "@str_temp"
+          },
+          "triggerEnable": {
+            "target": "deepdefb_terraform_check_exclude_whole"
+          }
+        },
+        "else_actions": {
+          "triggerEnable": {
+            "target": "deepdefb_at_gun_check"
+          }
+        }
+      },
+      "deepdefb_terraform_check_exclude_whole": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 0.0
+          }
+        },
+        "conditions": {
+          "objectExists": {
+            "target": "@TERRAFORM_EXCLUDE_ZONE",
+            "type": "area"
+          }
+        },
+        "actions": {
+          "triggerEnable": {
+            "target": "deepdefb_terraform_check_exclude_cur"
+          }
+        },
+        "else_actions": {
+          "triggerEnable": {
+            "target": "deepdefb_terraform_do"
+          }
+        }
+      },
+      "deepdefb_terraform_check_exclude_cur": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 0.0
+          }
+        },
+        "conditions": {
+          "areaWhenInArea": {
+            "math": "2D",
+            "target": "@str_temp2",
+            "object": "@TERRAFORM_EXCLUDE_ZONE"
+          }
+        },
+        "actions": {
+          "triggerEnable": {
+            "target": "deepdefb_at_gun_check"
+          }
+        },
+        "else_actions": {
+          "triggerEnable": {
+            "target": "deepdefb_terraform_do"
+          }
+        }
+      },
+      "deepdefb_terraform_do": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 0.0
+          }
+        },
+        "conditions": {},
+        "actions": {
+          "duplicateAreaAtPos": {
+            "area": "sample_for_trench_parapet",
+            "target": "@str_temp2",
+            "var_out": "trench_parapet_name",
+            "spawnOffsetSpace": "object"
+          },
+          "missionDestroyArea": {
+            "target_type": "permanent_rendinst",
+            "area": "@trench_parapet_name"
+          },
+          "missionTerraform": [
+            {
+              "delta": 0.5,
+              "deltaNoisePercent": 0,
+              "smoothingAreaWidth": 0.0,
+              "object": "@trench_parapet_name"
+            },
+            {
+              "delta": -0.2,
+              "deltaNoisePercent": 0,
+              "smoothingAreaWidth": 0.0,
+              "object": "@str_temp2"
+            }
+          ],
+          "triggerEnable": {
+            "target": "deepdefb_at_gun_check"
+          }
+        },
+        "else_actions": {}
+      },
+      "deepdefb_wake_at_gun": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": true
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 0.0
+          }
+        },
+        "conditions": {
+          "varCompareInt": {
+            "var_value": "int_temp",
+            "value": 15,
+            "comparasion_func": "less"
+          }
+        },
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "int_temp"
+          },
+          "varSetString": {
+            "value": "",
+            "var": "str_temp",
+            "input_var": "at_gun_name_prefix"
+          },
+          "varAddString": {
+            "value": "",
+            "digits": 2,
+            "var": "str_temp",
+            "input_var": "int_temp"
+          },
+          "unitGetVar": {
+            "object_marking": 0,
+            "object": "@str_temp",
+            "object_var_name": "pit_name",
+            "out_var_string": "str_temp2"
+          },
+          "unitRespawn": {
+            "delay": 1.0,
+            "offset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "object": "@str_temp",
+            "object_type": "isMarked",
+            "object_marking": 0,
+            "target": "@str_temp2"
+          }
+        },
+        "else_actions": {
+          "triggerDisable": {
+            "target": "deepdefb_wake_at_gun"
+          }
+        }
+      },
+      "deepdefb_check_capture": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 1.0
+          }
+        },
+        "conditions": {
+          "missionIsZoneCaptured": {
+            "target": "@capture_pt_cur",
+            "army": 1
+          }
+        },
+        "actions": {
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "captured_pts"
+          },
+          "triggerEnable": {
+            "target": [
+              "deepdefb_check_next_pt",
+              "deepdefb_t2_ticket_decrease"
+            ]
+          }
+        },
+        "else_actions": {}
+      },
+      "deepdefb_check_next_pt": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 0.01
+          }
+        },
+        "conditions": {
+          "varCompareInt": {
+            "var_value": "captured_pts",
+            "value": 0,
+            "comparasion_func": "less",
+            "var_value_other": "CAPTURE_POINTS_TOTAL"
+          }
+        },
+        "actions": {
+          "varSetInt": [
+            {
+              "value": 0,
+              "var": "int_temp2",
+              "input_var": "captured_pts"
+            },
+            {
+              "value": 0,
+              "var": "int_temp",
+              "input_var": "captured_pts"
+            }
+          ],
+          "varModify": {
+            "operator": "add",
+            "value": 1.0,
+            "var": "int_temp"
+          },
+          "varSetString": [
+            {
+              "value": "",
+              "var": "t1_rearm_cur",
+              "input_var": "capture_pt_cur"
+            },
+            {
+              "value": "capture_point_",
+              "var": "str_temp"
+            },
+            {
+              "value": "t1_spawn_",
+              "var": "str_temp"
+            },
+            {
+              "value": "t2_spawn_",
+              "var": "str_temp"
+            },
+            {
+              "value": "t1_safezone_",
+              "var": "t1_safezone_cur"
+            }
+          ],
+          "comment": [
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            },
+            {
+              "value": ""
+            }
+          ],
+          "missionMarkAsCaptureZone": [
+            {
+              "army": 2,
+              "name_for_respawn_base": "",
+              "timeMultiplier": 2.0,
+              "disableZone": true,
+              "target": "@capture_pt_cur",
+              "canCaptureOnGround": true,
+              "playAirfieldSound": false,
+              "canCaptureInAir": false,
+              "canCaptureByGM": true,
+              "useHUDMarkers": true,
+              "captureNoPenalty": true,
+              "markUnitPreset": "tank_decal",
+              "markUnits": "cz_circle",
+              "zoneDefenders": {},
+              "capture_tags": {
+                "vtol_jet": true,
+                "type_attack_helicopter": true,
+                "type_utility_helicopter": true,
+                "tank": true
+              }
+            },
+            {
+              "army": 2,
+              "name_for_respawn_base": "",
+              "timeMultiplier": 2.0,
+              "disableZone": false,
+              "target": "@capture_pt_cur",
+              "iconIndexVar": "int_temp2",
+              "canCaptureOnGround": true,
+              "playAirfieldSound": false,
+              "canCaptureInAir": false,
+              "canCaptureByGM": true,
+              "useHUDMarkers": true,
+              "captureNoPenalty": true,
+              "markUnitPreset": "tank_decal",
+              "markUnits": "cz_circle",
+              "zoneDefenders": {},
+              "capture_tags": {
+                "vtol_jet": true,
+                "type_attack_helicopter": true,
+                "type_utility_helicopter": true,
+                "tank": true
+              }
+            }
+          ],
+          "varAddString": [
+            {
+              "value": "",
+              "digits": 2,
+              "var": "str_temp",
+              "input_var": "int_temp"
+            },
+            {
+              "value": "",
+              "digits": 2,
+              "var": "str_temp",
+              "input_var": "int_temp"
+            },
+            {
+              "value": "",
+              "digits": 2,
+              "var": "str_temp",
+              "input_var": "int_temp"
+            },
+            {
+              "value": "",
+              "digits": 2,
+              "var": "t1_safezone_cur",
+              "input_var": "int_temp"
+            }
+          ],
+          "varGetStringValue": [
+            {
+              "from_var_name": "@str_temp",
+              "var": "capture_pt_cur"
+            },
+            {
+              "from_var_name": "@str_temp",
+              "var": "t1_spawn_cur"
+            },
+            {
+              "from_var_name": "@str_temp",
+              "var": "t2_spawn_cur"
+            }
+          ],
+          "missionMarkAsRearmZone": [
+            {
+              "army": 1,
+              "area_name": "@t1_spawn_cur",
+              "enabled": false,
+              "hideMarkers": true
+            },
+            {
+              "army": 1,
+              "area_name": "@t1_rearm_cur",
+              "enabled": true,
+              "hideMarkers": false
+            },
+            {
+              "army": 2,
+              "area_name": "@t2_spawn_cur",
+              "enabled": false,
+              "hideMarkers": true
+            },
+            {
+              "army": 2,
+              "area_name": "@t2_spawn_cur",
+              "enabled": true,
+              "hideMarkers": true
+            }
+          ],
+          "missionMarkAsRespawnPoint": [
+            {
+              "loc_name": "missions/spawn_01",
+              "spawnEffect": false,
+              "isAirfield": false,
+              "isUnit": false,
+              "radius": -1.0,
+              "isStrictSpawn": false,
+              "useExisting": true,
+              "removeAreas": false,
+              "canSpawnOnNeutral": false,
+              "showOnMap": true,
+              "isIndividual": true,
+              "resetStrictSpawnIndex": false,
+              "onlyOnePlayerPerSpawnPoint": false,
+              "replaceAreas": true,
+              "forceCreate": false,
+              "ignoreTeamsOnReuse": false,
+              "target": "@t1_spawn_cur",
+              "areaNameForSortingByProximity": "@capture_pt_cur",
+              "team": "A",
+              "tags": {
+                "tank": true
+              }
+            },
+            {
+              "loc_name": "missions/spawn_01",
+              "spawnEffect": false,
+              "isAirfield": false,
+              "isUnit": false,
+              "radius": -1.0,
+              "isStrictSpawn": false,
+              "useExisting": true,
+              "removeAreas": false,
+              "canSpawnOnNeutral": false,
+              "showOnMap": true,
+              "isIndividual": true,
+              "resetStrictSpawnIndex": false,
+              "onlyOnePlayerPerSpawnPoint": false,
+              "replaceAreas": true,
+              "forceCreate": false,
+              "ignoreTeamsOnReuse": false,
+              "target": "@t2_spawn_cur",
+              "areaNameForSortingByProximity": "@capture_pt_cur",
+              "team": "B",
+              "tags": {
+                "tank": true
+              }
+            }
+          ],
+          "missionBattleArea": [
+            {
+              "air": false,
+              "ground": false,
+              "mapArea": false,
+              "airMapArea": false,
+              "killArea": false,
+              "detectionArea": true,
+              "killOutOfBattleArea": false,
+              "area": "@t1_safezone_cur",
+              "team": "A"
+            },
+            {
+              "air": false,
+              "ground": false,
+              "mapArea": false,
+              "airMapArea": false,
+              "killArea": false,
+              "detectionArea": true,
+              "killOutOfBattleArea": false,
+              "area": "@t1_safezone_cur",
+              "team": "A"
+            }
+          ],
+          "triggerEnable": {
+            "target": "deepdefb_check_capture"
+          },
+          "__missionMarkAsRearmZone": [
+            {
+              "army": 1,
+              "area_name": "@t1_rearm_cur",
+              "enabled": false,
+              "hideMarkers": false
+            },
+            {
+              "army": 1,
+              "area_name": "@t1_rearm_cur",
+              "enabled": true,
+              "hideMarkers": false
+            },
+            {
+              "army": 2,
+              "area_name": "@t2_rearm_cur",
+              "enabled": false,
+              "hideMarkers": false
+            },
+            {
+              "army": 2,
+              "area_name": "@t2_rearm_cur",
+              "enabled": true,
+              "hideMarkers": false
+            }
+          ],
+          "__varSetString": [
+            {
+              "value": "",
+              "var": "t1_rearm_cur",
+              "input_var": "t1_rearm_name"
+            },
+            {
+              "value": "",
+              "var": "t2_rearm_cur",
+              "input_var": "t2_rearm_name"
+            },
+            {
+              "value": "",
+              "var": "str_temp",
+              "input_var": "battle_area_name"
+            }
+          ],
+          "__varAddString": [
+            {
+              "value": "",
+              "digits": 2,
+              "var": "t1_rearm_cur",
+              "input_var": "int_temp"
+            },
+            {
+              "value": "",
+              "digits": 2,
+              "var": "t2_rearm_cur",
+              "input_var": "int_temp"
+            },
+            {
+              "value": "",
+              "digits": 2,
+              "var": "str_temp",
+              "input_var": "int_temp"
+            }
+          ],
+          "__missionBattleArea": {
+            "air": false,
+            "ground": true,
+            "mapArea": true,
+            "airMapArea": false,
+            "killArea": false,
+            "detectionArea": false,
+            "killOutOfBattleArea": true,
+            "area": "@str_temp"
+          }
+        },
+        "else_actions": {}
+      },
+      "deepdefb_t2_ticket_decrease": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": false
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 0.01
+          }
+        },
+        "conditions": {},
+        "actions": {
+          "gameMPChangeScore": {
+            "value": -50,
+            "valueSystem": "percentage",
+            "team": "B"
+          }
+        },
+        "else_actions": {}
+      },
+      "deepdefb_t1_win": {
+        "is_enabled": false,
+        "comments": "",
+        "props": {
+          "actionsType": "PERFORM_ONE_BY_ONE",
+          "conditionsType": "ALL",
+          "enableAfterComplete": true
+        },
+        "events": {
+          "periodicEvent": {
+            "time": 1.0
+          }
+        },
+        "conditions": {
+          "varCompareInt": {
+            "var_value": "captured_pts",
+            "value": 0,
+            "comparasion_func": "notLess",
+            "var_value_other": "CAPTURE_POINTS_TOTAL"
+          }
+        },
+        "actions": {
+          "gameMPChangeScore": {
+            "value": -10,
+            "valueSystem": "percentage",
+            "team": "B"
+          }
+        },
+        "else_actions": {}
+      }
+    }
+  },
+  "mission_objectives": {
+    "isCategory": true,
+    "is_enabled": true
+  },
+  "variables": {
+    "t1_spawn_name": "",
+    "t2_spawn_name": "",
+    "t1_spawn_cur": "",
+    "t2_spawn_cur": "",
+    "cap_pt_name": "",
+    "capture_pt_cur": "",
+    "cap_pts_total": 0,
+    "captured_pts": 0,
+    "int_temp": 0,
+    "spawn_area": "",
+    "spawn_area_name": "",
+    "t1_rearm_cur": "",
+    "t2_rearm_cur": "",
+    "t1_rearm_name": "",
+    "t2_rearm_name": "",
+    "battle_area_name": "",
+    "str_temp": "",
+    "t1_ticket_penalty": 1,
+    "t2_ticket_penalty": 33,
+    "t1_spawn_01": "",
+    "t1_spawn_02": "",
+    "t1_spawn_03": "",
+    "t2_spawn_01": "",
+    "t2_spawn_02": "",
+    "t2_spawn_03": "",
+    "capture_point_01": "",
+    "capture_point_02": "",
+    "capture_point_03": "",
+    "CAPTURE_POINTS_TOTAL": 2,
+    "CAPTURE_POINT_NAME": "capture_point",
+    "SPAWN_NAME": "spawn_",
+    "str_temp1": "@t1_spawn_02",
+    "teamA_antiTankGun_count": 0,
+    "teamB_antiTankGun_count": 0,
+    "str_temp2": "",
+    "int_temp2": 0,
+    "t1_safezone_cur": "",
+    "t2_safezone_cur": "",
+    "ATTACK_OBJECTIVE": "avg_Bto_objective_01",
+    "DEFEND_OBJECTIVE": "avg_Bto_objective_02",
+    "at_gun_1st_line_count": 0,
+    "at_gun_2nd_line_count": 0,
+    "atGunFrontLinePercent": 0,
+    "at_gun_1st_sq_name": "",
+    "at_gun_2nd_sq_name": "",
+    "at_gun_all_sq_name": "",
+    "at_gun_name_prefix": "",
+    "trench_parapet_name": "",
+    "TERRAFORM_EXCLUDE_ZONE": "terraform_exclude_zone"
+  },
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {
+    "tankModels": [
+      {
+        "name": "t1_at_gun_01",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t1_at_gun_02",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -5.90904,
+            0.0,
+            0.0
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t1_at_gun_03",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -11.8181,
+            0.0,
+            0.0
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t1_at_gun_04",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -17.7271,
+            0.0,
+            0.0
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t1_at_gun_05",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -23.6362,
+            0.0,
+            0.0
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t1_at_gun_06",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -29.5452,
+            0.0,
+            0.0
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t1_at_gun_07",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -35.4543,
+            0.0,
+            0.0
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t1_at_gun_08",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -41.3633,
+            0.0,
+            0.0
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t1_at_gun_09",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -47.2724,
+            0.0,
+            0.0
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t1_at_gun_10",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -53.1814,
+            0.0,
+            0.0
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t1_at_gun_11",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -59.0904,
+            0.0,
+            0.0
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t1_at_gun_12",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -64.9995,
+            0.0,
+            0.0
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t1_at_gun_13",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -70.9085,
+            0.0,
+            0.0
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t1_at_gun_14",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -76.8176,
+            0.0,
+            0.0
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t1_at_gun_15",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -82.7266,
+            0.0,
+            0.0
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t2_at_gun_01",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            35.8422
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t2_at_gun_02",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -6.26104,
+            0.0,
+            35.8422
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t2_at_gun_03",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -12.5221,
+            0.0,
+            35.8422
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t2_at_gun_04",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -18.7831,
+            0.0,
+            35.8422
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t2_at_gun_05",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -25.0442,
+            0.0,
+            35.8422
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t2_at_gun_06",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -31.3052,
+            0.0,
+            35.8422
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t2_at_gun_07",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -37.5662,
+            0.0,
+            35.8422
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t2_at_gun_08",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -43.8273,
+            0.0,
+            35.8422
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t2_at_gun_09",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -50.0883,
+            0.0,
+            35.8422
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t2_at_gun_10",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -56.3494,
+            0.0,
+            35.8422
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t2_at_gun_11",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -62.6104,
+            0.0,
+            35.8422
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t2_at_gun_12",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -68.8714,
+            0.0,
+            35.8422
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t2_at_gun_13",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -75.1325,
+            0.0,
+            35.8422
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t2_at_gun_14",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -81.3935,
+            0.0,
+            35.8422
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      },
+      {
+        "name": "t2_at_gun_15",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -87.6546,
+            0.0,
+            35.8422
+          ]
+        ],
+        "unit_class": "germ_at_gun_pak40",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "isDelayed": true,
+          "unitReplacementType": "antiTankGun"
+        },
+        "way": {}
+      }
+    ],
+    "squad": [
+      {
+        "name": "t1_at_gun_1st_sq",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -11.8181,
+            0.0,
+            -21.2639
+          ]
+        ],
+        "props": {
+          "squad_members": [
+            "t1_at_gun_01",
+            "t1_at_gun_02",
+            "t1_at_gun_03",
+            "t1_at_gun_04",
+            "t1_at_gun_05"
+          ]
+        }
+      },
+      {
+        "name": "t1_at_gun_2nd_sq",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -56.1359,
+            0.0,
+            -21.5861
+          ]
+        ],
+        "props": {
+          "squad_members": [
+            "t1_at_gun_06",
+            "t1_at_gun_07",
+            "t1_at_gun_08",
+            "t1_at_gun_09",
+            "t1_at_gun_10",
+            "t1_at_gun_11",
+            "t1_at_gun_12",
+            "t1_at_gun_13",
+            "t1_at_gun_14",
+            "t1_at_gun_15"
+          ]
+        }
+      },
+      {
+        "name": "t2_at_gun_1st_sq",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -12.5221,
+            0.0,
+            55.0605
+          ]
+        ],
+        "props": {
+          "squad_members": [
+            "t2_at_gun_01",
+            "t2_at_gun_02",
+            "t2_at_gun_03",
+            "t2_at_gun_04",
+            "t2_at_gun_05"
+          ]
+        }
+      },
+      {
+        "name": "t2_at_gun_2nd_sq",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -59.4799,
+            0.0,
+            55.3396
+          ]
+        ],
+        "props": {
+          "squad_members": [
+            "t2_at_gun_06",
+            "t2_at_gun_07",
+            "t2_at_gun_08",
+            "t2_at_gun_09",
+            "t2_at_gun_10",
+            "t2_at_gun_11",
+            "t2_at_gun_12",
+            "t2_at_gun_13",
+            "t2_at_gun_14",
+            "t2_at_gun_15"
+          ]
+        }
+      },
+      {
+        "name": "t1_at_gun_all_sq",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -33.977,
+            0.0,
+            -40.2912
+          ]
+        ],
+        "props": {
+          "squad_members": [
+            "t1_at_gun_1st_sq",
+            "t1_at_gun_2nd_sq"
+          ]
+        }
+      },
+      {
+        "name": "t2_at_gun_all_sq",
+        "tm": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -36.001,
+            0.0,
+            72.8669
+          ]
+        ],
+        "props": {
+          "squad_members": [
+            "t2_at_gun_1st_sq",
+            "t2_at_gun_2nd_sq"
+          ]
+        }
+      }
+    ],
+    "objectGroups": {
+      "name": "cz_circle",
+      "tm": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          -158.844,
+          0.0,
+          22.5327
+        ]
+      ],
+      "unit_class": "capture_zone_circle",
+      "objLayer": 2,
+      "props": {
+        "army": 2,
+        "active": true
+      }
+    }
+  },
+  "areas": {
+    "sample_for_trench_parapet": {
+      "type": "Cylinder",
+      "tm": [
+        [
+          5.6,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          2.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          5.6
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    }
+  },
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      }
+    ]
+  },
+  "wayPoints": {}
 }

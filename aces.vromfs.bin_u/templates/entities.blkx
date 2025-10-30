@@ -1,1384 +1,2113 @@
-import:t = "%danetlibs/route_prober/templates/route_prober.blk"
-import:t = "%danetlibs/assets_import/templates/assets_import.blk"
-import:t = "%danetlibs/renderer/templates/fast_grass.template.blk"
-import:t = "%wtlibs/templates/essentials.blk"
-import:t = "%wtlibs/templates/net.blk"
-import:t = "%wtlibs/templates/rendinst.blk"
-import:t = "%wtlibs/templates/animchar.blk"
-import:t = "%wtlibs/templates/mission.blk"
-import:t = "%wtlibs/templates/units.blk"
-import:t = "%wtlibs/templates/grid.blk"
-import:t = "%wtlibs/templates/fx.blk"
-import:t = "%wtlibs/templates/lights.blk"
-import:t = "%wtlibs/templates/damage_model.blk"
-import:t = "%wtlibs/templates/microdetail.blk"
-import:t = "%wtlibs/templates/bloom.blk"
-import:t = "%wtlibs/templates/postfx.blk"
-import:t = "%wtlibs/templates/scene.blk"
-import:t = "%wtlibs/templates/skies.blk"
-import:t = "%gameLibs/render/lensFlare/templates/lens_flare.template.blk"
-import:t = "%wtlibs/templates/lens_flare.blk"
-import:t = "%gameLibs/render/lensGlow/templates/lens_glow.template.blk"
-import:t = "%wtlibs/templates/lens_glow.blk"
-import:t = "%wtlibs/templates/dynamic_hair.blk"
-import:t = "%wtlibs/templates/outline.blk"
-import:t = "%wtlibs/templates/outline_renderer.blk"
-import:t = "%wtlibs/templates/node_based_shaders.blk"
-import:t = "%wtlibs/templates/lightning.blk"
-import:t = "%wtlibs/templates/replay.blk"
-delayed_action {
-	delayed_action__doAtTime:r = -1
-	delayed_action__timer:r = 0
-}
-delayed_unit_shot {
-	_use:t = "delayed_action"
-	delayed_unit_shot__unitName:t = ""
-	delayed_unit_shot__triggerGroup:i = 0
-}
-action_by_date {
-	action_by_date__yearFrom:i = 1900
-	action_by_date__monthFrom:i = 1
-	action_by_date__dayFrom:i = 1
-	action_by_date__hourFrom:i = 0
-	action_by_date__minFrom:i = 0
-	action_by_date__secFrom:i = 0
-	action_by_date__yearTo:i = 1901
-	action_by_date__monthTo:i = 1
-	action_by_date__dayTo:i = 1
-	action_by_date__hourTo:i = 0
-	action_by_date__minTo:i = 0
-	action_by_date__secTo:i = 0
-	action_by_date__timeFrom:i64 = 0
-	action_by_date__timeTo:i64 = 0
-	action_by_date__delayFromCreate:r = 30
-	action_by_date__doAtTime:r = -1
-	action_by_date__onlyFirstEnter:b = false
-}
-unit_shot_by_date {
-	_use:t = "action_by_date"
-	unit_shot_by_date__unitName:t = ""
-	unit_shot_by_date__triggerGroup:i = 0
-}
-ri_gpu_object {
-	_use:t = "replicating"
-	_group {
-		_track:b = true
-		ri_gpu_object__name:t = "ammunition_box_n"
-		ri_gpu_object__grid_tiling:i = 4
-		ri_gpu_object__grid_size:i = 16
-		ri_gpu_object__cell_size:r = 8
-		ri_gpu_object__seed:i = 0
-		ri_gpu_object__up_vector:p3 = 0, 1, 0
-		ri_gpu_object__scale_range:p2 = 1, 1
-		ri_gpu_object__biom_indexes:p4 = -1, -1, -1, -1
-		ri_gpu_object__is_using_normal:b = false
-		ri_gpu_object__incline_delta:r = 0
-		ri_gpu_object__rotate_range:p2 = 0, 0
-		ri_gpu_object__map:t = ""
-		ri_gpu_object__map_size:p2 = 512, 512
-		ri_gpu_object__map_offset:p2 = 0, 0
-		ri_gpu_object__color_from:c = 127, 127, 127, 127
-		ri_gpu_object__color_to:c = 127, 127, 127, 127
-		ri_gpu_object__slope_factor:p2 = 1, 0
-		ri_gpu_object__hardness:r = 1
-		ri_gpu_object__sparse_weight:r = 0
-		ri_gpu_object__decal:b = false
-		ri_gpu_object__transparent:b = false
-		ri_gpu_object__distorsion:b = false
-		ri_gpu_object__place_on_water:b = false
-		ri_gpu_object__enable_displacement:b = true
-		ri_gpu_object__render_into_shadows:b = false
-		ri_gpu_object__coast_range:p2 = -1, -1
-		ri_gpu_object__face_coast:b = false
-		ri_gpu_object__biome_params:array {
-
-		}
-		ri_gpu_object__multiple_objects:array {
-
-		}
-	}
-	ri_preload:GpuObjectRiResourcePreload {
-		_tags:t = "render"
-	}
-}
-spot_light_large {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	_replicate:b = true
-	light__max_radius:r = 50
-	light__brightness:r = 200
-}
-spot_light_large_noshadows {
-	_use:t = "spot_light_large"
-	_use:t = "replicating"
-	_replicate:b = true
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = false
-		spot_light__shadows:b = false
-	}
-}
-spot_light_small {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	_group {
-		_replicate:b = true
-		light__max_radius:r = 5
-		light__brightness:r = 15
-	}
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = false
-		spot_light__shadows:b = false
-	}
-}
-spot_light_huge {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 25
-	light__brightness:r = 250
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = false
-		spot_light__shadows:b = false
-	}
-}
-field_light_huge {
-	_use:t = "omni_light"
-	_use:t = "replicating"
-	light__brightness:r = 35000
-	light__max_radius:r = 10000
-	light__color:c = 255, 255, 255, 255
-	light__contact_shadows:b = false
-	light__nightly:b = true
-}
-field_light_orange_largest {
-	_use:t = "omni_light"
-	_use:t = "replicating"
-	light__brightness:r = 20000
-	light__max_radius:r = 10000
-	light__color:c = 120, 185, 255, 255
-	light__contact_shadows:b = false
-	light__nightly:b = true
-}
-field_light_blue_huge {
-	_use:t = "omni_light"
-	_use:t = "replicating"
-	light__brightness:r = 15000
-	light__max_radius:r = 400
-	light__color:c = 50, 100, 50, 255
-	light__contact_shadows:b = false
-	light__nightly:b = true
-}
-field_light_large {
-	_use:t = "omni_light"
-	_use:t = "replicating"
-	light__brightness:r = 20
-	light__max_radius:r = 30
-	light__color:c = 255, 255, 255, 255
-	light__contact_shadows:b = false
-	light__nightly:b = true
-}
-field_light_medium {
-	_use:t = "omni_light"
-	_use:t = "replicating"
-	light__brightness:r = 30
-	light__max_radius:r = 30
-	light__color:c = 255, 255, 255, 255
-	light__contact_shadows:b = false
-	light__nightly:b = true
-}
-field_light_orange {
-	_use:t = "omni_light"
-	_use:t = "replicating"
-	light__brightness:r = 2
-	light__max_radius:r = 2
-	light__color:c = 10, 100, 255, 255
-	light__contact_shadows:b = false
-	light__nightly:b = true
-}
-field_light_orange_large {
-	_use:t = "field_light_orange"
-	_use:t = "replicating"
-	light__brightness:r = 3
-	light__max_radius:r = 2
-	light__contact_shadows:b = false
-}
-field_light_orange_extralarge {
-	_use:t = "field_light_orange"
-	_use:t = "replicating"
-	light__brightness:r = 50
-	light__max_radius:r = 200
-	light__contact_shadows:b = false
-}
-field_light_orange_huge {
-	_use:t = "field_light_orange"
-	_use:t = "replicating"
-	light__brightness:r = 10000
-	light__max_radius:r = 400
-	light__contact_shadows:b = false
-}
-field_light_orange_medium {
-	_use:t = "field_light_orange"
-	_use:t = "replicating"
-	light__brightness:r = 10
-	light__max_radius:r = 15
-	light__contact_shadows:b = false
-}
-field_light_orange_medium_a {
-	_use:t = "field_light_orange"
-	_use:t = "replicating"
-	light__brightness:r = 30
-	light__max_radius:r = 20
-	light__contact_shadows:b = false
-	light__color:c = 20, 100, 200, 255
-}
-field_light_orange_medium_b {
-	_use:t = "field_light_orange"
-	_use:t = "replicating"
-	light__brightness:r = 30
-	light__max_radius:r = 20
-	light__contact_shadows:b = true
-	light__color:c = 20, 100, 200, 255
-}
-field_light_orange_small {
-	_use:t = "field_light_orange"
-	_use:t = "replicating"
-	light__brightness:r = 1
-	light__max_radius:r = 1
-	light__contact_shadows:b = false
-}
-field_light_orange_smallest {
-	_use:t = "field_light_orange"
-	_use:t = "replicating"
-	light__brightness:r = 0.3
-	light__max_radius:r = 1
-	light__contact_shadows:b = false
-}
-field_light_blue {
-	_use:t = "field_light_orange"
-	_use:t = "replicating"
-	light__color:c = 255, 100, 100, 255
-	light__contact_shadows:b = false
-}
-field_light_blue_large {
-	_use:t = "field_light_orange"
-	_use:t = "replicating"
-	light__brightness:r = 300
-	light__max_radius:r = 1000
-	light__color:c = 255, 245, 10, 255
-	light__contact_shadows:b = false
-}
-field_light_blue_extralarge {
-	_use:t = "field_light_orange"
-	_use:t = "replicating"
-	light__brightness:r = 10
-	light__max_radius:r = 100
-	light__color:c = 255, 50, 50, 255
-	light__contact_shadows:b = false
-}
-field_light_red {
-	_use:t = "field_light_orange"
-	_use:t = "replicating"
-	light__color:c = 50, 80, 240, 255
-}
-field_light_red_extralarge {
-	_use:t = "field_light_orange"
-	_use:t = "replicating"
-	light__brightness:r = 10
-	light__max_radius:r = 100
-	light__color:c = 50, 80, 240, 255
-	light__contact_shadows:b = false
-}
-field_light_green_extralarge {
-	_use:t = "field_light_orange"
-	_use:t = "replicating"
-	light__brightness:r = 10
-	light__max_radius:r = 100
-	light__color:c = 30, 150, 10, 255
-	light__contact_shadows:b = false
-}
-field_light_green_small {
-	_use:t = "field_light_orange"
-	_use:t = "replicating"
-	light__brightness:r = 5
-	light__max_radius:r = 10
-	light__color:c = 20, 200, 60, 155
-	light__contact_shadows:b = false
-}
-aircraft_warning_light_red {
-	_use:t = "omni_light"
-	_use:t = "replicating"
-	light__brightness:r = 200
-	light__max_radius:r = 15
-	light__color:c = 0, 0, 255, 255
-	light__nightly:b = true
-}
-spot_light_red_large {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 75
-	light__brightness:r = 200
-	light__color:c = 10, 10, 255, 255
-}
-spot_light_magenta_large {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 75
-	light__brightness:r = 200
-	light__color:c = 255, 10, 186, 255
-}
-spot_light_orange_large {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 75
-	light__brightness:r = 200
-	light__color:c = 10, 100, 255, 255
-}
-spot_light_orange_medium {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 50
-	light__brightness:r = 500
-	light__color:c = 10, 100, 255, 255
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = false
-		spot_light__shadows:b = false
-	}
-}
-spot_light_blue_large {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 75
-	light__brightness:r = 200
-	light__color:c = 255, 245, 10, 255
-}
-spot_light_green_large {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 75
-	light__brightness:r = 200
-	light__color:c = 10, 255, 50, 255
-}
-spot_light_orange_extralarge {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 300
-	light__brightness:r = 1200
-	light__color:c = 10, 100, 255, 255
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = false
-		spot_light__shadows:b = false
-	}
-}
-spot_light_red_extralarge {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 250
-	light__brightness:r = 1200
-	light__color:c = 10, 10, 255, 255
-}
-spot_light_magenta_extralarge {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 250
-	light__brightness:r = 1200
-	light__color:c = 255, 10, 186, 255
-}
-spot_light_green_extralarge {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 250
-	light__brightness:r = 1200
-	light__color:c = 10, 255, 50, 255
-}
-spot_light_blue_extralarge {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 200
-	light__brightness:r = 55
-	light__color:c = 255, 245, 10, 255
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = false
-		spot_light__shadows:b = false
-	}
-}
-omni_light_red_medium {
-	_use:t = "omni_light"
-	_use:t = "replicating"
-	light__nightly:b = false
-	light__contact_shadows:b = false
-	light__max_radius:r = 8
-	light__brightness:r = 60
-	light__color:c = 3, 10, 255, 255
-}
-spot_light_orange_small_a {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 8
-	light__brightness:r = 3.2
-	light__color:c = 10, 100, 255, 255
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = false
-		spot_light__shadows:b = false
-		spot_light__inner_attenuation:r = 0.1
-	}
-}
-spot_light_blue_small_a {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 8
-	light__brightness:r = 3.2
-	light__color:c = 255, 245, 10, 255
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = false
-		spot_light__shadows:b = false
-		spot_light__inner_attenuation:r = 0.1
-	}
-}
-spot_light_red_small_a {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 8
-	light__brightness:r = 3.2
-	light__color:c = 3, 10, 255, 255
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = false
-		spot_light__shadows:b = false
-		spot_light__inner_attenuation:r = 0.1
-	}
-}
-spot_light_green_small_a {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 8
-	light__brightness:r = 3.2
-	light__color:c = 10, 255, 50, 255
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = false
-		spot_light__shadows:b = false
-		spot_light__inner_attenuation:r = 0.1
-	}
-}
-spot_light_orange_medium_b {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 50
-	light__brightness:r = 100
-	light__color:c = 10, 100, 255, 255
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = false
-		spot_light__shadows:b = false
-		spot_light__inner_attenuation:r = 0.1
-	}
-}
-spot_light_green_medium_b {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 50
-	light__brightness:r = 100
-	light__color:c = 10, 255, 50, 255
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = false
-		spot_light__shadows:b = false
-		spot_light__inner_attenuation:r = 0.1
-	}
-}
-spot_light_premium_a {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 50
-	light__brightness:r = 150
-	light__color:c = 142, 204, 236, 255
-	light__nightly:b = false
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = false
-		spot_light__shadows:b = false
-		spot_light__inner_attenuation:r = 0.5
-	}
-}
-spot_light_premium_shadow_a {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 50
-	light__brightness:r = 150
-	light__color:c = 142, 204, 236, 255
-	light__nightly:b = false
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = false
-		spot_light__shadows:b = true
-		spot_light__inner_attenuation:r = 0.5
-	}
-}
-spot_light_premium_b {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 5
-	light__brightness:r = 50
-	light__color:c = 142, 204, 236, 255
-	light__nightly:b = false
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = false
-		spot_light__shadows:b = false
-		spot_light__inner_attenuation:r = 0.9
-	}
-}
-spot_light_premium_blue_a {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 7
-	light__brightness:r = 50
-	light__color:c = 237, 216, 171, 255
-	light__nightly:b = false
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = false
-		spot_light__shadows:b = false
-		spot_light__inner_attenuation:r = 0.2
-	}
-}
-lamppost_a {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 14
-	light__brightness:r = 60
-	light__color:c = 160, 220, 255, 255
-	_group {
-		_tags:t = "render"
-		spot_light__inner_attenuation:r = 0.5
-		spot_light__dynamic_obj_shadows:b = true
-	}
-	destroyable_with_rendinst:tag {
-
-	}
-}
-lamppost_b {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 9
-	light__brightness:r = 15
-	light__color:c = 180, 250, 255, 255
-	_group {
-		_tags:t = "render"
-		spot_light__inner_attenuation:r = 0.5
-		spot_light__dynamic_obj_shadows:b = true
-	}
-	destroyable_with_rendinst:tag {
-
-	}
-}
-lamppost_c {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 19
-	light__brightness:r = 150
-	light__color:c = 180, 250, 255, 255
-	_group {
-		_tags:t = "render"
-		spot_light__inner_attenuation:r = 0.5
-		spot_light__dynamic_obj_shadows:b = true
-	}
-	destroyable_with_rendinst:tag {
-
-	}
-}
-spot_light_footbal_field {
-	_use:t = "spot_light"
-	_use:t = "replicating"
-	light__max_radius:r = 55
-	light__brightness:r = 250
-	light__color:c = 180, 250, 255, 255
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = true
-	}
-}
-tunnel_a_light_orange {
-	_use:t = "omni_light"
-	_use:t = "replicating"
-	light__max_radius:r = 22
-	light__brightness:r = 90
-	light__color:c = 108, 166, 255, 255
-	light__nightly:b = false
-	_group {
-		_tags:t = "render"
-		spot_light__dynamic_obj_shadows:b = true
-		spot_light__shadows:b = true
-	}
-}
-floating_rendinst_system {
-	_singleton:b = true
-	floatingRiSystem__randomWavesAmplitude:r = 0
-	floatingRiSystem__randomWavesLength:r = 0.5
-	floatingRiSystem__randomWavesPeriod:r = 1
-	floatingRiSystem__randomWavesVelocity:p2 = 0.6, 0.6
-	floatingRiSystem__volumePresets:object {
-		default_1:array {
-			volPos:p3 = 0, 0, 0
-		}
-		default_4:array {
-			volPos:p3 = -1, 0, -1
-			volPos:p3 = -1, 0, 1
-			volPos:p3 = 1, 0, -1
-			volPos:p3 = 1, 0, 1
-		}
-		default_12:array {
-			volPos:p3 = -1, 0.5, 0
-			volPos:p3 = 1, 0.5, 0
-			volPos:p3 = -0.8, 0, -1
-			volPos:p3 = -0.4, 0, -1
-			volPos:p3 = 0, 0, -1
-			volPos:p3 = 0.4, 0, -1
-			volPos:p3 = 0.8, 0, -1
-			volPos:p3 = -0.8, 0, 1
-			volPos:p3 = -0.4, 0, 1
-			volPos:p3 = 0, 0, 1
-			volPos:p3 = 0.4, 0, 1
-			volPos:p3 = 0.8, 0, 1
-		}
-	}
-	floatingRiSystem__userVolumePresets:object {
-
-	}
-}
-floating_rendinst_res_group {
-	floatingRiGroup__wreckageFloatDuration:r = 15
-	floatingRiGroup__updateDistSq:r = 1000000
-	floatingRiGroup__interactionType:i = 0
-	floatingRiGroup__interactionDistSq:r = 0
-	floatingRiGroup__elasticity:r = 0.1
-	floatingRiGroup__physUpdateDt:r = 0.041667
-	floatingRiGroup__maxShiftDist:r = 1000
-	floatingRiGroup__viscosity:r = 0.57
-	floatingRiGroup__minDistToGround:r = -1000000
-	_group {
-		_track:b = true
-		floatingRiGroup__resName:t = ""
-		floatingRiGroup__inertiaMult:p3 = 1, 1, 1
-		floatingRiGroup__volumesCount:i = -1
-		floatingRiGroup__volumePresetName:t = ""
-		floatingRiGroup__density:r = 500
-		floatingRiGroup__densityRandRange:r = 0
-		floatingRiGroup__useBoxInertia:b = false
-	}
-	floatingRiGroup__riPhysFloatingModel {
-
-	}
-}
-toolkit_ecs {
-	_use:t = "expendable_mod"
-	mod__name:t = "tank_tool_kit_expendable"
-	mod__type_name:t = "toolkit"
-}
-ship_toolkit_ecs {
-	_use:t = "expendable_mod"
-	mod__name:t = "ship_tool_kit"
-	mod__type_name:t = "toolkit"
-	mod__send_economic_spend:b = false
-}
-extinguisher_ecs {
-	_use:t = "expendable_mod"
-	mod__name:t = "manual_extinguisher_expendable"
-	mod__type_name:t = "extinguisher"
-	mod__enabled_without_mod:b = true
-	mod__count_effects_mod:b = true
-}
-ship_extinguisher_ecs {
-	_use:t = "extinguisher_ecs"
-	mod__enabled_without_mod:b = false
-}
-medicalkit_ecs {
-	_use:t = "expendable_mod"
-	mod__name:t = "tank_medical_kit_expendable"
-	mod__type_name:t = "medicalkit"
-	mod__count_effects_mod:b = true
-}
-smokescreen_ecs {
-	_use:t = "expendable_mod"
-	mod__type_name:t = "smokeScreen"
-	mod__send_economic_spend:b = false
-}
-tank_smokescreen_ecs {
-	_use:t = "smokescreen_ecs"
-	mod__name:t = "tank_engine_smoke_screen_system"
-}
-ship_smokescreen_ecs {
-	_use:t = "smokescreen_ecs"
-	mod__name:t = "ship_smoke_screen_system_mod"
-}
-disabled_update {
-	disabled:tag {
-
-	}
-}
-in_flight {
-	inFlight:tag {
-
-	}
-}
-weapon {
-	_use:t = "root"
-}
-gun {
-	_use:t = "weapon"
-}
-bomb_gun {
-	_use:t = "weapon"
-}
-rocket_gun {
-	_use:t = "weapon"
-}
-torpedo_gun {
-	_use:t = "weapon"
-}
-background_model {
-	background_model__model:t = ""
-	background_model__skin:t = ""
-	background_model__unitName:t = ""
-	background_model__weapon:t = ""
-	background_model__isPlane:b = false
-	background_model__tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
-	background_model__canOutline:b = false
-	background_model__hangarPlace:t = ""
-	background_model_res {
-		_tags:t = "gameClient"
-	}
-	background_model__bullets:list<t> {
-
-	}
-	background_model__spawnEid:eid {
-
-	}
-}
-destructed_model {
-	_use:t = "replicating"
-	destructed_model__fx:t = "fire_tank_destructed"
-	_group {
-		_replicate:b = true
-		destructed_model__model_ind:i = -1
-		destructed_model__tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
-	}
-	destructed_model__names:list<t> {
-		model:t = "tank_bottom"
-	}
-	destructed_model_res {
-		_tags:t = "render"
-	}
-}
-level {
-	isLocal:b = true
-	level__blk:t = ""
-	level__bin:t = ""
-	level__environment:t = "Day"
-	level__loaded:b = false
-	level__weather:t = "hazy"
-}
-render_view_cam {
-	camera__active:b = false
-	transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
-	_singleton:b = true
-	camera_view:tag {
-
-	}
-}
-static_cam {
-	camera__active:b = false
-	fov:r = 90
-	znear:r = 0.01
-	zfar:r = 10000
-	transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
-	static_camera_view:tag {
-
-	}
-}
-game_objects {
-	_singleton:b = true
-	nonCreatableObj:b = true
-	game_objects {
-
-	}
-	game_objects__createChance:object {
-		stationary_mg42:r = 0.4
-		chimney_exhaust:r = 0.15
-	}
-}
-game_object_creator {
-	_use:t = "ecs_no_debug"
-	transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
-	object_creator:tag {
-
-	}
-	object_creator__createdEid:eid {
-
-	}
-}
-ad_water_supply_medium {
-	_use:t = "ecs_fx"
-	ecs_fx__res:t = "water_flow_stream_medium_cmps_fx"
-	destroyable_with_rendinst:tag {
-
-	}
-}
-ad_water_supply_puddle_clear {
-	_use:t = "ecs_fx"
-	ecs_fx__res:t = "water_flow_splash_medium_clear_cmps_fx"
-	destroyable_with_rendinst:tag {
-
-	}
-}
-ad_water_supply_puddle_dirt {
-	_use:t = "ecs_fx"
-	ecs_fx__res:t = "water_flow_splash_medium_dirt_cmps_fx"
-	destroyable_with_rendinst:tag {
-
-	}
-}
-sparks_short_circuit {
-	_use:t = "ecs_fx"
-	ecs_fx__res:t = "sparks_short_circuit_burst_small_cmps_fx"
-	destroyable_with_rendinst:tag {
-
-	}
-}
-sand_unit {
-	sand_unit__noise:r = 0
-	sand_unit__moveNoiseK:r = 0
-	sand_unit__noiseDecSpd:r = 20
-	sand_unit__deathAnimVarId:i = -1
-	sand_unit__deathAnimTimer:r = -1
-	sand_unit__deathAnimTime:r = -1
-}
-sand_worm {
-	_use:t = "root"
-	_use:t = "replicating"
-	sand_worm__position:p2 = 0, 0
-	sand_worm__delayed:b = true
-	sand_worm__radius:r = 100
-	sand_worm__borderColor:c = 0, 30, 255, 210
-	sand_worm__curInactive:r = 0
-	_tracked:t = "sand_worm__delayed"
-	_tracked:t = "sand_worm__radius"
-	sand_worm__needSync:b = false
-	_group {
-		_tags:t = "server"
-		sand_worm__delayTimer:r = -1
-		sand_worm__radiusDecK:r = 1.4
-		sand_worm__inactiveTime:r = 30
-		sand_worm__attackRadius:r = 120
-		sand_worm__activateTime:p2 = 30, 45
-		sand_worm__respawnTimeout:p2 = 20, 40
-		sand_worm__speedK:list<p2> {
-			n:p2 = 50, 10
-			n:p2 = 5000, 1.5
-		}
-		sand_worm__noiseExcludeAreas:list<t> {
-
-		}
-		sand_worm__excludeAreasId:list<i> {
-
-		}
-	}
-	_group {
-		_tags:t = "gameClient"
-		sand_worm__cameraShake:p3 = 15, 10, 10
-		sand_worm__cameraShakeTimer:r = -1
-		sand_worm__appearSound:t = "desert/creature_appear"
-		sand_worm__nearSound:t = "desert/creature_move"
-		sand_worm__near_dist:r = 600
-		sand_worm__near_shake:list<p3> {
-			n:p3 = 600, 5, 3
-			n:p3 = 500, 7, 5
-			n:p3 = 400, 10, 6
-			n:p3 = 300, 15, 7
-			n:p3 = 250, 20, 8
-			n:p3 = 200, 30, 10
-			n:p3 = 170, 40, 15
-			n:p3 = 140, 55, 20
-			n:p3 = 100, 70, 25
-		}
-		sand_worm__nearSoundEvent:SoundEvent {
-			_tags:t = "sound"
-		}
-	}
-}
-sky_laser {
-	_use:t = "root"
-	_use:t = "replicating"
-	sky_laser__weaponIdx:i = -1
-	sky_laser__lastShootAt:r = -1
-	sky_laser__timer:r = 0.2
-	sky_laser__direction:p3 = 0, -1, 0
-	sky_laser__eid:eid {
-
-	}
-	sky_laser__positions:list<p3> {
-
-	}
-	sky_laser__timings:list<r> {
-
-	}
-}
-sand_worm_render {
-	_use:t = "root"
-	_use:t = "replicating"
-	transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
-	_tracked:t = "sand_worm__victimEid"
-	_replicated:t = "sand_worm__victimEid"
-	worm_visual__res:t = "shai_char"
-	sand_worm__animTime:r = 10
-	sand_worm__animName:t = "shai_action"
-	sand_worm__attackSfx:t = "desert/creature_attack"
-	sand_worm__attackFxName:t = "duna_worm_dust_cmps_fx"
-	sand_worm__victimEid:eid {
-
-	}
-	_group {
-		_tags:t = "render"
-		sand_worm__animVarId:i = -1
-		sand_worm__animValue:r = -1
-		sand_worm__linkNodeId:i = -1
-		sand_worm__linkNodeName:t = "trigger"
-		sand_worm__attackFxId:i = -1
-		worm_visual {
-
-		}
-	}
-	_group {
-		_tags:t = "server"
-		sand_worm__delayedTimer:r = -1
-		sand_worm__delayedTime:r = 12
-	}
-}
-asset_manager {
-	_tags:t = "render"
-	_use:t = "base_asset_manager"
-	asset__applicationBlkPath:t = "%gameBase/../../assetsImport/application_wt.blk"
-}
-burav {
-	_use:t = "root"
-	_use:t = "replicating"
-	burav__position:p2 = 0, 0
-	burav__delayed:b = true
-	burav__controlRadius:r = 150
-	_tracked:t = "burav__delayed"
-	_tracked:t = "burav__position"
-	burav__needSync:b = false
-	burav__attackRadius:r = 10
-	burav__curArmy:i = 0
-	_group {
-		_tags:t = "server"
-		burav__delayTimer:r = -1
-		burav__velocity:r = 15
-		burav__target:p2 = 0, 0
-		burav__activateTime:p2 = 30, 45
-		burav__respawnTimeout:p2 = 20, 40
-		burav__spawnArea:p4 = 0, 0, 0, 0
-		burav__controllerEid:eid {
-
-		}
-		burav__excludeAreas:list<t> {
-
-		}
-		burav__excludeAreasId:list<i> {
-
-		}
-	}
-	_group {
-		_tags:t = "gameClient"
-		burav__near_dist:r = 150
-		burav__appearSound:t = "event/units/burav/appear"
-		burav__nearSound:t = "event/units/burav/move"
-		burav__nearSoundEvent:SoundEvent {
-			_tags:t = "sound"
-		}
-	}
-	_group {
-		_tags:t = "render"
-		burav__attackRadiusColor:c = 0, 30, 255, 210
-		burav__controlRadiusAllyColor:c = 255, 30, 0, 210
-		burav__controlRadiusEnemyColor:c = 0, 30, 255, 210
-		burav__delayedHintActivated:b = false
-		burav__ctrlHintActivated:b = false
-	}
-}
-burav_controller {
-	can_control_burav:tag {
-
-	}
-}
-ussr_atomic_hedgie {
-	_use:t = "human"
-	_use:t = "unit_repair"
-	mods:list<t> {
-		mod:t = "toolkit_ecs"
-	}
-	modEids:list<eid> {
-		_replicate:b = true
-	}
-}
-unit_showcase {
-	unit_showcase_mission_name:t = ""
-	unit_showcase_eid:eid {
-
-	}
-}
-loot {
-	_use:t = "replicating"
-	transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
-	loot__count:i = -1
-	loot__resName:t = ""
-	loot__countRange:ip2 = 1, 5
-	loot__radius:r = 1
-	loot__typeName:t = ""
-	loot__type:i = -1
-	loot__itemId:i = 0
-	loot__render_update_tm:b = false
-	loot__render_offset_tm:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
-	loot__model_res {
-		_tags:t = "render"
-	}
-}
-scrap_metal_loot {
-	_use:t = "loot"
-	loot__resName:t = "mt_loot_metal_scrap_b"
-	loot__countRange:ip2 = 5, 9
-	loot__typeName:t = "scrap_metal_loot"
-	loot__itemId:i = 2907201
-}
-vehicle_parts_loot {
-	_use:t = "loot"
-	loot__resName:t = "mt_loot_metal_parts_a"
-	loot__countRange:ip2 = 5, 9
-	loot__typeName:t = "vehicle_parts_loot"
-	loot__itemId:i = 2907202
-}
-armor_loot {
-	_use:t = "loot"
-	loot__resName:t = "mt_loot_armor_parts_a"
-	loot__countRange:ip2 = 5, 9
-	loot__typeName:t = "armor_loot"
-	loot__itemId:i = 2907203
-}
-electronics_loot {
-	_use:t = "loot"
-	loot__resName:t = "mt_loot_electronics_a"
-	loot__countRange:ip2 = 5, 9
-	loot__typeName:t = "electronics_loot"
-	loot__itemId:i = 2907204
-}
-loot_carrier {
-	loot_carrier__capacity:i = 25
-	_tracked:t = "loot_carrier__loot_count"
-	loot_carrier__rage:i = 0
-	loot_carrier__pickUpSfx:t = "ground/effects/pickup_md"
-	loot_carrier__pickUpRageSfx:t = "ground/effects/level_up_md"
-	loot_carrier__pickUpRageMaxSfx:t = "ground/effects/level_max_md"
-	_replicated:t = "loot_carrier__loot_count"
-	_replicated:t = "loot_carrier__loot_type"
-	_replicated:t = "loot_carrier__rage"
-	loot_carrier__loot_type:list<i> {
-
-	}
-	loot_carrier__loot_count:list<i> {
-
-	}
-	loot_carrier__loot_itemId:list<i> {
-
-	}
-}
-loot_creater {
-	loot_creater__scrapProb:r = 0.035
-	loot_creater__partsProb:r = 0.035
-	loot_creater__armorProb:r = 0.035
-	loot_creater__electronicsProb:r = 0.035
-	loot_carrier__riNames:list<t> {
-		n:t = "conex_box_a"
-		n:t = "conex_box_b"
-		n:t = "ammunition_box_piles_a"
-		n:t = "ammunition_box_piles_b"
-		n:t = "ammunition_box_piles_c"
-		n:t = "ammunition_box_piles_e"
-		n:t = "ammunition_box_piles_f"
-		n:t = "ammunition_box_wooden_sanded_a"
-		n:t = "ammunition_box_wooden_sanded_b"
-		n:t = "ammunition_box_wooden_sanded_c"
-		n:t = "ammunition_box_wooden_sanded_d"
-		n:t = "ammunition_box_wooden_sanded_e"
-		n:t = "ammunition_box_wooden_sanded_o"
-		n:t = "ammunition_box_a_sanded"
-		n:t = "ammunition_box_b_sanded"
-		n:t = "ammunition_box_c_sanded"
-		n:t = "ammunition_box_d_sanded"
-		n:t = "ammunition_box_e_sanded"
-		n:t = "ammunition_box_f_sanded"
-		n:t = "air_cargo_a"
-		n:t = "air_cargo_b_ammunition_boxes_a"
-		n:t = "air_cargo_b_ammunition_boxes_b"
-		n:t = "air_cargo_c_bags_pile_a"
-		n:t = "air_cargo_d_pallet_cardboard_b"
-		n:t = "metal_barrels_pile_a_sanded"
-		n:t = "metal_barrels_pile_b_sanded"
-		n:t = "metal_barrels_pile_c_sanded"
-		n:t = "metal_barrels_pile_d_sanded"
-		n:t = "metal_barrel_a_sanded"
-		n:t = "metal_barrel_b_sanded"
-		n:t = "metal_barrel_c_sanded"
-	}
-	loot_carrier__riHandlers:list<u32> {
-
-	}
-}
-loot_chance_mult_zone {
-	_use:t = "replicating"
-	transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
-	loot_chance_mult__scrap:r = 1
-	loot_chance_mult__parts:r = 1
-	loot_chance_mult__armor:r = 1
-	loot_chance_mult__electronics:r = 1
-}
-loot_carrier_capacity_20 {
-	_use:t = "loot_carrier"
-	loot_carrier__capacity:i = 20
-}
-loot_carrier_capacity_40 {
-	_use:t = "loot_carrier"
-	loot_carrier__capacity:i = 40
-}
-loot_carrier_capacity_50 {
-	_use:t = "loot_carrier"
-	loot_carrier__capacity:i = 50
-}
-loot_carrier_capacity_80 {
-	_use:t = "loot_carrier"
-	loot_carrier__capacity:i = 80
-}
-loot_carrier_capacity_100 {
-	_use:t = "loot_carrier"
-	loot_carrier__capacity:i = 100
-}
-camera_rain_light_effect {
-	_use:t = "camera_bound_rain_effect_template"
-	_group {
-		_tags:t = "render"
-		camera_effect__offset:p3 = 0, -4, 0
-		camera_effect__distance:r = 3
-		effect__name:t = "camera_rain_light_cmps_fx"
-	}
-}
-camera_rain_heavy_effect {
-	_use:t = "camera_bound_rain_effect_template"
-	_group {
-		_tags:t = "render"
-		camera_effect__offset:p3 = 0, -4, 0
-		camera_effect__distance:r = 3
-		effect__name:t = "camera_rain_heavy_cmps_fx"
-	}
-}
-camera_rain_drop_splashes_effect {
-	_use:t = "camera_bound_rain_effect_template"
-	_group {
-		_tags:t = "render"
-		effect__name:t = "camera_rain_drops_cmps_fx"
-		is_ground_effect:b = true
-	}
-}
-camera_snow_light_effect {
-	_use:t = "camera_bound_rain_effect_template"
-	_group {
-		_tags:t = "render"
-		camera_effect__offset:p3 = 0, -4, 0
-		camera_effect__distance:r = 3
-		effect__name:t = "camera_snow_light_cmps_fx"
-	}
-}
-unit_init_params_ext {
-
-}
-base_unit_ext {
-
-}
-aircraft_ext {
-
-}
-barrage_ballon_ext {
-
-}
-ground_unit_ext {
-
-}
-ship_ext {
-	fuel_leak_fx {
-		_tags:t = "gameClient"
-	}
-	ship_sinking_fx {
-		_tags:t = "gameClient"
-	}
-}
-tank_ext {
-	unit_dm_part_fx {
-		_tags:t = "gameClient"
-	}
-	fuel_leak_fx {
-		_tags:t = "gameClient"
-	}
-	phys_obj_cls_activation {
-
-	}
-	free_area_check_traces {
-
-	}
-	free_area_check_states_list:u8 {
-		_replicate:b = true
-		value:i = 0
-	}
-}
-walker_ext {
-
-}
-simple_ground_unit_ext {
-
-}
-simple_ship_ext {
-
-}
-simple_tank_ext {
-
-}
-trailer_ext {
-
-}
-human_ext {
-
-}
-light_vehicle_ext {
-	_use:t = "gm_engine_sound"
-}
-fortification_ext {
-
-}
-infantry_troop_ext {
-
-}
-rail_wagon {
-	_use:t = "simple_tank"
-	unit_fx {
-
-	}
-	constantlyWinchable:tag {
-
-	}
-	dynamicObstacle:tag {
-
-	}
-}
-builder_preview {
-	preview_render__enabled:b = false
-	transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
-	buildingTime:r = 10
-	buildingTimer:r = -1
-	timeDirSign:i = 1
-	buildingRadius:r = 10
-	debuffUpdateTimer:r = 1
-	avaliableAngles:p2 = -30, 30
-	checkGridObjectsTimeInterval:r = 0.3
-	nextCheckGridObjectsTime:r = 0
-	builder_preview__collObjOffset:r = 0.5
-	simpleObject__transparentColor:p3 = 0, 0, 0
-	collres__res:t = "ammunition_box_construction_120x55x30_dynamic_collision"
-	builder_preview__physBlk:t = "gameData/units/structures/ammo_box_phys.blk"
-	builder_preview__soundName:t = "ground/effects/construction_set"
-	_tracked:t = "buildingTimer"
-	simpleObject__model_res_list {
-
-	}
-	simpleObject__resNameList:list<t> {
-		primary:t = "ammunition_box_construction_120x55x30_dynamic"
-		secondary:t = "ammunition_box_construction_99x50x27_dynamic"
-		special:t = "ammunition_box_construction_99x50x27_dynamic"
-	}
-	simpleObject__offsets:list<p3> {
-		primary:p3 = 0, 0, 0
-		secondary:p3 = 0, 0, 1
-		special:p3 = 0, 0, -1
-	}
-	simpleObject__visibleList:list<b> {
-		primary:b = false
-		secondary:b = false
-		special:b = false
-	}
-	buildingTemplates:list<t> {
-		primary:t = "ammo_box_primary"
-		secondary:t = "ammo_box_secondary"
-		special:t = "ammo_box_special"
-	}
-	builder_preview__owner:eid {
-
-	}
-	builder_preview__collObj:CollisionObject {
-
-	}
-	builder_preview__collRes:CollisionResource {
-
-	}
-	builder_preview__soundEvent:SoundEvent {
-		_tags:t = "sound"
-	}
-	builder_preview__triggerGrMask:u8 {
-		value:i = 0
-	}
-}
-slave_unit_preview {
-	slave_unit__transform:m = [[1.0, 0.0, 0.0] [0.0, 1.0, 0.0] [0.0, 0.0, 1.0] [0.0, 0.0, 0.0]]
-	slave_unit_preview__radius:r = 35
-	slave_unit_preview__canSpawn:b = false
-	slave_unit_preview__availableAngles:p2 = -30, 30
-	nextCheckGridObjectsTime:r = 0
-	checkGridObjectsTimeInterval:r = 0.5
-	slave_unit_preview__collObjOffset:r = 0.5
-}
-ammo_box {
-	_use:t = "replicating"
-	_use:t = "rendinst_owned"
-	ammo_box__triggerGroupNo:i = 0
-	ammo_box__bulletCount:i = 0
-	ammo_box__rearmRadius:r = 10
-	ri_extra__destructable:b = true
-	ri_extra__allyDontDamage:b = true
-	ammo_box__owner:eid {
-
-	}
-}
-ammo_box_primary {
-	_use:t = "ammo_box"
-	ri_extra__name:t = "ammunition_box_construction_120x55x30_static"
-	ammo_box__triggerGroupNo:i = 0
-}
-ammo_box_secondary {
-	_use:t = "ammo_box"
-	ri_extra__name:t = "ammunition_box_construction_99x50x27_static"
-	ammo_box__triggerGroupNo:i = 1
-}
-ammo_box_special {
-	_use:t = "ammo_box"
-	ri_extra__name:t = "ammunition_box_construction_99x50x27_static"
-	ammo_box__triggerGroupNo:i = 4
-}
-soldier_info_cache {
-	_singleton:b = true
-	_tags:t = "server"
-	soldierInfoCache:object {
-
-	}
+{
+  "import": [
+    "%danetlibs/route_prober/templates/route_prober.blk",
+    "%danetlibs/assets_import/templates/assets_import.blk",
+    "%danetlibs/renderer/templates/fast_grass.template.blk",
+    "%wtlibs/templates/essentials.blk",
+    "%wtlibs/templates/net.blk",
+    "%wtlibs/templates/rendinst.blk",
+    "%wtlibs/templates/animchar.blk",
+    "%wtlibs/templates/mission.blk",
+    "%wtlibs/templates/units.blk",
+    "%wtlibs/templates/grid.blk",
+    "%wtlibs/templates/fx.blk",
+    "%wtlibs/templates/lights.blk",
+    "%wtlibs/templates/damage_model.blk",
+    "%wtlibs/templates/microdetail.blk",
+    "%wtlibs/templates/bloom.blk",
+    "%wtlibs/templates/postfx.blk",
+    "%wtlibs/templates/scene.blk",
+    "%wtlibs/templates/skies.blk",
+    "%gameLibs/render/lensFlare/templates/lens_flare.template.blk",
+    "%wtlibs/templates/lens_flare.blk",
+    "%gameLibs/render/lensGlow/templates/lens_glow.template.blk",
+    "%wtlibs/templates/lens_glow.blk",
+    "%wtlibs/templates/dynamic_hair.blk",
+    "%wtlibs/templates/outline.blk",
+    "%wtlibs/templates/outline_renderer.blk",
+    "%wtlibs/templates/node_based_shaders.blk",
+    "%wtlibs/templates/lightning.blk",
+    "%wtlibs/templates/replay.blk"
+  ],
+  "delayed_action": {
+    "delayed_action__doAtTime": -1.0,
+    "delayed_action__timer": 0.0
+  },
+  "delayed_unit_shot": {
+    "_use": "delayed_action",
+    "delayed_unit_shot__unitName": "",
+    "delayed_unit_shot__triggerGroup": 0
+  },
+  "action_by_date": {
+    "action_by_date__yearFrom": 1900,
+    "action_by_date__monthFrom": 1,
+    "action_by_date__dayFrom": 1,
+    "action_by_date__hourFrom": 0,
+    "action_by_date__minFrom": 0,
+    "action_by_date__secFrom": 0,
+    "action_by_date__yearTo": 1901,
+    "action_by_date__monthTo": 1,
+    "action_by_date__dayTo": 1,
+    "action_by_date__hourTo": 0,
+    "action_by_date__minTo": 0,
+    "action_by_date__secTo": 0,
+    "action_by_date__timeFrom": 0,
+    "action_by_date__timeTo": 0,
+    "action_by_date__delayFromCreate": 30.0,
+    "action_by_date__doAtTime": -1.0,
+    "action_by_date__onlyFirstEnter": false
+  },
+  "unit_shot_by_date": {
+    "_use": "action_by_date",
+    "unit_shot_by_date__unitName": "",
+    "unit_shot_by_date__triggerGroup": 0
+  },
+  "ri_gpu_object": {
+    "_use": "replicating",
+    "_group": {
+      "_track": true,
+      "ri_gpu_object__name": "ammunition_box_n",
+      "ri_gpu_object__grid_tiling": 4,
+      "ri_gpu_object__grid_size": 16,
+      "ri_gpu_object__cell_size": 8.0,
+      "ri_gpu_object__seed": 0,
+      "ri_gpu_object__up_vector": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "ri_gpu_object__scale_range": [
+        1.0,
+        1.0
+      ],
+      "ri_gpu_object__biom_indexes": [
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0
+      ],
+      "ri_gpu_object__is_using_normal": false,
+      "ri_gpu_object__incline_delta": 0.0,
+      "ri_gpu_object__rotate_range": [
+        0.0,
+        0.0
+      ],
+      "ri_gpu_object__map": "",
+      "ri_gpu_object__map_size": [
+        512.0,
+        512.0
+      ],
+      "ri_gpu_object__map_offset": [
+        0.0,
+        0.0
+      ],
+      "ri_gpu_object__color_from": [
+        127,
+        127,
+        127,
+        127
+      ],
+      "ri_gpu_object__color_to": [
+        127,
+        127,
+        127,
+        127
+      ],
+      "ri_gpu_object__slope_factor": [
+        1.0,
+        0.0
+      ],
+      "ri_gpu_object__hardness": 1.0,
+      "ri_gpu_object__sparse_weight": 0.0,
+      "ri_gpu_object__decal": false,
+      "ri_gpu_object__transparent": false,
+      "ri_gpu_object__distorsion": false,
+      "ri_gpu_object__place_on_water": false,
+      "ri_gpu_object__enable_displacement": true,
+      "ri_gpu_object__render_into_shadows": false,
+      "ri_gpu_object__coast_range": [
+        -1.0,
+        -1.0
+      ],
+      "ri_gpu_object__face_coast": false,
+      "ri_gpu_object__biome_params:array": {},
+      "ri_gpu_object__multiple_objects:array": {}
+    },
+    "ri_preload:GpuObjectRiResourcePreload": {
+      "_tags": "render"
+    }
+  },
+  "spot_light_large": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "_replicate": true,
+    "light__max_radius": 50.0,
+    "light__brightness": 200.0
+  },
+  "spot_light_large_noshadows": {
+    "_use": [
+      "spot_light_large",
+      "replicating"
+    ],
+    "_replicate": true,
+    "_group": {
+      "_tags": "render",
+      "spot_light__dynamic_obj_shadows": false,
+      "spot_light__shadows": false
+    }
+  },
+  "spot_light_small": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "_group": [
+      {
+        "_replicate": true,
+        "light__max_radius": 5.0,
+        "light__brightness": 15.0
+      },
+      {
+        "_tags": "render",
+        "spot_light__dynamic_obj_shadows": false,
+        "spot_light__shadows": false
+      }
+    ]
+  },
+  "spot_light_huge": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 25.0,
+    "light__brightness": 250.0,
+    "_group": {
+      "_tags": "render",
+      "spot_light__dynamic_obj_shadows": false,
+      "spot_light__shadows": false
+    }
+  },
+  "field_light_huge": {
+    "_use": [
+      "omni_light",
+      "replicating"
+    ],
+    "light__brightness": 35000.0,
+    "light__max_radius": 10000.0,
+    "light__color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "light__contact_shadows": false,
+    "light__nightly": true
+  },
+  "field_light_orange_largest": {
+    "_use": [
+      "omni_light",
+      "replicating"
+    ],
+    "light__brightness": 20000.0,
+    "light__max_radius": 10000.0,
+    "light__color": [
+      120,
+      185,
+      255,
+      255
+    ],
+    "light__contact_shadows": false,
+    "light__nightly": true
+  },
+  "field_light_blue_huge": {
+    "_use": [
+      "omni_light",
+      "replicating"
+    ],
+    "light__brightness": 15000.0,
+    "light__max_radius": 400.0,
+    "light__color": [
+      50,
+      100,
+      50,
+      255
+    ],
+    "light__contact_shadows": false,
+    "light__nightly": true
+  },
+  "field_light_large": {
+    "_use": [
+      "omni_light",
+      "replicating"
+    ],
+    "light__brightness": 20.0,
+    "light__max_radius": 30.0,
+    "light__color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "light__contact_shadows": false,
+    "light__nightly": true
+  },
+  "field_light_medium": {
+    "_use": [
+      "omni_light",
+      "replicating"
+    ],
+    "light__brightness": 30.0,
+    "light__max_radius": 30.0,
+    "light__color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "light__contact_shadows": false,
+    "light__nightly": true
+  },
+  "field_light_orange": {
+    "_use": [
+      "omni_light",
+      "replicating"
+    ],
+    "light__brightness": 2.0,
+    "light__max_radius": 2.0,
+    "light__color": [
+      10,
+      100,
+      255,
+      255
+    ],
+    "light__contact_shadows": false,
+    "light__nightly": true
+  },
+  "field_light_orange_large": {
+    "_use": [
+      "field_light_orange",
+      "replicating"
+    ],
+    "light__brightness": 3.0,
+    "light__max_radius": 2.0,
+    "light__contact_shadows": false
+  },
+  "field_light_orange_extralarge": {
+    "_use": [
+      "field_light_orange",
+      "replicating"
+    ],
+    "light__brightness": 50.0,
+    "light__max_radius": 200.0,
+    "light__contact_shadows": false
+  },
+  "field_light_orange_huge": {
+    "_use": [
+      "field_light_orange",
+      "replicating"
+    ],
+    "light__brightness": 10000.0,
+    "light__max_radius": 400.0,
+    "light__contact_shadows": false
+  },
+  "field_light_orange_medium": {
+    "_use": [
+      "field_light_orange",
+      "replicating"
+    ],
+    "light__brightness": 10.0,
+    "light__max_radius": 15.0,
+    "light__contact_shadows": false
+  },
+  "field_light_orange_medium_a": {
+    "_use": [
+      "field_light_orange",
+      "replicating"
+    ],
+    "light__brightness": 30.0,
+    "light__max_radius": 20.0,
+    "light__contact_shadows": false,
+    "light__color": [
+      20,
+      100,
+      200,
+      255
+    ]
+  },
+  "field_light_orange_medium_b": {
+    "_use": [
+      "field_light_orange",
+      "replicating"
+    ],
+    "light__brightness": 30.0,
+    "light__max_radius": 20.0,
+    "light__contact_shadows": true,
+    "light__color": [
+      20,
+      100,
+      200,
+      255
+    ]
+  },
+  "field_light_orange_small": {
+    "_use": [
+      "field_light_orange",
+      "replicating"
+    ],
+    "light__brightness": 1.0,
+    "light__max_radius": 1.0,
+    "light__contact_shadows": false
+  },
+  "field_light_orange_smallest": {
+    "_use": [
+      "field_light_orange",
+      "replicating"
+    ],
+    "light__brightness": 0.3,
+    "light__max_radius": 1.0,
+    "light__contact_shadows": false
+  },
+  "field_light_blue": {
+    "_use": [
+      "field_light_orange",
+      "replicating"
+    ],
+    "light__color": [
+      255,
+      100,
+      100,
+      255
+    ],
+    "light__contact_shadows": false
+  },
+  "field_light_blue_large": {
+    "_use": [
+      "field_light_orange",
+      "replicating"
+    ],
+    "light__brightness": 300.0,
+    "light__max_radius": 1000.0,
+    "light__color": [
+      255,
+      245,
+      10,
+      255
+    ],
+    "light__contact_shadows": false
+  },
+  "field_light_blue_extralarge": {
+    "_use": [
+      "field_light_orange",
+      "replicating"
+    ],
+    "light__brightness": 10.0,
+    "light__max_radius": 100.0,
+    "light__color": [
+      255,
+      50,
+      50,
+      255
+    ],
+    "light__contact_shadows": false
+  },
+  "field_light_red": {
+    "_use": [
+      "field_light_orange",
+      "replicating"
+    ],
+    "light__color": [
+      50,
+      80,
+      240,
+      255
+    ]
+  },
+  "field_light_red_extralarge": {
+    "_use": [
+      "field_light_orange",
+      "replicating"
+    ],
+    "light__brightness": 10.0,
+    "light__max_radius": 100.0,
+    "light__color": [
+      50,
+      80,
+      240,
+      255
+    ],
+    "light__contact_shadows": false
+  },
+  "field_light_green_extralarge": {
+    "_use": [
+      "field_light_orange",
+      "replicating"
+    ],
+    "light__brightness": 10.0,
+    "light__max_radius": 100.0,
+    "light__color": [
+      30,
+      150,
+      10,
+      255
+    ],
+    "light__contact_shadows": false
+  },
+  "field_light_green_small": {
+    "_use": [
+      "field_light_orange",
+      "replicating"
+    ],
+    "light__brightness": 5.0,
+    "light__max_radius": 10.0,
+    "light__color": [
+      20,
+      200,
+      60,
+      155
+    ],
+    "light__contact_shadows": false
+  },
+  "aircraft_warning_light_red": {
+    "_use": [
+      "omni_light",
+      "replicating"
+    ],
+    "light__brightness": 200.0,
+    "light__max_radius": 15.0,
+    "light__color": [
+      0,
+      0,
+      255,
+      255
+    ],
+    "light__nightly": true
+  },
+  "spot_light_red_large": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 75.0,
+    "light__brightness": 200.0,
+    "light__color": [
+      10,
+      10,
+      255,
+      255
+    ]
+  },
+  "spot_light_magenta_large": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 75.0,
+    "light__brightness": 200.0,
+    "light__color": [
+      255,
+      10,
+      186,
+      255
+    ]
+  },
+  "spot_light_orange_large": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 75.0,
+    "light__brightness": 200.0,
+    "light__color": [
+      10,
+      100,
+      255,
+      255
+    ]
+  },
+  "spot_light_orange_medium": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 50.0,
+    "light__brightness": 500.0,
+    "light__color": [
+      10,
+      100,
+      255,
+      255
+    ],
+    "_group": {
+      "_tags": "render",
+      "spot_light__dynamic_obj_shadows": false,
+      "spot_light__shadows": false
+    }
+  },
+  "spot_light_blue_large": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 75.0,
+    "light__brightness": 200.0,
+    "light__color": [
+      255,
+      245,
+      10,
+      255
+    ]
+  },
+  "spot_light_green_large": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 75.0,
+    "light__brightness": 200.0,
+    "light__color": [
+      10,
+      255,
+      50,
+      255
+    ]
+  },
+  "spot_light_orange_extralarge": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 300.0,
+    "light__brightness": 1200.0,
+    "light__color": [
+      10,
+      100,
+      255,
+      255
+    ],
+    "_group": {
+      "_tags": "render",
+      "spot_light__dynamic_obj_shadows": false,
+      "spot_light__shadows": false
+    }
+  },
+  "spot_light_red_extralarge": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 250.0,
+    "light__brightness": 1200.0,
+    "light__color": [
+      10,
+      10,
+      255,
+      255
+    ]
+  },
+  "spot_light_magenta_extralarge": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 250.0,
+    "light__brightness": 1200.0,
+    "light__color": [
+      255,
+      10,
+      186,
+      255
+    ]
+  },
+  "spot_light_green_extralarge": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 250.0,
+    "light__brightness": 1200.0,
+    "light__color": [
+      10,
+      255,
+      50,
+      255
+    ]
+  },
+  "spot_light_blue_extralarge": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 200.0,
+    "light__brightness": 55.0,
+    "light__color": [
+      255,
+      245,
+      10,
+      255
+    ],
+    "_group": {
+      "_tags": "render",
+      "spot_light__dynamic_obj_shadows": false,
+      "spot_light__shadows": false
+    }
+  },
+  "omni_light_red_medium": {
+    "_use": [
+      "omni_light",
+      "replicating"
+    ],
+    "light__nightly": false,
+    "light__contact_shadows": false,
+    "light__max_radius": 8.0,
+    "light__brightness": 60.0,
+    "light__color": [
+      3,
+      10,
+      255,
+      255
+    ]
+  },
+  "spot_light_orange_small_a": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 8.0,
+    "light__brightness": 3.2,
+    "light__color": [
+      10,
+      100,
+      255,
+      255
+    ],
+    "_group": {
+      "_tags": "render",
+      "spot_light__dynamic_obj_shadows": false,
+      "spot_light__shadows": false,
+      "spot_light__inner_attenuation": 0.1
+    }
+  },
+  "spot_light_blue_small_a": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 8.0,
+    "light__brightness": 3.2,
+    "light__color": [
+      255,
+      245,
+      10,
+      255
+    ],
+    "_group": {
+      "_tags": "render",
+      "spot_light__dynamic_obj_shadows": false,
+      "spot_light__shadows": false,
+      "spot_light__inner_attenuation": 0.1
+    }
+  },
+  "spot_light_red_small_a": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 8.0,
+    "light__brightness": 3.2,
+    "light__color": [
+      3,
+      10,
+      255,
+      255
+    ],
+    "_group": {
+      "_tags": "render",
+      "spot_light__dynamic_obj_shadows": false,
+      "spot_light__shadows": false,
+      "spot_light__inner_attenuation": 0.1
+    }
+  },
+  "spot_light_green_small_a": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 8.0,
+    "light__brightness": 3.2,
+    "light__color": [
+      10,
+      255,
+      50,
+      255
+    ],
+    "_group": {
+      "_tags": "render",
+      "spot_light__dynamic_obj_shadows": false,
+      "spot_light__shadows": false,
+      "spot_light__inner_attenuation": 0.1
+    }
+  },
+  "spot_light_orange_medium_b": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 50.0,
+    "light__brightness": 100.0,
+    "light__color": [
+      10,
+      100,
+      255,
+      255
+    ],
+    "_group": {
+      "_tags": "render",
+      "spot_light__dynamic_obj_shadows": false,
+      "spot_light__shadows": false,
+      "spot_light__inner_attenuation": 0.1
+    }
+  },
+  "spot_light_green_medium_b": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 50.0,
+    "light__brightness": 100.0,
+    "light__color": [
+      10,
+      255,
+      50,
+      255
+    ],
+    "_group": {
+      "_tags": "render",
+      "spot_light__dynamic_obj_shadows": false,
+      "spot_light__shadows": false,
+      "spot_light__inner_attenuation": 0.1
+    }
+  },
+  "spot_light_premium_a": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 50.0,
+    "light__brightness": 150.0,
+    "light__color": [
+      142,
+      204,
+      236,
+      255
+    ],
+    "light__nightly": false,
+    "_group": {
+      "_tags": "render",
+      "spot_light__dynamic_obj_shadows": false,
+      "spot_light__shadows": false,
+      "spot_light__inner_attenuation": 0.5
+    }
+  },
+  "spot_light_premium_shadow_a": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 50.0,
+    "light__brightness": 150.0,
+    "light__color": [
+      142,
+      204,
+      236,
+      255
+    ],
+    "light__nightly": false,
+    "_group": {
+      "_tags": "render",
+      "spot_light__dynamic_obj_shadows": false,
+      "spot_light__shadows": true,
+      "spot_light__inner_attenuation": 0.5
+    }
+  },
+  "spot_light_premium_b": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 5.0,
+    "light__brightness": 50.0,
+    "light__color": [
+      142,
+      204,
+      236,
+      255
+    ],
+    "light__nightly": false,
+    "_group": {
+      "_tags": "render",
+      "spot_light__dynamic_obj_shadows": false,
+      "spot_light__shadows": false,
+      "spot_light__inner_attenuation": 0.9
+    }
+  },
+  "spot_light_premium_blue_a": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 7.0,
+    "light__brightness": 50.0,
+    "light__color": [
+      237,
+      216,
+      171,
+      255
+    ],
+    "light__nightly": false,
+    "_group": {
+      "_tags": "render",
+      "spot_light__dynamic_obj_shadows": false,
+      "spot_light__shadows": false,
+      "spot_light__inner_attenuation": 0.2
+    }
+  },
+  "lamppost_a": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 14.0,
+    "light__brightness": 60.0,
+    "light__color": [
+      160,
+      220,
+      255,
+      255
+    ],
+    "_group": {
+      "_tags": "render",
+      "spot_light__inner_attenuation": 0.5,
+      "spot_light__dynamic_obj_shadows": true
+    },
+    "destroyable_with_rendinst:tag": {}
+  },
+  "lamppost_b": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 9.0,
+    "light__brightness": 15.0,
+    "light__color": [
+      180,
+      250,
+      255,
+      255
+    ],
+    "_group": {
+      "_tags": "render",
+      "spot_light__inner_attenuation": 0.5,
+      "spot_light__dynamic_obj_shadows": true
+    },
+    "destroyable_with_rendinst:tag": {}
+  },
+  "lamppost_c": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 19.0,
+    "light__brightness": 150.0,
+    "light__color": [
+      180,
+      250,
+      255,
+      255
+    ],
+    "_group": {
+      "_tags": "render",
+      "spot_light__inner_attenuation": 0.5,
+      "spot_light__dynamic_obj_shadows": true
+    },
+    "destroyable_with_rendinst:tag": {}
+  },
+  "spot_light_footbal_field": {
+    "_use": [
+      "spot_light",
+      "replicating"
+    ],
+    "light__max_radius": 55.0,
+    "light__brightness": 250.0,
+    "light__color": [
+      180,
+      250,
+      255,
+      255
+    ],
+    "_group": {
+      "_tags": "render",
+      "spot_light__dynamic_obj_shadows": true
+    }
+  },
+  "tunnel_a_light_orange": {
+    "_use": [
+      "omni_light",
+      "replicating"
+    ],
+    "light__max_radius": 22.0,
+    "light__brightness": 90.0,
+    "light__color": [
+      108,
+      166,
+      255,
+      255
+    ],
+    "light__nightly": false,
+    "_group": {
+      "_tags": "render",
+      "spot_light__dynamic_obj_shadows": true,
+      "spot_light__shadows": true
+    }
+  },
+  "floating_rendinst_system": {
+    "_singleton": true,
+    "floatingRiSystem__randomWavesAmplitude": 0.0,
+    "floatingRiSystem__randomWavesLength": 0.5,
+    "floatingRiSystem__randomWavesPeriod": 1.0,
+    "floatingRiSystem__randomWavesVelocity": [
+      0.6,
+      0.6
+    ],
+    "floatingRiSystem__volumePresets:object": {
+      "default_1:array": {
+        "volPos": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "default_4:array": {
+        "volPos": [
+          [
+            -1.0,
+            0.0,
+            -1.0
+          ],
+          [
+            -1.0,
+            0.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            -1.0
+          ],
+          [
+            1.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "default_12:array": {
+        "volPos": [
+          [
+            -1.0,
+            0.5,
+            0.0
+          ],
+          [
+            1.0,
+            0.5,
+            0.0
+          ],
+          [
+            -0.8,
+            0.0,
+            -1.0
+          ],
+          [
+            -0.4,
+            0.0,
+            -1.0
+          ],
+          [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          [
+            0.4,
+            0.0,
+            -1.0
+          ],
+          [
+            0.8,
+            0.0,
+            -1.0
+          ],
+          [
+            -0.8,
+            0.0,
+            1.0
+          ],
+          [
+            -0.4,
+            0.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.4,
+            0.0,
+            1.0
+          ],
+          [
+            0.8,
+            0.0,
+            1.0
+          ]
+        ]
+      }
+    },
+    "floatingRiSystem__userVolumePresets:object": {}
+  },
+  "floating_rendinst_res_group": {
+    "floatingRiGroup__wreckageFloatDuration": 15.0,
+    "floatingRiGroup__updateDistSq": 1000000.0,
+    "floatingRiGroup__interactionType": 0,
+    "floatingRiGroup__interactionDistSq": 0.0,
+    "floatingRiGroup__elasticity": 0.1,
+    "floatingRiGroup__physUpdateDt": 0.041667,
+    "floatingRiGroup__maxShiftDist": 1000.0,
+    "floatingRiGroup__viscosity": 0.57,
+    "floatingRiGroup__minDistToGround": -1000000.0,
+    "_group": {
+      "_track": true,
+      "floatingRiGroup__resName": "",
+      "floatingRiGroup__inertiaMult": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "floatingRiGroup__volumesCount": -1,
+      "floatingRiGroup__volumePresetName": "",
+      "floatingRiGroup__density": 500.0,
+      "floatingRiGroup__densityRandRange": 0.0,
+      "floatingRiGroup__useBoxInertia": false
+    },
+    "floatingRiGroup__riPhysFloatingModel": {}
+  },
+  "toolkit_ecs": {
+    "_use": "expendable_mod",
+    "mod__name": "tank_tool_kit_expendable",
+    "mod__type_name": "toolkit"
+  },
+  "ship_toolkit_ecs": {
+    "_use": "expendable_mod",
+    "mod__name": "ship_tool_kit",
+    "mod__type_name": "toolkit",
+    "mod__send_economic_spend": false
+  },
+  "extinguisher_ecs": {
+    "_use": "expendable_mod",
+    "mod__name": "manual_extinguisher_expendable",
+    "mod__type_name": "extinguisher",
+    "mod__enabled_without_mod": true,
+    "mod__count_effects_mod": true
+  },
+  "ship_extinguisher_ecs": {
+    "_use": "extinguisher_ecs",
+    "mod__enabled_without_mod": false
+  },
+  "medicalkit_ecs": {
+    "_use": "expendable_mod",
+    "mod__name": "tank_medical_kit_expendable",
+    "mod__type_name": "medicalkit",
+    "mod__count_effects_mod": true
+  },
+  "smokescreen_ecs": {
+    "_use": "expendable_mod",
+    "mod__type_name": "smokeScreen",
+    "mod__send_economic_spend": false
+  },
+  "tank_smokescreen_ecs": {
+    "_use": "smokescreen_ecs",
+    "mod__name": "tank_engine_smoke_screen_system"
+  },
+  "ship_smokescreen_ecs": {
+    "_use": "smokescreen_ecs",
+    "mod__name": "ship_smoke_screen_system_mod"
+  },
+  "disabled_update": {
+    "disabled:tag": {}
+  },
+  "in_flight": {
+    "inFlight:tag": {}
+  },
+  "weapon": {
+    "_use": "root"
+  },
+  "gun": {
+    "_use": "weapon"
+  },
+  "bomb_gun": {
+    "_use": "weapon"
+  },
+  "rocket_gun": {
+    "_use": "weapon"
+  },
+  "torpedo_gun": {
+    "_use": "weapon"
+  },
+  "background_model": {
+    "background_model__model": "",
+    "background_model__skin": "",
+    "background_model__unitName": "",
+    "background_model__weapon": "",
+    "background_model__isPlane": false,
+    "background_model__tm": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "background_model__canOutline": false,
+    "background_model__hangarPlace": "",
+    "background_model_res": {
+      "_tags": "gameClient"
+    },
+    "background_model__bullets:list<t>": {},
+    "background_model__spawnEid:eid": {}
+  },
+  "destructed_model": {
+    "_use": "replicating",
+    "destructed_model__fx": "fire_tank_destructed",
+    "_group": {
+      "_replicate": true,
+      "destructed_model__model_ind": -1,
+      "destructed_model__tm": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "destructed_model__names:list<t>": {
+      "model": "tank_bottom"
+    },
+    "destructed_model_res": {
+      "_tags": "render"
+    }
+  },
+  "level": {
+    "isLocal": true,
+    "level__blk": "",
+    "level__bin": "",
+    "level__environment": "Day",
+    "level__loaded": false,
+    "level__weather": "hazy"
+  },
+  "render_view_cam": {
+    "camera__active": false,
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "_singleton": true,
+    "camera_view:tag": {}
+  },
+  "static_cam": {
+    "camera__active": false,
+    "fov": 90.0,
+    "znear": 0.01,
+    "zfar": 10000.0,
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "static_camera_view:tag": {}
+  },
+  "game_objects": {
+    "_singleton": true,
+    "nonCreatableObj": true,
+    "game_objects": {},
+    "game_objects__createChance:object": {
+      "stationary_mg42": 0.4,
+      "chimney_exhaust": 0.15
+    }
+  },
+  "game_object_creator": {
+    "_use": "ecs_no_debug",
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "object_creator:tag": {},
+    "object_creator__createdEid:eid": {}
+  },
+  "ad_water_supply_medium": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "water_flow_stream_medium_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "ad_water_supply_puddle_clear": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "water_flow_splash_medium_clear_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "ad_water_supply_puddle_dirt": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "water_flow_splash_medium_dirt_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "sparks_short_circuit": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "sparks_short_circuit_burst_small_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "sand_unit": {
+    "sand_unit__noise": 0.0,
+    "sand_unit__moveNoiseK": 0.0,
+    "sand_unit__noiseDecSpd": 20.0,
+    "sand_unit__deathAnimVarId": -1,
+    "sand_unit__deathAnimTimer": -1.0,
+    "sand_unit__deathAnimTime": -1.0
+  },
+  "sand_worm": {
+    "_use": [
+      "root",
+      "replicating"
+    ],
+    "sand_worm__position": [
+      0.0,
+      0.0
+    ],
+    "sand_worm__delayed": true,
+    "sand_worm__radius": 100.0,
+    "sand_worm__borderColor": [
+      0,
+      30,
+      255,
+      210
+    ],
+    "sand_worm__curInactive": 0.0,
+    "_tracked": [
+      "sand_worm__delayed",
+      "sand_worm__radius"
+    ],
+    "sand_worm__needSync": false,
+    "_group": [
+      {
+        "_tags": "server",
+        "sand_worm__delayTimer": -1.0,
+        "sand_worm__radiusDecK": 1.4,
+        "sand_worm__inactiveTime": 30.0,
+        "sand_worm__attackRadius": 120.0,
+        "sand_worm__activateTime": [
+          30.0,
+          45.0
+        ],
+        "sand_worm__respawnTimeout": [
+          20.0,
+          40.0
+        ],
+        "sand_worm__speedK:list<p2>": {
+          "n": [
+            [
+              50.0,
+              10.0
+            ],
+            [
+              5000.0,
+              1.5
+            ]
+          ]
+        },
+        "sand_worm__noiseExcludeAreas:list<t>": {},
+        "sand_worm__excludeAreasId:list<i>": {}
+      },
+      {
+        "_tags": "gameClient",
+        "sand_worm__cameraShake": [
+          15.0,
+          10.0,
+          10.0
+        ],
+        "sand_worm__cameraShakeTimer": -1.0,
+        "sand_worm__appearSound": "desert/creature_appear",
+        "sand_worm__nearSound": "desert/creature_move",
+        "sand_worm__near_dist": 600.0,
+        "sand_worm__near_shake:list<p3>": {
+          "n": [
+            [
+              600.0,
+              5.0,
+              3.0
+            ],
+            [
+              500.0,
+              7.0,
+              5.0
+            ],
+            [
+              400.0,
+              10.0,
+              6.0
+            ],
+            [
+              300.0,
+              15.0,
+              7.0
+            ],
+            [
+              250.0,
+              20.0,
+              8.0
+            ],
+            [
+              200.0,
+              30.0,
+              10.0
+            ],
+            [
+              170.0,
+              40.0,
+              15.0
+            ],
+            [
+              140.0,
+              55.0,
+              20.0
+            ],
+            [
+              100.0,
+              70.0,
+              25.0
+            ]
+          ]
+        },
+        "sand_worm__nearSoundEvent:SoundEvent": {
+          "_tags": "sound"
+        }
+      }
+    ]
+  },
+  "sky_laser": {
+    "_use": [
+      "root",
+      "replicating"
+    ],
+    "sky_laser__weaponIdx": -1,
+    "sky_laser__lastShootAt": -1.0,
+    "sky_laser__timer": 0.2,
+    "sky_laser__direction": [
+      0.0,
+      -1.0,
+      0.0
+    ],
+    "sky_laser__eid:eid": {},
+    "sky_laser__positions:list<p3>": {},
+    "sky_laser__timings:list<r>": {}
+  },
+  "sand_worm_render": {
+    "_use": [
+      "root",
+      "replicating"
+    ],
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "_tracked": "sand_worm__victimEid",
+    "_replicated": "sand_worm__victimEid",
+    "worm_visual__res": "shai_char",
+    "sand_worm__animTime": 10.0,
+    "sand_worm__animName": "shai_action",
+    "sand_worm__attackSfx": "desert/creature_attack",
+    "sand_worm__attackFxName": "duna_worm_dust_cmps_fx",
+    "sand_worm__victimEid:eid": {},
+    "_group": [
+      {
+        "_tags": "render",
+        "sand_worm__animVarId": -1,
+        "sand_worm__animValue": -1.0,
+        "sand_worm__linkNodeId": -1,
+        "sand_worm__linkNodeName": "trigger",
+        "sand_worm__attackFxId": -1,
+        "worm_visual": {}
+      },
+      {
+        "_tags": "server",
+        "sand_worm__delayedTimer": -1.0,
+        "sand_worm__delayedTime": 12.0
+      }
+    ]
+  },
+  "asset_manager": {
+    "_tags": "render",
+    "_use": "base_asset_manager",
+    "asset__applicationBlkPath": "%gameBase/../../assetsImport/application_wt.blk"
+  },
+  "burav": {
+    "_use": [
+      "root",
+      "replicating"
+    ],
+    "burav__position": [
+      0.0,
+      0.0
+    ],
+    "burav__delayed": true,
+    "burav__controlRadius": 150.0,
+    "_tracked": [
+      "burav__delayed",
+      "burav__position"
+    ],
+    "burav__needSync": false,
+    "burav__attackRadius": 10.0,
+    "burav__curArmy": 0,
+    "_group": [
+      {
+        "_tags": "server",
+        "burav__delayTimer": -1.0,
+        "burav__velocity": 15.0,
+        "burav__target": [
+          0.0,
+          0.0
+        ],
+        "burav__activateTime": [
+          30.0,
+          45.0
+        ],
+        "burav__respawnTimeout": [
+          20.0,
+          40.0
+        ],
+        "burav__spawnArea": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "burav__controllerEid:eid": {},
+        "burav__excludeAreas:list<t>": {},
+        "burav__excludeAreasId:list<i>": {}
+      },
+      {
+        "_tags": "gameClient",
+        "burav__near_dist": 150.0,
+        "burav__appearSound": "event/units/burav/appear",
+        "burav__nearSound": "event/units/burav/move",
+        "burav__nearSoundEvent:SoundEvent": {
+          "_tags": "sound"
+        }
+      },
+      {
+        "_tags": "render",
+        "burav__attackRadiusColor": [
+          0,
+          30,
+          255,
+          210
+        ],
+        "burav__controlRadiusAllyColor": [
+          255,
+          30,
+          0,
+          210
+        ],
+        "burav__controlRadiusEnemyColor": [
+          0,
+          30,
+          255,
+          210
+        ],
+        "burav__delayedHintActivated": false,
+        "burav__ctrlHintActivated": false
+      }
+    ]
+  },
+  "burav_controller": {
+    "can_control_burav:tag": {}
+  },
+  "ussr_atomic_hedgie": {
+    "_use": [
+      "human",
+      "unit_repair"
+    ],
+    "mods:list<t>": {
+      "mod": "toolkit_ecs"
+    },
+    "modEids:list<eid>": {
+      "_replicate": true
+    }
+  },
+  "unit_showcase": {
+    "unit_showcase_mission_name": "",
+    "unit_showcase_eid:eid": {}
+  },
+  "loot": {
+    "_use": "replicating",
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "loot__count": -1,
+    "loot__resName": "",
+    "loot__countRange": [
+      1,
+      5
+    ],
+    "loot__radius": 1.0,
+    "loot__typeName": "",
+    "loot__type": -1,
+    "loot__itemId": 0,
+    "loot__render_update_tm": false,
+    "loot__render_offset_tm": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "loot__model_res": {
+      "_tags": "render"
+    }
+  },
+  "scrap_metal_loot": {
+    "_use": "loot",
+    "loot__resName": "mt_loot_metal_scrap_b",
+    "loot__countRange": [
+      5,
+      9
+    ],
+    "loot__typeName": "scrap_metal_loot",
+    "loot__itemId": 2907201
+  },
+  "vehicle_parts_loot": {
+    "_use": "loot",
+    "loot__resName": "mt_loot_metal_parts_a",
+    "loot__countRange": [
+      5,
+      9
+    ],
+    "loot__typeName": "vehicle_parts_loot",
+    "loot__itemId": 2907202
+  },
+  "armor_loot": {
+    "_use": "loot",
+    "loot__resName": "mt_loot_armor_parts_a",
+    "loot__countRange": [
+      5,
+      9
+    ],
+    "loot__typeName": "armor_loot",
+    "loot__itemId": 2907203
+  },
+  "electronics_loot": {
+    "_use": "loot",
+    "loot__resName": "mt_loot_electronics_a",
+    "loot__countRange": [
+      5,
+      9
+    ],
+    "loot__typeName": "electronics_loot",
+    "loot__itemId": 2907204
+  },
+  "loot_carrier": {
+    "loot_carrier__capacity": 25,
+    "_tracked": "loot_carrier__loot_count",
+    "loot_carrier__rage": 0,
+    "loot_carrier__pickUpSfx": "ground/effects/pickup_md",
+    "loot_carrier__pickUpRageSfx": "ground/effects/level_up_md",
+    "loot_carrier__pickUpRageMaxSfx": "ground/effects/level_max_md",
+    "_replicated": [
+      "loot_carrier__loot_count",
+      "loot_carrier__loot_type",
+      "loot_carrier__rage"
+    ],
+    "loot_carrier__loot_type:list<i>": {},
+    "loot_carrier__loot_count:list<i>": {},
+    "loot_carrier__loot_itemId:list<i>": {}
+  },
+  "loot_creater": {
+    "loot_creater__scrapProb": 0.035,
+    "loot_creater__partsProb": 0.035,
+    "loot_creater__armorProb": 0.035,
+    "loot_creater__electronicsProb": 0.035,
+    "loot_carrier__riNames:list<t>": {
+      "n": [
+        "conex_box_a",
+        "conex_box_b",
+        "ammunition_box_piles_a",
+        "ammunition_box_piles_b",
+        "ammunition_box_piles_c",
+        "ammunition_box_piles_e",
+        "ammunition_box_piles_f",
+        "ammunition_box_wooden_sanded_a",
+        "ammunition_box_wooden_sanded_b",
+        "ammunition_box_wooden_sanded_c",
+        "ammunition_box_wooden_sanded_d",
+        "ammunition_box_wooden_sanded_e",
+        "ammunition_box_wooden_sanded_o",
+        "ammunition_box_a_sanded",
+        "ammunition_box_b_sanded",
+        "ammunition_box_c_sanded",
+        "ammunition_box_d_sanded",
+        "ammunition_box_e_sanded",
+        "ammunition_box_f_sanded",
+        "air_cargo_a",
+        "air_cargo_b_ammunition_boxes_a",
+        "air_cargo_b_ammunition_boxes_b",
+        "air_cargo_c_bags_pile_a",
+        "air_cargo_d_pallet_cardboard_b",
+        "metal_barrels_pile_a_sanded",
+        "metal_barrels_pile_b_sanded",
+        "metal_barrels_pile_c_sanded",
+        "metal_barrels_pile_d_sanded",
+        "metal_barrel_a_sanded",
+        "metal_barrel_b_sanded",
+        "metal_barrel_c_sanded"
+      ]
+    },
+    "loot_carrier__riHandlers:list<u32>": {}
+  },
+  "loot_chance_mult_zone": {
+    "_use": "replicating",
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "loot_chance_mult__scrap": 1.0,
+    "loot_chance_mult__parts": 1.0,
+    "loot_chance_mult__armor": 1.0,
+    "loot_chance_mult__electronics": 1.0
+  },
+  "loot_carrier_capacity_20": {
+    "_use": "loot_carrier",
+    "loot_carrier__capacity": 20
+  },
+  "loot_carrier_capacity_40": {
+    "_use": "loot_carrier",
+    "loot_carrier__capacity": 40
+  },
+  "loot_carrier_capacity_50": {
+    "_use": "loot_carrier",
+    "loot_carrier__capacity": 50
+  },
+  "loot_carrier_capacity_80": {
+    "_use": "loot_carrier",
+    "loot_carrier__capacity": 80
+  },
+  "loot_carrier_capacity_100": {
+    "_use": "loot_carrier",
+    "loot_carrier__capacity": 100
+  },
+  "camera_rain_light_effect": {
+    "_use": "camera_bound_rain_effect_template",
+    "_group": {
+      "_tags": "render",
+      "camera_effect__offset": [
+        0.0,
+        -4.0,
+        0.0
+      ],
+      "camera_effect__distance": 3.0,
+      "effect__name": "camera_rain_light_cmps_fx"
+    }
+  },
+  "camera_rain_heavy_effect": {
+    "_use": "camera_bound_rain_effect_template",
+    "_group": {
+      "_tags": "render",
+      "camera_effect__offset": [
+        0.0,
+        -4.0,
+        0.0
+      ],
+      "camera_effect__distance": 3.0,
+      "effect__name": "camera_rain_heavy_cmps_fx"
+    }
+  },
+  "camera_rain_drop_splashes_effect": {
+    "_use": "camera_bound_rain_effect_template",
+    "_group": {
+      "_tags": "render",
+      "effect__name": "camera_rain_drops_cmps_fx",
+      "is_ground_effect": true
+    }
+  },
+  "camera_snow_light_effect": {
+    "_use": "camera_bound_rain_effect_template",
+    "_group": {
+      "_tags": "render",
+      "camera_effect__offset": [
+        0.0,
+        -4.0,
+        0.0
+      ],
+      "camera_effect__distance": 3.0,
+      "effect__name": "camera_snow_light_cmps_fx"
+    }
+  },
+  "unit_init_params_ext": {},
+  "base_unit_ext": {},
+  "aircraft_ext": {},
+  "barrage_ballon_ext": {},
+  "ground_unit_ext": {},
+  "ship_ext": {
+    "fuel_leak_fx": {
+      "_tags": "gameClient"
+    },
+    "ship_sinking_fx": {
+      "_tags": "gameClient"
+    }
+  },
+  "tank_ext": {
+    "unit_dm_part_fx": {
+      "_tags": "gameClient"
+    },
+    "fuel_leak_fx": {
+      "_tags": "gameClient"
+    },
+    "phys_obj_cls_activation": {},
+    "free_area_check_traces": {},
+    "free_area_check_states_list:u8": {
+      "_replicate": true,
+      "value": 0
+    }
+  },
+  "walker_ext": {},
+  "simple_ground_unit_ext": {},
+  "simple_ship_ext": {},
+  "simple_tank_ext": {},
+  "trailer_ext": {},
+  "human_ext": {},
+  "light_vehicle_ext": {
+    "_use": "gm_engine_sound"
+  },
+  "fortification_ext": {},
+  "infantry_troop_ext": {},
+  "rail_wagon": {
+    "_use": "simple_tank",
+    "unit_fx": {},
+    "constantlyWinchable:tag": {},
+    "dynamicObstacle:tag": {}
+  },
+  "builder_preview": {
+    "preview_render__enabled": false,
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "buildingTime": 10.0,
+    "buildingTimer": -1.0,
+    "timeDirSign": 1,
+    "buildingRadius": 10.0,
+    "debuffUpdateTimer": 1.0,
+    "avaliableAngles": [
+      -30.0,
+      30.0
+    ],
+    "checkGridObjectsTimeInterval": 0.3,
+    "nextCheckGridObjectsTime": 0.0,
+    "builder_preview__collObjOffset": 0.5,
+    "simpleObject__transparentColor": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "collres__res": "ammunition_box_construction_120x55x30_dynamic_collision",
+    "builder_preview__physBlk": "gameData/units/structures/ammo_box_phys.blk",
+    "builder_preview__soundName": "ground/effects/construction_set",
+    "_tracked": "buildingTimer",
+    "simpleObject__model_res_list": {},
+    "simpleObject__resNameList:list<t>": {
+      "primary": "ammunition_box_construction_120x55x30_dynamic",
+      "secondary": "ammunition_box_construction_99x50x27_dynamic",
+      "special": "ammunition_box_construction_99x50x27_dynamic"
+    },
+    "simpleObject__offsets:list<p3>": {
+      "primary": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "secondary": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "special": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "simpleObject__visibleList:list<b>": {
+      "primary": false,
+      "secondary": false,
+      "special": false
+    },
+    "buildingTemplates:list<t>": {
+      "primary": "ammo_box_primary",
+      "secondary": "ammo_box_secondary",
+      "special": "ammo_box_special"
+    },
+    "builder_preview__owner:eid": {},
+    "builder_preview__collObj:CollisionObject": {},
+    "builder_preview__collRes:CollisionResource": {},
+    "builder_preview__soundEvent:SoundEvent": {
+      "_tags": "sound"
+    },
+    "builder_preview__triggerGrMask:u8": {
+      "value": 0
+    }
+  },
+  "slave_unit_preview": {
+    "slave_unit__transform": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "slave_unit_preview__radius": 35.0,
+    "slave_unit_preview__canSpawn": false,
+    "slave_unit_preview__availableAngles": [
+      -30.0,
+      30.0
+    ],
+    "nextCheckGridObjectsTime": 0.0,
+    "checkGridObjectsTimeInterval": 0.5,
+    "slave_unit_preview__collObjOffset": 0.5
+  },
+  "ammo_box": {
+    "_use": [
+      "replicating",
+      "rendinst_owned"
+    ],
+    "ammo_box__triggerGroupNo": 0,
+    "ammo_box__bulletCount": 0,
+    "ammo_box__rearmRadius": 10.0,
+    "ri_extra__destructable": true,
+    "ri_extra__allyDontDamage": true,
+    "ammo_box__owner:eid": {}
+  },
+  "ammo_box_primary": {
+    "_use": "ammo_box",
+    "ri_extra__name": "ammunition_box_construction_120x55x30_static",
+    "ammo_box__triggerGroupNo": 0
+  },
+  "ammo_box_secondary": {
+    "_use": "ammo_box",
+    "ri_extra__name": "ammunition_box_construction_99x50x27_static",
+    "ammo_box__triggerGroupNo": 1
+  },
+  "ammo_box_special": {
+    "_use": "ammo_box",
+    "ri_extra__name": "ammunition_box_construction_99x50x27_static",
+    "ammo_box__triggerGroupNo": 4
+  },
+  "soldier_info_cache": {
+    "_singleton": true,
+    "_tags": "server",
+    "soldierInfoCache:object": {}
+  }
 }

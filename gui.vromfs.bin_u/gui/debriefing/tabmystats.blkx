@@ -1,592 +1,596 @@
-debriefingTab {
-	id:t = "my_stats_tab"
-	flow:t = "vertical"
-	overflow-y:t = "auto"
-	tdiv {
-		size:t = "pw, fh"
-		flow:t = "horizontal"
-		tdiv {
-			size:t = "fw, ph"
-			flow:t = "vertical"
-			debrBlock {
-				id:t = "top_bar_nest"
-				width:t = "pw"
-				pos:t = "0, 1@debrMyPlaceBlockOffset"
-				position:t = "relative"
-				padding:t = "1@debrPad, 0.5@debrPad"
-				background-color:t = "@separatorBlockColor"
-				tdiv {
-					id:t = "my_place_move_box"
-					pos:t = "0, 0.5ph-0.5h"
-					position:t = "relative"
-					css-hier-invalidate:t = "yes"
-					total-input-transparent:t = "yes"
-					display:t = "hide"
-					activeText {
-						id:t = "my_place_label"
-						mediumFont:t = "yes"
-						animateFontSize:t = "yes"
-						text:t = "#debriefing/placeInMyTeam"
-					}
-					activeText {
-						id:t = "my_place_in_mptable"
-						mediumFont:t = "yes"
-						animateFontSize:t = "yes"
-						overlayTextColor:t = "userlog"
-						text:t = "0"
-					}
-				}
-				tdiv {
-					id:t = "my_stats_top_bar"
-					top:t = "0.5ph-0.5h"
-					position:t = "relative"
-					tdiv {
-						id:t = "wnd_total"
-						top:t = "0.5ph-0.5h"
-						position:t = "relative"
-					}
-					tdiv {
-						id:t = "buy_premium"
-						pos:t = "1@debrPad, 0.5ph-0.5h"
-						position:t = "relative"
-						display:t = "hide"
-						Button_text {
-							id:t = "btn_buy_premium_award"
-							class:t = "buyPremAward"
-							style:t = "margin-right:0;"
-							on_click:t = "onBuyPremiumAward"
-							visualStyle:t = "purchase"
-							tooltip:t = ""
-							btnName:t = "Y"
-							buttonWink {
-								_transp-timer:t = "0"
-							}
-							buttonGlance {
-
-							}
-							ButtonImg {
-
-							}
-							textarea {
-								id:t = "label"
-								pos:t = "0, 0.5ph-0.5h"
-								position:t = "relative"
-								min-width:t = "pw"
-								input-transparent:t = "yes"
-								text-align:t = "center"
-								overlayTextColor:t = "premiumNotEarned"
-								text:t = ""
-							}
-						}
-						textareaNoTab {
-							max-width:t = "150@sf/@pf"
-							pos:t = "0.3@sIco, 0.5ph-0.5h"
-							position:t = "relative"
-							overlayTextColor:t = "userlog"
-							smallFont:t = "yes"
-							text:t = "#mainmenu/notEarnedPremiumReward"
-						}
-					}
-					tdiv {
-						id:t = "active_wager_container"
-						pos:t = "1@debrPad, 0.5ph-0.5h"
-						position:t = "relative"
-						title:t = "$tooltipObj"
-						display:t = "hide"
-						smallFont:t = "yes"
-						interactive:t = "yes"
-						css-hier-invalidate:t = "yes"
-						tdiv {
-							size:t = "70%@debrWagerHeight, 1@debrWagerHeight"
-							itemIconBlock {
-								id:t = "active_wager_icon"
-								pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
-								position:t = "absolute"
-								debriefingSize:t = "yes"
-								overflow:t = "hidden"
-							}
-							img {
-								id:t = "active_wager_result_icon"
-								size:t = "0.5ph, 0.5ph"
-								pos:t = "pw-0.7w, ph-h"
-								position:t = "absolute"
-								background-image:t = ""
-								background-svg-size:t = "0.5ph, 0.5ph"
-								background-repeat:t = "aspect-ratio"
-							}
-						}
-						textareaNoTab {
-							id:t = "active_wager_text"
-							pos:t = "10@sf/@pf, 0.5ph-0.5h"
-							position:t = "relative"
-							overlayTextColor:t = "userlog"
-							smallFont:t = "yes"
-							text:t = ""
-						}
-						focus_border {
-
-						}
-						tooltipObj {
-							id:t = "active_wager_tooltip"
-							on_tooltip_open:t = "onWagerTooltipOpen"
-							on_tooltip_close:t = "onTooltipObjClose"
-							display:t = "hide"
-							enable:t = "no"
-						}
-					}
-					debriefingBonusIconNest {
-						id:t = "bonus_ico_place"
-						size:t = "1@debrBonusWidth, 1@debrBonusHeight"
-						pos:t = "1@debrPad, 0.5ph-0.5h"
-						position:t = "relative"
-						display:t = "hide"
-						interactive:t = "yes"
-						css-hier-invalidate:t = "yes"
-						img {
-							id:t = "bonus_ico"
-							position:t = "absolute"
-							pos:t = "pw/2-w/2, ph/2-h/2"
-							size:t = "@debrBonusIcoSize, @debrBonusIcoSize"
-							background-svg-size:t = "@debrBonusIcoSize, @debrBonusIcoSize"
-						}
-						tdiv {
-							id:t = "start_bonus_place"
-							size:t = "2.5@debrBonusIcoSize, 2.5@debrBonusIcoSize"
-							pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
-							position:t = "absolute"
-						}
-						focus_border {
-							class:t = "expanded"
-						}
-					}
-				}
-			}
-			tdiv {
-				size:t = "pw, fh"
-				tdiv {
-					id:t = "left_block"
-					min-width:t = "1@navBarBattleButtonMinWidth"
-					size:t = "2@debriefingUnlockIconSize+1@debrPad, ph"
-					margin-right:t = "@debrBigGap"
-					flow:t = "vertical"
-					debrBlock {
-						id:t = "inventory_gift_block"
-						width:t = "pw"
-						padding:t = "0, 1@debrPad"
-						display:t = "hide"
-						tdiv {
-							width:t = "pw"
-							flow:t = "vertical"
-							div {
-								width:t = "pw"
-								flow:t = "h-flow"
-								flow-align:t = "center"
-								tdiv {
-									id:t = "inventory_gift_icon"
-									width:t = "pw"
-									flow:t = "h-flow"
-									flow-align:t = "center"
-									smallItems:t = "no"
-								}
-								Button_text {
-									id:t = "btn_show_all"
-									pos:t = "0.5pw-0.5w"
-									margin-bottom:t = "0"
-									on_click:t = "onViewRewards"
-									text:t = "#mainmenu/showMore"
-									display:t = "hide"
-									enable:t = "no"
-									btnName:t = "R3"
-									ButtonImg {
-
-									}
-								}
-							}
-							Button_text {
-								id:t = "btn_inventory_gift_action"
-								pos:t = "0.5pw-0.5w, 0"
-								position:t = "relative"
-								max-width:t = "1@buttonWidth"
-								margin-top:t = "1@buttonMargin"
-								class:t = "battle"
-								navButtonFont:t = "yes"
-								btnName:t = "LT"
-								css-hier-invalidate:t = "yes"
-								_on_click:t = "onInventoryGiftAction"
-								display:t = "hide"
-								enable:t = "no"
-								pattern {
-
-								}
-								buttonWink {
-									_transp-timer:t = "0"
-								}
-								buttonGlance {
-
-								}
-								ButtonImg {
-
-								}
-								btnText {
-									id:t = "btn_inventory_gift_action_text"
-								}
-							}
-						}
-						debrSeparator {
-							class:t = "bottom"
-						}
-					}
-					debrBlock {
-						id:t = "my_stats_awards_block"
-						size:t = "pw, fh"
-						class:t = "button"
-						behaviour:t = "button"
-						on_click:t = "onViewAwards"
-						total-input-transparent:t = "yes"
-						skip-navigation:t = "yes"
-						margin-top:t = "1@blockInterval"
-						tdiv {
-							size:t = "pw, ph"
-							pos:t = "0.5pw-0.5w, 0"
-							position:t = "relative"
-							flow:t = "vertical"
-							tdiv {
-								id:t = "awards_list_challenges"
-								pos:t = "0.5pw - 0.5w, 0"
-								position:t = "relative"
-								size:t = "pw, 1@debriefingUnlockIconSize"
-								overflow:t = "visible"
-								display:t = "hide"
-								behavior:t = "PosNavigator"
-								navigatorShortcuts:t = "active"
-								on_activate:t = "onViewAwards"
-							}
-							div {
-								id:t = "btn_challenge_div"
-								width:t = "pw"
-								pos:t = "pw/2 - w/2, 0"
-								display:t = "hide"
-								flow:t = "vertical"
-								margin:t = "0, 1@blockInterval"
-								Button_text {
-									id:t = "btn_challenge"
-									pos:t = "pw/2 - w/2, 0"
-									position:t = "relative"
-									max-width:t = "1@buttonWidth"
-									navButtonFont:t = "yes"
-									class:t = "battle"
-									css-hier-invalidate:t = "yes"
-									_on_click:t = "onGotoChallenge"
-									pattern {
-										type:t = "bright_texture"
-									}
-									buttonWink {
-										_transp-timer:t = "0"
-									}
-									buttonGlance {
-
-									}
-									ButtonImg {
-
-									}
-									btnText {
-										id:t = "btn_next_text"
-										text:t = "#mainmenu/btnUnlockChallenge"
-									}
-								}
-								rowSeparator {
-									margin-top:t = "1@blockInterval"
-								}
-							}
-							tdiv {
-								size:t = "pw, fh"
-								position:t = "relative"
-								flow:t = "horizontal"
-								tdiv {
-									id:t = "awards_list_unlocks"
-									size:t = "1@debriefingUnlockIconSize, ph"
-									margin-left:t = "pw/4 - 0.5w"
-									position:t = "relative"
-									overflow:t = "visible"
-									flow:t = "vertical"
-									display:t = "hide"
-									behavior:t = "PosNavigator"
-									navigatorShortcuts:t = "active"
-									on_activate:t = "onViewAwards"
-								}
-								tdiv {
-									id:t = "awards_list_streaks"
-									size:t = "1@debriefingUnlockIconSize, ph"
-									margin-left:t = "pw/2 - w"
-									position:t = "relative"
-									overflow:t = "visible"
-									flow:t = "vertical"
-									display:t = "hide"
-									behavior:t = "PosNavigator"
-									navigatorShortcuts:t = "active"
-									on_activate:t = "onViewAwards"
-								}
-							}
-						}
-					}
-				}
-				tdiv {
-					size:t = "fw, ph"
-					flow:t = "vertical"
-					debrBlock {
-						id:t = "pve_trophy_block"
-						size:t = "pw, 0.75@itemHeight"
-						padding:t = "0, 1@debrPad"
-						display:t = "hide"
-						tdiv {
-							id:t = "pve_trophy_progress"
-							pos:t = "0, 0.5ph-0.5h"
-							position:t = "relative"
-							width:t = "75%pw"
-						}
-						tdiv {
-							id:t = "pve_trophy_chest"
-							size:t = "0.75@itemHeight, 0.75@itemHeight"
-							pos:t = "pw-w, 0.5ph-0.5h"
-							position:t = "absolute"
-						}
-						tdiv {
-							size:t = "0.75@itemHeight, 0.75@itemHeight"
-							pos:t = "pw-w-0.25w, 0.5ph-0.5h"
-							position:t = "absolute"
-							tdiv {
-								id:t = "pve_trophy_content"
-								size:t = "1@itemHeight, 1@itemHeight"
-								pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
-								position:t = "absolute"
-							}
-						}
-						activeText {
-							id:t = "pve_award_already_received"
-							pos:t = "pw-w-1@debrPad, 50%ph"
-							position:t = "absolute"
-							text:t = "#debriefing/awardHasAlreadyBeenReceived"
-							display:t = "hide"
-						}
-						debrSeparator {
-							class:t = "bottom"
-						}
-					}
-					debrBlock {
-						id:t = "no_awards_block"
-						size:t = "pw, 0.12@scrn_tgt"
-						padding:t = "0, 1@debrPad"
-						display:t = "hide"
-						tdiv {
-							width:t = "pw"
-							pos:t = "0, 0.5ph-0.5h"
-							position:t = "relative"
-							flow:t = "vertical"
-							textareaNoTab {
-								id:t = "no_awards_caption"
-								width:t = "pw"
-								position:t = "relative"
-								overlayTextColor:t = "userlog"
-								text:t = ""
-							}
-							Button_text {
-								id:t = "btn_no_awards_info"
-								position:t = "relative"
-								on_click:t = "onNoAwardsInfoBtn"
-								noMargin:t = "yes"
-								text:t = ""
-								display:t = "hide"
-								enable:t = "no"
-								btnName:t = "L3"
-								externalLink:t = "yes"
-								activeText {
-									text:t = "#msgbox/btn_more"
-									css-hier-invalidate:t = "yes"
-									underline {
-
-									}
-								}
-								ButtonImg {
-
-								}
-							}
-						}
-						debrSeparator {
-							class:t = "bottom"
-						}
-					}
-					tdiv {
-						size:t = "pw, fh"
-						padding-top:t = "1@dp"
-						debrBlock {
-							id:t = "my_stats_scroll_block"
-							size:t = "fw, ph"
-							flow:t = "vertical"
-							overflow-y:t = "auto"
-							scrollbarShortcuts:t = "yes"
-							css-hier-invalidate:t = "yes"
-							tdiv {
-								width:t = "pw"
-								min-height:t = "ph"
-								margin:t = "0, 1@debrPad"
-								flow:t = "vertical"
-								table {
-									id:t = "stat_table"
-									width:t = "pw"
-									baseRow:t = "rows16"
-									flow:t = "vertical"
-									total-input-transparent:t = "yes"
-									behavior:t = "PosNavigator"
-									navigatorShortcuts:t = "noSelect"
-									selfFocusBorder:t = "yes"
-								}
-								tdiv {
-									id:t = "leaderbord_stats"
-									width:t = "pw"
-									pos:t = "0, 1@debrPad"
-									position:t = "relative"
-									flow:t = "h-flow"
-									display:t = "hide"
-								}
-								textareaNoTab {
-									id:t = "stat_info_text"
-									width:t = "pw"
-									pos:t = "0, 3@debrPad"
-									position:t = "relative"
-									overlayTextColor:t = ""
-									text-align:t = "right"
-									text:t = ""
-									display:t = "hide"
-								}
-							}
-						}
-					}
-					tdiv {
-						id:t = "full_width_resources"
-						size:t = "pw, ph"
-						flow:t = "h-flow"
-						flow-align:t = "center"
-					}
-				}
-			}
-		}
-		debrBlock {
-			id:t = "right_block"
-			size:t = "2@slot_width+1@scrollBarSize, ph"
-			pos:t = "0, 1@debrMyPlaceBlockOffset"
-			position:t = "relative"
-			margin-left:t = "@debrBigGap"
-			flow:t = "vertical"
-			display:t = "hide"
-			debrBlock {
-				id:t = "battle_tasks_block"
-				width:t = "pw"
-				max-height:t = "0.5ph"
-				margin-bottom:t = "1@debrPad"
-				flow:t = "vertical"
-				tdiv {
-					size:t = "pw, 1@buttonHeight"
-					background-color:t = "@separatorBlockColor"
-					activeText {
-						width:t = "pw"
-						pos:t = "1@debrPad, 0.5ph-0.5h"
-						position:t = "relative"
-						text:t = "#userlog/page/battletasks"
-					}
-				}
-				listbox {
-					id:t = "current_battle_tasks"
-					width:t = "pw"
-					padding-left:t = "1@debrPad"
-					overflow-y:t = "auto"
-					flow:t = "vertical"
-					scrollbarShortcuts:t = "left"
-					background-color:t = "@frameDarkTransparentBgColor"
-				}
-			}
-			tdiv {
-				id:t = "researches_scroll_block"
-				size:t = "pw, fh"
-				overflow-y:t = "auto"
-				scrollbarShortcuts:t = "left"
-				tdiv {
-					width:t = "pw"
-					min-height:t = "ph"
-					flow:t = "vertical"
-					tdiv {
-						size:t = "pw, 1@buttonHeight"
-						background-color:t = "@separatorBlockColor"
-						activeText {
-							width:t = "pw"
-							pos:t = "1@debrPad, 0.5ph-0.5h"
-							position:t = "relative"
-							text:t = "#debriefing/researched_unit"
-						}
-					}
-					tdiv {
-						width:t = "pw"
-						margin-bottom:t = "1@debrPad"
-						background-color:t = "@frameDarkTransparentBgColor"
-						textAreaCentered {
-							id:t = "no_air_text"
-							width:t = "pw"
-							pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
-							position:t = "absolute"
-							smallFont:t = "yes"
-							text:t = ""
-						}
-						textAreaCentered {
-							id:t = "air_item_text"
-							width:t = "pw"
-							pos:t = "0.5pw-0.5w, 0.5ph-0.5h"
-							position:t = "absolute"
-							smallFont:t = "yes"
-							text:t = ""
-						}
-						rankUpList {
-							id:t = "air_item_place"
-							max-width:t = "pw-2@debrPad"
-							min-height:t = "@slot_height+2@slot_vert_pad"
-							position:t = "relative"
-							pos:t = "0.5pw-0.5w, 0"
-							flow:t = "h-flow"
-							holdTooltipChildren:t = "yes"
-						}
-					}
-					tdiv {
-						size:t = "pw, 1@buttonHeight"
-						background-color:t = "@separatorBlockColor"
-						activeText {
-							width:t = "pw"
-							pos:t = "1@debrPad, 0.5ph-0.5h"
-							position:t = "relative"
-							text:t = "#debriefing/research_list"
-						}
-					}
-					tdiv {
-						id:t = "research_list"
-						width:t = "pw"
-						flow:t = "vertical"
-						background-color:t = "@frameDarkTransparentBgColor"
-						textAreaCentered {
-							id:t = "research_list_text"
-							width:t = "pw"
-							pos:t = "0.5pw-0.5w, 0.5(@slot_height + 2@slot_vert_pad)-0.5h"
-							position:t = "absolute"
-							smallFont:t = "yes"
-							text:t = ""
-						}
-						tdiv {
-							id:t = "modifications_objects_place"
-							width:t = "pw"
-							min-height:t = "1@slot_height + 2@slot_vert_pad"
-							margin-left:t = "1@debrPad"
-							flow:t = "vertical"
-							interactiveChildren:t = "yes"
-						}
-					}
-				}
-			}
-		}
-	}
+{
+  "debriefingTab": {
+    "id": "my_stats_tab",
+    "flow": "vertical",
+    "overflow-y": "auto",
+    "tdiv": {
+      "size": "pw, fh",
+      "flow": "horizontal",
+      "tdiv": {
+        "size": "fw, ph",
+        "flow": "vertical",
+        "debrBlock": {
+          "id": "top_bar_nest",
+          "width": "pw",
+          "pos": "0, 1@debrMyPlaceBlockOffset",
+          "position": "relative",
+          "padding": "1@debrPad, 0.5@debrPad",
+          "background-color": "@separatorBlockColor",
+          "tdiv": [
+            {
+              "id": "my_place_move_box",
+              "pos": "0, 0.5ph-0.5h",
+              "position": "relative",
+              "css-hier-invalidate": "yes",
+              "total-input-transparent": "yes",
+              "display": "hide",
+              "activeText": [
+                {
+                  "id": "my_place_label",
+                  "mediumFont": "yes",
+                  "animateFontSize": "yes",
+                  "text": "#debriefing/placeInMyTeam"
+                },
+                {
+                  "id": "my_place_in_mptable",
+                  "mediumFont": "yes",
+                  "animateFontSize": "yes",
+                  "overlayTextColor": "userlog",
+                  "text": "0"
+                }
+              ]
+            },
+            {
+              "id": "my_stats_top_bar",
+              "top": "0.5ph-0.5h",
+              "position": "relative",
+              "tdiv": [
+                {
+                  "id": "wnd_total",
+                  "top": "0.5ph-0.5h",
+                  "position": "relative"
+                },
+                {
+                  "id": "buy_premium",
+                  "pos": "1@debrPad, 0.5ph-0.5h",
+                  "position": "relative",
+                  "display": "hide",
+                  "Button_text": {
+                    "id": "btn_buy_premium_award",
+                    "class": "buyPremAward",
+                    "style": "margin-right:0;",
+                    "on_click": "onBuyPremiumAward",
+                    "visualStyle": "purchase",
+                    "tooltip": "",
+                    "btnName": "Y",
+                    "buttonWink": {
+                      "_transp-timer": "0"
+                    },
+                    "buttonGlance": {},
+                    "ButtonImg": {},
+                    "textarea": {
+                      "id": "label",
+                      "pos": "0, 0.5ph-0.5h",
+                      "position": "relative",
+                      "min-width": "pw",
+                      "input-transparent": "yes",
+                      "text-align": "center",
+                      "overlayTextColor": "premiumNotEarned",
+                      "text": ""
+                    }
+                  },
+                  "textareaNoTab": {
+                    "max-width": "150@sf/@pf",
+                    "pos": "0.3@sIco, 0.5ph-0.5h",
+                    "position": "relative",
+                    "overlayTextColor": "userlog",
+                    "smallFont": "yes",
+                    "text": "#mainmenu/notEarnedPremiumReward"
+                  }
+                },
+                {
+                  "id": "active_wager_container",
+                  "pos": "1@debrPad, 0.5ph-0.5h",
+                  "position": "relative",
+                  "title": "$tooltipObj",
+                  "display": "hide",
+                  "smallFont": "yes",
+                  "interactive": "yes",
+                  "css-hier-invalidate": "yes",
+                  "tdiv": {
+                    "size": "70%@debrWagerHeight, 1@debrWagerHeight",
+                    "itemIconBlock": {
+                      "id": "active_wager_icon",
+                      "pos": "0.5pw-0.5w, 0.5ph-0.5h",
+                      "position": "absolute",
+                      "debriefingSize": "yes",
+                      "overflow": "hidden"
+                    },
+                    "img": {
+                      "id": "active_wager_result_icon",
+                      "size": "0.5ph, 0.5ph",
+                      "pos": "pw-0.7w, ph-h",
+                      "position": "absolute",
+                      "background-image": "",
+                      "background-svg-size": "0.5ph, 0.5ph",
+                      "background-repeat": "aspect-ratio"
+                    }
+                  },
+                  "textareaNoTab": {
+                    "id": "active_wager_text",
+                    "pos": "10@sf/@pf, 0.5ph-0.5h",
+                    "position": "relative",
+                    "overlayTextColor": "userlog",
+                    "smallFont": "yes",
+                    "text": ""
+                  },
+                  "focus_border": {},
+                  "tooltipObj": {
+                    "id": "active_wager_tooltip",
+                    "on_tooltip_open": "onWagerTooltipOpen",
+                    "on_tooltip_close": "onTooltipObjClose",
+                    "display": "hide",
+                    "enable": "no"
+                  }
+                }
+              ],
+              "debriefingBonusIconNest": {
+                "id": "bonus_ico_place",
+                "size": "1@debrBonusWidth, 1@debrBonusHeight",
+                "pos": "1@debrPad, 0.5ph-0.5h",
+                "position": "relative",
+                "display": "hide",
+                "interactive": "yes",
+                "css-hier-invalidate": "yes",
+                "img": {
+                  "id": "bonus_ico",
+                  "position": "absolute",
+                  "pos": "pw/2-w/2, ph/2-h/2",
+                  "size": "@debrBonusIcoSize, @debrBonusIcoSize",
+                  "background-svg-size": "@debrBonusIcoSize, @debrBonusIcoSize"
+                },
+                "tdiv": {
+                  "id": "start_bonus_place",
+                  "size": "2.5@debrBonusIcoSize, 2.5@debrBonusIcoSize",
+                  "pos": "0.5pw-0.5w, 0.5ph-0.5h",
+                  "position": "absolute"
+                },
+                "focus_border": {
+                  "class": "expanded"
+                }
+              }
+            }
+          ]
+        },
+        "tdiv": {
+          "size": "pw, fh",
+          "tdiv": [
+            {
+              "id": "left_block",
+              "min-width": "1@navBarBattleButtonMinWidth",
+              "size": "2@debriefingUnlockIconSize+1@debrPad, ph",
+              "margin-right": "@debrBigGap",
+              "flow": "vertical",
+              "debrBlock": [
+                {
+                  "id": "inventory_gift_block",
+                  "width": "pw",
+                  "padding": "0, 1@debrPad",
+                  "display": "hide",
+                  "tdiv": {
+                    "width": "pw",
+                    "flow": "vertical",
+                    "div": {
+                      "width": "pw",
+                      "flow": "h-flow",
+                      "flow-align": "center",
+                      "tdiv": {
+                        "id": "inventory_gift_icon",
+                        "width": "pw",
+                        "flow": "h-flow",
+                        "flow-align": "center",
+                        "smallItems": "no"
+                      },
+                      "Button_text": {
+                        "id": "btn_show_all",
+                        "pos": "0.5pw-0.5w",
+                        "margin-bottom": "0",
+                        "on_click": "onViewRewards",
+                        "text": "#mainmenu/showMore",
+                        "display": "hide",
+                        "enable": "no",
+                        "btnName": "R3",
+                        "ButtonImg": {}
+                      }
+                    },
+                    "Button_text": {
+                      "id": "btn_inventory_gift_action",
+                      "pos": "0.5pw-0.5w, 0",
+                      "position": "relative",
+                      "max-width": "1@buttonWidth",
+                      "margin-top": "1@buttonMargin",
+                      "class": "battle",
+                      "navButtonFont": "yes",
+                      "btnName": "LT",
+                      "css-hier-invalidate": "yes",
+                      "_on_click": "onInventoryGiftAction",
+                      "display": "hide",
+                      "enable": "no",
+                      "pattern": {},
+                      "buttonWink": {
+                        "_transp-timer": "0"
+                      },
+                      "buttonGlance": {},
+                      "ButtonImg": {},
+                      "btnText": {
+                        "id": "btn_inventory_gift_action_text"
+                      }
+                    }
+                  },
+                  "debrSeparator": {
+                    "class": "bottom"
+                  }
+                },
+                {
+                  "id": "my_stats_awards_block",
+                  "size": "pw, fh",
+                  "class": "button",
+                  "behaviour": "button",
+                  "on_click": "onViewAwards",
+                  "total-input-transparent": "yes",
+                  "skip-navigation": "yes",
+                  "margin-top": "1@blockInterval",
+                  "tdiv": {
+                    "size": "pw, ph",
+                    "pos": "0.5pw-0.5w, 0",
+                    "position": "relative",
+                    "flow": "vertical",
+                    "tdiv": [
+                      {
+                        "id": "awards_list_challenges",
+                        "pos": "0.5pw - 0.5w, 0",
+                        "position": "relative",
+                        "size": "pw, 1@debriefingUnlockIconSize",
+                        "overflow": "visible",
+                        "display": "hide",
+                        "behavior": "PosNavigator",
+                        "navigatorShortcuts": "active",
+                        "on_activate": "onViewAwards"
+                      },
+                      {
+                        "size": "pw, fh",
+                        "position": "relative",
+                        "flow": "horizontal",
+                        "tdiv": [
+                          {
+                            "id": "awards_list_unlocks",
+                            "size": "1@debriefingUnlockIconSize, ph",
+                            "margin-left": "pw/4 - 0.5w",
+                            "position": "relative",
+                            "overflow": "visible",
+                            "flow": "vertical",
+                            "display": "hide",
+                            "behavior": "PosNavigator",
+                            "navigatorShortcuts": "active",
+                            "on_activate": "onViewAwards"
+                          },
+                          {
+                            "id": "awards_list_streaks",
+                            "size": "1@debriefingUnlockIconSize, ph",
+                            "margin-left": "pw/2 - w",
+                            "position": "relative",
+                            "overflow": "visible",
+                            "flow": "vertical",
+                            "display": "hide",
+                            "behavior": "PosNavigator",
+                            "navigatorShortcuts": "active",
+                            "on_activate": "onViewAwards"
+                          }
+                        ]
+                      }
+                    ],
+                    "div": {
+                      "id": "btn_challenge_div",
+                      "width": "pw",
+                      "pos": "pw/2 - w/2, 0",
+                      "display": "hide",
+                      "flow": "vertical",
+                      "margin": "0, 1@blockInterval",
+                      "Button_text": {
+                        "id": "btn_challenge",
+                        "pos": "pw/2 - w/2, 0",
+                        "position": "relative",
+                        "max-width": "1@buttonWidth",
+                        "navButtonFont": "yes",
+                        "class": "battle",
+                        "css-hier-invalidate": "yes",
+                        "_on_click": "onGotoChallenge",
+                        "pattern": {
+                          "type": "bright_texture"
+                        },
+                        "buttonWink": {
+                          "_transp-timer": "0"
+                        },
+                        "buttonGlance": {},
+                        "ButtonImg": {},
+                        "btnText": {
+                          "id": "btn_next_text",
+                          "text": "#mainmenu/btnUnlockChallenge"
+                        }
+                      },
+                      "rowSeparator": {
+                        "margin-top": "1@blockInterval"
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "size": "fw, ph",
+              "flow": "vertical",
+              "debrBlock": [
+                {
+                  "id": "pve_trophy_block",
+                  "size": "pw, 0.75@itemHeight",
+                  "padding": "0, 1@debrPad",
+                  "display": "hide",
+                  "tdiv": [
+                    {
+                      "id": "pve_trophy_progress",
+                      "pos": "0, 0.5ph-0.5h",
+                      "position": "relative",
+                      "width": "75%pw"
+                    },
+                    {
+                      "id": "pve_trophy_chest",
+                      "size": "0.75@itemHeight, 0.75@itemHeight",
+                      "pos": "pw-w, 0.5ph-0.5h",
+                      "position": "absolute"
+                    },
+                    {
+                      "size": "0.75@itemHeight, 0.75@itemHeight",
+                      "pos": "pw-w-0.25w, 0.5ph-0.5h",
+                      "position": "absolute",
+                      "tdiv": {
+                        "id": "pve_trophy_content",
+                        "size": "1@itemHeight, 1@itemHeight",
+                        "pos": "0.5pw-0.5w, 0.5ph-0.5h",
+                        "position": "absolute"
+                      }
+                    }
+                  ],
+                  "activeText": {
+                    "id": "pve_award_already_received",
+                    "pos": "pw-w-1@debrPad, 50%ph",
+                    "position": "absolute",
+                    "text": "#debriefing/awardHasAlreadyBeenReceived",
+                    "display": "hide"
+                  },
+                  "debrSeparator": {
+                    "class": "bottom"
+                  }
+                },
+                {
+                  "id": "no_awards_block",
+                  "size": "pw, 0.12@scrn_tgt",
+                  "padding": "0, 1@debrPad",
+                  "display": "hide",
+                  "tdiv": {
+                    "width": "pw",
+                    "pos": "0, 0.5ph-0.5h",
+                    "position": "relative",
+                    "flow": "vertical",
+                    "textareaNoTab": {
+                      "id": "no_awards_caption",
+                      "width": "pw",
+                      "position": "relative",
+                      "overlayTextColor": "userlog",
+                      "text": ""
+                    },
+                    "Button_text": {
+                      "id": "btn_no_awards_info",
+                      "position": "relative",
+                      "on_click": "onNoAwardsInfoBtn",
+                      "noMargin": "yes",
+                      "text": "",
+                      "display": "hide",
+                      "enable": "no",
+                      "btnName": "L3",
+                      "externalLink": "yes",
+                      "activeText": {
+                        "text": "#msgbox/btn_more",
+                        "css-hier-invalidate": "yes",
+                        "underline": {}
+                      },
+                      "ButtonImg": {}
+                    }
+                  },
+                  "debrSeparator": {
+                    "class": "bottom"
+                  }
+                }
+              ],
+              "tdiv": [
+                {
+                  "size": "pw, fh",
+                  "padding-top": "1@dp",
+                  "debrBlock": {
+                    "id": "my_stats_scroll_block",
+                    "size": "fw, ph",
+                    "flow": "vertical",
+                    "overflow-y": "auto",
+                    "scrollbarShortcuts": "yes",
+                    "css-hier-invalidate": "yes",
+                    "tdiv": {
+                      "width": "pw",
+                      "min-height": "ph",
+                      "margin": "0, 1@debrPad",
+                      "flow": "vertical",
+                      "table": {
+                        "id": "stat_table",
+                        "width": "pw",
+                        "baseRow": "rows16",
+                        "flow": "vertical",
+                        "total-input-transparent": "yes",
+                        "behavior": "PosNavigator",
+                        "navigatorShortcuts": "noSelect",
+                        "selfFocusBorder": "yes"
+                      },
+                      "tdiv": {
+                        "id": "leaderbord_stats",
+                        "width": "pw",
+                        "pos": "0, 1@debrPad",
+                        "position": "relative",
+                        "flow": "h-flow",
+                        "display": "hide"
+                      },
+                      "textareaNoTab": {
+                        "id": "stat_info_text",
+                        "width": "pw",
+                        "pos": "0, 3@debrPad",
+                        "position": "relative",
+                        "overlayTextColor": "",
+                        "text-align": "right",
+                        "text": "",
+                        "display": "hide"
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "full_width_resources",
+                  "size": "pw, ph",
+                  "flow": "h-flow",
+                  "flow-align": "center"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "debrBlock": {
+        "id": "right_block",
+        "size": "2@slot_width+1@scrollBarSize, ph",
+        "pos": "0, 1@debrMyPlaceBlockOffset",
+        "position": "relative",
+        "margin-left": "@debrBigGap",
+        "flow": "vertical",
+        "display": "hide",
+        "debrBlock": {
+          "id": "battle_tasks_block",
+          "width": "pw",
+          "max-height": "0.5ph",
+          "margin-bottom": "1@debrPad",
+          "flow": "vertical",
+          "tdiv": {
+            "size": "pw, 1@buttonHeight",
+            "background-color": "@separatorBlockColor",
+            "activeText": {
+              "width": "pw",
+              "pos": "1@debrPad, 0.5ph-0.5h",
+              "position": "relative",
+              "text": "#userlog/page/battletasks"
+            }
+          },
+          "listbox": {
+            "id": "current_battle_tasks",
+            "width": "pw",
+            "padding-left": "1@debrPad",
+            "overflow-y": "auto",
+            "flow": "vertical",
+            "scrollbarShortcuts": "left",
+            "background-color": "@frameDarkTransparentBgColor"
+          }
+        },
+        "tdiv": {
+          "id": "researches_scroll_block",
+          "size": "pw, fh",
+          "overflow-y": "auto",
+          "scrollbarShortcuts": "left",
+          "tdiv": {
+            "width": "pw",
+            "min-height": "ph",
+            "flow": "vertical",
+            "tdiv": [
+              {
+                "size": "pw, 1@buttonHeight",
+                "background-color": "@separatorBlockColor",
+                "activeText": {
+                  "width": "pw",
+                  "pos": "1@debrPad, 0.5ph-0.5h",
+                  "position": "relative",
+                  "text": "#debriefing/researched_unit"
+                }
+              },
+              {
+                "width": "pw",
+                "margin-bottom": "1@debrPad",
+                "background-color": "@frameDarkTransparentBgColor",
+                "textAreaCentered": [
+                  {
+                    "id": "no_air_text",
+                    "width": "pw",
+                    "pos": "0.5pw-0.5w, 0.5ph-0.5h",
+                    "position": "absolute",
+                    "smallFont": "yes",
+                    "text": ""
+                  },
+                  {
+                    "id": "air_item_text",
+                    "width": "pw",
+                    "pos": "0.5pw-0.5w, 0.5ph-0.5h",
+                    "position": "absolute",
+                    "smallFont": "yes",
+                    "text": ""
+                  }
+                ],
+                "rankUpList": {
+                  "id": "air_item_place",
+                  "max-width": "pw-2@debrPad",
+                  "min-height": "@slot_height+2@slot_vert_pad",
+                  "position": "relative",
+                  "pos": "0.5pw-0.5w, 0",
+                  "flow": "h-flow",
+                  "holdTooltipChildren": "yes"
+                }
+              },
+              {
+                "size": "pw, 1@buttonHeight",
+                "background-color": "@separatorBlockColor",
+                "activeText": {
+                  "width": "pw",
+                  "pos": "1@debrPad, 0.5ph-0.5h",
+                  "position": "relative",
+                  "text": "#debriefing/research_list"
+                }
+              },
+              {
+                "id": "research_list",
+                "width": "pw",
+                "flow": "vertical",
+                "background-color": "@frameDarkTransparentBgColor",
+                "textAreaCentered": {
+                  "id": "research_list_text",
+                  "width": "pw",
+                  "pos": "0.5pw-0.5w, 0.5(@slot_height + 2@slot_vert_pad)-0.5h",
+                  "position": "absolute",
+                  "smallFont": "yes",
+                  "text": ""
+                },
+                "tdiv": {
+                  "id": "modifications_objects_place",
+                  "width": "pw",
+                  "min-height": "1@slot_height + 2@slot_vert_pad",
+                  "margin-left": "1@debrPad",
+                  "flow": "vertical",
+                  "interactiveChildren": "yes"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
 }

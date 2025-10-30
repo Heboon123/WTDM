@@ -1,1534 +1,1746 @@
-selected_tag:t = ""
-bin_dump_file:t = ""
-mission_settings {
-	player {
-		army:i = 1
-		wing:t = "player"
-	}
-	player_teamB {
-		army:i = 2
-	}
-	mission {
-		type:t = "training"
-		gt_training:b = false
-		level:t = "levels/avg_tunisia_desert.bin"
-		environment:t = "Day"
-		weather:t = "cloudy"
-		gt_reload_explosives:b = false
-		isLimitedFuel:b = false
-		isLimitedAmmo:b = false
-		timeLimit:i = 30
-	}
-	briefing {
-		place_loc:t = ""
-		date_loc:t = ""
-		objective_loc:t = ""
-		music:t = "action_01"
-		viewAreaScale:r = 1
-		part {
-			event:t = ""
-			minTime:i = 0
-			slide {
-				map:b = true
-				minTime:i = 4
-				picture:t = ""
-				showAirMap:b = false
-				icon {
-					icontype:t = "tank"
-					side:t = "player"
-					target:t = "player"
-					lookAt:t = "player_look"
-				}
-				icon {
-					icontype:t = "tank"
-					side:t = "enemy"
-					target:t = "target_tank02"
-					lookAt:t = "player"
-				}
-				icon {
-					icontype:t = "tank"
-					side:t = "enemy"
-					target:t = "target_tank01"
-					lookAt:t = "player"
-				}
-				battleArea {
-					target:t = "briefing_area"
-				}
-			}
-		}
-	}
-}
-imports {
-
-}
-triggers {
-	isCategory:b = true
-	is_enabled:b = true
-	init {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			initMission {
-
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			missionSetFade {
-				mode:t = "fadeOut"
-				color:p3 = 0, 0, 0
-				time:r = 0
-			}
-			missionDestroyArea {
-				target_type:t = "ALL"
-				area:t = "area_01"
-			}
-			unitMoveTo {
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				target:t = "player_respawn"
-				target_var_name:t = ""
-				target_var_comp_op:t = "equal"
-				target_var_value:i = 0
-				target_marking:i = 0
-				waypointReachedDist:r = 10
-				recalculatePathDist:r = -1
-				follow_target:b = false
-				fastClimb:b = false
-				destTimeMode:b = false
-				teleportHeightType:t = "target"
-				useUnitHeightForTele:b = true
-				shouldKeepFormation:b = false
-				teleportHeightValue:r = 1000
-				horizontalDirectionForTeleport:b = true
-				object:t = "player"
-				move_type:t = "teleport"
-				lookat:t = "player_look"
-			}
-			unitSetProperties {
-				object:t = "target_tank01"
-				calmDetection:b = true
-				forceVisibleOnMap:b = true
-				forceLockTarget:b = false
-			}
-			unitSetProperties {
-				object:t = "target_tank02"
-				calmDetection:b = true
-				forceVisibleOnMap:b = true
-				forceLockTarget:b = false
-			}
-			playerOptions {
-				allowBailout:b = false
-			}
-			playerControls {
-				setStatus:t = "disable"
-				control:t = "ALL"
-			}
-			wait {
-				time:r = 1
-			}
-			missionSetFade {
-				mode:t = "fadeIn"
-				color:p3 = 0, 0, 0
-				time:r = 1
-			}
-			playerControls {
-				setStatus:t = "enable"
-				control:t = "ID_RANGEFINDER"
-				control:t = "AXIS_GM_SIGHT_DISTANCE"
-				control:t = "ID_TOGGLE_VIEW_GM"
-			}
-			triggerEnable {
-				target:t = "check_difficulty_spawn"
-				target:t = "start_msg1"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	check_difficulty_spawn {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			gameWhenDifficulty {
-				difficulty:t = "arcade"
-				is:t = "equal"
-			}
-		}
-		actions {
-			unitSetProperties {
-				object:t = "target_tank01"
-				isImmortal:b = true
-				isDelayed:b = true
-				stealthRadius:r = -1
-			}
-		}
-		else_actions {
-
-		}
-	}
-	start_msg1 {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			gameWhenDifficulty {
-				difficulty:t = "arcade"
-				is:t = "notEqual"
-			}
-		}
-		actions {
-			__missionSetTimeSpeed {
-				speed:r = 0
-				realtimeTriggers:b = true
-			}
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_laser_rangefinder/start1"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				item:t = "ID_CONTINUE"
-			}
-			triggerEnable {
-				target:t = "check_msg1"
-			}
-		}
-		else_actions {
-			triggerActivate {
-				target:t = "check_msg1"
-				activate_type:t = "ignoreConditions"
-				check_trigger_status:b = false
-				after_activation:t = "disable"
-			}
-		}
-	}
-	check_msg1 {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			playerShortcutPressed {
-				control:t = "ID_CONTINUE"
-			}
-		}
-		actions {
-			wait {
-				time:r = 0.5
-			}
-			triggerEnable {
-				target:t = "find_enemy"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	find_enemy {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			missionSetTimeSpeed {
-				speed:r = 1
-				realtimeTriggers:b = true
-			}
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_modifications/find_target"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-			}
-			hudElementSelectionShade {
-				element:t = "curTarget"
-				targetName:t = "target_object"
-			}
-			playerControls {
-				setStatus:t = "enable"
-				control:t = "AXIS_THROTTLE"
-				control:t = "AXIS_RUDDER"
-				control:t = "AXIS_MOUSE_AIM_X"
-				control:t = "AXIS_MOUSE_AIM_Y"
-				control:t = "AXIS_TURRET_X"
-				control:t = "AXIS_TURRET_Y"
-				control:t = "AXIS_GM_MOUSE_AIM_X"
-				control:t = "AXIS_GM_MOUSE_AIM_Y"
-			}
-			unitSetProperties {
-				object:t = "target_tank02"
-				isImmortal:b = false
-			}
-			triggerEnable {
-				target:t = "aim_target2"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	aim_target2 {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			playerWhenCursorIn {
-				cursor:t = "crosshair"
-				element:t = "curTarget"
-				targetName:t = "target_tank02"
-			}
-		}
-		actions {
-			__hudElementSelectionShade {
-				element:t = ""
-			}
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_modifications/aim"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				item:t = "ID_TOGGLE_VIEW_GM"
-			}
-			playerControls {
-				setStatus:t = "enable"
-				control:t = "ID_TOGGLE_VIEW_GM"
-			}
-			triggerEnable {
-				target:t = "aim_start2"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	aim_start2 {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			playerShortcutPressed {
-				control:t = "ID_TOGGLE_VIEW_GM"
-			}
-		}
-		actions {
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_modifications/zoom"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				item:t = "ID_ZOOM_TOGGLE"
-			}
-			playerControls {
-				setStatus:t = "enable"
-				control:t = "ID_ZOOM_TOGGLE"
-			}
-			triggerEnable {
-				target:t = "zoom_activate"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	zoom_activate {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			playerWhenOptions {
-				isZoom:b = true
-			}
-		}
-		actions {
-			triggerEnable {
-				target:t = "check_difficulty_target2"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	check_difficulty_target2 {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ANY"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			gameWhenDifficulty {
-				difficulty:t = "arcade"
-				is:t = "notEqual"
-			}
-		}
-		actions {
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_laser_rangefinder/start2"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				item:t = "ID_CONTINUE"
-			}
-			playerControls {
-				setStatus:t = "enable"
-				control:t = "ID_RANGEFINDER"
-				control:t = "AXIS_GM_SIGHT_DISTANCE"
-			}
-			triggerEnable {
-				target:t = "info_msg"
-			}
-		}
-		else_actions {
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_laser_rangefinder/shoot_arcade_new_target"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				item:t = "ID_CONTINUE"
-			}
-			triggerEnable {
-				target:t = "target_hit2_arcade"
-			}
-		}
-	}
-	info_msg {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			playerShortcutPressed {
-				control:t = "ID_CONTINUE"
-			}
-		}
-		actions {
-			wait {
-				time:r = 0.5
-			}
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_laser_rangefinder/rangefinder_aim"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				item:t = "ID_RANGEFINDER"
-			}
-			triggerEnable {
-				target:t = "rangefinder_activate2"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	target_hit2_arcade {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			playerShortcutPressed {
-				control:t = "ID_CONTINUE"
-			}
-		}
-		actions {
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_laser_rangefinder/shoot_arcade_far"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				item:t = "ID_FIRE_GM"
-			}
-			playerControls {
-				setStatus:t = "enable"
-				control:t = "ID_FIRE_GM"
-			}
-			triggerEnable {
-				target:t = "bullet_restore"
-				target:t = "target_hit2"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	rangefinder_activate2 {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			playerWhenCursorIn {
-				cursor:t = "mouseAim"
-				element:t = "curTarget"
-				targetName:t = "target_tank02"
-			}
-			playerTankRangefinderValue {
-				func:t = "more"
-				dist:i = 700
-			}
-		}
-		actions {
-			playerControls {
-				setStatus:t = "enable"
-				control:t = "ID_FIRE_GM"
-			}
-			triggerEnable {
-				target:t = "bullet_restore"
-				target:t = "target_hit2"
-				target:t = "shoot_hint_difficult"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	target_hit2 {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ANY"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			unitWhenHit {
-				target:t = "target_tank02"
-			}
-		}
-		actions {
-			triggerEnable {
-				target:t = "check_difficulty_hit"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	check_difficulty_hit {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ANY"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			gameWhenDifficulty {
-				difficulty:t = "arcade"
-				is:t = "notEqual"
-			}
-		}
-		actions {
-			playerControls {
-				setStatus:t = "disable"
-				control:t = "ID_FIRE_GM"
-			}
-			unitSetProperties {
-				object:t = "target_tank01"
-				isImmortal:b = false
-			}
-			triggerEnable {
-				target:t = "check_sight_shortcut_exist"
-			}
-		}
-		else_actions {
-			triggerEnable {
-				target:t = "mission_completed"
-			}
-		}
-	}
-	check_sight_shortcut_exist {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ANY"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			playerShortcutBounded {
-				control:t = "AXIS_GM_SIGHT_DISTANCE_rangeSet"
-			}
-		}
-		actions {
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_laser_rangefinder/shoot_new_target"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				item:t = "ID_CONTINUE"
-			}
-			triggerEnable {
-				target:t = "check_sight_shortcut_msg"
-			}
-		}
-		else_actions {
-			playerControls {
-				setStatus:t = "enable"
-				control:t = "ID_TOGGLE_VIEW_GM"
-			}
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_modifications/aim_exit"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				item:t = "ID_TOGGLE_VIEW_GM"
-			}
-			triggerEnable {
-				target:t = "change_target"
-			}
-		}
-	}
-	check_sight_shortcut_msg {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ANY"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			playerShortcutPressed {
-				control:t = "ID_CONTINUE"
-			}
-		}
-		actions {
-			playerControls {
-				setStatus:t = "enable"
-				control:t = "AXIS_GM_SIGHT_DISTANCE"
-			}
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_laser_rangefinder/range_set"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				item:t = "gm_sight_distance_rangeSet"
-			}
-			triggerEnable {
-				target:t = "check_sight_shortcut_press"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	check_sight_shortcut_press {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ANY"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			playerShortcutPressed {
-				control:t = "AXIS_GM_SIGHT_DISTANCE_rangeSet"
-			}
-		}
-		actions {
-			playerControls {
-				setStatus:t = "enable"
-				control:t = "ID_TOGGLE_VIEW_GM"
-			}
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_modifications/aim_exit"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				item:t = "ID_TOGGLE_VIEW_GM"
-			}
-			triggerEnable {
-				target:t = "change_target"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	change_target {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			playerShortcutPressed {
-				control:t = "ID_TOGGLE_VIEW_GM"
-			}
-		}
-		actions {
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_modifications/find_next_target"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-			}
-			hudElementSelectionShade {
-				element:t = "curTarget"
-				targetName:t = "target_tank01"
-			}
-			playerControls {
-				setStatus:t = "disable"
-				control:t = "ID_TOGGLE_VIEW_GM"
-			}
-			triggerEnable {
-				target:t = "aim_target1"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	aim_target1 {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			playerWhenCursorIn {
-				cursor:t = "crosshair"
-				element:t = "curTarget"
-				targetName:t = "target_tank01"
-			}
-		}
-		actions {
-			hudElementSelectionShade {
-				element:t = ""
-			}
-			__unitSetProperties {
-				object:t = "target_tank02"
-				isImmortal:b = true
-			}
-			unitSetProperties {
-				object:t = "target_tank01"
-				isImmortal:b = false
-			}
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_modifications/aim"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				item:t = "ID_TOGGLE_VIEW_GM"
-			}
-			playerControls {
-				setStatus:t = "enable"
-				control:t = "ID_TOGGLE_VIEW_GM"
-			}
-			triggerEnable {
-				target:t = "aim_start1"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	aim_start1 {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			playerShortcutPressed {
-				control:t = "ID_TOGGLE_VIEW_GM"
-			}
-		}
-		actions {
-			playerControls {
-				setStatus:t = "enable"
-				control:t = "ID_ZOOM_TOGGLE"
-				control:t = "ID_RANGEFINDER"
-				control:t = "AXIS_GM_SIGHT_DISTANCE"
-			}
-			triggerEnable {
-				target:t = "aim_start1_check"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	aim_start1_check {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			playerShortcutBounded {
-				control:t = "AXIS_GM_SIGHT_DISTANCE_rangeSet"
-			}
-		}
-		actions {
-			triggerActivate {
-				target:t = "find_target1"
-				activate_type:t = "ignoreConditions"
-				check_trigger_status:b = false
-				after_activation:t = "disable"
-			}
-		}
-		else_actions {
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_laser_rangefinder/shoot_new_target"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				item:t = "ID_CONTINUE"
-			}
-			triggerEnable {
-				target:t = "find_target1"
-			}
-		}
-	}
-	find_target1 {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			playerShortcutPressed {
-				control:t = "ID_CONTINUE"
-			}
-		}
-		actions {
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_laser_rangefinder/rangefinder_aim"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				item:t = "ID_RANGEFINDER"
-			}
-			hudElementSelectionShade {
-				element:t = ""
-			}
-			triggerEnable {
-				target:t = "rangefinder_activate1"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	rangefinder_activate1 {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			playerWhenCursorIn {
-				cursor:t = "mouseAim"
-				element:t = "curTarget"
-				targetName:t = "target_tank01"
-			}
-			playerTankRangefinderValue {
-				func:t = "more"
-				dist:i = 130
-			}
-			playerTankRangefinderValue {
-				func:t = "less"
-				dist:i = 140
-			}
-		}
-		actions {
-			__playerControls {
-				setStatus:t = "disable"
-				control:t = "ID_RANGEFINDER"
-				control:t = "AXIS_GM_SIGHT_DISTANCE"
-			}
-			playerControls {
-				setStatus:t = "enable"
-				control:t = "ID_FIRE_GM"
-			}
-			triggerEnable {
-				target:t = "bullet_restore"
-				target:t = "target_hit1"
-				target:t = "shoot_hint_difficult"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	shoot_hint_difficult {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			gameWhenDifficulty {
-				difficulty:t = "simulator"
-				is:t = "equal"
-			}
-		}
-		actions {
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_laser_rangefinder/shoot_sim"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				item:t = "ID_FIRE_GM"
-			}
-		}
-		else_actions {
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_laser_rangefinder/shoot"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				item:t = "ID_FIRE_GM"
-			}
-		}
-	}
-	bullet_restore {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			playerShortcutPressed {
-				control:t = "ID_FIRE_GM"
-			}
-		}
-		actions {
-			wait {
-				time:r = 1
-			}
-			unitRestore {
-				target_marking:i = 0
-				ressurectIfDead:b = false
-				fullRestore:b = true
-				target:t = "player"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	target_hit1 {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ANY"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			unitWhenHit {
-				target:t = "target_tank01"
-			}
-		}
-		actions {
-			__unitDamage {
-				power:r = 1
-				useEffect:b = false
-				countEffects:i = 1
-				delay:p2 = 1, 1
-				offset:p3 = 0, 0, 0
-				radiusOffset:p2 = 10, 15
-				target:t = "target_tank01"
-				doExplosion:b = true
-			}
-			__playHint {
-				hintType:t = "standard"
-				name:t = "hints/tank_laser_rangefinder/shoot_new_target"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				item:t = "ID_CONTINUE"
-			}
-			triggerEnable {
-				target:t = "mission_completed"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	mission_completed {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			playHint {
-				hintType:t = "standard"
-				name:t = ""
-				action:t = "hide"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = -1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-			}
-			missionCompleted {
-				timer:b = false
-				debriefingTimer:i = 5
-			}
-		}
-		else_actions {
-
-		}
-	}
-	debug {
-		isCategory:b = true
-		is_enabled:b = true
-	}
-}
-mission_objectives {
-	isCategory:b = true
-	is_enabled:b = true
-}
-variables {
-
-}
-dialogs {
-
-}
-airfields {
-
-}
-effects {
-
-}
-units {
-	tankModels {
-		name:t = "target_tank02"
-		tm:m = [[0.048554, 0.0, 0.998821] [0.0, 1.0, 0.0] [-0.998821, 0.0, 0.048554] [1918.9, 16.8108, 2263.15]]
-		unit_class:t = "us_m1_abrams"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			attack_type:t = "dont_aim"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "target_tank01"
-		tm:m = [[-0.558496, -0.232963, 0.796122] [-0.382679, 0.92388, 0.00189055] [-0.735962, -0.303603, -0.605133] [2338.27, 8.00284, 2806.79]]
-		unit_class:t = "us_m1_abrams"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			attack_type:t = "dont_aim"
-		}
-		way {
-
-		}
-	}
-	tankModels {
-		name:t = "player"
-		tm:m = [[-6.46568, 0.000451323, -7.62856] [-1.04773, 9.90518, 0.888601] [7.55627, 1.37381, -6.40432] [2461.95, 18.9998, 2857.15]]
-		unit_class:t = "ussr_t_80u"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 50
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		modification:t = "modern_tank_laser_rangefinder"
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 1
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-		}
-		way {
-
-		}
-	}
-	structures {
-		name:t = "target_object"
-		tm:m = [[0.048554, 0.0, 0.998821] [0.0, 1.0, 0.0] [-0.998821, 0.0, 0.048554] [1985.45, 16.8108, 2330.8]]
-		unit_class:t = "tank_target_25_char"
-		objLayer:i = 1
-		closed_waypoints:b = false
-		isShipSpline:b = false
-		shipTurnRadius:r = 100
-		weapons:t = ""
-		bullets0:t = ""
-		bullets1:t = ""
-		bullets2:t = ""
-		bullets3:t = ""
-		bulletsCount0:i = 0
-		bulletsCount1:i = 0
-		bulletsCount2:i = 0
-		bulletsCount3:i = 0
-		crewSkillK:r = 0
-		applyAllMods:b = false
-		props {
-			army:i = 2
-			count:i = 1
-			formation_type:t = "rows"
-			formation_div:i = 3
-			formation_step:p2 = 2.5, 2
-			formation_noise:p2 = 0.1, 0.1
-			isDelayed:b = true
-			setStealth:b = true
-			targetAir:b = false
-			targetGnd:b = false
-		}
-		way {
-
-		}
-	}
-}
-areas {
-	target2_respawn_pt {
-		type:t = "Sphere"
-		tm:m = [[0.048554, 0.0, 0.998821] [0.0, 1.0, 0.0] [-0.998821, 0.0, 0.048554] [1921.53, 17.9038, 2267.14]]
-		objLayer:i = 0
-		props {
-			forceReplication:b = true
-		}
-	}
-	target1_respawn_pt {
-		type:t = "Sphere"
-		tm:m = [[0.048554, 0.0, 0.998821] [0.0, 1.0, 0.0] [-0.998821, 0.0, 0.048554] [2335.84, 7.48134, 2802.72]]
-		objLayer:i = 0
-		props {
-			forceReplication:b = true
-		}
-	}
-	player_respawn {
-		type:t = "Sphere"
-		tm:m = [[0.048554, 0.0, 0.998821] [0.0, 1.0, 0.0] [-0.998821, 0.0, 0.048554] [2463.51, 19.15, 2858.03]]
-		objLayer:i = 0
-		props {
-			forceReplication:b = true
-		}
-	}
-	player_look {
-		type:t = "Sphere"
-		tm:m = [[0.048554, 0.0, 0.998821] [0.0, 1.0, 0.0] [-0.998821, 0.0, 0.048554] [2307.56, 25.3068, 2682.99]]
-		objLayer:i = 0
-		props {
-			forceReplication:b = true
-		}
-	}
-	briefing_area {
-		type:t = "Box"
-		tm:m = [[-1354.85, 0.0, 0.0] [0.0, 115.45, 0.0] [0.0, 0.0, -1672.2] [2318.05, 93.9502, 2788.9]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-	area_01 {
-		type:t = "Box"
-		tm:m = [[184.55, 0.0, 0.0] [0.0, 20.9, 0.0] [0.0, 0.0, 73.1499] [2346.27, 6.9, 2867.5]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-}
-objLayers {
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = false
-	}
-}
-wayPoints {
-
+{
+  "selected_tag": "",
+  "bin_dump_file": "",
+  "mission_settings": {
+    "player": {
+      "army": 1,
+      "wing": "player"
+    },
+    "player_teamB": {
+      "army": 2
+    },
+    "mission": {
+      "type": "training",
+      "gt_training": false,
+      "level": "levels/avg_tunisia_desert.bin",
+      "environment": "Day",
+      "weather": "cloudy",
+      "gt_reload_explosives": false,
+      "isLimitedFuel": false,
+      "isLimitedAmmo": false,
+      "timeLimit": 30
+    },
+    "briefing": {
+      "place_loc": "",
+      "date_loc": "",
+      "objective_loc": "",
+      "music": "action_01",
+      "viewAreaScale": 1.0,
+      "part": {
+        "event": "",
+        "minTime": 0,
+        "slide": {
+          "map": true,
+          "minTime": 4,
+          "picture": "",
+          "showAirMap": false,
+          "icon": [
+            {
+              "icontype": "tank",
+              "side": "player",
+              "target": "player",
+              "lookAt": "player_look"
+            },
+            {
+              "icontype": "tank",
+              "side": "enemy",
+              "target": "target_tank02",
+              "lookAt": "player"
+            },
+            {
+              "icontype": "tank",
+              "side": "enemy",
+              "target": "target_tank01",
+              "lookAt": "player"
+            }
+          ],
+          "battleArea": {
+            "target": "briefing_area"
+          }
+        }
+      }
+    }
+  },
+  "imports": {},
+  "triggers": {
+    "isCategory": true,
+    "is_enabled": true,
+    "init": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "initMission": {}
+      },
+      "conditions": {},
+      "actions": {
+        "missionSetFade": [
+          {
+            "mode": "fadeOut",
+            "color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "time": 0.0
+          },
+          {
+            "mode": "fadeIn",
+            "color": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "time": 1.0
+          }
+        ],
+        "missionDestroyArea": {
+          "target_type": "ALL",
+          "area": "area_01"
+        },
+        "unitMoveTo": {
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target": "player_respawn",
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "follow_target": false,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "teleportHeightType": "target",
+          "useUnitHeightForTele": true,
+          "shouldKeepFormation": false,
+          "teleportHeightValue": 1000.0,
+          "horizontalDirectionForTeleport": true,
+          "object": "player",
+          "move_type": "teleport",
+          "lookat": "player_look"
+        },
+        "unitSetProperties": [
+          {
+            "object": "target_tank01",
+            "calmDetection": true,
+            "forceVisibleOnMap": true,
+            "forceLockTarget": false
+          },
+          {
+            "object": "target_tank02",
+            "calmDetection": true,
+            "forceVisibleOnMap": true,
+            "forceLockTarget": false
+          }
+        ],
+        "playerOptions": {
+          "allowBailout": false
+        },
+        "playerControls": [
+          {
+            "setStatus": "disable",
+            "control": "ALL"
+          },
+          {
+            "setStatus": "enable",
+            "control": [
+              "ID_RANGEFINDER",
+              "AXIS_GM_SIGHT_DISTANCE",
+              "ID_TOGGLE_VIEW_GM"
+            ]
+          }
+        ],
+        "wait": {
+          "time": 1.0
+        },
+        "triggerEnable": {
+          "target": [
+            "check_difficulty_spawn",
+            "start_msg1"
+          ]
+        }
+      },
+      "else_actions": {}
+    },
+    "check_difficulty_spawn": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "gameWhenDifficulty": {
+          "difficulty": "arcade",
+          "is": "equal"
+        }
+      },
+      "actions": {
+        "unitSetProperties": {
+          "object": "target_tank01",
+          "isImmortal": true,
+          "isDelayed": true,
+          "stealthRadius": -1.0
+        }
+      },
+      "else_actions": {}
+    },
+    "start_msg1": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "gameWhenDifficulty": {
+          "difficulty": "arcade",
+          "is": "notEqual"
+        }
+      },
+      "actions": {
+        "__missionSetTimeSpeed": {
+          "speed": 0.0,
+          "realtimeTriggers": true
+        },
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_laser_rangefinder/start1",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "item": "ID_CONTINUE"
+        },
+        "triggerEnable": {
+          "target": "check_msg1"
+        }
+      },
+      "else_actions": {
+        "triggerActivate": {
+          "target": "check_msg1",
+          "activate_type": "ignoreConditions",
+          "check_trigger_status": false,
+          "after_activation": "disable"
+        }
+      }
+    },
+    "check_msg1": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerShortcutPressed": {
+          "control": "ID_CONTINUE"
+        }
+      },
+      "actions": {
+        "wait": {
+          "time": 0.5
+        },
+        "triggerEnable": {
+          "target": "find_enemy"
+        }
+      },
+      "else_actions": {}
+    },
+    "find_enemy": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {},
+      "actions": {
+        "missionSetTimeSpeed": {
+          "speed": 1.0,
+          "realtimeTriggers": true
+        },
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_modifications/find_target",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0
+        },
+        "hudElementSelectionShade": {
+          "element": "curTarget",
+          "targetName": "target_object"
+        },
+        "playerControls": {
+          "setStatus": "enable",
+          "control": [
+            "AXIS_THROTTLE",
+            "AXIS_RUDDER",
+            "AXIS_MOUSE_AIM_X",
+            "AXIS_MOUSE_AIM_Y",
+            "AXIS_TURRET_X",
+            "AXIS_TURRET_Y",
+            "AXIS_GM_MOUSE_AIM_X",
+            "AXIS_GM_MOUSE_AIM_Y"
+          ]
+        },
+        "unitSetProperties": {
+          "object": "target_tank02",
+          "isImmortal": false
+        },
+        "triggerEnable": {
+          "target": "aim_target2"
+        }
+      },
+      "else_actions": {}
+    },
+    "aim_target2": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerWhenCursorIn": {
+          "cursor": "crosshair",
+          "element": "curTarget",
+          "targetName": "target_tank02"
+        }
+      },
+      "actions": {
+        "__hudElementSelectionShade": {
+          "element": ""
+        },
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_modifications/aim",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "item": "ID_TOGGLE_VIEW_GM"
+        },
+        "playerControls": {
+          "setStatus": "enable",
+          "control": "ID_TOGGLE_VIEW_GM"
+        },
+        "triggerEnable": {
+          "target": "aim_start2"
+        }
+      },
+      "else_actions": {}
+    },
+    "aim_start2": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerShortcutPressed": {
+          "control": "ID_TOGGLE_VIEW_GM"
+        }
+      },
+      "actions": {
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_modifications/zoom",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "item": "ID_ZOOM_TOGGLE"
+        },
+        "playerControls": {
+          "setStatus": "enable",
+          "control": "ID_ZOOM_TOGGLE"
+        },
+        "triggerEnable": {
+          "target": "zoom_activate"
+        }
+      },
+      "else_actions": {}
+    },
+    "zoom_activate": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerWhenOptions": {
+          "isZoom": true
+        }
+      },
+      "actions": {
+        "triggerEnable": {
+          "target": "check_difficulty_target2"
+        }
+      },
+      "else_actions": {}
+    },
+    "check_difficulty_target2": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ANY",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "gameWhenDifficulty": {
+          "difficulty": "arcade",
+          "is": "notEqual"
+        }
+      },
+      "actions": {
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_laser_rangefinder/start2",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "item": "ID_CONTINUE"
+        },
+        "playerControls": {
+          "setStatus": "enable",
+          "control": [
+            "ID_RANGEFINDER",
+            "AXIS_GM_SIGHT_DISTANCE"
+          ]
+        },
+        "triggerEnable": {
+          "target": "info_msg"
+        }
+      },
+      "else_actions": {
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_laser_rangefinder/shoot_arcade_new_target",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "item": "ID_CONTINUE"
+        },
+        "triggerEnable": {
+          "target": "target_hit2_arcade"
+        }
+      }
+    },
+    "info_msg": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerShortcutPressed": {
+          "control": "ID_CONTINUE"
+        }
+      },
+      "actions": {
+        "wait": {
+          "time": 0.5
+        },
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_laser_rangefinder/rangefinder_aim",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "item": "ID_RANGEFINDER"
+        },
+        "triggerEnable": {
+          "target": "rangefinder_activate2"
+        }
+      },
+      "else_actions": {}
+    },
+    "target_hit2_arcade": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerShortcutPressed": {
+          "control": "ID_CONTINUE"
+        }
+      },
+      "actions": {
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_laser_rangefinder/shoot_arcade_far",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "item": "ID_FIRE_GM"
+        },
+        "playerControls": {
+          "setStatus": "enable",
+          "control": "ID_FIRE_GM"
+        },
+        "triggerEnable": {
+          "target": [
+            "bullet_restore",
+            "target_hit2"
+          ]
+        }
+      },
+      "else_actions": {}
+    },
+    "rangefinder_activate2": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerWhenCursorIn": {
+          "cursor": "mouseAim",
+          "element": "curTarget",
+          "targetName": "target_tank02"
+        },
+        "playerTankRangefinderValue": {
+          "func": "more",
+          "dist": 700
+        }
+      },
+      "actions": {
+        "playerControls": {
+          "setStatus": "enable",
+          "control": "ID_FIRE_GM"
+        },
+        "triggerEnable": {
+          "target": [
+            "bullet_restore",
+            "target_hit2",
+            "shoot_hint_difficult"
+          ]
+        }
+      },
+      "else_actions": {}
+    },
+    "target_hit2": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ANY",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "unitWhenHit": {
+          "target": "target_tank02"
+        }
+      },
+      "actions": {
+        "triggerEnable": {
+          "target": "check_difficulty_hit"
+        }
+      },
+      "else_actions": {}
+    },
+    "check_difficulty_hit": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ANY",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "gameWhenDifficulty": {
+          "difficulty": "arcade",
+          "is": "notEqual"
+        }
+      },
+      "actions": {
+        "playerControls": {
+          "setStatus": "disable",
+          "control": "ID_FIRE_GM"
+        },
+        "unitSetProperties": {
+          "object": "target_tank01",
+          "isImmortal": false
+        },
+        "triggerEnable": {
+          "target": "check_sight_shortcut_exist"
+        }
+      },
+      "else_actions": {
+        "triggerEnable": {
+          "target": "mission_completed"
+        }
+      }
+    },
+    "check_sight_shortcut_exist": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ANY",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerShortcutBounded": {
+          "control": "AXIS_GM_SIGHT_DISTANCE_rangeSet"
+        }
+      },
+      "actions": {
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_laser_rangefinder/shoot_new_target",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "item": "ID_CONTINUE"
+        },
+        "triggerEnable": {
+          "target": "check_sight_shortcut_msg"
+        }
+      },
+      "else_actions": {
+        "playerControls": {
+          "setStatus": "enable",
+          "control": "ID_TOGGLE_VIEW_GM"
+        },
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_modifications/aim_exit",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "item": "ID_TOGGLE_VIEW_GM"
+        },
+        "triggerEnable": {
+          "target": "change_target"
+        }
+      }
+    },
+    "check_sight_shortcut_msg": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ANY",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerShortcutPressed": {
+          "control": "ID_CONTINUE"
+        }
+      },
+      "actions": {
+        "playerControls": {
+          "setStatus": "enable",
+          "control": "AXIS_GM_SIGHT_DISTANCE"
+        },
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_laser_rangefinder/range_set",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "item": "gm_sight_distance_rangeSet"
+        },
+        "triggerEnable": {
+          "target": "check_sight_shortcut_press"
+        }
+      },
+      "else_actions": {}
+    },
+    "check_sight_shortcut_press": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ANY",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerShortcutPressed": {
+          "control": "AXIS_GM_SIGHT_DISTANCE_rangeSet"
+        }
+      },
+      "actions": {
+        "playerControls": {
+          "setStatus": "enable",
+          "control": "ID_TOGGLE_VIEW_GM"
+        },
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_modifications/aim_exit",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "item": "ID_TOGGLE_VIEW_GM"
+        },
+        "triggerEnable": {
+          "target": "change_target"
+        }
+      },
+      "else_actions": {}
+    },
+    "change_target": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerShortcutPressed": {
+          "control": "ID_TOGGLE_VIEW_GM"
+        }
+      },
+      "actions": {
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_modifications/find_next_target",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0
+        },
+        "hudElementSelectionShade": {
+          "element": "curTarget",
+          "targetName": "target_tank01"
+        },
+        "playerControls": {
+          "setStatus": "disable",
+          "control": "ID_TOGGLE_VIEW_GM"
+        },
+        "triggerEnable": {
+          "target": "aim_target1"
+        }
+      },
+      "else_actions": {}
+    },
+    "aim_target1": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerWhenCursorIn": {
+          "cursor": "crosshair",
+          "element": "curTarget",
+          "targetName": "target_tank01"
+        }
+      },
+      "actions": {
+        "hudElementSelectionShade": {
+          "element": ""
+        },
+        "__unitSetProperties": {
+          "object": "target_tank02",
+          "isImmortal": true
+        },
+        "unitSetProperties": {
+          "object": "target_tank01",
+          "isImmortal": false
+        },
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_modifications/aim",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "item": "ID_TOGGLE_VIEW_GM"
+        },
+        "playerControls": {
+          "setStatus": "enable",
+          "control": "ID_TOGGLE_VIEW_GM"
+        },
+        "triggerEnable": {
+          "target": "aim_start1"
+        }
+      },
+      "else_actions": {}
+    },
+    "aim_start1": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerShortcutPressed": {
+          "control": "ID_TOGGLE_VIEW_GM"
+        }
+      },
+      "actions": {
+        "playerControls": {
+          "setStatus": "enable",
+          "control": [
+            "ID_ZOOM_TOGGLE",
+            "ID_RANGEFINDER",
+            "AXIS_GM_SIGHT_DISTANCE"
+          ]
+        },
+        "triggerEnable": {
+          "target": "aim_start1_check"
+        }
+      },
+      "else_actions": {}
+    },
+    "aim_start1_check": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerShortcutBounded": {
+          "control": "AXIS_GM_SIGHT_DISTANCE_rangeSet"
+        }
+      },
+      "actions": {
+        "triggerActivate": {
+          "target": "find_target1",
+          "activate_type": "ignoreConditions",
+          "check_trigger_status": false,
+          "after_activation": "disable"
+        }
+      },
+      "else_actions": {
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_laser_rangefinder/shoot_new_target",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "item": "ID_CONTINUE"
+        },
+        "triggerEnable": {
+          "target": "find_target1"
+        }
+      }
+    },
+    "find_target1": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerShortcutPressed": {
+          "control": "ID_CONTINUE"
+        }
+      },
+      "actions": {
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_laser_rangefinder/rangefinder_aim",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "item": "ID_RANGEFINDER"
+        },
+        "hudElementSelectionShade": {
+          "element": ""
+        },
+        "triggerEnable": {
+          "target": "rangefinder_activate1"
+        }
+      },
+      "else_actions": {}
+    },
+    "rangefinder_activate1": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerWhenCursorIn": {
+          "cursor": "mouseAim",
+          "element": "curTarget",
+          "targetName": "target_tank01"
+        },
+        "playerTankRangefinderValue": [
+          {
+            "func": "more",
+            "dist": 130
+          },
+          {
+            "func": "less",
+            "dist": 140
+          }
+        ]
+      },
+      "actions": {
+        "__playerControls": {
+          "setStatus": "disable",
+          "control": [
+            "ID_RANGEFINDER",
+            "AXIS_GM_SIGHT_DISTANCE"
+          ]
+        },
+        "playerControls": {
+          "setStatus": "enable",
+          "control": "ID_FIRE_GM"
+        },
+        "triggerEnable": {
+          "target": [
+            "bullet_restore",
+            "target_hit1",
+            "shoot_hint_difficult"
+          ]
+        }
+      },
+      "else_actions": {}
+    },
+    "shoot_hint_difficult": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "gameWhenDifficulty": {
+          "difficulty": "simulator",
+          "is": "equal"
+        }
+      },
+      "actions": {
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_laser_rangefinder/shoot_sim",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "item": "ID_FIRE_GM"
+        }
+      },
+      "else_actions": {
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_laser_rangefinder/shoot",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "item": "ID_FIRE_GM"
+        }
+      }
+    },
+    "bullet_restore": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerShortcutPressed": {
+          "control": "ID_FIRE_GM"
+        }
+      },
+      "actions": {
+        "wait": {
+          "time": 1.0
+        },
+        "unitRestore": {
+          "target_marking": 0,
+          "ressurectIfDead": false,
+          "fullRestore": true,
+          "target": "player"
+        }
+      },
+      "else_actions": {}
+    },
+    "target_hit1": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ANY",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "unitWhenHit": {
+          "target": "target_tank01"
+        }
+      },
+      "actions": {
+        "__unitDamage": {
+          "power": 1.0,
+          "useEffect": false,
+          "countEffects": 1,
+          "delay": [
+            1.0,
+            1.0
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "radiusOffset": [
+            10.0,
+            15.0
+          ],
+          "target": "target_tank01",
+          "doExplosion": true
+        },
+        "__playHint": {
+          "hintType": "standard",
+          "name": "hints/tank_laser_rangefinder/shoot_new_target",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "item": "ID_CONTINUE"
+        },
+        "triggerEnable": {
+          "target": "mission_completed"
+        }
+      },
+      "else_actions": {}
+    },
+    "mission_completed": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {},
+      "actions": {
+        "playHint": {
+          "hintType": "standard",
+          "name": "",
+          "action": "hide",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": -1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0
+        },
+        "missionCompleted": {
+          "timer": false,
+          "debriefingTimer": 5
+        }
+      },
+      "else_actions": {}
+    },
+    "debug": {
+      "isCategory": true,
+      "is_enabled": true
+    }
+  },
+  "mission_objectives": {
+    "isCategory": true,
+    "is_enabled": true
+  },
+  "variables": {},
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {
+    "tankModels": [
+      {
+        "name": "target_tank02",
+        "tm": [
+          [
+            0.048554,
+            0.0,
+            0.998821
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.998821,
+            0.0,
+            0.048554
+          ],
+          [
+            1918.9,
+            16.8108,
+            2263.15
+          ]
+        ],
+        "unit_class": "us_m1_abrams",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "attack_type": "dont_aim"
+        },
+        "way": {}
+      },
+      {
+        "name": "target_tank01",
+        "tm": [
+          [
+            -0.558496,
+            -0.232963,
+            0.796122
+          ],
+          [
+            -0.382679,
+            0.92388,
+            0.00189055
+          ],
+          [
+            -0.735962,
+            -0.303603,
+            -0.605133
+          ],
+          [
+            2338.27,
+            8.00284,
+            2806.79
+          ]
+        ],
+        "unit_class": "us_m1_abrams",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "attack_type": "dont_aim"
+        },
+        "way": {}
+      },
+      {
+        "name": "player",
+        "tm": [
+          [
+            -6.46568,
+            0.000451323,
+            -7.62856
+          ],
+          [
+            -1.04773,
+            9.90518,
+            0.888601
+          ],
+          [
+            7.55627,
+            1.37381,
+            -6.40432
+          ],
+          [
+            2461.95,
+            18.9998,
+            2857.15
+          ]
+        ],
+        "unit_class": "ussr_t_80u",
+        "objLayer": 1,
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 50,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "modification": "modern_tank_laser_rangefinder",
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 1,
+          "count": 1,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            2.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ]
+        },
+        "way": {}
+      }
+    ],
+    "structures": {
+      "name": "target_object",
+      "tm": [
+        [
+          0.048554,
+          0.0,
+          0.998821
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -0.998821,
+          0.0,
+          0.048554
+        ],
+        [
+          1985.45,
+          16.8108,
+          2330.8
+        ]
+      ],
+      "unit_class": "tank_target_25_char",
+      "objLayer": 1,
+      "closed_waypoints": false,
+      "isShipSpline": false,
+      "shipTurnRadius": 100.0,
+      "weapons": "",
+      "bullets0": "",
+      "bullets1": "",
+      "bullets2": "",
+      "bullets3": "",
+      "bulletsCount0": 0,
+      "bulletsCount1": 0,
+      "bulletsCount2": 0,
+      "bulletsCount3": 0,
+      "crewSkillK": 0.0,
+      "applyAllMods": false,
+      "props": {
+        "army": 2,
+        "count": 1,
+        "formation_type": "rows",
+        "formation_div": 3,
+        "formation_step": [
+          2.5,
+          2.0
+        ],
+        "formation_noise": [
+          0.1,
+          0.1
+        ],
+        "isDelayed": true,
+        "setStealth": true,
+        "targetAir": false,
+        "targetGnd": false
+      },
+      "way": {}
+    }
+  },
+  "areas": {
+    "target2_respawn_pt": {
+      "type": "Sphere",
+      "tm": [
+        [
+          0.048554,
+          0.0,
+          0.998821
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -0.998821,
+          0.0,
+          0.048554
+        ],
+        [
+          1921.53,
+          17.9038,
+          2267.14
+        ]
+      ],
+      "objLayer": 0,
+      "props": {
+        "forceReplication": true
+      }
+    },
+    "target1_respawn_pt": {
+      "type": "Sphere",
+      "tm": [
+        [
+          0.048554,
+          0.0,
+          0.998821
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -0.998821,
+          0.0,
+          0.048554
+        ],
+        [
+          2335.84,
+          7.48134,
+          2802.72
+        ]
+      ],
+      "objLayer": 0,
+      "props": {
+        "forceReplication": true
+      }
+    },
+    "player_respawn": {
+      "type": "Sphere",
+      "tm": [
+        [
+          0.048554,
+          0.0,
+          0.998821
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -0.998821,
+          0.0,
+          0.048554
+        ],
+        [
+          2463.51,
+          19.15,
+          2858.03
+        ]
+      ],
+      "objLayer": 0,
+      "props": {
+        "forceReplication": true
+      }
+    },
+    "player_look": {
+      "type": "Sphere",
+      "tm": [
+        [
+          0.048554,
+          0.0,
+          0.998821
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -0.998821,
+          0.0,
+          0.048554
+        ],
+        [
+          2307.56,
+          25.3068,
+          2682.99
+        ]
+      ],
+      "objLayer": 0,
+      "props": {
+        "forceReplication": true
+      }
+    },
+    "briefing_area": {
+      "type": "Box",
+      "tm": [
+        [
+          -1354.85,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          115.45,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -1672.2
+        ],
+        [
+          2318.05,
+          93.9502,
+          2788.9
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    },
+    "area_01": {
+      "type": "Box",
+      "tm": [
+        [
+          184.55,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          20.9,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          73.1499
+        ],
+        [
+          2346.27,
+          6.9,
+          2867.5
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    }
+  },
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": false
+      }
+    ]
+  },
+  "wayPoints": {}
 }

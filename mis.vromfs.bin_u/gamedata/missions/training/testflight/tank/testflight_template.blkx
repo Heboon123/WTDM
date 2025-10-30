@@ -1,1693 +1,1797 @@
-selected_tag:t = ""
-bin_dump_file:t = ""
-mission_settings {
-	player {
-		army:i = 1
-		wing:t = "t1_player01"
-	}
-	player_teamB {
-		army:i = 2
-	}
-	mission {
-		type:t = "singleMission"
-		level:t = "levels/avg_training_ground.bin"
-		environment:t = "Day"
-		weather:t = "hazy"
-		restoreType:t = "attempts"
-		optionalTakeOff:b = false
-	}
-	spectator_points {
-
-	}
-}
-imports {
-	import_record {
-		file:t = "gameData/missions/training/testFlight/tank/testFlight_sound_areas.blk"
-		importAreas:b = true
-		importUnits:b = true
-		importTriggers:b = true
-		importMissionObjectives:b = true
-		importWayPoints:b = true
-		importDialogs:b = true
-		showAreas:b = true
-		showUnits:b = true
-		showTriggers:b = true
-		showMissionObjectives:b = true
-		showWayPoints:b = true
-		showDialogs:b = true
-		excludes {
-
-		}
-	}
-}
-triggers {
-	isCategory:b = true
-	is_enabled:b = true
-	init {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			initMission {
-
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			varSetString {
-				value:t = "target_tanks_squad"
-				var:t = "target_tanks_squad"
-			}
-			varSetString {
-				value:t = "t1_player01"
-				var:t = "player"
-			}
-			unitPutToSleep {
-				target:t = "@target_tanks_squad"
-				target:t = "flight_target01"
-			}
-			missionMarkAsRespawnPoint {
-				loc_name:t = ""
-				spawnEffect:b = false
-				isGroundZone:b = false
-				radius:r = -1
-				target:t = "artillery_spawn01"
-				target:t = "artillery_spawn02"
-				target:t = "artillery_spawn03"
-				target:t = "artillery_spawn04"
-				team:t = "A"
-				isStrictSpawn:b = false
-				resetStrictSpawnIndex:b = false
-				isAirfield:b = false
-				isUnit:b = false
-				forceCreate:b = false
-				useExisting:b = false
-				ignoreTeamsOnReuse:b = false
-				isIndividual:b = false
-				onlyOnePlayerPerSpawnPoint:b = false
-				removeAreas:b = false
-				replaceAreas:b = false
-				canSpawnOnNeutral:b = false
-				showOnMap:b = true
-				tags {
-					artillery:b = true
-				}
-			}
-		}
-		else_actions {
-
-		}
-	}
-	end {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = true
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			playersWhenStatus {
-				players:t = "isKilled"
-				check_players:t = "any"
-			}
-		}
-		actions {
-			wait {
-				time:r = 3
-			}
-			unitRespawn {
-				delay:r = 1
-				offset:p3 = 0, 0, 0
-				object:t = "t1_player01"
-				target:t = "spawn01"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	name_assemble {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			varSetString {
-				value:t = "target_tank"
-				var:t = "target_tank"
-			}
-			varSetString {
-				value:t = "tank_spawn_area"
-				var:t = "tank_spawn_area"
-			}
-			varAddString {
-				value:t = ""
-				digits:i = 2
-				var:t = "target_tank"
-				input_var:t = "tank_num"
-			}
-			varAddString {
-				value:t = ""
-				digits:i = 2
-				var:t = "tank_spawn_area"
-				input_var:t = "tank_num"
-			}
-			triggerEnable {
-				target:t = "check_exist"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	check_exist {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			objectExists {
-				target:t = "@target_tank"
-				type:t = "unit"
-			}
-		}
-		actions {
-			unitSetProperties {
-				object:t = "@target_tank"
-				forceVisibleOnMap:b = true
-				attack_type:t = "dont_aim"
-			}
-			unitRespawn {
-				delay:r = 1
-				offset:p3 = 0, 0, 0
-				object:t = "@target_tank"
-				target:t = "@tank_spawn_area"
-			}
-			unitSetVar {
-				object_var_name:t = "killed"
-				object:t = "@target_tank"
-				object_var_value:i = 0
-			}
-			unitSetVar {
-				object_var_name:t = "self_name"
-				object:t = "@target_tank"
-				object_var_string:t = "@target_tank"
-			}
-			unitSetVar {
-				object_var_name:t = "self_spawn_area"
-				object:t = "@target_tank"
-				object_var_string:t = "@tank_spawn_area"
-			}
-			varModify {
-				operator:t = "add"
-				value:r = 1
-				var:t = "tank_num"
-			}
-			triggerEnable {
-				target:t = "name_assemble"
-			}
-		}
-		else_actions {
-			wait {
-				time:r = 2
-			}
-			unitSetRoute {
-				route:t = "way_target_tank05"
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				teleportToStart:b = true
-				object:t = "target_tank06"
-				object_type:t = "isActive"
-			}
-			unitSetProperties {
-				object:t = "@target_tanks_squad"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				forceVisibleOnMap:b = true
-				attack_type:t = "dont_aim"
-				speed:r = 25
-				lockSpeed:b = true
-			}
-			varSetInt {
-				value:i = 0
-				var:t = "tanks_total"
-				input_var:t = "tank_num"
-			}
-			varModify {
-				operator:t = "add"
-				value:r = -1
-				var:t = "tanks_total"
-			}
-			varSetInt {
-				value:i = 0
-				var:t = "tank_num"
-			}
-			triggerEnable {
-				target:t = "tick_killed"
-				target:t = "atgm_init"
-			}
-		}
-	}
-	spawn_plane {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			objectExists {
-				target:t = "flight_target01"
-				type:t = "unit"
-			}
-			objectExists {
-				target:t = "spawn_area"
-				type:t = "area"
-			}
-			objectExists {
-				target:t = "flight_point"
-				type:t = "area"
-			}
-		}
-		actions {
-			comment {
-				value:t = "disable missionkamikadze cause it going to plane crash"
-			}
-			__unitLoadBehTree {
-				name:t = ""
-				objects:t = "flight_target01"
-			}
-			unitRespawn {
-				delay:r = 1
-				offset:p3 = 0, 0, 0
-				object:t = "flight_target01"
-				target:t = "spawn_area"
-			}
-			__unitMoveTo {
-				object_marking:i = 0
-				target:t = "flight_point"
-				target_marking:i = 0
-				waypointReachedDist:r = 10
-				recalculatePathDist:r = -1
-				follow_target:b = false
-				teleportHeightType:t = "absolute"
-				useUnitHeightForTele:b = false
-				shouldKeepFormation:b = false
-				teleportHeightValue:r = 1000
-				horizontalDirectionForTeleport:b = true
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				fastClimb:b = false
-				destTimeMode:b = false
-				target_var_name:t = ""
-				target_var_comp_op:t = "equal"
-				target_var_value:i = 0
-				shouldKeepAirFormation:b = true
-				object:t = "flight_target01"
-			}
-			triggerEnable {
-				target:t = "respawn_plane"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	spawn_plane2 {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			objectExists {
-				target:t = "flight_target02"
-				type:t = "unit"
-			}
-			objectExists {
-				target:t = "spawn_area02"
-				type:t = "area"
-			}
-			objectExists {
-				target:t = "flight_point02"
-				type:t = "area"
-			}
-		}
-		actions {
-			comment {
-				value:t = "disable missionkamikadze cause it going to plane crash"
-			}
-			__unitLoadBehTree {
-				name:t = "missionKamikaze"
-				objects:t = "flight_target02"
-			}
-			unitRespawn {
-				delay:r = 1
-				offset:p3 = 0, 0, 0
-				object:t = "flight_target02"
-				target:t = "spawn_area02"
-			}
-			__unitMoveTo {
-				object_marking:i = 0
-				target:t = "flight_point02"
-				target_marking:i = 0
-				waypointReachedDist:r = 10
-				recalculatePathDist:r = -1
-				follow_target:b = false
-				teleportHeightType:t = "absolute"
-				useUnitHeightForTele:b = false
-				shouldKeepFormation:b = false
-				teleportHeightValue:r = 1000
-				horizontalDirectionForTeleport:b = true
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				fastClimb:b = false
-				destTimeMode:b = false
-				target_var_name:t = ""
-				target_var_comp_op:t = "equal"
-				target_var_value:i = 0
-				shouldKeepAirFormation:b = true
-				object:t = "flight_target02"
-			}
-			triggerEnable {
-				target:t = "respawn_plane2"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	spawn_plane3 {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			objectExists {
-				target:t = "flight_target03"
-				type:t = "unit"
-			}
-			objectExists {
-				target:t = "spawn_area03"
-				type:t = "area"
-			}
-		}
-		actions {
-			unitRespawn {
-				delay:r = 1
-				offset:p3 = 0, 0, 0
-				object:t = "flight_target03"
-				target:t = "spawn_area03"
-			}
-			triggerEnable {
-				target:t = "respawn_plane3"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	spawn_helicopter1 {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			objectExists {
-				target:t = "helicopter_target01"
-				type:t = "unit"
-			}
-			objectExists {
-				target:t = "helispawn_area01"
-				type:t = "area"
-			}
-		}
-		actions {
-			varSetInt {
-				value:i = 0
-				var:t = "timer_replay"
-			}
-			unitRespawn {
-				delay:r = 1
-				offset:p3 = 0, 0, 0
-				object:t = "helicopter_target01"
-				target:t = "helispawn_area01"
-				lookAtTargetUponRespawn:t = "flight_point02"
-			}
-			unitLoadBehTree {
-				name:t = "missionHitThePoint"
-				objects:t = "helicopter_target01"
-				loadType:t = "tree"
-			}
-			unitMoveTo {
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				target:t = "flight_point02"
-				target_var_name:t = ""
-				target_var_comp_op:t = "equal"
-				target_var_value:i = 0
-				target_marking:i = 0
-				waypointReachedDist:r = 10
-				recalculatePathDist:r = -1
-				follow_target:b = false
-				fastClimb:b = false
-				destTimeMode:b = false
-				teleportHeightType:t = "absolute"
-				useUnitHeightForTele:b = true
-				shouldKeepFormation:b = false
-				shouldKeepAirFormation:b = true
-				teleportHeightValue:r = 1000
-				horizontalDirectionForTeleport:b = true
-				object:t = "helicopter_target01"
-				move_type:t = "move"
-			}
-			triggerEnable {
-				target:t = "respawn_helicopter1"
-				target:t = "timer_start"
-				target:t = "change_point_helicopter"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	change_point_helicopter {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ANY"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			varCompareInt {
-				var_value:t = "timer_replay"
-				value:i = 30
-				comparasion_func:t = "more"
-			}
-		}
-		actions {
-			unitMoveTo {
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				target:t = "flight_point03"
-				target_var_name:t = ""
-				target_var_comp_op:t = "equal"
-				target_var_value:i = 0
-				target_marking:i = 0
-				waypointReachedDist:r = 10
-				recalculatePathDist:r = -1
-				follow_target:b = false
-				fastClimb:b = false
-				destTimeMode:b = false
-				teleportHeightType:t = "absolute"
-				useUnitHeightForTele:b = true
-				shouldKeepFormation:b = false
-				shouldKeepAirFormation:b = true
-				teleportHeightValue:r = 1000
-				horizontalDirectionForTeleport:b = true
-				object:t = "helicopter_target01"
-				move_type:t = "move"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	mark_battle_area {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			objectExists {
-				target:t = "game_area"
-				type:t = "area"
-			}
-		}
-		actions {
-			missionBattleArea {
-				air:b = false
-				ground:b = true
-				mapArea:b = true
-				airMapArea:b = false
-				killArea:b = false
-				detectionArea:b = false
-				killOutOfBattleArea:b = true
-				area:t = "game_area"
-				team:t = "A"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	mark_rearm_area {
-		is_enabled:b = true
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			objectExists {
-				target:t = "rearm_area"
-				type:t = "area"
-			}
-		}
-		actions {
-			missionMarkAsRearmZone {
-				army:i = 1
-				area_name:t = "rearm_area"
-				enabled:b = true
-				tags {
-					tank:b = true
-				}
-			}
-		}
-		else_actions {
-
-		}
-	}
-	tick_killed {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			unitWhenStatus {
-				object_type:t = "isKilled"
-				check_objects:t = "any"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				target_type:t = "isAlive"
-				check_period:r = 1
-				object:t = "@target_tanks_squad"
-			}
-		}
-		actions {
-			unitModifyVar {
-				object_var_name:t = "killed"
-				operator:t = "add"
-				value:i = 1
-				object:t = "@target_tanks_squad"
-				useForTriggerFiltered:b = true
-			}
-			triggerEnable {
-				target:t = "respawn_target"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	respawn_target {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			unitWhenStatus {
-				object_type:t = "isUnitVar"
-				check_objects:t = "any"
-				object_marking:i = 0
-				object_var_name:t = "killed"
-				object_var_comp_op:t = "more"
-				object_var_value:i = 0
-				target_type:t = "isAlive"
-				check_period:r = 1
-				object:t = "@target_tanks_squad"
-				input_var:t = "target_respawn_time"
-			}
-		}
-		actions {
-			unitGetVar {
-				object_marking:i = 0
-				object:t = "@target_tanks_squad"
-				object_var_name:t = "self_name"
-				useForTriggerFiltered:b = true
-				out_var_string:t = "target_tank"
-			}
-			unitGetVar {
-				object_marking:i = 0
-				object:t = "@target_tank"
-				object_var_name:t = "self_spawn_area"
-				out_var_string:t = "tank_spawn_area"
-			}
-			unitSetVar {
-				object_var_name:t = "killed"
-				object:t = "@target_tank"
-				object_var_value:i = 0
-			}
-			unitRespawn {
-				delay:r = 0
-				offset:p3 = 0, 0, 0
-				object:t = "@target_tank"
-				target:t = "@tank_spawn_area"
-				needStopOnRespawn:b = true
-			}
-			triggerEnable {
-				target:t = "set_route"
-			}
-			triggerEnable {
-				target:t = "tick_killed"
-			}
-		}
-		else_actions {
-			triggerEnable {
-				target:t = "tick_killed"
-			}
-		}
-	}
-	set_route {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			varCompareString {
-				var_value:t = "target_tank"
-				value:t = "target_tank06"
-				comparasion_func:t = "equal"
-			}
-		}
-		actions {
-			wait {
-				time:r = 2
-			}
-			unitSetRoute {
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				route:t = "way_target_tank05"
-				teleportToStart:b = true
-				object:t = "@target_tank"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	respawn_plane {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = true
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			unitWhenStatus {
-				object_type:t = "isInactive"
-				check_objects:t = "any"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				target_type:t = "isAlive"
-				check_period:r = 1
-				object:t = "flight_target01"
-			}
-		}
-		actions {
-			wait {
-				time:r = 15
-			}
-			unitPutToSleep {
-				target:t = "flight_target01"
-			}
-			wait {
-				time:r = 1
-			}
-			unitRespawn {
-				delay:r = 1
-				offset:p3 = 0, 0, 0
-				object:t = "flight_target01"
-				target:t = "spawn_area"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	respawn_plane2 {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = true
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			unitWhenStatus {
-				object_type:t = "isInactive"
-				check_objects:t = "any"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				target_type:t = "isAlive"
-				check_period:r = 1
-				object:t = "flight_target02"
-			}
-		}
-		actions {
-			wait {
-				time:r = 15
-			}
-			unitPutToSleep {
-				target:t = "flight_target02"
-			}
-			wait {
-				time:r = 1
-			}
-			unitRespawn {
-				delay:r = 1
-				offset:p3 = 0, 0, 0
-				object:t = "flight_target02"
-				target:t = "spawn_area02"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	respawn_plane3 {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = true
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			unitWhenStatus {
-				object_type:t = "isInactive"
-				check_objects:t = "any"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				target_type:t = "isAlive"
-				check_period:r = 1
-				object:t = "flight_target03"
-			}
-		}
-		actions {
-			wait {
-				time:r = 15
-			}
-			unitPutToSleep {
-				target:t = "flight_target03"
-			}
-			wait {
-				time:r = 1
-			}
-			unitRespawn {
-				delay:r = 1
-				offset:p3 = 0, 0, 0
-				object:t = "flight_target03"
-				target:t = "spawn_area03"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	respawn_helicopter1 {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ANY"
-			enableAfterComplete:b = true
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			unitWhenStatus {
-				object_type:t = "isInactive"
-				check_objects:t = "any"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				target_type:t = "isAlive"
-				check_period:r = 1
-				object:t = "helicopter_target01"
-			}
-			varCompareInt {
-				var_value:t = "timer_replay"
-				value:i = 90
-				comparasion_func:t = "more"
-			}
-		}
-		actions {
-			triggerDisable {
-				target:t = "timer_start"
-				target:t = "change_point_helicopter"
-			}
-			wait {
-				time:r = 15
-			}
-			unitPutToSleep {
-				target:t = "helicopter_target01"
-			}
-			wait {
-				time:r = 1
-			}
-			varSetInt {
-				value:i = 0
-				var:t = "timer_replay"
-			}
-			triggerEnable {
-				target:t = "timer_start"
-			}
-			unitRespawn {
-				delay:r = 1
-				offset:p3 = 0, 0, 0
-				object:t = "helicopter_target01"
-				target:t = "helispawn_area01"
-				lookAtTargetUponRespawn:t = "flight_point02"
-			}
-			unitMoveTo {
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				target:t = "flight_point02"
-				target_var_name:t = ""
-				target_var_comp_op:t = "equal"
-				target_var_value:i = 0
-				target_marking:i = 0
-				waypointReachedDist:r = 10
-				recalculatePathDist:r = -1
-				follow_target:b = false
-				fastClimb:b = false
-				destTimeMode:b = false
-				teleportHeightType:t = "absolute"
-				useUnitHeightForTele:b = true
-				shouldKeepFormation:b = false
-				shouldKeepAirFormation:b = true
-				teleportHeightValue:r = 1000
-				horizontalDirectionForTeleport:b = true
-				object:t = "helicopter_target01"
-				move_type:t = "move"
-			}
-			triggerEnable {
-				target:t = "change_point_helicopter"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	atgm_init {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			initMission {
-
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			varSetString {
-				value:t = "target_tank_atgm"
-				var:t = "atgm_unit"
-			}
-			varSetString {
-				value:t = "tank_spawn_area_atgm"
-				var:t = "atgm_unit_spawn"
-			}
-			varSetInt {
-				value:i = 0
-				var:t = "atgm_timer"
-				input_var:t = "atgm_time"
-			}
-			triggerEnable {
-				target:t = "atgm_enable"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	atgm_enable {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			objectExists {
-				target:t = "atgm_vs_player_area"
-				type:t = "area"
-			}
-			unitCheckTag {
-				target:t = "@player"
-				tags {
-					has_aps:b = true
-				}
-			}
-		}
-		actions {
-			missionShowMapIcon {
-				show:b = true
-				team:t = "A"
-				iconName:t = "ui/gameuiskin#fighter_radar"
-				areaName:t = "atgm_vs_player_area"
-				colorCode:t = "Enemy"
-				scale:r = 50
-				scaleWithMap:b = true
-				opacity:i = 192
-			}
-			missionShowMapIcon {
-				show:b = true
-				team:t = "A"
-				iconName:t = "ui/gameuiskin#shadow_fighter_radar.svg"
-				areaName:t = "atgm_vs_player_area"
-				colorCode:t = "White"
-				scale:r = 40
-				scaleWithMap:b = true
-				opacity:i = 192
-			}
-			unitRespawn {
-				delay:r = 1
-				offset:p3 = 0, 0, 0
-				object:t = "@atgm_unit"
-				target:t = "@atgm_unit_spawn"
-			}
-			unitSetVar {
-				object_var_name:t = "killed"
-				object:t = "@atgm_unit"
-				object_var_value:i = 0
-			}
-			unitSetVar {
-				object_var_name:t = "self_name"
-				object:t = "@atgm_unit"
-				object_var_string:t = "@atgm_unit"
-			}
-			unitSetVar {
-				object_var_name:t = "self_spawn_area"
-				object:t = "@atgm_unit"
-				object_var_string:t = "@atgm_unit_spawn"
-			}
-			triggerEnable {
-				target:t = "atgm_restore"
-				target:t = "atgm_in_area"
-				target:t = "atgm_fire_on"
-				target:t = "atgm_repair"
-				target:t = "atgm_unit_killed"
-			}
-		}
-		else_actions {
-			unitPutToSleep {
-				target:t = "atgm_objgrp_sq"
-			}
-		}
-	}
-	atgm_unit_killed {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			unitWhenKilled {
-				target:t = "@atgm_unit"
-			}
-		}
-		actions {
-			triggerDisable {
-				target:t = "atgm_fire_on"
-				target:t = "atgm_fire_off"
-				target:t = "atgm_in_area"
-			}
-			triggerEnable {
-				target:t = "atgm_unit_respawned"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	atgm_unit_respawned {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			unitWhenStatus {
-				object_type:t = "isAlive"
-				check_objects:t = "any"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				target_type:t = "isAlive"
-				check_period:r = 1
-				object:t = "@atgm_unit"
-			}
-		}
-		actions {
-			triggerActivate {
-				target:t = "atgm_fire_off"
-				activate_type:t = "ignoreConditions"
-				check_trigger_status:b = false
-				after_activation:t = "disable"
-			}
-			triggerEnable {
-				target:t = "atgm_unit_killed"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	atgm_fire_rate {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = true
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			unitWhenStatus {
-				object_type:t = "isShooting"
-				check_objects:t = "any"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				target_type:t = "isAlive"
-				check_period:r = 1
-				object:t = "@atgm_unit"
-			}
-		}
-		actions {
-			__unitSetProperties {
-				object:t = "@atgm_unit"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				attack_type:t = "dont_aim"
-			}
-			wait {
-				time:r = 5
-			}
-			unitSetProperties {
-				object:t = "@atgm_unit"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				attack_type:t = "fire_at_will"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	atgm_restore {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = true
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			unitRestore {
-				target_marking:i = 0
-				ressurectIfDead:b = false
-				fullRestore:b = false
-				target:t = "@atgm_unit"
-				ammoRestore:b = true
-			}
-		}
-		else_actions {
-
-		}
-	}
-	atgm_repair {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = true
-		}
-		events {
-			periodicEvent {
-				time:r = 0.01
-			}
-		}
-		conditions {
-			unitWhenHit {
-				target:t = "@player"
-				offender:t = "@atgm_unit"
-				clearHandledEvents:b = true
-			}
-		}
-		actions {
-			wait {
-				time:r = 4
-			}
-			unitRestore {
-				target_marking:i = 0
-				ressurectIfDead:b = false
-				fullRestore:b = true
-				target:t = "@player"
-				ammoRestore:b = false
-			}
-		}
-		else_actions {
-
-		}
-	}
-	atgm_in_area {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = true
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			unitWhenInArea {
-				math:t = "2D"
-				object_type:t = "isAlive"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				check_objects:t = "any"
-				object:t = "@player"
-				target:t = "atgm_vs_player_area"
-			}
-			unitWhenStatus {
-				object_type:t = "isAlive"
-				check_objects:t = "any"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				target_type:t = "isAlive"
-				check_period:r = 1
-				object:t = "@atgm_unit"
-			}
-		}
-		actions {
-			triggerActivate {
-				target:t = "atgm_time"
-				activate_type:t = "checkConidtions"
-				check_trigger_status:b = false
-				after_activation:t = "disable"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	atgm_time {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			unitWhenProperties {
-				object:t = "@player"
-				func:t = "less"
-				value:r = 0.5
-				property:t = "speed"
-				check_filter:t = "all"
-				object_type:t = "isAlive"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-			}
-		}
-		actions {
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/atgm_timer"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = 1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				var_name:t = "atgm_timer"
-			}
-			varModify {
-				operator:t = "add"
-				value:r = -1
-				var:t = "atgm_timer"
-			}
-		}
-		else_actions {
-			playHint {
-				hintType:t = "standard"
-				name:t = "hints/atgm_warning"
-				action:t = "show"
-				shouldFadeOut:b = false
-				isOverFade:b = false
-				time:r = 1
-				priority:i = 0
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-			}
-			varSetInt {
-				value:i = 0
-				var:t = "atgm_timer"
-				input_var:t = "atgm_time"
-			}
-		}
-	}
-	atgm_fire_on {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			varCompareInt {
-				var_value:t = "atgm_timer"
-				value:i = 1
-				comparasion_func:t = "less"
-			}
-		}
-		actions {
-			unitSetProperties {
-				object:t = "@atgm_unit"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				attack_type:t = "fire_at_will"
-			}
-			unitSetIndication {
-				set:b = true
-				target:t = "@atgm_unit"
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-			}
-			triggerDisable {
-				target:t = "atgm_in_area"
-			}
-			triggerEnable {
-				target:t = "atgm_fire_rate"
-			}
-			triggerEnable {
-				target:t = "atgm_fire_off"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	atgm_fire_off {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ANY"
-			enableAfterComplete:b = false
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-			unitWhenInArea {
-				math:t = "notNear2D"
-				object_type:t = "isAlive"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				check_objects:t = "any"
-				object:t = "@player"
-				target:t = "atgm_vs_player_area"
-			}
-			unitWhenProperties {
-				object:t = "@player"
-				func:t = "notLess"
-				value:r = 0.5
-				property:t = "speed"
-				check_filter:t = "all"
-				object_type:t = "isAlive"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-			}
-		}
-		actions {
-			unitSetProperties {
-				object:t = "@atgm_unit"
-				object_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-				attack_type:t = "dont_aim"
-			}
-			unitSetIndication {
-				set:b = false
-				target:t = "@atgm_unit"
-				target_marking:i = 0
-				object_var_name:t = ""
-				object_var_comp_op:t = "equal"
-				object_var_value:i = 0
-			}
-			varSetInt {
-				value:i = 0
-				var:t = "atgm_timer"
-				input_var:t = "atgm_time"
-			}
-			triggerDisable {
-				target:t = "atgm_fire_rate"
-			}
-			triggerEnable {
-				target:t = "atgm_in_area"
-			}
-			triggerEnable {
-				target:t = "atgm_fire_on"
-			}
-		}
-		else_actions {
-
-		}
-	}
-	timer_start {
-		is_enabled:b = false
-		comments:t = ""
-		props {
-			actionsType:t = "PERFORM_ONE_BY_ONE"
-			conditionsType:t = "ALL"
-			enableAfterComplete:b = true
-		}
-		events {
-			periodicEvent {
-				time:r = 1
-			}
-		}
-		conditions {
-
-		}
-		actions {
-			varModify {
-				operator:t = "add"
-				value:r = 1
-				var:t = "timer_replay"
-			}
-		}
-		else_actions {
-
-		}
-	}
-}
-mission_objectives {
-	isCategory:b = true
-	is_enabled:b = true
-}
-variables {
-	target_tank:t = ""
-	tank_num:i = 1
-	tank_spawn_area:t = ""
-	tanks_total:i = 0
-	unit_var:i = 0
-	target_tanks_squad:t = ""
-	target_respawn_time:i = 25
-	atgm_timer:i = 0
-	atgm_time:i = 3
-	atgm_unit:t = ""
-	player:t = ""
-	atgm_unit_spawn:t = ""
-	timer_replay:i = 0
-}
-dialogs {
-
-}
-airfields {
-
-}
-effects {
-
-}
-units {
-
-}
-areas {
-	artillery_spawn01 {
-		type:t = "Point"
-		tm:m = [[0.0871559, 0.0, 0.996195] [0.0, 1.0, 0.0] [-0.996195, 0.0, 0.0871559] [1158.35, 317.84, -412.074]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-	artillery_spawn02 {
-		type:t = "Point"
-		tm:m = [[0.0871559, 0.0, 0.996195] [0.0, 1.0, 0.0] [-0.996195, 0.0, 0.0871559] [1084.51, 302.897, -386.744]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-	artillery_spawn03 {
-		type:t = "Point"
-		tm:m = [[0.0871559, 0.0, 0.996195] [0.0, 1.0, 0.0] [-0.996195, 0.0, 0.0871559] [1006.13, 290.989, -356.143]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-	artillery_spawn04 {
-		type:t = "Point"
-		tm:m = [[0.0871559, 0.0, 0.996195] [0.0, 1.0, 0.0] [-0.996195, 0.0, 0.0871559] [941.489, 285.187, -338.394]]
-		objLayer:i = 0
-		props {
-
-		}
-	}
-}
-objLayers {
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = true
-	}
-	layer {
-		enabled:b = false
-	}
-}
-wayPoints {
-
+{
+  "selected_tag": "",
+  "bin_dump_file": "",
+  "mission_settings": {
+    "player": {
+      "army": 1,
+      "wing": "t1_player01"
+    },
+    "player_teamB": {
+      "army": 2
+    },
+    "mission": {
+      "type": "singleMission",
+      "level": "levels/avg_training_ground.bin",
+      "environment": "Day",
+      "weather": "hazy",
+      "restoreType": "attempts",
+      "optionalTakeOff": false
+    },
+    "spectator_points": {}
+  },
+  "imports": {
+    "import_record": {
+      "file": "gameData/missions/training/testFlight/tank/testFlight_sound_areas.blk",
+      "importAreas": true,
+      "importUnits": true,
+      "importTriggers": true,
+      "importMissionObjectives": true,
+      "importWayPoints": true,
+      "importDialogs": true,
+      "showAreas": true,
+      "showUnits": true,
+      "showTriggers": true,
+      "showMissionObjectives": true,
+      "showWayPoints": true,
+      "showDialogs": true,
+      "excludes": {}
+    }
+  },
+  "triggers": {
+    "isCategory": true,
+    "is_enabled": true,
+    "init": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "initMission": {}
+      },
+      "conditions": {},
+      "actions": {
+        "varSetString": [
+          {
+            "value": "target_tanks_squad",
+            "var": "target_tanks_squad"
+          },
+          {
+            "value": "t1_player01",
+            "var": "player"
+          }
+        ],
+        "unitPutToSleep": {
+          "target": [
+            "@target_tanks_squad",
+            "flight_target01"
+          ]
+        },
+        "missionMarkAsRespawnPoint": {
+          "loc_name": "",
+          "spawnEffect": false,
+          "isGroundZone": false,
+          "radius": -1.0,
+          "target": [
+            "artillery_spawn01",
+            "artillery_spawn02",
+            "artillery_spawn03",
+            "artillery_spawn04"
+          ],
+          "team": "A",
+          "isStrictSpawn": false,
+          "resetStrictSpawnIndex": false,
+          "isAirfield": false,
+          "isUnit": false,
+          "forceCreate": false,
+          "useExisting": false,
+          "ignoreTeamsOnReuse": false,
+          "isIndividual": false,
+          "onlyOnePlayerPerSpawnPoint": false,
+          "removeAreas": false,
+          "replaceAreas": false,
+          "canSpawnOnNeutral": false,
+          "showOnMap": true,
+          "tags": {
+            "artillery": true
+          }
+        }
+      },
+      "else_actions": {}
+    },
+    "end": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": true
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "playersWhenStatus": {
+          "players": "isKilled",
+          "check_players": "any"
+        }
+      },
+      "actions": {
+        "wait": {
+          "time": 3.0
+        },
+        "unitRespawn": {
+          "delay": 1.0,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "object": "t1_player01",
+          "target": "spawn01"
+        }
+      },
+      "else_actions": {}
+    },
+    "name_assemble": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {},
+      "actions": {
+        "varSetString": [
+          {
+            "value": "target_tank",
+            "var": "target_tank"
+          },
+          {
+            "value": "tank_spawn_area",
+            "var": "tank_spawn_area"
+          }
+        ],
+        "varAddString": [
+          {
+            "value": "",
+            "digits": 2,
+            "var": "target_tank",
+            "input_var": "tank_num"
+          },
+          {
+            "value": "",
+            "digits": 2,
+            "var": "tank_spawn_area",
+            "input_var": "tank_num"
+          }
+        ],
+        "triggerEnable": {
+          "target": "check_exist"
+        }
+      },
+      "else_actions": {}
+    },
+    "check_exist": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "objectExists": {
+          "target": "@target_tank",
+          "type": "unit"
+        }
+      },
+      "actions": {
+        "unitSetProperties": {
+          "object": "@target_tank",
+          "forceVisibleOnMap": true,
+          "attack_type": "dont_aim"
+        },
+        "unitRespawn": {
+          "delay": 1.0,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "object": "@target_tank",
+          "target": "@tank_spawn_area"
+        },
+        "unitSetVar": [
+          {
+            "object_var_name": "killed",
+            "object": "@target_tank",
+            "object_var_value": 0
+          },
+          {
+            "object_var_name": "self_name",
+            "object": "@target_tank",
+            "object_var_string": "@target_tank"
+          },
+          {
+            "object_var_name": "self_spawn_area",
+            "object": "@target_tank",
+            "object_var_string": "@tank_spawn_area"
+          }
+        ],
+        "varModify": {
+          "operator": "add",
+          "value": 1.0,
+          "var": "tank_num"
+        },
+        "triggerEnable": {
+          "target": "name_assemble"
+        }
+      },
+      "else_actions": {
+        "wait": {
+          "time": 2.0
+        },
+        "unitSetRoute": {
+          "route": "way_target_tank05",
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "teleportToStart": true,
+          "object": "target_tank06",
+          "object_type": "isActive"
+        },
+        "unitSetProperties": {
+          "object": "@target_tanks_squad",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "forceVisibleOnMap": true,
+          "attack_type": "dont_aim",
+          "speed": 25.0,
+          "lockSpeed": true
+        },
+        "varSetInt": [
+          {
+            "value": 0,
+            "var": "tanks_total",
+            "input_var": "tank_num"
+          },
+          {
+            "value": 0,
+            "var": "tank_num"
+          }
+        ],
+        "varModify": {
+          "operator": "add",
+          "value": -1.0,
+          "var": "tanks_total"
+        },
+        "triggerEnable": {
+          "target": [
+            "tick_killed",
+            "atgm_init"
+          ]
+        }
+      }
+    },
+    "spawn_plane": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "objectExists": [
+          {
+            "target": "flight_target01",
+            "type": "unit"
+          },
+          {
+            "target": "spawn_area",
+            "type": "area"
+          },
+          {
+            "target": "flight_point",
+            "type": "area"
+          }
+        ]
+      },
+      "actions": {
+        "comment": {
+          "value": "disable missionkamikadze cause it going to plane crash"
+        },
+        "__unitLoadBehTree": {
+          "name": "",
+          "objects": "flight_target01"
+        },
+        "unitRespawn": {
+          "delay": 1.0,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "object": "flight_target01",
+          "target": "spawn_area"
+        },
+        "__unitMoveTo": {
+          "object_marking": 0,
+          "target": "flight_point",
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "follow_target": false,
+          "teleportHeightType": "absolute",
+          "useUnitHeightForTele": false,
+          "shouldKeepFormation": false,
+          "teleportHeightValue": 1000.0,
+          "horizontalDirectionForTeleport": true,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "shouldKeepAirFormation": true,
+          "object": "flight_target01"
+        },
+        "triggerEnable": {
+          "target": "respawn_plane"
+        }
+      },
+      "else_actions": {}
+    },
+    "spawn_plane2": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "objectExists": [
+          {
+            "target": "flight_target02",
+            "type": "unit"
+          },
+          {
+            "target": "spawn_area02",
+            "type": "area"
+          },
+          {
+            "target": "flight_point02",
+            "type": "area"
+          }
+        ]
+      },
+      "actions": {
+        "comment": {
+          "value": "disable missionkamikadze cause it going to plane crash"
+        },
+        "__unitLoadBehTree": {
+          "name": "missionKamikaze",
+          "objects": "flight_target02"
+        },
+        "unitRespawn": {
+          "delay": 1.0,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "object": "flight_target02",
+          "target": "spawn_area02"
+        },
+        "__unitMoveTo": {
+          "object_marking": 0,
+          "target": "flight_point02",
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "follow_target": false,
+          "teleportHeightType": "absolute",
+          "useUnitHeightForTele": false,
+          "shouldKeepFormation": false,
+          "teleportHeightValue": 1000.0,
+          "horizontalDirectionForTeleport": true,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "shouldKeepAirFormation": true,
+          "object": "flight_target02"
+        },
+        "triggerEnable": {
+          "target": "respawn_plane2"
+        }
+      },
+      "else_actions": {}
+    },
+    "spawn_plane3": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "objectExists": [
+          {
+            "target": "flight_target03",
+            "type": "unit"
+          },
+          {
+            "target": "spawn_area03",
+            "type": "area"
+          }
+        ]
+      },
+      "actions": {
+        "unitRespawn": {
+          "delay": 1.0,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "object": "flight_target03",
+          "target": "spawn_area03"
+        },
+        "triggerEnable": {
+          "target": "respawn_plane3"
+        }
+      },
+      "else_actions": {}
+    },
+    "spawn_helicopter1": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "objectExists": [
+          {
+            "target": "helicopter_target01",
+            "type": "unit"
+          },
+          {
+            "target": "helispawn_area01",
+            "type": "area"
+          }
+        ]
+      },
+      "actions": {
+        "varSetInt": {
+          "value": 0,
+          "var": "timer_replay"
+        },
+        "unitRespawn": {
+          "delay": 1.0,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "object": "helicopter_target01",
+          "target": "helispawn_area01",
+          "lookAtTargetUponRespawn": "flight_point02"
+        },
+        "unitLoadBehTree": {
+          "name": "missionHitThePoint",
+          "objects": "helicopter_target01",
+          "loadType": "tree"
+        },
+        "unitMoveTo": {
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target": "flight_point02",
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "follow_target": false,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "teleportHeightType": "absolute",
+          "useUnitHeightForTele": true,
+          "shouldKeepFormation": false,
+          "shouldKeepAirFormation": true,
+          "teleportHeightValue": 1000.0,
+          "horizontalDirectionForTeleport": true,
+          "object": "helicopter_target01",
+          "move_type": "move"
+        },
+        "triggerEnable": {
+          "target": [
+            "respawn_helicopter1",
+            "timer_start",
+            "change_point_helicopter"
+          ]
+        }
+      },
+      "else_actions": {}
+    },
+    "change_point_helicopter": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ANY",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "varCompareInt": {
+          "var_value": "timer_replay",
+          "value": 30,
+          "comparasion_func": "more"
+        }
+      },
+      "actions": {
+        "unitMoveTo": {
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target": "flight_point03",
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "follow_target": false,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "teleportHeightType": "absolute",
+          "useUnitHeightForTele": true,
+          "shouldKeepFormation": false,
+          "shouldKeepAirFormation": true,
+          "teleportHeightValue": 1000.0,
+          "horizontalDirectionForTeleport": true,
+          "object": "helicopter_target01",
+          "move_type": "move"
+        }
+      },
+      "else_actions": {}
+    },
+    "mark_battle_area": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "objectExists": {
+          "target": "game_area",
+          "type": "area"
+        }
+      },
+      "actions": {
+        "missionBattleArea": {
+          "air": false,
+          "ground": true,
+          "mapArea": true,
+          "airMapArea": false,
+          "killArea": false,
+          "detectionArea": false,
+          "killOutOfBattleArea": true,
+          "area": "game_area",
+          "team": "A"
+        }
+      },
+      "else_actions": {}
+    },
+    "mark_rearm_area": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "objectExists": {
+          "target": "rearm_area",
+          "type": "area"
+        }
+      },
+      "actions": {
+        "missionMarkAsRearmZone": {
+          "army": 1,
+          "area_name": "rearm_area",
+          "enabled": true,
+          "tags": {
+            "tank": true
+          }
+        }
+      },
+      "else_actions": {}
+    },
+    "tick_killed": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "unitWhenStatus": {
+          "object_type": "isKilled",
+          "check_objects": "any",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_type": "isAlive",
+          "check_period": 1.0,
+          "object": "@target_tanks_squad"
+        }
+      },
+      "actions": {
+        "unitModifyVar": {
+          "object_var_name": "killed",
+          "operator": "add",
+          "value": 1,
+          "object": "@target_tanks_squad",
+          "useForTriggerFiltered": true
+        },
+        "triggerEnable": {
+          "target": "respawn_target"
+        }
+      },
+      "else_actions": {}
+    },
+    "respawn_target": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "unitWhenStatus": {
+          "object_type": "isUnitVar",
+          "check_objects": "any",
+          "object_marking": 0,
+          "object_var_name": "killed",
+          "object_var_comp_op": "more",
+          "object_var_value": 0,
+          "target_type": "isAlive",
+          "check_period": 1.0,
+          "object": "@target_tanks_squad",
+          "input_var": "target_respawn_time"
+        }
+      },
+      "actions": {
+        "unitGetVar": [
+          {
+            "object_marking": 0,
+            "object": "@target_tanks_squad",
+            "object_var_name": "self_name",
+            "useForTriggerFiltered": true,
+            "out_var_string": "target_tank"
+          },
+          {
+            "object_marking": 0,
+            "object": "@target_tank",
+            "object_var_name": "self_spawn_area",
+            "out_var_string": "tank_spawn_area"
+          }
+        ],
+        "unitSetVar": {
+          "object_var_name": "killed",
+          "object": "@target_tank",
+          "object_var_value": 0
+        },
+        "unitRespawn": {
+          "delay": 0.0,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "object": "@target_tank",
+          "target": "@tank_spawn_area",
+          "needStopOnRespawn": true
+        },
+        "triggerEnable": [
+          {
+            "target": "set_route"
+          },
+          {
+            "target": "tick_killed"
+          }
+        ]
+      },
+      "else_actions": {
+        "triggerEnable": {
+          "target": "tick_killed"
+        }
+      }
+    },
+    "set_route": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "varCompareString": {
+          "var_value": "target_tank",
+          "value": "target_tank06",
+          "comparasion_func": "equal"
+        }
+      },
+      "actions": {
+        "wait": {
+          "time": 2.0
+        },
+        "unitSetRoute": {
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "route": "way_target_tank05",
+          "teleportToStart": true,
+          "object": "@target_tank"
+        }
+      },
+      "else_actions": {}
+    },
+    "respawn_plane": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": true
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "unitWhenStatus": {
+          "object_type": "isInactive",
+          "check_objects": "any",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_type": "isAlive",
+          "check_period": 1.0,
+          "object": "flight_target01"
+        }
+      },
+      "actions": {
+        "wait": [
+          {
+            "time": 15.0
+          },
+          {
+            "time": 1.0
+          }
+        ],
+        "unitPutToSleep": {
+          "target": "flight_target01"
+        },
+        "unitRespawn": {
+          "delay": 1.0,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "object": "flight_target01",
+          "target": "spawn_area"
+        }
+      },
+      "else_actions": {}
+    },
+    "respawn_plane2": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": true
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "unitWhenStatus": {
+          "object_type": "isInactive",
+          "check_objects": "any",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_type": "isAlive",
+          "check_period": 1.0,
+          "object": "flight_target02"
+        }
+      },
+      "actions": {
+        "wait": [
+          {
+            "time": 15.0
+          },
+          {
+            "time": 1.0
+          }
+        ],
+        "unitPutToSleep": {
+          "target": "flight_target02"
+        },
+        "unitRespawn": {
+          "delay": 1.0,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "object": "flight_target02",
+          "target": "spawn_area02"
+        }
+      },
+      "else_actions": {}
+    },
+    "respawn_plane3": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": true
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "unitWhenStatus": {
+          "object_type": "isInactive",
+          "check_objects": "any",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_type": "isAlive",
+          "check_period": 1.0,
+          "object": "flight_target03"
+        }
+      },
+      "actions": {
+        "wait": [
+          {
+            "time": 15.0
+          },
+          {
+            "time": 1.0
+          }
+        ],
+        "unitPutToSleep": {
+          "target": "flight_target03"
+        },
+        "unitRespawn": {
+          "delay": 1.0,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "object": "flight_target03",
+          "target": "spawn_area03"
+        }
+      },
+      "else_actions": {}
+    },
+    "respawn_helicopter1": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ANY",
+        "enableAfterComplete": true
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "unitWhenStatus": {
+          "object_type": "isInactive",
+          "check_objects": "any",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_type": "isAlive",
+          "check_period": 1.0,
+          "object": "helicopter_target01"
+        },
+        "varCompareInt": {
+          "var_value": "timer_replay",
+          "value": 90,
+          "comparasion_func": "more"
+        }
+      },
+      "actions": {
+        "triggerDisable": {
+          "target": [
+            "timer_start",
+            "change_point_helicopter"
+          ]
+        },
+        "wait": [
+          {
+            "time": 15.0
+          },
+          {
+            "time": 1.0
+          }
+        ],
+        "unitPutToSleep": {
+          "target": "helicopter_target01"
+        },
+        "varSetInt": {
+          "value": 0,
+          "var": "timer_replay"
+        },
+        "triggerEnable": [
+          {
+            "target": "timer_start"
+          },
+          {
+            "target": "change_point_helicopter"
+          }
+        ],
+        "unitRespawn": {
+          "delay": 1.0,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "object": "helicopter_target01",
+          "target": "helispawn_area01",
+          "lookAtTargetUponRespawn": "flight_point02"
+        },
+        "unitMoveTo": {
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target": "flight_point02",
+          "target_var_name": "",
+          "target_var_comp_op": "equal",
+          "target_var_value": 0,
+          "target_marking": 0,
+          "waypointReachedDist": 10.0,
+          "recalculatePathDist": -1.0,
+          "follow_target": false,
+          "fastClimb": false,
+          "destTimeMode": false,
+          "teleportHeightType": "absolute",
+          "useUnitHeightForTele": true,
+          "shouldKeepFormation": false,
+          "shouldKeepAirFormation": true,
+          "teleportHeightValue": 1000.0,
+          "horizontalDirectionForTeleport": true,
+          "object": "helicopter_target01",
+          "move_type": "move"
+        }
+      },
+      "else_actions": {}
+    },
+    "atgm_init": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "initMission": {}
+      },
+      "conditions": {},
+      "actions": {
+        "varSetString": [
+          {
+            "value": "target_tank_atgm",
+            "var": "atgm_unit"
+          },
+          {
+            "value": "tank_spawn_area_atgm",
+            "var": "atgm_unit_spawn"
+          }
+        ],
+        "varSetInt": {
+          "value": 0,
+          "var": "atgm_timer",
+          "input_var": "atgm_time"
+        },
+        "triggerEnable": {
+          "target": "atgm_enable"
+        }
+      },
+      "else_actions": {}
+    },
+    "atgm_enable": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "objectExists": {
+          "target": "atgm_vs_player_area",
+          "type": "area"
+        },
+        "unitCheckTag": {
+          "target": "@player",
+          "tags": {
+            "has_aps": true
+          }
+        }
+      },
+      "actions": {
+        "missionShowMapIcon": [
+          {
+            "show": true,
+            "team": "A",
+            "iconName": "ui/gameuiskin#fighter_radar",
+            "areaName": "atgm_vs_player_area",
+            "colorCode": "Enemy",
+            "scale": 50.0,
+            "scaleWithMap": true,
+            "opacity": 192
+          },
+          {
+            "show": true,
+            "team": "A",
+            "iconName": "ui/gameuiskin#shadow_fighter_radar.svg",
+            "areaName": "atgm_vs_player_area",
+            "colorCode": "White",
+            "scale": 40.0,
+            "scaleWithMap": true,
+            "opacity": 192
+          }
+        ],
+        "unitRespawn": {
+          "delay": 1.0,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "object": "@atgm_unit",
+          "target": "@atgm_unit_spawn"
+        },
+        "unitSetVar": [
+          {
+            "object_var_name": "killed",
+            "object": "@atgm_unit",
+            "object_var_value": 0
+          },
+          {
+            "object_var_name": "self_name",
+            "object": "@atgm_unit",
+            "object_var_string": "@atgm_unit"
+          },
+          {
+            "object_var_name": "self_spawn_area",
+            "object": "@atgm_unit",
+            "object_var_string": "@atgm_unit_spawn"
+          }
+        ],
+        "triggerEnable": {
+          "target": [
+            "atgm_restore",
+            "atgm_in_area",
+            "atgm_fire_on",
+            "atgm_repair",
+            "atgm_unit_killed"
+          ]
+        }
+      },
+      "else_actions": {
+        "unitPutToSleep": {
+          "target": "atgm_objgrp_sq"
+        }
+      }
+    },
+    "atgm_unit_killed": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "unitWhenKilled": {
+          "target": "@atgm_unit"
+        }
+      },
+      "actions": {
+        "triggerDisable": {
+          "target": [
+            "atgm_fire_on",
+            "atgm_fire_off",
+            "atgm_in_area"
+          ]
+        },
+        "triggerEnable": {
+          "target": "atgm_unit_respawned"
+        }
+      },
+      "else_actions": {}
+    },
+    "atgm_unit_respawned": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "unitWhenStatus": {
+          "object_type": "isAlive",
+          "check_objects": "any",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_type": "isAlive",
+          "check_period": 1.0,
+          "object": "@atgm_unit"
+        }
+      },
+      "actions": {
+        "triggerActivate": {
+          "target": "atgm_fire_off",
+          "activate_type": "ignoreConditions",
+          "check_trigger_status": false,
+          "after_activation": "disable"
+        },
+        "triggerEnable": {
+          "target": "atgm_unit_killed"
+        }
+      },
+      "else_actions": {}
+    },
+    "atgm_fire_rate": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": true
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "unitWhenStatus": {
+          "object_type": "isShooting",
+          "check_objects": "any",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_type": "isAlive",
+          "check_period": 1.0,
+          "object": "@atgm_unit"
+        }
+      },
+      "actions": {
+        "__unitSetProperties": {
+          "object": "@atgm_unit",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "attack_type": "dont_aim"
+        },
+        "wait": {
+          "time": 5.0
+        },
+        "unitSetProperties": {
+          "object": "@atgm_unit",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "attack_type": "fire_at_will"
+        }
+      },
+      "else_actions": {}
+    },
+    "atgm_restore": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": true
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {},
+      "actions": {
+        "unitRestore": {
+          "target_marking": 0,
+          "ressurectIfDead": false,
+          "fullRestore": false,
+          "target": "@atgm_unit",
+          "ammoRestore": true
+        }
+      },
+      "else_actions": {}
+    },
+    "atgm_repair": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": true
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "unitWhenHit": {
+          "target": "@player",
+          "offender": "@atgm_unit",
+          "clearHandledEvents": true
+        }
+      },
+      "actions": {
+        "wait": {
+          "time": 4.0
+        },
+        "unitRestore": {
+          "target_marking": 0,
+          "ressurectIfDead": false,
+          "fullRestore": true,
+          "target": "@player",
+          "ammoRestore": false
+        }
+      },
+      "else_actions": {}
+    },
+    "atgm_in_area": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": true
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "unitWhenInArea": {
+          "math": "2D",
+          "object_type": "isAlive",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "check_objects": "any",
+          "object": "@player",
+          "target": "atgm_vs_player_area"
+        },
+        "unitWhenStatus": {
+          "object_type": "isAlive",
+          "check_objects": "any",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "target_type": "isAlive",
+          "check_period": 1.0,
+          "object": "@atgm_unit"
+        }
+      },
+      "actions": {
+        "triggerActivate": {
+          "target": "atgm_time",
+          "activate_type": "checkConidtions",
+          "check_trigger_status": false,
+          "after_activation": "disable"
+        }
+      },
+      "else_actions": {}
+    },
+    "atgm_time": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "unitWhenProperties": {
+          "object": "@player",
+          "func": "less",
+          "value": 0.5,
+          "property": "speed",
+          "check_filter": "all",
+          "object_type": "isAlive",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0
+        }
+      },
+      "actions": {
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/atgm_timer",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": 1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "var_name": "atgm_timer"
+        },
+        "varModify": {
+          "operator": "add",
+          "value": -1.0,
+          "var": "atgm_timer"
+        }
+      },
+      "else_actions": {
+        "playHint": {
+          "hintType": "standard",
+          "name": "hints/atgm_warning",
+          "action": "show",
+          "shouldFadeOut": false,
+          "isOverFade": false,
+          "time": 1.0,
+          "priority": 0,
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0
+        },
+        "varSetInt": {
+          "value": 0,
+          "var": "atgm_timer",
+          "input_var": "atgm_time"
+        }
+      }
+    },
+    "atgm_fire_on": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "varCompareInt": {
+          "var_value": "atgm_timer",
+          "value": 1,
+          "comparasion_func": "less"
+        }
+      },
+      "actions": {
+        "unitSetProperties": {
+          "object": "@atgm_unit",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "attack_type": "fire_at_will"
+        },
+        "unitSetIndication": {
+          "set": true,
+          "target": "@atgm_unit",
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0
+        },
+        "triggerDisable": {
+          "target": "atgm_in_area"
+        },
+        "triggerEnable": [
+          {
+            "target": "atgm_fire_rate"
+          },
+          {
+            "target": "atgm_fire_off"
+          }
+        ]
+      },
+      "else_actions": {}
+    },
+    "atgm_fire_off": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ANY",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {
+        "unitWhenInArea": {
+          "math": "notNear2D",
+          "object_type": "isAlive",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "check_objects": "any",
+          "object": "@player",
+          "target": "atgm_vs_player_area"
+        },
+        "unitWhenProperties": {
+          "object": "@player",
+          "func": "notLess",
+          "value": 0.5,
+          "property": "speed",
+          "check_filter": "all",
+          "object_type": "isAlive",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0
+        }
+      },
+      "actions": {
+        "unitSetProperties": {
+          "object": "@atgm_unit",
+          "object_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0,
+          "attack_type": "dont_aim"
+        },
+        "unitSetIndication": {
+          "set": false,
+          "target": "@atgm_unit",
+          "target_marking": 0,
+          "object_var_name": "",
+          "object_var_comp_op": "equal",
+          "object_var_value": 0
+        },
+        "varSetInt": {
+          "value": 0,
+          "var": "atgm_timer",
+          "input_var": "atgm_time"
+        },
+        "triggerDisable": {
+          "target": "atgm_fire_rate"
+        },
+        "triggerEnable": [
+          {
+            "target": "atgm_in_area"
+          },
+          {
+            "target": "atgm_fire_on"
+          }
+        ]
+      },
+      "else_actions": {}
+    },
+    "timer_start": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": true
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {},
+      "actions": {
+        "varModify": {
+          "operator": "add",
+          "value": 1.0,
+          "var": "timer_replay"
+        }
+      },
+      "else_actions": {}
+    }
+  },
+  "mission_objectives": {
+    "isCategory": true,
+    "is_enabled": true
+  },
+  "variables": {
+    "target_tank": "",
+    "tank_num": 1,
+    "tank_spawn_area": "",
+    "tanks_total": 0,
+    "unit_var": 0,
+    "target_tanks_squad": "",
+    "target_respawn_time": 25,
+    "atgm_timer": 0,
+    "atgm_time": 3,
+    "atgm_unit": "",
+    "player": "",
+    "atgm_unit_spawn": "",
+    "timer_replay": 0
+  },
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {},
+  "areas": {
+    "artillery_spawn01": {
+      "type": "Point",
+      "tm": [
+        [
+          0.0871559,
+          0.0,
+          0.996195
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -0.996195,
+          0.0,
+          0.0871559
+        ],
+        [
+          1158.35,
+          317.84,
+          -412.074
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    },
+    "artillery_spawn02": {
+      "type": "Point",
+      "tm": [
+        [
+          0.0871559,
+          0.0,
+          0.996195
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -0.996195,
+          0.0,
+          0.0871559
+        ],
+        [
+          1084.51,
+          302.897,
+          -386.744
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    },
+    "artillery_spawn03": {
+      "type": "Point",
+      "tm": [
+        [
+          0.0871559,
+          0.0,
+          0.996195
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -0.996195,
+          0.0,
+          0.0871559
+        ],
+        [
+          1006.13,
+          290.989,
+          -356.143
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    },
+    "artillery_spawn04": {
+      "type": "Point",
+      "tm": [
+        [
+          0.0871559,
+          0.0,
+          0.996195
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -0.996195,
+          0.0,
+          0.0871559
+        ],
+        [
+          941.489,
+          285.187,
+          -338.394
+        ]
+      ],
+      "objLayer": 0,
+      "props": {}
+    }
+  },
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": false
+      }
+    ]
+  },
+  "wayPoints": {}
 }
