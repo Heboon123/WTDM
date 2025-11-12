@@ -36,9 +36,6 @@
   "fightAiBehaviour": "assault",
   "autopilotImpl": "FBW",
   "paratrooper": "su_k_36_ejection_para",
-  "customClassIco": "!#ui/gameuiskin#image_in_progress_ico.svg",
-  "customImage": "!#ui/unitskin#image_in_progress.ddsx",
-  "customTooltipImage": "!#ui/aircrafts/image_in_progress.avif",
   "DamageParts": {
     "armor10": {
       "cannon1_dm": {
@@ -104,7 +101,7 @@
       "flap_r_dm": {
         "hp": 30.5
       },
-      "rudder1_dm": {
+      "rudder_dm": {
         "genericDamageMult": 0.3,
         "hp": 19.3
       },
@@ -216,6 +213,11 @@
         "hp": 39.5
       }
     },
+    "steel_cooling_sys": {
+      "oil1_dm": {
+        "hp": 12.2
+      }
+    },
     "steel_pilot": {
       "pilot_dm": {
         "fireProtectionHp": 20.0,
@@ -234,6 +236,12 @@
       },
       "tank4_dm": {
         "hp": 72.5
+      },
+      "tank5_dm": {
+        "hp": 64.3
+      },
+      "tank6_dm": {
+        "hp": 64.3
       }
     }
   },
@@ -790,10 +798,19 @@
         "name": "mgun6_dm"
       },
       {
+        "name": "oil1_dm",
+        "onHit": {
+          "leak_oil": 0.95
+        },
+        "onKill": {
+          "leak_oil": 1.0
+        }
+      },
+      {
         "name": "pilot_dm"
       },
       {
-        "name": "rudder1_dm",
+        "name": "rudder_dm",
         "onHit": [
           {
             "damage": 10.0,
@@ -1123,6 +1140,88 @@
             "damage": 80.0,
             "fire": 0.3,
             "leak": 1.0
+          }
+        ]
+      },
+      {
+        "name": "tank5_dm",
+        "onHit": [
+          {
+            "fire": 0.0001,
+            "leak": 0.3
+          },
+          {
+            "damage": 3.0,
+            "fire": 0.001,
+            "leak": 0.5
+          },
+          {
+            "damage": 20.0,
+            "fire": 0.05,
+            "leak": 0.7
+          },
+          {
+            "damage": 80.0,
+            "expl": 0.5,
+            "fire": 0.01,
+            "leak": 0.9
+          }
+        ],
+        "onKill": [
+          {
+            "fire": 0.01,
+            "leak": 9.99
+          },
+          {
+            "damage": 50.0,
+            "fire": 50.0,
+            "leak": 15.0
+          },
+          {
+            "damage": 80.0,
+            "fire": 50.0,
+            "leak": 10.0
+          }
+        ]
+      },
+      {
+        "name": "tank6_dm",
+        "onHit": [
+          {
+            "fire": 0.0001,
+            "leak": 0.3
+          },
+          {
+            "damage": 3.0,
+            "fire": 0.001,
+            "leak": 0.5
+          },
+          {
+            "damage": 20.0,
+            "fire": 0.05,
+            "leak": 0.7
+          },
+          {
+            "damage": 80.0,
+            "expl": 0.5,
+            "fire": 0.01,
+            "leak": 0.9
+          }
+        ],
+        "onKill": [
+          {
+            "fire": 0.01,
+            "leak": 9.99
+          },
+          {
+            "damage": 50.0,
+            "fire": 50.0,
+            "leak": 15.0
+          },
+          {
+            "damage": 80.0,
+            "fire": 50.0,
+            "leak": 10.0
           }
         ]
       },
@@ -1833,38 +1932,27 @@
     ],
     "mirrorNode": "blister19",
     "lightPos": [
-      3.479,
-      -0.086,
-      0.0
+      3.248,
+      0.093,
+      0.215
     ],
     "lightColor": [
-      0.7,
-      0.01,
-      0.0
+      0.15,
+      0.05,
+      0.01
     ],
-    "lightRadius": 0.3,
+    "lightRadius": 0.32,
     "lightPos1": [
-      3.438,
-      -0.168,
-      0.322
+      3.248,
+      0.093,
+      -0.215
     ],
     "lightColor1": [
-      0.7,
-      0.01,
-      0.0
+      0.15,
+      0.05,
+      0.01
     ],
-    "lightRadius1": 0.25,
-    "lightPos2": [
-      3.436,
-      -0.191,
-      -0.319
-    ],
-    "lightColor2": [
-      0.7,
-      0.01,
-      0.0
-    ],
-    "lightRadius2": 0.3,
+    "lightRadius1": 0.32,
     "devices": {
       "stick_ailerons": [
         -1.0,
@@ -2019,7 +2107,7 @@
       ],
       "rpm_hour": [
         0.0,
-        17700.0
+        13800.0
       ],
       "rpm_min": [
         0.0,
@@ -2053,7 +2141,31 @@
       ],
       "fuel_consume": [
         0.0,
-        15.0
+        30.0
+      ],
+      "ammo_counter1": [
+        0.0,
+        1000.0
+      ],
+      "ammo_counter2": [
+        0.0,
+        100.0
+      ],
+      "ammo_counter3": [
+        0.0,
+        10.0
+      ],
+      "ammo_counter4": [
+        0.0,
+        1000.0
+      ],
+      "ammo_counter5": [
+        0.0,
+        100.0
+      ],
+      "ammo_counter6": [
+        0.0,
+        10.0
       ]
     },
     "parts_holes_dmg": {
@@ -2065,6 +2177,34 @@
         "engine2",
         "engine3",
         "engine4"
+      ]
+    }
+  },
+  "fuelDumpingSettings": {
+    "fx": "fuel_dump_small",
+    "burningFx": "fuel_dump_fire_small",
+    "allowed": true,
+    "minWepSpeed": 3000.0,
+    "minSpeed": 280.0,
+    "maxSpeed": 800.0,
+    "burnTriggerJetLength": 100.0,
+    "burnTriggerMaxDistance": 10.0,
+    "maxEmission": 1.0,
+    "signal": 75.0,
+    "offset": [
+      50.0,
+      0.0,
+      0.0
+    ],
+    "losWidthIncrease": [
+      10.0,
+      20.0,
+      20.0
+    ],
+    "emitters": {
+      "emitter": [
+        "emtr_fuel_dump1",
+        "emtr_fuel_dump2"
       ]
     }
   },
@@ -2123,7 +2263,7 @@
     ]
   },
   "WeaponSlots": {
-    "maxloadMass": 1460.0,
+    "maxloadMass": 1685.0,
     "maxloadMassLeftConsoles": 850.0,
     "maxloadMassRightConsoles": 850.0,
     "maxDisbalance": 450.0,
@@ -2135,8 +2275,8 @@
         "pylon4",
         "pylon5",
         "pylon6",
-        "pylon_missile1",
-        "pylon_missile2",
+        "pylon_missle1",
+        "pylon_missle2",
         "pylon_lm39_001",
         "pylon_lm39_002",
         "defa_gunpod1",
@@ -2170,7 +2310,9 @@
         "cover7_dm",
         "mgun5_dm",
         "cover8_dm",
-        "mgun6_dm"
+        "mgun6_dm",
+        "tank5_dm",
+        "tank6_dm"
       ]
     },
     "WeaponSlot": [
@@ -2189,7 +2331,12 @@
               "bullets": 125,
               "light": false,
               "spread": 1.2,
-              "traceOffset": 1
+              "traceOffset": 1,
+              "counterIndex": [
+                1,
+                2,
+                3
+              ]
             },
             {
               "trigger": "cannon",
@@ -2200,7 +2347,12 @@
               "bullets": 125,
               "light": false,
               "spread": 1.2,
-              "traceOffset": 1
+              "traceOffset": 3,
+              "counterIndex": [
+                4,
+                5,
+                6
+              ]
             }
           ]
         }
@@ -2539,6 +2691,28 @@
               "counterIndex": 1,
               "external": true,
               "rotationAnimScale": "gun_rotate_01:CRS"
+            }
+          },
+          {
+            "iconType": "ptb",
+            "name": "ptb_1",
+            "showInWeaponMenu": true,
+            "ShowNodes": {
+              "node": "pylon2"
+            },
+            "ShowDmParts": {
+              "node": "tank5_dm"
+            },
+            "Weapon": {
+              "trigger": "fuel tanks",
+              "blk": "gameData/Weapons/drop_tank/it_330l_drop_tank_1.blk",
+              "emitter": "it_330l_drop_tank_001",
+              "bullets": 1,
+              "external": true
+            },
+            "DependentWeaponPreset": {
+              "slot": 5,
+              "preset": "ptb_2"
             }
           }
         ]
@@ -2880,7 +3054,7 @@
               "emitter": "flare10",
               "flash": "flare10",
               "dm": "mgun4_dm",
-              "shell": "emtr_shellrejection9",
+              "shell": "emtr_shellrejection10",
               "bullets": 1500,
               "spread": 1.5,
               "traceOffset": 1,
@@ -3044,13 +3218,35 @@
               "emitter": "flare11",
               "flash": "flare11",
               "dm": "mgun5_dm",
-              "shell": "emtr_shellrejection9",
+              "shell": "emtr_shellrejection11",
               "bullets": 1500,
               "spread": 1.5,
               "traceOffset": 1,
               "counterIndex": 1,
               "external": true,
               "rotationAnimScale": "gun_rotate_01:CRS"
+            }
+          },
+          {
+            "iconType": "ptb",
+            "name": "ptb_2",
+            "showInWeaponMenu": true,
+            "ShowNodes": {
+              "node": "pylon5"
+            },
+            "ShowDmParts": {
+              "node": "tank6_dm"
+            },
+            "Weapon": {
+              "trigger": "fuel tanks",
+              "blk": "gameData/Weapons/drop_tank/it_330l_drop_tank_2.blk",
+              "emitter": "it_330l_drop_tank_002",
+              "bullets": 1,
+              "external": true
+            },
+            "DependentWeaponPreset": {
+              "slot": 2,
+              "preset": "ptb_1"
             }
           }
         ]
@@ -3218,7 +3414,7 @@
               "emitter": "flare12",
               "flash": "flare12",
               "dm": "mgun6_dm",
-              "shell": "emtr_shellrejection9",
+              "shell": "emtr_shellrejection12",
               "bullets": 1500,
               "spread": 1.5,
               "traceOffset": 1,

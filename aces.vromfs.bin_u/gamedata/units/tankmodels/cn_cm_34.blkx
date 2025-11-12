@@ -265,7 +265,6 @@
       "turret_top_dm": {},
       "turret_04_bottom_dm": {},
       "turret_back_dm": {},
-      "turret_02_bottom_dm": {},
       "turret_04_front_dm": {},
       "turret_01_bottom_dm": {
         "armorThickness": 15.0
@@ -276,10 +275,11 @@
       "turret_03_bottom_dm": {},
       "turret_01_side_dm": {},
       "ex_decor_10_dm": {},
-      "turret_03_top_dm": {},
-      "turret_03_back_dm": {}
+      "turret_03_back_dm": {},
+      "turret_02_bottom_dm": {}
     },
     "xray_parts": {
+      "armorClass": "RHA_tank",
       "hp": 5000.0,
       "composite_armor_hull_01_dm": {
         "armorThickness": 5.0,
@@ -847,7 +847,7 @@
       "armorArrayHull": [
         {
           "xrayDmPart": "composite_armor_hull_01_dm",
-          "titleLoc": "RHAHH_tank",
+          "titleLoc": "RHA_tank",
           "armorArrayText": {
             "layer": {
               "dmPart": "composite_armor_hull_01_dm"
@@ -856,7 +856,7 @@
         },
         {
           "xrayDmPart": "composite_armor_hull_02_dm",
-          "titleLoc": "RHAHH_tank",
+          "titleLoc": "RHA_tank",
           "armorArrayText": {
             "layer": {
               "dmPart": "composite_armor_hull_02_dm"
@@ -2017,6 +2017,17 @@
         "emitter": "bone_gun_barrel",
         "flash": "emtr_gun_flame_01",
         "useEmitter": true,
+        "shellCasingEmitter": "emtr_shell_01",
+        "shellCasingMesh": "auto_cannon_cartridge_case",
+        "hatchAnimVar": "hatch_toggle",
+        "openHatchTime": 0.07,
+        "shellCasingLifeTime": 5.0,
+        "shellCasingImpulse": [
+          0.0,
+          -4.0,
+          3.0
+        ],
+        "linkShellCasingToGun": true,
         "recoilOffset": 0.09,
         "defaultYaw": 0.0,
         "defaultPitch": 0.0,
@@ -2169,7 +2180,7 @@
       {
         "trigger": "gunner1",
         "triggerGroup": "coaxial",
-        "blk": "gameData/Weapons/groundModels_weapons/7_62mm_Type74_user_machinegun.blk",
+        "blk": "gameData/Weapons/groundModels_weapons/7_62mm_T74v_user_machinegun.blk",
         "emitter": "bone_mg_gun_twin",
         "flash": "emtr_mg_flame_02",
         "defaultYaw": 0.0,
@@ -2224,9 +2235,11 @@
       {
         "trigger": "gunner2",
         "triggerGroup": "machinegun",
-        "blk": "gameData/Weapons/groundModels_weapons/7_62mm_Type74_user_machinegun.blk",
+        "blk": "gameData/Weapons/groundModels_weapons/7_62mm_T74_user_machinegun.blk",
         "emitter": "bone_mg_aa_v",
         "flash": "emtr_mg_flame_01",
+        "useEmitter": true,
+        "aimingFromBoneGun": false,
         "defaultYaw": 0.0,
         "defaultPitch": 0.0,
         "barrelDP": "gun_barrel_01_dm",
@@ -2266,35 +2279,25 @@
         }
       },
       {
-        "trigger": "gunner3",
+        "trigger": "gunner4",
         "triggerGroup": "commander",
         "blk": "gameData/Weapons/dummy_weapon.blk",
         "emitter": "bone_commander_sight_v",
+        "speedYaw": 0.0,
+        "speedPitch": 0.0,
         "defaultYaw": 0.0,
         "defaultPitch": 0.0,
         "parkInDeadzone": false,
-        "speedYaw": 120.0,
-        "speedPitch": 90.0,
         "turret": {
-          "head": "bone_commander_sight_h",
+          "head": "bone_turret",
           "gun": "bone_commander_sight_v",
           "gunnerDm": "commander_dm",
           "verDriveDm": "commander_panoramic_sight_dm",
-          "horDriveDm": "commander_panoramic_sight_dm"
-        },
-        "limits": {
-          "yaw": [
-            -180.0,
-            180.0
-          ],
-          "pitch": [
-            -10.0,
-            20.0
-          ]
+          "horDriveDm": "drive_turret_h_dm",
+          "rotatedTurret": "bone_turret"
         },
         "gunStabilizer": {
           "hasVerticalGunFreeMode": false,
-          "forceEnabled": true,
           "hasHorizontal": true,
           "horizontalOmegaMult": 1.0,
           "horizontalSpeedLimitKPH": 75.0,
@@ -2309,14 +2312,24 @@
               ],
               [
                 45.0,
-                0.00015
+                0.015
               ],
               [
                 80.0,
-                0.0002
+                0.02
               ]
             ]
           }
+        },
+        "limits": {
+          "yaw": [
+            -180.0,
+            180.0
+          ],
+          "pitch": [
+            -10.0,
+            60.0
+          ]
         }
       }
     ]
@@ -2429,16 +2442,14 @@
         "wheel_r_04": 0.4
       },
       "wheelsDamageWeight": {
-        "wheel_l_01": 0.05,
-        "wheel_r_01": 0.05,
-        "wheel_l_02": 0.05,
-        "wheel_r_02": 0.05,
-        "wheel_l_03": 0.05,
-        "wheel_r_03": 0.05,
-        "wheel_l_04": 0.05,
-        "wheel_r_04": 0.05,
-        "wheel_r_drive": 0.25,
-        "wheel_l_drive": 0.25
+        "wheel_l_01": 0.15,
+        "wheel_r_01": 0.15,
+        "wheel_l_02": 0.15,
+        "wheel_r_02": 0.15,
+        "wheel_l_03": 0.15,
+        "wheel_r_03": 0.15,
+        "wheel_l_04": 0.15,
+        "wheel_r_04": 0.15
       },
       "driven": {
         "wheel_l_01": true,
@@ -3854,6 +3865,17 @@
               "emitter": "bone_gun_barrel",
               "flash": "emtr_gun_flame_01",
               "useEmitter": true,
+              "shellCasingEmitter": "emtr_shell_01",
+              "shellCasingMesh": "auto_cannon_cartridge_case",
+              "hatchAnimVar": "hatch_toggle",
+              "openHatchTime": 0.07,
+              "shellCasingLifeTime": 5.0,
+              "shellCasingImpulse": [
+                0.0,
+                -4.0,
+                3.0
+              ],
+              "linkShellCasingToGun": true,
               "recoilOffset": 0.09,
               "defaultYaw": 0.0,
               "defaultPitch": 0.0,
@@ -4006,7 +4028,7 @@
             {
               "trigger": "gunner1",
               "triggerGroup": "coaxial",
-              "blk": "gameData/Weapons/groundModels_weapons/7_62mm_Type74_user_machinegun.blk",
+              "blk": "gameData/Weapons/groundModels_weapons/7_62mm_T74v_user_machinegun.blk",
               "emitter": "bone_mg_gun_twin",
               "flash": "emtr_mg_flame_02",
               "defaultYaw": 0.0,
@@ -4061,9 +4083,11 @@
             {
               "trigger": "gunner2",
               "triggerGroup": "machinegun",
-              "blk": "gameData/Weapons/groundModels_weapons/7_62mm_Type74_user_machinegun.blk",
+              "blk": "gameData/Weapons/groundModels_weapons/7_62mm_T74_user_machinegun.blk",
               "emitter": "bone_mg_aa_v",
               "flash": "emtr_mg_flame_01",
+              "useEmitter": true,
+              "aimingFromBoneGun": false,
               "defaultYaw": 0.0,
               "defaultPitch": 0.0,
               "barrelDP": "gun_barrel_01_dm",
@@ -4103,35 +4127,25 @@
               }
             },
             {
-              "trigger": "gunner3",
+              "trigger": "gunner4",
               "triggerGroup": "commander",
               "blk": "gameData/Weapons/dummy_weapon.blk",
               "emitter": "bone_commander_sight_v",
+              "speedYaw": 0.0,
+              "speedPitch": 0.0,
               "defaultYaw": 0.0,
               "defaultPitch": 0.0,
               "parkInDeadzone": false,
-              "speedYaw": 120.0,
-              "speedPitch": 90.0,
               "turret": {
-                "head": "bone_commander_sight_h",
+                "head": "bone_turret",
                 "gun": "bone_commander_sight_v",
                 "gunnerDm": "commander_dm",
                 "verDriveDm": "commander_panoramic_sight_dm",
-                "horDriveDm": "commander_panoramic_sight_dm"
-              },
-              "limits": {
-                "yaw": [
-                  -180.0,
-                  180.0
-                ],
-                "pitch": [
-                  -10.0,
-                  20.0
-                ]
+                "horDriveDm": "drive_turret_h_dm",
+                "rotatedTurret": "bone_turret"
               },
               "gunStabilizer": {
                 "hasVerticalGunFreeMode": false,
-                "forceEnabled": true,
                 "hasHorizontal": true,
                 "horizontalOmegaMult": 1.0,
                 "horizontalSpeedLimitKPH": 75.0,
@@ -4146,18 +4160,28 @@
                     ],
                     [
                       45.0,
-                      0.00015
+                      0.015
                     ],
                     [
                       80.0,
-                      0.0002
+                      0.02
                     ]
                   ]
                 }
+              },
+              "limits": {
+                "yaw": [
+                  -180.0,
+                  180.0
+                ],
+                "pitch": [
+                  -10.0,
+                  60.0
+                ]
               }
             },
             {
-              "trigger": "gunner4",
+              "trigger": "gunner3",
               "triggerGroup": "smoke",
               "blk": "gameData/Weapons/groundModels_weapons/66mm_modern_smoke_grenade_launcher.blk",
               "weaponType": "rockets",
@@ -4227,19 +4251,23 @@
             ],
             "noiseFactor": 0.04
           },
-          "commanderViewThermal": {
+          "commanderViewIr": {
             "resolution": [
-              1200,
-              800
+              1600,
+              1200
             ],
-            "noiseFactor": 0.04
+            "lightMult": 9.0,
+            "ghosting": 0.6,
+            "noiseFactor": 0.2
           },
-          "driverThermal": {
+          "driverIr": {
             "resolution": [
-              500,
-              300
+              800,
+              600
             ],
-            "noiseFactor": 0.05
+            "lightMult": 5.0,
+            "ghosting": 0.6,
+            "noiseFactor": 0.2
           }
         }
       }

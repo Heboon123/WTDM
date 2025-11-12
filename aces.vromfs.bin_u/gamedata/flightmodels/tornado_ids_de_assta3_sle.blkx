@@ -51,9 +51,6 @@
   "laserDesignator": true,
   "autopilotImpl": "FBW",
   "paratrooper": "usa_irvin_5000_ejection_para",
-  "customClassIco": "!#ui/gameuiskin#image_in_progress_ico.svg",
-  "customImage": "!#ui/unitskin#image_in_progress.ddsx",
-  "customTooltipImage": "!#ui/aircrafts/image_in_progress.avif",
   "DamageParts": {
     "armor10": {
       "cannon1_dm": {
@@ -1099,41 +1096,44 @@
           },
           {
             "damage": 7.0,
-            "wing_l_dm": 1.0,
-            "wing_r_dm": 1.0,
+            "spar1_r_dm": 1.0,
+            "spar1_l_dm": 1.0,
+            "canCut": true,
             "nothing": 5.0
           },
           {
             "damage": 10.0,
-            "wing_l_dm": 1.0,
-            "wing_r_dm": 1.0,
+            "spar1_r_dm": 1.0,
+            "spar1_l_dm": 1.0,
+            "canCut": true,
             "nothing": 4.0
           },
           {
             "damage": 20.0,
-            "wing_l_dm": 1.0,
-            "wing_r_dm": 1.0,
+            "spar1_r_dm": 1.0,
+            "spar1_l_dm": 1.0,
+            "canCut": true,
             "nothing": 3.0
           },
           {
             "damage": 30.0,
-            "wing_l_dm": 1.0,
-            "wing_r_dm": 1.0,
+            "spar1_r_dm": 1.0,
+            "spar1_l_dm": 1.0,
+            "canCut": true,
             "nothing": 2.0
           },
           {
             "damage": 50.0,
             "fire": 5.0,
-            "wing_l_dm": 1.0,
-            "wing_r_dm": 1.0
+            "spar1_r_dm": 1.0,
+            "spar1_l_dm": 1.0,
+            "canCut": true
           },
           {
             "damage": 200.0,
             "wingcontrol_dm": 0.4,
             "wingcontrol_l_dm": 0.4,
-            "wingcontrol_r_dm": 0.4,
-            "wing_l_dm": 1.0,
-            "wing_r_dm": 1.0
+            "wingcontrol_r_dm": 0.4
           }
         ]
       },
@@ -2668,9 +2668,9 @@
       0.0
     ],
     "lightColor": [
-      0.7,
-      0.01,
-      0.0
+      0.05,
+      0.25,
+      0.01
     ],
     "lightRadius": 0.45,
     "lightPos1": [
@@ -2679,9 +2679,9 @@
       0.3
     ],
     "lightColor1": [
-      0.7,
-      0.01,
-      0.0
+      0.05,
+      0.25,
+      0.01
     ],
     "lightRadius1": 0.35,
     "lightPos2": [
@@ -2690,9 +2690,9 @@
       -0.3
     ],
     "lightColor2": [
-      0.7,
-      0.01,
-      0.0
+      0.05,
+      0.25,
+      0.01
     ],
     "lightRadius2": 0.35,
     "devices": {
@@ -3118,24 +3118,6 @@
     }
   },
   "gunnerOpticFps": {
-    "TV": {
-      "pos": [
-        0.8,
-        -0.2,
-        0.0
-      ],
-      "head": "optic2_turret",
-      "crosshairPreset": "test_crosshair",
-      "angularLimits": [
-        -38.0,
-        38.0,
-        -55.0,
-        38.0
-      ],
-      "opticType": "",
-      "turretNo": 0,
-      "nvIndex": 2
-    },
     "TV1": {
       "pos": [
         0.8,
@@ -3153,7 +3135,7 @@
       "opticType": "tv",
       "turretNo": 0,
       "nvIndex": 2,
-      "name": "SPICE"
+      "name": "HOSBO"
     },
     "Target": {
       "pos": [
@@ -3177,7 +3159,7 @@
   "sensors": {
     "sensor": [
       {
-        "blk": "gameData/sensors/uk_ari_23274.blk",
+        "blk": "gameData/sensors/uk_ari_23274_ids.blk",
         "dmPart": "radar_dm"
       },
       {
@@ -3192,7 +3174,7 @@
         "node": "optic1_gun"
       },
       {
-        "blk": "gameData/sensors/uk_ari_23284.blk"
+        "blk": "gameData/sensors/swd_bow_21.blk"
       }
     ]
   },
@@ -3781,6 +3763,27 @@
             ]
           },
           {
+            "iconType": "guided_bomb_middle_jdam",
+            "name": "gbu_54b_slot4",
+            "reqModification": "gr_assta_3_0_gbu54b",
+            "ShowNodes": {
+              "node": "pylon_bomb3"
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/BombGuns/us_500lb_gbu_54b.blk",
+              "emitter": "bomb3_ld",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            },
+            "DependentWeaponPreset": {
+              "slot": 8,
+              "preset": "litening_pod"
+            }
+          },
+          {
             "iconType": "glide_bombs_heavy",
             "name": "hosbo_slot4",
             "reqModification": "de_hosbo_glide_bomb",
@@ -3790,30 +3793,12 @@
             "Weapon": {
               "trigger": "guided bombs",
               "blk": "gameData/Weapons/BombGuns/de_hosbo_glide_bomb.blk",
-              "emitter": "2000lb_gbu_24b_1",
+              "emitter": "bomb3_ld",
               "bullets": 1,
               "external": true,
               "separate": true,
               "machLimit": 1.01
-            },
-            "BannedWeaponPreset": [
-              {
-                "slot": 5,
-                "preset": "mk83_default_slot5"
-              },
-              {
-                "slot": 5,
-                "preset": "mk83_x2_slot5"
-              },
-              {
-                "slot": 5,
-                "preset": "mk83_air_slot5"
-              },
-              {
-                "slot": 5,
-                "preset": "gbu_54b_slot5"
-              }
-            ]
+            }
           }
         ]
       },
@@ -3940,6 +3925,23 @@
               "slot": 8,
               "preset": "litening_pod"
             }
+          },
+          {
+            "iconType": "glide_bombs_heavy",
+            "name": "hosbo_slot5",
+            "reqModification": "de_hosbo_glide_bomb",
+            "ShowNodes": {
+              "node": "pylon_bomb3"
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/BombGuns/de_hosbo_glide_bomb.blk",
+              "emitter": "bomb9_ld",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
           }
         ]
       },
@@ -4018,10 +4020,7 @@
             "name": "gbu_54b_slot6",
             "reqModification": "gr_assta_3_0_gbu54b",
             "ShowNodes": {
-              "node": [
-                "pylon_bomb4",
-                "pylon_bomb4_lap"
-              ]
+              "node": "pylon_bomb4"
             },
             "Weapon": {
               "trigger": "guided bombs",
@@ -4159,6 +4158,23 @@
               "slot": 8,
               "preset": "litening_pod"
             }
+          },
+          {
+            "iconType": "glide_bombs_heavy",
+            "name": "hosbo_slot7",
+            "reqModification": "de_hosbo_glide_bomb",
+            "ShowNodes": {
+              "node": "pylon_bomb5"
+            },
+            "Weapon": {
+              "trigger": "guided bombs",
+              "blk": "gameData/Weapons/BombGuns/de_hosbo_glide_bomb.blk",
+              "emitter": "bomb10_ld",
+              "bullets": 1,
+              "external": true,
+              "separate": true,
+              "machLimit": 1.01
+            }
           }
         ]
       },
@@ -4269,38 +4285,12 @@
             "Weapon": {
               "trigger": "guided bombs",
               "blk": "gameData/Weapons/BombGuns/de_hosbo_glide_bomb.blk",
-              "emitter": "2000lb_gbu_24b_2",
+              "emitter": "bomb4_ld",
               "bullets": 1,
               "external": true,
               "separate": true,
               "machLimit": 1.01
-            },
-            "BannedWeaponPreset": [
-              {
-                "slot": 7,
-                "preset": "brimstone_dm_slot7"
-              },
-              {
-                "slot": 7,
-                "preset": "mk83_default_slot7"
-              },
-              {
-                "slot": 7,
-                "preset": "mk83_x2_slot7"
-              },
-              {
-                "slot": 7,
-                "preset": "mk83_air_slot7"
-              },
-              {
-                "slot": 7,
-                "preset": "mk83_air_x2_slot7"
-              },
-              {
-                "slot": 7,
-                "preset": "gbu_54b_slot7"
-              }
-            ]
+            }
           }
         ]
       },

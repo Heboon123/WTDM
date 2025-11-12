@@ -1299,6 +1299,12 @@ let optionsMap = {
     descr.controlName <- "switchbox"
     descr.defaultValue = false
   },
+  [USEROPT_SHIP_PRESET_BASED_DAMAGE_CONTROL] = function(_optionId, descr, _context) {
+    descr.id = "shipPresetBasedDamageControl"
+    descr.controlType = optionControlType.CHECKBOX
+    descr.controlName <- "switchbox"
+    descr.defaultValue = true
+  },
   [USEROPT_TORPEDO_AUTO_SWITCH] = function(_optionId, descr, _context) {
     descr.id = "torpedo_auto_switch"
     descr.controlType = optionControlType.CHECKBOX
@@ -1924,31 +1930,34 @@ let optionsMap = {
     descr.id = "damage_indicator_scale"
     descr.controlType = optionControlType.SLIDER
     descr.min <- -2
-    descr.max <- 2
+    let maxValue = 2
+    descr.max <- maxValue
     descr.step <- 1
     descr.value = get_gui_option_in_mode(optionId, OPTIONS_MODE_GAMEPLAY)
     descr.defaultValue = 0
-    descr.getValueLocText = @(val) $"{(100 + 33.3 * val / descr.max).tointeger()}%"
+    descr.getValueLocText = @(val) $"{(100 + 33.3 * val / maxValue).tointeger()}%"
   },
   [USEROPT_TACTICAL_MAP_SIZE] = function(optionId, descr, _context) {
     descr.id = "tactical_map_scale"
     descr.controlType = optionControlType.SLIDER
     descr.min <- -2
-    descr.max <- 2
+    let maxValue = 2
+    descr.max <- maxValue
     descr.step <- 1
     descr.value = get_gui_option_in_mode(optionId, OPTIONS_MODE_GAMEPLAY)
     descr.defaultValue = 0
-    descr.getValueLocText = @(val) $"{(100 + 33.3 * val / descr.max).tointeger()}%"
+    descr.getValueLocText = @(val) $"{(100 + 33.3 * val / maxValue).tointeger()}%"
   },
   [USEROPT_AIR_RADAR_SIZE] = function(optionId, descr, _context) {
     descr.id = "air_radar_scale"
     descr.controlType = optionControlType.SLIDER
     descr.min <- -2
-    descr.max <- 2
+    let maxValue = 2
+    descr.max <- maxValue
     descr.step <- 1
     descr.value = get_gui_option_in_mode(optionId, OPTIONS_MODE_GAMEPLAY)
     descr.defaultValue = 0
-    descr.getValueLocText = @(val) $"{(100 + 33.3 * val / descr.max).tointeger()}%"
+    descr.getValueLocText = @(val) $"{(100 + 33.3 * val / maxValue).tointeger()}%"
   },
   [USEROPT_SHOW_PILOT] = function(_optionId, descr, _context) {
     descr.id = "show_pilot"
@@ -3715,12 +3724,6 @@ let optionsMap = {
     let unit = getPlayerCurUnit()
     descr.value = unit ? u.find_in_array(descr.values, get_option_tank_alt_crosshair(unit.name), 0) : 0
   },
-  [USEROPT_GAMEPAD_CURSOR_CONTROLLER] = function(_optionId, descr, _context) {
-    descr.id = "gamepad_cursor_controller"
-    descr.controlType = optionControlType.CHECKBOX
-    descr.controlName <- "switchbox"
-    descr.value = ::g_gamepad_cursor_controls.getValue()
-  },
   [USEROPT_PS4_CROSSPLAY] = function(_optionId, descr, _context) {
     descr.id = "ps4_crossplay"
     descr.controlType = optionControlType.CHECKBOX
@@ -4886,6 +4889,7 @@ let optionsSetMap = {
   [USEROPT_SINGLE_SHOT_BY_TURRET] = set_useropt_landing_mode,
   [USEROPT_AUTO_TARGET_CHANGE_SHIP] = set_useropt_landing_mode,
   [USEROPT_REALISTIC_AIMING_SHIP] = set_useropt_landing_mode,
+  [USEROPT_SHIP_PRESET_BASED_DAMAGE_CONTROL] = set_useropt_landing_mode,
   [USEROPT_TORPEDO_AUTO_SWITCH] = set_useropt_landing_mode,
   [USEROPT_DEFAULT_TORPEDO_FORESTALL_ACTIVE] = set_useropt_landing_mode,
   [USEROPT_REPLAY_ALL_INDICATORS] = set_useropt_landing_mode,
@@ -4965,7 +4969,6 @@ let optionsSetMap = {
     set_option_combine_pri_sec_triggers(value)
     set_gui_option(optionId, value)
   },
-  [USEROPT_GAMEPAD_CURSOR_CONTROLLER] = @(value, _descr, _optionId) ::g_gamepad_cursor_controls.setValue(value),
   [USEROPT_PS4_CROSSPLAY] = @(value, _descr, _optionId) crossplayModule.setCrossPlayStatus(value),
     
 

@@ -73,13 +73,14 @@ gui_handlers.GenericOptions <- class (gui_handlers.BaseGuiHandlerWT) {
 
   owner = null
 
-  optionIdToObjCache = {}
+  optionIdToObjCache = null
 
   isOptionInUpdate = false
 
   isInUpdateLoadFuelOptions = false
 
   function initScreen() {
+    this.optionIdToObjCache = {}
     if (!this.optionsContainers)
       this.optionsContainers = []
     if (this.options)
@@ -438,7 +439,7 @@ gui_handlers.GenericOptions <- class (gui_handlers.BaseGuiHandlerWT) {
 
   function onChangeDisplayRealClan(obj) {
     if (!havePremium.get())
-      return obj.setValue(false)
+      return obj.setValue(true)
     let optValue = get_option(USEROPT_DISPLAY_MY_REAL_CLAN).value
     if (optValue == obj.getValue())
       return
@@ -747,13 +748,14 @@ gui_handlers.GenericOptionsModal <- class (gui_handlers.GenericOptions) {
   needMoveMouseOnButtonApply = true
 
   navigationHandlerWeak = null
-  headersToOptionsList = {}
+  headersToOptionsList = null
 
   modalHeader = null
   modalWidth = null
   modalHeight = null
 
   function initScreen() {
+    this.headersToOptionsList = {}
     base.initScreen()
     this.initNavigation()
     this.initModalSize()

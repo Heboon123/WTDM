@@ -262,15 +262,18 @@
       },
       "turret_11_side_dm": {
         "armorClass": "RHAHH_tank",
-        "armorThickness": 25.0
+        "armorThickness": 25.0,
+        "hidableInViewer": true
       },
       "ex_armor_01_dm": {
         "armorClass": "RHAHH_tank",
-        "armorThickness": 15.0
+        "armorThickness": 15.0,
+        "hidableInViewer": true
       },
       "ex_armor_02_dm": {
         "armorClass": "RHAHH_tank",
-        "armorThickness": 15.0
+        "armorThickness": 15.0,
+        "hidableInViewer": true
       },
       "turret_06_side_dm": {
         "armorClass": "aluminum_armor_AMS_4050A",
@@ -278,15 +281,18 @@
       },
       "turret_07_back_dm": {
         "armorClass": "RHAHH_tank",
-        "armorThickness": 6.0
+        "armorThickness": 6.0,
+        "hidableInViewer": true
       },
       "turret_10_top_dm": {
         "armorThickness": 8.0,
-        "armorClass": "RHAHH_tank"
+        "armorClass": "RHAHH_tank",
+        "hidableInViewer": true
       },
       "turret_06_front_dm": {
         "armorThickness": 8.0,
-        "armorClass": "RHAHH_tank"
+        "armorClass": "RHAHH_tank",
+        "hidableInViewer": true
       },
       "body_top_dm": {
         "armorClass": "aluminum_armor_AMS_4050A",
@@ -326,11 +332,13 @@
       },
       "turret_01_side_dm": {
         "armorClass": "RHAHH_tank",
-        "armorThickness": 10.0
+        "armorThickness": 10.0,
+        "hidableInViewer": true
       },
       "turret_07_side_dm": {
         "armorClass": "RHAHH_tank",
-        "armorThickness": 10.0
+        "armorThickness": 10.0,
+        "hidableInViewer": true
       },
       "turret_02_top_dm": {
         "armorClass": "aluminum_armor_AMS_4050A",
@@ -391,7 +399,7 @@
       },
       "firewall_armor_01_dm": {
         "armorClass": "aluminum_armor_AMS_4050A",
-        "armorThickness": 10.0,
+        "armorThickness": 20.0,
         "hp": 150.0,
         "ignoreDeadWithSplash": true,
         "hidableInXrayViewer": true
@@ -469,7 +477,8 @@
       },
       "body_back_dm": {},
       "turret_07_bottom_dm": {
-        "armorThickness": 10.0
+        "armorThickness": 10.0,
+        "hidableInViewer": true
       },
       "turret_06_bottom_dm": {
         "armorThickness": 20.0
@@ -487,8 +496,9 @@
         "armorThickness": 10.0
       },
       "composite_armor_hull_26_dm": {
-        "armorThickness": 5.0,
-        "hidableInXrayViewer": true
+        "armorThickness": 12.0,
+        "hidableInXrayViewer": true,
+        "armorClass": "aluminum_armor_AMS_4050A"
       }
     },
     "hull_spall_liner": {
@@ -743,11 +753,20 @@
       "ex_decor_06_dm": {},
       "ex_decor_turret_04_dm": {},
       "ex_decor_turret_05_dm": {},
-      "ex_decor_15_dm": {},
-      "ex_decor_16_dm": {},
-      "ex_decor_13_dm": {},
       "ex_decor_10_dm": {},
       "ex_decor_09_dm": {}
+    },
+    "body_side_screens": {
+      "armorClass": "t_90_rubber_fabric_screens",
+      "hp": 100.0,
+      "hidableInViewer": true,
+      "armorThickness": 8.0,
+      "createSecondaryShatters": false,
+      "ex_decor_11_dm": {},
+      "ex_decor_12_dm": {},
+      "ex_decor_13_dm": {},
+      "ex_decor_14_dm": {},
+      "ex_decor_15_dm": {}
     },
     "composite_shields": {
       "armorClass": "hull_side_special_armor",
@@ -1477,9 +1496,37 @@
     }
   },
   "dmgAngles": {
+    "hatch_01": [
+      5.0,
+      0.0
+    ],
+    "hatch_03": [
+      20.0,
+      18.0
+    ],
+    "hatch_04": [
+      10.0,
+      10.0
+    ],
+    "hatch_07": [
+      15.0,
+      0.0
+    ],
+    "hatch_08": [
+      7.0,
+      15.0
+    ],
     "hatch_09": [
-      50.0,
-      50.0
+      25.0,
+      15.0
+    ],
+    "hatch_10": [
+      15.0,
+      10.0
+    ],
+    "hatch_11": [
+      15.0,
+      10.0
     ]
   },
   "attachables": {
@@ -2528,30 +2575,17 @@
             "fire_control_system_dm"
           ],
           "shootingDmPart": "fire_control_system_dm",
-          "linkedAnimPart": [
-            {
-              "verNode": "roll_01",
-              "verLimits": [
-                3.0,
-                -67.0
-              ],
-              "verOriginLimits": [
-                -10.0,
-                60.0
-              ]
-            },
-            {
-              "verNode": "roll_02",
-              "verLimits": [
-                -3.0,
-                60.0
-              ],
-              "verOriginLimits": [
-                -9.0,
-                59.0
-              ]
-            }
-          ]
+          "linkedAnimPart": {
+            "verNode": "bone_gun_02",
+            "verLimits": [
+              0.0,
+              20.0
+            ],
+            "verOriginLimits": [
+              -10.0,
+              45.0
+            ]
+          }
         },
         "limits": {
           "yaw": [
@@ -2713,12 +2747,12 @@
         "blk": "gameData/Weapons/groundModels_weapons/140mm_akeron_mp_rocket_launchr_user_cannon.blk",
         "flash": "emtr_gun_flame_01",
         "useEmitter": true,
-        "emitter": "bone_gun_barrel_01",
+        "emitter": "bone_rocket_01",
         "emitterGenRange": [
           1,
           2
         ],
-        "emitterGenFmt": "bone_gun_barrel_%02d",
+        "emitterGenFmt": "bone_rocket_%02d",
         "ammoDpGenFmt": "ammo_turret_%02d_dm",
         "skipAxisEmitterCheck": true,
         "recoilMultiplier": 0.1,
@@ -2950,6 +2984,18 @@
         "wheel_l_02": true,
         "wheel_r_03": true,
         "wheel_l_03": true
+      }
+    },
+    "movableSuspension": {
+      "speed": 0.07,
+      "maxSpeedForMove": 1.0,
+      "clearance": {
+        "wheel_l_01": {},
+        "wheel_l_02": {},
+        "wheel_l_03": {},
+        "wheel_r_01": {},
+        "wheel_r_02": {},
+        "wheel_r_03": {}
       }
     }
   },
@@ -4319,7 +4365,7 @@
               "dmPart": "electronic_equipment_dm"
             },
             {
-              "blk": "gameData/sensors/it_ralm-101.blk",
+              "blk": "gameData/sensors/fr_antares_lws.blk",
               "dmPart": "electronic_equipment_dm"
             }
           ]
@@ -4394,30 +4440,17 @@
                   "fire_control_system_dm"
                 ],
                 "shootingDmPart": "fire_control_system_dm",
-                "linkedAnimPart": [
-                  {
-                    "verNode": "roll_01",
-                    "verLimits": [
-                      3.0,
-                      -67.0
-                    ],
-                    "verOriginLimits": [
-                      -10.0,
-                      60.0
-                    ]
-                  },
-                  {
-                    "verNode": "roll_02",
-                    "verLimits": [
-                      -3.0,
-                      60.0
-                    ],
-                    "verOriginLimits": [
-                      -9.0,
-                      59.0
-                    ]
-                  }
-                ]
+                "linkedAnimPart": {
+                  "verNode": "bone_gun_02",
+                  "verLimits": [
+                    0.0,
+                    20.0
+                  ],
+                  "verOriginLimits": [
+                    -10.0,
+                    45.0
+                  ]
+                }
               },
               "limits": {
                 "yaw": [
@@ -4579,12 +4612,12 @@
               "blk": "gameData/Weapons/groundModels_weapons/140mm_akeron_mp_rocket_launchr_user_cannon.blk",
               "flash": "emtr_gun_flame_01",
               "useEmitter": true,
-              "emitter": "bone_gun_barrel_01",
+              "emitter": "bone_rocket_01",
               "emitterGenRange": [
                 1,
                 2
               ],
-              "emitterGenFmt": "bone_gun_barrel_%02d",
+              "emitterGenFmt": "bone_rocket_%02d",
               "ammoDpGenFmt": "ammo_turret_%02d_dm",
               "skipAxisEmitterCheck": true,
               "recoilMultiplier": 0.1,
@@ -4806,16 +4839,16 @@
           "nightVisionDmPart": "fire_control_system_dm",
           "gunnerThermal": {
             "resolution": [
-              800,
-              600
+              1200,
+              800
             ],
             "noiseFactor": 0.04
           },
           "commanderViewThermal": [
             {
               "resolution": [
-                800,
-                600
+                1200,
+                800
               ],
               "noiseFactor": 0.04
             },
@@ -4829,10 +4862,10 @@
           ],
           "driverThermal": {
             "resolution": [
-              800,
-              600
+              500,
+              300
             ],
-            "noiseFactor": 0.04
+            "noiseFactor": 0.05
           }
         }
       }
@@ -4937,6 +4970,7 @@
       "shells": [
         {
           "autoLoad": true,
+          "wreckedPartId": 0,
           "ammo_turret_03_dm": {
             "count": 1
           },
@@ -5255,6 +5289,7 @@
         },
         {
           "reloadTimeMult": 2.0,
+          "wreckedPartId": 0,
           "ammo_body_41_dm": {
             "count": 2
           },
@@ -5345,23 +5380,35 @@
           "ammo_body_70_dm": {
             "count": 2
           },
-          "ammo_turret_64_dm": {
+          "ammo_body_71_dm": {
             "count": 2
           },
-          "ammo_turret_65_dm": {
+          "ammo_body_72_dm": {
             "count": 2
           },
-          "ammo_turret_66_dm": {
+          "ammo_body_73_dm": {
             "count": 2
           },
-          "ammo_turret_67_dm": {
+          "ammo_body_74_dm": {
             "count": 2
           },
-          "ammo_turret_71_dm": {
+          "ammo_body_75_dm": {
             "count": 2
           },
-          "ammo_turret_68_dm": {
-            "count": 6
+          "ammo_body_76_dm": {
+            "count": 2
+          },
+          "ammo_body_77_dm": {
+            "count": 2
+          },
+          "ammo_body_78_dm": {
+            "count": 2
+          },
+          "ammo_body_79_dm": {
+            "count": 2
+          },
+          "ammo_body_80_dm": {
+            "count": 2
           }
         }
       ]
@@ -5375,7 +5422,7 @@
           "ammoLoadedInGun": true,
           "fatalFire": false,
           "fatalExplosion": false,
-          "wreckedPartId": 0,
+          "fireParamsPreset": "turret_bustle",
           "ammo_turret_01_dm": {
             "count": 1
           },
@@ -5384,8 +5431,10 @@
           }
         },
         {
-          "fireEvent": "ammo_fire",
-          "explosionEvent": "ammo_explosion",
+          "fatalFire": false,
+          "fatalExplosion": false,
+          "reloadTimeMult": 2.0,
+          "fireParamsPreset": "hull_bustle",
           "ammo_turret_72_dm": {
             "count": 1
           },
