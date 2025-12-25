@@ -16,7 +16,7 @@ let { tryOpenTutorialRewardHandler } = require("%scripts/tutorials/tutorialRewar
 let { getCrewUnlockTime, getCrewByAir } = require("%scripts/crew/crewInfo.nut")
 let { placePriceTextToButton } = require("%scripts/viewUtils/objectTextUpdate.nut")
 let { getSuggestedSkin } = require("%scripts/customization/suggestedSkins.nut")
-let { startFleetTrainingMission, canStartFleetTrainingMission
+let { startFleetTrainingMission, getFleetTrainingMissionName
 } = require("%scripts/missions/fleetTrainingMission.nut")
 let { create_promo_blocks } = require("%scripts/promo/promoHandler.nut")
 let { get_warpoints_blk } = require("blkGetters")
@@ -31,6 +31,7 @@ let { leaveSessionRoom } = require("%scripts/matchingRooms/sessionLobbyManager.n
 let { totalRooms, totalPlayers } = require("%scripts/onlineInfo/onlineInfo.nut")
 let { isLoadedModelHighQuality } = require("%scripts/unit/unitInfo.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
+let { checkPackageAndAskDownload } = require("%scripts/clientState/contentPacks.nut")
 
 gui_handlers.MainMenu <- class (gui_handlers.InstantDomination) {
   rootHandlerClass = topMenuHandlerClass.getHandler()
@@ -69,8 +70,9 @@ gui_handlers.MainMenu <- class (gui_handlers.InstantDomination) {
   }
 
   function onStart() {
-    if (canStartFleetTrainingMission()) {
-      this.guiScene.performDelayed(this, @() this.goForward(startFleetTrainingMission))
+    let fleetTrainingMisName = getFleetTrainingMissionName()
+    if (fleetTrainingMisName) {
+      this.guiScene.performDelayed(this, @() this.goForward(@() startFleetTrainingMission(fleetTrainingMisName)))
       return
     }
     base.onStart()
@@ -122,6 +124,8 @@ gui_handlers.MainMenu <- class (gui_handlers.InstantDomination) {
   function onLoadModels() {
     if (isPlatformSony || isPlatformXbox)
       showInfoMsgBox(contentStateModule.getClientDownloadProgressText())
+    else
+      checkPackageAndAskDownload("pkg_main", loc("msgbox/ask_package_download"))
   }
 
   function initPromoBlock() {

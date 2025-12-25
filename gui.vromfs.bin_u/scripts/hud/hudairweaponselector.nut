@@ -8,7 +8,8 @@ let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { get_all_weapons, set_secondary_weapon, get_countermeasures_data, COUNTER_MEASURE_MODE_FLARE_CHAFF, get_current_weapon_preset,
  COUNTER_MEASURE_MODE_FLARE, COUNTER_MEASURE_MODE_CHAFF, has_secondary_weapons, set_countermeasures_mode, set_secondary_weapons_selector,
- get_periodic_countermeasure_enabled, AAM_TRIGGER, AGM_TRIGGER, MINES_TRIGGER, BOMBS_TRIGGER, ROCKETS_TRIGGER, TORPEDOES_TRIGGER
+ get_periodic_countermeasure_enabled, AAM_TRIGGER, AGM_TRIGGER, MINES_TRIGGER, BOMBS_TRIGGER, ROCKETS_TRIGGER, TORPEDOES_TRIGGER,
+ get_secondary_weapons_selector_enabled = @() true
 } = require("weaponSelector")
 let { eventbus_subscribe } = require("eventbus")
 let { handlersManager} = require("%scripts/baseGuiHandlerManagerWT.nut")
@@ -78,7 +79,7 @@ function getCurrentHandler() {
 
 function onToggleSelectorState(_params) {
   let airHandler = getCurrentHandler()
-  if (airHandler == null)
+  if (airHandler == null || airHandler.isAttachedToActionBar)
     return
 
   if (airHandler.isInOpenedState)
@@ -87,6 +88,9 @@ function onToggleSelectorState(_params) {
     airHandler.open()
   airHandler.checkAndSaveCachedState()
 }
+
+let isWeaponSelectorSavedPinnedState = @()
+  (cachedSelectorState & SelectorState.OPENED_AND_PINNED) == SelectorState.OPENED_AND_PINNED
 
 eventbus_subscribe("toggleAirWeaponVisualSelector", onToggleSelectorState)
 
@@ -116,12 +120,15 @@ let class HudAirWeaponSelector {
   nextWeaponsTiers = null
   gunsInPresetCount = 0
   cachedPresets = null
+  isAttachedToActionBar = false
+  userSelectedPinnedState = null
 
   constructor(unit, nestObj) {
     this.nestObj = nestObj
     this.guiScene = nestObj.getScene()
     this.nestObj.show(false)
     this.selectUnit(unit)
+    broadcastEvent("WeaponSelectorInit")
     if (this.chosenPreset == null)
       return
 
@@ -236,7 +243,7 @@ let class HudAirWeaponSelector {
   }
 
   function onToggleSelectorState(_params) {
-    if (!this.isValid()) {
+    if (!this.isValid() || this.isAttachedToActionBar) {
       return
     }
     if (this.isOpened())
@@ -268,7 +275,7 @@ let class HudAirWeaponSelector {
       this.selectPresetByName(presetName)
   }
 
-  function open() {
+  function open(isFromActionBar = false) {
     if (!this.isValid() || !has_secondary_weapons()
       || getMfmHandler()?.isActive)
       return
@@ -277,13 +284,16 @@ let class HudAirWeaponSelector {
       || (!this.unit.hasWeaponSlots && ((this.weaponSlotToTiersId.len() - this.gunsInPresetCount) <= 0)))
       return
 
-    this.updatePinView()
+    if (isFromActionBar)
+      this.attachToActionBar()
+    else
+      this.updatePinView()
     this.nestObj.show(true)
+    this.updateControlsVisibility()
     let updateTimer = this.nestObj.findObject("visual_selector_timer")
     updateTimer.setUserData(this)
     this.isInOpenedState = true
     isSelectorClosed = false
-    set_secondary_weapons_selector(true)
 
     updateExtWatched({ isVisualWeaponSelectorVisible = true })
     if (!this.isSelectorPinned())
@@ -294,12 +304,19 @@ let class HudAirWeaponSelector {
     this.updateButtons()
   }
 
-  function close() {
+  function close(isFromActionBar = false) {
     if (!this.isOpened())
       return
+    if (isFromActionBar && !this.isAttachedToActionBar)
+      return
+    if (this.userSelectedPinnedState != null) {
+      this.isPinned = this.userSelectedPinnedState
+      this.userSelectedPinnedState = null
+    }
     this.hoveredWeaponBtn = null
     this.isInOpenedState = false
     isSelectorClosed = true
+    this.isAttachedToActionBar = false
     handlersManager.restoreAllowControlMask()
     broadcastEvent("ChangedShowActionBar")
     if (!this.isValid()) {
@@ -307,6 +324,12 @@ let class HudAirWeaponSelector {
     }
     this.nestObj.show(false)
     updateExtWatched({ isVisualWeaponSelectorVisible = false })
+  }
+
+  function attachToActionBar() {
+    this.userSelectedPinnedState = this.isPinned
+    this.isAttachedToActionBar = true
+    this.pinToScreen(true)
   }
 
   function onCancel(_obj = null) {
@@ -363,7 +386,8 @@ let class HudAirWeaponSelector {
     for (local i = 0; i < tiersCount; i++) {
       let tier = this.chosenPreset.tiersView[i]
       let weaponCell = this.nestObj.findObject($"tier_{tier.tierId}")
-      let isSelectedTier = selectedIds.contains(tier.tierId)
+      let isSelectedTier = get_secondary_weapons_selector_enabled()
+        && selectedIds.contains(tier.tierId)
       if (weaponCell != null) {
         if (isSelectedTier && !this.unit.hasWeaponSlots) {
           if (bulletName == "")
@@ -566,7 +590,8 @@ let class HudAirWeaponSelector {
       if (weaponCell == null)
         continue
       weaponCell.weaponIdx = $"{stat.weaponIdx}"
-      weaponCell.isNextWeapon = this.nextWeaponsTiers.indexof(stat.tierId) != null  ? "yes" : "no"
+      weaponCell.isNextWeapon = get_secondary_weapons_selector_enabled()
+        && this.nextWeaponsTiers.indexof(stat.tierId) != null  ? "yes" : "no"
       weaponCell.hasBullets = stat.count > 0 ? "yes" : "no"
       if ((weaponCell?.isGun ?? "no") == "no")
         weaponCell.findObject("label").setValue(stat.count > 0 ? $"{stat.count}" : "")
@@ -574,13 +599,19 @@ let class HudAirWeaponSelector {
     this.selectBtnsById(this.selectedTiers)
   }
 
+  notifyActionBarAboutInteraction = @() this.isAttachedToActionBar
+    ? broadcastEvent("WeaponSelectorUserInteraction") : null
+
   function onSecondaryWeaponClick(obj) {
     if ((!is_cursor_visible_in_gui() && !isXInputDevice()) || obj?.hasBullets == "no" || obj?.isGun == "yes")
       return
+    if (!get_secondary_weapons_selector_enabled())
+      set_secondary_weapons_selector(true)
     let weaponIdx = to_integer_safe(obj.weaponIdx)
     set_secondary_weapon(weaponIdx)
 
     this.updatePresetData()
+    this.notifyActionBarAboutInteraction()
     if (this.isSelectorPinned())
       return
     this.close()
@@ -706,6 +737,7 @@ let class HudAirWeaponSelector {
   function onCounterMeasureClick(obj) {
     if (!is_cursor_visible_in_gui())
       return
+    this.notifyActionBarAboutInteraction()
     this.selectCounterMeasureBtn(obj.id)
     set_countermeasures_mode(to_integer_safe(obj.counterMeasureMode))
   }
@@ -725,11 +757,11 @@ let class HudAirWeaponSelector {
   }
 
   function onJoystickApplySelection() {
-    if (this.hoveredWeaponBtn != null) {
+    if (this.hoveredWeaponBtn?.isValid()) {
       this.onSecondaryWeaponClick(this.hoveredWeaponBtn)
       return
     }
-    if (this.hoveredCounterMeasureBtn != null) {
+    if (this.hoveredCounterMeasureBtn?.isValid()) {
       this.onCounterMeasureClick(this.hoveredCounterMeasureBtn)
       return
     }
@@ -761,6 +793,11 @@ let class HudAirWeaponSelector {
     else
       this.setBlockControlMask()
     this.updateCounterMeasures(true)
+  }
+
+  function updateControlsVisibility() {
+    let controlsObj = this.nestObj.findObject("selector_controls")
+    controlsObj.show(!this.isAttachedToActionBar)
   }
 
   function isSelectorPinned() {
@@ -947,19 +984,28 @@ let class HudAirWeaponSelector {
 
 }
 
-function openHudAirWeaponSelector() {
-  let selectorHandler = getCurrentHandler()
-  if (selectorHandler == null || selectorHandler.isOpened())
-    return
-  selectorHandler.open()
-}
-
-function closeHudAirWeaponSelector() {
+function openHudAirWeaponSelector(isFromActionBar = false) {
   let selectorHandler = getCurrentHandler()
   if (selectorHandler == null)
     return
-  selectorHandler.close()
+  if (isFromActionBar && selectorHandler.isOpened()) {
+    selectorHandler.attachToActionBar()
+    selectorHandler.updateControlsVisibility()
+    return
+  }
+  selectorHandler.open(isFromActionBar)
 }
+
+function closeHudAirWeaponSelector(isFromActionBar = false) {
+  let selectorHandler = getCurrentHandler()
+  if (selectorHandler == null)
+    return
+  selectorHandler.close(isFromActionBar)
+}
+
+let setWeaponSelectorAttachedToActionBar = @(isAttached) isAttached
+  ? openHudAirWeaponSelector(true)
+  : closeHudAirWeaponSelector(true)
 
 function isVisualHudAirWeaponSelectorOpened() {
   let selectorHandler = getCurrentHandler()
@@ -969,11 +1015,13 @@ function isVisualHudAirWeaponSelectorOpened() {
 }
 
 function onCloseMultifuncMenu() {
-  if ((cachedSelectorState & SelectorState.OPENED_AND_PINNED) == SelectorState.OPENED_AND_PINNED)
+  if (isWeaponSelectorSavedPinnedState())
     deferOnce(@() openHudAirWeaponSelector())
 }
 
 eventbus_subscribe("on_multifunc_menu_request", function selector_on_multifunc_menu_request(evt) {
+  if (getCurrentHandler()?.isAttachedToActionBar)
+    return
   if (evt.show)
     closeHudAirWeaponSelector()
   else
@@ -1021,4 +1069,6 @@ eventbus_subscribe("onLaunchCountermeasure", function (_evt) {
 return {
   HudAirWeaponSelector
   isVisualHudAirWeaponSelectorOpened
+  setWeaponSelectorAttachedToActionBar
+  isWeaponSelectorSavedPinnedState
 }

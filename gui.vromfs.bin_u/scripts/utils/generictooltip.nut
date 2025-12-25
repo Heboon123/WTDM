@@ -9,6 +9,8 @@ let { add_event_listener, addListenersWithoutEnv } = require("%sqStdLibs/helpers
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { openModalInfo, closeModalInfo } = require("%scripts/modalInfo/modalInfo.nut")
 
+dagui_propid_add_name_id("tooltipId")
+
 local openedTooltipObjs = []
 function removeInvalidTooltipObjs() {
   openedTooltipObjs = openedTooltipObjs.filter(@(t) t.isValid())
@@ -82,7 +84,7 @@ function openGenericTooltip(obj, handler) {
   if (!isSucceed || !checkObj(obj))
     return
 
-  obj["class"] = ""
+  obj["class"] = (hasFeature("UnitModalInfo") && tooltipType.isEmptyTooltipObjClass) ? "empty" : ""
   openedTooltipObjs.append(addEventListenersTooltip(obj, handler, tooltipType, id, params))
 }
 

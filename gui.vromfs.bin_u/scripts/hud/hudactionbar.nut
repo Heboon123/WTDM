@@ -8,7 +8,8 @@ let { g_hud_action_bar_type } = require("%scripts/hud/hudActionBarType.nut")
 let { g_hud_event_manager } = require("%scripts/hud/hudEventManager.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
-let { broadcastEvent, add_event_listener } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { broadcastEvent, add_event_listener, subscribe_handler
+} = require("%sqStdLibs/helpers/subscriptions.nut")
 let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { hasXInputDevice, emulateShortcut } = require("controls")
 let { format } = require("string")
@@ -21,7 +22,7 @@ let { shouldActionBarFontBeTiny , getActionItemAmountText, getActionItemModifica
 let { toggleShortcut } = require("%globalScripts/controls/shortcutActions.nut")
 let { getWheelBarItems, activateActionBarAction, getActionBarUnitName } = require("hudActionBar")
 let { EII_BULLET, EII_ARTILLERY_TARGET, EII_EXTINGUISHER, EII_ROCKET, EII_FORCED_GUN, EII_SLAVE_UNIT_STATUS,
-  EII_GUIDANCE_MODE, EII_SELECT_SPECIAL_WEAPON, EII_GRENADE } = require("hudActionBarConst")
+  EII_SELECT_SPECIAL_WEAPON, EII_GRENADE } = require("hudActionBarConst")
 let { arrangeStreakWheelActions } = require("%scripts/hud/hudActionBarStreakWheel.nut")
 let { is_replay_playing } = require("replays")
 let { getHudUnitType } = require("hudState")
@@ -38,33 +39,32 @@ let { loadLocalByAccount, saveLocalByAccount
 let { closeCurVoicemenu } = require("%scripts/wheelmenu/voiceMessages.nut")
 let { guiStartWheelmenu, closeCurWheelmenu } = require("%scripts/wheelmenu/wheelmenu.nut")
 let { openGenericTooltip, closeGenericTooltip } = require("%scripts/utils/genericTooltip.nut")
-let { isVisualHudAirWeaponSelectorOpened } = require("%scripts/hud/hudAirWeaponSelector.nut")
-let { getExtraActionItemsView } = require("%scripts/hud/hudActionBarExtraActions.nut")
+let { isVisualHudAirWeaponSelectorOpened, setWeaponSelectorAttachedToActionBar,
+ isWeaponSelectorSavedPinnedState } = require("%scripts/hud/hudAirWeaponSelector.nut")
+let { getExtraActionItemsView, WEAPON_SELECTOR_SHORTCUT_ID
+} = require("%scripts/hud/hudActionBarExtraActions.nut")
 let updateExtWatched = require("%scripts/global/updateExtWatched.nut")
 let { isProfileReceived } = require("%appGlobals/login/loginState.nut")
 let { get_gui_option_in_mode } = require("%scripts/options/options.nut")
 let { isPlayerDedicatedSpectator } = require("%scripts/matchingRooms/sessionLobbyMembersInfo.nut")
 let { bhvHintForceUpdateValuePID } = require("%scripts/viewUtils/bhvHint.nut")
+let forceRealTimeRenderIcon = require("%globalScripts/iconRender/forceRealTimeRenderIcon.nut")
 
+ecs.register_es("current_weapons_templates_init_es", {
+  [["onInit", "onChange"]] = function(_eid, comp){
+    curHeroTemplates.set(comp["human_weap__weapTemplates"]?.getAll())
+  },
+  [["onDestroy"]] = function(_, _) {
+    curHeroTemplates.set({})
+  }
+},
+{
+  comps_track=[["human_weap__weapTemplates", ecs.TYPE_OBJECT, {}]],
+  comps_rq=["controlledHero"]
+})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+curHeroTemplates.subscribe(@(_) broadcastEvent("ChangedCurHeroTemplates"))
+forceRealTimeRenderIcon.subscribe(@(_v) broadcastEvent("UpdateForceRender3dIcon"))
 
 local sectorAngle1PID = dagui_propid_add_name_id("sector-angle-1")
 
@@ -105,6 +105,9 @@ let getSecondActionBarObjId = @(itemId) $"{SECOND_ACTION_ID_PREFIX}{itemId}"
 const COLLAPSE_ACTION_BAR_SH_ID = "ID_COLLAPSE_ACTION_BAR"
 const SECOND_ACTIONS_MENU_LIFETIME = 15
 
+const AUTO_COLLAPSE_DELAY_SEC = 20
+let unitTypesWithDelayedCollapse = ["aircraft", "helicopter"]
+
 enum ActionBarVsisbility {
   COLLAPSED,
   EXPANDED,
@@ -127,6 +130,7 @@ function getVisibilityStateProfilePath() {
 
 let class ActionBar {
   actionItems             = null
+  rawActionItems          = null
   guiScene                = null
   scene                   = null
 
@@ -150,17 +154,24 @@ let class ActionBar {
 
   isCollapsed = false
   isVisible = false
+  hasSavedVisibilityState = false
+  autoCollapseTimer = null
   hasXInputSh = false
   closeSecondActionsTimer = null
 
   currentActionWithMenu = null
   extraActionsCount = 0
+  extraActions = null
+  isWeaponSelectorMode = false
 
   shouldForceUpdateItems = false
 
   getActionBarVisibility = @() isCollapseBtnHidden ? ActionBarVsisbility.HIDDEN
     : this.isCollapsed ? ActionBarVsisbility.COLLAPSED
     : ActionBarVsisbility.EXPANDED
+
+  notifyActionBarStateChanged = @() get_cur_gui_scene()
+    .performDelayed(this, @() eventbus_send("setActionBarState", this.getState()))
 
   constructor(nestObj, itemBlk = null, itemDivName = null, secondItemsTpl = null) {
     if (!checkObj(nestObj))
@@ -173,6 +184,7 @@ let class ActionBar {
     this.guiScene.replaceContent(this.scene.findObject("actions_nest"), "%gui/hud/actionBar.blk", this)
     this.scene.findObject("action_bar").setUserData(this)
     this.actionItems = []
+    this.rawActionItems = []
     this.killStreaksActions = []
     this.weaponActions = []
     this.cooldownTimers = []
@@ -183,9 +195,11 @@ let class ActionBar {
 
     let savedVisibilityPath = getVisibilityStateProfilePath()
     if (isProfileReceived.get() && savedVisibilityPath != null) {
-      let savedVisibility = loadLocalByAccount(savedVisibilityPath, ActionBarVsisbility.EXPANDED)
-      this.isCollapsed = savedVisibility != ActionBarVsisbility.EXPANDED
-      updateExtWatched({ isActionBarCollapseBtnHidden = savedVisibility == ActionBarVsisbility.HIDDEN })
+      let savedVisibility = loadLocalByAccount(savedVisibilityPath)
+      let visibilityState = savedVisibility ?? ActionBarVsisbility.EXPANDED
+      this.isCollapsed = visibilityState != ActionBarVsisbility.EXPANDED
+      this.hasSavedVisibilityState = savedVisibility != null
+      updateExtWatched({ isActionBarCollapseBtnHidden = visibilityState == ActionBarVsisbility.HIDDEN })
     }
 
     this.updateVisibility()
@@ -203,9 +217,12 @@ let class ActionBar {
     }, this)
     g_hud_event_manager.subscribe("LocalPlayerAlive", function (_data) {
       updateActionBar()
+      this.scheduleAutoCollapseIfNeeded()
     }, this)
     add_event_listener("ChangedShowActionBar", function (_eventData) {
       this.updateVisibility()
+      if (this.isWeaponSelectorMode)
+        this.notifyActionBarStateChanged()
     }, this)
     add_event_listener("ControlsChangedShortcuts", function (_eventData) {
       this.shouldForceUpdateItems = true
@@ -213,20 +230,21 @@ let class ActionBar {
     add_event_listener("ControlsPresetChanged", function (_eventData) {
       this.shouldForceUpdateItems = true
     }, this)
+    add_event_listener("ChangedCurHeroTemplates", function (_eventData) {
+      this.shouldForceUpdateItems = true
+      this.reinit()
+    }, this)
+    add_event_listener("UpdateForceRender3dIcon", function (_eventData) {
+      this.shouldForceUpdateItems = true
+      this.reinit()
+    }, this)
 
-
-
-
-
-
-
-
-
-
-
+    subscribe_handler(this)
 
     this.updateParams()
     updateActionBar()
+    this.updateExtraActionsAndMode()
+    this.scheduleAutoCollapseIfNeeded()
     this.scene.setValue(stashBhvValueConfig([{
       watch = actionBarItems
       updateFunc = Callback(@(_obj, actionItems) this.updateActionBarItems(actionItems), this) 
@@ -236,24 +254,77 @@ let class ActionBar {
   isCollapsable = @() this.canControl && ((this.actionItems.len() + this.extraActionsCount) > 0)
 
   function collapse() {
+    if (this.isWeaponSelectorMode && this.isCollapsed && isVisualHudAirWeaponSelectorOpened())
+      return
+    this.setCollapsedState(!this.isCollapsed)
+    this.clearAutoCollapseTimer()
+  }
+
+  function setCollapsedState(needCollapse, needSave = true) {
     if (!this.isValid())
       return
-
     if (!this.isCollapsable())
       return
+    if (this.isCollapsed == needCollapse)
+      return
 
-    this.isCollapsed = !this.isCollapsed
+    this.isCollapsed = needCollapse
     if (!this.isCollapsed)
       isCollapseBtnHidden = false
 
-    if (isProfileReceived.get())
-      saveLocalByAccount(getVisibilityStateProfilePath(), this.getActionBarVisibility())
+    if (needSave && isProfileReceived.get()) {
+      let visibilityPath = getVisibilityStateProfilePath()
+      if (visibilityPath != null) {
+        saveLocalByAccount(visibilityPath, this.getActionBarVisibility())
+        this.hasSavedVisibilityState = true
+      }
+    }
 
     if (!this.isCollapsed)
       updateActionBar()
 
     this.scene.findObject("actions_nest").anim = this.isCollapsed ? "hide" : "show"
     eventbus_send("setIsActionBarCollapsed", this.isCollapsed)
+    this.syncWithWeaponSelector()
+  }
+
+  function scheduleAutoCollapseIfNeeded() {
+    if (this.hasSavedVisibilityState)
+      return
+    if (!this.isCollapsable())
+      return
+    let unitType = getHudUnitType()
+    if (!unitTypesWithDelayedCollapse.contains(unitType))
+      return
+    let hasToggleCollapseSh = getCollapseShText().getText() != ""
+    if (!hasToggleCollapseSh)
+      return
+
+    this.setCollapsedState(false, false)
+    this.clearAutoCollapseTimer()
+    if (this.isWeaponSelectorMode && isWeaponSelectorSavedPinnedState())
+      return
+
+    let cb = Callback(function autoCollapse() {
+      if (!this?.isValid())
+        return
+
+      this.autoCollapseTimer = null
+
+      if (this.isCollapsed)
+        return
+
+      this.setCollapsedState(true, false)
+      eventbus_send("actionBarAutoCollapse")
+    }, this)
+    this.autoCollapseTimer = setTimeout(AUTO_COLLAPSE_DELAY_SEC, @() cb())
+  }
+
+  function clearAutoCollapseTimer() {
+    if (this.autoCollapseTimer == null)
+      return
+    clearTimer(this.autoCollapseTimer)
+    this.autoCollapseTimer = null
   }
 
   getTextShHeight = @() to_pixels("@hudActionBarTextShHight")
@@ -263,14 +334,21 @@ let class ActionBar {
     if (!this.isValid())
       return null
 
-    let size = this.scene.findObject("action_bar").getSize()
+    let obj = this.isWeaponSelectorMode
+      ? this.scene.getParent().findObject("air_weapon_selector")
+      : this.scene.findObject("action_bar")
+    if (!obj?.isValid())
+      return null
+    let size = obj.getSize()
     if (size[0] < 0)
       return null 
 
-    let shHeight = this.hasXInputSh ? this.getXInputShHeight() : this.getTextShHeight()
-    let pos = this.scene.getPosRC()
-    pos[1] -= shHeight
-    size[1] += shHeight
+    let extraHeight = this.isWeaponSelectorMode ? 0
+      : this.hasXInputSh ? this.getXInputShHeight()
+      : this.getTextShHeight()
+    let pos = (this.isWeaponSelectorMode ? obj : this.scene).getPosRC()
+    pos[1] -= extraHeight
+    size[1] += extraHeight
     return { pos, size }
   }
 
@@ -289,6 +367,16 @@ let class ActionBar {
       shortcutText = getCollapseShText().getTextShort()
       actionsCount = this.actionItems.len()
     }
+  }
+
+  function syncWithWeaponSelector() {
+    if (!this.isValid())
+      return
+    let shouldAttach = this.isWeaponSelectorMode && this.canControl
+      && !this.isCollapsed && this.isVisible
+
+    this.scene.findObject("actions_nest")?.show(!this.isWeaponSelectorMode)
+    setWeaponSelectorAttachedToActionBar(shouldAttach)
   }
 
   function reinit() {
@@ -310,11 +398,12 @@ let class ActionBar {
   }
 
   function fillActionBarItem(itemObj, itemView) {
-    let { id, selected, active, activeBool, actionId, enableBool, visualEnable, layeredIcon = null, icon = "",
+    let { id, selected, active, activeBool, actionId, enableBool, visualEnable, layeredIcon = null,
       cooldownParams, blockedCooldownParams progressCooldownParams, amount, automatic, onClick = null
       showShortcut, isXinput, mainShortcutId, activatedShortcutId = "", actionType = null
       hasSecondActionsBtn, isCloseSecondActionsBtn, shortcutText, useShortcutTinyFont,
-      tooltipId = null, tooltipText = "", tooltipDelayed = false, unitIndex = "", isLocked = false
+      tooltipId = null, tooltipText = "", tooltipDelayed = false, unitIndex = "", isLocked = false,
+      icon = "", cooldownIcon = ""
     } = itemView
     itemObj.id = id
     let contentObj = itemObj.findObject("itemContent")
@@ -327,7 +416,7 @@ let class ActionBar {
 
     let isShowBulletsIcon = layeredIcon != null
     let bulletsSetIconObj = showObjById("bulletsSetIcon", isShowBulletsIcon, contentObj)
-    if (isShowBulletsIcon)
+    if (isShowBulletsIcon && bulletsSetIconObj != null)
       this.guiScene.replaceContentFromText(bulletsSetIconObj, layeredIcon, layeredIcon.len(), this)
 
     let isShowIcon = icon != ""
@@ -335,9 +424,20 @@ let class ActionBar {
     if (isShowIcon)
       actionIconObj["background-image"] = icon
 
-    this.updateWaitGaugeDegree(itemObj.findObject("cooldown"), cooldownParams)
-    this.updateWaitGaugeDegree(itemObj.findObject("blockedCooldown"), blockedCooldownParams)
-    this.updateWaitGaugeDegree(itemObj.findObject("progressCooldown"), progressCooldownParams)
+    let cooldownObj = itemObj.findObject("cooldown")
+    if (cooldownObj && cooldownIcon != "")
+      cooldownObj["background-image"] = cooldownIcon
+    this.updateWaitGaugeDegree(cooldownObj, cooldownParams)
+
+    let blockedCooldownObj = itemObj.findObject("blockedCooldown")
+    if (blockedCooldownObj && cooldownIcon != "")
+      blockedCooldownObj["background-image"] = cooldownIcon
+    this.updateWaitGaugeDegree(blockedCooldownObj, blockedCooldownParams)
+
+    let progressCooldownObj = itemObj.findObject("progressCooldown")
+    if (progressCooldownObj && cooldownIcon != "")
+      progressCooldownObj["background-image"] = cooldownIcon
+    this.updateWaitGaugeDegree(progressCooldownObj, progressCooldownParams)
 
     this.setItemAmountText(itemObj, amount)
     contentObj.findObject("automatic_text").show(automatic)
@@ -389,17 +489,18 @@ let class ActionBar {
     itemObj.findObject("lockedIcon").show(isLocked)
   }
 
-  function fill() {
+  function fill(prevActionItems) {
     this.extraActionsCount = 0
+    this.extraActions?.clear()
     this.flushCooldownTimers()
     if (!checkObj(this.scene))
       return
 
     this.curActionBarUnitName = getActionBarUnitName()
-    let unit = this.getActionBarUnit()
-    let extraItems = getExtraActionItemsView(unit)
-    this.extraActionsCount = extraItems?.len() ?? 0
-    let fullItemsList = this.actionItems.map((@(a, idx) this.buildItemView(a, idx, true)).bindenv(this)).extend(extraItems)
+    this.updateExtraActionsAndMode()
+    let fullItemsList = this.actionItems
+      .map((@(a, idx) this.buildItemView(a, idx, true)).bindenv(this))
+      .extend(this.extraActions)
 
     local newActionWithMenu = null
     foreach (idx, item in this.actionItems) {
@@ -425,6 +526,10 @@ let class ActionBar {
         continue
       }
 
+      let curActionItem = this.actionItems?[i]
+      if (!this.shouldForceUpdateItems && curActionItem != null && curActionItem == prevActionItems?[i])
+        continue
+
       itemObj.show(true)
       this.fillActionBarItem(itemObj, fullItemsList[i])
     }
@@ -441,8 +546,10 @@ let class ActionBar {
     animObj["_transp-timer"] = isShow ? "1" : "0"
     animObj["_pos-timer"] = isShow ? "0" : "1"
 
+    this.updateVisibility()
+    this.syncWithWeaponSelector()
     this.openSecondActionsMenu(newActionWithMenu)
-    get_cur_gui_scene().performDelayed(this, @() eventbus_send("setActionBarState", this.getState()))
+    this.notifyActionBarStateChanged()
   }
 
   
@@ -530,8 +637,10 @@ let class ActionBar {
       let killStreakUnitTag = getTblValue("killStreakUnitTag", item)
       if ("getLayeredIcon" in actionBarType)
         viewItem.layeredIcon <- actionBarType.getLayeredIcon(null, null, unit)
-      else
+      else {
         viewItem.icon <- actionBarType.getIcon(item, killStreakUnitTag)
+        viewItem.cooldownIcon <- actionBarType.getCooldownIcon(item, killStreakUnitTag)
+      }
       viewItem.name <- actionBarType.getTitle(item, killStreakTag)
       viewItem.tooltipText <- actionBarType.getTooltipText(item)
     }
@@ -579,6 +688,7 @@ let class ActionBar {
       let killStreakTag = getTblValue("killStreakTag", item)
       let killStreakUnitTag = getTblValue("killStreakUnitTag", item)
       viewItem.icon <- actionBarType.getIcon(item, killStreakUnitTag)
+      viewItem.cooldownIcon <- actionBarType.getCooldownIcon(item, killStreakUnitTag)
       viewItem.name <- actionBarType.getTitle(item, killStreakTag)
       viewItem.tooltipText <- actionBarType.getTooltipText(item)
     }
@@ -601,6 +711,8 @@ let class ActionBar {
   }
 
   function updateWaitGaugeDegree(obj, waitGaugeDegreeParams) {
+    if (!obj)
+      return
     let { degree, incFactor } = waitGaugeDegreeParams
     let incFactorStr = format("%.1f", incFactor)
     if (degree == (obj.getFinalProp(sectorAngle1PID) ?? -1).tointeger()
@@ -617,12 +729,14 @@ let class ActionBar {
 
   function updateActionBarItems(items) {
     let prevActionItems = this.actionItems
-    this.actionItems = items
+    this.actionItems = items.filter(@(action)
+      !g_hud_action_bar_type.getByActionItem(action).isHidden())
+    this.rawActionItems = items
     this.updateKillStreakWheel()
 
     if ((prevActionItems?.len() ?? 0) != this.actionItems.len() || this.actionItems.len() == 0) {
       this.openSecondActionsMenu(null)
-      this.fill()
+      this.fill(prevActionItems)
       return
     }
 
@@ -708,7 +822,8 @@ let class ActionBar {
         broadcastEvent("ArtilleryTarget", { active = this.artillery_target_mode })
       }
 
-      if (actionType != prevActionItems[id].type || actionType == EII_GUIDANCE_MODE)
+      let modifName = getActionItemModificationName(item, unit)
+      if (modifName == null) 
         nestActionObj.findObject("tooltipLayer").tooltip = actionBarType.getTooltipText(item)
 
       let cooldownParams = available ? this.getWaitGaugeDegreeParams(cooldownEndTime, cooldownTime)
@@ -729,7 +844,7 @@ let class ActionBar {
     }
 
     if (this.shouldForceUpdateItems) {
-      let extraItems = getExtraActionItemsView(unit)
+      let extraItems = getExtraActionItemsView()
       foreach (itemView in extraItems) {
         let { id } = itemView
         let nestActionObj = this.scene.findObject(id)
@@ -740,6 +855,14 @@ let class ActionBar {
 
     this.shouldForceUpdateItems = false
     this.openSecondActionsMenu(newActionWithMenu)
+  }
+
+  function updateExtraActionsAndMode() {
+    this.extraActions = getExtraActionItemsView()
+    this.extraActionsCount = this.extraActions.len()
+    this.isWeaponSelectorMode = this.actionItems.len() == 0
+      && this.extraActionsCount == 1
+      && (this.extraActions[0]?.mainShortcutId ?? "") == WEAPON_SELECTOR_SHORTCUT_ID
   }
 
   function setItemAmountText(itemObject, amountText) {
@@ -810,12 +933,15 @@ let class ActionBar {
       return
 
     let showActionBarOption = get_gui_option_in_mode(USEROPT_SHOW_ACTION_BAR, OPTIONS_MODE_GAMEPLAY, true)
-    this.isVisible = showActionBarOption && !g_hud_live_stats.isVisible() && !isVisualHudAirWeaponSelectorOpened()
+    let canShowWithSelector = this.isWeaponSelectorMode && this.canControl && !this.isCollapsed
+    let needHideSelector = isVisualHudAirWeaponSelectorOpened() && !canShowWithSelector
+    this.isVisible = showActionBarOption && !g_hud_live_stats.isVisible() && !needHideSelector
     this.scene.show(this.isVisible)
     eventbus_send("setIsActionBarVisible", this.isVisible)
   }
 
   function activateAction(obj) {
+    this.clearAutoCollapseTimer()
     let overrideClick = obj?.overrideClick ?? ""
     if (overrideClick != "" && overrideClick in this) {
       this[overrideClick](obj)
@@ -1030,7 +1156,7 @@ let class ActionBar {
 
   function updateKillStreaksActions() {
     this.killStreaksActions = []
-    foreach (item in this.actionItems)
+    foreach (item in this.rawActionItems)
       if (g_hud_action_bar_type.getByActionItem(item).isForWheelMenu())
         this.killStreaksActions.append(item)
   }
@@ -1113,7 +1239,17 @@ let class ActionBar {
     toggleShortcut(shortcutId)
   }
 
+  onEventWeaponSelectorInit = @(_) get_cur_gui_scene()
+    .performDelayed(this, this.syncWithWeaponSelector)
+
+  onEventWeaponSelectorUserInteraction = @(_) this.clearAutoCollapseTimer()
 }
+
+let mkActionBarAir = @(nestObj) ActionBar(
+  nestObj,
+  "%gui/hud/actionBarItemAir.blk",
+  "actionBarItemAirDiv"
+)
 
 eventbus_subscribe("ActionBarCollapseBtnHidden", function(isHidden) {
   isCollapseBtnHidden = isHidden
@@ -1127,4 +1263,5 @@ eventbus_subscribe("ActionBarCollapseBtnHidden", function(isHidden) {
 return {
   ActionBar
   getActionBarObjId
+  mkActionBarAir
 }

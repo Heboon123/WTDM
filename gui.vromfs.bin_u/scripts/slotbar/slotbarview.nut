@@ -64,9 +64,7 @@ let { handlersManager } = require("%scripts/baseGuiHandlerManagerWT.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
 let { getEntitlementUnitDiscount } = require("%scripts/discounts/discountsState.nut")
 let { canBuyUnitOnMarketplace } = require("%scripts/unit/canBuyUnitOnMarketplace.nut")
-let { isSlotbarOverrided, getSlotbarOverrideMods
-  } = require("%scripts/slotbar/slotbarOverride.nut")
-
+let { isSlotbarOverrided, getSlotbarOverrideMods } = require("%scripts/slotbar/slotbarOverride.nut")
 
 const DEFAULT_STATUS = "none"
 
@@ -100,9 +98,6 @@ function getUnitSlotRentInfo(unit, params) {
 function getSlotUnitNameText(unit, params) {
   local res = getUnitName(unit)
   let { missionRules = null, showAdditionExtraInfo = false } = params
-  let groupName = missionRules ? missionRules.getRandomUnitsGroupName(unit.name) : null
-  if (groupName)
-    res = missionRules.getRandomUnitsGroupLocName(groupName)
   if (missionRules == null)
     return res
 
@@ -383,6 +378,28 @@ function getUnitSlotPriceHintText(unit, params) {
   }
 
   return ""
+}
+
+function getRandomUnitHintData(groupName, missionRules) {
+  if (!groupName || !missionRules)
+    return false
+
+  let unitsList = missionRules.getRandomUnitsList(groupName)
+  let randomUnits = []
+
+  foreach (unitName in unitsList) {
+    let unit = getAircraftByName(unitName)
+    if (!unit)
+      randomUnits.append({ name = unitName })
+    else
+      randomUnits.append({
+        name = getUnitName(unit)
+        unitClassIcon = getUnitClassIco(unit.name)
+        shopItemType = getUnitRole(unit)
+      })
+  }
+
+  return randomUnits
 }
 
 function buildFakeSlot(id, unit, params) {
@@ -830,6 +847,12 @@ function buildCommonUnitSlot(id, unit, params) {
     ? $"{additionalRespawns}{loc("ui/minus")}{loc("mission_hint/spawns_per_unit", {army = armyLocName})}"
     : ""
 
+  let groupName = missionRules?.getRandomUnitsGroupName(unit.name)
+  let isRandomUnit = groupName && (isRespawnScreen() || !is_player_unit_alive() || get_player_unit_name() != unit.name)
+
+  let randomUnits = isRandomUnit ? getRandomUnitHintData(groupName, missionRules) : null
+  let hasRandomUnitsList = (randomUnits?.len() ?? 0) > 1
+
   let isUnitDisabled = isInFlight() && crew && isUnitDisabledByMatching(crew.idInCountry)
   let extraInfoTopView = !isUnitDisabled ? {
     showAdditionExtraInfo
@@ -856,7 +879,12 @@ function buildCommonUnitSlot(id, unit, params) {
       && (hasPriceText || hasAdditionalHistoricalRespawns)
     hasSpareSeparator = hasSpareInfo
       && (hasPriceText || hasAdditionalRespawns || hasAdditionalHistoricalRespawns)
-    hasExtraInfo = hasPriceText || hasAdditionalRespawns || hasSpareInfo || hasAdditionalHistoricalRespawns
+    hasExtraInfo = hasPriceText || hasAdditionalRespawns || hasSpareInfo || hasAdditionalHistoricalRespawns || isRandomUnit
+
+    hasDice = isRandomUnit
+    hasDiceSeparator = isRandomUnit && (hasPriceText || hasAdditionalRespawns || hasAdditionalHistoricalRespawns || hasSpareInfo)
+    hasRandomUnitsList
+    randomUnits
   } : {
     hasExtraInfo = false
     hasExtraInfoBlockTop
@@ -918,6 +946,8 @@ function buildCommonUnitSlot(id, unit, params) {
   let progressText = showProgress ? getUnitSlotResearchProgressText(unit, priceText) : ""
   let checkNotification = getEntitlementUnitDiscount(unit.name)
 
+  tooltipParams?.__update({ isRandomUnit })
+
   let resView = params.__merge({
     slotId              = $"td_{id}"
     bonusId             = id
@@ -939,6 +969,7 @@ function buildCommonUnitSlot(id, unit, params) {
     showDiscount        = isLocalState && !isOwn && (!isUnitGift(unit) || checkNotification)
     shopItemTextId      = $"{id}_txt"
     shopItemText        = getSlotUnitNameText(unit, params)
+    isRandomUnit
     progressText        = progressText
     progressStatus      = showProgress ? getUnitSlotProgressStatus(unit, params) : ""
     progressBlk         = handyman.renderCached("%gui/slotbar/airResearchProgress.tpl", airResearchProgressView)
@@ -961,20 +992,6 @@ function buildCommonUnitSlot(id, unit, params) {
     crewInfoTranslucent = showCrewInfoTranslucent ? "yes" : "no"
     hasContextCursor    = hasActions
   })
-  let groupName = missionRules ? missionRules.getRandomUnitsGroupName(unit.name) : null
-  let isShowAsRandomUnit = groupName
-    && (isRespawnScreen()
-      || !is_player_unit_alive()
-      || get_player_unit_name() != unit.name)
-  if (isShowAsRandomUnit) {
-    resView.shopAirImg = missionRules.getRandomUnitsGroupIcon(groupName)
-    resView.shopItemType = ""
-    resView.unitClassIcon = ""
-    resView.isElite = false
-    resView.unitRarity = ""
-    resView.unitRankText = ""
-    resView.tooltipId = getTooltipType("RANDOM_UNIT").getTooltipId(unit.name, { groupName = groupName })
-  }
 
   return handyman.renderCached("%gui/slotbar/slotbarSlotSingle.tpl", resView)
 }
@@ -1112,7 +1129,11 @@ addTooltipTypes({
       if (!unit)
         return false
       let guiScene = obj.getScene()
-      guiScene.replaceContent(obj, "%gui/airInfo.blk", handler)
+
+      let blkPath = hasFeature("UnitModalInfo") ? "%gui/unitInfo/unitModalInfo.blk"
+        : "%gui/unitInfo/unitInfo.blk"
+      guiScene.replaceContent(obj, blkPath, handler)
+
       return this.fillTooltipContent(obj, handler, id, params)
     }
     fillTooltipContent = function(obj, handler, id, params) {
@@ -1203,48 +1224,6 @@ addTooltipTypes({
         hasMultipleColumns = hasMultipleColumns,
         columns = columns
       })
-      obj.getScene().replaceContentFromText(obj, data, data.len(), handler)
-      return true
-    }
-  }
-
-  RANDOM_UNIT = { 
-    isCustomTooltipFill = true
-    fillTooltip = function(obj, handler, _id, params) {
-      if (!checkObj(obj))
-        return false
-      let groupName = params?.groupName
-      let missionRules = getCurMissionRules()
-      if (!groupName || !missionRules)
-        return false
-
-      let unitsList = missionRules.getRandomUnitsList(groupName)
-      let unitsView = []
-      local unit
-      foreach (unitName in unitsList) {
-        unit = getAircraftByName(unitName)
-        if (!unit)
-          unitsView.append({ name = unitName })
-        else
-          unitsView.append({
-            name = getUnitName(unit)
-            unitClassIcon = getUnitClassIco(unit.name)
-            shopItemType = getUnitRole(unit)
-            tooltipId = getTooltipType("UNIT").getTooltipId(unit.name, { needShopInfo = true })
-          })
-      }
-
-      let tooltipParams = {
-        groupName = loc("respawn/randomUnitsGroup/description",
-          { groupName = colorize("activeTextColor", missionRules.getRandomUnitsGroupLocName(groupName)) })
-        rankGroup = loc("ui/colon").concat(loc("shop/age"),
-          colorize("activeTextColor", missionRules.getRandomUnitsGroupLocRank(groupName)))
-        battleRatingGroup = loc("ui/colon").concat(loc("shop/battle_rating"),
-          colorize("activeTextColor", missionRules.getRandomUnitsGroupLocBattleRating(groupName)))
-        units = unitsView
-      }
-      let data = handyman.renderCached("%gui/tooltips/randomUnitTooltip.tpl", tooltipParams)
-
       obj.getScene().replaceContentFromText(obj, data, data.len(), handler)
       return true
     }

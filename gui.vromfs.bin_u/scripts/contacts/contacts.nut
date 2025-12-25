@@ -1,4 +1,3 @@
-from "%scripts/dagui_natives.nut" import get_nicks_find_result_blk, find_nicks_by_prefix
 from "%scripts/dagui_library.nut" import *
 from "%scripts/squads/squadsConsts.nut" import squadMemberState
 from "%scripts/shop/shopCountriesList.nut" import checkCountry
@@ -66,7 +65,7 @@ function getContactTooltipBattleOrSquadStatusTxt(contact, squadStatus, presenceP
   return statusTxt
 }
 
-::fillContactTooltip <- function fillContactTooltip(obj, contact, handler) {
+function fillContactTooltip(obj, contact, handler) {
   let customNick = getCustomNick(contact)
   local playerName = customNick == null
     ? contact.getName()
@@ -175,4 +174,5 @@ function getContactTooltipBattleOrSquadStatusTxt(contact, squadStatus, presenceP
 
 return {
   getContact
+  fillContactTooltip
 }

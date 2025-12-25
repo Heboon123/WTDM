@@ -76,7 +76,7 @@ let { requestEventLeaderboardData, requestEventLeaderboardSelfRow,
   requestCustomEventLeaderboardData, convertLeaderboardData
 } = require("%scripts/leaderboard/requestLeaderboardData.nut")
 let { userIdInt64 } = require("%scripts/user/profileStates.nut")
-let { isNewbieEventId } = require("%scripts/myStats.nut")
+let { isNewbieEventId } = require("%scripts/user/myStatsState.nut")
 let { g_event_display_type } = require("%scripts/events/eventDisplayType.nut")
 let { getTooltipType } = require("%scripts/utils/genericTooltipTypes.nut")
 let { getCrewUnit } = require("%scripts/crew/crew.nut")
@@ -90,6 +90,7 @@ let { getMatchingServerTime } = require("%scripts/onlineInfo/onlineInfo.nut")
 let { getItemsList, getInventoryList } = require("%scripts/items/itemsManagerModule.nut")
 let { getBrokenAirsInfo } = require("%scripts/instantAction.nut")
 let { getMemberStatusLocTag, getSquadMembersFlyoutData } = require("%scripts/squads/squadUtils.nut")
+let { checkPackageFull, getPkgLocName } = require("%scripts/clientState/contentPacks.nut")
 
 const EVENTS_OUT_OF_DATE_DAYS = 15
 const EVENT_DEFAULT_TEAM_SIZE = 16
@@ -1199,10 +1200,13 @@ let Events = class {
     return getEventDisplayType(event) != g_event_display_type.NONE
       && this.checkEventFeature(event, true)
       && this.isEventAllowedByComaptibilityMode(event)
+      && this.isEventAllowedByPackage(event)
       && (!this.eventRequiresTicket(event) || this.getEventActiveTicket(event) != null)
   }
 
   isEventAllowedByComaptibilityMode = @(event) event?.isAllowedForCompatibility != false || !isCompatibilityMode()
+
+  isEventAllowedByPackage = @(event) event?.reqPack == null || checkPackageFull(event.reqPack, true)
 
   function getEventsVisibleInEventsWindowCount() {
     return this.__countEventsList(EVENT_TYPE.ANY, this.isEventVisibleInEventsWindow)
@@ -1959,21 +1963,24 @@ let Events = class {
   }
 
   function getEventMission(eventId, shouldReturnFirst = false) {
+    local eventMissionName = ""
     if (!this.checkEventId(eventId))
-      return ""
+      return eventMissionName
+
     let list = __game_events[eventId].mission_decl.missions_list
-    if (list.len() == 1) {
-      if (type(list) == "array" && type(list[0]) == "string")
-        return list[0]
-      else if (type(list) == "table")
-        foreach (key, _value in list)
-          if (type(key) == "string")
-            return key
+    
+    
+    
+    if (list.len() == 1 || shouldReturnFirst)
+      eventMissionName = list?.keys()[0] ?? list?[0] ?? ""
+
+    
+    if (type(eventMissionName) != "string") {
+      logerr($"Wrong format of eventMissionName parameter for event with eventId {eventId}: {eventMissionName}")
+      eventMissionName = ""
     }
-    else if (shouldReturnFirst && type(list) == "table" && list.keys().len() > 0 && type(list.keys()[0]) == "string") {
-      return list.keys()[0]
-    }
-    return ""
+
+    return eventMissionName
   }
 
   function getFeaturedEvent() {
@@ -2326,6 +2333,8 @@ let Events = class {
     }
     else if (!this.isEventAllowedByComaptibilityMode(event))
       data.reasonText = loc("events/noCompatibilityMode")
+    else if (!this.isEventAllowedByPackage(event))
+      data.reasonText = loc("events/no_entitlement", { entitlement = getPkgLocName(event.reqPack, true)})
     else if (!isCreationCheck && !this.isEventEnabled(event)) {
       local startTime = events.getEventStartTime(event)
       if (startTime > 0)

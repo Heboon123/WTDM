@@ -52,12 +52,15 @@ let BULLETS_WITHOUT_ICON_PARAMS = [
 
 let DEFAULT_PRIMARY_BULLETS_INFO = {
   weapName                  = ""
+  blk                       = ""
   guns                      = 1
   total                     = 0 
   isBulletBelt              = true
   cartridge                 = 1
   groupIndex                = -1
   forcedMaxBulletsInRespawn = false
+  groupName                 = null
+  bulletSetAvailiable       = null
 }
 
 let BULLETS_LIST_PARAMS = {
@@ -163,7 +166,7 @@ function getBulletsItemsList(unit, bulletsList, groupIndex) {
       || (!bItem && curBulletsName == "")
     if (!bItem) 
       bItem = { name = value, isDefaultForGroup = groupIndex }
-    itemsList.append(bItem)
+    itemsList.append(bItem.__merge({ bulletGroupIndex = groupIndex }))
   }
   if (!isCurBulletsValid)
     setUnitLastBullets(unit, groupIndex, itemsList[0].name)
@@ -439,95 +442,97 @@ function getBulletsSetData(air, modifName, noModList = null) {
 }
 
 function getBulletsModListByGroups(air) {
-  let modList = []
-  let groups = []
+  let modsList = []
+  let groupsList = []
 
   if ("modifications" in air)
     foreach (m in air.modifications) {
       let groupName = getModificationBulletsGroup(m.name)
-      if (groupName != "" && !isInArray(groupName, groups)) {
-        groups.append(groupName)
-        modList.append(m.name)
+      if (groupName != "" && !isInArray(groupName, groupsList)) {
+        groupsList.append(groupName)
+        modsList.append(m.name)
       }
     }
-  return modList
-}
-
-function getActiveBulletsIntByWeaponsBlk(air, weaponsArr, weaponToFakeBulletMask) {
-  local res = 0
-  let wpList = []
-  foreach (weapon in weaponsArr)
-    if (weapon?.blk && !weapon?.dummy && !isInArray(weapon.blk, wpList))
-      wpList.append(weapon.blk)
-
-  if (wpList.len()) {
-    let modsList = getBulletsModListByGroups(air)
-    foreach (wBlkName in wpList) {
-      if (wBlkName in weaponToFakeBulletMask) {
-        res = res | weaponToFakeBulletMask[wBlkName]
-        continue
-      }
-
-      let wBlk = blkFromPath(wBlkName)
-      if (u.isEmpty(wBlk))
-        continue
-
-      foreach (idx, modName in modsList)
-        if (wBlk?[getModificationBulletsEffect(modName)]) {
-          res = change_bit(res, idx, 1)
-          break
-        }
-    }
+  return {
+    modsList
+    groupsList
   }
-  return res
-}
-
-function getBulletsGroupCount(air, full = false) {
-  if (!air)
-    return 0
-  if (air.bulGroups < 0) {
-    let modList = []
-    let groups = []
-
-    foreach (m in air.modifications) {
-      let groupName = getModificationBulletsGroup(m.name)
-      if (groupName != "") {
-        if (!isInArray(groupName, groups))
-          groups.append(groupName)
-        modList.append(m.name)
-      }
-    }
-    air.bulModsGroups = groups.len()
-    air.bulGroups     = groups.len()
-
-    let bulletSetsQuantity = air.unitType.bulletSetsQuantity
-    if (air.bulGroups < bulletSetsQuantity) {
-      let add = getBulletsSetData(air, fakeBullets_prefix, modList) ?? 0
-      air.bulGroups = min(air.bulGroups + add, bulletSetsQuantity)
-    }
-  }
-  return full ? air.bulGroups : air.bulModsGroups
 }
 
 function getWeaponModIdx(weaponBlk, modsList) {
   return modsList.findindex(@(modName) weaponBlk?[getModificationBulletsEffect(modName)]) ?? -1
 }
 
-function findIdenticalWeapon(weapon, weaponList, modsList) {
-  if (weapon in weaponList)
-    return weapon
+function findWeaponIdxInListByBulletSet(weapon, weaponList, bulletSetAvailiable) {
+  let weaponBlkName = weapon.blk
+  return weaponList.findindex(
+    @(w) w.blk == weaponBlkName && u.isEqual(w.bulletSetAvailiable, bulletSetAvailiable)
+  )
+}
 
-  let weaponBlk = blkFromPath(weapon)
+let hasWeaponsInList = @(weapon, weaponList, bulletSetAvailiable)
+  findWeaponIdxInListByBulletSet(weapon, weaponList, bulletSetAvailiable) != null
+
+function getActiveBulletsIntByWeaponsBlk(air, weaponsArr, weaponToFakeBulletMask) {
+  local res = 0
+  let loadedWeaponsBlk = {}
+  let wpList = []
+  foreach (weapon in weaponsArr)
+    if (weapon?.blk && !weapon?.dummy) {
+      let bulletSetAvailiable = weapon % "bulletSetAvailiable"
+      if (!hasWeaponsInList(weapon, wpList, bulletSetAvailiable))
+        wpList.append({ blk = weapon.blk, bulletSetAvailiable })
+    }
+
+  if (wpList.len() == 0)
+    return res
+
+  let { modsList } = getBulletsModListByGroups(air)
+  foreach (weapon in wpList) {
+    let { blk, bulletSetAvailiable } = weapon
+    if (blk in weaponToFakeBulletMask) {
+      res = res | weaponToFakeBulletMask[blk]
+      continue
+    }
+
+    let wBlk = loadedWeaponsBlk?[blk] ?? blkFromPath(blk)
+    if (blk not in loadedWeaponsBlk)
+      loadedWeaponsBlk[blk] <- wBlk
+    if (u.isEmpty(wBlk))
+      continue
+
+    local groupIndex = getWeaponModIdx(wBlk, modsList)
+    let modName = modsList?[groupIndex]
+    let forceBulletGroupIdx = bulletSetAvailiable?[0]
+    if (forceBulletGroupIdx != null && forceBulletGroupIdx != groupIndex && modName != null) {
+      modsList.insert(forceBulletGroupIdx, modName)
+      groupIndex = forceBulletGroupIdx
+    }
+    if (groupIndex >= 0)
+      res = change_bit(res, groupIndex, 1)
+  }
+  return res
+}
+
+function findIdenticalWeaponIdx(weapon, weaponList, modsList) {
+  let bulletSetAvailiable = weapon % "bulletSetAvailiable"
+  let sameIdx = findWeaponIdxInListByBulletSet(weapon, weaponList, bulletSetAvailiable)
+  if (sameIdx != null)
+    return sameIdx
+
+  if (bulletSetAvailiable.len() > 0) 
+    return null
+
+  let weaponBlk = blkFromPath(weapon.blk)
   if (u.isEmpty(weaponBlk))
     return null
 
   let cartridgeSize = max(weaponBlk?.bulletsCartridge ?? 1, 1)
   let groupIdx = getWeaponModIdx(weaponBlk, modsList)
 
-  foreach (blkName, info in weaponList) {
-    if (info.groupIndex == groupIdx
-      && cartridgeSize == info.cartridge)
-      return blkName
+  foreach (idx, info in weaponList) {
+    if (info.groupIndex == groupIdx && cartridgeSize == info.cartridge)
+      return idx
   }
 
   return null
@@ -580,38 +585,52 @@ function getBulletsInfoForPrimaryGuns(air) {
   if (weapons.len() == 0)
     return res
 
-  let modsList = getBulletsModListByGroups(air)
-  let wpList = {} 
+  let { modsList, groupsList } = getBulletsModListByGroups(air)
+  let wpList = []
   foreach (weapon in weapons)
     if (weapon?.blk && !weapon?.dummy) {
-      let weapName = findIdenticalWeapon(weapon.blk, wpList, modsList)
-      if (weapName) {
-        wpList[weapName].guns++
+      local weapIdx = findIdenticalWeaponIdx(weapon, wpList, modsList)
+      if (weapIdx != null) {
+        wpList[weapIdx].guns++
       }
       else {
-        wpList[weapon.blk] <- clone DEFAULT_PRIMARY_BULLETS_INFO
-        wpList[weapon.blk].weapName = getWeaponNameByBlkPath(weapon.blk)
+        weapIdx = wpList.len()
+        wpList.append(clone DEFAULT_PRIMARY_BULLETS_INFO)
+        wpList[weapIdx].weapName = getWeaponNameByBlkPath(weapon.blk)
+        wpList[weapIdx].blk = weapon.blk
+        let bulletSetAvailiable = weapon % "bulletSetAvailiable"
+        wpList[weapIdx].bulletSetAvailiable = bulletSetAvailiable
         if (!("bullets" in weapon))
           continue
 
-        wpList[weapon.blk].total = weapon?.bullets ?? 0
+        wpList[weapIdx].total = weapon?.bullets ?? 0
         let wBlk = blkFromPath(weapon.blk)
         if (u.isEmpty(wBlk))
           continue
 
-        wpList[weapon.blk].isBulletBelt = wBlk?.isBulletBelt ?? true
-        wpList[weapon.blk].cartridge = max((weapon?.bulletsCartridge ?? wBlk?.bulletsCartridge ?? 1), 1)
-        wpList[weapon.blk].total = ceil(wpList[weapon.blk].total * 1.0 /
-          wpList[weapon.blk].cartridge).tointeger()
+        wpList[weapIdx].isBulletBelt = wBlk?.isBulletBelt ?? true
+        wpList[weapIdx].cartridge = max((weapon?.bulletsCartridge ?? wBlk?.bulletsCartridge ?? 1), 1)
+        wpList[weapIdx].total = ceil(wpList[weapIdx].total * 1.0 /
+          wpList[weapIdx].cartridge).tointeger()
 
-        wpList[weapon.blk].groupIndex = getWeaponModIdx(wBlk, modsList)
-        wpList[weapon.blk].forcedMaxBulletsInRespawn = wBlk?.forcedMaxBulletsInRespawn ?? false
+        local groupIndex = getWeaponModIdx(wBlk, modsList)
+        let modName = modsList?[groupIndex]
+        let groupName = groupsList?[groupIndex] ?? ""
+        wpList[weapIdx].groupName = groupName
+        let forceBulletGroupIdx = bulletSetAvailiable?[0]
+        if (forceBulletGroupIdx != null && forceBulletGroupIdx != groupIndex && modName != null) {
+          modsList.insert(forceBulletGroupIdx, modName)
+          groupsList.insert(forceBulletGroupIdx, groupName)
+          groupIndex = forceBulletGroupIdx
+        }
+        wpList[weapIdx].groupIndex = groupIndex
+        wpList[weapIdx].forcedMaxBulletsInRespawn = wBlk?.forcedMaxBulletsInRespawn ?? false
       }
     }
 
   foreach (idx, _modName in modsList) {
     local bInfo = null
-    foreach (_blkName, info in wpList)
+    foreach (info in wpList)
       if (info.groupIndex == idx) {
         bInfo = info
         break
@@ -619,6 +638,29 @@ function getBulletsInfoForPrimaryGuns(air) {
     res.append(bInfo || (clone DEFAULT_PRIMARY_BULLETS_INFO))
   }
   return res
+}
+
+function getBulletsGroupCount(air, full = false) {
+  if (!air)
+    return 0
+  if (air.bulGroups < 0) {
+    let modList = []
+    foreach (m in air.modifications) {
+      let groupName = getModificationBulletsGroup(m.name)
+      if (groupName != "")
+        modList.append(m.name)
+    }
+    let bulletsInfo = getBulletsInfoForPrimaryGuns(air)
+    air.bulModsGroups = bulletsInfo.len()
+    air.bulGroups     = bulletsInfo.len()
+
+    let bulletSetsQuantity = air.unitType.bulletSetsQuantity
+    if (air.bulGroups < bulletSetsQuantity) {
+      let add = getBulletsSetData(air, fakeBullets_prefix, modList) ?? 0
+      air.bulGroups = min(air.bulGroups + add, bulletSetsQuantity)
+    }
+  }
+  return full ? air.bulGroups : air.bulModsGroups
 }
 
 function getBulletsInfoForGun(unit, gunIdx) {
@@ -643,7 +685,7 @@ function getLinkedGunIdx(groupIdx, totalGroups, bulletSetsQuantity, unit, canBeD
   local groupCount = 0
   let gunIdxWithDupicate = []
   foreach (gunIdx, gunInfo in gunsInfo) {
-    if (!gunInfo.isBulletBelt) {
+    if (!gunInfo.isBulletBelt && (gunInfo.bulletSetAvailiable?.len() ?? 0) == 0) {
       gunIdxWithDupicate.append(gunIdx)
       continue
     }
@@ -994,23 +1036,19 @@ function getBulletsList(airName, groupIdx, params = BULLETS_LIST_PARAMS) {
   descr.duplicate = canBeDuplicate && groupIdx > 0 &&
     linked_index == getLinkedGunIdx(groupIdx - 1, modTotal, bulletSetsQuantity, air, canBeDuplicate)
 
-  let groups = []
+  let bulletsInfo = getBulletsInfoForPrimaryGuns(air)
   for (local modifNo = 0; modifNo < air.modifications.len(); modifNo++) {
     let modif = air.modifications[modifNo]
-    let modifName = modif.name;
+    let modifName = modif.name
 
     let groupName = getModificationBulletsGroup(modifName)
     if (!groupName || groupName == "")
-      continue;
+      continue
 
-    
-    local currentGroup = u.find_in_array(groups, groupName)
-    if (currentGroup == -1) {
-      currentGroup = groups.len()
-      groups.append(groupName)
-    }
-    if (currentGroup != linked_index)
-      continue;
+    let hasBulletInfo = bulletsInfo.findvalue(@(v, idx) v.groupName == groupName
+      && (v.bulletSetAvailiable?[0] ?? idx) == linked_index)
+    if (!hasBulletInfo)
+      continue
 
     if (descr.values.len() == 0) {
       let bData = getBulletsSetData(air, modifName)
@@ -1076,7 +1114,11 @@ function getActiveBulletsGroupIntForDuplicates(unit, params) {
   return res
 }
 
-function getBulletGroupIndex(airName, bulletName) {
+function getBulletGroupIndex(airName, item) {
+  let { bulletGroupIndex = -1 } = item
+  if (bulletGroupIndex >= 0)
+    return bulletGroupIndex
+  let bulletName = item.name
   local group = -1
   let groupName = getModificationBulletsGroup(bulletName)
   if (!groupName || groupName == "")
@@ -1179,7 +1221,7 @@ function isBulletGroupActive(air, group) {
 function isBulletsGroupActiveByMod(air, mod) {
   local groupIdx = getTblValue("isDefaultForGroup", mod, -1)
   if (groupIdx < 0)
-    groupIdx = getBulletGroupIndex(air.name, mod.name)
+    groupIdx = getBulletGroupIndex(air.name, mod)
   return isBulletGroupActive(air, groupIdx)
 }
 
@@ -1244,7 +1286,7 @@ function getFakeBulletsModByName(unit, modName) {
   }
 
   
-  let groupIndex = getBulletGroupIndex(unit.name, modName)
+  let groupIndex = getBulletGroupIndex(unit.name, { name = modName })
   if (groupIndex >= 0)
     return { name = modName, isDefaultForGroup = groupIndex }
 

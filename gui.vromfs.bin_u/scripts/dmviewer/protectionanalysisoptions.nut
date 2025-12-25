@@ -1,6 +1,6 @@
 from "%scripts/dagui_library.nut" import *
 from "%scripts/utils_sa.nut" import findNearest
-from "%scripts/options/optionsCtors.nut" import create_option_combobox
+from "%scripts/options/optionsCtors.nut" import create_option_combobox, create_empty_combobox
 
 let { set_protection_checker_params } = require("hangarEventCommand")
 let { getUnitName, image_for_air } = require("%scripts/unit/unitInfo.nut")
@@ -127,8 +127,6 @@ function updateArmorPiercingText(obj) {
 
 local isBulletAvailable = @() options?.BULLET.value != null
 
-let create_empty_combobox = @() "option{pare-text:t='yes' selected:t = 'yes' optiontext{text:t = '#shop/search/global/notFound'}}"
-
 options.template <- {
   id = "" 
   sortId = 0
@@ -139,11 +137,12 @@ options.template <- {
   value = null
   defValue = null
   valueWidth = null
+  controlMarkupParams = null
 
   getLabel = @() this.labelLocId && loc(this.labelLocId)
   getControlMarkup = function() {
     return create_option_combobox(this.id, [], -1, "onChangeOption", true,
-      { controlStyle = this.controlStyle })
+      this.controlMarkupParams ?? {})
   }
   getInfoRows = @() null
 
@@ -231,7 +230,7 @@ options.addTypes({
   }
   COUNTRY = {
     sortId = sortIdCount++
-    controlStyle = "iconType:t='country_small';"
+    controlMarkupParams = { controlStyle = "iconType:t='country_small';" }
     getLabel = @() options.UNITTYPE.isVisible() ? null : loc("mainmenu/threat")
     needDisabledOnSearch = @() this.isVisible()
 
@@ -278,6 +277,7 @@ options.addTypes({
   }
   UNIT = {
     sortId = sortIdCount++
+    controlMarkupParams = { beforeSelectCb = "onBeforeSelectComboboxValue" }
 
     updateParams = function(_handler, _scene) {
       let unitType = options.UNITTYPE.value
@@ -338,7 +338,8 @@ options.addTypes({
       if (!checkObj(obj))
         return
       let idx = this.values.indexof(this.value) ?? -1
-      let markup = this.items.len() > 0 ? create_option_combobox(null, this.items, idx, null, false)
+      let markup = this.items.len() > 0
+        ? create_option_combobox(null, this.items, idx, null, false)
         : create_empty_combobox()
       obj.getScene().replaceContentFromText(obj, markup, markup.len(), handler)
     }
@@ -527,7 +528,7 @@ options.addTypes({
         if (isBullet)
           bSet = addParamsToBulletSet({}, curBlk).__merge({
             caliber = (curBlk?.caliber ?? 0) * 1000
-            bullets = weaponBlk % "bullet"
+            bullets = (weaponBlk % "bullet").map(@(v) v.bulletType)
             cartridge = 0
             bulletAnimations = [curBlk?.shellAnimation ?? ""]
             cumulativeDamage = curBlk?.cumulativeDamage.armorPower ?? 0

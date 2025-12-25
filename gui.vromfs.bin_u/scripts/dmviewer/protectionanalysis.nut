@@ -1,6 +1,5 @@
-from "%scripts/dagui_natives.nut" import allowCuttingInHangar, repairUnit, allowDamageSimulationInHangar, get_save_load_path
 from "%scripts/dagui_library.nut" import *
-
+from "%scripts/dagui_natives.nut" import allowCuttingInHangar, repairUnit, allowDamageSimulationInHangar
 let { isPC } = require("%sqstd/platform.nut")
 let { saveLocalAccountSettings, loadLocalAccountSettings
 } = require("%scripts/clientState/localProfile.nut")
@@ -27,6 +26,8 @@ let { open_weapons_for_unit } = require("%scripts/weaponry/weaponryActions.nut")
 let { hasSessionInLobby } = require("%scripts/matchingRooms/sessionLobbyState.nut")
 let dmViewer = require("%scripts/dmViewer/dmViewer.nut")
 let { loadProtectionAnalysisOptionsHandler } = require("%scripts/dmViewer/protectionAnalysisOptionsHandler.nut")
+let protectionAnalysisOptions = require("%scripts/dmViewer/protectionAnalysisOptions.nut")
+let { openBulletsBallisticParametersWnd } = require("%scripts/weaponry/bulletsBallisticParametersWnd.nut")
 
 local switch_damage = false
 local allow_cutting = false
@@ -47,7 +48,7 @@ let helpHintsParams = [
 function isValidHitData(hitData) {
   if ("ammo" not in hitData || "distance" not in hitData)
     return false
-  if (hitData.getStr("object", "") == "" || hitData.getStr("offenderObject", "") == "")
+  if (getAircraftByName(hitData?.object ?? "") == null || getAircraftByName(hitData?.offenderObject ?? "") == null)
     return false
   return true
 }
@@ -72,11 +73,16 @@ gui_handlers.ProtectionAnalysis <- class (gui_handlers.BaseGuiHandlerWT) {
     this.setSceneTitle(" ".concat(loc("mainmenu/btnProtectionAnalysis"),
       loc("ui/mdash"), getUnitName(this.unit.name)))
 
+    if (getShowedUnit()?.name != this.unit.name)
+      setShowUnit(getAircraftByName(this.unit.name))
+
+
     this.onUpdateActionsHint()
 
     let protectionAnalysisOptionsHandler = loadProtectionAnalysisOptionsHandler({
       scene            = this.scene.findObject("options_list_nest")
       unit             = this.unit
+      optionsList      = protectionAnalysisOptions
       onChangeOptionCb = Callback(@() this.resetRepeatHit(), this)
       goBackCb         = Callback(@() this.goBack(), this)
     })
@@ -92,6 +98,7 @@ gui_handlers.ProtectionAnalysis <- class (gui_handlers.BaseGuiHandlerWT) {
     allow_cutting = false
     explosionTest = false
 
+    showObjById("btnCompareBullets", hasFeature("CompareBulletsGraphs"))
     let isShowProtectionMapOptions = hasFeature("ProtectionMap") && this.unit.isTank()
     showObjById("btnProtectionMap", isShowProtectionMapOptions)
     let isShowCrewMapOptions = hasFeature("CrewMap") && this.unit.isShip()
@@ -392,6 +399,11 @@ gui_handlers.ProtectionAnalysis <- class (gui_handlers.BaseGuiHandlerWT) {
   function onValidateLastShot(_, __) {
     showObjById("btnSaveHitFile", hasFeature("HitsAnalysis") && isPC && is_last_shot_valid())
   }
+
+  onOpenBulletsBallisticParametersWnd = @() openBulletsBallisticParametersWnd({
+    unit = protectionAnalysisOptions.UNIT.value ?? this.unit
+    ammoName = protectionAnalysisOptions.BULLET.value?.bulletName
+  })
 }
 
 return {

@@ -1,5 +1,6 @@
 from "%scripts/dagui_natives.nut" import wp_get_modification_cost_gold, shop_get_module_research_status, wp_get_modification_cost, get_modifications_overdrive
 from "%scripts/dagui_library.nut" import *
+
 let { get_modifications_blk } = require("blkGetters")
 let { AMMO, getAmmoAmount, getAmmoMaxAmount } = require("%scripts/weaponry/ammoInfo.nut")
 let { shopIsModificationAvailable, shopIsModificationPurchased, shopIsModificationEnabled
@@ -8,7 +9,7 @@ let { get_gui_option } = require("guiOptions")
 let { get_game_mode } = require("mission")
 let { USEROPT_MODIFICATIONS } = require("%scripts/options/optionsExtNames.nut")
 let { getTemplateCompValue } = require("%globalScripts/templates.nut")
-
+let { convertBlk } = require("%sqstd/datablock.nut")
 
 let isReqModificationsUnlocked = @(unit, mod) mod?.reqModification.findvalue(
   @(req) !shopIsModificationPurchased(unit.name, req)) == null
@@ -88,12 +89,12 @@ function isWeaponModsPurchasedOrFree(unitName, weapon) {
 }
 
 function getModBlock(modName, blockName, templateKey) {
-  let modsBlk = get_modifications_blk()
-  let modBlock = modsBlk?.modifications?[modName]
+  let modificationsBlk = get_modifications_blk()
+  let modBlock = modificationsBlk?.modifications?[modName]
   if (!modBlock || modBlock?[blockName])
     return modBlock?[blockName]
   let tName = modBlock?[templateKey]
-  return tName ? modsBlk?.templates?[tName]?[blockName] : null
+  return tName ? modificationsBlk?.templates?[tName]?[blockName] : null
 }
 
 let isModUpgradeable = @(modName) getModBlock(modName, "upgradeEffect", "modUpgradeType")
@@ -123,38 +124,52 @@ function getModificationsByModClass(unit, modClass) {
   return res
 }
 
+let modificationBulletsGroupCache = {}
 function getModificationBulletsGroup(modifName) {
-  let blk = get_modifications_blk()
-  let modification = blk?.modifications?[modifName]
+  if (modificationBulletsGroupCache?[modifName])
+    return modificationBulletsGroupCache[modifName]
+
+  let modificationsBlk = get_modifications_blk()
+  let modification = modificationsBlk?.modifications?[modifName]
   if (modification) {
-    if (!modification?.group)
-      return "" 
-    if (modification?.effects)
+    if (!modification?.group) {
+      
+      modificationBulletsGroupCache[modifName] <- ""
+      return modificationBulletsGroupCache[modifName]
+    }
+    if (modification?.effects) {
       for (local i = 0; i < modification.effects.paramCount(); i++) {
         let effectType = modification.effects.getParamName(i)
         if (effectType == "additiveBulletMod") {
-          let underscore = modification.group.indexof("_")
-          if (underscore)
-            return modification.group.slice(0, underscore)
+          let underscoreIdx = modification.group.indexof("_")
+          if (underscoreIdx) {
+            modificationBulletsGroupCache[modifName] <- modification.group.slice(0, underscoreIdx)
+            return modificationBulletsGroupCache[modifName]
+          }
         }
-        if (effectType == "bulletMod" || effectType == "additiveBulletMod")
-          return modification.group
+        if (effectType == "bulletMod" || effectType == "additiveBulletMod") {
+          modificationBulletsGroupCache[modifName] <- modification.group
+          return modificationBulletsGroupCache[modifName]
+        }
       }
+    }
   }
-  else if (modifName.len() > 8 && modifName.slice(modifName.len() - 8) == "_default")
-    return modifName.slice(0, modifName.len() - 8)
-
-  return ""
+  else if (modifName.len() > 8 && modifName.slice(modifName.len() - 8) == "_default") {
+    modificationBulletsGroupCache[modifName] <- modifName.slice(0, modifName.len() - 8)
+    return modificationBulletsGroupCache[modifName]
+  }
+  modificationBulletsGroupCache[modifName] <- ""
+  return modificationBulletsGroupCache[modifName]
 }
 
 function updateRelationModificationList(unit, modifName) {
   let mod = getModificationByName(unit, modifName)
   if (mod && !("relationModification" in mod)) {
-    let blk = get_modifications_blk();
+    let modificationsBlk = get_modifications_blk()
     mod.relationModification <- [];
     foreach (_ind, m in unit.modifications) {
       if ("reqModification" in m && isInArray(modifName, m.reqModification)) {
-        let modification = blk?.modifications?[m.name]
+        let modification = modificationsBlk?.modifications?[m.name]
         if (modification?.effects)
           for (local i = 0; i < modification.effects.paramCount(); i++)
             if (modification.effects.getParamName(i) == "additiveBulletMod") {
@@ -174,33 +189,54 @@ function isModificationEnabled(unitName, modName) {
   return (gm == GM_TEST_FLIGHT || gm == GM_BUILDER) && !get_gui_option(USEROPT_MODIFICATIONS)
 }
 
+let modificationsWithTemplates = {}
+function getModificationsWithTemplates(unit) {
+  if (!unit?.modifications)
+    return {}
+  if (modificationsWithTemplates?[unit.name] != null)
+    return modificationsWithTemplates[unit.name]
 
+  let modificationsBlk = get_modifications_blk()
+  let res = {}
 
+  foreach(mod in unit.modifications) {
+    let modBlock = modificationsBlk?.modifications[mod.name]
+    if (modBlock?.effects != null)
+      res[mod.name] <- (mod.__merge({ effects = convertBlk(modBlock.effects) }))
+  }
+  modificationsWithTemplates[unit.name] <- res
+  return res
+}
 
+function calcHumanModEffects(unit, mod, templateParamKey) {
+  let effects = {}
+  let modWithEffects = getModificationsWithTemplates(unit)?[mod.name]
+  if (!modWithEffects || !modWithEffects.effects?[templateParamKey])
+    return effects
 
+  let templateName = modWithEffects.effects[templateParamKey]
 
+  let pAdderNames   = getTemplateCompValue(templateName, "gun_attachable_mod_params__adderNames", [])
+  let pAdderValues  = getTemplateCompValue(templateName, "gun_attachable_mod_params__adderValues", [])
+  let pMultNames    = getTemplateCompValue(templateName, "gun_attachable_mod_params__multiplierNames", [])
+  let pMultValues   = getTemplateCompValue(templateName, "gun_attachable_mod_params__multiplierValues", [])
+  let pSetterNames  = getTemplateCompValue(templateName, "gun_attachable_mod_params__setterNames", [])
+  let pSetterValues = getTemplateCompValue(templateName, "gun_attachable_mod_params__setterValues", [])
 
+  foreach (idx, pName in pAdderNames)
+    if (idx < pAdderValues.len())
+      effects[pName] <- pAdderValues[idx]
 
+  foreach (idx, pName in pMultNames)
+    if (idx < pMultValues.len())
+      effects[pName] <- pMultValues[idx]
 
+  foreach (idx, pName in pSetterNames)
+    if (idx < pSetterValues.len())
+      effects[pName] <- pSetterValues[idx]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  return effects
+}
 
 
 return {
@@ -221,8 +257,5 @@ return {
   isReqModificationsUnlocked
   updateRelationModificationList
   getModificationsByModClass
-  
-
-
-
+  calcHumanModEffects
 }

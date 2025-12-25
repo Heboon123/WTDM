@@ -1,5 +1,5 @@
 from "%scripts/dagui_library.nut" import *
-
+from "%scripts/dagui_natives.nut" import is_mouse_last_time_used
 let { setInterval, clearTimer } = require("dagor.workcycle")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { move_mouse_on_obj } = require("%sqDagui/daguiUtil.nut")
@@ -7,6 +7,8 @@ let { isEqual } = require("%sqStdLibs/helpers/u.nut")
 let { isActionsListOpen } = require("%scripts/actionsList/actionsListState.nut")
 let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { get_time_msec } = require("dagor.time")
+
+const MODAL_INFO_HOLDER_PATH = "%gui/modalInfo/modalInfoHolder.blk"
 
 let watchedObjects = []
 local timer = null
@@ -29,8 +31,10 @@ function startTimer() {
     timer = setInterval(0.05, onTimerTick)
 }
 
+let isUseGamePad = @() !is_mouse_last_time_used() && showConsoleButtons.get()
+
 function updateTimer() {
-  if (showConsoleButtons.get() || watchedObjects.len() == 0)
+  if (isUseGamePad() || watchedObjects.len() == 0)
     stopTimer()
   else
     startTimer()
@@ -41,7 +45,7 @@ function updateCloseAllWindowsInfo() {
     return
   foreach (idx, obj in watchedObjects) {
     let closeAllWindowsInfo = obj.infoWnd.findObject("closeAllWindowsInfo")
-    closeAllWindowsInfo.show(idx != 0 && idx == watchedObjects.len() - 1 && showConsoleButtons.get())
+    closeAllWindowsInfo?.show(idx != 0 && idx == watchedObjects.len() - 1 && isUseGamePad())
   }
 }
 
@@ -146,8 +150,7 @@ function getInfoWndPosition(initiatorObjBounds, modalInfoObjBounds) {
 }
 
 function createInfoHolder(initiatorObj) {
-  let content = "modalInfoHolder { id:t = 'modalInfoHolder' }"
-  initiatorObj.getScene().appendWithBlk(initiatorObj, content, null)
+  initiatorObj.getScene().createElementByObject(initiatorObj, MODAL_INFO_HOLDER_PATH, "modalInfoHolder", null)
   return {
     infoWnd = initiatorObj.findObject("modalInfoHolder")
   }
@@ -155,9 +158,8 @@ function createInfoHolder(initiatorObj) {
 
 function createInfoHolderModal(initiatorObj) {
   let guiScene = initiatorObj.getScene()
-  let infoWndHolder = guiScene.loadModal("", "%gui/modalInfo/modalInfoHolder.blk", "tdiv", handlerClass())
-  let content = "modalInfoHolder { id:t = 'modalInfoHolder' }"
-  guiScene.appendWithBlk(infoWndHolder, content, null)
+  let infoWndHolder = guiScene.loadModal("", "%gui/modalInfo/modalInfoHolderContent.blk", "tdiv", handlerClass())
+  guiScene.createElementByObject(infoWndHolder, MODAL_INFO_HOLDER_PATH, "modalInfoHolder", null)
   return {
     infoWnd = infoWndHolder.findObject("modalInfoHolder")
     infoWndHolder
@@ -180,7 +182,7 @@ function destroy() {
       guiScene.destroyElement(infoWnd)
     }
   })
-  if (showConsoleButtons.get()) {
+  if (isUseGamePad()) {
     let holders = watchedObjects.map(@(t) t.infoWndHolder)
     holders.each(function(infoWndHolder) {
       if (infoWndHolder?.isValid()) {
@@ -213,12 +215,12 @@ onTimerTick = function() {
   if (isInAct)
     return
 
+  removeInvalidWatchedObjects()
+
   if (watchedObjects.len() == 0) {
     isInAct = false
     return
   }
-
-  removeInvalidWatchedObjects()
 
   let cursorPos = getCursorPos()
   if (isEqual(cursorPos, lastCursorPos)) {
@@ -236,7 +238,7 @@ onTimerTick = function() {
       guiScene.destroyElement(infoWnd)
     }
 
-    if (showConsoleButtons.get() && infoWndHolder?.isValid()) {
+    if (isUseGamePad() && infoWndHolder?.isValid()) {
       let guiScene = infoWndHolder.getScene()
       guiScene.destroyElement(infoWndHolder)
     }
@@ -248,8 +250,8 @@ function addModalInfo(initiatorObj, handler, tooltipType, id, params) {
   if (watchedObjects.findindex(@(o) o.id == id) != null)
     return null
 
-  let { infoWnd, infoWndHolder = null} = showConsoleButtons.get() ? createInfoHolderModal(initiatorObj) : createInfoHolder(initiatorObj)
-  tooltipType.fillTooltip(infoWnd, handler , id, params)
+  let { infoWnd, infoWndHolder = null} = isUseGamePad() ? createInfoHolderModal(initiatorObj) : createInfoHolder(initiatorObj)
+  tooltipType.fillTooltip(infoWnd, handler, id, params)
   infoWnd.getScene().applyPendingChanges(false)
 
   let initiatorBounds = getObjectBounds(initiatorObj)
@@ -300,4 +302,5 @@ isActionsListOpen.subscribe(@(_) destroy())
 return {
   openModalInfo
   closeModalInfo
+  destroyModalInfo = destroy
 }

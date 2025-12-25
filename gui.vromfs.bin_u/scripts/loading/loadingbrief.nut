@@ -1,8 +1,7 @@
-from "%scripts/dagui_natives.nut" import stop_gui_sound, start_gui_sound, set_presence_to_player, gchat_is_enabled, map_to_location
 from "%scripts/dagui_library.nut" import *
+from "%scripts/dagui_natives.nut" import stop_gui_sound, start_gui_sound, set_presence_to_player, gchat_is_enabled
 from "%scripts/mainConsts.nut" import HELP_CONTENT_SET
 from "%scripts/utils_sa.nut" import is_multiplayer
-
 let { g_mission_type } = require("%scripts/missions/missionType.nut")
 let { get_game_params_blk } = require("blkGetters")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -25,7 +24,8 @@ let { GUI } = require("%scripts/utils/configs.nut")
 let { hasMenuChat } = require("%scripts/chat/chatStates.nut")
 let { getTip } = require("%scripts/loading/loadingTips.nut")
 let { add_event_listener, broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
-let { getMissionLocaltionAndConditionText } = require("%scripts/missions/missionsUtils.nut")
+let { getMissionLocaltionAndConditionText, getLevelMapBackgroundColors
+} = require("%scripts/missions/missionsUtils.nut")
 let { get_current_mission_desc } = require("guiMission")
 let { showConsoleButtons } = require("%scripts/options/consoleMode.nut")
 let { USEROPT_WEAPONS } = require("%scripts/options/optionsExtNames.nut")
@@ -220,6 +220,12 @@ gui_handlers.LoadingBrief <- class (gui_handlers.BaseGuiHandlerWT) {
         }
       }
     }
+
+    let level = missionBlk?.level ?? ""
+    if (level == "")
+      return
+    let { customMapBackColorInBriefing } = getLevelMapBackgroundColors(level)
+    this.customMapBackColorInBriefing = customMapBackColorInBriefing
   }
 
   function count_misObj_add(blk) {
@@ -433,6 +439,9 @@ gui_handlers.LoadingBrief <- class (gui_handlers.BaseGuiHandlerWT) {
           this.guiScene.playSound("show_map")
         obj.animShow = "show"
         obj.show(true)
+
+        let mapBgObj = this.scene.findObject("tactical-map-bg")
+        mapBgObj.bgcolor = this.customMapBackColorInBriefing
       }
     }
     else {
@@ -483,6 +492,7 @@ gui_handlers.LoadingBrief <- class (gui_handlers.BaseGuiHandlerWT) {
   briefing = null
   partsList = null
   misObj_add = ""
+  customMapBackColorInBriefing = ""
 
   slidesStarted = false
   finished = false

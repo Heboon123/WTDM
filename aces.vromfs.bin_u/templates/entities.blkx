@@ -27,7 +27,25 @@
     "%wtlibs/templates/outline_renderer.blk",
     "%wtlibs/templates/node_based_shaders.blk",
     "%wtlibs/templates/lightning.blk",
-    "%wtlibs/templates/replay.blk"
+    "%wtlibs/templates/replay.blk",
+    "rendinsts_hangars.blk",
+    "explosion_fx.blk",
+    "contact_fx.blk",
+    "inf/*.blk",
+    "inf/render/*.blk",
+    "infantry_skins/*.blk",
+    "%wtlibs/templates/net.blk",
+    "%danetlibs/motion_matching/templates/motion_matching.template.blk",
+    "%danetlibs/anim_replay/templates/anim_replay.template.blk",
+    "%danetlibs/sound/door_sounds/templates/door_sounds.template.blk",
+    "%danetlibs/sound/sound_utils/templates/sound_utils.template.blk",
+    "%danetlibs/sound/common_sounds/templates/common_sounds.template.blk",
+    "%danetlibs/sound/environment_sounds/templates/environment_sounds.template.blk",
+    "%danetlibs/sound/human_sounds/templates/human_sounds.template.blk",
+    "%danetlibs/sound/human_net_speech/templates/human_net_speech.template.blk",
+    "render/ssss.blk",
+    "render/local_tone_mapping.blk",
+    "%gameLibs/render/collimatorMoaCore/templates/collimator_moa_core.template.blk"
   ],
   "delayed_action": {
     "delayed_action__doAtTime": -1.0,
@@ -66,7 +84,7 @@
     "_use": "replicating",
     "_group": {
       "_track": true,
-      "ri_gpu_object__name": "ammunition_box_n",
+      "ri_gpu_object__name": "block_concrete_390x190x190_b_lying_a",
       "ri_gpu_object__grid_tiling": 4,
       "ri_gpu_object__grid_size": 16,
       "ri_gpu_object__cell_size": 8.0,
@@ -1196,6 +1214,7 @@
       ]
     ],
     "background_model__canOutline": false,
+    "background_model__needRemoveForPrem": false,
     "background_model__hangarPlace": "",
     "background_model_res": {
       "_tags": "gameClient"
@@ -1879,6 +1898,9 @@
       "effect__name": "camera_rain_light_cmps_fx"
     }
   },
+  "event_snowball_unit": {
+    "event_snowball__handle_hit:tag": {}
+  },
   "camera_rain_heavy_effect": {
     "_use": "camera_bound_rain_effect_template",
     "_group": {
@@ -2105,9 +2127,2071 @@
     "ri_extra__name": "ammunition_box_construction_99x50x27_static",
     "ammo_box__triggerGroupNo": 4
   },
+  "demonstrated_shell": {
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "simpleObject__resName": "",
+    "simpleObject__charName": "",
+    "simpleObject__visible": true,
+    "demonstrated_shell__caliber": 0.0,
+    "demonstrated_shell__length": 0.0,
+    "simpleObject__bboxMax": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "simpleObject__bboxMin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "simpleObject__scale": 1.0,
+    "demonstrated_shell__blk": "",
+    "demonstrated_shell__presetName": "",
+    "demonstrated_shell__cart": "",
+    "demonstrated_shell__bulletType": "",
+    "demonstrated_shell__offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "demonstrated_shell__roll": 0.0,
+    "demonstrated_shell__forTank": false,
+    "demonstrated_shell__isVertical": false,
+    "_tracked": "transform",
+    "simpleObject__model_res": {},
+    "demonstrated_shell:tag": {},
+    "simpleObject__hideNodes:list<t>": {}
+  },
+  "rendinst_for_prem_vehicle": {
+    "rendinst_for_prem_vehicle__forTank": false,
+    "rendinst_for_prem_vehicle__forPlane": false,
+    "rendinst_for_prem_vehicle__forShip": false,
+    "background_model__eid:eid": {}
+  },
+  "bomb_cart": {
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "simpleObject__resName": "",
+    "simpleObject__visible": true,
+    "simpleObject__model_res": {},
+    "bomb_cart__shellEid:eid": {},
+    "demonstrated_shell:tag": {}
+  },
+  "bomb_cart_short": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_short_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.4,
+      0.67,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      0.0,
+      0.67,
+      0.0
+    ]
+  },
+  "bomb_cart_standart": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_standart_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.4,
+      0.67,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.7,
+      0.67,
+      0.0
+    ]
+  },
+  "bomb_cart_thin": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_50_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.0,
+      0.175,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.4,
+      0.175,
+      0.0
+    ]
+  },
+  "bomb_cart_wide": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_wide_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.4,
+      0.67,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.7,
+      0.67,
+      0.0
+    ]
+  },
+  "bomb_stand": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_f_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.15,
+      0.5,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.15,
+      0.5,
+      0.0
+    ]
+  },
+  "bomb_stand_c1of": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_f_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.5,
+      0.28,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.1,
+      0.28,
+      0.0
+    ]
+  },
+  "bomb_stand_high": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_g_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.15,
+      0.635,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.15,
+      0.635,
+      0.0
+    ]
+  },
+  "missile_stand_heavy": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_h_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.35,
+      0.48,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.35,
+      0.48,
+      0.0
+    ]
+  },
+  "bomb_cart_big": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_big_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.4,
+      0.67,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.7,
+      0.67,
+      0.0
+    ]
+  },
+  "missile_cart_mid": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_mid_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.47,
+      0.65,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.7,
+      0.65,
+      0.0
+    ]
+  },
+  "bomb_cart_mid": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_mid_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.5,
+      0.65,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.7,
+      0.65,
+      0.0
+    ]
+  },
+  "bomb_cart_heavy": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_3000_dynmodel",
+    "bomb_cart__linkPoint1": [
+      1.2,
+      0.25,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.7,
+      0.25,
+      0.0
+    ]
+  },
+  "bomb_cart_heavy_long_tail": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_3000_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.0,
+      0.35,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -1.2,
+      0.35,
+      0.0
+    ]
+  },
+  "bomb_cart_agm_130": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_agm_130a_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.5,
+      1.1,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.5,
+      1.1,
+      0.0
+    ]
+  },
+  "bomb_cart_kh59": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_su_kh_59m_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.5,
+      0.8,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.5,
+      0.8,
+      0.0
+    ]
+  },
+  "bomb_cart_hs_293": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_hs_293a_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.5,
+      0.8,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.5,
+      0.8,
+      0.0
+    ]
+  },
+  "bomb_cart_sea_eagle": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_sea_eagle_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.5,
+      0.7,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.5,
+      0.7,
+      0.0
+    ]
+  },
+  "bomb_cart_big_zb_500": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_big_dynmodel",
+    "bomb_cart__linkPoint1": [
+      -0.2,
+      0.67,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.5,
+      0.67,
+      0.0
+    ]
+  },
+  "bomb_cart_big_bicaliber_s25": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_big_dynmodel",
+    "bomb_cart__linkPoint1": [
+      -0.2,
+      0.58,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.5,
+      0.58,
+      0.0
+    ]
+  },
+  "bomb_cart_big_mid_tail": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_big_dynmodel",
+    "bomb_cart__linkPoint1": [
+      -0.4,
+      0.67,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.9,
+      0.67,
+      0.0
+    ]
+  },
+  "bomb_cart_aim_4": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_mid_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.55,
+      0.67,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.45,
+      0.67,
+      0.0
+    ]
+  },
+  "missile_stand_heavy_bicaliber_rp3": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_g_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.1,
+      0.62,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.15,
+      0.62,
+      0.0
+    ]
+  },
+  "bomb_cart_fireflash": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_uk_fireflash_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.55,
+      0.67,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.45,
+      0.67,
+      0.0
+    ]
+  },
+  "bomb_cart_fx1400": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_de_fx1400_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.55,
+      0.67,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.45,
+      0.67,
+      0.0
+    ]
+  },
+  "missile_stand_thin": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_g_short_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.55,
+      0.67,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.45,
+      0.67,
+      0.0
+    ]
+  },
+  "bomb_cart_platform": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "bomb_cart_d_flat_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.55,
+      0.2,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.45,
+      0.2,
+      0.0
+    ]
+  },
+  "plane_shell_carts_cfg": {
+    "plane_demonstrated_shells:tag": {},
+    "shell_carts_params:array": {
+      "shell_cart_info:object": [
+        {
+          "cartTemplate": "bomb_stand_high",
+          "calibers": [
+            0.0,
+            0.18
+          ],
+          "length": [
+            0.0,
+            3.5
+          ]
+        },
+        {
+          "cartTemplate": "bomb_cart_thin",
+          "calibers": [
+            0.134,
+            0.31
+          ],
+          "length": [
+            1.8,
+            2.5
+          ]
+        },
+        {
+          "cartTemplate": "missile_stand_heavy",
+          "calibers": [
+            0.134,
+            0.31
+          ],
+          "length": [
+            2.5,
+            3.1
+          ]
+        },
+        {
+          "cartTemplate": "bomb_cart_thin",
+          "calibers": [
+            0.18,
+            1.0
+          ],
+          "length": [
+            0.1,
+            2.5
+          ]
+        },
+        {
+          "cartTemplate": "bomb_cart_standart",
+          "calibers": [
+            0.2,
+            0.4
+          ],
+          "length": [
+            1.5,
+            2.54
+          ]
+        },
+        {
+          "cartTemplate": "missile_cart_mid",
+          "calibers": [
+            0.16,
+            0.4
+          ],
+          "length": [
+            2.8,
+            5.0
+          ]
+        },
+        {
+          "cartTemplate": "bomb_cart_wide",
+          "calibers": [
+            0.4,
+            0.5
+          ],
+          "length": [
+            2.0,
+            7.0
+          ]
+        },
+        {
+          "cartTemplate": "bomb_cart_big",
+          "calibers": [
+            0.5,
+            0.6
+          ],
+          "length": [
+            2.0,
+            8.0
+          ]
+        },
+        {
+          "cartTemplate": "bomb_cart_heavy",
+          "calibers": [
+            0.6,
+            10.0
+          ],
+          "length": [
+            2.0,
+            3.0
+          ]
+        },
+        {
+          "cartTemplate": "bomb_cart_heavy_long_tail",
+          "calibers": [
+            0.6,
+            10.0
+          ],
+          "length": [
+            3.0,
+            20.0
+          ]
+        }
+      ]
+    }
+  },
+  "shell_stand_vertical": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "ammo_stand_a_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.0,
+      0.335,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.2,
+      0.335,
+      0.0
+    ]
+  },
+  "shell_stand_horisontal": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "ammo_stand_b_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.25,
+      0.47,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.2,
+      0.47,
+      0.0
+    ]
+  },
+  "shell_stand_horisontal_heat_fs": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "ammo_stand_b_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.15,
+      0.47,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.2,
+      0.47,
+      0.0
+    ]
+  },
+  "shell_stand_horisontal_apdsfs": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "ammo_stand_apdsfs_long_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.25,
+      0.47,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.2,
+      0.47,
+      0.0
+    ]
+  },
+  "shell_stand_horisontal_apcr": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "ammo_stand_ap_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.05,
+      0.47,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      0.0,
+      0.47,
+      0.0
+    ]
+  },
+  "shell_stand_horisontal_ap": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "ammo_stand_ap_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.25,
+      0.47,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.2,
+      0.47,
+      0.0
+    ]
+  },
+  "shell_stand_low": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "ammo_stand_d_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.2,
+      0.35,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.2,
+      0.35,
+      0.0
+    ]
+  },
+  "shell_stand_vertical_sam": {
+    "_use": "bomb_cart",
+    "simpleObject__resName": "ammo_stand_large_sam_dynmodel",
+    "bomb_cart__linkPoint1": [
+      0.0,
+      0.35,
+      0.0
+    ],
+    "bomb_cart__linkPoint2": [
+      -0.2,
+      0.35,
+      0.0
+    ]
+  },
+  "tank_shell_carts_cfg": {
+    "tank_demonstrated_shells:tag": {},
+    "shell_carts_params:array": {
+      "shell_cart_info:object": [
+        {
+          "cartTemplate": "shell_stand_vertical",
+          "calibers": [
+            0.0,
+            0.25
+          ],
+          "length": [
+            0.0,
+            2.7
+          ],
+          "isVertical": true
+        },
+        {
+          "cartTemplate": "shell_stand_vertical_sam",
+          "calibers": [
+            0.09,
+            0.7
+          ],
+          "length": [
+            1.5,
+            7.5
+          ],
+          "isVertical": true
+        },
+        {
+          "cartTemplate": "shell_stand_horisontal",
+          "calibers": [
+            0.081,
+            0.25
+          ],
+          "length": [
+            0.3,
+            1.0
+          ],
+          "isVertical": false
+        },
+        {
+          "cartTemplate": "shell_stand_horisontal_heat_fs",
+          "calibers": [
+            0.075,
+            0.13
+          ],
+          "length": [
+            0.35,
+            0.9
+          ],
+          "isVertical": false
+        },
+        {
+          "cartTemplate": "shell_stand_horisontal_apdsfs",
+          "calibers": [
+            0.037,
+            0.08
+          ],
+          "length": [
+            0.1,
+            0.5
+          ],
+          "isVertical": false
+        },
+        {
+          "cartTemplate": "shell_stand_horisontal_apdsfs",
+          "calibers": [
+            0.02,
+            0.14
+          ],
+          "length": [
+            0.01,
+            0.5
+          ],
+          "isVertical": false
+        },
+        {
+          "cartTemplate": "shell_stand_horisontal_apdsfs",
+          "calibers": [
+            0.0,
+            0.5
+          ],
+          "length": [
+            0.3,
+            1.5
+          ],
+          "isVertical": false
+        }
+      ]
+    }
+  },
+  "bullet_target": {
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "simpleObject__resName": "",
+    "simpleObject__visible": true,
+    "bullet_target__offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "simpleObject__model_res": {},
+    "demonstrated_shell:tag": {}
+  },
+  "bullet_target_he_5mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "he_target_5mm_dynmodel"
+  },
+  "bullet_target_he_10mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "he_target_10mm_dynmodel"
+  },
+  "bullet_target_he_20mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "he_target_20mm_dynmodel"
+  },
+  "bullet_target_he_40mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "he_target_40mm_dynmodel"
+  },
+  "bullet_target_he_40mm_big_caliber": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "he_target_40mm_dynmodel"
+  },
+  "bullet_target_apdsfs_50mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "apdsfs_target_50mm_dynmodel"
+  },
+  "bullet_target_apdsfs_75mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "apdsfs_target_75mm_dynmodel"
+  },
+  "bullet_target_apdsfs_100mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "apdsfs_target_100mm_dynmodel"
+  },
+  "bullet_target_apdsfs_150mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "apdsfs_target_150mm_dynmodel"
+  },
+  "bullet_target_apdsfs_200mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "apdsfs_target_200mm_dynmodel"
+  },
+  "bullet_target_apdsfs_300mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "apdsfs_target_300mm_dynmodel"
+  },
+  "bullet_target_apdsfs_400mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "apdsfs_target_400mm_dynmodel"
+  },
+  "bullet_target_ap_20mm_caliber_50mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "ap_target_20mm_low_velocity50_dynmodel"
+  },
+  "bullet_target_ap_30mm_caliber_76mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "ap_target_30mm_low_velocity76_dynmodel"
+  },
+  "bullet_target_ap_50mm_caliber_76mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "ap_target_50mm_low_velocity76_dynmodel"
+  },
+  "bullet_target_ap_70mm_caliber_120mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "ap_target_70mm_low_velocity120_dynmodel"
+  },
+  "bullet_target_ap_30mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "ap_target_30mm_dynmodel"
+  },
+  "bullet_target_ap_50mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "ap_target_50mm_dynmodel"
+  },
+  "bullet_target_ap_75mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "ap_target_75mm_dynmodel"
+  },
+  "bullet_target_ap_90mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "ap_target_90mm_dynmodel"
+  },
+  "bullet_target_ap_100mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "ap_target_100mm_dynmodel"
+  },
+  "bullet_target_ap_125mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "ap_target_125mm_dynmodel"
+  },
+  "bullet_target_ap_150mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "ap_target_150mm_dynmodel"
+  },
+  "bullet_target_ap_175mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "ap_target_175mm_dynmodel"
+  },
+  "bullet_target_ap_200mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "ap_target_200mm_dynmodel"
+  },
+  "bullet_target_ap_220mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "ap_target_220mm_dynmodel"
+  },
+  "bullet_target_ap_250mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "ap_target_250mm_dynmodel"
+  },
+  "bullet_target_ap_300mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "ap_target_300mm_dynmodel"
+  },
+  "bullet_target_apds_75mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "apds_target_75mm_dynmodel"
+  },
+  "bullet_target_apds_150mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "apds_target_150mm_dynmodel"
+  },
+  "bullet_target_apds_200mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "apds_target_200mm_dynmodel"
+  },
+  "bullet_target_apds_350mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "ap_target_350mm_dynmodel"
+  },
+  "bullet_target_heat_50mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "heat_target_50mm_dynmodel"
+  },
+  "bullet_target_heat_100mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "heat_target_100mm_dynmodel"
+  },
+  "bullet_target_heat_150mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "heat_target_150mm_dynmodel"
+  },
+  "bullet_target_heat_200mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "heat_target_200mm_dynmodel"
+  },
+  "bullet_target_heat_300mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "heat_target_300mm_dynmodel"
+  },
+  "bullet_target_heat_400mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "heat_target_400mm_dynmodel"
+  },
+  "bullet_target_heat_500mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "heat_target_500mm_dynmodel"
+  },
+  "bullet_target_heat_750mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "heat_target_750mm_dynmodel"
+  },
+  "bullet_target_heat_1000mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "heat_target_1000mm_dynmodel"
+  },
+  "bullet_target_heat_1300mm": {
+    "_use": "bullet_target",
+    "simpleObject__resName": "heat_target_1300mm_dynmodel"
+  },
+  "bullet_targets_cfg": {
+    "bullet_targets_params:array": {
+      "bullet_target_info:object": [
+        {
+          "bullet_type:list<t>": {
+            "type": [
+              "he_frag_tank",
+              "he_frag_fs_tank",
+              "rocket_tank",
+              "atgm_he_tank",
+              "atgm_vt_fuze_tank",
+              "he_frag_radio_fuse",
+              "he_frag_dist_fuse",
+              "he_frag_vog",
+              "he_frag_i_tank",
+              "he_vt",
+              "he_tf",
+              "he_grenade_tank",
+              "he_frag_base_fuse_tank",
+              "he_at",
+              "he_at_grenade",
+              "hesh_tank",
+              "shrapnel_tank"
+            ]
+          },
+          "targets:array": {
+            "he_5mm:object": {
+              "targetTemplate": "bullet_target_he_5mm",
+              "penetration": [
+                5.0,
+                10.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "he_10mm:object": {
+              "targetTemplate": "bullet_target_he_10mm",
+              "penetration": [
+                10.0,
+                20.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "he_20mm:object": {
+              "targetTemplate": "bullet_target_he_20mm",
+              "penetration": [
+                20.0,
+                35.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "he_40mm:object": {
+              "targetTemplate": "bullet_target_he_40mm",
+              "penetration": [
+                35.0,
+                79.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "he_40mm_big_caliber:object": {
+              "targetTemplate": "bullet_target_he_40mm_big_caliber",
+              "penetration": [
+                80.0,
+                250.0
+              ],
+              "targetOffset": [
+                -0.75,
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        {
+          "bullet_type:list<t>": {
+            "type": [
+              "apds_fs_tank",
+              "apds_fs_long_tank",
+              "apds_fs_long_l30_tank",
+              "apds_fs_full_body_steel_tank",
+              "apds_fs_tungsten_small_core_tank",
+              "apds_fs_tungsten_l10_l15_tank",
+              "apds_fs_tungsten_caliber_fins_tank"
+            ]
+          },
+          "targets:array": {
+            "apdsfs_50mm:object": {
+              "targetTemplate": "bullet_target_apdsfs_50mm",
+              "penetration": [
+                100.0,
+                150.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "apdsfs_75mm:object": {
+              "targetTemplate": "bullet_target_apdsfs_75mm",
+              "penetration": [
+                151.0,
+                240.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "apdsfs_100mm:object": {
+              "targetTemplate": "bullet_target_apdsfs_100mm",
+              "penetration": [
+                241.0,
+                350.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "apdsfs_150mm:object": {
+              "targetTemplate": "bullet_target_apdsfs_150mm",
+              "penetration": [
+                351.0,
+                450.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "apdsfs_200mm:object": {
+              "targetTemplate": "bullet_target_apdsfs_200mm",
+              "penetration": [
+                451.0,
+                550.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "apdsfs_300mm:object": {
+              "targetTemplate": "bullet_target_apdsfs_300mm",
+              "penetration": [
+                551.0,
+                700.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "apdsfs_400mm:object": {
+              "targetTemplate": "bullet_target_apdsfs_400mm",
+              "penetration": [
+                701.0,
+                1300.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        {
+          "bullet_type:list<t>": {
+            "type": [
+              "ac_shell_tank",
+              "apbc_tank",
+              "apbc_usa_tank",
+              "apds_l15_tank",
+              "apc_tank",
+              "aphe_tank",
+              "aphebc_tank",
+              "apcbc_tank",
+              "ap_tank",
+              "ap_large_caliber_tank",
+              "ahead_tank",
+              "ahead",
+              "apc_solid_medium_caliber_tank",
+              "apcbc_solid_medium_caliber_tank",
+              "aphe",
+              "sap_hei_tank",
+              "sap_tank",
+              "sapbc_tank",
+              "common_tank",
+              "special_common_tank",
+              "sapcbc_tank",
+              "sapbc_flat_nose_tank",
+              "atgm_ke_tank"
+            ]
+          },
+          "targets:array": {
+            "ap_20mm:object": {
+              "targetTemplate": "bullet_target_ap_20mm_caliber_50mm",
+              "penetration": [
+                19.0,
+                24.0
+              ],
+              "calibers": [
+                0.045,
+                0.065
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "ap_30mm_caliber_150mm:object": {
+              "targetTemplate": "bullet_target_ap_70mm_caliber_120mm",
+              "penetration": [
+                25.0,
+                45.0
+              ],
+              "calibers": [
+                0.13,
+                0.151
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "ap_30mm_caliber_76mm:object": {
+              "targetTemplate": "bullet_target_ap_30mm_caliber_76mm",
+              "penetration": [
+                25.0,
+                45.0
+              ],
+              "calibers": [
+                0.07,
+                0.085
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "ap_30mm_:object": {
+              "targetTemplate": "bullet_target_ap_30mm",
+              "penetration": [
+                25.0,
+                39.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "ap_50mm_caliber_76mm:object": {
+              "targetTemplate": "bullet_target_ap_50mm_caliber_76mm",
+              "penetration": [
+                50.0,
+                80.0
+              ],
+              "calibers": [
+                0.07,
+                0.085
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "ap_50mm:object": {
+              "targetTemplate": "bullet_target_ap_50mm",
+              "penetration": [
+                40.0,
+                60.0
+              ],
+              "calibers": [
+                0.037,
+                0.055
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "ap_70mm_caliber_120mm:object": {
+              "targetTemplate": "bullet_target_ap_70mm_caliber_120mm",
+              "penetration": [
+                60.0,
+                80.0
+              ],
+              "calibers": [
+                0.1,
+                0.13
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "ap_75mm:object": {
+              "targetTemplate": "bullet_target_ap_75mm",
+              "penetration": [
+                61.0,
+                75.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "ap_90mm:object": {
+              "targetTemplate": "bullet_target_ap_90mm",
+              "penetration": [
+                76.0,
+                99.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "ap_100mm:object": {
+              "targetTemplate": "bullet_target_ap_100mm",
+              "penetration": [
+                100.0,
+                110.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "ap_125mm:object": {
+              "targetTemplate": "bullet_target_ap_125mm",
+              "penetration": [
+                111.0,
+                130.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "ap_150mm:object": {
+              "targetTemplate": "bullet_target_ap_150mm",
+              "penetration": [
+                131.0,
+                165.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "ap_175mm:object": {
+              "targetTemplate": "bullet_target_ap_175mm",
+              "penetration": [
+                166.0,
+                190.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "ap_200mm:object": {
+              "targetTemplate": "bullet_target_ap_200mm",
+              "penetration": [
+                191.0,
+                215.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "ap_220mm:object": {
+              "targetTemplate": "bullet_target_ap_220mm",
+              "penetration": [
+                216.0,
+                235.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "ap_250mm:object": {
+              "targetTemplate": "bullet_target_ap_250mm",
+              "penetration": [
+                236.0,
+                280.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "ap_300mm:object": {
+              "targetTemplate": "bullet_target_ap_300mm",
+              "penetration": [
+                281.0,
+                400.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        {
+          "bullet_type:list<t>": {
+            "type": [
+              "apds_tank",
+              "apds_early_tank",
+              "apcr_tank"
+            ]
+          },
+          "targets:array": {
+            "apds_30mm:object": {
+              "targetTemplate": "bullet_target_ap_30mm",
+              "penetration": [
+                25.0,
+                50.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "apds_75mm:object": {
+              "targetTemplate": "bullet_target_apds_75mm",
+              "penetration": [
+                51.0,
+                130.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "apds_150mm:object": {
+              "targetTemplate": "bullet_target_apds_150mm",
+              "penetration": [
+                131.0,
+                180.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "apds_200mm:object": {
+              "targetTemplate": "bullet_target_apds_200mm",
+              "penetration": [
+                181.0,
+                270.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "apds_350mm:object": {
+              "targetTemplate": "bullet_target_apds_350mm",
+              "penetration": [
+                271.0,
+                550.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        {
+          "bullet_type:list<t>": {
+            "type": [
+              "atgm_tank",
+              "atgm_tandem_tank",
+              "heat_fs_tank",
+              "heat_fs_rocket",
+              "heat_grenade_tank",
+              "heat_tank",
+              "he_dp",
+              "heat_mp_vt_tank",
+              "he_or_tank"
+            ]
+          },
+          "targets:array": {
+            "heat_50mm:object": {
+              "targetTemplate": "bullet_target_heat_50mm",
+              "penetration": [
+                50.0,
+                90.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "heat_100mm:object": {
+              "targetTemplate": "bullet_target_heat_100mm",
+              "penetration": [
+                90.0,
+                140.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "heat_150mm:object": {
+              "targetTemplate": "bullet_target_heat_150mm",
+              "penetration": [
+                140.0,
+                190.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "heat_200mm:object": {
+              "targetTemplate": "bullet_target_heat_200mm",
+              "penetration": [
+                190.0,
+                250.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "heat_300mm:object": {
+              "targetTemplate": "bullet_target_heat_300mm",
+              "penetration": [
+                250.0,
+                350.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "heat_400mm:object": {
+              "targetTemplate": "bullet_target_heat_400mm",
+              "penetration": [
+                350.0,
+                450.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "heat_500mm:object": {
+              "targetTemplate": "bullet_target_heat_500mm",
+              "penetration": [
+                450.0,
+                550.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "heat_750mm:object": {
+              "targetTemplate": "bullet_target_heat_750mm",
+              "penetration": [
+                550.0,
+                900.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "heat_1000mm:object": {
+              "targetTemplate": "bullet_target_heat_1000mm",
+              "penetration": [
+                900.0,
+                1100.0
+              ],
+              "targetOffset": [
+                -0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "heat_1300mm:object": {
+              "targetTemplate": "bullet_target_heat_1300mm",
+              "penetration": [
+                1100.0,
+                2000.0
+              ],
+              "targetOffset": [
+                -0.7,
+                0.0,
+                -0.2
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "kamikazeRespawn": {
+    "_use": "replicating",
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "active": true,
+    "team": 0,
+    "kamikazeRespawn:tag": {}
+  },
+  "drone_box_flight_area": {
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "drone_area__weakSignalBorderDist": 5.0,
+    "drone_area__outOfOrderMaxTime": 5.0,
+    "drone_area__outOfOrderMaxDist": 5.0,
+    "box_zone:tag": {},
+    "drone_area__flightBox:tag": {}
+  },
   "soldier_info_cache": {
     "_singleton": true,
     "_tags": "server",
     "soldierInfoCache:object": {}
+  },
+  "squad_members_ui": {
+    "_tags": "gameClient",
+    "squad_members_ui__updateInterval": 0.25,
+    "squad_members_ui__nextUpdateAtTime": -1.0,
+    "_group": {
+      "_track": true,
+      "squad_members_ui__watchedSquadEid:eid": {},
+      "squad_members_ui__controlledSquadEid:eid": {},
+      "squad_members_ui__watchedSquadState:object": {}
+    }
+  },
+  "local_player_human_context": {
+    "_tags": "gameClient",
+    "_group": {
+      "_track": true,
+      "local_player_human_context__ctxState:object": {}
+    }
+  },
+  "covers_interval_check": {
+    "_tags": "server",
+    "covers__nextCoversCheckTime": 0.0,
+    "covers__coversCheckInterval": 0.25
+  },
+  "sync_player": {
+    "_override": true,
+    "is_local": false,
+    "_tracked": "is_local",
+    "player:tag": {},
+    "player__support_units_status_notification_mgr": {}
+  },
+  "item_spawner": {
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "spawnItemStep": [
+      1.0,
+      0.0,
+      0.0
+    ],
+    "spawn_item__rotationDeg": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "team": -1,
+    "spawnItemList:array": {}
+  },
+  "location_dust_ground_big_light_15m": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_dust_ground_big_light_15m_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_dust_ground_big_density": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_dust_ground_big_density_15m_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_dust_ground_med_density": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_dust_ground_med_density_15m_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_dust_ground_small_density": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_dust_ground_small_density_15m_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_camera_dust_many_15m_static": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_camera_dust_many_15m_static_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_camera_dust_many_15m": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_camera_dust_many_15m_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_camera_papers_30m": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_camera_papers_30m_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_camera_leaves": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_camera_leaves_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_camera_distortion_15m": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_camera_distortion_15m_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_camera_burned_ground": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_camera_burned_ground_smoke_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_ground_1m_nosmoke": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "fire_ground_1m_nosmoke_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_ground_2m_nosmoke": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "fire_ground_2m_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_ground_5m_nosmoke": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "fire_ground_5m_nosmoke_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_ground_5m_nosmoke_small": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "fire_ground_5m_small_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_ground_black": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "fire_ground_black_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_ground_building_background": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "fire_ground_building_background_long_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_water_flow_stream_big": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "water_flow_stream_big_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_water_flow_stream_medium": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "water_flow_stream_medium_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_water_flow_stream_small": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "water_flow_stream_small_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_water_flow_stream_hole_mud": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "water_flow_stream_hole_mud_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_water_flow_stream_hole": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "water_flow_stream_hole_water_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_water_flow_splash_big": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "water_flow_splash_big_clear_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_water_flow_splash_medium_dirt": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "water_flow_splash_medium_dirt_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_water_flow_splash_medium": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "water_flow_splash_medium_clear_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_water_flow_splash_small": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "water_flow_splash_small_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_misc_flies_gray": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_flying_stuff_flies_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_sparks_burst_big": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "hit_sparks_noise_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_sparks_burst_small": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "sparks_short_circuit_burst_small_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_camera_ground_sparks_1m": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_camera_ground_sparks_1m_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_camera_ground_sparks_2m": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_camera_ground_sparks_2m_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_camera_ground_sparks_5m": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_camera_ground_sparks_5m_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_big": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_fire_big_cmps_fx ",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_grass": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_fire_grass_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_huge": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_fire_huge_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_medium": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_fire_medium_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_small": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_fire_small_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_dust_floating": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_camera_dust_floating_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_window_horizontally_big": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "fire_window_horizontally_big_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_window_horizontally_med": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "fire_window_horizontally_med_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_window_horizontally_small": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "fire_window_horizontally_small_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_window_vertically_big": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "fire_window_vertically_big_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_window_vertically_med": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "fire_window_vertically_med_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_window_vertically_small": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "fire_window_vertically_small_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_misc_floating_ashes": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_camera_ashes_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_tank_fire_small": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "fire_tank_napalm_smal_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_misc_beatles_gray": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "misc_beatles_gray",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_misc_floating_leaves_5m": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_camera_leaves_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "fire_ground_building_background_long_cmps_fx": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "fire_ground_building_background_long_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "smoke_ground_static_dark_medium": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "smoke_ground_static_dark_medium_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "smoke_ground_static_medium": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "smoke_ground_static_medium_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "smoke_ground_static_dark_small": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "smoke_ground_static_dark_small_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "smoke_ground_static_small": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "smoke_ground_static_small_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "envir_smoke_small_effect": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_smoke_small_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "fire_chimney_effect": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_fire_small_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "fire_candle_effect": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "fire_candle_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "fire_torch_no_light_effect": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "fire_candle_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "fire_chimney_effect_no_light": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_fire_small_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "effect_volcano_lava": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "location_smoke_lava_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "location_fire_burning_fuel_smoke": {
+    "_use": "ecs_fx",
+    "ecs_fx__res": "fire_burning_fuel_smoke_cmps_fx",
+    "destroyable_with_rendinst:tag": {}
+  },
+  "destroyed_vehicle_decoration": {
+    "_use": "rail_wagon",
+    "farDelayedObstacle:tag": {}
+  },
+  "capsules_ao": {
+    "capsules_ao__max_units_per_cell": 4,
+    "_singleton": true,
+    "capsules_ao": {
+      "_tags": "render"
+    }
   }
 }

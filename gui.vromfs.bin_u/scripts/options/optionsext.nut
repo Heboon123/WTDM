@@ -1,5 +1,4 @@
 
-
 from "%scripts/mainConsts.nut" import global_max_players_versus
 from "%scripts/dagui_natives.nut" import get_option_default_ai_target_type, set_activate_ground_radar_on_spawn, set_enable_laser_designatior_before_launch, set_option_use_radar_hud_in_cockpit, set_option_depthcharge_activation_time, set_option_countermeasures_series, get_option_autopilot_on_bombview, apply_current_view_type, set_option_countermeasures_series_periods, set_activate_ground_active_counter_measures_on_spawn, get_option_subs_radio, get_option_ground_radar_target_cycling, get_commander_camera_in_views, set_option_bomb_activation_time, set_option_camera_invertY, get_option_gunVerticalTargeting, get_option_gun_target_dist, set_option_radar_target_cycling, get_activate_ground_radar_on_spawn, get_option_save_zoom_camera, set_internet_radio_options, set_option_save_zoom_camera, get_option_rocket_fuse_dist, set_option_use_oculus_to_aim_helicopter, get_option_showPilot, save_online_single_job, set_option_use_perfect_rangefinder, set_option_activate_airborne_active_counter_measures_on_spawn, set_option_subs, get_option_hud_show_fuel, myself_can_devoice, set_option_autopilot_on_bombview, set_option_combine_pri_sec_triggers, get_option_grass_in_tank_vision, get_strobe_enemy, get_option_countermeasures_periods, set_option_grass_in_tank_vision, set_option_radarAltitudeAlert, get_option_camera_invertY, get_option_bombs_series, set_option_hud, get_bomb_activation_auto_time, get_option_ai_target_type, get_option_use_rectangular_radar_indicator, set_option_default_ai_target_type, set_option_gain, set_option_tank_gunner_camera_from_sight, get_option_xray_death, set_option_gamma, set_option_use_rectangular_radar_indicator, get_option_invertY, get_option_tank_gunner_camera_from_sight, get_option_radarAltitudeAlert, ps4_headtrack_get_enable, get_hue, get_option_autorearm_on_airfield, get_option_gamma, set_option_deflection, set_option_zoom_turret, get_option_radar_target_cycling, get_option_countermeasures_series, set_option_hud_indicators, get_option_view_type, set_option_xray_death, get_option_delayed_download_content, set_option_activate_airborne_radar_on_spawn, get_option_gain, get_option_subs, get_option_use_radar_hud_in_cockpit, get_option_deflection, set_option_invertX, get_option_hud_show_ammo, set_option_bombs_series, get_internet_radio_stations, set_option_subs_radio, get_option_bomb_activation_type, set_commander_camera_in_views, get_option_ai_gunner_time, set_hue, get_option_auto_pilot_on_gunner_view_helicopter, get_show_destroyed_parts, myself_can_ban, get_option_countermeasures_series_periods, get_option_aerobatics_smoke_color, get_current_view_type, set_option_autorearm_on_airfield, set_option_view_type, ps4_headtrack_set_xscale, set_option_auto_pilot_on_gunner_view_helicopter, get_option_zoom_turret, set_option_horizontal_speed, set_option_showPilot, get_option_invertX, set_option_hud_show_fuel, get_option_use_oculus_to_aim_helicopter, set_option_bomb_activation_type, set_strobe_ally, set_option_ground_radar_target_cycling, get_activate_ground_active_counter_measures_on_spawn, get_strobe_ally, set_option_aerobatics_smoke_color, get_option_use_perfect_rangefinder, get_option_hud_indicators, set_option_ai_target_type, set_option_rocket_fuse_dist, set_option_gunVerticalTargeting, get_option_horizontal_speed, set_option_controller_light, set_option_hud_color, get_option_controller_light, set_show_destroyed_parts, set_option_hud_show_temperature, get_option_depthcharge_activation_time, get_enable_laser_designatior_before_launch, set_option_xray_kill, set_option_gun_target_dist, get_option_xchg_sticks, get_option_bomb_activation_time, get_option_mouse_smooth, set_option_hud_show_ammo, get_option_hud_color, set_option_mouse_smooth, get_option_xray_kill, get_internet_radio_path, get_option_hud_show_temperature, get_option_autosave_replays, ps4_headtrack_set_enable, set_strobe_enemy, set_option_autosave_replays, get_option_aerobatics_smoke_type, get_internet_radio_options, get_option_hud, get_option_slave_counter_measures_to_mlws_on_spawn, set_option_slave_counter_measures_to_mlws_on_spawn, get_option_activate_airborne_active_counter_measures_on_spawn, get_option_indicators_mode, set_option_aerobatics_smoke_type, ps4_headtrack_get_yscale, set_option_delayed_download_content, ps4_headtrack_set_yscale, is_unlocked, set_option_ai_gunner_time, set_option_countermeasures_periods, set_option_xchg_sticks, ps4_headtrack_get_xscale, get_option_activate_airborne_radar_on_spawn, set_option_indicators_mode, set_option_invertY, set_option_console_preset, get_option_console_preset
 from "%scripts/dagui_library.nut" import *
@@ -12,7 +11,6 @@ from "%scripts/controls/controlsConsts.nut" import optionControlType
 from "%scripts/options/optionsConsts.nut" import misCountries, SAVE_ONLINE_JOB_DIGIT, TANK_ALT_CROSSHAIR_ADD_NEW, AIR_SPAWN_POINT
 from "%scripts/customization/customizationConsts.nut" import TANK_CAMO_SCALE_SLIDER_FACTOR, TANK_CAMO_ROTATION_SLIDER_FACTOR
 from "%scripts/gameModes/gameModeConsts.nut" import BATTLE_TYPES
-from "%scripts/mainConsts.nut" import SEEN
 from "%scripts/utils_sa.nut" import findNearest
 from "%scripts/options/optionsStorage.nut" import get_crosshair_icons
 from "crosshair" import has_forced_crosshair, set_hud_crosshair_color, get_hud_crosshair_color, set_option_tank_alt_crosshair, get_user_alt_crosshairs, set_hud_crosshair_type, get_hud_crosshair_type, get_option_tank_alt_crosshair
@@ -167,10 +165,8 @@ let { getIsConsoleModeForceEnabled, switchShowConsoleButtons } = require("%scrip
 let respawnBases = require("%scripts/respawn/respawnBases.nut")
 let { getCountryOverride } = require("%scripts/countries/countriesCustomization.nut")
 
-
-
-
-
+let { getLocationInfantrySkins, saveInfantrySkin } = require("%scripts/customization/infantryCamouflageStorage.nut")
+let { convertLevelNameToLocation, getInfantrySkinTooltip } = require("%scripts/customization/infantryCamouflageUtils.nut")
 
 let airSpawnPointNames = {
   [AIR_SPAWN_POINT.AIRFIELD] = @(_unit) loc("multiplayer/airfieldName"),
@@ -1594,10 +1590,7 @@ let optionsMap = {
     descr.values = getConsolePresetsValues()
     descr.defaultValue = get_option_console_preset()
     descr.optionCb = "onConsolePresetChange"
-
-
-
-
+    descr.enabled <- !is_ps5_pro || !(getCurrentLevelBlk()?.disableConsoleRT ?? false)
   },
   [USEROPT_VOLUME_MASTER] = function(_optionId, descr, _context) {
     fillSoundDescr(descr, SND_TYPE_MASTER, "volume_master")
@@ -2468,27 +2461,24 @@ let optionsMap = {
       descr.values = []
     }
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  [USEROPT_INFANTRY_SKIN] = function(_optionId, descr, context) {
+    descr.id = "infantry_skin"
+    descr.trParams <- "optionWidthInc:t='double';"
+    let locationName = convertLevelNameToLocation(context.level)
+    let skins = getLocationInfantrySkins(locationName, context.team, context.tier)
+    descr.items = []
+    descr.values = []
+    descr.location <- locationName
+    descr.team <- context.team
+    descr.tier <- context.tier
+    foreach (skin in skins) {
+      descr.items.append({
+        text = skin
+        tooltip = getInfantrySkinTooltip(skin)
+      })
+      descr.values.append(skin)
+    }
+  },
   [USEROPT_USER_SKIN] = function(_optionId, descr, _context) {
     descr.id = "user_skins"
     descr.items = [{
@@ -4089,6 +4079,11 @@ let optionsMap = {
     descr.controlName <- "switchbox"
     descr.defaultValue = get_gui_option(optionId) ?? true
   },
+  [USEROPT_HOLD_THROTTLE_FOR_WEP] = function(optionId, descr, _context) {
+    descr.id = "holdThrottleForWEP"
+    descr.controlType = optionControlType.CHECKBOX
+    descr.defaultValue = get_gui_option(optionId) ?? false
+  }
 }.__update(getDevFeaturesOptionsMap())
 
 get_option = function(optionId, context=null) {
@@ -4460,7 +4455,10 @@ let optionsSetMap = {
   [USEROPT_CAMERA_SHAKE_MULTIPLIER] = @(value, _descr, _optionId) set_option_multiplier(OPTION_CAMERA_SHAKE, value / 50.0),
   [USEROPT_VR_CAMERA_SHAKE_MULTIPLIER] = @(value, _descr, _optionId) set_option_multiplier(OPTION_VR_CAMERA_SHAKE, value / 50.0),
   [USEROPT_GAMMA] = @(value, _descr, _optionId) set_option_gamma(value / 100.0, true),
-  [USEROPT_CONSOLE_GFX_PRESET] = @(value, descr, _optionId) set_option_console_preset(descr.values[value]),
+  [USEROPT_CONSOLE_GFX_PRESET] = function(value, descr, _optionId) {
+    if (!is_ps5_pro || !(getCurrentLevelBlk()?.disableConsoleRT ?? false))
+      set_option_console_preset(descr.values[value])
+  },
   [USEROPT_AILERONS_MULTIPLIER] = @(value, _descr, _optionId) set_option_multiplier(OPTION_AILERONS_MULTIPLIER, value / 100.0),
   [USEROPT_ELEVATOR_MULTIPLIER] = @(value, _descr, _optionId) set_option_multiplier(OPTION_ELEVATOR_MULTIPLIER, value / 100.0),
   [USEROPT_RUDDER_MULTIPLIER] = @(value, _descr, _optionId) set_option_multiplier(OPTION_RUDDER_MULTIPLIER, value / 100.0),
@@ -4594,21 +4592,18 @@ let optionsSetMap = {
     else
       print($"[ERROR] No values set for type '{optionId}'")
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  [USEROPT_INFANTRY_SKIN] = function(value, descr, optionId) {
+    if (type(descr.values) == "array") {
+      if (value >= 0 && value < descr.values.len()) {
+        set_gui_option(optionId, descr.values[value] ?? "")
+        saveInfantrySkin(descr.values[value] ?? "default", descr.location, descr.team, descr.tier, unitNameForWeapons.get() ?? "")
+      }
+      else
+        print($"[ERROR] value '{value}' is out of range")
+    }
+    else
+      print($"[ERROR] No values set for type '{optionId}'")
+  },
   [USEROPT_USER_SKIN] = function(value, descr, _optionId) {
     let cdb = get_user_skins_profile_blk()
     let unitName = unitNameForWeapons.get()
@@ -5016,6 +5011,7 @@ let optionsSetMap = {
   [USEROPT_AIR_SPAWN_POINT] = def_set_gui_option,
   [USEROPT_TARGET_RANK] = def_set_gui_option,
   [USEROPT_HOLD_BUTTON_FOR_TACTICAL_MAP] = def_set_gui_option,
+  [USEROPT_HOLD_THROTTLE_FOR_WEP] = def_set_gui_option,
 }.__update(getDevFeaturesOptionsSetMap())
 
 function registerOption(optionId, fill, set) {

@@ -2533,6 +2533,28 @@
             "sceneType": "on_the_march",
             "duration": 30.0,
             "delayPlayer": true,
+            "startSubTypeOnTheMarch": "mid",
+            "startSubTypeGroundUnits": "",
+            "startSubTypeArea": "",
+            "startSubTypeUnitAttackUnit": "",
+            "startSubTypeUnitMoveToUnit": "",
+            "startSubTypeTwoUnits": "",
+            "changeCameras": false,
+            "teleportAllAttackers": false,
+            "fadeOut": false,
+            "allowDeadUnits": false,
+            "allowTeleportAttackers": true,
+            "fadeIn": false,
+            "inverseCameraDirection": false,
+            "startSubTypeTakeoff": "",
+            "startSubTypeFlyBy": "",
+            "wait": false,
+            "object": "instructor"
+          },
+          {
+            "sceneType": "on_the_march",
+            "duration": 30.0,
+            "delayPlayer": true,
             "startSubTypeOnTheMarch": "back",
             "startSubTypeGroundUnits": "",
             "startSubTypeArea": "",
@@ -2544,6 +2566,50 @@
             "fadeOut": false,
             "allowDeadUnits": false,
             "allowTeleportAttackers": true,
+            "fadeIn": false,
+            "inverseCameraDirection": false,
+            "startSubTypeTakeoff": "",
+            "startSubTypeFlyBy": "",
+            "wait": false,
+            "object": "instructor"
+          },
+          {
+            "sceneType": "on_the_march",
+            "duration": 30.0,
+            "delayPlayer": true,
+            "startSubTypeOnTheMarch": "mid",
+            "startSubTypeGroundUnits": "",
+            "startSubTypeArea": "",
+            "startSubTypeUnitAttackUnit": "",
+            "startSubTypeUnitMoveToUnit": "",
+            "startSubTypeTwoUnits": "",
+            "changeCameras": false,
+            "teleportAllAttackers": false,
+            "fadeOut": false,
+            "allowDeadUnits": false,
+            "allowTeleportAttackers": true,
+            "fadeIn": false,
+            "inverseCameraDirection": false,
+            "startSubTypeTakeoff": "",
+            "startSubTypeFlyBy": "",
+            "wait": false,
+            "object": "instructor"
+          },
+          {
+            "sceneType": "on_the_march",
+            "duration": 30.0,
+            "delayPlayer": true,
+            "startSubTypeOnTheMarch": "mid",
+            "startSubTypeGroundUnits": "",
+            "startSubTypeArea": "",
+            "startSubTypeUnitAttackUnit": "",
+            "startSubTypeUnitMoveToUnit": "",
+            "startSubTypeTwoUnits": "",
+            "changeCameras": false,
+            "teleportAllAttackers": false,
+            "fadeOut": false,
+            "allowDeadUnits": false,
+            "allowTeleportAttackers": false,
             "fadeIn": false,
             "inverseCameraDirection": false,
             "startSubTypeTakeoff": "",
@@ -2586,7 +2652,16 @@
             "time": 10.0
           },
           {
-            "time": 28.0
+            "time": 9.0
+          },
+          {
+            "time": 9.0
+          },
+          {
+            "time": 5.0
+          },
+          {
+            "time": 19.0
           },
           {
             "time": 2.0
@@ -3684,8 +3759,11 @@
         "wait": {
           "time": 3.0
         },
-        "triggerEnable": {
-          "target": "land_levelAircraft_sim"
+        "triggerActivate": {
+          "target": "land_levelAircraft",
+          "activate_type": "ignoreConditions",
+          "check_trigger_status": false,
+          "after_activation": "disable"
         }
       },
       "else_actions": {}
@@ -3758,67 +3836,6 @@
       },
       "else_actions": {}
     },
-    "land_levelAircraft_sim": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 0.01
-        }
-      },
-      "conditions": {},
-      "actions": {
-        "triggerEnable": [
-          {
-            "target": "land_levelAircraft_dialogue"
-          },
-          {
-            "target": "land_decreaseTh00"
-          }
-        ],
-        "playHint": [
-          {
-            "hintType": "standard",
-            "name": "hints/tutorial_levelAircraft",
-            "action": "show",
-            "shouldFadeOut": false,
-            "time": -1.0,
-            "priority": 0,
-            "isOverFade": false,
-            "target_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "item": "elevator=max",
-            "shouldBlink": false
-          },
-          {
-            "hintType": "standard",
-            "name": "hints/tutorial_levelAircraft",
-            "action": "hide",
-            "shouldFadeOut": false,
-            "time": -1.0,
-            "priority": 0,
-            "isOverFade": false,
-            "target_marking": 0,
-            "object_var_name": "",
-            "object_var_comp_op": "equal",
-            "object_var_value": 0,
-            "item": "elevator=max",
-            "shouldBlink": false
-          }
-        ],
-        "wait": {
-          "time": 3.0
-        }
-      },
-      "else_actions": {}
-    },
     "land_levelAircraft": {
       "is_enabled": false,
       "comments": "",
@@ -3847,9 +3864,54 @@
         "triggerEnable": {
           "target": [
             "land_levelAircraft_dialogue",
-            "land_decreaseTh00"
+            "land_decreaseTh00",
+            "land_levelAircraft_hint"
           ]
-        },
+        }
+      },
+      "else_actions": {}
+    },
+    "land_levelAircraft_dialogue": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {},
+      "actions": {
+        "missionPlayDialogue": {
+          "dialog": "tutorial_m2_d10",
+          "showInGame": true
+        }
+      },
+      "else_actions": {}
+    },
+    "land_levelAircraft_hint": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ANY",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.01
+        }
+      },
+      "conditions": {
+        "playerAxisBounded": {
+          "control": "AXIS_ELEVATOR"
+        }
+      },
+      "actions": {
         "playHint": [
           {
             "hintType": "standard",
@@ -3884,28 +3946,6 @@
         ],
         "wait": {
           "time": 3.0
-        }
-      },
-      "else_actions": {}
-    },
-    "land_levelAircraft_dialogue": {
-      "is_enabled": false,
-      "comments": "",
-      "props": {
-        "actionsType": "PERFORM_ONE_BY_ONE",
-        "conditionsType": "ALL",
-        "enableAfterComplete": false
-      },
-      "events": {
-        "periodicEvent": {
-          "time": 0.01
-        }
-      },
-      "conditions": {},
-      "actions": {
-        "missionPlayDialogue": {
-          "dialog": "tutorial_m2_d10",
-          "showInGame": true
         }
       },
       "else_actions": {}

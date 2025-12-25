@@ -1,6 +1,7 @@
 from "%scripts/dagui_library.nut" import *
 let { isPC } = require("%sqstd/platform.nut")
 let { floor } = require("math")
+let { round_by_value } = require("%sqstd/math.nut")
 let { handyman } = require("%sqStdLibs/helpers/handyman.nut")
 let { secondsToString } = require("%scripts/time.nut")
 let { toPixels } = require("%sqDagui/daguiUtil.nut")
@@ -167,6 +168,26 @@ let tableColumns = [
     cellTransformFn = @(cellValue, reward) { text = reward.isPlainText
       ? "".concat(cellValue.tostring(), " ", loc("logs/damage"))
       : cellValue.tostring()
+    }
+  }
+  {
+    id = "killedCrewPercent"
+    titleLocId = "userlog/award_tip_col/killed_crew_percent"
+    cellTransformFn = function(cellValue, reward) {
+      let percentValue = round_by_value(validateEmptyCellValueInt(cellValue) * 100, 0.1)
+      return {
+        text = reward.isPlainText
+          ? loc("logs/crew_percent", {val = percentValue})
+          : $"{percentValue}%"
+      }
+    }
+  }
+  {
+    id = "navalDamage"
+    titleLocId = "userlog/award_tip_col/naval_damage"
+    cellTransformFn = @(cellValue, reward) { text = reward.isPlainText
+      ? "".concat(validateEmptyCellValueInt(cellValue).tostring(), " ", loc("logs/damage"))
+      : validateEmptyCellValueInt(cellValue).tostring()
     }
   }
   {

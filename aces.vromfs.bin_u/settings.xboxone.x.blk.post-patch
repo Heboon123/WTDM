@@ -1,12 +1,11 @@
 "@override:video" {
   resolution:t="3840x2160"
   antialiasing_mode:t="tsr"
-  antialiasing_upscaling:t="100"
+  antialiasing_upscaling:t="native"
 }
 
 "@override:graphics" {
-  fxQuality:t="medium"
-  fxDensityMul:r=1.0 // deprecated
+  fxQuality:t="xb1"
   tireTracksQuality:i=3
   foamQuality:t="high"
   rendinstDistMul:r=1.8
@@ -28,7 +27,7 @@ console_presets {
     performance {
       video {
         antialiasing_mode:t="tsr"
-        antialiasing_upscaling:t="150"
+        antialiasing_upscaling:t="ultra_quality"
       }
       graphics {
         forceDisableDof:b=yes
@@ -42,13 +41,12 @@ console_presets {
       render {
         ssrInHangar:b=no
         ssaoQuality:i=1
-        haze:b=no
       }
     }
     quality {
       video {
         antialiasing_mode:t="tsr"
-        antialiasing_upscaling:t="100"
+        antialiasing_upscaling:t="native"
       }
       graphics {
         forceDisableDof:b=no
@@ -61,8 +59,26 @@ console_presets {
       render {
         ssrInHangar:b=yes
         ssaoQuality:i=2
-        haze:b=yes
       }
     }
+  }
+}
+
+"@override:gi"
+{
+  "@override:low"
+  {
+    "@override:hangar"
+    {
+      "@override:dagiQuality":i = -1 //off
+    }
+  }
+}
+
+"@override:volfog"
+{
+  "@override:low"
+  {
+    "@override:enabled":b = false
   }
 }

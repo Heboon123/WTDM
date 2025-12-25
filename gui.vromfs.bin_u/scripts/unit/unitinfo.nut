@@ -1,7 +1,8 @@
-from "%scripts/dagui_natives.nut" import is_era_available, shop_get_unit_exp, wp_get_cost, wp_get_cost_gold
+from "%scripts/dagui_natives.nut" import shop_get_unit_exp, wp_get_cost, wp_get_cost_gold
 from "%scripts/dagui_library.nut" import *
 from "%scripts/gameModes/gameModeConsts.nut" import BATTLE_TYPES
 
+let regexp2 = require("regexp2")
 let { registerRespondent } = require("scriptRespondent")
 let u = require("%sqStdLibs/helpers/u.nut")
 let unitTypes = require("%scripts/unit/unitTypesList.nut")
@@ -13,20 +14,19 @@ let getAllUnits = require("%scripts/unit/allUnits.nut")
 let { hangar_get_loaded_unit_name, hangar_is_high_quality } = require("hangar")
 let { isUnitBought } = require("%scripts/unit/unitShopInfo.nut")
 let { shopCountriesList } = require("%scripts/shop/shopCountriesList.nut")
+let reUnitLocNameSeparators = regexp2("".concat(@"[ \-_/.()", nbsp, "]"))
+let icon3dByGameTemplate = require("%globalScripts/iconRender/icon3dByGameTemplate.nut")
+let forceRealTimeRenderIcon = require("%globalScripts/iconRender/forceRealTimeRenderIcon.nut")
+let { getUnitTemplateNames } = require("%scripts/weaponry/infantryTemplates.nut")
 
+local slotSize = []
+function getSlotSize() {
+  if (slotSize.len())
+    return slotSize
 
-
-
-
-
-
-
-
-
-
-
-
-
+  slotSize = [to_pixels("1@slot_width - 2@shopItemPad"), to_pixels("1@slot_height - 2@shopItemPad")]
+  return slotSize
+}
 
 enum bit_unit_status {
   locked      = 1
@@ -46,29 +46,27 @@ let getUnitTypeText = @(esUnitType) unitTypes.getByEsUnitType(esUnitType).name
 let getUnitTypeByText = @(typeName, caseSensitive = false) unitTypes.getByName(typeName, caseSensitive).esUnitType
 
 function get_unit_icon_by_unit(unit, iconName) {
+  if (unit.isHuman()) {
+    let slSize = getSlotSize()
+    let { primaryWeaponTemplateName } = getUnitTemplateNames(unit)
+    let templateIcon = icon3dByGameTemplate(primaryWeaponTemplateName, {
+      width = slSize[0]
+      height = slSize[1]
+      forceRealTimeRenderIcon = forceRealTimeRenderIcon.get()
+      renderSettingsPlace = "unit_slot"
+    })
+    if (templateIcon)
+      return templateIcon
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    log($"Unit Icon: Not found template {unit.name}_gun. Render default mosin_m91_gun")
+    
+    return icon3dByGameTemplate($"mosin_m91_gun", {
+      width = slSize[0]
+      height = slSize[1]
+      forceRealTimeRenderIcon = forceRealTimeRenderIcon.get()
+      renderSettingsPlace = "unit_slot"
+    })
+  }
   let esUnitType = getEsUnitType(unit)
   let t = unitTypes.getByEsUnitType(esUnitType)
   return $"{t.uiSkin}{iconName}.ddsx"
@@ -246,4 +244,5 @@ return {
   getUnitTypesInCountries
   getBattleTypeByUnit
   getCountryByAircraftName
+  reUnitLocNameSeparators
 }

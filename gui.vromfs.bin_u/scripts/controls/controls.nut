@@ -1,10 +1,10 @@
-from "%scripts/dagui_natives.nut" import set_current_controls, import_current_layout_by_path, import_current_layout, set_option_gain, fetch_devices_inited_once, get_save_load_path, get_axis_index, fill_joysticks_desc, export_current_layout, export_current_layout_by_path
 from "%scripts/dagui_library.nut" import *
+from "%scripts/dagui_natives.nut" import set_current_controls, import_current_layout_by_path,
+  import_current_layout, set_option_gain, fetch_devices_inited_once, get_save_load_path,
+  get_axis_index, export_current_layout, export_current_layout_by_path
 from "gameOptions" import *
 from "%scripts/controls/controlsConsts.nut" import AIR_MOUSE_USAGE
 from "%scripts/mainConsts.nut" import HELP_CONTENT_SET
-from "unit" import get_cur_unit_weapon_preset
-
 let { is_windows, isPC } = require("%sqstd/platform.nut")
 let { g_shortcut_type } = require("%scripts/controls/shortcutType.nut")
 let { gui_handlers } = require("%sqDagui/framework/gui_handlers.nut")
@@ -128,11 +128,13 @@ function resetDefaultControlSettings() {
   set_option_multiplier(OPTION_AIM_TIME_NONLINEARITY_TANK,       0.0); 
   set_option_multiplier(OPTION_AIM_TIME_NONLINEARITY_SHIP,       0.0); 
   set_option_multiplier(OPTION_AIM_TIME_NONLINEARITY_SUBMARINE,  0.0); 
+  set_option_multiplier(OPTION_AIM_TIME_NONLINEARITY_HUMAN,      0.0); 
   set_option_multiplier(OPTION_AIM_ACCELERATION_DELAY_AIR,        0.5); 
   set_option_multiplier(OPTION_AIM_ACCELERATION_DELAY_HELICOPTER, 0.5); 
   set_option_multiplier(OPTION_AIM_ACCELERATION_DELAY_TANK,       0.5); 
   set_option_multiplier(OPTION_AIM_ACCELERATION_DELAY_SHIP,       0.5); 
   set_option_multiplier(OPTION_AIM_ACCELERATION_DELAY_SUBMARINE,  0.5); 
+  set_option_multiplier(OPTION_AIM_ACCELERATION_DELAY_HUMAN,      0.5); 
 
   set_option_mouse_joystick_square(false); 
   set_option_mouse_joystick_square_helicopter(false);
@@ -1303,6 +1305,8 @@ gui_handlers.Hotkeys <- class (gui_handlers.GenericOptions) {
   }
 
   function doApplyJoystickImpl(itemsList, setValueContext) {
+    if (!this.isValid())
+      return
     foreach (item in itemsList) {
       if ((("condition" in item) && !item.condition())
           || item.type == CONTROL_TYPE.SHORTCUT)

@@ -1,10 +1,10 @@
 "@override:video" {
   resolution:t="3840x2160"
+  upscaleQualityFor4k:t="ultra_quality"
 }
 
 "@override:graphics" {
-  fxQuality:t="high"
-  fxDensityMul:r=1.0 // deprecated
+  fxQuality:t="xbs_quality"
   tireTracksQuality:i=3
   foamQuality:t="high"
   rendinstDistMul:r=1.8
@@ -25,7 +25,7 @@ console_presets {
     performance {
       video {
         antialiasing_mode:t="tsr"
-        antialiasing_upscaling:t="125"
+        antialiasing_upscaling:t="ultra_quality"
       }
       graphics {
         bvhMode:t="off"
@@ -35,21 +35,20 @@ console_presets {
         anisotropy:i=4
         disableHangarPlanarReflections:b=yes
         waterQuality:t="medium"
-        fxQuality:t="medium"
+        fxQuality:t="xbs_performance"
         fxDensityMul:r=0.5 // deprecated
       }
       render {
         ssrInHangar:b=no
         ssrQuality:i=0
         ssaoQuality:i=1
-        haze:b=no
       }
     }
 
     quality {
       video {
         antialiasing_mode:t="tsr"
-        antialiasing_upscaling:t="100"
+        antialiasing_upscaling:t="native"
       }
       graphics {
         bvhMode:t="off"
@@ -59,21 +58,20 @@ console_presets {
         anisotropy:i=16
         disableHangarPlanarReflections:b=no
         waterQuality:t="high"
-        fxQuality:t="high"
+        fxQuality:t="xbs_quality"
         fxDensityMul:r=0.95 // deprecated
       }
       render {
         ssrInHangar:b=yes
         ssrQuality:i=0
         ssaoQuality:i=2
-        haze:b=yes
       }
     }
 
     raytraced {
       video {
         antialiasing_mode:t="tsr"
-        antialiasing_upscaling:t="170"
+        antialiasing_upscaling:t="balanced"
       }
       graphics {
         bvhMode:t="custom"
@@ -93,15 +91,25 @@ console_presets {
         anisotropy:i=16
         disableHangarPlanarReflections:b=no
         waterQuality:t="high"
-        fxQuality:t="medium"
+        fxQuality:t="xbs_performance"
         fxDensityMul:r=0.95 // deprecated
       }
       render {
         ssrInHangar:b=yes
         ssrQuality:i=0
         ssaoQuality:i=2
-        haze:b=yes
       }
+    }
+  }
+}
+
+"@override:gi"
+{
+  "@override:low"
+  {
+    "@override:hangar"
+    {
+      "@override:dagiQuality":i = -1 //off
     }
   }
 }

@@ -1,4 +1,4 @@
-from "%scripts/dagui_natives.nut" import fill_joysticks_desc, get_axis_index
+from "%scripts/dagui_natives.nut" import get_axis_index
 from "%scripts/dagui_library.nut" import *
 from "modules" import on_module_unload
 from "unit" import get_cur_unit_weapon_preset
@@ -416,10 +416,10 @@ function getRequiredControlsForUnit(unit, helpersMode) {
 
 
 
-
-
-
-
+  else if (unitType == unitTypes.HUMAN) {
+    controls = [ "human_walk", "human_strafe", "human_mouse_aim_x", "human_mouse_aim_y",
+      "ID_TOGGLE_VIEW_HUMAN", "ID_FIRE_HUMAN", "ID_FIRE_HUMAN_SPECIAL_GUN" ]
+  }
   else if (unitType == unitTypes.TANK) {
     controls = [ "gm_throttle", "gm_steering", "gm_mouse_aim_x", "gm_mouse_aim_y", "ID_TOGGLE_VIEW_GM", "ID_FIRE_GM", "ID_REPAIR_TANK" ]
 

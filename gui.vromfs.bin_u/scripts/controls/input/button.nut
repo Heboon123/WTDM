@@ -17,15 +17,15 @@ let Button = class (InputBase) {
     this.preset = presetV || getCurControlsPreset()
   }
 
-  function getMarkup() {
-    let data = this.getMarkupData()
+  function getMarkup(hasHoldButtonSign = false) {
+    let data = this.getMarkupData(hasHoldButtonSign)
     return handyman.renderCached(data.template, data.view)
   }
 
-  function getMarkupData() {
+  function getMarkupData(hasHoldButtonSign) {
     let data = {
       template = ""
-      view = {}
+      view = { hasHoldButtonSign }
     }
 
     if (this.deviceId == JOYSTICK_DEVICE_0_ID && gamepadIcons.hasTextureByButtonIdx(this.buttonId)) {
@@ -66,7 +66,11 @@ let Button = class (InputBase) {
   }
 
   function hasImage () {
-    return gamepadIcons.hasMouseTexture(this.buttonId) || gamepadIcons.hasTextureByButtonIdx(this.buttonId)
+    if (this.deviceId == STD_MOUSE_DEVICE_ID)
+      return gamepadIcons.hasMouseTexture(this.buttonId)
+    if (this.deviceId == JOYSTICK_DEVICE_0_ID)
+      return gamepadIcons.hasTextureByButtonIdx(this.buttonId)
+    return false
   }
 
   function getConfig() {

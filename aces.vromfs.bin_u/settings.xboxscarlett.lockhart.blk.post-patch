@@ -1,9 +1,11 @@
 "@override:video" {
   resolution:t="1920x1080"
+  upscaleQualityFor4k:t="ultra_quality"
+  upscaleQualityFor2k:t="ultra_quality"
 }
 
 "@override:graphics" {
-  fxQuality:t="medium"
+  fxQuality:t="xbs_performance"
   fxDensityMul:r=0.95 // deprecated
   tireTracksQuality:i=2
   foamQuality:t="medium"
@@ -23,7 +25,7 @@ console_presets {
     performance {
       video {
         antialiasing_mode:t="tsr"
-        antialiasing_upscaling:t="155"
+        antialiasing_upscaling:t="quality"
       }
       graphics {
         bvhMode:t="off"
@@ -35,21 +37,20 @@ console_presets {
         lenseFlares:b=no
         usePostfxGlow:b=no
         waterQuality:t="medium"
-        fxQuality:t="medium"
+        fxQuality:t="xbs_performance"
         fxDensityMul:r=0.5 // deprecated
       }
       render {
         ssrInHangar:b=no
         ssrQuality:i=0
         ssaoQuality:i=1
-        haze:b=no
       }
     }
 
     quality {
       video {
         antialiasing_mode:t="tsr"
-        antialiasing_upscaling:t="100"
+        antialiasing_upscaling:t="native"
       }
       graphics {
         bvhMode:t="off"
@@ -61,14 +62,13 @@ console_presets {
         lenseFlares:b=yes
         usePostfxGlow:b=yes
         waterQuality:t="high"
-        fxQuality:t="high"
+        fxQuality:t="xbs_quality"
         fxDensityMul:r=0.95 // deprecated
       }
       render {
         ssrInHangar:b=yes
         ssrQuality:i=0
         ssaoQuality:i=2
-        haze:b=yes
       }
     }
 
@@ -89,7 +89,7 @@ console_presets {
         RTRWater:b=yes
         RTRWaterRes:t="half"
         RTRTranslucent:t="off"
-        giQuality:t="medium"
+        giQuality:t="low"
         forceDisableDof:b=no
         grassRadiusMul:r=1
         anisotropy:i=16
@@ -97,15 +97,28 @@ console_presets {
         lenseFlares:b=yes
         usePostfxGlow:b=yes
         waterQuality:t="high"
-        fxQuality:t="medium"
-        fxDensityMul:r=0.95 // deprecated
+        fxQuality:t="xbs_performance"
       }
       render {
         ssrInHangar:b=yes
         ssrQuality:i=0
         ssaoQuality:i=2
-        haze:b=yes
       }
+    }
+  }
+}
+
+"@override:volfog"
+{
+  "@override:low"
+  {
+    "@override:hangar"
+    {
+      enabled:b = false
+    }
+    "@override:hangar_ship"
+    {
+      enabled:b = false
     }
   }
 }

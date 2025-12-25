@@ -128,10 +128,30 @@ shopItem {
   }
 
   topline {
-    shopItemText {
-      id:t='<<shopItemTextId>>'
-      text:t='<<shopItemText>>'
-      header:t='yes'
+    shopItemDiv {
+      position:t='relative'
+      width:t='pw'
+      tdiv {
+        width:t='fw'
+      }
+      tdiv {
+        size:t='@weaponStatusIconSize, @weaponStatusIconSize'
+        valign:t='center'
+        margin-right:t='1@blockInterval'
+        background-svg-size:t='@weaponStatusIconSize, @weaponStatusIconSize'
+        background-repeat:t='aspect-ratio'
+        background-image:t='#ui/gameuiskin#dice_outline_white.svg'
+        background-color:t='@activeTextColor'
+        <<^isRandomUnit>>
+        display:t='hide'
+        <</isRandomUnit>>
+      }
+      shopItemText {
+        id:t='<<shopItemTextId>>'
+        noPadding:t='yes'
+        text:t='<<shopItemText>>'
+        header:t='yes'
+      }
     }
   }
 
