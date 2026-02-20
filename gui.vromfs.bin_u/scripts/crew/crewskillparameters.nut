@@ -219,9 +219,12 @@ function parseParameters(columnTypes,
   return res
 }
 
-function filterSkillsList(skillsList) {
+function filterSkillsList(skillsList, crewUnitType) {
   let res = []
   foreach (skill in skillsList) {
+    if (!skill.isVisible(crewUnitType))
+      continue
+
     let group = getTblValue(skill.skillName, skillGroups)
     if (group) {
       let resSkill = u.search(res,
@@ -229,14 +232,13 @@ function filterSkillsList(skillsList) {
       if (resSkill)
         continue
     }
-
     res.append(skill)
   }
   return res
 }
 
 function getSkillParamsList(crew, difficulty, notFilteredSkillsList, crewUnitType, unit) {
-  let skillsList = filterSkillsList(notFilteredSkillsList)
+  let skillsList = filterSkillsList(notFilteredSkillsList, crewUnitType)
 
   let columnTypes = getColumnsTypesList(skillsList, crewUnitType)
 
@@ -279,6 +281,7 @@ function getSkillDescriptionView(crew, difficulty, memberName, skillName, crewUn
   let skillsList = [{
     memberName = memberName
     skillName = skillName
+    isVisible = @(_) true
   }]
   let skillParamsList = getSkillParamsList(crew, difficulty, skillsList, crewUnitType, unit)
   let view = {

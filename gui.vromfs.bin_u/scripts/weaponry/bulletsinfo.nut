@@ -5,7 +5,7 @@ from "%scripts/weaponry/weaponryConsts.nut" import weaponsItem, fakeBullets_pref
 let { get_bullets_locId_by_caliber, get_modifications_locId_by_caliber } = require("%scripts/options/optionsStorage.nut")
 let u = require("%sqStdLibs/helpers/u.nut")
 let { format } = require("string")
-let { broadcastEvent } = require("%sqStdLibs/helpers/subscriptions.nut")
+let { broadcastEvent, addListenersWithoutEnv } = require("%sqStdLibs/helpers/subscriptions.nut")
 let { eventbus_subscribe } = require("eventbus")
 let { blkFromPath, eachParam, copyParamsToTable, blkOptFromPath } = require("%sqstd/datablock.nut")
 let { ceil, change_bit, interpolateArray } = require("%sqstd/math.nut")
@@ -36,6 +36,8 @@ let { isGameModeWithSpendableWeapons } = require("%scripts/gameModes/gameModeMan
 let { doesLocTextExist } = require("dagor.localize")
 let { getSupportUnits } = require("%scripts/unit/supportUnits.nut")
 let { floatToText } = require("%scripts/langUtils/textFormat.nut")
+let { getRandUnitOptPath, loadLocalUnitSettings, saveLocalUnitSettings
+} = require("%scripts/clientState/localProfile.nut")
 
 let BULLET_TYPE = {
   ROCKET_AIR          = "rocket_aircraft"
@@ -72,6 +74,12 @@ let BULLETS_LIST_PARAMS = {
 }
 
 let unitsPrimaryBulletsInfo = {}
+let unitLastBulletsCache = {}
+
+function clearUnitLastBulletsCache(unitName) {
+  if (unitName in unitLastBulletsCache)
+    unitLastBulletsCache.$rawdelete(unitName)
+}
 
 local squashArmorAnglesScale = {} 
 
@@ -538,7 +546,10 @@ function findIdenticalWeaponIdx(weapon, weaponList, modsList) {
   return null
 }
 
-eventbus_subscribe("clearCacheForBullets", @(_) unitsPrimaryBulletsInfo.clear())
+eventbus_subscribe("clearCacheForBullets", function onClearCacheForBullets(_) {
+  unitsPrimaryBulletsInfo.clear()
+  unitLastBulletsCache.clear()
+})
 
 function getBulletsInfoForPrimaryGuns(air) {
   if (!air.unitType.canUseSeveralBulletsForGun)
@@ -1303,6 +1314,11 @@ function getWeaponBlkNameByGroupIdx(unit, groupIndex) {
 }
 
 function getUnitLastBullets(unit) {
+  let unitName = unit.name
+  let cached = unitLastBulletsCache?[unitName]
+  if (cached != null)
+    return cached
+
   let bulletsItemsList = []
   let numBulletsGroups = getLastFakeBulletsIndex(unit);
   for (local groupIndex = 0; groupIndex < numBulletsGroups; groupIndex++) {
@@ -1310,10 +1326,12 @@ function getUnitLastBullets(unit) {
       continue
 
     bulletsItemsList.append({
-      name = getSavedBullets(unit.name, groupIndex),
+      name = getSavedBullets(unitName, groupIndex),
       weapon = getWeaponBlkNameByGroupIdx(unit, groupIndex)
     })
   }
+
+  unitLastBulletsCache[unitName] <- bulletsItemsList
   return bulletsItemsList
 }
 
@@ -1368,6 +1386,16 @@ function getBulletsSetMaxAmmoWithConstraints(constraintsByTrigger, bulletsSet) {
   if (bulletsSet?.explosiveMass && bulletsSet.explosiveMass > 0)
     ammo = min(constraints.explosive, ammo)
   return ammo
+}
+
+function calcBulletLimits(unit, bulletName) {
+  let bulletsSet = getBulletsSetData(unit, bulletName)
+  let constraintsByTrigger = getAmmoStowageConstraintsByTrigger(unit)
+  let constrainedTotalCount = getBulletsSetMaxAmmoWithConstraints(constraintsByTrigger, bulletsSet)
+  local maxToRespawn = bulletsSet?.maxToRespawn ?? 0
+  if (maxToRespawn > 0 && constrainedTotalCount > 0)
+    maxToRespawn = min(constrainedTotalCount, maxToRespawn)
+  return { maxToRespawn, constrainedTotalCount }
 }
 
 
@@ -1434,6 +1462,23 @@ function getProjectileIconLayers(projectileName) {
     .map(@(layeredIconSrc) { layeredIconSrc })
 }
 
+function setBulletsOptForRandomUnit(optName, unitName, groupIndex, count) {
+  let tempUnitOptPath = getRandUnitOptPath(unitName, optName, groupIndex)
+  saveLocalUnitSettings(tempUnitOptPath, count)
+}
+
+function getBulletsOptForRandomUnit(optName, unitName, groupIndex) {
+  let tempUnitOptPath = getRandUnitOptPath(unitName, optName, groupIndex)
+  return loadLocalUnitSettings(tempUnitOptPath)
+}
+
+addListenersWithoutEnv({
+  SignOut = @(_) unitLastBulletsCache.clear()
+  UnitWeaponChanged = @(p) clearUnitLastBulletsCache(p.unitName)
+  BulletsGroupsChanged = @(p) clearUnitLastBulletsCache(p.unit.name)
+  UnitBulletsChanged = @(p) clearUnitLastBulletsCache(p.unit.name)
+})
+
 return {
   BULLET_TYPE
   
@@ -1469,6 +1514,7 @@ return {
   updateSecondaryBullets
   getAmmoStowageConstraintsByTrigger
   getBulletsSetMaxAmmoWithConstraints
+  calcBulletLimits
   getBulletsNamesBySet
   isPairBulletsGroup
   getLinkedGunIdx
@@ -1478,4 +1524,7 @@ return {
   getProjectileNameLoc
   getProjectileIconLayers
   stripProjectileStrikPartSuffix
+
+  setBulletsOptForRandomUnit
+  getBulletsOptForRandomUnit
 }

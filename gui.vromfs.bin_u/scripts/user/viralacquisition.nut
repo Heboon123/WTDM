@@ -2,10 +2,7 @@ from "%scripts/dagui_natives.nut" import copy_to_clipboard
 from "%scripts/dagui_library.nut" import *
 
 let { Cost } = require("%scripts/money.nut")
-let regexp2 = require("regexp2")
 let { format } = require("string")
-let { rnd } = require("dagor.random")
-let { GUI } = require("%scripts/utils/configs.nut")
 let { userIdStr, isGuestLogin } = require("%scripts/user/profileStates.nut")
 let { showUnlockWnd } = require("%scripts/unlocks/showUnlockWnd.nut")
 
@@ -16,7 +13,7 @@ let awards = [[70000, 0], [300000, 100], [0, 2500]]
 let getLinkString = @() format(loc("msgBox/viralAcquisition"), userIdStr.get())
 
 function getViralAcquisitionDesc(locId = "msgbox/linkCopied") {
-  locId = "/".concat(locId, "disabledThirdStageForVessels") 
+  locId = "/".concat(locId, "disabledSecondAndThirdStageForVessels") 
   let desc = loc(locId, {
     firstAwardRank = get_roman_numeral(awardRanks[0]),
     secondAwardRank = get_roman_numeral(awardRanks[1]),
@@ -38,32 +35,15 @@ function showViralAcquisitionWnd() {
 
   copy_to_clipboard(getLinkString())
 
-  let formatImg = "ui/images/%s?P1"
-  local image = format(formatImg, "facebook_invite")
-  local height = 400
-  let guiBlk = GUI.get()
-
-  if (guiBlk?.invites_notification_window_images
-      && guiBlk.invites_notification_window_images.paramCount() > 0) {
-    let paramNum = rnd() % guiBlk.invites_notification_window_images.paramCount()
-    let newHeight = guiBlk.invites_notification_window_images.getParamName(paramNum)
-    let newImage = format(formatImg, guiBlk.invites_notification_window_images.getParamValue(paramNum))
-    if (!regexp2(@"\D+").match(newHeight)) {
-      height = newHeight
-      image = newImage
-    }
-  }
-
-  let config = {
+  showUnlockWnd({
     name = loc("mainmenu/getLinkTitle")
     desc = getViralAcquisitionDesc()
     descAlign = "center"
-    popupImage = $"#{image}"
-    ratioHeight = (height.tofloat() / 800).tostring()
+    popupImage = $"#ui/images/new_rank_germany?P1"
+    ratioHeight = "0.5"
     showSendEmail = true
     showPostLink = true
-  }
-  showUnlockWnd(config)
+  })
 }
 
 return {

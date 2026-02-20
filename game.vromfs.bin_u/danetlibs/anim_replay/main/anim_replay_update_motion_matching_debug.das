@@ -137,6 +137,7 @@ def anim_replay_update_motion_matching(evt : UpdateStageInfoAct;
                                        anim_replay__prevTime : float;
                                        anim_replay__currentTime : float;
                                        anim_replay__runMMSearch : bool;
+                                       anim_replay__disableMMTransitionBlend : bool;
                                        var anim_replay__prevMMTransitionTime : float&;
                                        var anim_replay__prevMMTransitionFrame : int&)
   if anim_replay__currentTime > 0.f && anim_replay__prevTime == anim_replay__currentTime
@@ -221,7 +222,7 @@ def anim_replay_update_motion_matching(evt : UpdateStageInfoAct;
               mm_visualization__prevTransitionClipIdx = motion_matching__controller.getCurrentClip()
               mm_visualization__prevTransitionFrameIdx = motion_matching__controller.getCurrentFrame()
           let needTransitionBlend = (motion_matching__controller |> hasActiveAnimation() &&
-            motion_matching__controller.motionMatchingWeight > 0f)
+            motion_matching__controller.motionMatchingWeight > 0f && !anim_replay__disableMMTransitionBlend)
           motion_matching__controller |> playAnimation(transitionClipIdx, transitionFrameIdx, needTransitionBlend)
           if nextTime == anim_replay__currentTime
             motion_matching__controller |> updateAnimationProgress(0f)
@@ -297,17 +298,18 @@ def sample_trajectory_features(animchar_data : Object; timestamps : FloatList; c
                                var trajectory_pos : array<float2>; var trajectory_dir : array<float2>)
   unsafe
     let mmTrajectoryFeatures & = *get_ecs_Point2List(animchar_data, "mmTrajectoryFeatures")
-    let mmTransitionTrajectoryFeatures & = *get_ecs_Point2List(animchar_data, "mmTransitionTrajectoryFeatures")
-    let mmTransitionTime & = *get_ecs_FloatList(animchar_data, "mmTransitionTime")
-    if empty(mmTransitionTime) || empty(mmTrajectoryFeatures)
+    let mmSearchTrajectoryFeatures & = *get_ecs_Point2List(animchar_data, "mmSearchTrajectoryFeatures")
+    let mmSearchTime & = *get_ecs_FloatList(animchar_data, "mmSearchTime")
+    if empty(mmTrajectoryFeatures)
       return
     let timeIdx = get_current_timestamp_idx(cur_time, timestamps)
-    let tansitionTimeIdx = get_current_timestamp_idx(cur_time, mmTransitionTime)
-    let useTransitionTrajectory = mmTransitionTime[tansitionTimeIdx] >= timestamps[timeIdx]
-    let features & = useTransitionTrajectory ? mmTransitionTrajectoryFeatures : mmTrajectoryFeatures
+    let searchTimeIdx = get_current_timestamp_idx(cur_time, mmSearchTime)
+    let useSearchTrajectory = (length(mmSearchTime) > 0 &&
+      cur_time >= mmSearchTime[searchTimeIdx] && mmSearchTime[searchTimeIdx] >= timestamps[timeIdx])
+    let features & = useSearchTrajectory ? mmSearchTrajectoryFeatures : mmTrajectoryFeatures
     let featuresCount = length(trajectory_pos) + length(trajectory_dir)
     assert(length(features) % featuresCount == 0)
-    var featureIdx = (useTransitionTrajectory ? tansitionTimeIdx : timeIdx) * featuresCount
+    var featureIdx = (useSearchTrajectory ? searchTimeIdx : timeIdx) * featuresCount
     for pos in trajectory_pos
       pos = features[featureIdx]
       featureIdx++

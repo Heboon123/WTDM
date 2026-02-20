@@ -9,7 +9,7 @@ from "%scripts/controls/controlsConsts.nut" import optionControlType
 from "%scripts/items/itemsConsts.nut" import itemType
 from "%scripts/respawn/respawnConsts.nut" import RespawnOptUpdBit
 from "radarOptions" import set_option_radar_name, set_option_radar_scan_pattern_name
-from "hudState" import show_hud
+from "hudState" import getHudUnitType, show_hud
 from "%scripts/utils_sa.nut" import get_mplayer_color
 from "%sqstd/platform.nut" import isPC
 let { g_mis_loading_state } = require("%scripts/respawn/misLoadingState.nut")
@@ -71,7 +71,7 @@ let { USEROPT_SKIP_WEAPON_WARNING, USEROPT_FUEL_AMOUNT_CUSTOM,
   USEROPT_LOAD_FUEL_AMOUNT,  USEROPT_RADAR_SCAN_PATTERN_SELECTED_UNIT_SELECT,
   USEROPT_RADAR_SCAN_RANGE_SELECTED_UNIT_SELECT, USEROPT_IGNORE_BAD_WEATHER,
   USEROPT_SAVE_AIRCRAFT_SPAWN } = require("%scripts/options/optionsExtNames.nut")
-let { loadLocalByScreenSize, saveLocalByScreenSize
+let { loadLocalByScreenSize, saveLocalByScreenSize, loadLocalUnitSettings, getRandUnitOptPath
 } = require("%scripts/clientState/localProfile.nut")
 let { getUnitName } = require("%scripts/unit/unitInfo.nut")
 let { getEsUnitType } = require("%scripts/unit/unitParams.nut")
@@ -123,6 +123,8 @@ let { DAILY_FREE_SPARE_UID } = require("%scripts/respawn/respawnDailyFreeSpare.n
 let { getReleasedLocationSkin, getLocationInfantrySkins, getTierByMrank } = require("%scripts/customization/infantryCamouflageStorage.nut")
 let { convertLevelNameToLocation } = require("%scripts/customization/infantryCamouflageUtils.nut")
 let { initOptions } = require("%scripts/options/initOptions.nut")
+let { unitTypeByHudUnitType } = require("%scripts/hud/hudUnitType.nut")
+let { isUnitRandomUnit } = require("%scripts/unit/unitStatus.nut")
 
 function getZoomIconByUnitType(uType) {
   if (uType == HUD_TYPE_TANK)
@@ -239,6 +241,7 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
   isNoRespawns = false
   isRespawn = false 
   needRefreshSlotbarOnReinit = false
+  lastHudUnitType = HUD_TYPE_UNKNOWN
 
   canInitVoiceChatWithSquadWidget = true
 
@@ -623,7 +626,8 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
     foreach (idx, crew in getCrewsListByCountry(get_local_player_country())) {
       let unit = getCrewUnit(crew)
       if (unit) {
-        let curScore = this.getSpawnScoreNoWeaponsMul(unit)
+        let curScore = shop_get_spawn_score(unit.name, getLastWeapon(unit.name),
+          getUnitLastBullets(unit), true, true)
         if (curScore >= this.curSpawnScore && this.missionRules.canRespawnOnUnitByRageTokens(unit))
           res = res | (1 << idx)
       }
@@ -796,6 +800,7 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
         if (this.isRespawn)
           setMousePointerInitialPos(this.getSlotbar()?.getCurrentCrewSlot())
       }
+      this.updateTacticalMapUnitType()
     }
     else {
       this.destroySlotbar()
@@ -1026,6 +1031,7 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
     respawnWndState.selectedUnitIdInCountry = this.getCurCrew()?.idInCountry ?? -1
     this.slotbarInited = true
     this.updateUnitOptions()
+    this.updateTacticalMapUnitType()
     this.checkReady()
     let slotbar = this.getSlotbar()
     if (slotbar) {
@@ -1283,8 +1289,6 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
         this.preselectUnitWeapon(unit)
     }
 
-    this.updateTacticalMapUnitType()
-
     this.updateWeaponsSelector(isUnitChanged)
     let isRespawnBasesChanged = this.updateRespawnBases()
 
@@ -1324,9 +1328,16 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
     if (unit == null)
       return
 
-    let forceWeapon = this.missionRules.getForcedUnitWeapon(unit)
+    let isRandomUnit = isUnitRandomUnit(unit.name)
+
+    local forceWeapon = null
+    if (isRandomUnit)
+      forceWeapon = loadLocalUnitSettings(getRandUnitOptPath(unit.name, "USEROPT_WEAPONS"))
+    if (forceWeapon == null)
+      forceWeapon = this.missionRules.getForcedUnitWeapon(unit)
+
     if (forceWeapon != null) {
-      setLastWeapon(unit.name, forceWeapon)
+      setLastWeapon(unit.name, forceWeapon, isRandomUnit)
       return
     }
 
@@ -1335,11 +1346,11 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
 
     foreach (weapon in (unit.getWeapons()))
       if (isWeaponVisible(unit, weapon)
-          && isWeaponEnabled(unit, weapon)
-          && this.missionRules.getUnitWeaponRespawnsLeft(unit, weapon) > 0) { 
-       setLastWeapon(unit.name, weapon.name)
-       break
-     }
+        && isWeaponEnabled(unit, weapon)
+        && this.missionRules.getUnitWeaponRespawnsLeft(unit, weapon) > 0) { 
+          setLastWeapon(unit.name, weapon.name)
+          break
+      }
   }
 
   function updateTacticalMapUnitType(isMapForSelectedUnit = null) {
@@ -1352,7 +1363,12 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
         hudType = unit.unitType.hudTypeCode
     }
     else
-      hudType = isForcedHudType() ? getCurHudType() : this.getCurSlotUnit()?.unitType.hudTypeCode ?? HUD_TYPE_UNKNOWN
+      hudType = isForcedHudType() ? getCurHudType()
+        : unitTypeByHudUnitType?[getHudUnitType()].hudTypeCode ?? HUD_TYPE_UNKNOWN
+
+    if (this.lastHudUnitType == hudType)
+      return
+    this.lastHudUnitType = hudType
 
     set_tactical_map_hud_type(hudType)
     let buttonImg = this.scene.findObject("hud_type_img");
@@ -2700,6 +2716,8 @@ gui_handlers.RespawnHandler <- class (gui_handlers.MPStatistics) {
   function onEventMissionObjectiveUpdated(_p) {
     this.updateLeftPanelBlock()
   }
+
+  onEventHudTypeSwitched = @(_p) this.updateTacticalMapUnitType()
 
   function updateSkinOptionTooltipId() {
     let unit = this.getCurSlotUnit()

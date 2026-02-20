@@ -55,7 +55,7 @@ let { isUnitGift, isUnitBought } = require("%scripts/unit/unitShopInfo.nut")
 let { checkForResearch, updateUnitAfterSwitchMod } = require("%scripts/unit/unitChecks.nut")
 let { get_ranks_blk } = require("blkGetters")
 let { addTask } = require("%scripts/tasker.nut")
-let { showUnitGoods } = require("%scripts/onlineShop/onlineShopModel.nut")
+let { showUnitGoods, showUnitsSharedGoods } = require("%scripts/onlineShop/onlineShopModel.nut")
 let { checkBalanceMsgBox } = require("%scripts/user/balanceFeatures.nut")
 let { guiStartProfile } = require("%scripts/user/profileHandler.nut")
 let takeUnitInSlotbar = require("%scripts/unit/takeUnitInSlotbar.nut")
@@ -618,17 +618,20 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     }
 
     let widthStr = isSmallScreen
-      ? "1@maxWindowWidth -1@modBlockTierNumHeight -1@scrollBarSize"
-      : "1@slotbarWidthFull -1@modBlockTierNumHeight -1@scrollBarSize"
+      ? "1@maxWindowWidth - 1@modBlockTierNumHeight - 1@scrollBarSize"
+      : "1@slotbarWidthFull - 1@modBlockTierNumHeight - 1@scrollBarSize"
     let totalWidth = this.guiScene.calcString(widthStr, null)
     let itemWidth = this.guiScene.calcString("@shop_width", null)
     this.extraWidth = max(0, totalWidth - (itemWidth * treeData.sectionsPos[treeData.sectionsPos.len() - 1])) / 2
-    let containersWidth = treeData.sectionsPos[treeData.sectionsPos.len()-1] - treeData.sectionsPos[0]
-    this.cachedPremiumSectionPos = treeData.sectionsPos?[1] ?? treeData.sectionsPos[treeData.sectionsPos.len()-1]
+    let containersWidth = treeData.sectionsPos[treeData.sectionsPos.len() - 1] - treeData.sectionsPos[0]
+    this.cachedPremiumSectionPos = treeData.sectionsPos?[1] ?? treeData.sectionsPos[treeData.sectionsPos.len() - 1]
 
     this.guiScene.setUpdatesEnabled(false, false);
-    this.initUnitCells(tableObj, containersWidth, treeData.sectionsPos[treeData.sectionsPos.len()-1]
-      - treeData.sectionsPos[treeData.sectionsPos.len()-2])
+    let hasPremiumTreeBranch = treeData.sectionsPos.len() > 2
+    let premiumSectionWidth = hasPremiumTreeBranch
+      ? treeData.sectionsPos[treeData.sectionsPos.len() - 1] - treeData.sectionsPos[treeData.sectionsPos.len() - 2]
+      : 0
+    this.initUnitCells(tableObj, containersWidth, premiumSectionWidth)
     this.updateCurUnitsList()
     this.fillBGLines(treeData)
     this.generateTierCollapsedIcons()
@@ -1884,7 +1887,7 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
   function updateGroupObjNavBar() {
     this.navBarGroupObj = this.groupChooseObj.findObject("nav-help-group")
     this.navBarGroupObj.hasMaxWindowSize = isSmallScreen ? "yes" : "no"
-    this.initShowMode(this.navBarGroupObj)
+    showObjById("show_mode", false, this.navBarGroupObj)
     this.updateButtons()
   }
 
@@ -2227,6 +2230,11 @@ gui_handlers.ShopMenuHandler <- class (gui_handlers.BaseGuiHandlerWT) {
     if (!unit)
       return
     this.curAirName = unit.name
+
+    if (this.findAirTableObjById(unit.name)?.canUseSharedEntitlement == "yes") {
+      showUnitsSharedGoods(unit.airsGroup, "units_group_order_btn")
+      return
+    }
 
     slotActions.slotMainAction(unit, {
       onSpendExcessExp = Callback(this.onSpendExcessExp, this)

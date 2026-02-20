@@ -77,6 +77,13 @@ def patch_motion_matching_data(var anim_replay__loadingAnimchars : Array;
           logerr("trajectory features count mismatch")
           assume mmTrajectoryFeatures = *getRW_ecs_Point2List(animcharData, "mmTrajectoryFeatures")
           clear(mmTrajectoryFeatures)
+    
+    let mmTransitionTrajectoryFeatures = get_ecs_Point2List(animcharData, "mmTransitionTrajectoryFeatures")
+    if mmTransitionTrajectoryFeatures != null
+      verify(get_ecs_Point2List(animcharData, "mmSearchTrajectoryFeatures") == null &&
+        get_ecs_FloatList(animcharData, "mmSearchTime") == null)
+      set(animcharData, "mmSearchTrajectoryFeatures", *mmTransitionTrajectoryFeatures)
+      set(animcharData, "mmSearchTime", *get_ecs_FloatList(animcharData, "mmTransitionTime"))
 
 def are_motion_matching_databases_loaded(animchars : Array)
   for animchar in animchars

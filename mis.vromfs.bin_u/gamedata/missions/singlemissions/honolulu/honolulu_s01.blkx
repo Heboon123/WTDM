@@ -1,0 +1,1895 @@
+{
+  "selected_tag": "",
+  "bin_dump_file": "",
+  "mission_settings": {
+    "player": {
+      "army": 1,
+      "wing": "player"
+    },
+    "player_teamB": {
+      "army": 2
+    },
+    "mission": {
+      "level": "levels/honolulu.bin",
+      "type": "singleMission",
+      "environment": "Day",
+      "weather": "hazy",
+      "windDirection": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "restoreType": "attempts",
+      "optionalTakeOff": false
+    },
+    "atmosphere": {
+      "pressure": 760.0,
+      "temperature": 0.0
+    },
+    "briefing": {
+      "place_loc": "",
+      "date_loc": "",
+      "objective_loc": "",
+      "music": "usa_main_theme",
+      "part": {
+        "event": "",
+        "minTime": 0,
+        "slide": {
+          "map": true,
+          "minTime": 4,
+          "picture": "",
+          "showAirMap": false,
+          "arrow": {
+            "width": 1,
+            "side": "player",
+            "point": [
+              "player",
+              "waypoint39"
+            ]
+          },
+          "icon": [
+            {
+              "icontype": "fighter",
+              "side": "player",
+              "target": "player",
+              "lookAt": "waypoint39"
+            },
+            {
+              "icontype": "airfield",
+              "side": "ally",
+              "target": "fake_area"
+            },
+            {
+              "icontype": "destroyer",
+              "side": "ally",
+              "target": "ships_01"
+            },
+            {
+              "icontype": "transport",
+              "side": "ally",
+              "target": "ships_02"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "imports": {},
+  "triggers": {
+    "isCategory": true,
+    "is_enabled": true,
+    "mission_start": {
+      "is_enabled": true,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "initMission": {}
+      },
+      "conditions": {},
+      "actions": {
+        "comment": [
+          {
+            "value": "initial id for current wapoint MINUS ONE"
+          },
+          {
+            "value": "initial id for next wapoint  MINUS ONE"
+          },
+          {
+            "value": "starting waypoint showing rotation"
+          }
+        ],
+        "varSetInt": [
+          {
+            "value": -1,
+            "var": "cur_waypoint_id"
+          },
+          {
+            "value": 0,
+            "var": "next_waypoint_id"
+          }
+        ],
+        "triggerEnable": {
+          "target": "waypoints_rotation"
+        }
+      },
+      "else_actions": {}
+    },
+    "waypoints_rotation": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.0
+        }
+      },
+      "conditions": {
+        "varCompareBool": {
+          "var_value": "is_last_waypoint",
+          "value": false,
+          "comparasion_func": "equal"
+        }
+      },
+      "actions": {
+        "comment": [
+          {
+            "value": "last waypoint flag is off so normal logic usage"
+          },
+          {
+            "value": "increasing both ids variables by one"
+          },
+          {
+            "value": "creating areas names"
+          },
+          {
+            "value": "adding  actual indexes to names"
+          },
+          {
+            "value": "checking does such areas exists"
+          }
+        ],
+        "varModify": {
+          "operator": "add",
+          "value": 1.0,
+          "var": [
+            "cur_waypoint_id",
+            "next_waypoint_id"
+          ]
+        },
+        "varSetString": {
+          "value": "waypoint",
+          "var": [
+            "cur_waypoint_name",
+            "next_waypoint_name"
+          ]
+        },
+        "varAddString": [
+          {
+            "value": "@cur_waypoint_id",
+            "digits": 2,
+            "var": "cur_waypoint_name"
+          },
+          {
+            "value": "@next_waypoint_id",
+            "digits": 2,
+            "var": "next_waypoint_name"
+          }
+        ],
+        "triggerEnable": {
+          "target": "waypoints_is_exist"
+        }
+      },
+      "else_actions": {
+        "comment": {
+          "value": "prev waypoint was the last one"
+        },
+        "triggerEnable": {
+          "target": "mission_completed"
+        }
+      }
+    },
+    "waypoints_is_exist": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.0
+        }
+      },
+      "conditions": {
+        "objectExists": [
+          {
+            "target": "@cur_waypoint_name",
+            "type": "area"
+          },
+          {
+            "target": "@next_waypoint_name",
+            "type": "area"
+          }
+        ]
+      },
+      "actions": {
+        "comment": [
+          {
+            "value": "marks waypoints"
+          },
+          {
+            "value": "waiting for player reached cur waypoint"
+          }
+        ],
+        "missionMarkAsWaypoint": [
+          {
+            "visible": true,
+            "primary": true,
+            "scale": 0.4,
+            "oriented": false,
+            "ignoreDifficulty": true,
+            "target": "@cur_waypoint_name"
+          },
+          {
+            "visible": true,
+            "primary": false,
+            "scale": 0.4,
+            "oriented": false,
+            "ignoreDifficulty": true,
+            "target": "@next_waypoint_name"
+          }
+        ],
+        "triggerEnable": {
+          "target": "waypoints_cur_reached"
+        }
+      },
+      "else_actions": {
+        "comment": {
+          "value": "it's last waypoint, cause cur exist and next is not"
+        },
+        "triggerEnable": {
+          "target": "waypoints_is_last_check"
+        }
+      }
+    },
+    "waypoints_cur_reached": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.0
+        }
+      },
+      "conditions": {
+        "playersDistanceBetween": {
+          "value": 125.0,
+          "math": "2D",
+          "players": "isAlive",
+          "target_type": "isAlive",
+          "check_players": "any",
+          "check_targets": "any",
+          "target": "@cur_waypoint_name"
+        }
+      },
+      "actions": {
+        "comment": [
+          {
+            "value": "player is in waypoints area. need to hide current one"
+          },
+          {
+            "value": "showing next waypoint"
+          }
+        ],
+        "missionMarkAsWaypoint": {
+          "visible": false,
+          "primary": true,
+          "scale": 0.4,
+          "oriented": false,
+          "ignoreDifficulty": true,
+          "target": "@cur_waypoint_name"
+        },
+        "triggerEnable": {
+          "target": "waypoints_rotation"
+        }
+      },
+      "else_actions": {}
+    },
+    "waypoints_is_last_check": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 0.0
+        }
+      },
+      "conditions": {
+        "objectExists": {
+          "target": "@cur_waypoint_name",
+          "type": "area"
+        }
+      },
+      "actions": {
+        "comment": [
+          {
+            "value": "aye it's last waypoint"
+          },
+          {
+            "value": ""
+          },
+          {
+            "value": ""
+          }
+        ],
+        "missionMarkAsWaypoint": {
+          "visible": true,
+          "primary": true,
+          "scale": 0.4,
+          "oriented": false,
+          "ignoreDifficulty": true,
+          "target": "@cur_waypoint_name"
+        },
+        "varSetBool": {
+          "value": true,
+          "var": "is_last_waypoint"
+        },
+        "triggerEnable": {
+          "target": "waypoints_cur_reached"
+        }
+      },
+      "else_actions": {}
+    },
+    "mission_completed": {
+      "is_enabled": false,
+      "comments": "",
+      "props": {
+        "actionsType": "PERFORM_ONE_BY_ONE",
+        "conditionsType": "ALL",
+        "enableAfterComplete": false
+      },
+      "events": {
+        "periodicEvent": {
+          "time": 1.0
+        }
+      },
+      "conditions": {},
+      "actions": {
+        "comment": {
+          "value": "lastwaypoint"
+        },
+        "missionMarkAsWaypoint": {
+          "visible": false,
+          "primary": true,
+          "scale": 0.4,
+          "oriented": false,
+          "ignoreDifficulty": true,
+          "target": "waypoint39"
+        },
+        "moSetObjectiveStatus": {
+          "target": "single_honolulu_m01_fly00",
+          "status": 2,
+          "object_marking": 0,
+          "object_var_comp_op": "equal",
+          "object_var_name": ""
+        },
+        "missionCompleted": {
+          "timer": false,
+          "debriefingTimer": 2
+        }
+      },
+      "else_actions": {}
+    }
+  },
+  "mission_objectives": {
+    "isCategory": true,
+    "is_enabled": true,
+    "single_honolulu_m01_fly00": {
+      "is_enabled": true,
+      "comments": "",
+      "type": "abstractMissionObjective",
+      "props": {
+        "isPrimary": true,
+        "timeLimit": 1800,
+        "scoreConst": 100,
+        "scoreTime": 400
+      },
+      "onSuccess": {},
+      "onFailed": {}
+    }
+  },
+  "variables": {
+    "cur_waypoint_id": 0,
+    "next_waypoint_id": 0,
+    "cur_waypoint_name": "",
+    "next_waypoint_name": "",
+    "is_last_waypoint": false
+  },
+  "dialogs": {},
+  "airfields": {},
+  "effects": {},
+  "units": {
+    "armada": {
+      "name": "player",
+      "tm": [
+        [
+          0.960886,
+          0.0,
+          0.276946
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -0.276946,
+          0.0,
+          0.960886
+        ],
+        [
+          -2435.95,
+          428.79,
+          350.9
+        ]
+      ],
+      "unit_class": "p-63a-5",
+      "closed_waypoints": false,
+      "isShipSpline": false,
+      "shipTurnRadius": 100.0,
+      "weapons": "",
+      "bullets0": "",
+      "bullets1": "",
+      "bullets2": "",
+      "bullets3": "",
+      "bulletsCount0": 0,
+      "bulletsCount1": 0,
+      "bulletsCount2": 0,
+      "bulletsCount3": 0,
+      "crewSkillK": 0.0,
+      "applyAllMods": false,
+      "props": {
+        "army": 2,
+        "free_distance": 70.0,
+        "floating_distance": 50.0,
+        "minimum_distance_to_earth": 20.0,
+        "altLimit": 6000.0,
+        "attack_type": "fire_at_will",
+        "skill": 4,
+        "count": 1,
+        "plane": {
+          "wing_formation": "Diamond",
+          "row_distances": 1.5,
+          "col_distances": 1.5,
+          "super_formation": "Diamond",
+          "super_row_distances": 1.5,
+          "super_col_distances": 1.5,
+          "ai_skill": "NORMAL",
+          "task": "FLY_WAYPOINT"
+        }
+      },
+      "way": {}
+    },
+    "ships": [
+      {
+        "name": "ships_01",
+        "tm": [
+          [
+            -0.0757756,
+            0.0,
+            -0.997125
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.997125,
+            0.0,
+            -0.0757756
+          ],
+          [
+            -5396.77,
+            1.99988,
+            -9286.67
+          ]
+        ],
+        "unit_class": "uss_dd_sims",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 2,
+          "formation_type": "rows",
+          "formation_div": 3,
+          "formation_step": [
+            2.5,
+            4.0
+          ],
+          "formation_noise": [
+            0.1,
+            0.1
+          ],
+          "uniqueName": "",
+          "attack_type": "fire_at_will"
+        },
+        "way": {
+          "ships_01_wp_01": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -4573.47,
+                2.0,
+                -10719.3
+              ]
+            ],
+            "props": {
+              "speed": 10.0,
+              "moveType": "MOVETO_STRAIGHT"
+            }
+          },
+          "ships_01_wp_02": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -3976.65,
+                2.0,
+                -10771.7
+              ]
+            ],
+            "props": {
+              "speed": 10.0,
+              "moveType": "MOVETO_STRAIGHT"
+            }
+          },
+          "ships_01_wp_03": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -3252.84,
+                2.00006,
+                -11338.3
+              ]
+            ],
+            "props": {
+              "speed": 10.0,
+              "moveType": "MOVETO_STRAIGHT"
+            }
+          },
+          "ships_01_wp_04": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -2621.33,
+                2.0,
+                -11384.7
+              ]
+            ],
+            "props": {
+              "speed": 10.0,
+              "moveType": "MOVETO_STRAIGHT"
+            }
+          },
+          "ships_01_wp_05": {
+            "type": "normal",
+            "tm": [
+              [
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0
+              ],
+              [
+                -763.937,
+                2.0,
+                -13224.3
+              ]
+            ],
+            "props": {
+              "speed": 10.0,
+              "moveType": "MOVETO_STRAIGHT"
+            }
+          }
+        }
+      },
+      {
+        "name": "ships_02",
+        "tm": [
+          [
+            -0.254582,
+            0.0,
+            -0.967051
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.967051,
+            0.0,
+            -0.254582
+          ],
+          [
+            712.394,
+            1.99994,
+            -9741.91
+          ]
+        ],
+        "unit_class": "hms_cargo_ship",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 3,
+          "formation_type": "rows",
+          "formation_div": 2,
+          "formation_step": [
+            14.0,
+            5.0
+          ],
+          "formation_noise": [
+            0.3,
+            -0.2
+          ],
+          "uniqueName": "",
+          "attack_type": "fire_at_will"
+        },
+        "way": {}
+      },
+      {
+        "name": "ships_03",
+        "tm": [
+          [
+            0.873588,
+            0.0,
+            -0.486667
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.486667,
+            0.0,
+            0.873588
+          ],
+          [
+            -6716.8,
+            1.99976,
+            -10289.7
+          ]
+        ],
+        "unit_class": "fishboat4",
+        "closed_waypoints": false,
+        "isShipSpline": false,
+        "shipTurnRadius": 100.0,
+        "weapons": "",
+        "bullets0": "",
+        "bullets1": "",
+        "bullets2": "",
+        "bullets3": "",
+        "bulletsCount0": 0,
+        "bulletsCount1": 0,
+        "bulletsCount2": 0,
+        "bulletsCount3": 0,
+        "crewSkillK": 0.0,
+        "applyAllMods": false,
+        "props": {
+          "army": 2,
+          "count": 5,
+          "formation_type": "cols",
+          "formation_div": 3,
+          "formation_step": [
+            15.0,
+            15.0
+          ],
+          "formation_noise": [
+            -0.4,
+            -0.1
+          ],
+          "uniqueName": "",
+          "attack_type": "fire_at_will"
+        },
+        "way": {}
+      }
+    ]
+  },
+  "areas": {
+    "waypoint14": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          5487.08,
+          1054.94,
+          3542.9
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint13": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          4747.87,
+          960.05,
+          3616.1
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint12": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          4341.2,
+          934.867,
+          3418.45
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint11": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          3803.65,
+          1006.4,
+          3328.2
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint10": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          3434.41,
+          1038.06,
+          3012.95
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint09": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          3083.86,
+          937.19,
+          2814.35
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint08": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          2663.3,
+          923.45,
+          2761.5
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint07": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          2158.0,
+          888.1,
+          2472.05
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint06": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          1861.15,
+          886.1,
+          2156.95
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint05": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          1782.45,
+          808.998,
+          1793.45
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint04": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          1438.24,
+          640.705,
+          1253.16
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint03": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          972.45,
+          564.97,
+          995.643
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint02": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          326.136,
+          498.098,
+          861.883
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint01": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          -392.7,
+          433.479,
+          776.857
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint00": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          -1085.75,
+          351.856,
+          721.893
+        ]
+      ],
+      "props": {}
+    },
+    "fake_area": {
+      "type": "Sphere",
+      "tm": [
+        [
+          268.942,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          268.942,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          268.942
+        ],
+        [
+          306.863,
+          20.8803,
+          -11878.6
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint15": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          6194.15,
+          1209.93,
+          3879.9
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint16": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          6477.45,
+          1212.3,
+          4039.65
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint17": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          7122.6,
+          917.85,
+          4304.45
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint18": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          7396.55,
+          651.819,
+          4677.2
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint19": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          7574.1,
+          653.266,
+          5274.7
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint20": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          7904.8,
+          889.064,
+          5575.4
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint21": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          8258.15,
+          1097.48,
+          5460.3
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint22": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          8658.84,
+          882.8,
+          5590.6
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint23": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          8897.45,
+          663.1,
+          5909.85
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint24": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          8895.05,
+          596.881,
+          6344.0
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint25": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          9099.45,
+          759.851,
+          6781.15
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint26": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          9176.05,
+          877.2,
+          7043.4
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint27": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          9212.58,
+          862.863,
+          7399.4
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint28": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          9286.73,
+          1000.02,
+          7617.94
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint29": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          9347.15,
+          1073.9,
+          7888.8
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint30": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          9465.2,
+          1070.35,
+          8191.65
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint31": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          9761.7,
+          1008.77,
+          8425.75
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint32": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          10112.0,
+          909.572,
+          8551.5
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint33": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          10256.2,
+          738.25,
+          8787.45
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint34": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          10216.8,
+          368.1,
+          9256.25
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint35": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          10370.7,
+          203.142,
+          9781.05
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint36": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          10060.9,
+          174.1,
+          10375.8
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint37": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          9389.5,
+          174.1,
+          10435.4
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint38": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          9044.95,
+          174.1,
+          10257.5
+        ]
+      ],
+      "props": {}
+    },
+    "waypoint39": {
+      "type": "Sphere",
+      "tm": [
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          100.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          8475.65,
+          174.1,
+          9543.2
+        ]
+      ],
+      "props": {}
+    }
+  },
+  "objLayers": {
+    "layer": [
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      },
+      {
+        "enabled": true
+      }
+    ]
+  },
+  "wayPoints": {}
+}
