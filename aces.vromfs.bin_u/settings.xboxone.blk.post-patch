@@ -2,6 +2,18 @@
   forceMemQuotaKB:i=2355200  // 2300M
 }
 
+"@delete:dx12" {}
+dx12{
+  debug {
+    loadPixCapturer:b=no
+  }
+  onlyPreallocatedHeaps:b=no
+  preallocHeap { sizeMB:i=1024; }
+  preallocHeap { sizeMB:i=32;   cpuCached:b=yes; }
+  preallocHeap { sizeMB:i=4;    gpuExec:b=yes; }
+  renderMemoryLimitMb:i=2560
+}
+
 "@override:video" {
   resolution:t="1920x1080"
   antialiasing_mode:t="high_fxaa"

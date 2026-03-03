@@ -12,7 +12,8 @@ def find_key_in_initial_equip_by_slot(slot : string; equipList : Object)
   for equipKV in equipList
     let equipSlot = equipKV.value ?? ""
     if equipSlot == slot
-      return equipKV.key
+      let out = clone_string(equipKV.key)
+      return out
   return ""
 
 def apply_armor_preset_skin(skinInfo : Object;
@@ -62,7 +63,7 @@ def apply_armor_preset_skin(skinInfo : Object;
       logerr("No chest_armor for apply armor modification {modeName} for soldier with team {team} skin {skin} tier {tier} soldierIdx {soldierIdx} commonSkinPreset {commonSkinPresetName}")
   return true
 
-[es(tag=server, REQUIRE=(unit__ref, human), REQUIRE_NOT=shootingRangeDummy)]
+[es(tag=server, REQUIRE=(unit__ref, human), REQUIRE_NOT=(human__useBaseEquip, shootingRangeDummy))]
 def human_init_skins_preset_es(evt : CmdInitComponent;
                                team : int;
                                squad_member__memberIdx : int;
@@ -131,7 +132,7 @@ def human_init_skins_preset_es(evt : CmdInitComponent;
           return true
 
     
-    let mods : DataBlock& = get_modifications_blk()
+    let mods : DataBlock const& = get_modifications_blk()
     let allMods = datablock_get_block_by_name(mods, "modifications")
     let modsNum = getModCount(*unit__ref.unit.unitMod)
     for i in range(0, modsNum)

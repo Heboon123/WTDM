@@ -55,8 +55,8 @@ def draw(var ctx : GuiContext&; rdata : ElemRenderData& const; rstate : RenderSt
   draw_vario(ctx, rdata, rdata.pos + float2(rdata.size.x * 0.78, rdata.size.y * 0.2), rdata.size * 0.35, data, fmw.fm.vertSpeed)
   draw_altitude(ctx, rdata.pos + float2(rdata.size.x * 0.62, rdata.size.y * 0.58), rdata.size * 0.35, data, hero.pos.y)
   draw_speed_device(ctx, rdata.pos + float2(rdata.size.x * 0.02, rdata.size.y * 0.58), rdata.size * 0.35, data, fmw.ias)
-  draw_heights(ctx, rdata.pos, rdata.size, data, fmw.fm.currentAlt, hero.pos.y)
-  draw_speeds(ctx, rdata.pos, rdata.size, data, fmw.ias, hero.speed, fmw.fm.Mach)
+  draw_heights(ctx, rdata.pos, rdata.size, data, fmw.fm.input.currentAlt, hero.pos.y)
+  draw_speeds(ctx, rdata.pos, rdata.size, data, fmw.ias, hero.speed, fmw.fm.cache.Mach)
   //logerr("{fmw.fm.EI.numEngines > 0}")
   if fmw.fm.EI.numEngines > 0
     assume propulsion = *(fmw.fm.EI)
@@ -415,14 +415,15 @@ def draw_speeds(var ctx : GuiContext&; pos : float2; size : float2; data : Canva
   var fctxSmall : StdGuiFontContext
   get_font_context(fctxSmall, data.fontId, 0, 0, data.fontSize)
 
-  let machText = "{int(mach)}"
+  let machString = "{format("%.2f", mach)}"
+  let machText = slice(machString, 0, 1)
   let machBox = get_str_bbox(machText, machText |> length(), fctx)
   var machPos = float2(pos.x + size.x * 0.15, pos.y + machBox.width.y + 5.)
   ctx |> goto_xy(machPos.x, machPos.y)
   ctx |> draw_str_scaled(1.f, machText, machText |> length())
 
   ctx |> set_font_ht(data.fontSize)
-  let machSmText = ".{roundi((mach * 100.) % 100.)}"
+  let machSmText =  slice(machString, 1)
   let machSmBox = get_str_bbox(machSmText, machSmText |> length(), fctxSmall)
   machPos.x += machBox.width.x
   ctx |> goto_xy(machPos.x, machPos.y)

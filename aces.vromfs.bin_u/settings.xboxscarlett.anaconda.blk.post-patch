@@ -19,6 +19,19 @@
   forceMemQuotaKB:i=5120000  // 5000M
 }
 
+"@delete:dx12" {}
+dx12{
+  debug {
+    loadPixCapturer:b=no
+  }
+  onlyPreallocatedHeaps:b=no
+  preallocHeap { sizeMB:i=1024; }
+  preallocHeap { sizeMB:i=32;   cpuCached:b=yes; }
+  preallocHeap { sizeMB:i=4;    gpuExec:b=yes; }
+  renderMemoryLimitMb:i=9006
+  additionalAsanSystemMemoryMb:i=4096
+}
+
 "@delete:console_presets" {}
 console_presets {
   xboxSeriesX {

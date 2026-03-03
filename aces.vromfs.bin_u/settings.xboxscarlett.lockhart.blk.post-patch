@@ -19,6 +19,19 @@
   forceMemQuotaKB:i=4096000  // 4000M
 }
 
+"@delete:dx12" {}
+dx12{
+  debug {
+    loadPixCapturer:b=no
+  }
+  onlyPreallocatedHeaps:b=no
+  preallocHeap { sizeMB:i=1024; }
+  preallocHeap { sizeMB:i=32;   cpuCached:b=yes; }
+  preallocHeap { sizeMB:i=4;    gpuExec:b=yes; }
+  renderMemoryLimitMb:i=4266
+  additionalAsanSystemMemoryMb:i=640
+}
+
 "@delete:console_presets" {}
 console_presets {
   xboxSeriesS {
@@ -55,10 +68,10 @@ console_presets {
       graphics {
         bvhMode:t="off"
         giQuality:t="medium"
-        forceDisableDof:b=no
+        forceDisableDof:b=yes
         grassRadiusMul:r=1
-        anisotropy:i=16
-        disableHangarPlanarReflections:b=no
+        anisotropy:i=8
+        disableHangarPlanarReflections:b=yes
         lenseFlares:b=yes
         usePostfxGlow:b=yes
         waterQuality:t="high"
@@ -75,7 +88,7 @@ console_presets {
     raytraced {
       video {
         antialiasing_mode:t="tsr"
-        antialiasing_upscaling:t="performance"
+        antialiasing_upscaling:t="quality"
       }
       graphics {
         bvhMode:t="custom"
@@ -90,7 +103,7 @@ console_presets {
         RTRWaterRes:t="half"
         RTRTranslucent:t="off"
         giQuality:t="low"
-        forceDisableDof:b=no
+        forceDisableDof:b=yes
         grassRadiusMul:r=1
         anisotropy:i=16
         disableHangarPlanarReflections:b=no

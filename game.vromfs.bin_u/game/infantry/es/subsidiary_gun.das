@@ -16,9 +16,9 @@ def subsidiary_gun_phys_es(evt : CmdWeapPhysUpdate; eid, subsidiaryGunEid : Enti
     return
 
   var subsidaryActive = false
-  query(subsidiaryGunEid) <| $ [es] (gun : Gun; gun__autoReload : bool; gun__manuallyUnloaded : bool; gun__ammo : int; weapon_mod__active : bool; weapon_mod__wantActiveState : bool)
+  query(subsidiaryGunEid) <| $ [es] (gun__autoReload : bool; gun__manuallyUnloaded : bool; gun__ammo : int; weapon_mod__active : bool; weapon_mod__wantActiveState : bool)
     if weapon_mod__wantActiveState
-      try_reload_empty_gun(gun, subsidiaryGunEid, gun__autoReload, gun__manuallyUnloaded, evt.gctrl.shoot, evt.isForReal, gun__ammo, evt.owner, (evt.atTime - evt.dt))
+      try_reload_empty_gun(subsidiaryGunEid, gun__autoReload, gun__manuallyUnloaded, evt.gctrl.shoot, evt.isForReal, gun__ammo, evt.owner, (evt.atTime - evt.dt))
     subsidaryActive = weapon_mod__active
 
   let gctrl = GunControls(shoot = false, wishShoot = false, boltActionMult = evt.gctrl.boltActionMult, timeStep = evt.gctrl.timeStep)
@@ -79,6 +79,7 @@ def subsidiary_gun_load_on_create_es(evt : Event;
                                      gun__owner : EntityId;
                                      gun__ammo : int;
                                      gun__shell_prop_ids : PropsIdList;
+                                     var gun__numAmmoOnInit : int&;
                                      var gun__curShellId : PropsId;
                                      var gun__isAmmoLoaded : bool&;
                                      var gun__ammoToReloadCount : int&;
@@ -89,6 +90,7 @@ def subsidiary_gun_load_on_create_es(evt : Event;
       find_ammo_for_gun(eid, itemContainer, INVALID_ITEM_ID, 0) <| $(ammoForGun : AmmoItemForGunResult)
         if ammoForGun.itemIndex < 0
           return
+        gun__numAmmoOnInit = gun__totalAmmo
         gun__curShellId = gun__shell_prop_ids[0]
         gun__ammoHolderEid = itemContainer[ammoForGun.itemIndex]
         itemContainer |> erase(ammoForGun.itemIndex)

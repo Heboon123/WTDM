@@ -66,8 +66,7 @@ def human_gun_es(evt : CmdWeapPhysUpdate;
                  gun__manuallyUnloaded : bool;
                  human_gun_attached : bool;
                  gun__isOverheat : bool = false;
-                 gun__isReady : bool = true;
-                 gun : Gun)
+                 gun__isReady : bool = true)
   if !human_gun_attached
     return
 
@@ -80,7 +79,7 @@ def human_gun_es(evt : CmdWeapPhysUpdate;
   let shoot = gctrl.shoot && !gun__isOverheat && gun__isReady
 
   
-  try_reload_empty_gun(gun, eid, gun__autoReload, gun__manuallyUnloaded, gctrl.shoot, isForReal, gun__ammo, ownerEid, (atTime - dt))
+  try_reload_empty_gun(eid, gun__autoReload, gun__manuallyUnloaded, gctrl.shoot, isForReal, gun__ammo, ownerEid, (atTime - dt))
 
   let rndSeed = phys_time_to_seed(atTime)
   using() <| $(var gctr : GunControls#)
@@ -448,9 +447,9 @@ def gun_anim_holster_pos_offset_es(info : ParallelUpdateFrameDelayed;
 
     let isHolster = int(currentState.weapEquipState.nextSlot) != slot_attach__weaponSlotIdx
     if isHolster && currentState.weapEquipState.curState == HUWeaponEquipState.EES_EQUIPING
-      slot_attach__rotTm[3] = lerp(slot_attach__rotTm[3], gun_attach__holsterPosOffset, float3(info.dt * gun_attach__holsterAnimLerpFactor))
+      slot_attach__rotTm[3] = lerp(slot_attach__rotTm[3], gun_attach__holsterPosOffset, float3(min(info.dt * gun_attach__holsterAnimLerpFactor, 1.0f)))
     elif !isHolster && currentState.weapEquipState.curState == HUWeaponEquipState.EES_HOLSTERING
-      slot_attach__rotTm[3] = lerp(slot_attach__rotTm[3], slot_attach__posOffset, float3(info.dt * gun_attach__holsterAnimLerpFactor))
+      slot_attach__rotTm[3] = lerp(slot_attach__rotTm[3], slot_attach__posOffset, float3(min(info.dt * gun_attach__holsterAnimLerpFactor, 1.0f)))
 
 [es(tag=gameClient, REQUIRE=menuChar)]
 def gun_anim_holster_menu_pos_offset_es(info : ParallelUpdateFrameDelayed;
@@ -462,9 +461,9 @@ def gun_anim_holster_menu_pos_offset_es(info : ParallelUpdateFrameDelayed;
                              gun_attach__holsterAnimLerpFactor : float;
                              var slot_attach__rotTm : float3x4&)
       if !human_gun_attached
-        slot_attach__rotTm[3] = lerp(slot_attach__rotTm[3], gun_attach__holsterPosOffset, float3(info.dt * gun_attach__holsterAnimLerpFactor))
+        slot_attach__rotTm[3] = lerp(slot_attach__rotTm[3], gun_attach__holsterPosOffset, float3(min(info.dt * gun_attach__holsterAnimLerpFactor, 1.0f)))
       else
-        slot_attach__rotTm[3] = lerp(slot_attach__rotTm[3], slot_attach__posOffset, float3(info.dt * gun_attach__holsterAnimLerpFactor))
+        slot_attach__rotTm[3] = lerp(slot_attach__rotTm[3], slot_attach__posOffset, float3(min(info.dt * gun_attach__holsterAnimLerpFactor, 1.0f)))
 
 [es(tag=gameClient, on_appear, REQUIRE=menuChar)]
 def gun_anim_holster_menu_pos_offset_init_on_soldier_creation_es(evt : Event; human_weap__gunEids : EidList)
