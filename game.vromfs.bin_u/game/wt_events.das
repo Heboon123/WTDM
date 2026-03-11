@@ -221,6 +221,10 @@ struct RequestRendinstEntityDamage
 struct CmdWeapSwitchSight
   toNext : bool
 
+[event(unicast)]
+struct CmdWeapSetSightPreset
+  presetIdx : int
+
 [event(unicast, routing=ROUTING_CLIENT_CONTROLLED_ENTITY_TO_SERVER)]
 struct CmdSetGunLaunchVerticalAngle
   gunEid : EntityId
@@ -704,6 +708,18 @@ struct CmdHangarRaiseWeapon {}
 [event(unicast, routing=ROUTING_CLIENT_CONTROLLED_ENTITY_TO_SERVER)]
 struct RequestQuickThrowGrenade
   grenade_ammo_id : int
+
+[event(unicast, routing=ROUTING_CLIENT_CONTROLLED_ENTITY_TO_SERVER)]
+struct CmdThrowGrenadeFromClient
+  gunEid : EntityId
+  shellId : uint
+  gunPropsId : uint
+  atTime : float
+  initialLifeTime : float
+  tm : float3x4
+  vel : float3
+  firingMode : uint
+  bombBayHeight : float
 
 [event(broadcast)]
 struct EventArmorInfoChanged {}

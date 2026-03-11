@@ -40,13 +40,6 @@
   "canReloadNonGuns": true,
   "perfectRangefinder": true,
   "debrisPreset": "debris_preset_boat",
-  "customClassIco": "!#ui/gameuiskin#image_in_progress_ico.svg",
-  "customImage": "!#ui/unitskin#image_in_progress.ddsx",
-  "customTooltipImage": "!#ui/aircrafts/image_in_progress.avif",
-  "spawn_count": {
-    "numSpawnsPerBattleArcade": 3,
-    "numSpawnsPerBattleHistorical": 3
-  },
   "hideNodesInDmg": {
     "node": "flag"
   },
@@ -642,7 +635,7 @@
       "armorClass": "ship_structural_steel",
       "armorThickness": 5.0,
       "fireProtectionHp": 10.0,
-      "pump_dm": {
+      "pump_01_dm": {
         "hp": 150.0
       }
     },
@@ -689,7 +682,7 @@
       "napalmDamageMult": 1.0,
       "pressureDamageMult": 4.0,
       "main_caliber_turret_01_dm": {
-        "hp": 130.0
+        "hp": 119.0
       }
     },
     "turrets_aux_caliber": {
@@ -2623,7 +2616,12 @@
         "part": "compartment_01_dm",
         "weight": 0.7,
         "maxWaterAlive": 1.0,
-        "innerParts": {}
+        "innerParts": {
+          "part": {
+            "partNo": "radio_station_dm",
+            "critWaterLevel": 0.85
+          }
+        }
       },
       {
         "part": "compartment_02_dm",
@@ -2703,18 +2701,26 @@
   "ammoStowages": {
     "ammo1": {
       "weaponTrigger": "gunner0",
-      "shells": {
-        "fatalFire": true,
-        "fatalExplosion": true,
-        "fireEvent": "ammo_fire_1",
-        "explosionEvent": "ammo_explosion_1",
-        "ammunition_storage_02_dm": {
-          "count": 500
+      "shells": [
+        {
+          "fatalFire": true,
+          "fatalExplosion": true,
+          "fireEvent": "ammo_fire_1",
+          "explosionEvent": "ammo_explosion_1",
+          "ammunition_storage_02_dm": {
+            "count": 500
+          }
         },
-        "ammunition_storage_03_dm": {
-          "count": 1500
+        {
+          "fatalFire": true,
+          "fatalExplosion": true,
+          "fireEvent": "ammo_fire_1",
+          "explosionEvent": "ammo_explosion_1",
+          "ammunition_storage_03_dm": {
+            "count": 1500
+          }
         }
-      }
+      ]
     },
     "ammo2": {
       "weaponTrigger": "gunner1",

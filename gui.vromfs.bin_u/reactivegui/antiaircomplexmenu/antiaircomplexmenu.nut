@@ -15,7 +15,7 @@ let { RadarTargetType, RadarTargetIconType, RadarParkingStateType } = require("g
 let { RADAR_TAGET_ICON_NONE, RADAR_TAGET_ICON_JET, RADAR_TAGET_ICON_HELICOPTER, RADAR_TAGET_ICON_ROCKET } = RadarTargetIconType
 let { RADAR_TAGET_TYPE_OWN_WEAPON, RADAR_TAGET_TYPE_OWN_WEAPON_TARGET } = RadarTargetType
 let { safeAreaSizeHud, bh, rh } = require("%rGui/style/screenState.nut")
-let { needShowDmgIndicator, dmgIndicatorStates } = require("%rGui/hudState.nut")
+let { needShowDmgIndicator } = require("%rGui/hudState.nut")
 let { setRenderCameraToHudTexture } = require("hudState")
 let { logerr } = require("dagor.debug")
 let { mkFrame, shortcutButtonPadding, frameHeaderHeight, borderWidth,
@@ -38,6 +38,9 @@ let { mkZoomMinBtn, mkZoomMaxBtn, radarColor, mkSensorTypeSwitchBtn, mkSensorSwi
 let { mkFilterTargetsBtn } = require("%rGui/antiAirComplexMenu/antiAirComplexMenuTargetsList.nut")
 let { getDasScriptByPath } = require("%rGui/utils/cacheDasScriptForView.nut")
 let { radarCanvas } = require("%rGui/radar.nut")
+let { dmgIndicatorPos } = require("%rGui/hud/tankDmgIndicatorState.nut")
+let { isAAComplexMenuActive } = require("%appGlobals/hud/hudState.nut")
+
 local tooltipTimer = null
 
 let imageSize = hdpxi(20)
@@ -82,7 +85,7 @@ let radarHeight = Computed(@()
   min(rh.get() - (actionBarSize.get()?[1] ?? 0) - occupiedCenterHeight, defRadarHeight))
 
 let topDamageIndicator = Computed(@() !needShowDmgIndicator.get() ? sh(100) - sizeDamageIndicatorFull
-  : dmgIndicatorStates.get()?.pos[1] ?? 0)
+  : dmgIndicatorPos.get()[1])
 
 let radarStateText = Computed(@()
   (RadarParkingState.get() == RadarParkingStateType.ST_LIFTING_DOWN ) ? $"{loc("hud/AAComplexMenu/LiftingDown")}..."
@@ -579,11 +582,13 @@ function fakeActionBar() {
   })
 }
 
+let closeAAComplexMenu = @() deferOnce(@() isAAComplexMenuActive.set(false))
+
 let aaComplexMenu = {
   size = flex()
   rendObj = ROBJ_SOLID
   color = 0xDD101010
-
+  hotkeys = [["^Esc | J:Start", closeAAComplexMenu]]
   children = [
     @() {
       watch = [safeAreaSizeHud, aaMenuCfg, contentScale]
