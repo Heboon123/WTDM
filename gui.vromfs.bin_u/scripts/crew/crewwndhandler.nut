@@ -69,20 +69,29 @@ gui_handlers.CrewHandler <- class (gui_handlers.CrewModalHandler) {
   isMaxLevel = false
   crewMemberSkillsMaxAmount = null
 
+  function initScreen() {
+    this.backSceneParams = { eventbusName = "gui_start_mainmenu" }
+    base.initScreen()
+  }
+
   function getWndSizes() {
     let wnd = this.scene.findObject("wnd_frame")
     let wndHeight = to_pixels("1@crewWndBaseHeight")
+    let wndPosX = wnd.getPos()[0]
     let wndPosY = wnd.getPos()[1]
     let slotBarPosY = to_pixels("sh-1@slotbarOffset-1@slotbarTop-1@slotbarHeight")
     let heightReservePadding = to_pixels("0.5@frameMediumPadding")
     let freeHeightToSlotbar = slotBarPosY - (wndPosY + wndHeight + heightReservePadding)
+    let wndPosYLowered = to_pixels("1@infoPanelVertPosition")
 
     return {
       wnd
+      wndPosX
       wndPosY
       wndHeight
       slotBarPosY
       freeHeightToSlotbar
+      wndPosYLowered
     }
   }
 
@@ -102,7 +111,7 @@ gui_handlers.CrewHandler <- class (gui_handlers.CrewModalHandler) {
       return
     this.needRecalcWndHeight = false
 
-    let { wnd, freeHeightToSlotbar } = this.getWndSizes()
+    let { wnd, wndPosX, wndPosY, slotBarPosY, freeHeightToSlotbar, wndPosYLowered } = this.getWndSizes()
 
     
     let qualReqContainer = this.scene.findObject("upgrade_qualification_block")
@@ -132,11 +141,18 @@ gui_handlers.CrewHandler <- class (gui_handlers.CrewModalHandler) {
     let fullSkillsTableHeight = skillsTable.childrenCount() > 0
       ? skillsTable.getChild(0).getSize()[1] * this.crewMemberSkillsMaxAmount
       : containerSkillsTableHeight
-    
-    if (containerSkillsTableHeight >= fullSkillsTableHeight)
-      return
 
-    wnd.height = resultWndHeight + min(freeHeightToSlotbar + increasedFreeHeight, fullSkillsTableHeight - containerSkillsTableHeight)
+    if (containerSkillsTableHeight < fullSkillsTableHeight)
+      resultWndHeight += min(freeHeightToSlotbar + increasedFreeHeight, fullSkillsTableHeight - containerSkillsTableHeight)
+
+    let updatedFreeHeightToSlotbar = slotBarPosY - (wndPosY + resultWndHeight)
+    
+    local updatedWndPosY = wndPosY
+    if (updatedFreeHeightToSlotbar >= 2 * (wndPosYLowered - wndPosY))
+      updatedWndPosY = wndPosYLowered
+
+    wnd.height = resultWndHeight
+    wnd.pos = $"{wndPosX},{updatedWndPosY}"
   }
 
   function updateCrewInfo() {
@@ -252,8 +268,9 @@ gui_handlers.CrewHandler <- class (gui_handlers.CrewModalHandler) {
   }
 
   function getCrewLevelToProgressValue(level) {
-    let progressValue =
-      round_by_value(level * CREW_MAX_PROGRESS_BAR_VALUE / getMaxCrewLevel(this.curCrewUnitType), 0.5)
+    let maxCrewLevel = getMaxCrewLevel(this.curCrewUnitType)
+    let progressValue = maxCrewLevel == 0 ? 0
+      : round_by_value(level * CREW_MAX_PROGRESS_BAR_VALUE / maxCrewLevel, 0.5)
     return progressValue
   }
 
@@ -315,7 +332,7 @@ gui_handlers.CrewHandler <- class (gui_handlers.CrewModalHandler) {
 
     let trainCostInstance = crewSpecType.getUpgradeCostByCrewAndByUnit(this.crew, this.curUnit, nextSpecType.code)
 
-    local crewReqLevelText = nextSpecType.getReqLevelText(this.crew, this.curUnit)
+    local crewReqLevelText = nextSpecType.getReqLevelText(this.crew, this.curUnit, trainCostInstance.tostring())
     let canUpgradeNow = crewReqLevelText == ""
     upgradeBtnObj.inactiveColor = !canUpgradeNow ? "yes" : "no"
 
@@ -533,13 +550,13 @@ gui_handlers.CrewHandler <- class (gui_handlers.CrewModalHandler) {
 
   prepareHelpPage = @(_handler) null
 
-  function setHangarCameraOffset(isFocused) {
+  function setHangarCameraOffsetForUnit(unit, isFocused) {
     local cameraOffset = 0
-    if (isFocused) {
+    if (isFocused && unit != null) {
       let wnd = this.scene.findObject("wnd_frame")
       let wndWidth = wnd.getSize()[0]
       let totalWidth = to_pixels("sw - 1@frameThickPadding")
-      let addOffset = this.curUnit.isShipOrBoat() ? -0.2 : 0
+      let addOffset = unit.isShipOrBoat() ? -0.2 : 0
       cameraOffset = round_by_value(wndWidth / totalWidth.tofloat(), 0.05) + addOffset
     }
     hangar_set_camera_screen_offset(Point2(cameraOffset, 0))
@@ -547,7 +564,7 @@ gui_handlers.CrewHandler <- class (gui_handlers.CrewModalHandler) {
 
   function toggleHangarFocusModelAndCameraOffset(isFocused) {
     hangar_focus_model(isFocused)
-    this.setHangarCameraOffset(isFocused)
+    this.setHangarCameraOffsetForUnit(this.curUnit, isFocused)
   }
 
   function toggleXrayFilterMode(isEnabled) {
@@ -576,8 +593,8 @@ gui_handlers.CrewHandler <- class (gui_handlers.CrewModalHandler) {
     dmViewer.placeHint(obj)
   }
 
-  function onEventHangarModelLoaded(_p) {
-    this.setHangarCameraOffset(true)
+  function onEventHangarModelLoaded(p) {
+    this.setHangarCameraOffsetForUnit(getAircraftByName(p.modelName), true)
     this.setXrayFilterShownParts()
   }
 

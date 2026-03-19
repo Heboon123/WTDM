@@ -22,7 +22,7 @@ let { disableNetwork } = require("%globalScripts/clientState/initialState.nut")
 
 const MAX_FETCH_RETRIES = 5
 
-const MAX_GAME_MODES_FOR_REQUEST_INFO = 10
+const MAX_GAME_MODES_FOR_REQUEST_INFO = 5
 
 const NIGHT_GAME_MODE_TAG_PREFIX = "regular_with_night_"
 const SMALL_TEAMS_GAME_MODE_TAG_PREFIX = "small_teams_"
@@ -76,7 +76,7 @@ function getGmListFromQueue() {
 }
 
 function loadGameModesFromList(gm_list) {
-  if (fetchingInfo) {
+  if (fetchingInfo || !is_online_available()) {
     addGmListToQueue(gm_list)
     return
   }
@@ -90,7 +90,7 @@ function loadGameModesFromList(gm_list) {
     function (result) {
       fetchingInfo = false
       if (!checkMatchingError(result, false)) {
-        queueGameModesForRequest.clear()
+        self(gm_list)
         return
       }
       if ("modes_str" in result)
@@ -255,10 +255,15 @@ function getModeById(gameModeId) {
 
 addListenersWithoutEnv({
   function MatchingConnect(_) {
-    if (!needForceUpdateOnReconnect)
+    if (needForceUpdateOnReconnect) {
+      needForceUpdateOnReconnect = false
+      queueGameModesForRequest.clear()
+      forceUpdateGameModes()
       return
-    needForceUpdateOnReconnect = false
-    forceUpdateGameModes()
+    }
+
+    if (queueGameModesForRequest.len() > 0 && !fetchingInfo)
+      loadGameModesFromList(getGmListFromQueue())
   }
   function SignOut(_) {
     gameModes.clear()
