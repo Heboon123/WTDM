@@ -15,10 +15,12 @@ require WeapHelpers
 require PropsManager
 require %appGame.infantry.es.human_gun_common
 require %appGame.infantry.es.human_reload_common
+require daslib/enum_trait
 require %appGame.infantry.es.human_weapon_utils_common
 require %appGame.infantry.es.inventory_drop_common
 require %appGame.infantry.es.multiple_guns_slot_common
 require %appGame.infantry.es.walker_common
+require %appGame.infantry.es.gun_anim_common
 require DngWalkerai
 require Dacoll
 require daslib.strings_boost
@@ -90,7 +92,7 @@ def find_rethrowable_grenade(to_whom : EntityId)
 
 def get_weapon_slot_from_name(name : string) : tuple<slot : HUWeaponSlots; found : bool>
   let slotIdx = get_weapon_slot_index_from_name(name)
-  for slot in each_enum(HUWeaponSlots.EWS_PRIMARY)
+  for slot in each(HUWeaponSlots.EWS_PRIMARY)
     if int(slot) == slotIdx
       return (slot, true)
 
@@ -545,7 +547,7 @@ def search_grenade_for_fast_throw(var result_ammo_type : int&;
                                       item__grenadeType : string)
               let slotConfig = *fastThrowSlots[item__grenadeType] as int
               if slotConfig != null
-                for slot in each_enum(HumanControlThrowSlot.HCTS_SLOT0)
+                for slot in each(HumanControlThrowSlot.HCTS_SLOT0)
                   if int(slot) == 1 << (*slotConfig - 1) && control_state |> human_control_state_is_throw_state_set(slot)
                     result_ammo_type = ammoItemId
                     foundGrenade = true
@@ -651,7 +653,9 @@ def human_weap_gun_update(var human_net_phys : HumanActor;
                           human_phys__jumpEndTime : float;
                           human_phys__afterJumpDelay : float;
                           human_phys__isInAirLong : bool;
-                          bipod__enabled : bool)
+                          bipod__enabled : bool;
+                          human_weap__weapModActivateStartTime : float;
+                          human_weap__weapModActivateFinishTime : float)
   assume phys = human_net_phys.phys
   let selectedGun = determine_current_weapon_slot(ctx.atTime, human_net_phys)
   let curGun = selectedGun
@@ -902,7 +906,8 @@ def human_weap_gun_update(var human_net_phys : HumanActor;
     elif !isInspecting && isRequestingReload && ct.dodgeState == DodgeState.No 
       sendEvent(ctx.eid, CmdGunRequestInspect(atTime = ctx.atTime, gunEid = overrideGunEid))
 
-    if isReloadingStarted && !isInspecting
+    let isSwitchingMod = ctx.atTime > human_weap__weapModActivateStartTime && ctx.atTime < human_weap__weapModActivateFinishTime
+    if isReloadingStarted && !isInspecting && !isSwitchingMod
       sendEvent(ctx.eid, EventHumanStartedReload())
 
     query(overrideGunEid) <| $ [es] (var gun_reload__isRequesting : bool&)

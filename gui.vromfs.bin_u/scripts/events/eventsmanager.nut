@@ -64,7 +64,7 @@ let { getLocTextFromConfig } = require("%scripts/langUtils/language.nut")
 let { getEventEconomicName, getEventTournamentMode, isEventMatchesType, isEventForClan,
   getEventDisplayType, setEventDisplayType, eventIdsForMainGameModeList, isEventRandomBattles,
   isEventWithLobby, getMaxLobbyDisbalance, getEventReqFeature, isEventVisibleByFeature,
-  isEventPlatformOnlyAllowed
+  isEventPlatformOnlyAllowed, canJoinWithoutRequireCrafts, isEventAllowedByPackage
 } = require("%scripts/events/eventInfo.nut")
 let { getLbCategoryTypeByField, eventsTableConfig } = require("%scripts/leaderboard/leaderboardCategoryType.nut")
 let { isCrewLockedByPrevBattle } = require("%scripts/crew/crewInfo.nut")
@@ -91,7 +91,7 @@ let { getItemsList, getInventoryList } = require("%scripts/items/itemsManagerMod
 let { getBrokenAirsInfo } = require("%scripts/instantAction.nut")
 let { getMemberStatusLocTag, getMemberStatusLocId, getSquadMembersFlyoutData
 } = require("%scripts/squads/squadUtils.nut")
-let { checkPackageFull, getPkgLocName } = require("%scripts/clientState/contentPacks.nut")
+let { havePackage, getPkgLocName } = require("%scripts/clientState/contentPacks.nut")
 let { EventChaptersManager } = require("%scripts/events/eventsChapter.nut")
 
 const EVENTS_OUT_OF_DATE_DAYS = 15
@@ -913,6 +913,10 @@ let Events = class {
       eventData.$rawdelete("loc_name")
     }
 
+    let { reqPack = null } = eventData
+    if (reqPack != null)
+     eventData.reqPacks <- reqPack.replace(";", ",").split(",")
+
     return eventData
   }
 
@@ -1206,13 +1210,11 @@ let Events = class {
     return getEventDisplayType(event) != g_event_display_type.NONE
       && this.checkEventFeature(event, true)
       && this.isEventAllowedByComaptibilityMode(event)
-      && this.isEventAllowedByPackage(event)
+      && isEventAllowedByPackage(event)
       && (!this.eventRequiresTicket(event) || this.getEventActiveTicket(event) != null)
   }
 
   isEventAllowedByComaptibilityMode = @(event) event?.isAllowedForCompatibility != false || !isCompatibilityMode()
-
-  isEventAllowedByPackage = @(event) event?.reqPack == null || checkPackageFull(event.reqPack, true)
 
   function getEventsVisibleInEventsWindowCount() {
     return this.__countEventsList(EVENT_TYPE.ANY, this.isEventVisibleInEventsWindow)
@@ -1505,6 +1507,9 @@ let Events = class {
     if (!event)
       return false
 
+    if (canJoinWithoutRequireCrafts(event))
+      return true
+
     let teamData = this.getTeamWithUnitsReq(event, room, country)
     if (teamData == null)
       return true
@@ -1575,6 +1580,8 @@ let Events = class {
   }
 
   function checkPlayersCrafts(event, room = null, minCrafts = 1) {
+    if (canJoinWithoutRequireCrafts(event))
+      return true
     let mGameMode = events.getMGameMode(event, room)
     let roomSpecialRules = room && getRoomSpecialRules(room)
     let playersCurCountry = profileCountrySq.get()
@@ -2356,8 +2363,11 @@ let Events = class {
     }
     else if (!this.isEventAllowedByComaptibilityMode(event))
       data.reasonText = loc("events/noCompatibilityMode")
-    else if (!this.isEventAllowedByPackage(event))
-      data.reasonText = loc("events/no_entitlement", { entitlement = getPkgLocName(event.reqPack, true)})
+    else if (!isEventAllowedByPackage(event))
+      data.reasonText = loc("events/no_entitlement", { entitlement = loc("ui/comma").join(
+        event.reqPacks.filter(@(packName) !havePackage(packName))
+          .map(@(packName) getPkgLocName(packName, true)))
+      })
     else if (!isCreationCheck && !this.isEventEnabled(event)) {
       local startTime = events.getEventStartTime(event)
       if (startTime > 0)

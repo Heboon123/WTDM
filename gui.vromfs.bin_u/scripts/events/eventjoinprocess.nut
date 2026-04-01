@@ -11,7 +11,8 @@ let { checkDiffTutorial } = require("%scripts/tutorials/tutorialsData.nut")
 let { showMsgboxIfSoundModsNotAllowed } = require("%scripts/penitentiary/soundMods.nut")
 let { profileCountrySq } = require("%scripts/user/playerCountry.nut")
 let tryOpenCaptchaHandler = require("%scripts/captcha/captchaHandler.nut")
-let { getEventEconomicName, checkEventFeaturePacks, isEventForNewbies
+let { getEventEconomicName, checkEventFeaturePacks, isEventForNewbies, canJoinWithoutRequireCrafts,
+  isEventAllowedByPackage
 } = require("%scripts/events/eventInfo.nut")
 let { checkShowMultiplayerAasWarningMsg } = require("%scripts/user/antiAddictSystem.nut")
 let { isMeNewbieOnUnitType } = require("%scripts/myStats.nut")
@@ -141,11 +142,11 @@ let EventJoinProcess = class {
   function joinStep3_external() {
     this.processStepName = "joinStep3_external"
     if (events.getEventDiffCode(this.event) == DIFFICULTY_HARDCORE &&
-        !checkPackageAndAskDownload("pkg_main"))
+        !checkPackageAndAskDownload(["pkg_main"]))
       return this.remove()
 
-    if (!events.isEventAllowedByPackage(this.event)
-      && !checkPackageAndAskDownload(this.event.reqPack))
+    if (!isEventAllowedByPackage(this.event)
+      && !checkPackageAndAskDownload(this.event.reqPacks))
       return this.remove()
 
     if (!events.checkEventFeature(this.event))
@@ -204,6 +205,10 @@ let EventJoinProcess = class {
 
   function joinStep6_repairInfo() {
     this.processStepName = "joinStep6_repairInfo"
+    if (canJoinWithoutRequireCrafts(this.event)) {
+      this.joinStep7_membersForQueue()
+      return
+    }
     let repairInfo = events.getCountryRepairInfo(this.event, this.room, profileCountrySq.get())
     checkBrokenAirsAndDo(repairInfo, this, this.joinStep7_membersForQueue, false, this.remove)
   }

@@ -43,6 +43,7 @@ let { showUserSightMigrationPopupIfNeeded } = require("%scripts/options/tankSigh
 let { checkLogoutScheduled } = require("%scripts/login/logout.nut")
 let { showPopupWndIfNeed } = require("%scripts/utils/popupMessages.nut")
 let { checkNewNotificationUserlogs } = require("%scripts/userLog/userlogData.nut")
+let { showMsgboxIfSoundModsForceDisabled } = require("%scripts/penitentiary/soundMods.nut")
 
 let delayed_gblk_error_popups = []
 function showGblkErrorPopup(errCode, path) {
@@ -112,13 +113,13 @@ function onMainMenuReturn(handler, isAfterLogin) {
     handler.doWhenActiveOnce("checkNonApprovedSquadronResearches")
   }
 
-  if (isAllowPopups && hasFeature("Invites") && !isGuestLogin.get() && !guiScene.hasModalObject())
+  if (isAllowPopups && hasFeature("Invites") && !isGuestLogin.get())
     handler.doWhenActiveOnce("checkShowViralAcquisition")
 
-  if (isAllowPopups && !guiScene.hasModalObject())
+  if (isAllowPopups)
     handler.doWhenActive(@() checkShowEmailRegistration())
 
-  if (isAfterLogin && isAllowPopups && !guiScene.hasModalObject())
+  if (isAfterLogin && isAllowPopups)
     handler.doWhenActive(@() checkShowGuestEmailRegistrationAfterLogin())
 
   if (handler.unitInfoPanel == null) {
@@ -155,6 +156,7 @@ function onMainMenuReturn(handler, isAfterLogin) {
     checkShowGraphicSettingsWasModified()
     searchAndRepairInvalidPresets()
     showUserSightMigrationPopupIfNeeded()
+    showMsgboxIfSoundModsForceDisabled()
   }
 
   handler.doWhenActive(popGblkErrorPopups)
