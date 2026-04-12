@@ -1,5 +1,6 @@
 require ecs
 require ecs.common
+require ecs.safe
 require Unit
 require IGroundModel
 require DagorMath
@@ -10,6 +11,7 @@ require DagorSystem
 require strings
 require app
 require Weapon
+require Grid
 
 struct TargetCandidate
   eid : EntityId
@@ -28,6 +30,45 @@ def on_equip_storage_appear_es(evt : Event;
                                equip_storage__capacity : float)
   equip_storage__current = rnd_float(equip_storage__capacity * 0.2, equip_storage__capacity * 0.4)
 
+def create_unit(template_name : string;
+                unit_name : das_string;
+                transform : float3x4;
+                team : int;
+                mods : StringList;
+                settings : Array;
+                check_visibility_target : bool = true;
+                move_speed_k_at_shooting : float = 1.)
+  var unitEid = INVALID_ENTITY_ID
+  using() <| $(var disabledTriggers : IntList)
+    unitEid = createEntity(template_name) <| $(init)
+      init |> set("unit__className", unit_name)
+      init |> set("transform", transform)
+      init |> set("team", team)
+      init |> set("unit__ownsUnitId", true)
+      init |> set("aimer_custom_setting__checkVisibilityTarget", check_visibility_target)
+      init |> set("aimer_custom_setting__ignoreStopForFire", true)
+      init |> set("aimer_custom_setting__targetAAA", false)
+      init |> set("aimer_custom_setting__moveSpeedKAtShooting", move_speed_k_at_shooting)
+      disabledTriggers |> push(int(WeaponTriggerGroups.TRIGGER_GROUP_MACHINE_GUN))
+      disabledTriggers |> push(int(WeaponTriggerGroups.TRIGGER_GROUP_COAXIAL_GUN))
+      init |> set("custom_gun_properties__tiggerGroupNo", disabledTriggers)
+      init |> set("custom_gun_properties__aimMaxDist", 0.)
+      init |> set("unit_params__modList", mods)
+      init |> set("unit_params__rearmOnFieldTime", 20.)
+      for j in range(length(settings))
+        let obj = settings[j] as Object
+        if obj != null
+          let unitName = obj?.unit ?? ""
+          if unitName == unit_name
+            let nameList = get_ecs_StringList(obj, "bulletNames")
+            if nameList != null
+              init |> set("unit_params__bulletNames", *nameList)
+            let countList = get_ecs_IntList(obj, "bulletsCount")
+            if countList != null
+              init |> set("unit_params__bulletsCount", *countList)
+            break;
+  return unitEid
+
 [es(tag=server, no_order)]
 def equip_storage_update_es(act : UpdateStageInfoAct;
                             unit__ref aka storage_unit__ref : UnitRef;
@@ -38,6 +79,8 @@ def equip_storage_update_es(act : UpdateStageInfoAct;
                             var equip_storage__current aka factory_equip_storage__current : float&;
                             equip_factory__columnUnitNames1 : StringList;
                             equip_factory__columnUnitNames2 : StringList;
+                            equip_factory__unitsColumnMods : StringList;
+                            equip_factory__bulletSetsForUnits : Array;
                             var equip_factory__columnUnits : EidList&;
                             var equip_factory__currentColumnTarget : EntityId&;
                             fuel_factory : Tag const?;
@@ -81,19 +124,9 @@ def equip_storage_update_es(act : UpdateStageInfoAct;
         var templateName = "tank+delayed_destroy_dead_unit+aimer_custom_setting+custom_gun_properties+disable_radar_on_start+unit_death_substract_team_tickets_5"
         if string(unit) |> find("/") != -1
           templateName = "simple_tank+delayed_destroy_dead_unit+aimer_custom_setting+custom_gun_properties+disable_radar_on_start+unit_death_substract_team_tickets_5"
-        using() <| $(var disabledTriggers : IntList)
-          let unitEid = createEntity(templateName) <| $(init)
-            init |> set("unit__className", unit)
-            init |> set("transform", unitTransform)
-            init |> set("team", storage_unit__ref.unit.army)
-            init |> set("unit__ownsUnitId", true)
-            init |> set("aimer_custom_setting__ignoreStopForFire", true)
-            disabledTriggers |> push(int(WeaponTriggerGroups.TRIGGER_GROUP_MACHINE_GUN))
-            disabledTriggers |> push(int(WeaponTriggerGroups.TRIGGER_GROUP_COAXIAL_GUN))
-            init |> set("custom_gun_properties__tiggerGroupNo", disabledTriggers)
-            init |> set("custom_gun_properties__aimMaxDist", 0.)
-          equip_factory__columnUnits |> push(unitEid)
-          columnUnits |> push(unitEid)
+        let unitEid = create_unit(templateName, unit, unitTransform, storage_unit__ref.unit.army, equip_factory__unitsColumnMods, equip_factory__bulletSetsForUnits)
+        equip_factory__columnUnits |> push(unitEid)
+        columnUnits |> push(unitEid)
       if columnUnits |> length() > 0
         factory_equip_storage__current -= equip_factory__equipForSendColumn
         createEntity("units_column") <| $(init)
@@ -137,8 +170,17 @@ def on_column_unit_appear_es(evt : Event;
         var gm = unit__ref.unit |> as_gm()
         gm.slowWhenEnemyNear = 0.2
         gm.slowWhenEnemyNearDistance = 300.
+  find_query() <| $ [es] (units_column__units : EidList&; spg_units_column__fireDist : float)
+    if find_index(units_column__units, eid) != -1
+      var gm = unit__ref.unit |> as_gm()
+      (*gm) |> set_gun_properties_from_mission(int(WeaponTriggerGroups.TRIGGER_GROUP_PRIMARY),
+         false, spg_units_column__fireDist, -1., -1., -1., -1.)
+      return true
+    return false
 
-[es(tag=server, no_order, REQUIRE_NOT=spg_units_column)]
+let arrivedDistSq = 20. * 20.
+let arrivedDist = 20.
+[es(tag=server, REQUIRE_NOT=spg_units_column, after=tank_column_capture_check_es)]
 def units_column_update_es(act : UpdateStageInfoAct;
                            eid : EntityId;
                            var units_column__units : EidList&;
@@ -160,34 +202,40 @@ def units_column_update_es(act : UpdateStageInfoAct;
         if !column_unit_unit__ref.unit.isDelayed
           hasAlive = hasAlive || column_unit_unit__ref.unit.isAlive
           foundSomething = true
-          if column_unit_unit__ref.unit.isAlive && length_sq(targetTm[3]) > 0. && length_sq(column_unit_unit__ref.unit.pos - targetTm[3]) < 400.
+          if column_unit_unit__ref.unit.isAlive && length_sq(targetTm[3]) > 0. && length_sq(column_unit_unit__ref.unit.pos - targetTm[3]) < arrivedDistSq
             equip_storage__current = min(equip_storage__current + units_column__transportedEquipment, equip_storage__capacity)
             destroyEntity(unitEid)
 
   query(units_column__target) <| $ [es] (strongpoint__radius : float;
                                          var strongpoint__units : EidList;
+                                         var team : int&;
+                                         strongpoint__ticketsByCapture : int;
                                          transform : float3x4;
                                          object_group_spawn_units__positions : TMatrixList)
     var arrived = INVALID_ENTITY_ID
 
     for unitEid in units_column__units
-      query(unitEid) <| $ [es] (var unit__ref aka column_unit_unit__ref : UnitRef&)
-        if !column_unit_unit__ref.unit.isDelayed
-          hasAlive = hasAlive || column_unit_unit__ref.unit.isAlive
+      query(unitEid) <| $ [es] (var unit__ref aka column_unit__ref : UnitRef&)
+        if !column_unit__ref.unit.isDelayed
+          hasAlive = hasAlive || column_unit__ref.unit.isAlive
           foundSomething = true
-          if column_unit_unit__ref.unit.isAlive && length_sq(column_unit_unit__ref.unit.pos - transform[3]) < strongpoint__radius * strongpoint__radius
+          if column_unit__ref.unit.isAlive && length_sq(column_unit__ref.unit.pos - transform[3]) < strongpoint__radius * strongpoint__radius
             let idx = strongpoint__units |> length()
-            arrived = unitEid
+            arrived = unitEid 
+
+            if idx == 0 && team != column_unit__ref.unit.army
+              change_mp_tickets_for_team(team, -strongpoint__ticketsByCapture)
+              team = column_unit__ref.unit.army
 
             if idx < object_group_spawn_units__positions |> length()
-              set_destination_way_point(column_unit_unit__ref.unit, "HALT", transform, 0.)
+              set_destination_way_point(column_unit__ref.unit, "HALT", transform, 0.)
               let vel = float3(0.)
-              reset_movesys_vel(column_unit_unit__ref.unit, vel)
+              reset_movesys_vel(column_unit__ref.unit, vel)
               strongpoint__units |> push(unitEid)
               var tm = transform * object_group_spawn_units__positions[idx]
               drop_object_on_ground_normal(tm, true, 3000.)
-              *column_unit_unit__ref.unit |> teleportToPos(false, tm[3])
-              column_unit_unit__ref.unit |> setOrientation(tm[0], tm[1]);
+              *column_unit__ref.unit |> teleportToPos(false, tm[3])
+              column_unit__ref.unit |> setOrientation(tm[0], tm[1]);
             else
               destroyEntity(unitEid)
     if arrived != INVALID_ENTITY_ID
@@ -242,6 +290,8 @@ def tank_storage_update_es(act : UpdateStageInfoAct;
                            tank_factory__spgColumnUnitNames1 : StringList;
                            tank_factory__spgColumnUnitNames2 : StringList;
                            tank_factory__spgColummProbability : float;
+                           equip_factory__bulletSetsForUnits : Array;
+                           equip_factory__unitsColumnMods : StringList;
                            var tank_factory__spawnPoints : float&;
                            var tank_factory__consumeTimer : float&;
                            var equip_factory__columnUnits : EidList&;
@@ -330,28 +380,24 @@ def tank_storage_update_es(act : UpdateStageInfoAct;
           var templateName = "tank+delayed_destroy_dead_unit+aimer_custom_setting+custom_gun_properties+disable_radar_on_start+unit_death_substract_team_tickets_5"
           if string(unit) |> find("/") != -1
             templateName = "simple_tank+delayed_destroy_dead_unit+aimer_custom_setting+custom_gun_properties+disable_radar_on_start+unit_death_substract_team_tickets_5"
-          using() <| $(var disabledTriggers : IntList)
-            let unitEid = createEntity(templateName) <| $(init)
-              init |> set("unit__className", unit)
-              init |> set("transform", unitTransform)
-              init |> set("team", army)
-              init |> set("unit__ownsUnitId", true)
-              init |> set("aimer_custom_setting__checkVisibilityTarget", !isSpg)
-              init |> set("aimer_custom_setting__ignoreStopForFire", true)
-              init |> set("aimer_custom_setting__targetAAA", false)
-              init |> set("aimer_custom_setting__moveSpeedKAtShooting", 0.1)
-              disabledTriggers |> push(int(WeaponTriggerGroups.TRIGGER_GROUP_MACHINE_GUN))
-              disabledTriggers |> push(int(WeaponTriggerGroups.TRIGGER_GROUP_COAXIAL_GUN))
-              init |> set("custom_gun_properties__tiggerGroupNo", disabledTriggers)
-              init |> set("custom_gun_properties__aimMaxDist", 0.)
-            columnUnits |> push(unitEid)
-            equip_factory__columnUnits |> push(unitEid)
+          let unitEid = create_unit(templateName, unit, unitTransform, army, equip_factory__unitsColumnMods, equip_factory__bulletSetsForUnits, !isSpg, 0.1)
+          columnUnits |> push(unitEid)
+          equip_factory__columnUnits |> push(unitEid)
         if columnUnits |> length() > 0
           tank_factory__spawnPoints -= tank_factory__spawnThreshold
           createEntity(isSpg ? "spg_units_column" : "units_column") <| $(init)
             init |> set("units_column__units", columnUnits)
             init |> set("units_column__target", equip_factory__currentColumnTarget)
             init |> set("units_column__captureCheckTimer", rnd_float(0., 1.)) 
+
+def capture_blocked(target_pos : float3; new_army : int; radius : float)
+  var found = false
+  find_entity_in_grid(ecs_hash("vehicles"), BSphere3(target_pos, radius), GridEntCheck.POS) <| $(objEid : EntityId)
+    query(objEid) <| $ [es(REQUIRE=unit_tag__tank)] (unit__ref aka any_enemy_unit__ref : UnitRef)
+      if !any_enemy_unit__ref.unit.isDelayed && any_enemy_unit__ref.unit.isAlive && any_enemy_unit__ref.unit.army != new_army
+        found = true
+    return found
+  return found
 
 
 [es(tag=server, no_order)]
@@ -368,6 +414,7 @@ def tank_column_capture_check_es(act : UpdateStageInfoAct;
   units_column__captureCheckTimer = units_column__captureCheckInterval
   
   query() <| $ [es(REQUIRE=equip_storage__capacity)] (var unit__ref aka target_unit__ref : UnitRef&;
+                                                      equip_storage__ticketsByCapture : int;
                                                       tank_factory__fuelStorage : EntityId const?;
                                                       tank_factory__ammoStorage : EntityId const?)
     if target_unit__ref.unit.isDelayed
@@ -378,7 +425,7 @@ def tank_column_capture_check_es(act : UpdateStageInfoAct;
     for unitEid in units_column__units
       query(unitEid) <| $ [es] (unit__ref aka column_unit__ref : UnitRef)
         if !column_unit__ref.unit.isDelayed && column_unit__ref.unit.isAlive && column_unit__ref.unit.army != target_unit__ref.unit.army
-          if length_sq(column_unit__ref.unit.pos - target_unit__ref.unit.pos) < 400.
+          if length_sq(column_unit__ref.unit.pos - target_unit__ref.unit.pos) < arrivedDistSq * 4.
             captured = true
             newArmy = column_unit__ref.unit.army
       if captured
@@ -386,6 +433,9 @@ def tank_column_capture_check_es(act : UpdateStageInfoAct;
 
     if !captured
       return
+    if capture_blocked(target_unit__ref.unit.pos, newArmy, arrivedDist * 2.)
+      return
+    change_mp_tickets_for_team(target_unit__ref.unit.army, -equip_storage__ticketsByCapture)
     *target_unit__ref.unit |> setArmy(newArmy)
     
     if tank_factory__fuelStorage != null && *tank_factory__fuelStorage != INVALID_ENTITY_ID
@@ -399,6 +449,7 @@ def tank_column_capture_check_es(act : UpdateStageInfoAct;
   
   find_query() <| $ [es] (strongpoint__units : EidList;
                           var team : int&;
+                          strongpoint__ticketsByCapture : int;
                           strongpoint__radius : float;
                           transform : float3x4)
     var found = false
@@ -409,7 +460,9 @@ def tank_column_capture_check_es(act : UpdateStageInfoAct;
          strongpoint__units |> length() <= 0 &&
          length_sq(column_unit__ref.unit.pos - transform[3]) < strongpoint__radius * strongpoint__radius)
           found = true
-          team = column_unit__ref.unit.army
+          if !capture_blocked(transform[3], column_unit__ref.unit.army, strongpoint__radius)
+            change_mp_tickets_for_team(team, -strongpoint__ticketsByCapture)
+            team = column_unit__ref.unit.army
       if found
         return true
     return false
@@ -443,25 +496,18 @@ def on_strongpoint_appear_es(evt : Event;
                              object_group_spawn_units__positions : TMatrixList;
                              object_group_spawn_units__namesTeam1 : StringList;
                              object_group_spawn_units__namesTeam2 : StringList;
+                             strongpoint__unitMods : StringList;
+                             strongpoint__bulletSetsForUnits : Array;
                              var strongpoint__units : EidList&)
   assume unitList = team == 1 ? object_group_spawn_units__namesTeam1 : object_group_spawn_units__namesTeam2
   for unit, tm in unitList, object_group_spawn_units__positions
     var templateName = "tank+delayed_destroy_dead_unit+custom_gun_properties+disable_radar_on_start+unit_death_substract_team_tickets_5"
     if string(unit) |> find("/") != -1
       templateName = "simple_tank+delayed_destroy_dead_unit+custom_gun_properties+disable_radar_on_start+unit_death_substract_team_tickets_5"
-    using() <| $(var disabledTriggers : IntList)
-      let unitEid = createEntity(templateName) <| $(init)
-        init |> set("unit__className", unit)
-        init |> set("transform", transform * tm)
-        init |> set("team", team)
-        init |> set("unit__ownsUnitId", true)
-        disabledTriggers |> push(int(WeaponTriggerGroups.TRIGGER_GROUP_MACHINE_GUN))
-        disabledTriggers |> push(int(WeaponTriggerGroups.TRIGGER_GROUP_COAXIAL_GUN))
-        init |> set("custom_gun_properties__tiggerGroupNo", disabledTriggers)
-        init |> set("custom_gun_properties__aimMaxDist", 0.)
-      strongpoint__units |> push(unitEid)
+    let unitEid = create_unit(templateName, unit, transform * tm, team, strongpoint__unitMods, strongpoint__bulletSetsForUnits)
+    strongpoint__units |> push(unitEid)
 
-let distSqToAlly = 50. * 50.
+let distSqToAlly = 300. * 300.
 
 [es(tag=server, no_order)]
 def spg_units_column_update_es(act : UpdateStageInfoAct;
